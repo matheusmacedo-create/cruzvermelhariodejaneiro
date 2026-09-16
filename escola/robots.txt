@@ -1,0 +1,11 @@
+# robots.txt da Escola de Educação e Saúde CVB-RJ
+# Servir em https://escola.cursoscruzvermelha.org/robots.txt
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /cadastro
+Disallow: /minha-conta
+Disallow: /inscrever/
+Disallow: /api/
+
+Sitemap: https://escola.cursoscruzvermelha.org/sitemap.xml
