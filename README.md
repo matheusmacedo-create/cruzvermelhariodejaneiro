@@ -35,7 +35,7 @@ Já no ar (16/09/2026):
    servia a escola (CNAME para o Render, com HTTPS). Fica como caminho alternativo; o
    endereço oficial continua sendo `escola.cursoscruzvermelha.org` (ver `escola/`).
 
-Prontos em `site/`, aguardando publicação na Hostinger (ver `site/README.md`):
+Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.md`):
 
 3. **Links diretos por curso** em `cursos.html`: cada card ganha o botão "Ver turmas e
    inscrever-se" apontando para a página do curso na escola, além do link "Plataforma da
@@ -59,19 +59,16 @@ Prontos em `site/`, aguardando publicação na Hostinger (ver `site/README.md`):
   sobrescritos na próxima publicação de notícia.
 - **Escola**: não tinha `robots.txt` nem `sitemap.xml` (ambos 404) nem `canonical`, e o
   mesmo conteúdo aparece em três hosts. O kit em `escola/` resolve isso; leia
-  `escola/README.md`. Enquanto o kit não for para o Render, `site/sitemap-escola.xml` (10 URLs) é
-  uma cópia do sitemap da escola para hospedar no domínio principal, em
-  `https://cruzvermelhariodejaneiro.org/sitemap-escola.xml` (publicar junto com as
-  páginas). O Search Console só a aceita para a escola depois que as duas propriedades
-  estiverem verificadas na **mesma conta**.
+  `escola/README.md`. Enquanto o kit não for para o Render, existe uma cópia do sitemap da escola
+  no domínio principal: `https://cruzvermelhariodejaneiro.org/sitemap-escola.xml`
+  (10 URLs, fonte em `site/sitemap-escola.xml`). O Search Console só a aceita para a
+  escola depois que as duas propriedades estiverem verificadas na **mesma conta**.
 - Para regenerar o sitemap da escola quando entrarem cursos novos:
   `python3 scripts/gerar_sitemap_escola.py` (lê o catálogo público e grava
   `escola/sitemap.xml` e `site/sitemap-escola.xml`).
 
 ## Próximos passos
 
-0. Publicar `site/index.html`, `site/cursos.html` e `site/sitemap-escola.xml` na Hostinger
-   (`scripts/publicar_hostinger.sh`) e limpar o cache do site.
 1. No app da escola (Render): copiar `escola/robots.txt` e `escola/sitemap.xml` para a
    pasta pública, ou instalar `escola/seo.js` (canonical + robots + sitemap dinâmico).
 2. Search Console: adicionar a propriedade `https://escola.cursoscruzvermelha.org/`
