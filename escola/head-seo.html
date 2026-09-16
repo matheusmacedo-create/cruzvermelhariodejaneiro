@@ -1,0 +1,41 @@
+<!--
+  Trecho para o <head> de TODAS as páginas da escola (layout principal).
+  `canonicalUrl` vem de res.locals (ver seo.js). Ajuste a sintaxe do template.
+-->
+<link rel="canonical" href="<%= canonicalUrl %>">
+<meta name="description" content="Escola de Educação e Saúde da Cruz Vermelha Brasileira - Rio de Janeiro: cursos de primeiros socorros, Lei Lucas, bombeiro civil, cuidador de idosos, punção venosa e suporte básico de vida, com certificação oficial.">
+<meta property="og:site_name" content="Escola de Educação e Saúde CVB-RJ">
+<meta property="og:url" content="<%= canonicalUrl %>">
+
+<!-- Liga a escola à instituição no grafo do Google (mesma organização do site principal). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "@id": "https://escola.cursoscruzvermelha.org/#escola",
+  "name": "Escola de Educação e Saúde CVB-RJ",
+  "alternateName": "Escola de Capacitação da Cruz Vermelha Brasileira - Rio de Janeiro",
+  "url": "https://escola.cursoscruzvermelha.org/",
+  "logo": "https://escola.cursoscruzvermelha.org/img/logo-cvb-rj.webp",
+  "email": "contato@cruzvermelhariodejaneiro.org",
+  "telephone": "+55-21-99992-2864",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Praça da Cruz Vermelha, 10",
+    "addressLocality": "Rio de Janeiro",
+    "addressRegion": "RJ",
+    "addressCountry": "BR"
+  },
+  "parentOrganization": {
+    "@type": "NGO",
+    "@id": "https://cruzvermelhariodejaneiro.org/#organizacao",
+    "name": "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro",
+    "url": "https://cruzvermelhariodejaneiro.org/"
+  },
+  "sameAs": [
+    "https://cruzvermelhariodejaneiro.org/",
+    "https://www.instagram.com/cruzvermelhabrasileirarj/",
+    "https://www.facebook.com/profile.php?id=61591390052128"
+  ]
+}
+</script>
