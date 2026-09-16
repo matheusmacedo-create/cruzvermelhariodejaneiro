@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <title>Cruz Vermelha Brasileira - Rio de Janeiro</title>
+  <meta name="description" content="Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro. Cursos, voluntariado, ações humanitárias e contato institucional.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --red: #cc0000;
+      --red-dark: #a30000;
+      --black: #0f1318;
+      --text: #1a202c;
+      --muted: #718096;
+      --line: #e2e8f0;
+      --soft: #f7f8fa;
+      --paper: #ffffff;
+      --max: 1100px;
+      --radius: 16px;
+      --shadow: 0 12px 28px rgba(16, 24, 40, .10);
+    }
+
+    * {
+      box-sizing: border-box;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='13' y='2' width='6' height='28' rx='2' fill='%23cc0000'/%3E%3Crect x='2' y='13' width='28' height='6' rx='2' fill='%23cc0000'/%3E%3C/svg%3E") 16 16, crosshair;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .eyebrow {
+      color: var(--red);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      color: #fff;
+      font-size: clamp(2.6rem, 5.5vw, 5.1rem);
+      line-height: .96;
+      letter-spacing: -.055em;
+      margin-bottom: 1.2rem;
+    }
+    h2 {
+      color: var(--black);
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+      margin: .45rem 0 1rem;
+    }
+    h3 { color: var(--black); line-height: 1.18; }
+    section { padding: 86px 0; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      border-radius: 999px;
+      padding: .9rem 1.35rem;
+      border: 1px solid transparent;
+      font-weight: 850;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+      min-height: 46px;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-red { background: var(--red); color: #fff; box-shadow: 0 12px 30px rgba(237, 27, 46, .28); }
+    .btn-red:hover { background: var(--red-dark); }
+    .btn-white { background: #fff; color: var(--red); }
+    .btn-outline { border-color: var(--line); color: var(--black); background: #fff; }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+    /* ============================================================
+       HEADER / NAVBAR (Escola)
+       ============================================================ */
+    .main-header {
+      background-color: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 12px 28px rgba(16,24,40,0.10);
+    }
+
+    .header-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      gap: 16px;
+      position: relative;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      height: 52px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-title {
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--ink);
+      letter-spacing: 0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 9.5px;
+      color: var(--red);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      justify-content: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13.5px;
+      letter-spacing: 0.2px;
+      transition: color 0.2s;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      transition: width 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--red); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      border: 0;
+      background: transparent;
+      font-size: 24px;
+      color: var(--ink);
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    .header-collapse {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-left: auto;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-login-sutil {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-login-sutil:hover {
+      background: rgba(204, 0, 0, 0.08);
+    }
+
+    @media (max-width: 1024px) {
+      .header-container { flex-wrap: nowrap; justify-content: space-between; gap: 10px; padding: 12px 16px; }
+      .nav-toggle { display: inline-flex; }
+      .header-collapse {
+        display: none;
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: var(--paper);
+        flex-direction: column;
+        padding: 8px 20px 18px;
+        box-shadow: 0 18px 40px rgba(11,18,32,.12);
+        border-top: 1px solid var(--line);
+        margin-left: 0;
+      }
+      .main-header.nav-open .header-collapse { display: flex; }
+      .main-header.nav-open .nav-toggle i::before { content: "\f00d"; }
+      .nav-links {
+        position: static;
+        transform: none;
+        left: auto;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+      }
+      .nav-links a {
+        padding: 14px 4px;
+        border-bottom: 1px solid var(--line);
+        width: 100%;
+      }
+      .nav-links a::after { display: none; }
+      .header-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .header-actions .btn-login-sutil { justify-content: center; width: 100%; }
+      .header-container { padding: 14px 20px !important; }
+      .logo-area {
+        display: flex !important;
+        align-items: center !important;
+        gap: 16px !important;
+        min-width: 0 !important;
+      }
+      .logo-img {
+        height: 56px !important;
+        width: auto !important;
+        flex-shrink: 0 !important;
+      }
+      .brand-text {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        line-height: 1.15 !important;
+        border-left: 2px solid var(--line) !important;
+        padding-left: 14px !important;
+      }
+      .brand-title {
+        font-size: 19px !important;
+        font-weight: 900 !important;
+        color: var(--ink) !important;
+        text-transform: uppercase !important;
+        letter-spacing: -0.3px !important;
+      }
+      .brand-subtitle {
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        color: var(--red) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-top: 2px !important;
+      }
+    }
+
+    .hero {
+      min-height: 690px;
+      padding: 0;
+      position: relative;
+      color: #fff;
+      overflow: hidden;
+      background: #111;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .68) 42%, rgba(0, 0, 0, .22) 100%),
+        url("assets/hero-equipe-grupo.jpg") center 30% / cover no-repeat;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      height: auto;
+      background: var(--red);
+      opacity: .96;
+    }
+    .hero .wrap {
+      min-height: 690px;
+      display: grid;
+      grid-template-columns: minmax(0, 680px) 1fr;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      padding: 76px 0;
+    }
+    .hero .eyebrow { color: #fff; }
+    .hero p {
+      max-width: 620px;
+      color: rgba(255, 255, 255, .88);
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+      margin-bottom: 1.7rem;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-card {
+      position: absolute;
+      right: 0;
+      bottom: 44px;
+      max-width: 430px;
+      background: rgba(255,255,255,.92);
+      color: var(--black);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--red);
+    }
+    .hero-card strong { display: block; color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .35rem; }
+    .hero-card p { color: #333; font-size: .95rem; margin: 0; }
+
+    .info-strip {
+      background: var(--red);
+      color: #fff;
+      padding: 22px 0;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 18px;
+    }
+    .info-item { border-left: 1px solid rgba(255,255,255,.34); padding-left: 18px; }
+    .info-item b { display: block; font-size: 1rem; }
+    .info-item span { color: rgba(255,255,255,.84); font-size: .9rem; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
+      align-items: center;
+    }
+    .lead { color: var(--muted); font-size: 1.1rem; max-width: 68ch; }
+    .photo-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+    .photo-stack img {
+      width: 100%;
+      border-radius: var(--radius);
+      object-fit: cover;
+      box-shadow: 0 14px 32px rgba(0,0,0,.12);
+    }
+    .photo-stack img:first-child { aspect-ratio: 4 / 5; }
+    .photo-stack img:last-child { aspect-ratio: 4 / 4.7; transform: translateY(34px); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 34px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      min-height: 225px;
+    }
+    .card .num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff0f2;
+      color: var(--red);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .card p { color: var(--muted); margin-bottom: 0; }
+
+    .courses { background: var(--soft); }
+    .course-box {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 46px rgba(0,0,0,.08);
+    }
+    .course-box img { height: 100%; min-height: 430px; width: 100%; object-fit: cover; object-position: top; }
+    .course-copy { padding: 42px; }
+    .check-list { list-style: none; padding: 0; margin: 22px 0 28px; display: grid; gap: 12px; }
+    .check-list li { display: flex; gap: 10px; color: #444; }
+    .check-list li::before { content: "+"; color: var(--red); font-weight: 900; }
+
+    /* ============================================================
+       NOVO: SLIDER DE CURSOS EM DESTAQUE
+       ============================================================ */
+    .course-slide { display: none; }
+    .course-slide.active { display: block; animation: campaignFade .4s ease; }
+    .courses-slider-nav { display: flex; gap: 10px; margin: 28px 0 0; flex-wrap: wrap; }
+    .course-tab {
+      background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 10px 20px;
+      font-weight: 700; font-size: 13.5px; color: var(--muted); cursor: pointer; transition: all .2s ease;
+    }
+    .course-tab.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .courses-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
+    .course-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); border: none; cursor: pointer; padding: 0; }
+    .course-dot.active { background: var(--red); }
+
+    /* ============================================================
+       NOVO: OUTROS CURSOS (mini-cards)
+       ============================================================ */
+    .more-courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 36px; }
+    .mini-course-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease; text-align: left;
+    }
+    .mini-course-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,.1); }
+    .mini-course-thumb { aspect-ratio: 4/3; overflow: hidden; background: #eee; }
+    .mini-course-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .mini-course-body { padding: 18px 20px 22px; }
+    .mini-course-body h4 { font-size: 15.5px; margin: 0 0 6px; color: var(--black); }
+    .mini-course-body p { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
+    .mini-course-body .btn { width: 100%; padding: 10px 18px; font-size: 13px; }
+    @media (max-width: 920px) { .more-courses-grid { grid-template-columns: 1fr; } }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .alert {
+      background: var(--black);
+      color: #fff;
+      padding: 0;
+    }
+    .alert-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .alert img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border-radius: var(--radius);
+    }
+    .alert h2 { color: #fff; }
+    .alert .lead { color: rgba(255,255,255,.76); }
+    .alert-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .alert-item {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .alert-item b { color: #fff; display: block; }
+    .alert-item span { color: rgba(255,255,255,.75); font-size: .94rem; }
+
+    .actions {
+      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+    }
+    .actions-head {
+      display: grid;
+      grid-template-columns: minmax(0, 690px) minmax(280px, 1fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    .actions-head .lead { margin-bottom: 0; }
+    .actions-kicker {
+      border-left: 5px solid var(--red);
+      padding: 18px 0 18px 20px;
+      color: #4f4f4f;
+      font-weight: 650;
+    }
+    .actions-layout {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+    .feature-action {
+      position: relative;
+      min-height: 560px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 18px 46px rgba(0,0,0,.12);
+      background: #111;
+    }
+    .feature-action img,
+    .action-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .feature-action img {
+      position: absolute;
+      inset: 0;
+    }
+    .feature-action::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.78));
+    }
+    .feature-caption {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 28px;
+      z-index: 2;
+      color: #fff;
+    }
+    .feature-caption .eyebrow { color: #fff; }
+    .feature-caption h3 {
+      color: #fff;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: -.04em;
+      margin: .35rem 0 .65rem;
+    }
+    .feature-caption p {
+      color: rgba(255,255,255,.84);
+      max-width: 58ch;
+      margin-bottom: 0;
+    }
+    .action-list {
+      display: grid;
+      gap: 18px;
+    }
+    .action-tile {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      min-height: 174px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(0,0,0,.06);
+    }
+    .action-copy {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .action-copy span {
+      color: var(--red);
+      font-size: .73rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 6px;
+    }
+    .action-copy h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .action-copy p {
+      color: var(--muted);
+      font-size: .94rem;
+      margin: 0;
+    }
+    .actions-cta {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .contact { background: var(--soft); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+    .contact-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px;
+    }
+    .contact-line {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .contact-line:last-child { border-bottom: 0; }
+    .contact-line b { display: block; color: var(--black); }
+    .contact-line a, .contact-line span { color: var(--muted); overflow-wrap: anywhere; }
+    .map-card {
+      min-height: 430px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      background:
+        linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.1)),
+        url("assets/dia-cruz-vermelha.jpg") center / cover no-repeat;
+      color: #fff;
+      display: flex;
+      align-items: flex-end;
+      padding: 30px;
+    }
+    .map-card h3 { color: #fff; font-size: 2rem; margin-bottom: .4rem; }
+    .map-card p { color: rgba(255,255,255,.84); margin-bottom: 0; }
+
+    footer {
+      background: var(--stone);
+      border-top: 3px solid var(--red);
+      color: var(--muted);
+      padding: 0;
+    }
+
+    .footer-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 36px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1.3fr 1fr;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-logo {
+      height: 64px;
+      width: auto;
+      display: block;
+      margin-bottom: 12px;
+      object-fit: contain;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+    }
+
+    .footer-col p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0 0 8px;
+    }
+
+    .footer-col p i {
+      color: var(--red);
+      width: 16px;
+      margin-right: 6px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .footer-social a {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--line);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .footer-social a:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--line);
+      background: var(--line);
+      padding: 16px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-inner a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .footer-inner a:hover { color: var(--red); }
+    .footer-inner .sep { color: var(--line); }
+
+    @media (max-width: 920px) {
+      nav { display: none !important; }
+      .menu-btn { display: block; }
+      .nav.open nav {
+        display: flex;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 76px;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 20px 22px;
+        transform: none;
+      }
+      .nav .btn-red { display: none; }
+      .hero .wrap { grid-template-columns: 1fr; }
+      .hero-card { position: static; margin-top: 28px; }
+      .info-grid, .cards, .split, .course-box, .alert-grid, .contact-grid, .footer-grid, .actions-head, .actions-layout { grid-template-columns: 1fr; }
+      .photo-stack img:last-child { transform: none; }
+      .feature-action { min-height: 420px; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 28px, var(--max)); }
+      section { padding: 62px 0; }
+      .topbar .wrap { align-items: flex-start; flex-direction: column; }
+      .brand img { width: 46px; height: 46px; }
+      .hero, .hero .wrap { min-height: 670px; }
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.52) 58%, rgba(0,0,0,.2) 100%),
+          url("assets/hero-equipe-grupo.jpg") center 20% / cover no-repeat;
+      }
+      .hero-actions, .cta-row { flex-direction: column; align-items: stretch; }
+      .course-copy { padding: 28px; }
+      .action-tile { display: block; }
+      .action-tile img {
+        display: block; position: static; width: 100%; height: auto;
+        aspect-ratio: 16 / 9; object-fit: cover;
+      }
+      .action-copy { position: static; }
+      .feature-action { min-height: 500px; }
+      .feature-caption { left: 20px; right: 20px; bottom: 22px; }
+    }
+
+    /* ============================================================
+       NOVO: SLIDER DE CAMPANHAS ATIVAS
+       ============================================================ */
+    .campaign-slider { position: relative; overflow: hidden; background: #0d0d0d; cursor: pointer; }
+    .campaign-slide { display: none; }
+    .campaign-slide.active { display: block; animation: campaignFade .5s ease; }
+    @keyframes campaignFade { from { opacity: 0; } to { opacity: 1; } }
+    .campaign-slide a { display: block; width: 100%; }
+    .campaign-slide img { width: 100%; height: auto; display: block; }
+    .campaign-slider-dots {
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 5;
+    }
+    .campaign-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.45);
+      border: none; padding: 0; cursor: pointer;
+    }
+    .campaign-dot.active { background: #fff; }
+    .campaign-slider-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.4); color: #fff;
+      width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .campaign-slider-arrow:hover { background: rgba(255,255,255,.3); }
+    .campaign-slider-arrow.prev { left: 16px; }
+    .campaign-slider-arrow.next { right: 16px; }
+    @media (max-width: 620px) { .campaign-slider-arrow { display: none; } }
+
+    /* ============================================================
+       NOVO: CAMPANHAS ATIVAS (cards)
+       ============================================================ */
+    .campaigns-section { background: var(--soft); }
+    .campaigns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+    .campaign-card {
+      background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line);
+      transition: transform .2s ease, box-shadow .2s ease; display: flex; flex-direction: column;
+    }
+    .campaign-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .campaign-card-thumb { aspect-ratio: 16/9; overflow: hidden; background: #0d0d0d; }
+    .campaign-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .campaign-card-thumb.placeholder {
+      display: flex; align-items: center; justify-content: center; color: var(--muted);
+      font-size: 13px; background: var(--soft); border-bottom: 1px dashed var(--line);
+    }
+    .campaign-card-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+    .campaign-card-body h3 { font-size: 19px; margin: 8px 0 10px; color: var(--black); }
+    .campaign-card-body p { font-size: 14px; color: var(--muted); margin-bottom: 18px; flex: 1; }
+    @media (max-width: 920px) { .campaigns-grid { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       NOVO: PARCEIROS CNPJ
+       ============================================================ */
+    .partners-section { background: #fff; }
+    .partners-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 18px; margin: 40px 0; }
+    .partner-slot {
+      background: var(--soft); border: 1px solid var(--line); border-radius: 10px; height: 90px;
+      display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .partner-slot img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(20%); }
+    .partner-slot.placeholder { border: 1px dashed var(--line); color: #b7b7b7; font-size: 12px; }
+    .partner-cta {
+      background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 32px; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .partner-cta h3 { font-size: 20px; margin-bottom: 6px; color: var(--black); }
+    .partner-cta p { color: var(--muted); font-size: 14px; margin: 0; }
+    @media (max-width: 920px) { .partners-logos { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ============================================================
+       NOVO: NEWSLETTER
+       ============================================================ */
+    .newsletter-section { background: var(--red); color: #fff; text-align: center; }
+    .newsletter-section .eyebrow { color: #fff; opacity: .85; }
+    .newsletter-section h2 { color: #fff; }
+    .newsletter-section p.lead { color: rgba(255,255,255,.92); max-width: 560px; margin: 0 auto 28px; }
+    .newsletter-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .newsletter-form input {
+      flex: 1; min-width: 200px; padding: 14px 16px; border-radius: 999px; border: none; font-size: 14px;
+    }
+    .newsletter-form .btn { background: var(--black); color: #fff; white-space: nowrap; }
+    .newsletter-form .btn:hover { background: #000; }
+
+    /* ============================================================
+       NOVO: FAQ
+       ============================================================ */
+    .faq-section { background: #fff; }
+    .faq-list { max-width: 760px; }
+    .faq-item {
+      background: var(--soft); border: 1px solid var(--line); border-radius: 12px;
+      margin-bottom: 14px; overflow: hidden;
+    }
+    .faq-item summary {
+      list-style: none; cursor: pointer; padding: 20px 24px; font-weight: 800; font-size: 15.5px;
+      color: var(--black); display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: "+"; color: var(--red); font-size: 22px; font-weight: 900; flex-shrink: 0;
+      transition: transform .2s ease;
+    }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-HDYZZ5JZHF');
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '2224500131617302');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-container">
+      <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
+        <img src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img">
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="header-collapse">
+        <nav class="nav-links">
+          <a href="#institucional">Sobre</a>
+          <a href="/noticias/">Notícias</a>
+          <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
+          <a href="#campanhas">Campanhas</a>
+          <a href="#parceiros">Parceiros</a>
+          <a href="#faq">FAQ</a>
+          <a href="equipe.html">Equipe</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="header-actions">
+          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
+  <div class="campaign-slider" id="campaignSlider">
+    <div class="campaign-slide active" data-slide="0">
+      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
+        <img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro">
+      </a>
+    </div>
+    <div class="campaign-slide" data-slide="1">
+      <a href="campanha-agasalho.html">
+        <img src="assets/agasalho-banner.jpg" alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro">
+      </a>
+    </div>
+    <button class="campaign-slider-arrow prev" onclick="changeCampaignSlide(-1)" aria-label="Campanha anterior">&#8249;</button>
+    <button class="campaign-slider-arrow next" onclick="changeCampaignSlide(1)" aria-label="Próxima campanha">&#8250;</button>
+    <div class="campaign-slider-dots">
+      <button class="campaign-dot active" onclick="goToCampaignSlide(0)" aria-label="Slide 1"></button>
+      <button class="campaign-dot" onclick="goToCampaignSlide(1)" aria-label="Slide 2"></button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var current = 0;
+      var slides = document.querySelectorAll('.campaign-slide');
+      var dots = document.querySelectorAll('.campaign-dot');
+      var timer;
+      function render(){
+        slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
+        dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
+      }
+      window.goToCampaignSlide = function(i){ current = i; render(); resetTimer(); };
+      window.changeCampaignSlide = function(dir){
+        current = (current + dir + slides.length) % slides.length;
+        render(); resetTimer();
+      };
+      function resetTimer(){
+        clearInterval(timer);
+        timer = setInterval(function(){ changeCampaignSlide(1); }, 6000);
+      }
+      resetTimer();
+    })();
+  </script>
+
+  <main id="inicio">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">Filial do Estado do Rio de Janeiro</p>
+          <h1 id="hero-title">Preparados para servir. Prontos para cuidar.</h1>
+          <p>Formação, voluntariado e presença humanitária para fortalecer comunidades, orientar a população e agir com técnica quando cada minuto importa.</p>
+          <div class="hero-actions">
+            <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conheça os cursos</a>
+            <a class="btn btn-white" href="https://doar.cruzvermelhariodejaneiro.org" target="_blank" rel="noopener">Fazer uma doação</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Dados institucionais">
+          <strong>Palácio da Cruz Vermelha</strong>
+          <p><b>Capacitação contínua no Rio de Janeiro.</b> Voluntários, instrutores e equipes preparados para transformar cuidado em ação.</p>
+          <p style="margin-top:.55rem"><b>CNPJ:</b> 08.560.973/0001-97</p>
+        </aside>
+      </div>
+    </section>
+
+    <div class="info-strip">
+      <div class="wrap info-grid">
+        <div class="info-item"><b>CNPJ</b><span>08.560.973/0001-97</span></div>
+        <div class="info-item"><b>E-mail</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
+        <div class="info-item"><b>Instagram</b><span>@cruzvermelhabrasileirarj</span></div>
+        <div class="info-item"><b>Endereço</b><span>Praça da Cruz Vermelha, 10 - Rio de Janeiro</span></div>
+      </div>
+    </div>
+
+    <section id="institucional">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">Institucional</p>
+          <h2>Uma filial histórica, conectada a uma missão mundial.</h2>
+          <p class="lead">A Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro integra um movimento humanitário guiado pelos princípios de humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+          <p class="lead">No Rio de Janeiro, a filial atua na formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, mantendo viva uma tradição de cuidado, preparo e serviço à população.</p>
+          <div class="cta-row" style="margin-top:24px">
+            <a class="btn btn-red" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver Instagram</a>
+            <a class="btn btn-outline" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Ver Facebook</a>
+          </div>
+        </div>
+        <div class="photo-stack" aria-label="Fotos reais da Cruz Vermelha RJ">
+          <img src="assets/reuniao-cicv.jpg" alt="Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV">
+          <img src="assets/reuniao-cicv-grupo.jpg" alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional">
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: CAMPANHAS ATIVAS -->
+    <section class="campaigns-section" id="campanhas">
+      <div class="wrap">
+        <p class="eyebrow">Fique atualizado</p>
+        <h2>Campanhas ativas</h2>
+        <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
+        <div class="campaigns-grid">
+          <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
+            <div class="campaign-card-thumb"><img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
+              <h3>Impacto das Cores</h3>
+              <p>Mutirões de pintura que revitalizam espaços comunitários e fortalecem vínculos entre voluntários e moradores.</p>
+              <span class="btn btn-outline">Conhecer o Projeto</span>
+            </div>
+          </a>
+          <a class="campaign-card" href="campanha-agasalho.html">
+            <div class="campaign-card-thumb"><img src="assets/agasalho-hero-rua.jpg" alt="Campanha do Agasalho"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Campanha de Inverno</p>
+              <h3>Campanha do Agasalho</h3>
+              <p>Arrecadação de agasalhos, cobertores e calçados para levar aquecimento e dignidade a famílias em situação de vulnerabilidade durante o frio.</p>
+              <span class="btn btn-outline">Ver Como Ajudar</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="courses" id="cursos">
+      <div class="wrap">
+        <p class="eyebrow">Escola e capacitação</p>
+        <h2>Formação que prepara pessoas para agir com segurança.</h2>
+
+        <div class="courses-slider-nav">
+          <button class="course-tab active" onclick="goToCourseSlide(0)">Primeiros Socorros</button>
+          <button class="course-tab" onclick="goToCourseSlide(1)">Punção Venosa</button>
+          <button class="course-tab" onclick="goToCourseSlide(2)">Cuidador de Idosos</button>
+        </div>
+
+        <div id="coursesSlider">
+          <div class="course-slide active" data-course-slide="0">
+            <div class="course-box">
+              <img src="assets/curso-primeiros-socorros-novo.jpg" alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro">
+              <div class="course-copy">
+                <h3>Curso de Primeiros Socorros Básico</h3>
+                <p class="lead">Capacitação para reconhecer riscos, acionar ajuda e aplicar condutas iniciais com técnica. O objetivo é reduzir improvisos perigosos e aumentar a segurança em situações críticas.</p>
+                <ul class="check-list">
+                  <li>Conteúdo com foco em prevenção, atendimento inicial e resposta adequada.</li>
+                  <li>Orientação sobre trauma, engasgo, parada cardiorrespiratória e emergências comuns.</li>
+                  <li>Carga horária de 8 horas, com certificação CVB.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Quero Aprender</a>
+                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Primeiros%20Socorros%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide" data-course-slide="1">
+            <div class="course-box">
+              <img src="assets/curso-puncao-venosa.jpg" alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro">
+              <div class="course-copy">
+                <h3>Curso de Punção Venosa</h3>
+                <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
+                <ul class="check-list">
+                  <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
+                  <li>Certificado emitido pela Cruz Vermelha Brasileira.</li>
+                  <li>Próxima turma em breve — vagas limitadas.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Faça sua Inscrição</a>
+                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Pun%C3%A7%C3%A3o%20Venosa%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide" data-course-slide="2">
+            <div class="course-box">
+              <img src="assets/curso-cuidador-idosos.jpg" alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro">
+              <div class="course-copy">
+                <h3>Curso de Cuidador de Idosos</h3>
+                <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
+                <ul class="check-list">
+                  <li>Carga horária de 160 horas, presenciais.</li>
+                  <li>Últimas vagas disponíveis para a próxima turma.</li>
+                  <li>Certificação reconhecida pela Cruz Vermelha Brasileira.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Faça sua Inscrição</a>
+                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Cuidador%20de%20Idosos%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="courses-dots">
+          <button class="course-dot active" onclick="goToCourseSlide(0)" aria-label="Curso 1"></button>
+          <button class="course-dot" onclick="goToCourseSlide(1)" aria-label="Curso 2"></button>
+          <button class="course-dot" onclick="goToCourseSlide(2)" aria-label="Curso 3"></button>
+        </div>
+
+        <div class="more-courses-grid">
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img src="assets/curso-bombeiro-civil.jpg" alt="Curso de Bombeiro Civil"></div>
+            <div class="mini-course-body">
+              <h4>Bombeiro Civil</h4>
+              <p>Formação para atuação em prevenção e combate a incêndios. 80 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img src="assets/curso-lei-lucas.jpg" alt="Curso Lei Lucas - Ambientes com Crianças"></div>
+            <div class="mini-course-body">
+              <h4>Lei Lucas — Ambientes com Crianças</h4>
+              <p>Capacitação essencial para escolas e creches, incluindo Stop the Bleed. 8 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img src="assets/curso-suporte-basico-vida.jpg" alt="Curso de Suporte Básico de Vida"></div>
+            <div class="mini-course-body">
+              <h4>Suporte Básico de Vida</h4>
+              <p>Atendimento inicial de emergências com diretrizes oficiais. 4 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="cta-row" style="justify-content:center;margin-top:32px">
+          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Ver todos os cursos</a>
+        </div>
+      </div>
+    </section>
+    <script>
+      (function(){
+        var current = 0;
+        var slides = document.querySelectorAll('.course-slide');
+        var tabs = document.querySelectorAll('.course-tab');
+        var dots = document.querySelectorAll('.course-dot');
+        var timer;
+        function render(){
+          slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
+          tabs.forEach(function(t,i){ t.classList.toggle('active', i===current); });
+          dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
+        }
+        window.goToCourseSlide = function(i){ current = i; render(); resetTimer(); };
+        function resetTimer(){
+          clearInterval(timer);
+          timer = setInterval(function(){ current = (current + 1) % slides.length; render(); }, 7000);
+        }
+        resetTimer();
+      })();
+    </script>
+
+    <section class="alert" aria-labelledby="trauma-title">
+      <div class="wrap alert-grid">
+        <img src="assets/protocolo-trauma.jpg" alt="Publicação educativa sobre protocolo de trauma e motociclista acidentado">
+        <div>
+          <p class="eyebrow">Educação salva vidas</p>
+          <h2 id="trauma-title">No trauma, ajudar é fazer a coisa certa.</h2>
+          <p class="lead">Uma boa intenção pode causar danos quando vira improviso. A orientação educativa da Cruz Vermelha RJ reforça uma mensagem simples: em acidente com motociclista, não retire o capacete sem treinamento.</p>
+          <div class="alert-list">
+            <div class="alert-item"><b>Acione ajuda especializada</b><span>Ligue para o SAMU 192 ou Bombeiros 193 em situações de emergência.</span></div>
+            <div class="alert-item"><b>Evite movimentos desnecessários</b><span>Movimentar cabeça e pescoço sem técnica pode agravar lesões.</span></div>
+            <div class="alert-item"><b>Busque capacitação</b><span>Primeiros socorros devem ser aprendidos com orientação profissional.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions" id="acoes">
+      <div class="wrap">
+        <div class="actions-head">
+          <div>
+            <p class="eyebrow">A Cruz Vermelha RJ em ação</p>
+            <h2>O trabalho humanitário exige preparo contínuo.</h2>
+            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
+          </div>
+          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
+        </div>
+
+        <div class="actions-layout">
+          <article class="feature-action">
+            <img src="assets/hero-formacao-voluntarios.jpg" alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro">
+            <div class="feature-caption">
+              <p class="eyebrow">Formação de voluntários</p>
+              <h3>Capacitação que salva vidas.</h3>
+              <p>A cada turma formada, a Cruz Vermelha RJ amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
+            </div>
+          </article>
+
+          <div class="action-list">
+            <article class="action-tile">
+              <img src="assets/voluntario-microfone.jpg" alt="Voluntário da Cruz Vermelha RJ falando durante capacitação">
+              <div class="action-copy">
+                <span>Capacitação</span>
+                <h3>Treinamento com orientação técnica</h3>
+                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img src="assets/equipe-corredor.jpg" alt="Equipe da Cruz Vermelha RJ em atividade no Palácio da Cruz Vermelha">
+              <div class="action-copy">
+                <span>Voluntariado</span>
+                <h3>Presença que acolhe</h3>
+                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img src="assets/acao-comunitaria-morro.jpg" alt="Ação comunitária com voluntários da Cruz Vermelha RJ">
+              <div class="action-copy">
+                <span>Comunidade</span>
+                <h3>Cuidado também se constrói no território</h3>
+                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="actions-cta">
+          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conhecer cursos e capacitações</a>
+          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: PARCEIROS CNPJ -->
+    <section class="partners-section" id="parceiros">
+      <div class="wrap">
+        <p class="eyebrow">Empresas parceiras</p>
+        <h2>Parcerias que salvam vidas</h2>
+        <p class="lead">Empresas que apoiam a Cruz Vermelha RJ através da Lei Lucas, treinamentos corporativos de NR e programas de responsabilidade social.</p>
+        <div class="partners-logos">
+          <div class="partner-slot"><img src="assets/parceiros/johnson-johnson.png" alt="Johnson & Johnson"></div>
+          <div class="partner-slot"><img src="assets/parceiros/embelleze.png" alt="Embelleze"></div>
+          <div class="partner-slot"><img src="assets/parceiros/renner.webp" alt="Lojas Renner"></div>
+          <div class="partner-slot"><img src="assets/parceiros/carrefour.png" alt="Carrefour"></div>
+          <div class="partner-slot"><img src="assets/parceiros/leite-de-rosas.png" alt="Leite de Rosas"></div>
+          <div class="partner-slot"><img src="assets/parceiros/avon.png" alt="Avon"></div>
+          <div class="partner-slot"><img src="assets/parceiros/ortobom.png" alt="Ortobom"></div>
+        </div>
+        <div class="partner-cta">
+          <div>
+            <h3>Sua empresa também pode ser parceira do Rio</h3>
+            <p>Treinamentos de NR, Lei Lucas e programas customizados para sua equipe.</p>
+          </div>
+          <a href="#contato" class="btn btn-red">Quero ser Parceiro</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: FAQ -->
+    <section class="faq-section" id="faq">
+      <div class="wrap">
+        <p class="eyebrow">Perguntas frequentes</p>
+        <h2>Tire suas dúvidas</h2>
+        <p class="lead" style="margin-bottom:32px">Informações rápidas sobre cursos, doações e voluntariado na Cruz Vermelha RJ.</p>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>Como faço para me inscrever em um curso?</summary>
+            <div class="faq-answer">Acesse a página de cursos, escolha a formação desejada e clique em "Inscrever-se" ou "Faça sua Inscrição". Você também pode chamar diretamente no WhatsApp para tirar dúvidas antes de se matricular.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como faço uma doação?</summary>
+            <div class="faq-answer">Clique em "Fazer uma doação" no topo do site. Você será direcionado ao ambiente seguro de pagamento, podendo doar via Pix, cartão de crédito ou boleto, de forma única ou recorrente.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como minha empresa pode virar parceira (CNPJ)?</summary>
+            <div class="faq-answer">Empresas podem apoiar através de treinamentos corporativos (NR, Lei Lucas), doações institucionais ou patrocínio de campanhas. Fale com a gente pela seção "Parceiros" ou pelo e-mail de contato.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como posso ser voluntário?</summary>
+            <div class="faq-answer">Voluntários são recebidos por meio de formações e convocações divulgadas no Instagram e no site. Entre em contato pelo e-mail institucional para saber sobre as próximas turmas de formação de voluntários.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Os certificados dos cursos têm validade nacional?</summary>
+            <div class="faq-answer">Sim, os certificados são emitidos pela Cruz Vermelha Brasileira e reconhecidos nacionalmente, podendo ser exigidos em processos seletivos, NRs e normativas específicas de cada curso.</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: NEWSLETTER -->
+    <section class="newsletter-section" data-newsletter-cvrj="ligado">
+      <style>
+        .newsletter-form{align-items:flex-start}
+        /* O CSS da home tem .newsletter-form input{flex:1;min-width:200px} para
+           os campos de texto. Sem as duas regras abaixo, essa mesma regra
+           estica a caixinha de aceite para 200px de largura e a joga longe do
+           texto dela. */
+        .newsletter-aceite{flex:1 0 100%;display:flex;gap:8px;align-items:flex-start;max-width:480px;margin:14px auto 0;text-align:left;font-size:13px;line-height:1.5;color:rgba(255,255,255,.92)}
+        .newsletter-aceite input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;min-width:0;margin:2px 0 0;padding:0;border-radius:3px;-webkit-appearance:checkbox;appearance:checkbox}
+        .newsletter-armadilha{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+        .newsletter-recado{max-width:480px;margin:16px auto 0;font-size:14.5px;line-height:1.55;color:#fff;min-height:1.2em}
+        .newsletter-recado[data-erro]{color:#ffe08a}
+      </style>
+      <div class="wrap">
+        <p class="eyebrow">Fique por dentro</p>
+        <h2>Receba novidades da Cruz Vermelha RJ</h2>
+        <p class="lead">Cursos, campanhas e o impacto da sua doação, direto no seu e-mail.</p>
+        <form class="newsletter-form" id="newsletter-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post">
+          <label class="newsletter-armadilha" aria-hidden="true">Não preencha este campo
+            <input type="text" name="site" tabindex="-1" autocomplete="off"></label>
+          <input type="text" name="nome" placeholder="Seu nome" autocomplete="name" required>
+          <input type="email" name="email" placeholder="Seu e-mail" autocomplete="email" required>
+          <button type="submit" class="btn">Quero Receber</button>
+          <label class="newsletter-aceite">
+            <input type="checkbox" name="consentimento" value="1" required>
+            <span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span>
+          </label>
+        </form>
+        <p class="newsletter-recado" id="newsletter-recado" role="status" aria-live="polite"></p>
+      </div>
+      <script>
+      (function(){
+        var f=document.getElementById('newsletter-form'),r=document.getElementById('newsletter-recado')
+        if(!f||!r||!window.fetch)return
+        f.addEventListener('submit',function(ev){
+          ev.preventDefault()
+          var b=f.querySelector('button[type=submit]'),rot=b.textContent
+          b.disabled=true;b.textContent='Enviando…';r.removeAttribute('data-erro');r.textContent=''
+          var d=new FormData(f)
+          fetch(f.action,{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({nome:d.get('nome'),email:d.get('email'),site:d.get('site'),consentimento:d.get('consentimento')==='1'})})
+            .then(function(x){return x.json().catch(function(){return{}})})
+            .then(function(resp){
+              if(resp&&resp.ok){r.textContent=resp.recado||'Quase lá! Confira seu e-mail para confirmar.';f.reset()}
+              else{r.setAttribute('data-erro','1');r.textContent=(resp&&resp.erro)||'Não foi possível concluir agora. Tente de novo.'}
+            })
+            .catch(function(){r.setAttribute('data-erro','1');r.textContent='Não foi possível concluir agora. Confira sua conexão e tente de novo.'})
+            .then(function(){b.disabled=false;b.textContent=rot})
+        })
+      })()
+      </script>
+    </section>
+
+    <section class="contact" id="contato">
+      <div class="wrap contact-grid">
+        <div class="contact-card">
+          <p class="eyebrow">Contato</p>
+          <h2>Fale com a Cruz Vermelha RJ.</h2>
+          <div class="contact-line">
+            <b>E-mail institucional</b>
+            <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>
+          </div>
+          <div class="contact-line">
+            <b>WhatsApp para cursos</b>
+            <a href="https://wa.me/5521999922864" target="_blank" rel="noopener">(21) 99992-2864</a>
+          </div>
+          <div class="contact-line">
+            <b>Redes sociais</b>
+            <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Instagram: @cruzvermelhabrasileirarj</a>
+            <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Facebook: Cruz Vermelha Brasileira - RJ</a>
+          </div>
+          <div class="contact-line">
+            <b>Dados cadastrais</b>
+            <span>CRUZ VERMELHA BRASILEIRA FILIAL DO ESTADO DO RIO DE JANEIRO</span><br>
+            <span>CNPJ 08.560.973/0001-97</span>
+          </div>
+        </div>
+        <aside class="map-card">
+          <div>
+            <h3>Praça da Cruz Vermelha, 10</h3>
+            <p>Rio de Janeiro - RJ<br>CEP 20230-130</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img class="footer-logo" src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro">
+        <p>Humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Sobre</h4>
+        <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <p><i class="fa-solid fa-location-dot"></i> Praça Cruz Vermelha, 10</p>
+        <p><i class="fa-solid fa-phone"></i> (21) 99992-2864</p>
+        <p><i class="fa-regular fa-envelope"></i> contato@cruzvermelhariodejaneiro.org</p>
+      </div>
+      <div class="footer-col">
+        <h4>Siga-nos</h4>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-inner">
+        <span>&copy; 2026 Cruz Vermelha Brasileira do Rio de Janeiro</span>
+        <span class="sep">|</span>
+        <a href="/noticias/">Notícias</a>
+        <span class="sep">|</span>
+        <a href="/privacidade">Política de Privacidade</a>
+        <span class="sep">|</span>
+        <a href="/termos/">Termos de Uso</a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="wpp-float" href="https://wa.me/5521999922864?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20cursos%20da%20Escola%20de%20Capacita%C3%A7%C3%A3o." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <style>
+    .wpp-float {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: #075e54;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+
+    .wpp-float:hover {
+      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+      transform: scale(1.1);
+    }
+
+    .wpp-float i {
+      font-size: 28px;
+    }
+  </style>
+
+  <script>
+    document.querySelector('.nav-toggle')?.addEventListener('click', function() {
+      const header = this.closest('.main-header');
+      const isOpen = header.classList.toggle('nav-open');
+      this.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', function() {
+        const header = this.closest('.main-header');
+        header.classList.remove('nav-open');
+        document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>
