@@ -221,13 +221,13 @@
     .footer-col p a:hover { color: var(--red); }
 
     /* Faixa de matrícula acima do cabeçalho (visível também no celular, sem abrir o menu). */
-    .faixa-matricula { background: var(--black); color: #fff; font-size: .9rem; }
-    .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 18px; padding: 9px 0; text-align: center; }
-    .faixa-matricula span { color: rgba(255,255,255,.85); }
-    .faixa-matricula a { color: #fff; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
-    .faixa-matricula a:hover { color: #ffb4b4; }
-    .faixa-matricula a i { font-size: .8em; margin-left: 4px; }
-    @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 7px 0; gap: 2px 12px; } }
+    .faixa-matricula { background: var(--red); color: #fff; font-size: .9rem; }
+    .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; padding: 8px 0; text-align: center; }
+    .faixa-matricula span { color: #fff; font-weight: 600; }
+    .faixa-matricula a { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--red); font-weight: 800; padding: .32rem .9rem; border-radius: 999px; white-space: nowrap; transition: background .2s, transform .18s; }
+    .faixa-matricula a:hover { background: #ffe9e9; transform: translateY(-1px); }
+    .faixa-matricula a i { font-size: .8em; }
+    @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 8px 0; gap: 6px 12px; } }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {

@@ -120,8 +120,8 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   mantidas à mão e do rodapé da home. Desde 18/09 o item "Cursos" (que ia para a plataforma)
   saiu dos menus: a plataforma da escola fica no botão "Plataforma" e nos links dos rodapés.
   `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação; envie os dois no Search Console.
-- **Topo e rodapé da home** (18/09): além do item de menu, a home ganhou uma faixa preta fina
-  acima do cabeçalho (`.faixa-matricula`: "Cursos presenciais da Cruz Vermelha: inscrição de
+- **Topo e rodapé da home** (18/09): além do item de menu, a home ganhou uma faixa vermelha fina
+  acima do cabeçalho (`.faixa-matricula`, texto branco e link em pílula branca: "Cursos presenciais da Cruz Vermelha: inscrição de
   R$ 99 e vaga garantida. Fazer matrícula agora"), visível também no celular sem abrir o menu, e
   a coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
   escola"; a linha inferior do rodapé já tinha o link. Um botão vermelho na barra superior foi
