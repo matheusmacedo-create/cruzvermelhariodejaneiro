@@ -195,13 +195,15 @@ validado no projeto da Punção Venosa.
 
 ## Pontos de atenção encontrados
 
-- **Checkout, pendências para fechar**: (1) `EMAIL_SECRETARIA` precisa de uma caixa real: o e-mail
-  de teste enviado pelo Resend em 18/09 para `contato@cruzvermelhariodejaneiro.org` voltou com
-  "554 5.7.1 Relay access denied" do MX da Hostinger, ou seja, essa caixa não existe (o site a
-  exibe no rodapé e na seção de contato); (2) acesso à escola (versão A) depende da API da escola
-  (`ESCOLA_API_URL`), que ainda não existe; (3) as transações de teste (R$ 1 e R$ 99,
-  "Teste Integracao", não pagas) aparecem no painel da Unicopag até expirarem. Resend configurado
-  em 18/09 com remetente `matricula@info.cruzvermelhariodejaneiro.org` (domínio verificado).
+- **Checkout, pendências para fechar**: (1) aviso de inscrição paga à secretaria **desligado**
+  (`EMAIL_SECRETARIA` vazio, decisão de 18/09): a caixa `contato@cruzvermelhariodejaneiro.org` não
+  existe (teste pelo Resend voltou com "554 5.7.1 Relay access denied" do MX da Hostinger; o
+  contato hoje é um Gmail) e o site ainda a exibe no rodapé e na seção de contato. Quando a caixa
+  do domínio existir, preencher `EMAIL_SECRETARIA` e testar; até lá, a secretaria acompanha pela
+  tabela `mcp_inscricoes` (status `pago`) ou pelo painel da Unicopag; (2) acesso à escola (versão A)
+  depende da API da escola (`ESCOLA_API_URL`), que ainda não existe; (3) as transações de teste
+  (R$ 1 e R$ 99, "Teste Integracao", não pagas) aparecem no painel da Unicopag até expirarem.
+  Resend configurado em 18/09 com remetente `matricula@info.cruzvermelhariodejaneiro.org`.
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
   `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do
   `@media (max-width: 920px)` das duas páginas; a matrícula herda pelo CSS copiado da home).
