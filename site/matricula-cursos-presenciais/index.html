@@ -1874,7 +1874,7 @@
 
   <script>
     (function () {
-      var CHECKOUT_URL = "";
+      var CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/";
       var lista = Array.prototype.slice.call(document.querySelectorAll('.mr-lista a[data-curso]'));
       var detalhes = Array.prototype.slice.call(document.querySelectorAll('.mr-detalhe'));
       if (!lista.length || !detalhes.length) return;
@@ -1925,7 +1925,7 @@
       document.querySelectorAll('.mr-cta').forEach(function (b) {
         var slug = b.getAttribute('data-curso');
         if (CHECKOUT_URL) {
-          var u = new URL(CHECKOUT_URL); u.searchParams.set('curso', slug);
+          var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
           extras.forEach(function (v, k) { u.searchParams.set(k, v); });
           b.href = u.toString(); b.removeAttribute('target');
         }

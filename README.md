@@ -145,6 +145,45 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Checkout da inscrição (`/matricula-cursos-presenciais/checkout/`)
+
+Construído em 18/09/2026, ainda **não publicado** (aguardando liberação do deploy). É a
+alternativa da seção 17 do briefing: backend em **PHP 8.3 + MySQL na própria Hostinger**, no
+mesmo domínio (sem CORS, sem Vercel, sem Supabase), reaproveitando o contrato da Unicopag
+validado no projeto da Punção Venosa.
+
+- **Páginas** (geradas por `scripts/gerar_checkout.py`, com cabeçalho, rodapé, CSS, GA4 e Pixel da
+  home; todas `noindex`): `checkout/` (dados do aluno + PIX ou cartão + opção de cobrir os custos
+  de processamento), `pendente/` (PIX de novo, acompanhamento), `parabens/` (pago + acesso).
+  O botão "Fazer matrícula agora" da página de matrícula leva a `checkout/?curso=<slug>` com as UTMs.
+- **Backend** em `site/matricula-cursos-presenciais/api/`: `info.php` (preços e custos por método),
+  `pagamentos.php` (cria a cobrança na Unicopag; PIX pendente do mesmo CPF/curso/valor é
+  reaproveitado; cartão passa em claro e nunca é gravado), `status.php` (estado por token; enquanto
+  pendente reconsulta a Unicopag a cada 6 s), `webhook.php` (postback: só o hash é usado, o status
+  vem da reconsulta). `lib.php` cria as tabelas `mcp_inscricoes` e `mcp_eventos` sozinha.
+- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
+  `customer.document` (testado: sem ele a API responde 422).
+- **Custos de processamento**: checkbox opcional; valor por método em `config.php`. PIX medido pela
+  API em 18/09 (valor líquido): 1,00% + R$ 1,48 (R$ 2,47 sobre R$ 99). Cartão está estimado
+  (4,99% + R$ 0,49): **confirmar a taxa da conta**.
+- **Pós-pagamento**: e-mail ao aluno (Resend se `RESEND_API_KEY` existir; senão `mail()` da
+  Hostinger) e aviso à secretaria (`EMAIL_SECRETARIA`). Com `ESCOLA_API_URL` configurada, chama a
+  API da escola (contrato da seção 8.2 do briefing), guarda o acesso devolvido e mostra usuário,
+  link ou senha temporária na tela Parabéns e no e-mail (versão A); sem API, tela e e-mail dizem
+  que a secretaria fecha turma e horário pelo WhatsApp em até 2 dias úteis (versão B). Retentativa
+  automática da escola (até 5, 1 por minuto) enquanto o aluno estiver na tela.
+- **Segredos**: `api/config.php` só existe no servidor (está no `.gitignore`); modelo em
+  `api/config.example.php`. `.htaccess` nega acesso direto a `config.php`, `lib.php` e ao modelo.
+  Banco: `u448697994_matricula` (criado pela API da Hostinger em 18/09).
+- **Publicar** (na ordem): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/api/.htaccess
+  site/matricula-cursos-presenciais/api/*.php site/matricula-cursos-presenciais/checkout/index.html
+  site/matricula-cursos-presenciais/pendente/index.html site/matricula-cursos-presenciais/parabens/index.html`,
+  subir `config.php` preenchido para `public_html/matricula-cursos-presenciais/api/`, testar com
+  `PRECO_TESTE_CENTAVOS` (ex.: 100), remover o teste e só então publicar
+  `site/matricula-cursos-presenciais/index.html` (botões apontando para o checkout) e limpar o cache.
+- **Testes já feitos**: chave válida (`/public/v1/balance`), criação de PIX (R$ 1 e R$ 99, não pagos,
+  expiram em 24 h), reconsulta por hash, render local das páginas com `php -S`.
+
 ## Pontos de atenção encontrados
 
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
@@ -174,6 +213,8 @@ docs/plano-matricula-express.md         plano de implementação do backend (che
 scripts/sincronizar_catalogo.py         cursos.json a partir do catálogo público da escola
 scripts/gerar_imagens_matricula.py      fotos dos cursos (img/*.webp, 4:3) a partir das imagens da escola
 scripts/gerar_matricula_presencial.py   gera a página a partir de cursos.json e da home
+scripts/gerar_checkout.py               gera checkout/, pendente/ e parabens/ (mesmo cabeçalho e rodapé)
+site/matricula-cursos-presenciais/api/  backend PHP do checkout (Unicopag, MySQL, e-mail, escola)
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

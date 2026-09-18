@@ -38,7 +38,7 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 WHATSAPP = "5521999922864"
-CHECKOUT_URL = ""  # ex.: "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/"
+CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"  # vazio = botão abre o WhatsApp da secretaria
 
 TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira"
 DESCRICAO = ("Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de "
@@ -114,19 +114,8 @@ def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
     return home[:a] + "".join(grupos) + "\n              " + home[b:]
 
 
-def main() -> int:
-    home = HOME.read_text(encoding="utf-8")
-    dados = json.loads(DADOS.read_text(encoding="utf-8"))
-    cursos = {c["slug"]: c for c in dados["cursos"]}
-    inscricao = dados["inscricao_centavos"]
-
-    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
-    home_nova = atualizar_seletor_home(home, dados, cursos)
-    if home_nova != home:
-        HOME.write_text(home_nova, encoding="utf-8")
-        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
-        home = home_nova
-
+def partes_da_home(home: str) -> dict:
+    """Cabeçalho, rodapé, CSS, GA4, Pixel e script do menu da home, já ajustados para /matricula-cursos-presenciais/."""
     # --- pedaços da home -------------------------------------------------------------
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     header = bloco(home, '  <header class="main-header">', "  </header>")
@@ -158,6 +147,24 @@ def main() -> int:
     if not padrao_menu.search(header):
         raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
     header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">Matrícula cursos presenciais</a>', header, count=1)
+    return {"estilo": estilo, "header": header, "footer": footer, "menu_js": menu_js, "ga4": ga4, "pixel": pixel}
+
+
+def main() -> int:
+    home = HOME.read_text(encoding="utf-8")
+    dados = json.loads(DADOS.read_text(encoding="utf-8"))
+    cursos = {c["slug"]: c for c in dados["cursos"]}
+    inscricao = dados["inscricao_centavos"]
+
+    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
+    home_nova = atualizar_seletor_home(home, dados, cursos)
+    if home_nova != home:
+        HOME.write_text(home_nova, encoding="utf-8")
+        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
+        home = home_nova
+
+    partes = partes_da_home(home)
+    estilo, header, footer, menu_js, ga4, pixel = (partes[k] for k in ("estilo", "header", "footer", "menu_js", "ga4", "pixel"))
 
     # --- catálogo --------------------------------------------------------------------
     def link_lista(slug: str) -> str:
@@ -372,7 +379,7 @@ def main() -> int:
       document.querySelectorAll('.mr-cta').forEach(function (b) {{
         var slug = b.getAttribute('data-curso');
         if (CHECKOUT_URL) {{
-          var u = new URL(CHECKOUT_URL); u.searchParams.set('curso', slug);
+          var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
           extras.forEach(function (v, k) {{ u.searchParams.set(k, v); }});
           b.href = u.toString(); b.removeAttribute('target');
         }}
