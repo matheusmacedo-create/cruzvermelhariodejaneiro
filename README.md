@@ -111,8 +111,8 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   plataforma da escola fica discreto, no fim do detalhe.
 - **Revisão de copy e SEO (18/09)**: título "Matrícula em cursos presenciais no RJ | Cruz Vermelha
   Brasileira"; description corrigida ("garanta"); H1 com linha de apoio com as palavras-chave
-  (cursos presenciais, Cruz Vermelha Brasileira, Rio de Janeiro); botão "Escolher meu curso" no
-  topo; breadcrumb sem `cursos.html`; `Course` com `image`, `offers` (inscrição e valor do curso) e
+  (cursos presenciais, Cruz Vermelha Brasileira, Rio de Janeiro); breadcrumb sem `cursos.html`
+  (um botão "Escolher meu curso" no topo foi testado e removido no mesmo dia); `Course` com `image`, `offers` (inscrição e valor do curso) e
   `hasCourseInstance` (presencial, endereço, carga horária); FAQ com formas de pagamento; taglines
   curtas demais da escola trocadas pela primeira frase de "Sobre o curso"; menu sanfona do celular
   corrigido nesta página e, em seguida, na home e em `equipe.html`.
@@ -147,8 +147,7 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
 
 ## Checkout da inscrição (`/matricula-cursos-presenciais/checkout/`)
 
-Construído em 18/09/2026, ainda **não publicado** (aguardando liberação do deploy). É a
-alternativa da seção 17 do briefing: backend em **PHP 8.3 + MySQL na própria Hostinger**, no
+Construído e publicado em 18/09/2026. É a alternativa da seção 17 do briefing: backend em **PHP 8.3 + MySQL na própria Hostinger**, no
 mesmo domínio (sem CORS, sem Vercel, sem Supabase), reaproveitando o contrato da Unicopag
 validado no projeto da Punção Venosa.
 
@@ -175,17 +174,32 @@ validado no projeto da Punção Venosa.
 - **Segredos**: `api/config.php` só existe no servidor (está no `.gitignore`); modelo em
   `api/config.example.php`. `.htaccess` nega acesso direto a `config.php`, `lib.php` e ao modelo.
   Banco: `u448697994_matricula` (criado pela API da Hostinger em 18/09).
-- **Publicar** (na ordem): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/api/.htaccess
-  site/matricula-cursos-presenciais/api/*.php site/matricula-cursos-presenciais/checkout/index.html
-  site/matricula-cursos-presenciais/pendente/index.html site/matricula-cursos-presenciais/parabens/index.html`,
+- **Publicar** (na ordem): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/cursos.json
+  site/matricula-cursos-presenciais/api/.htaccess site/matricula-cursos-presenciais/api/*.php
+  site/matricula-cursos-presenciais/checkout/index.html site/matricula-cursos-presenciais/pendente/index.html
+  site/matricula-cursos-presenciais/parabens/index.html` (o `cursos.json` precisa estar no servidor:
+  é o catálogo que a API valida),
   subir `config.php` preenchido para `public_html/matricula-cursos-presenciais/api/`, testar com
   `PRECO_TESTE_CENTAVOS` (ex.: 100), remover o teste e só então publicar
   `site/matricula-cursos-presenciais/index.html` (botões apontando para o checkout) e limpar o cache.
-- **Testes já feitos**: chave válida (`/public/v1/balance`), criação de PIX (R$ 1 e R$ 99, não pagos,
-  expiram em 24 h), reconsulta por hash, render local das páginas com `php -S`.
+- **Testes feitos em 18/09**: chave válida (`/public/v1/balance`); PIX de R$ 1 e R$ 99 criados direto
+  na API (não pagos, expiram em 24 h); no servidor, com `PRECO_TESTE_CENTAVOS=100`: `info.php`,
+  criação de PIX pelo `pagamentos.php` (R$ 1 + R$ 1,49 de custos), `status.php`, reaproveitamento
+  do PIX pendente, validações de CPF e cartão, postback com hash desconhecido e sem hash; no
+  navegador real: formulário, QR code, copia-e-cola, tela pendente, redirecionamento da tela
+  Parabéns sem pagamento e checkout no celular. O preço de teste foi removido em seguida e o
+  botão "Fazer matrícula agora" da página de matrícula passou a levar ao checkout. **Não testado**:
+  pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
+  acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
 ## Pontos de atenção encontrados
 
+- **Checkout, pendências para fechar**: (1) taxa do cartão em `config.php` é estimativa (4,99% +
+  R$ 0,49), confirmar com a conta Unicopag; (2) e-mails saem pelo `mail()` da Hostinger até
+  existir `RESEND_API_KEY`; (3) aviso de inscrição paga vai para `contato@cruzvermelhariodejaneiro.org`
+  (`EMAIL_SECRETARIA`), confirmar o endereço da secretaria; (4) acesso à escola (versão A) depende
+  da API da escola (`ESCOLA_API_URL`), que ainda não existe; (5) as transações de teste
+  (R$ 1 e R$ 99, "Teste Integracao", não pagas) aparecem no painel da Unicopag até expirarem.
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
   `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do
   `@media (max-width: 920px)` das duas páginas; a matrícula herda pelo CSS copiado da home).

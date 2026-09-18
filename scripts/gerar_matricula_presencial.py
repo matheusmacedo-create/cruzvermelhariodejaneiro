@@ -271,7 +271,6 @@ def main() -> int:
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
     .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
     .mr-hero h1 .mr-h1-sub { display: block; font-size: .5em; font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.25; margin-top: .4em; }
-    .mr-hero .cta-row { margin-top: 22px; }
     .mr-hero .lead { max-width: 72ch; }
     .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
@@ -433,9 +432,6 @@ def main() -> int:
         <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
         <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga <span class="mr-h1-sub">nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro</span></h1>
         <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Certificado da Cruz Vermelha Brasileira ao final.</p>
-        <div class="cta-row">
-          <a class="btn btn-red" href="#cursos">Escolher meu curso</a>
-        </div>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
