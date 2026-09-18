@@ -230,6 +230,13 @@
       background: rgba(204, 0, 0, 0.08);
     }
 
+    /* Botão de matrícula na barra superior (vira largura total dentro do menu sanfona). */
+    .btn-header { padding: .55rem 1.05rem; min-height: 38px; font-size: .9rem; white-space: nowrap; }
+    /* Entre o menu compacto e a sanfona, a barra não tem largura para o botão; ele segue no menu sanfona. */
+    @media (max-width: 1270px) and (min-width: 1181px) { .btn-header { display: none; } }
+    .footer-col p a { color: var(--black); font-weight: 600; }
+    .footer-col p a:hover { color: var(--red); }
+
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {
       .nav-links { gap: 16px; }
@@ -772,6 +779,8 @@
 
     @media (max-width: 920px) {
       nav { display: none !important; }
+      /* Regra do menu antigo acima; o menu sanfona atual (.header-collapse) precisa dos links visíveis quando aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
       .menu-btn { display: block; }
       .nav.open nav {
         display: flex;
@@ -900,6 +909,19 @@
     }
     .newsletter-form .btn { background: var(--black); color: #fff; white-space: nowrap; }
     .newsletter-form .btn:hover { background: #000; }
+
+    /* ============================================================
+       NOVO: MATRÍCULA CURSOS PRESENCIAIS (seletor de curso na home)
+       ============================================================ */
+    .matricula-section { background: #fff; }
+    .matricula-box { background: #fff; border: 1px solid var(--line); border-left: 6px solid var(--red); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow); }
+    .matricula-box .lead { max-width: 70ch; }
+    .matricula-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+    .matricula-form select { flex: 1 1 320px; min-width: 0; max-width: 100%; min-height: 46px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--text); font: inherit; font-size: .95rem; }
+    .matricula-form select:focus { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-nota { margin: 16px 0 0; font-size: .92rem; color: var(--muted); }
+    .matricula-nota a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    @media (max-width: 620px) { .matricula-box { padding: 24px; } .matricula-form .btn { width: 100%; } }
 
     /* ============================================================
        NOVO: FAQ
@@ -1530,7 +1552,6 @@
         <nav class="nav-links">
           <a href="/#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
-          <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
           <a href="/matricula-cursos-presenciais/" style="white-space:nowrap" aria-current="page">Matrícula cursos presenciais</a>
           <a href="/#campanhas">Campanhas</a>
           <a href="/#parceiros">Parceiros</a>
@@ -1541,6 +1562,7 @@
 
         <div class="header-actions">
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+          <a href="#cursos" class="btn btn-red btn-header">Fazer matrícula</a>
         </div>
       </div>
     </div>
@@ -1795,6 +1817,8 @@
       <div class="footer-col">
         <h4>Sobre</h4>
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>

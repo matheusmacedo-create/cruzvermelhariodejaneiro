@@ -95,11 +95,37 @@ def bloco(texto: str, inicio: str, fim: str, incluir_fim: bool = True) -> str:
     return texto[a:b]
 
 
+MARCA_INI = "<!-- matricula:cursos"
+MARCA_FIM = "<!-- /matricula:cursos -->"
+
+
+def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
+    """Reescreve as <option> do bloco "Já escolheu seu curso?" da home entre os marcadores."""
+    a = home.index(MARCA_INI)
+    a = home.index("-->", a) + len("-->")
+    b = home.index(MARCA_FIM)
+    grupos = []
+    for g in dados["grupos"]:
+        opcoes = "".join(
+            f'\n                <option value="{s}">{esc(cursos[s]["nome"])} · {esc(cursos[s]["carga_horaria"])}</option>'
+            for s in g["cursos"] if s in cursos
+        )
+        grupos.append(f'\n              <optgroup label="{esc(g["titulo"])}">{opcoes}\n              </optgroup>')
+    return home[:a] + "".join(grupos) + "\n              " + home[b:]
+
+
 def main() -> int:
     home = HOME.read_text(encoding="utf-8")
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     cursos = {c["slug"]: c for c in dados["cursos"]}
     inscricao = dados["inscricao_centavos"]
+
+    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
+    home_nova = atualizar_seletor_home(home, dados, cursos)
+    if home_nova != home:
+        HOME.write_text(home_nova, encoding="utf-8")
+        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
+        home = home_nova
 
     # --- pedaços da home -------------------------------------------------------------
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
@@ -132,6 +158,9 @@ def main() -> int:
     if not padrao_menu.search(header):
         raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
     header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">Matrícula cursos presenciais</a>', header, count=1)
+    # Botão "Fazer matrícula" da barra superior: aqui ele leva ao catálogo desta página.
+    header = header.replace('<a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>',
+                            '<a href="#cursos" class="btn btn-red btn-header">Fazer matrícula</a>')
 
     # --- catálogo --------------------------------------------------------------------
     def link_lista(slug: str) -> str:

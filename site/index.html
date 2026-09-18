@@ -217,6 +217,13 @@
       background: rgba(204, 0, 0, 0.08);
     }
 
+    /* Botão de matrícula na barra superior (vira largura total dentro do menu sanfona). */
+    .btn-header { padding: .55rem 1.05rem; min-height: 38px; font-size: .9rem; white-space: nowrap; }
+    /* Entre o menu compacto e a sanfona, a barra não tem largura para o botão; ele segue no menu sanfona. */
+    @media (max-width: 1270px) and (min-width: 1181px) { .btn-header { display: none; } }
+    .footer-col p a { color: var(--black); font-weight: 600; }
+    .footer-col p a:hover { color: var(--red); }
+
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {
       .nav-links { gap: 16px; }
@@ -759,6 +766,8 @@
 
     @media (max-width: 920px) {
       nav { display: none !important; }
+      /* Regra do menu antigo acima; o menu sanfona atual (.header-collapse) precisa dos links visíveis quando aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
       .menu-btn { display: block; }
       .nav.open nav {
         display: flex;
@@ -889,6 +898,19 @@
     .newsletter-form .btn:hover { background: #000; }
 
     /* ============================================================
+       NOVO: MATRÍCULA CURSOS PRESENCIAIS (seletor de curso na home)
+       ============================================================ */
+    .matricula-section { background: #fff; }
+    .matricula-box { background: #fff; border: 1px solid var(--line); border-left: 6px solid var(--red); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow); }
+    .matricula-box .lead { max-width: 70ch; }
+    .matricula-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+    .matricula-form select { flex: 1 1 320px; min-width: 0; max-width: 100%; min-height: 46px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--text); font: inherit; font-size: .95rem; }
+    .matricula-form select:focus { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-nota { margin: 16px 0 0; font-size: .92rem; color: var(--muted); }
+    .matricula-nota a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    @media (max-width: 620px) { .matricula-box { padding: 24px; } .matricula-form .btn { width: 100%; } }
+
+    /* ============================================================
        NOVO: FAQ
        ============================================================ */
     .faq-section { background: #fff; }
@@ -994,7 +1016,6 @@
         <nav class="nav-links">
           <a href="#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
-          <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
           <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
           <a href="#campanhas">Campanhas</a>
           <a href="#parceiros">Parceiros</a>
@@ -1005,6 +1026,7 @@
 
         <div class="header-actions">
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+          <a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>
         </div>
       </div>
     </div>
@@ -1258,6 +1280,39 @@
       })();
     </script>
 
+    <section class="matricula-section" id="matricula" aria-labelledby="matricula-title">
+      <div class="wrap">
+        <div class="matricula-box">
+          <p class="eyebrow">Matrícula cursos presenciais</p>
+          <h2 id="matricula-title">Já escolheu seu curso?</h2>
+          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na escola.</p>
+          <form class="matricula-form" action="/matricula-cursos-presenciais/" method="get">
+            <label for="matricula-curso" style="position:absolute;left:-9999px">Curso</label>
+            <select id="matricula-curso" name="curso" required>
+              <option value="" disabled selected>Escolha o curso</option>
+              <!-- matricula:cursos (preenchido por scripts/gerar_matricula_presencial.py a partir de cursos.json) -->
+              <optgroup label="Emergência e vida">
+                <option value="primeiros-socorros-basico">Primeiros Socorros Básico · 8 horas</option>
+                <option value="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças · 8 horas</option>
+                <option value="puncao-venosa">Punção Venosa · 8 horas</option>
+                <option value="suporte-basico-de-vida">Suporte Básico de Vida · 4 horas</option>
+              </optgroup>
+              <optgroup label="Formação profissional">
+                <option value="bombeiro-civil">Bombeiro Civil · 80 horas</option>
+                <option value="cuidador-de-idosos">Cuidador de Idosos (Curso Livre) · 160 horas</option>
+              </optgroup>
+              <optgroup label="Outros cursos">
+                <option value="micropigmentacao-labial">Micropigmentação Labial · 24 horas</option>
+              </optgroup>
+              <!-- /matricula:cursos -->
+            </select>
+            <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
+          </form>
+          <p class="matricula-nota"><a href="/matricula-cursos-presenciais/">Ver todos os cursos, valores e dúvidas frequentes</a></p>
+        </div>
+      </div>
+    </section>
+
     <section class="alert" aria-labelledby="trauma-title">
       <div class="wrap alert-grid">
         <img src="assets/protocolo-trauma.jpg" alt="Publicação educativa sobre protocolo de trauma e motociclista acidentado">
@@ -1483,6 +1538,8 @@
       <div class="footer-col">
         <h4>Sobre</h4>
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>

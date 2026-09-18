@@ -115,10 +115,21 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   topo; breadcrumb sem `cursos.html`; `Course` com `image`, `offers` (inscrição e valor do curso) e
   `hasCourseInstance` (presencial, endereço, carga horária); FAQ com formas de pagamento; taglines
   curtas demais da escola trocadas pela primeira frase de "Sobre o curso"; menu sanfona do celular
-  corrigido nesta página (a home ainda tem o defeito, ver "Pontos de atenção").
-- **Menu**: "Matrícula cursos presenciais" entrou na barra superior das cinco páginas mantidas
-  à mão e no rodapé da home. `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação;
-  envie os dois no Search Console.
+  corrigido nesta página e, em seguida, na home e em `equipe.html`.
+- **Menu**: "Matrícula cursos presenciais" é o item de cursos da barra superior das páginas
+  mantidas à mão e do rodapé da home. Desde 18/09 o item "Cursos" (que ia para a plataforma)
+  saiu dos menus: a plataforma da escola fica no botão "Plataforma" e nos links dos rodapés.
+  `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação; envie os dois no Search Console.
+- **Topo e rodapé da home** (18/09): além do item de menu, a barra superior ganhou o botão
+  vermelho "Fazer matrícula" ao lado de "Plataforma" (largura total dentro do menu sanfona), e a
+  coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
+  escola"; a linha inferior do rodapé já tinha o link. `equipe.html` recebeu o mesmo cabeçalho
+  e rodapé; a página de matrícula herda os dois do gerador (o botão lá leva ao catálogo).
+- **Bloco na home** ("Já escolheu seu curso?", seção `#matricula`, logo após os cursos): um
+  `<select>` com os cursos e o botão "Fazer matrícula agora", que leva a
+  `/matricula-cursos-presenciais/?curso=<slug>` sem JavaScript (formulário GET). As opções ficam
+  entre os marcadores `<!-- matricula:cursos -->` e são reescritas pelo gerador a partir de
+  `cursos.json`, então a home acompanha o catálogo.
 - **Publicar**: `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/index.html
   site/matricula-cursos-presenciais/img/*.webp site/index.html site/doacao.html
   site/equipe.html site/campanha-agasalho.html site/sitemap-paginas.xml` e limpar o cache do site.
@@ -132,12 +143,9 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
 
 ## Pontos de atenção encontrados
 
-- **Menu mobile sem links** na home, em `equipe.html` e, por herdar o CSS da home, na página
-  de matrícula: abaixo de 920 px a regra `nav { display: none !important; }` do menu antigo
-  esconde o `nav.nav-links` mesmo com o menu aberto, e só "Plataforma" aparece (conferido em
-  18/09/2026 com emulação de iPhone). Corrigir na home, por exemplo com
-  `.header-collapse .nav-links { display: flex !important; }` dentro do mesmo
-  `@media (max-width: 920px)`, replicar em `equipe.html` e gerar a página de matrícula de novo.
+- ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
+  `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do
+  `@media (max-width: 920px)` das duas páginas; a matrícula herda pelo CSS copiado da home).
 - `links.cruzvermelhariodejaneiro.org` redireciona para `install.php`: instalador do CVB
   Links exposto ao público. Concluir a instalação ou remover/proteger o arquivo.
 - Ícones de LinkedIn e TikTok no rodapé da home apontam para `linkedin.com` e `tiktok.com`
