@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="icon" type="image/png" href="assets/favicon.png">
-  <title>Cruz Vermelha Brasileira - Rio de Janeiro</title>
-  <meta name="description" content="Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro. Cursos, voluntariado, ações humanitárias e contato institucional.">
-  <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>Pagamento ainda não confirmado | Cruz Vermelha Brasileira RJ</title>
+  <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
   <style>
     :root {
       --red: #cc0000;
@@ -936,7 +937,63 @@
     .faq-item[open] summary::after { transform: rotate(45deg); }
     .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
   </style>
-
+  <style>
+    .ck-teste { background: #fff3cd; border-bottom: 1px solid #ffe69c; color: #664d03; padding: 10px 0; font-size: .92rem; text-align: center; }
+    .ck-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 40px 0 28px; }
+    .ck-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.6vw, 2.6rem); letter-spacing: -.03em; line-height: 1.05; margin: 8px 0 10px; }
+    .ck-hero .lead { max-width: 70ch; margin: 0; }
+    .ck-secao { padding: 36px 0 64px; }
+    .ck-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+    .ck-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; }
+    .ck-resumo { position: sticky; top: 96px; }
+    .ck-resumo h2 { font-size: 1.05rem; margin: 0 0 10px; }
+    .ck-linha { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .95rem; }
+    .ck-linha b { text-align: right; color: var(--black); }
+    .ck-linha.total { font-weight: 800; font-size: 1.15rem; color: var(--black); }
+    .ck-campo { display: block; margin-bottom: 16px; }
+    .ck-campo > span { display: block; font-size: .85rem; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+    .ck-campo input, .ck-campo select { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; }
+    .ck-campo input:focus, .ck-campo select:focus { outline: 2px solid var(--red); outline-offset: 1px; border-color: var(--red); }
+    .ck-campo.erro input, .ck-campo.erro select { border-color: var(--red); background: #fff8f8; }
+    .ck-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ck-metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0 16px; }
+    .ck-metodo { border: 1px solid var(--line); border-radius: 12px; padding: 14px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; background: #fff; }
+    .ck-metodo input { margin-top: 4px; }
+    .ck-metodo b { display: block; color: var(--black); }
+    .ck-metodo small { color: var(--muted); }
+    .ck-metodo.ativo { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
+    .ck-check { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; margin: 12px 0; cursor: pointer; }
+    .ck-check input { margin-top: 4px; flex-shrink: 0; }
+    .ck-check small { display: block; color: var(--muted); }
+    .ck-erro { background: #fff0f2; border: 1px solid #f5c2c7; color: #8a1c1c; border-radius: 12px; padding: 12px 14px; margin: 14px 0; display: none; }
+    .ck-erro.on { display: block; }
+    .ck-nota { color: var(--muted); font-size: .88rem; }
+    .ck-nota a { color: var(--red); text-decoration: underline; }
+    .ck-btn { width: 100%; font-size: 1.05rem; }
+    .ck-btn[disabled] { opacity: .6; cursor: wait; transform: none; }
+    .ck-pix { text-align: center; }
+    .ck-pix h2 { color: var(--black); font-size: 1.5rem; letter-spacing: -.02em; margin: 6px 0 8px; }
+    .ck-qr { width: 232px; height: 232px; margin: 14px auto; border: 1px solid var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 8px; }
+    .ck-qr img, .ck-qr canvas { width: 216px !important; height: 216px !important; display: block; }
+    .ck-copia { width: 100%; min-height: 86px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; word-break: break-all; resize: none; background: var(--soft); color: var(--text); }
+    .ck-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); font-weight: 700; font-size: .92rem; margin-top: 14px; }
+    .ck-status .pulso { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: ckPulso 1.2s infinite; }
+    @keyframes ckPulso { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+    .ck-bloco { border-top: 1px solid var(--line); padding: 18px 0; }
+    .ck-bloco:first-child { border-top: 0; padding-top: 0; }
+    .ck-bloco h2 { color: var(--black); font-size: 1.15rem; margin: 0 0 8px; }
+    .ck-acesso { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 12px 0; }
+    .ck-acesso div { margin: 4px 0; }
+    .ck-acesso b { color: var(--black); font-size: 1.05rem; }
+    .ck-ok { display: inline-flex; align-items: center; gap: 8px; color: #0f7b3e; font-weight: 800; }
+    .ck-ok i { font-size: 1.3rem; }
+    @media (max-width: 920px) {
+      .ck-grid { grid-template-columns: 1fr; }
+      .ck-resumo { position: static; }
+      .ck-2col, .ck-metodos { grid-template-columns: 1fr; }
+      .ck-card { padding: 20px; }
+    }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
   <script>
@@ -946,7 +1003,6 @@
 
     gtag('config', 'G-HDYZZ5JZHF');
   </script>
-
   <!-- Meta Pixel Code -->
   <script>
   !function(f,b,e,v,n,t,s)
@@ -964,59 +1020,13 @@
   src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "NGO",
-  "@id": "https://cruzvermelhariodejaneiro.org/#organizacao",
-  "name": "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro",
-  "alternateName": [
-    "Cruz Vermelha RJ",
-    "CVB-RJ"
-  ],
-  "url": "https://cruzvermelhariodejaneiro.org/",
-  "logo": "https://cruzvermelhariodejaneiro.org/assets/logo-cvb-rj.png",
-  "email": "contato@cruzvermelhariodejaneiro.org",
-  "telephone": "+55-21-99992-2864",
-  "taxID": "08.560.973/0001-97",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Praça da Cruz Vermelha, 10",
-    "addressLocality": "Rio de Janeiro",
-    "addressRegion": "RJ",
-    "addressCountry": "BR"
-  },
-  "areaServed": {
-    "@type": "AdministrativeArea",
-    "name": "Estado do Rio de Janeiro"
-  },
-  "sameAs": [
-    "https://www.instagram.com/cruzvermelhabrasileirarj/",
-    "https://www.facebook.com/profile.php?id=61591390052128"
-  ],
-  "subOrganization": {
-    "@type": "EducationalOrganization",
-    "@id": "https://escola.cursoscruzvermelha.org/#escola",
-    "name": "Escola de Educação e Saúde CVB-RJ",
-    "url": "https://escola.cursoscruzvermelha.org/",
-    "parentOrganization": {
-      "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
-    }
-  }
-}
-  </script>
 </head>
 <body>
-  <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
-    <div class="wrap">
-      <span>Cursos presenciais da Cruz Vermelha: inscrição de R$ 99 e vaga garantida.</span>
-      <a href="/matricula-cursos-presenciais/">Fazer matrícula agora <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-    </div>
-  </div>
+  <script>document.documentElement.classList.add('js');</script>
   <header class="main-header">
     <div class="header-container">
-      <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
-        <img src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img">
+      <a href="/" class="logo-area" style="text-decoration:none;color:inherit;">
+        <img src="/assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img">
       </a>
 
       <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
@@ -1025,14 +1035,14 @@
 
       <div class="header-collapse">
         <nav class="nav-links">
-          <a href="#institucional">Sobre</a>
+          <a href="/#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
-          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
-          <a href="#campanhas">Campanhas</a>
-          <a href="#parceiros">Parceiros</a>
-          <a href="#faq">FAQ</a>
-          <a href="equipe.html">Equipe</a>
-          <a href="#contato">Contato</a>
+          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap" aria-current="page">Matrícula cursos presenciais</a>
+          <a href="/#campanhas">Campanhas</a>
+          <a href="/#parceiros">Parceiros</a>
+          <a href="/#faq">FAQ</a>
+          <a href="/equipe.html">Equipe</a>
+          <a href="/#contato">Contato</a>
         </nav>
 
         <div class="header-actions">
@@ -1042,499 +1052,18 @@
     </div>
   </header>
 
-  <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
-  <div class="campaign-slider" id="campaignSlider">
-    <div class="campaign-slide active" data-slide="0">
-      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-        <img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro">
-      </a>
-    </div>
-    <div class="campaign-slide" data-slide="1">
-      <a href="campanha-agasalho.html">
-        <img src="assets/agasalho-banner.jpg" alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro">
-      </a>
-    </div>
-    <button class="campaign-slider-arrow prev" onclick="changeCampaignSlide(-1)" aria-label="Campanha anterior">&#8249;</button>
-    <button class="campaign-slider-arrow next" onclick="changeCampaignSlide(1)" aria-label="Próxima campanha">&#8250;</button>
-    <div class="campaign-slider-dots">
-      <button class="campaign-dot active" onclick="goToCampaignSlide(0)" aria-label="Slide 1"></button>
-      <button class="campaign-dot" onclick="goToCampaignSlide(1)" aria-label="Slide 2"></button>
-    </div>
-  </div>
-  <script>
-    (function(){
-      var current = 0;
-      var slides = document.querySelectorAll('.campaign-slide');
-      var dots = document.querySelectorAll('.campaign-dot');
-      var timer;
-      function render(){
-        slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
-        dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
-      }
-      window.goToCampaignSlide = function(i){ current = i; render(); resetTimer(); };
-      window.changeCampaignSlide = function(dir){
-        current = (current + dir + slides.length) % slides.length;
-        render(); resetTimer();
-      };
-      function resetTimer(){
-        clearInterval(timer);
-        timer = setInterval(function(){ changeCampaignSlide(1); }, 6000);
-      }
-      resetTimer();
-    })();
-  </script>
-
-  <main id="inicio">
-    <section class="hero" aria-labelledby="hero-title">
+  <main id="pendente">
+    <div class="ck-teste" id="ck-teste" hidden>Modo de teste: o valor cobrado não é o preço da inscrição.</div>
+    <section class="ck-hero">
       <div class="wrap">
-        <div>
-          <p class="eyebrow">Filial do Estado do Rio de Janeiro</p>
-          <h1 id="hero-title">Preparados para servir. Prontos para cuidar.</h1>
-          <p>Formação, voluntariado e presença humanitária para fortalecer comunidades, orientar a população e agir com técnica quando cada minuto importa.</p>
-          <div class="hero-actions">
-            <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conheça os cursos</a>
-            <a class="btn btn-white" href="https://doar.cruzvermelhariodejaneiro.org" target="_blank" rel="noopener">Fazer uma doação</a>
-          </div>
-        </div>
-        <aside class="hero-card" aria-label="Dados institucionais">
-          <strong>Palácio da Cruz Vermelha</strong>
-          <p><b>Capacitação contínua no Rio de Janeiro.</b> Voluntários, instrutores e equipes preparados para transformar cuidado em ação.</p>
-          <p style="margin-top:.55rem"><b>CNPJ:</b> 08.560.973/0001-97</p>
-        </aside>
+        <p class="eyebrow">Matrícula cursos presenciais</p>
+        <h1>Pagamento ainda não confirmado</h1>
+        <p class="lead">Esta tela não cria login. Quando o pagamento for aprovado, a matrícula é aberta e os dados aparecem aqui e no seu e-mail.</p>
       </div>
     </section>
-
-    <div class="info-strip">
-      <div class="wrap info-grid">
-        <div class="info-item"><b>CNPJ</b><span>08.560.973/0001-97</span></div>
-        <div class="info-item"><b>E-mail</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
-        <div class="info-item"><b>Instagram</b><span>@cruzvermelhabrasileirarj</span></div>
-        <div class="info-item"><b>Endereço</b><span>Praça da Cruz Vermelha, 10 - Rio de Janeiro</span></div>
-      </div>
-    </div>
-
-    <section id="institucional">
-      <div class="wrap split">
-        <div>
-          <p class="eyebrow">Institucional</p>
-          <h2>Uma filial histórica, conectada a uma missão mundial.</h2>
-          <p class="lead">A Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro integra um movimento humanitário guiado pelos princípios de humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
-          <p class="lead">No Rio de Janeiro, a filial atua na formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, mantendo viva uma tradição de cuidado, preparo e serviço à população.</p>
-          <div class="cta-row" style="margin-top:24px">
-            <a class="btn btn-red" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver Instagram</a>
-            <a class="btn btn-outline" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Ver Facebook</a>
-          </div>
-        </div>
-        <div class="photo-stack" aria-label="Fotos reais da Cruz Vermelha RJ">
-          <img src="assets/reuniao-cicv.jpg" alt="Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV">
-          <img src="assets/reuniao-cicv-grupo.jpg" alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional">
-        </div>
-      </div>
-    </section>
-
-    <!-- NOVO: CAMPANHAS ATIVAS -->
-    <section class="campaigns-section" id="campanhas">
-      <div class="wrap">
-        <p class="eyebrow">Fique atualizado</p>
-        <h2>Campanhas ativas</h2>
-        <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
-        <div class="campaigns-grid">
-          <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-            <div class="campaign-card-thumb"><img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores"></div>
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
-              <h3>Impacto das Cores</h3>
-              <p>Mutirões de pintura que revitalizam espaços comunitários e fortalecem vínculos entre voluntários e moradores.</p>
-              <span class="btn btn-outline">Conhecer o Projeto</span>
-            </div>
-          </a>
-          <a class="campaign-card" href="campanha-agasalho.html">
-            <div class="campaign-card-thumb"><img src="assets/agasalho-hero-rua.jpg" alt="Campanha do Agasalho"></div>
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Campanha de Inverno</p>
-              <h3>Campanha do Agasalho</h3>
-              <p>Arrecadação de agasalhos, cobertores e calçados para levar aquecimento e dignidade a famílias em situação de vulnerabilidade durante o frio.</p>
-              <span class="btn btn-outline">Ver Como Ajudar</span>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="courses" id="cursos">
-      <div class="wrap">
-        <p class="eyebrow">Escola e capacitação</p>
-        <h2>Formação que prepara pessoas para agir com segurança.</h2>
-
-        <div class="courses-slider-nav">
-          <button class="course-tab active" onclick="goToCourseSlide(0)">Primeiros Socorros</button>
-          <button class="course-tab" onclick="goToCourseSlide(1)">Punção Venosa</button>
-          <button class="course-tab" onclick="goToCourseSlide(2)">Cuidador de Idosos</button>
-        </div>
-
-        <div id="coursesSlider">
-          <div class="course-slide active" data-course-slide="0">
-            <div class="course-box">
-              <img src="assets/curso-primeiros-socorros-novo.jpg" alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro">
-              <div class="course-copy">
-                <h3>Curso de Primeiros Socorros Básico</h3>
-                <p class="lead">Capacitação para reconhecer riscos, acionar ajuda e aplicar condutas iniciais com técnica. O objetivo é reduzir improvisos perigosos e aumentar a segurança em situações críticas.</p>
-                <ul class="check-list">
-                  <li>Conteúdo com foco em prevenção, atendimento inicial e resposta adequada.</li>
-                  <li>Orientação sobre trauma, engasgo, parada cardiorrespiratória e emergências comuns.</li>
-                  <li>Carga horária de 8 horas, com certificação CVB.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Quero Aprender</a>
-                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Primeiros%20Socorros%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="course-slide" data-course-slide="1">
-            <div class="course-box">
-              <img src="assets/curso-puncao-venosa.jpg" alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro">
-              <div class="course-copy">
-                <h3>Curso de Punção Venosa</h3>
-                <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
-                <ul class="check-list">
-                  <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
-                  <li>Certificado emitido pela Cruz Vermelha Brasileira.</li>
-                  <li>Próxima turma em breve — vagas limitadas.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Faça sua Inscrição</a>
-                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Pun%C3%A7%C3%A3o%20Venosa%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="course-slide" data-course-slide="2">
-            <div class="course-box">
-              <img src="assets/curso-cuidador-idosos.jpg" alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro">
-              <div class="course-copy">
-                <h3>Curso de Cuidador de Idosos</h3>
-                <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
-                <ul class="check-list">
-                  <li>Carga horária de 160 horas, presenciais.</li>
-                  <li>Últimas vagas disponíveis para a próxima turma.</li>
-                  <li>Certificação reconhecida pela Cruz Vermelha Brasileira.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Faça sua Inscrição</a>
-                  <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%2C%20quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%20curso%20de%20Cuidador%20de%20Idosos%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Chamar no WhatsApp</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="courses-dots">
-          <button class="course-dot active" onclick="goToCourseSlide(0)" aria-label="Curso 1"></button>
-          <button class="course-dot" onclick="goToCourseSlide(1)" aria-label="Curso 2"></button>
-          <button class="course-dot" onclick="goToCourseSlide(2)" aria-label="Curso 3"></button>
-        </div>
-
-        <div class="more-courses-grid">
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-bombeiro-civil.jpg" alt="Curso de Bombeiro Civil"></div>
-            <div class="mini-course-body">
-              <h4>Bombeiro Civil</h4>
-              <p>Formação para atuação em prevenção e combate a incêndios. 80 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-lei-lucas.jpg" alt="Curso Lei Lucas - Ambientes com Crianças"></div>
-            <div class="mini-course-body">
-              <h4>Lei Lucas — Ambientes com Crianças</h4>
-              <p>Capacitação essencial para escolas e creches, incluindo Stop the Bleed. 8 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-suporte-basico-vida.jpg" alt="Curso de Suporte Básico de Vida"></div>
-            <div class="mini-course-body">
-              <h4>Suporte Básico de Vida</h4>
-              <p>Atendimento inicial de emergências com diretrizes oficiais. 4 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-        </div>
-
-        <div class="cta-row" style="justify-content:center;margin-top:32px">
-          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos" target="_blank" rel="noopener">Ver todos os cursos</a>
-        </div>
-      </div>
-    </section>
-    <script>
-      (function(){
-        var current = 0;
-        var slides = document.querySelectorAll('.course-slide');
-        var tabs = document.querySelectorAll('.course-tab');
-        var dots = document.querySelectorAll('.course-dot');
-        var timer;
-        function render(){
-          slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
-          tabs.forEach(function(t,i){ t.classList.toggle('active', i===current); });
-          dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
-        }
-        window.goToCourseSlide = function(i){ current = i; render(); resetTimer(); };
-        function resetTimer(){
-          clearInterval(timer);
-          timer = setInterval(function(){ current = (current + 1) % slides.length; render(); }, 7000);
-        }
-        resetTimer();
-      })();
-    </script>
-
-    <section class="matricula-section" id="matricula" aria-labelledby="matricula-title">
-      <div class="wrap">
-        <div class="matricula-box">
-          <p class="eyebrow">Matrícula cursos presenciais</p>
-          <h2 id="matricula-title">Já escolheu seu curso?</h2>
-          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na plataforma da escola.</p>
-          <form class="matricula-form" action="/matricula-cursos-presenciais/" method="get">
-            <label for="matricula-curso" style="position:absolute;left:-9999px">Curso</label>
-            <select id="matricula-curso" name="curso" required>
-              <option value="" disabled selected>Escolha o curso</option>
-              <!-- matricula:cursos (preenchido por scripts/gerar_matricula_presencial.py a partir de cursos.json) -->
-              <optgroup label="Emergência e vida">
-                <option value="primeiros-socorros-basico">Primeiros Socorros Básico · 8 horas</option>
-                <option value="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças · 8 horas</option>
-                <option value="puncao-venosa">Punção Venosa · 8 horas</option>
-                <option value="suporte-basico-de-vida">Suporte Básico de Vida · 4 horas</option>
-              </optgroup>
-              <optgroup label="Formação profissional">
-                <option value="bombeiro-civil">Bombeiro Civil · 80 horas</option>
-                <option value="cuidador-de-idosos">Cuidador de Idosos (Curso Livre) · 160 horas</option>
-              </optgroup>
-              <optgroup label="Outros cursos">
-                <option value="micropigmentacao-labial">Micropigmentação Labial · 24 horas</option>
-              </optgroup>
-              <!-- /matricula:cursos -->
-            </select>
-            <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
-          </form>
-          <p class="matricula-nota"><a href="/matricula-cursos-presenciais/">Ver todos os cursos, valores e dúvidas frequentes</a></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="alert" aria-labelledby="trauma-title">
-      <div class="wrap alert-grid">
-        <img src="assets/protocolo-trauma.jpg" alt="Publicação educativa sobre protocolo de trauma e motociclista acidentado">
-        <div>
-          <p class="eyebrow">Educação salva vidas</p>
-          <h2 id="trauma-title">No trauma, ajudar é fazer a coisa certa.</h2>
-          <p class="lead">Uma boa intenção pode causar danos quando vira improviso. A orientação educativa da Cruz Vermelha RJ reforça uma mensagem simples: em acidente com motociclista, não retire o capacete sem treinamento.</p>
-          <div class="alert-list">
-            <div class="alert-item"><b>Acione ajuda especializada</b><span>Ligue para o SAMU 192 ou Bombeiros 193 em situações de emergência.</span></div>
-            <div class="alert-item"><b>Evite movimentos desnecessários</b><span>Movimentar cabeça e pescoço sem técnica pode agravar lesões.</span></div>
-            <div class="alert-item"><b>Busque capacitação</b><span>Primeiros socorros devem ser aprendidos com orientação profissional.</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="actions" id="acoes">
-      <div class="wrap">
-        <div class="actions-head">
-          <div>
-            <p class="eyebrow">A Cruz Vermelha RJ em ação</p>
-            <h2>O trabalho humanitário exige preparo contínuo.</h2>
-            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
-          </div>
-          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
-        </div>
-
-        <div class="actions-layout">
-          <article class="feature-action">
-            <img src="assets/hero-formacao-voluntarios.jpg" alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro">
-            <div class="feature-caption">
-              <p class="eyebrow">Formação de voluntários</p>
-              <h3>Capacitação que salva vidas.</h3>
-              <p>A cada turma formada, a Cruz Vermelha RJ amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
-            </div>
-          </article>
-
-          <div class="action-list">
-            <article class="action-tile">
-              <img src="assets/voluntario-microfone.jpg" alt="Voluntário da Cruz Vermelha RJ falando durante capacitação">
-              <div class="action-copy">
-                <span>Capacitação</span>
-                <h3>Treinamento com orientação técnica</h3>
-                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img src="assets/equipe-corredor.jpg" alt="Equipe da Cruz Vermelha RJ em atividade no Palácio da Cruz Vermelha">
-              <div class="action-copy">
-                <span>Voluntariado</span>
-                <h3>Presença que acolhe</h3>
-                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img src="assets/acao-comunitaria-morro.jpg" alt="Ação comunitária com voluntários da Cruz Vermelha RJ">
-              <div class="action-copy">
-                <span>Comunidade</span>
-                <h3>Cuidado também se constrói no território</h3>
-                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="actions-cta">
-          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conhecer cursos e capacitações</a>
-          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- NOVO: PARCEIROS CNPJ -->
-    <section class="partners-section" id="parceiros">
-      <div class="wrap">
-        <p class="eyebrow">Empresas parceiras</p>
-        <h2>Parcerias que salvam vidas</h2>
-        <p class="lead">Empresas que apoiam a Cruz Vermelha RJ através da Lei Lucas, treinamentos corporativos de NR e programas de responsabilidade social.</p>
-        <div class="partners-logos">
-          <div class="partner-slot"><img src="assets/parceiros/johnson-johnson.png" alt="Johnson & Johnson"></div>
-          <div class="partner-slot"><img src="assets/parceiros/embelleze.png" alt="Embelleze"></div>
-          <div class="partner-slot"><img src="assets/parceiros/renner.webp" alt="Lojas Renner"></div>
-          <div class="partner-slot"><img src="assets/parceiros/carrefour.png" alt="Carrefour"></div>
-          <div class="partner-slot"><img src="assets/parceiros/leite-de-rosas.png" alt="Leite de Rosas"></div>
-          <div class="partner-slot"><img src="assets/parceiros/avon.png" alt="Avon"></div>
-          <div class="partner-slot"><img src="assets/parceiros/ortobom.png" alt="Ortobom"></div>
-        </div>
-        <div class="partner-cta">
-          <div>
-            <h3>Sua empresa também pode ser parceira do Rio</h3>
-            <p>Treinamentos de NR, Lei Lucas e programas customizados para sua equipe.</p>
-          </div>
-          <a href="#contato" class="btn btn-red">Quero ser Parceiro</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- NOVO: FAQ -->
-    <section class="faq-section" id="faq">
-      <div class="wrap">
-        <p class="eyebrow">Perguntas frequentes</p>
-        <h2>Tire suas dúvidas</h2>
-        <p class="lead" style="margin-bottom:32px">Informações rápidas sobre cursos, doações e voluntariado na Cruz Vermelha RJ.</p>
-        <div class="faq-list">
-          <details class="faq-item" open>
-            <summary>Como faço para me inscrever em um curso?</summary>
-            <div class="faq-answer">Acesse a página de cursos, escolha a formação desejada e clique em "Inscrever-se" ou "Faça sua Inscrição". Você também pode chamar diretamente no WhatsApp para tirar dúvidas antes de se matricular.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como faço uma doação?</summary>
-            <div class="faq-answer">Clique em "Fazer uma doação" no topo do site. Você será direcionado ao ambiente seguro de pagamento, podendo doar via Pix, cartão de crédito ou boleto, de forma única ou recorrente.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como minha empresa pode virar parceira (CNPJ)?</summary>
-            <div class="faq-answer">Empresas podem apoiar através de treinamentos corporativos (NR, Lei Lucas), doações institucionais ou patrocínio de campanhas. Fale com a gente pela seção "Parceiros" ou pelo e-mail de contato.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como posso ser voluntário?</summary>
-            <div class="faq-answer">Voluntários são recebidos por meio de formações e convocações divulgadas no Instagram e no site. Entre em contato pelo e-mail institucional para saber sobre as próximas turmas de formação de voluntários.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Os certificados dos cursos têm validade nacional?</summary>
-            <div class="faq-answer">Sim, os certificados são emitidos pela Cruz Vermelha Brasileira e reconhecidos nacionalmente, podendo ser exigidos em processos seletivos, NRs e normativas específicas de cada curso.</div>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- NOVO: NEWSLETTER -->
-    <section class="newsletter-section" data-newsletter-cvrj="ligado">
-      <style>
-        .newsletter-form{align-items:flex-start}
-        /* O CSS da home tem .newsletter-form input{flex:1;min-width:200px} para
-           os campos de texto. Sem as duas regras abaixo, essa mesma regra
-           estica a caixinha de aceite para 200px de largura e a joga longe do
-           texto dela. */
-        .newsletter-aceite{flex:1 0 100%;display:flex;gap:8px;align-items:flex-start;max-width:480px;margin:14px auto 0;text-align:left;font-size:13px;line-height:1.5;color:rgba(255,255,255,.92)}
-        .newsletter-aceite input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;min-width:0;margin:2px 0 0;padding:0;border-radius:3px;-webkit-appearance:checkbox;appearance:checkbox}
-        .newsletter-armadilha{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-        .newsletter-recado{max-width:480px;margin:16px auto 0;font-size:14.5px;line-height:1.55;color:#fff;min-height:1.2em}
-        .newsletter-recado[data-erro]{color:#ffe08a}
-      </style>
-      <div class="wrap">
-        <p class="eyebrow">Fique por dentro</p>
-        <h2>Receba novidades da Cruz Vermelha RJ</h2>
-        <p class="lead">Cursos, campanhas e o impacto da sua doação, direto no seu e-mail.</p>
-        <form class="newsletter-form" id="newsletter-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post">
-          <label class="newsletter-armadilha" aria-hidden="true">Não preencha este campo
-            <input type="text" name="site" tabindex="-1" autocomplete="off"></label>
-          <input type="text" name="nome" placeholder="Seu nome" autocomplete="name" required>
-          <input type="email" name="email" placeholder="Seu e-mail" autocomplete="email" required>
-          <button type="submit" class="btn">Quero Receber</button>
-          <label class="newsletter-aceite">
-            <input type="checkbox" name="consentimento" value="1" required>
-            <span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span>
-          </label>
-        </form>
-        <p class="newsletter-recado" id="newsletter-recado" role="status" aria-live="polite"></p>
-      </div>
-      <script>
-      (function(){
-        var f=document.getElementById('newsletter-form'),r=document.getElementById('newsletter-recado')
-        if(!f||!r||!window.fetch)return
-        f.addEventListener('submit',function(ev){
-          ev.preventDefault()
-          var b=f.querySelector('button[type=submit]'),rot=b.textContent
-          b.disabled=true;b.textContent='Enviando…';r.removeAttribute('data-erro');r.textContent=''
-          var d=new FormData(f)
-          fetch(f.action,{method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({nome:d.get('nome'),email:d.get('email'),site:d.get('site'),consentimento:d.get('consentimento')==='1'})})
-            .then(function(x){return x.json().catch(function(){return{}})})
-            .then(function(resp){
-              if(resp&&resp.ok){r.textContent=resp.recado||'Quase lá! Confira seu e-mail para confirmar.';f.reset()}
-              else{r.setAttribute('data-erro','1');r.textContent=(resp&&resp.erro)||'Não foi possível concluir agora. Tente de novo.'}
-            })
-            .catch(function(){r.setAttribute('data-erro','1');r.textContent='Não foi possível concluir agora. Confira sua conexão e tente de novo.'})
-            .then(function(){b.disabled=false;b.textContent=rot})
-        })
-      })()
-      </script>
-    </section>
-
-    <section class="contact" id="contato">
-      <div class="wrap contact-grid">
-        <div class="contact-card">
-          <p class="eyebrow">Contato</p>
-          <h2>Fale com a Cruz Vermelha RJ.</h2>
-          <div class="contact-line">
-            <b>E-mail institucional</b>
-            <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>
-          </div>
-          <div class="contact-line">
-            <b>WhatsApp para cursos</b>
-            <a href="https://wa.me/5521999922864" target="_blank" rel="noopener">(21) 99992-2864</a>
-          </div>
-          <div class="contact-line">
-            <b>Redes sociais</b>
-            <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Instagram: @cruzvermelhabrasileirarj</a>
-            <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Facebook: Cruz Vermelha Brasileira - RJ</a>
-          </div>
-          <div class="contact-line">
-            <b>Dados cadastrais</b>
-            <span>CRUZ VERMELHA BRASILEIRA FILIAL DO ESTADO DO RIO DE JANEIRO</span><br>
-            <span>CNPJ 08.560.973/0001-97</span>
-          </div>
-        </div>
-        <aside class="map-card">
-          <div>
-            <h3>Praça da Cruz Vermelha, 10</h3>
-            <p>Rio de Janeiro - RJ<br>CEP 20230-130</p>
-          </div>
-        </aside>
+    <section class="ck-secao">
+      <div class="wrap" style="max-width:820px">
+        <div class="ck-card" id="pd-card"><p>Carregando…</p></div>
       </div>
     </section>
   </main>
@@ -1542,7 +1071,7 @@
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <img class="footer-logo" src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro">
+        <img class="footer-logo" src="/assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro">
         <p>Humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
       </div>
       <div class="footer-col">
@@ -1554,7 +1083,6 @@
       <div class="footer-col">
         <h4>Contato</h4>
         <p><i class="fa-solid fa-location-dot"></i> Praça Cruz Vermelha, 10</p>
-        <p><i class="fa-solid fa-phone"></i> (21) 99992-2864</p>
         <p><i class="fa-regular fa-envelope"></i> contato@cruzvermelhariodejaneiro.org</p>
       </div>
       <div class="footer-col">
@@ -1584,39 +1112,6 @@
     </div>
   </footer>
 
-  <a class="wpp-float" href="https://wa.me/5521999922864?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20cursos%20da%20Escola%20de%20Capacita%C3%A7%C3%A3o." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
-  <style>
-    .wpp-float {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      background: #075e54;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 50%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-      transition: box-shadow 0.25s, transform 0.25s;
-    }
-
-    .wpp-float:hover {
-      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
-      transform: scale(1.1);
-    }
-
-    .wpp-float i {
-      font-size: 28px;
-    }
-  </style>
-
   <script>
     document.querySelector('.nav-toggle')?.addEventListener('click', function() {
       const header = this.closest('.main-header');
@@ -1631,6 +1126,100 @@
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
       });
     });
+  </script>
+  <script>
+
+    var API = '/matricula-cursos-presenciais/api/';
+    function brl(c) { return (c / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+    function q(s, r) { return (r || document).querySelector(s); }
+    function param(k) { return new URLSearchParams(location.search).get(k) || ''; }
+    function origem() {
+      var o = {};
+      new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) o[k] = v; });
+      try {
+        var salvo = JSON.parse(sessionStorage.getItem('mcp_origem') || '{}');
+        Object.keys(salvo).forEach(function (k) { if (!o[k]) o[k] = salvo[k]; });
+        sessionStorage.setItem('mcp_origem', JSON.stringify(o));
+      } catch (e) {}
+      return o;
+    }
+    function rastrear(meta, dados, ga) {
+      try { if (window.fbq && meta) fbq('track', meta, dados || {}); } catch (e) {}
+      try { if (window.gtag && ga) gtag('event', ga, dados || {}); } catch (e) {}
+    }
+    async function api(caminho, opcoes) {
+      var r, d = null;
+      try {
+        r = await fetch(API + caminho, Object.assign({ headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }, opcoes || {}));
+        try { d = await r.json(); } catch (e) {}
+        if (!d) d = { ok: false, erro: 'Resposta inesperada do servidor. Tente novamente.' };
+        d.http = r.status;
+      } catch (e) {
+        d = { ok: false, erro: 'Sem conexão. Verifique a internet e tente novamente.', http: 0 };
+      }
+      return d;
+    }
+    function textoEscapado(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function painelPix(d, alvo) {
+      var copia = d.pix && d.pix.copia_cola ? d.pix.copia_cola : '';
+      alvo.innerHTML = '<div class="ck-pix">'
+        + '<p class="eyebrow">PIX gerado</p>'
+        + '<h2>Pague ' + brl(d.total_centavos) + ' para garantir sua vaga</h2>'
+        + '<p class="lead" style="font-size:1rem;max-width:none">Abra o app do seu banco e leia o QR code ou use o <b>PIX Copia e Cola</b>. A confirmação aparece aqui sozinha.</p>'
+        + '<div class="ck-qr" id="ck-qr"></div>'
+        + '<textarea class="ck-copia" id="ck-copia" readonly>' + textoEscapado(copia) + '</textarea>'
+        + '<div class="cta-row" style="justify-content:center;margin-top:12px"><button class="btn btn-red" type="button" id="ck-copiar">Copiar código PIX</button>'
+        + (d.pix && d.pix.url ? '<a class="btn btn-outline" href="' + textoEscapado(d.pix.url) + '" target="_blank" rel="noopener">Abrir página do PIX</a>' : '') + '</div>'
+        + '<div class="ck-status"><span class="pulso"></span> Aguardando pagamento…</div>'
+        + '<p class="ck-nota" style="margin-top:14px">Enviamos este código para <b>' + textoEscapado(d.email) + '</b>. Ele vale por 24 horas. Se fechar esta página, volte pelo link do e-mail.</p>'
+        + '</div>';
+      var qr = q('#ck-qr', alvo);
+      if (window.QRCode && copia) {
+        try { new QRCode(qr, { text: copia, width: 216, height: 216, correctLevel: QRCode.CorrectLevel.M }); } catch (e) { qr.innerHTML = ''; }
+      }
+      if (!qr.firstChild && d.pix && d.pix.imagem) qr.innerHTML = '<img src="' + textoEscapado(d.pix.imagem) + '" alt="QR code do PIX" width="216" height="216">';
+      q('#ck-copiar', alvo).addEventListener('click', function () {
+        var ta = q('#ck-copia', alvo); ta.select();
+        var ok = false;
+        try { if (navigator.clipboard) { navigator.clipboard.writeText(copia); ok = true; } else { ok = document.execCommand('copy'); } } catch (e) {}
+        this.textContent = ok ? 'Código copiado' : 'Selecione e copie o código';
+        var b = this; setTimeout(function () { b.textContent = 'Copiar código PIX'; }, 2500);
+      });
+    }
+    function acompanhar(token, aoPagar, aoFalhar, intervalo) {
+      var parado = false;
+      async function passo() {
+        if (parado) return;
+        var d = await api('status.php?t=' + encodeURIComponent(token));
+        if (d.status === 'pago') { parado = true; aoPagar(d); return; }
+        if (d.status === 'expirado' || d.status === 'recusado' || d.status === 'estornado') { parado = true; aoFalhar(d); return; }
+        setTimeout(passo, document.hidden ? (intervalo || 5000) * 3 : (intervalo || 5000));
+      }
+      setTimeout(passo, intervalo || 5000);
+      return function () { parado = true; };
+    }
+
+
+    (function () {
+      var token = param('t'), card = q('#pd-card');
+      if (!/^[a-f0-9]{40}$/.test(token)) { card.innerHTML = '<p>Link inválido. <a href="/matricula-cursos-presenciais/">Voltar para os cursos</a>.</p>'; return; }
+      function falhou(d) {
+        var voltar = '/matricula-cursos-presenciais/checkout/?curso=' + encodeURIComponent(d.curso.slug);
+        if (d.status === 'expirado') card.innerHTML = '<h2>Este código PIX venceu</h2><p class="lead" style="font-size:1rem">Nenhum valor foi cobrado. Gere um novo código para continuar a matrícula em <b>' + textoEscapado(d.curso.nome) + '</b>.</p><div class="cta-row"><a class="btn btn-red" href="' + voltar + '">Gerar novo PIX</a></div>';
+        else if (d.status === 'recusado') card.innerHTML = '<h2>Pagamento recusado</h2><p class="lead" style="font-size:1rem">O emissor não autorizou a cobrança. Nenhum valor foi cobrado. Tente outro cartão ou pague com PIX.</p><div class="cta-row"><a class="btn btn-red" href="' + voltar + '">Tentar de novo</a></div>';
+        else card.innerHTML = '<h2>Pagamento estornado</h2><p class="lead" style="font-size:1rem">Esta inscrição foi estornada. Se quiser refazer a matrícula, use o botão abaixo.</p><div class="cta-row"><a class="btn btn-outline" href="' + voltar + '">Nova inscrição</a></div>';
+      }
+      api('status.php?t=' + encodeURIComponent(token)).then(function (d) {
+        if (!d.ok) { card.innerHTML = '<p>' + textoEscapado(d.erro || 'Inscrição não encontrada.') + ' <a href="/matricula-cursos-presenciais/">Voltar para os cursos</a>.</p>'; return; }
+        if (d.teste) q('#ck-teste').hidden = false;
+        if (d.status === 'pago') { location.replace(d.urls.parabens); return; }
+        if (d.status !== 'pendente') { falhou(d); return; }
+        if (d.metodo === 'pix') painelPix(d, card);
+        else card.innerHTML = '<h2>Cartão em análise</h2><p class="lead" style="font-size:1rem">A operadora ainda está processando a cobrança de ' + brl(d.total_centavos) + ' para <b>' + textoEscapado(d.curso.nome) + '</b>. Esta página atualiza sozinha.</p><div class="ck-status"><span class="pulso"></span> Aguardando confirmação…</div>';
+        acompanhar(token, function (x) { location.href = x.urls.parabens; }, falhou);
+      });
+    })();
+
   </script>
 </body>
 </html>

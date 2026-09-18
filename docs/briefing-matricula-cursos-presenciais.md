@@ -27,7 +27,11 @@
 > (3) Botão único por curso, "Fazer matrícula agora"; o link para o curso na plataforma da escola
 > fica discreto, no fim do detalhe. (4) As fotos vêm do catálogo da escola, recortadas em 4:3.
 > (5) `cursos.html` saiu do ar no mesmo dia e responde 301 para esta página, que virou a vitrine
-> de cursos do domínio. Onde as seções 6.1, 10, 12 e 18 disserem diferente, vale esta nota.
+> de cursos do domínio. (6) O valor do curso é pago na plataforma da escola; onde o briefing diz
+> "na escola / 1º dia", vale "na plataforma da escola". (7) O checkout foi construído em PHP +
+> MySQL na própria Hostinger (alternativa da seção 17), no mesmo domínio, e ganhou a opção de o
+> aluno cobrir os custos de processamento por vontade própria (valor por método, mostrado antes de
+> pagar). Onde as seções 6.1, 9, 10, 12, 17 e 18 disserem diferente, vale esta nota.
 
 ---
 

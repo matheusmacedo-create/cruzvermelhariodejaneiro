@@ -4,7 +4,9 @@ Espelho do `public_html` de `cruzvermelhariodejaneiro.org` (Hostinger, conta `u4
 restrito às páginas mantidas à mão: `index.html`, `doacao.html`, `equipe.html` e
 `campanha-agasalho.html`, mais `sitemap-escola.xml`, `sitemap-paginas.xml` e a pasta
 `matricula-cursos-presenciais/` (página gerada por `scripts/gerar_matricula_presencial.py`;
-edite `cursos.json` ou o gerador, nunca o `index.html` dela). `cursos.html` saiu do ar em
+edite `cursos.json` ou o gerador, nunca o `index.html` dela; `checkout/`, `pendente/` e `parabens/`
+vêm de `scripts/gerar_checkout.py`, e `api/` é o backend PHP do checkout, cujo `config.php` fica só
+no servidor). `cursos.html` saiu do ar em
 18/09/2026: o servidor responde 301 para a matrícula e o arquivo aqui é só um redirecionamento
 de segurança (meta refresh), não uma página.
 

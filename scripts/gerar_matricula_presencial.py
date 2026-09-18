@@ -38,7 +38,7 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 WHATSAPP = "5521999922864"
-CHECKOUT_URL = ""  # ex.: "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/"
+CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"  # vazio = botão abre o WhatsApp da secretaria
 
 TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira"
 DESCRICAO = ("Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de "
@@ -56,9 +56,9 @@ TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Se não houver horário compat
 FAQ_PAGINA = [
     ("O que é a inscrição de R$ 99?",
      "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago "
-     "depois, direto na escola, no valor à vista informado em cada curso."),
+     "depois, na plataforma da escola, no valor à vista informado em cada curso."),
     ("Quais são as formas de pagamento?",
-     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, direto na escola, "
+     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
      "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
      "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis "
@@ -114,19 +114,8 @@ def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
     return home[:a] + "".join(grupos) + "\n              " + home[b:]
 
 
-def main() -> int:
-    home = HOME.read_text(encoding="utf-8")
-    dados = json.loads(DADOS.read_text(encoding="utf-8"))
-    cursos = {c["slug"]: c for c in dados["cursos"]}
-    inscricao = dados["inscricao_centavos"]
-
-    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
-    home_nova = atualizar_seletor_home(home, dados, cursos)
-    if home_nova != home:
-        HOME.write_text(home_nova, encoding="utf-8")
-        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
-        home = home_nova
-
+def partes_da_home(home: str) -> dict:
+    """Cabeçalho, rodapé, CSS, GA4, Pixel e script do menu da home, já ajustados para /matricula-cursos-presenciais/."""
     # --- pedaços da home -------------------------------------------------------------
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     header = bloco(home, '  <header class="main-header">', "  </header>")
@@ -158,9 +147,24 @@ def main() -> int:
     if not padrao_menu.search(header):
         raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
     header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">Matrícula cursos presenciais</a>', header, count=1)
-    # Botão "Fazer matrícula" da barra superior: aqui ele leva ao catálogo desta página.
-    header = header.replace('<a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>',
-                            '<a href="#cursos" class="btn btn-red btn-header">Fazer matrícula</a>')
+    return {"estilo": estilo, "header": header, "footer": footer, "menu_js": menu_js, "ga4": ga4, "pixel": pixel}
+
+
+def main() -> int:
+    home = HOME.read_text(encoding="utf-8")
+    dados = json.loads(DADOS.read_text(encoding="utf-8"))
+    cursos = {c["slug"]: c for c in dados["cursos"]}
+    inscricao = dados["inscricao_centavos"]
+
+    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
+    home_nova = atualizar_seletor_home(home, dados, cursos)
+    if home_nova != home:
+        HOME.write_text(home_nova, encoding="utf-8")
+        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
+        home = home_nova
+
+    partes = partes_da_home(home)
+    estilo, header, footer, menu_js, ga4, pixel = (partes[k] for k in ("estilo", "header", "footer", "menu_js", "ga4", "pixel"))
 
     # --- catálogo --------------------------------------------------------------------
     def link_lista(slug: str) -> str:
@@ -206,7 +210,7 @@ def main() -> int:
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>{brl(inscricao)}</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na escola</span></div>
+              <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na plataforma da escola</span></div>
             </div>
             <div class="cta-row">
               <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula agora</a>
@@ -240,7 +244,7 @@ def main() -> int:
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
                     "priceCurrency": "BRL", "url": f"{URL_PAGINA}?curso={s}", "availability": "https://schema.org/InStock"}]
         if c["valor_curso_centavos"]:
-            ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na escola)",
+            ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na plataforma da escola)",
                             "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
         curso["offers"] = ofertas
         instancia = {"@type": "CourseInstance", "courseMode": "Onsite", "location": LOCAL}
@@ -267,7 +271,6 @@ def main() -> int:
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
     .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
     .mr-hero h1 .mr-h1-sub { display: block; font-size: .5em; font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.25; margin-top: .4em; }
-    .mr-hero .cta-row { margin-top: 22px; }
     .mr-hero .lead { max-width: 72ch; }
     .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
@@ -375,7 +378,7 @@ def main() -> int:
       document.querySelectorAll('.mr-cta').forEach(function (b) {{
         var slug = b.getAttribute('data-curso');
         if (CHECKOUT_URL) {{
-          var u = new URL(CHECKOUT_URL); u.searchParams.set('curso', slug);
+          var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
           extras.forEach(function (v, k) {{ u.searchParams.set(k, v); }});
           b.href = u.toString(); b.removeAttribute('target');
         }}
@@ -429,9 +432,6 @@ def main() -> int:
         <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
         <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga <span class="mr-h1-sub">nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro</span></h1>
         <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Certificado da Cruz Vermelha Brasileira ao final.</p>
-        <div class="cta-row">
-          <a class="btn btn-red" href="#cursos">Escolher meu curso</a>
-        </div>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
@@ -462,7 +462,7 @@ def main() -> int:
         <div class="mr-passos">
           <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, direto na escola.</p></div>
+          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
         <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
       </div>

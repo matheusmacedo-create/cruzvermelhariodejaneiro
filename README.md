@@ -111,8 +111,8 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   plataforma da escola fica discreto, no fim do detalhe.
 - **Revisão de copy e SEO (18/09)**: título "Matrícula em cursos presenciais no RJ | Cruz Vermelha
   Brasileira"; description corrigida ("garanta"); H1 com linha de apoio com as palavras-chave
-  (cursos presenciais, Cruz Vermelha Brasileira, Rio de Janeiro); botão "Escolher meu curso" no
-  topo; breadcrumb sem `cursos.html`; `Course` com `image`, `offers` (inscrição e valor do curso) e
+  (cursos presenciais, Cruz Vermelha Brasileira, Rio de Janeiro); breadcrumb sem `cursos.html`
+  (um botão "Escolher meu curso" no topo foi testado e removido no mesmo dia); `Course` com `image`, `offers` (inscrição e valor do curso) e
   `hasCourseInstance` (presencial, endereço, carga horária); FAQ com formas de pagamento; taglines
   curtas demais da escola trocadas pela primeira frase de "Sobre o curso"; menu sanfona do celular
   corrigido nesta página e, em seguida, na home e em `equipe.html`.
@@ -120,11 +120,15 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   mantidas à mão e do rodapé da home. Desde 18/09 o item "Cursos" (que ia para a plataforma)
   saiu dos menus: a plataforma da escola fica no botão "Plataforma" e nos links dos rodapés.
   `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação; envie os dois no Search Console.
-- **Topo e rodapé da home** (18/09): além do item de menu, a barra superior ganhou o botão
-  vermelho "Fazer matrícula" ao lado de "Plataforma" (largura total dentro do menu sanfona), e a
-  coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
-  escola"; a linha inferior do rodapé já tinha o link. `equipe.html` recebeu o mesmo cabeçalho
-  e rodapé; a página de matrícula herda os dois do gerador (o botão lá leva ao catálogo).
+- **Topo e rodapé da home** (18/09): além do item de menu, a home ganhou uma faixa vermelha fina
+  acima do cabeçalho (`.faixa-matricula`, texto branco e link em pílula branca: "Cursos presenciais da Cruz Vermelha: inscrição de
+  R$ 99 e vaga garantida. Fazer matrícula agora"), visível também no celular sem abrir o menu, e
+  a coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
+  escola"; a linha inferior do rodapé já tinha o link. Um botão vermelho na barra superior foi
+  testado e descartado no mesmo dia. `equipe.html` tem o mesmo rodapé; a página de matrícula
+  herda cabeçalho e rodapé do gerador (sem a faixa).
+- **Onde o valor do curso é pago**: na plataforma da escola, não "na escola". A página, o FAQ, o
+  passo 3, os dados estruturados e o bloco da home dizem "pago depois, na plataforma da escola".
 - **Bloco na home** ("Já escolheu seu curso?", seção `#matricula`, logo após os cursos): um
   `<select>` com os cursos e o botão "Fazer matrícula agora", que leva a
   `/matricula-cursos-presenciais/?curso=<slug>` sem JavaScript (formulário GET). As opções ficam
@@ -141,8 +145,65 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Checkout da inscrição (`/matricula-cursos-presenciais/checkout/`)
+
+Construído e publicado em 18/09/2026. É a alternativa da seção 17 do briefing: backend em **PHP 8.3 + MySQL na própria Hostinger**, no
+mesmo domínio (sem CORS, sem Vercel, sem Supabase), reaproveitando o contrato da Unicopag
+validado no projeto da Punção Venosa.
+
+- **Páginas** (geradas por `scripts/gerar_checkout.py`, com cabeçalho, rodapé, CSS, GA4 e Pixel da
+  home; todas `noindex`): `checkout/` (dados do aluno + PIX ou cartão + opção de cobrir os custos
+  de processamento), `pendente/` (PIX de novo, acompanhamento), `parabens/` (pago + acesso).
+  O botão "Fazer matrícula agora" da página de matrícula leva a `checkout/?curso=<slug>` com as UTMs.
+- **Backend** em `site/matricula-cursos-presenciais/api/`: `info.php` (preços e custos por método),
+  `pagamentos.php` (cria a cobrança na Unicopag; PIX pendente do mesmo CPF/curso/valor é
+  reaproveitado; cartão passa em claro e nunca é gravado), `status.php` (estado por token; enquanto
+  pendente reconsulta a Unicopag a cada 6 s), `webhook.php` (postback: só o hash é usado, o status
+  vem da reconsulta). `lib.php` cria as tabelas `mcp_inscricoes` e `mcp_eventos` sozinha.
+- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
+  `customer.document` (testado: sem ele a API responde 422).
+- **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
+  18/09: **5% em todos os métodos** (média de PIX, cartão e checkout), sem parcela fixa: R$ 4,95
+  sobre R$ 99. Para referência, o PIX medido pela API em 18/09 custou 1,00% + R$ 1,48.
+- **Pós-pagamento**: e-mail ao aluno pelo Resend, remetente
+  `matricula@info.cruzvermelhariodejaneiro.org` (domínio verificado; sem `RESEND_API_KEY` cairia
+  no `mail()` da Hostinger) e aviso à secretaria (`EMAIL_SECRETARIA`). Com `ESCOLA_API_URL` configurada, chama a
+  API da escola (contrato da seção 8.2 do briefing), guarda o acesso devolvido e mostra usuário,
+  link ou senha temporária na tela Parabéns e no e-mail (versão A); sem API, tela e e-mail dizem
+  que a secretaria fecha turma e horário pelo WhatsApp em até 2 dias úteis (versão B). Retentativa
+  automática da escola (até 5, 1 por minuto) enquanto o aluno estiver na tela.
+- **Segredos**: `api/config.php` só existe no servidor (está no `.gitignore`); modelo em
+  `api/config.example.php`. `.htaccess` nega acesso direto a `config.php`, `lib.php` e ao modelo.
+  Banco: `u448697994_matricula` (criado pela API da Hostinger em 18/09).
+- **Publicar** (na ordem): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/cursos.json
+  site/matricula-cursos-presenciais/api/.htaccess site/matricula-cursos-presenciais/api/*.php
+  site/matricula-cursos-presenciais/checkout/index.html site/matricula-cursos-presenciais/pendente/index.html
+  site/matricula-cursos-presenciais/parabens/index.html` (o `cursos.json` precisa estar no servidor:
+  é o catálogo que a API valida),
+  subir `config.php` preenchido para `public_html/matricula-cursos-presenciais/api/`, testar com
+  `PRECO_TESTE_CENTAVOS` (ex.: 100), remover o teste e só então publicar
+  `site/matricula-cursos-presenciais/index.html` (botões apontando para o checkout) e limpar o cache.
+- **Testes feitos em 18/09**: chave válida (`/public/v1/balance`); PIX de R$ 1 e R$ 99 criados direto
+  na API (não pagos, expiram em 24 h); no servidor, com `PRECO_TESTE_CENTAVOS=100`: `info.php`,
+  criação de PIX pelo `pagamentos.php` (R$ 1 + R$ 1,49 de custos), `status.php`, reaproveitamento
+  do PIX pendente, validações de CPF e cartão, postback com hash desconhecido e sem hash; no
+  navegador real: formulário, QR code, copia-e-cola, tela pendente, redirecionamento da tela
+  Parabéns sem pagamento e checkout no celular. O preço de teste foi removido em seguida e o
+  botão "Fazer matrícula agora" da página de matrícula passou a levar ao checkout. **Não testado**:
+  pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
+  acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
+
 ## Pontos de atenção encontrados
 
+- **Checkout, pendências para fechar**: (1) aviso de inscrição paga à secretaria **desligado**
+  (`EMAIL_SECRETARIA` vazio, decisão de 18/09): a caixa `contato@cruzvermelhariodejaneiro.org` não
+  existe (teste pelo Resend voltou com "554 5.7.1 Relay access denied" do MX da Hostinger; o
+  contato hoje é um Gmail) e o site ainda a exibe no rodapé e na seção de contato. Quando a caixa
+  do domínio existir, preencher `EMAIL_SECRETARIA` e testar; até lá, a secretaria acompanha pela
+  tabela `mcp_inscricoes` (status `pago`) ou pelo painel da Unicopag; (2) acesso à escola (versão A)
+  depende da API da escola (`ESCOLA_API_URL`), que ainda não existe; (3) as transações de teste
+  (R$ 1 e R$ 99, "Teste Integracao", não pagas) aparecem no painel da Unicopag até expirarem.
+  Resend configurado em 18/09 com remetente `matricula@info.cruzvermelhariodejaneiro.org`.
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
   `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do
   `@media (max-width: 920px)` das duas páginas; a matrícula herda pelo CSS copiado da home).
@@ -170,6 +231,8 @@ docs/plano-matricula-express.md         plano de implementação do backend (che
 scripts/sincronizar_catalogo.py         cursos.json a partir do catálogo público da escola
 scripts/gerar_imagens_matricula.py      fotos dos cursos (img/*.webp, 4:3) a partir das imagens da escola
 scripts/gerar_matricula_presencial.py   gera a página a partir de cursos.json e da home
+scripts/gerar_checkout.py               gera checkout/, pendente/ e parabens/ (mesmo cabeçalho e rodapé)
+site/matricula-cursos-presenciais/api/  backend PHP do checkout (Unicopag, MySQL, e-mail, escola)
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

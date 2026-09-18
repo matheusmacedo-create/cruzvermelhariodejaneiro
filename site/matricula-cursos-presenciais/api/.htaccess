@@ -1,0 +1,6 @@
+# Backend do checkout da matrícula. Só os endpoints públicos respondem por HTTP;
+# configuração e biblioteca são incluídas pelo PHP e nunca servidas.
+Options -Indexes
+<FilesMatch "^(config\.php|config\.example\.php|lib\.php)$">
+  Require all denied
+</FilesMatch>
