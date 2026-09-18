@@ -1,0 +1,61 @@
+/* Checkout da matrícula em cursos presenciais: checkout/, pendente/ e parabens/.
+   Complementa o CSS da home (copiado em cada página). Fonte: este arquivo; as páginas
+   referenciam /matricula-cursos-presenciais/static/checkout.css?v=<hash> (scripts/gerar_checkout.py). */
+[hidden] { display: none !important; }
+.ck-armadilha { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.ck-noscript { background: #fff3cd; border: 1px solid #ffe69c; color: #664d03; border-radius: 12px; padding: 12px 14px; margin: 0 0 16px; }
+.ck-teste { background: #fff3cd; border-bottom: 1px solid #ffe69c; color: #664d03; padding: 10px 0; font-size: .92rem; text-align: center; }
+.ck-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 40px 0 28px; }
+.ck-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.6vw, 2.6rem); letter-spacing: -.03em; line-height: 1.05; margin: 8px 0 10px; }
+.ck-hero .lead { max-width: 70ch; margin: 0; }
+.ck-secao { padding: 36px 0 64px; }
+.ck-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+.ck-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; }
+.ck-resumo { position: sticky; top: 96px; }
+.ck-resumo h2 { font-size: 1.05rem; margin: 0 0 10px; }
+.ck-linha { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: .95rem; }
+.ck-linha b { text-align: right; color: var(--black); }
+.ck-linha.total { font-weight: 800; font-size: 1.15rem; color: var(--black); }
+.ck-campo { display: block; margin-bottom: 16px; }
+.ck-campo > span { display: block; font-size: .85rem; font-weight: 700; color: var(--black); margin-bottom: 6px; }
+.ck-campo input, .ck-campo select { width: 100%; min-height: 46px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; }
+.ck-campo input:focus, .ck-campo select:focus { outline: 2px solid var(--red); outline-offset: 1px; border-color: var(--red); }
+.ck-campo.erro input, .ck-campo.erro select { border-color: var(--red); background: #fff8f8; }
+.ck-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ck-metodos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 6px 0 16px; }
+.ck-metodo { border: 1px solid var(--line); border-radius: 12px; padding: 14px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; background: #fff; }
+.ck-metodo input { margin-top: 4px; }
+.ck-metodo b { display: block; color: var(--black); }
+.ck-metodo small { color: var(--muted); }
+.ck-metodo.ativo { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
+.ck-check { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; margin: 12px 0; cursor: pointer; }
+.ck-check input { margin-top: 4px; flex-shrink: 0; }
+.ck-check small { display: block; color: var(--muted); }
+.ck-erro { background: #fff0f2; border: 1px solid #f5c2c7; color: #8a1c1c; border-radius: 12px; padding: 12px 14px; margin: 14px 0; }
+.ck-erro:empty { display: none; }
+.ck-nota { color: var(--muted); font-size: .88rem; }
+.ck-nota a { color: var(--red); text-decoration: underline; }
+.ck-btn { width: 100%; font-size: 1.05rem; }
+.ck-btn[disabled] { opacity: .6; cursor: wait; transform: none; }
+.ck-pix { text-align: center; }
+.ck-pix h2 { color: var(--black); font-size: 1.5rem; letter-spacing: -.02em; margin: 6px 0 8px; }
+.ck-qr { width: 232px; height: 232px; margin: 14px auto; border: 1px solid var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 8px; }
+.ck-qr img, .ck-qr canvas { width: 216px !important; height: 216px !important; display: block; }
+.ck-copia { width: 100%; min-height: 86px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; word-break: break-all; resize: none; background: var(--soft); color: var(--text); }
+.ck-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); font-weight: 700; font-size: .92rem; margin-top: 14px; }
+.ck-status .pulso { width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: ckPulso 1.2s infinite; }
+@keyframes ckPulso { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+.ck-bloco { border-top: 1px solid var(--line); padding: 18px 0; }
+.ck-bloco:first-child { border-top: 0; padding-top: 0; }
+.ck-bloco h2 { color: var(--black); font-size: 1.15rem; margin: 0 0 8px; }
+.ck-acesso { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 12px 0; }
+.ck-acesso div { margin: 4px 0; }
+.ck-acesso b { color: var(--black); font-size: 1.05rem; }
+.ck-ok { display: inline-flex; align-items: center; gap: 8px; color: #0f7b3e; font-weight: 800; }
+.ck-ok i { font-size: 1.3rem; }
+@media (max-width: 920px) {
+  .ck-grid { grid-template-columns: 1fr; }
+  .ck-resumo { position: static; }
+  .ck-2col, .ck-metodos { grid-template-columns: 1fr; }
+  .ck-card { padding: 20px; }
+}

@@ -1,0 +1,12 @@
+# Páginas da matrícula em cursos presenciais (matrícula, checkout, pendente, parabéns, api/).
+# Cabeçalhos de proteção do navegador. Sem CSP completa: GA4 e Meta Pixel injetam scripts
+# e conexões que uma política estrita quebraria em silêncio; frame-ancestors/base-uri/object-src
+# não dependem deles.
+Options -Indexes
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set Content-Security-Policy "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+</IfModule>

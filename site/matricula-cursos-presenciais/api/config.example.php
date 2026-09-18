@@ -34,9 +34,10 @@ return [
     // info., noticias. e parceria.cruzvermelhariodejaneiro.org). Sem chave, cai no mail() da Hostinger.
     'RESEND_API_KEY'   => '',
     'EMAIL_REMETENTE'  => 'Cruz Vermelha RJ <matricula@info.cruzvermelhariodejaneiro.org>',
-    'EMAIL_RESPOSTA'   => 'contato@cruzvermelhariodejaneiro.org',
-    // Quem recebe o aviso de cada inscrição paga (secretaria). Vazio = não avisa.
-    'EMAIL_SECRETARIA' => 'contato@cruzvermelhariodejaneiro.org',
+    // Responder-para e aviso à secretaria: só quando existir caixa de e-mail real no domínio
+    // (em 18/09/2026 o contato@ ainda é Gmail e o domínio não recebe e-mail). Vazio = desligado.
+    'EMAIL_RESPOSTA'   => '',
+    'EMAIL_SECRETARIA' => '',
     'WHATSAPP_SECRETARIA' => '5521999922864',
 
     // API da escola (versão A da tela Parabéns). Vazio = versão B (secretaria fecha pelo WhatsApp).
@@ -44,7 +45,4 @@ return [
     'ESCOLA_API_URL'   => '',
     'ESCOLA_API_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
-
-    // Segredo para endpoints administrativos (ex.: reprocessar). Gere com openssl rand -hex 24.
-    'ADMIN_TOKEN' => '',
 ];

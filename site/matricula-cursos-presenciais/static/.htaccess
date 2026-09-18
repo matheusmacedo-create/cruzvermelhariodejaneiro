@@ -1,0 +1,4 @@
+# CSS e JS do checkout: URL leva hash do conteúdo, então pode ficar em cache por muito tempo.
+<IfModule mod_headers.c>
+  Header always set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>

@@ -155,11 +155,25 @@ validado no projeto da Punção Venosa.
   home; todas `noindex`): `checkout/` (dados do aluno + PIX ou cartão + opção de cobrir os custos
   de processamento), `pendente/` (PIX de novo, acompanhamento), `parabens/` (pago + acesso).
   O botão "Fazer matrícula agora" da página de matrícula leva a `checkout/?curso=<slug>` com as UTMs.
-- **Backend** em `site/matricula-cursos-presenciais/api/`: `info.php` (preços e custos por método),
-  `pagamentos.php` (cria a cobrança na Unicopag; PIX pendente do mesmo CPF/curso/valor é
-  reaproveitado; cartão passa em claro e nunca é gravado), `status.php` (estado por token; enquanto
-  pendente reconsulta a Unicopag a cada 6 s), `webhook.php` (postback: só o hash é usado, o status
-  vem da reconsulta). `lib.php` cria as tabelas `mcp_inscricoes` e `mcp_eventos` sozinha.
+- **Backend** em `site/matricula-cursos-presenciais/api/` (reorganizado em 18/09, à noite):
+  `info.php` (preços e custos por método), `pagamentos.php` (cria a cobrança na Unicopag; PIX
+  pendente do mesmo CPF/curso/valor é reaproveitado; cartão passa em claro e nunca é gravado),
+  `status.php` (estado por token; enquanto pendente reconsulta a Unicopag a cada 6 s),
+  `webhook.php` (postback: só o hash é usado, o status vem da reconsulta). `lib.php` é só o
+  bootstrap (erros nunca vão para a tela; tratador global responde JSON 500/503) e carrega os
+  módulos de `api/lib/`: `config.php` (configuração, catálogo, preços), `http.php` (respostas,
+  guardas da requisição, validações), `db.php` (PDO, tabelas `mcp_inscricoes` e `mcp_eventos`
+  criadas sozinhas, freios), `unicopag.php` (cliente, tradução de status e a porta única de
+  mudança de status, com transições atômicas no SQL), `escola.php` (API da escola),
+  `email.php` (Resend com fallback em `mail()`), `publico.php` (o que as páginas podem ver).
+- **Front-end**: CSS e JS do checkout ficam em `site/matricula-cursos-presenciais/static/`
+  (`checkout.css`, `checkout.js`, um arquivo para as três telas, escolhidas por
+  `<body data-tela>`); as páginas os referenciam com hash do conteúdo na URL (`?v=`), e a pasta
+  manda `Cache-Control: immutable`. Validação local espelha a do servidor (CPF, Luhn do cartão,
+  telefone), com mensagens ligadas ao campo (`aria-live`, foco no campo errado).
+- **Testes automatizados**: `php scripts/testar_checkout.php` roda 59 verificações das funções
+  puras (CPF, Luhn, telefone, preços e custos, tradução de status, tokens, mensagens da Unicopag,
+  visão pública sem CPF/hash/IP) sem banco, rede ou segredos.
 - **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
   `customer.document` (testado: sem ele a API responde 422).
 - **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
@@ -173,13 +187,30 @@ validado no projeto da Punção Venosa.
   que a secretaria fecha turma e horário pelo WhatsApp em até 2 dias úteis (versão B). Retentativa
   automática da escola (até 5, 1 por minuto) enquanto o aluno estiver na tela.
 - **Segredos**: `api/config.php` só existe no servidor (está no `.gitignore`); modelo em
-  `api/config.example.php`. `.htaccess` nega acesso direto a `config.php`, `lib.php` e ao modelo.
-  Banco: `u448697994_matricula` (criado pela API da Hostinger em 18/09).
+  `api/config.example.php`. `.htaccess` nega acesso direto a `config.php`, `lib.php`, ao modelo e
+  à pasta `api/lib/` inteira (conferido ao vivo: 403). Banco: `u448697994_matricula` (criado pela
+  API da Hostinger em 18/09).
+- **Segurança (revisão de 18/09)**: `display_errors` da Hostinger vem ligado por padrão e o
+  bootstrap desliga (nenhum aviso do PHP vaza caminho ou SQL); `pagamentos.php` só aceita POST
+  com `Content-Type: application/json` vindo do próprio site (`Origin`/`Sec-Fetch-Site`; outro
+  site recebe 403), corpo até 64 KB (413 acima), campo armadilha escondido contra robôs
+  (preenchido = 422 sem chamar a Unicopag) e freios por IP (12 em 10 min), CPF e e-mail (6 por
+  hora cada); tokens de 160 bits aleatórios; cartão validado (Luhn, validade) e descartado após
+  a chamada; a resposta pública nunca leva CPF, hash, IP, telefone nem número de cartão; SQL só
+  com prepared statements e nomes de coluna fixados no código; chamadas externas só em HTTPS;
+  `.htaccess` da pasta manda `X-Frame-Options`, `Referrer-Policy`, `X-Content-Type-Options`,
+  `Permissions-Policy` e uma CSP mínima (`frame-ancestors`, `base-uri`, `object-src`). **Não
+  feito de propósito**: CSP completa (GA4 e Meta Pixel injetam scripts e conexões que uma
+  política estrita quebraria em silêncio) e criptografia do CPF no banco (a secretaria precisa
+  lê-lo; o banco só é alcançável de dentro da Hostinger).
 - **Publicar** (na ordem): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/cursos.json
+  site/matricula-cursos-presenciais/api/lib/.htaccess site/matricula-cursos-presenciais/api/lib/*.php
   site/matricula-cursos-presenciais/api/.htaccess site/matricula-cursos-presenciais/api/*.php
+  site/matricula-cursos-presenciais/.htaccess site/matricula-cursos-presenciais/static/.htaccess
+  site/matricula-cursos-presenciais/static/checkout.css site/matricula-cursos-presenciais/static/checkout.js
   site/matricula-cursos-presenciais/checkout/index.html site/matricula-cursos-presenciais/pendente/index.html
   site/matricula-cursos-presenciais/parabens/index.html` (o `cursos.json` precisa estar no servidor:
-  é o catálogo que a API valida),
+  é o catálogo que a API valida; os módulos de `lib/` vão antes de `lib.php` e dos endpoints),
   subir `config.php` preenchido para `public_html/matricula-cursos-presenciais/api/`, testar com
   `PRECO_TESTE_CENTAVOS` (ex.: 100), remover o teste e só então publicar
   `site/matricula-cursos-presenciais/index.html` (botões apontando para o checkout) e limpar o cache.
@@ -189,7 +220,13 @@ validado no projeto da Punção Venosa.
   do PIX pendente, validações de CPF e cartão, postback com hash desconhecido e sem hash; no
   navegador real: formulário, QR code, copia-e-cola, tela pendente, redirecionamento da tela
   Parabéns sem pagamento e checkout no celular. O preço de teste foi removido em seguida e o
-  botão "Fazer matrícula agora" da página de matrícula passou a levar ao checkout. **Não testado**:
+  botão "Fazer matrícula agora" da página de matrícula passou a levar ao checkout. Depois da
+  reorganização (18/09, à noite), repetido ao vivo com `PRECO_TESTE_CENTAVOS=100`: arquivos
+  internos negados (403), cabeçalhos de segurança presentes, origem estranha (403), armadilha
+  (422), token inválido (404), postback desconhecido (200 ignorado), PIX de R$ 1,05 criado,
+  status e reaproveitamento pelo mesmo token, e no navegador: formulário com a linha de custos
+  aparecendo só quando marcada (corrigido o `hidden` que o CSS ignorava), QR code, copiar
+  código, tela pendente e celular. Preço de teste removido em seguida. **Não testado**:
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
@@ -232,7 +269,9 @@ scripts/sincronizar_catalogo.py         cursos.json a partir do catálogo públi
 scripts/gerar_imagens_matricula.py      fotos dos cursos (img/*.webp, 4:3) a partir das imagens da escola
 scripts/gerar_matricula_presencial.py   gera a página a partir de cursos.json e da home
 scripts/gerar_checkout.py               gera checkout/, pendente/ e parabens/ (mesmo cabeçalho e rodapé)
-site/matricula-cursos-presenciais/api/  backend PHP do checkout (Unicopag, MySQL, e-mail, escola)
+scripts/testar_checkout.php             testes das funções puras do backend (php scripts/testar_checkout.php)
+site/matricula-cursos-presenciais/api/  backend PHP do checkout: endpoints, lib.php (bootstrap) e lib/ (módulos)
+site/matricula-cursos-presenciais/static/  checkout.css e checkout.js das três telas do checkout
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```
