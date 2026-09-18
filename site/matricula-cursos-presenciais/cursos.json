@@ -70,7 +70,8 @@
           "resposta": "Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula."
         }
       ],
-      "imagem": "curso-bombeiro-civil"
+      "imagem": "bombeiro-civil",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787054066-56ea71861ef7.webp"
     },
     {
       "slug": "cuidador-de-idosos",
@@ -111,7 +112,8 @@
           "resposta": "Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades."
         }
       ],
-      "imagem": "curso-cuidador-idosos"
+      "imagem": "cuidador-de-idosos",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp"
     },
     {
       "slug": "micropigmentacao-labial",
@@ -152,7 +154,8 @@
           "resposta": "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira."
         }
       ],
-      "imagem": "curso-pratico-sala"
+      "imagem": "micropigmentacao-labial",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787194666-cff317cf7b7a.webp"
     },
     {
       "slug": "primeiros-socorros-basico",
@@ -195,7 +198,8 @@
           "resposta": "Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento."
         }
       ],
-      "imagem": "curso-primeiros-socorros-novo"
+      "imagem": "primeiros-socorros-basico",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787217265-1eb3b399f771.webp"
     },
     {
       "slug": "primeiros-socorros-lei-lucas",
@@ -215,7 +219,8 @@
       "valor_matricula_escola_centavos": 10000,
       "total_escola_centavos": 25000,
       "faq": [],
-      "imagem": "curso-lei-lucas"
+      "imagem": "primeiros-socorros-lei-lucas",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787244064-e1a66aa9dff5.webp"
     },
     {
       "slug": "puncao-venosa",
@@ -256,7 +261,8 @@
           "resposta": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira ao término do curso."
         }
       ],
-      "imagem": "curso-puncao-venosa"
+      "imagem": "puncao-venosa",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787266061-226838379cba.webp"
     },
     {
       "slug": "suporte-basico-de-vida",
@@ -297,7 +303,8 @@
           "resposta": "Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais."
         }
       ],
-      "imagem": "curso-suporte-basico-vida"
+      "imagem": "suporte-basico-de-vida",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787285667-954a9ec93b34.webp"
     }
   ]
 }

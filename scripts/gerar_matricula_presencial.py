@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """Gera site/matricula-cursos-presenciais/index.html a partir de cursos.json e do padrão visual da home.
 
-A página é montada com o MESMO <style>, cabeçalho, rodapé, GA4, Meta Pixel, botão de
-WhatsApp e script de menu de site/index.html, para ficar indistinguível da home. O conteúdo
-dos cursos vem de site/matricula-cursos-presenciais/cursos.json (gerado por
-scripts/sincronizar_catalogo.py a partir do catálogo público da escola).
+A página é montada com o MESMO <style>, cabeçalho, rodapé, GA4, Meta Pixel e script de menu
+de site/index.html, para ficar indistinguível da home. O conteúdo dos cursos vem de
+site/matricula-cursos-presenciais/cursos.json (gerado por scripts/sincronizar_catalogo.py a partir
+do catálogo público da escola) e as fotos de img/ (geradas por scripts/gerar_imagens_matricula.py).
 
-Uso:  python3 scripts/gerar_matricula_presencial.py
+Decisões de 18/09 (após a primeira publicação): o topo e o bloco do curso focam em "faça sua
+matrícula agora e garanta sua vaga"; a regra "a secretaria confirma horário depois" fica só em
+"Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria (nem o botão
+flutuante da home), porque desviavam da matrícula; botão único por curso, com link discreto
+para a plataforma da escola no fim do detalhe.
+
+Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_matricula.py
+      && python3 scripts/gerar_matricula_presencial.py
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 
 CHECKOUT_URL vazio = o botão "Fazer matrícula" abre o WhatsApp da secretaria com a mensagem
@@ -25,6 +32,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
 DADOS = RAIZ / "site" / "matricula-cursos-presenciais" / "cursos.json"
 SAIDA = RAIZ / "site" / "matricula-cursos-presenciais" / "index.html"
+PASTA_IMG = RAIZ / "site" / "matricula-cursos-presenciais" / "img"
 
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
@@ -33,8 +41,8 @@ WHATSAPP = "5521999922864"
 CHECKOUT_URL = ""  # ex.: "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/"
 
 TITULO = "Matrícula cursos presenciais | Cruz Vermelha Brasileira RJ"
-DESCRICAO = ("Matrícula em cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro: "
-             "escolha o curso, pague a inscrição de R$ 99 e a secretaria confirma sua turma. "
+DESCRICAO = ("Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de "
+             "Janeiro: escolha o curso, pague a inscrição de R$ 99 e garante sua vaga. "
              "Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.")
 IMAGEM_OG = f"{ORIGEM}/assets/hero-cursos-banner-1.jpg"
 
@@ -90,7 +98,9 @@ def main() -> int:
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     header = bloco(home, '  <header class="main-header">', "  </header>")
     footer = bloco(home, "  <footer>", "  </footer>")
-    cauda = home[home.index('  <a class="wpp-float"'):home.index("</body>")]  # WhatsApp flutuante + estilo + script do menu
+    # Só o script do menu sanfona; o botão flutuante de WhatsApp da home não entra nesta página.
+    ini = home.index("  <script>\n    document.querySelector('.nav-toggle')")
+    menu_js = home[ini:home.index("</script>", ini) + len("</script>")]
     ga4 = bloco(home, "  <!-- Google tag (gtag.js) -->", "  </script>")
     pixel = bloco(home, "  <!-- Meta Pixel Code -->", "  <!-- End Meta Pixel Code -->") if "<!-- Meta Pixel Code -->" in home else ""
     if not pixel:
@@ -107,6 +117,10 @@ def main() -> int:
 
     header = absolutizar(header)
     footer = absolutizar(footer)
+    # Sem telefone da secretaria nesta página: o caminho do lead é o botão de matrícula.
+    footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"></i>[^<]*</p>', "", footer)
+    assert footer_sem_telefone != footer, "linha do telefone não encontrada no rodapé da home"
+    footer = footer_sem_telefone
     padrao_menu = re.compile(r'<a href="/matricula-cursos-presenciais/"([^>]*)>Matrícula cursos presenciais</a>')
     if not padrao_menu.search(header):
         raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
@@ -137,12 +151,14 @@ def main() -> int:
         )
         faq_html = f'<div class="mr-faq"><h3>Dúvidas frequentes sobre {esc(c["nome"])}</h3>{faq}</div>' if faq else ""
         loading = "eager" if primeiro else "lazy"
+        foto = ""
+        if (PASTA_IMG / f"{img}-960.webp").exists():
+            foto = (f'<img class="mr-foto" src="img/{img}-960.webp" srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" '
+                    f'sizes="(max-width: 920px) 100vw, 760px" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira do Rio de Janeiro" '
+                    f'loading="{loading}" width="960" height="720">')
         return f'''
         <article class="mr-detalhe" id="curso-{slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">
-          <picture>
-            <source type="image/webp" srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/{img}.jpg" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira do Rio de Janeiro" loading="{loading}" width="960" height="1280">
-          </picture>
+          {foto}
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>{esc(c["nome"])}</h2>
@@ -153,18 +169,18 @@ def main() -> int:
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>{brl(inscricao)}</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>{brl(inscricao)}</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="{esc(c["url_escola"])}" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             {sobre}
             {obs}
             {faq_html}
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="{esc(c["url_escola"])}" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>'''
 
@@ -219,7 +235,7 @@ def main() -> int:
     .mr-detalhe { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px; }
     .js .mr-detalhe { margin-bottom: 0; }
     .js .mr-detalhe:not(.ativo) { display: none; }
-    .mr-detalhe img { width: 100%; height: 340px; object-fit: cover; object-position: center 30%; display: block; }
+    .mr-detalhe .mr-foto { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--soft); }
     .mr-corpo { padding: 32px; }
     .mr-corpo h2 { color: var(--black); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; margin: 0 0 10px; }
     .mr-corpo h3 { color: var(--black); font-size: 1.1rem; margin: 26px 0 10px; }
@@ -229,6 +245,8 @@ def main() -> int:
     .mr-preco b { display: block; font-size: 1.7rem; color: var(--red); line-height: 1.1; margin: 4px 0; }
     .mr-preco b.mr-preco-curso { color: var(--black); }
     .mr-regra-curta { color: var(--muted); font-size: .92rem; margin: 14px 0 0; }
+    .mr-link-escola { color: var(--muted); font-size: .92rem; margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+    .mr-link-escola a { color: var(--red); font-weight: 700; text-decoration: underline; }
     .mr-nota { border-left: 4px solid var(--red); background: var(--soft); padding: 12px 16px; border-radius: 0 12px 12px 0; }
     .mr-nota i { color: var(--red); margin-right: 6px; }
     .mr-faq details, .mr-faq-pagina details { border-top: 1px solid var(--line); padding: 12px 0; }
@@ -248,7 +266,6 @@ def main() -> int:
       .mr-lista { position: static; }
       .mr-passos { grid-template-columns: 1fr; }
       .mr-preco { grid-template-columns: 1fr; }
-      .mr-detalhe img { height: 220px; }
       .mr-corpo { padding: 22px; }
     }
   </style>"""
@@ -355,9 +372,9 @@ def main() -> int:
   <main id="matricula-cursos-presenciais">
     <section class="mr-hero" aria-labelledby="mr-titulo">
       <div class="wrap">
-        <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">Matrícula em cursos presenciais: escolha o curso e garanta sua vaga</h1>
-        <p class="lead">Inscrição de {brl(inscricao)} nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro. Sem criar conta antes e sem escolher turma aqui: a secretaria confirma horário depois, e enquanto a aula não for marcada o estorno é simples.</p>
+        <p class="eyebrow">Cursos presenciais · Escola de Educação e Saúde CVB-RJ</p>
+        <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga</h1>
+        <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro, com certificado ao final.</p>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
@@ -366,7 +383,7 @@ def main() -> int:
       </div>
     </section>
 
-    <section class="mr-catalogo" aria-labelledby="mr-catalogo-titulo">
+    <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo">
       <div class="wrap">
         <h2 id="mr-catalogo-titulo" class="sr-only" style="position:absolute;left:-9999px">Cursos disponíveis</h2>
         <div class="mr-grid">
@@ -400,8 +417,8 @@ def main() -> int:
         <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
         {faq_pagina}
         <div class="cta-row" style="margin-top:28px">
+          <a class="btn btn-red" href="#cursos">Fazer matrícula agora</a>
           <a class="btn btn-outline" href="{ESCOLA}/cursos" target="_blank" rel="noopener">Ver turmas na plataforma da escola</a>
-          <a class="btn btn-outline" href="https://wa.me/{WHATSAPP}?text={quote('Olá! Tenho uma dúvida sobre a matrícula nos cursos presenciais da Cruz Vermelha RJ.')}" target="_blank" rel="noopener">Falar com a secretaria</a>
         </div>
       </div>
     </section>
@@ -409,7 +426,7 @@ def main() -> int:
 
 {footer}
 
-{cauda}
+{menu_js}
 {js}
 </body>
 </html>

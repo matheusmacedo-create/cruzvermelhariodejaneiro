@@ -87,15 +87,22 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   `site/matricula-cursos-presenciais/cursos.json`. Curso que a escola tirar do ar sai daqui na
   próxima sincronização. Nada é digitado à mão.
 - **Página**: `scripts/gerar_matricula_presencial.py` monta `index.html` com o `<style>`,
-  cabeçalho, rodapé, GA4, Meta Pixel e botão de WhatsApp copiados de `site/index.html`, mais
-  dados estruturados (BreadcrumbList, ItemList de Course, FAQPage). Não edite o `index.html`
-  gerado à mão: mude o gerador ou o `cursos.json` e gere de novo.
-- **Imagens**: `img/*.webp` em 480 e 960 px, geradas a partir das fotos já publicadas em
-  `assets/` (fallback JPG). Cada foto caiu de ~1 MB para 40–100 KB.
-- **Botão "Fazer matrícula"**: enquanto o checkout de R$ 99 não existe, abre o WhatsApp da
-  secretaria com a mensagem pronta com o nome do curso. Quando o checkout entrar, preencha
-  `CHECKOUT_URL` no gerador e gere de novo; o botão passa a levar ao checkout com
-  `?curso=<slug>` e as UTMs da visita.
+  cabeçalho, rodapé, GA4 e Meta Pixel copiados de `site/index.html`, mais dados estruturados
+  (BreadcrumbList, ItemList de Course, FAQPage). Não edite o `index.html` gerado à mão: mude o
+  gerador ou o `cursos.json` e gere de novo.
+- **Imagens**: `scripts/gerar_imagens_matricula.py` baixa a foto de cada curso da escola (campo
+  `imagem_url` do `cursos.json`), recorta ao centro em 4:3, como a escola exibe, e grava
+  `img/<slug>-480.webp` e `img/<slug>-960.webp` (requer Pillow: `pip install pillow`). As fotos
+  verticais de `assets/` não são mais usadas aqui: cortadas em faixa, perdiam o enquadramento.
+- **Botão "Fazer matrícula agora"** (único por curso): enquanto o checkout de R$ 99 não existe,
+  abre o WhatsApp da secretaria com a mensagem pronta com o nome do curso. Quando o checkout
+  entrar, preencha `CHECKOUT_URL` no gerador e gere de novo; o botão passa a levar ao checkout
+  com `?curso=<slug>` e as UTMs da visita.
+- **Decisões de 18/09 (depois da primeira publicação)**: o topo e o bloco de cada curso focam em
+  "faça sua matrícula agora e garanta sua vaga"; a regra "a secretaria confirma horário depois"
+  fica só em "Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria
+  (nem o botão flutuante da home), porque desviavam da matrícula; o link para o curso na
+  plataforma da escola fica discreto, no fim do detalhe.
 - **Menu**: "Matrícula cursos presenciais" entrou na barra superior das cinco páginas mantidas
   à mão e no rodapé da home. `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação;
   envie os dois no Search Console.
@@ -106,7 +113,10 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
 - **Publicada na Hostinger em 18/09/2026**: `index.html` e `img/*.webp` em
   `public_html/matricula-cursos-presenciais/`, as cinco páginas com o link no menu e
   `sitemap-paginas.xml`, com o cache do site limpo em seguida. No ar em
-  `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/`.
+  `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/`. No mesmo dia saiu a
+  segunda versão (copy focada na matrícula, sem telefone da secretaria, fotos da escola em 4:3);
+  as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
+  hPanel (o script de publicação só envia arquivos).
 
 ## Pontos de atenção encontrados
 
@@ -138,6 +148,7 @@ escola/                                 kit de SEO para o app da escola (robots,
 docs/briefing-matricula-cursos-presenciais.md   definição do produto (fonte da verdade)
 docs/plano-matricula-express.md         plano de implementação do backend (checkout, secretaria)
 scripts/sincronizar_catalogo.py         cursos.json a partir do catálogo público da escola
+scripts/gerar_imagens_matricula.py      fotos dos cursos (img/*.webp, 4:3) a partir das imagens da escola
 scripts/gerar_matricula_presencial.py   gera a página a partir de cursos.json e da home
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
