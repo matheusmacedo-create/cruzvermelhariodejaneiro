@@ -1,0 +1,303 @@
+{
+  "fonte": "https://escola.cursoscruzvermelha.org/cursos",
+  "inscricao_centavos": 9900,
+  "grupos": [
+    {
+      "id": "emergencia",
+      "titulo": "Emergência e vida",
+      "cursos": [
+        "primeiros-socorros-basico",
+        "primeiros-socorros-lei-lucas",
+        "puncao-venosa",
+        "suporte-basico-de-vida"
+      ]
+    },
+    {
+      "id": "formacao",
+      "titulo": "Formação profissional",
+      "cursos": [
+        "bombeiro-civil",
+        "cuidador-de-idosos"
+      ]
+    },
+    {
+      "id": "outros",
+      "titulo": "Outros cursos",
+      "cursos": [
+        "micropigmentacao-labial"
+      ]
+    }
+  ],
+  "cursos": [
+    {
+      "slug": "bombeiro-civil",
+      "uuid": "5bd737ee-00a6-48dc-b5ab-08cde9b12897",
+      "nome": "Bombeiro Civil",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897",
+      "descricao": "Formação para atuação em prevenção e combate a incêndios.",
+      "sobre": [
+        "O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, uso de equipamentos de segurança, gerenciamento de riscos e resposta a emergências.",
+        "Após a conclusão, o profissional poderá atuar em empresas, indústrias, hospitais, condomínios, shopping centers, aeroportos, hotéis, instituições de ensino, eventos e diversos estabelecimentos que necessitam de equipes especializadas em prevenção e atendimento a emergências."
+      ],
+      "observacoes": [
+        "Homologação somente no final do curso, valor a consultar, a cargo do aluno."
+      ],
+      "carga_horaria": "80 horas",
+      "escolaridade": "Ensino Médio",
+      "valor_curso_centavos": 95000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 105000,
+      "faq": [
+        {
+          "pergunta": "Quem pode fazer o curso de Bombeiro Civil?",
+          "resposta": "Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências."
+        },
+        {
+          "pergunta": "O certificado é reconhecido?",
+          "resposta": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências."
+        },
+        {
+          "pergunta": "Onde posso trabalhar após o curso?",
+          "resposta": "O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências."
+        },
+        {
+          "pergunta": "O curso possui aulas práticas?",
+          "resposta": "Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência."
+        },
+        {
+          "pergunta": "Preciso ter experiência na área?",
+          "resposta": "Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula."
+        }
+      ],
+      "imagem": "curso-bombeiro-civil"
+    },
+    {
+      "slug": "cuidador-de-idosos",
+      "uuid": "2bf8d91d-ad41-4232-903f-ca4895b611f3",
+      "nome": "Cuidador de Idosos (Curso Livre)",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3",
+      "descricao": "Cuidados, segurança e bem-estar no atendimento ao idoso.",
+      "sobre": [
+        "O Curso de Cuidador de Idosos da Cruz Vermelha forma profissionais capacitados para prestar assistência à pessoa idosa com segurança, responsabilidade, empatia e respeito, promovendo qualidade de vida e bem-estar em diferentes contextos de cuidado.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre higiene, alimentação, administração da rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros, além de compreender os aspectos físicos, emocionais e sociais do processo de envelhecimento, proporcionando um atendimento mais humanizado.",
+        "Após a conclusão, o profissional poderá atuar em residências, instituições de longa permanência para idosos (ILPIs), clínicas, hospitais, centros de convivência, serviços de atendimento domiciliar e demais ambientes voltados ao cuidado e à assistência da pessoa idosa."
+      ],
+      "observacoes": [],
+      "carga_horaria": "160 horas",
+      "escolaridade": "Ensino Fundamental",
+      "valor_curso_centavos": 95000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 105000,
+      "faq": [
+        {
+          "pergunta": "Quem pode fazer esse curso?",
+          "resposta": "Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares."
+        },
+        {
+          "pergunta": "O cuidador de idosos pode trabalhar no exterior?",
+          "resposta": "O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação."
+        },
+        {
+          "pergunta": "Onde posso trabalhar?",
+          "resposta": "O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso."
+        },
+        {
+          "pergunta": "O curso ensina cuidados práticos?",
+          "resposta": "Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento."
+        },
+        {
+          "pergunta": "Existe mercado para cuidadores de idosos?",
+          "resposta": "Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades."
+        }
+      ],
+      "imagem": "curso-cuidador-idosos"
+    },
+    {
+      "slug": "micropigmentacao-labial",
+      "uuid": "b05365c2-c066-4c73-bb4a-f32475a338a2",
+      "nome": "Micropigmentação Labial",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/b05365c2-c066-4c73-bb4a-f32475a338a2",
+      "descricao": "Procedimento estético de micropigmentação dos lábios.",
+      "sobre": [
+        "O Curso de Micropigmentação Labial da Cruz Vermelha forma profissionais capacitados para realizar procedimentos estéticos semipermanentes com segurança, precisão e excelência, valorizando a beleza natural dos lábios e proporcionando resultados harmoniosos.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre colorimetria, anatomia e fisiologia da pele, biossegurança, técnicas de implantação de pigmentos, correção de assimetrias visuais, uniformização da coloração labial, cuidados pré e pós-procedimento, além da utilização correta dos equipamentos e materiais utilizados na micropigmentação.",
+        "Após a conclusão, o profissional poderá atuar em clínicas de estética, salões de beleza, estúdios especializados, centros de estética ou como profissional autônomo, oferecendo um dos procedimentos mais valorizados do mercado da beleza, com alto potencial de crescimento e retorno financeiro."
+      ],
+      "observacoes": [],
+      "carga_horaria": "24 horas",
+      "escolaridade": "Ensino Médio",
+      "valor_curso_centavos": 40000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 50000,
+      "faq": [
+        {
+          "pergunta": "Preciso já trabalhar com estética?",
+          "resposta": "Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços."
+        },
+        {
+          "pergunta": "Vou aprender a técnica na prática?",
+          "resposta": "Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica."
+        },
+        {
+          "pergunta": "Posso começar a atender clientes após o curso?",
+          "resposta": "Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos."
+        },
+        {
+          "pergunta": "Quais são os diferenciais do curso?",
+          "resposta": "Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados."
+        },
+        {
+          "pergunta": "Recebo certificado?",
+          "resposta": "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira."
+        }
+      ],
+      "imagem": "curso-pratico-sala"
+    },
+    {
+      "slug": "primeiros-socorros-basico",
+      "uuid": "05f2c1fa-3aef-40c6-a5df-66ea30c32a4b",
+      "nome": "Primeiros Socorros Básico",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b",
+      "descricao": "O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
+      "sobre": [
+        "O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.",
+        "Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência."
+      ],
+      "observacoes": [
+        "Inclui Lei Lucas."
+      ],
+      "carga_horaria": "8 horas",
+      "escolaridade": "Ensino Fundamental",
+      "valor_curso_centavos": 18000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 28000,
+      "faq": [
+        {
+          "pergunta": "Preciso ser da área da saúde?",
+          "resposta": "Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros."
+        },
+        {
+          "pergunta": "Recebo certificado?",
+          "resposta": "Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro."
+        },
+        {
+          "pergunta": "Posso trabalhar como socorrista após o curso?",
+          "resposta": "Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados."
+        },
+        {
+          "pergunta": "Existe prática?",
+          "resposta": "Sim. O curso possui atividades demonstrativas e práticas supervisionadas."
+        },
+        {
+          "pergunta": "Há validade para o certificado?",
+          "resposta": "Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento."
+        }
+      ],
+      "imagem": "curso-primeiros-socorros-novo"
+    },
+    {
+      "slug": "primeiros-socorros-lei-lucas",
+      "uuid": "f8373fef-2523-42e4-ab3f-cc1059b10379",
+      "nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379",
+      "descricao": "Capacitação essencial. Inclui Stop the Bleed.",
+      "sobre": [
+        "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.",
+        "Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência."
+      ],
+      "observacoes": [],
+      "carga_horaria": "8 horas",
+      "escolaridade": "Ensino Fundamental",
+      "valor_curso_centavos": 15000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 25000,
+      "faq": [],
+      "imagem": "curso-lei-lucas"
+    },
+    {
+      "slug": "puncao-venosa",
+      "uuid": "ab2035b1-2c11-476f-a275-d29a4111ecf0",
+      "nome": "Punção Venosa",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0",
+      "descricao": "Técnica de acesso venoso periférico com segurança.",
+      "sobre": [
+        "O Curso de Punção Venosa da Cruz Vermelha forma profissionais capacitados para realizar procedimentos de acesso venoso com segurança, precisão e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre anatomia do sistema venoso, técnicas de punção venosa, identificação e utilização correta dos materiais, preparo do paciente, prevenção de complicações, controle de infecções, biossegurança e boas práticas aplicadas à rotina dos serviços de saúde.",
+        "Após a conclusão, o profissional estará preparado para atuar em hospitais, clínicas, laboratórios, unidades de saúde, serviços de coleta e demais instituições da área da saúde, executando procedimentos de punção venosa com competência, segurança e qualidade."
+      ],
+      "observacoes": [],
+      "carga_horaria": "8 horas",
+      "escolaridade": "Ensino Médio",
+      "valor_curso_centavos": 15000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 25000,
+      "faq": [
+        {
+          "pergunta": "Quem pode fazer esse curso?",
+          "resposta": "O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão."
+        },
+        {
+          "pergunta": "O curso é prático?",
+          "resposta": "Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas."
+        },
+        {
+          "pergunta": "Vou aprender apenas punção?",
+          "resposta": "Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais."
+        },
+        {
+          "pergunta": "Esse curso melhora minhas oportunidades de emprego?",
+          "resposta": "Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde."
+        },
+        {
+          "pergunta": "O certificado é válido?",
+          "resposta": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira ao término do curso."
+        }
+      ],
+      "imagem": "curso-puncao-venosa"
+    },
+    {
+      "slug": "suporte-basico-de-vida",
+      "uuid": "4f84e97b-1908-4e1e-8ea7-97d4124caff4",
+      "nome": "Suporte Básico de Vida",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4",
+      "descricao": "Atendimento inicial de emergências com diretrizes oficiais.",
+      "sobre": [
+        "O Curso de Suporte Básico de Vida da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.",
+        "Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência."
+      ],
+      "observacoes": [],
+      "carga_horaria": "4 horas",
+      "escolaridade": "Ensino Fundamental",
+      "valor_curso_centavos": 15000,
+      "valor_matricula_escola_centavos": 10000,
+      "total_escola_centavos": 25000,
+      "faq": [
+        {
+          "pergunta": "Para quem é indicado este curso?",
+          "resposta": "É indicado para profissionais da saúde, educação, segurança, empresas e também para qualquer pessoa que deseje aprender a agir corretamente em situações de emergência."
+        },
+        {
+          "pergunta": "Vou aprender a salvar vidas?",
+          "resposta": "Você aprenderá técnicas essenciais para prestar o primeiro atendimento até a chegada do serviço especializado, aumentando as chances de um atendimento seguro e eficiente."
+        },
+        {
+          "pergunta": "O curso possui prática?",
+          "resposta": "Sim. A metodologia combina teoria e treinamento prático para desenvolver segurança durante os atendimentos."
+        },
+        {
+          "pergunta": "Preciso ser profissional da saúde?",
+          "resposta": "Não. O curso é aberto tanto para profissionais quanto para pessoas sem experiência prévia."
+        },
+        {
+          "pergunta": "O certificado pode enriquecer meu currículo?",
+          "resposta": "Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais."
+        }
+      ],
+      "imagem": "curso-suporte-basico-vida"
+    }
+  ]
+}

@@ -217,7 +217,12 @@
       background: rgba(204, 0, 0, 0.08);
     }
 
-    @media (max-width: 1024px) {
+    /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
+    @media (max-width: 1366px) {
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: .86rem; }
+    }
+    @media (max-width: 1180px) {
       .header-container { flex-wrap: nowrap; justify-content: space-between; gap: 10px; padding: 12px 16px; }
       .nav-toggle { display: inline-flex; }
       .header-collapse {
@@ -990,6 +995,7 @@
           <a href="#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
           <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
+          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
           <a href="#campanhas">Campanhas</a>
           <a href="#parceiros">Parceiros</a>
           <a href="#faq">FAQ</a>
@@ -1501,6 +1507,8 @@
         <a href="/noticias/">Notícias</a>
         <span class="sep">|</span>
         <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Escola de Educação e Saúde</a>
+        <span class="sep">|</span>
+        <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
         <span class="sep">|</span>
         <a href="/privacidade">Política de Privacidade</a>
         <span class="sep">|</span>
