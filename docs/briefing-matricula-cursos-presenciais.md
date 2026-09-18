@@ -20,6 +20,15 @@
    hospedagem estática na Hostinger) e o que muda no plano de 16/09.
 5. Perguntas abertas atualizadas: as já respondidas saíram da lista, entraram as novas.
 
+> **Nota de 18/09/2026 (ajustes depois da primeira publicação).** (1) O topo e o bloco de cada
+> curso focam em "Faça sua matrícula agora e garanta sua vaga"; a regra "a secretaria confirma
+> horário depois" sai do topo e fica só em "Como funciona" e no FAQ. (2) A página não mostra
+> telefone nem WhatsApp da secretaria, nem o botão flutuante da home: desviavam da matrícula.
+> (3) Botão único por curso, "Fazer matrícula agora"; o link para o curso na plataforma da escola
+> fica discreto, no fim do detalhe. (4) As fotos vêm do catálogo da escola, recortadas em 4:3.
+> (5) `cursos.html` saiu do ar no mesmo dia e responde 301 para esta página, que virou a vitrine
+> de cursos do domínio. Onde as seções 6.1, 10, 12 e 18 disserem diferente, vale esta nota.
+
 ---
 
 ## 0. Prompt para colar em outra IA

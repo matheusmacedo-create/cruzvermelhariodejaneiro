@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <title>Matrícula cursos presenciais | Cruz Vermelha Brasileira RJ</title>
-  <meta name="description" content="Matrícula em cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro: escolha o curso, pague a inscrição de R$ 99 e a secretaria confirma sua turma. Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.">
+  <title>Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira</title>
+  <meta name="description" content="Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro: escolha o curso, pague a inscrição de R$ 99 e garanta sua vaga. Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
-  <meta property="og:title" content="Matrícula cursos presenciais | Cruz Vermelha Brasileira RJ">
-  <meta property="og:description" content="Matrícula em cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro: escolha o curso, pague a inscrição de R$ 99 e a secretaria confirma sua turma. Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.">
+  <meta property="og:title" content="Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira">
+  <meta property="og:description" content="Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro: escolha o curso, pague a inscrição de R$ 99 e garanta sua vaga. Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.">
   <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">
   <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/assets/hero-cursos-banner-1.jpg">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="540">
+  <meta property="og:image:alt" content="Cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -226,6 +229,13 @@
     .btn-login-sutil:hover {
       background: rgba(204, 0, 0, 0.08);
     }
+
+    /* Botão de matrícula na barra superior (vira largura total dentro do menu sanfona). */
+    .btn-header { padding: .55rem 1.05rem; min-height: 38px; font-size: .9rem; white-space: nowrap; }
+    /* Entre o menu compacto e a sanfona, a barra não tem largura para o botão; ele segue no menu sanfona. */
+    @media (max-width: 1270px) and (min-width: 1181px) { .btn-header { display: none; } }
+    .footer-col p a { color: var(--black); font-weight: 600; }
+    .footer-col p a:hover { color: var(--red); }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {
@@ -769,6 +779,8 @@
 
     @media (max-width: 920px) {
       nav { display: none !important; }
+      /* Regra do menu antigo acima; o menu sanfona atual (.header-collapse) precisa dos links visíveis quando aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
       .menu-btn { display: block; }
       .nav.open nav {
         display: flex;
@@ -899,6 +911,19 @@
     .newsletter-form .btn:hover { background: #000; }
 
     /* ============================================================
+       NOVO: MATRÍCULA CURSOS PRESENCIAIS (seletor de curso na home)
+       ============================================================ */
+    .matricula-section { background: #fff; }
+    .matricula-box { background: #fff; border: 1px solid var(--line); border-left: 6px solid var(--red); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow); }
+    .matricula-box .lead { max-width: 70ch; }
+    .matricula-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+    .matricula-form select { flex: 1 1 320px; min-width: 0; max-width: 100%; min-height: 46px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--text); font: inherit; font-size: .95rem; }
+    .matricula-form select:focus { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-nota { margin: 16px 0 0; font-size: .92rem; color: var(--muted); }
+    .matricula-nota a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    @media (max-width: 620px) { .matricula-box { padding: 24px; } .matricula-form .btn { width: 100%; } }
+
+    /* ============================================================
        NOVO: FAQ
        ============================================================ */
     .faq-section { background: #fff; }
@@ -923,6 +948,8 @@
   <style>
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
     .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
+    .mr-hero h1 .mr-h1-sub { display: block; font-size: .5em; font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.25; margin-top: .4em; }
+    .mr-hero .cta-row { margin-top: 22px; }
     .mr-hero .lead { max-width: 72ch; }
     .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
@@ -938,7 +965,7 @@
     .mr-detalhe { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px; }
     .js .mr-detalhe { margin-bottom: 0; }
     .js .mr-detalhe:not(.ativo) { display: none; }
-    .mr-detalhe img { width: 100%; height: 340px; object-fit: cover; object-position: center 30%; display: block; }
+    .mr-detalhe .mr-foto { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--soft); }
     .mr-corpo { padding: 32px; }
     .mr-corpo h2 { color: var(--black); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; margin: 0 0 10px; }
     .mr-corpo h3 { color: var(--black); font-size: 1.1rem; margin: 26px 0 10px; }
@@ -948,6 +975,8 @@
     .mr-preco b { display: block; font-size: 1.7rem; color: var(--red); line-height: 1.1; margin: 4px 0; }
     .mr-preco b.mr-preco-curso { color: var(--black); }
     .mr-regra-curta { color: var(--muted); font-size: .92rem; margin: 14px 0 0; }
+    .mr-link-escola { color: var(--muted); font-size: .92rem; margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+    .mr-link-escola a { color: var(--red); font-weight: 700; text-decoration: underline; }
     .mr-nota { border-left: 4px solid var(--red); background: var(--soft); padding: 12px 16px; border-radius: 0 12px 12px 0; }
     .mr-nota i { color: var(--red); margin-right: 6px; }
     .mr-faq details, .mr-faq-pagina details { border-top: 1px solid var(--line); padding: 12px 0; }
@@ -967,8 +996,10 @@
       .mr-lista { position: static; }
       .mr-passos { grid-template-columns: 1fr; }
       .mr-preco { grid-template-columns: 1fr; }
-      .mr-detalhe img { height: 220px; }
       .mr-corpo { padding: 22px; }
+      /* O CSS da home esconde qualquer <nav> abaixo de 920px (regra do menu antigo) e o menu sanfona
+         abria sem os links. Nesta página os links voltam a aparecer com o menu aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
     }
   </style>
   <!-- Google tag (gtag.js) -->
@@ -1012,12 +1043,6 @@
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Cursos",
-      "item": "https://cruzvermelhariodejaneiro.org/cursos.html"
-    },
-    {
-      "@type": "ListItem",
-      "position": 3,
       "name": "Matrícula cursos presenciais",
       "item": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/"
     }
@@ -1050,7 +1075,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT8H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=primeiros-socorros-basico",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "180.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT8H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT8H"
+          }
+        ]
       }
     },
     {
@@ -1059,7 +1122,7 @@
       "item": {
         "@type": "Course",
         "name": "Primeiros Socorros Lei Lucas - Ambientes com Crianças",
-        "description": "Capacitação essencial. Inclui Stop the Bleed.",
+        "description": "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
         "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas",
         "provider": {
           "@type": "EducationalOrganization",
@@ -1072,7 +1135,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT8H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/primeiros-socorros-lei-lucas-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "150.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT8H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT8H"
+          }
+        ]
       }
     },
     {
@@ -1094,7 +1195,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT8H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/puncao-venosa-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=puncao-venosa",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "150.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT8H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT8H"
+          }
+        ]
       }
     },
     {
@@ -1116,7 +1255,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT4H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/suporte-basico-de-vida-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=suporte-basico-de-vida",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "150.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT4H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT4H"
+          }
+        ]
       }
     },
     {
@@ -1138,7 +1315,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT80H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/bombeiro-civil-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=bombeiro-civil",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "950.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT80H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT80H"
+          }
+        ]
       }
     },
     {
@@ -1160,7 +1375,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT160H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/cuidador-de-idosos-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=cuidador-de-idosos",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "950.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT160H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT160H"
+          }
+        ]
       }
     },
     {
@@ -1182,7 +1435,45 @@
         },
         "courseMode": "Onsite",
         "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira",
-        "timeRequired": "PT24H"
+        "image": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/micropigmentacao-labial-960.webp",
+        "offers": [
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Inscrição",
+            "price": "99.00",
+            "priceCurrency": "BRL",
+            "url": "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?curso=micropigmentacao-labial",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "category": "Paid",
+            "name": "Valor do curso (pago depois, na escola)",
+            "price": "400.00",
+            "priceCurrency": "BRL"
+          }
+        ],
+        "timeRequired": "PT24H",
+        "hasCourseInstance": [
+          {
+            "@type": "CourseInstance",
+            "courseMode": "Onsite",
+            "location": {
+              "@type": "Place",
+              "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Praça da Cruz Vermelha, 10",
+                "addressLocality": "Rio de Janeiro",
+                "addressRegion": "RJ",
+                "postalCode": "20230-130",
+                "addressCountry": "BR"
+              }
+            },
+            "courseWorkload": "PT24H"
+          }
+        ]
       }
     }
   ]
@@ -1199,6 +1490,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago depois, direto na escola, no valor à vista informado em cada curso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quais são as formas de pagamento?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, direto na escola, no valor à vista informado em cada curso."
       }
     },
     {
@@ -1253,7 +1552,6 @@
         <nav class="nav-links">
           <a href="/#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
-          <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
           <a href="/matricula-cursos-presenciais/" style="white-space:nowrap" aria-current="page">Matrícula cursos presenciais</a>
           <a href="/#campanhas">Campanhas</a>
           <a href="/#parceiros">Parceiros</a>
@@ -1264,6 +1562,7 @@
 
         <div class="header-actions">
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+          <a href="#cursos" class="btn btn-red btn-header">Fazer matrícula</a>
         </div>
       </div>
     </div>
@@ -1273,8 +1572,11 @@
     <section class="mr-hero" aria-labelledby="mr-titulo">
       <div class="wrap">
         <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">Matrícula em cursos presenciais: escolha o curso e garanta sua vaga</h1>
-        <p class="lead">Inscrição de R$ 99,00 nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro. Sem criar conta antes e sem escolher turma aqui: a secretaria confirma horário depois, e enquanto a aula não for marcada o estorno é simples.</p>
+        <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga <span class="mr-h1-sub">nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro</span></h1>
+        <p class="lead">Escolha o curso, pague a inscrição de R$ 99,00 por PIX ou cartão e sua vaga fica reservada. Certificado da Cruz Vermelha Brasileira ao final.</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="#cursos">Escolher meu curso</a>
+        </div>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> 7 cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
@@ -1283,7 +1585,7 @@
       </div>
     </section>
 
-    <section class="mr-catalogo" aria-labelledby="mr-catalogo-titulo">
+    <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo">
       <div class="wrap">
         <h2 id="mr-catalogo-titulo" class="sr-only" style="position:absolute;left:-9999px">Cursos disponíveis</h2>
         <div class="mr-grid">
@@ -1294,10 +1596,7 @@
           <div class="mr-detalhes">
             
         <article class="mr-detalhe" id="curso-primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico">
-          <picture>
-            <source type="image/webp" srcset="img/curso-primeiros-socorros-novo-480.webp 480w, img/curso-primeiros-socorros-novo-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-primeiros-socorros-novo.jpg" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira do Rio de Janeiro" loading="eager" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/primeiros-socorros-basico-960.webp" srcset="img/primeiros-socorros-basico-480.webp 480w, img/primeiros-socorros-basico-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira do Rio de Janeiro" loading="eager" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Primeiros Socorros Básico</h2>
@@ -1308,54 +1607,48 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 180,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Primeiros%20Socorros%20B%C3%A1sico%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Primeiros%20Socorros%20B%C3%A1sico%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p>
             <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Inclui Lei Lucas.</p>
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Primeiros Socorros Básico</h3><details><summary>Preciso ser da área da saúde?</summary><p>Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p></details><details><summary>Posso trabalhar como socorrista após o curso?</summary><p>Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados.</p></details><details><summary>Existe prática?</summary><p>Sim. O curso possui atividades demonstrativas e práticas supervisionadas.</p></details><details><summary>Há validade para o certificado?</summary><p>Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças">
-          <picture>
-            <source type="image/webp" srcset="img/curso-lei-lucas-480.webp 480w, img/curso-lei-lucas-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-lei-lucas.jpg" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/primeiros-socorros-lei-lucas-960.webp" srcset="img/primeiros-socorros-lei-lucas-480.webp 480w, img/primeiros-socorros-lei-lucas-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Primeiros Socorros Lei Lucas - Ambientes com Crianças</h2>
-            <p class="lead">Capacitação essencial. Inclui Stop the Bleed.</p>
+            <p class="lead">O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p>
             <div class="mr-chips">
               <span class="mr-chip"><i class="fa-regular fa-clock"></i> 8 horas</span>
               <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Fundamental</span>
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Primeiros%20Socorros%20Lei%20Lucas%20-%20Ambientes%20com%20Crian%C3%A7as%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Primeiros%20Socorros%20Lei%20Lucas%20-%20Ambientes%20com%20Crian%C3%A7as%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.</p><p>Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência.</p>
+            <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Inclui Stop the Bleed.</p>
             
-            
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-puncao-venosa" data-curso="puncao-venosa" data-nome="Punção Venosa">
-          <picture>
-            <source type="image/webp" srcset="img/curso-puncao-venosa-480.webp 480w, img/curso-puncao-venosa-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-puncao-venosa.jpg" alt="Punção Venosa na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/puncao-venosa-960.webp" srcset="img/puncao-venosa-480.webp 480w, img/puncao-venosa-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Punção Venosa na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Punção Venosa</h2>
@@ -1366,25 +1659,22 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Pun%C3%A7%C3%A3o%20Venosa%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="puncao-venosa" data-nome="Punção Venosa" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Pun%C3%A7%C3%A3o%20Venosa%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="puncao-venosa" data-nome="Punção Venosa" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Punção Venosa da Cruz Vermelha forma profissionais capacitados para realizar procedimentos de acesso venoso com segurança, precisão e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre anatomia do sistema venoso, técnicas de punção venosa, identificação e utilização correta dos materiais, preparo do paciente, prevenção de complicações, controle de infecções, biossegurança e boas práticas aplicadas à rotina dos serviços de saúde.</p><p>Após a conclusão, o profissional estará preparado para atuar em hospitais, clínicas, laboratórios, unidades de saúde, serviços de coleta e demais instituições da área da saúde, executando procedimentos de punção venosa com competência, segurança e qualidade.</p>
             
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Punção Venosa</h3><details><summary>Quem pode fazer esse curso?</summary><p>O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão.</p></details><details><summary>O curso é prático?</summary><p>Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas.</p></details><details><summary>Vou aprender apenas punção?</summary><p>Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais.</p></details><details><summary>Esse curso melhora minhas oportunidades de emprego?</summary><p>Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde.</p></details><details><summary>O certificado é válido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira ao término do curso.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-suporte-basico-de-vida" data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida">
-          <picture>
-            <source type="image/webp" srcset="img/curso-suporte-basico-vida-480.webp 480w, img/curso-suporte-basico-vida-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-suporte-basico-vida.jpg" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/suporte-basico-de-vida-960.webp" srcset="img/suporte-basico-de-vida-480.webp 480w, img/suporte-basico-de-vida-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Suporte Básico de Vida</h2>
@@ -1395,25 +1685,22 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Suporte%20B%C3%A1sico%20de%20Vida%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Suporte%20B%C3%A1sico%20de%20Vida%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Suporte Básico de Vida da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p>
             
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Suporte Básico de Vida</h3><details><summary>Para quem é indicado este curso?</summary><p>É indicado para profissionais da saúde, educação, segurança, empresas e também para qualquer pessoa que deseje aprender a agir corretamente em situações de emergência.</p></details><details><summary>Vou aprender a salvar vidas?</summary><p>Você aprenderá técnicas essenciais para prestar o primeiro atendimento até a chegada do serviço especializado, aumentando as chances de um atendimento seguro e eficiente.</p></details><details><summary>O curso possui prática?</summary><p>Sim. A metodologia combina teoria e treinamento prático para desenvolver segurança durante os atendimentos.</p></details><details><summary>Preciso ser profissional da saúde?</summary><p>Não. O curso é aberto tanto para profissionais quanto para pessoas sem experiência prévia.</p></details><details><summary>O certificado pode enriquecer meu currículo?</summary><p>Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-bombeiro-civil" data-curso="bombeiro-civil" data-nome="Bombeiro Civil">
-          <picture>
-            <source type="image/webp" srcset="img/curso-bombeiro-civil-480.webp 480w, img/curso-bombeiro-civil-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-bombeiro-civil.jpg" alt="Bombeiro Civil na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/bombeiro-civil-960.webp" srcset="img/bombeiro-civil-480.webp 480w, img/bombeiro-civil-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Bombeiro Civil na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Bombeiro Civil</h2>
@@ -1424,25 +1711,22 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 950,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Bombeiro%20Civil%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="bombeiro-civil" data-nome="Bombeiro Civil" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Bombeiro%20Civil%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="bombeiro-civil" data-nome="Bombeiro Civil" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, uso de equipamentos de segurança, gerenciamento de riscos e resposta a emergências.</p><p>Após a conclusão, o profissional poderá atuar em empresas, indústrias, hospitais, condomínios, shopping centers, aeroportos, hotéis, instituições de ensino, eventos e diversos estabelecimentos que necessitam de equipes especializadas em prevenção e atendimento a emergências.</p>
             <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p>
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Bombeiro Civil</h3><details><summary>Quem pode fazer o curso de Bombeiro Civil?</summary><p>Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências.</p></details><details><summary>O certificado é reconhecido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências.</p></details><details><summary>Onde posso trabalhar após o curso?</summary><p>O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências.</p></details><details><summary>O curso possui aulas práticas?</summary><p>Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência.</p></details><details><summary>Preciso ter experiência na área?</summary><p>Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-cuidador-de-idosos" data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)">
-          <picture>
-            <source type="image/webp" srcset="img/curso-cuidador-idosos-480.webp 480w, img/curso-cuidador-idosos-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-cuidador-idosos.jpg" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/cuidador-de-idosos-960.webp" srcset="img/cuidador-de-idosos-480.webp 480w, img/cuidador-de-idosos-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Cuidador de Idosos (Curso Livre)</h2>
@@ -1453,25 +1737,22 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 950,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Cuidador%20de%20Idosos%20%28Curso%20Livre%29%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Cuidador%20de%20Idosos%20%28Curso%20Livre%29%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Cuidador de Idosos da Cruz Vermelha forma profissionais capacitados para prestar assistência à pessoa idosa com segurança, responsabilidade, empatia e respeito, promovendo qualidade de vida e bem-estar em diferentes contextos de cuidado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre higiene, alimentação, administração da rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros, além de compreender os aspectos físicos, emocionais e sociais do processo de envelhecimento, proporcionando um atendimento mais humanizado.</p><p>Após a conclusão, o profissional poderá atuar em residências, instituições de longa permanência para idosos (ILPIs), clínicas, hospitais, centros de convivência, serviços de atendimento domiciliar e demais ambientes voltados ao cuidado e à assistência da pessoa idosa.</p>
             
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Cuidador de Idosos (Curso Livre)</h3><details><summary>Quem pode fazer esse curso?</summary><p>Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares.</p></details><details><summary>O cuidador de idosos pode trabalhar no exterior?</summary><p>O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação.</p></details><details><summary>Onde posso trabalhar?</summary><p>O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso.</p></details><details><summary>O curso ensina cuidados práticos?</summary><p>Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento.</p></details><details><summary>Existe mercado para cuidadores de idosos?</summary><p>Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
         <article class="mr-detalhe" id="curso-micropigmentacao-labial" data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial">
-          <picture>
-            <source type="image/webp" srcset="img/curso-pratico-sala-480.webp 480w, img/curso-pratico-sala-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px">
-            <img src="/assets/curso-pratico-sala.jpg" alt="Micropigmentação Labial na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="1280">
-          </picture>
+          <img class="mr-foto" src="img/micropigmentacao-labial-960.webp" srcset="img/micropigmentacao-labial-480.webp 480w, img/micropigmentacao-labial-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Micropigmentação Labial na Cruz Vermelha Brasileira do Rio de Janeiro" loading="lazy" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Micropigmentação Labial</h2>
@@ -1482,18 +1763,18 @@
               <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>reserva da vaga e abertura da matrícula</span></div>
+              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
               <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 400,00</b><span>à vista, pago depois, na escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Micropigmenta%C3%A7%C3%A3o%20Labial%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial" target="_blank" rel="noopener">Fazer matrícula</a>
-              <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos/b05365c2-c066-4c73-bb4a-f32475a338a2" target="_blank" rel="noopener">Ver turmas e valores na escola</a>
+              <a class="btn btn-red mr-cta" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Quero%20fazer%20minha%20matr%C3%ADcula%20no%20curso%20presencial%20Micropigmenta%C3%A7%C3%A3o%20Labial%20pagando%20a%20inscri%C3%A7%C3%A3o%20de%20R%24%2099%2C00." data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial" target="_blank" rel="noopener">Fazer matrícula agora</a>
             </div>
-            <p class="mr-regra-curta">Sem criar conta antes e sem escolher turma aqui. A secretaria confirma horário depois.</p>
+            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Micropigmentação Labial da Cruz Vermelha forma profissionais capacitados para realizar procedimentos estéticos semipermanentes com segurança, precisão e excelência, valorizando a beleza natural dos lábios e proporcionando resultados harmoniosos.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre colorimetria, anatomia e fisiologia da pele, biossegurança, técnicas de implantação de pigmentos, correção de assimetrias visuais, uniformização da coloração labial, cuidados pré e pós-procedimento, além da utilização correta dos equipamentos e materiais utilizados na micropigmentação.</p><p>Após a conclusão, o profissional poderá atuar em clínicas de estética, salões de beleza, estúdios especializados, centros de estética ou como profissional autônomo, oferecendo um dos procedimentos mais valorizados do mercado da beleza, com alto potencial de crescimento e retorno financeiro.</p>
             
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Micropigmentação Labial</h3><details><summary>Preciso já trabalhar com estética?</summary><p>Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços.</p></details><details><summary>Vou aprender a técnica na prática?</summary><p>Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica.</p></details><details><summary>Posso começar a atender clientes após o curso?</summary><p>Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos.</p></details><details><summary>Quais são os diferenciais do curso?</summary><p>Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira.</p></details></div>
+            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/b05365c2-c066-4c73-bb4a-f32475a338a2" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>
           </div>
@@ -1518,10 +1799,10 @@
       <div class="wrap">
         <p class="eyebrow">Dúvidas frequentes</p>
         <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
-        <details><summary>O que é a inscrição de R$ 99?</summary><p>É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago depois, direto na escola, no valor à vista informado em cada curso.</p></details><details><summary>Preciso criar conta ou escolher turma agora?</summary><p>Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis para confirmar turma e horário.</p></details><details><summary>E se não houver horário compatível?</summary><p>A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.</p></details><details><summary>Os cursos são presenciais? Onde acontecem?</summary><p>Sim. Todos acontecem na sede da Cruz Vermelha Brasileira, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira.</p></details><details><summary>Posso ver as turmas abertas antes de pagar?</summary><p>Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem prefere o caminho completo de inscrição.</p></details>
+        <details><summary>O que é a inscrição de R$ 99?</summary><p>É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago depois, direto na escola, no valor à vista informado em cada curso.</p></details><details><summary>Quais são as formas de pagamento?</summary><p>A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, direto na escola, no valor à vista informado em cada curso.</p></details><details><summary>Preciso criar conta ou escolher turma agora?</summary><p>Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis para confirmar turma e horário.</p></details><details><summary>E se não houver horário compatível?</summary><p>A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.</p></details><details><summary>Os cursos são presenciais? Onde acontecem?</summary><p>Sim. Todos acontecem na sede da Cruz Vermelha Brasileira, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira.</p></details><details><summary>Posso ver as turmas abertas antes de pagar?</summary><p>Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem prefere o caminho completo de inscrição.</p></details>
         <div class="cta-row" style="margin-top:28px">
+          <a class="btn btn-red" href="#cursos">Fazer matrícula agora</a>
           <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos" target="_blank" rel="noopener">Ver turmas na plataforma da escola</a>
-          <a class="btn btn-outline" href="https://wa.me/5521999922864?text=Ol%C3%A1%21%20Tenho%20uma%20d%C3%BAvida%20sobre%20a%20matr%C3%ADcula%20nos%20cursos%20presenciais%20da%20Cruz%20Vermelha%20RJ." target="_blank" rel="noopener">Falar com a secretaria</a>
         </div>
       </div>
     </section>
@@ -1536,11 +1817,12 @@
       <div class="footer-col">
         <h4>Sobre</h4>
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
         <p><i class="fa-solid fa-location-dot"></i> Praça Cruz Vermelha, 10</p>
-        <p><i class="fa-solid fa-phone"></i> (21) 99992-2864</p>
         <p><i class="fa-regular fa-envelope"></i> contato@cruzvermelhariodejaneiro.org</p>
       </div>
       <div class="footer-col">
@@ -1570,39 +1852,6 @@
     </div>
   </footer>
 
-  <a class="wpp-float" href="https://wa.me/5521999922864?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20cursos%20da%20Escola%20de%20Capacita%C3%A7%C3%A3o." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
-  <style>
-    .wpp-float {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      background: #075e54;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 50%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-      transition: box-shadow 0.25s, transform 0.25s;
-    }
-
-    .wpp-float:hover {
-      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
-      transform: scale(1.1);
-    }
-
-    .wpp-float i {
-      font-size: 28px;
-    }
-  </style>
-
   <script>
     document.querySelector('.nav-toggle')?.addEventListener('click', function() {
       const header = this.closest('.main-header');
@@ -1618,7 +1867,6 @@
       });
     });
   </script>
-
 
   <script>
     (function () {

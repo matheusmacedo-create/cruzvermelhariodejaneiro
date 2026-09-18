@@ -70,7 +70,8 @@
           "resposta": "Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula."
         }
       ],
-      "imagem": "curso-bombeiro-civil"
+      "imagem": "bombeiro-civil",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787054066-56ea71861ef7.webp"
     },
     {
       "slug": "cuidador-de-idosos",
@@ -111,7 +112,8 @@
           "resposta": "Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades."
         }
       ],
-      "imagem": "curso-cuidador-idosos"
+      "imagem": "cuidador-de-idosos",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp"
     },
     {
       "slug": "micropigmentacao-labial",
@@ -152,7 +154,8 @@
           "resposta": "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira."
         }
       ],
-      "imagem": "curso-pratico-sala"
+      "imagem": "micropigmentacao-labial",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787194666-cff317cf7b7a.webp"
     },
     {
       "slug": "primeiros-socorros-basico",
@@ -195,27 +198,31 @@
           "resposta": "Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento."
         }
       ],
-      "imagem": "curso-primeiros-socorros-novo"
+      "imagem": "primeiros-socorros-basico",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787217265-1eb3b399f771.webp"
     },
     {
       "slug": "primeiros-socorros-lei-lucas",
       "uuid": "f8373fef-2523-42e4-ab3f-cc1059b10379",
       "nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças",
       "url_escola": "https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379",
-      "descricao": "Capacitação essencial. Inclui Stop the Bleed.",
+      "descricao": "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
       "sobre": [
         "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
         "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.",
         "Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência."
       ],
-      "observacoes": [],
+      "observacoes": [
+        "Inclui Stop the Bleed."
+      ],
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 15000,
       "valor_matricula_escola_centavos": 10000,
       "total_escola_centavos": 25000,
       "faq": [],
-      "imagem": "curso-lei-lucas"
+      "imagem": "primeiros-socorros-lei-lucas",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787244064-e1a66aa9dff5.webp"
     },
     {
       "slug": "puncao-venosa",
@@ -256,7 +263,8 @@
           "resposta": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira ao término do curso."
         }
       ],
-      "imagem": "curso-puncao-venosa"
+      "imagem": "puncao-venosa",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787266061-226838379cba.webp"
     },
     {
       "slug": "suporte-basico-de-vida",
@@ -297,7 +305,8 @@
           "resposta": "Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais."
         }
       ],
-      "imagem": "curso-suporte-basico-vida"
+      "imagem": "suporte-basico-de-vida",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787285667-954a9ec93b34.webp"
     }
   ]
 }

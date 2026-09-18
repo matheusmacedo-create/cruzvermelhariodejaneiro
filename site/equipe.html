@@ -216,6 +216,13 @@
       background: rgba(204, 0, 0, 0.08);
     }
 
+    /* Botão de matrícula na barra superior (vira largura total dentro do menu sanfona). */
+    .btn-header { padding: .55rem 1.05rem; min-height: 38px; font-size: .9rem; white-space: nowrap; }
+    /* Entre o menu compacto e a sanfona, a barra não tem largura para o botão; ele segue no menu sanfona. */
+    @media (max-width: 1270px) and (min-width: 1181px) { .btn-header { display: none; } }
+    .footer-col p a { color: var(--black); font-weight: 600; }
+    .footer-col p a:hover { color: var(--red); }
+
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {
       .nav-links { gap: 16px; }
@@ -758,6 +765,8 @@
 
     @media (max-width: 920px) {
       nav { display: none !important; }
+      /* Regra do menu antigo acima; o menu sanfona atual (.header-collapse) precisa dos links visíveis quando aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
       .menu-btn { display: block; }
       .nav.open nav {
         display: flex;
@@ -951,7 +960,6 @@
       <div class="header-collapse">
         <nav class="nav-links">
           <a href="index.html#institucional">Sobre</a>
-          <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Cursos</a>
           <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
           <a href="index.html#campanhas">Campanhas</a>
           <a href="index.html#parceiros">Parceiros</a>
@@ -962,6 +970,7 @@
 
         <div class="header-actions">
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+          <a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>
         </div>
       </div>
     </div>
@@ -1185,6 +1194,8 @@
       <div class="footer-col">
         <h4>Sobre</h4>
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>

@@ -3,9 +3,9 @@
 
 Lê https://escola.cursoscruzvermelha.org/cursos e a página de cada curso publicado e grava
 site/matricula-cursos-presenciais/cursos.json com nome, descrição, carga horária, escolaridade, valores,
-observações e dúvidas frequentes, exatamente como a escola publica. A página
-site/matricula-cursos-presenciais/index.html é gerada a partir desse arquivo por
-scripts/gerar_matricula_presencial.py.
+observações, dúvidas frequentes e a URL da foto do curso (imagem_url), exatamente como a escola
+publica. As fotos em WebP são geradas por scripts/gerar_imagens_matricula.py e a página
+site/matricula-cursos-presenciais/index.html por scripts/gerar_matricula_presencial.py.
 
 Regra do projeto: só existem aqui os cursos que a escola publica. Curso que sair do catálogo
 da escola sai daqui na próxima sincronização.
@@ -26,18 +26,6 @@ from pathlib import Path
 ORIGEM = "https://escola.cursoscruzvermelha.org"
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "site" / "matricula-cursos-presenciais" / "cursos.json"
-
-# Imagens já publicadas no site institucional (assets/), por slug. Curso sem imagem própria
-# usa a foto genérica de sala de aula.
-IMAGENS = {
-    "bombeiro-civil": "curso-bombeiro-civil",
-    "cuidador-de-idosos": "curso-cuidador-idosos",
-    "primeiros-socorros-basico": "curso-primeiros-socorros-novo",
-    "primeiros-socorros-lei-lucas": "curso-lei-lucas",
-    "puncao-venosa": "curso-puncao-venosa",
-    "suporte-basico-de-vida": "curso-suporte-basico-vida",
-}
-IMAGEM_PADRAO = "curso-pratico-sala"
 
 GRUPOS = [
     ("emergencia", "Emergência e vida", ["primeiros-socorros-basico", "primeiros-socorros-lei-lucas", "suporte-basico-de-vida", "puncao-venosa"]),
@@ -105,6 +93,8 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
     h1 = re.search(r"<h1[^>]*>(.*?)</h1>", pagina, re.S)
     nome = html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() if h1 else nome_catalogo
     meta = re.search(r'<meta name="description" content="([^"]*)"', pagina)
+    # Foto do curso: a mesma que a escola mostra no topo da página do curso.
+    foto = re.search(r'<img class="cx-hero-img" src="([^"]+)"', pagina)
 
     # Descrição curta: a linha logo depois do h1.
     try:
@@ -123,10 +113,18 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
     m_hom = re.search(r"\s*\((?:VALOR DE )?HOMOLOGA[^)]*\)\s*$", descricao, re.I)
     if m_hom:
         descricao = descricao[: m_hom.start()].strip()
+    # Tagline da escola: frases "Inclui X." viram observação; se o que sobrar for curto demais
+    # ("Capacitação essencial."), a descrição passa a ser a primeira frase de "Sobre o curso".
+    frases = [f.strip() for f in re.split(r"(?<=[.!?])\s+", descricao) if f.strip()]
+    inclui = [f if f.endswith(".") else f + "." for f in frases if re.match(r"inclui\b", f, re.I)]
+    descricao = " ".join(f for f in frases if not re.match(r"inclui\b", f, re.I))
+    if len(descricao) < 30:
+        descricao = ""
 
     sobre = bloco_entre(linhas, "Sobre o curso", ["Turmas abertas", "Dúvidas frequentes", "Investimento"])
     observacoes = [l for l in sobre if re.search(r"homologa|alimento|documento|a cargo do aluno", l, re.I)]
     sobre = [l for l in sobre if l not in observacoes]
+    observacoes = inclui + observacoes
     for comp in complementos:
         if comp.startswith("+"):
             observacoes.insert(0, "Inclui " + comp.lstrip("+ ").strip() + ".")
@@ -163,7 +161,8 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
         "valor_matricula_escola_centavos": valor("Valor da matrícula"),
         "total_escola_centavos": valor("Total à vista"),
         "faq": faq,
-        "imagem": IMAGENS.get(slug, IMAGEM_PADRAO),
+        "imagem": slug,  # base dos arquivos em img/ (<slug>-480.webp e <slug>-960.webp)
+        "imagem_url": html.unescape(foto.group(1)) if foto else None,
     }
 
 
