@@ -2,7 +2,9 @@
 
 Espelho do `public_html` de `cruzvermelhariodejaneiro.org` (Hostinger, conta `u448697994`)
 restrito às páginas mantidas à mão: `index.html`, `cursos.html`, `doacao.html`,
-`equipe.html` e `campanha-agasalho.html`, mais `sitemap-escola.xml`.
+`equipe.html` e `campanha-agasalho.html`, mais `sitemap-escola.xml`, `sitemap-paginas.xml` e a
+pasta `matricula-cursos-presenciais/` (página gerada por `scripts/gerar_matricula_presencial.py`;
+edite `cursos.json` ou o gerador, nunca o `index.html` dela).
 
 **Não** estão aqui, de propósito:
 
