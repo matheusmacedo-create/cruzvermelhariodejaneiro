@@ -30,9 +30,10 @@ return [
     'TAXA_CARTAO_PCT'   => 5.0,
     'TAXA_CARTAO_FIXA'  => 0,
 
-    // E-mail: Resend (domínio verificado). Sem chave, cai no mail() da Hostinger.
+    // E-mail: Resend. O remetente precisa estar num domínio verificado na conta (em 18/09/2026:
+    // info., noticias. e parceria.cruzvermelhariodejaneiro.org). Sem chave, cai no mail() da Hostinger.
     'RESEND_API_KEY'   => '',
-    'EMAIL_REMETENTE'  => 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>',
+    'EMAIL_REMETENTE'  => 'Cruz Vermelha RJ <matricula@info.cruzvermelhariodejaneiro.org>',
     'EMAIL_RESPOSTA'   => 'contato@cruzvermelhariodejaneiro.org',
     // Quem recebe o aviso de cada inscrição paga (secretaria). Vazio = não avisa.
     'EMAIL_SECRETARIA' => 'contato@cruzvermelhariodejaneiro.org',
