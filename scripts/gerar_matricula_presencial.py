@@ -56,9 +56,9 @@ TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Se não houver horário compat
 FAQ_PAGINA = [
     ("O que é a inscrição de R$ 99?",
      "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago "
-     "depois, direto na escola, no valor à vista informado em cada curso."),
+     "depois, na plataforma da escola, no valor à vista informado em cada curso."),
     ("Quais são as formas de pagamento?",
-     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, direto na escola, "
+     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
      "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
      "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis "
@@ -158,9 +158,6 @@ def main() -> int:
     if not padrao_menu.search(header):
         raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
     header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">Matrícula cursos presenciais</a>', header, count=1)
-    # Botão "Fazer matrícula" da barra superior: aqui ele leva ao catálogo desta página.
-    header = header.replace('<a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>',
-                            '<a href="#cursos" class="btn btn-red btn-header">Fazer matrícula</a>')
 
     # --- catálogo --------------------------------------------------------------------
     def link_lista(slug: str) -> str:
@@ -206,7 +203,7 @@ def main() -> int:
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>{brl(inscricao)}</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na escola</span></div>
+              <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na plataforma da escola</span></div>
             </div>
             <div class="cta-row">
               <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula agora</a>
@@ -240,7 +237,7 @@ def main() -> int:
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
                     "priceCurrency": "BRL", "url": f"{URL_PAGINA}?curso={s}", "availability": "https://schema.org/InStock"}]
         if c["valor_curso_centavos"]:
-            ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na escola)",
+            ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na plataforma da escola)",
                             "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
         curso["offers"] = ofertas
         instancia = {"@type": "CourseInstance", "courseMode": "Onsite", "location": LOCAL}
@@ -462,7 +459,7 @@ def main() -> int:
         <div class="mr-passos">
           <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, direto na escola.</p></div>
+          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
         <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
       </div>

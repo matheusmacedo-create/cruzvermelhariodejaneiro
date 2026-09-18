@@ -217,12 +217,17 @@
       background: rgba(204, 0, 0, 0.08);
     }
 
-    /* Botão de matrícula na barra superior (vira largura total dentro do menu sanfona). */
-    .btn-header { padding: .55rem 1.05rem; min-height: 38px; font-size: .9rem; white-space: nowrap; }
-    /* Entre o menu compacto e a sanfona, a barra não tem largura para o botão; ele segue no menu sanfona. */
-    @media (max-width: 1270px) and (min-width: 1181px) { .btn-header { display: none; } }
     .footer-col p a { color: var(--black); font-weight: 600; }
     .footer-col p a:hover { color: var(--red); }
+
+    /* Faixa de matrícula acima do cabeçalho (visível também no celular, sem abrir o menu). */
+    .faixa-matricula { background: var(--black); color: #fff; font-size: .9rem; }
+    .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 18px; padding: 9px 0; text-align: center; }
+    .faixa-matricula span { color: rgba(255,255,255,.85); }
+    .faixa-matricula a { color: #fff; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+    .faixa-matricula a:hover { color: #ffb4b4; }
+    .faixa-matricula a i { font-size: .8em; margin-left: 4px; }
+    @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 7px 0; gap: 2px 12px; } }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     @media (max-width: 1366px) {
@@ -1002,6 +1007,12 @@
   </script>
 </head>
 <body>
+  <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
+    <div class="wrap">
+      <span>Cursos presenciais da Cruz Vermelha: inscrição de R$ 99 e vaga garantida.</span>
+      <a href="/matricula-cursos-presenciais/">Fazer matrícula agora <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </div>
   <header class="main-header">
     <div class="header-container">
       <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
@@ -1026,7 +1037,6 @@
 
         <div class="header-actions">
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
-          <a href="/matricula-cursos-presenciais/" class="btn btn-red btn-header">Fazer matrícula</a>
         </div>
       </div>
     </div>
@@ -1285,7 +1295,7 @@
         <div class="matricula-box">
           <p class="eyebrow">Matrícula cursos presenciais</p>
           <h2 id="matricula-title">Já escolheu seu curso?</h2>
-          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na escola.</p>
+          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na plataforma da escola.</p>
           <form class="matricula-form" action="/matricula-cursos-presenciais/" method="get">
             <label for="matricula-curso" style="position:absolute;left:-9999px">Curso</label>
             <select id="matricula-curso" name="curso" required>

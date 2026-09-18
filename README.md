@@ -120,11 +120,15 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   mantidas à mão e do rodapé da home. Desde 18/09 o item "Cursos" (que ia para a plataforma)
   saiu dos menus: a plataforma da escola fica no botão "Plataforma" e nos links dos rodapés.
   `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação; envie os dois no Search Console.
-- **Topo e rodapé da home** (18/09): além do item de menu, a barra superior ganhou o botão
-  vermelho "Fazer matrícula" ao lado de "Plataforma" (largura total dentro do menu sanfona), e a
-  coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
-  escola"; a linha inferior do rodapé já tinha o link. `equipe.html` recebeu o mesmo cabeçalho
-  e rodapé; a página de matrícula herda os dois do gerador (o botão lá leva ao catálogo).
+- **Topo e rodapé da home** (18/09): além do item de menu, a home ganhou uma faixa preta fina
+  acima do cabeçalho (`.faixa-matricula`: "Cursos presenciais da Cruz Vermelha: inscrição de
+  R$ 99 e vaga garantida. Fazer matrícula agora"), visível também no celular sem abrir o menu, e
+  a coluna "Sobre" do rodapé ganhou os links "Matrícula cursos presenciais" e "Plataforma da
+  escola"; a linha inferior do rodapé já tinha o link. Um botão vermelho na barra superior foi
+  testado e descartado no mesmo dia. `equipe.html` tem o mesmo rodapé; a página de matrícula
+  herda cabeçalho e rodapé do gerador (sem a faixa).
+- **Onde o valor do curso é pago**: na plataforma da escola, não "na escola". A página, o FAQ, o
+  passo 3, os dados estruturados e o bloco da home dizem "pago depois, na plataforma da escola".
 - **Bloco na home** ("Já escolheu seu curso?", seção `#matricula`, logo após os cursos): um
   `<select>` com os cursos e o botão "Fazer matrícula agora", que leva a
   `/matricula-cursos-presenciais/?curso=<slug>` sem JavaScript (formulário GET). As opções ficam
