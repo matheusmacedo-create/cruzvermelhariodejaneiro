@@ -103,9 +103,19 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   site/matricula-cursos-presenciais/img/*.webp site/index.html site/cursos.html
   site/doacao.html site/equipe.html site/campanha-agasalho.html site/sitemap-paginas.xml`
   e limpar o cache do site.
+- **Publicada na Hostinger em 18/09/2026**: `index.html` e `img/*.webp` em
+  `public_html/matricula-cursos-presenciais/`, as cinco páginas com o link no menu e
+  `sitemap-paginas.xml`, com o cache do site limpo em seguida. No ar em
+  `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/`.
 
 ## Pontos de atenção encontrados
 
+- **Menu mobile sem links** na home, em `equipe.html` e, por herdar o CSS da home, na página
+  de matrícula: abaixo de 920 px a regra `nav { display: none !important; }` do menu antigo
+  esconde o `nav.nav-links` mesmo com o menu aberto, e só "Plataforma" aparece (conferido em
+  18/09/2026 com emulação de iPhone). Corrigir na home, por exemplo com
+  `.header-collapse .nav-links { display: flex !important; }` dentro do mesmo
+  `@media (max-width: 920px)`, replicar em `equipe.html` e gerar a página de matrícula de novo.
 - `links.cruzvermelhariodejaneiro.org` redireciona para `install.php`: instalador do CVB
   Links exposto ao público. Concluir a instalação ou remover/proteger o arquivo.
 - Ícones de LinkedIn e TikTok no rodapé da home apontam para `linkedin.com` e `tiktok.com`
