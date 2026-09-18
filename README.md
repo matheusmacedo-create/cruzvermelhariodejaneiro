@@ -162,9 +162,9 @@ validado no projeto da Punção Venosa.
   vem da reconsulta). `lib.php` cria as tabelas `mcp_inscricoes` e `mcp_eventos` sozinha.
 - **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
   `customer.document` (testado: sem ele a API responde 422).
-- **Custos de processamento**: checkbox opcional; valor por método em `config.php`. PIX medido pela
-  API em 18/09 (valor líquido): 1,00% + R$ 1,48 (R$ 2,47 sobre R$ 99). Cartão está estimado
-  (4,99% + R$ 0,49): **confirmar a taxa da conta**.
+- **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
+  18/09: **5% em todos os métodos** (média de PIX, cartão e checkout), sem parcela fixa: R$ 4,95
+  sobre R$ 99. Para referência, o PIX medido pela API em 18/09 custou 1,00% + R$ 1,48.
 - **Pós-pagamento**: e-mail ao aluno (Resend se `RESEND_API_KEY` existir; senão `mail()` da
   Hostinger) e aviso à secretaria (`EMAIL_SECRETARIA`). Com `ESCOLA_API_URL` configurada, chama a
   API da escola (contrato da seção 8.2 do briefing), guarda o acesso devolvido e mostra usuário,
@@ -194,11 +194,10 @@ validado no projeto da Punção Venosa.
 
 ## Pontos de atenção encontrados
 
-- **Checkout, pendências para fechar**: (1) taxa do cartão em `config.php` é estimativa (4,99% +
-  R$ 0,49), confirmar com a conta Unicopag; (2) e-mails saem pelo `mail()` da Hostinger até
-  existir `RESEND_API_KEY`; (3) aviso de inscrição paga vai para `contato@cruzvermelhariodejaneiro.org`
-  (`EMAIL_SECRETARIA`), confirmar o endereço da secretaria; (4) acesso à escola (versão A) depende
-  da API da escola (`ESCOLA_API_URL`), que ainda não existe; (5) as transações de teste
+- **Checkout, pendências para fechar**: (1) e-mails saem pelo `mail()` da Hostinger até existir
+  `RESEND_API_KEY`; (2) aviso de inscrição paga vai para `contato@cruzvermelhariodejaneiro.org`
+  (`EMAIL_SECRETARIA`), confirmar o endereço da secretaria; (3) acesso à escola (versão A) depende
+  da API da escola (`ESCOLA_API_URL`), que ainda não existe; (4) as transações de teste
   (R$ 1 e R$ 99, "Teste Integracao", não pagas) aparecem no painel da Unicopag até expirarem.
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
   `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do

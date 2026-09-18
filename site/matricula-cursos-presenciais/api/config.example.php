@@ -23,12 +23,12 @@ return [
 
     // Custos de processamento que o aluno pode escolher cobrir (opcional, por vontade própria).
     // Percentual sobre a inscrição + parcela fixa em centavos, por método.
-    // PIX medido em 18/09/2026 pelo valor líquido devolvido pela API: 1,00% + R$ 1,48.
-    'TAXA_PIX_PCT'      => 1.0,
-    'TAXA_PIX_FIXA'     => 148,
-    // Cartão: CONFIRMAR a taxa da conta (valores abaixo são estimativa).
-    'TAXA_CARTAO_PCT'   => 4.99,
-    'TAXA_CARTAO_FIXA'  => 49,
+    // Decisão de 18/09/2026: 5% em todos os métodos (média de PIX, cartão e checkout), sem parcela fixa.
+    // (PIX medido pela API em 18/09: 1,00% + R$ 1,48.)
+    'TAXA_PIX_PCT'      => 5.0,
+    'TAXA_PIX_FIXA'     => 0,
+    'TAXA_CARTAO_PCT'   => 5.0,
+    'TAXA_CARTAO_FIXA'  => 0,
 
     // E-mail: Resend (domínio verificado). Sem chave, cai no mail() da Hostinger.
     'RESEND_API_KEY'   => '',
