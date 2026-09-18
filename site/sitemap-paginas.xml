@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Páginas mantidas à mão do site institucional. O sitemap.xml da raiz é gerado pela Redação
+     (páginas fixas + notícias); este arquivo complementa com a matrícula em cursos presenciais. Envie os dois
+     no Google Search Console. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://cruzvermelhariodejaneiro.org/</loc></url>
+  <url><loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc><lastmod>2026-09-18</lastmod></url>
+  <url><loc>https://cruzvermelhariodejaneiro.org/cursos.html</loc></url>
+  <url><loc>https://cruzvermelhariodejaneiro.org/equipe.html</loc></url>
+  <url><loc>https://cruzvermelhariodejaneiro.org/doacao.html</loc></url>
+  <url><loc>https://cruzvermelhariodejaneiro.org/campanha-agasalho.html</loc></url>
+</urlset>

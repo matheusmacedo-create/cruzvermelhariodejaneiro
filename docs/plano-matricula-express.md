@@ -1,8 +1,8 @@
 <!-- Plano elaborado em 16/09/2026 a partir do levantamento do ecossistema e do código de puncaovenosa-fullautomatic. Status: aguardando as decisões da Fase 0 antes de iniciar a implementação. -->
 
-> **Nota de 18/09/2026.** A definição do produto passou a ser `docs/briefing-matricula-rapida.md`.
+> **Nota de 18/09/2026.** A definição do produto passou a ser `docs/briefing-matricula-cursos-presenciais.md`.
 > Duas decisões deste plano mudaram lá: (1) a página do aluno fica **dentro do domínio**, em
-> `cruzvermelhariodejaneiro.org/matricula-rapida/`, sem subdomínio; o backend reaproveitado
+> `cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/`, sem subdomínio; o backend reaproveitado
 > vira API com CORS; (2) o pós-pagamento ganha a API da escola (tela Parabéns com acesso), com
 > a versão manual (planilha + painel + WhatsApp) como fallback de lançamento. O restante
 > (catálogo de cursos, migration `0016`, preço por etapa, planilha, painel) continua válido.

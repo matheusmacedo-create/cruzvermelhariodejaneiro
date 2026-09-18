@@ -1,5 +1,5 @@
 # BRIEFING DE PROJETO
-# Matrícula rápida — Cruz Vermelha Brasileira · Rio de Janeiro
+# Matrícula cursos presenciais — Cruz Vermelha Brasileira · Rio de Janeiro
 
 **Uso deste arquivo:** documento-fonte para discutir, especificar ou implementar o projeto com outra IA ou com o time.
 **Idioma:** português (Brasil).
@@ -10,7 +10,7 @@
 
 1. **Preço da inscrição: R$ 99** em todos os cursos (decisão de 16/09). A escola mostra R$ 100; o
    atalho cobra R$ 99 e a escola precisa aceitar esse valor como quitação da inscrição.
-2. **URL definitiva: `https://cruzvermelhariodejaneiro.org/matricula-rapida`**, dentro do domínio
+2. **URL definitiva: `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais`**, dentro do domínio
    institucional, sem subdomínio. Motivo: rastreamento em primeira parte (GA4 `G-HDYZZ5JZHF` e Meta
    Pixel `2224500131617302` já instalados no site) sem ligação entre domínios.
 3. **Padrão visual = o do site da filial, com os tokens e arquivos reais** (seção 10), não uma
@@ -27,11 +27,11 @@
 Copie o bloco abaixo + o restante deste arquivo.
 
 ```
-Você vai trabalhar na matrícula rápida da Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro.
+Você vai trabalhar na matrícula em cursos presenciais da Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro.
 
 Leia o briefing completo abaixo como fonte da verdade. Não invente turmas com data. Não peça cadastro na escola antes do pagamento. Não construa o ambiente de horários/secretaria neste projeto — isso vive na plataforma da escola.
 
-Este projeto (página em cruzvermelhariodejaneiro.org/matricula-rapida, dentro do domínio institucional) só faz:
+Este projeto (página em cruzvermelhariodejaneiro.org/matricula-cursos-presenciais, dentro do domínio institucional) só faz:
 1) mostrar os cursos
 2) cobrar a INSCRIÇÃO de R$ 99 via Unicopag (PIX ou cartão, à vista)
 3) esperar o pagamento
@@ -74,16 +74,16 @@ Não é landing de campanha. Não substitui o site da escola. É um **circuito p
 | Casa institucional / vitrine | https://cruzvermelhariodejaneiro.org | Marca, notícias, cursos, WhatsApp. HTML estático na Hostinger. Página atual: https://cruzvermelhariodejaneiro.org/cursos.html |
 | Plataforma da escola (LMS / matrícula oficial) | https://escola.cursoscruzvermelha.org | Conta, turma, inscrição, pagamento do curso + matrícula, secretaria. App Node no Render, domínio separado de propósito (resiliência) |
 
-**A matrícula rápida vive no domínio institucional, como caminho, não como subdomínio:**
+**A matrícula em cursos presenciais vive no domínio institucional, como caminho, não como subdomínio:**
 
-`https://cruzvermelhariodejaneiro.org/matricula-rapida`
+`https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais`
 
 Atalho de anúncio (mesmo template, curso já aberto):
 
-`https://cruzvermelhariodejaneiro.org/matricula-rapida?curso=puncao-venosa`
+`https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais?curso=puncao-venosa`
 
 Já existe `cruzvermelhariodejaneiro.org/escola` redirecionando para a plataforma da escola; a
-matrícula rápida é outra coisa e não redireciona para lugar nenhum antes do pagamento.
+matrícula em cursos presenciais é outra coisa e não redireciona para lugar nenhum antes do pagamento.
 
 A plataforma da escola **não é copiada**. Ela só entra **depois do pagamento aprovado**, via API.
 
@@ -102,7 +102,7 @@ O caminho oficial da escola tem fricção demais para lead que já quer pagar:
 
 Isso mata conversão de "lead inteligente" (anúncio, bio, WhatsApp, indicação). O comercial hoje ainda manda WhatsApp (`cursos.html` empurra "Fazer matrícula pelo WhatsApp").
 
-**Objetivo da matrícula rápida:** reduzir a decisão a uma só: *pagar a inscrição deste curso*.
+**Objetivo da matrícula em cursos presenciais:** reduzir a decisão a uma só: *pagar a inscrição deste curso*.
 
 ---
 
@@ -127,7 +127,7 @@ Isso mata conversão de "lead inteligente" (anúncio, bio, WhatsApp, indicação
 ```
 [Anúncio / WhatsApp / bio / cursos.html / home]
         ↓
-[/matricula-rapida]  escolhe curso (texto curto + vídeo/imagem + botão)
+[/matricula-cursos-presenciais]  escolhe curso (texto curto + vídeo/imagem + botão)
         ↓
 [Checkout Unicopag, R$ 99]  nome, CPF, e-mail, WhatsApp
         ↓
@@ -155,9 +155,9 @@ Só estes. Qualquer outro vira caso especial e quebra autonomia.
 
 | Estado | Onde vive | O que o aluno vê neste site |
 |---|---|---|
-| `checkout_iniciado` | matrícula rápida | formulário / Unicopag |
-| `aguardando_pagamento` | matrícula rápida | tela pendente |
-| `pago` | matrícula rápida + API escola | tela Parabéns + e-mail |
+| `checkout_iniciado` | matrícula em cursos presenciais | formulário / Unicopag |
+| `aguardando_pagamento` | matrícula em cursos presenciais | tela pendente |
+| `pago` | matrícula em cursos presenciais + API escola | tela Parabéns + e-mail |
 | `reembolsado` | Unicopag + escola | **não é tela deste site** |
 | `encaixado` / cursando | escola | **não é tela deste site** |
 
@@ -167,7 +167,7 @@ Conta do aluno **não existe** em `aguardando_pagamento`.
 
 ## 6. Páginas deste projeto (somente estas)
 
-### 6.1 `/matricula-rapida` — catálogo + detalhe
+### 6.1 `/matricula-cursos-presenciais` — catálogo + detalhe
 
 Layout alinhado com o pedido original:
 
@@ -191,7 +191,7 @@ Layout alinhado com o pedido original:
 
 ### 6.2 Checkout da inscrição
 
-Mesmo domínio (`/matricula-rapida/checkout`). Unicopag (PIX e cartão, **à vista**).
+Mesmo domínio (`/matricula-cursos-presenciais/checkout`). Unicopag (PIX e cartão, **à vista**).
 
 Campos mínimos:
 
@@ -213,7 +213,7 @@ O botão cobra **somente a inscrição: R$ 99 (9900 centavos)**. Título do item
 
 ### 6.3 Tela Aguardando pagamento
 
-`/matricula-rapida/pendente`. Quando o checkout foi gerado mas ainda não há `paid`.
+`/matricula-cursos-presenciais/pendente`. Quando o checkout foi gerado mas ainda não há `paid`.
 
 Copy essencial:
 
@@ -226,7 +226,7 @@ Copy essencial:
 
 ### 6.4 Tela Parabéns (só depois de `paid` + resposta da API da escola)
 
-`/matricula-rapida/parabens`. Três blocos, sem teatro:
+`/matricula-cursos-presenciais/parabens`. Três blocos, sem teatro:
 
 1. Inscrição paga: [nome do curso] · R$ 99
 2. Acesso devolvido pela escola: usuário + acesso + botão **Acessar ambiente da secretaria**
@@ -269,13 +269,13 @@ Estorno automático Unicopag, **fora da estrutura financeira principal da escola
 
 **Não** estornar automático depois de `encaixado`.
 
-Texto visível (matrícula rápida + e-mail + escola), sempre igual:
+Texto visível (matrícula em cursos presenciais + e-mail + escola), sempre igual:
 
 > A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado automaticamente. O prazo para aparecer na conta depende de PIX ou cartão.
 
 Não escrever "na hora" / "instantâneo".
 
-**Não** colocar o botão de estorno na página `/matricula-rapida`. Senão o lead nem entra no pool.
+**Não** colocar o botão de estorno na página `/matricula-cursos-presenciais`. Senão o lead nem entra no pool.
 
 Atenção: o cliente Unicopag já escrito (`lib/unicopag.ts` do projeto da Punção Venosa) **não tem função de estorno** e a documentação pública não mostra o endpoint. Confirmar com a Unicopag se existe estorno por API antes de prometer "automático".
 
@@ -349,7 +349,7 @@ A filial comunicou **9 cursos**. Fontes públicas hoje não batem 9.
 
 **Na plataforma da escola (set/2026), 7 cursos visíveis:**
 
-| Curso | Slug | Carga (site escola) | Escolaridade | Inscrição (matrícula rápida) | Inscrição (escola) | Curso à vista (escola) |
+| Curso | Slug | Carga (site escola) | Escolaridade | Inscrição (matrícula em cursos presenciais) | Inscrição (escola) | Curso à vista (escola) |
 |---|---|---|---|---|---|---|
 | Bombeiro Civil | `bombeiro-civil` | 80h | Ensino Médio | **R$ 99** | R$ 100 | R$ 950 |
 | Cuidador de Idosos (curso livre) | `cuidador-de-idosos` | 160h | Ens. Fundamental | **R$ 99** | R$ 100 | R$ 950 |
@@ -361,7 +361,7 @@ A filial comunicou **9 cursos**. Fontes públicas hoje não batem 9.
 
 IDs dos cursos na escola (para `escolaUrl` e para o `curso_id` da API): ver `escola/sitemap.xml` neste repositório.
 
-**Na vitrine institucional `cursos.html` (lista promocional):** 6 cursos (não lista SBV). Diz "inscrição R$ 100 à parte" e 1 kg de alimento não perecível entre os requisitos. A linha de R$ 100 precisa ser corrigida para R$ 99 quando a matrícula rápida entrar no ar.
+**Na vitrine institucional `cursos.html` (lista promocional):** 6 cursos (não lista SBV). Diz "inscrição R$ 100 à parte" e 1 kg de alimento não perecível entre os requisitos. A linha de R$ 100 precisa ser corrigida para R$ 99 quando a matrícula em cursos presenciais entrar no ar.
 
 **Placeholders usados no protótipo para chegar a 9** (NÃO tratar como oficiais até a filial cravar):
 
@@ -385,13 +385,13 @@ Sempre duas linhas, mesma lógica em todos:
 - **Inscrição agora:** R$ 99 (paga neste checkout)
 - **Valor do curso:** R$ X (pago depois, na escola / 1º dia — a filial já opera inscrição à parte)
 
-O valor do curso é informação de referência e vem do catálogo; a fonte é a página do curso na escola. Não misturar modelo "às vezes cobra total". A matrícula rápida é da inscrição.
+O valor do curso é informação de referência e vem do catálogo; a fonte é a página do curso na escola. Não misturar modelo "às vezes cobra total". A matrícula em cursos presenciais é da inscrição.
 
 ---
 
 ## 10. Visual e marca (padrão real da filial, não aproximação)
 
-A referência é o **site institucional em produção**, arquivo `site/index.html` deste repositório (home). A matrícula rápida deve parecer uma página da home, não um app.
+A referência é o **site institucional em produção**, arquivo `site/index.html` deste repositório (home). A matrícula em cursos presenciais deve parecer uma página da home, não um app.
 
 ### Tokens (copiar do `:root` de `site/index.html`)
 
@@ -427,7 +427,7 @@ Observação: `cursos.html` usa uma paleta mais antiga (`--red #ed1b2e`, `--radi
 ### Cabeçalho (copiar de `site/index.html`, `header.main-header`)
 
 - Logo horizontal à esquerda; menu: Início, Notícias, Cursos, Campanhas, Parceiros, FAQ, Equipe, Contato; botão "Plataforma" (escola) à direita; menu sanfona no celular.
-- Na matrícula rápida, o item ativo é **Cursos**; acrescentar "Matrícula rápida" só se a home também ganhar esse item.
+- Na matrícula em cursos presenciais, o item ativo é **Cursos**; acrescentar "Matrícula cursos presenciais" só se a home também ganhar esse item.
 - A faixa preta superior "CRUZ VERMELHA BRASILEIRA - FILIAL DO ESTADO DO RIO DE JANEIRO", com e-mail e redes, existe em `cursos.html` (`.topbar`). Pode ser usada, desde que a home também a adote; não inventar uma terceira variação.
 
 ### Rodapé (copiar de `site/index.html`, `footer`)
@@ -459,20 +459,20 @@ Foi iniciado um HTML navegável (catálogo + detalhe + checkout mock + aguardand
 - Login/senha na tela Parabéns são **fake**, no lugar da resposta da API da escola.
 - Vídeo é placeholder (imagem Unsplash + play).
 - Dois cursos extras são placeholder.
-- **Está fora do padrão visual da filial** (logo, cores, cabeçalho). Refazer em cima de `site/index.html`, na pasta `site/matricula-rapida/` deste repositório, antes de qualquer validação com a equipe.
+- **Está fora do padrão visual da filial** (logo, cores, cabeçalho). Refazer em cima de `site/index.html`, na pasta `site/matricula-cursos-presenciais/` deste repositório, antes de qualquer validação com a equipe.
 
 Qualquer implementação nova deve partir deste circuito, não do funil da escola.
 
-Já existe um experimento anterior de um curso só (Punção Venosa) em estilo "paga matrícula, agenda depois": `https://puncaovenosav1.cruzvermelhariodejaneiro.org/` (código em `matheusmacedo-create/puncaovenosa-fullautomatic`). Validou o modelo pagar-primeiro e já tem a integração Unicopag, o webhook, a planilha da secretaria e os e-mails prontos. A matrícula rápida é a versão **catálogo** disso, no domínio oficial (ver seção 23).
+Já existe um experimento anterior de um curso só (Punção Venosa) em estilo "paga matrícula, agenda depois": `https://puncaovenosav1.cruzvermelhariodejaneiro.org/` (código em `matheusmacedo-create/puncaovenosa-fullautomatic`). Validou o modelo pagar-primeiro e já tem a integração Unicopag, o webhook, a planilha da secretaria e os e-mails prontos. A matrícula em cursos presenciais é a versão **catálogo** disso, no domínio oficial (ver seção 23).
 
 ---
 
 ## 12. Relação com as páginas atuais
 
-| Página atual | Destino depois da matrícula rápida |
+| Página atual | Destino depois da matrícula em cursos presenciais |
 |---|---|
-| Home | bloco "Já escolheu seu curso?" com seletor de curso apontando para `/matricula-rapida?curso=…` |
-| `/cursos.html` (vitrine + WhatsApp) | pode continuar; CTA principal de lead quente aponta para `/matricula-rapida?curso=…`; corrigir "Inscrição: R$ 100,00" para R$ 99 |
+| Home | bloco "Já escolheu seu curso?" com seletor de curso apontando para `/matricula-cursos-presenciais?curso=…` |
+| `/cursos.html` (vitrine + WhatsApp) | pode continuar; CTA principal de lead quente aponta para `/matricula-cursos-presenciais?curso=…`; corrigir "Inscrição: R$ 100,00" para R$ 99 |
 | `escola.cursoscruzvermelha.org` | continua para quem quer comparar turma/FAQ longo, e para **depois** do pagamento |
 | WhatsApp da secretaria | vira escape (dúvida), não o caixa principal |
 
@@ -502,7 +502,7 @@ Não esconder a escola. Só não forçar o lead quente a atravessar cadastro + t
 Porque o modelo aceita reclamação em troca de volume:
 
 - taxa de estorno / inscritos pagos
-- tempo médio `pago` → `encaixado` (isso é da escola; a matrícula rápida precisa receber esse evento da escola)
+- tempo médio `pago` → `encaixado` (isso é da escola; a matrícula em cursos presenciais precisa receber esse evento da escola)
 - abandono em `aguardando_pagamento`
 - estorno por curso (se um curso estorna 40%, o anúncio ou o texto está vendendo errado)
 - PIX aprovado vs cartão recusado
@@ -522,7 +522,7 @@ A vitrine atual pede, no ato da matrícula tradicional:
 - RG, CPF, comprovante de residência
 - 1 kg de alimento não perecível
 
-**Decisão de produto (protótipo atual):** a matrícula rápida **não** coleta documento nem comprovante. Coleta nome/CPF/e-mail/WhatsApp e um checkbox de requisito por curso ("Li os requisitos do curso e confirmo que os atendo", com link). O resto a secretaria pede no outro ambiente (ou no primeiro dia). O 1 kg de alimento fica como aviso, não como barreira, salvo decisão contrária da filial.
+**Decisão de produto (protótipo atual):** a matrícula em cursos presenciais **não** coleta documento nem comprovante. Coleta nome/CPF/e-mail/WhatsApp e um checkbox de requisito por curso ("Li os requisitos do curso e confirmo que os atendo", com link). O resto a secretaria pede no outro ambiente (ou no primeiro dia). O 1 kg de alimento fica como aviso, não como barreira, salvo decisão contrária da filial.
 
 Homologação do Bombeiro Civil, se existir, **continua à parte**. Não misturar no valor da inscrição.
 
@@ -530,19 +530,19 @@ Homologação do Bombeiro Civil, se existir, **continua à parte**. Não mistura
 
 ## 16. Mapa de URLs
 
-Domínio: `cruzvermelhariodejaneiro.org` (páginas na Hostinger, pasta `public_html/matricula-rapida/`).
+Domínio: `cruzvermelhariodejaneiro.org` (páginas na Hostinger, pasta `public_html/matricula-cursos-presenciais/`).
 
 | URL | Tela |
 |---|---|
-| `/matricula-rapida/` | catálogo + detalhe |
-| `/matricula-rapida/?curso=slug` | mesmo, curso pré-selecionado |
-| `/matricula-rapida/checkout/` | dados do aluno + pagamento Unicopag (PIX ou cartão) |
-| `/matricula-rapida/pendente/` | não pago |
-| `/matricula-rapida/parabens/` | pago + acesso (aberta por token de sessão do pagamento; nunca senha na URL) |
+| `/matricula-cursos-presenciais/` | catálogo + detalhe |
+| `/matricula-cursos-presenciais/?curso=slug` | mesmo, curso pré-selecionado |
+| `/matricula-cursos-presenciais/checkout/` | dados do aluno + pagamento Unicopag (PIX ou cartão) |
+| `/matricula-cursos-presenciais/pendente/` | não pago |
+| `/matricula-cursos-presenciais/parabens/` | pago + acesso (aberta por token de sessão do pagamento; nunca senha na URL) |
 
 Redirect final: `url_ambiente` devolvida pela API da escola.
 
-A pasta `matricula-rapida/` não é tocada pela Redação (que só escreve em `noticias/`, `termos/`, `privacidade/`, `sitemap.xml`, `robots.txt` e `index.html`). Deve entrar no sitemap do site.
+A pasta `matricula-cursos-presenciais/` não é tocada pela Redação (que só escreve em `noticias/`, `termos/`, `privacidade/`, `sitemap.xml`, `robots.txt` e `index.html`). Deve entrar no sitemap do site.
 
 ---
 
@@ -550,7 +550,7 @@ A pasta `matricula-rapida/` não é tocada pela Redação (que só escreve em `n
 
 O site institucional é HTML estático em hospedagem compartilhada Hostinger (LiteSpeed; PHP e MySQL disponíveis, sem Node). O que importa:
 
-1. **Páginas públicas rápidas no mesmo domínio** (confiança no PIX, rastreamento em primeira parte): HTML/CSS/JS estáticos em `site/matricula-rapida/`, publicados como o resto do site (`scripts/publicar_hostinger.sh`).
+1. **Páginas públicas rápidas no mesmo domínio** (confiança no PIX, rastreamento em primeira parte): HTML/CSS/JS estáticos em `site/matricula-cursos-presenciais/`, publicados como o resto do site (`scripts/publicar_hostinger.sh`).
 2. **Backend mínimo**: criar cobrança Unicopag, receber webhook, chamar API da escola, mandar e-mail, registrar tudo. Fica na API já existente do projeto da Punção Venosa (Vercel), generalizada para vários cursos, exposta em `api.cruzvermelhariodejaneiro.org` com CORS restrito a `https://cruzvermelhariodejaneiro.org`. O aluno nunca navega para esse host; ele só recebe chamadas `fetch` das páginas. Sessão do pagamento por cookie `httpOnly` com `Domain=.cruzvermelhariodejaneiro.org` (mesmo site) ou por token opaco devolvido ao criar a cobrança.
 3. Nenhuma lógica de turma neste backend.
 
@@ -582,7 +582,7 @@ Alternativa se a equipe preferir uma stack só na Hostinger: reescrever o backen
 
 ## 19. Perguntas ainda abertas (não chutar)
 
-Já respondidas e retiradas da lista: valor da inscrição (R$ 99 em todos); provedor de e-mail (Resend, domínio verificado); onde a página vive (`/matricula-rapida` no domínio, Hostinger); V1 só CPF (a Unicopag exige documento).
+Já respondidas e retiradas da lista: valor da inscrição (R$ 99 em todos); provedor de e-mail (Resend, domínio verificado); onde a página vive (`/matricula-cursos-presenciais` no domínio, Hostinger); V1 só CPF (a Unicopag exige documento).
 
 1. Lista fechada dos **9 nomes oficiais** e slugs (hoje 7 publicados na escola).
 2. O valor do curso é cobrado na confirmação da turma, no primeiro dia, ou ainda na escola por outro checkout?
@@ -598,9 +598,9 @@ Já respondidas e retiradas da lista: valor da inscrição (R$ 99 em todos); pro
 
 ## 20. Definição de pronto (V1)
 
-A V1 da matrícula rápida está pronta quando:
+A V1 da matrícula em cursos presenciais está pronta quando:
 
-- [ ] `/matricula-rapida/` no domínio da filial lista os cursos oficiais, com o cabeçalho e o rodapé da home
+- [ ] `/matricula-cursos-presenciais/` no domínio da filial lista os cursos oficiais, com o cabeçalho e o rodapé da home
 - [ ] selecionar curso mostra texto + mídia + botão de inscrição
 - [ ] checkout Unicopag cobra só a inscrição (R$ 99)
 - [ ] pendente não cria usuário
@@ -639,7 +639,7 @@ A V1 da **escola** (outro projeto) está pronta quando:
 
 ## 22. Resumo para humano (30 segundos)
 
-O site grande da escola é burocrático. Vamos ter uma página em cruzvermelhariodejaneiro.org/matricula-rapida: escolhe curso, paga inscrição de R$ 99 na Unicopag, espera. Se pagou, a API da escola cria a matrícula e manda o acesso (enquanto a API não existe, a secretaria fecha pelo WhatsApp em até 2 dias úteis). Horário e estorno são lá. Sem data nesta página. Mesmo domínio, mesmo visual e mesmo rastreamento do site da filial. Professores estão todos os dias; o gargalo é a entrada, não a turma.
+O site grande da escola é burocrático. Vamos ter uma página em cruzvermelhariodejaneiro.org/matricula-cursos-presenciais: escolhe curso, paga inscrição de R$ 99 na Unicopag, espera. Se pagou, a API da escola cria a matrícula e manda o acesso (enquanto a API não existe, a secretaria fecha pelo WhatsApp em até 2 dias úteis). Horário e estorno são lá. Sem data nesta página. Mesmo domínio, mesmo visual e mesmo rastreamento do site da filial. Professores estão todos os dias; o gargalo é a entrada, não a turma.
 
 ---
 
@@ -649,7 +649,7 @@ Este briefing é a **definição do produto**. O plano de implementação de 16/
 (`docs/plano-matricula-express.md`) continua válido para o backend, com estas mudanças:
 
 1. **Sem subdomínio para o aluno.** O plano previa `matricula.cruzvermelhariodejaneiro.org`;
-   agora as páginas ficam em `cruzvermelhariodejaneiro.org/matricula-rapida/` (estáticas, na
+   agora as páginas ficam em `cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/` (estáticas, na
    Hostinger) e o backend existente da Punção Venosa vira API (`api.cruzvermelhariodejaneiro.org`)
    com CORS restrito ao domínio. O que já está pronto e é reaproveitado: cliente Unicopag,
    reaproveitamento de PIX pendente, webhook com reconsulta, e-mails Resend com log,
@@ -659,11 +659,11 @@ Este briefing é a **definição do produto**. O plano de implementação de 16/
    tela Parabéns versão B (planilha + painel + WhatsApp da secretaria) e a versão A entra quando
    a escola expuser a API. Novo registro de entregas `escola_entregas` (tentativas, retry,
    reenvio manual pelo painel), no mesmo padrão de `webhook_entregas` e `email_entregas`.
-3. **Sem triagem.** As 8 perguntas ficam só no funil da Punção Venosa; a matrícula rápida termina
+3. **Sem triagem.** As 8 perguntas ficam só no funil da Punção Venosa; a matrícula em cursos presenciais termina
    em `pago`.
 4. **Páginas.** Catálogo com agrupamento e detalhe, checkout, pendente e parabéns, todas com o
    cabeçalho e o rodapé da home. Nada de gaveta em iframe (cookie e `X-Frame-Options` impedem).
 5. **Home e vitrine.** Bloco na home e botões em `cursos.html` apontam para
-   `/matricula-rapida?curso=…`; corrigir a linha "Inscrição: R$ 100,00".
-6. **Sitemap.** `/matricula-rapida/` entra no sitemap do site; as páginas de pendente e parabéns
+   `/matricula-cursos-presenciais?curso=…`; corrigir a linha "Inscrição: R$ 100,00".
+6. **Sitemap.** `/matricula-cursos-presenciais/` entra no sitemap do site; as páginas de pendente e parabéns
    levam `noindex`.
