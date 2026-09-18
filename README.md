@@ -9,7 +9,7 @@ projetos separados e têm seus próprios repositórios.
 
 | Endereço | O que é | Onde roda | Observações |
 | --- | --- | --- | --- |
-| `cruzvermelhariodejaneiro.org` (e `www`) | Site institucional: home, cursos, doação, equipe, campanha do agasalho, notícias, termos, privacidade | Hostinger, hospedagem compartilhada (conta `u448697994`, plano Business, LiteSpeed, SSL ativo com redirecionamento HTTPS) | HTML estático. As páginas mantidas à mão estão em `site/`. `noticias/`, `termos/`, `privacidade/`, `sitemap.xml` e `robots.txt` são gerados pela **Redação** via FTP. |
+| `cruzvermelhariodejaneiro.org` (e `www`) | Site institucional: home, doação, equipe, campanha do agasalho, notícias, termos, privacidade (`cursos.html` saiu do ar em 18/09/2026 e responde 301 para a matrícula) | Hostinger, hospedagem compartilhada (conta `u448697994`, plano Business, LiteSpeed, SSL ativo com redirecionamento HTTPS) | HTML estático. As páginas mantidas à mão estão em `site/`. `noticias/`, `termos/`, `privacidade/`, `sitemap.xml` e `robots.txt` são gerados pela **Redação** via FTP. |
 | `cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/` | **Matrícula cursos presenciais**: catálogo dos 7 cursos publicados na escola, inscrição de R$ 99, cabeçalho e rodapé da home | Hostinger, mesma pasta do site (`public_html/matricula-cursos-presenciais/`) | Página gerada por `scripts/gerar_matricula_presencial.py` a partir de `cursos.json` (sincronizado do catálogo da escola por `scripts/sincronizar_catalogo.py`). Definição do produto em `docs/briefing-matricula-cursos-presenciais.md`. |
 | `escola.cursoscruzvermelha.org` | **Escola de Educação e Saúde CVB-RJ**: catálogo de cursos, turmas, matrícula, login de alunos | Render (`escola-cruz-vermelha-1.onrender.com`), atrás da Cloudflare | App Node/Express (cookie `escola.sid`). Domínio **separado de propósito**, por resiliência após uma queda do domínio principal. Também responde em `escola.cruzvermelhariodejaneiro.org` (CNAME já existente). |
 | `cursoscruzvermelha.org` (raiz e `www`) | Domínio da escola | DNS na Hostinger, mas em **outra conta** (não aparece nesta) | A raiz mostra a página "Parked Domain" da Hostinger com `robots.txt` bloqueando tudo. Só o subdomínio `escola.` está em uso. |
@@ -51,6 +51,12 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
    escola e `provider` ligado à instituição. Isso diz ao Google que os dois domínios são a
    mesma organização. O par simétrico para a escola está em `escola/head-seo.html`.
 6. **Canonical** nas duas páginas editadas (`www` e apex servem o mesmo conteúdo).
+
+> **18/09/2026:** `cursos.html` saiu do ar (estava desatualizada e confundia quem ia se matricular).
+> Responde **301** para `/matricula-cursos-presenciais/`, que passou a ser a vitrine de cursos do
+> domínio e carrega a lista de cursos em JSON-LD (`Course`). Os itens 3 e 5 acima ficam como
+> histórico; os menus de `doacao.html` e `campanha-agasalho.html` passaram a apontar "Cursos"
+> para a plataforma da escola, como a home.
 
 ## Sitemaps e indexação
 
@@ -103,13 +109,19 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   fica só em "Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria
   (nem o botão flutuante da home), porque desviavam da matrícula; o link para o curso na
   plataforma da escola fica discreto, no fim do detalhe.
+- **Revisão de copy e SEO (18/09)**: título "Matrícula em cursos presenciais no RJ | Cruz Vermelha
+  Brasileira"; description corrigida ("garanta"); H1 com linha de apoio com as palavras-chave
+  (cursos presenciais, Cruz Vermelha Brasileira, Rio de Janeiro); botão "Escolher meu curso" no
+  topo; breadcrumb sem `cursos.html`; `Course` com `image`, `offers` (inscrição e valor do curso) e
+  `hasCourseInstance` (presencial, endereço, carga horária); FAQ com formas de pagamento; taglines
+  curtas demais da escola trocadas pela primeira frase de "Sobre o curso"; menu sanfona do celular
+  corrigido nesta página (a home ainda tem o defeito, ver "Pontos de atenção").
 - **Menu**: "Matrícula cursos presenciais" entrou na barra superior das cinco páginas mantidas
   à mão e no rodapé da home. `sitemap-paginas.xml` complementa o `sitemap.xml` da Redação;
   envie os dois no Search Console.
 - **Publicar**: `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/index.html
-  site/matricula-cursos-presenciais/img/*.webp site/index.html site/cursos.html
-  site/doacao.html site/equipe.html site/campanha-agasalho.html site/sitemap-paginas.xml`
-  e limpar o cache do site.
+  site/matricula-cursos-presenciais/img/*.webp site/index.html site/doacao.html
+  site/equipe.html site/campanha-agasalho.html site/sitemap-paginas.xml` e limpar o cache do site.
 - **Publicada na Hostinger em 18/09/2026**: `index.html` e `img/*.webp` em
   `public_html/matricula-cursos-presenciais/`, as cinco páginas com o link no menu e
   `sitemap-paginas.xml`, com o cache do site limpo em seguida. No ar em
@@ -130,9 +142,9 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   Links exposto ao público. Concluir a instalação ou remover/proteger o arquivo.
 - Ícones de LinkedIn e TikTok no rodapé da home apontam para `linkedin.com` e `tiktok.com`
   genéricos (não há perfil configurado). Trocar pelas URLs reais ou remover.
-- `cursos.html` fala em "cursos com início em julho" e traz preços diferentes dos da
-  escola. Hoje a página avisa que os dados atualizados estão na plataforma; o ideal é
-  revisar o texto ou passar a apontar só para o catálogo.
+- `cursos.html` saiu do ar em 18/09/2026 (301 para a matrícula), mas o `sitemap.xml` da Redação
+  ainda a lista entre as páginas fixas: retirar da lista no projeto da Redação, para o sitemap
+  parar de apontar para um redirecionamento.
 - `www.cruzvermelhariodejaneiro.org` serve o site sem redirecionar para o apex. A tag
   canonical resolve para o Google, mas um redirecionamento `www → apex` seria mais limpo.
 - DMARC em `p=none`. Depois de conferir os relatórios, evoluir para `quarantine`.

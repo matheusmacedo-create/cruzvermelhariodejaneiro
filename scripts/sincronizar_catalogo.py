@@ -113,10 +113,18 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
     m_hom = re.search(r"\s*\((?:VALOR DE )?HOMOLOGA[^)]*\)\s*$", descricao, re.I)
     if m_hom:
         descricao = descricao[: m_hom.start()].strip()
+    # Tagline da escola: frases "Inclui X." viram observação; se o que sobrar for curto demais
+    # ("Capacitação essencial."), a descrição passa a ser a primeira frase de "Sobre o curso".
+    frases = [f.strip() for f in re.split(r"(?<=[.!?])\s+", descricao) if f.strip()]
+    inclui = [f if f.endswith(".") else f + "." for f in frases if re.match(r"inclui\b", f, re.I)]
+    descricao = " ".join(f for f in frases if not re.match(r"inclui\b", f, re.I))
+    if len(descricao) < 30:
+        descricao = ""
 
     sobre = bloco_entre(linhas, "Sobre o curso", ["Turmas abertas", "Dúvidas frequentes", "Investimento"])
     observacoes = [l for l in sobre if re.search(r"homologa|alimento|documento|a cargo do aluno", l, re.I)]
     sobre = [l for l in sobre if l not in observacoes]
+    observacoes = inclui + observacoes
     for comp in complementos:
         if comp.startswith("+"):
             observacoes.insert(0, "Inclui " + comp.lstrip("+ ").strip() + ".")

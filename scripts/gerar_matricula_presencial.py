@@ -40,11 +40,15 @@ ESCOLA = "https://escola.cursoscruzvermelha.org"
 WHATSAPP = "5521999922864"
 CHECKOUT_URL = ""  # ex.: "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/"
 
-TITULO = "Matrícula cursos presenciais | Cruz Vermelha Brasileira RJ"
+TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira"
 DESCRICAO = ("Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de "
-             "Janeiro: escolha o curso, pague a inscrição de R$ 99 e garante sua vaga. "
+             "Janeiro: escolha o curso, pague a inscrição de R$ 99 e garanta sua vaga. "
              "Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.")
 IMAGEM_OG = f"{ORIGEM}/assets/hero-cursos-banner-1.jpg"
+IMAGEM_OG_TAMANHO = (1600, 540)
+ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
+            "addressRegion": "RJ", "postalCode": "20230-130", "addressCountry": "BR"}
+LOCAL = {"@type": "Place", "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro", "address": ENDERECO}
 
 TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da "
                  "confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.")
@@ -53,6 +57,9 @@ FAQ_PAGINA = [
     ("O que é a inscrição de R$ 99?",
      "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago "
      "depois, direto na escola, no valor à vista informado em cada curso."),
+    ("Quais são as formas de pagamento?",
+     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, direto na escola, "
+     "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
      "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis "
      "para confirmar turma e horário."),
@@ -199,14 +206,24 @@ def main() -> int:
         curso = {"@type": "Course", "name": c["nome"], "description": c["descricao"] or (c["sobre"][0] if c["sobre"] else ""),
                  "url": f"{URL_PAGINA}?curso={s}", "provider": provedor, "courseMode": "Onsite",
                  "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira"}
+        if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
+            curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
+        ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
+                    "priceCurrency": "BRL", "url": f"{URL_PAGINA}?curso={s}", "availability": "https://schema.org/InStock"}]
+        if c["valor_curso_centavos"]:
+            ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na escola)",
+                            "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
+        curso["offers"] = ofertas
+        instancia = {"@type": "CourseInstance", "courseMode": "Onsite", "location": LOCAL}
         if horas_iso(c["carga_horaria"]):
             curso["timeRequired"] = horas_iso(c["carga_horaria"])
+            instancia["courseWorkload"] = horas_iso(c["carga_horaria"])
+        curso["hasCourseInstance"] = [instancia]
         itens.append({"@type": "ListItem", "position": i, "item": curso})
     ld = [
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
-            {"@type": "ListItem", "position": 2, "name": "Cursos", "item": f"{ORIGEM}/cursos.html"},
-            {"@type": "ListItem", "position": 3, "name": "Matrícula cursos presenciais", "item": URL_PAGINA}]},
+            {"@type": "ListItem", "position": 2, "name": "Matrícula cursos presenciais", "item": URL_PAGINA}]},
         {"@context": "https://schema.org", "@type": "ItemList", "name": "Matrícula em cursos presenciais da Cruz Vermelha RJ",
          "url": URL_PAGINA, "itemListElement": itens},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
@@ -220,6 +237,8 @@ def main() -> int:
   <style>
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
     .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
+    .mr-hero h1 .mr-h1-sub { display: block; font-size: .5em; font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.25; margin-top: .4em; }
+    .mr-hero .cta-row { margin-top: 22px; }
     .mr-hero .lead { max-width: 72ch; }
     .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
@@ -267,6 +286,9 @@ def main() -> int:
       .mr-passos { grid-template-columns: 1fr; }
       .mr-preco { grid-template-columns: 1fr; }
       .mr-corpo { padding: 22px; }
+      /* O CSS da home esconde qualquer <nav> abaixo de 920px (regra do menu antigo) e o menu sanfona
+         abria sem os links. Nesta página os links voltam a aparecer com o menu aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
     }
   </style>"""
 
@@ -353,6 +375,9 @@ def main() -> int:
   <meta property="og:description" content="{esc(DESCRICAO)}">
   <meta property="og:url" content="{URL_PAGINA}">
   <meta property="og:image" content="{IMAGEM_OG}">
+  <meta property="og:image:width" content="{IMAGEM_OG_TAMANHO[0]}">
+  <meta property="og:image:height" content="{IMAGEM_OG_TAMANHO[1]}">
+  <meta property="og:image:alt" content="Cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -372,9 +397,12 @@ def main() -> int:
   <main id="matricula-cursos-presenciais">
     <section class="mr-hero" aria-labelledby="mr-titulo">
       <div class="wrap">
-        <p class="eyebrow">Cursos presenciais · Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga</h1>
-        <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro, com certificado ao final.</p>
+        <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
+        <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga <span class="mr-h1-sub">nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro</span></h1>
+        <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Certificado da Cruz Vermelha Brasileira ao final.</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="#cursos">Escolher meu curso</a>
+        </div>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>

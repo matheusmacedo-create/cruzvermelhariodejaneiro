@@ -206,13 +206,15 @@
       "uuid": "f8373fef-2523-42e4-ab3f-cc1059b10379",
       "nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças",
       "url_escola": "https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379",
-      "descricao": "Capacitação essencial. Inclui Stop the Bleed.",
+      "descricao": "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
       "sobre": [
         "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
         "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.",
         "Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência."
       ],
-      "observacoes": [],
+      "observacoes": [
+        "Inclui Stop the Bleed."
+      ],
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 15000,

@@ -26,7 +26,8 @@
 > telefone nem WhatsApp da secretaria, nem o botão flutuante da home: desviavam da matrícula.
 > (3) Botão único por curso, "Fazer matrícula agora"; o link para o curso na plataforma da escola
 > fica discreto, no fim do detalhe. (4) As fotos vêm do catálogo da escola, recortadas em 4:3.
-> Onde as seções 6.1, 10 e 18 disserem diferente, vale esta nota.
+> (5) `cursos.html` saiu do ar no mesmo dia e responde 301 para esta página, que virou a vitrine
+> de cursos do domínio. Onde as seções 6.1, 10, 12 e 18 disserem diferente, vale esta nota.
 
 ---
 
