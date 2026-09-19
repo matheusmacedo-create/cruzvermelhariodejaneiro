@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-19T02:14:03+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-19T03:24:12+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
-    <lastmod>2026-09-18T21:20:07+00:00</lastmod>
+    <lastmod>2026-09-19T03:22:31+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -73,9 +73,19 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-equipe-grupo.jpg</image:loc>
+      <image:title>Equipe de voluntários reunida no auditório da sede</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/dia-cruz-vermelha.jpg</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-hero-favela.jpg</image:loc>
+      <image:title>Voluntário entregando agasalho a morador de comunidade</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/auditorio-voluntarios.jpg</image:loc>
+      <image:title>Turma de voluntários em formação no auditório da sede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-fila-comunidade.jpg</image:loc>
+      <image:title>Comunidade recebendo doações da Campanha do Agasalho</image:title>
     </image:image>
   </url>
   <url>
@@ -164,7 +174,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/equipe.html</loc>
-    <lastmod>2026-09-18T21:17:25+00:00</lastmod>
+    <lastmod>2026-09-19T03:22:32+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
