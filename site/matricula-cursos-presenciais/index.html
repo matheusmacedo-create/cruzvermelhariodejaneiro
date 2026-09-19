@@ -22,10 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <!-- Estilos copiados da home (site/index.html) para a página ficar idêntica ao padrão da filial. -->
   <style>
+    /* Ícones em SVG inline (scripts/icones.py) */
+    i[class*="fa-"] { display: inline-block; font-style: normal; line-height: 1; }
+    .ico { display: inline-block; width: 1em; height: 1em; fill: currentColor; vertical-align: -.125em; overflow: visible; }
+    .nav-toggle .ico-xmark { display: none; }
+    .main-header.nav-open .nav-toggle .ico-bars { display: none; }
+    .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
     :root {
       --red: #cc0000;
       --red-dark: #a30000;
@@ -262,7 +268,6 @@
         margin-left: 0;
       }
       .main-header.nav-open .header-collapse { display: flex; }
-      .main-header.nav-open .nav-toggle i::before { content: "\f00d"; }
       .nav-links {
         position: static;
         transform: none;
@@ -1024,7 +1029,6 @@
     }
   </style>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -1038,9 +1042,7 @@
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
@@ -1048,6 +1050,19 @@
   <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
   /></noscript>
+  <script>
+    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
+    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    (function () {
+      function carregar() {
+        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
+          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+        });
+      }
+      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
+      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+    })();
+  </script>
   <!-- End Meta Pixel Code -->
 
   <script type="application/ld+json">
@@ -1558,6 +1573,7 @@
   </script>
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-certificate" viewBox="0 0 512 512"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.3-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/></symbol><symbol id="i-circle-info" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></symbol><symbol id="i-clock" viewBox="0 0 512 512"><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-linkedin-in" viewBox="0 0 448 512"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></symbol><symbol id="i-list-check" viewBox="0 0 512 512"><path d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H192c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-tiktok" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
   <script>document.documentElement.classList.add('js');</script>
   <header class="main-header">
     <div class="header-container">
@@ -1566,7 +1582,7 @@
       </a>
 
       <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
-        <i class="fa-solid fa-bars"></i>
+        <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
       </button>
 
       <div class="header-collapse">
@@ -1582,7 +1598,7 @@
         </nav>
 
         <div class="header-actions">
-          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"></i> Plataforma</a>
+          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
         </div>
       </div>
     </div>
@@ -1596,9 +1612,9 @@
         <p class="mr-h1-sub">Cursos presenciais no Centro do Rio. Garanta sua vaga hoje: a inscrição de R$ 99,00 reserva seu lugar.</p>
         <p class="lead">Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais. Escolha o curso, pague por PIX ou cartão e a vaga é sua.</p>
         <div class="mr-chips">
-          <span class="mr-chip"><i class="fa-solid fa-list-check"></i> 7 cursos presenciais</span>
-          <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
-          <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira</span>
+          <span class="mr-chip"><i class="fa-solid fa-list-check"><svg class="ico ico-list-check" aria-hidden="true" focusable="false"><use href="#i-list-check"/></svg></i> 7 cursos presenciais</span>
+          <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10 · Centro</span>
+          <span class="mr-chip"><i class="fa-solid fa-certificate"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i> Certificado da Cruz Vermelha Brasileira</span>
         </div>
       </div>
     </section>
@@ -1614,15 +1630,15 @@
           <div class="mr-detalhes">
             
         <article class="mr-detalhe" id="curso-primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico">
-          <img class="mr-foto" src="img/primeiros-socorros-basico-960.webp" srcset="img/primeiros-socorros-basico-480.webp 480w, img/primeiros-socorros-basico-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira do Rio de Janeiro" loading="eager" width="960" height="720">
+          <img class="mr-foto" src="img/primeiros-socorros-basico-960.webp" srcset="img/primeiros-socorros-basico-480.webp 480w, img/primeiros-socorros-basico-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira do Rio de Janeiro" loading="eager" fetchpriority="high" width="960" height="720">
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>Primeiros Socorros Básico</h2>
             <p class="lead">O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1634,7 +1650,7 @@
             <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p>
-            <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Inclui Lei Lucas.</p>
+            <p class="mr-nota"><i class="fa-solid fa-circle-info"><svg class="ico ico-circle-info" aria-hidden="true" focusable="false"><use href="#i-circle-info"/></svg></i> Inclui Lei Lucas.</p>
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Primeiros Socorros Básico</h3><details><summary>Preciso ser da área da saúde?</summary><p>Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p></details><details><summary>Posso trabalhar como socorrista após o curso?</summary><p>Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados.</p></details><details><summary>Existe prática?</summary><p>Sim. O curso possui atividades demonstrativas e práticas supervisionadas.</p></details><details><summary>Há validade para o certificado?</summary><p>Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento.</p></details></div>
             <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
@@ -1646,9 +1662,9 @@
             <h2>Primeiros Socorros Lei Lucas - Ambientes com Crianças</h2>
             <p class="lead">O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1660,7 +1676,7 @@
             <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.</p><p>Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência.</p>
-            <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Inclui Stop the Bleed.</p>
+            <p class="mr-nota"><i class="fa-solid fa-circle-info"><svg class="ico ico-circle-info" aria-hidden="true" focusable="false"><use href="#i-circle-info"/></svg></i> Inclui Stop the Bleed.</p>
             
             <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
@@ -1672,9 +1688,9 @@
             <h2>Punção Venosa</h2>
             <p class="lead">Técnica de acesso venoso periférico com segurança.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1698,9 +1714,9 @@
             <h2>Suporte Básico de Vida</h2>
             <p class="lead">Atendimento inicial de emergências com diretrizes oficiais.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 4 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 4 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1724,9 +1740,9 @@
             <h2>Bombeiro Civil</h2>
             <p class="lead">Formação para atuação em prevenção e combate a incêndios.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 80 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 80 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1738,7 +1754,7 @@
             <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
             <p>O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, uso de equipamentos de segurança, gerenciamento de riscos e resposta a emergências.</p><p>Após a conclusão, o profissional poderá atuar em empresas, indústrias, hospitais, condomínios, shopping centers, aeroportos, hotéis, instituições de ensino, eventos e diversos estabelecimentos que necessitam de equipes especializadas em prevenção e atendimento a emergências.</p>
-            <p class="mr-nota"><i class="fa-solid fa-circle-info"></i> Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p>
+            <p class="mr-nota"><i class="fa-solid fa-circle-info"><svg class="ico ico-circle-info" aria-hidden="true" focusable="false"><use href="#i-circle-info"/></svg></i> Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p>
             <div class="mr-faq"><h3>Dúvidas frequentes sobre Bombeiro Civil</h3><details><summary>Quem pode fazer o curso de Bombeiro Civil?</summary><p>Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências.</p></details><details><summary>O certificado é reconhecido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências.</p></details><details><summary>Onde posso trabalhar após o curso?</summary><p>O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências.</p></details><details><summary>O curso possui aulas práticas?</summary><p>Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência.</p></details><details><summary>Preciso ter experiência na área?</summary><p>Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula.</p></details></div>
             <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
@@ -1750,9 +1766,9 @@
             <h2>Cuidador de Idosos (Curso Livre)</h2>
             <p class="lead">Cuidados, segurança e bem-estar no atendimento ao idoso.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 160 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 160 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1776,9 +1792,9 @@
             <h2>Micropigmentação Labial</h2>
             <p class="lead">Procedimento estético de micropigmentação dos lábios.</p>
             <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"></i> 24 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</span>
+              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 24 horas</span>
+              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
+              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
             </div>
             <div class="mr-preco">
               <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
@@ -1840,16 +1856,16 @@
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
-        <p><i class="fa-solid fa-location-dot"></i> Praça Cruz Vermelha, 10</p>
-        <p><i class="fa-regular fa-envelope"></i> contato@cruzvermelhariodejaneiro.org</p>
+        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça Cruz Vermelha, 10</p>
+        <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
       </div>
       <div class="footer-col">
         <h4>Siga-nos</h4>
         <div class="footer-social">
-          <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://www.tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"><svg class="ico ico-linkedin-in" aria-hidden="true" focusable="false"><use href="#i-linkedin-in"/></svg></i></a>
+          <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></a>
+          <a href="https://www.tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"><svg class="ico ico-tiktok" aria-hidden="true" focusable="false"><use href="#i-tiktok"/></svg></i></a>
         </div>
       </div>
     </div>

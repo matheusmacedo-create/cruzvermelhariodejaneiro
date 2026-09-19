@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 
+import icones
 from gerar_matricula_presencial import DADOS, HOME, RAIZ, esc, partes_da_home
 
 PASTA = RAIZ / "site" / "matricula-cursos-presenciais"
@@ -38,8 +39,11 @@ PAGINA = """<!DOCTYPE html>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 @@QRCODE@@
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 @@ESTILO@@
@@ -153,7 +157,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
 CORPO_PENDENTE = """        <div class="ck-card" id="pd-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_PARABENS = """        <div class="ck-card" id="pb-card" aria-live="polite"><p>Carregando…</p></div>"""
 
-QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>'
+QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>'
 
 
 def brl(centavos: int) -> str:
@@ -225,6 +229,7 @@ def main() -> int:
     for nome, html in paginas.items():
         destino = PASTA / nome / "index.html"
         destino.parent.mkdir(parents=True, exist_ok=True)
+        html = icones.converter(html, extras={"circle-check"})  # SVG inline; circle-check vem do checkout.js
         destino.write_text(html, encoding="utf-8")
         print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
     return 0

@@ -27,6 +27,8 @@ import html
 import json
 import re
 from pathlib import Path
+
+import icones
 from urllib.parse import quote
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -141,7 +143,7 @@ def partes_da_home(home: str) -> dict:
     header = absolutizar(header)
     footer = absolutizar(footer)
     # Sem telefone da secretaria nesta página: o caminho do lead é o botão de matrícula.
-    footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"></i>[^<]*</p>', "", footer)
+    footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"[^>]*>(?:<svg.*?</svg>)*</i>[^<]*</p>', "", footer, flags=re.S)
     assert footer_sem_telefone != footer, "linha do telefone não encontrada no rodapé da home"
     footer = footer_sem_telefone
     padrao_menu = re.compile(r'<a href="/matricula-cursos-presenciais/"([^>]*)>Matrícula cursos presenciais</a>')
@@ -192,11 +194,12 @@ def main() -> int:
         )
         faq_html = f'<div class="mr-faq"><h3>Dúvidas frequentes sobre {esc(c["nome"])}</h3>{faq}</div>' if faq else ""
         loading = "eager" if primeiro else "lazy"
+        prioridade = ' fetchpriority="high"' if primeiro else ""  # a primeira foto é o maior elemento visível no celular
         foto = ""
         if (PASTA_IMG / f"{img}-960.webp").exists():
             foto = (f'<img class="mr-foto" src="img/{img}-960.webp" srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" '
                     f'sizes="(max-width: 920px) 100vw, 760px" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira do Rio de Janeiro" '
-                    f'loading="{loading}" width="960" height="720">')
+                    f'loading="{loading}"{prioridade} width="960" height="720">')
         return f'''
         <article class="mr-detalhe" id="curso-{slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">
           {foto}
@@ -416,8 +419,11 @@ def main() -> int:
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <!-- Estilos copiados da home (site/index.html) para a página ficar idêntica ao padrão da filial. -->
 {estilo}
 {css}
@@ -492,6 +498,7 @@ def main() -> int:
 </body>
 </html>
 """
+    pagina = icones.converter(pagina)  # ícones em SVG inline, sem Font Awesome
     SAIDA.write_text(pagina, encoding="utf-8")
     print(f"gravado {SAIDA.relative_to(RAIZ)} ({len(pagina.encode('utf-8'))} bytes, {len(ordem)} cursos)")
     return 0

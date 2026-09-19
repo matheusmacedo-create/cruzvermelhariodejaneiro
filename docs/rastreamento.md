@@ -38,6 +38,15 @@ alimentam os relatórios de funil; `AddPaymentInfo` só disparava no PIX; `Purch
 `transaction_id`; o `InitiateCheckout` disparava no clique da matrícula e não cobria quem entrava
 no checkout pela home.
 
+## Carregamento adiado (19/09, à noite)
+
+Os scripts `gtag.js` e `fbevents.js` passaram a carregar depois do `load` da página, em momento
+ocioso (`requestIdleCallback`, no máximo 2,5 s). O trecho que cria as filas (`dataLayer` e o stub
+`fbq`) continua no `<head>`, então `gtag('config')`, `fbq('init')`, `PageView` e qualquer evento
+disparado antes ficam guardados e saem quando os scripts chegam. Conferido ao vivo depois da
+mudança: PageView na home, matrícula, checkout, equipe e 404; InitiateCheckout, Lead,
+AddPaymentInfo e Purchase no funil, com os mesmos parâmetros.
+
 ## O que a verificação mostrou e não é problema
 
 - **Cada hit do GA4 sai duas vezes**, para `analytics.google.com` (`G-HDYZZ5JZHF`) e para
