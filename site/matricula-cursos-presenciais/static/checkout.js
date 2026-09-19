@@ -38,9 +38,15 @@
     return o;
   }
 
-  function rastrear(eventoMeta, dados, eventoGa) {
-    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dados || {}); } catch (e) { /* pixel ausente */ }
-    try { if (window.gtag && eventoGa) window.gtag('event', eventoGa, dados || {}); } catch (e) { /* GA4 ausente */ }
+  /* Rastreio: Meta recebe o evento padrão com os parâmetros content_*; GA4 recebe o evento de
+     comércio equivalente com os parâmetros que os relatórios de funil esperam (items, value,
+     currency, transaction_id). opcoes.eventID vai para o Meta (deduplicação com a API de conversões). */
+  function rastrear(eventoMeta, dadosMeta, eventoGa, dadosGa, opcoes) {
+    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dadosMeta || {}, opcoes && opcoes.eventID ? { eventID: opcoes.eventID } : undefined); } catch (e) { /* pixel ausente */ }
+    try { if (window.gtag && eventoGa) window.gtag('event', eventoGa, dadosGa || {}); } catch (e) { /* GA4 ausente */ }
+  }
+  function itemGa(slug, nome, centavos) {
+    return { currency: 'BRL', value: centavos / 100, items: [{ item_id: slug, item_name: nome, item_category: 'Cursos presenciais', price: centavos / 100, quantity: 1 }] };
   }
 
   /* Chamada à API. Sempre devolve um objeto com ok/erro e o código HTTP em `http`. */
@@ -146,8 +152,15 @@
 
   function telaCheckout() {
     var form = q('#ck-form'), sel = q('#ck-curso'), erroEl = q('#ck-erro'), btn = q('#ck-pagar');
-    var info = null, cursos = {}, origemAtual = origem();
+    var info = null, cursos = {}, origemAtual = origem(), checkoutIniciado = false;
     try { cursos = JSON.parse(q('#ck-cursos').textContent) || {}; } catch (e) { cursos = {}; }
+    function marcarInicio() {
+      var c = cursos[sel.value];
+      if (checkoutIniciado || !info || !c) return;
+      checkoutIniciado = true;
+      rastrear('InitiateCheckout', { content_name: c.nome, content_ids: [sel.value], content_type: 'product', num_items: 1, value: info.inscricao_centavos / 100, currency: 'BRL' },
+        'begin_checkout', itemGa(sel.value, c.nome, info.inscricao_centavos));
+    }
     var campos = {
       curso: '#ck-curso', nome: '#ck-nome', cpf: '#ck-cpf', email: '#ck-email', telefone: '#ck-telefone',
       cartao_numero: '#ck-cartao-numero', cartao_nome: '#ck-cartao-nome', cartao_validade: '#ck-cartao-validade', cartao_cvv: '#ck-cartao-cvv'
@@ -176,6 +189,7 @@
       var total = inscricao + (cobre ? taxa : 0);
       fichaDoCurso(c);
       q('#ck-cobre-opcao').classList.toggle('marcado', cobre);
+      marcarInicio();
       q('#ck-taxa-valor').textContent = '+ ' + brl(taxa);
       q('#ck-r-inscricao').textContent = brl(inscricao);
       q('#ck-r-taxa-linha').hidden = !cobre;
@@ -235,7 +249,9 @@
       var rotulo = btn.innerHTML;
       btn.disabled = true;
       btn.textContent = dados.metodo === 'pix' ? 'Gerando o PIX…' : 'Processando o pagamento…';
-      rastrear('Lead', { content_name: cursos[dados.curso] ? cursos[dados.curso].nome : dados.curso, content_ids: [dados.curso], content_category: 'matricula-cursos-presenciais' }, 'matricula_dados');
+      var nomeCurso = cursos[dados.curso] ? cursos[dados.curso].nome : dados.curso, centavosInscricao = info ? info.inscricao_centavos : 9900;
+      rastrear('Lead', { content_name: nomeCurso, content_ids: [dados.curso], content_category: 'matricula-cursos-presenciais', value: centavosInscricao / 100, currency: 'BRL' },
+        'generate_lead', { currency: 'BRL', value: centavosInscricao / 100, curso: dados.curso, metodo: dados.metodo });
       api('pagamentos.php', { method: 'POST', body: JSON.stringify(dados) }).then(function (r) {
         dados.cartao = null;
         if (!r.ok) {
@@ -244,13 +260,15 @@
           erro(r.erro || 'Não foi possível processar. Tente novamente.', r.campo);
           return;
         }
+        // Dados de pagamento aceitos pelo provedor (PIX gerado ou cartão enviado): mesmo evento nos dois métodos.
+        rastrear('AddPaymentInfo', { content_name: nomeCurso, content_ids: [dados.curso], content_type: 'product', value: r.total_centavos / 100, currency: 'BRL' },
+          'add_payment_info', Object.assign({ payment_type: dados.metodo }, itemGa(dados.curso, nomeCurso, r.total_centavos)), { eventID: r.token + '-pagamento' });
         if (r.status === 'pago') { location.href = r.urls.parabens; return; }
         if (r.metodo !== 'pix') { location.href = r.urls.pendente; return; } // cartão em análise
         form.hidden = true;
         var painel = q('#ck-pix');
         painel.hidden = false;
         painelPix(r, painel);
-        rastrear('AddPaymentInfo', { content_ids: [dados.curso], value: r.total_centavos / 100, currency: 'BRL' }, 'matricula_pix_gerado');
         acompanhar(r.token, function (d) { location.href = d.urls.parabens; }, function (d) { location.href = d.urls.pendente; });
         window.scrollTo({ top: painel.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
       });
@@ -342,7 +360,8 @@
         if (localStorage.getItem(chave)) return;
         localStorage.setItem(chave, '1');
       } catch (e) { /* sem localStorage: registra assim mesmo */ }
-      rastrear('Purchase', { content_name: d.curso.nome, content_ids: [d.curso.slug], content_type: 'product', value: d.total_centavos / 100, currency: 'BRL' }, 'purchase');
+      rastrear('Purchase', { content_name: d.curso.nome, content_ids: [d.curso.slug], content_type: 'product', num_items: 1, value: d.total_centavos / 100, currency: 'BRL' },
+        'purchase', Object.assign({ transaction_id: token, payment_type: d.metodo }, itemGa(d.curso.slug, d.curso.nome, d.total_centavos)), { eventID: token });
     }
 
     api('status.php?t=' + encodeURIComponent(token)).then(function (d) {

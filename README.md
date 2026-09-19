@@ -314,6 +314,16 @@ Search Console, Perfil da Empresa no Google, conteúdo). Resumo do que mudou aqu
   (`scripts/gerar_404.py` gera a página com o cabeçalho e o rodapé da home).
 - **`scripts/auditar_seo.py`**: auditoria on-page de qualquer lista de URLs ao vivo.
 
+## Rastreamento (19/09/2026)
+
+Verificado ao vivo e documentado em `docs/rastreamento.md`: cobertura de GA4 e Pixel por página,
+funil da matrícula com eventos padrão de comércio (`view_item`, `select_item`, `begin_checkout`,
+`generate_lead`, `add_payment_info`, `purchase` com `transaction_id`; no Meta `ViewContent`,
+`InitiateCheckout`, `Lead`, `AddPaymentInfo`, `Purchase` com `eventID`), Pixel acrescentado na
+doação, no agasalho e na 404, linker do GA4 para o domínio da escola, e a lista do que depende da
+escola, da Vercel e da Redação. O segundo ID do GA4 (`G-Z5NWV4RBTT`) vem da configuração da Google
+tag, não do código.
+
 ## Pontos de atenção encontrados
 
 - **Checkout, pendências para fechar**: (1) aviso de inscrição paga à secretaria **desligado**
@@ -373,5 +383,6 @@ scripts/otimizar_imagens.py             versões WebP e imagens de compartilhame
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
 docs/seo-revisao-2026-09.md             relatório da revisão de SEO (antes/depois e pendências por projeto)
+docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

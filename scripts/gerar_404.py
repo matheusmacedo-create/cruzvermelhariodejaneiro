@@ -27,6 +27,8 @@ PAGINA = """<!DOCTYPE html>
     .e404-links a:hover { border-color: var(--red); }
     .e404-links i { color: var(--red); }
   </style>
+@@GA4@@
+@@PIXEL@@
 </head>
 <body>
 @@HEADER@@
@@ -56,7 +58,8 @@ PAGINA = """<!DOCTYPE html>
 def main() -> int:
     partes = partes_da_home(HOME.read_text(encoding="utf-8"))
     html = (PAGINA.replace("@@ESTILO@@", partes["estilo"]).replace("@@HEADER@@", partes["header"])
-            .replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"]))
+            .replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
+            .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"]))
     destino = RAIZ / "site" / "404.html"
     destino.write_text(html, encoding="utf-8")
     print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
