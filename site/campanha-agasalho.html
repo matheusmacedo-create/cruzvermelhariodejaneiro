@@ -23,7 +23,8 @@
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-campanha-agasalho.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>
     :root {
       --red: #ed1b2e;
@@ -602,7 +603,6 @@
   </style>
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -616,9 +616,7 @@
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
@@ -626,6 +624,19 @@
   <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
   /></noscript>
+  <script>
+    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
+    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    (function () {
+      function carregar() {
+        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
+          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+        });
+      }
+      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
+      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+    })();
+  </script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 [
@@ -707,11 +718,11 @@
 
           <div class="crisis-gallery" aria-label="Imagens da Campanha do Agasalho">
             <figure class="crisis-photo">
-              <img alt="Voluntário da Cruz Vermelha Brasileira entregando cobertor a morador em situação de rua no Rio de Janeiro" src="assets/otim/agasalho-hero-rua-640.webp" srcset="assets/otim/agasalho-hero-rua-640.webp 640w, assets/otim/agasalho-hero-rua-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 415px" width="640" height="429" fetchpriority="high">
+              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro entregando cobertor a morador em situação de rua no Rio de Janeiro" src="assets/otim/agasalho-hero-rua-640.webp" srcset="assets/otim/agasalho-hero-rua-640.webp 640w, assets/otim/agasalho-hero-rua-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 415px" width="640" height="429" fetchpriority="high">
               <figcaption>Famílias em situação de vulnerabilidade precisam de agasalhos, cobertores e cuidado no frio.</figcaption>
             </figure>
             <figure class="crisis-photo small">
-              <img alt="Voluntário da Cruz Vermelha Brasileira em ação de doação de agasalhos em bairro popular do Rio de Janeiro" src="assets/otim/agasalho-hero-favela-640.webp" srcset="assets/otim/agasalho-hero-favela-640.webp 640w, assets/otim/agasalho-hero-favela-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 281px" width="640" height="429">
+              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro em ação de doação de agasalhos em bairro popular do Rio de Janeiro" src="assets/otim/agasalho-hero-favela-640.webp" srcset="assets/otim/agasalho-hero-favela-640.webp 640w, assets/otim/agasalho-hero-favela-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 281px" width="640" height="429">
               <figcaption>Cada peça doada ajuda alguém a atravessar o inverno com mais dignidade.</figcaption>
             </figure>
           </div>
@@ -1000,5 +1011,8 @@
     document.getElementById('copyPix').addEventListener('click', (event) => copyPix(event.currentTarget));
     document.getElementById('copyPix2').addEventListener('click', (event) => copyPix(event.currentTarget));
   </script>
+  <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
+  <link rel="stylesheet" href="/chat/chat.css?v=f845a6d789">
+  <script src="/chat/chat.js?v=d6852d055d" defer></script>
 </body>
 </html>

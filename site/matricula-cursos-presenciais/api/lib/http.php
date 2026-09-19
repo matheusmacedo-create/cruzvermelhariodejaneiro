@@ -109,6 +109,21 @@ function mcp_texto(mixed $valor, int $limite): string
     return mb_substr($texto, 0, $limite);
 }
 
+/**
+ * Texto livre de várias linhas (mensagem do chat): quebras de linha normalizadas, sem caracteres de
+ * controle, sem mais de uma linha em branco seguida, tamanho limitado.
+ */
+function mcp_texto_longo(mixed $valor, int $limite): string
+{
+    $texto = is_string($valor) ? $valor : (is_scalar($valor) ? (string) $valor : '');
+    $texto = str_replace(["\r\n", "\r"], "\n", $texto);
+    $texto = preg_replace('/[\t ]+/', ' ', $texto) ?? '';
+    $texto = preg_replace('/(?!\n)\p{Cc}/u', '', $texto) ?? '';
+    $texto = preg_replace('/ *\n */', "\n", $texto) ?? '';
+    $texto = preg_replace('/\n{3,}/', "\n\n", $texto) ?? '';
+    return mb_substr(trim($texto), 0, $limite);
+}
+
 function mcp_cpf_valido(string $cpf): bool
 {
     $cpf = mcp_digitos($cpf);
@@ -135,6 +150,17 @@ function mcp_telefone(string $bruto): string
         $digitos = substr($digitos, 2);
     }
     return in_array(strlen($digitos), [10, 11], true) && $digitos[0] !== '0' ? $digitos : '';
+}
+
+/** Telefone só com dígitos (10 ou 11) no formato (21) 99999-9999; outros tamanhos voltam como vieram. */
+function mcp_telefone_bonito(string $digitos): string
+{
+    $d = mcp_digitos($digitos);
+    if (!in_array(strlen($d), [10, 11], true)) {
+        return $digitos;
+    }
+    $corte = strlen($d) === 11 ? 7 : 6;
+    return '(' . substr($d, 0, 2) . ') ' . substr($d, 2, $corte - 2) . '-' . substr($d, $corte);
 }
 
 /** Luhn: pega erro de digitação no número do cartão antes de ir ao gateway. */

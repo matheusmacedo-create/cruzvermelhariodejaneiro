@@ -9,17 +9,17 @@ do catálogo público da escola) e as fotos de img/ (geradas por scripts/gerar_i
 Decisões de 18/09 (após a primeira publicação): o topo e o bloco do curso focam em "faça sua
 matrícula agora e garanta sua vaga" (desde 19/09 o H1 lidera com o certificado da Cruz Vermelha e
 a urgência fica na linha de apoio); a regra "a secretaria confirma horário depois" fica só em
-"Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria (nem o botão
-flutuante da home), porque desviavam da matrícula; botão único por curso, com link discreto
-para a plataforma da escola no fim do detalhe.
+"Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria, porque desviavam
+da matrícula (desde 19/09 nenhuma página cita WhatsApp: dúvidas vão pelo chat de contato por e-mail,
+site/chat/, presente em todas as páginas); botão único por curso, com link discreto para a plataforma
+da escola no fim do detalhe.
 
 Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_matricula.py
       && python3 scripts/gerar_matricula_presencial.py
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 
-CHECKOUT_URL vazio = o botão "Fazer matrícula" abre o WhatsApp da secretaria com a mensagem
-pronta (caminho de lançamento). Quando o checkout de R$ 99 entrar no ar, basta preencher a
-URL e gerar de novo: o botão passa a levar para o checkout com ?curso=<slug> e as UTMs.
+O botão "Fazer matrícula agora" leva ao checkout (CHECKOUT_URL) com ?curso=<slug>; o script da
+página acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript o link já funciona.
 """
 from __future__ import annotations
 
@@ -27,7 +27,9 @@ import html
 import json
 import re
 from pathlib import Path
-from urllib.parse import quote
+
+import chat_widget
+import icones
 
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
@@ -38,8 +40,7 @@ PASTA_IMG = RAIZ / "site" / "matricula-cursos-presenciais" / "img"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
-WHATSAPP = "5521999922864"
-CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"  # vazio = botão abre o WhatsApp da secretaria
+CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 
 TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha"
 DESCRICAO = ("Matricule-se nos cursos presenciais da Cruz Vermelha no Rio: primeiros socorros, bombeiro "
@@ -61,20 +62,32 @@ FAQ_PAGINA = [
      "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
      "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
-     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis "
+     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 2 dias úteis "
      "para confirmar turma e horário."),
     ("E se não houver horário compatível?", TEXTO_ESTORNO),
     ("Os cursos são presenciais? Onde acontecem?",
-     "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira, na Praça da Cruz Vermelha, 10, Centro do Rio de "
-     "Janeiro, com certificado emitido pela Cruz Vermelha Brasileira."),
+     "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro "
+     "do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro."),
     ("Posso ver as turmas abertas antes de pagar?",
      "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem "
      "prefere o caminho completo de inscrição."),
+    ("Como tiro dúvidas antes de me matricular?",
+     "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 2 dias úteis. "
+     "Se preferir, escreva para contato@cruzvermelhariodejaneiro.org."),
 ]
 
 
 def esc(s: str) -> str:
     return html.escape(s, quote=True)
+
+
+# "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Nos textos da filial (inclusive os que vêm
+# do catálogo da escola) o nome é sempre o completo, para não confundir as duas (decisão de 19/09/2026).
+NACIONAL_SOZINHA = re.compile(r"Cruz Vermelha Brasileira(?!\s*(?:[–\-—·,]|<br>)?\s*(?:Filial|Rio de Janeiro|do Rio|no Rio|RJ\b|Rio\b))")
+
+
+def nome_filial(texto: str) -> str:
+    return NACIONAL_SOZINHA.sub("Cruz Vermelha Brasileira Rio de Janeiro", texto or "")
 
 
 def brl(centavos: int | None) -> str:
@@ -121,7 +134,7 @@ def partes_da_home(home: str) -> dict:
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     header = bloco(home, '  <header class="main-header">', "  </header>")
     footer = bloco(home, "  <footer>", "  </footer>")
-    # Só o script do menu sanfona; o botão flutuante de WhatsApp da home não entra nesta página.
+    # Só o script do menu sanfona; os outros scripts da home (seletor de curso, contato) são da home.
     ini = home.index("  <script>\n    document.querySelector('.nav-toggle')")
     menu_js = home[ini:home.index("</script>", ini) + len("</script>")]
     ga4 = bloco(home, "  <!-- Google tag (gtag.js) -->", "  </script>")
@@ -141,7 +154,7 @@ def partes_da_home(home: str) -> dict:
     header = absolutizar(header)
     footer = absolutizar(footer)
     # Sem telefone da secretaria nesta página: o caminho do lead é o botão de matrícula.
-    footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"></i>[^<]*</p>', "", footer)
+    footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"[^>]*>(?:<svg.*?</svg>)*</i>[^<]*</p>', "", footer, flags=re.S)
     assert footer_sem_telefone != footer, "linha do telefone não encontrada no rodapé da home"
     footer = footer_sem_telefone
     padrao_menu = re.compile(r'<a href="/matricula-cursos-presenciais/"([^>]*)>Matrícula cursos presenciais</a>')
@@ -178,32 +191,29 @@ def main() -> int:
         for g in dados["grupos"]
     )
 
-    def whatsapp(nome: str) -> str:
-        msg = f"Olá! Quero fazer minha matrícula no curso presencial {nome} pagando a inscrição de {brl(inscricao)}."
-        return f"https://wa.me/{WHATSAPP}?text={quote(msg)}"
-
     def detalhe(slug: str, primeiro: bool) -> str:
         c = cursos[slug]
         img = c["imagem"]
-        sobre = "".join(f"<p>{esc(p)}</p>" for p in c["sobre"])
-        obs = "".join(f'<p class="mr-nota"><i class="fa-solid fa-circle-info"></i> {esc(o)}</p>' for o in c["observacoes"])
+        sobre = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"])
+        obs = "".join(f'<p class="mr-nota"><i class="fa-solid fa-circle-info"></i> {esc(nome_filial(o))}</p>' for o in c["observacoes"])
         faq = "".join(
-            f"<details><summary>{esc(f['pergunta'])}</summary><p>{esc(f['resposta'])}</p></details>" for f in c["faq"]
+            f"<details><summary>{esc(nome_filial(f['pergunta']))}</summary><p>{esc(nome_filial(f['resposta']))}</p></details>" for f in c["faq"]
         )
         faq_html = f'<div class="mr-faq"><h3>Dúvidas frequentes sobre {esc(c["nome"])}</h3>{faq}</div>' if faq else ""
         loading = "eager" if primeiro else "lazy"
+        prioridade = ' fetchpriority="high"' if primeiro else ""  # a primeira foto é o maior elemento visível no celular
         foto = ""
         if (PASTA_IMG / f"{img}-960.webp").exists():
             foto = (f'<img class="mr-foto" src="img/{img}-960.webp" srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" '
                     f'sizes="(max-width: 920px) 100vw, 760px" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira do Rio de Janeiro" '
-                    f'loading="{loading}" width="960" height="720">')
+                    f'loading="{loading}"{prioridade} width="960" height="720">')
         return f'''
         <article class="mr-detalhe" id="curso-{slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">
           {foto}
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>{esc(c["nome"])}</h2>
-            <p class="lead">{esc(c["descricao"])}</p>
+            <p class="lead">{esc(nome_filial(c["descricao"]))}</p>
             <div class="mr-chips">
               <span class="mr-chip"><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</span>
               <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> {esc(c["escolaridade"])}</span>
@@ -214,7 +224,7 @@ def main() -> int:
               <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na plataforma da escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula agora</a>
+              <a class="btn btn-red mr-cta" href="{CHECKOUT_URL}?curso={slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">Fazer matrícula agora</a>
             </div>
             <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
@@ -228,6 +238,11 @@ def main() -> int:
     ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
     detalhes = "".join(detalhe(s, i == 0) for i, s in enumerate(ordem))
 
+    # Chat de contato: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo.
+    if chat_widget.atualizar_cursos([{"slug": s, "nome": cursos[s]["nome"]} for s in ordem]):
+        print("atualizado site/chat/chat.js (lista de cursos)")
+    chat_tags = chat_widget.tags()
+
     faq_pagina = "".join(f"<details><summary>{esc(p)}</summary><p>{esc(r)}</p></details>" for p, r in FAQ_PAGINA)
 
     # --- dados estruturados ------------------------------------------------------------
@@ -237,9 +252,9 @@ def main() -> int:
     itens = []
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
-        curso = {"@type": "Course", "name": c["nome"], "description": c["descricao"] or (c["sobre"][0] if c["sobre"] else ""),
+        curso = {"@type": "Course", "name": c["nome"], "description": nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else "")),
                  "url": f"{URL_PAGINA}?curso={s}", "provider": provedor, "courseMode": "Onsite",
-                 "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira"}
+                 "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro"}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
@@ -374,7 +389,7 @@ def main() -> int:
         }});
       }});
 
-      // Repassa UTMs/fbclid/gclid da URL atual para o destino do botão.
+      // Repassa UTMs/fbclid/gclid da URL atual para o destino do botão (o href já aponta para o checkout).
       var extras = new URLSearchParams();
       new URLSearchParams(location.search).forEach(function (v, k) {{ if (/^(utm_|fbclid$|gclid$)/.test(k)) extras.set(k, v); }});
 
@@ -383,7 +398,7 @@ def main() -> int:
         if (CHECKOUT_URL) {{
           var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
           extras.forEach(function (v, k) {{ u.searchParams.set(k, v); }});
-          b.href = u.toString(); b.removeAttribute('target');
+          b.href = u.toString();
         }}
         b.addEventListener('click', function () {{
           rastrear('SelecionouCurso', {{ content_name: b.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' }});
@@ -416,8 +431,11 @@ def main() -> int:
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <!-- Estilos copiados da home (site/index.html) para a página ficar idêntica ao padrão da filial. -->
 {estilo}
 {css}
@@ -439,7 +457,7 @@ def main() -> int:
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
-          <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira</span>
+          <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</span>
         </div>
       </div>
     </section>
@@ -466,7 +484,7 @@ def main() -> int:
         <div class="mr-passos">
           <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
+          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
         <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
       </div>
@@ -489,9 +507,11 @@ def main() -> int:
 
 {menu_js}
 {js}
+{chat_tags}
 </body>
 </html>
 """
+    pagina = icones.converter(pagina)  # ícones em SVG inline, sem Font Awesome
     SAIDA.write_text(pagina, encoding="utf-8")
     print(f"gravado {SAIDA.relative_to(RAIZ)} ({len(pagina.encode('utf-8'))} bytes, {len(ordem)} cursos)")
     return 0

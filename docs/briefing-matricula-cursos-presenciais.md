@@ -680,3 +680,14 @@ Este briefing é a **definição do produto**. O plano de implementação de 16/
    `/matricula-cursos-presenciais?curso=…`; corrigir a linha "Inscrição: R$ 100,00".
 6. **Sitemap.** `/matricula-cursos-presenciais/` entra no sitemap do site; as páginas de pendente e parabéns
    levam `noindex`.
+
+---
+
+## Adendo (19/09/2026, à noite): contato por e-mail no lugar do WhatsApp
+
+Decisão do Matheus: tudo o que o site mandava para o WhatsApp da secretaria gerava confusão. Nenhuma
+página, tela ou e-mail cita mais WhatsApp. Dúvidas entram pelo chat de contato do site (todas as
+páginas), que grava em `mcp_contatos` e envia por e-mail para `EMAIL_CONTATO` com resposta direta a
+quem escreveu; a copy da tela Parabéns B e dos e-mails passou a "a secretaria entra em contato por
+e-mail em até 2 dias úteis". O e-mail de recuperação do PIX foi refeito no padrão visual do site com
+copy de conversão. Detalhes na seção "Chat de contato por e-mail" do `README.md`.

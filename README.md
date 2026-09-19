@@ -292,11 +292,117 @@ validado no projeto da Punção Venosa.
   real da aula de Primeiros Socorros, os três passos com ícone e, no fim, o botão "Fazer o curso
   de Primeiros Socorros" (checkout com o curso escolhido) e o link para todos os cursos. A seção
   passou a converter em vez de só informar.
-- O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`: a intenção é
-  substituir por um Intercom para toda a estrutura. O número continua no rodapé e nos cartões de
-  curso da home ("Chamar no WhatsApp").
+- O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`. Em 19/09, à noite,
+  entrou no lugar o chat de contato por e-mail (seção abaixo) e os botões "Chamar no WhatsApp" dos
+  cartões de curso viraram "Tirar dúvidas" (abrem o chat com o curso já escolhido).
 - `site/assets/` não é versionada (fica só no servidor); há uma cópia local ignorada pelo Git
   só para renderizar a home em testes.
+
+## Chat de contato por e-mail e fim do WhatsApp nas páginas (19/09/2026)
+
+Motivo: tudo o que o site oferecia como contato caía no WhatsApp da secretaria (botões "Chamar no
+WhatsApp" da home, o fallback dos botões de matrícula, a copy "a secretaria chama no WhatsApp" nas
+telas e nos e-mails), misturando lead do site com o atendimento da escola e gerando confusão. Agora o
+canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
+
+- **Chat (`site/chat/chat.js` + `chat.css`)**: botão flutuante "Fale com a gente" em todas as páginas
+  (home, matrícula, checkout, pendente, parabéns, equipe, doação, agasalho, 404), no lugar do antigo
+  `.wpp-float`. Conversa guiada: assunto (chips), curso (quando o assunto é matrícula/curso/pagamento;
+  o curso aberto na página vem primeiro), nome, e-mail, telefone opcional, mensagem, revisão e envio.
+  Sem dependências; estado na `sessionStorage` (sobrevive à navegação); `Esc` fecha; leitor de tela
+  recebe só a fala nova. Abre também por `#chat` na URL (usado no rodapé dos e-mails) e por qualquer
+  elemento com `data-abrir-chat` (opcionalmente `data-assunto` e `data-curso`): é o que os botões
+  "Tirar dúvidas" dos cartões de curso da home fazem. As tags das páginas levam hash do conteúdo
+  (`/chat/chat.js?v=…`), geradas por `scripts/chat_widget.py`; a lista de cursos dentro do `chat.js`
+  é reescrita por `gerar_matricula_presencial.py` a partir de `cursos.json`.
+- **API (`api/contato.php`)**: mesmas guardas do checkout (POST JSON da própria origem, corpo até
+  64 KB, campo armadilha, limites por IP 8/h e por e-mail 4/h), validação com o nome do campo para o
+  chat voltar à pergunta certa, tabela `mcp_contatos` (criada sozinha, como as outras), protocolo
+  `CV-aammdd-NNNN`, aviso à equipe em `EMAIL_CONTATO` com **responder-para = quem escreveu** e
+  confirmação à pessoa (com o botão de matrícula do curso, quando o assunto é curso). O banco é a fonte
+  da verdade: se o e-mail falhar, a mensagem fica em `mcp_contatos` com `email_equipe = 'falhou'`.
+- **Destino**: `EMAIL_CONTATO` no `config.php` (padrão `contato@cruzvermelhariodejaneiro.org`).
+  O aviso de teste de 19/09 chegou na caixa do Matheus, então `contato@` recebe (o MX aponta para
+  a Hostinger; a API de e-mail da Hostinger não lista o serviço nesta conta, provavelmente por
+  estar em outra conta ou escopo). Se o e-mail do domínio for para o Google Workspace, os passos
+  são: TXT de verificação do Admin, MX `smtp.google.com` prioridade 1 no lugar dos MX da Hostinger,
+  SPF com `include:_spf.google.com` e DKIM do Gmail.
+- **Painel de respostas (`api/painel.php`, 19/09 à noite)**: a equipe responde cada contato por
+  e-mail no padrão visual do site e a resposta fica registrada (`status`, `resposta`,
+  `respondido_por`, `respondido_em` em `mcp_contatos`). Entrada sem senha para configurar: o aviso
+  de cada mensagem traz o botão **"Responder no painel"**, um link assinado (HMAC com um segredo
+  gerado no servidor e guardado em `mcp_chaves`) que abre só aquele contato por 90 dias; a lista
+  completa exige um link de entrada enviado ao e-mail da equipe (`EMAIL_CONTATO` ou
+  `PAINEL_EMAILS`), válido por 20 minutos, que abre uma sessão de 12 h em cookie assinado
+  (HttpOnly, Secure, SameSite=Lax). Quem lê a caixa da equipe é quem pode responder. Formulários com
+  token anti-CSRF por ação e contato; limite de 5 pedidos de link por hora por IP; página `noindex`
+  e `no-store`. A resposta sai de `EMAIL_REMETENTE_CONTATO` (ou do remetente geral) com
+  responder-para `EMAIL_CONTATO`, assunto "Resposta da Cruz Vermelha RJ · protocolo", assinatura de
+  quem respondeu e a mensagem original citada; arquivar sem responder e reabrir também existem.
+  Responder direto pelo cliente de e-mail continua funcionando (responder-para = a pessoa), só não
+  registra no painel.
+- **Cliente sempre avisado de que a resposta vem por e-mail**: a tela final do chat diz para qual
+  endereço a resposta vai, em quanto tempo, que o protocolo vem no assunto, para olhar o spam e
+  salvar `contato@` nos contatos (com botão para copiar o endereço); a confirmação por e-mail repete
+  isso em três passos ("Como funciona a resposta"), com o remetente que vai aparecer; a resposta do
+  painel termina com "responda este e-mail para continuar".
+- **Páginas e telas sem WhatsApp**: botões de matrícula levam direto ao checkout (`?curso=`) mesmo sem
+  JavaScript; "Como funciona", FAQ (com a pergunta nova "Como tiro dúvidas antes de me matricular?"),
+  checkout (campo "Telefone (celular)", noscript), tela Parabéns B ("a secretaria escreve para você",
+  com link para o chat) e mensagens da API falam em e-mail. O telefone continua obrigatório no
+  checkout porque a Unicopag exige `phone_number`. O número da secretaria permanece só no rodapé e no
+  JSON-LD da home (dado institucional, não é botão).
+- **E-mails no padrão da instituição (`api/lib/email.php`)**: moldura única com faixa vermelha, logo
+  (`assets/otim/logo-cvb-rj-480.png`, PNG de 8 KB gerado do `logo-cvb-rj.png` porque WebP não abre no
+  Outlook), Inter com reserva de sistema, chapéu, título, rodapé com "Dúvidas? Responda este e-mail",
+  CNPJ, endereço e a linha do motivo; componentes reutilizáveis (botão em tabela, caixa de valores com
+  total em destaque, passos numerados, bloco do PIX, citação). Cada mensagem tem uma função pura
+  `mcp_montar_email_*()` (assunto, html, texto) coberta por `scripts/testar_checkout.php` e renderizada
+  por `scripts/previsualizar_emails.php [pasta]` para conferência visual (nove modelos, incluindo a
+  resposta do painel e o link de entrada).
+- **E-mail de recuperação do PIX** (sai quando o código é gerado): assunto "Falta só o PIX para
+  garantir sua vaga em <curso>", prévia com valor e validade, título "Falta só o PIX, <nome>.", caixa
+  Curso / Inscrição / custos opcionais / Total, botão único "Concluir pagamento" (tela pendente, com
+  `utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto` para medir a recuperação no GA4),
+  código copia e cola com o passo a passo, validade em horário de Brasília (criado + 24 h), "O que
+  acontece depois" em três passos e a regra de estorno. Antes: título "Sua inscrição está aberta",
+  valor, código e "Voltar para o pagamento", com o WhatsApp da secretaria no rodapé.
+- **Demais e-mails**: inscrição paga B ("Vaga garantida, <nome>!", comprovante com método e data,
+  próximos passos por e-mail), A (acesso da escola na mesma moldura), aviso à secretaria (coluna
+  Telefone, responder-para = aluno) e os dois do chat.
+- **Rastreamento**: GA4 `contato_aberto` (uma vez por sessão) e `contato_enviado` (assunto, curso,
+  página); Meta `Contact` no envio. Detalhes em `docs/rastreamento.md`.
+- **Pendências**: decidir se o e-mail do domínio vai para o Google Workspace (acima); no painel,
+  filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
+  úteis sem resposta.
+
+## Página de links da bio do Instagram (`/bio/`, 19/09/2026)
+
+A bio do Instagram apontava para `smartpa.ge/rWPY`, uma página de links fora do domínio. Agora
+ela mora em **https://cruzvermelhariodejaneiro.org/bio/**, gerada por `scripts/gerar_bio.py` no
+padrão da home (cabeçalho, rodapé, CSS, GA4, Meta Pixel e chat), para o tráfego do Instagram entrar
+no domínio e ser medido.
+
+- **Conteúdo**: avatar e chamada da página original ("Maior rede de ajuda humanitária do 🌎 / Doe
+  e nos ajude a salvar vidas!") e, por decisão do Matheus, **só três destinos, com os links
+  exatamente como estavam**: cursos na plataforma da escola
+  (`https://escola.cruzvermelhariodejaneiro.org`), formulário do voluntariado
+  (`https://form.spotform.com.br/voluntariocruzvermelharj`) e o WhatsApp do voluntariado
+  (`api.whatsapp.com/send?phone=+5521970360264…`, número do voluntariado, não o da secretaria).
+  Saíram: desfile de 7 de Setembro (evento passado), SOS Venezuela (campanha encerrada; o link
+  original apontava para `/sos-venezuela.html`, que não existe), e-mail do RFL, endereço e bloco do
+  Instagram. Os blocos ficam na lista `BLOCOS` do gerador; para mudar, edite e gere de novo.
+- **Imagens** em `site/bio/img/` (versionadas): avatar 256/512, cartões de cursos e voluntário em
+  700 e 420 px (WebP das artes originais) e `og-bio.jpg` 1200x630 para compartilhamento.
+- **SEO**: título e descrição próprios, canonical `/bio/`, `index, follow`, Open Graph, JSON-LD
+  (`WebPage` ligada à `WebSite` e à `Organization` da home, `BreadcrumbList`), entrada no
+  `sitemap-paginas.xml`.
+- **Rastreio**: cada clique dispara GA4 `bio_click` (`link_id`, `link_url`, `link_text`) e Meta
+  `BioClick`. Endereço para colar na bio:
+  `https://cruzvermelhariodejaneiro.org/bio/?utm_source=ig&utm_medium=social&utm_content=link_in_bio`.
+- **Aviso**: `/links/` e `links.cruzvermelhariodejaneiro.org` apontam para a pasta
+  `public_html/links/`, um projeto "CVB Links" em PHP que nunca foi instalado (responde com o
+  instalador). Não foi tocado; se quiser, `/links/` pode virar um redirecionamento para `/bio/`.
 
 ## Revisão de SEO (19/09/2026)
 
@@ -313,6 +419,13 @@ Search Console, Perfil da Empresa no Google, conteúdo). Resumo do que mudou aqu
 - **`site/.htaccess` (raiz do public_html)**: `www` → apex em 301 e `ErrorDocument 404 /404.html`
   (`scripts/gerar_404.py` gera a página com o cabeçalho e o rodapé da home).
 - **`scripts/auditar_seo.py`**: auditoria on-page de qualquer lista de URLs ao vivo.
+- **Velocidade** (Lighthouse celular: home 50→68, matrícula 39→81, doação 55→79, equipe 54→75,
+  agasalho 59→78): GA4 e Pixel carregam depois do `load` (filas preservam os eventos), Font Awesome
+  substituído por SVG inline (`scripts/icones.py` + `scripts/icones.json`; os geradores chamam
+  `icones.converter()` e as páginas à mão passam por `python3 scripts/icones.py site/index.html
+  site/equipe.html`), Google Fonts sem bloquear, QR code com `defer`, preload da imagem principal,
+  cache de 30 dias em `assets/otim/` e `matricula-cursos-presenciais/img/`. Ícone novo: acrescentar
+  o desenho em `scripts/icones.json` (viewBox e path do SVG) e usar `<i class="fa-solid fa-nome"></i>`.
 
 ## Rastreamento (19/09/2026)
 
@@ -382,7 +495,8 @@ scripts/auditar_seo.py                  auditoria de SEO on-page das páginas ao
 scripts/otimizar_imagens.py             versões WebP e imagens de compartilhamento em site/assets/otim/
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
-docs/seo-revisao-2026-09.md             relatório da revisão de SEO (antes/depois e pendências por projeto)
+scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
+docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

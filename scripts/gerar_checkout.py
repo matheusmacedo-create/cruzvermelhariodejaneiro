@@ -16,6 +16,8 @@ from __future__ import annotations
 import hashlib
 import json
 
+import chat_widget
+import icones
 from gerar_matricula_presencial import DADOS, HOME, RAIZ, esc, partes_da_home
 
 PASTA = RAIZ / "site" / "matricula-cursos-presenciais"
@@ -38,8 +40,11 @@ PAGINA = """<!DOCTYPE html>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 @@QRCODE@@
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 @@ESTILO@@
@@ -64,7 +69,7 @@ PAGINA = """<!DOCTYPE html>
     </section>
     <section class="ck-secao">
       <div class="wrap"@@WRAP_EXTRA@@>
-        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou fale com a secretaria pelo WhatsApp.</p></noscript>
+        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
 @@CORPO@@
       </div>
     </section>
@@ -73,6 +78,7 @@ PAGINA = """<!DOCTYPE html>
 @@FOOTER@@
 
 @@MENU_JS@@
+@@CHAT@@
 </body>
 </html>
 """
@@ -99,7 +105,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" placeholder="Como está no seu documento" required></label>
                 <div class="ck-2col">
                   <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
-                  <label class="ck-campo"><span>WhatsApp</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
+                  <label class="ck-campo"><span>Telefone (celular)</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
                 </div>
                 <label class="ck-campo"><span>E-mail</span><input id="ck-email" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" required><small class="ck-nota">A confirmação da inscrição chega neste e-mail.</small></label>
               </section>
@@ -125,7 +131,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <ul class="ck-confianca">
                   <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela Unicopag</li>
                   <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Estorno se não houver turma compatível</li>
-                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira</li>
+                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
                 </ul>
                 <p class="ck-nota" style="margin:14px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade/">Política de privacidade</a>.</p>
               </section>
@@ -153,7 +159,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
 CORPO_PENDENTE = """        <div class="ck-card" id="pd-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_PARABENS = """        <div class="ck-card" id="pb-card" aria-live="polite"><p>Carregando…</p></div>"""
 
-QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>'
+QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>'
 
 
 def brl(centavos: int) -> str:
@@ -185,6 +191,7 @@ def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, 
             .replace("@@CSS_URL@@", url_estatico("checkout.css")).replace("@@JS_URL@@", url_estatico("checkout.js"))
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", partes["header"]).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
+            .replace("@@CHAT@@", chat_widget.tags())
             .replace("@@ID@@", id_).replace("@@H1@@", h1).replace("@@LEAD@@", lead).replace("@@WRAP_EXTRA@@", wrap_extra)
             .replace("@@PASSOS@@", passos(passo)).replace("@@CORPO@@", corpo))
 
@@ -225,6 +232,7 @@ def main() -> int:
     for nome, html in paginas.items():
         destino = PASTA / nome / "index.html"
         destino.parent.mkdir(parents=True, exist_ok=True)
+        html = icones.converter(html, extras={"circle-check"})  # SVG inline; circle-check vem do checkout.js
         destino.write_text(html, encoding="utf-8")
         print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
     return 0

@@ -5,13 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <title>Pagar a inscrição | Cruz Vermelha Brasileira RJ</title>
-  <meta name="robots" content="noindex, nofollow">
+  <title>Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial</title>
+  <meta name="description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/bio/">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
+  <meta property="og:title" content="Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial">
+  <meta property="og:description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/bio/">
+  <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Faça a diferença ou construa seu futuro: seja voluntário ou faça cursos na Cruz Vermelha RJ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial">
+  <meta name="twitter:description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <link rel="preload" as="image" href="img/avatar-256.webp">
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
   <style>
     /* Ícones em SVG inline (scripts/icones.py) */
@@ -958,14 +974,68 @@
     .faq-item[open] summary::after { transform: rotate(45deg); }
     .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
   </style>
-  <link rel="stylesheet" href="/matricula-cursos-presenciais/static/checkout.css?v=54b897245e">
-  <script src="/matricula-cursos-presenciais/static/checkout.js?v=4403b7f1b7" defer></script>
+
+  <style>
+    .bio-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 44px 0 36px; text-align: center; }
+    .bio-avatar { width: 128px; height: 128px; border-radius: 50%; margin: 0 auto 16px; background: #fff; border: 4px solid #fff; box-shadow: var(--shadow); object-fit: cover; }
+    .bio-topo h1 { color: var(--black); font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.03em; line-height: 1.1; margin: 8px 0 10px; }
+    .bio-topo .lead { max-width: 36ch; margin: 0 auto; font-size: 1.05rem; }
+    .bio-lista { padding: 32px 0 72px; }
+    .bio-lista .wrap { max-width: 640px; display: grid; gap: 16px; }
+    .bio-botao { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 800; line-height: 1.25; box-shadow: 0 12px 30px rgba(237, 27, 46, .22); transition: transform .18s, background .18s, border-color .18s; text-align: left; }
+    .bio-botao:hover { transform: translateY(-2px); background: var(--red-dark); }
+    .bio-botao > i { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, .18); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
+    .bio-botao span { flex: 1; min-width: 0; }
+    .bio-botao .bio-seta { width: auto; height: auto; background: none; opacity: .85; font-size: .9rem; }
+    .bio-botao.claro { background: #fff; color: var(--black); border: 1.5px solid var(--line); box-shadow: none; }
+    .bio-botao.claro > i { background: var(--soft); color: var(--red); }
+    .bio-botao.claro:hover { background: #fff; border-color: var(--red); }
+    .bio-botao.whatsapp > i { color: #128c7e; }
+    .bio-cartao { display: block; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: 0 6px 22px rgba(16, 24, 40, .06); transition: transform .18s, box-shadow .18s; color: var(--text); }
+    .bio-cartao:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .bio-cartao img { width: 100%; height: auto; aspect-ratio: 700 / 367; object-fit: cover; display: block; background: var(--soft); }
+    .bio-cartao-corpo { padding: 18px 20px 20px; display: flex; align-items: center; gap: 14px; }
+    .bio-cartao-texto { flex: 1; min-width: 0; display: block; }
+    .bio-cartao b { display: block; color: var(--black); font-size: 1.08rem; line-height: 1.25; }
+    .bio-cartao small { display: block; color: var(--muted); margin-top: 4px; font-size: .92rem; line-height: 1.45; }
+    .bio-cta { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+    .bio-sep { border: 0; height: 3px; width: 64px; margin: 2px auto; background: var(--red); border-radius: 3px; }
+    .bio-titulo { margin: 10px 0 -6px; text-align: center; color: var(--muted); font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .bio-endereco { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+    .bio-endereco > i { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .bio-endereco b { display: block; color: var(--black); }
+    .bio-endereco p { margin: 4px 0 8px; color: var(--muted); font-size: .95rem; }
+    .bio-endereco a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .bio-faq { background: var(--soft); border-top: 1px solid var(--line); padding: 48px 0 64px; }
+    .bio-faq .wrap { max-width: 720px; }
+    .bio-faq h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: -.025em; margin: 6px 0 14px; }
+    .bio-faq details { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; }
+    .bio-faq summary { cursor: pointer; font-weight: 700; color: var(--black); }
+    .bio-faq details p { margin: 10px 0 0; color: var(--text); }
+    .bio-faq a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .bio-social { text-align: center; padding-top: 8px; }
+    .bio-social a { display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px 10px 10px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--black); font-weight: 800; transition: border-color .18s; }
+    .bio-social a:hover { border-color: var(--red); }
+    .bio-social a i { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    @media (max-width: 620px) {
+      .bio-topo { padding: 30px 0 26px; }
+      .bio-avatar { width: 108px; height: 108px; }
+      .bio-lista { padding: 22px 0 60px; }
+      .bio-lista .wrap { gap: 14px; }
+      .bio-cartao-corpo { padding: 14px 16px 16px; }
+      .bio-botao { padding: 13px 16px; }
+      /* O CSS da home esconde qualquer <nav> abaixo de 920px; aqui os links do menu voltam com o menu aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
+    }
+    @media (min-width: 621px) and (max-width: 920px) { .main-header .header-collapse .nav-links { display: flex !important; } }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
+    gtag('set', { content_group: 'bio' });
     gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
   </script>
   <!-- Meta Pixel Code -->
@@ -996,10 +1066,106 @@
     })();
   </script>
   <!-- End Meta Pixel Code -->
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Início",
+      "item": "https://cruzvermelhariodejaneiro.org/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Links",
+      "item": "https://cruzvermelhariodejaneiro.org/bio/"
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://cruzvermelhariodejaneiro.org/bio/#pagina",
+  "url": "https://cruzvermelhariodejaneiro.org/bio/",
+  "name": "Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial",
+  "description": "Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.",
+  "inLanguage": "pt-BR",
+  "isPartOf": {
+    "@id": "https://cruzvermelhariodejaneiro.org/#site"
+  },
+  "about": {
+    "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
+  },
+  "primaryImageOfPage": {
+    "@type": "ImageObject",
+    "url": "https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg",
+    "width": 1200,
+    "height": 630
+  },
+  "significantLink": [
+    "https://escola.cruzvermelhariodejaneiro.org",
+    "https://form.spotform.com.br/voluntariocruzvermelharj",
+    "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20"
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Como ser voluntário da Cruz Vermelha no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quais cursos a Cruz Vermelha RJ oferece?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de matrícula em cursos presenciais."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como falar com o voluntariado da Cruz Vermelha RJ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 2 dias úteis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como doar para a Cruz Vermelha do Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pela página de doação do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde fica a Cruz Vermelha no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários."
+      }
+    }
+  ]
+}
+  </script>
 </head>
-<body data-tela="checkout">
-<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-certificate" viewBox="0 0 512 512"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.3-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/></symbol><symbol id="i-check" viewBox="0 0 448 512"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></symbol><symbol id="i-circle-check" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></symbol><symbol id="i-clock" viewBox="0 0 512 512"><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-linkedin-in" viewBox="0 0 448 512"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-lock" viewBox="0 0 448 512"><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></symbol><symbol id="i-rotate-left" viewBox="0 0 512 512"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></symbol><symbol id="i-tiktok" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
-  <script>document.documentElement.classList.add('js');</script>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-linkedin-in" viewBox="0 0 448 512"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-tiktok" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol><symbol id="i-whatsapp" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
   <header class="main-header">
     <div class="header-container">
       <a href="/" class="logo-area" style="text-decoration:none;color:inherit;">
@@ -1014,7 +1180,7 @@
         <nav class="nav-links">
           <a href="/#institucional">Sobre</a>
           <a href="/noticias/">Notícias</a>
-          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap" aria-current="page">Matrícula cursos presenciais</a>
+          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
           <a href="/#campanhas">Campanhas</a>
           <a href="/#parceiros">Parceiros</a>
           <a href="/#faq">FAQ</a>
@@ -1029,104 +1195,30 @@
     </div>
   </header>
 
-  <main id="checkout">
-    <div class="ck-teste" id="ck-teste" hidden>Modo de teste: o valor cobrado não é o preço da inscrição.</div>
-    <section class="ck-hero">
+  <main id="bio">
+    <section class="bio-topo" aria-labelledby="bio-titulo">
       <div class="wrap">
-        <p class="eyebrow">Matrícula cursos presenciais</p>
-        <h1>Pagar a inscrição e garantir a vaga</h1>
-        <p class="lead">Inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma agora.</p>
-        <ol class="ck-passos" aria-label="Etapas da matrícula"><li class="feito"><span class="ck-passo-n"><i class="fa-solid fa-check" aria-hidden="true"><svg class="ico ico-check" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></i></span><span>Curso escolhido</span></li><li class="atual" aria-current="step"><span class="ck-passo-n">2</span><span>Pagamento da inscrição</span></li><li class=""><span class="ck-passo-n">3</span><span>Confirmação da turma</span></li></ol>
+        <img class="bio-avatar" src="img/avatar-256.webp" srcset="img/avatar-256.webp 256w, img/avatar-512.webp 512w" sizes="128px" alt="Cruz Vermelha Brasileira – Rio de Janeiro" width="256" height="256" fetchpriority="high">
+        <p class="eyebrow">Instagram · links oficiais</p>
+        <h1 id="bio-titulo">Cruz Vermelha Brasileira – Filial Rio de Janeiro</h1>
+        <p class="lead">Maior rede de ajuda humanitária do 🌎<br>Doe e nos ajude a salvar vidas!</p>
       </div>
     </section>
-    <section class="ck-secao">
+
+    <section class="bio-lista" aria-label="Links oficiais">
       <div class="wrap">
-        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
-        <div class="ck-grid">
-          <div class="ck-card">
-            <form id="ck-form" novalidate autocomplete="on">
-              <div class="ck-armadilha" aria-hidden="true"><label>Não preencha este campo<input id="ck-site" name="site" tabindex="-1" autocomplete="off"></label></div>
-              <section class="ck-bloco-form" aria-labelledby="ck-t1">
-                <h2 class="ck-bloco-titulo" id="ck-t1"><span class="ck-num">1</span> Curso</h2>
-                <label class="ck-campo"><span>Curso presencial</span>
-                  <select id="ck-curso" name="curso" required>
-                    <option value="" disabled selected>Escolha o curso</option>
-                  <optgroup label="Emergência e vida">
-                    <option value="primeiros-socorros-basico">Primeiros Socorros Básico · 8 horas</option>
-                    <option value="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças · 8 horas</option>
-                    <option value="puncao-venosa">Punção Venosa · 8 horas</option>
-                    <option value="suporte-basico-de-vida">Suporte Básico de Vida · 4 horas</option>
-                  </optgroup>
-                  <optgroup label="Formação profissional">
-                    <option value="bombeiro-civil">Bombeiro Civil · 80 horas</option>
-                    <option value="cuidador-de-idosos">Cuidador de Idosos (Curso Livre) · 160 horas</option>
-                  </optgroup>
-                  <optgroup label="Outros cursos">
-                    <option value="micropigmentacao-labial">Micropigmentação Labial · 24 horas</option>
-                  </optgroup>
-                  </select>
-                </label>
-                <ul class="ck-curso-meta" id="ck-curso-meta" hidden>
-                  <li><i class="fa-regular fa-clock" aria-hidden="true"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> <span id="ck-m-carga"></span></li>
-                  <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> <span id="ck-m-escolaridade"></span></li>
-                  <li><i class="fa-solid fa-location-dot" aria-hidden="true"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10 · Centro</li>
-                </ul>
-              </section>
-              <section class="ck-bloco-form" aria-labelledby="ck-t2">
-                <h2 class="ck-bloco-titulo" id="ck-t2"><span class="ck-num">2</span> Seus dados <small>só o necessário para a matrícula</small></h2>
-                <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" placeholder="Como está no seu documento" required></label>
-                <div class="ck-2col">
-                  <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
-                  <label class="ck-campo"><span>Telefone (celular)</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
-                </div>
-                <label class="ck-campo"><span>E-mail</span><input id="ck-email" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" required><small class="ck-nota">A confirmação da inscrição chega neste e-mail.</small></label>
-              </section>
-              <section class="ck-bloco-form" aria-labelledby="ck-t3">
-                <h2 class="ck-bloco-titulo" id="ck-t3"><span class="ck-num">3</span> Pagamento</h2>
-                <div class="ck-metodos" role="radiogroup" aria-label="Forma de pagamento">
-                  <label class="ck-metodo ativo"><input type="radio" name="metodo" value="pix" checked><i class="fa-brands fa-pix ck-metodo-icone" aria-hidden="true"></i><span class="ck-metodo-tag">Na hora</span><b>PIX</b><small>QR code ou copia e cola</small></label>
-                  <label class="ck-metodo"><input type="radio" name="metodo" value="cartao"><i class="fa-regular fa-credit-card ck-metodo-icone" aria-hidden="true"></i><b>Cartão de crédito</b><small>À vista, aprovação em segundos</small></label>
-                </div>
-                <div class="ck-cartao-box" id="ck-cartao" hidden>
-                  <label class="ck-campo"><span>Número do cartão</span><input id="ck-cartao-numero" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></label>
-                  <label class="ck-campo"><span>Nome como está no cartão</span><input id="ck-cartao-nome" autocomplete="cc-name"></label>
-                  <div class="ck-2col">
-                    <label class="ck-campo"><span>Validade</span><input id="ck-cartao-validade" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA"></label>
-                    <label class="ck-campo"><span>CVV</span><input id="ck-cartao-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></label>
-                  </div>
-                  <p class="ck-nota"><i class="fa-solid fa-lock" aria-hidden="true"><svg class="ico ico-lock" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg></i> Os dados do cartão vão direto para o processador de pagamento e não ficam guardados no site.</p>
-                </div>
-                <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small>Opcional. Assim a Cruz Vermelha recebe o valor integral da inscrição.</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
-                <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required><span class="ck-check-texto">Li os requisitos do curso (<span id="ck-escolaridade">escolaridade mínima</span>) e confirmo que os atendo.</span></label>
-                <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
-                <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
-                <ul class="ck-confianca">
-                  <li><i class="fa-solid fa-lock" aria-hidden="true"><svg class="ico ico-lock" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg></i> Pagamento seguro pela Unicopag</li>
-                  <li><i class="fa-solid fa-rotate-left" aria-hidden="true"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> Estorno se não houver turma compatível</li>
-                  <li><i class="fa-solid fa-certificate" aria-hidden="true"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
-                </ul>
-                <p class="ck-nota" style="margin:14px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade/">Política de privacidade</a>.</p>
-              </section>
-            </form>
-            <div id="ck-pix" hidden aria-live="polite"></div>
-          </div>
-          <aside class="ck-card ck-resumo" aria-label="Resumo da inscrição">
-            <img class="ck-resumo-foto" id="ck-r-foto" src="/assets/hero-cursos-banner-1.jpg" alt="" width="480" height="360">
-            <p class="ck-resumo-rotulo">Sua inscrição</p>
-            <p class="ck-resumo-curso" id="ck-r-curso">Escolha o curso</p>
-            <span class="ck-resumo-meta" id="ck-r-meta">7 cursos presenciais no Centro do Rio</span>
-            <div class="ck-linha"><span>Inscrição</span><span id="ck-r-inscricao">R$ 99,00</span></div>
-            <div class="ck-linha" id="ck-r-taxa-linha" hidden><span>Custos de processamento</span><span id="ck-r-taxa">R$ 0,00</span></div>
-            <div class="ck-linha total"><span>Total agora</span><span id="ck-r-total">R$ 99,00</span></div>
-            <p class="ck-nota">O valor do curso (<span id="ck-r-curso-valor">—</span>) é pago depois, na plataforma da escola.</p>
-            <ul class="ck-depois" aria-label="O que você garante">
-              <li><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Vaga reservada na hora, com confirmação por e-mail</li>
-              <li><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Sem criar conta e sem escolher turma agora</li>
-              <li><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Estorno se não houver horário compatível ou se você desistir antes da confirmação da aula</li>
-            </ul>
-          </aside>
-        </div>
-        <script type="application/json" id="ck-cursos">{"bombeiro-civil": {"nome": "Bombeiro Civil", "carga_horaria": "80 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 95000, "imagem": "/matricula-cursos-presenciais/img/bombeiro-civil-480.webp"}, "cuidador-de-idosos": {"nome": "Cuidador de Idosos (Curso Livre)", "carga_horaria": "160 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 95000, "imagem": "/matricula-cursos-presenciais/img/cuidador-de-idosos-480.webp"}, "micropigmentacao-labial": {"nome": "Micropigmentação Labial", "carga_horaria": "24 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 40000, "imagem": "/matricula-cursos-presenciais/img/micropigmentacao-labial-480.webp"}, "primeiros-socorros-basico": {"nome": "Primeiros Socorros Básico", "carga_horaria": "8 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 18000, "imagem": "/matricula-cursos-presenciais/img/primeiros-socorros-basico-480.webp"}, "primeiros-socorros-lei-lucas": {"nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças", "carga_horaria": "8 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/primeiros-socorros-lei-lucas-480.webp"}, "puncao-venosa": {"nome": "Punção Venosa", "carga_horaria": "8 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/puncao-venosa-480.webp"}, "suporte-basico-de-vida": {"nome": "Suporte Básico de Vida", "carga_horaria": "4 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/suporte-basico-de-vida-480.webp"}}</script>
+          <a class="bio-cartao" href="https://escola.cruzvermelhariodejaneiro.org" data-bio="escola" target="_blank" rel="noopener"><img src="img/cursos-700.webp" srcset="img/cursos-700.webp 700w, img/cursos-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro" width="700" height="367" loading="eager" fetchpriority="high" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Saiba mais sobre os nossos cursos</b><small>Turmas, valores e inscrição na plataforma da escola.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
+          <a class="bio-cartao" href="https://form.spotform.com.br/voluntariocruzvermelharj" data-bio="voluntario" target="_blank" rel="noopener"><img src="img/voluntario-700.webp" srcset="img/voluntario-700.webp 700w, img/voluntario-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira do Rio de Janeiro" width="700" height="367" loading="lazy" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro</b><small>Cadastro rápido no formulário do voluntariado.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
+          <p class="bio-titulo">WhatsApp do voluntário</p>
+          <a class="bio-botao claro whatsapp" href="https://api.whatsapp.com/send?phone=+5521970360264&amp;text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20" data-bio="whatsapp-voluntariado" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"><svg class="ico ico-whatsapp" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg></i><span>Falar com o voluntariado no WhatsApp</span><i class="fa-solid fa-arrow-right bio-seta" aria-hidden="true"></i></a>
+      </div>
+    </section>
+
+    <section class="bio-faq" aria-labelledby="bio-faq-titulo">
+      <div class="wrap">
+        <p class="eyebrow">Perguntas frequentes</p>
+        <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha RJ</h2>
+        <details><summary>Como ser voluntário da Cruz Vermelha no Rio de Janeiro?</summary><p>Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.</p></details><details><summary>Quais cursos a Cruz Vermelha RJ oferece?</summary><p>Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na <a href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</p></details><details><summary>Como falar com o voluntariado da Cruz Vermelha RJ?</summary><p>Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 2 dias úteis.</p></details><details><summary>Como doar para a Cruz Vermelha do Rio de Janeiro?</summary><p>Pela <a href="https://cruzvermelhariodejaneiro.org/doacao.html">página de doação</a> do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro.</p></details><details><summary>Onde fica a Cruz Vermelha no Rio de Janeiro?</summary><p>Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários.</p></details>
       </div>
     </section>
   </main>
@@ -1189,6 +1281,34 @@
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
       });
     });
+  </script>
+
+  <script>
+    (function () {
+      // UTMs, fbclid e gclid com que a pessoa chegou (ex.: ?utm_source=ig da bio) seguem para a plataforma da
+      // escola, que fica no nosso domínio: lá o GA4 e o Pixel enxergam a origem mesmo sem cookie compartilhado.
+      var origem = new URLSearchParams();
+      new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) origem.set(k, v); });
+      var escola = document.querySelector('[data-bio="escola"]');
+      if (escola && Array.from(origem.keys()).length) {
+        try { var u = new URL(escola.href); origem.forEach(function (v, k) { u.searchParams.set(k, v); }); escola.href = u.toString(); } catch (e) {}
+      }
+      // Cada clique vira um evento: GA4 bio_click (link_id, link_url, link_text, outbound) e, no Meta, BioClick;
+      // o WhatsApp também dispara o evento padrão Contact (pessoa iniciando contato com a organização).
+      document.querySelectorAll('[data-bio]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          var id = a.getAttribute('data-bio'), url = a.href;
+          var dados = { link_id: id, link_url: url, link_text: (a.textContent || '').trim().slice(0, 80), outbound: !url.startsWith(location.origin) };
+          try { if (window.gtag) gtag('event', 'bio_click', dados); } catch (e) {}
+          try {
+            if (window.fbq) {
+              fbq('trackCustom', 'BioClick', { link_id: id });
+              if (id === 'whatsapp-voluntariado') fbq('track', 'Contact', { content_name: 'WhatsApp do voluntariado', content_category: 'bio' });
+            }
+          } catch (e) {}
+        });
+      });
+    })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.css?v=f845a6d789">
