@@ -46,7 +46,7 @@ CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 # "cursos cruz vermelha rj", "curso de primeiros socorros cruz vermelha rj".
 TITULO = "Cursos da Cruz Vermelha RJ: matrícula em cursos presenciais"
 DESCRICAO = ("Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro: primeiros socorros, bombeiro civil e "
-             "cuidador de idosos, no Centro do Rio. Inscrição de R$ 99 garante a vaga.")
+             "cuidador de idosos, no Centro do Rio. Inscrição de R$ 99.")
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
 IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
