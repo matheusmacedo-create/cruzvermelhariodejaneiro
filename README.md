@@ -322,11 +322,30 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   confirmação à pessoa (com o botão de matrícula do curso, quando o assunto é curso). O banco é a fonte
   da verdade: se o e-mail falhar, a mensagem fica em `mcp_contatos` com `email_equipe = 'falhou'`.
 - **Destino**: `EMAIL_CONTATO` no `config.php` (padrão `contato@cruzvermelhariodejaneiro.org`).
-  **Atenção**: em 19/09/2026 o MX do domínio apontava para a Hostinger sem serviço de e-mail
-  contratado (a API lista zero pedidos de e-mail), então `contato@` não recebia nada; o endereço
-  passa a funcionar quando o MX for para o Google Workspace (instruções passadas ao Matheus: TXT de
-  verificação, MX `smtp.google.com` prioridade 1, SPF com `include:_spf.google.com`, DKIM). Até lá,
-  aponte `EMAIL_CONTATO` para uma caixa que funcione.
+  O aviso de teste de 19/09 chegou na caixa do Matheus, então `contato@` recebe (o MX aponta para
+  a Hostinger; a API de e-mail da Hostinger não lista o serviço nesta conta, provavelmente por
+  estar em outra conta ou escopo). Se o e-mail do domínio for para o Google Workspace, os passos
+  são: TXT de verificação do Admin, MX `smtp.google.com` prioridade 1 no lugar dos MX da Hostinger,
+  SPF com `include:_spf.google.com` e DKIM do Gmail.
+- **Painel de respostas (`api/painel.php`, 19/09 à noite)**: a equipe responde cada contato por
+  e-mail no padrão visual do site e a resposta fica registrada (`status`, `resposta`,
+  `respondido_por`, `respondido_em` em `mcp_contatos`). Entrada sem senha para configurar: o aviso
+  de cada mensagem traz o botão **"Responder no painel"**, um link assinado (HMAC com um segredo
+  gerado no servidor e guardado em `mcp_chaves`) que abre só aquele contato por 90 dias; a lista
+  completa exige um link de entrada enviado ao e-mail da equipe (`EMAIL_CONTATO` ou
+  `PAINEL_EMAILS`), válido por 20 minutos, que abre uma sessão de 12 h em cookie assinado
+  (HttpOnly, Secure, SameSite=Lax). Quem lê a caixa da equipe é quem pode responder. Formulários com
+  token anti-CSRF por ação e contato; limite de 5 pedidos de link por hora por IP; página `noindex`
+  e `no-store`. A resposta sai de `EMAIL_REMETENTE_CONTATO` (ou do remetente geral) com
+  responder-para `EMAIL_CONTATO`, assunto "Resposta da Cruz Vermelha RJ · protocolo", assinatura de
+  quem respondeu e a mensagem original citada; arquivar sem responder e reabrir também existem.
+  Responder direto pelo cliente de e-mail continua funcionando (responder-para = a pessoa), só não
+  registra no painel.
+- **Cliente sempre avisado de que a resposta vem por e-mail**: a tela final do chat diz para qual
+  endereço a resposta vai, em quanto tempo, que o protocolo vem no assunto, para olhar o spam e
+  salvar `contato@` nos contatos (com botão para copiar o endereço); a confirmação por e-mail repete
+  isso em três passos ("Como funciona a resposta"), com o remetente que vai aparecer; a resposta do
+  painel termina com "responda este e-mail para continuar".
 - **Páginas e telas sem WhatsApp**: botões de matrícula levam direto ao checkout (`?curso=`) mesmo sem
   JavaScript; "Como funciona", FAQ (com a pergunta nova "Como tiro dúvidas antes de me matricular?"),
   checkout (campo "Telefone (celular)", noscript), tela Parabéns B ("a secretaria escreve para você",
@@ -339,7 +358,8 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   CNPJ, endereço e a linha do motivo; componentes reutilizáveis (botão em tabela, caixa de valores com
   total em destaque, passos numerados, bloco do PIX, citação). Cada mensagem tem uma função pura
   `mcp_montar_email_*()` (assunto, html, texto) coberta por `scripts/testar_checkout.php` e renderizada
-  por `scripts/previsualizar_emails.php [pasta]` para conferência visual.
+  por `scripts/previsualizar_emails.php [pasta]` para conferência visual (nove modelos, incluindo a
+  resposta do painel e o link de entrada).
 - **E-mail de recuperação do PIX** (sai quando o código é gerado): assunto "Falta só o PIX para
   garantir sua vaga em <curso>", prévia com valor e validade, título "Falta só o PIX, <nome>.", caixa
   Curso / Inscrição / custos opcionais / Total, botão único "Concluir pagamento" (tela pendente, com
@@ -352,9 +372,9 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   Telefone, responder-para = aluno) e os dois do chat.
 - **Rastreamento**: GA4 `contato_aberto` (uma vez por sessão) e `contato_enviado` (assunto, curso,
   página); Meta `Contact` no envio. Detalhes em `docs/rastreamento.md`.
-- **Pendências**: MX do domínio no Google (acima); painel ou exportação de `mcp_contatos` (hoje só
-  phpMyAdmin); o `Reply-To` dos e-mails ao aluno passou a ser `EMAIL_CONTATO`, então a caixa precisa
-  existir de fato.
+- **Pendências**: decidir se o e-mail do domínio vai para o Google Workspace (acima); no painel,
+  filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
+  úteis sem resposta.
 
 ## Revisão de SEO (19/09/2026)
 

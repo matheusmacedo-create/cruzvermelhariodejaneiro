@@ -83,6 +83,11 @@ $id = mcp_contato_gravar($contato);
 $protocolo = mcp_contato_protocolo($id);
 mcp_contato_atualizar($id, ['protocolo' => $protocolo]);
 $registro = mcp_contato_por_id($id) ?? ($contato + ['id' => $id, 'protocolo' => $protocolo, 'criado_em' => mcp_agora()]);
+try {
+    $registro['link_painel'] = mcp_painel_link_contato($id); // botão "Responder no painel" do aviso à equipe
+} catch (Throwable $e) {
+    error_log('[matricula] link do painel falhou: ' . $e->getMessage());
+}
 
 $envios = mcp_email_contato($registro);
 mcp_contato_atualizar($id, ['email_equipe' => $envios['equipe'], 'email_confirmacao' => $envios['confirmacao']]);

@@ -102,11 +102,28 @@ function mcp_migrar(PDO $pdo): void
         ip VARCHAR(45) NULL,
         email_equipe VARCHAR(20) NULL,
         email_confirmacao VARCHAR(20) NULL,
+        status ENUM('novo','respondido','arquivado') NOT NULL DEFAULT 'novo',
+        resposta TEXT NULL,
+        respondido_por VARCHAR(120) NULL,
+        email_resposta VARCHAR(20) NULL,
         respondido_em DATETIME NULL,
         criado_em DATETIME NOT NULL,
         KEY ix_email (email, criado_em),
         KEY ix_ip (ip, criado_em),
         KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Colunas do painel de respostas (19/09, à noite) em bancos que já tinham a tabela.
+    mcp_garantir_colunas($pdo, 'mcp_contatos', [
+        'status' => "ENUM('novo','respondido','arquivado') NOT NULL DEFAULT 'novo'",
+        'resposta' => 'TEXT NULL',
+        'respondido_por' => 'VARCHAR(120) NULL',
+        'email_resposta' => 'VARCHAR(20) NULL',
+    ]);
+    // Chaves geradas no servidor (segredo dos links do painel): não exigem editar config.php.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_chaves (
+        nome VARCHAR(40) NOT NULL PRIMARY KEY,
+        valor VARCHAR(128) NOT NULL,
+        criado_em DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_eventos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -116,6 +133,36 @@ function mcp_migrar(PDO $pdo): void
         criado_em DATETIME NOT NULL,
         KEY ix_inscricao (inscricao_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+/** Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). */
+function mcp_garantir_colunas(PDO $pdo, string $tabela, array $colunas): void
+{
+    $existentes = array_column($pdo->query("SHOW COLUMNS FROM $tabela")->fetchAll(), 'Field');
+    foreach ($colunas as $nome => $definicao) {
+        if (!in_array($nome, $existentes, true)) {
+            $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+        }
+    }
+}
+
+/** Segredo gerado uma vez e guardado no banco (ex.: assinatura dos links do painel). */
+function mcp_segredo(string $nome): string
+{
+    static $cache = [];
+    if (isset($cache[$nome])) {
+        return $cache[$nome];
+    }
+    $pdo = mcp_db();
+    $stmt = $pdo->prepare('SELECT valor FROM mcp_chaves WHERE nome = ?');
+    $stmt->execute([$nome]);
+    $valor = $stmt->fetchColumn();
+    if (!$valor) {
+        $pdo->prepare('INSERT IGNORE INTO mcp_chaves (nome, valor, criado_em) VALUES (?, ?, ?)')->execute([$nome, bin2hex(random_bytes(32)), mcp_agora()]);
+        $stmt->execute([$nome]); // relê: outro processo pode ter inserido antes
+        $valor = $stmt->fetchColumn();
+    }
+    return $cache[$nome] = (string) $valor;
 }
 
 /** Trilha de auditoria por inscrição. Nunca recebe dado de cartão nem senha. Falha aqui não derruba a requisição. */
@@ -220,4 +267,37 @@ function mcp_contato_protocolo(int $id, ?string $agoraUtc = null): string
 {
     $data = (new DateTimeImmutable($agoraUtc ?? mcp_agora(), new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('America/Sao_Paulo'));
     return sprintf('CV-%s-%04d', $data->format('ymd'), $id);
+}
+
+/** Quantos eventos de um tipo com o mesmo detalhe (ex.: IP) nos últimos N segundos. Freio de ações sem tabela própria. */
+function mcp_contar_eventos_recentes(string $tipo, string $detalhe, int $segundos): int
+{
+    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_eventos WHERE tipo = ? AND detalhe = ? AND criado_em > ?');
+    $stmt->execute([$tipo, $detalhe, gmdate('Y-m-d H:i:s', time() - $segundos)]);
+    return (int) $stmt->fetchColumn();
+}
+
+/** Contatos para o painel, mais recentes primeiro; $status null = todos. */
+function mcp_contatos_listar(?string $status, int $limite = 50, int $deslocamento = 0): array
+{
+    $sql = 'SELECT id, protocolo, nome, email, telefone, assunto, curso_nome, status, criado_em, respondido_em FROM mcp_contatos';
+    $params = [];
+    if ($status !== null) {
+        $sql .= ' WHERE status = ?';
+        $params[] = $status;
+    }
+    $sql .= ' ORDER BY id DESC LIMIT ' . max(1, min(200, $limite)) . ' OFFSET ' . max(0, $deslocamento);
+    $stmt = mcp_db()->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
+
+/** Total de contatos por status: ['novo' => n, 'respondido' => n, 'arquivado' => n]. */
+function mcp_contatos_contar(): array
+{
+    $totais = ['novo' => 0, 'respondido' => 0, 'arquivado' => 0];
+    foreach (mcp_db()->query('SELECT status, COUNT(*) AS n FROM mcp_contatos GROUP BY status')->fetchAll() as $linha) {
+        $totais[(string) $linha['status']] = (int) $linha['n'];
+    }
+    return $totais;
 }

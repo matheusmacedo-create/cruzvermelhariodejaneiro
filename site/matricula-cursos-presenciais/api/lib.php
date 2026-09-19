@@ -2,7 +2,8 @@
 /**
  * Bootstrap do backend do checkout da matrícula em cursos presenciais (PHP 8.3, Hostinger).
  *
- * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php e contato.php (chat do site).
+ * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php, contato.php (chat do site) e
+ * painel.php (painel da equipe para responder os contatos).
  * Tudo o mais fica em lib/ (negado por .htaccess) e em config.php (segredos, só no servidor; modelo
  * em config.example.php).
  *
@@ -14,7 +15,7 @@
  */
 declare(strict_types=1);
 
-const MCP_VERSAO = '2026-09-19.1';
+const MCP_VERSAO = '2026-09-19.2';
 
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
@@ -45,6 +46,6 @@ set_exception_handler(static function (Throwable $e): void {
     exit;
 });
 
-foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'publico'] as $modulo) {
+foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'publico', 'painel'] as $modulo) {
     require __DIR__ . '/lib/' . $modulo . '.php';
 }

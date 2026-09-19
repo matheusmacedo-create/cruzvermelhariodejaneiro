@@ -152,6 +152,17 @@ function mcp_telefone(string $bruto): string
     return in_array(strlen($digitos), [10, 11], true) && $digitos[0] !== '0' ? $digitos : '';
 }
 
+/** Telefone só com dígitos (10 ou 11) no formato (21) 99999-9999; outros tamanhos voltam como vieram. */
+function mcp_telefone_bonito(string $digitos): string
+{
+    $d = mcp_digitos($digitos);
+    if (!in_array(strlen($d), [10, 11], true)) {
+        return $digitos;
+    }
+    $corte = strlen($d) === 11 ? 7 : 6;
+    return '(' . substr($d, 0, 2) . ') ' . substr($d, 2, $corte - 2) . '-' . substr($d, $corte);
+}
+
 /** Luhn: pega erro de digitação no número do cartão antes de ir ao gateway. */
 function mcp_luhn_valido(string $digitos): bool
 {

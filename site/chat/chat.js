@@ -158,8 +158,9 @@
         chips = [];
         if (precisaCurso() && r.curso) chips.push({ href: URL_CHECKOUT + '?curso=' + encodeURIComponent(r.curso), rotulo: 'Fazer matrícula em ' + nomeCurso(r.curso) });
         else if (precisaCurso()) chips.push({ href: URL_MATRICULA, rotulo: 'Ver cursos e matrícula' });
+        chips.push({ acao: copiarEmail, rotulo: 'Copiar e-mail da equipe', classe: 'neutro' });
         chips.push({ valor: 'nova', rotulo: 'Nova mensagem', classe: 'neutro' }, { valor: 'fechar', rotulo: 'Fechar', classe: 'neutro' });
-        return { html: 'Recebemos sua mensagem, <b>' + escapar(primeiroNome(r.nome)) + '</b>! Protocolo <b>' + escapar(estado.protocolo) + '</b>.\nEnviamos uma cópia para <b>' + escapar(r.email) + '</b> e a equipe responde por lá em até ' + PRAZO + '.', chips: chips };
+        return { html: 'Recebemos sua mensagem, <b>' + escapar(primeiroNome(r.nome)) + '</b>! Protocolo <b>' + escapar(estado.protocolo) + '</b>.\n\nA resposta chega <b>por e-mail</b>, em <b>' + escapar(r.email) + '</b>, em até ' + PRAZO + ', com o protocolo no assunto. Fique de olho na caixa de entrada e no spam.\n\nDaqui em diante a conversa segue por e-mail. Para não perder a resposta, salve <b>' + EMAIL_CONTATO + '</b> nos seus contatos.', chips: chips };
       case 'falhou':
         return { html: escapar(estado.erro || 'Não consegui enviar agora.') + '\nVocê pode tentar de novo ou escrever direto para <a href="' + linkEmail() + '">' + EMAIL_CONTATO + '</a>.',
           chips: [{ valor: 'tentar', rotulo: 'Tentar de novo', classe: 'cheio' }, { href: linkEmail(), rotulo: 'Escrever por e-mail', classe: 'neutro' }] };
@@ -177,6 +178,11 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
   }
   function primeiroNome(nome) { return String(nome || '').trim().split(/\s+/)[0] || ''; }
+  function copiarEmail(botao) {
+    var feito = function (ok) { botao.textContent = ok ? 'E-mail copiado' : EMAIL_CONTATO; };
+    if (navigator.clipboard) navigator.clipboard.writeText(EMAIL_CONTATO).then(function () { feito(true); }, function () { feito(false); });
+    else feito(false);
+  }
   function linkEmail() {
     var r = estado.respostas;
     var corpo = (r.mensagem || '') + '\n\nNome: ' + (r.nome || '') + (r.telefone ? '\nTelefone: ' + r.telefone : '') + (r.curso ? '\nCurso: ' + nomeCurso(r.curso) : '');
@@ -203,6 +209,7 @@
     return el('div', { class: 'cv-chat-chips' }, lista.map(function (c) {
       var classe = 'cv-chat-chip' + (c.classe ? ' ' + c.classe : '');
       if (c.href) return el('a', { class: classe, href: c.href, text: c.rotulo });
+      if (c.acao) return el('button', { class: classe, type: 'button', text: c.rotulo, onclick: function () { c.acao(this); } });
       return el('button', { class: classe, type: 'button', text: c.rotulo, onclick: function () { escolher(passo, c.valor); } });
     }));
   }

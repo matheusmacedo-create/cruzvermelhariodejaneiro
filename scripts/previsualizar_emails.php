@@ -55,8 +55,10 @@ $emails = [
     '3-pago-cartao' => mcp_montar_email_aluno_pago($pagaCartao),
     '4-pago-acesso-escola' => mcp_montar_email_aluno_pago($pagaA),
     '5-secretaria' => mcp_montar_email_secretaria($pagaB),
-    '6-contato-equipe' => mcp_montar_email_contato_equipe($contato),
+    '6-contato-equipe' => mcp_montar_email_contato_equipe(['link_painel' => 'https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/painel.php?c=7&e=1797000000&k=exemplo'] + $contato),
     '7-contato-confirmacao' => mcp_montar_email_contato_confirmacao($contato),
+    '8-resposta-painel' => mcp_montar_email_resposta_contato($contato, "Oi, Ana!\n\nTemos turma de Punção Venosa aos sábados, das 8h às 17h, e uma turma noturna começando no mês que vem (terças e quintas, 18h30 às 22h30). As duas acontecem na sede, na Praça da Cruz Vermelha, 10.\n\nSe quiser garantir a vaga, a inscrição de R$ 99 reserva seu lugar e a secretaria confirma a turma com você depois.\n\nQualquer outra dúvida, é só responder este e-mail.", 'Carla, da equipe de cursos'),
+    '9-painel-link' => mcp_montar_email_painel_link('https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/painel.php?entrar=contato%40cruzvermelhariodejaneiro.org&e=1797000000&k=exemplo'),
 ];
 foreach ($emails as $nome => $m) {
     file_put_contents("$pasta/$nome.html", $m['html']);

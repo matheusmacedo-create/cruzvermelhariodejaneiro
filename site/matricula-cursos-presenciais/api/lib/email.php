@@ -25,6 +25,18 @@ function mcp_email_contato_endereco(): string
     return (string) mcp_cfg('EMAIL_CONTATO', 'contato@cruzvermelhariodejaneiro.org');
 }
 
+/** Remetente das respostas do painel ao cliente (EMAIL_REMETENTE_CONTATO ou o remetente geral). */
+function mcp_email_remetente_contato(): string
+{
+    return (string) mcp_cfg('EMAIL_REMETENTE_CONTATO', mcp_cfg('EMAIL_REMETENTE', 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>'));
+}
+
+/** Só o endereço de um remetente no formato "Nome <endereco>". */
+function mcp_email_endereco(string $remetente): string
+{
+    return preg_match('/<([^>]+)>/', $remetente, $m) ? $m[1] : trim($remetente);
+}
+
 /** Logo em PNG (WebP não abre no Outlook), 480 px para ficar nítido em tela retina a 180 px. */
 function mcp_email_logo(): string
 {
@@ -109,7 +121,10 @@ function mcp_subtitulo(string $texto): string
     return '<h2 style="margin:26px 0 8px;font-size:18px;line-height:1.3;color:#0f1318;font-weight:800">' . mcp_escapar($texto) . '</h2>';
 }
 
-/** Caixa cinza com linhas rótulo/valor; $total (uma linha) fica em destaque, separado por uma régua. */
+/**
+ * Caixa cinza com linhas rótulo/valor; $total (uma linha) fica em destaque, separado por uma régua.
+ * Um valor pode ser ['html' => '...'] já escapado pelo chamador (links de e-mail e telefone).
+ */
 function mcp_caixa(array $linhas, array $total = []): string
 {
     $html = '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f7f8fa" style="margin:18px 0;background:#f7f8fa;border:1px solid #e2e8f0;border-radius:12px"><tr><td style="padding:14px 18px">'
@@ -118,8 +133,9 @@ function mcp_caixa(array $linhas, array $total = []): string
     foreach ($linhas as $rotulo => $valor) {
         $borda = $primeira ? '0' : '1px solid #e2e8f0';
         $primeira = false;
+        $v = is_array($valor) ? (string) ($valor['html'] ?? '') : mcp_escapar((string) $valor);
         $html .= '<tr><td valign="top" style="padding:7px 12px 7px 0;border-top:' . $borda . ';color:#718096">' . mcp_escapar((string) $rotulo) . '</td>'
-            . '<td valign="top" align="right" style="padding:7px 0;border-top:' . $borda . ';color:#1a202c;font-weight:600;text-align:right">' . mcp_escapar((string) $valor) . '</td></tr>';
+            . '<td valign="top" align="right" style="padding:7px 0;border-top:' . $borda . ';color:#1a202c;font-weight:600;text-align:right">' . $v . '</td></tr>';
     }
     foreach ($total as $rotulo => $valor) {
         $html .= '<tr><td style="padding:10px 12px 4px 0;border-top:2px solid #0f1318;color:#0f1318;font-weight:800;font-size:16px">' . mcp_escapar((string) $rotulo) . '</td>'
@@ -161,9 +177,9 @@ function mcp_citacao(string $texto): string
  * Responder-para: $responderPara (e-mail já validado com FILTER_VALIDATE_EMAIL, que não aceita quebra
  * de linha) ou, por padrão, EMAIL_RESPOSTA / EMAIL_CONTATO.
  */
-function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null): string
+function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null): string
 {
-    $remetente = (string) mcp_cfg('EMAIL_REMETENTE', 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>');
+    $remetente = $remetente ?? (string) mcp_cfg('EMAIL_REMETENTE', 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>');
     $resposta = $responderPara ?? (string) mcp_cfg('EMAIL_RESPOSTA', mcp_email_contato_endereco());
     if (!filter_var($resposta, FILTER_VALIDATE_EMAIL)) {
         $resposta = '';
@@ -420,43 +436,64 @@ function mcp_contato_com_curso(string $assunto): bool
     return in_array($assunto, ['matricula', 'curso', 'pagamento'], true);
 }
 
-/** Aviso à equipe (EMAIL_CONTATO): tudo o que a pessoa informou e a mensagem; responder = responder à pessoa. */
+/**
+ * Aviso à equipe (EMAIL_CONTATO): a mensagem primeiro, depois as duas formas de responder (painel, com
+ * registro, ou o próprio e-mail, que tem responder-para = a pessoa) e os dados do contato.
+ * $c['link_painel'] (opcional) é o link assinado do painel para este contato.
+ */
 function mcp_montar_email_contato_equipe(array $c): array
 {
     $assunto = mcp_contato_assunto_rotulo((string) $c['assunto']);
     $nome = (string) $c['nome'];
+    $primeiro = mcp_primeiro_nome($nome);
     $protocolo = (string) ($c['protocolo'] ?? '');
+    $email = (string) $c['email'];
+    $telefone = (string) ($c['telefone'] ?? '');
+    $curso = (string) ($c['curso_nome'] ?? '');
+    $linkPainel = (string) ($c['link_painel'] ?? '');
+    $mailto = 'mailto:' . $email . '?subject=' . rawurlencode("Re: $assunto · $protocolo");
+    $quando = mcp_data_brt((string) ($c['criado_em'] ?? ''), 'd/m/Y \à\s H\hi');
+
     $linhas = [
-        'Protocolo' => $protocolo,
         'Nome' => $nome,
-        'E-mail' => $c['email'],
-        'Telefone' => $c['telefone'] ?: 'não informado',
+        'E-mail' => ['html' => '<a href="mailto:' . mcp_escapar($email) . '" style="color:#cc0000;text-decoration:none">' . mcp_escapar($email) . '</a>'],
+        'Telefone' => $telefone !== ''
+            ? ['html' => '<a href="tel:+55' . mcp_escapar(mcp_digitos($telefone)) . '" style="color:#1a202c;text-decoration:none">' . mcp_escapar(mcp_telefone_bonito($telefone)) . '</a>']
+            : 'não informado',
         'Assunto' => $assunto,
     ];
-    if (!empty($c['curso_nome'])) {
-        $linhas['Curso'] = $c['curso_nome'];
+    if ($curso !== '') {
+        $linhas['Curso'] = $curso;
     }
     $linhas['Página'] = $c['pagina'] ?: 'não informada';
     $linhas['Origem'] = trim(($c['utm_source'] ?? '') . ' ' . ($c['utm_campaign'] ?? '')) ?: 'direto';
-    $quando = mcp_data_brt((string) ($c['criado_em'] ?? ''), 'd/m/Y \à\s H\hi');
     if ($quando !== '') {
         $linhas['Recebido em'] = $quando . ' (Brasília)';
     }
-    $texto = "Nova mensagem pelo chat do site.\n\n";
-    foreach ($linhas as $rotulo => $valor) {
-        $texto .= "$rotulo: $valor\n";
-    }
-    $texto .= "\nMensagem:\n{$c['mensagem']}\n\nPara responder, responda este e-mail (vai direto para {$c['email']}).";
-    $mailto = 'mailto:' . $c['email'] . '?subject=' . rawurlencode("Re: $assunto · $protocolo");
-    $corpo = mcp_p('Nova mensagem pelo chat do site. Para responder, basta <strong>responder este e-mail</strong>: a resposta vai direto para ' . mcp_escapar($nome) . '.')
-        . mcp_caixa($linhas)
-        . mcp_subtitulo('Mensagem')
+    $linhas['Protocolo'] = $protocolo;
+
+    $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong> escreveu pelo chat do site sobre <strong>' . mcp_escapar(mb_strtolower($assunto)) . '</strong>'
+            . ($curso !== '' ? ' (' . mcp_escapar($curso) . ')' : '') . '. A pessoa já foi avisada de que a resposta chega por e-mail em até ' . MCP_EMAIL_PRAZO . '.')
         . mcp_citacao((string) $c['mensagem'])
-        . mcp_botao($mailto, 'Responder para ' . mcp_primeiro_nome($nome));
+        . ($linkPainel !== ''
+            ? mcp_botao($linkPainel, 'Responder no painel')
+                . mcp_nota('Pelo painel a resposta sai no padrão visual do site, com o protocolo no assunto, e fica registrada com data e quem respondeu.')
+            : '')
+        . mcp_botao($mailto, 'Responder por e-mail', true)
+        . mcp_nota('Responder este e-mail também funciona: a resposta vai direto para ' . mcp_escapar($primeiro) . ', mas não fica registrada no painel.')
+        . mcp_subtitulo('Dados do contato')
+        . mcp_caixa($linhas);
+
+    $texto = "$nome escreveu pelo chat do site sobre " . mb_strtolower($assunto) . ($curso !== '' ? " ($curso)" : '') . ".\n\nMensagem:\n{$c['mensagem']}\n\n"
+        . ($linkPainel !== '' ? "Responder no painel: $linkPainel\n" : '')
+        . "Responder por e-mail: $email (ou responda este e-mail).\n\n";
+    foreach ($linhas as $rotulo => $valor) {
+        $texto .= "$rotulo: " . (is_array($valor) ? ($rotulo === 'E-mail' ? $email : mcp_telefone_bonito($telefone)) : $valor) . "\n";
+    }
     return [
-        'assunto' => "[Site] $assunto: $nome" . (!empty($c['curso_nome']) ? " · {$c['curso_nome']}" : '') . ($protocolo !== '' ? " · $protocolo" : ''),
-        'html' => mcp_moldura("$nome quer falar sobre " . mb_strtolower($assunto), $corpo, [
-            'eyebrow' => 'Chat do site · contato recebido',
+        'assunto' => "[Site] $assunto: $nome" . ($curso !== '' ? " · $curso" : '') . ($protocolo !== '' ? " · $protocolo" : ''),
+        'html' => mcp_moldura("Nova mensagem de $primeiro", $corpo, [
+            'eyebrow' => 'Chat do site' . ($protocolo !== '' ? " · $protocolo" : ''),
             'preheader' => mb_substr((string) $c['mensagem'], 0, 140),
             'motivo' => 'Aviso automático do chat de cruzvermelhariodejaneiro.org para ' . mcp_email_contato_endereco() . '.',
         ]),
@@ -464,26 +501,51 @@ function mcp_montar_email_contato_equipe(array $c): array
     ];
 }
 
-/** Confirmação a quem escreveu: protocolo, prazo, cópia da mensagem e, se for sobre curso, o caminho da matrícula. */
+/**
+ * Confirmação a quem escreveu: deixa claro que a conversa segue por e-mail (prazo, remetente, protocolo,
+ * spam), repete a mensagem e, se o assunto for curso, oferece a matrícula.
+ */
 function mcp_montar_email_contato_confirmacao(array $c): array
 {
     $nome = mcp_primeiro_nome((string) $c['nome']);
     $assunto = mcp_contato_assunto_rotulo((string) $c['assunto']);
     $protocolo = (string) ($c['protocolo'] ?? '');
+    $email = (string) $c['email'];
+    $telefone = (string) ($c['telefone'] ?? '');
     $comCurso = mcp_contato_com_curso((string) $c['assunto']);
+    $contato = mcp_email_contato_endereco();
+    $remetente = mcp_email_endereco(mcp_email_remetente_contato());
     $inscricao = mcp_brl(mcp_inscricao_centavos());
+    $quando = mcp_data_brt((string) ($c['criado_em'] ?? ''), 'd/m/Y \à\s H\hi');
+
     $linhas = ['Protocolo' => $protocolo, 'Assunto' => $assunto];
     if (!empty($c['curso_nome'])) {
         $linhas['Curso'] = $c['curso_nome'];
     }
-    $linhas['Resposta'] = 'por e-mail, em até ' . MCP_EMAIL_PRAZO;
-
-    $corpo = mcp_p('Oi, ' . mcp_escapar($nome) . '. Sua mensagem chegou. A nossa equipe responde <strong>por e-mail em até ' . MCP_EMAIL_PRAZO . '</strong>, neste mesmo endereço (<strong>' . mcp_escapar((string) $c['email']) . '</strong>). Se precisar falar dela, cite o protocolo.')
+    if ($quando !== '') {
+        $linhas['Enviada em'] = $quando . ' (Brasília)';
+    }
+    $passos = [
+        ['Respondemos por e-mail em até ' . MCP_EMAIL_PRAZO,
+            'A resposta vai para <strong>' . mcp_escapar($email) . '</strong>, com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong> no assunto.'
+            . ($telefone !== '' ? ' Se for preciso, também podemos ligar para ' . mcp_escapar(mcp_telefone_bonito($telefone)) . '.' : '')],
+        ['Fique de olho na caixa de entrada e no spam',
+            'O remetente é <strong>' . mcp_escapar($remetente) . '</strong>. Salve <strong>' . mcp_escapar($contato) . '</strong> nos seus contatos para a resposta não se perder.'],
+        ['Para continuar a conversa, responda o e-mail',
+            'Daqui em diante tudo acontece por e-mail, sempre com o protocolo. Você não precisa enviar a mensagem de novo.'],
+    ];
+    $corpo = mcp_p('Oi, ' . mcp_escapar($nome) . '. Sua mensagem chegou e já está com a nossa equipe. Guarde o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>: ele identifica a sua conversa.')
+        . mcp_subtitulo('Como funciona a resposta')
+        . mcp_passos($passos)
         . mcp_caixa($linhas)
         . mcp_subtitulo('Sua mensagem')
         . mcp_citacao((string) $c['mensagem']);
-    $texto = "Oi, $nome. Sua mensagem chegou. A nossa equipe responde por e-mail em até " . MCP_EMAIL_PRAZO . " neste mesmo endereço ({$c['email']}).\n\nProtocolo: $protocolo\nAssunto: $assunto"
-        . (!empty($c['curso_nome']) ? "\nCurso: {$c['curso_nome']}" : '') . "\n\nSua mensagem:\n{$c['mensagem']}\n";
+    $texto = "Oi, $nome. Sua mensagem chegou e já está com a nossa equipe. Protocolo: $protocolo.\n\n"
+        . "Como funciona a resposta:\n1) Respondemos por e-mail em até " . MCP_EMAIL_PRAZO . ", para $email, com o protocolo no assunto."
+        . ($telefone !== '' ? ' Se for preciso, também podemos ligar para ' . mcp_telefone_bonito($telefone) . '.' : '') . "\n"
+        . "2) Fique de olho na caixa de entrada e no spam. O remetente é $remetente; salve $contato nos seus contatos.\n"
+        . "3) Para continuar a conversa, responda o e-mail. Você não precisa enviar a mensagem de novo.\n\n"
+        . "Assunto: $assunto" . (!empty($c['curso_nome']) ? "\nCurso: {$c['curso_nome']}" : '') . "\n\nSua mensagem:\n{$c['mensagem']}\n";
     if ($comCurso && !empty($c['curso_slug'])) {
         $link = mcp_site_url() . '/matricula-cursos-presenciais/checkout/?curso=' . rawurlencode((string) $c['curso_slug']);
         $corpo .= mcp_p('Já decidiu? Dá para garantir a vaga agora: a inscrição de <strong>' . $inscricao . '</strong> reserva seu lugar em <strong>' . mcp_escapar((string) $c['curso_nome']) . '</strong>, e a secretaria confirma turma e horário depois.')
@@ -500,7 +562,7 @@ function mcp_montar_email_contato_confirmacao(array $c): array
         'assunto' => "Recebemos sua mensagem · $protocolo",
         'html' => mcp_moldura("Recebemos sua mensagem, $nome.", $corpo, [
             'eyebrow' => 'Atendimento por e-mail',
-            'preheader' => "Protocolo $protocolo. Respondemos em até " . MCP_EMAIL_PRAZO . '.',
+            'preheader' => "Protocolo $protocolo. A resposta chega por e-mail em até " . MCP_EMAIL_PRAZO . '.',
             'motivo' => 'Você recebeu este e-mail porque enviou uma mensagem pelo chat de cruzvermelhariodejaneiro.org.',
         ]),
         'texto' => $texto,
@@ -515,4 +577,62 @@ function mcp_email_contato(array $c): array
     $confirmacao = mcp_montar_email_contato_confirmacao($c);
     $r2 = mcp_enviar_email((string) $c['email'], $confirmacao['assunto'], $confirmacao['html'], $confirmacao['texto']);
     return ['equipe' => $r1, 'confirmacao' => $r2];
+}
+
+// ----------------------------------------------------------------------------- painel: resposta e acesso
+/** Resposta da equipe a um contato, escrita no painel: o texto, a assinatura, a mensagem original e o caminho de volta. */
+function mcp_montar_email_resposta_contato(array $c, string $resposta, string $assinatura): array
+{
+    $nome = mcp_primeiro_nome((string) $c['nome']);
+    $assunto = mcp_contato_assunto_rotulo((string) $c['assunto']);
+    $protocolo = (string) ($c['protocolo'] ?? '');
+    $comCurso = mcp_contato_com_curso((string) $c['assunto']);
+    $corpo = '<div style="font-size:16px;line-height:1.6;color:#1a202c">' . nl2br(mcp_escapar($resposta)) . '</div>'
+        . '<p style="margin:22px 0 0;font-size:15px;line-height:1.5;color:#1a202c"><strong>' . mcp_escapar($assinatura) . '</strong><br><span style="color:#718096">Equipe Cruz Vermelha RJ · Atendimento por e-mail</span></p>'
+        . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#fff7f7" style="margin:22px 0 0;background:#fff7f7;border:1px solid #f5c2c7;border-radius:12px"><tr><td style="padding:12px 16px;font-size:14px;line-height:1.5;color:#1a202c">'
+        . 'Ficou alguma dúvida? <strong>Responda este e-mail</strong> e a conversa continua por aqui, sempre com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>.</td></tr></table>';
+    $texto = "$resposta\n\n$assinatura\nEquipe Cruz Vermelha RJ · Atendimento por e-mail\n\nFicou alguma dúvida? Responda este e-mail (protocolo $protocolo).\n";
+    if ($comCurso && !empty($c['curso_slug'])) {
+        $link = mcp_site_url() . '/matricula-cursos-presenciais/checkout/?curso=' . rawurlencode((string) $c['curso_slug']);
+        $corpo .= mcp_botao($link, 'Fazer matrícula em ' . (string) $c['curso_nome'], true);
+        $texto .= "\nFazer matrícula em {$c['curso_nome']}: $link\n";
+    }
+    $corpo .= mcp_subtitulo('Sua mensagem')
+        . mcp_citacao((string) $c['mensagem']);
+    $texto .= "\nSua mensagem:\n{$c['mensagem']}\n";
+    return [
+        'assunto' => "Resposta da Cruz Vermelha RJ · $protocolo",
+        'html' => mcp_moldura("Respondemos sua mensagem, $nome.", $corpo, [
+            'eyebrow' => 'Atendimento por e-mail · ' . $assunto,
+            'preheader' => mb_substr(preg_replace('/\s+/u', ' ', $resposta) ?? '', 0, 140),
+            'motivo' => "Você recebeu este e-mail porque enviou uma mensagem pelo chat de cruzvermelhariodejaneiro.org (protocolo $protocolo).",
+        ]),
+        'texto' => $texto,
+    ];
+}
+
+/** Envia a resposta ao cliente pelo remetente de contato; responder-para é EMAIL_CONTATO. */
+function mcp_email_resposta_contato(array $c, string $resposta, string $assinatura): string
+{
+    $m = mcp_montar_email_resposta_contato($c, $resposta, $assinatura);
+    return mcp_enviar_email((string) $c['email'], $m['assunto'], $m['html'], $m['texto'], null, mcp_email_remetente_contato());
+}
+
+/** Link de entrada no painel (vale 20 minutos). */
+function mcp_montar_email_painel_link(string $link): array
+{
+    $corpo = mcp_p('Clique no botão para entrar no painel de contatos do chat. O link vale por <strong>' . MCP_PAINEL_LINK_ENTRADA_MINUTOS . ' minutos</strong> e abre uma sessão de ' . MCP_PAINEL_SESSAO_HORAS . ' horas neste navegador.')
+        . mcp_botao($link, 'Entrar no painel')
+        . mcp_nota('Se não foi você quem pediu, ignore este e-mail: nada acontece sem o clique.');
+    return [
+        'assunto' => 'Acesso ao painel de contatos',
+        'html' => mcp_moldura('Seu link de acesso ao painel', $corpo, ['eyebrow' => 'Painel de contatos', 'motivo' => 'Pedido feito em ' . mcp_painel_url() . '.']),
+        'texto' => "Entrar no painel de contatos (vale " . MCP_PAINEL_LINK_ENTRADA_MINUTOS . " minutos): $link\n\nSe não foi você quem pediu, ignore este e-mail.",
+    ];
+}
+
+function mcp_email_painel_link(string $email): string
+{
+    $m = mcp_montar_email_painel_link(mcp_painel_link_entrada($email));
+    return mcp_enviar_email($email, $m['assunto'], $m['html'], $m['texto']);
 }
