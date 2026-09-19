@@ -376,6 +376,15 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
   úteis sem resposta.
 
+## Convenção de nome (19/09/2026)
+
+"Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
+completo, **Cruz Vermelha Brasileira Rio de Janeiro** (ou "Filial Rio de Janeiro"/"Filial do Estado
+do Rio de Janeiro" onde já estava assim); a forma curta "Cruz Vermelha RJ" continua valendo no chat e
+nos e-mails. Os textos do catálogo da escola (`cursos.json`) são normalizados na geração da página de
+matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não precisam ser
+editados à mão.
+
 ## Página de links da bio do Instagram (`/bio/`, 19/09/2026)
 
 A bio do Instagram apontava para `smartpa.ge/rWPY`, uma página de links fora do domínio. Agora
