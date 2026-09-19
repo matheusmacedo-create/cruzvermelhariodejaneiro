@@ -480,38 +480,24 @@
     @media (max-width: 920px) { .more-courses-grid { grid-template-columns: 1fr; } }
     .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
 
-    .alert {
-      background: var(--black);
-      color: #fff;
-      padding: 0;
-    }
-    .alert-grid {
-      display: grid;
-      grid-template-columns: .9fr 1.1fr;
-      gap: 40px;
-      align-items: center;
-    }
-    .alert img {
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      object-fit: cover;
-      border-radius: var(--radius);
-    }
+    .alert { background: var(--black); color: #fff; padding: 72px 0; }
+    .alert-grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 48px; align-items: center; }
+    .alert-foto { margin: 0; position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
+    .alert-foto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .alert-foto figcaption { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border-radius: 12px; background: rgba(15, 19, 24, .78); color: #fff; font-size: .85rem; backdrop-filter: blur(6px); }
+    .alert-foto figcaption i { color: #ff6b6b; }
     .alert h2 { color: #fff; }
     .alert .lead { color: rgba(255,255,255,.76); }
-    .alert-list {
-      display: grid;
-      gap: 14px;
-      margin-top: 24px;
-    }
-    .alert-item {
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: var(--radius);
-      padding: 16px;
-    }
+    .alert-list { list-style: none; display: grid; gap: 12px; margin: 24px 0; padding: 0; }
+    .alert-item { display: flex; gap: 14px; align-items: flex-start; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px 16px; }
+    .alert-item > i { width: 40px; height: 40px; border-radius: 12px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1rem; }
     .alert-item b { color: #fff; display: block; }
-    .alert-item span { color: rgba(255,255,255,.75); font-size: .94rem; }
+    .alert-item span { color: rgba(255,255,255,.72); font-size: .93rem; }
+    .alert-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+    .alert-link { color: #fff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.35); padding-bottom: 2px; }
+    .alert-link:hover { border-color: #fff; }
+    .alert-nota { margin: 14px 0 0; color: rgba(255,255,255,.55); font-size: .85rem; }
+    @media (max-width: 920px) { .alert { padding: 48px 0; } .alert-grid { gap: 28px; } }
 
     .actions {
       background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
@@ -625,40 +611,58 @@
     }
 
     .contact { background: var(--soft); }
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      align-items: stretch;
+    .contact-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 28px; align-items: stretch; }
+    .contact-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 34px; display: flex; flex-direction: column; }
+    .contact-card .lead { font-size: 1rem; margin: 4px 0 20px; }
+    .contact-mail { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 16px 18px; border: 1.5px solid var(--red); border-radius: 14px; background: #fff7f7; text-decoration: none; color: var(--black); transition: box-shadow .15s, transform .15s; }
+    .contact-mail:hover { box-shadow: 0 10px 24px rgba(204, 0, 0, .14); transform: translateY(-1px); }
+    .contact-mail-icone { width: 46px; height: 46px; border-radius: 12px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+    .contact-mail-texto { flex: 1; min-width: 0; }
+    .contact-mail-texto b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); }
+    .contact-mail-texto span { display: block; font-weight: 700; font-size: .92rem; color: var(--black); overflow-wrap: anywhere; }
+    .contact-mail-acao { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--red); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-size: .9rem; transition: background .15s, color .15s; }
+    .contact-mail:hover .contact-mail-acao { background: var(--red); color: #fff; }
+    .contact-copiar { align-self: flex-start; margin: 10px 0 20px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .88rem; cursor: pointer; padding: 4px 0; display: inline-flex; gap: 7px; align-items: center; }
+    .contact-copiar:hover { color: var(--red); }
+    .contact-copiar.ok { color: #0f7b3e; }
+    .contact-canais { display: grid; gap: 10px; }
+    .contact-canal { display: flex; align-items: center; gap: 14px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 14px; text-decoration: none; color: var(--text); background: #fff; transition: border-color .15s, background .15s; }
+    .contact-canal:hover { border-color: #cbd5e1; background: var(--soft); }
+    .contact-canal > i:first-child { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .contact-canal > span { flex: 1; min-width: 0; font-size: .93rem; color: var(--muted); overflow-wrap: anywhere; }
+    .contact-canal > span b { display: block; color: var(--black); }
+    .contact-canal .seta { color: #a0aec0; font-size: .8rem; }
+    .contact-cnpj { margin: auto 0 0; padding-top: 18px; font-size: .8rem; color: var(--muted); }
+    .insta-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .insta-topo { display: flex; align-items: center; gap: 12px; }
+    .insta-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #f4a3a3; }
+    .insta-topo > div { flex: 1; min-width: 0; }
+    .insta-topo b { display: block; color: var(--black); font-size: .95rem; overflow-wrap: anywhere; }
+    .insta-topo small { color: var(--muted); font-size: .84rem; }
+    .insta-seguir { padding: 10px 16px; font-size: .9rem; white-space: nowrap; }
+    .insta-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; align-content: start; }
+    .insta-foto { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 10px; background: var(--soft); }
+    .insta-foto.grande { grid-column: span 2; grid-row: span 2; }
+    .insta-foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease, opacity .4s ease; }
+    .insta-foto:hover img { transform: scale(1.06); }
+    .insta-foto.trocando img { opacity: 0; }
+    .insta-foto span { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px; background: linear-gradient(transparent, rgba(0, 0, 0, .65)); color: #fff; font-size: .76rem; font-weight: 700; opacity: 0; transition: opacity .25s; }
+    .insta-foto.grande span { font-size: .9rem; padding-bottom: 12px; }
+    .insta-foto:hover span, .insta-foto:focus-visible span { opacity: 1; }
+    .insta-rodape { margin: auto 0 0; color: var(--muted); font-size: .85rem; display: flex; gap: 7px; align-items: center; }
+    .insta-rodape i { color: var(--red); }
+    @media (max-width: 620px) {
+      .contact-card { padding: 24px 20px; }
+      .contact-mail { padding: 14px; gap: 10px; }
+      .contact-mail-icone { display: none; }
+      .contact-mail-texto span { font-size: .88rem; }
+      .insta-topo { flex-wrap: wrap; }
+      .insta-topo > div { flex: 1 1 200px; }
+      .insta-seguir { width: 100%; justify-content: center; }
+      .contact-canal { padding: 12px 14px; }
+      .insta-card { padding: 14px; }
+      .insta-seguir { padding: 8px 12px; font-size: .85rem; }
     }
-    .contact-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 30px;
-    }
-    .contact-line {
-      padding: 18px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .contact-line:last-child { border-bottom: 0; }
-    .contact-line b { display: block; color: var(--black); }
-    .contact-line a, .contact-line span { color: var(--muted); overflow-wrap: anywhere; }
-    .map-card {
-      min-height: 430px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      position: relative;
-      background:
-        linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.1)),
-        url("assets/dia-cruz-vermelha.jpg") center / cover no-repeat;
-      color: #fff;
-      display: flex;
-      align-items: flex-end;
-      padding: 30px;
-    }
-    .map-card h3 { color: #fff; font-size: 2rem; margin-bottom: .4rem; }
-    .map-card p { color: rgba(255,255,255,.84); margin-bottom: 0; }
 
     footer {
       background: var(--stone);
@@ -908,12 +912,24 @@
     .matricula-section { background: #fff; }
     .matricula-box { background: #fff; border: 1px solid var(--line); border-left: 6px solid var(--red); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow); }
     .matricula-box .lead { max-width: 70ch; }
-    .matricula-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
-    .matricula-form select { flex: 1 1 320px; min-width: 0; max-width: 100%; min-height: 46px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--text); font: inherit; font-size: .95rem; }
-    .matricula-form select:focus { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-form { margin-top: 8px; position: relative; }
+    .matricula-opcoes { border: 0; margin: 0 0 18px; padding: 0; min-width: 0; }
+    .matricula-grupo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
+    .matricula-grupo-titulo { flex: 0 0 100%; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 8px 0 2px; }
+    .matricula-opcoes input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .matricula-pilula { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--black); font-weight: 600; font-size: .93rem; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s; }
+    .matricula-pilula small { color: var(--muted); font-weight: 500; font-size: .82rem; white-space: nowrap; }
+    .matricula-pilula:hover { border-color: #cbd5e1; }
+    .matricula-opcoes input:checked + .matricula-pilula { border-color: var(--red); background: #fff5f5; color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
+    .matricula-opcoes input:checked + .matricula-pilula small { color: var(--red); }
+    .matricula-opcoes input:focus-visible + .matricula-pilula { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-acao { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+    .matricula-escolhido { color: var(--muted); font-size: .92rem; }
+    .matricula-escolhido.ok { color: var(--black); font-weight: 600; }
+    .matricula-escolhido.erro { color: var(--red); font-weight: 600; }
     .matricula-nota { margin: 16px 0 0; font-size: .92rem; color: var(--muted); }
     .matricula-nota a { color: var(--red); font-weight: 700; text-decoration: underline; }
-    @media (max-width: 620px) { .matricula-box { padding: 24px; } .matricula-form .btn { width: 100%; } }
+    @media (max-width: 620px) { .matricula-box { padding: 24px 20px; } .matricula-form .btn { width: 100%; } .matricula-pilula { padding: 9px 13px; font-size: .88rem; } }
 
     /* ============================================================
        NOVO: FAQ
@@ -1296,27 +1312,36 @@
           <p class="eyebrow">Matrícula cursos presenciais</p>
           <h2 id="matricula-title">Já escolheu seu curso?</h2>
           <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na plataforma da escola.</p>
-          <form class="matricula-form" action="/matricula-cursos-presenciais/" method="get">
-            <label for="matricula-curso" style="position:absolute;left:-9999px">Curso</label>
-            <select id="matricula-curso" name="curso" required>
-              <option value="" disabled selected>Escolha o curso</option>
+          <form class="matricula-form" action="/matricula-cursos-presenciais/checkout/" method="get" novalidate>
+            <fieldset class="matricula-opcoes">
+              <legend style="position:absolute;left:-9999px">Curso</legend>
               <!-- matricula:cursos (preenchido por scripts/gerar_matricula_presencial.py a partir de cursos.json) -->
-              <optgroup label="Emergência e vida">
-                <option value="primeiros-socorros-basico">Primeiros Socorros Básico · 8 horas</option>
-                <option value="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças · 8 horas</option>
-                <option value="puncao-venosa">Punção Venosa · 8 horas</option>
-                <option value="suporte-basico-de-vida">Suporte Básico de Vida · 4 horas</option>
-              </optgroup>
-              <optgroup label="Formação profissional">
-                <option value="bombeiro-civil">Bombeiro Civil · 80 horas</option>
-                <option value="cuidador-de-idosos">Cuidador de Idosos (Curso Livre) · 160 horas</option>
-              </optgroup>
-              <optgroup label="Outros cursos">
-                <option value="micropigmentacao-labial">Micropigmentação Labial · 24 horas</option>
-              </optgroup>
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Emergência e vida</span>
+                <input type="radio" name="curso" value="primeiros-socorros-basico" id="mc-primeiros-socorros-basico">
+                <label class="matricula-pilula" for="mc-primeiros-socorros-basico">Primeiros Socorros Básico <small>8 horas</small></label>
+                <input type="radio" name="curso" value="primeiros-socorros-lei-lucas" id="mc-primeiros-socorros-lei-lucas">
+                <label class="matricula-pilula" for="mc-primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças <small>8 horas</small></label>
+                <input type="radio" name="curso" value="puncao-venosa" id="mc-puncao-venosa">
+                <label class="matricula-pilula" for="mc-puncao-venosa">Punção Venosa <small>8 horas</small></label>
+                <input type="radio" name="curso" value="suporte-basico-de-vida" id="mc-suporte-basico-de-vida">
+                <label class="matricula-pilula" for="mc-suporte-basico-de-vida">Suporte Básico de Vida <small>4 horas</small></label>
+              </div>
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Formação profissional</span>
+                <input type="radio" name="curso" value="bombeiro-civil" id="mc-bombeiro-civil">
+                <label class="matricula-pilula" for="mc-bombeiro-civil">Bombeiro Civil <small>80 horas</small></label>
+                <input type="radio" name="curso" value="cuidador-de-idosos" id="mc-cuidador-de-idosos">
+                <label class="matricula-pilula" for="mc-cuidador-de-idosos">Cuidador de Idosos (Curso Livre) <small>160 horas</small></label>
+              </div>
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Outros cursos</span>
+                <input type="radio" name="curso" value="micropigmentacao-labial" id="mc-micropigmentacao-labial">
+                <label class="matricula-pilula" for="mc-micropigmentacao-labial">Micropigmentação Labial <small>24 horas</small></label>
+              </div>
               <!-- /matricula:cursos -->
-            </select>
-            <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
+            </fieldset>
+            <div class="matricula-acao">
+              <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
+              <span class="matricula-escolhido" id="matricula-escolhido" aria-live="polite">Toque no curso para escolher</span>
+            </div>
           </form>
           <p class="matricula-nota"><a href="/matricula-cursos-presenciais/">Ver todos os cursos, valores e dúvidas frequentes</a></p>
         </div>
@@ -1325,16 +1350,24 @@
 
     <section class="alert" aria-labelledby="trauma-title">
       <div class="wrap alert-grid">
-        <img src="assets/protocolo-trauma.jpg" alt="Publicação educativa sobre protocolo de trauma e motociclista acidentado">
+        <figure class="alert-foto">
+          <img src="matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp" alt="Alunos praticando reanimação em manequim na aula de Primeiros Socorros da Cruz Vermelha RJ" loading="lazy" width="960" height="720">
+          <figcaption><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Aula prática de Primeiros Socorros na sede, no Centro do Rio</figcaption>
+        </figure>
         <div>
           <p class="eyebrow">Educação salva vidas</p>
           <h2 id="trauma-title">No trauma, ajudar é fazer a coisa certa.</h2>
-          <p class="lead">Uma boa intenção pode causar danos quando vira improviso. A orientação educativa da Cruz Vermelha RJ reforça uma mensagem simples: em acidente com motociclista, não retire o capacete sem treinamento.</p>
-          <div class="alert-list">
-            <div class="alert-item"><b>Acione ajuda especializada</b><span>Ligue para o SAMU 192 ou Bombeiros 193 em situações de emergência.</span></div>
-            <div class="alert-item"><b>Evite movimentos desnecessários</b><span>Movimentar cabeça e pescoço sem técnica pode agravar lesões.</span></div>
-            <div class="alert-item"><b>Busque capacitação</b><span>Primeiros socorros devem ser aprendidos com orientação profissional.</span></div>
+          <p class="lead">Uma boa intenção pode causar danos quando vira improviso. Em um acidente com motociclista, por exemplo, tirar o capacete sem técnica pode agravar uma lesão na coluna. Três atitudes que salvam:</p>
+          <ol class="alert-list">
+            <li class="alert-item"><i class="fa-solid fa-phone" aria-hidden="true"></i><div><b>Acione ajuda especializada</b><span>SAMU 192 ou Bombeiros 193. Diga onde está e o que aconteceu.</span></div></li>
+            <li class="alert-item"><i class="fa-solid fa-hand" aria-hidden="true"></i><div><b>Não mova a vítima</b><span>Cabeça e pescoço só se movem com técnica. Fique ao lado, mantenha a calma e converse com a pessoa até a ajuda chegar.</span></div></li>
+            <li class="alert-item"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i><div><b>Aprenda com quem sabe</b><span>Primeiros socorros se aprendem na prática, com orientação profissional. É o que o curso ensina em 8 horas.</span></div></li>
+          </ol>
+          <div class="alert-cta">
+            <a class="btn btn-red" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico">Fazer o curso de Primeiros Socorros</a>
+            <a class="alert-link" href="/matricula-cursos-presenciais/">Ver todos os cursos <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
           </div>
+          <p class="alert-nota">Presencial, 8 horas, certificado da Cruz Vermelha Brasileira. A inscrição de R$ 99 garante a vaga.</p>
         </div>
       </div>
     </section>
@@ -1510,30 +1543,63 @@
         <div class="contact-card">
           <p class="eyebrow">Contato</p>
           <h2>Fale com a Cruz Vermelha RJ.</h2>
-          <div class="contact-line">
-            <b>E-mail institucional</b>
-            <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>
+          <p class="lead">Cursos, voluntariado, doações ou parcerias: escreva para a gente. A equipe responde pelo e-mail institucional.</p>
+          <a class="contact-mail" href="mailto:contato@cruzvermelhariodejaneiro.org?subject=Contato%20pelo%20site">
+            <span class="contact-mail-icone"><i class="fa-regular fa-envelope" aria-hidden="true"></i></span>
+            <span class="contact-mail-texto"><b>E-mail institucional</b><span>contato@<wbr>cruzvermelhariodejaneiro.org</span></span>
+            <span class="contact-mail-acao" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+          <button type="button" class="contact-copiar" data-copiar="contato@cruzvermelhariodejaneiro.org"><i class="fa-regular fa-copy" aria-hidden="true"></i> <span>Copiar e-mail</span></button>
+          <div class="contact-canais">
+            <a class="contact-canal" href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130" target="_blank" rel="noopener">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <span><b>Sede</b>Praça da Cruz Vermelha, 10 · Centro, Rio de Janeiro · CEP 20230-130</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
+            <a class="contact-canal" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">
+              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+              <span><b>Instagram</b>@cruzvermelhabrasileirarj</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
+            <a class="contact-canal" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">
+              <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+              <span><b>Facebook</b>Cruz Vermelha Brasileira - RJ</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
           </div>
-          <div class="contact-line">
-            <b>WhatsApp para cursos</b>
-            <a href="https://wa.me/5521999922864" target="_blank" rel="noopener">(21) 99992-2864</a>
-          </div>
-          <div class="contact-line">
-            <b>Redes sociais</b>
-            <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Instagram: @cruzvermelhabrasileirarj</a>
-            <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Facebook: Cruz Vermelha Brasileira - RJ</a>
-          </div>
-          <div class="contact-line">
-            <b>Dados cadastrais</b>
-            <span>CRUZ VERMELHA BRASILEIRA FILIAL DO ESTADO DO RIO DE JANEIRO</span><br>
-            <span>CNPJ 08.560.973/0001-97</span>
-          </div>
+          <p class="contact-cnpj">Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro · CNPJ 08.560.973/0001-97</p>
         </div>
-        <aside class="map-card">
-          <div>
-            <h3>Praça da Cruz Vermelha, 10</h3>
-            <p>Rio de Janeiro - RJ<br>CEP 20230-130</p>
+        <aside class="insta-card" aria-label="Instagram da Cruz Vermelha RJ">
+          <div class="insta-topo">
+            <span class="insta-avatar"><i class="fa-brands fa-instagram" aria-hidden="true"></i></span>
+            <div><b>@cruzvermelhabrasileirarj</b><small>Ações, cursos e voluntariado da filial, todos os dias</small></div>
+            <a class="btn btn-red insta-seguir" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Seguir</a>
           </div>
+          <div class="insta-grade" id="insta-grade">
+            <a class="insta-foto grande" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/equipe-corredor.jpg" alt="Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha" loading="lazy"><span>Voluntariado</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-hero-rua.jpg" alt="Voluntário entregando cobertor a morador em situação de rua" loading="lazy"><span>Campanha do Agasalho</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/hero-equipe-grupo.jpg" alt="Equipe de voluntários reunida no auditório da sede" loading="lazy"><span>Nossa equipe</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-hero-favela.jpg" alt="Voluntário entregando agasalho a morador de comunidade" loading="lazy"><span>Ação nas comunidades</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/voluntario-microfone.jpg" alt="Voluntário falando ao microfone em formação na sede" loading="lazy"><span>Formação</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/acao-comunitaria-morro.jpg" alt="Ação comunitária em morro do Rio de Janeiro" loading="lazy"><span>Ação comunitária</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/auditorio-voluntarios.jpg" alt="Turma de voluntários em formação no auditório da sede" loading="lazy"><span>Formação de voluntários</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-fila-comunidade.jpg" alt="Comunidade recebendo doações da Campanha do Agasalho" loading="lazy"><span>Doações</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/reuniao-cicv-grupo.jpg" alt="Reunião com representantes do CICV na sede da filial" loading="lazy"><span>Parcerias</span></a>
+          </div>
+          <script type="application/json" id="insta-fotos">[
+            {"src": "assets/reuniao-cicv.jpg", "alt": "Representantes da filial e do CICV na sede", "legenda": "Parcerias"},
+            {"src": "assets/curso-pratico-sala.jpg", "alt": "Post do Instagram sobre a prática em sala dos cursos", "legenda": "Cursos"},
+            {"src": "assets/auditorio-voluntarios.jpg", "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Formação de voluntários"},
+            {"src": "assets/agasalho-fila-comunidade.jpg", "alt": "Comunidade recebendo doações da Campanha do Agasalho", "legenda": "Doações"},
+            {"src": "assets/reuniao-cicv-grupo.jpg", "alt": "Reunião com representantes do CICV na sede da filial", "legenda": "Parcerias"},
+            {"src": "assets/equipe-corredor.jpg", "alt": "Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha", "legenda": "Voluntariado"},
+            {"src": "assets/agasalho-hero-rua.jpg", "alt": "Voluntário entregando cobertor a morador em situação de rua", "legenda": "Campanha do Agasalho"},
+            {"src": "assets/hero-equipe-grupo.jpg", "alt": "Equipe de voluntários reunida no auditório da sede", "legenda": "Nossa equipe"},
+            {"src": "assets/agasalho-hero-favela.jpg", "alt": "Voluntário entregando agasalho a morador de comunidade", "legenda": "Ação nas comunidades"},
+            {"src": "assets/voluntario-microfone.jpg", "alt": "Voluntário falando ao microfone em formação na sede", "legenda": "Formação"},
+            {"src": "assets/acao-comunitaria-morro.jpg", "alt": "Ação comunitária em morro do Rio de Janeiro", "legenda": "Ação comunitária"}
+          ]</script>
+          <p class="insta-rodape"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro</p>
         </aside>
       </div>
     </section>
@@ -1584,39 +1650,6 @@
     </div>
   </footer>
 
-  <a class="wpp-float" href="https://wa.me/5521999922864?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20os%20cursos%20da%20Escola%20de%20Capacita%C3%A7%C3%A3o." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
-
-  <style>
-    .wpp-float {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      background: #075e54;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 50%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-      transition: box-shadow 0.25s, transform 0.25s;
-    }
-
-    .wpp-float:hover {
-      box-shadow: 0 14px 32px rgba(0,0,0,0.35);
-      transform: scale(1.1);
-    }
-
-    .wpp-float i {
-      font-size: 28px;
-    }
-  </style>
-
   <script>
     document.querySelector('.nav-toggle')?.addEventListener('click', function() {
       const header = this.closest('.main-header');
@@ -1631,6 +1664,58 @@
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
       });
     });
+  </script>
+  <script>
+    // Bloco "Já escolheu seu curso?": mostra o curso escolhido e impede enviar sem escolha.
+    (function () {
+      var form = document.querySelector('.matricula-form'), aviso = document.getElementById('matricula-escolhido');
+      if (!form || !aviso) return;
+      form.addEventListener('change', function (e) {
+        if (e.target.name !== 'curso') return;
+        var rotulo = form.querySelector('label[for="' + e.target.id + '"]');
+        aviso.textContent = 'Curso escolhido: ' + (rotulo ? rotulo.firstChild.textContent.trim() : e.target.value);
+        aviso.className = 'matricula-escolhido ok';
+      });
+      form.addEventListener('submit', function (e) {
+        if (form.querySelector('input[name="curso"]:checked')) return;
+        e.preventDefault();
+        aviso.textContent = 'Escolha um curso para continuar.';
+        aviso.className = 'matricula-escolhido erro';
+        var primeira = form.querySelector('input[name="curso"]');
+        if (primeira) primeira.focus();
+      });
+    })();
+  </script>
+  <script>
+    // Contato: copiar o e-mail e trocar as fotos do mosaico do Instagram de tempos em tempos.
+    (function () {
+      var botao = document.querySelector('.contact-copiar');
+      if (botao) {
+        botao.addEventListener('click', function () {
+          var email = botao.getAttribute('data-copiar'), rotulo = botao.querySelector('span');
+          var feito = function (ok) { rotulo.textContent = ok ? 'E-mail copiado' : email; botao.classList.toggle('ok', ok); setTimeout(function () { rotulo.textContent = 'Copiar e-mail'; botao.classList.remove('ok'); }, 2500); };
+          if (navigator.clipboard) navigator.clipboard.writeText(email).then(function () { feito(true); }, function () { feito(false); });
+          else feito(false);
+        });
+      }
+      var grade = document.getElementById('insta-grade'), dados = document.getElementById('insta-fotos');
+      if (!grade || !dados || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      var fotos; try { fotos = JSON.parse(dados.textContent); } catch (e) { return; }
+      var blocos = Array.prototype.slice.call(grade.querySelectorAll('.insta-foto')), vez = 1;
+      setInterval(function () {
+        if (document.hidden) return;
+        var visiveis = blocos.map(function (b) { return b.querySelector('img').getAttribute('src'); });
+        var ocultas = fotos.filter(function (f) { return visiveis.indexOf(f.src) < 0; });
+        if (!ocultas.length) return;
+        var nova = ocultas[Math.floor(Math.random() * ocultas.length)], bloco = blocos[vez++ % blocos.length];
+        var img = bloco.querySelector('img'), legenda = bloco.querySelector('span'), pre = new Image();
+        pre.onload = function () {
+          bloco.classList.add('trocando');
+          setTimeout(function () { img.src = nova.src; img.alt = nova.alt; legenda.textContent = nova.legenda; bloco.classList.remove('trocando'); }, 400);
+        };
+        pre.src = nova.src;
+      }, 3500);
+    })();
   </script>
 </body>
 </html>

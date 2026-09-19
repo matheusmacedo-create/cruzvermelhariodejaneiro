@@ -7,7 +7,8 @@ site/matricula-cursos-presenciais/cursos.json (gerado por scripts/sincronizar_ca
 do catálogo público da escola) e as fotos de img/ (geradas por scripts/gerar_imagens_matricula.py).
 
 Decisões de 18/09 (após a primeira publicação): o topo e o bloco do curso focam em "faça sua
-matrícula agora e garanta sua vaga"; a regra "a secretaria confirma horário depois" fica só em
+matrícula agora e garanta sua vaga" (desde 19/09 o H1 lidera com o certificado da Cruz Vermelha e
+a urgência fica na linha de apoio); a regra "a secretaria confirma horário depois" fica só em
 "Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria (nem o botão
 flutuante da home), porque desviavam da matrícula; botão único por curso, com link discreto
 para a plataforma da escola no fim do detalhe.
@@ -100,17 +101,18 @@ MARCA_FIM = "<!-- /matricula:cursos -->"
 
 
 def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
-    """Reescreve as <option> do bloco "Já escolheu seu curso?" da home entre os marcadores."""
+    """Reescreve as pílulas (radios) do bloco "Já escolheu seu curso?" da home entre os marcadores."""
     a = home.index(MARCA_INI)
     a = home.index("-->", a) + len("-->")
     b = home.index(MARCA_FIM)
     grupos = []
     for g in dados["grupos"]:
-        opcoes = "".join(
-            f'\n                <option value="{s}">{esc(cursos[s]["nome"])} · {esc(cursos[s]["carga_horaria"])}</option>'
+        itens = "".join(
+            f'\n                <input type="radio" name="curso" value="{s}" id="mc-{s}">'
+            f'\n                <label class="matricula-pilula" for="mc-{s}">{esc(cursos[s]["nome"])} <small>{esc(cursos[s]["carga_horaria"])}</small></label>'
             for s in g["cursos"] if s in cursos
         )
-        grupos.append(f'\n              <optgroup label="{esc(g["titulo"])}">{opcoes}\n              </optgroup>')
+        grupos.append(f'\n              <div class="matricula-grupo"><span class="matricula-grupo-titulo">{esc(g["titulo"])}</span>{itens}\n              </div>')
     return home[:a] + "".join(grupos) + "\n              " + home[b:]
 
 
@@ -430,8 +432,8 @@ def main() -> int:
     <section class="mr-hero" aria-labelledby="mr-titulo">
       <div class="wrap">
         <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">Faça sua matrícula agora e garanta sua vaga <span class="mr-h1-sub">nos cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro</span></h1>
-        <p class="lead">Escolha o curso, pague a inscrição de {brl(inscricao)} por PIX ou cartão e sua vaga fica reservada. Certificado da Cruz Vermelha Brasileira ao final.</p>
+        <h1 id="mr-titulo">O certificado da Cruz Vermelha no seu currículo <span class="mr-h1-sub">Cursos presenciais no Centro do Rio. Garanta sua vaga hoje: a inscrição de {brl(inscricao)} reserva seu lugar.</span></h1>
+        <p class="lead">Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais. Escolha o curso, pague por PIX ou cartão e a vaga é sua.</p>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>

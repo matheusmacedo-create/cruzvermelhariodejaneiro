@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Landing pages nos subdomínios de cruzvermelhariodejaneiro.org (propriedade de domínio no Search Console).
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-19T03:24:36+00:00. Não editar à mão. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://doar.cruzvermelhariodejaneiro.org/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://projetocores.cruzvermelhariodejaneiro.org/</loc>
+    <lastmod>2026-09-01T15:59:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/hero-1254.webp</image:loc>
+      <image:title>Voluntários e crianças reunidos em uma ação do projeto Impacto das Cores, com vista para o Rio de Janeiro.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/acao-1080.webp</image:loc>
+      <image:title>Voluntários da Cruz Vermelha e crianças reunidos durante uma ação comunitária.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/tintas-540.webp</image:loc>
+      <image:title>Participante do projeto segurando uma lata de tinta recebida para a ação.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/pintura-1-540.webp</image:loc>
+      <image:title>Voluntária pinta uma estrutura ao lado de crianças.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/vinculo-540.webp</image:loc>
+      <image:title>Voluntária e criança sorriem juntas durante a ação.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/pintura-2-540.webp</image:loc>
+      <image:title>Crianças e voluntários revitalizam uma escadaria comunitária.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/criancas-540.webp</image:loc>
+      <image:title>Duas crianças participantes sorriem durante a ação do projeto.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/equipe-540.webp</image:loc>
+      <image:title>Equipe de voluntários da Cruz Vermelha Brasileira reunida.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://projetocores.cruzvermelhariodejaneiro.org/assets/comunidade-1080.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://puncaovenosav1.cruzvermelhariodejaneiro.org</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://puncaovenosav1.cruzvermelhariodejaneiro.org/fotos/imagem-05-1080.webp</image:loc>
+      <image:title>Punção venosa sendo demonstrada em um braço de simulação sobre a mesa de uma sala de aula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://puncaovenosav1.cruzvermelhariodejaneiro.org/fotos/imagem-06-1080.webp</image:loc>
+      <image:title>Instrutor apresentando materiais de punção venosa em sala de aula da Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+  </url>
+</urlset>
