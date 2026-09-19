@@ -42,9 +42,11 @@ URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 
-TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha"
-DESCRICAO = ("Matricule-se nos cursos presenciais da Cruz Vermelha no Rio: primeiros socorros, bombeiro "
-             "civil, cuidador de idosos e mais. Inscrição de R$ 99 garante a vaga.")
+# Título e descrição seguem as consultas do Search Console (docs/seo-consultas-2026-09.md): "cruz vermelha cursos",
+# "cursos cruz vermelha rj", "curso de primeiros socorros cruz vermelha rj".
+TITULO = "Cursos da Cruz Vermelha RJ: matrícula em cursos presenciais"
+DESCRICAO = ("Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro: primeiros socorros, bombeiro civil, "
+             "cuidador de idosos e mais, no Centro do Rio. Inscrição de R$ 99 garante a vaga.")
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
 IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
