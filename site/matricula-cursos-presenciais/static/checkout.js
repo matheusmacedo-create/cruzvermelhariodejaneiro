@@ -348,7 +348,7 @@
     function render(d) {
       var metodo = d.metodo === 'pix' ? 'PIX' : 'cartão' + (d.cartao && d.cartao.ultimos4 ? ' final ' + esc(d.cartao.ultimos4) : '');
       var custos = d.taxa_centavos ? ', incluindo ' + brl(d.taxa_centavos) + ' de custos de processamento que você escolheu cobrir. Obrigado.' : '.';
-      card.innerHTML = '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
+      card.innerHTML = '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
         + blocoEscola(d)
         + '<div class="ck-bloco"><p class="ck-nota" style="margin:0">Mandamos a confirmação para <b>' + esc(d.email) + '</b>. Guarde este link: <a href="' + esc(d.urls.parabens) + '">' + esc(d.urls.parabens) + '</a></p></div>';
     }

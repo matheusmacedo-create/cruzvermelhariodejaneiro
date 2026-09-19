@@ -313,6 +313,13 @@ Search Console, Perfil da Empresa no Google, conteúdo). Resumo do que mudou aqu
 - **`site/.htaccess` (raiz do public_html)**: `www` → apex em 301 e `ErrorDocument 404 /404.html`
   (`scripts/gerar_404.py` gera a página com o cabeçalho e o rodapé da home).
 - **`scripts/auditar_seo.py`**: auditoria on-page de qualquer lista de URLs ao vivo.
+- **Velocidade** (Lighthouse celular: home 50→68, matrícula 39→81, doação 55→79, equipe 54→75,
+  agasalho 59→78): GA4 e Pixel carregam depois do `load` (filas preservam os eventos), Font Awesome
+  substituído por SVG inline (`scripts/icones.py` + `scripts/icones.json`; os geradores chamam
+  `icones.converter()` e as páginas à mão passam por `python3 scripts/icones.py site/index.html
+  site/equipe.html`), Google Fonts sem bloquear, QR code com `defer`, preload da imagem principal,
+  cache de 30 dias em `assets/otim/` e `matricula-cursos-presenciais/img/`. Ícone novo: acrescentar
+  o desenho em `scripts/icones.json` (viewBox e path do SVG) e usar `<i class="fa-solid fa-nome"></i>`.
 
 ## Rastreamento (19/09/2026)
 
@@ -382,7 +389,8 @@ scripts/auditar_seo.py                  auditoria de SEO on-page das páginas ao
 scripts/otimizar_imagens.py             versões WebP e imagens de compartilhamento em site/assets/otim/
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
-docs/seo-revisao-2026-09.md             relatório da revisão de SEO (antes/depois e pendências por projeto)
+scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
+docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

@@ -27,13 +27,37 @@ Ferramentas novas: `scripts/otimizar_imagens.py` (gera as versões WebP e as ima
 compartilhamento em `site/assets/otim/`), `scripts/aplicar_imagens_otimizadas.py` (troca as tags
 `<img>` com `srcset`, `sizes`, dimensões e lazy), `scripts/gerar_404.py`, `scripts/auditar_seo.py`.
 
-## 2. O que continua pesado (e por quê não foi mexido)
+## 2. Velocidade (Lighthouse, celular simulado, 19/09 à noite)
 
-- **Google Tag e Meta Pixel**: 1,4 MB por página. São os scripts oficiais; carregam em paralelo e
-  não bloqueiam a renderização, mas pesam no celular. Opção: carregar o Pixel só após o primeiro
-  toque ou rolagem (perde parte dos PageView). Decisão de negócio.
-- **Font Awesome** (147 KB de fonte + CSS): usado em toda a marcação. Trocar por SVG inline dos
-  ~20 ícones usados economizaria ~150 KB por página. Fica como melhoria futura.
+| Página | Antes | Depois | LCP antes → depois |
+| --- | --- | --- | --- |
+| Home | 50 | 68 | 9,4 s → 3,9 s |
+| Matrícula | 39 | 81 | 9,7 s → 1,2 s |
+| Checkout | 80 | 80 | 2,2 s → 2,2 s |
+| Doação | 55 | 79 | 7,8 s → 2,7 s |
+| Equipe | 54 | 75 | 8,7 s → 3,4 s |
+| Campanha do Agasalho | 59 | 78 | 6,7 s → 3,2 s |
+| Parabéns | 78 | 80 | 2,3 s → 2,0 s |
+
+O que mudou além das imagens (seção 1):
+
+- **GA4 e Pixel carregam depois do `load`** (mais um instante ocioso). As chamadas `gtag()` e
+  `fbq()` continuam no lugar e ficam na fila até os scripts chegarem, então nenhum evento se
+  perde; conferido ao vivo (PageView, InitiateCheckout, Lead, AddPaymentInfo, Purchase).
+- **Font Awesome saiu.** Os 39 ícones usados viraram SVG inline por um sprite em cada página
+  (`scripts/icones.py`, desenhos em `scripts/icones.json`, Font Awesome Free, CC BY 4.0). Menos
+  ~450 KB e 4 requisições por página; o `<i>` continua na marcação, então o CSS não mudou.
+- **Google Fonts sem bloquear** a primeira pintura (preload + troca para stylesheet), QR code do
+  checkout com `defer`, segundo banner do carrossel só carrega quando aparece, imagem principal
+  de cada página com `preload`/`fetchpriority`, cache de 30 dias nas pastas de imagens geradas.
+
+O que ainda pesa e é decisão de negócio: **Google Tag + Pixel** somam 1,4 MB e ~750 ms de
+processamento em celular fraco, em toda página. É o teto do que dá para ganhar sem mexer neles. A
+única saída seria carregá-los só no primeiro toque ou rolagem, o que deixaria de contar quem abre
+e sai sem interagir (afeta "visualizações da página de destino" dos anúncios). Não foi feito.
+
+Fora deste repositório: as páginas de notícia da Redação têm LCP de ~9 s por imagens PNG de 1 MB;
+converter para WebP com largura limitada resolve.
 
 ## 3. O que depende de outros projetos (checklist)
 

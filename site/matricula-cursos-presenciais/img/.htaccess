@@ -1,0 +1,4 @@
+# Fotos dos cursos geradas por scripts/gerar_imagens_matricula.py: 30 dias de cache.
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=2592000"
+</IfModule>
