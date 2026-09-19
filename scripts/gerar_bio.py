@@ -43,7 +43,7 @@ FAQ = [
      "ser tiradas no WhatsApp do voluntariado ou no chat deste site.", []),
     ("Quais cursos a Cruz Vermelha RJ oferece?",
      "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e "
-     "micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira. "
+     "micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. "
      "As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser "
      "feita na página de matrícula em cursos presenciais.",
      [("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
@@ -70,7 +70,7 @@ BLOCOS = [
      "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
     {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira do Rio de Janeiro",
-     "titulo": "Quero ser voluntário da Cruz Vermelha", "descricao": "Cadastro rápido no formulário do voluntariado.",
+     "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
      "link": "https://form.spotform.com.br/voluntariocruzvermelharj", "id": "voluntario"},
     {"tipo": "titulo", "texto": "WhatsApp do voluntário"},
     {"tipo": "botao", "estilo": "claro whatsapp", "icone": "fa-brands fa-whatsapp", "titulo": "Falar com o voluntariado no WhatsApp",

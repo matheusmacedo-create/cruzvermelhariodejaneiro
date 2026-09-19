@@ -66,8 +66,8 @@ FAQ_PAGINA = [
      "para confirmar turma e horário."),
     ("E se não houver horário compatível?", TEXTO_ESTORNO),
     ("Os cursos são presenciais? Onde acontecem?",
-     "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira, na Praça da Cruz Vermelha, 10, Centro do Rio de "
-     "Janeiro, com certificado emitido pela Cruz Vermelha Brasileira."),
+     "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro "
+     "do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro."),
     ("Posso ver as turmas abertas antes de pagar?",
      "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem "
      "prefere o caminho completo de inscrição."),
@@ -79,6 +79,15 @@ FAQ_PAGINA = [
 
 def esc(s: str) -> str:
     return html.escape(s, quote=True)
+
+
+# "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Nos textos da filial (inclusive os que vêm
+# do catálogo da escola) o nome é sempre o completo, para não confundir as duas (decisão de 19/09/2026).
+NACIONAL_SOZINHA = re.compile(r"Cruz Vermelha Brasileira(?!\s*(?:[–\-—·,]|<br>)?\s*(?:Filial|Rio de Janeiro|do Rio|no Rio|RJ\b|Rio\b))")
+
+
+def nome_filial(texto: str) -> str:
+    return NACIONAL_SOZINHA.sub("Cruz Vermelha Brasileira Rio de Janeiro", texto or "")
 
 
 def brl(centavos: int | None) -> str:
@@ -185,10 +194,10 @@ def main() -> int:
     def detalhe(slug: str, primeiro: bool) -> str:
         c = cursos[slug]
         img = c["imagem"]
-        sobre = "".join(f"<p>{esc(p)}</p>" for p in c["sobre"])
-        obs = "".join(f'<p class="mr-nota"><i class="fa-solid fa-circle-info"></i> {esc(o)}</p>' for o in c["observacoes"])
+        sobre = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"])
+        obs = "".join(f'<p class="mr-nota"><i class="fa-solid fa-circle-info"></i> {esc(nome_filial(o))}</p>' for o in c["observacoes"])
         faq = "".join(
-            f"<details><summary>{esc(f['pergunta'])}</summary><p>{esc(f['resposta'])}</p></details>" for f in c["faq"]
+            f"<details><summary>{esc(nome_filial(f['pergunta']))}</summary><p>{esc(nome_filial(f['resposta']))}</p></details>" for f in c["faq"]
         )
         faq_html = f'<div class="mr-faq"><h3>Dúvidas frequentes sobre {esc(c["nome"])}</h3>{faq}</div>' if faq else ""
         loading = "eager" if primeiro else "lazy"
@@ -204,7 +213,7 @@ def main() -> int:
           <div class="mr-corpo">
             <p class="eyebrow">Curso presencial</p>
             <h2>{esc(c["nome"])}</h2>
-            <p class="lead">{esc(c["descricao"])}</p>
+            <p class="lead">{esc(nome_filial(c["descricao"]))}</p>
             <div class="mr-chips">
               <span class="mr-chip"><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</span>
               <span class="mr-chip"><i class="fa-solid fa-graduation-cap"></i> {esc(c["escolaridade"])}</span>
@@ -243,9 +252,9 @@ def main() -> int:
     itens = []
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
-        curso = {"@type": "Course", "name": c["nome"], "description": c["descricao"] or (c["sobre"][0] if c["sobre"] else ""),
+        curso = {"@type": "Course", "name": c["nome"], "description": nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else "")),
                  "url": f"{URL_PAGINA}?curso={s}", "provider": provedor, "courseMode": "Onsite",
-                 "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira"}
+                 "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro"}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
@@ -448,7 +457,7 @@ def main() -> int:
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
-          <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira</span>
+          <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</span>
         </div>
       </div>
     </section>

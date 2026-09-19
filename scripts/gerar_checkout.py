@@ -131,7 +131,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <ul class="ck-confianca">
                   <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela Unicopag</li>
                   <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Estorno se não houver turma compatível</li>
-                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira</li>
+                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
                 </ul>
                 <p class="ck-nota" style="margin:14px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade/">Política de privacidade</a>.</p>
               </section>
