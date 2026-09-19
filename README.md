@@ -272,6 +272,23 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
+## Home: seção de contato e botão do WhatsApp (19/09/2026)
+
+- A seção `#contato` da home foi refeita para converter: e-mail institucional em destaque
+  (`contato@cruzvermelhariodejaneiro.org`, cartão clicável com `mailto:` e botão "Copiar
+  e-mail"), sede com link para o Google Maps, Instagram e Facebook como cartões, CNPJ em nota. Ao
+  lado, um cartão no estilo Instagram (`@cruzvermelhabrasileirarj`, botão Seguir) com um mosaico
+  de 9 fotos reais dos posts da filial que já estavam em `assets/` (várias trazem a marca
+  @cruzvermelhabrasileirarj); a cada 3,5 s uma foto é trocada por outra do conjunto (JSON no
+  `#insta-fotos`), respeitando `prefers-reduced-motion`. O Instagram bloqueia leitura anônima do
+  perfil (HTTP 429), então as fotos são as do servidor, não um feed ao vivo: para trocar, edite a
+  lista no `index.html` e suba a foto em `public_html/assets/`.
+- O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`: a intenção é
+  substituir por um Intercom para toda a estrutura. O número continua no rodapé e nos cartões de
+  curso da home ("Chamar no WhatsApp").
+- `site/assets/` não é versionada (fica só no servidor); há uma cópia local ignorada pelo Git
+  só para renderizar a home em testes.
+
 ## Pontos de atenção encontrados
 
 - **Checkout, pendências para fechar**: (1) aviso de inscrição paga à secretaria **desligado**
