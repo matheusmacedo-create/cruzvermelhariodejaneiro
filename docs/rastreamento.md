@@ -47,19 +47,20 @@ no checkout pela home.
   vale conferir. Dentro de cada propriedade não há contagem dupla.
 - Eventos personalizados do GA4 saem em lote alguns segundos depois do `page_view`; é o
   comportamento normal do gtag.
+- A página de matrícula e o checkout mudavam a URL (`?curso=`) a cada curso escolhido, e tanto o
+  GA4 (medição aprimorada) quanto o Pixel contam mudança de histórico como nova visualização de
+  página: gerava um `page_view`/`PageView` extra por clique. Removido em 19/09; a URL só muda por
+  navegação real.
 - O Pixel não envia nada quando detecta navegador automatizado; em navegador comum envia
   `PageView` e os eventos normalmente (conferido com o sinal de automação desligado).
 
 ## Pendências
 
-1. **GA4 Admin**: em Medição aprimorada → Visualizações de página, desligar "Mudanças de página
-   com base em eventos do histórico do navegador". A página de matrícula muda a URL (`?curso=`)
-   a cada curso aberto e isso gera um `page_view` extra por clique.
-2. **Escola**: GA4 `G-HDYZZ5JZHF` em todas as páginas (hoje a home não tem GA4 e `/cursos` usa
+1. **Escola**: GA4 `G-HDYZZ5JZHF` em todas as páginas (hoje a home não tem GA4 e `/cursos` usa
    outra propriedade) e aceitar o parâmetro `_gl` do linker (configuração `linker` no gtag da
    escola com `cruzvermelhariodejaneiro.org`). O site principal já decora os links para a escola.
-3. **Vercel**: GA4 em `doar.` e `puncaovenosav1.`; Pixel `Donate`/`Purchase` na confirmação da
+2. **Vercel**: GA4 em `doar.` e `puncaovenosav1.`; Pixel `Donate`/`Purchase` na confirmação da
    doação, com `value` e `currency`.
-4. **Redação**: Pixel nas notícias, termos e privacidade.
-5. **API de Conversões do Meta** para o `Purchase` do checkout (servidor → Meta, com o mesmo
+3. **Redação**: Pixel nas notícias, termos e privacidade.
+4. **API de Conversões do Meta** para o `Purchase` do checkout (servidor → Meta, com o mesmo
    `eventID`), quando houver volume: recupera as compras que o navegador não reporta.

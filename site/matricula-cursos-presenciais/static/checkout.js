@@ -200,7 +200,6 @@
       q('#ck-cartao').hidden = !cartao;
       form.querySelectorAll('#ck-cartao input').forEach(function (i) { i.disabled = !cartao; });
       form.querySelectorAll('.ck-metodo').forEach(function (m) { m.classList.toggle('ativo', m.querySelector('input').checked); });
-      if (sel.value) { var u = new URL(location.href); u.searchParams.set('curso', sel.value); history.replaceState(null, '', u); }
     }
 
     function erro(mensagem, campo) {

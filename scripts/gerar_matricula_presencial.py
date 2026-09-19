@@ -356,10 +356,8 @@ def main() -> int:
           a.classList.toggle('ativo', on);
           if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
         }});
-        if (atualizarUrl) {{
-          var u = new URL(location.href); u.searchParams.set('curso', slug); u.hash = '';
-          history.replaceState(null, '', u);
-        }}
+        // A URL não muda ao trocar de curso: GA4 e Pixel contam cada mudança de histórico como
+        // nova visualização de página. Chegar com ?curso= ou #curso- continua funcionando.
         return true;
       }}
       var inicial = slugDaUrl();
