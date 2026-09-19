@@ -376,6 +376,34 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
   úteis sem resposta.
 
+## Página de links da bio do Instagram (`/bio/`, 19/09/2026)
+
+A bio do Instagram apontava para `smartpa.ge/rWPY`, uma página de links fora do domínio. Agora
+ela mora em **https://cruzvermelhariodejaneiro.org/bio/**, gerada por `scripts/gerar_bio.py` no
+padrão da home (cabeçalho, rodapé, CSS, GA4, Meta Pixel e chat), para o tráfego do Instagram entrar
+no domínio e ser medido.
+
+- **Conteúdo**: avatar e chamada da página original ("Maior rede de ajuda humanitária do 🌎 / Doe
+  e nos ajude a salvar vidas!") e, por decisão do Matheus, **só três destinos, com os links
+  exatamente como estavam**: cursos na plataforma da escola
+  (`https://escola.cruzvermelhariodejaneiro.org`), formulário do voluntariado
+  (`https://form.spotform.com.br/voluntariocruzvermelharj`) e o WhatsApp do voluntariado
+  (`api.whatsapp.com/send?phone=+5521970360264…`, número do voluntariado, não o da secretaria).
+  Saíram: desfile de 7 de Setembro (evento passado), SOS Venezuela (campanha encerrada; o link
+  original apontava para `/sos-venezuela.html`, que não existe), e-mail do RFL, endereço e bloco do
+  Instagram. Os blocos ficam na lista `BLOCOS` do gerador; para mudar, edite e gere de novo.
+- **Imagens** em `site/bio/img/` (versionadas): avatar 256/512, cartões de cursos e voluntário em
+  700 e 420 px (WebP das artes originais) e `og-bio.jpg` 1200x630 para compartilhamento.
+- **SEO**: título e descrição próprios, canonical `/bio/`, `index, follow`, Open Graph, JSON-LD
+  (`WebPage` ligada à `WebSite` e à `Organization` da home, `BreadcrumbList`), entrada no
+  `sitemap-paginas.xml`.
+- **Rastreio**: cada clique dispara GA4 `bio_click` (`link_id`, `link_url`, `link_text`) e Meta
+  `BioClick`. Endereço para colar na bio:
+  `https://cruzvermelhariodejaneiro.org/bio/?utm_source=ig&utm_medium=social&utm_content=link_in_bio`.
+- **Aviso**: `/links/` e `links.cruzvermelhariodejaneiro.org` apontam para a pasta
+  `public_html/links/`, um projeto "CVB Links" em PHP que nunca foi instalado (responde com o
+  instalador). Não foi tocado; se quiser, `/links/` pode virar um redirecionamento para `/bio/`.
+
 ## Revisão de SEO (19/09/2026)
 
 Relatório completo em `docs/seo-revisao-2026-09.md` (antes/depois, pendências por projeto,
