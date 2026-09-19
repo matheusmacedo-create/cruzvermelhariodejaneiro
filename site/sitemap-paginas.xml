@@ -1,11 +1,195 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Páginas mantidas à mão do site institucional. O sitemap.xml da raiz é gerado pela Redação
-     (páginas fixas + notícias); este arquivo complementa com a matrícula em cursos presenciais. Envie os dois
-     no Google Search Console. -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://cruzvermelhariodejaneiro.org/</loc></url>
-  <url><loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc><lastmod>2026-09-18</lastmod></url>
-  <url><loc>https://cruzvermelhariodejaneiro.org/equipe.html</loc></url>
-  <url><loc>https://cruzvermelhariodejaneiro.org/doacao.html</loc></url>
-  <url><loc>https://cruzvermelhariodejaneiro.org/campanha-agasalho.html</loc></url>
+<!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-19T02:14:03+00:00. Não editar à mão. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/</loc>
+    <lastmod>2026-09-18T21:20:07+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/impacto-cores-banner.jpg</image:loc>
+      <image:title>Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-banner.jpg</image:loc>
+      <image:title>Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/reuniao-cicv.jpg</image:loc>
+      <image:title>Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/reuniao-cicv-grupo.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-hero-rua.jpg</image:loc>
+      <image:title>Campanha do Agasalho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-primeiros-socorros-novo.jpg</image:loc>
+      <image:title>Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-puncao-venosa.jpg</image:loc>
+      <image:title>Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-cuidador-idosos.jpg</image:loc>
+      <image:title>Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-bombeiro-civil.jpg</image:loc>
+      <image:title>Curso de Bombeiro Civil</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-lei-lucas.jpg</image:loc>
+      <image:title>Curso Lei Lucas - Ambientes com Crianças</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-suporte-basico-vida.jpg</image:loc>
+      <image:title>Curso de Suporte Básico de Vida</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/protocolo-trauma.jpg</image:loc>
+      <image:title>Publicação educativa sobre protocolo de trauma e motociclista acidentado</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-formacao-voluntarios.jpg</image:loc>
+      <image:title>Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/voluntario-microfone.jpg</image:loc>
+      <image:title>Voluntário da Cruz Vermelha RJ falando durante capacitação</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/equipe-corredor.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha RJ em atividade no Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/acao-comunitaria-morro.jpg</image:loc>
+      <image:title>Ação comunitária com voluntários da Cruz Vermelha RJ</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-equipe-grupo.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/dia-cruz-vermelha.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc>
+    <lastmod>2026-09-19T02:11:50+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp</image:loc>
+      <image:title>Primeiros Socorros Básico na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/primeiros-socorros-lei-lucas-960.webp</image:loc>
+      <image:title>Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/puncao-venosa-960.webp</image:loc>
+      <image:title>Punção Venosa na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/suporte-basico-de-vida-960.webp</image:loc>
+      <image:title>Suporte Básico de Vida na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/bombeiro-civil-960.webp</image:loc>
+      <image:title>Bombeiro Civil na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/cuidador-de-idosos-960.webp</image:loc>
+      <image:title>Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/micropigmentacao-labial-960.webp</image:loc>
+      <image:title>Micropigmentação Labial na Cruz Vermelha Brasileira do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-cursos-banner-1.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/doacao.html</loc>
+    <lastmod>2026-09-18T21:06:43+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/acao-comunitaria-morro.jpg</image:loc>
+      <image:title>Ação comunitária da Cruz Vermelha RJ</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/curso-pratico-sala.jpg</image:loc>
+      <image:title>Capacitação da Cruz Vermelha RJ</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/auditorio-voluntarios.jpg</image:loc>
+      <image:title>Voluntários em formação no Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/equipe-corredor.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha RJ</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-formacao-voluntarios.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/campanha-agasalho.html</loc>
+    <lastmod>2026-09-18T21:06:44+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-hero-rua.jpg</image:loc>
+      <image:title>Voluntário da Cruz Vermelha Brasileira entregando cobertor a morador em situação de rua no Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-hero-favela.jpg</image:loc>
+      <image:title>Voluntário da Cruz Vermelha Brasileira em ação de doação de agasalhos em bairro popular do Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-cartaz.jpg</image:loc>
+      <image:title>Cartaz oficial da Campanha do Agasalho da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/agasalho-fila-comunidade.jpg</image:loc>
+      <image:title>Comunidade recebendo doações de agasalhos da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/equipe.html</loc>
+    <lastmod>2026-09-18T21:17:25+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/hero-equipe-grupo.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/dia-cruz-vermelha.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/</loc>
+    <lastmod>2026-09-04T21:35:47+00:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/termos/</loc>
+    <lastmod>2026-09-03T04:54:21+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/privacidade/</loc>
+    <lastmod>2026-09-03T04:54:19+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 </urlset>

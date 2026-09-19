@@ -60,27 +60,56 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
 
 ## Sitemaps e indexação
 
-- **Site principal**: `https://cruzvermelhariodejaneiro.org/sitemap.xml` já existe, é
-  mantido pela Redação e está completo (8 páginas fixas + todas as notícias, com data).
-  `robots.txt` aberto e apontando para ele. Não editar esses dois arquivos aqui: seriam
-  sobrescritos na próxima publicação de notícia.
-- **Escola**: não tinha `robots.txt` nem `sitemap.xml` (ambos 404) nem `canonical`, e o
-  mesmo conteúdo aparece em três hosts. O kit em `escola/` resolve isso; leia
-  `escola/README.md`. Enquanto o kit não for para o Render, existe uma cópia do sitemap da escola
-  no domínio principal: `https://cruzvermelhariodejaneiro.org/sitemap-escola.xml`
-  (10 URLs, fonte em `site/sitemap-escola.xml`). O Search Console só a aceita para a
-  escola depois que as duas propriedades estiverem verificadas na **mesma conta**.
-- Para regenerar o sitemap da escola quando entrarem cursos novos:
-  `python3 scripts/gerar_sitemap_escola.py` (lê o catálogo público e grava
-  `escola/sitemap.xml` e `site/sitemap-escola.xml`).
+Desde 19/09/2026 o domínio tem um **índice de sitemaps**:
+`https://cruzvermelhariodejaneiro.org/sitemap-index.xml`. É o único endereço a enviar no Google
+Search Console (propriedade de domínio `cruzvermelhariodejaneiro.org`, verificada por DNS, que cobre
+todos os subdomínios). Ele aponta para quatro arquivos:
+
+| Arquivo | Conteúdo | Fonte |
+| --- | --- | --- |
+| `sitemap-paginas.xml` | 8 páginas fixas do domínio principal, com `lastmod` real (`Last-Modified` do servidor), `changefreq`, `priority` e as imagens de cada página (37, com título tirado do `alt`) | `scripts/gerar_sitemaps.py` |
+| `sitemap-noticias.xml` | as notícias da Redação (12 em 19/09), com `article:modified_time` e as imagens de cada artigo (15) | idem, lendo o `sitemap.xml` da Redação |
+| `sitemap-subdominios.xml` | landing pages `doar.`, `projetocores.` e `puncaovenosav1.` (11 imagens) | idem |
+| `sitemap.xml` | páginas fixas + notícias, sempre atual (a Redação regenera a cada notícia) | Redação; não editar aqui |
+
+Regras do gerador: confere ao vivo cada URL e cada imagem (só entra o que responde 200); deixa de
+fora página com `noindex` ou com canonical apontando para outro endereço; nunca inventa `lastmod`
+(sem fonte confiável, omite); ignora logotipos, logos de parceiros e pixels de rastreio. Os quatro
+arquivos validam contra os XSD oficiais (sitemaps.org e extensão de imagem do Google). Para
+regenerar e publicar:
+
+```
+python3 scripts/gerar_sitemaps.py
+scripts/publicar_hostinger.sh site/sitemap-index.xml site/sitemap-paginas.xml site/sitemap-noticias.xml site/sitemap-subdominios.xml
+```
+
+e limpar o cache. Vale rodar de novo quando uma página fixa mudar ou quando entrarem notícias (o
+`sitemap.xml` da Redação já cobre as novas; o `sitemap-noticias.xml` só acrescenta data e imagens).
+
+Ficam fora do índice, de propósito: `www.` (canonical no apex); `escola.cruzvermelhariodejaneiro.org`
+(apelido da escola, cujo canonical é `escola.cursoscruzvermelha.org`); `redacao.` (ferramenta
+interna); `links.` e `link.` (instalador exposto e página padrão); `cursos.html` e `/escola` (301);
+as três telas do checkout (`noindex`) e a API.
+
+- **Escola**: fica em outro domínio (`cursoscruzvermelha.org`), então não pode entrar no índice
+  até a escola estar verificada na **mesma conta** do Search Console. Não tinha `robots.txt` nem
+  `sitemap.xml` (ambos 404 ainda em 19/09) nem `canonical`, e o mesmo conteúdo aparece em três
+  hosts. O kit em `escola/` resolve isso; leia `escola/README.md`. Enquanto o kit não for para o
+  Render, existe a cópia `https://cruzvermelhariodejaneiro.org/sitemap-escola.xml` (10 URLs, fonte
+  em `site/sitemap-escola.xml`), para enviar à parte depois da verificação. Regenerar quando
+  entrarem cursos novos: `python3 scripts/gerar_sitemap_escola.py`.
+- **`robots.txt`** do domínio é gerado pela Redação e só aponta para `sitemap.xml`. Para o índice
+  aparecer nele, acrescentar `Sitemap: https://cruzvermelhariodejaneiro.org/sitemap-index.xml` no
+  projeto da Redação (não editar aqui: seria sobrescrito). O Search Console não depende disso.
 
 ## Próximos passos
 
 1. No app da escola (Render): copiar `escola/robots.txt` e `escola/sitemap.xml` para a
    pasta pública, ou instalar `escola/seo.js` (canonical + robots + sitemap dinâmico).
-2. Search Console: adicionar a propriedade `https://escola.cursoscruzvermelha.org/`
-   (verificação por meta tag no layout do app) e enviar o sitemap. Na propriedade do
-   domínio principal, o `sitemap.xml` da Redação já pode ser enviado, se ainda não foi.
+2. Search Console: na propriedade do domínio principal, enviar
+   `https://cruzvermelhariodejaneiro.org/sitemap-index.xml`. Depois, adicionar a propriedade
+   `https://escola.cursoscruzvermelha.org/` (verificação por meta tag no layout do app) e enviar
+   o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
 ## Matrícula cursos presenciais (página `/matricula-cursos-presenciais/`)
@@ -104,6 +133,11 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
   abre o WhatsApp da secretaria com a mensagem pronta com o nome do curso. Quando o checkout
   entrar, preencha `CHECKOUT_URL` no gerador e gere de novo; o botão passa a levar ao checkout
   com `?curso=<slug>` e as UTMs da visita.
+- **Hero (19/09)**: o H1 passou a liderar com o benefício e a marca ("O certificado da Cruz
+  Vermelha no seu currículo"), a urgência foi para a linha de apoio ("Garanta sua vaga hoje: a
+  inscrição de R$ 99 reserva seu lugar") e o parágrafo lista os cursos e o gesto (escolher, pagar
+  por PIX ou cartão, vaga garantida). O H1 anterior era o próprio chamado ("Faça sua matrícula
+  agora e garanta sua vaga"), que o Matheus achou fraco como título.
 - **Decisões de 18/09 (depois da primeira publicação)**: o topo e o bloco de cada curso focam em
   "faça sua matrícula agora e garanta sua vaga"; a regra "a secretaria confirma horário depois"
   fica só em "Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria
@@ -244,6 +278,12 @@ validado no projeto da Punção Venosa.
 - ~~Menu mobile sem links na home e em `equipe.html`~~: corrigido em 18/09/2026 (regra
   `.main-header .header-collapse .nav-links { display: flex !important; }` dentro do
   `@media (max-width: 920px)` das duas páginas; a matrícula herda pelo CSS copiado da home).
+- **Subdomínios (visto ao montar o sitemap, 19/09)**: em `puncaovenosav1.` as páginas
+  `/inscricao`, `/politica-de-privacidade` e `/politica-de-reembolso` declaram o canonical da raiz
+  (o Google as trata como cópias da home; ficaram fora do sitemap). Corrigir no projeto
+  `puncaovenosa-fullautomatic` com canonical por página. `redacao.` é ferramenta interna e está
+  indexável (sem `noindex`): acrescentar `noindex` ou `robots.txt` no projeto da Redação. `doar.`
+  não declara canonical.
 - `links.cruzvermelhariodejaneiro.org` redireciona para `install.php`: instalador do CVB
   Links exposto ao público. Concluir a instalação ou remover/proteger o arquivo.
 - Ícones de LinkedIn e TikTok no rodapé da home apontam para `linkedin.com` e `tiktok.com`
@@ -260,8 +300,11 @@ validado no projeto da Punção Venosa.
 ```
 site/                                   páginas estáticas mantidas à mão (espelho do public_html)
   matricula-cursos-presenciais/         página gerada (index.html), cursos.json e img/*.webp
-  sitemap-escola.xml                    cópia do sitemap da escola hospedada no domínio principal
-  sitemap-paginas.xml                   sitemap complementar das páginas mantidas à mão
+  sitemap-index.xml                     índice de sitemaps (o endereço a enviar no Search Console)
+  sitemap-paginas.xml                   páginas fixas com data real e imagens (gerado)
+  sitemap-noticias.xml                  notícias da Redação com data e imagens (gerado)
+  sitemap-subdominios.xml               landing pages doar., projetocores. e puncaovenosav1. (gerado)
+  sitemap-escola.xml                    cópia do sitemap da escola (outro domínio; enviar à parte)
 escola/                                 kit de SEO para o app da escola (robots, sitemap, canonical, JSON-LD)
 docs/briefing-matricula-cursos-presenciais.md   definição do produto (fonte da verdade)
 docs/plano-matricula-express.md         plano de implementação do backend (checkout, secretaria)
@@ -273,5 +316,6 @@ scripts/testar_checkout.php             testes das funções puras do backend (p
 site/matricula-cursos-presenciais/api/  backend PHP do checkout: endpoints, lib.php (bootstrap) e lib/ (módulos)
 site/matricula-cursos-presenciais/static/  checkout.css e checkout.js das três telas do checkout
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
+scripts/gerar_sitemaps.py               gera sitemap-index, -paginas, -noticias e -subdominios conferindo tudo ao vivo
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

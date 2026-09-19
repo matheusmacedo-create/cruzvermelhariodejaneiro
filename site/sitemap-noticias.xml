@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-19T02:14:20+00:00. Não editar à mão. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/alcoolicos-anonimos-reuniao-com-traducao-em-libras-no-leblon-completa-79-anos/</loc>
+    <lastmod>2026-09-04T21:35:40+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alcoolicos-anonimos-reuniao-com-traducao-em-libras-no-leblon-completa-79-anos/toalha-com-o-simbolo-do-alcoolicos-anonimos-unidade-servico.jpg</image:loc>
+      <image:title>Toalha com o símbolo do Alcoólicos Anônimos — unidade, serviço e recuperação — em sala de reunião do grupo.</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/</loc>
+    <lastmod>2026-09-04T21:02:54+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/voz-das-comunidades-caps-e-capsi-atendem-mare-alemao-penha-e.jpg</image:loc>
+      <image:title>Voz das Comunidades: CAPS e CAPSi atendem Maré, Alemão, Penha e bairros vizinhos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/caps-e-servico-publico-de-saude-mental-do-sus-o-capsi-atende.png</image:loc>
+      <image:title>CAPS é serviço público de saúde mental do SUS; o CAPSi atende crianças e adolescentes</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/</loc>
+    <lastmod>2026-09-03T17:52:36+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/card-da-secretaria-de-estado-de-saude-do-rj-com-estudante-e.jpg</image:loc>
+      <image:title>Card da Secretaria de Estado de Saúde do RJ com estudante e agente comemorando acertos no quiz sobre vape, HPV e prevenção.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/cigarro-eletronico-frasco-de-vacina-e-preservativo-sobre-car.png</image:loc>
+      <image:title>Cigarro eletrônico, frasco de vacina e preservativo sobre carteira escolar: os três temas do quiz aplicado aos estudantes.</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/</loc>
+    <lastmod>2026-09-03T05:10:25+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-1.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-2.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/</loc>
+    <lastmod>2026-09-03T04:14:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/voluntarias-da-cruz-vermelha-colombiana-organizam-kits-de-al.jpg</image:loc>
+      <image:title>Voluntárias da Cruz Vermelha Colombiana organizam kits de alimentos para as famílias atingidas em Chocó, com apoio do apelo de emergência da IFRC.</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombi-2.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/helicoptero-dos-bombeiros-na-praia-o-que-fazer-e-o-que-evitar/</loc>
+    <lastmod>2026-09-02T23:23:03+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/helicoptero-dos-bombeiros-na-praia-o-que-fazer-e-o-que-evitar/card-do-podbradar-com-dois-bombeiros-militares-do-goa-em-est.jpg</image:loc>
+      <image:title>Card do PodBradar com dois bombeiros militares do GOA em estúdio, no episódio sobre cuidados com aeronaves próximas.</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/ciclovia-tim-maia-interdicao-nesta-quarta-feira-2-9-em-funcao-da-ressaca-no-mar/</loc>
+    <lastmod>2026-09-02T23:16:31+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/ciclovia-tim-maia-interdicao-nesta-quarta-feira-2-9-em-funcao-da-ressaca-no-mar/cartaz-do-cor-rio-informa-interdicao-da-ciclovia-tim-maia-en.jpg</image:loc>
+      <image:title>Cartaz do COR-Rio informa interdição da Ciclovia Tim Maia entre São Conrado e Vidigal devido à ressaca com ondas até 3 m.</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/</loc>
+    <lastmod>2026-09-01T20:32:26+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida-1.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/</loc>
+    <lastmod>2026-09-01T19:00:42+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/midia-1.jpg</image:loc>
+      <image:title>aaa</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/o-7-de-setembro-esta-chegando/</loc>
+    <lastmod>2026-09-01T12:10:58+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/o-7-de-setembro-esta-chegando/midia-1.jpg</image:loc>
+      <image:title>cerebro-ea323c771d0fef39.jpg</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/</loc>
+    <lastmod>2026-08-30T22:35:37+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/midia-1.jpg</image:loc>
+      <image:title>Informações rápidas sobre cursos, doações e voluntariado na Cruz Vermelha RJ.</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/desfile-de-7-de-setembro-cruz-vermelha-rj-abre-cadastro-para-voluntarios/</loc>
+    <lastmod>2026-08-30T21:57:53+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
