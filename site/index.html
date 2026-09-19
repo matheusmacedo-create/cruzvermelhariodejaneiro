@@ -633,8 +633,9 @@
     .contact-mail-icone { width: 46px; height: 46px; border-radius: 12px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
     .contact-mail-texto { flex: 1; min-width: 0; }
     .contact-mail-texto b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); }
-    .contact-mail-texto span { display: block; font-weight: 700; font-size: .95rem; color: var(--black); overflow-wrap: anywhere; }
-    .contact-mail-acao { font-weight: 800; font-size: .9rem; color: var(--red); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+    .contact-mail-texto span { display: block; font-weight: 700; font-size: .92rem; color: var(--black); overflow-wrap: anywhere; }
+    .contact-mail-acao { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--red); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-size: .9rem; transition: background .15s, color .15s; }
+    .contact-mail:hover .contact-mail-acao { background: var(--red); color: #fff; }
     .contact-copiar { align-self: flex-start; margin: 10px 0 20px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .88rem; cursor: pointer; padding: 4px 0; display: inline-flex; gap: 7px; align-items: center; }
     .contact-copiar:hover { color: var(--red); }
     .contact-copiar.ok { color: #0f7b3e; }
@@ -669,7 +670,9 @@
       .contact-mail { padding: 14px; gap: 10px; }
       .contact-mail-icone { display: none; }
       .contact-mail-texto span { font-size: .88rem; }
-      .contact-mail-acao span { display: none; }
+      .insta-topo { flex-wrap: wrap; }
+      .insta-topo > div { flex: 1 1 200px; }
+      .insta-seguir { width: 100%; justify-content: center; }
       .contact-canal { padding: 12px 14px; }
       .insta-card { padding: 14px; }
       .insta-seguir { padding: 8px 12px; font-size: .85rem; }
@@ -1528,8 +1531,8 @@
           <p class="lead">Cursos, voluntariado, doações ou parcerias: escreva para a gente. A equipe responde pelo e-mail institucional.</p>
           <a class="contact-mail" href="mailto:contato@cruzvermelhariodejaneiro.org?subject=Contato%20pelo%20site">
             <span class="contact-mail-icone"><i class="fa-regular fa-envelope" aria-hidden="true"></i></span>
-            <span class="contact-mail-texto"><b>E-mail institucional</b><span>contato@cruzvermelhariodejaneiro.org</span></span>
-            <span class="contact-mail-acao"><span>Escrever</span> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            <span class="contact-mail-texto"><b>E-mail institucional</b><span>contato@<wbr>cruzvermelhariodejaneiro.org</span></span>
+            <span class="contact-mail-acao" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
           </a>
           <button type="button" class="contact-copiar" data-copiar="contato@cruzvermelhariodejaneiro.org"><i class="fa-regular fa-copy" aria-hidden="true"></i> <span>Copiar e-mail</span></button>
           <div class="contact-canais">
