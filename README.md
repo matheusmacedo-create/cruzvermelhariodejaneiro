@@ -298,6 +298,22 @@ validado no projeto da Punção Venosa.
 - `site/assets/` não é versionada (fica só no servidor); há uma cópia local ignorada pelo Git
   só para renderizar a home em testes.
 
+## Revisão de SEO (19/09/2026)
+
+Relatório completo em `docs/seo-revisao-2026-09.md` (antes/depois, pendências por projeto,
+Search Console, Perfil da Empresa no Google, conteúdo). Resumo do que mudou aqui:
+
+- **Imagens**: `scripts/otimizar_imagens.py` gera versões WebP em larguras fixas e as imagens de
+  compartilhamento (1200x630) em `site/assets/otim/`; `scripts/aplicar_imagens_otimizadas.py`
+  reescreve as tags `<img>` das páginas à mão com `srcset`, `sizes` (medidos ao vivo), `width`/`height`,
+  `loading="lazy"` fora da primeira dobra e `fetchpriority="high"` na principal. Home: 11,7 MB → 2,5 MB.
+  Os originais continuam no servidor; `site/assets/otim/` precisa ser publicada junto.
+- **Cabeçalho das páginas**: canonical, Open Graph, Twitter Card, títulos até 60 e descrições até
+  160 caracteres, JSON-LD (`WebSite`, `WebPage`, `BreadcrumbList`, `DonateAction`) e H1 limpo na matrícula.
+- **`site/.htaccess` (raiz do public_html)**: `www` → apex em 301 e `ErrorDocument 404 /404.html`
+  (`scripts/gerar_404.py` gera a página com o cabeçalho e o rodapé da home).
+- **`scripts/auditar_seo.py`**: auditoria on-page de qualquer lista de URLs ao vivo.
+
 ## Pontos de atenção encontrados
 
 - **Checkout, pendências para fechar**: (1) aviso de inscrição paga à secretaria **desligado**
@@ -332,7 +348,8 @@ validado no projeto da Punção Venosa.
 ## Estrutura do repositório
 
 ```
-site/                                   páginas estáticas mantidas à mão (espelho do public_html)
+site/                                   páginas estáticas mantidas à mão (espelho do public_html; .htaccess e 404.html incluídos)
+  assets/otim/                          imagens otimizadas geradas (fora do Git, como o resto de assets/; publicar junto)
   matricula-cursos-presenciais/         página gerada (index.html), cursos.json e img/*.webp
   sitemap-index.xml                     índice de sitemaps (o endereço a enviar no Search Console)
   sitemap-paginas.xml                   páginas fixas com data real e imagens (gerado)
@@ -351,5 +368,10 @@ site/matricula-cursos-presenciais/api/  backend PHP do checkout: endpoints, lib.
 site/matricula-cursos-presenciais/static/  checkout.css e checkout.js das três telas do checkout
 scripts/gerar_sitemap_escola.py         regenera os sitemaps da escola a partir do catálogo público
 scripts/gerar_sitemaps.py               gera sitemap-index, -paginas, -noticias e -subdominios conferindo tudo ao vivo
+scripts/auditar_seo.py                  auditoria de SEO on-page das páginas ao vivo
+scripts/otimizar_imagens.py             versões WebP e imagens de compartilhamento em site/assets/otim/
+scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
+scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
+docs/seo-revisao-2026-09.md             relatório da revisão de SEO (antes/depois e pendências por projeto)
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
 ```

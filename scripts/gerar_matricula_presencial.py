@@ -41,12 +41,11 @@ ESCOLA = "https://escola.cursoscruzvermelha.org"
 WHATSAPP = "5521999922864"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"  # vazio = botão abre o WhatsApp da secretaria
 
-TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha Brasileira"
-DESCRICAO = ("Faça sua matrícula agora nos cursos presenciais da Cruz Vermelha Brasileira no Rio de "
-             "Janeiro: escolha o curso, pague a inscrição de R$ 99 e garanta sua vaga. "
-             "Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais.")
-IMAGEM_OG = f"{ORIGEM}/assets/hero-cursos-banner-1.jpg"
-IMAGEM_OG_TAMANHO = (1600, 540)
+TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha"
+DESCRICAO = ("Matricule-se nos cursos presenciais da Cruz Vermelha no Rio: primeiros socorros, bombeiro "
+             "civil, cuidador de idosos e mais. Inscrição de R$ 99 garante a vaga.")
+IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
+IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
             "addressRegion": "RJ", "postalCode": "20230-130", "addressCountry": "BR"}
 LOCAL = {"@type": "Place", "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro", "address": ENDERECO}
@@ -272,7 +271,8 @@ def main() -> int:
   <style>
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
     .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
-    .mr-hero h1 .mr-h1-sub { display: block; font-size: .5em; font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.25; margin-top: .4em; }
+    .mr-hero h1 { margin-bottom: 6px; }
+    .mr-hero .mr-h1-sub { font-size: clamp(1rem, 2.3vw, 1.35rem); font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.3; margin: 0 0 14px; max-width: 60ch; }
     .mr-hero .lead { max-width: 72ch; }
     .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
     .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
@@ -432,7 +432,8 @@ def main() -> int:
     <section class="mr-hero" aria-labelledby="mr-titulo">
       <div class="wrap">
         <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">O certificado da Cruz Vermelha no seu currículo <span class="mr-h1-sub">Cursos presenciais no Centro do Rio. Garanta sua vaga hoje: a inscrição de {brl(inscricao)} reserva seu lugar.</span></h1>
+        <h1 id="mr-titulo">O certificado da Cruz Vermelha no seu currículo</h1>
+        <p class="mr-h1-sub">Cursos presenciais no Centro do Rio. Garanta sua vaga hoje: a inscrição de {brl(inscricao)} reserva seu lugar.</p>
         <p class="lead">Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais. Escolha o curso, pague por PIX ou cartão e a vaga é sua.</p>
         <div class="mr-chips">
           <span class="mr-chip"><i class="fa-solid fa-list-check"></i> {len(ordem)} cursos presenciais</span>
