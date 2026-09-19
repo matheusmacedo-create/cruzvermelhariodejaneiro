@@ -1,4 +1,4 @@
-/* Chat de contato por e-mail da Cruz Vermelha RJ (site inteiro, sem dependências).
+/* Chat de contato por e-mail da Cruz Vermelha Brasileira Rio de Janeiro (site inteiro, sem dependências).
    Cria o botão flutuante e um painel em estilo de conversa que pergunta assunto, curso, nome, e-mail,
    telefone (opcional) e mensagem, e envia tudo para /matricula-cursos-presenciais/api/contato.php, que
    grava, manda por e-mail à equipe e devolve um protocolo. Entrou em 19/09/2026 no lugar do botão do
@@ -17,6 +17,8 @@
   var EMAIL_CONTATO = 'contato@cruzvermelhariodejaneiro.org';
   var PRAZO = '2 dias úteis';
   var CHAVE = 'cv_chat';
+  var NOME = 'Cruz Vermelha Brasileira Rio de Janeiro';
+  var LOGO = '/bio/img/avatar-256.webp'; // logo oficial (quadrado), o mesmo da bio do Instagram
 
   /* chat:cursos (reescrito por scripts/gerar_matricula_presencial.py a partir de cursos.json) */
   var CURSOS = [
@@ -131,7 +133,7 @@
     var r = estado.respostas, daPagina, chips;
     switch (passo) {
       case 'assunto':
-        return { html: 'Oi! Aqui é o atendimento da <b>Cruz Vermelha RJ</b>. Deixe sua mensagem e a nossa equipe responde <b>por e-mail em até ' + PRAZO + '</b>.\nSobre o que você quer falar?',
+        return { html: 'Oi! Aqui é o atendimento da <b>' + NOME + '</b>. Deixe sua mensagem e a nossa equipe responde <b>por e-mail em até ' + PRAZO + '</b>.\nSobre o que você quer falar?',
           chips: ASSUNTOS.map(function (a) { return { valor: a[0], rotulo: a[1] }; }) };
       case 'curso':
         daPagina = cursoDaPagina();
@@ -376,7 +378,7 @@
     botao = el('button', { class: 'cv-chat-abrir', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'cv-chat-painel',
       html: '<span class="cv-chat-abrir-ico">' + ICONES.balao + '</span><span class="cv-chat-abrir-rotulo">Fale com a gente</span><span class="cv-chat-abrir-x">' + ICONES.x + '</span>',
       onclick: function () { if (estado.aberto) fechar(); else abrir(); } });
-    var topo = el('header', { class: 'cv-chat-topo', html: '<span class="cv-chat-avatar">' + ICONES.cruz + '</span><div><b id="cv-chat-titulo">Cruz Vermelha RJ</b><small><span class="cv-chat-status">Atendimento por e-mail</span> · resposta em até ' + PRAZO + '</small></div>' });
+    var topo = el('header', { class: 'cv-chat-topo', html: '<span class="cv-chat-avatar"><img src="' + LOGO + '" width="44" height="44" alt=""></span><div><b id="cv-chat-titulo">' + NOME + '</b><small><span class="cv-chat-status">Atendimento por e-mail</span> · resposta em até ' + PRAZO + '</small></div>' });
     topo.appendChild(el('button', { class: 'cv-chat-fechar', type: 'button', 'aria-label': 'Fechar o chat', html: ICONES.x, onclick: fechar }));
     mensagens = el('div', { class: 'cv-chat-mensagens', role: 'log' });
     leitor = el('div', { class: 'cv-chat-sr', 'aria-live': 'polite', 'aria-atomic': 'true' });

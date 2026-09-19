@@ -17,6 +17,9 @@ declare(strict_types=1);
 const MCP_EMAIL_FONTE = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const MCP_EMAIL_PRAZO = '2 dias úteis';
 const MCP_EMAIL_CNPJ = '08.560.973/0001-97';
+const MCP_NOME_FILIAL = 'Cruz Vermelha Brasileira Rio de Janeiro';
+/** Nomes curtos que aparecem em configurações antigas (EMAIL_REMETENTE): o remetente sai sempre com o nome completo. */
+const MCP_NOMES_CURTOS = ['cruz vermelha', 'cruz vermelha rj', 'cruz vermelha brasileira', 'cruz vermelha brasileira rj', 'cruz vermelha brasileira - rj', 'cruz vermelha brasileira – rj', 'cvb-rj', 'cvb rj', 'cvb'];
 const MCP_TEXTO_ESTORNO = 'A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.';
 
 /** Endereço que recebe o chat do site e responde os e-mails ao aluno. */
@@ -28,13 +31,27 @@ function mcp_email_contato_endereco(): string
 /** Remetente das respostas do painel ao cliente (EMAIL_REMETENTE_CONTATO ou o remetente geral). */
 function mcp_email_remetente_contato(): string
 {
-    return (string) mcp_cfg('EMAIL_REMETENTE_CONTATO', mcp_cfg('EMAIL_REMETENTE', 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>'));
+    return mcp_email_nome_oficial((string) mcp_cfg('EMAIL_REMETENTE_CONTATO', mcp_cfg('EMAIL_REMETENTE', MCP_NOME_FILIAL . ' <matricula@cruzvermelhariodejaneiro.org>')));
 }
 
 /** Só o endereço de um remetente no formato "Nome <endereco>". */
 function mcp_email_endereco(string $remetente): string
 {
     return preg_match('/<([^>]+)>/', $remetente, $m) ? $m[1] : trim($remetente);
+}
+
+/** "Nome <endereco>" com o nome completo da filial quando a configuração traz um nome curto ou só o endereço. */
+function mcp_email_nome_oficial(string $remetente): string
+{
+    $remetente = trim($remetente);
+    if (!preg_match('/^(.*?)\s*<([^>]+)>$/s', $remetente, $m)) {
+        return filter_var($remetente, FILTER_VALIDATE_EMAIL) ? MCP_NOME_FILIAL . " <$remetente>" : $remetente;
+    }
+    $nome = trim($m[1], " \t\"'");
+    if ($nome === '' || in_array(mb_strtolower($nome), MCP_NOMES_CURTOS, true)) {
+        $nome = MCP_NOME_FILIAL;
+    }
+    return "$nome <{$m[2]}>";
 }
 
 /** Logo em PNG (WebP não abre no Outlook), 480 px para ficar nítido em tela retina a 180 px. */
@@ -179,7 +196,7 @@ function mcp_citacao(string $texto): string
  */
 function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null): string
 {
-    $remetente = $remetente ?? (string) mcp_cfg('EMAIL_REMETENTE', 'Cruz Vermelha RJ <matricula@cruzvermelhariodejaneiro.org>');
+    $remetente = mcp_email_nome_oficial($remetente ?? (string) mcp_cfg('EMAIL_REMETENTE', MCP_NOME_FILIAL . ' <matricula@cruzvermelhariodejaneiro.org>'));
     $resposta = $responderPara ?? (string) mcp_cfg('EMAIL_RESPOSTA', mcp_email_contato_endereco());
     if (!filter_var($resposta, FILTER_VALIDATE_EMAIL)) {
         $resposta = '';
@@ -588,10 +605,10 @@ function mcp_montar_email_resposta_contato(array $c, string $resposta, string $a
     $protocolo = (string) ($c['protocolo'] ?? '');
     $comCurso = mcp_contato_com_curso((string) $c['assunto']);
     $corpo = '<div style="font-size:16px;line-height:1.6;color:#1a202c">' . nl2br(mcp_escapar($resposta)) . '</div>'
-        . '<p style="margin:22px 0 0;font-size:15px;line-height:1.5;color:#1a202c"><strong>' . mcp_escapar($assinatura) . '</strong><br><span style="color:#718096">Equipe Cruz Vermelha RJ · Atendimento por e-mail</span></p>'
+        . '<p style="margin:22px 0 0;font-size:15px;line-height:1.5;color:#1a202c"><strong>' . mcp_escapar($assinatura) . '</strong><br><span style="color:#718096">Equipe Cruz Vermelha Brasileira Rio de Janeiro · Atendimento por e-mail</span></p>'
         . '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#fff7f7" style="margin:22px 0 0;background:#fff7f7;border:1px solid #f5c2c7;border-radius:12px"><tr><td style="padding:12px 16px;font-size:14px;line-height:1.5;color:#1a202c">'
         . 'Ficou alguma dúvida? <strong>Responda este e-mail</strong> e a conversa continua por aqui, sempre com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>.</td></tr></table>';
-    $texto = "$resposta\n\n$assinatura\nEquipe Cruz Vermelha RJ · Atendimento por e-mail\n\nFicou alguma dúvida? Responda este e-mail (protocolo $protocolo).\n";
+    $texto = "$resposta\n\n$assinatura\nEquipe Cruz Vermelha Brasileira Rio de Janeiro · Atendimento por e-mail\n\nFicou alguma dúvida? Responda este e-mail (protocolo $protocolo).\n";
     if ($comCurso && !empty($c['curso_slug'])) {
         $link = mcp_site_url() . '/matricula-cursos-presenciais/checkout/?curso=' . rawurlencode((string) $c['curso_slug']);
         $corpo .= mcp_botao($link, 'Fazer matrícula em ' . (string) $c['curso_nome'], true);
@@ -601,7 +618,7 @@ function mcp_montar_email_resposta_contato(array $c, string $resposta, string $a
         . mcp_citacao((string) $c['mensagem']);
     $texto .= "\nSua mensagem:\n{$c['mensagem']}\n";
     return [
-        'assunto' => "Resposta da Cruz Vermelha RJ · $protocolo",
+        'assunto' => "Resposta da Cruz Vermelha Brasileira Rio de Janeiro · $protocolo",
         'html' => mcp_moldura("Respondemos sua mensagem, $nome.", $corpo, [
             'eyebrow' => 'Atendimento por e-mail · ' . $assunto,
             'preheader' => mb_substr(preg_replace('/\s+/u', ' ', $resposta) ?? '', 0, 140),

@@ -6,7 +6,7 @@ Fonte: relatório "Top consultas" enviado pelo Matheus em 19/09/2026 (cliques / 
 
 | Grupo de consultas | Cliques | Impressões | Leitura |
 | --- | --- | --- | --- |
-| "cruz vermelha cursos", "curso cruz vermelha", "cursos cruz vermelha rj", "cruz vermelha rj cursos", "curso na cruz vermelha rj"… | ~40 | ~70 | É a intenção que já converte. A página de matrícula precisa ser a resposta direta (título com "Cursos da Cruz Vermelha RJ"). |
+| "cruz vermelha cursos", "curso cruz vermelha", "cursos cruz vermelha rj", "cruz vermelha rj cursos", "curso na cruz vermelha rj"… | ~40 | ~70 | É a intenção que já converte. A página de matrícula precisa ser a resposta direta (título com "Cursos da Cruz Vermelha Brasileira Rio de Janeiro"). |
 | "cruz vermelha" (7/114), "cruz vermelha rj" (5/68), "cruz vermelha brasileira" (0/21), "cruz vermelha rio de janeiro" (0/4) | 12 | ~207 | Muita impressão, pouco clique: a home aparece mas o título/descrição não pedem o clique; parte busca a nacional. |
 | "curso de primeiros socorros cruz vermelha rj" e variações, "curso de socorrista", "curso bls", "cursos de primeiros socorros" | ~8 | ~20 | Intenção por curso específico. Hoje tudo cai na mesma URL da matrícula (`?curso=`), que não tem título próprio por curso. |
 | "cruz vermelha rj cursos gratuitos", "cruz vermelha cursos gratuitos", "curso de enfermagem cruz vermelha gratuito" | 4 | 8 | A pessoa quer saber se há curso gratuito. O site não responde; a FAQ da home precisa responder com clareza (o que é pago, o que existe de gratuito). |
@@ -20,8 +20,9 @@ Fonte: relatório "Top consultas" enviado pelo Matheus em 19/09/2026 (cliques / 
 
 ## Plano, em ordem de retorno
 
-1. **Feito em 19/09**: título e descrição da página de matrícula passaram a "Cursos da Cruz Vermelha RJ:
-   matrícula em cursos presenciais" e a citar primeiros socorros, bombeiro civil e cuidador de idosos no
+1. **Feito em 19/09**: título e descrição da página de matrícula passaram a "Cursos e matrícula | Cruz Vermelha Brasileira Rio de Janeiro"
+   (o nome curto "Cruz Vermelha RJ" saiu de todos os títulos a pedido do Matheus; continua só como
+   `alternateName` no JSON-LD) e a citar primeiros socorros, bombeiro civil e cuidador de idosos no
    Centro do Rio. A home ganhou a FAQ reescrita com perguntas tiradas desta lista (cursos gratuitos,
    hospital, endereço no Centro, telefone/WhatsApp, o que não é oferecido, outras cidades) e `FAQPage`
    nos dados estruturados. A bio do Instagram (`/bio/`) entrou no domínio.

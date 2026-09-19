@@ -216,15 +216,15 @@ def main() -> int:
     } for s, c in cursos.items()}, ensure_ascii=False).replace("</", "<\\/")
 
     paginas = {
-        "checkout": montar(partes, "Pagar a inscrição | Cruz Vermelha Brasileira RJ", "checkout",
+        "checkout": montar(partes, "Pagar a inscrição | Cruz Vermelha Brasileira Rio de Janeiro", "checkout",
                            "Pagar a inscrição e garantir a vaga",
                            f"Inscrição de {inscricao}, por PIX ou cartão. Sem criar conta e sem escolher turma agora.",
                            CORPO_CHECKOUT.replace("@@OPCOES@@", opcoes).replace("@@CURSOS_JSON@@", cursos_json), qrcode=True, passo=2),
-        "pendente": montar(partes, "Pagamento ainda não confirmado | Cruz Vermelha Brasileira RJ", "pendente",
+        "pendente": montar(partes, "Pagamento ainda não confirmado | Cruz Vermelha Brasileira Rio de Janeiro", "pendente",
                            "Pagamento ainda não confirmado",
                            "Esta tela não cria login. Quando o pagamento for aprovado, a matrícula é aberta e os dados aparecem aqui e no seu e-mail.",
                            CORPO_PENDENTE, qrcode=True, wrap_extra=' style="max-width:820px"', passo=2),
-        "parabens": montar(partes, "Inscrição paga | Cruz Vermelha Brasileira RJ", "parabens",
+        "parabens": montar(partes, "Inscrição paga | Cruz Vermelha Brasileira Rio de Janeiro", "parabens",
                            "Parabéns, sua inscrição está paga.",
                            "Guarde este link: ele mostra sua inscrição e o próximo passo.",
                            CORPO_PARABENS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),

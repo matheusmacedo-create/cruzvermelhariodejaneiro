@@ -315,6 +315,12 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   "Tirar dúvidas" dos cartões de curso da home fazem. As tags das páginas levam hash do conteúdo
   (`/chat/chat.js?v=…`), geradas por `scripts/chat_widget.py`; a lista de cursos dentro do `chat.js`
   é reescrita por `gerar_matricula_presencial.py` a partir de `cursos.json`.
+- **Identidade do chat (19/09 à noite)**: o Matheus apontou que a caixa estava "sem nossa identidade
+  visual e com nosso nome incompleto". Agora o cabeçalho é branco com faixa vermelha no topo, logo da
+  filial (`/bio/img/avatar-256.webp`), nome completo e status "Atendimento por e-mail · resposta em
+  até 2 dias úteis"; os balões da equipe têm filete vermelho e o botão de fechar fica vermelho no
+  hover. Fonte: `NOME`/`LOGO` no início de `chat.js` e `.cv-chat-topo`/`.cv-chat-avatar` em
+  `chat.css`. A saudação e os e-mails também usam o nome completo.
 - **API (`api/contato.php`)**: mesmas guardas do checkout (POST JSON da própria origem, corpo até
   64 KB, campo armadilha, limites por IP 8/h e por e-mail 4/h), validação com o nome do campo para o
   chat voltar à pergunta certa, tabela `mcp_contatos` (criada sozinha, como as outras), protocolo
@@ -337,7 +343,7 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   (HttpOnly, Secure, SameSite=Lax). Quem lê a caixa da equipe é quem pode responder. Formulários com
   token anti-CSRF por ação e contato; limite de 5 pedidos de link por hora por IP; página `noindex`
   e `no-store`. A resposta sai de `EMAIL_REMETENTE_CONTATO` (ou do remetente geral) com
-  responder-para `EMAIL_CONTATO`, assunto "Resposta da Cruz Vermelha RJ · protocolo", assinatura de
+  responder-para `EMAIL_CONTATO`, assunto "Resposta da Cruz Vermelha Brasileira Rio de Janeiro · protocolo", assinatura de
   quem respondeu e a mensagem original citada; arquivar sem responder e reabrir também existem.
   Responder direto pelo cliente de e-mail continua funcionando (responder-para = a pessoa), só não
   registra no painel.
@@ -380,10 +386,48 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
 completo, **Cruz Vermelha Brasileira Rio de Janeiro** (ou "Filial Rio de Janeiro"/"Filial do Estado
-do Rio de Janeiro" onde já estava assim); a forma curta "Cruz Vermelha RJ" continua valendo no chat e
-nos e-mails. Os textos do catálogo da escola (`cursos.json`) são normalizados na geração da página de
-matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não precisam ser
-editados à mão.
+do Rio de Janeiro" onde já estava assim). A forma curta "Cruz Vermelha RJ" **não vale em texto
+visível**: saiu do chat, dos e-mails, dos títulos, das descrições, dos `alt` e dos JSON-LD em 19/09 à
+noite, a pedido do Matheus (a caixa do chat mostrava "Cruz Vermelha RJ"). Ela sobrevive só como
+`alternateName` no JSON-LD da home, porque é o termo que as pessoas digitam no Google. Títulos seguem
+"Assunto | Cruz Vermelha Brasileira Rio de Janeiro", até cerca de 60 caracteres (a home usa
+"Cruz Vermelha Brasileira Rio de Janeiro | Site oficial"; a matrícula, "Cursos e matrícula | …").
+Nos e-mails, `mcp_email_nome_oficial()` (`api/lib/email.php`) troca um nome curto vindo do
+`config.php` (`EMAIL_REMETENTE`, `EMAIL_REMETENTE_CONTATO`) pelo nome completo, mantendo o endereço;
+um nome próprio (ex.: "Secretaria de Cursos") é respeitado. `scripts/gerar_faq_home.py` recusa o nome
+incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normalizados na geração da
+página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
+precisam ser editados à mão.
+
+## FAQ da home (19/09/2026, à noite)
+
+A FAQ da home tinha cinco respostas de uma frase. Agora é uma seção de conteúdo pensada para busca
+orgânica: **19 perguntas em 4 grupos** (Cursos e matrícula; Primeiros socorros, Lei Lucas e formação
+profissional; Voluntariado; Doações, sede e contato), cada resposta com 60 a 110 palavras, o nome
+completo da filial, fatos tirados do repositório (`cursos.json`, página de matrícula, doação, Campanha
+do Agasalho, bio) e links para páginas do próprio domínio. As perguntas saíram das consultas do Search
+Console (`docs/seo-consultas-2026-09.md`): "cursos gratuitos", hospital/emergência, endereço e
+horário, telefone/WhatsApp, cursos técnicos/enfermagem (não há), Nova Iguaçu/Cabo Frio, Lei Lucas,
+bombeiro civil, cuidador de idosos, BLS.
+
+- **Fonte**: `site/faq-home.json` (`titulo`, `subtitulo`, `grupos[].perguntas[]` com `pergunta`,
+  `resposta` e `links[{texto,url}]`). Para mudar uma resposta, edite o JSON, rode
+  `python3 scripts/gerar_faq_home.py` (reescreve o trecho entre `<!-- faq:inicio -->` e
+  `<!-- faq:fim -->` de `site/index.html` e o bloco `FAQPage`, `<script id="faq-ld">`) e publique
+  `site/index.html`.
+- **Regras do gerador**: recusa "Cruz Vermelha Brasileira" sem "Rio de Janeiro"; só aceita links
+  internos, da escola ou do formulário do voluntariado; o texto do link precisa estar literalmente na
+  resposta; avisa se a resposta sai de 40 a 120 palavras. A primeira pergunta abre por padrão. Os
+  links "chat do site" apontam para `/#chat`, que abre o chat em qualquer página.
+- **O que a FAQ afirma e convém a filial confirmar** (o que não tinha fonte ficou de fora ou foi
+  suavizado): a homologação do Bombeiro Civil é paga à parte, valor a consultar; a chave PIX do CNPJ
+  só aparece na Campanha do Agasalho, por isso a resposta de doação manda para a página de doação e
+  não cita a chave; o horário "segunda a sexta, 10h às 17h" é o da entrega de donativos da campanha,
+  não um horário geral da sede; não afirmamos que a formação de voluntários é gratuita, só que
+  voluntariado e cursos são caminhos separados; a resposta sobre emergências não diz se a filial tem
+  ou não hospital, só que este site não agenda consultas e que emergência é 192/193; o resumo da Lei
+  Lucas (Lei 13.722/2018) é conhecimento geral, não do repositório. Se a filial quiser afirmar mais
+  (curso gratuito, boleto, atendimento de saúde), basta editar o JSON e gerar de novo.
 
 ## Página de links da bio do Instagram (`/bio/`, 19/09/2026)
 
@@ -406,7 +450,13 @@ no domínio e ser medido.
 - **SEO**: título e descrição próprios, canonical `/bio/`, `index, follow`, Open Graph, JSON-LD
   (`WebPage` ligada à `WebSite` e à `Organization` da home, `BreadcrumbList`), entrada no
   `sitemap-paginas.xml`.
-- **Rastreio**: cada clique dispara GA4 `bio_click` (`link_id`, `link_url`, `link_text`) e Meta
+- **Revisão de 19/09 à noite**: título "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais",
+  descrição com 145 caracteres e nome completo em todo o texto; seta dos botões como ícone SVG,
+  `alt=""` nas artes dos cartões (o texto do link já descreve), cinza dos textos secundários com
+  contraste AA, preload do avatar com `imagesrcset`; nesta página o `gtag.js` carrega imediato (para
+  não perder o clique de quem entra e sai em segundos) e o Pixel continua depois do `load`.
+- **Rastreio**: cada clique dispara GA4 `bio_click` (`link_id`, `link_url` com host e caminho até 100
+  caracteres, `link_text`) e Meta
   `BioClick`. Endereço para colar na bio:
   `https://cruzvermelhariodejaneiro.org/bio/?utm_source=ig&utm_medium=social&utm_content=link_in_bio`.
 - **Aviso**: `/links/` e `links.cruzvermelhariodejaneiro.org` apontam para a pasta
