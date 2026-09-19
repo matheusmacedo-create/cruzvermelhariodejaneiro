@@ -283,6 +283,15 @@ validado no projeto da Punção Venosa.
   `#insta-fotos`), respeitando `prefers-reduced-motion`. O Instagram bloqueia leitura anônima do
   perfil (HTTP 429), então as fotos são as do servidor, não um feed ao vivo: para trocar, edite a
   lista no `index.html` e suba a foto em `public_html/assets/`.
+- **Bloco "Já escolheu seu curso?"**: o `<select>` nativo (a lista do sistema destoava da página)
+  virou pílulas: um `radio` escondido por curso, agrupado como em `cursos.json`, com carga horária
+  em cada pílula; o envio vai direto para `checkout/?curso=<slug>`, e sem escolha a página avisa
+  em vez de abrir o balão nativo. As pílulas continuam entre os marcadores `matricula:cursos`,
+  reescritos por `scripts/gerar_matricula_presencial.py` a cada sincronização do catálogo.
+- **Bloco "Educação salva vidas"**: saiu o post com texto (cortado e sem chamada) e entrou a foto
+  real da aula de Primeiros Socorros, os três passos com ícone e, no fim, o botão "Fazer o curso
+  de Primeiros Socorros" (checkout com o curso escolhido) e o link para todos os cursos. A seção
+  passou a converter em vez de só informar.
 - O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`: a intenção é
   substituir por um Intercom para toda a estrutura. O número continua no rodapé e nos cartões de
   curso da home ("Chamar no WhatsApp").

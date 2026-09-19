@@ -101,17 +101,18 @@ MARCA_FIM = "<!-- /matricula:cursos -->"
 
 
 def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
-    """Reescreve as <option> do bloco "Já escolheu seu curso?" da home entre os marcadores."""
+    """Reescreve as pílulas (radios) do bloco "Já escolheu seu curso?" da home entre os marcadores."""
     a = home.index(MARCA_INI)
     a = home.index("-->", a) + len("-->")
     b = home.index(MARCA_FIM)
     grupos = []
     for g in dados["grupos"]:
-        opcoes = "".join(
-            f'\n                <option value="{s}">{esc(cursos[s]["nome"])} · {esc(cursos[s]["carga_horaria"])}</option>'
+        itens = "".join(
+            f'\n                <input type="radio" name="curso" value="{s}" id="mc-{s}">'
+            f'\n                <label class="matricula-pilula" for="mc-{s}">{esc(cursos[s]["nome"])} <small>{esc(cursos[s]["carga_horaria"])}</small></label>'
             for s in g["cursos"] if s in cursos
         )
-        grupos.append(f'\n              <optgroup label="{esc(g["titulo"])}">{opcoes}\n              </optgroup>')
+        grupos.append(f'\n              <div class="matricula-grupo"><span class="matricula-grupo-titulo">{esc(g["titulo"])}</span>{itens}\n              </div>')
     return home[:a] + "".join(grupos) + "\n              " + home[b:]
 
 
