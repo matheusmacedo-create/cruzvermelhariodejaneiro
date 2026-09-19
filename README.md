@@ -200,6 +200,14 @@ validado no projeto da Punção Venosa.
   criadas sozinhas, freios), `unicopag.php` (cliente, tradução de status e a porta única de
   mudança de status, com transições atômicas no SQL), `escola.php` (API da escola),
   `email.php` (Resend com fallback em `mail()`), `publico.php` (o que as páginas podem ver).
+- **Design (19/09)**: topo com as três etapas da matrícula (curso escolhido, pagamento,
+  confirmação da turma; a tela Parabéns marca a terceira), formulário em três blocos numerados
+  (Curso, Seus dados, Pagamento) com a ficha do curso em etiquetas (carga horária, escolaridade,
+  endereço), formas de pagamento em cartões com ícone, opção de custos em cartão com o valor à
+  direita, faixa de confiança sob o botão (pagamento seguro, estorno, certificado) e resumo com a
+  foto do curso, total em destaque e o que a inscrição garante. No celular o resumo vira uma faixa
+  compacta acima do formulário. Nome, foto e ficha de cada curso vão embutidos na página (JSON
+  gerado do `cursos.json`), então o resumo aparece antes de a API responder.
 - **Front-end**: CSS e JS do checkout ficam em `site/matricula-cursos-presenciais/static/`
   (`checkout.css`, `checkout.js`, um arquivo para as três telas, escolhidas por
   `<body data-tela>`); as páginas os referenciam com hash do conteúdo na URL (`?v=`), e a pasta

@@ -937,8 +937,8 @@
     .faq-item[open] summary::after { transform: rotate(45deg); }
     .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
   </style>
-  <link rel="stylesheet" href="/matricula-cursos-presenciais/static/checkout.css?v=c51fdc8f2f">
-  <script src="/matricula-cursos-presenciais/static/checkout.js?v=c87301c2c0" defer></script>
+  <link rel="stylesheet" href="/matricula-cursos-presenciais/static/checkout.css?v=54b897245e">
+  <script src="/matricula-cursos-presenciais/static/checkout.js?v=911151b1f1" defer></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
   <script>
@@ -1004,6 +1004,7 @@
         <p class="eyebrow">Matrícula cursos presenciais</p>
         <h1>Pagar a inscrição e garantir a vaga</h1>
         <p class="lead">Inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma agora.</p>
+        <ol class="ck-passos" aria-label="Etapas da matrícula"><li class="feito"><span class="ck-passo-n"><i class="fa-solid fa-check" aria-hidden="true"></i></span><span>Curso escolhido</span></li><li class="atual" aria-current="step"><span class="ck-passo-n">2</span><span>Pagamento da inscrição</span></li><li class=""><span class="ck-passo-n">3</span><span>Confirmação da turma</span></li></ol>
       </div>
     </section>
     <section class="ck-secao">
@@ -1013,9 +1014,11 @@
           <div class="ck-card">
             <form id="ck-form" novalidate autocomplete="on">
               <div class="ck-armadilha" aria-hidden="true"><label>Não preencha este campo<input id="ck-site" name="site" tabindex="-1" autocomplete="off"></label></div>
-              <label class="ck-campo"><span>Curso</span>
-                <select id="ck-curso" name="curso" required>
-                  <option value="" disabled selected>Escolha o curso</option>
+              <section class="ck-bloco-form" aria-labelledby="ck-t1">
+                <h2 class="ck-bloco-titulo" id="ck-t1"><span class="ck-num">1</span> Curso</h2>
+                <label class="ck-campo"><span>Curso presencial</span>
+                  <select id="ck-curso" name="curso" required>
+                    <option value="" disabled selected>Escolha o curso</option>
                   <optgroup label="Emergência e vida">
                     <option value="primeiros-socorros-basico">Primeiros Socorros Básico · 8 horas</option>
                     <option value="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças · 8 horas</option>
@@ -1029,46 +1032,69 @@
                   <optgroup label="Outros cursos">
                     <option value="micropigmentacao-labial">Micropigmentação Labial · 24 horas</option>
                   </optgroup>
-                </select>
-              </label>
-              <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" required></label>
-              <div class="ck-2col">
-                <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
-                <label class="ck-campo"><span>WhatsApp</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
-              </div>
-              <label class="ck-campo"><span>E-mail</span><input id="ck-email" type="email" name="email" autocomplete="email" required><small class="ck-nota">A confirmação e o acesso chegam neste e-mail.</small></label>
-              <p class="ck-campo" style="margin-bottom:6px"><span>Forma de pagamento</span></p>
-              <div class="ck-metodos">
-                <label class="ck-metodo ativo"><input type="radio" name="metodo" value="pix" checked><span><b>PIX</b><small>Confirmação em segundos</small></span></label>
-                <label class="ck-metodo"><input type="radio" name="metodo" value="cartao"><span><b>Cartão de crédito</b><small>À vista</small></span></label>
-              </div>
-              <div id="ck-cartao" hidden>
-                <label class="ck-campo"><span>Número do cartão</span><input id="ck-cartao-numero" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></label>
-                <label class="ck-campo"><span>Nome como está no cartão</span><input id="ck-cartao-nome" autocomplete="cc-name"></label>
+                  </select>
+                </label>
+                <ul class="ck-curso-meta" id="ck-curso-meta" hidden>
+                  <li><i class="fa-regular fa-clock" aria-hidden="true"></i> <span id="ck-m-carga"></span></li>
+                  <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> <span id="ck-m-escolaridade"></span></li>
+                  <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Praça da Cruz Vermelha, 10 · Centro</li>
+                </ul>
+              </section>
+              <section class="ck-bloco-form" aria-labelledby="ck-t2">
+                <h2 class="ck-bloco-titulo" id="ck-t2"><span class="ck-num">2</span> Seus dados <small>só o necessário para a matrícula</small></h2>
+                <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" placeholder="Como está no seu documento" required></label>
                 <div class="ck-2col">
-                  <label class="ck-campo"><span>Validade</span><input id="ck-cartao-validade" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA"></label>
-                  <label class="ck-campo"><span>CVV</span><input id="ck-cartao-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></label>
+                  <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
+                  <label class="ck-campo"><span>WhatsApp</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
                 </div>
-                <p class="ck-nota">Os dados do cartão vão direto para o processador de pagamento e não ficam guardados no site.</p>
-              </div>
-              <label class="ck-check"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span>Quero cobrir os custos de processamento (<b id="ck-taxa-valor">+ R$ 0,00</b>)<small>Opcional. Assim a Cruz Vermelha recebe o valor integral da inscrição.</small></span></label>
-              <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required><span>Li os requisitos do curso (<span id="ck-escolaridade">escolaridade mínima</span>) e confirmo que os atendo.</span></label>
-              <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
-              <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
-              <p class="ck-nota" style="margin:12px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade">Política de privacidade</a>.</p>
+                <label class="ck-campo"><span>E-mail</span><input id="ck-email" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" required><small class="ck-nota">A confirmação da inscrição chega neste e-mail.</small></label>
+              </section>
+              <section class="ck-bloco-form" aria-labelledby="ck-t3">
+                <h2 class="ck-bloco-titulo" id="ck-t3"><span class="ck-num">3</span> Pagamento</h2>
+                <div class="ck-metodos" role="radiogroup" aria-label="Forma de pagamento">
+                  <label class="ck-metodo ativo"><input type="radio" name="metodo" value="pix" checked><i class="fa-brands fa-pix ck-metodo-icone" aria-hidden="true"></i><span class="ck-metodo-tag">Na hora</span><b>PIX</b><small>QR code ou copia e cola</small></label>
+                  <label class="ck-metodo"><input type="radio" name="metodo" value="cartao"><i class="fa-regular fa-credit-card ck-metodo-icone" aria-hidden="true"></i><b>Cartão de crédito</b><small>À vista, aprovação em segundos</small></label>
+                </div>
+                <div class="ck-cartao-box" id="ck-cartao" hidden>
+                  <label class="ck-campo"><span>Número do cartão</span><input id="ck-cartao-numero" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></label>
+                  <label class="ck-campo"><span>Nome como está no cartão</span><input id="ck-cartao-nome" autocomplete="cc-name"></label>
+                  <div class="ck-2col">
+                    <label class="ck-campo"><span>Validade</span><input id="ck-cartao-validade" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/AA"></label>
+                    <label class="ck-campo"><span>CVV</span><input id="ck-cartao-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></label>
+                  </div>
+                  <p class="ck-nota"><i class="fa-solid fa-lock" aria-hidden="true"></i> Os dados do cartão vão direto para o processador de pagamento e não ficam guardados no site.</p>
+                </div>
+                <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small>Opcional. Assim a Cruz Vermelha recebe o valor integral da inscrição.</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
+                <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required><span class="ck-check-texto">Li os requisitos do curso (<span id="ck-escolaridade">escolaridade mínima</span>) e confirmo que os atendo.</span></label>
+                <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
+                <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
+                <ul class="ck-confianca">
+                  <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela Unicopag</li>
+                  <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Estorno se não houver turma compatível</li>
+                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira</li>
+                </ul>
+                <p class="ck-nota" style="margin:14px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade/">Política de privacidade</a>.</p>
+              </section>
             </form>
             <div id="ck-pix" hidden aria-live="polite"></div>
           </div>
-          <aside class="ck-card ck-resumo">
-            <h2>Resumo</h2>
-            <div class="ck-linha"><span>Curso</span><b id="ck-r-curso">—</b></div>
+          <aside class="ck-card ck-resumo" aria-label="Resumo da inscrição">
+            <img class="ck-resumo-foto" id="ck-r-foto" src="/assets/hero-cursos-banner-1.jpg" alt="" width="480" height="360">
+            <p class="ck-resumo-rotulo">Sua inscrição</p>
+            <p class="ck-resumo-curso" id="ck-r-curso">Escolha o curso</p>
+            <span class="ck-resumo-meta" id="ck-r-meta">7 cursos presenciais no Centro do Rio</span>
             <div class="ck-linha"><span>Inscrição</span><span id="ck-r-inscricao">R$ 99,00</span></div>
             <div class="ck-linha" id="ck-r-taxa-linha" hidden><span>Custos de processamento</span><span id="ck-r-taxa">R$ 0,00</span></div>
             <div class="ck-linha total"><span>Total agora</span><span id="ck-r-total">R$ 99,00</span></div>
             <p class="ck-nota">O valor do curso (<span id="ck-r-curso-valor">—</span>) é pago depois, na plataforma da escola.</p>
-            <p class="ck-nota">A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado.</p>
+            <ul class="ck-depois" aria-label="O que você garante">
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Vaga reservada na hora, com confirmação por e-mail</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Sem criar conta e sem escolher turma agora</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Estorno se não houver horário compatível ou se você desistir antes da confirmação da aula</li>
+            </ul>
           </aside>
         </div>
+        <script type="application/json" id="ck-cursos">{"bombeiro-civil": {"nome": "Bombeiro Civil", "carga_horaria": "80 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 95000, "imagem": "/matricula-cursos-presenciais/img/bombeiro-civil-480.webp"}, "cuidador-de-idosos": {"nome": "Cuidador de Idosos (Curso Livre)", "carga_horaria": "160 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 95000, "imagem": "/matricula-cursos-presenciais/img/cuidador-de-idosos-480.webp"}, "micropigmentacao-labial": {"nome": "Micropigmentação Labial", "carga_horaria": "24 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 40000, "imagem": "/matricula-cursos-presenciais/img/micropigmentacao-labial-480.webp"}, "primeiros-socorros-basico": {"nome": "Primeiros Socorros Básico", "carga_horaria": "8 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 18000, "imagem": "/matricula-cursos-presenciais/img/primeiros-socorros-basico-480.webp"}, "primeiros-socorros-lei-lucas": {"nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças", "carga_horaria": "8 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/primeiros-socorros-lei-lucas-480.webp"}, "puncao-venosa": {"nome": "Punção Venosa", "carga_horaria": "8 horas", "escolaridade": "Ensino Médio", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/puncao-venosa-480.webp"}, "suporte-basico-de-vida": {"nome": "Suporte Básico de Vida", "carga_horaria": "4 horas", "escolaridade": "Ensino Fundamental", "valor_curso_centavos": 15000, "imagem": "/matricula-cursos-presenciais/img/suporte-basico-de-vida-480.webp"}}</script>
       </div>
     </section>
   </main>

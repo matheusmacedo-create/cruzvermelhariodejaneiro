@@ -147,6 +147,7 @@
   function telaCheckout() {
     var form = q('#ck-form'), sel = q('#ck-curso'), erroEl = q('#ck-erro'), btn = q('#ck-pagar');
     var info = null, cursos = {}, origemAtual = origem();
+    try { cursos = JSON.parse(q('#ck-cursos').textContent) || {}; } catch (e) { cursos = {}; }
     var campos = {
       curso: '#ck-curso', nome: '#ck-nome', cpf: '#ck-cpf', email: '#ck-email', telefone: '#ck-telefone',
       cartao_numero: '#ck-cartao-numero', cartao_nome: '#ck-cartao-nome', cartao_validade: '#ck-cartao-validade', cartao_cvv: '#ck-cartao-cvv'
@@ -155,15 +156,26 @@
     function metodo() { return (form.querySelector('input[name=metodo]:checked') || {}).value || 'pix'; }
     function taxaAtual() { return info ? (metodo() === 'pix' ? info.taxa.pix : info.taxa.cartao) : 0; }
 
+    function fichaDoCurso(c) {
+      q('#ck-r-curso').textContent = c ? c.nome : 'Escolha o curso';
+      q('#ck-r-meta').textContent = c ? [c.carga_horaria, c.escolaridade].filter(Boolean).join(' · ') : '7 cursos presenciais no Centro do Rio';
+      q('#ck-escolaridade').textContent = c && c.escolaridade ? 'escolaridade mínima: ' + c.escolaridade : 'escolaridade mínima';
+      q('#ck-r-curso-valor').textContent = c && c.valor_curso_centavos ? brl(c.valor_curso_centavos) : 'consulte a escola';
+      var meta = q('#ck-curso-meta');
+      meta.hidden = !c;
+      if (c) { q('#ck-m-carga').textContent = c.carga_horaria || ''; q('#ck-m-escolaridade').textContent = c.escolaridade ? 'Mínimo: ' + c.escolaridade : ''; }
+      var foto = q('#ck-r-foto');
+      if (c && c.imagem && foto.getAttribute('src') !== c.imagem) { foto.src = c.imagem; foto.alt = c.nome; }
+    }
+
     function atualizar() {
       var c = cursos[sel.value];
       var inscricao = info ? info.inscricao_centavos : 9900;
       var taxa = taxaAtual();
       var cobre = q('#ck-cobre').checked;
       var total = inscricao + (cobre ? taxa : 0);
-      q('#ck-r-curso').textContent = c ? c.nome : '—';
-      q('#ck-escolaridade').textContent = c && c.escolaridade ? 'escolaridade mínima: ' + c.escolaridade : 'escolaridade mínima';
-      q('#ck-r-curso-valor').textContent = c && c.valor_curso_centavos ? brl(c.valor_curso_centavos) : 'consulte a escola';
+      fichaDoCurso(c);
+      q('#ck-cobre-opcao').classList.toggle('marcado', cobre);
       q('#ck-taxa-valor').textContent = '+ ' + brl(taxa);
       q('#ck-r-inscricao').textContent = brl(inscricao);
       q('#ck-r-taxa-linha').hidden = !cobre;
@@ -251,12 +263,14 @@
     aplicarMascara(q('#ck-cartao-cvv'), mascaras.cvv);
     form.addEventListener('change', atualizar);
     form.addEventListener('submit', enviar);
+    var pedido = param('curso');
+    if (pedido && cursos[pedido]) sel.value = pedido;
     atualizar();
 
     api('info.php').then(function (d) {
       if (!d.ok) { erro('O checkout está indisponível no momento. Tente novamente em instantes.'); btn.disabled = true; return; }
       info = d;
-      d.cursos.forEach(function (c) { cursos[c.slug] = c; });
+      d.cursos.forEach(function (c) { cursos[c.slug] = Object.assign(cursos[c.slug] || {}, c); });
       mostrarAvisoTeste(d);
       var pedido = param('curso');
       if (pedido && cursos[pedido]) sel.value = pedido;
