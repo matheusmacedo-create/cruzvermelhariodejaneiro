@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <title>Cruz Vermelha Brasileira - Rio de Janeiro</title>
-  <meta name="description" content="Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro. Cursos, voluntariado, ações humanitárias e contato institucional.">
+  <title>Cruz Vermelha Brasileira RJ: cursos, voluntariado e doações</title>
+  <meta name="description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e como doar. Sede no Centro do Rio.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/">
+  <meta property="og:title" content="Cruz Vermelha Brasileira RJ: cursos, voluntariado e doações">
+  <meta property="og:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e como doar. Sede no Centro do Rio.">
+  <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cruz Vermelha Brasileira RJ: cursos, voluntariado e doações">
+  <meta name="twitter:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e como doar. Sede no Centro do Rio.">
+  <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -324,7 +339,7 @@
       inset: 0;
       background:
         linear-gradient(90deg, rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .68) 42%, rgba(0, 0, 0, .22) 100%),
-        url("assets/hero-equipe-grupo.jpg") center 30% / cover no-repeat;
+        url("assets/otim/hero-equipe-grupo-1440.webp") center 30% / cover no-repeat;
     }
     .hero::after {
       content: "";
@@ -808,7 +823,7 @@
       .hero::before {
         background:
           linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.52) 58%, rgba(0,0,0,.2) 100%),
-          url("assets/hero-equipe-grupo.jpg") center 20% / cover no-repeat;
+          url("assets/otim/hero-equipe-grupo-960.webp") center 20% / cover no-repeat;
       }
       .hero-actions, .cta-row { flex-direction: column; align-items: stretch; }
       .course-copy { padding: 28px; }
@@ -960,7 +975,7 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    gtag('config', 'G-HDYZZ5JZHF');
+    gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
   </script>
 
   <!-- Meta Pixel Code -->
@@ -976,7 +991,7 @@
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
+  <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
@@ -992,7 +1007,9 @@
   ],
   "url": "https://cruzvermelhariodejaneiro.org/",
   "logo": "https://cruzvermelhariodejaneiro.org/assets/logo-cvb-rj.png",
+  "image": "https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg",
   "email": "contato@cruzvermelhariodejaneiro.org",
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "customer service", "email": "contato@cruzvermelhariodejaneiro.org", "availableLanguage": "pt-BR"}],
   "telephone": "+55-21-99992-2864",
   "taxID": "08.560.973/0001-97",
   "address": {
@@ -1000,6 +1017,7 @@
     "streetAddress": "Praça da Cruz Vermelha, 10",
     "addressLocality": "Rio de Janeiro",
     "addressRegion": "RJ",
+    "postalCode": "20230-130",
     "addressCountry": "BR"
   },
   "areaServed": {
@@ -1021,6 +1039,21 @@
   }
 }
   </script>
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://cruzvermelhariodejaneiro.org/#site",
+    "url": "https://cruzvermelhariodejaneiro.org/",
+    "name": "Cruz Vermelha Brasileira - Rio de Janeiro",
+    "inLanguage": "pt-BR",
+    "publisher": {
+      "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
+    }
+  }
+]
+  </script>
 </head>
 <body>
   <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
@@ -1032,7 +1065,7 @@
   <header class="main-header">
     <div class="header-container">
       <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
-        <img src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img">
+        <img alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img" src="assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
       </a>
 
       <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
@@ -1062,12 +1095,12 @@
   <div class="campaign-slider" id="campaignSlider">
     <div class="campaign-slide active" data-slide="0">
       <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-        <img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro">
+        <img alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/impacto-cores-banner-1920.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
       </a>
     </div>
     <div class="campaign-slide" data-slide="1">
       <a href="campanha-agasalho.html">
-        <img src="assets/agasalho-banner.jpg" alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro">
+        <img alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/agasalho-banner-1920.webp" srcset="assets/otim/agasalho-banner-640.webp 640w, assets/otim/agasalho-banner-1200.webp 1200w, assets/otim/agasalho-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 1100px" width="1920" height="901">
       </a>
     </div>
     <button class="campaign-slider-arrow prev" onclick="changeCampaignSlide(-1)" aria-label="Campanha anterior">&#8249;</button>
@@ -1142,8 +1175,8 @@
           </div>
         </div>
         <div class="photo-stack" aria-label="Fotos reais da Cruz Vermelha RJ">
-          <img src="assets/reuniao-cicv.jpg" alt="Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV">
-          <img src="assets/reuniao-cicv-grupo.jpg" alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional">
+          <img alt="Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV" src="assets/otim/reuniao-cicv-480.webp" srcset="assets/otim/reuniao-cicv-480.webp 480w, assets/otim/reuniao-cicv-960.webp 960w" sizes="(max-width: 620px) 174px, 255px" width="480" height="600" loading="lazy" decoding="async">
+          <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional" src="assets/otim/reuniao-cicv-grupo-480.webp" srcset="assets/otim/reuniao-cicv-grupo-480.webp 480w, assets/otim/reuniao-cicv-grupo-960.webp 960w" sizes="(max-width: 620px) 174px, 255px" width="480" height="600" loading="lazy" decoding="async">
         </div>
       </div>
     </section>
@@ -1156,7 +1189,7 @@
         <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
         <div class="campaigns-grid">
           <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-            <div class="campaign-card-thumb"><img src="assets/impacto-cores-banner.jpg" alt="Impacto das Cores"></div>
+            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" fetchpriority="high"></div>
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
               <h3>Impacto das Cores</h3>
@@ -1165,7 +1198,7 @@
             </div>
           </a>
           <a class="campaign-card" href="campanha-agasalho.html">
-            <div class="campaign-card-thumb"><img src="assets/agasalho-hero-rua.jpg" alt="Campanha do Agasalho"></div>
+            <div class="campaign-card-thumb"><img alt="Campanha do Agasalho" src="assets/otim/agasalho-hero-rua-640.webp" srcset="assets/otim/agasalho-hero-rua-640.webp 640w, assets/otim/agasalho-hero-rua-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="429" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Campanha de Inverno</p>
               <h3>Campanha do Agasalho</h3>
@@ -1191,7 +1224,7 @@
         <div id="coursesSlider">
           <div class="course-slide active" data-course-slide="0">
             <div class="course-box">
-              <img src="assets/curso-primeiros-socorros-novo.jpg" alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro">
+              <img alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-primeiros-socorros-novo-768.webp" srcset="assets/otim/curso-primeiros-socorros-novo-480.webp 480w, assets/otim/curso-primeiros-socorros-novo-768.webp 768w" sizes="(max-width: 620px) 100vw, 576px" width="768" height="1024" loading="lazy" decoding="async">
               <div class="course-copy">
                 <h3>Curso de Primeiros Socorros Básico</h3>
                 <p class="lead">Capacitação para reconhecer riscos, acionar ajuda e aplicar condutas iniciais com técnica. O objetivo é reduzir improvisos perigosos e aumentar a segurança em situações críticas.</p>
@@ -1210,7 +1243,7 @@
 
           <div class="course-slide" data-course-slide="1">
             <div class="course-box">
-              <img src="assets/curso-puncao-venosa.jpg" alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro">
+              <img alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-puncao-venosa-768.webp" srcset="assets/otim/curso-puncao-venosa-480.webp 480w, assets/otim/curso-puncao-venosa-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
               <div class="course-copy">
                 <h3>Curso de Punção Venosa</h3>
                 <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
@@ -1229,7 +1262,7 @@
 
           <div class="course-slide" data-course-slide="2">
             <div class="course-box">
-              <img src="assets/curso-cuidador-idosos.jpg" alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro">
+              <img alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-cuidador-idosos-768.webp" srcset="assets/otim/curso-cuidador-idosos-480.webp 480w, assets/otim/curso-cuidador-idosos-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
               <div class="course-copy">
                 <h3>Curso de Cuidador de Idosos</h3>
                 <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
@@ -1255,7 +1288,7 @@
 
         <div class="more-courses-grid">
           <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-bombeiro-civil.jpg" alt="Curso de Bombeiro Civil"></div>
+            <div class="mini-course-thumb"><img alt="Curso de Bombeiro Civil" src="assets/otim/curso-bombeiro-civil-768.webp" srcset="assets/otim/curso-bombeiro-civil-480.webp 480w, assets/otim/curso-bombeiro-civil-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
             <div class="mini-course-body">
               <h4>Bombeiro Civil</h4>
               <p>Formação para atuação em prevenção e combate a incêndios. 80 horas.</p>
@@ -1263,7 +1296,7 @@
             </div>
           </a>
           <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-lei-lucas.jpg" alt="Curso Lei Lucas - Ambientes com Crianças"></div>
+            <div class="mini-course-thumb"><img alt="Curso Lei Lucas - Ambientes com Crianças" src="assets/otim/curso-lei-lucas-768.webp" srcset="assets/otim/curso-lei-lucas-480.webp 480w, assets/otim/curso-lei-lucas-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
             <div class="mini-course-body">
               <h4>Lei Lucas — Ambientes com Crianças</h4>
               <p>Capacitação essencial para escolas e creches, incluindo Stop the Bleed. 8 horas.</p>
@@ -1271,7 +1304,7 @@
             </div>
           </a>
           <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img src="assets/curso-suporte-basico-vida.jpg" alt="Curso de Suporte Básico de Vida"></div>
+            <div class="mini-course-thumb"><img alt="Curso de Suporte Básico de Vida" src="assets/otim/curso-suporte-basico-vida-768.webp" srcset="assets/otim/curso-suporte-basico-vida-480.webp 480w, assets/otim/curso-suporte-basico-vida-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
             <div class="mini-course-body">
               <h4>Suporte Básico de Vida</h4>
               <p>Atendimento inicial de emergências com diretrizes oficiais. 4 horas.</p>
@@ -1385,7 +1418,7 @@
 
         <div class="actions-layout">
           <article class="feature-action">
-            <img src="assets/hero-formacao-voluntarios.jpg" alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro">
+            <img alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/hero-formacao-voluntarios-1080.webp" srcset="assets/otim/hero-formacao-voluntarios-540.webp 540w, assets/otim/hero-formacao-voluntarios-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 620px" width="1080" height="1350" loading="lazy" decoding="async">
             <div class="feature-caption">
               <p class="eyebrow">Formação de voluntários</p>
               <h3>Capacitação que salva vidas.</h3>
@@ -1395,7 +1428,7 @@
 
           <div class="action-list">
             <article class="action-tile">
-              <img src="assets/voluntario-microfone.jpg" alt="Voluntário da Cruz Vermelha RJ falando durante capacitação">
+              <img alt="Voluntário da Cruz Vermelha RJ falando durante capacitação" src="assets/otim/voluntario-microfone-480.webp" srcset="assets/otim/voluntario-microfone-480.webp 480w, assets/otim/voluntario-microfone-960.webp 960w, assets/otim/voluntario-microfone-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
               <div class="action-copy">
                 <span>Capacitação</span>
                 <h3>Treinamento com orientação técnica</h3>
@@ -1403,7 +1436,7 @@
               </div>
             </article>
             <article class="action-tile">
-              <img src="assets/equipe-corredor.jpg" alt="Equipe da Cruz Vermelha RJ em atividade no Palácio da Cruz Vermelha">
+              <img alt="Equipe da Cruz Vermelha RJ em atividade no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-480.webp" srcset="assets/otim/equipe-corredor-480.webp 480w, assets/otim/equipe-corredor-960.webp 960w, assets/otim/equipe-corredor-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
               <div class="action-copy">
                 <span>Voluntariado</span>
                 <h3>Presença que acolhe</h3>
@@ -1411,7 +1444,7 @@
               </div>
             </article>
             <article class="action-tile">
-              <img src="assets/acao-comunitaria-morro.jpg" alt="Ação comunitária com voluntários da Cruz Vermelha RJ">
+              <img alt="Ação comunitária com voluntários da Cruz Vermelha RJ" src="assets/otim/acao-comunitaria-morro-480.webp" srcset="assets/otim/acao-comunitaria-morro-480.webp 480w, assets/otim/acao-comunitaria-morro-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="480" loading="lazy" decoding="async">
               <div class="action-copy">
                 <span>Comunidade</span>
                 <h3>Cuidado também se constrói no território</h3>
@@ -1435,13 +1468,13 @@
         <h2>Parcerias que salvam vidas</h2>
         <p class="lead">Empresas que apoiam a Cruz Vermelha RJ através da Lei Lucas, treinamentos corporativos de NR e programas de responsabilidade social.</p>
         <div class="partners-logos">
-          <div class="partner-slot"><img src="assets/parceiros/johnson-johnson.png" alt="Johnson & Johnson"></div>
-          <div class="partner-slot"><img src="assets/parceiros/embelleze.png" alt="Embelleze"></div>
-          <div class="partner-slot"><img src="assets/parceiros/renner.webp" alt="Lojas Renner"></div>
-          <div class="partner-slot"><img src="assets/parceiros/carrefour.png" alt="Carrefour"></div>
-          <div class="partner-slot"><img src="assets/parceiros/leite-de-rosas.png" alt="Leite de Rosas"></div>
-          <div class="partner-slot"><img src="assets/parceiros/avon.png" alt="Avon"></div>
-          <div class="partner-slot"><img src="assets/parceiros/ortobom.png" alt="Ortobom"></div>
+          <div class="partner-slot"><img alt="Johnson & Johnson" src="assets/otim/parceiros/johnson-johnson-400.webp" width="400" height="225" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Embelleze" src="assets/otim/parceiros/embelleze-400.webp" width="400" height="105" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Lojas Renner" src="assets/otim/parceiros/renner-400.webp" width="400" height="74" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Carrefour" src="assets/otim/parceiros/carrefour-400.webp" width="400" height="78" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Leite de Rosas" src="assets/otim/parceiros/leite-de-rosas-320.webp" width="320" height="320" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Avon" src="assets/otim/parceiros/avon-400.webp" width="400" height="107" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Ortobom" src="assets/otim/parceiros/ortobom-400.webp" width="400" height="58" loading="lazy" decoding="async"></div>
         </div>
         <div class="partner-cta">
           <div>
@@ -1576,28 +1609,28 @@
             <a class="btn btn-red insta-seguir" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Seguir</a>
           </div>
           <div class="insta-grade" id="insta-grade">
-            <a class="insta-foto grande" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/equipe-corredor.jpg" alt="Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha" loading="lazy"><span>Voluntariado</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-hero-rua.jpg" alt="Voluntário entregando cobertor a morador em situação de rua" loading="lazy"><span>Campanha do Agasalho</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/hero-equipe-grupo.jpg" alt="Equipe de voluntários reunida no auditório da sede" loading="lazy"><span>Nossa equipe</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-hero-favela.jpg" alt="Voluntário entregando agasalho a morador de comunidade" loading="lazy"><span>Ação nas comunidades</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/voluntario-microfone.jpg" alt="Voluntário falando ao microfone em formação na sede" loading="lazy"><span>Formação</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/acao-comunitaria-morro.jpg" alt="Ação comunitária em morro do Rio de Janeiro" loading="lazy"><span>Ação comunitária</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/auditorio-voluntarios.jpg" alt="Turma de voluntários em formação no auditório da sede" loading="lazy"><span>Formação de voluntários</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/agasalho-fila-comunidade.jpg" alt="Comunidade recebendo doações da Campanha do Agasalho" loading="lazy"><span>Doações</span></a>
-            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img src="assets/reuniao-cicv-grupo.jpg" alt="Reunião com representantes do CICV na sede da filial" loading="lazy"><span>Parcerias</span></a>
+            <a class="insta-foto grande" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-960.webp" width="960" height="727" loading="lazy" decoding="async"><span>Voluntariado</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário entregando cobertor a morador em situação de rua" src="assets/otim/agasalho-hero-rua-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Campanha do Agasalho</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Equipe de voluntários reunida no auditório da sede" src="assets/otim/hero-equipe-grupo-960.webp" width="960" height="723" loading="lazy" decoding="async"><span>Nossa equipe</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário entregando agasalho a morador de comunidade" src="assets/otim/agasalho-hero-favela-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Ação nas comunidades</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário falando ao microfone em formação na sede" src="assets/otim/voluntario-microfone-480.webp" width="480" height="364" loading="lazy" decoding="async"><span>Formação</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Ação comunitária em morro do Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" width="480" height="480" loading="lazy" decoding="async"><span>Ação comunitária</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Turma de voluntários em formação no auditório da sede" src="assets/otim/auditorio-voluntarios-480.webp" width="480" height="364" loading="lazy" decoding="async"><span>Formação de voluntários</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Comunidade recebendo doações da Campanha do Agasalho" src="assets/otim/agasalho-fila-comunidade-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Doações</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Reunião com representantes do CICV na sede da filial" src="assets/otim/reuniao-cicv-grupo-480.webp" width="480" height="600" loading="lazy" decoding="async"><span>Parcerias</span></a>
           </div>
           <script type="application/json" id="insta-fotos">[
-            {"src": "assets/reuniao-cicv.jpg", "alt": "Representantes da filial e do CICV na sede", "legenda": "Parcerias"},
-            {"src": "assets/curso-pratico-sala.jpg", "alt": "Post do Instagram sobre a prática em sala dos cursos", "legenda": "Cursos"},
-            {"src": "assets/auditorio-voluntarios.jpg", "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Formação de voluntários"},
-            {"src": "assets/agasalho-fila-comunidade.jpg", "alt": "Comunidade recebendo doações da Campanha do Agasalho", "legenda": "Doações"},
-            {"src": "assets/reuniao-cicv-grupo.jpg", "alt": "Reunião com representantes do CICV na sede da filial", "legenda": "Parcerias"},
-            {"src": "assets/equipe-corredor.jpg", "alt": "Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha", "legenda": "Voluntariado"},
-            {"src": "assets/agasalho-hero-rua.jpg", "alt": "Voluntário entregando cobertor a morador em situação de rua", "legenda": "Campanha do Agasalho"},
-            {"src": "assets/hero-equipe-grupo.jpg", "alt": "Equipe de voluntários reunida no auditório da sede", "legenda": "Nossa equipe"},
-            {"src": "assets/agasalho-hero-favela.jpg", "alt": "Voluntário entregando agasalho a morador de comunidade", "legenda": "Ação nas comunidades"},
-            {"src": "assets/voluntario-microfone.jpg", "alt": "Voluntário falando ao microfone em formação na sede", "legenda": "Formação"},
-            {"src": "assets/acao-comunitaria-morro.jpg", "alt": "Ação comunitária em morro do Rio de Janeiro", "legenda": "Ação comunitária"}
+            {"src": "assets/otim/reuniao-cicv-480.webp", "grande": "assets/otim/reuniao-cicv-960.webp", "alt": "Representantes da filial e do CICV na sede", "legenda": "Parcerias"},
+            {"src": "assets/otim/curso-pratico-sala-480.webp", "grande": "assets/otim/curso-pratico-sala-1080.webp", "alt": "Post do Instagram sobre a prática em sala dos cursos", "legenda": "Cursos"},
+            {"src": "assets/otim/auditorio-voluntarios-480.webp", "grande": "assets/otim/auditorio-voluntarios-960.webp", "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Formação de voluntários"},
+            {"src": "assets/otim/agasalho-fila-comunidade-640.webp", "grande": "assets/otim/agasalho-fila-comunidade-1264.webp", "alt": "Comunidade recebendo doações da Campanha do Agasalho", "legenda": "Doações"},
+            {"src": "assets/otim/reuniao-cicv-grupo-480.webp", "grande": "assets/otim/reuniao-cicv-grupo-960.webp", "alt": "Reunião com representantes do CICV na sede da filial", "legenda": "Parcerias"},
+            {"src": "assets/otim/equipe-corredor-480.webp", "grande": "assets/otim/equipe-corredor-960.webp", "alt": "Voluntárias da Cruz Vermelha RJ no Palácio da Cruz Vermelha", "legenda": "Voluntariado"},
+            {"src": "assets/otim/agasalho-hero-rua-640.webp", "grande": "assets/otim/agasalho-hero-rua-1264.webp", "alt": "Voluntário entregando cobertor a morador em situação de rua", "legenda": "Campanha do Agasalho"},
+            {"src": "assets/otim/hero-equipe-grupo-960.webp", "grande": "assets/otim/hero-equipe-grupo-960.webp", "alt": "Equipe de voluntários reunida no auditório da sede", "legenda": "Nossa equipe"},
+            {"src": "assets/otim/agasalho-hero-favela-640.webp", "grande": "assets/otim/agasalho-hero-favela-1264.webp", "alt": "Voluntário entregando agasalho a morador de comunidade", "legenda": "Ação nas comunidades"},
+            {"src": "assets/otim/voluntario-microfone-480.webp", "grande": "assets/otim/voluntario-microfone-960.webp", "alt": "Voluntário falando ao microfone em formação na sede", "legenda": "Formação"},
+            {"src": "assets/otim/acao-comunitaria-morro-480.webp", "grande": "assets/otim/acao-comunitaria-morro-1080.webp", "alt": "Ação comunitária em morro do Rio de Janeiro", "legenda": "Ação comunitária"}
           ]</script>
           <p class="insta-rodape"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro</p>
         </aside>
@@ -1608,7 +1641,7 @@
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <img class="footer-logo" src="assets/logo-cvb-rj.png" alt="Cruz Vermelha Brasileira — Rio de Janeiro">
+        <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="assets/otim/logo-cvb-rj-520.webp" width="520" height="156" loading="lazy" decoding="async">
         <p>Humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
       </div>
       <div class="footer-col">
@@ -1704,16 +1737,18 @@
       var blocos = Array.prototype.slice.call(grade.querySelectorAll('.insta-foto')), vez = 1;
       setInterval(function () {
         if (document.hidden) return;
-        var visiveis = blocos.map(function (b) { return b.querySelector('img').getAttribute('src'); });
-        var ocultas = fotos.filter(function (f) { return visiveis.indexOf(f.src) < 0; });
+        var base = function (s) { return String(s || '').replace(/-\d+\.webp$/, ''); };
+        var visiveis = blocos.map(function (b) { return base(b.querySelector('img').getAttribute('src')); });
+        var ocultas = fotos.filter(function (f) { return visiveis.indexOf(base(f.src)) < 0; });
         if (!ocultas.length) return;
         var nova = ocultas[Math.floor(Math.random() * ocultas.length)], bloco = blocos[vez++ % blocos.length];
+        var caminho = bloco.classList.contains('grande') && nova.grande ? nova.grande : nova.src;
         var img = bloco.querySelector('img'), legenda = bloco.querySelector('span'), pre = new Image();
         pre.onload = function () {
           bloco.classList.add('trocando');
-          setTimeout(function () { img.src = nova.src; img.alt = nova.alt; legenda.textContent = nova.legenda; bloco.classList.remove('trocando'); }, 400);
+          setTimeout(function () { img.src = caminho; img.alt = nova.alt; legenda.textContent = nova.legenda; bloco.classList.remove('trocando'); }, 400);
         };
-        pre.src = nova.src;
+        pre.src = caminho;
       }, 3500);
     })();
   </script>
