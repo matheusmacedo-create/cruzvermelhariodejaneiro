@@ -38,7 +38,7 @@ function mcp_validar_aluno(array $b): array
     }
     $telefone = mcp_telefone(mcp_texto($b['telefone'] ?? '', 30));
     if ($telefone === '') {
-        mcp_falhar(422, 'Informe o WhatsApp com DDD.', ['campo' => 'telefone']);
+        mcp_falhar(422, 'Informe o telefone com DDD.', ['campo' => 'telefone']);
     }
     if (empty($b['requisitos'])) {
         mcp_falhar(422, 'Confirme que leu os requisitos do curso.', ['campo' => 'requisitos']);

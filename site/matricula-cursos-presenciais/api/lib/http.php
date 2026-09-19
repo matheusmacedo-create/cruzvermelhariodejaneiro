@@ -109,6 +109,21 @@ function mcp_texto(mixed $valor, int $limite): string
     return mb_substr($texto, 0, $limite);
 }
 
+/**
+ * Texto livre de várias linhas (mensagem do chat): quebras de linha normalizadas, sem caracteres de
+ * controle, sem mais de uma linha em branco seguida, tamanho limitado.
+ */
+function mcp_texto_longo(mixed $valor, int $limite): string
+{
+    $texto = is_string($valor) ? $valor : (is_scalar($valor) ? (string) $valor : '');
+    $texto = str_replace(["\r\n", "\r"], "\n", $texto);
+    $texto = preg_replace('/[\t ]+/', ' ', $texto) ?? '';
+    $texto = preg_replace('/(?!\n)\p{Cc}/u', '', $texto) ?? '';
+    $texto = preg_replace('/ *\n */', "\n", $texto) ?? '';
+    $texto = preg_replace('/\n{3,}/', "\n\n", $texto) ?? '';
+    return mb_substr(trim($texto), 0, $limite);
+}
+
 function mcp_cpf_valido(string $cpf): bool
 {
     $cpf = mcp_digitos($cpf);

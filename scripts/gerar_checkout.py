@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 
+import chat_widget
 import icones
 from gerar_matricula_presencial import DADOS, HOME, RAIZ, esc, partes_da_home
 
@@ -68,7 +69,7 @@ PAGINA = """<!DOCTYPE html>
     </section>
     <section class="ck-secao">
       <div class="wrap"@@WRAP_EXTRA@@>
-        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou fale com a secretaria pelo WhatsApp.</p></noscript>
+        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
 @@CORPO@@
       </div>
     </section>
@@ -77,6 +78,7 @@ PAGINA = """<!DOCTYPE html>
 @@FOOTER@@
 
 @@MENU_JS@@
+@@CHAT@@
 </body>
 </html>
 """
@@ -103,7 +105,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" placeholder="Como está no seu documento" required></label>
                 <div class="ck-2col">
                   <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
-                  <label class="ck-campo"><span>WhatsApp</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
+                  <label class="ck-campo"><span>Telefone (celular)</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
                 </div>
                 <label class="ck-campo"><span>E-mail</span><input id="ck-email" type="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" required><small class="ck-nota">A confirmação da inscrição chega neste e-mail.</small></label>
               </section>
@@ -189,6 +191,7 @@ def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, 
             .replace("@@CSS_URL@@", url_estatico("checkout.css")).replace("@@JS_URL@@", url_estatico("checkout.js"))
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", partes["header"]).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
+            .replace("@@CHAT@@", chat_widget.tags())
             .replace("@@ID@@", id_).replace("@@H1@@", h1).replace("@@LEAD@@", lead).replace("@@WRAP_EXTRA@@", wrap_extra)
             .replace("@@PASSOS@@", passos(passo)).replace("@@CORPO@@", corpo))
 

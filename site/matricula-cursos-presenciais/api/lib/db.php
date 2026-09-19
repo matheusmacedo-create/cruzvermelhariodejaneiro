@@ -80,6 +80,34 @@ function mcp_migrar(PDO $pdo): void
         KEY ix_status (status),
         KEY ix_ip (ip, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Mensagens do chat de contato do site (api/contato.php). Fonte da verdade: o e-mail à equipe é cópia.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_contatos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        protocolo VARCHAR(24) NULL,
+        nome VARCHAR(120) NOT NULL,
+        email VARCHAR(190) NOT NULL,
+        telefone VARCHAR(20) NULL,
+        assunto VARCHAR(30) NOT NULL,
+        curso_slug VARCHAR(80) NULL,
+        curso_nome VARCHAR(160) NULL,
+        mensagem TEXT NOT NULL,
+        pagina VARCHAR(255) NULL,
+        utm_source VARCHAR(120) NULL,
+        utm_medium VARCHAR(120) NULL,
+        utm_campaign VARCHAR(160) NULL,
+        utm_content VARCHAR(160) NULL,
+        utm_term VARCHAR(160) NULL,
+        fbclid VARCHAR(255) NULL,
+        gclid VARCHAR(255) NULL,
+        ip VARCHAR(45) NULL,
+        email_equipe VARCHAR(20) NULL,
+        email_confirmacao VARCHAR(20) NULL,
+        respondido_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_email (email, criado_em),
+        KEY ix_ip (ip, criado_em),
+        KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_eventos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         inscricao_id INT UNSIGNED NULL,
@@ -135,4 +163,61 @@ function mcp_contar_recentes(string $coluna, string $valor, int $segundos): int
     $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_inscricoes WHERE $coluna = ? AND criado_em > ?");
     $stmt->execute([$valor, gmdate('Y-m-d H:i:s', time() - $segundos)]);
     return (int) $stmt->fetchColumn();
+}
+
+// ----------------------------------------------------------------------------- contatos (chat do site)
+/** Grava a mensagem do chat e devolve o id. As chaves vêm do código (contato.php), nunca do cliente. */
+function mcp_contato_gravar(array $c): int
+{
+    $agora = mcp_agora();
+    $linha = [
+        'nome' => $c['nome'], 'email' => $c['email'], 'telefone' => $c['telefone'] ?: null, 'assunto' => $c['assunto'],
+        'curso_slug' => $c['curso_slug'], 'curso_nome' => $c['curso_nome'], 'mensagem' => $c['mensagem'], 'pagina' => $c['pagina'],
+        'utm_source' => $c['utm_source'], 'utm_medium' => $c['utm_medium'], 'utm_campaign' => $c['utm_campaign'],
+        'utm_content' => $c['utm_content'], 'utm_term' => $c['utm_term'], 'fbclid' => $c['fbclid'], 'gclid' => $c['gclid'],
+        'ip' => mcp_ip(), 'criado_em' => $agora,
+    ];
+    $colunas = implode(', ', array_keys($linha));
+    $marcadores = implode(', ', array_fill(0, count($linha), '?'));
+    $pdo = mcp_db();
+    $pdo->prepare("INSERT INTO mcp_contatos ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
+    return (int) $pdo->lastInsertId();
+}
+
+function mcp_contato_por_id(int $id): ?array
+{
+    $stmt = mcp_db()->prepare('SELECT * FROM mcp_contatos WHERE id = ? LIMIT 1');
+    $stmt->execute([$id]);
+    $linha = $stmt->fetch();
+    return $linha ?: null;
+}
+
+function mcp_contato_atualizar(int $id, array $campos): void
+{
+    foreach (array_keys($campos) as $coluna) {
+        if (!preg_match('/^[a-z_]+$/', (string) $coluna)) {
+            throw new InvalidArgumentException("coluna inválida: $coluna");
+        }
+    }
+    $sets = implode(', ', array_map(static fn($c) => "$c = :$c", array_keys($campos)));
+    $campos['id'] = $id;
+    mcp_db()->prepare("UPDATE mcp_contatos SET $sets WHERE id = :id")->execute($campos);
+}
+
+/** Quantas mensagens uma chave (ip ou email) enviou nos últimos N segundos. Base dos freios do chat. */
+function mcp_contar_contatos_recentes(string $coluna, string $valor, int $segundos): int
+{
+    if (!in_array($coluna, ['ip', 'email'], true)) {
+        throw new InvalidArgumentException("coluna não permitida: $coluna");
+    }
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_contatos WHERE $coluna = ? AND criado_em > ?");
+    $stmt->execute([$valor, gmdate('Y-m-d H:i:s', time() - $segundos)]);
+    return (int) $stmt->fetchColumn();
+}
+
+/** Protocolo legível para a pessoa citar na resposta: CV-aammdd-NNNN (data de Brasília, id da mensagem). */
+function mcp_contato_protocolo(int $id, ?string $agoraUtc = null): string
+{
+    $data = (new DateTimeImmutable($agoraUtc ?? mcp_agora(), new DateTimeZone('UTC')))->setTimezone(new DateTimeZone('America/Sao_Paulo'));
+    return sprintf('CV-%s-%04d', $data->format('ymd'), $id);
 }

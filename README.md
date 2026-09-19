@@ -292,11 +292,69 @@ validado no projeto da Punção Venosa.
   real da aula de Primeiros Socorros, os três passos com ícone e, no fim, o botão "Fazer o curso
   de Primeiros Socorros" (checkout com o curso escolhido) e o link para todos os cursos. A seção
   passou a converter em vez de só informar.
-- O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`: a intenção é
-  substituir por um Intercom para toda a estrutura. O número continua no rodapé e nos cartões de
-  curso da home ("Chamar no WhatsApp").
+- O botão flutuante do WhatsApp (`.wpp-float`) saiu da home e de `equipe.html`. Em 19/09, à noite,
+  entrou no lugar o chat de contato por e-mail (seção abaixo) e os botões "Chamar no WhatsApp" dos
+  cartões de curso viraram "Tirar dúvidas" (abrem o chat com o curso já escolhido).
 - `site/assets/` não é versionada (fica só no servidor); há uma cópia local ignorada pelo Git
   só para renderizar a home em testes.
+
+## Chat de contato por e-mail e fim do WhatsApp nas páginas (19/09/2026)
+
+Motivo: tudo o que o site oferecia como contato caía no WhatsApp da secretaria (botões "Chamar no
+WhatsApp" da home, o fallback dos botões de matrícula, a copy "a secretaria chama no WhatsApp" nas
+telas e nos e-mails), misturando lead do site com o atendimento da escola e gerando confusão. Agora o
+canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
+
+- **Chat (`site/chat/chat.js` + `chat.css`)**: botão flutuante "Fale com a gente" em todas as páginas
+  (home, matrícula, checkout, pendente, parabéns, equipe, doação, agasalho, 404), no lugar do antigo
+  `.wpp-float`. Conversa guiada: assunto (chips), curso (quando o assunto é matrícula/curso/pagamento;
+  o curso aberto na página vem primeiro), nome, e-mail, telefone opcional, mensagem, revisão e envio.
+  Sem dependências; estado na `sessionStorage` (sobrevive à navegação); `Esc` fecha; leitor de tela
+  recebe só a fala nova. Abre também por `#chat` na URL (usado no rodapé dos e-mails) e por qualquer
+  elemento com `data-abrir-chat` (opcionalmente `data-assunto` e `data-curso`): é o que os botões
+  "Tirar dúvidas" dos cartões de curso da home fazem. As tags das páginas levam hash do conteúdo
+  (`/chat/chat.js?v=…`), geradas por `scripts/chat_widget.py`; a lista de cursos dentro do `chat.js`
+  é reescrita por `gerar_matricula_presencial.py` a partir de `cursos.json`.
+- **API (`api/contato.php`)**: mesmas guardas do checkout (POST JSON da própria origem, corpo até
+  64 KB, campo armadilha, limites por IP 8/h e por e-mail 4/h), validação com o nome do campo para o
+  chat voltar à pergunta certa, tabela `mcp_contatos` (criada sozinha, como as outras), protocolo
+  `CV-aammdd-NNNN`, aviso à equipe em `EMAIL_CONTATO` com **responder-para = quem escreveu** e
+  confirmação à pessoa (com o botão de matrícula do curso, quando o assunto é curso). O banco é a fonte
+  da verdade: se o e-mail falhar, a mensagem fica em `mcp_contatos` com `email_equipe = 'falhou'`.
+- **Destino**: `EMAIL_CONTATO` no `config.php` (padrão `contato@cruzvermelhariodejaneiro.org`).
+  **Atenção**: em 19/09/2026 o MX do domínio apontava para a Hostinger sem serviço de e-mail
+  contratado (a API lista zero pedidos de e-mail), então `contato@` não recebia nada; o endereço
+  passa a funcionar quando o MX for para o Google Workspace (instruções passadas ao Matheus: TXT de
+  verificação, MX `smtp.google.com` prioridade 1, SPF com `include:_spf.google.com`, DKIM). Até lá,
+  aponte `EMAIL_CONTATO` para uma caixa que funcione.
+- **Páginas e telas sem WhatsApp**: botões de matrícula levam direto ao checkout (`?curso=`) mesmo sem
+  JavaScript; "Como funciona", FAQ (com a pergunta nova "Como tiro dúvidas antes de me matricular?"),
+  checkout (campo "Telefone (celular)", noscript), tela Parabéns B ("a secretaria escreve para você",
+  com link para o chat) e mensagens da API falam em e-mail. O telefone continua obrigatório no
+  checkout porque a Unicopag exige `phone_number`. O número da secretaria permanece só no rodapé e no
+  JSON-LD da home (dado institucional, não é botão).
+- **E-mails no padrão da instituição (`api/lib/email.php`)**: moldura única com faixa vermelha, logo
+  (`assets/otim/logo-cvb-rj-480.png`, PNG de 8 KB gerado do `logo-cvb-rj.png` porque WebP não abre no
+  Outlook), Inter com reserva de sistema, chapéu, título, rodapé com "Dúvidas? Responda este e-mail",
+  CNPJ, endereço e a linha do motivo; componentes reutilizáveis (botão em tabela, caixa de valores com
+  total em destaque, passos numerados, bloco do PIX, citação). Cada mensagem tem uma função pura
+  `mcp_montar_email_*()` (assunto, html, texto) coberta por `scripts/testar_checkout.php` e renderizada
+  por `scripts/previsualizar_emails.php [pasta]` para conferência visual.
+- **E-mail de recuperação do PIX** (sai quando o código é gerado): assunto "Falta só o PIX para
+  garantir sua vaga em <curso>", prévia com valor e validade, título "Falta só o PIX, <nome>.", caixa
+  Curso / Inscrição / custos opcionais / Total, botão único "Concluir pagamento" (tela pendente, com
+  `utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto` para medir a recuperação no GA4),
+  código copia e cola com o passo a passo, validade em horário de Brasília (criado + 24 h), "O que
+  acontece depois" em três passos e a regra de estorno. Antes: título "Sua inscrição está aberta",
+  valor, código e "Voltar para o pagamento", com o WhatsApp da secretaria no rodapé.
+- **Demais e-mails**: inscrição paga B ("Vaga garantida, <nome>!", comprovante com método e data,
+  próximos passos por e-mail), A (acesso da escola na mesma moldura), aviso à secretaria (coluna
+  Telefone, responder-para = aluno) e os dois do chat.
+- **Rastreamento**: GA4 `contato_aberto` (uma vez por sessão) e `contato_enviado` (assunto, curso,
+  página); Meta `Contact` no envio. Detalhes em `docs/rastreamento.md`.
+- **Pendências**: MX do domínio no Google (acima); painel ou exportação de `mcp_contatos` (hoje só
+  phpMyAdmin); o `Reply-To` dos e-mails ao aluno passou a ser `EMAIL_CONTATO`, então a caixa precisa
+  existir de fato.
 
 ## Revisão de SEO (19/09/2026)
 

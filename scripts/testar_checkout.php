@@ -14,7 +14,7 @@ $configTeste = tempnam(sys_get_temp_dir(), 'mcp-config-');
 file_put_contents($configTeste, "<?php return [
     'SITE_URL' => 'https://exemplo.org', 'INSCRICAO_CENTAVOS' => '', 'PRECO_TESTE_CENTAVOS' => '',
     'TAXA_PIX_PCT' => 5.0, 'TAXA_PIX_FIXA' => 0, 'TAXA_CARTAO_PCT' => 5.0, 'TAXA_CARTAO_FIXA' => 0,
-    'ESCOLA_API_URL' => '', 'ESCOLA_URL' => 'https://escola.exemplo.org', 'WHATSAPP_SECRETARIA' => '5521999999999',
+    'ESCOLA_API_URL' => '', 'ESCOLA_URL' => 'https://escola.exemplo.org', 'EMAIL_CONTATO' => 'contato@exemplo.org',
 ];");
 putenv("MCP_CONFIG_ARQUIVO=$configTeste");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
@@ -120,9 +120,79 @@ $pendente = mcp_publico(['status' => 'pendente'] + $inscricao);
 verificar('público sem acesso quando pendente', $pendente['escola']['usuario'], null);
 verificar('público sem senha quando pendente', $pendente['escola']['senha'], null);
 
-// E-mail: moldura e botão escapam o que recebem.
+// Texto de várias linhas (mensagem do chat).
+verificar('texto longo normalizado', mcp_texto_longo("  Olá,\r\n\r\n\r\n\tcomo   vai?\x07 \n  linha  ", 100), "Olá,\n\ncomo vai?\nlinha");
+verificar('texto longo limitado', mb_strlen(mcp_texto_longo(str_repeat('á', 50), 10)), 10);
+verificar('texto longo não escalar', mcp_texto_longo(['x'], 10), '');
+
+// Chat de contato: assuntos, protocolo (data de Brasília) e o que pede curso.
+verificar('assunto desconhecido vira outro', mcp_contato_assunto_rotulo('zzz'), 'Outro assunto');
+verificar('assunto conhecido', mcp_contato_assunto_rotulo('curso'), 'Dúvida sobre um curso');
+verificar('assunto com curso', mcp_contato_com_curso('pagamento') && !mcp_contato_com_curso('voluntariado'), true);
+verificar('protocolo', mcp_contato_protocolo(12, '2026-09-19 02:30:00'), 'CV-260918-0012');
+
+// E-mail: moldura no padrão da instituição (logo, contato, CNPJ), botão e componentes escapam o que recebem.
 verificar('botão escapa', str_contains(mcp_botao('https://x/?a=1&b=2', '<Ir>'), 'a=1&amp;b=2') && str_contains(mcp_botao('https://x', '<Ir>'), '&lt;Ir&gt;'), true);
-verificar('moldura com whatsapp', str_contains(mcp_moldura('T', ''), '+5521999999999'), true);
+$moldura = mcp_moldura('Título <x>', '<p>corpo</p>', ['eyebrow' => 'Chapéu', 'preheader' => 'Prévia da caixa', 'motivo' => 'Porque sim']);
+verificar('moldura logo', str_contains($moldura, 'https://exemplo.org/assets/otim/logo-cvb-rj-480.png'), true);
+verificar('moldura contato', str_contains($moldura, 'mailto:contato@exemplo.org'), true);
+verificar('moldura cnpj', str_contains($moldura, '08.560.973/0001-97'), true);
+verificar('moldura chapéu, prévia e motivo', str_contains($moldura, 'Chapéu') && str_contains($moldura, 'Prévia da caixa') && str_contains($moldura, 'Porque sim'), true);
+verificar('moldura escapa título', str_contains($moldura, 'Título &lt;x&gt;') && !str_contains($moldura, 'Título <x>'), true);
+verificar('moldura sem whatsapp', stripos($moldura, 'whatsapp'), false);
+verificar('caixa total', str_contains(mcp_caixa(['Curso' => 'X'], ['Total' => 'R$ 1,00']), 'R$ 1,00'), true);
+verificar('citação quebra linha', str_contains(mcp_citacao("a\nb <i>"), "a<br />\nb &lt;i&gt;"), true);
+verificar('data brt', mcp_data_brt('2026-09-19 12:00:00'), '19/09 às 09h00');
+verificar('data brt inválida', mcp_data_brt('nada'), '');
+verificar('pix validade', mcp_pix_validade(['criado_em' => '2026-09-19 12:00:00']), '20/09 às 09h00');
+
+// E-mail de recuperação do PIX: copy de conversão, valores certos, link com UTM, tudo escapado, sem WhatsApp.
+$pix = ['pix_copia_cola' => '00020126BR.GOV.BCB.PIX<teste>', 'metodo' => 'pix', 'nome' => '<b>Maria</b> da Silva', 'criado_em' => '2026-09-19 12:00:00'] + $inscricao;
+$m = mcp_montar_email_pix_aberto($pix);
+verificar('pix assunto', $m['assunto'], 'Falta só o PIX para garantir sua vaga em Curso X');
+verificar('pix título com primeiro nome escapado', str_contains($m['html'], 'Falta só o PIX, &lt;b&gt;Maria&lt;/b&gt;.') && !str_contains($m['html'], '<b>Maria</b>'), true);
+verificar('pix botão', str_contains($m['html'], 'Concluir pagamento'), true);
+verificar('pix link com utm', str_contains($m['html'], 'https://exemplo.org/matricula-cursos-presenciais/pendente/?t=' . $token . '&amp;utm_source=email&amp;utm_medium=transacional&amp;utm_campaign=pix-aberto'), true);
+verificar('pix código escapado', str_contains($m['html'], '00020126BR.GOV.BCB.PIX&lt;teste&gt;'), true);
+verificar('pix valores', str_contains($m['html'], 'R$ 99,00') && str_contains($m['html'], 'R$ 4,95') && str_contains($m['html'], 'R$ 103,95'), true);
+verificar('pix validade no corpo', str_contains($m['html'], 'até 20/09 às 09h00'), true);
+verificar('pix texto puro', str_contains($m['texto'], '00020126BR.GOV.BCB.PIX<teste>') && str_contains($m['texto'], 'R$ 103,95'), true);
+verificar('pix sem whatsapp', stripos($m['html'] . $m['texto'], 'whatsapp'), false);
+
+// Inscrição paga: versão A (com acesso da escola) e versão B (a secretaria escreve por e-mail).
+$a = mcp_montar_email_aluno_pago($inscricao);
+verificar('pago A tipo', $a['tipo'], 'acesso');
+verificar('pago A acesso', str_contains($a['html'], 'maria') && str_contains($a['html'], 's3') && str_contains($a['html'], 'https://escola.exemplo.org/x'), true);
+$b = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
+verificar('pago B tipo', $b['tipo'], 'confirmacao');
+verificar('pago B assunto', $b['assunto'], 'Inscrição confirmada: sua vaga em Curso X');
+verificar('pago B próximos passos por e-mail', str_contains($b['html'], 'por e-mail em até 2 dias úteis') && str_contains($b['html'], 'Ver minha inscrição'), true);
+verificar('pago B cartão final', str_contains($b['html'], 'Cartão final 1111'), true);
+verificar('pago sem whatsapp', stripos($a['html'] . $b['html'] . $a['texto'] . $b['texto'], 'whatsapp'), false);
+$sec = mcp_montar_email_secretaria($inscricao);
+verificar('secretaria telefone', str_contains($sec['html'], 'Telefone') && str_contains($sec['texto'], "Telefone: 21999998888\n"), true);
+verificar('secretaria sem whatsapp', stripos($sec['html'] . $sec['texto'], 'whatsapp'), false);
+
+// Chat de contato: aviso à equipe e confirmação à pessoa.
+$contato = [
+    'id' => 7, 'protocolo' => 'CV-260919-0007', 'nome' => 'João <script>alert(1)</script> Souza', 'email' => 'joao@exemplo.org', 'telefone' => '21988887777',
+    'assunto' => 'curso', 'curso_slug' => $primeiro, 'curso_nome' => 'Curso X', 'mensagem' => "Tem turma à noite?\n<b>Obrigado</b>", 'pagina' => '/matricula-cursos-presenciais/?curso=' . $primeiro,
+    'utm_source' => 'instagram', 'utm_medium' => null, 'utm_campaign' => 'bio', 'utm_content' => null, 'utm_term' => null, 'fbclid' => null, 'gclid' => null,
+    'criado_em' => '2026-09-19 15:00:00',
+];
+$eq = mcp_montar_email_contato_equipe($contato);
+verificar('equipe assunto', $eq['assunto'], '[Site] Dúvida sobre um curso: João <script>alert(1)</script> Souza · Curso X · CV-260919-0007');
+verificar('equipe escapa nome', str_contains($eq['html'], 'João &lt;script&gt;alert(1)&lt;/script&gt; Souza') && !str_contains($eq['html'], '<script>alert(1)</script>'), true);
+verificar('equipe mensagem com quebra', str_contains($eq['html'], "Tem turma à noite?<br />\n&lt;b&gt;Obrigado&lt;/b&gt;"), true);
+verificar('equipe responder', str_contains($eq['html'], 'mailto:joao@exemplo.org?subject=Re%3A%20D'), true);
+verificar('equipe origem e hora', str_contains($eq['html'], 'instagram bio') && str_contains($eq['html'], '19/09/2026 às 12h00 (Brasília)'), true);
+$cf = mcp_montar_email_contato_confirmacao($contato);
+verificar('confirmação assunto', $cf['assunto'], 'Recebemos sua mensagem · CV-260919-0007');
+verificar('confirmação primeiro nome', str_contains($cf['html'], 'Recebemos sua mensagem, João.'), true);
+verificar('confirmação matrícula do curso', str_contains($cf['html'], 'https://exemplo.org/matricula-cursos-presenciais/checkout/?curso=' . $primeiro) && str_contains($cf['html'], 'R$ 99,00'), true);
+$cf2 = mcp_montar_email_contato_confirmacao(['assunto' => 'voluntariado', 'curso_slug' => null, 'curso_nome' => null] + $contato);
+verificar('confirmação sem curso não vende', str_contains($cf2['html'], 'checkout') || str_contains($cf2['html'], 'Ver cursos presenciais'), false);
+verificar('contato sem whatsapp', stripos($eq['html'] . $cf['html'] . $eq['texto'] . $cf['texto'], 'whatsapp'), false);
 
 unlink($configTeste);
 printf("%d testes, %d falhas\n", $total, $falhas);

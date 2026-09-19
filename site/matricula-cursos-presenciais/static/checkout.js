@@ -217,7 +217,7 @@
       if (dados.nome.length < 5 || dados.nome.indexOf(' ') < 0) return erro('Informe seu nome completo.', 'nome');
       if (!cpfValido(dados.cpf)) return erro('CPF inválido. Confira os 11 números.', 'cpf');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return erro('E-mail inválido.', 'email');
-      if (dados.telefone.length < 10 || dados.telefone.length > 11) return erro('Informe o WhatsApp com DDD.', 'telefone');
+      if (dados.telefone.length < 10 || dados.telefone.length > 11) return erro('Informe o telefone com DDD.', 'telefone');
       if (dados.cartao) {
         if (dados.cartao.numero.length < 13 || !luhnValido(dados.cartao.numero)) return erro('Número do cartão inválido.', 'cartao_numero');
         if (dados.cartao.nome.length < 3) return erro('Informe o nome como está no cartão.', 'cartao_nome');
@@ -340,8 +340,9 @@
         setTimeout(function () { api('status.php?t=' + encodeURIComponent(token)).then(function (x) { if (x.ok) render(x); }); }, 15000);
         return '<div class="ck-bloco"><h2>Pagamento confirmado, acesso em instantes</h2><p>Estamos criando sua matrícula na escola. O acesso aparece aqui e chega no seu e-mail em instantes.</p><div class="ck-status" role="status"><span class="pulso" aria-hidden="true"></span> Gerando acesso…</div></div>';
       }
-      return '<div class="ck-bloco"><h2>Próximo passo: a secretaria fala com você</h2><p><b>A secretaria da Escola entra em contato pelo WhatsApp em até 2 dias úteis</b> para fechar turma e horário. Você não precisa se inscrever de novo na plataforma.</p>'
+      return '<div class="ck-bloco"><h2>Próximo passo: a secretaria escreve para você</h2><p><b>A secretaria da Escola entra em contato por e-mail em até 2 dias úteis</b> para fechar turma e horário. Fique de olho na caixa de entrada e no spam. Você não precisa se inscrever de novo na plataforma.</p>'
         + '<p class="ck-nota">O valor do curso é pago depois, na plataforma da escola. ' + ESTORNO + '</p>'
+        + '<p class="ck-nota">Alguma dúvida enquanto espera? <a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="' + esc(d.curso.slug) + '">Fale com a gente pelo chat</a>.</p>'
         + '<div class="cta-row"><a class="btn btn-outline" href="' + esc(d.escola_url) + '" target="_blank" rel="noopener">Conhecer a plataforma da escola</a></div></div>';
     }
 

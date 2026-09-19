@@ -9,17 +9,17 @@ do catálogo público da escola) e as fotos de img/ (geradas por scripts/gerar_i
 Decisões de 18/09 (após a primeira publicação): o topo e o bloco do curso focam em "faça sua
 matrícula agora e garanta sua vaga" (desde 19/09 o H1 lidera com o certificado da Cruz Vermelha e
 a urgência fica na linha de apoio); a regra "a secretaria confirma horário depois" fica só em
-"Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria (nem o botão
-flutuante da home), porque desviavam da matrícula; botão único por curso, com link discreto
-para a plataforma da escola no fim do detalhe.
+"Como funciona" e no FAQ; a página não mostra telefone nem WhatsApp da secretaria, porque desviavam
+da matrícula (desde 19/09 nenhuma página cita WhatsApp: dúvidas vão pelo chat de contato por e-mail,
+site/chat/, presente em todas as páginas); botão único por curso, com link discreto para a plataforma
+da escola no fim do detalhe.
 
 Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_matricula.py
       && python3 scripts/gerar_matricula_presencial.py
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 
-CHECKOUT_URL vazio = o botão "Fazer matrícula" abre o WhatsApp da secretaria com a mensagem
-pronta (caminho de lançamento). Quando o checkout de R$ 99 entrar no ar, basta preencher a
-URL e gerar de novo: o botão passa a levar para o checkout com ?curso=<slug> e as UTMs.
+O botão "Fazer matrícula agora" leva ao checkout (CHECKOUT_URL) com ?curso=<slug>; o script da
+página acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript o link já funciona.
 """
 from __future__ import annotations
 
@@ -28,8 +28,8 @@ import json
 import re
 from pathlib import Path
 
+import chat_widget
 import icones
-from urllib.parse import quote
 
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
@@ -40,8 +40,7 @@ PASTA_IMG = RAIZ / "site" / "matricula-cursos-presenciais" / "img"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
-WHATSAPP = "5521999922864"
-CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"  # vazio = botão abre o WhatsApp da secretaria
+CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 
 TITULO = "Matrícula em cursos presenciais no RJ | Cruz Vermelha"
 DESCRICAO = ("Matricule-se nos cursos presenciais da Cruz Vermelha no Rio: primeiros socorros, bombeiro "
@@ -63,7 +62,7 @@ FAQ_PAGINA = [
      "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
      "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
-     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato pelo WhatsApp em até 2 dias úteis "
+     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 2 dias úteis "
      "para confirmar turma e horário."),
     ("E se não houver horário compatível?", TEXTO_ESTORNO),
     ("Os cursos são presenciais? Onde acontecem?",
@@ -72,6 +71,9 @@ FAQ_PAGINA = [
     ("Posso ver as turmas abertas antes de pagar?",
      "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem "
      "prefere o caminho completo de inscrição."),
+    ("Como tiro dúvidas antes de me matricular?",
+     "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 2 dias úteis. "
+     "Se preferir, escreva para contato@cruzvermelhariodejaneiro.org."),
 ]
 
 
@@ -123,7 +125,7 @@ def partes_da_home(home: str) -> dict:
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     header = bloco(home, '  <header class="main-header">', "  </header>")
     footer = bloco(home, "  <footer>", "  </footer>")
-    # Só o script do menu sanfona; o botão flutuante de WhatsApp da home não entra nesta página.
+    # Só o script do menu sanfona; os outros scripts da home (seletor de curso, contato) são da home.
     ini = home.index("  <script>\n    document.querySelector('.nav-toggle')")
     menu_js = home[ini:home.index("</script>", ini) + len("</script>")]
     ga4 = bloco(home, "  <!-- Google tag (gtag.js) -->", "  </script>")
@@ -180,10 +182,6 @@ def main() -> int:
         for g in dados["grupos"]
     )
 
-    def whatsapp(nome: str) -> str:
-        msg = f"Olá! Quero fazer minha matrícula no curso presencial {nome} pagando a inscrição de {brl(inscricao)}."
-        return f"https://wa.me/{WHATSAPP}?text={quote(msg)}"
-
     def detalhe(slug: str, primeiro: bool) -> str:
         c = cursos[slug]
         img = c["imagem"]
@@ -217,7 +215,7 @@ def main() -> int:
               <div><span>Valor do curso</span><b class="mr-preco-curso">{brl(c["valor_curso_centavos"])}</b><span>à vista, pago depois, na plataforma da escola</span></div>
             </div>
             <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="{whatsapp(c["nome"])}" data-curso="{slug}" data-nome="{esc(c["nome"])}" target="_blank" rel="noopener">Fazer matrícula agora</a>
+              <a class="btn btn-red mr-cta" href="{CHECKOUT_URL}?curso={slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">Fazer matrícula agora</a>
             </div>
             <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
             <h3>Sobre o curso</h3>
@@ -230,6 +228,11 @@ def main() -> int:
 
     ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
     detalhes = "".join(detalhe(s, i == 0) for i, s in enumerate(ordem))
+
+    # Chat de contato: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo.
+    if chat_widget.atualizar_cursos([{"slug": s, "nome": cursos[s]["nome"]} for s in ordem]):
+        print("atualizado site/chat/chat.js (lista de cursos)")
+    chat_tags = chat_widget.tags()
 
     faq_pagina = "".join(f"<details><summary>{esc(p)}</summary><p>{esc(r)}</p></details>" for p, r in FAQ_PAGINA)
 
@@ -377,7 +380,7 @@ def main() -> int:
         }});
       }});
 
-      // Repassa UTMs/fbclid/gclid da URL atual para o destino do botão.
+      // Repassa UTMs/fbclid/gclid da URL atual para o destino do botão (o href já aponta para o checkout).
       var extras = new URLSearchParams();
       new URLSearchParams(location.search).forEach(function (v, k) {{ if (/^(utm_|fbclid$|gclid$)/.test(k)) extras.set(k, v); }});
 
@@ -386,7 +389,7 @@ def main() -> int:
         if (CHECKOUT_URL) {{
           var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
           extras.forEach(function (v, k) {{ u.searchParams.set(k, v); }});
-          b.href = u.toString(); b.removeAttribute('target');
+          b.href = u.toString();
         }}
         b.addEventListener('click', function () {{
           rastrear('SelecionouCurso', {{ content_name: b.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' }});
@@ -472,7 +475,7 @@ def main() -> int:
         <div class="mr-passos">
           <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato pelo WhatsApp em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
+          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
         <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
       </div>
@@ -495,6 +498,7 @@ def main() -> int:
 
 {menu_js}
 {js}
+{chat_tags}
 </body>
 </html>
 """

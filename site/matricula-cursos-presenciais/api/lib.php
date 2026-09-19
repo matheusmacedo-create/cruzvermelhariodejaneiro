@@ -2,8 +2,9 @@
 /**
  * Bootstrap do backend do checkout da matrícula em cursos presenciais (PHP 8.3, Hostinger).
  *
- * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php. Tudo o mais fica em lib/
- * (negado por .htaccess) e em config.php (segredos, só no servidor; modelo em config.example.php).
+ * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php e contato.php (chat do site).
+ * Tudo o mais fica em lib/ (negado por .htaccess) e em config.php (segredos, só no servidor; modelo
+ * em config.example.php).
  *
  * Regras que atravessam o código inteiro:
  *  - erro nunca vai para a tela: display_errors desligado e tratador global que responde JSON 500;
@@ -13,7 +14,7 @@
  */
 declare(strict_types=1);
 
-const MCP_VERSAO = '2026-09-18.2';
+const MCP_VERSAO = '2026-09-19.1';
 
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
