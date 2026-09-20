@@ -691,6 +691,69 @@ minificados zeraram.
   guardado em cache — mudança de arquitetura que toca todos os geradores e não entrou nesta rodada.
   `/bio/` é uma página de links: encher de texto para cruzar um limiar seria escrever para o robô.
 
+## Rastreabilidade e Links internos: de 93% e 89% para o limite (20/09/2026, tarde da noite)
+
+A auditoria dá duas pontuações temáticas que não fecham sozinhas com a lista de problemas.
+`scripts/rastrear_site.py` (novo) percorre o site ao vivo a partir da home, como um robô de busca,
+e reporta o que essas pontuações medem — status, profundidade, links de entrada e de saída,
+noindex, canonical, órfãs, âncoras e redirecionamentos.
+
+**Armadilha do ambiente**: este contêiner sai por um proxy, e a primeira linha de cabeçalho é o
+aperto de mão dele (`HTTP/1.1 200 Connection Established`). Ler esse bloco fazia todo 301 parecer
+200 — o rastreador descarta o bloco do proxy. Quem escrever outra ferramenta que lê cabeçalho
+precisa fazer o mesmo.
+
+### O que o rastreio achou, e onde estava
+
+| Achado | Onde nascia |
+|---|---|
+| 3 links internos que respondiam 301 (`/cursos.html`, `/doacao.html`, `/privacidade`) | lista fixa de links que a IA sugere, em `app/actions/ia.ts` na Redação, e matérias antigas |
+| 1 erro 404 | `COLE_AQUI_O_LINK_DO_FORMULARIO`, lugar-comum publicado em `/noticias/7-de-setembro/` |
+| 10 títulos acima de 60 | a assinatura ` — Cruz Vermelha Brasileira — Rio de Janeiro` tem 43 caracteres: qualquer manchete acima de 17 estourava |
+| `/index.html` alcançável | `equipe.html`, `doacao.html` e `campanha-agasalho.html` linkavam `index.html#secao` em vez de `/#secao` |
+| `/bio/` com um único link de entrada | só duas respostas da FAQ apontavam para lá |
+| `/doe/?de=agasalho` como endereço próprio | o parâmetro de origem criava uma URL duplicada para rastrear |
+
+### O que foi feito
+
+- **Na Redação** (branch `claude/blissful-newton-7jpef4` daquele repositório): a lista de links da
+  IA passou a apontar para `/doe/` e `/matricula-cursos-presenciais/`; `tituloDaAba()` limita o
+  `<title>` a 60 caracteres cortando na última pausa, sem terminar em preposição e **sem a forma
+  curta "Cruz Vermelha RJ"**, que a convenção de nome não permite em texto visível — quando a
+  assinatura não cabe, fica só a manchete; e `atalho-noticias.ts` aceita `/privacidade` e
+  `/privacidade/`, porque a home mudou para a forma com barra e o enxerto recusaria por uma barra.
+- **Nas páginas já publicadas** (que o conserto na fonte só alcança na próxima publicação): as doze
+  matérias, a privacidade e os termos foram corrigidas direto no servidor — só o conteúdo da tag
+  `<title>` e três URLs mortas. O 404 do lugar-comum virou texto em negrito, sem link.
+- **No site**: `index.html#secao` → `/#secao`; "Links oficiais" para `/bio/` no rodapé; e a origem
+  da doação passou a vir do **referenciador interno** em vez de um parâmetro na URL — `doe.js` lê
+  `document.referrer`, então nenhum endereço duplicado é criado e a tabela continua registrando de
+  onde veio cada doação.
+
+### Estado final do rastreio
+
+Zero em: links internos que redirecionam, 4xx/5xx, páginas órfãs, páginas fora do sitemap, links
+sem texto âncora, nofollow interno e profundidade maior que 3. O rastreio caiu de 42 para 35 URLs —
+sete endereços duplicados deixaram de existir.
+
+Sobram, e são corretos assim:
+
+- **7 checkouts como "bloqueados para rastreio"**: são `noindex` de propósito. Página de pagamento
+  não vai para o índice.
+- **4 matérias com um único link de entrada**: são linkadas pelo índice de notícias, que é o normal
+  de um site de notícias.
+- **19 links externos quebrados**: testei as 32 URLs externas do site com agente de robô e de
+  navegador. Só uma falha, e é o **nosso próprio Instagram devolvendo 429** — limite de requisições
+  para robôs, não link quebrado. O Facebook responde 200 (a página existe). Dois links sociais do
+  rodapé apontam para `linkedin.com` e `tiktok.com` na raiz: respondem 200, mas **são
+  lugares-comuns** — ou apontam para os perfis da filial, ou os ícones saem.
+- **Título de 62 caracteres na Campanha do Agasalho**: encurtar exigiria tirar "Campanha do
+  Agasalho", que é o termo buscado, ou abreviar o nome da filial, que a convenção não permite.
+- **Texto/HTML abaixo de 10% em `/bio/`, `equipe.html` e `/termos/`**: metade do peso dessas
+  páginas é o CSS embutido (30 KB), repetido em cada uma das doze. A saída é um CSS externo, baixado
+  uma vez e guardado em cache — vale para quem navega, não só para a métrica, e é mudança de
+  arquitetura que toca todos os geradores e a home, que é a fonte do CSS. Não entrou nesta rodada.
+
 ## Referência da Wikipédia (20/09/2026)
 
 O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)**
