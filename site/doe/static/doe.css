@@ -1,0 +1,119 @@
+/* Página de doação (/doe/): cartão de doação, formas de pagamento e tela de agradecimento.
+   Complementa o CSS da home (mesmos tokens --red, --black, --muted, --line, --soft, --radius),
+   com valores de reserva para o caso de a página ser servida sem eles. */
+.doe {
+  --d-red: var(--red, #cc0000); --d-red-dark: var(--red-dark, #a30000); --d-black: var(--black, #0f1318);
+  --d-muted: var(--muted, #5b6776); --d-line: var(--line, #e2e8f0); --d-soft: var(--soft, #f7f8fa);
+}
+.doe *, .doe *::before, .doe *::after { box-sizing: border-box; }
+.doe [hidden] { display: none !important; }
+
+/* ---------- topo: texto à esquerda, cartão à direita */
+.doe-hero { padding: 44px 0 64px; background: linear-gradient(180deg, var(--d-soft) 0%, #fff 62%); }
+.doe-grid { display: grid; grid-template-columns: 1fr 460px; gap: 48px; align-items: start; }
+/* O h1 da home é branco e gigante (hero escuro); aqui o fundo é claro e o título divide espaço com o cartão. */
+.doe-hero h1 { margin: 0 0 14px; color: var(--d-black); font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1.04; letter-spacing: -.035em; }
+.doe-hero .lead { max-width: 30em; }
+.doe-confianca { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 12px; }
+.doe-confianca li { display: flex; gap: 11px; align-items: flex-start; font-size: .96rem; line-height: 1.5; color: var(--d-black); }
+.doe-confianca svg, .doe-confianca .ico { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; fill: var(--d-red); }
+.doe-confianca b { font-weight: 800; }
+
+/* ---------- cartão */
+.doe-card { background: #fff; border: 1px solid var(--d-line); border-radius: 18px; box-shadow: 0 24px 60px rgba(16, 24, 40, .10); padding: 26px 24px 22px; position: sticky; top: 96px; }
+.doe-card > form { margin: 0; }
+.doe-teste { margin: 0 0 16px; padding: 10px 14px; border-radius: 12px; background: #fff7ed; border: 1px solid #fed7aa; color: #7c2d12; font-size: .85rem; font-weight: 700; }
+.doe-passos { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; }
+.doe-passo { display: flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 800; color: var(--d-muted); }
+.doe-passo i { width: 24px; height: 24px; border-radius: 50%; background: var(--d-soft); color: var(--d-muted); border: 1px solid var(--d-line); display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-size: .78rem; }
+.doe-passo.ativo { color: var(--d-black); }
+.doe-passo.ativo i { background: var(--d-red); border-color: var(--d-red); color: #fff; }
+.doe-passo.feito i { background: var(--d-red); border-color: var(--d-red); color: #fff; }
+.doe-traco { flex: 1; height: 2px; background: var(--d-line); border-radius: 2px; }
+.doe-rotulo { display: block; margin: 0 0 9px; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--d-muted); font-weight: 900; }
+.doe-bloco + .doe-bloco { margin-top: 20px; }
+
+.doe-opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.doe-valores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.doe-op { border: 1.5px solid var(--d-line); background: #fff; border-radius: 12px; padding: 13px 10px; font: inherit; font-weight: 800; color: var(--d-black); cursor: pointer; text-align: center; line-height: 1.25; transition: border-color .15s, background .15s, color .15s; }
+.doe-op small { display: block; font-size: .74rem; font-weight: 600; color: var(--d-muted); margin-top: 3px; }
+.doe-op:hover { border-color: var(--d-red); }
+.doe-op.ativo { border-color: var(--d-red); background: #fff5f5; color: var(--d-red); }
+.doe-op.ativo small { color: var(--d-red); }
+
+.doe-outro { display: flex; align-items: center; gap: 10px; margin-top: 10px; border: 1.5px solid var(--d-line); border-radius: 12px; padding: 0 14px; background: #fff; transition: border-color .15s, box-shadow .15s; }
+.doe-outro:focus-within { border-color: var(--d-red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .1); }
+.doe-outro span { font-weight: 800; color: var(--d-muted); }
+.doe-outro input { flex: 1; border: 0; outline: 0; min-height: 48px; font: inherit; font-size: 1rem; font-weight: 700; color: var(--d-black); background: transparent; }
+
+.doe-campo { display: block; margin-bottom: 12px; }
+.doe-campo span { display: block; margin-bottom: 6px; font-size: .84rem; font-weight: 700; color: var(--d-black); }
+.doe-campo input { width: 100%; min-height: 48px; border: 1.5px solid var(--d-line); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 1rem; color: var(--d-black); background: #fff; transition: border-color .15s, box-shadow .15s; }
+.doe-campo input:focus { outline: 0; border-color: var(--d-red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .1); }
+.doe-campo.erro input { border-color: var(--d-red); background: #fff5f5; }
+.doe-dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.doe-cartao-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.doe-cartao-grid .doe-campo.largo { grid-column: 1 / -1; }
+
+.doe-caixa { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; padding: 12px 14px; border: 1.5px solid var(--d-line); border-radius: 12px; cursor: pointer; font-size: .88rem; line-height: 1.45; color: var(--d-black); transition: border-color .15s, background .15s; }
+.doe-caixa:hover { border-color: var(--d-red); }
+.doe-caixa.marcado { border-color: var(--d-red); background: #fff5f5; }
+.doe-caixa input { margin: 2px 0 0; width: 18px; height: 18px; accent-color: var(--d-red); flex-shrink: 0; }
+.doe-caixa b { font-weight: 800; }
+
+.doe-resumo { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 18px 0 12px; padding-top: 14px; border-top: 2px solid var(--d-black); font-weight: 800; }
+.doe-resumo span { font-size: .92rem; }
+.doe-resumo b { font-size: 1.5rem; color: var(--d-red); letter-spacing: -.02em; }
+.doe-acao { width: 100%; justify-content: center; }
+.doe-voltar { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; border: 0; background: none; font: inherit; font-size: .9rem; font-weight: 700; color: var(--d-muted); cursor: pointer; padding: 6px 0; }
+.doe-voltar:hover { color: var(--d-red); }
+.doe-erro { margin: 12px 0 0; padding: 11px 14px; border-radius: 12px; background: #fff0f2; border: 1px solid #f5c2c7; color: #8a1c1c; font-size: .9rem; font-weight: 700; }
+.doe-erro:empty { display: none; }
+.doe-aviso { margin: 14px 0 0; font-size: .78rem; line-height: 1.5; color: var(--d-muted); text-align: center; }
+.doe-aviso a { color: var(--d-muted); text-decoration: underline; }
+.doe-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- PIX e agradecimento */
+.doe-pix { text-align: center; }
+.doe-pix h2 { margin: 0 0 6px; font-size: 1.28rem; letter-spacing: -.01em; }
+.doe-pix p { margin: 0 0 16px; font-size: .94rem; line-height: 1.5; color: var(--d-muted); }
+.doe-qr { display: flex; justify-content: center; margin: 0 0 14px; }
+.doe-qr img, .doe-qr canvas { display: block; width: 208px; height: 208px; border: 1px solid var(--d-line); border-radius: 12px; padding: 8px; background: #fff; }
+.doe-copia { width: 100%; min-height: 76px; resize: none; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 11px 13px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .76rem; line-height: 1.45; color: var(--d-black); background: var(--d-soft); word-break: break-all; }
+.doe-status { display: inline-flex; align-items: center; gap: 9px; margin-top: 14px; font-size: .88rem; font-weight: 700; color: var(--d-muted); }
+.doe-pulso { width: 9px; height: 9px; border-radius: 50%; background: var(--d-red); animation: doePulso 1.4s infinite; }
+@keyframes doePulso { 0%, 100% { opacity: .25; transform: scale(.85); } 50% { opacity: 1; transform: scale(1); } }
+.doe-obrigado { text-align: center; padding: 8px 0; }
+.doe-selo { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: #e8f6ed; display: flex; align-items: center; justify-content: center; }
+.doe-selo svg, .doe-selo .ico { width: 32px; height: 32px; fill: #0f7b3e; }
+.doe-obrigado h2 { margin: 0 0 8px; font-size: 1.45rem; letter-spacing: -.02em; }
+.doe-obrigado p { margin: 0 0 14px; font-size: .96rem; line-height: 1.55; color: var(--d-muted); }
+.doe-obrigado .doe-recibo { text-align: left; margin: 16px 0; padding: 14px 16px; background: var(--d-soft); border: 1px solid var(--d-line); border-radius: 12px; font-size: .9rem; }
+.doe-obrigado .doe-recibo div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; }
+.doe-obrigado .doe-recibo span { color: var(--d-muted); }
+.doe-obrigado .doe-recibo b { color: var(--d-black); text-align: right; }
+
+/* ---------- seções de apoio */
+.doe-impacto { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin-top: 34px; }
+.doe-item { border: 1px solid var(--d-line); border-radius: 16px; padding: 22px 20px; background: #fff; }
+.doe-item b { display: block; font-size: 1.28rem; color: var(--d-red); letter-spacing: -.02em; margin-bottom: 6px; }
+.doe-item h3 { margin: 0 0 6px; font-size: 1.02rem; }
+.doe-item p { margin: 0; font-size: .92rem; line-height: 1.55; color: var(--d-muted); }
+.doe-dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-top: 30px; }
+.doe-dado { padding: 18px 20px; background: var(--d-soft); border: 1px solid var(--d-line); border-radius: 14px; }
+.doe-dado span { display: block; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--d-muted); font-weight: 900; margin-bottom: 6px; }
+.doe-dado b { font-size: 1rem; color: var(--d-black); font-weight: 800; }
+.doe-dado p { margin: 4px 0 0; font-size: .88rem; line-height: 1.5; color: var(--d-muted); }
+
+@media (max-width: 1040px) {
+  .doe-grid { grid-template-columns: 1fr; gap: 34px; }
+  .doe-card { position: static; }
+}
+@media (max-width: 620px) {
+  .doe-hero { padding: 30px 0 44px; }
+  .doe-card { padding: 22px 18px 18px; border-radius: 16px; }
+  .doe-valores { grid-template-columns: repeat(2, 1fr); }
+  .doe-dupla, .doe-cartao-grid { grid-template-columns: 1fr; }
+  .doe-resumo b { font-size: 1.32rem; }
+}
+@media (prefers-reduced-motion: reduce) { .doe-pulso { animation: none; } }

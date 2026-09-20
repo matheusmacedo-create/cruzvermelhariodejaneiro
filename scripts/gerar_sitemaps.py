@@ -49,7 +49,7 @@ PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
     ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
-    ("/doacao.html", "doacao.html", "monthly", "0.8", "Doação"),
+    ("/doe/", "doe/index.html", "monthly", "0.9", "Doação: PIX ou cartão, dentro do domínio"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
@@ -59,7 +59,6 @@ PAGINAS = [
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
 SUBDOMINIOS = [
-    ("https://doar.cruzvermelhariodejaneiro.org/", "monthly", "0.8", "Doação avulsa ou mensal (Vercel)"),
     ("https://projetocores.cruzvermelhariodejaneiro.org/", "monthly", "0.6", "Projeto Impacto das Cores (Hostinger)"),
     ("https://puncaovenosav1.cruzvermelhariodejaneiro.org", "monthly", "0.7", "Curso de Punção Venosa (Vercel)"),
 ]

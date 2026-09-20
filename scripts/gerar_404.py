@@ -46,7 +46,7 @@ PAGINA = """<!DOCTYPE html>
           <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> Página inicial</a>
           <a href="/matricula-cursos-presenciais/"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Matrícula em cursos presenciais</a>
           <a href="/noticias/"><i class="fa-regular fa-newspaper" aria-hidden="true"></i> Notícias</a>
-          <a href="/doacao.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Como doar</a>
+          <a href="/doe/"><i class="fa-solid fa-heart" aria-hidden="true"></i> Como doar</a>
           <a href="/#contato"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Fale com a gente</a>
         </div>
       </div>
