@@ -7,3 +7,7 @@ site/assets/
 
 # Vocabulário do Schema.org baixado por scripts/validar_jsonld.py (1,5 MB, refaz sozinho)
 scripts/.cache-schemaorg.jsonld
+
+# sitemap.xml da raiz: quem escreve é a Redação, por FTP (lib/site/sitemap.ts naquele repositório).
+# Fica fora daqui para não haver duas fontes da verdade; corrigido no servidor em 20/09/2026.
+site/sitemap.xml

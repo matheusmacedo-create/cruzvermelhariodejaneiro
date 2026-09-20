@@ -282,7 +282,7 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
                 </label>
                 <label class="doe-caixa" id="doe-aceite-caixa">
                   <input type="checkbox" id="doe-aceite">
-                  <span>Li e concordo com a <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo o uso dos meus dados para processar a doação.</span>
+                  <span>Li e concordo com a <a href="/privacidade/" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo o uso dos meus dados para processar a doação.</span>
                 </label>
               </div>
               <div class="doe-resumo"><span>Total da doação</span><b class="doe-total">R$ 0,00</b></div>

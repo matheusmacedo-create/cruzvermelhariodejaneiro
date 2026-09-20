@@ -640,6 +640,57 @@ Pedir à nacional que corrija o contato e inclua o link vale mais que qualquer p
 Wikipédia, essa sim, já linka para a home — é por isso que aparecemos nas respostas de IA sobre a
 sede e o endereço.
 
+## Rodada de erros e advertências do Semrush (20/09/2026, noite)
+
+Segunda passada na auditoria, depois que os 56 erros de dados estruturados e os 19 arquivos não
+minificados zeraram.
+
+### O que era nosso, e foi resolvido
+
+- **`sitemap.xml` listava `cursos.html` e `doacao.html`**, que respondem 301. Esse arquivo é escrito
+  pela **Redação**, por FTP, a cada publicação — corrigi na fonte
+  (`lib/site/sitemap.ts` no repositório `redacao-cruzvermelhariodejaneiro`, branch
+  `claude/blissful-newton-7jpef4`) e também no arquivo que já estava no servidor, para não esperar a
+  próxima matéria. Enquanto aquele PR não for para produção, uma publicação da Redação desfaz a
+  correção do servidor. `site/sitemap.xml` entrou no `.gitignore`: a fonte é lá, não aqui.
+- **O `robots.txt` da Redação apagava o nosso `sitemap-index.xml`.** Ele é escrito por cima do que
+  está no servidor e declarava só o `sitemap.xml`, então cada matéria publicada derrubava a linha do
+  índice. Agora `gerarRobots()` declara os dois. Era a causa do "se ele voltar ao conteúdo antigo, é
+  só republicar" anotado na seção anterior.
+- **32 links internos passavam por 301.** Dois culpados: `/privacidade` sem barra no rodapé de dez
+  páginas e `/doacao.html` em três respostas da FAQ. Corrigidos na fonte (a home, o
+  `site/faq-home.json` e o `scripts/gerar_doe.py`).
+- **`equipe.html` com pouco texto.** Passou de 164 para 666 palavras, com o que faltava e é nosso por
+  direito: a relação da filial com o Movimento, os sete princípios fundamentais, o que cada
+  coordenação responde, o Palácio da Cruz Vermelha e como entrar na equipe. Os textos das onze
+  coordenações foram escritos a partir do nome de cada área — **valem uma revisão de quem conhece
+  cada uma**.
+- **UTM em link interno.** A campanha do agasalho e a home apontavam para
+  `/doe/?utm_source=site&…`. O GA4 lê qualquer `utm_source` como campanha nova: abre outra sessão e
+  apaga a origem real, então uma doação vinda do Google orgânico era registrada como "site". Os links
+  internos passaram a usar `?de=<pagina>`, que o GA4 ignora; `doe.js` traduz isso para a nossa própria
+  tabela, que continua sabendo de onde veio a doação. UTM agora é só para campanha externa.
+
+### Dois scripts novos, para não repetir o erro
+
+| Script | O que faz |
+|---|---|
+| `scripts/validar_jsonld.py` | Confere o JSON-LD contra o vocabulário oficial do Schema.org: propriedade inexistente, propriedade fora do domínio do tipo, tipo inexistente, `@id` solto. Foi o que achou o `courseMode` em `Course`. |
+| `scripts/conferir_links.py` | Testa todo link e recurso interno ao vivo. **Redirecionamento conta como falha**: link interno deve apontar para o destino final. `--local` testa contra um servidor em 127.0.0.1:8767. |
+
+### O que sobrou, e por quê
+
+- **Da Redação** (repositório e deploy separados): 1 erro 4xx e 1 link interno quebrado, ambos o
+  `COLE_AQUI_O_LINK_DO_FORMULARIO` publicado em `/noticias/7-de-setembro/`; 19 links externos
+  quebrados; 10 títulos longos; e `/termos/` com pouco texto.
+- **Correto como está**: os 7 checkouts aparecem como "bloqueados para rastreio" porque são
+  `noindex` de propósito; `/sitemap-subdominios.xml` é "sitemap órfão" porque lista subdomínios, que
+  nenhuma página do site linka.
+- **Texto/HTML abaixo de 10% em `/bio/` e `equipe.html`**: metade do peso dessas páginas é o CSS
+  embutido (30 KB), copiado em toda página. A saída real é um CSS externo, servido uma vez e
+  guardado em cache — mudança de arquitetura que toca todos os geradores e não entrou nesta rodada.
+  `/bio/` é uma página de links: encher de texto para cruzar um limiar seria escrever para o robô.
+
 ## Referência da Wikipédia (20/09/2026)
 
 O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)**
