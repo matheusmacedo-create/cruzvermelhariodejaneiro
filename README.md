@@ -399,6 +399,49 @@ incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normali
 página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
 precisam ser editados à mão.
 
+## E-mail do domínio: Google Workspace e Resend (auditado em 20/09/2026)
+
+Dois caminhos, que não se misturam: **as caixas da equipe** ficam no Google Workspace, no domínio
+raiz; **os e-mails automáticos** (matrícula, doação, chat, newsletter) saem pela Resend, de
+subdomínios próprios. Auditoria feita com consultas DNS reais e conferindo mensagens recebidas.
+
+| O que | Estado | Onde |
+| --- | --- | --- |
+| MX do domínio | ✅ `1 smtp.google.com` | Workspace recebe tudo do domínio raiz |
+| Verificação do domínio | ✅ `google-site-verification=OzGrLD5…` | TXT no `@` |
+| SPF | ✅ `v=spf1 include:_spf.google.com ~all` | TXT no `@` |
+| **DKIM do Google** | ❌ **não existe** | falta `google._domainkey` (e nenhum outro seletor responde) |
+| DMARC | ⚠️ `p=none`, alinhamento estrito | só monitora; não age sobre falsificação |
+| Caixa `contato@` | ✅ ativa | o próprio Google manda os avisos de onboarding para ela |
+| Resend, subdomínio `info.` | ✅ DKIM + `send`/`rsend` | remetente de matrícula e doação |
+| Resend, subdomínios `noticias.`, `parceria.` | ✅ | newsletter e parcerias |
+| Serviço de e-mail da Hostinger | ❌ não existe nesta conta | `mail_listOrdersV1` devolve zero |
+
+**O que falta fazer, e só o administrador do Workspace consegue**: gerar o DKIM em
+_Admin console → Apps → Google Workspace → Gmail → Autenticar e-mail_, escolher o domínio, **Gerar
+novo registro** (2048 bits, prefixo `google`) e depois **Iniciar autenticação**. O console devolve um
+TXT; com ele em mãos, é um registro a acrescentar na zona (nome `google._domainkey`, TTL 3600). Sem
+DKIM, mensagens enviadas pelo Gmail do domínio dependem só do SPF e ficam mais sujeitas a spam e a
+falsificação.
+
+**Resíduos do e-mail antigo da Hostinger**, para apagar no hPanel (DNS da zona). Não apaguei pela API
+porque o endpoint de exclusão em massa não aceita filtro com segurança e um erro derrubaria a zona
+inteira; pelo painel é seguro e leva um minuto:
+
+- `autodiscover` CNAME → `autodiscover.mail.hostinger.com.`
+- `autoconfig` CNAME → `autoconfig.mail.hostinger.com.`
+- `hostingermail-a._domainkey`, `hostingermail-b._domainkey`, `hostingermail-c._domainkey` (CNAME)
+
+Os dois primeiros são os piores: fazem Outlook e Thunderbird tentarem configurar uma conta na
+Hostinger, que não existe mais. Os três DKIM são inertes.
+
+**Depois do DKIM**, vale endurecer o DMARC para `p=quarantine` e, mais adiante, `p=reject`. O
+alinhamento estrito já em uso passa pelo DKIM da Resend (`d=` é o domínio) e pelo SPF do Gmail.
+
+**Corrigido em 20/09**: os e-mails de doação saíam como `matricula@info.cruzvermelhariodejaneiro.org`,
+porque `EMAIL_REMETENTE_DOACAO` estava vazio e caía no remetente da matrícula. Agora saem como
+`doacao@info.cruzvermelhariodejaneiro.org`, com resposta para `contato@` (Workspace).
+
 ## Doação em `/doe/` (20/09/2026)
 
 A doação saiu do subdomínio `doar.cruzvermelhariodejaneiro.org` (app separado na Vercel) e passou a
