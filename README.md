@@ -428,8 +428,9 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   checkout: banco, Resend, `SITE_URL`, taxas e e-mails.
 - **Quem processa e para onde vai**: a Unicopag recebe a doação e repassa o valor à filial, do mesmo
   jeito que a Cruz Vermelha de São Paulo usa o Doare (no PIX dela aparece "Doare Servicos
-  Financeiro"). A página diz isso em três lugares — selo de confiança, transparência e FAQ — para o
-  nome no extrato não surpreender quem doou.
+  Financeiro"). Isso é dito **uma vez só**, na pergunta "A doação é segura? Quem processa o
+  pagamento?", para o nome no extrato não surpreender quem doou sem roubar o foco da doação. O selo
+  de confiança e a transparência falam da filial, não do meio de pagamento.
 - **Doação mensal**: a Unicopag tem API de assinaturas em base própria
   (`https://subscription.unicopag.com.br/api/v1`, autenticação `Authorization: Bearer`), com webhooks
   (`subscription.activated`, `subscription.renewed`, `charge.paid`…) e cobrança recorrente por cartão,

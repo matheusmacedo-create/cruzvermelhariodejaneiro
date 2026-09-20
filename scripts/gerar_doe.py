@@ -65,12 +65,12 @@ FAQ = [
      "são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês.",
      []),
     ("A doação é segura? Quem processa o pagamento?",
-     "Sim. A página fica no domínio oficial da filial, com conexão criptografada, e o pagamento é processado pela "
+     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. O pagamento é processado pela "
      "Unicopag, instituição de pagamento autorizada, que recebe a doação e repassa o valor à Cruz Vermelha Brasileira "
-     "Rio de Janeiro. Por isso é o nome da Unicopag que aparece no PIX e na fatura do cartão, do mesmo modo que outras "
-     "filiais da Cruz Vermelha aparecem com o nome do gateway que usam. Seus dados de cartão passam direto para o "
-     "processador: não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir "
-     "a cobrança e enviar o comprovante.",
+     "Rio de Janeiro; por isso é o nome dela que aparece no PIX e na fatura do cartão, como acontece com as outras "
+     "filiais da Cruz Vermelha e os meios de pagamento que usam. Seus dados de cartão passam direto para o processador "
+     "e não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir a cobrança "
+     "e enviar o comprovante.",
      []),
     ("Posso doar por PIX? E por cartão?",
      "Pode pelos dois. No PIX, a página gera o QR code e o código copia e cola na hora, e a confirmação aparece "
@@ -177,7 +177,7 @@ PAGINA = """<!DOCTYPE html>
       <div class="wrap">
         <p class="eyebrow">Transparência</p>
         <h2>Você sabe exatamente quem está apoiando.</h2>
-        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>. O pagamento da doação é processado pela Unicopag, instituição de pagamento, que repassa o valor à filial: é o nome dela que aparece no seu extrato e no PIX.</p>
+        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>.</p>
         <div class="doe-dados">
 @@DADOS@@
         </div>
@@ -299,7 +299,7 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
 CONFIANCA = [
     ("scale-balanced", "<b>Utilidade pública municipal e estadual</b>: lei municipal 5.153/2010 e lei estadual 9.984/2023."),
     ("certificate", "<b>CNPJ 08.560.973/0001-97</b>, Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro."),
-    ("lock", "<b>Processado pela Unicopag</b>, instituição de pagamento, que repassa o valor à filial."),
+    ("lock", "<b>Pagamento em ambiente seguro</b>, com comprovante por e-mail logo após a confirmação."),
     ("hand-holding-heart", "<b>Acesso futuro a cursos gravados gratuitos</b> para quem doa pelo site."),
 ]
 
