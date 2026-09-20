@@ -24,7 +24,11 @@
   /* Só http(s) entra em href: a API é nossa, mas o link do PIX vem do provedor. */
   function urlSegura(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : ''; }
 
-  /* UTMs e identificadores de anúncio: os da URL valem mais; os guardados sobrevivem à navegação. */
+  /* UTMs e identificadores de anúncio: os da URL valem mais; os guardados sobrevivem à navegação.
+
+     Link de dentro do site nunca leva utm_source: o GA4 lê qualquer utm_source como campanha nova,
+     abre outra sessão e apaga a origem real (o Google orgânico vira "site"). Para saber de que página
+     interna a pessoa veio, usamos ?de=<pagina>, que o GA4 ignora e só nós lemos. */
   function origem() {
     var p = new URLSearchParams(location.search), dados = {}, salvo = {};
     try { salvo = JSON.parse(sessionStorage.getItem('mcp_origem') || '{}'); } catch (e) { salvo = {}; }
@@ -32,6 +36,12 @@
       var v = p.get(k) || salvo[k] || '';
       if (v) dados[k] = String(v).slice(0, 160);
     });
+    var de = p.get('de');
+    if (de && !dados.utm_source) {
+      dados.utm_source = 'site';
+      dados.utm_medium = String(de).slice(0, 120);
+      dados.utm_campaign = dados.utm_campaign || 'doacao';
+    }
     if (!dados.utm_source && document.referrer && document.referrer.indexOf(location.host) < 0) {
       try { dados.utm_source = new URL(document.referrer).hostname.slice(0, 120); dados.utm_medium = 'referral'; } catch (e) { /* referrer estranho */ }
     }

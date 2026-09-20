@@ -263,7 +263,7 @@ def main() -> int:
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
         curso = {"@type": "Course", "name": c["nome"], "description": nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else "")),
-                 "url": f"{URL_PAGINA}#curso-{s}", "provider": provedor, "courseMode": "Onsite",
+                 "url": f"{URL_PAGINA}#curso-{s}", "provider": provedor,
                  "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro"}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
@@ -273,6 +273,7 @@ def main() -> int:
             ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na plataforma da escola)",
                             "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
         curso["offers"] = ofertas
+        # courseMode é propriedade de CourseInstance, não de Course: no Course o validador recusa.
         instancia = {"@type": "CourseInstance", "courseMode": "Onsite", "location": LOCAL}
         if horas_iso(c["carga_horaria"]):
             curso["timeRequired"] = horas_iso(c["carga_horaria"])
