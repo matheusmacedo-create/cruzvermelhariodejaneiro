@@ -399,6 +399,57 @@ incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normali
 página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
 precisam ser editados à mão.
 
+## E-mail do domínio: Google Workspace e Resend (auditado em 20/09/2026)
+
+Dois caminhos, que não se misturam: **as caixas da equipe** ficam no Google Workspace, no domínio
+raiz; **os e-mails automáticos** (matrícula, doação, chat, newsletter) saem pela Resend, de
+subdomínios próprios. Auditoria feita com consultas DNS reais e conferindo mensagens recebidas.
+
+| O que | Estado | Onde |
+| --- | --- | --- |
+| MX do domínio | ✅ `1 smtp.google.com` | Workspace recebe tudo do domínio raiz |
+| Verificação do domínio | ✅ `google-site-verification=OzGrLD5…` | TXT no `@` |
+| SPF | ✅ `v=spf1 include:_spf.google.com ~all` | TXT no `@` |
+| **DKIM do Google** | ❌ **não existe** | falta `google._domainkey` (e nenhum outro seletor responde) |
+| DMARC | ⚠️ `p=none`, alinhamento estrito | só monitora; não age sobre falsificação |
+| Caixa `contato@` | ✅ ativa | o próprio Google manda os avisos de onboarding para ela |
+| Resend, subdomínio `info.` | ✅ DKIM + `send`/`rsend` | remetente de matrícula e doação |
+| Resend, subdomínios `noticias.`, `parceria.` | ✅ | newsletter e parcerias |
+| Serviço de e-mail da Hostinger | ❌ não existe nesta conta | `mail_listOrdersV1` devolve zero |
+
+**O que falta fazer, e só o administrador do Workspace consegue**: gerar o DKIM em
+_Admin console → Apps → Google Workspace → Gmail → Autenticar e-mail_, escolher o domínio, **Gerar
+novo registro** (2048 bits, prefixo `google`) e depois **Iniciar autenticação**. O console devolve um
+TXT; com ele em mãos, é um registro a acrescentar na zona (nome `google._domainkey`, TTL 3600). Sem
+DKIM, mensagens enviadas pelo Gmail do domínio dependem só do SPF e ficam mais sujeitas a spam e a
+falsificação.
+
+**Resíduos do e-mail antigo da Hostinger**, para apagar no hPanel (DNS da zona). Três caminhos pela
+API foram tentados em 20/09 e nenhum funciona, então não insista: `DNS_deleteDNSRecordsV1` responde
+**422** sem filtro e o conector não repassa o filtro (nem como `filters`, nem como `zone`);
+`DNS_updateDNSRecordsV1` com `is_disabled: true` responde "Request accepted" mas **ignora o campo** —
+os registros voltam com `is_disabled: false`. A zona não foi danificada em nenhuma tentativa (os 422
+são recusados antes de gravar). Pelo painel é seguro e leva um minuto:
+
+- `autodiscover` CNAME → `autodiscover.mail.hostinger.com.`
+- `autoconfig` CNAME → `autoconfig.mail.hostinger.com.`
+- `hostingermail-a._domainkey`, `hostingermail-b._domainkey`, `hostingermail-c._domainkey` (CNAME)
+
+Os dois primeiros são os piores: fazem Outlook e Thunderbird tentarem configurar uma conta na
+Hostinger, que não existe mais. Os três DKIM são inertes. Nada disso derruba e-mail: o MX é do Google
+e a entrega não passa por esses registros; é limpeza, não urgência.
+
+Caminho no painel: **hPanel → Domínios → cruzvermelhariodejaneiro.org → DNS / Nameservers → Gerenciar
+registros DNS**, localizar cada um dos cinco nomes e clicar em excluir. A Hostinger tira um snapshot
+da zona antes de cada alteração, então dá para voltar atrás pelo próprio painel.
+
+**Depois do DKIM**, vale endurecer o DMARC para `p=quarantine` e, mais adiante, `p=reject`. O
+alinhamento estrito já em uso passa pelo DKIM da Resend (`d=` é o domínio) e pelo SPF do Gmail.
+
+**Corrigido em 20/09**: os e-mails de doação saíam como `matricula@info.cruzvermelhariodejaneiro.org`,
+porque `EMAIL_REMETENTE_DOACAO` estava vazio e caía no remetente da matrícula. Agora saem como
+`doacao@info.cruzvermelhariodejaneiro.org`, com resposta para `contato@` (Workspace).
+
 ## Doação em `/doe/` (20/09/2026)
 
 A doação saiu do subdomínio `doar.cruzvermelhariodejaneiro.org` (app separado na Vercel) e passou a
@@ -428,8 +479,9 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   checkout: banco, Resend, `SITE_URL`, taxas e e-mails.
 - **Quem processa e para onde vai**: a Unicopag recebe a doação e repassa o valor à filial, do mesmo
   jeito que a Cruz Vermelha de São Paulo usa o Doare (no PIX dela aparece "Doare Servicos
-  Financeiro"). A página diz isso em três lugares — selo de confiança, transparência e FAQ — para o
-  nome no extrato não surpreender quem doou.
+  Financeiro"). Isso é dito **uma vez só**, na pergunta "A doação é segura? Quem processa o
+  pagamento?", para o nome no extrato não surpreender quem doou sem roubar o foco da doação. O selo
+  de confiança e a transparência falam da filial, não do meio de pagamento.
 - **Doação mensal**: a Unicopag tem API de assinaturas em base própria
   (`https://subscription.unicopag.com.br/api/v1`, autenticação `Authorization: Bearer`), com webhooks
   (`subscription.activated`, `subscription.renewed`, `charge.paid`…) e cobrança recorrente por cartão,
@@ -438,11 +490,57 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   é a trava — enquanto for `false`, nem a configuração `DOACAO_MENSAL` liga a opção e a página nunca
   oferece o que o servidor não consegue cobrar. Quando os endpoints estiverem em mãos: implementar,
   virar a constante, ligar `DOACAO_MENSAL` e o seletor "Mensal" aparece sozinho no cartão.
+- **E-mail de agradecimento** (`mcp_doacao_montar_email_confirmada`): personalizado, não genérico.
+  O assunto leva o primeiro nome e o valor ("Obrigado, Maria! Sua doação de R$ 105,00 foi
+  confirmada"); o corpo abre com o nome no título, mostra um selo com o valor e a data, e um bloco
+  **"o que esse valor sustenta"** que muda conforme a faixa doada (`mcp_doacao_impacto()`: até R$ 60
+  material de primeiros socorros, até R$ 100 educação preventiva, até R$ 250 voluntariado, acima
+  disso ação comunitária — as mesmas referências de `IMPACTO` em `scripts/gerar_doe.py`, que precisam
+  ser mudadas nos dois lugares). Depois vêm os parágrafos que só aparecem quando cabem: cobriu os
+  custos, doação anônima, doação mensal. Fecha com o comprovante (protocolo e CNPJ), o convite para
+  acompanhar as ações e para se cadastrar como voluntário, e a assinatura da equipe. A versão em
+  texto puro acompanha as mesmas variações.
+- **Doação anônima**: caixa "Quero doar anonimamente" antes do aceite. Grava `anonimo` em
+  `mcp_doacoes` (coluna criada sozinha por `mcp_garantir_colunas`), aparece como "Divulgação: doação
+  anônima" no comprovante e no aviso à equipe, e a tela de agradecimento confirma. Nome, CPF, e-mail
+  e telefone continuam obrigatórios porque a Unicopag exige, mas a filial não usa o nome em
+  agradecimento público. Mesma ideia do `discloseDonorCheckbox` da página de São Paulo.
+- **Marcação de origem**: os botões da Campanha do Agasalho levam
+  `?utm_source=site&utm_medium=agasalho&utm_campaign=campanha-agasalho` e o da home
+  `utm_medium=home`; o `doe.js` guarda as UTMs e elas entram na doação e no aviso à equipe. O link do
+  menu fica sem marcação, porque é navegação.
 - **Endereços antigos**: `/doacao.html` responde **301** para `/doe/` (regra em `site/.htaccess`); o
-  arquivo continua no repositório, mas a regra vem antes. O subdomínio `doar.` ainda aponta para a
-  Vercel e **precisa ser redirecionado** (ver "Pontos de atenção").
-- **Testes**: `php scripts/testar_doacao.php` (50 testes, sem banco e sem rede) cobre configuração,
+  arquivo continua no repositório, mas a regra vem antes. O subdomínio
+  **`doar.cruzvermelhariodejaneiro.org` saiu da Vercel em 20/09/2026**: virou subdomínio da Hostinger
+  (`hosting_createWebsiteSubdomainV1` trocou o CNAME da Vercel por um ALIAS do CDN da Hostinger) com a
+  pasta `site/doar/`, cujo `.htaccess` responde 301 para `/doe/`. Certificado emitido e ativo. O
+  projeto antigo na Vercel continua existindo, sem tráfego: pode ser apagado lá quando quiser.
+- **Testes**: `php scripts/testar_doacao.php` (59 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
+
+## Revisão de SEO de 20/09/2026
+
+Rodada de `python3 scripts/auditar_seo.py` (páginas ao vivo) mais uma varredura de links e atalhos.
+
+- **Sem problemas**: home, `/matricula-cursos-presenciais/`, `/doe/`, `equipe.html`. Títulos dentro de
+  60 caracteres, descrições até 160, canonical, Open Graph, Twitter Card, JSON-LD e imagens com
+  dimensões.
+- **Atalhos consertados**: `/links/` e `/link/` respondiam 302 para `install.php` (404), o instalador
+  do "CVB Links" que nunca foi usado; agora respondem **301 para `/bio/`**, e os subdomínios `links.`
+  e `link.`, servidos dessas pastas, vão junto. `site/links/.htaccess` e `site/link/.htaccess`.
+- **`robots.txt`**: passou a declarar `sitemap-index.xml` além do `sitemap.xml` da Redação (o índice
+  já contém os dois). Atenção: quem publica a Redação também escreve esse arquivo; se ele voltar ao
+  conteúdo antigo, é só republicar `site/robots.txt`.
+- **Links internos**: as 38 URLs internas das páginas principais respondem 200 ou 301; nenhuma
+  quebrada.
+- **Redirecionamentos ativos**: `/doacao.html` → `/doe/`, `/cursos.html` →
+  `/matricula-cursos-presenciais/`, `/escola` → plataforma da escola, `/doe` → `/doe/`, `/bio` →
+  `/bio/`, `/links/` e `/link/` → `/bio/`, `doar.` → `/doe/`.
+- **Fica em aberto, fora do nosso alcance**: `/noticias/`, `/termos/` e `/privacidade/` (Redação, na
+  Vercel) estão sem `og:image` e sem `twitter:card`, e as notícias têm títulos longos; a escola
+  (`escola.cursoscruzvermelha.org`, outra conta) está sem descrição, canonical, Open Graph e JSON-LD.
+- **Título da Campanha do Agasalho** ficou em 62 caracteres: encurtar exigiria tirar "Campanha do
+  Agasalho" (que é o termo buscado) ou abreviar o nome da filial, que a convenção não permite.
 
 ## Referência da Wikipédia (20/09/2026)
 
@@ -484,8 +582,9 @@ bombeiro civil, cuidador de idosos, BLS.
   links "chat do site" apontam para `/#chat`, que abre o chat em qualquer página.
 - **O que a FAQ afirma e convém a filial confirmar** (o que não tinha fonte ficou de fora ou foi
   suavizado): a homologação do Bombeiro Civil é paga à parte, valor a consultar; a chave PIX do CNPJ
-  só aparece na Campanha do Agasalho, por isso a resposta de doação manda para a página de doação e
-  não cita a chave; o horário "segunda a sexta, 10h às 17h" é o da entrega de donativos da campanha,
+  **foi desativada em 20/09/2026** e saiu da Campanha do Agasalho (caixa "Pix CNPJ", cartão "Pix
+  direto", faixa de informações e o script que copiava a chave); quem quer doar por PIX passa por
+  `/doe/`, que gera o código na hora, e o CNPJ segue no site só como identificação da filial; o horário "segunda a sexta, 10h às 17h" é o da entrega de donativos da campanha,
   não um horário geral da sede; não afirmamos que a formação de voluntários é gratuita, só que
   voluntariado e cursos são caminhos separados; a resposta sobre emergências não diz se a filial tem
   ou não hospital, só que este site não agenda consultas e que emergência é 192/193; o resumo da Lei

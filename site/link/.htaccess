@@ -1,0 +1,10 @@
+# Pasta do "CVB Links", um projeto em PHP que nunca foi instalado e respondia com o instalador
+# (302 para install.php, que dá 404). Desde 20/09/2026 tudo aqui responde 301 para /bio/, a
+# página de links oficial da filial. Vale também para o subdomínio servido desta pasta.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(.*)$ https://cruzvermelhariodejaneiro.org/bio/ [R=301,L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+  RedirectMatch 301 ^/(.*)$ https://cruzvermelhariodejaneiro.org/bio/
+</IfModule>

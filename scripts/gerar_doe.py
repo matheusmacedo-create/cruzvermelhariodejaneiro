@@ -31,6 +31,7 @@ URL_PAGINA = f"{ORIGEM}/doe/"
 WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 
 TITULO = "Doar para a Cruz Vermelha Brasileira Rio de Janeiro"
+H1 = "Doe para a Cruz Vermelha Brasileira Rio de Janeiro"
 DESCRICAO = ("Doe para a Cruz Vermelha Brasileira Rio de Janeiro por PIX ou cartão, em menos de um minuto. "
              "Sua doação mantém a formação de voluntários e as ações no estado.")
 
@@ -45,7 +46,7 @@ IMPACTO = [
 
 DADOS = [
     ("Razão social", "Cruz Vermelha Brasileira<br>Filial do Estado do Rio de Janeiro", ""),
-    ("CNPJ", "08.560.973/0001-97", "O mesmo que aparece no comprovante da sua doação."),
+    ("CNPJ", "08.560.973/0001-97", "É o CNPJ do comprovante que enviamos por e-mail."),
     ("Utilidade pública", "Municipal e estadual", "Lei municipal 5.153/2010 e lei estadual 9.984/2023."),
     ("Sede", "Praça da Cruz Vermelha, 10", "Palácio da Cruz Vermelha, Centro do Rio de Janeiro."),
 ]
@@ -61,15 +62,15 @@ FAQ = [
      "Sua doação fica na Cruz Vermelha Brasileira Rio de Janeiro, a filial do Estado do Rio de Janeiro, e sustenta a "
      "formação de voluntários, a capacitação em primeiros socorros, a educação preventiva, as campanhas de apoio "
      "comunitário e a estrutura que mantém tudo isso de pé, na sede do Centro do Rio. Os valores sugeridos na página "
-     "são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior no mês.",
+     "são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês.",
      []),
     ("A doação é segura? Quem processa o pagamento?",
-     "Sim. A página fica no domínio oficial da filial, com conexão criptografada, e o pagamento é processado pela "
+     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. O pagamento é processado pela "
      "Unicopag, instituição de pagamento autorizada, que recebe a doação e repassa o valor à Cruz Vermelha Brasileira "
-     "Rio de Janeiro. Por isso é o nome da Unicopag que aparece no PIX e na fatura do cartão, do mesmo modo que outras "
-     "filiais da Cruz Vermelha aparecem com o nome do gateway que usam. Seus dados de cartão passam direto para o "
-     "processador: não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir "
-     "a cobrança e enviar o comprovante.",
+     "Rio de Janeiro; por isso é o nome dela que aparece no PIX e na fatura do cartão, como acontece com as outras "
+     "filiais da Cruz Vermelha e os meios de pagamento que usam. Seus dados de cartão passam direto para o processador "
+     "e não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir a cobrança "
+     "e enviar o comprovante.",
      []),
     ("Posso doar por PIX? E por cartão?",
      "Pode pelos dois. No PIX, a página gera o QR code e o código copia e cola na hora, e a confirmação aparece "
@@ -83,16 +84,21 @@ FAQ = [
      "em alguns minutos, confira a caixa de spam ou fale com a gente pelo chat do site.",
      [("chat do site", "/#chat")]),
     ("Posso doar todo mês?",
-     "A doação mensal está sendo ligada nesta mesma página, por PIX Automático e por cartão: você autoriza uma vez e a "
-     "cobrança se repete todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto o botão não "
-     "aparece aqui, é possível repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe "
-     "pelo chat do site.",
+     "Em breve, sim, nesta mesma página: por PIX Automático ou por cartão, você autoriza uma vez e a cobrança se repete "
+     "todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto a opção não aparece no formulário, "
+     "dá para repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo chat do site.",
      [("chat do site", "/#chat")]),
-    ("Quero doar roupas, cobertores ou alimentos. Como faço?",
+    ("Quero doar roupas e cobertores. Como faço?",
      "Doações de roupas de frio, cobertores e calçados são recebidas na sede da Cruz Vermelha Brasileira Rio de "
      "Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. "
      "Leve as peças limpas e em bom estado. Para outros itens, confirme antes com a equipe pelo chat do site.",
      [("Campanha do Agasalho", "/campanha-agasalho.html"), ("chat do site", "/#chat")]),
+    ("Posso doar sem que meu nome apareça?",
+     "Pode. Marque a opção \"Quero doar anonimamente\" antes de concluir e seu nome não é usado em agradecimentos "
+     "públicos, em redes sociais nem em listas de doadores. Nome, CPF, e-mail e telefone continuam sendo pedidos "
+     "porque o meio de pagamento exige esses dados para emitir a cobrança e para enviar o seu comprovante, mas eles "
+     "ficam restritos à equipe que cuida das doações.",
+     []),
     ("Minha empresa quer apoiar a Cruz Vermelha Brasileira Rio de Janeiro.",
      "Empresas apoiam a filial com doações institucionais, patrocínio de campanhas e treinamentos corporativos de NR "
      "e de primeiros socorros pela Lei Lucas. Fale com a gente pelo chat do site ou pelo e-mail "
@@ -171,7 +177,7 @@ PAGINA = """<!DOCTYPE html>
       <div class="wrap">
         <p class="eyebrow">Transparência</p>
         <h2>Você sabe exatamente quem está apoiando.</h2>
-        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>. O pagamento da doação é processado pela Unicopag, instituição de pagamento, que repassa o valor à filial: é o nome dela que aparece no seu extrato e no PIX.</p>
+        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>.</p>
         <div class="doe-dados">
 @@DADOS@@
         </div>
@@ -240,7 +246,7 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
                 </label>
               </div>
               <button class="btn btn-red doe-acao" type="button" id="doe-continuar" style="margin-top:20px">Continuar</button>
-              <p class="doe-aviso">Pagamento processado pela Unicopag, que repassa o valor à filial. Comprovante por e-mail.</p>
+              <p class="doe-aviso">Conexão segura. O comprovante chega no seu e-mail assim que o pagamento é confirmado.</p>
             </div>
 
             <div id="doe-dados" hidden>
@@ -269,6 +275,10 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
                   <input type="checkbox" id="doe-cobre">
                   <span>Quero cobrir os <b>custos de processamento</b> (<span id="doe-taxa-valor">R$ 0,00</span>) para a filial receber o valor cheio.</span>
                 </label>
+                <label class="doe-caixa" id="doe-anonimo-caixa">
+                  <input type="checkbox" id="doe-anonimo">
+                  <span>Quero <b>doar anonimamente</b>: meu nome não aparece em agradecimentos públicos nem em listas de doadores.</span>
+                </label>
                 <label class="doe-caixa" id="doe-aceite-caixa">
                   <input type="checkbox" id="doe-aceite">
                   <span>Li e concordo com a <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo o uso dos meus dados para processar a doação.</span>
@@ -289,7 +299,7 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
 CONFIANCA = [
     ("scale-balanced", "<b>Utilidade pública municipal e estadual</b>: lei municipal 5.153/2010 e lei estadual 9.984/2023."),
     ("certificate", "<b>CNPJ 08.560.973/0001-97</b>, Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro."),
-    ("lock", "<b>Processado pela Unicopag</b>, instituição de pagamento, que repassa o valor à filial. Comprovante por e-mail."),
+    ("lock", "<b>Pagamento em ambiente seguro</b>, com comprovante por e-mail logo após a confirmação."),
     ("hand-holding-heart", "<b>Acesso futuro a cursos gravados gratuitos</b> para quem doa pelo site."),
 ]
 
@@ -439,7 +449,7 @@ def main() -> int:
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", header).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
             .replace("@@CHAT@@", chat_widget.tags())
-            .replace("@@H1@@", esc(TITULO)).replace("@@LEAD@@", "Em menos de um minuto, por PIX ou cartão. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
+            .replace("@@H1@@", esc(H1)).replace("@@LEAD@@", "Em menos de um minuto, por PIX ou cartão. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
             .replace("@@CARTAO@@", CARTAO.replace("@@VALORES@@", valores))
             .replace("@@CONFIANCA@@", confianca).replace("@@IMPACTO@@", impacto)
             .replace("@@DADOS@@", dados).replace("@@PASSOS@@", passos).replace("@@FAQ@@", faq_html))

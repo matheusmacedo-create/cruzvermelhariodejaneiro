@@ -51,6 +51,7 @@ function mcp_doacao_validar(array $b): array
     return [
         'frequencia' => $frequencia, 'valor' => $valor, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email,
         'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => !empty($b['cobre_taxa']),
+        'anonimo' => !empty($b['anonimo']),
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -98,7 +99,8 @@ function mcp_doacao_montar_cobranca(array $doador, string $token, int $valor, in
         'origin' => MCP_DOACAO_ORIGEM,
         'metadata' => [
             'token' => $token, 'tipo' => 'doacao', 'frequencia' => $doador['frequencia'], 'doador' => $doador['nome'],
-            'cobre_taxa' => $doador['cobre_taxa'], 'utm_source' => $doador['utm_source'], 'utm_campaign' => $doador['utm_campaign'],
+            'cobre_taxa' => $doador['cobre_taxa'], 'anonima' => $doador['anonimo'],
+            'utm_source' => $doador['utm_source'], 'utm_campaign' => $doador['utm_campaign'],
         ],
     ];
 }
@@ -115,7 +117,8 @@ function mcp_doacao_gravar(array $doador, string $token, int $valor, int $taxa, 
         'token' => $token, 'frequencia' => $doador['frequencia'], 'nome' => $doador['nome'], 'cpf' => $doador['cpf'],
         'email' => $doador['email'], 'telefone' => $doador['telefone'], 'metodo' => $doador['metodo'],
         'valor_centavos' => $valor, 'taxa_centavos' => $taxa, 'total_centavos' => $valor + $taxa,
-        'cobre_taxa' => $doador['cobre_taxa'] ? 1 : 0, 'status' => $status === 'pago' ? 'pendente' : $status,
+        'cobre_taxa' => $doador['cobre_taxa'] ? 1 : 0, 'anonimo' => $doador['anonimo'] ? 1 : 0,
+        'status' => $status === 'pago' ? 'pendente' : $status,
         'unicopag_hash' => $limitar($cobranca['hash'] ?? null, 64), 'unicopag_status' => $statusOrigem ?: null,
         'pix_copia_cola' => $pix ? ($pix['pix_qr_code'] ?? null) : null,
         'pix_url' => $pix ? $limitar($pix['pix_url'] ?? null, 255) : null,
