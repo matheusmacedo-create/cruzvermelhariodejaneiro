@@ -4,8 +4,8 @@
 O conteúdo fica no JSON (título da seção, grupos e perguntas com resposta e links); este script gera o
 HTML entre os marcadores <!-- faq:inicio --> e <!-- faq:fim --> e o bloco FAQPage de dados
 estruturados (script id="faq-ld"), para a FAQ ranquear em buscas orgânicas. Regras de texto: nome
-completo "Cruz Vermelha Brasileira Rio de Janeiro", respostas de 45 a 110 palavras, links só internos ou
-dos canais oficiais (lista PERMITIDOS).
+completo "Cruz Vermelha Brasileira Rio de Janeiro", respostas de 45 a 110 palavras, links só internos, dos
+canais oficiais ou do verbete da filial na Wikipédia (lista PERMITIDOS).
 
 Uso:  python3 scripts/gerar_faq_home.py     (depois, publicar site/index.html)
 """
@@ -23,7 +23,7 @@ DADOS = RAIZ / "site" / "faq-home.json"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 MARCA_INI = "<!-- faq:inicio -->"
 MARCA_FIM = "<!-- faq:fim -->"
-PERMITIDOS = re.compile(r"^(/[a-z0-9\-./#?=&]*|https://escola\.cursoscruzvermelha\.org(/.*)?|https://form\.spotform\.com\.br/voluntariocruzvermelharj)$")
+PERMITIDOS = re.compile(r"^(/[a-z0-9\-./#?=&]*|https://escola\.cursoscruzvermelha\.org(/.*)?|https://form\.spotform\.com\.br/voluntariocruzvermelharj|https://pt\.wikipedia\.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)$")
 NACIONAL_SOZINHA = re.compile(r"Cruz Vermelha Brasileira(?!\s*(?:[–\-—·,])?\s*(?:Filial|Rio de Janeiro|do Rio|no Rio|RJ\b|Rio\b))")
 
 

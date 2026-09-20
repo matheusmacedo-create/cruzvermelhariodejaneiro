@@ -399,11 +399,29 @@ incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normali
 página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
 precisam ser editados à mão.
 
+## Referência da Wikipédia (20/09/2026)
+
+O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)**
+(pt.wikipedia.org) entrou no site como referência da filial, a pedido do Matheus:
+
+- `sameAs` do JSON-LD `NGO` da home (`site/index.html`), ao lado do Instagram e do Facebook: é o
+  sinal que liga a entidade do site ao verbete para o Google.
+- Parágrafo na seção Institucional da home ("utilidade pública municipal, Lei 5.153/2010, e estadual,
+  Lei 9.984/2023", fatos do verbete) com o link para o verbete.
+- Link "Verbete na Wikipédia" no rodapé de todas as páginas (o rodapé da home é copiado pelos
+  geradores; `equipe.html`, `doacao.html` e `campanha-agasalho.html` têm rodapé próprio e foram
+  editadas à mão).
+- Pergunta "O que é a Cruz Vermelha Brasileira Rio de Janeiro?" abrindo o grupo "Instituição, doações,
+  sede e contato" da FAQ, com o link; `scripts/gerar_faq_home.py` passou a aceitar essa URL em
+  `PERMITIDOS`.
+
+O verbete ainda não tem item no Wikidata; quando tiver, vale acrescentar o `Q…` ao `sameAs`.
+
 ## FAQ da home (19/09/2026, à noite)
 
 A FAQ da home tinha cinco respostas de uma frase. Agora é uma seção de conteúdo pensada para busca
-orgânica: **19 perguntas em 4 grupos** (Cursos e matrícula; Primeiros socorros, Lei Lucas e formação
-profissional; Voluntariado; Doações, sede e contato), cada resposta com 60 a 110 palavras, o nome
+orgânica: **20 perguntas em 4 grupos** (Cursos e matrícula; Primeiros socorros, Lei Lucas e formação
+profissional; Voluntariado; Instituição, doações, sede e contato), cada resposta com 60 a 110 palavras, o nome
 completo da filial, fatos tirados do repositório (`cursos.json`, página de matrícula, doação, Campanha
 do Agasalho, bio) e links para páginas do próprio domínio. As perguntas saíram das consultas do Search
 Console (`docs/seo-consultas-2026-09.md`): "cursos gratuitos", hospital/emergência, endereço e
