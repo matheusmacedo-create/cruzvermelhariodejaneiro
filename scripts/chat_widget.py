@@ -18,6 +18,8 @@ import re
 import sys
 from pathlib import Path
 
+import minificar_css
+
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA = RAIZ / "site" / "chat"
 URL = "/chat/"
@@ -26,14 +28,17 @@ MARCA_INI = "/* chat:cursos"
 MARCA_FIM = "/* /chat:cursos */"
 PADRAO_TAGS = re.compile(
     r'  <!-- Chat de contato por e-mail[^\n]*\n'
-    r'  <link rel="stylesheet" href="/chat/chat\.css\?v=[0-9a-f]+">\n'
+    r'  <link rel="stylesheet" href="/chat/chat(?:\.min)?\.css\?v=[0-9a-f]+">\n'
     r'  <script src="/chat/chat\.js\?v=[0-9a-f]+" defer></script>'
 )
 
 
 def url(nome: str) -> str:
-    conteudo = (PASTA / nome).read_bytes()
-    return f"{URL}{nome}?v={hashlib.sha256(conteudo).hexdigest()[:10]}"
+    """URL do arquivo com hash do conteúdo. CSS vai minificado; o .css fonte fica legível no repo."""
+    arquivo = PASTA / nome
+    if arquivo.suffix == ".css":
+        arquivo = minificar_css.gerar_min(arquivo)
+    return f"{URL}{arquivo.name}?v={hashlib.sha256(arquivo.read_bytes()).hexdigest()[:10]}"
 
 
 def tags() -> str:

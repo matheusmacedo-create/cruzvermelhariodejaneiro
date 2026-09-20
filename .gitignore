@@ -4,3 +4,6 @@ site/doe/api/config.php
 __pycache__/
 # Fotos e logos do site: ficam só no servidor (public_html/assets), não são versionadas
 site/assets/
+
+# Vocabulário do Schema.org baixado por scripts/validar_jsonld.py (1,5 MB, refaz sozinho)
+scripts/.cache-schemaorg.jsonld

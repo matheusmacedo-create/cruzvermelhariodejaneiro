@@ -21,6 +21,7 @@ import re
 
 import chat_widget
 import icones
+import minificar_css
 from gerar_matricula_presencial import HOME, RAIZ, esc, partes_da_home
 
 PASTA = RAIZ / "site" / "doe"
@@ -309,6 +310,9 @@ def hash_arquivo(nome: str) -> str:
 
 
 def url_estatico(nome: str) -> str:
+    """URL com hash do conteúdo. CSS vai minificado; o .css fonte fica legível no repo."""
+    if nome.endswith(".css"):
+        nome = minificar_css.gerar_min(STATIC / nome).name
     return f"{STATIC_URL}{nome}?v={hash_arquivo(nome)}"
 
 

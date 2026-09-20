@@ -38,6 +38,18 @@ def minificar(css: str) -> str:
     return "".join(partes).strip()
 
 
+def gerar_min(origem: Path) -> Path:
+    """Grava <nome>.min.css ao lado do fonte e devolve o caminho. O fonte continua legível.
+
+    Mesma regra da home: quem é fonte fica legível, quem é cópia servida ao navegador vai minificado.
+    """
+    destino = origem.with_suffix(".min.css")
+    css = minificar(origem.read_text(encoding="utf-8"))
+    if not destino.exists() or destino.read_text(encoding="utf-8") != css:
+        destino.write_text(css, encoding="utf-8")
+    return destino
+
+
 def main() -> int:
     for caminho in sys.argv[1:]:
         texto = Path(caminho).read_text(encoding="utf-8")
