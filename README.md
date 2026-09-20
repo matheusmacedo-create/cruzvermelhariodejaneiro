@@ -518,6 +518,41 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
 - **Testes**: `php scripts/testar_doacao.php` (59 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
 
+## Leitura de tráfego e lacunas de medição (20/09/2026)
+
+Não há conector de Google Analytics, Search Console ou Ads nesta sessão — só Gmail e Drive. A
+leitura abaixo vem do rastro de e-mails do Search Console, da lista de consultas que o Matheus
+colou (`docs/seo-consultas-2026-09.md`) e de testes feitos direto no site.
+
+**A medição é nova, então quase não há histórico.** Pelos e-mails: a propriedade de domínio foi
+verificada por volta de 14–15/09; em 17/09 o Google avisou que "as impressões começaram a ser
+coletadas"; em 19/09 o Search Console foi associado à propriedade do Analytics "Cruz Vermelha Rio de
+Janeiro" e `contato@` virou proprietário. Ou seja: falar de "últimas semanas" é falar de poucos dias
+de dados confiáveis. A lista de consultas some ~66 cliques e ~370 impressões acumulados, o que dá
+cerca de dois cliques por dia vindos da busca.
+
+**Avisos de indexação recebidos** (sc-noreply@google.com): em 16/09, "Cópia sem página canônica
+selecionada"; em 20/09, "Página alternativa com tag canônica adequada" e **"Não encontrado (404)"**,
+com uma validação de correção concluída no mesmo dia. O primeiro e o segundo são esperados
+(`www` → apex, `doacao.html` → `/doe/`). O 404 era real: foram encontrados e corrigidos em 20/09.
+
+**404 que viraram 301** (`site/.htaccess`): `sos-venezuela.html` (a campanha que a página de links
+antiga do Instagram apontava) → `/doe/`; `install.php` (o instalador que o antigo `/links/` servia)
+→ `/bio/`; e as variações sem extensão que gente e robô tentam: `/cursos`, `/matricula`,
+`/inscricao`, `/equipe`, `/campanha-agasalho`, `/doacao`, `/doar`, `/voluntario`, `/voluntariado`,
+`/contato`.
+
+**Lacunas de medição encontradas**, em ordem de importância:
+
+| Onde | Situação | Por que importa |
+| --- | --- | --- |
+| `escola.cursoscruzvermelha.org` | **sem GA4** (só Meta Pixel) | é onde a matrícula termina; no Analytics a jornada some quando a pessoa sai do nosso site |
+| `puncaovenosav1.` | sem GA4 | landing de curso invisível no Analytics |
+| `/noticias/` e notícias individuais | **sem Meta Pixel** (GA4 ok) | não dá para remarketing de quem lê conteúdo |
+| entre domínios | sem medição entre domínios configurada | mesmo pondo GA4 na escola, sem isso ela aparece como "referral" do próprio site e a origem real se perde |
+| `projetocores.` | GA4 e Pixel ok | — |
+| `/termos/`, `/privacidade/` | GA4 ok | — |
+
 ## Revisão de SEO de 20/09/2026
 
 Rodada de `python3 scripts/auditar_seo.py` (páginas ao vivo) mais uma varredura de links e atalhos.
