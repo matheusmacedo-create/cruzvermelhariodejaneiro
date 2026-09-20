@@ -577,6 +577,69 @@ Rodada de `python3 scripts/auditar_seo.py` (páginas ao vivo) mais uma varredura
 - **Título da Campanha do Agasalho** ficou em 62 caracteres: encurtar exigiria tirar "Campanha do
   Agasalho" (que é o termo buscado) ou abreviar o nome da filial, que a convenção não permite.
 
+## Relatórios do Semrush: busca por IA e palavras-chave (20/09/2026)
+
+Quatro relatórios de auditoria e visibilidade em IA, mais o construtor de estratégia de
+palavras-chave. O que saiu de cada um:
+
+### Dados estruturados (56 dos erros da auditoria)
+
+Eram 7 erros repetidos nas 8 URLs da página de matrícula: `Course.url` e `Offer.url` apontavam
+para `?curso=<slug>`, que se canonicaliza para a página sem parâmetro. O Semrush lia isso como
+oferta sem URL própria. Agora apontam para as âncoras `#curso-<slug>`, que existem na página, e o
+`ItemList` declara `numberOfItems`. Os links de navegação continuam usando `?curso=`, que
+pré-seleciona o curso no formulário — isso é função, não SEO.
+
+### Visibilidade em IA
+
+Já somos citados em "cursos de primeiros socorros no RJ" e em "cruz vermelha no rio de janeiro".
+Os prompts com **zero menção à marca** viraram FAQ (19 → 26 perguntas) e blocos do `llms.txt`:
+duração dos cursos, presencial × online, MEC, comparação de preços, curso gratuito de cuidador de
+idosos e que formação precisa quem trabalha com crianças.
+
+Um erro em circulação: o Google AI responde "Primeiros Socorros Básicos (4h)". O básico tem **8
+horas**; o de 4 horas é o Suporte Básico de Vida. O dado está certo no catálogo, na home e na
+página de matrícula — a citação veio da `cursos.html` antiga, hoje 301, e vai envelhecer.
+
+Regra que seguimos: os maiores volumes da lista (enfermagem, necropsia, cuidador infantil,
+cartão do idoso) são de cursos que **não oferecemos**. Não se persegue esse volume; o `llms.txt`
+diz explicitamente o que não temos, para a IA parar de errar a nosso respeito.
+
+### Palavras-chave institucionais: não aparecemos em nada
+
+O relatório de páginas traz 20 termos, **15.550 buscas/mês**, todos informacionais e quase todos
+com AI Overview. `cruzvermelhariodejaneiro.org` **não aparece em nenhum**. Quem ranqueia falando
+de nós é a nacional.
+
+| Página proposta | Buscas/mês | Dificuldade |
+|---|---|---|
+| cruz vermelha (o termo da marca) | 12.900 | KD 52 — São Paulo é o #1 |
+| o que é trabalho voluntário | 760 | KD 23 |
+| direito internacional humanitário | 670 | KD 14–28 |
+| símbolo da cruz vermelha | 490 | KD 16–35 |
+| história da cruz vermelha | 280 | KD 28–32 |
+| certificado de primeiros socorros | 250 | KD 19–27 |
+| voluntária social / portal de voluntários | 200 | KD 36–45 |
+
+O site é todo transacional (cursos, doação) e não responde nenhuma pergunta institucional.
+Recorte recomendado: **símbolo, direito internacional humanitário, voluntariado e certificado** —
+~2.400 buscas/mês, dificuldade baixa e autoridade legítima nossa. O termo "cruz vermelha" puro
+fica de fora: é KD 52 e disputa interna do Movimento.
+
+### O achado mais caro, e não é técnico
+
+`cruzvermelha.org.br/pb/filiais/rio-de-janeiro/` está no **top 10 do Google para "cruz vermelha"**
+(12.100 buscas/mês) e é a página mais visível que existe sobre a filial. Ela publica:
+
+- e-mail `comunicacaosocial@cruzvermelharj.org.br` — **o domínio está morto**: sem resposta HTTP e
+  sem registro MX, ou seja, esse endereço não entrega mensagem nenhuma;
+- telefones antigos;
+- **nenhum link** para `cruzvermelhariodejaneiro.org`.
+
+Pedir à nacional que corrija o contato e inclua o link vale mais que qualquer página nova. A
+Wikipédia, essa sim, já linka para a home — é por isso que aparecemos nas respostas de IA sobre a
+sede e o endereço.
+
 ## Referência da Wikipédia (20/09/2026)
 
 O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)**
