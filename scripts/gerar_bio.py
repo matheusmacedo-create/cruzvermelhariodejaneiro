@@ -32,7 +32,7 @@ TITULO = "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais"
 DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de "
              "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
-URL_DOACAO = f"{ORIGEM}/doacao.html"
+URL_DOACAO = f"{ORIGEM}/doe/"
 
 # Perguntas que as pessoas fazem ao Google sobre a filial: cada resposta cita os caminhos oficiais e liga
 # o restante do ecossistema (matrícula, doação, chat). Texto puro no FAQPage; links só no HTML.

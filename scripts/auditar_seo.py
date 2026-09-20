@@ -25,7 +25,7 @@ from urllib.parse import urljoin, urlsplit
 PADRAO = [
     "https://cruzvermelhariodejaneiro.org/",
     "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/",
-    "https://cruzvermelhariodejaneiro.org/doacao.html",
+    "https://cruzvermelhariodejaneiro.org/doe/",
     "https://cruzvermelhariodejaneiro.org/campanha-agasalho.html",
     "https://cruzvermelhariodejaneiro.org/equipe.html",
     "https://cruzvermelhariodejaneiro.org/noticias/",
@@ -33,7 +33,6 @@ PADRAO = [
     "https://cruzvermelhariodejaneiro.org/termos/",
     "https://cruzvermelhariodejaneiro.org/privacidade/",
     "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/",
-    "https://doar.cruzvermelhariodejaneiro.org/",
     "https://projetocores.cruzvermelhariodejaneiro.org/",
     "https://puncaovenosav1.cruzvermelhariodejaneiro.org/",
     "https://escola.cursoscruzvermelha.org/",

@@ -399,6 +399,51 @@ incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normali
 página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
 precisam ser editados à mão.
 
+## Doação em `/doe/` (20/09/2026)
+
+A doação saiu do subdomínio `doar.cruzvermelhariodejaneiro.org` (app separado na Vercel) e passou a
+acontecer **dentro do domínio principal**, em `https://cruzvermelhariodejaneiro.org/doe/`, com o
+pagamento pela Unicopag. Motivo: endereço melhor para busca orgânica, um só padrão visual e o mesmo
+backend que já cuida das matrículas. A inspiração de fluxo é a página da Cruz Vermelha de São Paulo
+(`paybox.doare.org`): um cartão só, valor → dados → pagamento, sem sair da página.
+
+- **Página** (`scripts/gerar_doe.py` → `site/doe/index.html`): cabeçalho, rodapé, CSS, GA4, Meta Pixel
+  e chat vêm da home. Hero com o cartão de doação, "para onde vai sua doação", transparência
+  (CNPJ, utilidade pública, verbete da Wikipédia), como funciona e 7 perguntas frequentes com
+  `FAQPage`. JSON-LD: `WebPage`, `BreadcrumbList`, `DonateAction` e `FAQPage`.
+- **Tela de agradecimento** (`site/doe/obrigado/index.html`, `noindex`): endereço próprio
+  `/doe/obrigado/?t=<token>`, como o `/thankyou/<id>` de São Paulo. Mostra o PIX a pagar (QR, copia e
+  cola) ou o comprovante, confirma sozinha pelo `status.php` e é para onde os e-mails apontam.
+- **Front-end** (`site/doe/static/doe.js` + `doe.css`): valores sugeridos, valor livre, PIX ou cartão,
+  opção de cobrir os custos de processamento, máscaras e as mesmas validações do servidor. Eventos
+  GA4 (`begin_checkout`, `add_payment_info`, `purchase`) e Meta (`InitiateCheckout`, `AddPaymentInfo`,
+  `Purchase`), com UTMs guardadas na `sessionStorage`.
+- **Backend** (`site/doe/api/`): `info.php`, `doacoes.php`, `status.php`, `webhook.php`. Reaproveita o
+  bootstrap do checkout (`site/matricula-cursos-presenciais/api/lib.php`): mesmo banco, mesmo cliente
+  da Unicopag, mesma moldura de e-mail. O que é próprio da doação fica em `lib/doacao.php` (tabela
+  `mcp_doacoes`, criada sozinha) e `lib/email_doacao.php` (PIX em aberto, comprovante de doação
+  confirmada e aviso à equipe). `mcp_unicopag()` ganhou um parâmetro de chave, porque a **conta da
+  Unicopag das doações é outra**, configurada em `site/doe/api/config.php` (só no servidor, fora do
+  repositório; modelo em `config.example.php`). O que não estiver lá cai para a configuração geral do
+  checkout: banco, Resend, `SITE_URL`, taxas e e-mails.
+- **Quem processa e para onde vai**: a Unicopag recebe a doação e repassa o valor à filial, do mesmo
+  jeito que a Cruz Vermelha de São Paulo usa o Doare (no PIX dela aparece "Doare Servicos
+  Financeiro"). A página diz isso em três lugares — selo de confiança, transparência e FAQ — para o
+  nome no extrato não surpreender quem doou.
+- **Doação mensal**: a Unicopag tem API de assinaturas em base própria
+  (`https://subscription.unicopag.com.br/api/v1`, autenticação `Authorization: Bearer`), com webhooks
+  (`subscription.activated`, `subscription.renewed`, `charge.paid`…) e cobrança recorrente por cartão,
+  PIX ou boleto. Os endpoints de **criação** da assinatura não estão na documentação pública, então a
+  integração ainda não foi escrita: a constante `MCP_DOACAO_MENSAL_IMPLEMENTADA` (`lib/doacao.php`)
+  é a trava — enquanto for `false`, nem a configuração `DOACAO_MENSAL` liga a opção e a página nunca
+  oferece o que o servidor não consegue cobrar. Quando os endpoints estiverem em mãos: implementar,
+  virar a constante, ligar `DOACAO_MENSAL` e o seletor "Mensal" aparece sozinho no cartão.
+- **Endereços antigos**: `/doacao.html` responde **301** para `/doe/` (regra em `site/.htaccess`); o
+  arquivo continua no repositório, mas a regra vem antes. O subdomínio `doar.` ainda aponta para a
+  Vercel e **precisa ser redirecionado** (ver "Pontos de atenção").
+- **Testes**: `php scripts/testar_doacao.php` (50 testes, sem banco e sem rede) cobre configuração,
+  valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
+
 ## Referência da Wikipédia (20/09/2026)
 
 O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)**

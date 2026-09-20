@@ -29,11 +29,12 @@ class McpUnicopagErro extends RuntimeException
 
 /**
  * Chamada à API. `$corpo` pode conter o cartão: por isso nada do corpo entra em log ou exceção,
- * só o método, o caminho e o erro de transporte.
+ * só o método, o caminho e o erro de transporte. `$chave` permite usar outra conta da Unicopag
+ * (as doações têm conta própria); sem ela vale a UNICO_API_KEY do checkout.
  */
-function mcp_unicopag(string $metodo, string $caminho, ?array $corpo = null): array
+function mcp_unicopag(string $metodo, string $caminho, ?array $corpo = null, ?string $chave = null): array
 {
-    $chave = (string) mcp_cfg('UNICO_API_KEY', '');
+    $chave = (string) ($chave ?? mcp_cfg('UNICO_API_KEY', ''));
     if ($chave === '') {
         throw new McpUnicopagErro(500, 'Gateway de pagamento não configurado.');
     }

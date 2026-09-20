@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Landing pages nos subdomínios de cruzvermelhariodejaneiro.org (propriedade de domínio no Search Console).
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-20T10:47:49+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-20T12:20:10+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <url>
-    <loc>https://doar.cruzvermelhariodejaneiro.org/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
   <url>
     <loc>https://projetocores.cruzvermelhariodejaneiro.org/</loc>
     <lastmod>2026-09-01T15:59:20+00:00</lastmod>

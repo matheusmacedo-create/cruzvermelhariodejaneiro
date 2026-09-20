@@ -1,10 +1,15 @@
-# Raiz do site principal (public_html). Duas regras de SEO:
+# Raiz do site principal (public_html). Regras de SEO:
 # 1) www → apex: uma só versão do endereço para o Google (a canonical já aponta para o apex).
-# 2) Página 404 própria, com menu e atalhos, no lugar da página padrão da Hostinger.
+# 2) doacao.html → /doe/ (a doação passou a ser feita dentro do domínio).
+# 3) Página 404 própria, com menu e atalhos, no lugar da página padrão da Hostinger.
 # Os subdomínios servidos de pastas dentro de public_html não são afetados (a condição testa o host).
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{HTTP_HOST} ^www\.cruzvermelhariodejaneiro\.org$ [NC]
   RewriteRule ^(.*)$ https://cruzvermelhariodejaneiro.org/$1 [R=301,L]
+
+  # A doação passou a acontecer em /doe/ (antes: doacao.html e o subdomínio doar., na Vercel).
+  # 301 para juntar num endereço só o que o Google já conhece.
+  RewriteRule ^doacao\.html$ /doe/ [R=301,L]
 </IfModule>
 ErrorDocument 404 /404.html
