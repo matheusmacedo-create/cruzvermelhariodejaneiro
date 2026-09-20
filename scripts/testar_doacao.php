@@ -110,7 +110,16 @@ contem('e-mail do PIX traz o link de volta', 'https://exemplo.org/doe/obrigado/?
 contem('e-mail do PIX em texto puro', '00020126BR', $pix['texto']);
 
 $ok = mcp_doacao_montar_email_confirmada($doacao);
-verificar('assunto da confirmação', $ok['assunto'], 'Recebemos sua doação de R$ 105,00 · CVD-260920-0042');
+verificar('assunto da confirmação traz nome e valor', $ok['assunto'], 'Obrigado, Maria! Sua doação de R$ 105,00 foi confirmada');
+contem('agradecimento abre pelo nome', 'Obrigado, Maria.', $ok['html']);
+contem('selo com o valor doado', 'Doação confirmada', $ok['html']);
+contem('impacto da faixa de R$ 100', 'Voluntariado preparado', $ok['html']);
+contem('reconhece quem cobriu os custos', 'chegam inteiros à filial', $ok['html']);
+contem('convida para o voluntariado', 'form.spotform.com.br/voluntariocruzvermelharj', $ok['html']);
+contem('assina como equipe', 'Equipe da Cruz Vermelha Brasileira Rio de Janeiro', $ok['html']);
+verificar('impacto muda com o valor', mcp_doacao_impacto(3000)[0] . '|' . mcp_doacao_impacto(8000)[0] . '|' . mcp_doacao_impacto(15000)[0] . '|' . mcp_doacao_impacto(50000)[0], 'Material de primeiros socorros|Educação preventiva|Voluntariado preparado|Ação comunitária');
+verificar('doação sem custos cobertos não fala neles', str_contains(mcp_doacao_montar_email_confirmada(['taxa_centavos' => 0, 'total_centavos' => 10000] + $doacao)['html'], 'chegam inteiros'), false);
+contem('doação anônima é reconhecida', 'anônima', mcp_doacao_montar_email_confirmada(['anonimo' => 1] + $doacao)['html']);
 contem('confirmação agradece pelo primeiro nome', 'Maria', $ok['html']);
 contem('confirmação traz o CNPJ', '08.560.973/0001-97', $ok['html']);
 contem('confirmação separa os custos', 'Custos de processamento', $ok['html']);

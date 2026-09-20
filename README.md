@@ -439,6 +439,16 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   é a trava — enquanto for `false`, nem a configuração `DOACAO_MENSAL` liga a opção e a página nunca
   oferece o que o servidor não consegue cobrar. Quando os endpoints estiverem em mãos: implementar,
   virar a constante, ligar `DOACAO_MENSAL` e o seletor "Mensal" aparece sozinho no cartão.
+- **E-mail de agradecimento** (`mcp_doacao_montar_email_confirmada`): personalizado, não genérico.
+  O assunto leva o primeiro nome e o valor ("Obrigado, Maria! Sua doação de R$ 105,00 foi
+  confirmada"); o corpo abre com o nome no título, mostra um selo com o valor e a data, e um bloco
+  **"o que esse valor sustenta"** que muda conforme a faixa doada (`mcp_doacao_impacto()`: até R$ 60
+  material de primeiros socorros, até R$ 100 educação preventiva, até R$ 250 voluntariado, acima
+  disso ação comunitária — as mesmas referências de `IMPACTO` em `scripts/gerar_doe.py`, que precisam
+  ser mudadas nos dois lugares). Depois vêm os parágrafos que só aparecem quando cabem: cobriu os
+  custos, doação anônima, doação mensal. Fecha com o comprovante (protocolo e CNPJ), o convite para
+  acompanhar as ações e para se cadastrar como voluntário, e a assinatura da equipe. A versão em
+  texto puro acompanha as mesmas variações.
 - **Doação anônima**: caixa "Quero doar anonimamente" antes do aceite. Grava `anonimo` em
   `mcp_doacoes` (coluna criada sozinha por `mcp_garantir_colunas`), aparece como "Divulgação: doação
   anônima" no comprovante e no aviso à equipe, e a tela de agradecimento confirma. Nome, CPF, e-mail
@@ -454,7 +464,7 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   (`hosting_createWebsiteSubdomainV1` trocou o CNAME da Vercel por um ALIAS do CDN da Hostinger) com a
   pasta `site/doar/`, cujo `.htaccess` responde 301 para `/doe/`. Certificado emitido e ativo. O
   projeto antigo na Vercel continua existindo, sem tráfego: pode ser apagado lá quando quiser.
-- **Testes**: `php scripts/testar_doacao.php` (50 testes, sem banco e sem rede) cobre configuração,
+- **Testes**: `php scripts/testar_doacao.php` (59 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
 
 ## Revisão de SEO de 20/09/2026

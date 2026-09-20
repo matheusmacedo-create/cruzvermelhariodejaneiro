@@ -9,6 +9,7 @@
  */
 declare(strict_types=1);
 
+const MCP_DOACAO_FORMULARIO_VOLUNTARIO = 'https://form.spotform.com.br/voluntariocruzvermelharj';
 const MCP_DOACAO_AGRADECIMENTO = 'Como agradecimento, quem doa pelo site recebe acesso futuro a cursos gravados gratuitos da Cruz Vermelha Brasileira Rio de Janeiro.';
 
 function mcp_doacao_remetente(): string
@@ -55,6 +56,50 @@ function mcp_doacao_linhas(array $d): array
     return $linhas;
 }
 
+/**
+ * Selo do valor doado, em destaque no topo do agradecimento. Tabela (e não div) porque o Outlook
+ * ignora boa parte do CSS moderno, e cor de fundo repetida em bgcolor pelo mesmo motivo.
+ */
+function mcp_doacao_selo(string $total, string $quando): string
+{
+    return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#fff5f5" style="margin:20px 0 6px;background:#fff5f5;border:1px solid #f5c2c7;border-radius:14px">'
+        . '<tr><td align="center" style="padding:22px 18px">'
+        . '<p style="margin:0 0 6px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#cc0000;font-weight:800">Doação confirmada</p>'
+        . '<p style="margin:0;font-size:38px;line-height:1.05;letter-spacing:-.03em;color:#cc0000;font-weight:800">' . mcp_escapar($total) . '</p>'
+        . ($quando !== '' ? '<p style="margin:8px 0 0;font-size:13px;color:#718096">' . mcp_escapar($quando) . '</p>' : '')
+        . '</td></tr></table>';
+}
+
+/**
+ * O que a faixa de valor sustenta. São as mesmas referências da página (IMPACTO em
+ * scripts/gerar_doe.py): ao mudar lá, mudar aqui. Não é pacote fechado, e o texto diz isso.
+ */
+function mcp_doacao_impacto(int $centavos): array
+{
+    if ($centavos < 6000) {
+        return ['Material de primeiros socorros', 'Insumos das aulas práticas: ataduras, luvas e material de treino que passam pelas mãos de cada turma.'];
+    }
+    if ($centavos < 10000) {
+        return ['Educação preventiva', 'Orientação à população em ações comunitárias: o que fazer antes de o socorro chegar.'];
+    }
+    if ($centavos < 25000) {
+        return ['Voluntariado preparado', 'Formação inicial e capacitação continuada de quem veste o colete na rua.'];
+    }
+    return ['Ação comunitária', 'Campanhas como a do Agasalho e o Impacto das Cores, que chegam a quem mais precisa.'];
+}
+
+/** Bloco do impacto, com o título da faixa em destaque. */
+function mcp_doacao_bloco_impacto(int $centavos): string
+{
+    [$titulo, $texto] = mcp_doacao_impacto($centavos);
+    return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 4px">'
+        . '<tr><td style="padding:16px 18px;border-left:4px solid #cc0000;background:#f7f8fa;border-radius:0 12px 12px 0">'
+        . '<p style="margin:0 0 4px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#718096;font-weight:800">O que esse valor sustenta</p>'
+        . '<p style="margin:0 0 4px;font-size:17px;color:#0f1318;font-weight:800">' . mcp_escapar($titulo) . '</p>'
+        . '<p style="margin:0;font-size:15px;line-height:1.5;color:#4a5568">' . mcp_escapar($texto) . '</p>'
+        . '</td></tr></table>';
+}
+
 // ----------------------------------------------------------------------------- PIX em aberto
 function mcp_doacao_montar_email_pix(array $d): array
 {
@@ -94,32 +139,64 @@ function mcp_doacao_email_pix(array $d): void
 function mcp_doacao_montar_email_confirmada(array $d): array
 {
     $nome = mcp_escapar(mcp_primeiro_nome((string) $d['nome']));
+    $valor = (int) $d['valor_centavos'];
+    $taxa = (int) $d['taxa_centavos'];
     $total = mcp_brl((int) $d['total_centavos']);
+    $protocolo = mcp_doacao_protocolo((int) $d['id'], (string) $d['criado_em']);
+    $quando = mcp_data_brt((string) ($d['pago_em'] ?: $d['criado_em']), 'd/m/Y \à\s H\hi');
     $site = mcp_site_url();
     $mensal = $d['frequencia'] === 'mensal';
-    $corpo = mcp_p("$nome, sua doação de <strong>$total</strong> foi confirmada. Obrigado por manter a Cruz Vermelha Brasileira Rio de Janeiro em movimento.")
+    $anonima = (int) ($d['anonimo'] ?? 0) === 1;
+
+    // Abertura: agradece pelo nome e diz onde o dinheiro já está. Nada de "prezado(a)".
+    $corpo = mcp_p('Sua doação acabou de chegar na Cruz Vermelha Brasileira Rio de Janeiro. Ela vira preparo, presença e resposta para quem precisa no estado do Rio.')
+        . mcp_doacao_selo($total, $quando)
+        . mcp_doacao_bloco_impacto($valor);
+
+    // O que muda conforme as escolhas de quem doou.
+    if ($taxa > 0) {
+        $corpo .= mcp_p('Você ainda escolheu cobrir os custos de processamento, então <strong>'
+            . mcp_escapar(mcp_brl($valor)) . '</strong> chegam inteiros à filial, sem desconto nenhum.');
+    }
+    if ($anonima) {
+        $corpo .= mcp_p('Registramos sua doação como <strong>anônima</strong>: seu nome não entra em agradecimentos públicos, redes sociais nem listas de doadores. Ele fica só com a equipe que cuida das doações.');
+    }
+    if ($mensal) {
+        $corpo .= mcp_p('Esta é uma <strong>doação mensal</strong>: a cobrança se repete todo mês, e avisamos você antes de cada uma. Para pausar ou cancelar, basta responder este e-mail.');
+    }
+
+    $corpo .= mcp_subtitulo('Seu comprovante')
         . mcp_caixa(mcp_doacao_linhas($d), ['Total' => $total])
-        . mcp_subtitulo('Para onde vai sua doação')
-        . mcp_passos([
-            ['Formação de voluntários', 'Turmas de formação inicial e capacitação continuada na sede, no Centro do Rio.'],
-            ['Capacitação em primeiros socorros', 'Material, manequins e instrutores para quem aprende a socorrer.'],
-            ['Ações comunitárias e campanhas', 'Campanha do Agasalho, Impacto das Cores e o atendimento à população.'],
-        ])
-        . ((int) ($d['anonimo'] ?? 0) === 1 ? mcp_nota('Sua doação foi registrada como <strong>anônima</strong>: seu nome não é usado em agradecimentos públicos nem em listas de doadores.') : '')
-        . mcp_p(mcp_escapar(MCP_DOACAO_AGRADECIMENTO))
-        . mcp_botao($site . '/noticias/', 'Ver as ações da filial', true)
-        . mcp_nota('Guarde este e-mail: ele é o comprovante da sua doação. Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro · CNPJ ' . MCP_EMAIL_CNPJ . '.')
-        . ($mensal ? mcp_nota('Para pausar ou cancelar a doação mensal, responda este e-mail a qualquer momento.') : '');
+        . mcp_nota('Guarde este e-mail: ele é o comprovante da sua doação, com o protocolo <strong>' . mcp_escapar($protocolo)
+            . '</strong> e o CNPJ ' . MCP_EMAIL_CNPJ . ' da Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro.')
+        . mcp_subtitulo('Continue por perto')
+        . mcp_p('Quem doa costuma querer ver o resultado. As ações da filial, as turmas formadas e as campanhas em andamento ficam nas notícias do site e no Instagram.')
+        . mcp_botao($site . '/noticias/', 'Ver as ações da filial')
+        . mcp_p('E se você quiser ir além da doação: a filial forma os próprios voluntários, com turmas na sede, no Centro do Rio. <a href="' . MCP_DOACAO_FORMULARIO_VOLUNTARIO . '" style="color:#cc0000;font-weight:700">Cadastre-se como voluntário</a> ou acompanhe pelo <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" style="color:#cc0000;font-weight:700">Instagram @cruzvermelhabrasileirarj</a>.')
+        . mcp_nota(mcp_escapar(MCP_DOACAO_AGRADECIMENTO))
+        . '<p style="margin:26px 0 0;font-size:15px;line-height:1.5;color:#1a202c">Com gratidão,<br><strong>Equipe da Cruz Vermelha Brasileira Rio de Janeiro</strong></p>';
+
+    $texto = "Obrigado, $nome.\n\nSua doação acabou de chegar na Cruz Vermelha Brasileira Rio de Janeiro. Ela vira preparo, presença e resposta para quem precisa no estado do Rio.\n\n"
+        . "Doação confirmada: $total" . ($quando !== '' ? " em $quando" : '') . "\n"
+        . "Protocolo: $protocolo\n"
+        . 'Forma de pagamento: ' . mcp_doacao_metodo_rotulo($d) . "\n"
+        . ($taxa > 0 ? 'Você cobriu os custos de processamento, então ' . mcp_brl($valor) . " chegam inteiros à filial, sem desconto.\n" : '')
+        . ($anonima ? "Sua doação foi registrada como anônima.\n" : '')
+        . ($mensal ? "Doação mensal: a cobrança se repete todo mês. Para pausar ou cancelar, responda este e-mail.\n" : '')
+        . "\nAções da filial: $site/noticias/\n"
+        . 'Seja voluntário: ' . MCP_DOACAO_FORMULARIO_VOLUNTARIO . "\n\n"
+        . MCP_DOACAO_AGRADECIMENTO . "\n\n"
+        . 'Com gratidão,\nEquipe da Cruz Vermelha Brasileira Rio de Janeiro\nCNPJ ' . MCP_EMAIL_CNPJ . "\n";
+
     return [
         'para' => (string) $d['email'],
-        'assunto' => "Recebemos sua doação de $total · " . mcp_doacao_protocolo((int) $d['id'], (string) $d['criado_em']),
-        'html' => mcp_moldura('Sua doação foi confirmada', $corpo, [
+        'assunto' => "Obrigado, $nome! Sua doação de $total foi confirmada",
+        'html' => mcp_moldura('Obrigado, ' . $nome . '.', $corpo, [
             'eyebrow' => 'Doação · Cruz Vermelha Brasileira Rio de Janeiro',
-            'preheader' => "Obrigado! Recebemos sua doação de $total.",
+            'preheader' => "Recebemos sua doação de $total. Aqui está o comprovante e o que ela sustenta.",
             'motivo' => 'Você recebeu este e-mail porque doou em cruzvermelhariodejaneiro.org/doe.',
         ]),
-        'texto' => "$nome, sua doação de $total foi confirmada. Obrigado!\n\nProtocolo: " . mcp_doacao_protocolo((int) $d['id'], (string) $d['criado_em'])
-            . "\nForma de pagamento: " . mcp_doacao_metodo_rotulo($d) . "\n\n" . MCP_DOACAO_AGRADECIMENTO . "\n\nCruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro · CNPJ " . MCP_EMAIL_CNPJ . "\n",
+        'texto' => $texto,
     ];
 }
 
