@@ -424,16 +424,24 @@ TXT; com ele em mãos, é um registro a acrescentar na zona (nome `google._domai
 DKIM, mensagens enviadas pelo Gmail do domínio dependem só do SPF e ficam mais sujeitas a spam e a
 falsificação.
 
-**Resíduos do e-mail antigo da Hostinger**, para apagar no hPanel (DNS da zona). Não apaguei pela API
-porque o endpoint de exclusão em massa não aceita filtro com segurança e um erro derrubaria a zona
-inteira; pelo painel é seguro e leva um minuto:
+**Resíduos do e-mail antigo da Hostinger**, para apagar no hPanel (DNS da zona). Três caminhos pela
+API foram tentados em 20/09 e nenhum funciona, então não insista: `DNS_deleteDNSRecordsV1` responde
+**422** sem filtro e o conector não repassa o filtro (nem como `filters`, nem como `zone`);
+`DNS_updateDNSRecordsV1` com `is_disabled: true` responde "Request accepted" mas **ignora o campo** —
+os registros voltam com `is_disabled: false`. A zona não foi danificada em nenhuma tentativa (os 422
+são recusados antes de gravar). Pelo painel é seguro e leva um minuto:
 
 - `autodiscover` CNAME → `autodiscover.mail.hostinger.com.`
 - `autoconfig` CNAME → `autoconfig.mail.hostinger.com.`
 - `hostingermail-a._domainkey`, `hostingermail-b._domainkey`, `hostingermail-c._domainkey` (CNAME)
 
 Os dois primeiros são os piores: fazem Outlook e Thunderbird tentarem configurar uma conta na
-Hostinger, que não existe mais. Os três DKIM são inertes.
+Hostinger, que não existe mais. Os três DKIM são inertes. Nada disso derruba e-mail: o MX é do Google
+e a entrega não passa por esses registros; é limpeza, não urgência.
+
+Caminho no painel: **hPanel → Domínios → cruzvermelhariodejaneiro.org → DNS / Nameservers → Gerenciar
+registros DNS**, localizar cada um dos cinco nomes e clicar em excluir. A Hostinger tira um snapshot
+da zona antes de cada alteração, então dá para voltar atrás pelo próprio painel.
 
 **Depois do DKIM**, vale endurecer o DMARC para `p=quarantine` e, mais adiante, `p=reject`. O
 alinhamento estrito já em uso passa pelo DKIM da Resend (`d=` é o domínio) e pelo SPF do Gmail.
