@@ -80,6 +80,31 @@
               "url": "/matricula-cursos-presenciais/"
             }
           ]
+        },
+        {
+          "pergunta": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
+          "resposta": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária e as datas de cada um na página de matrícula.",
+          "links": [
+            {
+              "texto": "página de matrícula",
+              "url": "/matricula-cursos-presenciais/"
+            }
+          ]
+        },
+        {
+          "pergunta": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
+          "resposta": "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Escolha a sua turma na página de matrícula.",
+          "links": [
+            {
+              "texto": "página de matrícula",
+              "url": "/matricula-cursos-presenciais/"
+            }
+          ]
+        },
+        {
+          "pergunta": "O certificado dos cursos é reconhecido pelo MEC?",
+          "resposta": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.",
+          "links": []
         }
       ]
     },
@@ -161,6 +186,36 @@
             {
               "texto": "chat do site",
               "url": "/#chat"
+            }
+          ]
+        },
+        {
+          "pergunta": "Como comparar os cursos de primeiros socorros no Rio de Janeiro?",
+          "resposta": "Compare quatro coisas, e não só o preço anunciado: carga horária, prática real com manequim, quem emite o certificado e o custo total. Na Cruz Vermelha Brasileira Rio de Janeiro o custo total é fechado e aparece antes do pagamento: inscrição de R$ 99 mais o valor do curso - R$ 180 no Primeiros Socorros Básico, de 8 horas, R$ 150 na Lei Lucas, de 8 horas, e R$ 150 no Suporte Básico de Vida, de 4 horas. Sem mensalidade, sem taxa de certificado e sem material à parte. Confira na página de matrícula.",
+          "links": [
+            {
+              "texto": "página de matrícula",
+              "url": "/matricula-cursos-presenciais/"
+            }
+          ]
+        },
+        {
+          "pergunta": "Existe curso de cuidador de idosos gratuito no Rio de Janeiro?",
+          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da filial, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. Para garantir a vaga agora, faça a matrícula em Cuidador de Idosos.",
+          "links": [
+            {
+              "texto": "matrícula em Cuidador de Idosos",
+              "url": "/matricula-cursos-presenciais/?curso=cuidador-de-idosos"
+            }
+          ]
+        },
+        {
+          "pergunta": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
+          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da filial. Veja o curso Lei Lucas.",
+          "links": [
+            {
+              "texto": "curso Lei Lucas",
+              "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas"
             }
           ]
         }

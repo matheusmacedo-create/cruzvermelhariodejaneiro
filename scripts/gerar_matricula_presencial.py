@@ -25,11 +25,13 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 from pathlib import Path
 
 import chat_widget
 import icones
+import minificar_css
 
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
@@ -136,6 +138,10 @@ def partes_da_home(home: str) -> dict:
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
     # Os url() do CSS são relativos à raiz da home; nas páginas em subpastas viram /pasta/assets/... (404).
     estilo = estilo.replace('url("assets/', 'url("/assets/').replace("url('assets/", "url('/assets/")
+    # Aqui o CSS é cópia, não fonte: pode ir minificado. A home guarda a versão legível.
+    # SEM_MINIFICAR=1 gera o CSS legível, para comparar o layout das duas versões.
+    if os.environ.get("SEM_MINIFICAR") != "1":
+        estilo = minificar_css.minificar(estilo)
     header = bloco(home, '  <header class="main-header">', "  </header>")
     footer = bloco(home, "  <footer>", "  </footer>")
     # Só o script do menu sanfona; os outros scripts da home (seletor de curso, contato) são da home.
@@ -257,12 +263,12 @@ def main() -> int:
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
         curso = {"@type": "Course", "name": c["nome"], "description": nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else "")),
-                 "url": f"{URL_PAGINA}?curso={s}", "provider": provedor, "courseMode": "Onsite",
+                 "url": f"{URL_PAGINA}#curso-{s}", "provider": provedor, "courseMode": "Onsite",
                  "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro"}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
-                    "priceCurrency": "BRL", "url": f"{URL_PAGINA}?curso={s}", "availability": "https://schema.org/InStock"}]
+                    "priceCurrency": "BRL", "url": f"{URL_PAGINA}#curso-{s}", "availability": "https://schema.org/InStock"}]
         if c["valor_curso_centavos"]:
             ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na plataforma da escola)",
                             "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
@@ -278,6 +284,7 @@ def main() -> int:
             {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
             {"@type": "ListItem", "position": 2, "name": "Matrícula cursos presenciais", "item": URL_PAGINA}]},
         {"@context": "https://schema.org", "@type": "ItemList", "name": "Matrícula em cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro",
+                 "numberOfItems": len(dados["cursos"]),
          "url": URL_PAGINA, "itemListElement": itens},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r in FAQ_PAGINA]},

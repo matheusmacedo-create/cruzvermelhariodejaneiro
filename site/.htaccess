@@ -1,7 +1,8 @@
 # Raiz do site principal (public_html). Regras de SEO:
 # 1) www → apex: uma só versão do endereço para o Google (a canonical já aponta para o apex).
 # 2) doacao.html → /doe/ (a doação passou a ser feita dentro do domínio).
-# 3) Página 404 própria, com menu e atalhos, no lugar da página padrão da Hostinger.
+# 3) Endereços antigos (sos-venezuela.html, install.php) e variações sem extensão → 301.
+# 4) Página 404 própria, com menu e atalhos, no lugar da página padrão da Hostinger.
 # Os subdomínios servidos de pastas dentro de public_html não são afetados (a condição testa o host).
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -11,5 +12,23 @@
   # A doação passou a acontecer em /doe/ (antes: doacao.html e o subdomínio doar., na Vercel).
   # 301 para juntar num endereço só o que o Google já conhece.
   RewriteRule ^doacao\.html$ /doe/ [R=301,L]
+
+  # Endereços antigos e variações sem extensão que o Google e links antigos ainda tentam.
+  # Cada um responde 301 para a página viva equivalente, em vez de 404.
+  RewriteRule ^sos-venezuela\.html$ /doe/ [R=301,L]
+  RewriteRule ^install\.php$ /bio/ [R=301,L]
+  RewriteRule ^(doacao|doar|doe-agora)/?$ /doe/ [R=301,L]
+  RewriteRule ^cursos/?$ /matricula-cursos-presenciais/ [R=301,L]
+  RewriteRule ^(matricula|inscricao)/?$ /matricula-cursos-presenciais/ [R=301,L]
+  RewriteRule ^equipe/?$ /equipe.html [R=301,L]
+  RewriteRule ^campanha-agasalho/?$ /campanha-agasalho.html [R=301,L]
+  RewriteRule ^(voluntario|voluntariado|seja-voluntario)/?$ /bio/ [R=301,L]
+  RewriteRule ^contato/?$ /#contato [R=301,L]
 </IfModule>
+<IfModule mod_headers.c>
+  # HSTS: o navegador passa a só falar HTTPS com o domínio, sem a ida e volta pelo HTTP.
+  # Um ano, subdomínios incluídos. Só é enviado sobre HTTPS, como manda a especificação.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
 ErrorDocument 404 /404.html
