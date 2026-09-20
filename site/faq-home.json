@@ -208,6 +208,16 @@
               "url": "/matricula-cursos-presenciais/?curso=cuidador-de-idosos"
             }
           ]
+        },
+        {
+          "pergunta": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
+          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da filial. Veja o curso Lei Lucas.",
+          "links": [
+            {
+              "texto": "curso Lei Lucas",
+              "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas"
+            }
+          ]
         }
       ]
     },
