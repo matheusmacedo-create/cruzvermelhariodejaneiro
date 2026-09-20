@@ -25,4 +25,10 @@
   RewriteRule ^(voluntario|voluntariado|seja-voluntario)/?$ /bio/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]
 </IfModule>
+<IfModule mod_headers.c>
+  # HSTS: o navegador passa a só falar HTTPS com o domínio, sem a ida e volta pelo HTTP.
+  # Um ano, subdomínios incluídos. Só é enviado sobre HTTPS, como manda a especificação.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+</IfModule>
+
 ErrorDocument 404 /404.html
