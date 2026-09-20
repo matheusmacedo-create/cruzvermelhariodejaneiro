@@ -975,7 +975,7 @@
     .faq-list .faq-grupo:first-child { margin-top: 0; }
   </style>
   <link rel="stylesheet" href="/doe/static/doe.css?v=c89748d0f7">
-  <script src="/doe/static/doe.js?v=cbec2220bf" defer></script>
+  <script src="/doe/static/doe.js?v=b8a51a6923" defer></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1045,7 +1045,7 @@
           "name": "Para onde vai o dinheiro da minha doação?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sua doação fica na Cruz Vermelha Brasileira Rio de Janeiro, a filial do Estado do Rio de Janeiro, e sustenta a formação de voluntários, a capacitação em primeiros socorros, a educação preventiva, as campanhas de apoio comunitário e a estrutura que mantém tudo isso de pé, na sede do Centro do Rio. Os valores sugeridos na página são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior no mês."
+            "text": "Sua doação fica na Cruz Vermelha Brasileira Rio de Janeiro, a filial do Estado do Rio de Janeiro, e sustenta a formação de voluntários, a capacitação em primeiros socorros, a educação preventiva, as campanhas de apoio comunitário e a estrutura que mantém tudo isso de pé, na sede do Centro do Rio. Os valores sugeridos na página são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês."
           }
         },
         {
@@ -1077,15 +1077,23 @@
           "name": "Posso doar todo mês?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A doação mensal está sendo ligada nesta mesma página, por PIX Automático e por cartão: você autoriza uma vez e a cobrança se repete todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto o botão não aparece aqui, é possível repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo chat do site."
+            "text": "Em breve, sim, nesta mesma página: por PIX Automático ou por cartão, você autoriza uma vez e a cobrança se repete todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto a opção não aparece no formulário, dá para repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo chat do site."
           }
         },
         {
           "@type": "Question",
-          "name": "Quero doar roupas, cobertores ou alimentos. Como faço?",
+          "name": "Quero doar roupas e cobertores. Como faço?",
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Doações de roupas de frio, cobertores e calçados são recebidas na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. Leve as peças limpas e em bom estado. Para outros itens, confirme antes com a equipe pelo chat do site."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Posso doar sem que meu nome apareça?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Pode. Marque a opção \"Quero doar anonimamente\" antes de concluir e seu nome não é usado em agradecimentos públicos, em redes sociais nem em listas de doadores. Nome, CPF, e-mail e telefone continuam sendo pedidos porque o meio de pagamento exige esses dados para emitir a cobrança e para enviar o seu comprovante, mas eles ficam restritos à equipe que cuida das doações."
           }
         },
         {
@@ -1176,12 +1184,12 @@
       <div class="wrap doe-grid">
         <div>
           <p class="eyebrow">Doação</p>
-          <h1>Doar para a Cruz Vermelha Brasileira Rio de Janeiro</h1>
+          <h1>Doe para a Cruz Vermelha Brasileira Rio de Janeiro</h1>
           <p class="lead">Em menos de um minuto, por PIX ou cartão. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.</p>
           <ul class="doe-confianca">
             <li><i class="fa-solid fa-scale-balanced" aria-hidden="true"><svg class="ico ico-scale-balanced" aria-hidden="true" focusable="false"><use href="#i-scale-balanced"/></svg></i><span><b>Utilidade pública municipal e estadual</b>: lei municipal 5.153/2010 e lei estadual 9.984/2023.</span></li>
             <li><i class="fa-solid fa-certificate" aria-hidden="true"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i><span><b>CNPJ 08.560.973/0001-97</b>, Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro.</span></li>
-            <li><i class="fa-solid fa-lock" aria-hidden="true"><svg class="ico ico-lock" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg></i><span><b>Processado pela Unicopag</b>, instituição de pagamento, que repassa o valor à filial. Comprovante por e-mail.</span></li>
+            <li><i class="fa-solid fa-lock" aria-hidden="true"><svg class="ico ico-lock" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg></i><span><b>Processado pela Unicopag</b>, instituição de pagamento, que repassa o valor à filial.</span></li>
             <li><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"><svg class="ico ico-hand-holding-heart" aria-hidden="true" focusable="false"><use href="#i-hand-holding-heart"/></svg></i><span><b>Acesso futuro a cursos gravados gratuitos</b> para quem doa pelo site.</span></li>
           </ul>
         </div>
@@ -1219,7 +1227,7 @@
                 </label>
               </div>
               <button class="btn btn-red doe-acao" type="button" id="doe-continuar" style="margin-top:20px">Continuar</button>
-              <p class="doe-aviso">Pagamento processado pela Unicopag, que repassa o valor à filial. Comprovante por e-mail.</p>
+              <p class="doe-aviso">Conexão segura. O comprovante chega no seu e-mail assim que o pagamento é confirmado.</p>
             </div>
 
             <div id="doe-dados" hidden>
@@ -1247,6 +1255,10 @@
                 <label class="doe-caixa" id="doe-cobre-caixa">
                   <input type="checkbox" id="doe-cobre">
                   <span>Quero cobrir os <b>custos de processamento</b> (<span id="doe-taxa-valor">R$ 0,00</span>) para a filial receber o valor cheio.</span>
+                </label>
+                <label class="doe-caixa" id="doe-anonimo-caixa">
+                  <input type="checkbox" id="doe-anonimo">
+                  <span>Quero <b>doar anonimamente</b>: meu nome não aparece em agradecimentos públicos nem em listas de doadores.</span>
                 </label>
                 <label class="doe-caixa" id="doe-aceite-caixa">
                   <input type="checkbox" id="doe-aceite">
@@ -1288,7 +1300,7 @@
         <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">verbete da Wikipédia</a>. O pagamento da doação é processado pela Unicopag, instituição de pagamento, que repassa o valor à filial: é o nome dela que aparece no seu extrato e no PIX.</p>
         <div class="doe-dados">
           <div class="doe-dado"><span>Razão social</span><b>Cruz Vermelha Brasileira<br>Filial do Estado do Rio de Janeiro</b></div>
-          <div class="doe-dado"><span>CNPJ</span><b>08.560.973/0001-97</b><p>O mesmo que aparece no comprovante da sua doação.</p></div>
+          <div class="doe-dado"><span>CNPJ</span><b>08.560.973/0001-97</b><p>É o CNPJ do comprovante que enviamos por e-mail.</p></div>
           <div class="doe-dado"><span>Utilidade pública</span><b>Municipal e estadual</b><p>Lei municipal 5.153/2010 e lei estadual 9.984/2023.</p></div>
           <div class="doe-dado"><span>Sede</span><b>Praça da Cruz Vermelha, 10</b><p>Palácio da Cruz Vermelha, Centro do Rio de Janeiro.</p></div>
         </div>
@@ -1318,7 +1330,7 @@
         <div class="faq-list">
           <details class="faq-item" open>
             <summary>Para onde vai o dinheiro da minha doação?</summary>
-            <div class="faq-answer">Sua doação fica na Cruz Vermelha Brasileira Rio de Janeiro, a filial do Estado do Rio de Janeiro, e sustenta a formação de voluntários, a capacitação em primeiros socorros, a educação preventiva, as campanhas de apoio comunitário e a estrutura que mantém tudo isso de pé, na sede do Centro do Rio. Os valores sugeridos na página são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior no mês.</div>
+            <div class="faq-answer">Sua doação fica na Cruz Vermelha Brasileira Rio de Janeiro, a filial do Estado do Rio de Janeiro, e sustenta a formação de voluntários, a capacitação em primeiros socorros, a educação preventiva, as campanhas de apoio comunitário e a estrutura que mantém tudo isso de pé, na sede do Centro do Rio. Os valores sugeridos na página são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês.</div>
           </details>
           <details class="faq-item">
             <summary>A doação é segura? Quem processa o pagamento?</summary>
@@ -1334,11 +1346,15 @@
           </details>
           <details class="faq-item">
             <summary>Posso doar todo mês?</summary>
-            <div class="faq-answer">A doação mensal está sendo ligada nesta mesma página, por PIX Automático e por cartão: você autoriza uma vez e a cobrança se repete todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto o botão não aparece aqui, é possível repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo <a href="/#chat">chat do site</a>.</div>
+            <div class="faq-answer">Em breve, sim, nesta mesma página: por PIX Automático ou por cartão, você autoriza uma vez e a cobrança se repete todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto a opção não aparece no formulário, dá para repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo <a href="/#chat">chat do site</a>.</div>
           </details>
           <details class="faq-item">
-            <summary>Quero doar roupas, cobertores ou alimentos. Como faço?</summary>
+            <summary>Quero doar roupas e cobertores. Como faço?</summary>
             <div class="faq-answer">Doações de roupas de frio, cobertores e calçados são recebidas na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. Leve as peças limpas e em bom estado. Para outros itens, confirme antes com a equipe pelo <a href="/#chat">chat do site</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Posso doar sem que meu nome apareça?</summary>
+            <div class="faq-answer">Pode. Marque a opção &quot;Quero doar anonimamente&quot; antes de concluir e seu nome não é usado em agradecimentos públicos, em redes sociais nem em listas de doadores. Nome, CPF, e-mail e telefone continuam sendo pedidos porque o meio de pagamento exige esses dados para emitir a cobrança e para enviar o seu comprovante, mas eles ficam restritos à equipe que cuida das doações.</div>
           </details>
           <details class="faq-item">
             <summary>Minha empresa quer apoiar a Cruz Vermelha Brasileira Rio de Janeiro.</summary>

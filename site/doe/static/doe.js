@@ -181,6 +181,7 @@
       + '<div><span>Forma de pagamento</span><b>' + (d.metodo === 'pix' ? 'PIX' : 'Cartão' + (d.cartao && d.cartao.ultimos4 ? ' ···· ' + esc(d.cartao.ultimos4) : '')) + '</b></div>'
       + '<div><span>Valor</span><b>' + brl(d.total_centavos) + '</b></div>'
       + '</div>'
+      + (d.anonima ? '<p>Registramos sua doação como <b>anônima</b>: seu nome não aparece em agradecimentos públicos.</p>' : '')
       + '<p>Sua doação mantém a formação de voluntários, a capacitação em primeiros socorros e as ações da Cruz Vermelha Brasileira Rio de Janeiro no estado.</p>'
       + '<a class="btn btn-red doe-acao" href="/noticias/">Ver as ações da filial</a>'
       + '<a class="btn btn-outline doe-acao" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" style="margin-top:8px">Seguir no Instagram</a>'
@@ -229,6 +230,7 @@
       telefone: digitos(q('#doe-telefone').value),
       metodo: metodo(),
       cobre_taxa: cobreTaxa(),
+      anonimo: q('#doe-anonimo').checked,
       aceite: q('#doe-aceite').checked,
       site: q('#doe-site').value,
       origem: origemAtual
@@ -314,6 +316,7 @@
       });
     });
     q('#doe-cobre').addEventListener('change', atualizarTotais);
+    q('#doe-anonimo').addEventListener('change', function () { q('#doe-anonimo-caixa').classList.toggle('marcado', this.checked); });
 
     q('#doe-continuar').addEventListener('click', function () {
       erro('');

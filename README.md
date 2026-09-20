@@ -438,11 +438,47 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   é a trava — enquanto for `false`, nem a configuração `DOACAO_MENSAL` liga a opção e a página nunca
   oferece o que o servidor não consegue cobrar. Quando os endpoints estiverem em mãos: implementar,
   virar a constante, ligar `DOACAO_MENSAL` e o seletor "Mensal" aparece sozinho no cartão.
+- **Doação anônima**: caixa "Quero doar anonimamente" antes do aceite. Grava `anonimo` em
+  `mcp_doacoes` (coluna criada sozinha por `mcp_garantir_colunas`), aparece como "Divulgação: doação
+  anônima" no comprovante e no aviso à equipe, e a tela de agradecimento confirma. Nome, CPF, e-mail
+  e telefone continuam obrigatórios porque a Unicopag exige, mas a filial não usa o nome em
+  agradecimento público. Mesma ideia do `discloseDonorCheckbox` da página de São Paulo.
+- **Marcação de origem**: os botões da Campanha do Agasalho levam
+  `?utm_source=site&utm_medium=agasalho&utm_campaign=campanha-agasalho` e o da home
+  `utm_medium=home`; o `doe.js` guarda as UTMs e elas entram na doação e no aviso à equipe. O link do
+  menu fica sem marcação, porque é navegação.
 - **Endereços antigos**: `/doacao.html` responde **301** para `/doe/` (regra em `site/.htaccess`); o
-  arquivo continua no repositório, mas a regra vem antes. O subdomínio `doar.` ainda aponta para a
-  Vercel e **precisa ser redirecionado** (ver "Pontos de atenção").
+  arquivo continua no repositório, mas a regra vem antes. O subdomínio
+  **`doar.cruzvermelhariodejaneiro.org` saiu da Vercel em 20/09/2026**: virou subdomínio da Hostinger
+  (`hosting_createWebsiteSubdomainV1` trocou o CNAME da Vercel por um ALIAS do CDN da Hostinger) com a
+  pasta `site/doar/`, cujo `.htaccess` responde 301 para `/doe/`. Certificado emitido e ativo. O
+  projeto antigo na Vercel continua existindo, sem tráfego: pode ser apagado lá quando quiser.
 - **Testes**: `php scripts/testar_doacao.php` (50 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
+
+## Revisão de SEO de 20/09/2026
+
+Rodada de `python3 scripts/auditar_seo.py` (páginas ao vivo) mais uma varredura de links e atalhos.
+
+- **Sem problemas**: home, `/matricula-cursos-presenciais/`, `/doe/`, `equipe.html`. Títulos dentro de
+  60 caracteres, descrições até 160, canonical, Open Graph, Twitter Card, JSON-LD e imagens com
+  dimensões.
+- **Atalhos consertados**: `/links/` e `/link/` respondiam 302 para `install.php` (404), o instalador
+  do "CVB Links" que nunca foi usado; agora respondem **301 para `/bio/`**, e os subdomínios `links.`
+  e `link.`, servidos dessas pastas, vão junto. `site/links/.htaccess` e `site/link/.htaccess`.
+- **`robots.txt`**: passou a declarar `sitemap-index.xml` além do `sitemap.xml` da Redação (o índice
+  já contém os dois). Atenção: quem publica a Redação também escreve esse arquivo; se ele voltar ao
+  conteúdo antigo, é só republicar `site/robots.txt`.
+- **Links internos**: as 38 URLs internas das páginas principais respondem 200 ou 301; nenhuma
+  quebrada.
+- **Redirecionamentos ativos**: `/doacao.html` → `/doe/`, `/cursos.html` →
+  `/matricula-cursos-presenciais/`, `/escola` → plataforma da escola, `/doe` → `/doe/`, `/bio` →
+  `/bio/`, `/links/` e `/link/` → `/bio/`, `doar.` → `/doe/`.
+- **Fica em aberto, fora do nosso alcance**: `/noticias/`, `/termos/` e `/privacidade/` (Redação, na
+  Vercel) estão sem `og:image` e sem `twitter:card`, e as notícias têm títulos longos; a escola
+  (`escola.cursoscruzvermelha.org`, outra conta) está sem descrição, canonical, Open Graph e JSON-LD.
+- **Título da Campanha do Agasalho** ficou em 62 caracteres: encurtar exigiria tirar "Campanha do
+  Agasalho" (que é o termo buscado) ou abreviar o nome da filial, que a convenção não permite.
 
 ## Referência da Wikipédia (20/09/2026)
 

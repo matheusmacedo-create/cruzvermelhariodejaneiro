@@ -1,0 +1,11 @@
+# doar.cruzvermelhariodejaneiro.org: endereço antigo da doação (app na Vercel), desativado em
+# 20/09/2026. Tudo responde 301 para a página de doação no domínio principal, para não perder
+# quem tem o link salvo, impresso ou em anúncio, e para o Google juntar os dois endereços num só.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(.*)$ https://cruzvermelhariodejaneiro.org/doe/ [R=301,L]
+</IfModule>
+# Sem mod_rewrite: o redirecionamento do próprio Apache.
+<IfModule !mod_rewrite.c>
+  RedirectMatch 301 ^/(.*)$ https://cruzvermelhariodejaneiro.org/doe/
+</IfModule>

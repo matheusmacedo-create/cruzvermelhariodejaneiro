@@ -129,6 +129,7 @@ function mcp_doacao_db(): PDO
         taxa_centavos INT UNSIGNED NOT NULL DEFAULT 0,
         total_centavos INT UNSIGNED NOT NULL,
         cobre_taxa TINYINT(1) NOT NULL DEFAULT 0,
+        anonimo TINYINT(1) NOT NULL DEFAULT 0,
         status ENUM('pendente','pago','recusado','expirado','estornado') NOT NULL DEFAULT 'pendente',
         unicopag_hash VARCHAR(64) NULL,
         unicopag_status VARCHAR(40) NULL,
@@ -159,6 +160,8 @@ function mcp_doacao_db(): PDO
         KEY ix_status (status),
         KEY ix_ip (ip, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Colunas acrescentadas depois da primeira versão da tabela.
+    mcp_garantir_colunas($pdo, 'mcp_doacoes', ['anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0']);
     $pronto = true;
     return $pdo;
 }
@@ -273,6 +276,7 @@ function mcp_doacao_publico(array $d): array
         'status' => $d['status'],
         'metodo' => $d['metodo'],
         'frequencia' => $d['frequencia'],
+        'anonima' => (int) ($d['anonimo'] ?? 0) === 1,
         'nome' => mcp_primeiro_nome((string) $d['nome']),
         'email' => $d['email'],
         'protocolo' => mcp_doacao_protocolo((int) $d['id'], (string) $d['criado_em']),

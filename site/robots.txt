@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# O índice reúne as páginas do site, as notícias e os subdomínios; sitemap.xml (Redação) está dentro dele.
+Sitemap: https://cruzvermelhariodejaneiro.org/sitemap-index.xml
+Sitemap: https://cruzvermelhariodejaneiro.org/sitemap.xml

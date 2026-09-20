@@ -49,6 +49,9 @@ function mcp_doacao_linhas(array $d): array
     if ($quando !== '') {
         $linhas['Data'] = $quando;
     }
+    if ((int) ($d['anonimo'] ?? 0) === 1) {
+        $linhas['Divulgação'] = 'Doação anônima';
+    }
     return $linhas;
 }
 
@@ -102,6 +105,7 @@ function mcp_doacao_montar_email_confirmada(array $d): array
             ['Capacitação em primeiros socorros', 'Material, manequins e instrutores para quem aprende a socorrer.'],
             ['Ações comunitárias e campanhas', 'Campanha do Agasalho, Impacto das Cores e o atendimento à população.'],
         ])
+        . ((int) ($d['anonimo'] ?? 0) === 1 ? mcp_nota('Sua doação foi registrada como <strong>anônima</strong>: seu nome não é usado em agradecimentos públicos nem em listas de doadores.') : '')
         . mcp_p(mcp_escapar(MCP_DOACAO_AGRADECIMENTO))
         . mcp_botao($site . '/noticias/', 'Ver as ações da filial', true)
         . mcp_nota('Guarde este e-mail: ele é o comprovante da sua doação. Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro · CNPJ ' . MCP_EMAIL_CNPJ . '.')
