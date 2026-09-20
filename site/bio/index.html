@@ -5,29 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <title>Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial</title>
-  <meta name="description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <title>Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais</title>
+  <meta name="description" content="Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de voluntário e WhatsApp do voluntariado.">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/bio/">
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
-  <meta property="og:title" content="Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial">
-  <meta property="og:description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <meta property="og:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais">
+  <meta property="og:description" content="Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de voluntário e WhatsApp do voluntariado.">
   <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/bio/">
   <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Faça a diferença ou construa seu futuro: seja voluntário ou faça cursos na Cruz Vermelha RJ">
+  <meta property="og:image:alt" content="Faça a diferença ou construa seu futuro: seja voluntário ou faça cursos na Cruz Vermelha Brasileira Rio de Janeiro">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial">
-  <meta name="twitter:description" content="Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.">
+  <meta name="twitter:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais">
+  <meta name="twitter:description" content="Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de voluntário e WhatsApp do voluntariado.">
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="preload" as="image" href="img/avatar-256.webp">
+  <link rel="preload" as="image" href="img/avatar-256.webp" imagesrcset="img/avatar-256.webp 256w, img/avatar-512.webp 512w" imagesizes="128px">
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
   <style>
     /* Ícones em SVG inline (scripts/icones.py) */
@@ -346,7 +346,7 @@
       inset: 0;
       background:
         linear-gradient(90deg, rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .68) 42%, rgba(0, 0, 0, .22) 100%),
-        url("assets/otim/hero-equipe-grupo-1440.webp") center 30% / cover no-repeat;
+        url("/assets/otim/hero-equipe-grupo-1440.webp") center 30% / cover no-repeat;
     }
     .hero::after {
       content: "";
@@ -830,7 +830,7 @@
       .hero::before {
         background:
           linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.52) 58%, rgba(0,0,0,.2) 100%),
-          url("assets/otim/hero-equipe-grupo-960.webp") center 20% / cover no-repeat;
+          url("/assets/otim/hero-equipe-grupo-960.webp") center 20% / cover no-repeat;
       }
       .hero-actions, .cta-row { flex-direction: column; align-items: stretch; }
       .course-copy { padding: 28px; }
@@ -973,20 +973,23 @@
     }
     .faq-item[open] summary::after { transform: rotate(45deg); }
     .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+    .faq-item .faq-answer a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .faq-grupo { margin: 30px 0 12px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 900; }
+    .faq-list .faq-grupo:first-child { margin-top: 0; }
   </style>
 
   <style>
     .bio-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 44px 0 36px; text-align: center; }
     .bio-avatar { width: 128px; height: 128px; border-radius: 50%; margin: 0 auto 16px; background: #fff; border: 4px solid #fff; box-shadow: var(--shadow); object-fit: cover; }
     .bio-topo h1 { color: var(--black); font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.03em; line-height: 1.1; margin: 8px 0 10px; }
-    .bio-topo .lead { max-width: 36ch; margin: 0 auto; font-size: 1.05rem; }
+    .bio-topo .lead { max-width: 36ch; margin: 0 auto; font-size: 1.05rem; color: #5b6776; }
     .bio-lista { padding: 32px 0 72px; }
     .bio-lista .wrap { max-width: 640px; display: grid; gap: 16px; }
     .bio-botao { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 800; line-height: 1.25; box-shadow: 0 12px 30px rgba(237, 27, 46, .22); transition: transform .18s, background .18s, border-color .18s; text-align: left; }
     .bio-botao:hover { transform: translateY(-2px); background: var(--red-dark); }
     .bio-botao > i { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, .18); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
     .bio-botao span { flex: 1; min-width: 0; }
-    .bio-botao .bio-seta { width: auto; height: auto; background: none; opacity: .85; font-size: .9rem; }
+    .bio-botao .bio-seta { flex: none; display: inline-flex; opacity: .85; font-size: .9rem; }
     .bio-botao.claro { background: #fff; color: var(--black); border: 1.5px solid var(--line); box-shadow: none; }
     .bio-botao.claro > i { background: var(--soft); color: var(--red); }
     .bio-botao.claro:hover { background: #fff; border-color: var(--red); }
@@ -997,10 +1000,10 @@
     .bio-cartao-corpo { padding: 18px 20px 20px; display: flex; align-items: center; gap: 14px; }
     .bio-cartao-texto { flex: 1; min-width: 0; display: block; }
     .bio-cartao b { display: block; color: var(--black); font-size: 1.08rem; line-height: 1.25; }
-    .bio-cartao small { display: block; color: var(--muted); margin-top: 4px; font-size: .92rem; line-height: 1.45; }
+    .bio-cartao small { display: block; color: #5b6776; margin-top: 4px; font-size: .92rem; line-height: 1.45; }
     .bio-cta { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
     .bio-sep { border: 0; height: 3px; width: 64px; margin: 2px auto; background: var(--red); border-radius: 3px; }
-    .bio-titulo { margin: 10px 0 -6px; text-align: center; color: var(--muted); font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .bio-titulo { margin: 10px 0 -6px; text-align: center; color: #5b6776; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .bio-endereco { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
     .bio-endereco > i { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
     .bio-endereco b { display: block; color: var(--black); }
@@ -1029,6 +1032,7 @@
     }
     @media (min-width: 621px) and (max-width: 920px) { .main-header .header-collapse .nav-links { display: flex !important; } }
   </style>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
   <!-- Google tag (gtag.js) -->
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -1057,7 +1061,7 @@
     // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
     (function () {
       function carregar() {
-        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
+        ['https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
           var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
         });
       }
@@ -1093,8 +1097,8 @@
   "@type": "WebPage",
   "@id": "https://cruzvermelhariodejaneiro.org/bio/#pagina",
   "url": "https://cruzvermelhariodejaneiro.org/bio/",
-  "name": "Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial",
-  "description": "Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do voluntariado. Faça a diferença ou construa seu futuro.",
+  "name": "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais",
+  "description": "Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de voluntário e WhatsApp do voluntariado.",
   "inLanguage": "pt-BR",
   "isPartOf": {
     "@id": "https://cruzvermelhariodejaneiro.org/#site"
@@ -1130,7 +1134,7 @@
     },
     {
       "@type": "Question",
-      "name": "Quais cursos a Cruz Vermelha RJ oferece?",
+      "name": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de matrícula em cursos presenciais."
@@ -1138,7 +1142,7 @@
     },
     {
       "@type": "Question",
-      "name": "Como falar com o voluntariado da Cruz Vermelha RJ?",
+      "name": "Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 2 dias úteis."
@@ -1207,18 +1211,18 @@
 
     <section class="bio-lista" aria-label="Links oficiais">
       <div class="wrap">
-          <a class="bio-cartao" href="https://escola.cruzvermelhariodejaneiro.org" data-bio="escola" target="_blank" rel="noopener"><img src="img/cursos-700.webp" srcset="img/cursos-700.webp 700w, img/cursos-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro" width="700" height="367" loading="eager" fetchpriority="high" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Saiba mais sobre os nossos cursos</b><small>Turmas, valores e inscrição na plataforma da escola.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
-          <a class="bio-cartao" href="https://form.spotform.com.br/voluntariocruzvermelharj" data-bio="voluntario" target="_blank" rel="noopener"><img src="img/voluntario-700.webp" srcset="img/voluntario-700.webp 700w, img/voluntario-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira do Rio de Janeiro" width="700" height="367" loading="lazy" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro</b><small>Cadastro rápido no formulário do voluntariado.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
+          <a class="bio-cartao" href="https://escola.cruzvermelhariodejaneiro.org" data-bio="escola" target="_blank" rel="noopener"><img src="img/cursos-700.webp" srcset="img/cursos-700.webp 700w, img/cursos-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="" width="700" height="367" loading="eager" fetchpriority="high" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Saiba mais sobre os nossos cursos</b><small>Turmas, valores e inscrição na plataforma da escola.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
+          <a class="bio-cartao" href="https://form.spotform.com.br/voluntariocruzvermelharj" data-bio="voluntario" target="_blank" rel="noopener"><img src="img/voluntario-700.webp" srcset="img/voluntario-700.webp 700w, img/voluntario-420.webp 420w" sizes="(max-width: 680px) 100vw, 640px" alt="" width="700" height="367" loading="lazy" decoding="async"><span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro</b><small>Cadastro rápido no formulário do voluntariado.</small></span><span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></span></a>
           <p class="bio-titulo">WhatsApp do voluntário</p>
-          <a class="bio-botao claro whatsapp" href="https://api.whatsapp.com/send?phone=+5521970360264&amp;text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20" data-bio="whatsapp-voluntariado" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"><svg class="ico ico-whatsapp" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg></i><span>Falar com o voluntariado no WhatsApp</span><i class="fa-solid fa-arrow-right bio-seta" aria-hidden="true"></i></a>
+          <a class="bio-botao claro whatsapp" href="https://api.whatsapp.com/send?phone=+5521970360264&amp;text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20" data-bio="whatsapp-voluntariado" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"><svg class="ico ico-whatsapp" aria-hidden="true" focusable="false"><use href="#i-whatsapp"/></svg></i><span>Falar com o voluntariado no WhatsApp</span><span class="bio-seta" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span></a>
       </div>
     </section>
 
     <section class="bio-faq" aria-labelledby="bio-faq-titulo">
       <div class="wrap">
         <p class="eyebrow">Perguntas frequentes</p>
-        <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha RJ</h2>
-        <details><summary>Como ser voluntário da Cruz Vermelha no Rio de Janeiro?</summary><p>Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.</p></details><details><summary>Quais cursos a Cruz Vermelha RJ oferece?</summary><p>Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na <a href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</p></details><details><summary>Como falar com o voluntariado da Cruz Vermelha RJ?</summary><p>Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 2 dias úteis.</p></details><details><summary>Como doar para a Cruz Vermelha do Rio de Janeiro?</summary><p>Pela <a href="https://cruzvermelhariodejaneiro.org/doacao.html">página de doação</a> do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro.</p></details><details><summary>Onde fica a Cruz Vermelha no Rio de Janeiro?</summary><p>Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários.</p></details>
+        <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha Brasileira Rio de Janeiro</h2>
+        <details><summary>Como ser voluntário da Cruz Vermelha no Rio de Janeiro?</summary><p>Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.</p></details><details><summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary><p>Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na <a href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</p></details><details><summary>Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?</summary><p>Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 2 dias úteis.</p></details><details><summary>Como doar para a Cruz Vermelha do Rio de Janeiro?</summary><p>Pela <a href="https://cruzvermelhariodejaneiro.org/doacao.html">página de doação</a> do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro.</p></details><details><summary>Onde fica a Cruz Vermelha no Rio de Janeiro?</summary><p>Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários.</p></details>
       </div>
     </section>
   </main>
@@ -1234,6 +1238,7 @@
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
         <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
         <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
+        <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Verbete na Wikipédia</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
@@ -1297,8 +1302,10 @@
       // o WhatsApp também dispara o evento padrão Contact (pessoa iniciando contato com a organização).
       document.querySelectorAll('[data-bio]').forEach(function (a) {
         a.addEventListener('click', function () {
-          var id = a.getAttribute('data-bio'), url = a.href;
-          var dados = { link_id: id, link_url: url, link_text: (a.textContent || '').trim().slice(0, 80), outbound: !url.startsWith(location.origin) };
+          var id = a.getAttribute('data-bio'), url = a.href, destino = url;
+          try { var d = new URL(url); destino = d.host + d.pathname; } catch (e) {}
+          var titulo = a.querySelector('b') || a.querySelector('span');
+          var dados = { link_id: id, link_url: destino.slice(0, 100), link_text: ((titulo ? titulo.textContent : a.textContent) || '').replace(/\s+/g, ' ').trim().slice(0, 100), outbound: !url.startsWith(location.origin) };
           try { if (window.gtag) gtag('event', 'bio_click', dados); } catch (e) {}
           try {
             if (window.fbq) {
@@ -1311,7 +1318,7 @@
     })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
-  <link rel="stylesheet" href="/chat/chat.css?v=f845a6d789">
-  <script src="/chat/chat.js?v=d6852d055d" defer></script>
+  <link rel="stylesheet" href="/chat/chat.css?v=f61aad42f5">
+  <script src="/chat/chat.js?v=b76b17534e" defer></script>
 </body>
 </html>

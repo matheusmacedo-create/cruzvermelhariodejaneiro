@@ -28,9 +28,9 @@ SAIDA = PASTA / "index.html"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/bio/"
 
-TITULO = "Cruz Vermelha RJ: cursos, voluntariado e WhatsApp oficial"
-DESCRICAO = ("Links oficiais da Cruz Vermelha RJ: cursos com certificado, cadastro de voluntário e WhatsApp do "
-             "voluntariado. Faça a diferença ou construa seu futuro.")
+TITULO = "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais"
+DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de "
+             "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
 URL_DOACAO = f"{ORIGEM}/doacao.html"
 
@@ -41,13 +41,13 @@ FAQ = [
      "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato "
      "para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem "
      "ser tiradas no WhatsApp do voluntariado ou no chat deste site.", []),
-    ("Quais cursos a Cruz Vermelha RJ oferece?",
+    ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
      "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e "
      "micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. "
      "As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser "
      "feita na página de matrícula em cursos presenciais.",
      [("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
-    ("Como falar com o voluntariado da Cruz Vermelha RJ?",
+    ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
      "Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
      "2 dias úteis.", []),
@@ -95,14 +95,14 @@ def bloco_html(b: dict, primeiro: bool = False) -> str:
         estilo = f' {b["estilo"]}' if b.get("estilo") else ""
         return (f'<a class="bio-botao{estilo}" href="{esc(b["link"])}" data-bio="{b["id"]}"{externo(b["link"])}>'
                 f'<i class="{b["icone"]}" aria-hidden="true"></i><span>{esc(b["titulo"])}</span>'
-                f'<i class="fa-solid fa-arrow-right bio-seta" aria-hidden="true"></i></a>')
+                f'<span class="bio-seta" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span></a>')
     if tipo == "cartao":
         img = b["imagem"]
         w, h = IMAGENS[img]
         srcset = f'img/{img}-700.webp 700w, img/{img}-420.webp 420w' if (PASTA / "img" / f"{img}-420.webp").exists() else f'img/{img}-700.webp 700w, img/{img}-1200.webp 1200w'
         carga = 'loading="eager" fetchpriority="high"' if primeiro else 'loading="lazy"'
         return (f'<a class="bio-cartao" href="{esc(b["link"])}" data-bio="{b["id"]}"{externo(b["link"])}>'
-                f'<img src="img/{img}-700.webp" srcset="{srcset}" sizes="(max-width: 680px) 100vw, 640px" alt="{esc(b["alt"])}" width="{w}" height="{h}" {carga} decoding="async">'
+                f'<img src="img/{img}-700.webp" srcset="{srcset}" sizes="(max-width: 680px) 100vw, 640px" alt="" width="{w}" height="{h}" {carga} decoding="async">'
                 f'<span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>{esc(b["titulo"])}</b><small>{esc(b["descricao"])}</small></span>'
                 f'<span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span></span></a>')
     if tipo == "endereco":
@@ -119,14 +119,14 @@ CSS = """
     .bio-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 44px 0 36px; text-align: center; }
     .bio-avatar { width: 128px; height: 128px; border-radius: 50%; margin: 0 auto 16px; background: #fff; border: 4px solid #fff; box-shadow: var(--shadow); object-fit: cover; }
     .bio-topo h1 { color: var(--black); font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.03em; line-height: 1.1; margin: 8px 0 10px; }
-    .bio-topo .lead { max-width: 36ch; margin: 0 auto; font-size: 1.05rem; }
+    .bio-topo .lead { max-width: 36ch; margin: 0 auto; font-size: 1.05rem; color: #5b6776; }
     .bio-lista { padding: 32px 0 72px; }
     .bio-lista .wrap { max-width: 640px; display: grid; gap: 16px; }
     .bio-botao { display: flex; align-items: center; gap: 14px; padding: 15px 20px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 800; line-height: 1.25; box-shadow: 0 12px 30px rgba(237, 27, 46, .22); transition: transform .18s, background .18s, border-color .18s; text-align: left; }
     .bio-botao:hover { transform: translateY(-2px); background: var(--red-dark); }
     .bio-botao > i { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, .18); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
     .bio-botao span { flex: 1; min-width: 0; }
-    .bio-botao .bio-seta { width: auto; height: auto; background: none; opacity: .85; font-size: .9rem; }
+    .bio-botao .bio-seta { flex: none; display: inline-flex; opacity: .85; font-size: .9rem; }
     .bio-botao.claro { background: #fff; color: var(--black); border: 1.5px solid var(--line); box-shadow: none; }
     .bio-botao.claro > i { background: var(--soft); color: var(--red); }
     .bio-botao.claro:hover { background: #fff; border-color: var(--red); }
@@ -137,10 +137,10 @@ CSS = """
     .bio-cartao-corpo { padding: 18px 20px 20px; display: flex; align-items: center; gap: 14px; }
     .bio-cartao-texto { flex: 1; min-width: 0; display: block; }
     .bio-cartao b { display: block; color: var(--black); font-size: 1.08rem; line-height: 1.25; }
-    .bio-cartao small { display: block; color: var(--muted); margin-top: 4px; font-size: .92rem; line-height: 1.45; }
+    .bio-cartao small { display: block; color: #5b6776; margin-top: 4px; font-size: .92rem; line-height: 1.45; }
     .bio-cta { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
     .bio-sep { border: 0; height: 3px; width: 64px; margin: 2px auto; background: var(--red); border-radius: 3px; }
-    .bio-titulo { margin: 10px 0 -6px; text-align: center; color: var(--muted); font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .bio-titulo { margin: 10px 0 -6px; text-align: center; color: #5b6776; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .bio-endereco { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
     .bio-endereco > i { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
     .bio-endereco b { display: block; color: var(--black); }
@@ -185,8 +185,10 @@ JS = """
       // o WhatsApp também dispara o evento padrão Contact (pessoa iniciando contato com a organização).
       document.querySelectorAll('[data-bio]').forEach(function (a) {
         a.addEventListener('click', function () {
-          var id = a.getAttribute('data-bio'), url = a.href;
-          var dados = { link_id: id, link_url: url, link_text: (a.textContent || '').trim().slice(0, 80), outbound: !url.startsWith(location.origin) };
+          var id = a.getAttribute('data-bio'), url = a.href, destino = url;
+          try { var d = new URL(url); destino = d.host + d.pathname; } catch (e) {}
+          var titulo = a.querySelector('b') || a.querySelector('span');
+          var dados = { link_id: id, link_url: destino.slice(0, 100), link_text: ((titulo ? titulo.textContent : a.textContent) || '').replace(/\s+/g, ' ').trim().slice(0, 100), outbound: !url.startsWith(location.origin) };
           try { if (window.gtag) gtag('event', 'bio_click', dados); } catch (e) {}
           try {
             if (window.fbq) {
@@ -217,6 +219,13 @@ def main() -> int:
     # GA4: esta página entra no grupo de conteúdo "bio" (relatórios por grupo). O snippet vem da home.
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'bio' });\n    gtag('config', 'G-", 1)
     assert "content_group: 'bio'" in ga4, "não achei o gtag('config') da home para inserir o content_group"
+    # Nesta página o gtag.js entra sem esperar o load: quem chega do Instagram toca num link em segundos e o
+    # bio_click precisa do GA4 carregado. O Pixel segue adiado como na home.
+    pixel = partes["pixel"]
+    adiado = "['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js']"
+    assert adiado in pixel, "o carregador adiado da home mudou; ajuste gerar_bio.py"
+    pixel = pixel.replace(adiado, "['https://connect.facebook.net/en_US/fbevents.js']", 1)
+    ga4 = '  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>\n' + ga4
 
     ld = [
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
@@ -253,7 +262,7 @@ def main() -> int:
   <meta property="og:image" content="{IMAGEM_OG}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Faça a diferença ou construa seu futuro: seja voluntário ou faça cursos na Cruz Vermelha RJ">
+  <meta property="og:image:alt" content="Faça a diferença ou construa seu futuro: seja voluntário ou faça cursos na Cruz Vermelha Brasileira Rio de Janeiro">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{esc(TITULO)}">
   <meta name="twitter:description" content="{esc(DESCRICAO)}">
@@ -262,12 +271,12 @@ def main() -> int:
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="preload" as="image" href="img/avatar-256.webp">
+  <link rel="preload" as="image" href="img/avatar-256.webp" imagesrcset="img/avatar-256.webp 256w, img/avatar-512.webp 512w" imagesizes="128px">
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 {partes["estilo"]}
 {CSS}
 {ga4}
-{partes["pixel"]}
+{pixel}
 {ld_html}
 </head>
 <body>
@@ -292,7 +301,7 @@ def main() -> int:
     <section class="bio-faq" aria-labelledby="bio-faq-titulo">
       <div class="wrap">
         <p class="eyebrow">Perguntas frequentes</p>
-        <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha RJ</h2>
+        <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha Brasileira Rio de Janeiro</h2>
         {faq}
       </div>
     </section>

@@ -44,7 +44,7 @@ CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 
 # Título e descrição seguem as consultas do Search Console (docs/seo-consultas-2026-09.md): "cruz vermelha cursos",
 # "cursos cruz vermelha rj", "curso de primeiros socorros cruz vermelha rj".
-TITULO = "Cursos da Cruz Vermelha RJ: matrícula em cursos presenciais"
+TITULO = "Cursos e matrícula | Cruz Vermelha Brasileira Rio de Janeiro"
 DESCRICAO = ("Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro: primeiros socorros, bombeiro civil e "
              "cuidador de idosos, no Centro do Rio. Inscrição de R$ 99.")
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
@@ -134,6 +134,8 @@ def partes_da_home(home: str) -> dict:
     """Cabeçalho, rodapé, CSS, GA4, Pixel e script do menu da home, já ajustados para /matricula-cursos-presenciais/."""
     # --- pedaços da home -------------------------------------------------------------
     estilo = bloco(home, "  <style>", "  </style>")                       # primeiro <style>: todo o CSS da home
+    # Os url() do CSS são relativos à raiz da home; nas páginas em subpastas viram /pasta/assets/... (404).
+    estilo = estilo.replace('url("assets/', 'url("/assets/').replace("url('assets/", "url('/assets/")
     header = bloco(home, '  <header class="main-header">', "  </header>")
     footer = bloco(home, "  <footer>", "  </footer>")
     # Só o script do menu sanfona; os outros scripts da home (seletor de curso, contato) são da home.
@@ -275,7 +277,7 @@ def main() -> int:
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
             {"@type": "ListItem", "position": 2, "name": "Matrícula cursos presenciais", "item": URL_PAGINA}]},
-        {"@context": "https://schema.org", "@type": "ItemList", "name": "Matrícula em cursos presenciais da Cruz Vermelha RJ",
+        {"@context": "https://schema.org", "@type": "ItemList", "name": "Matrícula em cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro",
          "url": URL_PAGINA, "itemListElement": itens},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r in FAQ_PAGINA]},

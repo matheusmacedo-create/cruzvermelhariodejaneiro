@@ -33,7 +33,7 @@ return [
     // E-mail: Resend. O remetente precisa estar num domínio verificado na conta (em 18/09/2026:
     // info., noticias. e parceria.cruzvermelhariodejaneiro.org). Sem chave, cai no mail() da Hostinger.
     'RESEND_API_KEY'   => '',
-    'EMAIL_REMETENTE'  => 'Cruz Vermelha RJ <matricula@info.cruzvermelhariodejaneiro.org>',
+    'EMAIL_REMETENTE'  => 'Cruz Vermelha Brasileira Rio de Janeiro <matricula@info.cruzvermelhariodejaneiro.org>',
     // Contato por e-mail (19/09/2026, no lugar do WhatsApp da secretaria): destino das mensagens do
     // chat do site (api/contato.php) e endereço citado no rodapé de todos os e-mails. Precisa ser uma
     // caixa que receba de fato: em 19/09/2026 o MX do domínio ainda apontava para a Hostinger sem

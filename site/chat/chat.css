@@ -20,21 +20,22 @@
 /* ---------- painel */
 .cv-chat-painel { position: absolute; right: 0; bottom: 72px; margin: 0; padding: 0; width: 384px; max-width: calc(100vw - 40px); height: 640px; max-height: calc(100vh - 112px); display: flex; flex-direction: column; background: #fff; border: 1px solid var(--cv-line); border-radius: 18px; box-shadow: 0 24px 60px rgba(16, 24, 40, .22); overflow: hidden; transform-origin: bottom right; animation: cvChatEntra .22s ease; }
 @keyframes cvChatEntra { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
-.cv-chat-topo { display: flex; align-items: center; gap: 12px; margin: 0; padding: 14px 12px 14px 16px; background: var(--cv-red); color: #fff; }
+.cv-chat-topo { display: flex; align-items: center; gap: 12px; margin: 0; padding: 14px 12px 14px 16px; background: #fff; color: var(--cv-black); border-bottom: 1px solid var(--cv-line); box-shadow: inset 0 5px 0 var(--cv-red); padding-top: 19px; }
 .cv-chat-topo > div { flex: 1; min-width: 0; }
-.cv-chat-topo b { display: block; font-size: 1rem; line-height: 1.2; }
-.cv-chat-topo small { display: block; font-size: .78rem; line-height: 1.3; opacity: .92; margin-top: 3px; }
-.cv-chat-avatar { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cv-chat-topo b { display: block; font-size: .98rem; line-height: 1.2; letter-spacing: -.01em; }
+.cv-chat-topo small { display: block; font-size: .78rem; line-height: 1.3; color: var(--cv-muted); margin-top: 3px; }
+.cv-chat-avatar { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 1px solid var(--cv-line); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+.cv-chat-avatar img { width: 44px; height: 44px; display: block; border-radius: 50%; }
 .cv-chat-avatar svg { width: 20px; height: 20px; fill: var(--cv-red); display: block; }
-.cv-chat-fechar { width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .14); color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s; }
-.cv-chat-fechar:hover { background: rgba(255, 255, 255, .28); }
+.cv-chat-fechar { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--cv-soft); color: var(--cv-black); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background .15s, color .15s; }
+.cv-chat-fechar:hover { background: var(--cv-red); color: #fff; }
 .cv-chat-fechar svg { width: 16px; height: 16px; fill: currentColor; display: block; }
-.cv-chat-status::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #7ee2a8; margin-right: 6px; vertical-align: 1px; }
+.cv-chat-status::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #0f7b3e; margin-right: 6px; vertical-align: 1px; }
 
 /* ---------- conversa */
 .cv-chat-mensagens { flex: 1; overflow-y: auto; padding: 18px 16px 10px; background: var(--cv-soft); display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
 .cv-chat-msg { max-width: 86%; padding: 11px 14px; border-radius: 16px; font-size: .95rem; overflow-wrap: anywhere; white-space: pre-line; }
-.cv-chat-msg.robo { align-self: flex-start; background: #fff; border: 1px solid var(--cv-line); border-bottom-left-radius: 6px; color: var(--cv-black); }
+.cv-chat-msg.robo { align-self: flex-start; background: #fff; border: 1px solid var(--cv-line); border-left: 3px solid var(--cv-red); border-bottom-left-radius: 6px; color: var(--cv-black); }
 .cv-chat-msg.pessoa { align-self: flex-end; background: var(--cv-red); color: #fff; border-bottom-right-radius: 6px; }
 .cv-chat-msg.erro { border-color: #f5c2c7; background: #fff0f2; color: #8a1c1c; }
 .cv-chat-msg.nova, .cv-chat-chips.nova, .cv-chat-resumo.nova { animation: cvMsgEntra .25s ease; }
