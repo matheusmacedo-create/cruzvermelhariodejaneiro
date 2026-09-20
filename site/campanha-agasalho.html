@@ -752,13 +752,6 @@
             <p>Quando o frio chega, cada dia sem apoio aumenta o sofrimento de quem não tem onde se abrigar. Clique abaixo e ajude a manter essa resposta humanitária em movimento.</p>
           </div>
           <a class="btn btn-red btn-huge btn-full js-open-donation" href="/doe/?utm_source=site&amp;utm_medium=agasalho&amp;utm_campaign=campanha-agasalho">Doar agora</a>
-          <div class="pix-box">
-            <small>Pix CNPJ</small>
-            <div class="pix-copy">
-              <code id="pixKey">08560973000197</code>
-              <button type="button" id="copyPix">Copiar</button>
-            </div>
-          </div>
           <div class="trust-list">
             <span>✓ Doação para a Cruz Vermelha Brasileira - RJ</span>
             <span>✓ CNPJ: 08.560.973/0001-97</span>
@@ -772,7 +765,7 @@
 
     <div class="strip">
       <div class="wrap strip-grid">
-        <div class="strip-item"><b>PIX</b><span>08.560.973/0001-97</span></div>
+        <div class="strip-item"><b>Doação online</b><span>cruzvermelhariodejaneiro.org/doe</span></div>
         <div class="strip-item"><b>Horário</b><span>Segunda a sexta, 10h às 17h</span></div>
         <div class="strip-item"><b>Local</b><span>Praça da Cruz Vermelha, 10 - Centro</span></div>
         <div class="strip-item"><b>Contato</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
@@ -872,24 +865,17 @@
     <section class="how-section" aria-labelledby="how-title">
       <div class="wrap">
         <p class="eyebrow" style="color:#fff">Como ajudar</p>
-        <h2 id="how-title">Três formas de participar da missão</h2>
-        <p class="lead">Você pode doar online, pelo Pix ou entregar donativos físicos na sede da Cruz Vermelha Brasileira Rio de Janeiro.</p>
+        <h2 id="how-title">Duas formas de participar da missão</h2>
+        <p class="lead">Você pode doar online, por PIX ou cartão, ou entregar donativos físicos na sede da Cruz Vermelha Brasileira Rio de Janeiro.</p>
         <div class="how-grid">
           <article class="how-card">
             <span class="num">1</span>
             <h3>Doação online</h3>
-            <p>Clique em doar agora e finalize sua contribuição no checkout oficial da campanha, sem etapas intermediárias.</p>
+            <p>Escolha o valor e pague por PIX ou cartão na página oficial de doação: o código PIX é gerado na hora e a confirmação aparece sozinha.</p>
             <a class="btn btn-red btn-huge js-open-donation" href="/doe/?utm_source=site&amp;utm_medium=agasalho&amp;utm_campaign=campanha-agasalho">Doar agora</a>
           </article>
           <article class="how-card">
             <span class="num">2</span>
-            <h3>Pix direto</h3>
-            <p>Use a chave CNPJ da filial do Rio de Janeiro.</p>
-            <p><b>08.560.973/0001-97</b></p>
-            <button class="btn btn-white" type="button" id="copyPix2">Copiar Pix</button>
-          </article>
-          <article class="how-card">
-            <span class="num">3</span>
             <h3>Entrega presencial</h3>
             <p>Segunda a sexta, das 10h às 17h.</p>
             <p><b>Praça da Cruz Vermelha, 10 - Centro, Rio de Janeiro</b></p>
@@ -976,7 +962,6 @@
 
   <script>
     const DONATION_CHECKOUT = '/doe/?utm_source=site&utm_medium=agasalho&utm_campaign=campanha-agasalho';
-    const PIX_KEY = '08560973000197';
 
     const nav = document.getElementById('menu');
     const menuBtn = document.getElementById('menuBtn');
@@ -998,19 +983,6 @@
       });
     });
 
-    async function copyPix(button) {
-      try {
-        await navigator.clipboard.writeText(PIX_KEY);
-        const original = button.textContent;
-        button.textContent = 'Copiado';
-        setTimeout(() => button.textContent = original, 1600);
-      } catch (error) {
-        alert('Chave Pix: ' + PIX_KEY);
-      }
-    }
-
-    document.getElementById('copyPix').addEventListener('click', (event) => copyPix(event.currentTarget));
-    document.getElementById('copyPix2').addEventListener('click', (event) => copyPix(event.currentTarget));
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.css?v=f61aad42f5">

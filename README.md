@@ -531,8 +531,9 @@ bombeiro civil, cuidador de idosos, BLS.
   links "chat do site" apontam para `/#chat`, que abre o chat em qualquer página.
 - **O que a FAQ afirma e convém a filial confirmar** (o que não tinha fonte ficou de fora ou foi
   suavizado): a homologação do Bombeiro Civil é paga à parte, valor a consultar; a chave PIX do CNPJ
-  só aparece na Campanha do Agasalho, por isso a resposta de doação manda para a página de doação e
-  não cita a chave; o horário "segunda a sexta, 10h às 17h" é o da entrega de donativos da campanha,
+  **foi desativada em 20/09/2026** e saiu da Campanha do Agasalho (caixa "Pix CNPJ", cartão "Pix
+  direto", faixa de informações e o script que copiava a chave); quem quer doar por PIX passa por
+  `/doe/`, que gera o código na hora, e o CNPJ segue no site só como identificação da filial; o horário "segunda a sexta, 10h às 17h" é o da entrega de donativos da campanha,
   não um horário geral da sede; não afirmamos que a formação de voluntários é gratuita, só que
   voluntariado e cursos são caminhos separados; a resposta sobre emergências não diz se a filial tem
   ou não hospital, só que este site não agenda consultas e que emergência é 192/193; o resumo da Lei
