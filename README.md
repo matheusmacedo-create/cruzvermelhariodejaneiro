@@ -216,8 +216,9 @@ validado no projeto da Punção Venosa.
 - **Testes automatizados**: `php scripts/testar_checkout.php` roda 59 verificações das funções
   puras (CPF, Luhn, telefone, preços e custos, tradução de status, tokens, mensagens da Unicopag,
   visão pública sem CPF/hash/IP) sem banco, rede ou segredos.
-- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
-  `customer.document` (testado: sem ele a API responde 422).
+- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. A Unicopag exige `customer.document` (testado:
+  sem ele a API responde 422), mas **não exige que seja um CPF** — ver "O que a Unicopag valida no
+  documento", abaixo. A trava de CPF é nossa.
 - **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
   18/09: **5% em todos os métodos** (média de PIX, cartão e checkout), sem parcela fixa: R$ 4,95
   sobre R$ 99. Para referência, o PIX medido pela API em 18/09 custou 1,00% + R$ 1,48.
@@ -494,6 +495,13 @@ de um, e disco não é problema.
   espalhado por `doe.js`, e não entrou aqui. As páginas dizem, com todas as letras, que a tela de
   pagamento é em português, e traduzem os botões que a pessoa vai encontrar (`Doar`, `Cartão`,
   `PIX`, `Doar anonimamente`, `Copiar código PIX`).
+- **O cenário de fora do Brasil ganhou seção própria nas duas páginas de doação**, logo depois do
+  botão, que é onde o doador estrangeiro bateria na parede: "Donating from outside Brazil: card
+  only" / "Donar desde fuera de Brasil: solo con tarjeta". Ela separa as duas travas, que são de
+  naturezas diferentes: **o PIX é impossível de fora por construção** (é sistema do Banco Central,
+  move dinheiro entre contas de bancos brasileiros, não existe PIX saindo de banco estrangeiro),
+  enquanto **o cartão atravessa fronteira sem problema** e só esbarra no CPF que o nosso formulário
+  pede. Dizer as duas coisas juntas ("não dá de fora") esconderia que a segunda é removível.
 - **Quem doa pelo site precisa de CPF e telefone brasileiro — nos dois meios de pagamento.** A
   primeira versão destas páginas dizia "tax ID or passport" e "card works from anywhere". Está
   errado: `site/doe/static/doe.js` roda `cpfValido()` (11 dígitos com dígito verificador) e exige
@@ -537,6 +545,44 @@ fingir. Ampliar é acrescentar texto ao `idiomas.json` — a base técnica já e
 
 Escrevi os textos, não são tradução automática, mas **pedem revisão humana** antes de virarem a voz
 oficial da filial em outro idioma — em especial os nomes próprios e o enquadramento institucional.
+
+## O que a Unicopag valida no documento (21/09/2026)
+
+Sondado direto na API de produção em 21/09, porque a resposta muda quem consegue doar e quem
+consegue se matricular. `POST /public/v1/payments` com `customer.document`:
+
+| documento | resposta |
+|---|---|
+| ausente | 422 `customer.document` obrigatório |
+| `X1234567` (alfanumérico) | 422 **"O documento do cliente deve ser numérico"** |
+| `123456789` (passaporte de 9 dígitos) | **passa** — nenhum erro em `customer.document` |
+
+**A Unicopag exige que o documento seja numérico e nada além disso.** Ela não confere dígito
+verificador, não exige 11 dígitos, não exige que seja um CPF. Quem valida CPF somos nós:
+`cpfValido()` em `site/doe/static/doe.js:79` e `mcp_cpf_valido()` em `site/doe/api/doacoes.php:38`
+(mesma dupla no checkout da matrícula). Isso derruba a premissa registrada no briefing de que "V1 =
+CPF porque a Unicopag exige o documento" (`docs/briefing-matricula-cursos-presenciais.md:507`): a
+exigência é de *um documento numérico*, e o passaporte numérico de um doador estrangeiro serve.
+
+Consequência prática: dá para aceitar doador e aluno de fora do Brasil **com o documento verdadeiro
+deles**, sem inventar CPF. Gerar CPF aleatório para "destravar" é o caminho errado e está descartado:
+um CPF válido sorteado tem chance na ordem de 1 em 4 de pertencer a uma pessoa real (~250 milhões
+emitidos num espaço de 1 bilhão), a doação ficaria registrada na Unicopag, na adquirente e no livro
+da filial no CPF de um estranho, e documento fabricado em série é motivo de encerramento da conta —
+o que pararia todas as doações, não só as de fora.
+
+**Técnica da sonda sem cobrança**: omitir `postback_url` de propósito. A API valida o payload inteiro
+e devolve todos os erros de uma vez, então, se `customer.document` não aparece na lista, aquele
+documento passou — e nenhuma transação é criada (422 não abre cobrança). Script em
+`scratchpad/sondar_limites.php`.
+
+### Ainda não sondado
+
+Faltou rodar a matriz de limites (o classificador de ações barrou a segunda rodada). Em aberto:
+faixa de tamanho aceita no documento numérico; se `phone_number` aceita telefone internacional com
+código de país ou só o formato brasileiro; e o que fazer com passaporte que tem letra
+(Portugal `N123456`, Alemanha `C01X00T47`), que a API recusa — cortar as letras do documento de
+alguém não é opção.
 
 ## Convenção de nome (19/09/2026)
 
