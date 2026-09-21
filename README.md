@@ -494,10 +494,38 @@ de um, e disco não é problema.
   espalhado por `doe.js`, e não entrou aqui. As páginas dizem, com todas as letras, que a tela de
   pagamento é em português, e traduzem os botões que a pessoa vai encontrar (`Doar`, `Cartão`,
   `PIX`, `Doar anonimamente`, `Copiar código PIX`).
-- **Cartão funciona de qualquer país; PIX exige conta em banco brasileiro.** As duas páginas dizem
-  isso, porque prometer PIX a quem está fora do Brasil é perder a doação na última tela.
+- **Quem doa pelo site precisa de CPF e telefone brasileiro — nos dois meios de pagamento.** A
+  primeira versão destas páginas dizia "tax ID or passport" e "card works from anywhere". Está
+  errado: `site/doe/static/doe.js` roda `cpfValido()` (11 dígitos com dígito verificador) e exige
+  telefone de 10 a 11 dígitos **antes** de abrir cartão *ou* PIX. Quem está fora do Brasil sem CPF
+  não passa do formulário. As duas páginas agora abrem por "Who can donate online"/"Quién puede
+  donar en línea", e a seção final ("Donating from outside Brazil") manda escrever para a filial,
+  que combina a transferência por fora. Mexer na validação de `doe.js` é mexer em página que recebe
+  pagamento; a saída honesta custou uma seção de texto, não um refactor.
 - **O nome da instituição** ficou "Brazilian Red Cross — Rio de Janeiro Branch" e "Cruz Roja
   Brasileña — Filial Río de Janeiro". Trocar é editar `instituicao` no `idiomas.json` e regerar.
+
+### Conferência de 21/09
+
+Depois de publicar, passei sitemap, ortografia e copy das quatro páginas:
+
+- **Sitemap: limpo.** Os 5 sitemaps em 200, `robots.txt` declarando `sitemap-index.xml` e
+  `sitemap.xml`, o índice listando os 4, `sitemap-paginas.xml` com 13 URLs e 24 `xhtml:link`.
+  Cruzamento sitemap × página ao vivo: 0 problema em 13 URLs — `canonical` igual ao `loc` e
+  `hreflang` idêntico nos dois lugares. Rastreio: 0 redirecionamento interno, 0 4xx/5xx, 0 órfã,
+  0 fora do sitemap, 0 âncora fraca.
+- **Ortografia: nada.** `pyspellchecker` acusou 10 palavras em inglês (CPF, CVB-RJ, centre,
+  organisation, recognised, first-aid…) e 114 em espanhol — todas legítimas: grafia britânica,
+  compostos hifenizados e dicionário pobre. Correções de língua que saíram: "thematic
+  coordinations"→"coordination teams", "volunteers the branch trains itself"→"volunteers trained by
+  the branch itself", "first-aid capability"→"first-aid training", "inscrita con el CNPJ"→
+  "registrada", "Campaña del Abrigo"→"Campaña de Ropa de Abrigo", "Primeros Auxilios Básico,"→
+  "Básicos,", vírgula em "Praça da Cruz Vermelha, 10".
+- **Copy: um erro de fato**, o do CPF acima — o único achado sério da conferência.
+- **Descrições fora do limite.** As quatro estavam entre 178 e 224 caracteres, enquanto as em
+  português respeitam ~160 e o Google corta por volta disso. Reescritas para 148–158.
+- **`og:locale`** saiu do código para o `idiomas.json` e o espanhol virou `es_LA`, não `es_ES`: a
+  copy é de espanhol latino-americano e a Espanha não é o público.
 
 ### O que ainda não está traduzido, de propósito
 

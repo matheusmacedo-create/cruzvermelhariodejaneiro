@@ -169,7 +169,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <link rel="canonical" href="{ORIGEM}{caminho}">
 {alternativas(pagina, idioma['codigo'])}
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="{'en_US' if idioma['codigo'] == 'en' else 'es_ES'}">
+  <meta property="og:locale" content="{idioma['og_locale']}">
   <meta property="og:title" content="{esc(titulo)}">
   <meta property="og:description" content="{esc(descricao)}">
   <meta property="og:url" content="{ORIGEM}{caminho}">
