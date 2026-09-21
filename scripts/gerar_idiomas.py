@@ -37,7 +37,10 @@ EMAIL = "contato@cruzvermelhariodejaneiro.org"
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
 # Caminho de cada página, por idioma. O português é o x-default.
 PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
-           "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"}}
+           "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
+           # Em português a FAQ é uma seção da home, não uma página: daí o "#".
+           "faq": {"pt": "/#faq", "en": "/en/faq/", "es": "/es/preguntas-frecuentes/"}}
+FAQ = SITE / "faq-idiomas.json"
 
 
 def esc(s: str) -> str:
@@ -47,10 +50,15 @@ def esc(s: str) -> str:
 def alternativas(pagina: str, atual: str) -> str:
     """As tags hreflang da página, para os três idiomas, mais o x-default no português."""
     caminhos = PAGINAS[pagina]
-    linhas = [f'  <link rel="alternate" hreflang="pt-BR" href="{ORIGEM}{caminhos["pt"]}">',
-              f'  <link rel="alternate" hreflang="en" href="{ORIGEM}{caminhos["en"]}">',
-              f'  <link rel="alternate" hreflang="es" href="{ORIGEM}{caminhos["es"]}">',
-              f'  <link rel="alternate" hreflang="x-default" href="{ORIGEM}{caminhos["pt"]}">']
+    pt = caminhos["pt"]
+    linhas = []
+    # Âncora não serve de hreflang. Quando o português é só uma seção ("/#faq"), o cluster fica
+    # com en e es, e o x-default aponta para a página inteira, sem o "#".
+    if "#" not in pt:
+        linhas.append(f'  <link rel="alternate" hreflang="pt-BR" href="{ORIGEM}{pt}">')
+    linhas += [f'  <link rel="alternate" hreflang="en" href="{ORIGEM}{caminhos["en"]}">',
+               f'  <link rel="alternate" hreflang="es" href="{ORIGEM}{caminhos["es"]}">',
+               f'  <link rel="alternate" hreflang="x-default" href="{ORIGEM}{pt.split("#")[0] or "/"}">']
     return "\n".join(linhas)
 
 
@@ -98,6 +106,7 @@ def cabecalho(idioma: dict, pagina: str) -> str:
     """Cabeçalho da home com o menu traduzido e o seletor de idioma."""
     m, pasta = idioma["menu"], idioma["pasta"]
     links = [(f'/{pasta}/#sobre', m["sobre"]), (f'/{pasta}/#principios', m["principios"]),
+             (PAGINAS["faq"][idioma["codigo"]], m["faq"]),
              (PAGINAS["doar"][idioma["codigo"]], m["doar"]), (f'/{pasta}/#contato', m["contato"]),
              ("/", m["portugues"])]
     nav = "\n          ".join(f'<a href="{a}">{esc(b)}</a>' for a, b in links)
@@ -314,14 +323,78 @@ def pagina_doar(idioma: dict, partes: dict) -> str:
     return moldura(idioma, "doar", d["titulo"], d["descricao"], corpo, ld, partes)
 
 
+def resposta_html(texto: str, links: list) -> str:
+    """Transforma em <a> os trechos listados em `links`, casando pelo texto exato.
+
+    Link para página que só existe em português (a matrícula, o formulário do voluntariado) leva
+    hreflang/lang="pt-BR": avisa o buscador, e o leitor de tela, que ali a língua muda.
+    """
+    texto = esc(texto)
+    for l in links:
+        alvo, url = esc(l["texto"]), l["url"]
+        if alvo not in texto:
+            raise SystemExit(f"trecho do link não está na resposta: {l['texto']!r}")
+        if url.startswith("http"):
+            extra = ' target="_blank" rel="noopener"'
+        elif url.startswith(("/en/", "/es/")):
+            extra = ""
+        else:
+            extra = ' hreflang="pt-BR" lang="pt-BR"'
+        texto = texto.replace(alvo, f'<a href="{esc(url)}"{extra}>{alvo}</a>', 1)
+    return texto
+
+
+def pagina_faq(idioma: dict, partes: dict, faq: dict) -> str:
+    """A FAQ do idioma, com a mesma marcação <details> da home em português (o CSS vem copiado)."""
+    d = faq[idioma["codigo"]]
+    blocos, entidades, primeira = [], [], True
+    for g in d["grupos"]:
+        blocos.append(f'          <h3 class="faq-grupo">{esc(g["titulo"])}</h3>')
+        for q in g["perguntas"]:
+            pergunta, resposta = q["pergunta"].strip(), q["resposta"].strip()
+            blocos.append(
+                f'          <details class="faq-item"{" open" if primeira else ""}>\n'
+                f'            <summary>{esc(pergunta)}</summary>\n'
+                f'            <div class="faq-answer">{resposta_html(resposta, q.get("links", []))}</div>\n'
+                f'          </details>')
+            entidades.append({"@type": "Question", "name": pergunta,
+                              "acceptedAnswer": {"@type": "Answer", "text": resposta}})
+            primeira = False
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap">
+        <p class="eyebrow">{esc(d['sobrancelha'])}</p>
+        <h1>{esc(d['titulo'])}</h1>
+        <p>{esc(d['subtitulo'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <div class="faq-list">
+{chr(10).join(blocos)}
+        </div>
+        <p class="i18n-nota">{esc(d['nota'])}</p>
+        <div class="cta-row" style="margin-top:20px">
+          <a class="btn btn-outline" href="mailto:{EMAIL}">{EMAIL}</a>
+        </div>
+      </div>
+    </section>"""
+    caminho = PAGINAS["faq"][idioma["codigo"]]
+    ld = [{"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{ORIGEM}{caminho}#faq",
+           "url": f"{ORIGEM}{caminho}", "name": d["titulo"], "inLanguage": idioma["codigo"],
+           "mainEntity": entidades}]
+    return moldura(idioma, "faq", d["titulo_aba"], d["descricao"], corpo, ld, partes)
+
+
 def main() -> int:
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     partes = base.partes_da_home(HOME.read_text(encoding="utf-8"))
     # partes['estilo'] vem com as tags <style>: aqui o CSS entra numa tag nossa, com o extra junto.
     partes["estilo_sem_tag"] = re.sub(r"^\s*<style>|</style>\s*$", "", partes["estilo"])
+    faq = json.loads(FAQ.read_text(encoding="utf-8"))
     total = 0
     for codigo, idioma in dados["idiomas"].items():
-        for nome, gerar in (("home", pagina_home), ("doar", pagina_doar)):
+        for nome, gerar in (("home", pagina_home), ("doar", pagina_doar),
+                            ("faq", lambda i, p: pagina_faq(i, p, faq))):
             destino = SITE / PAGINAS[nome][codigo].strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)
             # Sem o widget de chat: a interface dele é toda em português, e abrir um chat em

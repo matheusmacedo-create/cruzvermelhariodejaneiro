@@ -13,6 +13,7 @@
       "menu": {
         "sobre": "About us",
         "principios": "Our principles",
+        "faq": "FAQ",
         "doar": "Donate",
         "contato": "Contact",
         "portugues": "Site em português",
@@ -144,6 +145,7 @@
       "menu": {
         "sobre": "Quiénes somos",
         "principios": "Nuestros principios",
+        "faq": "Preguntas",
         "doar": "Donar",
         "contato": "Contacto",
         "portugues": "Site em português",
