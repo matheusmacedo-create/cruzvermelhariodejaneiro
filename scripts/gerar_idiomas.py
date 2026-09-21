@@ -35,6 +35,7 @@ WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
+VOLUNTARIO = "https://form.spotform.com.br/voluntariocruzvermelharj"
 # Caminho de cada página, por idioma. O português é o x-default.
 PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
@@ -43,7 +44,10 @@ PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            # A página em português dos cursos é a de matrícula, com checkout: é outro tipo de
            # página, não a mesma em outra língua. Fica de x-default, fora do par hreflang — o "#"
            # é o que sinaliza isso para alternativas(), como na FAQ.
-           "cursos": {"pt": "/matricula-cursos-presenciais/#cursos", "en": "/en/courses/", "es": "/es/cursos/"}}
+           "cursos": {"pt": "/matricula-cursos-presenciais/#cursos", "en": "/en/courses/", "es": "/es/cursos/"},
+           # A equipe existe nas três línguas e são a mesma página: cluster completo.
+           "equipe": {"pt": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"}}
+EQUIPE = SITE / "equipe.html"
 FAQ = SITE / "faq-idiomas.json"
 CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
 
@@ -114,7 +118,12 @@ ESTILO_EXTRA = """
     .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
     .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
     .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
-    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } }
+    .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
+    .i18n-fichas li { margin:2px 0 }
+    .i18n-diretoria article { text-align:center }
+    .i18n-diretoria h3 { font-size:1rem }
+    .i18n-diretoria p { color:var(--red); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } .i18n-diretoria, .i18n-areas { grid-template-columns:repeat(3,1fr) } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 """
 
@@ -123,6 +132,7 @@ def cabecalho(idioma: dict, pagina: str) -> str:
     """Cabeçalho da home com o menu traduzido e o seletor de idioma."""
     m, pasta = idioma["menu"], idioma["pasta"]
     links = [(f'/{pasta}/#sobre', m["sobre"]), (f'/{pasta}/#principios', m["principios"]),
+             (PAGINAS["equipe"][idioma["codigo"]], m["equipe"]),
              (PAGINAS["cursos"][idioma["codigo"]], m["cursos"]),
              (PAGINAS["faq"][idioma["codigo"]], m["faq"]),
              (PAGINAS["doar"][idioma["codigo"]], m["doar"]), (f'/{pasta}/#contato', m["contato"]),
@@ -362,6 +372,95 @@ def resposta_html(texto: str, links: list) -> str:
     return texto
 
 
+def ler_equipe() -> tuple[list, list]:
+    """Diretoria e coordenações lidas de equipe.html, que é a fonte de quem é quem.
+
+    Os nomes não são traduzidos e não podem divergir entre as versões: manter uma segunda lista
+    no idiomas.json garantiria que um dia as duas ficassem diferentes. Daqui sai só gente; os
+    rótulos de cargo e de área são traduzidos no idiomas.json, casados pelo nome em português.
+    """
+    fonte = EQUIPE.read_text(encoding="utf-8")
+    limpar = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+    diretoria = [(limpar(c), limpar(n)) for c, n in
+                 re.findall(r'<div class="role">(.*?)</div>\s*<div class="name">(.*?)</div>', fonte, re.S)]
+    coordenacoes = [(limpar(a), [limpar(x) for x in re.findall(r"<li[^>]*>(.*?)</li>", pessoas, re.S)])
+                    for a, _, pessoas in
+                    re.findall(r'<div class="area-name">(.*?)</div>(.*?)<ul>(.*?)</ul>', fonte, re.S)]
+    if len(diretoria) != 3 or len(coordenacoes) != 11:
+        raise SystemExit(f"equipe.html mudou de forma: {len(diretoria)} na diretoria, "
+                         f"{len(coordenacoes)} coordenações (esperado 3 e 11)")
+    return diretoria, coordenacoes
+
+
+def pagina_equipe(idioma: dict, partes: dict, equipe: tuple) -> str:
+    """Diretoria, coordenações, a sede e como fazer parceria — em inglês e espanhol."""
+    e = idioma["equipe"]
+    diretoria, coordenacoes = equipe
+    cartoes = "\n          ".join(
+        f'<article><h3>{esc(nome)}</h3><p>{esc(e["cargos"].get(cargo, cargo))}</p></article>'
+        for cargo, nome in diretoria)
+    areas = []
+    for area, pessoas in coordenacoes:
+        titulo, sobre = e["areas"].get(area, (area, ""))
+        gente = "".join(f"<li>{esc(x)}</li>" for x in pessoas)
+        areas.append(f'<article><h3>{esc(titulo)}</h3><p>{esc(sobre)}</p><ul>{gente}</ul></article>')
+    como = "\n          ".join(f"<p>{esc(x)}</p>" for x in e["como_paragrafos"])
+    sede = "\n          ".join(f"<p>{esc(x)}</p>" for x in e["sede_paragrafos"])
+    parceria = "\n        ".join(f"<p>{esc(x)}</p>" for x in e["parceria_paragrafos"])
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap">
+        <p class="eyebrow">{esc(e['sobrancelha'])}</p>
+        <h1>{esc(e['h1'])}</h1>
+        <p>{esc(e['linha'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(e['diretoria_titulo'])}</h2>
+        <div class="i18n-fichas i18n-diretoria">
+          {cartoes}
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(e['como_titulo'])}</h2>
+        <div class="i18n-caixa">
+          {como}
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(e['areas_titulo'])}</h2>
+        <p>{esc(e['areas_linha'])}</p>
+        <div class="i18n-fichas i18n-areas">
+          {chr(10).join("          " + a for a in areas).strip()}
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(e['sede_titulo'])}</h2>
+        {sede}
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(e['parceria_titulo'])}</h2>
+        {parceria}
+        <div class="cta-row" style="margin-top:22px">
+          <a class="btn btn-red" href="mailto:{EMAIL}">{EMAIL}</a>
+          <a class="btn btn-outline" href="{VOLUNTARIO}" target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR">{esc(e['cta_voluntario'])}</a>
+        </div>
+      </div>
+    </section>"""
+    caminho = PAGINAS["equipe"][idioma["codigo"]]
+    ld = [{"@context": "https://schema.org", "@type": "AboutPage", "url": f"{ORIGEM}{caminho}",
+           "name": e["titulo_aba"], "description": e["descricao"], "inLanguage": idioma["codigo"]}]
+    return moldura(idioma, "equipe", e["titulo_aba"], e["descricao"], corpo, ld, partes)
+
+
 def pagina_cursos(idioma: dict, partes: dict, cursos: dict) -> str:
     """Os sete cursos em inglês e espanhol.
 
@@ -499,11 +598,13 @@ def main() -> int:
     partes["estilo_sem_tag"] = re.sub(r"^\s*<style>|</style>\s*$", "", partes["estilo"])
     faq = json.loads(FAQ.read_text(encoding="utf-8"))
     cursos = json.loads(CURSOS.read_text(encoding="utf-8"))
+    equipe = ler_equipe()
     total = 0
     for codigo, idioma in dados["idiomas"].items():
         for nome, gerar in (("home", pagina_home), ("doar", pagina_doar),
                             ("faq", lambda i, p: pagina_faq(i, p, faq)),
-                            ("cursos", lambda i, p: pagina_cursos(i, p, cursos))):
+                            ("cursos", lambda i, p: pagina_cursos(i, p, cursos)),
+                            ("equipe", lambda i, p: pagina_equipe(i, p, equipe))):
             destino = SITE / PAGINAS[nome][codigo].strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)
             # Sem o widget de chat: a interface dele é toda em português, e abrir um chat em

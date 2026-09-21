@@ -63,6 +63,8 @@ PAGINAS = [
     ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
     ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
     ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
+    ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
+    ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
 ]
 
 # Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
@@ -83,6 +85,10 @@ ALTERNATIVAS = {
     # só pelo sitemap criaria divergência entre o que o sitemap diz e o que a página diz.
     "/en/courses/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
     "/es/cursos/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
+    # Equipe: cluster completo, porque equipe.html é a mesma página em português e declara hreflang.
+    "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+    "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+    "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
 }
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)

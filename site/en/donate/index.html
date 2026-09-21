@@ -52,7 +52,12 @@
     .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
     .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
     .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
-    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } }
+    .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
+    .i18n-fichas li { margin:2px 0 }
+    .i18n-diretoria article { text-align:center }
+    .i18n-diretoria h3 { font-size:1rem }
+    .i18n-diretoria p { color:var(--red); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } .i18n-diretoria, .i18n-areas { grid-template-columns:repeat(3,1fr) } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 </style>
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","url":"https://cruzvermelhariodejaneiro.org/en/donate/","name":"Donate to the Brazilian Red Cross — Rio de Janeiro","description":"Donate to the Brazilian Red Cross Rio de Janeiro branch by card or PIX. Your donation funds volunteer training and community action across the state.","inLanguage":"en","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"}},{"@context":"https://schema.org","@type":"DonateAction","name":"Donate to the Brazilian Red Cross — Rio de Janeiro","target":"https://cruzvermelhariodejaneiro.org/doe/","recipient":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}}]</script>
@@ -79,6 +84,7 @@
         <nav class="nav-links">
           <a href="/en/#sobre">About us</a>
           <a href="/en/#principios">Our principles</a>
+          <a href="/en/our-team/">Our team</a>
           <a href="/en/courses/">Courses</a>
           <a href="/en/faq/">FAQ</a>
           <a href="/en/donate/">Donate</a>

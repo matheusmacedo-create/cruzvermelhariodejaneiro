@@ -13,6 +13,7 @@
       "menu": {
         "sobre": "About us",
         "principios": "Our principles",
+        "equipe": "Our team",
         "cursos": "Courses",
         "faq": "FAQ",
         "doar": "Donate",
@@ -151,6 +152,83 @@
         "faq_texto": "The questions people ask most — about certificates, entry requirements, the Lucas Law and training a team at your company or school — are answered on the FAQ page.",
         "faq_link": "Read the FAQ"
       },
+      "equipe": {
+        "titulo_aba": "Our team — Brazilian Red Cross Rio de Janeiro",
+        "descricao": "The executive board and the eleven coordination teams that run the Brazilian Red Cross Rio de Janeiro branch, and how to work with us.",
+        "sobrancelha": "Rio de Janeiro State Branch",
+        "h1": "Our team",
+        "linha": "The executive board and the coordination teams that run the work of the Brazilian Red Cross — Rio de Janeiro Branch, from the Red Cross Palace in central Rio de Janeiro.",
+        "diretoria_titulo": "Executive board",
+        "cargos": {
+          "Presidente": "President",
+          "Vice-Presidente": "Vice-President",
+          "Diretor Financeiro": "Finance Director"
+        },
+        "como_titulo": "How the branch works",
+        "como_paragrafos": [
+          "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. The Movement brings together the International Committee of the Red Cross, the International Federation of Red Cross and Red Crescent Societies and the National Society of each country, all bound by the same seven fundamental principles.",
+          "The branch is a non-profit body, CNPJ 08.560.973/0001-97, recognised as being of municipal public utility by Law 5,153/2010 and of state public utility by Law 9,984/2023. The work is led by an executive board and by thematic coordination teams, and carried out largely by volunteers the branch trains itself. Its teaching arm is the Escola de Educação e Saúde CVB-RJ, which runs the in-person courses at the headquarters."
+        ],
+        "areas_titulo": "Coordination teams",
+        "areas_linha": "Eleven areas, each with the people who answer for it.",
+        "areas": {
+          "Jurídico": [
+            "Legal",
+            "Contracts, agreements and the compliance of the branch's acts."
+          ],
+          "Comunicação Social": [
+            "Communications",
+            "Official channels, the website, social media and press relations."
+          ],
+          "Tecnologia da Informação": [
+            "Information Technology",
+            "Systems, the website and the branch's digital infrastructure."
+          ],
+          "Humanitário": [
+            "Humanitarian Action",
+            "Assistance and support for communities across the state."
+          ],
+          "Educação e Saúde": [
+            "Education and Health",
+            "The Escola de Educação e Saúde CVB-RJ and the in-person courses at the headquarters."
+          ],
+          "Primeiros Socorros": [
+            "First Aid",
+            "First-aid training, and cover for events and field operations."
+          ],
+          "GRD": [
+            "Disaster Risk Management",
+            "Preparedness for and response to emergencies."
+          ],
+          "Voluntariado": [
+            "Volunteering",
+            "Registration, initial training and support for volunteers."
+          ],
+          "Juventude": [
+            "Youth",
+            "Programmes led by the branch's young volunteers."
+          ],
+          "Psicologia / Serviço Social": [
+            "Psychology and Social Work",
+            "Psychosocial support in the field and for the teams themselves."
+          ],
+          "Esportes": [
+            "Sport",
+            "Sporting activities and community engagement."
+          ]
+        },
+        "sede_titulo": "The Red Cross Palace",
+        "sede_paragrafos": [
+          "The branch works from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. The building takes up the block between Rua Carlos Carvalho and Rua Ubaldino do Amaral and Avenida Henrique Valadares and Avenida Carlos Sampaio, and is the historic headquarters of the Brazilian Red Cross, founded in 1908. In 2021 the complex was given provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute.",
+          "It is where the in-person courses, the initial volunteer training and the Winter Clothing Drive collection happen. The branch does not schedule medical appointments and does not answer emergencies: in an emergency, call 192 for an ambulance or 193 for the fire brigade."
+        ],
+        "parceria_titulo": "Working with the branch",
+        "parceria_paragrafos": [
+          "Sister National Societies, institutions and companies wanting to partner, donate institutionally, sponsor a campaign or commission training for a team all come through the same address: contato@cruzvermelhariodejaneiro.org. Say in the subject line which coordination team you are looking for, and the team replies within two business days.",
+          "Volunteering is open to anyone, with no requirement of a health background: the branch trains its own volunteers, and there are programmes for very different profiles. The working language is Portuguese. For anything concerning the Brazilian Red Cross nationally, rather than this state branch, the National Society is the right door."
+        ],
+        "cta_voluntario": "Register as a volunteer"
+      },
       "doar": {
         "titulo": "Donate to the Brazilian Red Cross — Rio de Janeiro",
         "descricao": "Donate to the Brazilian Red Cross Rio de Janeiro branch by card or PIX. Your donation funds volunteer training and community action across the state.",
@@ -211,6 +289,7 @@
       "menu": {
         "sobre": "Quiénes somos",
         "principios": "Nuestros principios",
+        "equipe": "Nuestro equipo",
         "cursos": "Cursos",
         "faq": "Preguntas",
         "doar": "Donar",
@@ -348,6 +427,83 @@
         "faq_titulo": "¿Todavía decidiendo?",
         "faq_texto": "Las preguntas más frecuentes — sobre certificados, requisitos, la Ley Lucas y capacitaciones para el equipo de su empresa o escuela — están respondidas en la página de preguntas frecuentes.",
         "faq_link": "Ver las preguntas frecuentes"
+      },
+      "equipe": {
+        "titulo_aba": "Nuestro equipo — Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "La junta ejecutiva y las once coordinaciones que conducen la filial de Río de Janeiro de la Cruz Roja Brasileña, y cómo trabajar con nosotros.",
+        "sobrancelha": "Filial del Estado de Río de Janeiro",
+        "h1": "Nuestro equipo",
+        "linha": "La junta ejecutiva y las coordinaciones que conducen el trabajo de la Cruz Roja Brasileña — Filial Río de Janeiro, desde el Palacio de la Cruz Roja, en el centro de Río de Janeiro.",
+        "diretoria_titulo": "Junta ejecutiva",
+        "cargos": {
+          "Presidente": "Presidente",
+          "Vice-Presidente": "Vicepresidente",
+          "Diretor Financeiro": "Director Financiero"
+        },
+        "como_titulo": "Cómo funciona la filial",
+        "como_paragrafos": [
+          "La Cruz Roja Brasileña — Filial Río de Janeiro es la filial del Estado de Río de Janeiro de la Cruz Roja Brasileña, la Sociedad Nacional del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja en Brasil. El Movimiento reúne al Comité Internacional de la Cruz Roja, a la Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja y a la Sociedad Nacional de cada país, todas regidas por los mismos siete principios fundamentales.",
+          "La filial es una entidad sin fines de lucro, CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. El trabajo es conducido por una junta ejecutiva y por coordinaciones temáticas, y llevado a cabo en gran parte por voluntarios que la propia filial forma. Su brazo formativo es la Escola de Educação e Saúde CVB-RJ, responsable de los cursos presenciales en la sede."
+        ],
+        "areas_titulo": "Coordinaciones",
+        "areas_linha": "Once áreas, cada una con las personas que responden por ella.",
+        "areas": {
+          "Jurídico": [
+            "Jurídico",
+            "Contratos, convenios y el cumplimiento normativo de los actos de la filial."
+          ],
+          "Comunicação Social": [
+            "Comunicación",
+            "Canales oficiales, el sitio web, las redes y la relación con la prensa."
+          ],
+          "Tecnologia da Informação": [
+            "Tecnología de la Información",
+            "Sistemas, sitio web e infraestructura digital de la filial."
+          ],
+          "Humanitário": [
+            "Acción Humanitaria",
+            "Asistencia y apoyo a las comunidades de todo el estado."
+          ],
+          "Educação e Saúde": [
+            "Educación y Salud",
+            "La Escola de Educação e Saúde CVB-RJ y los cursos presenciales en la sede."
+          ],
+          "Primeiros Socorros": [
+            "Primeros Auxilios",
+            "Formación en primeros auxilios y cobertura de eventos y acciones."
+          ],
+          "GRD": [
+            "Gestión de Riesgos de Desastres",
+            "Preparación y respuesta ante emergencias."
+          ],
+          "Voluntariado": [
+            "Voluntariado",
+            "Registro, formación inicial y acompañamiento de los voluntarios."
+          ],
+          "Juventude": [
+            "Juventud",
+            "Frentes conducidas por los jóvenes voluntarios de la filial."
+          ],
+          "Psicologia / Serviço Social": [
+            "Psicología y Trabajo Social",
+            "Apoyo psicosocial en las acciones y a los propios equipos."
+          ],
+          "Esportes": [
+            "Deportes",
+            "Actividades deportivas y de integración con la comunidad."
+          ]
+        },
+        "sede_titulo": "El Palacio de la Cruz Roja",
+        "sede_paragrafos": [
+          "La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. El edificio ocupa la manzana entre las calles Carlos Carvalho y Ubaldino do Amaral y las avenidas Henrique Valadares y Carlos Sampaio, y es la sede histórica de la Cruz Roja Brasileña, fundada en 1908. En 2021 el conjunto recibió protección patrimonial provisional del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil.",
+          "Allí ocurren los cursos presenciales, la formación inicial de los voluntarios y la recepción de las donaciones de la Campaña de Ropa de Abrigo. La filial no agenda citas médicas ni atiende urgencias: en una emergencia, llame al 192 (ambulancia) o al 193 (bomberos)."
+        ],
+        "parceria_titulo": "Trabajar con la filial",
+        "parceria_paragrafos": [
+          "Las Sociedades Nacionales hermanas, las instituciones y las empresas que quieran establecer una alianza, donar institucionalmente, patrocinar una campaña o encargar una capacitación para un equipo llegan por la misma dirección: contato@cruzvermelhariodejaneiro.org. Indique en el asunto qué coordinación busca, y el equipo responde en hasta dos días hábiles.",
+          "El voluntariado está abierto a cualquier persona, sin exigencia de formación en salud: la filial forma a sus propios voluntarios, y hay frentes para perfiles muy distintos. El idioma de trabajo es el portugués. Para cualquier asunto de la Cruz Roja Brasileña a nivel nacional, y no de esta filial estatal, la puerta correcta es la Sociedad Nacional."
+        ],
+        "cta_voluntario": "Registrarse como voluntario"
       },
       "doar": {
         "titulo": "Donar a la Cruz Roja Brasileña — Río de Janeiro",
