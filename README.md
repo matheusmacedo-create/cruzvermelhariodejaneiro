@@ -673,6 +673,49 @@ código de país ou só o formato brasileiro; e o que fazer com passaporte que t
 (Portugal `N123456`, Alemanha `C01X00T47`), que a API recusa — cortar as letras do documento de
 alguém não é opção.
 
+## Por que a resposta da equipe é bloqueada pelo Gmail (21/09/2026)
+
+Sintoma: a equipe responde o contato pela caixa do Google e volta um `Mail Delivery Subsystem`
+dizendo "Mensagem bloqueada". **Não é e-mail inválido do destinatário** — o endereço está certo e o
+chat já valida com `FILTER_VALIDATE_EMAIL`. O erro literal é:
+
+```
+550 5.7.26 Your email has been blocked because the sender is unauthenticated.
+Gmail requires all senders to authenticate with either SPF or DKIM.
+DKIM = did not pass
+SPF [cruzvermelhariodejaneiro.org] with ip: [209.85.220.41] = did not pass
+```
+
+Consultado na zona em 21/09:
+
+| registro | estado |
+|---|---|
+| `MX` do domínio raiz | `smtp.google.com` — a caixa é Google Workspace |
+| **SPF do domínio raiz** | **não existe** (o único TXT na raiz é um `prtoolkit-verification`) |
+| **DKIM do Google** (`google._domainkey`) | **não existe** |
+| `_dmarc` | existe: `p=none`, `adkim=s`, `aspf=s` |
+| `send.` (SPF + MX) e `resend._domainkey` | existem — são da Resend |
+
+Ou seja: a raiz não autoriza ninguém a enviar por ela. O Google manda do IP dele (209.85.220.41),
+o Gmail do destinatário confere e não acha nem SPF nem DKIM que cubram aquele IP, e recusa. Vale
+para qualquer destinatário no Gmail — que é a maioria de quem escreve pelo chat.
+
+**A correção são dois registros, nenhum deles toca a Resend:**
+
+1. `TXT` em `@` (raiz): `v=spf1 include:_spf.google.com ~all` — sozinho já destrava, porque o
+   Gmail exige SPF **ou** DKIM.
+2. `TXT` em `google._domainkey`: a chave gerada no Admin do Google (Apps → Google Workspace →
+   Gmail → Autenticar e-mail → gerar registro de 2048 bits, seletor `google`), e depois "Iniciar
+   autenticação" no próprio Admin. Só o Admin gera essa chave.
+
+**Não mexer** em `send.cruzvermelhariodejaneiro.org` (SPF e MX) nem em `resend._domainkey`: são da
+Resend e derrubam todo o e-mail automático do site. O SPF novo vai na **raiz**, que hoje não tem
+SPF nenhum, e não afeta a Resend porque o envelope dela é o subdomínio `send.`, que tem SPF próprio
+— SPF se confere contra o envelope, não contra o `From:` visível.
+
+`~all` (softfail) e não `-all`: com o DMARC em `p=none`, softfail não derruba nada que hoje
+funcione, e ainda assim satisfaz a exigência do Gmail.
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
