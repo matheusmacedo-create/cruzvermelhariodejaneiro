@@ -55,7 +55,22 @@ PAGINAS = [
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
     ("/termos/", None, "yearly", "0.3", "Termos de uso (Redação)"),
     ("/privacidade/", None, "yearly", "0.3", "Política de privacidade (Redação)"),
+    ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
+    ("/en/donate/", "en/donate/index.html", "monthly", "0.6", "Doação em inglês"),
+    ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
+    ("/es/donar/", "es/donar/index.html", "monthly", "0.6", "Doação em espanhol"),
 ]
+
+# Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
+# aceita o hreflang na página, no sitemap ou nos dois; declarar nos dois é o recomendado.
+ALTERNATIVAS = {
+    "/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
+    "/en/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
+    "/es/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
+    "/doe/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
+    "/en/donate/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
+    "/es/donar/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
+}
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
 SUBDOMINIOS = [
@@ -66,6 +81,7 @@ SUBDOMINIOS = [
 SITEMAP_REDACAO = f"{ORIGEM}/sitemap.xml"
 NS_SITEMAP = "http://www.sitemaps.org/schemas/sitemap/0.9"
 NS_IMAGEM = "http://www.google.com/schemas/sitemap-image/1.1"
+NS_XHTML = "http://www.w3.org/1999/xhtml"
 EXTENSOES_IMAGEM = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif")
 IGNORAR_IMAGEM = re.compile(r"logo|/parceiros/|facebook\.com/tr|^data:", re.I)
 
@@ -155,8 +171,15 @@ def imagens_de(pagina: str, base: str) -> list[tuple[str, str]]:
     return list(achadas.items())
 
 
-def entrada(loc: str, lastmod: str | None, changefreq: str, priority: str, imagens: list[tuple[str, str]]) -> str:
+def entrada(loc: str, lastmod: str | None, changefreq: str, priority: str, imagens: list[tuple[str, str]],
+            alternativas: dict[str, str] | None = None) -> str:
     linhas = ["  <url>", f"    <loc>{html.escape(loc, quote=True)}</loc>"]
+    # As versões da mesma página em outros idiomas. O Google aceita o hreflang na página, no
+    # sitemap ou nos dois; declarar nos dois é o recomendado, e é o que fazemos.
+    for codigo, caminho in (alternativas or {}).items():
+        linhas.append(f'    <xhtml:link rel="alternate" hreflang="{codigo}" href="{ORIGEM}{caminho}"/>')
+    if alternativas and alternativas.get("pt-BR"):
+        linhas.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{ORIGEM}{alternativas["pt-BR"]}"/>')
     if lastmod:
         linhas.append(f"    <lastmod>{lastmod}</lastmod>")
     linhas += [f"    <changefreq>{changefreq}</changefreq>", f"    <priority>{priority}</priority>"]
@@ -174,7 +197,7 @@ def urlset(comentario: str, entradas: list[str]) -> str:
     return "\n".join([
         '<?xml version="1.0" encoding="UTF-8"?>',
         f"<!-- {comentario}\n     Gerado por scripts/gerar_sitemaps.py em {agora_w3c()}. Não editar à mão. -->",
-        f'<urlset xmlns="{NS_SITEMAP}" xmlns:image="{NS_IMAGEM}">',
+        f'<urlset xmlns="{NS_SITEMAP}" xmlns:image="{NS_IMAGEM}" xmlns:xhtml="{NS_XHTML}">',
         *entradas,
         "</urlset>",
         "",
@@ -225,7 +248,7 @@ def gerar_paginas() -> tuple[str, int]:
         lastmod = w3c_de_http(cabecalhos.get("last-modified"))
         fonte = (SITE / arquivo).read_text(encoding="utf-8") if arquivo else ""
         imagens = conferir_imagens(imagens_de(fonte, url)) if fonte else []
-        entradas.append(entrada(url, lastmod, changefreq, priority, imagens))
+        entradas.append(entrada(url, lastmod, changefreq, priority, imagens, ALTERNATIVAS.get(caminho)))
         print(f"  lastmod {lastmod or '(sem fonte)'} · {len(imagens)} imagens")
     return urlset("Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.", entradas), len(entradas)
 

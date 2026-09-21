@@ -118,6 +118,10 @@ PAGINA = """<!DOCTYPE html>
   <meta name="description" content="@@DESCRICAO@@">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="@@URL@@">
+  <link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/">
+  <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/">
+  <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/">
+  <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:locale" content="pt_BR">
