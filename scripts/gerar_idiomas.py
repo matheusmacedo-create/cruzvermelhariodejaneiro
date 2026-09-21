@@ -60,21 +60,19 @@ def seletor(pagina: str, atual: str) -> str:
     Redirecionar por Accept-Language prenderia o Googlebot — que vem "em inglês", dos EUA — numa
     versão só, e tiraria de quem quer ler em português a chance de escolher.
     """
-    rotulos = {"pt": "Português", "en": "English", "es": "Español"}
+    siglas = {"pt": ("PT", "Português", "pt-BR"), "en": ("EN", "English", "en"), "es": ("ES", "Español", "es")}
     itens = []
     for codigo, caminho in PAGINAS[pagina].items():
+        sigla, nome, marca = siglas[codigo]
         if codigo == atual:
-            itens.append(f'<span class="idioma-atual" aria-current="true">{rotulos[codigo]}</span>')
+            itens.append(f'<span class="idioma-atual" aria-current="true" lang="{marca}">{sigla}</span>')
         else:
-            itens.append(f'<a href="{caminho}" hreflang="{codigo}" lang="{codigo}">{rotulos[codigo]}</a>')
+            itens.append(f'<a href="{caminho}" hreflang="{marca}" lang="{marca}" aria-label="{nome}">{sigla}</a>')
     return '<div class="seletor-idioma" role="navigation" aria-label="Language">' + " ".join(itens) + "</div>"
 
 
 ESTILO_EXTRA = """
-    .seletor-idioma { display:flex; gap:10px; align-items:center; font-size:.82rem; font-weight:700 }
-    .seletor-idioma a { color:var(--muted); text-decoration:none; padding:4px 8px; border-radius:8px }
-    .seletor-idioma a:hover { color:var(--red); background:rgba(204,0,0,.06) }
-    .seletor-idioma .idioma-atual { color:var(--red); padding:4px 8px; border:1px solid var(--line); border-radius:8px }
+    /* O CSS de .seletor-idioma vem do CSS da home, copiado por partes_da_home(). */
     .i18n-hero { background:var(--soft); border-bottom:1px solid var(--line); padding:64px 0 48px }
     .i18n-hero h1 { font-size:clamp(2rem,3.4vw,3rem); color:var(--black); margin:0 0 14px }
     .i18n-hero p { color:var(--muted); max-width:720px; font-size:1.05rem; margin:0 }

@@ -466,8 +466,20 @@ de um, e disco não é problema.
 - `hreflang` recíproco em **toda** página das três versões, com `x-default` no português — declarado
   na página e também no `sitemap-paginas.xml` (`xhtml:link`), que é o recomendado.
 - `canonical` próprio por versão; `lang` no `<html>`; `og:locale`; `inLanguage` no `WebPage`.
-- Seletor de idioma visível no cabeçalho, com link direto. **Nunca** redirecionamento por
-  `Accept-Language`: o Googlebot vem "em inglês", dos EUA, e ficaria preso numa versão.
+- Seletor de idioma **em toda página, nas três versões**: `PT · EN · ES` no cabeçalho, ao lado do
+  botão da Plataforma, com a sigla atual destacada. Na primeira rodada ele só existia nas páginas
+  traduzidas — quem estava em português não tinha como chegar lá, só o Google enxergava.
+- **Sigla em texto, não bandeira.** Bandeira é país, não idioma: espanhol não é a Espanha (são mais
+  de vinte países), inglês não é o Reino Unido, e a filial pertence a uma instituição cujo princípio
+  é a neutralidade. Para a busca também é melhor: cada sigla é um link rastreável com `hreflang` e
+  `lang`, e imagem de bandeira não carrega sinal nenhum. A acessibilidade vem do `aria-label` com o
+  nome do idioma por extenso.
+- No `/doe/` o seletor aponta para `/en/donate/` e `/es/donar/`, não para a institucional
+  (`seletor_da_doacao()` em `gerar_doe.py`): mandar quem está doando para outra página é perder a
+  doação. Nas páginas sem tradução própria, ele leva à institucional daquele idioma, que é a porta
+  de entrada certa.
+- **Nunca** redirecionamento por `Accept-Language`: o Googlebot vem "em inglês", dos EUA, e ficaria
+  preso numa versão.
 
 ### Decisões que valem registrar
 
