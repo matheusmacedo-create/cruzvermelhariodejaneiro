@@ -169,7 +169,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <link rel="canonical" href="{ORIGEM}{caminho}">
 {alternativas(pagina, idioma['codigo'])}
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="{'en_US' if idioma['codigo'] == 'en' else 'es_ES'}">
+  <meta property="og:locale" content="{idioma['og_locale']}">
   <meta property="og:title" content="{esc(titulo)}">
   <meta property="og:description" content="{esc(descricao)}">
   <meta property="og:url" content="{ORIGEM}{caminho}">
@@ -259,6 +259,7 @@ def pagina_doar(idioma: dict, partes: dict) -> str:
     d = idioma["doar"]
     passos = "\n          ".join(
         f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in d["como"])
+    exterior = "\n          ".join(f"<p>{esc(x)}</p>" for x in d["exterior_paragrafos"])
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap">
         <p class="eyebrow">{esc(d['sobrancelha'])}</p>
@@ -276,6 +277,14 @@ def pagina_doar(idioma: dict, partes: dict) -> str:
           <a class="btn btn-red" href="/doe/" hreflang="pt-BR" lang="pt-BR">{esc(d['botao'])}</a>
         </div>
         <p class="i18n-nota">{esc(d['botao_nota'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(d['exterior_titulo'])}</h2>
+        <div class="i18n-caixa">
+          {exterior}
+        </div>
       </div>
     </section>
     <section class="i18n-bloco">

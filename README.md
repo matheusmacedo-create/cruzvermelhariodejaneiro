@@ -216,8 +216,9 @@ validado no projeto da Punção Venosa.
 - **Testes automatizados**: `php scripts/testar_checkout.php` roda 59 verificações das funções
   puras (CPF, Luhn, telefone, preços e custos, tradução de status, tokens, mensagens da Unicopag,
   visão pública sem CPF/hash/IP) sem banco, rede ou segredos.
-- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. O CPF é obrigatório porque a Unicopag exige
-  `customer.document` (testado: sem ele a API responde 422).
+- **Dados mínimos**: nome, CPF, e-mail e WhatsApp. A Unicopag exige `customer.document` (testado:
+  sem ele a API responde 422), mas **não exige que seja um CPF** — ver "O que a Unicopag valida no
+  documento", abaixo. A trava de CPF é nossa.
 - **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
   18/09: **5% em todos os métodos** (média de PIX, cartão e checkout), sem parcela fixa: R$ 4,95
   sobre R$ 99. Para referência, o PIX medido pela API em 18/09 custou 1,00% + R$ 1,48.
@@ -494,10 +495,45 @@ de um, e disco não é problema.
   espalhado por `doe.js`, e não entrou aqui. As páginas dizem, com todas as letras, que a tela de
   pagamento é em português, e traduzem os botões que a pessoa vai encontrar (`Doar`, `Cartão`,
   `PIX`, `Doar anonimamente`, `Copiar código PIX`).
-- **Cartão funciona de qualquer país; PIX exige conta em banco brasileiro.** As duas páginas dizem
-  isso, porque prometer PIX a quem está fora do Brasil é perder a doação na última tela.
+- **O cenário de fora do Brasil ganhou seção própria nas duas páginas de doação**, logo depois do
+  botão, que é onde o doador estrangeiro bateria na parede: "Donating from outside Brazil: card
+  only" / "Donar desde fuera de Brasil: solo con tarjeta". Ela separa as duas travas, que são de
+  naturezas diferentes: **o PIX é impossível de fora por construção** (é sistema do Banco Central,
+  move dinheiro entre contas de bancos brasileiros, não existe PIX saindo de banco estrangeiro),
+  enquanto **o cartão atravessa fronteira sem problema** e só esbarra no CPF que o nosso formulário
+  pede. Dizer as duas coisas juntas ("não dá de fora") esconderia que a segunda é removível.
+- **Quem doa pelo site precisa de CPF e telefone brasileiro — nos dois meios de pagamento.** A
+  primeira versão destas páginas dizia "tax ID or passport" e "card works from anywhere". Está
+  errado: `site/doe/static/doe.js` roda `cpfValido()` (11 dígitos com dígito verificador) e exige
+  telefone de 10 a 11 dígitos **antes** de abrir cartão *ou* PIX. Quem está fora do Brasil sem CPF
+  não passa do formulário. As duas páginas agora abrem por "Who can donate online"/"Quién puede
+  donar en línea", e a seção final ("Donating from outside Brazil") manda escrever para a filial,
+  que combina a transferência por fora. Mexer na validação de `doe.js` é mexer em página que recebe
+  pagamento; a saída honesta custou uma seção de texto, não um refactor.
 - **O nome da instituição** ficou "Brazilian Red Cross — Rio de Janeiro Branch" e "Cruz Roja
   Brasileña — Filial Río de Janeiro". Trocar é editar `instituicao` no `idiomas.json` e regerar.
+
+### Conferência de 21/09
+
+Depois de publicar, passei sitemap, ortografia e copy das quatro páginas:
+
+- **Sitemap: limpo.** Os 5 sitemaps em 200, `robots.txt` declarando `sitemap-index.xml` e
+  `sitemap.xml`, o índice listando os 4, `sitemap-paginas.xml` com 13 URLs e 24 `xhtml:link`.
+  Cruzamento sitemap × página ao vivo: 0 problema em 13 URLs — `canonical` igual ao `loc` e
+  `hreflang` idêntico nos dois lugares. Rastreio: 0 redirecionamento interno, 0 4xx/5xx, 0 órfã,
+  0 fora do sitemap, 0 âncora fraca.
+- **Ortografia: nada.** `pyspellchecker` acusou 10 palavras em inglês (CPF, CVB-RJ, centre,
+  organisation, recognised, first-aid…) e 114 em espanhol — todas legítimas: grafia britânica,
+  compostos hifenizados e dicionário pobre. Correções de língua que saíram: "thematic
+  coordinations"→"coordination teams", "volunteers the branch trains itself"→"volunteers trained by
+  the branch itself", "first-aid capability"→"first-aid training", "inscrita con el CNPJ"→
+  "registrada", "Campaña del Abrigo"→"Campaña de Ropa de Abrigo", "Primeros Auxilios Básico,"→
+  "Básicos,", vírgula em "Praça da Cruz Vermelha, 10".
+- **Copy: um erro de fato**, o do CPF acima — o único achado sério da conferência.
+- **Descrições fora do limite.** As quatro estavam entre 178 e 224 caracteres, enquanto as em
+  português respeitam ~160 e o Google corta por volta disso. Reescritas para 148–158.
+- **`og:locale`** saiu do código para o `idiomas.json` e o espanhol virou `es_LA`, não `es_ES`: a
+  copy é de espanhol latino-americano e a Espanha não é o público.
 
 ### O que ainda não está traduzido, de propósito
 
@@ -509,6 +545,44 @@ fingir. Ampliar é acrescentar texto ao `idiomas.json` — a base técnica já e
 
 Escrevi os textos, não são tradução automática, mas **pedem revisão humana** antes de virarem a voz
 oficial da filial em outro idioma — em especial os nomes próprios e o enquadramento institucional.
+
+## O que a Unicopag valida no documento (21/09/2026)
+
+Sondado direto na API de produção em 21/09, porque a resposta muda quem consegue doar e quem
+consegue se matricular. `POST /public/v1/payments` com `customer.document`:
+
+| documento | resposta |
+|---|---|
+| ausente | 422 `customer.document` obrigatório |
+| `X1234567` (alfanumérico) | 422 **"O documento do cliente deve ser numérico"** |
+| `123456789` (passaporte de 9 dígitos) | **passa** — nenhum erro em `customer.document` |
+
+**A Unicopag exige que o documento seja numérico e nada além disso.** Ela não confere dígito
+verificador, não exige 11 dígitos, não exige que seja um CPF. Quem valida CPF somos nós:
+`cpfValido()` em `site/doe/static/doe.js:79` e `mcp_cpf_valido()` em `site/doe/api/doacoes.php:38`
+(mesma dupla no checkout da matrícula). Isso derruba a premissa registrada no briefing de que "V1 =
+CPF porque a Unicopag exige o documento" (`docs/briefing-matricula-cursos-presenciais.md:507`): a
+exigência é de *um documento numérico*, e o passaporte numérico de um doador estrangeiro serve.
+
+Consequência prática: dá para aceitar doador e aluno de fora do Brasil **com o documento verdadeiro
+deles**, sem inventar CPF. Gerar CPF aleatório para "destravar" é o caminho errado e está descartado:
+um CPF válido sorteado tem chance na ordem de 1 em 4 de pertencer a uma pessoa real (~250 milhões
+emitidos num espaço de 1 bilhão), a doação ficaria registrada na Unicopag, na adquirente e no livro
+da filial no CPF de um estranho, e documento fabricado em série é motivo de encerramento da conta —
+o que pararia todas as doações, não só as de fora.
+
+**Técnica da sonda sem cobrança**: omitir `postback_url` de propósito. A API valida o payload inteiro
+e devolve todos os erros de uma vez, então, se `customer.document` não aparece na lista, aquele
+documento passou — e nenhuma transação é criada (422 não abre cobrança). Script em
+`scratchpad/sondar_limites.php`.
+
+### Ainda não sondado
+
+Faltou rodar a matriz de limites (o classificador de ações barrou a segunda rodada). Em aberto:
+faixa de tamanho aceita no documento numérico; se `phone_number` aceita telefone internacional com
+código de país ou só o formato brasileiro; e o que fazer com passaporte que tem letra
+(Portugal `N123456`, Alemanha `C01X00T47`), que a API recusa — cortar as letras do documento de
+alguém não é opção.
 
 ## Convenção de nome (19/09/2026)
 
