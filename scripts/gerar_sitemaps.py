@@ -61,6 +61,8 @@ PAGINAS = [
     ("/es/donar/", "es/donar/index.html", "monthly", "0.6", "Doação em espanhol"),
     ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
     ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
+    ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
+    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
 ]
 
 # Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
@@ -76,6 +78,11 @@ ALTERNATIVAS = {
     # serve de hreflang. O par fica sem pt-BR, como nas próprias páginas.
     "/en/faq/": {"en": "/en/faq/", "es": "/es/preguntas-frecuentes/", "x-default": "/"},
     "/es/preguntas-frecuentes/": {"en": "/en/faq/", "es": "/es/preguntas-frecuentes/", "x-default": "/"},
+    # Cursos: o par en+es, como na FAQ. A página em português é a de matrícula, com checkout — é
+    # outro tipo de página, não a mesma em outra língua, e não declara hreflang. Entrar no cluster
+    # só pelo sitemap criaria divergência entre o que o sitemap diz e o que a página diz.
+    "/en/courses/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
+    "/es/cursos/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
 }
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)

@@ -39,8 +39,13 @@ ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 202
 PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
            # Em português a FAQ é uma seção da home, não uma página: daí o "#".
-           "faq": {"pt": "/#faq", "en": "/en/faq/", "es": "/es/preguntas-frecuentes/"}}
+           "faq": {"pt": "/#faq", "en": "/en/faq/", "es": "/es/preguntas-frecuentes/"},
+           # A página em português dos cursos é a de matrícula, com checkout: é outro tipo de
+           # página, não a mesma em outra língua. Fica de x-default, fora do par hreflang — o "#"
+           # é o que sinaliza isso para alternativas(), como na FAQ.
+           "cursos": {"pt": "/matricula-cursos-presenciais/#cursos", "en": "/en/courses/", "es": "/es/cursos/"}}
 FAQ = SITE / "faq-idiomas.json"
+CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
 
 
 def esc(s: str) -> str:
@@ -98,6 +103,18 @@ ESTILO_EXTRA = """
     .i18n-nota { color:var(--muted); font-size:.9rem; margin:18px 0 0; max-width:760px }
     .i18n-caixa { background:var(--soft); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-top:24px }
     .i18n-caixa p { margin:0 }
+    .i18n-caixa p + p { margin-top:14px }
+    .i18n-tabela-rolo { overflow-x:auto; margin-top:24px }
+    .i18n-tabela { width:100%; border-collapse:collapse; min-width:620px }
+    .i18n-tabela th, .i18n-tabela td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:.95rem }
+    .i18n-tabela th { background:var(--soft); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    .i18n-tabela td:last-child, .i18n-tabela th:last-child { white-space:nowrap }
+    .i18n-fichas { display:grid; gap:18px; margin-top:24px }
+    .i18n-fichas article { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px }
+    .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
+    .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
+    .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 """
 
@@ -106,6 +123,7 @@ def cabecalho(idioma: dict, pagina: str) -> str:
     """Cabeçalho da home com o menu traduzido e o seletor de idioma."""
     m, pasta = idioma["menu"], idioma["pasta"]
     links = [(f'/{pasta}/#sobre', m["sobre"]), (f'/{pasta}/#principios', m["principios"]),
+             (PAGINAS["cursos"][idioma["codigo"]], m["cursos"]),
              (PAGINAS["faq"][idioma["codigo"]], m["faq"]),
              (PAGINAS["doar"][idioma["codigo"]], m["doar"]), (f'/{pasta}/#contato', m["contato"]),
              ("/", m["portugues"])]
@@ -344,6 +362,95 @@ def resposta_html(texto: str, links: list) -> str:
     return texto
 
 
+def pagina_cursos(idioma: dict, partes: dict, cursos: dict) -> str:
+    """Os sete cursos em inglês e espanhol.
+
+    Não é tradução da página de vendas: é a ficha honesta, com a restrição dita antes da tabela
+    (aula em português, presencial, no Rio, e matrícula que pede CPF). Carga horária, escolaridade
+    e valor saem de cursos.json, a mesma fonte da página em português, para não saírem de sincronia.
+    """
+    c = idioma["cursos"]
+    por_slug = {x["slug"]: x for x in cursos["cursos"]}
+    linhas = []
+    for slug, nome in c["nomes"].items():
+        d_ = por_slug[slug]
+        escolaridade = c["escolaridade"].get(d_["escolaridade"], d_["escolaridade"])
+        horas = re.sub(r"\s*horas?", "", d_["carga_horaria"]).strip()
+        valor = f'R$ {d_["valor_curso_centavos"] / 100:,.0f}'.replace(",", ".")
+        linhas.append(f"            <tr><td>{esc(nome)}</td><td>{esc(horas)}</td>"
+                      f"<td>{esc(escolaridade)}</td><td>{esc(valor)}</td></tr>")
+    avisos = "\n          ".join(f"<p>{esc(x)}</p>" for x in c["aviso_paragrafos"])
+    fichas = "\n          ".join(
+        f'<article><h3>{esc(c["nomes"][s])} <small>{esc(por_slug[s]["carga_horaria"])}</small></h3>'
+        f"<p>{esc(x)}</p></article>" for s, x in c["detalhes"].items())
+    passos = "\n          ".join(
+        f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in c["como"])
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap">
+        <p class="eyebrow">{esc(c['sobrancelha'])}</p>
+        <h1>{esc(c['h1'])}</h1>
+        <p>{esc(c['linha'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(c['aviso_titulo'])}</h2>
+        <div class="i18n-caixa">
+          {avisos}
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(c['tabela_titulo'])}</h2>
+        <div class="i18n-tabela-rolo">
+          <table class="i18n-tabela">
+            <thead><tr>{''.join(f'<th>{esc(h)}</th>' for h in c['cabecalho'])}</tr></thead>
+            <tbody>
+{chr(10).join(linhas)}
+            </tbody>
+          </table>
+        </div>
+        <p class="i18n-nota">{esc(c['tabela_nota'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(c['detalhe_titulo'])}</h2>
+        <div class="i18n-fichas">
+          {fichas}
+        </div>
+        <p class="i18n-nota">{esc(c['detalhe_nota'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(c['como_titulo'])}</h2>
+        <ul class="i18n-passos">
+          {passos}
+        </ul>
+        <div class="cta-row" style="margin-top:32px">
+          <a class="btn btn-red" href="{PAGINAS['cursos']['pt']}" hreflang="pt-BR" lang="pt-BR">{esc(c['botao'])}</a>
+          <a class="btn btn-outline" href="{ESCOLA}" target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR">{esc(idioma['menu']['plataforma'])}</a>
+        </div>
+        <p class="i18n-nota">{esc(c['botao_nota'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(c['faq_titulo'])}</h2>
+        <p>{esc(c['faq_texto'])}</p>
+        <div class="cta-row" style="margin-top:20px">
+          <a class="btn btn-outline" href="{PAGINAS['faq'][idioma['codigo']]}">{esc(c['faq_link'])}</a>
+        </div>
+      </div>
+    </section>"""
+    caminho = PAGINAS["cursos"][idioma["codigo"]]
+    ld = [{"@context": "https://schema.org", "@type": "WebPage", "url": f"{ORIGEM}{caminho}",
+           "name": c["titulo_aba"], "description": c["descricao"], "inLanguage": idioma["codigo"]}]
+    return moldura(idioma, "cursos", c["titulo_aba"], c["descricao"], corpo, ld, partes)
+
+
 def pagina_faq(idioma: dict, partes: dict, faq: dict) -> str:
     """A FAQ do idioma, com a mesma marcação <details> da home em português (o CSS vem copiado)."""
     d = faq[idioma["codigo"]]
@@ -391,10 +498,12 @@ def main() -> int:
     # partes['estilo'] vem com as tags <style>: aqui o CSS entra numa tag nossa, com o extra junto.
     partes["estilo_sem_tag"] = re.sub(r"^\s*<style>|</style>\s*$", "", partes["estilo"])
     faq = json.loads(FAQ.read_text(encoding="utf-8"))
+    cursos = json.loads(CURSOS.read_text(encoding="utf-8"))
     total = 0
     for codigo, idioma in dados["idiomas"].items():
         for nome, gerar in (("home", pagina_home), ("doar", pagina_doar),
-                            ("faq", lambda i, p: pagina_faq(i, p, faq))):
+                            ("faq", lambda i, p: pagina_faq(i, p, faq)),
+                            ("cursos", lambda i, p: pagina_cursos(i, p, cursos))):
             destino = SITE / PAGINAS[nome][codigo].strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)
             # Sem o widget de chat: a interface dele é toda em português, e abrir um chat em

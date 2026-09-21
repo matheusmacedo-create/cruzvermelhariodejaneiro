@@ -41,6 +41,18 @@
     .i18n-nota { color:var(--muted); font-size:.9rem; margin:18px 0 0; max-width:760px }
     .i18n-caixa { background:var(--soft); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-top:24px }
     .i18n-caixa p { margin:0 }
+    .i18n-caixa p + p { margin-top:14px }
+    .i18n-tabela-rolo { overflow-x:auto; margin-top:24px }
+    .i18n-tabela { width:100%; border-collapse:collapse; min-width:620px }
+    .i18n-tabela th, .i18n-tabela td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:.95rem }
+    .i18n-tabela th { background:var(--soft); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    .i18n-tabela td:last-child, .i18n-tabela th:last-child { white-space:nowrap }
+    .i18n-fichas { display:grid; gap:18px; margin-top:24px }
+    .i18n-fichas article { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px }
+    .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
+    .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
+    .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 </style>
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","url":"https://cruzvermelhariodejaneiro.org/es/donar/","name":"Donar a la Cruz Roja Brasileña — Río de Janeiro","description":"Done a la filial de Río de Janeiro de la Cruz Roja Brasileña con tarjeta o PIX. Su donación sostiene la formación de voluntarios y la acción comunitaria.","inLanguage":"es","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"}},{"@context":"https://schema.org","@type":"DonateAction","name":"Donar a la Cruz Roja Brasileña — Río de Janeiro","target":"https://cruzvermelhariodejaneiro.org/doe/","recipient":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}}]</script>
@@ -67,6 +79,7 @@
         <nav class="nav-links">
           <a href="/es/#sobre">Quiénes somos</a>
           <a href="/es/#principios">Nuestros principios</a>
+          <a href="/es/cursos/">Cursos</a>
           <a href="/es/preguntas-frecuentes/">Preguntas</a>
           <a href="/es/donar/">Donar</a>
           <a href="/es/#contato">Contacto</a>
