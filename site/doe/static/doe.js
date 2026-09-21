@@ -42,8 +42,20 @@
       dados.utm_medium = String(de).slice(0, 120);
       dados.utm_campaign = dados.utm_campaign || 'doacao';
     }
-    if (!dados.utm_source && document.referrer && document.referrer.indexOf(location.host) < 0) {
-      try { dados.utm_source = new URL(document.referrer).hostname.slice(0, 120); dados.utm_medium = 'referral'; } catch (e) { /* referrer estranho */ }
+    if (!dados.utm_source && document.referrer) {
+      try {
+        var ref = new URL(document.referrer);
+        if (ref.host === location.host) {
+          // Veio de outra página nossa: o caminho já diz de onde, sem precisar de parâmetro
+          // na URL — parâmetro criaria um endereço duplicado para o buscador rastrear.
+          dados.utm_source = 'site';
+          dados.utm_medium = (ref.pathname.replace(/^\/|\/$/g, '').replace(/\.html$/, '') || 'home').slice(0, 120);
+          dados.utm_campaign = dados.utm_campaign || 'doacao';
+        } else {
+          dados.utm_source = ref.hostname.slice(0, 120);
+          dados.utm_medium = 'referral';
+        }
+      } catch (e) { /* referrer estranho */ }
     }
     try { sessionStorage.setItem('mcp_origem', JSON.stringify(dados)); } catch (e) { /* segue sem guardar */ }
     return dados;

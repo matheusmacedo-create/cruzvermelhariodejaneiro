@@ -48,12 +48,26 @@ function mcp_validar_contato(array $b): array
     if ($pagina !== '' && (!str_starts_with($pagina, '/') || str_starts_with($pagina, '//'))) {
         $pagina = '';
     }
+    // O que o chat já respondeu antes de a pessoa abrir chamado. Cada texto é conferido contra as
+    // perguntas que existem de verdade; o que não bate é descartado. Serve para a equipe não
+    // repetir o que a pessoa acabou de ler.
+    $conhecidas = mcp_perguntas_conhecidas();
+    $lidas = [];
+    foreach (is_array($b['ja_respondido'] ?? null) ? $b['ja_respondido'] : [] as $texto) {
+        $texto = mcp_texto((string) $texto, 200);
+        if ($texto !== '' && isset($conhecidas[$texto]) && !in_array($texto, $lidas, true)) {
+            $lidas[] = $texto;
+        }
+        if (count($lidas) >= 8) {
+            break;
+        }
+    }
     $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
     $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
     return [
         'nome' => $nome, 'email' => $email, 'telefone' => $telefone, 'assunto' => $assunto,
         'curso_slug' => $curso['slug'] ?? null, 'curso_nome' => $curso['nome'] ?? null,
-        'mensagem' => $mensagem, 'pagina' => $pagina ?: null,
+        'mensagem' => $mensagem, 'pagina' => $pagina ?: null, 'ja_respondido' => $lidas,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -83,6 +97,9 @@ $id = mcp_contato_gravar($contato);
 $protocolo = mcp_contato_protocolo($id);
 mcp_contato_atualizar($id, ['protocolo' => $protocolo]);
 $registro = mcp_contato_por_id($id) ?? ($contato + ['id' => $id, 'protocolo' => $protocolo, 'criado_em' => mcp_agora()]);
+// O que o chat já respondeu não vai para a tabela (é do atendimento, não do contato): reanexa
+// aqui, depois da releitura, para entrar nos dois e-mails.
+$registro['ja_respondido'] = $contato['ja_respondido'];
 try {
     $registro['link_painel'] = mcp_painel_link_contato($id); // botão "Responder no painel" do aviso à equipe
 } catch (Throwable $e) {

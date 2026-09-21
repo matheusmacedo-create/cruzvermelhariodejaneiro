@@ -382,6 +382,62 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
   úteis sem resposta.
 
+## O chat responde sozinho as dúvidas de curso (21/09/2026)
+
+Antes, toda dúvida virava chamado e esperava até 2 dias úteis. Agora o chat responde na hora o que
+já está escrito e revisado, e só abre chamado para o que sobra.
+
+### Como funciona
+
+Depois de escolher assunto e curso — **antes** de pedir nome e e-mail — o chat mostra a ficha do
+curso (carga horária, escolaridade, valor, inscrição, certificado) e oferece as dúvidas **como
+botões**. Tocou, respondeu, e a resposta fica na conversa.
+
+**Botão em vez de adivinhação, de propósito.** Um casador de texto erra, e resposta errada sobre
+preço ou certificado numa instituição como a Cruz Vermelha custa caro. Com botão, a resposta é
+sempre a que a escola ou a FAQ escreveu — não há como o chat interpretar mal.
+
+De onde vem cada resposta:
+
+| Situação | Fonte |
+|---|---|
+| Curso escolhido, com FAQ no catálogo | `cursos.json`, campo `faq` de cada curso (5 perguntas) |
+| Curso sem FAQ própria, ou assunto sem curso | `site/faq-home.json`, entradas marcadas com `"chat"` |
+
+A marca fica no próprio `faq-home.json`: `"chat": ["voluntariado"]` diz em que assuntos do chat
+aquela resposta se oferece, e `"chatRotulo"` dá o texto curto do botão (a pergunta da página
+carrega o nome completo da filial, que num botão de celular vira três linhas). Quem edita a FAQ vê
+as duas coisas na mesma linha. `scripts/chat_widget.py` gera os dois blocos do `chat.js`
+(`chat:cursos` e `chat:respostas`); no máximo 5 botões por tela.
+
+### Quem abre chamado mesmo assim
+
+- **O e-mail de confirmação** passou a levar a ficha do curso, montada no servidor a partir do
+  catálogo. Antes só dizia "retornamos em até 2 dias úteis".
+- **O aviso à equipe** lista o que a pessoa já leu no chat, sob "Já respondido no chat, antes de
+  escrever". A equipe não repete, e saber o que a pessoa leu e mesmo assim não resolveu costuma ser
+  a parte mais útil da mensagem.
+
+**Nada vindo do navegador entra num e-mail sem conferência.** O chat manda só o texto das perguntas
+lidas; `mcp_perguntas_conhecidas()` (em `api/lib/config.php`) confronta cada uma com as 44 que
+existem de verdade — a FAQ dos cursos mais a FAQ da home marcada com `chat` — e descarta o resto.
+Testado com texto inventado e com `<script>`: os dois são descartados. A lista não vai para a
+tabela (é do atendimento, não do contato): `contato.php` a reanexa depois de reler o registro.
+
+Para isso o `faq-home.json` precisa estar publicado na raiz do site — o PHP o lê de
+`public_html/faq-home.json`. É o mesmo conteúdo que já está na home.
+
+### O que medir
+
+Eventos no GA4: `chat_duvida_respondida` (com o curso e a pergunta), `chat_duvida_seguiu` (com
+quantas leu antes de abrir chamado) e `chat_duvida_matricula`. A conta que interessa é quantas
+conversas terminam sem virar e-mail.
+
+### Falta
+
+O curso **Primeiros Socorros Lei Lucas** é o único sem FAQ própria no catálogo da escola, então cai
+na FAQ geral. Vale pedir à escola as cinco perguntas dele — é o curso que as escolas procuram.
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
@@ -690,6 +746,69 @@ minificados zeraram.
   embutido (30 KB), copiado em toda página. A saída real é um CSS externo, servido uma vez e
   guardado em cache — mudança de arquitetura que toca todos os geradores e não entrou nesta rodada.
   `/bio/` é uma página de links: encher de texto para cruzar um limiar seria escrever para o robô.
+
+## Rastreabilidade e Links internos: de 93% e 89% para o limite (20/09/2026, tarde da noite)
+
+A auditoria dá duas pontuações temáticas que não fecham sozinhas com a lista de problemas.
+`scripts/rastrear_site.py` (novo) percorre o site ao vivo a partir da home, como um robô de busca,
+e reporta o que essas pontuações medem — status, profundidade, links de entrada e de saída,
+noindex, canonical, órfãs, âncoras e redirecionamentos.
+
+**Armadilha do ambiente**: este contêiner sai por um proxy, e a primeira linha de cabeçalho é o
+aperto de mão dele (`HTTP/1.1 200 Connection Established`). Ler esse bloco fazia todo 301 parecer
+200 — o rastreador descarta o bloco do proxy. Quem escrever outra ferramenta que lê cabeçalho
+precisa fazer o mesmo.
+
+### O que o rastreio achou, e onde estava
+
+| Achado | Onde nascia |
+|---|---|
+| 3 links internos que respondiam 301 (`/cursos.html`, `/doacao.html`, `/privacidade`) | lista fixa de links que a IA sugere, em `app/actions/ia.ts` na Redação, e matérias antigas |
+| 1 erro 404 | `COLE_AQUI_O_LINK_DO_FORMULARIO`, lugar-comum publicado em `/noticias/7-de-setembro/` |
+| 10 títulos acima de 60 | a assinatura ` — Cruz Vermelha Brasileira — Rio de Janeiro` tem 43 caracteres: qualquer manchete acima de 17 estourava |
+| `/index.html` alcançável | `equipe.html`, `doacao.html` e `campanha-agasalho.html` linkavam `index.html#secao` em vez de `/#secao` |
+| `/bio/` com um único link de entrada | só duas respostas da FAQ apontavam para lá |
+| `/doe/?de=agasalho` como endereço próprio | o parâmetro de origem criava uma URL duplicada para rastrear |
+
+### O que foi feito
+
+- **Na Redação** (branch `claude/blissful-newton-7jpef4` daquele repositório): a lista de links da
+  IA passou a apontar para `/doe/` e `/matricula-cursos-presenciais/`; `tituloDaAba()` limita o
+  `<title>` a 60 caracteres cortando na última pausa, sem terminar em preposição e **sem a forma
+  curta "Cruz Vermelha RJ"**, que a convenção de nome não permite em texto visível — quando a
+  assinatura não cabe, fica só a manchete; e `atalho-noticias.ts` aceita `/privacidade` e
+  `/privacidade/`, porque a home mudou para a forma com barra e o enxerto recusaria por uma barra.
+- **Nas páginas já publicadas** (que o conserto na fonte só alcança na próxima publicação): as doze
+  matérias, a privacidade e os termos foram corrigidas direto no servidor — só o conteúdo da tag
+  `<title>` e três URLs mortas. O 404 do lugar-comum virou texto em negrito, sem link.
+- **No site**: `index.html#secao` → `/#secao`; "Links oficiais" para `/bio/` no rodapé; e a origem
+  da doação passou a vir do **referenciador interno** em vez de um parâmetro na URL — `doe.js` lê
+  `document.referrer`, então nenhum endereço duplicado é criado e a tabela continua registrando de
+  onde veio cada doação.
+
+### Estado final do rastreio
+
+Zero em: links internos que redirecionam, 4xx/5xx, páginas órfãs, páginas fora do sitemap, links
+sem texto âncora, nofollow interno e profundidade maior que 3. O rastreio caiu de 42 para 35 URLs —
+sete endereços duplicados deixaram de existir.
+
+Sobram, e são corretos assim:
+
+- **7 checkouts como "bloqueados para rastreio"**: são `noindex` de propósito. Página de pagamento
+  não vai para o índice.
+- **4 matérias com um único link de entrada**: são linkadas pelo índice de notícias, que é o normal
+  de um site de notícias.
+- **19 links externos quebrados**: testei as 32 URLs externas do site com agente de robô e de
+  navegador. Só uma falha, e é o **nosso próprio Instagram devolvendo 429** — limite de requisições
+  para robôs, não link quebrado. O Facebook responde 200 (a página existe). Dois links sociais do
+  rodapé apontam para `linkedin.com` e `tiktok.com` na raiz: respondem 200, mas **são
+  lugares-comuns** — ou apontam para os perfis da filial, ou os ícones saem.
+- **Título de 62 caracteres na Campanha do Agasalho**: encurtar exigiria tirar "Campanha do
+  Agasalho", que é o termo buscado, ou abreviar o nome da filial, que a convenção não permite.
+- **Texto/HTML abaixo de 10% em `/bio/`, `equipe.html` e `/termos/`**: metade do peso dessas
+  páginas é o CSS embutido (30 KB), repetido em cada uma das doze. A saída é um CSS externo, baixado
+  uma vez e guardado em cache — vale para quem navega, não só para a métrica, e é mudança de
+  arquitetura que toca todos os geradores e a home, que é a fonte do CSS. Não entrou nesta rodada.
 
 ## Referência da Wikipédia (20/09/2026)
 

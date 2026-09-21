@@ -11,3 +11,10 @@ scripts/.cache-schemaorg.jsonld
 # sitemap.xml da raiz: quem escreve é a Redação, por FTP (lib/site/sitemap.ts naquele repositório).
 # Fica fora daqui para não haver duas fontes da verdade; corrigido no servidor em 20/09/2026.
 site/sitemap.xml
+
+# As matérias são geradas e enviadas pela Redação (outro repositório); ficam só no servidor.
+# Em 20/09/2026 foram corrigidas lá por fora: título dentro de 60 e links que respondiam 301.
+site/noticias/
+# A privacidade e os termos são páginas da Redação; o título foi corrigido no servidor em 20/09/2026.
+site/privacidade/
+site/termos/

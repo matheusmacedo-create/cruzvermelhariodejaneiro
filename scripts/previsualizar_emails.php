@@ -47,6 +47,8 @@ $contato = [
     'mensagem' => "Oi! Vi o curso no Instagram e queria saber se tem turma à noite ou aos sábados.\nTrabalho durante a semana em horário comercial.\n\nObrigada!",
     'pagina' => '/matricula-cursos-presenciais/?curso=' . $curso['slug'], 'utm_source' => 'instagram', 'utm_medium' => 'social', 'utm_campaign' => 'bio',
     'utm_content' => null, 'utm_term' => null, 'fbclid' => null, 'gclid' => null, 'criado_em' => gmdate('Y-m-d H:i:s'),
+    // O que o chat já respondeu antes de a pessoa abrir chamado (vem conferido por contato.php).
+    'ja_respondido' => ['Recebo certificado?', 'Existe prática?'],
 ];
 
 $emails = [
