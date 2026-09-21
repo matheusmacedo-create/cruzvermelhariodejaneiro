@@ -21,6 +21,10 @@
   <meta name="twitter:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e como doar. Sede no Centro do Rio.">
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/">
+  <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
+  <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)">
   <link rel="preload" as="image" href="assets/otim/impacto-cores-banner-1920.webp" imagesrcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">
@@ -221,6 +225,34 @@
       gap: 12px;
       align-items: center;
     }
+
+    /* Seletor de idioma (as páginas /en/ e /es/ usam as mesmas classes, via gerar_idiomas.py).
+       Sigla em texto, e não bandeira: bandeira é país, não idioma — espanhol não é a Espanha,
+       inglês não é o Reino Unido. Texto também é melhor para a busca: é um link rastreável com
+       hreflang, e imagem de bandeira não carrega sinal nenhum. */
+    .seletor-idioma {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .seletor-idioma a,
+    .seletor-idioma .idioma-atual {
+      padding: 5px 9px;
+      border-radius: 8px;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .seletor-idioma a { color: var(--muted); }
+
+    .seletor-idioma a:hover,
+    .seletor-idioma a:focus-visible { color: var(--red); background: rgba(204, 0, 0, .08); }
+
+    .seletor-idioma .idioma-atual { color: var(--red); background: rgba(204, 0, 0, .08); }
 
     .btn-login-sutil {
       color: var(--red);
@@ -1330,6 +1362,11 @@
         </nav>
 
         <div class="header-actions">
+          <div class="seletor-idioma" role="navigation" aria-label="Idioma">
+            <span class="idioma-atual" aria-current="true" lang="pt-BR">PT</span>
+            <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
+            <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
+          </div>
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
         </div>
       </div>

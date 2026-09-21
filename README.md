@@ -438,6 +438,78 @@ conversas terminam sem virar e-mail.
 O curso **Primeiros Socorros Lei Lucas** é o único sem FAQ própria no catálogo da escola, então cai
 na FAQ geral. Vale pedir à escola as cinco perguntas dele — é o curso que as escolas procuram.
 
+## Inglês e espanhol (21/09/2026)
+
+Quatro páginas novas, estáticas, geradas pelo mesmo caminho de sempre:
+
+| Endereço | Página |
+|---|---|
+| `/en/` · `/es/` | institucional: quem é a filial, o que faz, a sede, os sete princípios, contato |
+| `/en/donate/` · `/es/donar/` | doação: como funciona, o idioma da tela de pagamento, transparência, parceria |
+
+O conteúdo fica em **`site/idiomas.json`** e `scripts/gerar_idiomas.py` monta o HTML com o mesmo
+esqueleto da home (cabeçalho, rodapé, CSS minificado) e os rótulos traduzidos. Editar texto é
+editar o JSON.
+
+### Por que estático, e não tradução em tempo real
+
+Só endereço próprio por idioma faz o Google mostrar o site em busca feita em outro idioma. Widget
+de tradução e troca por JavaScript **não são indexados** — o robô vê português e a versão traduzida
+não existe para a busca. Servir idiomas diferentes na mesma URL, pelo `Accept-Language`, é pior
+ainda: uma URL, uma versão indexada.
+
+E é mais leve: cada visitante baixa uma página só, como hoje. São três arquivos no servidor em vez
+de um, e disco não é problema.
+
+### Como o Google entende as versões
+
+- `hreflang` recíproco em **toda** página das três versões, com `x-default` no português — declarado
+  na página e também no `sitemap-paginas.xml` (`xhtml:link`), que é o recomendado.
+- `canonical` próprio por versão; `lang` no `<html>`; `og:locale`; `inLanguage` no `WebPage`.
+- Seletor de idioma **em toda página, nas três versões**: `PT · EN · ES` no cabeçalho, ao lado do
+  botão da Plataforma, com a sigla atual destacada. Na primeira rodada ele só existia nas páginas
+  traduzidas — quem estava em português não tinha como chegar lá, só o Google enxergava.
+- **Sigla em texto, não bandeira.** Bandeira é país, não idioma: espanhol não é a Espanha (são mais
+  de vinte países), inglês não é o Reino Unido, e a filial pertence a uma instituição cujo princípio
+  é a neutralidade. Para a busca também é melhor: cada sigla é um link rastreável com `hreflang` e
+  `lang`, e imagem de bandeira não carrega sinal nenhum. A acessibilidade vem do `aria-label` com o
+  nome do idioma por extenso.
+- No `/doe/` o seletor aponta para `/en/donate/` e `/es/donar/`, não para a institucional
+  (`seletor_da_doacao()` em `gerar_doe.py`): mandar quem está doando para outra página é perder a
+  doação. Nas páginas sem tradução própria, ele leva à institucional daquele idioma, que é a porta
+  de entrada certa.
+- **Nunca** redirecionamento por `Accept-Language`: o Googlebot vem "em inglês", dos EUA, e ficaria
+  preso numa versão.
+
+### Decisões que valem registrar
+
+- **O português fica na raiz**, não em `/pt-br/`. Mover significaria redirecionar todas as URLs já
+  indexadas — a home, `/doe/`, `/matricula-cursos-presenciais/` — logo depois de zerarmos os
+  redirecionamentos internos, e mexer também na Redação, que escreve `/noticias/` e o `sitemap.xml`.
+  Idioma padrão na raiz com `x-default` é padrão suportado pelo Google.
+- **Sem o widget de chat nessas páginas.** A interface dele é toda em português; abrir um chat em
+  português para quem lê em inglês é pior do que não ter chat. O e-mail fica em evidência.
+- **A página de doação em inglês e espanhol explica e encaminha para `/doe/`**, que é a engrenagem
+  que recebe o dinheiro. Traduzir aquele fluxo é mexer em página que recebe pagamento, com texto
+  espalhado por `doe.js`, e não entrou aqui. As páginas dizem, com todas as letras, que a tela de
+  pagamento é em português, e traduzem os botões que a pessoa vai encontrar (`Doar`, `Cartão`,
+  `PIX`, `Doar anonimamente`, `Copiar código PIX`).
+- **Cartão funciona de qualquer país; PIX exige conta em banco brasileiro.** As duas páginas dizem
+  isso, porque prometer PIX a quem está fora do Brasil é perder a doação na última tela.
+- **O nome da instituição** ficou "Brazilian Red Cross — Rio de Janeiro Branch" e "Cruz Roja
+  Brasileña — Filial Río de Janeiro". Trocar é editar `instituicao` no `idiomas.json` e regerar.
+
+### O que ainda não está traduzido, de propósito
+
+Cursos e matrícula (presenciais, em português, no Rio), o checkout, o chat, os e-mails
+transacionais e as notícias (da Redação). As páginas em inglês e espanhol dizem isso em vez de
+fingir. Ampliar é acrescentar texto ao `idiomas.json` — a base técnica já está de pé.
+
+### Revisão
+
+Escrevi os textos, não são tradução automática, mas **pedem revisão humana** antes de virarem a voz
+oficial da filial em outro idioma — em especial os nomes próprios e o enquadramento institucional.
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o

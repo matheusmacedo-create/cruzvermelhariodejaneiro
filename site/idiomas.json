@@ -1,0 +1,195 @@
+{
+  "fonte": "Conteúdo das páginas em inglês e espanhol. Editar aqui; scripts/gerar_idiomas.py gera o HTML.",
+  "idiomas": {
+    "en": {
+      "codigo": "en",
+      "hreflang": "en",
+      "pasta": "en",
+      "nome_idioma": "English",
+      "instituicao": "Brazilian Red Cross — Rio de Janeiro Branch",
+      "instituicao_curta": "Brazilian Red Cross Rio de Janeiro",
+      "nacional": "Brazilian Red Cross (Cruz Vermelha Brasileira)",
+      "menu": {
+        "sobre": "About us",
+        "principios": "Our principles",
+        "doar": "Donate",
+        "contato": "Contact",
+        "portugues": "Site em português",
+        "plataforma": "Courses platform"
+      },
+      "home": {
+        "titulo": "Brazilian Red Cross — Rio de Janeiro Branch",
+        "descricao": "The Rio de Janeiro State Branch of the Brazilian Red Cross: volunteer training, first-aid courses, preventive education and community support, from the historic Red Cross Palace in downtown Rio.",
+        "sobrancelha": "Rio de Janeiro State Branch",
+        "h1": "Brazilian Red Cross — Rio de Janeiro Branch",
+        "linha": "Part of the International Red Cross and Red Crescent Movement, serving the state of Rio de Janeiro since the Brazilian Red Cross was founded in 1908.",
+        "blocos": [
+          {
+            "titulo": "Who we are",
+            "paragrafos": [
+              "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. The Movement brings together the International Committee of the Red Cross, the International Federation of Red Cross and Red Crescent Societies and the National Society of each country, all bound by the same seven fundamental principles.",
+              "We are a non-profit organisation, registered under Brazilian tax ID (CNPJ) 08.560.973/0001-97, and recognised as being of municipal public utility by Municipal Law 5,153/2010 and of state public utility by State Law 9,984/2023. The work is led by an executive board and thematic coordinations, and carried out largely by volunteers the branch trains itself."
+            ]
+          },
+          {
+            "titulo": "What we do",
+            "paragrafos": [
+              "We train volunteers, teach in-person first-aid and vocational courses at our headquarters, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
+              "Our training arm is the Escola de Educação e Saúde CVB-RJ, which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral Venous Access, Civil Firefighter, Caregiver for Older Adults and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+            ]
+          },
+          {
+            "titulo": "Our headquarters",
+            "paragrafos": [
+              "The branch operates from the Red Cross Palace, at Praça da Cruz Vermelha 10, in the centre of Rio de Janeiro. The building is the historic headquarters of the Brazilian Red Cross and was granted provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute, in 2021.",
+              "The branch does not run a clinic, schedule medical appointments or respond to emergencies. In an emergency in Brazil, call 192 (ambulance) or 193 (fire brigade)."
+            ]
+          }
+        ],
+        "principios_titulo": "The seven fundamental principles",
+        "principios": [
+          ["Humanity", "To prevent and alleviate human suffering wherever it may be found, protecting life and dignity."],
+          ["Impartiality", "To make no discrimination as to nationality, race, religion, class or political opinion; need alone sets priority."],
+          ["Neutrality", "To take no side in hostilities or in controversies of a political, racial, religious or ideological nature."],
+          ["Independence", "To be auxiliary to the public authorities while keeping the autonomy to act always in line with the Movement's principles."],
+          ["Voluntary service", "Relief given voluntarily and without any desire for gain."],
+          ["Unity", "One National Society in each country, open to all and present throughout its territory."],
+          ["Universality", "All National Societies have equal status and share equal responsibilities in helping each other."]
+        ],
+        "cta_titulo": "Get in touch",
+        "cta_texto": "Write to us in English, Spanish or Portuguese. We answer by e-mail within two business days.",
+        "cta_doar": "Support our work",
+        "cta_cursos": "Courses (in Portuguese)",
+        "aviso_cursos": "Course pages, enrolment and the payment screen are in Portuguese, because the courses themselves are taught in Portuguese, in person, in Rio de Janeiro."
+      },
+      "doar": {
+        "titulo": "Donate to the Brazilian Red Cross — Rio de Janeiro",
+        "descricao": "Support the Brazilian Red Cross Rio de Janeiro branch: volunteer training, first-aid capability and community action in the state of Rio de Janeiro. PIX or card, receipt by e-mail.",
+        "sobrancelha": "Support our work",
+        "h1": "Donate to the Brazilian Red Cross — Rio de Janeiro",
+        "linha": "Your donation stays with the Rio de Janeiro branch and funds volunteer training, first-aid capability, preventive education and community action across the state.",
+        "como_titulo": "How it works",
+        "como": [
+          ["Choose an amount", "Any amount helps. You can also cover the payment processing cost so the full amount reaches the branch, and you may donate anonymously."],
+          ["Pay by card or PIX", "Card works from anywhere. PIX is Brazil's instant transfer system and needs an account at a Brazilian bank."],
+          ["Get your receipt", "A receipt with a protocol number is sent to your e-mail as soon as the payment clears."]
+        ],
+        "idioma_titulo": "A note on language",
+        "idioma_texto": "The payment screen itself is in Portuguese. It is short — amount, name, e-mail, tax ID or passport, then card or PIX — and the buttons are: <b>Doar</b> (donate), <b>Cartão</b> (card), <b>PIX</b>, <b>Doar anonimamente</b> (donate anonymously) and <b>Copiar código PIX</b> (copy PIX code). If anything is unclear, write to us and we will help in English.",
+        "transparencia_titulo": "Where the money goes",
+        "transparencia": "The Brazilian Red Cross — Rio de Janeiro Branch is a non-profit organisation, CNPJ 08.560.973/0001-97, recognised as being of municipal and state public utility. Donations fund volunteer training, first-aid capability, preventive education, community campaigns and the running costs of the branch. Payments are processed by ÚnicoPag, which transfers the funds to the branch.",
+        "botao": "Go to the donation page",
+        "botao_nota": "The donation page is in Portuguese.",
+        "outra_forma_titulo": "Other ways to help",
+        "outra_forma": "Sister National Societies, institutions and companies wishing to partner, donate institutionally or sponsor a campaign can write to us directly. For clothing, blankets and shoes, the Winter Clothing Drive receives donations at our headquarters, Monday to Friday, 10am to 5pm."
+      },
+      "rodape": {
+        "sobre": "About",
+        "contato": "Contact",
+        "siga": "Follow us",
+        "principios": "Humanity, impartiality, neutrality, independence, voluntary service, unity and universality.",
+        "direitos": "Brazilian Red Cross — Rio de Janeiro Branch",
+        "wikipedia": "Wikipedia",
+        "plataforma": "Courses platform",
+        "portugues": "Site em português",
+        "privacidade": "Privacy Policy",
+        "termos": "Terms of Use"
+      }
+    },
+    "es": {
+      "codigo": "es",
+      "hreflang": "es",
+      "pasta": "es",
+      "nome_idioma": "Español",
+      "instituicao": "Cruz Roja Brasileña — Filial Río de Janeiro",
+      "instituicao_curta": "Cruz Roja Brasileña Río de Janeiro",
+      "nacional": "Cruz Roja Brasileña (Cruz Vermelha Brasileira)",
+      "menu": {
+        "sobre": "Quiénes somos",
+        "principios": "Nuestros principios",
+        "doar": "Donar",
+        "contato": "Contacto",
+        "portugues": "Site em português",
+        "plataforma": "Plataforma de cursos"
+      },
+      "home": {
+        "titulo": "Cruz Roja Brasileña — Filial Río de Janeiro",
+        "descricao": "Filial del Estado de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, cursos de primeros auxilios, educación preventiva y apoyo comunitario, desde el histórico Palacio de la Cruz Roja, en el centro de Río.",
+        "sobrancelha": "Filial del Estado de Río de Janeiro",
+        "h1": "Cruz Roja Brasileña — Filial Río de Janeiro",
+        "linha": "Parte del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja, al servicio del estado de Río de Janeiro desde la fundación de la Cruz Roja Brasileña, en 1908.",
+        "blocos": [
+          {
+            "titulo": "Quiénes somos",
+            "paragrafos": [
+              "La Cruz Roja Brasileña — Filial Río de Janeiro es la filial del Estado de Río de Janeiro de la Cruz Roja Brasileña, la Sociedad Nacional del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja en Brasil. El Movimiento reúne al Comité Internacional de la Cruz Roja, a la Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja y a la Sociedad Nacional de cada país, todas regidas por los mismos siete principios fundamentales.",
+              "Somos una entidad sin fines de lucro, inscrita con el CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. El trabajo es conducido por una junta ejecutiva y por coordinaciones temáticas, y llevado a cabo en gran parte por voluntarios que la propia filial forma."
+            ]
+          },
+          {
+            "titulo": "Qué hacemos",
+            "paragrafos": [
+              "Formamos voluntarios, impartimos cursos presenciales de primeros auxilios y de formación profesional en nuestra sede, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña del Abrigo y el proyecto Impacto das Cores.",
+              "Nuestro brazo formativo es la Escola de Educação e Saúde CVB-RJ, con siete cursos presenciales: Primeros Auxilios Básico, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil, Cuidador de Personas Mayores y Micropigmentación Labial. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
+            ]
+          },
+          {
+            "titulo": "Nuestra sede",
+            "paragrafos": [
+              "La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha 10, en el centro de Río de Janeiro. El edificio es la sede histórica de la Cruz Roja Brasileña y recibió protección patrimonial provisional del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil, en 2021.",
+              "La filial no tiene consultorio, no agenda citas médicas ni atiende urgencias. En una emergencia en Brasil, llame al 192 (ambulancia) o al 193 (bomberos)."
+            ]
+          }
+        ],
+        "principios_titulo": "Los siete principios fundamentales",
+        "principios": [
+          ["Humanidad", "Prevenir y aliviar el sufrimiento humano dondequiera que se encuentre, protegiendo la vida y la dignidad."],
+          ["Imparcialidad", "No hacer distinción de nacionalidad, raza, religión, condición social ni opinión política; solo la urgencia determina la prioridad."],
+          ["Neutralidad", "No tomar parte en hostilidades ni en controversias de orden político, racial, religioso o ideológico."],
+          ["Independencia", "Ser auxiliar de los poderes públicos conservando la autonomía para actuar siempre conforme a los principios del Movimiento."],
+          ["Voluntariado", "Socorro voluntario y desinteresado, sin ánimo de lucro."],
+          ["Unidad", "Una sola Sociedad Nacional en cada país, abierta a todos y presente en todo el territorio."],
+          ["Universalidad", "Todas las Sociedades Nacionales tienen los mismos derechos y el deber de ayudarse mutuamente."]
+        ],
+        "cta_titulo": "Hable con nosotros",
+        "cta_texto": "Escríbanos en español, inglés o portugués. Respondemos por correo electrónico en hasta dos días hábiles.",
+        "cta_doar": "Apoye nuestro trabajo",
+        "cta_cursos": "Cursos (en portugués)",
+        "aviso_cursos": "Las páginas de los cursos, la matrícula y la pantalla de pago están en portugués, porque los cursos se imparten en portugués, de forma presencial, en Río de Janeiro."
+      },
+      "doar": {
+        "titulo": "Donar a la Cruz Roja Brasileña — Río de Janeiro",
+        "descricao": "Apoye a la filial de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, capacitación en primeros auxilios y acción comunitaria en el estado de Río de Janeiro. PIX o tarjeta, comprobante por correo.",
+        "sobrancelha": "Apoye nuestro trabajo",
+        "h1": "Donar a la Cruz Roja Brasileña — Río de Janeiro",
+        "linha": "Su donación queda en la filial de Río de Janeiro y sostiene la formación de voluntarios, la capacitación en primeros auxilios, la educación preventiva y la acción comunitaria en todo el estado.",
+        "como_titulo": "Cómo funciona",
+        "como": [
+          ["Elija el importe", "Cualquier importe ayuda. También puede cubrir el costo de procesamiento para que el total llegue íntegro a la filial, y puede donar de forma anónima."],
+          ["Pague con tarjeta o PIX", "La tarjeta funciona desde cualquier país. El PIX es el sistema de transferencia instantánea de Brasil y requiere una cuenta en un banco brasileño."],
+          ["Reciba el comprobante", "Enviamos un comprobante con número de protocolo a su correo en cuanto se confirma el pago."]
+        ],
+        "idioma_titulo": "Sobre el idioma",
+        "idioma_texto": "La pantalla de pago está en portugués. Es corta — importe, nombre, correo, documento y luego tarjeta o PIX — y los botones son: <b>Doar</b> (donar), <b>Cartão</b> (tarjeta), <b>PIX</b>, <b>Doar anonimamente</b> (donar de forma anónima) y <b>Copiar código PIX</b> (copiar el código PIX). Si algo no queda claro, escríbanos y le ayudamos en español.",
+        "transparencia_titulo": "A dónde va el dinero",
+        "transparencia": "La Cruz Roja Brasileña — Filial Río de Janeiro es una entidad sin fines de lucro, CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal y estatal. Las donaciones sostienen la formación de voluntarios, la capacitación en primeros auxilios, la educación preventiva, las campañas comunitarias y el funcionamiento de la filial. Los pagos son procesados por ÚnicoPag, que transfiere los fondos a la filial.",
+        "botao": "Ir a la página de donación",
+        "botao_nota": "La página de donación está en portugués.",
+        "outra_forma_titulo": "Otras formas de ayudar",
+        "outra_forma": "Las Sociedades Nacionales hermanas, instituciones y empresas que deseen establecer alianzas, donar institucionalmente o patrocinar una campaña pueden escribirnos directamente. Para ropa, mantas y calzado, la Campaña del Abrigo recibe donaciones en nuestra sede, de lunes a viernes, de 10 a 17 horas."
+      },
+      "rodape": {
+        "sobre": "Acerca de",
+        "contato": "Contacto",
+        "siga": "Síganos",
+        "principios": "Humanidad, imparcialidad, neutralidad, independencia, voluntariado, unidad y universalidad.",
+        "direitos": "Cruz Roja Brasileña — Filial Río de Janeiro",
+        "wikipedia": "Wikipedia",
+        "plataforma": "Plataforma de cursos",
+        "portugues": "Site em português",
+        "privacidade": "Política de Privacidad",
+        "termos": "Términos de Uso"
+      }
+    }
+  }
+}

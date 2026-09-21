@@ -111,7 +111,7 @@ def conferir(no, dominios, tipos, caminho, erros, definidos, citados):
 
 def main(argv: list[str]) -> int:
     dominios, tipos = vocabulario()
-    arquivos = [Path(a) for a in argv] or sorted(
+    arquivos = [Path(a).resolve() for a in argv] or sorted(
         f for f in (RAIZ / "site").rglob("*.html") if "assets" not in f.parts)
     total = 0
     for f in arquivos:
@@ -127,7 +127,7 @@ def main(argv: list[str]) -> int:
         # @id apontando para um nó definido em outra página do site é prática corrente de JSON-LD
         # (a home define #organizacao e #site); fica como aviso, não como erro.
         avisos = [f"@id '{s}' é citado aqui e definido em outra página" for s in sorted(citados - definidos)]
-        rel = f.relative_to(RAIZ)
+        rel = f.relative_to(RAIZ) if f.is_relative_to(RAIZ) else f
         if erros:
             total += len(erros)
             print(f"✗ {rel} — {len(erros)} erro(s)")

@@ -118,6 +118,10 @@ PAGINA = """<!DOCTYPE html>
   <meta name="description" content="@@DESCRICAO@@">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="@@URL@@">
+  <link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/">
+  <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/">
+  <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/">
+  <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:locale" content="pt_BR">
@@ -316,6 +320,17 @@ def url_estatico(nome: str) -> str:
     return f"{STATIC_URL}{nome}?v={hash_arquivo(nome)}"
 
 
+def seletor_da_doacao(html: str) -> str:
+    """Aponta o seletor de idioma para a doação traduzida, não para a institucional.
+
+    O cabeçalho vem da home e leva o seletor genérico (/en/ e /es/). Aqui existe tradução da
+    própria página, então o link tem de ir para ela: mandar quem está doando para a institucional
+    em inglês é perder a doação.
+    """
+    return (html.replace('<a href="/en/" hreflang="en"', '<a href="/en/donate/" hreflang="en"')
+                .replace('<a href="/es/" hreflang="es"', '<a href="/es/donar/" hreflang="es"'))
+
+
 def menu_com_doe(home: str) -> str:
     """Acrescenta o link da doação ao menu da home (uma vez). Todas as páginas herdam o cabeçalho."""
     if 'href="/doe/"' in home:
@@ -404,6 +419,7 @@ def main() -> int:
     # A página de doação não é a de matrícula: o aria-current volta para o item certo.
     header = partes["header"].replace(' aria-current="page"', "")
     header = header.replace('<a href="/doe/">Doe</a>', '<a href="/doe/" aria-current="page">Doe</a>', 1)
+    header = seletor_da_doacao(header)
 
     valores = "\n".join(
         f'                  <button class="doe-op doe-valor" type="button" data-valor="{centavos}">R$ {centavos // 100}</button>'

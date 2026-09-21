@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-20T12:27:43+00:00. Não editar à mão. -->
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-21T13:39:56+00:00. Não editar à mão. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
-    <lastmod>2026-09-20T12:08:25+00:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
+    <lastmod>2026-09-21T13:39:03+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -104,7 +108,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc>
-    <lastmod>2026-09-20T12:08:33+00:00</lastmod>
+    <lastmod>2026-09-21T13:19:36+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -147,7 +151,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/bio/</loc>
-    <lastmod>2026-09-20T12:08:31+00:00</lastmod>
+    <lastmod>2026-09-21T13:19:31+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -172,7 +176,11 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/doe/</loc>
-    <lastmod>2026-09-20T12:20:12+00:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <lastmod>2026-09-21T13:39:04+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -187,7 +195,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/campanha-agasalho.html</loc>
-    <lastmod>2026-09-20T12:08:29+00:00</lastmod>
+    <lastmod>2026-09-21T13:19:28+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -215,7 +223,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/equipe.html</loc>
-    <lastmod>2026-09-20T12:08:26+00:00</lastmod>
+    <lastmod>2026-09-21T13:19:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -242,8 +250,72 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/privacidade/</loc>
-    <lastmod>2026-09-03T04:54:19+00:00</lastmod>
+    <lastmod>2026-09-20T23:11:15+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
+    <lastmod>2026-09-21T13:38:57+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/donate/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <lastmod>2026-09-21T13:38:58+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/es/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
+    <lastmod>2026-09-21T13:38:59+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/es/donar/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <lastmod>2026-09-21T13:39:01+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
   </url>
 </urlset>
