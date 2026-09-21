@@ -585,6 +585,37 @@ exatamente a mesma coisa nas 19 URLs — há verificação que cruza os dois.
 princípios) e o `#contato` do menu caía na seção da sede. Agora são `sobre`/`atuacao`/`sede`, e a
 seção de contato tem o id que o menu aponta.
 
+### Rastreamento das páginas novas (21/09/2026)
+
+Revisão pedida para não desperdiçar verba de tráfego pago. A **copy passou limpa**: cruzei 16 fatos
+(inscrição de R$ 99, os cinco preços de curso, CNPJ, as duas leis de utilidade pública, 192/193,
+CEP, e-mail, WhatsApp do voluntariado, prazo de 2 dias úteis, horário, Lei Lucas) nas 14 páginas
+dos três idiomas — nenhum aparece com valor diferente, nenhum valor velho, nenhum nome curto
+proibido, nenhum e-mail no domínio morto da nacional.
+
+O rastreamento não passou. **As 10 páginas em inglês e espanhol subiram com GA4 mas sem o Meta
+Pixel**: `gerar_idiomas.py` injetava `partes['ga4']` e nunca `partes['pixel']`. Corrigido — o
+`<noscript>` de fallback vem junto, e o bloco é byte a byte igual ao da home. Enquanto esteve
+assim, anúncio do Meta que caísse numa dessas páginas não construía público, não atribuía
+conversão e não alimentava a otimização de entrega.
+
+**Links internos continuam sem UTM**, que é o certo: UTM em link interno reinicia a sessão no GA4 e
+apaga a origem real da doação. Confirmado nas páginas novas.
+
+### O que ficou em aberto no rastreamento
+
+- **`/noticias/` e as matérias não têm Pixel** — só GA4. É da Redação, e lá não existe suporte a
+  Pixel nenhum (`esqueleto.ts` só tem o link do perfil no rodapé). É a área que mais recebe
+  tráfego de conteúdo.
+- **Não existe CAPI (Conversions API) em lugar nenhum.** O `Purchase` do `doe.js` já sai com
+  `eventID: token + '-doacao'`, ou seja, a deduplicação foi preparada e a metade servidor nunca
+  foi escrita. Sem ela, pixel de navegador perde as conversões de quem usa bloqueador, iOS ou
+  Safari, e o Meta otimiza com dado incompleto.
+- **PIX é subcontado.** O `Purchase` dispara quando o navegador chega na tela de obrigado. O PIX
+  confirma por webhook, de forma assíncrona: quem paga no app do banco e fecha a aba nunca dispara
+  o evento. O `webhook.php` já reconsulta a API e decide o status — é exatamente o ponto onde o
+  CAPI resolveria as duas coisas de uma vez.
+
 ### O que ainda não está traduzido, de propósito
 
 O checkout, o chat, os e-mails transacionais e as notícias (da Redação). As páginas em inglês e

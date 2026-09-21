@@ -224,6 +224,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <style>{partes['estilo_sem_tag']}{ESTILO_EXTRA}</style>
   <script type="application/ld+json">{ld_json}</script>
 {partes['ga4']}
+{partes['pixel']}
 </head>
 <body>
 {cabecalho(idioma, pagina)}
