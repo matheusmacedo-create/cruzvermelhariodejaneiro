@@ -13,6 +13,9 @@
       "menu": {
         "sobre": "About us",
         "principios": "Our principles",
+        "equipe": "Our team",
+        "cursos": "Courses",
+        "faq": "FAQ",
         "doar": "Donate",
         "contato": "Contact",
         "portugues": "Site em português",
@@ -46,6 +49,63 @@
               "The branch does not run a clinic, schedule medical appointments or respond to emergencies. In an emergency in Brazil, call 192 (ambulance) or 193 (fire brigade)."
             ]
           }
+        ],
+        "movimento_titulo": "The Movement we belong to",
+        "movimento_paragrafos": [
+          "The International Red Cross and Red Crescent Movement is the largest humanitarian network in the world, and it has three parts. The International Committee of the Red Cross works in armed conflict, with a mandate given to it by the Geneva Conventions. The International Federation of Red Cross and Red Crescent Societies coordinates the response to disasters outside conflict. And in each country there is one National Society, auxiliary to the public authorities in humanitarian matters — in Brazil, the Brazilian Red Cross.",
+          "This branch is the Rio de Janeiro State arm of that National Society. The emblem is not a brand: it is a protective sign defined in international humanitarian law, and its use is restricted. That is also why the seven fundamental principles below are not a statement of values but the conditions under which the Movement is allowed to work — neutrality and impartiality are what let a Red Cross team reach people that no one else can reach."
+        ],
+        "programas_titulo": "What the branch runs",
+        "programas_linha": "Five fronts, all carried out from the headquarters in central Rio de Janeiro and across the state.",
+        "programas": [
+          [
+            "Volunteer training",
+            "The branch trains its own volunteers, with no requirement of a health background. After registering, each volunteer goes through initial training at the headquarters and then joins one of the coordination teams — humanitarian action, first aid, disaster risk management, youth, sport, psychosocial support."
+          ],
+          [
+            "First-aid training",
+            "In-person courses in basic first aid, first aid for settings with children under the Lucas Law, and Basic Life Support, open to anyone. This is also what the branch brings to events and field operations."
+          ],
+          [
+            "Impacto das Cores",
+            "Collective painting efforts that bring community spaces back into use. The point is as much the work itself as the bond it builds between volunteers and residents."
+          ],
+          [
+            "Winter Clothing Drive",
+            "Collection of coats, blankets and shoes for families in vulnerable situations, received at the headquarters from Monday to Friday, 10am to 5pm, and sorted before distribution."
+          ],
+          [
+            "Training for companies and schools",
+            "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team. It is one of the main ways partner organisations support the branch."
+          ]
+        ],
+        "caminhos_titulo": "Ways in",
+        "caminhos_linha": "Four doors, depending on what brings you here.",
+        "caminhos": [
+          [
+            "Take a course",
+            "Seven in-person courses at the headquarters, each with a certificate. Taught in Portuguese.",
+            "See the courses",
+            "cursos"
+          ],
+          [
+            "Volunteer",
+            "Open to anyone, with no health background required. The working language is Portuguese.",
+            "Register as a volunteer",
+            "voluntario"
+          ],
+          [
+            "Donate",
+            "Card or PIX. From outside Brazil, card only — the donation page explains why.",
+            "Go to the donation page",
+            "doar"
+          ],
+          [
+            "Partner with us",
+            "Sister National Societies, institutions and companies, and training for your team.",
+            "See who does what",
+            "equipe"
+          ]
         ],
         "principios_titulo": "The seven fundamental principles",
         "principios": [
@@ -83,6 +143,148 @@
         "cta_doar": "Support our work",
         "cta_cursos": "Courses (in Portuguese)",
         "aviso_cursos": "Course pages, enrolment and the payment screen are in Portuguese, because the courses themselves are taught in Portuguese, in person, in Rio de Janeiro."
+      },
+      "cursos": {
+        "titulo_aba": "Courses — Brazilian Red Cross Rio de Janeiro",
+        "descricao": "The seven in-person courses of the Brazilian Red Cross Rio de Janeiro branch: hours, entry requirements, fees and how enrolment works.",
+        "sobrancelha": "School of Education and Health",
+        "h1": "Courses at the Brazilian Red Cross — Rio de Janeiro",
+        "linha": "Seven in-person courses taught at the branch headquarters in central Rio de Janeiro, each ending with a certificate issued by the branch.",
+        "aviso_titulo": "Read this first",
+        "aviso_paragrafos": [
+          "Every course is taught in Portuguese, in person, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. There is no interpreting, no online option and no group in another language. Practical first aid is learned with a manikin and an instructor beside you, and that is what gives the certificate its weight — which is also why it cannot be done remotely.",
+          "Enrolment is online, and the form asks for a CPF, the Brazilian individual taxpayer number, and a phone number with a Brazilian area code. Foreign residents in Brazil normally have both. If you do not, write to us before paying anything and we will tell you where you stand.",
+          "So this page is useful to you if you live in or near Rio de Janeiro and follow a class in Portuguese comfortably. If that is not you, the honest answer is that these courses are not the right fit — and we would rather say so here than take your money first."
+        ],
+        "tabela_titulo": "The seven courses",
+        "cabecalho": [
+          "Course",
+          "Hours",
+          "Entry requirement",
+          "Course fee"
+        ],
+        "nomes": {
+          "primeiros-socorros-basico": "Basic First Aid",
+          "primeiros-socorros-lei-lucas": "First Aid under the Lucas Law — Settings with Children",
+          "suporte-basico-de-vida": "Basic Life Support (BLS)",
+          "puncao-venosa": "Venipuncture",
+          "bombeiro-civil": "Civil Firefighter",
+          "cuidador-de-idosos": "Carer for Older People (open course)",
+          "micropigmentacao-labial": "Lip Micropigmentation"
+        },
+        "escolaridade": {
+          "Ensino Fundamental": "Lower secondary (ensino fundamental)",
+          "Ensino Médio": "Upper secondary (ensino médio)"
+        },
+        "tabela_nota": "Fees are in Brazilian reais and paid in full, not in instalments. On top of the course fee there is a one-off enrolment charge of R$ 99, which holds your place. For Civil Firefighter, professional accreditation at the end of the course is paid separately.",
+        "detalhe_titulo": "What each course covers",
+        "detalhe_nota": "Every course ends with a certificate issued by the branch. It is not accredited by Brazil's Ministry of Education — no open course is — and it does not replace a regulated professional licence.",
+        "detalhes": {
+          "primeiros-socorros-basico": "Recognising an emergency and giving safe initial care until the ambulance arrives: assessing the casualty, CPR, using an automated external defibrillator, bleeding control, and the first response to trauma, choking and fainting. It prepares you to act at home, at school, at work, in sport and in the community.",
+          "primeiros-socorros-lei-lucas": "The same ground, worked through for children: assessing a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention. Built for the people the Lucas Law covers — teachers and staff in schools, nurseries, social projects and sports activities — and for parents who want the same preparation.",
+          "suporte-basico-de-vida": "The short, protocol-led version: assessing the casualty, CPR, the automated external defibrillator, bleeding control and the first response to trauma, choking and fainting, following current international guidelines. Four hours, the quickest route to being useful in a cardiac arrest.",
+          "puncao-venosa": "Peripheral venous access done safely: anatomy of the venous system, puncture technique, choosing and handling the materials, preparing the patient, preventing complications, infection control and biosafety. Aimed at health students and professionals, for work in hospitals, clinics, laboratories and collection services.",
+          "bombeiro-civil": "Eighty hours of fire prevention and response, basic pre-hospital care, evacuation, safety equipment and risk management, theory and practice. It leads to work in companies, industry, hospitals, residential buildings, shopping centres, airports, hotels, schools and events. Professional accreditation is arranged separately at the end.",
+          "cuidador-de-idosos": "Hygiene, feeding, running a care routine, accident prevention, moving and handling, basic first aid, and the physical, emotional and social sides of ageing. It leads to work in homes, long-stay institutions, clinics, hospitals, day centres and home care — and it serves just as well someone caring for a relative.",
+          "micropigmentacao-labial": "Semi-permanent lip work: colour theory, skin anatomy and physiology, biosafety, pigment implantation technique, correcting asymmetry, evening out lip colour, before and after care, and correct handling of the equipment. It leads to work in aesthetic clinics, salons, specialist studios or self-employment."
+        },
+        "como_titulo": "How enrolment works",
+        "como": [
+          [
+            "Pay the R$ 99 enrolment",
+            "You choose the course, give your name, CPF, e-mail and phone number, and pay R$ 99 by card or PIX. No account to create, no group to pick yet."
+          ],
+          [
+            "The secretariat contacts you",
+            "Within two business days, by e-mail, to confirm the group and the timetable that fit you."
+          ],
+          [
+            "Pay the course fee",
+            "Afterwards, on the school platform, in full. If no timetable suits you, or you drop out before the class is confirmed, the enrolment charge is refunded."
+          ]
+        ],
+        "botao": "Go to the enrolment page",
+        "botao_nota": "The enrolment page is in Portuguese.",
+        "faq_titulo": "Still deciding?",
+        "faq_texto": "The questions people ask most — about certificates, entry requirements, the Lucas Law and training a team at your company or school — are answered on the FAQ page.",
+        "faq_link": "Read the FAQ"
+      },
+      "equipe": {
+        "titulo_aba": "Our team — Brazilian Red Cross Rio de Janeiro",
+        "descricao": "The executive board and the eleven coordination teams that run the Brazilian Red Cross Rio de Janeiro branch, and how to work with us.",
+        "sobrancelha": "Rio de Janeiro State Branch",
+        "h1": "Our team",
+        "linha": "The executive board and the coordination teams that run the work of the Brazilian Red Cross — Rio de Janeiro Branch, from the Red Cross Palace in central Rio de Janeiro.",
+        "diretoria_titulo": "Executive board",
+        "cargos": {
+          "Presidente": "President",
+          "Vice-Presidente": "Vice-President",
+          "Diretor Financeiro": "Finance Director"
+        },
+        "como_titulo": "How the branch works",
+        "como_paragrafos": [
+          "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. The Movement brings together the International Committee of the Red Cross, the International Federation of Red Cross and Red Crescent Societies and the National Society of each country, all bound by the same seven fundamental principles.",
+          "The branch is a non-profit body, CNPJ 08.560.973/0001-97, recognised as being of municipal public utility by Law 5,153/2010 and of state public utility by Law 9,984/2023. The work is led by an executive board and by thematic coordination teams, and carried out largely by volunteers the branch trains itself. Its teaching arm is the Escola de Educação e Saúde CVB-RJ, which runs the in-person courses at the headquarters."
+        ],
+        "areas_titulo": "Coordination teams",
+        "areas_linha": "Eleven areas, each with the people who answer for it.",
+        "areas": {
+          "Jurídico": [
+            "Legal",
+            "Contracts, agreements and the compliance of the branch's acts."
+          ],
+          "Comunicação Social": [
+            "Communications",
+            "Official channels, the website, social media and press relations."
+          ],
+          "Tecnologia da Informação": [
+            "Information Technology",
+            "Systems, the website and the branch's digital infrastructure."
+          ],
+          "Humanitário": [
+            "Humanitarian Action",
+            "Assistance and support for communities across the state."
+          ],
+          "Educação e Saúde": [
+            "Education and Health",
+            "The Escola de Educação e Saúde CVB-RJ and the in-person courses at the headquarters."
+          ],
+          "Primeiros Socorros": [
+            "First Aid",
+            "First-aid training, and cover for events and field operations."
+          ],
+          "GRD": [
+            "Disaster Risk Management",
+            "Preparedness for and response to emergencies."
+          ],
+          "Voluntariado": [
+            "Volunteering",
+            "Registration, initial training and support for volunteers."
+          ],
+          "Juventude": [
+            "Youth",
+            "Programmes led by the branch's young volunteers."
+          ],
+          "Psicologia / Serviço Social": [
+            "Psychology and Social Work",
+            "Psychosocial support in the field and for the teams themselves."
+          ],
+          "Esportes": [
+            "Sport",
+            "Sporting activities and community engagement."
+          ]
+        },
+        "sede_titulo": "The Red Cross Palace",
+        "sede_paragrafos": [
+          "The branch works from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. The building takes up the block between Rua Carlos Carvalho and Rua Ubaldino do Amaral and Avenida Henrique Valadares and Avenida Carlos Sampaio, and is the historic headquarters of the Brazilian Red Cross, founded in 1908. In 2021 the complex was given provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute.",
+          "It is where the in-person courses, the initial volunteer training and the Winter Clothing Drive collection happen. The branch does not schedule medical appointments and does not answer emergencies: in an emergency, call 192 for an ambulance or 193 for the fire brigade."
+        ],
+        "parceria_titulo": "Working with the branch",
+        "parceria_paragrafos": [
+          "Sister National Societies, institutions and companies wanting to partner, donate institutionally, sponsor a campaign or commission training for a team all come through the same address: contato@cruzvermelhariodejaneiro.org. Say in the subject line which coordination team you are looking for, and the team replies within two business days.",
+          "Volunteering is open to anyone, with no requirement of a health background: the branch trains its own volunteers, and there are programmes for very different profiles. The working language is Portuguese. For anything concerning the Brazilian Red Cross nationally, rather than this state branch, the National Society is the right door."
+        ],
+        "cta_voluntario": "Register as a volunteer"
       },
       "doar": {
         "titulo": "Donate to the Brazilian Red Cross — Rio de Janeiro",
@@ -144,6 +346,9 @@
       "menu": {
         "sobre": "Quiénes somos",
         "principios": "Nuestros principios",
+        "equipe": "Nuestro equipo",
+        "cursos": "Cursos",
+        "faq": "Preguntas",
         "doar": "Donar",
         "contato": "Contacto",
         "portugues": "Site em português",
@@ -177,6 +382,63 @@
               "La filial no tiene consultorio, no agenda citas médicas ni atiende urgencias. En una emergencia en Brasil, llame al 192 (ambulancia) o al 193 (bomberos)."
             ]
           }
+        ],
+        "movimento_titulo": "El Movimiento al que pertenecemos",
+        "movimento_paragrafos": [
+          "El Movimiento Internacional de la Cruz Roja y de la Media Luna Roja es la mayor red humanitaria del mundo, y tiene tres partes. El Comité Internacional de la Cruz Roja actúa en conflictos armados, con un mandato que le dan los Convenios de Ginebra. La Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja coordina la respuesta a desastres fuera de los conflictos. Y en cada país hay una única Sociedad Nacional, auxiliar de los poderes públicos en materia humanitaria — en Brasil, la Cruz Roja Brasileña.",
+          "Esta filial es el brazo del Estado de Río de Janeiro de esa Sociedad Nacional. El emblema no es una marca: es un signo de protección definido por el derecho internacional humanitario, y su uso está restringido. Por eso también los siete principios fundamentales que aparecen más abajo no son una declaración de valores, sino las condiciones bajo las cuales el Movimiento puede trabajar — la neutralidad y la imparcialidad son lo que permite que un equipo de la Cruz Roja llegue a donde nadie más llega."
+        ],
+        "programas_titulo": "Qué hace la filial",
+        "programas_linha": "Cinco frentes, llevadas adelante desde la sede, en el centro de Río de Janeiro, y en todo el estado.",
+        "programas": [
+          [
+            "Formación de voluntarios",
+            "La filial forma a sus propios voluntarios, sin exigir formación en salud. Tras el registro, cada voluntario pasa por la formación inicial en la sede y luego se integra a una de las coordinaciones — acción humanitaria, primeros auxilios, gestión de riesgos de desastres, juventud, deportes, apoyo psicosocial."
+          ],
+          [
+            "Capacitación en primeros auxilios",
+            "Cursos presenciales de primeros auxilios básicos, de primeros auxilios para entornos con niños según la Ley Lucas y de Soporte Vital Básico, abiertos a cualquier persona. Es también lo que la filial lleva a eventos y acciones de campo."
+          ],
+          [
+            "Impacto das Cores",
+            "Jornadas colectivas de pintura que devuelven al uso los espacios comunitarios. Importa tanto el trabajo en sí como el vínculo que crea entre voluntarios y vecinos."
+          ],
+          [
+            "Campaña de Ropa de Abrigo",
+            "Recolección de abrigos, mantas y calzado para familias en situación de vulnerabilidad, recibidos en la sede de lunes a viernes, de 10 a 17 horas, y seleccionados antes de la distribución."
+          ],
+          [
+            "Capacitación para empresas y escuelas",
+            "Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto. Es una de las principales formas en que las organizaciones aliadas apoyan a la filial."
+          ]
+        ],
+        "caminhos_titulo": "Por dónde entrar",
+        "caminhos_linha": "Cuatro puertas, según lo que le trajo hasta aquí.",
+        "caminhos": [
+          [
+            "Hacer un curso",
+            "Siete cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.",
+            "Ver los cursos",
+            "cursos"
+          ],
+          [
+            "Ser voluntario",
+            "Abierto a cualquier persona, sin exigir formación en salud. El idioma de trabajo es el portugués.",
+            "Registrarse como voluntario",
+            "voluntario"
+          ],
+          [
+            "Donar",
+            "Tarjeta o PIX. Desde fuera de Brasil, solo con tarjeta — la página de donación explica por qué.",
+            "Ir a la página de donación",
+            "doar"
+          ],
+          [
+            "Ser aliado",
+            "Sociedades Nacionales hermanas, instituciones y empresas, y capacitación para su equipo.",
+            "Ver quién hace qué",
+            "equipe"
+          ]
         ],
         "principios_titulo": "Los siete principios fundamentales",
         "principios": [
@@ -214,6 +476,148 @@
         "cta_doar": "Apoye nuestro trabajo",
         "cta_cursos": "Cursos (en portugués)",
         "aviso_cursos": "Las páginas de los cursos, la matrícula y la pantalla de pago están en portugués, porque los cursos se imparten en portugués, de forma presencial, en Río de Janeiro."
+      },
+      "cursos": {
+        "titulo_aba": "Cursos — Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Los siete cursos presenciales de la filial de Río de Janeiro de la Cruz Roja Brasileña: horas, requisitos, valores y cómo funciona la matrícula.",
+        "sobrancelha": "Escuela de Educación y Salud",
+        "h1": "Cursos de la Cruz Roja Brasileña — Río de Janeiro",
+        "linha": "Siete cursos presenciales dictados en la sede de la filial, en el centro de Río de Janeiro, cada uno con certificado emitido por la filial.",
+        "aviso_titulo": "Lea esto primero",
+        "aviso_paragrafos": [
+          "Todos los cursos se dictan en portugués, de forma presencial, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. No hay interpretación, no hay versión en línea y no hay grupos en otro idioma. Los primeros auxilios prácticos se aprenden con un maniquí y un instructor al lado, y es eso lo que da peso al certificado — y también el motivo por el que no se pueden hacer a distancia.",
+          "La matrícula sí se hace por internet, y el formulario pide el CPF, el número de contribuyente individual brasileño, y un teléfono con código de área de Brasil. Quien vive en Brasil como extranjero normalmente tiene los dos. Si no es su caso, escríbanos antes de pagar nada y le decimos en qué situación está.",
+          "Así que esta página le sirve si vive en Río de Janeiro o cerca y sigue una clase en portugués con comodidad. Si no es su caso, la respuesta honesta es que estos cursos no son lo adecuado para usted — y preferimos decirlo aquí antes que cobrarle primero."
+        ],
+        "tabela_titulo": "Los siete cursos",
+        "cabecalho": [
+          "Curso",
+          "Horas",
+          "Requisito de ingreso",
+          "Valor del curso"
+        ],
+        "nomes": {
+          "primeiros-socorros-basico": "Primeros Auxilios Básicos",
+          "primeiros-socorros-lei-lucas": "Primeros Auxilios Ley Lucas — Entornos con Niños",
+          "suporte-basico-de-vida": "Soporte Vital Básico (BLS)",
+          "puncao-venosa": "Punción Venosa",
+          "bombeiro-civil": "Bombero Civil",
+          "cuidador-de-idosos": "Cuidador de Personas Mayores (curso libre)",
+          "micropigmentacao-labial": "Micropigmentación Labial"
+        },
+        "escolaridade": {
+          "Ensino Fundamental": "Enseñanza básica (ensino fundamental)",
+          "Ensino Médio": "Enseñanza media (ensino médio)"
+        },
+        "tabela_nota": "Los valores están en reales brasileños y se pagan al contado, no en cuotas. Además del valor del curso hay una inscripción única de R$ 99, que reserva la plaza. En Bombero Civil, la homologación profesional al final del curso se paga aparte.",
+        "detalhe_titulo": "Qué enseña cada curso",
+        "detalhe_nota": "Cada curso termina con un certificado emitido por la filial. No está acreditado por el Ministerio de Educación de Brasil — ningún curso libre lo está — y no sustituye una habilitación profesional regulada.",
+        "detalhes": {
+          "primeiros-socorros-basico": "Reconocer una emergencia y dar la atención inicial con seguridad hasta que llegue la ambulancia: evaluación de la víctima, RCP, uso del desfibrilador externo automático, control de hemorragias y primera respuesta ante traumatismos, atragantamientos y desmayos. Prepara para actuar en casa, en la escuela, en el trabajo, en el deporte y en la comunidad.",
+          "primeiros-socorros-lei-lucas": "El mismo terreno, trabajado para niños: evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, además de prevención. Hecho para quienes alcanza la Ley Lucas — docentes y personal de escuelas, guarderías, proyectos sociales y actividades deportivas — y para madres y padres que quieren la misma preparación.",
+          "suporte-basico-de-vida": "La versión corta y guiada por protocolo: evaluación de la víctima, RCP, desfibrilador externo automático, control de hemorragias y primera respuesta ante traumatismos, atragantamientos y desmayos, según las directrices internacionales vigentes. Cuatro horas, el camino más rápido para ser útil en un paro cardíaco.",
+          "puncao-venosa": "Acceso venoso periférico con seguridad: anatomía del sistema venoso, técnica de punción, elección y manejo de los materiales, preparación del paciente, prevención de complicaciones, control de infecciones y bioseguridad. Dirigido a estudiantes y profesionales de la salud, para trabajar en hospitales, clínicas, laboratorios y servicios de extracción.",
+          "bombeiro-civil": "Ochenta horas de prevención y combate de incendios, atención prehospitalaria básica, evacuación, equipos de seguridad y gestión de riesgos, en teoría y en práctica. Habilita para trabajar en empresas, industrias, hospitales, edificios, centros comerciales, aeropuertos, hoteles, escuelas y eventos. La homologación profesional se gestiona aparte, al final.",
+          "cuidador-de-idosos": "Higiene, alimentación, administración de la rutina de cuidados, prevención de accidentes, técnicas de movilización, nociones de primeros auxilios y los aspectos físicos, emocionales y sociales del envejecimiento. Habilita para trabajar en domicilios, residencias de larga estadía, clínicas, hospitales, centros de día y atención domiciliaria — y sirve igual a quien cuida de un familiar.",
+          "micropigmentacao-labial": "Trabajo labial semipermanente: colorimetría, anatomía y fisiología de la piel, bioseguridad, técnica de implantación de pigmentos, corrección de asimetrías, uniformización del color labial, cuidados antes y después, y manejo correcto de los equipos. Habilita para trabajar en clínicas de estética, salones, estudios especializados o de forma autónoma."
+        },
+        "como_titulo": "Cómo funciona la matrícula",
+        "como": [
+          [
+            "Pague la inscripción de R$ 99",
+            "Elige el curso, informa nombre, CPF, correo y teléfono, y paga R$ 99 con tarjeta o PIX. No hay cuenta que crear ni grupo que elegir todavía."
+          ],
+          [
+            "La secretaría se comunica",
+            "En hasta dos días hábiles, por correo electrónico, para confirmar el grupo y el horario que le sirvan."
+          ],
+          [
+            "Pague el valor del curso",
+            "Después, en la plataforma de la escuela, al contado. Si ningún horario le sirve, o si desiste antes de que se confirme la clase, la inscripción se devuelve."
+          ]
+        ],
+        "botao": "Ir a la página de matrícula",
+        "botao_nota": "La página de matrícula está en portugués.",
+        "faq_titulo": "¿Todavía decidiendo?",
+        "faq_texto": "Las preguntas más frecuentes — sobre certificados, requisitos, la Ley Lucas y capacitaciones para el equipo de su empresa o escuela — están respondidas en la página de preguntas frecuentes.",
+        "faq_link": "Ver las preguntas frecuentes"
+      },
+      "equipe": {
+        "titulo_aba": "Nuestro equipo — Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "La junta ejecutiva y las once coordinaciones que conducen la filial de Río de Janeiro de la Cruz Roja Brasileña, y cómo trabajar con nosotros.",
+        "sobrancelha": "Filial del Estado de Río de Janeiro",
+        "h1": "Nuestro equipo",
+        "linha": "La junta ejecutiva y las coordinaciones que conducen el trabajo de la Cruz Roja Brasileña — Filial Río de Janeiro, desde el Palacio de la Cruz Roja, en el centro de Río de Janeiro.",
+        "diretoria_titulo": "Junta ejecutiva",
+        "cargos": {
+          "Presidente": "Presidente",
+          "Vice-Presidente": "Vicepresidente",
+          "Diretor Financeiro": "Director Financiero"
+        },
+        "como_titulo": "Cómo funciona la filial",
+        "como_paragrafos": [
+          "La Cruz Roja Brasileña — Filial Río de Janeiro es la filial del Estado de Río de Janeiro de la Cruz Roja Brasileña, la Sociedad Nacional del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja en Brasil. El Movimiento reúne al Comité Internacional de la Cruz Roja, a la Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja y a la Sociedad Nacional de cada país, todas regidas por los mismos siete principios fundamentales.",
+          "La filial es una entidad sin fines de lucro, CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. El trabajo es conducido por una junta ejecutiva y por coordinaciones temáticas, y llevado a cabo en gran parte por voluntarios que la propia filial forma. Su brazo formativo es la Escola de Educação e Saúde CVB-RJ, responsable de los cursos presenciales en la sede."
+        ],
+        "areas_titulo": "Coordinaciones",
+        "areas_linha": "Once áreas, cada una con las personas que responden por ella.",
+        "areas": {
+          "Jurídico": [
+            "Jurídico",
+            "Contratos, convenios y el cumplimiento normativo de los actos de la filial."
+          ],
+          "Comunicação Social": [
+            "Comunicación",
+            "Canales oficiales, el sitio web, las redes y la relación con la prensa."
+          ],
+          "Tecnologia da Informação": [
+            "Tecnología de la Información",
+            "Sistemas, sitio web e infraestructura digital de la filial."
+          ],
+          "Humanitário": [
+            "Acción Humanitaria",
+            "Asistencia y apoyo a las comunidades de todo el estado."
+          ],
+          "Educação e Saúde": [
+            "Educación y Salud",
+            "La Escola de Educação e Saúde CVB-RJ y los cursos presenciales en la sede."
+          ],
+          "Primeiros Socorros": [
+            "Primeros Auxilios",
+            "Formación en primeros auxilios y cobertura de eventos y acciones."
+          ],
+          "GRD": [
+            "Gestión de Riesgos de Desastres",
+            "Preparación y respuesta ante emergencias."
+          ],
+          "Voluntariado": [
+            "Voluntariado",
+            "Registro, formación inicial y acompañamiento de los voluntarios."
+          ],
+          "Juventude": [
+            "Juventud",
+            "Frentes conducidas por los jóvenes voluntarios de la filial."
+          ],
+          "Psicologia / Serviço Social": [
+            "Psicología y Trabajo Social",
+            "Apoyo psicosocial en las acciones y a los propios equipos."
+          ],
+          "Esportes": [
+            "Deportes",
+            "Actividades deportivas y de integración con la comunidad."
+          ]
+        },
+        "sede_titulo": "El Palacio de la Cruz Roja",
+        "sede_paragrafos": [
+          "La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. El edificio ocupa la manzana entre las calles Carlos Carvalho y Ubaldino do Amaral y las avenidas Henrique Valadares y Carlos Sampaio, y es la sede histórica de la Cruz Roja Brasileña, fundada en 1908. En 2021 el conjunto recibió protección patrimonial provisional del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil.",
+          "Allí ocurren los cursos presenciales, la formación inicial de los voluntarios y la recepción de las donaciones de la Campaña de Ropa de Abrigo. La filial no agenda citas médicas ni atiende urgencias: en una emergencia, llame al 192 (ambulancia) o al 193 (bomberos)."
+        ],
+        "parceria_titulo": "Trabajar con la filial",
+        "parceria_paragrafos": [
+          "Las Sociedades Nacionales hermanas, las instituciones y las empresas que quieran establecer una alianza, donar institucionalmente, patrocinar una campaña o encargar una capacitación para un equipo llegan por la misma dirección: contato@cruzvermelhariodejaneiro.org. Indique en el asunto qué coordinación busca, y el equipo responde en hasta dos días hábiles.",
+          "El voluntariado está abierto a cualquier persona, sin exigencia de formación en salud: la filial forma a sus propios voluntarios, y hay frentes para perfiles muy distintos. El idioma de trabajo es el portugués. Para cualquier asunto de la Cruz Roja Brasileña a nivel nacional, y no de esta filial estatal, la puerta correcta es la Sociedad Nacional."
+        ],
+        "cta_voluntario": "Registrarse como voluntario"
       },
       "doar": {
         "titulo": "Donar a la Cruz Roja Brasileña — Río de Janeiro",

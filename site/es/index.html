@@ -41,6 +41,27 @@
     .i18n-nota { color:var(--muted); font-size:.9rem; margin:18px 0 0; max-width:760px }
     .i18n-caixa { background:var(--soft); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-top:24px }
     .i18n-caixa p { margin:0 }
+    .i18n-caixa p + p { margin-top:14px }
+    .i18n-tabela-rolo { overflow-x:auto; margin-top:24px }
+    .i18n-tabela { width:100%; border-collapse:collapse; min-width:620px }
+    .i18n-tabela th, .i18n-tabela td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:.95rem }
+    .i18n-tabela th { background:var(--soft); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    .i18n-tabela td:last-child, .i18n-tabela th:last-child { white-space:nowrap }
+    .i18n-fichas { display:grid; gap:18px; margin-top:24px }
+    .i18n-fichas article { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px }
+    .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
+    .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
+    .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    .i18n-porta { margin-top:12px !important }
+    .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
+    .i18n-porta a:hover { text-decoration:underline }
+    @media (min-width:920px) { .i18n-portas { grid-template-columns:repeat(2,1fr) } }
+    .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
+    .i18n-fichas li { margin:2px 0 }
+    .i18n-diretoria article { text-align:center }
+    .i18n-diretoria h3 { font-size:1rem }
+    .i18n-diretoria p { color:var(--red); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } .i18n-diretoria, .i18n-areas { grid-template-columns:repeat(3,1fr) } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 </style>
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"NGO","@id":"https://cruzvermelhariodejaneiro.org/#organizacao","name":"Cruz Roja Brasileña — Filial Río de Janeiro","url":"https://cruzvermelhariodejaneiro.org/es/","parentOrganization":{"@type":"NGO","name":"Cruz Roja Brasileña (Cruz Vermelha Brasileira)"},"taxID":"08.560.973/0001-97","email":"contato@cruzvermelhariodejaneiro.org","address":{"@type":"PostalAddress","streetAddress":"Praça da Cruz Vermelha, 10","addressLocality":"Rio de Janeiro","addressRegion":"RJ","postalCode":"20230-130","addressCountry":"BR"},"sameAs":["https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"]},{"@context":"https://schema.org","@type":"WebPage","url":"https://cruzvermelhariodejaneiro.org/es/","name":"Cruz Roja Brasileña — Filial Río de Janeiro","description":"Filial del Estado de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, cursos de primeros auxilios y apoyo comunitario, en el centro de Río.","inLanguage":"es","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"}}]</script>
@@ -67,6 +88,9 @@
         <nav class="nav-links">
           <a href="/es/#sobre">Quiénes somos</a>
           <a href="/es/#principios">Nuestros principios</a>
+          <a href="/es/nuestro-equipo/">Nuestro equipo</a>
+          <a href="/es/cursos/">Cursos</a>
+          <a href="/es/preguntas-frecuentes/">Preguntas</a>
           <a href="/es/donar/">Donar</a>
           <a href="/es/#contato">Contacto</a>
           <a href="/">Site em português</a>
@@ -92,18 +116,50 @@
         <p>Somos una entidad sin fines de lucro, registrada con el CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. El trabajo es conducido por una junta ejecutiva y por coordinaciones temáticas, y llevado a cabo en gran parte por voluntarios que la propia filial forma.</p>
       </div>
     </section>
-    <section class="i18n-bloco" id="principios">
+    <section class="i18n-bloco" id="atuacao">
       <div class="wrap">
         <h2>Qué hacemos</h2>
         <p>Formamos voluntarios, impartimos cursos presenciales de primeros auxilios y de formación profesional en nuestra sede, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores.</p>
         <p>Nuestro brazo formativo es la Escola de Educação e Saúde CVB-RJ, con siete cursos presenciales: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil, Cuidador de Personas Mayores y Micropigmentación Labial. Las clases son presenciales y en portugués, en el centro de Río de Janeiro.</p>
       </div>
     </section>
-    <section class="i18n-bloco" id="contato">
+    <section class="i18n-bloco" id="sede">
       <div class="wrap">
         <h2>Nuestra sede</h2>
         <p>La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. El edificio es la sede histórica de la Cruz Roja Brasileña y recibió protección patrimonial provisional del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil, en 2021.</p>
         <p>La filial no tiene consultorio, no agenda citas médicas ni atiende urgencias. En una emergencia en Brasil, llame al 192 (ambulancia) o al 193 (bomberos).</p>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="movimento">
+      <div class="wrap">
+        <h2>El Movimiento al que pertenecemos</h2>
+        <p>El Movimiento Internacional de la Cruz Roja y de la Media Luna Roja es la mayor red humanitaria del mundo, y tiene tres partes. El Comité Internacional de la Cruz Roja actúa en conflictos armados, con un mandato que le dan los Convenios de Ginebra. La Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja coordina la respuesta a desastres fuera de los conflictos. Y en cada país hay una única Sociedad Nacional, auxiliar de los poderes públicos en materia humanitaria — en Brasil, la Cruz Roja Brasileña.</p>
+        <p>Esta filial es el brazo del Estado de Río de Janeiro de esa Sociedad Nacional. El emblema no es una marca: es un signo de protección definido por el derecho internacional humanitario, y su uso está restringido. Por eso también los siete principios fundamentales que aparecen más abajo no son una declaración de valores, sino las condiciones bajo las cuales el Movimiento puede trabajar — la neutralidad y la imparcialidad son lo que permite que un equipo de la Cruz Roja llegue a donde nadie más llega.</p>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="programas">
+      <div class="wrap">
+        <h2>Qué hace la filial</h2>
+        <p>Cinco frentes, llevadas adelante desde la sede, en el centro de Río de Janeiro, y en todo el estado.</p>
+        <div class="i18n-fichas">
+          <article><h3>Formación de voluntarios</h3><p>La filial forma a sus propios voluntarios, sin exigir formación en salud. Tras el registro, cada voluntario pasa por la formación inicial en la sede y luego se integra a una de las coordinaciones — acción humanitaria, primeros auxilios, gestión de riesgos de desastres, juventud, deportes, apoyo psicosocial.</p></article>
+          <article><h3>Capacitación en primeros auxilios</h3><p>Cursos presenciales de primeros auxilios básicos, de primeros auxilios para entornos con niños según la Ley Lucas y de Soporte Vital Básico, abiertos a cualquier persona. Es también lo que la filial lleva a eventos y acciones de campo.</p></article>
+          <article><h3>Impacto das Cores</h3><p>Jornadas colectivas de pintura que devuelven al uso los espacios comunitarios. Importa tanto el trabajo en sí como el vínculo que crea entre voluntarios y vecinos.</p></article>
+          <article><h3>Campaña de Ropa de Abrigo</h3><p>Recolección de abrigos, mantas y calzado para familias en situación de vulnerabilidad, recibidos en la sede de lunes a viernes, de 10 a 17 horas, y seleccionados antes de la distribución.</p></article>
+          <article><h3>Capacitación para empresas y escuelas</h3><p>Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto. Es una de las principales formas en que las organizaciones aliadas apoyan a la filial.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="caminhos">
+      <div class="wrap">
+        <h2>Por dónde entrar</h2>
+        <p>Cuatro puertas, según lo que le trajo hasta aquí.</p>
+        <div class="i18n-fichas i18n-portas">
+          <article><h3>Hacer un curso</h3><p>Siete cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.</p><p class="i18n-porta"><a href="/es/cursos/">Ver los cursos &rarr;</a></p></article>
+          <article><h3>Ser voluntario</h3><p>Abierto a cualquier persona, sin exigir formación en salud. El idioma de trabajo es el portugués.</p><p class="i18n-porta"><a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR">Registrarse como voluntario &rarr;</a></p></article>
+          <article><h3>Donar</h3><p>Tarjeta o PIX. Desde fuera de Brasil, solo con tarjeta — la página de donación explica por qué.</p><p class="i18n-porta"><a href="/es/donar/">Ir a la página de donación &rarr;</a></p></article>
+          <article><h3>Ser aliado</h3><p>Sociedades Nacionales hermanas, instituciones y empresas, y capacitación para su equipo.</p><p class="i18n-porta"><a href="/es/nuestro-equipo/">Ver quién hace qué &rarr;</a></p></article>
+        </div>
       </div>
     </section>
     <section class="i18n-bloco" id="principios">
@@ -120,7 +176,7 @@
         </ul>
       </div>
     </section>
-    <section class="i18n-bloco">
+    <section class="i18n-bloco" id="contato">
       <div class="wrap">
         <h2>Hable con nosotros</h2>
         <p>Escríbanos en español, inglés o portugués. Respondemos por correo electrónico en hasta dos días hábiles.</p>

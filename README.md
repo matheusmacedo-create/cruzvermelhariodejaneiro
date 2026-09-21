@@ -535,11 +535,69 @@ Depois de publicar, passei sitemap, ortografia e copy das quatro páginas:
 - **`og:locale`** saiu do código para o `idiomas.json` e o espanhol virou `es_LA`, não `es_ES`: a
   copy é de espanhol latino-americano e a Espanha não é o público.
 
+### As quatro camadas (21/09/2026)
+
+A primeira versão em inglês e espanhol era duas páginas de 588 palavras contra 4.324 da home em
+português, 17 links internos contra 119, nenhum `h3`. O Matheus apontou: para **posicionamento**
+isso é pior do que para busca — Sociedade Nacional irmã ou parceiro internacional que cai no `/en/`
+vê uma brochura enquanto o site em português é uma operação inteira. Ele estava certo, e a ideia de
+construir em camadas é dele.
+
+Só que espelhar 1:1 a home em português seria errado por outro motivo: ela é 60% catálogo de cursos
+presenciais, em português, no Rio, com checkout que pede CPF. Ranquear em inglês para "first aid
+course Rio de Janeiro" e entregar um beco sem saída é pior do que não ranquear. **A regra que ficou
+é espelhar por intenção, não por página**: para cada página em português, "o leitor de fora
+consegue agir com isso?".
+
+| | antes | depois |
+|---|---|---|
+| páginas por idioma | 2 | 5 |
+| palavras na home | 588 | 1.044 |
+| texto/HTML na home | 11,5% | 16,7% |
+| `h3` na home | 0 | 9 |
+| links internos na home | 17 | 24 |
+
+1. **FAQ** (`/en/faq/`, `/es/preguntas-frecuentes/`) — 20 perguntas, ~1.900 palavras, `FAQPage`
+   JSON-LD. Das 26 em português ficaram 15: saíram as de cauda longa doméstica (curso gratuito,
+   babá, Nova Iguaçu, MEC) e entraram 5 que só o leitor de fora faz — se somos a Cruz Vermelha
+   nacional, se o curso é em inglês, se dá para doar de fora, se estrangeiro pode ser voluntário,
+   e com quem falam Sociedade Nacional irmã e empresa. É a camada de melhor retorno: pergunta e
+   resposta é o que os motores de resposta citam, e eles respondem no idioma de quem pergunta.
+2. **Cursos** (`/en/courses/`, `/es/cursos/`) — a ficha honesta, não a página de vendas traduzida.
+   A restrição vem antes da tabela de preços. Carga horária, escolaridade e valor saem de
+   `cursos.json`, a mesma fonte da página em português.
+3. **Equipe** (`/en/our-team/`, `/es/nuestro-equipo/`) — diretoria, as onze coordenações e o
+   Palácio. Rende pouco em busca e muito em posicionamento. `ler_equipe()` extrai as pessoas do
+   próprio `equipe.html` na hora de gerar e aborta se a página mudar de forma; só os rótulos são
+   traduzidos, porque duas listas de nomes divergiriam um dia.
+4. **Home adensada** — o Movimento (as três partes, e por que o emblema não é marca), as cinco
+   frentes da filial e quatro "portas de entrada" que linkam para as camadas novas.
+
+**hreflang, três casos diferentes.** A FAQ e os cursos formam par `en`+`es`, porque em português a
+FAQ é seção da home (e âncora não serve de hreflang) e a página de cursos é a de matrícula, com
+checkout — outro tipo de página. A equipe forma cluster de três, e para isso `equipe.html` ganhou
+as quatro linhas de hreflang e o seletor dele passou a apontar para as traduções em vez da home:
+reciprocidade de verdade, não declaração unilateral do sitemap. Sitemap e páginas declaram
+exatamente a mesma coisa nas 19 URLs — há verificação que cruza os dois.
+
+**Defeito antigo corrigido de passagem**: os três blocos da home recebiam os ids
+`sobre`/`principios`/`contato`, então `principios` ficava duplicado (o outro é a seção dos sete
+princípios) e o `#contato` do menu caía na seção da sede. Agora são `sobre`/`atuacao`/`sede`, e a
+seção de contato tem o id que o menu aponta.
+
 ### O que ainda não está traduzido, de propósito
 
-Cursos e matrícula (presenciais, em português, no Rio), o checkout, o chat, os e-mails
-transacionais e as notícias (da Redação). As páginas em inglês e espanhol dizem isso em vez de
-fingir. Ampliar é acrescentar texto ao `idiomas.json` — a base técnica já está de pé.
+O checkout, o chat, os e-mails transacionais e as notícias (da Redação). As páginas em inglês e
+espanhol dizem isso em vez de fingir. Ampliar é acrescentar texto ao `idiomas.json` — a base
+técnica já está de pé.
+
+**Decisão em aberto, e vale tomar antes de ter cinquenta páginas**: o motor de conteúdo em camadas
+é `/noticias/`, que **não mora neste repositório** — é da Redação (Next.js na Vercel). Enquanto
+não for decidido, o português cresce toda semana e as outras línguas ficam congeladas no número de
+páginas que tiverem. As opções são `/en/news/` servido daqui ou notícia multilíngue dentro da
+própria Redação (minha recomendação), e **não traduzir tudo**: escolher o que tem alcance
+internacional de verdade — o apelo da IFRC para o Chocó, por exemplo — em vez de traduzir
+interdição de ciclovia. Isso muda estrutura de URL, então é decisão de agora.
 
 ### Revisão
 

@@ -59,6 +59,12 @@ PAGINAS = [
     ("/en/donate/", "en/donate/index.html", "monthly", "0.6", "Doação em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
     ("/es/donar/", "es/donar/index.html", "monthly", "0.6", "Doação em espanhol"),
+    ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
+    ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
+    ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
+    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
+    ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
+    ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
 ]
 
 # Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
@@ -70,6 +76,19 @@ ALTERNATIVAS = {
     "/doe/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
     "/en/donate/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
     "/es/donar/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
+    # A FAQ só existe em inglês e espanhol: em português ela é uma seção da home, e âncora não
+    # serve de hreflang. O par fica sem pt-BR, como nas próprias páginas.
+    "/en/faq/": {"en": "/en/faq/", "es": "/es/preguntas-frecuentes/", "x-default": "/"},
+    "/es/preguntas-frecuentes/": {"en": "/en/faq/", "es": "/es/preguntas-frecuentes/", "x-default": "/"},
+    # Cursos: o par en+es, como na FAQ. A página em português é a de matrícula, com checkout — é
+    # outro tipo de página, não a mesma em outra língua, e não declara hreflang. Entrar no cluster
+    # só pelo sitemap criaria divergência entre o que o sitemap diz e o que a página diz.
+    "/en/courses/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
+    "/es/cursos/": {"en": "/en/courses/", "es": "/es/cursos/", "x-default": "/matricula-cursos-presenciais/"},
+    # Equipe: cluster completo, porque equipe.html é a mesma página em português e declara hreflang.
+    "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+    "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+    "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
 }
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
@@ -178,7 +197,9 @@ def entrada(loc: str, lastmod: str | None, changefreq: str, priority: str, image
     # sitemap ou nos dois; declarar nos dois é o recomendado, e é o que fazemos.
     for codigo, caminho in (alternativas or {}).items():
         linhas.append(f'    <xhtml:link rel="alternate" hreflang="{codigo}" href="{ORIGEM}{caminho}"/>')
-    if alternativas and alternativas.get("pt-BR"):
+    # O x-default sai do português, quando existe. Página que só tem en+es (a FAQ) declara o seu
+    # na própria tabela, e aí o laço acima já o emitiu — não duplicar.
+    if alternativas and alternativas.get("pt-BR") and "x-default" not in alternativas:
         linhas.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{ORIGEM}{alternativas["pt-BR"]}"/>')
     if lastmod:
         linhas.append(f"    <lastmod>{lastmod}</lastmod>")

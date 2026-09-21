@@ -41,6 +41,27 @@
     .i18n-nota { color:var(--muted); font-size:.9rem; margin:18px 0 0; max-width:760px }
     .i18n-caixa { background:var(--soft); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-top:24px }
     .i18n-caixa p { margin:0 }
+    .i18n-caixa p + p { margin-top:14px }
+    .i18n-tabela-rolo { overflow-x:auto; margin-top:24px }
+    .i18n-tabela { width:100%; border-collapse:collapse; min-width:620px }
+    .i18n-tabela th, .i18n-tabela td { text-align:left; padding:12px 14px; border-bottom:1px solid var(--line); font-size:.95rem }
+    .i18n-tabela th { background:var(--soft); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    .i18n-tabela td:last-child, .i18n-tabela th:last-child { white-space:nowrap }
+    .i18n-fichas { display:grid; gap:18px; margin-top:24px }
+    .i18n-fichas article { background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px }
+    .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
+    .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
+    .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    .i18n-porta { margin-top:12px !important }
+    .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
+    .i18n-porta a:hover { text-decoration:underline }
+    @media (min-width:920px) { .i18n-portas { grid-template-columns:repeat(2,1fr) } }
+    .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
+    .i18n-fichas li { margin:2px 0 }
+    .i18n-diretoria article { text-align:center }
+    .i18n-diretoria h3 { font-size:1rem }
+    .i18n-diretoria p { color:var(--red); font-weight:800; font-size:.85rem; text-transform:uppercase; letter-spacing:.02em }
+    @media (min-width:920px) { .i18n-fichas { grid-template-columns:1fr 1fr } .i18n-diretoria, .i18n-areas { grid-template-columns:repeat(3,1fr) } }
     @media (max-width:920px) { .i18n-principios, .i18n-passos { grid-template-columns:1fr } }
 </style>
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"NGO","@id":"https://cruzvermelhariodejaneiro.org/#organizacao","name":"Brazilian Red Cross — Rio de Janeiro Branch","url":"https://cruzvermelhariodejaneiro.org/en/","parentOrganization":{"@type":"NGO","name":"Brazilian Red Cross (Cruz Vermelha Brasileira)"},"taxID":"08.560.973/0001-97","email":"contato@cruzvermelhariodejaneiro.org","address":{"@type":"PostalAddress","streetAddress":"Praça da Cruz Vermelha, 10","addressLocality":"Rio de Janeiro","addressRegion":"RJ","postalCode":"20230-130","addressCountry":"BR"},"sameAs":["https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"]},{"@context":"https://schema.org","@type":"WebPage","url":"https://cruzvermelhariodejaneiro.org/en/","name":"Brazilian Red Cross — Rio de Janeiro Branch","description":"The Rio de Janeiro State Branch of the Brazilian Red Cross: volunteer training, first-aid courses and community support, in downtown Rio de Janeiro.","inLanguage":"en","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"}}]</script>
@@ -67,6 +88,9 @@
         <nav class="nav-links">
           <a href="/en/#sobre">About us</a>
           <a href="/en/#principios">Our principles</a>
+          <a href="/en/our-team/">Our team</a>
+          <a href="/en/courses/">Courses</a>
+          <a href="/en/faq/">FAQ</a>
           <a href="/en/donate/">Donate</a>
           <a href="/en/#contato">Contact</a>
           <a href="/">Site em português</a>
@@ -92,18 +116,50 @@
         <p>We are a non-profit organisation, registered under Brazilian tax ID (CNPJ) 08.560.973/0001-97, and recognised as being of municipal public utility by Municipal Law 5,153/2010 and of state public utility by State Law 9,984/2023. The work is led by an executive board and thematic coordination teams, and carried out largely by volunteers trained by the branch itself.</p>
       </div>
     </section>
-    <section class="i18n-bloco" id="principios">
+    <section class="i18n-bloco" id="atuacao">
       <div class="wrap">
         <h2>What we do</h2>
         <p>We train volunteers, teach in-person first-aid and vocational courses at our headquarters, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.</p>
         <p>Our training arm is the Escola de Educação e Saúde CVB-RJ, which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral Venous Access, Civil Firefighter, Caregiver for Older Adults and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro.</p>
       </div>
     </section>
-    <section class="i18n-bloco" id="contato">
+    <section class="i18n-bloco" id="sede">
       <div class="wrap">
         <h2>Our headquarters</h2>
         <p>The branch operates from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in the centre of Rio de Janeiro. The building is the historic headquarters of the Brazilian Red Cross and was granted provisional heritage protection by IPHAN, Brazil&#x27;s National Historic and Artistic Heritage Institute, in 2021.</p>
         <p>The branch does not run a clinic, schedule medical appointments or respond to emergencies. In an emergency in Brazil, call 192 (ambulance) or 193 (fire brigade).</p>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="movimento">
+      <div class="wrap">
+        <h2>The Movement we belong to</h2>
+        <p>The International Red Cross and Red Crescent Movement is the largest humanitarian network in the world, and it has three parts. The International Committee of the Red Cross works in armed conflict, with a mandate given to it by the Geneva Conventions. The International Federation of Red Cross and Red Crescent Societies coordinates the response to disasters outside conflict. And in each country there is one National Society, auxiliary to the public authorities in humanitarian matters — in Brazil, the Brazilian Red Cross.</p>
+        <p>This branch is the Rio de Janeiro State arm of that National Society. The emblem is not a brand: it is a protective sign defined in international humanitarian law, and its use is restricted. That is also why the seven fundamental principles below are not a statement of values but the conditions under which the Movement is allowed to work — neutrality and impartiality are what let a Red Cross team reach people that no one else can reach.</p>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="programas">
+      <div class="wrap">
+        <h2>What the branch runs</h2>
+        <p>Five fronts, all carried out from the headquarters in central Rio de Janeiro and across the state.</p>
+        <div class="i18n-fichas">
+          <article><h3>Volunteer training</h3><p>The branch trains its own volunteers, with no requirement of a health background. After registering, each volunteer goes through initial training at the headquarters and then joins one of the coordination teams — humanitarian action, first aid, disaster risk management, youth, sport, psychosocial support.</p></article>
+          <article><h3>First-aid training</h3><p>In-person courses in basic first aid, first aid for settings with children under the Lucas Law, and Basic Life Support, open to anyone. This is also what the branch brings to events and field operations.</p></article>
+          <article><h3>Impacto das Cores</h3><p>Collective painting efforts that bring community spaces back into use. The point is as much the work itself as the bond it builds between volunteers and residents.</p></article>
+          <article><h3>Winter Clothing Drive</h3><p>Collection of coats, blankets and shoes for families in vulnerable situations, received at the headquarters from Monday to Friday, 10am to 5pm, and sorted before distribution.</p></article>
+          <article><h3>Training for companies and schools</h3><p>Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team. It is one of the main ways partner organisations support the branch.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="caminhos">
+      <div class="wrap">
+        <h2>Ways in</h2>
+        <p>Four doors, depending on what brings you here.</p>
+        <div class="i18n-fichas i18n-portas">
+          <article><h3>Take a course</h3><p>Seven in-person courses at the headquarters, each with a certificate. Taught in Portuguese.</p><p class="i18n-porta"><a href="/en/courses/">See the courses &rarr;</a></p></article>
+          <article><h3>Volunteer</h3><p>Open to anyone, with no health background required. The working language is Portuguese.</p><p class="i18n-porta"><a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR">Register as a volunteer &rarr;</a></p></article>
+          <article><h3>Donate</h3><p>Card or PIX. From outside Brazil, card only — the donation page explains why.</p><p class="i18n-porta"><a href="/en/donate/">Go to the donation page &rarr;</a></p></article>
+          <article><h3>Partner with us</h3><p>Sister National Societies, institutions and companies, and training for your team.</p><p class="i18n-porta"><a href="/en/our-team/">See who does what &rarr;</a></p></article>
+        </div>
       </div>
     </section>
     <section class="i18n-bloco" id="principios">
@@ -120,7 +176,7 @@
         </ul>
       </div>
     </section>
-    <section class="i18n-bloco">
+    <section class="i18n-bloco" id="contato">
       <div class="wrap">
         <h2>Get in touch</h2>
         <p>Write to us in English, Spanish or Portuguese. We answer by e-mail within two business days.</p>
