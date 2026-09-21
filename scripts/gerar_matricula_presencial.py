@@ -249,8 +249,20 @@ def main() -> int:
     detalhes = "".join(detalhe(s, i == 0) for i, s in enumerate(ordem))
 
     # Chat de contato: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo.
-    if chat_widget.atualizar_cursos([{"slug": s, "nome": cursos[s]["nome"]} for s in ordem]):
-        print("atualizado site/chat/chat.js (lista de cursos)")
+    # Vai junto a ficha e a FAQ de cada curso: o chat responde na hora, com o texto da escola.
+    para_o_chat = []
+    for s in ordem:
+        c = cursos[s]
+        valor = brl(c["valor_curso_centavos"]) if c.get("valor_curso_centavos") else ""
+        para_o_chat.append({
+            "slug": s, "nome": c["nome"], "carga": c.get("carga_horaria", ""),
+            "escolaridade": c.get("escolaridade", ""), "valor": valor,
+            "descricao": nome_filial(c.get("descricao", "")),
+            "faq": [{"pergunta": q["pergunta"], "resposta": nome_filial(q["resposta"])}
+                    for q in (c.get("faq") or []) if q.get("pergunta") and q.get("resposta")],
+        })
+    if chat_widget.atualizar_cursos(para_o_chat):
+        print("atualizado site/chat/chat.js (cursos, ficha e dúvidas)")
     chat_tags = chat_widget.tags()
 
     faq_pagina = "".join(f"<details><summary>{esc(p)}</summary><p>{esc(r)}</p></details>" for p, r in FAQ_PAGINA)

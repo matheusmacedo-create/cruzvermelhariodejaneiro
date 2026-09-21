@@ -162,6 +162,17 @@ function mcp_caixa(array $linhas, array $total = []): string
 }
 
 /** Passos numerados (círculo vermelho, título e texto). $passos = [[título, html], ...]. */
+/** Lista simples com marcador, para enumerar itens curtos. O HTML de cada item já vem escapado. */
+function mcp_lista(array $itens): string
+{
+    $html = '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:4px 0 12px">';
+    foreach ($itens as $item) {
+        $html .= '<tr><td width="16" valign="top" style="width:16px;padding:3px 0;color:#cc0000;font-size:15px;line-height:1.5">&bull;</td>'
+            . '<td valign="top" style="padding:3px 0;font-size:15px;line-height:1.5;color:#4a5568">' . $item . '</td></tr>';
+    }
+    return $html . '</table>';
+}
+
 function mcp_passos(array $passos): string
 {
     $html = '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:4px 0 12px">';
@@ -489,9 +500,19 @@ function mcp_montar_email_contato_equipe(array $c): array
     }
     $linhas['Protocolo'] = $protocolo;
 
+    // O que o chat já respondeu antes do chamado: a equipe não precisa repetir, e saber o que a
+    // pessoa leu e mesmo assim não resolveu costuma ser a parte mais útil da mensagem.
+    $lidas = is_array($c['ja_respondido'] ?? null) ? $c['ja_respondido'] : [];
+    $jaLido = $lidas
+        ? mcp_subtitulo('Já respondido no chat, antes de escrever')
+            . mcp_lista(array_map(static fn(string $q): string => mcp_escapar($q), $lidas))
+            . mcp_nota('A pessoa leu estas respostas no chat e ainda assim abriu o chamado.')
+        : '';
+
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong> escreveu pelo chat do site sobre <strong>' . mcp_escapar(mb_strtolower($assunto)) . '</strong>'
             . ($curso !== '' ? ' (' . mcp_escapar($curso) . ')' : '') . '. A pessoa já foi avisada de que a resposta chega por e-mail em até ' . MCP_EMAIL_PRAZO . '.')
         . mcp_citacao((string) $c['mensagem'])
+        . $jaLido
         . ($linkPainel !== ''
             ? mcp_botao($linkPainel, 'Responder no painel')
                 . mcp_nota('Pelo painel a resposta sai no padrão visual do site, com o protocolo no assunto, e fica registrada com data e quem respondeu.')
@@ -551,7 +572,27 @@ function mcp_montar_email_contato_confirmacao(array $c): array
         ['Para continuar a conversa, responda o e-mail',
             'Daqui em diante tudo acontece por e-mail, sempre com o protocolo. Você não precisa enviar a mensagem de novo.'],
     ];
+    // A ficha do curso, montada aqui a partir do catálogo: quem escreveu perguntando de um curso
+    // recebe carga horária, escolaridade e valor junto da confirmação, sem esperar dois dias.
+    $ficha = '';
+    $dadosCurso = !empty($c['curso_slug']) ? mcp_curso((string) $c['curso_slug']) : null;
+    if ($dadosCurso) {
+        $itens = [];
+        if (!empty($dadosCurso['carga_horaria'])) {
+            $itens[] = '<strong>' . mcp_escapar((string) $dadosCurso['carga_horaria']) . '</strong> presenciais, na sede, no Centro do Rio';
+        }
+        if (!empty($dadosCurso['escolaridade'])) {
+            $itens[] = 'Escolaridade mínima: <strong>' . mcp_escapar((string) $dadosCurso['escolaridade']) . '</strong>';
+        }
+        if (!empty($dadosCurso['valor_curso_centavos'])) {
+            $itens[] = 'Curso: <strong>' . mcp_brl((int) $dadosCurso['valor_curso_centavos']) . '</strong>, pago depois na plataforma da escola · Inscrição: <strong>' . $inscricao . '</strong>, que garante a vaga';
+        }
+        $itens[] = 'Certificado da Cruz Vermelha Brasileira Rio de Janeiro';
+        $ficha = mcp_subtitulo('Sobre o ' . (string) $c['curso_nome']) . mcp_lista($itens);
+    }
+
     $corpo = mcp_p('Oi, ' . mcp_escapar($nome) . '. Sua mensagem chegou e já está com a nossa equipe. Guarde o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>: ele identifica a sua conversa.')
+        . $ficha
         . mcp_subtitulo('Como funciona a resposta')
         . mcp_passos($passos)
         . mcp_caixa($linhas)

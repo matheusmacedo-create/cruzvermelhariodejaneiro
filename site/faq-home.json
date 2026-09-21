@@ -31,7 +31,12 @@
               "texto": "chat do site",
               "url": "/#chat"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso"
+          ],
+          "chatRotulo": "Como faço a matrícula?"
         },
         {
           "pergunta": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
@@ -41,7 +46,13 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso",
+            "pagamento"
+          ],
+          "chatRotulo": "Quanto custa?"
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
@@ -59,7 +70,12 @@
               "texto": "notícias do site",
               "url": "/noticias/"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso"
+          ],
+          "chatRotulo": "Tem curso gratuito?"
         },
         {
           "pergunta": "Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?",
@@ -69,7 +85,12 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso"
+          ],
+          "chatRotulo": "Qual a escolaridade mínima?"
         },
         {
           "pergunta": "O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?",
@@ -89,7 +110,12 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso"
+          ],
+          "chatRotulo": "Quanto tempo dura?"
         },
         {
           "pergunta": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
@@ -99,12 +125,22 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "chat": [
+            "matricula",
+            "curso"
+          ],
+          "chatRotulo": "É online ou presencial?"
         },
         {
           "pergunta": "O certificado dos cursos é reconhecido pelo MEC?",
           "resposta": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.",
-          "links": []
+          "links": [],
+          "chat": [
+            "curso",
+            "matricula"
+          ],
+          "chatRotulo": "O certificado é reconhecido pelo MEC?"
         }
       ]
     },
@@ -187,7 +223,12 @@
               "texto": "chat do site",
               "url": "/#chat"
             }
-          ]
+          ],
+          "chat": [
+            "curso",
+            "outro"
+          ],
+          "chatRotulo": "Treinamento para minha empresa ou escola"
         },
         {
           "pergunta": "Como comparar os cursos de primeiros socorros no Rio de Janeiro?",
@@ -244,7 +285,11 @@
               "texto": "página de links da filial",
               "url": "/bio/"
             }
-          ]
+          ],
+          "chat": [
+            "voluntariado"
+          ],
+          "chatRotulo": "Como ser voluntário?"
         },
         {
           "pergunta": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
@@ -262,7 +307,11 @@
               "texto": "curso de Primeiros Socorros Básico",
               "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-basico"
             }
-          ]
+          ],
+          "chat": [
+            "voluntariado"
+          ],
+          "chatRotulo": "Quem pode ser voluntário?"
         }
       ]
     },
@@ -295,7 +344,11 @@
               "texto": "Campanha do Agasalho",
               "url": "/campanha-agasalho.html"
             }
-          ]
+          ],
+          "chat": [
+            "doacoes"
+          ],
+          "chatRotulo": "Como doar? É seguro?"
         },
         {
           "pergunta": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
@@ -313,7 +366,11 @@
               "texto": "página de doação",
               "url": "/doe/"
             }
-          ]
+          ],
+          "chat": [
+            "doacoes"
+          ],
+          "chatRotulo": "Onde entregar roupas e cobertores?"
         },
         {
           "pergunta": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
@@ -327,7 +384,11 @@
               "texto": "chat do site",
               "url": "/#chat"
             }
-          ]
+          ],
+          "chat": [
+            "outro"
+          ],
+          "chatRotulo": "Vocês atendem emergência ou consulta?"
         },
         {
           "pergunta": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
@@ -349,7 +410,12 @@
               "texto": "seção de contato",
               "url": "/#contato"
             }
-          ]
+          ],
+          "chat": [
+            "outro",
+            "matricula"
+          ],
+          "chatRotulo": "Onde fica e qual o horário?"
         },
         {
           "pergunta": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
@@ -363,7 +429,12 @@
               "texto": "página de matrícula em cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "chat": [
+            "curso",
+            "matricula"
+          ],
+          "chatRotulo": "Tem curso em outras cidades?"
         },
         {
           "pergunta": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
@@ -385,7 +456,11 @@
               "texto": "notícias",
               "url": "/noticias/"
             }
-          ]
+          ],
+          "chat": [
+            "outro"
+          ],
+          "chatRotulo": "Tem telefone ou WhatsApp?"
         }
       ]
     }

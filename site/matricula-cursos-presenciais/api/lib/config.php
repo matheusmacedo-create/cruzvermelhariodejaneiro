@@ -48,6 +48,39 @@ function mcp_catalogo(): array
     return $catalogo;
 }
 
+/**
+ * As perguntas que o chat pode responder sozinho, para conferir o que a pessoa diz ter lido.
+ *
+ * O navegador manda só o texto da pergunta; aqui ele é confrontado com o que existe de verdade
+ * (a FAQ do curso no catálogo e a FAQ da home marcada com "chat"). Texto que não bate é
+ * descartado: nada vindo do navegador entra num e-mail sem passar por esta lista.
+ */
+function mcp_perguntas_conhecidas(): array
+{
+    static $lista = null;
+    if ($lista !== null) {
+        return $lista;
+    }
+    $lista = [];
+    foreach (mcp_catalogo()['cursos'] as $curso) {
+        foreach ($curso['faq'] ?? [] as $q) {
+            if (!empty($q['pergunta'])) {
+                $lista[(string) $q['pergunta']] = (string) ($q['resposta'] ?? '');
+            }
+        }
+    }
+    $faq = dirname(__DIR__, 3) . '/faq-home.json';
+    $dados = is_readable($faq) ? json_decode((string) file_get_contents($faq), true) : null;
+    foreach ($dados['grupos'] ?? [] as $grupo) {
+        foreach ($grupo['perguntas'] ?? [] as $q) {
+            if (!empty($q['chat']) && !empty($q['pergunta'])) {
+                $lista[(string) $q['pergunta']] = (string) ($q['resposta'] ?? '');
+            }
+        }
+    }
+    return $lista;
+}
+
 function mcp_curso(string $slug): ?array
 {
     foreach (mcp_catalogo()['cursos'] as $curso) {

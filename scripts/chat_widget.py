@@ -26,6 +26,9 @@ URL = "/chat/"
 PAGINAS_MANUAIS = ["site/index.html", "site/equipe.html", "site/doacao.html", "site/campanha-agasalho.html", "site/404.html"]
 MARCA_INI = "/* chat:cursos"
 MARCA_FIM = "/* /chat:cursos */"
+MARCA_RESP_INI = "/* chat:respostas"
+MARCA_RESP_FIM = "/* /chat:respostas */"
+FAQ_HOME = RAIZ / "site" / "faq-home.json"
 PADRAO_TAGS = re.compile(
     r'  <!-- Chat de contato por e-mail[^\n]*\n'
     r'  <link rel="stylesheet" href="/chat/chat(?:\.min)?\.css\?v=[0-9a-f]+">\n'
@@ -59,16 +62,57 @@ def aplicar(html: str) -> str:
 
 
 def atualizar_cursos(cursos: list[dict]) -> bool:
-    """Reescreve a lista de cursos do chat.js (slug e nome) entre os marcadores. Devolve True se mudou."""
+    """Reescreve a lista de cursos do chat.js entre os marcadores. Devolve True se mudou.
+
+    Cada curso leva a ficha (carga horária, escolaridade, valor) e as perguntas frequentes que a
+    escola publica. O chat mostra a ficha assim que a pessoa escolhe o curso e oferece as perguntas
+    como botões: a resposta é sempre a que a escola escreveu, sem o chat ter de adivinhar o que
+    a pessoa quis dizer.
+    """
     arquivo = PASTA / "chat.js"
     js = arquivo.read_text(encoding="utf-8")
     a = js.index(MARCA_INI)
     a = js.index("*/", a) + len("*/")
     b = js.index(MARCA_FIM)
-    itens = ",\n".join(
-        f"    {{ slug: {json.dumps(c['slug'], ensure_ascii=False)}, nome: {json.dumps(c['nome'], ensure_ascii=False)} }}" for c in cursos
-    )
-    novo = js[:a] + "\n  var CURSOS = [\n" + itens + "\n  ];\n  " + js[b:]
+    j = lambda v: json.dumps(v, ensure_ascii=False)
+    linhas = []
+    for c in cursos:
+        campos = [f"slug: {j(c['slug'])}", f"nome: {j(c['nome'])}"]
+        for chave in ("carga", "escolaridade", "valor", "descricao"):
+            if c.get(chave):
+                campos.append(f"{chave}: {j(c[chave])}")
+        if c.get("faq"):
+            duvidas = ",\n".join(
+                f"        {{ p: {j(q['pergunta'])}, r: {j(q['resposta'])} }}" for q in c["faq"])
+            campos.append("faq: [\n" + duvidas + "\n      ]")
+        linhas.append("    { " + ", ".join(campos) + " }")
+    novo = js[:a] + "\n  var CURSOS = [\n" + ",\n".join(linhas) + "\n  ];\n  " + js[b:]
+    if novo == js:
+        return False
+    arquivo.write_text(novo, encoding="utf-8")
+    return True
+
+
+def atualizar_respostas() -> bool:
+    """Leva para o chat.js as respostas da FAQ da home marcadas com "chat". Devolve True se mudou.
+
+    A marca fica no próprio site/faq-home.json (`"chat": ["voluntariado"]`): quem edita a FAQ vê,
+    na mesma linha, em que assunto do chat aquela resposta se oferece. O chat mostra as perguntas
+    como botões, então a resposta é sempre a que foi escrita e revisada — nada é interpretado.
+    """
+    dados = json.loads(FAQ_HOME.read_text(encoding="utf-8"))
+    itens = [q for g in dados["grupos"] for q in g["perguntas"] if q.get("chat")]
+    arquivo = PASTA / "chat.js"
+    js = arquivo.read_text(encoding="utf-8")
+    a = js.index(MARCA_RESP_INI)
+    a = js.index("*/", a) + len("*/")
+    b = js.index(MARCA_RESP_FIM)
+    j = lambda v: json.dumps(v, ensure_ascii=False)
+    # "rotulo" é o texto curto do botão; "p" é a pergunta completa, que vai na conversa. A pergunta
+    # da página carrega o nome completo da filial, que num botão de celular vira três linhas.
+    linhas = [f"    {{ assuntos: {j(q['chat'])}, rotulo: {j(q.get('chatRotulo') or q['pergunta'])}, "
+              f"p: {j(q['pergunta'])}, r: {j(q['resposta'])} }}" for q in itens]
+    novo = js[:a] + "\n  var RESPOSTAS = [\n" + ",\n".join(linhas) + "\n  ];\n  " + js[b:]
     if novo == js:
         return False
     arquivo.write_text(novo, encoding="utf-8")
@@ -76,6 +120,8 @@ def atualizar_cursos(cursos: list[dict]) -> bool:
 
 
 def main() -> int:
+    if atualizar_respostas():
+        print("atualizado site/chat/chat.js (respostas da FAQ)")
     for caminho in PAGINAS_MANUAIS:
         p = RAIZ / caminho
         if not p.exists():

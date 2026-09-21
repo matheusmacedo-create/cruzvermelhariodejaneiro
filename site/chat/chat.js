@@ -16,21 +16,79 @@
   var URL_PRIVACIDADE = '/privacidade/';
   var EMAIL_CONTATO = 'contato@cruzvermelhariodejaneiro.org';
   var PRAZO = '2 dias úteis';
+  var INSCRICAO = 'R$ 99,00';
   var CHAVE = 'cv_chat';
   var NOME = 'Cruz Vermelha Brasileira Rio de Janeiro';
   var LOGO = '/bio/img/avatar-256.webp'; // logo oficial (quadrado), o mesmo da bio do Instagram
 
   /* chat:cursos (reescrito por scripts/gerar_matricula_presencial.py a partir de cursos.json) */
   var CURSOS = [
-    { slug: "primeiros-socorros-basico", nome: "Primeiros Socorros Básico" },
-    { slug: "primeiros-socorros-lei-lucas", nome: "Primeiros Socorros Lei Lucas - Ambientes com Crianças" },
-    { slug: "puncao-venosa", nome: "Punção Venosa" },
-    { slug: "suporte-basico-de-vida", nome: "Suporte Básico de Vida" },
-    { slug: "bombeiro-civil", nome: "Bombeiro Civil" },
-    { slug: "cuidador-de-idosos", nome: "Cuidador de Idosos (Curso Livre)" },
-    { slug: "micropigmentacao-labial", nome: "Micropigmentação Labial" }
+    { slug: "primeiros-socorros-basico", nome: "Primeiros Socorros Básico", carga: "8 horas", escolaridade: "Ensino Fundamental", valor: "R$ 180,00", descricao: "O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.", faq: [
+        { p: "Preciso ser da área da saúde?", r: "Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros." },
+        { p: "Recebo certificado?", r: "Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro." },
+        { p: "Posso trabalhar como socorrista após o curso?", r: "Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados." },
+        { p: "Existe prática?", r: "Sim. O curso possui atividades demonstrativas e práticas supervisionadas." },
+        { p: "Há validade para o certificado?", r: "Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento." }
+      ] },
+    { slug: "primeiros-socorros-lei-lucas", nome: "Primeiros Socorros Lei Lucas - Ambientes com Crianças", carga: "8 horas", escolaridade: "Ensino Fundamental", valor: "R$ 150,00", descricao: "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado." },
+    { slug: "puncao-venosa", nome: "Punção Venosa", carga: "8 horas", escolaridade: "Ensino Médio", valor: "R$ 150,00", descricao: "Técnica de acesso venoso periférico com segurança.", faq: [
+        { p: "Quem pode fazer esse curso?", r: "O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão." },
+        { p: "O curso é prático?", r: "Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas." },
+        { p: "Vou aprender apenas punção?", r: "Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais." },
+        { p: "Esse curso melhora minhas oportunidades de emprego?", r: "Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde." },
+        { p: "O certificado é válido?", r: "Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro ao término do curso." }
+      ] },
+    { slug: "suporte-basico-de-vida", nome: "Suporte Básico de Vida", carga: "4 horas", escolaridade: "Ensino Fundamental", valor: "R$ 150,00", descricao: "Atendimento inicial de emergências com diretrizes oficiais.", faq: [
+        { p: "Para quem é indicado este curso?", r: "É indicado para profissionais da saúde, educação, segurança, empresas e também para qualquer pessoa que deseje aprender a agir corretamente em situações de emergência." },
+        { p: "Vou aprender a salvar vidas?", r: "Você aprenderá técnicas essenciais para prestar o primeiro atendimento até a chegada do serviço especializado, aumentando as chances de um atendimento seguro e eficiente." },
+        { p: "O curso possui prática?", r: "Sim. A metodologia combina teoria e treinamento prático para desenvolver segurança durante os atendimentos." },
+        { p: "Preciso ser profissional da saúde?", r: "Não. O curso é aberto tanto para profissionais quanto para pessoas sem experiência prévia." },
+        { p: "O certificado pode enriquecer meu currículo?", r: "Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais." }
+      ] },
+    { slug: "bombeiro-civil", nome: "Bombeiro Civil", carga: "80 horas", escolaridade: "Ensino Médio", valor: "R$ 950,00", descricao: "Formação para atuação em prevenção e combate a incêndios.", faq: [
+        { p: "Quem pode fazer o curso de Bombeiro Civil?", r: "Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências." },
+        { p: "O certificado é reconhecido?", r: "Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências." },
+        { p: "Onde posso trabalhar após o curso?", r: "O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências." },
+        { p: "O curso possui aulas práticas?", r: "Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência." },
+        { p: "Preciso ter experiência na área?", r: "Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula." }
+      ] },
+    { slug: "cuidador-de-idosos", nome: "Cuidador de Idosos (Curso Livre)", carga: "160 horas", escolaridade: "Ensino Fundamental", valor: "R$ 950,00", descricao: "Cuidados, segurança e bem-estar no atendimento ao idoso.", faq: [
+        { p: "Quem pode fazer esse curso?", r: "Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares." },
+        { p: "O cuidador de idosos pode trabalhar no exterior?", r: "O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação." },
+        { p: "Onde posso trabalhar?", r: "O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso." },
+        { p: "O curso ensina cuidados práticos?", r: "Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento." },
+        { p: "Existe mercado para cuidadores de idosos?", r: "Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades." }
+      ] },
+    { slug: "micropigmentacao-labial", nome: "Micropigmentação Labial", carga: "24 horas", escolaridade: "Ensino Médio", valor: "R$ 400,00", descricao: "Procedimento estético de micropigmentação dos lábios.", faq: [
+        { p: "Preciso já trabalhar com estética?", r: "Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços." },
+        { p: "Vou aprender a técnica na prática?", r: "Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica." },
+        { p: "Posso começar a atender clientes após o curso?", r: "Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos." },
+        { p: "Quais são os diferenciais do curso?", r: "Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados." },
+        { p: "Recebo certificado?", r: "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro." }
+      ] }
   ];
   /* /chat:cursos */
+
+  /* chat:respostas (reescrito por scripts/chat_widget.py a partir de site/faq-home.json) */
+  var RESPOSTAS = [
+    { assuntos: ["matricula", "curso"], rotulo: "Como faço a matrícula?", p: "Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?", r: "Escolha o curso na página de matrícula em cursos presenciais e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 2 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em escola.cursoscruzvermelha.org. Dúvidas? Use o chat do site, que responde por e-mail." },
+    { assuntos: ["matricula", "curso", "pagamento"], rotulo: "Quanto custa?", p: "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?", r: "Em todos os cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro a inscrição custa R$ 99, à vista, por PIX ou cartão, e reserva a vaga. O valor do curso é pago depois, na plataforma da escola, à vista: R$ 150 em Suporte Básico de Vida, Punção Venosa e Primeiros Socorros Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte, valor a consultar. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada; o prazo depende de PIX ou cartão. Confira tudo na página de matrícula." },
+    { assuntos: ["matricula", "curso"], rotulo: "Tem curso gratuito?", p: "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?", r: "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj." },
+    { assuntos: ["matricula", "curso"], rotulo: "Qual a escolaridade mínima?", p: "Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?", r: "Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na página de matrícula antes de garantir a vaga com a inscrição de R$ 99." },
+    { assuntos: ["matricula", "curso"], rotulo: "Quanto tempo dura?", p: "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?", r: "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária e as datas de cada um na página de matrícula." },
+    { assuntos: ["matricula", "curso"], rotulo: "É online ou presencial?", p: "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?", r: "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Escolha a sua turma na página de matrícula." },
+    { assuntos: ["curso", "matricula"], rotulo: "O certificado é reconhecido pelo MEC?", p: "O certificado dos cursos é reconhecido pelo MEC?", r: "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte." },
+    { assuntos: ["curso", "outro"], rotulo: "Treinamento para minha empresa ou escola", p: "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?", r: "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 2 dias úteis." },
+    { assuntos: ["voluntariado"], rotulo: "Como ser voluntário?", p: "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?", r: "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial." },
+    { assuntos: ["voluntariado"], rotulo: "Quem pode ser voluntário?", p: "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?", r: "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico." },
+    { assuntos: ["doacoes"], rotulo: "Como doar? É seguro?", p: "Como doar para a Cruz Vermelha Brasileira Rio de Janeiro? A doação é segura?", r: "Você doa pela página de doação da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor, define se a doação é única ou mensal e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a Campanha do Agasalho." },
+    { assuntos: ["doacoes"], rotulo: "Onde entregar roupas e cobertores?", p: "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?", r: "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail. Quem preferir pode doar em dinheiro pela página de doação." },
+    { assuntos: ["outro"], rotulo: "Vocês atendem emergência ou consulta?", p: "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?", r: "Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 2 dias úteis." },
+    { assuntos: ["outro", "matricula"], rotulo: "Onde fica e qual o horário?", p: "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?", r: "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais, a formação de voluntários e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 2 dias úteis. A seção de contato traz o endereço com link para o mapa." },
+    { assuntos: ["curso", "matricula"], rotulo: "Tem curso em outras cidades?", p: "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?", r: "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais." },
+    { assuntos: ["outro"], rotulo: "Tem telefone ou WhatsApp?", p: "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?", r: "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 2 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj." }
+  ];
+  /* /chat:respostas */
 
   var ASSUNTOS = [
     ['matricula', 'Matrícula em cursos'],
@@ -105,7 +163,8 @@
   }
 
   // ------------------------------------------------------------------ estado (sobrevive à navegação entre páginas)
-  function novoEstado() { return { aberto: false, passo: 'assunto', respostas: {}, editando: false, erro: '', protocolo: '', aberturaRastreada: false }; }
+  function novoEstado() { return { aberto: false, passo: 'assunto', respostas: {}, editando: false, erro: '',
+    protocolo: '', aberturaRastreada: false, duvidasVistas: false, duvidasLidas: [] }; }
   function carregar() {
     try {
       var s = JSON.parse(sessionStorage.getItem(CHAVE) || 'null');
@@ -123,9 +182,59 @@
     if (passo === 'telefone') return Object.prototype.hasOwnProperty.call(r, 'telefone');
     return typeof r[passo] === 'string' && r[passo] !== '';
   }
+  var MAX_DUVIDAS = 5;  // mais que isso vira parede de botão no celular
+
+  /* O curso escolhido, quando há ficha ou dúvidas dele para mostrar. */
+  function fichaDoCurso() {
+    if (!precisaCurso() || !estado.respostas.curso) return null;
+    var c = curso(estado.respostas.curso);
+    return c && (c.carga || c.valor || (c.faq && c.faq.length)) ? c : null;
+  }
+  /* O que o chat sabe responder aqui: as dúvidas do curso escolhido ou, na falta dele, as
+     respostas da FAQ marcadas para este assunto. Sempre texto escrito e revisado por gente. */
+  function duvidasDoPasso() {
+    var c = fichaDoCurso();
+    if (c && c.faq && c.faq.length) return c.faq.slice(0, MAX_DUVIDAS);
+    var assunto = estado.respostas.assunto;
+    return RESPOSTAS.filter(function (x) { return x.assuntos.indexOf(assunto) >= 0; })
+      .slice(0, MAX_DUVIDAS).map(function (x) { return { p: x.p, r: x.r, rotulo: x.rotulo }; });
+  }
+  function temOQueResponder() { return !!fichaDoCurso() || duvidasDoPasso().length > 0; }
   function proximoPasso() {
+    // Antes de pedir nome e e-mail: o que a escola já respondeu sobre este curso. Muita gente
+    // para por aqui, e quem para não precisou abrir chamado nem esperar dois dias úteis.
+    if (!estado.duvidasVistas && respondido('assunto') && respondido('curso') && temOQueResponder()) return 'duvidas';
     for (var i = 0; i < ORDEM.length; i++) if (!respondido(ORDEM[i])) return ORDEM[i];
     return 'revisar';
+  }
+
+  /* Ficha do curso e as dúvidas que a escola já respondeu, como botões.
+     Botão em vez de adivinhação: a resposta é sempre a que a escola escreveu, e o chat nunca
+     precisa interpretar o que a pessoa quis dizer — não tem como responder errado. */
+  function fichaHtml(c) {
+    var linhas = [];
+    if (c.carga) linhas.push(escapar(c.carga) + ' presenciais, na sede (Centro do Rio)');
+    if (c.escolaridade) linhas.push('Escolaridade mínima: ' + escapar(c.escolaridade));
+    if (c.valor) linhas.push('Curso: ' + escapar(c.valor) + ' · Inscrição: ' + INSCRICAO);
+    linhas.push('Certificado da ' + NOME);
+    var html = 'Sobre o <b>' + escapar(c.nome) + '</b>:\n· ' + linhas.join('\n· ');
+    return c.descricao ? html + '\n\n' + escapar(c.descricao) : html;
+  }
+  function jaLida(pergunta) {
+    for (var i = 0; i < estado.duvidasLidas.length; i++) if (estado.duvidasLidas[i].p === pergunta) return true;
+    return false;
+  }
+  function telaDuvidas() {
+    var c = fichaDoCurso();
+    var lista = duvidasDoPasso().filter(function (q) { return !jaLida(q.p); });
+    var botoes = lista.map(function (q) { return { valor: 'q' + q.p, rotulo: q.rotulo || q.p }; });
+    if (c) botoes.push({ valor: 'matricula', rotulo: 'Fazer matrícula em ' + c.nome, classe: 'cheio' });
+    else if (precisaCurso()) botoes.push({ href: URL_MATRICULA, rotulo: 'Ver cursos e matrícula', classe: 'cheio' });
+    botoes.push({ valor: 'seguir', rotulo: 'Escrever para a equipe', classe: 'neutro' });
+    var abertura = estado.duvidasLidas.length
+      ? (lista.length ? 'Ficou mais alguma?' : 'Era o que eu tinha aqui. Quer falar com a equipe?')
+      : (lista.length ? 'Posso responder alguma destas agora?' : 'Quer falar com a equipe?');
+    return { html: abertura, chips: botoes };
   }
 
   // ------------------------------------------------------------------ perguntas do robô e respostas da pessoa
@@ -141,6 +250,8 @@
           .map(function (c) { return { valor: c.slug, rotulo: c.nome + (c.slug === daPagina ? ' (este curso)' : '') }; });
         chips.push({ valor: '', rotulo: 'Ainda não sei', classe: 'neutro' });
         return { html: 'Sobre qual curso?', chips: chips };
+      case 'duvidas':
+        return telaDuvidas();
       case 'nome':
         return { html: 'Como você se chama?', entrada: { tipo: 'text', autocomplete: 'name', placeholder: 'Seu nome' } };
       case 'email':
@@ -239,6 +350,15 @@
       if (!respondido(p) || p === estado.passo) return;
       itens.push(balao('robo', pergunta(p).html));
       itens.push(balao('pessoa', resposta(p), true));
+      // A ficha do curso e as dúvidas já respondidas ficam na conversa, logo depois do curso:
+      // quem seguiu para o e-mail continua vendo o que já foi dito.
+      if (p === 'curso' && (estado.duvidasLidas.length || estado.passo === 'duvidas' || estado.duvidasVistas)) {
+        if (fichaDoCurso()) itens.push(balao('robo', fichaHtml(fichaDoCurso())));
+        estado.duvidasLidas.forEach(function (d) {
+          itens.push(balao('pessoa', d.p, true));
+          itens.push(balao('robo', escapar(d.r)));
+        });
+      }
     });
     var q = pergunta(estado.passo);
     if (q) {
@@ -313,6 +433,24 @@
       guardar(); render(); focar(); return;
     }
     if (passo === 'falhou') { if (valor === 'tentar') enviar(); return; }
+    if (passo === 'duvidas') {
+      if (valor === 'matricula') {
+        rastrear('chat_duvida_matricula', { curso: estado.respostas.curso });
+        location.href = URL_CHECKOUT + '?curso=' + encodeURIComponent(estado.respostas.curso);
+        return;
+      }
+      if (valor === 'seguir') {
+        estado.duvidasVistas = true;
+        rastrear('chat_duvida_seguiu', { curso: estado.respostas.curso, respostas_abertas: estado.duvidasLidas.length });
+        estado.passo = proximoPasso(); guardar(); render(); focar(); return;
+      }
+      var procurada = String(valor).slice(1), faq = duvidasDoPasso();
+      for (var i = 0; i < faq.length; i++) if (faq[i].p === procurada && !jaLida(procurada)) {
+        estado.duvidasLidas.push({ p: faq[i].p, r: faq[i].r });
+        rastrear('chat_duvida_respondida', { curso: estado.respostas.curso, pergunta: faq[i].p });
+      }
+      guardar(); render(); focar(); return;
+    }
     responder(passo, valor);
   }
   function aoEnviarTexto(e) {
@@ -336,6 +474,9 @@
     var corpo = {
       nome: r.nome, email: r.email, telefone: r.telefone || '', assunto: r.assunto,
       curso: precisaCurso() ? (r.curso || '') : '', mensagem: r.mensagem,
+      // O que o chat já respondeu antes do chamado. O servidor confere cada texto contra as
+      // perguntas que existem e descarta o resto — nada daqui entra num e-mail sem conferência.
+      ja_respondido: estado.duvidasLidas.map(function (d) { return d.p; }),
       pagina: location.pathname + location.search, origem: origem(), site: ''
     };
     fetch(API, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })

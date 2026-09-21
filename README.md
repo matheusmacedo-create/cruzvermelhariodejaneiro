@@ -382,6 +382,62 @@ canal é **e-mail**, com um chat no site para a pessoa deixar a mensagem.
   filtro por assunto e exportação CSV; um lembrete automático para contatos que ficarem 2 dias
   úteis sem resposta.
 
+## O chat responde sozinho as dúvidas de curso (21/09/2026)
+
+Antes, toda dúvida virava chamado e esperava até 2 dias úteis. Agora o chat responde na hora o que
+já está escrito e revisado, e só abre chamado para o que sobra.
+
+### Como funciona
+
+Depois de escolher assunto e curso — **antes** de pedir nome e e-mail — o chat mostra a ficha do
+curso (carga horária, escolaridade, valor, inscrição, certificado) e oferece as dúvidas **como
+botões**. Tocou, respondeu, e a resposta fica na conversa.
+
+**Botão em vez de adivinhação, de propósito.** Um casador de texto erra, e resposta errada sobre
+preço ou certificado numa instituição como a Cruz Vermelha custa caro. Com botão, a resposta é
+sempre a que a escola ou a FAQ escreveu — não há como o chat interpretar mal.
+
+De onde vem cada resposta:
+
+| Situação | Fonte |
+|---|---|
+| Curso escolhido, com FAQ no catálogo | `cursos.json`, campo `faq` de cada curso (5 perguntas) |
+| Curso sem FAQ própria, ou assunto sem curso | `site/faq-home.json`, entradas marcadas com `"chat"` |
+
+A marca fica no próprio `faq-home.json`: `"chat": ["voluntariado"]` diz em que assuntos do chat
+aquela resposta se oferece, e `"chatRotulo"` dá o texto curto do botão (a pergunta da página
+carrega o nome completo da filial, que num botão de celular vira três linhas). Quem edita a FAQ vê
+as duas coisas na mesma linha. `scripts/chat_widget.py` gera os dois blocos do `chat.js`
+(`chat:cursos` e `chat:respostas`); no máximo 5 botões por tela.
+
+### Quem abre chamado mesmo assim
+
+- **O e-mail de confirmação** passou a levar a ficha do curso, montada no servidor a partir do
+  catálogo. Antes só dizia "retornamos em até 2 dias úteis".
+- **O aviso à equipe** lista o que a pessoa já leu no chat, sob "Já respondido no chat, antes de
+  escrever". A equipe não repete, e saber o que a pessoa leu e mesmo assim não resolveu costuma ser
+  a parte mais útil da mensagem.
+
+**Nada vindo do navegador entra num e-mail sem conferência.** O chat manda só o texto das perguntas
+lidas; `mcp_perguntas_conhecidas()` (em `api/lib/config.php`) confronta cada uma com as 44 que
+existem de verdade — a FAQ dos cursos mais a FAQ da home marcada com `chat` — e descarta o resto.
+Testado com texto inventado e com `<script>`: os dois são descartados. A lista não vai para a
+tabela (é do atendimento, não do contato): `contato.php` a reanexa depois de reler o registro.
+
+Para isso o `faq-home.json` precisa estar publicado na raiz do site — o PHP o lê de
+`public_html/faq-home.json`. É o mesmo conteúdo que já está na home.
+
+### O que medir
+
+Eventos no GA4: `chat_duvida_respondida` (com o curso e a pergunta), `chat_duvida_seguiu` (com
+quantas leu antes de abrir chamado) e `chat_duvida_matricula`. A conta que interessa é quantas
+conversas terminam sem virar e-mail.
+
+### Falta
+
+O curso **Primeiros Socorros Lei Lucas** é o único sem FAQ própria no catálogo da escola, então cai
+na FAQ geral. Vale pedir à escola as cinco perguntas dele — é o curso que as escolas procuram.
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
