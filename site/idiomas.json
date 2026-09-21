@@ -50,6 +50,63 @@
             ]
           }
         ],
+        "movimento_titulo": "The Movement we belong to",
+        "movimento_paragrafos": [
+          "The International Red Cross and Red Crescent Movement is the largest humanitarian network in the world, and it has three parts. The International Committee of the Red Cross works in armed conflict, with a mandate given to it by the Geneva Conventions. The International Federation of Red Cross and Red Crescent Societies coordinates the response to disasters outside conflict. And in each country there is one National Society, auxiliary to the public authorities in humanitarian matters — in Brazil, the Brazilian Red Cross.",
+          "This branch is the Rio de Janeiro State arm of that National Society. The emblem is not a brand: it is a protective sign defined in international humanitarian law, and its use is restricted. That is also why the seven fundamental principles below are not a statement of values but the conditions under which the Movement is allowed to work — neutrality and impartiality are what let a Red Cross team reach people that no one else can reach."
+        ],
+        "programas_titulo": "What the branch runs",
+        "programas_linha": "Five fronts, all carried out from the headquarters in central Rio de Janeiro and across the state.",
+        "programas": [
+          [
+            "Volunteer training",
+            "The branch trains its own volunteers, with no requirement of a health background. After registering, each volunteer goes through initial training at the headquarters and then joins one of the coordination teams — humanitarian action, first aid, disaster risk management, youth, sport, psychosocial support."
+          ],
+          [
+            "First-aid training",
+            "In-person courses in basic first aid, first aid for settings with children under the Lucas Law, and Basic Life Support, open to anyone. This is also what the branch brings to events and field operations."
+          ],
+          [
+            "Impacto das Cores",
+            "Collective painting efforts that bring community spaces back into use. The point is as much the work itself as the bond it builds between volunteers and residents."
+          ],
+          [
+            "Winter Clothing Drive",
+            "Collection of coats, blankets and shoes for families in vulnerable situations, received at the headquarters from Monday to Friday, 10am to 5pm, and sorted before distribution."
+          ],
+          [
+            "Training for companies and schools",
+            "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team. It is one of the main ways partner organisations support the branch."
+          ]
+        ],
+        "caminhos_titulo": "Ways in",
+        "caminhos_linha": "Four doors, depending on what brings you here.",
+        "caminhos": [
+          [
+            "Take a course",
+            "Seven in-person courses at the headquarters, each with a certificate. Taught in Portuguese.",
+            "See the courses",
+            "cursos"
+          ],
+          [
+            "Volunteer",
+            "Open to anyone, with no health background required. The working language is Portuguese.",
+            "Register as a volunteer",
+            "voluntario"
+          ],
+          [
+            "Donate",
+            "Card or PIX. From outside Brazil, card only — the donation page explains why.",
+            "Go to the donation page",
+            "doar"
+          ],
+          [
+            "Partner with us",
+            "Sister National Societies, institutions and companies, and training for your team.",
+            "See who does what",
+            "equipe"
+          ]
+        ],
         "principios_titulo": "The seven fundamental principles",
         "principios": [
           [
@@ -325,6 +382,63 @@
               "La filial no tiene consultorio, no agenda citas médicas ni atiende urgencias. En una emergencia en Brasil, llame al 192 (ambulancia) o al 193 (bomberos)."
             ]
           }
+        ],
+        "movimento_titulo": "El Movimiento al que pertenecemos",
+        "movimento_paragrafos": [
+          "El Movimiento Internacional de la Cruz Roja y de la Media Luna Roja es la mayor red humanitaria del mundo, y tiene tres partes. El Comité Internacional de la Cruz Roja actúa en conflictos armados, con un mandato que le dan los Convenios de Ginebra. La Federación Internacional de Sociedades de la Cruz Roja y de la Media Luna Roja coordina la respuesta a desastres fuera de los conflictos. Y en cada país hay una única Sociedad Nacional, auxiliar de los poderes públicos en materia humanitaria — en Brasil, la Cruz Roja Brasileña.",
+          "Esta filial es el brazo del Estado de Río de Janeiro de esa Sociedad Nacional. El emblema no es una marca: es un signo de protección definido por el derecho internacional humanitario, y su uso está restringido. Por eso también los siete principios fundamentales que aparecen más abajo no son una declaración de valores, sino las condiciones bajo las cuales el Movimiento puede trabajar — la neutralidad y la imparcialidad son lo que permite que un equipo de la Cruz Roja llegue a donde nadie más llega."
+        ],
+        "programas_titulo": "Qué hace la filial",
+        "programas_linha": "Cinco frentes, llevadas adelante desde la sede, en el centro de Río de Janeiro, y en todo el estado.",
+        "programas": [
+          [
+            "Formación de voluntarios",
+            "La filial forma a sus propios voluntarios, sin exigir formación en salud. Tras el registro, cada voluntario pasa por la formación inicial en la sede y luego se integra a una de las coordinaciones — acción humanitaria, primeros auxilios, gestión de riesgos de desastres, juventud, deportes, apoyo psicosocial."
+          ],
+          [
+            "Capacitación en primeros auxilios",
+            "Cursos presenciales de primeros auxilios básicos, de primeros auxilios para entornos con niños según la Ley Lucas y de Soporte Vital Básico, abiertos a cualquier persona. Es también lo que la filial lleva a eventos y acciones de campo."
+          ],
+          [
+            "Impacto das Cores",
+            "Jornadas colectivas de pintura que devuelven al uso los espacios comunitarios. Importa tanto el trabajo en sí como el vínculo que crea entre voluntarios y vecinos."
+          ],
+          [
+            "Campaña de Ropa de Abrigo",
+            "Recolección de abrigos, mantas y calzado para familias en situación de vulnerabilidad, recibidos en la sede de lunes a viernes, de 10 a 17 horas, y seleccionados antes de la distribución."
+          ],
+          [
+            "Capacitación para empresas y escuelas",
+            "Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto. Es una de las principales formas en que las organizaciones aliadas apoyan a la filial."
+          ]
+        ],
+        "caminhos_titulo": "Por dónde entrar",
+        "caminhos_linha": "Cuatro puertas, según lo que le trajo hasta aquí.",
+        "caminhos": [
+          [
+            "Hacer un curso",
+            "Siete cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.",
+            "Ver los cursos",
+            "cursos"
+          ],
+          [
+            "Ser voluntario",
+            "Abierto a cualquier persona, sin exigir formación en salud. El idioma de trabajo es el portugués.",
+            "Registrarse como voluntario",
+            "voluntario"
+          ],
+          [
+            "Donar",
+            "Tarjeta o PIX. Desde fuera de Brasil, solo con tarjeta — la página de donación explica por qué.",
+            "Ir a la página de donación",
+            "doar"
+          ],
+          [
+            "Ser aliado",
+            "Sociedades Nacionales hermanas, instituciones y empresas, y capacitación para su equipo.",
+            "Ver quién hace qué",
+            "equipe"
+          ]
         ],
         "principios_titulo": "Los siete principios fundamentales",
         "principios": [

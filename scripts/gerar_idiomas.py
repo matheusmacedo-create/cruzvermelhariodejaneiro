@@ -118,6 +118,10 @@ ESTILO_EXTRA = """
     .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
     .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
     .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    .i18n-porta { margin-top:12px !important }
+    .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
+    .i18n-porta a:hover { text-decoration:underline }
+    @media (min-width:920px) { .i18n-portas { grid-template-columns:repeat(2,1fr) } }
     .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
     .i18n-fichas li { margin:2px 0 }
     .i18n-diretoria article { text-align:center }
@@ -238,7 +242,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     h = idioma["home"]
     blocos = []
     for i, b in enumerate(h["blocos"]):
-        ident = ["sobre", "principios", "contato"][i] if i < 3 else f"bloco{i}"
+        ident = ["sobre", "atuacao", "sede"][i] if i < 3 else f"bloco{i}"
         paras = "\n        ".join(f"<p>{esc(p)}</p>" for p in b["paragrafos"])
         blocos.append(f"""    <section class="i18n-bloco" id="{ident}">
       <div class="wrap">
@@ -248,6 +252,19 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     </section>""")
     principios = "\n          ".join(
         f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in h["principios"])
+    programas = "\n          ".join(
+        f"<article><h3>{esc(a)}</h3><p>{esc(b)}</p></article>" for a, b in h["programas"])
+    def porta(titulo: str, texto: str, rotulo: str, chave: str) -> str:
+        """Uma porta de entrada: página gerada deste idioma, ou o formulário do voluntariado."""
+        if chave == "voluntario":
+            url = VOLUNTARIO
+            extra = ' target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR"'
+        else:
+            url, extra = PAGINAS[chave][idioma["codigo"]], ""
+        return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
+                f'<p class="i18n-porta"><a href="{url}"{extra}>{esc(rotulo)} &rarr;</a></p></article>')
+
+    caminhos = "\n          ".join(porta(*x) for x in h["caminhos"])
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap">
         <p class="eyebrow">{esc(h['sobrancelha'])}</p>
@@ -256,6 +273,30 @@ def pagina_home(idioma: dict, partes: dict) -> str:
       </div>
     </section>
 {chr(10).join(blocos)}
+    <section class="i18n-bloco" id="movimento">
+      <div class="wrap">
+        <h2>{esc(h['movimento_titulo'])}</h2>
+        {chr(10).join("        <p>" + esc(x) + "</p>" for x in h["movimento_paragrafos"]).strip()}
+      </div>
+    </section>
+    <section class="i18n-bloco" id="programas">
+      <div class="wrap">
+        <h2>{esc(h['programas_titulo'])}</h2>
+        <p>{esc(h['programas_linha'])}</p>
+        <div class="i18n-fichas">
+          {programas}
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="caminhos">
+      <div class="wrap">
+        <h2>{esc(h['caminhos_titulo'])}</h2>
+        <p>{esc(h['caminhos_linha'])}</p>
+        <div class="i18n-fichas i18n-portas">
+          {caminhos}
+        </div>
+      </div>
+    </section>
     <section class="i18n-bloco" id="principios">
       <div class="wrap">
         <h2>{esc(h['principios_titulo'])}</h2>
@@ -264,7 +305,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         </ul>
       </div>
     </section>
-    <section class="i18n-bloco">
+    <section class="i18n-bloco" id="contato">
       <div class="wrap">
         <h2>{esc(h['cta_titulo'])}</h2>
         <p>{esc(h['cta_texto'])}</p>
