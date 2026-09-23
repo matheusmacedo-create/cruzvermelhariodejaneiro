@@ -119,7 +119,7 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
     $emitido = mcp_data_brt($agoraUtc ?? gmdate('Y-m-d H:i:s'), 'd/m/Y \à\s H\hi');
     $rodape = "Comprovante gerado automaticamente em $emitido (horário de Brasília)"
         . ($hash !== '' ? ", a partir da transação $hash processada pela UnicoPag" : '')
-        . '. Dúvidas: ' . mcp_email_contato_endereco() . '.';
+        . '. Este comprovante não substitui nota fiscal. Dúvidas: ' . mcp_email_contato_endereco() . '.';
 
     return [
         'titulo' => 'COMPROVANTE DE INSCRIÇÃO',

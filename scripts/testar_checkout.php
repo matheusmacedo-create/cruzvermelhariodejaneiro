@@ -256,6 +256,9 @@ verificar('comprovante: custos entram nos dados', end($ccPix['inscricao']), ['Cu
 verificar('comprovante: PIX pago depois mostra as duas datas', array_slice($ccPix['pagamento'], 2, 2), [['Data do pedido', '22/09/2026 12:10'], ['Data do pagamento', '22/09/2026 16:48']]);
 verificar('comprovante: sem hash vira travessão', $ccPix['pagamento'][4], ['Código da compra', '—']);
 verificar('comprovante: total com custos', end($ccPix['pagamento']), ['Total', 'R$ 103,95']);
+verificar('comprovante: rodapé avisa que não é nota fiscal, com e sem código da compra',
+    [str_contains($cc['rodape'], '. Este comprovante não substitui nota fiscal. Dúvidas: '),
+     str_contains($ccPix['rodape'], '(horário de Brasília). Este comprovante não substitui nota fiscal. Dúvidas: ')], [true, true]);
 
 verificar('comprovante: nome do arquivo', mcp_comprovante_arquivo($inscComprovante), 'Comprovante_de_Inscricao_Puncao_Venosa_Ana_Paula_de_Souza.pdf');
 $arquivoLongo = mcp_comprovante_arquivo(['curso_nome' => 'Primeiros Socorros Lei Lucas - Ambientes com Crianças', 'nome' => str_repeat('Nomecomprido ', 20)]);

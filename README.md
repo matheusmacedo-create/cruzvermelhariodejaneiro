@@ -738,11 +738,13 @@ Cores, posições e tamanhos foram lidos do próprio PDF modelo.
 - **Empresa recebedora**: `O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP`, CNPJ
   `67.733.551/0001-35` — a empresa de ensino da filial, que recebe a matrícula; **não** é o CNPJ da
   filial (08.560.973/0001-97, o das doações). Veio do comprovante UnicoPag de uma compra real pelo
-  checkout. `RECEBEDOR_NOME` e `RECEBEDOR_CNPJ` no `config.php` sobrepõem.
+  checkout e foi confirmado pelo Matheus em 23/09. `RECEBEDOR_NOME` e `RECEBEDOR_CNPJ` no
+  `config.php` sobrepõem.
 - **Código da compra** é o `unicopag_hash`, o mesmo que o comprovante da UnicoPag mostra.
-- **Três ajustes em relação ao modelo**: "CPF:" em vez de "CPF/CNPJ:" (o checkout só aceita pessoa
+- **Quatro ajustes em relação ao modelo**: "CPF:" em vez de "CPF/CNPJ:" (o checkout só aceita pessoa
   física); rótulos em caixa de frase, como no resto do site (o modelo misturava "Data do Pedido" com
-  "Código da compra"); e o rodapé diz de onde vêm os dados em vez de "comprovante fornecido". O nome
+  "Código da compra"); o rodapé diz de onde vêm os dados em vez de "comprovante fornecido"; e avisa
+  "Este comprovante não substitui nota fiscal." (pedido do Matheus, 23/09). O nome
   do aluno sai com as iniciais maiúsculas e as partículas minúsculas ("joana maria dos santos" →
   "Joana Maria dos Santos"), sem baixar letra de ninguém ("McDonald" fica).
 - **Conferir o visual**: `php scripts/previsualizar_comprovante.php` gera quatro casos (o do modelo,
