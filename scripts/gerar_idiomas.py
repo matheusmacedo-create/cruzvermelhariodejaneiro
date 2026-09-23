@@ -214,13 +214,16 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <meta property="og:title" content="{esc(titulo)}">
   <meta property="og:description" content="{esc(descricao)}">
   <meta property="og:url" content="{ORIGEM}{caminho}">
-  <meta property="og:image" content="{ORIGEM}/assets/otim/logo-cvb-rj-520.webp">
+  <meta property="og:image" content="{ORIGEM}/assets/otim/og-home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>{partes['estilo_sem_tag']}{ESTILO_EXTRA}</style>
   <script type="application/ld+json">{ld_json}</script>
 {partes['ga4']}

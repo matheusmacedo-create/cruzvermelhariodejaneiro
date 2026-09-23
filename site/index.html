@@ -26,7 +26,7 @@
   <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/otim/impacto-cores-banner-1920.webp" imagesrcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +39,14 @@
     .nav-toggle .ico-xmark { display: none; }
     .main-header.nav-open .nav-toggle .ico-bars { display: none; }
     .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
+    /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
+       aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
+       Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
+       (iPhone, Mac, Windows, Linux) e Roboto (Android). Conferidas no navegador; ver o README. */
+    @font-face { font-family: "Inter Reserva"; src: local("Arial"), local("ArialMT"), local("Arimo Regular"), local("Arimo"), local("Liberation Sans"), local("LiberationSans"); font-weight: 400; size-adjust: 106.02%; ascent-override: 91.37%; descent-override: 22.75%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Arimo-Bold"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); font-weight: 700; size-adjust: 102.4%; ascent-override: 94.6%; descent-override: 23.55%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto"), local("Roboto Regular"), local("Roboto-Regular"); font-weight: 400; size-adjust: 106.84%; ascent-override: 90.68%; descent-override: 22.58%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto Bold"), local("Roboto-Bold"); font-weight: 700; size-adjust: 108.31%; ascent-override: 89.45%; descent-override: 22.27%; line-gap-override: 0%; }
     :root {
       --red: #cc0000;
       --red-dark: #a30000;
@@ -60,7 +68,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif;
       color: var(--text);
       background: var(--paper);
       line-height: 1.55;
@@ -1472,7 +1480,7 @@
         <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
         <div class="campaigns-grid">
           <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" fetchpriority="high"></div>
+            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
               <h3>Impacto das Cores</h3>

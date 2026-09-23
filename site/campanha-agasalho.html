@@ -26,6 +26,14 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>
+    /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
+       aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
+       Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
+       (iPhone, Mac, Windows, Linux) e Roboto (Android). Conferidas no navegador; ver o README. */
+    @font-face { font-family: "Inter Reserva"; src: local("Arial"), local("ArialMT"), local("Arimo Regular"), local("Arimo"), local("Liberation Sans"), local("LiberationSans"); font-weight: 400; size-adjust: 106.02%; ascent-override: 91.37%; descent-override: 22.75%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Arimo-Bold"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); font-weight: 700; size-adjust: 102.4%; ascent-override: 94.6%; descent-override: 23.55%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto"), local("Roboto Regular"), local("Roboto-Regular"); font-weight: 400; size-adjust: 106.84%; ascent-override: 90.68%; descent-override: 22.58%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto Bold"), local("Roboto-Bold"); font-weight: 700; size-adjust: 108.31%; ascent-override: 89.45%; descent-override: 22.27%; line-gap-override: 0%; }
     :root {
       --red: #ed1b2e;
       --red-dark: #b80f1f;
@@ -45,7 +53,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif;
       color: var(--text);
       background: var(--paper);
       line-height: 1.55;
@@ -375,7 +383,7 @@
     }
     .pix-box small { color: rgba(255,255,255,.68); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
     .pix-copy { display: flex; gap: 8px; align-items: center; }
-    .pix-copy code { flex: 1; color: #fff; font-size: 1.05rem; font-weight: 900; font-family: Inter, Arial, sans-serif; }
+    .pix-copy code { flex: 1; color: #fff; font-size: 1.05rem; font-weight: 900; font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif; }
     .pix-copy button {
       border: 0;
       background: var(--red);
