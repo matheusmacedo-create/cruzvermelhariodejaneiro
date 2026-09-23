@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-21T16:35:02+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-23T23:09:34+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/</loc>
+    <lastmod>2026-09-21T17:16:41+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/imagem-ilustrativa-criada-por-ia.png</image:loc>
+      <image:title>imagem ilustrativa criada por IA</image:title>
+    </image:image>
+  </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/alcoolicos-anonimos-reuniao-com-traducao-em-libras-no-leblon-completa-79-anos/</loc>
     <lastmod>2026-09-04T21:35:40+00:00</lastmod>
