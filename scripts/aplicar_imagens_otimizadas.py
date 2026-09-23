@@ -77,9 +77,10 @@ def converter_pagina(nome: str) -> int:
     medidas = MEDIDAS.get(nome, [])
     trocas = 0
     indice = -1
+    priorizada = False  # só a primeira ocorrência da imagem principal leva fetchpriority
 
     def substituir(m: re.Match) -> str:
-        nonlocal trocas, indice
+        nonlocal trocas, indice, priorizada
         tag = m.group(0)
         src = atributo(tag, "src") or ""
         if not src.startswith("assets/") or src.startswith("assets/otim/"):
@@ -114,9 +115,12 @@ def converter_pagina(nome: str) -> int:
             desktop = "100vw" if wd >= 1200 else f"{wd}px"
             extras += f' sizes="{desktop}"' if movel == desktop else f' sizes="(max-width: 620px) {movel}, {desktop}"'
         extras += f' width="{w}" height="{h}"'
-        if arquivo == PRINCIPAL.get(nome):
+        if arquivo == PRINCIPAL.get(nome) and not priorizada:
+            # A mesma imagem pode voltar mais abaixo (na home, a miniatura do card de campanha):
+            # essa cópia fora da dobra não pode disputar banda com o LCP.
+            priorizada = True
             extras += ' fetchpriority="high"'
-        elif arquivo not in PRIMEIRA_DOBRA.get(nome, set()) or indice > 3:
+        elif arquivo not in PRIMEIRA_DOBRA.get(nome, set()) or indice > 3 or arquivo == PRINCIPAL.get(nome):
             extras += ' loading="lazy" decoding="async"'
         trocas += 1
         return novo[:-1] + extras + ">"

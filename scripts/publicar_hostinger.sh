@@ -10,6 +10,10 @@
 #   scripts/publicar_hostinger.sh site/index.html site/cursos.html site/sitemap-escola.xml
 # O caminho dentro de public_html é o caminho relativo à pasta site/.
 # Depois de publicar, limpe o cache do site (hPanel ou "clear website cache" na API).
+# A mesma credencial abre a API de arquivos, que serve para conferir um PHP publicado ou apagar um
+# arquivo temporário (204 = apagado):
+#   curl -X DELETE "${HOSTINGER_TUS_URL/\/api\/tus\//\/api\/resources\/}/<caminho>" \
+#     -H "X-Auth: $HOSTINGER_TUS_AUTH" -H "X-Auth-Rest: $HOSTINGER_TUS_AUTH_REST"
 set -euo pipefail
 : "${HOSTINGER_TUS_URL:?defina HOSTINGER_TUS_URL}" "${HOSTINGER_TUS_AUTH:?defina HOSTINGER_TUS_AUTH}" "${HOSTINGER_TUS_AUTH_REST:?defina HOSTINGER_TUS_AUTH_REST}"
 [ "$#" -gt 0 ] || { echo "informe ao menos um arquivo de site/"; exit 2; }

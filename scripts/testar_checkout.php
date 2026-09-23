@@ -166,7 +166,7 @@ verificar('pago A acesso', str_contains($a['html'], 'maria') && str_contains($a[
 $b = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
 verificar('pago B tipo', $b['tipo'], 'confirmacao');
 verificar('pago B assunto', $b['assunto'], 'Inscrição confirmada: sua vaga em Curso X');
-verificar('pago B próximos passos por e-mail', str_contains($b['html'], 'por e-mail em até 2 dias úteis') && str_contains($b['html'], 'Ver minha inscrição'), true);
+verificar('pago B próximos passos por e-mail', str_contains($b['html'], 'por e-mail em até 3 dias úteis') && str_contains($b['html'], 'Ver minha inscrição'), true);
 verificar('pago B cartão final', str_contains($b['html'], 'Cartão final 1111'), true);
 verificar('pago sem whatsapp', stripos($a['html'] . $b['html'] . $a['texto'] . $b['texto'], 'whatsapp'), false);
 $sec = mcp_montar_email_secretaria($inscricao);
@@ -198,7 +198,7 @@ verificar('equipe sem painel não mostra botão', str_contains($eq['html'], 'Res
 $eqPainel = mcp_montar_email_contato_equipe(['link_painel' => 'https://exemplo.org/matricula-cursos-presenciais/api/painel.php?c=7&e=1&k=abc'] + $contato);
 verificar('equipe com painel', str_contains($eqPainel['html'], 'Responder no painel') && str_contains($eqPainel['html'], 'painel.php?c=7&amp;e=1&amp;k=abc') && str_contains($eqPainel['texto'], 'painel.php?c=7&e=1&k=abc'), true);
 verificar('equipe título', str_contains($eqPainel['html'], 'Nova mensagem de João'), true);
-verificar('confirmação explica a resposta por e-mail', str_contains($cf['html'], 'Respondemos por e-mail em até 2 dias úteis') && str_contains($cf['html'], 'contato@exemplo.org') && str_contains($cf['html'], 'CV-260919-0007'), true);
+verificar('confirmação explica a resposta por e-mail', str_contains($cf['html'], 'Respondemos por e-mail em até 3 dias úteis') && str_contains($cf['html'], 'contato@exemplo.org') && str_contains($cf['html'], 'CV-260919-0007'), true);
 verificar('confirmação telefone opcional', str_contains($cf['html'], 'também podemos ligar para (21) 98888-7777'), true);
 
 // Resposta do painel e link de entrada.
@@ -221,6 +221,85 @@ verificar('remetente inválido é devolvido como veio', mcp_email_nome_oficial('
 verificar('remetente do contato normalizado', str_starts_with(mcp_email_remetente_contato(), 'Cruz Vermelha Brasileira Rio de Janeiro <') ? 'ok' : mcp_email_remetente_contato(), 'ok');
 verificar('painel e-mails permitidos', mcp_painel_emails_permitidos(), ['contato@exemplo.org']);
 verificar('painel url', mcp_painel_url(), 'https://exemplo.org/matricula-cursos-presenciais/api/painel.php');
+
+// Comprovante de inscrição em PDF (lib/pdf.php + lib/comprovante.php).
+verificar('nome próprio: minúsculo', mcp_nome_proprio('joana maria dos santos'), 'Joana Maria dos Santos');
+verificar('nome próprio: caixa alta', mcp_nome_proprio('MARIA DAS GRAÇAS DOS SANTOS'), 'Maria das Graças dos Santos');
+verificar('nome próprio: mantém capitular interna', mcp_nome_proprio('ana McDonald'), 'Ana McDonald');
+verificar('nome próprio: espaços', mcp_nome_proprio("  joão   de  souza \n"), 'João de Souza');
+verificar('nome próprio: partícula no começo sobe', mcp_nome_proprio('da silva'), 'Da Silva');
+verificar('cpf formatado', mcp_cpf_formatado('52998224725'), '529.982.247-25');
+verificar('cpf fora do padrão volta como veio', mcp_cpf_formatado('123'), '123');
+verificar('método pix', mcp_comprovante_metodo(['metodo' => 'pix']), 'PIX');
+verificar('método cartão sem detalhe', mcp_comprovante_metodo(['metodo' => 'cartao']), 'Cartão de crédito');
+verificar('método cartão com bandeira e final', mcp_comprovante_metodo(['metodo' => 'cartao', 'bandeira' => 'visa', 'ultimos4' => '4242']), 'Cartão de crédito · Visa final 4242');
+
+$inscComprovante = [
+    'id' => 7, 'token' => str_repeat('b', 40), 'nome' => 'ana paula de souza', 'cpf' => '52998224725', 'email' => 'a@exemplo.org',
+    'curso_nome' => 'Punção Venosa', 'metodo' => 'cartao', 'bandeira' => null, 'ultimos4' => null, 'status' => 'pago',
+    'inscricao_centavos' => 9900, 'taxa_centavos' => 0, 'total_centavos' => 9900,
+    'criado_em' => '2026-09-22 15:10:10', 'pago_em' => '2026-09-22 15:10:41', 'unicopag_hash' => 'exemplo001',
+];
+$cc = mcp_comprovante_conteudo($inscComprovante, '2026-09-23 17:00:00');
+verificar('comprovante: produto', $cc['subtitulo'], 'Punção Venosa — Inscrição');
+verificar('comprovante: nome', $cc['nome'], 'Ana Paula de Souza');
+verificar('comprovante: cpf', $cc['cpf'], 'CPF: 529.982.247-25');
+verificar('comprovante: dados sem custos', $cc['inscricao'], [['Produto', 'Punção Venosa — Inscrição'], ['Quantidade', '1'], ['Valor', 'R$ 99,00']]);
+verificar('comprovante: pagamento no mesmo minuto não repete a data', $cc['pagamento'], [
+    ['Status do pagamento', 'Pago'], ['Método de pagamento', 'Cartão de crédito'], ['Data do pedido', '22/09/2026 12:10'],
+    ['Código da compra', 'exemplo001'], ['Total', 'R$ 99,00']]);
+verificar('comprovante: recebedor padrão', [$cc['recebedor'], $cc['recebedor_cnpj']], ['O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP', 'CNPJ 67.733.551/0001-35']);
+verificar('comprovante: rodapé com a transação', str_contains($cc['rodape'], 'transação exemplo001') && str_contains($cc['rodape'], '23/09/2026 às 14h00'), true);
+
+$ccPix = mcp_comprovante_conteudo(['metodo' => 'pix', 'taxa_centavos' => 495, 'total_centavos' => 10395, 'pago_em' => '2026-09-22 19:48:00', 'unicopag_hash' => ''] + $inscComprovante);
+verificar('comprovante: custos entram nos dados', end($ccPix['inscricao']), ['Custos de processamento', 'R$ 4,95']);
+verificar('comprovante: PIX pago depois mostra as duas datas', array_slice($ccPix['pagamento'], 2, 2), [['Data do pedido', '22/09/2026 12:10'], ['Data do pagamento', '22/09/2026 16:48']]);
+verificar('comprovante: sem hash vira travessão', $ccPix['pagamento'][4], ['Código da compra', '—']);
+verificar('comprovante: total com custos', end($ccPix['pagamento']), ['Total', 'R$ 103,95']);
+verificar('comprovante: rodapé avisa que não é nota fiscal, com e sem código da compra',
+    [str_contains($cc['rodape'], '. Este comprovante não substitui nota fiscal. Dúvidas: '),
+     str_contains($ccPix['rodape'], '(horário de Brasília). Este comprovante não substitui nota fiscal. Dúvidas: ')], [true, true]);
+
+verificar('comprovante: nome do arquivo', mcp_comprovante_arquivo($inscComprovante), 'Comprovante_de_Inscricao_Puncao_Venosa_Ana_Paula_de_Souza.pdf');
+$arquivoLongo = mcp_comprovante_arquivo(['curso_nome' => 'Primeiros Socorros Lei Lucas - Ambientes com Crianças', 'nome' => str_repeat('Nomecomprido ', 20)]);
+verificar('comprovante: arquivo longo corta em palavra', strlen($arquivoLongo) <= 124 && str_ends_with($arquivoLongo, 'Nomecomprido.pdf'), true);
+
+$pdfBytes = mcp_comprovante_pdf($inscComprovante, '2026-09-23 17:00:00');
+verificar('pdf: cabeçalho e fim', [substr($pdfBytes, 0, 8), rtrim(substr($pdfBytes, -6))], ['%PDF-1.4', '%%EOF']);
+// A tabela xref é onde PDF escrito à mão costuma quebrar: cada entrada tem de apontar exatamente
+// para o "N 0 obj" do seu objeto, e o startxref para o começo da própria tabela.
+preg_match('/startxref\n(\d+)\n%%EOF/', $pdfBytes, $mx);
+$inicioXref = (int) ($mx[1] ?? 0);
+verificar('pdf: startxref aponta para a tabela', substr($pdfBytes, $inicioXref, 4), 'xref');
+preg_match('/^xref\n0 (\d+)\n/', substr($pdfBytes, $inicioXref), $mc);
+$entradas = (int) ($mc[1] ?? 0);
+$xrefOk = $entradas === 9;
+for ($num = 1; $xrefOk && $num < $entradas; $num++) {
+    $linha = substr($pdfBytes, $inicioXref + strlen("xref\n0 $entradas\n") + 20 * $num, 20);
+    $xrefOk = str_starts_with(substr($pdfBytes, (int) substr($linha, 0, 10)), "$num 0 obj");
+}
+verificar('pdf: 9 entradas na xref e todas certas', $xrefOk, true);
+preg_match('/\/Length (\d+) \/Filter \/FlateDecode >>\nstream\n/', $pdfBytes, $ml, PREG_OFFSET_CAPTURE);
+$fluxo = gzuncompress(substr($pdfBytes, $ml[0][1] + strlen($ml[0][0]), (int) $ml[1][0])) ?: '';
+verificar('pdf: título em cp1252 no conteúdo', str_contains($fluxo, "(COMPROVANTE DE INSCRI\xC7\xC3O)"), true);
+verificar('pdf: travessão em cp1252', str_contains($fluxo, "(Pun\xE7\xE3o Venosa \x97 Inscri\xE7\xE3o)"), true);
+verificar('pdf: empresa recebedora', str_contains($fluxo, '(O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP)'), true);
+verificar('pdf: logo embutido como paleta', (bool) preg_match('/\/ColorSpace \[\/Indexed \/DeviceRGB \d+ </', $pdfBytes), true);
+verificar('pdf: tamanho razoável para anexo', strlen($pdfBytes) > 20000 && strlen($pdfBytes) < 80000, true);
+verificar('pdf: parênteses do texto escapados', str_contains((function () {
+    $p = new McpPdf();
+    $p->texto(10, 10, 'a (b) c\\d', 'normal', 10, '#000000');
+    return gzuncompress(substr($s = $p->gerar(), strpos($s, "stream\n") + 7, (int) (preg_match('/\/Length (\d+)/', $s, $m) ? $m[1] : 0))) ?: '';
+})(), '(a \\(b\\) c\\\\d)'), true);
+verificar('pdf: quebra de linha respeita a largura', array_map(static fn(string $l): bool => McpPdf::larguraTexto($l, 'negrito', 11, 0) <= 300,
+    McpPdf::quebrar('Primeiros Socorros Lei Lucas - Ambientes com Crianças — Inscrição', 'negrito', 11, 300)), [true, true]);
+verificar('pdf: palavra maior que a linha é partida', count(McpPdf::quebrar(str_repeat('x', 200), 'normal', 10, 100)) > 1, true);
+
+$emailCom = mcp_montar_email_aluno_pago($inscComprovante, true);
+$emailSem = mcp_montar_email_aluno_pago($inscComprovante, false);
+verificar('e-mail pago cita o anexo quando há PDF', str_contains($emailCom['html'], 'comprovante de inscrição em PDF vai anexado') && str_contains($emailCom['texto'], 'PDF vai anexado'), true);
+verificar('e-mail pago não promete anexo sem PDF', str_contains($emailSem['html'] . $emailSem['texto'], 'anexado'), false);
+verificar('e-mail pago sem PDF mantém o texto antigo', str_contains($emailSem['texto'], 'este e-mail é o seu comprovante'), true);
 
 unlink($configTeste);
 printf("%d testes, %d falhas\n", $total, $falhas);

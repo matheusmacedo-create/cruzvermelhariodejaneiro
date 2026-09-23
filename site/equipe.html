@@ -25,12 +25,21 @@
   <meta name="twitter:title" content="Nossa equipe | Cruz Vermelha Brasileira Rio de Janeiro">
   <meta name="twitter:description" content="Conheça a diretoria e os coordenadores da Cruz Vermelha Brasileira, filial do Estado do Rio de Janeiro: quem responde pela filial e pelas áreas de atuação.">
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-equipe.jpg">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>
+    /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
+       aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
+       Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
+       (iPhone, Mac, Windows, Linux) e Roboto (Android). Conferidas no navegador; ver o README. */
+    @font-face { font-family: "Inter Reserva"; src: local("Arial"), local("ArialMT"), local("Arimo Regular"), local("Arimo"), local("Liberation Sans"), local("LiberationSans"); font-weight: 400; size-adjust: 106.02%; ascent-override: 91.37%; descent-override: 22.75%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Arimo-Bold"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); font-weight: 700; size-adjust: 102.4%; ascent-override: 94.6%; descent-override: 23.55%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto"), local("Roboto Regular"), local("Roboto-Regular"); font-weight: 400; size-adjust: 106.84%; ascent-override: 90.68%; descent-override: 22.58%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto Bold"), local("Roboto-Bold"); font-weight: 700; size-adjust: 108.31%; ascent-override: 89.45%; descent-override: 22.27%; line-gap-override: 0%; }
     /* Ícones em SVG inline (scripts/icones.py) */
     i[class*="fa-"] { display: inline-block; font-style: normal; line-height: 1; }
     .ico { display: inline-block; width: 1em; height: 1em; fill: currentColor; vertical-align: -.125em; overflow: visible; }
@@ -58,7 +67,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif;
       color: var(--text);
       background: var(--paper);
       line-height: 1.55;
@@ -1054,6 +1063,13 @@
         url("assets/otim/hero-equipe-grupo-1440.webp") center 30% / cover no-repeat;
       padding: 84px 0 64px;
     }
+    /* No celular, a versão de 960 px (a mesma da home): a de 1440 era o LCP e pesava 129 KB. */
+    @media (max-width: 920px) {
+      .team-hero {
+        background: linear-gradient(90deg, rgba(0,0,0,.88) 0%, rgba(0,0,0,.68) 42%, rgba(0,0,0,.22) 100%),
+          url("assets/otim/hero-equipe-grupo-960.webp") center 30% / cover no-repeat;
+      }
+    }
     .team-hero h1 { font-size: clamp(2.4rem, 4.4vw, 3.6rem); }
     .team-hero .eyebrow { color: #fff; opacity: .85; }
     .team-hero p.lead { color: rgba(255,255,255,.9); max-width: 640px; font-size: 1.05rem; }
@@ -1338,7 +1354,7 @@
             <h3>Falar com uma coordenação</h3>
             <p>Mensagens para qualquer área chegam pelo mesmo canal: o chat do site, que encaminha para
               contato@cruzvermelhariodejaneiro.org. Diga no assunto a coordenação que procura — a equipe
-              responde por e-mail em até 2 dias úteis.</p>
+              responde por e-mail em até 3 dias úteis.</p>
             <a class="btn btn-outline" href="/#chat">Abrir o chat do site</a>
           </div>
         </div>
@@ -1402,6 +1418,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=b4492e51cb" defer></script>
+  <script src="/chat/chat.js?v=69d965c755" defer></script>
 </body>
 </html>

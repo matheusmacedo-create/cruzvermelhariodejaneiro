@@ -26,7 +26,7 @@
   <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
   <link rel="preload" as="image" href="assets/otim/impacto-cores-banner-1920.webp" imagesrcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +39,14 @@
     .nav-toggle .ico-xmark { display: none; }
     .main-header.nav-open .nav-toggle .ico-bars { display: none; }
     .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
+    /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
+       aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
+       Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
+       (iPhone, Mac, Windows, Linux) e Roboto (Android). Conferidas no navegador; ver o README. */
+    @font-face { font-family: "Inter Reserva"; src: local("Arial"), local("ArialMT"), local("Arimo Regular"), local("Arimo"), local("Liberation Sans"), local("LiberationSans"); font-weight: 400; size-adjust: 106.02%; ascent-override: 91.37%; descent-override: 22.75%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Arimo-Bold"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); font-weight: 700; size-adjust: 102.4%; ascent-override: 94.6%; descent-override: 23.55%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto"), local("Roboto Regular"), local("Roboto-Regular"); font-weight: 400; size-adjust: 106.84%; ascent-override: 90.68%; descent-override: 22.58%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto Bold"), local("Roboto-Bold"); font-weight: 700; size-adjust: 108.31%; ascent-override: 89.45%; descent-override: 22.27%; line-gap-override: 0%; }
     :root {
       --red: #cc0000;
       --red-dark: #a30000;
@@ -60,7 +68,7 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
+      font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif;
       color: var(--text);
       background: var(--paper);
       line-height: 1.55;
@@ -1131,7 +1139,7 @@
       "name": "Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Escolha o curso na página de matrícula em cursos presenciais e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 2 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em escola.cursoscruzvermelha.org. Dúvidas? Use o chat do site, que responde por e-mail."
+        "text": "Escolha o curso na página de matrícula em cursos presenciais e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em escola.cursoscruzvermelha.org. Dúvidas? Use o chat do site, que responde por e-mail."
       }
     },
     {
@@ -1227,7 +1235,7 @@
       "name": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 2 dias úteis."
+        "text": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis."
       }
     },
     {
@@ -1299,7 +1307,7 @@
       "name": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 2 dias úteis."
+        "text": "Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis."
       }
     },
     {
@@ -1307,7 +1315,7 @@
       "name": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais, a formação de voluntários e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 2 dias úteis. A seção de contato traz o endereço com link para o mapa."
+        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais, a formação de voluntários e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
       }
     },
     {
@@ -1323,7 +1331,7 @@
       "name": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 2 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj."
+        "text": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj."
       }
     }
   ]
@@ -1472,7 +1480,7 @@
         <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
         <div class="campaigns-grid">
           <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" fetchpriority="high"></div>
+            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
               <h3>Impacto das Cores</h3>
@@ -1784,7 +1792,7 @@
           </details>
           <details class="faq-item">
             <summary>Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">Escolha o curso na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a> e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 2 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">escola.cursoscruzvermelha.org</a>. Dúvidas? Use o <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
+            <div class="faq-answer">Escolha o curso na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a> e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">escola.cursoscruzvermelha.org</a>. Dúvidas? Use o <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
           </details>
           <details class="faq-item">
             <summary>Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?</summary>
@@ -1833,7 +1841,7 @@
           </details>
           <details class="faq-item">
             <summary>A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?</summary>
-            <div class="faq-answer">Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Lei Lucas</a> (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 2 dias úteis.</div>
+            <div class="faq-answer">Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Lei Lucas</a> (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.</div>
           </details>
           <details class="faq-item">
             <summary>Como comparar os cursos de primeiros socorros no Rio de Janeiro?</summary>
@@ -1871,11 +1879,11 @@
           </details>
           <details class="faq-item">
             <summary>A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?</summary>
-            <div class="faq-answer">Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">cursos de Primeiros Socorros</a> e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail em até 2 dias úteis.</div>
+            <div class="faq-answer">Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">cursos de Primeiros Socorros</a> e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail em até 3 dias úteis.</div>
           </details>
           <details class="faq-item">
             <summary>Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?</summary>
-            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a>, a formação de voluntários e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 2 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
+            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a>, a formação de voluntários e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
           </details>
           <details class="faq-item">
             <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
@@ -1883,7 +1891,7 @@
           </details>
           <details class="faq-item">
             <summary>Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?</summary>
-            <div class="faq-answer">O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o <a href="/#chat">chat Fale com a gente</a>, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 2 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na <a href="/#contato">seção de contato</a>. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário do voluntariado</a>. Para acompanhar as ações da filial, veja as <a href="/noticias/">notícias</a> e o Instagram @cruzvermelhabrasileirarj.</div>
+            <div class="faq-answer">O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o <a href="/#chat">chat Fale com a gente</a>, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na <a href="/#contato">seção de contato</a>. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário do voluntariado</a>. Para acompanhar as ações da filial, veja as <a href="/noticias/">notícias</a> e o Instagram @cruzvermelhabrasileirarj.</div>
           </details>
         </div>
       <!-- faq:fim -->
@@ -2129,6 +2137,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=b4492e51cb" defer></script>
+  <script src="/chat/chat.js?v=69d965c755" defer></script>
 </body>
 </html>

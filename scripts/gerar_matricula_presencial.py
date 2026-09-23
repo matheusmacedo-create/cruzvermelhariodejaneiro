@@ -66,7 +66,7 @@ FAQ_PAGINA = [
      "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
      "no valor à vista informado em cada curso."),
     ("Preciso criar conta ou escolher turma agora?",
-     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 2 dias úteis "
+     "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 3 dias úteis "
      "para confirmar turma e horário."),
     ("E se não houver horário compatível?", TEXTO_ESTORNO),
     ("Os cursos são presenciais? Onde acontecem?",
@@ -76,7 +76,7 @@ FAQ_PAGINA = [
      "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem "
      "prefere o caminho completo de inscrição."),
     ("Como tiro dúvidas antes de me matricular?",
-     "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 2 dias úteis. "
+     "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 3 dias úteis. "
      "Se preferir, escreva para contato@cruzvermelhariodejaneiro.org."),
 ]
 
@@ -508,7 +508,7 @@ def main() -> int:
         <div class="mr-passos">
           <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 2 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
+          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 3 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
         <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
       </div>

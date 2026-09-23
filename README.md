@@ -716,6 +716,66 @@ SPF nenhum, e não afeta a Resend porque o envelope dela é o subdomínio `send.
 `~all` (softfail) e não `-all`: com o DMARC em `p=none`, softfail não derruba nada que hoje
 funcione, e ainda assim satisfaz a exigência do Gmail.
 
+## Comprovante de inscrição em PDF (23/09/2026)
+
+Todo aluno que paga a inscrição recebe, anexado ao e-mail de confirmação, um comprovante em PDF no
+estilo do modelo que a filial enviou (o da Punção Venosa de 22/09): faixa vermelha, logo, título,
+caixa do participante com borda vermelha, dados da inscrição, pagamento, empresa recebedora e rodapé.
+Cores, posições e tamanhos foram lidos do próprio PDF modelo.
+
+- **Onde**: `mcp_email_aluno_pago()` em `api/lib/email.php` gera o PDF e anexa. Vale para as duas
+  versões do e-mail (com e sem acesso da escola) e para o reenvio de quando a escola devolve o acesso.
+- **Nunca trava a confirmação**: a geração fica num `try`. Se falhar, o e-mail sai do mesmo jeito,
+  sem anexo, e o texto volta a dizer "este e-mail é o seu comprovante" em vez de prometer um anexo
+  que não está lá. O registro da inscrição anota "com/sem comprovante PDF".
+- **Sem biblioteca**: `api/lib/pdf.php` escreve o PDF à mão (a Hostinger não tem Composer aqui e o
+  FPDF não é baixável deste ambiente). Helvetica padrão do PDF, texto em cp1252, métricas oficiais
+  para quebrar linha, logo como PNG de paleta lido direto dos blocos IDAT — sem GD no servidor.
+  Cabe numa página A4 em qualquer caso: se nome, curso, custos e data de pagamento empurrarem o
+  rodapé para fora, o espaço entre linhas aperta (nunca a fonte).
+- **Logo**: `api/lib/comprovante-logo.png`, 1325 px (300 dpi no tamanho impresso), 32 cores, 31 KB,
+  gerado do original de 1730x520 por `scripts/gerar_logo_comprovante.py`.
+- **Empresa recebedora**: `O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP`, CNPJ
+  `67.733.551/0001-35` — a empresa de ensino da filial, que recebe a matrícula; **não** é o CNPJ da
+  filial (08.560.973/0001-97, o das doações). Veio do comprovante UnicoPag de uma compra real pelo
+  checkout e foi confirmado pelo Matheus em 23/09. `RECEBEDOR_NOME` e `RECEBEDOR_CNPJ` no
+  `config.php` sobrepõem.
+- **Código da compra** é o `unicopag_hash`, o mesmo que o comprovante da UnicoPag mostra.
+- **Quatro ajustes em relação ao modelo**: "CPF:" em vez de "CPF/CNPJ:" (o checkout só aceita pessoa
+  física); rótulos em caixa de frase, como no resto do site (o modelo misturava "Data do Pedido" com
+  "Código da compra"); o rodapé diz de onde vêm os dados em vez de "comprovante fornecido"; e avisa
+  "Este comprovante não substitui nota fiscal." (pedido do Matheus, 23/09). O nome
+  do aluno sai com as iniciais maiúsculas e as partículas minúsculas ("joana maria dos santos" →
+  "Joana Maria dos Santos"), sem baixar letra de ninguém ("McDonald" fica).
+- **Conferir o visual**: `php scripts/previsualizar_comprovante.php` gera quatro casos (o do modelo,
+  PIX com custos pago horas depois, nome e curso longos, e o pior caso) sem banco nem segredos.
+- **Ordem de publicação**: `lib/pdf.php`, `lib/comprovante.php`, `lib/comprovante-logo.png` e
+  `lib/email.php` **antes** de `lib.php`. O `lib.php` passa a exigir os dois arquivos novos: subir ele
+  primeiro derruba o checkout inteiro até os outros chegarem.
+- **No ar desde 23/09/2026**, conferido no próprio servidor (PHP 8.3.33): um diagnóstico temporário,
+  já apagado, gerou o comprovante com dados fictícios e o PDF saiu idêntico byte a byte ao gerado
+  aqui, fora a data de criação nos metadados. Os PHP publicados foram comparados com os do
+  repositório pela API de arquivos.
+- **Dados de exemplo são fictícios**: o comprovante real que serviu de modelo não deixa nome, CPF,
+  código da compra nem horário no repositório (testes, pré-visualização e esta seção).
+
+## Prazo de resposta: 3 dias úteis, por enquanto (23/09/2026)
+
+Pedido do Matheus enquanto o fluxo da secretaria normaliza: todo lugar que prometia **2** dias úteis
+passou a prometer **3** — contato da secretaria depois da inscrição e resposta ao chat. Para voltar,
+são estas fontes (35 ocorrências), e depois regerar tudo:
+
+`site/matricula-cursos-presenciais/api/lib/email.php` (`MCP_EMAIL_PRAZO`, vale para todos os
+e-mails) · `site/chat/chat.js` (`PRAZO` do cabeçalho do chat) ·
+`site/matricula-cursos-presenciais/static/checkout.js` · `site/faq-home.json` ·
+`site/faq-idiomas.json` e `site/idiomas.json` ("three business days" / "tres días hábiles") ·
+`scripts/gerar_matricula_presencial.py` · `scripts/gerar_bio.py` · `site/equipe.html` ·
+`scripts/testar_checkout.php` (dois testes conferem o texto).
+
+Regerar nesta ordem: `gerar_faq_home` → `gerar_matricula_presencial` → `gerar_checkout` →
+`gerar_bio` → `gerar_doe` → `gerar_404` → `gerar_idiomas` → `chat_widget` (o `chat.js` muda de hash
+e toda página que carrega o chat precisa da tag nova).
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o
@@ -732,6 +792,11 @@ um nome próprio (ex.: "Secretaria de Cursos") é respeitado. `scripts/gerar_faq
 incompleto na FAQ. Os textos do catálogo da escola (`cursos.json`) são normalizados na geração da
 página de matrícula por `nome_filial()` em `scripts/gerar_matricula_presencial.py`, então não
 precisam ser editados à mão.
+
+**Domínio antigo da filial: nenhuma ligação** (23/09/2026, a pedido do Matheus). O domínio que a
+filial usava antes deste está em disputa judicial: não citar, não linkar, não redirecionar para cá,
+não usar em e-mail nem em dados estruturados, em nenhum projeto. Todas as menções foram retiradas do
+código e das páginas nessa data; as notícias da Redação no ar também foram conferidas.
 
 ## E-mail do domínio: Google Workspace e Resend (auditado em 20/09/2026)
 
@@ -852,6 +917,87 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
 - **Testes**: `php scripts/testar_doacao.php` (59 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
 
+## Revisão de SEO e gargalos de alcance orgânico (23/09/2026)
+
+Pedido do Matheus: rever todo o SEO e o que trava o alcance orgânico. Rastreio ao vivo, auditoria
+on-page, Lighthouse no celular simulado, e duas frentes paralelas (Semrush; notícias, subdomínios e
+escola). **Conclusão: o site estático está tecnicamente limpo; o alcance trava em autoridade, em
+arquitetura de conteúdo e nas propriedades que não são deste repositório.**
+
+### O que está bem (e não precisa de trabalho)
+
+- Rastreio a partir da home (`scripts/rastrear_site.py`): zero link interno que redireciona, zero
+  4xx/5xx, zero órfã, zero página fora do sitemap, profundidade máxima 3.
+- On-page nas 19 páginas do sitemap (`scripts/auditar_seo.py`): títulos e descrições no tamanho,
+  canonical, Open Graph, Twitter Card, JSON-LD, imagens com `alt` e dimensões, brotli. Única
+  observação: título da Campanha do Agasalho com 62 caracteres (decisão registrada em 20/09).
+- Links e recursos internos (`scripts/conferir_links.py`): 87 URLs, todas 200. JSON-LD
+  (`scripts/validar_jsonld.py`): 0 erros (os avisos são as referências de propósito a `#organizacao`).
+- Lighthouse: **SEO 100 em todas as páginas medidas**. Servidor em São Paulo (IP da Hostinger em
+  AS47583), página inexistente responde 404 de verdade.
+
+### Velocidade: o que foi corrigido e publicado
+
+Lighthouse, celular simulado (a nota oscila de uma medição para outra; LCP e CLS são o que conta):
+
+| Página | Antes | Depois | O que era |
+| --- | --- | --- | --- |
+| Home | 62 · LCP 4,2 s | 73–79 · LCP 2,2–2,4 s | o LCP no celular é o hero (fundo em CSS) e baixava com prioridade normal, enquanto a miniatura do "Impacto das Cores", lá embaixo, tinha `fetchpriority=high` sem lazy |
+| `/doe/` | CLS 0,208 | CLS 0,002 | a Inter chegava depois da primeira pintura, o texto quebrava de outro jeito e empurrava o cartão de doação |
+| Equipe | 72 · LCP 4,1 s | 75 · LCP 3,3–3,5 s | o celular baixava a foto de 1440 px (129 KB) no topo |
+| `/en/` | 83 · LCP 1,9 s | 85 · LCP 1,3 s | Google Fonts bloqueando a renderização nas páginas em inglês e espanhol |
+
+- **Reserva da Inter com as mesmas medidas** (`@font-face` "Inter Reserva" e "Inter Reserva
+  Android" no primeiro `<style>` da home, copiado por todos os geradores; `equipe.html` e
+  `campanha-agasalho.html` à mão). `size-adjust` e `ascent/descent-override` calculados com
+  fontTools sobre o texto do próprio site, para Arial e gêmeas métricas (Arimo, Liberation) e para
+  Roboto, regular e negrito. No navegador, com a Inter bloqueada, a altura das páginas ficou igual
+  à da Inter carregada (0 a 30 px de diferença, contra 77 a 681 px sem a reserva). **Fonte nova ou
+  pesos novos: recalcular** com `python3 scripts/calcular_reserva_fonte.py` (precisa de `fonttools`
+  e `brotli`) e conferir no navegador antes de publicar.
+- `scripts/aplicar_imagens_otimizadas.py` dava a prioridade alta a **toda** ocorrência da imagem
+  principal; agora só à primeira, e as repetições levam lazy.
+- Inglês e espanhol: imagem de compartilhamento `og-home.jpg` (1200x630) no lugar do logo de 520 px
+  em WebP, que o LinkedIn não exibe e que ficava miúdo no WhatsApp.
+
+O que sobra e é decisão, não defeito: **Pixel da Meta e Google Tag** respondem pela maior parte do
+bloqueio da thread principal (≈ 900 ms na home, depois do `load`). Carregar só na primeira
+interação tiraria esse custo, mas deixaria de contar quem abre e sai (visualizações da página de
+destino dos anúncios). Mantido como está, como em 19/09.
+
+### Gargalos que travam o alcance, por impacto
+
+| # | Gargalo | Evidência | Onde se resolve |
+| --- | --- | --- | --- |
+| 1 | **Nenhuma página própria por curso** no domínio principal | Os 7 cursos dividem `/matricula-cursos-presenciais/`; as variações `?curso=` se canonicalizam para ela. Quem aparece em "curso de bombeiro civil rio de janeiro" ou "cuidador de idosos rio de janeiro" (escolas de bombeiro, Senac, UERJ, Fiocruz) tem uma URL por curso. O catálogo já tem, por curso, de 130 a 190 palavras e 5 perguntas (menos Lei Lucas, sem perguntas) | Este repositório: `/cursos/<slug>/` gerado de `cursos.json`, com `Course`, FAQ e botão para o checkout (plano de 19/09, item 2) |
+| 2 | **A escola não tem SEO básico e é lenta** | `escola.cursoscruzvermelha.org`: sem `robots.txt`, sitemap, canonical, description, Open Graph e JSON-LD; o mesmo HTML em 4 hosts (dois `.onrender.com` e o apelido no domínio principal); títulos sem "Rio de Janeiro"; TTFB de 2 a 5 s estável (processamento, não cold start); `/login` e `/cadastro` indexáveis | App da escola (Render). O kit em `escola/` vale, com três ajustes: description por página (não fixa), `noindex` em `/login` e `/cadastro` em vez de bloquear no robots, e `Course` por curso |
+| 3 | **Notícias lentas e com falhas no gerador** | LCP de 15 s (capas PNG de 1,3 a 2,6 MB, sem dimensões nem `srcset`); título da matéria ainda com a assinatura longa (`tituloDaAba()` só foi ligado às páginas fixas, não a `artigo-html.ts`); Markdown dentro de negrito sai cru (`lib/content-blocks.ts`); sem `author`, `publisher` sem `@id`, sem `BreadcrumbList`; data de publicação zerada ao republicar; cabeçalho e rodapé sem `/doe/` e sem a matrícula; índice, termos e privacidade sem `og:image`; alts "aaa" e nome de arquivo. E o banco ainda guarda os links antigos (`/cursos.html` em 8 corpos, `/doacao.html` em 5): republicar uma matéria antiga desfaz as correções feitas no servidor | Repositório da Redação (código e corpos no banco) |
+| 4 | **Autoridade e entidade fora do site** | A página da filial no site nacional, no top 10 de "cruz vermelha", não linka `cruzvermelhariodejaneiro.org` e publica um e-mail que não entrega; Perfil da Empresa no Google não conferido; sem item no Wikidata; ícones de LinkedIn e TikTok no rodapé apontam para as home pages genéricas das redes | Matheus e parceiros (pedido à nacional, Perfil da Empresa, Wikidata); rodapé: trocar pelos perfis certos ou tirar os ícones |
+| 5 | **Cópias indexáveis e exposição** | `puncao-3312.vercel.app` e `puncao-five.vercel.app` com canonical para si mesmas, `pulcaovenosav0.vercel.app` com canonical errado; em `puncaovenosav1.` sete rotas com canonical da raiz (`alternates` no `app/layout.tsx`) e rotas internas (`/secretaria`, `/minha-inscricao`, `/validar/*`) indexáveis; `redacao.` indexável; **o Cérebro está público, sem login e indexável, em três endereços `.vercel.app`, expondo o radar editorial interno** | Painel da Vercel (redirecionar ou proteger os aliases; proteger o Cérebro) e `puncaovenosa-fullautomatic` (canonical por página, `noindex` nas rotas internas, `robots`/`sitemap`) |
+| 6 | **Nada responde perguntas informacionais** | Plano de 20/09: símbolo, direito internacional humanitário, voluntariado e certificado (~2.400 buscas/mês, dificuldade baixa); mais explicações de curso ("o que é a Lei Lucas", "quem pode ser bombeiro civil"), cada uma linkando para a página do curso | Redação (pauta) + páginas por curso (item 1) |
+| 7 | **Scripts de terceiros** | Pixel da Meta e Google Tag: ~900 ms de bloqueio na home | Decisão de negócio (ver acima) |
+
+Menores, anotados pelo agente: `projetocores.` sem canonical e com `og:image` relativa (os CTAs vão
+para `doar.`, que redireciona); `http://www` chega ao apex em dois saltos; `/noticias/index.html` e
+afins respondem 200 (o canonical resolve); sem sitemap do Google News nem RSS; "Leia também" das
+matérias congelado na publicação.
+
+### Correções feitas nas páginas da Redação (direto no servidor)
+
+- `/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/`: a única matéria sobre os
+  cursos mandava o leitor para a **home com `?curso=`** (duas vezes) e exibia **Markdown cru** em
+  dois itens em negrito (`[Primeiros Socorros Lei Lucas…](https://…)`). Os cinco links viraram
+  âncoras para `/matricula-cursos-presenciais/?curso=<slug>`. A causa está no gerador da Redação
+  (ver os gargalos); uma nova publicação dessa matéria desfaz a correção até a fonte ser consertada.
+
+### Dados que não vieram
+
+- **Semrush**: a conta tem assinatura, mas **sem unidades de API** para o acesso por MCP (todas as
+  chamadas voltaram `no_api_units`; o Traffic Overview nem está no plano). Sem posições, volumes
+  ou backlinks novos. Unidades em https://www.semrush.com/mcp-access.
+- **PageSpeed Insights** sem cota no dia (a API pública anônima), então sem dados de campo do
+  Chrome (CrUX). As medições acima são do Lighthouse 12 rodado localmente, celular simulado.
+
 ## Leitura de tráfego e lacunas de medição (20/09/2026)
 
 Não há conector de Google Analytics, Search Console ou Ads nesta sessão — só Gmail e Drive. A
@@ -965,8 +1111,7 @@ fica de fora: é KD 52 e disputa interna do Movimento.
 `cruzvermelha.org.br/pb/filiais/rio-de-janeiro/` está no **top 10 do Google para "cruz vermelha"**
 (12.100 buscas/mês) e é a página mais visível que existe sobre a filial. Ela publica:
 
-- e-mail `comunicacaosocial@cruzvermelharj.org.br` — **o domínio está morto**: sem resposta HTTP e
-  sem registro MX, ou seja, esse endereço não entrega mensagem nenhuma;
+- um e-mail de contato que **não entrega mensagem nenhuma**;
 - telefones antigos;
 - **nenhum link** para `cruzvermelhariodejaneiro.org`.
 
@@ -1261,6 +1406,7 @@ scripts/gerar_sitemaps.py               gera sitemap-index, -paginas, -noticias 
 scripts/auditar_seo.py                  auditoria de SEO on-page das páginas ao vivo
 scripts/otimizar_imagens.py             versões WebP e imagens de compartilhamento em site/assets/otim/
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
+scripts/calcular_reserva_fonte.py      medidas da "Inter Reserva" (fonte do aparelho do tamanho da Inter, sem CLS)
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
