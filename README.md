@@ -716,6 +716,64 @@ SPF nenhum, e não afeta a Resend porque o envelope dela é o subdomínio `send.
 `~all` (softfail) e não `-all`: com o DMARC em `p=none`, softfail não derruba nada que hoje
 funcione, e ainda assim satisfaz a exigência do Gmail.
 
+## Comprovante de inscrição em PDF (23/09/2026)
+
+Todo aluno que paga a inscrição recebe, anexado ao e-mail de confirmação, um comprovante em PDF no
+estilo do modelo que a filial enviou (o da Punção Venosa de 22/09): faixa vermelha, logo, título,
+caixa do participante com borda vermelha, dados da inscrição, pagamento, empresa recebedora e rodapé.
+Cores, posições e tamanhos foram lidos do próprio PDF modelo.
+
+- **Onde**: `mcp_email_aluno_pago()` em `api/lib/email.php` gera o PDF e anexa. Vale para as duas
+  versões do e-mail (com e sem acesso da escola) e para o reenvio de quando a escola devolve o acesso.
+- **Nunca trava a confirmação**: a geração fica num `try`. Se falhar, o e-mail sai do mesmo jeito,
+  sem anexo, e o texto volta a dizer "este e-mail é o seu comprovante" em vez de prometer um anexo
+  que não está lá. O registro da inscrição anota "com/sem comprovante PDF".
+- **Sem biblioteca**: `api/lib/pdf.php` escreve o PDF à mão (a Hostinger não tem Composer aqui e o
+  FPDF não é baixável deste ambiente). Helvetica padrão do PDF, texto em cp1252, métricas oficiais
+  para quebrar linha, logo como PNG de paleta lido direto dos blocos IDAT — sem GD no servidor.
+  Cabe numa página A4 em qualquer caso: se nome, curso, custos e data de pagamento empurrarem o
+  rodapé para fora, o espaço entre linhas aperta (nunca a fonte).
+- **Logo**: `api/lib/comprovante-logo.png`, 1325 px (300 dpi no tamanho impresso), 32 cores, 31 KB,
+  gerado do original de 1730x520 por `scripts/gerar_logo_comprovante.py`.
+- **Empresa recebedora**: `O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP`, CNPJ
+  `67.733.551/0001-35` — a empresa de ensino da filial, que recebe a matrícula; **não** é o CNPJ da
+  filial (08.560.973/0001-97, o das doações). Veio do comprovante UnicoPag de uma compra real pelo
+  checkout. `RECEBEDOR_NOME` e `RECEBEDOR_CNPJ` no `config.php` sobrepõem.
+- **Código da compra** é o `unicopag_hash`, o mesmo que o comprovante da UnicoPag mostra.
+- **Três ajustes em relação ao modelo**: "CPF:" em vez de "CPF/CNPJ:" (o checkout só aceita pessoa
+  física); rótulos em caixa de frase, como no resto do site (o modelo misturava "Data do Pedido" com
+  "Código da compra"); e o rodapé diz de onde vêm os dados em vez de "comprovante fornecido". O nome
+  do aluno sai com as iniciais maiúsculas e as partículas minúsculas ("joana maria dos santos" →
+  "Joana Maria dos Santos"), sem baixar letra de ninguém ("McDonald" fica).
+- **Conferir o visual**: `php scripts/previsualizar_comprovante.php` gera quatro casos (o do modelo,
+  PIX com custos pago horas depois, nome e curso longos, e o pior caso) sem banco nem segredos.
+- **Ordem de publicação**: `lib/pdf.php`, `lib/comprovante.php`, `lib/comprovante-logo.png` e
+  `lib/email.php` **antes** de `lib.php`. O `lib.php` passa a exigir os dois arquivos novos: subir ele
+  primeiro derruba o checkout inteiro até os outros chegarem.
+- **No ar desde 23/09/2026**, conferido no próprio servidor (PHP 8.3.33): um diagnóstico temporário,
+  já apagado, gerou o comprovante com dados fictícios e o PDF saiu idêntico byte a byte ao gerado
+  aqui, fora a data de criação nos metadados. Os PHP publicados foram comparados com os do
+  repositório pela API de arquivos.
+- **Dados de exemplo são fictícios**: o comprovante real que serviu de modelo não deixa nome, CPF,
+  código da compra nem horário no repositório (testes, pré-visualização e esta seção).
+
+## Prazo de resposta: 3 dias úteis, por enquanto (23/09/2026)
+
+Pedido do Matheus enquanto o fluxo da secretaria normaliza: todo lugar que prometia **2** dias úteis
+passou a prometer **3** — contato da secretaria depois da inscrição e resposta ao chat. Para voltar,
+são estas fontes (35 ocorrências), e depois regerar tudo:
+
+`site/matricula-cursos-presenciais/api/lib/email.php` (`MCP_EMAIL_PRAZO`, vale para todos os
+e-mails) · `site/chat/chat.js` (`PRAZO` do cabeçalho do chat) ·
+`site/matricula-cursos-presenciais/static/checkout.js` · `site/faq-home.json` ·
+`site/faq-idiomas.json` e `site/idiomas.json` ("three business days" / "tres días hábiles") ·
+`scripts/gerar_matricula_presencial.py` · `scripts/gerar_bio.py` · `site/equipe.html` ·
+`scripts/testar_checkout.php` (dois testes conferem o texto).
+
+Regerar nesta ordem: `gerar_faq_home` → `gerar_matricula_presencial` → `gerar_checkout` →
+`gerar_bio` → `gerar_doe` → `gerar_404` → `gerar_idiomas` → `chat_widget` (o `chat.js` muda de hash
+e toda página que carrega o chat precisa da tag nova).
+
 ## Convenção de nome (19/09/2026)
 
 "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Em todo texto da filial o nome é o

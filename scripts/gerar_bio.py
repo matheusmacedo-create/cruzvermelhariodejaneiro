@@ -50,7 +50,7 @@ FAQ = [
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
      "Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
-     "2 dias úteis.", []),
+     "3 dias úteis.", []),
     ("Como doar para a Cruz Vermelha do Rio de Janeiro?",
      "Pela página de doação do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. "
      "Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro.",

@@ -15,7 +15,7 @@
 declare(strict_types=1);
 
 const MCP_EMAIL_FONTE = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-const MCP_EMAIL_PRAZO = '2 dias úteis';
+const MCP_EMAIL_PRAZO = '3 dias úteis';
 const MCP_EMAIL_CNPJ = '08.560.973/0001-97';
 const MCP_NOME_FILIAL = 'Cruz Vermelha Brasileira Rio de Janeiro';
 /** Nomes curtos que aparecem em configurações antigas (EMAIL_REMETENTE): o remetente sai sempre com o nome completo. */
@@ -204,9 +204,16 @@ function mcp_citacao(string $texto): string
  * 'falhou'. Falha de e-mail nunca derruba a requisição: o pagamento ou a mensagem já foram gravados.
  * Responder-para: $responderPara (e-mail já validado com FILTER_VALIDATE_EMAIL, que não aceita quebra
  * de linha) ou, por padrão, EMAIL_RESPOSTA / EMAIL_CONTATO.
+ * Anexos: lista de ['nome' => 'arquivo.pdf', 'conteudo' => bytes, 'tipo' => 'application/pdf'], usados
+ * pelo comprovante de inscrição. O nome é saneado para ASCII antes de ir para cabeçalho.
  */
-function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null): string
+function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null, array $anexos = []): string
 {
+    $anexos = array_values(array_filter(array_map(static fn(array $a): array => [
+        'nome' => (preg_replace('/[^A-Za-z0-9._-]+/', '_', (string) ($a['nome'] ?? '')) ?: 'anexo'),
+        'conteudo' => (string) ($a['conteudo'] ?? ''),
+        'tipo' => preg_match('#^[a-z]+/[a-z0-9.+-]+$#', (string) ($a['tipo'] ?? '')) ? (string) $a['tipo'] : 'application/octet-stream',
+    ], $anexos), static fn(array $a): bool => $a['conteudo'] !== ''));
     $remetente = mcp_email_nome_oficial($remetente ?? (string) mcp_cfg('EMAIL_REMETENTE', MCP_NOME_FILIAL . ' <matricula@cruzvermelhariodejaneiro.org>'));
     $resposta = $responderPara ?? (string) mcp_cfg('EMAIL_RESPOSTA', mcp_email_contato_endereco());
     if (!filter_var($resposta, FILTER_VALIDATE_EMAIL)) {
@@ -217,6 +224,13 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
         $corpo = ['from' => $remetente, 'to' => [$para], 'subject' => $assunto, 'html' => $html, 'text' => $texto];
         if ($resposta !== '') {
             $corpo['reply_to'] = $resposta;
+        }
+        if ($anexos) {
+            // Só filename e content: a Resend deduz o tipo pela extensão, e campo que ela não conhece
+            // devolveria 422 e jogaria o envio no mail() de reserva, que entrega pior.
+            $corpo['attachments'] = array_map(static fn(array $a): array => [
+                'filename' => $a['nome'], 'content' => base64_encode($a['conteudo']),
+            ], $anexos);
         }
         $ch = curl_init('https://api.resend.com/emails');
         curl_setopt_array($ch, [
@@ -238,10 +252,26 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
     }
     // Fallback: mail() local. Cabeçalhos só com valores da configuração ou e-mails validados.
     $enderecoRemetente = preg_match('/<([^>]+)>/', $remetente, $m) ? $m[1] : $remetente;
-    $cabecalhos = "From: $remetente\r\n" . ($resposta !== '' ? "Reply-To: $resposta\r\n" : '')
-        . "MIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n";
+    $cabecalhos = "From: $remetente\r\n" . ($resposta !== '' ? "Reply-To: $resposta\r\n" : '') . "MIME-Version: 1.0\r\n";
+    $mensagem = $html;
+    if ($anexos) {
+        // Com anexo, a mensagem vira multipart/mixed: o HTML em base64 (evita linha acima de 998
+        // caracteres, que servidor de e-mail corta) e cada anexo em base64 quebrado em 76 colunas.
+        $fronteira = 'mcp_' . bin2hex(random_bytes(12));
+        $cabecalhos .= "Content-Type: multipart/mixed; boundary=\"$fronteira\"\r\n";
+        $mensagem = "--$fronteira\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+            . chunk_split(base64_encode($html));
+        foreach ($anexos as $a) {
+            $mensagem .= "--$fronteira\r\nContent-Type: {$a['tipo']}; name=\"{$a['nome']}\"\r\n"
+                . "Content-Disposition: attachment; filename=\"{$a['nome']}\"\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+                . chunk_split(base64_encode($a['conteudo']));
+        }
+        $mensagem .= "--$fronteira--\r\n";
+    } else {
+        $cabecalhos .= "Content-Type: text/html; charset=UTF-8\r\n";
+    }
     $assuntoCodificado = '=?UTF-8?B?' . base64_encode($assunto) . '?=';
-    $ok = @mail($para, $assuntoCodificado, $html, $cabecalhos, '-f' . $enderecoRemetente);
+    $ok = @mail($para, $assuntoCodificado, $mensagem, $cabecalhos, '-f' . $enderecoRemetente);
     return $ok ? 'mail' : 'falhou';
 }
 
@@ -327,8 +357,10 @@ function mcp_email_pix_aberto(array $inscricao): void
  * Pagamento confirmado. Versão A (com acesso devolvido pela escola): usuário, senha e link.
  * Versão B (sem API da escola): comprovante e os próximos passos, com a secretaria escrevendo por e-mail.
  * Devolve também 'tipo' ('acesso' ou 'confirmacao') para o registro.
+ * $comComprovante: o PDF foi gerado e vai anexado. Sem ele o texto não cita anexo — o e-mail nunca
+ * promete um arquivo que não está lá.
  */
-function mcp_montar_email_aluno_pago(array $inscricao): array
+function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = true): array
 {
     $nome = mcp_primeiro_nome((string) $inscricao['nome']);
     $curso = (string) $inscricao['curso_nome'];
@@ -355,14 +387,16 @@ function mcp_montar_email_aluno_pago(array $inscricao): array
         $usuario = (string) ($acesso['usuario'] ?? $inscricao['email']);
         $url = (string) ($acesso['acesso']['url'] ?? $acesso['url_ambiente'] ?? $escolaUrl);
         $senha = isset($acesso['acesso']['senha']) ? (string) $acesso['acesso']['senha'] : '';
-        $corpo = mcp_p('Parabéns, ' . mcp_escapar($nome) . '. Recebemos o pagamento da sua inscrição em <strong>' . mcp_escapar($curso) . '</strong> e aqui está seu acesso à secretaria da escola.' . $obrigado)
+        $corpo = mcp_p('Parabéns, ' . mcp_escapar($nome) . '. Recebemos o pagamento da sua inscrição em <strong>' . mcp_escapar($curso) . '</strong> e aqui está seu acesso à secretaria da escola.' . $obrigado
+            . ($comComprovante ? ' O comprovante de inscrição em PDF vai anexado a este e-mail.' : ''))
             . $caixa
             . '<div style="margin:18px 0;padding:14px 18px;background:#f7f8fa;border:1px solid #e2e8f0;border-radius:12px;font-size:15px">Usuário: <strong>' . mcp_escapar($usuario) . '</strong>'
             . ($senha !== '' ? '<br>Senha temporária: <strong>' . mcp_escapar($senha) . '</strong> <span style="color:#718096">(troque no primeiro acesso)</span>' : '') . '</div>'
             . mcp_botao($url, 'Acessar ambiente da secretaria')
             . mcp_p('Horário e turma você escolhe lá.')
             . mcp_nota(mcp_escapar(MCP_TEXTO_ESTORNO));
-        $texto = "Parabéns, $nome. Recebemos o pagamento ($total) da sua inscrição em $curso.\nUsuário: $usuario" . ($senha !== '' ? "\nSenha temporária: $senha (troque no primeiro acesso)" : '')
+        $texto = "Parabéns, $nome. Recebemos o pagamento ($total) da sua inscrição em $curso."
+            . ($comComprovante ? ' O comprovante de inscrição em PDF vai anexado a este e-mail.' : '') . "\nUsuário: $usuario" . ($senha !== '' ? "\nSenha temporária: $senha (troque no primeiro acesso)" : '')
             . "\nAcesso: $url\n\nHorário e turma você escolhe lá. " . MCP_TEXTO_ESTORNO;
         return ['tipo' => 'acesso', 'assunto' => "Seu acesso à secretaria da escola — $curso", 'texto' => $texto,
             'html' => mcp_moldura("Vaga garantida, $nome: aqui está seu acesso", $corpo, [
@@ -372,7 +406,8 @@ function mcp_montar_email_aluno_pago(array $inscricao): array
             ])];
     }
 
-    $corpo = mcp_p('Parabéns, ' . mcp_escapar($nome) . '. Recebemos o pagamento da sua inscrição em <strong>' . mcp_escapar($curso) . '</strong>. Sua vaga está reservada e este e-mail é o seu comprovante.' . $obrigado)
+    $comprovante = $comComprovante ? 'o comprovante de inscrição em PDF vai anexado a este e-mail' : 'este e-mail é o seu comprovante';
+    $corpo = mcp_p('Parabéns, ' . mcp_escapar($nome) . '. Recebemos o pagamento da sua inscrição em <strong>' . mcp_escapar($curso) . '</strong>. Sua vaga está reservada e ' . $comprovante . '.' . $obrigado)
         . $caixa
         . mcp_subtitulo('Próximos passos')
         . mcp_passos([
@@ -382,7 +417,7 @@ function mcp_montar_email_aluno_pago(array $inscricao): array
         ])
         . mcp_botao($linkParabens, 'Ver minha inscrição')
         . mcp_nota(mcp_escapar(MCP_TEXTO_ESTORNO));
-    $texto = "Parabéns, $nome. Recebemos o pagamento ($total) da sua inscrição em $curso. Sua vaga está reservada e este e-mail é o seu comprovante.\n\n"
+    $texto = "Parabéns, $nome. Recebemos o pagamento ($total) da sua inscrição em $curso. Sua vaga está reservada e $comprovante.\n\n"
         . "Próximos passos: 1) inscrição paga, não precisa se inscrever de novo; 2) a secretaria da Escola entra em contato por e-mail em até " . MCP_EMAIL_PRAZO
         . " para confirmar turma, data e horário; 3) o valor do curso é pago depois, na plataforma da escola ($escolaUrl).\n\nMinha inscrição: $linkParabens\n\n" . MCP_TEXTO_ESTORNO;
     return ['tipo' => 'confirmacao', 'assunto' => "Inscrição confirmada: sua vaga em $curso", 'texto' => $texto,
@@ -395,10 +430,18 @@ function mcp_montar_email_aluno_pago(array $inscricao): array
 
 function mcp_email_aluno_pago(array $inscricao): void
 {
-    $m = mcp_montar_email_aluno_pago($inscricao);
-    $r = mcp_enviar_email((string) $inscricao['email'], $m['assunto'], $m['html'], $m['texto']);
+    // O comprovante em PDF é um extra: se falhar (logo ausente, qualquer coisa), o aluno recebe a
+    // confirmação do mesmo jeito, sem anexo. A mensagem de erro não leva dado do aluno.
+    $anexos = [];
+    try {
+        $anexos[] = ['nome' => mcp_comprovante_arquivo($inscricao), 'conteudo' => mcp_comprovante_pdf($inscricao), 'tipo' => 'application/pdf'];
+    } catch (Throwable $e) {
+        error_log('[matricula] comprovante em PDF falhou (inscrição ' . (int) $inscricao['id'] . '): ' . $e->getMessage());
+    }
+    $m = mcp_montar_email_aluno_pago($inscricao, $anexos !== []);
+    $r = mcp_enviar_email((string) $inscricao['email'], $m['assunto'], $m['html'], $m['texto'], null, null, $anexos);
     mcp_atualizar((int) $inscricao['id'], ['email_aluno' => $r === 'falhou' ? 'falhou' : $m['tipo']]);
-    mcp_registrar((int) $inscricao['id'], 'email_aluno', "{$m['tipo']} · $r");
+    mcp_registrar((int) $inscricao['id'], 'email_aluno', "{$m['tipo']} · $r · " . ($anexos ? 'com comprovante PDF' : 'sem comprovante PDF'));
 }
 
 // ----------------------------------------------------------------------------- aviso à secretaria

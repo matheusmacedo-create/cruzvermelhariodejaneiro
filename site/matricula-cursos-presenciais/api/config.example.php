@@ -55,4 +55,10 @@ return [
     'ESCOLA_API_URL'   => '',
     'ESCOLA_API_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
+
+    // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o
+    // padrão de lib/comprovante.php: O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP, 67.733.551/0001-35
+    // (a empresa de ensino da filial, que recebe a matrícula; não é o CNPJ da filial).
+    'RECEBEDOR_NOME'   => '',
+    'RECEBEDOR_CNPJ'   => '',
 ];
