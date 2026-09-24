@@ -26,7 +26,7 @@
         "descricao": "The Rio de Janeiro State Branch of the Brazilian Red Cross: volunteer training, first-aid courses and community support, in downtown Rio de Janeiro.",
         "sobrancelha": "Rio de Janeiro State Branch",
         "h1": "Brazilian Red Cross — Rio de Janeiro Branch",
-        "linha": "Part of the International Red Cross and Red Crescent Movement, serving the state of Rio de Janeiro since the Brazilian Red Cross was founded in 1908.",
+        "linha": "Part of the International Red Cross and Red Crescent Movement, serving the state of Rio de Janeiro.",
         "blocos": [
           {
             "titulo": "Who we are",
@@ -39,7 +39,7 @@
             "titulo": "What we do",
             "paragrafos": [
               "We train volunteers, teach in-person first-aid and vocational courses at our headquarters, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
-              "Our training arm is the Escola de Educação e Saúde CVB-RJ, which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral Venous Access, Civil Firefighter, Caregiver for Older Adults and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+              "Our training arm is the Escola de Educação e Saúde CVB-RJ, which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Venipuncture, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
             ]
           },
           {
@@ -176,7 +176,7 @@
           "Ensino Fundamental": "Lower secondary (ensino fundamental)",
           "Ensino Médio": "Upper secondary (ensino médio)"
         },
-        "tabela_nota": "Fees are in Brazilian reais and paid in full, not in instalments. On top of the course fee there is a one-off enrolment charge of R$ 99, which holds your place. For Civil Firefighter, professional accreditation at the end of the course is paid separately.",
+        "tabela_nota": "Fees are in Brazilian reais and are the prices for payment in full; the school platform also offers instalments, with interest, so the instalment total is higher. On top of the course fee there is a one-off enrolment charge of R$ 99, paid in full on this site, which holds your place. For Civil Firefighter, professional accreditation at the end of the course is paid separately.",
         "detalhe_titulo": "What each course covers",
         "detalhe_nota": "Every course ends with a certificate issued by the branch. It is not accredited by Brazil's Ministry of Education — no open course is — and it does not replace a regulated professional licence.",
         "detalhes": {
@@ -316,7 +316,7 @@
         "exterior_titulo": "Donating from outside Brazil: card only",
         "exterior_paragrafos": [
           "From outside Brazil a card is the only way to give, and the reason is structural rather than a rule of ours. PIX is Brazil’s instant payment system, operated by the country’s Central Bank, and every PIX payment moves money between accounts held at Brazilian banks — there is no way to send one from a bank abroad. Card networks, by contrast, settle across borders, so a card issued in any country can reach the branch.",
-          "What holds the online form back today is the identification, not the card. Brazilian financial rules require an identification number on every payment, and the form asks for a CPF. Foreign residents in Brazil who already have one can use the form in full, by card or by PIX. If you have no CPF, write to us with the amount you would like to give and we will arrange the payment with you directly."
+          "What holds the online form back today is the identification, not the card. The payment provider requires an identification number to issue each charge, and the form asks for a CPF. Foreign residents in Brazil who already have one can use the form in full, by card or by PIX. If you have no CPF, write to us with the amount you would like to give and we will arrange the payment with you directly."
         ],
         "outra_forma_titulo": "Other ways to help",
         "outra_forma": "Sister National Societies, institutions and companies wishing to partner, donate institutionally or sponsor a campaign can write to us directly. For clothing, blankets and shoes, the Winter Clothing Drive receives donations at our headquarters, Monday to Friday, 10am to 5pm."
@@ -341,6 +341,7 @@
         "h1": "Archive of the Brazilian Red Cross — Rio de Janeiro Branch",
         "linha": "Documents, photographs, videos, press coverage and records of the branch's history, organized for consultation, with the date, authorship and terms of use of each item.",
         "colecoes_titulo": "Collections",
+        "colecoes_nota": "The archive is being catalogued: these collections fill up as items are published, starting with the branch's own records.",
         "colecoes": [
           [
             "documentos",
@@ -402,7 +403,7 @@
         "descricao": "Filial del Estado de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, cursos de primeros auxilios y apoyo comunitario, en el centro de Río.",
         "sobrancelha": "Filial del Estado de Río de Janeiro",
         "h1": "Cruz Roja Brasileña — Filial Río de Janeiro",
-        "linha": "Parte del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja, al servicio del estado de Río de Janeiro desde la fundación de la Cruz Roja Brasileña, en 1908.",
+        "linha": "Parte del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja, al servicio del estado de Río de Janeiro.",
         "blocos": [
           {
             "titulo": "Quiénes somos",
@@ -552,7 +553,7 @@
           "Ensino Fundamental": "Enseñanza básica (ensino fundamental)",
           "Ensino Médio": "Enseñanza media (ensino médio)"
         },
-        "tabela_nota": "Los valores están en reales brasileños y se pagan al contado, no en cuotas. Además del valor del curso hay una inscripción única de R$ 99, que reserva la plaza. En Bombero Civil, la homologación profesional al final del curso se paga aparte.",
+        "tabela_nota": "Los valores están en reales brasileños y son precios al contado; la plataforma de la escuela también ofrece pago en cuotas, con intereses, por lo que el total en cuotas es mayor. Además del valor del curso hay una inscripción única de R$ 99, pagada al contado en este sitio, que reserva la plaza. En Bombero Civil, la homologación profesional al final del curso se paga aparte.",
         "detalhe_titulo": "Qué enseña cada curso",
         "detalhe_nota": "Cada curso termina con un certificado emitido por la filial. No está acreditado por el Ministerio de Educación de Brasil — ningún curso libre lo está — y no sustituye una habilitación profesional regulada.",
         "detalhes": {
@@ -692,7 +693,7 @@
         "exterior_titulo": "Donar desde fuera de Brasil: solo con tarjeta",
         "exterior_paragrafos": [
           "Desde fuera de Brasil la tarjeta es la única forma de donar, y el motivo es estructural, no una regla nuestra. El PIX es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y cada pago por PIX mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. Las redes de tarjetas, en cambio, liquidan entre países, así que una tarjeta emitida en cualquier lugar llega a la filial.",
-          "Lo que hoy frena el formulario en línea es la identificación, no la tarjeta. Las normas financieras brasileñas exigen un número de identificación en cada pago, y el formulario pide el CPF. Quien vive en Brasil como extranjero y ya lo tiene puede usar el formulario completo, con tarjeta o con PIX. Si no tiene CPF, escríbanos con el importe que desea donar y organizamos el pago directamente con usted."
+          "Lo que hoy frena el formulario en línea es la identificación, no la tarjeta. El proveedor de pagos exige un número de identificación para emitir cada cobro, y el formulario pide el CPF. Quien vive en Brasil como extranjero y ya lo tiene puede usar el formulario completo, con tarjeta o con PIX. Si no tiene CPF, escríbanos con el importe que desea donar y organizamos el pago directamente con usted."
         ],
         "outra_forma_titulo": "Otras formas de ayudar",
         "outra_forma": "Las Sociedades Nacionales hermanas, instituciones y empresas que deseen establecer alianzas, donar institucionalmente o patrocinar una campaña pueden escribirnos directamente. Para ropa, mantas y calzado, la Campaña de Ropa de Abrigo recibe donaciones en nuestra sede, de lunes a viernes, de 10 a 17 horas."
@@ -717,6 +718,7 @@
         "h1": "Acervo de la Cruz Roja Brasileña — Filial Río de Janeiro",
         "linha": "Documentos, fotografías, videos, lo que publicó la prensa y los registros de la historia de la filial, organizados para la consulta, con la fecha, la autoría y las condiciones de uso de cada ítem.",
         "colecoes_titulo": "Colecciones",
+        "colecoes_nota": "El acervo se está catalogando: estas colecciones se completan a medida que se publican los ítems, empezando por los registros de la propia filial.",
         "colecoes": [
           [
             "documentos",

@@ -67,7 +67,7 @@ FAQ = [
      []),
     ("A doação é segura? Quem processa o pagamento?",
      "Sim. A página fica no domínio oficial da filial, com conexão criptografada. O pagamento é processado pela "
-     "Unicopag, instituição de pagamento autorizada, que recebe a doação e repassa o valor à Cruz Vermelha Brasileira "
+     "ÚnicoPag, instituição de pagamento autorizada, que recebe a doação e repassa o valor à Cruz Vermelha Brasileira "
      "Rio de Janeiro; por isso é o nome dela que aparece no PIX e na fatura do cartão, como acontece com as outras "
      "filiais da Cruz Vermelha e os meios de pagamento que usam. Seus dados de cartão passam direto para o processador "
      "e não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir a cobrança "

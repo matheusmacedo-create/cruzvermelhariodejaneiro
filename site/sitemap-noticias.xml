@@ -1,7 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-24T21:06:20+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-24T23:07:37+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/</loc>
+    <lastmod>2026-09-24T21:28:49+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/sala-de-aula-infantil-vazia-com-um-estojo-de-primeiros-socor.png</image:loc>
+      <image:title>Sala de aula infantil vazia com um estojo de primeiros socorros na prateleira</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer/</loc>
+    <lastmod>2026-09-24T21:22:01+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer/desfibrilador-externo-automatico-em-um-armario-de-parede-no.png</image:loc>
+      <image:title>Desfibrilador externo automático em um armário de parede no saguão de um prédio</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda/</loc>
+    <lastmod>2026-09-24T21:21:05+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda/bandeja-com-cateter-venoso-embalado-garrote-e-materiais-de-a.png</image:loc>
+      <image:title>Bandeja com cateter venoso embalado, garrote e materiais de antissepsia</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/</loc>
+    <lastmod>2026-09-24T21:20:38+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png</image:loc>
+      <image:title>Kit de primeiros socorros aberto sobre a bancada de uma cozinha</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/</loc>
+    <lastmod>2026-09-24T21:20:14+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/bancada-de-micropigmentacao-com-dermografo-pigmentos-e-mater.png</image:loc>
+      <image:title>Bancada de micropigmentação com dermógrafo, pigmentos e materiais descartáveis</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/</loc>
+    <lastmod>2026-09-24T21:19:49+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/quarto-adaptado-com-poltrona-andador-barra-de-apoio-e-organi.png</image:loc>
+      <image:title>Quarto adaptado com poltrona, andador, barra de apoio e organizador de remédios</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/</loc>
+    <lastmod>2026-09-24T21:19:14+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/extintor-de-incendio-e-abrigo-de-hidrante-no-corredor-de-um.png</image:loc>
+      <image:title>Extintor de incêndio e abrigo de hidrante no corredor de um edifício</image:title>
+    </image:image>
+  </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/</loc>
     <lastmod>2026-09-21T17:16:41+00:00</lastmod>

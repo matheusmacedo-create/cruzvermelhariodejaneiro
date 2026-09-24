@@ -69,7 +69,7 @@ PAGINA = """<!DOCTYPE html>
     </section>
     <section class="ck-secao">
       <div class="wrap"@@WRAP_EXTRA@@>
-        <noscript><p class="ck-noscript">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
+        <noscript><p class="ck-noscript">@@NOSCRIPT@@ Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
 @@CORPO@@
       </div>
     </section>
@@ -129,7 +129,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
                 <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
                 <ul class="ck-confianca">
-                  <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela Unicopag</li>
+                  <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela ÚnicoPag</li>
                   <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Estorno se não houver turma compatível</li>
                   <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
                 </ul>
@@ -184,8 +184,17 @@ def passos(atual: int) -> str:
     return '        <ol class="ck-passos" aria-label="Etapas da matrícula">' + "".join(itens) + "</ol>"
 
 
+# O aviso sem JavaScript diz o que a página faria: gerar o pagamento, conferir o pagamento ou mostrar a inscrição.
+NOSCRIPT = {
+    "checkout": "Esta página precisa de JavaScript para gerar o pagamento.",
+    "pendente": "Esta página precisa de JavaScript para conferir o pagamento.",
+    "parabens": "Esta página precisa de JavaScript para mostrar os dados da sua inscrição.",
+}
+
+
 def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, qrcode: bool, wrap_extra: str = "", passo: int = 2) -> str:
     return (PAGINA
+            .replace("@@NOSCRIPT@@", NOSCRIPT[id_])
             .replace("@@TITULO@@", esc(titulo)).replace("@@QRCODE@@", QRCODE if qrcode else "")
             .replace("@@ESTILO@@", partes["estilo"])
             .replace("@@CSS_URL@@", url_estatico("checkout.css")).replace("@@JS_URL@@", url_estatico("checkout.js"))
