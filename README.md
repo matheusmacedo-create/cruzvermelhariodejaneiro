@@ -1079,7 +1079,7 @@ O que as páginas levam para a busca:
 
 Primeira publicação (cada passo depende de aprovação):
 
-1. Redação: aplicar a migração `20260925233100_cvrj_acervo.sql`, pôr `R2_BUCKET_ACERVO=cvrj-acervo`
+1. Redação: aplicar a migração `20260926003000_cvrj_acervo.sql`, pôr `R2_BUCKET_ACERVO=cvrj-acervo`
    (e as outras `R2_*`) na Vercel e publicar.
 2. Aqui: `python3 scripts/gerar_og_acervo.py` e publicar `/en/archive/`, `/es/acervo/`, as páginas
    com o rodapé novo, `robots.txt`, `llms.txt` e `site/assets/otim/og-acervo.jpg`. A apresentação
@@ -1088,6 +1088,14 @@ Primeira publicação (cada passo depende de aprovação):
 3. Conferir: `/acervo/` 200, `/acervo/equipe/` 302 para a Redação, `/acervo/nao-existe/` 404.
 4. `python3 scripts/gerar_sitemaps.py`, publicar os sitemaps e limpar o cache.
 5. Search Console: inspecionar `/acervo/` e pedir a indexação.
+
+**Publicado em 24/09/2026** (passos 2 a 4): `/acervo/` (apresentação sem itens, gerada com o código
+da Redação) e o `.htaccess` dela, `/en/archive/`, `/es/acervo/`, o rodapé novo em 20 páginas,
+`robots.txt`, `llms.txt`, `og-acervo.jpg` e os sitemaps. Conferido ao vivo: os arquivos iguais aos
+do repositório, `/acervo/` 200, `/acervo/equipe/` 302 para a Redação, `/acervo` 301 para a barra,
+página inexistente 404, `/verificar/` continua fora (404) e os 90 links internos respondem 200.
+Falta o passo 1 (Redação no ar): até lá, `/acervo/equipe/` leva a uma tela que ainda não existe na
+Redação publicada, e os itens só entram quando a tela Acervo estiver no ar.
 
 ## Acervo no Cloudflare R2: cópia do site (24/09/2026)
 
