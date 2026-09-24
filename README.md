@@ -1037,6 +1037,26 @@ Para abrir ao público, quando for decidido:
 4. Tirar `verificar` de `ESCONDIDAS` em `conferir_links.py`, `validar_jsonld.py` e `rastrear_site.py`.
 5. Continuar sem GA4, Pixel, fontes de terceiros e chat, com `no-referrer`: o código segue indo na URL.
 
+## Acervo no Cloudflare R2: cópia do site (24/09/2026)
+
+O acervo da filial fica no bucket privado `cvrj-acervo` do Cloudflare R2 (buckets, travas e tokens
+em `docs/armazenamento-r2.md`, no repositório da Redação). `scripts/copiar_site_para_o_acervo.sh`
+copia o site como está no ar para `site/AAAA-MM-DD/`, com um `MANIFESTO.sha256` (conferir com
+`sha256sum -c`) e um `SOBRE.txt`:
+
+```bash
+R2_ACCOUNT_ID=… R2_ACCESS_KEY_ID=… R2_SECRET_ACCESS_KEY=… scripts/copiar_site_para_o_acervo.sh
+```
+
+- Segue os links a partir da home com `wget`: entra o que o público vê (as notícias da Redação
+  incluídas). O que não tem link, como `/verificar/`, e o que o servidor não entrega
+  (`config.php`, `api/`) ficam de fora por construção.
+- A pasta `site/` do bucket tem trava de 30 dias: uma cópia enviada não se apaga nem se troca, e
+  rodar duas vezes no mesmo dia é recusado.
+- Usar um token do R2 só do bucket do acervo (Object Read & Write), nunca o de administrador.
+- A primeira cópia, de 24/09/2026, tem 145 arquivos (21,7 MB) e foi conferida arquivo por arquivo
+  pelo manifesto, baixada de volta do R2.
+
 ## Revisão de SEO e gargalos de alcance orgânico (23/09/2026)
 
 Pedido do Matheus: rever todo o SEO e o que trava o alcance orgânico. Rastreio ao vivo, auditoria
