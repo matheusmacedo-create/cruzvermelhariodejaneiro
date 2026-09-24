@@ -331,7 +331,50 @@
         "plataforma": "Courses platform",
         "portugues": "Site em português",
         "privacidade": "Privacy Policy",
-        "termos": "Terms of Use"
+        "termos": "Terms of Use",
+        "acervo": "Archive"
+      },
+      "acervo": {
+        "titulo": "Archive | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "The Brazilian Red Cross Rio de Janeiro archive: documents, photographs, videos, press coverage and the branch's history, open for consultation.",
+        "sobrancelha": "Archive",
+        "h1": "Archive of the Brazilian Red Cross — Rio de Janeiro Branch",
+        "linha": "Documents, photographs, videos, press coverage and records of the branch's history, organized for consultation, with the date, authorship and terms of use of each item.",
+        "colecoes_titulo": "Collections",
+        "colecoes": [
+          [
+            "documentos",
+            "Documents",
+            "Statutes, minutes, reports, official letters and certificates."
+          ],
+          [
+            "fotos",
+            "Photographs",
+            "Humanitarian action, courses, campaigns and events."
+          ],
+          [
+            "videos",
+            "Videos",
+            "Video records of actions, courses and campaigns."
+          ],
+          [
+            "imprensa",
+            "Press",
+            "Reports, interviews and news about the branch."
+          ],
+          [
+            "historia",
+            "History",
+            "Old photographs, founding documents and period records."
+          ]
+        ],
+        "botao": "Browse the archive (in Portuguese)",
+        "idioma_titulo": "Catalogued in Portuguese",
+        "idioma_texto": "Items are described in Portuguese, the language of the material itself. Each item page shows the date, authorship, credit and terms of use, and how to cite it.",
+        "contribua_titulo": "Contribute to the archive",
+        "contribua": "Do you have photographs, documents, newspaper clippings or memories related to the branch? Write to contato@cruzvermelhariodejaneiro.org telling us what you have, the approximate date, the place and who produced the material or appears in it. We reply in English, Spanish or Portuguese.",
+        "uso_titulo": "Using the material",
+        "uso": "Each item states its authorship, credit and terms of use. Items under a Creative Commons license or in the public domain may be used as the license allows, always with credit. To reproduce an item with all rights reserved, ask for permission at contato@cruzvermelhariodejaneiro.org, including the address of the item's page."
       }
     },
     "es": {
@@ -664,7 +707,50 @@
         "plataforma": "Plataforma de cursos",
         "portugues": "Site em português",
         "privacidade": "Política de Privacidad",
-        "termos": "Términos de Uso"
+        "termos": "Términos de Uso",
+        "acervo": "Acervo"
+      },
+      "acervo": {
+        "titulo": "Acervo | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "El acervo de la Cruz Roja Brasileña Río de Janeiro: documentos, fotografías, videos, prensa y la historia de la filial, abiertos a la consulta.",
+        "sobrancelha": "Acervo",
+        "h1": "Acervo de la Cruz Roja Brasileña — Filial Río de Janeiro",
+        "linha": "Documentos, fotografías, videos, lo que publicó la prensa y los registros de la historia de la filial, organizados para la consulta, con la fecha, la autoría y las condiciones de uso de cada ítem.",
+        "colecoes_titulo": "Colecciones",
+        "colecoes": [
+          [
+            "documentos",
+            "Documentos",
+            "Estatutos, actas, informes, oficios y certificados."
+          ],
+          [
+            "fotos",
+            "Fotografías",
+            "Acción humanitaria, cursos, campañas y eventos."
+          ],
+          [
+            "videos",
+            "Videos",
+            "Registros en video de acciones, cursos y campañas."
+          ],
+          [
+            "imprensa",
+            "Prensa",
+            "Reportajes, entrevistas y notas sobre la filial."
+          ],
+          [
+            "historia",
+            "Historia",
+            "Fotografías antiguas, documentos de fundación y registros de época."
+          ]
+        ],
+        "botao": "Ver el acervo (en portugués)",
+        "idioma_titulo": "Catalogado en portugués",
+        "idioma_texto": "Los ítems se describen en portugués, el idioma del propio material. La página de cada ítem muestra la fecha, la autoría, el crédito, las condiciones de uso y cómo citarlo.",
+        "contribua_titulo": "Contribuya con el acervo",
+        "contribua": "¿Tiene fotografías, documentos, recortes de prensa o recuerdos relacionados con la filial? Escriba a contato@cruzvermelhariodejaneiro.org contando lo que tiene, la fecha aproximada, el lugar y quién produjo el material o aparece en él. Respondemos en español, inglés o portugués.",
+        "uso_titulo": "Cómo usar el material",
+        "uso": "Cada ítem indica la autoría, el crédito y las condiciones de uso. Los ítems con licencia Creative Commons o en dominio público pueden usarse como indica la licencia, siempre con el crédito. Para reproducir un ítem con todos los derechos reservados, pida autorización a contato@cruzvermelhariodejaneiro.org, indicando la dirección de la página del ítem."
       }
     }
   }

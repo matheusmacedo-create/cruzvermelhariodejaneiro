@@ -23,6 +23,10 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   roupas de frio, cobertores e calçados na sede, de segunda a sexta, das 10h às 17h.
 - [Equipe](https://cruzvermelhariodejaneiro.org/equipe.html): diretoria e coordenação da filial.
 - [Notícias](https://cruzvermelhariodejaneiro.org/noticias/): ações, campanhas e atendimentos.
+- [Acervo](https://cruzvermelhariodejaneiro.org/acervo/): documentos, fotografias, vídeos, recortes
+  de imprensa e a história da filial, cada item com data, autoria, crédito, condições de uso e forma
+  de citar. Também em [inglês](https://cruzvermelhariodejaneiro.org/en/archive/) e
+  [espanhol](https://cruzvermelhariodejaneiro.org/es/acervo/).
 - [Links oficiais](https://cruzvermelhariodejaneiro.org/bio/): cursos, cadastro de voluntário e o
   WhatsApp exclusivo do voluntariado.
 

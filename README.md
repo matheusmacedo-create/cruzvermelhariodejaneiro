@@ -99,9 +99,9 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   Render, existe a cópia `https://cruzvermelhariodejaneiro.org/sitemap-escola.xml` (10 URLs, fonte
   em `site/sitemap-escola.xml`), para enviar à parte depois da verificação. Regenerar quando
   entrarem cursos novos: `python3 scripts/gerar_sitemap_escola.py`.
-- **`robots.txt`** do domínio é gerado pela Redação e só aponta para `sitemap.xml`. Para o índice
-  aparecer nele, acrescentar `Sitemap: https://cruzvermelhariodejaneiro.org/sitemap-index.xml` no
-  projeto da Redação (não editar aqui: seria sobrescrito). O Search Console não depende disso.
+- **`robots.txt`** do domínio é regravado pela Redação a cada notícia e aponta para os dois mapas
+  (`sitemap-index.xml` e `sitemap.xml`). `site/robots.txt` tem o mesmo conteúdo: mudou um, mudar o
+  outro (em `lib/site/sitemap.ts`, na Redação), senão a próxima notícia desfaz a mudança.
 
 ## Próximos passos
 
@@ -1036,6 +1036,58 @@ Para abrir ao público, quando for decidido:
    `llms.txt`.
 4. Tirar `verificar` de `ESCONDIDAS` em `conferir_links.py`, `validar_jsonld.py` e `rastrear_site.py`.
 5. Continuar sem GA4, Pixel, fontes de terceiros e chat, com `no-referrer`: o código segue indo na URL.
+
+## Acervo em `/acervo/`: a parte pública (24/09/2026)
+
+`cruzvermelhariodejaneiro.org/acervo/` é a parte pública do acervo da filial. A parte privada é a
+tela **Acervo** da Redação (`redacao.cruzvermelhariodejaneiro.org/acervo`, com login): lá a equipe
+manda os arquivos para o R2, cataloga cada item e decide o que vai para o site. O que não for
+publicado fica só no R2, fora do site. `/acervo/equipe/` é a porta da equipe no domínio principal:
+um 302 para essa tela, fora da busca (`Disallow` no `robots.txt` e `rel="nofollow"` no link).
+
+Quem é dono de quê (nada deste repositório escreve dentro de `site/acervo/`: a pasta é da Redação
+e seria sobrescrita na publicação seguinte):
+
+| O quê | Quem gera | Como chega ao ar |
+| --- | --- | --- |
+| `/acervo/` (apresentação), `/acervo/<coleção>/` e `pagina/N/`, `/acervo/<coleção>/<item>/`, `/acervo/arquivos/` (WebP e PDF) e `/acervo/.htaccess` | Redação (`lib/acervo/paginas.ts` e `publicacao.ts`) | FTP, a cada item publicado; o botão "Atualizar páginas" refaz tudo |
+| as coleções e os itens no `sitemap.xml`, com a imagem de cada item | Redação (`lib/site/sitemap.ts`) | idem |
+| `/en/archive/` e `/es/acervo/` | `scripts/gerar_idiomas.py` (textos em `site/idiomas.json`) | `scripts/publicar_hostinger.sh` |
+| link "Acervo" no rodapé | as páginas daqui; a Redação põe o mesmo link nas dela | idem |
+| `robots.txt` | os dois repositórios gravam o mesmo conteúdo (a Redação regrava a cada notícia) | idem |
+| `site/assets/otim/og-acervo.jpg` (1200×630, imagem de compartilhamento) | `scripts/gerar_og_acervo.py` | idem (`site/assets/` não é versionada) |
+| `/acervo/`, `/en/archive/` e `/es/acervo/` no `sitemap-paginas.xml`, com os três hreflang | `scripts/gerar_sitemaps.py` | idem; o gerador só inclui o que já responde 200 |
+
+O que as páginas levam para a busca:
+
+- **Endereço permanente.** Depois da primeira publicação, coleção e endereço do item não mudam
+  (trava no banco da Redação). Retirar um item do site apaga a página e os arquivos dele.
+- **Dados estruturados.** `CollectionPage` + `Collection` na apresentação, `CollectionPage` +
+  `ItemList` em cada coleção (24 itens por página, com `rel=prev/next` na navegação), `ItemPage`
+  em cada item com `ImageObject` (licença, crédito, autoria e aviso de direitos, que o Google
+  Imagens mostra como "Detalhes da licença"), `VideoObject` (miniatura do YouTube ou do Vimeo) ou
+  `DigitalDocument` (PDF), sempre com `BreadcrumbList`.
+- **Imagens.** Três larguras em WebP (480, 960 e 1600), sem EXIF (a localização de uma foto não
+  vaza), com `srcset`, texto alternativo obrigatório e `max-image-preview:large`.
+- **Compartilhamento.** `og:image` e cartão grande do X por item (a própria foto; PDF e vídeo sem
+  imagem usam `og-acervo.jpg`).
+- **PDF.** Servido pelo próprio domínio, com cabeçalho `Link: rel="canonical"` apontando para a
+  página do item: a busca junta os dois em vez de indexar o PDF solto.
+- **Idiomas.** O catálogo é em português (a língua do material). `/en/archive/` e `/es/acervo/`
+  apresentam o acervo e levam ao português; os três se declaram por `hreflang` (e `x-default` no
+  português), no HTML e no sitemap.
+
+Primeira publicação (cada passo depende de aprovação):
+
+1. Redação: aplicar a migração `20260925233100_cvrj_acervo.sql`, pôr `R2_BUCKET_ACERVO=cvrj-acervo`
+   (e as outras `R2_*`) na Vercel e publicar.
+2. Aqui: `python3 scripts/gerar_og_acervo.py` e publicar `/en/archive/`, `/es/acervo/`, as páginas
+   com o rodapé novo, `robots.txt`, `llms.txt` e `site/assets/otim/og-acervo.jpg`. A apresentação
+   `/acervo/` e o `.htaccess` dela saem do código da Redação: publicados junto na primeira vez, e a
+   Redação passa a regravá-los.
+3. Conferir: `/acervo/` 200, `/acervo/equipe/` 302 para a Redação, `/acervo/nao-existe/` 404.
+4. `python3 scripts/gerar_sitemaps.py`, publicar os sitemaps e limpar o cache.
+5. Search Console: inspecionar `/acervo/` e pedir a indexação.
 
 ## Acervo no Cloudflare R2: cópia do site (24/09/2026)
 
