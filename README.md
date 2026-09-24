@@ -89,7 +89,8 @@ e limpar o cache. Vale rodar de novo quando uma página fixa mudar ou quando ent
 Ficam fora do índice, de propósito: `www.` (canonical no apex); `escola.cruzvermelhariodejaneiro.org`
 (apelido da escola, cujo canonical é `escola.cursoscruzvermelha.org`); `redacao.` (ferramenta
 interna); `links.` e `link.` (instalador exposto e página padrão); `cursos.html` e `/escola` (301);
-as três telas do checkout (`noindex`) e a API.
+as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de propósito (ver
+"Verificação de documentos em `/verificar/`").
 
 - **Escola**: fica em outro domínio (`cursoscruzvermelha.org`), então não pode entrar no índice
   até a escola estar verificada na **mesma conta** do Search Console. Não tinha `robots.txt` nem
@@ -917,6 +918,125 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
 - **Testes**: `php scripts/testar_doacao.php` (59 testes, sem banco e sem rede) cobre configuração,
   valores, protocolo, visão pública (sem CPF, hash do provedor, IP ou telefone) e os três e-mails.
 
+## Verificação de documentos em `/verificar/` (24/09/2026, escondida)
+
+Página que confere documentos e publicações que a filial registrou na trilha pública de auditoria:
+ofícios, certificados de curso, comunicados à imprensa, matérias, documentos do portal de
+transparência, parcerias (MROSC) e a página de canais oficiais. O registro é encadeado por hash e fecha
+um lote por dia, com carimbo de tempo RFC 3161 (FreeTSA), âncora no Bitcoin (OpenTimestamps) e manifesto
+assinado (Ed25519). A página só consulta: quem registra, fecha os lotes e grava as provas é a Redação
+(`POST https://redacao.cruzvermelhariodejaneiro.org/api/publico/verificar`, construída em paralelo).
+
+**Escondida, de propósito.** O lançamento é discreto:
+
+- `noindex, nofollow, noarchive` na meta tag e no cabeçalho `X-Robots-Tag` de `site/verificar/.htaccess`,
+  que vale para a pasta inteira, inclusive para o que a Redação gravar por FTP em `lotes/`.
+- Nenhum link para `/verificar/` em página, menu, rodapé, sitemap, hreflang, `llms.txt` ou `robots.txt`
+  (pôr no `robots.txt` seria anunciar o caminho). `conferir_links.py` e `validar_jsonld.py` deixam a pasta
+  de fora; `conferir_links.py` e `rastrear_site.py` acusam como falha qualquer link de página pública para
+  ela; `gerar_sitemaps.py` tem lista fechada e ainda descarta página com `noindex`.
+- **O código na URL funciona como senha do registro** (`?c=` vem do QR code), então nada de terceiros:
+  sem GA4, sem Meta Pixel, sem Google Fonts (a "Inter Reserva" segura o texto na fonte do aparelho, nas
+  medidas da Inter) e sem o chat, que manda o endereço da página, com o código, no aviso à equipe. Soma-se
+  `Referrer-Policy: no-referrer` (meta e cabeçalho), uma CSP com o hash de cada script inline
+  (`default-src 'none'`; `connect-src` só para a API e, para o teste local, localhost),
+  `frame-ancestors 'none'` e um 404 próprio da pasta: o 404 geral do site carrega GA4 e Pixel.
+- O endereço da API é fixo no código. `?api=` troca o servidor só com a página em `localhost` ou
+  `127.0.0.1`, com a faixa "Modo de teste" na tela. No domínio de verdade, um link com `?api=` mostraria
+  "Confere" vindo do servidor de qualquer um.
+
+**Três jeitos de consultar.** Digitando o código (26 caracteres; 32 no ofício; `XXXX-XXXX` no
+certificado; também vale a impressão digital SHA-256, de 64, e o link inteiro colado), pelo link do QR
+code (`/verificar/?c=<código>` consulta sozinho) ou soltando o arquivo: o navegador calcula o SHA-256
+(`crypto.subtle`) e só ele vai para a API, com limite de 100 MB. O arquivo não sai do aparelho. A
+validação no navegador é leve (tamanho e caracteres) e vai o que a pessoa digitou, sem as bordas; quem
+decide é o servidor.
+
+| Resposta da API | O que a página mostra |
+| --- | --- |
+| 200, `vigente`, com lote | **Confere** (verde, ícone de confirmação): "Confere: ofício autêntico" |
+| 200, `vigente`, lote nulo | **Registrado — prova em confirmação** (azul, relógio): registrado, lote do dia ainda aberto |
+| 200, `substituido` | **Substituído** (âmbar), com a data e a versão nova (código, link e botão para verificá-la) |
+| 200, `revogado` / `retirado` | **Revogado** (vermelho) / **Retirado do ar** (cinza), com a data |
+| 200, `encontrado: false` | **Não encontrado**, com "Isso não prova que o documento seja falso…" |
+| 400 / 429 | **Código não reconhecido** / **Limite de consultas** (com o tempo do `Retry-After`) |
+| 5xx, erro de rede, 20 s sem resposta | **Serviço indisponível**, tente mais tarde |
+
+Cada resultado traz o tipo em palavras, as datas no horário de Brasília (as de classe V e C, que chegam
+só com o dia, saem como vieram, sem passar por fuso, senão 01/09 viraria 31/08), versão, título e link
+(só classe P), o bloco do certificado (classe C), as impressões digitais com botão de copiar, o estado das
+provas (Bitcoin, RFC 3161, manifesto assinado, cadeia íntegra) e os arquivos para baixar. Tudo o que vem
+da API entra como texto (`textContent`, nunca `innerHTML`); só vira link o que começa com `https://`,
+sempre com `rel="noopener noreferrer"`. "Imprimir relatório" gera o "Relatório de verificação" com a
+consulta, o `consultado_em` e o resultado inteiro, sem menu, rodapé e botões. Abaixo do formulário ficam
+"O que é esta página" e "Como conferir sem depender da Cruz Vermelha" (`sha256sum`, `ots verify`,
+`openssl ts -verify` com os certificados da FreeTSA, `openssl pkeyutl -verify -rawin` e o
+`sha256sum compromisso.bin`).
+
+**Arquivos de prova**, gravados pela Redação por FTP (podem ainda não existir; a página não depende deles
+para funcionar): `/verificar/chave-publica.pem` (e uma cópia permanente de cada chave em
+`/verificar/chaves/<chave_id>.pem`, para conferir lotes antigos depois de uma troca de chave),
+`/verificar/lotes/indice.json` e, por dia,
+`/verificar/lotes/AAAA-MM-DD/` com `manifesto.json`, `manifesto.json.sig`, `manifesto.json.tsr`,
+`compromisso.bin` e `compromisso.bin.ots`. O `.htaccess` da pasta dá o tipo certo a `.ots`, `.sig`,
+`.bin`, `.tsr` e `.pem` e manda revalidar `.json` e `.ots` (a prova do Bitcoin é completada depois da
+publicação). Sem regra de rewrite, para não mexer nesses arquivos.
+
+**Regenerar**: `python3 scripts/gerar_verificar.py` grava `site/verificar/index.html` e
+`site/verificar/404.html`. Rodar de novo quando mudarem o cabeçalho, o rodapé ou o CSS da home; não
+editar o HTML gerado. O gerador trava se faltar o `X-Robots-Tag` no `.htaccess`, se aparecer script,
+fonte ou pixel de terceiros, se o JS usar `innerHTML` ou se sobrar marcador. Ícones novos da página
+(estados, imprimir, baixar) entraram em `scripts/icones.json`.
+
+**Testar localmente**:
+
+```
+python3 scripts/gerar_verificar.py
+python3 -m http.server 8767 --bind 127.0.0.1 --directory site
+```
+
+e abrir `http://127.0.0.1:8767/verificar/?api=http://127.0.0.1:8799&c=<código>`, com uma API falsa em
+`127.0.0.1:8799` que responda `POST /api/publico/verificar` pelo contrato e o `OPTIONS` do CORS
+(`Access-Control-Allow-Origin: http://127.0.0.1:8767`, `Access-Control-Allow-Headers: Content-Type`,
+`Access-Control-Expose-Headers: Retry-After`). A API de verdade só aceita a origem do site e não serve
+para teste local; sem API nenhuma, a página mostra "Serviço indisponível", o que basta para conferir o
+layout. Para renderizar igual ao ar, o `site/assets/` local precisa de `otim/logo-cvb-rj-520.webp`,
+`favicon.svg` e `favicon.png`. Testado assim em 24/09/2026, no Chromium (Playwright), com uma API falsa
+com um cenário por estado: 190 conferências, entre elas o SHA-256 do navegador igual ao `sha256sum`
+(seletor e arrastar), dados hostis da API (marcação, `javascript:`, `http:`, `data:`) virando texto, as
+mesmas datas com o aparelho em Honolulu e Tóquio, `?api=` ignorado fora de localhost, impressão,
+teclado, 360 px sem rolagem lateral e nenhum pedido de rede além do site e da API.
+
+### Checklist de abertura
+
+Antes de publicar (a página vai ao ar, ainda escondida):
+
+1. API da Redação no ar, com CORS para `https://cruzvermelhariodejaneiro.org` (preflight `OPTIONS`
+   incluído) e `Access-Control-Expose-Headers: Retry-After`. Sem esse cabeçalho, o navegador não deixa a
+   página ler o tempo de espera, e o 429 diz "aguarde alguns minutos".
+2. `python3 scripts/gerar_verificar.py` sem erro.
+3. Publicar nesta ordem, para a página nunca ir ao ar sem o cabeçalho `noindex`:
+   `scripts/publicar_hostinger.sh site/verificar/.htaccess site/verificar/404.html site/verificar/index.html`,
+   e limpar o cache.
+4. Conferir ao vivo: `curl -sI https://cruzvermelhariodejaneiro.org/verificar/ | grep -i x-robots-tag`, o
+   mesmo numa URL inexistente dentro da pasta (tem de cair no 404 próprio) e, quando houver, num arquivo
+   de `lotes/`; abrir com um código real e com um inventado; no DevTools, aba Rede, só pedidos ao próprio
+   site e à API.
+5. Nenhuma referência ao caminho fora da pasta: `grep -rnE 'verificar(/|"|\?|#)' site --exclude-dir=verificar
+   --exclude=config.php` vazio e `python3 scripts/conferir_links.py` sem "link para página escondida".
+6. A Redação publica `chave-publica.pem` em `/verificar/` e fecha o primeiro lote em `/verificar/lotes/`;
+   rodar uma vez, à mão, os comandos de "Como conferir" com esses arquivos.
+
+Para abrir ao público, quando for decidido:
+
+1. Tirar o `noindex` da página (meta tag no gerador) e passar o `X-Robots-Tag` do `.htaccess` da pasta para
+   um `.htaccess` em `lotes/`: as provas continuam fora da busca.
+2. Canonical, descrição e Open Graph próprios no gerador.
+3. Link no rodapé (na home, que os geradores copiam), entrada em `PAGINAS` do `gerar_sitemaps.py` e no
+   `llms.txt`.
+4. Tirar `verificar` de `ESCONDIDAS` em `conferir_links.py`, `validar_jsonld.py` e `rastrear_site.py`.
+5. Continuar sem GA4, Pixel, fontes de terceiros e chat, com `no-referrer`: o código segue indo na URL.
+
 ## Revisão de SEO e gargalos de alcance orgânico (23/09/2026)
 
 Pedido do Matheus: rever todo o SEO e o que trava o alcance orgânico. Rastreio ao vivo, auditoria
@@ -1408,6 +1528,8 @@ scripts/otimizar_imagens.py             versões WebP e imagens de compartilhame
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/calcular_reserva_fonte.py      medidas da "Inter Reserva" (fonte do aparelho do tamanho da Inter, sem CLS)
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
+scripts/gerar_verificar.py              gera site/verificar/ (verificação de documentos, escondida: noindex, nada de terceiros)
+site/verificar/                         página de verificação e 404 próprio (gerados) e .htaccess (X-Robots-Tag da pasta)
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
 docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)

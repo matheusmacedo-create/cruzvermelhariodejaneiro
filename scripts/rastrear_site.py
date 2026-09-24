@@ -10,6 +10,7 @@ No fim, lista as ocorrências que a auditoria conta:
   - página bloqueada (noindex), órfã (no sitemap e sem link), com um único link de entrada
   - link sem texto âncora, âncora pouco descritiva, nofollow interno
   - título longo (>60), pouco texto, proporção texto/HTML baixa (<10%)
+  - link para página escondida (/verificar/) ou página escondida no sitemap (os dois têm de ser 0)
 
 Uso:  python3 scripts/rastrear_site.py [--max N]
 """
@@ -28,6 +29,14 @@ SITEMAPS = [f"{ORIGEM}/sitemap-index.xml", f"{ORIGEM}/sitemap.xml"]
 ANCORA_FRACA = {"clique aqui", "aqui", "leia mais", "saiba mais", "veja mais", "mais", "link", "ver"}
 IGNORAR = ("mailto:", "tel:", "javascript:", "data:")
 BINARIO = re.compile(r"\.(png|jpe?g|webp|svg|gif|ico|css|js|xml|txt|pdf|woff2?|mp4)(\?|$)", re.I)
+# Páginas publicadas escondidas (noindex e sem link de nenhuma página; ver o README, "Verificação de
+# documentos em /verificar/"). O rastreio não entra nelas, e link de qualquer página para elas é problema.
+ESCONDIDAS = ("/verificar",)
+
+
+def escondida(url: str) -> bool:
+    caminho = urlparse(url).path
+    return any(caminho == e or caminho.startswith(e + "/") for e in ESCONDIDAS)
 
 
 def buscar(url: str) -> tuple[str, str, str]:
@@ -111,6 +120,7 @@ def main(argv: list[str]) -> int:
     redirecionam: list[tuple[str, str, str]] = []
     ancora_ruim: list[tuple[str, str, str]] = []
     nofollow: list[tuple[str, str]] = []
+    para_escondidas: list[tuple[str, str]] = []
 
     while fila and len(paginas) < limite:
         url, prof = fila.popleft()
@@ -134,6 +144,9 @@ def main(argv: list[str]) -> int:
         vistos_aqui = set()
         for alvo, ancora, nf in links_de(corpo, url):
             if BINARIO.search(alvo):
+                continue
+            if escondida(alvo):
+                para_escondidas.append((url, alvo))
                 continue
             paginas[url]["saida"] += 1
             entrada[alvo].add(url)
@@ -196,6 +209,10 @@ def main(argv: list[str]) -> int:
     secao("links sem texto âncora ou com âncora fraca", ancora_ruim,
           lambda x: f"{x[2]!r} em {x[0].replace(ORIGEM,'')} → {x[1].replace(ORIGEM,'')}")
     secao("nofollow em link interno", nofollow, lambda x: f"{x[0].replace(ORIGEM,'')} → {x[1].replace(ORIGEM,'')}")
+    secao("links para página escondida (tem de ser 0)", para_escondidas,
+          lambda x: f"{x[0].replace(ORIGEM,'')} → {x[1].replace(ORIGEM,'')}")
+    na_lista = sorted(u for u in mapa if escondida(u))
+    secao("página escondida no sitemap (tem de ser 0)", na_lista, lambda u: u.replace(ORIGEM, ""))
     prof = [(u, d["prof"]) for u, d in paginas.items() if d["prof"] >= 4 and d["status"] == "200"]
     secao("profundidade 4 ou mais", prof, lambda x: f"{x[1]}  {x[0].replace(ORIGEM,'')}")
     return 0

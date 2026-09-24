@@ -26,6 +26,8 @@ CACHE = Path(__file__).resolve().parent / ".cache-schemaorg.jsonld"
 FONTE = "https://schema.org/version/latest/schemaorg-current-https.jsonld"
 # Palavras do próprio JSON-LD, não do vocabulário.
 RESERVADAS = {"@context", "@type", "@id", "@graph", "@value", "@language", "@list", "@reverse"}
+# Pastas publicadas escondidas (ver o README, "Verificação de documentos em /verificar/").
+ESCONDIDAS = ("verificar",)
 
 
 def vocabulario() -> tuple[dict[str, set[str]], set[str]]:
@@ -111,8 +113,10 @@ def conferir(no, dominios, tipos, caminho, erros, definidos, citados):
 
 def main(argv: list[str]) -> int:
     dominios, tipos = vocabulario()
+    # /verificar/ fica de fora: página escondida (noindex, sem link), sem dados estruturados de propósito.
     arquivos = [Path(a).resolve() for a in argv] or sorted(
-        f for f in (RAIZ / "site").rglob("*.html") if "assets" not in f.parts)
+        f for f in (RAIZ / "site").rglob("*.html")
+        if "assets" not in f.parts and f.relative_to(RAIZ / "site").parts[0] not in ESCONDIDAS)
     total = 0
     for f in arquivos:
         html = f.read_text(encoding="utf-8")
