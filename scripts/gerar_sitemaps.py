@@ -45,6 +45,8 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 AGENTE = "cvb-rj-sitemap/2.0 (+https://cruzvermelhariodejaneiro.org/)"
 
 # Páginas fixas do domínio principal: (caminho, arquivo local com as imagens ou None, changefreq, priority, nota)
+# /verificar/ não entra, de propósito: é página escondida (noindex, sem link; ver o README). Se entrasse por
+# engano, o noindex dela a tiraria daqui mesmo assim (pagina_indexavel).
 PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),

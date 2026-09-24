@@ -1,0 +1,29 @@
+# /verificar/: página de verificação de documentos (scripts/gerar_verificar.py), publicada escondida,
+# e em lotes/ os arquivos de prova que a Redação grava por FTP a cada dia. Nada desta pasta vai para a
+# busca: o cabeçalho abaixo vale para a pasta inteira, inclusive para o que chegar depois em lotes/.
+# Sem regra de rewrite, de propósito: os arquivos de lotes/ são servidos como estão.
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+  # O código consultado vai na URL (?c=, do QR code): nenhum link daqui leva o endereço adiante.
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Content-Type-Options "nosniff"
+  # A página oficial de verificação não pode ser emoldurada por outro site.
+  Header always set X-Frame-Options "DENY"
+  Header always set Content-Security-Policy "frame-ancestors 'none'"
+  # indice.json e as provas .ots mudam depois de publicados (a prova do Bitcoin é completada quando o
+  # bloco confirma): o navegador confere se há versão nova antes de reaproveitar a cópia guardada.
+  <FilesMatch "\.(json|ots)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# Arquivos de prova: tipos certos, para o navegador baixar os binários e mostrar a chave pública.
+AddType application/octet-stream .ots .sig .bin
+AddType application/timestamp-reply .tsr
+AddType text/plain .pem
+
+# O 404 geral do site carrega GA4 e Meta Pixel; um endereço errado aqui dentro, com o código na URL,
+# cai nesta página própria, sem nada de terceiros.
+ErrorDocument 404 /verificar/404.html
