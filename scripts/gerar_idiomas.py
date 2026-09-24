@@ -3,6 +3,7 @@
 
   site/en/            site/es/            página institucional
   site/en/donate/     site/es/donar/      página de doação
+  site/en/archive/    site/es/acervo/     o acervo (o português, /acervo/, é gerado pela Redação)
 
 O visual é o mesmo da home: cabeçalho, rodapé e CSS saem de partes_da_home(), e só os textos
 mudam. Cada página declara hreflang para as três versões, com x-default no português — sem isso
@@ -46,7 +47,10 @@ PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            # é o que sinaliza isso para alternativas(), como na FAQ.
            "cursos": {"pt": "/matricula-cursos-presenciais/#cursos", "en": "/en/courses/", "es": "/es/cursos/"},
            # A equipe existe nas três línguas e são a mesma página: cluster completo.
-           "equipe": {"pt": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"}}
+           "equipe": {"pt": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+           # O acervo em português é da Redação (lib/acervo/paginas.ts, com a mesma lista de hreflang);
+           # aqui ficam a apresentação em inglês e em espanhol, que levam para ele.
+           "acervo": {"pt": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"}}
 EQUIPE = SITE / "equipe.html"
 FAQ = SITE / "faq-idiomas.json"
 CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
@@ -121,6 +125,7 @@ ESTILO_EXTRA = """
     .i18n-porta { margin-top:12px !important }
     .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
     .i18n-porta a:hover { text-decoration:underline }
+    .i18n-texto a { color:var(--red); font-weight:700; text-decoration:underline; text-underline-offset:2px; overflow-wrap:anywhere }
     @media (min-width:920px) { .i18n-portas { grid-template-columns:repeat(2,1fr) } }
     .i18n-fichas ul { margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.92rem }
     .i18n-fichas li { margin:2px 0 }
@@ -188,6 +193,8 @@ def rodape(idioma: dict) -> str:
       <div class="wrap">
         <span>&copy; 2026 {esc(idioma['instituicao'])}</span>
         <span class="sep">|</span>
+        <a href="{PAGINAS['acervo'][idioma['codigo']]}">{esc(r['acervo'])}</a>
+        <span class="sep">|</span>
         <a href="/privacidade/" hreflang="pt-BR" lang="pt-BR">{esc(r['privacidade'])}</a>
         <span class="sep">|</span>
         <a href="/termos/" hreflang="pt-BR" lang="pt-BR">{esc(r['termos'])}</a>
@@ -196,7 +203,8 @@ def rodape(idioma: dict) -> str:
   </footer>"""
 
 
-def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, ld: list, partes: dict) -> str:
+def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, ld: list, partes: dict,
+            imagem: str = "og-home.jpg") -> str:
     caminho = PAGINAS[pagina][idioma["codigo"]]
     ld_json = json.dumps(ld, ensure_ascii=False, separators=(",", ":"))
     assert "</" not in ld_json, "JSON-LD não pode conter </ (fecharia o <script>)"
@@ -214,7 +222,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <meta property="og:title" content="{esc(titulo)}">
   <meta property="og:description" content="{esc(descricao)}">
   <meta property="og:url" content="{ORIGEM}{caminho}">
-  <meta property="og:image" content="{ORIGEM}/assets/otim/og-home.jpg">
+  <meta property="og:image" content="{ORIGEM}/assets/otim/{imagem}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
@@ -636,6 +644,61 @@ def pagina_faq(idioma: dict, partes: dict, faq: dict) -> str:
     return moldura(idioma, "faq", d["titulo_aba"], d["descricao"], corpo, ld, partes)
 
 
+def com_email(texto_escapado: str) -> str:
+    """O e-mail do texto (já escapado) vira link."""
+    return texto_escapado.replace(EMAIL, f'<a href="mailto:{EMAIL}">{EMAIL}</a>')
+
+
+def pagina_acervo(idioma: dict, partes: dict) -> str:
+    """A apresentação do acervo: o que é, as coleções, a língua do catálogo e como contribuir."""
+    a = idioma["acervo"]
+    colecoes = "\n          ".join(
+        f"<li><strong>{esc(nome)}</strong><span>{esc(resumo)}</span></li>" for _, nome, resumo in a["colecoes"])
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap">
+        <p class="eyebrow">{esc(a['sobrancelha'])}</p>
+        <h1>{esc(a['h1'])}</h1>
+        <p>{esc(a['linha'])}</p>
+        <div class="cta-row" style="margin-top:28px">
+          <a class="btn btn-red" href="{PAGINAS['acervo']['pt']}" hreflang="pt-BR" lang="pt-BR">{esc(a['botao'])}</a>
+        </div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(a['colecoes_titulo'])}</h2>
+        <ul class="i18n-principios">
+          {colecoes}
+        </ul>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(a['idioma_titulo'])}</h2>
+        <div class="i18n-caixa"><p>{esc(a['idioma_texto'])}</p></div>
+      </div>
+    </section>
+    <section class="i18n-bloco">
+      <div class="wrap">
+        <h2>{esc(a['contribua_titulo'])}</h2>
+        <p class="i18n-texto">{com_email(esc(a['contribua']))}</p>
+        <h2 style="margin-top:32px">{esc(a['uso_titulo'])}</h2>
+        <p class="i18n-texto">{com_email(esc(a['uso']))}</p>
+      </div>
+    </section>"""
+    caminho = PAGINAS["acervo"][idioma["codigo"]]
+    url = f"{ORIGEM}{caminho}"
+    ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "@id": f"{url}#pagina", "url": url,
+           "name": a["sobrancelha"], "description": a["descricao"], "inLanguage": idioma["codigo"],
+           "isPartOf": {"@id": f"{ORIGEM}/#site"}, "about": {"@id": f"{ORIGEM}/#organizacao"},
+           # A coleção é a mesma do português: o @id é o da página /acervo/ (Redação).
+           "mainEntity": {"@id": f"{ORIGEM}{PAGINAS['acervo']['pt']}#acervo"}},
+          {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": idioma["instituicao_curta"], "item": f"{ORIGEM}{PAGINAS['home'][idioma['codigo']]}"},
+              {"@type": "ListItem", "position": 2, "name": a["sobrancelha"], "item": url}]}]
+    return moldura(idioma, "acervo", a["titulo"], a["descricao"], corpo, ld, partes, imagem="og-acervo.jpg")
+
+
 def main() -> int:
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     partes = base.partes_da_home(HOME.read_text(encoding="utf-8"))
@@ -649,7 +712,8 @@ def main() -> int:
         for nome, gerar in (("home", pagina_home), ("doar", pagina_doar),
                             ("faq", lambda i, p: pagina_faq(i, p, faq)),
                             ("cursos", lambda i, p: pagina_cursos(i, p, cursos)),
-                            ("equipe", lambda i, p: pagina_equipe(i, p, equipe))):
+                            ("equipe", lambda i, p: pagina_equipe(i, p, equipe)),
+                            ("acervo", pagina_acervo)):
             destino = SITE / PAGINAS[nome][codigo].strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)
             # Sem o widget de chat: a interface dele é toda em português, e abrir um chat em

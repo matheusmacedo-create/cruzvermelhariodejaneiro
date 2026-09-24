@@ -57,6 +57,7 @@ PAGINAS = [
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
     ("/termos/", None, "yearly", "0.3", "Termos de uso (Redação)"),
     ("/privacidade/", None, "yearly", "0.3", "Política de privacidade (Redação)"),
+    ("/acervo/", None, "weekly", "0.7", "Acervo (Redação)"),
     ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
     ("/en/donate/", "en/donate/index.html", "monthly", "0.6", "Doação em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
@@ -67,6 +68,9 @@ PAGINAS = [
     ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
     ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
     ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
+    # As coleções e os itens do acervo ficam no sitemap.xml da Redação, que gera essas páginas.
+    ("/en/archive/", "en/archive/index.html", "monthly", "0.5", "Acervo em inglês"),
+    ("/es/acervo/", "es/acervo/index.html", "monthly", "0.5", "Acervo em espanhol"),
 ]
 
 # Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
@@ -91,6 +95,10 @@ ALTERNATIVAS = {
     "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
+    # Acervo: cluster completo; o português é gerado pela Redação e declara os mesmos hreflang.
+    "/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
 }
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
