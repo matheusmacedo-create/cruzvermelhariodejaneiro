@@ -1,0 +1,7 @@
+# Doação online fora do ar desde 25/09/2026 (ver /doe/.htaccess): 503 com o aviso.
+# Para voltar: apagar este arquivo (aqui e no servidor).
+ErrorDocument 503 /doacao-indisponivel.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(index\.html)?$ - [R=503,L]
+</IfModule>

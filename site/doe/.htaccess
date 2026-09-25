@@ -1,0 +1,13 @@
+# Doação online fora do ar desde 25/09/2026, a pedido do Matheus.
+# A página responde 503 (para a busca, saída temporária) com o aviso /doacao-indisponivel.html.
+# A API não cria cobrança nova, mas webhook.php e status.php seguem de pé para os pagamentos já
+# iniciados, e /doe/obrigado/ continua abrindo para quem acabou de doar.
+# O ErrorDocument fica nesta pasta, e não na raiz, para não trocar pelo aviso o 503 que a API da
+# matrícula devolve quando o banco cai.
+# Para voltar: apagar este arquivo, /en/donate/.htaccess e /es/donar/.htaccess (aqui e no servidor).
+ErrorDocument 503 /doacao-indisponivel.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(index\.html)?$ - [R=503,L]
+  RewriteRule ^api/doacoes\.php$ - [R=503,L]
+</IfModule>
