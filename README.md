@@ -852,6 +852,18 @@ porque `EMAIL_REMETENTE_DOACAO` estava vazio e caía no remetente da matrícula.
 
 ## Doação em `/doe/` (20/09/2026)
 
+> **Fora do ar desde 25/09/2026, a pedido do Matheus.** `/doe/`, `/en/donate/` e `/es/donar/`
+> respondem **503** com o aviso `site/doacao-indisponivel.html` (gerado por
+> `scripts/gerar_doacao_indisponivel.py`, com o cabeçalho e o rodapé da home). 503 diz à busca que a
+> saída é temporária. As regras ficam num `.htaccess` em cada uma das três pastas, e não na raiz: um
+> `ErrorDocument 503` na raiz trocaria pelo aviso o 503 que a API da matrícula devolve quando o
+> banco cai. A API não cria cobrança nova (`doacoes.php` responde 503), mas `webhook.php` e
+> `status.php` seguem de pé para os pagamentos já iniciados, e `/doe/obrigado/` continua abrindo.
+> Os links para `/doe/` (menu "Doe", FAQ, chat, campanha, bio, 404) continuam e levam ao aviso.
+> **Para voltar:** apagar `site/doe/.htaccess`, `site/en/donate/.htaccess` e
+> `site/es/donar/.htaccess`, aqui e no servidor (pela API do gerenciador de arquivos, como está em
+> `scripts/publicar_hostinger.sh`), e limpar o cache da Hostinger.
+
 A doação saiu do subdomínio `doar.cruzvermelhariodejaneiro.org` (app separado na Vercel) e passou a
 acontecer **dentro do domínio principal**, em `https://cruzvermelhariodejaneiro.org/doe/`, com o
 pagamento pela Unicopag. Motivo: endereço melhor para busca orgânica, um só padrão visual e o mesmo
