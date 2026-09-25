@@ -1117,6 +1117,76 @@ R2_ACCOUNT_ID=… R2_ACCESS_KEY_ID=… R2_SECRET_ACCESS_KEY=… scripts/copiar_s
 - A primeira cópia, de 24/09/2026, tem 145 arquivos (21,7 MB) e foi conferida arquivo por arquivo
   pelo manifesto, baixada de volta do R2.
 
+## Revisão de erros, informações e SEO depois das atualizações de 24/09 (25/09/2026)
+
+Pedido do Matheus: uma revisão de todo o site depois de um dia de muitas atualizações, com atenção
+ao SEO e às informações. Três frentes: as auditorias automáticas (`rastrear_site.py`,
+`conferir_links.py`, `validar_jsonld.py`, `auditar_seo.py`), a conferência de cada informação
+contra a fonte (catálogo da escola ao vivo, `/doe/api/info.php`, Wikipédia, o próprio código) e a
+auditoria das páginas que a Redação gera (`/noticias/`, `/privacidade/`, `/termos/`, `/acervo/`).
+
+### Site estático (publicado em 25/09, conferido ao vivo)
+
+| Estava assim | Ficou | Onde |
+|---|---|---|
+| FAQ (PT, EN, ES e chat) prometia escolher "única ou mensal" na doação | a doação mensal ainda não existe (`"mensal": false`): por enquanto é avulsa | `faq-home.json`, `faq-idiomas.json` |
+| "Últimas vagas" no Cuidador de Idosos e "próxima turma em breve" na Punção | a escola não tem turma aberta de Cuidador; agora escolaridade mínima e "datas na plataforma da escola" | `index.html` |
+| FAQ mandava ver datas e escolher turma na página de matrícula | a página não mostra datas nem turma: a secretaria confirma por e-mail | `faq-home.json` |
+| "10h às 17h" como horário dos cursos | é o horário de receber donativos; curso segue o horário da turma (Bombeiro Civil é à noite) | FAQ PT/EN/ES |
+| R$ 99 de inscrição sem explicar os R$ 100 da escola; EN/ES diziam "sem parcelas" | R$ 99 pelo site, R$ 100 direto na escola; a escola parcela com juros | FAQ, matrícula, `idiomas.json`, `llms.txt` |
+| EN/ES: filial "servindo desde 1908" | 1908 é a nacional; a pessoa jurídica da filial é de 2006 | `idiomas.json` |
+| LinkedIn e TikTok no rodapé apontando para a página inicial das redes | só Facebook e Instagram (como já dizia o briefing) | home, equipe e as 22 páginas geradas |
+| Menu por cima do seletor PT/EN/ES entre 1181 e ~1300 px e entre 1367 e ~1420 px | sanfona até 1320 px e menu compacto até 1440 px; folga mínima de 22 px com a Inter | CSS da home e da equipe |
+| `llms.txt` com resposta em 2 dias úteis | 3 dias úteis | `llms.txt` |
+| "tombado pelo IPHAN" | tombamento provisório federal, comunicado em 2021 | `equipe.html` |
+| Bio citava campanha de alimentos | não existe; só a Campanha do Agasalho | `gerar_bio.py` |
+| `/index.html` e `/en/index.html` respondiam 200 (cópias) | 301 para o endereço com barra | `.htaccess` |
+| Sitemap de notícias sem as 7 matérias de 24/09 | 20 matérias | `gerar_sitemaps.py` |
+
+Também: `og:site_name` e o `WebSite` do JSON-LD como "Cruz Vermelha Brasileira Rio de Janeiro"; o
+nó da organização das homes EN/ES com o mesmo nome e a mesma URL da home em português (o `@id` é
+o mesmo, então os dados não podem se contradizer); `availableLanguage` pt-BR, en, es; "8 hours" na
+página de cursos em inglês; ÚnicoPag com a grafia da empresa; aviso sem JavaScript certo em cada
+página do checkout; Lei Lucas sem "Stop the Bleed" (a escola tirou do curso).
+
+**Ordem dos geradores quando o `chat.js` muda** (a FAQ muda o `chat.js`): `gerar_faq_home` →
+`chat_widget` → geradores das páginas (`gerar_matricula_presencial`, `gerar_checkout`, `gerar_bio`,
+`gerar_doe`, `gerar_404`, `gerar_idiomas`, `gerar_verificar`) → `chat_widget` de novo →
+`aplicar_imagens_otimizadas`. Rodar o `chat_widget` só no fim deixa as páginas geradas com o hash
+velho do chat, e rodar antes do `gerar_404` apaga as tags do chat do 404.
+
+### Páginas da Redação (PR #201 da Redação, em produção)
+
+Títulos de 96 a 104 caracteres, JSON-LD incompleto, datas que zeravam a cada republicação, PNG de
+1,5 a 2 MB sem medidas, cabeçalho e rodapé diferentes da home, WhatsApp e Markdown cru com o
+endereço `/api/private-blob` à mostra: tudo corrigido no gerador. O detalhe está no PR e em
+`ARQUITETURA.md` §7.6 da Redação. **"Regerar as páginas das notícias"** (Configurações, só admin)
+refaz as matérias no ar com o molde novo; precisa de login de admin, então é um clique do Matheus
+depois do deploy.
+
+### Conteúdo das matérias (banco da Redação, aprovado pelo Matheus em 25/09)
+
+- Lei Lucas e SBV: WhatsApp da secretaria trocado pelo chat do site (o atendimento é por e-mail).
+- SBV e Primeiros Socorros Básico: link do SAMU atualizado (o antigo redirecionava); a notícia de
+  2024 do Ministério passou a pedir login e saiu das fontes.
+- "Cruz Vermelha RJ" pelo nome completo em quatro textos e no título do Setembro Amarelo; título da
+  ciclovia fora da caixa alta.
+- `/noticias/7-de-setembro/` fica (subtítulo que estava cortado, legenda que descreve o cartaz e
+  "cadastro encerrado" no lugar do botão sem link). As duas duplicatas do chamado saíram do ar, com
+  301 para ela (`REDIRECIONAMENTOS_DAS_NOTICIAS` na Redação; o `.htaccess` de `/noticias/` já foi
+  enviado e as pastas velhas foram apagadas do servidor).
+- A versão anterior de cada matéria ficou em `content_versions` (ponto de restauração) e cada
+  correção tem registro em `activity_log`. `updated_at` não mudou: a correção é pontual, e assim o
+  "Regerar" não pula essas matérias.
+
+### Ficou de fora, de propósito
+
+- **Telefone (21) 99992-2864 no rodapé e no JSON-LD**: é o WhatsApp da secretaria, e a FAQ diz que
+  o atendimento é por e-mail. Mantido por coerência de nome, endereço e telefone com o Google; se o
+  número não deve atender, sai do rodapé e do `telephone`.
+- **Trilha de auditoria**: as migrações ainda não estão em produção; a republicação só registra a
+  versão na trilha quando a RPC existir.
+
 ## Revisão de SEO e gargalos de alcance orgânico (23/09/2026)
 
 Pedido do Matheus: rever todo o SEO e o que trava o alcance orgânico. Rastreio ao vivo, auditoria

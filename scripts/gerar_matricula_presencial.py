@@ -60,11 +60,12 @@ TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Se não houver horário compat
 
 FAQ_PAGINA = [
     ("O que é a inscrição de R$ 99?",
-     "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. O valor do curso é pago "
-     "depois, na plataforma da escola, no valor à vista informado em cada curso."),
+     "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. Ela vale para a "
+     "matrícula feita por esta página; quem se inscreve direto na plataforma da escola paga lá a matrícula de R$ 100. "
+     "O valor do curso é pago depois, na plataforma da escola, no valor à vista informado em cada curso."),
     ("Quais são as formas de pagamento?",
-     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola, "
-     "no valor à vista informado em cada curso."),
+     "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola: "
+     "à vista, no valor informado em cada curso, ou parcelado, com juros."),
     ("Preciso criar conta ou escolher turma agora?",
      "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 3 dias úteis "
      "para confirmar turma e horário."),
@@ -215,7 +216,7 @@ def main() -> int:
         foto = ""
         if (PASTA_IMG / f"{img}-960.webp").exists():
             foto = (f'<img class="mr-foto" src="img/{img}-960.webp" srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" '
-                    f'sizes="(max-width: 920px) 100vw, 760px" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira do Rio de Janeiro" '
+                    f'sizes="(max-width: 920px) 100vw, 760px" alt="{esc(c["nome"])} na Cruz Vermelha Brasileira Rio de Janeiro" '
                     f'loading="{loading}"{prioridade} width="960" height="720">')
         return f'''
         <article class="mr-detalhe" id="curso-{slug}" data-curso="{slug}" data-nome="{esc(c["nome"])}">
@@ -444,7 +445,7 @@ def main() -> int:
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:title" content="{esc(TITULO)}">
   <meta property="og:description" content="{esc(DESCRICAO)}">
   <meta property="og:url" content="{URL_PAGINA}">

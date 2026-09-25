@@ -35,6 +35,7 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
+NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
 VOLUNTARIO = "https://form.spotform.com.br/voluntariocruzvermelharj"
 # Caminho de cada página, por idioma. O português é o x-default.
@@ -329,8 +330,10 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         <p class="i18n-nota">{esc(h['aviso_cursos'])}</p>
       </div>
     </section>"""
+    # O @id é o mesmo da home em português porque a entidade é a mesma: nome oficial e URL iguais aos de lá,
+    # e o nome traduzido entra como alternateName (dois nós com o mesmo @id e dados diferentes se contradizem).
     ld = [{"@context": "https://schema.org", "@type": "NGO", "@id": f"{ORIGEM}/#organizacao",
-           "name": idioma["instituicao"], "url": f"{ORIGEM}{PAGINAS['home'][idioma['codigo']]}",
+           "name": NOME_OFICIAL, "alternateName": idioma["instituicao"], "url": f"{ORIGEM}/",
            # inLanguage é de CreativeWork, não de Organization: no NGO o validador recusa.
            "parentOrganization": {"@type": "NGO", "name": idioma["nacional"]},
            "taxID": "08.560.973/0001-97", "email": EMAIL,
@@ -532,8 +535,12 @@ def pagina_cursos(idioma: dict, partes: dict, cursos: dict) -> str:
         linhas.append(f"            <tr><td>{esc(nome)}</td><td>{esc(horas)}</td>"
                       f"<td>{esc(escolaridade)}</td><td>{esc(valor)}</td></tr>")
     avisos = "\n          ".join(f"<p>{esc(x)}</p>" for x in c["aviso_paragrafos"])
+    # A carga horária do catálogo vem em português ("8 horas"): em inglês vira "8 hours"; em espanhol "horas" já serve.
+    def carga(slug: str) -> str:
+        texto = por_slug[slug]["carga_horaria"]
+        return re.sub(r"\bhoras?\b", "hours", texto) if idioma["codigo"] == "en" else texto
     fichas = "\n          ".join(
-        f'<article><h3>{esc(c["nomes"][s])} <small>{esc(por_slug[s]["carga_horaria"])}</small></h3>'
+        f'<article><h3>{esc(c["nomes"][s])} <small>{esc(carga(s))}</small></h3>'
         f"<p>{esc(x)}</p></article>" for s, x in c["detalhes"].items())
     passos = "\n          ".join(
         f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in c["como"])
@@ -667,6 +674,7 @@ def pagina_acervo(idioma: dict, partes: dict) -> str:
     <section class="i18n-bloco">
       <div class="wrap">
         <h2>{esc(a['colecoes_titulo'])}</h2>
+        <p class="i18n-texto">{esc(a['colecoes_nota'])}</p>
         <ul class="i18n-principios">
           {colecoes}
         </ul>

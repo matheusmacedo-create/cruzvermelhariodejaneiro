@@ -33,6 +33,7 @@ DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos 
              "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
 URL_DOACAO = f"{ORIGEM}/doe/"
+URL_AGASALHO = f"{ORIGEM}/campanha-agasalho.html"
 
 # Perguntas que as pessoas fazem ao Google sobre a filial: cada resposta cita os caminhos oficiais e liga
 # o restante do ecossistema (matrícula, doação, chat). Texto puro no FAQPage; links só no HTML.
@@ -52,9 +53,9 @@ FAQ = [
      "Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
      "3 dias úteis.", []),
     ("Como doar para a Cruz Vermelha do Rio de Janeiro?",
-     "Pela página de doação do site, com PIX ou cartão, e nas campanhas de arrecadação de roupas e alimentos da filial. "
-     "Toda ajuda vai para as ações humanitárias no estado do Rio de Janeiro.",
-     [("página de doação", "URL_DOACAO")]),
+     "Pela página de doação do site, com PIX ou cartão. Roupas de frio, cobertores e calçados são recebidos na sede, "
+     "pela Campanha do Agasalho. Toda ajuda vai para as ações humanitárias da filial no estado do Rio de Janeiro.",
+     [("página de doação", "URL_DOACAO"), ("Campanha do Agasalho", "URL_AGASALHO")]),
     ("Onde fica a Cruz Vermelha no Rio de Janeiro?",
      "Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e "
      "a formação de voluntários.", []),
@@ -69,10 +70,10 @@ BLOCOS = [
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
      "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
-    {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira do Rio de Janeiro",
+    {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira Rio de Janeiro",
      "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
      "link": "https://form.spotform.com.br/voluntariocruzvermelharj", "id": "voluntario"},
-    {"tipo": "titulo", "texto": "WhatsApp do voluntário"},
+    {"tipo": "titulo", "texto": "WhatsApp do voluntariado"},
     {"tipo": "botao", "estilo": "claro whatsapp", "icone": "fa-brands fa-whatsapp", "titulo": "Falar com o voluntariado no WhatsApp",
      "link": "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20",
      "id": "whatsapp-voluntariado"},
@@ -211,7 +212,7 @@ def main() -> int:
     def faq_html(pergunta: str, resposta: str, links: list) -> str:
         texto = esc(resposta)
         for rotulo, alvo in links:
-            url = {"URL_MATRICULA": URL_MATRICULA, "URL_DOACAO": URL_DOACAO}[alvo]
+            url = {"URL_MATRICULA": URL_MATRICULA, "URL_DOACAO": URL_DOACAO, "URL_AGASALHO": URL_AGASALHO}[alvo]
             texto = texto.replace(esc(rotulo), f'<a href="{url}">{esc(rotulo)}</a>', 1)
         return f"<details><summary>{esc(pergunta)}</summary><p>{texto}</p></details>"
     faq = "".join(faq_html(p, r, l) for p, r, l in FAQ)
@@ -255,7 +256,7 @@ def main() -> int:
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:title" content="{esc(TITULO)}">
   <meta property="og:description" content="{esc(DESCRICAO)}">
   <meta property="og:url" content="{URL_PAGINA}">

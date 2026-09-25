@@ -32,7 +32,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 
 ## Cursos presenciais
 
-Todos acontecem na sede, no Centro do Rio, com certificado da filial. Inscrição de R$ 99.
+Todos acontecem na sede, no Centro do Rio, com certificado da filial. Inscrição de R$ 99 pelo site
+(quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100). Os valores abaixo
+são à vista; a plataforma da escola também parcela, com juros. Datas e horários variam por turma.
 
 - Primeiros Socorros Básico: 8 horas, Ensino Fundamental, R$ 180. Inclui a Lei Lucas.
 - Primeiros Socorros Lei Lucas (ambientes com crianças): 8 horas, Ensino Fundamental, R$ 150.
@@ -53,7 +55,7 @@ Não há cursos gratuitos, cursos técnicos nem curso de enfermagem no catálogo
 - **O certificado é reconhecido pelo MEC?** Não, e nenhum curso livre é: o MEC regula a educação
   formal. O certificado é emitido pela filial, com carga horária e conteúdo, e vale em todo o país
   — certificado de curso livre não tem validade por região.
-- **Custo total.** Inscrição de R$ 99 mais o valor do curso, sem mensalidade, sem taxa de
+- **Custo total.** Inscrição de R$ 99 pelo site mais o valor do curso, sem mensalidade, sem taxa de
   certificado e sem material à parte. No Bombeiro Civil, a homologação profissional é à parte.
 - **Curso gratuito de cuidador de idosos?** Não na filial; o curso é pago. Programas gratuitos
   costumam vir de prefeituras, secretarias e fundos sociais, por edital.
@@ -61,7 +63,7 @@ Não há cursos gratuitos, cursos técnicos nem curso de enfermagem no catálogo
 
 ## Contato
 
-- Atendimento por e-mail: contato@cruzvermelhariodejaneiro.org, resposta em até 2 dias úteis.
+- Atendimento por e-mail: contato@cruzvermelhariodejaneiro.org, resposta em até 3 dias úteis.
   Há um chat no site que encaminha a mensagem para esse endereço.
 - Voluntariado: cadastro em https://form.spotform.com.br/voluntariocruzvermelharj e WhatsApp
   exclusivo dessa equipe, (21) 97036-0264.

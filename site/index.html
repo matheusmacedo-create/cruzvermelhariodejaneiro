@@ -8,7 +8,7 @@
   <title>Cruz Vermelha Brasileira Rio de Janeiro | Site oficial</title>
   <meta name="description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e como doar. Sede no Centro do Rio.">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Cruz Vermelha Brasileira - Rio de Janeiro">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/">
   <meta property="og:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Site oficial">
@@ -292,11 +292,13 @@
     @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 8px 0; gap: 6px 12px; } }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
-    @media (max-width: 1366px) {
+    /* Menu compacto até 1440 px e sanfona até 1320 px: o menu é centralizado com position:absolute e não vê o
+       seletor de idioma à direita; entre 1181 e 1300 px e entre 1367 e 1420 px ele encavalava no PT/EN/ES. */
+    @media (max-width: 1440px) {
       .nav-links { gap: 16px; }
       .nav-links a { font-size: .86rem; }
     }
-    @media (max-width: 1180px) {
+    @media (max-width: 1320px) {
       .header-container { flex-wrap: nowrap; justify-content: space-between; gap: 10px; padding: 12px 16px; }
       .nav-toggle { display: inline-flex; }
       .header-collapse {
@@ -1068,7 +1070,7 @@
   "logo": "https://cruzvermelhariodejaneiro.org/assets/logo-cvb-rj.png",
   "image": "https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg",
   "email": "contato@cruzvermelhariodejaneiro.org",
-  "contactPoint": [{"@type": "ContactPoint", "contactType": "customer service", "email": "contato@cruzvermelhariodejaneiro.org", "availableLanguage": "pt-BR"}],
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "customer service", "email": "contato@cruzvermelhariodejaneiro.org", "availableLanguage": ["pt-BR", "en", "es"]}],
   "telephone": "+55-21-99992-2864",
   "taxID": "08.560.973/0001-97",
   "address": {
@@ -1106,7 +1108,7 @@
     "@type": "WebSite",
     "@id": "https://cruzvermelhariodejaneiro.org/#site",
     "url": "https://cruzvermelhariodejaneiro.org/",
-    "name": "Cruz Vermelha Brasileira - Rio de Janeiro",
+    "name": "Cruz Vermelha Brasileira Rio de Janeiro",
     "inLanguage": "pt-BR",
     "publisher": {
       "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
@@ -1147,7 +1149,7 @@
       "name": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Em todos os cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro a inscrição custa R$ 99, à vista, por PIX ou cartão, e reserva a vaga. O valor do curso é pago depois, na plataforma da escola, à vista: R$ 150 em Suporte Básico de Vida, Punção Venosa e Primeiros Socorros Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte, valor a consultar. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada; o prazo depende de PIX ou cartão. Confira tudo na página de matrícula."
+        "text": "Pelo site, a inscrição em qualquer curso presencial da Cruz Vermelha Brasileira Rio de Janeiro custa R$ 99, por PIX ou cartão, e reserva a vaga; quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola: à vista, R$ 150 em Suporte Básico de Vida, Punção Venosa e Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte. Há parcelamento, com juros. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada. Confira na página de matrícula."
       }
     },
     {
@@ -1179,7 +1181,7 @@
       "name": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária e as datas de cada um na página de matrícula."
+        "text": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na página de matrícula; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição."
       }
     },
     {
@@ -1187,7 +1189,7 @@
       "name": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Escolha a sua turma na página de matrícula."
+        "text": "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail."
       }
     },
     {
@@ -1211,7 +1213,7 @@
       "name": "O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e Stop the Bleed. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola."
+        "text": "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola."
       }
     },
     {
@@ -1291,7 +1293,7 @@
       "name": "Como doar para a Cruz Vermelha Brasileira Rio de Janeiro? A doação é segura?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Você doa pela página de doação da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor, define se a doação é única ou mensal e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a Campanha do Agasalho."
+        "text": "Você doa pela página de doação da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. Por enquanto a doação é avulsa; a opção mensal está prevista na mesma página. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a Campanha do Agasalho."
       }
     },
     {
@@ -1315,7 +1317,7 @@
       "name": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais, a formação de voluntários e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
+        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
       }
     },
     {
@@ -1339,7 +1341,7 @@
   </script>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-copy" viewBox="0 0 512 512"><path d="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V336c0 1.5 0 3.1 .1 4.6L67.6 283c-16-15.2-41.3-14.6-56.6 1.4s-14.6 41.3 1.4 56.6L124.8 448c43.1 41.1 100.4 64 160 64H304c97.2 0 176-78.8 176-176V128c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V32z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-linkedin-in" viewBox="0 0 448 512"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></symbol><symbol id="i-tiktok" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-copy" viewBox="0 0 512 512"><path d="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V336c0 1.5 0 3.1 .1 4.6L67.6 283c-16-15.2-41.3-14.6-56.6 1.4s-14.6 41.3 1.4 56.6L124.8 448c43.1 41.1 100.4 64 160 64H304c97.2 0 176-78.8 176-176V128c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V32z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
   <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
     <div class="wrap">
       <span>Cursos presenciais da Cruz Vermelha: inscrição de R$ 99 e vaga garantida.</span>
@@ -1477,7 +1479,7 @@
       <div class="wrap">
         <p class="eyebrow">Fique atualizado</p>
         <h2>Campanhas ativas</h2>
-        <p class="lead">Ações em andamento agora pela Cruz Vermelha Rio de Janeiro.</p>
+        <p class="lead">Ações em andamento agora pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
         <div class="campaigns-grid">
           <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
             <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" loading="lazy" decoding="async"></div>
@@ -1541,7 +1543,7 @@
                 <ul class="check-list">
                   <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
                   <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
-                  <li>Próxima turma em breve — vagas limitadas.</li>
+                  <li>Datas das próximas turmas na plataforma da escola.</li>
                 </ul>
                 <div class="cta-row">
                   <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Faça sua Inscrição</a>
@@ -1559,8 +1561,8 @@
                 <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
                 <ul class="check-list">
                   <li>Carga horária de 160 horas, presenciais.</li>
-                  <li>Últimas vagas disponíveis para a próxima turma.</li>
-                  <li>Certificação reconhecida pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                  <li>Escolaridade mínima: Ensino Fundamental.</li>
+                  <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
                 </ul>
                 <div class="cta-row">
                   <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Faça sua Inscrição</a>
@@ -1590,7 +1592,7 @@
             <div class="mini-course-thumb"><img alt="Curso Lei Lucas - Ambientes com Crianças" src="assets/otim/curso-lei-lucas-768.webp" srcset="assets/otim/curso-lei-lucas-480.webp 480w, assets/otim/curso-lei-lucas-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
             <div class="mini-course-body">
               <h4>Lei Lucas — Ambientes com Crianças</h4>
-              <p>Capacitação essencial para escolas e creches, incluindo Stop the Bleed. 8 horas.</p>
+              <p>Capacitação essencial para escolas e creches: RCP, engasgos, quedas e hemorragias. 8 horas.</p>
               <span class="btn btn-outline">Saiba Mais</span>
             </div>
           </a>
@@ -1796,7 +1798,7 @@
           </details>
           <details class="faq-item">
             <summary>Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">Em todos os cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro a inscrição custa R$ 99, à vista, por PIX ou cartão, e reserva a vaga. O valor do curso é pago depois, na plataforma da escola, à vista: R$ 150 em Suporte Básico de Vida, Punção Venosa e Primeiros Socorros Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte, valor a consultar. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada; o prazo depende de PIX ou cartão. Confira tudo na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+            <div class="faq-answer">Pelo site, a inscrição em qualquer curso presencial da Cruz Vermelha Brasileira Rio de Janeiro custa R$ 99, por PIX ou cartão, e reserva a vaga; quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola: à vista, R$ 150 em Suporte Básico de Vida, Punção Venosa e Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte. Há parcelamento, com juros. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada. Confira na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
           </details>
           <details class="faq-item">
             <summary>A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?</summary>
@@ -1812,11 +1814,11 @@
           </details>
           <details class="faq-item">
             <summary>Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária e as datas de cada um na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+            <div class="faq-answer">As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição.</div>
           </details>
           <details class="faq-item">
             <summary>Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?</summary>
-            <div class="faq-answer">Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Escolha a sua turma na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+            <div class="faq-answer">Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; a secretaria confirma turma e horário por e-mail.</div>
           </details>
           <details class="faq-item">
             <summary>O certificado dos cursos é reconhecido pelo MEC?</summary>
@@ -1829,7 +1831,7 @@
           </details>
           <details class="faq-item">
             <summary>O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?</summary>
-            <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e Stop the Bleed. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
+            <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
           </details>
           <details class="faq-item">
             <summary>O que faz um bombeiro civil e quais são os requisitos para fazer o curso?</summary>
@@ -1871,7 +1873,7 @@
           </details>
           <details class="faq-item">
             <summary>Como doar para a Cruz Vermelha Brasileira Rio de Janeiro? A doação é segura?</summary>
-            <div class="faq-answer">Você doa pela <a href="/doe/">página de doação</a> da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor, define se a doação é única ou mensal e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>.</div>
+            <div class="faq-answer">Você doa pela <a href="/doe/">página de doação</a> da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. Por enquanto a doação é avulsa; a opção mensal está prevista na mesma página. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>.</div>
           </details>
           <details class="faq-item">
             <summary>Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?</summary>
@@ -1883,7 +1885,7 @@
           </details>
           <details class="faq-item">
             <summary>Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?</summary>
-            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a>, a formação de voluntários e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
+            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a> e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
           </details>
           <details class="faq-item">
             <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
@@ -1977,7 +1979,7 @@
             </a>
             <a class="contact-canal" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">
               <i class="fa-brands fa-facebook-f" aria-hidden="true"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i>
-              <span><b>Facebook</b>Cruz Vermelha Brasileira - RJ</span>
+              <span><b>Facebook</b>Cruz Vermelha Brasileira Rio de Janeiro</span>
               <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
             </a>
           </div>
@@ -2035,7 +2037,7 @@
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
-        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça Cruz Vermelha, 10</p>
+        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</p>
         <p><i class="fa-solid fa-phone"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i> (21) 99992-2864</p>
         <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
       </div>
@@ -2043,15 +2045,13 @@
         <h4>Siga-nos</h4>
         <div class="footer-social">
           <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
-          <a href="https://www.linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"><svg class="ico ico-linkedin-in" aria-hidden="true" focusable="false"><use href="#i-linkedin-in"/></svg></i></a>
           <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></a>
-          <a href="https://www.tiktok.com" target="_blank" rel="noopener" aria-label="TikTok"><i class="fa-brands fa-tiktok"><svg class="ico ico-tiktok" aria-hidden="true" focusable="false"><use href="#i-tiktok"/></svg></i></a>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="container footer-inner">
-        <span>&copy; 2026 Cruz Vermelha Brasileira do Rio de Janeiro</span>
+        <span>&copy; 2026 Cruz Vermelha Brasileira Rio de Janeiro</span>
         <span class="sep">|</span>
         <a href="/noticias/">Notícias</a>
         <span class="sep">|</span>
@@ -2139,6 +2139,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=69d965c755" defer></script>
+  <script src="/chat/chat.js?v=a599a03954" defer></script>
 </body>
 </html>

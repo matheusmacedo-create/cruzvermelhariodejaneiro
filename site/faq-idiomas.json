@@ -24,7 +24,7 @@
           },
           {
             "pergunta": "Where is the branch, and when is it open?",
-            "resposta": "The headquarters is the Red Cross Palace, at Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, postcode 20230-130. That is where the in-person courses, the volunteer training and the Winter Clothing Drive collection happen, Monday to Friday, 10am to 5pm. The area is served by metro, train, light rail and buses. Before travelling, confirm what you need by writing to contato@cruzvermelhariodejaneiro.org; the team replies within three business days."
+            "resposta": "The headquarters is the Red Cross Palace, at Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, postcode 20230-130. That is where the in-person courses and the volunteer training happen, on the days and times of each class. Donations for the Winter Clothing Drive are received Monday to Friday, 10am to 5pm. The area is served by metro, train, light rail and buses. Before travelling, confirm what you need by writing to contato@cruzvermelhariodejaneiro.org; the team replies within three business days."
           }
         ]
       },
@@ -63,7 +63,7 @@
           },
           {
             "pergunta": "What is the Lucas Law, and who needs that course?",
-            "resposta": "The Lucas Law (Federal Law 13,722/2018) requires every basic-education school in Brazil, state and private, and every children's play facility, to train teachers and staff in basic first aid. The branch runs the course built for it: First Aid under the Lucas Law — Settings with Children, eight in-person hours covering assessment of a child, CPR, choking, falls, trauma, seizures, burns and bleeding, including Stop the Bleed. If you teach or work with children in Brazil, this is the course the law means.",
+            "resposta": "The Lucas Law (Federal Law 13,722/2018) requires every basic-education school in Brazil, state and private, and every children's play facility, to train teachers and staff in basic first aid. The branch runs the course built for it: First Aid under the Lucas Law — Settings with Children, eight in-person hours covering assessment of a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention and up-to-date paediatric first-aid protocols. If you teach or work with children in Brazil, this is the course the law means.",
             "links": [
               {
                 "texto": "First Aid under the Lucas Law — Settings with Children",
@@ -82,7 +82,7 @@
         "perguntas": [
           {
             "pergunta": "How do I donate, and is the donation safe?",
-            "resposta": "Through the donation page: you choose the amount, decide whether it is a one-off or a monthly gift, and pay by card or PIX in the institution's own payment environment. The donation stays with the Rio de Janeiro State branch and funds volunteer training, first-aid training, community work, communication and the running costs of the branch. The CNPJ, the address and the e-mail are published on this site so you can check them before giving.",
+            "resposta": "Through the donation page: you choose the amount and pay by card or PIX in the institution's own payment environment. For now each gift is a one-off; a monthly option is planned for the same page. The donation stays with the Rio de Janeiro State branch and funds volunteer training, first-aid training, community work, communication and the running costs of the branch. The CNPJ, the address and the e-mail are published on this site so you can check them before giving.",
             "links": [
               {
                 "texto": "donation page",
@@ -181,7 +181,7 @@
           },
           {
             "pergunta": "¿Dónde está la filial y cuál es el horario?",
-            "resposta": "La sede es el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, Centro, Río de Janeiro, código postal 20230-130. Allí ocurren los cursos presenciales, la formación de voluntarios y la recepción de donaciones de la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas. La zona tiene metro, tren, tranvía y autobuses. Antes de ir, confirme lo que necesita escribiendo a contato@cruzvermelhariodejaneiro.org; el equipo responde en hasta tres días hábiles."
+            "resposta": "La sede es el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, Centro, Río de Janeiro, código postal 20230-130. Allí ocurren los cursos presenciales y la formación de voluntarios, en los días y horarios de cada grupo. Las donaciones de la Campaña de Ropa de Abrigo se reciben de lunes a viernes, de 10 a 17 horas. La zona tiene metro, tren, tranvía y autobuses. Antes de ir, confirme lo que necesita escribiendo a contato@cruzvermelhariodejaneiro.org; el equipo responde en hasta tres días hábiles."
           }
         ]
       },
@@ -220,7 +220,7 @@
           },
           {
             "pergunta": "¿Qué es la Ley Lucas y quién necesita ese curso?",
-            "resposta": "La Ley Lucas (Ley Federal 13.722/2018) obliga a toda escuela de educación básica de Brasil, pública o privada, y a todo espacio de recreación infantil, a capacitar a docentes y personal en nociones básicas de primeros auxilios. La filial dicta el curso hecho para eso: Primeros Auxilios Ley Lucas — Entornos con Niños, ocho horas presenciales sobre evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, incluido Stop the Bleed. Si enseña o trabaja con niños en Brasil, es el curso que la ley exige.",
+            "resposta": "La Ley Lucas (Ley Federal 13.722/2018) obliga a toda escuela de educación básica de Brasil, pública o privada, y a todo espacio de recreación infantil, a capacitar a docentes y personal en nociones básicas de primeros auxilios. La filial dicta el curso hecho para eso: Primeros Auxilios Ley Lucas — Entornos con Niños, ocho horas presenciales sobre evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, además de prevención y protocolos actualizados de primeros auxilios infantiles. Si enseña o trabaja con niños en Brasil, es el curso que la ley exige.",
             "links": [
               {
                 "texto": "Primeros Auxilios Ley Lucas — Entornos con Niños",
@@ -239,7 +239,7 @@
         "perguntas": [
           {
             "pergunta": "¿Cómo dono y la donación es segura?",
-            "resposta": "Por la página de donación: usted elige el importe, define si la donación es única o mensual y concluye el pago con tarjeta o PIX en el entorno de pago de la propia institución. La donación queda en la filial del Estado de Río de Janeiro y sostiene la formación de voluntarios, la capacitación en primeros auxilios, la acción comunitaria, la comunicación y el funcionamiento de la filial. El CNPJ, la dirección y el correo están publicados en este sitio para que usted los verifique antes de donar.",
+            "resposta": "Por la página de donación: usted elige el importe y concluye el pago con tarjeta o PIX en el entorno de pago de la propia institución. Por ahora cada donación es única; la opción mensual está prevista en la misma página. La donación queda en la filial del Estado de Río de Janeiro y sostiene la formación de voluntarios, la capacitación en primeros auxilios, la acción comunitaria, la comunicación y el funcionamiento de la filial. El CNPJ, la dirección y el correo están publicados en este sitio para que usted los verifique antes de donar.",
             "links": [
               {
                 "texto": "página de donación",
