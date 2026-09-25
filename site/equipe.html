@@ -254,11 +254,13 @@
     .footer-col p a:hover { color: var(--red); }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
-    @media (max-width: 1366px) {
+    /* Menu compacto até 1440 px e sanfona até 1320 px: o menu é centralizado com position:absolute e não vê o
+       seletor de idioma à direita; entre 1181 e 1300 px e entre 1367 e 1420 px ele encavalava no PT/EN/ES. */
+    @media (max-width: 1440px) {
       .nav-links { gap: 16px; }
       .nav-links a { font-size: .86rem; }
     }
-    @media (max-width: 1180px) {
+    @media (max-width: 1320px) {
       .header-container { flex-wrap: nowrap; justify-content: space-between; gap: 10px; padding: 12px 16px; }
       .nav-toggle { display: inline-flex; }
       .header-collapse {
