@@ -636,6 +636,56 @@ interdição de ciclovia. Isso muda estrutura de URL, então é decisão de agor
 Escrevi os textos, não são tradução automática, mas **pedem revisão humana** antes de virarem a voz
 oficial da filial em outro idioma — em especial os nomes próprios e o enquadramento institucional.
 
+## Inglês: notícias e as páginas que faltavam (26/09/2026)
+
+Pedido do Daniel (Comunicação): levar o site institucional e as notícias para o inglês. A escola
+ficou de fora, porque os cursos são dados em português.
+
+| Endereço | O que é | Fonte do texto |
+|---|---|---|
+| `/en/news/` | índice das notícias em inglês, em dois grupos (filial e cidade; guias de curso) | `traducoes/en/paginas.json` |
+| `/en/news/<slug>/` | as 19 matérias da Redação no ar em 26/09, traduzidas | `traducoes/en/noticias/<slug>.md` |
+| `/en/winter-clothing-drive/` | Campanha do Agasalho | `traducoes/en/paginas.json` |
+| `/en/privacy/` · `/en/terms/` | tradução de cortesia; vale o português, e a página diz isso | `traducoes/en/paginas/*.md` |
+| `/en/404.html` | página de erro de tudo que está sob `/en/` (`site/en/.htaccess`) | `traducoes/en/paginas.json` |
+
+`scripts/gerar_ingles.py` monta essas páginas com a moldura de `gerar_idiomas.py` (mesmo cabeçalho,
+rodapé e CSS). Rodar **depois** de `gerar_idiomas.py`. Ele recusa campo acima do limite da Redação
+(título 120, linha fina 200, endereço 80), marcador ⟦ ⟧ esquecido e link interno para página em
+inglês que não existe, e grava `traducoes/en/mapa-hreflang.json` (original → tradução), que
+`gerar_sitemaps.py` lê.
+
+- **Cada .md é uma matéria pronta para a Redação**: o cabeçalho traz os campos (título, linha fina,
+  capa, legenda, crédito) e o nome do arquivo é o endereço. Se um dia a Redação tiver versão em
+  inglês, é importar daqui.
+- **A matéria em inglês aponta para a original**: hreflang pt-BR/en com x-default no português, a
+  frase "First published in Portuguese on …" com o link e `translationOfWork` no JSON-LD. As
+  imagens são as da original (`/noticias/<slug-pt>/…`), sem cópia.
+- **Guias de curso**: dizem que o curso é em português, trocam o botão de matrícula pela página
+  `/en/courses/` e pela página do curso na escola, e o WhatsApp por e-mail.
+- **Menu em inglês**: "News" entrou no lugar de "Our principles" (seção da home, que também está
+  no rodapé). Com um item a mais, o menu quebrava linha entre 1321 e 1440 px; assim ele fica mais
+  curto que antes e deixou de quebrar a partir de 1441 px. Rodapé: "News", e Privacidade e Termos
+  apontam para as versões em inglês. O espanhol não muda (`gerar_idiomas.py` só age com as chaves
+  novas do `idiomas.json`, que o espanhol não tem).
+- **Revisão do inglês existente** (`idiomas.json`, `faq-idiomas.json`): grafia britânica uniforme
+  (organised, licence), "Five fronts" → "Five areas of work", "Ways in / Four doors" → "Get
+  involved / Four ways to take part", tradução do nome da escola na primeira menção, a quadra do
+  Palácio descrita pelas quatro ruas, e a porta "Donate" da home, que dizia "From outside Brazil,
+  card only" — o formulário pede CPF nos dois meios, como a página de doação já explica.
+  "Recognised as being of municipal public utility" virou "officially recognised as a
+  public-interest organisation": em inglês, *public utility* é empresa de água e luz.
+- **Nomes de curso só no inglês** (aprovados pelo Daniel em 26/09): Punção Venosa virou
+  "Peripheral IV Cannulation" (em inglês, *venipuncture* é sobretudo a coleta de sangue; o curso
+  ensina o cateter que fica na veia) e "curso livre" virou "non-accredited course" (antes "open
+  course", que sugere curso aberto ou gratuito). O português não muda: são chaves do bloco `en`
+  de `idiomas.json` e `faq-idiomas.json`, que só `gerar_idiomas.py` lê.
+
+**Falta, na Redação**: as matérias em português, `/noticias/`, `/privacidade/` e `/termos/` ainda
+não declaram hreflang para o inglês. `esqueleto.ts` já aceita `alternativas`; o par de cada matéria
+está em `traducoes/en/mapa-hreflang.json`. Até lá, o sitemap declara só o lado em inglês. Notícia
+nova entra em português primeiro; a tradução segue este mesmo caminho (um .md, gerar, publicar).
+
 ## O que a Unicopag valida no documento (21/09/2026)
 
 Sondado direto na API de produção em 21/09, porque a resposta muda quem consegue doar e quem

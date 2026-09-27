@@ -19,7 +19,8 @@
         "doar": "Donate",
         "contato": "Contact",
         "portugues": "Site em português",
-        "plataforma": "Courses platform"
+        "plataforma": "Courses platform",
+        "noticias": "News"
       },
       "home": {
         "titulo": "Brazilian Red Cross — Rio de Janeiro Branch",
@@ -32,14 +33,14 @@
             "titulo": "Who we are",
             "paragrafos": [
               "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. The Movement brings together the International Committee of the Red Cross, the International Federation of Red Cross and Red Crescent Societies and the National Society of each country, all bound by the same seven fundamental principles.",
-              "We are a non-profit organisation, registered under Brazilian tax ID (CNPJ) 08.560.973/0001-97, and recognised as being of municipal public utility by Municipal Law 5,153/2010 and of state public utility by State Law 9,984/2023. The work is led by an executive board and thematic coordination teams, and carried out largely by volunteers trained by the branch itself."
+              "We are a non-profit organisation, registered under Brazilian tax ID (CNPJ) 08.560.973/0001-97, and officially recognised as a public-interest organisation by Municipal Law 5,153/2010 and State Law 9,984/2023. The work is led by an executive board and thematic coordination teams, and carried out largely by volunteers trained by the branch itself."
             ]
           },
           {
             "titulo": "What we do",
             "paragrafos": [
               "We train volunteers, teach in-person first-aid and vocational courses at our headquarters, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
-              "Our training arm is the Escola de Educação e Saúde CVB-RJ, which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Venipuncture, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+              "Our training arm is the Escola de Educação e Saúde CVB-RJ (School of Education and Health), which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
             ]
           },
           {
@@ -56,7 +57,7 @@
           "This branch is the Rio de Janeiro State arm of that National Society. The emblem is not a brand: it is a protective sign defined in international humanitarian law, and its use is restricted. That is also why the seven fundamental principles below are not a statement of values but the conditions under which the Movement is allowed to work — neutrality and impartiality are what let a Red Cross team reach people that no one else can reach."
         ],
         "programas_titulo": "What the branch runs",
-        "programas_linha": "Five fronts, all carried out from the headquarters in central Rio de Janeiro and across the state.",
+        "programas_linha": "Five areas of work, all carried out from the headquarters in central Rio de Janeiro and across the state.",
         "programas": [
           [
             "Volunteer training",
@@ -79,8 +80,8 @@
             "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team. It is one of the main ways partner organisations support the branch."
           ]
         ],
-        "caminhos_titulo": "Ways in",
-        "caminhos_linha": "Four doors, depending on what brings you here.",
+        "caminhos_titulo": "Get involved",
+        "caminhos_linha": "Four ways to take part, depending on what brings you here.",
         "caminhos": [
           [
             "Take a course",
@@ -96,7 +97,7 @@
           ],
           [
             "Donate",
-            "Card or PIX. From outside Brazil, card only — the donation page explains why.",
+            "Card or PIX, with a Brazilian CPF. From outside Brazil, write to us — the donation page explains how.",
             "Go to the donation page",
             "doar"
           ],
@@ -168,9 +169,9 @@
           "primeiros-socorros-basico": "Basic First Aid",
           "primeiros-socorros-lei-lucas": "First Aid under the Lucas Law — Settings with Children",
           "suporte-basico-de-vida": "Basic Life Support (BLS)",
-          "puncao-venosa": "Venipuncture",
+          "puncao-venosa": "Peripheral IV Cannulation",
           "bombeiro-civil": "Civil Firefighter",
-          "cuidador-de-idosos": "Carer for Older People (open course)",
+          "cuidador-de-idosos": "Carer for Older People (non-accredited course)",
           "micropigmentacao-labial": "Lip Micropigmentation"
         },
         "escolaridade": {
@@ -179,7 +180,7 @@
         },
         "tabela_nota": "Fees are in Brazilian reais and are the prices for payment in full; the school platform also offers instalments, with interest, so the instalment total is higher. On top of the course fee there is a one-off enrolment charge of R$ 99, paid in full on this site, which holds your place. For Civil Firefighter, professional accreditation at the end of the course is paid separately.",
         "detalhe_titulo": "What each course covers",
-        "detalhe_nota": "Every course ends with a certificate issued by the branch. It is not accredited by Brazil's Ministry of Education — no open course is — and it does not replace a regulated professional licence.",
+        "detalhe_nota": "Every course ends with a certificate issued by the branch. It is not accredited by Brazil's Ministry of Education — no course of this kind is — and it does not replace a regulated professional licence.",
         "detalhes": {
           "primeiros-socorros-basico": "Recognising an emergency and giving safe initial care until the ambulance arrives: assessing the casualty, CPR, using an automated external defibrillator, bleeding control, and the first response to trauma, choking and fainting. It prepares you to act at home, at school, at work, in sport and in the community.",
           "primeiros-socorros-lei-lucas": "The same ground, worked through for children: assessing a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention. Built for the people the Lucas Law covers — teachers and staff in schools, nurseries, social projects and sports activities — and for parents who want the same preparation.",
@@ -225,10 +226,10 @@
         "como_titulo": "How the branch works",
         "como_paragrafos": [
           "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. The Movement brings together the International Committee of the Red Cross, the International Federation of Red Cross and Red Crescent Societies and the National Society of each country, all bound by the same seven fundamental principles.",
-          "The branch is a non-profit body, CNPJ 08.560.973/0001-97, recognised as being of municipal public utility by Law 5,153/2010 and of state public utility by Law 9,984/2023. The work is led by an executive board and by thematic coordination teams, and carried out largely by volunteers the branch trains itself. Its teaching arm is the Escola de Educação e Saúde CVB-RJ, which runs the in-person courses at the headquarters."
+          "The branch is a non-profit body, CNPJ 08.560.973/0001-97, officially recognised as a public-interest organisation by Municipal Law 5,153/2010 and State Law 9,984/2023. The work is led by an executive board and by thematic coordination teams, and carried out largely by volunteers trained by the branch itself. Its teaching arm is the Escola de Educação e Saúde CVB-RJ (School of Education and Health), which runs the in-person courses at the headquarters."
         ],
         "areas_titulo": "Coordination teams",
-        "areas_linha": "Eleven areas, each with the people who answer for it.",
+        "areas_linha": "Eleven areas, each with the people responsible for it.",
         "areas": {
           "Jurídico": [
             "Legal",
@@ -277,7 +278,7 @@
         },
         "sede_titulo": "The Red Cross Palace",
         "sede_paragrafos": [
-          "The branch works from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. The building takes up the block between Rua Carlos Carvalho and Rua Ubaldino do Amaral and Avenida Henrique Valadares and Avenida Carlos Sampaio, and is the historic headquarters of the Brazilian Red Cross, founded in 1908. In 2021 the complex was given provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute.",
+          "The branch works from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. The building occupies the block bounded by Rua Carlos Carvalho, Rua Ubaldino do Amaral, Avenida Henrique Valadares and Avenida Carlos Sampaio, and is the historic headquarters of the Brazilian Red Cross, founded in 1908. In 2021 the complex was given provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute.",
           "It is where the in-person courses, the initial volunteer training and the Winter Clothing Drive collection happen. The branch does not schedule medical appointments and does not answer emergencies: in an emergency, call 192 for an ambulance or 193 for the fire brigade."
         ],
         "parceria_titulo": "Working with the branch",
@@ -311,7 +312,7 @@
         "idioma_titulo": "A note on language",
         "idioma_texto": "The payment screen itself is in Portuguese. It is short — amount, name, e-mail, CPF, phone number, then card or PIX — and the buttons are: <b>Doar</b> (donate), <b>Cartão</b> (card), <b>PIX</b>, <b>Doar anonimamente</b> (donate anonymously) and <b>Copiar código PIX</b> (copy PIX code). If anything is unclear, write to us and we will help in English.",
         "transparencia_titulo": "Where the money goes",
-        "transparencia": "The Brazilian Red Cross — Rio de Janeiro Branch is a non-profit organisation, CNPJ 08.560.973/0001-97, recognised as being of municipal and state public utility. Donations fund volunteer training, first-aid training, preventive education, community campaigns and the running costs of the branch. Payments are processed by ÚnicoPag, which transfers the funds to the branch.",
+        "transparencia": "The Brazilian Red Cross — Rio de Janeiro Branch is a non-profit organisation, CNPJ 08.560.973/0001-97, officially recognised as a public-interest organisation by municipal and state law. Donations fund volunteer training, first-aid training, preventive education, community campaigns and the running costs of the branch. Payments are processed by ÚnicoPag, which transfers the funds to the branch.",
         "botao": "Go to the donation page",
         "botao_nota": "The donation page is in Portuguese.",
         "exterior_titulo": "Donating from outside Brazil: card only",
@@ -334,6 +335,7 @@
         "privacidade": "Privacy Policy",
         "termos": "Terms of Use",
         "acervo": "Archive",
+        "noticias": "News",
         "cookies": "Cookie Policy",
         "reembolso": "Cancellation and refunds",
         "preferencias": "Cookie preferences"
@@ -343,7 +345,7 @@
         "descricao": "The Brazilian Red Cross Rio de Janeiro archive: documents, photographs, videos, press coverage and the branch's history, open for consultation.",
         "sobrancelha": "Archive",
         "h1": "Archive of the Brazilian Red Cross — Rio de Janeiro Branch",
-        "linha": "Documents, photographs, videos, press coverage and records of the branch's history, organized for consultation, with the date, authorship and terms of use of each item.",
+        "linha": "Documents, photographs, videos, press coverage and records of the branch's history, organised for consultation, with the date, authorship and terms of use of each item.",
         "colecoes_titulo": "Collections",
         "colecoes_nota": "The archive is being catalogued: these collections fill up as items are published, starting with the branch's own records.",
         "colecoes": [
@@ -379,8 +381,9 @@
         "contribua_titulo": "Contribute to the archive",
         "contribua": "Do you have photographs, documents, newspaper clippings or memories related to the branch? Write to contato@cruzvermelhariodejaneiro.org telling us what you have, the approximate date, the place and who produced the material or appears in it. We reply in English, Spanish or Portuguese.",
         "uso_titulo": "Using the material",
-        "uso": "Each item states its authorship, credit and terms of use. Items under a Creative Commons license or in the public domain may be used as the license allows, always with credit. To reproduce an item with all rights reserved, ask for permission at contato@cruzvermelhariodejaneiro.org, including the address of the item's page."
-      }
+        "uso": "Each item states its authorship, credit and terms of use. Items under a Creative Commons licence or in the public domain may be used as the licence allows, always with credit. To reproduce an item with all rights reserved, ask for permission at contato@cruzvermelhariodejaneiro.org, including the address of the item's page."
+      },
+      "caminho_noticias": "/en/news/"
     },
     "es": {
       "codigo": "es",

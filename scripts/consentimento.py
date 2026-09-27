@@ -26,7 +26,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 ARQUIVO = RAIZ / "site" / "consentimento" / "consentimento.js"
 HOME = RAIZ / "site" / "index.html"
-PAGINAS_MANUAIS = ["site/equipe.html", "site/campanha-agasalho.html", "site/doacao.html"]
+PAGINAS_MANUAIS = ["site/equipe.html", "site/campanha-agasalho.html", "site/doacao.html", "site/historia/index.html"]
 # Páginas servidas em outro host (subdomínio com pasta dentro de public_html): a tag do aviso vai
 # com o endereço completo do site principal, porque /consentimento/ não existe nesse host.
 PAGINAS_OUTRO_HOST = ["site/projetocores/index.html"]

@@ -28,6 +28,7 @@ PADRAO = [
     "https://cruzvermelhariodejaneiro.org/doe/",
     "https://cruzvermelhariodejaneiro.org/campanha-agasalho.html",
     "https://cruzvermelhariodejaneiro.org/equipe.html",
+    "https://cruzvermelhariodejaneiro.org/historia/",
     "https://cruzvermelhariodejaneiro.org/noticias/",
     "https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/",
     "https://cruzvermelhariodejaneiro.org/termos/",

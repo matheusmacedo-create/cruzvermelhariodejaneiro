@@ -30,6 +30,7 @@ Sem dependências além da biblioteca padrão. Precisa de rede (confere tudo ao 
 from __future__ import annotations
 
 import html
+import json
 import re
 import sys
 import urllib.error
@@ -53,6 +54,7 @@ PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
     ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
+    ("/historia/", "historia/index.html", "monthly", "0.7", "História da filial"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
@@ -82,7 +84,14 @@ PAGINAS = [
     # As coleções e os itens do acervo ficam no sitemap.xml da Redação, que gera essas páginas.
     ("/en/archive/", "en/archive/index.html", "monthly", "0.5", "Acervo em inglês"),
     ("/es/acervo/", "es/acervo/index.html", "monthly", "0.5", "Acervo em espanhol"),
+    # Páginas só em inglês (scripts/gerar_ingles.py); as notícias em inglês entram logo abaixo.
+    ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
+    ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
 ]
+
+# Notícias traduzidas: original da Redação → versão em inglês (gravado por gerar_ingles.py).
+NOTICIAS_EN = json.loads((RAIZ / "traducoes" / "en" / "mapa-hreflang.json").read_text(encoding="utf-8"))
+PAGINAS += [(en, f"{en.strip('/')}/index.html", "monthly", "0.5", "Notícia em inglês") for en in NOTICIAS_EN.values()]
 
 # Versões da mesma página em outros idiomas, declaradas no sitemap com xhtml:link. O Google
 # aceita o hreflang na página, no sitemap ou nos dois; declarar nos dois é o recomendado.
@@ -107,7 +116,16 @@ ALTERNATIVAS = {
     "/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
     "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
     "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    # Pares pt-BR + en. A campanha declara o par nas duas páginas. /noticias/, /privacidade/ e
+    # /termos/ são da Redação e ainda não declaram hreflang: até declararem, só o lado em inglês
+    # entra aqui, para o sitemap não dizer mais do que as páginas dizem.
+    "/campanha-agasalho.html": {"pt-BR": "/campanha-agasalho.html", "en": "/en/winter-clothing-drive/"},
+    "/en/winter-clothing-drive/": {"pt-BR": "/campanha-agasalho.html", "en": "/en/winter-clothing-drive/"},
+    "/en/news/": {"pt-BR": "/noticias/", "en": "/en/news/"},
+    "/en/privacy/": {"pt-BR": "/privacidade/", "en": "/en/privacy/"},
+    "/en/terms/": {"pt-BR": "/termos/", "en": "/en/terms/"},
 }
+ALTERNATIVAS.update({en: {"pt-BR": pt, "en": en} for pt, en in NOTICIAS_EN.items()})
 for _chave in ("privacidade", "cookies", "termos", "reembolso"):
     _c = idiomas.PAGINAS[_chave]
     for _url in _c.values():

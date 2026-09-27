@@ -27,6 +27,12 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>
+    /* Ícones em SVG inline (scripts/icones.py) */
+    i[class*="fa-"] { display: inline-block; font-style: normal; line-height: 1; }
+    .ico { display: inline-block; width: 1em; height: 1em; fill: currentColor; vertical-align: -.125em; overflow: visible; }
+    .nav-toggle .ico-xmark { display: none; }
+    .main-header.nav-open .nav-toggle .ico-bars { display: none; }
+    .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
     :root {
       --red: #ed1b2e;
       --red-dark: #b80f1f;
@@ -682,7 +688,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=f0901be888" defer></script>
+  <script src="/consentimento/consentimento.js?v=4d145ab2d0" defer></script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 [
@@ -1204,6 +1210,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=df1904f032" defer></script>
+  <script src="/chat/chat.js?v=b04d76f320" defer></script>
 </body>
 </html>

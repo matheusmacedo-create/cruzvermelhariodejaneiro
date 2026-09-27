@@ -20,6 +20,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 - [Campanha do Agasalho](https://cruzvermelhariodejaneiro.org/campanha-agasalho.html): entrega de
   roupas de frio, cobertores e calçados na sede, de segunda a sexta, das 10h às 17h.
 - [Equipe](https://cruzvermelhariodejaneiro.org/equipe.html): diretoria e coordenação da filial.
+- [Nossa história](https://cruzvermelhariodejaneiro.org/historia/): da fundação da Cruz Vermelha
+  Brasileira, em 1908, no Rio, ao Palácio da Cruz Vermelha e à Escola de Enfermagem, com linha do
+  tempo e fontes.
 - [Notícias](https://cruzvermelhariodejaneiro.org/noticias/): ações, campanhas e atendimentos.
 - [Acervo](https://cruzvermelhariodejaneiro.org/acervo/): documentos, fotografias, vídeos, recortes
   de imprensa e a história da filial, cada item com data, autoria, crédito, condições de uso e forma
@@ -27,6 +30,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   [espanhol](https://cruzvermelhariodejaneiro.org/es/acervo/).
 - [Links oficiais](https://cruzvermelhariodejaneiro.org/bio/): cursos, cadastro de voluntário e o
   WhatsApp exclusivo do voluntariado.
+- [Em inglês](https://cruzvermelhariodejaneiro.org/en/): a versão em inglês do site, com as
+  notícias traduzidas em [/en/news/](https://cruzvermelhariodejaneiro.org/en/news/), cursos,
+  perguntas frequentes, equipe e Campanha do Agasalho.
 - Políticas: [Privacidade](https://cruzvermelhariodejaneiro.org/privacidade/) (LGPD),
   [Cookies](https://cruzvermelhariodejaneiro.org/cookies/),
   [Termos de Uso](https://cruzvermelhariodejaneiro.org/termos/) e

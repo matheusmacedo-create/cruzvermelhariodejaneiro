@@ -163,6 +163,12 @@ def cabecalho(idioma: dict, pagina: str) -> str:
     if DOACAO_NO_AR:
         links.append((PAGINAS["doar"][idioma["codigo"]], m["doar"]))
     links += [(f'/{pasta}/#contato', m["contato"]), ("/", m["portugues"])]
+    # Notícias traduzidas só existem no idioma que tem "noticias" no menu (hoje, o inglês:
+    # scripts/gerar_ingles.py); sem a chave, o menu fica como estava. Entram no lugar dos
+    # princípios (seção da home, também no rodapé): com um item a mais, o menu quebrava linha
+    # entre 1321 e 1440 px. A ordem fica a do português: Sobre, Notícias...
+    if m.get("noticias"):
+        links[1] = (idioma["caminho_noticias"], m["noticias"])
     nav = "\n          ".join(f'<a href="{a}">{esc(b)}</a>' for a, b in links)
     return f"""  <header class="main-header">
     <div class="header-container">
@@ -186,6 +192,8 @@ def cabecalho(idioma: dict, pagina: str) -> str:
 
 def rodape(idioma: dict) -> str:
     r, pasta = idioma["rodape"], idioma["pasta"]
+    noticias = (f'\n        <p><a href="{idioma["caminho_noticias"]}">{esc(r["noticias"])}</a></p>'
+                if r.get("noticias") else "")
     return f"""  <footer>
     <div class="footer-grid">
       <div class="footer-brand">
@@ -194,7 +202,7 @@ def rodape(idioma: dict) -> str:
       </div>
       <div class="footer-col">
         <h4>{esc(r['sobre'])}</h4>
-        <p>{esc(idioma['instituicao'])}</p>
+        <p>{esc(idioma['instituicao'])}</p>{noticias}
         <p><a href="/">{esc(r['portugues'])}</a></p>
         <p><a href="{ESCOLA}" target="_blank" rel="noopener">{esc(r['plataforma'])}</a></p>
         <p><a href="{WIKI}" target="_blank" rel="noopener">{esc(r['wikipedia'])}</a></p>
