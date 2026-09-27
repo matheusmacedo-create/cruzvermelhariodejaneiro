@@ -28,6 +28,11 @@ PASTA = RAIZ / "site" / "doe"
 STATIC = PASTA / "static"
 STATIC_URL = "/doe/static/"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
+# Doação online suspensa desde 25/09/2026 (pedido do Matheus): /doe/ responde 503 com o aviso
+# (site/doe/.htaccess) e a home ficou sem o link "Doe". Com False, este script só regenera as páginas
+# (/doe/obrigado/ continua no ar para quem já doou) e não põe o link de volta no menu da home. Para a
+# doação voltar: True aqui e em gerar_idiomas.py, rodar os geradores e tirar as regras 503 dos .htaccess.
+DOACAO_NO_AR = False
 URL_PAGINA = f"{ORIGEM}/doe/"
 WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 
@@ -409,7 +414,7 @@ OBRIGADO = """<!DOCTYPE html>
 
 def main() -> int:
     home = HOME.read_text(encoding="utf-8")
-    home_nova = menu_com_doe(home)
+    home_nova = menu_com_doe(home) if DOACAO_NO_AR else home
     if home_nova != home:
         HOME.write_text(home_nova, encoding="utf-8")
         print(f"atualizado {HOME.relative_to(RAIZ)} (link Doe no menu)")

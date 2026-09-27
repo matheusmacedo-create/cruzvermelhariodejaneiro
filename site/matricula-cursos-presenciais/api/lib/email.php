@@ -20,7 +20,7 @@ const MCP_EMAIL_CNPJ = '08.560.973/0001-97';
 const MCP_NOME_FILIAL = 'Cruz Vermelha Brasileira Rio de Janeiro';
 /** Nomes curtos que aparecem em configurações antigas (EMAIL_REMETENTE): o remetente sai sempre com o nome completo. */
 const MCP_NOMES_CURTOS = ['cruz vermelha', 'cruz vermelha rj', 'cruz vermelha brasileira', 'cruz vermelha brasileira rj', 'cruz vermelha brasileira - rj', 'cruz vermelha brasileira – rj', 'cvb-rj', 'cvb rj', 'cvb'];
-const MCP_TEXTO_ESTORNO = 'A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.';
+const MCP_TEXTO_ESTORNO = 'A inscrição reserva sua vaga. Você pode desistir em até 7 dias depois do pagamento e recebe o valor de volta. Depois disso, o valor também é estornado se não houver horário compatível ou se você desistir antes da confirmação da aula. O prazo para aparecer na conta depende de PIX ou cartão.';
 
 /** Endereço que recebe o chat do site e responde os e-mails ao aluno. */
 function mcp_email_contato_endereco(): string
@@ -492,7 +492,7 @@ function mcp_contato_assuntos(): array
 {
     return [
         'matricula' => 'Matrícula em cursos', 'curso' => 'Dúvida sobre um curso', 'pagamento' => 'Pagamento ou PIX',
-        'voluntariado' => 'Voluntariado', 'doacoes' => 'Doações e parcerias', 'outro' => 'Outro assunto',
+        'voluntariado' => 'Voluntariado', 'doacoes' => 'Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
     ];
 }
 

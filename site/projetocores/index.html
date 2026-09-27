@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#c8102e">
   <meta name="color-scheme" content="light">
-  <title>Impacto das Cores | Doe para transformar espaços e histórias</title>
-  <meta name="description" content="Ajude o projeto Impacto das Cores, da Cruz Vermelha Brasileira — Rio de Janeiro, a levar cuidado, participação e novas cores a espaços comunitários.">
+  <title>Impacto das Cores | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <meta name="description" content="Impacto das Cores, projeto da Cruz Vermelha Brasileira — Rio de Janeiro: voluntários, crianças e moradores revitalizam espaços comunitários. Veja como ser voluntário.">
+  <link rel="canonical" href="https://projetocores.cruzvermelhariodejaneiro.org/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://projetocores.cruzvermelhariodejaneiro.org/">
   <meta property="og:title" content="Impacto das Cores | Cruz Vermelha Brasileira — Rio de Janeiro">
-  <meta property="og:description" content="Uma doação pode ajudar a transformar espaços comunitários em lugares mais vivos, acolhedores e cheios de novas histórias.">
-  <meta property="og:image" content="assets/hero-1254.webp">
+  <meta property="og:description" content="Voluntários, crianças e moradores transformando espaços comunitários com cuidado, presença e participação.">
+  <meta property="og:image" content="https://projetocores.cruzvermelhariodejaneiro.org/assets/hero-1254.webp">
   <meta property="og:image:alt" content="Voluntários e crianças reunidos em uma ação do projeto Impacto das Cores.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" as="image" href="assets/logo-oficial-cruz-vermelha-rj.webp">
@@ -755,38 +757,79 @@
     "sameAs": []
   }
   </script>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    gtag('js', new Date());
+
+    gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
+  </script>
+
   <!-- Meta Pixel Code -->
   <script>
   !function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
+  <script>
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    (function () {
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
+      }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
+      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+    })();
+  </script>
+  <script src="https://cruzvermelhariodejaneiro.org/consentimento/consentimento.js?v=f0901be888" defer></script>
   <!-- End Meta Pixel Code -->
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HDYZZ5JZHF');
-</script>
 </head>
 
 <body>
-  <!-- Meta Pixel Code (noscript) -->
-  <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
-  alt=""></noscript>
-  <!-- End Meta Pixel Code (noscript) -->
-
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
 
   <header class="topbar">
@@ -803,9 +846,9 @@
 
       <nav class="nav-links" aria-label="Navegação principal">
         <a href="#projeto">O projeto</a>
-        <a href="#impacto">Como você ajuda</a>
+        <a href="#impacto">Como acontece</a>
         <a href="#perguntas">Dúvidas</a>
-        <a class="btn btn-primary donate-link" href="https://doar.cruzvermelhariodejaneiro.org/">Doar agora</a>
+        <a class="btn btn-primary" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Seja voluntário</a>
       </nav>
     </div>
   </header>
@@ -820,11 +863,11 @@
             O Impacto das Cores reúne voluntários, crianças e moradores para transformar espaços comunitários com cuidado, presença e participação.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary btn-lg donate-link" href="https://doar.cruzvermelhariodejaneiro.org/">
-              Quero ajudar agora
+            <a class="btn btn-primary btn-lg" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
+              Quero ser voluntário
               <span aria-hidden="true">→</span>
             </a>
-            <span class="safe-note"><span aria-hidden="true">🔒</span> Pix e cartão no próximo passo</span>
+            <span class="safe-note">Cadastro no formulário oficial do voluntariado</span>
           </div>
         </div>
 
@@ -843,7 +886,7 @@
       </div>
     </section>
 
-    <div class="trust" aria-label="Informações sobre a doação">
+    <div class="trust" aria-label="Informações sobre o projeto">
       <div class="container trust-grid">
         <div class="trust-item">
           <span class="trust-icon trust-icon-humanitarian">
@@ -865,12 +908,12 @@
         </div>
         <div class="trust-item">
           <span class="trust-icon trust-icon-donation">
-            <svg viewBox="0 0 24 24" role="img" aria-label="Doação segura e simples">
+            <svg viewBox="0 0 24 24" role="img" aria-label="Voluntariado">
             <path d="M12 3 20 6v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3Z"></path>
             <path d="m8.5 12 2.2 2.2 4.8-5"></path>
           </svg>
           </span>
-          <div><strong>Doação simples</strong><span>Escolha o valor e pague por Pix ou cartão</span></div>
+          <div><strong>Voluntariado aberto</strong><span>A formação é dada pela própria Cruz Vermelha</span></div>
         </div>
       </div>
     </div>
@@ -914,10 +957,10 @@
       <div class="container">
         <div class="impact-head reveal">
           <div>
-            <span class="section-kicker">Sua doação em movimento</span>
-            <h2 class="section-title">Você ajuda a próxima ação a sair do papel.</h2>
+            <span class="section-kicker">Como o projeto acontece</span>
+            <h2 class="section-title">O que cada ação precisa para sair do papel.</h2>
           </div>
-          <p class="section-lead">O apoio recebido fortalece a estrutura necessária para levar o projeto a novos espaços comunitários.</p>
+          <p class="section-lead">Cada mutirão depende de planejamento, materiais e pessoas dispostas a construir junto com a comunidade.</p>
         </div>
 
         <div class="impact-grid">
@@ -979,19 +1022,19 @@
       <div class="container reveal">
         <span class="section-kicker" style="color:#fff;">Impacto que permanece</span>
         <h2>Uma comunidade colorida também é uma comunidade que se sente vista.</h2>
-        <p>Ao contribuir, você participa de uma rede de cuidado que aproxima pessoas, fortalece o pertencimento e ajuda novos espaços a receberem vida.</p>
+        <p>Ao participar, você entra em uma rede de cuidado que aproxima pessoas, fortalece o pertencimento e ajuda novos espaços a receberem vida.</p>
       </div>
     </section>
 
-    <section class="donate" id="doar">
+    <section class="donate" id="participe">
       <div class="container donate-card reveal">
         <h2>Ajude a pintar a próxima história.</h2>
-        <p>Na próxima etapa, você escolhe o valor da contribuição e conclui sua doação com Pix ou cartão.</p>
-        <a class="btn btn-light btn-lg donate-link" href="https://doar.cruzvermelhariodejaneiro.org/">
-          Escolher valor e doar
+        <p>Faça o cadastro no formulário oficial do voluntariado. A equipe entra em contato para explicar as próximas ações e a formação, que é dada pela própria Cruz Vermelha.</p>
+        <a class="btn btn-light btn-lg" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
+          Quero ser voluntário
           <span aria-hidden="true">→</span>
         </a>
-        <div class="payment-note">Você será direcionado para o ambiente de doação.</div>
+        <div class="payment-note">Dúvidas sobre o voluntariado: WhatsApp <a href="https://wa.me/5521970360264" style="color:inherit">(21) 97036-0264</a>.</div>
       </div>
     </section>
 
@@ -999,26 +1042,26 @@
       <div class="container faq-layout">
         <div class="reveal">
           <span class="section-kicker">Perguntas frequentes</span>
-          <h2 class="section-title">Antes de doar</h2>
-          <p class="section-lead">Informações rápidas para que você contribua com segurança e clareza.</p>
+          <h2 class="section-title">Antes de participar</h2>
+          <p class="section-lead">Informações rápidas sobre o projeto e o voluntariado.</p>
         </div>
 
         <div class="faq-list reveal">
           <details>
-            <summary>Como faço a doação?</summary>
-            <p>Clique em um dos botões “Doar agora”. Você será levado ao ambiente de doação, onde poderá escolher o valor e pagar por Pix ou cartão.</p>
+            <summary>Como faço para participar?</summary>
+            <p>Faça o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. A equipe do voluntariado entra em contato para explicar as próximas ações e a formação.</p>
           </details>
           <details>
-            <summary>Como minha contribuição ajuda?</summary>
-            <p>Ela fortalece a realização do projeto, apoiando necessidades como materiais, preparação, logística e novas mobilizações comunitárias, conforme o planejamento da instituição.</p>
+            <summary>Preciso ter experiência?</summary>
+            <p>Não. A Cruz Vermelha Brasileira — Rio de Janeiro forma os próprios voluntários, e nas ações a equipe orienta cada etapa do trabalho.</p>
           </details>
           <details>
-            <summary>Posso doar qualquer valor?</summary>
-            <p>Sim. Na etapa seguinte, escolha a opção disponível que melhor se encaixa na sua realidade. Toda contribuição soma.</p>
+            <summary>Posso doar dinheiro para o projeto?</summary>
+            <p>No momento, a doação em dinheiro pelo site está suspensa. Empresas e instituições que queiram apoiar o projeto podem escrever para contato@cruzvermelhariodejaneiro.org.</p>
           </details>
           <details>
             <summary>Esta é uma iniciativa da Cruz Vermelha?</summary>
-            <p>Sim. O Impacto das Cores é apresentado pela Cruz Vermelha Brasileira — Rio de Janeiro e esta página direciona para o ambiente institucional de doação.</p>
+            <p>Sim. O Impacto das Cores é um projeto da Cruz Vermelha Brasileira — Rio de Janeiro, com sede na Praça da Cruz Vermelha, 10, Centro do Rio.</p>
           </details>
         </div>
       </div>
@@ -1074,12 +1117,12 @@
 
       <div class="footer-legal">
         <span>© 2026 Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro.</span>
-        <span><strong>Projeto Impacto das Cores</strong> · Página de mobilização para doações.</span>
+        <span><strong>Projeto Impacto das Cores</strong> · <a href="https://cruzvermelhariodejaneiro.org/privacidade/">Privacidade</a> · <a href="https://cruzvermelhariodejaneiro.org/termos/">Termos de Uso</a> · <a href="https://cruzvermelhariodejaneiro.org/cookies/">Cookies</a> · <a href="https://cruzvermelhariodejaneiro.org/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a></span>
       </div>
     </div>
   </footer>
 
-  <a class="mobile-donate donate-link" href="https://doar.cruzvermelhariodejaneiro.org/">Doar agora →</a>
+  <a class="mobile-donate" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Quero ser voluntário →</a>
 
   <dialog id="lightbox" aria-label="Visualização ampliada da foto">
     <button class="close-dialog" type="button" aria-label="Fechar imagem">×</button>
@@ -1087,26 +1130,6 @@
   </dialog>
 
   <script>
-    const DONATION_URL = "https://doar.cruzvermelhariodejaneiro.org/";
-
-    function buildDonationUrl() {
-      const destination = new URL(DONATION_URL);
-      const current = new URLSearchParams(window.location.search);
-      const allowed = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"];
-      allowed.forEach(key => {
-        if (current.has(key)) destination.searchParams.set(key, current.get(key));
-      });
-      return destination.toString();
-    }
-
-    document.querySelectorAll(".donate-link").forEach(link => {
-      link.href = buildDonationUrl();
-      link.addEventListener("click", () => {
-        if (typeof window.fbq === "function") window.fbq("track", "InitiateCheckout");
-        if (typeof window.gtag === "function") window.gtag("event", "begin_checkout", { campaign: "impacto_das_cores" });
-      });
-    });
-
     /* No celular, o cabeçalho aparece na primeira dobra e some ao sair do hero. */
     const topbar = document.querySelector(".topbar");
     const heroSection = document.querySelector(".hero");

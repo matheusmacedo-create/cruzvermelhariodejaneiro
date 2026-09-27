@@ -12,13 +12,11 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 ## Páginas principais
 
 - [Início](https://cruzvermelhariodejaneiro.org/): apresentação da filial, ações, parceiros e
-  perguntas frequentes sobre cursos, voluntariado, doações, endereço e contato.
+  perguntas frequentes sobre cursos, voluntariado, como ajudar, endereço e contato.
 - [Cursos e matrícula](https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/): os sete
   cursos presenciais na sede, com carga horária, escolaridade mínima e valor. A vaga é garantida
   com uma inscrição de R$ 99 por PIX ou cartão; o valor do curso é pago depois, na plataforma da
   escola.
-- [Doação](https://cruzvermelhariodejaneiro.org/doe/): doação por PIX ou cartão, com comprovante
-  por e-mail. Opção de doar anonimamente e de cobrir os custos de processamento.
 - [Campanha do Agasalho](https://cruzvermelhariodejaneiro.org/campanha-agasalho.html): entrega de
   roupas de frio, cobertores e calçados na sede, de segunda a sexta, das 10h às 17h.
 - [Equipe](https://cruzvermelhariodejaneiro.org/equipe.html): diretoria e coordenação da filial.
@@ -29,6 +27,14 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   [espanhol](https://cruzvermelhariodejaneiro.org/es/acervo/).
 - [Links oficiais](https://cruzvermelhariodejaneiro.org/bio/): cursos, cadastro de voluntário e o
   WhatsApp exclusivo do voluntariado.
+- Políticas: [Privacidade](https://cruzvermelhariodejaneiro.org/privacidade/) (LGPD),
+  [Cookies](https://cruzvermelhariodejaneiro.org/cookies/),
+  [Termos de Uso](https://cruzvermelhariodejaneiro.org/termos/) e
+  [Cancelamento e reembolso](https://cruzvermelhariodejaneiro.org/reembolso/) da inscrição (7 dias
+  para desistir). Também em inglês e espanhol.
+
+A doação online em dinheiro pelo site está suspensa desde 25/09/2026. Dá para ajudar como
+voluntário ou entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho.
 
 ## Cursos presenciais
 

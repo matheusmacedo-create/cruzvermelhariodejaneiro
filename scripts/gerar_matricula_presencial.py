@@ -55,8 +55,10 @@ ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha,
             "addressRegion": "RJ", "postalCode": "20230-130", "addressCountry": "BR"}
 LOCAL = {"@type": "Place", "name": "Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro", "address": ENDERECO}
 
-TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Se não houver horário compatível ou você desistir antes da "
-                 "confirmação da aula, o valor é estornado. O prazo para aparecer na conta depende de PIX ou cartão.")
+# O mesmo texto vai nos e-mails ao aluno (MCP_TEXTO_ESTORNO, api/lib/email.php). Regras completas: /reembolso/.
+TEXTO_ESTORNO = ("A inscrição reserva sua vaga. Você pode desistir em até 7 dias depois do pagamento e recebe o valor "
+                 "de volta. Depois disso, o valor também é estornado se não houver horário compatível ou se você "
+                 "desistir antes da confirmação da aula. O prazo para aparecer na conta depende de PIX ou cartão.")
 
 FAQ_PAGINA = [
     ("O que é a inscrição de R$ 99?",
@@ -70,6 +72,11 @@ FAQ_PAGINA = [
      "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 3 dias úteis "
      "para confirmar turma e horário."),
     ("E se não houver horário compatível?", TEXTO_ESTORNO),
+    ("Posso desistir depois de pagar a inscrição?",
+     "Sim. Em até 7 dias depois do pagamento, você desiste sem precisar dar motivo e recebe o valor integral de volta "
+     "(art. 49 do Código de Defesa do Consumidor). Depois desse prazo, a inscrição ainda é devolvida se não houver "
+     "horário compatível ou se você desistir antes da confirmação da aula. O pedido é feito pelo chat da página, e as "
+     "regras completas estão na página de cancelamento e reembolso."),
     ("Os cursos são presenciais? Onde acontecem?",
      "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro "
      "do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro."),
@@ -511,7 +518,7 @@ def main() -> int:
           <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de {brl(inscricao)}</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
           <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 3 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
         </div>
-        <p class="mr-regra">{esc(TEXTO_ESTORNO)}</p>
+        <p class="mr-regra">{esc(TEXTO_ESTORNO)} <a href="/reembolso/">Regras de cancelamento e reembolso</a>.</p>
       </div>
     </section>
 
