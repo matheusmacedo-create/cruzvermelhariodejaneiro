@@ -150,6 +150,12 @@ def cabecalho(idioma: dict, pagina: str) -> str:
              (PAGINAS["faq"][idioma["codigo"]], m["faq"]),
              (PAGINAS["doar"][idioma["codigo"]], m["doar"]), (f'/{pasta}/#contato', m["contato"]),
              ("/", m["portugues"])]
+    # Notícias traduzidas só existem no idioma que tem "noticias" no menu (hoje, o inglês:
+    # scripts/gerar_ingles.py); sem a chave, o menu fica como estava. Entram no lugar dos
+    # princípios (seção da home, também no rodapé): com um item a mais, o menu quebrava linha
+    # entre 1321 e 1440 px. A ordem fica a do português: Sobre, Notícias...
+    if m.get("noticias"):
+        links[1] = (idioma["caminho_noticias"], m["noticias"])
     nav = "\n          ".join(f'<a href="{a}">{esc(b)}</a>' for a, b in links)
     return f"""  <header class="main-header">
     <div class="header-container">
@@ -173,6 +179,13 @@ def cabecalho(idioma: dict, pagina: str) -> str:
 
 def rodape(idioma: dict) -> str:
     r, pasta = idioma["rodape"], idioma["pasta"]
+    # Privacidade e termos: a tradução do idioma, quando existe; senão, o original em português.
+    def legal(chave: str, pt: str) -> str:
+        url = r.get(f"{chave}_url")
+        marca = "" if url else ' hreflang="pt-BR" lang="pt-BR"'
+        return f'<a href="{url or pt}"{marca}>{esc(r[chave])}</a>'
+    noticias = (f'\n        <p><a href="{idioma["caminho_noticias"]}">{esc(r["noticias"])}</a></p>'
+                if r.get("noticias") else "")
     return f"""  <footer>
     <div class="footer-grid">
       <div class="footer-brand">
@@ -181,7 +194,7 @@ def rodape(idioma: dict) -> str:
       </div>
       <div class="footer-col">
         <h4>{esc(r['sobre'])}</h4>
-        <p>{esc(idioma['instituicao'])}</p>
+        <p>{esc(idioma['instituicao'])}</p>{noticias}
         <p><a href="/">{esc(r['portugues'])}</a></p>
         <p><a href="{ESCOLA}" target="_blank" rel="noopener">{esc(r['plataforma'])}</a></p>
         <p><a href="{WIKI}" target="_blank" rel="noopener">{esc(r['wikipedia'])}</a></p>
@@ -199,9 +212,9 @@ def rodape(idioma: dict) -> str:
         <span class="sep">|</span>
         <a href="{PAGINAS['acervo'][idioma['codigo']]}">{esc(r['acervo'])}</a>
         <span class="sep">|</span>
-        <a href="/privacidade/" hreflang="pt-BR" lang="pt-BR">{esc(r['privacidade'])}</a>
+        {legal('privacidade', '/privacidade/')}
         <span class="sep">|</span>
-        <a href="/termos/" hreflang="pt-BR" lang="pt-BR">{esc(r['termos'])}</a>
+        {legal('termos', '/termos/')}
       </div>
     </div>
   </footer>"""

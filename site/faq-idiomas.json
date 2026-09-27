@@ -12,7 +12,7 @@
         "perguntas": [
           {
             "pergunta": "What is the Brazilian Red Cross — Rio de Janeiro Branch?",
-            "resposta": "It is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. It is a non-profit association, registered under CNPJ 08.560.973/0001-97 and recognised as being of municipal public utility by Law 5,153/2010 and of state public utility by Law 9,984/2023. It works in volunteer training, first-aid and vocational courses, preventive education and community campaigns, from the Red Cross Palace in central Rio de Janeiro."
+            "resposta": "It is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. It is a non-profit association, registered under CNPJ 08.560.973/0001-97 and officially recognised as a public-interest organisation by Municipal Law 5,153/2010 and State Law 9,984/2023. It works in volunteer training, first-aid and vocational courses, preventive education and community campaigns, from the Red Cross Palace in central Rio de Janeiro."
           },
           {
             "pergunta": "Is this the national Brazilian Red Cross?",
@@ -33,7 +33,7 @@
         "perguntas": [
           {
             "pergunta": "What courses does the branch offer?",
-            "resposta": "Seven in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Venipuncture (8 hours), Civil Firefighter (80 hours), Carer for Older People, an open course (160 hours), and Lip Micropigmentation (24 hours). Every one ends with a certificate issued by the branch. There are no technical or nursing degree programmes."
+            "resposta": "Seven in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). Every one ends with a certificate issued by the branch. There are no technical or nursing degree programmes."
           },
           {
             "pergunta": "Are the courses taught in English or Spanish?",
@@ -45,7 +45,7 @@
           },
           {
             "pergunta": "What does a course cost, and how do I enrol?",
-            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee is paid afterwards on the school platform: R$ 150 for Basic Life Support, Venipuncture and the Lucas Law course, R$ 180 for Basic First Aid, R$ 400 for Lip Micropigmentation, and R$ 950 for Civil Firefighter and for Carer for Older People. None of the courses is free. The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
+            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee is paid afterwards on the school platform: R$ 150 for Basic Life Support, Peripheral IV Cannulation and the Lucas Law course, R$ 180 for Basic First Aid, R$ 400 for Lip Micropigmentation, and R$ 950 for Civil Firefighter and for Carer for Older People. None of the courses is free. The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
             "links": [
               {
                 "texto": "enrolment form",
@@ -55,11 +55,11 @@
           },
           {
             "pergunta": "What are the entry requirements? Do I need a health background?",
-            "resposta": "It depends on the course. Basic First Aid, the Lucas Law course, Basic Life Support and Carer for Older People ask for completed lower secondary schooling (ensino fundamental); Civil Firefighter, Venipuncture and Lip Micropigmentation ask for completed secondary schooling (ensino médio). The first-aid courses and Basic Life Support are open to anyone, with no health background at all. Venipuncture is aimed at health students and professionals, following the rules of the profession."
+            "resposta": "It depends on the course. Basic First Aid, the Lucas Law course, Basic Life Support and Carer for Older People ask for completed lower secondary schooling (ensino fundamental); Civil Firefighter, Peripheral IV Cannulation and Lip Micropigmentation ask for completed secondary schooling (ensino médio). The first-aid courses and Basic Life Support are open to anyone, with no health background at all. Peripheral IV Cannulation is aimed at health students and professionals, following the rules of the profession."
           },
           {
             "pergunta": "Is the certificate recognised?",
-            "resposta": "It is issued by the Brazilian Red Cross — Rio de Janeiro Branch to whoever completes every stage of the course, by an institution recognised in Brazil and abroad for its record in humanitarian and emergency training. It is not accredited by Brazil's Ministry of Education, and no open course is: the ministry regulates formal education — technical, undergraduate and postgraduate — and neither issues nor recognises open-course certificates, here or anywhere else. For Civil Firefighter, professional accreditation is arranged separately at the end."
+            "resposta": "It is issued by the Brazilian Red Cross — Rio de Janeiro Branch to whoever completes every stage of the course, by an institution recognised in Brazil and abroad for its record in humanitarian and emergency training. It is not accredited by Brazil's Ministry of Education, and no course of this kind is: the ministry regulates formal education — technical, undergraduate and postgraduate — and neither issues nor recognises certificates for non-accredited courses, here or anywhere else. For Civil Firefighter, professional accreditation is arranged separately at the end."
           },
           {
             "pergunta": "What is the Lucas Law, and who needs that course?",

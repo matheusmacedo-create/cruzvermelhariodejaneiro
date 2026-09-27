@@ -23,7 +23,7 @@ import minificar_css
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA = RAIZ / "site" / "chat"
 URL = "/chat/"
-PAGINAS_MANUAIS = ["site/index.html", "site/equipe.html", "site/doacao.html", "site/campanha-agasalho.html", "site/404.html"]
+PAGINAS_MANUAIS = ["site/index.html", "site/equipe.html", "site/doacao.html", "site/campanha-agasalho.html", "site/404.html", "site/historia/index.html"]
 MARCA_INI = "/* chat:cursos"
 MARCA_FIM = "/* /chat:cursos */"
 MARCA_RESP_INI = "/* chat:respostas"

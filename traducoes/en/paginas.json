@@ -1,0 +1,196 @@
+{
+  "fonte": "Textos das páginas em inglês que não estão em site/idiomas.json: notícias, Campanha do Agasalho, 404, privacidade e termos. As matérias ficam em traducoes/en/noticias/*.md e os textos legais em traducoes/en/paginas/*.md. scripts/gerar_ingles.py gera o HTML.",
+  "caminhos": {
+    "noticias": "/en/news/",
+    "campanha": "/en/winter-clothing-drive/",
+    "privacy": "/en/privacy/",
+    "terms": "/en/terms/",
+    "erro": "/en/404.html"
+  },
+  "menu_noticias": "News",
+  "noticias": {
+    "titulo": "News | Brazilian Red Cross Rio de Janeiro",
+    "descricao": "News from the Brazilian Red Cross Rio de Janeiro branch: humanitarian work, public-interest guidance and guides to the in-person courses, in English.",
+    "sobrancelha": "News",
+    "h1": "News from the Brazilian Red Cross — Rio de Janeiro Branch",
+    "linha": "What the branch does, public-interest guidance for Rio de Janeiro, and plain-language guides to the courses taught at our headquarters.",
+    "aviso": "Every article here was first published in Portuguese, and each one links to the original. New articles appear in Portuguese first.",
+    "grupos": {
+      "noticia": [
+        "From the branch and the city",
+        "Humanitarian work, the Movement and public-interest guidance."
+      ],
+      "curso": [
+        "Course guides",
+        "What each in-person course covers and who it is for. The courses are taught in Portuguese, in central Rio de Janeiro."
+      ]
+    },
+    "portugues": "All news in Portuguese"
+  },
+  "materia": {
+    "kicker": {
+      "noticia": "News",
+      "curso": "Course guide"
+    },
+    "por": "By Brazilian Red Cross — Rio de Janeiro Branch",
+    "leitura": "min read",
+    "compartilhe": "Share",
+    "compartilhar_em": "Share on",
+    "copiar": "Copy the page address",
+    "copiado": "Link copied",
+    "original": "First published in Portuguese on {data}.",
+    "original_link": "Read the original",
+    "leia_tambem": "Related articles",
+    "para_entender": "At a glance",
+    "para_entender_itens": [
+      "The Brazilian Red Cross is part of the largest humanitarian movement in the world, present in 191 countries.",
+      "In Rio de Janeiro, the branch works in emergencies, community health and training.",
+      "The work is carried out by volunteers from the city itself."
+    ],
+    "cta": "Volunteer in Rio",
+    "cta_url": "/en/faq/",
+    "todas": "All news",
+    "breadcrumb": "News"
+  },
+  "campanha": {
+    "titulo": "Winter Clothing Drive | Brazilian Red Cross Rio de Janeiro",
+    "descricao": "Donate coats, blankets and shoes to the Brazilian Red Cross Rio de Janeiro Winter Clothing Drive and help families face the cold. Here is how to take part.",
+    "sobrancelha": "Campaign",
+    "h1": "Winter Clothing Drive",
+    "linha": "Every year, the cold arrives before the care does. Families in vulnerable situations face cold nights without a blanket, a coat or closed shoes. The Brazilian Red Cross — Rio de Janeiro Branch is mobilised to bring warmth, dignity and hope to those who need it most.",
+    "fotos": [
+      [
+        "agasalho-hero-rua",
+        "640x429",
+        "A Brazilian Red Cross Rio de Janeiro volunteer hands a blanket to a person living on the street in Rio de Janeiro.",
+        "Families in vulnerable situations need warm clothing, blankets and care when it is cold."
+      ],
+      [
+        "agasalho-hero-favela",
+        "640x429",
+        "A Brazilian Red Cross Rio de Janeiro volunteer at a winter clothing distribution in a low-income neighbourhood of Rio de Janeiro.",
+        "Every item donated helps someone get through the winter with more dignity."
+      ]
+    ],
+    "faixa": [
+      [
+        "Online donation",
+        "cruzvermelhariodejaneiro.org/en/donate"
+      ],
+      [
+        "Drop-off hours",
+        "Monday to Friday, 10am to 5pm"
+      ],
+      [
+        "Where",
+        "Praça da Cruz Vermelha, 10 — Centro"
+      ],
+      [
+        "Contact",
+        "contato@cruzvermelhariodejaneiro.org"
+      ]
+    ],
+    "caso_titulo": "When the cold comes, people without shelter suffer first",
+    "caso_paragrafos": [
+      "In the coldest seasons of the year, the basic needs of people living on the street or in vulnerable situations become more acute: warmth, protection, hygiene and reliable information. The Winter Clothing Drive exists to channel people's generosity and turn donations into well-organised humanitarian aid."
+    ],
+    "caso_destaque": "<b>Giving quickly matters. Giving the right way is essential.</b> Donated items must be clean, sorted and in line with the campaign team's guidance.",
+    "cartaz_alt": "Official poster of the Brazilian Red Cross Rio de Janeiro Winter Clothing Drive, in Portuguese.",
+    "itens_titulo": "What we are receiving",
+    "itens_linha": "Sorting avoids waste and gets help to people faster. These are the items that can be dropped off at the headquarters.",
+    "itens": [
+      [
+        "Coats and warm clothing",
+        "Clean items in good condition, sorted by type and size wherever possible."
+      ],
+      [
+        "Blankets",
+        "Clean blankets and throws, without tears, ready for immediate use."
+      ],
+      [
+        "Cold-weather clothing",
+        "Socks, gloves, hats, scarves and long-sleeved tops in good condition."
+      ],
+      [
+        "Shoes",
+        "Closed shoes, in pairs, following the campaign team's guidance."
+      ]
+    ],
+    "como_titulo": "Two ways to take part",
+    "como_linha": "You can donate online, by card or PIX, or drop off items at the headquarters of the Brazilian Red Cross — Rio de Janeiro Branch.",
+    "como": [
+      [
+        "Donate online",
+        "Choose the amount and pay by card or PIX on the official donation page. The page is in Portuguese; the English donation page explains each step, and who can use it from outside Brazil.",
+        "How to donate",
+        "/en/donate/"
+      ],
+      [
+        "Drop off in person",
+        "Monday to Friday, 10am to 5pm, at Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro. For large quantities or items not on the list, write to the team first.",
+        "Write to the team",
+        "mailto:contato@cruzvermelhariodejaneiro.org?subject=Winter%20Clothing%20Drive%20donation"
+      ]
+    ],
+    "agradecimento_titulo": "Thank you to our donors",
+    "agradecimento_paragrafos": [
+      "People who donate online to the Winter Clothing Drive will, in the future, receive access to free recorded courses offered by the Brazilian Red Cross — Rio de Janeiro Branch, as a thank-you for their humanitarian support."
+    ],
+    "agradecimento_nota": "<b>Please note:</b> the courses will be offered free of charge to online donors once the recorded-content area is available. The courses are in Portuguese.",
+    "fila_alt": "A community receiving winter clothing donations from the Brazilian Red Cross Rio de Janeiro.",
+    "principios_titulo": "Humanitarian aid needs clear criteria, care and transparency",
+    "principios_linha": "The Red Cross acts according to the principles of humanity, impartiality, neutrality and independence. The campaign organises resources so that help arrives more safely and effectively.",
+    "principios": [
+      [
+        "Sorting donations",
+        "Items are organised to avoid waste, duplication and delays in the response."
+      ],
+      [
+        "Humanitarian priority",
+        "Aid must first meet the most urgent needs of the families affected by the cold."
+      ],
+      [
+        "Official contact",
+        "The official address for questions, partnerships and confirming priority items."
+      ]
+    ],
+    "final_titulo": "Your donation helps bring warmth and hope to those who need it most",
+    "final_texto": "Someone may be waiting for exactly the coat you can give today.",
+    "final_doar": "How to donate",
+    "final_entregar": "How to drop off items",
+    "portugues": "This page in Portuguese"
+  },
+  "erro": {
+    "titulo": "Page not found | Brazilian Red Cross Rio de Janeiro",
+    "sobrancelha": "Error 404",
+    "h1": "This page does not exist.",
+    "texto": "The address may have changed or been mistyped. These are the pages people look for most:",
+    "links": [
+      [
+        "Home",
+        "/en/"
+      ],
+      [
+        "Courses",
+        "/en/courses/"
+      ],
+      [
+        "News",
+        "/en/news/"
+      ],
+      [
+        "How to donate",
+        "/en/donate/"
+      ],
+      [
+        "Frequently asked questions",
+        "/en/faq/"
+      ],
+      [
+        "Site em português",
+        "/"
+      ]
+    ]
+  },
+  "traduzido_em": "2026-09-26T12:00:00-03:00"
+}
