@@ -123,6 +123,9 @@ ESTILO_EXTRA = """
     .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
     .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
     .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    .i18n-fichas .i18n-email { margin-top:10px; overflow-wrap:anywhere }
+    .i18n-fichas .i18n-email a { color:var(--red); font-weight:700; text-decoration:none }
+    .i18n-fichas .i18n-email a:hover { text-decoration:underline }
     .i18n-porta { margin-top:12px !important }
     .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
     .i18n-porta a:hover { text-decoration:underline }
@@ -437,14 +440,18 @@ def ler_equipe() -> tuple[list, list]:
     """
     fonte = EQUIPE.read_text(encoding="utf-8")
     limpar = lambda s: html.unescape(re.sub(r"<[^>]+>", "", s)).strip()
-    diretoria = [(limpar(c), limpar(n)) for c, n in
-                 re.findall(r'<div class="role">(.*?)</div>\s*<div class="name">(.*?)</div>', fonte, re.S)]
-    coordenacoes = [(limpar(a), [limpar(x) for x in re.findall(r"<li[^>]*>(.*?)</li>", pessoas, re.S)])
-                    for a, _, pessoas in
-                    re.findall(r'<div class="area-name">(.*?)</div>(.*?)<ul>(.*?)</ul>', fonte, re.S)]
+    # O e-mail de cada cartão (o do setor, cadastrado no E-mail do setor da Redação) vem logo
+    # depois do nome, na diretoria, e da lista de pessoas, nas coordenações.
+    diretoria = [(limpar(c), limpar(n), m) for c, n, m in
+                 re.findall(r'<div class="role">(.*?)</div>\s*<div class="name">(.*?)</div>'
+                            r'\s*<a class="leader-email" href="mailto:([^"]+)"', fonte, re.S)]
+    coordenacoes = [(limpar(a), [limpar(x) for x in re.findall(r"<li[^>]*>(.*?)</li>", pessoas, re.S)], m)
+                    for a, _, pessoas, m in
+                    re.findall(r'<div class="area-name">(.*?)</div>(.*?)<ul>(.*?)</ul>'
+                               r'\s*<a class="area-email" href="mailto:([^"]+)"', fonte, re.S)]
     if len(diretoria) != 3 or len(coordenacoes) != 11:
         raise SystemExit(f"equipe.html mudou de forma: {len(diretoria)} na diretoria, "
-                         f"{len(coordenacoes)} coordenações (esperado 3 e 11)")
+                         f"{len(coordenacoes)} coordenações com e-mail (esperado 3 e 11)")
     return diretoria, coordenacoes
 
 
@@ -452,14 +459,15 @@ def pagina_equipe(idioma: dict, partes: dict, equipe: tuple) -> str:
     """Diretoria, coordenações, a sede e como fazer parceria — em inglês e espanhol."""
     e = idioma["equipe"]
     diretoria, coordenacoes = equipe
+    email = lambda m: f'<p class="i18n-email"><a href="mailto:{esc(m)}">{esc(m)}</a></p>'
     cartoes = "\n          ".join(
-        f'<article><h3>{esc(nome)}</h3><p>{esc(e["cargos"].get(cargo, cargo))}</p></article>'
-        for cargo, nome in diretoria)
+        f'<article><h3>{esc(nome)}</h3><p>{esc(e["cargos"].get(cargo, cargo))}</p>{email(m)}</article>'
+        for cargo, nome, m in diretoria)
     areas = []
-    for area, pessoas in coordenacoes:
+    for area, pessoas, m in coordenacoes:
         titulo, sobre = e["areas"].get(area, (area, ""))
         gente = "".join(f"<li>{esc(x)}</li>" for x in pessoas)
-        areas.append(f'<article><h3>{esc(titulo)}</h3><p>{esc(sobre)}</p><ul>{gente}</ul></article>')
+        areas.append(f'<article><h3>{esc(titulo)}</h3><p>{esc(sobre)}</p><ul>{gente}</ul>{email(m)}</article>')
     como = "\n          ".join(f"<p>{esc(x)}</p>" for x in e["como_paragrafos"])
     sede = "\n          ".join(f"<p>{esc(x)}</p>" for x in e["sede_paragrafos"])
     parceria = "\n        ".join(f"<p>{esc(x)}</p>" for x in e["parceria_paragrafos"])
