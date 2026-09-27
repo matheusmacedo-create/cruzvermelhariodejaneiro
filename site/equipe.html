@@ -1108,11 +1108,21 @@
     .team-card ul { list-style: none; padding: 0; margin: 0; }
     .team-card li { padding: 6px 0; color: var(--muted); font-size: .94rem; border-top: 1px solid var(--line); }
     .team-card li:first-child { border-top: 0; }
+    .area-email, .leader-email {
+      display: inline-flex; align-items: center; gap: 6px; color: var(--red); font-weight: 700; font-size: .88rem;
+      text-decoration: none; overflow-wrap: break-word;
+    }
+    .area-email:hover, .leader-email:hover { text-decoration: underline; }
+    .area-email .ico, .leader-email .ico { width: 14px; height: 14px; flex-shrink: 0; fill: currentColor; }
+    .area-email { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); width: 100%; }
+    .leader-email { margin-top: 10px; justify-content: center; }
 
     @media (max-width: 920px) {
       .leader-grid { grid-template-columns: repeat(2, 1fr); }
       .team-grid { grid-template-columns: 1fr; }
     }
+    /* Duas colunas estreitas não comportam o e-mail da diretoria. */
+    @media (max-width: 560px) { .leader-grid { grid-template-columns: 1fr; } }
   </style>
 
   <main>
@@ -1134,16 +1144,19 @@
             <div class="avatar-circle">LC</div>
             <div class="role">Presidente</div>
             <div class="name">Luiz Carlos dos Santos</div>
+            <a class="leader-email" href="mailto:presidente@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>presidente<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
           <div class="leader-card">
             <div class="avatar-circle">AP</div>
             <div class="role">Vice-Presidente</div>
             <div class="name">Antonio Pedregal</div>
+            <a class="leader-email" href="mailto:vicepresidente@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>vicepresidente<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
           <div class="leader-card">
             <div class="avatar-circle">JB</div>
             <div class="role">Diretor Financeiro</div>
             <div class="name">Jorge Braz</div>
+            <a class="leader-email" href="mailto:jorge.braz@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>jorge.braz<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
         </div>
       </div>
@@ -1202,6 +1215,7 @@
               <li>João Stogmiller</li>
               <li>Marcelo Laia</li>
             </ul>
+            <a class="area-email" href="mailto:juridico@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>juridico<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1216,6 +1230,7 @@
               <li>Daniel Lamim</li>
               <li>Salomão Pedregal</li>
             </ul>
+            <a class="area-email" href="mailto:comunicacao@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>comunicacao<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1227,6 +1242,7 @@
             <ul>
               <li>Matheus Neves</li>
             </ul>
+            <a class="area-email" href="mailto:ti@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>ti<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1238,6 +1254,7 @@
             <ul>
               <li>Dayse Oliveira</li>
             </ul>
+            <a class="area-email" href="mailto:humanitario@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>humanitario<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1250,6 +1267,7 @@
               <li>Marcio Romero</li>
               <li>Alessandra Rachel</li>
             </ul>
+            <a class="area-email" href="mailto:edusaude@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>edusaude<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1261,6 +1279,7 @@
             <ul>
               <li>Luiz Anjo</li>
             </ul>
+            <a class="area-email" href="mailto:psocorros@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>psocorros<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1272,6 +1291,7 @@
             <ul>
               <li>Éder Hipólito</li>
             </ul>
+            <a class="area-email" href="mailto:grd@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>grd<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1283,6 +1303,7 @@
             <ul>
               <li>Elisabete Souza</li>
             </ul>
+            <a class="area-email" href="mailto:voluntariado@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>voluntariado<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1294,6 +1315,7 @@
             <ul>
               <li>Hannah Terto</li>
             </ul>
+            <a class="area-email" href="mailto:juventude@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>juventude<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1306,6 +1328,7 @@
               <li>Rejane Romero</li>
               <li>Rebecca Romero</li>
             </ul>
+            <a class="area-email" href="mailto:psicologia@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>psicologia<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
 
           <div class="team-card">
@@ -1317,6 +1340,7 @@
             <ul>
               <li>Clara Gracie</li>
             </ul>
+            <a class="area-email" href="mailto:esportes@cruzvermelhariodejaneiro.org"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg><span>esportes<wbr>@cruzvermelhariodejaneiro.org</span></a>
           </div>
         </div>
       </div>
@@ -1354,9 +1378,9 @@
           </div>
           <div>
             <h3>Falar com uma coordenação</h3>
-            <p>Mensagens para qualquer área chegam pelo mesmo canal: o chat do site, que encaminha para
-              contato@cruzvermelhariodejaneiro.org. Diga no assunto a coordenação que procura — a equipe
-              responde por e-mail em até 3 dias úteis.</p>
+            <p>Cada coordenação tem o seu e-mail, que aparece no cartão da área, acima. Para uma dúvida
+              geral, ou se não souber qual área procurar, escreva para contato@cruzvermelhariodejaneiro.org
+              ou use o chat do site — a equipe responde por e-mail em até 3 dias úteis.</p>
             <a class="btn btn-outline" href="/#chat">Abrir o chat do site</a>
           </div>
         </div>
