@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-24T23:07:37+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-27T14:27:54+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/</loc>
+    <lastmod>2026-09-25T21:04:15+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro.jpg</image:loc>
+      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro-2.jpg</image:loc>
+      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro-3.jpg</image:loc>
+      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+    </image:image>
+  </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/</loc>
     <lastmod>2026-09-24T21:28:49+00:00</lastmod>
@@ -185,16 +203,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://cruzvermelhariodejaneiro.org/noticias/o-7-de-setembro-esta-chegando/</loc>
-    <lastmod>2026-09-01T12:10:58+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/o-7-de-setembro-esta-chegando/midia-1.jpg</image:loc>
-      <image:title>cerebro-ea323c771d0fef39.jpg</image:title>
-    </image:image>
-  </url>
-  <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/</loc>
     <lastmod>2026-08-30T22:35:37+00:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -203,11 +211,5 @@
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/midia-1.jpg</image:loc>
       <image:title>Informações rápidas sobre cursos, doações e voluntariado na Cruz Vermelha RJ.</image:title>
     </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/noticias/desfile-de-7-de-setembro-cruz-vermelha-rj-abre-cadastro-para-voluntarios/</loc>
-    <lastmod>2026-08-30T21:57:53+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
   </url>
 </urlset>
