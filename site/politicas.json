@@ -228,7 +228,7 @@
             "titulo": "Transferência para fora do Brasil",
             "blocos": [
               {
-                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, em especial nos Estados Unidos (como Google, Meta, Resend e Vercel). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
+                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos e no Canadá (Google, Meta, Resend, Vercel e Supabase). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
               }
             ]
           },
@@ -436,7 +436,7 @@
             "titulo": "Transfers outside Brazil",
             "blocos": [
               {
-                "p": "Some of these providers store or process data outside Brazil, especially in the United States (such as Google, Meta, Resend and Vercel). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
+                "p": "Some of these providers store or process data outside Brazil, such as in the United States and Canada (Google, Meta, Resend, Vercel and Supabase). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
               }
             ]
           },
@@ -644,7 +644,7 @@
             "titulo": "Transferencia fuera de Brasil",
             "blocos": [
               {
-                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, en especial en Estados Unidos (como Google, Meta, Resend y Vercel). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
+                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos y Canadá (Google, Meta, Resend, Vercel y Supabase). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
               }
             ]
           },
