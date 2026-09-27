@@ -1,6 +1,6 @@
 {
   "titulo": "Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro",
-  "subtitulo": "Cursos, matrícula, voluntariado, doações, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.",
+  "subtitulo": "Cursos, matrícula, voluntariado, como ajudar, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.",
   "grupos": [
     {
       "titulo": "Cursos e matrícula",
@@ -56,15 +56,11 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
-          "resposta": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj.",
+          "resposta": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj.",
           "links": [
             {
               "texto": "cadastrar como voluntário",
               "url": "https://form.spotform.com.br/voluntariocruzvermelharj"
-            },
-            {
-              "texto": "doa online",
-              "url": "/doe/"
             },
             {
               "texto": "notícias do site",
@@ -209,7 +205,7 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
-          "resposta": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social; empresas também podem contribuir com doações institucionais e patrocínio de campanhas, como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.",
+          "resposta": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social, e podem somar esforços em campanhas como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.",
           "links": [
             {
               "texto": "Lei Lucas",
@@ -316,7 +312,7 @@
       ]
     },
     {
-      "titulo": "Instituição, doações, sede e contato",
+      "titulo": "Instituição, como ajudar, sede e contato",
       "perguntas": [
         {
           "pergunta": "O que é a Cruz Vermelha Brasileira Rio de Janeiro?",
@@ -333,27 +329,13 @@
           ]
         },
         {
-          "pergunta": "Como doar para a Cruz Vermelha Brasileira Rio de Janeiro? A doação é segura?",
-          "resposta": "Você doa pela página de doação da Cruz Vermelha Brasileira Rio de Janeiro: escolhe o valor e conclui o pagamento por PIX ou cartão no ambiente seguro de doação da instituição. Por enquanto a doação é avulsa; a opção mensal está prevista na mesma página. A doação fica na filial do Estado do Rio de Janeiro e apoia formação de voluntários, capacitação em primeiros socorros, ações comunitárias, comunicação e estrutura operacional; CNPJ, endereço e e-mail estão publicados no site para conferência. Quem doa online recebe, como agradecimento, acesso futuro a cursos gravados gratuitos. Prefere doar roupas e cobertores? Veja a Campanha do Agasalho.",
+          "pergunta": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",
+          "resposta": "A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail. Os canais oficiais da filial estão na página de links.",
           "links": [
             {
-              "texto": "página de doação",
-              "url": "/doe/"
+              "texto": "formulário oficial do voluntariado",
+              "url": "https://form.spotform.com.br/voluntariocruzvermelharj"
             },
-            {
-              "texto": "Campanha do Agasalho",
-              "url": "/campanha-agasalho.html"
-            }
-          ],
-          "chat": [
-            "doacoes"
-          ],
-          "chatRotulo": "Como doar? É seguro?"
-        },
-        {
-          "pergunta": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
-          "resposta": "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail. Quem preferir pode doar em dinheiro pela página de doação.",
-          "links": [
             {
               "texto": "Campanha do Agasalho",
               "url": "/campanha-agasalho.html"
@@ -363,8 +345,27 @@
               "url": "/#chat"
             },
             {
-              "texto": "página de doação",
-              "url": "/doe/"
+              "texto": "página de links",
+              "url": "/bio/"
+            }
+          ],
+          "chat": [
+            "doacoes",
+            "voluntariado"
+          ],
+          "chatRotulo": "Como posso ajudar?"
+        },
+        {
+          "pergunta": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
+          "resposta": "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail.",
+          "links": [
+            {
+              "texto": "Campanha do Agasalho",
+              "url": "/campanha-agasalho.html"
+            },
+            {
+              "texto": "chat do site",
+              "url": "/#chat"
             }
           ],
           "chat": [
@@ -374,7 +375,7 @@
         },
         {
           "pergunta": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
-          "resposta": "Neste site você encontra os cursos, o voluntariado, as doações e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
+          "resposta": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
           "links": [
             {
               "texto": "cursos de Primeiros Socorros",
@@ -438,7 +439,7 @@
         },
         {
           "pergunta": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
-          "resposta": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, doações, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj.",
+          "resposta": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj.",
           "links": [
             {
               "texto": "chat Fale com a gente",

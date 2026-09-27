@@ -9,7 +9,7 @@ Saídas (em site/, publicadas na raiz do public_html):
                            (cabeçalho Last-Modified do servidor) e as imagens de cada página
   sitemap-noticias.xml     notícias publicadas pela Redação (lidas do sitemap.xml dela), com a data
                            de modificação do artigo (article:modified_time) e suas imagens
-  sitemap-subdominios.xml  landing pages nos subdomínios (doar., projetocores., puncaovenosav1.),
+  sitemap-subdominios.xml  landing pages nos subdomínios (projetocores., puncaovenosav1.),
                            cobertos pela propriedade de domínio do Search Console
   + sitemap.xml            o da Redação (páginas fixas + notícias, sempre atual): só referenciado
 
@@ -39,6 +39,8 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 
+import gerar_idiomas as idiomas
+
 RAIZ = Path(__file__).resolve().parent.parent
 SITE = RAIZ / "site"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
@@ -51,17 +53,26 @@ PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
     ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
-    ("/doe/", "doe/index.html", "monthly", "0.9", "Doação: PIX ou cartão, dentro do domínio"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
-    ("/termos/", None, "yearly", "0.3", "Termos de uso (Redação)"),
-    ("/privacidade/", None, "yearly", "0.3", "Política de privacidade (Redação)"),
+    # Políticas: geradas por gerar_politicas.py, nas três línguas (até 27/09/2026, a Redação gerava
+    # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) saiu: está fora do ar.
+    ("/privacidade/", "privacidade/index.html", "yearly", "0.3", "Política de Privacidade"),
+    ("/cookies/", "cookies/index.html", "yearly", "0.3", "Política de Cookies"),
+    ("/termos/", "termos/index.html", "yearly", "0.3", "Termos de Uso"),
+    ("/reembolso/", "reembolso/index.html", "yearly", "0.3", "Cancelamento e reembolso"),
+    ("/en/privacy/", "en/privacy/index.html", "yearly", "0.2", "Privacidade em inglês"),
+    ("/en/cookies/", "en/cookies/index.html", "yearly", "0.2", "Cookies em inglês"),
+    ("/en/terms/", "en/terms/index.html", "yearly", "0.2", "Termos em inglês"),
+    ("/en/refunds/", "en/refunds/index.html", "yearly", "0.2", "Reembolso em inglês"),
+    ("/es/privacidad/", "es/privacidad/index.html", "yearly", "0.2", "Privacidade em espanhol"),
+    ("/es/cookies/", "es/cookies/index.html", "yearly", "0.2", "Cookies em espanhol"),
+    ("/es/terminos/", "es/terminos/index.html", "yearly", "0.2", "Termos em espanhol"),
+    ("/es/reembolsos/", "es/reembolsos/index.html", "yearly", "0.2", "Reembolso em espanhol"),
     ("/acervo/", None, "weekly", "0.7", "Acervo (Redação)"),
     ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
-    ("/en/donate/", "en/donate/index.html", "monthly", "0.6", "Doação em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
-    ("/es/donar/", "es/donar/index.html", "monthly", "0.6", "Doação em espanhol"),
     ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
     ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
     ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
@@ -79,9 +90,6 @@ ALTERNATIVAS = {
     "/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
     "/en/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
     "/es/": {"pt-BR": "/", "en": "/en/", "es": "/es/"},
-    "/doe/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
-    "/en/donate/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
-    "/es/donar/": {"pt-BR": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
     # A FAQ só existe em inglês e espanhol: em português ela é uma seção da home, e âncora não
     # serve de hreflang. O par fica sem pt-BR, como nas próprias páginas.
     "/en/faq/": {"en": "/en/faq/", "es": "/es/preguntas-frecuentes/", "x-default": "/"},
@@ -100,6 +108,10 @@ ALTERNATIVAS = {
     "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
     "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
 }
+for _chave in ("privacidade", "cookies", "termos", "reembolso"):
+    _c = idiomas.PAGINAS[_chave]
+    for _url in _c.values():
+        ALTERNATIVAS[_url] = {"pt-BR": _c["pt"], "en": _c["en"], "es": _c["es"]}
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
 SUBDOMINIOS = [

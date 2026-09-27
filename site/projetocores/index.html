@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#c8102e">
+  <meta name="color-scheme" content="light">
+  <title>Impacto das Cores | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <meta name="description" content="Impacto das Cores, projeto da Cruz Vermelha Brasileira — Rio de Janeiro: voluntários, crianças e moradores revitalizam espaços comunitários. Veja como ser voluntário.">
+  <link rel="canonical" href="https://projetocores.cruzvermelhariodejaneiro.org/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://projetocores.cruzvermelhariodejaneiro.org/">
+  <meta property="og:title" content="Impacto das Cores | Cruz Vermelha Brasileira — Rio de Janeiro">
+  <meta property="og:description" content="Voluntários, crianças e moradores transformando espaços comunitários com cuidado, presença e participação.">
+  <meta property="og:image" content="https://projetocores.cruzvermelhariodejaneiro.org/assets/hero-1254.webp">
+  <meta property="og:image:alt" content="Voluntários e crianças reunidos em uma ação do projeto Impacto das Cores.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" as="image" href="assets/logo-oficial-cruz-vermelha-rj.webp">
+  <link rel="preload" as="image" href="assets/hero-1254.webp" imagesrcset="assets/hero-720.webp 720w, assets/hero-1254.webp 1254w" imagesizes="(max-width: 900px) 100vw, 52vw">
+
+  <style>
+    :root {
+      --red: #c8102e;
+      --red-dark: #970b22;
+      --ink: #171717;
+      --muted: #616161;
+      --paper: #fffdf9;
+      --soft: #f7f3ec;
+      --line: #e9e2d8;
+      --green: #148647;
+      --yellow: #f2c438;
+      --blue: #2377b8;
+      --purple: #6b4bb5;
+      --radius: 26px;
+      --shadow: 0 24px 70px rgba(31, 23, 19, .13);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+
+    .skip {
+      position: absolute;
+      left: 12px;
+      top: -60px;
+      z-index: 1000;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+    }
+    .skip:focus { top: 12px; }
+
+    .container { width: min(calc(100% - 38px), var(--max)); margin-inline: auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(0,0,0,.07);
+      background: rgba(255,253,249,.9);
+      backdrop-filter: blur(14px);
+      transition: transform .28s ease, opacity .22s ease;
+      will-change: transform;
+    }
+
+    .nav {
+      min-height: 118px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 102px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .footer-brand-logo {
+      display: block;
+      width: 175px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a:not(.btn) {
+      color: #343434;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      min-height: 50px;
+      padding: 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      font: inherit;
+      font-weight: 850;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff;
+      background: var(--red);
+      box-shadow: 0 12px 28px rgba(200, 16, 46, .25);
+    }
+    .btn-primary:hover { background: var(--red-dark); box-shadow: 0 16px 34px rgba(200, 16, 46, .32); }
+    .btn-light { background: #fff; color: var(--red); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+    .btn-lg { min-height: 58px; padding-inline: 30px; font-size: 17px; }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 68px 0 58px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -20% auto auto -10%;
+      width: 460px;
+      height: 460px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(242,196,56,.3), rgba(242,196,56,0) 68%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -180px;
+      bottom: -210px;
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,134,71,.18), rgba(20,134,71,0) 68%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      align-items: center;
+      gap: clamp(34px, 6vw, 80px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      font-weight: 850;
+      color: var(--red);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 4px;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--red), var(--purple), var(--blue));
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 720px;
+      margin-bottom: 22px;
+      font-size: clamp(42px, 6.2vw, 78px);
+      line-height: .96;
+      letter-spacing: -.055em;
+    }
+    h1 em { font-style: normal; color: var(--red); }
+    .hero-copy > p {
+      max-width: 610px;
+      margin-bottom: 28px;
+      color: #494949;
+      font-size: clamp(18px, 2vw, 21px);
+    }
+    .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 18px; }
+    .safe-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero-card {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      align-self: center;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transform: rotate(1deg);
+      background: #eee;
+    }
+    .hero-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
+      object-position: 46% 50%;
+    }
+    .hero-sticker {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      padding: 13px 17px;
+      border-radius: 16px;
+      color: #fff;
+      background: rgba(20,20,20,.82);
+      backdrop-filter: blur(10px);
+      font-size: 13px;
+      font-weight: 850;
+      transform: rotate(-2deg);
+    }
+
+    .trust {
+      border-block: 1px solid var(--line);
+      background: #fff;
+    }
+    .trust-grid {
+      min-height: 104px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 54px;
+      padding: 0 30px;
+      border-right: 1px solid var(--line);
+    }
+    .trust-item:first-child { padding-left: 0; }
+    .trust-item:last-child { border-right: 0; padding-right: 0; }
+    .trust-icon {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--soft);
+    }
+    .trust-icon svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .trust-icon-humanitarian { color: var(--red); }
+    .trust-icon-humanitarian svg { stroke: none; }
+    .trust-icon-community { color: var(--blue); }
+    .trust-icon-donation { color: var(--green); }
+    .trust-item strong { display: block; font-size: 14px; }
+    .trust-item span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+    section { padding: 100px 0; }
+    .section-kicker {
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .section-title {
+      max-width: 760px;
+      margin: 10px 0 18px;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+    }
+    .section-lead {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .story { background: var(--soft); }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr .92fr;
+      gap: clamp(36px, 7vw, 90px);
+      align-items: center;
+    }
+    .story-photo {
+      position: relative;
+      min-height: 560px;
+    }
+    .story-photo .main-photo {
+      width: 83%;
+      height: 500px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      box-shadow: var(--shadow);
+    }
+    .story-photo .mini-photo {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 44%;
+      aspect-ratio: 1;
+      border: 9px solid var(--soft);
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 18px 50px rgba(0,0,0,.18);
+    }
+    .story-copy p { color: #4f4f4f; font-size: 17px; }
+    .quote {
+      margin-top: 28px;
+      padding: 22px 24px;
+      border-left: 5px solid var(--yellow);
+      border-radius: 0 16px 16px 0;
+      background: #fff;
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .impact-head { display: flex; justify-content: space-between; gap: 30px; align-items: end; }
+    .impact-grid {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .impact-card {
+      min-height: 270px;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(31,23,19,.06);
+    }
+    .impact-card:nth-child(1) { border-top: 7px solid var(--yellow); }
+    .impact-card:nth-child(2) { border-top: 7px solid var(--green); }
+    .impact-card:nth-child(3) { border-top: 7px solid var(--red); }
+    .impact-number {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 24px;
+      border-radius: 15px;
+      background: var(--soft);
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .impact-card h3 { margin-bottom: 10px; font-size: 22px; }
+    .impact-card p { color: var(--muted); }
+
+    .gallery { padding-top: 30px; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr .85fr;
+      grid-template-rows: 270px 270px;
+      gap: 16px;
+    }
+    .gallery-card {
+      position: relative;
+      overflow: hidden;
+      border: 0;
+      padding: 0;
+      border-radius: 22px;
+      background: #ddd;
+      cursor: zoom-in;
+    }
+    .gallery-card:first-child { grid-row: 1 / 3; }
+    .gallery-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+    .gallery-card:hover img { transform: scale(1.035); }
+    .gallery-caption {
+      position: absolute;
+      inset: auto 12px 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: #fff;
+      background: rgba(17,17,17,.72);
+      backdrop-filter: blur(9px);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .manifesto {
+      position: relative;
+      overflow: hidden;
+      padding: 105px 0;
+      color: #fff;
+      background:
+        linear-gradient(120deg, rgba(9,9,9,.88), rgba(9,9,9,.66)),
+        url("assets/comunidade-1080.webp") center / cover no-repeat;
+    }
+    .manifesto::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(200,16,46,.34), transparent 45%);
+      pointer-events: none;
+    }
+    .manifesto .container { position: relative; z-index: 1; }
+    .manifesto h2 {
+      max-width: 880px;
+      margin-bottom: 22px;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1;
+      letter-spacing: -.055em;
+    }
+    .manifesto p {
+      max-width: 680px;
+      color: rgba(255,255,255,.85);
+      font-size: 19px;
+    }
+
+    .donate {
+      position: relative;
+      overflow: hidden;
+      background: var(--red);
+      color: #fff;
+    }
+    .donate::before, .donate::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 70px;
+      opacity: .9;
+      transform: rotate(-12deg);
+      background: linear-gradient(90deg, var(--green) 0 34%, var(--yellow) 34% 67%, var(--blue) 67%);
+    }
+    .donate::before { top: 25px; right: -60px; }
+    .donate::after { bottom: 20px; left: -80px; transform: rotate(10deg); }
+    .donate-card {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .donate h2 {
+      margin-bottom: 18px;
+      font-size: clamp(40px, 6vw, 70px);
+      line-height: .98;
+      letter-spacing: -.05em;
+    }
+    .donate p {
+      max-width: 680px;
+      margin: 0 auto 30px;
+      color: rgba(255,255,255,.88);
+      font-size: 19px;
+    }
+    .payment-note {
+      margin-top: 17px;
+      font-size: 13px;
+      color: rgba(255,255,255,.82);
+      font-weight: 700;
+    }
+
+    .faq { background: #fff; }
+    .faq-layout {
+      display: grid;
+      grid-template-columns: .75fr 1.25fr;
+      gap: 70px;
+      align-items: start;
+    }
+    .faq-list { display: grid; gap: 12px; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--paper);
+      padding: 0 20px;
+    }
+    summary {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      cursor: pointer;
+      font-weight: 850;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--red); font-size: 25px; }
+    details[open] summary::after { content: "–"; }
+    details p { padding: 0 0 20px; color: var(--muted); }
+
+
+    footer {
+      padding: 58px 0 98px;
+      border-top: 1px solid var(--line);
+      background: #f7f3ec;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .85fr .95fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .footer-brand-block p {
+      max-width: 330px;
+      margin: 20px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-column h3 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      letter-spacing: .02em;
+    }
+
+    .footer-column p,
+    .footer-column address {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      font-style: normal;
+      line-height: 1.75;
+    }
+
+    .footer-column a {
+      color: var(--ink);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .footer-links {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .footer-legal {
+      margin-top: 42px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-legal strong {
+      color: var(--ink);
+    }
+
+    .mobile-donate {
+      display: none;
+      position: fixed;
+      z-index: 60;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      min-height: 56px;
+      border-radius: 18px;
+      color: #fff;
+      background: var(--red);
+      box-shadow: 0 16px 40px rgba(0,0,0,.24);
+      text-decoration: none;
+      font-weight: 900;
+      align-items: center;
+      justify-content: center;
+    }
+
+    dialog {
+      width: min(92vw, 940px);
+      border: 0;
+      border-radius: 22px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: 0 34px 100px rgba(0,0,0,.5);
+      background: #111;
+    }
+    dialog::backdrop { background: rgba(0,0,0,.8); backdrop-filter: blur(6px); }
+    dialog img { width: 100%; max-height: 84vh; object-fit: contain; }
+    .close-dialog {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 50%;
+      color: #111;
+      background: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .nav-links a:not(.btn) { display: none; }
+      .hero { padding-top: 42px; }
+      .hero-grid, .story-grid, .faq-layout { grid-template-columns: 1fr; }
+      .hero-card { max-width: 680px; margin-inline: auto; transform: none; aspect-ratio: 1 / 1; }
+      .trust-grid { grid-template-columns: 1fr; padding: 15px 0; }
+      .trust-item { padding: 14px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .trust-item:last-child { border-bottom: 0; }
+      .story-photo { min-height: 520px; }
+      .impact-grid { grid-template-columns: 1fr; }
+      .impact-card { min-height: auto; }
+      .impact-head { display: block; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 360px 230px 230px; }
+      .gallery-card:first-child { grid-column: 1 / 3; grid-row: auto; }
+    }
+
+    @media (max-width: 620px) {
+      .container { width: min(calc(100% - 26px), var(--max)); }
+
+      /* Cabeçalho compacto com CTA visível somente na primeira parte da página. */
+      .topbar {
+        background: rgba(255,253,249,.96);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .topbar.is-hidden {
+        transform: translateY(calc(-100% - 2px));
+        opacity: 0;
+        pointer-events: none;
+      }
+      .nav {
+        min-height: 72px;
+        gap: 12px;
+      }
+      .brand {
+        padding-block: 4px;
+        flex: 0 0 auto;
+      }
+      .brand-logo {
+        width: 58px;
+        max-height: 64px;
+      }
+      .brand-copy strong { font-size: 13px; }
+      .brand-copy span { font-size: 9px; }
+      .nav-links {
+        margin-left: auto;
+        gap: 0;
+      }
+      .nav-links .btn {
+        display: inline-flex;
+        min-height: 42px;
+        padding: 0 17px;
+        font-size: 14px;
+        white-space: nowrap;
+        box-shadow: 0 8px 20px rgba(200,16,46,.22);
+      }
+      .hero { padding-top: 24px; }
+      h1 { font-size: clamp(42px, 15vw, 63px); }
+      section { padding: 74px 0; }
+      .hero-actions .btn { width: 100%; }
+      .hero-sticker { right: 12px; bottom: 12px; }
+
+      /* Fotos padronizadas lado a lado; a imagem da lata aparece inteira. */
+      .story-photo {
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 10px;
+        align-items: stretch;
+      }
+      .story-photo .main-photo,
+      .story-photo .mini-photo {
+        position: static;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 4;
+        border: 0;
+        border-radius: 18px;
+        box-shadow: 0 14px 34px rgba(0,0,0,.14);
+      }
+      .story-photo .main-photo {
+        object-fit: cover;
+        object-position: center;
+      }
+      .story-photo .mini-photo {
+        object-fit: contain;
+        object-position: center;
+        background: #eee8df;
+      }
+
+      .gallery-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 310px); }
+      .gallery-card:first-child { grid-column: auto; }
+      .manifesto { padding: 82px 0; }
+      .footer-grid { grid-template-columns: 1fr; gap: 34px; }
+      .footer-brand-logo { width: 150px; }
+      .footer-legal { flex-direction: column; gap: 8px; }
+      .mobile-donate { display: flex; }
+      footer { padding-bottom: 110px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NGO",
+    "name": "Cruz Vermelha Brasileira — Rio de Janeiro",
+    "url": "https://cruzvermelhariodejaneiro.org/",
+    "description": "Ação humanitária e mobilização comunitária no estado do Rio de Janeiro.",
+    "sameAs": []
+  }
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    gtag('js', new Date());
+
+    gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[]}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
+  fbq('init', '2224500131617302');
+  fbq('track', 'PageView');
+  </script>
+  <script>
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    (function () {
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
+      }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
+      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+    })();
+  </script>
+  <script src="https://cruzvermelhariodejaneiro.org/consentimento/consentimento.js?v=f0901be888" defer></script>
+  <!-- End Meta Pixel Code -->
+</head>
+
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="https://cruzvermelhariodejaneiro.org/" aria-label="Site oficial da Cruz Vermelha Brasileira — Rio de Janeiro">
+        <img
+          class="brand-logo"
+          src="assets/logo-oficial-cruz-vermelha-rj.webp"
+          width="540"
+          height="596"
+          alt="Cruz Vermelha Brasileira — Rio de Janeiro"
+          decoding="async">
+      </a>
+
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="#projeto">O projeto</a>
+        <a href="#impacto">Como acontece</a>
+        <a href="#perguntas">Dúvidas</a>
+        <a class="btn btn-primary" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Seja voluntário</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Projeto Impacto das Cores</span>
+          <h1>Uma nova cor pode abrir espaço para uma <em>nova história.</em></h1>
+          <p>
+            O Impacto das Cores reúne voluntários, crianças e moradores para transformar espaços comunitários com cuidado, presença e participação.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
+              Quero ser voluntário
+              <span aria-hidden="true">→</span>
+            </a>
+            <span class="safe-note">Cadastro no formulário oficial do voluntariado</span>
+          </div>
+        </div>
+
+        <figure class="hero-card reveal">
+          <img
+            src="assets/hero-1254.webp"
+            srcset="assets/hero-720.webp 720w, assets/hero-1254.webp 1254w"
+            sizes="(max-width: 900px) 100vw, 52vw"
+            width="1254"
+            height="1254"
+            alt="Voluntários e crianças reunidos em uma ação do projeto Impacto das Cores, com vista para o Rio de Janeiro."
+            fetchpriority="high"
+            decoding="async">
+          <figcaption class="hero-sticker">Cuidado que ganha forma e cor.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="trust" aria-label="Informações sobre o projeto">
+      <div class="container trust-grid">
+        <div class="trust-item">
+          <span class="trust-icon trust-icon-humanitarian">
+            <svg viewBox="0 0 24 24" role="img" aria-label="Cruz humanitária">
+            <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3Z" fill="currentColor"></path>
+          </svg>
+          </span>
+          <div><strong>Iniciativa humanitária</strong><span>Cruz Vermelha Brasileira — Rio de Janeiro</span></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon trust-icon-community">
+            <svg viewBox="0 0 24 24" role="img" aria-label="Transformação por meio da pintura">
+            <path d="M4 5h11a2 2 0 0 1 2 2v3H4a2.5 2.5 0 0 1 0-5Z"></path>
+            <path d="M17 8h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-5v7"></path>
+            <path d="M11 21h6"></path>
+          </svg>
+          </span>
+          <div><strong>Transformação comunitária</strong><span>Voluntários e moradores construindo juntos</span></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon trust-icon-donation">
+            <svg viewBox="0 0 24 24" role="img" aria-label="Voluntariado">
+            <path d="M12 3 20 6v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3Z"></path>
+            <path d="m8.5 12 2.2 2.2 4.8-5"></path>
+          </svg>
+          </span>
+          <div><strong>Voluntariado aberto</strong><span>A formação é dada pela própria Cruz Vermelha</span></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="story" id="projeto">
+      <div class="container story-grid">
+        <div class="story-photo reveal">
+          <img
+            class="main-photo"
+            src="assets/acao-1080.webp"
+            srcset="assets/acao-540.webp 540w, assets/acao-1080.webp 1080w"
+            sizes="(max-width: 900px) 90vw, 48vw"
+            width="1080" height="1080"
+            alt="Voluntários da Cruz Vermelha e crianças reunidos durante uma ação comunitária."
+            loading="lazy" decoding="async">
+          <img
+            class="mini-photo"
+            src="assets/tintas-540.webp"
+            srcset="assets/tintas-540.webp 540w, assets/tintas-1080.webp 1080w"
+            sizes="44vw"
+            width="540" height="540"
+            alt="Participante do projeto segurando uma lata de tinta recebida para a ação."
+            loading="lazy" decoding="async">
+        </div>
+
+        <div class="story-copy reveal">
+          <span class="section-kicker">Mais do que pintura</span>
+          <h2 class="section-title">Quando a comunidade participa, o espaço volta a pertencer a todos.</h2>
+          <p>
+            O projeto mobiliza pessoas para revitalizar áreas de convivência, estimular o cuidado coletivo e fortalecer vínculos entre moradores, crianças e voluntários.
+          </p>
+          <p>
+            A tinta muda a paisagem. A presença muda a experiência de quem vive ali. Cada nova ação começa com materiais, organização, deslocamento e pessoas dispostas a construir junto.
+          </p>
+          <div class="quote">“Não deixamos apenas novas cores. Deixamos cuidado, conexão e a certeza de que ninguém precisa transformar o seu entorno sozinho.”</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impacto">
+      <div class="container">
+        <div class="impact-head reveal">
+          <div>
+            <span class="section-kicker">Como o projeto acontece</span>
+            <h2 class="section-title">O que cada ação precisa para sair do papel.</h2>
+          </div>
+          <p class="section-lead">Cada mutirão depende de planejamento, materiais e pessoas dispostas a construir junto com a comunidade.</p>
+        </div>
+
+        <div class="impact-grid">
+          <article class="impact-card reveal">
+            <div class="impact-number">01</div>
+            <h3>Materiais para transformar</h3>
+            <p>Tintas, pincéis, rolos, proteção e outros insumos utilizados na revitalização dos espaços.</p>
+          </article>
+          <article class="impact-card reveal">
+            <div class="impact-number">02</div>
+            <h3>Mobilização e logística</h3>
+            <p>Organização, transporte e preparação para que voluntários e materiais cheguem onde a ação acontece.</p>
+          </article>
+          <article class="impact-card reveal">
+            <div class="impact-number">03</div>
+            <h3>Continuidade do projeto</h3>
+            <p>Mais capacidade para planejar novas iniciativas e manter viva a participação das comunidades.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery" aria-labelledby="galeria-titulo">
+      <div class="container">
+        <span class="section-kicker">A transformação acontecendo</span>
+        <h2 class="section-title" id="galeria-titulo">Cores nas paredes. Pessoas no centro.</h2>
+        <p class="section-lead">Registros reais de voluntários e crianças construindo juntos um espaço mais acolhedor.</p>
+
+        <div class="gallery-grid" style="margin-top: 42px;">
+          <button class="gallery-card reveal" type="button" data-lightbox="assets/pintura-1-1080.webp" aria-label="Ampliar foto de voluntária pintando com uma criança">
+            <img src="assets/pintura-1-540.webp" srcset="assets/pintura-1-540.webp 540w, assets/pintura-1-1080.webp 1080w" sizes="(max-width: 900px) 100vw, 42vw" width="1080" height="1080" alt="Voluntária pinta uma estrutura ao lado de crianças." loading="lazy" decoding="async">
+            <span class="gallery-caption">Participação desde o primeiro traço.</span>
+          </button>
+
+          <button class="gallery-card reveal" type="button" data-lightbox="assets/vinculo-1080.webp" aria-label="Ampliar foto de voluntária abraçando uma criança">
+            <img src="assets/vinculo-540.webp" srcset="assets/vinculo-540.webp 540w, assets/vinculo-1080.webp 1080w" sizes="(max-width: 900px) 50vw, 28vw" width="1080" height="1080" alt="Voluntária e criança sorriem juntas durante a ação." loading="lazy" decoding="async">
+            <span class="gallery-caption">Presença que cria vínculo.</span>
+          </button>
+
+          <button class="gallery-card reveal" type="button" data-lightbox="assets/pintura-2-1080.webp" aria-label="Ampliar foto de crianças e voluntários pintando uma escadaria">
+            <img src="assets/pintura-2-540.webp" srcset="assets/pintura-2-540.webp 540w, assets/pintura-2-1080.webp 1080w" sizes="(max-width: 900px) 50vw, 28vw" width="1080" height="1080" alt="Crianças e voluntários revitalizam uma escadaria comunitária." loading="lazy" decoding="async">
+            <span class="gallery-caption">Cada mão deixa uma marca positiva.</span>
+          </button>
+
+          <button class="gallery-card reveal" type="button" data-lightbox="assets/criancas-1080.webp" aria-label="Ampliar foto de crianças participantes do projeto">
+            <img src="assets/criancas-540.webp" srcset="assets/criancas-540.webp 540w, assets/criancas-1080.webp 1080w" sizes="(max-width: 900px) 50vw, 28vw" width="1080" height="1080" alt="Duas crianças participantes sorriem durante a ação do projeto." loading="lazy" decoding="async">
+            <span class="gallery-caption">Novos tons, novas histórias.</span>
+          </button>
+
+          <button class="gallery-card reveal" type="button" data-lightbox="assets/equipe-1080.webp" aria-label="Ampliar foto da equipe da Cruz Vermelha">
+            <img src="assets/equipe-540.webp" srcset="assets/equipe-540.webp 540w, assets/equipe-1080.webp 1080w" sizes="(max-width: 900px) 50vw, 28vw" width="1080" height="1080" alt="Equipe de voluntários da Cruz Vermelha Brasileira reunida." loading="lazy" decoding="async">
+            <span class="gallery-caption">Voluntários que fazem acontecer.</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="manifesto">
+      <div class="container reveal">
+        <span class="section-kicker" style="color:#fff;">Impacto que permanece</span>
+        <h2>Uma comunidade colorida também é uma comunidade que se sente vista.</h2>
+        <p>Ao participar, você entra em uma rede de cuidado que aproxima pessoas, fortalece o pertencimento e ajuda novos espaços a receberem vida.</p>
+      </div>
+    </section>
+
+    <section class="donate" id="participe">
+      <div class="container donate-card reveal">
+        <h2>Ajude a pintar a próxima história.</h2>
+        <p>Faça o cadastro no formulário oficial do voluntariado. A equipe entra em contato para explicar as próximas ações e a formação, que é dada pela própria Cruz Vermelha.</p>
+        <a class="btn btn-light btn-lg" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
+          Quero ser voluntário
+          <span aria-hidden="true">→</span>
+        </a>
+        <div class="payment-note">Dúvidas sobre o voluntariado: WhatsApp <a href="https://wa.me/5521970360264" style="color:inherit">(21) 97036-0264</a>.</div>
+      </div>
+    </section>
+
+    <section class="faq" id="perguntas">
+      <div class="container faq-layout">
+        <div class="reveal">
+          <span class="section-kicker">Perguntas frequentes</span>
+          <h2 class="section-title">Antes de participar</h2>
+          <p class="section-lead">Informações rápidas sobre o projeto e o voluntariado.</p>
+        </div>
+
+        <div class="faq-list reveal">
+          <details>
+            <summary>Como faço para participar?</summary>
+            <p>Faça o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. A equipe do voluntariado entra em contato para explicar as próximas ações e a formação.</p>
+          </details>
+          <details>
+            <summary>Preciso ter experiência?</summary>
+            <p>Não. A Cruz Vermelha Brasileira — Rio de Janeiro forma os próprios voluntários, e nas ações a equipe orienta cada etapa do trabalho.</p>
+          </details>
+          <details>
+            <summary>Posso doar dinheiro para o projeto?</summary>
+            <p>No momento, a doação em dinheiro pelo site está suspensa. Empresas e instituições que queiram apoiar o projeto podem escrever para contato@cruzvermelhariodejaneiro.org.</p>
+          </details>
+          <details>
+            <summary>Esta é uma iniciativa da Cruz Vermelha?</summary>
+            <p>Sim. O Impacto das Cores é um projeto da Cruz Vermelha Brasileira — Rio de Janeiro, com sede na Praça da Cruz Vermelha, 10, Centro do Rio.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-block">
+          <a href="https://cruzvermelhariodejaneiro.org/" aria-label="Acessar o site oficial da Cruz Vermelha Brasileira — Rio de Janeiro">
+            <img
+              class="footer-brand-logo"
+              src="assets/logo-oficial-cruz-vermelha-rj.webp"
+              width="540"
+              height="596"
+              alt="Cruz Vermelha Brasileira — Rio de Janeiro"
+              loading="lazy"
+              decoding="async">
+          </a>
+          <p>
+            Humanidade, imparcialidade, neutralidade, independência,
+            voluntariado, unidade e universalidade.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h3>Contato institucional</h3>
+          <p>
+            <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a><br>
+            <a href="https://wa.me/5521999922864">(21) 99992-2864</a>
+          </p>
+          <div class="footer-links">
+            <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener noreferrer">Instagram @cruzvermelhabrasileirarj</a>
+            <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener noreferrer">Facebook Cruz Vermelha Brasileira — RJ</a>
+            <a href="https://cruzvermelhariodejaneiro.org/">Site institucional</a>
+          </div>
+        </div>
+
+        <div class="footer-column">
+          <h3>Dados cadastrais</h3>
+          <p>
+            <strong>Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro</strong><br>
+            CNPJ 08.560.973/0001-97
+          </p>
+          <address style="margin-top:12px;">
+            Praça da Cruz Vermelha, 10<br>
+            Rio de Janeiro — RJ<br>
+            CEP 20230-130
+          </address>
+        </div>
+      </div>
+
+      <div class="footer-legal">
+        <span>© 2026 Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro.</span>
+        <span><strong>Projeto Impacto das Cores</strong> · <a href="https://cruzvermelhariodejaneiro.org/privacidade/">Privacidade</a> · <a href="https://cruzvermelhariodejaneiro.org/termos/">Termos de Uso</a> · <a href="https://cruzvermelhariodejaneiro.org/cookies/">Cookies</a> · <a href="https://cruzvermelhariodejaneiro.org/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="mobile-donate" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Quero ser voluntário →</a>
+
+  <dialog id="lightbox" aria-label="Visualização ampliada da foto">
+    <button class="close-dialog" type="button" aria-label="Fechar imagem">×</button>
+    <img src="" alt="">
+  </dialog>
+
+  <script>
+    /* No celular, o cabeçalho aparece na primeira dobra e some ao sair do hero. */
+    const topbar = document.querySelector(".topbar");
+    const heroSection = document.querySelector(".hero");
+    const mobileHeaderQuery = window.matchMedia("(max-width: 620px)");
+
+    function updateMobileHeader() {
+      if (!topbar || !heroSection) return;
+
+      if (!mobileHeaderQuery.matches) {
+        topbar.classList.remove("is-hidden");
+        return;
+      }
+
+      const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+      topbar.classList.toggle("is-hidden", window.scrollY >= heroBottom - 8);
+    }
+
+    updateMobileHeader();
+    window.addEventListener("scroll", updateMobileHeader, { passive: true });
+    window.addEventListener("resize", updateMobileHeader);
+    mobileHeaderQuery.addEventListener?.("change", updateMobileHeader);
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: .12 });
+      document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+    } else {
+      document.querySelectorAll(".reveal").forEach(el => el.classList.add("visible"));
+    }
+
+    const dialog = document.getElementById("lightbox");
+    const dialogImage = dialog.querySelector("img");
+    const closeButton = dialog.querySelector(".close-dialog");
+
+    document.querySelectorAll("[data-lightbox]").forEach(button => {
+      button.addEventListener("click", () => {
+        const image = button.querySelector("img");
+        dialogImage.src = button.dataset.lightbox;
+        dialogImage.alt = image.alt;
+        dialog.showModal();
+      });
+    });
+
+    closeButton.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", event => {
+      if (event.target === dialog) dialog.close();
+    });
+  </script>
+</body>
+</html>

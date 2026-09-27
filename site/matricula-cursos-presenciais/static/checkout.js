@@ -26,9 +26,17 @@
     return '<p>' + esc(mensagem) + ' <a href="' + URL_CURSOS + '">Voltar para os cursos</a>.</p>';
   }
 
-  /* utm_*, fbclid e gclid da URL, guardados na sessão para sobreviver à navegação entre páginas. */
+  /* A escolha do aviso de cookies (bloco de medição da página, window.cvrjMedicao). */
+  function consentimento() {
+    try { return (window.cvrjMedicao && window.cvrjMedicao.ler()) || null; } catch (e) { return null; }
+  }
+
+  /* utm_*, fbclid e gclid da URL, guardados na sessão para sobreviver à navegação entre páginas.
+     Só com consentimento de estatística: sem ele, a inscrição segue sem a origem da visita. */
   function origem() {
     var o = {};
+    var c = consentimento();
+    if (!c || !c.estatistica) return o;
     new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) o[k] = v.slice(0, 255); });
     try {
       var salvo = JSON.parse(sessionStorage.getItem('mcp_origem') || '{}');
@@ -355,6 +363,8 @@
     }
 
     function registrarCompra(d) {
+      var c = consentimento();
+      if (!c || (!c.estatistica && !c.marketing)) return; // sem consentimento, nada a medir nem a marcar
       try {
         var chave = 'mcp_purchase_' + token;
         if (localStorage.getItem(chave)) return;

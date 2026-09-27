@@ -32,11 +32,10 @@ TITULO = "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais"
 DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de "
              "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
-URL_DOACAO = f"{ORIGEM}/doe/"
 URL_AGASALHO = f"{ORIGEM}/campanha-agasalho.html"
 
 # Perguntas que as pessoas fazem ao Google sobre a filial: cada resposta cita os caminhos oficiais e liga
-# o restante do ecossistema (matrícula, doação, chat). Texto puro no FAQPage; links só no HTML.
+# o restante do ecossistema (matrícula, Campanha do Agasalho, chat). Texto puro no FAQPage; links só no HTML.
 FAQ = [
     ("Como ser voluntário da Cruz Vermelha no Rio de Janeiro?",
      "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato "
@@ -50,18 +49,19 @@ FAQ = [
      [("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
-     "Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
+     "Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
      "3 dias úteis.", []),
-    ("Como doar para a Cruz Vermelha do Rio de Janeiro?",
-     "Pela página de doação do site, com PIX ou cartão. Roupas de frio, cobertores e calçados são recebidos na sede, "
-     "pela Campanha do Agasalho. Toda ajuda vai para as ações humanitárias da filial no estado do Rio de Janeiro.",
-     [("página de doação", "URL_DOACAO"), ("Campanha do Agasalho", "URL_AGASALHO")]),
+    ("Como ajudar a Cruz Vermelha no Rio de Janeiro?",
+     "Sendo voluntário, com o cadastro no formulário oficial, no botão acima, ou entregando roupas de frio, cobertores e "
+     "calçados na sede, pela Campanha do Agasalho. A doação em dinheiro pelo site está suspensa no momento. Empresas e "
+     "escolas que queiram propor uma parceria podem usar o chat de contato deste site.",
+     [("Campanha do Agasalho", "URL_AGASALHO")]),
     ("Onde fica a Cruz Vermelha no Rio de Janeiro?",
      "Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e "
      "a formação de voluntários.", []),
 ]
 NOME = "Cruz Vermelha Brasileira – Filial Rio de Janeiro"
-CHAMADA = "Maior rede de ajuda humanitária do 🌎<br>Doe e nos ajude a salvar vidas!"
+CHAMADA = "Maior rede de ajuda humanitária do 🌎<br>Seja voluntário e ajude a salvar vidas!"
 IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
 
 # Só os três destinos que o Matheus pediu (19/09/2026), na ordem em que apareciam na página original.
@@ -176,11 +176,17 @@ JS = """
     (function () {
       // UTMs, fbclid e gclid com que a pessoa chegou (ex.: ?utm_source=ig da bio) seguem para a plataforma da
       // escola, que fica no nosso domínio: lá o GA4 e o Pixel enxergam a origem mesmo sem cookie compartilhado.
+      // Só com a permissão de estatística (aviso de cookies), conferida na hora do clique: quem aceita depois
+      // de a página abrir também leva a origem.
       var origem = new URLSearchParams();
       new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) origem.set(k, v); });
       var escola = document.querySelector('[data-bio="escola"]');
       if (escola && Array.from(origem.keys()).length) {
-        try { var u = new URL(escola.href); origem.forEach(function (v, k) { u.searchParams.set(k, v); }); escola.href = u.toString(); } catch (e) {}
+        escola.addEventListener('click', function () {
+          var c = window.cvrjMedicao && window.cvrjMedicao.ler();
+          if (!c || !c.estatistica) return;
+          try { var u = new URL(escola.href); origem.forEach(function (v, k) { u.searchParams.set(k, v); }); escola.href = u.toString(); } catch (e) {}
+        });
       }
       // Cada clique vira um evento: GA4 bio_click (link_id, link_url, link_text, outbound) e, no Meta, BioClick;
       // o WhatsApp também dispara o evento padrão Contact (pessoa iniciando contato com a organização).
@@ -212,7 +218,7 @@ def main() -> int:
     def faq_html(pergunta: str, resposta: str, links: list) -> str:
         texto = esc(resposta)
         for rotulo, alvo in links:
-            url = {"URL_MATRICULA": URL_MATRICULA, "URL_DOACAO": URL_DOACAO, "URL_AGASALHO": URL_AGASALHO}[alvo]
+            url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO}[alvo]
             texto = texto.replace(esc(rotulo), f'<a href="{url}">{esc(rotulo)}</a>', 1)
         return f"<details><summary>{esc(pergunta)}</summary><p>{texto}</p></details>"
     faq = "".join(faq_html(p, r, l) for p, r, l in FAQ)
@@ -220,13 +226,13 @@ def main() -> int:
     # GA4: esta página entra no grupo de conteúdo "bio" (relatórios por grupo). O snippet vem da home.
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'bio' });\n    gtag('config', 'G-", 1)
     assert "content_group: 'bio'" in ga4, "não achei o gtag('config') da home para inserir o content_group"
-    # Nesta página o gtag.js entra sem esperar o load: quem chega do Instagram toca num link em segundos e o
-    # bio_click precisa do GA4 carregado. O Pixel segue adiado como na home.
+    # Nesta página a medição entra sem esperar o load: quem chega do Instagram toca num link em segundos e
+    # o bio_click precisa do GA4 carregado. Só vale para quem já deu consentimento no aviso de cookies: o
+    # carregador da home aplica a escolha na hora, em vez de esperar a página ficar ociosa.
     pixel = partes["pixel"]
-    adiado = "['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js']"
-    assert adiado in pixel, "o carregador adiado da home mudou; ajuste gerar_bio.py"
-    pixel = pixel.replace(adiado, "['https://connect.facebook.net/en_US/fbevents.js']", 1)
-    ga4 = '  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>\n' + ga4
+    agenda = "      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);"
+    assert agenda in pixel, "o carregador da home mudou; ajuste gerar_bio.py"
+    pixel = pixel.replace(agenda, "      aplicar();", 1)
 
     ld = [
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [

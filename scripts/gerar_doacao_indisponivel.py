@@ -70,7 +70,7 @@ PAGINA = """<!DOCTYPE html>
 
 def main() -> int:
     partes = partes_da_home(HOME.read_text(encoding="utf-8"))
-    html = (PAGINA.replace("@@ESTILO@@", partes["estilo"]).replace("@@HEADER@@", partes["header"])
+    html = (PAGINA.replace("@@ESTILO@@", partes["estilo"]).replace("@@HEADER@@", partes["header"].replace(' aria-current="page"', ""))
             .replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"]))
     destino = RAIZ / "site" / "doacao-indisponivel.html"

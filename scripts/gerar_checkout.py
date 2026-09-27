@@ -130,10 +130,11 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
                 <ul class="ck-confianca">
                   <li><i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro pela ÚnicoPag</li>
-                  <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Estorno se não houver turma compatível</li>
+                  <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 7 dias para desistir, com o valor de volta</li>
                   <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
                 </ul>
-                <p class="ck-nota" style="margin:14px 0 0">Seus dados são usados só para a matrícula e a cobrança. <a href="/privacidade/">Política de privacidade</a>.</p>
+                <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber o valor de volta (art. 49 do Código de Defesa do Consumidor). Seus dados são usados só para a matrícula e a cobrança, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>
+                <p class="ck-nota ck-legal" style="margin:8px 0 0">Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro · CNPJ 08.560.973/0001-97 · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ · contato@cruzvermelhariodejaneiro.org</p>
               </section>
             </form>
             <div id="ck-pix" hidden aria-live="polite"></div>

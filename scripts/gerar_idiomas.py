@@ -2,8 +2,11 @@
 """Gera as páginas em inglês e espanhol a partir de site/idiomas.json.
 
   site/en/            site/es/            página institucional
-  site/en/donate/     site/es/donar/      página de doação
+  site/en/donate/     site/es/donar/      página de doação (só com DOACAO_NO_AR = True)
   site/en/archive/    site/es/acervo/     o acervo (o português, /acervo/, é gerado pela Redação)
+
+As políticas (privacidade, termos, cookies, reembolso) nas três línguas saem de
+scripts/gerar_politicas.py, que usa a moldura() e o PAGINAS daqui.
 
 O visual é o mesmo da home: cabeçalho, rodapé e CSS saem de partes_da_home(), e só os textos
 mudam. Cada página declara hreflang para as três versões, com x-default no português — sem isso
@@ -38,6 +41,10 @@ EMAIL = "contato@cruzvermelhariodejaneiro.org"
 NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
 VOLUNTARIO = "https://form.spotform.com.br/voluntariocruzvermelharj"
+# Doação online suspensa desde 25/09/2026 (pedido do Matheus): sem "Donate/Donar" no menu, sem a
+# porta de doação na home e sem gerar /en/donate/ e /es/donar/ (que respondem 503 com o aviso,
+# ver site/en/donate/.htaccess). Para a doação voltar, True aqui, rodar e publicar.
+DOACAO_NO_AR = False
 # Caminho de cada página, por idioma. O português é o x-default.
 PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
@@ -51,7 +58,12 @@ PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "equipe": {"pt": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
            # O acervo em português é da Redação (lib/acervo/paginas.ts, com a mesma lista de hreflang);
            # aqui ficam a apresentação em inglês e em espanhol, que levam para ele.
-           "acervo": {"pt": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"}}
+           "acervo": {"pt": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+           # Políticas: a mesma página nas três línguas (scripts/gerar_politicas.py).
+           "privacidade": {"pt": "/privacidade/", "en": "/en/privacy/", "es": "/es/privacidad/"},
+           "termos": {"pt": "/termos/", "en": "/en/terms/", "es": "/es/terminos/"},
+           "cookies": {"pt": "/cookies/", "en": "/en/cookies/", "es": "/es/cookies/"},
+           "reembolso": {"pt": "/reembolso/", "en": "/en/refunds/", "es": "/es/reembolsos/"}}
 EQUIPE = SITE / "equipe.html"
 FAQ = SITE / "faq-idiomas.json"
 CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
@@ -147,9 +159,10 @@ def cabecalho(idioma: dict, pagina: str) -> str:
     links = [(f'/{pasta}/#sobre', m["sobre"]), (f'/{pasta}/#principios', m["principios"]),
              (PAGINAS["equipe"][idioma["codigo"]], m["equipe"]),
              (PAGINAS["cursos"][idioma["codigo"]], m["cursos"]),
-             (PAGINAS["faq"][idioma["codigo"]], m["faq"]),
-             (PAGINAS["doar"][idioma["codigo"]], m["doar"]), (f'/{pasta}/#contato', m["contato"]),
-             ("/", m["portugues"])]
+             (PAGINAS["faq"][idioma["codigo"]], m["faq"])]
+    if DOACAO_NO_AR:
+        links.append((PAGINAS["doar"][idioma["codigo"]], m["doar"]))
+    links += [(f'/{pasta}/#contato', m["contato"]), ("/", m["portugues"])]
     nav = "\n          ".join(f'<a href="{a}">{esc(b)}</a>' for a, b in links)
     return f"""  <header class="main-header">
     <div class="header-container">
@@ -199,16 +212,22 @@ def rodape(idioma: dict) -> str:
         <span class="sep">|</span>
         <a href="{PAGINAS['acervo'][idioma['codigo']]}">{esc(r['acervo'])}</a>
         <span class="sep">|</span>
-        <a href="/privacidade/" hreflang="pt-BR" lang="pt-BR">{esc(r['privacidade'])}</a>
+        <a href="{PAGINAS['privacidade'][idioma['codigo']]}">{esc(r['privacidade'])}</a>
         <span class="sep">|</span>
-        <a href="/termos/" hreflang="pt-BR" lang="pt-BR">{esc(r['termos'])}</a>
+        <a href="{PAGINAS['termos'][idioma['codigo']]}">{esc(r['termos'])}</a>
+        <span class="sep">|</span>
+        <a href="{PAGINAS['cookies'][idioma['codigo']]}">{esc(r['cookies'])}</a>
+        <span class="sep">|</span>
+        <a href="{PAGINAS['reembolso'][idioma['codigo']]}">{esc(r['reembolso'])}</a>
+        <span class="sep">|</span>
+        <a href="{PAGINAS['cookies'][idioma['codigo']]}#preferencias" data-cvrj-cookies>{esc(r['preferencias'])}</a>
       </div>
     </div>
   </footer>"""
 
 
 def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, ld: list, partes: dict,
-            imagem: str = "og-home.jpg") -> str:
+            imagem: str = "og-home.jpg", css: str = "") -> str:
     caminho = PAGINAS[pagina][idioma["codigo"]]
     ld_json = json.dumps(ld, ensure_ascii=False, separators=(",", ":"))
     assert "</" not in ld_json, "JSON-LD não pode conter </ (fecharia o <script>)"
@@ -236,7 +255,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-  <style>{partes['estilo_sem_tag']}{ESTILO_EXTRA}</style>
+  <style>{partes['estilo_sem_tag']}{ESTILO_EXTRA}{css}</style>
   <script type="application/ld+json">{ld_json}</script>
 {partes['ga4']}
 {partes['pixel']}
@@ -280,7 +299,12 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
                 f'<p class="i18n-porta"><a href="{url}"{extra}>{esc(rotulo)} &rarr;</a></p></article>')
 
-    caminhos = "\n          ".join(porta(*x) for x in h["caminhos"])
+    caminhos = "\n          ".join(porta(*x) for x in h["caminhos"] if DOACAO_NO_AR or x[3] != "doar")
+    if DOACAO_NO_AR:
+        cta = f'<a class="btn btn-red" href="{PAGINAS["doar"][idioma["codigo"]]}">{esc(h["cta_doar"])}</a>'
+    else:
+        cta = (f'<a class="btn btn-red" href="{VOLUNTARIO}" target="_blank" rel="noopener" hreflang="pt-BR" '
+               f'lang="pt-BR">{esc(h["cta_voluntario"])}</a>')
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap">
         <p class="eyebrow">{esc(h['sobrancelha'])}</p>
@@ -326,7 +350,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         <h2>{esc(h['cta_titulo'])}</h2>
         <p>{esc(h['cta_texto'])}</p>
         <div class="cta-row" style="margin-top:20px">
-          <a class="btn btn-red" href="{PAGINAS['doar'][idioma['codigo']]}">{esc(h['cta_doar'])}</a>
+          {cta}
           <a class="btn btn-outline" href="/matricula-cursos-presenciais/" hreflang="pt-BR" lang="pt-BR">{esc(h['cta_cursos'])}</a>
           <a class="btn btn-outline" href="mailto:{EMAIL}">{EMAIL}</a>
         </div>
@@ -730,6 +754,8 @@ def main() -> int:
                             ("cursos", lambda i, p: pagina_cursos(i, p, cursos)),
                             ("equipe", lambda i, p: pagina_equipe(i, p, equipe)),
                             ("acervo", pagina_acervo)):
+            if nome == "doar" and not DOACAO_NO_AR:
+                continue
             destino = SITE / PAGINAS[nome][codigo].strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)
             # Sem o widget de chat: a interface dele é toda em português, e abrir um chat em

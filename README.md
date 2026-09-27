@@ -1199,6 +1199,97 @@ depois do deploy.
 - **Trilha de auditoria**: as migrações ainda não estão em produção; a republicação só registra a
   versão na trilha quando a RPC existir.
 
+## Aviso de cookies, políticas obrigatórias e fim dos convites para doar (27/09/2026)
+
+Pedido do Matheus: as páginas de política que todo site precisa ter, o aviso de cookies, nas três
+línguas, em todos os sites feitos para a filial; e tirar do ar tudo o que convida a doar dinheiro
+(a doação online está suspensa desde 25/09). Decisão dele sobre o encarregado: **sem nome por
+enquanto**, com `contato@cruzvermelhariodejaneiro.org` como canal do titular (art. 11 da Resolução
+CD/ANPD nº 2/2022, agente de pequeno porte).
+
+### Aviso de cookies (LGPD; Guia de Cookies da ANPD, 2022)
+
+- `site/consentimento/consentimento.js` (cache de um ano; a URL leva o hash do conteúdo): aviso
+  com **Rejeitar, Personalizar e Aceitar todos**, do mesmo tamanho; painel com Necessários (sempre
+  ligados), Estatística e Marketing (desligados até a pessoa ligar); textos pela língua da página.
+  Qualquer elemento com `data-cvrj-cookies` reabre o painel ("Preferências de cookies" em todo
+  rodapé). Esc fecha e devolve o foco; o painel prende o Tab.
+- A escolha fica no cookie `cvrj_consentimento` (`v=1&e=0|1&m=0|1&t=<unix>`, 12 meses,
+  `Domain=.cruzvermelhariodejaneiro.org`): quem escolheu no site principal não é perguntado de novo
+  nos subdomínios (Impacto das Cores, Punção Venosa, Redação).
+- O bloco de medição da home (entre `<!-- Google tag (gtag.js) -->` e `<!-- End Meta Pixel Code -->`)
+  começa com o Consent Mode v2 negado e o Pixel revogado, e **só baixa o gtag.js e o fbevents.js
+  com permissão** (`window.cvrjMedicao.aplicar`). Revogar liga `ga-disable-G-HDYZZ5JZHF` e apaga
+  `_ga*`, `_gid`, `_fbp` e `_fbc`. O pixel em `<noscript>` saiu (sem JavaScript não há escolha).
+- `scripts/consentimento.py` carimba o hash do aviso na home e copia o bloco para as páginas
+  mantidas à mão (equipe, campanha, `doacao.html` e o Impacto das Cores, este com o endereço
+  completo do aviso). Rode **antes** dos geradores, que copiam o bloco da home.
+- A origem da visita (utm, fbclid, gclid) só vai com a inscrição, com a mensagem do chat ou para a
+  escola (bio) se a pessoa permitiu estatística.
+- Conferido no Chromium, página por página (33 páginas): nenhum pedido ao Google ou à Meta antes da
+  escolha; "Aceitar todos" baixa os dois scripts; revogar apaga os cookies; a Política de Cookies
+  mostra a escolha atual.
+
+### Políticas em português, inglês e espanhol
+
+`scripts/gerar_politicas.py` gera 12 páginas a partir de `site/politicas.json` (o texto, com as
+fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, o inglês e o espanhol a
+`moldura()` de `gerar_idiomas.py`, com hreflang recíproco e seletor de idioma para a mesma política.
+
+| Política | Português | Inglês | Espanhol |
+|---|---|---|---|
+| Privacidade (LGPD) | `/privacidade/` | `/en/privacy/` | `/es/privacidad/` |
+| Cookies | `/cookies/` | `/en/cookies/` | `/es/cookies/` |
+| Termos de Uso | `/termos/` | `/en/terms/` | `/es/terminos/` |
+| Cancelamento e reembolso | `/reembolso/` | `/en/refunds/` | `/es/reembolsos/` |
+
+- Privacidade: controladora e canal do titular; cada tratamento com dados, finalidade e **base
+  legal** (art. 7º); compartilhamento (ÚnicoPag, plataforma da escola, Hostinger, Resend, Vercel e
+  Supabase, Google e Meta só com permissão, Spotform); transferência internacional (art. 33); guarda
+  por critério (o código não tem rotina de exclusão automática, então não se prometeu prazo que não
+  existe, salvo a guarda legal de registros de pagamento); direitos do art. 18 e prazo do art. 19.
+- Reembolso: **7 dias de arrependimento** (CDC, art. 49) com devolução integral, as regras que já
+  valiam (estorno sem horário compatível ou antes da confirmação da turma), como pedir (chat, com
+  confirmação imediata por protocolo, ou e-mail) e quem vende (Decreto 7.962/2013). Checkout,
+  página de matrícula e e-mails ao aluno citam os 7 dias; o checkout mostra CNPJ e endereço e
+  avisa que pagar é aceitar os termos e as regras de reembolso.
+- Termos: foro do domicílio do consumidor nas relações de consumo (CDC, art. 101, I).
+- `/privacidade/` e `/termos/` eram da Redação: saíram de lá (`publicarPaginasJuridicas` e as
+  pastas na lista do FTP) e entraram aqui (`.gitignore` atualizado).
+
+### Doação em dinheiro fora do site
+
+- Sem "Doe" no menu (home, equipe, Redação, inglês e espanhol) e sem "Fazer uma doação" na home
+  (virou "Seja voluntário"); FAQ e chat com "Como ajudar" (voluntariado, Campanha do Agasalho,
+  parcerias); assunto do chat "Campanha do Agasalho e parcerias".
+- Campanha do Agasalho: só entrega de roupas na sede e voluntariado (saíram o checkout, a faixa
+  "Doação online", o agradecimento com cursos gravados e o botão fixo de doar).
+- Impacto das Cores (`site/projetocores/index.html`, antes só no servidor): convida para o
+  voluntariado, com canonical, `og:image` absoluta, aviso de cookies e políticas no rodapé.
+- Bio, 404, `llms.txt` e sitemaps sem doação. `/en/donate/` e `/es/donar/` deixam de ser geradas.
+- Para a doação voltar: `DOACAO_NO_AR = True` em `gerar_idiomas.py` e `gerar_doe.py`, rodar os
+  geradores, tirar as regras 503 de `site/doe/.htaccess`, `site/en/donate/.htaccess` e
+  `site/es/donar/.htaccess` e rever a FAQ, a campanha e as políticas.
+- As 5 matérias da Redação que chamavam para a página de doação (Chocó, Helicóptero, Ciclovia,
+  Setembro Amarelo, "Recebemos") passam a chamar para o voluntariado, no padrão da revisão de 25/09
+  (versões guardadas, `updated_at` intacto, `conteudo_corrigido_na_revisao`), depois do "Regerar".
+
+### Ordem de geração
+
+`consentimento.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
+`gerar_checkout.py` → `gerar_bio.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
+`gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`.
+Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
+
+### Pendências para a filial
+
+- Nomear o encarregado quando houver (trocar o parágrafo "Canal de privacidade" em `politicas.json`).
+- Se o limite de agente de pequeno porte deixar de valer (faturamento, tratamento de alto risco), o
+  encarregado passa a ser obrigatório (Resolução CD/ANPD nº 18/2024).
+- Confirmar com os fornecedores (Google, Meta, Resend, Vercel) as cláusulas-padrão da ANPD.
+- Resposta automática em `contato@` ajudaria a confirmar na hora pedidos de reembolso feitos por
+  e-mail (pelo chat, a confirmação já é imediata).
+
 ## Revisão de SEO e gargalos de alcance orgânico (23/09/2026)
 
 Pedido do Matheus: rever todo o SEO e o que trava o alcance orgânico. Rastreio ao vivo, auditoria

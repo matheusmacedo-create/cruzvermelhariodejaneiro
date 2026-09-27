@@ -1,0 +1,1798 @@
+{
+  "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão. Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
+  "revisao": "2026-09-27",
+  "rotulos": {
+    "pt": {
+      "atualizada": "Atualizada em",
+      "dados": "Dados",
+      "finalidade": "Para quê",
+      "base": "Base legal",
+      "indice": "Nesta página",
+      "inicio": "Início",
+      "traducao": "",
+      "filial": [
+        "Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro",
+        "CNPJ 08.560.973/0001-97",
+        "Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro/RJ, CEP 20230-130",
+        "E-mail: {email}"
+      ],
+      "estado": {
+        "rotulo": "Sua escolha atual:",
+        "nenhuma": "você ainda não escolheu. Até escolher, só os cookies necessários são usados.",
+        "estatistica": "estatística",
+        "marketing": "marketing",
+        "sim": "sim",
+        "nao": "não",
+        "em": "registrada em"
+      },
+      "noscript": "Sem JavaScript, o site não usa cookies de estatística nem de marketing, e não há escolha a fazer.",
+      "outras": "Outras políticas:",
+      "nomes": {
+        "privacidade": "Política de Privacidade",
+        "cookies": "Política de Cookies",
+        "termos": "Termos de Uso",
+        "reembolso": "Cancelamento e reembolso"
+      }
+    },
+    "en": {
+      "atualizada": "Last updated",
+      "dados": "Data",
+      "finalidade": "Purpose",
+      "base": "Legal basis",
+      "indice": "On this page",
+      "inicio": "Home",
+      "traducao": "This translation is provided for convenience. The official version is the Portuguese one.",
+      "filial": [
+        "Brazilian Red Cross — Rio de Janeiro State Branch (Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro)",
+        "CNPJ (Brazilian company number) 08.560.973/0001-97",
+        "Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro, RJ, 20230-130, Brazil",
+        "E-mail: {email}"
+      ],
+      "estado": {
+        "rotulo": "Your current choice:",
+        "nenhuma": "you have not chosen yet. Until you do, only necessary cookies are used.",
+        "estatistica": "statistics",
+        "marketing": "marketing",
+        "sim": "yes",
+        "nao": "no",
+        "em": "recorded on"
+      },
+      "noscript": "Without JavaScript, the site uses no statistics or marketing cookies, so there is no choice to make.",
+      "outras": "Other policies:",
+      "nomes": {
+        "privacidade": "Privacy Policy",
+        "cookies": "Cookie Policy",
+        "termos": "Terms of Use",
+        "reembolso": "Cancellation and refunds"
+      }
+    },
+    "es": {
+      "atualizada": "Actualizada el",
+      "dados": "Datos",
+      "finalidade": "Para qué",
+      "base": "Base legal",
+      "indice": "En esta página",
+      "inicio": "Inicio",
+      "traducao": "Esta traducción se ofrece para su comodidad. La versión oficial es la portuguesa.",
+      "filial": [
+        "Cruz Roja Brasileña — Filial del Estado de Río de Janeiro (Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro)",
+        "CNPJ (registro de personas jurídicas de Brasil) 08.560.973/0001-97",
+        "Praça da Cruz Vermelha, 10 — Centro, Río de Janeiro, RJ, 20230-130, Brasil",
+        "Correo: {email}"
+      ],
+      "estado": {
+        "rotulo": "Su elección actual:",
+        "nenhuma": "todavía no eligió. Hasta que elija, solo se usan las cookies necesarias.",
+        "estatistica": "estadística",
+        "marketing": "marketing",
+        "sim": "sí",
+        "nao": "no",
+        "em": "registrada el"
+      },
+      "noscript": "Sin JavaScript, el sitio no usa cookies de estadística ni de marketing, y no hay nada que elegir.",
+      "outras": "Otras políticas:",
+      "nomes": {
+        "privacidade": "Política de Privacidad",
+        "cookies": "Política de Cookies",
+        "termos": "Términos de Uso",
+        "reembolso": "Cancelación y reembolso"
+      }
+    }
+  },
+  "paginas": {
+    "privacidade": {
+      "pt": {
+        "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
+        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat e na newsletter, para quê, com quem compartilha e seus direitos pela LGPD.",
+        "sobrancelha": "Proteção de dados",
+        "h1": "Política de Privacidade",
+        "intro": [
+          "Esta política explica, em linguagem direta, quais dados pessoais o site da Cruz Vermelha Brasileira Rio de Janeiro trata, para que servem, com quem são compartilhados, por quanto tempo ficam guardados e como você exerce os seus direitos. Ela segue a Lei Geral de Proteção de Dados Pessoais (Lei nº 13.709/2018, a LGPD).",
+          "Vale para cruzvermelhariodejaneiro.org e todas as suas páginas, inclusive notícias, acervo e as versões em inglês e espanhol, e para a página do projeto Impacto das Cores (projetocores.cruzvermelhariodejaneiro.org). O curso de Punção Venosa tem site e [política de privacidade próprios]({puncao})."
+        ],
+        "secoes": [
+          {
+            "id": "controladora",
+            "titulo": "Quem cuida dos seus dados",
+            "blocos": [
+              {
+                "p": "A controladora dos dados, que decide como eles são tratados, é a filial abaixo."
+              },
+              {
+                "filial": true
+              },
+              {
+                "p": "**Canal de privacidade:** para qualquer assunto sobre os seus dados, escreva para [{email}](mailto:{email}) com o assunto “Privacidade”. Enquanto não houver encarregado nomeado, este é o canal de comunicação com os titulares e com a Autoridade Nacional de Proteção de Dados (ANPD), como permite o art. 11 da Resolução CD/ANPD nº 2/2022 aos agentes de tratamento de pequeno porte."
+              }
+            ]
+          },
+          {
+            "id": "dados",
+            "titulo": "Que dados tratamos, para quê e com que base legal",
+            "blocos": [
+              {
+                "p": "Cada formulário pede só o necessário para o que ele faz. A base legal é a hipótese da LGPD (art. 7º) que autoriza cada uso."
+              },
+              {
+                "atividades": [
+                  {
+                    "titulo": "Matrícula em cursos presenciais",
+                    "dados": "Nome completo, CPF, e-mail, telefone, curso escolhido, forma de pagamento, situação do pagamento e, no cartão, só a bandeira e os quatro últimos dígitos.",
+                    "finalidade": "Registrar a inscrição, gerar a cobrança, enviar o comprovante, combinar turma e horário por e-mail e, depois do pagamento, criar a sua matrícula na plataforma da escola.",
+                    "base": "Execução de contrato e dos procedimentos que o antecedem, a seu pedido (art. 7º, V); cumprimento de obrigação legal, na guarda dos registros de pagamento (art. 7º, II)."
+                  },
+                  {
+                    "titulo": "Chat “Fale com a gente”",
+                    "dados": "Assunto, curso (quando o assunto é matrícula, curso ou pagamento), nome, e-mail, telefone (opcional), a sua mensagem e a página de onde você escreveu.",
+                    "finalidade": "Responder ao seu contato por e-mail, com número de protocolo, e registrar o atendimento.",
+                    "base": "Atendimento a pedido seu (art. 7º, V) e legítimo interesse em responder e manter o histórico do atendimento (art. 7º, IX)."
+                  },
+                  {
+                    "titulo": "Newsletter",
+                    "dados": "Nome, e-mail e o registro do consentimento: o texto aceito, a data, o endereço IP e a identificação do navegador.",
+                    "finalidade": "Enviar notícias, campanhas e informações sobre cursos, só depois de você confirmar a inscrição pelo link enviado ao seu e-mail (válido por 72 horas). Todo envio traz um link para sair da lista em um clique.",
+                    "base": "Consentimento (art. 7º, I), que você pode retirar a qualquer momento."
+                  },
+                  {
+                    "titulo": "Estatística de visitas (Google Analytics), só com a sua permissão",
+                    "dados": "Páginas vistas, origem da visita, dados técnicos do navegador e do aparelho, cidade aproximada e o identificador do cookie.",
+                    "finalidade": "Contar as visitas e entender quais páginas são lidas, para melhorar o site.",
+                    "base": "Consentimento (art. 7º, I), dado no aviso de cookies."
+                  },
+                  {
+                    "titulo": "Marketing (Pixel da Meta), só com a sua permissão",
+                    "dados": "Páginas vistas e etapas como abrir o chat, começar a inscrição ou concluir o pagamento, com o assunto ou o curso e o valor. Nunca o nome, o CPF, o e-mail, o telefone ou a mensagem.",
+                    "finalidade": "Medir o alcance das nossas campanhas de divulgação no Facebook e no Instagram.",
+                    "base": "Consentimento (art. 7º, I), dado no aviso de cookies."
+                  },
+                  {
+                    "titulo": "Origem da visita, só com a permissão de estatística",
+                    "dados": "Os parâmetros de campanha do endereço da página (utm, fbclid e gclid), gravados junto com a inscrição ou o contato.",
+                    "finalidade": "Saber de onde vêm as inscrições e os contatos.",
+                    "base": "Consentimento (art. 7º, I)."
+                  },
+                  {
+                    "titulo": "Segurança dos formulários",
+                    "dados": "Endereço IP, data e hora de cada envio de matrícula ou de mensagem.",
+                    "finalidade": "Limitar tentativas repetidas e proteger os formulários contra robôs e fraudes.",
+                    "base": "Legítimo interesse (art. 7º, IX) e prevenção à fraude."
+                  },
+                  {
+                    "titulo": "Doações feitas até 25 de setembro de 2026",
+                    "dados": "Nome, CPF, e-mail, telefone, valor e forma de pagamento (no cartão, só a bandeira e os quatro últimos dígitos).",
+                    "finalidade": "Reenviar comprovantes e cumprir obrigações legais e contábeis. A doação online está suspensa desde essa data, e nenhum dado novo de doação é coletado.",
+                    "base": "Cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
+                  },
+                  {
+                    "titulo": "Voluntariado",
+                    "dados": "Os dados que você informa no formulário do voluntariado, que fica no serviço Spotform (form.spotform.com.br).",
+                    "finalidade": "A equipe do voluntariado entrar em contato e organizar a formação. O WhatsApp (21) 97036-0264 é exclusivo dessa equipe.",
+                    "base": "Procedimentos preliminares à adesão ao serviço voluntário, a seu pedido (art. 7º, V)."
+                  }
+                ]
+              },
+              {
+                "p": "O pagamento da inscrição é processado pela ÚnicoPag. Os dados do cartão passam pelo nosso servidor só a caminho dela, no momento do pagamento, e não são gravados."
+              },
+              {
+                "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site e não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal."
+              }
+            ]
+          },
+          {
+            "id": "compartilhamento",
+            "titulo": "Com quem os dados são compartilhados",
+            "blocos": [
+              {
+                "p": "Só com quem precisa deles para o serviço funcionar, e cada um recebe apenas a parte necessária:"
+              },
+              {
+                "lista": [
+                  "**ÚnicoPag**, que processa os pagamentos: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
+                  "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso.",
+                  "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
+                  "**Resend**, que envia os e-mails (comprovantes, protocolos do chat e newsletter). Na falta dele, os e-mails saem pelo servidor da hospedagem.",
+                  "**Vercel e Supabase**, que hospedam o sistema que publica as notícias e guarda a lista da newsletter.",
+                  "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
+                  "**Spotform**, onde fica o formulário do voluntariado.",
+                  "**Autoridades públicas**, quando a lei ou uma ordem judicial exigir."
+                ]
+              },
+              {
+                "p": "Não vendemos dados pessoais, a ninguém, em hipótese alguma."
+              }
+            ]
+          },
+          {
+            "id": "internacional",
+            "titulo": "Transferência para fora do Brasil",
+            "blocos": [
+              {
+                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos e no Canadá (Google, Meta, Resend, Vercel e Supabase). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
+              }
+            ]
+          },
+          {
+            "id": "cookies",
+            "titulo": "Cookies",
+            "blocos": [
+              {
+                "p": "Usamos cookies necessários para o site funcionar e, só com a sua permissão, cookies de estatística e de marketing. A lista completa, com a validade de cada um, está na [Política de Cookies]({cookies}). Você pode mudar a sua escolha quando quiser:"
+              },
+              {
+                "botao_cookies": "Preferências de cookies"
+              }
+            ]
+          },
+          {
+            "id": "guarda",
+            "titulo": "Por quanto tempo guardamos",
+            "blocos": [
+              {
+                "lista": [
+                  "**Matrícula e pagamentos:** durante a inscrição e o curso e, depois, pelo prazo de guarda que a lei exige para registros fiscais e de consumo (em geral, 5 anos).",
+                  "**Doações anteriores à suspensão:** pelo prazo legal de guarda dos registros contábeis e fiscais.",
+                  "**Chat:** enquanto for útil para acompanhar o atendimento. Você pode pedir a exclusão a qualquer momento.",
+                  "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
+                  "**Registros de segurança (IP):** junto com o envio a que se referem.",
+                  "**Cookies:** pelo prazo de cada um, listado na [Política de Cookies]({cookies})."
+                ]
+              },
+              {
+                "p": "Terminado o prazo, os dados são apagados ou anonimizados, salvo quando a lei mandar guardar."
+              }
+            ]
+          },
+          {
+            "id": "seguranca",
+            "titulo": "Segurança",
+            "blocos": [
+              {
+                "p": "Os dados dos formulários ficam em bancos de dados com acesso restrito à equipe responsável por cada assunto, e o site só funciona por conexão segura (HTTPS). Nenhum sistema é infalível: se acontecer um incidente de segurança que possa causar risco ou dano relevante, avisamos você e a ANPD, como manda o art. 48 da LGPD."
+              }
+            ]
+          },
+          {
+            "id": "direitos",
+            "titulo": "Seus direitos",
+            "blocos": [
+              {
+                "p": "A LGPD (art. 18) garante que você pode pedir, a qualquer momento:"
+              },
+              {
+                "lista": [
+                  "a confirmação de que tratamos os seus dados e o acesso a eles;",
+                  "a correção de dados incompletos, inexatos ou desatualizados;",
+                  "a anonimização, o bloqueio ou a eliminação de dados desnecessários, excessivos ou tratados em desacordo com a lei;",
+                  "a portabilidade dos dados a outro fornecedor;",
+                  "a eliminação dos dados tratados com o seu consentimento e a revogação desse consentimento;",
+                  "a informação sobre com quem compartilhamos os seus dados e sobre a possibilidade de não dar o consentimento, e o que acontece se não der;",
+                  "a oposição a um tratamento que descumpra a lei."
+                ]
+              },
+              {
+                "p": "Para exercer qualquer um deles, escreva para [{email}](mailto:{email}) com o assunto “Privacidade”. Podemos pedir uma informação para confirmar que o pedido é seu. A confirmação e o acesso aos dados, em declaração completa, saem em até 15 dias (art. 19 da LGPD). Alguns dados podem precisar ser guardados mesmo depois de um pedido de exclusão, para cumprir obrigação legal, como os registros de pagamento."
+              },
+              {
+                "p": "Se achar que o seu pedido não foi atendido, você pode reclamar à Autoridade Nacional de Proteção de Dados, em [gov.br/anpd](https://www.gov.br/anpd)."
+              }
+            ]
+          },
+          {
+            "id": "mudancas",
+            "titulo": "Mudanças nesta política",
+            "blocos": [
+              {
+                "p": "Quando esta política mudar, a data no topo muda junto. Mudanças relevantes são avisadas no site e, para quem assina a newsletter, por e-mail."
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "titulo_aba": "Privacy Policy | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat and the newsletter, why, who receives it, and your rights under the LGPD.",
+        "sobrancelha": "Data protection",
+        "h1": "Privacy Policy",
+        "intro": [
+          "This policy explains, in plain language, which personal data the Brazilian Red Cross Rio de Janeiro website processes, what it is used for, who receives it, how long it is kept and how you exercise your rights. It follows Brazil's General Personal Data Protection Law (Law No. 13,709/2018, the LGPD).",
+          "It covers cruzvermelhariodejaneiro.org and all its pages, including news, the archive and the English and Spanish versions, and the Impacto das Cores project page (projetocores.cruzvermelhariodejaneiro.org). The Venipuncture course has its own website and [privacy policy]({puncao}), in Portuguese."
+        ],
+        "secoes": [
+          {
+            "id": "controller",
+            "titulo": "Who looks after your data",
+            "blocos": [
+              {
+                "p": "The controller, which decides how the data is processed, is the branch below."
+              },
+              {
+                "filial": true
+              },
+              {
+                "p": "**Privacy channel:** for anything about your data, write to [{email}](mailto:{email}) with the subject “Privacy”, in English, Spanish or Portuguese. Until a data protection officer is appointed, this is the channel for data subjects and for Brazil's National Data Protection Authority (ANPD), as Article 11 of ANPD Resolution CD/ANPD No. 2/2022 allows for small data processing agents."
+              }
+            ]
+          },
+          {
+            "id": "data",
+            "titulo": "What data we process, why, and on what legal basis",
+            "blocos": [
+              {
+                "p": "Each form asks only for what it needs. The legal basis is the provision of the LGPD (Article 7) that authorises each use."
+              },
+              {
+                "atividades": [
+                  {
+                    "titulo": "Enrolment in in-person courses",
+                    "dados": "Full name, CPF (the Brazilian individual taxpayer number), e-mail, phone number, chosen course, payment method, payment status and, for cards, only the card brand and the last four digits.",
+                    "finalidade": "To register the enrolment, issue the charge, send the receipt, arrange the class and schedule by e-mail and, once paid, create your enrolment on the school platform.",
+                    "base": "Performance of a contract and of the steps that precede it, at your request (Art. 7, V); compliance with a legal obligation, for keeping payment records (Art. 7, II)."
+                  },
+                  {
+                    "titulo": "The “Fale com a gente” contact chat",
+                    "dados": "Subject, course (when the subject is enrolment, a course or payment), name, e-mail, phone number (optional), your message and the page you wrote from.",
+                    "finalidade": "To answer you by e-mail, with a reference number, and keep a record of the exchange.",
+                    "base": "Handling a request of yours (Art. 7, V) and legitimate interest in answering and keeping a record of the exchange (Art. 7, IX)."
+                  },
+                  {
+                    "titulo": "Newsletter",
+                    "dados": "Name, e-mail and the record of consent: the text accepted, the date, the IP address and the browser identification.",
+                    "finalidade": "To send news, campaigns and course information, only after you confirm the subscription through the link sent to your e-mail (valid for 72 hours). Every e-mail has a one-click unsubscribe link.",
+                    "base": "Consent (Art. 7, I), which you can withdraw at any time."
+                  },
+                  {
+                    "titulo": "Visit statistics (Google Analytics), only with your permission",
+                    "dados": "Pages viewed, where the visit came from, technical data about the browser and device, approximate city and the cookie identifier.",
+                    "finalidade": "To count visits and understand which pages are read, so we can improve the site.",
+                    "base": "Consent (Art. 7, I), given in the cookie notice."
+                  },
+                  {
+                    "titulo": "Marketing (Meta Pixel), only with your permission",
+                    "dados": "Pages viewed and steps such as opening the chat, starting an enrolment or completing a payment, with the subject or course and the amount. Never your name, CPF, e-mail, phone number or message.",
+                    "finalidade": "To measure the reach of our outreach campaigns on Facebook and Instagram.",
+                    "base": "Consent (Art. 7, I), given in the cookie notice."
+                  },
+                  {
+                    "titulo": "Where the visit came from, only with statistics permission",
+                    "dados": "The campaign parameters in the page address (utm, fbclid and gclid), stored with the enrolment or the message.",
+                    "finalidade": "To know where enrolments and messages come from.",
+                    "base": "Consent (Art. 7, I)."
+                  },
+                  {
+                    "titulo": "Form security",
+                    "dados": "IP address, date and time of each enrolment or message sent.",
+                    "finalidade": "To limit repeated attempts and protect the forms against bots and fraud.",
+                    "base": "Legitimate interest (Art. 7, IX) and fraud prevention."
+                  },
+                  {
+                    "titulo": "Donations made up to 25 September 2026",
+                    "dados": "Name, CPF, e-mail, phone number, amount and payment method (for cards, only the brand and the last four digits).",
+                    "finalidade": "To resend receipts and meet legal and accounting obligations. Online donations have been suspended since that date, and no new donation data is collected.",
+                    "base": "Compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
+                  },
+                  {
+                    "titulo": "Volunteering",
+                    "dados": "The data you enter in the volunteer form, hosted on the Spotform service (form.spotform.com.br).",
+                    "finalidade": "So the volunteering team can contact you and organise your training. The WhatsApp number (21) 97036-0264 belongs to that team only.",
+                    "base": "Steps prior to joining the volunteer service, at your request (Art. 7, V)."
+                  }
+                ]
+              },
+              {
+                "p": "Enrolment payments are processed by ÚnicoPag. Card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored."
+              },
+              {
+                "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site, and we make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian."
+              }
+            ]
+          },
+          {
+            "id": "sharing",
+            "titulo": "Who receives the data",
+            "blocos": [
+              {
+                "p": "Only those who need it for the service to work, and each receives only the part it needs:"
+              },
+              {
+                "lista": [
+                  "**ÚnicoPag**, which processes payments: name, CPF, e-mail and phone number and, for cards, the card details.",
+                  "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access.",
+                  "**Hostinger**, which hosts the site, the forms and their database.",
+                  "**Resend**, which sends the e-mails (receipts, chat reference numbers and the newsletter). If it is unavailable, e-mails go out through the hosting server.",
+                  "**Vercel and Supabase**, which host the system that publishes the news and keeps the newsletter list.",
+                  "**Google and Meta**, through the statistics and marketing tools, only with your permission. Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
+                  "**Spotform**, which hosts the volunteer form.",
+                  "**Public authorities**, when the law or a court order requires it."
+                ]
+              },
+              {
+                "p": "We do not sell personal data, to anyone, under any circumstances."
+              }
+            ]
+          },
+          {
+            "id": "transfers",
+            "titulo": "Transfers outside Brazil",
+            "blocos": [
+              {
+                "p": "Some of these providers store or process data outside Brazil, such as in the United States and Canada (Google, Meta, Resend, Vercel and Supabase). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
+              }
+            ]
+          },
+          {
+            "id": "cookies",
+            "titulo": "Cookies",
+            "blocos": [
+              {
+                "p": "We use cookies the site needs in order to work and, only with your permission, statistics and marketing cookies. The full list, with how long each one lasts, is in the [Cookie Policy]({cookies}). You can change your choice at any time:"
+              },
+              {
+                "botao_cookies": "Cookie preferences"
+              }
+            ]
+          },
+          {
+            "id": "retention",
+            "titulo": "How long we keep data",
+            "blocos": [
+              {
+                "lista": [
+                  "**Enrolment and payments:** during the enrolment and the course and then for the retention period the law requires for tax and consumer records (generally 5 years).",
+                  "**Donations made before the suspension:** for the legal retention period for accounting and tax records.",
+                  "**Chat:** for as long as it is useful to follow up the exchange. You can ask for deletion at any time.",
+                  "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
+                  "**Security records (IP):** together with the submission they relate to.",
+                  "**Cookies:** for the period of each one, listed in the [Cookie Policy]({cookies})."
+                ]
+              },
+              {
+                "p": "When the period ends, the data is deleted or anonymised, unless the law requires it to be kept."
+              }
+            ]
+          },
+          {
+            "id": "security",
+            "titulo": "Security",
+            "blocos": [
+              {
+                "p": "Form data is kept in databases with access restricted to the team responsible for each subject, and the site only works over a secure connection (HTTPS). No system is infallible: if a security incident occurs that may cause significant risk or harm, we will notify you and the ANPD, as Article 48 of the LGPD requires."
+              }
+            ]
+          },
+          {
+            "id": "rights",
+            "titulo": "Your rights",
+            "blocos": [
+              {
+                "p": "The LGPD (Article 18) guarantees that you can ask, at any time, for:"
+              },
+              {
+                "lista": [
+                  "confirmation that we process your data, and access to it;",
+                  "correction of incomplete, inaccurate or outdated data;",
+                  "anonymisation, blocking or deletion of data that is unnecessary, excessive or processed in breach of the law;",
+                  "portability of your data to another provider;",
+                  "deletion of data processed on the basis of your consent, and withdrawal of that consent;",
+                  "information about who we share your data with, and about the possibility of not giving consent and what happens if you do not;",
+                  "objection to processing that breaches the law."
+                ]
+              },
+              {
+                "p": "To exercise any of them, write to [{email}](mailto:{email}) with the subject “Privacy”. We may ask for some information to confirm the request is yours. Confirmation and access, as a complete statement, are provided within 15 days (Art. 19 of the LGPD). Some data may have to be kept even after a deletion request, to comply with a legal obligation, such as payment records."
+              },
+              {
+                "p": "If you feel your request has not been met, you can complain to Brazil's National Data Protection Authority at [gov.br/anpd](https://www.gov.br/anpd)."
+              }
+            ]
+          },
+          {
+            "id": "changes",
+            "titulo": "Changes to this policy",
+            "blocos": [
+              {
+                "p": "When this policy changes, the date at the top changes with it. Significant changes are announced on the site and, for newsletter subscribers, by e-mail."
+              }
+            ]
+          }
+        ]
+      },
+      "es": {
+        "titulo_aba": "Privacidad | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat y el boletín, para qué, con quién se comparte y sus derechos según la LGPD.",
+        "sobrancelha": "Protección de datos",
+        "h1": "Política de Privacidad",
+        "intro": [
+          "Esta política explica, en lenguaje directo, qué datos personales trata el sitio de la Cruz Roja Brasileña Río de Janeiro, para qué sirven, con quién se comparten, cuánto tiempo se guardan y cómo ejercer sus derechos. Sigue la Ley General de Protección de Datos Personales de Brasil (Ley n.º 13.709/2018, la LGPD).",
+          "Se aplica a cruzvermelhariodejaneiro.org y a todas sus páginas, incluidas las noticias, el acervo y las versiones en inglés y español, y a la página del proyecto Impacto das Cores (projetocores.cruzvermelhariodejaneiro.org). El curso de Punción Venosa tiene sitio y [política de privacidad propios]({puncao}), en portugués."
+        ],
+        "secoes": [
+          {
+            "id": "responsable",
+            "titulo": "Quién cuida de sus datos",
+            "blocos": [
+              {
+                "p": "El responsable del tratamiento, que decide cómo se tratan los datos, es la filial que se indica abajo."
+              },
+              {
+                "filial": true
+              },
+              {
+                "p": "**Canal de privacidad:** para cualquier asunto sobre sus datos, escriba a [{email}](mailto:{email}) con el asunto “Privacidad”, en español, inglés o portugués. Mientras no se designe un encargado de protección de datos, este es el canal de comunicación con los titulares y con la Autoridad Nacional de Protección de Datos de Brasil (ANPD), como permite el art. 11 de la Resolución CD/ANPD n.º 2/2022 a los agentes de tratamiento de pequeño porte."
+              }
+            ]
+          },
+          {
+            "id": "datos",
+            "titulo": "Qué datos tratamos, para qué y con qué base legal",
+            "blocos": [
+              {
+                "p": "Cada formulario pide solo lo necesario para lo que hace. La base legal es la hipótesis de la LGPD (art. 7) que autoriza cada uso."
+              },
+              {
+                "atividades": [
+                  {
+                    "titulo": "Matrícula en cursos presenciales",
+                    "dados": "Nombre completo, CPF (número de contribuyente individual de Brasil), correo, teléfono, curso elegido, forma de pago, estado del pago y, con tarjeta, solo la marca y los cuatro últimos dígitos.",
+                    "finalidade": "Registrar la inscripción, emitir el cobro, enviar el comprobante, acordar grupo y horario por correo y, tras el pago, crear su matrícula en la plataforma de la escuela.",
+                    "base": "Ejecución de un contrato y de los pasos previos, a su pedido (art. 7, V); cumplimiento de una obligación legal, en la conservación de los registros de pago (art. 7, II)."
+                  },
+                  {
+                    "titulo": "Chat “Fale com a gente”",
+                    "dados": "Asunto, curso (cuando el asunto es matrícula, curso o pago), nombre, correo, teléfono (opcional), su mensaje y la página desde la que escribió.",
+                    "finalidade": "Responderle por correo, con número de protocolo, y registrar la atención.",
+                    "base": "Atención a un pedido suyo (art. 7, V) e interés legítimo en responder y mantener el historial de la atención (art. 7, IX)."
+                  },
+                  {
+                    "titulo": "Boletín",
+                    "dados": "Nombre, correo y el registro del consentimiento: el texto aceptado, la fecha, la dirección IP y la identificación del navegador.",
+                    "finalidade": "Enviar noticias, campañas e información sobre cursos, solo después de que usted confirme la suscripción con el enlace enviado a su correo (válido por 72 horas). Cada envío trae un enlace para darse de baja con un clic.",
+                    "base": "Consentimiento (art. 7, I), que puede retirar en cualquier momento."
+                  },
+                  {
+                    "titulo": "Estadística de visitas (Google Analytics), solo con su permiso",
+                    "dados": "Páginas vistas, origen de la visita, datos técnicos del navegador y del dispositivo, ciudad aproximada y el identificador de la cookie.",
+                    "finalidade": "Contar las visitas y entender qué páginas se leen, para mejorar el sitio.",
+                    "base": "Consentimiento (art. 7, I), dado en el aviso de cookies."
+                  },
+                  {
+                    "titulo": "Marketing (Píxel de Meta), solo con su permiso",
+                    "dados": "Páginas vistas y pasos como abrir el chat, empezar la inscripción o completar el pago, con el asunto o el curso y el importe. Nunca el nombre, el CPF, el correo, el teléfono ni el mensaje.",
+                    "finalidade": "Medir el alcance de nuestras campañas de difusión en Facebook e Instagram.",
+                    "base": "Consentimiento (art. 7, I), dado en el aviso de cookies."
+                  },
+                  {
+                    "titulo": "Origen de la visita, solo con el permiso de estadística",
+                    "dados": "Los parámetros de campaña de la dirección de la página (utm, fbclid y gclid), guardados junto con la inscripción o el mensaje.",
+                    "finalidade": "Saber de dónde vienen las inscripciones y los contactos.",
+                    "base": "Consentimiento (art. 7, I)."
+                  },
+                  {
+                    "titulo": "Seguridad de los formularios",
+                    "dados": "Dirección IP, fecha y hora de cada envío de matrícula o de mensaje.",
+                    "finalidade": "Limitar los intentos repetidos y proteger los formularios contra robots y fraudes.",
+                    "base": "Interés legítimo (art. 7, IX) y prevención del fraude."
+                  },
+                  {
+                    "titulo": "Donaciones hechas hasta el 25 de septiembre de 2026",
+                    "dados": "Nombre, CPF, correo, teléfono, importe y forma de pago (con tarjeta, solo la marca y los cuatro últimos dígitos).",
+                    "finalidade": "Reenviar comprobantes y cumplir obligaciones legales y contables. La donación en línea está suspendida desde esa fecha y no se recogen datos nuevos de donación.",
+                    "base": "Cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
+                  },
+                  {
+                    "titulo": "Voluntariado",
+                    "dados": "Los datos que usted informa en el formulario del voluntariado, alojado en el servicio Spotform (form.spotform.com.br).",
+                    "finalidade": "Que el equipo de voluntariado se ponga en contacto y organice la formación. El WhatsApp (21) 97036-0264 es exclusivo de ese equipo.",
+                    "base": "Pasos previos a la adhesión al servicio voluntario, a su pedido (art. 7, V)."
+                  }
+                ]
+              },
+              {
+                "p": "El pago de la inscripción lo procesa ÚnicoPag. Los datos de la tarjeta pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan."
+              },
+              {
+                "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio ni tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal."
+              }
+            ]
+          },
+          {
+            "id": "compartir",
+            "titulo": "Con quién se comparten los datos",
+            "blocos": [
+              {
+                "p": "Solo con quien los necesita para que el servicio funcione, y cada uno recibe solo la parte necesaria:"
+              },
+              {
+                "lista": [
+                  "**ÚnicoPag**, que procesa los pagos: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
+                  "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso.",
+                  "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",
+                  "**Resend**, que envía los correos (comprobantes, protocolos del chat y el boletín). Si no está disponible, los correos salen por el servidor del alojamiento.",
+                  "**Vercel y Supabase**, que alojan el sistema que publica las noticias y guarda la lista del boletín.",
+                  "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
+                  "**Spotform**, donde está el formulario del voluntariado.",
+                  "**Autoridades públicas**, cuando la ley o una orden judicial lo exija."
+                ]
+              },
+              {
+                "p": "No vendemos datos personales, a nadie, bajo ninguna circunstancia."
+              }
+            ]
+          },
+          {
+            "id": "internacional",
+            "titulo": "Transferencia fuera de Brasil",
+            "blocos": [
+              {
+                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos y Canadá (Google, Meta, Resend, Vercel y Supabase). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
+              }
+            ]
+          },
+          {
+            "id": "cookies",
+            "titulo": "Cookies",
+            "blocos": [
+              {
+                "p": "Usamos cookies necesarias para que el sitio funcione y, solo con su permiso, cookies de estadística y de marketing. La lista completa, con la duración de cada una, está en la [Política de Cookies]({cookies}). Puede cambiar su elección cuando quiera:"
+              },
+              {
+                "botao_cookies": "Preferencias de cookies"
+              }
+            ]
+          },
+          {
+            "id": "conservacion",
+            "titulo": "Cuánto tiempo guardamos los datos",
+            "blocos": [
+              {
+                "lista": [
+                  "**Matrícula y pagos:** durante la inscripción y el curso y, después, por el plazo de conservación que la ley exige para los registros fiscales y de consumo (en general, 5 años).",
+                  "**Donaciones anteriores a la suspensión:** por el plazo legal de conservación de los registros contables y fiscales.",
+                  "**Chat:** mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.",
+                  "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
+                  "**Registros de seguridad (IP):** junto con el envío al que se refieren.",
+                  "**Cookies:** por el plazo de cada una, indicado en la [Política de Cookies]({cookies})."
+                ]
+              },
+              {
+                "p": "Terminado el plazo, los datos se eliminan o se anonimizan, salvo cuando la ley obligue a conservarlos."
+              }
+            ]
+          },
+          {
+            "id": "seguridad",
+            "titulo": "Seguridad",
+            "blocos": [
+              {
+                "p": "Los datos de los formularios se guardan en bases de datos con acceso restringido al equipo responsable de cada asunto, y el sitio solo funciona con conexión segura (HTTPS). Ningún sistema es infalible: si ocurre un incidente de seguridad que pueda causar un riesgo o daño relevante, le avisaremos a usted y a la ANPD, como exige el art. 48 de la LGPD."
+              }
+            ]
+          },
+          {
+            "id": "derechos",
+            "titulo": "Sus derechos",
+            "blocos": [
+              {
+                "p": "La LGPD (art. 18) garantiza que usted puede pedir, en cualquier momento:"
+              },
+              {
+                "lista": [
+                  "la confirmación de que tratamos sus datos y el acceso a ellos;",
+                  "la corrección de datos incompletos, inexactos o desactualizados;",
+                  "la anonimización, el bloqueo o la eliminación de datos innecesarios, excesivos o tratados en contra de la ley;",
+                  "la portabilidad de los datos a otro proveedor;",
+                  "la eliminación de los datos tratados con su consentimiento y la revocación de ese consentimiento;",
+                  "la información sobre con quién compartimos sus datos y sobre la posibilidad de no dar el consentimiento, y qué ocurre si no lo da;",
+                  "la oposición a un tratamiento que incumpla la ley."
+                ]
+              },
+              {
+                "p": "Para ejercer cualquiera de ellos, escriba a [{email}](mailto:{email}) con el asunto “Privacidad”. Podemos pedirle algún dato para confirmar que el pedido es suyo. La confirmación y el acceso, en declaración completa, se entregan en hasta 15 días (art. 19 de la LGPD). Algunos datos pueden tener que conservarse incluso después de un pedido de eliminación, para cumplir una obligación legal, como los registros de pago."
+              },
+              {
+                "p": "Si considera que su pedido no fue atendido, puede presentar una reclamación ante la Autoridad Nacional de Protección de Datos de Brasil, en [gov.br/anpd](https://www.gov.br/anpd)."
+              }
+            ]
+          },
+          {
+            "id": "cambios",
+            "titulo": "Cambios en esta política",
+            "blocos": [
+              {
+                "p": "Cuando esta política cambie, la fecha del inicio cambiará con ella. Los cambios relevantes se anuncian en el sitio y, a quienes reciben el boletín, por correo."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cookies": {
+      "pt": {
+        "titulo_aba": "Cookies | Cruz Vermelha Brasileira Rio de Janeiro",
+        "descricao": "Quais cookies o site da Cruz Vermelha Brasileira Rio de Janeiro usa, para quê e por quanto tempo, e como aceitar, recusar ou mudar a sua escolha.",
+        "sobrancelha": "Proteção de dados",
+        "h1": "Política de Cookies",
+        "intro": [
+          "Cookies são pequenos arquivos que um site grava no seu navegador. Alguns são necessários para o site funcionar; os de estatística e de marketing só entram se você permitir. Esta página lista todos, explica para que servem e mostra como mudar a sua escolha. Ela complementa a [Política de Privacidade]({privacidade})."
+        ],
+        "secoes": [
+          {
+            "id": "preferencias",
+            "titulo": "Sua escolha",
+            "blocos": [
+              {
+                "p": "Na primeira visita, um aviso pergunta se você aceita os cookies de estatística e de marketing. Os botões Rejeitar, Personalizar e Aceitar todos têm o mesmo destaque, e nenhum cookie além dos necessários é gravado antes da sua resposta."
+              },
+              {
+                "p": "A escolha fica guardada por 12 meses e vale para cruzvermelhariodejaneiro.org e seus subdomínios. Depois desse prazo, perguntamos de novo. Você pode mudar de ideia a qualquer momento, aqui ou em “Preferências de cookies”, no rodapé de todas as páginas."
+              },
+              {
+                "estado_cookies": true
+              },
+              {
+                "botao_cookies": "Abrir preferências de cookies"
+              },
+              {
+                "p": "Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada."
+              }
+            ]
+          },
+          {
+            "id": "categorias",
+            "titulo": "Categorias",
+            "blocos": [
+              {
+                "lista": [
+                  "**Necessários (sempre ligados):** fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.",
+                  "**Estatística (desligados até você ligar):** o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.",
+                  "**Marketing (desligados até você ligar):** o Pixel da Meta mede o alcance das nossas campanhas no Facebook e no Instagram."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "lista",
+            "titulo": "Cookies e armazenamento usados",
+            "blocos": [
+              {
+                "p": "Além dos cookies, o site usa o armazenamento do navegador (o da sessão, que se apaga quando a aba é fechada, e o local), que segue as mesmas categorias."
+              },
+              {
+                "tabela": {
+                  "colunas": [
+                    "Nome",
+                    "Categoria",
+                    "De quem",
+                    "Para quê",
+                    "Validade"
+                  ],
+                  "linhas": [
+                    [
+                      "cvrj_consentimento",
+                      "Necessário",
+                      "Este site",
+                      "Guarda a sua escolha sobre cookies",
+                      "12 meses"
+                    ],
+                    [
+                      "cv_chat (armazenamento da sessão)",
+                      "Necessário",
+                      "Este site",
+                      "Guarda o andamento da conversa no chat",
+                      "Até fechar a aba"
+                    ],
+                    [
+                      "mcp_painel e mcp_painel_assinatura",
+                      "Necessário (só equipe)",
+                      "Este site",
+                      "Sessão e assinatura da equipe no painel de respostas do chat",
+                      "12 horas e 12 meses"
+                    ],
+                    [
+                      "Cookies de login do Palácio Virtual",
+                      "Necessário (só equipe)",
+                      "Palácio Virtual",
+                      "Sessão de quem entra na área da equipe",
+                      "Durante a sessão"
+                    ],
+                    [
+                      "_ga",
+                      "Estatística",
+                      "Google Analytics",
+                      "Distingue visitantes para contar as visitas",
+                      "2 anos"
+                    ],
+                    [
+                      "_ga_HDYZZ5JZHF",
+                      "Estatística",
+                      "Google Analytics",
+                      "Mantém o estado da visita",
+                      "2 anos"
+                    ],
+                    [
+                      "mcp_origem (armazenamento da sessão)",
+                      "Estatística",
+                      "Este site",
+                      "Lembra a campanha que trouxe você até a inscrição ou o contato",
+                      "Até fechar a aba"
+                    ],
+                    [
+                      "mcp_purchase_… (armazenamento local)",
+                      "Estatística e marketing",
+                      "Este site",
+                      "Evita contar duas vezes o mesmo pagamento nas estatísticas",
+                      "Até você limpar o navegador"
+                    ],
+                    [
+                      "_fbp",
+                      "Marketing",
+                      "Meta",
+                      "Identifica o navegador para medir as campanhas",
+                      "3 meses"
+                    ],
+                    [
+                      "_fbc",
+                      "Marketing",
+                      "Meta",
+                      "Guarda o clique no anúncio que trouxe você",
+                      "3 meses"
+                    ]
+                  ]
+                }
+              },
+              {
+                "p": "Com o marketing ligado, o navegador também pode enviar à Meta os cookies que ela mesma grava no domínio facebook.com (como o fr), que seguem a [política da Meta](https://www.facebook.com/privacy/policy). As regras do Google estão em [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+              }
+            ]
+          },
+          {
+            "id": "navegador",
+            "titulo": "Como controlar pelo navegador",
+            "blocos": [
+              {
+                "p": "Você também pode apagar ou bloquear cookies nas configurações do navegador. Se bloquear todos, a sua escolha sobre cookies não fica guardada e o aviso volta a aparecer a cada visita."
+              }
+            ]
+          },
+          {
+            "id": "duvidas",
+            "titulo": "Dúvidas",
+            "blocos": [
+              {
+                "p": "Escreva para [{email}](mailto:{email}) com o assunto “Privacidade”."
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "titulo_aba": "Cookie Policy | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "Which cookies the Brazilian Red Cross Rio de Janeiro website uses, what for and for how long, and how to accept, refuse or change your choice.",
+        "sobrancelha": "Data protection",
+        "h1": "Cookie Policy",
+        "intro": [
+          "Cookies are small files a website stores in your browser. Some are needed for the site to work; statistics and marketing cookies are only used if you allow them. This page lists all of them, explains what they are for and shows how to change your choice. It complements the [Privacy Policy]({privacidade})."
+        ],
+        "secoes": [
+          {
+            "id": "preferencias",
+            "titulo": "Your choice",
+            "blocos": [
+              {
+                "p": "On your first visit, a notice asks whether you accept statistics and marketing cookies. The Reject, Customize and Accept all buttons are equally prominent, and no cookie other than the necessary ones is stored before you answer."
+              },
+              {
+                "p": "Your choice is kept for 12 months and applies to cruzvermelhariodejaneiro.org and its subdomains. After that, we ask again. You can change your mind at any time, here or under “Cookie preferences” in the footer of every page."
+              },
+              {
+                "estado_cookies": true
+              },
+              {
+                "botao_cookies": "Open cookie preferences"
+              },
+              {
+                "p": "When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading."
+              }
+            ]
+          },
+          {
+            "id": "categories",
+            "titulo": "Categories",
+            "blocos": [
+              {
+                "lista": [
+                  "**Necessary (always on):** keep the site working. They store your cookie choice, the progress of the chat conversation and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.",
+                  "**Statistics (off until you turn them on):** Google Analytics counts visits and shows which pages are read, without identifying you by name.",
+                  "**Marketing (off until you turn them on):** the Meta Pixel measures the reach of our campaigns on Facebook and Instagram."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "list",
+            "titulo": "Cookies and storage in use",
+            "blocos": [
+              {
+                "p": "Besides cookies, the site uses browser storage (session storage, which is cleared when you close the tab, and local storage), which follows the same categories."
+              },
+              {
+                "tabela": {
+                  "colunas": [
+                    "Name",
+                    "Category",
+                    "Set by",
+                    "Purpose",
+                    "Duration"
+                  ],
+                  "linhas": [
+                    [
+                      "cvrj_consentimento",
+                      "Necessary",
+                      "This site",
+                      "Stores your cookie choice",
+                      "12 months"
+                    ],
+                    [
+                      "cv_chat (session storage)",
+                      "Necessary",
+                      "This site",
+                      "Keeps the progress of the chat conversation",
+                      "Until the tab is closed"
+                    ],
+                    [
+                      "mcp_painel and mcp_painel_assinatura",
+                      "Necessary (staff only)",
+                      "This site",
+                      "Staff session and signature in the chat reply panel",
+                      "12 hours and 12 months"
+                    ],
+                    [
+                      "Palácio Virtual login cookies",
+                      "Necessary (staff only)",
+                      "Palácio Virtual",
+                      "Session of staff who log in to the staff area",
+                      "For the session"
+                    ],
+                    [
+                      "_ga",
+                      "Statistics",
+                      "Google Analytics",
+                      "Distinguishes visitors to count visits",
+                      "2 years"
+                    ],
+                    [
+                      "_ga_HDYZZ5JZHF",
+                      "Statistics",
+                      "Google Analytics",
+                      "Keeps the state of the visit",
+                      "2 years"
+                    ],
+                    [
+                      "mcp_origem (session storage)",
+                      "Statistics",
+                      "This site",
+                      "Remembers the campaign that brought you, until you enrol or write to us",
+                      "Until the tab is closed"
+                    ],
+                    [
+                      "mcp_purchase_… (local storage)",
+                      "Statistics and marketing",
+                      "This site",
+                      "Avoids counting the same payment twice in the statistics",
+                      "Until you clear your browser"
+                    ],
+                    [
+                      "_fbp",
+                      "Marketing",
+                      "Meta",
+                      "Identifies the browser to measure campaigns",
+                      "3 months"
+                    ],
+                    [
+                      "_fbc",
+                      "Marketing",
+                      "Meta",
+                      "Stores the ad click that brought you",
+                      "3 months"
+                    ]
+                  ]
+                }
+              },
+              {
+                "p": "With marketing on, your browser may also send Meta the cookies Meta itself stores on the facebook.com domain (such as fr), which follow [Meta's policy](https://www.facebook.com/privacy/policy). Google's rules are at [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+              }
+            ]
+          },
+          {
+            "id": "browser",
+            "titulo": "Controlling cookies in your browser",
+            "blocos": [
+              {
+                "p": "You can also delete or block cookies in your browser settings. If you block all of them, your cookie choice cannot be stored and the notice will appear again on every visit."
+              }
+            ]
+          },
+          {
+            "id": "questions",
+            "titulo": "Questions",
+            "blocos": [
+              {
+                "p": "Write to [{email}](mailto:{email}) with the subject “Privacy”, in English, Spanish or Portuguese."
+              }
+            ]
+          }
+        ]
+      },
+      "es": {
+        "titulo_aba": "Cookies | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Qué cookies usa el sitio de la Cruz Roja Brasileña Río de Janeiro, para qué y por cuánto tiempo, y cómo aceptar, rechazar o cambiar su elección.",
+        "sobrancelha": "Protección de datos",
+        "h1": "Política de Cookies",
+        "intro": [
+          "Las cookies son pequeños archivos que un sitio guarda en su navegador. Algunas son necesarias para que el sitio funcione; las de estadística y de marketing solo se usan si usted lo permite. Esta página las enumera todas, explica para qué sirven y muestra cómo cambiar su elección. Complementa la [Política de Privacidad]({privacidade})."
+        ],
+        "secoes": [
+          {
+            "id": "preferencias",
+            "titulo": "Su elección",
+            "blocos": [
+              {
+                "p": "En la primera visita, un aviso le pregunta si acepta las cookies de estadística y de marketing. Los botones Rechazar, Personalizar y Aceptar todas tienen el mismo destaque, y no se guarda ninguna cookie además de las necesarias antes de su respuesta."
+              },
+              {
+                "p": "Su elección se guarda por 12 meses y vale para cruzvermelhariodejaneiro.org y sus subdominios. Después de ese plazo, volvemos a preguntar. Puede cambiar de opinión en cualquier momento, aquí o en “Preferencias de cookies”, en el pie de todas las páginas."
+              },
+              {
+                "estado_cookies": true
+              },
+              {
+                "botao_cookies": "Abrir preferencias de cookies"
+              },
+              {
+                "p": "Al retirar un permiso, borramos de su navegador las cookies de esa categoría que el propio sitio puede borrar, y la herramienta deja de cargarse."
+              }
+            ]
+          },
+          {
+            "id": "categorias",
+            "titulo": "Categorías",
+            "blocos": [
+              {
+                "lista": [
+                  "**Necesarias (siempre activas):** hacen que el sitio funcione. Guardan su elección sobre cookies, el progreso de la conversación del chat y, para el equipo, la sesión de los paneles internos. No dependen de permiso, porque sin ellas el sitio no puede hacer lo que usted pidió.",
+                  "**Estadística (desactivadas hasta que las active):** Google Analytics cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.",
+                  "**Marketing (desactivadas hasta que las active):** el Píxel de Meta mide el alcance de nuestras campañas en Facebook e Instagram."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "lista",
+            "titulo": "Cookies y almacenamiento en uso",
+            "blocos": [
+              {
+                "p": "Además de las cookies, el sitio usa el almacenamiento del navegador (el de sesión, que se borra al cerrar la pestaña, y el local), que sigue las mismas categorías."
+              },
+              {
+                "tabela": {
+                  "colunas": [
+                    "Nombre",
+                    "Categoría",
+                    "De quién",
+                    "Para qué",
+                    "Duración"
+                  ],
+                  "linhas": [
+                    [
+                      "cvrj_consentimento",
+                      "Necesaria",
+                      "Este sitio",
+                      "Guarda su elección sobre cookies",
+                      "12 meses"
+                    ],
+                    [
+                      "cv_chat (almacenamiento de sesión)",
+                      "Necesaria",
+                      "Este sitio",
+                      "Guarda el progreso de la conversación del chat",
+                      "Hasta cerrar la pestaña"
+                    ],
+                    [
+                      "mcp_painel y mcp_painel_assinatura",
+                      "Necesaria (solo el equipo)",
+                      "Este sitio",
+                      "Sesión y firma del equipo en el panel de respuestas del chat",
+                      "12 horas y 12 meses"
+                    ],
+                    [
+                      "Cookies de acceso del Palácio Virtual",
+                      "Necesaria (solo el equipo)",
+                      "Palácio Virtual",
+                      "Sesión de quien entra en el área del equipo",
+                      "Durante la sesión"
+                    ],
+                    [
+                      "_ga",
+                      "Estadística",
+                      "Google Analytics",
+                      "Distingue visitantes para contar las visitas",
+                      "2 años"
+                    ],
+                    [
+                      "_ga_HDYZZ5JZHF",
+                      "Estadística",
+                      "Google Analytics",
+                      "Mantiene el estado de la visita",
+                      "2 años"
+                    ],
+                    [
+                      "mcp_origem (almacenamiento de sesión)",
+                      "Estadística",
+                      "Este sitio",
+                      "Recuerda la campaña que le trajo, hasta la inscripción o el contacto",
+                      "Hasta cerrar la pestaña"
+                    ],
+                    [
+                      "mcp_purchase_… (almacenamiento local)",
+                      "Estadística y marketing",
+                      "Este sitio",
+                      "Evita contar dos veces el mismo pago en las estadísticas",
+                      "Hasta que borre los datos del navegador"
+                    ],
+                    [
+                      "_fbp",
+                      "Marketing",
+                      "Meta",
+                      "Identifica el navegador para medir las campañas",
+                      "3 meses"
+                    ],
+                    [
+                      "_fbc",
+                      "Marketing",
+                      "Meta",
+                      "Guarda el clic en el anuncio que le trajo",
+                      "3 meses"
+                    ]
+                  ]
+                }
+              },
+              {
+                "p": "Con el marketing activado, el navegador también puede enviar a Meta las cookies que la propia Meta guarda en el dominio facebook.com (como fr), que siguen la [política de Meta](https://www.facebook.com/privacy/policy). Las reglas de Google están en [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+              }
+            ]
+          },
+          {
+            "id": "navegador",
+            "titulo": "Cómo controlarlas en el navegador",
+            "blocos": [
+              {
+                "p": "También puede borrar o bloquear cookies en la configuración del navegador. Si las bloquea todas, su elección sobre cookies no se puede guardar y el aviso volverá a aparecer en cada visita."
+              }
+            ]
+          },
+          {
+            "id": "dudas",
+            "titulo": "Dudas",
+            "blocos": [
+              {
+                "p": "Escriba a [{email}](mailto:{email}) con el asunto “Privacidad”, en español, inglés o portugués."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "termos": {
+      "pt": {
+        "titulo_aba": "Termos de Uso | Cruz Vermelha Brasileira Rio de Janeiro",
+        "descricao": "Regras de uso do site da Cruz Vermelha Brasileira Rio de Janeiro: conteúdo, emblema da cruz vermelha, matrícula em cursos, doações, responsabilidade e foro.",
+        "sobrancelha": "Regras do site",
+        "h1": "Termos de Uso",
+        "intro": [
+          "Este site é mantido pela Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro para informar sobre o seu trabalho humanitário, os cursos e as campanhas. Ao usá-lo, você concorda com estes termos."
+        ],
+        "secoes": [
+          {
+            "id": "quem",
+            "titulo": "Quem somos",
+            "blocos": [
+              {
+                "filial": true
+              }
+            ]
+          },
+          {
+            "id": "conteudo",
+            "titulo": "Uso do conteúdo",
+            "blocos": [
+              {
+                "p": "Os textos e as notícias publicados aqui podem ser compartilhados e citados livremente, com crédito e link para a página original. As fotos podem retratar pessoas atendidas e voluntários: não as reutilize fora do contexto original sem autorização por escrito."
+              }
+            ]
+          },
+          {
+            "id": "emblema",
+            "titulo": "O emblema da cruz vermelha",
+            "blocos": [
+              {
+                "p": "A cruz vermelha sobre fundo branco é um emblema protegido pelas Convenções de Genebra e pela legislação brasileira. O uso é reservado: não pode ser reproduzido em outros sites, materiais ou produtos sem autorização, mesmo sem fim comercial."
+              }
+            ]
+          },
+          {
+            "id": "cursos",
+            "titulo": "Cursos e matrícula",
+            "blocos": [
+              {
+                "p": "A matrícula em cursos presenciais é feita na [página de matrícula]({matricula}): a inscrição de {inscricao}, paga por PIX ou cartão, reserva a vaga, e o valor do curso é pago depois, na [plataforma da escola]({escola}), com as condições informadas lá. A secretaria confirma turma, data e horário por e-mail."
+              },
+              {
+                "p": "As regras para desistir e receber o valor de volta, incluindo o direito de arrependimento de 7 dias, estão em [Cancelamento e reembolso]({reembolso})."
+              }
+            ]
+          },
+          {
+            "id": "doacoes",
+            "titulo": "Doações",
+            "blocos": [
+              {
+                "p": "A doação online pelo site está suspensa desde 25 de setembro de 2026: nenhuma página deste site gera cobrança de doação. Desconfie de qualquer cobrança em nome da Cruz Vermelha feita fora dos canais oficiais, listados na [página de links]({links}), e avise pelo e-mail acima."
+              }
+            ]
+          },
+          {
+            "id": "conduta",
+            "titulo": "Uso do site e do chat",
+            "blocos": [
+              {
+                "p": "Não é permitido usar o site ou o chat para enviar conteúdo ilegal, ofensivo ou enganoso, se passar por outra pessoa, tentar entrar em áreas restritas ou sobrecarregar os formulários. Mensagens assim podem ser descartadas sem resposta."
+              }
+            ]
+          },
+          {
+            "id": "responsabilidade",
+            "titulo": "Responsabilidade",
+            "blocos": [
+              {
+                "p": "Trabalhamos para manter as informações corretas e atualizadas, mas elas têm caráter informativo. O site e o chat não atendem emergências: em caso de urgência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros)."
+              },
+              {
+                "p": "Os links para sites de terceiros são oferecidos de boa-fé; o conteúdo deles é responsabilidade de quem os mantém."
+              }
+            ]
+          },
+          {
+            "id": "privacidade",
+            "titulo": "Privacidade e cookies",
+            "blocos": [
+              {
+                "p": "O tratamento de dados pessoais está descrito na [Política de Privacidade]({privacidade}), e os cookies, na [Política de Cookies]({cookies})."
+              }
+            ]
+          },
+          {
+            "id": "mudancas",
+            "titulo": "Mudanças nestes termos",
+            "blocos": [
+              {
+                "p": "Estes termos podem mudar para acompanhar o site e a lei. A data no topo mostra a versão em vigor."
+              }
+            ]
+          },
+          {
+            "id": "foro",
+            "titulo": "Lei aplicável e foro",
+            "blocos": [
+              {
+                "p": "Estes termos seguem a lei brasileira. Nas relações de consumo, como a matrícula em cursos, você pode propor ação no foro do seu domicílio (art. 101, I, do Código de Defesa do Consumidor). Nas demais questões, fica eleito o foro da comarca da Capital do Estado do Rio de Janeiro."
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "titulo_aba": "Terms of Use | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "Rules for using the Brazilian Red Cross Rio de Janeiro website: content, the red cross emblem, course enrolment, donations, liability and jurisdiction.",
+        "sobrancelha": "Site rules",
+        "h1": "Terms of Use",
+        "intro": [
+          "This website is run by the Brazilian Red Cross — Rio de Janeiro State Branch to inform people about its humanitarian work, courses and campaigns. By using it, you agree to these terms."
+        ],
+        "secoes": [
+          {
+            "id": "who",
+            "titulo": "Who we are",
+            "blocos": [
+              {
+                "filial": true
+              }
+            ]
+          },
+          {
+            "id": "content",
+            "titulo": "Using the content",
+            "blocos": [
+              {
+                "p": "The texts and news published here may be freely shared and quoted, with credit and a link to the original page. Photos may show people assisted and volunteers: do not reuse them outside their original context without written permission."
+              }
+            ]
+          },
+          {
+            "id": "emblem",
+            "titulo": "The red cross emblem",
+            "blocos": [
+              {
+                "p": "The red cross on a white background is an emblem protected by the Geneva Conventions and by Brazilian law. Its use is restricted: it may not be reproduced on other websites, materials or products without authorisation, even for non-commercial purposes."
+              }
+            ]
+          },
+          {
+            "id": "courses",
+            "titulo": "Courses and enrolment",
+            "blocos": [
+              {
+                "p": "Enrolment in in-person courses is done on the [enrolment page]({matricula}), in Portuguese: the {inscricao} enrolment fee, paid by PIX or card, holds your place, and the course fee is paid afterwards on the [school platform]({escola}), under the conditions stated there. The school office confirms the class, date and time by e-mail."
+              },
+              {
+                "p": "The rules for withdrawing and getting your money back, including the 7-day right of withdrawal, are in [Cancellation and refunds]({reembolso})."
+              }
+            ]
+          },
+          {
+            "id": "donations",
+            "titulo": "Donations",
+            "blocos": [
+              {
+                "p": "Online donations through this site have been suspended since 25 September 2026: no page on this site issues donation charges. Be wary of any charge in the name of the Red Cross made outside the official channels, listed on the [links page]({links}), and let us know at the e-mail above."
+              }
+            ]
+          },
+          {
+            "id": "conduct",
+            "titulo": "Using the site and the chat",
+            "blocos": [
+              {
+                "p": "You may not use the site or the chat to send illegal, offensive or misleading content, impersonate someone else, try to access restricted areas or overload the forms. Such messages may be discarded without reply."
+              }
+            ]
+          },
+          {
+            "id": "liability",
+            "titulo": "Liability",
+            "blocos": [
+              {
+                "p": "We work to keep the information accurate and up to date, but it is for information only. The site and the chat do not handle emergencies: in an emergency in Brazil, call 192 (SAMU ambulance service) or 193 (Fire Brigade)."
+              },
+              {
+                "p": "Links to third-party sites are provided in good faith; their content is the responsibility of whoever runs them."
+              }
+            ]
+          },
+          {
+            "id": "privacy",
+            "titulo": "Privacy and cookies",
+            "blocos": [
+              {
+                "p": "How personal data is processed is described in the [Privacy Policy]({privacidade}), and cookies in the [Cookie Policy]({cookies})."
+              }
+            ]
+          },
+          {
+            "id": "changes",
+            "titulo": "Changes to these terms",
+            "blocos": [
+              {
+                "p": "These terms may change to keep up with the site and the law. The date at the top shows the version in force."
+              }
+            ]
+          },
+          {
+            "id": "law",
+            "titulo": "Governing law and jurisdiction",
+            "blocos": [
+              {
+                "p": "These terms are governed by Brazilian law. In consumer relationships, such as course enrolment, you may bring proceedings in the courts of your place of residence (Art. 101, I, of the Brazilian Consumer Protection Code). For other matters, the courts of the City of Rio de Janeiro, State of Rio de Janeiro, have jurisdiction."
+              }
+            ]
+          }
+        ]
+      },
+      "es": {
+        "titulo_aba": "Términos de Uso | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Reglas de uso del sitio de la Cruz Roja Brasileña Río de Janeiro: contenido, emblema, matrícula en cursos, donaciones, responsabilidad y jurisdicción.",
+        "sobrancelha": "Reglas del sitio",
+        "h1": "Términos de Uso",
+        "intro": [
+          "Este sitio lo mantiene la Cruz Roja Brasileña — Filial del Estado de Río de Janeiro para informar sobre su trabajo humanitario, sus cursos y sus campañas. Al usarlo, usted acepta estos términos."
+        ],
+        "secoes": [
+          {
+            "id": "quienes",
+            "titulo": "Quiénes somos",
+            "blocos": [
+              {
+                "filial": true
+              }
+            ]
+          },
+          {
+            "id": "contenido",
+            "titulo": "Uso del contenido",
+            "blocos": [
+              {
+                "p": "Los textos y las noticias publicados aquí pueden compartirse y citarse libremente, con crédito y enlace a la página original. Las fotos pueden mostrar a personas atendidas y a voluntarios: no las reutilice fuera de su contexto original sin autorización por escrito."
+              }
+            ]
+          },
+          {
+            "id": "emblema",
+            "titulo": "El emblema de la cruz roja",
+            "blocos": [
+              {
+                "p": "La cruz roja sobre fondo blanco es un emblema protegido por los Convenios de Ginebra y por la legislación brasileña. Su uso está reservado: no puede reproducirse en otros sitios, materiales o productos sin autorización, aunque no tenga fines comerciales."
+              }
+            ]
+          },
+          {
+            "id": "cursos",
+            "titulo": "Cursos y matrícula",
+            "blocos": [
+              {
+                "p": "La matrícula en los cursos presenciales se hace en la [página de matrícula]({matricula}), en portugués: la inscripción de {inscricao}, pagada con PIX o tarjeta, reserva la plaza, y el valor del curso se paga después, en la [plataforma de la escuela]({escola}), con las condiciones que allí se informan. La secretaría confirma el grupo, la fecha y el horario por correo."
+              },
+              {
+                "p": "Las reglas para desistir y recuperar el dinero, incluido el derecho de arrepentimiento de 7 días, están en [Cancelación y reembolso]({reembolso})."
+              }
+            ]
+          },
+          {
+            "id": "donaciones",
+            "titulo": "Donaciones",
+            "blocos": [
+              {
+                "p": "La donación en línea por este sitio está suspendida desde el 25 de septiembre de 2026: ninguna página de este sitio genera cobros de donación. Desconfíe de cualquier cobro en nombre de la Cruz Roja hecho fuera de los canales oficiales, indicados en la [página de enlaces]({links}), y avísenos al correo de arriba."
+              }
+            ]
+          },
+          {
+            "id": "conducta",
+            "titulo": "Uso del sitio y del chat",
+            "blocos": [
+              {
+                "p": "No está permitido usar el sitio o el chat para enviar contenido ilegal, ofensivo o engañoso, hacerse pasar por otra persona, intentar entrar en áreas restringidas o sobrecargar los formularios. Esos mensajes pueden descartarse sin respuesta."
+              }
+            ]
+          },
+          {
+            "id": "responsabilidad",
+            "titulo": "Responsabilidad",
+            "blocos": [
+              {
+                "p": "Trabajamos para mantener la información correcta y actualizada, pero tiene carácter informativo. El sitio y el chat no atienden emergencias: en una urgencia en Brasil, llame al 192 (SAMU, ambulancias) o al 193 (Bomberos)."
+              },
+              {
+                "p": "Los enlaces a sitios de terceros se ofrecen de buena fe; su contenido es responsabilidad de quien los mantiene."
+              }
+            ]
+          },
+          {
+            "id": "privacidad",
+            "titulo": "Privacidad y cookies",
+            "blocos": [
+              {
+                "p": "El tratamiento de datos personales se describe en la [Política de Privacidad]({privacidade}), y las cookies, en la [Política de Cookies]({cookies})."
+              }
+            ]
+          },
+          {
+            "id": "cambios",
+            "titulo": "Cambios en estos términos",
+            "blocos": [
+              {
+                "p": "Estos términos pueden cambiar para acompañar al sitio y a la ley. La fecha del inicio muestra la versión vigente."
+              }
+            ]
+          },
+          {
+            "id": "ley",
+            "titulo": "Ley aplicable y jurisdicción",
+            "blocos": [
+              {
+                "p": "Estos términos se rigen por la ley brasileña. En las relaciones de consumo, como la matrícula en cursos, usted puede presentar una acción ante los tribunales de su domicilio (art. 101, I, del Código de Defensa del Consumidor de Brasil). Para las demás cuestiones, se elige el foro de la comarca de la Capital del Estado de Río de Janeiro."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "reembolso": {
+      "pt": {
+        "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
+        "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
+        "sobrancelha": "Matrícula em cursos",
+        "h1": "Cancelamento e reembolso",
+        "intro": [
+          "Estas regras valem para a inscrição de {inscricao} paga na [página de matrícula em cursos presenciais]({matricula}). Elas seguem o Código de Defesa do Consumidor (Lei nº 8.078/1990) e o Decreto nº 7.962/2013, que trata das compras pela internet."
+        ],
+        "secoes": [
+          {
+            "id": "arrependimento",
+            "titulo": "Direito de arrependimento: 7 dias",
+            "blocos": [
+              {
+                "p": "Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você tiver escolhido cobri-lo."
+              }
+            ]
+          },
+          {
+            "id": "depois",
+            "titulo": "Depois dos 7 dias",
+            "blocos": [
+              {
+                "p": "Passado o prazo de arrependimento, a inscrição ainda é devolvida por inteiro:"
+              },
+              {
+                "lista": [
+                  "se não houver turma com horário compatível para você; ou",
+                  "se você desistir antes de a secretaria confirmar a sua turma (data e horário da aula)."
+                ]
+              },
+              {
+                "p": "Com a turma confirmada, a inscrição não é devolvida, salvo se a própria filial cancelar ou adiar a turma e você não puder participar em outra data."
+              }
+            ]
+          },
+          {
+            "id": "como-pedir",
+            "titulo": "Como pedir",
+            "blocos": [
+              {
+                "p": "Peça pelo chat “Fale com a gente”, que fica no canto da própria [página de matrícula]({matricula}) e de todas as páginas do site, escolhendo o assunto “Pagamento ou PIX”. Informe o nome e o e-mail usados na inscrição e o curso. A confirmação de que o pedido chegou vai na hora para o seu e-mail, com número de protocolo."
+              },
+              {
+                "p": "Se preferir, escreva para [{email}](mailto:{email}). Nesse caso, a confirmação de recebimento vem na resposta da equipe."
+              }
+            ]
+          },
+          {
+            "id": "devolucao",
+            "titulo": "Como o valor volta",
+            "blocos": [
+              {
+                "p": "Assim que o pedido chega, pedimos o estorno à ÚnicoPag, a empresa que processou o pagamento, que avisa o banco ou a administradora do cartão."
+              },
+              {
+                "lista": [
+                  "**PIX:** o valor volta para a conta de onde saiu o pagamento.",
+                  "**Cartão de crédito:** a cobrança é cancelada ou, se já tiver entrado na fatura, o estorno aparece em uma das faturas seguintes, conforme o calendário do banco emissor."
+                ]
+              },
+              {
+                "p": "Avisamos por e-mail quando o estorno for feito."
+              }
+            ]
+          },
+          {
+            "id": "curso",
+            "titulo": "O valor do curso, na plataforma da escola",
+            "blocos": [
+              {
+                "p": "O valor do curso é pago à parte, na [plataforma da escola]({escola}), e segue as condições informadas lá no momento do pagamento. O direito de arrependimento de 7 dias vale também para essa compra, feita pela internet. Dúvidas sobre esse pagamento podem ser enviadas pelo mesmo chat ou por e-mail."
+              }
+            ]
+          },
+          {
+            "id": "quem-vende",
+            "titulo": "Quem vende",
+            "blocos": [
+              {
+                "p": "A inscrição é vendida pela filial abaixo, que responde por estas regras:"
+              },
+              {
+                "filial": true
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "titulo_aba": "Cancellation and refunds | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "How to withdraw from a course enrolment with the Brazilian Red Cross Rio de Janeiro: the 7-day right of withdrawal, when the money is returned and how to ask.",
+        "sobrancelha": "Course enrolment",
+        "h1": "Cancellation and refunds",
+        "intro": [
+          "These rules apply to the {inscricao} enrolment fee paid on the [in-person course enrolment page]({matricula}). They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases."
+        ],
+        "secoes": [
+          {
+            "id": "withdrawal",
+            "titulo": "Right of withdrawal: 7 days",
+            "blocos": [
+              {
+                "p": "You may withdraw from the enrolment within 7 calendar days of payment, without giving a reason (Art. 49 of the Consumer Protection Code). The full amount paid is refunded, including the processing cost if you chose to cover it."
+              }
+            ]
+          },
+          {
+            "id": "after",
+            "titulo": "After the 7 days",
+            "blocos": [
+              {
+                "p": "After the withdrawal period, the enrolment fee is still refunded in full:"
+              },
+              {
+                "lista": [
+                  "if there is no class at a time that suits you; or",
+                  "if you withdraw before the school office confirms your class (date and time)."
+                ]
+              },
+              {
+                "p": "Once the class is confirmed, the enrolment fee is not refunded, unless the branch itself cancels or postpones the class and you cannot attend on another date."
+              }
+            ]
+          },
+          {
+            "id": "how-to-ask",
+            "titulo": "How to ask",
+            "blocos": [
+              {
+                "p": "Use the “Fale com a gente” chat, in the corner of the [enrolment page]({matricula}) and of every Portuguese page of the site, choosing the subject “Pagamento ou PIX” (payment). Give the name and e-mail used for the enrolment and the course. Confirmation that your request has arrived goes to your e-mail straight away, with a reference number."
+              },
+              {
+                "p": "If you prefer, write to [{email}](mailto:{email}), in English, Spanish or Portuguese. In that case, confirmation of receipt comes with the team's reply."
+              }
+            ]
+          },
+          {
+            "id": "refund",
+            "titulo": "How the money is returned",
+            "blocos": [
+              {
+                "p": "As soon as the request arrives, we ask ÚnicoPag, the company that processed the payment, for a refund, and it notifies the bank or the card issuer."
+              },
+              {
+                "lista": [
+                  "**PIX:** the amount goes back to the account the payment came from.",
+                  "**Credit card:** the charge is cancelled or, if it is already on your statement, the refund appears on one of the following statements, according to the issuing bank's schedule."
+                ]
+              },
+              {
+                "p": "We let you know by e-mail when the refund has been made."
+              }
+            ]
+          },
+          {
+            "id": "course-fee",
+            "titulo": "The course fee, on the school platform",
+            "blocos": [
+              {
+                "p": "The course fee is paid separately, on the [school platform]({escola}), and follows the conditions stated there at the time of payment. The 7-day right of withdrawal also applies to that purchase, made online. Questions about that payment can be sent through the same chat or by e-mail."
+              }
+            ]
+          },
+          {
+            "id": "seller",
+            "titulo": "Who is selling",
+            "blocos": [
+              {
+                "p": "The enrolment is sold by the branch below, which is responsible for these rules:"
+              },
+              {
+                "filial": true
+              }
+            ]
+          }
+        ]
+      },
+      "es": {
+        "titulo_aba": "Cancelación y reembolso | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Cómo desistir de la inscripción en un curso de la Cruz Roja Brasileña Río de Janeiro: arrepentimiento de 7 días, cuándo vuelve el dinero y cómo pedirlo.",
+        "sobrancelha": "Matrícula en cursos",
+        "h1": "Cancelación y reembolso",
+        "intro": [
+          "Estas reglas se aplican a la inscripción de {inscricao} pagada en la [página de matrícula en cursos presenciales]({matricula}). Siguen el Código de Defensa del Consumidor de Brasil (Ley n.º 8.078/1990) y el Decreto n.º 7.962/2013, sobre las compras por internet."
+        ],
+        "secoes": [
+          {
+            "id": "arrepentimiento",
+            "titulo": "Derecho de arrepentimiento: 7 días",
+            "blocos": [
+              {
+                "p": "Puede desistir de la inscripción en hasta 7 días corridos contados desde el pago, sin tener que dar el motivo (art. 49 del Código de Defensa del Consumidor). Se devuelve el importe íntegro, incluido el costo de procesamiento, si eligió cubrirlo."
+              }
+            ]
+          },
+          {
+            "id": "despues",
+            "titulo": "Después de los 7 días",
+            "blocos": [
+              {
+                "p": "Pasado el plazo de arrepentimiento, la inscripción todavía se devuelve íntegramente:"
+              },
+              {
+                "lista": [
+                  "si no hay un grupo con un horario compatible para usted; o",
+                  "si desiste antes de que la secretaría confirme su grupo (fecha y horario de la clase)."
+                ]
+              },
+              {
+                "p": "Con el grupo confirmado, la inscripción no se devuelve, salvo que la propia filial cancele o aplace el grupo y usted no pueda participar en otra fecha."
+              }
+            ]
+          },
+          {
+            "id": "como-pedir",
+            "titulo": "Cómo pedirlo",
+            "blocos": [
+              {
+                "p": "Pídalo por el chat “Fale com a gente”, en la esquina de la [página de matrícula]({matricula}) y de todas las páginas en portugués del sitio, eligiendo el asunto “Pagamento ou PIX” (pago). Indique el nombre y el correo usados en la inscripción y el curso. La confirmación de que el pedido llegó se envía de inmediato a su correo, con número de protocolo."
+              },
+              {
+                "p": "Si lo prefiere, escriba a [{email}](mailto:{email}), en español, inglés o portugués. En ese caso, la confirmación de recepción llega con la respuesta del equipo."
+              }
+            ]
+          },
+          {
+            "id": "devolucion",
+            "titulo": "Cómo se devuelve el dinero",
+            "blocos": [
+              {
+                "p": "En cuanto llega el pedido, solicitamos el reembolso a ÚnicoPag, la empresa que procesó el pago, que avisa al banco o a la emisora de la tarjeta."
+              },
+              {
+                "lista": [
+                  "**PIX:** el importe vuelve a la cuenta desde la que se hizo el pago.",
+                  "**Tarjeta de crédito:** el cobro se cancela o, si ya entró en el resumen, el reembolso aparece en uno de los resúmenes siguientes, según el calendario del banco emisor."
+                ]
+              },
+              {
+                "p": "Le avisamos por correo cuando se haga el reembolso."
+              }
+            ]
+          },
+          {
+            "id": "valor-del-curso",
+            "titulo": "El valor del curso, en la plataforma de la escuela",
+            "blocos": [
+              {
+                "p": "El valor del curso se paga aparte, en la [plataforma de la escuela]({escola}), y sigue las condiciones informadas allí en el momento del pago. El derecho de arrepentimiento de 7 días también se aplica a esa compra, hecha por internet. Las dudas sobre ese pago pueden enviarse por el mismo chat o por correo."
+              }
+            ]
+          },
+          {
+            "id": "quien-vende",
+            "titulo": "Quién vende",
+            "blocos": [
+              {
+                "p": "La inscripción la vende la filial que se indica abajo, responsable de estas reglas:"
+              },
+              {
+                "filial": true
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
