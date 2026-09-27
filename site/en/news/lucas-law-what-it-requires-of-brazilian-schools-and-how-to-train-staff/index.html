@@ -56,6 +56,9 @@
     .i18n-fichas h3 { margin:0 0 8px; font-size:1.05rem }
     .i18n-fichas h3 small { color:var(--muted); font-weight:600; font-size:.85rem; margin-left:8px }
     .i18n-fichas p { margin:0; color:var(--muted); font-size:.95rem }
+    .i18n-fichas .i18n-email { margin-top:10px; overflow-wrap:anywhere }
+    .i18n-fichas .i18n-email a { color:var(--red); font-weight:700; text-decoration:none }
+    .i18n-fichas .i18n-email a:hover { text-decoration:underline }
     .i18n-porta { margin-top:12px !important }
     .i18n-porta a { color:var(--red); font-weight:800; text-decoration:none }
     .i18n-porta a:hover { text-decoration:underline }
@@ -140,8 +143,11 @@
   <script type="application/ld+json">[{"@context":"https://schema.org","@type":"NewsArticle","@id":"https://cruzvermelhariodejaneiro.org/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/#artigo","headline":"The Lucas Law: what it requires of Brazilian schools and how to train staff","description":"What Brazil's Lucas Law requires of schools and nurseries: who must be trained, how often, the penalties, and how to train a team in 8 hours in Rio de Janeiro.","inLanguage":"en","datePublished":"2026-09-24T21:28:49.043Z","dateModified":"2026-09-26T12:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/"},"author":{"@type":"NGO","@id":"https://cruzvermelhariodejaneiro.org/#organizacao","name":"Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro","alternateName":"Brazilian Red Cross — Rio de Janeiro Branch","url":"https://cruzvermelhariodejaneiro.org/"},"publisher":{"@type":"NGO","@id":"https://cruzvermelhariodejaneiro.org/#organizacao","name":"Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro","alternateName":"Brazilian Red Cross — Rio de Janeiro Branch","url":"https://cruzvermelhariodejaneiro.org/"},"isPartOf":{"@type":"WebSite","@id":"https://cruzvermelhariodejaneiro.org/#site","url":"https://cruzvermelhariodejaneiro.org/"},"translationOfWork":{"@type":"NewsArticle","@id":"https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/","inLanguage":"pt-BR"},"wordCount":1038,"image":["https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/sala-de-aula-infantil-vazia-com-um-estojo-de-primeiros-socor.png"]},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Brazilian Red Cross Rio de Janeiro","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"News","item":"https://cruzvermelhariodejaneiro.org/en/news/"},{"@type":"ListItem","position":3,"name":"The Lucas Law: what it requires of Brazilian schools and how to train staff","item":"https://cruzvermelhariodejaneiro.org/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
     gtag('js', new Date());
 
     gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
@@ -154,25 +160,55 @@
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none" alt=""
-  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
-  /></noscript>
   <script>
-    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
-    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
     (function () {
-      function carregar() {
-        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
-          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
-        });
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
       }
-      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
+  <script src="/consentimento/consentimento.js?v=4d145ab2d0" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -192,7 +228,6 @@
           <a href="/en/our-team/">Our team</a>
           <a href="/en/courses/">Courses</a>
           <a href="/en/faq/">FAQ</a>
-          <a href="/en/donate/">Donate</a>
           <a href="/en/#contato">Contact</a>
           <a href="/">Site em português</a>
         </nav>
@@ -307,6 +342,12 @@ document.querySelectorAll('.copiar-link').forEach(function (b) {
         <a href="/en/privacy/">Privacy Policy</a>
         <span class="sep">|</span>
         <a href="/en/terms/">Terms of Use</a>
+        <span class="sep">|</span>
+        <a href="/en/cookies/">Cookie Policy</a>
+        <span class="sep">|</span>
+        <a href="/en/refunds/">Cancellation and refunds</a>
+        <span class="sep">|</span>
+        <a href="/en/cookies/#preferencias" data-cvrj-cookies>Cookie preferences</a>
       </div>
     </div>
   </footer>

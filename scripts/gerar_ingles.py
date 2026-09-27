@@ -4,8 +4,10 @@
   site/en/news/                   índice das notícias traduzidas
   site/en/news/<slug>/            uma página por matéria (traducoes/en/noticias/<slug>.md)
   site/en/winter-clothing-drive/  Campanha do Agasalho
-  site/en/privacy/  site/en/terms/  tradução de cortesia; vale o texto em português
   site/en/404.html                servido pelo site/en/.htaccess para tudo que estiver sob /en/
+
+Privacidade, Cookies, Termos e Reembolso em inglês são gerados por gerar_politicas.py, não por
+este script (desde 27/09/2026).
 
 Cabeçalho, rodapé, CSS e moldura vêm de gerar_idiomas.py: o visual é o das outras páginas em
 inglês. As notícias são traduções das matérias da Redação (que continuam sendo a fonte): cada uma
@@ -537,32 +539,6 @@ def pagina_campanha(idioma: dict, partes: dict, P: dict) -> str:
     return moldura(idioma, "campanha", c["titulo"], c["descricao"], corpo, ld, partes, og_imagem=og)
 
 
-def pagina_legal(idioma: dict, partes: dict, P: dict, nome: str, pt: str) -> str:
-    arquivo = FONTE / "paginas" / f"{nome}.md"
-    d, texto = ler_cabecalho(arquivo.read_text(encoding="utf-8"), arquivo)
-    caminho = P["caminhos"][nome]
-    trilha, ld_trilha = migalhas(idioma, [(d["h1"], caminho)])
-    corpo = f"""    <section class="i18n-hero">
-      <div class="wrap materia-estreita">
-        {trilha}
-        <h1>{esc(d['h1'])}</h1>
-        <p>{esc(d['atualizado'])}</p>
-        <p class="i18n-legal-aviso">{em_linha(d['aviso'])}</p>
-      </div>
-    </section>
-    <section class="i18n-bloco">
-      <div class="wrap materia-estreita i18n-prosa">
-{markdown(texto)}
-      </div>
-    </section>"""
-    url = f"{ORIGEM}{caminho}"
-    ld = [{"@context": "https://schema.org", "@type": "WebPage", "@id": f"{url}#pagina", "url": url,
-           "name": d["h1"], "description": d["descricao"], "inLanguage": "en",
-           "isPartOf": {"@type": "WebSite", "@id": f"{ORIGEM}/#site", "url": f"{ORIGEM}/"}}, ld_trilha]
-    registrar(nome, pt, caminho)
-    return moldura(idioma, nome, d["titulo"], d["descricao"], corpo, ld, partes)
-
-
 def pagina_erro(idioma: dict, partes: dict, P: dict) -> str:
     e = P["erro"]
     links = "".join(f'<a class="btn {"btn-red" if i == 0 else "btn-outline"}" href="{u}"'
@@ -614,8 +590,6 @@ def main() -> int:
         paginas[SITE / "en" / "news" / n["slug"] / "index.html"] = pagina_noticia(idioma, partes, P, n, noticias)
     paginas[SITE / "en" / "news" / "index.html"] = pagina_indice(idioma, partes, P, noticias)
     paginas[SITE / "en" / "winter-clothing-drive" / "index.html"] = pagina_campanha(idioma, partes, P)
-    paginas[SITE / "en" / "privacy" / "index.html"] = pagina_legal(idioma, partes, P, "privacy", "/privacidade/")
-    paginas[SITE / "en" / "terms" / "index.html"] = pagina_legal(idioma, partes, P, "terms", "/termos/")
     paginas[SITE / "en" / "404.html"] = pagina_erro(idioma, partes, P)
     conferir_links(paginas)
     for destino, html_ in paginas.items():

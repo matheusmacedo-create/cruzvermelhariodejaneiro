@@ -1,10 +1,10 @@
 {
   "en": {
     "titulo_aba": "FAQ — Brazilian Red Cross Rio de Janeiro",
-    "descricao": "Courses, enrolment, volunteering, donations, address and contact at the Brazilian Red Cross Rio de Janeiro branch, answered one question at a time.",
+    "descricao": "Courses, enrolment, volunteering, how to help, address and contact at the Brazilian Red Cross Rio de Janeiro branch, answered one question at a time.",
     "sobrancelha": "Frequently asked questions",
     "titulo": "Frequently asked questions about the Brazilian Red Cross — Rio de Janeiro Branch",
-    "subtitulo": "Courses, enrolment, volunteering, donations, address and contact, with the official rules and the right channel for each subject.",
+    "subtitulo": "Courses, enrolment, volunteering, how to help, address and contact, with the official rules and the right channel for each subject.",
     "nota": "Did not find your question? Write to us and the team will answer within three business days, in English, Spanish or Portuguese.",
     "grupos": [
       {
@@ -16,7 +16,7 @@
           },
           {
             "pergunta": "Is this the national Brazilian Red Cross?",
-            "resposta": "No. The Brazilian Red Cross is the National Society for the whole country; this site belongs to its Rio de Janeiro State branch, one of the branches within that national structure. If you are looking for the National Society itself — for official positions, national programmes or matters covering other states — that is a different body. What you will find here is what the Rio de Janeiro branch runs directly: courses, volunteering, donations and community work in this state."
+            "resposta": "No. The Brazilian Red Cross is the National Society for the whole country; this site belongs to its Rio de Janeiro State branch, one of the branches within that national structure. If you are looking for the National Society itself — for official positions, national programmes or matters covering other states — that is a different body. What you will find here is what the Rio de Janeiro branch runs directly: courses, volunteering, campaigns and community work in this state."
           },
           {
             "pergunta": "Does the branch respond to emergencies or schedule medical appointments?",
@@ -73,30 +73,20 @@
           },
           {
             "pergunta": "Can you train my company's or my school's team?",
-            "resposta": "Yes. The branch runs closed training for companies and schools: occupational-safety (NR) training, first-aid training under the Lucas Law — which schools, nurseries and teams working with children need — and programmes built around a particular team. Organisations anywhere in Rio de Janeiro State can request one. This is also one of the ways partner organisations support the branch, alongside institutional donations and campaign sponsorship. Write to contato@cruzvermelhariodejaneiro.org to ask for a proposal."
+            "resposta": "Yes. The branch runs closed training for companies and schools: occupational-safety (NR) training, first-aid training under the Lucas Law — which schools, nurseries and teams working with children need — and programmes built around a particular team. Organisations anywhere in Rio de Janeiro State can request one. This is also one of the ways partner organisations support the branch, alongside support for campaigns such as the Winter Clothing Drive. Write to contato@cruzvermelhariodejaneiro.org to ask for a proposal."
           }
         ]
       },
       {
-        "titulo": "Donating",
+        "titulo": "How to help",
         "perguntas": [
           {
-            "pergunta": "How do I donate, and is the donation safe?",
-            "resposta": "Through the donation page: you choose the amount and pay by card or PIX in the institution's own payment environment. For now each gift is a one-off; a monthly option is planned for the same page. The donation stays with the Rio de Janeiro State branch and funds volunteer training, first-aid training, community work, communication and the running costs of the branch. The CNPJ, the address and the e-mail are published on this site so you can check them before giving.",
+            "pergunta": "How can I help? Can I donate money online?",
+            "resposta": "Online money donations through this site are suspended for now. You can help in three ways: by volunteering, registering on the official volunteer form (the branch trains its own volunteers, and the working language is Portuguese); by bringing winter clothing, blankets and shoes to the headquarters for the Winter Clothing Drive, Monday to Friday, 10am to 5pm; or, for companies, schools and institutions, by proposing a partnership at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, in English, Spanish or Portuguese.",
             "links": [
               {
-                "texto": "donation page",
-                "url": "/en/donate/"
-              }
-            ]
-          },
-          {
-            "pergunta": "Can I donate from outside Brazil?",
-            "resposta": "By card only. PIX cannot do it: PIX is Brazil's instant payment system, operated by the country's Central Bank, and it moves money between accounts held at Brazilian banks — there is no way to send one from a bank abroad. Card networks settle across borders, so a card issued anywhere can reach the branch. What stops the online form today is the identification, not the card: it asks for a CPF. If you have none, write to us and we will arrange the payment directly.",
-            "links": [
-              {
-                "texto": "write to us",
-                "url": "/en/donate/"
+                "texto": "official volunteer form",
+                "url": "https://form.spotform.com.br/voluntariocruzvermelharj"
               }
             ]
           },
@@ -146,11 +136,11 @@
         "perguntas": [
           {
             "pergunta": "How do I contact the branch?",
-            "resposta": "By e-mail, at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, with a reference number in the subject line, so it is worth checking your spam folder. That address covers courses, enrolment, donations, campaigns and partnerships. The Portuguese pages of this site also carry a contact chat in the corner, which replies by e-mail all the same. Volunteering has its own WhatsApp number, (21) 97036-0264, for people who want to volunteer."
+            "resposta": "By e-mail, at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, with a reference number in the subject line, so it is worth checking your spam folder. That address covers courses, enrolment, campaigns and partnerships. The Portuguese pages of this site also carry a contact chat in the corner, which replies by e-mail all the same. Volunteering has its own WhatsApp number, (21) 97036-0264, for people who want to volunteer."
           },
           {
             "pergunta": "I am from a sister National Society, an institution or a company. Who do I talk to?",
-            "resposta": "Write to contato@cruzvermelhariodejaneiro.org and say what you have in mind. Sister National Societies, institutions and companies wanting to partner, donate institutionally, sponsor a campaign or commission training for a team are all handled at that address, and the team replies within three business days. For anything concerning the Brazilian Red Cross nationally, rather than the Rio de Janeiro State branch, the National Society is the right door."
+            "resposta": "Write to contato@cruzvermelhariodejaneiro.org and say what you have in mind. Sister National Societies, institutions and companies wanting to partner, support a campaign or commission training for a team are all handled at that address, and the team replies within three business days. For anything concerning the Brazilian Red Cross nationally, rather than the Rio de Janeiro State branch, the National Society is the right door."
           }
         ]
       }
@@ -158,10 +148,10 @@
   },
   "es": {
     "titulo_aba": "Preguntas frecuentes — Cruz Roja Brasileña Río de Janeiro",
-    "descricao": "Cursos, matrícula, voluntariado, donaciones, dirección y contacto de la filial de Río de Janeiro de la Cruz Roja Brasileña, respondidos uno a uno.",
+    "descricao": "Cursos, matrícula, voluntariado, cómo ayudar, dirección y contacto de la filial de Río de Janeiro de la Cruz Roja Brasileña, respondidos uno a uno.",
     "sobrancelha": "Preguntas frecuentes",
     "titulo": "Preguntas frecuentes sobre la Cruz Roja Brasileña — Filial Río de Janeiro",
-    "subtitulo": "Cursos, matrícula, voluntariado, donaciones, dirección y contacto, con las reglas oficiales y el canal correcto para cada asunto.",
+    "subtitulo": "Cursos, matrícula, voluntariado, cómo ayudar, dirección y contacto, con las reglas oficiales y el canal correcto para cada asunto.",
     "nota": "¿No encontró su pregunta? Escríbanos y el equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
     "grupos": [
       {
@@ -173,7 +163,7 @@
           },
           {
             "pergunta": "¿Esta es la Cruz Roja Brasileña nacional?",
-            "resposta": "No. La Cruz Roja Brasileña es la Sociedad Nacional de todo el país; este sitio pertenece a su filial del Estado de Río de Janeiro, una de las filiales dentro de esa estructura nacional. Si busca a la Sociedad Nacional en sí — posiciones oficiales, programas nacionales o asuntos de otros estados —, ese es otro organismo. Aquí encontrará lo que la filial de Río de Janeiro hace directamente: cursos, voluntariado, donaciones y acción comunitaria en este estado."
+            "resposta": "No. La Cruz Roja Brasileña es la Sociedad Nacional de todo el país; este sitio pertenece a su filial del Estado de Río de Janeiro, una de las filiales dentro de esa estructura nacional. Si busca a la Sociedad Nacional en sí — posiciones oficiales, programas nacionales o asuntos de otros estados —, ese es otro organismo. Aquí encontrará lo que la filial de Río de Janeiro hace directamente: cursos, voluntariado, campañas y acción comunitaria en este estado."
           },
           {
             "pergunta": "¿La filial atiende urgencias o agenda citas médicas?",
@@ -230,30 +220,20 @@
           },
           {
             "pergunta": "¿Pueden capacitar al equipo de mi empresa o de mi escuela?",
-            "resposta": "Sí. La filial dicta capacitaciones cerradas para empresas y escuelas: formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirla cualquier organización del estado de Río de Janeiro. Es también una de las formas en que las organizaciones aliadas apoyan a la filial, junto con donaciones institucionales y patrocinio de campañas. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
+            "resposta": "Sí. La filial dicta capacitaciones cerradas para empresas y escuelas: formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirla cualquier organización del estado de Río de Janeiro. Es también una de las formas en que las organizaciones aliadas apoyan a la filial, junto con el apoyo a campañas como la Campaña de Ropa de Abrigo. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
           }
         ]
       },
       {
-        "titulo": "Donaciones",
+        "titulo": "Cómo ayudar",
         "perguntas": [
           {
-            "pergunta": "¿Cómo dono y la donación es segura?",
-            "resposta": "Por la página de donación: usted elige el importe y concluye el pago con tarjeta o PIX en el entorno de pago de la propia institución. Por ahora cada donación es única; la opción mensual está prevista en la misma página. La donación queda en la filial del Estado de Río de Janeiro y sostiene la formación de voluntarios, la capacitación en primeros auxilios, la acción comunitaria, la comunicación y el funcionamiento de la filial. El CNPJ, la dirección y el correo están publicados en este sitio para que usted los verifique antes de donar.",
+            "pergunta": "¿Cómo puedo ayudar? ¿Puedo donar dinero en línea?",
+            "resposta": "La donación de dinero en línea por este sitio está suspendida por ahora. Puede ayudar de tres maneras: como voluntario, con el registro en el formulario oficial del voluntariado (la filial forma a sus propios voluntarios y el idioma de trabajo es el portugués); llevando ropa de abrigo, mantas y calzado a la sede para la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas; o, si es una empresa, escuela o institución, proponiendo una alianza en contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
             "links": [
               {
-                "texto": "página de donación",
-                "url": "/es/donar/"
-              }
-            ]
-          },
-          {
-            "pergunta": "¿Puedo donar desde fuera de Brasil?",
-            "resposta": "Solo con tarjeta. El PIX no sirve: es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. Las redes de tarjetas liquidan entre países, así que una tarjeta emitida en cualquier lugar llega a la filial. Lo que frena el formulario en línea hoy es la identificación, no la tarjeta: pide el CPF. Si no lo tiene, escríbanos y organizamos el pago directamente.",
-            "links": [
-              {
-                "texto": "escríbanos",
-                "url": "/es/donar/"
+                "texto": "formulario oficial del voluntariado",
+                "url": "https://form.spotform.com.br/voluntariocruzvermelharj"
               }
             ]
           },
@@ -303,11 +283,11 @@
         "perguntas": [
           {
             "pergunta": "¿Cómo hablo con la filial?",
-            "resposta": "Por correo electrónico, a contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, con un número de protocolo en el asunto, así que vale revisar la carpeta de spam. Esa dirección atiende cursos, matrícula, donaciones, campañas y alianzas. Las páginas en portugués de este sitio tienen además un chat de contacto en la esquina, que responde por correo igualmente. El voluntariado tiene su propio WhatsApp, (21) 97036-0264, para quien quiere ser voluntario."
+            "resposta": "Por correo electrónico, a contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, con un número de protocolo en el asunto, así que vale revisar la carpeta de spam. Esa dirección atiende cursos, matrícula, campañas y alianzas. Las páginas en portugués de este sitio tienen además un chat de contacto en la esquina, que responde por correo igualmente. El voluntariado tiene su propio WhatsApp, (21) 97036-0264, para quien quiere ser voluntario."
           },
           {
             "pergunta": "Represento a una Sociedad Nacional hermana, a una institución o a una empresa. ¿Con quién hablo?",
-            "resposta": "Escriba a contato@cruzvermelhariodejaneiro.org y cuente lo que tiene en mente. Las Sociedades Nacionales hermanas, las instituciones y las empresas que quieran establecer una alianza, donar institucionalmente, patrocinar una campaña o encargar una capacitación para un equipo se atienden en esa dirección, y el equipo responde en hasta tres días hábiles. Para cualquier asunto de la Cruz Roja Brasileña a nivel nacional, y no de la filial del Estado de Río de Janeiro, la puerta correcta es la Sociedad Nacional."
+            "resposta": "Escriba a contato@cruzvermelhariodejaneiro.org y cuente lo que tiene en mente. Las Sociedades Nacionales hermanas, las instituciones y las empresas que quieran establecer una alianza, apoyar una campaña o encargar una capacitación para un equipo se atienden en esa dirección, y el equipo responde en hasta tres días hábiles. Para cualquier asunto de la Cruz Roja Brasileña a nivel nacional, y no de la filial del Estado de Río de Janeiro, la puerta correcta es la Sociedad Nacional."
           }
         ]
       }

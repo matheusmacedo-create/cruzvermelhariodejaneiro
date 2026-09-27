@@ -91,11 +91,13 @@
     }
     @media (min-width: 621px) and (max-width: 920px) { .main-header .header-collapse .nav-links { display: flex !important; } }
   </style>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF"></script>
   <!-- Google tag (gtag.js) -->
   <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
     gtag('js', new Date());
 
     gtag('set', { content_group: 'bio' });
@@ -109,25 +111,55 @@
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none" alt=""
-  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
-  /></noscript>
   <script>
-    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
-    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
     (function () {
-      function carregar() {
-        ['https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
-          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
-        });
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
       }
-      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
-      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
+      aplicar();
     })();
   </script>
+  <script src="/consentimento/consentimento.js?v=4d145ab2d0" defer></script>
   <!-- End Meta Pixel Code -->
 
   <script type="application/ld+json">
@@ -204,15 +236,15 @@
       "name": "Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 3 dias úteis."
+        "text": "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 3 dias úteis."
       }
     },
     {
       "@type": "Question",
-      "name": "Como doar para a Cruz Vermelha do Rio de Janeiro?",
+      "name": "Como ajudar a Cruz Vermelha no Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Pela página de doação do site, com PIX ou cartão. Roupas de frio, cobertores e calçados são recebidos na sede, pela Campanha do Agasalho. Toda ajuda vai para as ações humanitárias da filial no estado do Rio de Janeiro."
+        "text": "Sendo voluntário, com o cadastro no formulário oficial, no botão acima, ou entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho. A doação em dinheiro pelo site está suspensa no momento. Empresas e escolas que queiram propor uma parceria podem usar o chat de contato deste site."
       }
     },
     {
@@ -250,7 +282,6 @@
           <a href="/#faq">FAQ</a>
           <a href="/equipe.html">Equipe</a>
           <a href="/#contato">Contato</a>
-          <a href="/doe/">Doe</a>
         </nav>
 
         <div class="header-actions">
@@ -271,7 +302,7 @@
         <img class="bio-avatar" src="img/avatar-256.webp" srcset="img/avatar-256.webp 256w, img/avatar-512.webp 512w" sizes="128px" alt="Cruz Vermelha Brasileira – Rio de Janeiro" width="256" height="256" fetchpriority="high">
         <p class="eyebrow">Instagram · links oficiais</p>
         <h1 id="bio-titulo">Cruz Vermelha Brasileira – Filial Rio de Janeiro</h1>
-        <p class="lead">Maior rede de ajuda humanitária do 🌎<br>Doe e nos ajude a salvar vidas!</p>
+        <p class="lead">Maior rede de ajuda humanitária do 🌎<br>Seja voluntário e ajude a salvar vidas!</p>
       </div>
     </section>
 
@@ -288,7 +319,7 @@
       <div class="wrap">
         <p class="eyebrow">Perguntas frequentes</p>
         <h2 id="bio-faq-titulo">Cursos, voluntariado e contato da Cruz Vermelha Brasileira Rio de Janeiro</h2>
-        <details><summary>Como ser voluntário da Cruz Vermelha no Rio de Janeiro?</summary><p>Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.</p></details><details><summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary><p>Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na <a href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</p></details><details><summary>Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?</summary><p>Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, doações e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 3 dias úteis.</p></details><details><summary>Como doar para a Cruz Vermelha do Rio de Janeiro?</summary><p>Pela <a href="https://cruzvermelhariodejaneiro.org/doe/">página de doação</a> do site, com PIX ou cartão. Roupas de frio, cobertores e calçados são recebidos na sede, pela <a href="https://cruzvermelhariodejaneiro.org/campanha-agasalho.html">Campanha do Agasalho</a>. Toda ajuda vai para as ações humanitárias da filial no estado do Rio de Janeiro.</p></details><details><summary>Onde fica a Cruz Vermelha no Rio de Janeiro?</summary><p>Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários.</p></details>
+        <details><summary>Como ser voluntário da Cruz Vermelha no Rio de Janeiro?</summary><p>Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.</p></details><details><summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary><p>Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na <a href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</p></details><details><summary>Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?</summary><p>Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até 3 dias úteis.</p></details><details><summary>Como ajudar a Cruz Vermelha no Rio de Janeiro?</summary><p>Sendo voluntário, com o cadastro no formulário oficial, no botão acima, ou entregando roupas de frio, cobertores e calçados na sede, pela <a href="https://cruzvermelhariodejaneiro.org/campanha-agasalho.html">Campanha do Agasalho</a>. A doação em dinheiro pelo site está suspensa no momento. Empresas e escolas que queiram propor uma parceria podem usar o chat de contato deste site.</p></details><details><summary>Onde fica a Cruz Vermelha no Rio de Janeiro?</summary><p>Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e a formação de voluntários.</p></details>
       </div>
     </section>
   </main>
@@ -336,6 +367,12 @@
         <a href="/privacidade/">Política de Privacidade</a>
         <span class="sep">|</span>
         <a href="/termos/">Termos de Uso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/">Política de Cookies</a>
+        <span class="sep">|</span>
+        <a href="/reembolso/">Cancelamento e reembolso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
       </div>
     </div>
   </footer>
@@ -360,11 +397,17 @@
     (function () {
       // UTMs, fbclid e gclid com que a pessoa chegou (ex.: ?utm_source=ig da bio) seguem para a plataforma da
       // escola, que fica no nosso domínio: lá o GA4 e o Pixel enxergam a origem mesmo sem cookie compartilhado.
+      // Só com a permissão de estatística (aviso de cookies), conferida na hora do clique: quem aceita depois
+      // de a página abrir também leva a origem.
       var origem = new URLSearchParams();
       new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) origem.set(k, v); });
       var escola = document.querySelector('[data-bio="escola"]');
       if (escola && Array.from(origem.keys()).length) {
-        try { var u = new URL(escola.href); origem.forEach(function (v, k) { u.searchParams.set(k, v); }); escola.href = u.toString(); } catch (e) {}
+        escola.addEventListener('click', function () {
+          var c = window.cvrjMedicao && window.cvrjMedicao.ler();
+          if (!c || !c.estatistica) return;
+          try { var u = new URL(escola.href); origem.forEach(function (v, k) { u.searchParams.set(k, v); }); escola.href = u.toString(); } catch (e) {}
+        });
       }
       // Cada clique vira um evento: GA4 bio_click (link_id, link_url, link_text, outbound) e, no Meta, BioClick;
       // o WhatsApp também dispara o evento padrão Contact (pessoa iniciando contato com a organização).
@@ -387,6 +430,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=50f004d894" defer></script>
+  <script src="/chat/chat.js?v=b04d76f320" defer></script>
 </body>
 </html>

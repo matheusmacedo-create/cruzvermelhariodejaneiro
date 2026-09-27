@@ -30,8 +30,11 @@
   </style>
   <!-- Google tag (gtag.js) -->
   <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
     gtag('js', new Date());
 
     gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
@@ -44,25 +47,55 @@
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none" alt=""
-  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
-  /></noscript>
   <script>
-    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
-    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
     (function () {
-      function carregar() {
-        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
-          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
-        });
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
       }
-      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
+  <script src="/consentimento/consentimento.js?v=4d145ab2d0" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -82,13 +115,12 @@
           <a href="/#institucional">Sobre</a>
           <a href="/historia/">História</a>
           <a href="/noticias/">Notícias</a>
-          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap" aria-current="page">Matrícula cursos presenciais</a>
+          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
           <a href="/#campanhas">Campanhas</a>
           <a href="/#parceiros">Parceiros</a>
           <a href="/#faq">FAQ</a>
           <a href="/equipe.html">Equipe</a>
           <a href="/#contato">Contato</a>
-          <a href="/doe/">Doe</a>
         </nav>
 
         <div class="header-actions">
@@ -163,6 +195,12 @@
         <a href="/privacidade/">Política de Privacidade</a>
         <span class="sep">|</span>
         <a href="/termos/">Termos de Uso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/">Política de Cookies</a>
+        <span class="sep">|</span>
+        <a href="/reembolso/">Cancelamento e reembolso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
       </div>
     </div>
   </footer>

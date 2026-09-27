@@ -46,7 +46,7 @@ PAGINA = """<!DOCTYPE html>
           <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> Página inicial</a>
           <a href="/matricula-cursos-presenciais/"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Matrícula em cursos presenciais</a>
           <a href="/noticias/"><i class="fa-regular fa-newspaper" aria-hidden="true"></i> Notícias</a>
-          <a href="/doe/"><i class="fa-solid fa-heart" aria-hidden="true"></i> Como doar</a>
+          <a href="/campanha-agasalho.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Campanha do Agasalho</a>
           <a href="/#contato"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Fale com a gente</a>
         </div>
       </div>
@@ -61,7 +61,7 @@ PAGINA = """<!DOCTYPE html>
 
 def main() -> int:
     partes = partes_da_home(HOME.read_text(encoding="utf-8"))
-    html = (PAGINA.replace("@@ESTILO@@", partes["estilo"]).replace("@@HEADER@@", partes["header"])
+    html = (PAGINA.replace("@@ESTILO@@", partes["estilo"]).replace("@@HEADER@@", partes["header"].replace(' aria-current="page"', ""))
             .replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"]))
     destino = RAIZ / "site" / "404.html"

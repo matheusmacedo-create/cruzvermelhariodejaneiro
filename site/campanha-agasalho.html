@@ -29,6 +29,12 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>
+    /* Ícones em SVG inline (scripts/icones.py) */
+    i[class*="fa-"] { display: inline-block; font-style: normal; line-height: 1; }
+    .ico { display: inline-block; width: 1em; height: 1em; fill: currentColor; vertical-align: -.125em; overflow: visible; }
+    .nav-toggle .ico-xmark { display: none; }
+    .main-header.nav-open .nav-toggle .ico-bars { display: none; }
+    .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
     /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
        aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
        Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
@@ -344,17 +350,6 @@
       font-weight: 850;
       line-height: 1.25;
     }
-    .donor-thanks {
-      margin-top: 14px;
-      border: 1px solid #ffd6dc;
-      background: #fff5f6;
-      border-radius: var(--radius);
-      padding: 14px;
-      color: #333;
-      font-size: .9rem;
-    }
-    .donor-thanks b { color: var(--red); }
-
     .donation-card {
       background: rgba(255,255,255,.96);
       color: var(--black);
@@ -551,6 +546,7 @@
     footer h4 { color: #fff; margin: 0 0 .8rem; font-size: .88rem; text-transform: uppercase; letter-spacing: .08em; }
     footer a { color: rgba(255,255,255,.72); display: block; margin-bottom: .45rem; }
     footer a:hover { color: #fff; }
+    .footer-legal a { display: inline; margin: 0; }
     .footer-bottom {
       border-top: 1px solid rgba(255,255,255,.12);
       margin-top: 34px;
@@ -613,13 +609,17 @@
     }
   </style>
 
-<!-- Google tag (gtag.js) -->
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    gtag('js', new Date());
+
+    gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
+  </script>
 
   <!-- Meta Pixel Code -->
   <script>
@@ -629,25 +629,55 @@
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('consent', 'revoke');
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none" alt=""
-  src="https://www.facebook.com/tr?id=2224500131617302&ev=PageView&noscript=1"
-  /></noscript>
   <script>
-    // Os scripts do GA4 e do Pixel carregam depois de a página estar pronta (load + ocioso).
-    // As chamadas gtag() e fbq() feitas antes ficam na fila e saem quando os scripts chegam.
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
     (function () {
-      function carregar() {
-        ['https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF', 'https://connect.facebook.net/en_US/fbevents.js'].forEach(function (src) {
-          var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
-        });
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
       }
-      function agendar() { if ('requestIdleCallback' in window) requestIdleCallback(carregar, { timeout: 2500 }); else setTimeout(carregar, 800); }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        if (c.marketing) baixar(PIXEL);
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
+  <script src="/consentimento/consentimento.js?v=4d145ab2d0" defer></script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 [
@@ -691,7 +721,7 @@
   <div class="urgent-bar">
     <div class="wrap">
       <span><span class="pulse-dot" aria-hidden="true"></span><b>Campanha aberta:</b> Campanha do Agasalho</span>
-      <a href="/doe/" class="js-open-donation">Doe agora</a>
+      <a href="#entrega">Onde entregar</a>
     </div>
   </div>
 
@@ -706,11 +736,10 @@
         <a href="/">Institucional</a>
         <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
         <a href="/#acoes">Ações</a>
-        <a href="/doe/">Doar</a>
         <a href="campanha-agasalho.html" aria-current="page">Campanha do Agasalho</a>
         <a href="/#contato">Contato</a>
       </nav>
-      <a class="btn btn-red js-open-donation" href="/doe/">Doe agora</a>
+      <a class="btn btn-red" href="#doacoes-fisicas">O que doar</a>
     </div>
   </header>
 
@@ -723,8 +752,8 @@
           <h1>Campanha do <span>Agasalho</span></h1>
           <p>Todo ano, o frio chega antes do cuidado. Famílias em situação de vulnerabilidade enfrentam noites geladas sem um cobertor, um casaco ou um calçado fechado. A Cruz Vermelha Brasileira Rio de Janeiro está mobilizada para levar aquecimento, dignidade e esperança a quem mais precisa.</p>
           <div class="hero-actions">
-            <a class="btn btn-red btn-huge js-open-donation" href="/doe/">Doar agora</a>
-            <a class="btn btn-white" href="#doacoes-fisicas">Doar agasalhos e cobertores</a>
+            <a class="btn btn-red btn-huge" href="#doacoes-fisicas">Doar agasalhos e cobertores</a>
+            <a class="btn btn-white" href="#entrega">Onde e quando entregar</a>
           </div>
 
           <div class="crisis-gallery" aria-label="Imagens da Campanha do Agasalho">
@@ -740,43 +769,42 @@
 
           <div class="hero-note" aria-label="Informações da campanha">
             <div class="note-card">
-              <b>Doações financeiras</b>
-              <span>Clique em doar agora e finalize diretamente no checkout oficial da campanha.</span>
+              <b>Onde entregar</b>
+              <span>Na sede, Praça da Cruz Vermelha, 10, Centro do Rio, de segunda a sexta, das 10h às 17h.</span>
             </div>
             <div class="note-card">
               <b>Donativos físicos</b>
               <span>Casacos, cobertores, roupas de frio, calçados e itens orientados pela equipe.</span>
             </div>
             <div class="note-card">
-              <b>Agradecimento ao doador</b>
-              <span>Quem doar online receberá acesso futuro a cursos gravados gratuitos da Cruz Vermelha Brasileira Rio de Janeiro.</span>
+              <b>Voluntariado</b>
+              <span>Quer ajudar na triagem e na entrega? Faça o cadastro no formulário oficial do voluntariado.</span>
             </div>
           </div>
         </div>
 
-        <aside class="donation-card" id="doar" aria-label="Doação imediata Campanha do Agasalho">
-          <p class="eyebrow">Doação imediata</p>
+        <aside class="donation-card" id="doar" aria-label="Como doar para a Campanha do Agasalho">
+          <p class="eyebrow">Doe agasalhos</p>
           <h2>Alguém precisa de aquecimento agora.</h2>
           <p>Não é apenas uma doação. É um cobertor chegando, um casaco chegando, cuidado chegando e uma pessoa sentindo que não está sozinha no frio.</p>
           <div class="emotional-appeal">
             <strong>Uma atitude sua agora pode aquecer uma noite inteira.</strong>
-            <p>Quando o frio chega, cada dia sem apoio aumenta o sofrimento de quem não tem onde se abrigar. Clique abaixo e ajude a manter essa resposta humanitária em movimento.</p>
+            <p>Quando o frio chega, cada dia sem apoio aumenta o sofrimento de quem não tem onde se abrigar. Separe casacos, cobertores e roupas de frio limpos e em bom estado e leve à sede.</p>
           </div>
-          <a class="btn btn-red btn-huge btn-full js-open-donation" href="/doe/">Doar agora</a>
+          <a class="btn btn-red btn-huge btn-full" href="#doacoes-fisicas">Ver o que doar</a>
           <div class="trust-list">
-            <span>✓ Doação para a Cruz Vermelha Brasileira Rio de Janeiro</span>
-            <span>✓ CNPJ: 08.560.973/0001-97</span>
-            <span>✓ Pagamento seguro, na página de doação do site oficial</span>
-            <span>✓ Doadores online terão acesso futuro a cursos gravados gratuitos como agradecimento</span>
+            <span>✓ Praça da Cruz Vermelha, 10 - Centro, Rio de Janeiro</span>
+            <span>✓ Segunda a sexta, das 10h às 17h</span>
+            <span>✓ Triagem feita pela equipe da campanha</span>
+            <span>✓ Dúvidas: contato@cruzvermelhariodejaneiro.org</span>
           </div>
-          <div class="donor-thanks"><b>Agradecimento especial:</b> ao doar online, você receberá acesso futuro a cursos gravados disponibilizados gratuitamente pela Cruz Vermelha Brasileira Rio de Janeiro.</div>
         </aside>
       </div>
     </section>
 
     <div class="strip">
       <div class="wrap strip-grid">
-        <div class="strip-item"><b>Doação online</b><span>cruzvermelhariodejaneiro.org/doe</span></div>
+        <div class="strip-item"><b>O que doar</b><span>Agasalhos, cobertores, roupas de frio e calçados</span></div>
         <div class="strip-item"><b>Horário</b><span>Segunda a sexta, 10h às 17h</span></div>
         <div class="strip-item"><b>Local</b><span>Praça da Cruz Vermelha, 10 - Centro</span></div>
         <div class="strip-item"><b>Contato</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
@@ -796,8 +824,8 @@
             <p><b>Doar rápido é importante. Doar certo é essencial.</b> Donativos físicos devem estar limpos, separados e de acordo com as orientações da equipe da campanha.</p>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px">
-            <a class="btn btn-red btn-huge js-open-donation" href="/doe/">Doar agora</a>
-            <a class="btn btn-outline" href="#doacoes-fisicas">Ver como entregar donativos</a>
+            <a class="btn btn-red btn-huge" href="#doacoes-fisicas">Ver o que doar</a>
+            <a class="btn btn-outline" href="#entrega">Ver como entregar donativos</a>
           </div>
         </div>
       </div>
@@ -837,11 +865,11 @@
       <div class="wrap">
         <p class="eyebrow">A hora de agir é agora</p>
         <h2 id="appeal-title">Para quem enfrenta o frio sem abrigo, a sua ajuda pode ser o primeiro sinal de esperança.</h2>
-        <p class="lead">Não existe valor pequeno quando a necessidade é urgente. O que existe é uma decisão: assistir de longe ou fazer parte da resposta humanitária.</p>
+        <p class="lead">Não existe doação pequena quando a necessidade é urgente: um casaco, um cobertor ou um par de meias já fazem diferença. O que existe é uma decisão: assistir de longe ou fazer parte da resposta humanitária.</p>
         <div class="appeal-grid">
           <article class="appeal-card">
             <b>O frio não espera.</b>
-            <span>Sua contribuição ajuda a levar casacos, cobertores e itens essenciais para quem enfrenta o inverno sem proteção.</span>
+            <span>Cada peça entregue ajuda a levar casacos, cobertores e itens essenciais para quem enfrenta o inverno sem proteção.</span>
           </article>
           <article class="appeal-card">
             <b>Dignidade também é urgência.</b>
@@ -852,7 +880,7 @@
             <span>A missão depende de mobilização, triagem e logística para que a ajuda saia da intenção e chegue a quem precisa.</span>
           </article>
         </div>
-        <a class="btn btn-red btn-huge js-open-donation" href="/doe/">Doar agora</a>
+        <a class="btn btn-red btn-huge" href="#entrega">Saiba onde entregar</a>
       </div>
     </section>
 
@@ -860,11 +888,11 @@
     <section aria-labelledby="thanks-title" class="items-section">
       <div class="wrap split">
         <div>
-          <p class="eyebrow">Agradecimento ao doador</p>
-          <h2 id="thanks-title">Sua solidariedade também será reconhecida.</h2>
-          <p class="lead">Quem contribuir online pela Campanha do Agasalho receberá, no futuro, acesso a cursos gravados gratuitos disponibilizados pela Cruz Vermelha Brasileira Rio de Janeiro como forma de agradecimento pelo apoio humanitário.</p>
+          <p class="eyebrow">Voluntariado</p>
+          <h2 id="thanks-title">Também dá para ajudar com o seu tempo.</h2>
+          <p class="lead">A triagem, a separação e a entrega dos donativos são feitas com a ajuda de voluntários. A Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários: não é preciso ser profissional de saúde.</p>
           <div class="callout">
-            <p><b>Importante:</b> os cursos serão oferecidos gratuitamente aos doadores online quando a área de conteúdos gravados estiver disponível.</p>
+            <p><b>Como começar:</b> preencha o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. A equipe do voluntariado entra em contato para explicar as frentes de atuação.</p>
           </div>
         </div>
         <div class="poster-frame">
@@ -873,24 +901,24 @@
       </div>
     </section>
 
-    <section class="how-section" aria-labelledby="how-title">
+    <section class="how-section" id="entrega" aria-labelledby="how-title">
       <div class="wrap">
         <p class="eyebrow" style="color:#fff">Como ajudar</p>
         <h2 id="how-title">Duas formas de participar da missão</h2>
-        <p class="lead">Você pode doar online, por PIX ou cartão, ou entregar donativos físicos na sede da Cruz Vermelha Brasileira Rio de Janeiro.</p>
+        <p class="lead">Você pode entregar donativos físicos na sede da Cruz Vermelha Brasileira Rio de Janeiro ou ajudar como voluntário na triagem e na entrega.</p>
         <div class="how-grid">
           <article class="how-card">
             <span class="num">1</span>
-            <h3>Doação online</h3>
-            <p>Escolha o valor e pague por PIX ou cartão na página oficial de doação: o código PIX é gerado na hora e a confirmação aparece sozinha.</p>
-            <a class="btn btn-red btn-huge js-open-donation" href="/doe/">Doar agora</a>
-          </article>
-          <article class="how-card">
-            <span class="num">2</span>
             <h3>Entrega presencial</h3>
             <p>Segunda a sexta, das 10h às 17h.</p>
             <p><b>Praça da Cruz Vermelha, 10 - Centro, Rio de Janeiro</b></p>
             <a href="mailto:contato@cruzvermelhariodejaneiro.org?subject=Doa%C3%A7%C3%A3o%20Campanha%20do%20Agasalho">Falar com a equipe</a>
+          </article>
+          <article class="how-card">
+            <span class="num">2</span>
+            <h3>Voluntariado</h3>
+            <p>Ajude a separar e a entregar os donativos. A formação é dada pela própria Cruz Vermelha.</p>
+            <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Quero ser voluntário</a>
           </article>
         </div>
       </div>
@@ -920,12 +948,12 @@
 
     <section class="final-cta" aria-labelledby="final-title">
       <div class="wrap">
-        <p class="eyebrow" style="color:#fff">Doe agora</p>
+        <p class="eyebrow" style="color:#fff">Doe agasalhos</p>
         <h2 id="final-title">A sua doação ajuda a levar aquecimento e esperança para quem mais precisa.</h2>
         <p>Não deixe essa dor passar despercebida. Alguém pode estar esperando exatamente o agasalho que você pode oferecer agora.</p>
         <div class="final-actions">
-          <a class="btn btn-red btn-huge js-open-donation" href="/doe/">Doar agora</a>
-          <a class="btn btn-white" href="#doacoes-fisicas">Entregar donativos</a>
+          <a class="btn btn-red btn-huge" href="#doacoes-fisicas">Ver o que doar</a>
+          <a class="btn btn-white" href="#entrega">Entregar donativos</a>
         </div>
       </div>
     </section>
@@ -945,12 +973,12 @@
           <h4>Site</h4>
           <a href="/">Institucional</a>
           <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
-          <a href="/doe/">Doações</a>
+          <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Voluntariado</a>
           <a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a>
         </div>
         <div>
           <h4>Campanha</h4>
-          <a class="js-open-donation" href="/doe/">Doar agora</a>
+          <a href="#entrega">Onde entregar</a>
           <a href="#doacoes-fisicas">Doações físicas</a>
           <a href="mailto:contato@cruzvermelhariodejaneiro.org">Contato</a>
         </div>
@@ -963,17 +991,15 @@
       </div>
       <div class="footer-bottom">
         <span>© Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro</span>
-        <span>Campanha do Agasalho</span>
+        <span class="footer-legal"><a href="/privacidade/">Privacidade</a> · <a href="/termos/">Termos de Uso</a> · <a href="/cookies/">Cookies</a> · <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a></span>
       </div>
     </div>
   </footer>
 
-  <a class="btn btn-red sticky-donate js-open-donation" href="/doe/">Doar agora para a Campanha do Agasalho</a>
+  <a class="btn btn-red sticky-donate" href="#doacoes-fisicas">Como doar agasalhos e cobertores</a>
 
 
   <script>
-    const DONATION_CHECKOUT = '/doe/';
-
     const nav = document.getElementById('menu');
     const menuBtn = document.getElementById('menuBtn');
     menuBtn.addEventListener('click', () => {
@@ -987,16 +1013,9 @@
       });
     });
 
-    document.querySelectorAll('.js-open-donation').forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        window.location.href = DONATION_CHECKOUT;
-      });
-    });
-
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=a599a03954" defer></script>
+  <script src="/chat/chat.js?v=b04d76f320" defer></script>
 </body>
 </html>

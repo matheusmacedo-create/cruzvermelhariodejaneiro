@@ -15,6 +15,5 @@ site/sitemap.xml
 # As matérias são geradas e enviadas pela Redação (outro repositório); ficam só no servidor.
 # Em 20/09/2026 foram corrigidas lá por fora: título dentro de 60 e links que respondiam 301.
 site/noticias/
-# A privacidade e os termos são páginas da Redação; o título foi corrigido no servidor em 20/09/2026.
-site/privacidade/
-site/termos/
+# /privacidade/ e /termos/ eram páginas da Redação até 27/09/2026; agora saem de scripts/gerar_politicas.py
+# (com /cookies/, /reembolso/ e as versões em inglês e espanhol) e entram no repositório.
