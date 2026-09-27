@@ -1249,6 +1249,28 @@ depois do deploy.
 - **Trilha de auditoria**: as migrações ainda não estão em produção; a republicação só registra a
   versão na trilha quando a RPC existir.
 
+## Visitas de pessoas × robôs no Google Analytics (27/09/2026)
+
+Pergunta do Matheus: quantas das visitas de outros países no GA4 são de gente? O GA4 descarta
+sozinho só os robôs que se declaram (lista da IAB). Navegadores automatizados que rodam o
+JavaScript a partir de data centers (raspadores, ferramentas de SEO e de velocidade, robôs de IA,
+as ondas vindas da China e de Singapura) entram como visitas, quase sempre de outro país, sem
+engajamento e numa página só.
+
+- **Desde 27/09, o aviso de cookies funciona como filtro:** o GA4 só carrega depois de um clique
+  em "Aceitar", e robô não clica. O preço é não contar quem recusa. Comparar o antes e o depois
+  por país mostra o tamanho do problema: país cuja audiência "some" depois do aviso era robô.
+- `scripts/analisar_visitantes_ga4.py` lê o GA4 pela Data API e classifica cada combinação de
+  país, cidade, navegador, sistema, resolução, idioma, origem e página de entrada em robô, provável
+  robô, pessoa ou indefinido. Por país, mostra a faixa de pessoas reais (mínimo: só sessões
+  engajadas; máximo: tudo que não parece robô), antes e depois do aviso, por onde as pessoas de
+  fora chegam e as maiores fontes de robô. `--teste` confere a classificação sem rede.
+- **A Data API não aceita chave de API**, só conta de serviço. Para rodar: criar uma conta de
+  serviço no projeto do Google Cloud (sem papel nenhum no projeto), gerar a chave JSON, adicionar o
+  e-mail dela como **Leitor** na propriedade do GA4 e passar `GA4_CHAVE_JSON` (caminho da chave,
+  fora do repositório) e `GA4_PROPRIEDADE` (ID numérico). A chave só lê o Analytics; apagar
+  depois do uso.
+
 ## Aviso de cookies, políticas obrigatórias e fim dos convites para doar (27/09/2026)
 
 Pedido do Matheus: as páginas de política que todo site precisa ter, o aviso de cookies, nas três
