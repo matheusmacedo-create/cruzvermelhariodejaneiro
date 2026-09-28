@@ -17,6 +17,11 @@ file_put_contents($configTeste, "<?php return [
     'ESCOLA_API_URL' => '', 'ESCOLA_URL' => 'https://escola.exemplo.org', 'EMAIL_CONTATO' => 'contato@exemplo.org',
 ];");
 putenv("MCP_CONFIG_ARQUIVO=$configTeste");
+// Chave da escola num arquivo à parte, como no servidor: só as chaves ESCOLA_* podem valer.
+$configEscola = tempnam(sys_get_temp_dir(), 'mcp-escola-');
+file_put_contents($configEscola, "<?php return ['ESCOLA_API_URL' => 'https://escola-db.exemplo.org/rest/v1/rpc/matricula_rapida',
+    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
+putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$configEscola");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 $_SERVER['REQUEST_METHOD'] = 'CLI';
 require $raiz . '/site/matricula-cursos-presenciais/api/lib.php';
@@ -103,9 +108,13 @@ $inscricao = [
     'nome' => 'Maria da Silva', 'cpf' => '52998224725', 'email' => 'maria@exemplo.org', 'telefone' => '21999998888',
     'inscricao_centavos' => 9900, 'taxa_centavos' => 495, 'total_centavos' => 10395, 'unicopag_hash' => 'h4sh', 'ip' => '10.0.0.1',
     'pix_copia_cola' => null, 'pix_url' => null, 'pix_imagem' => null, 'bandeira' => 'visa', 'ultimos4' => '1111',
-    'criado_em' => '2026-09-18 00:00:00', 'pago_em' => '2026-09-18 00:01:00', 'escola_status' => 'nao_aplicavel',
-    'escola_acesso' => json_encode(['usuario' => 'maria', 'acesso' => ['senha' => 's3', 'url' => 'https://escola.exemplo.org/x']]),
+    'criado_em' => '2026-09-18 00:00:00', 'pago_em' => '2026-09-18 00:01:00', 'escola_status' => 'ok', 'escola_tentativas' => 1,
+    'escola_acesso' => json_encode(['resultado' => 'matriculado', 'aluno_novo' => true, 'email_conta' => 'm***@exemplo.org', 'email_confere' => true,
+        'matricula_id' => 'm-1', 'turma_inicio' => '2026-10-21', 'aviso' => null, 'link' => true, 'link_expira_em' => '2099-01-01T15:00:00Z',
+        'url_login' => 'https://escola.exemplo.org/login']),
+    'escola_token' => str_repeat('ab', 32),
 ];
+$linkEscola = 'https://escola.exemplo.org/redefinir-senha?token=' . str_repeat('ab', 32);
 $publico = mcp_publico($inscricao);
 $serializado = json_encode($publico);
 verificar('público sem cpf', str_contains($serializado, '52998224725'), false);
@@ -115,10 +124,15 @@ verificar('público sem telefone', str_contains($serializado, '21999998888'), fa
 verificar('público primeiro nome', $publico['nome'], 'Maria');
 verificar('público cartão', $publico['cartao'], ['bandeira' => 'visa', 'ultimos4' => '1111']);
 verificar('público pix nulo', $publico['pix'], null);
-verificar('público acesso quando pago', $publico['escola']['usuario'], 'maria');
+verificar('público matrícula na escola quando pago', [$publico['escola']['resultado'], $publico['escola']['aluno_novo'], $publico['escola']['turma_inicio']], ['matriculado', true, '2026-10-21']);
+verificar('público link de entrada da escola', $publico['escola']['url'], 'https://escola.exemplo.org/login');
+verificar('público nunca traz senha', array_key_exists('senha', $publico['escola']), false);
+verificar('público link de criar senha quando pago', [$publico['escola']['link'], $publico['escola']['link_validade']], [$linkEscola, '01/01 às 12h00']);
+verificar('público sem link quando vencido', mcp_publico(['escola_acesso' => json_encode(['link_expira_em' => '2020-01-01T00:00:00Z'] + json_decode($inscricao['escola_acesso'], true))] + $inscricao)['escola']['link'], null);
+verificar('público sem link sem token', mcp_publico(['escola_token' => null] + $inscricao)['escola']['link'], null);
 $pendente = mcp_publico(['status' => 'pendente'] + $inscricao);
-verificar('público sem acesso quando pendente', $pendente['escola']['usuario'], null);
-verificar('público sem senha quando pendente', $pendente['escola']['senha'], null);
+verificar('público sem acesso quando pendente', [$pendente['escola']['resultado'], $pendente['escola']['link']], [null, null]);
+verificar('público tentativas esgotadas', mcp_publico(['escola_status' => 'erro', 'escola_tentativas' => 5, 'escola_acesso' => null] + $inscricao)['escola']['esgotado'], true);
 
 // Texto de várias linhas (mensagem do chat).
 verificar('texto longo normalizado', mcp_texto_longo("  Olá,\r\n\r\n\r\n\tcomo   vai?\x07 \n  linha  ", 100), "Olá,\n\ncomo vai?\nlinha");
@@ -162,7 +176,43 @@ verificar('pix sem whatsapp', stripos($m['html'] . $m['texto'], 'whatsapp'), fal
 // Inscrição paga: versão A (com acesso da escola) e versão B (a secretaria escreve por e-mail).
 $a = mcp_montar_email_aluno_pago($inscricao);
 verificar('pago A tipo', $a['tipo'], 'acesso');
-verificar('pago A acesso', str_contains($a['html'], 'maria') && str_contains($a['html'], 's3') && str_contains($a['html'], 'https://escola.exemplo.org/x'), true);
+verificar('pago A assunto', $a['assunto'], 'Matrícula feita: seu acesso à plataforma da escola — Curso X');
+verificar('pago A conta nova: botão de criar senha com o link', str_contains($a['html'], 'Criar minha senha') && str_contains($a['html'], $linkEscola) && str_contains($a['texto'], $linkEscola), true);
+verificar('pago A conta nova: validade do link', str_contains($a['html'], 'o link vale até 01/01 às 12h00'), true);
+verificar('pago A nunca usa os 4 últimos dígitos do CPF', str_contains($a['html'] . $a['texto'], '4 últimos') || str_contains($a['html'] . $a['texto'], '4725'), false);
+$vencido = ['escola_acesso' => json_encode(['link_expira_em' => '2020-01-01T00:00:00Z'] + json_decode($inscricao['escola_acesso'], true))] + $inscricao;
+$aVencido = mcp_montar_email_aluno_pago($vencido);
+verificar('pago A link vencido: Esqueci minha senha', str_contains($aVencido['html'], 'Esqueci minha senha') && !str_contains($aVencido['html'], 'redefinir-senha'), true);
+verificar('pago A turma', str_contains($a['html'], '21/10/2026') && str_contains($a['texto'], '21/10/2026'), true);
+verificar('pago A link de entrada', str_contains($a['html'], 'https://escola.exemplo.org/login') && str_contains($a['html'], 'Entrar na plataforma da escola'), true);
+$existente = ['escola_acesso' => json_encode(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_conta' => 'o***@exemplo.com', 'email_confere' => false,
+    'turma_inicio' => '2026-10-21', 'aviso' => null, 'url_login' => 'https://escola.exemplo.org/login'])] + $inscricao;
+$aExistente = mcp_montar_email_aluno_pago($existente);
+verificar('pago A conta existente com outro e-mail', str_contains($aExistente['html'], 'o***@exemplo.com') && str_contains($aExistente['html'], 'senha de sempre')
+    && !str_contains($aExistente['html'], 'redefinir-senha'), true);
+$semTurma = ['escola_acesso' => json_encode(['resultado' => 'sem_turma', 'aluno_novo' => true, 'email_conta' => 'm***@exemplo.org', 'email_confere' => true,
+    'turma_inicio' => null, 'aviso' => null, 'url_login' => 'https://escola.exemplo.org/login'])] + $inscricao;
+$aSemTurma = mcp_montar_email_aluno_pago($semTurma);
+verificar('pago A sem turma', $aSemTurma['assunto'] === 'Inscrição paga: sua conta na plataforma da escola — Curso X'
+    && str_contains($aSemTurma['html'], 'matricula você na próxima turma'), true);
+$conflito = ['escola_status' => 'erro', 'escola_tentativas' => 5, 'escola_acesso' => json_encode(['erro' => 'email_em_uso'])] + $inscricao;
+verificar('pago com conflito na escola vai na versão B', mcp_montar_email_aluno_pago($conflito)['tipo'], 'confirmacao');
+verificar('escola: resumo matriculado', mcp_escola_resumo($inscricao), 'matriculado na turma que começa em 21/10/2026, conta criada pelo site, taxa confirmada');
+verificar('escola: resumo conta existente', str_contains(mcp_escola_resumo($existente), 'conta que já existia (e-mail da conta: o***@exemplo.com)'), true);
+verificar('escola: resumo sem turma', str_starts_with(mcp_escola_resumo($semTurma), 'SEM TURMA ABERTA: conta criada pelo site.'), true);
+verificar('escola: resumo conflito', mcp_escola_resumo($conflito), 'NÃO MATRICULADO: o e-mail já está em outra conta da escola (com outro CPF). Criar a matrícula à mão e aplicar o valor da inscrição');
+verificar('escola: resumo taxa repetida', str_contains(mcp_escola_resumo(['escola_acesso' => json_encode(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => true,
+    'turma_inicio' => '2026-10-21', 'aviso' => 'taxa_ja_confirmada'])] + $inscricao), 'avaliar o estorno'), true);
+verificar('escola: resumo falha técnica', str_starts_with(mcp_escola_resumo(['escola_status' => 'erro', 'escola_acesso' => null] + $inscricao), 'falha técnica'), true);
+$senhaA = mcp_escola_senha_aleatoria();
+$senhaB = mcp_escola_senha_aleatoria();
+verificar('senha de conta nova em argon2id', is_string($senhaA) && str_starts_with($senhaA, '$argon2id$v=19$'), true);
+verificar('senha de conta nova é aleatória (nunca os 4 últimos dígitos)', $senhaA !== $senhaB && !password_verify('4725', (string) $senhaA), true);
+verificar('link da escola aceito', mcp_escola_url_login('https://escola.exemplo.org/login'), 'https://escola.exemplo.org/login');
+verificar('link de outro site vira o padrão', mcp_escola_url_login('https://golpe.exemplo.com/login'), 'https://escola.exemplo.org/login');
+verificar('link sem https vira o padrão', mcp_escola_url_login('http://escola.exemplo.org/login'), 'https://escola.exemplo.org/login');
+verificar('data da turma', [mcp_escola_data('2026-10-21'), mcp_escola_data('ontem'), mcp_escola_data(null)], ['21/10/2026', '', '']);
+verificar('config escola: só ESCOLA_* valem', [mcp_cfg('ESCOLA_API_TOKEN'), mcp_site_url(), mcp_escola_configurada()], ['chave-de-teste', 'https://exemplo.org', true]);
 $b = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
 verificar('pago B tipo', $b['tipo'], 'confirmacao');
 verificar('pago B assunto', $b['assunto'], 'Inscrição confirmada: sua vaga em Curso X');
@@ -171,6 +221,9 @@ verificar('pago B cartão final', str_contains($b['html'], 'Cartão final 1111')
 verificar('pago sem whatsapp', stripos($a['html'] . $b['html'] . $a['texto'] . $b['texto'], 'whatsapp'), false);
 $sec = mcp_montar_email_secretaria($inscricao);
 verificar('secretaria telefone', str_contains($sec['html'], 'Telefone') && str_contains($sec['texto'], "Telefone: 21999998888\n"), true);
+verificar('secretaria linha da escola', str_contains($sec['texto'], "Escola: matriculado na turma que começa em 21/10/2026, conta criada pelo site, taxa confirmada\n"), true);
+verificar('secretaria: aluno já matriculado', str_contains($sec['html'], 'já está matriculado na plataforma da escola'), true);
+verificar('secretaria: sem integração pede contato', str_contains(mcp_montar_email_secretaria($conflito)['html'], 'Entrar em contato com o aluno'), true);
 verificar('secretaria sem whatsapp', stripos($sec['html'] . $sec['texto'], 'whatsapp'), false);
 
 // Chat de contato: aviso à equipe e confirmação à pessoa.
@@ -302,5 +355,6 @@ verificar('e-mail pago não promete anexo sem PDF', str_contains($emailSem['html
 verificar('e-mail pago sem PDF mantém o texto antigo', str_contains($emailSem['texto'], 'este e-mail é o seu comprovante'), true);
 
 unlink($configTeste);
+unlink($configEscola);
 printf("%d testes, %d falhas\n", $total, $falhas);
 exit($falhas > 0 ? 1 : 0);

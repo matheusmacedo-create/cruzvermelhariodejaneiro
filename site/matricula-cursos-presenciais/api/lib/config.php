@@ -12,6 +12,17 @@ function mcp_config(): array
         }
         $lido = require $arquivo;
         $config = is_array($lido) ? $lido : [];
+        // A chave da escola fica num arquivo à parte (só no servidor, fora do Git), para não mexer no
+        // config.php. Dele só valem as chaves ESCOLA_*: o resto da configuração continua no config.php.
+        $escola = getenv('MCP_CONFIG_ESCOLA_ARQUIVO') ?: dirname(__DIR__) . '/config-escola.php';
+        if (is_file($escola)) {
+            $extra = require $escola;
+            foreach (is_array($extra) ? $extra : [] as $chave => $valor) {
+                if (is_string($chave) && str_starts_with($chave, 'ESCOLA_')) {
+                    $config[$chave] = $valor;
+                }
+            }
+        }
     }
     return $config;
 }

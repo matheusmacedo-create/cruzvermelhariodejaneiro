@@ -274,6 +274,34 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
+## Matrícula paga entra na plataforma da escola (28/09/2026)
+
+Assim que a Unicopag confirma a inscrição de R$ 99, o site chama a função
+`public.matricula_rapida` no banco da escola (Supabase `wrckokgdtiwvxapqzkki`), com a chave
+secreta. A função:
+
+1. acha o aluno pelo CPF ou cria a conta;
+2. matricula na próxima turma aberta do curso, com a taxa confirmada e o pagamento `TAXA` registrado;
+3. devolve o resultado.
+
+O aluno vê na tela Parabéns e no e-mail que está matriculado e em qual turma. Se a conta é nova,
+recebe um botão "Criar minha senha": é um link único da própria escola, válido por 72 horas, e a
+senha nunca é os 4 últimos dígitos do CPF. Se ele já tinha conta, é orientado a entrar com a senha
+de sempre. Sem turma aberta, só a conta é criada, e a secretaria matricula depois.
+
+O aviso à secretaria ganhou uma linha "Escola" que diz o que aconteceu: matriculado em tal turma,
+sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
+
+- **Onde está o código:** `api/lib/escola.php`, `publico.php`, `email.php` e `static/checkout.js`.
+- **A chave:** fica em `api/config-escola.php`, só no servidor e fora do Git; o `config.php` não
+  muda. Sem esse arquivo, o site continua na versão B (a secretaria escreve para o aluno).
+- **SQL, diagnósticos, testes, limpeza e como desfazer:** [`docs/escola/README.md`](docs/escola/README.md).
+- **Testes:**
+  - 84 testes pgTAP da função numa cópia local do banco da escola;
+  - 195 testes em `scripts/testar_checkout.php`;
+  - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
+    → cópia da escola).
+
 ## Home: seção de contato e botão do WhatsApp (19/09/2026)
 
 - A seção `#contato` da home foi refeita para converter: e-mail institucional em destaque

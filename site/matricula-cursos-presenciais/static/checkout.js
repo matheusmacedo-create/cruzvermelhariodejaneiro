@@ -336,17 +336,32 @@
     if (!TOKEN.test(token)) { card.innerHTML = voltarCursos('Link inválido.'); return; }
     var ESTORNO = 'A inscrição reserva sua vaga; se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado.';
 
+    function dataBr(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; }
+
     function blocoEscola(d) {
       var e = d.escola || {};
-      if (e.usuario || e.url) {
-        return '<div class="ck-bloco"><h2>Seu acesso à secretaria da escola</h2><div class="ck-acesso"><div>Usuário: <b>' + esc(e.usuario || d.email) + '</b></div>'
-          + (e.senha ? '<div>Senha temporária: <b>' + esc(e.senha) + '</b> <span class="ck-nota">(troque no primeiro acesso)</span></div>' : '')
-          + '</div><div class="cta-row"><a class="btn btn-red" href="' + esc(urlSegura(e.url) || d.escola_url) + '">Acessar ambiente da secretaria</a></div>'
-          + '<p class="ck-nota" style="margin-top:12px">Horário e turma você escolhe lá. ' + ESTORNO + '</p></div>';
+      if (e.status === 'ok' && e.resultado) {
+        var semTurma = e.resultado === 'sem_turma', data = dataBr(e.turma_inicio);
+        var link = e.aluno_novo ? urlSegura(e.link) : '';
+        var entrada = e.aluno_novo
+          ? (link
+            ? 'Sua conta foi criada com o seu CPF. Para entrar pela primeira vez, <b>crie sua senha no botão abaixo</b>' + (e.link_validade ? ' (o link vale até ' + esc(e.link_validade) + ')' : '') + '. Depois é só entrar com seu <b>CPF</b> ou e-mail e a senha que você criou.'
+            : 'Sua conta foi criada com o seu CPF. Para entrar pela primeira vez, use <b>"Esqueci minha senha"</b> na tela de entrada, com o e-mail <b>' + esc(d.email) + '</b>: a escola manda um link para você criar sua senha.')
+          : 'Você já tinha conta na escola' + (!e.email_confere && e.email_conta ? ', com o e-mail <b>' + esc(e.email_conta) + '</b>' : '')
+            + '. Entre com seu <b>CPF</b> ou e-mail e a senha de sempre. Esqueceu? Use "Esqueci minha senha" na tela de entrada.';
+        return '<div class="ck-bloco"><h2>' + (semTurma ? 'Sua conta na plataforma da escola está pronta' : 'Sua matrícula já está na plataforma da escola') + '</h2>'
+          + '<p>' + (semTurma
+            ? 'Ainda não há turma aberta para este curso. <b>A secretaria matricula você na próxima turma e avisa por e-mail.</b> Você não precisa se inscrever de novo.'
+            : 'A taxa de inscrição já aparece confirmada' + (data ? ' e sua turma começa em <b>' + esc(data) + '</b>' : '') + '. Datas, horários e o andamento do curso ficam na plataforma.') + '</p>'
+          + '<div class="ck-acesso"><div>' + entrada + '</div></div>'
+          + '<div class="cta-row">' + (link
+            ? '<a class="btn btn-red" href="' + esc(link) + '">Criar minha senha</a><a class="btn btn-outline" href="' + esc(urlSegura(e.url) || d.escola_url) + '">Já criei: entrar</a>'
+            : '<a class="btn btn-red" href="' + esc(urlSegura(e.url) || d.escola_url) + '">Entrar na plataforma da escola</a>') + '</div>'
+          + '<p class="ck-nota" style="margin-top:12px">O valor do curso é pago depois, na plataforma da escola ou com a secretaria, no valor à vista. ' + ESTORNO + '</p></div>';
       }
-      if (e.configurada && e.status !== 'ok') {
+      if (e.configurada && (e.status === 'pendente' || (e.status === 'erro' && !e.esgotado))) {
         setTimeout(function () { api('status.php?t=' + encodeURIComponent(token)).then(function (x) { if (x.ok) render(x); }); }, 15000);
-        return '<div class="ck-bloco"><h2>Pagamento confirmado, acesso em instantes</h2><p>Estamos criando sua matrícula na escola. O acesso aparece aqui e chega no seu e-mail em instantes.</p><div class="ck-status" role="status"><span class="pulso" aria-hidden="true"></span> Gerando acesso…</div></div>';
+        return '<div class="ck-bloco"><h2>Pagamento confirmado, matrícula em instantes</h2><p>Estamos criando sua matrícula na plataforma da escola. O acesso aparece aqui e chega no seu e-mail em instantes.</p><div class="ck-status" role="status"><span class="pulso" aria-hidden="true"></span> Criando matrícula…</div></div>';
       }
       return '<div class="ck-bloco"><h2>Próximo passo: a secretaria escreve para você</h2><p><b>A secretaria da Escola entra em contato por e-mail em até 3 dias úteis</b> para fechar turma e horário. Fique de olho na caixa de entrada e no spam. Você não precisa se inscrever de novo na plataforma.</p>'
         + '<p class="ck-nota">O valor do curso é pago depois, na plataforma da escola. ' + ESTORNO + '</p>'

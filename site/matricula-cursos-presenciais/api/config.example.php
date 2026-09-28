@@ -50,8 +50,13 @@ return [
     // Remetente das respostas do painel ao cliente. Vazio = EMAIL_REMETENTE.
     'EMAIL_REMETENTE_CONTATO' => '',
 
-    // API da escola (versão A da tela Parabéns). Vazio = versão B (a secretaria fecha turma e horário por e-mail).
-    // Contrato: docs/briefing-matricula-cursos-presenciais.md, seção 8.2.
+    // Plataforma da escola (versão A da tela Parabéns): depois do pagamento, o site chama a função
+    // public.matricula_rapida do banco da escola (Supabase), que cria a conta e a matrícula.
+    // As duas chaves ficam em api/config-escola.php (só no servidor, fora do Git), para não mexer
+    // neste arquivo; de lá só valem as chaves ESCOLA_*:
+    //   return ['ESCOLA_API_URL' => 'https://wrckokgdtiwvxapqzkki.supabase.co/rest/v1/rpc/matricula_rapida',
+    //           'ESCOLA_API_TOKEN' => 'sb_secret_...'];  // chave secreta do projeto da escola
+    // Vazio = versão B (a secretaria fecha turma e horário por e-mail). Passo a passo: docs/escola/README.md.
     'ESCOLA_API_URL'   => '',
     'ESCOLA_API_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
