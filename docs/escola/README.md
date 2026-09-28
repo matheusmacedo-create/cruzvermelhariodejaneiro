@@ -77,6 +77,15 @@ Tudo vem das consultas de 28/09/2026 (`diagnostico-1.sql` e `diagnostico-2.sql`,
   servidor e está no `.gitignore`. Desse arquivo o site aceita só as chaves `ESCOLA_*`; o
   `config.php` não é tocado.
 
+## Situação
+
+Em produção desde 28/09/2026:
+- a função foi aplicada no banco da escola e testada lá com chamadas que não gravam nada;
+- o site foi publicado;
+- `api/config-escola.php` está no servidor, e o acesso pelo navegador responde 403.
+
+Falta o primeiro teste com pagamento real.
+
 ## Como ligar em produção
 
 1. No SQL Editor do projeto da escola, rodar `matricula_rapida.sql`. O script pode ser rodado de
