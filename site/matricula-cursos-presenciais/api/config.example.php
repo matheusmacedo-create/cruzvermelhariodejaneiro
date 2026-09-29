@@ -44,7 +44,7 @@ return [
     'EMAIL_RESPOSTA'   => '',
     // Aviso interno de inscrição paga (responder-para = o aluno). Vazio = desligado.
     'EMAIL_SECRETARIA' => '',
-    // Painel da equipe (api/painel.php, mensagens do chat e horários dos alunos): e-mails que podem pedir o link de entrada, separados por
+    // Portal da secretaria (api/painel.php: inscrições, horários dos alunos e mensagens do chat): e-mails que podem pedir o link de entrada, separados por
     // vírgula. Vazio = EMAIL_CONTATO e EMAIL_SECRETARIA. O segredo dos links fica no banco (mcp_chaves).
     'PAINEL_EMAILS'    => '',
     // Remetente das respostas do painel ao cliente. Vazio = EMAIL_REMETENTE.
@@ -59,6 +59,11 @@ return [
     // Vazio = versão B (a secretaria fecha turma e horário por e-mail). Passo a passo: docs/escola/README.md.
     'ESCOLA_API_URL'   => '',
     'ESCOLA_API_TOKEN' => '',
+    // Aba "Horários" do painel da secretaria da escola: ela lê as respostas do questionário de dias e
+    // horários em api/escola-horarios.php com esta chave (32 caracteres ou mais; gere com
+    // `openssl rand -hex 24`). Também vai no api/config-escola.php, e a mesma chave vai na variável
+    // SITE_HORARIOS_TOKEN da escola (Render). Vazio = o endereço responde 404.
+    'ESCOLA_HORARIOS_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
 
     // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o

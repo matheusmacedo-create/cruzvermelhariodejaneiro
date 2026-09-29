@@ -1,8 +1,12 @@
 <?php
 /**
- * Painel da equipe: mensagens do chat (lista, detalhe e resposta por e-mail no padrão visual da
- * instituição) e, desde 29/09/2026, os dias e horários preferidos pelos alunos (?v=horarios: mapa por
- * curso, lista e planilha; lib/horarios.php).
+ * Portal da secretaria. Menu no cabeçalho com cinco itens:
+ *   - Início: o que pede ação e o que chegou por último;
+ *   - Inscrições (?v=inscricoes): filtros, busca, planilha, e a ficha de cada uma (?v=inscricao&id=)
+ *     com o histórico e o lembrete de horários à mão (lib/secretaria.php);
+ *   - Horários dos alunos (?v=horarios): mapa por curso, lista e planilha (lib/horarios.php);
+ *   - Mensagens do chat (?v=mensagens): lista, detalhe e resposta por e-mail no padrão da instituição;
+ *   - Plataforma da escola: link externo.
  *
  * Acesso (lib/painel.php): pelo link assinado que vai no aviso à equipe (abre só aquele contato) ou por
  * um link de entrada enviado ao e-mail da equipe (sessão de 12 h com a lista completa). A resposta sai
@@ -17,6 +21,14 @@ const MCP_PAINEL_RESPOSTA_MIN = 5;
 const MCP_PAINEL_RESPOSTA_MAX = 6000;
 const MCP_PAINEL_POR_PAGINA = 50;
 const MCP_PAINEL_HORARIOS_LIMITE = 2000;
+/** Ícones do menu (traço de 24 px, herdam a cor do texto). */
+const PN_ICONES = [
+    'inicio' => '<path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    'inscricoes' => '<path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    'horarios' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+    'mensagens' => '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
+    'escola' => '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+];
 
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store');
@@ -47,25 +59,49 @@ function pn_redirecionar(string $query): never
     exit;
 }
 
-function pn_pagina(string $titulo, string $corpo, ?string $usuario, bool $comLista, string $aba = 'mensagens'): never
+function pn_icone(string $nome): string
+{
+    return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . PN_ICONES[$nome] . '</svg>';
+}
+
+/** Menu do portal, no cabeçalho: cada seção com o número do que pede ação. */
+function pn_menu(string $aba): string
+{
+    $contas = mcp_secretaria_contar();
+    $itens = [
+        'inicio' => ['painel.php', 'Início', 0, ''],
+        'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
+        'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
+        'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
+    ];
+    $html = '';
+    foreach ($itens as $chave => [$href, $rotulo, $n, $explica]) {
+        $html .= '<a href="' . pn_e($href) . '"' . ($aba === $chave ? ' aria-current="page"' : '') . '>' . pn_icone($chave) . '<span>' . pn_e($rotulo) . '</span>'
+            . ($n > 0 ? '<span class="badge' . ($chave === 'horarios' ? ' suave' : '') . '" title="' . $n . ' ' . pn_e($explica) . '">' . $n . '<span class="sr"> ' . pn_e($explica) . '</span></span>' : '') . '</a>';
+    }
+    $escola = rtrim((string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org'), '/') . '/login';
+    $html .= '<a class="externo" href="' . pn_e($escola) . '" target="_blank" rel="noopener">' . pn_icone('escola') . '<span>Plataforma da escola</span><span class="sr"> (abre em outra aba)</span></a>';
+    return '<nav class="menu" aria-label="Portal da secretaria"><div class="wrap">' . $html . '</div></nav>';
+}
+
+function pn_pagina(string $titulo, string $corpo, ?string $usuario, bool $comLista, string $aba = 'inicio'): never
 {
     $logo = pn_e(mcp_email_logo());
     $topoDireita = $usuario !== null
         ? '<div class="usuario">' . pn_e($usuario) . ' · <a href="painel.php?sair=1">Sair</a></div>'
         : ($comLista ? '' : '<div class="usuario">Acesso por link · só este contato</div>');
-    $abas = $usuario !== null
-        ? '<nav class="abas wrap" aria-label="Seções do painel"><a href="painel.php"' . ($aba === 'mensagens' ? ' aria-current="page"' : '') . '>Mensagens do chat</a>'
-          . '<a href="painel.php?v=horarios"' . ($aba === 'horarios' ? ' aria-current="page"' : '') . '>Dias e horários dos alunos</a></nav>'
-        : '';
     echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-        . '<meta name="robots" content="noindex, nofollow"><title>' . pn_e($titulo) . ' · Painel da equipe</title>'
+        . '<meta name="robots" content="noindex, nofollow"><title>' . pn_e($titulo) . ' · Portal da secretaria</title>'
         . '<link rel="icon" type="image/png" href="/assets/favicon.png">'
         . '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         . '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">'
         . '<style>' . pn_css() . '</style></head><body><div class="faixa"></div>'
-        . '<header class="topo"><div class="wrap"><a href="' . ($usuario !== null ? 'painel.php' : pn_e(mcp_site_url()) . '/') . '"><img src="' . $logo . '" width="120" height="36" alt="Cruz Vermelha Brasileira · Rio de Janeiro"></a>'
-        . '<div><b>Painel da equipe</b><small>Chat do site · horários dos alunos</small></div>' . $topoDireita . '</div>' . $abas . '</header>'
-        . '<main class="wrap">' . $corpo . '</main></body></html>';
+        . '<header class="topo"><div class="wrap linha"><a href="' . ($usuario !== null ? 'painel.php' : pn_e(mcp_site_url()) . '/') . '"><img src="' . $logo . '" width="120" height="36" alt="Cruz Vermelha Brasileira · Rio de Janeiro"></a>'
+        . '<div><b>Portal da secretaria</b><small>Matrícula cursos presenciais</small></div>' . $topoDireita . '</div>'
+        . ($usuario !== null ? pn_menu($aba) : '') . '</header>'
+        . '<main class="wrap">' . $corpo . '</main>'
+        . ($usuario !== null ? '<script>(function(){var a=document.querySelector(".menu a[aria-current]"),m=a&&a.parentNode;if(m&&a.offsetLeft+a.offsetWidth>m.clientWidth)m.scrollLeft=a.offsetLeft-24})();</script>' : '')
+        . '</body></html>';
     exit;
 }
 
@@ -77,7 +113,7 @@ function pn_css(): string
 a{color:var(--red)}img{display:block}
 .faixa{height:5px;background:var(--red)}
 .topo{background:#fff;border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(16,24,40,.06)}
-.topo .wrap{display:flex;align-items:center;gap:16px;padding:12px 20px}
+.topo .linha{display:flex;align-items:center;gap:16px;padding:12px 20px}
 .topo img{height:36px;width:auto}
 .topo b{font-size:1rem;color:var(--black);display:block;line-height:1.2}
 .topo small{display:block;color:var(--muted);font-size:.8rem}
@@ -129,9 +165,46 @@ input:focus,textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4p
 .voltar{display:inline-block;margin:0 0 14px;font-size:.9rem;color:var(--muted);text-decoration:none}
 .voltar:hover{color:var(--red)}
 .paginacao{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;font-size:.9rem}
-.topo .abas{display:flex;align-items:stretch;gap:4px;padding:0 20px;overflow-x:auto}
-.abas a{padding:10px 14px;font-weight:700;font-size:.9rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
-.abas a:hover{color:var(--black)}.abas a[aria-current]{color:var(--red);border-bottom-color:var(--red)}
+.menu{border-top:1px solid var(--line)}
+.menu .wrap{position:relative;display:flex;align-items:stretch;gap:2px;padding:0 12px;overflow-x:auto;scrollbar-width:none;
+background:linear-gradient(90deg,#fff 30%,rgba(255,255,255,0)) 0 0/28px 100% no-repeat local,linear-gradient(270deg,#fff 30%,rgba(255,255,255,0)) 100% 0/28px 100% no-repeat local,
+radial-gradient(farthest-side at 0 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 0 0/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 100% 0/12px 100% no-repeat scroll #fff}
+.menu .wrap::-webkit-scrollbar{display:none}
+.menu a{position:relative;display:inline-flex;align-items:center;gap:8px;padding:12px 12px 11px;font-weight:700;font-size:.9rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
+.menu a:hover{color:var(--black)}.menu a[aria-current]{color:var(--red);border-bottom-color:var(--red)}
+.menu .ico{width:18px;height:18px;flex-shrink:0}.menu .externo{margin-left:auto}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--red);color:#fff;font-size:.72rem;font-weight:800;line-height:1}
+.badge.suave{background:var(--soft);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+.sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.numeros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}
+@media(max-width:900px){.numeros{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.numero{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-decoration:none;color:var(--text);box-shadow:0 6px 22px rgba(16,24,40,.05)}
+.numero:hover{border-color:var(--red)}
+.numero b{display:block;font-size:2rem;line-height:1.1;color:var(--black);letter-spacing:-.02em}
+.numero span{display:block;font-weight:700;color:var(--black);margin-top:4px}
+.numero small{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.numero.alerta{border-color:#f5c2c7;background:#fff7f7}.numero.alerta b{color:var(--red)}
+.grade-inicio{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.grade-inicio .cartao+.cartao{margin-top:0}
+@media(max-width:820px){.grade-inicio{grid-template-columns:minmax(0,1fr)}}
+.lista-curta{list-style:none;margin:0;padding:0}
+.lista-curta li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.lista-curta li:last-child{border-bottom:0}.lista-curta li>div{flex:1 1 180px;min-width:0}
+.lista-curta a{font-weight:700;color:var(--black);text-decoration:none}.lista-curta a:hover{color:var(--red)}
+.lista-curta small{display:block;color:var(--muted);font-size:.82rem}
+.selo{display:inline-block;border-radius:999px;padding:3px 10px;font-size:.74rem;font-weight:800;white-space:nowrap}
+.selo.ok{background:#e9f7ef;color:#0f7b3e}.selo.alerta{background:#fff4e5;color:#8a5200}.selo.erro{background:#fff0f2;color:#b91c1c}.selo.neutro{background:var(--soft);color:#4a5568}
+.busca{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.busca input,.busca select{flex:1 1 220px;width:auto;font:inherit;font-size:.95rem;padding:10px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:var(--text)}
+.busca select{flex:0 1 240px}.busca .btn{min-height:44px;padding:10px 18px}
+.ficha{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;align-items:start}
+.ficha .cartao+.cartao{margin-top:0}
+@media(max-width:820px){.ficha{grid-template-columns:minmax(0,1fr)}}
+.orientacao{background:var(--soft);border-radius:12px;padding:12px 14px;margin:12px 0 0;font-size:.92rem}
+.tempo{list-style:none;margin:0;padding:0;font-size:.92rem}
+.tempo li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.tempo li:last-child{border-bottom:0}.tempo time{color:var(--muted);white-space:nowrap}
+@media(max-width:640px){.tempo li{grid-template-columns:minmax(0,1fr);gap:2px}}
 .cabeca>div{flex:1 1 420px;min-width:0}
 .resumo-grade{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:18px;align-items:start;margin-top:4px}
 .resumo-grade .cartao+.cartao{margin-top:0}
@@ -146,8 +219,16 @@ table.mapa{width:100%;min-width:320px;border-collapse:separate;border-spacing:4p
 .contas li:last-child{border-bottom:0}.contas b{color:var(--black)}
 .destaques{margin:12px 0 0;font-size:.9rem;color:var(--text)}
 table.respostas{min-width:860px}
-td.lista-dias,td.comeco,td small.tel{white-space:nowrap}
-@media(max-width:640px){.topo .wrap:first-child{flex-wrap:wrap;row-gap:4px}.topo .wrap:first-child small{display:none}
+td.comeco,td small.tel{white-space:nowrap}td.horarios{min-width:170px}
+table.respostas .selo{white-space:normal;border-radius:10px}table.respostas .abrir{display:none}
+@media(max-width:640px){table.respostas{min-width:0}table.respostas thead{display:none}table.respostas tbody{display:block}
+table.respostas tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 14px;padding:16px;border-bottom:1px solid var(--line)}
+table.respostas tr:last-child{border-bottom:0}table.respostas td{display:block;padding:0;border:0;min-width:0;background:none!important}
+table.respostas td[data-rotulo]::before{content:attr(data-rotulo);display:block;margin-bottom:2px;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+table.respostas td.aluno{grid-column:1/-1;order:-1}table.respostas td.horarios,table.respostas td.recado,table.respostas td.abrir,table.respostas td.vazio{grid-column:1/-1;min-width:0}
+table.respostas td.vazio{padding:28px 0}table.respostas td.comeco{white-space:normal}table.respostas td.abrir{display:block}}
+.faltam{margin:-6px 0 16px;font-size:.9rem;color:var(--text)}.faltam b{color:var(--red)}
+@media(max-width:640px){.topo .linha{flex-wrap:wrap;row-gap:4px}.topo .linha small{display:none}
 .topo .usuario{flex-basis:100%;margin-left:0;text-align:left}.cartao{padding:18px 16px}
 .mapa td.celula{padding:10px 2px;font-size:.95rem}.mapa th small{font-size:.66rem}}
 CSS;
@@ -157,7 +238,7 @@ CSS;
 function pn_login(string $aviso = '', string $classe = 'erro'): never
 {
     $corpo = '<div class="login"><div class="cartao">'
-        . '<p class="eyebrow">Painel da equipe</p><h1>Entrar</h1>'
+        . '<p class="eyebrow">Portal da secretaria</p><h1>Entrar</h1>'
         . '<p>Digite o e-mail da equipe. Enviamos um link de acesso que vale ' . MCP_PAINEL_LINK_ENTRADA_MINUTOS . ' minutos.</p>'
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . '<form method="post" action="painel.php"><input type="hidden" name="acao" value="entrar">'
@@ -176,13 +257,13 @@ function pn_lista(string $usuario): never
     if (!isset($filtros[$f])) {
         $f = $totais['novo'] > 0 ? 'novo' : 'todos';
     }
-    $pagina = max(1, (int) ($_GET['p'] ?? 1));
+    $pagina = min(max(1, (int) ($_GET['p'] ?? 1)), 10000);
     $linhas = mcp_contatos_listar($f === 'todos' ? null : $f, MCP_PAINEL_POR_PAGINA, ($pagina - 1) * MCP_PAINEL_POR_PAGINA);
 
     $pilulas = '';
     foreach ($filtros as $chave => $rotulo) {
         $n = $chave === 'todos' ? array_sum($totais) : $totais[$chave];
-        $pilulas .= '<a class="pilula' . ($chave === $f ? ' ativo' : '') . '" href="painel.php?f=' . $chave . '">' . pn_e($rotulo) . ' <span class="n">' . $n . '</span></a>';
+        $pilulas .= '<a class="pilula' . ($chave === $f ? ' ativo' : '') . '" href="painel.php?v=mensagens&amp;f=' . $chave . '">' . pn_e($rotulo) . ' <span class="n">' . $n . '</span></a>';
     }
     $assuntos = mcp_contato_assuntos();
     $tabela = '';
@@ -200,15 +281,15 @@ function pn_lista(string $usuario): never
         . ($tabela !== '' ? $tabela : '<tr><td colspan="5" class="vazio">Nenhuma mensagem aqui.</td></tr>') . '</tbody></table></div>';
     $paginacao = '';
     if ($pagina > 1) {
-        $paginacao .= '<a href="painel.php?f=' . $f . '&p=' . ($pagina - 1) . '">Mais recentes</a>';
+        $paginacao .= '<a href="painel.php?v=mensagens&amp;f=' . $f . '&amp;p=' . ($pagina - 1) . '">Mais recentes</a>';
     }
     if (count($linhas) === MCP_PAINEL_POR_PAGINA) {
-        $paginacao .= '<a href="painel.php?f=' . $f . '&p=' . ($pagina + 1) . '">Mais antigas</a>';
+        $paginacao .= '<a href="painel.php?v=mensagens&amp;f=' . $f . '&amp;p=' . ($pagina + 1) . '">Mais antigas</a>';
     }
     if ($paginacao !== '') {
         $corpo .= '<div class="paginacao">' . $paginacao . '</div>';
     }
-    pn_pagina('Mensagens', $corpo, $usuario, true);
+    pn_pagina('Mensagens', $corpo, $usuario, true, 'mensagens');
 }
 
 /** Dias e horários preferidos: mapa por curso, destaques, contagens, lista e planilha (?csv=1). */
@@ -274,33 +355,255 @@ function pn_horarios(string $usuario): never
     $tabela = '';
     foreach ($linhas as $l) {
         $dataTurma = mcp_escola_data(mcp_horarios_turma($l));
-        $tabela .= '<tr><td>' . pn_e(pn_data((string) $l['atualizado_em'])) . ((int) $l['vezes'] > 1 ? '<small>alterado ' . ((int) $l['vezes'] - 1) . 'x</small>' : '') . '</td>'
-            . '<td><b>' . pn_e((string) $l['nome']) . '</b><small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
+        $tabela .= '<tr><td data-rotulo="Respondido">' . pn_e(pn_data((string) $l['atualizado_em'])) . ((int) $l['vezes'] > 1 ? '<small>alterado ' . ((int) $l['vezes'] - 1) . 'x</small>' : '') . '</td>'
+            . '<td class="aluno"><a class="nome" href="painel.php?v=inscricao&amp;id=' . (int) $l['inscricao_id'] . '">' . pn_e((string) $l['nome']) . '</a><small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
             . ($l['telefone'] ? '<small class="tel">' . pn_e(mcp_telefone_bonito((string) $l['telefone'])) . '</small>' : '') . '</td>'
-            . '<td>' . pn_e((string) $l['curso_nome']) . '<small>' . ($dataTurma !== '' ? 'turma de ' . pn_e($dataTurma) : 'sem turma ainda') . '</small></td>'
-            . '<td class="lista-dias">' . pn_e(implode(', ', array_map(static fn(string $d): string => MCP_HORARIOS_DIAS_CURTOS[$d], $l['dias'])))
-            . '<small>' . pn_e(implode(', ', array_map(static fn(string $p): string => MCP_HORARIOS_PERIODOS[$p], $l['periodos']))) . '</small></td>'
-            . '<td class="comeco">' . pn_e(MCP_HORARIOS_INICIO[$l['inicio']] ?? (string) $l['inicio'])
+            . '<td data-rotulo="Curso">' . pn_e((string) $l['curso_nome']) . '<small>' . ($dataTurma !== '' ? 'turma de ' . pn_e($dataTurma) : 'sem turma ainda') . '</small></td>'
+            . '<td class="horarios" data-rotulo="Pode vir">' . pn_e(mcp_horarios_texto($l['horarios'])) . '</td>'
+            . '<td class="comeco" data-rotulo="Começo">' . pn_e(MCP_HORARIOS_INICIO[$l['inicio']] ?? (string) $l['inicio'])
             . ($l['turma_serve'] ? '<small>' . pn_e(MCP_HORARIOS_TURMA[$l['turma_serve']] ?? '') . '</small>' : '') . '</td>'
-            . '<td>' . ($l['observacao'] ? pn_e((string) $l['observacao']) : '<span style="color:var(--muted)">—</span>') . '</td></tr>';
+            . '<td class="recado" data-rotulo="Recado">' . ($l['observacao'] ? pn_e((string) $l['observacao']) : '<span style="color:var(--muted)">—</span>') . '</td></tr>';
     }
 
     $titulo = $curso !== '' ? $contagem[$curso]['nome'] : 'Todos os cursos';
+    // Quem pagou e ainda não disse os horários: a lista (com o lembrete à mão) fica em Inscrições.
+    $faltam = mcp_secretaria_contar($curso !== '' ? $curso : null)['sem_horarios'];
+    $avisoFaltam = $faltam > 0 ? '<p class="faltam"><b>' . $faltam . ' aluno' . ($faltam > 1 ? 's pagaram e ainda não disseram os horários.' : ' pagou e ainda não disse os horários.')
+        . '</b> <a href="' . pn_e('painel.php?v=inscricoes&f=sem_horarios' . ($curso !== '' ? '&curso=' . rawurlencode($curso) : '')) . '">Ver quem falta e mandar lembrete →</a></p>' : '';
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Questionário do site</p><h1>Dias e horários preferidos</h1>'
         . '<p class="nota">Cada aluno responde depois de pagar a inscrição e pode mudar as respostas quando quiser. Use o mapa para escolher os dias das próximas turmas.</p></div>'
         . ($linhas ? '<a class="btn btn-outline" href="' . pn_e($base . '&csv=1') . '">Baixar planilha</a>' : '') . '</div>'
         . '<div class="filtros">' . $pilulas . '</div>'
+        . $avisoFaltam
         . ($linhas
             ? '<div class="resumo-grade"><div class="cartao"><h2>' . pn_e($titulo) . ' · quantos alunos podem em cada horário</h2><div class="rolagem"><table class="mapa">' . $grade . '</table></div>'
               . ($destaques !== '' ? '<p class="destaques"><b>Mais pedidos:</b> ' . $destaques . '</p>' : '')
-              . '<p class="nota">Um aluno que marcou dois dias conta nos dois. Total: ' . $mapa['total'] . ' aluno(s)'
+              . '<p class="nota">Cada número é quantos alunos marcaram aquele dia e período. Total: ' . $mapa['total'] . ' aluno(s)'
               . (count($linhas) >= MCP_PAINEL_HORARIOS_LIMITE ? ', contando só as ' . MCP_PAINEL_HORARIOS_LIMITE . ' respostas mais recentes' : '') . '.</p></div>'
               . '<div class="cartao"><h2>A partir de quando podem começar</h2><ul class="contas">' . $contas . '</ul>'
               . ($turma !== '' ? '<h2 style="margin-top:18px">A data da turma serve?</h2><ul class="contas">' . $turma . '</ul>' : '') . '</div></div>'
               . '<h2 style="margin:26px 0 12px">Respostas (' . count($linhas) . ')</h2>'
-              . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Respondido</th><th>Aluno</th><th>Curso</th><th>Dias</th><th>Começo</th><th>Comentário</th></tr></thead><tbody>' . $tabela . '</tbody></table></div>'
+              . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Respondido</th><th>Aluno</th><th>Curso</th><th>Pode vir</th><th>Começo</th><th>Recado</th></tr></thead><tbody>' . $tabela . '</tbody></table></div>'
             : '<div class="cartao vazio">Ainda não há respostas. O convite para responder aparece na tela de inscrição paga e no e-mail de confirmação.</div>');
     pn_pagina('Dias e horários', $corpo, $usuario, true, 'horarios');
+}
+
+/** Início: o que pede ação agora e o que chegou por último. Cada número leva à lista correspondente. */
+function pn_inicio(string $usuario): never
+{
+    $contas = mcp_secretaria_contar();
+    $novas = mcp_contatos_contar()['novo'];
+    $numero = static fn(string $href, int $n, string $rotulo, string $explica, bool $alerta = false): string =>
+        '<a class="numero' . ($alerta && $n > 0 ? ' alerta' : '') . '" href="' . pn_e($href) . '"><b>' . $n . '</b><span>' . pn_e($rotulo) . '</span><small>' . pn_e($explica) . '</small></a>';
+    $numeros = '<div class="numeros">'
+        . $numero('painel.php?v=inscricoes&f=pagas', $contas['pagas'], 'Inscrições pagas', mcp_secretaria_pagas_recentes(7) . ' nos últimos 7 dias')
+        . $numero('painel.php?v=inscricoes&f=atencao', $contas['atencao'], 'Precisam de atenção', 'matrícula na escola com pendência', true)
+        . $numero('painel.php?v=inscricoes&f=sem_horarios', $contas['sem_horarios'], 'Sem horários', 'pagaram e ainda não disseram os horários')
+        . $numero('painel.php?v=mensagens&f=novo', $novas, 'Mensagens novas', 'do chat do site, sem resposta', true)
+        . '</div>';
+
+    $ultimas = '';
+    foreach (mcp_secretaria_listar('pagas', null, '', 6) as $l) {
+        $esc = mcp_secretaria_escola($l);
+        $ultimas .= '<li><div><a href="painel.php?v=inscricao&amp;id=' . (int) $l['id'] . '">' . pn_e((string) $l['nome']) . '</a><small>' . pn_e((string) $l['curso_nome'])
+            . ' · ' . pn_e(pn_data((string) $l['pago_em'])) . '</small></div><span class="selo ' . $esc['tom'] . '">' . pn_e($esc['rotulo']) . '</span></li>';
+    }
+    $assuntos = mcp_contato_assuntos();
+    $mensagens = '';
+    foreach (mcp_contatos_listar(null, 6) as $c) {
+        $mensagens .= '<li><div><a href="painel.php?id=' . (int) $c['id'] . '">' . pn_e((string) $c['nome']) . '</a><small>' . pn_e($assuntos[$c['assunto']] ?? (string) $c['assunto'])
+            . ' · ' . pn_e(pn_data((string) $c['criado_em'])) . '</small></div>' . pn_status((string) $c['status']) . '</li>';
+    }
+    $mapa = mcp_horarios_mapa(mcp_horarios_listar(null, MCP_PAINEL_HORARIOS_LIMITE));
+    $pedidos = [];
+    foreach ($mapa['grade'] as $periodo => $dias) {
+        foreach ($dias as $dia => $n) {
+            if ($n > 0) {
+                $pedidos[] = [$n, MCP_HORARIOS_DIAS[$dia] . ' ' . MCP_HORARIOS_PERIODOS_FRASE[$periodo]];
+            }
+        }
+    }
+    usort($pedidos, static fn(array $a, array $b): int => $b[0] <=> $a[0]);
+    $horarios = '';
+    foreach (array_slice($pedidos, 0, 5) as [$n, $rotulo]) {
+        $horarios .= '<li><span>' . pn_e($rotulo) . '</span><b>' . $n . ' aluno' . ($n > 1 ? 's' : '') . '</b></li>';
+    }
+
+    $corpo = '<div class="cabeca"><div><p class="eyebrow">Portal da secretaria · ' . pn_e(mcp_data_brt(mcp_agora(), 'd/m/Y')) . '</p><h1>Início</h1>'
+        . '<p class="nota">O que pede ação agora e o que chegou por último. Clique num número para ver a lista.</p></div></div>'
+        . $numeros
+        . '<div class="grade-inicio"><div class="cartao"><h2>Últimas inscrições pagas</h2>'
+        . ($ultimas !== '' ? '<ul class="lista-curta">' . $ultimas . '</ul>' : '<p class="nota">Nenhuma inscrição paga ainda.</p>')
+        . '<p class="nota"><a href="painel.php?v=inscricoes">Ver todas as inscrições →</a></p></div>'
+        . '<div class="cartao"><h2>Mensagens recentes</h2>'
+        . ($mensagens !== '' ? '<ul class="lista-curta">' . $mensagens . '</ul>' : '<p class="nota">Nenhuma mensagem ainda.</p>')
+        . '<p class="nota"><a href="painel.php?v=mensagens">Ver todas as mensagens →</a></p></div></div>'
+        . '<div class="cartao" style="margin-top:18px"><h2>Horários mais pedidos, em todos os cursos</h2>'
+        . ($horarios !== '' ? '<ul class="lista-curta">' . $horarios . '</ul>' : '<p class="nota">Ainda não há respostas ao questionário de horários.</p>')
+        . '<p class="nota"><a href="painel.php?v=horarios">Ver o mapa por curso →</a></p></div>';
+    pn_pagina('Início', $corpo, $usuario, true, 'inicio');
+}
+
+/** Inscrições: filtros, busca por nome, e-mail, telefone ou CPF, curso, planilha (?csv=1) e paginação. */
+function pn_inscricoes(string $usuario): never
+{
+    $f = mcp_texto($_GET['f'] ?? '', 20);
+    if (!isset(MCP_SECRETARIA_FILTROS[$f])) {
+        $f = 'pagas';
+    }
+    $cursos = mcp_secretaria_cursos();
+    $curso = mcp_texto($_GET['curso'] ?? '', 80);
+    if (!isset($cursos[$curso])) {
+        $curso = '';
+    }
+    $q = mcp_texto($_GET['q'] ?? '', 80);
+    $pagina = min(max(1, (int) ($_GET['p'] ?? 1)), 10000);
+    $params = array_filter(['v' => 'inscricoes', 'f' => $f, 'curso' => $curso, 'q' => $q], static fn(string $x): bool => $x !== '');
+    $url = static fn(array $extra): string => 'painel.php?' . http_build_query(array_merge($params, $extra));
+    if (isset($_GET['csv'])) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="inscricoes-' . $f . ($curso !== '' ? '-' . preg_replace('/[^a-z0-9-]/', '', $curso) : '') . '-' . gmdate('Y-m-d') . '.csv"');
+        mcp_registrar(null, 'painel_inscricoes_csv', $usuario . ' · ' . $f . ($curso !== '' ? " · $curso" : '') . ($q !== '' ? ' · com busca' : ''));
+        echo mcp_secretaria_csv(mcp_secretaria_listar($f, $curso ?: null, $q, 5000));
+        exit;
+    }
+    $contas = mcp_secretaria_contar($curso ?: null, $q);
+    $linhas = mcp_secretaria_listar($f, $curso ?: null, $q, MCP_PAINEL_POR_PAGINA, ($pagina - 1) * MCP_PAINEL_POR_PAGINA);
+
+    $pilulas = '';
+    foreach (MCP_SECRETARIA_FILTROS as $chave => $rotulo) {
+        $pilulas .= '<a class="pilula' . ($chave === $f ? ' ativo' : '') . '" href="' . pn_e($url(['f' => $chave, 'p' => null])) . '">' . pn_e($rotulo) . ' <span class="n">' . $contas[$chave] . '</span></a>';
+    }
+    $opcoes = '<option value="">Todos os cursos</option>';
+    foreach ($cursos as $slug => $nome) {
+        $opcoes .= '<option value="' . pn_e($slug) . '"' . ($slug === $curso ? ' selected' : '') . '>' . pn_e($nome) . '</option>';
+    }
+    $busca = '<form class="busca" method="get" action="painel.php" role="search"><input type="hidden" name="v" value="inscricoes"><input type="hidden" name="f" value="' . pn_e($f) . '">'
+        . '<label class="sr" for="q">Buscar</label><input id="q" name="q" value="' . pn_e($q) . '" placeholder="Nome, e-mail, telefone ou CPF">'
+        . '<label class="sr" for="curso-filtro">Curso</label><select id="curso-filtro" name="curso">' . $opcoes . '</select>'
+        . '<button class="btn btn-outline" type="submit">Buscar</button>'
+        . ($q !== '' || $curso !== '' ? '<a class="btn btn-outline" href="' . pn_e($url(['q' => null, 'curso' => null, 'p' => null])) . '">Limpar</a>' : '') . '</form>';
+
+    $tabela = '';
+    foreach ($linhas as $l) {
+        $esc = mcp_secretaria_escola($l);
+        $pref = $l['preferencia'];
+        $lembretes = (int) $l['lembretes'];
+        $horas = $l['status'] !== 'pago' ? '<span style="color:var(--muted)">—</span>'
+            : ($pref ? pn_e(mcp_horarios_texto($pref['horarios']))
+                : '<span class="selo neutro">Não respondeu</span>' . ($lembretes > 0 ? '<small>' . $lembretes . ' lembrete' . ($lembretes > 1 ? 's' : '') . ' enviado' . ($lembretes > 1 ? 's' : '') . '</small>' : ''));
+        $ficha = 'painel.php?v=inscricao&amp;id=' . (int) $l['id'];
+        $tabela .= '<tr><td data-rotulo="Data">' . pn_e(pn_data((string) ($l['pago_em'] ?: $l['criado_em']))) . '</td>'
+            . '<td class="aluno"><a class="nome" href="' . $ficha . '">' . pn_e((string) $l['nome']) . '</a><small>' . pn_e((string) $l['email']) . '</small>'
+            . ($l['telefone'] ? '<small class="tel">' . pn_e(mcp_telefone_bonito((string) $l['telefone'])) . '</small>' : '') . '</td>'
+            . '<td data-rotulo="Curso">' . pn_e((string) $l['curso_nome']) . '</td>'
+            . '<td class="comeco" data-rotulo="Pagamento">' . pn_e(mcp_brl((int) $l['total_centavos'])) . '<small>' . ($l['metodo'] === 'pix' ? 'PIX' : 'Cartão') . ' · ' . pn_e(MCP_SECRETARIA_STATUS[$l['status']] ?? (string) $l['status']) . '</small></td>'
+            . '<td data-rotulo="Escola"><span class="selo ' . $esc['tom'] . '">' . pn_e($esc['rotulo']) . '</span></td>'
+            . '<td class="horarios" data-rotulo="Horários">' . $horas . '</td>'
+            . '<td class="abrir"><a class="btn btn-outline" style="min-height:36px;padding:6px 14px" href="' . $ficha . '">Abrir ficha</a></td></tr>';
+    }
+    $explica = [
+        'pagas' => 'Inscrições com o pagamento confirmado.',
+        'atencao' => 'Pagas, mas a matrícula na escola tem pendência: não foi feita, falhou, ficou sem turma ou a taxa já estava paga. Abra a ficha para ver o que fazer.',
+        'sem_horarios' => 'Pagas, e o aluno ainda não disse em quais dias e horários consegue vir. Na ficha, dá para mandar um lembrete por e-mail.',
+        'pendentes' => 'Começaram a inscrição e ainda não pagaram (PIX em aberto ou cartão não concluído).',
+        'todas' => 'Todas as inscrições, inclusive recusadas, expiradas e estornadas.',
+    ][$f];
+    $corpo = '<div class="cabeca"><div><p class="eyebrow">Matrícula cursos presenciais</p><h1>Inscrições</h1><p class="nota">' . pn_e($explica) . '</p></div>'
+        . ($linhas ? '<a class="btn btn-outline" href="' . pn_e($url(['csv' => 1, 'p' => null])) . '">Baixar planilha</a>' : '') . '</div>'
+        . '<div class="filtros">' . $pilulas . '</div>' . $busca
+        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Data</th><th>Aluno</th><th>Curso</th><th>Pagamento</th><th>Escola</th><th>Horários</th><th class="abrir"></th></tr></thead><tbody>'
+        . ($tabela !== '' ? $tabela : '<tr><td colspan="7" class="vazio">Nenhuma inscrição aqui.</td></tr>') . '</tbody></table></div>';
+    $paginacao = ($pagina > 1 ? '<a href="' . pn_e($url(['p' => $pagina - 1])) . '">Mais recentes</a>' : '')
+        . (count($linhas) === MCP_PAINEL_POR_PAGINA ? '<a href="' . pn_e($url(['p' => $pagina + 1])) . '">Mais antigas</a>' : '');
+    if ($paginacao !== '') {
+        $corpo .= '<div class="paginacao">' . $paginacao . '</div>';
+    }
+    pn_pagina('Inscrições', $corpo, $usuario, true, 'inscricoes');
+}
+
+/** Ficha da inscrição: aluno, pagamento, escola, horários (com o lembrete à mão) e histórico. */
+function pn_inscricao(string $usuario, int $id, string $aviso = '', string $classe = 'ok'): never
+{
+    $i = mcp_secretaria_inscricao($id);
+    if (!$i) {
+        pn_redirecionar('v=inscricoes');
+    }
+    $pago = $i['status'] === 'pago';
+    $esc = mcp_secretaria_escola($i);
+    $pref = $i['preferencia'];
+    $dl = static function (array $linhas): string {
+        $html = '';
+        foreach ($linhas as $rotulo => $valor) {
+            $html .= '<dt>' . pn_e($rotulo) . '</dt><dd>' . $valor . '</dd>';
+        }
+        return '<dl>' . $html . '</dl>';
+    };
+    $aluno = $dl([
+        'Nome' => pn_e((string) $i['nome']),
+        'CPF' => pn_e(mcp_cpf_formatado((string) $i['cpf'])),
+        'E-mail' => '<a href="mailto:' . pn_e((string) $i['email']) . '">' . pn_e((string) $i['email']) . '</a>',
+        'Telefone' => $i['telefone'] ? '<a href="tel:+55' . pn_e(mcp_digitos((string) $i['telefone'])) . '">' . pn_e(mcp_telefone_bonito((string) $i['telefone'])) . '</a>' : '—',
+        'Curso' => pn_e((string) $i['curso_nome']),
+    ]);
+    $pagamento = $dl([
+        'Situação' => '<span class="selo ' . ($pago ? 'ok' : ($i['status'] === 'pendente' ? 'neutro' : 'erro')) . '">' . pn_e(MCP_SECRETARIA_STATUS[$i['status']] ?? (string) $i['status']) . '</span>',
+        'Valor' => pn_e(mcp_brl((int) $i['total_centavos'])) . ((int) $i['taxa_centavos'] > 0 ? ' <span style="color:var(--muted);font-weight:400">(inscrição ' . pn_e(mcp_brl((int) $i['inscricao_centavos'])) . ' + custos ' . pn_e(mcp_brl((int) $i['taxa_centavos'])) . ')</span>' : ''),
+        'Método' => $i['metodo'] === 'pix' ? 'PIX' : pn_e(trim('Cartão ' . mb_convert_case((string) ($i['bandeira'] ?? ''), MB_CASE_TITLE) . ($i['ultimos4'] ? ' final ' . $i['ultimos4'] : ''))),
+        'Iniciada em' => pn_e(pn_data((string) $i['criado_em'])),
+        'Paga em' => $i['pago_em'] ? pn_e(pn_data((string) $i['pago_em'])) : '—',
+        'Transação Unicopag' => $i['unicopag_hash'] ? '<code>' . pn_e((string) $i['unicopag_hash']) . '</code>' : '—',
+        'Origem' => pn_e(implode(' · ', array_filter([(string) ($i['utm_source'] ?? ''), (string) ($i['utm_campaign'] ?? '')], 'strlen')) ?: 'direto'),
+    ]);
+    $escolaUrl = rtrim((string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org'), '/') . '/login';
+    $escola = '<p><span class="selo ' . $esc['tom'] . '">' . pn_e($esc['rotulo']) . '</span></p>'
+        . '<p class="orientacao">' . pn_e(mcp_secretaria_escola_orientacao($i)) . '</p>'
+        . (($conta = mcp_secretaria_escola_conta($i)) !== null ? '<p class="nota">' . pn_e($conta) . '.</p>' : '')
+        . '<p class="nota"><a href="' . pn_e($escolaUrl) . '" target="_blank" rel="noopener">Abrir a plataforma da escola ↗</a></p>';
+
+    if (!$pago) {
+        $horarios = '<p class="nota" style="margin:0">O questionário abre para o aluno depois que o pagamento é confirmado.</p>';
+    } elseif ($pref) {
+        $horarios = $dl(array_filter([
+            'Pode vir' => pn_e(mcp_horarios_texto($pref['horarios'])),
+            'Começo' => pn_e(MCP_HORARIOS_INICIO[$pref['inicio']] ?? (string) $pref['inicio']),
+            'A data da turma serve?' => $pref['turma_serve'] ? pn_e(MCP_HORARIOS_TURMA[$pref['turma_serve']] ?? (string) $pref['turma_serve']) : null,
+            'Recado' => $pref['observacao'] ? pn_e((string) $pref['observacao']) : null,
+            'Respondido em' => pn_e(pn_data((string) $pref['atualizado_em'])) . ((int) $pref['vezes'] > 1 ? ' (mudou ' . ((int) $pref['vezes'] - 1) . 'x)' : ''),
+        ], static fn(?string $v): bool => $v !== null));
+    } else {
+        $lembretes = (int) $i['lembretes'];
+        $ultimo = $i['lembrete_em'] ? (int) strtotime($i['lembrete_em'] . ' UTC') : 0;
+        $podeMandar = $ultimo === 0 || time() - $ultimo >= MCP_SECRETARIA_LEMBRETE_INTERVALO;
+        $horarios = '<p style="margin:0 0 8px"><span class="selo neutro">Ainda não respondeu</span></p>'
+            . '<p class="nota">' . ($lembretes > 0
+                ? $lembretes . ' lembrete' . ($lembretes > 1 ? 's' : '') . ' enviado' . ($lembretes > 1 ? 's' : '') . ', o último em ' . pn_e(pn_data((string) $i['lembrete_em'])) . '.'
+                : 'Nenhum lembrete enviado ainda.') . ' O aluno também vê um alerta na página da inscrição.</p>'
+            . ($podeMandar
+                ? '<form method="post" action="painel.php" class="acoes"><input type="hidden" name="acao" value="lembrete_horarios"><input type="hidden" name="id" value="' . (int) $i['id'] . '">'
+                  . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'lembrete_horarios', (int) $i['id'])) . '">'
+                  . '<button class="btn btn-red" type="submit">Mandar lembrete agora</button></form>'
+                  . '<p class="nota">O aluno recebe por e-mail o link pessoal para escolher os horários, no mesmo modelo dos lembretes automáticos.</p>'
+                : '<p class="nota">Um novo lembrete pode sair a partir de ' . pn_e(pn_data(gmdate('Y-m-d H:i:s', $ultimo + MCP_SECRETARIA_LEMBRETE_INTERVALO))) . ' (no máximo um a cada 24 horas).</p>');
+    }
+    $horarios .= $pago ? '<p class="nota"><a href="' . pn_e(mcp_url_pagina('parabens', (string) $i['token'])) . '" target="_blank" rel="noopener">Ver a página da inscrição, como o aluno vê ↗</a></p>' : '';
+
+    $tempo = '';
+    foreach (mcp_secretaria_eventos((int) $i['id']) as $e) {
+        $rotulo = mcp_secretaria_evento((string) $e['tipo'], $e['detalhe']);
+        if ($rotulo !== null) {
+            $tempo .= '<li><time>' . pn_e(pn_data((string) $e['criado_em'])) . '</time><span>' . pn_e($rotulo) . '</span></li>';
+        }
+    }
+
+    $corpo = '<a class="voltar" href="painel.php?v=inscricoes">← Voltar para as inscrições</a>'
+        . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
+        . '<div class="cabeca"><div><p class="eyebrow">Inscrição #' . (int) $i['id'] . ' · ' . pn_e((string) $i['curso_nome']) . '</p><h1>' . pn_e((string) $i['nome']) . '</h1>'
+        . '<p class="nota">' . pn_e(MCP_SECRETARIA_STATUS[$i['status']] ?? (string) $i['status']) . ($i['pago_em'] ? ' em ' . pn_e(pn_data((string) $i['pago_em'])) : '') . '</p></div></div>'
+        . '<div class="ficha"><div class="cartao"><h2>Aluno</h2>' . $aluno . '</div><div class="cartao"><h2>Pagamento</h2>' . $pagamento . '</div>'
+        . '<div class="cartao"><h2>Matrícula na escola</h2>' . $escola . '</div><div class="cartao"><h2>Horários</h2>' . $horarios . '</div></div>'
+        . '<div class="cartao" style="margin-top:18px"><h2>Histórico</h2>' . ($tempo !== '' ? '<ul class="tempo">' . $tempo . '</ul>' : '<p class="nota" style="margin:0">Sem registros.</p>') . '</div>';
+    pn_pagina((string) $i['nome'], $corpo, $usuario, true, 'inscricoes');
 }
 
 /**
@@ -346,7 +649,7 @@ function pn_detalhe(array $c, string $quem, string $baseQuery, bool $comLista, ?
     }
 
     $statusAcao = $c['status'] === 'arquivado' ? 'reabrir' : 'arquivar';
-    $corpo = ($comLista ? '<a class="voltar" href="painel.php">← Voltar para a lista</a>' : '')
+    $corpo = ($comLista ? '<a class="voltar" href="painel.php?v=mensagens">← Voltar para as mensagens</a>' : '')
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . '<div class="cabeca"><div><p class="eyebrow">Chat do site · ' . pn_e((string) $c['protocolo']) . '</p><h1>' . pn_e((string) $c['nome']) . '</h1>'
         . '<p class="nota">' . pn_e($assunto) . ($c['curso_nome'] ? ' · ' . pn_e((string) $c['curso_nome']) : '') . ' · recebido em ' . pn_e(pn_data((string) $c['criado_em'])) . '</p></div></div>'
@@ -363,7 +666,7 @@ function pn_detalhe(array $c, string $quem, string $baseQuery, bool $comLista, ?
         . '<div class="acoes"><form method="post" action="painel.php">' . $ocultos . '<input type="hidden" name="acao" value="' . $statusAcao . '"><input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($quem, $statusAcao, $id)) . '">'
         . '<button class="btn btn-outline" type="submit">' . ($statusAcao === 'arquivar' ? 'Arquivar sem responder' : 'Reabrir contato') . '</button></form></div>'
         . '</div>';
-    pn_pagina((string) $c['nome'], $corpo, $usuario, $comLista);
+    pn_pagina((string) $c['nome'], $corpo, $usuario, $comLista, 'mensagens');
 }
 
 // ----------------------------------------------------------------------------- fluxo
@@ -373,6 +676,11 @@ $avisos = [
     'respondido' => ['Resposta enviada por e-mail. O contato ficou como respondido.', 'ok'],
     'arquivar' => ['Contato arquivado.', 'ok'],
     'reabrir' => ['Contato reaberto.', 'ok'],
+    'lb_ok' => ['Lembrete de horários enviado ao aluno por e-mail.', 'ok'],
+    'lb_recente' => ['Já saiu um lembrete nas últimas 24 horas. Espere um pouco antes de mandar outro.', 'erro'],
+    'lb_resp' => ['O aluno já respondeu os horários; nenhum lembrete foi enviado.', 'ok'],
+    'lb_falhou' => ['O e-mail não pôde ser enviado agora. Tente de novo em instantes.', 'erro'],
+    'lb_naopago' => ['Esta inscrição não está paga; o questionário ainda não abriu para o aluno.', 'erro'],
 ];
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
@@ -408,6 +716,21 @@ if ($metodo === 'POST') {
             pn_login('Não foi possível enviar o link agora. Tente de novo em instantes.');
         }
         pn_login($mensagem, 'ok');
+    }
+
+    // Lembrete de horários à mão, pela ficha da inscrição: só com sessão.
+    if ($acao === 'lembrete_horarios') {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($sessao === null || $id <= 0 || !hash_equals(mcp_painel_csrf($sessao, 'lembrete_horarios', $id), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        $inscricao = mcp_inscricao_por('id', (string) $id);
+        if (!$inscricao) {
+            pn_redirecionar('v=inscricoes');
+        }
+        $resultado = mcp_secretaria_lembrete($inscricao, $sessao);
+        mcp_registrar(null, 'painel_lembrete', "#$id · $sessao · $resultado");
+        pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago'][$resultado]);
     }
 
     $id = (int) ($_POST['id'] ?? 0);
@@ -469,8 +792,15 @@ if ($sessao === null && $viaLink !== null) {
 if ($sessao === null) {
     pn_login();
 }
-if (($_GET['v'] ?? '') === 'horarios') {
+$secao = mcp_texto($_GET['v'] ?? '', 20);
+if ($secao === 'horarios') {
     pn_horarios($sessao);
+}
+if ($secao === 'inscricoes') {
+    pn_inscricoes($sessao);
+}
+if ($secao === 'inscricao') {
+    pn_inscricao($sessao, (int) ($_GET['id'] ?? 0), $aviso, $classe);
 }
 if (isset($_GET['id'])) {
     $c = mcp_contato_por_id((int) $_GET['id']);
@@ -479,4 +809,7 @@ if (isset($_GET['id'])) {
     }
     pn_detalhe($c, $sessao, 'id=' . (int) $c['id'], true, $sessao, $aviso, $classe);
 }
-pn_lista($sessao);
+if ($secao === 'mensagens' || isset($_GET['f'])) {
+    pn_lista($sessao);
+}
+pn_inicio($sessao);

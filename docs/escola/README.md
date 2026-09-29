@@ -90,19 +90,57 @@ Os dados desse teste podem ser apagados com `limpar_teste.sql`, colando nele o h
 ## Fase 2: o questionário dentro da escola
 
 Desde 29/09/2026 o questionário de dias e horários funciona no site. Depois de pagar a inscrição, o
-aluno responde em `/matricula-cursos-presenciais/horarios/`, e a secretaria vê as respostas no painel
-do site (`api/painel.php?v=horarios`). Veja a seção "Questionário de dias e horários" no
+aluno responde em `/matricula-cursos-presenciais/horarios/`, e a secretaria vê as respostas no portal
+da secretaria do site (`api/painel.php?v=horarios`). Veja a seção "Questionário de dias e horários" no
 [README principal](../../README.md).
 
 A fase 2 leva a mesma pergunta para dentro da plataforma da escola: na área do aluno e no painel da
 secretaria, com as respostas guardadas no banco da escola.
 
-### Por que ainda não
+### Primeiro passo, no ar a partir de 29/09/2026: a secretaria vê os horários no painel da escola
 
-A plataforma da escola é um app Express, EJS e Prisma no Render, e o código dela não está em nenhum
-repositório a que temos acesso. Sem ele, não dá para criar uma página na área do aluno nem uma tela no
-painel da secretaria. A chave que o site usa no banco só executa `matricula_rapida`, de propósito, e
-continua assim.
+Com acesso ao código da escola ([matheusnsp/ESCOLA_CRUZ_VERMELHA](https://github.com/matheusnsp/ESCOLA_CRUZ_VERMELHA)),
+o painel da secretaria ganhou a aba **Horários** (`/horarios`). Ela mostra, por curso:
+
+- o mapa;
+- os horários mais pedidos, o começo e se a data da turma serve;
+- as próximas turmas abertas ou confirmadas do curso, com os dias e horários das aulas (`AulaData`);
+- quem pagou e ainda não respondeu;
+- a lista das respostas;
+- a planilha.
+
+O nome do aluno abre a ficha dele na escola, quando o e-mail bate com uma conta de aluno.
+
+As respostas continuam guardadas só no site. A escola lê por `api/escola-horarios.php`, servidor a servidor:
+
+| | Site | Escola |
+|---|---|---|
+| Chave | `ESCOLA_HORARIOS_TOKEN` em `api/config-escola.php` | `SITE_HORARIOS_TOKEN` (variável no Render) |
+| Endereço | `api/escola-horarios.php` | `SITE_HORARIOS_URL` (opcional; o padrão é o endereço do site) |
+
+- Sem a chave, o endereço responde 404. Com a chave errada, 401, e cada IP pode errar até 20 vezes por hora.
+- O que sai: as respostas e quem falta, com nome, e-mail, telefone, curso (com o `uuid` da escola),
+  a turma e a matrícula da escola, se houver. **Nunca sai CPF.**
+- A escola guarda o que leu por 1 minuto, e o botão "Atualizar" lê de novo.
+- Nenhuma tabela nova, nenhuma migração e nenhuma permissão nova no banco da escola.
+
+**Para ligar:**
+1. gerar a chave: `openssl rand -hex 24`;
+2. pôr a chave no `api/config-escola.php` do site: `'ESCOLA_HORARIOS_TOKEN' => '…'`;
+3. publicar `api/escola-horarios.php`, `api/lib/horarios.php` e `api/.htaccess`;
+4. no Render, pôr a mesma chave em `SITE_HORARIOS_TOKEN` no serviço da escola e publicar.
+
+O que continua para depois: o questionário dentro da área do aluno da escola e as respostas guardadas
+no banco dela. É o resto desta seção.
+
+### Por que o resto ainda não
+
+A plataforma da escola é um app Express, EJS e Prisma no Render. O código já está acessível, mas guardar
+as respostas no banco da escola pede uma tabela nova. As migrações do Prisma da escola param em
+julho de 2026, e o banco já tem tabelas e colunas criadas fora delas (`AulaData`, `Avaliacao`, `lembreteImediatoEm`…).
+Uma migração nova precisa antes alinhar esse histórico, senão o Prisma vê a diferença ("drift"). Isso
+pede combinar com quem mantém a escola. A chave que o site usa no banco só executa `matricula_rapida`,
+de propósito, e continua assim.
 
 ### O que é preciso
 
@@ -127,8 +165,7 @@ As regras são as mesmas no site e na escola, para as respostas se somarem no me
 
 | Campo | Valores | Regra |
 |---|---|---|
-| dias | `seg` `ter` `qua` `qui` `sex` `sab` | pelo menos um, sem domingo |
-| periodos | `manha` (8h às 12h), `tarde` (13h às 17h), `noite` (18h às 22h) | pelo menos um |
+| horarios | combinações `dia-periodo`: dia `seg` … `sab` (sem domingo) e período `manha` (8h às 12h), `tarde` (13h às 17h) ou `noite` (18h às 22h), ex. `seg-noite` | pelo menos uma; 18 possíveis |
 | inicio | `proxima`, `1mes`, `2meses` | obrigatório |
 | turma_serve | `sim`, `nao` | só quando o aluno já tem turma |
 | observacao | texto | opcional, até 500 caracteres |
@@ -145,8 +182,7 @@ model PreferenciaHorario {
   id           String   @id @default(uuid())
   alunoId      String
   cursoId      String
-  dias         String[] // seg … sab
-  periodos     String[] // manha | tarde | noite
+  horarios     String[] // "seg-noite", "sab-manha" …
   inicio       String   // proxima | 1mes | 2meses
   turmaServe   Boolean? // só com turma
   observacao   String?
@@ -171,8 +207,7 @@ para o Prisma como diferença ("drift"), e um `prisma migrate dev` propõe apaga
 {
   "cpf": "<CPF, só dígitos>",
   "curso_id": "5bd737ee-00a6-48dc-b5ab-08cde9b12897",
-  "dias": ["seg", "qua"],
-  "periodos": ["noite"],
+  "horarios": ["seg-noite", "qua-noite", "sab-manha"],
   "inicio": "proxima",
   "turma_serve": "nao",
   "observacao": "Trabalho até as 18h.",
@@ -230,7 +265,7 @@ createdb escola_teste
 for f in teste-local/00_papeis_supabase.sql teste-local/01_estrutura_escola.sql \
          teste-local/02_dados_ficticios.sql matricula_rapida.sql; do psql -d escola_teste -f $f; done
 psql -d escola_teste -f teste-local/03_testes_pgtap.sql   # 84 testes (pgTAP)
-php ../../scripts/testar_checkout.php                     # 225 testes do PHP, sem banco nem rede
+php ../../scripts/testar_checkout.php                     # 237 testes do PHP, sem banco nem rede
 ```
 
 O teste de ponta a ponta (`scripts/testar_escola_integracao.php`, 19 testes) usa o código do site

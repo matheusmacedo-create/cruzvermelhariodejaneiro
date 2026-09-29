@@ -241,9 +241,9 @@ def main() -> int:
                            "Guarde este link: ele mostra sua inscrição e o próximo passo.",
                            CORPO_PARABENS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),
         # Questionário de dias e horários (29/09/2026): link pessoal, abre só com a inscrição paga.
-        "horarios": montar(partes, "Seus dias e horários | Cruz Vermelha Brasileira Rio de Janeiro", "horarios",
-                           "Quais dias e horários são melhores para você?",
-                           "Leva 1 minuto. A secretaria usa suas respostas para montar as turmas e combinar a sua.",
+        "horarios": montar(partes, "Seus horários | Cruz Vermelha Brasileira Rio de Janeiro", "horarios",
+                           "Quando você pode fazer as aulas?",
+                           "Toque nos dias e horários em que você consegue vir. Leva 30 segundos e ajuda a secretaria a encaixar você na turma certa.",
                            CORPO_HORARIOS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),
     }
     for nome, html in paginas.items():

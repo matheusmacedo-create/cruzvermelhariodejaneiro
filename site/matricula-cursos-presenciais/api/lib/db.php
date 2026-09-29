@@ -137,12 +137,12 @@ function mcp_migrar(PDO $pdo): void
         KEY ix_inscricao (inscricao_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Dias e horários preferidos pelo aluno (29/09/2026): uma linha por inscrição paga, que ele pode
-    // mudar pelo mesmo link. A secretaria vê o resumo por curso no painel (lib/horarios.php).
+    // mudar pelo mesmo link. horarios = combinações dia-período marcadas ("seg-noite,sab-manha").
+    // A secretaria vê o mapa por curso no painel (lib/horarios.php).
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_preferencias (
         inscricao_id INT UNSIGNED NOT NULL PRIMARY KEY,
         curso_slug VARCHAR(80) NOT NULL,
-        dias VARCHAR(40) NOT NULL,
-        periodos VARCHAR(30) NOT NULL,
+        horarios VARCHAR(200) NOT NULL,
         inicio VARCHAR(20) NOT NULL,
         turma_serve VARCHAR(10) NULL,
         observacao TEXT NULL,

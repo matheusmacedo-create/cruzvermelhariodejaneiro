@@ -20,7 +20,8 @@ putenv("MCP_CONFIG_ARQUIVO=$configTeste");
 // Chave da escola num arquivo à parte, como no servidor: só as chaves ESCOLA_* podem valer.
 $configEscola = tempnam(sys_get_temp_dir(), 'mcp-escola-');
 file_put_contents($configEscola, "<?php return ['ESCOLA_API_URL' => 'https://escola-db.exemplo.org/rest/v1/rpc/matricula_rapida',
-    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
+    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'ESCOLA_HORARIOS_TOKEN' => '" . str_repeat('k', 40) . "',
+    'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
 putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$configEscola");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 $_SERVER['REQUEST_METHOD'] = 'CLI';
@@ -263,7 +264,9 @@ verificar('resposta assinatura', str_contains($resp['html'], 'Ana, da equipe de 
 verificar('resposta cita a mensagem original e a matrícula', str_contains($resp['html'], 'Tem turma à noite?') && str_contains($resp['html'], 'checkout/?curso=' . $primeiro), true);
 verificar('resposta sem whatsapp', stripos($resp['html'] . $resp['texto'], 'whatsapp'), false);
 $entrada = mcp_montar_email_painel_link('https://exemplo.org/matricula-cursos-presenciais/api/painel.php?entrar=a%40b.co&e=1&k=abc');
-verificar('link de entrada no e-mail', str_contains($entrada['html'], 'painel.php?entrar=a%40b.co&amp;e=1&amp;k=abc') && str_contains($entrada['html'], 'Entrar no painel'), true);
+verificar('link de entrada no e-mail', str_contains($entrada['html'], 'painel.php?entrar=a%40b.co&amp;e=1&amp;k=abc') && str_contains($entrada['html'], 'Entrar no portal'), true);
+verificar('link de entrada: portal da secretaria no assunto e no topo', [$entrada['assunto'], str_contains($entrada['html'], 'Portal da secretaria'), str_contains($entrada['texto'], 'Entrar no portal da secretaria')],
+    ['Acesso ao portal da secretaria', true, true]);
 verificar('telefone bonito', mcp_telefone_bonito('21999990000') . ' ' . mcp_telefone_bonito('2133334444') . ' ' . mcp_telefone_bonito('123'), '(21) 99999-0000 (21) 3333-4444 123');
 verificar('remetente endereço', mcp_email_endereco('Cruz Vermelha RJ <x@exemplo.org>') . '|' . mcp_email_endereco('y@exemplo.org'), 'x@exemplo.org|y@exemplo.org');
 verificar('remetente nome curto vira nome completo', mcp_email_nome_oficial('Cruz Vermelha RJ <matricula@info.exemplo.org>'), 'Cruz Vermelha Brasileira Rio de Janeiro <matricula@info.exemplo.org>');
@@ -354,48 +357,59 @@ verificar('e-mail pago cita o anexo quando há PDF', str_contains($emailCom['htm
 verificar('e-mail pago não promete anexo sem PDF', str_contains($emailSem['html'] . $emailSem['texto'], 'anexado'), false);
 verificar('e-mail pago sem PDF mantém o texto antigo', str_contains($emailSem['texto'], 'este e-mail é o seu comprovante'), true);
 
-// Questionário de dias e horários (lib/horarios.php): conferência, resumo, mapa, planilha, visão pública e e-mails.
-verificar('horários: listas na ordem da semana, sem repetição nem valor desconhecido', mcp_horarios_conferir(
-    ['dias' => ['sab', 'seg', 'seg', 'dom', 7], 'periodos' => ['noite', 'madrugada'], 'inicio' => 'proxima', 'turma_serve' => 'sim', 'observacao' => "  Só depois\n\n\n das 19h  "], false),
-    ['ok' => true, 'dados' => ['dias' => ['seg', 'sab'], 'periodos' => ['noite'], 'inicio' => 'proxima', 'turma_serve' => null, 'observacao' => "Só depois\n\ndas 19h"]]);
-$respostaValida = ['dias' => ['ter'], 'periodos' => ['manha'], 'inicio' => '1mes'];
+// Questionário de dias e horários (lib/horarios.php): conferência, texto, mapa, planilha, visão pública, e-mails e lembretes.
+verificar('horários: 18 combinações dia-período', [count(mcp_horarios_slots()), mcp_horarios_slots()[0], mcp_horarios_slots()[17]], [18, 'seg-manha', 'sab-noite']);
+verificar('horários: lista na ordem da semana, sem repetição nem valor desconhecido', mcp_horarios_conferir(
+    ['horarios' => ['sab-manha', 'seg-noite', 'seg-noite', 'dom-noite', 'seg-madrugada', 7], 'inicio' => 'proxima', 'turma_serve' => 'sim', 'observacao' => "  Só depois\n\n\n das 19h  "], false),
+    ['ok' => true, 'dados' => ['horarios' => ['seg-noite', 'sab-manha'], 'inicio' => 'proxima', 'turma_serve' => null, 'observacao' => "Só depois\n\ndas 19h"]]);
+$respostaValida = ['horarios' => ['ter-manha'], 'inicio' => '1mes'];
 $campoDoErro = static fn(array $b, bool $turma = false): ?string => mcp_horarios_conferir($b + $respostaValida, $turma)['campo'] ?? null;
 verificar('horários: campo de cada erro', [
-    $campoDoErro(['dias' => []]), $campoDoErro(['dias' => 'seg']), $campoDoErro(['dias' => ['dom']]), $campoDoErro(['periodos' => []]),
+    $campoDoErro(['horarios' => []]), $campoDoErro(['horarios' => 'seg-noite']), $campoDoErro(['horarios' => ['dom-manha']]),
     $campoDoErro(['inicio' => 'ontem']), $campoDoErro([], true), $campoDoErro(['turma_serve' => 'talvez'], true),
     $campoDoErro(['observacao' => str_repeat('a', 501)]), $campoDoErro(['observacao' => str_repeat('á', 500)]), $campoDoErro(['turma_serve' => 'nao'], true),
-], ['dias', 'dias', 'dias', 'periodos', 'inicio', 'turma_serve', 'turma_serve', 'observacao', null, null]);
-verificar('horários: mensagem do erro', mcp_horarios_conferir(['dias' => []] + $respostaValida, false)['erro'], 'Escolha pelo menos um dia da semana.');
+], ['horarios', 'horarios', 'horarios', 'inicio', 'turma_serve', 'turma_serve', 'observacao', null, null]);
+verificar('horários: mensagem do erro', mcp_horarios_conferir(['horarios' => []] + $respostaValida, false)['erro'], 'Marque pelo menos um horário em que você consegue vir.');
 verificar('horários: com turma guarda se a data serve', mcp_horarios_conferir(['turma_serve' => 'nao'] + $respostaValida, true)['dados']['turma_serve'], 'nao');
-verificar('horários: comentário vazio vira nulo', mcp_horarios_conferir(['observacao' => '   '] + $respostaValida, false)['dados']['observacao'], null);
-verificar('horários: linha do banco ignora valor desconhecido', array_intersect_key(mcp_horarios_linha(['dias' => 'seg,xxx,qua', 'periodos' => 'noite,,tarde']), ['dias' => 1, 'periodos' => 1]),
-    ['dias' => ['seg', 'qua'], 'periodos' => ['noite', 'tarde']]);
+verificar('horários: recado vazio vira nulo', mcp_horarios_conferir(['observacao' => '   '] + $respostaValida, false)['dados']['observacao'], null);
+verificar('horários: linha do banco ignora valor desconhecido', mcp_horarios_linha(['horarios' => 'sab-manha,xxx,seg-noite'])['horarios'], ['seg-noite', 'sab-manha']);
 verificar('horários: lista em português', [mcp_horarios_lista([]), mcp_horarios_lista(['A']), mcp_horarios_lista(['A', 'B']), mcp_horarios_lista(['A', 'B', 'C'])], ['', 'A', 'A e B', 'A, B e C']);
-$preferencia = ['dias' => ['seg', 'qua', 'sab'], 'periodos' => ['noite'], 'inicio' => 'proxima', 'turma_serve' => 'nao', 'observacao' => '<b>Só</b> depois das 19h',
+verificar('horários: dias em faixa', [mcp_horarios_dias_texto(['seg', 'ter', 'qua', 'qui', 'sex']), mcp_horarios_dias_texto(['seg', 'ter', 'qua', 'sex']),
+    mcp_horarios_dias_texto(['ter', 'qui']), mcp_horarios_dias_texto(['sab']), mcp_horarios_dias_texto(['seg', 'ter'])],
+    ['Seg a Sex', 'Seg a Qua e Sex', 'Ter e Qui', 'Sáb', 'Seg e Ter']);
+verificar('horários: texto agrupa dias com os mesmos períodos', [
+    mcp_horarios_texto(['seg-noite', 'ter-noite', 'qua-noite', 'qui-noite', 'sex-noite', 'sab-manha', 'sab-tarde']),
+    mcp_horarios_texto(['sab-manha', 'sab-tarde', 'sab-noite']),
+    mcp_horarios_texto(['ter-manha', 'qui-manha', 'qui-noite']),
+], ['Seg a Sex à noite; Sáb de manhã e à tarde', 'Sáb o dia todo', 'Ter de manhã; Qui de manhã e à noite']);
+$preferencia = ['horarios' => ['seg-noite', 'qua-noite', 'sab-manha'], 'inicio' => 'proxima', 'turma_serve' => 'nao', 'observacao' => '<b>Só</b> depois das 19h',
     'atualizado_em' => '2026-09-29 15:30:00', 'vezes' => 2];
-verificar('horários: resumo de uma linha', mcp_horarios_resumo($preferencia), 'Seg, Qua e Sáb · Noite · Já na próxima turma');
+verificar('horários: resumo de uma linha', mcp_horarios_resumo($preferencia), 'Seg e Qua à noite; Sáb de manhã · Já na próxima turma');
 $urlHorarios = 'https://exemplo.org/matricula-cursos-presenciais/horarios/?t=' . $token;
 verificar('horários: público convida quando pago', mcp_publico($inscricao)['horarios'], ['url' => $urlHorarios, 'respondido' => false, 'resumo' => null]);
 verificar('horários: público mostra o resumo do que respondeu', mcp_publico($inscricao, $preferencia)['horarios'],
-    ['url' => $urlHorarios, 'respondido' => true, 'resumo' => 'Seg, Qua e Sáb · Noite · Já na próxima turma']);
+    ['url' => $urlHorarios, 'respondido' => true, 'resumo' => 'Seg e Qua à noite; Sáb de manhã · Já na próxima turma']);
 verificar('horários: público sem questionário quando pendente', mcp_publico(['status' => 'pendente'] + $inscricao, $preferencia)['horarios'], null);
-verificar('horários: público não traz o comentário', str_contains(json_encode(mcp_publico($inscricao, $preferencia)), 'depois das 19h'), false);
+verificar('horários: público não traz o recado', str_contains(json_encode(mcp_publico($inscricao, $preferencia)), 'depois das 19h'), false);
 $tela = mcp_horarios_para_tela($inscricao, $preferencia);
-verificar('horários: tela com nome, curso, turma e resposta', [$tela['nome'], $tela['curso']['nome'], $tela['turma_inicio'], $tela['resposta']['dias'], $tela['resposta']['turma_serve']],
-    ['Maria', 'Curso X', '2026-10-21', ['seg', 'qua', 'sab'], 'nao']);
-verificar('horários: tela com as opções e o limite do comentário', [array_keys($tela['opcoes']['dias']), $tela['opcoes']['horas']['noite'], $tela['opcoes']['observacao_max']],
-    [['seg', 'ter', 'qua', 'qui', 'sex', 'sab'], '18h às 22h', 500]);
+verificar('horários: tela com nome, curso, turma e resposta', [$tela['nome'], $tela['curso']['nome'], $tela['turma_inicio'], $tela['resposta']['horarios'], $tela['resposta']['turma_serve']],
+    ['Maria', 'Curso X', '2026-10-21', ['seg-noite', 'qua-noite', 'sab-manha'], 'nao']);
+verificar('horários: tela com opções, atalhos e limite do recado', [array_keys($tela['opcoes']['dias']), $tela['opcoes']['horas']['noite'], $tela['opcoes']['observacao_max'],
+    array_column($tela['opcoes']['atalhos'], 'chave'), $tela['opcoes']['atalhos'][1]['horarios']],
+    [['seg', 'ter', 'qua', 'qui', 'sex', 'sab'], '18h às 22h', 500, ['noites', 'sabado', 'manhas', 'tardes'], ['sab-manha', 'sab-tarde']]);
+verificar('horários: atalhos só com combinações válidas', array_values(array_filter(array_merge(...array_column($tela['opcoes']['atalhos'], 'horarios')),
+    static fn(string $x): bool => !in_array($x, mcp_horarios_slots(), true))), []);
 verificar('horários: tela sem turma quando a escola não matriculou', [mcp_horarios_para_tela($semTurma, null)['turma_inicio'], mcp_horarios_para_tela(['escola_acesso' => null] + $inscricao, null)['turma_inicio']], [null, null]);
 $telaJson = json_encode(mcp_horarios_para_tela($inscricao, null));
 verificar('horários: tela sem cpf, e-mail nem telefone', str_contains($telaJson, '52998224725') || str_contains($telaJson, 'maria@exemplo.org') || str_contains($telaJson, '21999998888'), false);
 
 $mapa = mcp_horarios_mapa([
-    ['dias' => ['seg', 'qua'], 'periodos' => ['noite'], 'inicio' => 'proxima', 'turma_serve' => 'sim'],
-    ['dias' => ['qua'], 'periodos' => ['manha', 'noite'], 'inicio' => '1mes', 'turma_serve' => 'nao'],
-    ['dias' => ['sab'], 'periodos' => ['manha'], 'inicio' => 'proxima', 'turma_serve' => null],
+    ['horarios' => ['seg-noite', 'qua-noite'], 'inicio' => 'proxima', 'turma_serve' => 'sim'],
+    ['horarios' => ['qua-manha', 'qua-noite'], 'inicio' => '1mes', 'turma_serve' => 'nao'],
+    ['horarios' => ['sab-manha'], 'inicio' => 'proxima', 'turma_serve' => null],
 ]);
-verificar('horários: mapa conta cada dia e período marcado', [$mapa['grade']['noite']['qua'], $mapa['grade']['noite']['seg'], $mapa['grade']['manha']['qua'],
-    $mapa['grade']['manha']['sab'], $mapa['grade']['tarde']['qua'], $mapa['grade']['noite']['sab']], [2, 1, 1, 1, 0, 0]);
+verificar('horários: mapa conta exatamente cada horário marcado', [$mapa['grade']['noite']['qua'], $mapa['grade']['noite']['seg'], $mapa['grade']['manha']['qua'],
+    $mapa['grade']['manha']['sab'], $mapa['grade']['tarde']['qua'], $mapa['grade']['noite']['sab'], $mapa['grade']['manha']['seg']], [2, 1, 1, 1, 0, 0, 0]);
 verificar('horários: mapa máximo, começo, data serve e total', [$mapa['maximo'], $mapa['inicio'], $mapa['turma'], $mapa['total']],
     [2, ['proxima' => 2, '1mes' => 1, '2meses' => 0], ['sim' => 1, 'nao' => 1], 3]);
 verificar('horários: mapa vazio', [mcp_horarios_mapa([])['maximo'], mcp_horarios_mapa([])['total']], [0, 0]);
@@ -410,15 +424,16 @@ rewind($fcsv);
 $cabecalho = fgetcsv($fcsv, null, ';', '"', '');
 $linhaCsv = fgetcsv($fcsv, null, ';', '"', '');
 fclose($fcsv);
-verificar('horários: planilha com BOM e 11 colunas', [str_starts_with($csv, "\xEF\xBB\xBF"), count($cabecalho), count($linhaCsv), $cabecalho[0], $cabecalho[9]],
-    [true, 11, 11, 'Respondido em (Brasília)', 'A data da turma serve?']);
-verificar('horários: planilha com os valores por extenso', $linhaCsv, ['29/09/2026 12:30', "'=HYPERLINK(\"http://x\")", 'maria@exemplo.org', '(21) 99999-8888', 'Curso X',
-    '21/10/2026', 'Segunda, Quarta, Sábado', 'Noite', 'Já na próxima turma', 'Não, prefiro outra data', "Prefiro sábado; \"de manhã\"\nobrigado"]);
+verificar('horários: planilha com BOM, 10 colunas e uma por horário', [str_starts_with($csv, "\xEF\xBB\xBF"), count($cabecalho), count($linhaCsv), $cabecalho[0], $cabecalho[10], $cabecalho[27]],
+    [true, 28, 28, 'Respondido em (Brasília)', 'Seg manhã', 'Sáb noite']);
+verificar('horários: planilha com os valores por extenso', array_slice($linhaCsv, 0, 10), ['29/09/2026 12:30', "'=HYPERLINK(\"http://x\")", 'maria@exemplo.org', '(21) 99999-8888', 'Curso X',
+    '21/10/2026', 'Seg e Qua à noite; Sáb de manhã', 'Já na próxima turma', 'Não, preciso de outra data', "Prefiro sábado; \"de manhã\"\nobrigado"]);
+verificar('horários: planilha marca x nos horários', [$linhaCsv[10 + 2], $linhaCsv[10 + 8], $linhaCsv[10 + 15], $linhaCsv[10 + 0]], ['x', 'x', 'x', '']);
 
 $avisoHorarios = mcp_montar_email_horarios($inscricao, $preferencia);
 verificar('horários: aviso à secretaria assunto', $avisoHorarios['assunto'], 'Horários: Maria da Silva — Curso X');
-verificar('horários: aviso com dias, períodos, turma e comentário escapado', str_contains($avisoHorarios['html'], 'Segunda, Quarta, Sábado') && str_contains($avisoHorarios['html'], 'Noite (18h às 22h)')
-    && str_contains($avisoHorarios['html'], 'começa em 21/10/2026') && str_contains($avisoHorarios['html'], 'Não, prefiro outra data')
+verificar('horários: aviso com horários, turma e recado escapado', str_contains($avisoHorarios['html'], 'Seg e Qua à noite; Sáb de manhã')
+    && str_contains($avisoHorarios['html'], 'começa em 21/10/2026') && str_contains($avisoHorarios['html'], 'Não, preciso de outra data')
     && str_contains($avisoHorarios['html'], '&lt;b&gt;Só&lt;/b&gt;') && !str_contains($avisoHorarios['html'], '<b>Só</b>'), true);
 verificar('horários: aviso leva ao mapa do curso no painel', str_contains($avisoHorarios['texto'], 'https://exemplo.org/matricula-cursos-presenciais/api/painel.php?v=horarios&curso=' . rawurlencode($primeiro))
     && str_contains($avisoHorarios['html'], 'Ver o mapa do curso no painel'), true);
@@ -426,11 +441,150 @@ verificar('horários: aviso sem whatsapp', stripos($avisoHorarios['html'] . $avi
 $emailA = mcp_montar_email_aluno_pago($inscricao);
 $emailB = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
 $emailSemTurma = mcp_montar_email_aluno_pago($semTurma);
-verificar('horários: e-mail pago A convida para o questionário', str_contains($emailA['html'], 'Quais dias e horários são melhores para você?') && str_contains($emailA['html'], $urlHorarios)
-    && str_contains($emailA['texto'], $urlHorarios), true);
-verificar('horários: e-mail com turma fala da data', str_contains($emailA['html'], 'se a data da sua turma não servir'), true);
-verificar('horários: e-mail sem turma não fala de data', str_contains($emailSemTurma['html'], $urlHorarios) && !str_contains($emailSemTurma['html'], 'data da sua turma'), true);
-verificar('horários: e-mail pago B convida para o questionário', str_contains($emailB['html'], $urlHorarios) && str_contains($emailB['texto'], $urlHorarios), true);
+verificar('horários: e-mail pago A traz o quadro "Falta 1 passo"', str_contains($emailA['html'], 'Falta 1 passo') && str_contains($emailA['html'], 'Quando você pode fazer as aulas?')
+    && str_contains($emailA['html'], $urlHorarios) && str_contains($emailA['texto'], $urlHorarios), true);
+verificar('horários: no A o quadro vem antes dos próximos passos e o botão é contornado', strpos($emailA['html'], 'Falta 1 passo') < strpos($emailA['html'], 'Próximos passos')
+    && str_contains($emailA['html'], 'bgcolor="#ffffff" style="border-radius:999px;background:#ffffff;border:1.5px solid #cc0000"><a href="' . $urlHorarios), true);
+verificar('horários: e-mail com turma fala da data', str_contains($emailA['html'], 'se a da sua turma não servir'), true);
+verificar('horários: e-mail sem turma não fala de data', str_contains($emailSemTurma['html'], $urlHorarios) && !str_contains($emailSemTurma['html'], 'da sua turma não servir'), true);
+verificar('horários: no B o quadro vem logo depois do valor, com botão cheio', strpos($emailB['html'], 'Falta 1 passo') < strpos($emailB['html'], 'Próximos passos')
+    && str_contains($emailB['html'], 'bgcolor="#cc0000" style="border-radius:999px;background:#cc0000;border:1.5px solid #cc0000"><a href="' . $urlHorarios)
+    && str_contains($emailB['texto'], $urlHorarios), true);
+
+// Lembretes: 24 h e 72 h depois do pagamento, no máximo dois, com 48 h entre eles.
+$pagoEm = '2026-10-01 12:00:00';
+$t0 = (int) strtotime($pagoEm . ' UTC');
+verificar('lembrete: quando cabe cada um', [
+    mcp_horarios_lembrete_devido($pagoEm, 0, null, $t0 + 23 * 3600),
+    mcp_horarios_lembrete_devido($pagoEm, 0, null, $t0 + 24 * 3600),
+    mcp_horarios_lembrete_devido($pagoEm, 1, '2026-10-02 12:00:00', $t0 + 71 * 3600),
+    mcp_horarios_lembrete_devido($pagoEm, 1, '2026-10-02 12:00:00', $t0 + 72 * 3600),
+    mcp_horarios_lembrete_devido($pagoEm, 1, '2026-10-03 20:00:00', $t0 + 72 * 3600),
+    mcp_horarios_lembrete_devido($pagoEm, 2, '2026-10-04 12:00:00', $t0 + 30 * 86400),
+], [0, 1, 0, 2, 0, 0]);
+$lembrete1 = mcp_montar_email_lembrete_horarios($inscricao, 1);
+$lembrete2 = mcp_montar_email_lembrete_horarios($semTurma, 2);
+verificar('lembrete: assuntos', [$lembrete1['assunto'], $lembrete2['assunto']],
+    ['Falta 1 passo: quando você pode fazer as aulas de Curso X?', 'Ainda dá tempo: seus horários para Curso X']);
+verificar('lembrete: link com utm e botão', str_contains($lembrete1['html'], $urlHorarios . '&amp;utm_source=email&amp;utm_medium=transacional&amp;utm_campaign=lembrete-horarios-1')
+    && str_contains($lembrete1['html'], 'Escolher meus horários') && str_contains($lembrete1['texto'], $urlHorarios . '&utm_source=email'), true);
+verificar('lembrete: com turma cita a data, sem turma não', str_contains($lembrete1['html'], '21/10/2026') && !str_contains($lembrete2['html'], 'Sua turma começa'), true);
+verificar('lembrete: texto puro sem tag nem entidade', !preg_match('/<|&[a-z]+;/', $lembrete1['texto'] . $lembrete2['texto']), true);
+verificar('lembrete: sem whatsapp', stripos($lembrete1['html'] . $lembrete2['html'], 'whatsapp'), false);
+
+// Portal da secretaria (lib/secretaria.php): situação na escola, filtros, busca, histórico e planilha.
+$comEscola = static fn(array $acesso, string $status = 'ok'): array => ['escola_status' => $status, 'escola_acesso' => json_encode($acesso)] + $inscricao;
+$situacoes = [
+    'matriculado' => $inscricao,
+    'sem_turma' => $semTurma,
+    'taxa' => $comEscola(['resultado' => 'matriculado', 'turma_inicio' => '2026-10-21', 'aviso' => 'taxa_ja_confirmada']),
+    'recusado' => $comEscola(['erro' => 'email_em_uso'], 'erro'),
+    'recusa_nova' => $comEscola(['erro' => 'motivo_novo'], 'erro'),
+    'falha' => ['escola_status' => 'erro', 'escola_acesso' => null] + $inscricao,
+    'andamento' => ['escola_status' => 'pendente', 'escola_acesso' => null] + $inscricao,
+    'antes' => ['escola_status' => 'nao_aplicavel', 'escola_acesso' => null] + $inscricao,
+    'pendente' => ['status' => 'pendente', 'pago_em' => null] + $inscricao,
+];
+verificar('secretaria: situação na escola', array_map('mcp_secretaria_escola', $situacoes), [
+    'matriculado' => ['rotulo' => 'Matriculado · turma de 21/10/2026', 'tom' => 'ok'],
+    'sem_turma' => ['rotulo' => 'Sem turma aberta', 'tom' => 'alerta'],
+    'taxa' => ['rotulo' => 'Taxa já estava paga na escola', 'tom' => 'alerta'],
+    'recusado' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
+    'recusa_nova' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
+    'falha' => ['rotulo' => 'Falha na integração', 'tom' => 'erro'],
+    'andamento' => ['rotulo' => 'Matrícula em andamento', 'tom' => 'neutro'],
+    'antes' => ['rotulo' => 'Sem integração na época', 'tom' => 'neutro'],
+    'pendente' => ['rotulo' => '—', 'tom' => 'neutro'],
+]);
+verificar('secretaria: conta do aluno na escola', [mcp_secretaria_escola_conta($inscricao), mcp_secretaria_escola_conta($situacoes['recusado']),
+    mcp_secretaria_escola_conta($comEscola(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => true])),
+    mcp_secretaria_escola_conta($comEscola(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => false, 'email_conta' => 'm***@exemplo.org']))],
+    ['Conta criada pelo site, com o e-mail da inscrição', null, 'O aluno já tinha conta na escola, com o mesmo e-mail', 'O aluno já tinha conta na escola, com outro e-mail: m***@exemplo.org']);
+verificar('secretaria: precisa de atenção só quando pago com pendência na escola', array_map('mcp_secretaria_precisa_atencao', $situacoes),
+    ['matriculado' => false, 'sem_turma' => true, 'taxa' => true, 'recusado' => true, 'recusa_nova' => true, 'falha' => true, 'andamento' => false, 'antes' => false, 'pendente' => false]);
+$orientacoes = array_map('mcp_secretaria_escola_orientacao', $situacoes);
+verificar('secretaria: orientação diz o que fazer', [
+    str_starts_with($orientacoes['matriculado'], 'Nada a fazer'), str_contains($orientacoes['sem_turma'], 'quando abrir turma'),
+    str_contains($orientacoes['taxa'], 'estorno'), str_contains($orientacoes['recusado'], 'o e-mail já está em outra conta da escola, com outro CPF'),
+    str_contains($orientacoes['recusa_nova'], 'motivo_novo'), str_contains($orientacoes['falha'], 'problema técnico'), str_contains($orientacoes['antes'], '28/09/2026'),
+], [true, true, true, true, true, true, true]);
+// O filtro "Precisam de atenção" no banco tem de achar o mesmo que a regra em PHP: o JSON gravado pela escola casa com o LIKE.
+$casaAtencao = static function (array $i): bool {
+    $acesso = (string) $i['escola_acesso'];
+    return $i['status'] === 'pago' && ($i['escola_status'] === 'erro' || str_contains($acesso, '"resultado":"sem_turma"') || str_contains($acesso, '"aviso":"taxa_ja_confirmada"'));
+};
+verificar('secretaria: condição SQL espelha a regra em PHP', array_map($casaAtencao, $situacoes), array_map('mcp_secretaria_precisa_atencao', $situacoes));
+verificar('secretaria: condição de cada filtro', array_map('mcp_secretaria_condicao', array_keys(MCP_SECRETARIA_FILTROS)), [
+    "i.status = 'pago'",
+    "i.status = 'pago' AND (i.escola_status = 'erro' OR i.escola_acesso LIKE '%\"resultado\":\"sem_turma\"%' OR i.escola_acesso LIKE '%\"aviso\":\"taxa_ja_confirmada\"%')",
+    "i.status = 'pago' AND p.inscricao_id IS NULL", "i.status = 'pendente'", '1 = 1',
+]);
+verificar('secretaria: filtro desconhecido não filtra', mcp_secretaria_condicao('<x>'), '1 = 1');
+verificar('secretaria: busca por nome ou e-mail, com curso', mcp_secretaria_where('pagas', 'curso-x', ' Maria '),
+    ["i.status = 'pago' AND i.curso_slug = ? AND (i.nome LIKE ? OR i.email LIKE ?)", ['curso-x', '%Maria%', '%Maria%']]);
+verificar('secretaria: busca escapa curinga do LIKE', mcp_secretaria_where('todas', null, '50%_a\\b')[1], ['%50\\%\\_a\\\\b%', '%50\\%\\_a\\\\b%']);
+verificar('secretaria: busca por telefone com 4 dígitos ou mais', mcp_secretaria_where('todas', null, '(21) 9999')[1], ['%(21) 9999%', '%(21) 9999%', '%219999%']);
+verificar('secretaria: busca por CPF só com 11 dígitos', [mcp_secretaria_where('todas', null, '529.982.247-25'), mcp_secretaria_where('todas', '', '')],
+    [["1 = 1 AND (i.nome LIKE ? OR i.email LIKE ? OR i.telefone LIKE ? OR i.cpf = ?)", ['%529.982.247-25%', '%529.982.247-25%', '%52998224725%', '52998224725']], ['1 = 1', []]]);
+verificar('secretaria: histórico em linguagem da secretaria', [
+    mcp_secretaria_evento('cobranca_criada', 'pix · waiting_payment · R$ 103,95'),
+    mcp_secretaria_evento('pago', null),
+    mcp_secretaria_evento('escola_ok', 'tentativa 1 · matriculado'),
+    mcp_secretaria_evento('escola_ok', 'tentativa 2 · sem_turma · repetido'),
+    mcp_secretaria_evento('escola_ok', 'tentativa 1 · matriculado · taxa_ja_confirmada'),
+    mcp_secretaria_evento('escola_erro', 'tentativa 1 · HTTP 200 · email_em_uso'),
+    mcp_secretaria_evento('escola_erro', 'tentativa 3 · HTTP 503'),
+    mcp_secretaria_evento('email_aluno', 'acesso · resend · com comprovante PDF'),
+    mcp_secretaria_evento('email_aluno', 'b · falhou · sem comprovante PDF'),
+    mcp_secretaria_evento('email_secretaria', 'falhou'),
+    mcp_secretaria_evento('lembrete_horarios', '#1 resend'),
+    mcp_secretaria_evento('lembrete_horarios', '#2 manual ana@exemplo.org · resend'),
+], [
+    'Cobrança criada: PIX, R$ 103,95', 'Pagamento confirmado', 'Escola: matrícula feita', 'Escola: conta pronta, mas sem turma aberta (confirmação repetida)',
+    'Escola: matrícula feita (a taxa já estava confirmada)', 'Escola: a matrícula não foi feita (o e-mail já está em outra conta da escola, com outro CPF)',
+    'Escola: a matrícula não foi feita (HTTP 503)', 'E-mail de inscrição paga enviado ao aluno, com o comprovante em PDF',
+    'E-mail de inscrição paga enviado ao aluno (o envio falhou)', 'Aviso de inscrição paga enviado à secretaria (o envio falhou)',
+    'Lembrete de horários enviado ao aluno', 'Lembrete de horários enviado ao aluno, à mão, por ana@exemplo.org',
+]);
+verificar('secretaria: histórico esconde IP e o que é técnico', [mcp_secretaria_evento('horarios', '10.0.0.1'), mcp_secretaria_evento('armadilha', '10.0.0.1'),
+    mcp_secretaria_evento('painel_lembrete', '#1 · a@b.co · enviado'), mcp_secretaria_evento('limite', 'ip · 5 em 60s')], ['O aluno salvou os horários', null, null, null]);
+$linhaPortal = ['preferencia' => ['horarios' => ['seg-noite', 'sab-manha'], 'inicio' => 'proxima', 'observacao' => '=HYPERLINK("http://x")'], 'lembretes' => 0, 'lembrete_em' => null] + $inscricao;
+$csvPortal = mcp_secretaria_csv([$linhaPortal, ['preferencia' => null, 'nome' => 'João', 'telefone' => '', 'status' => 'pendente', 'metodo' => 'pix', 'pago_em' => null] + $linhaPortal,
+    ['preferencia' => null, 'nome' => 'Rita'] + $semTurma]);
+$linhasPortal = array_map(static fn(string $l): array => str_getcsv($l, ';', '"', ''), explode("\n", trim(substr($csvPortal, 3))));
+verificar('secretaria: planilha com BOM e 12 colunas', [str_starts_with($csvPortal, "\xEF\xBB\xBF"), count($linhasPortal), array_unique(array_map('count', $linhasPortal))], [true, 4, [12]]);
+verificar('secretaria: planilha da inscrição paga', $linhasPortal[1],
+    ['17/09/2026 21:01', 'Paga', 'Maria da Silva', 'maria@exemplo.org', '(21) 99999-8888', 'Curso X', 'R$ 103,95', 'Cartão', 'Matriculado · turma de 21/10/2026', 'Seg à noite; Sáb de manhã', 'Já na próxima turma', "'=HYPERLINK(\"http://x\")"]);
+verificar('secretaria: planilha de pendente e de quem não respondeu', [$linhasPortal[2][1], $linhasPortal[2][7], $linhasPortal[2][8], $linhasPortal[2][9], $linhasPortal[3][8], $linhasPortal[3][9]],
+    ['Aguardando pagamento', 'PIX', '—', '', 'Sem turma aberta', 'não respondeu']);
+verificar('secretaria: planilha sem CPF', [str_contains($csvPortal, '52998224725'), str_contains($csvPortal, '529.982.247-25'), str_contains($csvPortal, 'CPF')], [false, false, false]);
+
+// Leitura pelo painel da escola (api/escola-horarios.php): chave, formato e nada de CPF.
+$chaveEscola = str_repeat('k', 40);
+verificar('escola-horários: chave certa', mcp_horarios_escola_autorizado("Bearer $chaveEscola"), true);
+verificar('escola-horários: chaves recusadas', [
+    mcp_horarios_escola_autorizado(''), mcp_horarios_escola_autorizado($chaveEscola), mcp_horarios_escola_autorizado('Bearer ' . str_repeat('k', 39)),
+    mcp_horarios_escola_autorizado("Basic $chaveEscola"), mcp_horarios_escola_autorizado("Bearer $chaveEscola extra"),
+], [false, false, false, false, false]);
+verificar('escola-horários: data ISO', [mcp_horarios_iso('2026-09-29 15:30:00'), mcp_horarios_iso(null), mcp_horarios_iso('29/09/2026')], ['2026-09-29T15:30:00Z', null, null]);
+// Mesmo formato de mcp_horarios_listar: p.* (inscricao_id, sem id) com os campos da inscrição.
+$respostaEscola = mcp_horarios_linha(['inscricao_id' => 1, 'horarios' => 'seg-noite,sab-manha', 'inicio' => 'proxima', 'turma_serve' => 'nao', 'observacao' => '',
+    'vezes' => 2, 'atualizado_em' => '2026-09-29 15:30:00'] + array_intersect_key($inscricao, array_flip(['curso_slug', 'nome', 'email', 'telefone', 'curso_nome', 'escola_acesso', 'pago_em'])));
+$paraEscola = mcp_horarios_para_escola([$respostaEscola], [['nome' => 'Rita', 'id' => 7, 'telefone' => '(21) 98888-7777'] + $semTurma], '2026-09-29 16:00:00');
+verificar('escola-horários: resposta', $paraEscola['respostas'][0], [
+    'inscricao_id' => 1, 'curso_slug' => $primeiro, 'curso_id' => mcp_curso($primeiro)['uuid'], 'curso_nome' => 'Curso X',
+    'nome' => 'Maria da Silva', 'email' => 'maria@exemplo.org', 'telefone' => '21999998888', 'pago_em' => '2026-09-18T00:01:00Z',
+    'matricula_id' => 'm-1', 'turma_inicio' => '2026-10-21', 'horarios' => ['seg-noite', 'sab-manha'], 'inicio' => 'proxima',
+    'turma_serve' => 'nao', 'observacao' => null, 'vezes' => 2, 'respondido_em' => '2026-09-29T15:30:00Z',
+]);
+verificar('escola-horários: quem falta, sem turma', [$paraEscola['sem_resposta'][0]['nome'], $paraEscola['sem_resposta'][0]['telefone'],
+    $paraEscola['sem_resposta'][0]['turma_inicio'], $paraEscola['sem_resposta'][0]['matricula_id'], array_key_exists('horarios', $paraEscola['sem_resposta'][0])],
+    ['Rita', '21988887777', null, null, false]);
+verificar('escola-horários: cabeçalho e rótulos', [$paraEscola['ok'], $paraEscola['gerado_em'], array_keys($paraEscola['rotulos']), $paraEscola['rotulos']['periodos']['noite']],
+    [true, '2026-09-29T16:00:00Z', ['dias', 'dias_curtos', 'periodos', 'horas', 'inicio', 'turma'], 'Noite']);
+$jsonEscola = json_encode($paraEscola);
+verificar('escola-horários: nunca CPF, hash, IP ou token', [str_contains($jsonEscola, '52998224725'), str_contains($jsonEscola, 'h4sh'),
+    str_contains($jsonEscola, '10.0.0.1'), str_contains($jsonEscola, $token), str_contains($jsonEscola, str_repeat('ab', 32))], [false, false, false, false, false]);
 
 unlink($configTeste);
 unlink($configEscola);
