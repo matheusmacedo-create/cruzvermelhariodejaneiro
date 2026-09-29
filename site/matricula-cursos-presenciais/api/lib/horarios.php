@@ -447,3 +447,83 @@ function mcp_horarios_enviar_lembretes(int $limite = 50, ?int $agora = null): ar
     }
     return $r;
 }
+
+// ----------------------------------------------------------------------------- plataforma da escola
+/**
+ * O painel da secretaria da escola (escola.cursoscruzvermelha.org, aba "Horários") lê as respostas
+ * daqui, servidor a servidor, por api/escola-horarios.php. A chave é ESCOLA_HORARIOS_TOKEN, em
+ * api/config-escola.php (só no servidor); a mesma vai na variável SITE_HORARIOS_TOKEN da escola.
+ * Sem a chave configurada, o endereço responde 404.
+ */
+const MCP_HORARIOS_ESCOLA_TOKEN_MIN = 32;
+const MCP_HORARIOS_ESCOLA_FALHAS = [20, 3600];
+
+function mcp_horarios_escola_configurado(): bool
+{
+    return strlen((string) mcp_cfg('ESCOLA_HORARIOS_TOKEN', '')) >= MCP_HORARIOS_ESCOLA_TOKEN_MIN;
+}
+
+/** Confere o cabeçalho "Authorization: Bearer <chave>" em tempo constante. */
+function mcp_horarios_escola_autorizado(string $cabecalho): bool
+{
+    if (!mcp_horarios_escola_configurado() || !preg_match('/^Bearer\s+(\S+)$/', trim($cabecalho), $m)) {
+        return false;
+    }
+    return hash_equals(hash('sha256', (string) mcp_cfg('ESCOLA_HORARIOS_TOKEN')), hash('sha256', $m[1]));
+}
+
+/** 'AAAA-MM-DD HH:MM:SS' (UTC, como o banco guarda) em ISO 8601, ou null. */
+function mcp_horarios_iso(?string $utc): ?string
+{
+    return is_string($utc) && preg_match('/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$/', $utc, $m) ? "$m[1]T$m[2]Z" : null;
+}
+
+/** Quem pagou e ainda não respondeu, mais antigo primeiro. */
+function mcp_horarios_sem_resposta(int $limite = 1000): array
+{
+    return mcp_db()->query("SELECT i.* FROM mcp_inscricoes i LEFT JOIN mcp_preferencias p ON p.inscricao_id = i.id
+        WHERE i.status = 'pago' AND p.inscricao_id IS NULL ORDER BY i.pago_em LIMIT " . max(1, $limite))->fetchAll();
+}
+
+/**
+ * O que a escola recebe: as respostas, quem falta responder e os rótulos, para o painel dela montar
+ * as mesmas telas daqui. Nunca vai CPF (a escola acha o aluno pelo e-mail ou pela matrícula).
+ * O curso vai também pelo uuid do catálogo, que é o id do curso no banco da escola.
+ */
+function mcp_horarios_para_escola(array $respostas, array $semResposta, ?string $agora = null): array
+{
+    $uuid = static fn(string $slug): ?string => is_string(mcp_curso($slug)['uuid'] ?? null) ? mcp_curso($slug)['uuid'] : null;
+    $aluno = static function (array $l) use ($uuid): array {
+        $acesso = mcp_escola_acesso($l);
+        return [
+            // Respostas vêm de mcp_horarios_listar (p.*: inscricao_id); quem falta, de mcp_inscricoes (i.*: id).
+            'inscricao_id' => (int) ($l['inscricao_id'] ?? $l['id']),
+            'curso_slug' => (string) $l['curso_slug'],
+            'curso_id' => $uuid((string) $l['curso_slug']),
+            'curso_nome' => (string) $l['curso_nome'],
+            'nome' => (string) $l['nome'],
+            'email' => (string) $l['email'],
+            'telefone' => mcp_digitos((string) $l['telefone']),
+            'pago_em' => mcp_horarios_iso($l['pago_em'] ?? null),
+            'matricula_id' => is_string($acesso['matricula_id'] ?? null) ? $acesso['matricula_id'] : null,
+            'turma_inicio' => mcp_horarios_turma($l),
+        ];
+    };
+    return [
+        'ok' => true,
+        'gerado_em' => mcp_horarios_iso($agora ?? mcp_agora()),
+        'rotulos' => [
+            'dias' => MCP_HORARIOS_DIAS, 'dias_curtos' => MCP_HORARIOS_DIAS_CURTOS, 'periodos' => MCP_HORARIOS_PERIODOS,
+            'horas' => MCP_HORARIOS_PERIODOS_HORAS, 'inicio' => MCP_HORARIOS_INICIO, 'turma' => MCP_HORARIOS_TURMA,
+        ],
+        'respostas' => array_map(static fn(array $l): array => $aluno($l) + [
+            'horarios' => $l['horarios'],
+            'inicio' => (string) $l['inicio'],
+            'turma_serve' => $l['turma_serve'] !== null && $l['turma_serve'] !== '' ? (string) $l['turma_serve'] : null,
+            'observacao' => $l['observacao'] !== null && $l['observacao'] !== '' ? (string) $l['observacao'] : null,
+            'vezes' => (int) $l['vezes'],
+            'respondido_em' => mcp_horarios_iso($l['atualizado_em'] ?? null),
+        ], $respostas),
+        'sem_resposta' => array_map($aluno, $semResposta),
+    ];
+}

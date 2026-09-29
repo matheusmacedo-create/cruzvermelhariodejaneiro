@@ -97,12 +97,50 @@ da secretaria do site (`api/painel.php?v=horarios`). Veja a seção "Questionár
 A fase 2 leva a mesma pergunta para dentro da plataforma da escola: na área do aluno e no painel da
 secretaria, com as respostas guardadas no banco da escola.
 
-### Por que ainda não
+### Primeiro passo, no ar a partir de 29/09/2026: a secretaria vê os horários no painel da escola
 
-A plataforma da escola é um app Express, EJS e Prisma no Render, e o código dela não está em nenhum
-repositório a que temos acesso. Sem ele, não dá para criar uma página na área do aluno nem uma tela no
-painel da secretaria. A chave que o site usa no banco só executa `matricula_rapida`, de propósito, e
-continua assim.
+Com acesso ao código da escola ([matheusnsp/ESCOLA_CRUZ_VERMELHA](https://github.com/matheusnsp/ESCOLA_CRUZ_VERMELHA)),
+o painel da secretaria ganhou a aba **Horários** (`/horarios`). Ela mostra, por curso:
+
+- o mapa;
+- os horários mais pedidos, o começo e se a data da turma serve;
+- as próximas turmas abertas ou confirmadas do curso, com os dias e horários das aulas (`AulaData`);
+- quem pagou e ainda não respondeu;
+- a lista das respostas;
+- a planilha.
+
+O nome do aluno abre a ficha dele na escola, quando o e-mail bate com uma conta de aluno.
+
+As respostas continuam guardadas só no site. A escola lê por `api/escola-horarios.php`, servidor a servidor:
+
+| | Site | Escola |
+|---|---|---|
+| Chave | `ESCOLA_HORARIOS_TOKEN` em `api/config-escola.php` | `SITE_HORARIOS_TOKEN` (variável no Render) |
+| Endereço | `api/escola-horarios.php` | `SITE_HORARIOS_URL` (opcional; o padrão é o endereço do site) |
+
+- Sem a chave, o endereço responde 404. Com a chave errada, 401, e cada IP pode errar até 20 vezes por hora.
+- O que sai: as respostas e quem falta, com nome, e-mail, telefone, curso (com o `uuid` da escola),
+  a turma e a matrícula da escola, se houver. **Nunca sai CPF.**
+- A escola guarda o que leu por 1 minuto, e o botão "Atualizar" lê de novo.
+- Nenhuma tabela nova, nenhuma migração e nenhuma permissão nova no banco da escola.
+
+**Para ligar:**
+1. gerar a chave: `openssl rand -hex 24`;
+2. pôr a chave no `api/config-escola.php` do site: `'ESCOLA_HORARIOS_TOKEN' => '…'`;
+3. publicar `api/escola-horarios.php`, `api/lib/horarios.php` e `api/.htaccess`;
+4. no Render, pôr a mesma chave em `SITE_HORARIOS_TOKEN` no serviço da escola e publicar.
+
+O que continua para depois: o questionário dentro da área do aluno da escola e as respostas guardadas
+no banco dela. É o resto desta seção.
+
+### Por que o resto ainda não
+
+A plataforma da escola é um app Express, EJS e Prisma no Render. O código já está acessível, mas guardar
+as respostas no banco da escola pede uma tabela nova. As migrações do Prisma da escola param em
+julho de 2026, e o banco já tem tabelas e colunas criadas fora delas (`AulaData`, `Avaliacao`, `lembreteImediatoEm`…).
+Uma migração nova precisa antes alinhar esse histórico, senão o Prisma vê a diferença ("drift"). Isso
+pede combinar com quem mantém a escola. A chave que o site usa no banco só executa `matricula_rapida`,
+de propósito, e continua assim.
 
 ### O que é preciso
 
