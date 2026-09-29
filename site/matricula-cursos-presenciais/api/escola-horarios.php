@@ -1,7 +1,7 @@
 <?php
 /**
  * Respostas do questionário de dias e horários para o painel da secretaria da escola (aba "Horários").
- *   GET, com "Authorization: Bearer <ESCOLA_HORARIOS_TOKEN>"  →  JSON de mcp_horarios_para_escola().
+ *   GET, com "Authorization: Bearer <SITE_HORARIOS_TOKEN>"  →  JSON de mcp_horarios_para_escola().
  * Servidor a servidor: sem a chave configurada responde 404; chave errada, 401, e cada IP tem até
  * 20 erros por hora. Nunca devolve CPF.
  */

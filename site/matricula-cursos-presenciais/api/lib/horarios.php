@@ -451,16 +451,22 @@ function mcp_horarios_enviar_lembretes(int $limite = 50, ?int $agora = null): ar
 // ----------------------------------------------------------------------------- plataforma da escola
 /**
  * O painel da secretaria da escola (escola.cursoscruzvermelha.org, aba "Horários") lê as respostas
- * daqui, servidor a servidor, por api/escola-horarios.php. A chave é ESCOLA_HORARIOS_TOKEN, em
- * api/config-escola.php (só no servidor); a mesma vai na variável SITE_HORARIOS_TOKEN da escola.
+ * daqui, servidor a servidor, por api/escola-horarios.php. A chave é SITE_HORARIOS_TOKEN, em
+ * api/config-escola.php (só no servidor); o mesmo nome e o mesmo valor vão na variável da escola
+ * (Render). ESCOLA_HORARIOS_TOKEN, o nome antigo, ainda vale.
  * Sem a chave configurada, o endereço responde 404.
  */
 const MCP_HORARIOS_ESCOLA_TOKEN_MIN = 32;
 const MCP_HORARIOS_ESCOLA_FALHAS = [20, 3600];
 
+function mcp_horarios_escola_chave(): string
+{
+    return trim((string) mcp_cfg('SITE_HORARIOS_TOKEN', mcp_cfg('ESCOLA_HORARIOS_TOKEN', '')));
+}
+
 function mcp_horarios_escola_configurado(): bool
 {
-    return strlen((string) mcp_cfg('ESCOLA_HORARIOS_TOKEN', '')) >= MCP_HORARIOS_ESCOLA_TOKEN_MIN;
+    return strlen(mcp_horarios_escola_chave()) >= MCP_HORARIOS_ESCOLA_TOKEN_MIN;
 }
 
 /** Confere o cabeçalho "Authorization: Bearer <chave>" em tempo constante. */
@@ -469,7 +475,7 @@ function mcp_horarios_escola_autorizado(string $cabecalho): bool
     if (!mcp_horarios_escola_configurado() || !preg_match('/^Bearer\s+(\S+)$/', trim($cabecalho), $m)) {
         return false;
     }
-    return hash_equals(hash('sha256', (string) mcp_cfg('ESCOLA_HORARIOS_TOKEN')), hash('sha256', $m[1]));
+    return hash_equals(hash('sha256', mcp_horarios_escola_chave()), hash('sha256', $m[1]));
 }
 
 /** 'AAAA-MM-DD HH:MM:SS' (UTC, como o banco guarda) em ISO 8601, ou null. */

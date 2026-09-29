@@ -440,7 +440,7 @@ try {
     $escolaUrl = $base . 'escola-horarios.php';
     verificar('escola: sem chave configurada responde 404', http($escolaUrl)[0], 404);
     $chaveEscola = bin2hex(random_bytes(24));
-    file_put_contents($semEscola, '<?php return [\'ESCOLA_HORARIOS_TOKEN\' => ' . var_export($chaveEscola, true) . '];');
+    file_put_contents($semEscola, '<?php return [\'SITE_HORARIOS_TOKEN\' => ' . var_export($chaveEscola, true) . '];');
     verificar('escola: sem cabeçalho, 401', http($escolaUrl)[0], 401);
     verificar('escola: chave errada, 401', http($escolaUrl, 'GET', null, ['Authorization: Bearer ' . str_repeat('x', 48)])[0], 401);
     verificar('escola: POST recusado', http($escolaUrl, 'POST', '{}', ['Authorization: Bearer ' . $chaveEscola, 'Content-Type: application/json'])[0], 405);
