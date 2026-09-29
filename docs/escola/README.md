@@ -90,8 +90,8 @@ Os dados desse teste podem ser apagados com `limpar_teste.sql`, colando nele o h
 ## Fase 2: o questionário dentro da escola
 
 Desde 29/09/2026 o questionário de dias e horários funciona no site. Depois de pagar a inscrição, o
-aluno responde em `/matricula-cursos-presenciais/horarios/`, e a secretaria vê as respostas no painel
-do site (`api/painel.php?v=horarios`). Veja a seção "Questionário de dias e horários" no
+aluno responde em `/matricula-cursos-presenciais/horarios/`, e a secretaria vê as respostas no portal
+da secretaria do site (`api/painel.php?v=horarios`). Veja a seção "Questionário de dias e horários" no
 [README principal](../../README.md).
 
 A fase 2 leva a mesma pergunta para dentro da plataforma da escola: na área do aluno e no painel da

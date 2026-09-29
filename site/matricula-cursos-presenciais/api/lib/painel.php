@@ -1,6 +1,6 @@
 <?php
 /**
- * Painel da equipe (api/painel.php): segredo guardado no banco, links assinados e sessão por cookie.
+ * Portal da secretaria (api/painel.php): segredo guardado no banco, links assinados e sessão por cookie.
  *
  * Dois jeitos de entrar, sem senha para configurar:
  *  - link direto de UM contato, que vai no aviso à equipe (?c=<id>&e=<validade>&k=<assinatura>), vale

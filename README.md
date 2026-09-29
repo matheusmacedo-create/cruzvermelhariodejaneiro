@@ -302,6 +302,63 @@ sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
   - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
     → cópia da escola).
 
+## Portal da secretaria (29/09/2026)
+
+O antigo painel da equipe (`api/painel.php`) virou o portal da secretaria. O menu no cabeçalho tem
+estas seções:
+
+- **Início:** quatro números que pedem ação, cada um levando à lista dele:
+  - inscrições pagas, com as dos últimos 7 dias;
+  - as que precisam de atenção;
+  - quem pagou e ainda não disse os horários;
+  - mensagens novas do chat.
+
+  Abaixo ficam as últimas inscrições pagas, com a situação na escola, as mensagens recentes e os
+  horários mais pedidos em todos os cursos.
+- **Inscrições** (`?v=inscricoes`):
+  - filtros com a contagem de cada um: Pagas, Precisam de atenção, Sem horários, Aguardando
+    pagamento e Todas. "Precisam de atenção" são as pagas em que a matrícula na escola não foi
+    feita, falhou, ficou sem turma aberta ou encontrou a taxa já paga;
+  - busca por nome, e-mail, telefone (4 dígitos ou mais) ou CPF (11 dígitos), e filtro por curso;
+  - "Baixar planilha": um CSV do que está na tela, **sem CPF**, porque o arquivo costuma circular.
+- **Ficha da inscrição** (`?v=inscricao&id=N`), com estes quadros:
+  - o aluno, com CPF;
+  - o pagamento;
+  - a matrícula na escola: a situação, o que fazer e se a conta foi criada pelo site ou já existia;
+  - os horários;
+  - o histórico, em palavras da secretaria, sem IP nem detalhe técnico.
+
+  Quem pagou e ainda não disse os horários tem o botão **"Mandar lembrete agora"**:
+  - manda o mesmo e-mail dos lembretes automáticos;
+  - sai no máximo um lembrete a cada 24 horas, somando os automáticos;
+  - o histórico registra quem mandou;
+  - usa a mesma trava do cron, então um clique duplo ou a rodada da hora não mandam dois e-mails.
+- **Horários dos alunos** (`?v=horarios`): o mapa e a lista do questionário, como antes. O nome do
+  aluno abre a ficha, e o aviso de quem falta leva à lista "Sem horários".
+- **Mensagens do chat** (`?v=mensagens`): a lista e as respostas de antes. Os endereços antigos
+  (`painel.php?f=…` e `?id=…`) continuam valendo.
+- **Plataforma da escola:** link para `ESCOLA_URL/login`, em outra aba.
+
+Os números no menu são vermelhos quando pedem ação (inscrições com atenção, mensagens novas) e
+cinza para quem ainda não disse os horários. No celular:
+- o menu rola de lado, com sombra na borda quando há mais itens;
+- o menu abre já na seção atual;
+- as tabelas viram cartões.
+
+- **Acesso:** como antes. O link de entrada vai por e-mail para os endereços de `PAINEL_EMAILS` (sem
+  ele, `EMAIL_CONTATO` e `EMAIL_SECRETARIA`), e a sessão dura 12 h.
+- **Código:**
+  - `api/painel.php`: as telas;
+  - `api/lib/secretaria.php`: consultas, situação na escola, histórico, lembrete à mão e planilha.
+- **Testes:**
+  - 18 dos 255 testes de `scripts/testar_checkout.php`;
+  - 29 dos 80 testes de `scripts/testar_horarios_integracao.php`: início, menu, filtros, busca,
+    planilha, ficha e o lembrete à mão com as travas.
+- **Para publicar:** `api/painel.php`, `api/lib.php`, `api/lib/secretaria.php` (novo),
+  `api/lib/horarios.php`, `api/lib/email.php` e `api/lib/painel.php`.
+- **Situação:** pronto e testado localmente, com capturas no computador e no celular. Publicar só
+  com o OK do Matheus.
+
 ## Questionário de dias e horários (29/09/2026)
 
 Depois de pagar a inscrição, o aluno diz quais dias e horários são melhores para ele. A secretaria
@@ -329,13 +386,14 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
     comando; por HTTP responde 404 e o `.htaccess` nega). Só entram pagamentos a partir de
     `HORARIOS_LEMBRETES_DESDE` (padrão 30/09/2026) e dos últimos 14 dias.
 
-  O aluno pode mudar as respostas quando quiser. Vale a última, e o painel mostra quantas vezes ele mudou.
-- **Onde a secretaria vê:** no painel da equipe, aba "Dias e horários dos alunos"
-  (`api/painel.php?v=horarios`). O login é o mesmo link por e-mail do painel de mensagens. Para cada
-  curso, a aba mostra:
+  O aluno pode mudar as respostas quando quiser. Vale a última, e o portal mostra quantas vezes ele mudou.
+- **Onde a secretaria vê:** no portal da secretaria, seção "Horários dos alunos"
+  (`api/painel.php?v=horarios`). O login é o link por e-mail do portal. Para cada curso, a seção
+  mostra:
   - o mapa de quantos alunos podem em cada dia e período, com os horários mais pedidos;
   - quantos podem começar em cada prazo e para quantos a data da turma serve;
-  - quantos pagaram e ainda não responderam;
+  - quantos pagaram e ainda não responderam, com o link para essa lista em Inscrições (de onde sai o
+    lembrete à mão);
   - a lista das respostas, com os contatos;
   - o botão "Baixar planilha": um CSV que abre no Excel e no Google Planilhas, com uma coluna por
     horário ("Seg manhã" … "Sáb noite", marcada com x) para filtrar quem pode em cada um.
@@ -351,14 +409,14 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   - `api/lib/horarios.php`: regras, mapa, planilha e aviso;
   - `api/horarios.php`: a API;
   - `api/lembretes.php`: os lembretes (cron);
-  - `api/painel.php`: a aba da secretaria;
+  - `api/painel.php`: a seção "Horários dos alunos" do portal;
   - `static/checkout.js` e `checkout.css`: a tela;
   - `scripts/gerar_checkout.py`: gera a página;
   - tabela `mcp_preferencias`, com uma linha por inscrição, criada sozinha na primeira chamada.
 - **Testes:**
-  - 42 dos 237 testes de `scripts/testar_checkout.php`;
-  - 51 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
-    painel, planilha e lembretes, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
+  - 42 dos 255 testes de `scripts/testar_checkout.php`;
+  - 80 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
+    portal da secretaria, planilhas e lembretes, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
     `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_horarios_integracao.php`. O
     teste recusa banco que não seja local e apaga no fim o que criou.
 - **Para publicar:**
@@ -379,7 +437,7 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
     inscrição de teste dele.
 - **Pendente:** `EMAIL_SECRETARIA` está vazio no servidor (no teste de 28/09 não saiu o aviso de
   inscrição paga). Sem ele, a secretaria não recebe os avisos de inscrição paga nem os de horários; o
-  painel mostra tudo mesmo assim. Configurar no `api/config.php` do servidor.
+  portal mostra tudo mesmo assim. Configurar no `api/config.php` do servidor.
 - **Dentro da escola (fase 2):** a mesma pergunta na área do aluno da plataforma da escola, quando
   houver acesso ao código dela. O plano e o contrato dos dados estão em
   [`docs/escola/README.md`](docs/escola/README.md#fase-2-o-questionário-dentro-da-escola).

@@ -247,21 +247,6 @@ function mcp_horarios_contar(): array
     return $contagem;
 }
 
-/** Quantos pagaram (desde que o questionário existe) e ainda não responderam; $curso null = todos. */
-function mcp_horarios_faltam(?string $curso): int
-{
-    $sql = "SELECT COUNT(*) FROM mcp_inscricoes i LEFT JOIN mcp_preferencias p ON p.inscricao_id = i.id
-        WHERE i.status = 'pago' AND p.inscricao_id IS NULL AND i.pago_em >= ?";
-    $params = [(string) mcp_cfg('HORARIOS_LEMBRETES_DESDE', MCP_HORARIOS_DESDE_PADRAO)];
-    if ($curso !== null) {
-        $sql .= ' AND i.curso_slug = ?';
-        $params[] = $curso;
-    }
-    $stmt = mcp_db()->prepare($sql);
-    $stmt->execute($params);
-    return (int) $stmt->fetchColumn();
-}
-
 /**
  * Mapa de disponibilidade: para cada período e dia, quantos alunos marcaram aquele horário. Mais a
  * contagem de começo e de "a data serve".

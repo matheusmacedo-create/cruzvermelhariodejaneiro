@@ -263,7 +263,9 @@ verificar('resposta assinatura', str_contains($resp['html'], 'Ana, da equipe de 
 verificar('resposta cita a mensagem original e a matrícula', str_contains($resp['html'], 'Tem turma à noite?') && str_contains($resp['html'], 'checkout/?curso=' . $primeiro), true);
 verificar('resposta sem whatsapp', stripos($resp['html'] . $resp['texto'], 'whatsapp'), false);
 $entrada = mcp_montar_email_painel_link('https://exemplo.org/matricula-cursos-presenciais/api/painel.php?entrar=a%40b.co&e=1&k=abc');
-verificar('link de entrada no e-mail', str_contains($entrada['html'], 'painel.php?entrar=a%40b.co&amp;e=1&amp;k=abc') && str_contains($entrada['html'], 'Entrar no painel'), true);
+verificar('link de entrada no e-mail', str_contains($entrada['html'], 'painel.php?entrar=a%40b.co&amp;e=1&amp;k=abc') && str_contains($entrada['html'], 'Entrar no portal'), true);
+verificar('link de entrada: portal da secretaria no assunto e no topo', [$entrada['assunto'], str_contains($entrada['html'], 'Portal da secretaria'), str_contains($entrada['texto'], 'Entrar no portal da secretaria')],
+    ['Acesso ao portal da secretaria', true, true]);
 verificar('telefone bonito', mcp_telefone_bonito('21999990000') . ' ' . mcp_telefone_bonito('2133334444') . ' ' . mcp_telefone_bonito('123'), '(21) 99999-0000 (21) 3333-4444 123');
 verificar('remetente endereço', mcp_email_endereco('Cruz Vermelha RJ <x@exemplo.org>') . '|' . mcp_email_endereco('y@exemplo.org'), 'x@exemplo.org|y@exemplo.org');
 verificar('remetente nome curto vira nome completo', mcp_email_nome_oficial('Cruz Vermelha RJ <matricula@info.exemplo.org>'), 'Cruz Vermelha Brasileira Rio de Janeiro <matricula@info.exemplo.org>');
@@ -468,6 +470,93 @@ verificar('lembrete: link com utm e botão', str_contains($lembrete1['html'], $u
 verificar('lembrete: com turma cita a data, sem turma não', str_contains($lembrete1['html'], '21/10/2026') && !str_contains($lembrete2['html'], 'Sua turma começa'), true);
 verificar('lembrete: texto puro sem tag nem entidade', !preg_match('/<|&[a-z]+;/', $lembrete1['texto'] . $lembrete2['texto']), true);
 verificar('lembrete: sem whatsapp', stripos($lembrete1['html'] . $lembrete2['html'], 'whatsapp'), false);
+
+// Portal da secretaria (lib/secretaria.php): situação na escola, filtros, busca, histórico e planilha.
+$comEscola = static fn(array $acesso, string $status = 'ok'): array => ['escola_status' => $status, 'escola_acesso' => json_encode($acesso)] + $inscricao;
+$situacoes = [
+    'matriculado' => $inscricao,
+    'sem_turma' => $semTurma,
+    'taxa' => $comEscola(['resultado' => 'matriculado', 'turma_inicio' => '2026-10-21', 'aviso' => 'taxa_ja_confirmada']),
+    'recusado' => $comEscola(['erro' => 'email_em_uso'], 'erro'),
+    'recusa_nova' => $comEscola(['erro' => 'motivo_novo'], 'erro'),
+    'falha' => ['escola_status' => 'erro', 'escola_acesso' => null] + $inscricao,
+    'andamento' => ['escola_status' => 'pendente', 'escola_acesso' => null] + $inscricao,
+    'antes' => ['escola_status' => 'nao_aplicavel', 'escola_acesso' => null] + $inscricao,
+    'pendente' => ['status' => 'pendente', 'pago_em' => null] + $inscricao,
+];
+verificar('secretaria: situação na escola', array_map('mcp_secretaria_escola', $situacoes), [
+    'matriculado' => ['rotulo' => 'Matriculado · turma de 21/10/2026', 'tom' => 'ok'],
+    'sem_turma' => ['rotulo' => 'Sem turma aberta', 'tom' => 'alerta'],
+    'taxa' => ['rotulo' => 'Taxa já estava paga na escola', 'tom' => 'alerta'],
+    'recusado' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
+    'recusa_nova' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
+    'falha' => ['rotulo' => 'Falha na integração', 'tom' => 'erro'],
+    'andamento' => ['rotulo' => 'Matrícula em andamento', 'tom' => 'neutro'],
+    'antes' => ['rotulo' => 'Sem integração na época', 'tom' => 'neutro'],
+    'pendente' => ['rotulo' => '—', 'tom' => 'neutro'],
+]);
+verificar('secretaria: conta do aluno na escola', [mcp_secretaria_escola_conta($inscricao), mcp_secretaria_escola_conta($situacoes['recusado']),
+    mcp_secretaria_escola_conta($comEscola(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => true])),
+    mcp_secretaria_escola_conta($comEscola(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => false, 'email_conta' => 'm***@exemplo.org']))],
+    ['Conta criada pelo site, com o e-mail da inscrição', null, 'O aluno já tinha conta na escola, com o mesmo e-mail', 'O aluno já tinha conta na escola, com outro e-mail: m***@exemplo.org']);
+verificar('secretaria: precisa de atenção só quando pago com pendência na escola', array_map('mcp_secretaria_precisa_atencao', $situacoes),
+    ['matriculado' => false, 'sem_turma' => true, 'taxa' => true, 'recusado' => true, 'recusa_nova' => true, 'falha' => true, 'andamento' => false, 'antes' => false, 'pendente' => false]);
+$orientacoes = array_map('mcp_secretaria_escola_orientacao', $situacoes);
+verificar('secretaria: orientação diz o que fazer', [
+    str_starts_with($orientacoes['matriculado'], 'Nada a fazer'), str_contains($orientacoes['sem_turma'], 'quando abrir turma'),
+    str_contains($orientacoes['taxa'], 'estorno'), str_contains($orientacoes['recusado'], 'o e-mail já está em outra conta da escola, com outro CPF'),
+    str_contains($orientacoes['recusa_nova'], 'motivo_novo'), str_contains($orientacoes['falha'], 'problema técnico'), str_contains($orientacoes['antes'], '28/09/2026'),
+], [true, true, true, true, true, true, true]);
+// O filtro "Precisam de atenção" no banco tem de achar o mesmo que a regra em PHP: o JSON gravado pela escola casa com o LIKE.
+$casaAtencao = static function (array $i): bool {
+    $acesso = (string) $i['escola_acesso'];
+    return $i['status'] === 'pago' && ($i['escola_status'] === 'erro' || str_contains($acesso, '"resultado":"sem_turma"') || str_contains($acesso, '"aviso":"taxa_ja_confirmada"'));
+};
+verificar('secretaria: condição SQL espelha a regra em PHP', array_map($casaAtencao, $situacoes), array_map('mcp_secretaria_precisa_atencao', $situacoes));
+verificar('secretaria: condição de cada filtro', array_map('mcp_secretaria_condicao', array_keys(MCP_SECRETARIA_FILTROS)), [
+    "i.status = 'pago'",
+    "i.status = 'pago' AND (i.escola_status = 'erro' OR i.escola_acesso LIKE '%\"resultado\":\"sem_turma\"%' OR i.escola_acesso LIKE '%\"aviso\":\"taxa_ja_confirmada\"%')",
+    "i.status = 'pago' AND p.inscricao_id IS NULL", "i.status = 'pendente'", '1 = 1',
+]);
+verificar('secretaria: filtro desconhecido não filtra', mcp_secretaria_condicao('<x>'), '1 = 1');
+verificar('secretaria: busca por nome ou e-mail, com curso', mcp_secretaria_where('pagas', 'curso-x', ' Maria '),
+    ["i.status = 'pago' AND i.curso_slug = ? AND (i.nome LIKE ? OR i.email LIKE ?)", ['curso-x', '%Maria%', '%Maria%']]);
+verificar('secretaria: busca escapa curinga do LIKE', mcp_secretaria_where('todas', null, '50%_a\\b')[1], ['%50\\%\\_a\\\\b%', '%50\\%\\_a\\\\b%']);
+verificar('secretaria: busca por telefone com 4 dígitos ou mais', mcp_secretaria_where('todas', null, '(21) 9999')[1], ['%(21) 9999%', '%(21) 9999%', '%219999%']);
+verificar('secretaria: busca por CPF só com 11 dígitos', [mcp_secretaria_where('todas', null, '529.982.247-25'), mcp_secretaria_where('todas', '', '')],
+    [["1 = 1 AND (i.nome LIKE ? OR i.email LIKE ? OR i.telefone LIKE ? OR i.cpf = ?)", ['%529.982.247-25%', '%529.982.247-25%', '%52998224725%', '52998224725']], ['1 = 1', []]]);
+verificar('secretaria: histórico em linguagem da secretaria', [
+    mcp_secretaria_evento('cobranca_criada', 'pix · waiting_payment · R$ 103,95'),
+    mcp_secretaria_evento('pago', null),
+    mcp_secretaria_evento('escola_ok', 'tentativa 1 · matriculado'),
+    mcp_secretaria_evento('escola_ok', 'tentativa 2 · sem_turma · repetido'),
+    mcp_secretaria_evento('escola_ok', 'tentativa 1 · matriculado · taxa_ja_confirmada'),
+    mcp_secretaria_evento('escola_erro', 'tentativa 1 · HTTP 200 · email_em_uso'),
+    mcp_secretaria_evento('escola_erro', 'tentativa 3 · HTTP 503'),
+    mcp_secretaria_evento('email_aluno', 'acesso · resend · com comprovante PDF'),
+    mcp_secretaria_evento('email_aluno', 'b · falhou · sem comprovante PDF'),
+    mcp_secretaria_evento('email_secretaria', 'falhou'),
+    mcp_secretaria_evento('lembrete_horarios', '#1 resend'),
+    mcp_secretaria_evento('lembrete_horarios', '#2 manual ana@exemplo.org · resend'),
+], [
+    'Cobrança criada: PIX, R$ 103,95', 'Pagamento confirmado', 'Escola: matrícula feita', 'Escola: conta pronta, mas sem turma aberta (confirmação repetida)',
+    'Escola: matrícula feita (a taxa já estava confirmada)', 'Escola: a matrícula não foi feita (o e-mail já está em outra conta da escola, com outro CPF)',
+    'Escola: a matrícula não foi feita (HTTP 503)', 'E-mail de inscrição paga enviado ao aluno, com o comprovante em PDF',
+    'E-mail de inscrição paga enviado ao aluno (o envio falhou)', 'Aviso de inscrição paga enviado à secretaria (o envio falhou)',
+    'Lembrete de horários enviado ao aluno', 'Lembrete de horários enviado ao aluno, à mão, por ana@exemplo.org',
+]);
+verificar('secretaria: histórico esconde IP e o que é técnico', [mcp_secretaria_evento('horarios', '10.0.0.1'), mcp_secretaria_evento('armadilha', '10.0.0.1'),
+    mcp_secretaria_evento('painel_lembrete', '#1 · a@b.co · enviado'), mcp_secretaria_evento('limite', 'ip · 5 em 60s')], ['O aluno salvou os horários', null, null, null]);
+$linhaPortal = ['preferencia' => ['horarios' => ['seg-noite', 'sab-manha'], 'inicio' => 'proxima', 'observacao' => '=HYPERLINK("http://x")'], 'lembretes' => 0, 'lembrete_em' => null] + $inscricao;
+$csvPortal = mcp_secretaria_csv([$linhaPortal, ['preferencia' => null, 'nome' => 'João', 'telefone' => '', 'status' => 'pendente', 'metodo' => 'pix', 'pago_em' => null] + $linhaPortal,
+    ['preferencia' => null, 'nome' => 'Rita'] + $semTurma]);
+$linhasPortal = array_map(static fn(string $l): array => str_getcsv($l, ';', '"', ''), explode("\n", trim(substr($csvPortal, 3))));
+verificar('secretaria: planilha com BOM e 12 colunas', [str_starts_with($csvPortal, "\xEF\xBB\xBF"), count($linhasPortal), array_unique(array_map('count', $linhasPortal))], [true, 4, [12]]);
+verificar('secretaria: planilha da inscrição paga', $linhasPortal[1],
+    ['17/09/2026 21:01', 'Paga', 'Maria da Silva', 'maria@exemplo.org', '(21) 99999-8888', 'Curso X', 'R$ 103,95', 'Cartão', 'Matriculado · turma de 21/10/2026', 'Seg à noite; Sáb de manhã', 'Já na próxima turma', "'=HYPERLINK(\"http://x\")"]);
+verificar('secretaria: planilha de pendente e de quem não respondeu', [$linhasPortal[2][1], $linhasPortal[2][7], $linhasPortal[2][8], $linhasPortal[2][9], $linhasPortal[3][8], $linhasPortal[3][9]],
+    ['Aguardando pagamento', 'PIX', '—', '', 'Sem turma aberta', 'não respondeu']);
+verificar('secretaria: planilha sem CPF', [str_contains($csvPortal, '52998224725'), str_contains($csvPortal, '529.982.247-25'), str_contains($csvPortal, 'CPF')], [false, false, false]);
 
 unlink($configTeste);
 unlink($configEscola);

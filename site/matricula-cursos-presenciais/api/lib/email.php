@@ -787,13 +787,13 @@ function mcp_email_resposta_contato(array $c, string $resposta, string $assinatu
 /** Link de entrada no painel (vale 20 minutos). */
 function mcp_montar_email_painel_link(string $link): array
 {
-    $corpo = mcp_p('Clique no botão para entrar no painel de contatos do chat. O link vale por <strong>' . MCP_PAINEL_LINK_ENTRADA_MINUTOS . ' minutos</strong> e abre uma sessão de ' . MCP_PAINEL_SESSAO_HORAS . ' horas neste navegador.')
-        . mcp_botao($link, 'Entrar no painel')
+    $corpo = mcp_p('Clique no botão para entrar no portal da secretaria (inscrições, horários dos alunos e mensagens do chat). O link vale por <strong>' . MCP_PAINEL_LINK_ENTRADA_MINUTOS . ' minutos</strong> e abre uma sessão de ' . MCP_PAINEL_SESSAO_HORAS . ' horas neste navegador.')
+        . mcp_botao($link, 'Entrar no portal')
         . mcp_nota('Se não foi você quem pediu, ignore este e-mail: nada acontece sem o clique.');
     return [
-        'assunto' => 'Acesso ao painel de contatos',
-        'html' => mcp_moldura('Seu link de acesso ao painel', $corpo, ['eyebrow' => 'Painel da equipe', 'motivo' => 'Pedido feito em ' . mcp_painel_url() . '.']),
-        'texto' => "Entrar no painel de contatos (vale " . MCP_PAINEL_LINK_ENTRADA_MINUTOS . " minutos): $link\n\nSe não foi você quem pediu, ignore este e-mail.",
+        'assunto' => 'Acesso ao portal da secretaria',
+        'html' => mcp_moldura('Seu link de acesso ao portal', $corpo, ['eyebrow' => 'Portal da secretaria', 'motivo' => 'Pedido feito em ' . mcp_painel_url() . '.']),
+        'texto' => "Entrar no portal da secretaria (vale " . MCP_PAINEL_LINK_ENTRADA_MINUTOS . " minutos): $link\n\nSe não foi você quem pediu, ignore este e-mail.",
     ];
 }
 
