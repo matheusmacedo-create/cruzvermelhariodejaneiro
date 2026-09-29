@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-28T12:28:56+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-29T23:16:12+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -176,41 +176,446 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/historia/</loc>
-    <lastmod>2026-09-28T12:22:32+00:00</lastmod>
+    <lastmod>2026-09-29T23:12:03+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1920-960.webp</image:loc>
-      <image:title>Prédio da Cruz Vermelha em obras, cercado por andaimes e por um muro, ainda sem os andares superiores</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-botelho-th.webp</image:loc>
+      <image:title>Retrato de Joaquim de Oliveira Botelho</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-960.webp</image:loc>
-      <image:title>Fachada do Palácio da Cruz Vermelha ainda com andaimes, já com os andares superiores e a estrutura da cúpula</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-socio-th.webp</image:loc>
+      <image:title>Diploma de sócio da Cruz Vermelha Brasileira, com moldura decorada e a cruz vermelha</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-relevo-fachada-855.webp</image:loc>
-      <image:title>Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-sede-provisoria-1917-960.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-sede-provisoria-1917-480.webp</image:loc>
       <image:title>Sede provisória da Cruz Vermelha Brasileira, prédio térreo com bandeiras, com pessoas e automóveis antigos em frente</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-varanda-escola-1917-960.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pedra-1919-th.webp</image:loc>
+      <image:title>Autoridades ao redor de uma escavação, no momento de assentar a pedra fundamental; enfermeiras ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-cerimonia-1919-th.webp</image:loc>
+      <image:title>Grupo de enfermeiras e convidados sob bandeirolas, na cerimônia da pedra fundamental</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1920-480.webp</image:loc>
+      <image:title>Prédio da Cruz Vermelha em obras, cercado por andaimes e por um muro, ainda sem os andares superiores</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-480.webp</image:loc>
+      <image:title>Fachada do Palácio da Cruz Vermelha ainda com andaimes, já com os andares superiores e a estrutura da cúpula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-relevo-fachada-480.webp</image:loc>
+      <image:title>Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-heloisa-th.webp</image:loc>
+      <image:title>Retrato de Heloisa Loureiro Leal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-voluntaria-th.webp</image:loc>
+      <image:title>Diploma de Enfermeira Voluntária da Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-profissional-th.webp</image:loc>
+      <image:title>Diploma de Enfermeira Profissional da Escola Prática de Enfermeiras da Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-varanda-escola-1917-480.webp</image:loc>
       <image:title>Enfermeiras de uniforme branco e véu enfileiradas na varanda da Escola de Enfermeiras, sob a placa com o nome da instituição</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diplomadas-1917-th.webp</image:loc>
+      <image:title>Painel com retratos em medalhões e o título Enfermeiras Diplomadas em 1917</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-aula-anatomia-th.webp</image:loc>
+      <image:title>Enfermeiras de uniforme branco assistem a uma aula de anatomia, com o professor ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-sala-de-aula-th.webp</image:loc>
+      <image:title>Alunas de uniforme branco com a cruz vermelha, sentadas em carteiras numa sala de aula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diplomadas-1918-th.webp</image:loc>
+      <image:title>Painel com retratos em medalhões, o lema In pace et in bello caritas e cenas de hospital e de campanha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-quadro-1919-21-th.webp</image:loc>
+      <image:title>Quadro com retratos em medalhões das enfermeiras diplomadas entre 1919 e 1921</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-exames-1922-th.webp</image:loc>
+      <image:title>Sala de exame com alunas sentadas e a banca examinadora à mesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-visita-escola-th.webp</image:loc>
+      <image:title>Grupo de enfermeiras de uniforme branco diante da fachada da Escola, com duas senhoras ao centro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-entrega-diplomas-1918-th.webp</image:loc>
+      <image:title>Cerimônia de entrega de diplomas, com enfermeiras em pé diante de uma mesa e homens sentados</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-thaumaturgo-grupo-th.webp</image:loc>
+      <image:title>Grande grupo de enfermeiras e dirigentes posando sentados e em pé, com um homem ao centro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-gripe-1918-th.webp</image:loc>
+      <image:title>Nove enfermeiras de uniforme branco, sentadas em três fileiras</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-tuberculose-diretoria-th.webp</image:loc>
+      <image:title>Diretoria da Cruzada Nacional contra a Tuberculose reunida em torno de uma mesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-profilaxia-inauguracao-th.webp</image:loc>
+      <image:title>Autoridades sentadas em torno de uma mesa numa sala com cartazes de saúde na parede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-oficiais-italia-th.webp</image:loc>
+      <image:title>Montagem de retratos de cinco enfermeiras uniformizadas, com os nomes impressos abaixo de cada uma</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-painel-feb-th.webp</image:loc>
+      <image:title>Painel ilustrado com uma grande cruz vermelha, um retrato ao centro, tanques e navios</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-fisica-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Preparação física das enfermeiras no Exército (1 de 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-fisica-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Preparação física das enfermeiras no Exército (2 de 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-uniformes-th.webp</image:loc>
+      <image:title>Duas mulheres de pé, de uniforme branco com véu e a cruz vermelha, lado a lado</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (1 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (2 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-3-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (3 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-4-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (4 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-5-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (5 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-6-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (6 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-7-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (7 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-8-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (8 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-9-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (9 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-10-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (10 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-11-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (11 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-12-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Formaturas da Escola de Enfermeiras (12 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (1 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (2 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-3-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (3 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-4-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (4 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-5-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (5 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-6-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Enfermeiras da CVB em ação (6 de 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (1 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (2 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-3-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (3 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-4-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (4 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-5-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (5 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (6 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-7-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Alunas e voluntárias em atividades públicas: desfile, exposição e treinamento de primeiros socorros (7 de 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (1 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (2 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-3-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (3 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-4-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (4 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-5-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (5 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-6-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (6 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-7-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (7 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-8-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (8 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-9-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (9 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-10-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (10 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-11-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (11 de 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-12-th.webp</image:loc>
+      <image:title>Fotografia do acervo: O Hospital da Cruz Vermelha Brasileira e suas enfermeiras nos anos 1950 e 1960 (12 de 12)</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-distribuicao-donativos-550.webp</image:loc>
       <image:title>Voluntário de costas, com colete da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos</image:title>
     </image:image>
     <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-01-th.webp</image:loc>
+      <image:title>Retrato de Dr. Oswaldo Cruz</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-02-th.webp</image:loc>
+      <image:title>Retrato de Marechal Gregório Thaumaturgo de Azevedo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-03-th.webp</image:loc>
+      <image:title>Retrato de Engenheiro Miguel Calmon Du Pin e Almeida</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-04-th.webp</image:loc>
+      <image:title>Retrato de Marechal Antônio Ferreira do Amaral</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-05-th.webp</image:loc>
+      <image:title>Retrato de Comendador Carlos Pereira Leal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-06-th.webp</image:loc>
+      <image:title>Retrato de General Sebastião Ivo Soares</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-07-th.webp</image:loc>
+      <image:title>Retrato de General Álvaro Tourinho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-09-th.webp</image:loc>
+      <image:title>Retrato de Senador Vivaldo Palma Lima Filho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-10-th.webp</image:loc>
+      <image:title>Retrato de Ministro Álvaro Tolentino Borge Dias</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-11-th.webp</image:loc>
+      <image:title>Retrato de Almirante Edgar Pereira de Beauclair</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-12-th.webp</image:loc>
+      <image:title>Retrato de Tom Willmontt Sloper</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-13-th.webp</image:loc>
+      <image:title>Retrato de Profa. Mavy d'Aché Assumpção Harmon</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-14-th.webp</image:loc>
+      <image:title>Retrato de Dr. Carlos Velloso de Oliveira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-16-th.webp</image:loc>
+      <image:title>Retrato de Major-Brigadeiro do Ar Milton Segala Pauletto</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-17-th.webp</image:loc>
+      <image:title>Retrato de Dr. Luiz Fernando Hernández</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-agenor-th.webp</image:loc>
+      <image:title>Retrato de Dr. Agenor Estelitta Lins</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-paiva-th.webp</image:loc>
+      <image:title>Retrato de General Carlos Paiva Gonçalves</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-uchoa-th.webp</image:loc>
+      <image:title>Retrato de Marechal do Ar Salvador B. Uchôa Cavalcanti</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-olivio-th.webp</image:loc>
+      <image:title>Retrato de General Olívio Vieira Filho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-idalia-th.webp</image:loc>
+      <image:title>Retrato de Enfermeira Idália de Araújo Porto Alegre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-getulio-th.webp</image:loc>
+      <image:title>Retrato de Dr. Getúlio Florentino dos Santos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-elza-th.webp</image:loc>
+      <image:title>Retrato de Major Elza Cansanção Medeiros</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-virginia-th.webp</image:loc>
+      <image:title>Retrato de Capitã Virgínia Maria de Niemeyer Portocarrero</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-dutra-th.webp</image:loc>
+      <image:title>Retrato de Marechal Eurico Gaspar Dutra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-irene-th.webp</image:loc>
+      <image:title>Retrato de Enfermeira Irene de Miranda Cotegipe Milanez</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-nordeste-1-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Distribuição de donativos da Cruz Vermelha Brasileira, com caixas marcadas com a cruz vermelha (1 de 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-nordeste-2-th.webp</image:loc>
+      <image:title>Fotografia do acervo: Distribuição de donativos da Cruz Vermelha Brasileira, com caixas marcadas com a cruz vermelha (2 de 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ararajuba-emblema-th.webp</image:loc>
+      <image:title>Emblema com uma arara amarela e o texto Operação Ararajuba, Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ararajuba-csu-th.webp</image:loc>
+      <image:title>Crianças e um adulto sentados na entrada de um Centro Social Urbano, com uma faixa da Operação Ararajuba</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-voluntario-sp-th.webp</image:loc>
+      <image:title>Voluntário de costas, com colete da Cruz Vermelha Brasileira, olha casas e um carro destruídos numa encosta</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-holanda-th.webp</image:loc>
+      <image:title>Página com o título O maremoto da Holanda e o agradecimento assinado pela Cruz Vermelha Neerlandesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-asia-2004-th.webp</image:loc>
+      <image:title>Caminhão com a carga de caixas à mostra e uma faixa Doações para Ásia, da Cruz Vermelha Brasileira, Filial São Paulo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-instalacao-th.webp</image:loc>
+      <image:title>Recorte de jornal com fotografias da sessão de instalação da conferência</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-comissao-th.webp</image:loc>
+      <image:title>Recorte de jornal com fotografias de uma reunião e de uma exposição</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-pedra-anna-nery-th.webp</image:loc>
+      <image:title>Recorte de jornal com fotografia de pessoas reunidas na cerimônia da pedra fundamental</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-selo-th.webp</image:loc>
+      <image:title>Selo postal com uma enfermeira, o lema In pace et in bello caritas e o valor 700 mais 100 réis</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-almoco-th.webp</image:loc>
+      <image:title>Recorte de jornal com fotografia dos congressistas diante do Albergue da Boa Vontade</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-encerramento-th.webp</image:loc>
+      <image:title>Recorte de jornal com fotografia da assembleia de encerramento, com bandeiras e a cruz vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ana-nery-estatua-th.webp</image:loc>
+      <image:title>Estátua em bronze de Ana Nery, de pé, com um xale sobre os ombros</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-vivaldo-discurso-th.webp</image:loc>
+      <image:title>Autoridades reunidas ao ar livre; um homem de terno fala diante de um microfone</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-fachada-noturna-767.webp</image:loc>
+      <image:title>Fachada iluminada do Palácio da Cruz Vermelha, à noite</image:title>
+    </image:image>
+    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-cruz-vermelha-1254.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-fachada-noturna-767.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
