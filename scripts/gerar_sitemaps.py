@@ -87,6 +87,7 @@ PAGINAS = [
     # Páginas só em inglês (scripts/gerar_ingles.py); as notícias em inglês entram logo abaixo.
     ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
     ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
+    ("/en/history/", "en/history/index.html", "monthly", "0.6", "História em inglês"),
 ]
 
 # Notícias traduzidas: original da Redação → versão em inglês (gravado por gerar_ingles.py).
@@ -119,6 +120,9 @@ ALTERNATIVAS = {
     # Pares pt-BR + en. A campanha declara o par nas duas páginas. /noticias/, /privacidade/ e
     # /termos/ são da Redação e ainda não declaram hreflang: até declararem, só o lado em inglês
     # entra aqui, para o sitemap não dizer mais do que as páginas dizem.
+    # História: par pt-BR + en; as duas páginas declaram hreflang (x-default no português).
+    "/historia/": {"pt-BR": "/historia/", "en": "/en/history/", "x-default": "/historia/"},
+    "/en/history/": {"pt-BR": "/historia/", "en": "/en/history/", "x-default": "/historia/"},
     "/campanha-agasalho.html": {"pt-BR": "/campanha-agasalho.html", "en": "/en/winter-clothing-drive/"},
     "/en/winter-clothing-drive/": {"pt-BR": "/campanha-agasalho.html", "en": "/en/winter-clothing-drive/"},
     "/en/news/": {"pt-BR": "/noticias/", "en": "/en/news/"},
