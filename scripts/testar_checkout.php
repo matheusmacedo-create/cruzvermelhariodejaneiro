@@ -20,7 +20,8 @@ putenv("MCP_CONFIG_ARQUIVO=$configTeste");
 // Chave da escola num arquivo à parte, como no servidor: só as chaves ESCOLA_* podem valer.
 $configEscola = tempnam(sys_get_temp_dir(), 'mcp-escola-');
 file_put_contents($configEscola, "<?php return ['ESCOLA_API_URL' => 'https://escola-db.exemplo.org/rest/v1/rpc/matricula_rapida',
-    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
+    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'ESCOLA_HORARIOS_TOKEN' => '" . str_repeat('k', 40) . "',
+    'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
 putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$configEscola");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 $_SERVER['REQUEST_METHOD'] = 'CLI';
@@ -557,6 +558,33 @@ verificar('secretaria: planilha da inscrição paga', $linhasPortal[1],
 verificar('secretaria: planilha de pendente e de quem não respondeu', [$linhasPortal[2][1], $linhasPortal[2][7], $linhasPortal[2][8], $linhasPortal[2][9], $linhasPortal[3][8], $linhasPortal[3][9]],
     ['Aguardando pagamento', 'PIX', '—', '', 'Sem turma aberta', 'não respondeu']);
 verificar('secretaria: planilha sem CPF', [str_contains($csvPortal, '52998224725'), str_contains($csvPortal, '529.982.247-25'), str_contains($csvPortal, 'CPF')], [false, false, false]);
+
+// Leitura pelo painel da escola (api/escola-horarios.php): chave, formato e nada de CPF.
+$chaveEscola = str_repeat('k', 40);
+verificar('escola-horários: chave certa', mcp_horarios_escola_autorizado("Bearer $chaveEscola"), true);
+verificar('escola-horários: chaves recusadas', [
+    mcp_horarios_escola_autorizado(''), mcp_horarios_escola_autorizado($chaveEscola), mcp_horarios_escola_autorizado('Bearer ' . str_repeat('k', 39)),
+    mcp_horarios_escola_autorizado("Basic $chaveEscola"), mcp_horarios_escola_autorizado("Bearer $chaveEscola extra"),
+], [false, false, false, false, false]);
+verificar('escola-horários: data ISO', [mcp_horarios_iso('2026-09-29 15:30:00'), mcp_horarios_iso(null), mcp_horarios_iso('29/09/2026')], ['2026-09-29T15:30:00Z', null, null]);
+// Mesmo formato de mcp_horarios_listar: p.* (inscricao_id, sem id) com os campos da inscrição.
+$respostaEscola = mcp_horarios_linha(['inscricao_id' => 1, 'horarios' => 'seg-noite,sab-manha', 'inicio' => 'proxima', 'turma_serve' => 'nao', 'observacao' => '',
+    'vezes' => 2, 'atualizado_em' => '2026-09-29 15:30:00'] + array_intersect_key($inscricao, array_flip(['curso_slug', 'nome', 'email', 'telefone', 'curso_nome', 'escola_acesso', 'pago_em'])));
+$paraEscola = mcp_horarios_para_escola([$respostaEscola], [['nome' => 'Rita', 'id' => 7, 'telefone' => '(21) 98888-7777'] + $semTurma], '2026-09-29 16:00:00');
+verificar('escola-horários: resposta', $paraEscola['respostas'][0], [
+    'inscricao_id' => 1, 'curso_slug' => $primeiro, 'curso_id' => mcp_curso($primeiro)['uuid'], 'curso_nome' => 'Curso X',
+    'nome' => 'Maria da Silva', 'email' => 'maria@exemplo.org', 'telefone' => '21999998888', 'pago_em' => '2026-09-18T00:01:00Z',
+    'matricula_id' => 'm-1', 'turma_inicio' => '2026-10-21', 'horarios' => ['seg-noite', 'sab-manha'], 'inicio' => 'proxima',
+    'turma_serve' => 'nao', 'observacao' => null, 'vezes' => 2, 'respondido_em' => '2026-09-29T15:30:00Z',
+]);
+verificar('escola-horários: quem falta, sem turma', [$paraEscola['sem_resposta'][0]['nome'], $paraEscola['sem_resposta'][0]['telefone'],
+    $paraEscola['sem_resposta'][0]['turma_inicio'], $paraEscola['sem_resposta'][0]['matricula_id'], array_key_exists('horarios', $paraEscola['sem_resposta'][0])],
+    ['Rita', '21988887777', null, null, false]);
+verificar('escola-horários: cabeçalho e rótulos', [$paraEscola['ok'], $paraEscola['gerado_em'], array_keys($paraEscola['rotulos']), $paraEscola['rotulos']['periodos']['noite']],
+    [true, '2026-09-29T16:00:00Z', ['dias', 'dias_curtos', 'periodos', 'horas', 'inicio', 'turma'], 'Noite']);
+$jsonEscola = json_encode($paraEscola);
+verificar('escola-horários: nunca CPF, hash, IP ou token', [str_contains($jsonEscola, '52998224725'), str_contains($jsonEscola, 'h4sh'),
+    str_contains($jsonEscola, '10.0.0.1'), str_contains($jsonEscola, $token), str_contains($jsonEscola, str_repeat('ab', 32))], [false, false, false, false, false]);
 
 unlink($configTeste);
 unlink($configEscola);

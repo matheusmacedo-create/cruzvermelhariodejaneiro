@@ -397,6 +397,15 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   - a lista das respostas, com os contatos;
   - o botão "Baixar planilha": um CSV que abre no Excel e no Google Planilhas, com uma coluna por
     horário ("Seg manhã" … "Sáb noite", marcada com x) para filtrar quem pode em cada um.
+- **Também no painel da escola:** a secretaria vê o mesmo mapa na aba **Horários** do painel da
+  plataforma da escola (`escola.cursoscruzvermelha.org`). O mapa sai por curso e fica ao lado das
+  próximas turmas abertas daquele curso. A aba também mostra quem falta responder e a lista com os
+  contatos, e baixa a planilha. A escola lê daqui, servidor a servidor, por `api/escola-horarios.php`:
+  - chave `ESCOLA_HORARIOS_TOKEN` em `api/config-escola.php`, a mesma de `SITE_HORARIOS_TOKEN` na escola;
+  - sem a chave o endereço responde 404, e chave errada responde 401 (até 20 erros por hora por IP);
+  - nunca vai CPF.
+
+  Nada é gravado no banco da escola. Detalhes em [docs/escola/README.md](docs/escola/README.md#fase-2-o-questionário-dentro-da-escola).
 - **Aviso por e-mail:** na primeira resposta de cada aluno, a secretaria (`EMAIL_SECRETARIA`) recebe
   o resumo e um botão para o mapa do curso. Mudanças de resposta não geram outro e-mail.
 - **Regras:**

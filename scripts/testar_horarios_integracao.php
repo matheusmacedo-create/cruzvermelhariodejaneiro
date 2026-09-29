@@ -435,6 +435,30 @@ try {
     verificar('portal: mensagens do chat', [$st, str_contains($html, '<h1>Mensagens recebidas</h1>'), str_contains($html, 'href="painel.php?v=mensagens" aria-current="page"><svg')], [200, true, true]);
     verificar('portal: endereço antigo das mensagens continua valendo', str_contains(http($base . 'painel.php?f=novo', 'GET', null, [$cookie])[2], '<h1>Mensagens recebidas</h1>'), true);
 
+    // Leitura pelo painel da escola (api/escola-horarios.php). A configuração é lida a cada pedido:
+    // sem a chave no config-escola.php o endereço não existe; com ela, só a chave certa lê.
+    $escolaUrl = $base . 'escola-horarios.php';
+    verificar('escola: sem chave configurada responde 404', http($escolaUrl)[0], 404);
+    $chaveEscola = bin2hex(random_bytes(24));
+    file_put_contents($semEscola, '<?php return [\'ESCOLA_HORARIOS_TOKEN\' => ' . var_export($chaveEscola, true) . '];');
+    verificar('escola: sem cabeçalho, 401', http($escolaUrl)[0], 401);
+    verificar('escola: chave errada, 401', http($escolaUrl, 'GET', null, ['Authorization: Bearer ' . str_repeat('x', 48)])[0], 401);
+    verificar('escola: POST recusado', http($escolaUrl, 'POST', '{}', ['Authorization: Bearer ' . $chaveEscola, 'Content-Type: application/json'])[0], 405);
+    [$st, , $corpo] = http($escolaUrl, 'GET', null, ['Authorization: Bearer ' . $chaveEscola]);
+    $lido = json_decode($corpo, true);
+    $porInscricao = static fn(string $lista): array => array_column($lido[$lista] ?? [], null, 'inscricao_id');
+    $respostas = $porInscricao('respostas');
+    $faltam = $porInscricao('sem_resposta');
+    verificar('escola: chave certa lê', [$st, $lido['ok'] ?? null], [200, true]);
+    verificar('escola: resposta de A com turma e curso da escola', [campo($respostas[$a['id']] ?? null, 'horarios'), campo($respostas[$a['id']] ?? null, 'inicio'),
+        campo($respostas[$a['id']] ?? null, 'turma_serve'), campo($respostas[$a['id']] ?? null, 'turma_inicio'), campo($respostas[$a['id']] ?? null, 'curso_id')],
+        [['ter-manha', 'ter-tarde'], '1mes', 'sim', '2026-10-21', mcp_curso('bombeiro-civil')['uuid']]);
+    verificar('escola: B respondeu, D e E faltam, C (pendente) fora', [isset($respostas[$b['id']]), isset($faltam[$d['id']]), isset($faltam[$e['id']]),
+        isset($respostas[$c['id']]), isset($faltam[$c['id']])], [true, true, true, false, false]);
+    verificar('escola: nunca CPF nem token', [str_contains($corpo, $a['cpf']), str_contains($corpo, $d['cpf']), str_contains($corpo, $a['token'])], [false, false, false]);
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'escola_horarios_negado' AND detalhe = '127.0.0.1'");
+    file_put_contents($semEscola, '<?php return [];');
+
     // Lembretes, como o cron roda: D recebe o 1º, E o 2º; quem respondeu ou não pagou, nada. Rodar de novo não repete.
     $lembretes = static function () use ($raiz, $config, $semEscola): array {
         $saida = [];
