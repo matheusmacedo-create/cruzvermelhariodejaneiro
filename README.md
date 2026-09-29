@@ -401,7 +401,7 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   plataforma da escola (`escola.cursoscruzvermelha.org`). O mapa sai por curso e fica ao lado das
   próximas turmas abertas daquele curso. A aba também mostra quem falta responder e a lista com os
   contatos, e baixa a planilha. A escola lê daqui, servidor a servidor, por `api/escola-horarios.php`:
-  - chave `ESCOLA_HORARIOS_TOKEN` em `api/config-escola.php`, a mesma de `SITE_HORARIOS_TOKEN` na escola;
+  - chave `SITE_HORARIOS_TOKEN`, com o mesmo nome e o mesmo valor em `api/config-escola.php` e na escola (Render);
   - sem a chave o endereço responde 404, e chave errada responde 401 (até 20 erros por hora por IP);
   - nunca vai CPF.
 

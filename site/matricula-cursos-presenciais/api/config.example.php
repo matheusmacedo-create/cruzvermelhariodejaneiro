@@ -62,8 +62,8 @@ return [
     // Aba "Horários" do painel da secretaria da escola: ela lê as respostas do questionário de dias e
     // horários em api/escola-horarios.php com esta chave (32 caracteres ou mais; gere com
     // `openssl rand -hex 24`). Também vai no api/config-escola.php, e a mesma chave vai na variável
-    // SITE_HORARIOS_TOKEN da escola (Render). Vazio = o endereço responde 404.
-    'ESCOLA_HORARIOS_TOKEN' => '',
+    // SITE_HORARIOS_TOKEN da escola (Render), com o mesmo nome. Vazio = o endereço responde 404.
+    'SITE_HORARIOS_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
 
     // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o

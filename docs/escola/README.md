@@ -115,7 +115,7 @@ As respostas continuam guardadas só no site. A escola lê por `api/escola-horar
 
 | | Site | Escola |
 |---|---|---|
-| Chave | `ESCOLA_HORARIOS_TOKEN` em `api/config-escola.php` | `SITE_HORARIOS_TOKEN` (variável no Render) |
+| Chave | `SITE_HORARIOS_TOKEN` em `api/config-escola.php` | `SITE_HORARIOS_TOKEN` (variável no Render), com o mesmo valor |
 | Endereço | `api/escola-horarios.php` | `SITE_HORARIOS_URL` (opcional; o padrão é o endereço do site) |
 
 - Sem a chave, o endereço responde 404. Com a chave errada, 401, e cada IP pode errar até 20 vezes por hora.
@@ -126,7 +126,7 @@ As respostas continuam guardadas só no site. A escola lê por `api/escola-horar
 
 **Para ligar:**
 1. gerar a chave: `openssl rand -hex 24`;
-2. pôr a chave no `api/config-escola.php` do site: `'ESCOLA_HORARIOS_TOKEN' => '…'`;
+2. pôr a chave no `api/config-escola.php` do site: `'SITE_HORARIOS_TOKEN' => '…'` (o nome antigo `ESCOLA_HORARIOS_TOKEN` ainda vale);
 3. publicar `api/escola-horarios.php`, `api/lib/horarios.php` e `api/.htaccess`;
 4. no Render, pôr a mesma chave em `SITE_HORARIOS_TOKEN` no serviço da escola e publicar.
 

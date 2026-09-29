@@ -20,7 +20,7 @@ putenv("MCP_CONFIG_ARQUIVO=$configTeste");
 // Chave da escola num arquivo à parte, como no servidor: só as chaves ESCOLA_* podem valer.
 $configEscola = tempnam(sys_get_temp_dir(), 'mcp-escola-');
 file_put_contents($configEscola, "<?php return ['ESCOLA_API_URL' => 'https://escola-db.exemplo.org/rest/v1/rpc/matricula_rapida',
-    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'ESCOLA_HORARIOS_TOKEN' => '" . str_repeat('k', 40) . "',
+    'ESCOLA_API_TOKEN' => 'chave-de-teste', 'SITE_HORARIOS_TOKEN' => '" . str_repeat('k', 40) . "',
     'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
 putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$configEscola");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
