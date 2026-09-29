@@ -1,7 +1,7 @@
 # Backend do checkout da matrícula. Só os endpoints públicos respondem por HTTP; configuração,
 # bootstrap e módulos são incluídos pelo PHP e nunca servidos.
 Options -Indexes
-<FilesMatch "^(config\.php|config-escola\.php|config\.example\.php|lib\.php)$">
+<FilesMatch "^(config\.php|config-escola\.php|config\.example\.php|lib\.php|lembretes\.php)$">
   Require all denied
 </FilesMatch>
 <IfModule mod_headers.c>

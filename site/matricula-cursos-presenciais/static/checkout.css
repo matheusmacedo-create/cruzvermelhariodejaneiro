@@ -139,10 +139,37 @@
 
 /* Questionário de dias e horários (tela horarios/, 29/09/2026). */
 .hr-curso { margin: 0 0 22px; color: var(--text); }
-.hr-opcoes { display: grid; gap: 10px; }
-.hr-dias { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.hr-periodos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.hr-lista { grid-template-columns: 1fr; max-width: 460px; }
+/* Atalhos e grade dia × período (questionário de horários) */
+.hr-atalhos { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.hr-atalho { font: inherit; font-size: .9rem; font-weight: 700; color: var(--black); background: #fff; border: 1.5px solid #cbd5e1; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.hr-atalho:hover { border-color: var(--red); color: var(--red); }
+.hr-atalho[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+.hr-grade { width: 100%; max-width: 520px; border-collapse: separate; border-spacing: 6px; margin: 0 -6px; }
+.hr-grade th { font-weight: 700; padding: 0; }
+.hr-cab { font: inherit; font-weight: 800; color: var(--black); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-align: left; line-height: 1.2; width: 100%; }
+.hr-cab:hover { color: var(--red); }
+thead .hr-cab { text-align: center; font-size: .92rem; }
+.hr-cab small { display: block; font-weight: 500; color: var(--muted); font-size: .76rem; }
+.hr-curto { display: none; }
+.hr-grade td { padding: 0; }
+.hr-slot { display: flex; align-items: center; justify-content: center; height: 48px; border: 1.5px solid #cbd5e1; border-radius: 12px; background: #fff; cursor: pointer; transition: background .15s, border-color .15s; position: relative; }
+.hr-slot:hover { border-color: #94a3b8; }
+.hr-slot input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.hr-slot span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #cbd5e1; }
+.hr-slot.marcado, .hr-slot:has(input:checked) { background: var(--red); border-color: var(--red); }
+.hr-slot.marcado span, .hr-slot:has(input:checked) span { width: 16px; height: 9px; border-radius: 0; border: 0; border-left: 3px solid #fff; border-bottom: 3px solid #fff; transform: rotate(-45deg) translate(1px, -2px); }
+.hr-slot:focus-within { outline: 2px solid var(--red); outline-offset: 2px; }
+.hr-contador { margin: 10px 0 0; font-size: .9rem; color: var(--muted); }
+.hr-escolha { display: flex; flex-wrap: wrap; gap: 10px; }
+.hr-escolha .hr-opcao { flex: 1 1 180px; }
+.hr-recado summary { cursor: pointer; font-weight: 700; color: var(--black); margin: 0 0 10px; }
+.hr-recado[open] summary { margin-bottom: 12px; }
+.hr-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Alerta "falta 1 passo" no topo da tela Parabéns */
+.ck-alerta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: #fff7f7; border: 1.5px solid var(--red); border-radius: 14px; padding: 16px 18px; margin: 0 0 18px; }
+.ck-alerta > div { flex: 1 1 280px; }
+.ck-alerta p { margin: 0; }
+.ck-alerta .ck-alerta-titulo { color: var(--red); font-weight: 800; font-size: 1.05rem; margin: 0 0 4px; }
 .hr-opcao { display: flex; align-items: center; gap: 10px; min-height: 52px; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 12px 14px; cursor: pointer; background: #fff; font-weight: 700; color: var(--black); line-height: 1.25; transition: border-color .15s, background .15s, box-shadow .15s; }
 .hr-opcao:hover { border-color: #94a3b8; }
 .hr-opcao input { margin: 0; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--red); }
@@ -155,11 +182,14 @@
 .ck-campo textarea { width: 100%; min-height: 96px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; resize: vertical; }
 .ck-campo textarea:focus { outline: 0; border-color: var(--red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .12); }
 @media (max-width: 720px) {
-  .hr-dias { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hr-periodos { grid-template-columns: 1fr; }
+  .ck-alerta .btn { width: 100%; }
   #hr-form .ck-bloco-titulo { flex-wrap: wrap; row-gap: 4px; }
   #hr-form .ck-bloco-titulo small { flex-basis: 100%; margin-left: 0; }
 }
 @media (max-width: 480px) {
-  .hr-dias { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hr-escolha .hr-opcao { flex-basis: 100%; }
+}
+@media (max-width: 360px) {
+  .hr-longo { display: none; }
+  .hr-curto { display: inline; }
 }

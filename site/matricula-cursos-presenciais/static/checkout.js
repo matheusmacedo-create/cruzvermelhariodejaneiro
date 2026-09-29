@@ -369,21 +369,26 @@
         + '<div class="cta-row"><a class="btn btn-outline" href="' + esc(d.escola_url) + '" target="_blank" rel="noopener">Conhecer a plataforma da escola</a></div></div>';
     }
 
-    /* Questionário de dias e horários: convite enquanto não respondeu, resumo depois. */
+    /* Questionário de dias e horários: enquanto o aluno não responde, um alerta no topo (é o passo que
+       falta); depois, o resumo embaixo, com o link para mudar. */
+    function alertaHorarios(d) {
+      var h = d.horarios;
+      if (!h || !h.url || h.respondido) return '';
+      return '<div class="ck-alerta" role="status"><div><p class="ck-alerta-titulo">Falta 1 passo: seus horários</p>'
+        + '<p>Toque nos dias e horários em que você consegue vir às aulas. Leva 30 segundos e ajuda a secretaria a encaixar você na turma certa.</p></div>'
+        + '<a class="btn btn-red" href="' + esc(h.url) + '">Escolher meus horários</a></div>';
+    }
     function blocoHorarios(d) {
       var h = d.horarios;
-      if (!h || !h.url) return '';
-      return '<div class="ck-bloco"><h2>' + (h.respondido ? 'Seus dias e horários' : 'Quais dias e horários são melhores para você?') + '</h2>'
-        + (h.respondido
-          ? '<p>' + esc(h.resumo) + '</p><p class="ck-nota"><a href="' + esc(h.url) + '">Mudar respostas</a></p>'
-          : '<p>Responda em 1 minuto: a secretaria usa suas respostas para montar as turmas e combinar a sua.</p><div class="cta-row"><a class="btn btn-outline" href="' + esc(h.url) + '">Responder agora</a></div>')
-        + '</div>';
+      if (!h || !h.url || !h.respondido) return '';
+      return '<div class="ck-bloco"><h2>Seus horários</h2><p>' + esc(h.resumo) + '</p><p class="ck-nota"><a href="' + esc(h.url) + '">Mudar meus horários</a></p></div>';
     }
 
     function render(d) {
       var metodo = d.metodo === 'pix' ? 'PIX' : 'cartão' + (d.cartao && d.cartao.ultimos4 ? ' final ' + esc(d.cartao.ultimos4) : '');
       var custos = d.taxa_centavos ? ', incluindo ' + brl(d.taxa_centavos) + ' de custos de processamento que você escolheu cobrir. Obrigado.' : '.';
-      card.innerHTML = '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
+      card.innerHTML = alertaHorarios(d)
+        + '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
         + blocoEscola(d)
         + blocoHorarios(d)
         + '<div class="ck-bloco"><p class="ck-nota" style="margin:0">Mandamos a confirmação para <b>' + esc(d.email) + '</b>. Guarde este link: <a href="' + esc(d.urls.parabens) + '">' + esc(d.urls.parabens) + '</a></p></div>';
@@ -411,21 +416,38 @@
   }
 
   // ------------------------------------------------------------------ tela: dias e horários
+  /* Grade dia × período: cada célula é um checkbox ("seg-noite"). Atalhos marcam conjuntos comuns, e o
+     nome do dia ou do período marca a linha ou a coluna inteira. O contador mostra quantos horários
+     estão marcados. Começo e "a data serve" são botões de escolha única; o recado fica recolhido. */
   function telaHorarios() {
     var token = param('t'), card = q('#hr-card');
     if (!TOKEN.test(token)) { card.innerHTML = voltarCursos('Link inválido.'); return; }
 
-    /* Opções como cartões clicáveis (checkbox ou radio dentro do label, acessível pelo teclado). */
-    function opcoes(nome, tipo, lista, marcados, detalhes) {
-      return Object.keys(lista).map(function (k) {
-        var marcado = marcados.indexOf(k) >= 0;
-        return '<label class="hr-opcao' + (marcado ? ' marcado' : '') + '"><input type="' + tipo + '" name="' + nome + '" value="' + esc(k) + '"' + (marcado ? ' checked' : '') + '>'
-          + '<span>' + esc(lista[k]) + (detalhes && detalhes[k] ? '<small>' + esc(detalhes[k]) + '</small>' : '') + '</span></label>';
-      }).join('');
+    function escolha(nome, lista, marcado) {
+      return '<div class="hr-escolha">' + Object.keys(lista).map(function (k) {
+        return '<label class="hr-opcao' + (k === marcado ? ' marcado' : '') + '"><input type="radio" name="' + nome + '" value="' + esc(k) + '"' + (k === marcado ? ' checked' : '') + '><span>' + esc(lista[k]) + '</span></label>';
+      }).join('') + '</div>';
     }
-    function grupo(id, titulo, dica, classe, conteudo) {
+    function grupo(id, titulo, dica, conteudo) {
       return '<div class="ck-bloco-form" role="group" aria-labelledby="hr-t-' + id + '" id="hr-' + id + '"><h2 class="ck-bloco-titulo" id="hr-t-' + id + '">' + titulo
-        + (dica ? '<small>' + dica + '</small>' : '') + '</h2><div class="hr-opcoes ' + classe + '">' + conteudo + '</div></div>';
+        + (dica ? '<small>' + dica + '</small>' : '') + '</h2>' + conteudo + '</div>';
+    }
+    function grade(o, marcados) {
+      var dias = Object.keys(o.dias), periodos = Object.keys(o.periodos);
+      var html = '<div class="hr-atalhos" aria-label="Atalhos">' + o.atalhos.map(function (a) {
+        return '<button type="button" class="hr-atalho" data-horarios="' + esc(a.horarios.join(' ')) + '" aria-pressed="false">' + esc(a.rotulo) + '</button>';
+      }).join('') + '</div><table class="hr-grade"><thead><tr><td></td>' + periodos.map(function (p) {
+        return '<th scope="col"><button type="button" class="hr-cab" data-horarios="' + dias.map(function (d) { return d + '-' + p; }).join(' ') + '" title="Marcar ' + esc(o.periodos[p].toLowerCase()) + ' em todos os dias">'
+          + esc(o.periodos[p]) + '<small>' + esc(o.horas[p]) + '</small></button></th>';
+      }).join('') + '</tr></thead><tbody>' + dias.map(function (d) {
+        return '<tr><th scope="row"><button type="button" class="hr-cab" data-horarios="' + periodos.map(function (p) { return d + '-' + p; }).join(' ') + '" title="Marcar ' + esc(o.dias[d].toLowerCase()) + ' inteira">'
+          + '<span class="hr-longo">' + esc(o.dias[d]) + '</span><span class="hr-curto">' + esc(o.dias_curtos[d]) + '</span></button></th>' + periodos.map(function (p) {
+            var v = d + '-' + p, on = marcados.indexOf(v) >= 0;
+            return '<td><label class="hr-slot' + (on ? ' marcado' : '') + '"><input type="checkbox" name="horarios" value="' + v + '"' + (on ? ' checked' : '')
+              + ' aria-label="' + esc(o.dias[d] + ', ' + o.periodos[p].toLowerCase() + ' (' + o.horas[p] + ')') + '"><span aria-hidden="true"></span></label></td>';
+          }).join('') + '</tr>';
+      }).join('') + '</tbody></table><p class="hr-contador" id="hr-contador" aria-live="polite"></p>';
+      return html;
     }
     function valores(form, nome) {
       return Array.prototype.map.call(form.querySelectorAll('input[name="' + nome + '"]:checked'), function (i) { return i.value; });
@@ -435,23 +457,48 @@
       var r = d.resposta || {}, o = d.opcoes, data = dataBr(d.turma_inicio);
       card.innerHTML = '<p class="hr-curso"><b>' + esc(d.curso.nome) + '</b> · ' + (data ? 'sua turma começa em <b>' + esc(data) + '</b>' : 'a secretaria vai definir sua turma') + '</p>'
         + '<form id="hr-form" novalidate>'
-        + grupo('dias', 'Quais dias da semana você pode?', 'Marque todos que der', 'hr-dias', opcoes('dias', 'checkbox', o.dias, r.dias || []))
-        + grupo('periodos', 'Em quais períodos?', 'Marque todos que der', 'hr-periodos', opcoes('periodos', 'checkbox', o.periodos, r.periodos || [], o.horas))
-        + grupo('inicio', 'A partir de quando você pode começar?', '', 'hr-lista', opcoes('inicio', 'radio', o.inicio, r.inicio ? [r.inicio] : []))
-        + (data ? grupo('turma_serve', 'Sua turma começa em ' + esc(data) + '. Essa data serve para você?', '', 'hr-lista', opcoes('turma_serve', 'radio', o.turma, r.turma_serve ? [r.turma_serve] : [])) : '')
-        + '<div class="ck-bloco-form"><label class="ck-campo" for="hr-obs"><span>Quer contar mais alguma coisa? (opcional)</span>'
-        + '<textarea id="hr-obs" name="observacao" maxlength="' + o.observacao_max + '" rows="3" placeholder="Ex.: só consigo depois das 19h; prefiro sábado de manhã.">' + esc(r.observacao || '') + '</textarea></label>'
+        + grupo('horarios', 'Quando você consegue vir?', 'Toque em todos os horários possíveis', grade(o, r.horarios || []))
+        + grupo('inicio', 'A partir de quando você pode começar?', '', escolha('inicio', o.inicio, r.inicio))
+        + (data ? grupo('turma_serve', 'Sua turma começa em ' + esc(data) + '. Essa data funciona?', '', escolha('turma_serve', o.turma, r.turma_serve)) : '')
+        + '<div class="ck-bloco-form"><details class="hr-recado"' + (r.observacao ? ' open' : '') + '><summary>Quer deixar um recado para a secretaria? (opcional)</summary>'
+        + '<label class="ck-campo" for="hr-obs"><span class="hr-oculto">Recado para a secretaria</span><textarea id="hr-obs" name="observacao" maxlength="' + o.observacao_max + '" rows="3" placeholder="Ex.: só chego depois das 18h30; às quintas não posso.">' + esc(r.observacao || '') + '</textarea></label></details>'
         + '<div class="ck-erro" id="hr-erro" role="alert"></div>'
-        + '<div class="cta-row"><button class="btn btn-red" type="submit" id="hr-enviar">' + (d.resposta ? 'Salvar alterações' : 'Enviar minhas respostas') + '</button></div></div>'
+        + '<div class="cta-row"><button class="btn btn-red" type="submit" id="hr-enviar">' + (d.resposta ? 'Salvar alterações' : 'Enviar meus horários') + '</button></div></div>'
         + '</form>';
       ligar(d);
     }
 
     function ligar(d) {
-      var form = q('#hr-form'), erro = q('#hr-erro'), botao = q('#hr-enviar'), rotulo = botao.textContent;
-      form.addEventListener('change', function () {
+      var form = q('#hr-form'), erro = q('#hr-erro'), botao = q('#hr-enviar'), rotulo = botao.textContent, contador = q('#hr-contador');
+      var caixas = Array.prototype.slice.call(form.querySelectorAll('input[name="horarios"]'));
+      function atualizar() {
+        caixas.forEach(function (c) { c.parentNode.classList.toggle('marcado', c.checked); });
         Array.prototype.forEach.call(form.querySelectorAll('.hr-opcao'), function (l) { l.classList.toggle('marcado', q('input', l).checked); });
+        Array.prototype.forEach.call(form.querySelectorAll('.hr-atalho'), function (b) {
+          b.setAttribute('aria-pressed', b.getAttribute('data-horarios').split(' ').every(function (v) { return form.querySelector('input[value="' + v + '"]').checked; }) ? 'true' : 'false');
+        });
+        var n = valores(form, 'horarios').length;
+        contador.textContent = n === 0 ? 'Nenhum horário marcado ainda.'
+          : n + (n === 1 ? ' horário marcado.' : ' horários marcados.') + (n < 3 ? ' Quanto mais opções, mais fácil encaixar você numa turma.' : '');
+      }
+      /* Erro some assim que o aluno mexe no formulário: a mensagem velha não fica depois de corrigido. */
+      function limparErros() {
+        erro.textContent = '';
+        Array.prototype.forEach.call(form.querySelectorAll('.ck-bloco-form.erro'), function (g) { g.classList.remove('erro'); g.removeAttribute('aria-describedby'); });
+        Array.prototype.forEach.call(form.querySelectorAll('.hr-msg'), function (m) { m.parentNode.removeChild(m); });
+      }
+      /* Atalho, dia ou período: se todos já estão marcados, desmarca; senão, marca todos. */
+      Array.prototype.forEach.call(form.querySelectorAll('[data-horarios]'), function (b) {
+        b.addEventListener('click', function () {
+          var alvo = b.getAttribute('data-horarios').split(' ').map(function (v) { return form.querySelector('input[value="' + v + '"]'); });
+          var todos = alvo.every(function (c) { return c.checked; });
+          alvo.forEach(function (c) { c.checked = !todos; });
+          limparErros();
+          atualizar();
+        });
       });
+      form.addEventListener('change', function () { limparErros(); atualizar(); });
+      atualizar();
       /* A mensagem aparece também no grupo com erro: a de baixo, junto do botão, sai da tela quando a página rola até o grupo. */
       function falhar(campo, mensagem) {
         erro.textContent = mensagem;
@@ -465,15 +512,12 @@
       }
       form.addEventListener('submit', function (ev) {
         ev.preventDefault();
-        erro.textContent = '';
-        Array.prototype.forEach.call(form.querySelectorAll('.ck-bloco-form.erro'), function (g) { g.classList.remove('erro'); g.removeAttribute('aria-describedby'); });
-        Array.prototype.forEach.call(form.querySelectorAll('.hr-msg'), function (m) { m.parentNode.removeChild(m); });
-        var corpo = { t: token, dias: valores(form, 'dias'), periodos: valores(form, 'periodos'), inicio: valores(form, 'inicio')[0] || '',
+        limparErros();
+        var corpo = { t: token, horarios: valores(form, 'horarios'), inicio: valores(form, 'inicio')[0] || '',
           turma_serve: valores(form, 'turma_serve')[0] || '', observacao: q('#hr-obs').value };
-        var falta = !corpo.dias.length ? ['dias', 'Escolha pelo menos um dia da semana.']
-          : !corpo.periodos.length ? ['periodos', 'Escolha pelo menos um período.']
+        var falta = !corpo.horarios.length ? ['horarios', 'Marque pelo menos um horário em que você consegue vir.']
           : !corpo.inicio ? ['inicio', 'Diga a partir de quando você pode começar.']
-          : (d.turma_inicio && !corpo.turma_serve) ? ['turma_serve', 'Diga se a data da sua turma serve.'] : null;
+          : (d.turma_inicio && !corpo.turma_serve) ? ['turma_serve', 'Diga se a data da sua turma funciona para você.'] : null;
         if (falta) { falhar(falta[0], falta[1]); return; }
         botao.disabled = true; botao.textContent = 'Enviando…';
         api('horarios.php', { method: 'POST', body: JSON.stringify(corpo) }).then(function (x) {
@@ -487,13 +531,13 @@
 
     function resumo(d, recemSalvo) {
       card.innerHTML = '<div class="ck-bloco" style="border-top:0;padding-top:0">'
-        + (recemSalvo ? '<p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Respostas recebidas</p>' : '')
-        + '<h2>' + (recemSalvo ? 'Obrigado, ' + esc(d.nome) + '!' : 'Suas respostas') + '</h2>'
-        + '<p>A secretaria da Escola usa estas respostas para montar as turmas' + (d.turma_inicio ? ' e, se a data da sua turma não servir, fala com você sobre outra.' : ' e avisa por e-mail quando a sua turma for definida.') + '</p>'
+        + (recemSalvo ? '<p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Horários recebidos</p>' : '')
+        + '<h2>' + (recemSalvo ? 'Pronto, ' + esc(d.nome) + '!' : 'Seus horários') + '</h2>'
+        + '<p>A secretaria da Escola usa estas respostas para montar as turmas' + (d.turma_inicio ? ' e, se a data da sua turma não funcionar, fala com você sobre outra.' : ' e avisa por e-mail quando a sua turma for definida.') + '</p>'
         + '<div class="ck-acesso"><div><b>' + esc(d.curso.nome) + '</b></div><div>' + esc(d.resumo) + '</div>'
         + (d.resposta && d.resposta.observacao ? '<div class="ck-nota">“' + esc(d.resposta.observacao) + '”</div>' : '') + '</div>'
-        + '<div class="cta-row"><a class="btn btn-red" href="' + esc(d.urls.parabens) + '">Voltar para minha inscrição</a><button class="btn btn-outline" type="button" id="hr-editar">Mudar respostas</button></div>'
-        + '<p class="ck-nota">Você pode mudar as respostas quando quiser, por este mesmo link.</p></div>';
+        + '<div class="cta-row"><a class="btn btn-red" href="' + esc(d.urls.parabens) + '">Voltar para minha inscrição</a><button class="btn btn-outline" type="button" id="hr-editar">Mudar meus horários</button></div>'
+        + '<p class="ck-nota">Você pode mudar quando quiser, por este mesmo link.</p></div>';
       q('#hr-editar').addEventListener('click', function () { formulario(d); window.scrollTo(0, 0); });
     }
 

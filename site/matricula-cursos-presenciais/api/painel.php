@@ -146,7 +146,8 @@ table.mapa{width:100%;min-width:320px;border-collapse:separate;border-spacing:4p
 .contas li:last-child{border-bottom:0}.contas b{color:var(--black)}
 .destaques{margin:12px 0 0;font-size:.9rem;color:var(--text)}
 table.respostas{min-width:860px}
-td.lista-dias,td.comeco,td small.tel{white-space:nowrap}
+td.comeco,td small.tel{white-space:nowrap}td.horarios{min-width:170px}
+.faltam{margin:-6px 0 16px;font-size:.9rem;color:var(--text)}.faltam b{color:var(--red)}
 @media(max-width:640px){.topo .wrap:first-child{flex-wrap:wrap;row-gap:4px}.topo .wrap:first-child small{display:none}
 .topo .usuario{flex-basis:100%;margin-left:0;text-align:left}.cartao{padding:18px 16px}
 .mapa td.celula{padding:10px 2px;font-size:.95rem}.mapa th small{font-size:.66rem}}
@@ -278,27 +279,31 @@ function pn_horarios(string $usuario): never
             . '<td><b>' . pn_e((string) $l['nome']) . '</b><small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
             . ($l['telefone'] ? '<small class="tel">' . pn_e(mcp_telefone_bonito((string) $l['telefone'])) . '</small>' : '') . '</td>'
             . '<td>' . pn_e((string) $l['curso_nome']) . '<small>' . ($dataTurma !== '' ? 'turma de ' . pn_e($dataTurma) : 'sem turma ainda') . '</small></td>'
-            . '<td class="lista-dias">' . pn_e(implode(', ', array_map(static fn(string $d): string => MCP_HORARIOS_DIAS_CURTOS[$d], $l['dias'])))
-            . '<small>' . pn_e(implode(', ', array_map(static fn(string $p): string => MCP_HORARIOS_PERIODOS[$p], $l['periodos']))) . '</small></td>'
+            . '<td class="horarios">' . pn_e(mcp_horarios_texto($l['horarios'])) . '</td>'
             . '<td class="comeco">' . pn_e(MCP_HORARIOS_INICIO[$l['inicio']] ?? (string) $l['inicio'])
             . ($l['turma_serve'] ? '<small>' . pn_e(MCP_HORARIOS_TURMA[$l['turma_serve']] ?? '') . '</small>' : '') . '</td>'
             . '<td>' . ($l['observacao'] ? pn_e((string) $l['observacao']) : '<span style="color:var(--muted)">—</span>') . '</td></tr>';
     }
 
     $titulo = $curso !== '' ? $contagem[$curso]['nome'] : 'Todos os cursos';
+    // Quem pagou e ainda não respondeu: recebe o alerta na tela da inscrição e até dois lembretes por e-mail.
+    $faltam = mcp_horarios_faltam($curso !== '' ? $curso : null);
+    $avisoFaltam = $faltam > 0 ? '<p class="faltam"><b>' . $faltam . ' aluno' . ($faltam > 1 ? 's pagaram e ainda não responderam' : ' pagou e ainda não respondeu')
+        . '.</b> ' . ($faltam > 1 ? 'Eles veem' : 'Ele vê') . ' um alerta na página da inscrição e ' . ($faltam > 1 ? 'recebem' : 'recebe') . ' até dois lembretes por e-mail (24 h e 72 h depois do pagamento).</p>' : '';
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Questionário do site</p><h1>Dias e horários preferidos</h1>'
         . '<p class="nota">Cada aluno responde depois de pagar a inscrição e pode mudar as respostas quando quiser. Use o mapa para escolher os dias das próximas turmas.</p></div>'
         . ($linhas ? '<a class="btn btn-outline" href="' . pn_e($base . '&csv=1') . '">Baixar planilha</a>' : '') . '</div>'
         . '<div class="filtros">' . $pilulas . '</div>'
+        . $avisoFaltam
         . ($linhas
             ? '<div class="resumo-grade"><div class="cartao"><h2>' . pn_e($titulo) . ' · quantos alunos podem em cada horário</h2><div class="rolagem"><table class="mapa">' . $grade . '</table></div>'
               . ($destaques !== '' ? '<p class="destaques"><b>Mais pedidos:</b> ' . $destaques . '</p>' : '')
-              . '<p class="nota">Um aluno que marcou dois dias conta nos dois. Total: ' . $mapa['total'] . ' aluno(s)'
+              . '<p class="nota">Cada número é quantos alunos marcaram aquele dia e período. Total: ' . $mapa['total'] . ' aluno(s)'
               . (count($linhas) >= MCP_PAINEL_HORARIOS_LIMITE ? ', contando só as ' . MCP_PAINEL_HORARIOS_LIMITE . ' respostas mais recentes' : '') . '.</p></div>'
               . '<div class="cartao"><h2>A partir de quando podem começar</h2><ul class="contas">' . $contas . '</ul>'
               . ($turma !== '' ? '<h2 style="margin-top:18px">A data da turma serve?</h2><ul class="contas">' . $turma . '</ul>' : '') . '</div></div>'
               . '<h2 style="margin:26px 0 12px">Respostas (' . count($linhas) . ')</h2>'
-              . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Respondido</th><th>Aluno</th><th>Curso</th><th>Dias</th><th>Começo</th><th>Comentário</th></tr></thead><tbody>' . $tabela . '</tbody></table></div>'
+              . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Respondido</th><th>Aluno</th><th>Curso</th><th>Pode vir</th><th>Começo</th><th>Recado</th></tr></thead><tbody>' . $tabela . '</tbody></table></div>'
             : '<div class="cartao vazio">Ainda não há respostas. O convite para responder aparece na tela de inscrição paga e no e-mail de confirmação.</div>');
     pn_pagina('Dias e horários', $corpo, $usuario, true, 'horarios');
 }

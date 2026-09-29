@@ -127,8 +127,7 @@ As regras são as mesmas no site e na escola, para as respostas se somarem no me
 
 | Campo | Valores | Regra |
 |---|---|---|
-| dias | `seg` `ter` `qua` `qui` `sex` `sab` | pelo menos um, sem domingo |
-| periodos | `manha` (8h às 12h), `tarde` (13h às 17h), `noite` (18h às 22h) | pelo menos um |
+| horarios | combinações `dia-periodo`: dia `seg` … `sab` (sem domingo) e período `manha` (8h às 12h), `tarde` (13h às 17h) ou `noite` (18h às 22h), ex. `seg-noite` | pelo menos uma; 18 possíveis |
 | inicio | `proxima`, `1mes`, `2meses` | obrigatório |
 | turma_serve | `sim`, `nao` | só quando o aluno já tem turma |
 | observacao | texto | opcional, até 500 caracteres |
@@ -145,8 +144,7 @@ model PreferenciaHorario {
   id           String   @id @default(uuid())
   alunoId      String
   cursoId      String
-  dias         String[] // seg … sab
-  periodos     String[] // manha | tarde | noite
+  horarios     String[] // "seg-noite", "sab-manha" …
   inicio       String   // proxima | 1mes | 2meses
   turmaServe   Boolean? // só com turma
   observacao   String?
@@ -171,8 +169,7 @@ para o Prisma como diferença ("drift"), e um `prisma migrate dev` propõe apaga
 {
   "cpf": "<CPF, só dígitos>",
   "curso_id": "5bd737ee-00a6-48dc-b5ab-08cde9b12897",
-  "dias": ["seg", "qua"],
-  "periodos": ["noite"],
+  "horarios": ["seg-noite", "qua-noite", "sab-manha"],
   "inicio": "proxima",
   "turma_serve": "nao",
   "observacao": "Trabalho até as 18h.",
@@ -230,7 +227,7 @@ createdb escola_teste
 for f in teste-local/00_papeis_supabase.sql teste-local/01_estrutura_escola.sql \
          teste-local/02_dados_ficticios.sql matricula_rapida.sql; do psql -d escola_teste -f $f; done
 psql -d escola_teste -f teste-local/03_testes_pgtap.sql   # 84 testes (pgTAP)
-php ../../scripts/testar_checkout.php                     # 225 testes do PHP, sem banco nem rede
+php ../../scripts/testar_checkout.php                     # 237 testes do PHP, sem banco nem rede
 ```
 
 O teste de ponta a ponta (`scripts/testar_escola_integracao.php`, 19 testes) usa o código do site

@@ -298,7 +298,7 @@ sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
 - **SQL, diagnósticos, testes, limpeza e como desfazer:** [`docs/escola/README.md`](docs/escola/README.md).
 - **Testes:**
   - 84 testes pgTAP da função numa cópia local do banco da escola;
-  - os testes de `scripts/testar_checkout.php` (225 em 29/09/2026);
+  - os testes de `scripts/testar_checkout.php` (237 em 29/09/2026);
   - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
     → cópia da escola).
 
@@ -308,15 +308,26 @@ Depois de pagar a inscrição, o aluno diz quais dias e horários são melhores 
 usa as respostas para montar as turmas e, se a data da turma do aluno não servir, combinar outra.
 
 - **Onde o aluno responde:** em `/matricula-cursos-presenciais/horarios/?t=<token>`, com o mesmo link
-  pessoal da tela Parabéns, sem login. O convite aparece:
-  - na tela Parabéns: botão "Responder agora" e, depois de responder, o resumo com "Mudar respostas";
-  - no e-mail de inscrição paga, nas versões A e B.
+  pessoal da tela Parabéns, sem login.
 - **As perguntas:**
-  1. dias da semana, de segunda a sábado (pode marcar vários);
-  2. períodos: manhã (8h às 12h), tarde (13h às 17h) e noite (18h às 22h) (pode marcar vários);
-  3. a partir de quando pode começar: na próxima turma, em cerca de 1 mês, ou em 2 meses ou mais;
-  4. se a escola já o colocou numa turma: se a data serve;
-  5. comentário opcional, de até 500 caracteres.
+  1. "Quando você consegue vir?": uma grade de segunda a sábado × manhã (8h às 12h), tarde (13h às
+     17h) e noite (18h às 22h). O aluno toca em cada horário possível, ou usa os atalhos "Noites de
+     semana", "Sábado", "Manhãs de semana" e "Tardes de semana"; tocar no nome do dia ou do período
+     marca a linha ou a coluna. Um contador mostra quantos horários estão marcados;
+  2. a partir de quando pode começar: na próxima turma, em cerca de 1 mês, ou em 2 meses ou mais;
+  3. se a escola já o colocou numa turma: se a data funciona;
+  4. recado opcional para a secretaria, de até 500 caracteres (recolhido, abre com um toque).
+
+  Cada horário é gravado como dia-período ("seg-noite"), então o mapa é exato: quem marca sábado de
+  manhã e noites de semana não aparece em "sábado à noite".
+- **Avisos a quem ainda não respondeu:**
+  - no topo da tela Parabéns (a página da inscrição do aluno), o alerta "Falta 1 passo: seus horários";
+    depois de responder, vira o resumo com "Mudar meus horários";
+  - no e-mail de inscrição paga, um quadro "Falta 1 passo" logo depois da ação principal (versões A e B);
+  - até dois lembretes por e-mail, 24 h e 72 h depois do pagamento, que param assim que ele responde.
+    Quem manda é `api/lembretes.php`, rodado pelo cron da Hostinger de hora em hora (só linha de
+    comando; por HTTP responde 404 e o `.htaccess` nega). Só entram pagamentos a partir de
+    `HORARIOS_LEMBRETES_DESDE` (padrão 30/09/2026) e dos últimos 14 dias.
 
   O aluno pode mudar as respostas quando quiser. Vale a última, e o painel mostra quantas vezes ele mudou.
 - **Onde a secretaria vê:** no painel da equipe, aba "Dias e horários dos alunos"
@@ -324,8 +335,10 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   curso, a aba mostra:
   - o mapa de quantos alunos podem em cada dia e período, com os horários mais pedidos;
   - quantos podem começar em cada prazo e para quantos a data da turma serve;
+  - quantos pagaram e ainda não responderam;
   - a lista das respostas, com os contatos;
-  - o botão "Baixar planilha": um CSV que abre no Excel e no Google Planilhas.
+  - o botão "Baixar planilha": um CSV que abre no Excel e no Google Planilhas, com uma coluna por
+    horário ("Seg manhã" … "Sáb noite", marcada com x) para filtrar quem pode em cada um.
 - **Aviso por e-mail:** na primeira resposta de cada aluno, a secretaria (`EMAIL_SECRETARIA`) recebe
   o resumo e um botão para o mapa do curso. Mudanças de resposta não geram outro e-mail.
 - **Regras:**
@@ -337,22 +350,24 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
 - **Código:**
   - `api/lib/horarios.php`: regras, mapa, planilha e aviso;
   - `api/horarios.php`: a API;
+  - `api/lembretes.php`: os lembretes (cron);
   - `api/painel.php`: a aba da secretaria;
   - `static/checkout.js` e `checkout.css`: a tela;
   - `scripts/gerar_checkout.py`: gera a página;
   - tabela `mcp_preferencias`, com uma linha por inscrição, criada sozinha na primeira chamada.
 - **Testes:**
-  - 30 dos 225 testes de `scripts/testar_checkout.php`;
-  - 43 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
-    painel e planilha, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
+  - 42 dos 237 testes de `scripts/testar_checkout.php`;
+  - 51 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
+    painel, planilha e lembretes, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
     `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_horarios_integracao.php`. O
     teste recusa banco que não seja local e apaga no fim o que criou.
 - **Para publicar:**
-  - `api/horarios.php`, `api/lib/horarios.php` e `api/lib.php`;
+  - `api/horarios.php`, `api/lembretes.php`, `api/lib/horarios.php`, `api/lib.php` e `api/.htaccess`;
   - `api/lib/db.php`, `email.php`, `painel.php` e `publico.php`;
   - `api/painel.php` e `api/status.php`;
   - `static/checkout.css` e `checkout.js`;
-  - as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`.
+  - as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`;
+  - depois, criar o cron de hora em hora com `php .../public_html/matricula-cursos-presenciais/api/lembretes.php`.
 - **Dentro da escola (fase 2):** a mesma pergunta na área do aluno da plataforma da escola, quando
   houver acesso ao código dela. O plano e o contrato dos dados estão em
   [`docs/escola/README.md`](docs/escola/README.md#fase-2-o-questionário-dentro-da-escola).
