@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>Cartaz do ponto da sede | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <style>
+    @page{size:A4;margin:0}
+    *{box-sizing:border-box}
+    body{margin:0;background:#e9ecf0;font-family:Inter,Arial,sans-serif;color:#1a202c;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .acoes{max-width:210mm;margin:16px auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:0 12px;font-size:14px;color:#4a5568}
+    .acoes button{font:inherit;font-weight:800;border:0;border-radius:999px;background:#cc0000;color:#fff;padding:12px 22px;cursor:pointer}
+    .cartaz{width:210mm;height:297mm;overflow:hidden;margin:0 auto 24px;background:#fff;position:relative;padding:18mm 18mm 12mm;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+    .cartaz:before{content:"";position:absolute;left:0;right:0;top:0;height:8mm;background:#cc0000}
+    .logo{height:19mm;width:auto;display:block;margin:2mm auto 7mm}
+    h1{margin:0;font-size:21mm;line-height:1;font-weight:900;letter-spacing:-.03em;color:#0f1318}
+    .lead{margin:4mm 0 7mm;font-size:6.6mm;font-weight:700;color:#cc0000;line-height:1.2}
+    #qr{width:84mm;height:84mm;margin:0 auto;padding:4.5mm;border:1.2mm solid #0f1318;border-radius:6mm;display:flex;align-items:center;justify-content:center}
+    #qr img,#qr canvas{width:73mm!important;height:73mm!important}
+    .url{margin:4mm 0 7mm;font-size:5.6mm;font-weight:800;color:#0f1318;letter-spacing:.02em}
+    ol{list-style:none;counter-reset:passo;margin:0 auto;padding:0;max-width:152mm;text-align:left}
+    ol li{counter-increment:passo;display:flex;gap:4.5mm;align-items:flex-start;margin:0 0 4mm;font-size:5mm;line-height:1.3}
+    ol li:before{content:counter(passo);flex:0 0 9mm;height:9mm;border-radius:50%;background:#cc0000;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:5mm}
+    ol li span{padding-top:1.3mm}
+    .duas{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:6mm auto 0;max-width:174mm;text-align:left}
+    .duas div{background:#f5f6f8;border-radius:5mm;padding:4mm 5mm}
+    .duas b{display:block;font-size:4.6mm;color:#0f1318;margin:0 0 1.2mm}
+    .duas p{margin:0;font-size:3.9mm;line-height:1.35;color:#4a5568}
+    .rodape{margin:7mm 0 0;font-size:4.4mm;font-weight:700;color:#4a5568}
+    @media print{body{background:#fff}.acoes{display:none}.cartaz{margin:0;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <div class="acoes"><button type="button" onclick="window.print()">Imprimir cartaz</button><span>Imprima em A4, em cores, e cole perto da entrada ou da recepção.</span></div>
+  <article class="cartaz">
+    <img class="logo" src="/assets/otim/logo-cvb-rj-480.png" alt="Cruz Vermelha Brasileira · Rio de Janeiro">
+    <h1>Ponto da sede</h1>
+    <p class="lead">Registre a chegada e a saída pelo celular</p>
+    <div id="qr" role="img" aria-label="QR code que abre o ponto da sede: https://cruzvermelhariodejaneiro.org/ponto/"></div>
+    <p class="url">cruzvermelhariodejaneiro.org/ponto</p>
+    <ol>
+      <li><span>Aponte a câmera do celular para o código.</span></li>
+      <li><span>Digite seu CPF.</span></li>
+      <li><span>Permita a localização e toque em <b>Registrar entrada</b>, <b>Registrar saída</b> ou <b>Confirmar presença</b>.</span></li>
+    </ol>
+    <div class="duas">
+      <div><b>Colaboradores</b><p>As horas doadas à instituição ficam registradas a cada entrada e saída.</p></div>
+      <div><b>Alunos</b><p>Confirme a presença na aula. O comprovante de comparecimento chega por e-mail no fim da aula.</p></div>
+    </div>
+    <p class="rodape">Sem celular? Use o aparelho da recepção.</p>
+  </article>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.QRCode) new QRCode(document.getElementById('qr'), { text: 'https://cruzvermelhariodejaneiro.org/ponto/', width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
+      else document.getElementById('qr').textContent = 'cruzvermelhariodejaneiro.org/ponto';
+    });
+  </script>
+</body>
+</html>

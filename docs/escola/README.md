@@ -63,8 +63,9 @@ Tudo vem das consultas de 28/09/2026 (`diagnostico-1.sql` e `diagnostico-2.sql`,
 
 ## Segurança
 
-- A chave secreta do projeto (papel `service_role`) só executa esta função. Ela continua sem ler
-  nem gravar nenhuma tabela: o teste confere `permission denied for table Usuario`.
+- A chave secreta do projeto (papel `service_role`) só executa as funções do site: esta e, para o
+  ponto da sede, [`aulas_do_aluno`](#aulas-do-aluno-para-o-ponto-da-sede), que só lê. Ela continua sem
+  ler nem gravar nenhuma tabela: o teste confere `permission denied for table Usuario`.
 - A função é `SECURITY DEFINER` com `search_path` vazio. O `EXECUTE` foi retirado de `PUBLIC`,
   `anon` e `authenticated`.
 - O link de criar senha é uma credencial. Ele só fica:
@@ -139,8 +140,8 @@ A plataforma da escola é um app Express, EJS e Prisma no Render. O código já 
 as respostas no banco da escola pede uma tabela nova. As migrações do Prisma da escola param em
 julho de 2026, e o banco já tem tabelas e colunas criadas fora delas (`AulaData`, `Avaliacao`, `lembreteImediatoEm`…).
 Uma migração nova precisa antes alinhar esse histórico, senão o Prisma vê a diferença ("drift"). Isso
-pede combinar com quem mantém a escola. A chave que o site usa no banco só executa `matricula_rapida`,
-de propósito, e continua assim.
+pede combinar com quem mantém a escola. A chave que o site usa no banco só executa `matricula_rapida` e
+`aulas_do_aluno`, de propósito, e continua assim.
 
 ### O que é preciso
 
@@ -233,6 +234,71 @@ painel não o inclui.
 
 Ela entra depois da tabela, com os mesmos testes pgTAP numa cópia local, e só com aprovação.
 
+## Aulas do aluno para o ponto da sede
+
+Desde 29/09/2026 o site tem o ponto da sede (veja a seção "Ponto da sede e comprovante de
+comparecimento" no [README principal](../../README.md)). Quando um aluno registra a chegada na sede,
+o site pergunta à escola quais aulas ele tem naquele dia e guarda a presença. Quando a aula termina,
+o site libera o comprovante de comparecimento. A pergunta é a função `public.aulas_do_aluno`
+(`aulas_do_aluno.sql`).
+
+- **Chamada:** `POST /rest/v1/rpc/aulas_do_aluno` com a mesma chave secreta e o corpo
+  `{"dados": {"cpf": "<11 dígitos>", "data": "AAAA-MM-DD"}}`.
+- **Resposta:** `{"ok": true, "aluno": {"nome", "email"}, "aulas": [...]}`, com uma aula por linha de
+  `AulaData` da data pedida, em ordem de horário. Cada aula traz `aula_id`, `data`, `horario`,
+  `turma_id`, `curso_id`, `curso_nome` e `carga_horaria`.
+- **O que entra:**
+  - matrículas do CPF que não foram canceladas nem estornadas (`statusPagamento`);
+  - em turmas que não foram canceladas.
+
+  Matrícula com pagamento pendente entra: o aluno está na turma e veio à aula.
+- **Sem aula no dia:** `{"ok": true, "aluno": null, "aulas": []}`. Nome e e-mail só vêm quando há
+  aula, então a função não serve para descobrir o nome de um CPF qualquer.
+- **Dados inválidos:** erro `22023` com `dados inválidos: cpf` ou `dados inválidos: data`. O CPF precisa
+  ter o dígito verificador válido.
+
+### Segurança da consulta
+
+- A função só lê (`STABLE`) e não grava nada, nem no `LogAuditoria`.
+- Tem o mesmo molde de `matricula_rapida`:
+  - `SECURITY DEFINER` com `search_path` vazio;
+  - `EXECUTE` só para `service_role`, retirado de `PUBLIC`, `anon` e `authenticated`.
+
+  A chave continua sem ler nenhuma tabela.
+- No site, a resposta é limpa, com tamanho máximo em cada texto. O log registra só o código HTTP,
+  nunca CPF ou nome. O e-mail do aluno serve só para mandar o comprovante.
+
+### Como ligar a consulta
+
+1. No SQL Editor do projeto da escola, rodar `aulas_do_aluno.sql`. O script pode ser rodado de novo.
+2. No servidor, nada muda. O site usa a chave que já está em `api/config-escola.php` e acha a URL
+   trocando `matricula_rapida` por `aulas_do_aluno` em `ESCOLA_API_URL`. Para outra URL, pôr
+   `ESCOLA_API_AULAS_URL` no mesmo arquivo.
+3. Conferir no SQL Editor que a função existe com os privilégios certos, sem gravar nada:
+   ```sql
+   select p.prosecdef as security_definer, p.proconfig as config, p.proacl as privilegios
+     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'aulas_do_aluno';
+   ```
+   O esperado:
+   - `security_definer` verdadeiro;
+   - `search_path` vazio em `config`;
+   - em `privilegios`, só `postgres=X/postgres` e `service_role=X/postgres`.
+
+   Depois do site publicado, o teste de verdade é um aluno com aula no dia digitar o CPF no ponto.
+
+**Desfazer:** `drop function public.aulas_do_aluno(jsonb);`. O ponto dos colaboradores continua
+funcionando, e o aluno vê "Não conseguimos consultar as aulas na escola agora".
+
+**Testes:** 24 testes pgTAP em `teste-local/04_testes_aulas_pgtap.sql` e o passo 7 de
+`scripts/testar_escola_integracao.php`, em que o site chama a função pelo PostgREST local. Os testes
+pgTAP cobrem:
+- segurança e privilégios;
+- aluno com dois cursos no dia;
+- outro dia e pagamento pendente;
+- matrícula cancelada ou estornada, turma cancelada e CPF desconhecido;
+- dados inválidos.
+
 ## Como ligar em produção
 
 1. No SQL Editor do projeto da escola, rodar `matricula_rapida.sql`. O script pode ser rodado de
@@ -263,13 +329,14 @@ local. Os CPFs dos testes são gerados na hora, só com o dígito verificador v�
 ```bash
 createdb escola_teste
 for f in teste-local/00_papeis_supabase.sql teste-local/01_estrutura_escola.sql \
-         teste-local/02_dados_ficticios.sql matricula_rapida.sql; do psql -d escola_teste -f $f; done
-psql -d escola_teste -f teste-local/03_testes_pgtap.sql   # 84 testes (pgTAP)
-php ../../scripts/testar_checkout.php                     # 237 testes do PHP, sem banco nem rede
+         teste-local/02_dados_ficticios.sql matricula_rapida.sql aulas_do_aluno.sql; do psql -d escola_teste -f $f; done
+psql -d escola_teste -f teste-local/03_testes_pgtap.sql        # 84 testes de matricula_rapida (pgTAP)
+psql -d escola_teste -f teste-local/04_testes_aulas_pgtap.sql  # 24 testes de aulas_do_aluno (pgTAP)
+php ../../scripts/testar_checkout.php                          # 281 testes do PHP, sem banco nem rede
 ```
 
-O teste de ponta a ponta (`scripts/testar_escola_integracao.php`, 19 testes) usa o código do site
-chamando a função por HTTP. Ele precisa de três coisas:
+O teste de ponta a ponta (`scripts/testar_escola_integracao.php`, 21 testes) usa o código do site
+chamando as duas funções por HTTP. Ele precisa de três coisas:
 
 - um PostgREST local na frente de `escola_teste`, com o papel `service_role` num JWT;
 - um MariaDB vazio para o site;

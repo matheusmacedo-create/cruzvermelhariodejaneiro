@@ -585,6 +585,91 @@ verificar('escola-horários: cabeçalho e rótulos', [$paraEscola['ok'], $paraEs
 $jsonEscola = json_encode($paraEscola);
 verificar('escola-horários: nunca CPF, hash, IP ou token', [str_contains($jsonEscola, '52998224725'), str_contains($jsonEscola, 'h4sh'),
     str_contains($jsonEscola, '10.0.0.1'), str_contains($jsonEscola, $token), str_contains($jsonEscola, str_repeat('ab', 32))], [false, false, false, false, false]);
+// Ponto da sede (lib/ponto.php, lib/presenca.php e lib/declaracao.php): horário da aula, janela da presença,
+// localização, horas, código de verificação, textos dos documentos, e-mail e PDF.
+verificar('ponto: horário da aula em vários formatos (Brasília → UTC)', array_map(static fn(string $h): array => array_intersect_key(mcp_presenca_horario($h, '2026-10-22'),
+    ['inicio' => 1, 'fim' => 1, 'texto' => 1]), ['18:00 - 22:00', '9h às 12h', '18h30-22h', 'das 13h às 17h30', 'Manhã', '22:00 - 18:00']), [
+    ['inicio' => '2026-10-22 21:00:00', 'fim' => '2026-10-23 01:00:00', 'texto' => 'das 18:00 às 22:00'],
+    ['inicio' => '2026-10-22 12:00:00', 'fim' => '2026-10-22 15:00:00', 'texto' => 'das 09:00 às 12:00'],
+    ['inicio' => '2026-10-22 21:30:00', 'fim' => '2026-10-23 01:00:00', 'texto' => 'das 18:30 às 22:00'],
+    ['inicio' => '2026-10-22 16:00:00', 'fim' => '2026-10-22 20:30:00', 'texto' => 'das 13:00 às 17:30'],
+    ['inicio' => null, 'fim' => '2026-10-23 02:59:59', 'texto' => 'Manhã'],
+    ['inicio' => null, 'fim' => '2026-10-23 02:59:59', 'texto' => '22:00 - 18:00'],
+]);
+$aulaNoite = ['horario' => '18:00 - 22:00', 'data' => '2026-10-22'];
+$inicioAula = (int) strtotime('2026-10-22 21:00:00 UTC');
+verificar('ponto: janela da presença (3 h antes do início até o fim)', [
+    mcp_presenca_janela($aulaNoite, $inicioAula - 181 * 60),
+    mcp_presenca_janela($aulaNoite, $inicioAula - 180 * 60)['pode'],
+    mcp_presenca_janela($aulaNoite, $inicioAula + 4 * 3600)['pode'],
+    mcp_presenca_janela($aulaNoite, $inicioAula + 4 * 3600 + 1),
+    mcp_presenca_janela(['horario' => 'a combinar', 'data' => '2026-10-22'], $inicioAula + 5 * 3600)['pode'],
+], [
+    ['pode' => false, 'motivo' => 'Sua aula começa às 18:00. Registre a chegada quando vier para a aula.'], true, true,
+    ['pode' => false, 'motivo' => 'Esta aula terminou às 22:00. Se você veio, fale com a secretaria.'], true,
+]);
+verificar('ponto: horário local de Brasília em UTC e datas inválidas', [mcp_ponto_local_para_utc('2026-10-22T18:30'), mcp_ponto_local_para_utc('2026-10-22 00:00:00'),
+    mcp_ponto_local_para_utc('2026-02-30 10:00'), mcp_ponto_local_para_utc('22/10/2026 10:00'), mcp_ponto_local_para_utc('2026-10-22 25:00')],
+    ['2026-10-22 21:30:00', '2026-10-22 03:00:00', null, null, null]);
+verificar('ponto: hoje e mês em Brasília (UTC 02:00 ainda é o dia anterior)', [mcp_ponto_hoje((int) strtotime('2026-10-01 02:00:00 UTC')), mcp_ponto_mes_atual((int) strtotime('2026-10-01 02:00:00 UTC')),
+    mcp_ponto_mes_dias('2026-12'), mcp_ponto_mes_vizinho('2026-01', -1), mcp_ponto_mes_nome('2026-03'), mcp_ponto_mes_valido('2026-13'), mcp_ponto_mes_valido('2026-09')],
+    ['2026-09-30', '2026-09', ['2026-12-01', '2027-01-01'], '2025-12', 'março de 2026', false, true]);
+verificar('ponto: horas em texto e por extenso', [mcp_ponto_horas_texto(0), mcp_ponto_horas_texto(65), mcp_ponto_horas_texto(1350), mcp_ponto_horas_extenso(60), mcp_ponto_horas_extenso(61), mcp_ponto_horas_extenso(1350)],
+    ['0h00', '1h05', '22h30', '1 hora', '1 hora e 1 minuto', '22 horas e 30 minutos']);
+verificar('ponto: distância até a sede', [(int) round(mcp_ponto_distancia(-22.91132, -43.18779, -22.9115, -43.1880)), (int) round(mcp_ponto_distancia(-22.91132, -43.18779, -22.9068, -43.1729)),
+    mcp_ponto_distancia_texto(29), mcp_ponto_distancia_texto(1606)], [29, 1606, '29 m', '1,6 km']);
+verificar('ponto: localização do celular', [
+    mcp_ponto_conferir_localizacao(['lat' => -22.9115, 'lng' => -43.1880, 'precisao' => 25]),
+    // 196 m: acima dos 150 m do raio, mas dentro da folga pela imprecisão de 90 m do GPS; com 10 m de imprecisão, não.
+    mcp_ponto_conferir_localizacao(['lat' => -22.9124, 'lng' => -43.1893, 'precisao' => 90]),
+    mcp_ponto_conferir_localizacao(['lat' => -22.9124, 'lng' => -43.1893, 'precisao' => 10])['ok'],
+    mcp_ponto_conferir_localizacao(['lat' => -22.9068, 'lng' => -43.1729, 'precisao' => 10])['erro'],
+    mcp_ponto_conferir_localizacao(['lat' => -22.9115, 'lng' => -43.1880, 'precisao' => 1500])['ok'],
+    mcp_ponto_conferir_localizacao(['lat' => 'x', 'lng' => -43.1880])['ok'],
+    mcp_ponto_conferir_localizacao(null)['ok'],
+], [['ok' => true, 'distancia' => 29, 'erro' => null], ['ok' => true, 'distancia' => 196, 'erro' => null], false, 'Você está a 1,6 km da sede. Pelo celular, o registro só vale na sede.', false, false, false]);
+verificar('ponto: código de verificação sem 0/O nem 1/I', [strlen(mcp_codigo_gerar()), (bool) preg_match('/^[A-HJ-NP-Z2-9]{8}$/', mcp_codigo_gerar()), mcp_codigo_normalizar('k7qm-4xpa'), mcp_codigo_normalizar(' K7QM 4XPA '),
+    mcp_codigo_normalizar('K7QM-4XP0'), mcp_codigo_normalizar(['x']), mcp_codigo_formatado('K7QM4XPA')], [8, true, 'K7QM4XPA', 'K7QM4XPA', '', '', 'K7QM-4XPA']);
+verificar('ponto: textos de apoio', [mcp_data_extenso('2026-10-01'), mcp_data_extenso('2026-10-22'), mcp_dia_semana('2026-10-22'), mcp_cpf_mascarado('529.982.247-25'), mcp_email_mascarado('maria@exemplo.org'),
+    mcp_nome_arquivo('Comprovante de Comparecimento Punção Venosa 2026-10-22'), mcp_conferir_url('K7QM4XPA'), mcp_conferir_url_curta()],
+    ['1º de outubro de 2026', '22 de outubro de 2026', 'quinta-feira', '***.982.247-**', 'm***@exemplo.org', 'Comprovante_de_Comparecimento_Puncao_Venosa_2026-10-22.pdf',
+     'https://exemplo.org/conferir/?c=K7QM4XPA', 'exemplo.org/conferir']);
+verificar('ponto: endereço da função da escola a partir do da matricula_rapida', [mcp_escola_url_funcao('aulas_do_aluno')], ['https://escola-db.exemplo.org/rest/v1/rpc/aulas_do_aluno']);
+$presencaTeste = ['id' => 1, 'token' => str_repeat('b', 40), 'codigo' => 'K7QM4XPA', 'cpf' => '52998224725', 'nome' => 'MARIA DAS GRAÇAS DOS SANTOS', 'email' => 'maria@exemplo.org',
+    'curso_nome' => 'Bombeiro Civil', 'aula_data' => '2026-10-22', 'horario' => '18:00 - 22:00', 'inicio' => '2026-10-22 21:00:00', 'fim' => '2026-10-23 01:00:00',
+    'chegada' => '2026-10-22 20:52:00', 'origem' => 'celular', 'status' => 'valida', 'email_em' => null];
+$conteudo = mcp_presenca_conteudo($presencaTeste, '2026-10-23 01:07:00');
+verificar('comprovante de comparecimento: texto declara a aula, o horário e o local', $conteudo['texto'],
+    'Declaramos, para os devidos fins, que Maria das Graças dos Santos, CPF 529.982.247-25, compareceu à aula presencial do curso Bombeiro Civil, da Escola de Educação e Saúde da '
+    . 'Cruz Vermelha Brasileira Rio de Janeiro, no dia 22 de outubro de 2026 (quinta-feira), das 18:00 às 22:00, na sede da instituição, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ.');
+verificar('comprovante de comparecimento: dados, código e rodapé', [$conteudo['linhas'][3], $conteudo['codigo'], $conteudo['local_data'], str_contains($conteudo['rodape'], 'emitido eletronicamente em 22/10/2026 às 22h07'),
+    str_contains($conteudo['rodape'], 'exemplo.org/conferir com o código K7QM-4XPA')], [['Chegada registrada', '17:52, pelo celular, na sede'], 'K7QM-4XPA', 'Rio de Janeiro, 22 de outubro de 2026.', true, true]);
+verificar('comprovante de comparecimento: público antes e depois do fim da aula', [
+    array_intersect_key(mcp_presenca_publico($presencaTeste, (int) strtotime('2026-10-23 00:59:00 UTC')), ['disponivel' => 1, 'pdf' => 1, 'codigo' => 1, 'disponivel_em' => 1, 'email' => 1]),
+    mcp_presenca_publico($presencaTeste, (int) strtotime('2026-10-23 01:00:00 UTC'))['codigo'],
+    mcp_presenca_publico(['status' => 'cancelada'] + $presencaTeste, (int) strtotime('2026-10-24 00:00:00 UTC'))['disponivel'],
+], [['disponivel' => false, 'disponivel_em' => '22/10 às 22:00', 'pdf' => null, 'codigo' => null, 'email' => 'm***@exemplo.org'], 'K7QM-4XPA', false]);
+$pdfPresenca = mcp_presenca_pdf($presencaTeste, '2026-10-23 01:07:00');
+verificar('comprovante de comparecimento: PDF de uma página', [str_starts_with($pdfPresenca, '%PDF-1.'), substr_count($pdfPresenca, '/Type /Page ') + substr_count($pdfPresenca, '/Type/Page '), mcp_presenca_arquivo($presencaTeste)],
+    [true, 1, 'Comprovante_de_Comparecimento_Bombeiro_Civil_2026-10-22.pdf']);
+$emailPresenca = mcp_montar_email_comparecimento($presencaTeste);
+verificar('comprovante de comparecimento: e-mail com link, código e sem whatsapp', [$emailPresenca['assunto'], str_contains($emailPresenca['html'], 'https://exemplo.org/matricula-cursos-presenciais/comparecimento/?t=' . str_repeat('b', 40)),
+    str_contains($emailPresenca['html'], 'Baixar meu comprovante'), str_contains($emailPresenca['texto'], 'K7QM-4XPA'), stripos($emailPresenca['html'] . $emailPresenca['texto'], 'whatsapp'), (bool) preg_match('/<|&[a-z]+;/', $emailPresenca['texto'])],
+    ['Seu comprovante de comparecimento: Bombeiro Civil, 22/10/2026', true, true, true, false, false]);
+$declaracaoTeste = ['codigo' => 'P3RN8WQZ', 'nome' => 'joão pedro da silva', 'cpf' => '11144477735', 'funcao' => 'Socorrista voluntário', 'de' => '2026-09-01', 'ate' => '2026-09-30',
+    'minutos' => 1350, 'dias' => 9, 'emitida_em' => '2026-10-01 13:00:00'];
+$conteudoHoras = mcp_ponto_declaracao_conteudo($declaracaoTeste);
+verificar('declaração de horas: texto, período e código', [$conteudoHoras['texto'], $conteudoHoras['linhas'][0], $conteudoHoras['linhas'][3], $conteudoHoras['local_data'], $conteudoHoras['codigo']], [
+    'Declaramos, para os devidos fins, que João Pedro da Silva, CPF 111.444.777-35, prestou serviço voluntário na Cruz Vermelha Brasileira Rio de Janeiro, na função de Socorrista voluntário, '
+    . 'somando 22 horas e 30 minutos de atividades na sede da instituição entre 01/09/2026 e 30/09/2026, conforme os registros de entrada e saída do ponto da sede.',
+    ['Período', '01/09/2026 a 30/09/2026'], ['Total de horas', '22h30'], 'Rio de Janeiro, 1º de outubro de 2026.', 'P3RN-8WQZ']);
+verificar('declaração de horas: um dia só e sem função', [mcp_ponto_declaracao_conteudo(['de' => '2026-09-15', 'ate' => '2026-09-15', 'funcao' => null] + $declaracaoTeste)['linhas'][0],
+    count(mcp_ponto_declaracao_conteudo(['funcao' => ''] + $declaracaoTeste)['linhas']), mcp_ponto_declaracao_arquivo($declaracaoTeste)],
+    [['Período', '15/09/2026'], 4, 'Declaracao_de_Horas_Voluntarias_Joao_Pedro_da_Silva_2026-09-01_a_2026-09-30.pdf']);
+$pdfHoras = mcp_declaracao_pdf($conteudoHoras);
+verificar('declaração de horas: PDF de uma página', [str_starts_with($pdfHoras, '%PDF-1.'), substr_count($pdfHoras, '/Type /Page ') + substr_count($pdfHoras, '/Type/Page ')], [true, 1]);
+$nomeLongo = mcp_presenca_pdf(['nome' => str_repeat('Maria Aparecida ', 8) . 'Santos', 'curso_nome' => str_repeat('Curso de nome comprido ', 6)] + $presencaTeste, '2026-10-23 01:07:00');
+verificar('comprovante de comparecimento: nome e curso longos cabem numa página', substr_count($nomeLongo, '/Type /Page ') + substr_count($nomeLongo, '/Type/Page '), 1);
 
 unlink($configTeste);
 unlink($configEscola);

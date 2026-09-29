@@ -298,9 +298,9 @@ sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
 - **SQL, diagnósticos, testes, limpeza e como desfazer:** [`docs/escola/README.md`](docs/escola/README.md).
 - **Testes:**
   - 84 testes pgTAP da função numa cópia local do banco da escola;
-  - os testes de `scripts/testar_checkout.php` (237 em 29/09/2026);
-  - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
-    → cópia da escola).
+  - os testes de `scripts/testar_checkout.php` (281 em 29/09/2026);
+  - 21 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
+    → cópia da escola), com a consulta das aulas do ponto da sede.
 
 ## Portal da secretaria (29/09/2026)
 
@@ -337,6 +337,9 @@ estas seções:
   aluno abre a ficha, e o aviso de quem falta leva à lista "Sem horários".
 - **Mensagens do chat** (`?v=mensagens`): a lista e as respostas de antes. Os endereços antigos
   (`painel.php?f=…` e `?id=…`) continuam valendo.
+- **Ponto da sede** (`?v=ponto`): horas dos colaboradores, presenças dos alunos nas aulas e aparelhos
+  da recepção. O número no menu é o de saídas esquecidas. Veja a seção
+  [Ponto da sede e comprovante de comparecimento](#ponto-da-sede-e-comprovante-de-comparecimento-29092026).
 - **Plataforma da escola:** link para `ESCOLA_URL/login`, em outra aba.
 
 Os números no menu são vermelhos quando pedem ação (inscrições com atenção, mensagens novas) e
@@ -351,13 +354,141 @@ cinza para quem ainda não disse os horários. No celular:
   - `api/painel.php`: as telas;
   - `api/lib/secretaria.php`: consultas, situação na escola, histórico, lembrete à mão e planilha.
 - **Testes:**
-  - 18 dos 255 testes de `scripts/testar_checkout.php`;
-  - 29 dos 80 testes de `scripts/testar_horarios_integracao.php`: início, menu, filtros, busca,
+  - 18 dos 281 testes de `scripts/testar_checkout.php`;
+  - 29 dos 88 testes de `scripts/testar_horarios_integracao.php`: início, menu, filtros, busca,
     planilha, ficha e o lembrete à mão com as travas.
 - **Para publicar:** `api/painel.php`, `api/lib.php`, `api/lib/secretaria.php` (novo),
-  `api/lib/horarios.php`, `api/lib/email.php` e `api/lib/painel.php`.
+  `api/lib/horarios.php`, `api/lib/email.php` e `api/lib/painel.php`. Vai junto com o ponto da sede,
+  na ordem da lista daquela seção.
 - **Situação:** pronto e testado localmente, com capturas no computador e no celular. Publicar só
   com o OK do Matheus.
+
+## Ponto da sede e comprovante de comparecimento (29/09/2026)
+
+Quem chega à sede registra a chegada em `cruzvermelhariodejaneiro.org/ponto/`, que leva a
+`/matricula-cursos-presenciais/ponto/`:
+- **colaboradores** registram entrada e saída, e as horas doadas à instituição somam no portal da
+  secretaria;
+- **alunos** registram a chegada à aula presencial do dia e, quando a aula termina, recebem o
+  comprovante de comparecimento para baixar e por e-mail.
+
+A pessoa se identifica pelo CPF. Quem é colaborador e aluno vê as duas coisas.
+
+- **Dois jeitos de registrar,** na mesma página:
+  - **aparelho da recepção:** um tablet ou computador que a secretaria liberou no portal (Ponto da
+    sede → Aparelhos e QR code → "Liberar este aparelho"). Ele mostra um teclado numérico grande e
+    volta sozinho para o início depois de cada registro. A liberação é um cookie assinado de 400 dias
+    e pode ser desativada no portal a qualquer hora;
+  - **celular da pessoa:** pelo QR code do cartaz para imprimir em A4
+    (`/matricula-cursos-presenciais/ponto/cartaz/`). Só vale com a localização do celular a até
+    150 m da sede, com uma folga de até 100 m pela imprecisão do GPS. O site guarda só a distância,
+    nunca a localização. A pessoa pode marcar "Lembrar de mim neste celular": o CPF fica cifrado
+    num cookie de 180 dias.
+- **Colaboradores:**
+  - a secretaria cadastra cada um no portal, com nome, CPF, função e contatos;
+  - no ponto, o colaborador vê se está na sede e desde quando, as horas de hoje e do mês, e o botão
+    "Registrar entrada" ou "Registrar saída";
+  - contam só os pares entrada–saída, com pelo menos 1 minuto entre as duas;
+  - uma entrada sem saída há mais de 16 horas é uma **saída esquecida**. Ela não conta, a pessoa pode
+    registrar outra entrada, e o número aparece no menu do portal até a secretaria corrigir.
+- **Alunos:**
+  - o site pergunta à escola, pela função `aulas_do_aluno` (só leitura), as aulas daquele CPF no dia:
+    curso, data e horário vêm da agenda da turma na escola (`AulaData`). Matrícula cancelada ou
+    estornada e turma cancelada não entram;
+  - dá para registrar a chegada de 3 horas antes do início até o fim da aula, uma vez por aula;
+  - o horário é lido do texto da escola ("18:00 - 22:00", "9h às 12h", "18h30-22h"). Se não der
+    para ler, a aula vale o dia todo e termina às 23:59;
+  - só quem registrou presença recebe comprovante, e só depois que a aula termina.
+- **O comprovante de comparecimento:**
+  - é um PDF no desenho do comprovante de inscrição, com o aluno e o CPF, o curso, o dia e o horário
+    da aula, a hora da chegada, o local e um código de conferência;
+  - a página pessoal `/matricula-cursos-presenciais/comparecimento/?t=…` libera o botão "Baixar
+    comprovante (PDF)" quando a aula termina, sem recarregar. No celular, o link aparece logo no registro
+    ("Ver meu comprovante"). No aparelho da recepção, não aparece, porque o aparelho não é da pessoa;
+  - o e-mail com o PDF anexado vai para o e-mail que a escola tem do aluno. Quem manda é
+    `api/comparecimentos.php`, rodado pelo cron da Hostinger a cada 15 minutos. São até 5 tentativas
+    por presença, para aulas dos últimos 30 dias. Só linha de comando; por HTTP responde 404 e o
+    `.htaccess` nega.
+- **Conferência:** em `cruzvermelhariodejaneiro.org/conferir/`, que leva a
+  `/matricula-cursos-presenciais/conferir/`, quem recebe um comprovante ou uma declaração de horas
+  digita o código de 8 caracteres (ex.: `K7QM-3XPD`). A página mostra se o documento é verdadeiro,
+  com o nome, o CPF mascarado (`***.456.789-**`) e os dados. Presença cancelada aparece como
+  cancelada. Cada IP pode consultar 30 vezes a cada 10 minutos. O `/verificar` continua sendo da
+  auditoria.
+- **No portal da secretaria,** a seção **Ponto da sede** (`api/painel.php?v=ponto`) tem três abas:
+  - **Colaboradores:**
+    - o mês, com setas para os anteriores;
+    - quem está na sede agora;
+    - horas e dias de cada colaborador, com as saídas esquecidas;
+    - a planilha CSV do mês, sem CPF.
+
+    A ficha do colaborador (`?v=colaborador&id=N`) edita o cadastro e lista os registros do mês com
+    "Corrigir" e "Apagar". Ela também lança horas à mão e emite a **declaração de horas voluntárias**
+    em PDF, para qualquer período, com código de conferência. Correções e lançamentos pedem motivo,
+    valem até 16 horas por turno e não podem sobrepor outro registro. O histórico do ajuste fica no
+    registro;
+  - **Alunos nas aulas:** as presenças de cada dia e a situação do comprovante: sai às HH:MM, pronto,
+    enviado, envio falhou, sem e-mail ou cancelada. Cada presença tem "Ver" e "Cancelar". Cancelada,
+    o comprovante deixa de baixar e de valer;
+  - **Aparelhos e QR code:** liberar o aparelho em uso, abrir o cartaz para imprimir e desativar
+    aparelhos.
+- **Segurança:**
+  - depois de conferir o CPF e o local, o servidor devolve uma sessão de 3 minutos cifrada
+    (AES-256-GCM). Quem mexe no aparelho da recepção não lê o CPF nem o e-mail de quem usou antes, e
+    ninguém consegue alterar a sessão;
+  - consultas de CPF: até 15 a cada 10 minutos por IP no celular, 240 por aparelho da sede;
+  - para um CPF sem aula no dia, a escola não devolve o nome, então a consulta não revela quem é aluno;
+  - no portal, tudo passa pela sessão e pelo CSRF de sempre e fica no histórico (`mcp_eventos`);
+  - a página do ponto não carrega Analytics, Pixel nem o chat.
+- **Configuração:** nada obrigatório. `PONTO_SEDE_LAT`, `PONTO_SEDE_LNG` e `PONTO_RAIO_METROS`, no
+  `api/config.php` do servidor, trocam o ponto da sede e o raio. O padrão é a Praça da Cruz Vermelha,
+  10 (-22.91132, -43.18779, pelo OpenStreetMap) e 150 m. A consulta às aulas usa a chave da escola
+  que já está em `api/config-escola.php`, com a URL de `ESCOLA_API_URL` trocando `matricula_rapida`
+  por `aulas_do_aluno`.
+- **Código:**
+  - `api/lib/ponto.php`: regras do ponto, aparelhos, sessão, relatórios, correções e declaração de horas;
+  - `api/lib/presenca.php`: consulta à escola, horário da aula, presenças, comprovante, e-mail e conferência;
+  - `api/lib/declaracao.php`: códigos de conferência e o PDF das declarações;
+  - `api/ponto.php`, `api/comparecimento.php` e `api/conferir.php`: as APIs;
+  - `api/comparecimentos.php`: o cron dos e-mails;
+  - `api/painel.php`: a seção Ponto da sede;
+  - `static/ponto.js` e `ponto.css`: a página do ponto;
+  - `static/checkout.js` e `checkout.css`: as páginas do comprovante e da conferência;
+  - `scripts/gerar_checkout.py`: gera `ponto/`, `ponto/cartaz/`, `comparecimento/` e `conferir/`;
+  - tabelas `mcp_colaboradores`, `mcp_ponto`, `mcp_ponto_aparelhos`, `mcp_presencas` e
+    `mcp_declaracoes_horas`, criadas sozinhas na primeira chamada;
+  - na escola: `docs/escola/aulas_do_aluno.sql` ([`docs/escola/README.md`](docs/escola/README.md#aulas-do-aluno-para-o-ponto-da-sede)).
+- **Testes:**
+  - 19 dos 281 testes de `scripts/testar_checkout.php`: horário da aula, janela, distância, códigos
+    e PDFs;
+  - 76 testes de ponta a ponta em `scripts/testar_ponto_integracao.php`, com uma escola falsa:
+    - aparelho e celular;
+    - entrada, saída e saída esquecida;
+    - presença, comprovante e e-mail;
+    - conferência;
+    - portal, com correções, lançamentos, declaração e cancelamento.
+
+    Para rodar: `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_ponto_integracao.php`.
+    O teste recusa banco que não seja local e apaga no fim o que criou;
+  - 24 testes pgTAP de `aulas_do_aluno` e o passo 7 de `scripts/testar_escola_integracao.php`, com a
+    chamada de verdade pelo PostgREST local.
+- **Para publicar,** junto com o portal da secretaria e nesta ordem:
+  1. antes de tudo, aplicar `docs/escola/aulas_do_aluno.sql` no banco da escola. Sem a função, o
+     ponto dos colaboradores funciona, e o aluno vê "Não conseguimos consultar as aulas na escola agora";
+  2. `api/lib/secretaria.php`, `declaracao.php`, `ponto.php` e `presenca.php` (novos), e
+     `api/lib/db.php`, `email.php` e `painel.php`;
+  3. `api/lib.php`;
+  4. `api/painel.php` e `api/lib/horarios.php`;
+  5. `api/ponto.php`, `comparecimento.php`, `conferir.php` e `comparecimentos.php` (novos) e `api/.htaccess`;
+  6. `static/ponto.css` e `ponto.js` (novos), `checkout.css` e `checkout.js`;
+  7. as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`, e as novas `ponto/`,
+     `ponto/cartaz/`, `comparecimento/` e `conferir/`;
+  8. o `.htaccess` da raiz do site (atalhos `/ponto/` e `/conferir/`), e limpar o cache;
+  9. criar o cron a cada 15 minutos:
+     `/opt/alt/php83/usr/bin/php /home/u448697994/domains/cruzvermelhariodejaneiro.org/public_html/matricula-cursos-presenciais/api/comparecimentos.php`.
+- **Na sede:** imprimir o cartaz, liberar o tablet da recepção no portal e cadastrar os colaboradores.
+- **Situação:** pronto e testado localmente, com capturas no tablet, no celular, nos PDFs e no portal.
+  Publicar só com o OK do Matheus.
 
 ## Questionário de dias e horários (29/09/2026)
 
@@ -423,9 +554,9 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   - `scripts/gerar_checkout.py`: gera a página;
   - tabela `mcp_preferencias`, com uma linha por inscrição, criada sozinha na primeira chamada.
 - **Testes:**
-  - 42 dos 255 testes de `scripts/testar_checkout.php`;
-  - 80 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
-    portal da secretaria, planilhas e lembretes, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
+  - 49 dos 281 testes de `scripts/testar_checkout.php`;
+  - 88 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
+    portal da secretaria, planilhas, lembretes e a leitura pelo painel da escola, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
     `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_horarios_integracao.php`. O
     teste recusa banco que não seja local e apaga no fim o que criou.
 - **Para publicar:**

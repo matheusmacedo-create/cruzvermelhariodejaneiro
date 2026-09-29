@@ -137,6 +137,20 @@ mcp_escola_tentar($id);
 $i = mcp_inscricao_por('id', (string) $id);
 verificar('recusado: erro definitivo com o campo', [$i['escola_status'], (int) $i['escola_tentativas'], mcp_escola_erro($i)], ['erro', MCP_ESCOLA_MAX_TENTATIVAS, 'dados inválidos: curso_id']);
 
+// 7) Ponto da sede: a função aulas_do_aluno (docs/escola/aulas_do_aluno.sql), pela mesma chave, devolve as aulas
+//    do dia do aluno matriculado no passo 1. O PostgREST relê as funções antes (a função pode ser nova na cópia).
+$pg->exec("NOTIFY pgrst, 'reload schema'");
+usleep(1500000);
+$hojeBrt = mcp_ponto_hoje();
+$turmaNovo = (string) $pg->query("select m.\"turmaId\" from \"Matricula\" m join \"Usuario\" u on u.id = m.\"alunoId\" where u.\"cpfCnpj\" = " . $pg->quote($cpfNovo))->fetchColumn();
+$pg->exec("delete from \"AulaData\" where id = 'ad-ponto-teste'");
+$pg->prepare('insert into "AulaData" (id, "turmaId", data, horario) values (?, ?, ?, ?)')->execute(['ad-ponto-teste', $turmaNovo, $hojeBrt, '18:00 - 22:00']);
+$aulas = mcp_escola_aulas($cpfNovo, $hojeBrt);
+verificar('ponto: aulas de hoje pela função da escola', [$aulas['ok'], $aulas['aluno']['email'] ?? null, count($aulas['aulas'] ?? []), $aulas['aulas'][0]['id'] ?? null,
+    $aulas['aulas'][0]['horario'] ?? null, $aulas['aulas'][0]['curso'] ?? null], [true, $emailNovo, 1, 'ad-ponto-teste', '18:00 - 22:00', 'Bombeiro Civil']);
+verificar('ponto: dia sem aula não devolve nem o nome', mcp_escola_aulas($cpfNovo, '2030-01-01'), ['ok' => true, 'aluno' => null, 'aulas' => []]);
+$pg->exec("delete from \"AulaData\" where id = 'ad-ponto-teste'");
+
 // 6) A escola fora do ar: erro que pode ser tentado de novo (tentativas continuam abaixo do limite).
 $foraDoAr = tempnam(sys_get_temp_dir(), 'mcp-escola-fora-');
 file_put_contents($foraDoAr, "<?php return ['ESCOLA_API_URL' => 'http://127.0.0.1:9/rpc/matricula_rapida', 'ESCOLA_API_TOKEN' => 'x'];");

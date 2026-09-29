@@ -151,6 +151,96 @@ function mcp_migrar(PDO $pdo): void
         atualizado_em DATETIME NOT NULL,
         KEY ix_curso (curso_slug, atualizado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Ponto da sede (29/09/2026, lib/ponto.php e lib/presenca.php). Colaboradores cadastrados pela
+    // secretaria registram entrada e saída (horas doadas); alunos registram a chegada às aulas, e a
+    // presença vira o comprovante de comparecimento. Horários em UTC, como no resto do banco.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_colaboradores (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(160) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        email VARCHAR(190) NULL,
+        telefone VARCHAR(20) NULL,
+        funcao VARCHAR(120) NULL,
+        ativo TINYINT(1) NOT NULL DEFAULT 1,
+        criado_por VARCHAR(190) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_cpf (cpf)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        colaborador_id INT UNSIGNED NOT NULL,
+        entrada DATETIME NOT NULL,
+        saida DATETIME NULL,
+        origem_entrada VARCHAR(12) NOT NULL,
+        origem_saida VARCHAR(12) NULL,
+        aparelho_entrada INT UNSIGNED NULL,
+        aparelho_saida INT UNSIGNED NULL,
+        distancia_entrada SMALLINT UNSIGNED NULL,
+        distancia_saida SMALLINT UNSIGNED NULL,
+        ajuste TEXT NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_colaborador (colaborador_id, entrada),
+        KEY ix_entrada (entrada)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto_aparelhos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(80) NOT NULL,
+        ativo TINYINT(1) NOT NULL DEFAULT 1,
+        criado_por VARCHAR(190) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        usado_em DATETIME NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_presencas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        token CHAR(40) NOT NULL,
+        codigo CHAR(8) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        nome VARCHAR(160) NOT NULL,
+        email VARCHAR(190) NULL,
+        aula_id VARCHAR(64) NOT NULL,
+        turma_id VARCHAR(64) NULL,
+        curso_id VARCHAR(64) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        aula_data DATE NOT NULL,
+        horario VARCHAR(60) NOT NULL,
+        inicio DATETIME NULL,
+        fim DATETIME NOT NULL,
+        chegada DATETIME NOT NULL,
+        origem VARCHAR(12) NOT NULL,
+        aparelho_id INT UNSIGNED NULL,
+        distancia SMALLINT UNSIGNED NULL,
+        status VARCHAR(12) NOT NULL DEFAULT 'valida',
+        cancelada_por VARCHAR(190) NULL,
+        cancelada_em DATETIME NULL,
+        email_status VARCHAR(20) NULL,
+        email_tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        email_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_aula (cpf, aula_id),
+        UNIQUE KEY ux_token (token),
+        UNIQUE KEY ux_codigo (codigo),
+        KEY ix_data (aula_data),
+        KEY ix_envio (email_em, fim)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Declarações de horas voluntárias emitidas no portal: o código impresso no PDF é conferido em conferir/.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_declaracoes_horas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        codigo CHAR(8) NOT NULL,
+        colaborador_id INT UNSIGNED NOT NULL,
+        nome VARCHAR(160) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        funcao VARCHAR(120) NULL,
+        de DATE NOT NULL,
+        ate DATE NOT NULL,
+        minutos INT UNSIGNED NOT NULL,
+        dias INT UNSIGNED NOT NULL,
+        emitida_por VARCHAR(190) NOT NULL,
+        emitida_em DATETIME NOT NULL,
+        UNIQUE KEY ux_codigo (codigo),
+        KEY ix_colaborador (colaborador_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 
 /** Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). */

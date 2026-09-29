@@ -65,6 +65,16 @@ return [
     // SITE_HORARIOS_TOKEN da escola (Render), com o mesmo nome. Vazio = o endereço responde 404.
     'SITE_HORARIOS_TOKEN' => '',
     'ESCOLA_URL'       => 'https://escola.cursoscruzvermelha.org',
+    // Aulas do dia para o ponto da sede (lib/presenca.php): a função public.aulas_do_aluno da escola,
+    // com a mesma chave. Vazio = a URL de ESCOLA_API_URL trocando matricula_rapida por aulas_do_aluno.
+    // Também vale em api/config-escola.php.
+    'ESCOLA_API_AULAS_URL' => '',
+
+    // Ponto da sede (/ponto/): no celular, o registro só vale a até PONTO_RAIO_METROS da sede. Vazio =
+    // Praça da Cruz Vermelha, 10 (-22.91132, -43.18779, pelo OpenStreetMap) e 150 m.
+    'PONTO_SEDE_LAT'    => '',
+    'PONTO_SEDE_LNG'    => '',
+    'PONTO_RAIO_METROS' => '',
 
     // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o
     // padrão de lib/comprovante.php: O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP, 67.733.551/0001-35

@@ -1,5 +1,5 @@
-/* Checkout da matrícula em cursos presenciais: um arquivo para as quatro telas.
-   A tela é escolhida por <body data-tela="checkout|pendente|parabens|horarios">. Conversa só com
+/* Checkout da matrícula em cursos presenciais: um arquivo para as telas do site.
+   A tela é escolhida por <body data-tela="checkout|pendente|parabens|horarios|comparecimento|conferir">. Conversa só com
    /matricula-cursos-presenciais/api/ (mesma origem). Nada aqui guarda dado de cartão. */
 (function () {
   'use strict';
@@ -550,7 +550,75 @@
     });
   }
 
-  var telas = { checkout: telaCheckout, pendente: telaPendente, parabens: telaParabens, horarios: telaHorarios };
+  // ------------------------------------------------------------------ comprovante de comparecimento
+  /* Link pessoal do comprovante (comparecimento/?t=): antes do fim da aula mostra quando fica pronto e
+     atualiza sozinho; depois, o botão do PDF e o código de verificação. */
+  function telaComparecimento() {
+    var card = q('#cp-card');
+    var token = param('t');
+    var ok = '<p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> ';
+    if (!TOKEN.test(token)) { card.innerHTML = voltarCursos('Link incompleto. Abra o link do e-mail ou o que apareceu no ponto da sede.'); return; }
+    function mostrar(d) {
+      if (!d.ok) { card.innerHTML = voltarCursos(d.erro || 'Comprovante não encontrado.'); return; }
+      var aula = '<div class="ck-acesso"><div><b>' + esc(d.curso) + '</b></div><div>' + esc((d.dia_semana ? d.dia_semana + ', ' : '') + d.data + ', ' + d.horario) + '</div>'
+        + '<div class="ck-nota">' + esc(d.nome) + ' · chegada registrada às ' + esc(d.chegada) + '</div></div>';
+      if (d.status !== 'valida') {
+        card.innerHTML = '<h2>Presença cancelada</h2>' + aula
+          + '<p>A secretaria cancelou esta presença, e o comprovante não vale mais. Se foi engano, escreva para contato@cruzvermelhariodejaneiro.org.</p>';
+        return;
+      }
+      if (!d.disponivel) {
+        card.innerHTML = ok + 'Presença registrada</p><h2>O comprovante fica pronto no fim da aula</h2>' + aula
+          + '<p>Ele aparece aqui em <b>' + esc(d.disponivel_em) + '</b>' + (d.email ? ' e vai também para o e-mail <b>' + esc(d.email) + '</b>' : '') + '.</p>'
+          + '<div class="ck-status" role="status"><span class="pulso" aria-hidden="true"></span> Esta página atualiza sozinha</div>';
+        setTimeout(carregar, 60000);
+        return;
+      }
+      card.innerHTML = ok + 'Comprovante pronto</p><h2>Seu comprovante de comparecimento</h2>' + aula
+        + '<div class="cta-row"><a class="btn btn-red" href="' + esc(urlSegura(d.pdf)) + '">Baixar comprovante (PDF)</a></div>'
+        + '<div class="ck-codigo"><span>Código de verificação</span><b>' + esc(d.codigo) + '</b>'
+        + '<small>Quem receber o comprovante pode conferir se ele é verdadeiro em <a href="' + esc(urlSegura(d.conferir)) + '">cruzvermelhariodejaneiro.org/conferir</a>.</small></div>'
+        + (d.email ? '<p class="ck-nota">' + (d.enviado ? 'Também enviamos o comprovante para ' + esc(d.email) + '.' : 'Uma cópia vai para ' + esc(d.email) + ' em alguns minutos.') + '</p>' : '');
+    }
+    function carregar() { api('comparecimento.php?t=' + encodeURIComponent(token)).then(mostrar); }
+    carregar();
+  }
+
+  // ------------------------------------------------------------------ conferência de documentos
+  /* conferir/?c=: quem recebeu um comprovante ou uma declaração digita o código e vê o que foi declarado. */
+  function telaConferir() {
+    var card = q('#cf-card');
+    function formulario(codigo, erro) {
+      card.innerHTML = '<form id="cf-form" novalidate><label class="ck-campo"><span>Código de verificação</span>'
+        + '<input id="cf-codigo" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ex.: K7QM-4XPA" maxlength="14" value="' + esc(codigo || '') + '"></label>'
+        + '<div class="ck-erro" role="alert">' + esc(erro || '') + '</div>'
+        + '<button class="btn btn-red ck-btn" type="submit">Conferir</button></form>'
+        + '<p class="ck-nota">O código está no quadro “Código de verificação” do comprovante de comparecimento ou da declaração de horas voluntárias.</p>';
+      q('#cf-form').addEventListener('submit', function (e) { e.preventDefault(); conferir(q('#cf-codigo').value); });
+    }
+    function conferir(codigo) {
+      var limpo = String(codigo || '').toUpperCase().replace(/[\s.\-]+/g, '');
+      if (!/^[A-HJ-NP-Z2-9]{8}$/.test(limpo)) { formulario(codigo, 'O código tem 8 letras e números, como K7QM-4XPA.'); return; }
+      try { history.replaceState(null, '', '?c=' + limpo); } catch (e) { /* sem história: segue */ }
+      card.innerHTML = '<p>Conferindo…</p>';
+      api('conferir.php?c=' + encodeURIComponent(limpo)).then(function (d) {
+        if (!d.ok) { formulario(codigo, d.erro); return; }
+        card.innerHTML = '<p class="ck-selo ' + (d.valido ? 'ok' : 'erro') + '">' + esc(d.situacao) + '</p>'
+          + '<h2>' + esc(d.tipo) + '</h2>'
+          + '<p><b>' + esc(d.nome) + '</b><br><span class="ck-nota">CPF ' + esc(d.cpf) + ' · código ' + esc(d.codigo) + '</span></p>'
+          + d.linhas.map(function (l) { return '<div class="ck-linha"><span>' + esc(l[0]) + '</span><b>' + esc(l[1]) + '</b></div>'; }).join('')
+          + '<p class="ck-nota">Estes são os dados que a Cruz Vermelha Brasileira Rio de Janeiro registrou. Confira se batem com o documento que você recebeu.</p>'
+          + '<div class="cta-row"><button class="btn btn-outline" type="button" id="cf-outro">Conferir outro código</button></div>';
+        q('#cf-outro').addEventListener('click', function () {
+          try { history.replaceState(null, '', location.pathname); } catch (e) { /* segue */ }
+          formulario('');
+        });
+      });
+    }
+    if (param('c')) conferir(param('c')); else formulario('');
+  }
+
+  var telas = { checkout: telaCheckout, pendente: telaPendente, parabens: telaParabens, horarios: telaHorarios, comparecimento: telaComparecimento, conferir: telaConferir };
   var tela = telas[document.body.getAttribute('data-tela')];
   if (tela) tela();
 })();

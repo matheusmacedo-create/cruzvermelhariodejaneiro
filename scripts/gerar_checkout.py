@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Gera as páginas do checkout da matrícula: checkout/, pendente/ e parabens/.
+"""Gera as páginas do checkout da matrícula: checkout/, pendente/, parabens/ e horarios/, e as do
+ponto da sede: ponto/ (com o cartaz do QR code), comparecimento/ e conferir/.
 
 Todas usam o cabeçalho, o rodapé, o CSS, o GA4 e o Meta Pixel da home (via
 scripts/gerar_matricula_presencial.py) e conversam com o backend em
@@ -61,7 +62,7 @@ PAGINA = """<!DOCTYPE html>
     <div class="ck-teste" id="ck-teste" hidden>Modo de teste: o valor cobrado não é o preço da inscrição.</div>
     <section class="ck-hero">
       <div class="wrap">
-        <p class="eyebrow">Matrícula cursos presenciais</p>
+        <p class="eyebrow">@@EYEBROW@@</p>
         <h1>@@H1@@</h1>
         <p class="lead">@@LEAD@@</p>
 @@PASSOS@@
@@ -160,6 +161,113 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
 CORPO_PENDENTE = """        <div class="ck-card" id="pd-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_PARABENS = """        <div class="ck-card" id="pb-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_HORARIOS = """        <div class="ck-card" id="hr-card" aria-live="polite"><p>Carregando…</p></div>"""
+CORPO_COMPARECIMENTO = """        <div class="ck-card" id="cp-card" aria-live="polite"><p>Carregando…</p></div>"""
+CORPO_CONFERIR = """        <div class="ck-card" id="cf-card" aria-live="polite"><p>Carregando…</p></div>"""
+
+# Ponto da sede (29/09/2026): página própria, sem o cabeçalho do site, sem medição e sem chat. Fica
+# aberta no aparelho da recepção e também no celular de quem lê o QR code do cartaz.
+PAGINA_PONTO = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#cc0000">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>Ponto da sede | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="@@CSS_URL@@">
+  <script src="@@JS_URL@@" defer></script>
+</head>
+<body>
+  <div class="pt-faixa"></div>
+  <header class="pt-topo">
+    <img src="/assets/otim/logo-cvb-rj-480.png" alt="Cruz Vermelha Brasileira · Rio de Janeiro" width="160" height="48">
+    <div class="pt-titulo"><b>Ponto da sede</b><small id="pt-modo">Colaboradores e alunos</small></div>
+    <div class="pt-relogio"><b id="pt-hora">--:--</b><small id="pt-data"></small></div>
+  </header>
+  <main class="pt-main">
+    <section class="pt-card" id="pt-tela" aria-live="polite"><p>Carregando…</p></section>
+    <noscript><p class="pt-card">O ponto precisa de JavaScript. Ative o JavaScript ou fale com a secretaria.</p></noscript>
+  </main>
+  <footer class="pt-rodape">
+    <p>O CPF e os horários de entrada e saída servem só para registrar a presença e as horas doadas. No celular, a localização só confirma que você está na sede e não fica guardada. <a href="/privacidade/">Privacidade</a></p>
+  </footer>
+</body>
+</html>
+"""
+
+# Cartaz A4 para imprimir e colar na recepção: o QR code abre o ponto no celular.
+PAGINA_CARTAZ = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>Cartaz do ponto da sede | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <style>
+    @page{size:A4;margin:0}
+    *{box-sizing:border-box}
+    body{margin:0;background:#e9ecf0;font-family:Inter,Arial,sans-serif;color:#1a202c;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .acoes{max-width:210mm;margin:16px auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:0 12px;font-size:14px;color:#4a5568}
+    .acoes button{font:inherit;font-weight:800;border:0;border-radius:999px;background:#cc0000;color:#fff;padding:12px 22px;cursor:pointer}
+    .cartaz{width:210mm;height:297mm;overflow:hidden;margin:0 auto 24px;background:#fff;position:relative;padding:18mm 18mm 12mm;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+    .cartaz:before{content:"";position:absolute;left:0;right:0;top:0;height:8mm;background:#cc0000}
+    .logo{height:19mm;width:auto;display:block;margin:2mm auto 7mm}
+    h1{margin:0;font-size:21mm;line-height:1;font-weight:900;letter-spacing:-.03em;color:#0f1318}
+    .lead{margin:4mm 0 7mm;font-size:6.6mm;font-weight:700;color:#cc0000;line-height:1.2}
+    #qr{width:84mm;height:84mm;margin:0 auto;padding:4.5mm;border:1.2mm solid #0f1318;border-radius:6mm;display:flex;align-items:center;justify-content:center}
+    #qr img,#qr canvas{width:73mm!important;height:73mm!important}
+    .url{margin:4mm 0 7mm;font-size:5.6mm;font-weight:800;color:#0f1318;letter-spacing:.02em}
+    ol{list-style:none;counter-reset:passo;margin:0 auto;padding:0;max-width:152mm;text-align:left}
+    ol li{counter-increment:passo;display:flex;gap:4.5mm;align-items:flex-start;margin:0 0 4mm;font-size:5mm;line-height:1.3}
+    ol li:before{content:counter(passo);flex:0 0 9mm;height:9mm;border-radius:50%;background:#cc0000;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:5mm}
+    ol li span{padding-top:1.3mm}
+    .duas{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:6mm auto 0;max-width:174mm;text-align:left}
+    .duas div{background:#f5f6f8;border-radius:5mm;padding:4mm 5mm}
+    .duas b{display:block;font-size:4.6mm;color:#0f1318;margin:0 0 1.2mm}
+    .duas p{margin:0;font-size:3.9mm;line-height:1.35;color:#4a5568}
+    .rodape{margin:7mm 0 0;font-size:4.4mm;font-weight:700;color:#4a5568}
+    @media print{body{background:#fff}.acoes{display:none}.cartaz{margin:0;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <div class="acoes"><button type="button" onclick="window.print()">Imprimir cartaz</button><span>Imprima em A4, em cores, e cole perto da entrada ou da recepção.</span></div>
+  <article class="cartaz">
+    <img class="logo" src="/assets/otim/logo-cvb-rj-480.png" alt="Cruz Vermelha Brasileira · Rio de Janeiro">
+    <h1>Ponto da sede</h1>
+    <p class="lead">Registre a chegada e a saída pelo celular</p>
+    <div id="qr" role="img" aria-label="QR code que abre o ponto da sede: @@URL@@"></div>
+    <p class="url">@@URL_VISIVEL@@</p>
+    <ol>
+      <li><span>Aponte a câmera do celular para o código.</span></li>
+      <li><span>Digite seu CPF.</span></li>
+      <li><span>Permita a localização e toque em <b>Registrar entrada</b>, <b>Registrar saída</b> ou <b>Confirmar presença</b>.</span></li>
+    </ol>
+    <div class="duas">
+      <div><b>Colaboradores</b><p>As horas doadas à instituição ficam registradas a cada entrada e saída.</p></div>
+      <div><b>Alunos</b><p>Confirme a presença na aula. O comprovante de comparecimento chega por e-mail no fim da aula.</p></div>
+    </div>
+    <p class="rodape">Sem celular? Use o aparelho da recepção.</p>
+  </article>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.QRCode) new QRCode(document.getElementById('qr'), { text: '@@URL@@', width: 600, height: 600, correctLevel: QRCode.CorrectLevel.M });
+      else document.getElementById('qr').textContent = '@@URL_VISIVEL@@';
+    });
+  </script>
+</body>
+</html>
+"""
+URL_PONTO = "https://cruzvermelhariodejaneiro.org/ponto/"
 
 QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>'
 
@@ -175,7 +283,9 @@ def url_estatico(nome: str) -> str:
 
 
 def passos(atual: int) -> str:
-    """Etapas da matrícula no topo: 1 curso escolhido, 2 pagamento, 3 confirmação da turma."""
+    """Etapas da matrícula no topo: 1 curso escolhido, 2 pagamento, 3 confirmação da turma (0 = sem etapas)."""
+    if atual == 0:
+        return ""
     etapas = ["Curso escolhido", "Pagamento da inscrição", "Confirmação da turma"]
     itens = []
     for i, nome in enumerate(etapas, 1):
@@ -192,11 +302,15 @@ NOSCRIPT = {
     "pendente": "Esta página precisa de JavaScript para conferir o pagamento.",
     "parabens": "Esta página precisa de JavaScript para mostrar os dados da sua inscrição.",
     "horarios": "Esta página precisa de JavaScript para mostrar o questionário de dias e horários.",
+    "comparecimento": "Esta página precisa de JavaScript para mostrar o comprovante.",
+    "conferir": "Esta página precisa de JavaScript para conferir o código.",
 }
 
 
-def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, qrcode: bool, wrap_extra: str = "", passo: int = 2) -> str:
+def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, qrcode: bool, wrap_extra: str = "", passo: int = 2,
+           eyebrow: str = "Matrícula cursos presenciais") -> str:
     return (PAGINA
+            .replace("@@EYEBROW@@", esc(eyebrow))
             .replace("@@NOSCRIPT@@", NOSCRIPT[id_])
             .replace("@@TITULO@@", esc(titulo)).replace("@@QRCODE@@", QRCODE if qrcode else "")
             .replace("@@ESTILO@@", partes["estilo"])
@@ -245,11 +359,30 @@ def main() -> int:
                            "Quando você pode fazer as aulas?",
                            "Toque nos dias e horários em que você consegue vir. Leva 30 segundos e ajuda a secretaria a encaixar você na turma certa.",
                            CORPO_HORARIOS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),
+        # Ponto da sede (29/09/2026): comprovante de comparecimento pelo link pessoal e conferência do código.
+        "comparecimento": montar(partes, "Comprovante de comparecimento | Cruz Vermelha Brasileira Rio de Janeiro", "comparecimento",
+                                 "Comprovante de comparecimento",
+                                 "O comprovante da sua aula presencial. Ele fica disponível quando a aula termina e também chega no seu e-mail.",
+                                 CORPO_COMPARECIMENTO, qrcode=False, wrap_extra=' style="max-width:820px"', passo=0, eyebrow="Escola de Educação e Saúde"),
+        "conferir": montar(partes, "Conferir documento | Cruz Vermelha Brasileira Rio de Janeiro", "conferir",
+                           "Conferir um comprovante ou declaração",
+                           "Digite o código de verificação impresso no documento para confirmar que ele foi emitido pela Cruz Vermelha Brasileira Rio de Janeiro.",
+                           CORPO_CONFERIR, qrcode=False, wrap_extra=' style="max-width:820px"', passo=0, eyebrow="Conferência de documentos"),
     }
     for nome, html in paginas.items():
         destino = PASTA / nome / "index.html"
         destino.parent.mkdir(parents=True, exist_ok=True)
         html = icones.converter(html, extras={"circle-check"})  # SVG inline; circle-check vem do checkout.js
+        destino.write_text(html, encoding="utf-8")
+        print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
+
+    # Ponto da sede e cartaz do QR code: páginas próprias, fora do layout do site.
+    ponto = {
+        PASTA / "ponto" / "index.html": PAGINA_PONTO.replace("@@CSS_URL@@", url_estatico("ponto.css")).replace("@@JS_URL@@", url_estatico("ponto.js")),
+        PASTA / "ponto" / "cartaz" / "index.html": PAGINA_CARTAZ.replace("@@URL_VISIVEL@@", URL_PONTO.replace("https://", "").rstrip("/")).replace("@@URL@@", URL_PONTO),
+    }
+    for destino, html in ponto.items():
+        destino.parent.mkdir(parents=True, exist_ok=True)
         destino.write_text(html, encoding="utf-8")
         print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
     return 0
