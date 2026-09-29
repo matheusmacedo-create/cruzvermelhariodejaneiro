@@ -159,6 +159,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
 
 CORPO_PENDENTE = """        <div class="ck-card" id="pd-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_PARABENS = """        <div class="ck-card" id="pb-card" aria-live="polite"><p>Carregando…</p></div>"""
+CORPO_HORARIOS = """        <div class="ck-card" id="hr-card" aria-live="polite"><p>Carregando…</p></div>"""
 
 QRCODE = '  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>'
 
@@ -190,6 +191,7 @@ NOSCRIPT = {
     "checkout": "Esta página precisa de JavaScript para gerar o pagamento.",
     "pendente": "Esta página precisa de JavaScript para conferir o pagamento.",
     "parabens": "Esta página precisa de JavaScript para mostrar os dados da sua inscrição.",
+    "horarios": "Esta página precisa de JavaScript para mostrar o questionário de dias e horários.",
 }
 
 
@@ -238,6 +240,11 @@ def main() -> int:
                            "Parabéns, sua inscrição está paga.",
                            "Guarde este link: ele mostra sua inscrição e o próximo passo.",
                            CORPO_PARABENS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),
+        # Questionário de dias e horários (29/09/2026): link pessoal, abre só com a inscrição paga.
+        "horarios": montar(partes, "Seus dias e horários | Cruz Vermelha Brasileira Rio de Janeiro", "horarios",
+                           "Quais dias e horários são melhores para você?",
+                           "Leva 1 minuto. A secretaria usa suas respostas para montar as turmas e combinar a sua.",
+                           CORPO_HORARIOS, qrcode=False, wrap_extra=' style="max-width:820px"', passo=3),
     }
     for nome, html in paginas.items():
         destino = PASTA / nome / "index.html"

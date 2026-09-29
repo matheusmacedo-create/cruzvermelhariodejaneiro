@@ -67,6 +67,7 @@ function mcp_migrar(PDO $pdo): void
         escola_tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
         escola_tentativa_em DATETIME NULL,
         escola_acesso TEXT NULL,
+        escola_token CHAR(64) NULL,
         email_aluno VARCHAR(20) NULL,
         email_secretaria VARCHAR(20) NULL,
         criado_em DATETIME NOT NULL,
@@ -80,6 +81,8 @@ function mcp_migrar(PDO $pdo): void
         KEY ix_status (status),
         KEY ix_ip (ip, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Link de criar senha na plataforma da escola (28/09/2026) em bancos que já tinham a tabela.
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['escola_token' => 'CHAR(64) NULL']);
     // Mensagens do chat de contato do site (api/contato.php). Fonte da verdade: o e-mail à equipe é cópia.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_contatos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -132,6 +135,21 @@ function mcp_migrar(PDO $pdo): void
         detalhe TEXT NULL,
         criado_em DATETIME NOT NULL,
         KEY ix_inscricao (inscricao_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Dias e horários preferidos pelo aluno (29/09/2026): uma linha por inscrição paga, que ele pode
+    // mudar pelo mesmo link. A secretaria vê o resumo por curso no painel (lib/horarios.php).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_preferencias (
+        inscricao_id INT UNSIGNED NOT NULL PRIMARY KEY,
+        curso_slug VARCHAR(80) NOT NULL,
+        dias VARCHAR(40) NOT NULL,
+        periodos VARCHAR(30) NOT NULL,
+        inicio VARCHAR(20) NOT NULL,
+        turma_serve VARCHAR(10) NULL,
+        observacao TEXT NULL,
+        vezes INT UNSIGNED NOT NULL DEFAULT 1,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_curso (curso_slug, atualizado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

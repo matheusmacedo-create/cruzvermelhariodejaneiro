@@ -25,4 +25,5 @@ if ($inscricao['status'] === 'pendente') {
         $inscricao = mcp_aplicar_status((int) $inscricao['id'], 'expirado');
     }
 }
-mcp_json(mcp_publico(mcp_escola_retentar_se_preciso($inscricao)));
+$inscricao = mcp_escola_retentar_se_preciso($inscricao);
+mcp_json(mcp_publico($inscricao, $inscricao['status'] === 'pago' ? mcp_horarios_por_inscricao((int) $inscricao['id']) : null));

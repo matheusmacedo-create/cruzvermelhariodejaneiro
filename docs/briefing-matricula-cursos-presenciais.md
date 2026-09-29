@@ -314,45 +314,36 @@ Contrato mínimo ao criar a cobrança:
 - metadata = curso + identificadores + origem
 - postback_url = endpoint do backend desta página
 
-### 8.2 API da escola (criar matrícula e devolver acesso)
+### 8.2 Escola: criar a matrícula e devolver o acesso (implementado em 28/09/2026)
 
-Disparada **somente** quando a Unicopag confirmar `paid`.
-
-Pedido (proposta — a escola ainda precisa fechar o contrato real):
-
-```json
-POST /api/matriculas/rapida
-{
-  "curso_id": "puncao-venosa",
-  "transacao_unicopag": "hash...",
-  "valor_inscricao_centavos": 9900,
-  "aluno": {
-    "nome": "Maria Silva",
-    "cpf": "00000000000",
-    "email": "maria@email.com",
-    "whatsapp": "21999999999"
-  }
-}
-```
-
-Resposta esperada:
+Disparada **somente** quando a Unicopag confirmar `paid`. A escola não tinha API; a integração é
+uma função no banco dela (Supabase), chamada pelo servidor do site com a chave secreta:
 
 ```json
-{
-  "ok": true,
-  "matricula_id": "...",
-  "usuario": "maria@email.com",
-  "acesso": { "tipo": "link_unico", "url": "https://escola.cursoscruzvermelha.org/acesso/…", "expira_em": "..." },
-  "url_ambiente": "https://escola.cursoscruzvermelha.org/..."
-}
+POST https://wrckokgdtiwvxapqzkki.supabase.co/rest/v1/rpc/matricula_rapida
+{ "dados": { "nome": "…", "cpf": "…", "email": "…", "celular": "…", "curso_id": "<uuid do curso na escola>",
+             "transacao": "<hash Unicopag>", "metodo": "pix|cartao", "valor_centavos": 9900, "total_centavos": 10395,
+             "pago_em": "2026-09-28T19:00:00Z", "referencia": "<id da inscrição>",
+             "senha_hash": "<argon2id de senha aleatória>", "token_hash": "<sha256 do link de criar senha>" } }
 ```
 
-Regras:
+Resposta (`ok=true`): `resultado` (`matriculado` ou `sem_turma`), `repetido`, `aluno_novo`,
+`email_conta` (mascarado), `email_confere`, `matricula_id`, `matricula_existente`,
+`turma {id, inicio}`, `aviso` (`taxa_ja_confirmada`), `link_acesso`, `link_expira_em` e `url_login`.
+Conflito (`ok=false`, nada gravado): `email_em_uso`, `documento_da_equipe`, `aluno_bloqueado`,
+`curso_inativo` ou `curso_inexistente`. Dado inválido: HTTP 400 com `dados inválidos: <campo>`.
 
-- Idempotência: se o mesmo `transacao_unicopag` chegar duas vezes, devolver o mesmo acesso, não criar duas matrículas.
-- Não criar usuário na escola em pagamento pendente.
-- Senha **não** deve ser os 4 últimos dígitos do CPF (padrão ruim do cadastro atual da escola). Preferir link de acesso único.
-- Autenticação servidor a servidor (token secreto em cabeçalho), nunca a partir do navegador.
+Regras atendidas:
+
+- **Idempotência:** o mesmo hash chegando de novo devolve o mesmo resultado, sem duplicar nada.
+- **Pagamento pendente:** não cria usuário na escola.
+- **Senha:** **nunca** os 4 últimos dígitos do CPF. A conta nova ganha uma senha aleatória e um
+  **link único** de criar senha (`/redefinir-senha?token=…`, 72 h, mesmo mecanismo do "Esqueci
+  minha senha" da escola). Se o link vencer, o aluno usa o "Esqueci minha senha".
+- **Autenticação:** só servidor a servidor. A chave fica em `api/config-escola.php` (fora do Git)
+  e só executa esta função, sem acesso às tabelas.
+
+Detalhes, o SQL, os testes e o passo a passo para ligar e desfazer: `docs/escola/README.md`.
 
 ---
 
