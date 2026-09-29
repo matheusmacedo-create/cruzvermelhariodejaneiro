@@ -1,5 +1,5 @@
-/* Checkout da matrícula em cursos presenciais: um arquivo para as três telas.
-   A tela é escolhida por <body data-tela="checkout|pendente|parabens">. Conversa só com
+/* Checkout da matrícula em cursos presenciais: um arquivo para as quatro telas.
+   A tela é escolhida por <body data-tela="checkout|pendente|parabens|horarios">. Conversa só com
    /matricula-cursos-presenciais/api/ (mesma origem). Nada aqui guarda dado de cartão. */
 (function () {
   'use strict';
@@ -22,6 +22,8 @@
   }
   /* Só http(s) entra em href: a API é nossa, mas o link do PIX vem do provedor. */
   function urlSegura(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : ''; }
+  /* Data AAAA-MM-DD (turma da escola) como DD/MM/AAAA. */
+  function dataBr(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; }
   function voltarCursos(mensagem) {
     return '<p>' + esc(mensagem) + ' <a href="' + URL_CURSOS + '">Voltar para os cursos</a>.</p>';
   }
@@ -336,8 +338,6 @@
     if (!TOKEN.test(token)) { card.innerHTML = voltarCursos('Link inválido.'); return; }
     var ESTORNO = 'A inscrição reserva sua vaga; se não houver horário compatível ou você desistir antes da confirmação da aula, o valor é estornado.';
 
-    function dataBr(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : ''; }
-
     function blocoEscola(d) {
       var e = d.escola || {};
       if (e.status === 'ok' && e.resultado) {
@@ -369,11 +369,23 @@
         + '<div class="cta-row"><a class="btn btn-outline" href="' + esc(d.escola_url) + '" target="_blank" rel="noopener">Conhecer a plataforma da escola</a></div></div>';
     }
 
+    /* Questionário de dias e horários: convite enquanto não respondeu, resumo depois. */
+    function blocoHorarios(d) {
+      var h = d.horarios;
+      if (!h || !h.url) return '';
+      return '<div class="ck-bloco"><h2>' + (h.respondido ? 'Seus dias e horários' : 'Quais dias e horários são melhores para você?') + '</h2>'
+        + (h.respondido
+          ? '<p>' + esc(h.resumo) + '</p><p class="ck-nota"><a href="' + esc(h.url) + '">Mudar respostas</a></p>'
+          : '<p>Responda em 1 minuto: a secretaria usa suas respostas para montar as turmas e combinar a sua.</p><div class="cta-row"><a class="btn btn-outline" href="' + esc(h.url) + '">Responder agora</a></div>')
+        + '</div>';
+    }
+
     function render(d) {
       var metodo = d.metodo === 'pix' ? 'PIX' : 'cartão' + (d.cartao && d.cartao.ultimos4 ? ' final ' + esc(d.cartao.ultimos4) : '');
       var custos = d.taxa_centavos ? ', incluindo ' + brl(d.taxa_centavos) + ' de custos de processamento que você escolheu cobrir. Obrigado.' : '.';
       card.innerHTML = '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
         + blocoEscola(d)
+        + blocoHorarios(d)
         + '<div class="ck-bloco"><p class="ck-nota" style="margin:0">Mandamos a confirmação para <b>' + esc(d.email) + '</b>. Guarde este link: <a href="' + esc(d.urls.parabens) + '">' + esc(d.urls.parabens) + '</a></p></div>';
     }
 
@@ -398,7 +410,103 @@
     });
   }
 
-  var telas = { checkout: telaCheckout, pendente: telaPendente, parabens: telaParabens };
+  // ------------------------------------------------------------------ tela: dias e horários
+  function telaHorarios() {
+    var token = param('t'), card = q('#hr-card');
+    if (!TOKEN.test(token)) { card.innerHTML = voltarCursos('Link inválido.'); return; }
+
+    /* Opções como cartões clicáveis (checkbox ou radio dentro do label, acessível pelo teclado). */
+    function opcoes(nome, tipo, lista, marcados, detalhes) {
+      return Object.keys(lista).map(function (k) {
+        var marcado = marcados.indexOf(k) >= 0;
+        return '<label class="hr-opcao' + (marcado ? ' marcado' : '') + '"><input type="' + tipo + '" name="' + nome + '" value="' + esc(k) + '"' + (marcado ? ' checked' : '') + '>'
+          + '<span>' + esc(lista[k]) + (detalhes && detalhes[k] ? '<small>' + esc(detalhes[k]) + '</small>' : '') + '</span></label>';
+      }).join('');
+    }
+    function grupo(id, titulo, dica, classe, conteudo) {
+      return '<div class="ck-bloco-form" role="group" aria-labelledby="hr-t-' + id + '" id="hr-' + id + '"><h2 class="ck-bloco-titulo" id="hr-t-' + id + '">' + titulo
+        + (dica ? '<small>' + dica + '</small>' : '') + '</h2><div class="hr-opcoes ' + classe + '">' + conteudo + '</div></div>';
+    }
+    function valores(form, nome) {
+      return Array.prototype.map.call(form.querySelectorAll('input[name="' + nome + '"]:checked'), function (i) { return i.value; });
+    }
+
+    function formulario(d) {
+      var r = d.resposta || {}, o = d.opcoes, data = dataBr(d.turma_inicio);
+      card.innerHTML = '<p class="hr-curso"><b>' + esc(d.curso.nome) + '</b> · ' + (data ? 'sua turma começa em <b>' + esc(data) + '</b>' : 'a secretaria vai definir sua turma') + '</p>'
+        + '<form id="hr-form" novalidate>'
+        + grupo('dias', 'Quais dias da semana você pode?', 'Marque todos que der', 'hr-dias', opcoes('dias', 'checkbox', o.dias, r.dias || []))
+        + grupo('periodos', 'Em quais períodos?', 'Marque todos que der', 'hr-periodos', opcoes('periodos', 'checkbox', o.periodos, r.periodos || [], o.horas))
+        + grupo('inicio', 'A partir de quando você pode começar?', '', 'hr-lista', opcoes('inicio', 'radio', o.inicio, r.inicio ? [r.inicio] : []))
+        + (data ? grupo('turma_serve', 'Sua turma começa em ' + esc(data) + '. Essa data serve para você?', '', 'hr-lista', opcoes('turma_serve', 'radio', o.turma, r.turma_serve ? [r.turma_serve] : [])) : '')
+        + '<div class="ck-bloco-form"><label class="ck-campo" for="hr-obs"><span>Quer contar mais alguma coisa? (opcional)</span>'
+        + '<textarea id="hr-obs" name="observacao" maxlength="' + o.observacao_max + '" rows="3" placeholder="Ex.: só consigo depois das 19h; prefiro sábado de manhã.">' + esc(r.observacao || '') + '</textarea></label>'
+        + '<div class="ck-erro" id="hr-erro" role="alert"></div>'
+        + '<div class="cta-row"><button class="btn btn-red" type="submit" id="hr-enviar">' + (d.resposta ? 'Salvar alterações' : 'Enviar minhas respostas') + '</button></div></div>'
+        + '</form>';
+      ligar(d);
+    }
+
+    function ligar(d) {
+      var form = q('#hr-form'), erro = q('#hr-erro'), botao = q('#hr-enviar'), rotulo = botao.textContent;
+      form.addEventListener('change', function () {
+        Array.prototype.forEach.call(form.querySelectorAll('.hr-opcao'), function (l) { l.classList.toggle('marcado', q('input', l).checked); });
+      });
+      /* A mensagem aparece também no grupo com erro: a de baixo, junto do botão, sai da tela quando a página rola até o grupo. */
+      function falhar(campo, mensagem) {
+        erro.textContent = mensagem;
+        var g = campo && q('#hr-' + campo);
+        if (!g) return;
+        var m = document.createElement('p');
+        m.className = 'hr-msg'; m.id = 'hr-msg-' + campo; m.textContent = mensagem;
+        g.insertBefore(m, g.children[1] || null);
+        g.classList.add('erro'); g.setAttribute('aria-describedby', m.id);
+        g.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        erro.textContent = '';
+        Array.prototype.forEach.call(form.querySelectorAll('.ck-bloco-form.erro'), function (g) { g.classList.remove('erro'); g.removeAttribute('aria-describedby'); });
+        Array.prototype.forEach.call(form.querySelectorAll('.hr-msg'), function (m) { m.parentNode.removeChild(m); });
+        var corpo = { t: token, dias: valores(form, 'dias'), periodos: valores(form, 'periodos'), inicio: valores(form, 'inicio')[0] || '',
+          turma_serve: valores(form, 'turma_serve')[0] || '', observacao: q('#hr-obs').value };
+        var falta = !corpo.dias.length ? ['dias', 'Escolha pelo menos um dia da semana.']
+          : !corpo.periodos.length ? ['periodos', 'Escolha pelo menos um período.']
+          : !corpo.inicio ? ['inicio', 'Diga a partir de quando você pode começar.']
+          : (d.turma_inicio && !corpo.turma_serve) ? ['turma_serve', 'Diga se a data da sua turma serve.'] : null;
+        if (falta) { falhar(falta[0], falta[1]); return; }
+        botao.disabled = true; botao.textContent = 'Enviando…';
+        api('horarios.php', { method: 'POST', body: JSON.stringify(corpo) }).then(function (x) {
+          botao.disabled = false; botao.textContent = rotulo;
+          if (!x.ok) { falhar(x.campo, x.erro || 'Não foi possível salvar agora. Tente de novo.'); return; }
+          resumo(x, true);
+          window.scrollTo(0, 0); // o botão fica no fim do formulário, bem mais longo que o resumo
+        });
+      });
+    }
+
+    function resumo(d, recemSalvo) {
+      card.innerHTML = '<div class="ck-bloco" style="border-top:0;padding-top:0">'
+        + (recemSalvo ? '<p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Respostas recebidas</p>' : '')
+        + '<h2>' + (recemSalvo ? 'Obrigado, ' + esc(d.nome) + '!' : 'Suas respostas') + '</h2>'
+        + '<p>A secretaria da Escola usa estas respostas para montar as turmas' + (d.turma_inicio ? ' e, se a data da sua turma não servir, fala com você sobre outra.' : ' e avisa por e-mail quando a sua turma for definida.') + '</p>'
+        + '<div class="ck-acesso"><div><b>' + esc(d.curso.nome) + '</b></div><div>' + esc(d.resumo) + '</div>'
+        + (d.resposta && d.resposta.observacao ? '<div class="ck-nota">“' + esc(d.resposta.observacao) + '”</div>' : '') + '</div>'
+        + '<div class="cta-row"><a class="btn btn-red" href="' + esc(d.urls.parabens) + '">Voltar para minha inscrição</a><button class="btn btn-outline" type="button" id="hr-editar">Mudar respostas</button></div>'
+        + '<p class="ck-nota">Você pode mudar as respostas quando quiser, por este mesmo link.</p></div>';
+      q('#hr-editar').addEventListener('click', function () { formulario(d); window.scrollTo(0, 0); });
+    }
+
+    api('horarios.php?t=' + encodeURIComponent(token)).then(function (d) {
+      if (!d.ok) {
+        card.innerHTML = d.http === 403 ? '<p>' + esc(d.erro) + '</p><p class="ck-nota">Assim que o pagamento for aprovado, este link abre o questionário.</p>' : voltarCursos(d.erro || 'Inscrição não encontrada.');
+        return;
+      }
+      if (d.resposta) resumo(d, false); else formulario(d);
+    });
+  }
+
+  var telas = { checkout: telaCheckout, pendente: telaPendente, parabens: telaParabens, horarios: telaHorarios };
   var tela = telas[document.body.getAttribute('data-tela')];
   if (tela) tela();
 })();

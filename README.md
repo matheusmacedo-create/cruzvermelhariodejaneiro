@@ -298,9 +298,64 @@ sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
 - **SQL, diagnósticos, testes, limpeza e como desfazer:** [`docs/escola/README.md`](docs/escola/README.md).
 - **Testes:**
   - 84 testes pgTAP da função numa cópia local do banco da escola;
-  - 195 testes em `scripts/testar_checkout.php`;
+  - os testes de `scripts/testar_checkout.php` (225 em 29/09/2026);
   - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
     → cópia da escola).
+
+## Questionário de dias e horários (29/09/2026)
+
+Depois de pagar a inscrição, o aluno diz quais dias e horários são melhores para ele. A secretaria
+usa as respostas para montar as turmas e, se a data da turma do aluno não servir, combinar outra.
+
+- **Onde o aluno responde:** em `/matricula-cursos-presenciais/horarios/?t=<token>`, com o mesmo link
+  pessoal da tela Parabéns, sem login. O convite aparece:
+  - na tela Parabéns: botão "Responder agora" e, depois de responder, o resumo com "Mudar respostas";
+  - no e-mail de inscrição paga, nas versões A e B.
+- **As perguntas:**
+  1. dias da semana, de segunda a sábado (pode marcar vários);
+  2. períodos: manhã (8h às 12h), tarde (13h às 17h) e noite (18h às 22h) (pode marcar vários);
+  3. a partir de quando pode começar: na próxima turma, em cerca de 1 mês, ou em 2 meses ou mais;
+  4. se a escola já o colocou numa turma: se a data serve;
+  5. comentário opcional, de até 500 caracteres.
+
+  O aluno pode mudar as respostas quando quiser. Vale a última, e o painel mostra quantas vezes ele mudou.
+- **Onde a secretaria vê:** no painel da equipe, aba "Dias e horários dos alunos"
+  (`api/painel.php?v=horarios`). O login é o mesmo link por e-mail do painel de mensagens. Para cada
+  curso, a aba mostra:
+  - o mapa de quantos alunos podem em cada dia e período, com os horários mais pedidos;
+  - quantos podem começar em cada prazo e para quantos a data da turma serve;
+  - a lista das respostas, com os contatos;
+  - o botão "Baixar planilha": um CSV que abre no Excel e no Google Planilhas.
+- **Aviso por e-mail:** na primeira resposta de cada aluno, a secretaria (`EMAIL_SECRETARIA`) recebe
+  o resumo e um botão para o mapa do curso. Mudanças de resposta não geram outro e-mail.
+- **Regras:**
+  - o questionário só abre com a inscrição paga; antes disso, a API responde 403;
+  - cada IP pode enviar até 60 vezes por hora;
+  - valores fora da lista são descartados;
+  - na planilha, texto que começa com `=`, `+`, `-` ou `@` não vira fórmula;
+  - a tela e a API nunca devolvem CPF, e-mail ou telefone.
+- **Código:**
+  - `api/lib/horarios.php`: regras, mapa, planilha e aviso;
+  - `api/horarios.php`: a API;
+  - `api/painel.php`: a aba da secretaria;
+  - `static/checkout.js` e `checkout.css`: a tela;
+  - `scripts/gerar_checkout.py`: gera a página;
+  - tabela `mcp_preferencias`, com uma linha por inscrição, criada sozinha na primeira chamada.
+- **Testes:**
+  - 30 dos 225 testes de `scripts/testar_checkout.php`;
+  - 43 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
+    painel e planilha, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
+    `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_horarios_integracao.php`. O
+    teste recusa banco que não seja local e apaga no fim o que criou.
+- **Para publicar:**
+  - `api/horarios.php`, `api/lib/horarios.php` e `api/lib.php`;
+  - `api/lib/db.php`, `email.php`, `painel.php` e `publico.php`;
+  - `api/painel.php` e `api/status.php`;
+  - `static/checkout.css` e `checkout.js`;
+  - as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`.
+- **Dentro da escola (fase 2):** a mesma pergunta na área do aluno da plataforma da escola, quando
+  houver acesso ao código dela. O plano e o contrato dos dados estão em
+  [`docs/escola/README.md`](docs/escola/README.md#fase-2-o-questionário-dentro-da-escola).
 
 ## Home: seção de contato e botão do WhatsApp (19/09/2026)
 

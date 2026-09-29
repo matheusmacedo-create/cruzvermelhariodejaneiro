@@ -361,6 +361,21 @@ function mcp_email_pix_aberto(array $inscricao): void
  * $comComprovante: o PDF foi gerado e vai anexado. Sem ele o texto não cita anexo — o e-mail nunca
  * promete um arquivo que não está lá.
  */
+/** Convite para o questionário de dias e horários (tela horarios/), no e-mail de inscrição paga. */
+function mcp_email_bloco_horarios(array $inscricao, bool $comTurma): array
+{
+    $url = mcp_url_pagina('horarios', (string) $inscricao['token']);
+    $frase = 'Responda em 1 minuto: a secretaria usa suas respostas para montar as turmas'
+        . ($comTurma ? ' e, se a data da sua turma não servir, fala com você sobre outra.' : '.');
+    return [
+        'html' => mcp_subtitulo('Quais dias e horários são melhores para você?') . mcp_p($frase) . mcp_botao($url, 'Responder em 1 minuto', true),
+        'texto' => "Quais dias e horários são melhores para você? $frase
+$url
+
+",
+    ];
+}
+
 function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = true): array
 {
     $nome = mcp_primeiro_nome((string) $inscricao['nome']);
@@ -421,6 +436,7 @@ function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = tr
                 : mcp_botao($urlLogin, 'Entrar na plataforma da escola'))
             . mcp_subtitulo('Próximos passos')
             . mcp_passos($passos)
+            . mcp_email_bloco_horarios($inscricao, !$semTurma && $data !== '')['html']
             . mcp_nota(mcp_escapar(MCP_TEXTO_ESTORNO));
         $textoEntrada = $novo
             ? ($link
@@ -431,7 +447,8 @@ function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = tr
             . ($comComprovante ? ' O comprovante de inscrição em PDF vai anexado a este e-mail.' : '') . "\n\n"
             . ($semTurma ? 'Sua conta na plataforma da escola está pronta. Ainda não há turma aberta: a secretaria matricula você na próxima e avisa por e-mail.'
                 : 'Sua matrícula já está feita na plataforma da escola' . ($data !== '' ? ", na turma que começa em $data" : '') . '.')
-            . "\n$textoEntrada\nEntrar: $urlLogin\n\nO valor do curso é pago depois, na plataforma da escola ou com a secretaria, no valor à vista do curso.\n\n" . MCP_TEXTO_ESTORNO;
+            . "\n$textoEntrada\nEntrar: $urlLogin\n\nO valor do curso é pago depois, na plataforma da escola ou com a secretaria, no valor à vista do curso.\n\n"
+            . mcp_email_bloco_horarios($inscricao, !$semTurma && $data !== '')['texto'] . MCP_TEXTO_ESTORNO;
         return ['tipo' => 'acesso', 'texto' => $texto,
             'assunto' => $semTurma ? "Inscrição paga: sua conta na plataforma da escola — $curso" : "Matrícula feita: seu acesso à plataforma da escola — $curso",
             'html' => mcp_moldura($semTurma ? "Vaga garantida, $nome!" : "Matrícula feita, $nome!", $corpo, [
@@ -451,10 +468,11 @@ function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = tr
             ['O valor do curso é pago depois', 'Direto na <a href="' . mcp_escapar($escolaUrl) . '" style="color:#cc0000">plataforma da escola</a>, quando a turma estiver confirmada.'],
         ])
         . mcp_botao($linkParabens, 'Ver minha inscrição')
+        . mcp_email_bloco_horarios($inscricao, false)['html']
         . mcp_nota(mcp_escapar(MCP_TEXTO_ESTORNO));
     $texto = "Parabéns, $nome. Recebemos o pagamento ($total) da sua inscrição em $curso. Sua vaga está reservada e $comprovante.\n\n"
         . "Próximos passos: 1) inscrição paga, não precisa se inscrever de novo; 2) a secretaria da Escola entra em contato por e-mail em até " . MCP_EMAIL_PRAZO
-        . " para confirmar turma, data e horário; 3) o valor do curso é pago depois, na plataforma da escola ($escolaUrl).\n\nMinha inscrição: $linkParabens\n\n" . MCP_TEXTO_ESTORNO;
+        . " para confirmar turma, data e horário; 3) o valor do curso é pago depois, na plataforma da escola ($escolaUrl).\n\nMinha inscrição: $linkParabens\n\n" . mcp_email_bloco_horarios($inscricao, false)['texto'] . MCP_TEXTO_ESTORNO;
     return ['tipo' => 'confirmacao', 'assunto' => "Inscrição confirmada: sua vaga em $curso", 'texto' => $texto,
         'html' => mcp_moldura("Vaga garantida, $nome!", $corpo, [
             'eyebrow' => 'Matrícula cursos presenciais',
@@ -765,7 +783,7 @@ function mcp_montar_email_painel_link(string $link): array
         . mcp_nota('Se não foi você quem pediu, ignore este e-mail: nada acontece sem o clique.');
     return [
         'assunto' => 'Acesso ao painel de contatos',
-        'html' => mcp_moldura('Seu link de acesso ao painel', $corpo, ['eyebrow' => 'Painel de contatos', 'motivo' => 'Pedido feito em ' . mcp_painel_url() . '.']),
+        'html' => mcp_moldura('Seu link de acesso ao painel', $corpo, ['eyebrow' => 'Painel da equipe', 'motivo' => 'Pedido feito em ' . mcp_painel_url() . '.']),
         'texto' => "Entrar no painel de contatos (vale " . MCP_PAINEL_LINK_ENTRADA_MINUTOS . " minutos): $link\n\nSe não foi você quem pediu, ignore este e-mail.",
     ];
 }

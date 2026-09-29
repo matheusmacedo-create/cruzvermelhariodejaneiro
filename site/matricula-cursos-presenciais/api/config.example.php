@@ -44,7 +44,7 @@ return [
     'EMAIL_RESPOSTA'   => '',
     // Aviso interno de inscrição paga (responder-para = o aluno). Vazio = desligado.
     'EMAIL_SECRETARIA' => '',
-    // Painel de contatos (api/painel.php): e-mails que podem pedir o link de entrada, separados por
+    // Painel da equipe (api/painel.php, mensagens do chat e horários dos alunos): e-mails que podem pedir o link de entrada, separados por
     // vírgula. Vazio = EMAIL_CONTATO e EMAIL_SECRETARIA. O segredo dos links fica no banco (mcp_chaves).
     'PAINEL_EMAILS'    => '',
     // Remetente das respostas do painel ao cliente. Vazio = EMAIL_REMETENTE.
