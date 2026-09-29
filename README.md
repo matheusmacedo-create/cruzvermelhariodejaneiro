@@ -368,6 +368,18 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   - `static/checkout.css` e `checkout.js`;
   - as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`;
   - depois, criar o cron de hora em hora com `php .../public_html/matricula-cursos-presenciais/api/lembretes.php`.
+- **No ar desde 29/09/2026:**
+  - os 17 arquivos acima foram publicados, o cache foi limpo e a página, a API e os bloqueios (403 em
+    `lembretes.php`, `lib/` e `config.php`) foram conferidos ao vivo;
+  - o cron roda de hora em hora, no minuto 7:
+    `/opt/alt/php83/usr/bin/php /home/u448697994/domains/cruzvermelhariodejaneiro.org/public_html/matricula-cursos-presenciais/api/lembretes.php`
+    (PHP 8.3, o mesmo do site). A saída da última rodada fica no hPanel, em Cron Jobs. A primeira saída
+    foi `lembretes: 0 enviados, 0 falhas, 0 inscrições vistas`;
+  - os e-mails novos foram enviados em teste para o Matheus e entregues, com os links apontando para a
+    inscrição de teste dele.
+- **Pendente:** `EMAIL_SECRETARIA` está vazio no servidor (no teste de 28/09 não saiu o aviso de
+  inscrição paga). Sem ele, a secretaria não recebe os avisos de inscrição paga nem os de horários; o
+  painel mostra tudo mesmo assim. Configurar no `api/config.php` do servidor.
 - **Dentro da escola (fase 2):** a mesma pergunta na área do aluno da plataforma da escola, quando
   houver acesso ao código dela. O plano e o contrato dos dados estão em
   [`docs/escola/README.md`](docs/escola/README.md#fase-2-o-questionário-dentro-da-escola).
