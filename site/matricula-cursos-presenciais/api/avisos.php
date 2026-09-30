@@ -47,7 +47,7 @@ function av_pagina_descadastro(string $estado): void
     $css = '/matricula-cursos-presenciais/static/ponto.css?v=' . substr((string) md5_file(__DIR__ . '/../static/ponto.css'), 0, 10);
     $corpo = match ($estado) {
         'pergunta' => '<h1>Parar os avisos por e-mail</h1><p>Toque no botão para não receber mais estes avisos neste e-mail.</p>'
-            . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber por e-mail</button></form>'
+            . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber</button></form>'
             . '<p class="pt-nota">Para escolher os dias ou receber pelo WhatsApp, use o link "Escolher o que recebo" de uma mensagem recente.</p>',
         'pronto' => '<h1>Pronto</h1><p>Você não vai mais receber estes avisos por e-mail.</p>'
             . '<p class="pt-nota">Mudou de ideia? Escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',

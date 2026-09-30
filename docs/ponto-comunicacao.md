@@ -45,7 +45,7 @@ Regras que valem para tudo:
   Gmail e outros mostram "cancelar inscrição" ao lado do remetente, em vez de a pessoa marcar como spam (o
   que prejudicaria também os e-mails da matrícula, que saem do mesmo domínio). O programa de e-mail manda
   um POST a `api/avisos.php?u=`: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista
-  de bloqueio. Abrir o link no navegador mostra uma página com o botão "Não quero mais receber por e-mail",
+  de bloqueio. Abrir o link no navegador mostra uma página com o botão "Não quero mais receber",
   sem link pessoal. No colaborador, só vale se o e-mail da mensagem ainda é o do cadastro;
 - **cota diária de e-mails**: a conta da Resend é a mesma da matrícula (recibos, PIX, comprovantes) e, em
   30/09/2026, estava no plano grátis, com 100 e-mails por dia e 3.000 por mês. Os avisos usam no máximo 60
@@ -280,8 +280,9 @@ sair.
 - **no celular, só o que o botão precisa**: se a pessoa está na sede e se a entrada é de outro dia. O
   horário de entrada, as horas do mês e o termo pendente ficam para o tablet; o comprovante do aluno vai
   por e-mail (a tela não mostra o link, que leva ao nome completo e ao PDF com o CPF). A localização é
-  indício, não prova: quem sabe o CPF de alguém e finge estar perto ainda registra por ela. Para fechar
-  isso de vez, veja "código do dia" no relatório de melhorias;
+  indício, não prova: quem sabe o CPF de alguém e finge estar perto ainda registra por ela no mesmo dia.
+  Para fechar isso de vez, falta um código do dia na tela do tablet ou no cartaz, pedido só no celular
+  (decisão pendente; cada registro guarda a origem e a distância, para a secretaria conferir);
 - "Lembrar de mim neste celular" vem desmarcado; no tablet, a tela volta ao começo depois de um tempo sem
   uso (qualquer toque reinicia a contagem);
 - limites: no celular, 120 consultas a cada 10 minutos por IP e 10 CPFs não encontrados param aquele IP

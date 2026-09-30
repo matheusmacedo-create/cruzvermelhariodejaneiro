@@ -405,8 +405,9 @@ A pessoa se identifica pelo CPF. Quem é colaborador e aluno vê as duas coisas.
   - é um PDF no desenho do comprovante de inscrição, com o aluno e o CPF, o curso, o dia e o horário
     da aula, a hora da chegada, o local e um código de conferência;
   - a página pessoal `/matricula-cursos-presenciais/comparecimento/?t=…` libera o botão "Baixar
-    comprovante (PDF)" quando a aula termina, sem recarregar. No celular, o link aparece logo no registro
-    ("Ver meu comprovante"). No aparelho da recepção, não aparece, porque o aparelho não é da pessoa;
+    comprovante (PDF)" quando a aula termina, sem recarregar. O link vai por e-mail; a tela do ponto não
+    o mostra, nem no celular (desde 30/09/2026: quem soubesse o CPF de outra pessoa chegaria ao nome
+    completo dela e ao PDF) nem no aparelho da recepção;
   - o e-mail com o PDF anexado vai para o e-mail que a escola tem do aluno. Quem manda é
     `api/comparecimentos.php`, rodado pelo cron da Hostinger a cada 15 minutos. São até 5 tentativas
     por presença, para aulas dos últimos 30 dias. Só linha de comando; por HTTP responde 404 e o
@@ -592,9 +593,10 @@ desligado no portal, em **Comunicação**.
 
 - **Lembretes automáticos**, cada um com liga e desliga:
   - véspera, às 18h: voluntário e diretoria, nos dias que escolheram ("se vier amanhã, registre a
-    chegada e a saída; se não puder vir, tudo bem"); equipe contratada, só em dia útil e só se a própria
-    pessoa pediu (só presença, por segurança: lembrete da instituição a empregado pareceria controle de
-    jornada). Nada em feriado do Rio nem nos dias sem expediente marcados no portal;
+    chegada e a saída; se não puder vir, tudo bem"); equipe contratada, de terça a sexta (a véspera também
+    precisa ser dia útil: nada sai no fim de semana nem em feriado) e só se a própria pessoa pediu (só
+    presença, por segurança: lembrete da instituição a empregado pareceria controle de jornada). Nada em
+    feriado do Rio nem nos dias sem expediente marcados no portal;
   - saída não registrada, a partir das 9h, para o voluntário com a saída em aberto, com o link para
     informar a hora (a secretaria confere no portal);
   - aula de amanhã, às 18h, para os alunos, pela função `aulas_do_dia` da escola
