@@ -13,13 +13,13 @@ if (!mcp_horarios_escola_configurado()) {
 }
 mcp_exigir_metodo('GET');
 [$maximo, $janela] = MCP_HORARIOS_ESCOLA_FALHAS;
-if (mcp_contar_eventos_recentes('escola_horarios_negado', mcp_ip(), $janela) >= $maximo) {
+if (mcp_contar_eventos_recentes('escola_horarios_negado', mcp_ip_balde(), $janela) >= $maximo) {
     mcp_falhar(429, 'Muitas tentativas.');
 }
 $cabecalhos = function_exists('getallheaders') ? array_change_key_case((array) getallheaders()) : [];
 $autorizacao = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? $cabecalhos['authorization'] ?? '');
 if (!mcp_horarios_escola_autorizado($autorizacao)) {
-    mcp_registrar(null, 'escola_horarios_negado', mcp_ip());
+    mcp_registrar(null, 'escola_horarios_negado', mcp_ip_balde());
     mcp_falhar(401, 'Não autorizado.');
 }
 mcp_json(mcp_horarios_para_escola(mcp_horarios_listar(null, 5000), mcp_horarios_sem_resposta(5000)));

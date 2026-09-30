@@ -1,0 +1,61 @@
+# Publicação dos lembretes, comunicados e opinião do ponto (commits 488efb4 a 83449fa, sobre a237b7b).
+# Uso: scripts/publicar_hostinger.sh $(grep -v '^#' scripts/publicacao-comunicacao.txt)
+# A ordem importa: lib.php carrega avisos, comunicacao e metricas; se subir antes deles, toda requisição
+# da matrícula cai. Nenhuma função mudou de arquivo nem de assinatura incompatível (conferido em 30/09/2026),
+# então o código no ar convive com as bibliotecas novas durante o envio.
+# site/politicas.json fica de fora: é só a fonte de scripts/gerar_politicas.py e nunca foi publicado.
+
+# 1. Independentes: a correção da localização do ponto no celular e o bloqueio de cópias de segurança.
+site/matricula-cursos-presenciais/ponto/.htaccess
+site/matricula-cursos-presenciais/api/.htaccess
+
+# 2. Módulos novos (o lib.php que está no ar não os carrega).
+site/matricula-cursos-presenciais/api/lib/avisos.php
+site/matricula-cursos-presenciais/api/lib/comunicacao.php
+site/matricula-cursos-presenciais/api/lib/metricas.php
+site/matricula-cursos-presenciais/api/lib/painel_comunicacao.php
+
+# 3. lib.php, que passa a carregá-los.
+site/matricula-cursos-presenciais/api/lib.php
+
+# 4. Módulos alterados; db.php primeiro, para as tabelas novas existirem antes das telas novas.
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/http.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/painel.php
+site/matricula-cursos-presenciais/api/lib/ponto.php
+site/matricula-cursos-presenciais/api/lib/presenca.php
+
+# 5. Endereços da API.
+site/matricula-cursos-presenciais/api/ponto.php
+site/matricula-cursos-presenciais/api/painel.php
+site/matricula-cursos-presenciais/api/avisos.php
+site/matricula-cursos-presenciais/api/whatsapp.php
+site/matricula-cursos-presenciais/api/comparecimentos.php
+site/matricula-cursos-presenciais/api/conferir.php
+site/matricula-cursos-presenciais/api/escola-horarios.php
+site/matricula-cursos-presenciais/api/config.example.php
+
+# 6. Estáticos e páginas.
+site/matricula-cursos-presenciais/static/ponto.css
+site/matricula-cursos-presenciais/static/ponto.js
+site/matricula-cursos-presenciais/static/avisos.js
+site/matricula-cursos-presenciais/ponto/manifest.json
+site/matricula-cursos-presenciais/ponto/icone-192.png
+site/matricula-cursos-presenciais/ponto/icone-512.png
+site/matricula-cursos-presenciais/ponto/icone-512-mascara.png
+site/matricula-cursos-presenciais/ponto/index.html
+site/matricula-cursos-presenciais/ponto/lembretes/index.html
+site/matricula-cursos-presenciais/ponto/opiniao/index.html
+site/matricula-cursos-presenciais/ponto/saida/index.html
+site/matricula-cursos-presenciais/ponto/sair/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+
+# 7. Políticas (português, inglês e espanhol).
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
+site/cookies/index.html
+site/en/cookies/index.html
+site/es/cookies/index.html

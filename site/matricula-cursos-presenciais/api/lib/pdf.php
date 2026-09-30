@@ -1,7 +1,8 @@
 <?php
 /**
- * Gerador de PDF mínimo, sem biblioteca: uma página A4 com retângulos, cantos arredondados, fios,
- * texto em Helvetica e uma imagem PNG.
+ * Gerador de PDF mínimo, sem biblioteca: páginas A4 com retângulos, cantos arredondados, fios,
+ * texto em Helvetica e uma imagem PNG. O comprovante e as declarações cabem numa página; o termo de
+ * adesão do voluntário usa novaPagina().
  *
  * Por que à mão: a Hostinger não tem Composer neste projeto, e o FPDF não é baixável daqui (o proxy
  * bloqueia o GitHub). O que o comprovante precisa cabe em poucas centenas de linhas e dispensa
@@ -66,10 +67,24 @@ final class McpPdf
         ],    ];
 
     private string $conteudo = '';
+    /** @var list<string> páginas já fechadas por novaPagina(); a atual fica em $conteudo */
+    private array $paginas = [];
     /** @var array{largura:int, altura:int, espaco:string, cores:int, bits:int, dados:string}|null */
     private ?array $imagem = null;
     /** @var array<string, string> */
     private array $info = [];
+
+    /** Fecha a página atual e começa outra, em branco. */
+    public function novaPagina(): void
+    {
+        $this->paginas[] = $this->conteudo;
+        $this->conteudo = '';
+    }
+
+    public function totalPaginas(): int
+    {
+        return count($this->paginas) + 1;
+    }
 
     public function metadados(string $titulo, string $autor, string $assunto): void
     {
@@ -179,7 +194,7 @@ final class McpPdf
         return $linhas ?: [''];
     }
 
-    /** Desenha um PNG (paleta, RGB ou cinza; 8 bits; sem entrelaçamento; sem alfa). Uma imagem por página. */
+    /** Desenha um PNG (paleta, RGB ou cinza; 8 bits; sem entrelaçamento; sem alfa). Uma imagem por documento. */
     public function imagemPng(string $caminho, float $x, float $y, float $l, float $a): void
     {
         $this->imagem = self::lerPng($caminho);
@@ -191,20 +206,28 @@ final class McpPdf
     public function gerar(): string
     {
         $comprimir = function_exists('gzcompress');
-        $fluxo = $comprimir ? gzcompress($this->conteudo, 9) : $this->conteudo;
         $filtro = $comprimir ? ' /Filter /FlateDecode' : '';
-
         $recursos = '/Font << /F1 4 0 R /F2 5 0 R >>' . ($this->imagem ? ' /XObject << /Im1 7 0 R >>' : '')
             . ' /ProcSet [/PDF /Text' . ($this->imagem ? ' /ImageB /ImageC /ImageI' : '') . ']';
+        // Página 1 nos objetos 3 (página) e 6 (conteúdo), como sempre; as seguintes, do 9 em diante, aos pares.
+        $conteudos = [...$this->paginas, $this->conteudo];
+        $numeros = [[3, 6]];
+        for ($i = 1, $n = count($conteudos); $i < $n; $i++) {
+            $numeros[] = [7 + 2 * $i, 8 + 2 * $i];
+        }
         $objetos = [
             1 => '<< /Type /Catalog /Pages 2 0 R >>',
-            2 => '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-            3 => '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::n(self::LARGURA) . ' ' . self::n(self::ALTURA)
-                . '] /Resources << ' . $recursos . ' >> /Contents 6 0 R >>',
+            2 => '<< /Type /Pages /Kids [' . implode(' ', array_map(static fn(array $p): string => $p[0] . ' 0 R', $numeros)) . '] /Count ' . count($numeros) . ' >>',
             4 => '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
             5 => '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
-            6 => '<< /Length ' . strlen($fluxo) . $filtro . " >>\nstream\n" . $fluxo . "\nendstream",
         ];
+        foreach ($conteudos as $i => $conteudo) {
+            [$pagina, $fluxoNum] = $numeros[$i];
+            $fluxo = $comprimir ? gzcompress($conteudo, 9) : $conteudo;
+            $objetos[$pagina] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' . self::n(self::LARGURA) . ' ' . self::n(self::ALTURA)
+                . '] /Resources << ' . $recursos . ' >> /Contents ' . $fluxoNum . ' 0 R >>';
+            $objetos[$fluxoNum] = '<< /Length ' . strlen($fluxo) . $filtro . " >>\nstream\n" . $fluxo . "\nendstream";
+        }
         if ($this->imagem) {
             $im = $this->imagem;
             $objetos[7] = '<< /Type /XObject /Subtype /Image /Width ' . $im['largura'] . ' /Height ' . $im['altura']
@@ -219,6 +242,7 @@ final class McpPdf
         }
         $info[] = '/CreationDate (D:' . gmdate('YmdHis') . "Z)";
         $objetos[8] = '<< ' . implode(' ', $info) . ' >>';
+        ksort($objetos);
 
         // "%âãÏÓ" na segunda linha avisa aos programas de transferência que o arquivo é binário.
         $pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";

@@ -298,9 +298,9 @@ sem turma aberta, ou "NÃO MATRICULADO" com o motivo.
 - **SQL, diagnósticos, testes, limpeza e como desfazer:** [`docs/escola/README.md`](docs/escola/README.md).
 - **Testes:**
   - 84 testes pgTAP da função numa cópia local do banco da escola;
-  - os testes de `scripts/testar_checkout.php` (237 em 29/09/2026);
-  - 19 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
-    → cópia da escola).
+  - os testes de `scripts/testar_checkout.php` (291 em 30/09/2026);
+  - 21 testes de ponta a ponta em `scripts/testar_escola_integracao.php` (site → PostgREST local
+    → cópia da escola), com a consulta das aulas do ponto da sede.
 
 ## Portal da secretaria (29/09/2026)
 
@@ -337,6 +337,10 @@ estas seções:
   aluno abre a ficha, e o aviso de quem falta leva à lista "Sem horários".
 - **Mensagens do chat** (`?v=mensagens`): a lista e as respostas de antes. Os endereços antigos
   (`painel.php?f=…` e `?id=…`) continuam valendo.
+- **Ponto da sede** (`?v=ponto`): horas doadas por voluntários e diretoria, presença dos outros
+  vínculos, presenças dos alunos nas aulas e aparelhos da recepção. O número no menu soma as saídas
+  esquecidas e os termos de adesão pendentes. Veja a seção
+  [Ponto da sede e comprovante de comparecimento](#ponto-da-sede-e-comprovante-de-comparecimento-29092026).
 - **Plataforma da escola:** link para `ESCOLA_URL/login`, em outra aba.
 
 Os números no menu são vermelhos quando pedem ação (inscrições com atenção, mensagens novas) e
@@ -351,13 +355,321 @@ cinza para quem ainda não disse os horários. No celular:
   - `api/painel.php`: as telas;
   - `api/lib/secretaria.php`: consultas, situação na escola, histórico, lembrete à mão e planilha.
 - **Testes:**
-  - 18 dos 255 testes de `scripts/testar_checkout.php`;
-  - 29 dos 80 testes de `scripts/testar_horarios_integracao.php`: início, menu, filtros, busca,
+  - 18 dos 291 testes de `scripts/testar_checkout.php`;
+  - 29 dos 88 testes de `scripts/testar_horarios_integracao.php`: início, menu, filtros, busca,
     planilha, ficha e o lembrete à mão com as travas.
 - **Para publicar:** `api/painel.php`, `api/lib.php`, `api/lib/secretaria.php` (novo),
-  `api/lib/horarios.php`, `api/lib/email.php` e `api/lib/painel.php`.
+  `api/lib/horarios.php`, `api/lib/email.php` e `api/lib/painel.php`. Vai junto com o ponto da sede,
+  na ordem da lista daquela seção.
 - **Situação:** pronto e testado localmente, com capturas no computador e no celular. Publicar só
   com o OK do Matheus.
+
+## Ponto da sede e comprovante de comparecimento (29/09/2026)
+
+Quem chega à sede registra a chegada em `cruzvermelhariodejaneiro.org/ponto/`, que leva a
+`/matricula-cursos-presenciais/ponto/`:
+- **colaboradores** registram entrada e saída, e as horas doadas à instituição somam no portal da
+  secretaria;
+- **alunos** registram a chegada à aula presencial do dia e, quando a aula termina, recebem o
+  comprovante de comparecimento para baixar e por e-mail.
+
+A pessoa se identifica pelo CPF. Quem é colaborador e aluno vê as duas coisas.
+
+- **Dois jeitos de registrar,** na mesma página:
+  - **aparelho da recepção:** um tablet ou computador que a secretaria liberou no portal (Ponto da
+    sede → Aparelhos e QR code → "Liberar este aparelho"). Ele mostra um teclado numérico grande e
+    volta sozinho para o início depois de cada registro. A liberação é um cookie assinado de 400 dias
+    e pode ser desativada no portal a qualquer hora;
+  - **celular da pessoa:** pelo QR code do cartaz para imprimir em A4
+    (`/matricula-cursos-presenciais/ponto/cartaz/`). Só vale com a localização do celular a até
+    150 m da sede, com uma folga de até 100 m pela imprecisão do GPS. O site guarda só a distância,
+    nunca a localização. A pessoa pode marcar "Lembrar de mim neste celular": o CPF fica cifrado
+    num cookie de 180 dias.
+- **Colaboradores:**
+  - a secretaria cadastra cada um no portal, com nome, CPF, **vínculo**, função e contatos (veja
+    [Vínculo e termo de adesão](#vínculo-e-termo-de-adesão-30092026));
+  - no ponto, o colaborador vê se está na sede e desde quando e o botão "Registrar entrada" ou
+    "Registrar saída". Voluntários e diretoria veem também as horas doadas de hoje e do mês;
+  - contam só os pares entrada–saída, com pelo menos 1 minuto entre as duas;
+  - uma entrada de voluntário sem saída há mais de 16 horas é uma **saída esquecida**. Ela não conta, a
+    pessoa pode registrar outra entrada, e o número aparece no menu do portal até a secretaria corrigir.
+- **Alunos:**
+  - o site pergunta à escola, pela função `aulas_do_aluno` (só leitura), as aulas daquele CPF no dia:
+    curso, data e horário vêm da agenda da turma na escola (`AulaData`). Matrícula cancelada ou
+    estornada e turma cancelada não entram;
+  - dá para registrar a chegada de 3 horas antes do início até o fim da aula, uma vez por aula;
+  - o horário é lido do texto da escola ("18:00 - 22:00", "9h às 12h", "18h30-22h"). Se não der
+    para ler, a aula vale o dia todo e termina às 23:59;
+  - só quem registrou presença recebe comprovante, e só depois que a aula termina.
+- **O comprovante de comparecimento:**
+  - é um PDF no desenho do comprovante de inscrição, com o aluno e o CPF, o curso, o dia e o horário
+    da aula, a hora da chegada, o local e um código de conferência;
+  - a página pessoal `/matricula-cursos-presenciais/comparecimento/?t=…` libera o botão "Baixar
+    comprovante (PDF)" quando a aula termina, sem recarregar. O link vai por e-mail; a tela do ponto não
+    o mostra, nem no celular (desde 30/09/2026: quem soubesse o CPF de outra pessoa chegaria ao nome
+    completo dela e ao PDF) nem no aparelho da recepção;
+  - o e-mail com o PDF anexado vai para o e-mail que a escola tem do aluno. Quem manda é
+    `api/comparecimentos.php`, rodado pelo cron da Hostinger a cada 15 minutos. São até 5 tentativas
+    por presença, para aulas dos últimos 30 dias. Só linha de comando; por HTTP responde 404 e o
+    `.htaccess` nega.
+- **Conferência:** em `cruzvermelhariodejaneiro.org/conferir/`, que leva a
+  `/matricula-cursos-presenciais/conferir/`, quem recebe um comprovante ou uma declaração de horas
+  digita o código de 8 caracteres (ex.: `K7QM-3XPD`). A página mostra se o documento é verdadeiro,
+  com o nome, o CPF mascarado (`***.456.789-**`) e os dados. Presença cancelada aparece como
+  cancelada. Cada IP pode consultar 30 vezes a cada 10 minutos. O `/verificar` continua sendo da
+  auditoria.
+- **No portal da secretaria,** a seção **Ponto da sede** (`api/painel.php?v=ponto`) tem três abas:
+  - **Colaboradores:**
+    - o mês, com setas para os anteriores;
+    - quem está na sede agora, de todos os vínculos;
+    - horas e dias de cada voluntário e da diretoria, com as saídas esquecidas e os termos pendentes;
+    - em lista à parte, a presença de empregados, terceirizados e outros, sem horas;
+    - a planilha CSV das horas do mês, sem CPF e só com voluntários e diretoria.
+
+    A ficha de voluntário ou diretoria (`?v=colaborador&id=N`) mostra o termo de adesão e edita o
+    cadastro. Ela lista os registros do mês com "Corrigir" e "Apagar", lança horas à mão e emite a
+    **declaração de horas voluntárias** em PDF, com código de conferência, depois que o termo está
+    registrado. Correções e lançamentos pedem motivo, valem até 16 horas por turno e não podem
+    sobrepor outro registro. O histórico do ajuste fica no registro. A ficha dos outros vínculos
+    mostra só a presença;
+  - **Alunos nas aulas:** as presenças de cada dia e a situação do comprovante: sai às HH:MM, pronto,
+    enviado, envio falhou, sem e-mail ou cancelada. Cada presença tem "Ver" e "Cancelar". Cancelada,
+    o comprovante deixa de baixar e de valer;
+  - **Aparelhos e QR code:** liberar o aparelho em uso, abrir o cartaz para imprimir e desativar
+    aparelhos.
+- **Segurança:**
+  - depois de conferir o CPF e o local, o servidor devolve uma sessão de 3 minutos cifrada
+    (AES-256-GCM). Quem mexe no aparelho da recepção não lê o CPF nem o e-mail de quem usou antes, e
+    ninguém consegue alterar a sessão;
+  - consultas de CPF: até 15 a cada 10 minutos por IP no celular, 240 por aparelho da sede;
+  - para um CPF sem aula no dia, a escola não devolve o nome, então a consulta não revela quem é aluno;
+  - no portal, tudo passa pela sessão e pelo CSRF de sempre e fica no histórico (`mcp_eventos`);
+  - a página do ponto não carrega Analytics, Pixel nem o chat.
+- **Configuração:** nada obrigatório. `PONTO_SEDE_LAT`, `PONTO_SEDE_LNG` e `PONTO_RAIO_METROS`, no
+  `api/config.php` do servidor, trocam o ponto da sede e o raio. O padrão é a Praça da Cruz Vermelha,
+  10 (-22.91132, -43.18779, pelo OpenStreetMap) e 150 m. A consulta às aulas usa a chave da escola
+  que já está em `api/config-escola.php`, com a URL de `ESCOLA_API_URL` trocando `matricula_rapida`
+  por `aulas_do_aluno`.
+- **Código:**
+  - `api/lib/ponto.php`: regras do ponto, aparelhos, sessão, relatórios, correções e declaração de horas;
+  - `api/lib/presenca.php`: consulta à escola, horário da aula, presenças, comprovante, e-mail e conferência;
+  - `api/lib/declaracao.php`: códigos de conferência e o PDF das declarações;
+  - `api/ponto.php`, `api/comparecimento.php` e `api/conferir.php`: as APIs;
+  - `api/comparecimentos.php`: o cron dos e-mails;
+  - `api/painel.php`: a seção Ponto da sede;
+  - `static/ponto.js` e `ponto.css`: a página do ponto;
+  - `static/checkout.js` e `checkout.css`: as páginas do comprovante e da conferência;
+  - `scripts/gerar_checkout.py`: gera `ponto/`, `ponto/cartaz/`, `comparecimento/` e `conferir/`;
+  - tabelas `mcp_colaboradores`, `mcp_ponto`, `mcp_ponto_aparelhos`, `mcp_presencas` e
+    `mcp_declaracoes_horas`, criadas sozinhas na primeira chamada;
+  - na escola: `docs/escola/aulas_do_aluno.sql` ([`docs/escola/README.md`](docs/escola/README.md#aulas-do-aluno-para-o-ponto-da-sede)).
+- **Testes:**
+  - 29 dos 291 testes de `scripts/testar_checkout.php`: horário da aula, janela, distância, códigos
+    e PDFs;
+  - 100 testes de ponta a ponta em `scripts/testar_ponto_integracao.php`, com uma escola falsa:
+    - aparelho e celular;
+    - entrada, saída e saída esquecida;
+    - presença, comprovante e e-mail;
+    - conferência;
+    - portal, com correções, lançamentos, declaração e cancelamento.
+
+    Para rodar: `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_ponto_integracao.php`.
+    O teste recusa banco que não seja local e apaga no fim o que criou;
+  - 24 testes pgTAP de `aulas_do_aluno` e o passo 7 de `scripts/testar_escola_integracao.php`, com a
+    chamada de verdade pelo PostgREST local.
+- **Para publicar,** junto com o portal da secretaria e nesta ordem:
+  1. antes de tudo, aplicar `docs/escola/aulas_do_aluno.sql` no banco da escola. Sem a função, o
+     ponto dos colaboradores funciona, e o aluno vê "Não conseguimos consultar as aulas na escola agora";
+  2. `api/lib/secretaria.php`, `declaracao.php`, `ponto.php` e `presenca.php` (novos), e
+     `api/lib/db.php`, `email.php` e `painel.php`;
+  3. `api/lib.php`;
+  4. `api/painel.php` e `api/lib/horarios.php`;
+  5. `api/ponto.php`, `comparecimento.php`, `conferir.php` e `comparecimentos.php` (novos) e `api/.htaccess`;
+  6. `static/ponto.css` e `ponto.js` (novos), `checkout.css` e `checkout.js`;
+  7. as páginas `checkout/`, `pendente/`, `parabens/` e `horarios/`, e as novas `ponto/`,
+     `ponto/cartaz/`, `comparecimento/` e `conferir/`;
+  8. o `.htaccess` da raiz do site (atalhos `/ponto/` e `/conferir/`), e limpar o cache;
+  9. criar o cron a cada 15 minutos:
+     `/opt/alt/php83/usr/bin/php /home/u448697994/domains/cruzvermelhariodejaneiro.org/public_html/matricula-cursos-presenciais/api/comparecimentos.php`.
+- **Na sede:** imprimir o cartaz, liberar o tablet da recepção no portal e cadastrar os colaboradores.
+- **Situação:** pronto e testado localmente, com capturas no tablet, no celular, nos PDFs e no portal.
+  Publicado em 30/09/2026 com o vínculo e as políticas (versão `a237b7b`).
+
+### Vínculo e termo de adesão (30/09/2026)
+
+Do presidente ao pessoal da limpeza, todo mundo registra no ponto quando chega e quando vai embora.
+Cada vínculo tem uma regra, para a instituição ficar coberta.
+
+| Vínculo | O que o ponto faz | O que não faz |
+|---|---|---|
+| **Voluntário** e **Diretoria (voluntária)** | soma as horas doadas, emite a declaração de horas e pede o termo de adesão (Lei 9.608/1998) | nunca serve para cobrar horário nem punir |
+| **Empregado (CLT)**, **Terceirizado** e **Outro** (estagiário, prestador de serviço) | registra só a presença na sede, por segurança | não soma horas, não tem correção, lançamento nem declaração; não é o ponto oficial dos empregados |
+
+- **Por que assim:**
+  - voluntariado sem termo de adesão e com cobrança de horário é o que costuma virar pedido de vínculo
+    de emprego na Justiça do Trabalho;
+  - o ponto oficial de empregado tem regras próprias (Portaria MTP 671/2021): sistema registrado,
+    comprovante a cada marcação, nenhuma marcação apagada ou alterada. O nosso deixa a secretaria
+    corrigir, de propósito, porque foi feito para voluntários. Por isso não soma horas de empregado:
+    não vira um segundo registro de jornada;
+  - as horas dos voluntários e da diretoria dão ao contador o número para reconhecer o trabalho
+    voluntário no balanço (ITG 2002).
+- **Termo de adesão ao serviço voluntário:**
+  - na ficha do voluntário, "Imprimir o termo para assinar" gera o PDF preenchido, em duas páginas.
+    Ele traz a entidade (com CNPJ), o voluntário (com CPF e contatos) e 11 cláusulas:
+    - objeto, com a função;
+    - natureza gratuita e sem vínculo empregatício (art. 1º);
+    - dias e horários combinados;
+    - registro das horas só para reconhecer, declarar e prestar contas;
+    - ressarcimento de despesas autorizadas (art. 3º);
+    - compromissos das duas partes e dados pessoais (LGPD);
+    - vigência e desligamento, voluntário com menos de 18 anos e foro;
+  - a data e as assinaturas ficam em branco na via impressa: voluntário, quem representa a
+    instituição e, se for menor de idade, o responsável legal. Há espaço para rubricas e numeração de
+    páginas;
+  - assinado o termo, a secretaria registra a data no portal. Ficam gravados o modelo do texto
+    (`2026-09`) e quem registrou, e o registro entra no histórico. A data pode ser corrigida ou o
+    registro removido;
+  - **sem o termo registrado, a declaração de horas não sai.** Com ele, a declaração diz que o serviço
+    foi prestado "nos termos da Lei nº 9.608/1998 e do termo de adesão assinado em …, sem vínculo
+    empregatício". A conferência pública (`/conferir/`) também mostra a data do termo;
+  - voluntário sem termo aparece com o selo "Termo pendente" na lista. O número de pendentes aparece
+    no quadro, no menu (junto com as saídas esquecidas) e no Início. No ponto, a pessoa vê "Seu termo
+    de adesão ao voluntariado ainda não foi registrado. Fale com a secretaria.";
+  - **o modelo do termo deve passar pela revisão do jurídico da instituição antes do primeiro uso.** O
+    texto está em `mcp_ponto_termo_conteudo()` (`api/lib/ponto.php`). Mudou o texto, muda
+    `MCP_PONTO_TERMO_MODELO`.
+- **Presença de empregados, terceirizados e outros:**
+  - aparece numa lista à parte ("Empregados, terceirizados e outros · só presença");
+  - na ficha deles, só a presença do mês;
+  - fica fora da planilha de horas e é apagada depois de 90 dias pela rotina `api/comparecimentos.php`
+    (a mesma dos comprovantes);
+  - a natureza de cada registro fica gravada na entrada (`mcp_ponto.voluntario`). Mudar o vínculo
+    depois não transforma presença em horas nem apaga horas antigas.
+- **Desligamento:** ao desmarcar "Ativo", a data do desligamento fica registrada (`desligado_em`) e
+  some ao reativar.
+- **Políticas:** a Política de Privacidade (pt, en e es) ganhou duas atividades:
+  - "Ponto da sede: voluntários, diretoria e equipe";
+  - "Presença nas aulas presenciais".
+
+  A seção de compartilhamento cita a consulta das aulas à escola. Na guarda:
+  - horas de voluntários, até 5 anos depois do fim do voluntariado;
+  - presença dos outros vínculos, 90 dias;
+  - presença nas aulas, o prazo da matrícula.
+
+  A Política de Cookies lista `mcp_ponto_aparelho` e `mcp_ponto_pessoa`. Tudo é gerado de
+  `site/politicas.json` por `scripts/gerar_politicas.py`, com a revisão em 30/09/2026 nas 12 páginas.
+- **Código:**
+  - `api/lib/ponto.php`: vínculos, termo e retenção;
+  - `api/lib/declaracao.php`: PDF do termo, em várias páginas;
+  - `api/lib/presenca.php`: a data do termo na conferência pública da declaração;
+  - `api/lib/pdf.php`: `novaPagina()`;
+  - `api/painel.php`: lista por vínculo, ficha, termo e travas;
+  - `api/ponto.php` e `static/ponto.js`: sem horas para quem registra só presença;
+  - `api/comparecimentos.php`: a limpeza de 90 dias.
+- **Testes:**
+  - 10 dos 291 testes de `scripts/testar_checkout.php`: vínculo, termo, PDF de duas páginas e
+    declaração citando o termo;
+  - 24 dos 100 testes de `scripts/testar_ponto_integracao.php`:
+    - termo em PDF, registro com as travas e declaração bloqueada e depois liberada;
+    - empregado sem horas, correção, lançamento, declaração nem termo;
+    - lista separada e planilha sem ele;
+    - limpeza de 90 dias guardando as horas dos voluntários;
+    - data de desligamento.
+- **Para publicar,** além da lista da seção acima:
+  - `api/lib/pdf.php`;
+  - as 12 páginas de políticas (`privacidade/`, `cookies/`, `termos/`, `reembolso/` e as versões
+    `en/` e `es/`);
+  - `ponto/` e `ponto/cartaz/` regeneradas.
+
+  As tabelas do ponto ainda não existem no banco de produção. Por isso, as colunas novas já nascem
+  com elas, sem migração.
+
+### Lembretes, comunicados e opinião (30/09/2026)
+
+Guia completo, com os modelos do WhatsApp para a Meta e o passo a passo da secretaria:
+[`docs/ponto-comunicacao.md`](docs/ponto-comunicacao.md). **Publicado em 30/09/2026, por volta das 15h53
+(horário de Brasília), e nada ligado:** tudo começa desligado no portal, em **Comunicação**.
+
+- **Lembretes automáticos**, cada um com liga e desliga:
+  - véspera, às 18h: voluntário e diretoria, nos dias que escolheram ("se vier amanhã, registre a
+    chegada e a saída; se não puder vir, tudo bem"); equipe contratada, de terça a sexta (a véspera também
+    precisa ser dia útil: nada sai no fim de semana nem em feriado) e só se a própria pessoa pediu (só
+    presença, por segurança: lembrete da instituição a empregado pareceria controle de jornada). Nada em
+    feriado do Rio nem nos dias sem expediente marcados no portal;
+  - saída não registrada, a partir das 9h, para o voluntário com a saída em aberto, com o link para
+    informar a hora (a secretaria confere no portal);
+  - aula de amanhã, às 18h, para os alunos, pela função `aulas_do_dia` da escola
+    (`docs/escola/aulas_do_dia.sql`, ainda não aplicada no banco da escola); WhatsApp só com a
+    autorização registrada na escola.
+- **Canais:** e-mail (Resend) e WhatsApp em quatro modos: manual (fila no portal, com o botão que abre o
+  WhatsApp com o texto pronto), WhatsApp do Palácio Virtual pela Evolution (o que já está conectado; só
+  depois do aceite formal do risco no portal), API oficial da Meta (sete modelos; webhook
+  `api/whatsapp.php` com a situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às
+  20h conferida a cada mensagem, consentimento do WhatsApp com data, autor e como foi dado, preferência
+  conferida de novo na hora de mandar, chave única por mensagem, lembretes antes dos comunicados, e-mail
+  de reserva quando o WhatsApp falha de vez (e troca para o e-mail perto do prazo, a partir das 19h, com
+  o WhatsApp fora do ar), descadastro de um clique (`List-Unsubscribe`) nos e-mails e cota diária de
+  e-mails dos avisos (60 por dia; a Resend está no plano grátis, com 100 por dia divididos com a
+  matrícula), em que o comunicado usa só o que sobra dos lembretes do dia.
+- **Implantação em três fases:** a partir da data do lançamento, o portal prepara quatro comunicados
+  (antes, no dia, depois de 2 semanas para colaboradores e para alunos), com prévia do e-mail, do WhatsApp
+  e do aviso na tela do ponto, teste para a própria secretaria e agendamento. O "depois" leva o resumo de
+  cada voluntário (dias e horas doadas) e a pesquisa de opinião.
+- **Páginas pessoais** com link assinado (token depois do `#`, fora do log do servidor; os links das
+  mensagens são amarrados à chave da pessoa, e "Invalidar" derruba também os que já saíram): lembretes
+  (dias, canais), saída sem registro, opinião (anônima: sem nome para a secretaria, a não ser que a
+  pessoa autorize, sem quem clicou e sem data nos comentários; desligada de quem respondeu um mês depois,
+  quando a pesquisa fecha) e "não quero mais receber" (alunos).
+- **Na tela do ponto:** os avisos dos comunicados (sem link pessoal) e, só no aparelho da recepção, as
+  saídas sem registro dos últimos 7 dias para informar ali mesmo e o "saí ontem"; no celular, só o que o
+  botão precisa (sem horário de entrada, horas do mês, termo pendente nem link do comprovante), a saída de
+  uma entrada de outro dia vira saída informada, o código do dia (desligado de início, liga no portal:
+  o celular pede os 4 números da tela do tablet) e a dica de pôr o ponto na tela inicial.
+- **Portal:** seção Comunicação (visão geral com o alerta de rotina parada e os dias sem expediente,
+  comunicados, fila do WhatsApp, envios com "tentar de novo" e "pediu para parar", resultados com adesão,
+  entradas por dia, horas, saídas não registradas na hora, efeito dos lembretes, opinião, planilha dos
+  voluntários e relatório para imprimir); em Ponto da sede, as saídas informadas para conferir, a
+  importação da planilha de colaboradores e a **lista de emergência** (quem está na sede agora, com os
+  alunos em aula, para imprimir numa evacuação); na ficha, "Lembretes e contato" e "Invalidar os links já
+  enviados".
+- **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
+  erro nos avisos não derruba os comprovantes.
+- **Testes:** 185 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 111 no ponto, 303 unitários e 26
+  testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
+- **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual
+  funciona já; a Evolution do Palácio exige o aceite do risco de bloqueio do número; a API oficial precisa
+  de um número da própria instituição e dos modelos aprovados; a única conexão de WhatsApp no Make,
+  "goatlumiar", é de outra empresa e não deve ser usada); aplicar `aulas_do_dia.sql` na escola, se for
+  ligar o lembrete das aulas; e, no portal, importar os colaboradores e preparar os comunicados.
+- **Publicar** (feito em 30/09/2026, por volta das 15h53, numa sessão aberta pelo Matheus com o
+  conector da Hostinger: 25 arquivos copiados do ar antes, 41 enviados, cache limpo; a conferência no ar
+  deu as 46 verificações certas e o ponto no celular voltou a poder pedir a localização): são 41 arquivos,
+  na ordem de `scripts/publicacao-comunicacao.txt` (os módulos novos antes do `lib.php`, que os carrega;
+  `site/politicas.json` fica de fora, é só a fonte das políticas). Com as credenciais TUS exportadas
+  (conector da Hostinger, `hosting_files_generate-upload-url`, conta u448697994), sem ecoá-las:
+  1. guardar o que está no ar: `scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`
+     (esperado: 25 copiados e 16 em `novos.txt`);
+  2. publicar fora da hora das rotinas (a do ponto roda a cada 15 minutos, a dos horários aos 7 de cada
+     hora): `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`;
+  3. limpar o cache (`hosting_cache_clear-website`) e rodar
+     `scripts/conferir_publicacao.sh scripts/publicacao-comunicacao.txt` até dar "Tudo certo." (estáticos
+     iguais ao repositório, API respondendo, configuração bloqueada, localização liberada só no ponto);
+  4. conferir com um Android na sede que o ponto pede a localização e registra, e no portal que a
+     Comunicação abre e a Visão geral não mostra "A rotina parou" depois de 15 minutos;
+  5. para desfazer: `scripts/desfazer_publicacao.sh a237b7b scripts/publicacao-comunicacao.txt` (cada
+     arquivo volta à versão de `a237b7b`, na ordem inversa, e os 16 novos saem, menos o `ponto/.htaccess`:
+     nenhum `.htaccess` é apagado por script). A cópia do passo 1 serve para conferir. As tabelas e colunas
+     novas podem ficar: o código antigo não as usa e nenhum INSERT dele deixa de listar as colunas.
+
+  A migração do banco é automática na primeira visita e só acrescenta (5 tabelas, 13 colunas e 3 índices
+  comuns em tabelas que já existem). Ensaiada em 30/09/2026: o esquema de `a237b7b` com dados de
+  exemplo, atualizado pela versão nova, ficou idêntico ao criado do zero (306 colunas, índices e
+  tabelas), com os dados preservados e a rotina rodando sem erro e sem enviar nada. Nenhuma função mudou de arquivo e as 270 que já existiam
+  mantêm assinaturas compatíveis, então o código no ar convive com as bibliotecas novas durante o envio.
+  Na primeira rotina, os registros de freio com mais de 2 dias e os de robôs com mais de 30 são apagados,
+  como diz a Política de Privacidade publicada junto.
 
 ## Questionário de dias e horários (29/09/2026)
 
@@ -423,9 +735,9 @@ usa as respostas para montar as turmas e, se a data da turma do aluno não servi
   - `scripts/gerar_checkout.py`: gera a página;
   - tabela `mcp_preferencias`, com uma linha por inscrição, criada sozinha na primeira chamada.
 - **Testes:**
-  - 42 dos 255 testes de `scripts/testar_checkout.php`;
-  - 80 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
-    portal da secretaria, planilhas e lembretes, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
+  - 49 dos 291 testes de `scripts/testar_checkout.php`;
+  - 88 testes de ponta a ponta em `scripts/testar_horarios_integracao.php`: API, tela Parabéns,
+    portal da secretaria, planilhas, lembretes e a leitura pelo painel da escola, pelo servidor embutido do PHP contra um MariaDB local. Para rodar:
     `MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_horarios_integracao.php`. O
     teste recusa banco que não seja local e apaga no fim o que criou.
 - **Para publicar:**
@@ -2035,5 +2347,8 @@ site/verificar/                         página de verificação e 404 próprio 
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
 docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)
-scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
+scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS); --copiar-do-ar guarda o que está no ar, --apagar desfaz os novos
+scripts/publicacao-comunicacao.txt      os 41 arquivos da publicação dos lembretes e comunicados, na ordem de envio
+scripts/conferir_publicacao.sh          confere uma publicação no ar (estáticos, API, bloqueios, localização do ponto)
+scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versão do commit anterior (Git), na ordem inversa
 ```

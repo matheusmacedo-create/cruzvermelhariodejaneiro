@@ -29,6 +29,12 @@
   RewriteRule ^campanha-agasalho/?$ /campanha-agasalho.html [R=301,L]
   RewriteRule ^(voluntario|voluntariado|seja-voluntario)/?$ /bio/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]
+
+  # Ponto da sede: o QR code do cartaz da recepção aponta para /ponto/. /conferir/ é o endereço
+  # impresso nos comprovantes de comparecimento e nas declarações de horas (a query ?c= segue junto).
+  # 302 e não 301: o endereço de destino pode mudar sem o navegador guardar o antigo.
+  RewriteRule ^ponto/?$ /matricula-cursos-presenciais/ponto/ [R=302,L]
+  RewriteRule ^conferir/?$ /matricula-cursos-presenciais/conferir/ [R=302,L]
 </IfModule>
 <IfModule mod_headers.c>
   # HSTS: o navegador passa a só falar HTTPS com o domínio, sem a ida e volta pelo HTTP.

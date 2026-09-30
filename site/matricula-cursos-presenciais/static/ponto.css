@@ -1,0 +1,122 @@
+/* Ponto da sede (/ponto/): aparelho da recepção e celular. Mesma paleta do site, alvos de toque grandes. */
+:root{--red:#cc0000;--red-dark:#a30000;--black:#0f1318;--text:#1a202c;--muted:#5f6b7a;--line:#e2e8f0;--soft:#f5f6f8;--ok:#0f7b3e;--ok-soft:#e9f7ef}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--soft);color:var(--text);font-family:Inter,Arial,sans-serif;line-height:1.45}
+button{font:inherit;cursor:pointer}
+a{color:var(--red)}
+.pt-faixa{height:6px;background:var(--red)}
+.pt-topo{display:flex;align-items:center;gap:14px;padding:12px 20px;background:#fff;border-bottom:1px solid var(--line)}
+.pt-topo img{height:40px;width:auto;display:block}
+.pt-titulo b{display:block;font-size:1.02rem;color:var(--black);line-height:1.2;white-space:nowrap}
+.pt-titulo small{display:block;color:var(--muted);font-size:.8rem}
+.pt-relogio{margin-left:auto;text-align:right}
+.pt-relogio b{display:block;font-size:1.5rem;font-weight:800;color:var(--black);font-variant-numeric:tabular-nums;line-height:1.1}
+.pt-relogio small{display:block;color:var(--muted);font-size:.78rem}
+.pt-main{flex:1;padding:24px 16px 32px}
+.pt-card{max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px 24px;box-shadow:0 10px 30px rgba(16,24,40,.07)}
+.pt-card h1{margin:0 0 6px;font-size:1.6rem;line-height:1.2;letter-spacing:-.02em;color:var(--black)}
+.pt-card h2{margin:0 0 10px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.pt-sub{margin:0 0 18px;color:var(--muted);font-size:1rem}
+.pt-sub b{color:var(--text)}
+.pt-nota{margin:16px 0 0;color:var(--muted);font-size:.86rem}
+.pt-erro{margin:0 0 16px;padding:12px 14px;border-radius:12px;background:#fff0f2;border:1px solid #f5c2c7;color:#8a1c1c;font-size:.95rem}
+.pt-campo{display:block;margin:0 0 14px}
+.pt-campo span{display:block;font-weight:700;font-size:.9rem;margin:0 0 6px;color:var(--black)}
+.pt-campo input{width:100%;font:inherit;font-size:1.5rem;letter-spacing:.06em;padding:14px 16px;border:1.5px solid #cbd5e1;border-radius:14px;font-variant-numeric:tabular-nums}
+.pt-campo input:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.12)}
+.pt-check{display:flex;gap:10px;align-items:center;margin:0 0 18px;font-size:.95rem}
+.pt-check input{width:20px;height:20px;accent-color:var(--red)}
+.pt-btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:60px;padding:14px 20px;border:0;border-radius:999px;background:var(--red);color:#fff;font-size:1.15rem;font-weight:800;text-decoration:none;text-align:center}
+.pt-btn:hover{background:var(--red-dark)}
+.pt-btn:disabled{background:#e5b3b3;cursor:default}
+.pt-btn:focus-visible,.pt-tecla:focus-visible,.pt-link:focus-visible{outline:3px solid var(--black);outline-offset:3px}
+.pt-btn-saida{background:var(--black)}.pt-btn-saida:hover{background:#2b323c}
+.pt-btn-sec{background:#fff;color:var(--red);border:2px solid var(--red);margin-top:12px}.pt-btn-sec:hover{background:#fff5f5}
+.pt-link{display:block;margin:18px auto 0;padding:10px;border:0;background:none;color:var(--muted);font-size:.95rem;text-decoration:underline}
+.pt-visor{margin:0 0 16px;padding:16px;border:2px solid var(--line);border-radius:16px;text-align:center;font-size:2rem;font-weight:800;letter-spacing:.06em;color:var(--black);font-variant-numeric:tabular-nums}
+.pt-visor.vazio{color:#c3cad4}
+.pt-teclado{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pt-tecla{min-height:68px;border:1.5px solid var(--line);border-radius:16px;background:#fff;color:var(--black);font-size:1.7rem;font-weight:700;touch-action:manipulation}
+.pt-tecla:active{background:var(--soft)}
+.pt-tecla.apagar{font-size:1rem;color:var(--muted)}
+.pt-tecla.ok{background:var(--red);border-color:var(--red);color:#fff;font-size:1.1rem;font-weight:800}
+.pt-tecla.ok:disabled{background:#e5b3b3;border-color:#e5b3b3;cursor:default}
+.pt-bloco{margin:18px 0 0;padding:18px 0 0;border-top:1px solid var(--line)}
+.pt-status{margin:0 0 14px;font-size:1rem;font-weight:600;color:var(--muted)}
+.pt-status.ok{color:var(--ok)}
+.pt-status.erro{color:#b91c1c}
+.pt-horas{margin:12px 0 0;text-align:center;color:var(--muted);font-size:.95rem}
+.pt-horas b{color:var(--black)}
+.pt-aula{margin:0 0 14px}
+.pt-aula b{display:block;font-size:1.15rem;color:var(--black)}
+.pt-aula span{color:var(--muted)}
+.pt-sucesso{text-align:center}
+.pt-sucesso .pt-sub{margin-top:8px}
+.pt-marca{width:84px;height:84px;margin:4px auto 16px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:flex;align-items:center;justify-content:center}
+.pt-marca svg{width:44px;height:44px}
+.pt-sucesso .pt-btn{margin-top:18px}
+.pt-carregando{padding:28px 0;text-align:center;color:var(--muted)}
+.pt-giro{display:inline-block;width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:pt-giro .8s linear infinite}
+@keyframes pt-giro{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pt-giro{animation-duration:2.4s}}
+.pt-rodape{padding:0 20px 22px;text-align:center;color:var(--muted);font-size:.8rem}
+.pt-rodape p{max-width:560px;margin:0 auto}
+/* Avisos dos comunicados e saída sem registro (30/09/2026). */
+.pt-aviso{margin:0 0 12px;padding:12px 14px;border-radius:12px;background:#fff7e6;border:1px solid #f6d7a7;color:#6b4400;font-size:.95rem}
+.pt-aviso a{font-weight:800;color:var(--red);white-space:nowrap}
+.pt-aviso.ok{background:var(--ok-soft);border-color:#b7e4c7;color:#0f5132}
+.pt-pendencia .pt-status{color:var(--text);font-weight:500}
+.pt-saida{margin:4px 0 0}
+.pt-saida .pt-campo input{font-size:1.3rem;letter-spacing:0}
+.pt-detalhe{margin:12px 0 0}
+.pt-detalhe summary{cursor:pointer;color:var(--red);font-weight:700;padding:8px 0}
+/* Aparelho da recepção: tudo um pouco maior. */
+.pt-aparelho .pt-card{max-width:600px;padding:32px 30px}
+.pt-aparelho .pt-card h1{font-size:1.9rem}
+.pt-aparelho .pt-tecla{min-height:80px}
+@media (max-width:480px){.pt-topo{padding:10px 14px;gap:10px}.pt-topo img{height:32px}.pt-titulo small,.pt-relogio small{display:none}.pt-relogio b{font-size:1.2rem}
+.pt-card{padding:22px 18px;border-radius:16px}.pt-card h1{font-size:1.4rem}.pt-visor{font-size:1.6rem}}
+/* Páginas pessoais dos avisos (ponto/lembretes, saida, opiniao, sair). */
+.av-grupo{border:0;margin:0 0 22px;padding:0}
+.av-grupo legend{display:flex;gap:10px;align-items:flex-start;padding:0;margin:0 0 10px;font-weight:800;font-size:1.02rem;color:var(--black)}
+.av-n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center}
+.av-ajuda{margin:-4px 0 10px;color:var(--muted);font-size:.88rem}
+.av-dias{display:flex;flex-wrap:wrap;gap:8px}
+.av-chip{position:relative}
+.av-chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.av-chip span{display:inline-flex;align-items:center;justify-content:center;min-width:58px;min-height:48px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font-weight:700;color:var(--text)}
+.av-chip input:checked+span{background:var(--red);border-color:var(--red);color:#fff}
+.av-chip input:focus-visible+span{outline:3px solid var(--black);outline-offset:2px}
+.av-mascara{color:var(--muted);font-size:.88rem}
+.av-link{display:inline-block;margin:-6px 0 12px;padding:6px 0;border:0;background:none;color:var(--red);font-weight:700;text-decoration:underline}
+.av-escala{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.av-nota{position:relative}
+.av-nota input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.av-nota span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:74px;padding:8px 4px;border:1.5px solid var(--line);border-radius:14px;background:#fff;text-align:center}
+.av-nota b{font-size:1.4rem;color:var(--black)}
+.av-nota small{font-size:.72rem;line-height:1.15;color:var(--muted)}
+.av-nota input:checked+span{border-color:var(--red);background:#fff5f5}
+.av-nota input:checked+span b{color:var(--red)}
+.av-nota input:focus-visible+span{outline:3px solid var(--black);outline-offset:2px}
+.av-opcoes{display:grid;gap:8px}
+.av-opcao{display:flex;gap:10px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+.av-opcao input{width:20px;height:20px;accent-color:var(--red)}
+.av-opcao:has(input:checked){border-color:var(--red);background:#fff5f5}
+.av-grupo textarea{width:100%;font:inherit;font-size:1rem;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:14px;resize:vertical;min-height:110px}
+.av-grupo textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.12)}
+.av-contato{margin:0 0 16px}
+@media (max-width:420px){.av-escala{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.av-nota small{font-size:.62rem}.av-chip span{min-width:52px}}
+.pt-app{margin-top:18px;text-align:left}
+.pt-app .pt-link{display:inline;margin:0;padding:0 2px;color:var(--red);font-weight:700;font-size:.92rem}
+/* Revisão de acessibilidade (30/09/2026): o atributo hidden sempre vence; caixas de marcar não encolhem ao
+   lado de textos longos; dica do aviso na tela do ponto. */
+[hidden]{display:none!important}
+.pt-check input{flex-shrink:0}
+.pt-dica{display:block;margin-top:6px;font-size:.88rem;color:#5c3a00}
+@media (max-width:420px){.av-nota small{font-size:.8rem}}
+/* O título recebe o foco ao trocar de tela (leitor de tela anuncia); não é um controle, então sem contorno. */
+h1[tabindex="-1"]:focus{outline:0}
+/* Código do dia no tablet (quando o portal liga o código no celular). */
+.pt-codigo{margin:-4px 0 14px;color:var(--muted);font-size:1rem}
+.pt-codigo b{display:inline-block;margin-left:6px;color:var(--text);font-size:1.6rem;letter-spacing:.18em;font-variant-numeric:tabular-nums}

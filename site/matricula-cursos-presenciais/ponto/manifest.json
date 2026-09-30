@@ -1,0 +1,31 @@
+{
+  "name": "Ponto da sede · Cruz Vermelha Brasileira RJ",
+  "short_name": "Ponto CVB-RJ",
+  "description": "Registre a chegada e a saída na sede da Cruz Vermelha Brasileira Rio de Janeiro.",
+  "start_url": "/matricula-cursos-presenciais/ponto/?origem=app",
+  "scope": "/matricula-cursos-presenciais/ponto/",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#cc0000",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/matricula-cursos-presenciais/ponto/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/matricula-cursos-presenciais/ponto/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/matricula-cursos-presenciais/ponto/icone-512-mascara.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -193,3 +193,13 @@ thead .hr-cab { text-align: center; font-size: .92rem; }
   .hr-longo { display: none; }
   .hr-curto { display: inline; }
 }
+/* Ponto da sede: comprovante de comparecimento e conferência de documentos (29/09/2026). */
+.ck-codigo { display: grid; gap: 4px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin: 18px 0 0; }
+.ck-codigo span { font-size: .74rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #718096; }
+.ck-codigo b { font-size: 1.6rem; letter-spacing: .12em; color: var(--red); }
+.ck-codigo small { color: #718096; font-size: .88rem; }
+.ck-codigo a { overflow-wrap: anywhere; }
+.ck-selo { display: inline-block; margin: 0 0 12px; padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: .9rem; }
+.ck-selo.ok { background: #e9f7ef; color: #0f7b3e; }
+.ck-selo.erro { background: #fff0f2; color: #b91c1c; }
+.ck-codigo + .ck-nota { margin-top: 12px; }

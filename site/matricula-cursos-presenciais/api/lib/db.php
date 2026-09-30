@@ -30,8 +30,34 @@ function mcp_db(): PDO
     return $pdo;
 }
 
-/** Cria as tabelas na primeira chamada. CREATE IF NOT EXISTS é barato e evita passo manual no deploy. */
+/**
+ * Versão do esquema: o md5 deste arquivo sem esta linha (scripts/testar_checkout.php confere e diz o valor
+ * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
+ * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
+ */
+const MCP_DB_VERSAO = 'e060d62015add327';
+
+/**
+ * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
+ * MCP_DB_VERSAO mudou desde a última vez (a versão fica em mcp_chaves). No dia a dia, uma consulta por
+ * requisição em vez de ~20 comandos. Para forçar, apague a linha versao_banco de mcp_chaves.
+ */
 function mcp_migrar(PDO $pdo): void
+{
+    $versao = 'db:' . MCP_DB_VERSAO;
+    try {
+        if ($pdo->query("SELECT valor FROM mcp_chaves WHERE nome = 'versao_banco'")->fetchColumn() === $versao) {
+            return;
+        }
+    } catch (PDOException) {
+        // Primeira vez: mcp_chaves ainda não existe.
+    }
+    mcp_migrar_tudo($pdo);
+    $pdo->prepare("INSERT INTO mcp_chaves (nome, valor, criado_em) VALUES ('versao_banco', ?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor), criado_em = VALUES(criado_em)")
+        ->execute([$versao, gmdate('Y-m-d H:i:s')]);
+}
+
+function mcp_migrar_tudo(PDO $pdo): void
 {
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_inscricoes (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -151,6 +177,281 @@ function mcp_migrar(PDO $pdo): void
         atualizado_em DATETIME NOT NULL,
         KEY ix_curso (curso_slug, atualizado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Ponto da sede (29/09/2026, lib/ponto.php e lib/presenca.php). Colaboradores cadastrados pela
+    // secretaria registram entrada e saída; alunos registram a chegada às aulas, e a presença vira o
+    // comprovante de comparecimento. Horários em UTC, como no resto do banco.
+    // vinculo: diretoria e voluntario somam horas doadas e assinam o termo de adesão (Lei 9.608/1998,
+    // termo_*); empregado, terceirizado e outro registram só a presença na sede.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_colaboradores (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(160) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        email VARCHAR(190) NULL,
+        telefone VARCHAR(20) NULL,
+        funcao VARCHAR(120) NULL,
+        vinculo VARCHAR(12) NOT NULL DEFAULT 'voluntario',
+        ativo TINYINT(1) NOT NULL DEFAULT 1,
+        desligado_em DATE NULL,
+        termo_em DATE NULL,
+        termo_modelo VARCHAR(12) NULL,
+        termo_registrado_por VARCHAR(190) NULL,
+        termo_registrado_em DATETIME NULL,
+        aviso_email TINYINT(1) NOT NULL DEFAULT 1,
+        aviso_whatsapp TINYINT(1) NOT NULL DEFAULT 0,
+        aviso_dias VARCHAR(30) NULL,
+        aviso_saida TINYINT(1) NOT NULL DEFAULT 1,
+        aviso_comunicados TINYINT(1) NOT NULL DEFAULT 1,
+        aviso_chave CHAR(16) NULL,
+        aviso_whatsapp_em DATETIME NULL,
+        aviso_whatsapp_por VARCHAR(190) NULL,
+        aviso_whatsapp_como VARCHAR(160) NULL,
+        aviso_dias_por VARCHAR(190) NULL,
+        aviso_atualizado_em DATETIME NULL,
+        criado_por VARCHAR(190) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_cpf (cpf)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Lembretes e comunicados do ponto (30/09/2026, lib/avisos.php): canais, dias da véspera e o
+    // consentimento para o WhatsApp, em bancos que já tinham a tabela.
+    mcp_garantir_colunas($pdo, 'mcp_colaboradores', MCP_DB_COLUNAS_AVISOS);
+    // voluntario: natureza do registro no momento da entrada (1 = horas doadas; 0 = só presença, apagada
+    // depois de 90 dias). Mudar o vínculo depois não muda o que já foi registrado.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        colaborador_id INT UNSIGNED NOT NULL,
+        voluntario TINYINT(1) NOT NULL DEFAULT 1,
+        entrada DATETIME NOT NULL,
+        saida DATETIME NULL,
+        origem_entrada VARCHAR(12) NOT NULL,
+        origem_saida VARCHAR(12) NULL,
+        aparelho_entrada INT UNSIGNED NULL,
+        aparelho_saida INT UNSIGNED NULL,
+        distancia_entrada SMALLINT UNSIGNED NULL,
+        distancia_saida SMALLINT UNSIGNED NULL,
+        ajuste TEXT NULL,
+        saida_informada DATETIME NULL,
+        saida_informada_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_colaborador (colaborador_id, entrada),
+        KEY ix_entrada (entrada),
+        KEY ix_presenca (voluntario, entrada)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Saída informada pela própria pessoa (lembrete da manhã seguinte ou tela do ponto): fica à espera
+    // da secretaria, que aceita ou recusa no portal.
+    mcp_garantir_colunas($pdo, 'mcp_ponto', ['saida_informada' => 'DATETIME NULL', 'saida_informada_em' => 'DATETIME NULL']);
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto_aparelhos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(80) NOT NULL,
+        ativo TINYINT(1) NOT NULL DEFAULT 1,
+        criado_por VARCHAR(190) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        usado_em DATETIME NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_presencas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        token CHAR(40) NOT NULL,
+        codigo CHAR(8) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        nome VARCHAR(160) NOT NULL,
+        email VARCHAR(190) NULL,
+        aula_id VARCHAR(64) NOT NULL,
+        turma_id VARCHAR(64) NULL,
+        curso_id VARCHAR(64) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        aula_data DATE NOT NULL,
+        horario VARCHAR(60) NOT NULL,
+        inicio DATETIME NULL,
+        fim DATETIME NOT NULL,
+        chegada DATETIME NOT NULL,
+        origem VARCHAR(12) NOT NULL,
+        aparelho_id INT UNSIGNED NULL,
+        distancia SMALLINT UNSIGNED NULL,
+        status VARCHAR(12) NOT NULL DEFAULT 'valida',
+        cancelada_por VARCHAR(190) NULL,
+        cancelada_em DATETIME NULL,
+        email_status VARCHAR(20) NULL,
+        email_tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        email_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_aula (cpf, aula_id),
+        UNIQUE KEY ux_token (token),
+        UNIQUE KEY ux_codigo (codigo),
+        KEY ix_data (aula_data),
+        KEY ix_envio (email_em, fim)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Declarações de horas voluntárias emitidas no portal: o código impresso no PDF é conferido em conferir/.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_declaracoes_horas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        codigo CHAR(8) NOT NULL,
+        colaborador_id INT UNSIGNED NOT NULL,
+        nome VARCHAR(160) NOT NULL,
+        cpf CHAR(11) NOT NULL,
+        funcao VARCHAR(120) NULL,
+        de DATE NOT NULL,
+        ate DATE NOT NULL,
+        minutos INT UNSIGNED NOT NULL,
+        dias INT UNSIGNED NOT NULL,
+        termo_em DATE NULL,
+        emitida_por VARCHAR(190) NOT NULL,
+        emitida_em DATETIME NOT NULL,
+        UNIQUE KEY ux_codigo (codigo),
+        KEY ix_colaborador (colaborador_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Lembretes e comunicados do ponto (30/09/2026, lib/avisos.php e lib/comunicacao.php).
+    // Ajustes que a secretaria liga e desliga no portal (lembretes, WhatsApp, data do lançamento).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ajustes (
+        nome VARCHAR(40) NOT NULL PRIMARY KEY,
+        valor VARCHAR(255) NOT NULL,
+        atualizado_por VARCHAR(190) NULL,
+        atualizado_em DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Comunicados das três fases da implantação (antes, durante e depois de 2 semanas) e avulsos.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_campanhas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        fase VARCHAR(10) NOT NULL,
+        nome VARCHAR(120) NOT NULL,
+        publico VARCHAR(20) NOT NULL,
+        canais VARCHAR(40) NOT NULL,
+        assunto VARCHAR(160) NOT NULL,
+        titulo VARCHAR(120) NOT NULL,
+        mensagem TEXT NOT NULL,
+        botao VARCHAR(12) NOT NULL DEFAULT 'nenhum',
+        botao_rotulo VARCHAR(60) NULL,
+        whatsapp TEXT NULL,
+        aviso_ponto VARCHAR(255) NULL,
+        aviso_dias TINYINT UNSIGNED NOT NULL DEFAULT 14,
+        status VARCHAR(10) NOT NULL DEFAULT 'rascunho',
+        agendada_para DATETIME NULL,
+        iniciada_em DATETIME NULL,
+        concluida_em DATETIME NULL,
+        criado_por VARCHAR(190) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_por VARCHAR(190) NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_status (status, agendada_para)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Cada mensagem, por canal: fila, registro do envio e clique. chave impede mandar a mesma coisa duas
+    // vezes (ex.: "vespera|12|2026-10-01|email"). dados guarda o contexto; o texto é montado na hora de enviar.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_avisos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        chave VARCHAR(120) NOT NULL,
+        tipo VARCHAR(12) NOT NULL,
+        canal VARCHAR(10) NOT NULL,
+        campanha_id INT UNSIGNED NULL,
+        colaborador_id INT UNSIGNED NULL,
+        pessoa VARCHAR(40) NULL,
+        nome VARCHAR(160) NOT NULL,
+        destino VARCHAR(190) NOT NULL,
+        referencia VARCHAR(20) NULL,
+        dados TEXT NULL,
+        assunto VARCHAR(200) NULL,
+        texto TEXT NULL,
+        status VARCHAR(10) NOT NULL,
+        provedor VARCHAR(10) NULL,
+        provedor_id VARCHAR(120) NULL,
+        entrega VARCHAR(10) NULL,
+        erro VARCHAR(255) NULL,
+        tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        agendado_para DATETIME NOT NULL,
+        expira_em DATETIME NULL,
+        enviado_em DATETIME NULL,
+        enviado_por VARCHAR(190) NULL,
+        clicado_em DATETIME NULL,
+        cliques SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_chave (chave),
+        KEY ix_fila (status, agendado_para),
+        KEY ix_colaborador (colaborador_id, criado_em),
+        KEY ix_campanha (campanha_id, status),
+        KEY ix_provedor (provedor_id),
+        KEY ix_tipo (tipo, criado_em),
+        KEY ix_criado (criado_em),
+        KEY ix_enviado (status, enviado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Quem pediu para não receber (alunos, que não têm cadastro aqui): só o hash do e-mail ou do celular.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_avisos_bloqueios (
+        canal VARCHAR(10) NOT NULL,
+        destino_hash CHAR(64) NOT NULL,
+        origem VARCHAR(20) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        PRIMARY KEY (canal, destino_hash)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Opinião sobre o ponto (comunicado das 2 semanas). pessoa = "c<id>" (colaborador) ou "a<hash>"
+    // (aluno), para não responder duas vezes; o portal mostra o nome só de quem marcou contato_ok.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_opinioes (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        campanha_id INT UNSIGNED NOT NULL,
+        pessoa VARCHAR(40) NOT NULL,
+        publico VARCHAR(12) NOT NULL,
+        vinculo VARCHAR(12) NULL,
+        nome VARCHAR(160) NULL,
+        contato VARCHAR(190) NULL,
+        facilidade TINYINT UNSIGNED NULL,
+        como VARCHAR(12) NULL,
+        problemas VARCHAR(200) NULL,
+        lembretes VARCHAR(12) NULL,
+        comentario TEXT NULL,
+        contato_ok TINYINT(1) NOT NULL DEFAULT 0,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_pessoa (campanha_id, pessoa)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+/** Colunas dos lembretes em mcp_colaboradores (as mesmas do CREATE TABLE, para bancos antigos). */
+const MCP_DB_COLUNAS_AVISOS = [
+    'aviso_email' => 'TINYINT(1) NOT NULL DEFAULT 1',
+    'aviso_whatsapp' => 'TINYINT(1) NOT NULL DEFAULT 0',
+    'aviso_dias' => 'VARCHAR(30) NULL',
+    'aviso_saida' => 'TINYINT(1) NOT NULL DEFAULT 1',
+    'aviso_comunicados' => 'TINYINT(1) NOT NULL DEFAULT 1',
+    'aviso_chave' => 'CHAR(16) NULL',
+    'aviso_whatsapp_em' => 'DATETIME NULL',
+    'aviso_whatsapp_por' => 'VARCHAR(190) NULL',
+    // Como a pessoa autorizou o WhatsApp (formulário, pessoalmente, pela página): a prova do consentimento.
+    'aviso_whatsapp_como' => 'VARCHAR(160) NULL',
+    // Quem escolheu os dias dos lembretes ("a própria pessoa" ou o e-mail da secretaria).
+    'aviso_dias_por' => 'VARCHAR(190) NULL',
+    'aviso_atualizado_em' => 'DATETIME NULL',
+];
+
+/**
+ * Índices das tabelas que já existiam antes deles (freios, "na sede", presenças por e-mail, cota de e-mail).
+ * Roda só na rotina da linha de comando (a cada 15 minutos), para não pesar em cada visita.
+ */
+const MCP_DB_INDICES = [
+    'mcp_avisos' => ['ix_criado' => 'criado_em', 'ix_enviado' => 'status, enviado_em'],
+    'mcp_eventos' => ['ix_tipo_criado' => 'tipo, criado_em'],
+    'mcp_ponto' => ['ix_sem_saida' => 'saida, entrada'],
+    'mcp_presencas' => ['ix_email' => 'email, chegada'],
+];
+
+function mcp_garantir_indices(PDO $pdo): void
+{
+    foreach (MCP_DB_INDICES as $tabela => $indices) {
+        $existentes = array_column($pdo->query("SHOW INDEX FROM $tabela")->fetchAll(), 'Key_name');
+        foreach ($indices as $nome => $colunas) {
+            if (!in_array($nome, $existentes, true)) {
+                $pdo->exec("ALTER TABLE $tabela ADD KEY $nome ($colunas)");
+            }
+        }
+    }
+}
+
+/**
+ * Faxina dos registros de freio (IP de quem consultou o ponto, abriu as páginas pessoais etc.): só valem
+ * por minutos; depois de 2 dias saem. Os de armadilha (robôs), depois de 30.
+ */
+function mcp_eventos_apagar_freios(?int $agora = null): int
+{
+    $agora ??= time();
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado')
+        AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
+    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
+    return $stmt->rowCount();
 }
 
 /** Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). */
@@ -159,7 +460,14 @@ function mcp_garantir_colunas(PDO $pdo, string $tabela, array $colunas): void
     $existentes = array_column($pdo->query("SHOW COLUMNS FROM $tabela")->fetchAll(), 'Field');
     foreach ($colunas as $nome => $definicao) {
         if (!in_array($nome, $existentes, true)) {
-            $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+            try {
+                $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+            } catch (PDOException $e) {
+                // Outra requisição acrescentou a coluna no mesmo instante (1060: Duplicate column name).
+                if ((int) ($e->errorInfo[1] ?? 0) !== 1060) {
+                    throw $e;
+                }
+            }
         }
     }
 }
