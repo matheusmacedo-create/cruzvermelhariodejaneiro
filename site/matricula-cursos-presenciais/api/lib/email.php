@@ -232,7 +232,9 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
                 'filename' => $a['nome'], 'content' => base64_encode($a['conteudo']),
             ], $anexos);
         }
-        $ch = curl_init('https://api.resend.com/emails');
+        // RESEND_API_URL só existe para os testes locais (um servidor falso em 127.0.0.1); em produção, a da Resend.
+        $url = (string) mcp_cfg('RESEND_API_URL', 'https://api.resend.com/emails');
+        $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
@@ -240,7 +242,7 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
             CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $chave, 'Content-Type: application/json'],
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_TIMEOUT => 30,
-            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (parse_url($url, PHP_URL_HOST) === '127.0.0.1' ? CURLPROTO_HTTP : 0),
         ]);
         $r = curl_exec($ch);
         $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);

@@ -1085,6 +1085,16 @@ function mcp_ponto_saida_decidir(int $id, bool $aceitar, string $quem, string $m
 /** Colunas da planilha, na ordem padrão; o cabeçalho, se vier, pode trazê-las em outra ordem. */
 const MCP_IMPORTAR_COLUNAS = ['nome', 'cpf', 'vinculo', 'funcao', 'email', 'telefone', 'dias', 'whatsapp'];
 
+/**
+ * Texto colado da planilha: quebras de linha normalizadas e sem caracteres de controle, mas com as
+ * tabulações (é assim que o Excel e o Google Planilhas separam as colunas ao copiar).
+ */
+function mcp_importar_texto(mixed $valor, int $limite): string
+{
+    $texto = str_replace(["\r\n", "\r"], "\n", is_string($valor) ? $valor : '');
+    return mb_substr((string) preg_replace('/(?![\t\n])\p{Cc}/u', '', $texto), 0, $limite);
+}
+
 /** Texto sem acento, minúsculo e sem espaços nas pontas (para comparar vínculos, dias e cabeçalhos). */
 function mcp_sem_acento(string $texto): string
 {

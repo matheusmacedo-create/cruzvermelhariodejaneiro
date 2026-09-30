@@ -888,7 +888,7 @@ function pc_post(string $sessao, string $acao, int $id): never
             }
             pn_redirecionar('v=ponto&ok=' . ($acao === 'saida_aceitar' ? 'sd_ok' : 'sd_rec'));
         case 'col_importar':
-            $texto = mcp_texto_longo($_POST['texto'] ?? '', 200000);
+            $texto = mcp_importar_texto($_POST['texto'] ?? '', 200000);
             $conferido = mcp_colaboradores_importar_conferir($texto);
             if (($_POST['etapa'] ?? '') !== 'importar') {
                 pc_importar($sessao, '', 'ok', $texto, $conferido);

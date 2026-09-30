@@ -299,6 +299,47 @@ pgTAP cobrem:
 - matrícula cancelada ou estornada, turma cancelada e CPF desconhecido;
 - dados inválidos.
 
+## Alunos com aula num dia, para o lembrete da véspera
+
+Desde 30/09/2026, o site pode mandar na véspera, às 18h, o lembrete "amanhã tem aula, confirme a
+presença no ponto da recepção" (seção Comunicação do portal da secretaria; o lembrete começa
+desligado). Às 8h, o site pergunta à escola quem tem aula no dia seguinte. A pergunta é a função
+`public.aulas_do_dia` (`aulas_do_dia.sql`).
+
+- **Chamada:** `POST /rest/v1/rpc/aulas_do_dia` com a mesma chave secreta e o corpo
+  `{"dados": {"data": "AAAA-MM-DD"}}`.
+- **Resposta:** `{"ok": true, "data": "AAAA-MM-DD", "alunos": [...]}`, um item por aluno, em ordem de
+  nome, com `aluno_id`, `nome`, `email`, `celular` e `aulas` (`aula_id`, `horario`, `turma_id`,
+  `curso_id`, `curso_nome`, em ordem de horário). Não traz CPF.
+- **O que entra:** as mesmas matrículas do ponto (não canceladas nem estornadas, em turmas não
+  canceladas), só de contas de aluno (`papel = ALUNO`) e sem `bloqueioTotal`.
+- **Janela:** a data precisa estar entre ontem e daqui a 7 dias (Brasília). Fora disso, erro `22023`
+  com `dados inválidos: data fora da janela`. Assim, se a chave vazar, não dá para baixar a lista de
+  todos os alunos de uma vez.
+- **Sem aula no dia:** `{"ok": true, "data": ..., "alunos": []}`.
+
+**Segurança:** o mesmo molde das outras funções: só lê, `SECURITY DEFINER` com `search_path` vazio,
+`EXECUTE` só para `service_role`. No site, o log registra só o código HTTP. O e-mail e o celular servem
+só para o lembrete; o WhatsApp dos alunos tem um ajuste próprio no portal, desligado por padrão, para
+ligar só se os alunos autorizaram contato por WhatsApp na matrícula. Cada lembrete tem o link "não quero
+receber".
+
+**Atenção à escola:** a tabela `Matricula` tem as colunas `lembreteImediatoEm` e `lembreteVesperaEm`,
+sinal de que a própria escola já manda algum lembrete. Antes de ligar o do site, confirmar com quem
+mantém a escola o que esse lembrete faz, para o aluno não receber dois avisos parecidos.
+
+**Como ligar:** rodar `aulas_do_dia.sql` no SQL Editor (pode rodar de novo). No servidor, nada muda: o
+site acha a URL trocando `matricula_rapida` por `aulas_do_dia` em `ESCOLA_API_URL` (ou usa
+`ESCOLA_API_AULAS_DIA_URL`, se existir). Depois, ligar "Aula de amanhã" em Comunicação, no portal.
+
+**Desfazer:** `drop function public.aulas_do_dia(jsonb);`. O lembrete das aulas para de sair (a rotina
+tenta de novo a cada 15 minutos e registra só o código do erro).
+
+**Testes:** 26 testes pgTAP em `teste-local/05_testes_aulas_do_dia_pgtap.sql` (segurança e
+privilégios, contrato, aluna com dois cursos, exclusões, janela de datas e dados inválidos). Em
+30/09/2026, conferido também de ponta a ponta: o código do site chamou a função pelo PostgREST local e
+recebeu a aluna de teste; a data fora da janela voltou com o erro `22023`.
+
 ## Como ligar em produção
 
 1. No SQL Editor do projeto da escola, rodar `matricula_rapida.sql`. O script pode ser rodado de
@@ -332,6 +373,8 @@ for f in teste-local/00_papeis_supabase.sql teste-local/01_estrutura_escola.sql 
          teste-local/02_dados_ficticios.sql matricula_rapida.sql aulas_do_aluno.sql; do psql -d escola_teste -f $f; done
 psql -d escola_teste -f teste-local/03_testes_pgtap.sql        # 84 testes de matricula_rapida (pgTAP)
 psql -d escola_teste -f teste-local/04_testes_aulas_pgtap.sql  # 24 testes de aulas_do_aluno (pgTAP)
+psql -d escola_teste -f aulas_do_dia.sql
+psql -d escola_teste -f teste-local/05_testes_aulas_do_dia_pgtap.sql  # 26 testes de aulas_do_dia (pgTAP)
 php ../../scripts/testar_checkout.php                          # 291 testes do PHP, sem banco nem rede
 ```
 
