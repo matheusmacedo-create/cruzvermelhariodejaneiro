@@ -22,11 +22,11 @@ const MCP_CAMPANHA_PUBLICOS = [
     'colaboradores' => 'Todos os colaboradores',
     'voluntarios' => 'Voluntários e diretoria',
     'outros' => 'Empregados, terceirizados e outros',
-    'alunos' => 'Alunos (inscritos e com presença recente)',
+    'alunos' => 'Alunos que confirmaram presença pelo ponto (60 dias)',
 ];
 const MCP_CAMPANHA_CANAIS = ['email' => 'E-mail', 'whatsapp' => 'WhatsApp', 'ponto' => 'Aviso na tela do ponto'];
 const MCP_CAMPANHA_BOTOES = ['lembretes' => 'Escolher meus lembretes', 'ponto' => 'Abrir o ponto', 'opiniao' => 'Responder em 1 minuto', 'nenhum' => 'Sem botão'];
-const MCP_CAMPANHA_STATUS = ['rascunho' => 'Rascunho', 'agendada' => 'Agendado', 'enviando' => 'Enviando', 'enviada' => 'Enviado', 'cancelada' => 'Cancelado'];
+const MCP_CAMPANHA_STATUS = ['rascunho' => 'Rascunho', 'agendada' => 'Agendado', 'enviando' => 'Enviando', 'enviada' => 'Enviado', 'falhou' => 'Não saiu', 'cancelada' => 'Cancelado'];
 /** Campos que o texto de um comunicado pode usar. */
 const MCP_COMUNICADO_CAMPOS = [
     'primeiro_nome' => 'primeiro nome da pessoa',
@@ -40,7 +40,8 @@ const MCP_COMUNICADO_CAMPOS = [
 ];
 /** Modelos do WhatsApp (API oficial) por fase; o texto exato de cada um está em docs/ponto-comunicacao.md. */
 const MCP_WHATSAPP_MODELOS = [
-    'cvb_ponto_vespera' => 'Lembrete da véspera (colaboradores)',
+    'cvb_ponto_vespera' => 'Lembrete da véspera (voluntários e diretoria)',
+    'cvb_ponto_vespera_equipe' => 'Lembrete da véspera (equipe contratada, só quando a pessoa pediu)',
     'cvb_ponto_saida' => 'Saída não registrada (voluntários)',
     'cvb_aula_amanha' => 'Aula de amanhã (alunos)',
     'cvb_ponto_novidade' => 'Comunicado: antes do lançamento',
@@ -48,15 +49,26 @@ const MCP_WHATSAPP_MODELOS = [
     'cvb_ponto_opiniao' => 'Comunicado: opinião depois de 2 semanas',
 ];
 const MCP_WHATSAPP_MODELO_FASE = ['antes' => 'cvb_ponto_novidade', 'durante' => 'cvb_ponto_comecou', 'depois' => 'cvb_ponto_opiniao'];
+/** O botão de cada modelo aprovado: o comunicado que vai pela API oficial precisa usar o mesmo. */
+const MCP_WHATSAPP_BOTAO_FASE = ['antes' => 'lembretes', 'durante' => 'ponto', 'depois' => 'opiniao'];
 const MCP_OPINIAO_FACILIDADE = [1 => 'Muito difícil', 2 => 'Difícil', 3 => 'Mais ou menos', 4 => 'Fácil', 5 => 'Muito fácil'];
 const MCP_OPINIAO_COMO = ['aparelho' => 'No tablet da recepção', 'celular' => 'No meu celular', 'os_dois' => 'Nos dois', 'nao_usei' => 'Ainda não registrei'];
+const MCP_OPINIAO_COMO_ALUNO = ['aparelho' => 'No tablet da recepção', 'celular' => 'No meu celular', 'os_dois' => 'Nos dois', 'nao_usei' => 'Ainda não confirmei presença'];
 const MCP_OPINIAO_PROBLEMAS = [
     'localizacao' => 'A localização do celular não funcionou',
     'cpf' => 'O CPF não foi encontrado',
     'esqueci' => 'Esqueci de registrar a saída',
     'aparelho' => 'O tablet da recepção estava desligado ou com problema',
     'internet' => 'Internet lenta ou fora do ar',
-    'nao_sabia' => 'Não sabia que precisava registrar',
+    'nao_sabia' => 'Não sabia do registro ou de como usar',
+    'outro' => 'Outro problema (conte abaixo)',
+];
+const MCP_OPINIAO_PROBLEMAS_ALUNO = [
+    'localizacao' => 'A localização do celular não funcionou',
+    'cpf' => 'O CPF não foi encontrado',
+    'aula' => 'Minha aula não apareceu na tela',
+    'aparelho' => 'O tablet da recepção estava desligado ou com problema',
+    'internet' => 'Internet lenta ou fora do ar',
     'outro' => 'Outro problema (conte abaixo)',
 ];
 const MCP_OPINIAO_LEMBRETES = ['ajudam' => 'Ajudam', 'indiferente' => 'Não fazem diferença', 'demais' => 'Chegam demais', 'nao_recebo' => 'Não recebo lembretes'];
@@ -162,6 +174,9 @@ function mcp_comunicado_resumo(array $pessoa, int $agora): string
         return $n > 0 ? "Nestas semanas, você confirmou presença em *$n " . ($n === 1 ? 'aula' : 'aulas') . '* pelo ponto da recepção.' : '';
     }
     $c = $pessoa['colaborador'];
+    if (!mcp_ponto_voluntario($c)) {
+        return ''; // presença da equipe contratada não vira relatório para a pessoa (não é controle de jornada)
+    }
     $dias = [];
     $segundos = 0;
     foreach (mcp_ponto_registros($deUtc, $ateUtc, (int) $c['id']) as $r) {
@@ -172,17 +187,17 @@ function mcp_comunicado_resumo(array $pessoa, int $agora): string
     }
     $n = count($dias);
     if ($n === 0) {
-        return 'Ainda não vimos nenhum registro seu no ponto. Se algo atrapalhou, conte na pesquisa: é justamente isso que queremos saber.';
+        return ''; // sem registro, nada a dizer: não soa como cobrança
     }
     $diasTexto = "*$n " . ($n === 1 ? 'dia' : 'dias') . '*';
-    if (mcp_ponto_voluntario($c) && $segundos >= 60) {
-        return "Nestas duas semanas, você registrou $diasTexto na sede e *" . mcp_ponto_horas_texto(intdiv($segundos, 60)) . '* de horas doadas. Obrigado!';
+    if ($segundos >= 60) {
+        return "Nestas duas semanas, você registrou $diasTexto na sede e doou *" . mcp_ponto_horas_texto(intdiv($segundos, 60)) . '*. Obrigado!';
     }
-    return "Nestas duas semanas, você registrou presença na sede em $diasTexto.";
+    return "Nestas duas semanas, você registrou $diasTexto na sede. Obrigado!";
 }
 
 /** Valores dos campos de um comunicado para uma pessoa ($exemplo: resumo de exemplo, para o teste e a prévia). */
-function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false): array
+function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false, bool $comResumo = true): array
 {
     $nome = mcp_nome_proprio((string) $pessoa['nome']);
     $lancamento = mcp_ajuste('lancamento');
@@ -190,12 +205,12 @@ function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false): 
     $vinculo = match (true) {
         $pessoa['publico'] !== 'colaborador' => ['', ''],
         $voluntario => [
-            'Para você, que é voluntário, cada hora doada fica registrada e pode virar uma declaração de horas voluntárias sempre que precisar. O registro serve para reconhecer o seu trabalho, nunca para cobrar horário.',
-            'Para os voluntários, cada hora doada fica registrada e vira declaração de horas quando precisar.',
+            'Para você, que é voluntário, cada hora doada fica registrada e vira declaração quando você pedir. O registro serve para reconhecer o seu trabalho, nunca para cobrar horário: se não puder vir, tudo bem.',
+            'Para os voluntários, cada hora doada fica registrada e vira declaração quando pedir.',
         ],
         default => [
-            'Para você, o registro é só da presença na sede, pela segurança de todos. Ele não substitui o ponto oficial nem muda nada na sua jornada.',
-            'Para a equipe, é só o registro da presença na sede, pela segurança de todos.',
+            'Para você, que é da equipe contratada, o registro serve só para sabermos quem está na sede, por segurança. Ele não é o ponto oficial, não conta horas, atrasos ou faltas e não muda nada na sua jornada.',
+            'Para a equipe contratada, é só a presença na sede, por segurança: não é o ponto oficial e não conta horas.',
         ],
     };
     return [
@@ -205,9 +220,10 @@ function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false): 
         'data_curta' => $lancamento !== '' ? mcp_comunicado_data($lancamento, true) : 'em breve',
         'vinculo_frase' => $vinculo[0],
         'vinculo_frase_curta' => $vinculo[1],
-        'resumo' => !$exemplo ? mcp_comunicado_resumo($pessoa, $agora) : ($pessoa['publico'] === 'aluno'
+        // O resumo custa uma consulta por pessoa: só quando o texto usa {resumo} (ou o modelo da fase "depois").
+        'resumo' => !$comResumo ? '' : (!$exemplo ? mcp_comunicado_resumo($pessoa, $agora) : ($pessoa['publico'] === 'aluno'
             ? 'Nestas semanas, você confirmou presença em *3 aulas* pelo ponto da recepção.'
-            : ($voluntario ? 'Nestas duas semanas, você registrou *6 dias* na sede e *23h40* de horas doadas. Obrigado!' : 'Nestas duas semanas, você registrou presença na sede em *6 dias*.')),
+            : ($voluntario ? 'Nestas duas semanas, você registrou *6 dias* na sede e doou *23h40*. Obrigado!' : ''))),
     ];
 }
 
@@ -218,7 +234,8 @@ function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false): 
  */
 function mcp_campanha_mensagem(array $campanha, array $pessoa, int $avisoId, int $agora, bool $teste = false, bool $exemplo = false): array
 {
-    $vars = mcp_comunicado_vars($pessoa, $agora, $teste || $exemplo);
+    $comResumo = $campanha['fase'] === 'depois' || str_contains($campanha['assunto'] . $campanha['titulo'] . $campanha['mensagem'] . $campanha['whatsapp'], '{resumo}');
+    $vars = mcp_comunicado_vars($pessoa, $agora, $teste || $exemplo, $comResumo);
     $colaborador = $pessoa['publico'] === 'colaborador';
     $destino = ['ponto' => 'ponto', 'lembretes' => 'lembretes', 'opiniao' => 'opiniao'][$campanha['botao']] ?? null;
     if ($destino === 'lembretes' && !$colaborador) {
@@ -233,16 +250,20 @@ function mcp_campanha_mensagem(array $campanha, array $pessoa, int $avisoId, int
     $privacidade = mcp_site_url() . '/privacidade/';
     $html = mcp_comunicado_html($corpoTexto)
         . ($link !== '' ? mcp_botao($link, $rotulo) : '')
-        . mcp_nota('No celular, a localização só confirma que você está na sede e não fica guardada. Saiba mais na <a href="' . mcp_escapar($privacidade) . '">Política de Privacidade</a>.'
-            . ' ' . ($colaborador ? 'Para escolher o que você recebe, <a href="' . mcp_escapar($sair) . '">toque aqui</a>.' : 'Não quer receber estes avisos? <a href="' . mcp_escapar($sair) . '">Toque aqui</a>.'));
+        . mcp_nota('No celular, a localização só confirma que você está na sede: guardamos só a distância aproximada. Saiba mais na <a href="' . mcp_escapar($privacidade) . '">Política de Privacidade</a>.'
+            . ' ' . ($colaborador ? '<a href="' . mcp_escapar($sair) . '">Escolher o que recebo</a>.' : '<a href="' . mcp_escapar($sair) . '">Não quero receber estes avisos</a>.'));
     if ($teste) {
         $html = '<p style="margin:0 0 16px;padding:10px 14px;border-radius:10px;background:#fff4e5;color:#8a5200;font-size:14px"><strong>Teste.</strong> É assim que o comunicado chega. Os dados da pessoa são de exemplo.</p>' . $html;
     }
     $texto = mcp_comunicado_texto($corpoTexto) . ($link !== '' ? "\n\n$rotulo: $link" : '')
-        . "\n\n" . ($colaborador ? "Para escolher o que você recebe: $sair" : "Não quer receber estes avisos? $sair");
+        . "\n\n" . ($colaborador ? "Escolher o que recebo: $sair" : "Não quero receber estes avisos: $sair");
     $whatsapp = trim(mcp_comunicado_trocar((string) $campanha['whatsapp'], $vars + ['link' => $link]));
     if ($link !== '' && !str_contains((string) $campanha['whatsapp'], '{link}')) {
         $whatsapp .= "\n\n$link";
+    }
+    // Texto livre (fila manual, Evolution, Make) sempre com o caminho para parar; o modelo da Meta tem o dele.
+    if ($whatsapp !== '' && $colaborador && $destino !== 'lembretes') {
+        $whatsapp .= "\n\nEscolher o que recebo: $sair";
     }
     $modeloNome = $colaborador ? (MCP_WHATSAPP_MODELO_FASE[$campanha['fase']] ?? null) : null;
     $modelo = $modeloNome === null ? null : [
@@ -296,63 +317,82 @@ function mcp_montar_aviso_vespera(array $colaborador, string $dataIso, int $avis
     $ponto = mcp_avisos_link_clique($avisoId, 'ponto');
     $prefs = mcp_avisos_link_clique($avisoId, 'lembretes');
     $voluntario = mcp_ponto_voluntario($colaborador);
-    $porque = $voluntario
-        ? 'É assim que suas horas doadas ficam registradas e podem virar declaração de horas voluntárias quando você precisar.'
-        : 'O registro serve para sabermos quem está na sede, pela segurança de todos.';
-    $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. ' . ($dias !== '' ? 'Você nos disse que costuma vir à sede às ' . mcp_escapar($dias) . '. ' : '')
-            . 'Se vier amanhã, <strong>' . mcp_escapar($dia) . '</strong>, lembre-se do ponto:')
-        . mcp_lista([
-            '<strong>Ao chegar:</strong> digite seu CPF no tablet da recepção ou leia o QR code do cartaz com o celular e toque em <strong>Registrar entrada</strong>.',
-            '<strong>Ao ir embora:</strong> toque em <strong>Registrar saída</strong>. Leva 10 segundos.',
-        ])
-        . mcp_p(mcp_escapar($porque))
-        . mcp_botao($ponto, 'Abrir o ponto')
-        . mcp_nota('No celular, o ponto só funciona na sede. ' . ($voluntario ? 'Se não puder vir, tudo bem: o voluntariado é no seu ritmo e não precisa avisar por aqui. ' : '')
-            . 'Para mudar os dias ou parar os lembretes, <a href="' . mcp_escapar($prefs) . '">toque aqui</a>.');
-    $texto = "Oi, $primeiro. Se vier à sede amanhã, $dia, lembre-se do ponto:\n- Ao chegar: digite seu CPF no tablet da recepção ou leia o QR code com o celular e toque em Registrar entrada.\n"
-        . "- Ao ir embora: toque em Registrar saída.\n\n$porque\n\nAbrir o ponto: $ponto\nMudar os dias ou parar os lembretes: $prefs";
-    $whatsapp = "Olá, $primeiro! Lembrete da secretaria da Cruz Vermelha Brasileira RJ: se vier à sede amanhã, $dia, registre a *entrada* ao chegar e a *saída* ao ir embora "
-        . "(CPF no tablet da recepção ou QR code no celular).\n\n" . ($voluntario ? "Se não puder vir, tudo bem.\n" : '') . "Mudar os dias ou parar os lembretes: $prefs";
+    $como = [
+        '<strong>Ao chegar:</strong> digite seu CPF no tablet da recepção (ou leia o QR code do cartaz com o celular) e toque em <strong>Registrar entrada</strong>.',
+        '<strong>Ao sair:</strong> digite o CPF de novo e toque em <strong>Registrar saída</strong>.',
+    ];
+    if ($voluntario) {
+        // Revisão jurídica (30/09/2026): lembrete condicional, sem pressupor a vinda, e sem cobrança (Lei 9.608/1998).
+        $assunto = "Se vier amanhã ($dia), lembre-se de registrar a presença";
+        $abertura = 'Oi, ' . mcp_escapar($primeiro) . '. ' . ($dias !== '' ? 'Seus dias de lembrete são ' . mcp_escapar($dias) . '. ' : '')
+            . 'Se você vier à sede amanhã, <strong>' . mcp_escapar($dia) . '</strong>:';
+        $porque = 'Assim suas horas voluntárias ficam registradas para a declaração, quando você quiser pedir.';
+        $nota = 'Se não puder vir, tudo bem: o voluntariado é no seu ritmo e este lembrete não precisa de resposta. ';
+        $motivo = 'Você recebeu este lembrete porque há dias de lembrete cadastrados para você na sede da ' . MCP_NOME_FILIAL . '. Mude ou pare quando quiser pelo link acima.';
+        $whatsapp = "Olá, $primeiro! Lembrete da secretaria da Cruz Vermelha Brasileira RJ: se vier à sede amanhã, $dia, registre a *chegada* e a *saída* "
+            . "para suas horas voluntárias contarem (CPF no tablet da recepção ou QR code no celular).\n\nSe não puder vir, tudo bem.\nMudar os dias ou parar: $prefs";
+        $modelo = 'cvb_ponto_vespera';
+    } else {
+        // Equipe contratada: só vai quando a própria pessoa pediu (mcp_avisos_recebe_vespera), em dia útil.
+        $assunto = "Lembrete que você pediu: presença na sede amanhã ($dia)";
+        $abertura = 'Oi, ' . mcp_escapar($primeiro) . '. Este é o lembrete que você pediu' . ($dias !== '' ? ' para as ' . mcp_escapar($dias) : '') . ': se vier à sede amanhã, <strong>'
+            . mcp_escapar($dia) . '</strong>, registre a presença:';
+        $porque = 'É só para sabermos quem está no prédio, por segurança: não é o ponto oficial, não conta horas e não muda nada na sua jornada.';
+        $nota = '';
+        $motivo = 'Você recebeu este lembrete porque escolheu recebê-lo. Mude ou pare quando quiser pelo link acima.';
+        $whatsapp = "Olá, $primeiro! Lembrete que você pediu: se vier à sede amanhã, $dia, registre a presença ao chegar e ao sair (CPF no tablet da recepção ou QR code no celular). "
+            . "É só por segurança, não é o ponto oficial.\n\nMudar os dias ou parar: $prefs";
+        $modelo = 'cvb_ponto_vespera_equipe';
+    }
+    $corpo = mcp_p($abertura) . mcp_lista($como) . mcp_p(mcp_escapar($porque)) . mcp_botao($ponto, 'Abrir o ponto')
+        . mcp_nota('No celular, o ponto só funciona na sede. ' . $nota . '<a href="' . mcp_escapar($prefs) . '">Mudar os dias ou parar os lembretes</a>.');
+    $texto = "Oi, $primeiro. " . ($voluntario ? ($dias !== '' ? "Seus dias de lembrete são $dias. " : '') . "Se você vier à sede amanhã, $dia:" : "Lembrete que você pediu: se vier à sede amanhã, $dia, registre a presença:")
+        . "\n- Ao chegar: digite seu CPF no tablet da recepção (ou leia o QR code com o celular) e toque em Registrar entrada.\n- Ao sair: digite o CPF de novo e toque em Registrar saída.\n\n$porque\n\n"
+        . ($voluntario ? "Se não puder vir, tudo bem: este lembrete não precisa de resposta.\n\n" : '') . "Abrir o ponto: $ponto\nMudar os dias ou parar os lembretes: $prefs";
     return [
-        'assunto' => "Lembrete para amanhã, $dia: registre a chegada e a saída",
-        'titulo' => "Até amanhã, $primeiro!",
-        'html' => mcp_moldura("Até amanhã, $primeiro!", $corpo, [
+        'assunto' => $assunto,
+        'titulo' => "Lembrete para amanhã, $primeiro",
+        'html' => mcp_moldura("Lembrete para amanhã, $primeiro", $corpo, [
             'eyebrow' => 'Ponto da sede',
-            'preheader' => 'Ao chegar, registre a entrada; ao ir embora, a saída. Leva 10 segundos.',
-            'motivo' => 'Você recebeu este lembrete porque escolheu ser avisado na véspera dos dias em que vem à sede da ' . MCP_NOME_FILIAL . '.',
+            'preheader' => $voluntario ? 'Se vier amanhã, registre a chegada e a saída. Se não puder vir, tudo bem.' : 'Se vier amanhã, registre a presença ao chegar e ao sair.',
+            'motivo' => $motivo,
         ]),
         'texto' => $texto,
         'whatsapp' => $whatsapp,
-        'modelo' => ['nome' => 'cvb_ponto_vespera', 'parametros' => [$primeiro, $dia], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'lembretes')],
+        'modelo' => ['nome' => $modelo, 'parametros' => [$primeiro, $dia], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'lembretes')],
     ];
 }
 
 function mcp_montar_aviso_saida(array $colaborador, array $registro, int $avisoId, int $agora): array
 {
     $primeiro = mcp_primeiro_nome(mcp_nome_proprio((string) $colaborador['nome']));
-    $quando = mcp_avisos_quando(mcp_data_brt((string) $registro['entrada'], 'Y-m-d'), $agora);
+    $diaIso = mcp_data_brt((string) $registro['entrada'], 'Y-m-d');
+    $quando = mcp_avisos_quando($diaIso, $agora);
     $hora = mcp_data_brt((string) $registro['entrada'], 'H:i');
     $link = mcp_avisos_link_clique($avisoId, 'saida');
+    $prefs = mcp_avisos_link_clique($avisoId, 'lembretes');
     $abertura = mb_strtoupper(mb_substr($quando, 0, 1)) . mb_substr($quando, 1);
-    $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. ' . mcp_escapar($abertura) . ' você registrou a entrada na sede às <strong>' . mcp_escapar($hora)
-            . '</strong>, mas a saída ficou sem registro. Sem ela, as horas desse dia ainda não entram na sua conta de horas doadas.')
+    // Revisão jurídica (30/09/2026): um convite a completar as horas, nunca "faltou registrar".
+    $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. ' . mcp_escapar($abertura) . ' você registrou a chegada na sede às <strong>' . mcp_escapar($hora)
+            . '</strong>, e a saída ficou em aberto. Se quiser que essas horas entrem no seu histórico de horas voluntárias (e na declaração, quando pedir), informe a que horas saiu.')
         . mcp_botao($link, 'Informar a que horas saí')
-        . mcp_p('Leva 10 segundos. A secretaria confere e as horas entram na sua conta.')
-        . mcp_nota('Se você ainda está na sede, é só registrar a saída ao ir embora. O link vale por ' . MCP_AVISOS_LINK_DIAS['saida'] . ' dias. Da próxima vez que abrir o ponto, ele também pergunta.');
+        . mcp_p('Se preferir não informar, tudo bem: nada muda para você.')
+        . mcp_nota('A secretaria confere o horário antes de incluí-lo. O link vale por ' . MCP_AVISOS_LINK_DIAS['saida'] . ' dias. '
+            . 'Para não receber este aviso, <a href="' . mcp_escapar($prefs) . '">mude aqui</a>.');
     return [
-        'assunto' => 'Faltou registrar sua saída de ' . mcp_avisos_dia_texto(mcp_data_brt((string) $registro['entrada'], 'Y-m-d')),
-        'titulo' => "Faltou só a saída, $primeiro",
-        'html' => mcp_moldura("Faltou só a saída, $primeiro", $corpo, [
+        'assunto' => 'Suas horas de ' . mcp_avisos_dia_texto($diaIso) . ': quer informar a saída?',
+        'titulo' => "Quer completar suas horas, $primeiro?",
+        'html' => mcp_moldura("Quer completar suas horas, $primeiro?", $corpo, [
             'eyebrow' => 'Ponto da sede',
-            'preheader' => "Informe a que horas saiu para as horas entrarem na sua conta.",
-            'motivo' => 'Você recebeu este aviso porque registrou a entrada no ponto da sede e a saída ficou sem registro. Para não receber este aviso, mude nas suas preferências de lembretes.',
+            'preheader' => 'Se quiser, informe a que horas saiu, e as horas entram no seu histórico.',
+            'motivo' => 'Você recebeu este aviso porque registrou a chegada no ponto da sede e a saída ficou em aberto. Mude ou pare pelo link acima.',
         ]),
-        'texto' => "Oi, $primeiro. $abertura você registrou a entrada na sede às $hora, mas a saída ficou sem registro. Sem ela, as horas desse dia ainda não entram na sua conta de horas doadas.\n\n"
-            . "Informe a que horas saiu (leva 10 segundos): $link\n\nA secretaria confere e as horas entram na sua conta.",
-        'whatsapp' => "Olá, $primeiro! $abertura você registrou a entrada na sede às $hora, mas a saída ficou sem registro. Informe a que horas saiu para as horas entrarem na sua conta de horas doadas: $link",
-        // No modelo aprovado: "Você registrou a entrada na sede em {{2}}, às {{3}}" (ex.: "1º/10 (quinta)").
-        'modelo' => ['nome' => 'cvb_ponto_saida', 'parametros' => [$primeiro, mcp_avisos_data_modelo(mcp_data_brt((string) $registro['entrada'], 'Y-m-d')), $hora],
-            'botao' => mcp_avisos_sufixo_clique($avisoId, 'saida')],
+        'texto' => "Oi, $primeiro. $abertura você registrou a chegada na sede às $hora, e a saída ficou em aberto. Se quiser que essas horas entrem no seu histórico de horas voluntárias, "
+            . "informe a que horas saiu: $link\n\nSe preferir não informar, tudo bem: nada muda para você. A secretaria confere o horário antes de incluí-lo.\n\nPara não receber este aviso: $prefs",
+        'whatsapp' => "Olá, $primeiro! $abertura você registrou a chegada na sede às $hora, e a saída ficou em aberto. Se quiser que essas horas entrem no seu histórico de horas voluntárias, "
+            . "informe o horário: $link\n\nSe preferir, é só ignorar esta mensagem. Para não receber este aviso: $prefs",
+        // No modelo aprovado: "Em {{2}} você registrou a chegada na sede às {{3}}" (ex.: "1º/10 (quinta)").
+        'modelo' => ['nome' => 'cvb_ponto_saida', 'parametros' => [$primeiro, mcp_avisos_data_modelo($diaIso), $hora], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'saida')],
     ];
 }
 
@@ -363,35 +403,45 @@ function mcp_montar_aviso_aula(string $nome, string $dataIso, array $aulas, int 
     $linhas = [];
     foreach ($aulas as $a) {
         $h = mcp_presenca_horario((string) ($a['horario'] ?? ''), $dataIso)['texto'];
-        $linhas[] = [(string) $a['curso'], $h];
+        $linhas[] = [(string) ($a['curso'] ?? '') ?: 'Aula presencial', $h];
     }
-    $cursos = implode(' e ', array_values(array_unique(array_column($linhas, 0))));
-    $horario = $linhas[0][1] ?? '';
+    if (!$linhas) {
+        $linhas[] = ['Aula presencial', 'no horário da sua turma'];
+    }
+    $nomesCursos = array_values(array_unique(array_column($linhas, 0)));
+    $cursos = implode(' e ', $nomesCursos);
+    $horarios = implode(' e ', array_values(array_unique(array_filter(array_column($linhas, 1)))));
     $mapa = mcp_avisos_link_clique($avisoId, 'mapa');
     $sair = mcp_avisos_link_clique($avisoId, 'sair');
+    // Uma linha por aula, mesmo com duas do mesmo curso no dia (a chave da caixa não pode se repetir).
     $caixa = [];
     foreach ($linhas as [$curso, $h]) {
-        $caixa[$curso . (isset($caixa[$curso]) ? ' ' : '')] = $h;
+        $rotulo = $curso;
+        for ($i = 2; isset($caixa[$rotulo]); $i++) {
+            $rotulo = "$curso ($i)";
+        }
+        $caixa[$rotulo] = $h;
     }
     $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. Lembrete: amanhã, <strong>' . mcp_escapar($dia) . '</strong>, você tem aula na sede da ' . MCP_NOME_FILIAL . ':')
         . mcp_caixa($caixa)
         . mcp_p('Ao chegar, confirme a presença no <strong>ponto da recepção</strong> com o seu CPF. No fim da aula, o comprovante de comparecimento chega neste e-mail.')
         . mcp_botao($mapa, 'Como chegar', true)
-        . mcp_nota(mcp_escapar(MCP_PRESENCA_LOCAL) . '. Não quer receber estes lembretes? <a href="' . mcp_escapar($sair) . '">Toque aqui</a>.');
+        . mcp_nota(mcp_escapar(MCP_PRESENCA_LOCAL) . '. <a href="' . mcp_escapar($sair) . '">Não quero receber estes lembretes</a>.');
     $lista = implode("\n", array_map(static fn(array $l): string => "- {$l[0]}, {$l[1]}", $linhas));
+    $resumoAulas = count($linhas) === 1 ? "*$cursos*, $horarios" : implode('; ', array_map(static fn(array $l): string => "*{$l[0]}*, {$l[1]}", $linhas));
     return [
-        'assunto' => count(array_unique(array_column($linhas, 0))) === 1 ? "Amanhã tem aula: $cursos" : 'Amanhã tem aula na sede',
+        'assunto' => count($nomesCursos) === 1 ? "Amanhã tem aula: $cursos" : 'Amanhã tem aula na sede',
         'titulo' => "Até amanhã, $primeiro!",
         'html' => mcp_moldura("Até amanhã, $primeiro!", $corpo, [
             'eyebrow' => 'Escola de Educação e Saúde',
-            'preheader' => "Amanhã, $dia: $cursos, $horario. Confirme a presença no ponto da recepção.",
+            'preheader' => "Amanhã, $dia: $cursos, $horarios. Confirme a presença no ponto da recepção.",
             'motivo' => 'Você recebeu este lembrete porque tem aula presencial amanhã na Escola de Educação e Saúde da ' . MCP_NOME_FILIAL . '.',
         ]),
         'texto' => "Oi, $primeiro. Lembrete: amanhã, $dia, você tem aula na sede:\n$lista\n\nAo chegar, confirme a presença no ponto da recepção com o seu CPF. No fim da aula, o comprovante de comparecimento chega neste e-mail.\n\n"
-            . MCP_PRESENCA_LOCAL . "\nComo chegar: $mapa\nNão quer receber estes lembretes? $sair",
-        'whatsapp' => "Olá, $primeiro! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: amanhã, $dia, tem aula de *$cursos*, $horario, na Praça da Cruz Vermelha, 10 (Centro). "
-            . "Ao chegar, confirme a presença no ponto da recepção com o seu CPF.\n\nNão quer receber estes lembretes? $sair",
-        'modelo' => ['nome' => 'cvb_aula_amanha', 'parametros' => [$primeiro, $dia, $cursos, $horario], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'sair')],
+            . MCP_PRESENCA_LOCAL . "\nComo chegar: $mapa\nNão quero receber estes lembretes: $sair",
+        'whatsapp' => "Olá, $primeiro! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: amanhã, $dia, tem aula de $resumoAulas, na Praça da Cruz Vermelha, 10 (Centro). "
+            . "Ao chegar, confirme a presença no ponto da recepção com o seu CPF.\n\nNão quero receber estes lembretes: $sair",
+        'modelo' => ['nome' => 'cvb_aula_amanha', 'parametros' => [$primeiro, $dia, $cursos, $horarios], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'sair')],
     ];
 }
 
@@ -534,6 +584,15 @@ function mcp_campanha_conferir(array $f): array
     if ($d['publico'] === 'alunos' && $d['botao'] === 'lembretes') {
         return ['ok' => false, 'campo' => 'botao', 'erro' => 'Alunos não têm a página de lembretes: escolha outro botão.'];
     }
+    // Pela API oficial, o WhatsApp só sai com um modelo aprovado pela Meta, e o botão é o do modelo.
+    if (in_array('whatsapp', $canais, true) && mcp_whatsapp_modo() === 'cloud') {
+        if (!isset(MCP_WHATSAPP_MODELO_FASE[$d['fase']])) {
+            return ['ok' => false, 'campo' => 'canais', 'erro' => 'Pela API oficial do WhatsApp, comunicado avulso não sai (a Meta exige um modelo aprovado para cada texto). Mande por e-mail e na tela do ponto.'];
+        }
+        if ($d['botao'] !== MCP_WHATSAPP_BOTAO_FASE[$d['fase']]) {
+            return ['ok' => false, 'campo' => 'botao', 'erro' => 'Pela API oficial do WhatsApp, o botão tem de ser o do modelo aprovado: "' . MCP_CAMPANHA_BOTOES[MCP_WHATSAPP_BOTAO_FASE[$d['fase']]] . '".'];
+        }
+    }
     foreach (['assunto', 'titulo', 'mensagem', 'whatsapp', 'aviso_ponto'] as $campo) {
         preg_match_all('/\{([a-z_]+)\}/', $d[$campo], $m);
         $desconhecidos = array_diff($m[1], array_keys(MCP_COMUNICADO_CAMPOS));
@@ -581,8 +640,11 @@ function mcp_campanha_agendar(int $id, ?string $quandoUtc, string $quem, ?int $a
     if (preg_match('/\{(data_lancamento|data_curta)\}/', $campanha['assunto'] . $campanha['titulo'] . $campanha['mensagem'] . $campanha['whatsapp']) && mcp_ajuste('lancamento') === '') {
         return 'O texto usa a data do lançamento, que ainda não foi definida. Defina a data na Visão geral.';
     }
-    mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'agendada', agendada_para = ?, atualizado_por = ?, atualizado_em = ? WHERE id = ?")
-        ->execute([$quandoUtc ?? gmdate('Y-m-d H:i:s', $agora), $quem, gmdate('Y-m-d H:i:s', $agora), $id]);
+    $stmt = mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'agendada', agendada_para = ?, atualizado_por = ?, atualizado_em = ? WHERE id = ? AND status IN ('rascunho', 'agendada')");
+    $stmt->execute([$quandoUtc ?? gmdate('Y-m-d H:i:s', $agora), $quem, gmdate('Y-m-d H:i:s', $agora), $id]);
+    if ($stmt->rowCount() === 0 && mcp_campanha($id)['status'] !== 'agendada') {
+        return 'Este comunicado acabou de começar a sair.';
+    }
     mcp_registrar(null, 'campanha_agendada', "#$id · $quem · " . ($quandoUtc ?? 'agora'));
     return null;
 }
@@ -595,12 +657,19 @@ function mcp_campanha_cancelar(int $id, string $quem): bool
         return false;
     }
     if ($campanha['status'] === 'agendada') {
-        mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'rascunho', atualizado_por = ?, atualizado_em = ? WHERE id = ? AND status = 'agendada'")->execute([$quem, mcp_agora(), $id]);
+        $stmt = mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'rascunho', atualizado_por = ?, atualizado_em = ? WHERE id = ? AND status = 'agendada'");
     } elseif ($campanha['status'] === 'enviando') {
-        mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'cancelada', concluida_em = ?, atualizado_por = ?, atualizado_em = ? WHERE id = ?")->execute([mcp_agora(), $quem, mcp_agora(), $id]);
-        mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'comunicado interrompido', atualizado_em = ? WHERE campanha_id = ? AND status IN ('pendente', 'manual')")->execute([mcp_agora(), $id]);
+        $stmt = mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'cancelada', concluida_em = UTC_TIMESTAMP(), atualizado_por = ?, atualizado_em = ? WHERE id = ? AND status = 'enviando'");
     } else {
         return false;
+    }
+    $stmt->execute([$quem, mcp_agora(), $id]);
+    if ($stmt->rowCount() === 0) {
+        return false; // mudou no meio tempo (começou a sair, ou terminou)
+    }
+    if ($campanha['status'] === 'enviando') {
+        // O que estava saindo neste instante é conferido de novo no envio (mcp_aviso_destinatario).
+        mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'comunicado interrompido', atualizado_em = ? WHERE campanha_id = ? AND status IN ('pendente', 'manual')")->execute([mcp_agora(), $id]);
     }
     mcp_registrar(null, 'campanha_cancelada', "#$id · $quem · era {$campanha['status']}");
     return true;
@@ -619,14 +688,13 @@ function mcp_campanha_apagar(int $id, string $quem): bool
 }
 
 // ----------------------------------------------------------------------------- comunicados: público e disparo
-/** Alunos que fizeram inscrição paga (180 dias) ou confirmaram presença pelo ponto (60 dias), sem repetir e-mail. */
+/** Alunos que confirmaram presença pelo ponto nos últimos 60 dias, sem repetir e-mail. */
 function mcp_campanha_alunos(?int $agora = null): array
 {
     $agora ??= time();
     $alunos = [];
-    $stmt = mcp_db()->prepare("SELECT email, nome, pago_em AS quando FROM mcp_inscricoes WHERE status = 'pago' AND pago_em >= ?
-        UNION ALL SELECT email, nome, chegada AS quando FROM mcp_presencas WHERE status = 'valida' AND email IS NOT NULL AND chegada >= ? ORDER BY quando");
-    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 180 * 86400), gmdate('Y-m-d H:i:s', $agora - 60 * 86400)]);
+    $stmt = mcp_db()->prepare("SELECT email, nome, chegada AS quando FROM mcp_presencas WHERE status = 'valida' AND email IS NOT NULL AND chegada >= ? ORDER BY quando");
+    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 60 * 86400)]);
     foreach ($stmt->fetchAll() as $l) {
         $email = mb_strtolower(trim((string) $l['email']));
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -642,8 +710,9 @@ function mcp_campanha_destinatarios(array $campanha, ?int $agora = null): array
     $canaisCampanha = mcp_campanha_canais($campanha);
     $lista = [];
     if ($campanha['publico'] === 'alunos') {
+        $bloqueados = array_flip(mcp_db()->query("SELECT destino_hash FROM mcp_avisos_bloqueios WHERE canal = 'email'")->fetchAll(PDO::FETCH_COLUMN));
         foreach (mcp_campanha_alunos($agora) as $p) {
-            $canais = in_array('email', $canaisCampanha, true) && !mcp_avisos_bloqueado('email', (string) $p['email']) ? ['email' => $p['email']] : [];
+            $canais = in_array('email', $canaisCampanha, true) && !isset($bloqueados[mcp_avisos_hash('email', (string) $p['email'])]) ? ['email' => $p['email']] : [];
             $lista[] = ['pessoa' => $p, 'canais' => $canais];
         }
         return $lista;
@@ -695,36 +764,76 @@ function mcp_campanhas_disparar(?int $agora = null): int
     return $n;
 }
 
-/** Cria as mensagens de um comunicado. Só quem muda o status de agendado para enviando cria (sem duplicar). */
+/**
+ * Até quando as mensagens de um comunicado podem sair: o do dia do lançamento ("começa hoje") vence às 20h
+ * do dia em que começou a sair; os outros, em 7 dias.
+ */
+function mcp_campanha_validade(array $campanha, int $agora): string
+{
+    $inicio = !empty($campanha['iniciada_em']) ? (int) strtotime($campanha['iniciada_em'] . ' UTC') : $agora;
+    if ($campanha['fase'] === 'durante') {
+        return mcp_ponto_local_para_utc(mcp_ponto_hoje($inicio) . ' ' . MCP_AVISOS_JANELA[1] . ':00');
+    }
+    return gmdate('Y-m-d H:i:s', $inicio + 7 * 86400);
+}
+
+/**
+ * Cria as mensagens de um comunicado. Só quem muda o status de agendado para enviando cria (sem duplicar),
+ * e tudo numa transação: outra rodada não vê o comunicado "enviando" sem as mensagens (e não o dá por
+ * enviado no meio da preparação).
+ */
 function mcp_campanha_materializar(array $campanha, int $agora): int
 {
     $quando = gmdate('Y-m-d H:i:s', $agora);
-    $stmt = mcp_db()->prepare("UPDATE mcp_campanhas SET status = 'enviando', iniciada_em = ?, atualizado_em = ? WHERE id = ? AND status = 'agendada'");
-    $stmt->execute([$quando, $quando, (int) $campanha['id']]);
-    if ($stmt->rowCount() === 0) {
-        return 0;
-    }
-    $n = 0;
-    foreach (mcp_campanha_destinatarios($campanha, $agora) as $d) {
-        $p = $d['pessoa'];
-        foreach ($d['canais'] as $canal => $destino) {
-            $n += mcp_aviso_criar([
-                'chave' => "campanha|{$campanha['id']}|{$p['pessoa']}|$canal", 'tipo' => 'campanha', 'canal' => $canal, 'campanha_id' => (int) $campanha['id'],
-                'colaborador_id' => $p['colaborador'] ? (int) $p['colaborador']['id'] : null, 'pessoa' => $p['pessoa'], 'nome' => (string) $p['nome'],
-                'destino' => $destino, 'agendado_para' => $quando, 'expira_em' => gmdate('Y-m-d H:i:s', $agora + 7 * 86400),
-            ], $agora) !== null ? 1 : 0;
+    $db = mcp_db();
+    $db->beginTransaction();
+    try {
+        $stmt = $db->prepare("UPDATE mcp_campanhas SET status = 'enviando', iniciada_em = ?, atualizado_em = ? WHERE id = ? AND status = 'agendada'");
+        $stmt->execute([$quando, $quando, (int) $campanha['id']]);
+        if ($stmt->rowCount() === 0) {
+            $db->rollBack();
+            return 0;
         }
+        $campanha['iniciada_em'] = $quando;
+        $validade = mcp_campanha_validade($campanha, $agora);
+        // Pela API oficial, sem modelo aprovado para a fase o WhatsApp não sai: nem entra na fila.
+        $semModelo = mcp_whatsapp_modo() === 'cloud' && !isset(MCP_WHATSAPP_MODELO_FASE[$campanha['fase']]);
+        $n = 0;
+        foreach (mcp_campanha_destinatarios($campanha, $agora) as $d) {
+            $p = $d['pessoa'];
+            foreach ($d['canais'] as $canal => $destino) {
+                if ($canal === 'whatsapp' && $semModelo) {
+                    continue;
+                }
+                $n += mcp_aviso_criar([
+                    'chave' => "campanha|{$campanha['id']}|{$p['pessoa']}|$canal", 'tipo' => 'campanha', 'canal' => $canal, 'campanha_id' => (int) $campanha['id'],
+                    'colaborador_id' => $p['colaborador'] ? (int) $p['colaborador']['id'] : null, 'pessoa' => $p['pessoa'], 'nome' => (string) $p['nome'],
+                    'destino' => $destino, 'agendado_para' => $quando, 'expira_em' => $validade,
+                ], $agora) !== null ? 1 : 0;
+            }
+        }
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        throw $e;
     }
     mcp_registrar(null, 'campanha_iniciada', "#{$campanha['id']} · $n mensagens");
     return $n;
 }
 
-/** Comunicado sem nada na fila automática vira "enviado" (a fila manual do WhatsApp não segura). */
+/**
+ * Comunicado sem nada na fila automática termina (a fila manual do WhatsApp não segura): "enviado", ou
+ * "não saiu" quando nenhuma mensagem saiu e alguma falhou.
+ */
 function mcp_campanhas_concluir(?int $agora = null): void
 {
-    mcp_db()->prepare("UPDATE mcp_campanhas c SET status = 'enviada', concluida_em = ?, atualizado_em = ? WHERE status = 'enviando'
+    $quando = gmdate('Y-m-d H:i:s', $agora ?? time());
+    mcp_db()->prepare("UPDATE mcp_campanhas c SET status = IF(
+            EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status = 'falhou')
+            AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status IN ('enviado', 'manual')), 'falhou', 'enviada'),
+        concluida_em = ?, atualizado_em = ? WHERE status = 'enviando'
         AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status IN ('pendente', 'enviando'))")
-        ->execute([gmdate('Y-m-d H:i:s', $agora ?? time()), gmdate('Y-m-d H:i:s', $agora ?? time())]);
+        ->execute([$quando, $quando]);
 }
 
 /** Números de um comunicado: mensagens por situação e canal, cliques e respostas da opinião. */
@@ -758,11 +867,11 @@ function mcp_campanhas_modelos(string $lancamentoIso): array
             'agendada_para' => $em(mcp_avisos_dia_mais($lancamentoIso, -5), '10:00'), 'aviso_dias' => 5,
             'assunto' => 'Novidade na sede: o ponto de chegada e saída começa em {data_curta}',
             'titulo' => 'Novidade na sede, {primeiro_nome}',
-            'mensagem' => "A partir de *{data_lancamento}*, a sede da Cruz Vermelha Brasileira Rio de Janeiro passa a ter um ponto de chegada e saída para todos que fazem a instituição funcionar: diretoria, voluntários, equipe e prestadores de serviço.\n\n"
+            'mensagem' => "A partir de *{data_lancamento}*, a sede da Cruz Vermelha Brasileira Rio de Janeiro passa a ter um registro de chegada e saída, o ponto da sede, para voluntários, diretoria e equipe.\n\n"
                 . "{vinculo_frase}\n\nComo funciona, em 10 segundos:\n1. Ao chegar, digite seu CPF no tablet da recepção ou leia com o celular o QR code do cartaz.\n2. Toque em *Registrar entrada*.\n"
-                . "3. Ao ir embora, faça o mesmo e toque em *Registrar saída*.\n\nQuer um lembrete na véspera dos dias em que você vem? No botão abaixo, você escolhe os dias e se prefere receber por e-mail ou WhatsApp.",
-            'whatsapp' => "Olá, {primeiro_nome}! Aqui é a secretaria da Cruz Vermelha Brasileira RJ. A partir de *{data_lancamento}*, a sede terá um ponto de chegada e saída: ao chegar e ao ir embora, "
-                . "digite seu CPF no tablet da recepção ou leia o QR code com o celular. Leva 10 segundos.\n\n{vinculo_frase_curta}\n\nQuer lembrete na véspera dos dias em que vem? Escolha aqui: {link}",
+                . "3. Ao ir embora, faça o mesmo e toque em *Registrar saída*.\n\nQuer um lembrete na véspera dos dias em que você vem? É opcional: no botão abaixo, você escolhe os dias e se prefere receber por e-mail ou WhatsApp.",
+            'whatsapp' => "Olá, {primeiro_nome}! Aqui é a secretaria da Cruz Vermelha Brasileira RJ. A partir de *{data_lancamento}*, a sede terá um registro de chegada e saída: ao chegar e ao ir embora, "
+                . "digite seu CPF no tablet da recepção ou leia o QR code com o celular. Leva 10 segundos.\n\n{vinculo_frase_curta}\n\nQuer lembrete na véspera dos dias em que vem? É opcional, escolha aqui: {link}",
             'aviso_ponto' => null,
         ],
         [
@@ -770,12 +879,12 @@ function mcp_campanhas_modelos(string $lancamentoIso): array
             'agendada_para' => $em($lancamentoIso, '08:30'), 'aviso_dias' => 14,
             'assunto' => 'Começou hoje: registre sua chegada e sua saída na sede',
             'titulo' => 'O ponto começou, {primeiro_nome}!',
-            'mensagem' => "Bom dia! Desde hoje, o ponto da sede está funcionando. Ao chegar, registre a entrada; ao ir embora, registre a saída.\n\nDicas para ser rápido:\n"
-                . "- No celular, permita a localização quando a página pedir. Ela só confirma que você está na sede e não fica guardada.\n"
+            'mensagem' => "Olá! Desde hoje, o ponto da sede está funcionando. Ao chegar, registre a entrada; ao ir embora, registre a saída.\n\n{vinculo_frase_curta}\n\nDicas para ser rápido:\n"
+                . "- No celular, permita a localização quando a página pedir. Ela só confirma que você está na sede: guardamos só a distância aproximada.\n"
                 . "- Marque *Lembrar de mim neste celular*: da próxima vez, é um toque.\n- Adicione o ponto à tela inicial do celular, como um aplicativo.\n"
-                . "- Esqueceu de registrar a saída? Da próxima vez que abrir o ponto, ele pergunta a que horas você saiu.\n\n"
-                . "Teve algum problema? Responda este e-mail ou fale com a secretaria. Nas próximas duas semanas, vamos acompanhar de perto para ajustar o que for preciso.",
-            'whatsapp' => "Bom dia, {primeiro_nome}! O ponto da sede da Cruz Vermelha Brasileira RJ começa hoje. Ao chegar, registre a *entrada*; ao ir embora, a *saída* "
+                . "- Esqueceu de registrar a saída? Da próxima vez que usar o tablet da recepção, ele pergunta a que horas você saiu.\n\n"
+                . "Teve algum problema? Responda este e-mail ou fale com a secretaria. Nas próximas duas semanas, vamos acompanhar o funcionamento do registro para ajustar o que for preciso.",
+            'whatsapp' => "Olá, {primeiro_nome}! O ponto da sede da Cruz Vermelha Brasileira RJ começa hoje. Ao chegar, registre a *entrada*; ao ir embora, a *saída* "
                 . "(CPF no tablet da recepção ou QR code no celular).\n\nDica: no celular, marque “Lembrar de mim” e da próxima vez é um toque. Algum problema? Fale com a secretaria.\n\nPonto: {link}",
             'aviso_ponto' => 'Dica: no celular, marque “Lembrar de mim” e adicione esta página à tela inicial. Da próxima vez, é um toque.',
         ],
@@ -806,24 +915,35 @@ function mcp_campanhas_modelos(string $lancamentoIso): array
  * Grava a data do lançamento e cria, como rascunho, os comunicados das fases que ainda não existem.
  * Devolve quantos comunicados foram criados.
  */
-function mcp_campanhas_preparar_implantacao(string $lancamentoIso, string $quem): int
+function mcp_campanhas_preparar_implantacao(string $lancamentoIso, string $quem): array
 {
     mcp_ajuste_gravar('lancamento', $lancamentoIso, $quem);
     $existentes = [];
     foreach (mcp_campanhas_listar() as $c) {
-        $existentes[$c['fase'] . '|' . $c['publico']] = true;
+        $existentes[$c['fase'] . '|' . $c['publico']][] = $c;
     }
-    $n = 0;
+    $r = ['criados' => 0, 'recalculados' => 0, 'agendados' => 0];
     foreach (mcp_campanhas_modelos($lancamentoIso) as $m) {
-        if (isset($existentes[$m['fase'] . '|' . $m['publico']])) {
+        $iguais = $existentes[$m['fase'] . '|' . $m['publico']] ?? [];
+        if (!$iguais) {
+            $id = mcp_campanha_salvar(null, $m, $quem);
+            mcp_db()->prepare('UPDATE mcp_campanhas SET agendada_para = ? WHERE id = ?')->execute([$m['agendada_para'], $id]);
+            $r['criados']++;
             continue;
         }
-        $id = mcp_campanha_salvar(null, $m, $quem);
-        mcp_db()->prepare('UPDATE mcp_campanhas SET agendada_para = ? WHERE id = ?')->execute([$m['agendada_para'], $id]);
-        $n++;
+        foreach ($iguais as $c) {
+            // Rascunho ganha a data nova; o que já está agendado fica como está, e a secretaria é avisada.
+            if ($c['status'] === 'rascunho' && $c['agendada_para'] !== $m['agendada_para']) {
+                mcp_db()->prepare("UPDATE mcp_campanhas SET agendada_para = ?, atualizado_por = ?, atualizado_em = ? WHERE id = ? AND status = 'rascunho'")
+                    ->execute([$m['agendada_para'], $quem, mcp_agora(), (int) $c['id']]);
+                $r['recalculados']++;
+            } elseif ($c['status'] === 'agendada' && $c['agendada_para'] !== $m['agendada_para']) {
+                $r['agendados']++;
+            }
+        }
     }
-    mcp_registrar(null, 'campanhas_implantacao', "$quem · lançamento $lancamentoIso · $n criados");
-    return $n;
+    mcp_registrar(null, 'campanhas_implantacao', "$quem · lançamento $lancamentoIso · {$r['criados']} criados, {$r['recalculados']} recalculados");
+    return $r;
 }
 
 // ----------------------------------------------------------------------------- avisos na tela do ponto
@@ -855,23 +975,21 @@ function mcp_comunicacao_avisos_ponto(?array $colaborador, ?array $aluno, bool $
         } else {
             continue;
         }
-        $link = null;
-        $rotulo = null;
+        // Sem link pessoal na tela: no celular, a única prova de identidade é o CPF (que não é segredo), e o
+        // link daria a quem digitou um CPF alheio a opinião ou os lembretes da pessoa. O link está no e-mail
+        // ou no WhatsApp que ela recebeu.
+        $dica = null;
         if ($c['botao'] === 'opiniao') {
             $stmtR = mcp_db()->prepare('SELECT 1 FROM mcp_opinioes WHERE campanha_id = ? AND pessoa = ?');
             $stmtR->execute([(int) $c['id'], $pessoa]);
             if ($stmtR->fetchColumn()) {
                 continue; // já respondeu: o aviso some
             }
-            if ($celular) {
-                $link = mcp_avisos_link('opiniao', $pessoa, (string) $c['id'], $agora);
-                $rotulo = 'Responder';
-            }
-        } elseif ($c['botao'] === 'lembretes' && $celular && str_starts_with($pessoa, 'c')) {
-            $link = mcp_avisos_link('lembretes', $pessoa, '', $agora);
-            $rotulo = 'Escolher lembretes';
+            $dica = 'O link para responder está no e-mail ou no WhatsApp que você recebeu.';
+        } elseif ($c['botao'] === 'lembretes' && str_starts_with($pessoa, 'c')) {
+            $dica = 'O link para escolher os lembretes está no e-mail ou no WhatsApp que você recebeu.';
         }
-        $avisos[] = ['texto' => (string) $c['aviso_ponto'], 'link' => $link, 'rotulo' => $rotulo];
+        $avisos[] = ['texto' => (string) $c['aviso_ponto'], 'link' => null, 'rotulo' => null, 'dica' => $dica];
         if (count($avisos) >= 2) {
             break;
         }
@@ -912,13 +1030,14 @@ function mcp_opiniao_salvar(array $ctx, array $f): ?array
 {
     $facilidade = (int) ($f['facilidade'] ?? 0);
     if (!isset(MCP_OPINIAO_FACILIDADE[$facilidade])) {
-        return ['facilidade', 'Escolha de 1 a 5: quanto foi fácil registrar.'];
+        return ['facilidade', $ctx['publico'] === 'aluno' ? 'Escolha de 1 a 5: quanto foi fácil confirmar a presença.' : 'Escolha de 1 a 5: quanto foi fácil registrar.'];
     }
+    $aluno = $ctx['publico'] === 'aluno';
     $como = mcp_texto($f['como'] ?? '', 12);
-    if (!isset(MCP_OPINIAO_COMO[$como])) {
-        return ['como', 'Diga como você costuma registrar.'];
+    if (!isset(($aluno ? MCP_OPINIAO_COMO_ALUNO : MCP_OPINIAO_COMO)[$como])) {
+        return ['como', $aluno ? 'Diga como você costuma confirmar a presença.' : 'Diga como você costuma registrar.'];
     }
-    $problemas = array_values(array_intersect(array_keys(MCP_OPINIAO_PROBLEMAS), array_map('strval', (array) ($f['problemas'] ?? []))));
+    $problemas = array_values(array_intersect(array_keys($aluno ? MCP_OPINIAO_PROBLEMAS_ALUNO : MCP_OPINIAO_PROBLEMAS), array_map('strval', (array) ($f['problemas'] ?? []))));
     $lembretes = mcp_texto($f['lembretes'] ?? '', 12);
     if ($ctx['publico'] === 'colaborador' && !isset(MCP_OPINIAO_LEMBRETES[$lembretes])) {
         return ['lembretes', 'Diga o que acha dos lembretes.'];
@@ -963,10 +1082,12 @@ function mcp_opinioes_resultado(?int $campanhaId = null): array
     $r = [
         'respostas' => count($linhas), 'por_publico' => ['colaborador' => 0, 'aluno' => 0], 'media' => null,
         'facilidade' => array_fill_keys(array_keys(MCP_OPINIAO_FACILIDADE), 0), 'como' => array_fill_keys(array_keys(MCP_OPINIAO_COMO), 0),
-        'problemas' => array_fill_keys(array_keys(MCP_OPINIAO_PROBLEMAS), 0), 'lembretes' => array_fill_keys(array_keys(MCP_OPINIAO_LEMBRETES), 0),
+        'problemas' => array_fill_keys(array_keys(MCP_OPINIAO_PROBLEMAS + MCP_OPINIAO_PROBLEMAS_ALUNO), 0), 'lembretes' => array_fill_keys(array_keys(MCP_OPINIAO_LEMBRETES), 0),
         'sem_problema' => 0, 'comentarios' => [],
     ];
     $soma = 0;
+    // Com poucas respostas de um vínculo, mostrar o vínculo junto do comentário identifica quem escreveu.
+    $porVinculo = array_count_values(array_map(static fn(array $l): string => (string) $l['vinculo'], $linhas));
     foreach ($linhas as $l) {
         $r['por_publico'][$l['publico']] = ($r['por_publico'][$l['publico']] ?? 0) + 1;
         $f = (int) $l['facilidade'];
@@ -990,9 +1111,9 @@ function mcp_opinioes_resultado(?int $campanhaId = null): array
         if ($l['comentario'] !== null) {
             $r['comentarios'][] = [
                 'texto' => (string) $l['comentario'], 'facilidade' => $f, 'publico' => (string) $l['publico'],
-                'vinculo' => $l['vinculo'] !== null ? (MCP_PONTO_VINCULOS[$l['vinculo']] ?? (string) $l['vinculo']) : null,
+                'vinculo' => $l['vinculo'] !== null && ($porVinculo[(string) $l['vinculo']] ?? 0) >= 5 ? (MCP_PONTO_VINCULOS[$l['vinculo']] ?? (string) $l['vinculo']) : null,
                 'nome' => (int) $l['contato_ok'] ? (string) $l['nome'] : null, 'contato' => (int) $l['contato_ok'] ? (string) $l['contato'] : null,
-                'quando' => (string) $l['atualizado_em'],
+                'quando' => substr(mcp_data_brt((string) $l['atualizado_em'], 'Y-m-d'), 0, 10),
             ];
         }
     }
@@ -1067,12 +1188,16 @@ function mcp_ponto_saidas_informadas_contar(): int
 }
 
 /** A secretaria aceita (a saída vira a do registro, com origem "informada") ou recusa. Devolve o erro, ou null. */
-function mcp_ponto_saida_decidir(int $id, bool $aceitar, string $quem, string $motivo = '', ?int $agora = null): ?string
+function mcp_ponto_saida_decidir(int $id, bool $aceitar, string $quem, string $motivo = '', ?int $agora = null, ?string $visto = null): ?string
 {
     $agora ??= time();
     $r = mcp_ponto_registro($id);
     if (!$r || $r['saida_informada'] === null || $r['saida'] !== null) {
         return 'Esta saída informada já foi resolvida.';
+    }
+    // A pessoa pode mudar o horário enquanto espera: vale o que a secretaria viu na lista, não o de agora.
+    if ($visto !== null && $visto !== (string) $r['saida_informada']) {
+        return 'O horário informado mudou depois que você abriu a lista. Confira de novo antes de decidir.';
     }
     $informada = mcp_data_brt((string) $r['saida_informada'], 'd/m H:i');
     $quando = mcp_data_brt((string) $r['saida_informada_em'], 'd/m \à\s H:i');
@@ -1128,8 +1253,40 @@ function mcp_importar_vinculo(string $texto): string
 /** Dias da semana escritos à mão ("seg, qua", "segunda e quarta", "sábado") → ['seg', 'qua']. */
 function mcp_importar_dias(string $texto): array
 {
-    $partes = preg_split('/[\s,;\/|+]+|\be\b/u', mcp_sem_acento($texto)) ?: [];
-    return mcp_avisos_dias(array_map(static fn(string $p): string => mb_substr($p, 0, 3), array_filter($partes, static fn($p) => $p !== '')));
+    $t = mcp_sem_acento(mb_strtolower($texto));
+    // Os jeitos comuns de dizer vários dias de uma vez.
+    $t = (string) preg_replace(['/\btod[oa]s?\s+(?:os\s+)?dias?\b/u', '/\bdias?\s+ute?is\b/u', '/\b(?:fim|fins)\s+de\s+semana\b/u'], [' dom a sab ', ' seg a sex ', ' sab e dom '], $t);
+    // "2ª", "2a", "2º" ou só "2" (com ou sem "feira") e o nome do dia viram a chave de três letras. O "a"
+    // colado no número é ordinal ("2a"); separado ("2 a 6"), é intervalo.
+    $t = (string) preg_replace_callback('/(?<![0-9])([2-6])(?:ª|º|a\b|o\b)?(?:\s*-?\s*feira)?(?![0-9])/u',
+        static fn(array $m): string => ' ' . ['2' => 'seg', '3' => 'ter', '4' => 'qua', '5' => 'qui', '6' => 'sex'][$m[1]] . ' ', $t);
+    $t = (string) preg_replace('/\b(dom|seg|ter|qua|qui|sex|sab)[a-z]*(?:\s*-\s*feira)?/u', ' $1 ', $t);
+    // Um intervalo é "dia a dia", "dia até dia" ou "dia-dia"; "e", vírgula e barra separam dias soltos.
+    preg_match_all('/\b(dom|seg|ter|qua|qui|sex|sab)\b|\b(a|ate)\b|(-)|(\be\b|[,;\/|+])/u', $t, $m, PREG_SET_ORDER);
+    $ordem = array_keys(MCP_AVISOS_DIAS);
+    $dias = [];
+    $anterior = null;
+    $intervalo = false;
+    $depoisDoE = false;
+    foreach ($m as $x) {
+        if (($x[1] ?? '') !== '') {
+            if ($intervalo && $anterior !== null) {
+                for ($k = (int) array_search($anterior, $ordem, true); $ordem[$k] !== $x[1]; $k = ($k + 1) % 7) {
+                    $dias[] = $ordem[$k];
+                }
+            }
+            $dias[] = $x[1];
+            $anterior = $x[1];
+            $intervalo = $depoisDoE = false;
+        } elseif (($x[4] ?? '') !== '') {
+            $intervalo = false;
+            $depoisDoE = true;
+        } elseif ($anterior !== null && !$depoisDoE) {
+            // "a" logo depois de "e" é artigo ("segunda e a quarta"), não intervalo.
+            $intervalo = true;
+        }
+    }
+    return mcp_avisos_dias($dias);
 }
 
 /**
@@ -1194,7 +1351,13 @@ function mcp_colaboradores_importar_conferir(string $texto): array
             continue;
         }
         $existente = mcp_colaborador_por_cpf($d['cpf']);
-        $r['linhas'][] = ['ok' => true, 'dados' => $d, 'dias' => mcp_importar_dias((string) ($campos['dias'] ?? '')), 'whatsapp' => $whatsapp, 'existe' => $existente ? (int) $existente['id'] : null] + $item;
+        $dias = mcp_importar_dias((string) ($campos['dias'] ?? ''));
+        $avisoDias = trim((string) ($campos['dias'] ?? '')) !== '' && !$dias ? 'Dias não entendidos: "' . mb_substr((string) $campos['dias'], 0, 40) . '". Escreva, por exemplo, "seg, qua" ou "segunda a sexta".' : null;
+        // Quem respondeu PARAR não é religado pela planilha: só a própria pessoa (pelo link) ou a secretaria, na ficha.
+        $numero = mcp_whatsapp_numero((string) $d['telefone']);
+        $bloqueado = $whatsapp && $numero !== null && mcp_avisos_bloqueado('whatsapp', $numero);
+        $r['linhas'][] = ['ok' => true, 'dados' => $d, 'dias' => $dias, 'aviso' => $avisoDias ?? ($bloqueado ? 'Pediu para parar o WhatsApp: a planilha não religa.' : null),
+            'whatsapp' => $whatsapp && !$bloqueado, 'existe' => $existente ? (int) $existente['id'] : null] + $item;
     }
     return $r;
 }
@@ -1232,6 +1395,7 @@ function mcp_colaboradores_importar(array $linhas, string $quem): array
             mcp_avisos_preferencias_salvar($c, [
                 'email' => (int) $c['aviso_email'] === 1, 'whatsapp' => $l['whatsapp'] || (int) $c['aviso_whatsapp'] === 1,
                 'dias' => $l['dias'] ?: mcp_avisos_dias($c['aviso_dias']), 'saida' => (int) $c['aviso_saida'] === 1, 'comunicados' => (int) $c['aviso_comunicados'] === 1,
+                'como' => 'planilha importada: a secretaria confirmou que a pessoa autorizou',
             ], $quem . ' (importação)', false);
         }
     }

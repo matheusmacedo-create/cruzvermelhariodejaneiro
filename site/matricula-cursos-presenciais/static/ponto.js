@@ -141,7 +141,7 @@
       + erroHtml(erro)
       + '<form id="pt-form" novalidate>'
       + '<label class="pt-campo"><span>Seu CPF</span><input id="pt-cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" required value="' + esc(mascaraCpf(estado.cpfDigitado)) + '"></label>'
-      + '<label class="pt-check"><input type="checkbox" id="pt-lembrar" checked> Lembrar de mim neste celular</label>'
+      + '<label class="pt-check"><input type="checkbox" id="pt-lembrar"> Lembrar de mim neste celular</label>'
       + '<button class="pt-btn" type="submit">Continuar</button></form>'
       + '<p class="pt-nota">A página vai pedir a localização do celular: ela só confirma que você está na sede e não fica guardada.</p>';
     var campo = q('#pt-cpf');
@@ -205,10 +205,9 @@
     limparRelogios();
     var html = '<h1>Olá, ' + esc(d.nome) + '!</h1>';
     if (d.confirmacao) html += '<p class="pt-aviso ok" role="status">' + esc(d.confirmacao) + '</p>';
-    // Avisos dos comunicados no ar (no celular, com o link; no aparelho da sede, só o texto).
+    // Avisos dos comunicados no ar: só o texto (o link pessoal vai por e-mail ou WhatsApp, nunca na tela).
     (d.avisos || []).forEach(function (a) {
-      html += '<p class="pt-aviso">' + esc(a.texto)
-        + (a.link ? ' <a href="' + esc(a.link) + '" target="_blank" rel="noopener">' + esc(a.rotulo || 'Abrir') + '</a>' : '') + '</p>';
+      html += '<p class="pt-aviso">' + esc(a.texto) + (a.dica ? ' <span class="pt-dica">' + esc(a.dica) + '</span>' : '') + '</p>';
     });
     if (d.colaborador) {
       // Voluntários e diretoria veem as horas doadas; os outros vínculos registram só a presença.
@@ -218,8 +217,9 @@
         // Entrada aberta de outro dia: plantão que virou a noite ou saída esquecida.
         html += '<p class="pt-status erro">Entrada registrada ' + esc(c.desde_dia) + ' às ' + esc(c.desde) + ', sem saída.</p>'
           + '<button type="button" class="pt-btn pt-btn-saida" data-acao="saida">Estou saindo agora</button>'
-          + (c.aberto_id ? '<details class="pt-detalhe"><summary>Saí ' + esc(c.desde_dia) + ': informar o horário</summary>'
-            + formSaida(c.aberto_id, 'A que horas você saiu ' + c.desde_dia + '?') + '</details>' : '');
+          + (c.aberto_id && estado.modo === 'aparelho' ? '<details class="pt-detalhe"><summary>Saí ' + esc(c.desde_dia) + ': informar o horário</summary>'
+            + formSaida(c.aberto_id, 'A que horas você saiu ' + c.desde_dia + '?') + '</details>'
+            : (c.aberto_id ? '<p class="pt-nota">Saiu ' + esc(c.desde_dia) + ' e esqueceu de registrar? Informe o horário pelo link do aviso que chega ao seu e-mail ou WhatsApp, ou no tablet da recepção.</p>' : ''));
       } else {
         html += (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + (c.horas ? ' · ' + esc(c.agora) + ' até agora' : '') + '</p>'
             : '<p class="pt-status">Sem entrada registrada agora.</p>')
@@ -237,7 +237,7 @@
             + ' e informou a saída às <b>' + esc(p.informada) + '</b>. A secretaria vai conferir.</p>';
         } else {
           html += '<p class="pt-status">' + esc(p.quando.charAt(0).toUpperCase() + p.quando.slice(1)) + ' você registrou a entrada às ' + esc(p.entrada)
-            + ' e a saída ficou sem registro. Sem ela, as horas desse dia não contam.</p>'
+            + ' e a saída ficou em aberto. Se quiser, informe a que horas saiu: as horas desse dia entram no seu histórico.</p>'
             + formSaida(p.id, 'A que horas você saiu?');
         }
         html += '</section>';
@@ -263,12 +263,30 @@
       f.addEventListener('submit', function (e) {
         e.preventDefault();
         var hora = f.querySelector('[name=hora]').value;
-        if (!/^\d{2}:\d{2}$/.test(hora)) { f.querySelector('[name=hora]').focus(); return; }
+        if (!/^\d{2}:\d{2}$/.test(hora)) {
+          var velho = f.querySelector('.pt-erro');
+          if (velho) velho.remove();
+          f.insertAdjacentHTML('afterbegin', erroHtml('Escolha a hora em que você saiu.'));
+          f.querySelector('[name=hora]').focus();
+          return;
+        }
         informarSaida(d, f.getAttribute('data-registro'), hora, f.querySelector('[name=dia_seguinte]').checked, f);
       });
     });
     q('#pt-voltar').addEventListener('click', function () { inicio(); });
-    if (estado.modo === 'aparelho') depois(VOLTA_PARADO, function () { inicio(); });
+    if (estado.modo === 'aparelho') {
+      depois(VOLTA_PARADO, function () { inicio(); });
+      // Quem está mexendo na tela não volta ao início no meio do que fazia: cada toque ou tecla recomeça a conta.
+      ['pointerdown', 'keydown', 'input'].forEach(function (ev) {
+        tela.addEventListener(ev, function reinicia() {
+          if (!tela.contains(q('#pt-voltar'))) { tela.removeEventListener(ev, reinicia); return; }
+          relogios.forEach(clearTimeout); relogios = [];
+          depois(VOLTA_PARADO, function () { inicio(); });
+        });
+      });
+    }
+    var titulo = tela.querySelector('h1');
+    if (titulo) { titulo.tabIndex = -1; titulo.focus(); }
   }
 
   /* Manda a hora da saída esquecida e volta à tela da pessoa, já atualizada. */
@@ -287,7 +305,7 @@
       }
       d.colaborador = r.colaborador;
       d.pendencias = r.pendencias;
-      d.confirmacao = r.mensagem + ' A secretaria confere e as horas desse dia entram na sua conta.';
+      d.confirmacao = r.mensagem + ' A secretaria confere e as horas desse dia entram no seu histórico de horas voluntárias.';
       telaPessoa(d);
     });
   }

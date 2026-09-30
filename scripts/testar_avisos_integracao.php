@@ -38,6 +38,8 @@ $base0 = [
     'EMAIL_SECRETARIA' => '', 'SITE_URL' => "http://127.0.0.1:$portaSite", 'RESEND_API_KEY' => 're_teste', 'RESEND_API_URL' => "http://127.0.0.1:$portaFalso/emails",
     'EMAIL_REMETENTE' => 'Cruz Vermelha Brasileira Rio de Janeiro <ponto@info.exemplo.org>', 'EMAIL_CONTATO' => 'contato@exemplo.org',
     'ESCOLA_API_URL' => "http://127.0.0.1:$portaFalso/rest/v1/rpc/matricula_rapida", 'ESCOLA_API_TOKEN' => 'chave-falsa',
+    // O teste usa as datas de verdade (hoje, amanhã): sem os feriados embutidos, o resultado não depende do dia.
+    'AVISOS_FERIADOS' => '0',
 ];
 /** Grava um arquivo de configuração de teste (o banco vem da configuração original). */
 function config_teste(array $extra): string
@@ -122,9 +124,11 @@ function limpar(PDO $db): void
         $db->exec("DELETE FROM mcp_campanhas WHERE id IN ($lista)");
     }
     $db->exec("DELETE FROM mcp_avisos WHERE nome LIKE '%Teste Avisos %' OR destino LIKE '%avisos-teste.example%'");
-    $db->exec("DELETE FROM mcp_avisos_bloqueios WHERE origem IN ('pagina', 'respondeu PARAR')");
+    $db->exec("DELETE FROM mcp_avisos_bloqueios WHERE origem IN ('pagina', 'respondeu PARAR', 'secretaria')");
+    $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Avisos %'");
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Avisos %'");
-    $db->exec("DELETE FROM mcp_eventos WHERE detalhe LIKE '%avisos@exemplo.org%' OR (tipo = 'aviso_pagina' AND detalhe = '127.0.0.1') OR tipo IN ('aviso_preferencias', 'aviso_telefone', 'opiniao', 'aviso_sair', 'ponto_saida_informada', 'aviso_whatsapp_parou') AND criado_em > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)");
+    $db->exec("DELETE FROM mcp_eventos WHERE detalhe LIKE '%avisos@exemplo.org%' OR (tipo = 'aviso_pagina' AND detalhe = '127.0.0.1') OR tipo IN ('aviso_preferencias', 'aviso_telefone', 'opiniao', 'aviso_sair', 'ponto_saida_informada', 'aviso_whatsapp_parou',
+        'aviso_whatsapp_numero_trocado', 'painel_aviso_parar', 'painel_links_novos', 'painel_aviso_repetir') AND criado_em > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)");
 }
 limpar($db);
 $outros = (int) $db->query("SELECT COUNT(*) FROM mcp_colaboradores WHERE ativo = 1")->fetchColumn();
@@ -304,10 +308,23 @@ function linha_aviso(PDO $db, string $chave): ?array
     return $stmt->fetch() ?: null;
 }
 
+/** O token de um link pessoal: vai no fragmento (#t=); os links antigos usavam ?t=. */
+function token_do_link(string $link): string
+{
+    return preg_match('/[#?&]t=([A-Za-z0-9_.-]+)/', $link, $m) ? $m[1] : '';
+}
+
 $hoje = mcp_ponto_hoje();
 $amanha = mcp_avisos_dia_mais($hoje, 1);
 $ontem = mcp_avisos_dia_mais($hoje, -1);
 $diaAmanha = mcp_avisos_dia_chave($amanha);
+$amanhaUtil = in_array($diaAmanha, MCP_AVISOS_DIAS_UTEIS, true);
+// Um dia útil a partir de depois de amanhã: os avisos da equipe contratada só saem em dia útil, e a
+// véspera dele (às 20h) ainda não passou, seja qual for a hora em que o teste roda.
+$util = mcp_avisos_dia_mais($hoje, 2);
+while (!in_array(mcp_avisos_dia_chave($util), MCP_AVISOS_DIAS_UTEIS, true)) {
+    $util = mcp_avisos_dia_mais($util, 1);
+}
 
 try {
     // ------------------------------------------------------------------------- funções puras
@@ -346,13 +363,14 @@ try {
     verificar('canais: sem e-mail, só WhatsApp; sem contato, nada', [array_keys(mcp_avisos_canais($e1, 'vespera')), mcp_avisos_canais($x1, 'vespera')], [['whatsapp'], []]);
 
     $link = mcp_avisos_link('lembretes', 'c' . $v1['id']);
-    $token = substr($link, strpos($link, '?t=') + 3);
+    verificar('link pessoal: o token vai no fragmento (#t=), que não chega ao servidor nem ao log', str_starts_with($link, mcp_avisos_pagina('lembretes') . '#t='), true);
+    $token = token_do_link($link);
     $lido = mcp_avisos_token_ler('lembretes', $token);
     verificar('token: lê a pessoa', [$lido['ok'], $lido['pessoa'] ?? null], [true, 'c' . $v1['id']]);
     verificar('token: de outro uso não vale', mcp_avisos_token_ler('saida', $token)['ok'], false);
     $adulterado = substr($token, 0, -1) . (substr($token, -1) === 'a' ? 'b' : 'a');
     verificar('token: adulterado não vale', mcp_avisos_token_ler('lembretes', $adulterado)['ok'], false);
-    $vencido = substr(mcp_avisos_link('lembretes', 'c' . $v1['id'], '', time() - 61 * 86400), strlen(mcp_avisos_pagina('lembretes')) + 3);
+    $vencido = token_do_link(mcp_avisos_link('lembretes', 'c' . $v1['id'], '', time() - 61 * 86400));
     verificar('token: vencido avisa que venceu', mcp_avisos_token_ler('lembretes', $vencido), ['ok' => false, 'vencido' => true]);
 
     // Página de lembretes (api/avisos.php).
@@ -365,26 +383,44 @@ try {
     verificar('página de lembretes: link vencido', [$st, $r['motivo'] ?? null], [410, 'vencido']);
     [$st, $r] = api_avisos($base, ['acao' => 'lembretes_salvar', 't' => $token, 'dias' => [$diaAmanha, 'xyz'], 'email' => true, 'whatsapp' => true, 'telefone' => '(21) 3333-4444', 'saida' => true, 'comunicados' => true]);
     verificar('página de lembretes: telefone fixo para o WhatsApp é recusado', [$st, $r['campo'] ?? null], [422, 'telefone']);
+    [$st, $r] = api_avisos($base, ['acao' => 'lembretes_salvar', 't' => $token, 'dias' => [$diaAmanha], 'email' => true, 'whatsapp' => true, 'telefone' => '(21) 99876-9999', 'saida' => true, 'comunicados' => true]);
+    verificar('página de lembretes: trocar o número já cadastrado, só pela secretaria (link encaminhado não desvia as mensagens)', [$st, $r['campo'] ?? null, $r['erro'] ?? null, mcp_colaborador_por_id((int) $v1['id'])['telefone']],
+        [422, 'telefone', 'Para trocar o número do WhatsApp, fale com a secretaria.', '21998760001']);
     [$st, $r] = api_avisos($base, ['acao' => 'lembretes_salvar', 't' => $token, 'dias' => [$diaAmanha, 'xyz'], 'email' => true, 'whatsapp' => true, 'saida' => true, 'comunicados' => true]);
     $v1 = mcp_colaborador_por_id((int) $v1['id']);
     verificar('página de lembretes: salva e resume o que ficou', [$st, str_starts_with($r['mensagem'] ?? '', 'Pronto! Você recebe o lembrete na véspera das'), $v1['aviso_dias'], $v1['aviso_whatsapp_por']],
         [200, true, $diaAmanha, $quem]);
+    $tokenAntigo = $token;
+    mcp_avisos_chave_colaborador($v1, true);
+    $token = token_do_link(mcp_avisos_link('lembretes', 'c' . $v1['id']));
+    verificar('chave nova: os links já mandados deixam de valer; os novos valem', [mcp_avisos_token_ler('lembretes', $tokenAntigo)['ok'], mcp_avisos_token_ler('lembretes', $token)['ok']], [false, true]);
 
     // ------------------------------------------------------------------------- lembrete da véspera
     mcp_ajuste_gravar('lembrete_vespera', '1', $quem);
     verificar('véspera: antes das 8h não prepara nada', mcp_avisos_preparar_vespera(em($hoje, '07:50')), 0);
+    verificar('feriados: com AVISOS_FERIADOS = 0, o Natal não fecha a sede', mcp_avisos_dia_fechado(substr($hoje, 0, 4) . '-12-25'), null);
+    mcp_ajuste_gravar('dias_fechados', $amanha, $quem);
+    verificar('véspera: amanhã sem expediente (marcado no portal), nada é preparado', [mcp_avisos_dia_fechado($amanha), mcp_avisos_preparar_vespera(em($hoje, '08:02'))], ['dia sem expediente na sede', 0]);
+    mcp_ajuste_gravar('dias_fechados', '', $quem);
     $preparados = mcp_avisos_preparar_vespera(em($hoje, '08:05'));
-    verificar('véspera: às 8h prepara (Vera: e-mail e WhatsApp; Elias: WhatsApp)', $preparados, 3);
+    verificar('véspera: às 8h prepara a da voluntária (e-mail e WhatsApp); o empregado com os dias marcados pela secretaria fica de fora',
+        [$preparados, linha_aviso($db, "vespera|{$e1['id']}|$amanha|whatsapp")], [2, null]);
     verificar('véspera: rodar de novo não duplica', mcp_avisos_preparar_vespera(em($hoje, '09:20')), 0);
+    // Empregado: o lembrete só sai se foi ele quem escolheu os dias, e só em dia útil (senão pareceria controle de jornada).
+    mcp_avisos_preferencias_salvar($e1, ['email' => true, 'whatsapp' => true, 'dias' => [$diaAmanha], 'saida' => true, 'comunicados' => true], 'a própria pessoa', true);
+    $e1 = mcp_colaborador_por_id((int) $e1['id']);
+    verificar('véspera: o empregado que escolheu os dias recebe, só em dia útil (' . ($amanhaUtil ? 'amanhã é' : 'amanhã não é') . ' dia útil)',
+        [$e1['aviso_dias_por'], mcp_avisos_preparar_vespera(em($hoje, '09:30')), mcp_avisos_recebe_vespera($e1, $util), mcp_avisos_recebe_vespera($e1, '2026-10-03')],
+        ['a própria pessoa', $amanhaUtil ? 1 : 0, true, false]);
     $av = linha_aviso($db, "vespera|{$v1['id']}|$amanha|email");
-    verificar('véspera: sai às 18h e vale até as 10h de amanhã', [$av['status'], mcp_data_brt($av['agendado_para'], 'Y-m-d H:i'), mcp_data_brt($av['expira_em'], 'Y-m-d H:i')],
-        ['pendente', "$hoje 18:00", "$amanha 10:00"]);
+    verificar('véspera: sai às 18h e vale até as 20h (depois, "amanhã" já estaria errado)', [$av['status'], mcp_data_brt($av['agendado_para'], 'Y-m-d H:i'), mcp_data_brt($av['expira_em'], 'Y-m-d H:i')],
+        ['pendente', "$hoje 18:00", "$hoje 20:00"]);
     verificar('véspera: WhatsApp no modo manual vai para a fila', linha_aviso($db, "vespera|{$v1['id']}|$amanha|whatsapp")['status'], 'manual');
     verificar('envio: ao meio-dia ainda não sai (é para as 18h)', mcp_avisos_enviar_pendentes(em($hoje, '12:00')), [0, 0]);
     $antesEmails = count(falso('emails'));
     verificar('envio: às 18h sai o e-mail', mcp_avisos_enviar_pendentes(em($hoje, '18:00')), [1, 0]);
     $email = falso('emails')[$antesEmails] ?? [];
-    verificar('e-mail da véspera: destinatário, assunto, remetente e responder-para', [$email['to'] ?? null, str_starts_with($email['subject'] ?? '', 'Lembrete para amanhã,'), $email['from'] ?? null, $email['reply_to'] ?? null],
+    verificar('e-mail da véspera: destinatário, assunto, remetente e responder-para', [$email['to'] ?? null, str_starts_with($email['subject'] ?? '', 'Se vier amanhã ('), $email['from'] ?? null, $email['reply_to'] ?? null],
         [["vera-$sufixo@avisos-teste.example"], true, 'Cruz Vermelha Brasileira Rio de Janeiro <ponto@info.exemplo.org>', 'contato@exemplo.org']);
     verificar('e-mail da véspera: botão do ponto e link para mudar os dias', [str_contains($email['html'] ?? '', 'Abrir o ponto'), (bool) preg_match('~avisos\.php\?r=\d+\.p\.[a-f0-9]{16}~', $email['html'] ?? ''),
         (bool) preg_match('~avisos\.php\?r=\d+\.l\.[a-f0-9]{16}~', $email['html'] ?? ''), str_contains($email['html'] ?? '', 'Se não puder vir, tudo bem')], [true, true, true, true]);
@@ -392,8 +428,10 @@ try {
     verificar('envio: registra provedor, assunto e texto', [$av['status'], $av['provedor'], $av['assunto'] === $email['subject'], str_contains((string) $av['texto'], 'Ao chegar')], ['enviado', 'resend', true, true]);
     $fila = mcp_avisos_fila_manual(em($hoje, '18:00'));
     $daVera = array_values(array_filter($fila, static fn(array $f): bool => (int) $f['colaborador_id'] === (int) $v1['id']))[0] ?? null;
-    verificar('fila do WhatsApp: link wa.me com o número e o texto pronto', [count($fila), str_starts_with($daVera['link_whatsapp'] ?? '', 'https://wa.me/5521998760001?text='),
-        str_contains(rawurldecode($daVera['link_whatsapp'] ?? ''), 'registre a *entrada*')], [2, true, true]);
+    $doElias = array_values(array_filter($fila, static fn(array $f): bool => (int) $f['colaborador_id'] === (int) $e1['id']))[0] ?? null;
+    verificar('fila do WhatsApp: link wa.me com o número e o texto pronto (e o texto da equipe, sem falar em horas)', [count($fila), str_starts_with($daVera['link_whatsapp'] ?? '', 'https://wa.me/5521998760001?text='),
+        str_contains(rawurldecode($daVera['link_whatsapp'] ?? ''), 'registre a *chegada* e a *saída*'), $amanhaUtil ? str_contains((string) ($doElias['texto_pronto'] ?? ''), 'não é o ponto oficial') : true],
+        [$amanhaUtil ? 2 : 1, true, true, true]);
     verificar('fila do WhatsApp: marcar como enviada', [mcp_avisos_fila_marcar((int) $daVera['id'], true, $quem), linha_aviso($db, "vespera|{$v1['id']}|$amanha|whatsapp")['status'],
         linha_aviso($db, "vespera|{$v1['id']}|$amanha|whatsapp")['enviado_por']], [true, 'enviado', $quem]);
     // Quem desliga depois do preparo não recebe.
@@ -410,8 +448,8 @@ try {
     mcp_avisos_preparar_vespera(em($hoje, '19:00'));
     verificar('envio: às 20h30 não sai nada', mcp_avisos_enviar_pendentes(em($hoje, '20:30')), [0, 0]);
     verificar('envio: às 7h30 de amanhã também não', mcp_avisos_enviar_pendentes(em($amanha, '07:30')), [0, 0]);
-    mcp_avisos_expirar(em($amanha, '10:01'));
-    verificar('véspera: o que não saiu até as 10h do dia vence', linha_aviso($db, "vespera|{$v4['id']}|$amanha|email")['status'], 'expirado');
+    mcp_avisos_expirar(em($hoje, '20:01'));
+    verificar('véspera: o que não saiu até as 20h vence', linha_aviso($db, "vespera|{$v4['id']}|$amanha|email")['status'], 'expirado');
 
     // ------------------------------------------------------------------------- saída não registrada
     mcp_ajuste_gravar('lembrete_saida', '1', $quem);
@@ -423,7 +461,7 @@ try {
     $antesEmails = count(falso('emails'));
     mcp_avisos_enviar_pendentes(em($hoje, '09:06'));
     $email = falso('emails')[$antesEmails] ?? [];
-    verificar('e-mail da saída: assunto e link para informar', [str_starts_with($email['subject'] ?? '', 'Faltou registrar sua saída de'), (bool) preg_match('~avisos\.php\?r=(\d+\.s\.[a-f0-9]{16})~', $email['html'] ?? '', $m)],
+    verificar('e-mail da saída: assunto e link para informar', [str_starts_with($email['subject'] ?? '', 'Suas horas de ' . mcp_avisos_dia_texto($ontem) . ': quer informar a saída?'), (bool) preg_match('~avisos\.php\?r=(\d+\.s\.[a-f0-9]{16})~', $email['html'] ?? '', $m)],
         [true, true]);
     $r = $m[1] ?? '';
     [$st, $cab] = http($base . 'avisos.php?r=' . $r, 'HEAD');
@@ -431,11 +469,11 @@ try {
     verificar('clique: a prévia (HEAD) não conta', [(int) mcp_aviso_por_id($avId)['cliques']], [0]);
     [$st, $cab] = http($base . 'avisos.php?r=' . $r);
     $destino = $cab['location'] ?? '';
-    verificar('clique: conta e leva à página da saída com um link novo', [$st, str_contains($destino, '/matricula-cursos-presenciais/ponto/saida/?t='), (int) mcp_aviso_por_id($avId)['cliques'], mcp_aviso_por_id($avId)['clicado_em'] !== null],
+    verificar('clique: conta e leva à página da saída com um link novo', [$st, str_contains($destino, '/matricula-cursos-presenciais/ponto/saida/#t='), (int) mcp_aviso_por_id($avId)['cliques'], mcp_aviso_por_id($avId)['clicado_em'] !== null],
         [302, true, 1, true]);
     [$st, $cab] = http($base . 'avisos.php?r=' . $avId . '.s.0000000000000000');
     verificar('clique: assinatura errada vai para o ponto e não conta', [$st, $cab['location'] ?? '', (int) mcp_aviso_por_id($avId)['cliques']], [302, "http://127.0.0.1:$portaSite/ponto/", 1]);
-    $tokenSaida = substr($destino, strpos($destino, '?t=') + 3);
+    $tokenSaida = token_do_link($destino);
     [$st, $r2] = api_avisos($base, ['acao' => 'saida_ler', 't' => $tokenSaida]);
     verificar('página da saída: mostra o dia e a entrada', [$st, $r2['quando'] ?? null, $r2['entrada'] ?? null, $r2['pode'] ?? null], [200, 'ontem (' . mcp_avisos_dia_texto($ontem) . ')', '09:00', true]);
     [$st, $r2] = api_avisos($base, ['acao' => 'saida_informar', 't' => $tokenSaida, 'hora' => '08:30']);
@@ -447,26 +485,36 @@ try {
     $avWhats = linha_aviso($db, "saida|$pontoVera|whatsapp");
     verificar('saída informada: a mensagem que estava na fila deixa de valer', [mcp_avisos_fila_manual() === [] || !in_array((int) $avWhats['id'], array_map('intval', array_column(mcp_avisos_fila_manual(), 'id')), true),
         mcp_aviso_por_id((int) $avWhats['id'])['status']], [true, 'cancelado']);
-    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'saida_aceitar', 'id' => $pontoVera, 't' => $csrf('saida_aceitar', $pontoVera)]);
+    $vistoVera = (string) mcp_ponto_registro($pontoVera)['saida_informada'];
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'saida_aceitar', 'id' => $pontoVera, 't' => $csrf('saida_aceitar', $pontoVera), 'visto' => '2026-01-01 10:00:00']);
+    verificar('portal: se o horário mudou depois de abrir a lista, o aceite pede para conferir de novo', [$st, str_contains($html, 'O horário informado mudou'), mcp_ponto_registro($pontoVera)['saida']], [200, true, null]);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'saida_aceitar', 'id' => $pontoVera, 't' => $csrf('saida_aceitar', $pontoVera), 'visto' => $vistoVera]);
     $reg = mcp_ponto_registro($pontoVera);
     verificar('portal: aceitar a saída informada', [$st, str_ends_with($cab['location'] ?? '', 'ok=sd_ok'), mcp_data_brt($reg['saida'], 'H:i'), $reg['origem_saida'], $reg['saida_informada'],
         str_contains((string) $reg['ajuste'], 'aceitou a saída informada pela pessoa')], [303, true, '17:30', 'informada', null, true]);
     [$st, $r2] = api_avisos($base, ['acao' => 'saida_informar', 't' => $tokenSaida, 'hora' => '18:00']);
     verificar('página da saída: depois de aceita, não muda mais', [$st, $r2['erro'] ?? null], [422, 'A saída deste dia já está registrada.']);
 
-    // Pela tela do ponto (celular, perto da sede), com recusa no portal.
+    // Pela tela do ponto, com recusa no portal. Só no aparelho da sede: no celular, quem digita um CPF
+    // (que não é segredo) não pode ver nem mexer nas horas de outra pessoa.
     $db->prepare("INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, origem_entrada, criado_em, atualizado_em) VALUES (?, 1, ?, 'celular', ?, ?)")
         ->execute([(int) $v2['id'], mcp_ponto_local_para_utc("$ontem 14:00:00"), mcp_agora(), mcp_agora()]);
     $pontoVitor = (int) $db->lastInsertId();
     $perto = ['lat' => -22.9115, 'lng' => -43.1880, 'precisao' => 20];
     [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'identificar', 'cpf' => $v2['cpf'], 'posicao' => $perto]), ['Content-Type: application/json']);
     $id = json_decode($corpo, true) ?? [];
-    verificar('ponto: mostra a saída sem registro de ontem', [$st, count($id['pendencias'] ?? []), $id['pendencias'][0]['entrada'] ?? null, $id['colaborador']['na_sede'] ?? null], [200, 1, '14:00', false]);
-    [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'informar_saida', 'sessao' => $id['sessao'] ?? '', 'registro' => $pontoVitor, 'hora' => '19:10']), ['Content-Type: application/json']);
+    [$stInf] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'informar_saida', 'sessao' => $id['sessao'] ?? '', 'registro' => $pontoVitor, 'hora' => '19:10']), ['Content-Type: application/json']);
+    verificar('ponto no celular: não mostra a saída pendente nem deixa informar', [$st, $id['pendencias'] ?? null, $stInf, mcp_ponto_registro($pontoVitor)['saida_informada']], [200, [], 403, null]);
+    $aparelhoId = mcp_ponto_aparelho_criar("Tablet $marca", $quem);
+    $cAparelho = 'Cookie: ' . MCP_PONTO_COOKIE_APARELHO . '=' . mcp_ponto_aparelho_cookie_valor($aparelhoId);
+    [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'identificar', 'cpf' => $v2['cpf']]), ['Content-Type: application/json', $cAparelho]);
+    $id = json_decode($corpo, true) ?? [];
+    verificar('ponto no aparelho da sede: mostra a saída sem registro de ontem', [$st, count($id['pendencias'] ?? []), $id['pendencias'][0]['entrada'] ?? null, $id['colaborador']['na_sede'] ?? null], [200, 1, '14:00', false]);
+    [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'informar_saida', 'sessao' => $id['sessao'] ?? '', 'registro' => $pontoVitor, 'hora' => '19:10']), ['Content-Type: application/json', $cAparelho]);
     $inf = json_decode($corpo, true) ?? [];
-    verificar('ponto: informa a hora da saída ali mesmo', [$st, $inf['registrado'] ?? null, $inf['pendencias'][0]['informada'] ?? null], [200, 'saida_informada', '19:10']);
-    [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'informar_saida', 'sessao' => $id['sessao'] ?? '', 'registro' => $pontoVera, 'hora' => '19:10']), ['Content-Type: application/json']);
-    verificar('ponto: não informa a saída de outra pessoa', $st, 404);
+    verificar('ponto no aparelho da sede: informa a hora da saída ali mesmo', [$st, $inf['registrado'] ?? null, $inf['pendencias'][0]['informada'] ?? null], [200, 'saida_informada', '19:10']);
+    [$st, , $corpo] = http($base . 'ponto.php', 'POST', json_encode(['acao' => 'informar_saida', 'sessao' => $id['sessao'] ?? '', 'registro' => $pontoVera, 'hora' => '19:10']), ['Content-Type: application/json', $cAparelho]);
+    verificar('ponto no aparelho da sede: não informa a saída de outra pessoa', $st, 404);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'saida_recusar', 'id' => $pontoVitor, 't' => $csrf('saida_recusar', $pontoVitor), 'motivo' => 'saiu mais cedo']);
     $reg = mcp_ponto_registro($pontoVitor);
     verificar('portal: recusar a saída informada', [$st, str_ends_with($cab['location'] ?? '', 'ok=sd_rec'), $reg['saida'], $reg['saida_informada'], str_contains((string) $reg['ajuste'], 'recusou a saída informada (')],
@@ -474,7 +522,7 @@ try {
 
     // ------------------------------------------------------------------------- comunicados das três fases
     $lancamento = mcp_avisos_dia_mais($hoje, 6);
-    verificar('implantação: prepara os quatro comunicados como rascunho', mcp_campanhas_preparar_implantacao($lancamento, $quem), 4);
+    verificar('implantação: prepara os quatro comunicados como rascunho', mcp_campanhas_preparar_implantacao($lancamento, $quem), ['criados' => 4, 'recalculados' => 0, 'agendados' => 0]);
     $camp = [];
     foreach (mcp_campanhas_listar() as $c) {
         $camp[$c['fase'] . '|' . $c['publico']] = $c;
@@ -482,7 +530,10 @@ try {
     verificar('implantação: datas a partir do lançamento', [mcp_data_brt($camp['antes|colaboradores']['agendada_para'], 'Y-m-d H:i'), mcp_data_brt($camp['durante|colaboradores']['agendada_para'], 'Y-m-d H:i'),
         mcp_data_brt($camp['depois|colaboradores']['agendada_para'], 'Y-m-d H:i'), $camp['antes|colaboradores']['status']],
         [mcp_avisos_dia_mais($lancamento, -5) . ' 10:00', "$lancamento 08:30", mcp_avisos_dia_mais($lancamento, 14) . ' 10:00', 'rascunho']);
-    verificar('implantação: rodar de novo não duplica', mcp_campanhas_preparar_implantacao($lancamento, $quem), 0);
+    verificar('implantação: rodar de novo não duplica', mcp_campanhas_preparar_implantacao($lancamento, $quem), ['criados' => 0, 'recalculados' => 0, 'agendados' => 0]);
+    verificar('implantação: outra data recalcula os rascunhos', [mcp_campanhas_preparar_implantacao(mcp_avisos_dia_mais($lancamento, 1), $quem), mcp_ajuste('lancamento')],
+        [['criados' => 0, 'recalculados' => 4, 'agendados' => 0], mcp_avisos_dia_mais($lancamento, 1)]);
+    mcp_campanhas_preparar_implantacao($lancamento, $quem);
     $antes = $camp['antes|colaboradores'];
     verificar('agendar no passado é recusado', mcp_campanha_agendar((int) $antes['id'], gmdate('Y-m-d H:i:s', time() - 3600), $quem), 'A data do agendamento já passou. Escolha outra ou use "Enviar agora".');
     $quando = em(mcp_avisos_dia_mais($lancamento, -5), '10:00');
@@ -504,7 +555,7 @@ try {
         [true, true, true, true]);
     $avElias = linha_aviso($db, "campanha|{$antes['id']}|c{$e1['id']}|whatsapp");
     $msgElias = mcp_aviso_mensagem($avElias, mcp_aviso_destinatario($avElias), time());
-    verificar('comunicado "antes": WhatsApp do empregado com a frase da presença', [$avElias['status'], str_contains($msgElias['whatsapp'], 'Para a equipe, é só o registro da presença')], ['manual', true]);
+    verificar('comunicado "antes": WhatsApp do empregado com a frase da presença', [$avElias['status'], str_contains($msgElias['whatsapp'], 'Para a equipe contratada, é só a presença na sede, por segurança')], ['manual', true]);
     $num = mcp_campanha_numeros((int) $antes['id']);
     verificar('números do comunicado', [$num['total'], $num['enviado'], $num['manual'], $num['falhou']], [6, 4, 2, 0]);
     // Nome com HTML não vira HTML no e-mail.
@@ -524,11 +575,12 @@ try {
     $quandoDepois = em(mcp_avisos_dia_mais($lancamento, 14), '10:00');
     mcp_campanha_agendar((int) $depois['id'], gmdate('Y-m-d H:i:s', $quandoDepois), $quem, $quandoDepois - 60);
     mcp_campanhas_disparar($quandoDepois + 30);
-    verificar('aviso na tela do ponto: o comunicado da opinião aparece, com o link no celular',
-        [count(mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600)), str_contains((string) (mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600)[0]['link'] ?? ''), '/ponto/opiniao/?t='),
-            array_key_exists('link', mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, false, $quandoDepois + 3600)[0] ?? [])
-                ? mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, false, $quandoDepois + 3600)[0]['link'] : 'sem aviso'], [1, true, null]);
-    $tokOpiniao = substr(mcp_avisos_link('opiniao', 'c' . $v2['id'], (string) $depois['id']), strlen(mcp_avisos_pagina('opiniao')) + 3);
+    $telaCelular = mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600);
+    $telaAparelho = mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, false, $quandoDepois + 3600);
+    verificar('aviso na tela do ponto: o comunicado da opinião aparece sem link pessoal (a dica aponta o e-mail ou o WhatsApp)',
+        [count($telaCelular), array_key_exists('link', $telaCelular[0] ?? []) ? $telaCelular[0]['link'] : 'sem aviso', $telaCelular[0]['dica'] ?? null, isset($telaAparelho[0]) && $telaAparelho[0]['link'] === null ? 'sem link' : 'com link ou sem aviso'],
+        [1, null, 'O link para responder está no e-mail ou no WhatsApp que você recebeu.', 'sem link']);
+    $tokOpiniao = token_do_link(mcp_avisos_link('opiniao', 'c' . $v2['id'], (string) $depois['id']));
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_ler', 't' => $tokOpiniao]);
     verificar('opinião: abre com as perguntas', [$st, $r['nome'] ?? null, $r['publico'] ?? null, array_keys($r['opcoes']['lembretes'] ?? [])], [200, 'Vitor', 'colaborador', array_keys(MCP_OPINIAO_LEMBRETES)]);
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_salvar', 't' => $tokOpiniao, 'facilidade' => 0]);
@@ -539,7 +591,7 @@ try {
     $res = mcp_opinioes_resultado((int) $depois['id']);
     verificar('opinião: grava e deixa mudar (uma resposta por pessoa)', [$st, $st2, $res['respostas'], $res['media'], $res['comentarios'][0]['nome'] ?? null], [200, 200, 1, 5.0, "Vitor Voluntário $marca"]);
     verificar('aviso na tela do ponto: some depois de responder', mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600), []);
-    $tokAluno = substr(mcp_avisos_link('opiniao', 'a' . mcp_avisos_hash('email', "aluno-$sufixo@avisos-teste.example"), (string) $depois['id']), strlen(mcp_avisos_pagina('opiniao')) + 3);
+    $tokAluno = token_do_link(mcp_avisos_link('opiniao', 'a' . mcp_avisos_hash('email', "aluno-$sufixo@avisos-teste.example"), (string) $depois['id']));
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_salvar', 't' => $tokAluno, 'facilidade' => 3, 'como' => 'aparelho', 'contato_ok' => true]);
     verificar('opinião de aluno: contato pedido sem nome é recusado', [$st, $r['campo'] ?? null], [422, 'contato']);
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_salvar', 't' => $tokAluno, 'facilidade' => 3, 'como' => 'aparelho', 'contato_ok' => false, 'comentario' => 'O tablet estava desligado.']);
@@ -551,10 +603,14 @@ try {
     $db->prepare("UPDATE mcp_colaboradores SET aviso_dias = 'dom,seg,ter,qua,qui,sex,sab' WHERE id = ?")->execute([(int) $v1['id']]);
     $depoisAmanha = mcp_avisos_dia_mais($hoje, 2);
     $r = sub($configCloud, '$n = mcp_avisos_preparar_vespera(' . em($amanha, '08:05') . '); [$e, $f] = mcp_avisos_enviar_pendentes(' . em($amanha, '18:00') . ', 50);'
-        . ' echo json_encode(["preparados" => $n, "enviados" => $e, "falhas" => $f, "modo" => mcp_whatsapp_modo()]);');
-    verificar('API oficial: prepara e manda o lembrete só pelo WhatsApp', [$r['modo'] ?? null, $r['preparados'] ?? null, $r['enviados'] ?? null], ['cloud', 1, 1]);
+        . ' echo json_encode(["preparados" => $n, "enviados" => $e, "falhas" => $f, "modo" => mcp_whatsapp_modo(), "fila" => mcp_avisos_fila_manual_contar(' . em($amanha, '18:00') . ')]);');
+    verificar('API oficial: prepara o lembrete só pelo WhatsApp', [$r['modo'] ?? null, $r['preparados'] ?? null, $r['falhas'] ?? null], ['cloud', 1, 0]);
     $graph = falso('graph');
-    $daVeraCloud = array_values(array_filter($graph, static fn(array $g): bool => ($g['to'] ?? '') === '5521998760001'))[0] ?? [];
+    $daVeraCloud = array_values(array_filter($graph, static fn(array $g): bool => ($g['to'] ?? '') === '5521998760001' && ($g['template']['name'] ?? '') === 'cvb_ponto_vespera'))[0] ?? [];
+    // Trocar o modo com mensagens na fila manual: o que ainda vale sai sozinho, com o modelo aprovado da fase.
+    $avAntesElias = linha_aviso($db, "campanha|{$antes['id']}|c{$e1['id']}|whatsapp");
+    verificar('API oficial: o que esperava na fila manual sai sozinho, com o modelo da fase', [$r['enviados'] ?? null, $r['fila'] ?? null, $avAntesElias['status'], $avAntesElias['provedor'],
+        count(array_filter($graph, static fn(array $g): bool => ($g['template']['name'] ?? '') === 'cvb_ponto_novidade'))], [3, 0, 'enviado', 'cloud', 2]);
     verificar('API oficial: modelo, idioma, parâmetros e botão', [$daVeraCloud['template']['name'] ?? null, $daVeraCloud['template']['language']['code'] ?? null,
         $daVeraCloud['template']['components'][0]['parameters'][0]['text'] ?? null, $daVeraCloud['template']['components'][0]['parameters'][1]['text'] ?? null,
         (bool) preg_match('~^\d+\.l\.[a-f0-9]{16}$~', (string) ($daVeraCloud['template']['components'][1]['parameters'][0]['text'] ?? ''))],
@@ -581,10 +637,11 @@ try {
     $corpo = $evento([], [['from' => '5521998760001', 'type' => 'text', 'text' => ['body' => 'Parar!']]]);
     http($baseCloud . 'whatsapp.php', 'POST', $corpo, ['Content-Type: application/json', $assinar($corpo)]);
     verificar('webhook: quem responde PARAR deixa de receber pelo WhatsApp', [(int) mcp_colaborador_por_id((int) $v1['id'])['aviso_whatsapp'], linha_aviso($db, "teste-parar|$sufixo")['status']], [0, 'cancelado']);
-    // Erro da API: tenta de novo e, na terceira, desiste.
-    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760000', aviso_whatsapp = 1 WHERE id = ?")->execute([(int) $e1['id']]);
+    // Erro da API: tenta de novo e, na terceira, desiste. (Elias, da equipe: os dias são dele, e o aviso é de um dia útil.)
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760000', aviso_whatsapp = 1, aviso_dias = 'dom,seg,ter,qua,qui,sex,sab', aviso_dias_por = 'a própria pessoa' WHERE id = ?")
+        ->execute([(int) $e1['id']]);
     $r = sub($configCloud, '$id = mcp_aviso_criar(["chave" => "teste-erro|' . $sufixo . '", "tipo" => "vespera", "canal" => "whatsapp", "colaborador_id" => ' . (int) $e1['id'] . ', "pessoa" => "c' . (int) $e1['id']
-        . '", "nome" => "x", "destino" => "5521998760000", "referencia" => "' . $amanha . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
+        . '", "nome" => "x", "destino" => "5521998760000", "referencia" => "' . $util . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
         . ' $s = []; foreach ([' . em($hoje, '09:01') . ', ' . em($hoje, '09:20') . ', ' . em($hoje, '09:50') . '] as $t) { mcp_avisos_enviar_pendentes($t, 50); $s[] = mcp_aviso_por_id($id)["status"]; }'
         . ' echo json_encode(["s" => $s, "erro" => mcp_aviso_por_id($id)["erro"], "t" => (int) mcp_aviso_por_id($id)["tentativas"]]);');
     verificar('API oficial: erro tenta de novo e desiste na terceira', [$r['s'] ?? null, $r['erro'] ?? null, $r['t'] ?? null], [['pendente', 'pendente', 'falhou'], 'número inválido (teste)', 3]);
@@ -592,29 +649,33 @@ try {
     // ------------------------------------------------------------------------- WhatsApp pelo Make
     $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760003' WHERE id = ?")->execute([(int) $e1['id']]);
     $r = sub($configMake, '$id = mcp_aviso_criar(["chave" => "teste-make|' . $sufixo . '", "tipo" => "vespera", "canal" => "whatsapp", "colaborador_id" => ' . (int) $e1['id'] . ', "pessoa" => "c' . (int) $e1['id']
-        . '", "nome" => "x", "destino" => "5521998760003", "referencia" => "' . $amanha . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
-        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id); echo json_encode(["status" => $a["status"], "provedor" => $a["provedor"], "id" => $a["provedor_id"], "modo" => mcp_whatsapp_modo()]);');
-    $make = falso('make');
-    verificar('Make: webhook assinado, com o texto e o modelo', [$r['modo'] ?? null, $r['status'] ?? null, $r['provedor'] ?? null, $r['id'] ?? null, $make[0]['telefone'] ?? null,
-        str_contains((string) ($make[0]['texto'] ?? ''), 'registre a *entrada*'), $make[0]['modelo']['nome'] ?? null], ['webhook', 'enviado', 'webhook', 'make-1', '5521998760003', true, 'cvb_ponto_vespera']);
+        . '", "nome" => "x", "destino" => "5521998760003", "referencia" => "' . $util . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
+        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id); echo json_encode(["aviso" => $id, "status" => $a["status"], "provedor" => $a["provedor"], "id" => $a["provedor_id"], "modo" => mcp_whatsapp_modo()]);');
+    $make = array_values(array_filter(falso('make'), static fn(array $x): bool => ($x['aviso'] ?? 0) === ($r['aviso'] ?? -1)))[0] ?? [];
+    verificar('Make: webhook assinado, com o texto e o modelo da equipe', [$r['modo'] ?? null, $r['status'] ?? null, $r['provedor'] ?? null, str_starts_with((string) ($r['id'] ?? ''), 'make-'), $make['telefone'] ?? null,
+        str_contains((string) ($make['texto'] ?? ''), 'registre a presença ao chegar e ao sair'), $make['modelo']['nome'] ?? null], ['webhook', 'enviado', 'webhook', true, '5521998760003', true, 'cvb_ponto_vespera_equipe']);
     $r = sub($configMakeCurto, '$id = mcp_aviso_criar(["chave" => "teste-make-curto|' . $sufixo . '", "tipo" => "vespera", "canal" => "whatsapp", "colaborador_id" => ' . (int) $e1['id'] . ', "pessoa" => "c' . (int) $e1['id']
-        . '", "nome" => "x", "destino" => "5521998760003", "referencia" => "' . $amanha . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
+        . '", "nome" => "x", "destino" => "5521998760003", "referencia" => "' . $util . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '09:00') . ')]);'
         . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); echo json_encode(["erro" => mcp_aviso_por_id($id)["erro"]]);');
     verificar('Make: segredo curto não manda', str_starts_with((string) ($r['erro'] ?? ''), 'WHATSAPP_WEBHOOK_SEGREDO ausente ou curto'), true);
 
     // ------------------------------------------------------------------------- WhatsApp pelo número do Palácio (Evolution)
+    $r = sub($configEvolution, 'echo json_encode(["modo" => mcp_whatsapp_modo()]);');
+    verificar('Evolution: configurada mas sem o risco aceito no portal, o modo continua manual', $r['modo'] ?? null, 'manual');
+    mcp_ajuste_gravar('evolution_riscos', '1', $quem);
     $w1 = colaborador("Wagner WhatsApp $marca", 'voluntario', null, '21998760005');
     $db->prepare("UPDATE mcp_colaboradores SET aviso_whatsapp = 1, aviso_whatsapp_em = ?, aviso_whatsapp_por = 'teste', aviso_dias = 'dom,seg,ter,qua,qui,sex,sab' WHERE id = ?")
         ->execute([mcp_agora(), (int) $w1['id']]);
     $avisoEvo = static fn(string $chave, int $colId, string $numero, string $hora): string => '$id = mcp_aviso_criar(["chave" => "' . $chave . '|' . $sufixo . '", "tipo" => "vespera", "canal" => "whatsapp", "colaborador_id" => ' . $colId
-        . ', "pessoa" => "c' . $colId . '", "nome" => "x", "destino" => "' . $numero . '", "referencia" => "' . $amanha . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, $hora) . ')]);';
+        . ', "pessoa" => "c' . $colId . '", "nome" => "x", "destino" => "' . $numero . '", "referencia" => "' . $util . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, $hora) . ')]);';
     $r = sub($configEvolution, $avisoEvo('teste-evo', (int) $w1['id'], '5521998760005', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
         . ' echo json_encode(["status" => $a["status"], "provedor" => $a["provedor"], "id" => $a["provedor_id"], "modo" => mcp_whatsapp_modo(), "nome" => mcp_whatsapp_modo_nome(mcp_whatsapp_modo())]);');
-    $evo = falso('evolution');
-    verificar('Evolution: manda pelo número do Palácio, com o texto pronto e sem prévia de link', [$r['modo'] ?? null, $r['nome'] ?? null, $r['status'] ?? null, $r['provedor'] ?? null, $r['id'] ?? null,
-        $evo[0]['number'] ?? null, str_contains((string) ($evo[0]['text'] ?? ''), 'registre a *entrada*'), str_ends_with((string) ($evo[0]['text'] ?? ''), "\n\n_Mensagem automática: não precisa responder._"), $evo[0]['linkPreview'] ?? null],
-        ['evolution', 'automático, pelo WhatsApp do Palácio Virtual (Evolution)', 'enviado', 'evolution', 'EVO-1', '5521998760005', true, true, false]);
-    verificar('Evolution: com o WhatsApp automático, o lembrete não vai também por e-mail', linha_aviso($db, "vespera|{$w1['id']}|$amanha|email"), null);
+    $evo = array_values(array_filter(falso('evolution'), static fn(array $x): bool => ($x['number'] ?? '') === '5521998760005'))[0] ?? [];
+    verificar('Evolution: manda pelo número do Palácio, com o texto pronto, o caminho para parar e sem prévia de link', [$r['modo'] ?? null, $r['nome'] ?? null, $r['status'] ?? null, $r['provedor'] ?? null, str_starts_with((string) ($r['id'] ?? ''), 'EVO-'),
+        str_contains((string) ($evo['text'] ?? ''), 'registre a *chegada* e a *saída*'), str_contains((string) ($evo['text'] ?? ''), 'Mudar os dias ou parar: '),
+        str_ends_with((string) ($evo['text'] ?? ''), "\n\n_Mensagem automática da secretaria. Para não receber mais, use o link acima._"), $evo['linkPreview'] ?? null],
+        ['evolution', 'automático, pelo WhatsApp do Palácio Virtual (Evolution)', 'enviado', 'evolution', true, true, true, true, false]);
+    verificar('Evolution: com o WhatsApp automático, o lembrete não vai também por e-mail', linha_aviso($db, "vespera|{$w1['id']}|$util|email"), null);
     $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760000' WHERE id = ?")->execute([(int) $w1['id']]);
     $r = sub($configEvolution, $avisoEvo('teste-evo-sem', (int) $w1['id'], '5521998760000', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
         . ' echo json_encode(["status" => $a["status"], "erro" => $a["erro"], "t" => (int) $a["tentativas"]]);');
@@ -663,14 +724,30 @@ try {
         [302, "http://127.0.0.1:$portaSite/ponto/", 0]);
     [$st, $cab] = http($base . 'avisos.php?r=' . ($m[1] ?? ''));
     verificar('clique: pelo navegador conta', $cliques() - $antesCliques, 1);
-    $tokSair = substr($cab['location'] ?? '', strpos($cab['location'] ?? '', '?t=') + 3);
+    $tokSair = token_do_link($cab['location'] ?? '');
     [$st, $r] = api_avisos($base, ['acao' => 'sair_ler', 't' => $tokSair]);
     [$st2, $r2] = api_avisos($base, ['acao' => 'sair_confirmar', 't' => $tokSair]);
     verificar('não quero mais receber: bloqueia o e-mail do aluno', [$st, $r['bloqueado'] ?? null, $st2, $r2['bloqueado'] ?? null, mcp_avisos_bloqueado('email', "rita-$sufixo@avisos-teste.example")], [200, false, 200, true, true]);
     mcp_ajuste_gravar('aula_preparada', '', $quem);
     verificar('aula: quem pediu para não receber fica de fora', mcp_avisos_preparar_aulas(em($amanha, '08:10')), 0);
+    // WhatsApp do aluno: só com o WhatsApp da aula ligado no portal e a autorização registrada na escola (true, e só true).
+    mcp_ajuste_gravar('aula_whatsapp', '1', $quem);
+    mcp_ajuste_gravar('aula_preparada', '', $quem);
+    $aulaNoite = [['aula_id' => 'a2', 'horario' => '18:00 - 22:00', 'turma_id' => 't1', 'curso_id' => 'c1', 'curso_nome' => 'Bombeiro Civil']];
+    file_put_contents("$falso/escola.json", json_encode(['falha' => false, 'alunos' => [
+        ['aluno_id' => "al2-$sufixo", 'nome' => "Sara Aluna $marca", 'email' => "sara-$sufixo@avisos-teste.example", 'celular' => '21998768888', 'whatsapp_autorizado' => true, 'aulas' => $aulaNoite],
+        ['aluno_id' => "al3-$sufixo", 'nome' => "Tiago Aluno $marca", 'email' => "tiago-$sufixo@avisos-teste.example", 'celular' => '21998767777', 'whatsapp_autorizado' => 'sim', 'aulas' => $aulaNoite],
+    ]]));
+    $depoisDeAmanha = mcp_avisos_dia_mais($hoje, 2);
+    verificar('aula: WhatsApp só para o aluno com a autorização registrada na escola', [mcp_avisos_preparar_aulas(em($amanha, '08:12')),
+        linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|whatsapp")['status'] ?? null, linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|whatsapp"),
+        linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|email")['status'] ?? null], [3, 'manual', null, 'pendente']);
+    mcp_ajuste_gravar('aula_whatsapp', '0', $quem);
 
     // ------------------------------------------------------------------------- portal
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760005', aviso_whatsapp = 1 WHERE id = ?")->execute([(int) $w1['id']]);
+    $idFila = (int) mcp_aviso_criar(['chave' => "teste-fila|$sufixo", 'tipo' => 'vespera', 'canal' => 'whatsapp', 'colaborador_id' => (int) $w1['id'], 'pessoa' => 'c' . $w1['id'], 'nome' => "Wagner $marca",
+        'destino' => '5521998760005', 'referencia' => $amanha]);
     foreach (['v=comunicacao' => 'Lembretes automáticos', 'v=comunicacao&aba=comunicados' => 'Antes: anúncio do ponto', 'v=comunicacao&aba=fila' => 'Abrir no WhatsApp',
         'v=comunicacao&aba=envios' => 'Lembrete da véspera', 'v=comunicacao&aba=resultados' => 'Adesão', 'v=comunicado&id=' . $antes['id'] => 'Quem recebe',
         'v=comunicado&novo=1' => 'Criar o rascunho', 'v=importar' => 'Importar colaboradores', 'v=colaborador&id=' . $v1['id'] => 'Lembretes e contato', 'v=ponto' => 'Importar planilha'] as $q => $texto) {
@@ -678,7 +755,13 @@ try {
         verificar("portal: $q", [$st, str_contains($html, $texto)], [200, true]);
     }
     [$st, , $html] = http($base . 'painel.php?v=comunicacao&aba=resultados&csv=1', 'GET', null, ["Cookie: $sessaoPortal"]);
-    verificar('portal: planilha dos resultados por pessoa, sem CPF', [$st, str_starts_with($html, "\xEF\xBB\xBFColaborador;"), str_contains($html, "Vera Voluntária $marca"), str_contains($html, $v1['cpf'])], [200, true, true, false]);
+    verificar('portal: planilha dos resultados por voluntário, sem CPF e sem a equipe contratada', [$st, str_starts_with($html, "\xEF\xBB\xBFVoluntário;"), str_contains($html, "Vera Voluntária $marca"), str_contains($html, $v1['cpf']),
+        str_contains($html, "Elias Empregado $marca")], [200, true, true, false, false]);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'fila_pular', 'id' => $idFila, 't' => $csrf('fila_pular', $idFila)]);
+    verificar('fila: pular uma mensagem', [$st, mcp_aviso_por_id($idFila)['status'], mcp_aviso_por_id($idFila)['erro']], [303, 'cancelado', 'a secretaria pulou']);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aviso_parar', 'id' => $idFila, 't' => $csrf('aviso_parar', $idFila)]);
+    verificar('envios: "pediu para parar" desliga o WhatsApp da pessoa e bloqueia o número', [str_ends_with($cab['location'] ?? '', 'ok=av_parou'), (int) mcp_colaborador_por_id((int) $w1['id'])['aviso_whatsapp'],
+        mcp_avisos_bloqueado('whatsapp', '5521998760005')], [true, 0, true]);
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => 'errado', 'lembrete_vespera' => '1']);
     verificar('portal: sem o token do formulário, volta para a entrada', str_contains($html, '<h1>Entrar</h1>'), true);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'lembrete_saida' => '1', 'whatsapp_ativo' => '1']);
@@ -699,6 +782,18 @@ try {
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'col_avisos', 'id' => $nid, 't' => $csrf('col_avisos', $nid), 'dias' => ['sab'], 'email' => '1', 'comunicados' => '1']);
     $nina = mcp_colaborador_por_id($nid);
     verificar('ficha: lembretes e contato (tirar o WhatsApp apaga o consentimento)', [$st, $nina['aviso_dias'], (int) $nina['aviso_whatsapp'], $nina['aviso_whatsapp_em'], (int) $nina['aviso_saida']], [303, 'sab', 0, null, 0]);
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'col_avisos', 'id' => $nid, 't' => $csrf('col_avisos', $nid), 'dias' => ['sab'], 'email' => '1', 'whatsapp' => '1', 'comunicados' => '1']);
+    verificar('ficha: marcar o WhatsApp pede como a pessoa autorizou (a prova do consentimento)', [$st, str_contains($html, 'Diga como a pessoa autorizou o WhatsApp'), (int) mcp_colaborador_por_id($nid)['aviso_whatsapp']], [200, true, 0]);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'col_avisos', 'id' => $nid, 't' => $csrf('col_avisos', $nid), 'dias' => ['sab'], 'email' => '1', 'whatsapp' => '1', 'comunicados' => '1',
+        'como' => 'disse na recepção, em 30/09']);
+    $nina = mcp_colaborador_por_id($nid);
+    verificar('ficha: WhatsApp autorizado, com quem registrou e como', [(int) $nina['aviso_whatsapp'], $nina['aviso_whatsapp_por'], $nina['aviso_whatsapp_como']], [1, $quem, 'disse na recepção, em 30/09']);
+    $chaveNina = (string) mcp_avisos_chave_colaborador($nina);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'col_links_novos', 'id' => $nid, 't' => $csrf('col_links_novos', $nid)]);
+    verificar('ficha: invalidar os links já enviados troca a chave da pessoa', [str_contains($cab['location'] ?? '', 'ok=cl_novos'), mcp_colaborador_por_id($nid)['aviso_chave'] !== $chaveNina], [true, true]);
+    mcp_colaborador_salvar($nid, ['nome' => $nina['nome'], 'cpf' => $nina['cpf'], 'email' => $nina['email'], 'telefone' => '21998762222', 'funcao' => $nina['funcao'], 'vinculo' => $nina['vinculo'], 'ativo' => 1], $quem);
+    $nina = mcp_colaborador_por_id($nid);
+    verificar('ficha: trocar o celular derruba a autorização do WhatsApp e os links (valiam para o número antigo)', [(int) $nina['aviso_whatsapp'], $nina['aviso_whatsapp_por'], $nina['aviso_chave']], [0, null, null]);
     $antesEmails = count(falso('emails'));
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'campanha_teste', 'id' => (int) $depois['id'], 't' => $csrf('campanha_teste', (int) $depois['id'])]);
     $email = falso('emails')[$antesEmails] ?? [];
@@ -714,7 +809,11 @@ try {
     // Falha: tentar de novo pelo portal.
     $idErro = (int) linha_aviso($db, "teste-erro|$sufixo")['id'];
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aviso_repetir', 'id' => $idErro, 't' => $csrf('aviso_repetir', $idErro)]);
-    verificar('envios: tentar de novo uma falha', [str_ends_with($cab['location'] ?? '', 'ok=av_rep'), mcp_aviso_por_id($idErro)['status'], (int) mcp_aviso_por_id($idErro)['tentativas']], [true, 'pendente', 0]);
+    verificar('envios: tentar de novo uma falha (com o prazo da véspera)', [str_ends_with($cab['location'] ?? '', 'ok=av_rep'), mcp_aviso_por_id($idErro)['status'], (int) mcp_aviso_por_id($idErro)['tentativas'],
+        mcp_data_brt((string) mcp_aviso_por_id($idErro)['expira_em'], 'Y-m-d H:i')], [true, 'pendente', 0, mcp_avisos_dia_mais($util, -1) . ' 20:00']);
+    $db->prepare("UPDATE mcp_avisos SET status = 'falhou', referencia = ? WHERE id = ?")->execute([$hoje, $idErro]);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aviso_repetir', 'id' => $idErro, 't' => $csrf('aviso_repetir', $idErro)]);
+    verificar('envios: lembrete cuja véspera já passou não sai de novo', [str_ends_with($cab['location'] ?? '', 'ok=av_tarde'), mcp_aviso_por_id($idErro)['status']], [true, 'falhou']);
 
     // ------------------------------------------------------------------------- métricas
     $m = mcp_metricas(mcp_avisos_dia_mais($hoje, -3), mcp_avisos_dia_mais($hoje, 1));
@@ -723,7 +822,8 @@ try {
     $saida = $m['avisos']['saida'];
     verificar('métricas: aviso de saída que deu certo', [$saida['enviados'] >= 1, $saida['convertidos'], $saida['avaliados']], [true, 1, 1]);
     $pessoas = array_column($m['pessoas'], null, 'id');
-    verificar('métricas por pessoa: dias, horas e opinião', [$pessoas[(int) $v1['id']]['dias'] ?? null, $pessoas[(int) $v1['id']]['minutos'] ?? null, $pessoas[(int) $v2['id']]['opiniao'] ?? null], [1, 510, true]);
+    verificar('métricas por pessoa: dias e horas dos voluntários; a equipe contratada fica fora', [$pessoas[(int) $v1['id']]['dias'] ?? null, $pessoas[(int) $v1['id']]['minutos'] ?? null,
+        isset($pessoas[(int) $e1['id']]), array_key_exists('opiniao', $pessoas[(int) $v2['id']] ?? [])], [1, 510, false, false]);
 
     // ------------------------------------------------------------------------- faxina e rotina
     $idPreso = mcp_aviso_criar(['chave' => "teste-preso|$sufixo", 'tipo' => 'vespera', 'canal' => 'email', 'colaborador_id' => (int) $v2['id'], 'pessoa' => 'c' . $v2['id'], 'nome' => "x $marca", 'destino' => "vitor-$sufixo@avisos-teste.example", 'referencia' => $amanha]);
@@ -734,6 +834,12 @@ try {
     $db->prepare('UPDATE mcp_opinioes SET atualizado_em = ? WHERE campanha_id = ? AND pessoa = ?')->execute([gmdate('Y-m-d H:i:s', time() - 400 * 86400), (int) $depois['id'], 'c' . $v2['id']]);
     verificar('faxina: registro com mais de 1 ano é apagado', [mcp_avisos_apagar_antigos() >= 2, mcp_aviso_por_id($idPreso)], [true, null]);
     verificar('faxina: a opinião com mais de 1 ano também (e só ela)', [mcp_opinioes_resultado((int) $depois['id'])['respostas'], mcp_opinioes_resultado((int) $depois['id'])['por_publico']], [1, ['colaborador' => 0, 'aluno' => 1]]);
+    $db->prepare('UPDATE mcp_campanhas SET iniciada_em = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 40 * 86400), (int) $depois['id']]);
+    mcp_avisos_apagar_antigos();
+    $quemRespondeu = $db->prepare('SELECT pessoa FROM mcp_opinioes WHERE campanha_id = ?');
+    $quemRespondeu->execute([(int) $depois['id']]);
+    verificar('faxina: um mês depois do comunicado, a opinião deixa de ficar ligada a quem respondeu (e continua contando)',
+        [array_values(array_unique(array_map(static fn(string $p): string => $p[0], $quemRespondeu->fetchAll(PDO::FETCH_COLUMN)))), mcp_opinioes_resultado((int) $depois['id'])['respostas']], [['x'], 1]);
     $saida = [];
     exec('MCP_CONFIG_ARQUIVO=' . escapeshellarg($config) . ' MCP_CONFIG_ESCOLA_ARQUIVO=' . escapeshellarg($semEscola) . ' ' . escapeshellarg(PHP_BINARY) . ' '
         . escapeshellarg($raiz . '/site/matricula-cursos-presenciais/api/comparecimentos.php') . ' 2>&1', $saida, $codigo);

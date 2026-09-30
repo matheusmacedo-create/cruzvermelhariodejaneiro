@@ -420,6 +420,19 @@ function mcp_colaborador_salvar(?int $id, array $d, string $quem): ?int
     }
     mcp_db()->prepare('UPDATE mcp_colaboradores SET nome = ?, cpf = ?, email = ?, telefone = ?, funcao = ?, vinculo = ?, ativo = ?, desligado_em = ?, atualizado_em = ? WHERE id = ?')
         ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['vinculo'], $d['ativo'], $desligado, $agora, $id]);
+    if ($antes !== null) {
+        $mudouEmail = mb_strtolower(trim((string) $antes['email'])) !== mb_strtolower(trim((string) $d['email']));
+        $mudouTelefone = mcp_digitos((string) $antes['telefone']) !== mcp_digitos((string) $d['telefone']);
+        // Contato novo: os links pessoais já mandados (talvez para o endereço errado) deixam de valer, e a
+        // autorização do WhatsApp era para o número antigo: precisa ser dada de novo para o número novo.
+        if ($mudouEmail || $mudouTelefone) {
+            mcp_db()->prepare('UPDATE mcp_colaboradores SET aviso_chave = NULL WHERE id = ?')->execute([$id]);
+        }
+        if ($mudouTelefone && (int) ($antes['aviso_whatsapp'] ?? 0) === 1) {
+            mcp_db()->prepare('UPDATE mcp_colaboradores SET aviso_whatsapp = 0, aviso_whatsapp_em = NULL, aviso_whatsapp_por = NULL, aviso_whatsapp_como = NULL WHERE id = ?')->execute([$id]);
+            mcp_registrar(null, 'aviso_whatsapp_numero_trocado', "#$id · $quem");
+        }
+    }
     return $id;
 }
 

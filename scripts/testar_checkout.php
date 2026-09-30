@@ -729,6 +729,29 @@ verificar('cliques: prévias de link e programas não contam; navegadores contam
     'Mozilla/5.0 (Linux; Android 13; moto g) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0.0.0 Mobile Safari/537.36',
 ]), [true, true, true, true, true, true, true, false, false, false]);
 
+// Calendário dos lembretes: Páscoa, feriados do Rio e a regra da equipe contratada.
+verificar('páscoa: anos conhecidos', array_map('mcp_avisos_pascoa', [2019, 2024, 2025, 2026, 2027]), ['2019-04-21', '2024-03-31', '2025-04-20', '2026-04-05', '2027-03-28']);
+verificar('feriados: fixos, do estado e da cidade, e os móveis', array_map('mcp_avisos_feriado', ['2026-10-12', '2026-01-20', '2026-04-23', '2026-11-20', '2026-02-16', '2026-02-17', '2026-04-03', '2026-06-04', '2026-10-01', 'x']),
+    ['Nossa Senhora Aparecida', 'Dia de São Sebastião', 'Dia de São Jorge', 'Dia Nacional de Zumbi e da Consciência Negra', 'Carnaval', 'Carnaval', 'Sexta-feira Santa', 'Corpus Christi', null, null]);
+verificar('feriados: dia fechado sem consultar o portal quando é feriado', mcp_avisos_dia_fechado('2026-12-25'), 'Natal');
+$equipe = ['vinculo' => 'empregado', 'aviso_dias_por' => 'a própria pessoa'];
+verificar('véspera: voluntário em qualquer dia; equipe só em dia útil e só com os dias escolhidos por ela', [
+    mcp_avisos_recebe_vespera(['vinculo' => 'voluntario', 'aviso_dias_por' => 'secretaria@exemplo.org'], '2026-10-03'),
+    mcp_avisos_recebe_vespera($equipe, '2026-10-01'), mcp_avisos_recebe_vespera($equipe, '2026-10-03'), mcp_avisos_recebe_vespera($equipe, '2026-10-04'),
+    mcp_avisos_recebe_vespera(['aviso_dias_por' => 'secretaria@exemplo.org'] + $equipe, '2026-10-01'), mcp_avisos_recebe_vespera(['aviso_dias_por' => null] + $equipe, '2026-10-01'),
+], [true, true, false, false, false, false]);
+$agoraAviso = (int) strtotime('2026-09-30 12:00:00 UTC');
+verificar('prazo do aviso: véspera e aula até as 20h da véspera; saída 3 dias; link 1 dia', [
+    mcp_aviso_validade(['tipo' => 'vespera', 'referencia' => '2026-10-01'], $agoraAviso), mcp_aviso_validade(['tipo' => 'aula', 'referencia' => '2026-10-02'], $agoraAviso),
+    mcp_aviso_validade(['tipo' => 'saida', 'referencia' => '12'], $agoraAviso), mcp_aviso_validade(['tipo' => 'link', 'referencia' => null], $agoraAviso),
+], ['2026-09-30 23:00:00', '2026-10-01 23:00:00', '2026-10-03 12:00:00', '2026-10-01 12:00:00']);
+verificar('data no modelo do WhatsApp', [mcp_avisos_data_modelo('2026-10-01'), mcp_avisos_data_modelo('2026-10-03')], ['1º/10 (quinta)', '03/10 (sábado)']);
+verificar('planilha: dias por extenso, abreviados, ordinais, intervalos e expressões', array_map('mcp_importar_dias', [
+    'segunda e quarta', 'seg, qua, sex', '2ª a 6ª', '2 a 6', '2a e 4a feira', 'segunda a sexta', 'segunda até quarta', 'sex a seg', 'segunda e a quarta', 'terça-feira, quinta-feira e sábado',
+    'todos os dias', 'dias úteis', 'fim de semana', 'às vezes', '',
+]), [['seg', 'qua'], ['seg', 'qua', 'sex'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'qua'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'ter', 'qua'],
+    ['dom', 'seg', 'sex', 'sab'], ['seg', 'qua'], ['ter', 'qui', 'sab'], ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['dom', 'sab'], [], []]);
+
 unlink($configTeste);
 unlink($configEscola);
 printf("%d testes, %d falhas\n", $total, $falhas);

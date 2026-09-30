@@ -194,7 +194,7 @@ PAGINA_PONTO = """<!DOCTYPE html>
     <div class="pt-relogio"><b id="pt-hora">--:--</b><small id="pt-data"></small></div>
   </header>
   <main class="pt-main">
-    <section class="pt-card" id="pt-tela" aria-live="polite"><p>Carregando…</p></section>
+    <section class="pt-card" id="pt-tela"><p>Carregando…</p></section>
     <noscript><p class="pt-card">O ponto precisa de JavaScript. Ative o JavaScript ou fale com a secretaria.</p></noscript>
   </main>
   <footer class="pt-rodape">
@@ -230,7 +230,7 @@ PAGINA_AVISO = """<!DOCTYPE html>
     <div class="pt-titulo"><b>@@CABECALHO@@</b><small>@@SUBTITULO@@</small></div>
   </header>
   <main class="pt-main">
-    <section class="pt-card" id="av-tela" aria-live="polite"><p>Carregando…</p></section>
+    <section class="pt-card" id="av-tela"><p>Carregando…</p></section>
     <noscript><p class="pt-card">Esta página precisa de JavaScript. Ative o JavaScript ou fale com a secretaria.</p></noscript>
   </main>
   <footer class="pt-rodape">

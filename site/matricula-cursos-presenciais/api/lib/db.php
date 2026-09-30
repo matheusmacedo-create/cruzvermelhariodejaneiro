@@ -178,6 +178,8 @@ function mcp_migrar(PDO $pdo): void
         aviso_chave CHAR(16) NULL,
         aviso_whatsapp_em DATETIME NULL,
         aviso_whatsapp_por VARCHAR(190) NULL,
+        aviso_whatsapp_como VARCHAR(160) NULL,
+        aviso_dias_por VARCHAR(190) NULL,
         aviso_atualizado_em DATETIME NULL,
         criado_por VARCHAR(190) NULL,
         criado_em DATETIME NOT NULL,
@@ -339,7 +341,9 @@ function mcp_migrar(PDO $pdo): void
         KEY ix_colaborador (colaborador_id, criado_em),
         KEY ix_campanha (campanha_id, status),
         KEY ix_provedor (provedor_id),
-        KEY ix_tipo (tipo, criado_em)
+        KEY ix_tipo (tipo, criado_em),
+        KEY ix_criado (criado_em),
+        KEY ix_enviado (status, enviado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Quem pediu para não receber (alunos, que não têm cadastro aqui): só o hash do e-mail ou do celular.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_avisos_bloqueios (
@@ -381,8 +385,47 @@ const MCP_DB_COLUNAS_AVISOS = [
     'aviso_chave' => 'CHAR(16) NULL',
     'aviso_whatsapp_em' => 'DATETIME NULL',
     'aviso_whatsapp_por' => 'VARCHAR(190) NULL',
+    // Como a pessoa autorizou o WhatsApp (formulário, pessoalmente, pela página): a prova do consentimento.
+    'aviso_whatsapp_como' => 'VARCHAR(160) NULL',
+    // Quem escolheu os dias dos lembretes ("a própria pessoa" ou o e-mail da secretaria).
+    'aviso_dias_por' => 'VARCHAR(190) NULL',
     'aviso_atualizado_em' => 'DATETIME NULL',
 ];
+
+/**
+ * Índices das tabelas que já existiam em produção antes deles (freios, "na sede", presenças por e-mail).
+ * Roda só na rotina da linha de comando (a cada 15 minutos), para não pesar em cada visita.
+ */
+const MCP_DB_INDICES = [
+    'mcp_eventos' => ['ix_tipo_criado' => 'tipo, criado_em'],
+    'mcp_ponto' => ['ix_sem_saida' => 'saida, entrada'],
+    'mcp_presencas' => ['ix_email' => 'email, chegada'],
+];
+
+function mcp_garantir_indices(PDO $pdo): void
+{
+    foreach (MCP_DB_INDICES as $tabela => $indices) {
+        $existentes = array_column($pdo->query("SHOW INDEX FROM $tabela")->fetchAll(), 'Key_name');
+        foreach ($indices as $nome => $colunas) {
+            if (!in_array($nome, $existentes, true)) {
+                $pdo->exec("ALTER TABLE $tabela ADD KEY $nome ($colunas)");
+            }
+        }
+    }
+}
+
+/**
+ * Faxina dos registros de freio (IP de quem consultou o ponto, abriu as páginas pessoais etc.): só valem
+ * por minutos; depois de 2 dias saem. Os de armadilha (robôs), depois de 30.
+ */
+function mcp_eventos_apagar_freios(?int $agora = null): int
+{
+    $agora ??= time();
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado')
+        AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
+    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
+    return $stmt->rowCount();
+}
 
 /** Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). */
 function mcp_garantir_colunas(PDO $pdo, string $tabela, array $colunas): void

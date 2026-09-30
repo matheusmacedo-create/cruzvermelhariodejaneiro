@@ -22,13 +22,14 @@ const PC_ABAS = ['geral' => 'Visão geral', 'comunicados' => 'Comunicados', 'fil
 /** Ações dos formulários desta parte do portal (cada uma com o token do formulário, como as outras). */
 const PC_ACOES = [
     'ajustes_salvar', 'implantacao', 'links_enviar', 'campanha_salvar', 'campanha_teste', 'campanha_agendar', 'campanha_enviar',
-    'campanha_cancelar', 'campanha_apagar', 'fila_enviada', 'fila_pular', 'aviso_repetir', 'saida_aceitar', 'saida_recusar',
-    'col_importar', 'col_avisos', 'col_link',
+    'campanha_cancelar', 'campanha_apagar', 'fila_enviada', 'fila_pular', 'aviso_repetir', 'aviso_parar', 'saida_aceitar', 'saida_recusar',
+    'col_importar', 'col_avisos', 'col_link', 'col_links_novos',
 ];
 const PC_AVISOS = [
     'aj_ok' => ['Ajustes salvos.', 'ok'],
     'imp_ok' => ['Comunicados da implantação preparados como rascunho. Confira cada um, mande um teste para você e agende.', 'ok'],
-    'imp_data' => ['Data do lançamento salva. As datas dos rascunhos foram recalculadas.', 'ok'],
+    'imp_data' => ['Data do lançamento salva. Os rascunhos ganharam as datas novas.', 'ok'],
+    'imp_agend' => ['Data do lançamento salva. Os rascunhos ganharam as datas novas; os comunicados já agendados mantêm a data deles: confira cada um.', 'ok'],
     'lk_ok' => ['Os links de lembretes foram para a fila. Saem por e-mail das 8h às 20h.', 'ok'],
     'lk_nada' => ['Ninguém para receber: todos os ativos com e-mail já escolheram os lembretes ou já receberam o link hoje.', 'ok'],
     'cp_ok' => ['Comunicado salvo.', 'ok'],
@@ -42,6 +43,9 @@ const PC_AVISOS = [
     'fl_ok' => ['Marcado como enviado.', 'ok'],
     'fl_pulo' => ['Mensagem tirada da fila.', 'ok'],
     'av_rep' => ['A mensagem voltou para a fila e sai na próxima rodada (das 8h às 20h).', 'ok'],
+    'av_tarde' => ['Esta mensagem não pode mais sair: era para a véspera (ou o prazo dela acabou).', 'erro'],
+    'av_parou' => ['Pedido registrado: essa pessoa não recebe mais por esse canal, e o que estava na fila foi cancelado.', 'ok'],
+    'cl_novos' => ['Pronto: os links já enviados a essa pessoa deixaram de valer. Os próximos avisos levam links novos.', 'ok'],
     'sd_ok' => ['Saída aceita: as horas desse dia já contam.', 'ok'],
     'sd_rec' => ['Saída informada recusada. O registro continua como saída esquecida, para corrigir à mão.', 'ok'],
     'ci_ok' => ['Colaboradores importados.', 'ok'],
@@ -76,7 +80,7 @@ function pc_selo_aviso(string $status): string
 
 function pc_selo_campanha(array $c): string
 {
-    $classe = ['rascunho' => 'neutro', 'agendada' => 'alerta', 'enviando' => 'alerta', 'enviada' => 'ok', 'cancelada' => 'neutro'][$c['status']] ?? 'neutro';
+    $classe = ['rascunho' => 'neutro', 'agendada' => 'alerta', 'enviando' => 'alerta', 'enviada' => 'ok', 'falhou' => 'erro', 'cancelada' => 'neutro'][$c['status']] ?? 'neutro';
     return pc_selo($classe, MCP_CAMPANHA_STATUS[$c['status']] ?? (string) $c['status']);
 }
 
@@ -173,10 +177,16 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
 {
     $agora = time();
     $semana = gmdate('Y-m-d H:i:s', $agora - 7 * 86400);
-    $stmt = mcp_db()->prepare("SELECT COALESCE(SUM(status = 'enviado' AND enviado_em >= ?), 0) AS enviados, COALESCE(SUM(status = 'falhou' AND atualizado_em >= ?), 0) AS falhas,
-        COALESCE(SUM(clicado_em >= ?), 0) AS cliques FROM mcp_avisos");
-    $stmt->execute([$semana, $semana, $semana]);
-    $n = $stmt->fetch();
+    $contar = static function (string $sql, array $params): int {
+        $stmt = mcp_db()->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    };
+    $n = [
+        'enviados' => $contar("SELECT COUNT(*) FROM mcp_avisos WHERE status = 'enviado' AND enviado_em >= ?", [$semana]),
+        'falhas' => $contar("SELECT COUNT(*) FROM mcp_avisos WHERE status = 'falhou' AND criado_em >= ?", [gmdate('Y-m-d H:i:s', $agora - 14 * 86400)]),
+        'cliques' => $contar('SELECT COUNT(*) FROM mcp_avisos WHERE criado_em >= ? AND clicado_em >= ?', [gmdate('Y-m-d H:i:s', $agora - 67 * 86400), $semana]),
+    ];
     $fila = mcp_avisos_fila_manual_contar($agora);
     $modo = mcp_whatsapp_modo();
     $numeros = '<div class="numeros">'
@@ -196,15 +206,27 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
             . 'o número pode ser bloqueado se muita gente denunciar as mensagens, e aí param também os avisos do Palácio. Mande só a quem autorizou. '
             . 'Quem responde à mensagem cai no robô do Palácio, e não aqui: se alguém pedir para parar por lá, registre em Envios (<b>Pediu para parar</b>).',
         'webhook' => 'As mensagens vão para o cenário do Make, que manda pelo WhatsApp. O retorno do Make diz se saiu.',
-        default => 'Sem a API configurada, cada mensagem vai para a <a href="painel.php?v=comunicacao&amp;aba=fila">Fila do WhatsApp</a>: você abre no WhatsApp da instituição com um toque e manda. '
-            . 'Nesse modo, os lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atrasar. Para mandar sozinho, veja docs/ponto-comunicacao.md.',
+        default => 'Hoje o WhatsApp é manual: cada mensagem entra na <a href="painel.php?v=comunicacao&amp;aba=fila">Fila do WhatsApp</a> e você manda com um toque, pelo WhatsApp da instituição. '
+            . 'Por isso os lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atrasar. Para o envio automático, fale com o suporte técnico.',
     };
+    // O WhatsApp do Palácio (Evolution) está configurado, mas só vale depois de a instituição aceitar o risco.
+    $evolucaoPendente = (string) mcp_cfg('WHATSAPP_EVOLUTION_URL', '') !== '' && !mcp_ajuste_ligado('evolution_riscos') && mcp_whatsapp_modo() !== 'cloud';
+    $rotinaEm = mcp_ajuste('rotina_em');
+    $rotinaParada = $rotinaEm !== '' && (int) strtotime($rotinaEm . ' UTC') < $agora - 45 * 60;
     $canais = '<div class="cartao"><h2>Canais</h2><ul class="contas">'
-        . '<li><span>E-mail</span><b>' . ($resend ? 'Resend' : 'servidor da hospedagem (sem a chave da Resend)') . '</b></li>'
+        . '<li><span>E-mail</span><b>' . ($resend ? 'Resend' : 'envio simples pelo servidor do site (pode cair no spam)') . '</b></li>'
         . '<li><span>Remetente</span><b>' . pn_e($remetente) . '</b></li>'
         . '<li><span>WhatsApp</span><b>' . (mcp_whatsapp_ativo() ? 'ligado · ' : 'desligado · ') . pn_e(mcp_whatsapp_modo_nome($modo)) . '</b></li>'
         . '</ul><p class="nota">' . $explicaModo . '</p>'
-        . '<p class="nota">Nada sai fora da janela das 8h às 20h (Brasília). WhatsApp só para quem autorizou, com a data registrada na ficha.</p></div>';
+        . '<p class="nota">Nada sai fora da janela das 8h às 20h (Brasília), nem véspera de feriado ou de dia sem expediente. WhatsApp só para quem autorizou, com a data registrada na ficha.</p>'
+        . ($rotinaParada ? '<p class="nota" role="alert" style="color:var(--red)"><b>A rotina parou</b>: a última rodada foi ' . pn_e(pn_data($rotinaEm)) . '. Sem ela, nada sai (nem os comprovantes das aulas). Avise o suporte técnico.</p>' : '')
+        . ($evolucaoPendente ? pc_form($usuario, 'ajustes_salvar', 0, '<input type="hidden" name="so_evolucao" value="1">'
+            . '<p class="nota" style="margin-bottom:6px"><b>O WhatsApp do Palácio Virtual está configurado, mas desligado.</b> Ele não é a API oficial do WhatsApp: se muita gente denunciar as mensagens, '
+            . 'o número pode ser bloqueado, e com ele param os avisos do Palácio. Leia os riscos em docs/ponto-comunicacao.md antes de ligar.</p>'
+            . '<label class="check pc-check"><input type="checkbox" name="evolution_riscos" value="1"><span><b>A instituição decidiu usar o WhatsApp do Palácio sabendo dos riscos</b>'
+            . '<small>Fica registrado quem marcou e quando. Mande só a quem autorizou; os pedidos de parar que chegarem ao robô do Palácio são registrados em Envios.</small></span></label>'
+            . '<div class="acoes">' . pc_botao('Registrar a decisão', 'btn-outline') . '</div>') : '')
+        . '</div>';
 
     // Lembretes automáticos.
     $vespera = pc_previa_vespera($agora);
@@ -218,10 +240,13 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
                 'Para quem escolheu os dias em que vem à sede. Amanhã (' . pn_e(mcp_avisos_dia_texto($vespera['data'])) . '): <b>' . $vespera['pessoas'] . '</b> ' . ($vespera['pessoas'] === 1 ? 'pessoa' : 'pessoas')
                 . ($vespera['sem_canal'] > 0 ? ', mais ' . $vespera['sem_canal'] . ' sem e-mail nem WhatsApp' : '') . '.')
             . $check('lembrete_saida', 'Saída não registrada, às 9h', 'Para o voluntário que entrou ontem e não registrou a saída, com o link para informar o horário. Hoje: <b>' . $saidas . '</b>.')
-            . $check('lembrete_aula', 'Aula de amanhã, às 18h (alunos)', 'Pela função aulas_do_dia da escola (precisa estar aplicada no banco da escola). '
-                . ($aulaPreparada !== '' ? 'Última lista preparada: aulas de ' . pn_e(mcp_escola_data($aulaPreparada)) . '.' : 'Ainda não preparou nenhuma lista.'))
-            . $check('aula_whatsapp', 'Lembrete da aula também pelo WhatsApp', 'Só ligue se os alunos autorizaram contato por WhatsApp na matrícula. Sem isso, o lembrete da aula vai só por e-mail.')
-            . $check('whatsapp_ativo', 'Usar o WhatsApp', 'Desligado, nada vai pelo WhatsApp (nem para a fila); tudo segue por e-mail.')
+            . $check('lembrete_aula', 'Aula de amanhã, às 18h (alunos)', 'Usa a lista de aulas da plataforma da escola. '
+                . ($aulaPreparada !== '' ? 'Última lista preparada: aulas de ' . pn_e(mcp_escola_data($aulaPreparada)) . '.' : 'Se depois das 8h continuar sem lista preparada, avise o suporte técnico.'))
+            . $check('aula_whatsapp', 'Lembrete da aula também pelo WhatsApp', 'Vale só para os alunos que autorizaram o WhatsApp na escola (a escola informa quem). Os outros recebem só por e-mail.')
+            . $check('whatsapp_ativo', 'Usar o WhatsApp', 'Se desmarcar, nada vai pelo WhatsApp (nem para a fila) e tudo segue por e-mail. O que estava esperando volta a sair se religar dentro do prazo.')
+            . '<label style="margin-top:12px">Dias sem expediente na sede (além dos feriados)<input name="dias_fechados" placeholder="24/12, 31/12" value="'
+                . pn_e(implode(', ', array_map(static fn(string $d): string => mcp_escola_data($d), mcp_avisos_dias_fechados()))) . '"></label>'
+            . '<p class="nota" style="margin-top:4px">Na véspera desses dias e dos feriados (nacionais, do estado e da cidade do Rio), o lembrete não sai.</p>'
             . '<div class="acoes">' . pc_botao('Salvar os ajustes', 'btn-red') . '</div>')
         . '</div>';
 
@@ -249,7 +274,7 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
         . '<ol class="pc-fases">' . $fases . '</ol>'
         . pc_form($usuario, 'implantacao', 0, '<div class="mini" style="max-width:none;grid-template-columns:auto auto;align-items:end;justify-content:start">'
             . '<label>Data do lançamento<input type="date" name="data" required value="' . pn_e($sugestao) . '"></label>'
-            . pc_botao($campanhas ? 'Salvar a data e recalcular os rascunhos' : 'Preparar os comunicados', 'btn-red') . '</div>')
+            . pc_botao($campanhas ? 'Salvar a data do lançamento' : 'Preparar os comunicados', 'btn-red') . '</div>')
         . '<p class="nota">Os comunicados nascem como rascunho, com o texto sugerido. Nada sai antes de você agendar.</p></div>';
 
     // Colaboradores e contatos.
@@ -272,7 +297,7 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
         . '<li><span>Com e-mail</span><b>' . $comEmail . '</b></li>'
         . '<li><span>WhatsApp autorizado</span><b>' . $comWhatsapp . '</b></li>'
         . '<li><span>Escolheram os dias da véspera</span><b>' . $comDias . '</b></li>'
-        . '<li><span>Já abriram as preferências</span><b>' . $escolheram . '</b></li></ul>'
+        . '<li><span>Com preferências definidas</span><b>' . $escolheram . '</b></li></ul>'
         . ($semContato ? '<p class="nota"><b>Sem e-mail nem WhatsApp</b> (não recebem nada): ' . implode(', ', $semContato) . '.</p>' : '')
         . pc_form($usuario, 'links_enviar', 0, '<div class="acoes">' . pc_botao('Mandar o link de lembretes a quem ainda não escolheu') . '</div>',
             ' onsubmit="return confirm(\'Mandar por e-mail o link das preferências a todos os ativos com e-mail que ainda não escolheram?\')"')
@@ -499,16 +524,21 @@ function pc_envios(string $usuario, string $aviso, string $classe): never
     foreach ($stmt->fetchAll() as $a) {
         $repetir = $a['status'] === 'falhou' && $a['tipo'] !== 'teste'
             ? pc_form($usuario, 'aviso_repetir', (int) $a['id'], pc_botao('Tentar de novo'), ' onsubmit="return confirm(\'Mandar de novo? Confira antes se a pessoa já não recebeu.\')"') : '';
+        // A pessoa respondeu "pare" (no WhatsApp da instituição, no robô do Palácio ou por e-mail): a secretaria registra.
+        $repetir .= $a['tipo'] !== 'teste' && $a['destino'] !== ''
+            ? pc_form($usuario, 'aviso_parar', (int) $a['id'], pc_botao('Pediu para parar'), ' onsubmit="return confirm(\'Registrar que esta pessoa pediu para não receber mais por este canal?\')"') : '';
+        $provedor = ['resend' => 'pela Resend', 'mail' => 'pelo servidor do site', 'manual' => 'mandado à mão', 'cloud' => 'pela API oficial', 'evolution' => 'pelo WhatsApp do Palácio',
+            'webhook' => 'pelo Make', 'email' => 'e-mail', 'fila' => ''][$a['provedor'] ?? ''] ?? (string) $a['provedor'];
         $linhas .= '<tr><td data-rotulo="Quando">' . pn_e(pn_data((string) ($a['enviado_em'] ?? $a['criado_em']))) . '</td>'
             . '<td class="aluno"><b>' . pn_e((string) $a['nome']) . '</b><small>' . pn_e(pc_destino((string) $a['canal'], (string) $a['destino'])) . '</small></td>'
-            . '<td data-rotulo="Aviso">' . pn_e(MCP_AVISOS_TIPOS[$a['tipo']] ?? $a['tipo']) . '<small>' . ($a['canal'] === 'whatsapp' ? 'WhatsApp' : 'E-mail') . ($a['provedor'] ? ' · ' . pn_e((string) $a['provedor']) : '') . '</small></td>'
+            . '<td data-rotulo="Aviso">' . pn_e(MCP_AVISOS_TIPOS[$a['tipo']] ?? $a['tipo']) . '<small>' . ($a['canal'] === 'whatsapp' ? 'WhatsApp' : 'E-mail') . ($provedor !== '' ? ' · ' . pn_e($provedor) : '') . '</small></td>'
             . '<td data-rotulo="Situação">' . pc_selo_aviso((string) $a['status']) . ($a['entrega'] ? '<small>WhatsApp: ' . pn_e(['sent' => 'enviada', 'delivered' => 'entregue', 'read' => 'lida', 'failed' => 'falhou'][$a['entrega']] ?? (string) $a['entrega']) . '</small>' : '')
             . ($a['erro'] ? '<small>' . pn_e((string) $a['erro']) . '</small>' : '') . '</td>'
             . '<td data-rotulo="Clique">' . ($a['clicado_em'] ? pn_e(pn_data((string) $a['clicado_em'])) . ((int) $a['cliques'] > 1 ? '<small>' . (int) $a['cliques'] . ' cliques</small>' : '') : '—') . '</td>'
             . '<td>' . $repetir . '</td></tr>';
     }
     $filtro = static function (string $nome, array $opcoes, string $atual) use ($tipo, $status): string {
-        $html = '<option value="">Todos</option>';
+        $html = '<option value="">' . ($nome === 'tipo' ? 'Todos os tipos' : 'Todas as situações') . '</option>';
         foreach ($opcoes as $k => $r) {
             $html .= '<option value="' . pn_e($k) . '"' . ($k === $atual ? ' selected' : '') . '>' . pn_e($r) . '</option>';
         }
@@ -518,7 +548,7 @@ function pc_envios(string $usuario, string $aviso, string $classe): never
         . '<form class="busca" method="get" action="painel.php"><input type="hidden" name="v" value="comunicacao"><input type="hidden" name="aba" value="envios">'
         . $filtro('tipo', MCP_AVISOS_TIPOS, $tipo) . $filtro('status', MCP_AVISOS_STATUS, $status) . '<button class="btn btn-outline" type="submit">Filtrar</button></form>'
         . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Quando</th><th>Pessoa</th><th>Aviso</th><th>Situação</th><th>Clique</th><th></th></tr></thead><tbody>'
-        . ($linhas !== '' ? $linhas : '<tr><td colspan="6" class="vazio">Nada por aqui.</td></tr>') . '</tbody></table></div>';
+        . ($linhas !== '' ? $linhas : '<tr><td colspan="6" class="vazio">' . ($tipo !== '' || $status !== '' ? 'Nenhuma mensagem com esses filtros. <a href="painel.php?v=comunicacao&amp;aba=envios">Limpar filtros</a>' : 'Nada por aqui.') . '</td></tr>') . '</tbody></table></div>';
     pn_pagina('Envios', $corpo, $usuario, true, 'comunicacao');
 }
 
@@ -589,7 +619,7 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
         . '<div class="numero"><b>' . pc_pct($adesao) . '</b><span>Adesão</span><small>' . $a['com_registro'] . ' de ' . $a['ativos'] . ' colaboradores ativos registraram</small>' . pc_variacao((float) ($adesao ?? 0), (float) ($adesaoAntes ?? 0)) . '</div>'
         . '<div class="numero"><b>' . $a['entradas'] . '</b><span>Entradas no ponto</span><small>em ' . $m['dias'] . ' dias</small>' . pc_variacao($a['entradas'], $p['entradas']) . '</div>'
         . '<div class="numero"><b>' . pn_e(mcp_ponto_horas_texto($a['horas_minutos'])) . '</b><span>Horas doadas</span><small>voluntários e diretoria</small>' . pc_variacao($a['horas_minutos'], $p['horas_minutos']) . '</div>'
-        . '<div class="numero' . ($a['esquecidas'] > 0 ? ' alerta' : '') . '"><b>' . pc_pct($esquecidasPct) . '</b><span>Saídas esquecidas</span><small>' . $a['esquecidas'] . ' de ' . $a['entradas_voluntario'] . ' entradas de voluntários'
+        . '<div class="numero' . ($a['esquecidas'] > 0 ? ' alerta' : '') . '"><b>' . pc_pct($esquecidasPct) . '</b><span>Saídas não registradas na hora</span><small>' . $a['esquecidas'] . ' de ' . $a['entradas_voluntario'] . ' entradas de voluntários, contando as resolvidas depois'
         . ($a['informadas'] ? ' · ' . pc_plural($a['informadas'], 'informada', 'informadas') . ' pela própria pessoa' : '') . '</small>' . pc_variacao((float) ($esquecidasPct ?? 0), (float) ($esquecidasAntes ?? 0), true) . '</div>'
         . '</div>';
     $origens = [];
@@ -614,11 +644,12 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
             . '<td data-rotulo="Enviados">' . $t['enviados'] . '<small>de ' . $t['preparados'] . ' preparados</small></td>'
             . '<td data-rotulo="Falhas">' . $t['falhas'] . ($t['fila'] ? '<small>' . $t['fila'] . ' na fila</small>' : '') . '</td>'
             . '<td data-rotulo="Clicaram">' . pc_pct(mcp_metricas_pct($t['clicados'], $t['enviados'])) . '</td>'
-            . '<td data-rotulo="Deram certo">' . $certo . '</td></tr>';
+            . '<td data-rotulo="Registraram depois">' . $certo . '</td></tr>';
     }
     $blocoLembretes = '<h2 style="margin:26px 0 6px">Lembretes e comunicados</h2>'
-        . '<p class="nota" style="margin:0 0 10px">"Deram certo": depois do lembrete da véspera, a pessoa registrou a entrada no dia; depois do aviso de saída, a saída foi informada ou corrigida; depois do lembrete da aula, o aluno confirmou presença.</p>'
-        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Aviso</th><th>Enviados</th><th>Falhas</th><th>Clicaram</th><th>Deram certo</th></tr></thead><tbody>'
+        . '<p class="nota" style="margin:0 0 10px">"Registraram depois": depois do lembrete da véspera, a pessoa registrou a entrada no dia; depois do aviso de saída, a saída foi informada ou corrigida; depois do lembrete da aula, o aluno confirmou presença. '
+        . 'Só conta o que já podia dar resultado (o dia já passou). Quem escolheu os dias talvez viesse de qualquer jeito: é um sinal, não uma prova do efeito do lembrete.</p>'
+        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Aviso</th><th>Enviados</th><th>Falhas</th><th>Clicaram</th><th>Registraram depois</th></tr></thead><tbody>'
         . ($lembretes !== '' ? $lembretes : '<tr><td colspan="5" class="vazio">Nenhum aviso preparado neste período.</td></tr>') . '</tbody></table></div>';
 
     // Opinião.
@@ -634,7 +665,7 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
         $problemas = [];
         foreach ($o['problemas'] as $k => $n) {
             if ($n > 0) {
-                $problemas[MCP_OPINIAO_PROBLEMAS[$k]] = $n;
+                $problemas[(MCP_OPINIAO_PROBLEMAS + MCP_OPINIAO_PROBLEMAS_ALUNO)[$k]] = $n;
             }
         }
         $problemas['Nenhum problema'] = $o['sem_problema'];
@@ -648,7 +679,7 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
         }
         $comentarios = '';
         foreach (array_slice($o['comentarios'], 0, 60) as $cm) {
-            $comentarios .= '<li><p class="mensagem" style="font-size:.92rem">' . pn_e($cm['texto']) . '</p><small>' . pn_e(pn_data($cm['quando'])) . ' · nota ' . $cm['facilidade']
+            $comentarios .= '<li><p class="mensagem" style="font-size:.92rem">' . pn_e($cm['texto']) . '</p><small>' . pn_e(mcp_escola_data($cm['quando'])) . ' · nota ' . $cm['facilidade']
                 . ' · ' . ($cm['publico'] === 'aluno' ? 'aluno' : pn_e((string) ($cm['vinculo'] ?? 'colaborador')))
                 . ($cm['nome'] !== null ? ' · <b>' . pn_e($cm['nome']) . '</b> (pode ser procurado: ' . pn_e((string) $cm['contato']) . ')' : ' · sem nome') . '</small></li>';
         }
@@ -667,19 +698,18 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
         $pessoas .= '<tr><td class="aluno"><a class="nome" href="painel.php?v=colaborador&amp;id=' . $l['id'] . '">' . pn_e($l['nome']) . '</a><small>' . pn_e(MCP_PONTO_VINCULOS[$l['vinculo']] ?? $l['vinculo'])
             . ($l['ativo'] ? '' : ' · inativo') . '</small></td>'
             . '<td data-rotulo="Dias">' . $l['dias'] . '</td>'
-            . '<td data-rotulo="Horas">' . ($l['voluntario'] ? pn_e(mcp_ponto_horas_texto($l['minutos'])) : '<span style="color:var(--muted)">só presença</span>') . '</td>'
-            . '<td data-rotulo="Saídas esquecidas">' . ($l['esquecidas'] ? '<span class="selo erro">' . $l['esquecidas'] . '</span>' : '0') . '</td>'
-            . '<td data-rotulo="Avisos">' . $l['avisos'] . ($l['cliques'] ? '<small>' . pc_plural($l['cliques'], 'clicado', 'clicados') . '</small>' : '') . '</td>'
-            . '<td data-rotulo="Lembretes">' . ($l['lembrete'] ? 'véspera' : '—') . ($l['whatsapp'] ? '<small>WhatsApp</small>' : '') . (!$l['contato'] ? '<small>sem contato</small>' : '') . '</td>'
-            . '<td data-rotulo="Opinião">' . ($l['opiniao'] ? 'respondeu' : '—') . '</td></tr>';
+            . '<td data-rotulo="Horas">' . pn_e(mcp_ponto_horas_texto($l['minutos'])) . '</td>'
+            . '<td data-rotulo="Saídas a completar">' . ($l['esquecidas'] ? $l['esquecidas'] : '0') . '</td>'
+            . '<td data-rotulo="Lembretes">' . ($l['lembrete'] ? 'véspera' : '—') . ($l['whatsapp'] ? '<small>WhatsApp</small>' : '') . (!$l['contato'] ? '<small>sem contato</small>' : '') . '</td></tr>';
     }
-    $blocoPessoas = '<h2 style="margin:26px 0 10px">Por pessoa <small>' . pn_e($rotuloPeriodo) . '</small></h2>'
-        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Colaborador</th><th>Dias</th><th>Horas</th><th>Saídas esquecidas</th><th>Avisos</th><th>Lembretes</th><th>Opinião</th></tr></thead><tbody>'
-        . ($pessoas !== '' ? $pessoas : '<tr><td colspan="7" class="vazio">Nenhum colaborador cadastrado.</td></tr>') . '</tbody></table></div>'
-        . '<p class="nota">A opinião aparece só como "respondeu": o conteúdo fica sem nome, a não ser de quem autorizou o contato.</p>';
+    $blocoPessoas = '<h2 style="margin:26px 0 10px">Voluntários e diretoria <small>' . pn_e($rotuloPeriodo) . '</small></h2>'
+        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Voluntário</th><th>Dias</th><th>Horas</th><th>Saídas a completar</th><th>Lembretes</th></tr></thead><tbody>'
+        . ($pessoas !== '' ? $pessoas : '<tr><td colspan="5" class="vazio">Nenhum voluntário cadastrado.</td></tr>') . '</tbody></table></div>'
+        . '<p class="nota">Por nome, sem ranking: o voluntariado não é competição. A equipe contratada fica só nos totais (presença por pessoa pareceria controle de jornada). '
+        . 'Cliques e opiniões aparecem só no total.</p>';
 
     $corpo = pc_topo('Resultados', 'Adesão ao ponto, registros, horas doadas, saídas esquecidas, efeito dos lembretes e a opinião das pessoas. Comparado com o período anterior, do mesmo tamanho.', 'resultados', $aviso, $classe,
-            '<a class="btn btn-outline" href="' . pn_e('painel.php?v=comunicacao&aba=resultados&periodo=' . $pedido . '&csv=1') . '">Baixar planilha por pessoa</a><button class="btn btn-outline" type="button" onclick="window.print()">Imprimir relatório</button>')
+            '<a class="btn btn-outline" href="' . pn_e('painel.php?v=comunicacao&aba=resultados&periodo=' . $pedido . '&csv=1') . '">Baixar planilha dos voluntários</a><button class="btn btn-outline" type="button" onclick="window.print()">Imprimir relatório</button>')
         . '<div class="filtros pc-periodo">' . $pilulas . '</div>' . $numeros . '<div class="grade-inicio">' . $registros . '</div>' . $blocoLembretes . $blocoOpiniao . $blocoPessoas;
     pn_pagina('Resultados', $corpo, $usuario, true, 'comunicacao');
 }
@@ -697,7 +727,8 @@ function pc_saidas_informadas(string $usuario): string
             . '<td data-rotulo="Entrada">' . pn_e(mcp_data_brt((string) $r['entrada'], 'H:i')) . '</td>'
             . '<td data-rotulo="Saída informada"><b>' . pn_e(mcp_data_brt((string) $r['saida_informada'], mcp_data_brt((string) $r['saida_informada'], 'Y-m-d') !== mcp_data_brt((string) $r['entrada'], 'Y-m-d') ? 'd/m H:i' : 'H:i')) . '</b>'
             . '<small>' . pn_e(mcp_ponto_horas_texto(intdiv(max(0, (int) strtotime($r['saida_informada'] . ' UTC') - (int) strtotime($r['entrada'] . ' UTC')), 60))) . ' · informada em ' . pn_e(pn_data((string) $r['saida_informada_em'])) . '</small></td>'
-            . '<td><div class="acoes" style="margin:0;gap:6px">' . pc_form($usuario, 'saida_aceitar', $id, pc_botao('Aceitar', 'btn-red'))
+            . '<td><div class="acoes" style="margin:0;gap:6px">' . pc_form($usuario, 'saida_aceitar', $id, '<input type="hidden" name="visto" value="' . pn_e((string) $r['saida_informada']) . '">'
+                . pc_botao('Aceitar', 'btn-red', ' aria-label="' . pn_e('Aceitar a saída de ' . $r['nome'] . ', ' . mcp_data_brt((string) $r['entrada'], 'd/m')) . '"'))
             . '<details class="ajustar"><summary>Recusar</summary>' . pc_form($usuario, 'saida_recusar', $id, '<div class="mini"><label>Motivo (opcional)<input name="motivo" maxlength="200" placeholder="Ex.: saiu mais cedo, confirmado com a coordenação"></label>'
                 . pc_botao('Recusar') . '</div>') . '</details></div></td></tr>';
     }
@@ -757,30 +788,37 @@ function pc_ficha_lembretes(string $usuario, array $c): string
         $marcaDia .= '<label class="check"><input type="checkbox" name="dias[]" value="' . $k . '"' . (in_array($k, $dias, true) ? ' checked' : '') . '> ' . pn_e(mb_substr($r, 0, 3)) . '</label>';
     }
     $consentimento = (int) $c['aviso_whatsapp'] === 1
-        ? 'WhatsApp autorizado em ' . pn_e(pn_data((string) $c['aviso_whatsapp_em'])) . ' por ' . pn_e((string) $c['aviso_whatsapp_por']) . '.'
+        ? 'WhatsApp autorizado em ' . pn_e(pn_data((string) $c['aviso_whatsapp_em'])) . ' por ' . pn_e((string) $c['aviso_whatsapp_por'])
+            . (!empty($c['aviso_whatsapp_como']) ? ' (' . pn_e((string) $c['aviso_whatsapp_como']) . ')' : '') . '.'
         : 'WhatsApp não autorizado.';
+    $voluntario = mcp_ponto_voluntario($c);
     $stmt = mcp_db()->prepare('SELECT * FROM mcp_avisos WHERE colaborador_id = ? ORDER BY id DESC LIMIT 8');
     $stmt->execute([$id]);
     $ultimos = '';
     foreach ($stmt->fetchAll() as $a) {
         $ultimos .= '<li><div>' . pn_e(MCP_AVISOS_TIPOS[$a['tipo']] ?? $a['tipo']) . ' · ' . ($a['canal'] === 'whatsapp' ? 'WhatsApp' : 'e-mail') . '<small>' . pn_e(pn_data((string) ($a['enviado_em'] ?? $a['criado_em'])))
-            . ($a['clicado_em'] ? ' · clicou' : '') . '</small></div>' . pc_selo_aviso((string) $a['status']) . '</li>';
+            . ($a['status'] !== 'enviado' && $a['erro'] ? ' · ' . pn_e((string) $a['erro']) : '') . '</small></div>' . pc_selo_aviso((string) $a['status']) . '</li>';
     }
     $link = (int) $c['ativo'] ? mcp_avisos_link('lembretes', 'c' . $id) : '';
     return '<div class="cartao" id="lembretes" style="margin-top:18px"><h2>Lembretes e contato</h2>'
         . '<p class="nota" style="margin-top:0">' . ($c['aviso_atualizado_em'] ? 'Última mudança em ' . pn_e(pn_data((string) $c['aviso_atualizado_em'])) . '. ' : 'A pessoa ainda não abriu as preferências. ') . $consentimento . '</p>'
         . pc_form($usuario, 'col_avisos', $id,
-            '<label>Dias em que costuma vir (lembrete na véspera, às 18h)</label><div class="pc-canais">' . $marcaDia . '</div>'
+            '<fieldset class="pc-dias"><legend>Dias em que costuma vir (lembrete na véspera, às 18h)</legend><div class="pc-canais">' . $marcaDia . '</div></fieldset>'
+            . (!$voluntario ? '<p class="nota" style="margin:4px 0 0">Para quem não é voluntário, o lembrete só sai se a própria pessoa escolher os dias pelo link, e só em dia útil '
+                . '(lembrete de presença mandado pela instituição a empregado pareceria controle de jornada).' . (($c['aviso_dias_por'] ?? null) === 'a própria pessoa' ? ' Estes dias foram escolhidos pela pessoa.' : '') . '</p>' : '')
             . '<label class="check" style="margin-top:12px"><input type="checkbox" name="email" value="1"' . ((int) $c['aviso_email'] ? ' checked' : '') . (filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? '' : ' disabled') . '> Receber por e-mail'
             . (filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? '' : ' (sem e-mail no cadastro)') . '</label>'
-            . '<label class="check"><input type="checkbox" name="whatsapp" value="1"' . ((int) $c['aviso_whatsapp'] ? ' checked' : '') . ($numero ? '' : ' disabled') . '> A pessoa autorizou receber lembretes por WhatsApp'
-            . ($numero ? ' (' . pn_e(mcp_whatsapp_mascarado($numero)) . ')' : ' (cadastre um celular com DDD)') . '</label>'
+            . '<label class="check"><input type="checkbox" name="whatsapp" value="1"' . ((int) $c['aviso_whatsapp'] ? ' checked' : '') . ($numero ? '' : ' disabled') . '> A pessoa autorizou receber os avisos do ponto por WhatsApp'
+            . ($numero ? ' no ' . pn_e(mcp_whatsapp_mascarado($numero)) : ' (cadastre um celular com DDD)') . '</label>'
+            . ((int) $c['aviso_whatsapp'] !== 1 && $numero ? '<label style="margin-top:6px">Como a pessoa autorizou (obrigatório ao marcar)<input name="como" maxlength="160" placeholder="Ex.: formulário assinado; pessoalmente na recepção"></label>' : '')
             . (mcp_ponto_voluntario($c) ? '<label class="check"><input type="checkbox" name="saida" value="1"' . ((int) $c['aviso_saida'] ? ' checked' : '') . '> Avisar quando esquecer de registrar a saída</label>' : '')
             . '<label class="check"><input type="checkbox" name="comunicados" value="1"' . ((int) $c['aviso_comunicados'] ? ' checked' : '') . '> Receber os comunicados sobre o ponto</label>'
             . '<div class="acoes">' . pc_botao('Salvar lembretes e contato', 'btn-red') . '</div>')
         . ($link !== '' ? '<div class="acoes">' . pc_form($usuario, 'col_link', $id, pc_botao('Mandar o link das preferências por e-mail'), filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? '' : ' hidden') . '</div>'
             . '<details class="ajustar"><summary>Copiar o link das preferências (vale ' . MCP_AVISOS_LINK_DIAS['lembretes'] . ' dias)</summary><input readonly value="' . pn_e($link) . '" onclick="this.select()" style="margin-top:8px;font-size:.85rem"></details>' : '')
         . ($ultimos !== '' ? '<h2 style="margin:18px 0 6px;font-size:.9rem">Últimos avisos</h2><ul class="lista-curta">' . $ultimos . '</ul>' : '')
+        . pc_form($usuario, 'col_links_novos', $id, '<div class="acoes">' . pc_botao('Invalidar os links já enviados') . '</div>',
+            ' onsubmit="return confirm(\'Os links pessoais já enviados a esta pessoa deixam de valer (use se um e-mail foi para o endereço errado). Continuar?\')"')
         . '</div>';
 }
 
@@ -791,11 +829,36 @@ function pc_post(string $sessao, string $acao, int $id): never
     $agora = time();
     switch ($acao) {
         case 'ajustes_salvar':
-            foreach (['lembrete_vespera', 'lembrete_saida', 'lembrete_aula', 'aula_whatsapp', 'whatsapp_ativo'] as $nome) {
+            // A decisão sobre o WhatsApp do Palácio vem num formulário à parte (não mexe nos outros ajustes).
+            $nomes = !empty($_POST['so_evolucao']) ? ['evolution_riscos'] : ['lembrete_vespera', 'lembrete_saida', 'lembrete_aula', 'aula_whatsapp', 'whatsapp_ativo'];
+            foreach ($nomes as $nome) {
                 $novo = !empty($_POST[$nome]) ? '1' : '0';
                 if (mcp_ajuste($nome, '0') !== $novo) {
                     mcp_ajuste_gravar($nome, $novo, $sessao);
                     mcp_registrar(null, 'painel_ajuste', "$sessao · $nome = $novo");
+                    // Lembrete desligado: o que estava na fila daquele tipo também não sai.
+                    $tipo = array_search($nome, MCP_AVISOS_AJUSTES, true);
+                    if ($novo === '0' && $tipo !== false) {
+                        mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'lembrete desligado no portal', atualizado_em = ? WHERE tipo = ? AND status IN ('pendente', 'manual')")
+                            ->execute([mcp_agora(), $tipo]);
+                    }
+                }
+            }
+            if (empty($_POST['so_evolucao'])) {
+                $fechados = [];
+                foreach (preg_split('/[\s,;]+/', mcp_texto($_POST['dias_fechados'] ?? '', 400)) ?: [] as $d) {
+                    if (preg_match('~^(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?$~', $d, $m)) {
+                        $ano = isset($m[3]) ? ((int) $m[3] < 100 ? 2000 + (int) $m[3] : (int) $m[3]) : (int) substr(mcp_ponto_hoje($agora), 0, 4);
+                        if (checkdate((int) $m[2], (int) $m[1], $ano)) {
+                            $fechados[] = sprintf('%04d-%02d-%02d', $ano, $m[2], $m[1]);
+                        }
+                    } elseif (preg_match('/^\d{4}-\d{2}-\d{2}$/', $d)) {
+                        $fechados[] = $d;
+                    }
+                }
+                $fechados = implode(',', array_values(array_unique($fechados)));
+                if (mcp_ajuste('dias_fechados') !== $fechados) {
+                    mcp_ajuste_gravar('dias_fechados', $fechados, $sessao);
                 }
             }
             pn_redirecionar('v=comunicacao&ok=aj_ok');
@@ -805,8 +868,8 @@ function pc_post(string $sessao, string $acao, int $id): never
                 pn_redirecionar('v=comunicacao');
             }
             $havia = mcp_campanhas_listar() !== [];
-            mcp_campanhas_preparar_implantacao($data, $sessao);
-            pn_redirecionar('v=comunicacao&ok=' . ($havia ? 'imp_data' : 'imp_ok') . '#implantacao');
+            $r = mcp_campanhas_preparar_implantacao($data, $sessao);
+            pn_redirecionar('v=comunicacao&ok=' . (!$havia ? 'imp_ok' : ($r['agendados'] > 0 ? 'imp_agend' : 'imp_data')) . '#implantacao');
         case 'links_enviar':
             $n = 0;
             foreach (mcp_colaboradores_listar() as $c) {
@@ -878,14 +941,41 @@ function pc_post(string $sessao, string $acao, int $id): never
             mcp_avisos_fila_marcar($id, $acao === 'fila_enviada', $sessao, $agora);
             pn_redirecionar('v=comunicacao&aba=fila&ok=' . ($acao === 'fila_enviada' ? 'fl_ok' : 'fl_pulo'));
         case 'aviso_repetir':
-            mcp_db()->prepare("UPDATE mcp_avisos SET status = 'pendente', tentativas = 0, erro = NULL, agendado_para = ?, expira_em = GREATEST(COALESCE(expira_em, ?), ?), atualizado_em = ?
+            $aviso = mcp_aviso_por_id($id);
+            // Véspera e aula valem até as 20h da véspera: depois disso, "amanhã" viraria "hoje". O prazo não se estende.
+            $prazo = $aviso ? mcp_aviso_validade($aviso, $agora) : null;
+            if ($prazo === null || (int) strtotime($prazo . ' UTC') <= $agora) {
+                pn_redirecionar('v=comunicacao&aba=envios&ok=av_tarde');
+            }
+            mcp_db()->prepare("UPDATE mcp_avisos SET status = 'pendente', tentativas = 0, erro = NULL, agendado_para = ?, expira_em = ?, atualizado_em = ?
                 WHERE id = ? AND status = 'falhou' AND tipo <> 'teste'")
-                ->execute([gmdate('Y-m-d H:i:s', $agora), gmdate('Y-m-d H:i:s', $agora + 86400), gmdate('Y-m-d H:i:s', $agora + 86400), gmdate('Y-m-d H:i:s', $agora), $id]);
+                ->execute([gmdate('Y-m-d H:i:s', $agora), $prazo, gmdate('Y-m-d H:i:s', $agora), $id]);
             mcp_registrar(null, 'painel_aviso_repetir', "#$id · $sessao");
             pn_redirecionar('v=comunicacao&aba=envios&ok=av_rep');
+        case 'aviso_parar':
+            $aviso = mcp_aviso_por_id($id);
+            if (!$aviso || $aviso['tipo'] === 'teste') {
+                pn_redirecionar('v=comunicacao&aba=envios');
+            }
+            // Quem registrou fica no evento do portal; a lista de bloqueio guarda só a origem.
+            $origem = 'secretaria';
+            if ($aviso['canal'] === 'whatsapp') {
+                mcp_whatsapp_parar(mcp_digitos((string) $aviso['destino']), $origem);
+            } elseif (!empty($aviso['colaborador_id'])) {
+                mcp_db()->prepare('UPDATE mcp_colaboradores SET aviso_email = 0, aviso_atualizado_em = ?, atualizado_em = ? WHERE id = ?')->execute([mcp_agora(), mcp_agora(), (int) $aviso['colaborador_id']]);
+                mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'pediu para parar', atualizado_em = ? WHERE colaborador_id = ? AND canal = 'email' AND status IN ('pendente', 'manual')")
+                    ->execute([mcp_agora(), (int) $aviso['colaborador_id']]);
+            } else {
+                mcp_avisos_bloquear_hash('email', mcp_avisos_hash('email', (string) $aviso['destino']), $origem);
+            }
+            mcp_registrar(null, 'painel_aviso_parar', "#$id · {$aviso['canal']} · $sessao");
+            pn_redirecionar('v=comunicacao&aba=envios&ok=av_parou');
         case 'saida_aceitar':
         case 'saida_recusar':
-            $erro = mcp_ponto_saida_decidir($id, $acao === 'saida_aceitar', $sessao, mcp_texto($_POST['motivo'] ?? '', 200), $agora);
+            // "visto": o horário que a secretaria viu na lista (sem ele, de uma página aberta antes, não confere).
+            $visto = mcp_texto($_POST['visto'] ?? '', 19);
+            $erro = mcp_ponto_saida_decidir($id, $acao === 'saida_aceitar', $sessao, mcp_texto($_POST['motivo'] ?? '', 200), $agora,
+                $acao === 'saida_aceitar' && $visto !== '' ? $visto : null);
             if ($erro !== null) {
                 $_GET = [];
                 pn_ponto($sessao, $erro, 'erro');
@@ -909,11 +999,24 @@ function pc_post(string $sessao, string $acao, int $id): never
             if (!$c) {
                 pn_redirecionar('v=ponto');
             }
+            $whatsapp = !empty($_POST['whatsapp']) && mcp_whatsapp_numero((string) $c['telefone']) !== null;
+            $como = mcp_texto($_POST['como'] ?? '', 160);
+            // A autorização do WhatsApp marcada pela secretaria precisa dizer como a pessoa autorizou (a prova do consentimento).
+            if ($whatsapp && (int) $c['aviso_whatsapp'] !== 1 && mb_strlen($como) < 4) {
+                pn_colaborador($sessao, $id, 'Diga como a pessoa autorizou o WhatsApp (ex.: formulário assinado, pessoalmente na recepção).', 'erro');
+            }
             mcp_avisos_preferencias_salvar($c, [
-                'email' => !empty($_POST['email']), 'whatsapp' => !empty($_POST['whatsapp']) && mcp_whatsapp_numero((string) $c['telefone']) !== null,
-                'dias' => (array) ($_POST['dias'] ?? []), 'saida' => !empty($_POST['saida']), 'comunicados' => !empty($_POST['comunicados']),
+                'email' => filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? !empty($_POST['email']) : (int) $c['aviso_email'] === 1, 'whatsapp' => $whatsapp,
+                'dias' => (array) ($_POST['dias'] ?? []), 'saida' => !empty($_POST['saida']), 'comunicados' => !empty($_POST['comunicados']), 'como' => $como,
             ], $sessao, false);
             pn_redirecionar('v=colaborador&id=' . $id . '&ok=ca_ok#lembretes');
+        case 'col_links_novos':
+            $c = mcp_colaborador_por_id($id);
+            if ($c) {
+                mcp_avisos_chave_colaborador($c, true);
+                mcp_registrar(null, 'painel_links_novos', "#$id · $sessao");
+            }
+            pn_redirecionar('v=colaborador&id=' . $id . '&ok=cl_novos#lembretes');
         case 'col_link':
             $c = mcp_colaborador_por_id($id);
             if (!$c || !(int) $c['ativo'] || !filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL)) {

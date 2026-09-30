@@ -79,6 +79,9 @@ return [
     // Comunicação do ponto (30/09/2026, docs/ponto-comunicacao.md). Tudo começa desligado no portal.
     // Remetente dos lembretes e comunicados. Vazio = EMAIL_REMETENTE.
     'EMAIL_REMETENTE_PONTO' => '',
+    // Feriados nacionais, do estado e da cidade do Rio (com Carnaval e Corpus Christi): sem lembrete da véspera
+    // nem da aula. '0' = a sede abre nos feriados (valem só os dias sem expediente marcados no portal).
+    'AVISOS_FERIADOS' => '',
     // WhatsApp. Sem nada aqui, o modo é o manual: as mensagens vão para a "Fila do WhatsApp" do portal.
     // As chaves WHATSAPP_* também podem ficar em api/config-whatsapp.php (só no servidor, fora do Git), para
     // não mexer neste arquivo; de lá só valem as WHATSAPP_*.

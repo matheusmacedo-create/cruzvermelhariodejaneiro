@@ -109,3 +109,9 @@ a{color:var(--red)}
 @media (max-width:420px){.av-escala{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.av-nota small{font-size:.62rem}.av-chip span{min-width:52px}}
 .pt-app{margin-top:18px;text-align:left}
 .pt-app .pt-link{display:inline;margin:0;padding:0 2px;color:var(--red);font-weight:700;font-size:.92rem}
+/* Revisão de acessibilidade (30/09/2026): o atributo hidden sempre vence; caixas de marcar não encolhem ao
+   lado de textos longos; dica do aviso na tela do ponto. */
+[hidden]{display:none!important}
+.pt-check input{flex-shrink:0}
+.pt-dica{display:block;margin-top:6px;font-size:.88rem;color:#5c3a00}
+@media (max-width:420px){.av-nota small{font-size:.8rem}}

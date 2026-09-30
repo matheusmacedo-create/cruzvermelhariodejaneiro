@@ -207,7 +207,13 @@ function mcp_citacao(string $texto): string
  * Anexos: lista de ['nome' => 'arquivo.pdf', 'conteudo' => bytes, 'tipo' => 'application/pdf'], usados
  * pelo comprovante de inscrição. O nome é saneado para ASCII antes de ir para cabeçalho.
  */
-function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null, array $anexos = []): string
+/**
+ * Manda um e-mail pela Resend (ou, sem a chave dela, pelo mail() da hospedagem). Devolve resend, mail ou
+ * falhou. $opcoes (avisos do ponto): sem_reserva (com a Resend configurada, não cai no mail() quando ela
+ * falha: devolve falhou, limite no 429 ou incerto quando o tempo acabou depois de o pedido chegar) e
+ * tempo (segundos de espera pela Resend; padrão 30).
+ */
+function mcp_enviar_email(string $para, string $assunto, string $html, string $texto, ?string $responderPara = null, ?string $remetente = null, array $anexos = [], array $opcoes = []): string
 {
     $anexos = array_values(array_filter(array_map(static fn(array $a): array => [
         'nome' => (preg_replace('/[^A-Za-z0-9._-]+/', '_', (string) ($a['nome'] ?? '')) ?: 'anexo'),
@@ -241,16 +247,20 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
             CURLOPT_POSTFIELDS => json_encode($corpo, JSON_UNESCAPED_UNICODE),
             CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $chave, 'Content-Type: application/json'],
             CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_TIMEOUT => max(1, (int) ($opcoes['tempo'] ?? 30)),
             CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (parse_url($url, PHP_URL_HOST) === '127.0.0.1' ? CURLPROTO_HTTP : 0),
         ]);
         $r = curl_exec($ch);
         $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        $esgotado = curl_errno($ch) === CURLE_OPERATION_TIMEDOUT && (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
         curl_close($ch);
-        if ($r !== false && $status < 300) {
+        if ($r !== false && $status > 0 && $status < 300) {
             return 'resend';
         }
         error_log("[matricula] Resend falhou ($status): " . mb_substr((string) $r, 0, 300));
+        if (!empty($opcoes['sem_reserva'])) {
+            return $status === 429 ? 'limite' : ($esgotado ? 'incerto' : 'falhou');
+        }
     }
     // Fallback: mail() local. Cabeçalhos só com valores da configuração ou e-mails validados.
     $enderecoRemetente = preg_match('/<([^>]+)>/', $remetente, $m) ? $m[1] : $remetente;

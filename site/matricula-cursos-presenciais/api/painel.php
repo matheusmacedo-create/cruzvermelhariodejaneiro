@@ -120,7 +120,7 @@ function pn_pagina(string $titulo, string $corpo, ?string $usuario, bool $comLis
 function pn_css(): string
 {
     return <<<'CSS'
-:root{--red:#cc0000;--red-dark:#a30000;--black:#0f1318;--text:#1a202c;--muted:#718096;--line:#e2e8f0;--soft:#f7f8fa}
+:root{--red:#cc0000;--red-dark:#a30000;--black:#0f1318;--text:#1a202c;--muted:#5f6b7a;--line:#e2e8f0;--soft:#f7f8fa}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--text);background:var(--soft);line-height:1.5}
 a{color:var(--red)}img{display:block}
 .faixa{height:5px;background:var(--red)}
@@ -147,7 +147,7 @@ h2{font-size:1.02rem;color:var(--black);margin:0 0 12px}
 .pilula .n{background:var(--soft);border-radius:999px;padding:1px 8px;font-size:.78rem}
 .tabela{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:.92rem}
-th{text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft);white-space:nowrap}
+th{text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#4a5568;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--soft);white-space:nowrap}
 td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
 tbody tr:hover td{background:#fffafa}
@@ -163,7 +163,7 @@ dd a{color:var(--red);text-decoration:none}dd a:hover{text-decoration:underline}
 label{display:block;font-weight:700;font-size:.86rem;color:var(--black);margin:14px 0 6px}
 input,textarea{width:100%;font:inherit;font-size:.98rem;padding:11px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:var(--text)}
 textarea{min-height:240px;resize:vertical;line-height:1.55}
-input:focus,textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.12)}
+input:not([type=checkbox]):not([type=radio]):focus,textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.25)}input[type=checkbox]:focus-visible,input[type=radio]:focus-visible{outline:3px solid var(--black);outline-offset:2px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 22px;font:inherit;font-weight:800;border:1.5px solid transparent;cursor:pointer;text-decoration:none;min-height:46px}
 .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-dark)}
 .btn-outline{background:#fff;border-color:var(--line);color:var(--black)}.btn-outline:hover{border-color:var(--red);color:var(--red)}

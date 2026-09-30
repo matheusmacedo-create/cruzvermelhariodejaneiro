@@ -10,8 +10,10 @@
  *   POST {acao: informar_saida, sessao, registro, hora, dia_seguinte?}  o voluntário informa a que horas saiu num
  *                                                     dia em que esqueceu a saída (a secretaria confere no portal);
  *   POST {acao: esquecer}                             tira do celular a pessoa lembrada.
- * Depois do CPF, a tela mostra também os avisos dos comunicados no ar (lib/comunicacao.php) e as saídas
- * sem registro dos últimos 7 dias, para a pessoa informar o horário ali mesmo.
+ * Depois do CPF, a tela mostra também os avisos dos comunicados no ar (lib/comunicacao.php) e, no tablet
+ * da recepção, as saídas sem registro dos últimos 7 dias, para a pessoa informar o horário ali mesmo. No
+ * celular, a única prova de identidade é o CPF (que não é segredo): lá não aparecem pendências nem links
+ * pessoais, e a saída se informa pelo link do aviso, que chega ao e-mail ou ao WhatsApp da pessoa.
  * Sem o aparelho liberado pela secretaria, cada consulta precisa da localização a até
  * PONTO_RAIO_METROS da sede.
  */
@@ -151,7 +153,7 @@ if ($acao === 'identificar') {
         'colaborador' => $colaborador ? mcp_ponto_resumo($colaborador, $agora) : null,
         'aulas' => array_map(static fn(array $a): array => pt_aula($a, $cpf, $agora), $aulas),
         'escola_indisponivel' => $escolaFora,
-        'pendencias' => $colaborador ? pt_pendencias($colaborador, $agora) : [],
+        'pendencias' => $colaborador && $aparelho ? pt_pendencias($colaborador, $agora) : [],
         'avisos' => mcp_comunicacao_avisos_ponto($colaborador, $aluno, !$aparelho, $agora),
     ]);
 }
@@ -185,6 +187,9 @@ if ($acao === 'entrada' || $acao === 'saida') {
 }
 
 if ($acao === 'informar_saida') {
+    if (($sessao['m'] ?? '') !== 'aparelho') {
+        mcp_falhar(403, 'Pelo celular, informe a saída pelo link do aviso que chega ao seu e-mail ou WhatsApp, ou use o tablet da recepção.');
+    }
     $colaborador = !empty($sessao['col']) ? mcp_colaborador_por_id((int) $sessao['col']) : null;
     if (!$colaborador || !(int) $colaborador['ativo']) {
         mcp_falhar(403, 'Este CPF não está cadastrado como colaborador. Fale com a secretaria.');

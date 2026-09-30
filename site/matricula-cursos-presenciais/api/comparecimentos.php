@@ -38,6 +38,15 @@ try {
         $a = ['falhas' => 1];
         $avisos = 'avisos: erro (' . get_class($e) . ')';
     }
+    // Faxina e manutenção: índices das tabelas antigas, IPs dos freios e o batimento da rotina (o portal
+    // avisa quando a rotina para de rodar).
+    try {
+        mcp_garantir_indices($db);
+        mcp_eventos_apagar_freios();
+        mcp_ajuste_gravar('rotina_em', gmdate('Y-m-d H:i:s'), 'rotina');
+    } catch (Throwable $e) {
+        error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
+    }
     printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s\n",
         gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, $avisos);
     exit($r['falhas'] > 0 || $a['falhas'] > 0 ? 1 : 0);

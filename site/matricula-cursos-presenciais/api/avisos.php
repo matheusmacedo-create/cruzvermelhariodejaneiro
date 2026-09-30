@@ -39,9 +39,9 @@ if (!isset($usos[$acao])) {
 $token = mcp_avisos_token_ler($usos[$acao], $corpo['t'] ?? null);
 if (!$token['ok']) {
     if (!empty($token['vencido'])) {
-        mcp_falhar(410, 'Este link venceu. Peça um novo à secretaria, ou use o link do aviso mais recente.', ['motivo' => 'vencido']);
+        mcp_falhar(410, 'Este link venceu. Peça um novo à secretaria, ou use o link do aviso mais recente.', ['motivo' => 'vencido', 'contato' => mcp_email_contato_endereco()]);
     }
-    mcp_falhar(404, 'Link inválido. Confira se ele veio inteiro, ou peça um novo à secretaria.', ['motivo' => 'invalido']);
+    mcp_falhar(404, 'Link inválido. Confira se ele veio inteiro, ou peça um novo à secretaria.', ['motivo' => 'invalido', 'contato' => mcp_email_contato_endereco()]);
 }
 if (str_ends_with($acao, '_salvar') || str_ends_with($acao, '_informar') || str_ends_with($acao, '_confirmar')) {
     [$maximo, $janela] = AV_LIMITE_SALVAR;
@@ -69,7 +69,8 @@ function av_lembretes(array $c): array
         'whatsapp_disponivel' => mcp_whatsapp_ativo(),
         'vespera_ligada' => mcp_ajuste_ligado('lembrete_vespera'),
         'saida_ligada' => mcp_ajuste_ligado('lembrete_saida'),
-        'dias_opcoes' => MCP_AVISOS_DIAS,
+        // Equipe contratada: lembrete só em dia útil (mcp_avisos_recebe_vespera).
+        'dias_opcoes' => mcp_ponto_voluntario($c) ? MCP_AVISOS_DIAS : array_intersect_key(MCP_AVISOS_DIAS, array_flip(MCP_AVISOS_DIAS_UTEIS)),
         'prefs' => [
             'email' => (int) $c['aviso_email'] === 1, 'whatsapp' => (int) $c['aviso_whatsapp'] === 1, 'dias' => mcp_avisos_dias($c['aviso_dias']),
             'saida' => (int) $c['aviso_saida'] === 1, 'comunicados' => (int) $c['aviso_comunicados'] === 1,
@@ -89,18 +90,27 @@ if ($c !== null && $acao === 'lembretes_salvar') {
         if ($numero === null) {
             mcp_falhar(422, 'Número inválido: escreva o DDD e o celular, com o 9 na frente (ex.: 21 99999-9999).', ['campo' => 'telefone']);
         }
+        // Trocar um número já cadastrado só pela secretaria: um link encaminhado não pode mandar as
+        // mensagens para o celular de outra pessoa. Quem ainda não tem celular no cadastro pode incluir.
+        $atualNumero = mcp_whatsapp_numero((string) $c['telefone']);
+        if ($atualNumero !== null && $atualNumero !== $numero) {
+            mcp_falhar(422, 'Para trocar o número do WhatsApp, fale com a secretaria.', ['campo' => 'telefone']);
+        }
         $telefone = substr($numero, 2);
     }
     if ($whatsapp && mcp_whatsapp_numero((string) $telefone) === null) {
         mcp_falhar(422, 'Para receber pelo WhatsApp, escreva o número do seu celular.', ['campo' => 'telefone']);
     }
-    $email = !empty($corpo['email']) && filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL);
+    // Sem e-mail no cadastro, a escolha do e-mail fica como estava (quando a secretaria incluir o e-mail,
+    // os avisos passam a chegar por ele).
+    $email = filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? !empty($corpo['email']) : (int) $c['aviso_email'] === 1;
     if ($telefone !== $c['telefone']) {
         mcp_registrar(null, 'aviso_telefone', '#' . $c['id'] . ' · pela pessoa · ' . mcp_whatsapp_mascarado((string) $c['telefone']) . ' → ' . mcp_whatsapp_mascarado('55' . $telefone));
     }
     mcp_avisos_preferencias_salvar($c, [
-        'email' => $email, 'whatsapp' => $whatsapp, 'telefone' => $telefone, 'dias' => (array) ($corpo['dias'] ?? []),
-        'saida' => !empty($corpo['saida']), 'comunicados' => !empty($corpo['comunicados']),
+        'email' => $email, 'whatsapp' => $whatsapp, 'telefone' => $telefone,
+        'dias' => mcp_ponto_voluntario($c) ? (array) ($corpo['dias'] ?? []) : array_intersect(mcp_avisos_dias($corpo['dias'] ?? []), MCP_AVISOS_DIAS_UTEIS),
+        'saida' => !empty($corpo['saida']), 'comunicados' => !empty($corpo['comunicados']), 'como' => 'pela página de lembretes',
     ], 'a própria pessoa', true);
     $atual = mcp_colaborador_por_id((int) $c['id']);
     $dias = mcp_avisos_dias($atual['aviso_dias']);
@@ -158,7 +168,9 @@ if ($acao === 'opiniao_ler' || $acao === 'opiniao_salvar') {
             'nome' => $ctx['primeiro_nome'],
             'publico' => $ctx['publico'],
             'opcoes' => [
-                'facilidade' => MCP_OPINIAO_FACILIDADE, 'como' => MCP_OPINIAO_COMO, 'problemas' => MCP_OPINIAO_PROBLEMAS,
+                'facilidade' => MCP_OPINIAO_FACILIDADE,
+                'como' => $ctx['publico'] === 'aluno' ? MCP_OPINIAO_COMO_ALUNO : MCP_OPINIAO_COMO,
+                'problemas' => $ctx['publico'] === 'aluno' ? MCP_OPINIAO_PROBLEMAS_ALUNO : MCP_OPINIAO_PROBLEMAS,
                 'lembretes' => $ctx['publico'] === 'colaborador' ? MCP_OPINIAO_LEMBRETES : null,
             ],
             'resposta' => $r ? [
