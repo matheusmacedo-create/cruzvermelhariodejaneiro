@@ -372,6 +372,13 @@ sem cota). As `WHATSAPP_*` podem ficar em
 `api/config-whatsapp.php`, e as `ESCOLA_*` em `api/config-escola.php`. Nenhum cron novo: a rotina do
 ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
+## Publicação
+
+Os 41 arquivos, na ordem de envio, estão em `scripts/publicacao-comunicacao.txt`; o passo a passo (cópia do
+que está no ar, envio, cache, conferência com `scripts/conferir_publicacao.sh` e como desfazer) está no
+README, seção "Lembretes, comunicados e opinião". A migração do banco é automática e só acrescenta; nada
+sai antes de a secretaria ligar os lembretes ou agendar um comunicado.
+
 ## Testes
 
 `scripts/testar_avisos_integracao.php` (185 testes, MariaDB local, servidores falsos de e-mail,

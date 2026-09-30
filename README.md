@@ -643,6 +643,30 @@ desligado no portal, em **Comunicação**.
   de um número da própria instituição e dos modelos aprovados; a única conexão de WhatsApp no Make,
   "goatlumiar", é de outra empresa e não deve ser usada); aplicar `aulas_do_dia.sql` na escola, se for
   ligar o lembrete das aulas; e, no portal, importar os colaboradores e preparar os comunicados.
+- **Publicar** (aprovado pelo Matheus em 30/09/2026): são 41 arquivos, na ordem de
+  `scripts/publicacao-comunicacao.txt` (os módulos novos antes do `lib.php`, que os carrega;
+  `site/politicas.json` fica de fora, é só a fonte das políticas). Com as credenciais TUS exportadas
+  (conector da Hostinger, `hosting_files_generate-upload-url`, conta u448697994), sem ecoá-las:
+  1. guardar o que está no ar: `scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`
+     (esperado: 28 copiados e 13 em `novos.txt`);
+  2. publicar fora da hora das rotinas (a do ponto roda a cada 15 minutos, a dos horários aos 7 de cada
+     hora): `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`;
+  3. limpar o cache (`hosting_cache_clear-website`) e rodar
+     `scripts/conferir_publicacao.sh scripts/publicacao-comunicacao.txt` até dar "Tudo certo." (estáticos
+     iguais ao repositório, API respondendo, configuração bloqueada, localização liberada só no ponto);
+  4. conferir com um Android na sede que o ponto pede a localização e registra, e no portal que a
+     Comunicação abre e a Visão geral não mostra "A rotina parou" depois de 15 minutos;
+  5. para desfazer: `RAIZ=/tmp/no-ar scripts/publicar_hostinger.sh $(find /tmp/no-ar -type f ! -name novos.txt)`
+     e `scripts/publicar_hostinger.sh --apagar $(cat /tmp/no-ar/novos.txt)`. As tabelas e colunas novas
+     podem ficar: o código antigo não as usa e nenhum INSERT dele deixa de listar as colunas.
+
+  A migração do banco é automática na primeira visita e só acrescenta (5 tabelas, 13 colunas e 3 índices
+  comuns em tabelas que já existem). Ensaiada em 30/09/2026: o esquema de `a237b7b` com dados de
+  exemplo, atualizado pela versão nova, ficou idêntico ao criado do zero (306 colunas, índices e
+  tabelas), com os dados preservados e a rotina rodando sem erro e sem enviar nada. Nenhuma função mudou de arquivo e as 270 que já existiam
+  mantêm assinaturas compatíveis, então o código no ar convive com as bibliotecas novas durante o envio.
+  Na primeira rotina, os registros de freio com mais de 2 dias e os de robôs com mais de 30 são apagados,
+  como diz a Política de Privacidade publicada junto.
 
 ## Questionário de dias e horários (29/09/2026)
 
@@ -2320,5 +2344,7 @@ site/verificar/                         página de verificação e 404 próprio 
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
 docs/rastreamento.md                    cobertura de GA4 e Pixel por página e eventos do funil da matrícula
 docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)
-scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS)
+scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS); --copiar-do-ar guarda o que está no ar, --apagar desfaz os novos
+scripts/publicacao-comunicacao.txt      os 41 arquivos da publicação dos lembretes e comunicados, na ordem de envio
+scripts/conferir_publicacao.sh          confere uma publicação no ar (estáticos, API, bloqueios, localização do ponto)
 ```
