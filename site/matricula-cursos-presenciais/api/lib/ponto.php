@@ -16,6 +16,15 @@
  *
  * Horas: conta cada par entrada–saída. Uma entrada sem saída há mais de 16 horas é uma saída
  * esquecida. Ela não conta até a secretaria corrigir no portal, e a pessoa pode registrar outra entrada.
+ *
+ * Vínculo (30/09/2026): cada vínculo tem uma regra, para a instituição ficar coberta.
+ *  - Diretoria e voluntários: horas doadas, declaração de horas e termo de adesão ao serviço
+ *    voluntário (Lei 9.608/1998). O registro serve para reconhecer as horas, nunca para cobrar horário.
+ *  - Empregados, terceirizados e outros: só a presença na sede, por segurança. Não soma horas, não tem
+ *    correção nem declaração e é apagada depois de 90 dias: não é o ponto oficial dos empregados
+ *    (Portaria MTP 671/2021) e não vira um segundo registro de jornada.
+ * A natureza de cada registro fica gravada na entrada (mcp_ponto.voluntario): mudar o vínculo depois não
+ * muda o que já foi registrado.
  */
 declare(strict_types=1);
 
@@ -39,6 +48,19 @@ const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celul
 const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [15, 600]];
 const MCP_PONTO_FUSO = 'America/Sao_Paulo';
 const MCP_PONTO_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const MCP_PONTO_VINCULOS = [
+    'voluntario' => 'Voluntário',
+    'diretoria' => 'Diretoria (voluntária)',
+    'empregado' => 'Empregado (CLT)',
+    'terceirizado' => 'Terceirizado',
+    'outro' => 'Outro (estagiário, prestador de serviço)',
+];
+/** Vínculos que somam horas doadas e assinam o termo de adesão. */
+const MCP_PONTO_VINCULOS_VOLUNTARIOS = ['voluntario', 'diretoria'];
+/** Presença de quem não é voluntário: guardada por tantos dias e depois apagada (api/comparecimentos.php). */
+const MCP_PONTO_PRESENCA_DIAS = 90;
+/** Versão do texto do termo de adesão (mcp_ponto_termo_conteudo). Mudou o texto, muda a versão. */
+const MCP_PONTO_TERMO_MODELO = '2026-09';
 
 // ----------------------------------------------------------------------------- assinatura, cifra e sessão
 function mcp_ponto_assinar(string $dados): string
@@ -345,10 +367,31 @@ function mcp_colaborador_conferir(array $f): array
     if ($telefoneBruto !== '' && $telefone === '') {
         return ['ok' => false, 'campo' => 'telefone', 'erro' => 'Telefone inválido: escreva o DDD e o número.'];
     }
+    $vinculo = mcp_texto($f['vinculo'] ?? '', 12);
+    if (!isset(MCP_PONTO_VINCULOS[$vinculo])) {
+        return ['ok' => false, 'campo' => 'vinculo', 'erro' => 'Escolha o vínculo com a instituição.'];
+    }
     return ['ok' => true, 'dados' => [
         'nome' => $nome, 'cpf' => $cpf, 'email' => $email !== '' ? $email : null, 'telefone' => $telefone !== '' ? $telefone : null,
-        'funcao' => mcp_texto($f['funcao'] ?? '', 120) ?: null, 'ativo' => !empty($f['ativo']) ? 1 : 0,
+        'funcao' => mcp_texto($f['funcao'] ?? '', 120) ?: null, 'vinculo' => $vinculo, 'ativo' => !empty($f['ativo']) ? 1 : 0,
     ]];
+}
+
+/** Diretoria e voluntários somam horas doadas; os demais vínculos registram só a presença. */
+function mcp_ponto_voluntario(array $colaborador): bool
+{
+    return in_array((string) ($colaborador['vinculo'] ?? ''), MCP_PONTO_VINCULOS_VOLUNTARIOS, true);
+}
+
+function mcp_ponto_vinculo_nome(array $colaborador): string
+{
+    return MCP_PONTO_VINCULOS[(string) ($colaborador['vinculo'] ?? '')] ?? (string) ($colaborador['vinculo'] ?? '');
+}
+
+/** Voluntário ou diretoria, ativo, sem o termo de adesão registrado. */
+function mcp_ponto_termo_pendente(array $colaborador): bool
+{
+    return mcp_ponto_voluntario($colaborador) && (int) $colaborador['ativo'] && empty($colaborador['termo_em']);
 }
 
 /** Grava o colaborador ($id null = novo). Devolve o id, ou null se o CPF já é de outra pessoa. */
@@ -360,13 +403,48 @@ function mcp_colaborador_salvar(?int $id, array $d, string $quem): ?int
     }
     $agora = mcp_agora();
     if ($id === null) {
-        mcp_db()->prepare('INSERT INTO mcp_colaboradores (nome, cpf, email, telefone, funcao, ativo, criado_por, criado_em, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-            ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['ativo'], $quem, $agora, $agora]);
+        mcp_db()->prepare('INSERT INTO mcp_colaboradores (nome, cpf, email, telefone, funcao, vinculo, ativo, criado_por, criado_em, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+            ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['vinculo'], $d['ativo'], $quem, $agora, $agora]);
         return (int) mcp_db()->lastInsertId();
     }
-    mcp_db()->prepare('UPDATE mcp_colaboradores SET nome = ?, cpf = ?, email = ?, telefone = ?, funcao = ?, ativo = ?, atualizado_em = ? WHERE id = ?')
-        ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['ativo'], $agora, $id]);
+    // Desligamento: a data fica ao desativar e sai ao reativar (vale para o prazo de guarda dos registros).
+    $antes = mcp_colaborador_por_id($id);
+    $desligado = $antes['desligado_em'] ?? null;
+    if (!$d['ativo'] && ($antes === null || (int) $antes['ativo'])) {
+        $desligado = mcp_ponto_hoje();
+    } elseif ($d['ativo']) {
+        $desligado = null;
+    }
+    mcp_db()->prepare('UPDATE mcp_colaboradores SET nome = ?, cpf = ?, email = ?, telefone = ?, funcao = ?, vinculo = ?, ativo = ?, desligado_em = ?, atualizado_em = ? WHERE id = ?')
+        ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['vinculo'], $d['ativo'], $desligado, $agora, $id]);
     return $id;
+}
+
+/**
+ * Registra (data em Brasília) ou remove ($data null) o termo de adesão assinado. Devolve a mensagem do
+ * erro, ou null. Só diretoria e voluntários assinam o termo.
+ */
+function mcp_ponto_termo_registrar(array $colaborador, ?string $data, string $quem, ?int $agora = null): ?string
+{
+    $agora ??= time();
+    if ($data !== null) {
+        if (!mcp_ponto_voluntario($colaborador)) {
+            return 'O termo de adesão é só para voluntários e diretoria.';
+        }
+        $dia = DateTimeImmutable::createFromFormat('!Y-m-d', $data, mcp_ponto_fuso());
+        if (!$dia || $dia->format('Y-m-d') !== $data) {
+            return 'Data inválida.';
+        }
+        if ($data > mcp_ponto_hoje($agora)) {
+            return 'A data da assinatura não pode ser no futuro.';
+        }
+    }
+    $antes = $colaborador['termo_em'] ?: 'sem termo';
+    mcp_db()->prepare('UPDATE mcp_colaboradores SET termo_em = ?, termo_modelo = ?, termo_registrado_por = ?, termo_registrado_em = ?, atualizado_em = ? WHERE id = ?')
+        ->execute([$data, $data !== null ? MCP_PONTO_TERMO_MODELO : null, $data !== null ? $quem : null, $data !== null ? gmdate('Y-m-d H:i:s', $agora) : null,
+            gmdate('Y-m-d H:i:s', $agora), (int) $colaborador['id']]);
+    mcp_registrar(null, 'ponto_termo', '#' . $colaborador['id'] . " · $quem · $antes → " . ($data ?? 'removido'));
+    return null;
 }
 
 // ----------------------------------------------------------------------------- entrada e saída
@@ -408,8 +486,8 @@ function mcp_ponto_registrar(array $colaborador, string $tipo, string $origem, ?
                 $pdo->rollBack();
                 return ['ok' => false, 'codigo' => 'ja_na_sede', 'erro' => 'Você já registrou a entrada às ' . mcp_data_brt($aberto['entrada'], 'H:i') . '. Para ir embora, registre a saída.'];
             }
-            $pdo->prepare('INSERT INTO mcp_ponto (colaborador_id, entrada, origem_entrada, aparelho_entrada, distancia_entrada, criado_em, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?)')
-                ->execute([(int) $colaborador['id'], $quando, $origem, $aparelhoId, $distancia, $quando, $quando]);
+            $pdo->prepare('INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, origem_entrada, aparelho_entrada, distancia_entrada, criado_em, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+                ->execute([(int) $colaborador['id'], mcp_ponto_voluntario($colaborador) ? 1 : 0, $quando, $origem, $aparelhoId, $distancia, $quando, $quando]);
             $id = (int) $pdo->lastInsertId();
         } else {
             if (!$aberto) {
@@ -434,22 +512,31 @@ function mcp_ponto_registrar(array $colaborador, string $tipo, string $origem, ?
     return ['ok' => true, 'registro' => mcp_ponto_registro($id)];
 }
 
-/** Minutos dos pares entrada–saída cuja entrada cai em [de, ate) (UTC). */
+/** Minutos doados: pares entrada–saída de voluntário cuja entrada cai em [de, ate) (UTC). */
 function mcp_ponto_minutos(int $colaboradorId, string $deUtc, string $ateUtc): int
 {
     $stmt = mcp_db()->prepare('SELECT COALESCE(SUM(TIMESTAMPDIFF(SECOND, entrada, saida)), 0) FROM mcp_ponto
-        WHERE colaborador_id = ? AND saida IS NOT NULL AND entrada >= ? AND entrada < ?');
+        WHERE colaborador_id = ? AND voluntario = 1 AND saida IS NOT NULL AND entrada >= ? AND entrada < ?');
     $stmt->execute([$colaboradorId, $deUtc, $ateUtc]);
     return intdiv((int) $stmt->fetchColumn(), 60);
 }
 
-/** O que o colaborador vê no ponto depois do CPF: se está na sede e as horas de hoje e do mês. */
+/**
+ * O que o colaborador vê no ponto depois do CPF: se está na sede e, para voluntários e diretoria, as horas
+ * doadas hoje e no mês. Para os outros vínculos, só a presença: nada de horas (horas = false).
+ */
 function mcp_ponto_resumo(array $colaborador, ?int $agora = null): array
 {
     $agora ??= time();
     $id = (int) $colaborador['id'];
     $aberto = mcp_ponto_aberto($id, $agora);
     $hoje = mcp_ponto_hoje($agora);
+    if (!mcp_ponto_voluntario($colaborador)) {
+        return [
+            'na_sede' => $aberto !== null, 'desde' => $aberto ? mcp_data_brt($aberto['entrada'], 'H:i') : null, 'horas' => false,
+            'agora' => null, 'hoje' => null, 'mes' => null, 'mes_nome' => null, 'termo_pendente' => false,
+        ];
+    }
     [$diaDe, $diaAte] = mcp_ponto_periodo_utc($hoje, (new DateTimeImmutable($hoje))->modify('+1 day')->format('Y-m-d'));
     [$mesIni, $mesFim] = mcp_ponto_mes_dias(substr($hoje, 0, 7));
     [$mesDe, $mesAte] = mcp_ponto_periodo_utc($mesIni, $mesFim);
@@ -459,22 +546,31 @@ function mcp_ponto_resumo(array $colaborador, ?int $agora = null): array
     return [
         'na_sede' => $aberto !== null,
         'desde' => $aberto ? mcp_data_brt($aberto['entrada'], 'H:i') : null,
+        'horas' => true,
         'agora' => $aberto ? mcp_ponto_horas_texto($abertoMin) : null,
         'hoje' => mcp_ponto_horas_texto($hojeMin),
         'mes' => mcp_ponto_horas_texto($mesMin),
         'mes_nome' => mcp_ponto_mes_nome(substr($hoje, 0, 7)),
+        'termo_pendente' => empty($colaborador['termo_em']),
     ];
 }
 
 // ----------------------------------------------------------------------------- portal: relatórios e correções
-/** Registros com entrada em [de, ate) (UTC), de todos ou de um colaborador, em ordem. */
-function mcp_ponto_registros(string $deUtc, string $ateUtc, ?int $colaboradorId = null): array
+/**
+ * Registros com entrada em [de, ate) (UTC), de todos ou de um colaborador, em ordem. $voluntario filtra
+ * pela natureza do registro (true = horas doadas, false = só presença, null = todos).
+ */
+function mcp_ponto_registros(string $deUtc, string $ateUtc, ?int $colaboradorId = null, ?bool $voluntario = null): array
 {
-    $sql = 'SELECT p.*, c.nome, c.funcao FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id WHERE p.entrada >= ? AND p.entrada < ?';
+    $sql = 'SELECT p.*, c.nome, c.funcao, c.vinculo FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id WHERE p.entrada >= ? AND p.entrada < ?';
     $params = [$deUtc, $ateUtc];
     if ($colaboradorId !== null) {
         $sql .= ' AND p.colaborador_id = ?';
         $params[] = $colaboradorId;
+    }
+    if ($voluntario !== null) {
+        $sql .= ' AND p.voluntario = ?';
+        $params[] = $voluntario ? 1 : 0;
     }
     $stmt = mcp_db()->prepare($sql . ' ORDER BY p.entrada, p.id');
     $stmt->execute($params);
@@ -493,15 +589,20 @@ function mcp_ponto_esquecido(array $r, int $agora): bool
 }
 
 /**
- * Horas de um período por colaborador: ativos (mesmo sem horas) e inativos com horas no período.
- * Os dias são contados no calendário de Brasília.
+ * Horas doadas de um período por colaborador: ativos (mesmo sem horas) e inativos com registro no
+ * período. Só os registros de voluntário contam horas, dias e saídas esquecidas; voluntario diz a regra
+ * do vínculo atual (horas ou só presença). Os dias são contados no calendário de Brasília.
  */
 function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora = null): array
 {
     $agora ??= time();
     [$de, $ate] = mcp_ponto_periodo_utc($deIso, $ateIsoExclusivo);
     $por = [];
-    foreach (mcp_ponto_registros($de, $ate) as $r) {
+    $presentes = [];
+    foreach (mcp_ponto_registros($de, $ate, null, false) as $r) {
+        $presentes[(int) $r['colaborador_id']] = true;
+    }
+    foreach (mcp_ponto_registros($de, $ate, null, true) as $r) {
         $c = (int) $r['colaborador_id'];
         $por[$c] ??= ['segundos' => 0, 'dias' => [], 'esquecidas' => 0];
         if ($r['saida'] !== null) {
@@ -523,12 +624,13 @@ function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora
     foreach (mcp_colaboradores_listar() as $col) {
         $id = (int) $col['id'];
         $x = $por[$id] ?? null;
-        if (!(int) $col['ativo'] && $x === null) {
+        if (!(int) $col['ativo'] && $x === null && !isset($presentes[$id])) {
             continue;
         }
         $linhas[] = $col + [
             'minutos' => intdiv($x['segundos'] ?? 0, 60), 'dias' => count($x['dias'] ?? []), 'esquecidas' => $x['esquecidas'] ?? 0,
             'ultima' => $ultimas[$id] ?? null, 'aberto' => $abertos[$id] ?? null,
+            'voluntario' => mcp_ponto_voluntario($col), 'termo_pendente' => mcp_ponto_termo_pendente($col),
         ];
     }
     return $linhas;
@@ -537,18 +639,41 @@ function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora
 /** Quem está na sede agora (entrada sem saída nas últimas 16 horas), por ordem de chegada. */
 function mcp_ponto_na_sede(?int $agora = null): array
 {
-    $stmt = mcp_db()->prepare('SELECT p.*, c.nome, c.funcao FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id
+    $stmt = mcp_db()->prepare('SELECT p.*, c.nome, c.funcao, c.vinculo FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id
         WHERE p.saida IS NULL AND p.entrada > ? ORDER BY p.entrada');
     $stmt->execute([mcp_ponto_limite_aberto($agora ?? time())]);
     return $stmt->fetchAll();
 }
 
-/** Saídas esquecidas (entrada sem saída há mais de 16 horas), em qualquer mês: pedem correção. */
+/**
+ * Saídas esquecidas de voluntário (entrada sem saída há mais de 16 horas), em qualquer mês: pedem
+ * correção. As de quem registra só presença não contam hora nenhuma e não pedem nada.
+ */
 function mcp_ponto_esquecidas_contar(?int $agora = null): int
 {
-    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_ponto WHERE saida IS NULL AND entrada <= ?');
+    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_ponto WHERE voluntario = 1 AND saida IS NULL AND entrada <= ?');
     $stmt->execute([mcp_ponto_limite_aberto($agora ?? time())]);
     return (int) $stmt->fetchColumn();
+}
+
+/** Voluntários e diretoria ativos sem o termo de adesão registrado. */
+function mcp_ponto_termos_pendentes_contar(): int
+{
+    $marcas = implode(',', array_fill(0, count(MCP_PONTO_VINCULOS_VOLUNTARIOS), '?'));
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_colaboradores WHERE ativo = 1 AND termo_em IS NULL AND vinculo IN ($marcas)");
+    $stmt->execute(MCP_PONTO_VINCULOS_VOLUNTARIOS);
+    return (int) $stmt->fetchColumn();
+}
+
+/**
+ * Apaga a presença de quem não é voluntário registrada há mais de 90 dias (rotina de
+ * api/comparecimentos.php). Devolve quantos registros saíram.
+ */
+function mcp_ponto_presencas_apagar_antigas(?int $agora = null): int
+{
+    $stmt = mcp_db()->prepare('DELETE FROM mcp_ponto WHERE voluntario = 0 AND entrada < ?');
+    $stmt->execute([gmdate('Y-m-d H:i:s', ($agora ?? time()) - MCP_PONTO_PRESENCA_DIAS * 86400)]);
+    return $stmt->rowCount();
 }
 
 /**
@@ -616,7 +741,7 @@ function mcp_ponto_lancar(int $colaboradorId, string $entradaUtc, string $saidaU
         return $erro;
     }
     $quando = mcp_agora();
-    mcp_db()->prepare("INSERT INTO mcp_ponto (colaborador_id, entrada, saida, origem_entrada, origem_saida, ajuste, criado_em, atualizado_em) VALUES (?, ?, ?, 'portal', 'portal', ?, ?, ?)")
+    mcp_db()->prepare("INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, saida, origem_entrada, origem_saida, ajuste, criado_em, atualizado_em) VALUES (?, 1, ?, ?, 'portal', 'portal', ?, ?, ?)")
         ->execute([$colaboradorId, $entradaUtc, $saidaUtc, mcp_ponto_nota_ajuste(null, $quem, "lançou à mão: $motivo"), $quando, $quando]);
     $id = (int) mcp_db()->lastInsertId();
     mcp_registrar(null, 'ponto_lancado', "#$id · colaborador $colaboradorId · $quem · $motivo");
@@ -639,10 +764,10 @@ function mcp_ponto_csv(array $registros, ?int $agora = null): string
 {
     $agora ??= time();
     $f = fopen('php://temp', 'w+');
-    fputcsv($f, ['Data (Brasília)', 'Colaborador', 'Função', 'Entrada', 'Saída', 'Horas', 'Registro da entrada', 'Registro da saída', 'Ajustes'], ';', '"', '');
+    fputcsv($f, ['Data (Brasília)', 'Colaborador', 'Vínculo', 'Função', 'Entrada', 'Saída', 'Horas', 'Registro da entrada', 'Registro da saída', 'Ajustes'], ';', '"', '');
     foreach ($registros as $r) {
         fputcsv($f, array_map('mcp_horarios_celula', [
-            mcp_data_brt($r['entrada'], 'd/m/Y'), $r['nome'], (string) $r['funcao'], mcp_data_brt($r['entrada'], 'H:i'),
+            mcp_data_brt($r['entrada'], 'd/m/Y'), $r['nome'], mcp_ponto_vinculo_nome($r), (string) $r['funcao'], mcp_data_brt($r['entrada'], 'H:i'),
             $r['saida'] !== null
                 ? (mcp_data_brt($r['saida'], 'd/m/Y') !== mcp_data_brt($r['entrada'], 'd/m/Y') ? mcp_data_brt($r['saida'], 'd/m H:i') : mcp_data_brt($r['saida'], 'H:i'))
                 : (mcp_ponto_esquecido($r, $agora) ? 'saída esquecida' : 'na sede'),
@@ -661,7 +786,8 @@ function mcp_ponto_csv(array $registros, ?int $agora = null): string
 // ----------------------------------------------------------------------------- declaração de horas voluntárias
 /**
  * Emite (ou reaproveita, se nada mudou) a declaração de horas de um período e devolve a linha gravada,
- * com o código de verificação. Período em datas de Brasília, [de, ate].
+ * com o código de verificação. Período em datas de Brasília, [de, ate]. Só conta os registros de
+ * voluntário e cita o termo de adesão; quem chama confere antes que o termo está registrado.
  */
 function mcp_ponto_declaracao_emitir(array $colaborador, string $deIso, string $ateIso, string $quem, ?int $agora = null): array
 {
@@ -669,21 +795,22 @@ function mcp_ponto_declaracao_emitir(array $colaborador, string $deIso, string $
     [$de, $ate] = mcp_ponto_periodo_utc($deIso, $proximo);
     $segundos = 0;
     $dias = [];
-    foreach (mcp_ponto_registros($de, $ate, (int) $colaborador['id']) as $r) {
+    foreach (mcp_ponto_registros($de, $ate, (int) $colaborador['id'], true) as $r) {
         if ($r['saida'] !== null) {
             $segundos += mcp_ponto_segundos($r);
             $dias[mcp_data_brt($r['entrada'], 'Y-m-d')] = true;
         }
     }
     $minutos = intdiv($segundos, 60);
+    $termo = $colaborador['termo_em'] ?: null;
     $stmt = mcp_db()->prepare('SELECT * FROM mcp_declaracoes_horas WHERE colaborador_id = ? AND de = ? AND ate = ? AND minutos = ? AND dias = ?
-        AND nome = ? AND cpf = ? AND COALESCE(funcao, \'\') = ? ORDER BY id DESC LIMIT 1');
-    $stmt->execute([(int) $colaborador['id'], $deIso, $ateIso, $minutos, count($dias), $colaborador['nome'], $colaborador['cpf'], (string) $colaborador['funcao']]);
+        AND nome = ? AND cpf = ? AND COALESCE(funcao, \'\') = ? AND termo_em <=> ? ORDER BY id DESC LIMIT 1');
+    $stmt->execute([(int) $colaborador['id'], $deIso, $ateIso, $minutos, count($dias), $colaborador['nome'], $colaborador['cpf'], (string) $colaborador['funcao'], $termo]);
     if ($existente = $stmt->fetch()) {
         return $existente;
     }
-    mcp_db()->prepare('INSERT INTO mcp_declaracoes_horas (codigo, colaborador_id, nome, cpf, funcao, de, ate, minutos, dias, emitida_por, emitida_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        ->execute([mcp_codigo_novo(), (int) $colaborador['id'], $colaborador['nome'], $colaborador['cpf'], $colaborador['funcao'], $deIso, $ateIso, $minutos, count($dias), $quem,
+    mcp_db()->prepare('INSERT INTO mcp_declaracoes_horas (codigo, colaborador_id, nome, cpf, funcao, de, ate, minutos, dias, termo_em, emitida_por, emitida_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        ->execute([mcp_codigo_novo(), (int) $colaborador['id'], $colaborador['nome'], $colaborador['cpf'], $colaborador['funcao'], $deIso, $ateIso, $minutos, count($dias), $termo, $quem,
             gmdate('Y-m-d H:i:s', $agora ?? time())]);
     $stmt = mcp_db()->prepare('SELECT * FROM mcp_declaracoes_horas WHERE id = ?');
     $stmt->execute([(int) mcp_db()->lastInsertId()]);
@@ -709,6 +836,7 @@ function mcp_ponto_declaracao_conteudo(array $d, ?string $agoraUtc = null): arra
     $horas = mcp_ponto_horas_extenso((int) $d['minutos']);
     $codigo = mcp_codigo_formatado((string) $d['codigo']);
     $emitida = mcp_data_brt((string) $d['emitida_em'], 'd/m/Y \à\s H\hi');
+    $termo = !empty($d['termo_em']) ? mcp_escola_data((string) $d['termo_em']) : null;
     return [
         'titulo' => 'DECLARAÇÃO DE HORAS VOLUNTÁRIAS',
         'subtitulo' => 'Trabalho voluntário na sede da ' . MCP_NOME_FILIAL,
@@ -718,13 +846,15 @@ function mcp_ponto_declaracao_conteudo(array $d, ?string $agoraUtc = null): arra
         'cpf' => "CPF: $cpf",
         'texto' => "Declaramos, para os devidos fins, que $nome, CPF $cpf, prestou serviço voluntário na " . MCP_NOME_FILIAL
             . ($funcao !== '' ? ", na função de $funcao," : '') . " somando $horas de atividades na sede da instituição $periodo, "
-            . 'conforme os registros de entrada e saída do ponto da sede.',
+            . 'conforme os registros de entrada e saída do ponto da sede.'
+            . ($termo !== null ? " O serviço foi prestado nos termos da Lei nº 9.608/1998 e do termo de adesão assinado em $termo, sem vínculo empregatício." : ''),
         'secao' => 'HORAS REGISTRADAS',
         'linhas' => array_values(array_filter([
             ['Período', $d['de'] === $d['ate'] ? $de : "$de a $ate"],
             $funcao !== '' ? ['Função', $funcao] : null,
             ['Dias com registro', (string) (int) $d['dias']],
             ['Total de horas', mcp_ponto_horas_texto((int) $d['minutos'])],
+            $termo !== null ? ['Termo de adesão', "assinado em $termo"] : null,
             ['Local', 'Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ'],
         ])),
         'local_data' => 'Rio de Janeiro, ' . mcp_data_extenso(mcp_data_brt((string) $d['emitida_em'], 'Y-m-d')) . '.',
@@ -740,4 +870,80 @@ function mcp_ponto_declaracao_conteudo(array $d, ?string $agoraUtc = null): arra
 function mcp_ponto_declaracao_arquivo(array $d): string
 {
     return mcp_nome_arquivo('Declaracao de Horas Voluntarias ' . mcp_nome_proprio((string) $d['nome']) . ' ' . $d['de'] . ($d['de'] !== $d['ate'] ? ' a ' . $d['ate'] : ''));
+}
+
+// ----------------------------------------------------------------------------- termo de adesão (Lei 9.608/1998)
+/** A entidade como aparece nos documentos com valor jurídico (a mesma da Política de Privacidade). */
+const MCP_PONTO_ENTIDADE = 'Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro, CNPJ 08.560.973/0001-97, com sede na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ, CEP 20230-130';
+
+/**
+ * Conteúdo do termo de adesão ao serviço voluntário, preenchido com os dados do cadastro (sem desenho:
+ * é o que os testes conferem). A data e as assinaturas ficam em branco, para a via impressa; a
+ * secretaria registra no portal a data em que foi assinado. Mudou o texto, muda MCP_PONTO_TERMO_MODELO.
+ * O modelo deve passar pela revisão do jurídico da instituição antes do primeiro uso.
+ */
+function mcp_ponto_termo_conteudo(array $colaborador, ?string $agoraUtc = null): array
+{
+    $nome = mcp_nome_proprio((string) $colaborador['nome']);
+    $cpf = mcp_cpf_formatado((string) $colaborador['cpf']);
+    $funcao = trim((string) $colaborador['funcao']);
+    $contatos = array_values(array_filter([
+        !empty($colaborador['email']) ? 'e-mail ' . $colaborador['email'] : null,
+        !empty($colaborador['telefone']) ? 'telefone ' . mcp_telefone_bonito((string) $colaborador['telefone']) : null,
+    ]));
+    $gerado = mcp_data_brt($agoraUtc ?? mcp_agora(), 'd/m/Y');
+    $lei = 'Lei nº 9.608/1998';
+    return [
+        'titulo' => 'TERMO DE ADESÃO AO SERVIÇO VOLUNTÁRIO',
+        'subtitulo' => 'Lei nº 9.608, de 18 de fevereiro de 1998',
+        'assunto' => "Termo de adesão ao serviço voluntário de $nome",
+        'nome' => $nome,
+        'partes' => [
+            ['ENTIDADE', MCP_PONTO_ENTIDADE . ', representada na forma do seu estatuto.'],
+            ['VOLUNTÁRIO(A)', "$nome, CPF $cpf" . ($contatos ? ', ' . implode(', ', $contatos) : '') . '.'],
+        ],
+        'abertura' => "As partes acima celebram este Termo de Adesão ao Serviço Voluntário, nos termos da $lei, com as cláusulas a seguir.",
+        'clausulas' => [
+            ['1. Objeto', 'O(A) VOLUNTÁRIO(A) prestará serviço voluntário à ENTIDADE' . ($funcao !== '' ? ", na função de $funcao," : '')
+                . ' em atividades de interesse humanitário e social ligadas às finalidades da instituição, conforme a orientação da coordenação responsável.'],
+            ['2. Natureza do serviço', 'O serviço é prestado de forma espontânea e gratuita, sem remuneração de qualquer espécie, e não gera vínculo '
+                . "empregatício nem obrigação de natureza trabalhista, previdenciária ou afim, conforme o art. 1º, parágrafo único, da $lei."],
+            ['3. Dias e horários', 'As atividades são realizadas nos dias e horários combinados entre as partes, de acordo com a disponibilidade do(a) '
+                . 'VOLUNTÁRIO(A), que avisa a coordenação quando não puder comparecer a uma atividade combinada.'],
+            ['4. Registro das horas', 'O(A) VOLUNTÁRIO(A) registra a chegada e a saída no ponto da sede. O registro serve para reconhecer as horas doadas, '
+                . 'emitir a declaração de horas voluntárias a pedido do(a) VOLUNTÁRIO(A) e prestar contas do trabalho voluntário, inclusive na contabilidade '
+                . 'da ENTIDADE. Não serve para remuneração, controle de jornada ou punição.'],
+            ['5. Despesas', 'O(A) VOLUNTÁRIO(A) pode ser ressarcido(a) das despesas que comprovadamente realizar no desempenho das atividades, desde que '
+                . "autorizadas antes, por escrito, pela ENTIDADE, conforme o art. 3º da $lei. O ressarcimento não tem natureza de remuneração."],
+            ['6. Compromissos do(a) voluntário(a)', 'Respeitar os Princípios Fundamentais do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho '
+                . '(Humanidade, Imparcialidade, Neutralidade, Independência, Voluntariado, Unidade e Universalidade), o estatuto, as normas internas e as '
+                . 'orientações de segurança da ENTIDADE; zelar pelos materiais e equipamentos que usar; usar o nome e o emblema da Cruz Vermelha só nas '
+                . 'atividades autorizadas; e manter sigilo sobre as informações e os dados pessoais de terceiros a que tiver acesso, que só podem ser usados '
+                . 'nas atividades do voluntariado.'],
+            ['7. Compromissos da entidade', 'Orientar o(a) VOLUNTÁRIO(A) sobre as atividades e os cuidados de segurança, oferecer as condições necessárias '
+                . 'para realizá-las e emitir, a pedido, a declaração das horas registradas.'],
+            ['8. Dados pessoais', 'A ENTIDADE trata os dados do(a) VOLUNTÁRIO(A) (nome, CPF, contatos, função e os horários registrados no ponto da sede) '
+                . 'para executar este Termo, cumprir obrigações legais e contábeis e garantir a segurança da sede, na forma da Lei nº 13.709/2018 (LGPD) e '
+                . 'da Política de Privacidade publicada em cruzvermelhariodejaneiro.org/privacidade. Os registros são guardados enquanto durar o voluntariado '
+                . 'e por até 5 anos depois do seu fim.'],
+            ['9. Vigência e desligamento', 'Este Termo vale por prazo indeterminado, a partir da assinatura, e pode ser encerrado por qualquer das partes a '
+                . 'qualquer tempo, por simples comunicação, sem ônus para nenhuma delas.'],
+            ['10. Voluntário(a) com menos de 18 anos', 'Neste caso, este Termo é assinado também pelo responsável legal, que autoriza a participação nas atividades.'],
+            ['11. Foro', 'Fica eleito o foro da Comarca da Capital do Estado do Rio de Janeiro para resolver qualquer questão sobre este Termo.'],
+        ],
+        'fecho' => 'E, por estarem de acordo, as partes assinam este Termo em duas vias de igual teor.',
+        'local_data' => 'Rio de Janeiro, ______ de ________________________ de ________.',
+        'assinaturas' => [
+            ['VOLUNTÁRIO(A)', "$nome · CPF $cpf"],
+            ['PELA ENTIDADE', 'Nome e cargo:'],
+            ['RESPONSÁVEL LEGAL (se o voluntário tiver menos de 18 anos)', 'Nome e CPF:'],
+        ],
+        'rodape' => 'Termo de adesão ao serviço voluntário · modelo ' . MCP_PONTO_TERMO_MODELO . " · gerado em $gerado · $nome",
+    ];
+}
+
+/** "Termo_de_Adesao_Voluntario_Joao_da_Silva.pdf" */
+function mcp_ponto_termo_arquivo(array $colaborador): string
+{
+    return mcp_nome_arquivo('Termo de Adesao Voluntario ' . mcp_nome_proprio((string) $colaborador['nome']));
 }

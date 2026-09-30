@@ -220,3 +220,143 @@ function mcp_declaracao_desenhar(array $c, float $f): array
     }
     return [$pdf, $y + (count($rodape) - 1) * 11.5];
 }
+
+// ----------------------------------------------------------------------------- termo de adesão (várias páginas)
+/**
+ * PDF do termo de adesão ao serviço voluntário (conteúdo de mcp_ponto_termo_conteudo): cabeçalho da
+ * instituição na primeira página, as partes, as cláusulas (que seguem na página seguinte quando não
+ * cabem), a data e as assinaturas em branco para a via impressa. Cada página leva no rodapé o modelo, o
+ * nome do voluntário e "Página X de Y"; as que não são a última têm o espaço das rubricas.
+ */
+function mcp_termo_pdf(array $c): string
+{
+    [, $total] = mcp_termo_desenhar($c, 0);
+    [$pdf] = mcp_termo_desenhar($c, $total);
+    return $pdf->gerar();
+}
+
+/** @return array{0: McpPdf, 1: int} o PDF e o número de páginas ($total 0 = ainda não se sabe) */
+function mcp_termo_desenhar(array $c, int $total): array
+{
+    $pdf = new McpPdf();
+    $pdf->metadados($c['titulo'] . ' — ' . $c['nome'], MCP_NOME_FILIAL, $c['assunto']);
+    $esq = MCP_CP_MARGEM;
+    $dir = McpPdf::LARGURA - MCP_CP_MARGEM;
+    $largura = $dir - $esq;
+    $limite = McpPdf::ALTURA - 86;  // linha de base mais baixa do texto, acima das rubricas e do rodapé
+    $passo = 14.4;
+    $tam = 10.2;
+    $pagina = 1;
+
+    $rodape = static function (bool $ultima) use ($pdf, $c, $esq, $dir, $total, &$pagina): void {
+        $base = McpPdf::ALTURA - 34;
+        if (!$ultima) {
+            $rubricas = 'Rubricas: ________________________';
+            $pdf->texto($dir - McpPdf::larguraTexto($rubricas, 'normal', 8.6), $base - 32, $rubricas, 'normal', 8.6, MCP_CP_CINZA);
+        }
+        $pdf->linha($esq, $base - 14, $dir, $base - 14, MCP_CP_FIO, 0.8);
+        $numero = $total > 0 ? "Página $pagina de $total" : "Página $pagina";
+        $larguraNumero = McpPdf::larguraTexto($numero, 'normal', 8.4);
+        $linhas = McpPdf::quebrar($c['rodape'], 'normal', 8.4, $dir - $esq - $larguraNumero - 24);
+        $pdf->texto($esq, $base, $linhas[0] . (count($linhas) > 1 ? '…' : ''), 'normal', 8.4, MCP_CP_CINZA);
+        $pdf->texto($dir - $larguraNumero, $base, $numero, 'normal', 8.4, MCP_CP_CINZA);
+    };
+    // Página seguinte: faixa, o título pequeno e o fio. Devolve a linha de base de onde o texto continua.
+    $virar = static function () use ($pdf, $c, $esq, $dir, $rodape, &$pagina): float {
+        $rodape(false);
+        $pdf->novaPagina();
+        $pagina++;
+        $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
+        $pdf->texto($esq, 38, $c['titulo'], 'negrito', 8.6, MCP_CP_CINZA, 0.9);
+        $pdf->linha($esq, 50, $dir, 50, MCP_CP_FIO, 0.8);
+        return 64.0;
+    };
+    // Uma linha de texto $avanco abaixo da anterior, virando a página se não couber.
+    $y = 0.0;
+    $linha = static function (string $texto, string $estilo, float $avanco) use ($pdf, $esq, $tam, $limite, $virar, &$y): void {
+        if ($y + $avanco > $limite) {
+            $y = $virar() + min($avanco, 14.4);  // no alto da página nova, sem o espaço entre parágrafos
+        } else {
+            $y += $avanco;
+        }
+        $pdf->texto($esq, $y, $texto, $estilo, $tam, MCP_CP_TEXTO);
+    };
+
+    // Cabeçalho da primeira página, igual ao das declarações: faixa, logo e fio.
+    $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
+    $logoL = 345.0;
+    $logoA = $logoL * 398 / 1325;
+    $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, 44 - 0.0427 * $logoA, $logoL, $logoA);
+    $pdf->linha($esq, 158, $dir, 158, MCP_CP_FIO, 0.8);
+    $pdf->texto($esq, 194, $c['titulo'], 'negrito', 17, MCP_CP_TEXTO, 0.4);
+    $pdf->texto($esq, 214, $c['subtitulo'], 'normal', 11, MCP_CP_CINZA);
+
+    // As partes, na caixa cinza com a faixa vermelha (como a caixa da pessoa nas declarações).
+    $topo = 232.0;
+    $partes = [];
+    $fundo = $topo;
+    foreach ($c['partes'] as [$rotulo, $texto]) {
+        $linhas = McpPdf::quebrar($texto, 'normal', $tam, $dir - 18 - MCP_CP_ROTULO_X);
+        $partes[] = [$rotulo, $linhas];
+        $fundo += 22 + 15 + (count($linhas) - 1) * $passo;
+    }
+    $altura = $fundo - $topo + 16;
+    $pdf->retanguloArredondado($esq, $topo, 13, $altura, [7, 0, 0, 7], MCP_CP_VERMELHO);
+    $pdf->retanguloArredondado($esq + 5, $topo, $largura - 5, $altura, [0, 7, 7, 0], MCP_CP_CAIXA);
+    $yy = $topo;
+    foreach ($partes as [$rotulo, $linhas]) {
+        $yy += 22;
+        $pdf->texto(MCP_CP_ROTULO_X, $yy, $rotulo, 'negrito', 8.6, MCP_CP_CINZA, 0.9);
+        $yy += 15 - $passo;
+        foreach ($linhas as $l) {
+            $yy += $passo;
+            $pdf->texto(MCP_CP_ROTULO_X, $yy, $l, 'normal', $tam, MCP_CP_TEXTO);
+        }
+    }
+    $y = $topo + $altura;
+
+    // Abertura e cláusulas. O título da cláusula não fica sozinho no pé da página: vai com duas linhas.
+    foreach (McpPdf::quebrar($c['abertura'], 'normal', $tam, $largura) as $i => $l) {
+        $linha($l, 'normal', $i === 0 ? 26 : $passo);
+    }
+    foreach ($c['clausulas'] as [$titulo, $texto]) {
+        $linhas = McpPdf::quebrar($texto, 'normal', $tam, $largura);
+        if ($y + 10 + $passo * (1 + min(2, count($linhas))) > $limite) {
+            $y = $virar();
+        } else {
+            $y += 10;
+        }
+        $linha($titulo, 'negrito', $passo);
+        foreach ($linhas as $l) {
+            $linha($l, 'normal', $passo);
+        }
+    }
+
+    // Fecho, local e data em branco e as assinaturas, sempre juntos.
+    $fecho = McpPdf::quebrar($c['fecho'], 'normal', $tam, $largura);
+    $colunaL = ($largura - 40) / 2;
+    $precisa = 20 + count($fecho) * $passo + 24 + 58 + 34 + 64 + 34;
+    if ($y + $precisa > McpPdf::ALTURA - 60) {
+        $y = $virar();
+    }
+    foreach ($fecho as $i => $l) {
+        $linha($l, 'normal', $i === 0 ? 20 : $passo);
+    }
+    $linha($c['local_data'], 'normal', 24);
+    $assinar = static function (float $x, float $yLinha, array $a, float $l) use ($pdf): void {
+        $pdf->linha($x, $yLinha, $x + $l, $yLinha, MCP_CP_TEXTO, 0.7);
+        $pdf->texto($x, $yLinha + 14, $a[0], 'negrito', 8.2, MCP_CP_CINZA, 0.6);
+        foreach (McpPdf::quebrar($a[1], 'normal', 9.4, $l) as $i => $parte) {
+            $pdf->texto($x, $yLinha + 27 + $i * 12, $parte, 'normal', 9.4, MCP_CP_TEXTO);
+        }
+    };
+    $y += 58;
+    $assinar($esq, $y, $c['assinaturas'][0], $colunaL);
+    $assinar($esq + $colunaL + 40, $y, $c['assinaturas'][1], $colunaL);
+    if (isset($c['assinaturas'][2])) {
+        $y += 34 + 64;
+        $assinar($esq, $y, $c['assinaturas'][2], $colunaL);
+    }
+    $rodape(true);
+    return [$pdf, $pagina];
+}

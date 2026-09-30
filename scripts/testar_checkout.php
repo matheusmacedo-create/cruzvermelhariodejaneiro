@@ -671,6 +671,49 @@ verificar('declaração de horas: PDF de uma página', [str_starts_with($pdfHora
 $nomeLongo = mcp_presenca_pdf(['nome' => str_repeat('Maria Aparecida ', 8) . 'Santos', 'curso_nome' => str_repeat('Curso de nome comprido ', 6)] + $presencaTeste, '2026-10-23 01:07:00');
 verificar('comprovante de comparecimento: nome e curso longos cabem numa página', substr_count($nomeLongo, '/Type /Page ') + substr_count($nomeLongo, '/Type/Page '), 1);
 
+// Vínculo e termo de adesão (30/09/2026): quem soma horas, o texto do termo e o PDF de várias páginas.
+$formColaborador = ['nome' => 'Maria da Silva', 'cpf' => '529.982.247-25', 'ativo' => 1];
+verificar('colaborador: vínculo obrigatório e só da lista', [
+    mcp_colaborador_conferir($formColaborador)['campo'] ?? null,
+    mcp_colaborador_conferir(['vinculo' => 'chefe'] + $formColaborador)['campo'] ?? null,
+    mcp_colaborador_conferir(['vinculo' => 'diretoria'] + $formColaborador)['dados']['vinculo'] ?? null,
+], ['vinculo', 'vinculo', 'diretoria']);
+verificar('vínculo: diretoria e voluntários somam horas; os outros, só presença', array_map(static fn(string $v): bool => mcp_ponto_voluntario(['vinculo' => $v]), array_keys(MCP_PONTO_VINCULOS)),
+    [true, true, false, false, false]);
+verificar('vínculo: termo pendente só para voluntário ativo sem termo', [
+    mcp_ponto_termo_pendente(['vinculo' => 'voluntario', 'ativo' => 1, 'termo_em' => null]),
+    mcp_ponto_termo_pendente(['vinculo' => 'voluntario', 'ativo' => 1, 'termo_em' => '2026-09-01']),
+    mcp_ponto_termo_pendente(['vinculo' => 'voluntario', 'ativo' => 0, 'termo_em' => null]),
+    mcp_ponto_termo_pendente(['vinculo' => 'empregado', 'ativo' => 1, 'termo_em' => null]),
+], [true, false, false, false]);
+$voluntarioTeste = ['id' => 7, 'nome' => 'JOÃO PEDRO DA SILVA', 'cpf' => '11144477735', 'email' => 'joao@exemplo.org', 'telefone' => '21988887777',
+    'funcao' => 'Socorrista voluntário', 'vinculo' => 'voluntario', 'ativo' => 1, 'termo_em' => null];
+$termo = mcp_ponto_termo_conteudo($voluntarioTeste, '2026-09-30 13:00:00');
+$textoTermo = implode(' ', array_map(static fn(array $c): string => $c[1], $termo['clausulas']));
+verificar('termo: partes com a entidade (CNPJ) e o voluntário (CPF e contatos)', [$termo['partes'][0][1], $termo['partes'][1][1]], [
+    'Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro, CNPJ 08.560.973/0001-97, com sede na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ, CEP 20230-130, representada na forma do seu estatuto.',
+    'João Pedro da Silva, CPF 111.444.777-35, e-mail joao@exemplo.org, telefone (21) 98888-7777.']);
+verificar('termo: objeto com a função e cláusulas da Lei 9.608/1998', [
+    str_contains($termo['clausulas'][0][1], 'na função de Socorrista voluntário,'),
+    str_contains($textoTermo, 'não gera vínculo empregatício nem obrigação de natureza trabalhista, previdenciária ou afim, conforme o art. 1º, parágrafo único, da Lei nº 9.608/1998'),
+    str_contains($textoTermo, 'conforme o art. 3º da Lei nº 9.608/1998'),
+    str_contains($textoTermo, 'Não serve para remuneração, controle de jornada ou punição.'),
+    str_contains($textoTermo, 'Lei nº 13.709/2018 (LGPD)'),
+    count($termo['clausulas']), $termo['assinaturas'][0][1],
+], [true, true, true, true, true, 11, 'João Pedro da Silva · CPF 111.444.777-35']);
+verificar('termo: sem função e sem contatos', [mcp_ponto_termo_conteudo(['funcao' => '', 'email' => null, 'telefone' => null] + $voluntarioTeste)['partes'][1][1],
+    str_contains(mcp_ponto_termo_conteudo(['funcao' => ''] + $voluntarioTeste)['clausulas'][0][1], 'função')], ['João Pedro da Silva, CPF 111.444.777-35.', false]);
+verificar('termo: rodapé com o modelo, a data e o nome; arquivo', [$termo['rodape'], mcp_ponto_termo_arquivo($voluntarioTeste)],
+    ['Termo de adesão ao serviço voluntário · modelo ' . MCP_PONTO_TERMO_MODELO . ' · gerado em 30/09/2026 · João Pedro da Silva', 'Termo_de_Adesao_Voluntario_Joao_Pedro_da_Silva.pdf']);
+$pdfTermo = mcp_termo_pdf($termo);
+verificar('termo: PDF de duas páginas', [str_starts_with($pdfTermo, '%PDF-1.'), substr_count($pdfTermo, '/Type /Page '), str_contains($pdfTermo, '/Count 2 ')], [true, 2, true]);
+$termoLongo = mcp_termo_pdf(mcp_ponto_termo_conteudo(['nome' => str_repeat('Maria Aparecida ', 8) . 'Santos', 'funcao' => str_repeat('Função de nome comprido ', 8)] + $voluntarioTeste));
+verificar('termo: nome e função longos continuam na página seguinte', in_array(substr_count($termoLongo, '/Type /Page '), [2, 3], true), true);
+$declaracaoComTermo = mcp_ponto_declaracao_conteudo(['termo_em' => '2026-08-12'] + $declaracaoTeste);
+verificar('declaração: cita a Lei 9.608/1998 e o termo de adesão', [str_ends_with($declaracaoComTermo['texto'],
+    'O serviço foi prestado nos termos da Lei nº 9.608/1998 e do termo de adesão assinado em 12/08/2026, sem vínculo empregatício.'), $declaracaoComTermo['linhas'][4]],
+    [true, ['Termo de adesão', 'assinado em 12/08/2026']]);
+
 unlink($configTeste);
 unlink($configEscola);
 printf("%d testes, %d falhas\n", $total, $falhas);

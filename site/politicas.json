@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão. Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-09-27",
+  "revisao": "2026-09-30",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -188,6 +188,18 @@
                     "dados": "Os dados que você informa no formulário do voluntariado, que fica no serviço Spotform (form.spotform.com.br).",
                     "finalidade": "A equipe do voluntariado entrar em contato e organizar a formação. O WhatsApp (21) 97036-0264 é exclusivo dessa equipe.",
                     "base": "Procedimentos preliminares à adesão ao serviço voluntário, a seu pedido (art. 7º, V)."
+                  },
+                  {
+                    "titulo": "Ponto da sede: voluntários, diretoria e equipe",
+                    "dados": "Nome, CPF, vínculo com a instituição, função, e-mail e telefone (opcionais), a data do termo de adesão ao serviço voluntário, os horários de entrada e saída, o aparelho usado e, no celular, a distância até a sede. A localização do celular só confirma que a pessoa está na sede e não é guardada.",
+                    "finalidade": "Para voluntários e diretoria: reconhecer as horas doadas, emitir a declaração de horas e prestar contas do trabalho voluntário, inclusive na contabilidade. Para empregados, terceirizados e outros vínculos: saber quem está na sede, por segurança, sem somar horas. O registro nunca serve para cobrar horário de voluntário.",
+                    "base": "Execução do termo de adesão ao serviço voluntário (art. 7º, V); cumprimento de obrigação legal e regulatória, na contabilidade (art. 7º, II); legítimo interesse na segurança da sede (art. 7º, IX); exercício regular de direitos (art. 7º, VI)."
+                  },
+                  {
+                    "titulo": "Presença nas aulas presenciais",
+                    "dados": "CPF, e o nome e o e-mail que a plataforma da escola tem do aluno, o curso, o dia e o horário da aula, a hora da chegada e o aparelho usado ou, no celular, a distância até a sede.",
+                    "finalidade": "Emitir o comprovante de comparecimento e enviá-lo por e-mail quando a aula termina. Quem recebe o comprovante pode conferir se ele é verdadeiro pelo código impresso: a conferência mostra o nome, o CPF mascarado, o curso, a aula e o local.",
+                    "base": "Execução de contrato (art. 7º, V)."
                   }
                 ]
               },
@@ -209,7 +221,7 @@
               {
                 "lista": [
                   "**ÚnicoPag**, que processa os pagamentos: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
-                  "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso.",
+                  "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso; no ponto da sede, o CPF e a data, para saber as aulas do aluno naquele dia.",
                   "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
                   "**Resend**, que envia os e-mails (comprovantes, protocolos do chat e newsletter). Na falta dele, os e-mails saem pelo servidor da hospedagem.",
                   "**Vercel e Supabase**, que hospedam o sistema que publica as notícias e guarda a lista da newsletter.",
@@ -255,6 +267,9 @@
                   "**Chat:** enquanto for útil para acompanhar o atendimento. Você pode pedir a exclusão a qualquer momento.",
                   "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
                   "**Registros de segurança (IP):** junto com o envio a que se referem.",
+                  "**Ponto da sede, de voluntários e diretoria:** enquanto durar o voluntariado e por até 5 anos depois do fim, para comprovar as horas doadas e a natureza voluntária do serviço.",
+                  "**Presença na sede de empregados, terceirizados e outros vínculos:** 90 dias. Depois, é apagada automaticamente.",
+                  "**Presença nas aulas e comprovantes de comparecimento:** pelo mesmo prazo da matrícula.",
                   "**Cookies:** pelo prazo de cada um, listado na [Política de Cookies]({cookies})."
                 ]
               },
@@ -396,6 +411,18 @@
                     "dados": "The data you enter in the volunteer form, hosted on the Spotform service (form.spotform.com.br).",
                     "finalidade": "So the volunteering team can contact you and organise your training. The WhatsApp number (21) 97036-0264 belongs to that team only.",
                     "base": "Steps prior to joining the volunteer service, at your request (Art. 7, V)."
+                  },
+                  {
+                    "titulo": "Headquarters time clock: volunteers, board and staff",
+                    "dados": "Name, CPF, relationship with the organisation, role, e-mail and phone number (optional), the date of the volunteer service agreement, the check-in and check-out times, the device used and, on a phone, the distance to the headquarters. The phone's location only confirms that the person is at the headquarters and is not stored.",
+                    "finalidade": "For volunteers and board members: to recognise the hours donated, issue the hours statement and account for volunteer work, including in the accounts. For employees, contractors and other relationships: to know who is at the headquarters, for safety, without adding up hours. The record is never used to demand hours from a volunteer.",
+                    "base": "Performance of the volunteer service agreement (Art. 7, V); compliance with legal and regulatory obligations, in the accounts (Art. 7, II); legitimate interest in the safety of the headquarters (Art. 7, IX); regular exercise of rights (Art. 7, VI)."
+                  },
+                  {
+                    "titulo": "Attendance at in-person classes",
+                    "dados": "CPF, and the name and e-mail the school platform holds for the student, the course, the day and time of the class, the arrival time and the device used or, on a phone, the distance to the headquarters.",
+                    "finalidade": "To issue the attendance certificate and send it by e-mail when the class ends. Whoever receives the certificate can check that it is genuine with the printed code: the check shows the name, the masked CPF, the course, the class and the place.",
+                    "base": "Performance of a contract (Art. 7, V)."
                   }
                 ]
               },
@@ -417,7 +444,7 @@
               {
                 "lista": [
                   "**ÚnicoPag**, which processes payments: name, CPF, e-mail and phone number and, for cards, the card details.",
-                  "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access.",
+                  "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access; at the headquarters time clock, the CPF and the date, to find the student's classes that day.",
                   "**Hostinger**, which hosts the site, the forms and their database.",
                   "**Resend**, which sends the e-mails (receipts, chat reference numbers and the newsletter). If it is unavailable, e-mails go out through the hosting server.",
                   "**Vercel and Supabase**, which host the system that publishes the news and keeps the newsletter list.",
@@ -463,6 +490,9 @@
                   "**Chat:** for as long as it is useful to follow up the exchange. You can ask for deletion at any time.",
                   "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
                   "**Security records (IP):** together with the submission they relate to.",
+                  "**Headquarters time clock, for volunteers and board members:** while the volunteering lasts and for up to 5 years after it ends, to prove the hours donated and the voluntary nature of the service.",
+                  "**Presence of employees, contractors and other relationships at the headquarters:** 90 days. After that, it is deleted automatically.",
+                  "**Class attendance and attendance certificates:** for the same period as the enrolment.",
                   "**Cookies:** for the period of each one, listed in the [Cookie Policy]({cookies})."
                 ]
               },
@@ -604,6 +634,18 @@
                     "dados": "Los datos que usted informa en el formulario del voluntariado, alojado en el servicio Spotform (form.spotform.com.br).",
                     "finalidade": "Que el equipo de voluntariado se ponga en contacto y organice la formación. El WhatsApp (21) 97036-0264 es exclusivo de ese equipo.",
                     "base": "Pasos previos a la adhesión al servicio voluntario, a su pedido (art. 7, V)."
+                  },
+                  {
+                    "titulo": "Control de asistencia de la sede: voluntarios, directiva y equipo",
+                    "dados": "Nombre, CPF, vínculo con la institución, función, correo y teléfono (opcionales), la fecha del acuerdo de adhesión al servicio voluntario, los horarios de entrada y salida, el aparato usado y, en el celular, la distancia hasta la sede. La ubicación del celular solo confirma que la persona está en la sede y no se guarda.",
+                    "finalidade": "Para voluntarios y directiva: reconocer las horas donadas, emitir la declaración de horas y rendir cuentas del trabajo voluntario, incluso en la contabilidad. Para empleados, tercerizados y otros vínculos: saber quién está en la sede, por seguridad, sin sumar horas. El registro nunca sirve para exigir horario a un voluntario.",
+                    "base": "Ejecución del acuerdo de adhesión al servicio voluntario (art. 7, V); cumplimiento de obligación legal y regulatoria, en la contabilidad (art. 7, II); interés legítimo en la seguridad de la sede (art. 7, IX); ejercicio regular de derechos (art. 7, VI)."
+                  },
+                  {
+                    "titulo": "Asistencia a las clases presenciales",
+                    "dados": "CPF, y el nombre y el correo que la plataforma de la escuela tiene del alumno, el curso, el día y el horario de la clase, la hora de llegada y el aparato usado o, en el celular, la distancia hasta la sede.",
+                    "finalidade": "Emitir el comprobante de asistencia y enviarlo por correo cuando termina la clase. Quien recibe el comprobante puede verificar que es auténtico con el código impreso: la verificación muestra el nombre, el CPF enmascarado, el curso, la clase y el lugar.",
+                    "base": "Ejecución de contrato (art. 7, V)."
                   }
                 ]
               },
@@ -625,7 +667,7 @@
               {
                 "lista": [
                   "**ÚnicoPag**, que procesa los pagos: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
-                  "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso.",
+                  "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso; en el control de asistencia de la sede, el CPF y la fecha, para saber las clases del alumno ese día.",
                   "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",
                   "**Resend**, que envía los correos (comprobantes, protocolos del chat y el boletín). Si no está disponible, los correos salen por el servidor del alojamiento.",
                   "**Vercel y Supabase**, que alojan el sistema que publica las noticias y guarda la lista del boletín.",
@@ -671,6 +713,9 @@
                   "**Chat:** mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.",
                   "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
                   "**Registros de seguridad (IP):** junto con el envío al que se refieren.",
+                  "**Control de asistencia de la sede, de voluntarios y directiva:** mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.",
+                  "**Presencia en la sede de empleados, tercerizados y otros vínculos:** 90 días. Después, se elimina automáticamente.",
+                  "**Asistencia a las clases y comprobantes de asistencia:** por el mismo plazo de la matrícula.",
                   "**Cookies:** por el plazo de cada una, indicado en la [Política de Cookies]({cookies})."
                 ]
               },
@@ -763,7 +808,7 @@
             "blocos": [
               {
                 "lista": [
-                  "**Necessários (sempre ligados):** fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.",
+                  "**Necessários (sempre ligados):** fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat, o aparelho da recepção liberado para o ponto da sede, quem pediu para ser lembrado no ponto pelo celular e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.",
                   "**Estatística (desligados até você ligar):** o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.",
                   "**Marketing (desligados até você ligar):** o Pixel da Meta mede o alcance das nossas campanhas no Facebook e no Instagram."
                 ]
@@ -805,8 +850,22 @@
                       "mcp_painel e mcp_painel_assinatura",
                       "Necessário (só equipe)",
                       "Este site",
-                      "Sessão e assinatura da equipe no painel de respostas do chat",
+                      "Sessão e assinatura da equipe no portal da secretaria",
                       "12 horas e 12 meses"
+                    ],
+                    [
+                      "mcp_ponto_aparelho",
+                      "Necessário (só equipe)",
+                      "Este site",
+                      "Identifica o aparelho da recepção liberado pela secretaria para o ponto da sede",
+                      "400 dias"
+                    ],
+                    [
+                      "mcp_ponto_pessoa",
+                      "Necessário (só se você pedir)",
+                      "Este site",
+                      "No ponto da sede pelo celular, lembra quem marcou “Lembrar de mim neste celular” (o CPF vai cifrado)",
+                      "180 dias"
                     ],
                     [
                       "Cookies de login do Palácio Virtual",
@@ -921,7 +980,7 @@
             "blocos": [
               {
                 "lista": [
-                  "**Necessary (always on):** keep the site working. They store your cookie choice, the progress of the chat conversation and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.",
+                  "**Necessary (always on):** keep the site working. They store your cookie choice, the progress of the chat conversation, the reception device authorised for the headquarters time clock, who asked to be remembered on the time clock on their phone and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.",
                   "**Statistics (off until you turn them on):** Google Analytics counts visits and shows which pages are read, without identifying you by name.",
                   "**Marketing (off until you turn them on):** the Meta Pixel measures the reach of our campaigns on Facebook and Instagram."
                 ]
@@ -963,8 +1022,22 @@
                       "mcp_painel and mcp_painel_assinatura",
                       "Necessary (staff only)",
                       "This site",
-                      "Staff session and signature in the chat reply panel",
+                      "Staff session and signature in the office portal",
                       "12 hours and 12 months"
+                    ],
+                    [
+                      "mcp_ponto_aparelho",
+                      "Necessary (staff only)",
+                      "This site",
+                      "Identifies the reception device the office authorised for the headquarters time clock",
+                      "400 days"
+                    ],
+                    [
+                      "mcp_ponto_pessoa",
+                      "Necessary (only if you ask)",
+                      "This site",
+                      "On the headquarters time clock by phone, remembers who ticked “Remember me on this phone” (the CPF is encrypted)",
+                      "180 days"
                     ],
                     [
                       "Palácio Virtual login cookies",
@@ -1079,7 +1152,7 @@
             "blocos": [
               {
                 "lista": [
-                  "**Necesarias (siempre activas):** hacen que el sitio funcione. Guardan su elección sobre cookies, el progreso de la conversación del chat y, para el equipo, la sesión de los paneles internos. No dependen de permiso, porque sin ellas el sitio no puede hacer lo que usted pidió.",
+                  "**Necesarias (siempre activas):** hacen que el sitio funcione. Guardan su elección sobre cookies, el progreso de la conversación del chat, el aparato de la recepción autorizado para el control de asistencia de la sede, quién pidió ser recordado en el control de asistencia por el celular y, para el equipo, la sesión de los paneles internos. No dependen de permiso, porque sin ellas el sitio no puede hacer lo que usted pidió.",
                   "**Estadística (desactivadas hasta que las active):** Google Analytics cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.",
                   "**Marketing (desactivadas hasta que las active):** el Píxel de Meta mide el alcance de nuestras campañas en Facebook e Instagram."
                 ]
@@ -1121,8 +1194,22 @@
                       "mcp_painel y mcp_painel_assinatura",
                       "Necesaria (solo el equipo)",
                       "Este sitio",
-                      "Sesión y firma del equipo en el panel de respuestas del chat",
+                      "Sesión y firma del equipo en el portal de la secretaría",
                       "12 horas y 12 meses"
+                    ],
+                    [
+                      "mcp_ponto_aparelho",
+                      "Necesaria (solo el equipo)",
+                      "Este sitio",
+                      "Identifica el aparato de la recepción que la secretaría autorizó para el control de asistencia de la sede",
+                      "400 días"
+                    ],
+                    [
+                      "mcp_ponto_pessoa",
+                      "Necesaria (solo si usted lo pide)",
+                      "Este sitio",
+                      "En el control de asistencia de la sede por el celular, recuerda a quien marcó “Recordarme en este celular” (el CPF va cifrado)",
+                      "180 días"
                     ],
                     [
                       "Cookies de acceso del Palácio Virtual",

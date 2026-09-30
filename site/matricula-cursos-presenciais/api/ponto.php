@@ -4,7 +4,8 @@
  *   GET                                               modo (aparelho da sede ou celular) e pessoa lembrada;
  *   POST {acao: identificar, cpf?, posicao?, lembrar?}  confere o CPF (no celular, também a localização) e
  *        devolve o colaborador e as aulas de hoje, com a sessão cifrada de 3 minutos;
- *   POST {acao: entrada|saida, sessao}                registra o ponto do colaborador;
+ *   POST {acao: entrada|saida, sessao}                registra o ponto do colaborador (horas doadas para
+ *                                                     voluntários e diretoria; só presença para os outros vínculos);
  *   POST {acao: presenca, sessao, aula}               registra a chegada do aluno à aula;
  *   POST {acao: esquecer}                             tira do celular a pessoa lembrada.
  * Sem o aparelho liberado pela secretaria, cada consulta precisa da localização a até
@@ -132,12 +133,15 @@ if ($acao === 'entrada' || $acao === 'saida') {
         mcp_falhar(409, $r['erro'], ['codigo' => $r['codigo']]);
     }
     $hora = mcp_data_brt((string) $r['registro'][$acao], 'H:i');
+    // Horas só para voluntários e diretoria; para os outros vínculos, o ponto registra só a presença.
+    $horas = (int) $r['registro']['voluntario'] === 1;
     mcp_json([
         'ok' => true,
         'registrado' => $acao,
         'hora' => $hora,
-        'mensagem' => $acao === 'entrada' ? "Entrada registrada às $hora." : "Saída registrada às $hora. Obrigado pelas horas doadas!",
-        'duracao' => $acao === 'saida' ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
+        'mensagem' => $acao === 'entrada' ? "Entrada registrada às $hora."
+            : ($horas ? "Saída registrada às $hora. Obrigado pelas horas doadas!" : "Saída registrada às $hora. Até a próxima!"),
+        'duracao' => $acao === 'saida' && $horas ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
         'colaborador' => mcp_ponto_resumo($colaborador, $agora),
     ]);
 }

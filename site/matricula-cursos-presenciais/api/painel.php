@@ -6,9 +6,10 @@
  *     com o histórico e o lembrete de horários à mão (lib/secretaria.php);
  *   - Horários dos alunos (?v=horarios): mapa por curso, lista e planilha (lib/horarios.php);
  *   - Mensagens do chat (?v=mensagens): lista, detalhe e resposta por e-mail no padrão da instituição;
- *   - Ponto da sede (?v=ponto): horas dos colaboradores, com a ficha de cada um (?v=colaborador&id=),
- *     correções e declaração de horas; presença dos alunos nas aulas; aparelhos da recepção e o cartaz
- *     do QR code (lib/ponto.php e lib/presenca.php);
+ *   - Ponto da sede (?v=ponto): horas doadas por voluntários e diretoria e presença dos outros vínculos,
+ *     com a ficha de cada um (?v=colaborador&id=): termo de adesão, correções e declaração de horas;
+ *     presença dos alunos nas aulas; aparelhos da recepção e o cartaz do QR code (lib/ponto.php e
+ *     lib/presenca.php);
  *   - Plataforma da escola: link externo.
  *
  * Acesso (lib/painel.php): pelo link assinado que vai no aviso à equipe (abre só aquele contato) ou por
@@ -77,7 +78,7 @@ function pn_menu(string $aba): string
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
         'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
-        'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar(), 'saídas esquecidas'],
+        'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar(), 'pendências (saídas esquecidas e termos de adesão)'],
     ];
     $html = '';
     foreach ($itens as $chave => [$href, $rotulo, $n, $explica]) {
@@ -245,7 +246,11 @@ label.check{display:flex;gap:10px;align-items:center;font-weight:600}label.check
 .na-sede{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .na-sede li{background:#e9f7ef;color:#0f5132;border-radius:999px;padding:6px 12px;font-size:.88rem;font-weight:600}
 .historico{max-width:440px;overflow-wrap:anywhere}td small.dia{white-space:nowrap}
-.campo-erro input{border-color:var(--red);box-shadow:0 0 0 3px rgba(204,0,0,.1)}
+.campo-erro input,.campo-erro select{border-color:var(--red);box-shadow:0 0 0 3px rgba(204,0,0,.1)}
+select.campo{width:100%;font:inherit;font-size:.98rem;padding:11px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:var(--text)}
+select.campo:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.12)}
+h2 small{font-weight:600;font-size:.8rem;color:var(--muted);margin-left:6px}
+.cartao.termo.pendente{border-left:4px solid #b45309}.cartao.termo.ok{border-left:4px solid #0f7b3e}
 @media(max-width:640px){.topo .linha{flex-wrap:wrap;row-gap:4px}.topo .linha small{display:none}
 .topo .usuario{flex-basis:100%;margin-left:0;text-align:left}.cartao{padding:18px 16px}
 .mapa td.celula{padding:10px 2px;font-size:.95rem}.mapa th small{font-size:.66rem}}
@@ -448,10 +453,12 @@ function pn_inicio(string $usuario): never
     }
 
     $naSede = count(mcp_ponto_na_sede());
+    $termos = mcp_ponto_termos_pendentes_contar();
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Portal da secretaria · ' . pn_e(mcp_data_brt(mcp_agora(), 'd/m/Y')) . '</p><h1>Início</h1>'
         . '<p class="nota">O que pede ação agora e o que chegou por último. Clique num número para ver a lista.</p></div></div>'
         . $numeros
         . ($naSede > 0 ? '<p class="faltam"><a href="painel.php?v=ponto#na-sede">' . $naSede . ($naSede > 1 ? ' colaboradores estão' : ' colaborador está') . ' na sede agora →</a></p>' : '')
+        . ($termos > 0 ? '<p class="faltam"><a href="painel.php?v=ponto#voluntarios">' . $termos . ($termos > 1 ? ' voluntários ainda não têm' : ' voluntário ainda não tem') . ' o termo de adesão registrado →</a></p>' : '')
         . '<div class="grade-inicio"><div class="cartao"><h2>Últimas inscrições pagas</h2>'
         . ($ultimas !== '' ? '<ul class="lista-curta">' . $ultimas . '</ul>' : '<p class="nota">Nenhuma inscrição paga ainda.</p>')
         . '<p class="nota"><a href="painel.php?v=inscricoes">Ver todas as inscrições →</a></p></div>'
@@ -657,16 +664,25 @@ function pn_navegar_mes(string $base, string $mes): string
 function pn_ponto_selo(array $linha): string
 {
     if ($linha['aberto']) {
-        return '<span class="selo ok">Na sede desde ' . pn_e(mcp_data_brt((string) $linha['aberto']['entrada'], 'H:i')) . '</span>';
+        $selo = '<span class="selo ok">Na sede desde ' . pn_e(mcp_data_brt((string) $linha['aberto']['entrada'], 'H:i')) . '</span>';
+    } elseif ((int) $linha['esquecidas'] > 0) {
+        $n = (int) $linha['esquecidas'];
+        $selo = '<span class="selo erro">' . $n . ($n > 1 ? ' saídas esquecidas' : ' saída esquecida') . '</span>';
+    } elseif (!(int) $linha['ativo']) {
+        $selo = '<span class="selo neutro">Inativo</span>';
+    } else {
+        $selo = '';
     }
-    $n = (int) $linha['esquecidas'];
-    if ($n > 0) {
-        return '<span class="selo erro">' . $n . ($n > 1 ? ' saídas esquecidas' : ' saída esquecida') . '</span>';
+    if (!empty($linha['termo_pendente'])) {
+        $selo .= ($selo !== '' ? ' ' : '') . '<span class="selo alerta">Termo pendente</span>';
     }
-    return (int) $linha['ativo'] ? '<span style="color:var(--muted)">—</span>' : '<span class="selo neutro">Inativo</span>';
+    return $selo !== '' ? $selo : '<span style="color:var(--muted)">—</span>';
 }
 
-/** Ponto da sede: horas dos colaboradores no mês (aba padrão), alunos nas aulas e aparelhos. */
+/**
+ * Ponto da sede: horas doadas por voluntários e diretoria no mês (aba padrão) e presença dos outros
+ * vínculos, que não soma horas; alunos nas aulas; aparelhos.
+ */
 function pn_ponto(string $usuario, string $aviso = '', string $classe = 'ok'): never
 {
     $aba = mcp_texto($_GET['aba'] ?? '', 20);
@@ -683,46 +699,66 @@ function pn_ponto(string $usuario, string $aviso = '', string $classe = 'ok'): n
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="ponto-da-sede-' . $mes . '.csv"');
         mcp_registrar(null, 'painel_ponto_csv', "$usuario · $mes");
-        echo mcp_ponto_csv(mcp_ponto_registros($deUtc, $ateUtc));
+        // Só as horas doadas: a presença dos outros vínculos não vira planilha de horas.
+        echo mcp_ponto_csv(mcp_ponto_registros($deUtc, $ateUtc, null, true));
         exit;
     }
     $linhas = mcp_ponto_relatorio($de, $ate);
+    $voluntarios = array_values(array_filter($linhas, static fn(array $l): bool => $l['voluntario']));
+    $presencas = array_values(array_filter($linhas, static fn(array $l): bool => !$l['voluntario']));
     $naSede = mcp_ponto_na_sede();
     $esquecidas = mcp_ponto_esquecidas_contar();
-    $total = array_sum(array_column($linhas, 'minutos'));
-    $ativos = count(array_filter($linhas, static fn(array $l): bool => (bool) (int) $l['ativo']));
+    $termos = mcp_ponto_termos_pendentes_contar();
+    $total = array_sum(array_column($voluntarios, 'minutos'));
+    $ativos = count(array_filter($voluntarios, static fn(array $l): bool => (bool) (int) $l['ativo']));
     $numeros = '<div class="numeros">'
-        . '<a class="numero" href="#na-sede"><b>' . count($naSede) . '</b><span>Na sede agora</span><small>com entrada e sem saída</small></a>'
-        . '<div class="numero"><b>' . pn_e(mcp_ponto_horas_texto($total)) . '</b><span>Horas doadas</span><small>em ' . pn_e(mcp_ponto_mes_nome($mes)) . '</small></div>'
-        . '<div class="numero"><b>' . $ativos . '</b><span>Colaboradores ativos</span><small>cadastrados no ponto</small></div>'
+        . '<a class="numero" href="#na-sede"><b>' . count($naSede) . '</b><span>Na sede agora</span><small>todos os vínculos</small></a>'
+        . '<div class="numero"><b>' . pn_e(mcp_ponto_horas_texto($total)) . '</b><span>Horas doadas</span><small>em ' . pn_e(mcp_ponto_mes_nome($mes)) . ' · '
+        . $ativos . ($ativos === 1 ? ' voluntário ativo' : ' voluntários ativos') . '</small></div>'
+        . '<a class="numero' . ($termos > 0 ? ' alerta' : '') . '" href="#voluntarios"><b>' . $termos . '</b><span>Termos pendentes</span><small>voluntários sem o termo de adesão registrado</small></a>'
         . '<div class="numero' . ($esquecidas > 0 ? ' alerta' : '') . '"><b>' . $esquecidas . '</b><span>Saídas esquecidas</span><small>entrada sem saída há mais de ' . MCP_PONTO_ESQUECIDA_HORAS . ' h: corrija na ficha</small></div>'
         . '</div>';
     $lista = '';
     foreach ($naSede as $n) {
         $lista .= '<li>' . pn_e((string) $n['nome']) . ' · desde ' . pn_e(mcp_data_brt((string) $n['entrada'], 'H:i')) . '</li>';
     }
+    $ficha = static fn(array $l): string => 'painel.php?v=colaborador&amp;id=' . (int) $l['id'] . '&amp;mes=' . $mes;
+    $abrir = static fn(array $l): string => '<td class="abrir"><a class="btn btn-outline" style="min-height:36px;padding:6px 14px" href="' . $ficha($l) . '">Abrir ficha</a></td></tr>';
+    $nome = static fn(array $l): string => '<td class="aluno"><a class="nome" href="' . $ficha($l) . '">' . pn_e((string) $l['nome']) . '</a><small>'
+        . pn_e(mcp_ponto_vinculo_nome($l)) . ($l['funcao'] ? ' · ' . pn_e((string) $l['funcao']) : '') . '</small></td>';
+    $ultima = static fn(array $l): string => '<td data-rotulo="Última presença">' . ($l['ultima'] ? pn_e(pn_data((string) $l['ultima'])) : '<span style="color:var(--muted)">nunca registrou</span>') . '</td>';
     $tabela = '';
-    foreach ($linhas as $l) {
-        $ficha = 'painel.php?v=colaborador&amp;id=' . (int) $l['id'] . '&amp;mes=' . $mes;
-        $tabela .= '<tr><td class="aluno"><a class="nome" href="' . $ficha . '">' . pn_e((string) $l['nome']) . '</a>' . ($l['funcao'] ? '<small>' . pn_e((string) $l['funcao']) . '</small>' : '') . '</td>'
+    foreach ($voluntarios as $l) {
+        $tabela .= '<tr>' . $nome($l)
             . '<td data-rotulo="Dias no mês">' . (int) $l['dias'] . '</td>'
             . '<td data-rotulo="Horas no mês"><b>' . pn_e(mcp_ponto_horas_texto((int) $l['minutos'])) . '</b></td>'
-            . '<td data-rotulo="Última presença">' . ($l['ultima'] ? pn_e(pn_data((string) $l['ultima'])) : '<span style="color:var(--muted)">nunca registrou</span>') . '</td>'
-            . '<td data-rotulo="Situação">' . pn_ponto_selo($l) . '</td>'
-            . '<td class="abrir"><a class="btn btn-outline" style="min-height:36px;padding:6px 14px" href="' . $ficha . '">Abrir ficha</a></td></tr>';
+            . $ultima($l) . '<td data-rotulo="Situação">' . pn_ponto_selo($l) . '</td>' . $abrir($l);
     }
-    $corpo = '<div class="cabeca"><div><p class="eyebrow">Ponto da sede</p><h1>Horas dos colaboradores</h1>'
-        . '<p class="nota">Cada entrada e saída registrada no ponto (aparelho da recepção ou celular na sede) soma as horas doadas à instituição.</p></div>'
+    $tabelaPresenca = '';
+    foreach ($presencas as $l) {
+        $tabelaPresenca .= '<tr>' . $nome($l) . $ultima($l) . '<td data-rotulo="Situação">' . pn_ponto_selo($l) . '</td>' . $abrir($l);
+    }
+    $corpo = '<div class="cabeca"><div><p class="eyebrow">Ponto da sede</p><h1>Colaboradores na sede</h1>'
+        . '<p class="nota">Voluntários e diretoria registram entrada e saída e somam as horas doadas à instituição, com o termo de adesão da Lei 9.608/1998. '
+        . 'Empregados, terceirizados e outros registram só a presença na sede.</p></div>'
         . '<div class="acoes" style="margin-top:0"><a class="btn btn-red" href="painel.php?v=colaborador&amp;novo=1">Cadastrar colaborador</a>'
-        . ($linhas ? '<a class="btn btn-outline" href="' . pn_e("painel.php?v=ponto&mes=$mes&csv=1") . '">Baixar planilha do mês</a>' : '') . '</div></div>'
+        . ($voluntarios ? '<a class="btn btn-outline" href="' . pn_e("painel.php?v=ponto&mes=$mes&csv=1") . '">Baixar planilha das horas do mês</a>' : '') . '</div></div>'
         . pn_ponto_abas('colaboradores')
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . pn_navegar_mes('painel.php?v=ponto', $mes)
         . $numeros
         . '<div class="cartao" id="na-sede" style="margin-bottom:18px"><h2>Na sede agora</h2>'
         . ($lista !== '' ? '<ul class="na-sede">' . $lista . '</ul>' : '<p class="nota" style="margin:0">Ninguém com entrada aberta agora.</p>') . '</div>'
+        . '<h2 id="voluntarios" style="margin:24px 0 10px">Voluntários e diretoria <small>horas doadas</small></h2>'
         . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Colaborador</th><th>Dias</th><th>Horas</th><th>Última presença</th><th>Situação</th><th class="abrir"></th></tr></thead><tbody>'
-        . ($tabela !== '' ? $tabela : '<tr><td colspan="6" class="vazio">Nenhum colaborador cadastrado. Comece por “Cadastrar colaborador”.</td></tr>') . '</tbody></table></div>';
+        . ($tabela !== '' ? $tabela : '<tr><td colspan="6" class="vazio">Nenhum voluntário cadastrado. Comece por “Cadastrar colaborador”.</td></tr>') . '</tbody></table></div>'
+        . ($tabelaPresenca !== ''
+            ? '<h2 id="presenca" style="margin:28px 0 6px">Empregados, terceirizados e outros <small>só presença</small></h2>'
+                . '<p class="nota" style="margin:0 0 10px">Presença na sede, por segurança: não soma horas, não tem declaração e não é o ponto oficial dos empregados. '
+                . 'Os registros são apagados depois de ' . MCP_PONTO_PRESENCA_DIAS . ' dias.</p>'
+                . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Colaborador</th><th>Última presença</th><th>Situação</th><th class="abrir"></th></tr></thead><tbody>'
+                . $tabelaPresenca . '</tbody></table></div>'
+            : '');
     pn_pagina('Ponto da sede', $corpo, $usuario, true, 'ponto');
 }
 
@@ -819,7 +855,10 @@ function pn_campo(string $nome, string $rotulo, string $valor, string $campoErro
     return '<div' . ($campoErro === $nome ? ' class="campo-erro"' : '') . '><label for="c-' . $nome . '">' . pn_e($rotulo) . '</label><input id="c-' . $nome . '" name="' . $nome . '" value="' . pn_e($valor) . '"' . $extra . '></div>';
 }
 
-/** Ficha do colaborador ($id null = cadastro novo): dados, horas do mês com correções e a declaração. */
+/**
+ * Ficha do colaborador ($id null = cadastro novo): dados com o vínculo; para voluntários e diretoria, o
+ * termo de adesão, as horas do mês com correções e a declaração; para os outros vínculos, só a presença.
+ */
 function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $classe = 'ok', ?array $form = null, string $campoErro = ''): never
 {
     $c = $id !== null ? mcp_colaborador_por_id($id) : null;
@@ -828,7 +867,26 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
     }
     $mes = pn_mes();
     [$de, $ate] = mcp_ponto_mes_dias($mes);
+    if ($c && isset($_GET['termo'])) {
+        unset($_GET['termo']);
+        if (!mcp_ponto_voluntario($c)) {
+            pn_colaborador($usuario, $id, 'O termo de adesão é só para voluntários e diretoria.', 'erro');
+        }
+        mcp_registrar(null, 'painel_termo_pdf', '#' . $c['id'] . " · $usuario");
+        $pdf = mcp_termo_pdf(mcp_ponto_termo_conteudo($c));
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . mcp_ponto_termo_arquivo($c) . '"');
+        echo $pdf;
+        exit;
+    }
     if ($c && isset($_GET['declaracao'])) {
+        unset($_GET['declaracao']);
+        // Sem o termo de adesão registrado, a instituição não declara serviço voluntário.
+        if (empty($c['termo_em'])) {
+            pn_colaborador($usuario, $id, mcp_ponto_voluntario($c)
+                ? 'Registre o termo de adesão assinado antes de emitir a declaração de horas.'
+                : 'A declaração de horas é só para voluntários e diretoria.', 'erro');
+        }
         // Mês fechado: o mês inteiro; mês atual: até hoje.
         $fim = min((new DateTimeImmutable($ate))->modify('-1 day')->format('Y-m-d'), mcp_ponto_hoje());
         $d = mcp_ponto_declaracao_emitir($c, $de, $fim, $usuario);
@@ -839,27 +897,35 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
         echo $pdf;
         exit;
     }
-    $v = $form ?? ($c ?? ['nome' => '', 'cpf' => '', 'email' => '', 'telefone' => '', 'funcao' => '', 'ativo' => 1]);
+    $v = $form ?? ($c ?? ['nome' => '', 'cpf' => '', 'email' => '', 'telefone' => '', 'funcao' => '', 'vinculo' => '', 'ativo' => 1]);
     $idForm = $c ? (int) $c['id'] : 0;
+    $opcoes = '<option value="">Escolha…</option>';
+    foreach (MCP_PONTO_VINCULOS as $chave => $rotulo) {
+        $opcoes .= '<option value="' . $chave . '"' . (($v['vinculo'] ?? '') === $chave ? ' selected' : '') . '>' . pn_e($rotulo) . '</option>';
+    }
     $dados = '<form method="post" action="painel.php"><input type="hidden" name="acao" value="colaborador_salvar"><input type="hidden" name="id" value="' . $idForm . '">'
         . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'colaborador_salvar', $idForm)) . '">'
         . pn_campo('nome', 'Nome completo', (string) ($v['nome'] ?? ''), $campoErro, ' required maxlength="160" autocomplete="off"')
         . '<div class="form-grade">'
         . pn_campo('cpf', 'CPF (é com ele que a pessoa registra o ponto)', $form !== null ? (string) ($v['cpf'] ?? '') : mcp_cpf_formatado((string) ($v['cpf'] ?? '')), $campoErro, ' required inputmode="numeric" maxlength="14" autocomplete="off"')
-        . pn_campo('funcao', 'Função (opcional)', (string) ($v['funcao'] ?? ''), $campoErro, ' maxlength="120" placeholder="Ex.: Socorrista voluntário"')
+        . '<div' . ($campoErro === 'vinculo' ? ' class="campo-erro"' : '') . '><label for="c-vinculo">Vínculo com a instituição</label><select class="campo" id="c-vinculo" name="vinculo" required>' . $opcoes . '</select></div>'
+        . pn_campo('funcao', 'Função (opcional)', (string) ($v['funcao'] ?? ''), $campoErro, ' maxlength="120" placeholder="Ex.: Socorrista voluntário, Presidente"')
         . pn_campo('email', 'E-mail (opcional)', (string) ($v['email'] ?? ''), $campoErro, ' type="email" maxlength="190"')
-        . pn_campo('telefone', 'Telefone (opcional)', $form !== null ? (string) ($v['telefone'] ?? '') : ($v['telefone'] ? mcp_telefone_bonito((string) $v['telefone']) : ''), $campoErro, ' inputmode="tel" maxlength="20"')
-        . '</div><label class="check" style="margin-top:16px"><input type="checkbox" name="ativo" value="1"' . (!empty($v['ativo']) ? ' checked' : '') . '> Ativo (pode registrar o ponto)</label>'
+        . pn_campo('telefone', 'Telefone (opcional)', $form !== null ? (string) ($v['telefone'] ?? '') : (!empty($v['telefone']) ? mcp_telefone_bonito((string) $v['telefone']) : ''), $campoErro, ' inputmode="tel" maxlength="20"')
+        . '</div><p class="nota">Voluntários e diretoria somam horas doadas e precisam do termo de adesão assinado. Empregados, terceirizados e outros registram só a presença na sede: '
+        . 'não soma horas, não tem declaração e os registros são apagados depois de ' . MCP_PONTO_PRESENCA_DIAS . ' dias. O ponto não substitui o ponto oficial dos empregados.</p>'
+        . '<label class="check" style="margin-top:16px"><input type="checkbox" name="ativo" value="1"' . (!empty($v['ativo']) ? ' checked' : '') . '> Ativo (pode registrar o ponto)</label>'
         . '<div class="acoes"><button class="btn btn-red" type="submit">' . ($c ? 'Salvar alterações' : 'Cadastrar') . '</button></div></form>';
     $topo = '<a class="voltar" href="painel.php?v=ponto&amp;mes=' . $mes . '">← Voltar para o ponto da sede</a>'
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '');
     if (!$c) {
         $corpo = $topo . '<div class="cabeca"><div><p class="eyebrow">Ponto da sede</p><h1>Cadastrar colaborador</h1>'
-            . '<p class="nota">Depois do cadastro, a pessoa já registra entrada e saída no ponto com o CPF.</p></div></div>'
+            . '<p class="nota">Depois do cadastro, a pessoa já registra entrada e saída no ponto com o CPF. Para voluntários e diretoria, imprima em seguida o termo de adesão.</p></div></div>'
             . '<div class="cartao" style="margin-top:18px;max-width:720px">' . $dados . '</div>';
         pn_pagina('Cadastrar colaborador', $corpo, $usuario, true, 'ponto');
     }
 
+    $voluntario = mcp_ponto_voluntario($c);
     [$deUtc, $ateUtc] = mcp_ponto_periodo_utc($de, $ate);
     $registros = mcp_ponto_registros($deUtc, $ateUtc, (int) $c['id']);
     $agora = time();
@@ -868,16 +934,24 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
     $tabela = '';
     foreach ($registros as $r) {
         $rid = (int) $r['id'];
-        if ($r['saida'] !== null) {
+        $doado = (int) $r['voluntario'] === 1;
+        if ($doado && $r['saida'] !== null) {
             $segundos += mcp_ponto_segundos($r);
             $dias[mcp_data_brt((string) $r['entrada'], 'Y-m-d')] = true;
         }
         $saida = $r['saida'] !== null
             ? pn_e(mcp_data_brt((string) $r['saida'], mcp_data_brt((string) $r['saida'], 'Y-m-d') !== mcp_data_brt((string) $r['entrada'], 'Y-m-d') ? 'd/m H:i' : 'H:i'))
-            : (mcp_ponto_esquecido($r, $agora) ? '<span class="selo erro">Saída esquecida</span>' : '<span class="selo ok">Na sede</span>');
+            : (!mcp_ponto_esquecido($r, $agora) ? '<span class="selo ok">Na sede</span>'
+                : ($doado ? '<span class="selo erro">Saída esquecida</span>' : '<span style="color:var(--muted)">não registrada</span>'));
         $origem = pn_e(MCP_PONTO_ORIGENS[$r['origem_entrada']] ?? (string) $r['origem_entrada']) . ($r['origem_saida'] !== null && $r['origem_saida'] !== $r['origem_entrada']
             ? ' · ' . pn_e(MCP_PONTO_ORIGENS[$r['origem_saida']] ?? (string) $r['origem_saida']) : '');
-        $ajustar = '<details class="ajustar"><summary>Corrigir</summary>'
+        $dia = '<td data-rotulo="Dia">' . pn_e(mcp_data_brt((string) $r['entrada'], 'd/m/Y')) . '<small class="dia">' . pn_e(mcp_dia_semana(mcp_data_brt((string) $r['entrada'], 'Y-m-d'))) . '</small></td>';
+        if (!$voluntario) {
+            $tabela .= '<tr>' . $dia . '<td data-rotulo="Chegada">' . pn_e(mcp_data_brt((string) $r['entrada'], 'H:i')) . '</td>'
+                . '<td data-rotulo="Saída">' . $saida . '</td><td data-rotulo="Registro">' . $origem . '</td></tr>';
+            continue;
+        }
+        $ajustar = !$doado ? '<small style="color:var(--muted)">Só presença (vínculo da época)</small>' : '<details class="ajustar"><summary>Corrigir</summary>'
             . ($r['ajuste'] ? '<p class="nota historico">' . nl2br(pn_e((string) $r['ajuste']), false) . '</p>' : '')
             . '<form method="post" action="painel.php" class="mini"><input type="hidden" name="acao" value="ponto_corrigir"><input type="hidden" name="id" value="' . $rid . '">'
             . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'ponto_corrigir', $rid)) . '">'
@@ -889,14 +963,62 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
             . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'ponto_apagar', $rid)) . '">'
             . '<label>Motivo para apagar<input name="motivo" required maxlength="200" placeholder="Ex.: registro duplicado"></label>'
             . '<button class="btn btn-outline" type="submit">Apagar registro</button></form></details>';
-        $tabela .= '<tr><td data-rotulo="Dia">' . pn_e(mcp_data_brt((string) $r['entrada'], 'd/m/Y')) . '<small class="dia">' . pn_e(mcp_dia_semana(mcp_data_brt((string) $r['entrada'], 'Y-m-d'))) . '</small></td>'
+        $tabela .= '<tr>' . $dia
             . '<td data-rotulo="Entrada">' . pn_e(mcp_data_brt((string) $r['entrada'], 'H:i')) . '</td>'
             . '<td data-rotulo="Saída">' . $saida . '</td>'
-            . '<td data-rotulo="Horas"><b>' . ($r['saida'] !== null ? pn_e(mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r), 60))) : '—') . '</b></td>'
+            . '<td data-rotulo="Horas"><b>' . ($doado && $r['saida'] !== null ? pn_e(mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r), 60))) : '—') . '</b></td>'
             . '<td data-rotulo="Registro">' . $origem . ($r['ajuste'] ? '<small>Ajustado no portal</small>' : '') . '</td>'
             . '<td class="recado">' . $ajustar . '</td></tr>';
     }
     $minutos = intdiv($segundos, 60);
+    $aberto = mcp_ponto_aberto((int) $c['id'], $agora);
+    $selos = ($aberto ? '<span class="selo ok">Na sede desde ' . pn_e(mcp_data_brt((string) $aberto['entrada'], 'H:i')) . '</span> ' : '')
+        . (!(int) $c['ativo'] ? '<span class="selo neutro">Inativo' . (!empty($c['desligado_em']) ? ' desde ' . pn_e(mcp_escola_data((string) $c['desligado_em'])) : '') . ': não registra o ponto</span> ' : '')
+        . 'Cadastrado em ' . pn_e(pn_data((string) $c['criado_em']));
+
+    // Termo de adesão: só para voluntários e diretoria (ou quem já o assinou antes de mudar de vínculo).
+    $termo = '';
+    if ($voluntario || !empty($c['termo_em'])) {
+        $imprimir = $voluntario ? '<div class="acoes" style="margin-top:0"><a class="btn btn-outline" href="' . pn_e('painel.php?v=colaborador&id=' . $c['id'] . '&termo=1') . '">'
+            . (empty($c['termo_em']) ? 'Imprimir o termo para assinar (PDF)' : 'Imprimir o termo de novo (PDF)') . '</a></div>' : '';
+        $registrar = static fn(string $botao, string $valor): string => '<form method="post" action="painel.php" class="mini"><input type="hidden" name="acao" value="termo_registrar"><input type="hidden" name="id" value="' . (int) $c['id'] . '">'
+            . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'termo_registrar', (int) $c['id'])) . '">'
+            . '<label>Data em que o termo foi assinado<input type="date" name="data" required max="' . mcp_ponto_hoje() . '" value="' . pn_e($valor) . '"></label>'
+            . '<button class="btn btn-red" type="submit">' . pn_e($botao) . '</button></form>';
+        if (empty($c['termo_em'])) {
+            $termo = '<div class="cartao termo pendente" id="termo" style="margin-top:18px"><h2>Termo de adesão <small>Lei 9.608/1998</small></h2>'
+                . '<p style="margin:0 0 10px"><span class="selo alerta">Pendente</span></p>'
+                . '<p class="nota">A lei pede o termo de adesão assinado para o serviço voluntário. Imprima o termo, colha as assinaturas do voluntário e de quem representa a '
+                . 'instituição (e do responsável legal, se o voluntário tiver menos de 18 anos), guarde a via assinada e registre aqui a data. Sem ele, a declaração de horas fica bloqueada.</p>'
+                . $imprimir . ($voluntario ? $registrar('Registrar termo assinado', mcp_ponto_hoje()) : '') . '</div>';
+        } else {
+            $termo = '<div class="cartao termo ok" id="termo" style="margin-top:18px"><h2>Termo de adesão <small>Lei 9.608/1998</small></h2>'
+                . '<p style="margin:0 0 10px"><span class="selo ok">Assinado em ' . pn_e(mcp_escola_data((string) $c['termo_em'])) . '</span></p>'
+                . '<p class="nota">Modelo ' . pn_e((string) $c['termo_modelo']) . ' · registrado por ' . pn_e((string) $c['termo_registrado_por']) . ' em '
+                . pn_e(pn_data((string) $c['termo_registrado_em'])) . '. A via assinada fica guardada na secretaria.</p>'
+                . $imprimir
+                . '<details class="ajustar"><summary>Corrigir a data ou remover o registro</summary>' . ($voluntario ? $registrar('Salvar a data', (string) $c['termo_em']) : '')
+                . '<form method="post" action="painel.php" class="mini" onsubmit="return confirm(\'Remover o registro do termo? A declaração de horas fica bloqueada até registrar de novo.\')">'
+                . '<input type="hidden" name="acao" value="termo_remover"><input type="hidden" name="id" value="' . (int) $c['id'] . '">'
+                . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'termo_remover', (int) $c['id'])) . '">'
+                . '<button class="btn btn-outline" type="submit">Remover o registro do termo</button></form></details></div>';
+        }
+    }
+
+    if (!$voluntario) {
+        $corpo = $topo . '<div class="cabeca"><div><p class="eyebrow">' . pn_e(mcp_ponto_vinculo_nome($c)) . ($c['funcao'] ? ' · ' . pn_e((string) $c['funcao']) : '') . '</p><h1>' . pn_e((string) $c['nome']) . '</h1>'
+            . '<p class="nota">' . $selos . '</p></div></div>'
+            . '<div class="cartao" style="margin-top:18px"><h2>Presença na sede em ' . pn_e(mcp_ponto_mes_nome($mes)) . '</h2>'
+            . pn_navegar_mes('painel.php?v=colaborador&id=' . $c['id'], $mes)
+            . '<p class="nota" style="margin:0 0 12px">Registro de presença na sede, por segurança. Não soma horas e não é o ponto oficial nem controle de jornada. '
+            . 'Os registros são apagados depois de ' . MCP_PONTO_PRESENCA_DIAS . ' dias.</p>'
+            . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Dia</th><th>Chegada</th><th>Saída</th><th>Registro</th></tr></thead><tbody>'
+            . ($tabela !== '' ? $tabela : '<tr><td colspan="4" class="vazio">Nenhuma presença neste mês.</td></tr>') . '</tbody></table></div></div>'
+            . $termo
+            . '<div class="cartao" style="margin-top:18px;max-width:720px"><h2>Dados do colaborador</h2>' . $dados . '</div>';
+        pn_pagina((string) $c['nome'], $corpo, $usuario, true, 'ponto');
+    }
+
     $hoje = mcp_ponto_hoje();
     $lancar = '<details class="ajustar"><summary>Lançar horas à mão</summary>'
         . '<form method="post" action="painel.php" class="mini"><input type="hidden" name="acao" value="ponto_lancar"><input type="hidden" name="id" value="' . (int) $c['id'] . '">'
@@ -905,18 +1027,21 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
         . '<label>Entrada<input type="time" name="entrada" required></label><label>Saída<input type="time" name="saida" required></label>'
         . '<label>Motivo<input name="motivo" required maxlength="200" placeholder="Ex.: plantão no evento da praça, sem o ponto"></label>'
         . '<button class="btn btn-outline" type="submit">Lançar</button></form></details>';
-    $aberto = mcp_ponto_aberto((int) $c['id'], $agora);
-    $corpo = $topo . '<div class="cabeca"><div><p class="eyebrow">Colaborador' . ($c['funcao'] ? ' · ' . pn_e((string) $c['funcao']) : '') . '</p><h1>' . pn_e((string) $c['nome']) . '</h1>'
-        . '<p class="nota">' . ($aberto ? '<span class="selo ok">Na sede desde ' . pn_e(mcp_data_brt((string) $aberto['entrada'], 'H:i')) . '</span> ' : '')
-        . (!(int) $c['ativo'] ? '<span class="selo neutro">Inativo: não registra o ponto</span> ' : '') . 'Cadastrado em ' . pn_e(pn_data((string) $c['criado_em'])) . '</p></div>'
-        . '<div class="acoes" style="margin-top:0"><a class="btn btn-red" href="' . pn_e('painel.php?v=colaborador&id=' . $c['id'] . "&mes=$mes&declaracao=1") . '">Declaração de horas (PDF)</a></div></div>'
+    $declaracao = !empty($c['termo_em'])
+        ? '<div class="acoes" style="margin-top:0"><a class="btn btn-red" href="' . pn_e('painel.php?v=colaborador&id=' . $c['id'] . "&mes=$mes&declaracao=1") . '">Declaração de horas (PDF)</a></div>'
+        : '<div class="acoes" style="margin-top:0"><a class="btn btn-outline" href="#termo">Declaração: registre o termo antes</a></div>';
+    $corpo = $topo . '<div class="cabeca"><div><p class="eyebrow">' . pn_e(mcp_ponto_vinculo_nome($c)) . ($c['funcao'] ? ' · ' . pn_e((string) $c['funcao']) : '') . '</p><h1>' . pn_e((string) $c['nome']) . '</h1>'
+        . '<p class="nota">' . $selos . '</p></div>'
+        . $declaracao . '</div>'
+        . $termo
         . '<div class="cartao" style="margin-top:18px"><h2>Horas de ' . pn_e(mcp_ponto_mes_nome($mes)) . '</h2>'
         . pn_navegar_mes('painel.php?v=colaborador&id=' . $c['id'], $mes)
         . '<p style="margin:0 0 14px"><b style="font-size:1.4rem;color:var(--black)">' . pn_e(mcp_ponto_horas_texto($minutos)) . '</b> em ' . count($dias) . (count($dias) === 1 ? ' dia' : ' dias') . '</p>'
         . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Dia</th><th>Entrada</th><th>Saída</th><th>Horas</th><th>Registro</th><th></th></tr></thead><tbody>'
         . ($tabela !== '' ? $tabela : '<tr><td colspan="6" class="vazio">Nenhum registro neste mês.</td></tr>') . '</tbody></table></div>'
         . $lancar
-        . '<p class="nota">A declaração de horas sai para o mês escolhido (no mês atual, até hoje), com um código de verificação que qualquer pessoa confere em cruzvermelhariodejaneiro.org/conferir.</p></div>'
+        . '<p class="nota">A declaração de horas sai para o mês escolhido (no mês atual, até hoje), cita o termo de adesão e leva um código de verificação que qualquer pessoa confere em cruzvermelhariodejaneiro.org/conferir. '
+        . 'O registro serve para reconhecer as horas doadas, nunca para cobrar horário.</p></div>'
         . '<div class="cartao" style="margin-top:18px;max-width:720px"><h2>Dados do colaborador</h2>' . $dados . '</div>';
     pn_pagina((string) $c['nome'], $corpo, $usuario, true, 'ponto');
 }
@@ -1000,6 +1125,8 @@ $avisos = [
     'pt_corr' => ['Registro corrigido.', 'ok'],
     'pt_lanc' => ['Horas lançadas.', 'ok'],
     'pt_apag' => ['Registro apagado.', 'ok'],
+    'tm_ok' => ['Termo de adesão registrado. A declaração de horas já pode ser emitida.', 'ok'],
+    'tm_rem' => ['Registro do termo removido. A declaração de horas fica bloqueada até registrar de novo.', 'ok'],
     'pr_canc' => ['Presença cancelada. O comprovante deixou de valer.', 'ok'],
     'ap_ok' => ['Pronto: este aparelho agora é o ponto da sede. Deixe a página do ponto aberta nele.', 'ok'],
     'ap_desat' => ['Aparelho desativado. Ele não registra mais o ponto.', 'ok'],
@@ -1056,7 +1183,7 @@ if ($metodo === 'POST') {
     }
 
     // Ponto da sede (lib/ponto.php e lib/presenca.php): cadastro, correções, presenças e aparelhos. Só com sessão.
-    if (in_array($acao, ['colaborador_salvar', 'ponto_corrigir', 'ponto_lancar', 'ponto_apagar', 'presenca_cancelar', 'aparelho_ativar', 'aparelho_desativar'], true)) {
+    if (in_array($acao, ['colaborador_salvar', 'termo_registrar', 'termo_remover', 'ponto_corrigir', 'ponto_lancar', 'ponto_apagar', 'presenca_cancelar', 'aparelho_ativar', 'aparelho_desativar'], true)) {
         $id = (int) ($_POST['id'] ?? 0);
         if ($sessao === null || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
             pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
@@ -1070,8 +1197,20 @@ if ($metodo === 'POST') {
             if ($salvo === null) {
                 pn_colaborador($sessao, $id ?: null, 'Este CPF já está cadastrado para outro colaborador.', 'erro', $_POST, 'cpf');
             }
-            mcp_registrar(null, 'painel_colaborador', "#$salvo · $sessao · " . ($id ? 'editou' : 'cadastrou'));
+            mcp_registrar(null, 'painel_colaborador', "#$salvo · $sessao · " . ($id ? 'editou' : 'cadastrou') . ' · vínculo ' . $conferido['dados']['vinculo']);
             pn_redirecionar('v=colaborador&id=' . $salvo . '&ok=col_ok');
+        }
+        if ($acao === 'termo_registrar' || $acao === 'termo_remover') {
+            $colaborador = mcp_colaborador_por_id($id);
+            if (!$colaborador) {
+                pn_redirecionar('v=ponto');
+            }
+            $data = $acao === 'termo_registrar' ? mcp_texto($_POST['data'] ?? '', 10) : null;
+            $erro = mcp_ponto_termo_registrar($colaborador, $data, $sessao);
+            if ($erro !== null) {
+                pn_colaborador($sessao, $id, $erro, 'erro');
+            }
+            pn_redirecionar('v=colaborador&id=' . $id . '&ok=' . ($data !== null ? 'tm_ok' : 'tm_rem') . '#termo');
         }
         if ($acao === 'ponto_corrigir' || $acao === 'ponto_apagar') {
             $registro = mcp_ponto_registro($id);
@@ -1081,6 +1220,10 @@ if ($metodo === 'POST') {
             $colaboradorId = (int) $registro['colaborador_id'];
             $motivo = mcp_texto($_POST['motivo'] ?? '', 200);
             $_GET['mes'] = mcp_data_brt((string) $registro['entrada'], 'Y-m');
+            // Presença de quem não é voluntário não soma horas: não tem correção nem se apaga à mão.
+            if (!(int) $registro['voluntario']) {
+                pn_colaborador($sessao, $colaboradorId, 'Registro de presença não tem correção: ele não soma horas e sai sozinho depois de ' . MCP_PONTO_PRESENCA_DIAS . ' dias.', 'erro');
+            }
             if ($motivo === '') {
                 pn_colaborador($sessao, $colaboradorId, 'Escreva o motivo.', 'erro');
             }
@@ -1101,6 +1244,9 @@ if ($metodo === 'POST') {
             $colaborador = mcp_colaborador_por_id($id);
             if (!$colaborador) {
                 pn_redirecionar('v=ponto');
+            }
+            if (!mcp_ponto_voluntario($colaborador)) {
+                pn_colaborador($sessao, $id, 'Lançar horas é só para voluntários e diretoria.', 'erro');
             }
             $dia = mcp_texto($_POST['data'] ?? '', 10);
             $entrada = mcp_ponto_local_para_utc($dia . ' ' . mcp_texto($_POST['entrada'] ?? '', 5));

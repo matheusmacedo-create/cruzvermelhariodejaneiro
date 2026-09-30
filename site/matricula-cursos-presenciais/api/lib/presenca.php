@@ -371,6 +371,7 @@ function mcp_conferir(string $codigo, ?int $agora = null): ?array
                 ['Período', mcp_escola_data((string) $d['de']) . ($d['de'] !== $d['ate'] ? ' a ' . mcp_escola_data((string) $d['ate']) : '')],
                 trim((string) $d['funcao']) !== '' ? ['Função', (string) $d['funcao']] : null,
                 ['Total de horas', mcp_ponto_horas_texto((int) $d['minutos']) . ' em ' . (int) $d['dias'] . ((int) $d['dias'] === 1 ? ' dia' : ' dias')],
+                !empty($d['termo_em']) ? ['Termo de adesão', 'assinado em ' . mcp_escola_data((string) $d['termo_em']) . ' (Lei nº 9.608/1998)'] : null,
                 ['Emitida em', mcp_data_brt((string) $d['emitida_em'], 'd/m/Y')],
             ])),
         ];

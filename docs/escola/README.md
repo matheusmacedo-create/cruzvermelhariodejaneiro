@@ -332,7 +332,7 @@ for f in teste-local/00_papeis_supabase.sql teste-local/01_estrutura_escola.sql 
          teste-local/02_dados_ficticios.sql matricula_rapida.sql aulas_do_aluno.sql; do psql -d escola_teste -f $f; done
 psql -d escola_teste -f teste-local/03_testes_pgtap.sql        # 84 testes de matricula_rapida (pgTAP)
 psql -d escola_teste -f teste-local/04_testes_aulas_pgtap.sql  # 24 testes de aulas_do_aluno (pgTAP)
-php ../../scripts/testar_checkout.php                          # 281 testes do PHP, sem banco nem rede
+php ../../scripts/testar_checkout.php                          # 291 testes do PHP, sem banco nem rede
 ```
 
 O teste de ponta a ponta (`scripts/testar_escola_integracao.php`, 21 testes) usa o código do site

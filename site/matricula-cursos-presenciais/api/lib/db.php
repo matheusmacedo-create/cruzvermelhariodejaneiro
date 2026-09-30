@@ -152,8 +152,10 @@ function mcp_migrar(PDO $pdo): void
         KEY ix_curso (curso_slug, atualizado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Ponto da sede (29/09/2026, lib/ponto.php e lib/presenca.php). Colaboradores cadastrados pela
-    // secretaria registram entrada e saída (horas doadas); alunos registram a chegada às aulas, e a
-    // presença vira o comprovante de comparecimento. Horários em UTC, como no resto do banco.
+    // secretaria registram entrada e saída; alunos registram a chegada às aulas, e a presença vira o
+    // comprovante de comparecimento. Horários em UTC, como no resto do banco.
+    // vinculo: diretoria e voluntario somam horas doadas e assinam o termo de adesão (Lei 9.608/1998,
+    // termo_*); empregado, terceirizado e outro registram só a presença na sede.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_colaboradores (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(160) NOT NULL,
@@ -161,15 +163,24 @@ function mcp_migrar(PDO $pdo): void
         email VARCHAR(190) NULL,
         telefone VARCHAR(20) NULL,
         funcao VARCHAR(120) NULL,
+        vinculo VARCHAR(12) NOT NULL DEFAULT 'voluntario',
         ativo TINYINT(1) NOT NULL DEFAULT 1,
+        desligado_em DATE NULL,
+        termo_em DATE NULL,
+        termo_modelo VARCHAR(12) NULL,
+        termo_registrado_por VARCHAR(190) NULL,
+        termo_registrado_em DATETIME NULL,
         criado_por VARCHAR(190) NULL,
         criado_em DATETIME NOT NULL,
         atualizado_em DATETIME NOT NULL,
         UNIQUE KEY ux_cpf (cpf)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // voluntario: natureza do registro no momento da entrada (1 = horas doadas; 0 = só presença, apagada
+    // depois de 90 dias). Mudar o vínculo depois não muda o que já foi registrado.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         colaborador_id INT UNSIGNED NOT NULL,
+        voluntario TINYINT(1) NOT NULL DEFAULT 1,
         entrada DATETIME NOT NULL,
         saida DATETIME NULL,
         origem_entrada VARCHAR(12) NOT NULL,
@@ -182,7 +193,8 @@ function mcp_migrar(PDO $pdo): void
         criado_em DATETIME NOT NULL,
         atualizado_em DATETIME NOT NULL,
         KEY ix_colaborador (colaborador_id, entrada),
-        KEY ix_entrada (entrada)
+        KEY ix_entrada (entrada),
+        KEY ix_presenca (voluntario, entrada)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_ponto_aparelhos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -236,6 +248,7 @@ function mcp_migrar(PDO $pdo): void
         ate DATE NOT NULL,
         minutos INT UNSIGNED NOT NULL,
         dias INT UNSIGNED NOT NULL,
+        termo_em DATE NULL,
         emitida_por VARCHAR(190) NOT NULL,
         emitida_em DATETIME NOT NULL,
         UNIQUE KEY ux_codigo (codigo),

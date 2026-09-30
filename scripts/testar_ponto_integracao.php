@@ -4,6 +4,8 @@
  * Teste de ponta a ponta do ponto da sede, contra um MariaDB LOCAL. Cobre:
  *   - colaboradores: cadastro no portal, entrada e saída no aparelho da sede e no celular (com a
  *     localização), horas, saída esquecida, correção, lançamento, apagar, planilha e declaração;
+ *   - vínculo: termo de adesão do voluntário (PDF, registro, declaração só com o termo) e empregado
+ *     só com presença (sem horas, correção, declaração nem termo; presença apagada depois de 90 dias);
  *   - alunos: presença na aula (dados de uma escola falsa, local), comprovante antes e depois do fim
  *     da aula, PDF, conferência do código, rotina de e-mail (api/comparecimentos.php) e cancelamento;
  *   - aparelhos: liberar no portal, usar e desativar;
@@ -110,7 +112,7 @@ function limpar(PDO $db): void
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'conferir') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
-        OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada')
+        OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
         AND detalhe LIKE '%ponto@exemplo.org%'");
 }
 limpar($db);
@@ -118,6 +120,7 @@ limpar($db);
 // ----------------------------------------------------------------------------- dados da escola falsa
 $hoje = mcp_ponto_hoje();
 $cpfColaborador = cpf_de_teste();
+$cpfEmpregado = cpf_de_teste();
 $cpfAluna = cpf_de_teste();
 $cpfAlunoCelular = cpf_de_teste();
 $cpfEscolaFora = cpf_de_teste();
@@ -243,18 +246,21 @@ $pertoDaSede = ['lat' => -22.9115, 'lng' => -43.1880, 'precisao' => 20];
 try {
     // ------------------------------------------------------------------------- cadastro no portal
     [$st, , $html] = http($base . 'painel.php?v=ponto', 'GET', null, ["Cookie: $sessaoPortal"]);
-    verificar('portal: seção ponto com o menu ativo e as abas', [$st, str_contains($html, 'href="painel.php?v=ponto" aria-current="page"><svg'), str_contains($html, '<h1>Horas dos colaboradores</h1>'),
+    verificar('portal: seção ponto com o menu ativo e as abas', [$st, str_contains($html, 'href="painel.php?v=ponto" aria-current="page"><svg'), str_contains($html, '<h1>Colaboradores na sede</h1>'),
         str_contains($html, 'Alunos nas aulas'), str_contains($html, 'Aparelhos e QR code')], [200, true, true, true, true]);
     $csrf = static fn(string $acao, int $id): string => mcp_painel_csrf('ponto@exemplo.org', $acao, $id);
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Colaborador $marca", 'cpf' => '123.456.789-00', 'ativo' => 1]);
     verificar('cadastro: CPF inválido volta com o erro e o que foi digitado', [$st, str_contains($html, 'CPF inválido. Confira os números.'), str_contains($html, 'value="Colaborador ' . $marca . '"')], [200, true, true]);
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Colaborador $marca",
+        'cpf' => mcp_cpf_formatado($cpfColaborador), 'vinculo' => 'chefe', 'ativo' => 1]);
+    verificar('cadastro: sem vínculo válido volta com o erro', [$st, str_contains($html, 'Escolha o vínculo com a instituição.'), str_contains($html, '<div class="campo-erro"><label for="c-vinculo">')], [200, true, true]);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Colaborador $marca",
-        'cpf' => mcp_cpf_formatado($cpfColaborador), 'email' => "COLAB-$sufixo@Exemplo.org", 'telefone' => '(21) 98888-7777', 'funcao' => 'Socorrista voluntário', 'ativo' => 1]);
+        'cpf' => mcp_cpf_formatado($cpfColaborador), 'email' => "COLAB-$sufixo@Exemplo.org", 'telefone' => '(21) 98888-7777', 'funcao' => 'Socorrista voluntário', 'vinculo' => 'voluntario', 'ativo' => 1]);
     $colaborador = mcp_colaborador_por_cpf($cpfColaborador);
-    verificar('cadastro: grava e vai para a ficha', [$st, (bool) preg_match('~^painel\.php\?v=colaborador&id=\d+&ok=col_ok$~', $cab['location'] ?? ''), $colaborador['email'] ?? null, $colaborador['telefone'] ?? null, (int) ($colaborador['ativo'] ?? 0)],
-        [303, true, "colab-$sufixo@exemplo.org", '21988887777', 1]);
+    verificar('cadastro: grava e vai para a ficha', [$st, (bool) preg_match('~^painel\.php\?v=colaborador&id=\d+&ok=col_ok$~', $cab['location'] ?? ''), $colaborador['email'] ?? null, $colaborador['telefone'] ?? null, (int) ($colaborador['ativo'] ?? 0),
+        $colaborador['vinculo'] ?? null, campo($colaborador, 'termo_em')], [303, true, "colab-$sufixo@exemplo.org", '21988887777', 1, 'voluntario', null]);
     $colId = (int) $colaborador['id'];
-    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Outro $marca", 'cpf' => $cpfColaborador, 'ativo' => 1]);
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Outro $marca", 'cpf' => $cpfColaborador, 'vinculo' => 'voluntario', 'ativo' => 1]);
     verificar('cadastro: CPF de outro colaborador é recusado', str_contains($html, 'Este CPF já está cadastrado para outro colaborador.'), true);
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => 'falso', 'nome' => "Colaborador $marca", 'cpf' => cpf_de_teste(), 'ativo' => 1]);
     verificar('cadastro: sem o token do formulário pede para entrar', str_contains($html, '<h1>Entrar</h1>'), true);
@@ -293,6 +299,7 @@ try {
     verificar('saída: logo depois da entrada espera um minuto', [$st, $d['codigo'] ?? null], [409, 'cedo']);
     $db->prepare('UPDATE mcp_ponto SET entrada = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 7200), (int) $registro['id']]);
     [$st, $d] = ponto($base, ['acao' => 'saida', 'sessao' => $sessao]);
+    verificar('saída: voluntário vê o agradecimento pelas horas doadas', [str_ends_with((string) ($d['mensagem'] ?? ''), 'Obrigado pelas horas doadas!'), $d['colaborador']['horas'] ?? null, $d['colaborador']['termo_pendente'] ?? null], [true, true, true]);
     verificar('saída: registrada, com as horas desta vez e do mês', [$st, $d['registrado'] ?? null, $d['duracao'] ?? null, $d['colaborador']['na_sede'] ?? null],
         [200, 'saida', '2h00', false]);
     [$st, $d] = ponto($base, ['acao' => 'saida', 'sessao' => substr($sessao, 0, -3) . 'AAA']);
@@ -462,28 +469,103 @@ try {
     $db->prepare("INSERT INTO mcp_ponto (colaborador_id, entrada, origem_entrada, criado_em, atualizado_em) VALUES (?, ?, 'aparelho', ?, ?)")
         ->execute([$colId, gmdate('Y-m-d H:i:s', time() - 20 * 3600), mcp_agora(), mcp_agora()]);
     [, , $html] = http($base . 'painel.php?v=ponto', 'GET', null, ["Cookie: $sessaoPortal"]);
-    verificar('saída esquecida: número no menu e selo na lista', [(bool) preg_match('~<span>Ponto da sede</span><span class="badge" title="[1-9]\d* saídas esquecidas">~', $html), str_contains($html, 'saída esquecida')], [true, true]);
+    verificar('saída esquecida: número no menu e selo na lista', [(bool) preg_match('~<span>Ponto da sede</span><span class="badge" title="[1-9]\d* pendências \(saídas esquecidas e termos de adesão\)">~', $html), str_contains($html, 'saída esquecida')], [true, true]);
+    verificar('termo pendente: número no quadro e selo na lista', [(bool) preg_match('~<b>[1-9]\d*</b><span>Termos pendentes</span>~', $html), str_contains($html, '<span class="selo alerta">Termo pendente</span>')], [true, true]);
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfColaborador], [$cAparelho]);
     verificar('saída esquecida: a pessoa não conta como na sede e pode entrar de novo', [$d['colaborador']['na_sede'] ?? null, ponto($base, ['acao' => 'entrada', 'sessao' => (string) $d['sessao']])[0]], [false, 200]);
 
-    // Ficha e declaração de horas.
+    // Ficha, termo de adesão e declaração de horas.
     [$st, , $html] = http($base . 'painel.php?v=colaborador&id=' . $colId, 'GET', null, ["Cookie: $sessaoPortal"]);
-    verificar('ficha: horas, registros e formulários de correção', [$st, str_contains($html, '<h1>Colaborador ' . $marca . '</h1>'), str_contains($html, '<summary>Corrigir</summary>'),
-        str_contains($html, '<summary>Lançar horas à mão</summary>'), str_contains($html, 'Declaração de horas (PDF)')], [200, true, true, true, true]);
+    verificar('ficha: horas, registros, correção e o termo pendente', [$st, str_contains($html, '<h1>Colaborador ' . $marca . '</h1>'), str_contains($html, '<summary>Corrigir</summary>'),
+        str_contains($html, '<summary>Lançar horas à mão</summary>'), str_contains($html, 'Declaração: registre o termo antes'), str_contains($html, '<span class="selo alerta">Pendente</span>'),
+        str_contains($html, 'Imprimir o termo para assinar (PDF)')], [200, true, true, true, true, true, true]);
+    [$st, , $html] = http($base . 'painel.php?v=colaborador&id=' . $colId . '&declaracao=1', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('declaração: sem o termo registrado não sai', [$st, str_contains($html, 'Registre o termo de adesão assinado antes de emitir a declaração de horas.'),
+        (int) $db->query("SELECT COUNT(*) FROM mcp_declaracoes_horas WHERE colaborador_id = $colId")->fetchColumn()], [200, true, 0]);
+    [$st, $cab, $pdf] = http($base . 'painel.php?v=colaborador&id=' . $colId . '&termo=1', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('termo: PDF de duas páginas para imprimir, com o nome no arquivo', [$st, $cab['content-type'] ?? null, str_starts_with($pdf, '%PDF-'), substr_count($pdf, '/Type /Page '),
+        str_contains($cab['content-disposition'] ?? '', 'Termo_de_Adesao_Voluntario_Colaborador_Teste_Ponto_')], [200, 'application/pdf', true, 2, true]);
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'termo_registrar', 'id' => $colId, 't' => $csrf('termo_registrar', $colId), 'data' => (new DateTimeImmutable($hoje))->modify('+1 day')->format('Y-m-d')]);
+    verificar('termo: data no futuro é recusada', [$st, str_contains($html, 'A data da assinatura não pode ser no futuro.'), campo(mcp_colaborador_por_id($colId), 'termo_em')], [200, true, null]);
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'termo_registrar', 'id' => $colId, 't' => 'falso', 'data' => $hoje]);
+    verificar('termo: sem o token do formulário não registra', [str_contains($html, '<h1>Entrar</h1>'), campo(mcp_colaborador_por_id($colId), 'termo_em')], [true, null]);
+    $diaTermo = (new DateTimeImmutable($hoje))->modify('-3 days')->format('Y-m-d');
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'termo_registrar', 'id' => $colId, 't' => $csrf('termo_registrar', $colId), 'data' => $diaTermo]);
+    $colaborador = mcp_colaborador_por_id($colId);
+    verificar('termo: registrado com a data, o modelo e quem registrou', [$st, $cab['location'] ?? null, $colaborador['termo_em'], $colaborador['termo_modelo'], $colaborador['termo_registrado_por'],
+        (int) $db->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'ponto_termo' AND detalhe LIKE '#$colId · ponto@exemplo.org · sem termo → $diaTermo'")->fetchColumn()],
+        [303, "painel.php?v=colaborador&id=$colId&ok=tm_ok#termo", $diaTermo, MCP_PONTO_TERMO_MODELO, 'ponto@exemplo.org', 1]);
+    [$st, , $html] = http($base . 'painel.php?v=colaborador&id=' . $colId . '&ok=tm_ok', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('ficha: termo assinado e declaração liberada', [str_contains($html, 'Termo de adesão registrado.'), str_contains($html, '<span class="selo ok">Assinado em ' . mcp_escola_data($diaTermo) . '</span>'),
+        str_contains($html, 'Declaração de horas (PDF)'), str_contains($html, 'Termo pendente')], [true, true, true, false]);
     [$st, $cab, $pdf] = http($base . 'painel.php?v=colaborador&id=' . $colId . '&declaracao=1', 'GET', null, ["Cookie: $sessaoPortal"]);
     $declaracao = $db->query("SELECT * FROM mcp_declaracoes_horas WHERE colaborador_id = $colId ORDER BY id DESC LIMIT 1")->fetch();
     verificar('declaração: PDF e registro com código', [$st, $cab['content-type'] ?? null, str_starts_with($pdf, '%PDF-'), (bool) $declaracao, strlen((string) ($declaracao['codigo'] ?? ''))],
         [200, 'application/pdf', true, true, 8]);
+    verificar('declaração: cita a lei e o termo de adesão', [$declaracao['termo_em'] ?? null, str_contains(mcp_ponto_declaracao_conteudo($declaracao)['texto'],
+        'nos termos da Lei nº 9.608/1998 e do termo de adesão assinado em ' . mcp_escola_data($diaTermo) . ', sem vínculo empregatício.')], [$diaTermo, true]);
     http($base . 'painel.php?v=colaborador&id=' . $colId . '&declaracao=1', 'GET', null, ["Cookie: $sessaoPortal"]);
     verificar('declaração: baixar de novo sem mudança reaproveita o código', (int) $db->query("SELECT COUNT(*) FROM mcp_declaracoes_horas WHERE colaborador_id = $colId")->fetchColumn(), 1);
     [$st, , $corpo] = http($base . 'conferir.php?c=' . $declaracao['codigo']);
     $conf = json_decode($corpo, true) ?? [];
-    verificar('conferir: declaração de horas', [$st, $conf['tipo'] ?? null, $conf['valido'] ?? null, $conf['nome'] ?? null], [200, 'Declaração de horas voluntárias', true, mcp_nome_proprio("Colaborador $marca")]);
+    verificar('conferir: declaração de horas, com o termo de adesão', [$st, $conf['tipo'] ?? null, $conf['valido'] ?? null, $conf['nome'] ?? null, in_array(['Termo de adesão', 'assinado em ' . mcp_escola_data($diaTermo) . ' (Lei nº 9.608/1998)'], $conf['linhas'] ?? [], true)],
+        [200, 'Declaração de horas voluntárias', true, mcp_nome_proprio("Colaborador $marca"), true]);
 
-    // Colaborador inativo não registra; aparelho desativado vira celular.
-    [$st] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => $colId, 't' => $csrf('colaborador_salvar', $colId), 'nome' => "Colaborador $marca", 'cpf' => $cpfColaborador]);
+    // ------------------------------------------------------------------------- empregado: só presença
+    [$st] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => 0, 't' => $csrf('colaborador_salvar', 0), 'nome' => "Empregado $marca",
+        'cpf' => $cpfEmpregado, 'funcao' => 'Limpeza', 'vinculo' => 'empregado', 'ativo' => 1]);
+    $empregado = mcp_colaborador_por_cpf($cpfEmpregado);
+    $empId = (int) $empregado['id'];
+    [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfEmpregado], [$cAparelho]);
+    verificar('empregado: identificado sem horas nem termo', [$st, $d['colaborador']['horas'] ?? null, campo($d['colaborador'] ?? null, 'hoje'), campo($d['colaborador'] ?? null, 'mes'), $d['colaborador']['termo_pendente'] ?? null],
+        [200, false, null, null, false]);
+    [$st, $d] = ponto($base, ['acao' => 'entrada', 'sessao' => (string) $d['sessao']]);
+    $presenca = mcp_ponto_aberto($empId);
+    verificar('empregado: a entrada fica gravada como presença', [$st, (int) ($presenca['voluntario'] ?? 9)], [200, 0]);
+    $db->prepare('UPDATE mcp_ponto SET entrada = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 2 * 3600), (int) $presenca['id']]);
+    [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfEmpregado], [$cAparelho]);
+    [$st, $d] = ponto($base, ['acao' => 'saida', 'sessao' => (string) $d['sessao']]);
+    verificar('empregado: saída sem horas e sem "horas doadas"', [$st, str_ends_with((string) ($d['mensagem'] ?? ''), 'Até a próxima!'), campo($d, 'duracao'), $d['colaborador']['horas'] ?? null],
+        [200, true, null, false]);
+    verificar('empregado: presença não soma horas doadas', mcp_ponto_minutos($empId, gmdate('Y-m-d H:i:s', time() - 86400), gmdate('Y-m-d H:i:s', time() + 60)), 0);
+    [$st, , $html] = http($base . 'painel.php?v=ponto', 'GET', null, ["Cookie: $sessaoPortal"]);
+    $posPresenca = strpos($html, 'Empregados, terceirizados e outros');
+    verificar('portal: empregado na lista de presença, fora das horas doadas', [$posPresenca !== false, $posPresenca !== false && strpos($html, "Empregado $marca") > $posPresenca,
+        str_contains($html, 'não é o ponto oficial dos empregados')], [true, true, true]);
+    [, , $csv] = http($base . 'painel.php?v=ponto&csv=1', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('planilha das horas: sem o empregado e com o vínculo', [str_contains($csv, "Empregado $marca"), str_contains($csv, 'Vínculo'), str_contains($csv, "\"Colaborador $marca\";Voluntário;")], [false, true, true]);
+    [$st, , $html] = http($base . 'painel.php?v=colaborador&id=' . $empId, 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('ficha do empregado: só presença, sem horas, correção, declaração nem termo', [$st, str_contains($html, '<h2>Presença na sede em '), str_contains($html, '<summary>Corrigir</summary>'),
+        str_contains($html, 'Lançar horas à mão'), str_contains($html, 'Declaração de horas'), str_contains($html, 'Termo de adesão <small>'), str_contains($html, 'Empregado (CLT) · Limpeza')],
+        [200, true, false, false, false, false, true]);
+    [, , $html] = http($base . 'painel.php?v=colaborador&id=' . $empId . '&declaracao=1', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('empregado: declaração de horas recusada', str_contains($html, 'A declaração de horas é só para voluntários e diretoria.'), true);
+    [, , $html] = http($base . 'painel.php?v=colaborador&id=' . $empId . '&termo=1', 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('empregado: termo de adesão recusado', str_contains($html, 'O termo de adesão é só para voluntários e diretoria.'), true);
+    [, , $html] = portal($base, $sessaoPortal, ['acao' => 'termo_registrar', 'id' => $empId, 't' => $csrf('termo_registrar', $empId), 'data' => $hoje]);
+    verificar('empregado: registrar termo recusado', [str_contains($html, 'O termo de adesão é só para voluntários e diretoria.'), campo(mcp_colaborador_por_id($empId), 'termo_em')], [true, null]);
+    $pid = (int) $presenca['id'];
+    [, , $html] = portal($base, $sessaoPortal, ['acao' => 'ponto_corrigir', 'id' => $pid, 't' => $csrf('ponto_corrigir', $pid), 'entrada' => mcp_data_brt(mcp_agora(), 'Y-m-d\TH:i'), 'saida' => '', 'motivo' => 'teste']);
+    verificar('empregado: presença não tem correção', str_contains($html, 'Registro de presença não tem correção'), true);
+    [, , $html] = portal($base, $sessaoPortal, ['acao' => 'ponto_lancar', 'id' => $empId, 't' => $csrf('ponto_lancar', $empId), 'data' => $ontem, 'entrada' => '09:00', 'saida' => '10:00', 'motivo' => 'teste']);
+    verificar('empregado: lançar horas recusado', str_contains($html, 'Lançar horas é só para voluntários e diretoria.'), true);
+    // Guarda de 90 dias: a presença antiga do empregado sai; as horas antigas do voluntário ficam.
+    $velho = gmdate('Y-m-d H:i:s', time() - (MCP_PONTO_PRESENCA_DIAS + 10) * 86400);
+    $velhoSaida = gmdate('Y-m-d H:i:s', time() - (MCP_PONTO_PRESENCA_DIAS + 10) * 86400 + 3600);
+    $inserir = $db->prepare("INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, saida, origem_entrada, origem_saida, criado_em, atualizado_em) VALUES (?, ?, ?, ?, 'aparelho', 'aparelho', ?, ?)");
+    $inserir->execute([$empId, 0, $velho, $velhoSaida, $velho, $velho]);
+    $velhaPresenca = (int) $db->lastInsertId();
+    $inserir->execute([$colId, 1, $velho, $velhoSaida, $velho, $velho]);
+    $velhaHora = (int) $db->lastInsertId();
+    [$codigo, $saida] = $rotina();
+    verificar('rotina: apaga a presença com mais de 90 dias e guarda as horas doadas', [$codigo, (bool) preg_match('/ponto: [1-9]\d* presenças antigas apagadas/', $saida), mcp_ponto_registro($velhaPresenca),
+        mcp_ponto_registro($velhaHora) !== null, mcp_ponto_registro($pid) !== null], [0, true, null, true, true]);
+
+    // Colaborador inativo não registra e fica com a data do desligamento; aparelho desativado vira celular.
+    [$st] = portal($base, $sessaoPortal, ['acao' => 'colaborador_salvar', 'id' => $colId, 't' => $csrf('colaborador_salvar', $colId), 'nome' => "Colaborador $marca", 'cpf' => $cpfColaborador, 'vinculo' => 'voluntario']);
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfColaborador], [$cAparelho]);
     verificar('colaborador inativo não é encontrado', $st, 404);
+    verificar('colaborador inativo: data do desligamento', [mcp_colaborador_por_id($colId)['desligado_em'], mcp_colaborador_por_id($colId)['termo_em']], [$hoje, $diaTermo]);
     $aid = (int) $aparelho['id'];
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aparelho_desativar', 'id' => $aid, 't' => $csrf('aparelho_desativar', $aid)]);
     verificar('aparelho desativado passa a valer como celular', [$st, json_decode(http($base . 'ponto.php', 'GET', null, ["Cookie: $cAparelho"])[2], true)['modo'] ?? null], [303, 'celular']);

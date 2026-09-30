@@ -194,7 +194,7 @@ PAGINA_PONTO = """<!DOCTYPE html>
     <noscript><p class="pt-card">O ponto precisa de JavaScript. Ative o JavaScript ou fale com a secretaria.</p></noscript>
   </main>
   <footer class="pt-rodape">
-    <p>O CPF e os horários de entrada e saída servem só para registrar a presença e as horas doadas. No celular, a localização só confirma que você está na sede e não fica guardada. <a href="/privacidade/">Privacidade</a></p>
+    <p>O registro serve para reconhecer as horas doadas pelos voluntários e para saber quem está na sede. Não é controle de jornada. No celular, a localização só confirma que você está na sede e não fica guardada. <a href="/privacidade/">Privacidade</a></p>
   </footer>
 </body>
 </html>
@@ -253,7 +253,7 @@ PAGINA_CARTAZ = """<!DOCTYPE html>
       <li><span>Permita a localização e toque em <b>Registrar entrada</b>, <b>Registrar saída</b> ou <b>Confirmar presença</b>.</span></li>
     </ol>
     <div class="duas">
-      <div><b>Colaboradores</b><p>As horas doadas à instituição ficam registradas a cada entrada e saída.</p></div>
+      <div><b>Colaboradores</b><p>Voluntários somam as horas doadas a cada entrada e saída. Os demais registram a presença na sede.</p></div>
       <div><b>Alunos</b><p>Confirme a presença na aula. O comprovante de comparecimento chega por e-mail no fim da aula.</p></div>
     </div>
     <p class="rodape">Sem celular? Use o aparelho da recepção.</p>

@@ -195,13 +195,16 @@
     limparRelogios();
     var html = '<h1>Olá, ' + esc(d.nome) + '!</h1>';
     if (d.colaborador) {
+      // Voluntários e diretoria veem as horas doadas; os outros vínculos registram só a presença.
       var c = d.colaborador;
-      html += '<section class="pt-bloco"><h2>Ponto de colaborador</h2>'
-        + (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + ' · ' + esc(c.agora) + ' até agora</p>'
+      html += '<section class="pt-bloco"><h2>' + (c.horas ? 'Horas doadas' : 'Presença na sede') + '</h2>'
+        + (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + (c.horas ? ' · ' + esc(c.agora) + ' até agora' : '') + '</p>'
           : '<p class="pt-status">Sem entrada registrada agora.</p>')
         + '<button type="button" class="pt-btn' + (c.na_sede ? ' pt-btn-saida' : '') + '" data-acao="' + (c.na_sede ? 'saida' : 'entrada') + '">'
         + (c.na_sede ? 'Registrar saída' : 'Registrar entrada') + '</button>'
-        + '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p></section>';
+        + (c.horas ? '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p>' : '')
+        + (c.termo_pendente ? '<p class="pt-nota">Seu termo de adesão ao voluntariado ainda não foi registrado. Fale com a secretaria.</p>' : '')
+        + '</section>';
     }
     (d.aulas || []).forEach(function (a) {
       html += '<section class="pt-bloco"><h2>Aula de hoje</h2>'
@@ -246,7 +249,7 @@
     if (d.registrado === 'entrada') {
       html += '<p class="pt-sub">Bom trabalho! Na hora de ir embora, registre a saída.</p>';
     } else if (d.registrado === 'saida') {
-      html += '<p class="pt-sub">Desta vez: <b>' + esc(d.duracao) + '</b>. Em ' + esc(d.colaborador.mes_nome) + ': <b>' + esc(d.colaborador.mes) + '</b>.</p>';
+      if (d.duracao) html += '<p class="pt-sub">Desta vez: <b>' + esc(d.duracao) + '</b>. Em ' + esc(d.colaborador.mes_nome) + ': <b>' + esc(d.colaborador.mes) + '</b>.</p>';
     } else {
       html += '<p class="pt-sub">Aula de <b>' + esc(d.curso) + '</b>, ' + esc(d.horario) + '. O comprovante de comparecimento fica disponível hoje às <b>'
         + esc(d.disponivel_hora) + '</b>' + (d.email ? ' e vai para o e-mail <b>' + esc(d.email) + '</b>' : '') + '.</p>';
