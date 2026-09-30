@@ -40,10 +40,15 @@ try {
     }
     // Faxina e manutenção: índices das tabelas antigas, IPs dos freios e o batimento da rotina (o portal
     // avisa quando a rotina para de rodar).
+    // O batimento vem antes e à parte: um índice que não se cria não pode fazer o portal dizer que a rotina parou.
+    try {
+        mcp_ajuste_gravar('rotina_em', gmdate('Y-m-d H:i:s'), 'rotina');
+    } catch (Throwable $e) {
+        error_log('[matricula] batimento da rotina: ' . get_class($e) . ': ' . $e->getMessage());
+    }
     try {
         mcp_garantir_indices($db);
         mcp_eventos_apagar_freios();
-        mcp_ajuste_gravar('rotina_em', gmdate('Y-m-d H:i:s'), 'rotina');
     } catch (Throwable $e) {
         error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }

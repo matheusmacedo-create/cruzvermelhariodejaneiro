@@ -828,11 +828,12 @@ function mcp_campanha_materializar(array $campanha, int $agora): int
 function mcp_campanhas_concluir(?int $agora = null): void
 {
     $quando = gmdate('Y-m-d H:i:s', $agora ?? time());
+    // Só as mensagens do comunicado: um teste preso na fila não o deixa "enviando" para sempre.
     mcp_db()->prepare("UPDATE mcp_campanhas c SET status = IF(
-            EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status = 'falhou')
-            AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status IN ('enviado', 'manual')), 'falhou', 'enviada'),
+            EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.tipo = 'campanha' AND a.status = 'falhou')
+            AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.tipo = 'campanha' AND a.status IN ('enviado', 'manual')), 'falhou', 'enviada'),
         concluida_em = ?, atualizado_em = ? WHERE status = 'enviando'
-        AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.status IN ('pendente', 'enviando'))")
+        AND NOT EXISTS (SELECT 1 FROM mcp_avisos a WHERE a.campanha_id = c.id AND a.tipo = 'campanha' AND a.status IN ('pendente', 'enviando'))")
         ->execute([$quando, $quando]);
 }
 
@@ -1256,11 +1257,17 @@ function mcp_importar_dias(string $texto): array
     $t = mcp_sem_acento(mb_strtolower($texto));
     // Os jeitos comuns de dizer vários dias de uma vez.
     $t = (string) preg_replace(['/\btod[oa]s?\s+(?:os\s+)?dias?\b/u', '/\bdias?\s+ute?is\b/u', '/\b(?:fim|fins)\s+de\s+semana\b/u'], [' dom a sab ', ' seg a sex ', ' sab e dom '], $t);
-    // "2ª", "2a", "2º" ou só "2" (com ou sem "feira") e o nome do dia viram a chave de três letras. O "a"
-    // colado no número é ordinal ("2a"); separado ("2 a 6"), é intervalo.
-    $t = (string) preg_replace_callback('/(?<![0-9])([2-6])(?:ª|º|a\b|o\b)?(?:\s*-?\s*feira)?(?![0-9])/u',
-        static fn(array $m): string => ' ' . ['2' => 'seg', '3' => 'ter', '4' => 'qua', '5' => 'qui', '6' => 'sex'][$m[1]] . ' ', $t);
-    $t = (string) preg_replace('/\b(dom|seg|ter|qua|qui|sex|sab)[a-z]*(?:\s*-\s*feira)?/u', ' $1 ', $t);
+    // Frequência e hora não são dia: "3 vezes por semana", "3x", "2h por dia", "das 9:00".
+    $t = (string) preg_replace('/\b\d+\s*(?:x|vez(?:es)?|h|hs|hrs?|horas?|min(?:utos)?)\b|\b\d{1,2}:\d{2}\b/u', ' ', $t);
+    $numero = static fn(string $n): string => ' ' . ['2' => 'seg', '3' => 'ter', '4' => 'qua', '5' => 'qui', '6' => 'sex'][$n] . ' ';
+    // Número solto só vale numa sequência de dias ("2 a 6", "2, 4 e 6", "3-5"); sozinho, pode ser qualquer coisa.
+    $t = (string) preg_replace_callback('/(?<![0-9])[2-6](?:\s*(?:a|ate|e|,|\/|-)\s*[2-6](?![0-9]))+/u',
+        static fn(array $m): string => (string) preg_replace_callback('/[2-6]/', static fn(array $d): string => $numero($d[0]), $m[0]), $t);
+    // "2ª", "2a", "2º" e "2 feira" viram o dia. O "a" colado no número é ordinal ("2a"); separado ("2 a 6"), é intervalo.
+    $t = (string) preg_replace_callback('/(?<![0-9])([2-6])(?:(?:ª|º|a\b|o\b)(?:\s*-?\s*feira)?|\s*-?\s*feira)(?![0-9])/u', static fn(array $m): string => $numero($m[1]), $t);
+    // Nomes dos dias, inteiros ou abreviados, nunca o começo de outra palavra ("segundo", "qualquer", "quinzenal").
+    $t = (string) preg_replace_callback('/\b(?:(dom)(?:ingos?)?|(seg)(?:undas?)?|(ter)(?:cas?)?|(qua)(?:rtas?)?|(qui)(?:ntas?)?|(sex)(?:tas?)?|(sab)(?:ados?)?)\b(?:\s*-?\s*feiras?)?/u',
+        static fn(array $m): string => ' ' . implode('', array_slice($m, 1)) . ' ', $t);
     // Um intervalo é "dia a dia", "dia até dia" ou "dia-dia"; "e", vírgula e barra separam dias soltos.
     preg_match_all('/\b(dom|seg|ter|qua|qui|sex|sab)\b|\b(a|ate)\b|(-)|(\be\b|[,;\/|+])/u', $t, $m, PREG_SET_ORDER);
     $ordem = array_keys(MCP_AVISOS_DIAS);

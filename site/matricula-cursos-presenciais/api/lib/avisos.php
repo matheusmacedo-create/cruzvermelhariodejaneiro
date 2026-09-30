@@ -45,6 +45,17 @@ const MCP_AVISOS_PAUSA_MS = 550;
  */
 const MCP_AVISOS_EMAILS_POR_DIA = 60;
 /**
+ * Parte da cota que o comunicado deixa livre, além dos lembretes do dia já preparados: para os que nascem
+ * depois (e-mail de reserva de um WhatsApp que falhou, quem ligou os lembretes à tarde).
+ */
+const MCP_AVISOS_EMAILS_FOLGA = 0.15;
+/**
+ * Lembrete que ainda espera o WhatsApp perto do prazo vai por e-mail: a partir de HORA_TROCA se o WhatsApp
+ * está fora do ar ou desligado; na última rodada (HORA_ULTIMA), seja qual for o motivo.
+ */
+const MCP_AVISOS_HORA_TROCA = '19:00';
+const MCP_AVISOS_HORA_ULTIMA = '19:45';
+/**
  * WhatsApp pelo número do Palácio Virtual (Evolution): um freio fixo, para não disputar o número com os
  * avisos do Palácio (que manda até 12 por minuto) nem travar a rotina. 8 s entre mensagens
  * (WHATSAPP_EVOLUTION_PAUSA_S muda) e até 30 por rodada da rotina; num clique do portal, até 3.
@@ -414,32 +425,64 @@ function mcp_avisos_token_ler(string $uso, mixed $token, ?int $agora = null): ar
     return ['ok' => true, 'pessoa' => $dados[1], 'extra' => $dados[2], 'colaborador' => $colaborador];
 }
 
+/**
+ * Chave pessoal que entra na assinatura dos links de um aviso (?r= e ?u=): "Invalidar os links já enviados"
+ * e a troca do e-mail ou do celular derrubam também os links das mensagens que já saíram. Aluno não tem
+ * chave (''). $criar: ao montar o link, o colaborador sem chave ganha uma; ao conferir, sem chave nada vale.
+ */
+function mcp_avisos_chave_do_aviso(?array $aviso, bool $criar): string
+{
+    if ($aviso === null || empty($aviso['colaborador_id'])) {
+        return '';
+    }
+    $c = mcp_colaborador_por_id((int) $aviso['colaborador_id']);
+    if (!$c) {
+        return '-';
+    }
+    if ($criar) {
+        return mcp_avisos_chave_colaborador($c);
+    }
+    return preg_match('/^[a-f0-9]{16}$/', (string) ($c['aviso_chave'] ?? '')) ? (string) $c['aviso_chave'] : '-';
+}
+
 // ----------------------------------------------------------------------------- descadastro de um clique
 /**
  * Cabeçalhos do descadastro de um clique (RFC 8058): o Gmail e outros mostram "cancelar inscrição" ao lado
  * do remetente e mandam um POST a api/avisos.php?u=, em vez de a pessoa marcar a mensagem como spam.
  */
-function mcp_avisos_cabecalhos_descadastro(int $avisoId): array
+function mcp_avisos_cabecalhos_descadastro(array $aviso): array
 {
-    $url = mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?u=' . $avisoId . '.' . substr(mcp_avisos_assinar("u|$avisoId"), 0, 16);
+    $id = (int) $aviso['id'];
+    $url = mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?u=' . $id . '.' . substr(mcp_avisos_assinar("u|$id", mcp_avisos_chave_do_aviso($aviso, true)), 0, 16);
     return ['List-Unsubscribe' => "<$url>", 'List-Unsubscribe-Post' => 'List-Unsubscribe=One-Click'];
 }
 
 /** O aviso por e-mail de um código de descadastro (id.assinatura), ou null. */
 function mcp_avisos_descadastro_aviso(string $codigo): ?array
 {
-    if (!preg_match('/^(\d{1,10})\.([a-f0-9]{16})$/', $codigo, $m) || !hash_equals(substr(mcp_avisos_assinar("u|{$m[1]}"), 0, 16), $m[2])) {
+    if (!preg_match('/^(\d{1,10})\.([a-f0-9]{16})$/', $codigo, $m)) {
         return null;
     }
     $aviso = mcp_aviso_por_id((int) $m[1]);
-    return $aviso && $aviso['canal'] === 'email' ? $aviso : null;
+    if (!$aviso || $aviso['canal'] !== 'email' || !hash_equals(substr(mcp_avisos_assinar("u|{$m[1]}", mcp_avisos_chave_do_aviso($aviso, false)), 0, 16), $m[2])) {
+        return null;
+    }
+    return $aviso;
 }
 
-/** Descadastro de um clique: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista de bloqueio. */
-function mcp_avisos_descadastrar(array $aviso): void
+/**
+ * Descadastro de um clique: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista de
+ * bloqueio. Devolve false se não valeu (o e-mail do cadastro já não é o da mensagem).
+ */
+function mcp_avisos_descadastrar(array $aviso): bool
 {
     if (!empty($aviso['colaborador_id'])) {
         $id = (int) $aviso['colaborador_id'];
+        $c = mcp_colaborador_por_id($id);
+        // Quem recebeu por engano (o e-mail estava errado e foi corrigido) não desliga o e-mail certo.
+        if (!$c || mb_strtolower(trim((string) $c['email'])) !== mb_strtolower(trim((string) $aviso['destino']))) {
+            return false;
+        }
         mcp_db()->prepare('UPDATE mcp_colaboradores SET aviso_email = 0, aviso_atualizado_em = ?, atualizado_em = ? WHERE id = ?')->execute([mcp_agora(), mcp_agora(), $id]);
         mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'pediu para parar', atualizado_em = ? WHERE colaborador_id = ? AND canal = 'email' AND status IN ('pendente', 'manual')")
             ->execute([mcp_agora(), $id]);
@@ -447,16 +490,7 @@ function mcp_avisos_descadastrar(array $aviso): void
         mcp_avisos_bloquear_hash('email', mcp_avisos_hash('email', (string) $aviso['destino']), 'descadastro');
     }
     mcp_registrar(null, 'aviso_descadastro', '#' . $aviso['id'] . ' · ' . $aviso['tipo']);
-}
-
-/** Quem abre o link de descadastro no navegador vai à página de escolhas (lembretes ou "não quero mais receber"). */
-function mcp_avisos_descadastro_destino(array $aviso): string
-{
-    if (!empty($aviso['colaborador_id'])) {
-        return mcp_avisos_link('lembretes', 'c' . (int) $aviso['colaborador_id']);
-    }
-    $pessoa = preg_match('/^a[a-f0-9]{32}$/', (string) $aviso['pessoa']) ? (string) $aviso['pessoa'] : 'a' . mcp_avisos_hash('email', (string) $aviso['destino']);
-    return mcp_avisos_link('sair', $pessoa);
+    return true;
 }
 
 /** Link de clique de um aviso: registra o clique e leva ao destino (api/avisos.php?r=). */
@@ -469,7 +503,8 @@ function mcp_avisos_link_clique(int $avisoId, string $destino): string
 function mcp_avisos_sufixo_clique(int $avisoId, string $destino): string
 {
     $codigo = (string) array_search($destino, MCP_AVISOS_DESTINOS, true);
-    return $avisoId . '.' . $codigo . '.' . substr(mcp_avisos_assinar("r|$avisoId|$codigo"), 0, 16);
+    $chave = $avisoId > 0 ? mcp_avisos_chave_do_aviso(mcp_aviso_por_id($avisoId), true) : '';
+    return $avisoId . '.' . $codigo . '.' . substr(mcp_avisos_assinar("r|$avisoId|$codigo", $chave), 0, 16);
 }
 
 /**
@@ -490,12 +525,11 @@ function mcp_avisos_eh_robo(string $agente): bool
 function mcp_avisos_clique(string $r, ?int $agora = null): ?string
 {
     $agora ??= time();
-    if (!preg_match('/^(\d{1,10})\.([a-z])\.([a-f0-9]{16})$/', $r, $m) || !isset(MCP_AVISOS_DESTINOS[$m[2]])
-        || !hash_equals(substr(mcp_avisos_assinar("r|{$m[1]}|{$m[2]}"), 0, 16), $m[3])) {
+    if (!preg_match('/^(\d{1,10})\.([a-z])\.([a-f0-9]{16})$/', $r, $m) || !isset(MCP_AVISOS_DESTINOS[$m[2]])) {
         return null;
     }
     $aviso = mcp_aviso_por_id((int) $m[1]);
-    if (!$aviso) {
+    if (!$aviso || !hash_equals(substr(mcp_avisos_assinar("r|{$m[1]}|{$m[2]}", mcp_avisos_chave_do_aviso($aviso, false)), 0, 16), $m[3])) {
         return null;
     }
     mcp_db()->prepare('UPDATE mcp_avisos SET cliques = LEAST(cliques + 1, 65535), clicado_em = COALESCE(clicado_em, ?) WHERE id = ?')
@@ -541,6 +575,21 @@ function mcp_avisos_bloqueado(string $canal, string $destino): bool
     return (bool) $stmt->fetchColumn();
 }
 
+/**
+ * Aluno que disse "não quero mais receber" na página (pelo link de um e-mail, que não conhece o celular dele):
+ * vale também para o WhatsApp das aulas. O descadastro de um clique do e-mail vale só para o e-mail.
+ */
+function mcp_avisos_aluno_saiu(array $dados): bool
+{
+    $email = (string) ($dados['email'] ?? '');
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    $stmt = mcp_db()->prepare("SELECT 1 FROM mcp_avisos_bloqueios WHERE canal = 'email' AND destino_hash = ? AND origem = 'pagina'");
+    $stmt->execute([mcp_avisos_hash('email', $email)]);
+    return (bool) $stmt->fetchColumn();
+}
+
 /** Bloqueia um canal pelo hash (a página "sair" só conhece o hash, nunca o endereço). */
 function mcp_avisos_bloquear_hash(string $canal, string $hash, string $origem): void
 {
@@ -550,11 +599,12 @@ function mcp_avisos_bloquear_hash(string $canal, string $hash, string $origem): 
     mcp_db()->prepare('INSERT IGNORE INTO mcp_avisos_bloqueios (canal, destino_hash, origem, criado_em) VALUES (?, ?, ?, ?)')
         ->execute([$canal, $hash, $origem, mcp_agora()]);
     // O que já estava na fila para esse destino não sai mais (o hash tem segredo: a conta é feita aqui).
-    $stmt = mcp_db()->prepare("SELECT id, destino FROM mcp_avisos WHERE status IN ('pendente', 'manual') AND canal = ? AND colaborador_id IS NULL");
+    $stmt = mcp_db()->prepare("SELECT id, destino, status FROM mcp_avisos WHERE status IN ('pendente', 'manual') AND canal = ? AND colaborador_id IS NULL");
     $stmt->execute([$canal]);
     foreach ($stmt->fetchAll() as $a) {
+        // Só se ainda estiver na fila: se a rotina acabou de pegar (enviando), o envio fica registrado como foi.
         if (hash_equals($hash, mcp_avisos_hash($canal, (string) $a['destino']))) {
-            mcp_aviso_atualizar((int) $a['id'], ['status' => 'cancelado', 'erro' => 'pediu para não receber']);
+            mcp_aviso_atualizar((int) $a['id'], ['status' => 'cancelado', 'erro' => 'pediu para não receber'], (string) $a['status']);
         }
     }
 }
@@ -630,6 +680,13 @@ function mcp_aviso_destinatario(array $aviso): array
     }
     if ($aviso['tipo'] === 'aula' && $aviso['canal'] === 'whatsapp' && !mcp_ajuste_ligado('aula_whatsapp')) {
         return ['ok' => false, 'motivo' => 'WhatsApp da aula desligado no portal'];
+    }
+    // Recesso marcado depois do preparo (às 8h) também barra o lembrete da aula.
+    if ($aviso['tipo'] === 'aula' && mcp_avisos_dia_fechado((string) $aviso['referencia']) !== null) {
+        return ['ok' => false, 'motivo' => 'sede fechada nesse dia'];
+    }
+    if ($aviso['tipo'] === 'aula' && $aviso['canal'] === 'whatsapp' && mcp_avisos_aluno_saiu(json_decode((string) ($aviso['dados'] ?? ''), true) ?: [])) {
+        return ['ok' => false, 'motivo' => 'pediu para não receber'];
     }
     if ($aviso['tipo'] === 'campanha') {
         $campanha = !empty($aviso['campanha_id']) ? mcp_campanha((int) $aviso['campanha_id']) : null;
@@ -988,13 +1045,18 @@ function mcp_aviso_enviar(array $aviso, ?int $agora = null): string
         // limite de envios dela. Com a Resend fora, espera a próxima tentativa.
         $via = mcp_enviar_email((string) $dest['destino'], $msg['assunto'], $msg['html'], $msg['texto'], null,
             ($r = (string) mcp_cfg('EMAIL_REMETENTE_PONTO', '')) !== '' ? $r : null, [], ['sem_reserva' => true, 'tempo' => 15,
-                'cabecalhos' => in_array($aviso['tipo'], MCP_AVISOS_COM_DESCADASTRO, true) ? mcp_avisos_cabecalhos_descadastro((int) $aviso['id']) : []]);
+                'cabecalhos' => in_array($aviso['tipo'], MCP_AVISOS_COM_DESCADASTRO, true) ? mcp_avisos_cabecalhos_descadastro($aviso) : []]);
         $resultado = match ($via) {
+            'sem_resend' => ['ok' => false, 'provedor' => 'resend', 'id' => null, 'erro' => 'falta a chave da Resend (RESEND_API_KEY): os avisos não saem pelo servidor do site', 'definitivo' => true],
             'falhou' => ['ok' => false, 'provedor' => 'resend', 'id' => null, 'erro' => 'o e-mail não saiu (Resend)'],
             'limite' => ['ok' => false, 'provedor' => 'resend', 'id' => null, 'erro' => 'a Resend recusou por limite de envio; tenta de novo depois', 'limite' => true],
             'incerto' => ['ok' => true, 'provedor' => 'resend', 'id' => null, 'erro' => 'a Resend não confirmou a tempo; o e-mail pode ter saído (não vai de novo)'],
             default => ['ok' => true, 'provedor' => $via, 'id' => null, 'erro' => null],
         };
+        if ($via === 'sem_resend') {
+            // Sem a Resend, o resto do e-mail da rodada nem tenta.
+            mcp_email_fora('sem a chave da Resend');
+        }
     } else {
         $resultado = mcp_whatsapp_enviar((string) $dest['destino'], $msg, (int) $aviso['id']);
     }
@@ -1045,11 +1107,50 @@ function mcp_aviso_reserva_email(array $aviso, int $agora): ?int
     if ($email === null || ($expira !== null && (int) strtotime($expira . ' UTC') <= $agora)) {
         return null;
     }
-    return mcp_aviso_criar([
-        'chave' => substr((string) $aviso['chave'], 0, -8) . 'email', 'tipo' => $aviso['tipo'], 'canal' => 'email', 'colaborador_id' => $aviso['colaborador_id'] ?: null,
+    $chave = substr((string) $aviso['chave'], 0, -8) . 'email';
+    $id = mcp_aviso_criar([
+        'chave' => $chave, 'tipo' => $aviso['tipo'], 'canal' => 'email', 'colaborador_id' => $aviso['colaborador_id'] ?: null,
         'pessoa' => $aviso['pessoa'], 'nome' => (string) $aviso['nome'], 'destino' => $email, 'referencia' => $aviso['referencia'], 'dados' => $dados ?: null,
         'agendado_para' => gmdate('Y-m-d H:i:s', $agora), 'expira_em' => $expira,
     ], $agora);
+    if ($id !== null) {
+        return $id;
+    }
+    // O e-mail deste lembrete já existia e foi cancelado porque ia (ou foi) pelo WhatsApp: volta para a fila.
+    $quando = gmdate('Y-m-d H:i:s', $agora);
+    $stmt = mcp_db()->prepare("UPDATE mcp_avisos SET status = 'pendente', erro = NULL, tentativas = 0, destino = ?, agendado_para = ?, expira_em = ?, atualizado_em = ?
+        WHERE chave = ? AND status = 'cancelado' AND erro IN ('vai pelo WhatsApp', 'já foi pelo WhatsApp')");
+    $stmt->execute([$email, $quando, $expira, $quando, $chave]);
+    return $stmt->rowCount() > 0 ? (int) (mcp_aviso_por_chave($chave)['id'] ?? 0) ?: null : null;
+}
+
+/**
+ * Perto do prazo, lembrete que ainda espera o WhatsApp vai por e-mail (quem tem e-mail), e o WhatsApp dele
+ * não sai mais: um canal só. Só os que vencem hoje (véspera, aula e a saída no último dia). Devolve quantos.
+ */
+function mcp_avisos_trocar_para_email(int $agora): int
+{
+    if (mcp_avisos_hora_local($agora) < MCP_AVISOS_HORA_TROCA) {
+        return 0;
+    }
+    $fim = mcp_ponto_local_para_utc(mcp_ponto_hoje($agora) . ' ' . MCP_AVISOS_JANELA[1] . ':00');
+    $stmt = mcp_db()->prepare("SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = 'whatsapp' AND tipo IN ('vespera', 'saida', 'aula')
+        AND expira_em IS NOT NULL AND expira_em <= ? AND expira_em > ? ORDER BY id");
+    $stmt->execute([$fim, gmdate('Y-m-d H:i:s', $agora)]);
+    $n = 0;
+    foreach ($stmt->fetchAll() as $aviso) {
+        // Primeiro tira o WhatsApp da fila (se outra rodada já o pegou, fica com ela); depois nasce o e-mail.
+        if (!mcp_aviso_atualizar((int) $aviso['id'], ['status' => 'cancelado', 'erro' => 'o WhatsApp não saiu a tempo: foi por e-mail'], 'pendente')) {
+            continue;
+        }
+        if (mcp_aviso_reserva_email($aviso, $agora) !== null) {
+            $n++;
+        } else {
+            // Sem e-mail (ou já vencido): o WhatsApp volta para a fila; ainda pode sair até as 20h.
+            mcp_aviso_atualizar((int) $aviso['id'], ['status' => 'pendente', 'erro' => $aviso['erro']], 'cancelado');
+        }
+    }
+    return $n;
 }
 
 /** Cota diária dos e-mails dos avisos (0 = sem cota). */
@@ -1068,6 +1169,30 @@ function mcp_avisos_emails_hoje(?int $agora = null): int
     return (int) $stmt->fetchColumn();
 }
 
+/** E-mails de lembrete (tudo menos comunicado) que ainda vão sair hoje: o que a cota precisa guardar para eles. */
+function mcp_avisos_emails_lembretes_hoje(?int $agora = null): int
+{
+    $agora ??= time();
+    $quando = gmdate('Y-m-d H:i:s', $agora);
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_avisos WHERE status = 'pendente' AND canal = 'email' AND tipo <> 'campanha'
+        AND agendado_para < ? AND (expira_em IS NULL OR expira_em > ?)");
+    $stmt->execute([mcp_ponto_local_para_utc(mcp_ponto_hoje($agora) . ' ' . MCP_AVISOS_JANELA[1] . ':00'), $quando]);
+    return (int) $stmt->fetchColumn();
+}
+
+/**
+ * Quantos e-mails de comunicado ainda cabem hoje (null = sem cota): a cota menos o que já saiu, menos os
+ * lembretes do dia que ainda vão sair e a folga. Um comunicado grande não tira o e-mail dos lembretes das 18h.
+ */
+function mcp_avisos_cota_comunicados(?int $agora = null): ?int
+{
+    $cota = mcp_avisos_emails_cota();
+    if ($cota <= 0) {
+        return null;
+    }
+    return max(0, $cota - mcp_avisos_emails_hoje($agora) - mcp_avisos_emails_lembretes_hoje($agora) - (int) ceil($cota * MCP_AVISOS_EMAILS_FOLGA));
+}
+
 /** A Resend recusando nesta rodada (limite ou três falhas seguidas): o resto do e-mail fica para a próxima. */
 function mcp_email_fora(?string $motivo = null): ?string
 {
@@ -1081,8 +1206,10 @@ function mcp_email_fora(?string $motivo = null): ?string
 /**
  * Manda os avisos que já podem sair (só dentro da janela das 8h às 20h). Devolve [enviados, falhas].
  * Um lote por canal, os lembretes antes dos comunicados: WhatsApp parado não segura os e-mails, e um
- * comunicado grande não passa na frente dos lembretes das 18h. $campanhaId limita a um comunicado (o
- * "Mandar agora" do portal manda um lote pequeno na hora).
+ * comunicado grande não passa na frente dos lembretes das 18h (nem gasta a cota de e-mail deles). Depois
+ * do WhatsApp, perto do prazo, o que ainda o espera vai por e-mail, e uma segunda passada de e-mail manda
+ * já nesta rodada as reservas que nasceram. $campanhaId limita a um comunicado (o "Mandar agora" do
+ * portal manda um lote pequeno na hora).
  */
 function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISOS_LOTE, ?int $campanhaId = null): array
 {
@@ -1104,17 +1231,24 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
     $lugar = PHP_SAPI === 'cli' ? 'cli' : 'web';
     $evolution = $modo === 'evolution';
     $tetos = ['email' => $limite, 'whatsapp' => $evolution ? min($limite, $lugar === 'cli' ? MCP_WHATSAPP_EVOLUTION_POR_RODADA : MCP_WHATSAPP_EVOLUTION_POR_CLIQUE) : $limite];
-    // Cota diária dos e-mails: os lembretes vêm antes dos comunicados na fila, então são os comunicados que esperam.
+    // Cota diária dos e-mails: os lembretes usam o que sobrou dela; o comunicado, só o que os lembretes do
+    // dia não vão precisar (mcp_avisos_cota_comunicados). O resto do comunicado espera o dia seguinte.
+    $tetoComunicados = PHP_INT_MAX;
     if (($cota = mcp_avisos_emails_cota()) > 0) {
         $tetos['email'] = min($tetos['email'], max(0, $cota - mcp_avisos_emails_hoje($agora)));
+        $tetoComunicados = (int) mcp_avisos_cota_comunicados($agora);
     }
     $pausaEvolution = max(0, (int) mcp_cfg('WHATSAPP_EVOLUTION_PAUSA_S', MCP_WHATSAPP_EVOLUTION_PAUSA_S));
     $enviados = 0;
     $falhas = 0;
-    foreach (['email', 'whatsapp'] as $canal) {
-        if (($canal === 'whatsapp' && ($modo === 'manual' || !mcp_whatsapp_ativo() || mcp_whatsapp_fora() !== null)) || ($canal === 'email' && mcp_email_fora() !== null)
-            || $tetos[$canal] <= 0) {
-            continue;
+    $usados = ['email' => 0, 'whatsapp' => 0];
+    $parar = false;
+    $lote = static function (string $canal) use (&$enviados, &$falhas, &$usados, &$parar, &$tetoComunicados, $tetos, $modo, $evolution, $pausaEvolution,
+        $quando, $campanhaId, $agora, $inicio, $lugar): void {
+        $resta = $tetos[$canal] - $usados[$canal];
+        if ($parar || $resta <= 0 || ($canal === 'whatsapp' && ($modo === 'manual' || !mcp_whatsapp_ativo() || mcp_whatsapp_fora() !== null))
+            || ($canal === 'email' && mcp_email_fora() !== null)) {
+            return;
         }
         $sql = "SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = ? AND agendado_para <= ? AND (expira_em IS NULL OR expira_em > ?)";
         $params = [$canal, $quando, $quando];
@@ -1122,7 +1256,10 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
             $sql .= ' AND campanha_id = ?';
             $params[] = $campanhaId;
         }
-        $stmt = mcp_db()->prepare($sql . ' ORDER BY ' . MCP_AVISOS_PRIORIDADE . ', agendado_para, id LIMIT ' . max(1, $tetos[$canal]));
+        if ($canal === 'email' && $tetoComunicados <= 0) {
+            $sql .= " AND tipo <> 'campanha'";
+        }
+        $stmt = mcp_db()->prepare($sql . ' ORDER BY ' . MCP_AVISOS_PRIORIDADE . ', agendado_para, id LIMIT ' . $resta);
         $stmt->execute($params);
         $n = 0;
         $seguidas = 0;
@@ -1131,7 +1268,14 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
             $passou = time() - $inicio;
             $momento = $agora + $passou;
             if (!mcp_avisos_na_janela($momento) || $passou > MCP_AVISOS_RODADA_S[$lugar]) {
-                break 2;
+                $parar = true;
+                return;
+            }
+            if ($canal === 'email' && $aviso['tipo'] === 'campanha') {
+                if ($tetoComunicados <= 0) {
+                    continue;
+                }
+                $tetoComunicados--;
             }
             if ($canal === 'whatsapp' && $evolution && $n > 0 && $pausaEvolution > 0) {
                 sleep($pausaEvolution);
@@ -1139,6 +1283,7 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
                 usleep(MCP_AVISOS_PAUSA_MS * 1000);
             }
             $n++;
+            $usados[$canal]++;
             $r = mcp_aviso_enviar($aviso, $momento);
             if ($r === 'enviado') {
                 $enviados++;
@@ -1151,10 +1296,21 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
                 }
             }
             if (($canal === 'email' && mcp_email_fora() !== null) || ($canal === 'whatsapp' && mcp_whatsapp_fora() !== null)) {
-                break;
+                return;
             }
         }
+    };
+    $lote('email');
+    $lote('whatsapp');
+    // Perto do prazo (véspera e aula vencem às 20h), o que ainda espera o WhatsApp vai por e-mail: a partir
+    // das 19h com o WhatsApp fora do ar ou desligado; na última rodada, seja qual for o motivo.
+    $momento = $agora + (time() - $inicio);
+    if ($campanhaId === null && $modo !== 'manual' && !$parar
+        && (mcp_whatsapp_fora() !== null || !mcp_whatsapp_ativo() || mcp_avisos_hora_local($momento) >= MCP_AVISOS_HORA_ULTIMA)) {
+        mcp_avisos_trocar_para_email($momento);
     }
+    // Segunda passada de e-mail: as reservas desta rodada (WhatsApp que falhou de vez ou trocado) não esperam a próxima.
+    $lote('email');
     return [$enviados, $falhas];
 }
 
@@ -1230,21 +1386,25 @@ function mcp_avisos_fila_manual_contar(?int $agora = null): int
 /** A secretaria abriu no WhatsApp e mandou (enviado) ou decidiu não mandar (cancelado). */
 function mcp_avisos_fila_marcar(int $id, bool $enviado, string $quem, ?int $agora = null): bool
 {
+    $agora ??= time();
     $aviso = mcp_aviso_por_id($id);
-    if (!$aviso || $aviso['status'] !== 'manual') {
+    // Venceu às 20h com a página aberta: quem já tinha mandado ainda pode marcar "Enviei" por 2 horas.
+    $vencidoHaPouco = $aviso && $enviado && $aviso['status'] === 'expirado' && $aviso['canal'] === 'whatsapp' && $aviso['expira_em'] !== null
+        && (int) strtotime($aviso['expira_em'] . ' UTC') > $agora - 7200;
+    if (!$aviso || ($aviso['status'] !== 'manual' && !$vencidoHaPouco)) {
         return false;
     }
     // Trava: se outra pessoa da secretaria marcou este item no meio tempo, não marca de novo.
-    $trava = mcp_db()->prepare("UPDATE mcp_avisos SET status = 'enviando', atualizado_em = ? WHERE id = ? AND status = 'manual'");
-    $trava->execute([mcp_agora(), $id]);
+    $trava = mcp_db()->prepare("UPDATE mcp_avisos SET status = 'enviando', atualizado_em = ? WHERE id = ? AND status = ?");
+    $trava->execute([mcp_agora(), $id, $aviso['status']]);
     if ($trava->rowCount() === 0) {
         return false;
     }
     $campos = ['status' => $enviado ? 'enviado' : 'cancelado', 'enviado_por' => $quem, 'provedor' => 'manual'];
     if ($enviado) {
         $dest = mcp_aviso_destinatario($aviso);
-        $msg = $dest['ok'] ? mcp_aviso_mensagem($aviso, $dest, $agora ?? time()) : null;
-        $campos += ['enviado_em' => gmdate('Y-m-d H:i:s', $agora ?? time()), 'texto' => $msg['whatsapp'] ?? null, 'assunto' => isset($msg['assunto']) ? mb_substr($msg['assunto'], 0, 200) : null];
+        $msg = $dest['ok'] ? mcp_aviso_mensagem($aviso, $dest, $agora) : null;
+        $campos += ['enviado_em' => gmdate('Y-m-d H:i:s', $agora), 'texto' => $msg['whatsapp'] ?? null, 'assunto' => isset($msg['assunto']) ? mb_substr($msg['assunto'], 0, 200) : null];
     } else {
         $campos['erro'] = 'a secretaria pulou';
     }
@@ -1369,8 +1529,10 @@ function mcp_avisos_preparar_aulas(?int $agora = null): int
         if ($email !== '' && !mcp_avisos_bloqueado('email', $email)) {
             $canais['email'] = $email;
         }
-        // WhatsApp só para quem autorizou na escola (a função aulas_do_dia devolve whatsapp_autorizado).
-        if ($numero !== null && $aluno['whatsapp_autorizado'] && mcp_whatsapp_ativo() && mcp_ajuste_ligado('aula_whatsapp') && !mcp_avisos_bloqueado('whatsapp', $numero)) {
+        // WhatsApp só para quem autorizou na escola (a função aulas_do_dia devolve whatsapp_autorizado) e não
+        // disse "não quero mais receber" na página.
+        if ($numero !== null && $aluno['whatsapp_autorizado'] && mcp_whatsapp_ativo() && mcp_ajuste_ligado('aula_whatsapp') && !mcp_avisos_bloqueado('whatsapp', $numero)
+            && !mcp_avisos_aluno_saiu($dados)) {
             $canais['whatsapp'] = $numero;
         }
         foreach ($canais as $canal => $destino) {

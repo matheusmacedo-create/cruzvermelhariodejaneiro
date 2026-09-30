@@ -42,6 +42,9 @@ const PC_AVISOS = [
     'cp_apag' => ['Rascunho apagado.', 'ok'],
     'fl_ok' => ['Marcado como enviado.', 'ok'],
     'fl_pulo' => ['Mensagem tirada da fila.', 'ok'],
+    'aj_muitos' => ['Os outros ajustes foram salvos, mas os dias sem expediente não: cabem até 23 datas futuras. Tire algumas e salve de novo.', 'erro'],
+    'fl_ja' => ['Esta mensagem já tinha saído da fila: outra pessoa marcou antes, ou o prazo dela acabou (a véspera e a aula valem até as 20h).', 'erro'],
+    'cp_cota' => ['A cota de e-mails de hoje ficou para os lembretes do dia: os e-mails do comunicado começam a sair amanhã, dentro do prazo. O WhatsApp sai normalmente.', 'ok'],
     'av_rep' => ['A mensagem voltou para a fila e sai na próxima rodada (das 8h às 20h).', 'ok'],
     'av_tarde' => ['Esta mensagem não pode mais sair: era para a véspera (ou o prazo dela acabou).', 'erro'],
     'av_parou' => ['Pedido registrado: essa pessoa não recebe mais por esse canal, e o que estava na fila foi cancelado.', 'ok'],
@@ -212,16 +215,20 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
     // O WhatsApp do Palácio (Evolution) está configurado, mas só vale depois de a instituição aceitar o risco.
     $evolucaoPendente = (string) mcp_cfg('WHATSAPP_EVOLUTION_URL', '') !== '' && !mcp_ajuste_ligado('evolution_riscos') && mcp_whatsapp_modo() !== 'cloud';
     $rotinaEm = mcp_ajuste('rotina_em');
-    $rotinaParada = $rotinaEm !== '' && (int) strtotime($rotinaEm . ' UTC') < $agora - 45 * 60;
+    // Parada há 45 minutos, ou nunca rodou com algo esperando por ela (lembrete ligado ou comunicado marcado).
+    $precisaRotina = mcp_ajuste_ligado('lembrete_vespera') || mcp_ajuste_ligado('lembrete_saida') || mcp_ajuste_ligado('lembrete_aula')
+        || (bool) mcp_db()->query("SELECT 1 FROM mcp_campanhas WHERE status IN ('agendada', 'enviando') LIMIT 1")->fetchColumn();
+    $rotinaParada = $rotinaEm !== '' ? (int) strtotime($rotinaEm . ' UTC') < $agora - 45 * 60 : $precisaRotina;
     $canais = '<div class="cartao"><h2>Canais</h2><ul class="contas">'
-        . '<li><span>E-mail</span><b>' . ($resend ? 'Resend' : 'envio simples pelo servidor do site (pode cair no spam)') . '</b></li>'
+        . '<li><span>E-mail</span><b>' . ($resend ? 'Resend' : 'sem a chave da Resend: os avisos não saem por e-mail') . '</b></li>'
         . (($cota = mcp_avisos_emails_cota()) > 0 ? '<li><span>E-mails dos avisos hoje</span><b>' . ($hojeEmails = mcp_avisos_emails_hoje($agora)) . ' de ' . $cota
             . ($hojeEmails >= $cota ? ' · o resto sai amanhã' : '') . '</b></li>' : '')
         . '<li><span>Remetente</span><b>' . pn_e($remetente) . '</b></li>'
         . '<li><span>WhatsApp</span><b>' . (mcp_whatsapp_ativo() ? 'ligado · ' : 'desligado · ') . pn_e(mcp_whatsapp_modo_nome($modo)) . '</b></li>'
         . '</ul><p class="nota">' . $explicaModo . '</p>'
         . '<p class="nota">Nada sai fora da janela das 8h às 20h (Brasília), nem véspera de feriado ou de dia sem expediente. WhatsApp só para quem autorizou, com a data registrada na ficha.</p>'
-        . ($rotinaParada ? '<p class="nota" role="alert" style="color:var(--red)"><b>A rotina parou</b>: a última rodada foi ' . pn_e(pn_data($rotinaEm)) . '. Sem ela, nada sai (nem os comprovantes das aulas). Avise o suporte técnico.</p>' : '')
+        . ($rotinaParada ? '<p class="nota" role="alert" style="color:var(--red)">' . ($rotinaEm !== '' ? '<b>A rotina parou</b>: a última rodada foi ' . pn_e(pn_data($rotinaEm)) . '.'
+            : '<b>A rotina ainda não rodou</b> (a tarefa agendada de api/comparecimentos.php, a cada 15 minutos).') . ' Sem ela, nada sai (nem os comprovantes das aulas). Avise o suporte técnico.</p>' : '')
         . ($evolucaoPendente ? pc_form($usuario, 'ajustes_salvar', 0, '<input type="hidden" name="so_evolucao" value="1">'
             . '<p class="nota" style="margin-bottom:6px"><b>O WhatsApp do Palácio Virtual está configurado, mas desligado.</b> Ele não é a API oficial do WhatsApp: se muita gente denunciar as mensagens, '
             . 'o número pode ser bloqueado, e com ele param os avisos do Palácio. Leia os riscos em docs/ponto-comunicacao.md antes de ligar.</p>'
@@ -247,7 +254,7 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
             . $check('aula_whatsapp', 'Lembrete da aula também pelo WhatsApp', 'Vale só para os alunos que autorizaram o WhatsApp na escola (a escola informa quem). Os outros recebem só por e-mail.')
             . $check('whatsapp_ativo', 'Usar o WhatsApp', 'Se desmarcar, nada vai pelo WhatsApp (nem para a fila) e tudo segue por e-mail. O que estava esperando volta a sair se religar dentro do prazo.')
             . '<label style="margin-top:12px">Dias sem expediente na sede (além dos feriados)<input name="dias_fechados" placeholder="24/12, 31/12" value="'
-                . pn_e(implode(', ', array_map(static fn(string $d): string => mcp_escola_data($d), mcp_avisos_dias_fechados()))) . '"></label>'
+                . pn_e(implode(', ', array_map(static fn(string $d): string => mcp_escola_data($d), array_filter(mcp_avisos_dias_fechados(), static fn(string $d): bool => $d >= mcp_ponto_hoje($agora))))) . '"></label>'
             . '<p class="nota" style="margin-top:4px">Na véspera desses dias e dos feriados (nacionais, do estado e da cidade do Rio), o lembrete não sai.</p>'
             . '<div class="acoes">' . pc_botao('Salvar os ajustes', 'btn-red') . '</div>')
         . '</div>';
@@ -840,19 +847,29 @@ function pc_post(string $sessao, string $acao, int $id): never
                 if (mcp_ajuste($nome, '0') !== $novo) {
                     mcp_ajuste_gravar($nome, $novo, $sessao);
                     mcp_registrar(null, 'painel_ajuste', "$sessao · $nome = $novo");
-                    // Lembrete desligado: o que estava na fila daquele tipo também não sai.
+                    // Lembrete desligado: o que estava na fila daquele tipo também não sai. Religado, o que saiu da
+                    // fila por isso volta, se ainda estiver no prazo (o preparo não o recriaria: a chave já existe).
                     $tipo = array_search($nome, MCP_AVISOS_AJUSTES, true);
                     if ($novo === '0' && $tipo !== false) {
                         mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'lembrete desligado no portal', atualizado_em = ? WHERE tipo = ? AND status IN ('pendente', 'manual')")
                             ->execute([mcp_agora(), $tipo]);
+                    } elseif ($tipo !== false) {
+                        mcp_db()->prepare("UPDATE mcp_avisos SET status = IF(canal = 'whatsapp' AND ? = 'manual', 'manual', 'pendente'), erro = NULL, atualizado_em = ?
+                            WHERE tipo = ? AND status = 'cancelado' AND erro = 'lembrete desligado no portal' AND (expira_em IS NULL OR expira_em > ?)")
+                            ->execute([mcp_whatsapp_modo(), mcp_agora(), $tipo, mcp_agora()]);
                     }
                 }
             }
             if (empty($_POST['so_evolucao'])) {
+                $hoje = mcp_ponto_hoje($agora);
                 $fechados = [];
-                foreach (preg_split('/[\s,;]+/', mcp_texto($_POST['dias_fechados'] ?? '', 400)) ?: [] as $d) {
+                foreach (preg_split('/[\s,;]+/', mcp_texto($_POST['dias_fechados'] ?? '', 1000)) ?: [] as $d) {
                     if (preg_match('~^(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?$~', $d, $m)) {
-                        $ano = isset($m[3]) ? ((int) $m[3] < 100 ? 2000 + (int) $m[3] : (int) $m[3]) : (int) substr(mcp_ponto_hoje($agora), 0, 4);
+                        $ano = isset($m[3]) ? ((int) $m[3] < 100 ? 2000 + (int) $m[3] : (int) $m[3]) : (int) substr($hoje, 0, 4);
+                        // Sem o ano e já passada neste ano, é a do ano que vem ("02/01" escrito em dezembro).
+                        if (!isset($m[3]) && sprintf('%04d-%02d-%02d', $ano, $m[2], $m[1]) < $hoje) {
+                            $ano++;
+                        }
                         if (checkdate((int) $m[2], (int) $m[1], $ano)) {
                             $fechados[] = sprintf('%04d-%02d-%02d', $ano, $m[2], $m[1]);
                         }
@@ -860,7 +877,13 @@ function pc_post(string $sessao, string $acao, int $id): never
                         $fechados[] = $d;
                     }
                 }
-                $fechados = implode(',', array_values(array_unique($fechados)));
+                // Data que já passou não serve para mais nada: sai da lista e não ocupa o lugar das novas.
+                $fechados = array_values(array_unique(array_filter($fechados, static fn(string $d): bool => $d >= $hoje)));
+                sort($fechados);
+                $fechados = implode(',', $fechados);
+                if (strlen($fechados) > 255) {
+                    pn_redirecionar('v=comunicacao&ok=aj_muitos');
+                }
                 if (mcp_ajuste('dias_fechados') !== $fechados) {
                     mcp_ajuste_gravar('dias_fechados', $fechados, $sessao);
                 }
@@ -933,7 +956,10 @@ function pc_post(string $sessao, string $acao, int $id): never
             mcp_campanhas_disparar($agora);
             mcp_avisos_enviar_pendentes($agora, 15, $id);
             mcp_campanhas_concluir($agora);
-            pn_redirecionar('v=comunicado&id=' . $id . '&ok=cp_envio');
+            // Cota de e-mail do dia já reservada para os lembretes: o comunicado não começou pelo e-mail.
+            $semCota = mcp_avisos_cota_comunicados($agora) === 0 && (int) mcp_db()->query("SELECT COUNT(*) FROM mcp_avisos WHERE campanha_id = " . (int) $id
+                . " AND tipo = 'campanha' AND canal = 'email' AND status = 'pendente'")->fetchColumn() > 0;
+            pn_redirecionar('v=comunicado&id=' . $id . '&ok=' . ($semCota ? 'cp_cota' : 'cp_envio'));
         case 'campanha_cancelar':
             mcp_campanha_cancelar($id, $sessao);
             pn_redirecionar('v=comunicado&id=' . $id . '&ok=cp_canc');
@@ -942,8 +968,8 @@ function pc_post(string $sessao, string $acao, int $id): never
             pn_redirecionar('v=comunicacao&aba=comunicados&ok=cp_apag');
         case 'fila_enviada':
         case 'fila_pular':
-            mcp_avisos_fila_marcar($id, $acao === 'fila_enviada', $sessao, $agora);
-            pn_redirecionar('v=comunicacao&aba=fila&ok=' . ($acao === 'fila_enviada' ? 'fl_ok' : 'fl_pulo'));
+            $marcou = mcp_avisos_fila_marcar($id, $acao === 'fila_enviada', $sessao, $agora);
+            pn_redirecionar('v=comunicacao&aba=fila&ok=' . (!$marcou ? 'fl_ja' : ($acao === 'fila_enviada' ? 'fl_ok' : 'fl_pulo')));
         case 'aviso_repetir':
             $aviso = mcp_aviso_por_id($id);
             // Véspera e aula valem até as 20h da véspera: depois disso, "amanhã" viraria "hoje". O prazo não se estende.

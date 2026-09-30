@@ -767,20 +767,38 @@ try {
         linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|whatsapp")['status'] ?? null, linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|whatsapp"),
         linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|email")['status'] ?? null], [3, 'manual', null, 'pendente']);
     mcp_ajuste_gravar('aula_whatsapp', '0', $quem);
-    // Descadastro de um clique: o POST do programa de e-mail descadastra; abrir o link só leva à página de escolhas.
+    // Descadastro de um clique: o POST do programa de e-mail descadastra; abrir o link mostra uma página com o
+    // botão, sem link pessoal (quem tem o cabeçalho não ganha acesso às escolhas da pessoa).
     $avSara = linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|email");
-    $urlSair = trim(mcp_avisos_cabecalhos_descadastro((int) $avSara['id'])['List-Unsubscribe'], '<>');
-    [$stGet, $cabGet] = http($urlSair);
-    [, $cabRoboU] = http($urlSair, 'GET', null, ['User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1)']);
-    verificar('descadastro de um clique: abrir o link leva à página de escolhas (robô vai ao ponto) e não descadastra', [$stGet, str_contains($cabGet['location'] ?? '', '/ponto/sair/#t='),
-        $cabRoboU['location'] ?? null, mcp_avisos_bloqueado('email', "sara-$sufixo@avisos-teste.example")], [302, true, "http://127.0.0.1:$portaSite/ponto/", false]);
+    $urlSair = trim(mcp_avisos_cabecalhos_descadastro($avSara)['List-Unsubscribe'], '<>');
+    [$stGet, $cabGet, $htmlGet] = http($urlSair);
+    [$stRoboU, , $htmlRoboU] = http($urlSair, 'GET', null, ['User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1)']);
+    verificar('descadastro de um clique: abrir o link mostra a página com o botão, sem link pessoal, e não descadastra (nem para robô)', [$stGet, isset($cabGet['location']),
+        str_contains($htmlGet, 'name="confirmar"'), str_contains($htmlGet . $htmlRoboU, '#t='), $stRoboU, mcp_avisos_bloqueado('email', "sara-$sufixo@avisos-teste.example")],
+        [200, false, true, false, 200, false]);
     [$stFalso] = http((string) preg_replace('/\.[a-f0-9]{16}$/', '.0000000000000000', $urlSair), 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
     [$stPost] = http($urlSair, 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
     verificar('descadastro de um clique: o POST bloqueia o e-mail do aluno e cancela o que estava na fila; assinatura errada não vale',
         [$stFalso, $stPost, mcp_avisos_bloqueado('email', "sara-$sufixo@avisos-teste.example"), mcp_aviso_por_id((int) $avSara['id'])['status']], [404, 200, true, 'cancelado']);
     $avVania = linha_aviso($db, "vespera|{$v3['id']}|$amanha|email");
-    [$st] = http(trim(mcp_avisos_cabecalhos_descadastro((int) $avVania['id'])['List-Unsubscribe'], '<>'), 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
+    $formulario = ['Content-Type: application/x-www-form-urlencoded'];
+    // "Invalidar os links já enviados" (a chave da pessoa muda) derruba também o descadastro das mensagens que já saíram.
+    $urlVania = trim(mcp_avisos_cabecalhos_descadastro($avVania)['List-Unsubscribe'], '<>');
+    mcp_avisos_chave_colaborador(mcp_colaborador_por_id((int) $v3['id']), true);
+    [$stVelho, , $htmlVelho] = http($urlVania);
+    [$stVelhoPost] = http($urlVania, 'POST', 'List-Unsubscribe=One-Click', $formulario);
+    verificar('descadastro de um clique: depois de invalidar os links, o da mensagem antiga não vale', [$stVelho, str_contains($htmlVelho, 'Este link não vale mais'), $stVelhoPost,
+        (int) mcp_colaborador_por_id((int) $v3['id'])['aviso_email']], [404, true, 404, 1]);
+    // Mensagem que foi para um e-mail que não é mais o do cadastro (estava errado): quem recebeu não desliga o certo.
+    $idErrado = (int) mcp_aviso_criar(['chave' => "teste-descadastro|$sufixo", 'tipo' => 'vespera', 'canal' => 'email', 'colaborador_id' => (int) $v3['id'], 'pessoa' => 'c' . $v3['id'],
+        'nome' => "Vânia $marca", 'destino' => "outra-pessoa-$sufixo@avisos-teste.example", 'referencia' => $amanha]);
+    [$stErrado] = http(trim(mcp_avisos_cabecalhos_descadastro(mcp_aviso_por_id($idErrado))['List-Unsubscribe'], '<>'), 'POST', 'List-Unsubscribe=One-Click', $formulario);
+    verificar('descadastro de um clique: e-mail que não é mais o do cadastro não desliga o da pessoa', [$stErrado, (int) mcp_colaborador_por_id((int) $v3['id'])['aviso_email']], [404, 1]);
+    [$st] = http(trim(mcp_avisos_cabecalhos_descadastro($avVania)['List-Unsubscribe'], '<>'), 'POST', 'List-Unsubscribe=One-Click', $formulario);
     verificar('descadastro de um clique: o colaborador deixa de receber por e-mail', [$st, (int) mcp_colaborador_por_id((int) $v3['id'])['aviso_email']], [200, 0]);
+    $db->prepare('UPDATE mcp_colaboradores SET aviso_email = 1 WHERE id = ?')->execute([(int) $v3['id']]);
+    [$st, , $html] = http(trim(mcp_avisos_cabecalhos_descadastro($avVania)['List-Unsubscribe'], '<>'), 'POST', 'confirmar=1', $formulario);
+    verificar('descadastro pela página: o botão desliga o e-mail e confirma', [$st, str_contains($html, '<h1>Pronto</h1>'), (int) mcp_colaborador_por_id((int) $v3['id'])['aviso_email']], [200, true, 0]);
 
     // ------------------------------------------------------------------------- portal
     $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760005', aviso_whatsapp = 1 WHERE id = ?")->execute([(int) $w1['id']]);
@@ -833,8 +851,16 @@ try {
     $nina = mcp_colaborador_por_id($nid);
     verificar('ficha: WhatsApp autorizado, com quem registrou e como', [(int) $nina['aviso_whatsapp'], $nina['aviso_whatsapp_por'], $nina['aviso_whatsapp_como']], [1, $quem, 'disse na recepção, em 30/09']);
     $chaveNina = (string) mcp_avisos_chave_colaborador($nina);
+    // Um link de clique de uma mensagem que já saiu: antes de invalidar, leva à página de lembretes; depois, ao ponto.
+    $idNina = (int) mcp_aviso_criar(['chave' => "teste-links|$sufixo", 'tipo' => 'link', 'canal' => 'email', 'colaborador_id' => $nid, 'pessoa' => "c$nid", 'nome' => (string) $nina['nome'],
+        'destino' => (string) $nina['email']]);
+    $linkNina = mcp_avisos_link_clique($idNina, 'lembretes');
+    [, $cabAntes] = http($linkNina);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'col_links_novos', 'id' => $nid, 't' => $csrf('col_links_novos', $nid)]);
-    verificar('ficha: invalidar os links já enviados troca a chave da pessoa', [str_contains($cab['location'] ?? '', 'ok=cl_novos'), mcp_colaborador_por_id($nid)['aviso_chave'] !== $chaveNina], [true, true]);
+    [, $cabDepois] = http($linkNina);
+    verificar('ficha: invalidar os links já enviados troca a chave e derruba também os links das mensagens que já saíram', [str_contains($cab['location'] ?? '', 'ok=cl_novos'),
+        mcp_colaborador_por_id($nid)['aviso_chave'] !== $chaveNina, str_contains($cabAntes['location'] ?? '', '/ponto/lembretes/#t='), $cabDepois['location'] ?? null],
+        [true, true, true, "http://127.0.0.1:$portaSite/ponto/"]);
     mcp_colaborador_salvar($nid, ['nome' => $nina['nome'], 'cpf' => $nina['cpf'], 'email' => $nina['email'], 'telefone' => '21998762222', 'funcao' => $nina['funcao'], 'vinculo' => $nina['vinculo'], 'ativo' => 1], $quem);
     $nina = mcp_colaborador_por_id($nid);
     verificar('ficha: trocar o celular derruba a autorização do WhatsApp e os links (valiam para o número antigo)', [(int) $nina['aviso_whatsapp'], $nina['aviso_whatsapp_por'], $nina['aviso_chave']], [0, null, null]);
@@ -880,6 +906,177 @@ try {
     @unlink($configCota);
     verificar('cota diária dos e-mails: acabou a cota, o resto espera o dia seguinte', [$r['e'] ?? null, in_array('pendente', $r['s'] ?? [], true), $r['cota'] ?? null],
         [1, true, $jaHoje + 1]);
+
+    // ------------------------------------------------------------------------- revisão final: cota, reserva, troca de canal, fila, ajustes
+    // Cota: o comunicado deixa a parte dos lembretes do dia (os já preparados) e a folga. Os outros e-mails na fila saem da conta.
+    $db->exec("UPDATE mcp_avisos SET status = 'cancelado', erro = 'teste da cota' WHERE status = 'pendente' AND canal = 'email'");
+    $criarCota = static function (string $n, string $tipo, string $hora) use ($v1, $sufixo, $hoje, $depois): int {
+        return (int) mcp_aviso_criar(['chave' => "teste-cota2-$n|$sufixo", 'tipo' => $tipo, 'canal' => 'email', 'campanha_id' => $tipo === 'campanha' ? (int) $depois['id'] : null,
+            'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'], 'nome' => 'Vera', 'destino' => "vera-$sufixo@avisos-teste.example",
+            'agendado_para' => mcp_ponto_local_para_utc("$hoje $hora:00"), 'expira_em' => mcp_ponto_local_para_utc("$hoje 20:00:00")]);
+    };
+    $idsLembrete = array_map(static fn(int $i): int => $criarCota("l$i", 'link', '18:00'), [1, 2, 3]);
+    $idsComunicado = array_map(static fn(int $i): int => $criarCota("c$i", 'campanha', '10:00'), [1, 2, 3, 4, 5]);
+    $jaHoje = mcp_avisos_emails_hoje(em($hoje, '11:00'));
+    $lembretesHoje = mcp_avisos_emails_lembretes_hoje(em($hoje, '11:00'));
+    // A cota em que sobram exatamente 2 e-mails para o comunicado às 11h.
+    for ($cota = 1; $cota - (int) ceil($cota * MCP_AVISOS_EMAILS_FOLGA) - $jaHoje - $lembretesHoje !== 2; $cota++) {
+    }
+    $configCota = config_teste(['AVISOS_EMAILS_POR_DIA' => (string) $cota] + $base0);
+    $situacoes = static fn(array $ids): string => 'array_map(static fn(int $i): string => mcp_aviso_por_id($i)["status"], ' . var_export($ids, true) . ')';
+    $r = sub($configCota, 'mcp_avisos_enviar_pendentes(' . em($hoje, '11:00') . '); $c11 = ' . $situacoes($idsComunicado) . '; $l11 = ' . $situacoes($idsLembrete) . ';'
+        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '18:00') . '); echo json_encode(["c11" => $c11, "l11" => $l11, "c18" => ' . $situacoes($idsComunicado)
+        . ', "l18" => ' . $situacoes($idsLembrete) . ', "resta" => mcp_avisos_cota_comunicados(' . em($hoje, '18:01') . ')]);');
+    @unlink($configCota);
+    $quantos = static fn(array $l, string $st): int => count(array_filter($l, static fn($x): bool => $x === $st));
+    verificar('cota: às 11h o comunicado usa só a parte dele (2 de 5); às 18h os 3 lembretes saem, e o resto do comunicado espera o dia seguinte',
+        [$quantos($r['c11'] ?? [], 'enviado'), $quantos($r['l11'] ?? [], 'pendente'), $quantos($r['l18'] ?? [], 'enviado'), $quantos($r['c18'] ?? [], 'pendente'), $r['resta'] ?? null], [2, 3, 3, 3, 0]);
+
+    // Reserva: o e-mail do mesmo lembrete, cancelado porque ia pelo WhatsApp, volta para a fila quando o WhatsApp falha de vez.
+    $refReserva = mcp_avisos_dia_mais($hoje, 23);
+    $baseReserva = ['tipo' => 'vespera', 'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'], 'nome' => 'Vera', 'referencia' => $refReserva,
+        'agendado_para' => gmdate('Y-m-d H:i:s', time() - 60), 'expira_em' => gmdate('Y-m-d H:i:s', time() + 3600)];
+    $idEmailGemeo = (int) mcp_aviso_criar(['chave' => "vespera|{$v1['id']}|$refReserva|email", 'canal' => 'email', 'destino' => "vera-$sufixo@avisos-teste.example"] + $baseReserva);
+    mcp_aviso_atualizar($idEmailGemeo, ['status' => 'cancelado', 'erro' => 'vai pelo WhatsApp']);
+    $idWhatsGemeo = (int) mcp_aviso_criar(['chave' => "vespera|{$v1['id']}|$refReserva|whatsapp", 'canal' => 'whatsapp', 'destino' => '5521998760001'] + $baseReserva);
+    mcp_aviso_atualizar($idWhatsGemeo, ['status' => 'falhou', 'erro' => '#131026 teste']);
+    verificar('reserva: o e-mail cancelado porque ia pelo WhatsApp volta para a fila quando o WhatsApp falha de vez',
+        [mcp_aviso_reserva_email(mcp_aviso_por_id($idWhatsGemeo), time()), mcp_aviso_por_id($idEmailGemeo)['status'], mcp_aviso_por_id($idEmailGemeo)['erro']], [$idEmailGemeo, 'pendente', null]);
+
+    // Perto do prazo, o lembrete que ainda espera o WhatsApp (desligado, fora do ar) vai por e-mail, e sai na mesma rodada.
+    $ajustesAntesTroca = ['whatsapp_ativo' => mcp_ajuste('whatsapp_ativo', '0'), 'lembrete_aula' => mcp_ajuste('lembrete_aula', '0'), 'aula_whatsapp' => mcp_ajuste('aula_whatsapp', '0')];
+    mcp_ajuste_gravar('whatsapp_ativo', '0', $quem);
+    mcp_ajuste_gravar('lembrete_aula', '1', $quem);
+    $dadosTroca = ['data' => $amanha, 'aulas' => [['curso' => 'Bombeiro Civil', 'horario' => '18:00 - 22:00']], 'email' => "ulisses-$sufixo@avisos-teste.example", 'whatsapp_hash' => ''];
+    $chaveTroca = "aula|al-troca-$sufixo|$amanha";
+    $idTroca = (int) mcp_aviso_criar(['chave' => "$chaveTroca|whatsapp", 'tipo' => 'aula', 'canal' => 'whatsapp', 'pessoa' => 'a' . mcp_avisos_hash('email', $dadosTroca['email']),
+        'nome' => "Ulisses Aluno $marca", 'destino' => '5521998765432', 'referencia' => $amanha, 'dados' => $dadosTroca,
+        'agendado_para' => mcp_ponto_local_para_utc("$hoje 18:00:00"), 'expira_em' => mcp_ponto_local_para_utc("$hoje 20:00:00")]);
+    $configTroca = config_teste(['AVISOS_EMAILS_POR_DIA' => '0'] + $base0 + ['WHATSAPP_CLOUD_TOKEN' => 'tok_teste', 'WHATSAPP_CLOUD_NUMERO_ID' => '1234567890',
+        'WHATSAPP_CLOUD_BASE' => "http://127.0.0.1:$portaFalso"]);
+    $antesEmails = count(falso('emails'));
+    $r = sub($configTroca, 'mcp_avisos_enviar_pendentes(' . em($hoje, '18:30') . '); $s1 = mcp_aviso_por_id(' . $idTroca . ')["status"];'
+        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '19:05') . '); $w = mcp_aviso_por_id(' . $idTroca . '); $e = mcp_aviso_por_chave(' . var_export("$chaveTroca|email", true) . ');'
+        . ' echo json_encode(["s1" => $s1, "s2" => $w["status"], "erro" => $w["erro"], "e" => $e["status"] ?? null]);');
+    @unlink($configTroca);
+    foreach ($ajustesAntesTroca as $nome => $valor) {
+        mcp_ajuste_gravar($nome, $valor, $quem);
+    }
+    verificar('troca de canal: às 18h30 o WhatsApp desligado espera; às 19h o lembrete vai por e-mail na mesma rodada, e o WhatsApp não sai mais',
+        [$r['s1'] ?? null, $r['s2'] ?? null, $r['erro'] ?? null, $r['e'] ?? null,
+        count(array_filter(array_slice(falso('emails'), $antesEmails), static fn(array $m): bool => ($m['to'] ?? []) === ["ulisses-$sufixo@avisos-teste.example"]))],
+        ['pendente', 'cancelado', 'o WhatsApp não saiu a tempo: foi por e-mail', 'enviado', 1]);
+
+    // Aula: recesso marcado depois do preparo barra o lembrete; quem disse "não quero mais receber" na página não recebe o WhatsApp.
+    $ajustesAntesAula = ['whatsapp_ativo' => mcp_ajuste('whatsapp_ativo', '0'), 'lembrete_aula' => mcp_ajuste('lembrete_aula', '0'), 'aula_whatsapp' => mcp_ajuste('aula_whatsapp', '0'),
+        'dias_fechados' => mcp_ajuste('dias_fechados')];
+    foreach (['whatsapp_ativo', 'lembrete_aula', 'aula_whatsapp'] as $nome) {
+        mcp_ajuste_gravar($nome, '1', $quem);
+    }
+    $dataFechada = mcp_avisos_dia_mais($hoje, 12);
+    mcp_ajuste_gravar('dias_fechados', $dataFechada, $quem);
+    $emailSaiu = "yara-$sufixo@avisos-teste.example";
+    $avisoAula = static fn(string $canal, string $ref): array => ['tipo' => 'aula', 'canal' => $canal, 'referencia' => $ref, 'colaborador_id' => null, 'chave' => "x|$canal",
+        'destino' => $canal === 'email' ? $emailSaiu : '5521998761212', 'nome' => 'Yara', 'dados' => json_encode(['email' => $emailSaiu])];
+    $whatsAntesDeSair = mcp_aviso_destinatario($avisoAula('whatsapp', $amanha))['ok'];
+    mcp_avisos_bloquear_hash('email', mcp_avisos_hash('email', $emailSaiu), 'descadastro');
+    $whatsDepoisDoDescadastro = mcp_aviso_destinatario($avisoAula('whatsapp', $amanha))['ok'];
+    $db->prepare("UPDATE mcp_avisos_bloqueios SET origem = 'pagina' WHERE canal = 'email' AND destino_hash = ?")->execute([mcp_avisos_hash('email', $emailSaiu)]);
+    verificar('aula: recesso marcado depois barra o lembrete; "não quero mais receber" na página vale para o WhatsApp, o descadastro só do e-mail não',
+        [mcp_aviso_destinatario($avisoAula('email', $dataFechada))['motivo'] ?? null, $whatsAntesDeSair, $whatsDepoisDoDescadastro, mcp_aviso_destinatario($avisoAula('whatsapp', $amanha))['motivo'] ?? null],
+        ['sede fechada nesse dia', true, true, 'pediu para não receber']);
+    foreach ($ajustesAntesAula as $nome => $valor) {
+        mcp_ajuste_gravar($nome, $valor, $quem);
+    }
+
+    // Fila: "Enviei" logo depois das 20h (a página estava aberta) ainda vale; horas depois, ou "pular" num vencido, não, e o portal diz.
+    $vencido = static function (string $n, int $haSegundos) use ($db, $w1, $marca, $amanha, $sufixo): int {
+        $id = (int) mcp_aviso_criar(['chave' => "teste-vencido-$n|$sufixo", 'tipo' => 'vespera', 'canal' => 'whatsapp', 'colaborador_id' => (int) $w1['id'], 'pessoa' => 'c' . $w1['id'],
+            'nome' => "Wagner $marca", 'destino' => '5521998760005', 'referencia' => $amanha]);
+        $db->prepare("UPDATE mcp_avisos SET status = 'expirado', expira_em = ? WHERE id = ?")->execute([gmdate('Y-m-d H:i:s', time() - $haSegundos), $id]);
+        return $id;
+    };
+    $idVencido = $vencido('a', 1800);
+    $idVelho = $vencido('b', 3 * 3600);
+    [, $cabVelho] = portal($base, $sessaoPortal, ['acao' => 'fila_enviada', 'id' => $idVelho, 't' => $csrf('fila_enviada', $idVelho)]);
+    verificar('fila: "Enviei" logo depois das 20h vale; horas depois, ou "pular" num vencido, não (e o portal avisa)',
+        [mcp_avisos_fila_marcar($idVencido, true, $quem), mcp_aviso_por_id($idVencido)['status'], mcp_avisos_fila_marcar($idVelho, false, $quem), mcp_aviso_por_id($idVelho)['status'],
+        str_ends_with($cabVelho['location'] ?? '', 'ok=fl_ja')], [true, 'enviado', false, 'expirado', true]);
+
+    // Ajustes: desligar um lembrete tira da fila; religar no mesmo dia devolve o que ainda está no prazo.
+    $idToggle = (int) mcp_aviso_criar(['chave' => "teste-religar|$sufixo", 'tipo' => 'saida', 'canal' => 'email', 'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'], 'nome' => 'Vera',
+        'destino' => "vera-$sufixo@avisos-teste.example", 'referencia' => '0', 'agendado_para' => gmdate('Y-m-d H:i:s', time() + 3600), 'expira_em' => gmdate('Y-m-d H:i:s', time() + 86400)]);
+    $formAjustes = static function (bool $saida): array {
+        mcp_ajustes_todos(true);
+        $campos = ['dias_fechados' => implode(', ', array_map('mcp_escola_data', mcp_avisos_dias_fechados()))];
+        foreach (['lembrete_vespera', 'lembrete_aula', 'aula_whatsapp', 'whatsapp_ativo'] as $nome) {
+            if (mcp_ajuste_ligado($nome)) {
+                $campos[$nome] = '1';
+            }
+        }
+        return $campos + ($saida ? ['lembrete_saida' => '1'] : []);
+    };
+    portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0)] + $formAjustes(false));
+    $situacaoDesligado = mcp_aviso_por_id($idToggle)['status'];
+    portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0)] + $formAjustes(true));
+    mcp_ajustes_todos(true);
+    verificar('ajustes: desligar um lembrete tira da fila; religar no mesmo dia devolve o que ainda está no prazo', [$situacaoDesligado, mcp_aviso_por_id($idToggle)['status'], mcp_ajuste('lembrete_saida')],
+        ['cancelado', 'pendente', '1']);
+    mcp_aviso_atualizar($idToggle, ['status' => 'cancelado', 'erro' => 'fim do teste']);
+    // Dias sem expediente: data passada sai, "02/01" em dezembro é do ano seguinte, lista grande demais não é cortada em silêncio.
+    $anoQueVem = (int) substr($hoje, 0, 4) + 1;
+    $ontemBr = mcp_escola_data(mcp_avisos_dia_mais($hoje, -1));
+    $diaPassadoSemAno = substr(mcp_escola_data(mcp_avisos_dia_mais($hoje, -1)), 0, 5);
+    portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'dias_fechados' => "$ontemBr, $diaPassadoSemAno"] + array_diff_key($formAjustes(true), ['dias_fechados' => 1]));
+    mcp_ajustes_todos(true);
+    $datas = array_map(static fn(int $i): string => mcp_escola_data(mcp_avisos_dia_mais($hoje, 20 + $i)), range(1, 30));
+    [, $cabMuitos] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'dias_fechados' => implode(', ', $datas)] + array_diff_key($formAjustes(true), ['dias_fechados' => 1]));
+    mcp_ajustes_todos(true);
+    verificar('dias sem expediente: data passada sai; sem o ano e já passada, é a do ano que vem; mais de 23 datas não é cortado em silêncio',
+        [mcp_avisos_dias_fechados(), str_ends_with($cabMuitos['location'] ?? '', 'ok=aj_muitos')], [[$anoQueVem . '-' . substr(mcp_avisos_dia_mais($hoje, -1), 5)], true]);
+    mcp_ajuste_gravar('dias_fechados', '', $quem);
+
+    // Comunicado: um teste preso na fila não o deixa "enviando" para sempre.
+    $db->prepare("INSERT INTO mcp_campanhas (fase, nome, publico, canais, assunto, titulo, mensagem, status, iniciada_em, criado_por, criado_em, atualizado_em)
+        VALUES ('livre', ?, 'colaboradores', 'email', 'x', 'x', 'x', 'enviando', ?, 'avisos@exemplo.org', ?, ?)")->execute(["Concluir $marca", mcp_agora(), mcp_agora(), mcp_agora()]);
+    $idConcluir = (int) $db->lastInsertId();
+    mcp_aviso_criar(['chave' => "teste-concluir|$sufixo", 'tipo' => 'teste', 'canal' => 'whatsapp', 'campanha_id' => $idConcluir, 'nome' => "Teste $marca", 'destino' => '5521998760009']);
+    mcp_campanhas_concluir();
+    verificar('comunicado: o teste preso na fila não segura o comunicado em "enviando"', mcp_campanha($idConcluir)['status'], 'enviada');
+
+    // Sem a chave da Resend, o aviso por e-mail não sai pelo servidor do site: falha com o motivo.
+    $configSemResend = config_teste(['RESEND_API_KEY' => ''] + $base0);
+    $idSemResend = (int) mcp_aviso_criar(['chave' => "teste-sem-resend|$sufixo", 'tipo' => 'link', 'canal' => 'email', 'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'],
+        'nome' => 'Vera', 'destino' => "vera-$sufixo@avisos-teste.example"]);
+    $r = sub($configSemResend, '$s = mcp_aviso_enviar(mcp_aviso_por_id(' . $idSemResend . ')); echo json_encode(["s" => $s, "e" => mcp_aviso_por_id(' . $idSemResend . ')["erro"]]);');
+    @unlink($configSemResend);
+    verificar('sem a chave da Resend, o aviso por e-mail não sai pelo servidor do site (falha, com o motivo)', [$r['s'] ?? null, str_starts_with((string) ($r['e'] ?? ''), 'falta a chave da Resend')], ['falhou', true]);
+
+    // Métrica "saídas não registradas na hora": turno lançado inteiro à mão e ajuste de uma saída registrada na hora não contam.
+    $diaMetrica = mcp_avisos_dia_mais($hoje, -25);
+    $colMetrica = colaborador("Mário Métrica $marca", 'voluntario', null, null);
+    mcp_ponto_lancar((int) $colMetrica['id'], (string) mcp_ponto_local_para_utc("$diaMetrica 08:00:00"), (string) mcp_ponto_local_para_utc("$diaMetrica 09:00:00"), $quem, 'teste');
+    $turnoMetrica = static function (string $entrada, ?string $saida) use ($db, $colMetrica, $diaMetrica): int {
+        $db->prepare("INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, saida, origem_entrada, origem_saida, criado_em, atualizado_em) VALUES (?, 1, ?, ?, 'aparelho', ?, ?, ?)")
+            ->execute([(int) $colMetrica['id'], mcp_ponto_local_para_utc("$diaMetrica $entrada:00"), $saida ? mcp_ponto_local_para_utc("$diaMetrica $saida:00") : null, $saida ? 'aparelho' : null, mcp_agora(), mcp_agora()]);
+        return (int) $db->lastInsertId();
+    };
+    $idAjuste = $turnoMetrica('10:00', '11:00');
+    mcp_ponto_corrigir($idAjuste, (string) mcp_ponto_local_para_utc("$diaMetrica 10:00:00"), mcp_ponto_local_para_utc("$diaMetrica 11:30:00"), $quem, 'teste');
+    $idSemSaida = $turnoMetrica('13:00', null);
+    mcp_ponto_corrigir($idSemSaida, (string) mcp_ponto_local_para_utc("$diaMetrica 13:00:00"), mcp_ponto_local_para_utc("$diaMetrica 14:00:00"), $quem, 'teste');
+    $nucleo = mcp_metricas_nucleo($diaMetrica, mcp_avisos_dia_mais($diaMetrica, 1));
+    verificar('métricas: só a saída lançada num registro que estava sem saída conta como não registrada na hora', [$nucleo['entradas'], $nucleo['esquecidas']], [3, 1]);
+
+    // Cadastro: o mesmo celular escrito sem o 9 (formato antigo) não é troca: a autorização e os links continuam.
+    $colTelefone = colaborador("Telma Telefone $marca", 'voluntario', "telma-$sufixo@avisos-teste.example", '21998761234');
+    $db->prepare('UPDATE mcp_colaboradores SET aviso_whatsapp = 1, aviso_whatsapp_em = ?, aviso_whatsapp_por = ? WHERE id = ?')->execute([mcp_agora(), $quem, (int) $colTelefone['id']]);
+    $chaveTelma = mcp_avisos_chave_colaborador(mcp_colaborador_por_id((int) $colTelefone['id']));
+    $telma = mcp_colaborador_por_id((int) $colTelefone['id']);
+    mcp_colaborador_salvar((int) $telma['id'], ['nome' => $telma['nome'], 'cpf' => $telma['cpf'], 'email' => $telma['email'], 'telefone' => '2198761234', 'funcao' => $telma['funcao'],
+        'vinculo' => $telma['vinculo'], 'ativo' => 1], $quem);
+    $telma = mcp_colaborador_por_id((int) $colTelefone['id']);
+    verificar('cadastro: o mesmo celular sem o 9 não é troca (a autorização do WhatsApp e os links continuam)', [(int) $telma['aviso_whatsapp'], $telma['aviso_chave']], [1, $chaveTelma]);
 
     // ------------------------------------------------------------------------- faxina e rotina
     $idPreso = mcp_aviso_criar(['chave' => "teste-preso|$sufixo", 'tipo' => 'vespera', 'canal' => 'email', 'colaborador_id' => (int) $v2['id'], 'pessoa' => 'c' . $v2['id'], 'nome' => "x $marca", 'destino' => "vitor-$sufixo@avisos-teste.example", 'referencia' => $amanha]);

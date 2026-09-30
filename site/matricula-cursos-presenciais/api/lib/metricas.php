@@ -56,7 +56,7 @@ function mcp_metricas_nucleo(string $deIso, string $ateIso, ?int $agora = null):
         }
         $voluntarios[(int) $c['id']] = mcp_ponto_voluntario($c);
     }
-    $stmt = mcp_db()->prepare('SELECT p.colaborador_id, p.voluntario, p.entrada, p.saida, p.saida_informada, p.origem_entrada, p.origem_saida, c.ativo
+    $stmt = mcp_db()->prepare('SELECT p.colaborador_id, p.voluntario, p.entrada, p.saida, p.saida_informada, p.origem_entrada, p.origem_saida, p.ajuste, c.ativo
         FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id WHERE p.entrada >= ? AND p.entrada < ?');
     $stmt->execute([$de, $ate]);
     $pessoas = [];
@@ -85,7 +85,10 @@ function mcp_metricas_nucleo(string $deIso, string $ateIso, ?int $agora = null):
             if ($informada) {
                 $r['informadas']++;
             }
-            if ($informada || $p['origem_saida'] === 'portal'
+            // Saída lançada pela secretaria num registro que estava sem saída (a nota da correção diz "sem saída").
+            // Turno lançado inteiro à mão e ajuste de uma saída que foi registrada na hora não contam.
+            $lancadaDepois = $p['origem_saida'] === 'portal' && $p['origem_entrada'] !== 'portal' && str_contains((string) $p['ajuste'], '–sem saída para');
+            if ($informada || $lancadaDepois
                 || ($p['saida'] === null && (int) strtotime($p['entrada'] . ' UTC') <= $agora - MCP_PONTO_ESQUECIDA_HORAS * 3600)) {
                 $r['esquecidas']++;
             }

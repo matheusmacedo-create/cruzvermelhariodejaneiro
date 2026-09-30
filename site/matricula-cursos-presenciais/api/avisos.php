@@ -2,7 +2,8 @@
 /**
  * Páginas pessoais dos avisos do ponto (lib/avisos.php e lib/comunicacao.php):
  *   GET  ?r=<id>.<destino>.<assinatura>          clique num link de aviso: conta o clique e leva ao destino;
- *   POST ?u=<id>.<assinatura>                     descadastro de um clique (List-Unsubscribe do e-mail); GET só leva à página;
+ *   POST ?u=<id>.<assinatura>                     descadastro de um clique (List-Unsubscribe do e-mail); o GET mostra
+ *                                                  uma página com o botão (POST confirmar=1), sem link pessoal;
  *   POST {acao: lembretes_ler | lembretes_salvar, t, …}  o que o colaborador quer receber (ponto/lembretes/);
  *   POST {acao: saida_ler | saida_informar, t, hora, dia_seguinte}  saída sem registro do voluntário (ponto/saida/);
  *   POST {acao: opiniao_ler | opiniao_salvar, t, …}      opinião depois de 2 semanas (ponto/opiniao/);
@@ -17,25 +18,51 @@ const AV_LIMITE_SALVAR = [30, 600];
 
 $metodo = $_SERVER['REQUEST_METHOD'] ?? '';
 // Descadastro de um clique (List-Unsubscribe, RFC 8058): o programa de e-mail manda um POST sozinho. Abrir o
-// link (GET) só leva à página de escolhas: robôs e verificadores de e-mail abrem links sem ninguém pedir.
+// link (GET) mostra uma página com um botão, sem descadastrar (robôs e verificadores de e-mail abrem links
+// sem ninguém pedir) e sem link pessoal (quem tem o cabeçalho não ganha acesso às escolhas da pessoa).
 if (isset($_GET['u'])) {
     header('Cache-Control: no-store');
     header('Referrer-Policy: no-referrer');
     header('X-Robots-Tag: noindex, nofollow');
     $aviso = mcp_avisos_descadastro_aviso(mcp_texto($_GET['u'], 40));
-    if ($metodo === 'POST') {
-        if ($aviso === null) {
-            http_response_code(404);
-            exit;
-        }
-        mcp_avisos_descadastrar($aviso);
+    $pelaPagina = $metodo === 'POST' && !empty($_POST['confirmar']);
+    if ($metodo === 'POST' && !$pelaPagina) {
+        $valeu = $aviso !== null && mcp_avisos_descadastrar($aviso);
+        http_response_code($valeu ? 200 : 404);
         header('Content-Type: text/plain; charset=utf-8');
-        echo 'Pronto: você não vai mais receber estes avisos por e-mail.';
+        echo $valeu ? 'Pronto: você não vai mais receber estes avisos por e-mail.' : 'Link inválido.';
         exit;
     }
-    $robo = mcp_avisos_eh_robo((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
-    header('Location: ' . ($aviso !== null && $metodo === 'GET' && !$robo ? mcp_avisos_descadastro_destino($aviso) : mcp_site_url() . '/ponto/'), true, 302);
+    $valeu = $aviso !== null && (!$pelaPagina || mcp_avisos_descadastrar($aviso));
+    http_response_code($valeu ? 200 : 404);
+    av_pagina_descadastro($valeu ? ($pelaPagina ? 'pronto' : 'pergunta') : 'invalido');
     exit;
+}
+
+/** Página do descadastro aberta no navegador: pergunta (com o botão), pronto ou link que não vale mais. */
+function av_pagina_descadastro(string $estado): void
+{
+    header('Content-Type: text/html; charset=utf-8');
+    $contato = mcp_escapar(mcp_email_contato_endereco());
+    $css = '/matricula-cursos-presenciais/static/ponto.css?v=' . substr((string) md5_file(__DIR__ . '/../static/ponto.css'), 0, 10);
+    $corpo = match ($estado) {
+        'pergunta' => '<h1>Parar os avisos por e-mail</h1><p>Toque no botão para não receber mais estes avisos neste e-mail.</p>'
+            . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber por e-mail</button></form>'
+            . '<p class="pt-nota">Para escolher os dias ou receber pelo WhatsApp, use o link "Escolher o que recebo" de uma mensagem recente.</p>',
+        'pronto' => '<h1>Pronto</h1><p>Você não vai mais receber estes avisos por e-mail.</p>'
+            . '<p class="pt-nota">Mudou de ideia? Escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+        default => '<h1>Este link não vale mais</h1><p>Ele foi trocado, ou o e-mail do cadastro mudou.</p>'
+            . '<p class="pt-nota">Para parar os avisos, use o link da mensagem mais recente ou escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+    };
+    echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        . '<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer"><meta name="theme-color" content="#cc0000">'
+        . '<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><title>Avisos por e-mail | ' . mcp_escapar(MCP_NOME_FILIAL) . '</title>'
+        . '<link rel="stylesheet" href="' . $css . '"></head><body><div class="pt-faixa"></div>'
+        . '<header class="pt-topo"><a href="/"><img src="/assets/otim/logo-cvb-rj-480.png" alt="Cruz Vermelha Brasileira · Rio de Janeiro" width="160" height="48"></a>'
+        . '<div class="pt-titulo"><b>Escola de Educação e Saúde</b><small>Avisos por e-mail e WhatsApp</small></div></header>'
+        . '<main class="pt-main"><section class="pt-card">' . $corpo . '</section></main>'
+        . '<footer class="pt-rodape"><p>Os e-mails da matrícula e o comprovante de comparecimento continuam chegando. <a href="/privacidade/">Privacidade</a></p></footer>'
+        . '</body></html>';
 }
 if ($metodo === 'GET' || $metodo === 'HEAD') {
     header('Cache-Control: no-store');

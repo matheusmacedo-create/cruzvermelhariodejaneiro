@@ -752,6 +752,15 @@ verificar('planilha: dias por extenso, abreviados, ordinais, intervalos e expres
 ]), [['seg', 'qua'], ['seg', 'qua', 'sex'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'qua'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['seg', 'ter', 'qua'],
     ['dom', 'seg', 'sex', 'sab'], ['seg', 'qua'], ['ter', 'qui', 'sab'], ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['dom', 'sab'], [], []]);
 
+verificar('planilha: frequência, hora e palavras parecidas com dias não viram dia', array_map('mcp_importar_dias', [
+    '3 vezes por semana', '3x por semana', '2 vezes na semana', 'qualquer dia', 'quando puder', 'quinzenal', 'segundo sábado do mês', '2h por dia',
+    '2, 4 e 6', '3-5', 'de 2ª a 6ª das 8h às 12h', 'sábados e domingos', 'quartas-feiras', '5',
+]), [[], [], [], [], [], [], ['sab'], [], ['seg', 'qua', 'sex'], ['ter', 'qua', 'qui'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['dom', 'sab'], ['qua'], []]);
+
+// A versão do banco vem de uma constante no código (e não do arquivo em disco): mudou o db.php, muda a constante.
+$versaoDb = substr(md5((string) preg_replace('/^const MCP_DB_VERSAO = .*\n/m', '', (string) file_get_contents(__DIR__ . '/../site/matricula-cursos-presenciais/api/lib/db.php'))), 0, 16);
+verificar("banco: MCP_DB_VERSAO acompanha o db.php (se falhar, troque o valor por '$versaoDb')", MCP_DB_VERSAO, $versaoDb);
+
 unlink($configTeste);
 unlink($configEscola);
 printf("%d testes, %d falhas\n", $total, $falhas);

@@ -422,7 +422,9 @@ function mcp_colaborador_salvar(?int $id, array $d, string $quem): ?int
         ->execute([$d['nome'], $d['cpf'], $d['email'], $d['telefone'], $d['funcao'], $d['vinculo'], $d['ativo'], $desligado, $agora, $id]);
     if ($antes !== null) {
         $mudouEmail = mb_strtolower(trim((string) $antes['email'])) !== mb_strtolower(trim((string) $d['email']));
-        $mudouTelefone = mcp_digitos((string) $antes['telefone']) !== mcp_digitos((string) $d['telefone']);
+        // O mesmo celular escrito de outro jeito ("2187654321" e "21987654321", com ou sem o 55) não é troca.
+        $telefone = static fn(?string $t): string => mcp_whatsapp_numero($t) ?? mcp_telefone((string) $t);
+        $mudouTelefone = $telefone($antes['telefone']) !== $telefone($d['telefone']);
         // Contato novo: os links pessoais já mandados (talvez para o endereço errado) deixam de valer, e a
         // autorização do WhatsApp era para o número antigo: precisa ser dada de novo para o número novo.
         if ($mudouEmail || $mudouTelefone) {

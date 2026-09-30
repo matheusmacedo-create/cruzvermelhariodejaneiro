@@ -226,6 +226,10 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
         $resposta = '';
     }
     $chave = (string) mcp_cfg('RESEND_API_KEY', '');
+    // Sem reserva (avisos do ponto): nada de mail() da hospedagem, nem sem a Resend configurada.
+    if ($chave === '' && !empty($opcoes['sem_reserva'])) {
+        return 'sem_resend';
+    }
     if ($chave !== '') {
         $corpo = ['from' => $remetente, 'to' => [$para], 'subject' => $assunto, 'html' => $html, 'text' => $texto];
         if ($resposta !== '') {
@@ -267,7 +271,8 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
         if ($r !== false && $status > 0 && $status < 300) {
             return 'resend';
         }
-        error_log("[matricula] Resend falhou ($status): " . mb_substr((string) $r, 0, 300));
+        // No registro, só o erro (sem endereço de e-mail): a resposta da Resend pode citar o destinatário.
+        error_log("[matricula] Resend falhou ($status): " . mb_substr((string) preg_replace('/[^\s"<>]+@[^\s"<>]+/', '[e-mail]', (string) $r), 0, 200));
         if (!empty($opcoes['sem_reserva'])) {
             return $status === 429 ? 'limite' : ($esgotado ? 'incerto' : 'falhou');
         }

@@ -31,13 +31,20 @@ function mcp_db(): PDO
 }
 
 /**
+ * Versão do esquema: o md5 deste arquivo sem esta linha (scripts/testar_checkout.php confere e diz o valor
+ * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
+ * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
+ */
+const MCP_DB_VERSAO = '6c6a754caa995d4f';
+
+/**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
- * este arquivo mudou desde a última vez: a versão é o hash dele, guardado em mcp_chaves. No dia a dia, uma
- * consulta por requisição em vez de ~20 comandos. Para forçar, apague a linha versao_banco de mcp_chaves.
+ * MCP_DB_VERSAO mudou desde a última vez (a versão fica em mcp_chaves). No dia a dia, uma consulta por
+ * requisição em vez de ~20 comandos. Para forçar, apague a linha versao_banco de mcp_chaves.
  */
 function mcp_migrar(PDO $pdo): void
 {
-    $versao = 'db:' . substr((string) md5_file(__FILE__), 0, 16);
+    $versao = 'db:' . MCP_DB_VERSAO;
     try {
         if ($pdo->query("SELECT valor FROM mcp_chaves WHERE nome = 'versao_banco'")->fetchColumn() === $versao) {
             return;
@@ -412,10 +419,11 @@ const MCP_DB_COLUNAS_AVISOS = [
 ];
 
 /**
- * Índices das tabelas que já existiam em produção antes deles (freios, "na sede", presenças por e-mail).
+ * Índices das tabelas que já existiam antes deles (freios, "na sede", presenças por e-mail, cota de e-mail).
  * Roda só na rotina da linha de comando (a cada 15 minutos), para não pesar em cada visita.
  */
 const MCP_DB_INDICES = [
+    'mcp_avisos' => ['ix_criado' => 'criado_em', 'ix_enviado' => 'status, enviado_em'],
     'mcp_eventos' => ['ix_tipo_criado' => 'tipo, criado_em'],
     'mcp_ponto' => ['ix_sem_saida' => 'saida, entrada'],
     'mcp_presencas' => ['ix_email' => 'email, chegada'],
