@@ -27,7 +27,7 @@
  *  - o consentimento é conferido de novo na hora de mandar: quem desligou depois não recebe;
  *  - voluntário recebe lembrete como gentileza, nunca cobrança (Lei 9.608/1998): o texto diz que, se
  *    não puder vir, está tudo bem;
- *  - o registro dos envios é apagado depois de 1 ano.
+ *  - o registro dos envios e as opiniões são apagados depois de 1 ano.
  */
 declare(strict_types=1);
 
@@ -536,7 +536,9 @@ function mcp_whatsapp_enviar(string $numero, array $msg, int $avisoId): array
         }
         $componentes = [];
         if (!empty($modelo['parametros'])) {
-            $componentes[] = ['type' => 'body', 'parameters' => array_map(static fn($p): array => ['type' => 'text', 'text' => mb_substr((string) $p, 0, 900)], array_values($modelo['parametros']))];
+            // A Meta recusa parâmetro com quebra de linha, tabulação ou mais de 4 espaços seguidos.
+            $componentes[] = ['type' => 'body', 'parameters' => array_map(static fn($p): array => ['type' => 'text', 'text' => mb_substr(trim((string) preg_replace('/\s+/u', ' ', (string) $p)), 0, 900)],
+                array_values($modelo['parametros']))];
         }
         if (($modelo['botao'] ?? '') !== '') {
             $componentes[] = ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => (string) $modelo['botao']]]];
@@ -670,12 +672,15 @@ function mcp_avisos_expirar(?int $agora = null): int
     return $n;
 }
 
-/** Apaga o registro de avisos com mais de 1 ano. */
+/** Apaga o registro de avisos e as opiniões com mais de 1 ano (Política de Privacidade, "Por quanto tempo guardamos"). */
 function mcp_avisos_apagar_antigos(?int $agora = null): int
 {
+    $limite = gmdate('Y-m-d H:i:s', ($agora ?? time()) - MCP_AVISOS_GUARDA_DIAS * 86400);
     $stmt = mcp_db()->prepare('DELETE FROM mcp_avisos WHERE criado_em < ?');
-    $stmt->execute([gmdate('Y-m-d H:i:s', ($agora ?? time()) - MCP_AVISOS_GUARDA_DIAS * 86400)]);
-    return $stmt->rowCount();
+    $stmt->execute([$limite]);
+    $opinioes = mcp_db()->prepare('DELETE FROM mcp_opinioes WHERE atualizado_em < ?');
+    $opinioes->execute([$limite]);
+    return $stmt->rowCount() + $opinioes->rowCount();
 }
 
 // ----------------------------------------------------------------------------- fila manual do WhatsApp

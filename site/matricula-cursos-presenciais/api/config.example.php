@@ -76,6 +76,24 @@ return [
     'PONTO_SEDE_LNG'    => '',
     'PONTO_RAIO_METROS' => '',
 
+    // Comunicação do ponto (30/09/2026, docs/ponto-comunicacao.md). Tudo começa desligado no portal.
+    // Remetente dos lembretes e comunicados. Vazio = EMAIL_REMETENTE.
+    'EMAIL_REMETENTE_PONTO' => '',
+    // WhatsApp. Sem nada aqui, o modo é o manual: as mensagens vão para a "Fila do WhatsApp" do portal.
+    // API oficial da Meta (número da própria instituição, nunca de outra empresa): token permanente do
+    // usuário do sistema, Phone number ID, a chave secreta do app (confere o webhook api/whatsapp.php) e o
+    // texto de verificação que se escreve no painel da Meta.
+    'WHATSAPP_CLOUD_TOKEN' => '',
+    'WHATSAPP_CLOUD_NUMERO_ID' => '',
+    'WHATSAPP_CLOUD_APP_SEGREDO' => '',
+    'WHATSAPP_CLOUD_VERIFICACAO' => '',
+    // Ou um cenário do Make (POST assinado com X-CVB-Assinatura: sha256=HMAC do corpo; segredo com 24+ caracteres).
+    'WHATSAPP_WEBHOOK_URL' => '',
+    'WHATSAPP_WEBHOOK_SEGREDO' => '',
+    // Lembrete da aula de amanhã: a função public.aulas_do_dia da escola. Vazio = ESCOLA_API_URL trocando
+    // matricula_rapida por aulas_do_dia. Também vale em api/config-escola.php.
+    'ESCOLA_API_AULAS_DIA_URL' => '',
+
     // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o
     // padrão de lib/comprovante.php: O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP, 67.733.551/0001-35
     // (a empresa de ensino da filial, que recebe a matrícula; não é o CNPJ da filial).

@@ -200,6 +200,12 @@
                     "dados": "CPF, e o nome e o e-mail que a plataforma da escola tem do aluno, o curso, o dia e o horário da aula, a hora da chegada e o aparelho usado ou, no celular, a distância até a sede.",
                     "finalidade": "Emitir o comprovante de comparecimento e enviá-lo por e-mail quando a aula termina. Quem recebe o comprovante pode conferir se ele é verdadeiro pelo código impresso: a conferência mostra o nome, o CPF mascarado, o curso, a aula e o local.",
                     "base": "Execução de contrato (art. 7º, V)."
+                  },
+                  {
+                    "titulo": "Lembretes, comunicados e pesquisa do ponto",
+                    "dados": "De voluntários, diretoria e equipe: o que cada um escolheu receber (por e-mail ou WhatsApp, os dias em que costuma vir à sede, o aviso de saída não registrada e os comunicados), a data e o autor da autorização para o WhatsApp e o horário de saída que a própria pessoa informar depois. Dos alunos: nome, e-mail, celular e as aulas do dia seguinte, que a plataforma da escola informa na véspera. De todos: o registro de cada mensagem (para quem, por onde, quando saiu, se foi entregue e se o link foi aberto) e as respostas da pesquisa de opinião, com nome e contato só de quem autorizar.",
+                    "finalidade": "Lembrar de registrar a entrada e a saída nos dias escolhidos e de confirmar a presença na aula do dia seguinte, avisar sobre a chegada do ponto, conferir as saídas informadas depois e saber o que melhorar. Para voluntários, o lembrete é uma gentileza, nunca uma cobrança de horário. As mensagens saem só entre 8h e 20h, e cada uma traz no fim o link para escolher o que receber ou deixar de receber.",
+                    "base": "Nos lembretes: execução do termo de adesão ao serviço voluntário e do contrato do curso (art. 7º, V) e, para empregados e outros vínculos, legítimo interesse na segurança da sede (art. 7º, IX). Nos comunicados, na contagem dos cliques e na pesquisa: legítimo interesse em implantar o ponto e melhorá-lo (art. 7º, IX), com a opção de sair a qualquer momento. No WhatsApp e no nome e contato da pesquisa: consentimento (art. 7º, I)."
                   }
                 ]
               },
@@ -223,7 +229,8 @@
                   "**ÚnicoPag**, que processa os pagamentos: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
                   "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso; no ponto da sede, o CPF e a data, para saber as aulas do aluno naquele dia.",
                   "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
-                  "**Resend**, que envia os e-mails (comprovantes, protocolos do chat e newsletter). Na falta dele, os e-mails saem pelo servidor da hospedagem.",
+                  "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails saem pelo servidor da hospedagem.",
+                  "**Meta, pelo WhatsApp**, só para quem autorizou receber mensagens por ali: o número e o texto de cada lembrete ou comunicado. Se a instituição usar um serviço intermediário para mandar o WhatsApp (como o Make), ele recebe o mesmo, só para o envio.",
                   "**Vercel e Supabase**, que hospedam o sistema que publica as notícias e guarda a lista da newsletter.",
                   "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
                   "**Spotform**, onde fica o formulário do voluntariado.",
@@ -240,7 +247,7 @@
             "titulo": "Transferência para fora do Brasil",
             "blocos": [
               {
-                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos e no Canadá (Google, Meta, Resend, Vercel e Supabase). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
+                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos, no Canadá e na União Europeia (Google, Meta, inclusive no WhatsApp, Resend, Vercel, Supabase e, se for usado para o WhatsApp, o Make). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
               }
             ]
           },
@@ -270,6 +277,7 @@
                   "**Ponto da sede, de voluntários e diretoria:** enquanto durar o voluntariado e por até 5 anos depois do fim, para comprovar as horas doadas e a natureza voluntária do serviço.",
                   "**Presença na sede de empregados, terceirizados e outros vínculos:** 90 dias. Depois, é apagada automaticamente.",
                   "**Presença nas aulas e comprovantes de comparecimento:** pelo mesmo prazo da matrícula.",
+                  "**Lembretes, comunicados e pesquisa do ponto:** o registro das mensagens e as respostas da pesquisa são apagados automaticamente depois de 1 ano. As escolhas sobre o que receber ficam enquanto durar o cadastro no ponto. De quem pediu para não receber mais nada, guardamos só um código gerado a partir do e-mail ou do número (e não o e-mail ou o número), enquanto for preciso para respeitar o pedido.",
                   "**Cookies:** pelo prazo de cada um, listado na [Política de Cookies]({cookies})."
                 ]
               },
@@ -304,6 +312,9 @@
                   "a informação sobre com quem compartilhamos os seus dados e sobre a possibilidade de não dar o consentimento, e o que acontece se não der;",
                   "a oposição a um tratamento que descumpra a lei."
                 ]
+              },
+              {
+                "p": "Para deixar de receber os lembretes e os comunicados do ponto, use o link do fim de qualquer mensagem, responda PARAR no WhatsApp ou peça à secretaria. Pelo mesmo link, voluntários, diretoria e equipe escolhem os dias e os canais. A autorização para o WhatsApp pode ser retirada a qualquer momento, sem nenhuma consequência."
               },
               {
                 "p": "Para exercer qualquer um deles, escreva para [{email}](mailto:{email}) com o assunto “Privacidade”. Podemos pedir uma informação para confirmar que o pedido é seu. A confirmação e o acesso aos dados, em declaração completa, saem em até 15 dias (art. 19 da LGPD). Alguns dados podem precisar ser guardados mesmo depois de um pedido de exclusão, para cumprir obrigação legal, como os registros de pagamento."
@@ -423,6 +434,12 @@
                     "dados": "CPF, and the name and e-mail the school platform holds for the student, the course, the day and time of the class, the arrival time and the device used or, on a phone, the distance to the headquarters.",
                     "finalidade": "To issue the attendance certificate and send it by e-mail when the class ends. Whoever receives the certificate can check that it is genuine with the printed code: the check shows the name, the masked CPF, the course, the class and the place.",
                     "base": "Performance of a contract (Art. 7, V)."
+                  },
+                  {
+                    "titulo": "Time clock reminders, announcements and survey",
+                    "dados": "From volunteers, board members and staff: what each person chose to receive (by e-mail or WhatsApp, the days they usually come to the headquarters, the missed check-out reminder and the announcements), the date and author of the WhatsApp authorisation, and the check-out time the person reports afterwards. From students: name, e-mail, mobile number and the next day's classes, which the school platform provides the day before. From everyone: a record of each message (to whom, through which channel, when it went out, whether it was delivered and whether the link was opened) and the answers to the feedback survey, with name and contact details only from those who authorise it.",
+                    "finalidade": "To remind people to check in and out on the days they chose and to confirm attendance at the next day's class, to announce the time clock, to review check-out times reported afterwards and to learn what to improve. For volunteers, the reminder is a courtesy, never a demand for hours. Messages go out only between 8 a.m. and 8 p.m., and each one ends with a link to choose what to receive or to stop receiving.",
+                    "base": "Reminders: performance of the volunteer service agreement and of the course contract (Art. 7, V) and, for employees and other relationships, legitimate interest in the security of the headquarters (Art. 7, IX). Announcements, click counts and the survey: legitimate interest in introducing and improving the time clock (Art. 7, IX), with the option to opt out at any time. WhatsApp and the name and contact details in the survey: consent (Art. 7, I)."
                   }
                 ]
               },
@@ -446,7 +463,8 @@
                   "**ÚnicoPag**, which processes payments: name, CPF, e-mail and phone number and, for cards, the card details.",
                   "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access; at the headquarters time clock, the CPF and the date, to find the student's classes that day.",
                   "**Hostinger**, which hosts the site, the forms and their database.",
-                  "**Resend**, which sends the e-mails (receipts, chat reference numbers and the newsletter). If it is unavailable, e-mails go out through the hosting server.",
+                  "**Resend**, which sends the e-mails (receipts, chat reference numbers, the newsletter and the time clock reminders and announcements). If it is unavailable, e-mails go out through the hosting server.",
+                  "**Meta, through WhatsApp**, only for people who agreed to receive messages there: the number and the text of each reminder or announcement. If the institution uses an intermediary service to send WhatsApp messages (such as Make), it receives the same, only for sending.",
                   "**Vercel and Supabase**, which host the system that publishes the news and keeps the newsletter list.",
                   "**Google and Meta**, through the statistics and marketing tools, only with your permission. Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
                   "**Spotform**, which hosts the volunteer form.",
@@ -463,7 +481,7 @@
             "titulo": "Transfers outside Brazil",
             "blocos": [
               {
-                "p": "Some of these providers store or process data outside Brazil, such as in the United States and Canada (Google, Meta, Resend, Vercel and Supabase). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
+                "p": "Some of these providers store or process data outside Brazil, such as in the United States, Canada and the European Union (Google, Meta, including WhatsApp, Resend, Vercel, Supabase and, if used for WhatsApp, Make). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
               }
             ]
           },
@@ -493,6 +511,7 @@
                   "**Headquarters time clock, for volunteers and board members:** while the volunteering lasts and for up to 5 years after it ends, to prove the hours donated and the voluntary nature of the service.",
                   "**Presence of employees, contractors and other relationships at the headquarters:** 90 days. After that, it is deleted automatically.",
                   "**Class attendance and attendance certificates:** for the same period as the enrolment.",
+                  "**Time clock reminders, announcements and survey:** the record of messages and the survey answers are deleted automatically after 1 year. Choices about what to receive are kept while the person remains registered on the time clock. For people who asked to receive nothing more, we keep only a code generated from the e-mail address or number (not the address or number itself), for as long as needed to honour the request.",
                   "**Cookies:** for the period of each one, listed in the [Cookie Policy]({cookies})."
                 ]
               },
@@ -527,6 +546,9 @@
                   "information about who we share your data with, and about the possibility of not giving consent and what happens if you do not;",
                   "objection to processing that breaches the law."
                 ]
+              },
+              {
+                "p": "To stop receiving the time clock reminders and announcements, use the link at the end of any message, reply STOP (PARAR) on WhatsApp or ask the office. Through the same link, volunteers, board members and staff choose the days and channels. The WhatsApp authorisation can be withdrawn at any time, with no consequences."
               },
               {
                 "p": "To exercise any of them, write to [{email}](mailto:{email}) with the subject “Privacy”. We may ask for some information to confirm the request is yours. Confirmation and access, as a complete statement, are provided within 15 days (Art. 19 of the LGPD). Some data may have to be kept even after a deletion request, to comply with a legal obligation, such as payment records."
@@ -646,6 +668,12 @@
                     "dados": "CPF, y el nombre y el correo que la plataforma de la escuela tiene del alumno, el curso, el día y el horario de la clase, la hora de llegada y el aparato usado o, en el celular, la distancia hasta la sede.",
                     "finalidade": "Emitir el comprobante de asistencia y enviarlo por correo cuando termina la clase. Quien recibe el comprobante puede verificar que es auténtico con el código impreso: la verificación muestra el nombre, el CPF enmascarado, el curso, la clase y el lugar.",
                     "base": "Ejecución de contrato (art. 7, V)."
+                  },
+                  {
+                    "titulo": "Recordatorios, comunicados y encuesta del control de asistencia",
+                    "dados": "De voluntarios, directiva y equipo: lo que cada uno eligió recibir (por correo o WhatsApp, los días en que suele venir a la sede, el aviso de salida no registrada y los comunicados), la fecha y el autor de la autorización para WhatsApp y la hora de salida que la propia persona informe después. De los alumnos: nombre, correo, celular y las clases del día siguiente, que la plataforma de la escuela informa la víspera. De todos: el registro de cada mensaje (a quién, por qué canal, cuándo salió, si se entregó y si se abrió el enlace) y las respuestas de la encuesta de opinión, con nombre y contacto solo de quien lo autorice.",
+                    "finalidade": "Recordar el registro de entrada y salida en los días elegidos y la confirmación de asistencia a la clase del día siguiente, avisar sobre la llegada del control de asistencia, revisar las salidas informadas después y saber qué mejorar. Para los voluntarios, el recordatorio es una cortesía, nunca una exigencia de horario. Los mensajes salen solo entre las 8 h y las 20 h, y cada uno termina con el enlace para elegir qué recibir o dejar de recibir.",
+                    "base": "En los recordatorios: ejecución del término de adhesión al servicio voluntario y del contrato del curso (art. 7, V) y, para empleados y otros vínculos, interés legítimo en la seguridad de la sede (art. 7, IX). En los comunicados, el conteo de clics y la encuesta: interés legítimo en implantar y mejorar el control de asistencia (art. 7, IX), con la opción de salir en cualquier momento. En WhatsApp y en el nombre y contacto de la encuesta: consentimiento (art. 7, I)."
                   }
                 ]
               },
@@ -669,7 +697,8 @@
                   "**ÚnicoPag**, que procesa los pagos: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
                   "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso; en el control de asistencia de la sede, el CPF y la fecha, para saber las clases del alumno ese día.",
                   "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",
-                  "**Resend**, que envía los correos (comprobantes, protocolos del chat y el boletín). Si no está disponible, los correos salen por el servidor del alojamiento.",
+                  "**Resend**, que envía los correos (comprobantes, protocolos del chat, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos salen por el servidor del alojamiento.",
+                  "**Meta, por WhatsApp**, solo para quien autorizó recibir mensajes por ahí: el número y el texto de cada recordatorio o comunicado. Si la institución usa un servicio intermediario para enviar el WhatsApp (como Make), este recibe lo mismo, solo para el envío.",
                   "**Vercel y Supabase**, que alojan el sistema que publica las noticias y guarda la lista del boletín.",
                   "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
                   "**Spotform**, donde está el formulario del voluntariado.",
@@ -686,7 +715,7 @@
             "titulo": "Transferencia fuera de Brasil",
             "blocos": [
               {
-                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos y Canadá (Google, Meta, Resend, Vercel y Supabase). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
+                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos, Canadá y la Unión Europea (Google, Meta, también en WhatsApp, Resend, Vercel, Supabase y, si se usa para WhatsApp, Make). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
               }
             ]
           },
@@ -716,6 +745,7 @@
                   "**Control de asistencia de la sede, de voluntarios y directiva:** mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.",
                   "**Presencia en la sede de empleados, tercerizados y otros vínculos:** 90 días. Después, se elimina automáticamente.",
                   "**Asistencia a las clases y comprobantes de asistencia:** por el mismo plazo de la matrícula.",
+                  "**Recordatorios, comunicados y encuesta del control de asistencia:** el registro de los mensajes y las respuestas de la encuesta se eliminan automáticamente después de 1 año. Las elecciones sobre qué recibir se guardan mientras dure el registro en el control de asistencia. De quien pidió no recibir nada más, guardamos solo un código generado a partir del correo o del número (y no el correo o el número), mientras sea necesario para respetar el pedido.",
                   "**Cookies:** por el plazo de cada una, indicado en la [Política de Cookies]({cookies})."
                 ]
               },
@@ -750,6 +780,9 @@
                   "la información sobre con quién compartimos sus datos y sobre la posibilidad de no dar el consentimiento, y qué ocurre si no lo da;",
                   "la oposición a un tratamiento que incumpla la ley."
                 ]
+              },
+              {
+                "p": "Para dejar de recibir los recordatorios y comunicados del control de asistencia, use el enlace del final de cualquier mensaje, responda PARAR por WhatsApp o pídalo a la secretaría. Con el mismo enlace, voluntarios, directiva y equipo eligen los días y los canales. La autorización para WhatsApp puede retirarse en cualquier momento, sin ninguna consecuencia."
               },
               {
                 "p": "Para ejercer cualquiera de ellos, escriba a [{email}](mailto:{email}) con el asunto “Privacidad”. Podemos pedirle algún dato para confirmar que el pedido es suyo. La confirmación y el acceso, en declaración completa, se entregan en hasta 15 días (art. 19 de la LGPD). Algunos datos pueden tener que conservarse incluso después de un pedido de eliminación, para cumplir una obligación legal, como los registros de pago."
@@ -866,6 +899,13 @@
                       "Este site",
                       "No ponto da sede pelo celular, lembra quem marcou “Lembrar de mim neste celular” (o CPF vai cifrado)",
                       "180 dias"
+                    ],
+                    [
+                      "pt_dica_app (armazenamento local)",
+                      "Necessário",
+                      "Este site",
+                      "No ponto da sede pelo celular, lembra que você já viu ou dispensou a dica de pôr o ponto na tela inicial",
+                      "Até você limpar o navegador"
                     ],
                     [
                       "Cookies de login do Palácio Virtual",
@@ -1040,6 +1080,13 @@
                       "180 days"
                     ],
                     [
+                      "pt_dica_app (local storage)",
+                      "Necessary",
+                      "This site",
+                      "On the headquarters time clock on a phone, remembers that you have seen or dismissed the tip to add the time clock to the home screen",
+                      "Until you clear your browser"
+                    ],
+                    [
                       "Palácio Virtual login cookies",
                       "Necessary (staff only)",
                       "Palácio Virtual",
@@ -1210,6 +1257,13 @@
                       "Este sitio",
                       "En el control de asistencia de la sede por el celular, recuerda a quien marcó “Recordarme en este celular” (el CPF va cifrado)",
                       "180 días"
+                    ],
+                    [
+                      "pt_dica_app (almacenamiento local)",
+                      "Necesaria",
+                      "Este sitio",
+                      "En el control de asistencia de la sede por el celular, recuerda que ya vio o descartó la sugerencia de poner el control en la pantalla de inicio",
+                      "Hasta que limpie el navegador"
                     ],
                     [
                       "Cookies de acceso del Palácio Virtual",

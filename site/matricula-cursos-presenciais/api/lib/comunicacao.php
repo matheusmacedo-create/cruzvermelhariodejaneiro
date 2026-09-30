@@ -281,6 +281,13 @@ function mcp_avisos_quando(string $iso, int $agora): string
     return (in_array(mcp_avisos_dia_chave($iso), ['sab', 'dom'], true) ? 'no ' : 'na ') . $texto;
 }
 
+/** "1º/10 (quinta)", para os modelos do WhatsApp, onde a frase não muda com o dia da semana. */
+function mcp_avisos_data_modelo(string $iso): string
+{
+    $d = new DateTimeImmutable($iso);
+    return ((int) $d->format('j') === 1 ? '1º' : $d->format('d')) . '/' . $d->format('m') . ' (' . mb_strtolower(MCP_AVISOS_DIAS[mcp_avisos_dia_chave($iso)]) . ')';
+}
+
 function mcp_montar_aviso_vespera(array $colaborador, string $dataIso, int $avisoId): array
 {
     $primeiro = mcp_primeiro_nome(mcp_nome_proprio((string) $colaborador['nome']));
@@ -343,7 +350,9 @@ function mcp_montar_aviso_saida(array $colaborador, array $registro, int $avisoI
         'texto' => "Oi, $primeiro. $abertura você registrou a entrada na sede às $hora, mas a saída ficou sem registro. Sem ela, as horas desse dia ainda não entram na sua conta de horas doadas.\n\n"
             . "Informe a que horas saiu (leva 10 segundos): $link\n\nA secretaria confere e as horas entram na sua conta.",
         'whatsapp' => "Olá, $primeiro! $abertura você registrou a entrada na sede às $hora, mas a saída ficou sem registro. Informe a que horas saiu para as horas entrarem na sua conta de horas doadas: $link",
-        'modelo' => ['nome' => 'cvb_ponto_saida', 'parametros' => [$primeiro, $quando, $hora], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'saida')],
+        // No modelo aprovado: "Você registrou a entrada na sede em {{2}}, às {{3}}" (ex.: "1º/10 (quinta)").
+        'modelo' => ['nome' => 'cvb_ponto_saida', 'parametros' => [$primeiro, mcp_avisos_data_modelo(mcp_data_brt((string) $registro['entrada'], 'Y-m-d')), $hora],
+            'botao' => mcp_avisos_sufixo_clique($avisoId, 'saida')],
     ];
 }
 

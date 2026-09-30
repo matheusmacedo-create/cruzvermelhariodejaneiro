@@ -663,7 +663,9 @@ try {
     mcp_avisos_expirar();
     verificar('faxina: envio interrompido vira falha (sem mandar de novo)', [mcp_aviso_por_id($idPreso)['status'], mcp_aviso_por_id($idPreso)['erro']], ['falhou', 'envio interrompido; confira antes de mandar de novo']);
     $db->prepare('UPDATE mcp_avisos SET criado_em = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 400 * 86400), $idPreso]);
-    verificar('faxina: registro com mais de 1 ano é apagado', [mcp_avisos_apagar_antigos() >= 1, mcp_aviso_por_id($idPreso)], [true, null]);
+    $db->prepare('UPDATE mcp_opinioes SET atualizado_em = ? WHERE campanha_id = ? AND pessoa = ?')->execute([gmdate('Y-m-d H:i:s', time() - 400 * 86400), (int) $depois['id'], 'c' . $v2['id']]);
+    verificar('faxina: registro com mais de 1 ano é apagado', [mcp_avisos_apagar_antigos() >= 2, mcp_aviso_por_id($idPreso)], [true, null]);
+    verificar('faxina: a opinião com mais de 1 ano também (e só ela)', [mcp_opinioes_resultado((int) $depois['id'])['respostas'], mcp_opinioes_resultado((int) $depois['id'])['por_publico']], [1, ['colaborador' => 0, 'aluno' => 1]]);
     $saida = [];
     exec('MCP_CONFIG_ARQUIVO=' . escapeshellarg($config) . ' MCP_CONFIG_ESCOLA_ARQUIVO=' . escapeshellarg($semEscola) . ' ' . escapeshellarg(PHP_BINARY) . ' '
         . escapeshellarg($raiz . '/site/matricula-cursos-presenciais/api/comparecimentos.php') . ' 2>&1', $saida, $codigo);
