@@ -12,7 +12,7 @@
  *     nas aulas; aparelhos da recepção e o cartaz do QR code (lib/ponto.php e lib/presenca.php);
  *   - Comunicação (?v=comunicacao): lembretes, comunicados das três fases da implantação, fila do
  *     WhatsApp, envios e resultados (lib/painel_comunicacao.php, lib/avisos.php, lib/comunicacao.php);
- *   - Plataforma da escola: link externo.
+ *   - Escola (plataforma da escola): link externo.
  *
  * Acesso (lib/painel.php): pelo link assinado que vai no aviso à equipe (abre só aquele contato) ou por
  * um link de entrada enviado ao e-mail da equipe (sessão de 12 h com a lista completa). A resposta sai
@@ -92,7 +92,8 @@ function pn_menu(string $aba): string
             . ($n > 0 ? '<span class="badge' . ($chave === 'horarios' ? ' suave' : '') . '" title="' . $n . ' ' . pn_e($explica) . '">' . $n . '<span class="sr"> ' . pn_e($explica) . '</span></span>' : '') . '</a>';
     }
     $escola = rtrim((string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org'), '/') . '/login';
-    $html .= '<a class="externo" href="' . pn_e($escola) . '" target="_blank" rel="noopener">' . pn_icone('escola') . '<span>Plataforma da escola</span><span class="sr"> (abre em outra aba)</span></a>';
+    $html .= '<a class="externo" title="Plataforma da escola (abre em outra aba)" href="' . pn_e($escola) . '" target="_blank" rel="noopener">' . pn_icone('escola')
+        . '<span>Escola</span><span class="sr">: plataforma da escola (abre em outra aba)</span></a>';
     return '<nav class="menu" aria-label="Portal da secretaria"><div class="wrap">' . $html . '</div></nav>';
 }
 
@@ -182,7 +183,7 @@ input:not([type=checkbox]):not([type=radio]):focus,textarea:focus{outline:0;bord
 background:linear-gradient(90deg,#fff 30%,rgba(255,255,255,0)) 0 0/28px 100% no-repeat local,linear-gradient(270deg,#fff 30%,rgba(255,255,255,0)) 100% 0/28px 100% no-repeat local,
 radial-gradient(farthest-side at 0 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 0 0/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 100% 0/12px 100% no-repeat scroll #fff}
 .menu .wrap::-webkit-scrollbar{display:none}
-.menu a{position:relative;display:inline-flex;align-items:center;gap:7px;padding:12px 9px 11px;font-weight:700;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
+.menu a{position:relative;display:inline-flex;align-items:center;gap:7px;padding:12px 8px 11px;font-weight:700;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
 .menu a:hover{color:var(--black)}.menu a[aria-current]{color:var(--red);border-bottom-color:var(--red)}
 .menu .ico{width:18px;height:18px;flex-shrink:0}.menu .externo{margin-left:auto}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--red);color:#fff;font-size:.72rem;font-weight:800;line-height:1}
@@ -884,8 +885,9 @@ function pn_ponto_emergencia(string $usuario): never
         . '<div class="acoes" style="margin-top:0"><button class="btn btn-red" type="button" onclick="window.print()">Imprimir</button>'
         . '<a class="btn btn-outline" href="painel.php?v=ponto&amp;aba=emergencia">Atualizar</a></div></div>'
         . pn_ponto_abas('emergencia')
-        . '<div class="numeros"><div class="numero"><b>' . $total . '</b><span>Na sede agora</span><small>' . count($lista['colaboradores']) . ' colaboradores · '
-        . count($lista['alunos']) . ' alunos</small></div></div>'
+        . '<div class="numeros"><div class="numero"><b>' . $total . '</b><span>Na sede agora</span><small>'
+        . count($lista['colaboradores']) . (count($lista['colaboradores']) === 1 ? ' colaborador · ' : ' colaboradores · ')
+        . count($lista['alunos']) . (count($lista['alunos']) === 1 ? ' aluno' : ' alunos') . '</small></div></div>'
         . '<div class="tabela rolagem"><table class="respostas emergencia"><thead><tr><th>Pessoa</th><th>Desde</th><th>Conferido</th></tr></thead><tbody>'
         . ($linhas !== '' ? $linhas : '<tr><td colspan="3" class="vazio">Ninguém com entrada aberta nem aluno em aula agora.</td></tr>') . '</tbody></table></div>';
     pn_pagina('Lista de emergência', $corpo, $usuario, true, 'ponto');

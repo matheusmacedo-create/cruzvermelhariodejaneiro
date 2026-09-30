@@ -115,3 +115,5 @@ a{color:var(--red)}
 .pt-check input{flex-shrink:0}
 .pt-dica{display:block;margin-top:6px;font-size:.88rem;color:#5c3a00}
 @media (max-width:420px){.av-nota small{font-size:.8rem}}
+/* O título recebe o foco ao trocar de tela (leitor de tela anuncia); não é um controle, então sem contorno. */
+h1[tabindex="-1"]:focus{outline:0}
