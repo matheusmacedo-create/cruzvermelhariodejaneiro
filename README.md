@@ -628,7 +628,7 @@ desligado no portal, em **Comunicação**.
   enviados".
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
-- **Testes:** 163 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+- **Testes:** 164 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
   WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 103 no ponto, 301 unitários e 26
   testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual

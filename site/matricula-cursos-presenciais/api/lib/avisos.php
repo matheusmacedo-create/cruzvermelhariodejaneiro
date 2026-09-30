@@ -659,12 +659,13 @@ function mcp_aviso_destinatario(array $aviso): array
             return ['ok' => false, 'motivo' => 'não se aplica a este dia'];
         }
         // Lembrete é por um canal só: se a pessoa passou a receber pelo WhatsApp automático e ele já está
-        // na fila (ou saiu), o e-mail preparado antes não sai também.
-        if ($aviso['canal'] === 'email' && in_array($aviso['tipo'], ['vespera', 'saida'], true) && !isset(mcp_avisos_canais($c, (string) $aviso['tipo'])['email'])
-            && str_ends_with((string) $aviso['chave'], '|email')) {
+        // na fila (ou saiu), o e-mail preparado antes não sai também. No modo manual, o e-mail é a garantia
+        // de quem a fila não alcançou: se a secretaria já mandou o WhatsApp, ele não sai em dobro.
+        if ($aviso['canal'] === 'email' && in_array($aviso['tipo'], ['vespera', 'saida'], true) && str_ends_with((string) $aviso['chave'], '|email')) {
             $gemeo = mcp_aviso_por_chave(substr((string) $aviso['chave'], 0, -5) . 'whatsapp');
-            if ($gemeo && in_array($gemeo['status'], ['pendente', 'enviando', 'enviado'], true)) {
-                return ['ok' => false, 'motivo' => 'vai pelo WhatsApp'];
+            $umCanal = !isset(mcp_avisos_canais($c, (string) $aviso['tipo'])['email']);
+            if ($gemeo && ($gemeo['status'] === 'enviado' || ($umCanal && in_array($gemeo['status'], ['pendente', 'enviando'], true)))) {
+                return ['ok' => false, 'motivo' => $gemeo['status'] === 'enviado' ? 'já foi pelo WhatsApp' : 'vai pelo WhatsApp'];
             }
         }
         return ['ok' => true, 'nome' => (string) $c['nome'], 'destino' => $destino, 'colaborador' => $c];

@@ -92,8 +92,10 @@ vale o primeiro desta ordem: API oficial, Evolution, Make, manual.
 
 Cada mensagem vai para **Comunicação → Fila do WhatsApp**. A secretaria toca em **Abrir no WhatsApp**
 (abre a conversa com o texto pronto, pelo link `wa.me`, no WhatsApp do aparelho — use o da
-instituição), manda e marca **Enviei**. A fila mostra desde as 8h o que sai no dia. Nesse modo, os
-lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atrasar.
+instituição), manda e marca **Enviei**. No computador, o WhatsApp Web abre sempre na mesma aba, em vez
+de uma aba por mensagem. A fila mostra desde as 8h o que sai no dia. Nesse modo, os lembretes também vão
+por e-mail, para ninguém ficar sem aviso se a fila atrasar; se a secretaria já marcou o WhatsApp como
+enviado, o e-mail do mesmo lembrete não sai (sem aviso em dobro e sem gastar a cota).
 
 ### WhatsApp do Palácio Virtual, pela Evolution (o que já está conectado)
 
@@ -332,7 +334,7 @@ ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (163 testes, MariaDB local, servidores falsos de e-mail,
+`scripts/testar_avisos_integracao.php` (164 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
 feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (103), `scripts/testar_checkout.php`
 (301, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha) e

@@ -491,7 +491,9 @@ function pc_fila(string $usuario, string $aviso, string $classe): never
         $id = (int) $a['id'];
         $linhas .= '<li class="pc-item"><div class="pc-item-topo"><div><b>' . pn_e((string) $a['nome']) . '</b><small>' . pn_e(MCP_AVISOS_TIPOS[$a['tipo']] ?? $a['tipo']) . ' · '
             . pn_e(mcp_whatsapp_mascarado((string) $a['destino_atual'])) . ' · desde ' . pn_e(pn_data((string) $a['criado_em'])) . '</small></div>'
-            . '<div class="acoes" style="margin:0;gap:6px"><a class="btn btn-red pc-mini" href="' . pn_e($a['link_whatsapp']) . '" target="_blank" rel="noopener">Abrir no WhatsApp</a>'
+            // Aba com nome (e sem noopener, que faria cada clique abrir uma aba nova): no WhatsApp Web, a mesma aba
+            // recebe a conversa seguinte, em vez de uma aba por mensagem com o aviso "aberto em outra janela".
+            . '<div class="acoes" style="margin:0;gap:6px"><a class="btn btn-red pc-mini" href="' . pn_e($a['link_whatsapp']) . '" target="cvb-whatsapp" referrerpolicy="no-referrer">Abrir no WhatsApp</a>'
             . pc_form($usuario, 'fila_enviada', $id, pc_botao('Enviei'))
             . pc_form($usuario, 'fila_pular', $id, pc_botao('Pular'), ' onsubmit="return confirm(\'Tirar esta mensagem da fila sem mandar?\')"') . '</div></div>'
             . '<details><summary>Ver o texto</summary><textarea readonly rows="5">' . pn_e((string) $a['texto_pronto']) . '</textarea></details></li>';

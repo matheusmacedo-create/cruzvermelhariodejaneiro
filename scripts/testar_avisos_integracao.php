@@ -437,6 +437,16 @@ try {
         [$amanhaUtil ? 2 : 1, true, true, true]);
     verificar('fila do WhatsApp: marcar como enviada', [mcp_avisos_fila_marcar((int) $daVera['id'], true, $quem), linha_aviso($db, "vespera|{$v1['id']}|$amanha|whatsapp")['status'],
         linha_aviso($db, "vespera|{$v1['id']}|$amanha|whatsapp")['enviado_por']], [true, 'enviado', $quem]);
+    // Modo manual: o WhatsApp que a secretaria já mandou dispensa o e-mail do mesmo lembrete (sem aviso em dobro).
+    $proximaSemana = mcp_avisos_dia_mais($amanha, 7);
+    $idEmailDobro = (int) mcp_aviso_criar(['chave' => "vespera|{$v1['id']}|$proximaSemana|email", 'tipo' => 'vespera', 'canal' => 'email', 'colaborador_id' => (int) $v1['id'],
+        'pessoa' => 'c' . $v1['id'], 'nome' => "Vera $marca", 'destino' => "vera-$sufixo@avisos-teste.example", 'referencia' => $proximaSemana]);
+    $idWhatsDobro = (int) mcp_aviso_criar(['chave' => "vespera|{$v1['id']}|$proximaSemana|whatsapp", 'tipo' => 'vespera', 'canal' => 'whatsapp', 'colaborador_id' => (int) $v1['id'],
+        'pessoa' => 'c' . $v1['id'], 'nome' => "Vera $marca", 'destino' => '5521998760001', 'referencia' => $proximaSemana]);
+    $antesEmails = count(falso('emails'));
+    mcp_avisos_fila_marcar($idWhatsDobro, true, $quem);
+    verificar('modo manual: WhatsApp já mandado pela fila dispensa o e-mail do mesmo lembrete', [mcp_aviso_enviar(mcp_aviso_por_id($idEmailDobro), time()),
+        mcp_aviso_por_id($idEmailDobro)['erro'], count(falso('emails')) - $antesEmails], ['cancelado', 'já foi pelo WhatsApp', 0]);
     // Quem desliga depois do preparo não recebe.
     $v3 = colaborador("Vânia Voluntária $marca", 'voluntario', "vania-$sufixo@avisos-teste.example", null);
     mcp_avisos_preferencias_salvar($v3, ['email' => true, 'whatsapp' => false, 'dias' => [$diaAmanha], 'saida' => true, 'comunicados' => true], $quem, false);
