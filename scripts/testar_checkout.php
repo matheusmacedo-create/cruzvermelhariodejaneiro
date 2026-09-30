@@ -714,6 +714,21 @@ verificar('declaração: cita a Lei 9.608/1998 e o termo de adesão', [str_ends_
     'O serviço foi prestado nos termos da Lei nº 9.608/1998 e do termo de adesão assinado em 12/08/2026, sem vínculo empregatício.'), $declaracaoComTermo['linhas'][4]],
     [true, ['Termo de adesão', 'assinado em 12/08/2026']]);
 
+// WhatsApp: número, erros da Evolution e robôs que abrem links sozinhos.
+verificar('whatsapp: celular com e sem o nono dígito; fixo e inválido não servem', [mcp_whatsapp_numero('(21) 98765-4321'), mcp_whatsapp_numero('21 8765-4321'),
+    mcp_whatsapp_numero('+55 21 98765-4321'), mcp_whatsapp_numero('(21) 3234-5678'), mcp_whatsapp_numero('123')], ['5521987654321', '5521987654321', '5521987654321', null, null]);
+verificar('evolution: número sem WhatsApp, mensagem aninhada, texto e nada', [
+    mcp_whatsapp_evolution_erro(['status' => 400, 'error' => 'Bad Request', 'response' => ['message' => [['jid' => '5521999990000@s.whatsapp.net', 'exists' => false, 'number' => '5521999990000']]]]),
+    mcp_whatsapp_evolution_erro(['response' => ['message' => ['The "x" instance does not exist']]]), mcp_whatsapp_evolution_erro(['error' => true, 'message' => 'Connection Closed']),
+    mcp_whatsapp_evolution_erro([])], ['esse número não tem WhatsApp', 'The "x" instance does not exist', 'Connection Closed', null]);
+verificar('cliques: prévias de link e programas não contam; navegadores contam', array_map('mcp_avisos_eh_robo', [
+    'WhatsApp/2.23.20.0 A', 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)', 'TelegramBot (like TwitterBot)', 'Mozilla/5.0 (compatible; Googlebot/2.1)',
+    'curl/8.5.0', 'python-requests/2.31', '',
+    'Mozilla/5.0 (Linux; Android 14; SM-A546E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1',
+    'Mozilla/5.0 (Linux; Android 13; moto g) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0.0.0 Mobile Safari/537.36',
+]), [true, true, true, true, true, true, true, false, false, false]);
+
 unlink($configTeste);
 unlink($configEscola);
 printf("%d testes, %d falhas\n", $total, $falhas);

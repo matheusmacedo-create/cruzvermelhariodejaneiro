@@ -45,7 +45,10 @@ const MCP_PONTO_APARELHO_DIAS = 400;
 const MCP_PONTO_PESSOA_DIAS = 180;
 const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celular', 'portal' => 'Portal', 'informada' => 'Informada pela pessoa'];
 /** Consultas por CPF: [máximo, janela em segundos], por aparelho ou, no celular, por IP. */
-const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [15, 600]];
+/** Consultas de CPF a cada 10 minutos: por aparelho da sede e, no celular, por IP (o Wi-Fi da sede é um IP só). */
+const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [120, 600]];
+/** No celular, CPFs inválidos ou não cadastrados a cada 10 minutos por IP, antes de parar. */
+const MCP_PONTO_LIMITE_FALHAS = 10;
 const MCP_PONTO_FUSO = 'America/Sao_Paulo';
 const MCP_PONTO_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const MCP_PONTO_VINCULOS = [

@@ -52,10 +52,18 @@ $configCloud = config_teste($base0 + ['WHATSAPP_CLOUD_TOKEN' => 'tok_teste', 'WH
     'WHATSAPP_CLOUD_APP_SEGREDO' => 'segredo-do-app-de-teste', 'WHATSAPP_CLOUD_VERIFICACAO' => 'verifica-teste']);
 $configMake = config_teste($base0 + ['WHATSAPP_WEBHOOK_URL' => "http://127.0.0.1:$portaFalso/make", 'WHATSAPP_WEBHOOK_SEGREDO' => 'segredo-do-make-com-mais-de-24-letras']);
 $configMakeCurto = config_teste($base0 + ['WHATSAPP_WEBHOOK_URL' => "http://127.0.0.1:$portaFalso/make", 'WHATSAPP_WEBHOOK_SEGREDO' => 'curto']);
+$evolution0 = ['WHATSAPP_EVOLUTION_URL' => "http://127.0.0.1:$portaFalso/", 'WHATSAPP_EVOLUTION_INSTANCIA' => 'palacio', 'WHATSAPP_EVOLUTION_CHAVE' => 'token-da-instancia',
+    'WHATSAPP_EVOLUTION_PAUSA_S' => '0', 'WHATSAPP_EVOLUTION_TEMPO_S' => '1'];
+$configEvolution = config_teste($base0 + $evolution0);
+$configEvolutionChave = config_teste($base0 + ['WHATSAPP_EVOLUTION_CHAVE' => 'chave-errada-12345'] + $evolution0);
+// As chaves do WhatsApp também podem vir de config-whatsapp.php; de lá, só as WHATSAPP_* valem.
+$arquivoWhatsapp = tempnam(sys_get_temp_dir(), 'mcp-avisos-whatsapp-');
+file_put_contents($arquivoWhatsapp, '<?php return ' . var_export($evolution0 + ['SITE_URL' => 'https://nao-pode-valer.example', 'RESEND_API_KEY' => 're_nao_pode'], true) . ';');
 $semEscola = tempnam(sys_get_temp_dir(), 'mcp-avisos-escola-');
 file_put_contents($semEscola, '<?php return [];');
 putenv("MCP_CONFIG_ARQUIVO=$config");
 putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$semEscola");
+putenv("MCP_CONFIG_WHATSAPP_ARQUIVO=$semEscola");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 $_SERVER['REQUEST_METHOD'] = 'CLI';
 require $raiz . '/site/matricula-cursos-presenciais/api/lib.php';
@@ -155,6 +163,20 @@ if (preg_match('~^/v[0-9.]+/1234567890/messages$~', $caminho)) {
     echo json_encode(['messaging_product' => 'whatsapp', 'messages' => [['id' => "wamid.teste-$n"]]]);
     return true;
 }
+if (preg_match('~^/message/sendText/([^/]+)$~', $caminho, $m)) {
+    // Evolution API v2: cabeçalho apikey (token da instância), corpo {number, text, linkPreview}.
+    if ($m[1] !== 'palacio') { http_response_code(404); echo json_encode(['status' => 404, 'error' => 'Not Found', 'response' => ['message' => ['The "' . $m[1] . '" instance does not exist']]]); return true; }
+    if (($_SERVER['HTTP_APIKEY'] ?? '') !== 'token-da-instancia') { http_response_code(401); echo '{"status":401,"error":"Unauthorized","response":{"message":"Unauthorized"}}'; return true; }
+    $d = json_decode($corpo, true) ?: [];
+    $numero = (string) ($d['number'] ?? '');
+    if (str_ends_with($numero, '0000')) { http_response_code(400); echo json_encode(['status' => 400, 'error' => 'Bad Request', 'response' => ['message' => [['jid' => "$numero@s.whatsapp.net", 'exists' => false, 'number' => $numero]]]]); return true; }
+    if (str_ends_with($numero, '0500')) { http_response_code(500); echo '{"status":500,"error":"Internal Server Error","response":{"message":"Connection Closed"}}'; return true; }
+    if (str_ends_with($numero, '0777')) { sleep(3); }
+    $n = $anotar('evolution.jsonl', $d);
+    http_response_code(201);
+    echo json_encode(['key' => ['remoteJid' => "$numero@s.whatsapp.net", 'fromMe' => true, 'id' => "EVO-$n"], 'status' => 'PENDING', 'messageType' => 'conversation']);
+    return true;
+}
 if ($caminho === '/make') {
     $esperado = 'sha256=' . hash_hmac('sha256', $corpo, 'segredo-do-make-com-mais-de-24-letras');
     if (!hash_equals($esperado, (string) ($_SERVER['HTTP_X_CVB_ASSINATURA'] ?? ''))) { http_response_code(401); echo '{}'; return true; }
@@ -191,9 +213,9 @@ $logErros = tempnam(sys_get_temp_dir(), 'mcp-avisos-php-');
 $nulo = [0 => ['file', '/dev/null', 'r'], 1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']];
 $servidor = proc_open([PHP_BINARY, '-S', "127.0.0.1:$portaSite", '-t', $raiz . '/site', '-d', 'sendmail_path=/bin/true',
     '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', "error_log=$logErros"], $nulo, $tubos,
-    null, ['MCP_CONFIG_ARQUIVO' => $config, 'MCP_CONFIG_ESCOLA_ARQUIVO' => $semEscola, 'MCP_CATALOGO_ARQUIVO' => getenv('MCP_CATALOGO_ARQUIVO'), 'PATH' => (string) getenv('PATH')]);
+    null, ['MCP_CONFIG_ARQUIVO' => $config, 'MCP_CONFIG_ESCOLA_ARQUIVO' => $semEscola, 'MCP_CONFIG_WHATSAPP_ARQUIVO' => $semEscola, 'MCP_CATALOGO_ARQUIVO' => getenv('MCP_CATALOGO_ARQUIVO'), 'PATH' => (string) getenv('PATH')]);
 $servidorCloud = proc_open([PHP_BINARY, '-S', "127.0.0.1:" . ($portaSite + 1), '-t', $raiz . '/site', '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', "error_log=$logErros"], $nulo, $tubos3,
-    null, ['MCP_CONFIG_ARQUIVO' => $configCloud, 'MCP_CONFIG_ESCOLA_ARQUIVO' => $semEscola, 'MCP_CATALOGO_ARQUIVO' => getenv('MCP_CATALOGO_ARQUIVO'), 'PATH' => (string) getenv('PATH')]);
+    null, ['MCP_CONFIG_ARQUIVO' => $configCloud, 'MCP_CONFIG_ESCOLA_ARQUIVO' => $semEscola, 'MCP_CONFIG_WHATSAPP_ARQUIVO' => $semEscola, 'MCP_CATALOGO_ARQUIVO' => getenv('MCP_CATALOGO_ARQUIVO'), 'PATH' => (string) getenv('PATH')]);
 $servidorFalso = proc_open([PHP_BINARY, '-S', "127.0.0.1:$portaFalso", $roteador], $nulo, $tubos2, null, ['FALSO_DIR' => $falso, 'PATH' => (string) getenv('PATH')]);
 foreach ([$portaSite, $portaSite + 1, $portaFalso] as $porta) {
     for ($i = 0; $i < 50 && @fsockopen('127.0.0.1', $porta) === false; $i++) {
@@ -213,6 +235,8 @@ function http(string $url, string $metodo = 'GET', ?string $corpo = null, array 
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true, CURLOPT_CUSTOMREQUEST => $metodo, CURLOPT_HTTPHEADER => $cabecalhos, CURLOPT_TIMEOUT => 60,
+        // Como um celular de verdade: sem User-Agent, o clique conta como robô (prévia de link).
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (Linux; Android 14; teste) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36',
         CURLOPT_NOBODY => $metodo === 'HEAD',
         CURLOPT_HEADERFUNCTION => static function ($ch, string $linha) use (&$recebidos): int {
             if (str_contains($linha, ':')) {
@@ -243,14 +267,15 @@ function portal(string $base, string $sessao, array $campos): array
 }
 
 /** Roda um trecho de PHP noutro processo, com outra configuração (outro modo do WhatsApp). Devolve o JSON que ele imprimir. */
-function sub(string $configArq, string $codigo): mixed
+function sub(string $configArq, string $codigo, ?string $whatsappArq = null): mixed
 {
     global $raiz, $semEscola;
     $arq = tempnam(sys_get_temp_dir(), 'mcp-avisos-sub-') . '.php';
     file_put_contents($arq, "<?php\ndeclare(strict_types=1);\n\$_SERVER['REQUEST_METHOD'] = 'CLI';\nrequire " . var_export($raiz . '/site/matricula-cursos-presenciais/api/lib.php', true)
         . ";\nrestore_exception_handler();\n" . $codigo);
     $saida = [];
-    exec('MCP_CONFIG_ARQUIVO=' . escapeshellarg($configArq) . ' MCP_CONFIG_ESCOLA_ARQUIVO=' . escapeshellarg($semEscola) . ' MCP_CATALOGO_ARQUIVO=' . escapeshellarg((string) getenv('MCP_CATALOGO_ARQUIVO'))
+    exec('MCP_CONFIG_ARQUIVO=' . escapeshellarg($configArq) . ' MCP_CONFIG_ESCOLA_ARQUIVO=' . escapeshellarg($semEscola) . ' MCP_CONFIG_WHATSAPP_ARQUIVO=' . escapeshellarg($whatsappArq ?? $semEscola)
+        . ' MCP_CATALOGO_ARQUIVO=' . escapeshellarg((string) getenv('MCP_CATALOGO_ARQUIVO'))
         . ' ' . escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($arq) . ' 2>&1', $saida);
     unlink($arq);
     $texto = implode("\n", $saida);
@@ -577,6 +602,43 @@ try {
         . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); echo json_encode(["erro" => mcp_aviso_por_id($id)["erro"]]);');
     verificar('Make: segredo curto não manda', str_starts_with((string) ($r['erro'] ?? ''), 'WHATSAPP_WEBHOOK_SEGREDO ausente ou curto'), true);
 
+    // ------------------------------------------------------------------------- WhatsApp pelo número do Palácio (Evolution)
+    $w1 = colaborador("Wagner WhatsApp $marca", 'voluntario', null, '21998760005');
+    $db->prepare("UPDATE mcp_colaboradores SET aviso_whatsapp = 1, aviso_whatsapp_em = ?, aviso_whatsapp_por = 'teste', aviso_dias = 'dom,seg,ter,qua,qui,sex,sab' WHERE id = ?")
+        ->execute([mcp_agora(), (int) $w1['id']]);
+    $avisoEvo = static fn(string $chave, int $colId, string $numero, string $hora): string => '$id = mcp_aviso_criar(["chave" => "' . $chave . '|' . $sufixo . '", "tipo" => "vespera", "canal" => "whatsapp", "colaborador_id" => ' . $colId
+        . ', "pessoa" => "c' . $colId . '", "nome" => "x", "destino" => "' . $numero . '", "referencia" => "' . $amanha . '", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, $hora) . ')]);';
+    $r = sub($configEvolution, $avisoEvo('teste-evo', (int) $w1['id'], '5521998760005', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
+        . ' echo json_encode(["status" => $a["status"], "provedor" => $a["provedor"], "id" => $a["provedor_id"], "modo" => mcp_whatsapp_modo(), "nome" => mcp_whatsapp_modo_nome(mcp_whatsapp_modo())]);');
+    $evo = falso('evolution');
+    verificar('Evolution: manda pelo número do Palácio, com o texto pronto e sem prévia de link', [$r['modo'] ?? null, $r['nome'] ?? null, $r['status'] ?? null, $r['provedor'] ?? null, $r['id'] ?? null,
+        $evo[0]['number'] ?? null, str_contains((string) ($evo[0]['text'] ?? ''), 'registre a *entrada*'), str_ends_with((string) ($evo[0]['text'] ?? ''), "\n\n_Mensagem automática: não precisa responder._"), $evo[0]['linkPreview'] ?? null],
+        ['evolution', 'automático, pelo WhatsApp do Palácio Virtual (Evolution)', 'enviado', 'evolution', 'EVO-1', '5521998760005', true, true, false]);
+    verificar('Evolution: com o WhatsApp automático, o lembrete não vai também por e-mail', linha_aviso($db, "vespera|{$w1['id']}|$amanha|email"), null);
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760000' WHERE id = ?")->execute([(int) $w1['id']]);
+    $r = sub($configEvolution, $avisoEvo('teste-evo-sem', (int) $w1['id'], '5521998760000', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
+        . ' echo json_encode(["status" => $a["status"], "erro" => $a["erro"], "t" => (int) $a["tentativas"]]);');
+    verificar('Evolution: número sem WhatsApp falha na hora, sem tentar de novo', [$r['status'] ?? null, $r['erro'] ?? null, $r['t'] ?? null], ['falhou', 'esse número não tem WhatsApp', 1]);
+    // Servidor da Evolution com erro: a mensagem volta para a fila e as outras da rodada nem tentam.
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760500' WHERE id = ?")->execute([(int) $e1['id']]);
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760005' WHERE id = ?")->execute([(int) $w1['id']]);
+    $r = sub($configEvolution, $avisoEvo('teste-evo-cai', (int) $e1['id'], '5521998760500', '09:00') . ' $a1 = $id; ' . $avisoEvo('teste-evo-espera', (int) $w1['id'], '5521998760005', '09:00') . ' $a2 = $id;'
+        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); echo json_encode(["s1" => mcp_aviso_por_id($a1)["status"], "e1" => mcp_aviso_por_id($a1)["erro"],'
+        . ' "s2" => mcp_aviso_por_id($a2)["status"], "t2" => (int) mcp_aviso_por_id($a2)["tentativas"], "fora" => mcp_whatsapp_fora() !== null]);');
+    $r2 = sub($configEvolution, 'mcp_avisos_enviar_pendentes(' . em($hoje, '09:20') . ', 50); echo json_encode(["s2" => mcp_aviso_por_id(' . (int) (linha_aviso($db, "teste-evo-espera|$sufixo")['id'] ?? 0) . ')["status"]]);');
+    verificar('Evolution: fora do ar, a fila espera a próxima rodada sem gastar tentativa', [$r['s1'] ?? null, $r['e1'] ?? null, $r['s2'] ?? null, $r['t2'] ?? null, $r['fora'] ?? null, $r2['s2'] ?? null],
+        ['pendente', 'Connection Closed', 'pendente', 0, true, 'enviado']);
+    $r = sub($configEvolutionChave, $avisoEvo('teste-evo-chave', (int) $w1['id'], '5521998760005', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
+        . ' echo json_encode(["status" => $a["status"], "erro" => $a["erro"]]);');
+    verificar('Evolution: chave recusada volta para a fila, e a chave não aparece no erro', [$r['status'] ?? null, $r['erro'] ?? null, str_contains(json_encode($r), 'chave-errada')],
+        ['pendente', 'a Evolution recusou a chave (confira WHATSAPP_EVOLUTION_CHAVE)', false]);
+    $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760777' WHERE id = ?")->execute([(int) $w1['id']]);
+    $r = sub($configEvolution, $avisoEvo('teste-evo-demora', (int) $w1['id'], '5521998760777', '09:00') . ' mcp_avisos_enviar_pendentes(' . em($hoje, '09:01') . ', 50); $a = mcp_aviso_por_id($id);'
+        . ' echo json_encode(["status" => $a["status"], "erro" => $a["erro"], "t" => (int) $a["tentativas"]]);');
+    verificar('Evolution: sem confirmação a tempo, conta como enviada e não vai de novo', [$r['status'] ?? null, str_contains((string) ($r['erro'] ?? ''), 'não confirmou a tempo'), $r['t'] ?? null], ['enviado', true, 1]);
+    $r = sub($config, 'echo json_encode(["modo" => mcp_whatsapp_modo(), "site" => mcp_site_url(), "resend" => mcp_cfg("RESEND_API_KEY")]);', $arquivoWhatsapp);
+    verificar('config-whatsapp.php: liga a Evolution, e só as chaves WHATSAPP_* valem', [$r['modo'] ?? null, $r['site'] ?? null, $r['resend'] ?? null], ['evolution', "http://127.0.0.1:$portaSite", 're_teste']);
+
     // ------------------------------------------------------------------------- lembrete da aula (escola falsa)
     mcp_ajuste_gravar('lembrete_aula', '1', $quem);
     file_put_contents("$falso/escola.json", json_encode(['falha' => true, 'alunos' => []]));
@@ -594,7 +656,13 @@ try {
     $email = falso('emails')[$antesEmails] ?? [];
     verificar('e-mail da aula: assunto, curso, horário e link para não receber', [$email['subject'] ?? null, str_contains($email['html'] ?? '', 'das 18:00 às 22:00'), (bool) preg_match('~avisos\.php\?r=(\d+\.x\.[a-f0-9]{16})~', $email['html'] ?? '', $m)],
         ['Amanhã tem aula: Bombeiro Civil', true, true]);
+    $cliques = static fn(): int => (int) (linha_aviso($db, "aula|al-$sufixo|$amanha|email")['cliques'] ?? -1);
+    $antesCliques = $cliques();
+    [$stRobo, $cabRobo] = http($base . 'avisos.php?r=' . ($m[1] ?? ''), 'GET', null, ['User-Agent: WhatsApp/2.23.20.0 A']);
+    verificar('clique: prévia do WhatsApp vai ao ponto, sem link pessoal e sem contar', [$stRobo, $cabRobo['location'] ?? null, $cliques() - $antesCliques],
+        [302, "http://127.0.0.1:$portaSite/ponto/", 0]);
     [$st, $cab] = http($base . 'avisos.php?r=' . ($m[1] ?? ''));
+    verificar('clique: pelo navegador conta', $cliques() - $antesCliques, 1);
     $tokSair = substr($cab['location'] ?? '', strpos($cab['location'] ?? '', '?t=') + 3);
     [$st, $r] = api_avisos($base, ['acao' => 'sair_ler', 't' => $tokSair]);
     [$st2, $r2] = api_avisos($base, ['acao' => 'sair_confirmar', 't' => $tokSair]);
@@ -684,7 +752,7 @@ try {
     }
     array_map('unlink', glob("$falso/*") ?: []);
     @rmdir($falso);
-    foreach ([$config, $configCloud, $configMake, $configMakeCurto, $semEscola, $logErros] as $arq) {
+    foreach ([$config, $configCloud, $configMake, $configMakeCurto, $configEvolution, $configEvolutionChave, $arquivoWhatsapp, $semEscola, $logErros] as $arq) {
         @unlink($arq);
     }
 }

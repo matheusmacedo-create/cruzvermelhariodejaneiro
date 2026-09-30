@@ -111,7 +111,7 @@ function limpar(PDO $db): void
     }
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Ponto %'");
-    $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'conferir') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
+    $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'conferir') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
         OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
         AND detalhe LIKE '%ponto@exemplo.org%'");
 }
@@ -570,10 +570,20 @@ try {
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aparelho_desativar', 'id' => $aid, 't' => $csrf('aparelho_desativar', $aid)]);
     verificar('aparelho desativado passa a valer como celular', [$st, json_decode(http($base . 'ponto.php', 'GET', null, ["Cookie: $cAparelho"])[2], true)['modo'] ?? null], [303, 'celular']);
 
-    // Limite de consultas pelo celular (por IP).
+    // Limite de consultas pelo celular (por IP): quem acerta tem folga, porque todos no Wi-Fi da sede saem pelo
+    // mesmo IP; quem erra CPF (o jeito de descobrir quem está cadastrado) para depois de 10.
     $db->prepare('INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES ' . implode(', ', array_fill(0, 15, "(NULL, 'ponto_consulta', '127.0.0.1', ?)")))
         ->execute(array_fill(0, 15, mcp_agora()));
-    verificar('limite de consultas pelo celular', ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede])[0], 429);
+    verificar('Wi-Fi da sede: a 16ª consulta certa do mesmo IP passa', ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede])[0], 200);
+    $cpfNinguem = cpf_de_teste();
+    // Os CPFs errados dos testes de antes também contam: começa do zero.
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'ponto_consulta_falha' AND detalhe = '127.0.0.1'");
+    for ($i = 0; $i < 9; $i++) {
+        ponto($base, ['acao' => 'identificar', 'cpf' => $cpfNinguem, 'posicao' => $pertoDaSede]);
+    }
+    [$st404] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfNinguem, 'posicao' => $pertoDaSede]);
+    [$st429, $r429] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede]);
+    verificar('limite de consultas pelo celular: 10 CPFs não encontrados param o IP', [$st404, $st429, str_contains($r429['erro'] ?? '', 'sem encontrar o CPF')], [404, 429, true]);
 
     $erros = array_values(array_filter(file($logErros) ?: [], static fn(string $l): bool => (bool) preg_match('/PHP (Warning|Notice|Deprecated|Fatal|Parse)/', $l)));
     verificar('sem aviso nem erro do PHP no servidor', $erros, []);

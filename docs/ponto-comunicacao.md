@@ -52,10 +52,11 @@ quem está sem contato, **mandar um teste para si**, agendar, mandar agora ou de
 quem recebeu, por qual canal, quem clicou e as opiniões. Mudar a data do lançamento recalcula as datas
 dos rascunhos.
 
-## WhatsApp: três modos
+## WhatsApp: quatro modos
 
-O modo sai da configuração (`api/config.php`, só no servidor); o botão **Usar o WhatsApp**, na Visão
-geral, liga e desliga em qualquer modo.
+O modo sai da configuração (`api/config.php` ou `api/config-whatsapp.php`, só no servidor); o botão
+**Usar o WhatsApp**, na Visão geral, liga e desliga em qualquer modo. Se houver mais de um configurado,
+vale o primeiro desta ordem: API oficial, Evolution, Make, manual.
 
 ### Manual (padrão, sem configurar nada)
 
@@ -63,6 +64,62 @@ Cada mensagem vai para **Comunicação → Fila do WhatsApp**. A secretaria toca
 (abre a conversa com o texto pronto, pelo link `wa.me`, no WhatsApp do aparelho — use o da
 instituição), manda e marca **Enviei**. A fila mostra desde as 8h o que sai no dia. Nesse modo, os
 lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atrasar.
+
+### WhatsApp do Palácio Virtual, pela Evolution (o que já está conectado)
+
+É "o WhatsApp que já temos conectado": desde 29/09/2026, o Palácio Virtual (repositório
+`redacao-cruzvermelhariodejaneiro`) manda os avisos da equipe e responde no robô por uma instância da
+**Evolution API** ligada a um número de WhatsApp. O ponto pode usar a mesma instância: texto livre (sem
+modelo para aprovar na Meta), sozinho e sem custo por mensagem. **Está pronto, mas desligado: ligar é uma
+decisão da instituição, por causa dos riscos abaixo.**
+
+**Riscos (revisão jurídica de 30/09/2026):**
+- A Evolution usa o WhatsApp Web, conectado por QR code. **Não é a API oficial**, e os Termos do WhatsApp
+  não permitem mensagens automáticas por meios não autorizados. Se o número for bloqueado (o gatilho mais
+  comum é gente denunciando mensagens que não esperava), **caem junto os avisos e o robô do Palácio**.
+- Quem responde cai no robô do Palácio, não aqui. Um "PARAR" respondido ali é um pedido válido de
+  saída (política do WhatsApp e LGPD) e precisa ser registrado pela secretaria em **Envios → Pediu para
+  parar**, porque o site não recebe essa resposta.
+- As mensagens e os contatos passam pelo servidor da Evolution (no Palácio, um computador da filial atrás
+  de um túnel). É preciso saber quem hospeda e quem acessa, e que o número está em nome da Cruz Vermelha
+  Brasileira RJ.
+
+**Condições para ligar:** número em nome da instituição; só para quem autorizou o WhatsApp; a secretaria
+registra os pedidos de parar que chegarem ao robô; a Política de Privacidade cita o servidor do Palácio;
+aceite formal do risco de bloqueio. **Recomendação:** para os lembretes em volume, a API oficial (abaixo)
+com número próprio; a Evolution, no máximo, para um grupo pequeno enquanto a API oficial não sai.
+
+Como ligar:
+1. No Palácio, em **Configurações → Integrações** (serviço Evolution API), copiar o endereço do
+   servidor, o nome da instância e o **token da instância** (melhor que a chave global: só mexe naquela
+   instância).
+2. Criar `api/config-whatsapp.php` no servidor (fora do Git; o `.htaccess` nega o acesso a ele):
+   ```php
+   <?php return [
+       'WHATSAPP_EVOLUTION_URL' => 'https://…',        // o mesmo endereço do Palácio (https)
+       'WHATSAPP_EVOLUTION_INSTANCIA' => '…',
+       'WHATSAPP_EVOLUTION_CHAVE' => '…',              // token da instância
+   ];
+   ```
+3. No portal, mandar um teste pelo comunicado ("Testar também no WhatsApp") e ligar **Usar o WhatsApp**.
+
+Como se comporta:
+- **Freio fixo:** uma mensagem a cada 8 segundos, até 30 a cada rodada de 15 minutos (até 3 num clique do
+  portal), para não disputar o número com o Palácio (que manda até 12 por minuto) nem travar a rotina.
+  Com 60 voluntários, os lembretes das 18h terminam por volta das 18h20.
+- **Número sem WhatsApp** falha na hora, sem tentar de novo. **Servidor fora do ar, chave recusada ou
+  instância que sumiu**: a mensagem volta para a fila e as outras da rodada esperam a próxima (sem gastar
+  tentativas). **Sem confirmação em 40 s** (acontece logo depois de conectar pelo QR code): conta como
+  enviada, com a ressalva no registro, para não mandar duas vezes.
+- Cada mensagem termina com "_Mensagem automática: não precisa responder._" (quem responde recebe a
+  apresentação do robô do Palácio, no máximo uma por dia). Parar é pelo link do fim da mensagem ou pela
+  secretaria.
+- **Janela:** o ponto manda das 8h às 20h; o Palácio guarda silêncio das 22h às 7h. Não se cruzam.
+- **Se o WhatsApp do Palácio desconectar**, o Palácio avisa a administração; a fila do ponto espera.
+
+Mais adiante, se a Evolution continuar, o melhor é centralizar: o Palácio recebe o pedido do site (o mesmo
+POST assinado do modo Make), põe na fila dele (com o freio de volume e o alerta de queda que já tem) e
+devolve ao site os pedidos de parar que chegarem ao robô.
 
 ### API oficial do WhatsApp (Meta)
 
@@ -181,17 +238,20 @@ links dele.
   `mcp_avisos_bloqueios` (só o hash do e-mail ou do celular de quem pediu para sair),
   `mcp_opinioes`; colunas `aviso_*` em `mcp_colaboradores` e `saida_informada*` em `mcp_ponto`. Criadas
   sozinhas na primeira conexão.
-- Operadores: Resend (e-mail); Meta (WhatsApp, se a API oficial for ligada); Make (se o webhook for
-  ligado). No modo manual, a mensagem sai do aparelho da secretaria.
+- Operadores: Resend (e-mail); Meta, dona do WhatsApp (em qualquer modo); o servidor da Evolution do
+  Palácio (no modo Evolution); Make (se o webhook for ligado). No modo manual, a mensagem sai do
+  aparelho da secretaria.
 - A página do ponto guarda no navegador do celular só a marca `pt_dica_app` (quantas vezes a dica de
   instalar apareceu).
 
 ## Configuração (nomes, só no servidor)
 
-`WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_CLOUD_NUMERO_ID`, `WHATSAPP_CLOUD_APP_SEGREDO`,
+`WHATSAPP_EVOLUTION_URL`, `WHATSAPP_EVOLUTION_INSTANCIA`, `WHATSAPP_EVOLUTION_CHAVE` (e, só para teste,
+`WHATSAPP_EVOLUTION_PAUSA_S` e `WHATSAPP_EVOLUTION_TEMPO_S`), `WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_CLOUD_NUMERO_ID`, `WHATSAPP_CLOUD_APP_SEGREDO`,
 `WHATSAPP_CLOUD_VERIFICACAO`, `WHATSAPP_CLOUD_VERSAO`, `WHATSAPP_CLOUD_IDIOMA`, `WHATSAPP_WEBHOOK_URL`,
 `WHATSAPP_WEBHOOK_SEGREDO`, `EMAIL_REMETENTE_PONTO` (remetente dos avisos; vazio = `EMAIL_REMETENTE`),
-`ESCOLA_API_AULAS_DIA_URL` (vazio = a URL da escola com `aulas_do_dia`). Nenhum cron novo: a rotina do
+`ESCOLA_API_AULAS_DIA_URL` (vazio = a URL da escola com `aulas_do_dia`). As `WHATSAPP_*` podem ficar em
+`api/config-whatsapp.php`, e as `ESCOLA_*` em `api/config-escola.php`. Nenhum cron novo: a rotina do
 ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes

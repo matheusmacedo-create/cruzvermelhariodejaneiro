@@ -95,6 +95,22 @@ function mcp_ip(): string
     return substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
 }
 
+/**
+ * O IP para os freios de requisições. IPv6 conta pelo /64, porque cada casa ou celular recebe um /64
+ * inteiro e trocaria de endereço a cada pedido para fugir do freio. IPv4 fica como está.
+ */
+function mcp_ip_balde(): string
+{
+    $ip = mcp_ip();
+    if (str_contains($ip, ':')) {
+        $binario = @inet_pton($ip);
+        if (is_string($binario) && strlen($binario) === 16) {
+            return inet_ntop(substr($binario, 0, 8) . str_repeat("\0", 8)) . '/64';
+        }
+    }
+    return $ip;
+}
+
 // ----------------------------------------------------------------------------- texto e valores
 function mcp_digitos(string $texto): string
 {

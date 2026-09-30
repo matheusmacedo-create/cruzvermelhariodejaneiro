@@ -1,0 +1,8 @@
+# Ponto da sede: no celular, o registro só vale perto da sede, e para isso a página precisa pedir a
+# localização. O .htaccess da pasta de cima manda "geolocation=()" para toda a matrícula, o que no
+# Chrome (a maioria dos Android) desliga a localização da página sem nem perguntar. Aqui a própria
+# página pode pedir (self); câmera, microfone e pagamento continuam desligados. Os outros cabeçalhos
+# de proteção vêm da pasta de cima.
+<IfModule mod_headers.c>
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self), payment=()"
+</IfModule>

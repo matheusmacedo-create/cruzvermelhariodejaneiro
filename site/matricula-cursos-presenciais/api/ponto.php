@@ -84,11 +84,21 @@ function pt_pendencias(array $colaborador, int $agora): array
 
 if ($acao === 'identificar') {
     [$maximo, $janela] = MCP_PONTO_LIMITE[$modo];
-    $chaveLimite = $aparelho ? 'aparelho ' . $aparelho['id'] : mcp_ip();
+    $chaveLimite = $aparelho ? 'aparelho ' . $aparelho['id'] : mcp_ip_balde();
     if (mcp_contar_eventos_recentes('ponto_consulta', $chaveLimite, $janela) >= $maximo) {
         mcp_falhar(429, 'Muitas consultas em pouco tempo. Aguarde alguns minutos e tente de novo.');
     }
+    // No celular, o freio de verdade é para quem erra: CPF inválido ou que não está cadastrado é o jeito de
+    // descobrir quem está. Quem acerta tem um limite largo, porque todos no Wi-Fi da sede saem pelo mesmo IP.
+    if (!$aparelho && mcp_contar_eventos_recentes('ponto_consulta_falha', $chaveLimite, $janela) >= MCP_PONTO_LIMITE_FALHAS) {
+        mcp_falhar(429, 'Muitas tentativas sem encontrar o CPF. Aguarde alguns minutos ou use o tablet da recepção.');
+    }
     mcp_registrar(null, 'ponto_consulta', $chaveLimite);
+    $falhou = static function () use ($aparelho, $chaveLimite): void {
+        if (!$aparelho) {
+            mcp_registrar(null, 'ponto_consulta_falha', $chaveLimite);
+        }
+    };
     $distancia = null;
     if (!$aparelho) {
         $local = mcp_ponto_conferir_localizacao($corpo['posicao'] ?? null);
@@ -100,6 +110,7 @@ if ($acao === 'identificar') {
     $digitado = mcp_digitos(mcp_texto($corpo['cpf'] ?? '', 20));
     $cpf = $digitado !== '' ? $digitado : (string) ($aparelho ? '' : mcp_ponto_pessoa_lembrada());
     if (!mcp_cpf_valido($cpf)) {
+        $falhou();
         mcp_falhar(422, 'CPF inválido. Confira os números.', ['campo' => 'cpf']);
     }
 
@@ -115,6 +126,7 @@ if ($acao === 'identificar') {
         if ($escolaFora) {
             mcp_falhar(503, 'Não conseguimos consultar as aulas na escola agora. Tente de novo em instantes ou fale com a secretaria.');
         }
+        $falhou();
         mcp_falhar(404, 'Não encontramos este CPF entre os colaboradores nem aula sua hoje. Colaborador: peça à secretaria para cadastrar seu CPF. Aluno: confira com a secretaria o dia da sua aula.');
     }
     // No celular, a pessoa escolhe se o aparelho lembra dela (o CPF vai cifrado no cookie).

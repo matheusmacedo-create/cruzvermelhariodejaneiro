@@ -191,6 +191,10 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
     $remetente = mcp_email_endereco(mcp_email_nome_oficial((string) (mcp_cfg('EMAIL_REMETENTE_PONTO', '') ?: mcp_cfg('EMAIL_REMETENTE', MCP_NOME_FILIAL . ' <matricula@cruzvermelhariodejaneiro.org>'))));
     $explicaModo = match ($modo) {
         'cloud' => 'As mensagens saem sozinhas pela API oficial do WhatsApp, com os modelos aprovados pela Meta: ' . pn_e(implode(', ', array_keys(MCP_WHATSAPP_MODELOS))) . '. Quem responde PARAR deixa de receber.',
+        'evolution' => 'As mensagens saem sozinhas pelo WhatsApp do Palácio Virtual (o mesmo número dos avisos da equipe), uma a cada 8 segundos, até '
+            . MCP_WHATSAPP_EVOLUTION_POR_RODADA . ' a cada 15 minutos, para não atrapalhar os avisos do Palácio. A Evolution não é a API oficial do WhatsApp: '
+            . 'o número pode ser bloqueado se muita gente denunciar as mensagens, e aí param também os avisos do Palácio. Mande só a quem autorizou. '
+            . 'Quem responde à mensagem cai no robô do Palácio, e não aqui: se alguém pedir para parar por lá, registre em Envios (<b>Pediu para parar</b>).',
         'webhook' => 'As mensagens vão para o cenário do Make, que manda pelo WhatsApp. O retorno do Make diz se saiu.',
         default => 'Sem a API configurada, cada mensagem vai para a <a href="painel.php?v=comunicacao&amp;aba=fila">Fila do WhatsApp</a>: você abre no WhatsApp da instituição com um toque e manda. '
             . 'Nesse modo, os lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atrasar. Para mandar sozinho, veja docs/ponto-comunicacao.md.',

@@ -1200,10 +1200,10 @@ if ($metodo === 'POST') {
             pn_login('Digite um e-mail válido.');
         }
         [$maximo, $janela] = MCP_PAINEL_LIMITE_LINKS;
-        if (mcp_contar_eventos_recentes('painel_link', mcp_ip(), $janela) >= $maximo) {
+        if (mcp_contar_eventos_recentes('painel_link', mcp_ip_balde(), $janela) >= $maximo) {
             pn_login('Muitos pedidos de link em pouco tempo. Aguarde alguns minutos.');
         }
-        mcp_registrar(null, 'painel_link', mcp_ip());
+        mcp_registrar(null, 'painel_link', mcp_ip_balde());
         // Não revela quem tem acesso: a mesma mensagem para e-mail permitido e não permitido.
         $mensagem = 'Se este e-mail tiver acesso, o link chega em instantes. Confira a caixa de entrada e o spam; o link vale ' . MCP_PAINEL_LINK_ENTRADA_MINUTOS . ' minutos.';
         if (in_array($email, mcp_painel_emails_permitidos(), true) && mcp_email_painel_link($email) === 'falhou') {

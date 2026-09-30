@@ -38,6 +38,16 @@ const MCP_AVISOS_JANELA = ['08:00', '20:00'];
 /** Mensagens por rodada da rotina (a cada 15 minutos) e pausa entre e-mails (a Resend aceita 2 por segundo). */
 const MCP_AVISOS_LOTE = 80;
 const MCP_AVISOS_PAUSA_MS = 550;
+/**
+ * WhatsApp pelo número do Palácio Virtual (Evolution): um freio fixo, para não disputar o número com os
+ * avisos do Palácio (que manda até 12 por minuto) nem travar a rotina. 8 s entre mensagens
+ * (WHATSAPP_EVOLUTION_PAUSA_S muda) e até 30 por rodada da rotina; num clique do portal, até 3.
+ */
+const MCP_WHATSAPP_EVOLUTION_PAUSA_S = 8;
+const MCP_WHATSAPP_EVOLUTION_POR_RODADA = 30;
+const MCP_WHATSAPP_EVOLUTION_POR_CLIQUE = 3;
+/** Logo depois de conectar pelo QR code, a Evolution demora a confirmar cada envio (visto no Palácio). */
+const MCP_WHATSAPP_EVOLUTION_TEMPO_S = 40;
 const MCP_AVISOS_TENTATIVAS = 3;
 const MCP_AVISOS_GUARDA_DIAS = 365;
 /** Validade dos links pessoais, em dias. */
@@ -150,10 +160,16 @@ function mcp_avisos_dias_texto(array $dias): string
     return implode(', ', $nomes) . ' e ' . $ultimo;
 }
 
-/** Número do WhatsApp (55 + DDD + 9 dígitos) de um celular brasileiro, ou null (fixo e inválido não servem). */
+/**
+ * Número do WhatsApp (55 + DDD + 9 dígitos) de um celular brasileiro, ou null (fixo e inválido não servem).
+ * Celular antigo sem o nono dígito (21 8765-4321) ganha o 9, como no Palácio Virtual.
+ */
 function mcp_whatsapp_numero(?string $telefone): ?string
 {
     $d = mcp_telefone((string) $telefone);
+    if (strlen($d) === 10 && in_array($d[2], ['6', '7', '8', '9'], true)) {
+        $d = substr($d, 0, 2) . '9' . substr($d, 2);
+    }
     return strlen($d) === 11 && $d[2] === '9' ? '55' . $d : null;
 }
 
@@ -315,6 +331,17 @@ function mcp_avisos_sufixo_clique(int $avisoId, string $destino): string
  * Registra o clique e devolve a URL de destino (com um link pessoal novo, quando é o caso), ou null se
  * o código não vale. O clique conta uma vez por aviso em clicado_em; cliques soma todos.
  */
+/**
+ * Prévia de link e robôs (WhatsApp, Meta, Telegram, Slack, buscadores, verificadores de e-mail e
+ * programas): abrem o link sem ninguém ter clicado. Não contam como clique e não ganham link pessoal.
+ */
+function mcp_avisos_eh_robo(string $agente): bool
+{
+    return $agente === '' || (bool) preg_match('~whatsapp|facebookexternalhit|facebot|meta-externalagent|telegrambot|slackbot|discordbot|twitterbot|linkedinbot'
+        . '|skypeuripreview|microsoftpreview|googlebot|bingbot|applebot|yandex|duckduckbot|googleimageproxy|ggpht|yahoo! slurp|embedly|iframely|outlook-ios-linkpreview'
+        . '|barracuda|mimecast|proofpoint|safelinks|bot\b|crawler|spider|preview|python-|curl/|wget/|go-http-client|okhttp|java/|headlesschrome~i', $agente);
+}
+
 function mcp_avisos_clique(string $r, ?int $agora = null): ?string
 {
     $agora ??= time();
@@ -471,16 +498,76 @@ function mcp_aviso_atualizar(int $id, array $campos): void
 }
 
 // ----------------------------------------------------------------------------- WhatsApp
-/** cloud (API oficial da Meta), webhook (Make ou similar) ou manual (fila do portal). */
+/**
+ * cloud (API oficial da Meta), evolution (o WhatsApp do Palácio Virtual, pela Evolution API), webhook
+ * (Make ou similar) ou manual (fila do portal).
+ */
 function mcp_whatsapp_modo(): string
 {
     if ((string) mcp_cfg('WHATSAPP_CLOUD_TOKEN', '') !== '' && (string) mcp_cfg('WHATSAPP_CLOUD_NUMERO_ID', '') !== '') {
         return 'cloud';
     }
+    if ((string) mcp_cfg('WHATSAPP_EVOLUTION_URL', '') !== '') {
+        return 'evolution';
+    }
     if ((string) mcp_cfg('WHATSAPP_WEBHOOK_URL', '') !== '') {
         return 'webhook';
     }
     return 'manual';
+}
+
+/**
+ * Servidor, instância e chave da Evolution (a mesma instância do Palácio Virtual), conferidos; ou o que
+ * falta. A chave de preferência é o token da instância (só mexe nela), não a chave global do servidor.
+ * @return array{ok: true, url: string, instancia: string, chave: string}|array{ok: false, erro: string}
+ */
+function mcp_whatsapp_evolution_config(): array
+{
+    $url = rtrim(trim((string) mcp_cfg('WHATSAPP_EVOLUTION_URL', '')), '/');
+    $partes = parse_url($url);
+    $local = in_array($partes['host'] ?? '', ['127.0.0.1', 'localhost'], true);
+    if (!is_array($partes) || !isset($partes['host']) || !in_array($partes['scheme'] ?? '', $local ? ['http', 'https'] : ['https'], true)
+        || isset($partes['user']) || isset($partes['query']) || isset($partes['fragment'])) {
+        return ['ok' => false, 'erro' => 'WHATSAPP_EVOLUTION_URL precisa ser o endereço https do servidor da Evolution'];
+    }
+    $instancia = trim((string) mcp_cfg('WHATSAPP_EVOLUTION_INSTANCIA', ''));
+    if (!preg_match('/^[A-Za-z0-9._-]{1,64}$/', $instancia)) {
+        return ['ok' => false, 'erro' => 'WHATSAPP_EVOLUTION_INSTANCIA ausente ou inválida (letras, números, ponto, hífen e sublinhado)'];
+    }
+    $chave = trim((string) mcp_cfg('WHATSAPP_EVOLUTION_CHAVE', ''));
+    if (strlen($chave) < 8) {
+        return ['ok' => false, 'erro' => 'WHATSAPP_EVOLUTION_CHAVE ausente ou curta'];
+    }
+    return ['ok' => true, 'url' => $url, 'instancia' => $instancia, 'chave' => $chave];
+}
+
+/** A mensagem de erro de um corpo da Evolution ({response: {message}}, {message} ou {error}). */
+function mcp_whatsapp_evolution_erro(array $dados): ?string
+{
+    $candidata = $dados['response']['message'] ?? $dados['message'] ?? $dados['error'] ?? null;
+    if (is_array($candidata)) {
+        $primeiro = $candidata[0] ?? null;
+        if (is_array($primeiro) && ($primeiro['exists'] ?? null) === false) {
+            return 'esse número não tem WhatsApp';
+        }
+        $partes = array_map(static fn($c): string => is_string($c) ? $c : (string) json_encode($c, JSON_UNESCAPED_UNICODE), $candidata);
+        return $partes ? mb_substr(implode('; ', $partes), 0, 200) : null;
+    }
+    return is_string($candidata) && $candidata !== '' ? mb_substr($candidata, 0, 200) : null;
+}
+
+/**
+ * Provedor do WhatsApp fora do ar ou recusando a configuração nesta rodada (servidor caiu, chave errada,
+ * instância sumiu): o resto do WhatsApp fica para a próxima rodada, sem gastar tentativas nem esperar
+ * o tempo de cada mensagem. Vale só para este processo.
+ */
+function mcp_whatsapp_fora(?string $motivo = null): ?string
+{
+    static $fora = null;
+    if ($motivo !== null) {
+        $fora = $motivo;
+    }
+    return $fora;
 }
 
 /** A secretaria ligou o WhatsApp no portal (em qualquer modo). */
@@ -491,7 +578,8 @@ function mcp_whatsapp_ativo(): bool
 
 function mcp_whatsapp_modo_nome(string $modo): string
 {
-    return ['cloud' => 'automático, pela API oficial do WhatsApp', 'webhook' => 'automático, pelo cenário do Make', 'manual' => 'manual, pela fila do portal'][$modo] ?? $modo;
+    return ['cloud' => 'automático, pela API oficial do WhatsApp', 'evolution' => 'automático, pelo WhatsApp do Palácio Virtual (Evolution)',
+        'webhook' => 'automático, pelo cenário do Make', 'manual' => 'manual, pela fila do portal'][$modo] ?? $modo;
 }
 
 /** Link que abre o WhatsApp com a mensagem pronta (fila manual). */
@@ -500,8 +588,11 @@ function mcp_whatsapp_link_manual(string $numero, string $texto): string
     return 'https://wa.me/' . mcp_digitos($numero) . '?text=' . rawurlencode($texto);
 }
 
-/** POST JSON com curl. HTTPS sempre; HTTP só para teste local em 127.0.0.1. Devolve [status, corpo decodificado, erro]. */
-function mcp_avisos_post_json(string $url, string $corpo, array $cabecalhos): array
+/**
+ * POST JSON com curl. HTTPS sempre; HTTP só para teste local em 127.0.0.1. Devolve [status, corpo
+ * decodificado, erro, tempo esgotado]: com o tempo esgotado, o outro lado pode ter recebido mesmo assim.
+ */
+function mcp_avisos_post_json(string $url, string $corpo, array $cabecalhos, int $tempo = 20): array
 {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -510,29 +601,43 @@ function mcp_avisos_post_json(string $url, string $corpo, array $cabecalhos): ar
         CURLOPT_POSTFIELDS => $corpo,
         CURLOPT_HTTPHEADER => array_merge(['Content-Type: application/json', 'Accept: application/json'], $cabecalhos),
         CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_TIMEOUT => 20,
+        CURLOPT_TIMEOUT => max(1, $tempo),
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (in_array(parse_url($url, PHP_URL_HOST), ['127.0.0.1', 'localhost'], true) ? CURLPROTO_HTTP : 0),
     ]);
     $resposta = curl_exec($ch);
     $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $erro = curl_error($ch);
+    // Esgotou depois de conectar: o pedido pode ter chegado (sem conectar, com certeza não chegou).
+    $esgotado = curl_errno($ch) === CURLE_OPERATION_TIMEDOUT && (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
     curl_close($ch);
     $dados = is_string($resposta) ? json_decode($resposta, true) : null;
-    return [$status, is_array($dados) ? $dados : [], $erro];
+    return [$status, is_array($dados) ? $dados : [], $erro, $esgotado];
 }
 
 /**
  * Manda uma mensagem de WhatsApp pelo modo configurado. $msg: whatsapp (texto livre) e modelo
  * (nome, parametros, botao) para a API oficial.
- * @return array{ok: bool, provedor: string, id: ?string, erro: ?string}
+ * Além de ok/erro: definitivo (não adianta tentar de novo) e incerto (o tempo acabou depois de o pedido
+ * chegar: pode ter saído, então não se manda de novo). Provedor fora do ar marca mcp_whatsapp_fora().
+ * @return array{ok: bool, provedor: string, id: ?string, erro: ?string, definitivo?: bool, incerto?: bool}
  */
 function mcp_whatsapp_enviar(string $numero, array $msg, int $avisoId): array
 {
     $modo = mcp_whatsapp_modo();
+    // Sem resposta, servidor com erro, chave recusada ou endereço inexistente: o resto espera a próxima rodada.
+    $cair = static function (string $provedor, int $status, string $erro): void {
+        if ($status === 0 || $status === 401 || $status === 403 || $status === 404 || $status >= 500) {
+            mcp_whatsapp_fora("$provedor: $erro");
+        }
+    };
+    $incerto = static function (string $provedor, string $quem): array {
+        mcp_whatsapp_fora("$provedor: sem confirmação a tempo");
+        return ['ok' => true, 'provedor' => $provedor, 'id' => null, 'erro' => "$quem não confirmou a tempo; a mensagem pode ter saído (não vai de novo)", 'incerto' => true];
+    };
     if ($modo === 'cloud') {
         $modelo = $msg['modelo'] ?? null;
         if (!is_array($modelo) || empty($modelo['nome'])) {
-            return ['ok' => false, 'provedor' => 'cloud', 'id' => null, 'erro' => 'sem modelo aprovado para este aviso'];
+            return ['ok' => false, 'provedor' => 'cloud', 'id' => null, 'erro' => 'sem modelo aprovado para este aviso', 'definitivo' => true];
         }
         $componentes = [];
         if (!empty($modelo['parametros'])) {
@@ -547,31 +652,75 @@ function mcp_whatsapp_enviar(string $numero, array $msg, int $avisoId): array
             'template' => ['name' => (string) $modelo['nome'], 'language' => ['code' => (string) mcp_cfg('WHATSAPP_CLOUD_IDIOMA', 'pt_BR')], 'components' => $componentes]];
         $url = rtrim((string) mcp_cfg('WHATSAPP_CLOUD_BASE', 'https://graph.facebook.com'), '/') . '/' . mcp_cfg('WHATSAPP_CLOUD_VERSAO', 'v23.0') . '/'
             . rawurlencode((string) mcp_cfg('WHATSAPP_CLOUD_NUMERO_ID', '')) . '/messages';
-        [$status, $resposta, $erroCurl] = mcp_avisos_post_json($url, (string) json_encode($corpo, JSON_UNESCAPED_UNICODE), ['Authorization: Bearer ' . mcp_cfg('WHATSAPP_CLOUD_TOKEN', '')]);
+        [$status, $resposta, $erroCurl, $esgotado] = mcp_avisos_post_json($url, (string) json_encode($corpo, JSON_UNESCAPED_UNICODE), ['Authorization: Bearer ' . mcp_cfg('WHATSAPP_CLOUD_TOKEN', '')]);
+        if ($esgotado) {
+            return $incerto('cloud', 'A Meta');
+        }
         $id = $resposta['messages'][0]['id'] ?? null;
         if ($status >= 200 && $status < 300 && is_string($id)) {
             return ['ok' => true, 'provedor' => 'cloud', 'id' => mb_substr($id, 0, 120), 'erro' => null];
         }
         $erro = is_string($resposta['error']['message'] ?? null) ? $resposta['error']['message'] : ($status > 0 ? "HTTP $status" : ($erroCurl ?: 'sem resposta'));
+        $cair('cloud', $status, $erro);
         return ['ok' => false, 'provedor' => 'cloud', 'id' => null, 'erro' => mb_substr($erro, 0, 250)];
+    }
+    if ($modo === 'evolution') {
+        $cfg = mcp_whatsapp_evolution_config();
+        if (!$cfg['ok']) {
+            mcp_whatsapp_fora('evolution: ' . $cfg['erro']);
+            return ['ok' => false, 'provedor' => 'evolution', 'id' => null, 'erro' => $cfg['erro']];
+        }
+        // O número é o mesmo do Palácio: quem responde cai no robô de lá, e não aqui.
+        $texto = rtrim((string) ($msg['whatsapp'] ?? '')) . "\n\n_Mensagem automática: não precisa responder._";
+        $tempo = max(1, (int) mcp_cfg('WHATSAPP_EVOLUTION_TEMPO_S', MCP_WHATSAPP_EVOLUTION_TEMPO_S));
+        [$status, $resposta, $erroCurl, $esgotado] = mcp_avisos_post_json($cfg['url'] . '/message/sendText/' . rawurlencode($cfg['instancia']),
+            (string) json_encode(['number' => $numero, 'text' => $texto, 'linkPreview' => false], JSON_UNESCAPED_UNICODE), ['apikey: ' . $cfg['chave']], $tempo);
+        if ($esgotado) {
+            return $incerto('evolution', 'A Evolution');
+        }
+        // A Evolution devolve alguns erros com 200 e {"error": true, "message": …}.
+        if ($status >= 200 && $status < 300 && ($resposta['error'] ?? null) !== true) {
+            $id = $resposta['key']['id'] ?? null;
+            return ['ok' => true, 'provedor' => 'evolution', 'id' => is_string($id) ? mb_substr($id, 0, 120) : null, 'erro' => null];
+        }
+        $detalhe = mcp_whatsapp_evolution_erro($resposta);
+        if ($status === 400 && $detalhe === 'esse número não tem WhatsApp') {
+            return ['ok' => false, 'provedor' => 'evolution', 'id' => null, 'erro' => $detalhe, 'definitivo' => true];
+        }
+        $erro = match (true) {
+            $status === 401 || $status === 403 => 'a Evolution recusou a chave (confira WHATSAPP_EVOLUTION_CHAVE)',
+            $status === 404 => 'instância não encontrada na Evolution (confira WHATSAPP_EVOLUTION_INSTANCIA)' . ($detalhe !== null ? ": $detalhe" : ''),
+            $status === 0 => 'sem resposta do servidor da Evolution' . ($erroCurl !== '' ? " ($erroCurl)" : ''),
+            default => $detalhe ?? "HTTP $status",
+        };
+        // A chave nunca vai para o registro, nem dentro de uma mensagem de erro.
+        $erro = str_replace([$cfg['chave'], $cfg['url']], ['[chave]', '[servidor]'], $erro);
+        $cair('evolution', $status, $erro);
+        return ['ok' => false, 'provedor' => 'evolution', 'id' => null, 'erro' => mb_substr($erro, 0, 250)];
     }
     if ($modo === 'webhook') {
         $segredo = (string) mcp_cfg('WHATSAPP_WEBHOOK_SEGREDO', '');
         if (strlen($segredo) < 24) {
+            mcp_whatsapp_fora('webhook: segredo curto');
             return ['ok' => false, 'provedor' => 'webhook', 'id' => null, 'erro' => 'WHATSAPP_WEBHOOK_SEGREDO ausente ou curto (24 caracteres ou mais)'];
         }
         $corpo = (string) json_encode([
             'evento' => 'whatsapp', 'aviso' => $avisoId, 'telefone' => $numero, 'texto' => (string) ($msg['whatsapp'] ?? ''),
             'modelo' => $msg['modelo'] ?? null, 'enviado_em' => gmdate('c'),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        [$status, $resposta, $erroCurl] = mcp_avisos_post_json((string) mcp_cfg('WHATSAPP_WEBHOOK_URL', ''), $corpo, ['X-CVB-Assinatura: sha256=' . hash_hmac('sha256', $corpo, $segredo)]);
+        [$status, $resposta, $erroCurl, $esgotado] = mcp_avisos_post_json((string) mcp_cfg('WHATSAPP_WEBHOOK_URL', ''), $corpo, ['X-CVB-Assinatura: sha256=' . hash_hmac('sha256', $corpo, $segredo)]);
+        if ($esgotado) {
+            return $incerto('webhook', 'O Make');
+        }
         if ($status >= 200 && $status < 300) {
             $id = $resposta['id'] ?? null;
             return ['ok' => true, 'provedor' => 'webhook', 'id' => is_scalar($id) ? mb_substr((string) $id, 0, 120) : null, 'erro' => null];
         }
-        return ['ok' => false, 'provedor' => 'webhook', 'id' => null, 'erro' => $status > 0 ? "HTTP $status" : ($erroCurl ?: 'sem resposta')];
+        $erro = $status > 0 ? "HTTP $status" : ($erroCurl ?: 'sem resposta');
+        $cair('webhook', $status, $erro);
+        return ['ok' => false, 'provedor' => 'webhook', 'id' => null, 'erro' => $erro];
     }
-    return ['ok' => false, 'provedor' => 'manual', 'id' => null, 'erro' => 'WhatsApp no modo manual: envie pela fila do portal'];
+    return ['ok' => false, 'provedor' => 'manual', 'id' => null, 'erro' => 'WhatsApp no modo manual: envie pela fila do portal', 'definitivo' => true];
 }
 
 // ----------------------------------------------------------------------------- envio
@@ -609,10 +758,11 @@ function mcp_aviso_enviar(array $aviso, ?int $agora = null): string
     $campos = ['destino' => mb_substr((string) $dest['destino'], 0, 190), 'nome' => mb_substr((string) $dest['nome'], 0, 160), 'assunto' => mb_substr((string) $msg['assunto'], 0, 200),
         'texto' => $aviso['canal'] === 'email' ? $msg['texto'] : $msg['whatsapp'], 'provedor' => $resultado['provedor']];
     if ($resultado['ok']) {
-        mcp_aviso_atualizar((int) $aviso['id'], $campos + ['status' => 'enviado', 'provedor_id' => $resultado['id'], 'erro' => null, 'enviado_em' => gmdate('Y-m-d H:i:s', $agora)]);
+        // Envio incerto (o tempo acabou depois de o pedido chegar) conta como enviado, com a ressalva no erro.
+        mcp_aviso_atualizar((int) $aviso['id'], $campos + ['status' => 'enviado', 'provedor_id' => $resultado['id'], 'erro' => $resultado['erro'] ?? null, 'enviado_em' => gmdate('Y-m-d H:i:s', $agora)]);
         return 'enviado';
     }
-    $final = $aviso['tentativas'] >= MCP_AVISOS_TENTATIVAS;
+    $final = !empty($resultado['definitivo']) || $aviso['tentativas'] >= MCP_AVISOS_TENTATIVAS;
     mcp_aviso_atualizar((int) $aviso['id'], $campos + [
         'status' => $final ? 'falhou' : 'pendente', 'erro' => mb_substr((string) $resultado['erro'], 0, 250),
         // Espera 15 min, depois 30, antes de tentar de novo.
@@ -642,7 +792,21 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
     $enviados = 0;
     $falhas = 0;
     $emails = 0;
+    $whatsapps = 0;
+    $evolution = mcp_whatsapp_modo() === 'evolution';
+    $tetoEvolution = PHP_SAPI === 'cli' ? MCP_WHATSAPP_EVOLUTION_POR_RODADA : MCP_WHATSAPP_EVOLUTION_POR_CLIQUE;
+    $pausaEvolution = max(0, (int) mcp_cfg('WHATSAPP_EVOLUTION_PAUSA_S', MCP_WHATSAPP_EVOLUTION_PAUSA_S));
     foreach ($stmt->fetchAll() as $aviso) {
+        if ($aviso['canal'] === 'whatsapp') {
+            // Provedor fora do ar nesta rodada, ou teto do número do Palácio: fica na fila, sem gastar tentativa.
+            if (mcp_whatsapp_fora() !== null || ($evolution && $whatsapps >= $tetoEvolution)) {
+                continue;
+            }
+            if ($evolution && $whatsapps > 0 && $pausaEvolution > 0) {
+                sleep($pausaEvolution);
+            }
+            $whatsapps++;
+        }
         if ($aviso['canal'] === 'email' && $emails++ > 0 && MCP_AVISOS_PAUSA_MS > 0 && (string) mcp_cfg('RESEND_API_KEY', '') !== '') {
             usleep(MCP_AVISOS_PAUSA_MS * 1000);
         }

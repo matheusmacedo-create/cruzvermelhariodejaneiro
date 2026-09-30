@@ -2,6 +2,8 @@
 site/matricula-cursos-presenciais/api/config.php
 # Chave da escola (Supabase) da matrícula: arquivo à parte, também só no servidor.
 site/matricula-cursos-presenciais/api/config-escola.php
+# Chaves do WhatsApp (Evolution do Palácio, API da Meta ou Make): também só no servidor.
+site/matricula-cursos-presenciais/api/config-whatsapp.php
 site/doe/api/config.php
 __pycache__/
 # Fotos e logos do site: ficam só no servidor (public_html/assets), não são versionadas

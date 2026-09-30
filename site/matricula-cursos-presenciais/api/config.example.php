@@ -80,6 +80,15 @@ return [
     // Remetente dos lembretes e comunicados. Vazio = EMAIL_REMETENTE.
     'EMAIL_REMETENTE_PONTO' => '',
     // WhatsApp. Sem nada aqui, o modo é o manual: as mensagens vão para a "Fila do WhatsApp" do portal.
+    // As chaves WHATSAPP_* também podem ficar em api/config-whatsapp.php (só no servidor, fora do Git), para
+    // não mexer neste arquivo; de lá só valem as WHATSAPP_*.
+    // O WhatsApp que a instituição já tem conectado no Palácio Virtual, pela Evolution API (a mesma
+    // instância): o endereço https do servidor, o nome da instância e o token da instância (Palácio →
+    // Configurações → Integrações). Não é a API oficial: leia os riscos em docs/ponto-comunicacao.md antes
+    // de ligar (o número pode ser bloqueado, e com ele os avisos do Palácio).
+    'WHATSAPP_EVOLUTION_URL' => '',
+    'WHATSAPP_EVOLUTION_INSTANCIA' => '',
+    'WHATSAPP_EVOLUTION_CHAVE' => '',
     // API oficial da Meta (número da própria instituição, nunca de outra empresa): token permanente do
     // usuário do sistema, Phone number ID, a chave secreta do app (confere o webhook api/whatsapp.php) e o
     // texto de verificação que se escreve no painel da Meta.

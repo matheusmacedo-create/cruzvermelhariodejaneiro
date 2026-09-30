@@ -19,8 +19,10 @@ if ($metodo === 'GET' || $metodo === 'HEAD') {
     header('Cache-Control: no-store');
     header('Referrer-Policy: no-referrer');
     header('X-Robots-Tag: noindex, nofollow');
-    // HEAD vem das prévias de link de alguns aplicativos: leva ao destino, mas não conta como clique.
-    $destino = $metodo === 'GET' ? mcp_avisos_clique(mcp_texto($_GET['r'] ?? '', 80)) : null;
+    // HEAD e robôs (prévias de link do WhatsApp, verificadores de e-mail): vão ao ponto, sem contar clique
+    // e sem gerar link pessoal.
+    $robo = mcp_avisos_eh_robo((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+    $destino = $metodo === 'GET' && !$robo ? mcp_avisos_clique(mcp_texto($_GET['r'] ?? '', 80)) : null;
     header('Location: ' . ($destino ?? mcp_site_url() . '/ponto/'), true, 302);
     exit;
 }
@@ -43,10 +45,10 @@ if (!$token['ok']) {
 }
 if (str_ends_with($acao, '_salvar') || str_ends_with($acao, '_informar') || str_ends_with($acao, '_confirmar')) {
     [$maximo, $janela] = AV_LIMITE_SALVAR;
-    if (mcp_contar_eventos_recentes('aviso_pagina', mcp_ip(), $janela) >= $maximo) {
+    if (mcp_contar_eventos_recentes('aviso_pagina', mcp_ip_balde(), $janela) >= $maximo) {
         mcp_falhar(429, 'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente de novo.');
     }
-    mcp_registrar(null, 'aviso_pagina', mcp_ip());
+    mcp_registrar(null, 'aviso_pagina', mcp_ip_balde());
 }
 $c = $token['colaborador'];
 if ($c !== null && !(int) $c['ativo']) {
