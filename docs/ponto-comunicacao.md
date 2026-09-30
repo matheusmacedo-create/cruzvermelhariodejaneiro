@@ -372,6 +372,35 @@ sem cota). As `WHATSAPP_*` podem ficar em
 `api/config-whatsapp.php`, e as `ESCOLA_*` em `api/config-escola.php`. Nenhum cron novo: a rotina do
 ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
+## Para o futuro
+
+Ideias combinadas para depois, na ordem em que foram pedidas ou vistas. Nada disso está feito.
+
+- **QR que muda a cada 30 segundos no tablet da recepção** (pedido do Matheus em 30/09/2026). Hoje o
+  cartaz tem um QR fixo e quem confirma a presença é a localização do celular, que dá para falsificar.
+  A ideia: o tablet mostra também um QR que aponta para o ponto com um código curto no fim do endereço
+  (`#q=`, fora do log do servidor). Ler esse QR prova que a pessoa está diante do tablet naquele momento;
+  junto com a localização (até 150 m), o registro vale sem digitar nada.
+  - Servidor: código = HMAC do segredo do ponto com a janela de 30 s; vale a janela atual e a anterior
+    (até 60 s), então a foto do QR repassada a alguém perde a validade em menos de um minuto.
+  - Com o código do dia ligado no portal, o celular aceita o QR do tablet ou os 4 números; desligado, o
+    cartaz continua valendo só com a localização.
+  - O tablet busca o QR novo a cada 30 s (hoje busca o código a cada 5 minutos); o gerador de QR do cartaz
+    (qrcodejs) serve. Estimativa: uma a duas horas, com testes e capturas.
+- **Medir o efeito real dos lembretes** com um grupo de comparação: cerca de 10% das vésperas sorteadas de
+  forma fixa, não enviadas, para comparar a taxa de entrada.
+- **Lembrete adaptativo:** pausar a véspera de quem sempre vem e retomar quando a pessoa faltar ou esquecer
+  a saída.
+- **Rotina da secretaria:** tela "Hoje", resumo às 8h e, na fila do WhatsApp, "enviei, abrir a próxima".
+- **Voluntário:** a própria área, marcos de horas, termo com aceite eletrônico e horas de eventos em lote.
+- **Tablet:** PIN opcional para quem pede declaração.
+- **Guarda de 5 anos dos voluntários:** apagar sozinho o cadastro e as horas 5 anos depois do
+  desligamento, como a Política promete (o primeiro caso seria em 2031).
+- **IPv6:** freio de CPF errado também por bloco /48, se a hospedagem passar a responder por IPv6.
+- **GPS:** baixar a precisão aceita de 1.000 m para 200–300 m (muda o comportamento no ar: é decisão).
+- **Palácio Virtual:** o robô encaminhar ao site os pedidos de PARAR (mudança no repositório do Palácio).
+- **Desempenho:** guardar por 60 segundos as contagens do menu do portal.
+
 ## Publicação
 
 Publicada em 30/09/2026, por volta das 15h53 (horário de Brasília); a conferência no ar deu as 46

@@ -643,6 +643,9 @@ Guia completo, com os modelos do WhatsApp para a Meta e o passo a passo da secre
   de um número da própria instituição e dos modelos aprovados; a única conexão de WhatsApp no Make,
   "goatlumiar", é de outra empresa e não deve ser usada); aplicar `aulas_do_dia.sql` na escola, se for
   ligar o lembrete das aulas; e, no portal, importar os colaboradores e preparar os comunicados.
+- **Para o futuro:** a lista do que ficou combinado para depois está no guia, seção "Para o futuro", a
+  começar pelo QR que muda a cada 30 segundos no tablet da recepção (ler o QR e estar na sede confirmam o
+  registro pelo celular, sem digitar o código do dia).
 - **Publicar** (feito em 30/09/2026, por volta das 15h53, numa sessão aberta pelo Matheus com o
   conector da Hostinger: 25 arquivos copiados do ar antes, 41 enviados, cache limpo; a conferência no ar
   deu as 46 verificações certas e o ponto no celular voltou a poder pedir a localização): são 41 arquivos,
