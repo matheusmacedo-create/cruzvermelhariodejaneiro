@@ -215,6 +215,8 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
     $rotinaParada = $rotinaEm !== '' && (int) strtotime($rotinaEm . ' UTC') < $agora - 45 * 60;
     $canais = '<div class="cartao"><h2>Canais</h2><ul class="contas">'
         . '<li><span>E-mail</span><b>' . ($resend ? 'Resend' : 'envio simples pelo servidor do site (pode cair no spam)') . '</b></li>'
+        . (($cota = mcp_avisos_emails_cota()) > 0 ? '<li><span>E-mails dos avisos hoje</span><b>' . ($hojeEmails = mcp_avisos_emails_hoje($agora)) . ' de ' . $cota
+            . ($hojeEmails >= $cota ? ' · o resto sai amanhã' : '') . '</b></li>' : '')
         . '<li><span>Remetente</span><b>' . pn_e($remetente) . '</b></li>'
         . '<li><span>WhatsApp</span><b>' . (mcp_whatsapp_ativo() ? 'ligado · ' : 'desligado · ') . pn_e(mcp_whatsapp_modo_nome($modo)) . '</b></li>'
         . '</ul><p class="nota">' . $explicaModo . '</p>'

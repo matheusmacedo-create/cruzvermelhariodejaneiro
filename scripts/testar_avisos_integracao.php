@@ -859,6 +859,18 @@ try {
     verificar('métricas por pessoa: dias e horas dos voluntários; a equipe contratada fica fora', [$pessoas[(int) $v1['id']]['dias'] ?? null, $pessoas[(int) $v1['id']]['minutos'] ?? null,
         isset($pessoas[(int) $e1['id']]), array_key_exists('opiniao', $pessoas[(int) $v2['id']] ?? [])], [1, 510, false, false]);
 
+    // ------------------------------------------------------------------------- cota diária dos e-mails dos avisos
+    // A conta da Resend é dividida com a matrícula: acabou a cota dos avisos, o resto espera o dia seguinte.
+    $jaHoje = mcp_avisos_emails_hoje(em($hoje, '11:00'));
+    $configCota = config_teste(['AVISOS_EMAILS_POR_DIA' => (string) ($jaHoje + 1)] + $base0);
+    $avisoCota = static fn(string $n): string => '$' . $n . ' = mcp_aviso_criar(["chave" => "teste-cota-' . $n . '|' . $sufixo . '", "tipo" => "link", "canal" => "email", "colaborador_id" => '
+        . (int) $v1['id'] . ', "pessoa" => "c' . (int) $v1['id'] . '", "nome" => "Vera", "destino" => "vera-' . $sufixo . '@avisos-teste.example", "agendado_para" => gmdate("Y-m-d H:i:s", ' . em($hoje, '10:59') . ')]);';
+    $r = sub($configCota, $avisoCota('a') . $avisoCota('b') . ' [$e] = mcp_avisos_enviar_pendentes(' . em($hoje, '11:00') . ', 50);'
+        . ' echo json_encode(["e" => $e, "s" => [mcp_aviso_por_id($a)["status"], mcp_aviso_por_id($b)["status"]], "cota" => mcp_avisos_emails_cota()]);');
+    @unlink($configCota);
+    verificar('cota diária dos e-mails: acabou a cota, o resto espera o dia seguinte', [$r['e'] ?? null, in_array('pendente', $r['s'] ?? [], true), $r['cota'] ?? null],
+        [1, true, $jaHoje + 1]);
+
     // ------------------------------------------------------------------------- faxina e rotina
     $idPreso = mcp_aviso_criar(['chave' => "teste-preso|$sufixo", 'tipo' => 'vespera', 'canal' => 'email', 'colaborador_id' => (int) $v2['id'], 'pessoa' => 'c' . $v2['id'], 'nome' => "x $marca", 'destino' => "vitor-$sufixo@avisos-teste.example", 'referencia' => $amanha]);
     $db->prepare("UPDATE mcp_avisos SET status = 'enviando', atualizado_em = ? WHERE id = ?")->execute([gmdate('Y-m-d H:i:s', time() - 1200), $idPreso]);

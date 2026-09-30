@@ -606,7 +606,9 @@ desligado no portal, em **Comunicação**.
   `api/whatsapp.php` com a situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às
   20h conferida a cada mensagem, consentimento do WhatsApp com data, autor e como foi dado, preferência
   conferida de novo na hora de mandar, chave única por mensagem, lembretes antes dos comunicados, e-mail
-  de reserva quando o WhatsApp falha de vez, descadastro de um clique (`List-Unsubscribe`) nos e-mails.
+  de reserva quando o WhatsApp falha de vez, descadastro de um clique (`List-Unsubscribe`) nos e-mails e
+  cota diária de e-mails dos avisos (60 por dia; a Resend está no plano grátis, com 100 por dia divididos
+  com a matrícula).
 - **Implantação em três fases:** a partir da data do lançamento, o portal prepara quatro comunicados
   (antes, no dia, depois de 2 semanas para colaboradores e para alunos), com prévia do e-mail, do WhatsApp
   e do aviso na tela do ponto, teste para a própria secretaria e agendamento. O "depois" leva o resumo de
@@ -626,7 +628,7 @@ desligado no portal, em **Comunicação**.
   enviados".
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
-- **Testes:** 162 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+- **Testes:** 163 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
   WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 103 no ponto, 301 unitários e 26
   testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual

@@ -82,6 +82,9 @@ return [
     // Feriados nacionais, do estado e da cidade do Rio (com Carnaval e Corpus Christi): sem lembrete da véspera
     // nem da aula. '0' = a sede abre nos feriados (valem só os dias sem expediente marcados no portal).
     'AVISOS_FERIADOS' => '',
+    // E-mails dos avisos por dia. A conta da Resend é dividida com a matrícula (recibos, PIX, comprovantes); no
+    // plano grátis são 100 por dia. Vazio = 60. '0' = sem cota (plano pago).
+    'AVISOS_EMAILS_POR_DIA' => '',
     // WhatsApp. Sem nada aqui, o modo é o manual: as mensagens vão para a "Fila do WhatsApp" do portal.
     // As chaves WHATSAPP_* também podem ficar em api/config-whatsapp.php (só no servidor, fora do Git), para
     // não mexer neste arquivo; de lá só valem as WHATSAPP_*.

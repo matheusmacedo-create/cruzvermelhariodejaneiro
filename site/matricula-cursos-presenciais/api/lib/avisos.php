@@ -39,6 +39,12 @@ const MCP_AVISOS_JANELA = ['08:00', '20:00'];
 const MCP_AVISOS_LOTE = 80;
 const MCP_AVISOS_PAUSA_MS = 550;
 /**
+ * E-mails dos avisos por dia (Brasília). A conta da Resend é dividida com a matrícula (recibos, PIX,
+ * comprovantes): no plano grátis são 100 por dia, e a cota protege o resto. AVISOS_EMAILS_POR_DIA muda
+ * ('0' = sem cota, num plano pago). Acabou a cota, o resto espera o dia seguinte, dentro do prazo de cada um.
+ */
+const MCP_AVISOS_EMAILS_POR_DIA = 60;
+/**
  * WhatsApp pelo número do Palácio Virtual (Evolution): um freio fixo, para não disputar o número com os
  * avisos do Palácio (que manda até 12 por minuto) nem travar a rotina. 8 s entre mensagens
  * (WHATSAPP_EVOLUTION_PAUSA_S muda) e até 30 por rodada da rotina; num clique do portal, até 3.
@@ -1045,6 +1051,22 @@ function mcp_aviso_reserva_email(array $aviso, int $agora): ?int
     ], $agora);
 }
 
+/** Cota diária dos e-mails dos avisos (0 = sem cota). */
+function mcp_avisos_emails_cota(): int
+{
+    return max(0, (int) mcp_cfg('AVISOS_EMAILS_POR_DIA', MCP_AVISOS_EMAILS_POR_DIA));
+}
+
+/** E-mails dos avisos que já saíram no dia (Brasília) de $agora. */
+function mcp_avisos_emails_hoje(?int $agora = null): int
+{
+    $agora ??= time();
+    $dia = mcp_ponto_hoje($agora);
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_avisos WHERE status = 'enviado' AND enviado_em >= ? AND enviado_em < ? AND canal = 'email'");
+    $stmt->execute([mcp_ponto_local_para_utc("$dia 00:00:00"), mcp_ponto_local_para_utc(mcp_avisos_dia_mais($dia, 1) . ' 00:00:00')]);
+    return (int) $stmt->fetchColumn();
+}
+
 /** A Resend recusando nesta rodada (limite ou três falhas seguidas): o resto do e-mail fica para a próxima. */
 function mcp_email_fora(?string $motivo = null): ?string
 {
@@ -1081,11 +1103,16 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
     $lugar = PHP_SAPI === 'cli' ? 'cli' : 'web';
     $evolution = $modo === 'evolution';
     $tetos = ['email' => $limite, 'whatsapp' => $evolution ? min($limite, $lugar === 'cli' ? MCP_WHATSAPP_EVOLUTION_POR_RODADA : MCP_WHATSAPP_EVOLUTION_POR_CLIQUE) : $limite];
+    // Cota diária dos e-mails: os lembretes vêm antes dos comunicados na fila, então são os comunicados que esperam.
+    if (($cota = mcp_avisos_emails_cota()) > 0) {
+        $tetos['email'] = min($tetos['email'], max(0, $cota - mcp_avisos_emails_hoje($agora)));
+    }
     $pausaEvolution = max(0, (int) mcp_cfg('WHATSAPP_EVOLUTION_PAUSA_S', MCP_WHATSAPP_EVOLUTION_PAUSA_S));
     $enviados = 0;
     $falhas = 0;
     foreach (['email', 'whatsapp'] as $canal) {
-        if (($canal === 'whatsapp' && ($modo === 'manual' || !mcp_whatsapp_ativo() || mcp_whatsapp_fora() !== null)) || ($canal === 'email' && mcp_email_fora() !== null)) {
+        if (($canal === 'whatsapp' && ($modo === 'manual' || !mcp_whatsapp_ativo() || mcp_whatsapp_fora() !== null)) || ($canal === 'email' && mcp_email_fora() !== null)
+            || $tetos[$canal] <= 0) {
             continue;
         }
         $sql = "SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = ? AND agendado_para <= ? AND (expira_em IS NULL OR expira_em > ?)";

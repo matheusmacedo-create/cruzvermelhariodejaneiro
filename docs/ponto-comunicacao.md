@@ -43,6 +43,11 @@ Regras que valem para tudo:
   que prejudicaria também os e-mails da matrícula, que saem do mesmo domínio). O programa de e-mail manda
   um POST a `api/avisos.php?u=`: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista
   de bloqueio. Abrir o link no navegador só leva à página de escolhas;
+- **cota diária de e-mails**: a conta da Resend é a mesma da matrícula (recibos, PIX, comprovantes) e, em
+  30/09/2026, estava no plano grátis, com 100 e-mails por dia e 3.000 por mês. Os avisos usam no máximo 60
+  por dia (`AVISOS_EMAILS_POR_DIA`; `'0'` = sem cota, num plano pago). Acabou a cota, o resto espera o
+  dia seguinte, dentro do prazo de cada um; a Visão geral mostra quantos saíram no dia. Com o plano grátis,
+  um comunicado para mais de 60 pessoas leva mais de um dia por e-mail;
 - **lembretes antes de comunicados**: um comunicado grande não atrasa os lembretes das 18h. Se a Resend
   recusar por limite ou falhar três vezes seguidas, o resto do e-mail espera a próxima rodada (os avisos
   não usam o `mail()` da hospedagem, que cai no spam). Lembrete que não sai pelo WhatsApp de vez (número
@@ -320,13 +325,14 @@ nada sai.
 `WHATSAPP_CLOUD_VERIFICACAO`, `WHATSAPP_CLOUD_VERSAO`, `WHATSAPP_CLOUD_IDIOMA`, `WHATSAPP_WEBHOOK_URL`,
 `WHATSAPP_WEBHOOK_SEGREDO`, `EMAIL_REMETENTE_PONTO` (remetente dos avisos; vazio = `EMAIL_REMETENTE`),
 `ESCOLA_API_AULAS_DIA_URL` (vazio = a URL da escola com `aulas_do_dia`), `AVISOS_FERIADOS` (`'0'` = a
-sede abre nos feriados; valem só os dias marcados no portal). As `WHATSAPP_*` podem ficar em
+sede abre nos feriados; valem só os dias marcados no portal), `AVISOS_EMAILS_POR_DIA` (vazio = 60; `'0'` =
+sem cota). As `WHATSAPP_*` podem ficar em
 `api/config-whatsapp.php`, e as `ESCOLA_*` em `api/config-escola.php`. Nenhum cron novo: a rotina do
 ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (162 testes, MariaDB local, servidores falsos de e-mail,
+`scripts/testar_avisos_integracao.php` (163 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
 feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (103), `scripts/testar_checkout.php`
 (301, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha) e
