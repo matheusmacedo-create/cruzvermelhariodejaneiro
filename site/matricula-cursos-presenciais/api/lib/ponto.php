@@ -49,6 +49,8 @@ const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celul
 const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [120, 600]];
 /** No celular, CPFs inválidos ou não cadastrados a cada 10 minutos por IP, antes de parar. */
 const MCP_PONTO_LIMITE_FALHAS = 10;
+/** Códigos do dia errados, por CPF, até o celular travar para ele no dia (o tablet continua valendo). */
+const MCP_PONTO_CODIGO_TENTATIVAS = 5;
 /** Na rede da sede (o IP do tablet), os limites do celular valem vezes este fator: todo o prédio sai por um IP. */
 const MCP_PONTO_FATOR_REDE_SEDE = 4;
 const MCP_PONTO_FUSO = 'America/Sao_Paulo';
@@ -302,6 +304,43 @@ function mcp_ponto_aparelho_usado(int $id): void
     if (mcp_contar_eventos_recentes('ponto_rede_sede', mcp_ip_balde(), 3600) === 0) {
         mcp_registrar(null, 'ponto_rede_sede', mcp_ip_balde());
     }
+}
+
+// ----------------------------------------------------------------------------- código do dia (celular)
+/**
+ * Código do dia (4 números), que aparece na tela do tablet da recepção e muda à meia-noite (Brasília).
+ * Ligado no portal (Ponto da sede → Aparelhos), o celular só registra com ele: sem ir à sede, o CPF e uma
+ * localização inventada não bastam para registrar por outra pessoa.
+ */
+function mcp_ponto_codigo_do_dia(?int $agora = null): string
+{
+    $n = hexdec(substr(hash_hmac('sha256', 'codigo|' . mcp_ponto_hoje($agora ?? time()), mcp_segredo('ponto_codigo')), 0, 8)) % 10000;
+    return str_pad((string) $n, 4, '0', STR_PAD_LEFT);
+}
+
+function mcp_ponto_codigo_ligado(): bool
+{
+    return mcp_ajuste_ligado('ponto_codigo_celular');
+}
+
+/**
+ * Confere o código do dia digitado no celular. Devolve null se vale, ou [motivo, mensagem]. Cinco códigos
+ * errados para o mesmo CPF no dia travam o celular para ele até o dia seguinte (4 números não resistem a
+ * muitas tentativas); o tablet continua valendo.
+ */
+function mcp_ponto_codigo_conferir(string $cpf, string $codigo, int $agora): ?array
+{
+    $pessoa = substr(hash_hmac('sha256', $cpf, mcp_segredo('ponto_codigo')), 0, 16);
+    [$inicioDoDia] = mcp_ponto_periodo_utc(mcp_ponto_hoje($agora), mcp_avisos_dia_mais(mcp_ponto_hoje($agora), 1));
+    $erradosHoje = mcp_contar_eventos_recentes('ponto_codigo_errado', $pessoa, max(60, $agora - (int) strtotime($inicioDoDia . ' UTC')));
+    if ($erradosHoje >= MCP_PONTO_CODIGO_TENTATIVAS) {
+        return ['codigo_bloqueado', 'Muitos códigos errados para este CPF hoje. Registre no tablet da recepção.'];
+    }
+    if (!preg_match('/^\d{4}$/', $codigo) || !hash_equals(mcp_ponto_codigo_do_dia($agora), $codigo)) {
+        mcp_registrar(null, 'ponto_codigo_errado', $pessoa);
+        return ['codigo', $codigo === '' ? 'Digite o código do dia: ele aparece na tela do tablet da recepção.' : 'Código do dia errado. Confira na tela do tablet da recepção.'];
+    }
+    return null;
 }
 
 /**

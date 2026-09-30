@@ -16,7 +16,7 @@
  * horário de entrada nem horas do mês; a saída de uma entrada de outro dia vira saída informada (a secretaria
  * confere), e a saída esquecida se informa pelo link do aviso, que chega ao e-mail ou ao WhatsApp da pessoa.
  * Sem o aparelho liberado pela secretaria, cada consulta precisa da localização a até
- * PONTO_RAIO_METROS da sede.
+ * PONTO_RAIO_METROS da sede e, se ligado no portal, do código do dia que o tablet mostra.
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
@@ -38,6 +38,9 @@ if (!$post) {
         'aparelho' => $aparelho ? (string) $aparelho['nome'] : null,
         'lembrado' => $lembrado !== null ? mcp_cpf_mascarado($lembrado) : null,
         'raio' => mcp_ponto_sede()['raio'],
+        // Código do dia: o tablet mostra; o celular pede (quando ligado no portal).
+        'codigo' => $aparelho && mcp_ponto_codigo_ligado() ? mcp_ponto_codigo_do_dia($agora) : null,
+        'pede_codigo' => !$aparelho && mcp_ponto_codigo_ligado(),
     ]);
 }
 
@@ -132,6 +135,11 @@ if ($acao === 'identificar') {
     if (!mcp_cpf_valido($cpf)) {
         $falhou();
         mcp_falhar(422, 'CPF inválido. Confira os números.', ['campo' => 'cpf']);
+    }
+    // Código do dia (ligado no portal): no celular, só registra quem está vendo o tablet da recepção.
+    if (!$aparelho && mcp_ponto_codigo_ligado() && ($erroCodigo = mcp_ponto_codigo_conferir($cpf, mcp_digitos(mcp_texto($corpo['codigo'] ?? '', 10)), $agora)) !== null) {
+        $falhou();
+        mcp_falhar(403, $erroCodigo[1], ['motivo' => $erroCodigo[0], 'campo' => 'codigo']);
     }
 
     $colaborador = mcp_colaborador_por_cpf($cpf);

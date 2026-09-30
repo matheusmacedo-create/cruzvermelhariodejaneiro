@@ -599,6 +599,39 @@ try {
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'aparelho_desativar', 'id' => $aid, 't' => $csrf('aparelho_desativar', $aid)]);
     verificar('aparelho desativado passa a valer como celular', [$st, json_decode(http($base . 'ponto.php', 'GET', null, ["Cookie: $cAparelho"])[2], true)['modo'] ?? null], [303, 'celular']);
 
+    // Código do dia (desligado por padrão): ligado no portal, o tablet mostra e o celular só registra com ele.
+    // Cinco errados para o mesmo CPF no dia travam o celular para ele; o tablet continua valendo.
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('ponto_consulta_falha', 'ponto_codigo_errado')");
+    $apCodigo = mcp_ponto_aparelho_criar("Tablet do código $marca", 'teste');
+    $cApCodigo = 'mcp_ponto_aparelho=' . mcp_ponto_aparelho_cookie_valor($apCodigo);
+    $semCodigo = json_decode(http($base . 'ponto.php', 'GET', null, ["Cookie: $cApCodigo"])[2], true);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ponto_codigo', 'id' => 0, 't' => $csrf('ponto_codigo', 0), 'ligar' => '1']);
+    [, , $htmlCodigo] = http($base . 'painel.php?v=ponto&aba=aparelhos', 'GET', null, ["Cookie: $sessaoPortal"]);
+    $codigoHoje = mcp_ponto_codigo_do_dia();
+    $codigoErrado = $codigoHoje === '0000' ? '0001' : '0000';
+    verificar('código do dia: começa desligado; o portal liga e mostra o de hoje', [campo($semCodigo, 'codigo'), str_ends_with($cab['location'] ?? '', 'ok=cod_on'),
+        str_contains($htmlCodigo, '<span class="selo ok">Ligado</span>'), str_contains($htmlCodigo, $codigoHoje)], [null, true, true, true]);
+    $getTablet = json_decode(http($base . 'ponto.php', 'GET', null, ["Cookie: $cApCodigo"])[2], true);
+    $getCelular = json_decode(http($base . 'ponto.php')[2], true);
+    [$stSem, $rSem] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede]);
+    [$stErrado, $rErrado] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede, 'codigo' => $codigoErrado]);
+    [$stCerto] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede, 'codigo' => $codigoHoje]);
+    verificar('código do dia: o tablet mostra e o celular pede; sem ele ou errado não registra, certo registra',
+        [$getTablet['codigo'] ?? null, campo($getCelular, 'codigo'), $getCelular['pede_codigo'] ?? null, $stSem, $rSem['motivo'] ?? null, $stErrado, $rErrado['motivo'] ?? null, $stCerto],
+        [$codigoHoje, null, true, 403, 'codigo', 403, 'codigo', 200]);
+    for ($i = 0; $i < 3; $i++) {
+        ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede, 'codigo' => $codigoErrado]);
+    }
+    [$stTravado, $rTravado] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede, 'codigo' => $codigoHoje]);
+    [$stTablet] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna], [$cApCodigo]);
+    $eventosCodigo = implode(' ', $db->query("SELECT detalhe FROM mcp_eventos WHERE tipo = 'ponto_codigo_errado'")->fetchAll(PDO::FETCH_COLUMN));
+    verificar('código do dia: 5 errados para o mesmo CPF travam o celular para ele no dia; o tablet continua valendo; o registro não guarda o CPF',
+        [$stTravado, $rTravado['motivo'] ?? null, $stTablet, str_contains($eventosCodigo, $cpfAluna)], [403, 'codigo_bloqueado', 200, false]);
+    [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ponto_codigo', 'id' => 0, 't' => $csrf('ponto_codigo', 0), 'ligar' => '0']);
+    [$stDesligado] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede]);
+    verificar('código do dia: desligado no portal, o celular volta a registrar só com o CPF e a localização', [str_ends_with($cab['location'] ?? '', 'ok=cod_off'), $stDesligado], [true, 200]);
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('ponto_consulta_falha', 'ponto_codigo_errado')");
+
     // Limite de consultas pelo celular (por IP): quem acerta tem folga, porque todos no Wi-Fi da sede saem pelo
     // mesmo IP; quem erra CPF (o jeito de descobrir quem está cadastrado) para depois de 10.
     $db->prepare('INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES ' . implode(', ', array_fill(0, 15, "(NULL, 'ponto_consulta', '127.0.0.1', ?)")))

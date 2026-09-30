@@ -624,7 +624,8 @@ desligado no portal, em **Comunicação**.
 - **Na tela do ponto:** os avisos dos comunicados (sem link pessoal) e, só no aparelho da recepção, as
   saídas sem registro dos últimos 7 dias para informar ali mesmo e o "saí ontem"; no celular, só o que o
   botão precisa (sem horário de entrada, horas do mês, termo pendente nem link do comprovante), a saída de
-  uma entrada de outro dia vira saída informada, e a dica de pôr o ponto na tela inicial.
+  uma entrada de outro dia vira saída informada, o código do dia (desligado de início, liga no portal:
+  o celular pede os 4 números da tela do tablet) e a dica de pôr o ponto na tela inicial.
 - **Portal:** seção Comunicação (visão geral com o alerta de rotina parada e os dias sem expediente,
   comunicados, fila do WhatsApp, envios com "tentar de novo" e "pediu para parar", resultados com adesão,
   entradas por dia, horas, saídas não registradas na hora, efeito dos lembretes, opinião, planilha dos
@@ -635,7 +636,7 @@ desligado no portal, em **Comunicação**.
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
 - **Testes:** 183 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
-  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 105 no ponto, 303 unitários e 26
+  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 109 no ponto, 303 unitários e 26
   testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual
   funciona já; a Evolution do Palácio exige o aceite do risco de bloqueio do número; a API oficial precisa

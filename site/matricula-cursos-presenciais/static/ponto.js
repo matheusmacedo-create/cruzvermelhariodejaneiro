@@ -11,7 +11,7 @@
   var VOLTA_SUCESSO = 8;   // segundos até voltar ao início depois de registrar (só no aparelho)
   var VOLTA_PARADO = 45;   // segundos parado na tela da pessoa até voltar ao início (só no aparelho)
   var tela = document.getElementById('pt-tela');
-  var estado = { modo: null, aparelho: null, lembrado: null, outroCpf: false, sessao: null, cpfDigitado: '' };
+  var estado = { modo: null, aparelho: null, lembrado: null, outroCpf: false, sessao: null, cpfDigitado: '', codigo: null, pedeCodigo: false, codigoEm: 0 };
   var relogios = [];
   var teclado = null;      // função que recebe as teclas físicas quando o teclado da tela está aberto
   var instalar = null;     // pedido de instalação do Chrome (ponto na tela inicial do celular)
@@ -86,12 +86,31 @@
     tela.innerHTML = '<div class="pt-carregando"><span class="pt-giro" aria-hidden="true"></span><p>' + esc(msg) + '</p></div>';
   }
 
+  /* Código do dia (quando ligado no portal): o tablet mostra e busca de novo a cada 5 minutos, porque ele
+     muda à meia-noite e a página fica aberta por dias. */
+  function codigoHtml() {
+    return estado.codigo ? '<p class="pt-codigo" id="pt-codigo-dia">Código do dia para o celular: <b>' + esc(estado.codigo) + '</b></p>' : '';
+  }
+  function atualizarCodigo() {
+    if (Date.now() - estado.codigoEm < 300000) return;
+    estado.codigoEm = Date.now();
+    api().then(function (d) {
+      if (!d.ok) return;
+      estado.codigo = d.codigo || null;
+      var el = document.getElementById('pt-codigo-dia');
+      if (el && estado.codigo) el.querySelector('b').textContent = estado.codigo;
+      else if (el) el.remove();
+    });
+  }
+
   /* Aparelho da sede: teclado numérico na tela (e o teclado físico, se houver). */
   function telaTeclado(erro) {
     var cpf = '';
     var teclas = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'apagar', '0', 'ok'];
+    atualizarCodigo();
     tela.innerHTML = '<h1>Digite seu CPF</h1>'
       + '<p class="pt-sub">Colaborador: registre a entrada e a saída. Aluno: confirme a presença na aula de hoje.</p>'
+      + codigoHtml()
       + '<div class="pt-visor vazio" id="pt-visor" aria-live="polite">000.000.000-00</div>'
       + erroHtml(erro)
       + '<div class="pt-teclado" role="group" aria-label="Teclado numérico">'
@@ -123,16 +142,31 @@
     teclado = tecla;
   }
 
+  /* Campo do código do dia no celular (só quando o portal liga). */
+  function campoCodigo() {
+    return estado.pedeCodigo ? '<label class="pt-campo"><span>Código do dia</span><input id="pt-codigo" inputmode="numeric" autocomplete="off" placeholder="0000" maxlength="4" required></label>'
+      + '<p class="pt-nota">Os 4 números estão na tela do tablet da recepção e mudam todo dia.</p>' : '';
+  }
+  function lerCodigo() {
+    var el = q('#pt-codigo');
+    return el ? digitos(el.value).slice(0, 4) : '';
+  }
+
   /* Celular: campo com o teclado do próprio celular, e a pessoa lembrada, se houver. */
   function telaCelular(erro) {
     if (estado.lembrado && !estado.outroCpf) {
       tela.innerHTML = '<h1>Olá de novo!</h1>'
         + '<p class="pt-sub">Este celular lembra do CPF <b>' + esc(estado.lembrado) + '</b>.</p>'
         + erroHtml(erro)
+        + campoCodigo()
         + '<button type="button" class="pt-btn" id="pt-continuar">Continuar</button>'
         + '<button type="button" class="pt-link" id="pt-outro">Usar outro CPF</button>'
         + '<p class="pt-nota">A página vai pedir a localização do celular: ela só confirma que você está na sede e não fica guardada.</p>';
-      q('#pt-continuar').addEventListener('click', function () { identificar({}); });
+      q('#pt-continuar').addEventListener('click', function () {
+        var codigo = lerCodigo();
+        if (estado.pedeCodigo && codigo.length !== 4) { telaCelular('Digite os 4 números do código do dia.'); foco('#pt-codigo'); return; }
+        identificar({ codigo: codigo });
+      });
       q('#pt-outro').addEventListener('click', function () { estado.outroCpf = true; telaCelular(); });
       return;
     }
@@ -141,6 +175,7 @@
       + erroHtml(erro)
       + '<form id="pt-form" novalidate>'
       + '<label class="pt-campo"><span>Seu CPF</span><input id="pt-cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="14" required value="' + esc(mascaraCpf(estado.cpfDigitado)) + '"></label>'
+      + campoCodigo()
       + '<label class="pt-check"><input type="checkbox" id="pt-lembrar"> Lembrar de mim neste celular</label>'
       + '<button class="pt-btn" type="submit">Continuar</button></form>'
       + '<p class="pt-nota">A página vai pedir a localização do celular: ela só confirma que você está na sede e não fica guardada.</p>';
@@ -150,10 +185,12 @@
       e.preventDefault();
       var cpf = digitos(campo.value);
       if (!cpfValido(cpf)) { telaCelular('CPF inválido. Confira os números.'); foco('#pt-cpf'); return; }
-      var lembrar = q('#pt-lembrar').checked;
+      var codigo = lerCodigo();
       // Se der erro (localização, por exemplo), o CPF volta preenchido; depois de identificar, some do campo.
       estado.cpfDigitado = cpf;
-      identificar({ cpf: cpf, lembrar: lembrar }).then(function (ok) {
+      if (estado.pedeCodigo && codigo.length !== 4) { telaCelular('Digite os 4 números do código do dia.'); foco('#pt-codigo'); return; }
+      var lembrar = q('#pt-lembrar').checked;
+      identificar({ cpf: cpf, lembrar: lembrar, codigo: codigo }).then(function (ok) {
         if (ok) { estado.lembrado = lembrar ? cpfMascarado(cpf) : null; estado.outroCpf = false; estado.cpfDigitado = ''; }
       });
     });
@@ -177,6 +214,7 @@
   function identificar(dados) {
     var corpo = { acao: 'identificar', cpf: dados.cpf || '' };
     if (dados.lembrar !== undefined) corpo.lembrar = dados.lembrar;
+    if (dados.codigo) corpo.codigo = dados.codigo;
     var passo = Promise.resolve();
     if (estado.modo === 'celular') {
       carregando('Confirmando que você está na sede…');
@@ -397,6 +435,9 @@
     estado.modo = d.modo;
     estado.aparelho = d.aparelho;
     estado.lembrado = d.lembrado;
+    estado.codigo = d.codigo || null;
+    estado.pedeCodigo = !!d.pede_codigo;
+    estado.codigoEm = Date.now();
     document.body.classList.add('pt-' + d.modo);
     document.getElementById('pt-modo').textContent = d.modo === 'aparelho' ? 'Aparelho da sede · ' + d.aparelho : 'Pelo celular, na sede';
     inicio();

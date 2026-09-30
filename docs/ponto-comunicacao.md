@@ -281,8 +281,10 @@ sair.
   horário de entrada, as horas do mês e o termo pendente ficam para o tablet; o comprovante do aluno vai
   por e-mail (a tela não mostra o link, que leva ao nome completo e ao PDF com o CPF). A localização é
   indício, não prova: quem sabe o CPF de alguém e finge estar perto ainda registra por ela no mesmo dia.
-  Para fechar isso de vez, falta um código do dia na tela do tablet ou no cartaz, pedido só no celular
-  (decisão pendente; cada registro guarda a origem e a distância, para a secretaria conferir);
+  Para fechar isso, há o **código do dia** (Ponto da sede → Aparelhos e QR code; começa desligado):
+  ligado, o celular pede os 4 números que aparecem na tela do tablet da recepção e mudam à meia-noite;
+  cinco códigos errados para o mesmo CPF no dia travam o celular para ele, e o tablet continua valendo.
+  Cada registro guarda a origem e a distância, para a secretaria conferir;
 - "Lembrar de mim neste celular" vem desmarcado; no tablet, a tela volta ao começo depois de um tempo sem
   uso (qualquer toque reinicia a contagem);
 - limites: no celular, 120 consultas a cada 10 minutos por IP e 10 CPFs não encontrados param aquele IP
@@ -371,6 +373,6 @@ ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 `scripts/testar_avisos_integracao.php` (183 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
-feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (105), `scripts/testar_checkout.php`
+feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (109), `scripts/testar_checkout.php`
 (303, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha, versão do banco) e
 `docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql` (26 testes da função da escola).

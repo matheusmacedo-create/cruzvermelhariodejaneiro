@@ -923,10 +923,27 @@ function pn_ponto_aparelhos(string $usuario, string $aviso, string $classe): nev
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . '<div class="ficha" style="margin-top:0"><div class="cartao"><h2>Este aparelho</h2>' . $este . '</div>'
         . '<div class="cartao"><h2>QR code para o celular</h2><p class="nota" style="margin-top:0">Imprima o cartaz em A4 e cole perto da entrada. O QR code abre <b>cruzvermelhariodejaneiro.org/ponto</b>.</p>'
-        . '<div class="acoes"><a class="btn btn-outline" href="../ponto/cartaz/" target="_blank" rel="noopener">Abrir o cartaz para imprimir</a></div></div></div>'
+        . '<div class="acoes"><a class="btn btn-outline" href="../ponto/cartaz/" target="_blank" rel="noopener">Abrir o cartaz para imprimir</a></div></div>'
+        . pn_ponto_codigo_cartao($usuario) . '</div>'
         . '<div class="tabela rolagem" style="margin-top:18px"><table class="respostas"><thead><tr><th>Aparelho</th><th>Liberado</th><th>Último uso</th><th>Situação</th><th></th></tr></thead><tbody>'
         . ($linhas !== '' ? $linhas : '<tr><td colspan="5" class="vazio">Nenhum aparelho liberado ainda.</td></tr>') . '</tbody></table></div>';
     pn_pagina('Aparelhos do ponto', $corpo, $usuario, true, 'ponto');
+}
+
+/**
+ * Código do dia para o celular: com ele ligado, o celular só registra com os 4 números que o tablet da
+ * recepção mostra (e que mudam à meia-noite). Sem ir à sede, o CPF e uma localização inventada não bastam.
+ */
+function pn_ponto_codigo_cartao(string $usuario): string
+{
+    $ligado = mcp_ponto_codigo_ligado();
+    return '<div class="cartao"><h2>Código do dia no celular</h2>'
+        . '<p class="nota" style="margin-top:0">' . ($ligado
+            ? '<span class="selo ok">Ligado</span> O celular pede o código que aparece na tela do tablet da recepção. Hoje: <b style="font-size:1.2rem;letter-spacing:.15em">' . pn_e(mcp_ponto_codigo_do_dia()) . '</b> (muda à meia-noite).'
+            : '<span class="selo neutro">Desligado</span> Pelo celular, bastam o CPF e a localização, que o próprio celular informa: quem sabe o CPF de outra pessoa e finge estar perto registra por ela. Ligado, o celular pede também os 4 números que aparecem na tela do tablet da recepção.') . '</p>'
+        . '<form method="post" action="painel.php"><input type="hidden" name="acao" value="ponto_codigo"><input type="hidden" name="id" value="0">'
+        . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'ponto_codigo', 0)) . '"><input type="hidden" name="ligar" value="' . ($ligado ? '0' : '1') . '">'
+        . '<div class="acoes"><button class="btn ' . ($ligado ? 'btn-outline' : 'btn-red') . '" type="submit">' . ($ligado ? 'Desligar o código do dia' : 'Ligar o código do dia') . '</button></div></form></div>';
 }
 
 function pn_campo(string $nome, string $rotulo, string $valor, string $campoErro, string $extra = ''): string
@@ -1212,6 +1229,8 @@ $avisos = [
     'pr_canc' => ['Presença cancelada. O comprovante deixou de valer.', 'ok'],
     'ap_ok' => ['Pronto: este aparelho agora é o ponto da sede. Deixe a página do ponto aberta nele.', 'ok'],
     'ap_desat' => ['Aparelho desativado. Ele não registra mais o ponto.', 'ok'],
+    'cod_on' => ['Código do dia ligado: o celular passa a pedir os 4 números que aparecem no tablet da recepção.', 'ok'],
+    'cod_off' => ['Código do dia desligado: pelo celular, voltam a bastar o CPF e a localização.', 'ok'],
 ] + PC_AVISOS;
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
@@ -1279,7 +1298,7 @@ if ($metodo === 'POST') {
     }
 
     // Ponto da sede (lib/ponto.php e lib/presenca.php): cadastro, correções, presenças e aparelhos. Só com sessão.
-    if (in_array($acao, ['colaborador_salvar', 'termo_registrar', 'termo_remover', 'ponto_corrigir', 'ponto_lancar', 'ponto_apagar', 'presenca_cancelar', 'aparelho_ativar', 'aparelho_desativar'], true)) {
+    if (in_array($acao, ['colaborador_salvar', 'termo_registrar', 'termo_remover', 'ponto_corrigir', 'ponto_lancar', 'ponto_apagar', 'presenca_cancelar', 'aparelho_ativar', 'aparelho_desativar', 'ponto_codigo'], true)) {
         $id = (int) ($_POST['id'] ?? 0);
         if ($sessao === null || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
             pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
@@ -1363,6 +1382,12 @@ if ($metodo === 'POST') {
                 mcp_presenca_cancelar($id, $sessao);
             }
             pn_redirecionar('v=ponto&aba=alunos' . ($presenca ? '&data=' . $presenca['aula_data'] : '') . '&ok=pr_canc');
+        }
+        if ($acao === 'ponto_codigo') {
+            $ligar = !empty($_POST['ligar']);
+            mcp_ajuste_gravar('ponto_codigo_celular', $ligar ? '1' : '0', $sessao);
+            mcp_registrar(null, 'painel_ajuste', "$sessao · ponto_codigo_celular = " . ($ligar ? '1' : '0'));
+            pn_redirecionar('v=ponto&aba=aparelhos&ok=' . ($ligar ? 'cod_on' : 'cod_off'));
         }
         if ($acao === 'aparelho_ativar') {
             $nome = mcp_texto($_POST['nome'] ?? '', 80);
