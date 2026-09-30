@@ -73,11 +73,14 @@ function mcp_exigir_post_json(): array
     return $dados;
 }
 
-/** O navegador diz que o pedido veio de outro site (Origin ou Sec-Fetch-Site)? Sem esses cabeçalhos, vale. */
-function mcp_origem_do_site(): bool
+/**
+ * O navegador diz que o pedido veio de outro site (Origin ou Sec-Fetch-Site)? Sem esses cabeçalhos, vale.
+ * $aceitaNula: "Origin: null" (página em sandbox, arquivo local) conta como do site; o portal não aceita.
+ */
+function mcp_origem_do_site(bool $aceitaNula = true): bool
 {
     $origem = rtrim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''), '/');
-    if ($origem !== '' && $origem !== 'null' && !in_array($origem, mcp_origens_permitidas(), true)) {
+    if ($origem !== '' && !($aceitaNula && $origem === 'null') && !in_array($origem, mcp_origens_permitidas(), true)) {
         return false;
     }
     $sitio = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));

@@ -598,7 +598,7 @@ try {
     $telaAparelho = mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, false, $quandoDepois + 3600);
     verificar('aviso na tela do ponto: o comunicado da opinião aparece sem link pessoal (a dica aponta o e-mail ou o WhatsApp)',
         [count($telaCelular), array_key_exists('link', $telaCelular[0] ?? []) ? $telaCelular[0]['link'] : 'sem aviso', $telaCelular[0]['dica'] ?? null, isset($telaAparelho[0]) && $telaAparelho[0]['link'] === null ? 'sem link' : 'com link ou sem aviso'],
-        [1, null, 'O link para responder está no e-mail ou no WhatsApp que você recebeu.', 'sem link']);
+        [1, null, 'O link para responder está no e-mail ou no WhatsApp que você recebeu. Se já respondeu, obrigado!', 'sem link']);
     $tokOpiniao = token_do_link(mcp_avisos_link('opiniao', 'c' . $v2['id'], (string) $depois['id']));
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_ler', 't' => $tokOpiniao]);
     verificar('opinião: abre com as perguntas', [$st, $r['nome'] ?? null, $r['publico'] ?? null, array_keys($r['opcoes']['lembretes'] ?? [])], [200, 'Vitor', 'colaborador', array_keys(MCP_OPINIAO_LEMBRETES)]);
@@ -609,7 +609,9 @@ try {
     [$st2, $r2] = api_avisos($base, ['acao' => 'opiniao_salvar', 't' => $tokOpiniao, 'facilidade' => 5, 'como' => 'celular', 'problemas' => [], 'lembretes' => 'ajudam', 'comentario' => 'Agora ficou ótimo.', 'contato_ok' => true]);
     $res = mcp_opinioes_resultado((int) $depois['id']);
     verificar('opinião: grava e deixa mudar (uma resposta por pessoa)', [$st, $st2, $res['respostas'], $res['media'], $res['comentarios'][0]['nome'] ?? null], [200, 200, 1, 5.0, "Vitor Voluntário $marca"]);
-    verificar('aviso na tela do ponto: some depois de responder', mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600), []);
+    $telaDepois = mcp_comunicacao_avisos_ponto(mcp_colaborador_por_id((int) $v2['id']), null, true, $quandoDepois + 3600);
+    verificar('aviso na tela do ponto: continua igual depois de responder (se sumisse, o CPF no tablet diria quem respondeu)', [count($telaDepois), $telaDepois[0]['dica'] ?? null],
+        [1, 'O link para responder está no e-mail ou no WhatsApp que você recebeu. Se já respondeu, obrigado!']);
     $tokAluno = token_do_link(mcp_avisos_link('opiniao', 'a' . mcp_avisos_hash('email', "aluno-$sufixo@avisos-teste.example"), (string) $depois['id']));
     [$st, $r] = api_avisos($base, ['acao' => 'opiniao_salvar', 't' => $tokAluno, 'facilidade' => 3, 'como' => 'aparelho', 'contato_ok' => true]);
     verificar('opinião de aluno: contato pedido sem nome é recusado', [$st, $r['campo'] ?? null], [422, 'contato']);
@@ -832,6 +834,9 @@ try {
     $_COOKIE[MCP_PAINEL_COOKIE] = $cookieReal;
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $tokenVelho, 'lembrete_vespera' => '1']);
     verificar('portal: token de formulário de outra sessão não vale', [str_contains($html, '<h1>Entrar</h1>'), $tokenVelho !== $csrf('ajustes_salvar', 0)], [true, true]);
+    [, , $fichaEquipe] = http($base . 'painel.php?v=colaborador&id=' . (int) $e1['id'], 'GET', null, ["Cookie: $sessaoPortal"]);
+    verificar('ficha da equipe: só de terça a sexta nos dias do lembrete', [str_contains($fichaEquipe, 'name="dias[]" value="ter"'), str_contains($fichaEquipe, 'name="dias[]" value="seg"'),
+        str_contains($fichaEquipe, 'name="dias[]" value="dom"'), str_contains($fichaEquipe, 'só de terça a sexta')], [true, false, false, true]);
     // Sessão de um e-mail que saiu de PAINEL_EMAILS cai na hora (não espera as 12 horas).
     $valorFora = rtrim(strtr(base64_encode((string) json_encode(['u' => 'ex-secretaria@exemplo.org', 'e' => time() + 3600])), '+/', '-_'), '=');
     $sessaoFora = 'mcp_painel=' . $valorFora . '.' . mcp_painel_assinar("k|$valorFora");
@@ -840,8 +845,10 @@ try {
     $pedidosAntes = mcp_contar_eventos_recentes('painel_link', '127.0.0.1', 3600);
     [, , $htmlOutroSite] = http($base . 'painel.php', 'POST', http_build_query(['acao' => 'entrar', 'email' => $quem]),
         ['Content-Type: application/x-www-form-urlencoded', 'Sec-Fetch-Site: cross-site', 'Origin: https://site-qualquer.example']);
-    verificar('portal: e-mail fora da lista perde a sessão; pedido de link vindo de outro site é recusado sem gastar o limite',
-        [str_contains($htmlFora, '<h1>Entrar</h1>'), str_contains($htmlOutroSite, 'Abra o portal pelo endereço dele'), mcp_contar_eventos_recentes('painel_link', '127.0.0.1', 3600) - $pedidosAntes],
+    [, , $htmlNulo] = http($base . 'painel.php', 'POST', http_build_query(['acao' => 'entrar', 'email' => $quem]), ['Content-Type: application/x-www-form-urlencoded', 'Origin: null']);
+    $htmlOutroSite .= str_contains($htmlNulo, 'Abra o portal pelo endereço dele') ? '' : ' [Origin: null passou]';
+    verificar('portal: e-mail fora da lista perde a sessão; pedido de link vindo de outro site (ou com Origin: null) é recusado sem gastar o limite',
+        [str_contains($htmlFora, '<h1>Entrar</h1>'), str_contains($htmlOutroSite, 'Abra o portal pelo endereço dele') && !str_contains($htmlOutroSite, '[Origin: null passou]'), mcp_contar_eventos_recentes('painel_link', '127.0.0.1', 3600) - $pedidosAntes],
         [true, true, 0]);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'lembrete_saida' => '1', 'whatsapp_ativo' => '1']);
     mcp_ajustes_todos(true);
@@ -942,12 +949,14 @@ try {
     $configCota = config_teste(['AVISOS_EMAILS_POR_DIA' => (string) $cota] + $base0);
     $situacoes = static fn(array $ids): string => 'array_map(static fn(int $i): string => mcp_aviso_por_id($i)["status"], ' . var_export($ids, true) . ')';
     $r = sub($configCota, 'mcp_avisos_enviar_pendentes(' . em($hoje, '11:00') . '); $c11 = ' . $situacoes($idsComunicado) . '; $l11 = ' . $situacoes($idsLembrete) . ';'
-        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '18:00') . '); echo json_encode(["c11" => $c11, "l11" => $l11, "c18" => ' . $situacoes($idsComunicado)
-        . ', "l18" => ' . $situacoes($idsLembrete) . ', "resta" => mcp_avisos_cota_comunicados(' . em($hoje, '18:01') . ')]);');
+        . ' mcp_avisos_enviar_pendentes(' . em($hoje, '18:00') . '); $c18 = ' . $situacoes($idsComunicado) . '; $l18 = ' . $situacoes($idsLembrete) . ';'
+        . ' $resta = mcp_avisos_cota_comunicados(' . em($hoje, '18:01') . '); mcp_avisos_enviar_pendentes(' . em($hoje, '19:46') . ');'
+        . ' echo json_encode(["c11" => $c11, "l11" => $l11, "c18" => $c18, "l18" => $l18, "resta" => $resta, "c1946" => ' . $situacoes($idsComunicado) . ']);');
     @unlink($configCota);
     $quantos = static fn(array $l, string $st): int => count(array_filter($l, static fn($x): bool => $x === $st));
     verificar('cota: às 11h o comunicado usa só a parte dele (2 de 5); às 18h os 3 lembretes saem, e o resto do comunicado espera o dia seguinte',
         [$quantos($r['c11'] ?? [], 'enviado'), $quantos($r['l11'] ?? [], 'pendente'), $quantos($r['l18'] ?? [], 'enviado'), $quantos($r['c18'] ?? [], 'pendente'), $r['resta'] ?? null], [2, 3, 3, 3, 0]);
+    verificar('cota: na última rodada (19h45), a folga que sobrou vai para o comunicado', $quantos($r['c1946'] ?? [], 'enviado'), 2 + min(3, (int) ceil($cota * MCP_AVISOS_EMAILS_FOLGA)));
 
     // Reserva: o e-mail do mesmo lembrete, cancelado porque ia pelo WhatsApp, volta para a fila quando o WhatsApp falha de vez.
     $refReserva = mcp_avisos_dia_mais($hoje, 23);
@@ -969,6 +978,12 @@ try {
     $idTroca = (int) mcp_aviso_criar(['chave' => "$chaveTroca|whatsapp", 'tipo' => 'aula', 'canal' => 'whatsapp', 'pessoa' => 'a' . mcp_avisos_hash('email', $dadosTroca['email']),
         'nome' => "Ulisses Aluno $marca", 'destino' => '5521998765432', 'referencia' => $amanha, 'dados' => $dadosTroca,
         'agendado_para' => mcp_ponto_local_para_utc("$hoje 18:00:00"), 'expira_em' => mcp_ponto_local_para_utc("$hoje 20:00:00")]);
+    // Três e-mails na primeira passada das 19h05 (com a pausa de 550 ms entre eles): a rodada passa de 1 segundo
+    // antes da troca de canal, e a segunda passada ainda precisa enxergar o e-mail que nasceu nela.
+    foreach ([1, 2, 3] as $i) {
+        mcp_aviso_criar(['chave' => "teste-lento-$i|$sufixo", 'tipo' => 'link', 'canal' => 'email', 'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'], 'nome' => 'Vera',
+            'destino' => "vera-$sufixo@avisos-teste.example", 'agendado_para' => mcp_ponto_local_para_utc("$hoje 19:00:00"), 'expira_em' => mcp_ponto_local_para_utc("$hoje 20:00:00")]);
+    }
     $configTroca = config_teste(['AVISOS_EMAILS_POR_DIA' => '0'] + $base0 + ['WHATSAPP_CLOUD_TOKEN' => 'tok_teste', 'WHATSAPP_CLOUD_NUMERO_ID' => '1234567890',
         'WHATSAPP_CLOUD_BASE' => "http://127.0.0.1:$portaFalso"]);
     $antesEmails = count(falso('emails'));
@@ -979,7 +994,7 @@ try {
     foreach ($ajustesAntesTroca as $nome => $valor) {
         mcp_ajuste_gravar($nome, $valor, $quem);
     }
-    verificar('troca de canal: às 18h30 o WhatsApp desligado espera; às 19h o lembrete vai por e-mail na mesma rodada, e o WhatsApp não sai mais',
+    verificar('troca de canal: às 18h30 o WhatsApp desligado espera; às 19h o lembrete vai por e-mail na mesma rodada (mesmo lenta), e o WhatsApp não sai mais',
         [$r['s1'] ?? null, $r['s2'] ?? null, $r['erro'] ?? null, $r['e'] ?? null,
         count(array_filter(array_slice(falso('emails'), $antesEmails), static fn(array $m): bool => ($m['to'] ?? []) === ["ulisses-$sufixo@avisos-teste.example"]))],
         ['pendente', 'cancelado', 'o WhatsApp não saiu a tempo: foi por e-mail', 'enviado', 1]);

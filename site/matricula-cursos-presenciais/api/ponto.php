@@ -213,7 +213,9 @@ if ($acao === 'entrada' || $acao === 'saida') {
     }
     $r = mcp_ponto_registrar($colaborador, $acao, (string) $sessao['m'], $sessao['ap'] ?? null, $sessao['d'] ?? null, $agora);
     if (!$r['ok']) {
-        mcp_falhar(409, $r['erro'], ['codigo' => $r['codigo']]);
+        // No celular, sem o horário da entrada (quem digitou o CPF de outra pessoa não fica sabendo dele).
+        $erro = $celular && $r['codigo'] === 'ja_na_sede' ? 'Você já está com a entrada registrada. Para ir embora, registre a saída.' : $r['erro'];
+        mcp_falhar(409, $erro, ['codigo' => $r['codigo']]);
     }
     $hora = mcp_data_brt((string) $r['registro'][$acao], 'H:i');
     // Horas só para voluntários e diretoria; para os outros vínculos, o ponto registra só a presença.
@@ -224,7 +226,8 @@ if ($acao === 'entrada' || $acao === 'saida') {
         'hora' => $hora,
         'mensagem' => $acao === 'entrada' ? "Entrada registrada às $hora."
             : ($horas ? "Saída registrada às $hora. Obrigado pelas horas doadas!" : "Saída registrada às $hora. Até a próxima!"),
-        'duracao' => $acao === 'saida' && $horas ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
+        // A duração entrega a hora da entrada: só no tablet da recepção.
+        'duracao' => $acao === 'saida' && $horas && !$celular ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
         'colaborador' => pt_resumo($colaborador, $agora, $celular),
     ]);
 }

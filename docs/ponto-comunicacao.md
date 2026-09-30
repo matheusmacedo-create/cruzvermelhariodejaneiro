@@ -54,9 +54,10 @@ Regras que valem para tudo:
   de 15% para os que nascem depois (e-mail de reserva, quem ligou os lembretes à tarde): um comunicado às
   10h não tira o e-mail dos lembretes das 18h. O que não coube espera o dia seguinte, dentro do prazo de
   cada um; a Visão geral mostra quantos saíram no dia, e o "Mandar agora" avisa quando o e-mail do
-  comunicado fica para amanhã. Com o plano grátis, um comunicado para mais de uns 40 colaboradores leva
-  mais de um dia por e-mail. A cota é aproximada: a rotina e o "Mandar agora" juntos podem passar dela em
-  até 15 e-mails;
+  comunicado fica para amanhã. Na última rodada (19h45), depois da troca de canal, a folga que sobrou vai
+  para o comunicado (o do dia do lançamento vence às 20h). Com o plano grátis, um comunicado para mais de
+  uns 40 colaboradores leva mais de um dia por e-mail. A cota é aproximada: a rotina e o "Mandar agora"
+  juntos podem passar dela em até 15 e-mails;
 - **lembretes antes de comunicados**: um comunicado grande não atrasa os lembretes das 18h. Se a Resend
   recusar por limite ou falhar três vezes seguidas, o resto do e-mail espera a próxima rodada (os avisos
   não usam o `mail()` da hospedagem, que cai no spam, nem sem a chave da Resend: sem ela, o aviso por
@@ -278,7 +279,8 @@ sair.
   numa entrada de outro dia vira saída informada (a secretaria confere): de longe, com o CPF de outra
   pessoa, não se lançam horas;
 - **no celular, só o que o botão precisa**: se a pessoa está na sede e se a entrada é de outro dia. O
-  horário de entrada, as horas do mês e o termo pendente ficam para o tablet; o comprovante do aluno vai
+  horário de entrada, as horas do mês e o termo pendente ficam para o tablet (nem a entrada repetida nem a
+  duração da saída dizem a que horas a pessoa entrou); o comprovante do aluno vai
   por e-mail (a tela não mostra o link, que leva ao nome completo e ao PDF com o CPF). A localização é
   indício, não prova: quem sabe o CPF de alguém e finge estar perto ainda registra por ela no mesmo dia.
   Para fechar isso, há o **código do dia** (Ponto da sede → Aparelhos e QR code; começa desligado):
@@ -343,8 +345,9 @@ nada sai.
   logo depois de um deploy, não gravar a versão nova sem criar o que é novo. A versão gravada fica em
   `mcp_chaves`, linha `versao_banco`; apague a linha para forçar.
 - A opinião é anônima: o portal não mostra quem clicou no comunicado da pesquisa (só quantos), os
-  comentários aparecem sem data e fora da ordem das respostas, e não há registro à parte da hora de cada
-  resposta. Um mês depois do comunicado, a resposta deixa de ficar ligada a quem respondeu: sai a pessoa,
+  comentários aparecem sem data e fora da ordem das respostas, não há registro à parte da hora de cada
+  resposta, e o aviso da pesquisa na tela do ponto é o mesmo para quem respondeu e para quem não (se
+  sumisse, o CPF digitado no tablet diria quem respondeu). Um mês depois do comunicado, a resposta deixa de ficar ligada a quem respondeu: sai a pessoa,
   as datas viram as do comunicado e o clique de cada um fica só com o dia. Continua contando no resultado
   e é apagada depois de 1 ano.
 - Os freios por IP guardam o IP (no IPv6, só o prefixo /64; o IPv4 escrito como IPv6 vale como IPv4) por
@@ -371,8 +374,8 @@ ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (183 testes, MariaDB local, servidores falsos de e-mail,
+`scripts/testar_avisos_integracao.php` (185 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
-feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (109), `scripts/testar_checkout.php`
+feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (111), `scripts/testar_checkout.php`
 (303, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha, versão do banco) e
 `docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql` (26 testes da função da escola).

@@ -45,6 +45,7 @@ const PC_AVISOS = [
     'aj_muitos' => ['Os outros ajustes foram salvos, mas os dias sem expediente não: cabem até 23 datas futuras. Tire algumas e salve de novo.', 'erro'],
     'fl_ja' => ['Esta mensagem já tinha saído da fila: outra pessoa marcou antes, ou o prazo dela acabou (a véspera e a aula valem até as 20h).', 'erro'],
     'cp_cota' => ['A cota de e-mails de hoje ficou para os lembretes do dia: os e-mails do comunicado começam a sair amanhã, dentro do prazo. O WhatsApp sai normalmente.', 'ok'],
+    'cp_cota_hoje' => ['A cota de e-mails de hoje ficou para os lembretes do dia. Este comunicado vale só até as 20h: o e-mail sai se sobrar cota na última rodada (19h45); o WhatsApp e o aviso na tela do ponto saem normalmente.', 'ok'],
     'av_rep' => ['A mensagem voltou para a fila e sai na próxima rodada (das 8h às 20h).', 'ok'],
     'av_tarde' => ['Esta mensagem não pode mais sair: era para a véspera (ou o prazo dela acabou).', 'erro'],
     'av_parou' => ['Pedido registrado: essa pessoa não recebe mais por esse canal, e o que estava na fila foi cancelado.', 'ok'],
@@ -801,7 +802,8 @@ function pc_ficha_lembretes(string $usuario, array $c): string
     $dias = mcp_avisos_dias($c['aviso_dias']);
     $numero = mcp_whatsapp_numero((string) $c['telefone']);
     $marcaDia = '';
-    foreach (MCP_AVISOS_DIAS as $k => $r) {
+    // Equipe contratada: só de terça a sexta (a mensagem sai na véspera, que também precisa ser dia útil).
+    foreach (mcp_ponto_voluntario($c) ? MCP_AVISOS_DIAS : array_intersect_key(MCP_AVISOS_DIAS, array_flip(MCP_AVISOS_DIAS_EQUIPE)) as $k => $r) {
         $marcaDia .= '<label class="check"><input type="checkbox" name="dias[]" value="' . $k . '"' . (in_array($k, $dias, true) ? ' checked' : '') . '> ' . pn_e(mb_substr($r, 0, 3)) . '</label>';
     }
     $consentimento = (int) $c['aviso_whatsapp'] === 1
@@ -821,7 +823,7 @@ function pc_ficha_lembretes(string $usuario, array $c): string
         . '<p class="nota" style="margin-top:0">' . ($c['aviso_atualizado_em'] ? 'Última mudança em ' . pn_e(pn_data((string) $c['aviso_atualizado_em'])) . '. ' : 'A pessoa ainda não abriu as preferências. ') . $consentimento . '</p>'
         . pc_form($usuario, 'col_avisos', $id,
             '<fieldset class="pc-dias"><legend>Dias em que costuma vir (lembrete na véspera, às 18h)</legend><div class="pc-canais">' . $marcaDia . '</div></fieldset>'
-            . (!$voluntario ? '<p class="nota" style="margin:4px 0 0">Para quem não é voluntário, o lembrete só sai se a própria pessoa escolher os dias pelo link, e só em dia útil '
+            . (!$voluntario ? '<p class="nota" style="margin:4px 0 0">Para quem não é voluntário, o lembrete só sai se a própria pessoa escolher os dias pelo link, e só de terça a sexta '
                 . '(lembrete de presença mandado pela instituição a empregado pareceria controle de jornada).' . (($c['aviso_dias_por'] ?? null) === 'a própria pessoa' ? ' Estes dias foram escolhidos pela pessoa.' : '') . '</p>' : '')
             . '<label class="check" style="margin-top:12px"><input type="checkbox" name="email" value="1"' . ((int) $c['aviso_email'] ? ' checked' : '') . (filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? '' : ' disabled') . '> Receber por e-mail'
             . (filter_var((string) $c['email'], FILTER_VALIDATE_EMAIL) ? '' : ' (sem e-mail no cadastro)') . '</label>'
@@ -965,7 +967,8 @@ function pc_post(string $sessao, string $acao, int $id): never
             // Cota de e-mail do dia já reservada para os lembretes: o comunicado não começou pelo e-mail.
             $semCota = mcp_avisos_cota_comunicados($agora) === 0 && (int) mcp_db()->query("SELECT COUNT(*) FROM mcp_avisos WHERE campanha_id = " . (int) $id
                 . " AND tipo = 'campanha' AND canal = 'email' AND status = 'pendente'")->fetchColumn() > 0;
-            pn_redirecionar('v=comunicado&id=' . $id . '&ok=' . ($semCota ? 'cp_cota' : 'cp_envio'));
+            $venceHoje = ($cc = mcp_campanha($id)) && mcp_ponto_hoje((int) strtotime(mcp_campanha_validade($cc, $agora) . ' UTC')) === mcp_ponto_hoje($agora);
+            pn_redirecionar('v=comunicado&id=' . $id . '&ok=' . ($semCota ? ($venceHoje ? 'cp_cota_hoje' : 'cp_cota') : 'cp_envio'));
         case 'campanha_cancelar':
             mcp_campanha_cancelar($id, $sessao);
             pn_redirecionar('v=comunicado&id=' . $id . '&ok=cp_canc');

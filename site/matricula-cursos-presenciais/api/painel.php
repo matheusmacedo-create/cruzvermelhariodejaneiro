@@ -1253,7 +1253,7 @@ if ($metodo === 'POST') {
     if ($acao === 'entrar') {
         // Pedido vindo de outro site (um formulário escondido numa página aberta no computador da sede) não gasta
         // o limite de pedidos do IP, que é o de todo o prédio.
-        if (!mcp_origem_do_site()) {
+        if (!mcp_origem_do_site(false)) {
             pn_login('Abra o portal pelo endereço dele e peça o link de novo.');
         }
         $email = mb_strtolower(mcp_texto($_POST['email'] ?? '', 190));

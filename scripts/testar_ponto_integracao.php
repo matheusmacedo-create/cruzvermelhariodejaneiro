@@ -111,6 +111,7 @@ function limpar(PDO $db): void
     }
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Ponto %'");
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'ponto_saida_informada' AND detalhe LIKE '%tela do ponto (celular)%' AND criado_em > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)");
     $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'conferir', 'ponto_rede_sede') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
         OR tipo = 'escola_fora' OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
         AND detalhe LIKE '%ponto@exemplo.org%'");
@@ -326,6 +327,18 @@ try {
     verificar('celular: lembra da pessoa com o CPF mascarado', json_decode($corpo, true)['lembrado'] ?? null, mcp_cpf_mascarado($cpfColaborador));
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'posicao' => $pertoDaSede], [$cPessoa]);
     verificar('celular: pessoa lembrada entra sem digitar o CPF, e já está na sede', [$st, $d['colaborador']['na_sede'] ?? null], [200, true]);
+    // No celular, nem a entrada repetida nem a saída entregam a hora da entrada (quem digitou o CPF de outra pessoa).
+    // Com um voluntário só para isto, para não mexer em quem os testes seguintes esperam na sede.
+    $cpfCel = cpf_de_teste();
+    $colCel = mcp_colaborador_salvar(null, ['nome' => "Celular Voluntário $marca", 'cpf' => $cpfCel, 'email' => null, 'telefone' => null, 'funcao' => null, 'vinculo' => 'voluntario', 'ativo' => 1], 'teste');
+    [, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfCel, 'posicao' => $pertoDaSede]);
+    $sessaoCel = (string) ($d['sessao'] ?? '');
+    ponto($base, ['acao' => 'entrada', 'sessao' => $sessaoCel]);
+    [$st, $d] = ponto($base, ['acao' => 'entrada', 'sessao' => $sessaoCel]);
+    verificar('celular: entrada repetida não diz a que horas foi a primeira', [$st, $d['erro'] ?? null], [409, 'Você já está com a entrada registrada. Para ir embora, registre a saída.']);
+    $db->prepare('UPDATE mcp_ponto SET entrada = ? WHERE colaborador_id = ? AND saida IS NULL')->execute([gmdate('Y-m-d H:i:s', time() - 3600), $colCel]);
+    [$st, $d] = ponto($base, ['acao' => 'saida', 'sessao' => $sessaoCel]);
+    verificar('celular: a saída não diz quanto durou (entregaria a hora da entrada)', [$st, $d['registrado'] ?? null, campo($d, 'duracao')], [200, 'saida', null]);
     // "Estou saindo agora" pelo celular numa entrada de outro dia: vira saída informada, que a secretaria confere
     // (de longe, com o CPF de outra pessoa, não se lançam horas). Entrada de hoje não entra nessa regra.
     $colNoite = mcp_colaborador_salvar(null, ['nome' => "Noite Voluntária $marca", 'cpf' => cpf_de_teste(), 'email' => null, 'telefone' => null, 'funcao' => null, 'vinculo' => 'voluntario', 'ativo' => 1], 'teste');

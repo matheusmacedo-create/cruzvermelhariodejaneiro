@@ -1249,14 +1249,17 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
     $usados = ['email' => 0, 'whatsapp' => 0];
     $parar = false;
     $lote = static function (string $canal) use (&$enviados, &$falhas, &$usados, &$parar, &$tetoComunicados, $tetos, $modo, $evolution, $pausaEvolution,
-        $quando, $campanhaId, $agora, $inicio, $lugar): void {
+        $campanhaId, $agora, $inicio, $lugar): void {
         $resta = $tetos[$canal] - $usados[$canal];
         if ($parar || $resta <= 0 || ($canal === 'whatsapp' && ($modo === 'manual' || !mcp_whatsapp_ativo() || mcp_whatsapp_fora() !== null))
             || ($canal === 'email' && mcp_email_fora() !== null)) {
             return;
         }
+        // A hora de agora na rodada, e não a do começo: a reserva e o e-mail trocado nascem com o momento em que
+        // foram criados, e a segunda passada precisa enxergá-los (uma rodada lenta passa de alguns segundos).
+        $agoraLote = gmdate('Y-m-d H:i:s', $agora + (time() - $inicio));
         $sql = "SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = ? AND agendado_para <= ? AND (expira_em IS NULL OR expira_em > ?)";
-        $params = [$canal, $quando, $quando];
+        $params = [$canal, $agoraLote, $agoraLote];
         if ($campanhaId !== null) {
             $sql .= ' AND campanha_id = ?';
             $params[] = $campanhaId;
@@ -1314,6 +1317,12 @@ function mcp_avisos_enviar_pendentes(?int $agora = null, int $limite = MCP_AVISO
         && (mcp_whatsapp_fora() !== null || !mcp_whatsapp_ativo() || mcp_avisos_hora_local($momento) >= MCP_AVISOS_HORA_ULTIMA)) {
         mcp_avisos_trocar_para_email($momento);
     }
+    // Na última rodada, depois da troca de canal, a folga que sobrou da cota vai para o comunicado: hoje nada
+    // mais vai precisar dela (e o comunicado do dia do lançamento vence às 20h).
+    $momento = $agora + (time() - $inicio);
+    if (($cota = mcp_avisos_emails_cota()) > 0 && mcp_avisos_hora_local($momento) >= MCP_AVISOS_HORA_ULTIMA) {
+        $tetoComunicados = max(0, $cota - mcp_avisos_emails_hoje($momento) - mcp_avisos_emails_lembretes_hoje($momento));
+    }
     // Segunda passada de e-mail: as reservas desta rodada (WhatsApp que falhou de vez ou trocado) não esperam a próxima.
     $lote('email');
     return [$enviados, $falhas];
@@ -1352,7 +1361,7 @@ function mcp_avisos_apagar_antigos(?int $agora = null): int
     // pessoa, as datas da resposta viram a do comunicado e o clique de cada um no comunicado fica só com o dia
     // (a hora do clique e a da resposta, juntas, diriam quem escreveu cada comentário).
     $fimDaPesquisa = gmdate('Y-m-d H:i:s', ($agora ?? time()) - (MCP_AVISOS_LINK_DIAS['opiniao'] + 1) * 86400);
-    mcp_db()->prepare("UPDATE mcp_avisos a JOIN mcp_campanhas c ON c.id = a.campanha_id SET a.clicado_em = TIMESTAMP(DATE(a.clicado_em), '15:00:00')
+    mcp_db()->prepare("UPDATE mcp_avisos a JOIN mcp_campanhas c ON c.id = a.campanha_id SET a.clicado_em = TIMESTAMP(DATE(DATE_SUB(a.clicado_em, INTERVAL 3 HOUR)), '15:00:00')
         WHERE c.botao = 'opiniao' AND c.iniciada_em < ? AND a.clicado_em IS NOT NULL AND TIME(a.clicado_em) <> '15:00:00'")->execute([$fimDaPesquisa]);
     mcp_db()->prepare("UPDATE mcp_opinioes o JOIN mcp_campanhas c ON c.id = o.campanha_id SET o.pessoa = CONCAT('x', o.id), o.criado_em = c.iniciada_em, o.atualizado_em = c.iniciada_em
         WHERE o.pessoa NOT LIKE 'x%' AND c.iniciada_em < ?")->execute([$fimDaPesquisa]);

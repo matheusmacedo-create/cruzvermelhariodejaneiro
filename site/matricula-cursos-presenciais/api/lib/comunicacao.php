@@ -981,12 +981,9 @@ function mcp_comunicacao_avisos_ponto(?array $colaborador, ?array $aluno, bool $
         // ou no WhatsApp que ela recebeu.
         $dica = null;
         if ($c['botao'] === 'opiniao') {
-            $stmtR = mcp_db()->prepare('SELECT 1 FROM mcp_opinioes WHERE campanha_id = ? AND pessoa = ?');
-            $stmtR->execute([(int) $c['id'], $pessoa]);
-            if ($stmtR->fetchColumn()) {
-                continue; // já respondeu: o aviso some
-            }
-            $dica = 'O link para responder está no e-mail ou no WhatsApp que você recebeu.';
+            // O mesmo aviso para quem respondeu e para quem não: se sumisse, digitar o CPF de alguém no tablet
+            // diria se (e quando) a pessoa respondeu, e a opinião deixaria de ser anônima.
+            $dica = 'O link para responder está no e-mail ou no WhatsApp que você recebeu. Se já respondeu, obrigado!';
         } elseif ($c['botao'] === 'lembretes' && str_starts_with($pessoa, 'c')) {
             $dica = 'O link para escolher os lembretes está no e-mail ou no WhatsApp que você recebeu.';
         }
@@ -1287,8 +1284,9 @@ function mcp_importar_dias(string $texto): array
     // Número solto só vale numa sequência de dias ("2 a 6", "2, 4 e 6", "3-5"); sozinho, pode ser qualquer coisa.
     $t = (string) preg_replace_callback('/(?<![0-9])[2-6](?:\s*(?:a|ate|e|,|\/|-)\s*[2-6](?![0-9]))+/u',
         static fn(array $m): string => (string) preg_replace_callback('/[2-6]/', static fn(array $d): string => $numero($d[0]), $m[0]), $t);
-    // "2ª", "2a", "2º" e "2 feira" viram o dia. O "a" colado no número é ordinal ("2a"); separado ("2 a 6"), é intervalo.
-    $t = (string) preg_replace_callback('/(?<![0-9])([2-6])(?:(?:ª|º|a\b|o\b)(?:\s*-?\s*feira)?|\s*-?\s*feira)(?![0-9])/u', static fn(array $m): string => $numero($m[1]), $t);
+    // "2ª", "2a", "2as", "2º", "2°" e "2 feira" viram o dia. O "a" colado no número é ordinal ("2a"); separado
+    // ("2 a 6"), é intervalo.
+    $t = (string) preg_replace_callback('/(?<![0-9])([2-6])(?:(?:[ªº°]s?|as?\b|os?\b)(?:\s*-?\s*feiras?)?|\s*-?\s*feiras?)(?![0-9])/u', static fn(array $m): string => $numero($m[1]), $t);
     // Nomes dos dias, inteiros ou abreviados, nunca o começo de outra palavra ("segundo", "qualquer", "quinzenal").
     $t = (string) preg_replace_callback('/\b(?:(dom)(?:ingos?)?|(seg)(?:undas?)?|(ter)(?:cas?)?|(qua)(?:rtas?)?|(qui)(?:ntas?)?|(sex)(?:tas?)?|(sab)(?:ados?)?)\b(?:\s*-?\s*feiras?)?/u',
         static fn(array $m): string => ' ' . implode('', array_slice($m, 1)) . ' ', $t);
