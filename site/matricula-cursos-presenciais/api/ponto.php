@@ -12,8 +12,9 @@
  *   POST {acao: esquecer}                             tira do celular a pessoa lembrada.
  * Depois do CPF, a tela mostra também os avisos dos comunicados no ar (lib/comunicacao.php) e, no tablet
  * da recepção, as saídas sem registro dos últimos 7 dias, para a pessoa informar o horário ali mesmo. No
- * celular, a única prova de identidade é o CPF (que não é segredo): lá não aparecem pendências nem links
- * pessoais, e a saída se informa pelo link do aviso, que chega ao e-mail ou ao WhatsApp da pessoa.
+ * celular, a única prova de identidade é o CPF (que não é segredo): lá não aparecem pendências, links pessoais,
+ * horário de entrada nem horas do mês; a saída de uma entrada de outro dia vira saída informada (a secretaria
+ * confere), e a saída esquecida se informa pelo link do aviso, que chega ao e-mail ou ao WhatsApp da pessoa.
  * Sem o aparelho liberado pela secretaria, cada consulta precisa da localização a até
  * PONTO_RAIO_METROS da sede.
  */
@@ -64,6 +65,21 @@ function pt_aula(array $aula, string $cpf, int $agora): array
     ];
 }
 
+/**
+ * O que a tela mostra do colaborador. No celular, a única prova é o CPF (que não é segredo): só o que o botão
+ * precisa (se está na sede e se a entrada é de outro dia). Horário de entrada, horas do mês e termo pendente
+ * ficam para o tablet da recepção.
+ */
+function pt_resumo(array $colaborador, int $agora, bool $celular): array
+{
+    $r = mcp_ponto_resumo($colaborador, $agora);
+    if (!$celular) {
+        return $r;
+    }
+    return ['na_sede' => $r['na_sede'], 'horas' => $r['horas'], 'desde_dia' => $r['desde_dia'], 'desde' => null, 'agora' => null, 'hoje' => null, 'mes' => null, 'mes_nome' => null,
+        'termo_pendente' => false, 'aberto_id' => null];
+}
+
 /** Saídas sem registro de dias anteriores (menos a entrada ainda aberta, que a tela trata à parte). */
 function pt_pendencias(array $colaborador, int $agora): array
 {
@@ -87,12 +103,14 @@ function pt_pendencias(array $colaborador, int $agora): array
 if ($acao === 'identificar') {
     [$maximo, $janela] = MCP_PONTO_LIMITE[$modo];
     $chaveLimite = $aparelho ? 'aparelho ' . $aparelho['id'] : mcp_ip_balde();
-    if (mcp_contar_eventos_recentes('ponto_consulta', $chaveLimite, $janela) >= $maximo) {
+    // Na rede da sede (o mesmo IP do tablet), todos os celulares do prédio dividem o limite: ele é maior ali.
+    $fator = !$aparelho && mcp_ponto_rede_da_sede() ? MCP_PONTO_FATOR_REDE_SEDE : 1;
+    if (mcp_contar_eventos_recentes('ponto_consulta', $chaveLimite, $janela) >= $maximo * $fator) {
         mcp_falhar(429, 'Muitas consultas em pouco tempo. Aguarde alguns minutos e tente de novo.');
     }
     // No celular, o freio de verdade é para quem erra: CPF inválido ou que não está cadastrado é o jeito de
     // descobrir quem está. Quem acerta tem um limite largo, porque todos no Wi-Fi da sede saem pelo mesmo IP.
-    if (!$aparelho && mcp_contar_eventos_recentes('ponto_consulta_falha', $chaveLimite, $janela) >= MCP_PONTO_LIMITE_FALHAS) {
+    if (!$aparelho && mcp_contar_eventos_recentes('ponto_consulta_falha', $chaveLimite, $janela) >= MCP_PONTO_LIMITE_FALHAS * $fator) {
         mcp_falhar(429, 'Muitas tentativas sem encontrar o CPF. Aguarde alguns minutos ou use o tablet da recepção.');
     }
     mcp_registrar(null, 'ponto_consulta', $chaveLimite);
@@ -154,7 +172,7 @@ if ($acao === 'identificar') {
             'col' => $colaborador ? (int) $colaborador['id'] : null, 'al' => $aluno, 'au' => $aulas,
         ], $agora),
         'nome' => mcp_primeiro_nome(mcp_nome_proprio($nome)),
-        'colaborador' => $colaborador ? mcp_ponto_resumo($colaborador, $agora) : null,
+        'colaborador' => $colaborador ? pt_resumo($colaborador, $agora, !$aparelho) : null,
         'aulas' => array_map(static fn(array $a): array => pt_aula($a, $cpf, $agora), $aulas),
         'escola_indisponivel' => $escolaFora,
         'pendencias' => $colaborador && $aparelho ? pt_pendencias($colaborador, $agora) : [],
@@ -172,6 +190,19 @@ if ($acao === 'entrada' || $acao === 'saida') {
     if (!$colaborador || !(int) $colaborador['ativo']) {
         mcp_falhar(403, 'Este CPF não está cadastrado como colaborador. Fale com a secretaria.');
     }
+    $celular = ($sessao['m'] ?? '') === 'celular';
+    // No celular, a saída de uma entrada de outro dia vai para a secretaria conferir (mcp_ponto_saida_outro_dia).
+    if ($acao === 'saida' && $celular && ($outroDia = mcp_ponto_saida_outro_dia($colaborador, $agora)) !== null) {
+        if (isset($outroDia['erro'])) {
+            mcp_falhar(409, $outroDia['erro']);
+        }
+        mcp_json([
+            'ok' => true, 'registrado' => 'saida_informada', 'hora' => $outroDia['hora'],
+            'mensagem' => 'Saída informada às ' . $outroDia['hora'] . '.',
+            'detalhe' => 'A entrada era de outro dia: a secretaria confere, e as horas desse turno entram no seu histórico.',
+            'colaborador' => pt_resumo($colaborador, $agora, true),
+        ]);
+    }
     $r = mcp_ponto_registrar($colaborador, $acao, (string) $sessao['m'], $sessao['ap'] ?? null, $sessao['d'] ?? null, $agora);
     if (!$r['ok']) {
         mcp_falhar(409, $r['erro'], ['codigo' => $r['codigo']]);
@@ -186,7 +217,7 @@ if ($acao === 'entrada' || $acao === 'saida') {
         'mensagem' => $acao === 'entrada' ? "Entrada registrada às $hora."
             : ($horas ? "Saída registrada às $hora. Obrigado pelas horas doadas!" : "Saída registrada às $hora. Até a próxima!"),
         'duracao' => $acao === 'saida' && $horas ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
-        'colaborador' => mcp_ponto_resumo($colaborador, $agora),
+        'colaborador' => pt_resumo($colaborador, $agora, $celular),
     ]);
 }
 
@@ -246,9 +277,9 @@ if ($acao === 'presenca') {
         'horario' => $pub['horario'],
         'disponivel_em' => $pub['disponivel_em'],
         'disponivel_hora' => mcp_data_brt((string) $p['fim'], 'H:i'),
+        // O comprovante vai por e-mail; a tela não mostra o link pessoal (no celular, quem sabe o CPF de outra
+        // pessoa não chega ao nome completo dela nem ao PDF).
         'email' => $pub['email'],
-        // O link pessoal do comprovante aparece só no celular, que é da pessoa; no aparelho da sede, não.
-        'link' => $sessao['m'] === 'celular' ? mcp_presenca_link($p) : null,
     ]);
 }
 

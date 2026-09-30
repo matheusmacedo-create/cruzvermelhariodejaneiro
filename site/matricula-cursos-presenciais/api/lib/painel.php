@@ -110,7 +110,8 @@ function mcp_painel_sessao(): ?string
     if (!is_array($dados) || (int) ($dados['e'] ?? 0) < time() || empty($dados['u']) || !is_string($dados['u'])) {
         return null;
     }
-    return $dados['u'];
+    // Tirar o e-mail de PAINEL_EMAILS derruba também a sessão já aberta (sem esperar as 12 horas).
+    return in_array($dados['u'], mcp_painel_emails_permitidos(), true) ? $dados['u'] : null;
 }
 
 function mcp_painel_sessao_fechar(): void

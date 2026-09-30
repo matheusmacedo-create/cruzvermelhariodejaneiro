@@ -1009,6 +1009,11 @@ function mcp_opiniao_contexto(array $token): ?array
     if (!$campanha) {
         return null;
     }
+    // A pesquisa fecha 30 dias depois de o comunicado começar a sair: depois disso, a resposta deixa de ficar
+    // ligada a quem respondeu (mcp_avisos_apagar_antigos), e uma segunda resposta viraria uma linha a mais.
+    if (!empty($campanha['iniciada_em']) && (int) strtotime($campanha['iniciada_em'] . ' UTC') < time() - MCP_AVISOS_LINK_DIAS['opiniao'] * 86400) {
+        return null;
+    }
     $c = $token['colaborador'];
     if ($c !== null && !(int) $c['ativo']) {
         return null;
@@ -1076,7 +1081,7 @@ function mcp_opiniao_salvar(array $ctx, array $f): ?array
  */
 function mcp_opinioes_resultado(?int $campanhaId = null): array
 {
-    $sql = 'SELECT * FROM mcp_opinioes' . ($campanhaId !== null ? ' WHERE campanha_id = ?' : '') . ' ORDER BY atualizado_em DESC';
+    $sql = 'SELECT * FROM mcp_opinioes' . ($campanhaId !== null ? ' WHERE campanha_id = ?' : '') . ' ORDER BY id';
     $stmt = mcp_db()->prepare($sql);
     $stmt->execute($campanhaId !== null ? [$campanhaId] : []);
     $linhas = $stmt->fetchAll();
@@ -1114,10 +1119,13 @@ function mcp_opinioes_resultado(?int $campanhaId = null): array
                 'texto' => (string) $l['comentario'], 'facilidade' => $f, 'publico' => (string) $l['publico'],
                 'vinculo' => $l['vinculo'] !== null && ($porVinculo[(string) $l['vinculo']] ?? 0) >= 5 ? (MCP_PONTO_VINCULOS[$l['vinculo']] ?? (string) $l['vinculo']) : null,
                 'nome' => (int) $l['contato_ok'] ? (string) $l['nome'] : null, 'contato' => (int) $l['contato_ok'] ? (string) $l['contato'] : null,
-                'quando' => substr(mcp_data_brt((string) $l['atualizado_em'], 'Y-m-d'), 0, 10),
+                'ordem' => hash_hmac('sha256', (string) $l['id'], mcp_segredo('opinioes')),
             ];
         }
     }
+    // Sem data e fora da ordem das respostas: casar um comentário com a hora do clique de alguém o identificaria.
+    usort($r['comentarios'], static fn(array $a, array $b): int => strcmp($a['ordem'], $b['ordem']));
+    $r['comentarios'] = array_map(static fn(array $c): array => array_diff_key($c, ['ordem' => 1]), $r['comentarios']);
     $r['media'] = $linhas ? round($soma / count($linhas), 1) : null;
     arsort($r['problemas']);
     return $r;
@@ -1174,6 +1182,22 @@ function mcp_ponto_saida_informar(array $registro, string $hora, bool $diaSeguin
         ->execute([$saida, gmdate('Y-m-d H:i:s', $agora), gmdate('Y-m-d H:i:s', $agora), (int) $registro['id']]);
     mcp_registrar(null, 'ponto_saida_informada', '#' . $registro['id'] . " · $origem · " . mcp_data_brt($saida, 'd/m H:i'));
     return null;
+}
+
+/**
+ * "Estou saindo agora" pelo celular numa entrada de outro dia (plantão que virou a noite, saída esquecida):
+ * vira saída informada, que a secretaria confere. De longe, com o CPF de outra pessoa, não se lançam horas.
+ * Devolve null se não é o caso (entrada de hoje, ou vínculo sem horas), ['erro' => …] ou ['hora' => 'HH:MM'].
+ */
+function mcp_ponto_saida_outro_dia(array $colaborador, int $agora): ?array
+{
+    $aberto = mcp_ponto_aberto((int) $colaborador['id'], $agora);
+    if (!$aberto || !mcp_ponto_saida_informavel($aberto, $agora)) {
+        return null;
+    }
+    $hora = mcp_data_brt(gmdate('Y-m-d H:i:s', $agora), 'H:i');
+    $erro = mcp_ponto_saida_informar($aberto, $hora, true, 'tela do ponto (celular)', $agora);
+    return $erro !== null ? ['erro' => $erro] : ['hora' => $hora];
 }
 
 /** Saídas informadas esperando a secretaria, das mais antigas para as mais novas. */

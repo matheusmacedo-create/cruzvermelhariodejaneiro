@@ -14,7 +14,7 @@ Código: `site/matricula-cursos-presenciais/api/lib/avisos.php` (fila, envio, ca
 
 | Aviso | Quando | Para quem | Canal |
 |---|---|---|---|
-| Lembrete da véspera | 18h do dia anterior (preparado a partir das 8h) | voluntário e diretoria, nos dias que escolheram; equipe contratada, só em dia útil e só se a própria pessoa escolheu os dias pelo link | WhatsApp automático, se autorizou; senão e-mail. No modo manual, os dois |
+| Lembrete da véspera | 18h do dia anterior (preparado a partir das 8h) | voluntário e diretoria, nos dias que escolheram; equipe contratada, de terça a sexta com a véspera também em dia útil (a mensagem nunca sai em fim de semana nem em feriado) e só se a própria pessoa escolheu os dias pelo link | WhatsApp automático, se autorizou; senão e-mail. No modo manual, os dois |
 | Saída não registrada | a partir das 9h | voluntário ou diretoria com entrada de até 3 dias atrás, sem saída há mais de 16 horas | igual ao da véspera |
 | Aula de amanhã | 18h do dia anterior | aluno com aula no dia seguinte (função `aulas_do_dia` da escola) | e-mail; WhatsApp só com o ajuste próprio ligado **e** a autorização registrada na escola |
 | Comunicado | na data agendada | o público escolhido (todos, voluntários, os outros vínculos, alunos que confirmaram presença pelo ponto) | e-mail e WhatsApp (alunos: só e-mail) e aviso na tela do ponto |
@@ -27,39 +27,54 @@ Regras que valem para tudo:
   outros comunicados em 7 dias;
 - **feriados e dias sem expediente não têm lembrete** da véspera nem da aula: os nacionais, os do estado
   do Rio (São Jorge, Carnaval) e o da cidade (São Sebastião), mais Sexta-feira Santa e Corpus Christi, e
-  os dias que a secretaria marcar na Visão geral (recessos). Se a sede abrir nos feriados,
-  `AVISOS_FERIADOS = '0'` desliga os embutidos;
+  os dias que a secretaria marcar na Visão geral (recessos). Recesso marcado depois do preparo (às 8h)
+  também barra o lembrete da aula na hora de mandar. Na lista, data que já passou sai sozinha, "02/01"
+  escrito em dezembro vale para o ano seguinte, e cabem até 23 datas futuras (mais que isso, o portal
+  avisa em vez de cortar). Se a sede abrir nos feriados, `AVISOS_FERIADOS = '0'` desliga os embutidos;
 - **WhatsApp só com consentimento registrado**, com data, autor e como foi dado: pela própria pessoa, na
   página de lembretes, ou pela secretaria, na ficha (com "como a pessoa autorizou", obrigatório) ou na
   importação da planilha (com a confirmação obrigatória). Trocar o celular no cadastro apaga a
   autorização (valia para o número antigo). Quem responde PARAR no WhatsApp oficial deixa de receber; os
   pedidos que chegam por outro caminho, a secretaria registra em **Envios → Pediu para parar**;
 - a preferência é conferida de novo na hora de mandar: quem desligou depois do preparo não recebe.
-  Desligar o WhatsApp no portal é uma pausa: religado, sai o que ainda estiver no prazo;
+  Desligar o WhatsApp no portal é uma pausa: religado, sai o que ainda estiver no prazo. Desligar um
+  lembrete tira da fila o que era dele; religado no mesmo dia, o que ainda está no prazo volta;
 - cada mensagem tem uma chave única (tipo, pessoa, data, canal): a mesma coisa nunca sai duas vezes,
   mesmo com a rotina e o botão "Mandar agora" rodando juntos;
 - os e-mails de lembrete e comunicado levam o **descadastro de um clique** (`List-Unsubscribe`, RFC 8058): o
   Gmail e outros mostram "cancelar inscrição" ao lado do remetente, em vez de a pessoa marcar como spam (o
   que prejudicaria também os e-mails da matrícula, que saem do mesmo domínio). O programa de e-mail manda
   um POST a `api/avisos.php?u=`: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista
-  de bloqueio. Abrir o link no navegador só leva à página de escolhas;
+  de bloqueio. Abrir o link no navegador mostra uma página com o botão "Não quero mais receber por e-mail",
+  sem link pessoal. No colaborador, só vale se o e-mail da mensagem ainda é o do cadastro;
 - **cota diária de e-mails**: a conta da Resend é a mesma da matrícula (recibos, PIX, comprovantes) e, em
   30/09/2026, estava no plano grátis, com 100 e-mails por dia e 3.000 por mês. Os avisos usam no máximo 60
-  por dia (`AVISOS_EMAILS_POR_DIA`; `'0'` = sem cota, num plano pago). Acabou a cota, o resto espera o
-  dia seguinte, dentro do prazo de cada um; a Visão geral mostra quantos saíram no dia. Com o plano grátis,
-  um comunicado para mais de 60 pessoas leva mais de um dia por e-mail;
+  por dia (`AVISOS_EMAILS_POR_DIA`; `'0'` = sem cota, num plano pago). O comunicado usa só o que sobra
+  depois dos lembretes do dia já preparados (a véspera e as aulas nascem às 8h e saem às 18h) e de uma folga
+  de 15% para os que nascem depois (e-mail de reserva, quem ligou os lembretes à tarde): um comunicado às
+  10h não tira o e-mail dos lembretes das 18h. O que não coube espera o dia seguinte, dentro do prazo de
+  cada um; a Visão geral mostra quantos saíram no dia, e o "Mandar agora" avisa quando o e-mail do
+  comunicado fica para amanhã. Com o plano grátis, um comunicado para mais de uns 40 colaboradores leva
+  mais de um dia por e-mail. A cota é aproximada: a rotina e o "Mandar agora" juntos podem passar dela em
+  até 15 e-mails;
 - **lembretes antes de comunicados**: um comunicado grande não atrasa os lembretes das 18h. Se a Resend
   recusar por limite ou falhar três vezes seguidas, o resto do e-mail espera a próxima rodada (os avisos
-  não usam o `mail()` da hospedagem, que cai no spam). Lembrete que não sai pelo WhatsApp de vez (número
-  sem WhatsApp, recusado pela Meta, três falhas, ou a Meta avisando depois, pelo webhook, que não
-  entregou) vai por e-mail, se ainda der tempo;
+  não usam o `mail()` da hospedagem, que cai no spam, nem sem a chave da Resend: sem ela, o aviso por
+  e-mail falha com o motivo). Lembrete que não sai pelo WhatsApp de vez (número sem WhatsApp, recusado
+  pela Meta, três falhas, ou a Meta avisando depois, pelo webhook, que não entregou) vai por e-mail, se
+  ainda der tempo, mesmo que o e-mail dele tenha sido cancelado antes porque ia pelo WhatsApp;
+- **perto do prazo, troca de canal**: a partir das 19h, com o WhatsApp fora do ar ou desligado no portal,
+  e na última rodada (19h45) em qualquer caso, o lembrete que ainda espera o WhatsApp vai por e-mail (quem
+  tem e-mail), já na mesma rodada, e o WhatsApp dele não sai mais;
 - **trocar o modo do WhatsApp não perde nada**: indo para o manual, o que esperava o envio automático vai
   para a Fila do WhatsApp; indo para um modo automático, o que estava na fila e ainda vale sai sozinho
   (confira antes a fila: o que já foi mandado à mão e não foi marcado sairia de novo);
 - voluntário recebe o lembrete como gentileza, nunca cobrança (Lei 9.608/1998): "se não puder vir, tudo
-  bem". A equipe contratada recebe só o lembrete de registrar a presença, por segurança, em dia útil e
-  só se pediu; lembrete mandado pela instituição a empregado pareceria controle de jornada;
-- o registro dos envios é apagado depois de 1 ano.
+  bem". A equipe contratada recebe só o lembrete de registrar a presença, por segurança, de terça a sexta
+  (a mensagem sai na véspera, que também precisa ser dia útil sem feriado: nada no domingo) e só se pediu;
+  lembrete mandado pela instituição a empregado pareceria controle de jornada;
+- o registro dos envios, as respostas da pesquisa e o registro das escolhas (preferências, troca de
+  número, pedidos para parar, saídas informadas) são apagados depois de 1 ano.
 
 ## As três fases da implantação
 
@@ -244,9 +259,12 @@ link pessoal. A prévia de link dos aplicativos (HEAD, WhatsApp, Meta, verificad
 robôs) não conta e não ganha link pessoal. O token do link pessoal vai depois do `#` (`#t=`): essa parte
 não é mandada ao servidor, então não fica no log da hospedagem (a página ainda aceita o `?t=` dos links
 antigos). Desativar o colaborador, trocar o e-mail ou o celular dele, ou tocar em **Invalidar os links já
-enviados**, na ficha, derruba os links já mandados. Pela página de lembretes, a pessoa não troca um
-número de WhatsApp que já está no cadastro (um link encaminhado não pode desviar as mensagens): isso é
-com a secretaria. A equipe contratada só vê os dias úteis.
+enviados**, na ficha, derruba os links já mandados: o de clique (`?r=`) e o de descadastro (`?u=`) são
+assinados com a chave da pessoa, que muda nesses casos, então uma mensagem encaminhada deixa de abrir a
+página de escolhas. Pela página de lembretes, a pessoa não troca um número de WhatsApp que já está no
+cadastro (um link encaminhado não pode desviar as mensagens): isso é com a secretaria. A equipe
+contratada só vê de terça a sexta. A pesquisa de opinião fecha 30 dias depois de o comunicado começar a
+sair.
 
 ## A tela do ponto
 
@@ -256,12 +274,19 @@ com a secretaria. A equipe contratada só vê os dias úteis.
 - **só no aparelho da recepção**: saídas sem registro dos últimos 7 dias (a pessoa informa a hora ali
   mesmo, e a secretaria confere em **Ponto da sede → Saídas informadas para conferir**, aceitando ou
   recusando com o motivo; se a pessoa mudar o horário enquanto isso, o aceite pede para conferir de novo)
-  e, na entrada aberta de outro dia, "Saí ontem: informar o horário". No celular aparece só "Estou saindo
-  agora" e a orientação de falar com a secretaria;
+  e, na entrada aberta de outro dia, "Saí ontem: informar o horário". No celular, "Estou saindo agora"
+  numa entrada de outro dia vira saída informada (a secretaria confere): de longe, com o CPF de outra
+  pessoa, não se lançam horas;
+- **no celular, só o que o botão precisa**: se a pessoa está na sede e se a entrada é de outro dia. O
+  horário de entrada, as horas do mês e o termo pendente ficam para o tablet; o comprovante do aluno vai
+  por e-mail (a tela não mostra o link, que leva ao nome completo e ao PDF com o CPF). A localização é
+  indício, não prova: quem sabe o CPF de alguém e finge estar perto ainda registra por ela. Para fechar
+  isso de vez, veja "código do dia" no relatório de melhorias;
 - "Lembrar de mim neste celular" vem desmarcado; no tablet, a tela volta ao começo depois de um tempo sem
   uso (qualquer toque reinicia a contagem);
-- limites: no celular, 120 consultas a cada 10 minutos por IP (o Wi-Fi da sede sai por um IP só) e 10
-  CPFs não encontrados param aquele IP por 10 minutos; no aparelho da sede, 240 a cada 10 minutos. Para
+- limites: no celular, 120 consultas a cada 10 minutos por IP e 10 CPFs não encontrados param aquele IP
+  por 10 minutos; na rede da sede (o mesmo IP de onde o tablet fala, nas últimas 24 horas), 4 vezes isso,
+  porque todos os celulares no Wi-Fi saem por um IP só; no aparelho da sede, 240 a cada 10 minutos. Para
   colaborador, a escola tem 4 segundos para responder se há aula (e não é consultada por 2 minutos
   depois de uma falha): a escola fora do ar não segura o tablet;
 - no celular, a dica de pôr o ponto na tela inicial (até 3 vezes), com o manifesto e os ícones do app.
@@ -273,7 +298,7 @@ com a secretaria. A equipe contratada só vê os dias úteis.
    contato, preparar os comunicados, revisar os textos e mandar um teste para si.
 2. **Ligar os lembretes** na Visão geral: véspera e saída (e o da aula, depois da função `aulas_do_dia`
    aplicada na escola). Marcar ali os dias sem expediente (recessos) além dos feriados. Desligar um
-   lembrete cancela o que dele estava na fila.
+   lembrete tira da fila o que era dele; religado no mesmo dia, o que ainda está no prazo volta.
 3. **No modo manual**, abrir a Fila do WhatsApp de manhã e no fim da tarde.
 4. **Todo dia:** conferir as saídas informadas (o número aparece no menu, em Ponto da sede).
    Numa emergência (evacuação), **Ponto da sede → Lista de emergência** mostra quem está na sede agora
@@ -309,11 +334,20 @@ nada sai.
   `mcp_avisos_bloqueios` (só o hash, com segredo, do e-mail ou do celular de quem pediu para sair),
   `mcp_opinioes`; colunas `aviso_*` em `mcp_colaboradores` (inclusive quem autorizou o WhatsApp, quando
   e como, e quem escolheu os dias) e `saida_informada*` em `mcp_ponto`. Criadas sozinhas: a migração roda
-  quando `lib/db.php` muda (a versão fica em `mcp_chaves`, linha `versao_banco`; apague a linha para
-  forçar).
-- A opinião deixa de ficar ligada a quem respondeu um mês depois do comunicado (continua contando no
-  resultado) e é apagada depois de 1 ano.
-- Os freios por IP guardam o IP (no IPv6, só o prefixo /64) por 2 dias.
+  quando `MCP_DB_VERSAO` (em `lib/db.php`) muda. Ela é o md5 do próprio arquivo sem essa linha:
+  `scripts/testar_checkout.php` confere e diz o valor novo quando o arquivo muda. A versão vem do código
+  que está rodando, e não do arquivo em disco, para uma requisição servida com o `db.php` antigo (opcache),
+  logo depois de um deploy, não gravar a versão nova sem criar o que é novo. A versão gravada fica em
+  `mcp_chaves`, linha `versao_banco`; apague a linha para forçar.
+- A opinião é anônima: o portal não mostra quem clicou no comunicado da pesquisa (só quantos), os
+  comentários aparecem sem data e fora da ordem das respostas, e não há registro à parte da hora de cada
+  resposta. Um mês depois do comunicado, a resposta deixa de ficar ligada a quem respondeu: sai a pessoa,
+  as datas viram as do comunicado e o clique de cada um fica só com o dia. Continua contando no resultado
+  e é apagada depois de 1 ano.
+- Os freios por IP guardam o IP (no IPv6, só o prefixo /64; o IPv4 escrito como IPv6 vale como IPv4) por
+  2 dias; a marca da rede da sede (o IP do tablet), também.
+- Portal: tirar um e-mail de `PAINEL_EMAILS` derruba na hora a sessão aberta dele; o pedido de link de
+  entrada vindo de outro site é recusado sem gastar o limite do IP.
 - Operadores: Resend (e-mail); Meta, dona do WhatsApp (em qualquer modo); o servidor da Evolution do
   Palácio (no modo Evolution); Make (se o webhook for ligado). No modo manual, a mensagem sai do
   aparelho da secretaria.
@@ -334,8 +368,8 @@ ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (164 testes, MariaDB local, servidores falsos de e-mail,
+`scripts/testar_avisos_integracao.php` (183 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
-feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (103), `scripts/testar_checkout.php`
-(301, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha) e
+feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (105), `scripts/testar_checkout.php`
+(303, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha, versão do banco) e
 `docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql` (26 testes da função da escola).

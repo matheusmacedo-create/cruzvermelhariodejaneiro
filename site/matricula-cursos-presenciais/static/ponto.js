@@ -215,18 +215,20 @@
       html += '<section class="pt-bloco"><h2>' + (c.horas ? 'Horas doadas' : 'Presença na sede') + '</h2>';
       if (c.na_sede && c.desde_dia) {
         // Entrada aberta de outro dia: plantão que virou a noite ou saída esquecida.
-        html += '<p class="pt-status erro">Entrada registrada ' + esc(c.desde_dia) + ' às ' + esc(c.desde) + ', sem saída.</p>'
+        html += '<p class="pt-status erro">Entrada registrada ' + esc(c.desde_dia) + (c.desde ? ' às ' + esc(c.desde) : '') + ', sem saída.</p>'
           + '<button type="button" class="pt-btn pt-btn-saida" data-acao="saida">Estou saindo agora</button>'
           + (c.aberto_id && estado.modo === 'aparelho' ? '<details class="pt-detalhe"><summary>Saí ' + esc(c.desde_dia) + ': informar o horário</summary>'
             + formSaida(c.aberto_id, 'A que horas você saiu ' + c.desde_dia + '?') + '</details>'
-            : (c.aberto_id ? '<p class="pt-nota">Saiu ' + esc(c.desde_dia) + ' e esqueceu de registrar? Informe o horário pelo link do aviso que chega ao seu e-mail ou WhatsApp, ou no tablet da recepção.</p>' : ''));
+            : (estado.modo === 'celular' && c.horas ? '<p class="pt-nota">Pelo celular, a secretaria confere essa saída. Saiu ' + esc(c.desde_dia)
+              + ' e esqueceu de registrar? Informe o horário pelo link do aviso que chega ao seu e-mail ou WhatsApp, ou no tablet da recepção.</p>' : ''));
       } else {
-        html += (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + (c.horas ? ' · ' + esc(c.agora) + ' até agora' : '') + '</p>'
+        // No celular, sem o horário: quem digita o CPF de outra pessoa não fica sabendo desde quando ela está na sede.
+        html += (c.na_sede ? '<p class="pt-status ok">' + (c.desde ? 'Na sede desde ' + esc(c.desde) + (c.horas && c.agora ? ' · ' + esc(c.agora) + ' até agora' : '') : 'Você está com a entrada registrada.') + '</p>'
             : '<p class="pt-status">Sem entrada registrada agora.</p>')
           + '<button type="button" class="pt-btn' + (c.na_sede ? ' pt-btn-saida' : '') + '" data-acao="' + (c.na_sede ? 'saida' : 'entrada') + '">'
           + (c.na_sede ? 'Registrar saída' : 'Registrar entrada') + '</button>';
       }
-      html += (c.horas ? '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p>' : '')
+      html += (c.horas && c.hoje ? '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p>' : '')
         + (c.termo_pendente ? '<p class="pt-nota">Seu termo de adesão ao voluntariado ainda não foi registrado. Fale com a secretaria.</p>' : '')
         + '</section>';
       // Saídas esquecidas de dias anteriores: a pessoa informa o horário ali mesmo; a secretaria confere.
@@ -334,11 +336,13 @@
     if (d.registrado === 'entrada') {
       html += '<p class="pt-sub">Bom trabalho! Na hora de ir embora, registre a saída.</p>';
     } else if (d.registrado === 'saida') {
-      if (d.duracao) html += '<p class="pt-sub">Desta vez: <b>' + esc(d.duracao) + '</b>. Em ' + esc(d.colaborador.mes_nome) + ': <b>' + esc(d.colaborador.mes) + '</b>.</p>';
+      if (d.duracao) html += '<p class="pt-sub">Desta vez: <b>' + esc(d.duracao) + '</b>.'
+        + (d.colaborador && d.colaborador.mes ? ' Em ' + esc(d.colaborador.mes_nome) + ': <b>' + esc(d.colaborador.mes) + '</b>.' : '') + '</p>';
+    } else if (d.registrado === 'saida_informada') {
+      html += '<p class="pt-sub">' + esc(d.detalhe || '') + '</p>';
     } else {
       html += '<p class="pt-sub">Aula de <b>' + esc(d.curso) + '</b>, ' + esc(d.horario) + '. O comprovante de comparecimento fica disponível hoje às <b>'
         + esc(d.disponivel_hora) + '</b>' + (d.email ? ' e vai para o e-mail <b>' + esc(d.email) + '</b>' : '') + '.</p>';
-      if (d.link) html += '<a class="pt-btn pt-btn-sec" href="' + esc(d.link) + '">Ver meu comprovante</a>';
     }
     html += '<button type="button" class="pt-btn" id="pt-fim">Concluir</button>';
     if (estado.modo === 'aparelho') html += '<p class="pt-nota" id="pt-contagem" aria-live="off"></p>';

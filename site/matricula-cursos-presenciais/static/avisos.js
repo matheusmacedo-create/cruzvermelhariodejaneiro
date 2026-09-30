@@ -80,7 +80,7 @@
 
   function telaLembretes(d, msg) {
     var p = d.prefs;
-    // A equipe contratada só vê os dias úteis (o lembrete dela não sai no fim de semana).
+    // A equipe contratada só vê de terça a sexta (o lembrete dela não sai no fim de semana nem em feriado).
     var dias = ORDEM_DIAS.filter(function (k) { return d.dias_opcoes[k]; }).map(function (k) {
       return '<label class="av-chip"><input type="checkbox" name="dias" value="' + k + '" aria-label="' + esc(d.dias_opcoes[k] || k) + '"' + (p.dias.indexOf(k) >= 0 ? ' checked' : '') + '><span>'
         + esc((d.dias_opcoes[k] || k).slice(0, 3)) + '</span></label>';
@@ -90,7 +90,7 @@
       + '<form id="av-form" novalidate>'
       + '<fieldset class="av-grupo"><legend>Em que dias você costuma vir à sede?</legend>'
       + '<p class="av-ajuda">Na véspera desses dias, às 18h, chega um lembrete. Não marque nada se não quiser o lembrete da véspera.'
-      + (d.voluntario ? '' : ' Para a equipe, o lembrete é só nos dias úteis e só se você pedir aqui.') + '</p>'
+      + (d.voluntario ? '' : ' Para a equipe, o lembrete só sai em dia útil (por isso não há o de segunda) e só se você pedir aqui.') + '</p>'
       + '<div class="av-dias">' + dias + '</div>'
       + (!d.vespera_ligada ? '<p class="av-ajuda">Os lembretes da véspera começam quando a secretaria ligar. Suas escolhas já ficam guardadas.</p>' : '')
       + '</fieldset>'

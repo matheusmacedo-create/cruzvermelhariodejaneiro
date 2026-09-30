@@ -26,7 +26,8 @@ if ($metodo === 'GET') {
     exit;
 }
 mcp_exigir_metodo('POST');
-$corpo = mcp_corpo_bruto();
+// A Meta junta vários eventos num pedido (até 3 MB, pela documentação): o limite de 64 KB do site recusaria.
+$corpo = mcp_corpo_bruto(3 * 1024 * 1024);
 if (!mcp_whatsapp_webhook_assinatura_ok($corpo, (string) ($_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? ''))) {
     http_response_code(401);
     exit;

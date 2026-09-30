@@ -74,6 +74,8 @@ const MCP_AVISOS_CLIQUE_DIAS = 60;
 const MCP_AVISOS_DIAS = ['dom' => 'Domingo', 'seg' => 'Segunda', 'ter' => 'Terça', 'qua' => 'Quarta', 'qui' => 'Quinta', 'sex' => 'Sexta', 'sab' => 'Sábado'];
 const MCP_AVISOS_DIAS_PLURAL = ['dom' => 'domingos', 'seg' => 'segundas', 'ter' => 'terças', 'qua' => 'quartas', 'qui' => 'quintas', 'sex' => 'sextas', 'sab' => 'sábados'];
 const MCP_AVISOS_DIAS_UTEIS = ['seg', 'ter', 'qua', 'qui', 'sex'];
+/** Dias em que a equipe contratada pode pedir o lembrete: dia útil com a véspera também útil (segunda não: sairia no domingo). */
+const MCP_AVISOS_DIAS_EQUIPE = ['ter', 'qua', 'qui', 'sex'];
 /** Avisos por e-mail que levam o descadastro de um clique (List-Unsubscribe): os que a pessoa não pediu naquela hora. */
 const MCP_AVISOS_COM_DESCADASTRO = ['vespera', 'saida', 'aula', 'campanha'];
 /** O ajuste do portal que liga cada lembrete: desligado, o que estava na fila também não sai. */
@@ -273,7 +275,10 @@ function mcp_avisos_recebe_vespera(array $c, string $dataIso): bool
     if (mcp_ponto_voluntario($c)) {
         return true;
     }
-    return in_array(mcp_avisos_dia_chave($dataIso), MCP_AVISOS_DIAS_UTEIS, true) && ($c['aviso_dias_por'] ?? null) === 'a própria pessoa';
+    // Para a equipe, a mensagem também não sai em fim de semana nem em feriado: a véspera precisa ser dia útil.
+    $vespera = mcp_avisos_dia_mais($dataIso, -1);
+    return ($c['aviso_dias_por'] ?? null) === 'a própria pessoa' && in_array(mcp_avisos_dia_chave($dataIso), MCP_AVISOS_DIAS_EQUIPE, true)
+        && mcp_avisos_dia_fechado($vespera) === null;
 }
 
 /** Voluntário ou diretoria recebe o aviso de saída não registrada (só eles somam horas). */
@@ -1338,10 +1343,19 @@ function mcp_avisos_apagar_antigos(?int $agora = null): int
     $stmt->execute([$limite]);
     $opinioes = mcp_db()->prepare('DELETE FROM mcp_opinioes WHERE atualizado_em < ?');
     $opinioes->execute([$limite]);
-    // Ao fim da pesquisa (o link da opinião vale 30 dias), a resposta deixa de ficar ligada a quem respondeu.
-    mcp_db()->prepare("UPDATE mcp_opinioes o JOIN mcp_campanhas c ON c.id = o.campanha_id SET o.pessoa = CONCAT('x', o.id)
-        WHERE o.pessoa NOT LIKE 'x%' AND c.iniciada_em < ?")
-        ->execute([gmdate('Y-m-d H:i:s', ($agora ?? time()) - (MCP_AVISOS_LINK_DIAS['opiniao'] + 1) * 86400)]);
+    // Os registros das escolhas e dos lembretes (preferências, troca de número, pedidos para parar, saídas
+    // informadas) também: 1 ano, como o das mensagens. O que vale hoje fica no cadastro da pessoa.
+    mcp_db()->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('aviso_preferencias', 'aviso_telefone', 'aviso_whatsapp_parou', 'aviso_whatsapp_numero_trocado',
+        'aviso_descadastro', 'aviso_sair', 'ponto_saida_informada', 'opiniao', 'painel_aviso_parar', 'painel_links_novos', 'painel_aviso_repetir') AND criado_em < ?")
+        ->execute([$limite]);
+    // Ao fim da pesquisa (ela fica aberta 30 dias), a resposta deixa de ficar ligada a quem respondeu: sai a
+    // pessoa, as datas da resposta viram a do comunicado e o clique de cada um no comunicado fica só com o dia
+    // (a hora do clique e a da resposta, juntas, diriam quem escreveu cada comentário).
+    $fimDaPesquisa = gmdate('Y-m-d H:i:s', ($agora ?? time()) - (MCP_AVISOS_LINK_DIAS['opiniao'] + 1) * 86400);
+    mcp_db()->prepare("UPDATE mcp_avisos a JOIN mcp_campanhas c ON c.id = a.campanha_id SET a.clicado_em = TIMESTAMP(DATE(a.clicado_em), '15:00:00')
+        WHERE c.botao = 'opiniao' AND c.iniciada_em < ? AND a.clicado_em IS NOT NULL AND TIME(a.clicado_em) <> '15:00:00'")->execute([$fimDaPesquisa]);
+    mcp_db()->prepare("UPDATE mcp_opinioes o JOIN mcp_campanhas c ON c.id = o.campanha_id SET o.pessoa = CONCAT('x', o.id), o.criado_em = c.iniciada_em, o.atualizado_em = c.iniciada_em
+        WHERE o.pessoa NOT LIKE 'x%' AND c.iniciada_em < ?")->execute([$fimDaPesquisa]);
     return $stmt->rowCount() + $opinioes->rowCount();
 }
 

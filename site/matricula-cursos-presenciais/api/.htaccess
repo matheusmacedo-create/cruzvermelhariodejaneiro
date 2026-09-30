@@ -4,6 +4,10 @@ Options -Indexes
 <FilesMatch "^(config\.php|config-escola\.php|config-whatsapp\.php|config\.example\.php|lib\.php|lembretes\.php|comparecimentos\.php)$">
   Require all denied
 </FilesMatch>
+# Cópias de editor e de segurança (config.php~, config.php.bak, .swp…) nunca são servidas: o texto sairia cru.
+<FilesMatch "(~|\.(bak|old|orig|save|swp|swo|tmp|dist|sql|log))$">
+  Require all denied
+</FilesMatch>
 # O PHP em FastCGI não recebe o cabeçalho Authorization sozinho; escola-horarios.php precisa dele.
 <IfModule mod_setenvif.c>
   SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1

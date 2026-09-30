@@ -454,6 +454,8 @@ function pc_comunicado(string $usuario, ?int $id, string $aviso = '', string $cl
     $resultado = '';
     if ($c && !$editavel) {
         $num = mcp_campanha_numeros((int) $c['id']);
+        // Comunicado com a pesquisa: a opinião é anônima, então o portal não mostra quem clicou (só quantos).
+        $anonimo = $c['botao'] === 'opiniao';
         $stmt = mcp_db()->prepare("SELECT * FROM mcp_avisos WHERE campanha_id = ? AND tipo = 'campanha' ORDER BY nome, canal LIMIT 1000");
         $stmt->execute([(int) $c['id']]);
         $linhas = '';
@@ -462,7 +464,7 @@ function pc_comunicado(string $usuario, ?int $id, string $aviso = '', string $cl
                 . '<td data-rotulo="Canal">' . ($a['canal'] === 'whatsapp' ? 'WhatsApp' : 'E-mail') . '</td>'
                 . '<td data-rotulo="Situação">' . pc_selo_aviso((string) $a['status']) . ($a['erro'] ? '<small>' . pn_e((string) $a['erro']) . '</small>' : '') . '</td>'
                 . '<td data-rotulo="Enviado">' . ($a['enviado_em'] ? pn_e(pn_data((string) $a['enviado_em'])) : '—') . '</td>'
-                . '<td data-rotulo="Clique">' . ($a['clicado_em'] ? pn_e(pn_data((string) $a['clicado_em'])) : '—') . '</td></tr>';
+                . '<td data-rotulo="Clique">' . ($anonimo ? 'não mostrado' : ($a['clicado_em'] ? pn_e(pn_data((string) $a['clicado_em'])) : '—')) . '</td></tr>';
         }
         $resultado = '<div class="numeros">'
             . '<div class="numero"><b>' . $num['enviado'] . '</b><span>Enviadas</span><small>de ' . $num['total'] . ' mensagens</small></div>'
@@ -473,7 +475,8 @@ function pc_comunicado(string $usuario, ?int $id, string $aviso = '', string $cl
             . ($c['status'] === 'enviando' ? '<div class="acoes" style="margin:0 0 16px">' . pc_form($usuario, 'campanha_cancelar', (int) $c['id'], pc_botao('Interromper o envio'),
                 ' onsubmit="return confirm(\'Interromper? O que ainda não saiu fica cancelado.\')"') . '</div>' : '')
             . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Pessoa</th><th>Canal</th><th>Situação</th><th>Enviado</th><th>Clique</th></tr></thead><tbody>'
-            . ($linhas !== '' ? $linhas : '<tr><td colspan="5" class="vazio">Nenhuma mensagem (só aviso na tela do ponto, ou ninguém com contato).</td></tr>') . '</tbody></table></div>';
+            . ($linhas !== '' ? $linhas : '<tr><td colspan="5" class="vazio">Nenhuma mensagem (só aviso na tela do ponto, ou ninguém com contato).</td></tr>') . '</tbody></table></div>'
+            . ($anonimo ? '<p class="nota">A opinião é anônima: neste comunicado, o portal mostra quantos clicaram, e não quem.</p>' : '');
     }
 
     $topo = '<a class="voltar" href="painel.php?v=comunicacao&amp;aba=comunicados">← Voltar para os comunicados</a>'
@@ -532,6 +535,8 @@ function pc_envios(string $usuario, string $aviso, string $classe): never
     $stmt = mcp_db()->prepare($sql . ' ORDER BY id DESC LIMIT 200');
     $stmt->execute($params);
     $linhas = '';
+    // A opinião é anônima: nos comunicados com a pesquisa, o clique de cada pessoa não aparece.
+    $comOpiniao = array_flip(array_map('intval', mcp_db()->query("SELECT id FROM mcp_campanhas WHERE botao = 'opiniao'")->fetchAll(PDO::FETCH_COLUMN)));
     foreach ($stmt->fetchAll() as $a) {
         $repetir = $a['status'] === 'falhou' && $a['tipo'] !== 'teste'
             ? pc_form($usuario, 'aviso_repetir', (int) $a['id'], pc_botao('Tentar de novo'), ' onsubmit="return confirm(\'Mandar de novo? Confira antes se a pessoa já não recebeu.\')"') : '';
@@ -545,7 +550,8 @@ function pc_envios(string $usuario, string $aviso, string $classe): never
             . '<td data-rotulo="Aviso">' . pn_e(MCP_AVISOS_TIPOS[$a['tipo']] ?? $a['tipo']) . '<small>' . ($a['canal'] === 'whatsapp' ? 'WhatsApp' : 'E-mail') . ($provedor !== '' ? ' · ' . pn_e($provedor) : '') . '</small></td>'
             . '<td data-rotulo="Situação">' . pc_selo_aviso((string) $a['status']) . ($a['entrega'] ? '<small>WhatsApp: ' . pn_e(['sent' => 'enviada', 'delivered' => 'entregue', 'read' => 'lida', 'failed' => 'falhou'][$a['entrega']] ?? (string) $a['entrega']) . '</small>' : '')
             . ($a['erro'] ? '<small>' . pn_e((string) $a['erro']) . '</small>' : '') . '</td>'
-            . '<td data-rotulo="Clique">' . ($a['clicado_em'] ? pn_e(pn_data((string) $a['clicado_em'])) . ((int) $a['cliques'] > 1 ? '<small>' . (int) $a['cliques'] . ' cliques</small>' : '') : '—') . '</td>'
+            . '<td data-rotulo="Clique">' . (isset($comOpiniao[(int) $a['campanha_id']]) ? 'não mostrado'
+                : ($a['clicado_em'] ? pn_e(pn_data((string) $a['clicado_em'])) . ((int) $a['cliques'] > 1 ? '<small>' . (int) $a['cliques'] . ' cliques</small>' : '') : '—')) . '</td>'
             . '<td>' . $repetir . '</td></tr>';
     }
     $filtro = static function (string $nome, array $opcoes, string $atual) use ($tipo, $status): string {
@@ -690,7 +696,7 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
         }
         $comentarios = '';
         foreach (array_slice($o['comentarios'], 0, 60) as $cm) {
-            $comentarios .= '<li><p class="mensagem" style="font-size:.92rem">' . pn_e($cm['texto']) . '</p><small>' . pn_e(mcp_escola_data($cm['quando'])) . ' · nota ' . $cm['facilidade']
+            $comentarios .= '<li><p class="mensagem" style="font-size:.92rem">' . pn_e($cm['texto']) . '</p><small>nota ' . $cm['facilidade']
                 . ' · ' . ($cm['publico'] === 'aluno' ? 'aluno' : pn_e((string) ($cm['vinculo'] ?? 'colaborador')))
                 . ($cm['nome'] !== null ? ' · <b>' . pn_e($cm['nome']) . '</b> (pode ser procurado: ' . pn_e((string) $cm['contato']) . ')' : ' · sem nome') . '</small></li>';
         }

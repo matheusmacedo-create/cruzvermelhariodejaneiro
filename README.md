@@ -606,19 +606,23 @@ desligado no portal, em **Comunicação**.
   `api/whatsapp.php` com a situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às
   20h conferida a cada mensagem, consentimento do WhatsApp com data, autor e como foi dado, preferência
   conferida de novo na hora de mandar, chave única por mensagem, lembretes antes dos comunicados, e-mail
-  de reserva quando o WhatsApp falha de vez, descadastro de um clique (`List-Unsubscribe`) nos e-mails e
-  cota diária de e-mails dos avisos (60 por dia; a Resend está no plano grátis, com 100 por dia divididos
-  com a matrícula).
+  de reserva quando o WhatsApp falha de vez (e troca para o e-mail perto do prazo, a partir das 19h, com
+  o WhatsApp fora do ar), descadastro de um clique (`List-Unsubscribe`) nos e-mails e cota diária de
+  e-mails dos avisos (60 por dia; a Resend está no plano grátis, com 100 por dia divididos com a
+  matrícula), em que o comunicado usa só o que sobra dos lembretes do dia.
 - **Implantação em três fases:** a partir da data do lançamento, o portal prepara quatro comunicados
   (antes, no dia, depois de 2 semanas para colaboradores e para alunos), com prévia do e-mail, do WhatsApp
   e do aviso na tela do ponto, teste para a própria secretaria e agendamento. O "depois" leva o resumo de
   cada voluntário (dias e horas doadas) e a pesquisa de opinião.
-- **Páginas pessoais** com link assinado (token depois do `#`, fora do log do servidor): lembretes
-  (dias, canais), saída sem registro, opinião (sem nome para a secretaria, a não ser que a pessoa
-  autorize; desligada de quem respondeu um mês depois) e "não quero mais receber" (alunos).
+- **Páginas pessoais** com link assinado (token depois do `#`, fora do log do servidor; os links das
+  mensagens são amarrados à chave da pessoa, e "Invalidar" derruba também os que já saíram): lembretes
+  (dias, canais), saída sem registro, opinião (anônima: sem nome para a secretaria, a não ser que a
+  pessoa autorize, sem quem clicou e sem data nos comentários; desligada de quem respondeu um mês depois,
+  quando a pesquisa fecha) e "não quero mais receber" (alunos).
 - **Na tela do ponto:** os avisos dos comunicados (sem link pessoal) e, só no aparelho da recepção, as
-  saídas sem registro dos últimos 7 dias para informar ali mesmo e o "saí ontem"; no celular, a dica de
-  pôr o ponto na tela inicial (manifesto e ícones do app).
+  saídas sem registro dos últimos 7 dias para informar ali mesmo e o "saí ontem"; no celular, só o que o
+  botão precisa (sem horário de entrada, horas do mês, termo pendente nem link do comprovante), a saída de
+  uma entrada de outro dia vira saída informada, e a dica de pôr o ponto na tela inicial.
 - **Portal:** seção Comunicação (visão geral com o alerta de rotina parada e os dias sem expediente,
   comunicados, fila do WhatsApp, envios com "tentar de novo" e "pediu para parar", resultados com adesão,
   entradas por dia, horas, saídas não registradas na hora, efeito dos lembretes, opinião, planilha dos
@@ -628,8 +632,8 @@ desligado no portal, em **Comunicação**.
   enviados".
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
-- **Testes:** 164 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
-  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 103 no ponto, 301 unitários e 26
+- **Testes:** 183 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 105 no ponto, 303 unitários e 26
   testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual
   funciona já; a Evolution do Palácio exige o aceite do risco de bloqueio do número; a API oficial precisa

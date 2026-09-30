@@ -36,15 +36,15 @@ function mcp_origens_permitidas(): array
     return array_values(array_unique([$site, "https://$host", "https://www.$host"]));
 }
 
-/** Lê até MCP_CORPO_MAX bytes do corpo; acima disso, 413. */
-function mcp_corpo_bruto(): string
+/** Lê até $maximo bytes do corpo (MCP_CORPO_MAX, se não disser); acima disso, 413. */
+function mcp_corpo_bruto(int $maximo = MCP_CORPO_MAX): string
 {
     $declarado = (int) ($_SERVER['CONTENT_LENGTH'] ?? 0);
-    if ($declarado > MCP_CORPO_MAX) {
+    if ($declarado > $maximo) {
         mcp_falhar(413, 'Requisição grande demais.');
     }
-    $bruto = (string) file_get_contents('php://input', false, null, 0, MCP_CORPO_MAX + 1);
-    if (strlen($bruto) > MCP_CORPO_MAX) {
+    $bruto = (string) file_get_contents('php://input', false, null, 0, $maximo + 1);
+    if (strlen($bruto) > $maximo) {
         mcp_falhar(413, 'Requisição grande demais.');
     }
     return $bruto;
@@ -63,12 +63,7 @@ function mcp_exigir_post_json(): array
     if (!str_starts_with($tipo, 'application/json')) {
         mcp_falhar(415, 'Envie o corpo em JSON.');
     }
-    $origem = rtrim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''), '/');
-    if ($origem !== '' && $origem !== 'null' && !in_array($origem, mcp_origens_permitidas(), true)) {
-        mcp_falhar(403, 'Origem não permitida.');
-    }
-    $sitio = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
-    if ($sitio !== '' && !in_array($sitio, ['same-origin', 'same-site', 'none'], true)) {
+    if (!mcp_origem_do_site()) {
         mcp_falhar(403, 'Origem não permitida.');
     }
     $dados = json_decode(mcp_corpo_bruto() ?: '', true);
@@ -76,6 +71,17 @@ function mcp_exigir_post_json(): array
         mcp_falhar(400, 'Corpo da requisição inválido.');
     }
     return $dados;
+}
+
+/** O navegador diz que o pedido veio de outro site (Origin ou Sec-Fetch-Site)? Sem esses cabeçalhos, vale. */
+function mcp_origem_do_site(): bool
+{
+    $origem = rtrim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''), '/');
+    if ($origem !== '' && $origem !== 'null' && !in_array($origem, mcp_origens_permitidas(), true)) {
+        return false;
+    }
+    $sitio = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
+    return $sitio === '' || in_array($sitio, ['same-origin', 'same-site', 'none'], true);
 }
 
 /** Postback de servidor para servidor: JSON ou formulário, sem exigência de origem. */
@@ -105,6 +111,10 @@ function mcp_ip_balde(): string
     if (str_contains($ip, ':')) {
         $binario = @inet_pton($ip);
         if (is_string($binario) && strlen($binario) === 16) {
+            // IPv4 escrito como IPv6 (::ffff:a.b.c.d): é o IPv4, e não um bloco /64 que juntaria todo mundo.
+            if (str_starts_with($binario, str_repeat("\0", 10) . "\xff\xff")) {
+                return (string) inet_ntop(substr($binario, 12));
+            }
             return inet_ntop(substr($binario, 0, 8) . str_repeat("\0", 8)) . '/64';
         }
     }

@@ -118,8 +118,8 @@ function av_lembretes(array $c): array
         'whatsapp_disponivel' => mcp_whatsapp_ativo(),
         'vespera_ligada' => mcp_ajuste_ligado('lembrete_vespera'),
         'saida_ligada' => mcp_ajuste_ligado('lembrete_saida'),
-        // Equipe contratada: lembrete só em dia útil (mcp_avisos_recebe_vespera).
-        'dias_opcoes' => mcp_ponto_voluntario($c) ? MCP_AVISOS_DIAS : array_intersect_key(MCP_AVISOS_DIAS, array_flip(MCP_AVISOS_DIAS_UTEIS)),
+        // Equipe contratada: lembrete só de terça a sexta, com a véspera em dia útil (mcp_avisos_recebe_vespera).
+        'dias_opcoes' => mcp_ponto_voluntario($c) ? MCP_AVISOS_DIAS : array_intersect_key(MCP_AVISOS_DIAS, array_flip(MCP_AVISOS_DIAS_EQUIPE)),
         'prefs' => [
             'email' => (int) $c['aviso_email'] === 1, 'whatsapp' => (int) $c['aviso_whatsapp'] === 1, 'dias' => mcp_avisos_dias($c['aviso_dias']),
             'saida' => (int) $c['aviso_saida'] === 1, 'comunicados' => (int) $c['aviso_comunicados'] === 1,
@@ -158,7 +158,7 @@ if ($c !== null && $acao === 'lembretes_salvar') {
     }
     mcp_avisos_preferencias_salvar($c, [
         'email' => $email, 'whatsapp' => $whatsapp, 'telefone' => $telefone,
-        'dias' => mcp_ponto_voluntario($c) ? (array) ($corpo['dias'] ?? []) : array_intersect(mcp_avisos_dias($corpo['dias'] ?? []), MCP_AVISOS_DIAS_UTEIS),
+        'dias' => mcp_ponto_voluntario($c) ? (array) ($corpo['dias'] ?? []) : array_intersect(mcp_avisos_dias($corpo['dias'] ?? []), MCP_AVISOS_DIAS_EQUIPE),
         'saida' => !empty($corpo['saida']), 'comunicados' => !empty($corpo['comunicados']), 'como' => 'pela página de lembretes',
     ], 'a própria pessoa', true);
     $atual = mcp_colaborador_por_id((int) $c['id']);
@@ -233,7 +233,7 @@ if ($acao === 'opiniao_ler' || $acao === 'opiniao_salvar') {
         if ($erro !== null) {
             mcp_falhar(422, $erro[1], ['campo' => $erro[0]]);
         }
-        mcp_registrar(null, 'opiniao', '#' . $ctx['campanha']['id'] . ' · ' . $ctx['publico']);
+        // Sem registro de evento: a hora de cada resposta, guardada à parte, desfaria o anonimato da opinião.
         mcp_json(['mensagem' => 'Obrigado pela sua opinião! Ela ajuda a melhorar o ponto para todo mundo.'] + $publico(mcp_opiniao_contexto($token)));
     }
     mcp_json($publico($ctx));

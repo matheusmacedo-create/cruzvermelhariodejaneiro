@@ -735,11 +735,12 @@ verificar('feriados: fixos, do estado e da cidade, e os móveis', array_map('mcp
     ['Nossa Senhora Aparecida', 'Dia de São Sebastião', 'Dia de São Jorge', 'Dia Nacional de Zumbi e da Consciência Negra', 'Carnaval', 'Carnaval', 'Sexta-feira Santa', 'Corpus Christi', null, null]);
 verificar('feriados: dia fechado sem consultar o portal quando é feriado', mcp_avisos_dia_fechado('2026-12-25'), 'Natal');
 $equipe = ['vinculo' => 'empregado', 'aviso_dias_por' => 'a própria pessoa'];
-verificar('véspera: voluntário em qualquer dia; equipe só em dia útil e só com os dias escolhidos por ela', [
+// O caso em que a equipe recebe (dia e véspera úteis, sem dia fechado no portal) consulta o banco: está na integração.
+verificar('véspera: voluntário em qualquer dia; equipe nunca no fim de semana nem na segunda, e só com os dias escolhidos por ela', [
     mcp_avisos_recebe_vespera(['vinculo' => 'voluntario', 'aviso_dias_por' => 'secretaria@exemplo.org'], '2026-10-03'),
-    mcp_avisos_recebe_vespera($equipe, '2026-10-01'), mcp_avisos_recebe_vespera($equipe, '2026-10-03'), mcp_avisos_recebe_vespera($equipe, '2026-10-04'),
+    mcp_avisos_recebe_vespera($equipe, '2026-10-03'), mcp_avisos_recebe_vespera($equipe, '2026-10-04'), mcp_avisos_recebe_vespera($equipe, '2026-10-05'),
     mcp_avisos_recebe_vespera(['aviso_dias_por' => 'secretaria@exemplo.org'] + $equipe, '2026-10-01'), mcp_avisos_recebe_vespera(['aviso_dias_por' => null] + $equipe, '2026-10-01'),
-], [true, true, false, false, false, false]);
+], [true, false, false, false, false, false]);
 $agoraAviso = (int) strtotime('2026-09-30 12:00:00 UTC');
 verificar('prazo do aviso: véspera e aula até as 20h da véspera; saída 3 dias; link 1 dia', [
     mcp_aviso_validade(['tipo' => 'vespera', 'referencia' => '2026-10-01'], $agoraAviso), mcp_aviso_validade(['tipo' => 'aula', 'referencia' => '2026-10-02'], $agoraAviso),

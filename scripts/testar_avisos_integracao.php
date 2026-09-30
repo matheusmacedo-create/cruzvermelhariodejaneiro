@@ -35,7 +35,7 @@ $portaFalso = $portaSite + 400;
 $falso = sys_get_temp_dir() . '/mcp-avisos-falso-' . bin2hex(random_bytes(4));
 mkdir($falso);
 $base0 = [
-    'EMAIL_SECRETARIA' => '', 'SITE_URL' => "http://127.0.0.1:$portaSite", 'RESEND_API_KEY' => 're_teste', 'RESEND_API_URL' => "http://127.0.0.1:$portaFalso/emails",
+    'EMAIL_SECRETARIA' => '', 'PAINEL_EMAILS' => 'avisos@exemplo.org', 'SITE_URL' => "http://127.0.0.1:$portaSite", 'RESEND_API_KEY' => 're_teste', 'RESEND_API_URL' => "http://127.0.0.1:$portaFalso/emails",
     'EMAIL_REMETENTE' => 'Cruz Vermelha Brasileira Rio de Janeiro <ponto@info.exemplo.org>', 'EMAIL_CONTATO' => 'contato@exemplo.org',
     'ESCOLA_API_URL' => "http://127.0.0.1:$portaFalso/rest/v1/rpc/matricula_rapida", 'ESCOLA_API_TOKEN' => 'chave-falsa',
     // O teste usa as datas de verdade (hoje, amanhã): sem os feriados embutidos, o resultado não depende do dia.
@@ -318,11 +318,12 @@ $hoje = mcp_ponto_hoje();
 $amanha = mcp_avisos_dia_mais($hoje, 1);
 $ontem = mcp_avisos_dia_mais($hoje, -1);
 $diaAmanha = mcp_avisos_dia_chave($amanha);
-$amanhaUtil = in_array($diaAmanha, MCP_AVISOS_DIAS_UTEIS, true);
-// Um dia útil a partir de depois de amanhã: os avisos da equipe contratada só saem em dia útil, e a
-// véspera dele (às 20h) ainda não passou, seja qual for a hora em que o teste roda.
+// A equipe contratada recebe o lembrete de terça a sexta (a véspera também precisa ser dia útil).
+$amanhaUtil = in_array($diaAmanha, MCP_AVISOS_DIAS_EQUIPE, true);
+// Um dia assim a partir de depois de amanhã: a véspera dele (às 20h) ainda não passou, seja qual for a hora
+// em que o teste roda.
 $util = mcp_avisos_dia_mais($hoje, 2);
-while (!in_array(mcp_avisos_dia_chave($util), MCP_AVISOS_DIAS_UTEIS, true)) {
+while (!in_array(mcp_avisos_dia_chave($util), MCP_AVISOS_DIAS_EQUIPE, true)) {
     $util = mcp_avisos_dia_mais($util, 1);
 }
 
@@ -409,9 +410,14 @@ try {
     // Empregado: o lembrete só sai se foi ele quem escolheu os dias, e só em dia útil (senão pareceria controle de jornada).
     mcp_avisos_preferencias_salvar($e1, ['email' => true, 'whatsapp' => true, 'dias' => [$diaAmanha], 'saida' => true, 'comunicados' => true], 'a própria pessoa', true);
     $e1 = mcp_colaborador_por_id((int) $e1['id']);
-    verificar('véspera: o empregado que escolheu os dias recebe, só em dia útil (' . ($amanhaUtil ? 'amanhã é' : 'amanhã não é') . ' dia útil)',
-        [$e1['aviso_dias_por'], mcp_avisos_preparar_vespera(em($hoje, '09:30')), mcp_avisos_recebe_vespera($e1, $util), mcp_avisos_recebe_vespera($e1, '2026-10-03')],
-        ['a própria pessoa', $amanhaUtil ? 1 : 0, true, false]);
+    verificar('véspera: o empregado que escolheu os dias recebe, só com o dia e a véspera úteis (' . ($amanhaUtil ? 'amanhã vale' : 'amanhã não vale') . '; sábado e segunda, não)',
+        [$e1['aviso_dias_por'], mcp_avisos_preparar_vespera(em($hoje, '09:30')), mcp_avisos_recebe_vespera($e1, $util), mcp_avisos_recebe_vespera($e1, '2026-10-03'), mcp_avisos_recebe_vespera($e1, '2026-10-05')],
+        ['a própria pessoa', $amanhaUtil ? 1 : 0, true, false, false]);
+    // Véspera em dia sem expediente (quarta fechada): o lembrete de quinta não sai para a equipe; o voluntário recebe.
+    $diasFechadosAntes = mcp_ajuste('dias_fechados');
+    mcp_ajuste_gravar('dias_fechados', '2026-10-07', $quem);
+    verificar('véspera: com a véspera fechada, a equipe não recebe; o voluntário sim', [mcp_avisos_recebe_vespera($e1, '2026-10-08'), mcp_avisos_recebe_vespera($v1, '2026-10-08')], [false, true]);
+    mcp_ajuste_gravar('dias_fechados', $diasFechadosAntes, $quem);
     $av = linha_aviso($db, "vespera|{$v1['id']}|$amanha|email");
     verificar('véspera: sai às 18h e vale até as 20h (depois, "amanhã" já estaria errado)', [$av['status'], mcp_data_brt($av['agendado_para'], 'Y-m-d H:i'), mcp_data_brt($av['expira_em'], 'Y-m-d H:i')],
         ['pendente', "$hoje 18:00", "$hoje 20:00"]);
@@ -826,6 +832,17 @@ try {
     $_COOKIE[MCP_PAINEL_COOKIE] = $cookieReal;
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $tokenVelho, 'lembrete_vespera' => '1']);
     verificar('portal: token de formulário de outra sessão não vale', [str_contains($html, '<h1>Entrar</h1>'), $tokenVelho !== $csrf('ajustes_salvar', 0)], [true, true]);
+    // Sessão de um e-mail que saiu de PAINEL_EMAILS cai na hora (não espera as 12 horas).
+    $valorFora = rtrim(strtr(base64_encode((string) json_encode(['u' => 'ex-secretaria@exemplo.org', 'e' => time() + 3600])), '+/', '-_'), '=');
+    $sessaoFora = 'mcp_painel=' . $valorFora . '.' . mcp_painel_assinar("k|$valorFora");
+    [, , $htmlFora] = http($base . 'painel.php?v=comunicacao', 'GET', null, ["Cookie: $sessaoFora"]);
+    // Pedido de link vindo de outro site (formulário escondido numa página qualquer) não gasta o limite do IP.
+    $pedidosAntes = mcp_contar_eventos_recentes('painel_link', '127.0.0.1', 3600);
+    [, , $htmlOutroSite] = http($base . 'painel.php', 'POST', http_build_query(['acao' => 'entrar', 'email' => $quem]),
+        ['Content-Type: application/x-www-form-urlencoded', 'Sec-Fetch-Site: cross-site', 'Origin: https://site-qualquer.example']);
+    verificar('portal: e-mail fora da lista perde a sessão; pedido de link vindo de outro site é recusado sem gastar o limite',
+        [str_contains($htmlFora, '<h1>Entrar</h1>'), str_contains($htmlOutroSite, 'Abra o portal pelo endereço dele'), mcp_contar_eventos_recentes('painel_link', '127.0.0.1', 3600) - $pedidosAntes],
+        [true, true, 0]);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'lembrete_saida' => '1', 'whatsapp_ativo' => '1']);
     mcp_ajustes_todos(true);
     verificar('portal: ajustes (liga e desliga)', [$st, str_ends_with($cab['location'] ?? '', 'ok=aj_ok'), mcp_ajuste('lembrete_vespera'), mcp_ajuste('lembrete_saida'), mcp_ajuste('whatsapp_ativo')], [303, true, '0', '1', '1']);
@@ -1085,10 +1102,30 @@ try {
     verificar('faxina: envio interrompido vira falha (sem mandar de novo)', [mcp_aviso_por_id($idPreso)['status'], mcp_aviso_por_id($idPreso)['erro']], ['falhou', 'envio interrompido; confira antes de mandar de novo']);
     $db->prepare('UPDATE mcp_avisos SET criado_em = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 400 * 86400), $idPreso]);
     $db->prepare('UPDATE mcp_opinioes SET atualizado_em = ? WHERE campanha_id = ? AND pessoa = ?')->execute([gmdate('Y-m-d H:i:s', time() - 400 * 86400), (int) $depois['id'], 'c' . $v2['id']]);
+    $db->prepare("INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES (NULL, 'aviso_telefone', ?, ?), (NULL, 'aviso_telefone', ?, ?)")
+        ->execute(["velho $marca", gmdate('Y-m-d H:i:s', time() - 400 * 86400), "novo $marca", mcp_agora()]);
     verificar('faxina: registro com mais de 1 ano é apagado', [mcp_avisos_apagar_antigos() >= 2, mcp_aviso_por_id($idPreso)], [true, null]);
+    $eventosTelefone = $db->prepare("SELECT detalhe FROM mcp_eventos WHERE tipo = 'aviso_telefone' AND detalhe IN (?, ?)");
+    $eventosTelefone->execute(["velho $marca", "novo $marca"]);
+    verificar('faxina: o registro das escolhas (troca de número etc.) com mais de 1 ano também sai', $eventosTelefone->fetchAll(PDO::FETCH_COLUMN), ["novo $marca"]);
     verificar('faxina: a opinião com mais de 1 ano também (e só ela)', [mcp_opinioes_resultado((int) $depois['id'])['respostas'], mcp_opinioes_resultado((int) $depois['id'])['por_publico']], [1, ['colaborador' => 0, 'aluno' => 1]]);
+    // A opinião é anônima: o portal não mostra quem clicou no comunicado da pesquisa, e os comentários vêm sem data.
+    [, , $htmlDepois] = http($base . 'painel.php?v=comunicado&id=' . (int) $depois['id'], 'GET', null, ["Cookie: $sessaoPortal"]);
+    $comentarioAluno = mcp_opinioes_resultado((int) $depois['id'])['comentarios'][0] ?? [];
+    verificar('opinião anônima: o portal mostra quantos clicaram, e não quem; o comentário vem sem data',
+        [str_contains($htmlDepois, 'o portal mostra quantos clicaram, e não quem'), str_contains($htmlDepois, 'não mostrado'), array_key_exists('quando', $comentarioAluno), isset($comentarioAluno['texto'])],
+        [true, true, false, true]);
+    $idCliqueDepois = (int) $db->query('SELECT id FROM mcp_avisos WHERE campanha_id = ' . (int) $depois['id'] . " AND tipo = 'campanha' ORDER BY id LIMIT 1")->fetchColumn();
+    $db->prepare('UPDATE mcp_avisos SET clicado_em = ? WHERE id = ?')->execute([gmdate('Y-m-d 13:47:12', time() - 35 * 86400), $idCliqueDepois]);
     $db->prepare('UPDATE mcp_campanhas SET iniciada_em = ? WHERE id = ?')->execute([gmdate('Y-m-d H:i:s', time() - 40 * 86400), (int) $depois['id']]);
     mcp_avisos_apagar_antigos();
+    $iniciadaDepois = (string) mcp_campanha((int) $depois['id'])['iniciada_em'];
+    $datasOpiniao = $db->prepare('SELECT DISTINCT criado_em, atualizado_em FROM mcp_opinioes WHERE campanha_id = ?');
+    $datasOpiniao->execute([(int) $depois['id']]);
+    [$stFechada] = api_avisos($base, ['acao' => 'opiniao_ler', 't' => $tokOpiniao]);
+    verificar('faxina: ao fim da pesquisa, a resposta fica com a data do comunicado, o clique só com o dia, e a pesquisa fecha',
+        [$datasOpiniao->fetchAll(), mcp_aviso_por_id($idCliqueDepois)['clicado_em'], $stFechada],
+        [[['criado_em' => $iniciadaDepois, 'atualizado_em' => $iniciadaDepois]], gmdate('Y-m-d 15:00:00', time() - 35 * 86400), 404]);
     $quemRespondeu = $db->prepare('SELECT pessoa FROM mcp_opinioes WHERE campanha_id = ?');
     $quemRespondeu->execute([(int) $depois['id']]);
     verificar('faxina: um mês depois do comunicado, a opinião deixa de ficar ligada a quem respondeu (e continua contando)',

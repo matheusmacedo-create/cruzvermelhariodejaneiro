@@ -30,7 +30,7 @@ if ($configOriginal === '' || !is_file($configOriginal)) {
 $portaSite = 18400 + random_int(0, 499);
 $portaEscola = $portaSite + 500;
 $config = tempnam(sys_get_temp_dir(), 'mcp-ponto-');
-file_put_contents($config, '<?php return [\'EMAIL_SECRETARIA\' => \'\', \'SITE_URL\' => \'http://127.0.0.1:' . $portaSite . '\', '
+file_put_contents($config, '<?php return [\'EMAIL_SECRETARIA\' => \'\', \'PAINEL_EMAILS\' => \'ponto@exemplo.org\', \'SITE_URL\' => \'http://127.0.0.1:' . $portaSite . '\', '
     . '\'ESCOLA_API_URL\' => \'http://127.0.0.1:' . $portaEscola . '/rest/v1/rpc/matricula_rapida\', \'ESCOLA_API_TOKEN\' => \'chave-falsa\'] + (require '
     . var_export($configOriginal, true) . ');');
 $semEscola = tempnam(sys_get_temp_dir(), 'mcp-ponto-escola-');
@@ -111,7 +111,7 @@ function limpar(PDO $db): void
     }
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Ponto %'");
-    $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'conferir') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
+    $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'conferir', 'ponto_rede_sede') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
         OR tipo = 'escola_fora' OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
         AND detalhe LIKE '%ponto@exemplo.org%'");
 }
@@ -314,9 +314,10 @@ try {
     verificar('celular: localização imprecisa é recusada', [$st, str_contains((string) ($d['erro'] ?? ''), 'imprecisa')], [403, true]);
     [$st, $d, $cab] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfColaborador, 'posicao' => $pertoDaSede, 'lembrar' => true]);
     $valorPessoa = cookie_de($cab, 'mcp_ponto_pessoa');
-    // Horas de hoje: as 2 h da primeira entrada (menos, se o teste rodar logo depois da meia-noite).
-    verificar('celular: na sede identifica e lembra o CPF cifrado', [$st, $d['colaborador']['hoje'] ?? null, $valorPessoa !== null && $valorPessoa !== '' && !str_contains($valorPessoa, $cpfColaborador)],
-        [200, mcp_ponto_resumo(mcp_colaborador_por_id($colId))['hoje'], true]);
+    // No celular, a única prova é o CPF: a tela não mostra horas do mês, horário de entrada nem termo pendente.
+    verificar('celular: na sede identifica e lembra o CPF cifrado, sem horas, horário nem termo na resposta', [$st, $d['colaborador']['hoje'] ?? null, $d['colaborador']['mes'] ?? null,
+        $d['colaborador']['desde'] ?? null, $d['colaborador']['termo_pendente'] ?? null, $d['colaborador']['horas'] ?? null, $valorPessoa !== null && $valorPessoa !== '' && !str_contains($valorPessoa, $cpfColaborador)],
+        [200, null, null, null, false, true, true]);
     [$st, $d] = ponto($base, ['acao' => 'entrada', 'sessao' => (string) $d['sessao']]);
     $registro = $db->query("SELECT * FROM mcp_ponto WHERE colaborador_id = $colId ORDER BY id DESC LIMIT 1")->fetch();
     verificar('celular: entrada com a distância e sem aparelho', [$st, $registro['origem_entrada'], $registro['aparelho_entrada'], (int) $registro['distancia_entrada'] < 60], [200, 'celular', null, true]);
@@ -325,6 +326,19 @@ try {
     verificar('celular: lembra da pessoa com o CPF mascarado', json_decode($corpo, true)['lembrado'] ?? null, mcp_cpf_mascarado($cpfColaborador));
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'posicao' => $pertoDaSede], [$cPessoa]);
     verificar('celular: pessoa lembrada entra sem digitar o CPF, e já está na sede', [$st, $d['colaborador']['na_sede'] ?? null], [200, true]);
+    // "Estou saindo agora" pelo celular numa entrada de outro dia: vira saída informada, que a secretaria confere
+    // (de longe, com o CPF de outra pessoa, não se lançam horas). Entrada de hoje não entra nessa regra.
+    $colNoite = mcp_colaborador_salvar(null, ['nome' => "Noite Voluntária $marca", 'cpf' => cpf_de_teste(), 'email' => null, 'telefone' => null, 'funcao' => null, 'vinculo' => 'voluntario', 'ativo' => 1], 'teste');
+    $ontemNoite = mcp_avisos_dia_mais($hoje, -1);
+    $db->prepare("INSERT INTO mcp_ponto (colaborador_id, voluntario, entrada, origem_entrada, criado_em, atualizado_em) VALUES (?, 1, ?, 'celular', ?, ?)")
+        ->execute([$colNoite, mcp_ponto_local_para_utc("$ontemNoite 22:00:00"), mcp_agora(), mcp_agora()]);
+    $idNoite = (int) $db->lastInsertId();
+    $agoraNoite = (int) strtotime(mcp_ponto_local_para_utc("$hoje 06:30:00") . ' UTC');
+    $saidaNoite = mcp_ponto_saida_outro_dia(mcp_colaborador_por_id($colNoite), $agoraNoite);
+    $registroNoite = mcp_ponto_registro($idNoite);
+    verificar('celular: saída de uma entrada de outro dia vira saída informada (a secretaria confere); entrada de hoje não',
+        [$saidaNoite, $registroNoite['saida'], mcp_data_brt((string) $registroNoite['saida_informada'], 'Y-m-d H:i'), mcp_ponto_saida_outro_dia(mcp_colaborador_por_id($colId), time())],
+        [['hora' => '06:30'], null, "$hoje 06:30", null]);
     [$st, , $cab] = ponto($base, ['acao' => 'esquecer'], [$cPessoa]);
     // O PHP apaga o cookie mandando o valor "deleted" com validade no passado.
     verificar('celular: esquecer apaga o cookie', [$st, cookie_de($cab, 'mcp_ponto_pessoa'), str_contains(implode(' ', $cab['set-cookie']), 'expires=Thu, 01 Jan 1970')], [200, 'deleted', true]);
@@ -342,7 +356,7 @@ try {
     $sessaoAluna = (string) $d['sessao'];
     [$st, $d] = ponto($base, ['acao' => 'presenca', 'sessao' => $sessaoAluna, 'aula' => "dia-$sufixo"]);
     verificar('presença: registrada no aparelho, sem link pessoal na tela', [$st, $d['nova'] ?? null, $d['curso'] ?? null, campo($d, 'link'), $d['email'] ?? null, str_starts_with((string) ($d['mensagem'] ?? ''), 'Presença registrada às ')],
-        [200, true, 'Bombeiro Civil', null, 'a***@exemplo.org', true]);
+        [200, true, 'Bombeiro Civil', 'ausente', 'a***@exemplo.org', true]);
     [$st, $d] = ponto($base, ['acao' => 'presenca', 'sessao' => $sessaoAluna, 'aula' => "dia-$sufixo"]);
     verificar('presença: de novo não duplica', [$st, $d['nova'] ?? null, (int) $db->query('SELECT COUNT(*) FROM mcp_presencas WHERE cpf = ' . $db->quote($cpfAluna))->fetchColumn()], [200, false, 1]);
     [$st, $d] = ponto($base, ['acao' => 'presenca', 'sessao' => $sessaoAluna, 'aula' => "cedo-$sufixo"]);
@@ -395,10 +409,12 @@ try {
     verificar('e-mail do comprovante: assunto, link e código', [$email['assunto'], str_contains($email['html'], mcp_presenca_link($presenca)), str_contains($email['texto'], mcp_codigo_formatado((string) $presenca['codigo']))],
         ['Seu comprovante de comparecimento: Bombeiro Civil, ' . mcp_escola_data($hoje), true, true]);
 
-    // Presença pelo celular: o link pessoal aparece na tela.
+    // Presença pelo celular: o comprovante vai por e-mail; a tela não mostra o link pessoal (quem sabe o CPF de
+    // outra pessoa não chega ao nome completo dela nem ao PDF).
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAlunoCelular, 'posicao' => $pertoDaSede]);
     [$st, $d] = ponto($base, ['acao' => 'presenca', 'sessao' => (string) $d['sessao'], 'aula' => "cel-$sufixo"]);
-    verificar('presença pelo celular: com o link do comprovante', [$st, str_contains((string) ($d['link'] ?? ''), '/matricula-cursos-presenciais/comparecimento/?t=')], [200, true]);
+    verificar('presença pelo celular: sem o link do comprovante na tela (vai por e-mail)', [$st, campo($d, 'link'), str_starts_with((string) ($d['mensagem'] ?? ''), 'Presença registrada às ')],
+        [200, 'ausente', true]);
     verificar('presença pelo celular: origem e distância', $db->query('SELECT origem, distancia < 60 AS perto FROM mcp_presencas WHERE cpf = ' . $db->quote($cpfAlunoCelular))->fetch(),
         ['origem' => 'celular', 'perto' => 1]);
 
@@ -589,14 +605,19 @@ try {
         ->execute(array_fill(0, 15, mcp_agora()));
     verificar('Wi-Fi da sede: a 16ª consulta certa do mesmo IP passa', ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede])[0], 200);
     $cpfNinguem = cpf_de_teste();
-    // Os CPFs errados dos testes de antes também contam: começa do zero.
-    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'ponto_consulta_falha' AND detalhe = '127.0.0.1'");
+    // Os CPFs errados dos testes de antes também contam: começa do zero. E longe da rede da sede: o tablet dos
+    // testes fala do mesmo IP (127.0.0.1), que por isso ficou marcado como a rede da sede.
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('ponto_consulta_falha', 'ponto_rede_sede') AND detalhe = '127.0.0.1'");
     for ($i = 0; $i < 9; $i++) {
         ponto($base, ['acao' => 'identificar', 'cpf' => $cpfNinguem, 'posicao' => $pertoDaSede]);
     }
     [$st404] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfNinguem, 'posicao' => $pertoDaSede]);
     [$st429, $r429] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfAluna, 'posicao' => $pertoDaSede]);
     verificar('limite de consultas pelo celular: 10 CPFs não encontrados param o IP', [$st404, $st429, str_contains($r429['erro'] ?? '', 'sem encontrar o CPF')], [404, 429, true]);
+    // Na rede da sede (o IP de onde o tablet fala), o limite é maior: uma turma chegando não trava todos os celulares.
+    mcp_registrar(null, 'ponto_rede_sede', '127.0.0.1');
+    verificar('rede da sede: com o IP do tablet, o 11º CPF não encontrado ainda é respondido (limite 4 vezes maior)',
+        [ponto($base, ['acao' => 'identificar', 'cpf' => $cpfNinguem, 'posicao' => $pertoDaSede])[0], mcp_ponto_rede_da_sede()], [404, false]);
 
     $erros = array_values(array_filter(file($logErros) ?: [], static fn(string $l): bool => (bool) preg_match('/PHP (Warning|Notice|Deprecated|Fatal|Parse)/', $l)));
     verificar('sem aviso nem erro do PHP no servidor', $erros, []);

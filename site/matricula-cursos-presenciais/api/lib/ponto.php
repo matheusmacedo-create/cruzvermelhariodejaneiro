@@ -49,6 +49,8 @@ const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celul
 const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [120, 600]];
 /** No celular, CPFs inválidos ou não cadastrados a cada 10 minutos por IP, antes de parar. */
 const MCP_PONTO_LIMITE_FALHAS = 10;
+/** Na rede da sede (o IP do tablet), os limites do celular valem vezes este fator: todo o prédio sai por um IP. */
+const MCP_PONTO_FATOR_REDE_SEDE = 4;
 const MCP_PONTO_FUSO = 'America/Sao_Paulo';
 const MCP_PONTO_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const MCP_PONTO_VINCULOS = [
@@ -296,6 +298,19 @@ function mcp_ponto_aparelho_liberar(int $id): void
 function mcp_ponto_aparelho_usado(int $id): void
 {
     mcp_db()->prepare('UPDATE mcp_ponto_aparelhos SET usado_em = ? WHERE id = ?')->execute([mcp_agora(), $id]);
+    // O IP de onde o tablet da recepção fala é o da rede da sede (mcp_ponto_rede_da_sede): uma marca a cada hora.
+    if (mcp_contar_eventos_recentes('ponto_rede_sede', mcp_ip_balde(), 3600) === 0) {
+        mcp_registrar(null, 'ponto_rede_sede', mcp_ip_balde());
+    }
+}
+
+/**
+ * O pedido vem da rede da sede (o mesmo IP do tablet da recepção nas últimas 24 horas)? Todos os celulares no
+ * Wi-Fi saem por esse IP: o freio de CPF errado ali é mais largo, para uma turma chegando não travar todo mundo.
+ */
+function mcp_ponto_rede_da_sede(): bool
+{
+    return mcp_contar_eventos_recentes('ponto_rede_sede', mcp_ip_balde(), 86400) > 0;
 }
 
 function mcp_ponto_aparelho_desativar(int $id): void
