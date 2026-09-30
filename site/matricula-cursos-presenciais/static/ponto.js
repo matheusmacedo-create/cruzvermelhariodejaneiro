@@ -14,6 +14,8 @@
   var estado = { modo: null, aparelho: null, lembrado: null, outroCpf: false, sessao: null, cpfDigitado: '' };
   var relogios = [];
   var teclado = null;      // função que recebe as teclas físicas quando o teclado da tela está aberto
+  var instalar = null;     // pedido de instalação do Chrome (ponto na tela inicial do celular)
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); instalar = e; });
 
   // ---------------------------------------------------------------- utilidades
   function esc(s) {
@@ -191,20 +193,55 @@
     }, function (msg) { inicio(msg); return false; });
   }
 
+  /* Formulário "a que horas você saiu?" de um registro sem saída (voluntário). */
+  function formSaida(id, rotulo) {
+    return '<form class="pt-saida" data-registro="' + esc(id) + '" novalidate>'
+      + '<label class="pt-campo"><span>' + esc(rotulo) + '</span><input type="time" name="hora" required step="60"></label>'
+      + '<label class="pt-check"><input type="checkbox" name="dia_seguinte"> Saí depois da meia-noite</label>'
+      + '<button class="pt-btn pt-btn-sec" type="submit">Informar a hora da saída</button></form>';
+  }
+
   function telaPessoa(d) {
     limparRelogios();
     var html = '<h1>Olá, ' + esc(d.nome) + '!</h1>';
+    if (d.confirmacao) html += '<p class="pt-aviso ok" role="status">' + esc(d.confirmacao) + '</p>';
+    // Avisos dos comunicados no ar (no celular, com o link; no aparelho da sede, só o texto).
+    (d.avisos || []).forEach(function (a) {
+      html += '<p class="pt-aviso">' + esc(a.texto)
+        + (a.link ? ' <a href="' + esc(a.link) + '" target="_blank" rel="noopener">' + esc(a.rotulo || 'Abrir') + '</a>' : '') + '</p>';
+    });
     if (d.colaborador) {
       // Voluntários e diretoria veem as horas doadas; os outros vínculos registram só a presença.
       var c = d.colaborador;
-      html += '<section class="pt-bloco"><h2>' + (c.horas ? 'Horas doadas' : 'Presença na sede') + '</h2>'
-        + (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + (c.horas ? ' · ' + esc(c.agora) + ' até agora' : '') + '</p>'
-          : '<p class="pt-status">Sem entrada registrada agora.</p>')
-        + '<button type="button" class="pt-btn' + (c.na_sede ? ' pt-btn-saida' : '') + '" data-acao="' + (c.na_sede ? 'saida' : 'entrada') + '">'
-        + (c.na_sede ? 'Registrar saída' : 'Registrar entrada') + '</button>'
-        + (c.horas ? '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p>' : '')
+      html += '<section class="pt-bloco"><h2>' + (c.horas ? 'Horas doadas' : 'Presença na sede') + '</h2>';
+      if (c.na_sede && c.desde_dia) {
+        // Entrada aberta de outro dia: plantão que virou a noite ou saída esquecida.
+        html += '<p class="pt-status erro">Entrada registrada ' + esc(c.desde_dia) + ' às ' + esc(c.desde) + ', sem saída.</p>'
+          + '<button type="button" class="pt-btn pt-btn-saida" data-acao="saida">Estou saindo agora</button>'
+          + (c.aberto_id ? '<details class="pt-detalhe"><summary>Saí ' + esc(c.desde_dia) + ': informar o horário</summary>'
+            + formSaida(c.aberto_id, 'A que horas você saiu ' + c.desde_dia + '?') + '</details>' : '');
+      } else {
+        html += (c.na_sede ? '<p class="pt-status ok">Na sede desde ' + esc(c.desde) + (c.horas ? ' · ' + esc(c.agora) + ' até agora' : '') + '</p>'
+            : '<p class="pt-status">Sem entrada registrada agora.</p>')
+          + '<button type="button" class="pt-btn' + (c.na_sede ? ' pt-btn-saida' : '') + '" data-acao="' + (c.na_sede ? 'saida' : 'entrada') + '">'
+          + (c.na_sede ? 'Registrar saída' : 'Registrar entrada') + '</button>';
+      }
+      html += (c.horas ? '<p class="pt-horas">Horas registradas hoje: <b>' + esc(c.hoje) + '</b> · em ' + esc(c.mes_nome) + ': <b>' + esc(c.mes) + '</b></p>' : '')
         + (c.termo_pendente ? '<p class="pt-nota">Seu termo de adesão ao voluntariado ainda não foi registrado. Fale com a secretaria.</p>' : '')
         + '</section>';
+      // Saídas esquecidas de dias anteriores: a pessoa informa o horário ali mesmo; a secretaria confere.
+      (d.pendencias || []).forEach(function (p) {
+        html += '<section class="pt-bloco pt-pendencia"><h2>Saída sem registro</h2>';
+        if (p.informada) {
+          html += '<p class="pt-status">' + esc(p.quando.charAt(0).toUpperCase() + p.quando.slice(1)) + ' você entrou às ' + esc(p.entrada)
+            + ' e informou a saída às <b>' + esc(p.informada) + '</b>. A secretaria vai conferir.</p>';
+        } else {
+          html += '<p class="pt-status">' + esc(p.quando.charAt(0).toUpperCase() + p.quando.slice(1)) + ' você registrou a entrada às ' + esc(p.entrada)
+            + ' e a saída ficou sem registro. Sem ela, as horas desse dia não contam.</p>'
+            + formSaida(p.id, 'A que horas você saiu?');
+        }
+        html += '</section>';
+      });
     }
     (d.aulas || []).forEach(function (a) {
       html += '<section class="pt-bloco"><h2>Aula de hoje</h2>'
@@ -215,14 +252,44 @@
       else html += '<p class="pt-status">' + esc(a.motivo) + '</p>';
       html += '</section>';
     });
-    if (d.escola_indisponivel) html += '<p class="pt-nota">Não conseguimos consultar as aulas na escola agora. Se você é aluno, tente de novo em instantes.</p>';
+    // Só interessa a quem pode ser aluno: para o colaborador, a nota sobre a escola seria ruído.
+    if (d.escola_indisponivel && !d.colaborador) html += '<p class="pt-nota">Não conseguimos consultar as aulas na escola agora. Se você é aluno, tente de novo em instantes.</p>';
     html += '<button type="button" class="pt-link" id="pt-voltar">' + (estado.modo === 'aparelho' ? 'Não é você? Voltar' : 'Voltar') + '</button>';
     tela.innerHTML = html;
     tela.querySelectorAll('[data-acao]').forEach(function (b) {
       b.addEventListener('click', function () { registrar(b.getAttribute('data-acao'), b.getAttribute('data-aula')); });
     });
+    tela.querySelectorAll('form.pt-saida').forEach(function (f) {
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var hora = f.querySelector('[name=hora]').value;
+        if (!/^\d{2}:\d{2}$/.test(hora)) { f.querySelector('[name=hora]').focus(); return; }
+        informarSaida(d, f.getAttribute('data-registro'), hora, f.querySelector('[name=dia_seguinte]').checked, f);
+      });
+    });
     q('#pt-voltar').addEventListener('click', function () { inicio(); });
     if (estado.modo === 'aparelho') depois(VOLTA_PARADO, function () { inicio(); });
+  }
+
+  /* Manda a hora da saída esquecida e volta à tela da pessoa, já atualizada. */
+  function informarSaida(d, registro, hora, diaSeguinte, form) {
+    limparRelogios();
+    form.querySelectorAll('button, input').forEach(function (el) { el.disabled = true; });
+    var antigo = form.querySelector('.pt-erro');
+    if (antigo) antigo.remove();
+    api({ acao: 'informar_saida', sessao: estado.sessao, registro: Number(registro), hora: hora, dia_seguinte: diaSeguinte }).then(function (r) {
+      if (!r.ok) {
+        if (r.motivo === 'sessao') { telaAviso(r.erro, true); return; }
+        form.querySelectorAll('button, input').forEach(function (el) { el.disabled = false; });
+        form.insertAdjacentHTML('afterbegin', erroHtml(r.erro));
+        if (estado.modo === 'aparelho') depois(VOLTA_PARADO, function () { inicio(); });
+        return;
+      }
+      d.colaborador = r.colaborador;
+      d.pendencias = r.pendencias;
+      d.confirmacao = r.mensagem + ' A secretaria confere e as horas desse dia entram na sua conta.';
+      telaPessoa(d);
+    });
   }
 
   function registrar(acao, aula) {
@@ -257,8 +324,10 @@
     }
     html += '<button type="button" class="pt-btn" id="pt-fim">Concluir</button>';
     if (estado.modo === 'aparelho') html += '<p class="pt-nota" id="pt-contagem" aria-live="off"></p>';
+    else html += dicaApp();
     tela.innerHTML = html + '</div>';
     q('#pt-fim').addEventListener('click', function () { inicio(); });
+    ligarDicaApp();
     if (estado.modo === 'aparelho') {
       var resta = VOLTA_SUCESSO;
       var contagem = q('#pt-contagem');
@@ -268,6 +337,26 @@
         depois(1, tique);
       })();
     }
+  }
+
+  /* Dica, no celular, de pôr o ponto na tela inicial (até 3 vezes, e nunca dentro do app instalado). */
+  function lerDica() { try { return Number(localStorage.getItem('pt_dica_app') || 0); } catch (e) { return 9; } }
+  function gravarDica(n) { try { localStorage.setItem('pt_dica_app', String(n)); } catch (e) { /* sem armazenamento: tudo bem */ } }
+  function dicaApp() {
+    var instalado = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    if (instalado || lerDica() >= 3) return '';
+    gravarDica(lerDica() + 1);
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    return '<div class="pt-aviso pt-app"><b>Da próxima vez, um toque:</b> '
+      + (instalar ? 'ponha o ponto na tela inicial do celular. <button type="button" class="pt-link" id="pt-instalar">Adicionar à tela inicial</button>'
+        : (ios ? 'no Safari, toque em Compartilhar e depois em <b>Adicionar à Tela de Início</b>.' : 'no menu do navegador (⋮), toque em <b>Adicionar à tela inicial</b>.'))
+      + ' <button type="button" class="pt-link" id="pt-dica-nao">Não mostrar de novo</button></div>';
+  }
+  function ligarDicaApp() {
+    var b = q('#pt-instalar');
+    if (b) b.addEventListener('click', function () { instalar.prompt(); instalar = null; b.remove(); });
+    var nao = q('#pt-dica-nao');
+    if (nao) nao.addEventListener('click', function () { gravarDica(9); var d = q('.pt-app'); if (d) d.remove(); });
   }
 
   // Teclado físico no aparelho da sede (números, apagar e Enter).

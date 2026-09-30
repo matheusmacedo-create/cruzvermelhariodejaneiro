@@ -824,12 +824,13 @@ function mcp_avisos_preparar_aulas(?int $agora = null): int
         if ($pessoa === 'a') {
             continue;
         }
-        $dados = ['data' => $amanha, 'aulas' => $aluno['aulas'], 'whatsapp_hash' => $numero !== null ? mcp_avisos_hash('whatsapp', $numero) : ''];
+        // O e-mail vai nos dados para os Resultados saberem se o aluno confirmou presença no dia (mcp_presencas).
+        $dados = ['data' => $amanha, 'aulas' => $aluno['aulas'], 'email' => $email, 'whatsapp_hash' => $numero !== null ? mcp_avisos_hash('whatsapp', $numero) : ''];
         $canais = [];
         if ($email !== '' && !mcp_avisos_bloqueado('email', $email)) {
             $canais['email'] = $email;
         }
-        if ($numero !== null && mcp_whatsapp_ativo() && !mcp_avisos_bloqueado('whatsapp', $numero)) {
+        if ($numero !== null && mcp_whatsapp_ativo() && mcp_ajuste_ligado('aula_whatsapp') && !mcp_avisos_bloqueado('whatsapp', $numero)) {
             $canais['whatsapp'] = $numero;
         }
         foreach ($canais as $canal => $destino) {

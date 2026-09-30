@@ -175,6 +175,10 @@ PAGINA_PONTO = """<!DOCTYPE html>
   <meta name="theme-color" content="#cc0000">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="manifest" href="/matricula-cursos-presenciais/ponto/manifest.json">
+  <link rel="apple-touch-icon" href="/matricula-cursos-presenciais/ponto/icone-192.png">
+  <meta name="apple-mobile-web-app-title" content="Ponto CVB-RJ">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Ponto da sede | Cruz Vermelha Brasileira Rio de Janeiro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,6 +203,89 @@ PAGINA_PONTO = """<!DOCTYPE html>
 </body>
 </html>
 """
+
+# Páginas pessoais dos avisos do ponto (30/09/2026): lembretes, saída sem registro, opinião e "não quero
+# mais receber". Mesmo visual do ponto; o conteúdo vem de static/avisos.js com o token do link.
+PAGINA_AVISO = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#cc0000">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>@@TITULO@@ | Cruz Vermelha Brasileira Rio de Janeiro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="@@CSS_URL@@">
+  <script src="@@JS_URL@@" defer></script>
+</head>
+<body data-pagina="@@PAGINA@@">
+  <div class="pt-faixa"></div>
+  <header class="pt-topo">
+    <a href="/"><img src="/assets/otim/logo-cvb-rj-480.png" alt="Cruz Vermelha Brasileira · Rio de Janeiro" width="160" height="48"></a>
+    <div class="pt-titulo"><b>@@CABECALHO@@</b><small>@@SUBTITULO@@</small></div>
+  </header>
+  <main class="pt-main">
+    <section class="pt-card" id="av-tela" aria-live="polite"><p>Carregando…</p></section>
+    <noscript><p class="pt-card">Esta página precisa de JavaScript. Ative o JavaScript ou fale com a secretaria.</p></noscript>
+  </main>
+  <footer class="pt-rodape">
+    <p>@@RODAPE@@ <a href="/privacidade/">Privacidade</a></p>
+  </footer>
+</body>
+</html>
+"""
+AVISOS_PAGINAS = {
+    "lembretes": ("Seus lembretes", "Ponto da sede", "Seus lembretes",
+                  "Os lembretes servem para você não esquecer de registrar a chegada e a saída. Você muda ou para quando quiser."),
+    "saida": ("Saída sem registro", "Ponto da sede", "Saída sem registro",
+              "A secretaria confere o horário informado antes de ele entrar nas suas horas doadas."),
+    "opiniao": ("Sua opinião sobre o ponto", "Ponto da sede", "Sua opinião",
+                "A secretaria vê as respostas sem o seu nome, a não ser que você autorize o contato."),
+    "sair": ("Não receber mais avisos", "Escola de Educação e Saúde", "Avisos por e-mail e WhatsApp",
+             "Os e-mails da matrícula e o comprovante de comparecimento continuam chegando."),
+}
+# Instalar o ponto no celular como um aplicativo (tela inicial). O ícone é o do site (cruz vermelha em fundo branco).
+MANIFESTO_PONTO = {
+    "name": "Ponto da sede · Cruz Vermelha Brasileira RJ",
+    "short_name": "Ponto CVB-RJ",
+    "description": "Registre a chegada e a saída na sede da Cruz Vermelha Brasileira Rio de Janeiro.",
+    "start_url": "/matricula-cursos-presenciais/ponto/?origem=app",
+    "scope": "/matricula-cursos-presenciais/ponto/",
+    "display": "standalone",
+    "background_color": "#f5f6f8",
+    "theme_color": "#cc0000",
+    "lang": "pt-BR",
+    "icons": [
+        {"src": "/matricula-cursos-presenciais/ponto/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+        {"src": "/matricula-cursos-presenciais/ponto/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+        {"src": "/matricula-cursos-presenciais/ponto/icone-512-mascara.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    ],
+}
+
+
+def gravar_icones_ponto(pasta: Path) -> None:
+    """Ícones do ponto instalado no celular: a cruz do favicon.svg desenhada em PNG (192 e 512 px, e o de máscara com margem)."""
+    from PIL import Image, ImageDraw
+    for tamanho, nome, escala, arredondar in ((192, "icone-192.png", 1.0, True), (512, "icone-512.png", 1.0, True), (512, "icone-512-mascara.png", 0.72, False)):
+        fator = 4  # desenha grande e reduz, para as bordas ficarem lisas
+        t = tamanho * fator
+        img = Image.new("RGBA", (t, t), (255, 255, 255, 0 if arredondar else 255))
+        d = ImageDraw.Draw(img)
+        if arredondar:
+            d.rounded_rectangle([0, 0, t - 1, t - 1], radius=int(t * 12 / 64), fill=(255, 255, 255, 255))
+        # Cruz do favicon.svg (viewBox 64): braços de 16 de largura, de 8 a 56.
+        u = t / 64 * escala
+        c = t / 2
+        braco, meia = 16 * u, 24 * u
+        d.rectangle([c - braco / 2, c - meia, c + braco / 2, c + meia], fill=(237, 27, 46, 255))
+        d.rectangle([c - meia, c - braco / 2, c + meia, c + braco / 2], fill=(237, 27, 46, 255))
+        img.resize((tamanho, tamanho), Image.LANCZOS).save(pasta / nome, optimize=True)
+
 
 # Cartaz A4 para imprimir e colar na recepção: o QR code abre o ponto no celular.
 PAGINA_CARTAZ = """<!DOCTYPE html>
@@ -381,10 +468,18 @@ def main() -> int:
         PASTA / "ponto" / "index.html": PAGINA_PONTO.replace("@@CSS_URL@@", url_estatico("ponto.css")).replace("@@JS_URL@@", url_estatico("ponto.js")),
         PASTA / "ponto" / "cartaz" / "index.html": PAGINA_CARTAZ.replace("@@URL_VISIVEL@@", URL_PONTO.replace("https://", "").rstrip("/")).replace("@@URL@@", URL_PONTO),
     }
+    for uso, (titulo, cabecalho, subtitulo, rodape) in AVISOS_PAGINAS.items():
+        ponto[PASTA / "ponto" / uso / "index.html"] = (PAGINA_AVISO
+            .replace("@@CSS_URL@@", url_estatico("ponto.css")).replace("@@JS_URL@@", url_estatico("avisos.js"))
+            .replace("@@TITULO@@", esc(titulo)).replace("@@PAGINA@@", uso).replace("@@CABECALHO@@", esc(cabecalho))
+            .replace("@@SUBTITULO@@", esc(subtitulo)).replace("@@RODAPE@@", esc(rodape)))
+    ponto[PASTA / "ponto" / "manifest.json"] = json.dumps(MANIFESTO_PONTO, ensure_ascii=False, indent=2) + "\n"
     for destino, html in ponto.items():
         destino.parent.mkdir(parents=True, exist_ok=True)
         destino.write_text(html, encoding="utf-8")
         print(f"gravado {destino.relative_to(RAIZ)} ({len(html.encode('utf-8'))} bytes)")
+    gravar_icones_ponto(PASTA / "ponto")
+    print("gravados os ícones do ponto (192, 512 e 512 de máscara)")
     return 0
 
 

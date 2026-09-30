@@ -469,7 +469,7 @@ try {
     $db->prepare("INSERT INTO mcp_ponto (colaborador_id, entrada, origem_entrada, criado_em, atualizado_em) VALUES (?, ?, 'aparelho', ?, ?)")
         ->execute([$colId, gmdate('Y-m-d H:i:s', time() - 20 * 3600), mcp_agora(), mcp_agora()]);
     [, , $html] = http($base . 'painel.php?v=ponto', 'GET', null, ["Cookie: $sessaoPortal"]);
-    verificar('saída esquecida: número no menu e selo na lista', [(bool) preg_match('~<span>Ponto da sede</span><span class="badge" title="[1-9]\d* pendências \(saídas esquecidas e termos de adesão\)">~', $html), str_contains($html, 'saída esquecida')], [true, true]);
+    verificar('saída esquecida: número no menu e selo na lista', [(bool) preg_match('~<span>Ponto da sede</span><span class="badge" title="[1-9]\d* pendências \(saídas esquecidas, saídas informadas para conferir e termos de adesão\)">~', $html), str_contains($html, 'saída esquecida')], [true, true]);
     verificar('termo pendente: número no quadro e selo na lista', [(bool) preg_match('~<b>[1-9]\d*</b><span>Termos pendentes</span>~', $html), str_contains($html, '<span class="selo alerta">Termo pendente</span>')], [true, true]);
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfColaborador], [$cAparelho]);
     verificar('saída esquecida: a pessoa não conta como na sede e pode entrar de novo', [$d['colaborador']['na_sede'] ?? null, ponto($base, ['acao' => 'entrada', 'sessao' => (string) $d['sessao']])[0]], [false, 200]);

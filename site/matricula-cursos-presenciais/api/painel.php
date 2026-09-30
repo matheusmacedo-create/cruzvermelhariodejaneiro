@@ -7,9 +7,11 @@
  *   - Horários dos alunos (?v=horarios): mapa por curso, lista e planilha (lib/horarios.php);
  *   - Mensagens do chat (?v=mensagens): lista, detalhe e resposta por e-mail no padrão da instituição;
  *   - Ponto da sede (?v=ponto): horas doadas por voluntários e diretoria e presença dos outros vínculos,
- *     com a ficha de cada um (?v=colaborador&id=): termo de adesão, correções e declaração de horas;
- *     presença dos alunos nas aulas; aparelhos da recepção e o cartaz do QR code (lib/ponto.php e
- *     lib/presenca.php);
+ *     com a ficha de cada um (?v=colaborador&id=): termo de adesão, correções, declaração de horas e
+ *     lembretes; saídas informadas pelas pessoas; importar a planilha (?v=importar); presença dos alunos
+ *     nas aulas; aparelhos da recepção e o cartaz do QR code (lib/ponto.php e lib/presenca.php);
+ *   - Comunicação (?v=comunicacao): lembretes, comunicados das três fases da implantação, fila do
+ *     WhatsApp, envios e resultados (lib/painel_comunicacao.php, lib/avisos.php, lib/comunicacao.php);
  *   - Plataforma da escola: link externo.
  *
  * Acesso (lib/painel.php): pelo link assinado que vai no aviso à equipe (abre só aquele contato) ou por
@@ -19,6 +21,7 @@
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
+require __DIR__ . '/lib/painel_comunicacao.php';
 
 const MCP_PAINEL_LIMITE_LINKS = [5, 3600];
 const MCP_PAINEL_RESPOSTA_MIN = 5;
@@ -32,6 +35,7 @@ const PN_ICONES = [
     'horarios' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
     'mensagens' => '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
     'ponto' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    'comunicacao' => '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
     'escola' => '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 ];
 
@@ -78,7 +82,9 @@ function pn_menu(string $aba): string
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
         'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
-        'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar(), 'pendências (saídas esquecidas e termos de adesão)'],
+        'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar() + mcp_ponto_saidas_informadas_contar(),
+            'pendências (saídas esquecidas, saídas informadas para conferir e termos de adesão)'],
+        'comunicacao' => ['painel.php?v=comunicacao', 'Comunicação', mcp_avisos_fila_manual_contar(), 'mensagens na fila do WhatsApp'],
     ];
     $html = '';
     foreach ($itens as $chave => [$href, $rotulo, $n, $explica]) {
@@ -176,7 +182,7 @@ input:focus,textarea:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4p
 background:linear-gradient(90deg,#fff 30%,rgba(255,255,255,0)) 0 0/28px 100% no-repeat local,linear-gradient(270deg,#fff 30%,rgba(255,255,255,0)) 100% 0/28px 100% no-repeat local,
 radial-gradient(farthest-side at 0 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 0 0/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 100% 0/12px 100% no-repeat scroll #fff}
 .menu .wrap::-webkit-scrollbar{display:none}
-.menu a{position:relative;display:inline-flex;align-items:center;gap:8px;padding:12px 12px 11px;font-weight:700;font-size:.9rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
+.menu a{position:relative;display:inline-flex;align-items:center;gap:7px;padding:12px 9px 11px;font-weight:700;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;white-space:nowrap}
 .menu a:hover{color:var(--black)}.menu a[aria-current]{color:var(--red);border-bottom-color:var(--red)}
 .menu .ico{width:18px;height:18px;flex-shrink:0}.menu .externo{margin-left:auto}
 .badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--red);color:#fff;font-size:.72rem;font-weight:800;line-height:1}
@@ -251,6 +257,34 @@ select.campo{width:100%;font:inherit;font-size:.98rem;padding:11px 14px;border:1
 select.campo:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(204,0,0,.12)}
 h2 small{font-weight:600;font-size:.8rem;color:var(--muted);margin-left:6px}
 .cartao.termo.pendente{border-left:4px solid #b45309}.cartao.termo.ok{border-left:4px solid #0f7b3e}
+.pc-mini{min-height:36px;padding:6px 14px;font-size:.86rem}
+.pc-check{align-items:flex-start;margin:0 0 12px}.pc-check input{margin-top:3px;flex-shrink:0}.pc-check span>b{display:block;font-weight:700}.pc-check span small{display:block;color:var(--muted);font-weight:500;font-size:.84rem}
+.pc-canais{display:flex;flex-wrap:wrap;gap:6px 16px}.pc-canais .check{margin:6px 0}
+.pc-fases{list-style:none;margin:0 0 14px;padding:0;counter-reset:fase}.pc-fase{position:relative;padding:0 0 12px 34px;counter-increment:fase}
+.pc-fase:before{content:counter(fase);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+.pc-fase>b{display:block;color:var(--black);margin:1px 0 2px}
+.pc-editor{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start;margin-top:18px}.pc-editor>div>.cartao+.cartao{margin-top:18px}
+@media(max-width:960px){.pc-editor{grid-template-columns:minmax(0,1fr)}}
+.pc-rotulo{margin:14px 0 6px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:800}.pc-rotulo b{text-transform:none;letter-spacing:0;color:var(--black)}
+.pc-previa{width:100%;height:560px;border:1px solid var(--line);border-radius:12px;background:#f7f8fa}
+.pc-zap{background:#efeae2;border-radius:12px;padding:14px}.pc-balao{max-width:92%;background:#fff;border-radius:0 12px 12px 12px;padding:10px 12px;font-size:.92rem;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.08);overflow-wrap:anywhere}
+.pc-ponto{margin:0;padding:12px 14px;border-radius:12px;background:#fff7e6;border:1px solid #f6d7a7;color:#6b4400;font-size:.92rem}
+.pc-fila{list-style:none;margin:0;padding:0;display:grid;gap:12px}.pc-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.pc-item-topo{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-start}.pc-item-topo small{display:block;color:var(--muted);font-size:.84rem}
+.pc-item details summary{cursor:pointer;color:var(--red);font-weight:700;font-size:.85rem;margin-top:8px}.pc-item textarea{min-height:0;margin-top:8px;font-size:.88rem}
+.pc-var{display:block;margin-top:6px;font-size:.78rem;font-weight:700;color:var(--muted)}.pc-var span{font-weight:500}.pc-var.bom{color:#0f7b3e}.pc-var.ruim{color:#b91c1c}
+.pc-barras{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pc-barras li{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:.88rem}
+.pc-barras-rotulo{color:var(--text)}.pc-barras-trilho{height:12px;background:var(--soft);border-radius:4px;overflow:hidden}
+.pc-barras-barra{display:block;height:100%;background:#2a78d6;border-radius:0 4px 4px 0}.pc-barras b{font-variant-numeric:tabular-nums;color:var(--black);min-width:2.5em;text-align:right}
+.pc-colunas{display:flex;align-items:flex-end;gap:2px;height:170px;padding:18px 0 0;border-bottom:1px solid var(--line)}
+.pc-coluna{flex:1 1 0;min-width:3px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;position:relative}
+.pc-coluna-barra{display:block;width:100%;max-width:24px;background:#2a78d6;border-radius:4px 4px 0 0;min-height:0}
+.pc-coluna-valor{font-size:.7rem;color:var(--muted);line-height:1.2;font-variant-numeric:tabular-nums}
+.pc-coluna-dia{position:absolute;bottom:-20px;font-size:.68rem;color:var(--muted);white-space:nowrap}
+.pc-colunas+details{margin-top:28px}
+.pc-comentarios{list-style:none;margin:0;padding:0;display:grid;gap:12px}.pc-comentarios small{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
+code{background:var(--soft);border-radius:6px;padding:1px 5px;font-size:.84em}
+@media print{.faixa,.menu,.acoes,.filtros,.voltar,details.ajustar,.topo .usuario{display:none!important}body{background:#fff}.cartao,.numero,.tabela{box-shadow:none;break-inside:avoid}.grade-inicio{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.topo .linha{flex-wrap:wrap;row-gap:4px}.topo .linha small{display:none}
 .topo .usuario{flex-basis:100%;margin-left:0;text-align:left}.cartao{padding:18px 16px}
 .mapa td.celula{padding:10px 2px;font-size:.95rem}.mapa th small{font-size:.66rem}}
@@ -454,11 +488,17 @@ function pn_inicio(string $usuario): never
 
     $naSede = count(mcp_ponto_na_sede());
     $termos = mcp_ponto_termos_pendentes_contar();
+    $informadas = mcp_ponto_saidas_informadas_contar();
+    $fila = mcp_avisos_fila_manual_contar();
+    $proximo = mcp_db()->query("SELECT id, nome, agendada_para FROM mcp_campanhas WHERE status = 'agendada' ORDER BY agendada_para LIMIT 1")->fetch() ?: null;
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Portal da secretaria · ' . pn_e(mcp_data_brt(mcp_agora(), 'd/m/Y')) . '</p><h1>Início</h1>'
         . '<p class="nota">O que pede ação agora e o que chegou por último. Clique num número para ver a lista.</p></div></div>'
         . $numeros
         . ($naSede > 0 ? '<p class="faltam"><a href="painel.php?v=ponto#na-sede">' . $naSede . ($naSede > 1 ? ' colaboradores estão' : ' colaborador está') . ' na sede agora →</a></p>' : '')
         . ($termos > 0 ? '<p class="faltam"><a href="painel.php?v=ponto#voluntarios">' . $termos . ($termos > 1 ? ' voluntários ainda não têm' : ' voluntário ainda não tem') . ' o termo de adesão registrado →</a></p>' : '')
+        . ($informadas > 0 ? '<p class="faltam"><a href="painel.php?v=ponto#saidas-informadas">' . $informadas . ($informadas > 1 ? ' saídas informadas esperam' : ' saída informada espera') . ' a sua conferência →</a></p>' : '')
+        . ($fila > 0 ? '<p class="faltam"><a href="painel.php?v=comunicacao&amp;aba=fila">' . $fila . ($fila > 1 ? ' mensagens esperam' : ' mensagem espera') . ' na fila do WhatsApp →</a></p>' : '')
+        . ($proximo ? '<p class="faltam"><a href="painel.php?v=comunicado&amp;id=' . (int) $proximo['id'] . '">Próximo comunicado: ' . pn_e((string) $proximo['nome']) . ', em ' . pn_e(pn_data((string) $proximo['agendada_para'])) . ' →</a></p>' : '')
         . '<div class="grade-inicio"><div class="cartao"><h2>Últimas inscrições pagas</h2>'
         . ($ultimas !== '' ? '<ul class="lista-curta">' . $ultimas . '</ul>' : '<p class="nota">Nenhuma inscrição paga ainda.</p>')
         . '<p class="nota"><a href="painel.php?v=inscricoes">Ver todas as inscrições →</a></p></div>'
@@ -742,9 +782,11 @@ function pn_ponto(string $usuario, string $aviso = '', string $classe = 'ok'): n
         . '<p class="nota">Voluntários e diretoria registram entrada e saída e somam as horas doadas à instituição, com o termo de adesão da Lei 9.608/1998. '
         . 'Empregados, terceirizados e outros registram só a presença na sede.</p></div>'
         . '<div class="acoes" style="margin-top:0"><a class="btn btn-red" href="painel.php?v=colaborador&amp;novo=1">Cadastrar colaborador</a>'
+        . '<a class="btn btn-outline" href="painel.php?v=importar">Importar planilha</a>'
         . ($voluntarios ? '<a class="btn btn-outline" href="' . pn_e("painel.php?v=ponto&mes=$mes&csv=1") . '">Baixar planilha das horas do mês</a>' : '') . '</div></div>'
         . pn_ponto_abas('colaboradores')
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
+        . pc_saidas_informadas($usuario)
         . pn_navegar_mes('painel.php?v=ponto', $mes)
         . $numeros
         . '<div class="cartao" id="na-sede" style="margin-bottom:18px"><h2>Na sede agora</h2>'
@@ -941,8 +983,9 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
         }
         $saida = $r['saida'] !== null
             ? pn_e(mcp_data_brt((string) $r['saida'], mcp_data_brt((string) $r['saida'], 'Y-m-d') !== mcp_data_brt((string) $r['entrada'], 'Y-m-d') ? 'd/m H:i' : 'H:i'))
+            : ($r['saida_informada'] !== null ? '<a class="selo alerta" href="painel.php?v=ponto#saidas-informadas">Informada: ' . pn_e(mcp_data_brt((string) $r['saida_informada'], 'H:i')) . ' · a conferir</a>'
             : (!mcp_ponto_esquecido($r, $agora) ? '<span class="selo ok">Na sede</span>'
-                : ($doado ? '<span class="selo erro">Saída esquecida</span>' : '<span style="color:var(--muted)">não registrada</span>'));
+                : ($doado ? '<span class="selo erro">Saída esquecida</span>' : '<span style="color:var(--muted)">não registrada</span>')));
         $origem = pn_e(MCP_PONTO_ORIGENS[$r['origem_entrada']] ?? (string) $r['origem_entrada']) . ($r['origem_saida'] !== null && $r['origem_saida'] !== $r['origem_entrada']
             ? ' · ' . pn_e(MCP_PONTO_ORIGENS[$r['origem_saida']] ?? (string) $r['origem_saida']) : '');
         $dia = '<td data-rotulo="Dia">' . pn_e(mcp_data_brt((string) $r['entrada'], 'd/m/Y')) . '<small class="dia">' . pn_e(mcp_dia_semana(mcp_data_brt((string) $r['entrada'], 'Y-m-d'))) . '</small></td>';
@@ -1015,6 +1058,7 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
             . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Dia</th><th>Chegada</th><th>Saída</th><th>Registro</th></tr></thead><tbody>'
             . ($tabela !== '' ? $tabela : '<tr><td colspan="4" class="vazio">Nenhuma presença neste mês.</td></tr>') . '</tbody></table></div></div>'
             . $termo
+            . pc_ficha_lembretes($usuario, $c)
             . '<div class="cartao" style="margin-top:18px;max-width:720px"><h2>Dados do colaborador</h2>' . $dados . '</div>';
         pn_pagina((string) $c['nome'], $corpo, $usuario, true, 'ponto');
     }
@@ -1042,6 +1086,7 @@ function pn_colaborador(string $usuario, ?int $id, string $aviso = '', string $c
         . $lancar
         . '<p class="nota">A declaração de horas sai para o mês escolhido (no mês atual, até hoje), cita o termo de adesão e leva um código de verificação que qualquer pessoa confere em cruzvermelhariodejaneiro.org/conferir. '
         . 'O registro serve para reconhecer as horas doadas, nunca para cobrar horário.</p></div>'
+        . pc_ficha_lembretes($usuario, $c)
         . '<div class="cartao" style="margin-top:18px;max-width:720px"><h2>Dados do colaborador</h2>' . $dados . '</div>';
     pn_pagina((string) $c['nome'], $corpo, $usuario, true, 'ponto');
 }
@@ -1130,7 +1175,7 @@ $avisos = [
     'pr_canc' => ['Presença cancelada. O comprovante deixou de valer.', 'ok'],
     'ap_ok' => ['Pronto: este aparelho agora é o ponto da sede. Deixe a página do ponto aberta nele.', 'ok'],
     'ap_desat' => ['Aparelho desativado. Ele não registra mais o ponto.', 'ok'],
-];
+] + PC_AVISOS;
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
     mcp_painel_sessao_fechar();
@@ -1180,6 +1225,15 @@ if ($metodo === 'POST') {
         $resultado = mcp_secretaria_lembrete($inscricao, $sessao);
         mcp_registrar(null, 'painel_lembrete', "#$id · $sessao · $resultado");
         pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago'][$resultado]);
+    }
+
+    // Comunicação e acréscimos do ponto (lib/painel_comunicacao.php). Só com sessão e o token do formulário.
+    if (in_array($acao, PC_ACOES, true)) {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($sessao === null || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        pc_post($sessao, $acao, $id);
     }
 
     // Ponto da sede (lib/ponto.php e lib/presenca.php): cadastro, correções, presenças e aparelhos. Só com sessão.
@@ -1354,6 +1408,15 @@ if ($secao === 'ponto') {
 }
 if ($secao === 'colaborador') {
     pn_colaborador($sessao, isset($_GET['novo']) ? null : (int) ($_GET['id'] ?? 0), $aviso, $classe);
+}
+if ($secao === 'importar') {
+    pc_importar($sessao, $aviso, $classe);
+}
+if ($secao === 'comunicacao') {
+    pc_comunicacao($sessao, $aviso, $classe);
+}
+if ($secao === 'comunicado') {
+    pc_comunicado($sessao, isset($_GET['novo']) ? null : (int) ($_GET['id'] ?? 0), $aviso, $classe);
 }
 if (isset($_GET['id'])) {
     $c = mcp_contato_por_id((int) $_GET['id']);

@@ -43,7 +43,7 @@ const MCP_PONTO_COOKIE_APARELHO = 'mcp_ponto_aparelho';
 const MCP_PONTO_COOKIE_PESSOA = 'mcp_ponto_pessoa';
 const MCP_PONTO_APARELHO_DIAS = 400;
 const MCP_PONTO_PESSOA_DIAS = 180;
-const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celular', 'portal' => 'Portal'];
+const MCP_PONTO_ORIGENS = ['aparelho' => 'Aparelho da sede', 'celular' => 'Celular', 'portal' => 'Portal', 'informada' => 'Informada pela pessoa'];
 /** Consultas por CPF: [máximo, janela em segundos], por aparelho ou, no celular, por IP. */
 const MCP_PONTO_LIMITE = ['aparelho' => [240, 600], 'celular' => [15, 600]];
 const MCP_PONTO_FUSO = 'America/Sao_Paulo';
@@ -453,10 +453,13 @@ function mcp_ponto_limite_aberto(int $agora): string
     return gmdate('Y-m-d H:i:s', $agora - MCP_PONTO_ESQUECIDA_HORAS * 3600);
 }
 
-/** Entrada sem saída das últimas 16 horas (a pessoa está na sede), ou null. */
+/**
+ * Entrada sem saída das últimas 16 horas (a pessoa está na sede), ou null. Registro com saída informada
+ * pela pessoa (esperando a secretaria) não conta: ela já disse que foi embora.
+ */
 function mcp_ponto_aberto(int $colaboradorId, ?int $agora = null): ?array
 {
-    $stmt = mcp_db()->prepare('SELECT * FROM mcp_ponto WHERE colaborador_id = ? AND saida IS NULL AND entrada > ? ORDER BY entrada DESC LIMIT 1');
+    $stmt = mcp_db()->prepare('SELECT * FROM mcp_ponto WHERE colaborador_id = ? AND saida IS NULL AND saida_informada IS NULL AND entrada > ? ORDER BY entrada DESC LIMIT 1');
     $stmt->execute([$colaboradorId, mcp_ponto_limite_aberto($agora ?? time())]);
     return $stmt->fetch() ?: null;
 }
@@ -531,10 +534,16 @@ function mcp_ponto_resumo(array $colaborador, ?int $agora = null): array
     $id = (int) $colaborador['id'];
     $aberto = mcp_ponto_aberto($id, $agora);
     $hoje = mcp_ponto_hoje($agora);
+    // Entrada aberta de outro dia (plantão que virou a noite ou saída esquecida ontem): a tela oferece
+    // "registrar a saída agora" e "saí ontem: informar o horário".
+    $diaAberto = $aberto ? mcp_data_brt($aberto['entrada'], 'Y-m-d') : null;
+    $outroDia = $diaAberto !== null && $diaAberto !== $hoje
+        ? ['desde_dia' => $diaAberto === mcp_avisos_dia_mais($hoje, -1) ? 'ontem' : mcp_avisos_dia_texto($diaAberto), 'aberto_id' => (int) $aberto['id']]
+        : ['desde_dia' => null, 'aberto_id' => null];
     if (!mcp_ponto_voluntario($colaborador)) {
         return [
             'na_sede' => $aberto !== null, 'desde' => $aberto ? mcp_data_brt($aberto['entrada'], 'H:i') : null, 'horas' => false,
-            'agora' => null, 'hoje' => null, 'mes' => null, 'mes_nome' => null, 'termo_pendente' => false,
+            'agora' => null, 'hoje' => null, 'mes' => null, 'mes_nome' => null, 'termo_pendente' => false, 'desde_dia' => $outroDia['desde_dia'], 'aberto_id' => null,
         ];
     }
     [$diaDe, $diaAte] = mcp_ponto_periodo_utc($hoje, (new DateTimeImmutable($hoje))->modify('+1 day')->format('Y-m-d'));
@@ -552,7 +561,7 @@ function mcp_ponto_resumo(array $colaborador, ?int $agora = null): array
         'mes' => mcp_ponto_horas_texto($mesMin),
         'mes_nome' => mcp_ponto_mes_nome(substr($hoje, 0, 7)),
         'termo_pendente' => empty($colaborador['termo_em']),
-    ];
+    ] + $outroDia;
 }
 
 // ----------------------------------------------------------------------------- portal: relatórios e correções
@@ -608,7 +617,7 @@ function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora
         if ($r['saida'] !== null) {
             $por[$c]['segundos'] += mcp_ponto_segundos($r);
             $por[$c]['dias'][mcp_data_brt($r['entrada'], 'Y-m-d')] = true;
-        } elseif (mcp_ponto_esquecido($r, $agora)) {
+        } elseif ($r['saida_informada'] === null && mcp_ponto_esquecido($r, $agora)) {
             $por[$c]['esquecidas']++;
         }
     }
@@ -640,18 +649,19 @@ function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora
 function mcp_ponto_na_sede(?int $agora = null): array
 {
     $stmt = mcp_db()->prepare('SELECT p.*, c.nome, c.funcao, c.vinculo FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id
-        WHERE p.saida IS NULL AND p.entrada > ? ORDER BY p.entrada');
+        WHERE p.saida IS NULL AND p.saida_informada IS NULL AND p.entrada > ? ORDER BY p.entrada');
     $stmt->execute([mcp_ponto_limite_aberto($agora ?? time())]);
     return $stmt->fetchAll();
 }
 
 /**
  * Saídas esquecidas de voluntário (entrada sem saída há mais de 16 horas), em qualquer mês: pedem
- * correção. As de quem registra só presença não contam hora nenhuma e não pedem nada.
+ * correção. As de quem registra só presença não contam hora nenhuma e não pedem nada. As que a pessoa
+ * já informou ficam na lista "saídas informadas" (lib/comunicacao.php), não aqui.
  */
 function mcp_ponto_esquecidas_contar(?int $agora = null): int
 {
-    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_ponto WHERE voluntario = 1 AND saida IS NULL AND entrada <= ?');
+    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_ponto WHERE voluntario = 1 AND saida IS NULL AND saida_informada IS NULL AND entrada <= ?');
     $stmt->execute([mcp_ponto_limite_aberto($agora ?? time())]);
     return (int) $stmt->fetchColumn();
 }
@@ -770,7 +780,8 @@ function mcp_ponto_csv(array $registros, ?int $agora = null): string
             mcp_data_brt($r['entrada'], 'd/m/Y'), $r['nome'], mcp_ponto_vinculo_nome($r), (string) $r['funcao'], mcp_data_brt($r['entrada'], 'H:i'),
             $r['saida'] !== null
                 ? (mcp_data_brt($r['saida'], 'd/m/Y') !== mcp_data_brt($r['entrada'], 'd/m/Y') ? mcp_data_brt($r['saida'], 'd/m H:i') : mcp_data_brt($r['saida'], 'H:i'))
-                : (mcp_ponto_esquecido($r, $agora) ? 'saída esquecida' : 'na sede'),
+                : ($r['saida_informada'] !== null ? 'informada: ' . mcp_data_brt((string) $r['saida_informada'], 'd/m H:i') . ' (a conferir)'
+                    : (mcp_ponto_esquecido($r, $agora) ? 'saída esquecida' : 'na sede')),
             $r['saida'] !== null ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r), 60)) : '',
             MCP_PONTO_ORIGENS[$r['origem_entrada']] ?? (string) $r['origem_entrada'],
             $r['origem_saida'] !== null ? (MCP_PONTO_ORIGENS[$r['origem_saida']] ?? (string) $r['origem_saida']) : '',

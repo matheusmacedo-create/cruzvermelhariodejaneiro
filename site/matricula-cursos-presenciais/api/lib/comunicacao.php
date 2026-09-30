@@ -181,8 +181,8 @@ function mcp_comunicado_resumo(array $pessoa, int $agora): string
     return "Nestas duas semanas, você registrou presença na sede em $diasTexto.";
 }
 
-/** Valores dos campos de um comunicado para uma pessoa. */
-function mcp_comunicado_vars(array $pessoa, int $agora, bool $teste = false): array
+/** Valores dos campos de um comunicado para uma pessoa ($exemplo: resumo de exemplo, para o teste e a prévia). */
+function mcp_comunicado_vars(array $pessoa, int $agora, bool $exemplo = false): array
 {
     $nome = mcp_nome_proprio((string) $pessoa['nome']);
     $lancamento = mcp_ajuste('lancamento');
@@ -205,17 +205,20 @@ function mcp_comunicado_vars(array $pessoa, int $agora, bool $teste = false): ar
         'data_curta' => $lancamento !== '' ? mcp_comunicado_data($lancamento, true) : 'em breve',
         'vinculo_frase' => $vinculo[0],
         'vinculo_frase_curta' => $vinculo[1],
-        'resumo' => $teste ? 'Nestas duas semanas, você registrou *6 dias* na sede e *23h40* de horas doadas. Obrigado!' : mcp_comunicado_resumo($pessoa, $agora),
+        'resumo' => !$exemplo ? mcp_comunicado_resumo($pessoa, $agora) : ($pessoa['publico'] === 'aluno'
+            ? 'Nestas semanas, você confirmou presença em *3 aulas* pelo ponto da recepção.'
+            : ($voluntario ? 'Nestas duas semanas, você registrou *6 dias* na sede e *23h40* de horas doadas. Obrigado!' : 'Nestas duas semanas, você registrou presença na sede em *6 dias*.')),
     ];
 }
 
 /**
  * Mensagem de um comunicado para uma pessoa. $avisoId monta os links de clique (0 na prévia do portal).
+ * $teste: vai para a secretaria, com o aviso de teste; $exemplo: pessoa e resumo de exemplo (teste e prévia).
  * @return array{assunto: string, titulo: string, html: string, texto: string, whatsapp: string, modelo: ?array}
  */
-function mcp_campanha_mensagem(array $campanha, array $pessoa, int $avisoId, int $agora, bool $teste = false): array
+function mcp_campanha_mensagem(array $campanha, array $pessoa, int $avisoId, int $agora, bool $teste = false, bool $exemplo = false): array
 {
-    $vars = mcp_comunicado_vars($pessoa, $agora, $teste);
+    $vars = mcp_comunicado_vars($pessoa, $agora, $teste || $exemplo);
     $colaborador = $pessoa['publico'] === 'colaborador';
     $destino = ['ponto' => 'ponto', 'lembretes' => 'lembretes', 'opiniao' => 'opiniao'][$campanha['botao']] ?? null;
     if ($destino === 'lembretes' && !$colaborador) {
@@ -1076,4 +1079,142 @@ function mcp_ponto_saida_decidir(int $id, bool $aceitar, string $quem, string $m
         ->execute([mcp_ponto_nota_ajuste($r['ajuste'], $quem, "recusou a saída informada ($informada, informada em $quando)" . ($motivo !== '' ? ": $motivo" : '')), mcp_agora(), $id]);
     mcp_registrar(null, 'ponto_saida_recusada', "#$id · $quem · $informada · $motivo");
     return null;
+}
+
+// ----------------------------------------------------------------------------- importar colaboradores (planilha colada)
+/** Colunas da planilha, na ordem padrão; o cabeçalho, se vier, pode trazê-las em outra ordem. */
+const MCP_IMPORTAR_COLUNAS = ['nome', 'cpf', 'vinculo', 'funcao', 'email', 'telefone', 'dias', 'whatsapp'];
+
+/** Texto sem acento, minúsculo e sem espaços nas pontas (para comparar vínculos, dias e cabeçalhos). */
+function mcp_sem_acento(string $texto): string
+{
+    return trim(strtr(mb_strtolower($texto), ['á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'é' => 'e', 'ê' => 'e', 'í' => 'i', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ú' => 'u', 'ü' => 'u', 'ç' => 'c']));
+}
+
+/** Vínculo escrito do jeito que a planilha trouxer ("Voluntária", "CLT", "presidente"…), ou ''. */
+function mcp_importar_vinculo(string $texto): string
+{
+    $t = mcp_sem_acento($texto);
+    return match (true) {
+        $t === '' => '',
+        str_starts_with($t, 'volunt') => 'voluntario',
+        str_starts_with($t, 'diret') || str_starts_with($t, 'presid') || str_starts_with($t, 'vice') || str_starts_with($t, 'conselh') => 'diretoria',
+        str_starts_with($t, 'empreg') || $t === 'clt' || str_starts_with($t, 'funcion') => 'empregado',
+        str_starts_with($t, 'tercei') => 'terceirizado',
+        str_starts_with($t, 'outro') || str_starts_with($t, 'estag') || str_starts_with($t, 'prestad') => 'outro',
+        default => '',
+    };
+}
+
+/** Dias da semana escritos à mão ("seg, qua", "segunda e quarta", "sábado") → ['seg', 'qua']. */
+function mcp_importar_dias(string $texto): array
+{
+    $partes = preg_split('/[\s,;\/|+]+|\be\b/u', mcp_sem_acento($texto)) ?: [];
+    return mcp_avisos_dias(array_map(static fn(string $p): string => mb_substr($p, 0, 3), array_filter($partes, static fn($p) => $p !== '')));
+}
+
+/**
+ * Confere as linhas coladas da planilha, sem gravar nada.
+ * @return array{linhas: list<array{linha: int, ok: bool, erro: ?string, dados: ?array, dias: array, whatsapp: bool, existe: ?int, bruto: array}>}
+ */
+function mcp_colaboradores_importar_conferir(string $texto): array
+{
+    $linhas = array_values(array_filter(array_map('rtrim', explode("\n", str_replace("\r", '', $texto))), static fn(string $l): bool => trim($l) !== ''));
+    $r = ['linhas' => []];
+    if (!$linhas) {
+        return $r;
+    }
+    // Separador: tabulação (colado do Excel/Planilhas), ponto e vírgula ou vírgula, o que aparecer na 1ª linha.
+    $primeira = $linhas[0];
+    $sep = str_contains($primeira, "\t") ? "\t" : (substr_count($primeira, ';') >= substr_count($primeira, ',') ? ';' : ',');
+    $colunas = MCP_IMPORTAR_COLUNAS;
+    $cabecalho = array_map(static fn(string $c): string => mcp_sem_acento($c), str_getcsv($primeira, $sep, '"', ''));
+    if (in_array('nome', $cabecalho, true) && in_array('cpf', $cabecalho, true)) {
+        $mapa = ['nome' => 'nome', 'cpf' => 'cpf', 'vinculo' => 'vinculo', 'funcao' => 'funcao', 'cargo' => 'funcao', 'e-mail' => 'email', 'email' => 'email',
+            'telefone' => 'telefone', 'celular' => 'telefone', 'whatsapp' => 'whatsapp', 'dias' => 'dias'];
+        $colunas = array_map(static fn(string $c): string => $mapa[$c] ?? '', $cabecalho);
+        array_shift($linhas);
+        $inicio = 2;
+    } else {
+        $inicio = 1;
+    }
+    $vistos = [];
+    foreach ($linhas as $i => $linha) {
+        $valores = str_getcsv($linha, $sep, '"', '');
+        $campos = [];
+        foreach ($colunas as $j => $coluna) {
+            if ($coluna !== '' && !isset($campos[$coluna])) {
+                $campos[$coluna] = trim((string) ($valores[$j] ?? ''));
+            }
+        }
+        $item = ['linha' => $i + $inicio, 'ok' => false, 'erro' => null, 'dados' => null, 'dias' => [], 'whatsapp' => false, 'existe' => null, 'bruto' => $valores];
+        $vinculo = mcp_importar_vinculo((string) ($campos['vinculo'] ?? ''));
+        $conferido = mcp_colaborador_conferir([
+            'nome' => $campos['nome'] ?? '', 'cpf' => $campos['cpf'] ?? '', 'email' => $campos['email'] ?? '', 'telefone' => $campos['telefone'] ?? '',
+            'funcao' => $campos['funcao'] ?? '', 'vinculo' => $vinculo, 'ativo' => 1,
+        ]);
+        if (!$conferido['ok']) {
+            $item['erro'] = $conferido['campo'] === 'vinculo' ? 'Vínculo não reconhecido: use voluntário, diretoria, empregado, terceirizado ou outro.' : $conferido['erro'];
+            $item['dados'] = ['nome' => $campos['nome'] ?? ''];
+            $r['linhas'][] = $item;
+            continue;
+        }
+        $d = $conferido['dados'];
+        if (isset($vistos[$d['cpf']])) {
+            $item['erro'] = 'CPF repetido na planilha (linha ' . $vistos[$d['cpf']] . ').';
+            $item['dados'] = $d;
+            $r['linhas'][] = $item;
+            continue;
+        }
+        $vistos[$d['cpf']] = $item['linha'];
+        $whatsapp = in_array(mcp_sem_acento((string) ($campos['whatsapp'] ?? '')), ['sim', 's', 'x', '1', 'yes', 'autorizado', 'autorizou'], true);
+        if ($whatsapp && mcp_whatsapp_numero((string) $d['telefone']) === null) {
+            $item['erro'] = 'WhatsApp "sim" precisa de um celular com DDD (com o 9 na frente).';
+            $item['dados'] = $d;
+            $r['linhas'][] = $item;
+            continue;
+        }
+        $existente = mcp_colaborador_por_cpf($d['cpf']);
+        $r['linhas'][] = ['ok' => true, 'dados' => $d, 'dias' => mcp_importar_dias((string) ($campos['dias'] ?? '')), 'whatsapp' => $whatsapp, 'existe' => $existente ? (int) $existente['id'] : null] + $item;
+    }
+    return $r;
+}
+
+/**
+ * Grava as linhas conferidas: CPF novo vira cadastro ativo; CPF existente tem nome, vínculo e função
+ * atualizados, e e-mail e telefone só quando a planilha traz. Dias e WhatsApp entram nas preferências
+ * (o WhatsApp com o consentimento registrado em nome de quem importou). Linhas com erro ficam de fora.
+ * @return array{criados: int, atualizados: int, erros: int}
+ */
+function mcp_colaboradores_importar(array $linhas, string $quem): array
+{
+    $r = ['criados' => 0, 'atualizados' => 0, 'erros' => 0];
+    foreach ($linhas as $l) {
+        if (!$l['ok']) {
+            $r['erros']++;
+            continue;
+        }
+        $d = $l['dados'];
+        $existente = mcp_colaborador_por_cpf($d['cpf']);
+        if ($existente) {
+            $d['email'] = $d['email'] ?? $existente['email'];
+            $d['telefone'] = $d['telefone'] ?? $existente['telefone'];
+            $d['funcao'] = $d['funcao'] ?? $existente['funcao'];
+            $d['ativo'] = (int) $existente['ativo'];
+        }
+        $id = mcp_colaborador_salvar($existente ? (int) $existente['id'] : null, $d, $quem . ' (importação)');
+        if ($id === null) {
+            $r['erros']++;
+            continue;
+        }
+        $existente ? $r['atualizados']++ : $r['criados']++;
+        $c = mcp_colaborador_por_id($id);
+        if ($l['dias'] || $l['whatsapp']) {
+            mcp_avisos_preferencias_salvar($c, [
+                'email' => (int) $c['aviso_email'] === 1, 'whatsapp' => $l['whatsapp'] || (int) $c['aviso_whatsapp'] === 1,
+                'dias' => $l['dias'] ?: mcp_avisos_dias($c['aviso_dias']), 'saida' => (int) $c['aviso_saida'] === 1, 'comunicados' => (int) $c['aviso_comunicados'] === 1,
+            ], $quem . ' (importação)', false);
+        }
+    }
+    return $r;
 }

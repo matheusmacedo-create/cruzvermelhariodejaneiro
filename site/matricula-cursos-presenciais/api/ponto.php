@@ -7,7 +7,11 @@
  *   POST {acao: entrada|saida, sessao}                registra o ponto do colaborador (horas doadas para
  *                                                     voluntários e diretoria; só presença para os outros vínculos);
  *   POST {acao: presenca, sessao, aula}               registra a chegada do aluno à aula;
+ *   POST {acao: informar_saida, sessao, registro, hora, dia_seguinte?}  o voluntário informa a que horas saiu num
+ *                                                     dia em que esqueceu a saída (a secretaria confere no portal);
  *   POST {acao: esquecer}                             tira do celular a pessoa lembrada.
+ * Depois do CPF, a tela mostra também os avisos dos comunicados no ar (lib/comunicacao.php) e as saídas
+ * sem registro dos últimos 7 dias, para a pessoa informar o horário ali mesmo.
  * Sem o aparelho liberado pela secretaria, cada consulta precisa da localização a até
  * PONTO_RAIO_METROS da sede.
  */
@@ -56,6 +60,26 @@ function pt_aula(array $aula, string $cpf, int $agora): array
         'motivo' => $presenca === null ? $janela['motivo'] : null,
         'disponivel_em' => mcp_data_brt($h['fim'], 'H:i'),
     ];
+}
+
+/** Saídas sem registro de dias anteriores (menos a entrada ainda aberta, que a tela trata à parte). */
+function pt_pendencias(array $colaborador, int $agora): array
+{
+    if (!mcp_ponto_voluntario($colaborador)) {
+        return [];
+    }
+    $aberto = mcp_ponto_aberto((int) $colaborador['id'], $agora);
+    $lista = [];
+    foreach (mcp_ponto_saidas_sem_registro((int) $colaborador['id'], $agora) as $r) {
+        if ($aberto && (int) $aberto['id'] === (int) $r['id']) {
+            continue;
+        }
+        $lista[] = [
+            'id' => (int) $r['id'], 'quando' => mcp_avisos_quando(mcp_data_brt((string) $r['entrada'], 'Y-m-d'), $agora), 'entrada' => mcp_data_brt((string) $r['entrada'], 'H:i'),
+            'informada' => $r['saida_informada'] !== null ? mcp_data_brt((string) $r['saida_informada'], 'H:i') : null,
+        ];
+    }
+    return $lista;
 }
 
 if ($acao === 'identificar') {
@@ -115,6 +139,8 @@ if ($acao === 'identificar') {
         'colaborador' => $colaborador ? mcp_ponto_resumo($colaborador, $agora) : null,
         'aulas' => array_map(static fn(array $a): array => pt_aula($a, $cpf, $agora), $aulas),
         'escola_indisponivel' => $escolaFora,
+        'pendencias' => $colaborador ? pt_pendencias($colaborador, $agora) : [],
+        'avisos' => mcp_comunicacao_avisos_ponto($colaborador, $aluno, !$aparelho, $agora),
     ]);
 }
 
@@ -143,6 +169,28 @@ if ($acao === 'entrada' || $acao === 'saida') {
             : ($horas ? "Saída registrada às $hora. Obrigado pelas horas doadas!" : "Saída registrada às $hora. Até a próxima!"),
         'duracao' => $acao === 'saida' && $horas ? mcp_ponto_horas_texto(intdiv(mcp_ponto_segundos($r['registro']), 60)) : null,
         'colaborador' => mcp_ponto_resumo($colaborador, $agora),
+    ]);
+}
+
+if ($acao === 'informar_saida') {
+    $colaborador = !empty($sessao['col']) ? mcp_colaborador_por_id((int) $sessao['col']) : null;
+    if (!$colaborador || !(int) $colaborador['ativo']) {
+        mcp_falhar(403, 'Este CPF não está cadastrado como colaborador. Fale com a secretaria.');
+    }
+    $registro = mcp_ponto_registro((int) ($corpo['registro'] ?? 0));
+    if (!$registro || (int) $registro['colaborador_id'] !== (int) $colaborador['id']) {
+        mcp_falhar(404, 'Registro não encontrado. Digite o CPF de novo.');
+    }
+    $erro = mcp_ponto_saida_informar($registro, mcp_texto($corpo['hora'] ?? '', 5), !empty($corpo['dia_seguinte']), 'tela do ponto (' . $sessao['m'] . ')', $agora);
+    if ($erro !== null) {
+        mcp_falhar(422, $erro, ['campo' => 'hora']);
+    }
+    mcp_json([
+        'ok' => true,
+        'registrado' => 'saida_informada',
+        'mensagem' => 'Obrigado! Saída informada às ' . mcp_texto($corpo['hora'] ?? '', 5) . '.',
+        'colaborador' => mcp_ponto_resumo($colaborador, $agora),
+        'pendencias' => pt_pendencias($colaborador, $agora),
     ]);
 }
 
