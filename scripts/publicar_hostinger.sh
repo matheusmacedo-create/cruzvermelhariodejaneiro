@@ -13,7 +13,8 @@
 #
 # Antes de sobrescrever, guarde o que está no ar (arquivos que ainda não existem vão para novos.txt):
 #   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar site/index.html site/cursos.html
-# Para desfazer: republique a cópia e apague os que eram novos.
+# Para desfazer uma publicação, prefira scripts/desfazer_publicacao.sh (versão anterior tirada do Git, na
+# ordem inversa). Com a cópia: republique-a e apague os que eram novos (.htaccess nunca é apagado).
 #   RAIZ=/tmp/no-ar scripts/publicar_hostinger.sh /tmp/no-ar/index.html /tmp/no-ar/cursos.html
 #   scripts/publicar_hostinger.sh --apagar $(cat /tmp/no-ar/novos.txt)
 # A mesma credencial abre a API de arquivos: .../api/raw/<caminho> lê um arquivo publicado (inclusive
@@ -47,6 +48,9 @@ for arquivo in "$@"; do
       esac
       ;;
     apagar)
+      if [ "$(basename "$destino")" = .htaccess ]; then
+        echo "mantido: $destino protege a pasta; para desfazer, republique a versão anterior (Git)"; continue
+      fi
       codigo=$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE "${HOSTINGER_TUS_URL/\/api\/tus\//\/api\/resources\/}/$destino" "${autorizacao[@]}")
       case "$codigo" in
         204|200) echo "apagado: $destino" ;;

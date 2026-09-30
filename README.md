@@ -493,7 +493,7 @@ A pessoa se identifica pelo CPF. Quem é colaborador e aluno vê as duas coisas.
      `/opt/alt/php83/usr/bin/php /home/u448697994/domains/cruzvermelhariodejaneiro.org/public_html/matricula-cursos-presenciais/api/comparecimentos.php`.
 - **Na sede:** imprimir o cartaz, liberar o tablet da recepção no portal e cadastrar os colaboradores.
 - **Situação:** pronto e testado localmente, com capturas no tablet, no celular, nos PDFs e no portal.
-  Publicar só com o OK do Matheus.
+  Publicado em 30/09/2026 com o vínculo e as políticas (versão `a237b7b`).
 
 ### Vínculo e termo de adesão (30/09/2026)
 
@@ -588,8 +588,8 @@ Cada vínculo tem uma regra, para a instituição ficar coberta.
 ### Lembretes, comunicados e opinião (30/09/2026)
 
 Guia completo, com os modelos do WhatsApp para a Meta e o passo a passo da secretaria:
-[`docs/ponto-comunicacao.md`](docs/ponto-comunicacao.md). **Nada está publicado nem ligado:** tudo começa
-desligado no portal, em **Comunicação**.
+[`docs/ponto-comunicacao.md`](docs/ponto-comunicacao.md). **Publicado em 30/09/2026, por volta das 15h53
+(horário de Brasília), e nada ligado:** tudo começa desligado no portal, em **Comunicação**.
 
 - **Lembretes automáticos**, cada um com liga e desliga:
   - véspera, às 18h: voluntário e diretoria, nos dias que escolheram ("se vier amanhã, registre a
@@ -643,12 +643,14 @@ desligado no portal, em **Comunicação**.
   de um número da própria instituição e dos modelos aprovados; a única conexão de WhatsApp no Make,
   "goatlumiar", é de outra empresa e não deve ser usada); aplicar `aulas_do_dia.sql` na escola, se for
   ligar o lembrete das aulas; e, no portal, importar os colaboradores e preparar os comunicados.
-- **Publicar** (aprovado pelo Matheus em 30/09/2026): são 41 arquivos, na ordem de
-  `scripts/publicacao-comunicacao.txt` (os módulos novos antes do `lib.php`, que os carrega;
+- **Publicar** (feito em 30/09/2026, por volta das 15h53, numa sessão aberta pelo Matheus com o
+  conector da Hostinger: 25 arquivos copiados do ar antes, 41 enviados, cache limpo; a conferência no ar
+  deu as 46 verificações certas e o ponto no celular voltou a poder pedir a localização): são 41 arquivos,
+  na ordem de `scripts/publicacao-comunicacao.txt` (os módulos novos antes do `lib.php`, que os carrega;
   `site/politicas.json` fica de fora, é só a fonte das políticas). Com as credenciais TUS exportadas
   (conector da Hostinger, `hosting_files_generate-upload-url`, conta u448697994), sem ecoá-las:
   1. guardar o que está no ar: `scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`
-     (esperado: 28 copiados e 13 em `novos.txt`);
+     (esperado: 25 copiados e 16 em `novos.txt`);
   2. publicar fora da hora das rotinas (a do ponto roda a cada 15 minutos, a dos horários aos 7 de cada
      hora): `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-comunicacao.txt)`;
   3. limpar o cache (`hosting_cache_clear-website`) e rodar
@@ -656,9 +658,10 @@ desligado no portal, em **Comunicação**.
      iguais ao repositório, API respondendo, configuração bloqueada, localização liberada só no ponto);
   4. conferir com um Android na sede que o ponto pede a localização e registra, e no portal que a
      Comunicação abre e a Visão geral não mostra "A rotina parou" depois de 15 minutos;
-  5. para desfazer: `RAIZ=/tmp/no-ar scripts/publicar_hostinger.sh $(find /tmp/no-ar -type f ! -name novos.txt)`
-     e `scripts/publicar_hostinger.sh --apagar $(cat /tmp/no-ar/novos.txt)`. As tabelas e colunas novas
-     podem ficar: o código antigo não as usa e nenhum INSERT dele deixa de listar as colunas.
+  5. para desfazer: `scripts/desfazer_publicacao.sh a237b7b scripts/publicacao-comunicacao.txt` (cada
+     arquivo volta à versão de `a237b7b`, na ordem inversa, e os 16 novos saem, menos o `ponto/.htaccess`:
+     nenhum `.htaccess` é apagado por script). A cópia do passo 1 serve para conferir. As tabelas e colunas
+     novas podem ficar: o código antigo não as usa e nenhum INSERT dele deixa de listar as colunas.
 
   A migração do banco é automática na primeira visita e só acrescenta (5 tabelas, 13 colunas e 3 índices
   comuns em tabelas que já existem). Ensaiada em 30/09/2026: o esquema de `a237b7b` com dados de
@@ -2347,4 +2350,5 @@ docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocida
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS); --copiar-do-ar guarda o que está no ar, --apagar desfaz os novos
 scripts/publicacao-comunicacao.txt      os 41 arquivos da publicação dos lembretes e comunicados, na ordem de envio
 scripts/conferir_publicacao.sh          confere uma publicação no ar (estáticos, API, bloqueios, localização do ponto)
+scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versão do commit anterior (Git), na ordem inversa
 ```

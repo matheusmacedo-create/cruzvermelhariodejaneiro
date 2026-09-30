@@ -48,13 +48,16 @@ api/comparecimento.php|404|
 LISTA
 
 echo "== Bloqueados"
-for caminho in api/config.php api/config-escola.php api/config-whatsapp.php api/config.example.php api/lib.php \
+for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
   api/lib/avisos.php api/lib/db.php api/lib/config.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done
-codigo=$(pedir "$m/api/config.php.bak")
-case "$codigo" in 403 | 404) ok "api/config.php.bak → $codigo" ;; *) falha "api/config.php.bak → $codigo (esperado 403 ou 404)" ;; esac
+# Estes podem não existir no servidor; aí o LiteSpeed responde 404 antes de aplicar o bloqueio.
+for caminho in api/config-whatsapp.php api/config.php.bak; do
+  codigo=$(pedir "$m/$caminho")
+  case "$codigo" in 403 | 404) ok "$caminho → $codigo" ;; *) falha "$caminho → $codigo (esperado 403 ou 404)" ;; esac
+done
 
 echo "== Localização"
 for caminho in ponto/ ponto/lembretes/; do
