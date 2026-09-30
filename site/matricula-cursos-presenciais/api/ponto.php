@@ -120,7 +120,11 @@ if ($acao === 'identificar') {
     if ($colaborador && !(int) $colaborador['ativo']) {
         $colaborador = null;
     }
-    $escola = mcp_escola_aulas($cpf, mcp_ponto_hoje($agora));
+    // Colaborador quase nunca é aluno do dia: a escola lenta ou fora do ar não pode segurar o tablet. Para
+    // ele, espera pouco e, se a escola falhou há menos de 2 minutos, nem pergunta. Aluno espera o normal.
+    $escola = $colaborador && mcp_contar_eventos_recentes('escola_fora', 'aulas_do_aluno', 120) > 0
+        ? ['ok' => false, 'erro' => 'a escola falhou há pouco']
+        : mcp_escola_aulas($cpf, mcp_ponto_hoje($agora), $colaborador ? 4 : 12);
     $aluno = $escola['ok'] ? $escola['aluno'] : null;
     $aulas = $escola['ok'] ? $escola['aulas'] : [];
     $escolaFora = !$escola['ok'] && $escola['erro'] !== 'sem integração com a escola';

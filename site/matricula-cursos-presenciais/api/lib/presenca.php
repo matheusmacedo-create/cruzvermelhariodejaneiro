@@ -31,10 +31,11 @@ function mcp_escola_url_funcao(string $funcao): string
 }
 
 /**
- * Aulas do aluno num dia, pela escola.
+ * Aulas do aluno num dia, pela escola. $tempo: segundos de espera (o ponto espera pouco por colaborador).
+ * Cada falha fica registrada (evento escola_fora), para o ponto não perguntar de novo por 2 minutos.
  * @return array{ok: bool, aluno?: ?array{nome: string, email: string}, aulas?: list<array>, erro?: string}
  */
-function mcp_escola_aulas(string $cpf, string $dataIso): array
+function mcp_escola_aulas(string $cpf, string $dataIso, int $tempo = 12): array
 {
     $url = (string) mcp_cfg('ESCOLA_API_AULAS_URL', '') ?: mcp_escola_url_funcao('aulas_do_aluno');
     if ($url === '') {
@@ -47,8 +48,8 @@ function mcp_escola_aulas(string $cpf, string $dataIso): array
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode(['dados' => ['cpf' => $cpf, 'data' => $dataIso]]),
         CURLOPT_HTTPHEADER => ['Accept: application/json', 'Content-Type: application/json', 'apikey: ' . $chave, 'Authorization: Bearer ' . $chave],
-        CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_TIMEOUT => 12,
+        CURLOPT_CONNECTTIMEOUT => min(5, max(1, $tempo)),
+        CURLOPT_TIMEOUT => max(1, $tempo),
         // HTTPS sempre; HTTP só para o teste local contra um servidor em 127.0.0.1.
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (in_array(parse_url($url, PHP_URL_HOST), ['127.0.0.1', 'localhost'], true) ? CURLPROTO_HTTP : 0),
     ]);
@@ -60,6 +61,7 @@ function mcp_escola_aulas(string $cpf, string $dataIso): array
     if ($status !== 200 || !is_array($dados) || ($dados['ok'] ?? null) !== true || !is_array($dados['aulas'] ?? null)) {
         // Só o status e o código de erro: nem CPF nem chave vão para o log.
         error_log('[matricula] aulas_do_aluno: HTTP ' . $status . ($erroCurl !== '' ? " · $erroCurl" : '') . (is_array($dados) && isset($dados['code']) ? ' · ' . $dados['code'] : ''));
+        mcp_registrar(null, 'escola_fora', 'aulas_do_aluno');
         return ['ok' => false, 'erro' => $status > 0 ? "HTTP $status" : 'sem resposta'];
     }
     $aulas = [];

@@ -119,8 +119,12 @@ function mcp_painel_sessao_fechar(): void
     unset($_COOKIE[MCP_PAINEL_COOKIE]);
 }
 
-/** Token dos formulários: amarrado a quem age (sessão ou link do contato), à ação e ao contato. */
+/**
+ * Token dos formulários: amarrado a quem age (sessão ou link do contato), à ação, ao contato e ao cookie da
+ * sessão aberta. Um token que vazar (tela compartilhada, página salva) deixa de valer quando a sessão acaba.
+ */
 function mcp_painel_csrf(string $quem, string $acao, int $id): string
 {
-    return mcp_painel_assinar("f|$quem|$acao|$id");
+    $sessao = substr(hash('sha256', (string) ($_COOKIE[MCP_PAINEL_COOKIE] ?? '')), 0, 16);
+    return mcp_painel_assinar("f|$quem|$acao|$id|$sessao");
 }

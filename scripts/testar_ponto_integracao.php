@@ -112,7 +112,7 @@ function limpar(PDO $db): void
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Ponto %'");
     $db->exec("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'conferir') AND (detalhe = '127.0.0.1' OR detalhe LIKE 'aparelho %'))
-        OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
+        OR tipo = 'escola_fora' OR (tipo LIKE 'painel_%' AND detalhe LIKE '%ponto@exemplo.org%') OR tipo IN ('ponto_corrigido', 'ponto_lancado', 'ponto_apagado', 'presenca_cancelada', 'ponto_termo')
         AND detalhe LIKE '%ponto@exemplo.org%'");
 }
 limpar($db);
@@ -405,6 +405,11 @@ try {
     // Escola fora do ar e CPF desconhecido.
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfEscolaFora], [$cAparelho]);
     verificar('escola fora do ar: avisa, sem inventar', [$st, $d['erro'] ?? null], [503, 'Não conseguimos consultar as aulas na escola agora. Tente de novo em instantes ou fale com a secretaria.']);
+    // Disjuntor: com a escola falhando há menos de 2 minutos, o colaborador entra sem esperar por ela.
+    $consultasAntes = count(file($logEscola));
+    [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => $cpfColaborador], [$cAparelho]);
+    verificar('escola fora do ar há pouco: o colaborador entra sem esperar por ela', [$st, $d['escola_indisponivel'] ?? null, count(file($logEscola)) - $consultasAntes], [200, true, 0]);
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'escola_fora'");
     [$st, $d] = ponto($base, ['acao' => 'identificar', 'cpf' => cpf_de_teste()], [$cAparelho]);
     verificar('CPF sem cadastro e sem aula', [$st, str_starts_with((string) ($d['erro'] ?? ''), 'Não encontramos este CPF')], [404, true]);
 

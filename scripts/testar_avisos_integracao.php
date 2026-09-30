@@ -764,6 +764,12 @@ try {
         mcp_avisos_bloqueado('whatsapp', '5521998760005')], [true, 0, true]);
     [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => 'errado', 'lembrete_vespera' => '1']);
     verificar('portal: sem o token do formulário, volta para a entrada', str_contains($html, '<h1>Entrar</h1>'), true);
+    $cookieReal = $_COOKIE[MCP_PAINEL_COOKIE];
+    $_COOKIE[MCP_PAINEL_COOKIE] = 'sessao-que-ja-acabou';
+    $tokenVelho = mcp_painel_csrf($quem, 'ajustes_salvar', 0);
+    $_COOKIE[MCP_PAINEL_COOKIE] = $cookieReal;
+    [$st, , $html] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $tokenVelho, 'lembrete_vespera' => '1']);
+    verificar('portal: token de formulário de outra sessão não vale', [str_contains($html, '<h1>Entrar</h1>'), $tokenVelho !== $csrf('ajustes_salvar', 0)], [true, true]);
     [$st, $cab] = portal($base, $sessaoPortal, ['acao' => 'ajustes_salvar', 'id' => 0, 't' => $csrf('ajustes_salvar', 0), 'lembrete_saida' => '1', 'whatsapp_ativo' => '1']);
     mcp_ajustes_todos(true);
     verificar('portal: ajustes (liga e desliga)', [$st, str_ends_with($cab['location'] ?? '', 'ok=aj_ok'), mcp_ajuste('lembrete_vespera'), mcp_ajuste('lembrete_saida'), mcp_ajuste('whatsapp_ativo')], [303, true, '0', '1', '1']);

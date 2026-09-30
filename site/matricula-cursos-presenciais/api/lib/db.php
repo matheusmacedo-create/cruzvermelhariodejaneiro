@@ -30,8 +30,27 @@ function mcp_db(): PDO
     return $pdo;
 }
 
-/** Cria as tabelas na primeira chamada. CREATE IF NOT EXISTS é barato e evita passo manual no deploy. */
+/**
+ * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
+ * este arquivo mudou desde a última vez: a versão é o hash dele, guardado em mcp_chaves. No dia a dia, uma
+ * consulta por requisição em vez de ~20 comandos. Para forçar, apague a linha versao_banco de mcp_chaves.
+ */
 function mcp_migrar(PDO $pdo): void
+{
+    $versao = 'db:' . substr((string) md5_file(__FILE__), 0, 16);
+    try {
+        if ($pdo->query("SELECT valor FROM mcp_chaves WHERE nome = 'versao_banco'")->fetchColumn() === $versao) {
+            return;
+        }
+    } catch (PDOException) {
+        // Primeira vez: mcp_chaves ainda não existe.
+    }
+    mcp_migrar_tudo($pdo);
+    $pdo->prepare("INSERT INTO mcp_chaves (nome, valor, criado_em) VALUES ('versao_banco', ?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor), criado_em = VALUES(criado_em)")
+        ->execute([$versao, gmdate('Y-m-d H:i:s')]);
+}
+
+function mcp_migrar_tudo(PDO $pdo): void
 {
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_inscricoes (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -421,7 +440,7 @@ function mcp_garantir_indices(PDO $pdo): void
 function mcp_eventos_apagar_freios(?int $agora = null): int
 {
     $agora ??= time();
-    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado')
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora')
         AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
     return $stmt->rowCount();
@@ -433,7 +452,14 @@ function mcp_garantir_colunas(PDO $pdo, string $tabela, array $colunas): void
     $existentes = array_column($pdo->query("SHOW COLUMNS FROM $tabela")->fetchAll(), 'Field');
     foreach ($colunas as $nome => $definicao) {
         if (!in_array($nome, $existentes, true)) {
-            $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+            try {
+                $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+            } catch (PDOException $e) {
+                // Outra requisição acrescentou a coluna no mesmo instante (1060: Duplicate column name).
+                if ((int) ($e->errorInfo[1] ?? 0) !== 1060) {
+                    throw $e;
+                }
+            }
         }
     }
 }
