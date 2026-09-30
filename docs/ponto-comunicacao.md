@@ -14,23 +14,40 @@ Código: `site/matricula-cursos-presenciais/api/lib/avisos.php` (fila, envio, ca
 
 | Aviso | Quando | Para quem | Canal |
 |---|---|---|---|
-| Lembrete da véspera | 18h do dia anterior (preparado às 8h) | colaborador que escolheu os dias em que vem | WhatsApp automático, se autorizou; senão e-mail. No modo manual, os dois |
-| Saída não registrada | 9h do dia seguinte | voluntário ou diretoria que entrou ontem e não registrou a saída | igual ao da véspera |
-| Aula de amanhã | 18h do dia anterior | aluno com aula no dia seguinte (função `aulas_do_dia` da escola) | e-mail; WhatsApp só com o ajuste próprio ligado |
-| Comunicado | na data agendada | o público escolhido (todos, voluntários, os outros vínculos, alunos) | e-mail e WhatsApp (alunos: só e-mail) e aviso na tela do ponto |
+| Lembrete da véspera | 18h do dia anterior (preparado a partir das 8h) | voluntário e diretoria, nos dias que escolheram; equipe contratada, só em dia útil e só se a própria pessoa escolheu os dias pelo link | WhatsApp automático, se autorizou; senão e-mail. No modo manual, os dois |
+| Saída não registrada | a partir das 9h | voluntário ou diretoria com entrada de até 3 dias atrás, sem saída há mais de 16 horas | igual ao da véspera |
+| Aula de amanhã | 18h do dia anterior | aluno com aula no dia seguinte (função `aulas_do_dia` da escola) | e-mail; WhatsApp só com o ajuste próprio ligado **e** a autorização registrada na escola |
+| Comunicado | na data agendada | o público escolhido (todos, voluntários, os outros vínculos, alunos que confirmaram presença pelo ponto) | e-mail e WhatsApp (alunos: só e-mail) e aviso na tela do ponto |
 | Link das preferências | quando a secretaria manda | colaborador | e-mail |
 
 Regras que valem para tudo:
-- nada sai fora da janela das **8h às 20h** (Brasília). O que não sai até o prazo vence sozinho: o
-  lembrete da véspera às 10h do dia, o da aula ao meio-dia, o da saída em 3 dias, o comunicado em 7;
-- **WhatsApp só com consentimento registrado**, com data e autor: pela própria pessoa, na página de
-  lembretes, ou pela secretaria, na ficha ("a pessoa autorizou…") ou na importação da planilha (com a
-  confirmação obrigatória). Quem responde PARAR no WhatsApp oficial deixa de receber;
-- a preferência é conferida de novo na hora de mandar: quem desligou depois do preparo não recebe;
+- nada sai fora da janela das **8h às 20h** (Brasília), e a janela é conferida a cada mensagem. O que
+  não sai até o prazo vence sozinho: o lembrete da véspera e o da aula às 20h da véspera (depois disso,
+  "amanhã" já estaria errado), o da saída em 3 dias, o comunicado "durante" às 20h do próprio dia e os
+  outros comunicados em 7 dias;
+- **feriados e dias sem expediente não têm lembrete** da véspera nem da aula: os nacionais, os do estado
+  do Rio (São Jorge, Carnaval) e o da cidade (São Sebastião), mais Sexta-feira Santa e Corpus Christi, e
+  os dias que a secretaria marcar na Visão geral (recessos). Se a sede abrir nos feriados,
+  `AVISOS_FERIADOS = '0'` desliga os embutidos;
+- **WhatsApp só com consentimento registrado**, com data, autor e como foi dado: pela própria pessoa, na
+  página de lembretes, ou pela secretaria, na ficha (com "como a pessoa autorizou", obrigatório) ou na
+  importação da planilha (com a confirmação obrigatória). Trocar o celular no cadastro apaga a
+  autorização (valia para o número antigo). Quem responde PARAR no WhatsApp oficial deixa de receber; os
+  pedidos que chegam por outro caminho, a secretaria registra em **Envios → Pediu para parar**;
+- a preferência é conferida de novo na hora de mandar: quem desligou depois do preparo não recebe.
+  Desligar o WhatsApp no portal é uma pausa: religado, sai o que ainda estiver no prazo;
 - cada mensagem tem uma chave única (tipo, pessoa, data, canal): a mesma coisa nunca sai duas vezes,
   mesmo com a rotina e o botão "Mandar agora" rodando juntos;
+- **lembretes antes de comunicados**: um comunicado grande não atrasa os lembretes das 18h. Se a Resend
+  recusar por limite ou falhar três vezes seguidas, o resto do e-mail espera a próxima rodada (os avisos
+  não usam o `mail()` da hospedagem, que cai no spam). Lembrete que não sai pelo WhatsApp de vez (número
+  sem WhatsApp, recusado pela Meta, três falhas) vai por e-mail, se ainda der tempo;
+- **trocar o modo do WhatsApp não perde nada**: indo para o manual, o que esperava o envio automático vai
+  para a Fila do WhatsApp; indo para um modo automático, o que estava na fila e ainda vale sai sozinho
+  (confira antes a fila: o que já foi mandado à mão e não foi marcado sairia de novo);
 - voluntário recebe o lembrete como gentileza, nunca cobrança (Lei 9.608/1998): "se não puder vir, tudo
-  bem". Empregado recebe só o lembrete de registrar a presença, e só se escolheu os dias;
+  bem". A equipe contratada recebe só o lembrete de registrar a presença, por segurança, em dia útil e
+  só se pediu; lembrete mandado pela instituição a empregado pareceria controle de jornada;
 - o registro dos envios é apagado depois de 1 ano.
 
 ## As três fases da implantação
@@ -42,15 +59,17 @@ e toca em **Preparar os comunicados**. Nascem quatro rascunhos com o texto suger
 |---|---|---|---|---|
 | Antes | 5 dias antes, 10h | todos os colaboradores | o que muda a partir da data, por que (horas doadas ou segurança, conforme o vínculo) e como funciona em 3 passos | Escolher meus lembretes |
 | Durante | no dia, 8h30 | todos os colaboradores | "começou hoje", dicas (localização, "lembrar de mim", tela inicial) e aviso na tela do ponto por 14 dias | Abrir o ponto |
-| Depois | 14 dias depois, 10h | todos os colaboradores | o resumo de cada um (dias e horas doadas nas 2 semanas) e 5 perguntas; aviso na tela do ponto por 10 dias | Responder em 1 minuto |
-| Depois (alunos) | 14 dias depois, 10h30 | alunos com inscrição paga (180 dias) ou presença (60 dias) | como foi confirmar a presença pelo ponto; 4 perguntas | Responder em 1 minuto |
+| Depois | 14 dias depois, 10h | todos os colaboradores | o resumo de cada voluntário (dias e horas doadas nas 2 semanas; a equipe contratada não recebe resumo) e 5 perguntas; aviso na tela do ponto por 10 dias | Responder em 1 minuto |
+| Depois (alunos) | 14 dias depois, 10h30 | alunos que confirmaram presença pelo ponto nos últimos 60 dias | como foi confirmar a presença pelo ponto; 4 perguntas | Responder em 1 minuto |
 
 Em cada comunicado: editar os textos (campos como `{primeiro_nome}`, `{data_lancamento}`,
 `{vinculo_frase}`, `{resumo}`; `*negrito*`, listas com "- " e passos com "1. "), ver a prévia do e-mail,
 do WhatsApp e do aviso no ponto (com uma pessoa de exemplo, voluntária ou empregada), ver quem recebe e
 quem está sem contato, **mandar um teste para si**, agendar, mandar agora ou desagendar. Depois de sair:
 quem recebeu, por qual canal, quem clicou e as opiniões. Mudar a data do lançamento recalcula as datas
-dos rascunhos.
+dos rascunhos; os já agendados ficam como estão, e o portal avisa para conferir. Um comunicado em que
+nada saiu fica como **Não saiu**. Pela API oficial, o comunicado só é aceito com o modelo aprovado da fase
+e o botão certo.
 
 ## WhatsApp: quatro modos
 
@@ -71,7 +90,9 @@ lembretes também vão por e-mail, para ninguém ficar sem aviso se a fila atras
 `redacao-cruzvermelhariodejaneiro`) manda os avisos da equipe e responde no robô por uma instância da
 **Evolution API** ligada a um número de WhatsApp. O ponto pode usar a mesma instância: texto livre (sem
 modelo para aprovar na Meta), sozinho e sem custo por mensagem. **Está pronto, mas desligado: ligar é uma
-decisão da instituição, por causa dos riscos abaixo.**
+decisão da instituição, por causa dos riscos abaixo.** Mesmo configurada, a Evolution só vale depois que
+alguém da secretaria marca, na Visão geral, "A instituição decidiu usar o WhatsApp do Palácio sabendo dos
+riscos" (fica registrado quem marcou e quando); até lá, o modo continua o manual.
 
 **Riscos (revisão jurídica de 30/09/2026):**
 - A Evolution usa o WhatsApp Web, conectado por QR code. **Não é a API oficial**, e os Termos do WhatsApp
@@ -101,7 +122,8 @@ Como ligar:
        'WHATSAPP_EVOLUTION_CHAVE' => '…',              // token da instância
    ];
    ```
-3. No portal, mandar um teste pelo comunicado ("Testar também no WhatsApp") e ligar **Usar o WhatsApp**.
+3. No portal, registrar o aceite do risco na Visão geral, mandar um teste pelo comunicado ("Testar
+   também no WhatsApp") e ligar **Usar o WhatsApp**.
 
 Como se comporta:
 - **Freio fixo:** uma mensagem a cada 8 segundos, até 30 a cada rodada de 15 minutos (até 3 num clique do
@@ -111,9 +133,10 @@ Como se comporta:
   instância que sumiu**: a mensagem volta para a fila e as outras da rodada esperam a próxima (sem gastar
   tentativas). **Sem confirmação em 40 s** (acontece logo depois de conectar pelo QR code): conta como
   enviada, com a ressalva no registro, para não mandar duas vezes.
-- Cada mensagem termina com "_Mensagem automática: não precisa responder._" (quem responde recebe a
-  apresentação do robô do Palácio, no máximo uma por dia). Parar é pelo link do fim da mensagem ou pela
-  secretaria.
+- Cada mensagem termina com "_Mensagem automática da secretaria. Para não receber mais, use o link
+  acima._" e toda mensagem tem esse link (lembretes: "Mudar os dias ou parar"; comunicados em texto livre:
+  "Escolher o que recebo"). Quem responde recebe a apresentação do robô do Palácio (no máximo uma por
+  dia); o pedido de parar que chegar lá, a secretaria registra em **Envios → Pediu para parar**.
 - **Janela:** o ponto manda das 8h às 20h; o Palácio guarda silêncio das 22h às 7h. Não se cruzam.
 - **Se o WhatsApp do Palácio desconectar**, o Palácio avisa a administração; a fila do ponto espera.
 
@@ -129,7 +152,7 @@ Vermelha Brasileira Rio de Janeiro**, com um número próprio. Nunca use o núme
 
 1. No Meta Business da instituição: criar o app, ligar o WhatsApp, registrar o número e criar um
    usuário do sistema com token permanente (permissão `whatsapp_business_messaging`).
-2. Cadastrar os seis modelos abaixo (idioma português do Brasil) e esperar a aprovação.
+2. Cadastrar os sete modelos abaixo (idioma português do Brasil) e esperar a aprovação.
 3. Em `api/config.php`:
    ```php
    'WHATSAPP_CLOUD_TOKEN' => '…',          // token permanente do usuário do sistema
@@ -144,8 +167,10 @@ Vermelha Brasileira Rio de Janeiro**, com um número próprio. Nunca use o núme
    daquele número.
 5. Mandar um teste pelo comunicado ("Testar também no WhatsApp") e ligar **Usar o WhatsApp**.
 
-Custo: a Meta cobra por modelo entregue; lembretes são categoria *utility*. A Meta pode reclassificar os
-comunicados e a pesquisa como *marketing* (mais caros e com regras de opt-in mais estritas).
+Custo: a Meta cobra por mensagem de modelo entregue, e *utility* custa bem menos que *marketing*; confira
+a tabela vigente antes de ligar. Lembretes são *utility*. A Meta pode reclassificar os comunicados e a
+pesquisa como *marketing* (mais caros e com regras de opt-in mais estritas). Os erros 131026 (número que
+não recebe) e 131049 (limite da Meta por pessoa) não são tentados de novo.
 
 ### Make (webhook)
 
@@ -170,19 +195,25 @@ Português do Brasil. O botão de URL dinâmica tem a base
 `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/avisos.php?r={{1}}` (o site
 completa com o código de cada mensagem, que registra o clique e leva à página certa).
 
+Textos da revisão jurídica de 30/09/2026: convite, nunca cobrança; nada de "faltou" ou "esqueceu"; para a
+equipe contratada, só presença por segurança. Rodapé sugerido em todos (até 60 caracteres): "Para não
+receber mais, responda PARAR." (no modo oficial, o webhook trata a resposta).
+
 | Modelo | Categoria sugerida | Corpo | Botão |
 |---|---|---|---|
-| `cvb_ponto_vespera` | Utilidade | Olá, {{1}}! Lembrete da secretaria da Cruz Vermelha Brasileira RJ: se você vier à sede amanhã, {{2}}, registre a entrada ao chegar e a saída ao ir embora (CPF no tablet da recepção ou QR code no celular). | URL dinâmica: "Mudar lembretes" |
-| `cvb_ponto_saida` | Utilidade | Olá, {{1}}! Você registrou a entrada na sede em {{2}}, às {{3}}, mas a saída ficou sem registro. Informe a que horas saiu para as horas entrarem na sua conta de horas doadas. | URL dinâmica: "Informar horário" |
-| `cvb_aula_amanha` | Utilidade | Olá, {{1}}! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: amanhã, {{2}}, você tem aula de {{3}}, {{4}}, na Praça da Cruz Vermelha, 10, Centro. Ao chegar, confirme a presença no ponto da recepção com o seu CPF. | URL dinâmica: "Não quero receber" |
-| `cvb_ponto_novidade` | Utilidade | Olá, {{1}}! A partir de {{2}}, a sede da Cruz Vermelha Brasileira RJ terá um ponto de chegada e saída para todos que trabalham com a gente. Ao chegar e ao ir embora, digite seu CPF no tablet da recepção ou leia o QR code do cartaz com o celular. Leva 10 segundos. | URL dinâmica: "Escolher lembretes" |
-| `cvb_ponto_comecou` | Utilidade | Bom dia, {{1}}! O ponto da sede da Cruz Vermelha Brasileira RJ começa hoje. Ao chegar, registre a entrada; ao ir embora, a saída (CPF no tablet da recepção ou QR code no celular). | URL fixa: "Abrir o ponto" → `https://cruzvermelhariodejaneiro.org/ponto/` |
+| `cvb_ponto_vespera` | Utilidade | Olá, {{1}}! Lembrete da secretaria da Cruz Vermelha Brasileira RJ: se vier à sede amanhã, {{2}}, registre a chegada e a saída para suas horas voluntárias contarem (CPF no tablet da recepção ou QR code no celular). Se não puder vir, tudo bem. | URL dinâmica: "Mudar lembretes" |
+| `cvb_ponto_vespera_equipe` | Utilidade | Olá, {{1}}! Lembrete que você pediu: se vier à sede amanhã, {{2}}, registre a presença ao chegar e ao sair (CPF no tablet da recepção ou QR code no celular). É só por segurança, não é o ponto oficial. | URL dinâmica: "Mudar lembretes" |
+| `cvb_ponto_saida` | Utilidade | Olá, {{1}}! Em {{2}} você registrou a chegada na sede às {{3}}, e a saída ficou em aberto. Se quiser que essas horas entrem no seu histórico de horas voluntárias, informe o horário. Se preferir, é só ignorar esta mensagem. | URL dinâmica: "Informar horário" |
+| `cvb_aula_amanha` | Utilidade | Olá, {{1}}! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: amanhã, {{2}}, tem aula de {{3}}, {{4}}, na Praça da Cruz Vermelha, 10 (Centro). Ao chegar, confirme a presença no ponto da recepção com o seu CPF. | URL dinâmica: "Não quero receber" |
+| `cvb_ponto_novidade` | Utilidade (a Meta pode pôr em marketing) | Olá, {{1}}! Aqui é a secretaria da Cruz Vermelha Brasileira RJ. A partir de {{2}}, a sede terá um registro de chegada e saída: ao chegar e ao ir embora, digite seu CPF no tablet da recepção ou leia o QR code com o celular. Leva 10 segundos. Quer lembrete na véspera dos dias em que vem? É opcional. | URL dinâmica: "Escolher lembretes" |
+| `cvb_ponto_comecou` | Utilidade (a Meta pode pôr em marketing) | Olá, {{1}}! O ponto da sede da Cruz Vermelha Brasileira RJ começa hoje. Ao chegar, registre a entrada; ao ir embora, a saída (CPF no tablet da recepção ou QR code no celular). | URL fixa: "Abrir o ponto" → `https://cruzvermelhariodejaneiro.org/ponto/` |
 | `cvb_ponto_opiniao` | Utilidade (a Meta pode pôr em marketing) | Olá, {{1}}! Faz duas semanas que o ponto da sede da Cruz Vermelha Brasileira RJ começou. {{2}} Conte como está sendo para você: são 5 perguntas, leva 1 minuto. | URL dinâmica: "Responder" |
 
 Exemplos para a Meta: {{1}} = "Ana"; {{2}} (véspera) = "quinta, 1º/10"; {{2}} (saída) = "1º/10 (quinta)",
 {{3}} = "09:12"; aula: "quinta, 1º/10", "Primeiros Socorros", "das 18:00 às 22:00"; novidade:
-"segunda-feira, 5 de outubro"; opinião: "Nestas duas semanas, você registrou 6 dias na sede e 23h40 de
-horas doadas. Obrigado!". Mudou um modelo na Meta, mude o texto aqui e em `lib/comunicacao.php`.
+"segunda-feira, 5 de outubro"; opinião: "Nestas duas semanas, você registrou 6 dias na sede e doou 23h40.
+Obrigado!" (para quem não tem resumo: "Obrigado por fazer parte da Cruz Vermelha."). Mudou um modelo na
+Meta, mude o texto aqui e em `lib/comunicacao.php`.
 
 ## Páginas pessoais
 
@@ -196,17 +227,30 @@ Links assinados, com validade, que chegam nos avisos (e na ficha, para a secreta
 | `/matricula-cursos-presenciais/ponto/sair/` | aluno que não quer mais receber os avisos | 365 dias |
 
 O link que vai na mensagem é o de clique (`api/avisos.php?r=`), que conta o clique e gera na hora o
-link pessoal. A prévia de link dos aplicativos (HEAD) não conta. Desativar o colaborador invalida os
-links dele.
+link pessoal. A prévia de link dos aplicativos (HEAD, WhatsApp, Meta, verificadores de e-mail e outros
+robôs) não conta e não ganha link pessoal. O token do link pessoal vai depois do `#` (`#t=`): essa parte
+não é mandada ao servidor, então não fica no log da hospedagem (a página ainda aceita o `?t=` dos links
+antigos). Desativar o colaborador, trocar o e-mail ou o celular dele, ou tocar em **Invalidar os links já
+enviados**, na ficha, derruba os links já mandados. Pela página de lembretes, a pessoa não troca um
+número de WhatsApp que já está no cadastro (um link encaminhado não pode desviar as mensagens): isso é
+com a secretaria. A equipe contratada só vê os dias úteis.
 
 ## A tela do ponto
 
-- depois do CPF, os avisos dos comunicados no ar (no celular, com o link; no aparelho da recepção, só o
-  texto);
-- saídas sem registro dos últimos 7 dias: a pessoa informa a hora ali mesmo, e a secretaria confere em
-  **Ponto da sede → Saídas informadas para conferir** (aceitar ou recusar, com o motivo);
-- entrada aberta de outro dia (plantão que virou a noite ou saída esquecida): "Estou saindo agora" ou
-  "Saí ontem: informar o horário";
+- depois do CPF, os avisos dos comunicados no ar, só com o texto e uma dica ("o link está no e-mail ou
+  no WhatsApp que você recebeu"): no celular, a única prova de quem é a pessoa é o CPF, que não é
+  segredo, então a tela nunca mostra link pessoal;
+- **só no aparelho da recepção**: saídas sem registro dos últimos 7 dias (a pessoa informa a hora ali
+  mesmo, e a secretaria confere em **Ponto da sede → Saídas informadas para conferir**, aceitando ou
+  recusando com o motivo; se a pessoa mudar o horário enquanto isso, o aceite pede para conferir de novo)
+  e, na entrada aberta de outro dia, "Saí ontem: informar o horário". No celular aparece só "Estou saindo
+  agora" e a orientação de falar com a secretaria;
+- "Lembrar de mim neste celular" vem desmarcado; no tablet, a tela volta ao começo depois de um tempo sem
+  uso (qualquer toque reinicia a contagem);
+- limites: no celular, 120 consultas a cada 10 minutos por IP (o Wi-Fi da sede sai por um IP só) e 10
+  CPFs não encontrados param aquele IP por 10 minutos; no aparelho da sede, 240 a cada 10 minutos. Para
+  colaborador, a escola tem 4 segundos para responder se há aula (e não é consultada por 2 minutos
+  depois de uma falha): a escola fora do ar não segura o tablet;
 - no celular, a dica de pôr o ponto na tela inicial (até 3 vezes), com o manifesto e os ícones do app.
 
 ## Portal: dia a dia da secretaria
@@ -215,29 +259,45 @@ links dele.
    planilha**: colar do Excel ou do Google Planilhas; conferir; importar), conferir quem está sem
    contato, preparar os comunicados, revisar os textos e mandar um teste para si.
 2. **Ligar os lembretes** na Visão geral: véspera e saída (e o da aula, depois da função `aulas_do_dia`
-   aplicada na escola).
+   aplicada na escola). Marcar ali os dias sem expediente (recessos) além dos feriados. Desligar um
+   lembrete cancela o que dele estava na fila.
 3. **No modo manual**, abrir a Fila do WhatsApp de manhã e no fim da tarde.
 4. **Todo dia:** conferir as saídas informadas (o número aparece no menu, em Ponto da sede).
-5. **Depois de 2 semanas:** ver **Resultados** (adesão, entradas por dia, horas, saídas esquecidas,
-   efeito dos lembretes, opinião) e baixar a planilha por pessoa ou imprimir o relatório.
+5. **Quando alguém pedir para parar** fora do link (resposta no WhatsApp do Palácio, e-mail, pessoalmente):
+   em **Envios**, no aviso da pessoa, **Pediu para parar**.
+6. **Depois de 2 semanas:** ver **Resultados** (adesão, entradas por dia, horas, saídas não registradas
+   na hora, efeito dos lembretes, opinião) e baixar a planilha dos voluntários ou imprimir o relatório.
+
+A Visão geral avisa se a rotina (`api/comparecimentos.php`, a cada 15 minutos) parou de rodar: sem ela,
+nada sai.
 
 ## Resultados: definições
 
 - **Adesão:** colaboradores ativos com pelo menos uma entrada no período ÷ colaboradores ativos.
-- **Saídas esquecidas:** entradas de voluntário sem saída há mais de 16 horas ÷ entradas de voluntário
-  (as informadas pela pessoa aparecem à parte).
+- **Saídas não registradas na hora:** entradas de voluntário cuja saída não foi registrada no ponto
+  (sem saída há mais de 16 horas, informada depois pela pessoa ou lançada pela secretaria) ÷ entradas de
+  voluntário. As resolvidas continuam contando, para o período atual e o anterior se compararem do mesmo
+  jeito; **Registraram depois** mostra as informadas pela pessoa.
 - **Clicaram:** mensagens enviadas com pelo menos um clique ÷ enviadas.
 - **Deram certo:** véspera → a pessoa registrou entrada no dia; saída → a saída foi informada ou
   corrigida; aula → o aluno confirmou presença no dia. Conta uma vez por pessoa, mesmo com e-mail e
-  WhatsApp.
+  WhatsApp, e só entra o que já podia dar resultado: véspera e aula cujo dia já passou; saída informada,
+  ou com o prazo do link (7 dias) vencido.
+- **Por pessoa:** só voluntários e diretoria, em ordem de nome (sem ranking de horas), sem cliques e sem
+  "respondeu a opinião". A equipe contratada fica fora: presença por pessoa pareceria controle de jornada.
 - Tudo comparado com o período anterior, do mesmo tamanho.
 
 ## Dados e privacidade
 
 - Tabelas novas: `mcp_ajustes`, `mcp_campanhas`, `mcp_avisos` (fila e registro; apagado em 1 ano),
-  `mcp_avisos_bloqueios` (só o hash do e-mail ou do celular de quem pediu para sair),
-  `mcp_opinioes`; colunas `aviso_*` em `mcp_colaboradores` e `saida_informada*` em `mcp_ponto`. Criadas
-  sozinhas na primeira conexão.
+  `mcp_avisos_bloqueios` (só o hash, com segredo, do e-mail ou do celular de quem pediu para sair),
+  `mcp_opinioes`; colunas `aviso_*` em `mcp_colaboradores` (inclusive quem autorizou o WhatsApp, quando
+  e como, e quem escolheu os dias) e `saida_informada*` em `mcp_ponto`. Criadas sozinhas: a migração roda
+  quando `lib/db.php` muda (a versão fica em `mcp_chaves`, linha `versao_banco`; apague a linha para
+  forçar).
+- A opinião deixa de ficar ligada a quem respondeu um mês depois do comunicado (continua contando no
+  resultado) e é apagada depois de 1 ano.
+- Os freios por IP guardam o IP (no IPv6, só o prefixo /64) por 2 dias.
 - Operadores: Resend (e-mail); Meta, dona do WhatsApp (em qualquer modo); o servidor da Evolution do
   Palácio (no modo Evolution); Make (se o webhook for ligado). No modo manual, a mensagem sai do
   aparelho da secretaria.
@@ -250,12 +310,15 @@ links dele.
 `WHATSAPP_EVOLUTION_PAUSA_S` e `WHATSAPP_EVOLUTION_TEMPO_S`), `WHATSAPP_CLOUD_TOKEN`, `WHATSAPP_CLOUD_NUMERO_ID`, `WHATSAPP_CLOUD_APP_SEGREDO`,
 `WHATSAPP_CLOUD_VERIFICACAO`, `WHATSAPP_CLOUD_VERSAO`, `WHATSAPP_CLOUD_IDIOMA`, `WHATSAPP_WEBHOOK_URL`,
 `WHATSAPP_WEBHOOK_SEGREDO`, `EMAIL_REMETENTE_PONTO` (remetente dos avisos; vazio = `EMAIL_REMETENTE`),
-`ESCOLA_API_AULAS_DIA_URL` (vazio = a URL da escola com `aulas_do_dia`). As `WHATSAPP_*` podem ficar em
+`ESCOLA_API_AULAS_DIA_URL` (vazio = a URL da escola com `aulas_do_dia`), `AVISOS_FERIADOS` (`'0'` = a
+sede abre nos feriados; valem só os dias marcados no portal). As `WHATSAPP_*` podem ficar em
 `api/config-whatsapp.php`, e as `ESCOLA_*` em `api/config-escola.php`. Nenhum cron novo: a rotina do
 ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (126 testes, MariaDB local, servidores falsos de e-mail,
-WhatsApp, Make e escola: nada sai de verdade) e `docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql`
-(26 testes da função da escola).
+`scripts/testar_avisos_integracao.php` (157 testes, MariaDB local, servidores falsos de e-mail,
+WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
+feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (102), `scripts/testar_checkout.php`
+(301, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha) e
+`docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql` (26 testes da função da escola).

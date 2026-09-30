@@ -591,41 +591,48 @@ Guia completo, com os modelos do WhatsApp para a Meta e o passo a passo da secre
 desligado no portal, em **Comunicação**.
 
 - **Lembretes automáticos**, cada um com liga e desliga:
-  - véspera, às 18h, para quem escolheu os dias em que vem: "amanhã, registre a entrada ao chegar e a
-    saída ao ir embora";
-  - saída não registrada, às 9h, para o voluntário que entrou ontem e não registrou a saída, com o
-    link para informar a hora (a secretaria confere no portal);
+  - véspera, às 18h: voluntário e diretoria, nos dias que escolheram ("se vier amanhã, registre a
+    chegada e a saída; se não puder vir, tudo bem"); equipe contratada, só em dia útil e só se a própria
+    pessoa pediu (só presença, por segurança: lembrete da instituição a empregado pareceria controle de
+    jornada). Nada em feriado do Rio nem nos dias sem expediente marcados no portal;
+  - saída não registrada, a partir das 9h, para o voluntário com a saída em aberto, com o link para
+    informar a hora (a secretaria confere no portal);
   - aula de amanhã, às 18h, para os alunos, pela função `aulas_do_dia` da escola
-    (`docs/escola/aulas_do_dia.sql`, ainda não aplicada no banco da escola).
-- **Canais:** e-mail (Resend) e WhatsApp em três modos: manual (fila no portal, com o botão que abre o
-  WhatsApp com o texto pronto), API oficial da Meta (modelos aprovados; webhook `api/whatsapp.php` com a
-  situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às 20h, consentimento do
-  WhatsApp registrado com data e autor, preferência conferida de novo na hora de mandar, chave única por
-  mensagem.
+    (`docs/escola/aulas_do_dia.sql`, ainda não aplicada no banco da escola); WhatsApp só com a
+    autorização registrada na escola.
+- **Canais:** e-mail (Resend) e WhatsApp em quatro modos: manual (fila no portal, com o botão que abre o
+  WhatsApp com o texto pronto), WhatsApp do Palácio Virtual pela Evolution (o que já está conectado; só
+  depois do aceite formal do risco no portal), API oficial da Meta (sete modelos; webhook
+  `api/whatsapp.php` com a situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às
+  20h conferida a cada mensagem, consentimento do WhatsApp com data, autor e como foi dado, preferência
+  conferida de novo na hora de mandar, chave única por mensagem, lembretes antes dos comunicados, e-mail
+  de reserva quando o WhatsApp falha de vez.
 - **Implantação em três fases:** a partir da data do lançamento, o portal prepara quatro comunicados
   (antes, no dia, depois de 2 semanas para colaboradores e para alunos), com prévia do e-mail, do WhatsApp
   e do aviso na tela do ponto, teste para a própria secretaria e agendamento. O "depois" leva o resumo de
-  cada um (dias e horas doadas) e a pesquisa de opinião.
-- **Páginas pessoais** com link assinado: lembretes (dias, canais, número), saída sem registro,
-  opinião (sem nome para a secretaria, a não ser que a pessoa autorize) e "não quero mais receber"
-  (alunos).
-- **Na tela do ponto:** os avisos dos comunicados, as saídas sem registro dos últimos 7 dias para
-  informar ali mesmo, a entrada aberta de outro dia ("estou saindo agora" ou "saí ontem") e, no celular,
-  a dica de pôr o ponto na tela inicial (manifesto e ícones do app).
-- **Portal:** seção Comunicação (visão geral, comunicados, fila do WhatsApp, envios com "tentar de novo",
-  resultados com adesão, entradas por dia, horas, saídas esquecidas, efeito dos lembretes, opinião,
-  planilha por pessoa e relatório para imprimir); em Ponto da sede, as saídas informadas para conferir e
-  a importação da planilha de colaboradores; na ficha, "Lembretes e contato".
+  cada voluntário (dias e horas doadas) e a pesquisa de opinião.
+- **Páginas pessoais** com link assinado (token depois do `#`, fora do log do servidor): lembretes
+  (dias, canais), saída sem registro, opinião (sem nome para a secretaria, a não ser que a pessoa
+  autorize; desligada de quem respondeu um mês depois) e "não quero mais receber" (alunos).
+- **Na tela do ponto:** os avisos dos comunicados (sem link pessoal) e, só no aparelho da recepção, as
+  saídas sem registro dos últimos 7 dias para informar ali mesmo e o "saí ontem"; no celular, a dica de
+  pôr o ponto na tela inicial (manifesto e ícones do app).
+- **Portal:** seção Comunicação (visão geral com o alerta de rotina parada e os dias sem expediente,
+  comunicados, fila do WhatsApp, envios com "tentar de novo" e "pediu para parar", resultados com adesão,
+  entradas por dia, horas, saídas não registradas na hora, efeito dos lembretes, opinião, planilha dos
+  voluntários e relatório para imprimir); em Ponto da sede, as saídas informadas para conferir e a
+  importação da planilha de colaboradores; na ficha, "Lembretes e contato" e "Invalidar os links já
+  enviados".
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
-- **Testes:** 126 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
-  WhatsApp, Make e escola; nada sai de verdade) e 26 testes pgTAP da `aulas_do_dia`, conferida também
-  pelo PostgREST local.
+- **Testes:** 157 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 102 no ponto, 301 unitários e 26
+  testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual
-  funciona já; a API oficial precisa de um número da própria instituição e dos modelos aprovados; a única
-  conexão de WhatsApp no Make, "goatlumiar", é de outra empresa e não deve ser usada); aplicar
-  `aulas_do_dia.sql` na escola, se for ligar o lembrete das aulas; e, no portal, importar os
-  colaboradores e preparar os comunicados.
+  funciona já; a Evolution do Palácio exige o aceite do risco de bloqueio do número; a API oficial precisa
+  de um número da própria instituição e dos modelos aprovados; a única conexão de WhatsApp no Make,
+  "goatlumiar", é de outra empresa e não deve ser usada); aplicar `aulas_do_dia.sql` na escola, se for
+  ligar o lembrete das aulas; e, no portal, importar os colaboradores e preparar os comunicados.
 
 ## Questionário de dias e horários (29/09/2026)
 
