@@ -124,11 +124,11 @@ function limpar(PDO $db): void
         $db->exec("DELETE FROM mcp_campanhas WHERE id IN ($lista)");
     }
     $db->exec("DELETE FROM mcp_avisos WHERE nome LIKE '%Teste Avisos %' OR destino LIKE '%avisos-teste.example%'");
-    $db->exec("DELETE FROM mcp_avisos_bloqueios WHERE origem IN ('pagina', 'respondeu PARAR', 'secretaria')");
+    $db->exec("DELETE FROM mcp_avisos_bloqueios WHERE origem IN ('pagina', 'respondeu PARAR', 'secretaria', 'descadastro')");
     $db->exec("DELETE FROM mcp_ponto_aparelhos WHERE nome LIKE '%Teste Avisos %'");
     $db->exec("DELETE FROM mcp_presencas WHERE nome LIKE '%Teste Avisos %'");
     $db->exec("DELETE FROM mcp_eventos WHERE detalhe LIKE '%avisos@exemplo.org%' OR (tipo = 'aviso_pagina' AND detalhe = '127.0.0.1') OR tipo IN ('aviso_preferencias', 'aviso_telefone', 'opiniao', 'aviso_sair', 'ponto_saida_informada', 'aviso_whatsapp_parou',
-        'aviso_whatsapp_numero_trocado', 'painel_aviso_parar', 'painel_links_novos', 'painel_aviso_repetir') AND criado_em > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)");
+        'aviso_whatsapp_numero_trocado', 'painel_aviso_parar', 'painel_links_novos', 'painel_aviso_repetir', 'aviso_descadastro') AND criado_em > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)");
 }
 limpar($db);
 $outros = (int) $db->query("SELECT COUNT(*) FROM mcp_colaboradores WHERE ativo = 1")->fetchColumn();
@@ -422,6 +422,9 @@ try {
     $email = falso('emails')[$antesEmails] ?? [];
     verificar('e-mail da véspera: destinatário, assunto, remetente e responder-para', [$email['to'] ?? null, str_starts_with($email['subject'] ?? '', 'Se vier amanhã ('), $email['from'] ?? null, $email['reply_to'] ?? null],
         [["vera-$sufixo@avisos-teste.example"], true, 'Cruz Vermelha Brasileira Rio de Janeiro <ponto@info.exemplo.org>', 'contato@exemplo.org']);
+    verificar('e-mail da véspera: descadastro de um clique (List-Unsubscribe) apontando para o site', [
+        (bool) preg_match('~^<http://127\.0\.0\.1:\d+/matricula-cursos-presenciais/api/avisos\.php\?u=\d+\.[a-f0-9]{16}>$~', (string) ($email['headers']['List-Unsubscribe'] ?? '')),
+        $email['headers']['List-Unsubscribe-Post'] ?? null], [true, 'List-Unsubscribe=One-Click']);
     verificar('e-mail da véspera: botão do ponto e link para mudar os dias', [str_contains($email['html'] ?? '', 'Abrir o ponto'), (bool) preg_match('~avisos\.php\?r=\d+\.p\.[a-f0-9]{16}~', $email['html'] ?? ''),
         (bool) preg_match('~avisos\.php\?r=\d+\.l\.[a-f0-9]{16}~', $email['html'] ?? ''), str_contains($email['html'] ?? '', 'Se não puder vir, tudo bem')], [true, true, true, true]);
     $av = linha_aviso($db, "vespera|{$v1['id']}|$amanha|email");
@@ -628,6 +631,17 @@ try {
     verificar('webhook: evento fora de ordem não faz a situação voltar', linha_aviso($db, "vespera|{$v1['id']}|$depoisAmanha|whatsapp")['entrega'], 'read');
     [$st] = http($baseCloud . 'whatsapp.php', 'POST', $corpo, ['Content-Type: application/json', 'X-Hub-Signature-256: sha256=' . str_repeat('0', 64)]);
     verificar('webhook: assinatura errada é recusada', $st, 401);
+    // A Meta avisa depois que não entregou: o lembrete vai por e-mail (se ainda der tempo), com o código do erro no registro.
+    $semanaQueVem = mcp_avisos_dia_mais($util, 7);
+    $idFalha = (int) mcp_aviso_criar(['chave' => "vespera|{$v1['id']}|$semanaQueVem|whatsapp", 'tipo' => 'vespera', 'canal' => 'whatsapp', 'colaborador_id' => (int) $v1['id'], 'pessoa' => 'c' . $v1['id'],
+        'nome' => "Vera $marca", 'destino' => '5521998760001', 'referencia' => $semanaQueVem, 'expira_em' => mcp_aviso_validade(['tipo' => 'vespera', 'referencia' => $semanaQueVem], time())]);
+    $db->prepare("UPDATE mcp_avisos SET status = 'enviado', provedor = 'cloud', provedor_id = 'wamid.falha-teste', enviado_em = ? WHERE id = ?")->execute([mcp_agora(), $idFalha]);
+    $corpo = $evento([['id' => 'wamid.falha-teste', 'status' => 'failed', 'errors' => [['code' => 131026, 'title' => 'Message undeliverable']]]]);
+    [$st] = http($baseCloud . 'whatsapp.php', 'POST', $corpo, ['Content-Type: application/json', $assinar($corpo)]);
+    $reserva = linha_aviso($db, "vespera|{$v1['id']}|$semanaQueVem|email");
+    verificar('webhook: WhatsApp que falhou depois vira e-mail, com o código do erro', [$st, mcp_aviso_por_id($idFalha)['status'], mcp_aviso_por_id($idFalha)['erro'], $reserva['status'] ?? null, $reserva['destino'] ?? null],
+        [200, 'falhou', '#131026 Message undeliverable', 'pendente', "vera-$sufixo@avisos-teste.example"]);
+    $db->prepare("UPDATE mcp_avisos SET status = 'cancelado' WHERE id = ?")->execute([(int) ($reserva['id'] ?? 0)]);
     [$st, , $resp] = http($baseCloud . 'whatsapp.php?hub.mode=subscribe&hub.verify_token=verifica-teste&hub.challenge=12345');
     [$st2] = http($baseCloud . 'whatsapp.php?hub.mode=subscribe&hub.verify_token=errado&hub.challenge=12345');
     verificar('webhook: verificação do endereço no painel da Meta', [$st, $resp, $st2], [200, '12345', 403]);
@@ -743,6 +757,20 @@ try {
         linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|whatsapp")['status'] ?? null, linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|whatsapp"),
         linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|email")['status'] ?? null], [3, 'manual', null, 'pendente']);
     mcp_ajuste_gravar('aula_whatsapp', '0', $quem);
+    // Descadastro de um clique: o POST do programa de e-mail descadastra; abrir o link só leva à página de escolhas.
+    $avSara = linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|email");
+    $urlSair = trim(mcp_avisos_cabecalhos_descadastro((int) $avSara['id'])['List-Unsubscribe'], '<>');
+    [$stGet, $cabGet] = http($urlSair);
+    [, $cabRoboU] = http($urlSair, 'GET', null, ['User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1)']);
+    verificar('descadastro de um clique: abrir o link leva à página de escolhas (robô vai ao ponto) e não descadastra', [$stGet, str_contains($cabGet['location'] ?? '', '/ponto/sair/#t='),
+        $cabRoboU['location'] ?? null, mcp_avisos_bloqueado('email', "sara-$sufixo@avisos-teste.example")], [302, true, "http://127.0.0.1:$portaSite/ponto/", false]);
+    [$stFalso] = http((string) preg_replace('/\.[a-f0-9]{16}$/', '.0000000000000000', $urlSair), 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
+    [$stPost] = http($urlSair, 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
+    verificar('descadastro de um clique: o POST bloqueia o e-mail do aluno e cancela o que estava na fila; assinatura errada não vale',
+        [$stFalso, $stPost, mcp_avisos_bloqueado('email', "sara-$sufixo@avisos-teste.example"), mcp_aviso_por_id((int) $avSara['id'])['status']], [404, 200, true, 'cancelado']);
+    $avVania = linha_aviso($db, "vespera|{$v3['id']}|$amanha|email");
+    [$st] = http(trim(mcp_avisos_cabecalhos_descadastro((int) $avVania['id'])['List-Unsubscribe'], '<>'), 'POST', 'List-Unsubscribe=One-Click', ['Content-Type: application/x-www-form-urlencoded']);
+    verificar('descadastro de um clique: o colaborador deixa de receber por e-mail', [$st, (int) mcp_colaborador_por_id((int) $v3['id'])['aviso_email']], [200, 0]);
 
     // ------------------------------------------------------------------------- portal
     $db->prepare("UPDATE mcp_colaboradores SET telefone = '21998760005', aviso_whatsapp = 1 WHERE id = ?")->execute([(int) $w1['id']]);

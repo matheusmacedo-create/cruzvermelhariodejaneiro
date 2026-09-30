@@ -38,10 +38,16 @@ Regras que valem para tudo:
   Desligar o WhatsApp no portal é uma pausa: religado, sai o que ainda estiver no prazo;
 - cada mensagem tem uma chave única (tipo, pessoa, data, canal): a mesma coisa nunca sai duas vezes,
   mesmo com a rotina e o botão "Mandar agora" rodando juntos;
+- os e-mails de lembrete e comunicado levam o **descadastro de um clique** (`List-Unsubscribe`, RFC 8058): o
+  Gmail e outros mostram "cancelar inscrição" ao lado do remetente, em vez de a pessoa marcar como spam (o
+  que prejudicaria também os e-mails da matrícula, que saem do mesmo domínio). O programa de e-mail manda
+  um POST a `api/avisos.php?u=`: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista
+  de bloqueio. Abrir o link no navegador só leva à página de escolhas;
 - **lembretes antes de comunicados**: um comunicado grande não atrasa os lembretes das 18h. Se a Resend
   recusar por limite ou falhar três vezes seguidas, o resto do e-mail espera a próxima rodada (os avisos
   não usam o `mail()` da hospedagem, que cai no spam). Lembrete que não sai pelo WhatsApp de vez (número
-  sem WhatsApp, recusado pela Meta, três falhas) vai por e-mail, se ainda der tempo;
+  sem WhatsApp, recusado pela Meta, três falhas, ou a Meta avisando depois, pelo webhook, que não
+  entregou) vai por e-mail, se ainda der tempo;
 - **trocar o modo do WhatsApp não perde nada**: indo para o manual, o que esperava o envio automático vai
   para a Fila do WhatsApp; indo para um modo automático, o que estava na fila e ainda vale sai sozinho
   (confira antes a fila: o que já foi mandado à mão e não foi marcado sairia de novo);
@@ -263,6 +269,9 @@ com a secretaria. A equipe contratada só vê os dias úteis.
    lembrete cancela o que dele estava na fila.
 3. **No modo manual**, abrir a Fila do WhatsApp de manhã e no fim da tarde.
 4. **Todo dia:** conferir as saídas informadas (o número aparece no menu, em Ponto da sede).
+   Numa emergência (evacuação), **Ponto da sede → Lista de emergência** mostra quem está na sede agora
+   (colaboradores com entrada aberta e alunos em aula), pronta para imprimir e conferir no ponto de
+   encontro.
 5. **Quando alguém pedir para parar** fora do link (resposta no WhatsApp do Palácio, e-mail, pessoalmente):
    em **Envios**, no aviso da pessoa, **Pediu para parar**.
 6. **Depois de 2 semanas:** ver **Resultados** (adesão, entradas por dia, horas, saídas não registradas
@@ -317,8 +326,8 @@ ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos.
 
 ## Testes
 
-`scripts/testar_avisos_integracao.php` (157 testes, MariaDB local, servidores falsos de e-mail,
+`scripts/testar_avisos_integracao.php` (162 testes, MariaDB local, servidores falsos de e-mail,
 WhatsApp oficial, Evolution, Make e escola: nada sai de verdade; roda em qualquer dia, sem depender de
-feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (102), `scripts/testar_checkout.php`
+feriado ou fim de semana), `scripts/testar_ponto_integracao.php` (103), `scripts/testar_checkout.php`
 (301, sem banco: calendário, Páscoa, regra da equipe, prazos, leitor de dias da planilha) e
 `docs/escola/teste-local/05_testes_aulas_do_dia_pgtap.sql` (26 testes da função da escola).

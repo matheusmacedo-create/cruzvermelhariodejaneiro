@@ -2,6 +2,7 @@
 /**
  * Páginas pessoais dos avisos do ponto (lib/avisos.php e lib/comunicacao.php):
  *   GET  ?r=<id>.<destino>.<assinatura>          clique num link de aviso: conta o clique e leva ao destino;
+ *   POST ?u=<id>.<assinatura>                     descadastro de um clique (List-Unsubscribe do e-mail); GET só leva à página;
  *   POST {acao: lembretes_ler | lembretes_salvar, t, …}  o que o colaborador quer receber (ponto/lembretes/);
  *   POST {acao: saida_ler | saida_informar, t, hora, dia_seguinte}  saída sem registro do voluntário (ponto/saida/);
  *   POST {acao: opiniao_ler | opiniao_salvar, t, …}      opinião depois de 2 semanas (ponto/opiniao/);
@@ -15,6 +16,27 @@ require __DIR__ . '/lib.php';
 const AV_LIMITE_SALVAR = [30, 600];
 
 $metodo = $_SERVER['REQUEST_METHOD'] ?? '';
+// Descadastro de um clique (List-Unsubscribe, RFC 8058): o programa de e-mail manda um POST sozinho. Abrir o
+// link (GET) só leva à página de escolhas: robôs e verificadores de e-mail abrem links sem ninguém pedir.
+if (isset($_GET['u'])) {
+    header('Cache-Control: no-store');
+    header('Referrer-Policy: no-referrer');
+    header('X-Robots-Tag: noindex, nofollow');
+    $aviso = mcp_avisos_descadastro_aviso(mcp_texto($_GET['u'], 40));
+    if ($metodo === 'POST') {
+        if ($aviso === null) {
+            http_response_code(404);
+            exit;
+        }
+        mcp_avisos_descadastrar($aviso);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Pronto: você não vai mais receber estes avisos por e-mail.';
+        exit;
+    }
+    $robo = mcp_avisos_eh_robo((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+    header('Location: ' . ($aviso !== null && $metodo === 'GET' && !$robo ? mcp_avisos_descadastro_destino($aviso) : mcp_site_url() . '/ponto/'), true, 302);
+    exit;
+}
 if ($metodo === 'GET' || $metodo === 'HEAD') {
     header('Cache-Control: no-store');
     header('Referrer-Policy: no-referrer');

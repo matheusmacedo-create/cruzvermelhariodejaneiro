@@ -432,6 +432,14 @@ try {
     [$st, , $html] = http($base . 'painel.php?v=ponto', 'GET', null, ["Cookie: $sessaoPortal"]);
     verificar('portal: colaborador na sede e horas do mês', [str_contains($html, "Colaborador $marca"), str_contains($html, '<span class="selo ok">Na sede desde'),
         str_contains($html, '<b>' . mcp_ponto_resumo(mcp_colaborador_por_id($colId))['mes'] . '</b>')], [true, true, true]);
+    // Lista de emergência: quem está na sede agora (colaboradores com entrada aberta e alunos em aula), sem CPF.
+    [$st, , $html] = http($base . 'painel.php?v=ponto&aba=emergencia', 'GET', null, ["Cookie: $sessaoPortal"]);
+    $emergencia = mcp_ponto_emergencia();
+    verificar('lista de emergência: colaborador na sede e aluno em aula, sem CPF, pronta para imprimir', [$st, str_contains($html, '<h1>Lista de emergência</h1>'),
+        str_contains($html, mcp_escapar("Colaborador $marca")), str_contains($html, mcp_escapar(mcp_nome_proprio("Aluno Celular $marca"))), str_contains($html, 'window.print()'),
+        str_contains($html, $cpfColaborador) || str_contains($html, $cpfAlunoCelular), in_array("Colaborador $marca", array_column($emergencia['colaboradores'], 'nome'), true),
+        in_array(mcp_nome_proprio("Aluna $marca"), array_map('mcp_nome_proprio', array_column($emergencia['alunos'], 'nome')), true)],
+        [200, true, true, true, true, false, true, false]);
     [$st, , $html] = http($base . 'painel.php', 'GET', null, ["Cookie: $sessaoPortal"]);
     verificar('início: quem está na sede', (bool) preg_match('~\d+ colaborador(es estão| está) na sede agora~', $html), true);
     [$st, $cab, $csv] = http($base . 'painel.php?v=ponto&csv=1', 'GET', null, ["Cookie: $sessaoPortal"]);

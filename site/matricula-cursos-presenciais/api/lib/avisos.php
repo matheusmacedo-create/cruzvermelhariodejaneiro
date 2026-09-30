@@ -57,6 +57,8 @@ const MCP_AVISOS_CLIQUE_DIAS = 60;
 const MCP_AVISOS_DIAS = ['dom' => 'Domingo', 'seg' => 'Segunda', 'ter' => 'Terça', 'qua' => 'Quarta', 'qui' => 'Quinta', 'sex' => 'Sexta', 'sab' => 'Sábado'];
 const MCP_AVISOS_DIAS_PLURAL = ['dom' => 'domingos', 'seg' => 'segundas', 'ter' => 'terças', 'qua' => 'quartas', 'qui' => 'quintas', 'sex' => 'sextas', 'sab' => 'sábados'];
 const MCP_AVISOS_DIAS_UTEIS = ['seg', 'ter', 'qua', 'qui', 'sex'];
+/** Avisos por e-mail que levam o descadastro de um clique (List-Unsubscribe): os que a pessoa não pediu naquela hora. */
+const MCP_AVISOS_COM_DESCADASTRO = ['vespera', 'saida', 'aula', 'campanha'];
 /** O ajuste do portal que liga cada lembrete: desligado, o que estava na fila também não sai. */
 const MCP_AVISOS_AJUSTES = ['vespera' => 'lembrete_vespera', 'saida' => 'lembrete_saida', 'aula' => 'lembrete_aula'];
 /** Ordem de saída: o que tem hora certa (teste, link, saída, véspera, aula) antes dos comunicados. */
@@ -404,6 +406,51 @@ function mcp_avisos_token_ler(string $uso, mixed $token, ?int $agora = null): ar
         return ['ok' => false, 'vencido' => true];
     }
     return ['ok' => true, 'pessoa' => $dados[1], 'extra' => $dados[2], 'colaborador' => $colaborador];
+}
+
+// ----------------------------------------------------------------------------- descadastro de um clique
+/**
+ * Cabeçalhos do descadastro de um clique (RFC 8058): o Gmail e outros mostram "cancelar inscrição" ao lado
+ * do remetente e mandam um POST a api/avisos.php?u=, em vez de a pessoa marcar a mensagem como spam.
+ */
+function mcp_avisos_cabecalhos_descadastro(int $avisoId): array
+{
+    $url = mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?u=' . $avisoId . '.' . substr(mcp_avisos_assinar("u|$avisoId"), 0, 16);
+    return ['List-Unsubscribe' => "<$url>", 'List-Unsubscribe-Post' => 'List-Unsubscribe=One-Click'];
+}
+
+/** O aviso por e-mail de um código de descadastro (id.assinatura), ou null. */
+function mcp_avisos_descadastro_aviso(string $codigo): ?array
+{
+    if (!preg_match('/^(\d{1,10})\.([a-f0-9]{16})$/', $codigo, $m) || !hash_equals(substr(mcp_avisos_assinar("u|{$m[1]}"), 0, 16), $m[2])) {
+        return null;
+    }
+    $aviso = mcp_aviso_por_id((int) $m[1]);
+    return $aviso && $aviso['canal'] === 'email' ? $aviso : null;
+}
+
+/** Descadastro de um clique: o colaborador deixa de receber avisos por e-mail; o aluno entra na lista de bloqueio. */
+function mcp_avisos_descadastrar(array $aviso): void
+{
+    if (!empty($aviso['colaborador_id'])) {
+        $id = (int) $aviso['colaborador_id'];
+        mcp_db()->prepare('UPDATE mcp_colaboradores SET aviso_email = 0, aviso_atualizado_em = ?, atualizado_em = ? WHERE id = ?')->execute([mcp_agora(), mcp_agora(), $id]);
+        mcp_db()->prepare("UPDATE mcp_avisos SET status = 'cancelado', erro = 'pediu para parar', atualizado_em = ? WHERE colaborador_id = ? AND canal = 'email' AND status IN ('pendente', 'manual')")
+            ->execute([mcp_agora(), $id]);
+    } else {
+        mcp_avisos_bloquear_hash('email', mcp_avisos_hash('email', (string) $aviso['destino']), 'descadastro');
+    }
+    mcp_registrar(null, 'aviso_descadastro', '#' . $aviso['id'] . ' · ' . $aviso['tipo']);
+}
+
+/** Quem abre o link de descadastro no navegador vai à página de escolhas (lembretes ou "não quero mais receber"). */
+function mcp_avisos_descadastro_destino(array $aviso): string
+{
+    if (!empty($aviso['colaborador_id'])) {
+        return mcp_avisos_link('lembretes', 'c' . (int) $aviso['colaborador_id']);
+    }
+    $pessoa = preg_match('/^a[a-f0-9]{32}$/', (string) $aviso['pessoa']) ? (string) $aviso['pessoa'] : 'a' . mcp_avisos_hash('email', (string) $aviso['destino']);
+    return mcp_avisos_link('sair', $pessoa);
 }
 
 /** Link de clique de um aviso: registra o clique e leva ao destino (api/avisos.php?r=). */
@@ -933,7 +980,8 @@ function mcp_aviso_enviar(array $aviso, ?int $agora = null): string
         // Sem o mail() de reserva: aviso em quantidade pelo servidor da hospedagem cai no spam e esbarra no
         // limite de envios dela. Com a Resend fora, espera a próxima tentativa.
         $via = mcp_enviar_email((string) $dest['destino'], $msg['assunto'], $msg['html'], $msg['texto'], null,
-            ($r = (string) mcp_cfg('EMAIL_REMETENTE_PONTO', '')) !== '' ? $r : null, [], ['sem_reserva' => true, 'tempo' => 15]);
+            ($r = (string) mcp_cfg('EMAIL_REMETENTE_PONTO', '')) !== '' ? $r : null, [], ['sem_reserva' => true, 'tempo' => 15,
+                'cabecalhos' => in_array($aviso['tipo'], MCP_AVISOS_COM_DESCADASTRO, true) ? mcp_avisos_cabecalhos_descadastro((int) $aviso['id']) : []]);
         $resultado = match ($via) {
             'falhou' => ['ok' => false, 'provedor' => 'resend', 'id' => null, 'erro' => 'o e-mail não saiu (Resend)'],
             'limite' => ['ok' => false, 'provedor' => 'resend', 'id' => null, 'erro' => 'a Resend recusou por limite de envio; tenta de novo depois', 'limite' => true],
@@ -1378,15 +1426,25 @@ function mcp_whatsapp_webhook_tratar(array $evento, ?int $agora = null): int
                 }
                 $campos = ['entrega' => $s['status']];
                 if ($s['status'] === 'failed') {
+                    $codigo = (int) ($s['errors'][0]['code'] ?? 0);
                     $campos['status'] = 'falhou';
-                    $campos['erro'] = mb_substr((string) ($s['errors'][0]['title'] ?? $s['errors'][0]['message'] ?? 'falhou no WhatsApp'), 0, 250);
+                    $campos['erro'] = mb_substr(($codigo ? "#$codigo " : '') . (string) ($s['errors'][0]['title'] ?? $s['errors'][0]['message'] ?? 'falhou no WhatsApp'), 0, 250);
                 }
                 // A situação só avança (lida não volta para entregue quando os eventos chegam fora de ordem).
                 $ordem = "FIELD(entrega, 'sent', 'delivered', 'read')";
                 $sets = implode(', ', array_map(static fn($c) => "$c = ?", array_keys($campos)));
                 $stmt = mcp_db()->prepare("UPDATE mcp_avisos SET $sets, atualizado_em = ? WHERE provedor_id = ? AND (entrega IS NULL OR ? = 'failed' OR $ordem < FIELD(?, 'sent', 'delivered', 'read'))");
                 $stmt->execute(array_merge(array_values($campos), [gmdate('Y-m-d H:i:s', $agora), $s['id'], $s['status'], $s['status']]));
-                $n += $stmt->rowCount();
+                $mudou = $stmt->rowCount();
+                $n += $mudou;
+                // Lembrete que a Meta não conseguiu entregar: vai por e-mail, se a pessoa tiver e ainda der tempo.
+                if ($s['status'] === 'failed' && $mudou > 0) {
+                    $falhos = mcp_db()->prepare("SELECT * FROM mcp_avisos WHERE provedor_id = ? AND canal = 'whatsapp'");
+                    $falhos->execute([$s['id']]);
+                    foreach ($falhos->fetchAll() as $aviso) {
+                        mcp_aviso_reserva_email($aviso, $agora);
+                    }
+                }
             }
             foreach ((array) ($valor['messages'] ?? []) as $m) {
                 if (!is_array($m) || !is_string($m['from'] ?? null)) {

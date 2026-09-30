@@ -662,6 +662,34 @@ function mcp_ponto_relatorio(string $deIso, string $ateIsoExclusivo, ?int $agora
 }
 
 /** Quem está na sede agora (entrada sem saída nas últimas 16 horas), por ordem de chegada. */
+/**
+ * Quem está na sede agora, para uma emergência (evacuação, chamada no ponto de encontro): colaboradores de
+ * todos os vínculos com entrada aberta e alunos com presença registrada numa aula que ainda não terminou.
+ * Entrada com mais de 12 horas vem marcada: provavelmente a pessoa já saiu e não registrou.
+ * @return array{colaboradores: list<array{nome: string, vinculo: string, funcao: string, desde: string, antiga: bool}>, alunos: list<array{nome: string, curso: string, horario: string, chegada: string}>}
+ */
+function mcp_ponto_emergencia(?int $agora = null): array
+{
+    $agora ??= time();
+    $colaboradores = [];
+    foreach (mcp_ponto_na_sede($agora) as $p) {
+        $colaboradores[] = ['nome' => (string) $p['nome'], 'vinculo' => mcp_ponto_vinculo_nome($p), 'funcao' => (string) ($p['funcao'] ?? ''),
+            'desde' => (string) $p['entrada'], 'antiga' => (int) strtotime($p['entrada'] . ' UTC') < $agora - 12 * 3600];
+    }
+    $alunos = [];
+    $hoje = mcp_ponto_hoje($agora);
+    foreach (mcp_presencas_listar($hoje, $hoje) as $p) {
+        if ($p['status'] !== 'valida' || (int) strtotime($p['fim'] . ' UTC') < $agora) {
+            continue;
+        }
+        $alunos[] = ['nome' => (string) $p['nome'], 'curso' => (string) $p['curso_nome'], 'horario' => mcp_presenca_horario_texto($p), 'chegada' => (string) $p['chegada']];
+    }
+    $porNome = static fn(array $a, array $b): int => strcmp(mcp_sem_acento(mb_strtolower($a['nome'])), mcp_sem_acento(mb_strtolower($b['nome'])));
+    usort($colaboradores, $porNome);
+    usort($alunos, $porNome);
+    return ['colaboradores' => $colaboradores, 'alunos' => $alunos];
+}
+
 function mcp_ponto_na_sede(?int $agora = null): array
 {
     $stmt = mcp_db()->prepare('SELECT p.*, c.nome, c.funcao, c.vinculo FROM mcp_ponto p JOIN mcp_colaboradores c ON c.id = p.colaborador_id

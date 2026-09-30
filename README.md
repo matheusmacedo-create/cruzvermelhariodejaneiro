@@ -606,7 +606,7 @@ desligado no portal, em **Comunicação**.
   `api/whatsapp.php` com a situação das mensagens e o PARAR) e Make (webhook assinado). Janela das 8h às
   20h conferida a cada mensagem, consentimento do WhatsApp com data, autor e como foi dado, preferência
   conferida de novo na hora de mandar, chave única por mensagem, lembretes antes dos comunicados, e-mail
-  de reserva quando o WhatsApp falha de vez.
+  de reserva quando o WhatsApp falha de vez, descadastro de um clique (`List-Unsubscribe`) nos e-mails.
 - **Implantação em três fases:** a partir da data do lançamento, o portal prepara quatro comunicados
   (antes, no dia, depois de 2 semanas para colaboradores e para alunos), com prévia do e-mail, do WhatsApp
   e do aviso na tela do ponto, teste para a própria secretaria e agendamento. O "depois" leva o resumo de
@@ -620,13 +620,14 @@ desligado no portal, em **Comunicação**.
 - **Portal:** seção Comunicação (visão geral com o alerta de rotina parada e os dias sem expediente,
   comunicados, fila do WhatsApp, envios com "tentar de novo" e "pediu para parar", resultados com adesão,
   entradas por dia, horas, saídas não registradas na hora, efeito dos lembretes, opinião, planilha dos
-  voluntários e relatório para imprimir); em Ponto da sede, as saídas informadas para conferir e a
-  importação da planilha de colaboradores; na ficha, "Lembretes e contato" e "Invalidar os links já
+  voluntários e relatório para imprimir); em Ponto da sede, as saídas informadas para conferir, a
+  importação da planilha de colaboradores e a **lista de emergência** (quem está na sede agora, com os
+  alunos em aula, para imprimir numa evacuação); na ficha, "Lembretes e contato" e "Invalidar os links já
   enviados".
 - **Sem cron novo:** a rotina do ponto (`api/comparecimentos.php`, a cada 15 minutos) roda os avisos;
   erro nos avisos não derruba os comprovantes.
-- **Testes:** 157 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
-  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 102 no ponto, 301 unitários e 26
+- **Testes:** 162 testes em `scripts/testar_avisos_integracao.php` (servidores falsos de e-mail,
+  WhatsApp oficial, Evolution, Make e escola; nada sai de verdade), 103 no ponto, 301 unitários e 26
   testes pgTAP da `aulas_do_dia`, conferida também pelo PostgREST local.
 - **Para ligar em produção** (decisões do Matheus): publicar os arquivos; escolher o WhatsApp (o manual
   funciona já; a Evolution do Palácio exige o aceite do risco de bloqueio do número; a API oficial precisa

@@ -284,6 +284,7 @@ h2 small{font-weight:600;font-size:.8rem;color:var(--muted);margin-left:6px}
 .pc-colunas+details{margin-top:28px}
 .pc-comentarios{list-style:none;margin:0;padding:0;display:grid;gap:12px}.pc-comentarios small{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
 code{background:var(--soft);border-radius:6px;padding:1px 5px;font-size:.84em}
+table.emergencia td.conferido{width:90px}table.emergencia td.conferido::after{content:"";display:inline-block;width:22px;height:22px;border:2px solid #4a5568;border-radius:4px}
 @media print{.faixa,.menu,.acoes,.filtros,.voltar,details.ajustar,.topo .usuario{display:none!important}body{background:#fff}.cartao,.numero,.tabela{box-shadow:none;break-inside:avoid}.grade-inicio{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.topo .linha{flex-wrap:wrap;row-gap:4px}.topo .linha small{display:none}
 .topo .usuario{flex-basis:100%;margin-left:0;text-align:left}.cartao{padding:18px 16px}
@@ -674,7 +675,7 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
 }
 
 // ----------------------------------------------------------------------------- ponto da sede
-const PN_PONTO_ABAS = ['colaboradores' => 'Colaboradores', 'alunos' => 'Alunos nas aulas', 'aparelhos' => 'Aparelhos e QR code'];
+const PN_PONTO_ABAS = ['colaboradores' => 'Colaboradores', 'alunos' => 'Alunos nas aulas', 'aparelhos' => 'Aparelhos e QR code', 'emergencia' => 'Lista de emergência'];
 
 function pn_ponto_abas(string $aba): string
 {
@@ -731,6 +732,9 @@ function pn_ponto(string $usuario, string $aviso = '', string $classe = 'ok'): n
     }
     if ($aba === 'aparelhos') {
         pn_ponto_aparelhos($usuario, $aviso, $classe);
+    }
+    if ($aba === 'emergencia') {
+        pn_ponto_emergencia($usuario);
     }
     $mes = pn_mes();
     [$de, $ate] = mcp_ponto_mes_dias($mes);
@@ -789,7 +793,7 @@ function pn_ponto(string $usuario, string $aviso = '', string $classe = 'ok'): n
         . pc_saidas_informadas($usuario)
         . pn_navegar_mes('painel.php?v=ponto', $mes)
         . $numeros
-        . '<div class="cartao" id="na-sede" style="margin-bottom:18px"><h2>Na sede agora</h2>'
+        . '<div class="cartao" id="na-sede" style="margin-bottom:18px"><h2>Na sede agora <small><a href="painel.php?v=ponto&amp;aba=emergencia">Lista de emergência para imprimir</a></small></h2>'
         . ($lista !== '' ? '<ul class="na-sede">' . $lista . '</ul>' : '<p class="nota" style="margin:0">Ninguém com entrada aberta agora.</p>') . '</div>'
         . '<h2 id="voluntarios" style="margin:24px 0 10px">Voluntários e diretoria <small>horas doadas</small></h2>'
         . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Colaborador</th><th>Dias</th><th>Horas</th><th>Última presença</th><th>Situação</th><th class="abrir"></th></tr></thead><tbody>'
@@ -856,6 +860,37 @@ function pn_ponto_alunos(string $usuario, string $aviso, string $classe): never
 }
 
 /** Aparelhos da recepção liberados como ponto e o cartaz do QR code para o celular. */
+/** Lista de emergência: quem está na sede agora (colaboradores e alunos em aula), pronta para imprimir. */
+function pn_ponto_emergencia(string $usuario): never
+{
+    $agora = time();
+    $lista = mcp_ponto_emergencia($agora);
+    mcp_registrar(null, 'painel_emergencia', "$usuario · " . count($lista['colaboradores']) . ' colaboradores · ' . count($lista['alunos']) . ' alunos');
+    $linhas = '';
+    foreach ($lista['colaboradores'] as $c) {
+        $linhas .= '<tr><td class="aluno"><b>' . pn_e($c['nome']) . '</b><small>' . pn_e($c['vinculo']) . ($c['funcao'] !== '' ? ' · ' . pn_e($c['funcao']) : '') . '</small></td>'
+            . '<td data-rotulo="Desde">' . pn_e(mcp_data_brt($c['desde'], 'd/m H:i'))
+            . ($c['antiga'] ? '<small>entrada há mais de 12 h: provável saída não registrada</small>' : '') . '</td><td class="conferido" aria-label="Conferido"></td></tr>';
+    }
+    foreach ($lista['alunos'] as $a) {
+        $linhas .= '<tr><td class="aluno"><b>' . pn_e(mcp_nome_proprio($a['nome'])) . '</b><small>Aluno · ' . pn_e($a['curso']) . ', ' . pn_e($a['horario']) . '</small></td>'
+            . '<td data-rotulo="Chegada">' . pn_e(mcp_data_brt($a['chegada'], 'd/m H:i')) . '</td><td class="conferido" aria-label="Conferido"></td></tr>';
+    }
+    $total = count($lista['colaboradores']) + count($lista['alunos']);
+    $corpo = '<div class="cabeca"><div><p class="eyebrow">Ponto da sede</p><h1>Lista de emergência</h1>'
+        . '<p class="nota">Quem registrou a chegada e ainda não registrou a saída, e os alunos com presença numa aula que ainda não terminou. '
+        . 'Gerada em ' . pn_e(mcp_data_brt(gmdate('Y-m-d H:i:s', $agora), 'd/m/Y \à\s H:i')) . '. Numa evacuação, imprima ou leve no celular e confira os nomes no ponto de encontro. '
+        . 'Visitantes e quem não registrou não aparecem.</p></div>'
+        . '<div class="acoes" style="margin-top:0"><button class="btn btn-red" type="button" onclick="window.print()">Imprimir</button>'
+        . '<a class="btn btn-outline" href="painel.php?v=ponto&amp;aba=emergencia">Atualizar</a></div></div>'
+        . pn_ponto_abas('emergencia')
+        . '<div class="numeros"><div class="numero"><b>' . $total . '</b><span>Na sede agora</span><small>' . count($lista['colaboradores']) . ' colaboradores · '
+        . count($lista['alunos']) . ' alunos</small></div></div>'
+        . '<div class="tabela rolagem"><table class="respostas emergencia"><thead><tr><th>Pessoa</th><th>Desde</th><th>Conferido</th></tr></thead><tbody>'
+        . ($linhas !== '' ? $linhas : '<tr><td colspan="3" class="vazio">Ninguém com entrada aberta nem aluno em aula agora.</td></tr>') . '</tbody></table></div>';
+    pn_pagina('Lista de emergência', $corpo, $usuario, true, 'ponto');
+}
+
 function pn_ponto_aparelhos(string $usuario, string $aviso, string $classe): never
 {
     $atual = mcp_ponto_aparelho_atual();

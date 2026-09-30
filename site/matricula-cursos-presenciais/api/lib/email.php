@@ -231,6 +231,16 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
         if ($resposta !== '') {
             $corpo['reply_to'] = $resposta;
         }
+        // Cabeçalhos extras (ex.: List-Unsubscribe dos avisos do ponto), sem quebra de linha.
+        $extras = [];
+        foreach ((array) ($opcoes['cabecalhos'] ?? []) as $nome => $valor) {
+            if (preg_match('/^[A-Za-z][A-Za-z0-9-]{1,60}$/', (string) $nome) && !preg_match('/[\r\n]/', (string) $valor)) {
+                $extras[(string) $nome] = (string) $valor;
+            }
+        }
+        if ($extras) {
+            $corpo['headers'] = $extras;
+        }
         if ($anexos) {
             // Só filename e content: a Resend deduz o tipo pela extensão, e campo que ela não conhece
             // devolveria 422 e jogaria o envio no mail() de reserva, que entrega pior.
