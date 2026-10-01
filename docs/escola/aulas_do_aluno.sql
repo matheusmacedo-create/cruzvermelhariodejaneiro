@@ -11,8 +11,21 @@
 -- turmas que não foram canceladas. Nome e e-mail só vêm quando o aluno tem aula nesse dia: a função
 -- não serve para descobrir o nome de um CPF qualquer.
 --
--- Aplicar no SQL Editor do projeto da escola. Pode rodar de novo: recria a função e os privilégios.
+-- Aplicar no SQL Editor do projeto da escola (wrckokgdtiwvxapqzkki), o arquivo inteiro. Pode rodar de
+-- novo: recria a função e os privilégios. Em outro projeto, o script para no começo e não cria nada. No
+-- fim, avisa a API do Supabase para reler as funções e mostra a função criada (uma linha).
 -- Para desfazer: drop function public.aulas_do_aluno(jsonb);
+
+-- Trava: só segue no projeto da escola. Sem a tabela "AulaData", o script para aqui e nada é criado.
+do $trava$
+begin
+  if to_regclass('public."AulaData"') is null then
+    raise exception using
+      message = 'Este não é o projeto da escola: falta a tabela "AulaData". Nada foi criado.',
+      hint = 'Abra o projeto wrckokgdtiwvxapqzkki no Supabase e rode o script de novo.';
+  end if;
+end
+$trava$;
 
 create or replace function public.aulas_do_aluno(dados jsonb)
 returns jsonb
@@ -101,3 +114,17 @@ comment on function public.aulas_do_aluno(jsonb) is
 revoke all on function public.aulas_do_aluno(jsonb) from public;
 revoke all on function public.aulas_do_aluno(jsonb) from anon, authenticated;
 grant execute on function public.aulas_do_aluno(jsonb) to service_role;
+
+-- Avisa a API do Supabase (PostgREST) para reler as funções. Sem isso, ela pode continuar respondendo
+-- "Could not find the function public.aulas_do_aluno" (PGRST202) mesmo com a função criada.
+notify pgrst, 'reload schema';
+
+-- Conferência: o resultado deve ser uma linha, aulas_do_aluno | dados jsonb | true | true | false.
+select p.proname as funcao,
+       pg_get_function_identity_arguments(p.oid) as argumentos,
+       p.prosecdef as security_definer,
+       has_function_privilege('service_role', p.oid, 'execute') as service_role_executa,
+       has_function_privilege('anon', p.oid, 'execute') as anon_executa
+  from pg_proc p
+  join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public' and p.proname = 'aulas_do_aluno';

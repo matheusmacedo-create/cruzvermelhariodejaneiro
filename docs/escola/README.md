@@ -270,7 +270,12 @@ o site libera o comprovante de comparecimento. A pergunta é a função `public.
 
 ### Como ligar a consulta
 
-1. No SQL Editor do projeto da escola, rodar `aulas_do_aluno.sql`. O script pode ser rodado de novo.
+1. No SQL Editor do projeto da escola (o endereço do painel termina em
+   `/project/wrckokgdtiwvxapqzkki`), rodar o arquivo `aulas_do_aluno.sql` inteiro. O script pode ser
+   rodado de novo.
+   - Em outro projeto, ele para logo no começo com "Este não é o projeto da escola" e não cria nada.
+   - No fim, avisa a API para reler as funções (`notify pgrst, 'reload schema'`) e mostra uma linha:
+     `aulas_do_aluno | dados jsonb | true | true | false`.
 2. No servidor, nada muda. O site usa a chave que já está em `api/config-escola.php` e acha a URL
    trocando `matricula_rapida` por `aulas_do_aluno` em `ESCOLA_API_URL`. Para outra URL, pôr
    `ESCOLA_API_AULAS_URL` no mesmo arquivo.
@@ -287,6 +292,10 @@ o site libera o comprovante de comparecimento. A pergunta é a função `public.
 
    Depois do site publicado, o teste de verdade é um aluno com aula no dia digitar o CPF no ponto.
 
+**Se a API responder `PGRST202`** ("Could not find the function"): ou a função não existe nesse projeto,
+ou a API ainda não releu a lista de funções. Rodar o arquivo inteiro de novo no projeto da escola resolve
+os dois casos. Enquanto isso, o ponto mostra ao aluno "Não conseguimos consultar as aulas na escola agora".
+
 **Desfazer:** `drop function public.aulas_do_aluno(jsonb);`. O ponto dos colaboradores continua
 funcionando, e o aluno vê "Não conseguimos consultar as aulas na escola agora".
 
@@ -298,6 +307,14 @@ pgTAP cobrem:
 - outro dia e pagamento pendente;
 - matrícula cancelada ou estornada, turma cancelada e CPF desconhecido;
 - dados inválidos.
+
+A trava de projeto e o aviso à API foram conferidos em 01/10/2026 num PostgREST local, mandando o arquivo
+como uma consulta só, do jeito do SQL Editor:
+- a versão anterior criava a função, mas a API seguia respondendo `PGRST202`;
+- a versão atual faz a API responder na hora;
+- num banco sem `AulaData`, a trava para tudo e nada é criado.
+
+Para repetir a trava: `psql -d <banco sem a escola> -c "$(cat aulas_do_aluno.sql)"`.
 
 ## Alunos com aula num dia, para o lembrete da véspera
 
@@ -328,7 +345,9 @@ receber".
 sinal de que a própria escola já manda algum lembrete. Antes de ligar o do site, confirmar com quem
 mantém a escola o que esse lembrete faz, para o aluno não receber dois avisos parecidos.
 
-**Como ligar:** rodar `aulas_do_dia.sql` no SQL Editor (pode rodar de novo). No servidor, nada muda: o
+**Como ligar:** rodar o arquivo `aulas_do_dia.sql` inteiro no SQL Editor do projeto da escola (pode
+rodar de novo). Ele tem a mesma trava de projeto e o mesmo aviso à API de `aulas_do_aluno.sql`. No fim,
+mostra a linha `aulas_do_dia | dados jsonb | true | true | false`. No servidor, nada muda: o
 site acha a URL trocando `matricula_rapida` por `aulas_do_dia` em `ESCOLA_API_URL` (ou usa
 `ESCOLA_API_AULAS_DIA_URL`, se existir). Depois, ligar "Aula de amanhã" em Comunicação, no portal.
 
