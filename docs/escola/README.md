@@ -292,9 +292,17 @@ o site libera o comprovante de comparecimento. A pergunta é a função `public.
 
    Depois do site publicado, o teste de verdade é um aluno com aula no dia digitar o CPF no ponto.
 
-**Se a API responder `PGRST202`** ("Could not find the function"): ou a função não existe nesse projeto,
-ou a API ainda não releu a lista de funções. Rodar o arquivo inteiro de novo no projeto da escola resolve
-os dois casos. Enquanto isso, o ponto mostra ao aluno "Não conseguimos consultar as aulas na escola agora".
+**Conferência de fora (sem acesso ao painel):** `GET /rest/v1/` com a chave secreta deve listar
+`/rpc/aulas_do_aluno` (e `/rpc/aulas_do_dia`); o `POST` com um CPF fictício válido deve voltar 200 com
+`{"ok": true, "aluno": null, "aulas": []}`.
+
+**Se a API responder `PGRST202`** ("Could not find the function") depois de aplicar: no Supabase, um
+`CREATE FUNCTION` confirmado já faz a API reler as funções sozinha (gatilho `pgrst_ddl_watch`). Então
+`PGRST202` quer dizer que o script não foi confirmado nesse projeto. O SQL Editor roda o texto inteiro
+numa transação só, então um erro desfaz tudo e só aparece a mensagem em vermelho. Também pode ter rodado
+só o trecho selecionado ou em outro projeto. Rodar o arquivo inteiro de novo, sem nada selecionado, e
+conferir a linha do fim. Enquanto isso, o ponto mostra ao aluno "Não conseguimos consultar as aulas na
+escola agora". Foi o que aconteceu em 01/10/2026: a primeira aplicação não chegou ao banco da escola.
 
 **Desfazer:** `drop function public.aulas_do_aluno(jsonb);`. O ponto dos colaboradores continua
 funcionando, e o aluno vê "Não conseguimos consultar as aulas na escola agora".
@@ -310,9 +318,11 @@ pgTAP cobrem:
 
 A trava de projeto e o aviso à API foram conferidos em 01/10/2026 num PostgREST local, mandando o arquivo
 como uma consulta só, do jeito do SQL Editor:
-- a versão anterior criava a função, mas a API seguia respondendo `PGRST202`;
-- a versão atual faz a API responder na hora;
-- num banco sem `AulaData`, a trava para tudo e nada é criado.
+- num banco sem `AulaData`, a trava para tudo e nada é criado;
+- o aviso no fim faz a API responder na hora.
+
+O PostgREST local não tem o gatilho que o Supabase instala. Por isso, nele, a versão anterior (sem o
+aviso) deixava a API em `PGRST202`. No Supabase o aviso é só uma garantia a mais.
 
 Para repetir a trava: `psql -d <banco sem a escola> -c "$(cat aulas_do_aluno.sql)"`.
 
