@@ -16,6 +16,9 @@ $inscricao = mcp_token_valido($token) ? mcp_inscricao_por('token', $token) : nul
 if (!$inscricao) {
     mcp_falhar(404, 'Inscrição não encontrada.');
 }
+// Pedido do próprio aluno: a escolha de marketing do cookie dele passa a valer para o Purchase (lib/meta.php).
+mcp_meta_atualizar_escolha($inscricao);
+$inscricao = mcp_inscricao_por('id', (string) $inscricao['id']) ?? $inscricao;
 if ($inscricao['status'] === 'pendente') {
     $ultima = $inscricao['consultado_em'] ? (int) strtotime($inscricao['consultado_em'] . ' UTC') : 0;
     if (time() - $ultima >= MCP_RECONSULTA_SEGUNDOS) {

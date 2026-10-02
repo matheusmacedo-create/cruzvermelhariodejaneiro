@@ -130,7 +130,7 @@ function mcp_aplicar_status(int $id, string $novo): array
     return mcp_inscricao_por('id', (string) $id) ?? [];
 }
 
-/** Roda uma vez, na transição para pago: escola (se houver API), e-mail do aluno, aviso à secretaria. */
+/** Roda uma vez, na transição para pago: escola (se houver API), e-mail do aluno, aviso à secretaria, Purchase à Meta. */
 function mcp_pos_pagamento(int $id): void
 {
     $inscricao = mcp_inscricao_por('id', (string) $id);
@@ -144,4 +144,5 @@ function mcp_pos_pagamento(int $id): void
     }
     mcp_email_aluno_pago($inscricao);
     mcp_email_secretaria($inscricao);
+    mcp_meta_compra($inscricao);
 }

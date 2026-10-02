@@ -49,6 +49,7 @@ try {
     try {
         mcp_garantir_indices($db);
         mcp_eventos_apagar_freios();
+        mcp_meta_faxina();
     } catch (Throwable $e) {
         error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }

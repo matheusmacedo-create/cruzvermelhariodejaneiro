@@ -162,9 +162,9 @@
     } catch (e) { /* armazenamento bloqueado */ }
     return o;
   }
-  function rastrear(eventoGa, dadosGa, eventoMeta, dadosMeta) {
+  function rastrear(eventoGa, dadosGa, eventoMeta, dadosMeta, idMeta) {
     try { if (window.gtag && eventoGa) window.gtag('event', eventoGa, dadosGa || {}); } catch (e) { /* GA4 ausente */ }
-    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dadosMeta || {}); } catch (e) { /* pixel ausente */ }
+    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dadosMeta || {}, idMeta ? { eventID: idMeta } : undefined); } catch (e) { /* pixel ausente */ }
   }
 
   // ------------------------------------------------------------------ estado (sobrevive à navegação entre páginas)
@@ -484,6 +484,8 @@
       ja_respondido: estado.duvidasLidas.map(function (d) { return d.p; }),
       pagina: location.pathname + location.search, origem: origem(), site: ''
     };
+    // O id do Contact do Pixel vai junto: o servidor manda o mesmo Contact à API de Conversões (só com "sim" para marketing).
+    try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) corpo.evento_id = window.cvrjMedicao.novoId('ct'); } catch (e) { /* sem bloco de medição */ }
     fetch(API, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })
       .then(function (resp) { return resp.json().catch(function () { return null; }).then(function (d) { return { http: resp.status, d: d }; }); })
       .catch(function () { return { http: 0, d: null }; })
@@ -494,7 +496,7 @@
           estado.protocolo = d.protocolo || '';
           estado.passo = 'enviado';
           rastrear('contato_enviado', { assunto: r.assunto, curso: corpo.curso, pagina: location.pathname },
-            'Contact', { content_category: r.assunto, content_name: nomeCurso(corpo.curso) || rotuloAssunto(r.assunto) });
+            'Contact', { content_category: r.assunto, content_name: nomeCurso(corpo.curso) || rotuloAssunto(r.assunto) }, corpo.evento_id);
         } else if (d.campo && ORDEM.indexOf(d.campo) >= 0) {
           estado.passo = d.campo; estado.editando = true; estado.erro = d.erro || '';
         } else {

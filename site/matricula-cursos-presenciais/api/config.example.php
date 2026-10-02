@@ -108,6 +108,18 @@ return [
     // Lembrete da aula de amanhã: a função public.aulas_do_dia da escola. Vazio = ESCOLA_API_URL trocando
     // matricula_rapida por aulas_do_dia. Também vale em api/config-escola.php.
     'ESCOLA_API_AULAS_DIA_URL' => '',
+    // API de Conversões da Meta (lib/meta.php): os eventos da matrícula saem também pelo servidor, só para quem
+    // aceitou os cookies de marketing. Sem o token, nada é enviado nem guardado. As chaves META_* também podem
+    // ficar em api/config-meta.php (só no servidor, fora do Git; de lá só valem as META_*), por exemplo:
+    //   <?php return ['META_CAPI_TOKEN' => 'cole aqui o token'];
+    // O token vem do Gerenciador de Eventos: conjunto de dados 2224500131617302 > Configurações > API de
+    // Conversões > Gerar token de acesso. Nunca o mande por chat nem e-mail.
+    'META_CAPI_TOKEN' => '',
+    // Código da aba "Testar eventos" do Gerenciador, só enquanto confere (os eventos não entram nas campanhas).
+    'META_CAPI_TESTE' => '',
+    // Opcionais: outra versão da API (padrão em lib/meta.php) e outro pixel. Não mexa sem motivo.
+    'META_CAPI_VERSAO' => '',
+    'META_PIXEL_ID' => '',
 
     // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o
     // padrão de lib/comprovante.php: O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP, 67.733.551/0001-35

@@ -1,7 +1,7 @@
 # Backend do checkout da matrícula. Só os endpoints públicos respondem por HTTP; configuração,
 # bootstrap e módulos são incluídos pelo PHP e nunca servidos.
 Options -Indexes
-<FilesMatch "^(config\.php|config-escola\.php|config-whatsapp\.php|config\.example\.php|lib\.php|lembretes\.php|comparecimentos\.php)$">
+<FilesMatch "^(config(-[a-z]+)?\.php|config\.example\.php|lib\.php|lembretes\.php|comparecimentos\.php)$">
   Require all denied
 </FilesMatch>
 # Cópias de editor e de segurança (config.php~, config.php.bak, .swp…) nunca são servidas: o texto sairia cru.

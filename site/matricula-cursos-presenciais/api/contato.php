@@ -76,6 +76,7 @@ function mcp_validar_contato(array $b): array
 
 // ----------------------------------------------------------------------------- fluxo
 $b = mcp_exigir_post_json();
+$metaId = mcp_meta_id_valido($b['evento_id'] ?? null); // id do Contact do Pixel (lib/meta.php)
 
 // Campo armadilha: o chat sempre manda vazio; robô que preenche tudo cai aqui.
 if (mcp_texto($b['site'] ?? '', 10) !== '') {
@@ -109,6 +110,8 @@ try {
 $envios = mcp_email_contato($registro);
 mcp_contato_atualizar($id, ['email_equipe' => $envios['equipe'], 'email_confirmacao' => $envios['confirmacao']]);
 mcp_registrar(null, 'contato', "#$id · {$contato['assunto']} · equipe {$envios['equipe']} · confirmação {$envios['confirmacao']}");
+// API de Conversões (só com "sim" para marketing): o Contact que o chat manda ao Pixel, com o mesmo id.
+mcp_meta_contato($contato, $metaId);
 
 mcp_json([
     'ok' => true,

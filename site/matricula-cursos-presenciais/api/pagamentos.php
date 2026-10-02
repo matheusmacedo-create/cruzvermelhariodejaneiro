@@ -52,6 +52,8 @@ function mcp_validar_aluno(array $b): array
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
+        // id do Lead do Pixel, para a API de Conversões mandar o mesmo evento (lib/meta.php)
+        'meta_lead' => mcp_meta_id_valido($b['evento_id'] ?? null),
     ];
 }
 
@@ -155,7 +157,7 @@ function mcp_gravar_inscricao(array $aluno, string $token, int $inscricaoCentavo
         'utm_content' => $aluno['utm_content'], 'utm_term' => $aluno['utm_term'], 'fbclid' => $aluno['fbclid'], 'gclid' => $aluno['gclid'],
         'ip' => mcp_ip(), 'escola_status' => mcp_escola_configurada() ? 'pendente' : 'nao_aplicavel',
         'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
-    ];
+    ] + mcp_meta_colunas_da_inscricao($aluno['fbclid']);
     $colunas = implode(', ', array_keys($linha));
     $marcadores = implode(', ', array_fill(0, count($linha), '?'));
     $pdo = mcp_db();
@@ -186,6 +188,7 @@ mcp_aplicar_limites($aluno);
 
 if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $total))) {
     mcp_registrar((int) $aberta['id'], 'pix_reaproveitado');
+    mcp_meta_cobranca_criada($aberta, $aluno, $aluno['meta_lead'], false);
     mcp_json(mcp_publico($aberta) + ['reaproveitado' => true]);
 }
 
@@ -206,6 +209,8 @@ try {
 $id = mcp_gravar_inscricao($aluno, $token, $inscricaoCentavos, $taxa, $cobranca, $cartao['ultimos4'] ?? null);
 $inscricao = mcp_inscricao_por('id', (string) $id) ?? [];
 $status = mcp_traduzir_status((string) ($cobranca['payment_status'] ?? ''));
+// API de Conversões (só com "sim" para marketing): Lead e, se a cobrança foi aceita, AddPaymentInfo, como o Pixel.
+mcp_meta_cobranca_criada($inscricao, $aluno, $aluno['meta_lead'], $status !== 'recusado');
 
 if ($aluno['metodo'] === 'pix') {
     mcp_email_pix_aberto($inscricao);

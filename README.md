@@ -1801,6 +1801,25 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
   são abortados no teste. Com `--repositorio`, usa as páginas de `site/` no lugar das do ar, para
   conferir antes de publicar.
 
+### API de Conversões da Meta (02/10/2026)
+
+Os eventos do funil saem também pelo servidor, com o mesmo id que o Pixel usa no navegador, e a Meta junta
+os dois. Só para quem aceitou marketing depois do texto atual do aviso (quem tinha aceitado antes é
+perguntado de novo). Detalhes, tabela de eventos e o que fica guardado em `docs/rastreamento.md`.
+
+- `api/lib/meta.php`: monta e envia os eventos, depois da resposta ao aluno; nunca derruba o pagamento.
+  Lead e AddPaymentInfo saem de `pagamentos.php`; Purchase, de `mcp_pos_pagamento` (inclusive pelo postback);
+  Contact, de `contato.php`. Nome, e-mail e telefone vão em hash SHA-256; o CPF nunca vai.
+- `api/medicao.php`: repasse dos eventos de página (PageView, ViewContent, InitiateCheckout) que o bloco de
+  medição manda (`window.cvrjMedicao.servidor`), com freio por IP.
+- **Para ligar:** o token vem do Gerenciador de Eventos (conjunto de dados `2224500131617302` >
+  Configurações > API de Conversões > Gerar token de acesso). No hPanel, em
+  `public_html/matricula-cursos-presenciais/api/`, crie `config-meta.php` com
+  `<?php return ['META_CAPI_TOKEN' => 'o token'];`. Para conferir, acrescente `'META_CAPI_TESTE' =>
+  'o código da aba Testar eventos'` e tire depois. Sem o token, nada é enviado nem guardado.
+- Testes: `php scripts/testar_checkout.php` (funções), `scripts/testar_meta_integracao.php` (ponta a ponta,
+  com banco local e uma Meta falsa) e `scripts/conferir_pixel.js` (navegador: o mesmo id no Pixel e no repasse).
+
 ### Políticas em português, inglês e espanhol
 
 `scripts/gerar_politicas.py` gera 12 páginas a partir de `site/politicas.json` (o texto, com as

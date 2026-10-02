@@ -124,7 +124,7 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
 </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/cookies/","name":"Cookie Policy","description":"Which cookies the Brazilian Red Cross Rio de Janeiro website uses, what for and for how long, and how to accept, refuse or change your choice.","inLanguage":"en","dateModified":"2026-09-30","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cookie Policy","item":"https://cruzvermelhariodejaneiro.org/en/cookies/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/cookies/","name":"Cookie Policy","description":"Which cookies the Brazilian Red Cross Rio de Janeiro website uses, what for and for how long, and how to accept, refuse or change your choice.","inLanguage":"en","dateModified":"2026-10-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cookie Policy","item":"https://cruzvermelhariodejaneiro.org/en/cookies/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -147,7 +147,9 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
-  fbq('track', 'PageView');
+  // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
+  window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+  fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
     // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
@@ -170,6 +172,25 @@
         baixados[src] = 1;
         var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
       }
+      // API de Conversões: com "sim" para marketing, o evento vai também ao servidor do site, com o mesmo
+      // eventID do Pixel, e de lá à Meta. Só no site principal (o endereço é relativo a ele).
+      var SERVIDOR = /^(www\.)?cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '/matricula-cursos-presenciais/api/medicao.php' : '';
+      var repassados = {};
+      function novoId(prefixo) { return (prefixo || 'ev') + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10); }
+      var pendentes = [];
+      function servidor(evento, id, curso) {
+        if (!SERVIDOR || !id || repassados[id] || !window.fetch) return;
+        var c = ler();
+        // Sem escolha ainda (o checkout dispara ao abrir): espera, como a fila do Pixel. "Não" descarta.
+        if (!c) { if (pendentes.length < 20) pendentes.push([evento, id, curso]); return; }
+        if (!c.marketing) return;
+        repassados[id] = 1;
+        var corpo = { evento: evento, id: id, url: location.href };
+        if (curso) corpo.curso = String(curso);
+        try {
+          fetch(SERVIDOR, { method: 'POST', keepalive: true, credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) })['catch'](function () {});
+        } catch (e) { /* navegador sem fetch: fica só o Pixel */ }
+      }
       function aplicar(c) {
         c = c || ler();
         if (!c) return;
@@ -182,9 +203,15 @@
         });
         fbq('consent', c.marketing ? 'grant' : 'revoke');
         if (c.estatistica) baixar(GTAG);
-        if (c.marketing) baixar(PIXEL);
+        var esperando = pendentes;
+        pendentes = [];
+        if (c.marketing) {
+          baixar(PIXEL);
+          servidor('PageView', window.cvrjIdPageView);
+          esperando.forEach(function (p) { servidor(p[0], p[1], p[2]); });
+        }
       }
-      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
         if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
@@ -193,7 +220,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=f0901be888" defer></script>
+  <script src="/consentimento/consentimento.js?v=9ad82b5548" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -227,7 +254,7 @@
       <div class="wrap">
         <p class="eyebrow">Data protection</p>
         <h1>Cookie Policy</h1>
-        <p class="pol-data">Last updated <time datetime="2026-09-30">30 September 2026</time>.</p>
+        <p class="pol-data">Last updated <time datetime="2026-10-02">2 October 2026</time>.</p>
         <p class="pol-traducao">This translation is provided for convenience. The official version is the Portuguese one.</p>
       </div>
     </section>
@@ -252,14 +279,14 @@
         <p class="pol-estado" id="pol-estado" aria-live="polite" data-textos="{&quot;rotulo&quot;: &quot;Your current choice:&quot;, &quot;nenhuma&quot;: &quot;you have not chosen yet. Until you do, only necessary cookies are used.&quot;, &quot;estatistica&quot;: &quot;statistics&quot;, &quot;marketing&quot;: &quot;marketing&quot;, &quot;sim&quot;: &quot;yes&quot;, &quot;nao&quot;: &quot;no&quot;, &quot;em&quot;: &quot;recorded on&quot;}"></p>
         <p class="pol-acoes"><a class="btn btn-red" href="#preferencias" data-cvrj-cookies>Open cookie preferences</a></p>
         <noscript><p>Without JavaScript, the site uses no statistics or marketing cookies, so there is no choice to make.</p></noscript>
-        <p>When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading.</p>
+        <p>When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5).</p>
       </section>
       <section id="categories" aria-labelledby="t-categories">
         <h2 id="t-categories">Categories</h2>
         <ul>
           <li><strong>Necessary (always on):</strong> keep the site working. They store your cookie choice, the progress of the chat conversation, the reception device authorised for the headquarters time clock, who asked to be remembered on the time clock on their phone and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.</li>
           <li><strong>Statistics (off until you turn them on):</strong> Google Analytics counts visits and shows which pages are read, without identifying you by name.</li>
-          <li><strong>Marketing (off until you turn them on):</strong> the Meta Pixel measures the reach of our campaigns on Facebook and Instagram.</li>
+          <li><strong>Marketing (off until you turn them on):</strong> the Meta Pixel measures the reach and results of our campaigns on Facebook and Instagram. With it on, our server also sends Meta a copy of the events (Conversions API), with the data described in the <a href="/en/privacy/">Privacy Policy</a>.</li>
         </ul>
       </section>
       <section id="list" aria-labelledby="t-list">
@@ -285,7 +312,7 @@
             </tbody>
           </table>
         </div>
-        <p>With marketing on, your browser may also send Meta the cookies Meta itself stores on the facebook.com domain (such as fr), which follow <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">Meta&#x27;s policy</a>. Google&#x27;s rules are at <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener">policies.google.com/technologies/cookies</a>.</p>
+        <p>With marketing on, our server reads the _fbp and _fbc cookies and sends them to Meta with the copy of the events; for enrolments, it stores them for up to 8 days, to tell Meta about the confirmed payment. Your browser may also send Meta the cookies Meta itself stores on the facebook.com domain (such as fr), which follow <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">Meta&#x27;s policy</a>. Google&#x27;s rules are at <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener">policies.google.com/technologies/cookies</a>.</p>
       </section>
       <section id="browser" aria-labelledby="t-browser">
         <h2 id="t-browser">Controlling cookies in your browser</h2>

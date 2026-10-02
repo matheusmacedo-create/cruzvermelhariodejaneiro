@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 // Confere, num Chromium de verdade, se o Pixel da Meta envia os eventos depois do "Aceitar todos" e
 // se nada sai sem consentimento. Os envios à Meta (facebook.com/tr) e ao GA4 (/g/collect) são
-// registrados e abortados: o teste não suja o conjunto de dados nem o GA4. Não envia formulário.
+// registrados e abortados: o teste não suja o conjunto de dados nem o GA4. O repasse à API de
+// Conversões (api/medicao.php) também é registrado e respondido aqui, sem chegar ao servidor, e
+// precisa levar o mesmo id do Pixel. Nenhuma outra chamada à API do site passa (só a leitura de
+// info.php). Não envia formulário.
 //
 // Uso:
 //   NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js                  # o site no ar
@@ -30,7 +33,7 @@ function arquivoLocal(u) {
 }
 
 function tipo(u) {
-  if (/facebook\.com\/tr/.test(u)) return 'meta:' + (new URL(u).searchParams.get('ev') || 'automático');
+  if (/facebook\.com\/tr/.test(u)) { const x = new URL(u); return 'meta:' + (x.searchParams.get('ev') || 'automático') + (x.searchParams.get('eid') ? '#' + x.searchParams.get('eid') : ''); }
   if (/connect\.facebook\.net\/signals\/config/.test(u)) return 'meta:config';
   if (/connect\.facebook\.net\/.*fbevents\.js/.test(u)) return 'meta:fbevents.js';
   return null;
@@ -47,17 +50,24 @@ async function cenario(nome, url, passos, esperado) {
     await ctx.addCookies([{ name: 'cvrj_consentimento', value: encodeURIComponent(`v=1&e=1&m=1&t=${Math.floor(Date.now() / 1000)}`),
       domain: '.cruzvermelhariodejaneiro.org', path: '/', secure: true, sameSite: 'Lax' }]);
   }
-  await ctx.route(/facebook\.com\/tr|google-analytics\.com\/g\/collect/, (r) => r.abort());
   if (DO_REPOSITORIO) {
     await ctx.route(/^https:\/\/cruzvermelhariodejaneiro\.org\//, async (r) => {
-      if (r.request().resourceType() !== 'document') return r.continue();
-      const f = arquivoLocal(r.request().url()) || (esperado.pagina404 ? path.join(RAIZ, '404.html') : null);
+      // Páginas e os scripts delas (checkout.js, chat.js, aviso de cookies) vêm do repositório.
+      const documento = r.request().resourceType() === 'document';
+      if (!documento && !/\.(js|css)$/.test(new URL(r.request().url()).pathname)) return r.continue();
+      const f = arquivoLocal(r.request().url()) || (documento && esperado.pagina404 ? path.join(RAIZ, '404.html') : null);
       if (!f) return r.continue();
-      await r.fulfill({ status: esperado.pagina404 ? 404 : 200, contentType: 'text/html; charset=utf-8', body: fs.readFileSync(f) });
+      const tipoDoArquivo = f.endsWith('.js') ? 'application/javascript' : f.endsWith('.css') ? 'text/css' : 'text/html; charset=utf-8';
+      await r.fulfill({ status: documento && esperado.pagina404 ? 404 : 200, contentType: tipoDoArquivo, body: fs.readFileSync(f) });
     });
   }
-  const p = await ctx.newPage();
+  // No Playwright vale a rota registrada por último: a trava da API vem depois das páginas, e o repasse depois da trava.
+  const repasses = [];
   let fase = 'chegada';
+  await ctx.route(/\/matricula-cursos-presenciais\/api\//, (r) => (r.request().method() === 'GET' && /\/api\/info\.php$/.test(new URL(r.request().url()).pathname) ? r.continue() : r.abort()));
+  await ctx.route(/\/api\/medicao\.php/, (r) => { try { repasses.push(Object.assign(JSON.parse(r.request().postData() || '{}'), { fase })); } catch (e) { /* corpo inválido */ } return r.fulfill({ status: 204, body: '' }); });
+  await ctx.route(/facebook\.com\/tr|google-analytics\.com\/g\/collect/, (r) => r.abort());
+  const p = await ctx.newPage();
   const vistos = [];
   const erros = [];
   p.on('request', (r) => { const t = tipo(r.url()); if (t) vistos.push({ fase, t }); });
@@ -69,17 +79,24 @@ async function cenario(nome, url, passos, esperado) {
     await passo.fazer(p);
     await p.waitForTimeout(passo.espera || 7000);
   }
-  const eventos = new Set(vistos.filter((v) => /^meta:[A-Z]/.test(v.t)).map((v) => v.t.slice(5)));
+  const comId = vistos.filter((v) => /^meta:[A-Z]/.test(v.t)).map((v) => v.t.slice(5).split('#'));
+  const eventos = new Set(comId.map(([ev]) => ev));
   const problemas = [];
+  // API de Conversões: os eventos de página que saíram no Pixel também vão ao repasse, com o mesmo id.
+  for (const [ev, eid] of comId) {
+    if (['PageView', 'ViewContent', 'InitiateCheckout'].includes(ev) && !repasses.some((x) => x.evento === ev && x.id === eid)) problemas.push(`${ev} sem repasse com o mesmo id`);
+  }
+  if (esperado.nadaDaMeta && repasses.length) problemas.push('repasse sem consentimento');
   for (const ev of esperado.eventos || []) if (!eventos.has(ev)) problemas.push(`faltou ${ev}`);
   if (esperado.nadaDaMeta && vistos.length) problemas.push('falou com a Meta sem consentimento');
   if (esperado.semEventosEm) {
     const depois = vistos.filter((v) => v.fase === esperado.semEventosEm && /^meta:[A-Z]/.test(v.t));
     if (depois.length) problemas.push(`evento depois de retirar o consentimento: ${depois.map((v) => v.t).join(', ')}`);
+    if (repasses.some((x) => x.fase === esperado.semEventosEm)) problemas.push('repasse depois de retirar o consentimento');
   }
   if (erros.length) problemas.push('erro na página: ' + erros.join(' / '));
   falhas += problemas.length ? 1 : 0;
-  console.log(`${problemas.length ? 'FALHA' : 'ok   '} ${nome}: ${[...eventos].join(', ') || 'nenhum evento'}${problemas.length ? ' (' + problemas.join('; ') + ')' : ''}`);
+  console.log(`${problemas.length ? 'FALHA' : 'ok   '} ${nome}: ${[...eventos].join(', ') || 'nenhum evento'}${repasses.length ? ` · repasse: ${repasses.map((x) => x.evento).join(', ')}` : ''}${problemas.length ? ' (' + problemas.join('; ') + ')' : ''}`);
   await navegador.close();
 }
 

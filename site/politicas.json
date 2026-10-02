@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão. Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-09-30",
+  "revisao": "2026-10-02",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -160,10 +160,10 @@
                     "base": "Consentimento (art. 7º, I), dado no aviso de cookies."
                   },
                   {
-                    "titulo": "Marketing (Pixel da Meta), só com a sua permissão",
-                    "dados": "Páginas vistas e etapas como abrir o chat, começar a inscrição ou concluir o pagamento, com o assunto ou o curso e o valor. Nunca o nome, o CPF, o e-mail, o telefone ou a mensagem.",
-                    "finalidade": "Medir o alcance das nossas campanhas de divulgação no Facebook e no Instagram.",
-                    "base": "Consentimento (art. 7º, I), dado no aviso de cookies."
+                    "titulo": "Marketing (Pixel e API de Conversões da Meta), só com a sua permissão",
+                    "dados": "Páginas vistas e etapas como abrir o chat, começar a inscrição ou concluir o pagamento, com o assunto ou o curso e o valor. O nosso servidor também envia uma cópia desses eventos à Meta (API de Conversões), com o endereço IP, a identificação do navegador, os cookies _fbp e _fbc (ou o fbclid do endereço da página) e, quando você manda uma mensagem pelo chat ou se inscreve, o nome, o e-mail e o telefone, transformados em código (hash SHA-256), e, na inscrição, um código da própria inscrição. Para avisar a Meta do pagamento confirmado depois que você fecha a página, a sua escolha sobre marketing, os cookies _fbp e _fbc e a identificação do navegador ficam guardados com a inscrição. O hash não é anonimização: é o que permite à Meta reconhecer você entre os usuários dela. O CPF, a mensagem do chat e os dados do cartão nunca vão.",
+                    "finalidade": "Medir o alcance e o resultado das nossas campanhas de divulgação no Facebook e no Instagram: saber quais anúncios trouxeram inscrições e ajudar a Meta a mostrá-los a quem tem mais chance de se interessar.",
+                    "base": "Consentimento (art. 7º, I), dado no aviso de cookies, que você pode retirar a qualquer momento em “Preferências de cookies”. Sem ele, nada disso acontece, e recusar não muda nada na sua inscrição."
                   },
                   {
                     "titulo": "Origem da visita, só com a permissão de estatística",
@@ -232,7 +232,7 @@
                   "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula e do chat saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.",
                   "**Meta, pelo WhatsApp**, só para quem autorizou receber mensagens por ali: o número e o texto de cada lembrete ou comunicado. Se a instituição usar um intermediário para mandar o WhatsApp (o Make ou o servidor do WhatsApp do Palácio Virtual, mantido pela filial), ele recebe o mesmo, só para o envio. Alunos só recebem WhatsApp com a autorização registrada na plataforma da escola.",
                   "**Vercel e Supabase**, que hospedam o sistema que publica as notícias e guarda a lista da newsletter.",
-                  "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
+                  "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
                   "**Spotform**, onde fica o formulário do voluntariado.",
                   "**Autoridades públicas**, quando a lei ou uma ordem judicial exigir."
                 ]
@@ -273,11 +273,12 @@
                   "**Doações anteriores à suspensão:** pelo prazo legal de guarda dos registros contábeis e fiscais.",
                   "**Chat:** enquanto for útil para acompanhar o atendimento. Você pode pedir a exclusão a qualquer momento.",
                   "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
-                  "**Registros de segurança (IP):** junto com o envio a que se referem; os limites de tentativas do ponto e das páginas pessoais guardam o IP (e, no código do dia do ponto, um código gerado a partir do CPF, que não permite ler o CPF) por 2 dias, e o registro de robôs barrados nos formulários, por 30 dias.",
+                  "**Registros de segurança (IP):** junto com o envio a que se referem; os limites de tentativas do ponto, das páginas pessoais e do repasse das páginas à Meta guardam o IP (e, no código do dia do ponto, um código gerado a partir do CPF, que não permite ler o CPF) por 2 dias, e o registro de robôs barrados nos formulários, por 30 dias.",
                   "**Ponto da sede, de voluntários e diretoria:** enquanto durar o voluntariado e por até 5 anos depois do fim, para comprovar as horas doadas e a natureza voluntária do serviço.",
                   "**Presença na sede de empregados, terceirizados e outros vínculos:** 90 dias. Depois, é apagada automaticamente.",
                   "**Presença nas aulas e comprovantes de comparecimento:** pelo mesmo prazo da matrícula.",
                   "**Lembretes, comunicados e pesquisa do ponto:** o registro das mensagens e as respostas da pesquisa são apagados automaticamente depois de 1 ano; um mês depois do comunicado, as respostas deixam de ficar ligadas a quem respondeu. As escolhas sobre o que receber ficam enquanto durar o cadastro no ponto. De quem pediu para não receber mais nada, guardamos só um código gerado a partir do e-mail ou do número (e não o e-mail ou o número), enquanto for preciso para respeitar o pedido.",
+                  "**Marketing na inscrição:** os cookies _fbp e _fbc e a identificação do navegador, guardados com a inscrição só com a sua permissão, são apagados quando o pagamento é informado à Meta ou, no máximo, em 8 dias (a Meta só aceita eventos de até 7 dias), e também quando a inscrição registra que você retirou a permissão. A sua escolha sobre marketing e a data dela ficam com a inscrição, pelo mesmo prazo da matrícula, para comprovar o consentimento.",
                   "**Cookies:** pelo prazo de cada um, listado na [Política de Cookies]({cookies})."
                 ]
               },
@@ -394,10 +395,10 @@
                     "base": "Consent (Art. 7, I), given in the cookie notice."
                   },
                   {
-                    "titulo": "Marketing (Meta Pixel), only with your permission",
-                    "dados": "Pages viewed and steps such as opening the chat, starting an enrolment or completing a payment, with the subject or course and the amount. Never your name, CPF, e-mail, phone number or message.",
-                    "finalidade": "To measure the reach of our outreach campaigns on Facebook and Instagram.",
-                    "base": "Consent (Art. 7, I), given in the cookie notice."
+                    "titulo": "Marketing (Meta Pixel and Conversions API), only with your permission",
+                    "dados": "Pages viewed and steps such as opening the chat, starting an enrolment or completing a payment, with the subject or course and the amount. Our server also sends Meta a copy of these events (Conversions API), with your IP address, the browser identification, the _fbp and _fbc cookies (or the fbclid in the page address) and, when you send a chat message or enrol, your name, e-mail and phone number, turned into a code (SHA-256 hash), and, for enrolments, a code of the enrolment itself. So that Meta can be told about a payment confirmed after you close the page, your marketing choice, the _fbp and _fbc cookies and the browser identification are stored with the enrolment. Hashing is not anonymisation: it is what lets Meta recognise you among its users. Your CPF, chat message and card details are never sent.",
+                    "finalidade": "To measure the reach and results of our outreach campaigns on Facebook and Instagram: to learn which ads brought enrolments and to help Meta show them to people more likely to be interested.",
+                    "base": "Consent (Art. 7, I), given in the cookie notice, which you can withdraw at any time under “Cookie preferences”. Without it, none of this happens, and refusing changes nothing in your enrolment."
                   },
                   {
                     "titulo": "Where the visit came from, only with statistics permission",
@@ -466,7 +467,7 @@
                   "**Resend**, which sends the e-mails (receipts, chat reference numbers, the newsletter and the time clock reminders and announcements). If it is unavailable, enrolment and chat e-mails go out through the hosting server; the time clock reminders and announcements wait for Resend to come back.",
                   "**Meta, through WhatsApp**, only for people who agreed to receive messages there: the number and the text of each reminder or announcement. If the institution uses an intermediary to send WhatsApp messages (Make, or the server of the Palácio Virtual WhatsApp, run by the branch), it receives the same, only for sending. Students only receive WhatsApp messages if their authorisation is recorded on the school platform.",
                   "**Vercel and Supabase**, which host the system that publishes the news and keeps the newsletter list.",
-                  "**Google and Meta**, through the statistics and marketing tools, only with your permission. Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
+                  "**Google and Meta**, through the statistics and marketing tools, only with your permission. Meta also receives from our server a copy of the marketing events, with the data described above (Conversions API). Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
                   "**Spotform**, which hosts the volunteer form.",
                   "**Public authorities**, when the law or a court order requires it."
                 ]
@@ -507,11 +508,12 @@
                   "**Donations made before the suspension:** for the legal retention period for accounting and tax records.",
                   "**Chat:** for as long as it is useful to follow up the exchange. You can ask for deletion at any time.",
                   "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
-                  "**Security records (IP):** together with the submission they relate to; the attempt limits of the time clock and the personal pages keep the IP (and, for the time clock's code of the day, a code derived from the CPF that does not reveal it) for 2 days, and the record of robots blocked on the forms, for 30 days.",
+                  "**Security records (IP):** together with the submission they relate to; the attempt limits of the time clock, the personal pages and the relay of page views to Meta keep the IP (and, for the time clock's code of the day, a code derived from the CPF that does not reveal it) for 2 days, and the record of robots blocked on the forms, for 30 days.",
                   "**Headquarters time clock, for volunteers and board members:** while the volunteering lasts and for up to 5 years after it ends, to prove the hours donated and the voluntary nature of the service.",
                   "**Presence of employees, contractors and other relationships at the headquarters:** 90 days. After that, it is deleted automatically.",
                   "**Class attendance and attendance certificates:** for the same period as the enrolment.",
                   "**Time clock reminders, announcements and survey:** the record of messages and the survey answers are deleted automatically after 1 year; one month after the announcement, the answers are no longer linked to whoever gave them. Choices about what to receive are kept while the person remains registered on the time clock. For people who asked to receive nothing more, we keep only a code generated from the e-mail address or number (not the address or number itself), for as long as needed to honour the request.",
+                  "**Marketing on the enrolment:** the _fbp and _fbc cookies and the browser identification, stored with the enrolment only with your permission, are deleted once the payment is reported to Meta or, at the latest, after 8 days (Meta only accepts events up to 7 days old), and also when the enrolment records that you withdrew your permission. Your marketing choice and its date stay with the enrolment for as long as the enrolment record, as proof of consent.",
                   "**Cookies:** for the period of each one, listed in the [Cookie Policy]({cookies})."
                 ]
               },
@@ -628,10 +630,10 @@
                     "base": "Consentimiento (art. 7, I), dado en el aviso de cookies."
                   },
                   {
-                    "titulo": "Marketing (Píxel de Meta), solo con su permiso",
-                    "dados": "Páginas vistas y pasos como abrir el chat, empezar la inscripción o completar el pago, con el asunto o el curso y el importe. Nunca el nombre, el CPF, el correo, el teléfono ni el mensaje.",
-                    "finalidade": "Medir el alcance de nuestras campañas de difusión en Facebook e Instagram.",
-                    "base": "Consentimiento (art. 7, I), dado en el aviso de cookies."
+                    "titulo": "Marketing (Píxel y API de Conversiones de Meta), solo con su permiso",
+                    "dados": "Páginas vistas y pasos como abrir el chat, empezar la inscripción o completar el pago, con el asunto o el curso y el importe. Nuestro servidor también envía una copia de estos eventos a Meta (API de Conversiones), con la dirección IP, la identificación del navegador, las cookies _fbp y _fbc (o el fbclid de la dirección de la página) y, cuando usted envía un mensaje por el chat o se inscribe, el nombre, el correo y el teléfono, convertidos en un código (hash SHA-256), y, en la inscripción, un código de la propia inscripción. Para avisar a Meta del pago confirmado después de que usted cierre la página, su elección sobre marketing, las cookies _fbp y _fbc y la identificación del navegador se guardan con la inscripción. El hash no es anonimización: es lo que permite a Meta reconocerle entre sus usuarios. El CPF, el mensaje del chat y los datos de la tarjeta nunca se envían.",
+                    "finalidade": "Medir el alcance y el resultado de nuestras campañas de difusión en Facebook e Instagram: saber qué anuncios trajeron inscripciones y ayudar a Meta a mostrarlos a quienes tienen más probabilidad de interesarse.",
+                    "base": "Consentimiento (art. 7, I), dado en el aviso de cookies, que puede retirar en cualquier momento en “Preferencias de cookies”. Sin él, nada de esto ocurre, y rechazarlo no cambia nada en su inscripción."
                   },
                   {
                     "titulo": "Origen de la visita, solo con el permiso de estadística",
@@ -700,7 +702,7 @@
                   "**Resend**, que envía los correos (comprobantes, protocolos del chat, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula y del chat salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.",
                   "**Meta, por WhatsApp**, solo para quien autorizó recibir mensajes por ahí: el número y el texto de cada recordatorio o comunicado. Si la institución usa un intermediario para enviar el WhatsApp (Make o el servidor del WhatsApp del Palácio Virtual, mantenido por la filial), este recibe lo mismo, solo para el envío. Los alumnos solo reciben WhatsApp si su autorización está registrada en la plataforma de la escuela.",
                   "**Vercel y Supabase**, que alojan el sistema que publica las noticias y guarda la lista del boletín.",
-                  "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
+                  "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Meta también recibe de nuestro servidor una copia de los eventos de marketing, con los datos descritos arriba (API de Conversiones). Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
                   "**Spotform**, donde está el formulario del voluntariado.",
                   "**Autoridades públicas**, cuando la ley o una orden judicial lo exija."
                 ]
@@ -741,11 +743,12 @@
                   "**Donaciones anteriores a la suspensión:** por el plazo legal de conservación de los registros contables y fiscales.",
                   "**Chat:** mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.",
                   "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
-                  "**Registros de seguridad (IP):** junto con el envío al que se refieren; los límites de intentos del control de asistencia y de las páginas personales guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.",
+                  "**Registros de seguridad (IP):** junto con el envío al que se refieren; los límites de intentos del control de asistencia, de las páginas personales y del reenvío de las páginas a Meta guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.",
                   "**Control de asistencia de la sede, de voluntarios y directiva:** mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.",
                   "**Presencia en la sede de empleados, tercerizados y otros vínculos:** 90 días. Después, se elimina automáticamente.",
                   "**Asistencia a las clases y comprobantes de asistencia:** por el mismo plazo de la matrícula.",
                   "**Recordatorios, comunicados y encuesta del control de asistencia:** el registro de los mensajes y las respuestas de la encuesta se eliminan automáticamente después de 1 año; un mes después del comunicado, las respuestas dejan de estar vinculadas a quien respondió. Las elecciones sobre qué recibir se guardan mientras dure el registro en el control de asistencia. De quien pidió no recibir nada más, guardamos solo un código generado a partir del correo o del número (y no el correo o el número), mientras sea necesario para respetar el pedido.",
+                  "**Marketing en la inscripción:** las cookies _fbp y _fbc y la identificación del navegador, guardadas con la inscripción solo con su permiso, se eliminan cuando el pago se informa a Meta o, como máximo, a los 8 días (Meta solo acepta eventos de hasta 7 días), y también cuando la inscripción registra que usted retiró su permiso. Su elección sobre marketing y su fecha se guardan con la inscripción, durante el mismo plazo que la matrícula, para acreditar el consentimiento.",
                   "**Cookies:** por el plazo de cada una, indicado en la [Política de Cookies]({cookies})."
                 ]
               },
@@ -831,7 +834,7 @@
                 "botao_cookies": "Abrir preferências de cookies"
               },
               {
-                "p": "Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada."
+                "p": "Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada. No marketing, o nosso servidor também deixa de enviar à Meta a cópia dos eventos. Numa inscrição já feita, a retirada passa a valer quando você abre de novo a página da inscrição (pagamento ou confirmação) no mesmo navegador; se não for voltar a ela, ou se inscreveu em outro aparelho, peça pelo e-mail do fim desta página. A retirada não desfaz o que foi feito enquanto a permissão valia (art. 8º, § 5º, da LGPD)."
               }
             ]
           },
@@ -843,7 +846,7 @@
                 "lista": [
                   "**Necessários (sempre ligados):** fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat, o aparelho da recepção liberado para o ponto da sede, quem pediu para ser lembrado no ponto pelo celular e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.",
                   "**Estatística (desligados até você ligar):** o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.",
-                  "**Marketing (desligados até você ligar):** o Pixel da Meta mede o alcance das nossas campanhas no Facebook e no Instagram."
+                  "**Marketing (desligados até você ligar):** o Pixel da Meta mede o alcance e o resultado das nossas campanhas no Facebook e no Instagram. Com ele ligado, o nosso servidor também envia à Meta uma cópia dos eventos (API de Conversões), com os dados descritos na [Política de Privacidade]({privacidade})."
                 ]
               }
             ]
@@ -960,7 +963,7 @@
                 }
               },
               {
-                "p": "Com o marketing ligado, o navegador também pode enviar à Meta os cookies que ela mesma grava no domínio facebook.com (como o fr), que seguem a [política da Meta](https://www.facebook.com/privacy/policy). As regras do Google estão em [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+                "p": "Com o marketing ligado, o nosso servidor lê os cookies _fbp e _fbc e os envia à Meta junto com a cópia dos eventos; na inscrição, guarda-os por até 8 dias, para avisar a Meta do pagamento confirmado. O navegador também pode enviar à Meta os cookies que ela mesma grava no domínio facebook.com (como o fr), que seguem a [política da Meta](https://www.facebook.com/privacy/policy). As regras do Google estão em [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
               }
             ]
           },
@@ -1010,7 +1013,7 @@
                 "botao_cookies": "Open cookie preferences"
               },
               {
-                "p": "When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading."
+                "p": "When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5)."
               }
             ]
           },
@@ -1022,7 +1025,7 @@
                 "lista": [
                   "**Necessary (always on):** keep the site working. They store your cookie choice, the progress of the chat conversation, the reception device authorised for the headquarters time clock, who asked to be remembered on the time clock on their phone and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.",
                   "**Statistics (off until you turn them on):** Google Analytics counts visits and shows which pages are read, without identifying you by name.",
-                  "**Marketing (off until you turn them on):** the Meta Pixel measures the reach of our campaigns on Facebook and Instagram."
+                  "**Marketing (off until you turn them on):** the Meta Pixel measures the reach and results of our campaigns on Facebook and Instagram. With it on, our server also sends Meta a copy of the events (Conversions API), with the data described in the [Privacy Policy]({privacidade})."
                 ]
               }
             ]
@@ -1139,7 +1142,7 @@
                 }
               },
               {
-                "p": "With marketing on, your browser may also send Meta the cookies Meta itself stores on the facebook.com domain (such as fr), which follow [Meta's policy](https://www.facebook.com/privacy/policy). Google's rules are at [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+                "p": "With marketing on, our server reads the _fbp and _fbc cookies and sends them to Meta with the copy of the events; for enrolments, it stores them for up to 8 days, to tell Meta about the confirmed payment. Your browser may also send Meta the cookies Meta itself stores on the facebook.com domain (such as fr), which follow [Meta's policy](https://www.facebook.com/privacy/policy). Google's rules are at [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
               }
             ]
           },
@@ -1189,7 +1192,7 @@
                 "botao_cookies": "Abrir preferencias de cookies"
               },
               {
-                "p": "Al retirar un permiso, borramos de su navegador las cookies de esa categoría que el propio sitio puede borrar, y la herramienta deja de cargarse."
+                "p": "Al retirar un permiso, borramos de su navegador las cookies de esa categoría que el propio sitio puede borrar, y la herramienta deja de cargarse. En el marketing, nuestro servidor también deja de enviar a Meta la copia de los eventos. En una inscripción ya hecha, la retirada vale cuando usted vuelve a abrir la página de la inscripción (pago o confirmación) en el mismo navegador; si no va a volver a ella, o se inscribió en otro dispositivo, pídalo por el correo del final de esta página. La retirada no deshace lo realizado mientras el permiso estaba vigente (art. 8, § 5, de la LGPD)."
               }
             ]
           },
@@ -1201,7 +1204,7 @@
                 "lista": [
                   "**Necesarias (siempre activas):** hacen que el sitio funcione. Guardan su elección sobre cookies, el progreso de la conversación del chat, el aparato de la recepción autorizado para el control de asistencia de la sede, quién pidió ser recordado en el control de asistencia por el celular y, para el equipo, la sesión de los paneles internos. No dependen de permiso, porque sin ellas el sitio no puede hacer lo que usted pidió.",
                   "**Estadística (desactivadas hasta que las active):** Google Analytics cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.",
-                  "**Marketing (desactivadas hasta que las active):** el Píxel de Meta mide el alcance de nuestras campañas en Facebook e Instagram."
+                  "**Marketing (desactivadas hasta que las active):** el Píxel de Meta mide el alcance y el resultado de nuestras campañas en Facebook e Instagram. Con él activado, nuestro servidor también envía a Meta una copia de los eventos (API de Conversiones), con los datos descritos en la [Política de Privacidad]({privacidade})."
                 ]
               }
             ]
@@ -1318,7 +1321,7 @@
                 }
               },
               {
-                "p": "Con el marketing activado, el navegador también puede enviar a Meta las cookies que la propia Meta guarda en el dominio facebook.com (como fr), que siguen la [política de Meta](https://www.facebook.com/privacy/policy). Las reglas de Google están en [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
+                "p": "Con el marketing activado, nuestro servidor lee las cookies _fbp y _fbc y las envía a Meta junto con la copia de los eventos; en la inscripción, las guarda hasta 8 días, para avisar a Meta del pago confirmado. El navegador también puede enviar a Meta las cookies que la propia Meta guarda en el dominio facebook.com (como fr), que siguen la [política de Meta](https://www.facebook.com/privacy/policy). Las reglas de Google están en [policies.google.com/technologies/cookies](https://policies.google.com/technologies/cookies)."
               }
             ]
           },

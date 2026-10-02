@@ -88,6 +88,54 @@ está atrás na mesma fila e nunca é lido. O script baixava, e nenhum evento sa
 - **O que esperar:** só quem aceita marketing é medido (LGPD). Os números ficam abaixo dos de antes de
   27/09, quando o Pixel saía para todo mundo.
 
+## API de Conversões da Meta (02/10/2026)
+
+O servidor do site manda à Meta os mesmos eventos do Pixel, com o mesmo id (`event_id` = `eventID`). A Meta
+junta os dois num só (deduplicação, até 48 h). Quem tem bloqueador de anúncio continua medido, e os eventos
+da inscrição chegam com nome, e-mail e telefone em hash, o que melhora a qualidade da correspondência.
+
+| Evento | De onde sai no servidor | id (igual ao do Pixel) | Dados da pessoa |
+| --- | --- | --- | --- |
+| PageView | `api/medicao.php` (repasse do bloco de medição) | `window.cvrjIdPageView` | não (IP, navegador, _fbp/_fbc) |
+| ViewContent | `api/medicao.php` (página de matrícula) | `vc.…` | não |
+| InitiateCheckout | `api/medicao.php` (checkout) | `ic.…` | não |
+| Lead | `api/pagamentos.php`, com a inscrição criada | `lead.…` (vai no corpo da inscrição) | nome, e-mail, telefone em hash |
+| AddPaymentInfo | `api/pagamentos.php`, cobrança aceita | `<token>-pagamento` | idem |
+| Purchase | `mcp_pos_pagamento` (postback, consulta de status ou cartão aprovado) | `<token>` | idem, com os sinais guardados |
+| Contact | `api/contato.php` (chat) | `ct.…` (vai no corpo da mensagem) | nome, e-mail e telefone (se houver) em hash |
+
+- **Consentimento:** só com marketing ligado (`m=1` no cookie `cvrj_consentimento`) e escolhido depois de
+  `MCP_META_CONSENTIMENTO_DESDE` (em `api/lib/meta.php`). Até esta revisão, o aviso e a política diziam que
+  nome, e-mail e telefone nunca iam à Meta. Por isso, quem tinha ligado o marketing antes é perguntado de
+  novo: é o `REVISAO` de `site/consentimento/consentimento.js`, o mesmo instante. Até a pessoa escolher, o
+  Pixel segue como antes e o servidor não manda nada. **Na publicação, os dois valores vão para a hora da
+  publicação.**
+- **O que nunca vai:** CPF (os Termos das Ferramentas de Negócios proíbem números de documento), mensagem do
+  chat, dados do cartão e o token das páginas de acompanhamento (o `t=` sai do endereço). O `external_id` é
+  o token da inscrição em hash, que só liga os eventos da mesma inscrição.
+- **O que fica guardado na inscrição:** a escolha de marketing e a data dela (`meta_marketing`,
+  `meta_marketing_em`, prova do consentimento) e, só com "sim", `_fbp`, `_fbc` e a identificação do
+  navegador (`meta_fbp`, `meta_fbc`, `meta_ua`). Os três últimos servem só ao Purchase confirmado sem
+  navegador: saem quando ele é aceito pela Meta ou, no máximo, em 8 dias (faxina na rotina de 15 minutos).
+  A consulta de status feita pelo próprio aluno atualiza a escolha, então retirar a permissão vale para o
+  Purchase.
+- **Nunca atrapalha o aluno:** os eventos vão para uma fila e saem depois da resposta
+  (`fastcgi_finish_request`/`litespeed_finish_request`), com tempo curto. Um evento de site sem a
+  identificação do navegador não entra na fila, porque a Meta recusaria o lote inteiro.
+- **Acompanhamento:** cada envio de uma inscrição fica em `mcp_eventos` (`meta_capi` com o HTTP, ou
+  `meta_capi_falha` com a mensagem da Meta, como token inválido). Dos repasses anônimos, só as falhas, uma a
+  cada 10 minutos. Quando a Meta avisa que a versão da API está vencendo (`x-ad-api-version-warning`), fica
+  `meta_capi_aviso` e uma linha no log de erros, uma vez por dia.
+- **Versão:** `v25.0`, a atual da Marketing API. A Conversions API segue esse calendário, e a v24 vence em
+  06/10/2026. Para trocar sem publicar código, use `META_CAPI_VERSAO`.
+- **Para ligar:** crie `api/config-meta.php` no servidor (veja o README) com `META_CAPI_TOKEN`. Para
+  conferir na aba "Testar eventos" do Gerenciador, use também `META_CAPI_TESTE` com o código da aba, e tire
+  depois. Um `config-meta.php` com erro de digitação desliga só a API de Conversões; o checkout segue.
+- **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento, fila, URL limpa),
+  `scripts/testar_meta_integracao.php` (25 cenários de ponta a ponta com MariaDB local e uma Meta, uma
+  Unicopag e uma Resend falsas) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e no
+  repasse; nada sem permissão).
+
 ## O que a verificação mostrou e não é problema
 
 - **Cada hit do GA4 sai duas vezes**, para `analytics.google.com` (`G-HDYZZ5JZHF`) e para
@@ -112,12 +160,9 @@ está atrás na mesma fila e nunca é lido. O script baixava, e nenhum evento sa
 2. **Vercel**: GA4 em `doar.` e `puncaovenosav1.`; Pixel `Donate`/`Purchase` na confirmação da
    doação, com `value` e `currency`.
 3. **Redação**: Pixel nas notícias, termos e privacidade.
-4. **API de Conversões do Meta** para o `Purchase` do checkout (servidor → Meta, com o mesmo
-   `eventID`), quando houver volume: recupera as compras que o navegador não reporta. Só para quem deu
-   permissão de marketing (o cookie `cvrj_consentimento` vai junto com a inscrição). O Gerenciador de
-   Eventos estimava em 02/10 um custo por resultado 21,7% menor com mais eventos cobertos pela API.
-5. **Correspondência avançada** (e-mail e telefone com hash, de quem deu permissão) no `Lead` e no
-   `Purchase`: a qualidade da correspondência do PageView estava em 6,1/10 em 02/10.
+4. **API de Conversões**: feita em 02/10/2026 (seção acima). Falta o token no servidor (`config-meta.php`).
+5. **Correspondência avançada no navegador** (e-mail e telefone em hash no `fbq('init')` de quem deu
+   permissão): o servidor já manda esses dados na inscrição; no navegador, é opcional.
 6. **Redação**: o modelo das notícias (`lib/site/analytics.ts`) tinha a mesma linha que travava o
    Pixel; corrigido em matheusmacedo-create/redacao-cruzvermelhariodejaneiro#287. Depois do merge,
    usar o "Regerar". Em 02/10, só o índice `/noticias/` tinha o bloco que trava; 17 das 19 matérias

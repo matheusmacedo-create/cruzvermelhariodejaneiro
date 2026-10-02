@@ -18,6 +18,11 @@
 
   var NOME = 'cvrj_consentimento';
   var VERSAO = '1';
+  // Quem ligou o marketing antes deste texto (que passou a incluir a cópia dos eventos pelo servidor, com nome,
+  // e-mail e telefone em código) é perguntado de novo. Até escolher outra vez, o servidor não manda nada à Meta:
+  // MCP_META_CONSENTIMENTO_DESDE, em api/lib/meta.php, é o mesmo instante. A VERSAO do cookie não muda, porque
+  // os outros sites (Punção, Redação, Escola) leem v=1.
+  var REVISAO = 1791000000;
   var VALIDADE_S = 365 * 24 * 60 * 60;
   var DOMINIO = /(^|\.)cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '.cruzvermelhariodejaneiro.org' : '';
   // As políticas moram no site principal: num subdomínio (Impacto das Cores), o link leva o endereço completo.
@@ -26,7 +31,7 @@
   var TEXTOS = {
     pt: {
       titulo: 'Sua privacidade',
-      texto: 'Usamos cookies necessários para o site funcionar. Com a sua permissão, usamos também cookies de estatística (Google Analytics), para saber quais páginas são lidas, e de marketing (Pixel da Meta), para medir nossas campanhas. Você escolhe, e pode mudar quando quiser em “Preferências de cookies”, no rodapé.',
+      texto: 'Usamos cookies necessários para o site funcionar. Com a sua permissão, usamos também cookies de estatística (Google Analytics), para saber quais páginas são lidas, e de marketing (Pixel da Meta), para medir nossas campanhas; com o marketing, se você escrever pelo chat ou se inscrever, o nosso servidor também envia à Meta o seu nome, e-mail e telefone em código. Você escolhe, e pode mudar quando quiser em “Preferências de cookies”, no rodapé.',
       politica: 'Política de Cookies', url: '/cookies/',
       rejeitar: 'Rejeitar', personalizar: 'Personalizar', aceitar: 'Aceitar todos',
       painel: 'Preferências de cookies',
@@ -34,14 +39,14 @@
       categorias: {
         necessarios: ['Necessários', 'Fazem o site funcionar: guardam a sua escolha sobre cookies e a conversa do chat enquanto você navega.'],
         estatistica: ['Estatística', 'Google Analytics: conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.'],
-        marketing: ['Marketing', 'Pixel da Meta (Facebook e Instagram): mede o alcance das nossas campanhas de divulgação.']
+        marketing: ['Marketing', 'Pixel da Meta (Facebook e Instagram): mede o alcance e o resultado das nossas campanhas. O nosso servidor também envia esses eventos à Meta e, no chat e na inscrição, nome, e-mail e telefone em código (hash).']
       },
       sempre: 'Sempre ligados',
       rejeitarTudo: 'Rejeitar não necessários', salvar: 'Salvar escolhas', fechar: 'Fechar'
     },
     en: {
       titulo: 'Your privacy',
-      texto: 'We use necessary cookies to make this site work. With your permission, we also use statistics cookies (Google Analytics) to see which pages are read, and marketing cookies (Meta Pixel) to measure our campaigns. It is your choice, and you can change it at any time under “Cookie preferences” in the footer.',
+      texto: 'We use necessary cookies to make this site work. With your permission, we also use statistics cookies (Google Analytics) to see which pages are read, and marketing cookies (Meta Pixel) to measure our campaigns; with marketing on, if you use the chat or enrol, our server also sends Meta your name, e-mail and phone number in coded form. It is your choice, and you can change it at any time under “Cookie preferences” in the footer.',
       politica: 'Cookie Policy', url: '/en/cookies/',
       rejeitar: 'Reject', personalizar: 'Customize', aceitar: 'Accept all',
       painel: 'Cookie preferences',
@@ -49,14 +54,14 @@
       categorias: {
         necessarios: ['Necessary', 'Keep the site working: they store your cookie choice and the chat conversation while you browse.'],
         estatistica: ['Statistics', 'Google Analytics: counts visits and shows which pages are read, without identifying you by name.'],
-        marketing: ['Marketing', 'Meta Pixel (Facebook and Instagram): measures the reach of our outreach campaigns.']
+        marketing: ['Marketing', 'Meta Pixel (Facebook and Instagram): measures the reach and results of our campaigns. Our server also sends these events to Meta and, in the chat and enrolment, your name, e-mail and phone number in coded form (hash).']
       },
       sempre: 'Always on',
       rejeitarTudo: 'Reject non-essential', salvar: 'Save choices', fechar: 'Close'
     },
     es: {
       titulo: 'Su privacidad',
-      texto: 'Usamos cookies necesarias para que el sitio funcione. Con su permiso, usamos también cookies de estadística (Google Analytics), para saber qué páginas se leen, y de marketing (Píxel de Meta), para medir nuestras campañas. Usted elige y puede cambiar su elección cuando quiera en “Preferencias de cookies”, en el pie de página.',
+      texto: 'Usamos cookies necesarias para que el sitio funcione. Con su permiso, usamos también cookies de estadística (Google Analytics), para saber qué páginas se leen, y de marketing (Píxel de Meta), para medir nuestras campañas; con el marketing, si escribe por el chat o se inscribe, nuestro servidor también envía a Meta su nombre, correo y teléfono en código. Usted elige y puede cambiar su elección cuando quiera en “Preferencias de cookies”, en el pie de página.',
       politica: 'Política de Cookies', url: '/es/cookies/',
       rejeitar: 'Rechazar', personalizar: 'Personalizar', aceitar: 'Aceptar todas',
       painel: 'Preferencias de cookies',
@@ -64,7 +69,7 @@
       categorias: {
         necessarios: ['Necesarias', 'Hacen que el sitio funcione: guardan su elección sobre cookies y la conversación del chat mientras navega.'],
         estatistica: ['Estadística', 'Google Analytics: cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.'],
-        marketing: ['Marketing', 'Píxel de Meta (Facebook e Instagram): mide el alcance de nuestras campañas de difusión.']
+        marketing: ['Marketing', 'Píxel de Meta (Facebook e Instagram): mide el alcance y el resultado de nuestras campañas. Nuestro servidor también envía estos eventos a Meta y, en el chat y la inscripción, nombre, correo y teléfono en código (hash).']
       },
       sempre: 'Siempre activas',
       rejeitarTudo: 'Rechazar no necesarias', salvar: 'Guardar elección', fechar: 'Cerrar'
@@ -280,7 +285,10 @@
 
   window.cvrjConsentimento = { ler: ler, abrir: abrirPainel };
 
-  function iniciar() { if (!ler()) mostrarAviso(); }
+  function iniciar() {
+    var c = ler();
+    if (!c || (c.marketing && c.em < REVISAO)) mostrarAviso();
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();
 })();
