@@ -2221,6 +2221,54 @@ O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org
 
 O verbete ainda não tem item no Wikidata; quando tiver, vale acrescentar o `Q…` ao `sameAs`.
 
+## Slider de campanhas da home (02/10/2026)
+
+O topo da home é um slider (`#campaignSlider`): troca sozinho a cada 6 s, e a altura dele é a do banner
+visível. Regras:
+
+- **Todo banner em 1920x901.** Um banner com outra proporção muda a altura a cada troca automática, e a
+  página inteira pula (CLS). O CSS (`aspect-ratio: 1920 / 901` com `object-fit: cover`) segura a altura
+  mesmo assim, mas cortaria as bordas da arte: ajuste a arte antes.
+- **Só o primeiro slide entra na carga da página:** preload no `<head>` com `fetchpriority="high"` (no
+  computador ele é o maior elemento da página, o LCP). Os outros têm `loading="lazy"`. 1,5 s antes da
+  troca, o script baixa a imagem do próximo slide, mas só com a página carregada, a aba visível, o slider
+  na tela e sem a economia de dados ligada: quem rolou para baixo ou saiu não paga por ela.
+- **O CSS do slider fica no segundo `<style>` da home.** O primeiro é copiado pelos geradores para todas as
+  páginas, e só a home tem o slider.
+- Pontos e setas ficam sobre um fundo escuro translúcido, porque os brancos puros sumiam num banner de
+  fundo claro.
+
+**Banner da Força-Tarefa Humanitária – Ações El Niño** (primeiro slide desde 02/10/2026). Só
+informativo, sem link, a pedido do Matheus: o slide leva a classe `sem-link` (cursor normal, sem a mão de
+link do slider), e o `alt` traz o texto da arte.
+
+- A arte veio em 1916x821 (`site/assets/forca-tarefa-el-nino-arte.webp`, no servidor).
+  `forca-tarefa-el-nino-banner.png` é a mesma arte com 1920 de largura e 78 linhas brancas a mais na
+  faixa branca de baixo: 42 acima e 36 abaixo da linha do rodapé, que continua centralizada. Nada da arte
+  foi cortado.
+- `scripts/otimizar_imagens.py` gera 640, 960, 1200, 1440 e 1920 px em AVIF (qualidade 60) e em WebP
+  (78): de 23 a 95 KB em AVIF e de 32 a 122 KB em WebP. O `<picture>` serve o AVIF a quem aceita, e o
+  preload é `type="image/avif"` (quem não aceita ignora o preload e pega o WebP do próprio `<img>`).
+- Lighthouse, mediana de 3, servidor local com as fotos do ar, home de antes e de depois:
+
+  | | Nota | LCP | CLS | Página |
+  | --- | --- | --- | --- | --- |
+  | Celular, antes → depois | 81 → 88 | 3,31 → 3,00 s | 0,001 → 0,001 | 493 → 420 KB |
+  | Computador, antes → depois | 98 → 98 | 1,10 → 1,03 s | 0 → 0 | 717 → 568 KB |
+
+  O banner baixado na carga caiu de 115 para 39 KB no celular e de 218 para 66 KB no computador.
+- **Trocar o primeiro slide:** arte em 1920x901 em `site/assets/`, entrada em `FOTOS` (e em `AVIF`) de
+  `scripts/otimizar_imagens.py`, rodar o script e, na home, o `<picture>` do slide e o preload do `<head>`
+  com os mesmos `srcset` e `sizes` (se diferirem, o navegador baixa duas vezes). O slide que sai da frente
+  passa a ter `loading="lazy"` no lugar de `fetchpriority="high"`.
+- Publicação: `scripts/publicacao-banner-el-nino.txt` (as imagens antes da página que as pede).
+- **No ar desde 02/10/2026, 17h51 (Brasília)**, depois de copiar a home do ar (igual à última publicação).
+  O LiteSpeed da Hostinger mandava `.avif` como `text/plain`: o `.htaccess` da raiz ganhou
+  `AddType image/avif .avif` (publicado com cópia do anterior; home, páginas, redirecionamentos, 404 e
+  HSTS conferidos logo depois). Conferido no ar: AVIF escolhido na largura certa, só o primeiro slide na
+  carga, próximo slide pronto na troca, alturas iguais, CLS ≤ 0,0002, sem erro de JS, e
+  `conferir_pixel.js` nos 12 cenários.
+
 ## FAQ da home (19/09/2026, à noite)
 
 A FAQ da home tinha cinco respostas de uma frase. Agora é uma seção de conteúdo pensada para busca
