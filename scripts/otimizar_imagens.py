@@ -4,6 +4,7 @@
 Lê os originais em site/assets/ (cópia do public_html/assets do servidor, fora do Git) e grava em
 site/assets/otim/ arquivos <nome>-<largura>.webp, além das imagens de compartilhamento (og-*.jpg,
 1200x630). As páginas referenciam essas versões com srcset; os originais ficam no servidor.
+As imagens de AVIF ganham também <nome>-<largura>.avif (a página usa <picture>, com o WebP de reserva).
 
 Uso:  python3 scripts/otimizar_imagens.py
 Depois: scripts/publicar_hostinger.sh site/assets/otim/*  (os arquivos novos precisam ir ao servidor)
@@ -19,10 +20,17 @@ RAIZ = Path(__file__).resolve().parent.parent
 ORIGEM = RAIZ / "site" / "assets"
 DESTINO = ORIGEM / "otim"
 QUALIDADE = 78
+# AVIF: com qualidade 60 fica igual ao WebP 78 a olho (texto e foto conferidos) e cerca de 25% menor.
+QUALIDADE_AVIF = 60
 
 # Fotos: larguras geradas (só as menores ou iguais à largura original, mais a original se for menor que a maior pedida).
 FOTOS = {
     "hero-equipe-grupo.jpg": [960, 1440],
+    # Banners do slider de campanhas da home: todos em 1920x901, senão a altura do slider muda a cada troca
+    # automática (CLS). A arte da Força-Tarefa El Niño veio em 1916x821 (forca-tarefa-el-nino-arte.webp):
+    # forca-tarefa-el-nino-banner.png é ela com 1920 de largura e 78 linhas brancas a mais na faixa de baixo
+    # (42 acima e 36 abaixo da linha do rodapé, que fica centralizada), sem cortar nada da arte.
+    "forca-tarefa-el-nino-banner.png": [640, 960, 1200, 1440, 1920],
     "impacto-cores-banner.jpg": [640, 1200, 1920],
     "agasalho-banner.jpg": [640, 1200, 1920],
     "reuniao-cicv.jpg": [480, 960],
@@ -46,6 +54,8 @@ FOTOS = {
     "protocolo-trauma.jpg": [480, 1080],
     "dia-cruz-vermelha.jpg": [640, 1254],
 }
+# Também em AVIF (o primeiro slide da home, que é o maior elemento da página no computador).
+AVIF = {"forca-tarefa-el-nino-banner.png"}
 # Logos com transparência: uma largura só.
 LOGOS = {
     "logo-cvb-rj.png": 520,
@@ -92,9 +102,15 @@ def main() -> int:
         antes += arq.stat().st_size
         for largura in sorted(set(min(l, im.width) for l in larguras)):
             saida = DESTINO / f"{arq.stem}-{largura}.webp"
-            redimensionar(im, largura).save(saida, "WEBP", quality=QUALIDADE, method=6)
+            versao = redimensionar(im, largura)
+            versao.save(saida, "WEBP", quality=QUALIDADE, method=6)
             gerados += 1
             depois += saida.stat().st_size
+            if nome in AVIF:
+                saida_avif = saida.with_suffix(".avif")
+                versao.save(saida_avif, "AVIF", quality=QUALIDADE_AVIF, speed=4)
+                gerados += 1
+                depois += saida_avif.stat().st_size
     for nome, largura in LOGOS.items():
         arq = ORIGEM / nome
         if not arq.is_file():

@@ -27,7 +27,7 @@
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
   <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/otim/impacto-cores-banner-1920.webp" imagesrcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="assets/otim/forca-tarefa-el-nino-banner-1920.avif" imagesrcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" imagesizes="100vw" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -1018,6 +1018,17 @@
     .faq-grupo { margin: 30px 0 12px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 900; }
     .faq-list .faq-grupo:first-child { margin-top: 0; }
   </style>
+  <style>
+    /* Slider de campanhas. Fica fora do primeiro <style>, que os geradores copiam para as outras páginas (só a
+       home tem o slider). Todos os banners em 1920x901: com a proporção fixa, a altura do slider não muda a
+       cada troca automática, nem quando o navegador escolhe uma largura com altura arredondada. */
+    .campaign-slide picture { display: block; }
+    .campaign-slide img { aspect-ratio: 1920 / 901; object-fit: cover; }
+    /* Pontos e setas sobre um fundo escuro translúcido: brancos puros sumiam nos banners de fundo claro. */
+    .campaign-slider-dots { background: rgba(0,0,0,.32); padding: 6px 10px; border-radius: 999px; }
+    .campaign-slider-arrow { background: rgba(0,0,0,.32); border-color: rgba(255,255,255,.55); }
+    .campaign-slider-arrow:hover { background: rgba(0,0,0,.5); }
+  </style>
 
   <!-- Google tag (gtag.js) -->
   <script>
@@ -1451,11 +1462,19 @@
   <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
   <div class="campaign-slider" id="campaignSlider">
     <div class="campaign-slide active" data-slide="0">
-      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-        <img alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/impacto-cores-banner-1920.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
+      <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
+        <picture>
+          <source type="image/avif" srcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" sizes="100vw" width="1920" height="901">
+          <img alt="Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Inscreva-se como voluntário." src="assets/otim/forca-tarefa-el-nino-banner-1200.webp" srcset="assets/otim/forca-tarefa-el-nino-banner-640.webp 640w, assets/otim/forca-tarefa-el-nino-banner-960.webp 960w, assets/otim/forca-tarefa-el-nino-banner-1200.webp 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.webp 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
+        </picture>
       </a>
     </div>
     <div class="campaign-slide" data-slide="1">
+      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
+        <img alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/impacto-cores-banner-1920.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" loading="lazy" decoding="async">
+      </a>
+    </div>
+    <div class="campaign-slide" data-slide="2">
       <a href="campanha-agasalho.html">
         <img alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/agasalho-banner-1920.webp" srcset="assets/otim/agasalho-banner-640.webp 640w, assets/otim/agasalho-banner-1200.webp 1200w, assets/otim/agasalho-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 1100px" width="1920" height="901" loading="lazy" decoding="async">
       </a>
@@ -1465,6 +1484,7 @@
     <div class="campaign-slider-dots">
       <button class="campaign-dot active" onclick="goToCampaignSlide(0)" aria-label="Slide 1"></button>
       <button class="campaign-dot" onclick="goToCampaignSlide(1)" aria-label="Slide 2"></button>
+      <button class="campaign-dot" onclick="goToCampaignSlide(2)" aria-label="Slide 3"></button>
     </div>
   </div>
   <script>
@@ -1473,6 +1493,20 @@
       var slides = document.querySelectorAll('.campaign-slide');
       var dots = document.querySelectorAll('.campaign-dot');
       var timer;
+      // Só a imagem do primeiro slide entra na carga da página; as outras têm loading="lazy". Um pouco antes da
+      // troca, a do próximo slide começa a baixar, para a troca não mostrar o fundo vazio: só com a página já
+      // carregada, a aba visível, o slider na tela e sem a economia de dados ligada (quem não vai ver a troca
+      // não paga por ela).
+      var slider = document.getElementById('campaignSlider');
+      var preparo;
+      function prepararProximo(){
+        if (document.readyState !== 'complete' || document.visibilityState !== 'visible') return;
+        if (navigator.connection && navigator.connection.saveData) return;
+        var r = slider.getBoundingClientRect();
+        if (r.bottom <= 0 || r.top >= window.innerHeight) return;
+        var img = slides[(current + 1) % slides.length].querySelector('img');
+        if (img && img.loading === 'lazy') img.loading = 'eager';
+      }
       function render(){
         slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
         dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
@@ -1484,7 +1518,9 @@
       };
       function resetTimer(){
         clearInterval(timer);
+        clearTimeout(preparo);
         timer = setInterval(function(){ changeCampaignSlide(1); }, 6000);
+        preparo = setTimeout(prepararProximo, 4500);
       }
       resetTimer();
     })();

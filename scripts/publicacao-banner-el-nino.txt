@@ -1,0 +1,19 @@
+# Banner da Força-Tarefa El Niño no slider da home (02/10/2026). As imagens antes da página que as pede.
+# site/assets/ fica fora do Git (só no servidor); as versões de otim/ saem de scripts/otimizar_imagens.py.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-banner-el-nino.txt)
+# 1) originais (a arte recebida e a versão em 1920x901)
+site/assets/forca-tarefa-el-nino-arte.webp
+site/assets/forca-tarefa-el-nino-banner.png
+# 2) versões otimizadas
+site/assets/otim/forca-tarefa-el-nino-banner-640.avif
+site/assets/otim/forca-tarefa-el-nino-banner-640.webp
+site/assets/otim/forca-tarefa-el-nino-banner-960.avif
+site/assets/otim/forca-tarefa-el-nino-banner-960.webp
+site/assets/otim/forca-tarefa-el-nino-banner-1200.avif
+site/assets/otim/forca-tarefa-el-nino-banner-1200.webp
+site/assets/otim/forca-tarefa-el-nino-banner-1440.avif
+site/assets/otim/forca-tarefa-el-nino-banner-1440.webp
+site/assets/otim/forca-tarefa-el-nino-banner-1920.avif
+site/assets/otim/forca-tarefa-el-nino-banner-1920.webp
+# 3) a home
+site/index.html
