@@ -1782,9 +1782,12 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
   `Domain=.cruzvermelhariodejaneiro.org`): quem escolheu no site principal não é perguntado de novo
   nos subdomínios (Impacto das Cores, Punção Venosa, Redação).
 - O bloco de medição da home (entre `<!-- Google tag (gtag.js) -->` e `<!-- End Meta Pixel Code -->`)
-  começa com o Consent Mode v2 negado e o Pixel revogado, e **só baixa o gtag.js e o fbevents.js
-  com permissão** (`window.cvrjMedicao.aplicar`). Revogar liga `ga-disable-G-HDYZZ5JZHF` e apaga
-  `_ga*`, `_gid`, `_fbp` e `_fbc`. O pixel em `<noscript>` saiu (sem JavaScript não há escolha).
+  começa com o Consent Mode v2 negado e **só baixa o gtag.js e o fbevents.js com permissão**
+  (`window.cvrjMedicao.aplicar`, que também chama `fbq('consent', 'grant')`). Revogar liga
+  `ga-disable-G-HDYZZ5JZHF`, chama `fbq('consent', 'revoke')` e apaga `_ga*`, `_gid`, `_fbp` e
+  `_fbc`. O pixel em `<noscript>` saiu (sem JavaScript não há escolha). **Não há
+  `fbq('consent', 'revoke')` antes do `init`:** de 27/09 a 02/10 essa linha travou o Pixel, que
+  baixava e não enviava nada, nem para quem aceitou (detalhes em `docs/rastreamento.md`).
 - `scripts/consentimento.py` carimba o hash do aviso na home e copia o bloco para as páginas
   mantidas à mão (equipe, campanha, `doacao.html` e o Impacto das Cores, este com o endereço
   completo do aviso). Rode **antes** dos geradores, que copiam o bloco da home.
@@ -1793,6 +1796,10 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
 - Conferido no Chromium, página por página (33 páginas): nenhum pedido ao Google ou à Meta antes da
   escolha; "Aceitar todos" baixa os dois scripts; revogar apaga os cookies; a Política de Cookies
   mostra a escolha atual.
+- Baixar o script não basta: `scripts/conferir_pixel.js` exige que os eventos cheguem à Meta
+  (PageView, ViewContent, InitiateCheckout) depois de aceitar, e nada sem permissão. Os envios
+  são abortados no teste. Com `--repositorio`, usa as páginas de `site/` no lugar das do ar, para
+  conferir antes de publicar.
 
 ### Políticas em português, inglês e espanhol
 

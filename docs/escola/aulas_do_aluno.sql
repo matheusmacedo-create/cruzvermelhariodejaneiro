@@ -115,8 +115,8 @@ revoke all on function public.aulas_do_aluno(jsonb) from public;
 revoke all on function public.aulas_do_aluno(jsonb) from anon, authenticated;
 grant execute on function public.aulas_do_aluno(jsonb) to service_role;
 
--- Avisa a API do Supabase (PostgREST) para reler as funções. Sem isso, ela pode continuar respondendo
--- "Could not find the function public.aulas_do_aluno" (PGRST202) mesmo com a função criada.
+-- Avisa a API do Supabase (PostgREST) para reler as funções. No Supabase isso já acontece sozinho quando o
+-- script é confirmado; o aviso fica como garantia. Se a API seguir em PGRST202, o script não foi confirmado.
 notify pgrst, 'reload schema';
 
 -- Conferência: o resultado deve ser uma linha, aulas_do_aluno | dados jsonb | true | true | false.

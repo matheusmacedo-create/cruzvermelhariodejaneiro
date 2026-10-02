@@ -59,6 +59,35 @@ disparado antes ficam guardados e saem quando os scripts chegam. Conferido ao vi
 mudança: PageView na home, matrícula, checkout, equipe e 404; InitiateCheckout, Lead,
 AddPaymentInfo e Purchase no funil, com os mesmos parâmetros.
 
+## Pixel travado de 27/09 a 02/10/2026 (corrigido)
+
+Com o aviso de cookies (27/09), o bloco de medição passou a começar com `fbq('consent', 'revoke')`
+antes do `fbq('init')`, e o `fbevents.js` só é baixado depois do "Aceitar todos". Nessa ordem a fila
+do Pixel trava. Quando o script chega, a fila já tem `revoke`, `init`, `PageView` e, só no fim, o
+`grant`. O Pixel processa o `revoke` e espera o consentimento para seguir com o `init`, mas o `grant`
+está atrás na mesma fila e nunca é lido. O script baixava, e nenhum evento saía, nem para quem aceitou.
+
+- **Como apareceu:** no Gerenciador de Eventos (conjunto `2224500131617302`), os PageView caíram de
+  cerca de 200 por dia (18 a 25/09) para 1 a 3 por dia (30/09 e 01/10). Na matrícula, o Consultor de
+  Dados de Anúncios (Pixel Helper) mostrava "instalado, mas não disparado". O app da Punção cria o
+  `fbq` só depois do consentimento e não tinha o problema: a queda dele é a do próprio consentimento.
+- **Correção (02/10):** a linha saiu do bloco da home e das 63 páginas que o copiam, e um comentário
+  no lugar explica por quê. O `revoke` antes do `init` não faz falta, porque sem permissão o
+  `fbevents.js` nem é baixado. Quem retira a permissão depois de dar continua passando por
+  `fbq('consent', 'revoke')` (em `cvrjMedicao.aplicar`), e nessa hora o Pixel já está carregado e
+  obedece.
+- **Conferência:** `scripts/conferir_pixel.js` roda num Chromium, com os envios à Meta e ao GA4
+  abortados. Ele exige PageView, ViewContent e InitiateCheckout depois de aceitar, e nada sem escolha,
+  com "Rejeitar" ou depois de retirar a permissão. Antes da correção, 9 de 11 cenários falhavam no ar;
+  com as páginas corrigidas (`--repositorio`), 11 de 11 passam. A conferência de 27/09 só olhava o
+  download do script, e por isso o problema passou.
+- **Publicado em 02/10/2026, por volta das 8h55:** as 61 páginas de `scripts/publicacao-pixel.txt`,
+  depois de copiar as do ar. Conferido em seguida: as 61 estão iguais ao repositório, byte a byte, e
+  `scripts/conferir_pixel.js` passou nos 11 cenários no ar.
+- **GA4:** não foi afetado. O gtag processa a fila em ordem, com o Consent Mode.
+- **O que esperar:** só quem aceita marketing é medido (LGPD). Os números ficam abaixo dos de antes de
+  27/09, quando o Pixel saía para todo mundo.
+
 ## O que a verificação mostrou e não é problema
 
 - **Cada hit do GA4 sai duas vezes**, para `analytics.google.com` (`G-HDYZZ5JZHF`) e para
@@ -84,4 +113,13 @@ AddPaymentInfo e Purchase no funil, com os mesmos parâmetros.
    doação, com `value` e `currency`.
 3. **Redação**: Pixel nas notícias, termos e privacidade.
 4. **API de Conversões do Meta** para o `Purchase` do checkout (servidor → Meta, com o mesmo
-   `eventID`), quando houver volume: recupera as compras que o navegador não reporta.
+   `eventID`), quando houver volume: recupera as compras que o navegador não reporta. Só para quem deu
+   permissão de marketing (o cookie `cvrj_consentimento` vai junto com a inscrição). O Gerenciador de
+   Eventos estimava em 02/10 um custo por resultado 21,7% menor com mais eventos cobertos pela API.
+5. **Correspondência avançada** (e-mail e telefone com hash, de quem deu permissão) no `Lead` e no
+   `Purchase`: a qualidade da correspondência do PageView estava em 6,1/10 em 02/10.
+6. **Redação**: o modelo das notícias (`lib/site/analytics.ts`) tinha a mesma linha que travava o
+   Pixel; corrigido em matheusmacedo-create/redacao-cruzvermelhariodejaneiro#287. Depois do merge,
+   usar o "Regerar". Em 02/10, só o índice `/noticias/` tinha o bloco que trava; 17 das 19 matérias
+   estavam sem Pixel, e uma matéria e `/transparencia/` tinham o bloco antigo, que baixa o Pixel
+   sem perguntar.
