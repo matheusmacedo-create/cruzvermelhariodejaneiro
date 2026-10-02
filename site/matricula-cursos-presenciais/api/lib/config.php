@@ -12,16 +12,24 @@ function mcp_config(): array
         }
         $lido = require $arquivo;
         $config = is_array($lido) ? $lido : [];
-        // A chave da escola e as do WhatsApp ficam em arquivos à parte (só no servidor, fora do Git), para
-        // não mexer no config.php. De config-escola.php só valem as chaves ESCOLA_* e SITE_HORARIOS_TOKEN;
-        // de config-whatsapp.php, só as WHATSAPP_*. O resto continua no config.php.
+        // A chave da escola, as do WhatsApp e o token da API de Conversões da Meta ficam em arquivos à parte (só
+        // no servidor, fora do Git), para não mexer no config.php. De config-escola.php só valem as chaves
+        // ESCOLA_* e SITE_HORARIOS_TOKEN; de config-whatsapp.php, só as WHATSAPP_*; de config-meta.php, só as
+        // META_*. O resto continua no config.php.
         $extras = [
             [getenv('MCP_CONFIG_ESCOLA_ARQUIVO') ?: dirname(__DIR__) . '/config-escola.php', static fn(string $c): bool => str_starts_with($c, 'ESCOLA_') || $c === 'SITE_HORARIOS_TOKEN'],
             [getenv('MCP_CONFIG_WHATSAPP_ARQUIVO') ?: dirname(__DIR__) . '/config-whatsapp.php', static fn(string $c): bool => str_starts_with($c, 'WHATSAPP_')],
+            [getenv('MCP_CONFIG_META_ARQUIVO') ?: dirname(__DIR__) . '/config-meta.php', static fn(string $c): bool => str_starts_with($c, 'META_')],
         ];
         foreach ($extras as [$arquivoExtra, $vale]) {
             if (is_file($arquivoExtra)) {
-                $extra = require $arquivoExtra;
+                // Um arquivo extra escrito com erro (vírgula, aspas) desliga só o que ele configura; o checkout segue.
+                try {
+                    $extra = require $arquivoExtra;
+                } catch (Throwable $e) {
+                    error_log('[matricula] ' . basename($arquivoExtra) . ' ignorado: ' . get_class($e) . ' na linha ' . $e->getLine());
+                    continue;
+                }
                 foreach (is_array($extra) ? $extra : [] as $chave => $valor) {
                     if (is_string($chave) && $vale($chave)) {
                         $config[$chave] = $valor;

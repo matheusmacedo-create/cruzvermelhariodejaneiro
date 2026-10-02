@@ -87,7 +87,7 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
   </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/cookies/","name":"Política de Cookies","description":"Quais cookies o site da Cruz Vermelha Brasileira Rio de Janeiro usa, para quê e por quanto tempo, e como aceitar, recusar ou mudar a sua escolha.","inLanguage":"pt-BR","dateModified":"2026-09-30","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://cruzvermelhariodejaneiro.org/"},{"@type":"ListItem","position":2,"name":"Política de Cookies","item":"https://cruzvermelhariodejaneiro.org/cookies/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/cookies/","name":"Política de Cookies","description":"Quais cookies o site da Cruz Vermelha Brasileira Rio de Janeiro usa, para quê e por quanto tempo, e como aceitar, recusar ou mudar a sua escolha.","inLanguage":"pt-BR","dateModified":"2026-10-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://cruzvermelhariodejaneiro.org/"},{"@type":"ListItem","position":2,"name":"Política de Cookies","item":"https://cruzvermelhariodejaneiro.org/cookies/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -110,7 +110,9 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
-  fbq('track', 'PageView');
+  // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
+  window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+  fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
     // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
@@ -126,12 +128,35 @@
         if (!m) return null;
         var p = {};
         try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
-        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1', revisao: parseInt(p.r, 10) || 0 } : null;
       }
       function baixar(src) {
         if (baixados[src]) return;
         baixados[src] = 1;
         var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      // API de Conversões: com "sim" para marketing, o evento vai também ao servidor do site, com o mesmo
+      // eventID do Pixel, e de lá à Meta. Só no site principal (o endereço é relativo a ele).
+      var SERVIDOR = /^(www\.)?cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '/matricula-cursos-presenciais/api/medicao.php' : '';
+      // Revisão do texto do aviso que vale para o servidor (r no cookie; MCP_META_REVISAO em api/lib/meta.php e
+      // REVISAO em consentimento.js são o mesmo número). O Pixel não depende dela.
+      var REVISAO = 2;
+      var repassados = {};
+      function novoId(prefixo) { return (prefixo || 'ev') + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10); }
+      var pendentes = [];
+      function servidor(evento, id, curso) {
+        if (!SERVIDOR || !id || repassados[id] || !window.fetch) return;
+        var c = ler();
+        // Sem escolha ainda (o checkout dispara ao abrir), ou "sim" num texto anterior que o aviso está
+        // perguntando de novo: espera, como a fila do Pixel. "Não" descarta.
+        if (!c || (c.marketing && c.revisao < REVISAO)) { if (pendentes.length < 20) pendentes.push([evento, id, curso]); return; }
+        if (!c.marketing) return;
+        repassados[id] = 1;
+        var corpo = { evento: evento, id: id, url: location.href };
+        if (curso) corpo.curso = String(curso);
+        try {
+          fetch(SERVIDOR, { method: 'POST', keepalive: true, credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) })['catch'](function () {});
+        } catch (e) { /* navegador sem fetch: fica só o Pixel */ }
       }
       function aplicar(c) {
         c = c || ler();
@@ -145,9 +170,15 @@
         });
         fbq('consent', c.marketing ? 'grant' : 'revoke');
         if (c.estatistica) baixar(GTAG);
-        if (c.marketing) baixar(PIXEL);
+        var esperando = pendentes;
+        pendentes = [];
+        if (c.marketing) {
+          baixar(PIXEL);
+          servidor('PageView', window.cvrjIdPageView);
+          esperando.forEach(function (p) { servidor(p[0], p[1], p[2]); });
+        }
       }
-      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
         if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
@@ -156,7 +187,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=f0901be888" defer></script>
+  <script src="/consentimento/consentimento.js?v=73b1fa99d5" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -196,7 +227,7 @@
       <div class="wrap">
         <p class="eyebrow">Proteção de dados</p>
         <h1>Política de Cookies</h1>
-        <p class="pol-data">Atualizada em <time datetime="2026-09-30">30 de setembro de 2026</time>.</p>
+        <p class="pol-data">Atualizada em <time datetime="2026-10-02">2 de outubro de 2026</time>.</p>
       </div>
     </section>
     <div class="wrap pol-corpo">
@@ -220,14 +251,14 @@
         <p class="pol-estado" id="pol-estado" aria-live="polite" data-textos="{&quot;rotulo&quot;: &quot;Sua escolha atual:&quot;, &quot;nenhuma&quot;: &quot;você ainda não escolheu. Até escolher, só os cookies necessários são usados.&quot;, &quot;estatistica&quot;: &quot;estatística&quot;, &quot;marketing&quot;: &quot;marketing&quot;, &quot;sim&quot;: &quot;sim&quot;, &quot;nao&quot;: &quot;não&quot;, &quot;em&quot;: &quot;registrada em&quot;}"></p>
         <p class="pol-acoes"><a class="btn btn-red" href="#preferencias" data-cvrj-cookies>Abrir preferências de cookies</a></p>
         <noscript><p>Sem JavaScript, o site não usa cookies de estatística nem de marketing, e não há escolha a fazer.</p></noscript>
-        <p>Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada.</p>
+        <p>Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada. No marketing, o nosso servidor também deixa de enviar à Meta a cópia dos eventos. Numa inscrição já feita, a retirada passa a valer quando você abre de novo a página da inscrição (pagamento ou confirmação) no mesmo navegador; se não for voltar a ela, ou se inscreveu em outro aparelho, peça pelo e-mail do fim desta página. A retirada não desfaz o que foi feito enquanto a permissão valia (art. 8º, § 5º, da LGPD).</p>
       </section>
       <section id="categorias" aria-labelledby="t-categorias">
         <h2 id="t-categorias">Categorias</h2>
         <ul>
           <li><strong>Necessários (sempre ligados):</strong> fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat, o aparelho da recepção liberado para o ponto da sede, quem pediu para ser lembrado no ponto pelo celular e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.</li>
           <li><strong>Estatística (desligados até você ligar):</strong> o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.</li>
-          <li><strong>Marketing (desligados até você ligar):</strong> o Pixel da Meta mede o alcance das nossas campanhas no Facebook e no Instagram.</li>
+          <li><strong>Marketing (desligados até você ligar):</strong> o Pixel da Meta mede o alcance e o resultado das nossas campanhas no Facebook e no Instagram. Com ele ligado, o nosso servidor também envia à Meta uma cópia dos eventos (API de Conversões), com os dados descritos na <a href="/privacidade/">Política de Privacidade</a>.</li>
         </ul>
       </section>
       <section id="lista" aria-labelledby="t-lista">
@@ -253,7 +284,7 @@
             </tbody>
           </table>
         </div>
-        <p>Com o marketing ligado, o navegador também pode enviar à Meta os cookies que ela mesma grava no domínio facebook.com (como o fr), que seguem a <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">política da Meta</a>. As regras do Google estão em <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener">policies.google.com/technologies/cookies</a>.</p>
+        <p>Com o marketing ligado, o nosso servidor lê os cookies _fbp e _fbc e os envia à Meta junto com a cópia dos eventos; na inscrição, guarda-os por até 8 dias, para avisar a Meta do pagamento confirmado. O navegador também pode enviar à Meta os cookies que ela mesma grava no domínio facebook.com (como o fr), que seguem a <a href="https://www.facebook.com/privacy/policy" target="_blank" rel="noopener">política da Meta</a>. As regras do Google estão em <a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener">policies.google.com/technologies/cookies</a>.</p>
       </section>
       <section id="navegador" aria-labelledby="t-navegador">
         <h2 id="t-navegador">Como controlar pelo navegador</h2>
@@ -353,6 +384,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=df1904f032" defer></script>
+  <script src="/chat/chat.js?v=aa00cac6d2" defer></script>
 </body>
 </html>

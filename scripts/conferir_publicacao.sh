@@ -45,6 +45,7 @@ api/contato.php|405|
 api/pagamentos.php|405|
 api/webhook.php|405|
 api/comparecimento.php|404|
+api/medicao.php|405|
 LISTA
 
 echo "== Bloqueados"
@@ -54,7 +55,7 @@ for caminho in api/config.php api/config-escola.php api/config.example.php api/l
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done
 # Estes podem não existir no servidor; aí o LiteSpeed responde 404 antes de aplicar o bloqueio.
-for caminho in api/config-whatsapp.php api/config.php.bak; do
+for caminho in api/config-whatsapp.php api/config-meta.php api/config.php.bak; do
   codigo=$(pedir "$m/$caminho")
   case "$codigo" in 403 | 404) ok "$caminho → $codigo" ;; *) falha "$caminho → $codigo (esperado 403 ou 404)" ;; esac
 done

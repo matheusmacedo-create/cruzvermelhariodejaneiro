@@ -124,7 +124,7 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
 </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/es/privacidad/#pagina","url":"https://cruzvermelhariodejaneiro.org/es/privacidad/","name":"Política de Privacidad","description":"Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat y el boletín, para qué, con quién se comparte y sus derechos según la LGPD.","inLanguage":"es","dateModified":"2026-09-30","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://cruzvermelhariodejaneiro.org/es/"},{"@type":"ListItem","position":2,"name":"Política de Privacidad","item":"https://cruzvermelhariodejaneiro.org/es/privacidad/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/es/privacidad/#pagina","url":"https://cruzvermelhariodejaneiro.org/es/privacidad/","name":"Política de Privacidad","description":"Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat y el boletín, para qué, con quién se comparte y sus derechos según la LGPD.","inLanguage":"es","dateModified":"2026-10-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://cruzvermelhariodejaneiro.org/es/"},{"@type":"ListItem","position":2,"name":"Política de Privacidad","item":"https://cruzvermelhariodejaneiro.org/es/privacidad/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -147,7 +147,9 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
-  fbq('track', 'PageView');
+  // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
+  window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+  fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
     // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
@@ -163,12 +165,35 @@
         if (!m) return null;
         var p = {};
         try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
-        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1' } : null;
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1', revisao: parseInt(p.r, 10) || 0 } : null;
       }
       function baixar(src) {
         if (baixados[src]) return;
         baixados[src] = 1;
         var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      // API de Conversões: com "sim" para marketing, o evento vai também ao servidor do site, com o mesmo
+      // eventID do Pixel, e de lá à Meta. Só no site principal (o endereço é relativo a ele).
+      var SERVIDOR = /^(www\.)?cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '/matricula-cursos-presenciais/api/medicao.php' : '';
+      // Revisão do texto do aviso que vale para o servidor (r no cookie; MCP_META_REVISAO em api/lib/meta.php e
+      // REVISAO em consentimento.js são o mesmo número). O Pixel não depende dela.
+      var REVISAO = 2;
+      var repassados = {};
+      function novoId(prefixo) { return (prefixo || 'ev') + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10); }
+      var pendentes = [];
+      function servidor(evento, id, curso) {
+        if (!SERVIDOR || !id || repassados[id] || !window.fetch) return;
+        var c = ler();
+        // Sem escolha ainda (o checkout dispara ao abrir), ou "sim" num texto anterior que o aviso está
+        // perguntando de novo: espera, como a fila do Pixel. "Não" descarta.
+        if (!c || (c.marketing && c.revisao < REVISAO)) { if (pendentes.length < 20) pendentes.push([evento, id, curso]); return; }
+        if (!c.marketing) return;
+        repassados[id] = 1;
+        var corpo = { evento: evento, id: id, url: location.href };
+        if (curso) corpo.curso = String(curso);
+        try {
+          fetch(SERVIDOR, { method: 'POST', keepalive: true, credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) })['catch'](function () {});
+        } catch (e) { /* navegador sem fetch: fica só o Pixel */ }
       }
       function aplicar(c) {
         c = c || ler();
@@ -182,9 +207,15 @@
         });
         fbq('consent', c.marketing ? 'grant' : 'revoke');
         if (c.estatistica) baixar(GTAG);
-        if (c.marketing) baixar(PIXEL);
+        var esperando = pendentes;
+        pendentes = [];
+        if (c.marketing) {
+          baixar(PIXEL);
+          servidor('PageView', window.cvrjIdPageView);
+          esperando.forEach(function (p) { servidor(p[0], p[1], p[2]); });
+        }
       }
-      window.cvrjMedicao = { ler: ler, aplicar: aplicar };
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
         if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
@@ -193,7 +224,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=f0901be888" defer></script>
+  <script src="/consentimento/consentimento.js?v=73b1fa99d5" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -227,7 +258,7 @@
       <div class="wrap">
         <p class="eyebrow">Protección de datos</p>
         <h1>Política de Privacidad</h1>
-        <p class="pol-data">Actualizada el <time datetime="2026-09-30">30 de septiembre de 2026</time>.</p>
+        <p class="pol-data">Actualizada el <time datetime="2026-10-02">2 de octubre de 2026</time>.</p>
         <p class="pol-traducao">Esta traducción se ofrece para su comodidad. La versión oficial es la portuguesa.</p>
       </div>
     </section>
@@ -298,11 +329,11 @@
             </dl>
           </article>
           <article class="pol-atividade">
-            <h3>Marketing (Píxel de Meta), solo con su permiso</h3>
+            <h3>Marketing (Píxel y API de Conversiones de Meta), solo con su permiso</h3>
             <dl>
-              <dt>Datos</dt><dd>Páginas vistas y pasos como abrir el chat, empezar la inscripción o completar el pago, con el asunto o el curso y el importe. Nunca el nombre, el CPF, el correo, el teléfono ni el mensaje.</dd>
-              <dt>Para qué</dt><dd>Medir el alcance de nuestras campañas de difusión en Facebook e Instagram.</dd>
-              <dt>Base legal</dt><dd>Consentimiento (art. 7, I), dado en el aviso de cookies.</dd>
+              <dt>Datos</dt><dd>Páginas vistas y pasos como abrir el chat, empezar la inscripción o completar el pago, con el asunto o el curso y el importe. Nuestro servidor también envía una copia de estos eventos a Meta (API de Conversiones), con la dirección IP, la identificación del navegador, las cookies _fbp y _fbc (o el fbclid de la dirección de la página) y, cuando usted envía un mensaje por el chat o se inscribe, el nombre, el correo y el teléfono, convertidos en un código (hash SHA-256), y, en la inscripción, un código de la propia inscripción. Para avisar a Meta del pago confirmado después de que usted cierre la página, su elección sobre marketing, la dirección IP, las cookies _fbp y _fbc y la identificación del navegador se guardan con la inscripción. El hash no es anonimización: es lo que permite a Meta reconocerle entre sus usuarios. El CPF, el mensaje del chat y los datos de la tarjeta nunca se envían.</dd>
+              <dt>Para qué</dt><dd>Medir el alcance y el resultado de nuestras campañas de difusión en Facebook e Instagram: saber qué anuncios trajeron inscripciones y ayudar a Meta a mostrarlos a quienes tienen más probabilidad de interesarse.</dd>
+              <dt>Base legal</dt><dd>Consentimiento (art. 7, I), dado en el aviso de cookies, que puede retirar en cualquier momento en “Preferencias de cookies”. Sin él, nada de esto ocurre, y rechazarlo no cambia nada en su inscripción.</dd>
             </dl>
           </article>
           <article class="pol-atividade">
@@ -375,7 +406,7 @@
           <li><strong>Resend</strong>, que envía los correos (comprobantes, protocolos del chat, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula y del chat salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.</li>
           <li><strong>Meta, por WhatsApp</strong>, solo para quien autorizó recibir mensajes por ahí: el número y el texto de cada recordatorio o comunicado. Si la institución usa un intermediario para enviar el WhatsApp (Make o el servidor del WhatsApp del Palácio Virtual, mantenido por la filial), este recibe lo mismo, solo para el envío. Los alumnos solo reciben WhatsApp si su autorización está registrada en la plataforma de la escuela.</li>
           <li><strong>Vercel y Supabase</strong>, que alojan el sistema que publica las noticias y guarda la lista del boletín.</li>
-          <li><strong>Google y Meta</strong>, por las herramientas de estadística y de marketing, solo con su permiso. Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.</li>
+          <li><strong>Google y Meta</strong>, por las herramientas de estadística y de marketing, solo con su permiso. Meta también recibe de nuestro servidor una copia de los eventos de marketing, con los datos descritos arriba (API de Conversiones). Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.</li>
           <li><strong>Spotform</strong>, donde está el formulario del voluntariado.</li>
           <li><strong>Autoridades públicas</strong>, cuando la ley o una orden judicial lo exija.</li>
         </ul>
@@ -398,11 +429,12 @@
           <li><strong>Donaciones anteriores a la suspensión:</strong> por el plazo legal de conservación de los registros contables y fiscales.</li>
           <li><strong>Chat:</strong> mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.</li>
           <li><strong>Boletín:</strong> hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.</li>
-          <li><strong>Registros de seguridad (IP):</strong> junto con el envío al que se refieren; los límites de intentos del control de asistencia y de las páginas personales guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.</li>
+          <li><strong>Registros de seguridad (IP):</strong> junto con el envío al que se refieren; los límites de intentos del control de asistencia, de las páginas personales y del reenvío de las páginas a Meta guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.</li>
           <li><strong>Control de asistencia de la sede, de voluntarios y directiva:</strong> mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.</li>
           <li><strong>Presencia en la sede de empleados, tercerizados y otros vínculos:</strong> 90 días. Después, se elimina automáticamente.</li>
           <li><strong>Asistencia a las clases y comprobantes de asistencia:</strong> por el mismo plazo de la matrícula.</li>
           <li><strong>Recordatorios, comunicados y encuesta del control de asistencia:</strong> el registro de los mensajes y las respuestas de la encuesta se eliminan automáticamente después de 1 año; un mes después del comunicado, las respuestas dejan de estar vinculadas a quien respondió. Las elecciones sobre qué recibir se guardan mientras dure el registro en el control de asistencia. De quien pidió no recibir nada más, guardamos solo un código generado a partir del correo o del número (y no el correo o el número), mientras sea necesario para respetar el pedido.</li>
+          <li><strong>Marketing en la inscripción:</strong> la dirección IP, las cookies _fbp y _fbc y la identificación del navegador, guardadas con la inscripción solo con su permiso, se eliminan cuando el pago se informa a Meta o, como máximo, a los 8 días (Meta solo acepta eventos de hasta 7 días), y también cuando la inscripción registra que usted retiró su permiso. Su elección sobre marketing y su fecha se guardan con la inscripción, durante el mismo plazo que la matrícula, para acreditar el consentimiento.</li>
           <li><strong>Cookies:</strong> por el plazo de cada una, indicado en la <a href="/es/cookies/">Política de Cookies</a>.</li>
         </ul>
         <p>Terminado el plazo, los datos se eliminan o se anonimizan, salvo cuando la ley obligue a conservarlos.</p>

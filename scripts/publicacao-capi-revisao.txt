@@ -1,0 +1,81 @@
+# Revisão da API de Conversões (02/10/2026, à tarde): correções dos revisores. Ordem: a migração (db.php) e o
+# módulo (meta.php) antes de quem usa as funções novas (publico.php chama mcp_meta_id_da_compra), as bibliotecas
+# antes dos endereços, os estáticos antes das páginas que os pedem pelo hash novo.
+# Fora da lista: site/politicas.json (fonte, não é servida) e as páginas de doação (fora do ar: /doe/ e doacao.html).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-capi-revisao.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-capi-revisao.txt e NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js
+# 1) bibliotecas (db.php leva a migração: meta_revisao, meta_ip e meta_fbc com 600)
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/meta.php
+site/matricula-cursos-presenciais/api/lib/publico.php
+# 2) endereços
+site/matricula-cursos-presenciais/api/status.php
+site/matricula-cursos-presenciais/api/medicao.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/api/painel.php
+site/matricula-cursos-presenciais/api/comparecimentos.php
+# 3) estáticos (aviso de cookies com r=2; checkout com o id da compra)
+site/consentimento/consentimento.js
+site/matricula-cursos-presenciais/static/checkout.js
+# 4) páginas (bloco de medição que segura o repasse de quem responde de novo, tag nova do aviso; checkout,
+#    pendente e parabéns com o checkout.js novo; políticas com o IP)
+site/404.html
+site/bio/index.html
+site/campanha-agasalho.html
+site/cookies/index.html
+site/doacao-indisponivel.html
+site/en/404.html
+site/en/archive/index.html
+site/en/cookies/index.html
+site/en/courses/index.html
+site/en/faq/index.html
+site/en/history/index.html
+site/en/index.html
+site/en/news/7-september-parade-registration-of-branch-volunteers/index.html
+site/en/news/alcoholics-anonymous-sign-language-meeting-in-leblon-marks-79-years/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/index.html
+site/en/news/caps-and-capsi-public-mental-health-services-in-mare-alemao-and-penha/index.html
+site/en/news/carer-for-older-people-course-what-carers-do-and-how-to-train/index.html
+site/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/index.html
+site/en/news/civil-firefighter-course-what-the-job-involves-and-how-to-qualify-in-rio/index.html
+site/en/news/deam-digital-rj-how-to-report-domestic-violence-online/index.html
+site/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/index.html
+site/en/news/first-aid-course-learn-the-essentials-in-a-few-lessons/index.html
+site/en/news/health-in-schools-quiz-on-vaping-hpv-and-condoms-in-rio/index.html
+site/en/news/index.html
+site/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/index.html
+site/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/index.html
+site/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/index.html
+site/en/news/peripheral-iv-cannulation-course-who-it-is-for-and-what-you-learn/index.html
+site/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/index.html
+site/en/news/yellow-september-and-suicide-prevention/index.html
+site/en/our-team/index.html
+site/en/privacy/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/en/winter-clothing-drive/index.html
+site/equipe.html
+site/es/acervo/index.html
+site/es/cookies/index.html
+site/es/cursos/index.html
+site/es/index.html
+site/es/nuestro-equipo/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/historia/index.html
+site/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/privacidade/index.html
+site/projetocores/index.html
+site/reembolso/index.html
+site/termos/index.html

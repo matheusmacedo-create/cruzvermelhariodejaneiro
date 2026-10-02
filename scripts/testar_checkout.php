@@ -23,6 +23,12 @@ file_put_contents($configEscola, "<?php return ['ESCOLA_API_URL' => 'https://esc
     'ESCOLA_API_TOKEN' => 'chave-de-teste', 'SITE_HORARIOS_TOKEN' => '" . str_repeat('k', 40) . "',
     'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
 putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$configEscola");
+// Token da API de Conversões num arquivo à parte, como no servidor: só as chaves META_* valem. O endereço da
+// Meta aponta para uma porta local fechada: nenhum teste fala com a Meta de verdade.
+$configMeta = tempnam(sys_get_temp_dir(), 'mcp-meta-');
+file_put_contents($configMeta, "<?php return ['META_CAPI_TOKEN' => 'token-de-teste', 'META_CAPI_URL' => 'http://127.0.0.1:9',
+    'SITE_URL' => 'https://nao-pode-valer.exemplo.org'];");
+putenv("MCP_CONFIG_META_ARQUIVO=$configMeta");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 $_SERVER['REQUEST_METHOD'] = 'CLI';
 require $raiz . '/site/matricula-cursos-presenciais/api/lib.php';
@@ -759,11 +765,153 @@ verificar('planilha: frequência, hora e palavras parecidas com dias não viram 
 ]), [[], [], [], [], [], [], ['sab'], [], ['seg', 'qua', 'sex'], ['ter', 'qua', 'qui'], ['seg', 'ter', 'qua', 'qui', 'sex'], ['dom', 'sab'], ['qua'], [],
     ['seg', 'qua'], ['ter', 'qui'], ['seg', 'qua', 'sex'], ['seg', 'qua']]);
 
+// ----------------------------------------------------------------------------- API de Conversões da Meta (lib/meta.php)
+verificar('meta: configurada pelo config-meta.php, que não muda o resto', [mcp_meta_configurada(), mcp_meta_pixel(), mcp_site_url()], [true, '2224500131617302', 'https://exemplo.org']);
+$cookie = static function (?string $valor): void { if ($valor === null) { unset($_COOKIE['cvrj_consentimento']); } else { $_COOKIE['cvrj_consentimento'] = $valor; } };
+$escolhas = [];
+foreach (['v=1&e=1&m=1&t=1790940000&r=2', 'v=1&e=1&m=0&t=1', 'v=2&e=1&m=1&t=1790940000&r=2', 'v=1&e=1', 'lixo', '', null, str_repeat('m', 300), 'v=1&e=1&m=1&t=1790940000',
+    'v=1&e=1&m=1&r=2', 'v=1&e=1&m=1&t=1790940000&r=1', 'v=1&e=1&m=1&t=' . (time() + 3 * 86400) . '&r=2', 'v=1&e=1&m=1&t=1790940000&r=3', 'v=1&e=0&m=0', 'v=1&e=1&m=1&t=1790940000&r=999'] as $valor) {
+    $cookie($valor);
+    $escolhas[] = mcp_meta_marketing_no_cookie();
+}
+// O "sim" só vale com a revisão atual do texto (r=2, que só o aviso atual grava) e uma data possível; o "não" vale sempre.
+verificar('meta: escolha de marketing no cookie (só v=1 e m=0/1; "sim" sem r=2 ou com data no futuro não vale)', $escolhas,
+    [true, false, null, null, null, null, null, null, null, null, null, null, true, false, null]);
+$cookie('v=1&e=1&m=1&t=1790940000&r=2');
+verificar('meta: data da escolha vem do t do cookie', mcp_meta_escolha_em(mcp_meta_escolha_no_cookie()), '2026-10-02 11:20:00');
+verificar('meta: id de evento do navegador (sem quebra de linha no fim)', array_map('mcp_meta_id_valido', ['pv.mgb2k1.a8f3k2l1', 'lead.x', 'tok-' . str_repeat('a', 36) . '-pagamento', '<script>', '', 123, str_repeat('a', 81), "ev.abcdefgh3\n", ['ev.abcdefgh3']]),
+    ['pv.mgb2k1.a8f3k2l1', null, 'tok-' . str_repeat('a', 36) . '-pagamento', null, null, null, null, null, null]);
+verificar('meta: id da compra é um hash do token, não o token', [mcp_meta_id_da_compra(str_repeat('b', 40)), str_contains(mcp_meta_id_da_compra(str_repeat('b', 40)), str_repeat('b', 8)),
+    mcp_meta_id_da_compra(str_repeat('b', 40)) === mcp_meta_id_da_compra(str_repeat('c', 40)), mcp_meta_id_valido(mcp_meta_id_da_compra(str_repeat('b', 40)) . '-pagamento') !== null],
+    ['c.' . substr(hash('sha256', 'cvrj-meta-compra|' . str_repeat('b', 40)), 0, 32), false, false, true]);
+$_COOKIE['_fbp'] = 'fb.1.1790940000123.1234567890';
+$_COOKIE['_fbc'] = 'fb.1.1790940000123.IwAR0abc-_XYZ';
+verificar('meta: _fbp e _fbc no formato da Meta', [mcp_meta_cookie_fb('_fbp'), mcp_meta_cookie_fb('_fbc')], ['fb.1.1790940000123.1234567890', 'fb.1.1790940000123.IwAR0abc-_XYZ']);
+$_COOKIE['_fbc'] = 'fb.1.123.<script>';
+verificar('meta: _fbc fora do formato não vai', mcp_meta_cookie_fb('_fbc'), null);
+$_COOKIE['_fbc'] = 'fb.1.1790940000123.IwAR0abc' . "\n";
+verificar('meta: _fbc com quebra de linha no fim não vai', mcp_meta_cookie_fb('_fbc'), null);
+$_COOKIE['_fbc'] = 'fb.1.1790940000123.' . str_repeat('A', 400);
+verificar('meta: _fbc com fbclid longo (anúncios de hoje) vai inteiro', mcp_meta_cookie_fb('_fbc'), 'fb.1.1790940000123.' . str_repeat('A', 400));
+$_COOKIE['_fbp'] = 'fb.1.1790940000123.' . str_repeat('9', 300);
+verificar('meta: _fbp maior que a coluna (255) não vai', mcp_meta_cookie_fb('_fbp'), null);
+$_COOKIE['_fbp'] = 'fb.1.1790940000123.1234567890';
+unset($_COOKIE['_fbc']);
+verificar('meta: fbc a partir do fbclid (o de 255, que pode ter sido cortado, não vai)', [mcp_meta_fbc_do_fbclid('IwAR0abc', 1790940000123), mcp_meta_fbc_do_fbclid('a b'), mcp_meta_fbc_do_fbclid(null),
+    mcp_meta_fbc_do_fbclid("ZZZ\n"), strlen((string) mcp_meta_fbc_do_fbclid(str_repeat('A', 254), 1790940000123)), mcp_meta_fbc_do_fbclid(str_repeat('A', 255))],
+    ['fb.1.1790940000123.IwAR0abc', null, null, null, 254 + 19, null]);
+verificar('meta: endereço sem o t= e só com parâmetros de campanha', [
+    mcp_meta_url_limpa('https://exemplo.org/matricula-cursos-presenciais/parabens/?t=' . str_repeat('a', 40) . '&utm_source=ig&x=1', 'P'),
+    mcp_meta_url_limpa('https://www.exemplo.org/a/?fbclid=IwAR&curso=puncao-venosa', 'P'),
+    mcp_meta_url_limpa('https://outro.org/?utm_source=x', 'P'),
+    mcp_meta_url_limpa('javascript:alert(1)', 'P'),
+    mcp_meta_url_limpa('/matricula-cursos-presenciais/?utm_campaign=c&t=segredo', 'P'),
+    mcp_meta_url_limpa('//outro.org/', 'P'),
+    mcp_meta_url_limpa(null, 'P'),
+], ['https://exemplo.org/matricula-cursos-presenciais/parabens/?utm_source=ig', 'https://www.exemplo.org/a/?fbclid=IwAR&curso=puncao-venosa', 'P', 'P',
+    'https://exemplo.org/matricula-cursos-presenciais/?utm_campaign=c', 'P', 'P']);
+verificar('meta: hash SHA-256 de valor normalizado (minúsculas, sem espaços nas pontas)', [mcp_meta_hash('  Teste@Exemplo.ORG '), mcp_meta_hash(''), mcp_meta_hash('ÁGUA')],
+    [hash('sha256', 'teste@exemplo.org'), null, hash('sha256', 'água')]);
+verificar('meta: telefone com 55 na frente (DDD 55 do RS não confunde)', array_map('mcp_meta_telefone', ['21999998888', '2133334444', '5521999998888', '55999998888', '+55 (21) 99999-8888', '123']),
+    ['5521999998888', '552133334444', '5521999998888', '5555999998888', '5521999998888', '']);
+verificar('meta: primeiro nome e o resto', [mcp_meta_nome_e_sobrenome('  Maria  da Silva Souza '), mcp_meta_nome_e_sobrenome('Ana')], [['Maria', 'da Silva Souza'], ['Ana', '']]);
+$_SERVER['REMOTE_ADDR'] = '203.0.113.9';
+$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (teste)';
+$pessoaTeste = ['nome' => 'Maria da Silva', 'email' => 'Maria@Exemplo.org', 'telefone' => '21999998888', 'cpf' => '52998224725', 'external_id' => str_repeat('c', 40)];
+$userData = mcp_meta_user_data($pessoaTeste, mcp_meta_contexto('IwAR0abc'));
+verificar('meta: user_data com hash dos dados da pessoa e sinais do navegador sem hash', [
+    $userData['em'], $userData['ph'], $userData['fn'], $userData['ln'], $userData['external_id'], $userData['country'],
+    $userData['client_ip_address'], $userData['client_user_agent'], $userData['fbp'], str_starts_with($userData['fbc'], 'fb.1.') && str_ends_with($userData['fbc'], '.IwAR0abc'),
+], [hash('sha256', 'maria@exemplo.org'), hash('sha256', '5521999998888'), hash('sha256', 'maria'), hash('sha256', 'da silva'), hash('sha256', str_repeat('c', 40)), hash('sha256', 'br'),
+    '203.0.113.9', 'Mozilla/5.0 (teste)', 'fb.1.1790940000123.1234567890', true]);
+verificar('meta: o CPF nunca vai (nem em hash)', in_array(hash('sha256', '52998224725'), $userData, true), false);
+verificar('meta: evento de página é anônimo (sem dado da pessoa nem país)', array_keys(mcp_meta_user_data([], mcp_meta_contexto())), ['client_ip_address', 'client_user_agent', 'fbp']);
+$eventoTeste = mcp_meta_evento('ViewContent', 'vc.abc.12345678', ['fbp' => 'x'], mcp_meta_dados_do_curso('puncao-venosa', 'Punção Venosa', 9900), 'https://exemplo.org/', 1790940000);
+verificar('meta: evento no formato da API', $eventoTeste, ['event_name' => 'ViewContent', 'event_time' => 1790940000, 'event_id' => 'vc.abc.12345678', 'action_source' => 'website',
+    'event_source_url' => 'https://exemplo.org/', 'user_data' => ['fbp' => 'x'],
+    'custom_data' => ['content_name' => 'Punção Venosa', 'content_ids' => ['puncao-venosa'], 'content_type' => 'product', 'value' => 99.0, 'currency' => 'BRL']]);
+
+// O que fica na inscrição: só com "sim" os sinais do navegador; com "não" ou sem escolha, nada além da escolha.
+$cookie('v=1&e=0&m=1&t=1790940000&r=2');
+$colunasSim = mcp_meta_colunas_da_inscricao('IwAR0abc');
+$cookie('v=1&e=1&m=0&t=1');
+$colunasNao = mcp_meta_colunas_da_inscricao('IwAR0abc');
+$cookie(null);
+$colunasSem = mcp_meta_colunas_da_inscricao('IwAR0abc');
+verificar('meta: colunas da inscrição por escolha', [$colunasSim['meta_marketing'], $colunasSim['meta_marketing_em'], $colunasSim['meta_revisao'], $colunasSim['meta_fbp'], $colunasSim['meta_ua'], $colunasSim['meta_ip'],
+    str_ends_with((string) $colunasSim['meta_fbc'], '.IwAR0abc'), $colunasNao, $colunasSem],
+    [1, '2026-10-02 11:20:00', 2, 'fb.1.1790940000123.1234567890', 'Mozilla/5.0 (teste)', '203.0.113.9', true, ['meta_marketing' => 0, 'meta_marketing_em' => '1970-01-01 00:00:01'], ['meta_marketing' => null, 'meta_marketing_em' => null]]);
+
+// Fila: os eventos saem só no fim do pedido (depois da resposta); aqui a fila é conferida e esvaziada.
+$fila = &mcp_meta_fila();
+$inscricaoTeste = ['id' => 7, 'token' => str_repeat('b', 40), 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa', 'nome' => 'Maria da Silva',
+    'email' => 'maria@exemplo.org', 'telefone' => '21999998888', 'cpf' => '52998224725', 'inscricao_centavos' => 9900, 'total_centavos' => 10395,
+    'ip' => '198.51.100.4', 'meta_ip' => '198.51.100.77', 'meta_marketing' => '1', 'meta_revisao' => '2', 'meta_ua' => 'UA guardado', 'meta_fbp' => 'fb.1.1790940000123.999', 'meta_fbc' => null,
+    'fbclid' => 'IwAR0abc', 'criado_em' => '2026-10-02 12:00:00'];
+$idCompraTeste = mcp_meta_id_da_compra(str_repeat('b', 40));
+$cookie('v=1&e=1&m=1&t=1790940000&r=2');
+mcp_meta_cobranca_criada($inscricaoTeste, ['slug' => 'puncao-venosa', 'fbclid' => null] + $pessoaTeste, 'lead.mgb2k1.a8f3k2l1', true);
+mcp_meta_compra($inscricaoTeste);
+$compra = $fila[2][0] ?? [];
+verificar('meta: cobrança aceita manda Lead e AddPaymentInfo; pago manda Purchase com os sinais guardados (e o id da compra, nunca o token)', [
+    array_map(static fn($i) => [$i[0]['event_name'], $i[0]['event_id'], $i[1]], $fila),
+    $fila[1][0]['custom_data']['value'] ?? null,
+    [$fila[2][0]['user_data']['external_id'] ?? null, isset($fila[2][0]['custom_data']['num_items'])],
+    [$compra['user_data']['client_ip_address'] ?? null, $compra['user_data']['client_user_agent'] ?? null, $compra['user_data']['fbp'] ?? null, $compra['user_data']['fbc'] ?? null],
+    [$compra['custom_data']['order_id'] ?? null, $compra['custom_data']['value'] ?? null, $compra['event_source_url'] ?? null],
+], [
+    [['Lead', 'lead.mgb2k1.a8f3k2l1', 7], ['AddPaymentInfo', $idCompraTeste . '-pagamento', 7], ['Purchase', $idCompraTeste, 7]],
+    103.95,
+    [hash('sha256', str_repeat('b', 40)), false],
+    ['198.51.100.77', 'UA guardado', 'fb.1.1790940000123.999', 'fb.1.1790942400000.IwAR0abc'],
+    [$idCompraTeste, 103.95, 'https://exemplo.org/matricula-cursos-presenciais/parabens/'],
+]);
+verificar('meta: o token da inscrição não aparece em nenhum evento', str_contains(json_encode(array_column($fila, 0)), str_repeat('b', 40)), false);
+$fila = [];
+mcp_meta_compra(['meta_revisao' => null] + $inscricaoTeste);
+mcp_meta_compra(['meta_revisao' => '1'] + $inscricaoTeste);
+verificar('meta: Purchase só com o "sim" dado no texto atual (meta_revisao)', count($fila), 0);
+mcp_meta_compra(['meta_ip' => null] + $inscricaoTeste);
+verificar('meta: Purchase sem o IP guardado com o "sim" não usa o IP de segurança da inscrição', [count($fila), $fila[0][0]['user_data']['client_ip_address'] ?? null], [1, null]);
+$fila = [];
+mcp_meta_compra(['meta_ua' => null] + $inscricaoTeste);
+verificar('meta: Purchase sem a identificação do navegador não entra na fila (a Meta recusaria o lote)', count($fila), 0);
+mcp_meta_compra(['meta_marketing' => '0'] + $inscricaoTeste);
+mcp_meta_compra(['meta_marketing' => null] + $inscricaoTeste);
+$cookie('v=1&e=1&m=0&t=1');
+mcp_meta_cobranca_criada($inscricaoTeste, ['slug' => 'puncao-venosa', 'fbclid' => null] + $pessoaTeste, 'lead.mgb2k1.a8f3k2l1', true);
+mcp_meta_contato(['nome' => 'Ana', 'email' => 'a@exemplo.org', 'assunto' => 'matricula'], 'ct.mgb2k1.a8f3k2l1');
+verificar('meta: sem "sim" para marketing (na inscrição ou no cookie), a fila fica vazia', count($fila), 0);
+$cookie('v=1&e=1&m=1&t=1790940000');
+mcp_meta_contato(['nome' => 'Ana', 'email' => 'a@exemplo.org', 'assunto' => 'matricula'], 'ct.mgb2k1.a8f3k2l1');
+verificar('meta: "sim" sem a revisão atual do texto (r) não manda nada', count($fila), 0);
+$cookie('v=1&e=1&m=1&t=1790940000&r=2');
+mcp_meta_contato(['nome' => 'Ana Lima', 'email' => 'a@exemplo.org', 'telefone' => '', 'assunto' => 'matricula', 'curso_nome' => null, 'pagina' => '/cursos/?t=x&utm_source=ig'], 'ct.mgb2k1.a8f3k2l1');
+mcp_meta_contato(['nome' => 'Ana Lima', 'email' => 'a@exemplo.org', 'assunto' => 'matricula'], null);
+verificar('meta: Contact só com o id do chat, sem telefone vazio e com a página limpa', [count($fila), $fila[0][0]['event_name'] ?? null, isset($fila[0][0]['user_data']['ph']),
+    $fila[0][0]['custom_data'] ?? null, $fila[0][0]['event_source_url'] ?? null],
+    [1, 'Contact', false, ['content_category' => 'matricula', 'content_name' => 'matricula'], 'https://exemplo.org/cursos/?utm_source=ig']);
+$fila = [];
+$envioFechado = mcp_meta_enviar([$eventoTeste]);
+verificar('meta: Meta fora do ar vira resultado de falha, sem exceção', [$envioFechado['ok'], $envioFechado['http'], str_starts_with($envioFechado['erro'], 'sem resposta')], [false, 0, true]);
+$cookie(null);
+unset($_COOKIE['_fbp']);
+
+// Um config-meta.php escrito com erro desliga só a API de Conversões; o checkout segue (processo à parte).
+$quebrado = tempnam(sys_get_temp_dir(), 'mcp-meta-quebrado-');
+file_put_contents($quebrado, "<?php return ['META_CAPI_TOKEN' => 'x' 'faltou a vírgula'];");
+$saida = shell_exec(sprintf('MCP_CONFIG_ARQUIVO=%s MCP_CONFIG_META_ARQUIVO=%s MCP_CATALOGO_ARQUIVO=%s %s -d log_errors=0 -r %s 2>/dev/null',
+    escapeshellarg($configTeste), escapeshellarg($quebrado), escapeshellarg($raiz . '/site/matricula-cursos-presenciais/cursos.json'), escapeshellarg(PHP_BINARY),
+    escapeshellarg('$_SERVER["REQUEST_METHOD"]="CLI"; require ' . var_export($raiz . '/site/matricula-cursos-presenciais/api/lib.php', true) . '; echo json_encode([mcp_site_url(), mcp_meta_configurada()]);')));
+unlink($quebrado);
+verificar('meta: config-meta.php com erro de sintaxe é ignorado', $saida, '["https:\/\/exemplo.org",false]');
+
 // A versão do banco vem de uma constante no código (e não do arquivo em disco): mudou o db.php, muda a constante.
 $versaoDb = substr(md5((string) preg_replace('/^const MCP_DB_VERSAO = .*\n/m', '', (string) file_get_contents(__DIR__ . '/../site/matricula-cursos-presenciais/api/lib/db.php'))), 0, 16);
 verificar("banco: MCP_DB_VERSAO acompanha o db.php (se falhar, troque o valor por '$versaoDb')", MCP_DB_VERSAO, $versaoDb);
 
 unlink($configTeste);
 unlink($configEscola);
+unlink($configMeta);
 printf("%d testes, %d falhas\n", $total, $falhas);
 exit($falhas > 0 ? 1 : 0);

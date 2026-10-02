@@ -50,10 +50,18 @@
 
   /* Rastreio: Meta recebe o evento padrão com os parâmetros content_*; GA4 recebe o evento de
      comércio equivalente com os parâmetros que os relatórios de funil esperam (items, value,
-     currency, transaction_id). opcoes.eventID vai para o Meta (deduplicação com a API de conversões). */
+     currency, transaction_id). opcoes.eventID vai para o Meta: é o mesmo id que o servidor usa na API de
+     Conversões, e a Meta junta os dois. Lead, AddPaymentInfo e Purchase o servidor manda sozinho (tem os
+     dados da inscrição); o InitiateCheckout vai pelo repasse (opcoes.repassar, só com "sim" para marketing). */
   function rastrear(eventoMeta, dadosMeta, eventoGa, dadosGa, opcoes) {
-    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dadosMeta || {}, opcoes && opcoes.eventID ? { eventID: opcoes.eventID } : undefined); } catch (e) { /* pixel ausente */ }
+    var id = opcoes && opcoes.eventID;
+    try { if (window.fbq && eventoMeta) window.fbq('track', eventoMeta, dadosMeta || {}, id ? { eventID: id } : undefined); } catch (e) { /* pixel ausente */ }
     try { if (window.gtag && eventoGa) window.gtag('event', eventoGa, dadosGa || {}); } catch (e) { /* GA4 ausente */ }
+    try { if (id && opcoes.repassar && window.cvrjMedicao && window.cvrjMedicao.servidor) window.cvrjMedicao.servidor(eventoMeta, id, opcoes.curso); } catch (e) { /* sem repasse */ }
+  }
+  /* id de evento do bloco de medição da página; sem ele (página antiga em cache), fica só o Pixel. */
+  function novoIdEvento(prefixo) {
+    try { return window.cvrjMedicao && window.cvrjMedicao.novoId ? window.cvrjMedicao.novoId(prefixo) : ''; } catch (e) { return ''; }
   }
   function itemGa(slug, nome, centavos) {
     return { currency: 'BRL', value: centavos / 100, items: [{ item_id: slug, item_name: nome, item_category: 'Cursos presenciais', price: centavos / 100, quantity: 1 }] };
@@ -169,7 +177,7 @@
       if (checkoutIniciado || !info || !c) return;
       checkoutIniciado = true;
       rastrear('InitiateCheckout', { content_name: c.nome, content_ids: [sel.value], content_type: 'product', num_items: 1, value: info.inscricao_centavos / 100, currency: 'BRL' },
-        'begin_checkout', itemGa(sel.value, c.nome, info.inscricao_centavos));
+        'begin_checkout', itemGa(sel.value, c.nome, info.inscricao_centavos), { eventID: novoIdEvento('ic'), repassar: true, curso: sel.value });
     }
     var campos = {
       curso: '#ck-curso', nome: '#ck-nome', cpf: '#ck-cpf', email: '#ck-email', telefone: '#ck-telefone',
@@ -259,8 +267,10 @@
       btn.disabled = true;
       btn.textContent = dados.metodo === 'pix' ? 'Gerando o PIX…' : 'Processando o pagamento…';
       var nomeCurso = cursos[dados.curso] ? cursos[dados.curso].nome : dados.curso, centavosInscricao = info ? info.inscricao_centavos : 9900;
+      // O id do Lead vai junto com a inscrição: o servidor manda o mesmo Lead à API de Conversões.
+      dados.evento_id = novoIdEvento('lead') || undefined;
       rastrear('Lead', { content_name: nomeCurso, content_ids: [dados.curso], content_category: 'matricula-cursos-presenciais', value: centavosInscricao / 100, currency: 'BRL' },
-        'generate_lead', { currency: 'BRL', value: centavosInscricao / 100, curso: dados.curso, metodo: dados.metodo });
+        'generate_lead', { currency: 'BRL', value: centavosInscricao / 100, curso: dados.curso, metodo: dados.metodo }, { eventID: dados.evento_id });
       api('pagamentos.php', { method: 'POST', body: JSON.stringify(dados) }).then(function (r) {
         dados.cartao = null;
         if (!r.ok) {
@@ -271,7 +281,7 @@
         }
         // Dados de pagamento aceitos pelo provedor (PIX gerado ou cartão enviado): mesmo evento nos dois métodos.
         rastrear('AddPaymentInfo', { content_name: nomeCurso, content_ids: [dados.curso], content_type: 'product', value: r.total_centavos / 100, currency: 'BRL' },
-          'add_payment_info', Object.assign({ payment_type: dados.metodo }, itemGa(dados.curso, nomeCurso, r.total_centavos)), { eventID: r.token + '-pagamento' });
+          'add_payment_info', Object.assign({ payment_type: dados.metodo }, itemGa(dados.curso, nomeCurso, r.total_centavos)), { eventID: r.id_compra + '-pagamento' });
         if (r.status === 'pago') { location.href = r.urls.parabens; return; }
         if (r.metodo !== 'pix') { location.href = r.urls.pendente; return; } // cartão em análise
         form.hidden = true;
@@ -394,16 +404,23 @@
         + '<div class="ck-bloco"><p class="ck-nota" style="margin:0">Mandamos a confirmação para <b>' + esc(d.email) + '</b>. Guarde este link: <a href="' + esc(d.urls.parabens) + '">' + esc(d.urls.parabens) + '</a></p></div>';
     }
 
+    /* O id da compra (d.id_compra) é um hash do token: o token abre a inscrição e não vai à Meta nem ao GA.
+       A compra conta uma vez: o servidor manda o Purchase na hora do pagamento (API de Conversões) e a Meta
+       só junta os dois em 48 h. Quem abre esta tela mais de um dia depois (outro navegador, o e-mail de
+       confirmação, a página de horários) ou pelo painel da secretaria não manda de novo. */
     function registrarCompra(d) {
       var c = consentimento();
       if (!c || (!c.estatistica && !c.marketing)) return; // sem consentimento, nada a medir nem a marcar
+      if (param('painel') === '1') return;
+      var pagoEm = d.pago_em ? Date.parse(String(d.pago_em).replace(' ', 'T') + 'Z') : NaN;
+      if (!isNaN(pagoEm) && Date.now() - pagoEm > 864e5) return;
       try {
         var chave = 'mcp_purchase_' + token;
         if (localStorage.getItem(chave)) return;
         localStorage.setItem(chave, '1');
       } catch (e) { /* sem localStorage: registra assim mesmo */ }
-      rastrear('Purchase', { content_name: d.curso.nome, content_ids: [d.curso.slug], content_type: 'product', num_items: 1, value: d.total_centavos / 100, currency: 'BRL' },
-        'purchase', Object.assign({ transaction_id: token, payment_type: d.metodo }, itemGa(d.curso.slug, d.curso.nome, d.total_centavos)), { eventID: token });
+      rastrear('Purchase', { content_name: d.curso.nome, content_ids: [d.curso.slug], content_type: 'product', value: d.total_centavos / 100, currency: 'BRL' },
+        'purchase', Object.assign({ transaction_id: d.id_compra, payment_type: d.metodo }, itemGa(d.curso.slug, d.curso.nome, d.total_centavos)), { eventID: d.id_compra });
     }
 
     api('status.php?t=' + encodeURIComponent(token)).then(function (d) {

@@ -2,8 +2,9 @@
 /**
  * Bootstrap do backend do checkout da matrícula em cursos presenciais (PHP 8.3, Hostinger).
  *
- * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php, contato.php (chat do site) e
- * painel.php (portal da secretaria: inscrições, horários dos alunos e mensagens do chat).
+ * Endpoints públicos: info.php, pagamentos.php, status.php, webhook.php, contato.php (chat do site),
+ * medicao.php (repasse de eventos de página à API de Conversões da Meta) e painel.php (portal da
+ * secretaria: inscrições, horários dos alunos e mensagens do chat).
  * Tudo o mais fica em lib/ (negado por .htaccess) e em config.php (segredos, só no servidor; modelo
  * em config.example.php).
  *
@@ -46,6 +47,6 @@ set_exception_handler(static function (Throwable $e): void {
     exit;
 });
 
-foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas'] as $modulo) {
+foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta'] as $modulo) {
     require __DIR__ . '/lib/' . $modulo . '.php';
 }

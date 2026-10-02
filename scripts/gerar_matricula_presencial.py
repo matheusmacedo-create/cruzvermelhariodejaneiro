@@ -387,11 +387,15 @@ def main() -> int:
         var h = location.hash.replace('#curso-', '');
         return h || null;
       }}
-      // Meta: ViewContent ao abrir um curso (InitiateCheckout dispara na página do checkout).
+      // Meta: ViewContent ao abrir um curso (InitiateCheckout dispara na página do checkout), com um id que vai
+      // também no repasse ao servidor (API de Conversões, só com "sim" para marketing): a Meta junta os dois.
       // GA4: view_item ao abrir um curso e select_item no botão, com o item para os relatórios de funil.
       function rastrear(nome, dados) {{
         var item = {{ item_id: dados.content_ids[0], item_name: dados.content_name, item_category: 'Cursos presenciais', price: {inscricao / 100:.2f}, quantity: 1 }};
-        try {{ if (window.fbq && nome === 'ViewContent') fbq('track', nome, dados); }} catch (e) {{}}
+        var id = '';
+        try {{ if (nome === 'ViewContent' && window.cvrjMedicao && window.cvrjMedicao.novoId) id = window.cvrjMedicao.novoId('vc'); }} catch (e) {{}}
+        try {{ if (window.fbq && nome === 'ViewContent') fbq('track', nome, dados, id ? {{ eventID: id }} : undefined); }} catch (e) {{}}
+        try {{ if (id) window.cvrjMedicao.servidor(nome, id, dados.content_ids[0]); }} catch (e) {{}}
         try {{ if (window.gtag) gtag('event', nome === 'ViewContent' ? 'view_item' : 'select_item', {{ currency: 'BRL', value: {inscricao / 100:.2f}, item_list_name: 'Matrícula cursos presenciais', items: [item] }}); }} catch (e) {{}}
       }}
       function ativar(slug, atualizarUrl) {{
@@ -417,7 +421,7 @@ def main() -> int:
           ativar(slug, true);
           var alvo = document.getElementById('curso-' + slug);
           if (window.innerWidth < 920 && alvo) alvo.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
-          rastrear('ViewContent', {{ content_name: alvo.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' }});
+          rastrear('ViewContent', {{ content_name: alvo.getAttribute('data-nome'), content_ids: [slug], content_type: 'product', content_category: 'matricula-cursos-presenciais', value: {inscricao / 100:.2f}, currency: 'BRL' }});
         }});
       }});
 

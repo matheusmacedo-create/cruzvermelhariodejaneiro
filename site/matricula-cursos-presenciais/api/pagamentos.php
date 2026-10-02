@@ -52,6 +52,8 @@ function mcp_validar_aluno(array $b): array
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
+        // id do Lead do Pixel, para a API de Conversões mandar o mesmo evento (lib/meta.php)
+        'meta_lead' => mcp_meta_id_valido($b['evento_id'] ?? null),
     ];
 }
 
@@ -106,6 +108,10 @@ function mcp_pix_aberto(array $aluno, int $total): ?array
     if (!$aberta) {
         return null;
     }
+    // "Não" para marketing neste pedido: o "sim" guardado deixa de valer antes da reconsulta, que pode achar o
+    // PIX pago e mandar o Purchase na hora (mcp_pos_pagamento relê a inscrição). Só retira: quem sabe o CPF de
+    // outra pessoa não dá o "sim" por ela.
+    mcp_meta_atualizar_escolha($aberta);
     $aberta = mcp_sincronizar($aberta);
     return ($aberta['status'] ?? '') === 'pendente' ? $aberta : null;
 }
@@ -162,6 +168,17 @@ function mcp_gravar_inscricao(array $aluno, string $token, int $inscricaoCentavo
     $pdo->prepare("INSERT INTO mcp_inscricoes ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
     $id = (int) $pdo->lastInsertId();
     mcp_registrar($id, 'cobranca_criada', "{$aluno['metodo']} · $statusOrigem · " . mcp_brl($inscricaoCentavos + $taxa));
+    // A escolha de marketing e os sinais para o Purchase (lib/meta.php) à parte, depois da inscrição gravada: a
+    // cobrança já existe no provedor, e nada que venha do cookie ou de uma coluna nova pode impedir a inscrição.
+    // Se não gravar, meta_marketing fica vazio e o Purchase não sai (falha fechada).
+    try {
+        $meta = mcp_meta_colunas_da_inscricao($aluno['fbclid']);
+        if ($meta) {
+            mcp_atualizar($id, $meta);
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] escolha de marketing da inscrição não gravada: ' . get_class($e) . ': ' . $e->getMessage());
+    }
     return $id;
 }
 
@@ -186,6 +203,7 @@ mcp_aplicar_limites($aluno);
 
 if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $total))) {
     mcp_registrar((int) $aberta['id'], 'pix_reaproveitado');
+    mcp_meta_cobranca_criada($aberta, $aluno, $aluno['meta_lead'], false);
     mcp_json(mcp_publico($aberta) + ['reaproveitado' => true]);
 }
 
@@ -206,6 +224,8 @@ try {
 $id = mcp_gravar_inscricao($aluno, $token, $inscricaoCentavos, $taxa, $cobranca, $cartao['ultimos4'] ?? null);
 $inscricao = mcp_inscricao_por('id', (string) $id) ?? [];
 $status = mcp_traduzir_status((string) ($cobranca['payment_status'] ?? ''));
+// API de Conversões (só com "sim" para marketing): Lead e, se a cobrança foi aceita, AddPaymentInfo, como o Pixel.
+mcp_meta_cobranca_criada($inscricao, $aluno, $aluno['meta_lead'], $status !== 'recusado');
 
 if ($aluno['metodo'] === 'pix') {
     mcp_email_pix_aberto($inscricao);

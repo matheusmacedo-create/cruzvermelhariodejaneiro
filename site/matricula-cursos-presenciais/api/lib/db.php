@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = 'e060d62015add327';
+const MCP_DB_VERSAO = '8867a1844da8cdde';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -96,6 +96,13 @@ function mcp_migrar_tudo(PDO $pdo): void
         escola_token CHAR(64) NULL,
         email_aluno VARCHAR(20) NULL,
         email_secretaria VARCHAR(20) NULL,
+        meta_marketing TINYINT(1) NULL,
+        meta_marketing_em DATETIME NULL,
+        meta_revisao TINYINT UNSIGNED NULL,
+        meta_fbp VARCHAR(255) NULL,
+        meta_fbc VARCHAR(600) NULL,
+        meta_ua VARCHAR(512) NULL,
+        meta_ip VARCHAR(45) NULL,
         criado_em DATETIME NOT NULL,
         atualizado_em DATETIME NOT NULL,
         pago_em DATETIME NULL,
@@ -109,6 +116,17 @@ function mcp_migrar_tudo(PDO $pdo): void
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Link de criar senha na plataforma da escola (28/09/2026) em bancos que já tinham a tabela.
     mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['escola_token' => 'CHAR(64) NULL']);
+    // API de Conversões da Meta (02/10/2026): a escolha de marketing do aluno e a data dela (prova do
+    // consentimento) e, só com "sim", os sinais do navegador que o Purchase confirmado pelo postback precisa
+    // (lib/meta.php; saem em até 8 dias).
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', [
+        'meta_marketing' => 'TINYINT(1) NULL', 'meta_marketing_em' => 'DATETIME NULL', 'meta_fbp' => 'VARCHAR(255) NULL', 'meta_fbc' => 'VARCHAR(600) NULL', 'meta_ua' => 'VARCHAR(512) NULL',
+    ]);
+    // Revisão da API de Conversões (02/10/2026): a revisão do texto do aviso sob a qual o "sim" foi dado (o
+    // Purchase só sai com a atual) e o IP guardado só com "sim", para o Purchase, em vez do IP de segurança. O
+    // _fbc leva o fbclid inteiro, que passa de 200 caracteres: a coluna cresce (MODIFY é idempotente).
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['meta_revisao' => 'TINYINT UNSIGNED NULL', 'meta_ip' => 'VARCHAR(45) NULL']);
+    $pdo->exec('ALTER TABLE mcp_inscricoes MODIFY meta_fbc VARCHAR(600) NULL');
     // Mensagens do chat de contato do site (api/contato.php). Fonte da verdade: o e-mail à equipe é cópia.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_contatos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -448,7 +466,7 @@ function mcp_garantir_indices(PDO $pdo): void
 function mcp_eventos_apagar_freios(?int $agora = null): int
 {
     $agora ??= time();
-    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado')
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse')
         AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
     return $stmt->rowCount();
@@ -600,6 +618,14 @@ function mcp_contar_eventos_recentes(string $tipo, string $detalhe, int $segundo
 {
     $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_eventos WHERE tipo = ? AND detalhe = ? AND criado_em > ?');
     $stmt->execute([$tipo, $detalhe, gmdate('Y-m-d H:i:s', time() - $segundos)]);
+    return (int) $stmt->fetchColumn();
+}
+
+/** Todos os eventos de um tipo na janela, de qualquer origem (só o índice tipo, criado_em). */
+function mcp_contar_eventos_do_tipo(string $tipo, int $segundos): int
+{
+    $stmt = mcp_db()->prepare('SELECT COUNT(*) FROM mcp_eventos WHERE tipo = ? AND criado_em > ?');
+    $stmt->execute([$tipo, gmdate('Y-m-d H:i:s', time() - $segundos)]);
     return (int) $stmt->fetchColumn();
 }
 

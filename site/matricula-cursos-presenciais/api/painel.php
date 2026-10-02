@@ -655,7 +655,7 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
                   . '<p class="nota">O aluno recebe por e-mail o link pessoal para escolher os horários, no mesmo modelo dos lembretes automáticos.</p>'
                 : '<p class="nota">Um novo lembrete pode sair a partir de ' . pn_e(pn_data(gmdate('Y-m-d H:i:s', $ultimo + MCP_SECRETARIA_LEMBRETE_INTERVALO))) . ' (no máximo um a cada 24 horas).</p>');
     }
-    $horarios .= $pago ? '<p class="nota"><a href="' . pn_e(mcp_url_pagina('parabens', (string) $i['token'])) . '" target="_blank" rel="noopener">Ver a página da inscrição, como o aluno vê ↗</a></p>' : '';
+    $horarios .= $pago ? '<p class="nota"><a href="' . pn_e(mcp_url_pagina('parabens', (string) $i['token']) . '&painel=1') . '" target="_blank" rel="noopener">Ver a página da inscrição, como o aluno vê ↗</a></p>' : '';
 
     $tempo = '';
     foreach (mcp_secretaria_eventos((int) $i['id']) as $e) {
