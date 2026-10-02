@@ -180,6 +180,13 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
   repasse da página em que respondia; e o teto do site se esgotava sem registro.
   Os verificadores não confirmaram dois achados como defeito, mas eles também mudaram: o IP do Purchase
   passou a ser guardado à parte (`meta_ip`), e a faxina ganhou um try próprio.
+- **Correções publicadas em 02/10/2026, às 15h37 (Brasília):** os 70 arquivos de
+  `scripts/publicacao-capi-revisao.txt`, depois de copiar os do ar (os 70 eram iguais ao `355d3ae`, a
+  publicação das 14h50). A migração rodou na primeira consulta (`status.php` respondeu 404, sem 503);
+  `conferir_publicacao.sh` deu "Tudo certo", os PHP e os estáticos no servidor são iguais ao repositório,
+  byte a byte, `conferir_pixel.js` passou nos 12 cenários no ar e o aviso, no ar, pergunta de novo a quem
+  tem "sim" sem `r` e grava `r=2`. Quem aceitou entre 14h50 e 15h37 (o aviso ainda não gravava o `r`) é
+  perguntado mais uma vez. A parte do servidor continua desligada até o token.
 - **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento com `r`, id da compra,
   fila, URL limpa), `scripts/testar_meta_integracao.php` (36 cenários de ponta a ponta com MariaDB local e
   uma Meta, uma Unicopag e uma Resend falsas, incluindo o link aberto por outra pessoa, o PIX refeito, os
