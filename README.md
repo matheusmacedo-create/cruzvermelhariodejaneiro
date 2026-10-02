@@ -2238,8 +2238,9 @@ visível. Regras:
 - Pontos e setas ficam sobre um fundo escuro translúcido, porque os brancos puros sumiam num banner de
   fundo claro.
 
-**Banner da Força-Tarefa Humanitária – Ações El Niño** (primeiro slide desde 02/10/2026). Leva ao
-formulário de voluntários, como os outros "Seja voluntário" do site.
+**Banner da Força-Tarefa Humanitária – Ações El Niño** (primeiro slide desde 02/10/2026). Só
+informativo, sem link, a pedido do Matheus: o slide leva a classe `sem-link` (cursor normal, sem a mão de
+link do slider), e o `alt` traz o texto da arte.
 
 - A arte veio em 1916x821 (`site/assets/forca-tarefa-el-nino-arte.webp`, no servidor).
   `forca-tarefa-el-nino-banner.png` é a mesma arte com 1920 de largura e 78 linhas brancas a mais na

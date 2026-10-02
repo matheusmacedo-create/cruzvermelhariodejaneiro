@@ -1024,6 +1024,7 @@
        cada troca automática, nem quando o navegador escolhe uma largura com altura arredondada. */
     .campaign-slide picture { display: block; }
     .campaign-slide img { aspect-ratio: 1920 / 901; object-fit: cover; }
+    .campaign-slide.sem-link { cursor: default; } /* banner só informativo: sem a mãozinha de link */
     /* Pontos e setas sobre um fundo escuro translúcido: brancos puros sumiam nos banners de fundo claro. */
     .campaign-slider-dots { background: rgba(0,0,0,.32); padding: 6px 10px; border-radius: 999px; }
     .campaign-slider-arrow { background: rgba(0,0,0,.32); border-color: rgba(255,255,255,.55); }
@@ -1461,13 +1462,11 @@
 
   <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
   <div class="campaign-slider" id="campaignSlider">
-    <div class="campaign-slide active" data-slide="0">
-      <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">
-        <picture>
-          <source type="image/avif" srcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" sizes="100vw" width="1920" height="901">
-          <img alt="Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Inscreva-se como voluntário." src="assets/otim/forca-tarefa-el-nino-banner-1200.webp" srcset="assets/otim/forca-tarefa-el-nino-banner-640.webp 640w, assets/otim/forca-tarefa-el-nino-banner-960.webp 960w, assets/otim/forca-tarefa-el-nino-banner-1200.webp 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.webp 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
-        </picture>
-      </a>
+    <div class="campaign-slide active sem-link" data-slide="0">
+      <picture>
+        <source type="image/avif" srcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" sizes="100vw" width="1920" height="901">
+        <img alt="Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Evento interno." src="assets/otim/forca-tarefa-el-nino-banner-1200.webp" srcset="assets/otim/forca-tarefa-el-nino-banner-640.webp 640w, assets/otim/forca-tarefa-el-nino-banner-960.webp 960w, assets/otim/forca-tarefa-el-nino-banner-1200.webp 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.webp 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
+      </picture>
     </div>
     <div class="campaign-slide" data-slide="1">
       <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
