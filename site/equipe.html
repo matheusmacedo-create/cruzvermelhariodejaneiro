@@ -969,7 +969,8 @@
   if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
   n.queue=[]}(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('consent', 'revoke');
+  // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
+  // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
   fbq('track', 'PageView');
   </script>
