@@ -7,14 +7,17 @@
  * que dependem do navegador. E o servidor tem nome, e-mail e telefone da inscrição para a Meta reconhecer a
  * pessoa (sempre em hash SHA-256), o que melhora a "qualidade da correspondência" das campanhas. O CPF nunca vai.
  *
- * Só com consentimento de marketing, o mesmo m=1 do cookie cvrj_consentimento que libera o Pixel, dado depois
- * do texto atual do aviso (MCP_META_CONSENTIMENTO_DESDE):
+ * Só com consentimento de marketing, o mesmo m=1 do cookie cvrj_consentimento que libera o Pixel, dado com o
+ * texto atual do aviso (r=MCP_META_REVISAO no cookie, que só o consentimento.js atual grava):
  *  - evento que nasce de um pedido do próprio aluno (cobrança, chat, repasse de PageView, ViewContent e
  *    InitiateCheckout por api/medicao.php): vale o cookie deste pedido, e IP, navegador e _fbp/_fbc saem dele;
  *  - Purchase, que pode ser confirmado pelo postback da Unicopag (sem navegador nenhum): vale a escolha
- *    guardada na inscrição (meta_marketing), gravada quando a cobrança foi criada e atualizada a cada consulta
- *    de status feita pelo próprio aluno. Os sinais guardados com ela (navegador, _fbp/_fbc) servem só para
- *    esse evento: saem do banco quando ele é enviado ou, no máximo, em 8 dias (mcp_meta_faxina).
+ *    gravada na inscrição quando a cobrança foi criada (meta_marketing, meta_revisao). Depois disso, quem
+ *    abre o link da inscrição só consegue retirar a permissão, nunca dá-la: o link pode estar com outra
+ *    pessoa (mcp_meta_atualizar_escolha). Os sinais guardados com ela (IP, navegador, _fbp/_fbc) servem só
+ *    para esse evento: saem do banco quando ele é enviado ou, no máximo, em 8 dias (mcp_meta_faxina).
+ * O token da inscrição (que abre as páginas de acompanhamento) nunca vai à Meta: os ids de evento da
+ * inscrição saem de um hash dele (mcp_meta_id_da_compra).
  * Sem token (META_CAPI_TOKEN, em config.php ou config-meta.php), nada acontece e nada é gravado.
  *
  * Nunca lança nem atrasa o aluno: os eventos entram numa fila e saem depois da resposta
@@ -29,13 +32,16 @@ const MCP_META_VERSAO_PADRAO = 'v25.0';
 const MCP_META_CONEXAO_SEGUNDOS = 3;
 const MCP_META_TOTAL_SEGUNDOS = 6;
 /** event_id que o navegador pode mandar: o mesmo formato que window.cvrjMedicao.novoId() gera. */
-const MCP_META_ID = '/^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$/';
+const MCP_META_ID = '/^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}\z/';
 /**
- * Escolhas de marketing feitas antes desta data (o t do cookie) não valem para a API de Conversões: até ela, o
- * aviso e a política diziam que nome, e-mail e telefone nunca iam à Meta. O aviso de cookies pergunta de novo
- * (REVISAO em consentimento.js, o mesmo instante). Pode ser trocado por META_CONSENTIMENTO_DESDE.
+ * Revisão do texto do aviso de cookies que vale para a API de Conversões: o consentimento.js atual grava r=2 no
+ * cookie (REVISAO lá). Um "sim" sem ela não vale: foi dado no texto anterior, que dizia que nome, e-mail e
+ * telefone nunca iam à Meta, ou por outro aviso que grava o mesmo cookie (o da Punção, um consentimento.js
+ * antigo guardado no cache). O t do cookie não serve para isso: diz quando, não qual texto. Mudou o texto do
+ * que vai à Meta, sobe aqui e em consentimento.js: o aviso pergunta de novo, e as inscrições com o "sim"
+ * anterior deixam de mandar o Purchase.
  */
-const MCP_META_CONSENTIMENTO_DESDE = 1790963580;
+const MCP_META_REVISAO = 2;
 /** Sinais guardados na inscrição só para o Purchase: depois disso, saem (minimização). */
 const MCP_META_GUARDA_SEGUNDOS = 8 * 86400;
 /** Parâmetros de endereço que podem ir à Meta. O resto sai, a começar pelo t= (token que abre a inscrição). */
@@ -57,15 +63,10 @@ function mcp_meta_configurada(): bool
     return mcp_meta_token() !== '' && mcp_meta_pixel() !== '';
 }
 
-function mcp_meta_consentimento_desde(): int
-{
-    $desde = mcp_cfg('META_CONSENTIMENTO_DESDE', MCP_META_CONSENTIMENTO_DESDE);
-    return is_numeric($desde) ? (int) $desde : MCP_META_CONSENTIMENTO_DESDE;
-}
-
 /**
- * A escolha de marketing no cookie deste pedido: ['marketing' => bool, 'em' => unix] ou null (sem escolha
- * válida). Um "sim" dado antes do texto atual (t anterior a META_CONSENTIMENTO_DESDE) vale como sem escolha.
+ * A escolha de marketing no cookie deste pedido: ['marketing' => bool, 'em' => unix, 'revisao' => int] ou null
+ * (sem escolha válida). Um "sim" sem a revisão atual do texto (r) ou com data no futuro vale como sem escolha;
+ * um "não" vale sempre.
  */
 function mcp_meta_escolha_no_cookie(): ?array
 {
@@ -78,11 +79,12 @@ function mcp_meta_escolha_no_cookie(): ?array
     if (($partes['v'] ?? null) !== '1' || !in_array($partes['m'] ?? null, ['0', '1'], true)) {
         return null;
     }
-    $em = is_string($partes['t'] ?? null) && ctype_digit($partes['t']) ? (int) $partes['t'] : 0;
-    if ($partes['m'] === '1' && $em < mcp_meta_consentimento_desde()) {
+    $em = is_string($partes['t'] ?? null) && ctype_digit($partes['t']) && strlen($partes['t']) <= 12 ? (int) $partes['t'] : 0;
+    $revisao = is_string($partes['r'] ?? null) && ctype_digit($partes['r']) && strlen($partes['r']) <= 3 ? (int) $partes['r'] : 0;
+    if ($partes['m'] === '1' && ($revisao < MCP_META_REVISAO || $em <= 0 || $em > time() + 86400)) {
         return null;
     }
-    return ['marketing' => $partes['m'] === '1', 'em' => $em];
+    return ['marketing' => $partes['m'] === '1', 'em' => $em, 'revisao' => $revisao];
 }
 
 /** true (sim, dado com o texto atual), false (não) ou null (sem escolha que valha). */
@@ -107,21 +109,28 @@ function mcp_meta_id_valido(mixed $id): ?string
     return is_string($id) && preg_match(MCP_META_ID, $id) ? $id : null;
 }
 
-/** _fbp e _fbc do navegador (fb.<n>.<criado em ms>.<valor>), só se tiverem o formato da Meta. */
+/**
+ * _fbp e _fbc do navegador (fb.<n>.<criado em ms>.<valor>), só se tiverem o formato da Meta. O _fbc leva o
+ * fbclid inteiro, que passa de 200 caracteres nos anúncios de hoje (meta_fbc guarda até 600).
+ */
 function mcp_meta_cookie_fb(string $nome): ?string
 {
     $valor = $_COOKIE[$nome] ?? null;
-    if (!is_string($valor) || strlen($valor) > 255) {
+    if (!is_string($valor) || strlen($valor) > 600) {
         return null;
     }
-    return preg_match('/^fb\.[0-9]\.[0-9]{10,16}\.[A-Za-z0-9_-]{1,220}$/', $valor) ? $valor : null;
+    return preg_match('/^fb\.[0-9]\.[0-9]{10,16}\.[A-Za-z0-9_-]{1,560}\z/', $valor) ? $valor : null;
 }
 
-/** fbc montado a partir do fbclid de um anúncio, quando o cookie _fbc ainda não existe. */
+/**
+ * fbc montado a partir do fbclid de um anúncio, quando o cookie _fbc ainda não existe. A Meta proíbe mexer
+ * no fbclid: as páginas e o banco guardam até 255 caracteres, então um fbclid desse tamanho pode ter sido
+ * cortado e é descartado.
+ */
 function mcp_meta_fbc_do_fbclid(?string $fbclid, ?int $quandoMs = null): ?string
 {
     $fbclid = (string) $fbclid;
-    if ($fbclid === '' || strlen($fbclid) > 220 || !preg_match('/^[A-Za-z0-9_-]+$/', $fbclid)) {
+    if ($fbclid === '' || strlen($fbclid) >= 255 || !preg_match('/^[A-Za-z0-9_-]+\z/', $fbclid)) {
         return null;
     }
     return 'fb.1.' . ($quandoMs ?? (int) floor(microtime(true) * 1000)) . '.' . $fbclid;
@@ -202,9 +211,19 @@ function mcp_meta_ip(?string $ip): ?string
 }
 
 /**
+ * Id dos eventos da inscrição na Meta (Purchase, AddPaymentInfo com "-pagamento"), no servidor e no Pixel
+ * (mcp_publico o entrega às páginas como id_compra). Sai de um hash do token e não o revela: o token abre a
+ * inscrição (e-mail, PIX, o link de criar senha na escola) e não pode aparecer no Gerenciador de Eventos.
+ */
+function mcp_meta_id_da_compra(string $token): string
+{
+    return 'c.' . substr(hash('sha256', 'cvrj-meta-compra|' . $token), 0, 32);
+}
+
+/**
  * user_data: dados da pessoa em hash + sinais do navegador (que a Meta pede sem hash). O CPF nunca vai: os
- * Termos das Ferramentas de Negócios da Meta proíbem números de documento. O external_id é o token da
- * inscrição em hash (liga Lead, AddPaymentInfo e Purchase da mesma inscrição).
+ * Termos das Ferramentas de Negócios da Meta proíbem números de documento. O external_id é o SHA-256 do token
+ * da inscrição (liga Lead, AddPaymentInfo e Purchase da mesma inscrição; o hash não revela o token).
  */
 function mcp_meta_user_data(array $pessoa, array $contexto): array
 {
@@ -291,7 +310,7 @@ function mcp_meta_descarregar(): void
                 mcp_registrar($inscricaoId, $resultado['ok'] ? 'meta_capi' : 'meta_capi_falha', $resumo);
                 if ($resultado['ok'] && $evento['event_name'] === 'Purchase') {
                     // O Purchase era o único motivo para guardar os sinais do navegador na inscrição.
-                    mcp_atualizar($inscricaoId, ['meta_fbp' => null, 'meta_fbc' => null, 'meta_ua' => null]);
+                    mcp_atualizar($inscricaoId, ['meta_fbp' => null, 'meta_fbc' => null, 'meta_ua' => null, 'meta_ip' => null]);
                 }
             } elseif (!$resultado['ok'] && mcp_contar_eventos_recentes('meta_capi_falha', 'repasse', 600) === 0) {
                 // Repasse anônimo (PageView etc.): uma falha a cada 10 minutos basta para avisar (token vencido, Meta fora).
@@ -390,40 +409,44 @@ function mcp_meta_colunas_da_inscricao(?string $fbclid): array
     return [
         'meta_marketing' => 1,
         'meta_marketing_em' => mcp_meta_escolha_em($escolha),
+        'meta_revisao' => $escolha['revisao'],
         'meta_fbp' => $contexto['fbp'] ?? null,
         'meta_fbc' => $contexto['fbc'] ?? null,
         'meta_ua' => $contexto['client_user_agent'] ?? null,
+        'meta_ip' => $contexto['client_ip_address'] ?? null,
     ];
 }
 
-/** O aluno abriu a página de acompanhamento: a escolha do cookie dele vale daqui em diante para o Purchase. */
+/**
+ * Alguém abriu o link da inscrição pendente (status.php) ou refez o PIX com o mesmo CPF (pagamentos.php) com
+ * "não" para marketing no cookie: o "sim" guardado deixa de valer e os sinais do navegador saem. Só retira,
+ * nunca dá: o link pode estar com outra pessoa (a mãe que paga, a secretaria pelo painel), e o "sim" de quem
+ * abriu não é o do aluno. Depois do pagamento, nada muda: a escolha guardada é a prova do consentimento sob o
+ * qual o Purchase saiu (ou não). Cada retirada fica em mcp_eventos, com a escolha anterior.
+ */
 function mcp_meta_atualizar_escolha(array $inscricao): void
 {
-    if (!mcp_meta_configurada() || empty($inscricao['id']) || !array_key_exists('meta_marketing', $inscricao)) {
+    if (!mcp_meta_configurada() || empty($inscricao['id']) || ($inscricao['status'] ?? '') !== 'pendente'
+        || (string) ($inscricao['meta_marketing'] ?? '') !== '1') {
         return;
     }
     $escolha = mcp_meta_escolha_no_cookie();
-    if ($escolha === null || (string) $inscricao['meta_marketing'] === ($escolha['marketing'] ? '1' : '0')) {
+    if ($escolha === null || $escolha['marketing']) {
         return;
     }
-    $marketing = $escolha['marketing'];
-    $campos = ['meta_marketing' => $marketing ? 1 : 0, 'meta_marketing_em' => mcp_meta_escolha_em($escolha)];
-    if (!$marketing) {
-        $campos += ['meta_fbp' => null, 'meta_fbc' => null, 'meta_ua' => null];
-    } elseif ($inscricao['status'] === 'pendente') {
-        $contexto = mcp_meta_contexto($inscricao['fbclid'] ?? null);
-        $campos += ['meta_fbp' => $contexto['fbp'] ?? null, 'meta_fbc' => $contexto['fbc'] ?? null, 'meta_ua' => $contexto['client_user_agent'] ?? null];
-    }
+    $em = mcp_meta_escolha_em($escolha);
     try {
-        mcp_atualizar((int) $inscricao['id'], $campos);
+        mcp_atualizar((int) $inscricao['id'], ['meta_marketing' => 0, 'meta_marketing_em' => $em, 'meta_revisao' => null,
+            'meta_fbp' => null, 'meta_fbc' => null, 'meta_ua' => null, 'meta_ip' => null]);
+        mcp_registrar((int) $inscricao['id'], 'meta_escolha', 'retirada: sim de ' . ($inscricao['meta_marketing_em'] ?? '?') . ' → não de ' . $em);
     } catch (Throwable $e) {
         error_log('[matricula] escolha de marketing não gravada: ' . $e->getMessage());
     }
 }
 
 /**
- * Lead (com o id que o navegador mandou) e AddPaymentInfo (id <token>-pagamento, como no Pixel), logo depois
- * de a cobrança ser criada. PIX reaproveitado manda só o Lead: o AddPaymentInfo daquele token já foi.
+ * Lead (com o id que o navegador mandou) e AddPaymentInfo (id <id da compra>-pagamento, como no Pixel), logo
+ * depois de a cobrança ser criada. PIX reaproveitado manda só o Lead: o AddPaymentInfo daquele PIX já foi.
  */
 function mcp_meta_cobranca_criada(array $inscricao, array $aluno, ?string $idLead, bool $cobrancaNova): void
 {
@@ -445,31 +468,33 @@ function mcp_meta_cobranca_criada(array $inscricao, array $aluno, ?string $idLea
              'value' => round((int) $inscricao['inscricao_centavos'] / 100, 2), 'currency' => 'BRL'], $url), $id);
     }
     if ($cobrancaNova) {
-        mcp_meta_enfileirar(mcp_meta_evento('AddPaymentInfo', $inscricao['token'] . '-pagamento', $userData,
+        mcp_meta_enfileirar(mcp_meta_evento('AddPaymentInfo', mcp_meta_id_da_compra((string) $inscricao['token']) . '-pagamento', $userData,
             mcp_meta_dados_do_curso((string) $aluno['slug'], $nomeCurso, (int) $inscricao['total_centavos']), $url), $id);
     }
 }
 
 /**
- * Purchase, na transição para pago (mcp_pos_pagamento), com event_id = token, o mesmo do Pixel na tela
- * Parabéns. Vale a escolha guardada na inscrição; os sinais do navegador também são os guardados.
+ * Purchase, na transição para pago (mcp_pos_pagamento), com o id da compra, o mesmo do Pixel na tela Parabéns.
+ * Vale a escolha guardada na inscrição, se foi dada com o texto atual (meta_revisao); IP, navegador e
+ * _fbp/_fbc também são os guardados com ela (o IP de segurança da inscrição, mcp_inscricoes.ip, não vai).
  */
 function mcp_meta_compra(array $inscricao): void
 {
-    if (!mcp_meta_configurada() || (string) ($inscricao['meta_marketing'] ?? '') !== '1') {
+    if (!mcp_meta_configurada() || (string) ($inscricao['meta_marketing'] ?? '') !== '1' || (int) ($inscricao['meta_revisao'] ?? 0) < MCP_META_REVISAO) {
         return;
     }
     $criadoMs = (int) strtotime(($inscricao['criado_em'] ?? 'now') . ' UTC') * 1000;
     $contexto = array_filter([
-        'client_ip_address' => mcp_meta_ip($inscricao['ip'] ?? null),
+        'client_ip_address' => mcp_meta_ip($inscricao['meta_ip'] ?? null),
         'client_user_agent' => ($inscricao['meta_ua'] ?? '') ?: null,
         'fbp' => ($inscricao['meta_fbp'] ?? '') ?: null,
         'fbc' => ($inscricao['meta_fbc'] ?? null) ?: mcp_meta_fbc_do_fbclid($inscricao['fbclid'] ?? null, $criadoMs),
     ], static fn($v) => $v !== null);
     $pessoa = ['nome' => $inscricao['nome'], 'email' => $inscricao['email'], 'telefone' => $inscricao['telefone'], 'external_id' => (string) $inscricao['token']];
-    mcp_meta_enfileirar(mcp_meta_evento('Purchase', (string) $inscricao['token'], mcp_meta_user_data($pessoa, $contexto),
+    $idCompra = mcp_meta_id_da_compra((string) $inscricao['token']);
+    mcp_meta_enfileirar(mcp_meta_evento('Purchase', $idCompra, mcp_meta_user_data($pessoa, $contexto),
         mcp_meta_dados_do_curso((string) $inscricao['curso_slug'], (string) $inscricao['curso_nome'], (int) $inscricao['total_centavos'],
-            ['order_id' => (string) $inscricao['token']]),
+            ['order_id' => $idCompra]),
         mcp_url_pagina('parabens')), (int) $inscricao['id']);
 }
 
@@ -490,8 +515,8 @@ function mcp_meta_contato(array $contato, ?string $id): void
 function mcp_meta_faxina(?int $agora = null): int
 {
     $limite = gmdate('Y-m-d H:i:s', ($agora ?? time()) - MCP_META_GUARDA_SEGUNDOS);
-    $stmt = mcp_db()->prepare('UPDATE mcp_inscricoes SET meta_fbp = NULL, meta_fbc = NULL, meta_ua = NULL
-        WHERE criado_em < ? AND (meta_fbp IS NOT NULL OR meta_fbc IS NOT NULL OR meta_ua IS NOT NULL)');
+    $stmt = mcp_db()->prepare('UPDATE mcp_inscricoes SET meta_fbp = NULL, meta_fbc = NULL, meta_ua = NULL, meta_ip = NULL
+        WHERE criado_em < ? AND (meta_fbp IS NOT NULL OR meta_fbc IS NOT NULL OR meta_ua IS NOT NULL OR meta_ip IS NOT NULL)');
     $stmt->execute([$limite]);
     return $stmt->rowCount();
 }

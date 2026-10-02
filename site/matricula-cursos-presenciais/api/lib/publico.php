@@ -14,6 +14,8 @@ function mcp_publico(array $inscricao, ?array $preferencia = null): array
     return [
         'ok' => true,
         'token' => $token,
+        // Id dos eventos da compra no Pixel e no GA (Purchase, AddPaymentInfo): um hash do token, que não o revela.
+        'id_compra' => mcp_meta_id_da_compra($token),
         'status' => $inscricao['status'],
         'metodo' => $inscricao['metodo'],
         'curso' => ['slug' => $inscricao['curso_slug'], 'nome' => $inscricao['curso_nome']],

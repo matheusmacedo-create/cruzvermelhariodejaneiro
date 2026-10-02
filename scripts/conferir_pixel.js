@@ -47,7 +47,7 @@ async function cenario(nome, url, passos, esperado) {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' });
   await ctx.addInitScript(() => { Object.defineProperty(navigator, 'webdriver', { get: () => undefined }); });
   if (esperado.jaAceitou) {
-    await ctx.addCookies([{ name: 'cvrj_consentimento', value: encodeURIComponent(`v=1&e=1&m=1&t=${Math.floor(Date.now() / 1000)}`),
+    await ctx.addCookies([{ name: 'cvrj_consentimento', value: encodeURIComponent(`v=1&e=1&m=1&t=${Math.floor(Date.now() / 1000)}&r=2`),
       domain: '.cruzvermelhariodejaneiro.org', path: '/', secure: true, sameSite: 'Lax' }]);
   }
   if (DO_REPOSITORIO) {

@@ -281,7 +281,7 @@
         }
         // Dados de pagamento aceitos pelo provedor (PIX gerado ou cartão enviado): mesmo evento nos dois métodos.
         rastrear('AddPaymentInfo', { content_name: nomeCurso, content_ids: [dados.curso], content_type: 'product', value: r.total_centavos / 100, currency: 'BRL' },
-          'add_payment_info', Object.assign({ payment_type: dados.metodo }, itemGa(dados.curso, nomeCurso, r.total_centavos)), { eventID: r.token + '-pagamento' });
+          'add_payment_info', Object.assign({ payment_type: dados.metodo }, itemGa(dados.curso, nomeCurso, r.total_centavos)), { eventID: r.id_compra + '-pagamento' });
         if (r.status === 'pago') { location.href = r.urls.parabens; return; }
         if (r.metodo !== 'pix') { location.href = r.urls.pendente; return; } // cartão em análise
         form.hidden = true;
@@ -404,16 +404,23 @@
         + '<div class="ck-bloco"><p class="ck-nota" style="margin:0">Mandamos a confirmação para <b>' + esc(d.email) + '</b>. Guarde este link: <a href="' + esc(d.urls.parabens) + '">' + esc(d.urls.parabens) + '</a></p></div>';
     }
 
+    /* O id da compra (d.id_compra) é um hash do token: o token abre a inscrição e não vai à Meta nem ao GA.
+       A compra conta uma vez: o servidor manda o Purchase na hora do pagamento (API de Conversões) e a Meta
+       só junta os dois em 48 h. Quem abre esta tela mais de um dia depois (outro navegador, o e-mail de
+       confirmação, a página de horários) ou pelo painel da secretaria não manda de novo. */
     function registrarCompra(d) {
       var c = consentimento();
       if (!c || (!c.estatistica && !c.marketing)) return; // sem consentimento, nada a medir nem a marcar
+      if (param('painel') === '1') return;
+      var pagoEm = d.pago_em ? Date.parse(String(d.pago_em).replace(' ', 'T') + 'Z') : NaN;
+      if (!isNaN(pagoEm) && Date.now() - pagoEm > 864e5) return;
       try {
         var chave = 'mcp_purchase_' + token;
         if (localStorage.getItem(chave)) return;
         localStorage.setItem(chave, '1');
       } catch (e) { /* sem localStorage: registra assim mesmo */ }
       rastrear('Purchase', { content_name: d.curso.nome, content_ids: [d.curso.slug], content_type: 'product', value: d.total_centavos / 100, currency: 'BRL' },
-        'purchase', Object.assign({ transaction_id: token, payment_type: d.metodo }, itemGa(d.curso.slug, d.curso.nome, d.total_centavos)), { eventID: token });
+        'purchase', Object.assign({ transaction_id: d.id_compra, payment_type: d.metodo }, itemGa(d.curso.slug, d.curso.nome, d.total_centavos)), { eventID: d.id_compra });
     }
 
     api('status.php?t=' + encodeURIComponent(token)).then(function (d) {

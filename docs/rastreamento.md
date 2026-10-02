@@ -100,25 +100,50 @@ da inscrição chegam com nome, e-mail e telefone em hash, o que melhora a quali
 | ViewContent | `api/medicao.php` (página de matrícula) | `vc.…` | não |
 | InitiateCheckout | `api/medicao.php` (checkout) | `ic.…` | não |
 | Lead | `api/pagamentos.php`, com a inscrição criada | `lead.…` (vai no corpo da inscrição) | nome, e-mail, telefone em hash |
-| AddPaymentInfo | `api/pagamentos.php`, cobrança aceita | `<token>-pagamento` | idem |
-| Purchase | `mcp_pos_pagamento` (postback, consulta de status ou cartão aprovado) | `<token>` | idem, com os sinais guardados |
+| AddPaymentInfo | `api/pagamentos.php`, cobrança aceita | `<id da compra>-pagamento` | idem |
+| Purchase | `mcp_pos_pagamento` (postback, consulta de status ou cartão aprovado) | `<id da compra>` (também o `order_id` e, no GA, o `transaction_id`) | idem, com os sinais guardados |
+
+O **id da compra** (`c.` + 32 caracteres) é um hash do token da inscrição (`mcp_meta_id_da_compra`), e as
+páginas o recebem de `status.php` como `id_compra`. O token abre a inscrição (e-mail, PIX e, depois do
+pagamento, o link de criar senha na escola) e não pode aparecer no Gerenciador de Eventos nem no GA. Até a
+revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
 | Contact | `api/contato.php` (chat) | `ct.…` (vai no corpo da mensagem) | nome, e-mail e telefone (se houver) em hash |
 
-- **Consentimento:** só com marketing ligado (`m=1` no cookie `cvrj_consentimento`) e escolhido depois de
-  `MCP_META_CONSENTIMENTO_DESDE` (em `api/lib/meta.php`). Até esta revisão, o aviso e a política diziam que
-  nome, e-mail e telefone nunca iam à Meta. Por isso, quem tinha ligado o marketing antes é perguntado de
-  novo: é o `REVISAO` de `site/consentimento/consentimento.js`, o mesmo instante. Até a pessoa escolher, o
-  Pixel segue como antes e o servidor não manda nada. **Na publicação, os dois valores vão para a hora da
-  publicação.**
+- **Consentimento:** só com marketing ligado (`m=1` no cookie `cvrj_consentimento`) **e** a revisão atual do
+  texto do aviso no cookie (`r=2`; `MCP_META_REVISAO` em `api/lib/meta.php` e `REVISAO` em
+  `site/consentimento/consentimento.js`). Só o aviso atual grava o `r`. Um "sim" sem ele não vale para o
+  servidor: veio do texto anterior (que dizia que nome, e-mail e telefone nunca iam à Meta), do aviso da
+  Punção (que grava o mesmo cookie em `.cruzvermelhariodejaneiro.org`) ou de um `consentimento.js` antigo
+  guardado no cache. O aviso pergunta de novo a essa pessoa, e o painel "Personalizar" abre com o marketing
+  desligado (nada pré-marcado). O Pixel no navegador segue como antes. Os outros sites leem só `v`, `e` e `m`
+  e ignoram o `r`. Um `t` mais de um dia no futuro também não vale. Mudou o texto do que vai à Meta: sobe os
+  dois números juntos. A primeira versão (14h50) usava o `t` do cookie e uma data de corte, e isso não dizia
+  qual texto a pessoa viu.
 - **O que nunca vai:** CPF (os Termos das Ferramentas de Negócios proíbem números de documento), mensagem do
-  chat, dados do cartão e o token das páginas de acompanhamento (o `t=` sai do endereço). O `external_id` é
-  o token da inscrição em hash, que só liga os eventos da mesma inscrição.
-- **O que fica guardado na inscrição:** a escolha de marketing e a data dela (`meta_marketing`,
-  `meta_marketing_em`, prova do consentimento) e, só com "sim", `_fbp`, `_fbc` e a identificação do
-  navegador (`meta_fbp`, `meta_fbc`, `meta_ua`). Os três últimos servem só ao Purchase confirmado sem
-  navegador: saem quando ele é aceito pela Meta ou, no máximo, em 8 dias (faxina na rotina de 15 minutos).
-  A consulta de status feita pelo próprio aluno atualiza a escolha, então retirar a permissão vale para o
-  Purchase.
+  chat, dados do cartão e o token das páginas de acompanhamento (o `t=` sai do endereço; os ids são o id da
+  compra). O `external_id` é o SHA-256 do token, que só liga os eventos da mesma inscrição e não o revela.
+- **O que fica guardado na inscrição:** a escolha de marketing feita ao se inscrever, a data dela e a
+  revisão do texto (`meta_marketing`, `meta_marketing_em`, `meta_revisao`, prova do consentimento) e, só com
+  "sim", o IP, `_fbp`, `_fbc` e a identificação do navegador (`meta_ip`, `meta_fbp`, `meta_fbc`, `meta_ua`).
+  Os quatro últimos servem só ao Purchase confirmado sem navegador: saem quando ele é aceito pela Meta ou, no
+  máximo, em 8 dias (faxina na rotina de 15 minutos, antes das outras tarefas). O Purchase usa esse IP, não o
+  IP de segurança da inscrição, e só sai com `meta_revisao` atual.
+- **Depois da inscrição, a permissão só pode ser retirada, nunca dada:** quem abre o link da inscrição
+  pendente (`status.php`) ou refaz o PIX com o mesmo CPF (`pagamentos.php`, antes da reconsulta) com "não"
+  no cookie apaga o "sim" e os sinais, e a troca fica em `mcp_eventos` (`meta_escolha`, com a escolha
+  anterior). Um "sim" de quem abre o link não vale, porque o link pode estar com outra pessoa: a mãe que
+  paga, a secretaria. Depois do pagamento, nada muda. O link "como o aluno vê" do painel leva `painel=1` e
+  não dispara o Purchase do Pixel.
+- **Uma compra, um Purchase:** o servidor manda o Purchase na hora do pagamento, e a Meta só junta com o do
+  Pixel em 48 h. A tela Parabéns não manda o do Pixel quando o pagamento tem mais de 24 h (outro navegador,
+  o e-mail de confirmação, a página de horários) nem quando vem do painel.
+- **Freios do repasse (`medicao.php`):** 120 por minuto no site inteiro e 120 em 10 minutos por IP (o /64 no
+  IPv6). Acima disso, os eventos de página ficam só com o Pixel. As duas contagens usam o índice
+  `(tipo, criado_em)` e leem no máximo algumas centenas de linhas. Corpo inválido (evento em lista, id com
+  quebra de linha) responde 204 e não vai a lugar nenhum.
+- **fbclid longo:** o `_fbc` do navegador vai inteiro (até 600 caracteres; os anúncios de hoje passam de
+  200). O fbc montado a partir do fbclid do endereço só vai até 254 caracteres: as páginas e o banco guardam
+  255, e um fbclid cortado não pode ir (a Meta proíbe mexer nele).
 - **Nunca atrapalha o aluno:** os eventos vão para uma fila e saem depois da resposta
   (`fastcgi_finish_request`/`litespeed_finish_request`), com tempo curto. Um evento de site sem a
   identificação do navegador não entra na fila, porque a Meta recusaria o lote inteiro.
@@ -136,10 +161,20 @@ da inscrição chegam com nome, e-mail e telefone em hash, o que melhora a quali
   (sem 503), `conferir_publicacao.sh` e `conferir_pixel.js` passaram no ar, e o aviso volta a perguntar só a
   quem tinha ligado o marketing antes de 14h53 (`REVISAO` = `MCP_META_CONSENTIMENTO_DESDE` = 1790963580).
   Sem o token no servidor, a parte do servidor está desligada: o repasse responde 204 e nada é guardado.
-- **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento, fila, URL limpa),
-  `scripts/testar_meta_integracao.php` (25 cenários de ponta a ponta com MariaDB local e uma Meta, uma
-  Unicopag e uma Resend falsas) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e no
-  repasse; nada sem permissão).
+- **Revisão adversarial (02/10, à tarde)**, com quatro revisores (segurança, LGPD, especificação da Meta e
+  regressões) e um verificador para cada achado. Confirmados e corrigidos: o token ia à Meta como
+  `event_id`/`order_id`; quem tinha o link dava o "sim" no lugar do aluno; o "sim" do aviso da Punção ou de
+  um aviso antigo valia como o do texto novo; "Personalizar" abria com o marketing pré-marcado; o painel
+  sobrescrevia a prova do consentimento; a retirada no PIX refeito não valia; o Purchase do Pixel contava
+  duas vezes depois de 48 h; o repasse não tinha teto global; havia o 500 com evento em lista e os padrões
+  aceitavam `\n` no fim; o fbclid longo perdia o fbc; e `config-meta.php` não estava no `.gitignore`.
+  Os verificadores não confirmaram dois achados como defeito, mas eles também mudaram: o IP do Purchase
+  passou a ser guardado à parte (`meta_ip`), e a faxina ganhou um try próprio.
+- **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento com `r`, id da compra,
+  fila, URL limpa), `scripts/testar_meta_integracao.php` (33 cenários de ponta a ponta com MariaDB local e
+  uma Meta, uma Unicopag e uma Resend falsas, incluindo o link aberto por outra pessoa, o PIX refeito e o
+  teto do repasse) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e no repasse; nada sem
+  permissão).
 
 ## O que a verificação mostrou e não é problema
 

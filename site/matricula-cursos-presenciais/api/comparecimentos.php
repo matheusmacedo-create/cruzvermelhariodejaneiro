@@ -27,6 +27,14 @@ if ((int) $db->query("SELECT GET_LOCK('mcp_comparecimentos', 0)")->fetchColumn()
     exit(0);
 }
 try {
+    // As faxinas com prazo prometido na política (IPs dos freios em 2 dias, sinais do navegador em 8) vêm
+    // primeiro e no próprio try: nem os comprovantes nem um índice que não sai (lock, permissão) as seguram.
+    try {
+        mcp_eventos_apagar_freios();
+        mcp_meta_faxina();
+    } catch (Throwable $e) {
+        error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
+    }
     $r = mcp_presencas_enviar_pendentes();
     $apagadas = mcp_ponto_presencas_apagar_antigas();
     // Os avisos não podem derrubar os comprovantes: erro aqui vai para o log e a rodada termina normalmente.
@@ -38,8 +46,7 @@ try {
         $a = ['falhas' => 1];
         $avisos = 'avisos: erro (' . get_class($e) . ')';
     }
-    // Faxina e manutenção: índices das tabelas antigas, IPs dos freios e o batimento da rotina (o portal
-    // avisa quando a rotina para de rodar).
+    // Manutenção: o batimento da rotina (o portal avisa quando ela para de rodar) e os índices das tabelas antigas.
     // O batimento vem antes e à parte: um índice que não se cria não pode fazer o portal dizer que a rotina parou.
     try {
         mcp_ajuste_gravar('rotina_em', gmdate('Y-m-d H:i:s'), 'rotina');
@@ -48,10 +55,8 @@ try {
     }
     try {
         mcp_garantir_indices($db);
-        mcp_eventos_apagar_freios();
-        mcp_meta_faxina();
     } catch (Throwable $e) {
-        error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
+        error_log('[matricula] índices da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }
     printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s\n",
         gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, $avisos);

@@ -13,6 +13,10 @@ require __DIR__ . '/lib.php';
 
 // Por IP (o /64 no IPv6), em 10 minutos: folga para quem navega, freio para quem usa o endereço como atalho.
 const MCP_MEDICAO_LIMITE = [120, 600];
+// Teto do site inteiro por minuto, antes do freio por IP: quem troca de IP (proxies, um bloco IPv6) não passa
+// dele, e as duas contagens leem no máximo umas centenas de linhas do índice (tipo, criado_em). Acima disso,
+// os eventos de página ficam só com o Pixel.
+const MCP_MEDICAO_TETO_POR_MINUTO = 120;
 const MCP_MEDICAO_EVENTOS = ['PageView', 'ViewContent', 'InitiateCheckout'];
 
 function mcp_medicao_fim(): never
@@ -31,7 +35,7 @@ if (!str_starts_with(strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? '')), 'app
     mcp_medicao_fim();
 }
 $b = json_decode(mcp_corpo_bruto(4096) ?: '', true);
-$evento = is_array($b) ? (string) ($b['evento'] ?? '') : '';
+$evento = is_array($b) && is_string($b['evento'] ?? null) ? $b['evento'] : '';
 $id = is_array($b) ? mcp_meta_id_valido($b['id'] ?? null) : null;
 if (!in_array($evento, MCP_MEDICAO_EVENTOS, true) || $id === null) {
     mcp_medicao_fim();
@@ -39,7 +43,8 @@ if (!in_array($evento, MCP_MEDICAO_EVENTOS, true) || $id === null) {
 
 [$maximo, $janela] = MCP_MEDICAO_LIMITE;
 $balde = mcp_ip_balde();
-if (mcp_contar_eventos_recentes('meta_repasse', $balde, $janela) >= $maximo) {
+if (mcp_contar_eventos_do_tipo('meta_repasse', 60) >= MCP_MEDICAO_TETO_POR_MINUTO
+    || mcp_contar_eventos_recentes('meta_repasse', $balde, $janela) >= $maximo) {
     mcp_medicao_fim();
 }
 mcp_registrar(null, 'meta_repasse', $balde);

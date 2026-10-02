@@ -18,11 +18,12 @@
 
   var NOME = 'cvrj_consentimento';
   var VERSAO = '1';
-  // Quem ligou o marketing antes deste texto (que passou a incluir a cópia dos eventos pelo servidor, com nome,
-  // e-mail e telefone em código) é perguntado de novo. Até escolher outra vez, o servidor não manda nada à Meta:
-  // MCP_META_CONSENTIMENTO_DESDE, em api/lib/meta.php, é o mesmo instante. A VERSAO do cookie não muda, porque
-  // os outros sites (Punção, Redação, Escola) leem v=1.
-  var REVISAO = 1790963580;
+  // Revisão do texto, gravada no cookie (r=). A partir da 2, o texto inclui a cópia dos eventos pelo servidor,
+  // com nome, e-mail e telefone em código. Quem ligou o marketing sem ela (no texto anterior, no aviso da
+  // Punção ou num consentimento.js antigo guardado no cache) é perguntado de novo, e até lá o servidor não
+  // manda nada à Meta (MCP_META_REVISAO, em api/lib/meta.php, é o mesmo número). A VERSAO do cookie não muda,
+  // porque os outros sites (Punção, Redação, Escola) leem v=1 e ignoram o r.
+  var REVISAO = 2;
   var VALIDADE_S = 365 * 24 * 60 * 60;
   var DOMINIO = /(^|\.)cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '.cruzvermelhariodejaneiro.org' : '';
   // As políticas moram no site principal: num subdomínio (Impacto das Cores), o link leva o endereço completo.
@@ -91,11 +92,14 @@
       });
     } catch (e) { return null; }
     if (p.v !== VERSAO) return null;
-    return { estatistica: p.e === '1', marketing: p.m === '1', em: parseInt(p.t, 10) || 0 };
+    return { estatistica: p.e === '1', marketing: p.m === '1', em: parseInt(p.t, 10) || 0, revisao: parseInt(p.r, 10) || 0 };
   }
 
+  // Sem escolha, ou com marketing ligado num texto anterior: o aviso aparece de novo.
+  function perguntar(c) { return !c || (c.marketing && c.revisao < REVISAO); }
+
   function gravar(c) {
-    var valor = 'v=' + VERSAO + '&e=' + (c.estatistica ? 1 : 0) + '&m=' + (c.marketing ? 1 : 0) + '&t=' + Math.floor(Date.now() / 1000);
+    var valor = 'v=' + VERSAO + '&e=' + (c.estatistica ? 1 : 0) + '&m=' + (c.marketing ? 1 : 0) + '&t=' + Math.floor(Date.now() / 1000) + '&r=' + REVISAO;
     document.cookie = NOME + '=' + encodeURIComponent(valor) + '; Max-Age=' + VALIDADE_S + '; Path=/; SameSite=Lax' +
       (location.protocol === 'https:' ? '; Secure' : '') + (DOMINIO ? '; Domain=' + DOMINIO : '');
   }
@@ -211,15 +215,15 @@
     return el('div', { class: 'cvrj-ck-cat' }, [rotulo, el('p', { texto: c[1] })]);
   }
 
-  // Fechar o painel sem escolher: o foco volta para onde estava, e quem ainda não escolheu
-  // volta a ver o aviso.
+  // Fechar o painel sem escolher: o foco volta para onde estava, e quem ainda não escolheu (ou precisa
+  // escolher de novo) volta a ver o aviso.
   function fecharPainel() {
     if (!fundo) return;
     fundo.remove(); fundo = null;
     document.removeEventListener('keydown', teclado, true);
     var foco = voltarFoco;
     voltarFoco = null;
-    if (!ler()) mostrarAviso();
+    if (perguntar(ler())) mostrarAviso();
     else if (foco && document.contains(foco)) { try { foco.focus(); } catch (e) { /* segue */ } }
   }
 
@@ -244,6 +248,8 @@
     if (fundo) return;
     voltarFoco = document.activeElement;
     var atual = ler() || { estatistica: false, marketing: false };
+    // Marketing ligado num texto anterior não vale para este: a chave começa desligada (nada pré-marcado).
+    if (perguntar(atual)) atual = { estatistica: atual.estatistica, marketing: false };
     var catEstatistica = categoria('estatistica', atual.estatistica);
     var catMarketing = categoria('marketing', atual.marketing);
     var painel = el('div', { class: 'cvrj-ck-painel', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'cvrj-ck-t2' }, [
@@ -286,8 +292,7 @@
   window.cvrjConsentimento = { ler: ler, abrir: abrirPainel };
 
   function iniciar() {
-    var c = ler();
-    if (!c || (c.marketing && c.em < REVISAO)) mostrarAviso();
+    if (perguntar(ler())) mostrarAviso();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
   else iniciar();

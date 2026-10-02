@@ -108,6 +108,10 @@ function mcp_pix_aberto(array $aluno, int $total): ?array
     if (!$aberta) {
         return null;
     }
+    // "Não" para marketing neste pedido: o "sim" guardado deixa de valer antes da reconsulta, que pode achar o
+    // PIX pago e mandar o Purchase na hora (mcp_pos_pagamento relê a inscrição). Só retira: quem sabe o CPF de
+    // outra pessoa não dá o "sim" por ela.
+    mcp_meta_atualizar_escolha($aberta);
     $aberta = mcp_sincronizar($aberta);
     return ($aberta['status'] ?? '') === 'pendente' ? $aberta : null;
 }

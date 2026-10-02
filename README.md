@@ -1804,19 +1804,23 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
 ### API de Conversões da Meta (02/10/2026)
 
 Os eventos do funil saem também pelo servidor, com o mesmo id que o Pixel usa no navegador, e a Meta junta
-os dois. Só para quem aceitou marketing depois do texto atual do aviso (quem tinha aceitado antes é
-perguntado de novo). Detalhes, tabela de eventos e o que fica guardado em `docs/rastreamento.md`.
+os dois. Só para quem aceitou marketing no texto atual do aviso, marcado no cookie com `r=2` (quem tinha
+aceitado antes, ou no aviso da Punção, é perguntado de novo). O token da inscrição nunca vai: os ids da
+compra são um hash dele (`id_compra`). Depois da inscrição, quem abre o link só consegue retirar a
+permissão. Detalhes, tabela de eventos e o que fica guardado em `docs/rastreamento.md`.
 
 - `api/lib/meta.php`: monta e envia os eventos, depois da resposta ao aluno; nunca derruba o pagamento.
   Lead e AddPaymentInfo saem de `pagamentos.php`; Purchase, de `mcp_pos_pagamento` (inclusive pelo postback);
   Contact, de `contato.php`. Nome, e-mail e telefone vão em hash SHA-256; o CPF nunca vai.
 - `api/medicao.php`: repasse dos eventos de página (PageView, ViewContent, InitiateCheckout) que o bloco de
-  medição manda (`window.cvrjMedicao.servidor`), com freio por IP.
+  medição manda (`window.cvrjMedicao.servidor`), com teto de 120 por minuto no site e freio por IP.
 - **Para ligar:** o token vem do Gerenciador de Eventos (conjunto de dados `2224500131617302` >
   Configurações > API de Conversões > Gerar token de acesso). No hPanel, em
   `public_html/matricula-cursos-presenciais/api/`, crie `config-meta.php` com
   `<?php return ['META_CAPI_TOKEN' => 'o token'];`. Para conferir, acrescente `'META_CAPI_TESTE' =>
   'o código da aba Testar eventos'` e tire depois. Sem o token, nada é enviado nem guardado.
+- Mudou o texto do aviso sobre o que vai à Meta: suba `MCP_META_REVISAO` (`api/lib/meta.php`) e `REVISAO`
+  (`site/consentimento/consentimento.js`) juntos e rode `scripts/consentimento.py` e os geradores.
 - Testes: `php scripts/testar_checkout.php` (funções), `scripts/testar_meta_integracao.php` (ponta a ponta,
   com banco local e uma Meta falsa) e `scripts/conferir_pixel.js` (navegador: o mesmo id no Pixel e no repasse).
 
@@ -1868,7 +1872,8 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 
 `consentimento.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
 `gerar_checkout.py` → `gerar_bio.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
-`gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`.
+`gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`, e
+`gerar_ingles.py` depois de `gerar_idiomas.py` (notícias e 404 em inglês).
 Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
 
 ### Pendências para a filial
