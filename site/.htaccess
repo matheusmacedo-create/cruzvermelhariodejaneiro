@@ -41,5 +41,9 @@
   # Um ano, subdomínios incluídos. Só é enviado sobre HTTPS, como manda a especificação.
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
 </IfModule>
+<IfModule mod_mime.c>
+  # AVIF (o banner do topo da home): sem isto, o LiteSpeed da Hostinger mandava .avif como text/plain.
+  AddType image/avif .avif
+</IfModule>
 
 ErrorDocument 404 /404.html

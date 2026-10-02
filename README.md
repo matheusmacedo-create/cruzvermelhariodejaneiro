@@ -2262,6 +2262,12 @@ link do slider), e o `alt` traz o texto da arte.
   com os mesmos `srcset` e `sizes` (se diferirem, o navegador baixa duas vezes). O slide que sai da frente
   passa a ter `loading="lazy"` no lugar de `fetchpriority="high"`.
 - Publicação: `scripts/publicacao-banner-el-nino.txt` (as imagens antes da página que as pede).
+- **No ar desde 02/10/2026, 17h51 (Brasília)**, depois de copiar a home do ar (igual à última publicação).
+  O LiteSpeed da Hostinger mandava `.avif` como `text/plain`: o `.htaccess` da raiz ganhou
+  `AddType image/avif .avif` (publicado com cópia do anterior; home, páginas, redirecionamentos, 404 e
+  HSTS conferidos logo depois). Conferido no ar: AVIF escolhido na largura certa, só o primeiro slide na
+  carga, próximo slide pronto na troca, alturas iguais, CLS ≤ 0,0002, sem erro de JS, e
+  `conferir_pixel.js` nos 12 cenários.
 
 ## FAQ da home (19/09/2026, à noite)
 

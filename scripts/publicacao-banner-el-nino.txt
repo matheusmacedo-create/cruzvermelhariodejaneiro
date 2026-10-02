@@ -17,3 +17,5 @@ site/assets/otim/forca-tarefa-el-nino-banner-1920.avif
 site/assets/otim/forca-tarefa-el-nino-banner-1920.webp
 # 3) a home
 site/index.html
+# 4) depois: AVIF com o tipo certo (o servidor mandava text/plain)
+site/.htaccess
