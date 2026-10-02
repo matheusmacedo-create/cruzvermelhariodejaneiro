@@ -81,6 +81,9 @@ está atrás na mesma fila e nunca é lido. O script baixava, e nenhum evento sa
   com "Rejeitar" ou depois de retirar a permissão. Antes da correção, 9 de 11 cenários falhavam no ar;
   com as páginas corrigidas (`--repositorio`), 11 de 11 passam. A conferência de 27/09 só olhava o
   download do script, e por isso o problema passou.
+- **Publicado em 02/10/2026, por volta das 8h55:** as 61 páginas de `scripts/publicacao-pixel.txt`,
+  depois de copiar as do ar. Conferido em seguida: as 61 estão iguais ao repositório, byte a byte, e
+  `scripts/conferir_pixel.js` passou nos 11 cenários no ar.
 - **GA4:** não foi afetado. O gtag processa a fila em ordem, com o Consent Mode.
 - **O que esperar:** só quem aceita marketing é medido (LGPD). Os números ficam abaixo dos de antes de
   27/09, quando o Pixel saía para todo mundo.
