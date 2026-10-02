@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-29T23:16:12+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-09-29T23:42:27+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -176,7 +176,10 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/historia/</loc>
-    <lastmod>2026-09-29T23:12:03+00:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/historia/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/history/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/historia/"/>
+    <lastmod>2026-09-29T23:40:22+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1211,6 +1214,456 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-campanha-agasalho.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/history/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/historia/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/history/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/historia/"/>
+    <lastmod>2026-09-29T23:40:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-botelho-th.webp</image:loc>
+      <image:title>Portrait of Joaquim de Oliveira Botelho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-socio-th.webp</image:loc>
+      <image:title>Member's diploma of the Brazilian Red Cross, with a decorated border and the red cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-sede-provisoria-1917-480.webp</image:loc>
+      <image:title>Provisional headquarters of the Brazilian Red Cross, a single-storey building with flags, with people and vintage cars in front</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pedra-1919-th.webp</image:loc>
+      <image:title>Officials around an excavation as the foundation stone is laid; nurses in the background</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-cerimonia-1919-th.webp</image:loc>
+      <image:title>Group of nurses and guests under bunting at the foundation-stone ceremony</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1920-480.webp</image:loc>
+      <image:title>Red Cross building under construction, surrounded by scaffolding and a wall, still without the upper floors</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-480.webp</image:loc>
+      <image:title>Façade of the Red Cross Palace still with scaffolding, now with the upper floors and the dome structure</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-relevo-fachada-480.webp</image:loc>
+      <image:title>Sculptural group above the Palace entrance: a nurse supporting a wounded man, under the façade arch</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-heloisa-th.webp</image:loc>
+      <image:title>Portrait of Heloisa Loureiro Leal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-voluntaria-th.webp</image:loc>
+      <image:title>Volunteer Nurse diploma of the Brazilian Red Cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-profissional-th.webp</image:loc>
+      <image:title>Professional Nurse diploma of the Brazilian Red Cross Practical School of Nurses</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-varanda-escola-1917-480.webp</image:loc>
+      <image:title>Nurses in white uniforms and veils lined up on the School of Nurses veranda, under the sign bearing the institution's name</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diplomadas-1917-th.webp</image:loc>
+      <image:title>Panel of portrait medallions titled Nurses Graduated in 1917</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-aula-anatomia-th.webp</image:loc>
+      <image:title>Nurses in white uniforms attending an anatomy class, with the teacher in the background</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-sala-de-aula-th.webp</image:loc>
+      <image:title>Students in white uniforms with the red cross, seated at desks in a classroom</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diplomadas-1918-th.webp</image:loc>
+      <image:title>Panel of portrait medallions, the motto In pace et in bello caritas, and hospital and field scenes</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-quadro-1919-21-th.webp</image:loc>
+      <image:title>Board with portrait medallions of the nurses who graduated between 1919 and 1921</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-exames-1922-th.webp</image:loc>
+      <image:title>Examination room with students seated and the examining board at a table</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-visita-escola-th.webp</image:loc>
+      <image:title>Group of nurses in white uniforms in front of the School façade, with two ladies at the centre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-entrega-diplomas-1918-th.webp</image:loc>
+      <image:title>Diploma ceremony, with nurses standing before a table and men seated</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-thaumaturgo-grupo-th.webp</image:loc>
+      <image:title>Large group of nurses and officers posing seated and standing, with a man at the centre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-gripe-1918-th.webp</image:loc>
+      <image:title>Nine nurses in white uniforms, seated in three rows</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-tuberculose-diretoria-th.webp</image:loc>
+      <image:title>Board of the National Crusade against Tuberculosis gathered around a table</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-profilaxia-inauguracao-th.webp</image:loc>
+      <image:title>Officials seated around a table in a room with health posters on the wall</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-oficiais-italia-th.webp</image:loc>
+      <image:title>Montage of portraits of five uniformed nurses, with their names printed below each one</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-painel-feb-th.webp</image:loc>
+      <image:title>Illustrated panel with a large red cross, a portrait at the centre, tanks and ships</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-fisica-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: Physical training of nurses in the Army (1 of 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-fisica-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: Physical training of nurses in the Army (2 of 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-uniformes-th.webp</image:loc>
+      <image:title>Two women standing side by side in white uniforms with veils and the red cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (1 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (2 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-3-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (3 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-4-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (4 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-5-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (5 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-6-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (6 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-7-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (7 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-8-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (8 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-9-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (9 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-10-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (10 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-11-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (11 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-formaturas-12-th.webp</image:loc>
+      <image:title>Photograph from the archive: Graduations at the School of Nurses (12 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (1 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (2 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-3-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (3 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-4-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (4 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-5-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (5 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-6-th.webp</image:loc>
+      <image:title>Photograph from the archive: Brazilian Red Cross nurses in action (6 of 6)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (1 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (2 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-3-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (3 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-4-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (4 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-5-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (5 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (6 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-7-th.webp</image:loc>
+      <image:title>Photograph from the archive: Students and volunteers in public activities: parade, exhibition and first-aid training (7 of 7)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (1 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (2 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-3-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (3 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-4-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (4 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-5-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (5 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-6-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (6 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-7-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (7 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-8-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (8 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-9-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (9 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-10-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (10 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-11-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (11 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-hospital-12-th.webp</image:loc>
+      <image:title>Photograph from the archive: The Brazilian Red Cross Hospital and its nurses in the 1950s and 1960s (12 of 12)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-distribuicao-donativos-550.webp</image:loc>
+      <image:title>Volunteer seen from behind, in a Brazilian Red Cross Rio de Janeiro State Branch vest, at a donation distribution</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-01-th.webp</image:loc>
+      <image:title>Portrait of Dr. Oswaldo Cruz</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-02-th.webp</image:loc>
+      <image:title>Portrait of Marshal Gregório Thaumaturgo de Azevedo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-03-th.webp</image:loc>
+      <image:title>Portrait of Engineer Miguel Calmon Du Pin e Almeida</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-04-th.webp</image:loc>
+      <image:title>Portrait of Marshal Antônio Ferreira do Amaral</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-05-th.webp</image:loc>
+      <image:title>Portrait of Commander Carlos Pereira Leal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-06-th.webp</image:loc>
+      <image:title>Portrait of General Sebastião Ivo Soares</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-07-th.webp</image:loc>
+      <image:title>Portrait of General Álvaro Tourinho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-09-th.webp</image:loc>
+      <image:title>Portrait of Senator Vivaldo Palma Lima Filho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-10-th.webp</image:loc>
+      <image:title>Portrait of Minister Álvaro Tolentino Borge Dias</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-11-th.webp</image:loc>
+      <image:title>Portrait of Admiral Edgar Pereira de Beauclair</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-12-th.webp</image:loc>
+      <image:title>Portrait of Tom Willmontt Sloper</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-13-th.webp</image:loc>
+      <image:title>Portrait of Prof. Mavy d'Aché Assumpção Harmon</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-14-th.webp</image:loc>
+      <image:title>Portrait of Dr. Carlos Velloso de Oliveira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-16-th.webp</image:loc>
+      <image:title>Portrait of Air Brigadier Milton Segala Pauletto</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pres-17-th.webp</image:loc>
+      <image:title>Portrait of Dr. Luiz Fernando Hernández</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-agenor-th.webp</image:loc>
+      <image:title>Portrait of Dr. Agenor Estelitta Lins</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-paiva-th.webp</image:loc>
+      <image:title>Portrait of General Carlos Paiva Gonçalves</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-uchoa-th.webp</image:loc>
+      <image:title>Portrait of Air Marshal Salvador B. Uchôa Cavalcanti</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-int-olivio-th.webp</image:loc>
+      <image:title>Portrait of General Olívio Vieira Filho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-idalia-th.webp</image:loc>
+      <image:title>Portrait of Nurse Idália de Araújo Porto Alegre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-getulio-th.webp</image:loc>
+      <image:title>Portrait of Dr. Getúlio Florentino dos Santos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-elza-th.webp</image:loc>
+      <image:title>Portrait of Major Elza Cansanção Medeiros</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-virginia-th.webp</image:loc>
+      <image:title>Portrait of Captain Virgínia Maria de Niemeyer Portocarrero</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-dutra-th.webp</image:loc>
+      <image:title>Portrait of Marshal Eurico Gaspar Dutra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-not-irene-th.webp</image:loc>
+      <image:title>Portrait of Nurse Irene de Miranda Cotegipe Milanez</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-nordeste-1-th.webp</image:loc>
+      <image:title>Photograph from the archive: Distribution of Brazilian Red Cross donations, with boxes marked with the red cross (1 of 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-nordeste-2-th.webp</image:loc>
+      <image:title>Photograph from the archive: Distribution of Brazilian Red Cross donations, with boxes marked with the red cross (2 of 2)</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ararajuba-emblema-th.webp</image:loc>
+      <image:title>Emblem with a yellow macaw and the text Operação Ararajuba, Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ararajuba-csu-th.webp</image:loc>
+      <image:title>Children and an adult seated at the entrance of an Urban Social Centre, with an Operation Ararajuba banner</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-voluntario-sp-th.webp</image:loc>
+      <image:title>Volunteer seen from behind, in a Brazilian Red Cross vest, looking at destroyed houses and a car on a hillside</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-holanda-th.webp</image:loc>
+      <image:title>Page titled O maremoto da Holanda, with a thank-you signed by the Netherlands Red Cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-asia-2004-th.webp</image:loc>
+      <image:title>Lorry with boxes visible on the load and a banner reading Doações para Ásia, Cruz Vermelha Brasileira, Filial São Paulo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-instalacao-th.webp</image:loc>
+      <image:title>Newspaper clipping with photographs of the conference's opening session</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-comissao-th.webp</image:loc>
+      <image:title>Newspaper clipping with photographs of a meeting and an exhibition</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-pedra-anna-nery-th.webp</image:loc>
+      <image:title>Newspaper clipping with a photograph of people gathered at the foundation-stone ceremony</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-selo-th.webp</image:loc>
+      <image:title>Postage stamp with a nurse, the motto In pace et in bello caritas and the value 700 plus 100 réis</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-almoco-th.webp</image:loc>
+      <image:title>Newspaper clipping with a photograph of the delegates in front of the Albergue da Boa Vontade</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-encerramento-th.webp</image:loc>
+      <image:title>Newspaper clipping with a photograph of the closing assembly, with flags and the red cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-ana-nery-estatua-th.webp</image:loc>
+      <image:title>Bronze statue of Ana Nery, standing, with a shawl over her shoulders</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-vivaldo-discurso-th.webp</image:loc>
+      <image:title>Officials gathered outdoors; a man in a suit speaks in front of a microphone</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-fachada-noturna-767.webp</image:loc>
+      <image:title>Illuminated façade of the Red Cross Palace at night</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
     </image:image>
   </url>
   <url>
