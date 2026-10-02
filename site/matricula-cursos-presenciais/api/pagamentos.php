@@ -161,13 +161,24 @@ function mcp_gravar_inscricao(array $aluno, string $token, int $inscricaoCentavo
         'utm_content' => $aluno['utm_content'], 'utm_term' => $aluno['utm_term'], 'fbclid' => $aluno['fbclid'], 'gclid' => $aluno['gclid'],
         'ip' => mcp_ip(), 'escola_status' => mcp_escola_configurada() ? 'pendente' : 'nao_aplicavel',
         'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
-    ] + mcp_meta_colunas_da_inscricao($aluno['fbclid']);
+    ];
     $colunas = implode(', ', array_keys($linha));
     $marcadores = implode(', ', array_fill(0, count($linha), '?'));
     $pdo = mcp_db();
     $pdo->prepare("INSERT INTO mcp_inscricoes ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
     $id = (int) $pdo->lastInsertId();
     mcp_registrar($id, 'cobranca_criada', "{$aluno['metodo']} · $statusOrigem · " . mcp_brl($inscricaoCentavos + $taxa));
+    // A escolha de marketing e os sinais para o Purchase (lib/meta.php) à parte, depois da inscrição gravada: a
+    // cobrança já existe no provedor, e nada que venha do cookie ou de uma coluna nova pode impedir a inscrição.
+    // Se não gravar, meta_marketing fica vazio e o Purchase não sai (falha fechada).
+    try {
+        $meta = mcp_meta_colunas_da_inscricao($aluno['fbclid']);
+        if ($meta) {
+            mcp_atualizar($id, $meta);
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] escolha de marketing da inscrição não gravada: ' . get_class($e) . ': ' . $e->getMessage());
+    }
     return $id;
 }
 

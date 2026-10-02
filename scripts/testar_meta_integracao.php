@@ -389,24 +389,44 @@ unlink("$dir/recusar");
 eventos_meta($marca);
 
 // ----------------------------------------------------------------------------- freio do repasse
-$jaUsados = (int) $pdo->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'meta_repasse'")->fetchColumn();
-for ($i = 0; $i < 125 - $jaUsados; $i++) {
+$pdo->exec("DELETE FROM mcp_eventos WHERE tipo = 'meta_repasse'");
+for ($i = 0; $i < 25; $i++) {
     pedir('POST', 'medicao.php', array_merge($pv, ['id' => sprintf('pv.freio.%08d', $i)]), $SIM);
 }
-verificar('freio do repasse: 120 por IP em 10 minutos', [count(eventos_meta($marca)), (int) $pdo->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'meta_repasse'")->fetchColumn()],
-    [120 - $jaUsados, 120]);
+verificar('freio do repasse: 20 por IP em um minuto', [count(eventos_meta($marca)), (int) $pdo->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'meta_repasse'")->fetchColumn()], [20, 20]);
+// Os 20 de agora vão para 2 minutos atrás, e mais 100 do mesmo IP há 5 minutos: 120 em 10 minutos.
+$pdo->exec("UPDATE mcp_eventos SET criado_em = '" . gmdate('Y-m-d H:i:s', time() - 120) . "' WHERE tipo = 'meta_repasse'");
+$cincoMin = gmdate('Y-m-d H:i:s', time() - 300);
+$pdo->exec("INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES " . implode(',', array_fill(0, 100, "(NULL, 'meta_repasse', '127.0.0.1', '$cincoMin')")));
+pedir('POST', 'medicao.php', array_merge($pv, ['id' => 'pv.freio.dezminutos']), $SIM);
+verificar('freio do repasse: 120 por IP em 10 minutos', count(eventos_meta($marca)), 0);
+$r = pedir('POST', 'pagamentos.php', array_merge($aluno, ['cpf' => cpf_ficticio('900000009'), 'email' => 'r999@exemplo.org', 'evento_id' => 'lead.mgb2k1.kkkkkkkk']),
+    ['cvrj_consentimento' => rawurlencode('v=1&e=1&m=1&t=' . time() . '&r=999'), '_fbp' => 'fb.1.1790940000123.1234567890']);
+$linhaR999 = $pdo->query("SELECT * FROM mcp_inscricoes WHERE token = " . $pdo->quote((string) ($r['corpo']['token'] ?? '')))->fetch() ?: [];
+verificar('cookie com r=999: a inscrição é gravada (201), sem escolha de marketing', [$r['http'], (bool) $linhaR999, coluna($linhaR999, 'meta_marketing'), coluna($linhaR999, 'meta_revisao')], [201, true, null, null]);
+eventos_meta($marca);
+// Código novo com o esquema anterior (meta.php no ar antes do db.php, opcache): a cobrança já existe no provedor,
+// então a inscrição tem de ser gravada mesmo sem a coluna; a escolha fica vazia e o Purchase não sai.
+$pdo->exec('ALTER TABLE mcp_inscricoes DROP COLUMN meta_ip');
+$r = pedir('POST', 'pagamentos.php', array_merge($aluno, ['cpf' => cpf_ficticio('900000010'), 'email' => 'esquema@exemplo.org', 'evento_id' => 'lead.mgb2k1.llllllll']), $SIM);
+$pdo->exec('ALTER TABLE mcp_inscricoes ADD COLUMN meta_ip VARCHAR(45) NULL');
+$linhaEsquema = $pdo->query("SELECT * FROM mcp_inscricoes WHERE token = " . $pdo->quote((string) ($r['corpo']['token'] ?? '')))->fetch() ?: [];
+verificar('coluna nova ainda ausente: a inscrição é gravada (201) e a escolha fica vazia (sem Purchase)', [$r['http'], (bool) $linhaEsquema, coluna($linhaEsquema, 'meta_marketing')], [201, true, null]);
+eventos_meta($marca);
 // Teto do site inteiro: 120 repasses no último minuto, de outros IPs, seguram também quem ainda não usou nada.
 $pdo->exec("DELETE FROM mcp_eventos WHERE tipo = 'meta_repasse'");
 $agora = gmdate('Y-m-d H:i:s');
 $pdo->exec("INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES " . implode(',', array_map(static fn($i) => "(NULL, 'meta_repasse', '198.51.100." . ($i % 250) . "', '$agora')", range(1, 120))));
 pedir('POST', 'medicao.php', array_merge($pv, ['id' => 'pv.teto.00000001']), $SIM);
+pedir('POST', 'medicao.php', array_merge($pv, ['id' => 'pv.teto.00000003']), $SIM);
 $teto = count(eventos_meta($marca));
+$avisosTeto = (int) $pdo->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'meta_capi_aviso' AND detalhe = 'teto'")->fetchColumn();
 $pdo->exec("UPDATE mcp_eventos SET criado_em = '" . gmdate('Y-m-d H:i:s', time() - 120) . "' WHERE tipo = 'meta_repasse'");
 pedir('POST', 'medicao.php', array_merge($pv, ['id' => 'pv.teto.00000002']), $SIM);
-verificar('teto do repasse: 120 por minuto no site inteiro, antes do freio por IP', [$teto, count(eventos_meta($marca))], [0, 1]);
+verificar('teto do repasse: 120 por minuto no site inteiro, antes do freio por IP, com um aviso só', [$teto, $avisosTeto, count(eventos_meta($marca))], [0, 1, 1]);
 
 $erros = trim((string) @file_get_contents("$dir/site.err"));
-$erros = implode("\n", array_filter(explode("\n", $erros), static fn($l) => !preg_match('/(Development Server|Accepted|Closing|Closed without sending a request|\[200\]|\[201\]|\[204\]|\[404\]|\[402\]|Listening|Press Ctrl|\[matricula\] API de Conversões: PageView · HTTP 400)/', $l)));
+$erros = implode("\n", array_filter(explode("\n", $erros), static fn($l) => !preg_match('/(Development Server|Accepted|Closing|Closed without sending a request|\[200\]|\[201\]|\[204\]|\[404\]|\[402\]|Listening|Press Ctrl|\[matricula\] API de Conversões: PageView · HTTP 400|\[matricula\] API de Conversões: teto de 120 repasses|\[matricula\] escolha de marketing da inscrição não gravada: PDOException: SQLSTATE\[42S22\])/', $l)));
 verificar('nenhum erro do PHP no servidor local', $erros, '');
 printf("\n%d testes, %d falhas\n", $total, $falhas);
 exit($falhas > 0 ? 1 : 0);

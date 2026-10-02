@@ -770,13 +770,13 @@ verificar('meta: configurada pelo config-meta.php, que não muda o resto', [mcp_
 $cookie = static function (?string $valor): void { if ($valor === null) { unset($_COOKIE['cvrj_consentimento']); } else { $_COOKIE['cvrj_consentimento'] = $valor; } };
 $escolhas = [];
 foreach (['v=1&e=1&m=1&t=1790940000&r=2', 'v=1&e=1&m=0&t=1', 'v=2&e=1&m=1&t=1790940000&r=2', 'v=1&e=1', 'lixo', '', null, str_repeat('m', 300), 'v=1&e=1&m=1&t=1790940000',
-    'v=1&e=1&m=1&r=2', 'v=1&e=1&m=1&t=1790940000&r=1', 'v=1&e=1&m=1&t=' . (time() + 3 * 86400) . '&r=2', 'v=1&e=1&m=1&t=1790940000&r=3', 'v=1&e=0&m=0'] as $valor) {
+    'v=1&e=1&m=1&r=2', 'v=1&e=1&m=1&t=1790940000&r=1', 'v=1&e=1&m=1&t=' . (time() + 3 * 86400) . '&r=2', 'v=1&e=1&m=1&t=1790940000&r=3', 'v=1&e=0&m=0', 'v=1&e=1&m=1&t=1790940000&r=999'] as $valor) {
     $cookie($valor);
     $escolhas[] = mcp_meta_marketing_no_cookie();
 }
 // O "sim" só vale com a revisão atual do texto (r=2, que só o aviso atual grava) e uma data possível; o "não" vale sempre.
 verificar('meta: escolha de marketing no cookie (só v=1 e m=0/1; "sim" sem r=2 ou com data no futuro não vale)', $escolhas,
-    [true, false, null, null, null, null, null, null, null, null, null, null, true, false]);
+    [true, false, null, null, null, null, null, null, null, null, null, null, true, false, null]);
 $cookie('v=1&e=1&m=1&t=1790940000&r=2');
 verificar('meta: data da escolha vem do t do cookie', mcp_meta_escolha_em(mcp_meta_escolha_no_cookie()), '2026-10-02 11:20:00');
 verificar('meta: id de evento do navegador (sem quebra de linha no fim)', array_map('mcp_meta_id_valido', ['pv.mgb2k1.a8f3k2l1', 'lead.x', 'tok-' . str_repeat('a', 36) . '-pagamento', '<script>', '', 123, str_repeat('a', 81), "ev.abcdefgh3\n", ['ev.abcdefgh3']]),
@@ -793,6 +793,9 @@ $_COOKIE['_fbc'] = 'fb.1.1790940000123.IwAR0abc' . "\n";
 verificar('meta: _fbc com quebra de linha no fim não vai', mcp_meta_cookie_fb('_fbc'), null);
 $_COOKIE['_fbc'] = 'fb.1.1790940000123.' . str_repeat('A', 400);
 verificar('meta: _fbc com fbclid longo (anúncios de hoje) vai inteiro', mcp_meta_cookie_fb('_fbc'), 'fb.1.1790940000123.' . str_repeat('A', 400));
+$_COOKIE['_fbp'] = 'fb.1.1790940000123.' . str_repeat('9', 300);
+verificar('meta: _fbp maior que a coluna (255) não vai', mcp_meta_cookie_fb('_fbp'), null);
+$_COOKIE['_fbp'] = 'fb.1.1790940000123.1234567890';
 unset($_COOKIE['_fbc']);
 verificar('meta: fbc a partir do fbclid (o de 255, que pode ter sido cortado, não vai)', [mcp_meta_fbc_do_fbclid('IwAR0abc', 1790940000123), mcp_meta_fbc_do_fbclid('a b'), mcp_meta_fbc_do_fbclid(null),
     mcp_meta_fbc_do_fbclid("ZZZ\n"), strlen((string) mcp_meta_fbc_do_fbclid(str_repeat('A', 254), 1790940000123)), mcp_meta_fbc_do_fbclid(str_repeat('A', 255))],

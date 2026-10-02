@@ -13,6 +13,8 @@ require __DIR__ . '/lib.php';
 
 // Por IP (o /64 no IPv6), em 10 minutos: folga para quem navega, freio para quem usa o endereço como atalho.
 const MCP_MEDICAO_LIMITE = [120, 600];
+// Por IP, por minuto: um endereço só não ocupa o teto do site inteiro.
+const MCP_MEDICAO_LIMITE_POR_MINUTO = 20;
 // Teto do site inteiro por minuto, antes do freio por IP: quem troca de IP (proxies, um bloco IPv6) não passa
 // dele, e as duas contagens leem no máximo umas centenas de linhas do índice (tipo, criado_em). Acima disso,
 // os eventos de página ficam só com o Pixel.
@@ -43,7 +45,15 @@ if (!in_array($evento, MCP_MEDICAO_EVENTOS, true) || $id === null) {
 
 [$maximo, $janela] = MCP_MEDICAO_LIMITE;
 $balde = mcp_ip_balde();
-if (mcp_contar_eventos_do_tipo('meta_repasse', 60) >= MCP_MEDICAO_TETO_POR_MINUTO
+if (mcp_contar_eventos_do_tipo('meta_repasse', 60) >= MCP_MEDICAO_TETO_POR_MINUTO) {
+    // Pico de campanha ou abuso: o operador fica sabendo (uma linha a cada 10 minutos, no log e em mcp_eventos).
+    if (mcp_contar_eventos_recentes('meta_capi_aviso', 'teto', 600) === 0) {
+        mcp_registrar(null, 'meta_capi_aviso', 'teto');
+        error_log('[matricula] API de Conversões: teto de ' . MCP_MEDICAO_TETO_POR_MINUTO . ' repasses por minuto atingido; os eventos de página ficam só com o Pixel');
+    }
+    mcp_medicao_fim();
+}
+if (mcp_contar_eventos_recentes('meta_repasse', $balde, 60) >= MCP_MEDICAO_LIMITE_POR_MINUTO
     || mcp_contar_eventos_recentes('meta_repasse', $balde, $janela) >= $maximo) {
     mcp_medicao_fim();
 }

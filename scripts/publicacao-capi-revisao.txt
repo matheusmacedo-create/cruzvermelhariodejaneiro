@@ -1,7 +1,7 @@
 # Revisão da API de Conversões (02/10/2026, à tarde): correções dos revisores. Ordem: a migração (db.php) e o
 # módulo (meta.php) antes de quem usa as funções novas (publico.php chama mcp_meta_id_da_compra), as bibliotecas
 # antes dos endereços, os estáticos antes das páginas que os pedem pelo hash novo.
-# Fora da lista: site/politicas.json (fonte, não é servida) e as páginas de doação (fora do ar).
+# Fora da lista: site/politicas.json (fonte, não é servida) e as páginas de doação (fora do ar: /doe/ e doacao.html).
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-capi-revisao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-capi-revisao.txt e NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js
 # 1) bibliotecas (db.php leva a migração: meta_revisao, meta_ip e meta_fbc com 600)
@@ -17,13 +17,13 @@ site/matricula-cursos-presenciais/api/comparecimentos.php
 # 3) estáticos (aviso de cookies com r=2; checkout com o id da compra)
 site/consentimento/consentimento.js
 site/matricula-cursos-presenciais/static/checkout.js
-# 4) páginas (tag nova do aviso; checkout, pendente e parabéns com o checkout.js novo; políticas com o IP)
+# 4) páginas (bloco de medição que segura o repasse de quem responde de novo, tag nova do aviso; checkout,
+#    pendente e parabéns com o checkout.js novo; políticas com o IP)
 site/404.html
 site/bio/index.html
 site/campanha-agasalho.html
 site/cookies/index.html
 site/doacao-indisponivel.html
-site/doacao.html
 site/en/404.html
 site/en/archive/index.html
 site/en/cookies/index.html

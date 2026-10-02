@@ -115,9 +115,11 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
   servidor: veio do texto anterior (que dizia que nome, e-mail e telefone nunca iam à Meta), do aviso da
   Punção (que grava o mesmo cookie em `.cruzvermelhariodejaneiro.org`) ou de um `consentimento.js` antigo
   guardado no cache. O aviso pergunta de novo a essa pessoa, e o painel "Personalizar" abre com o marketing
-  desligado (nada pré-marcado). O Pixel no navegador segue como antes. Os outros sites leem só `v`, `e` e `m`
-  e ignoram o `r`. Um `t` mais de um dia no futuro também não vale. Mudou o texto do que vai à Meta: sobe os
-  dois números juntos. A primeira versão (14h50) usava o `t` do cookie e uma data de corte, e isso não dizia
+  desligado (nada pré-marcado). O Pixel no navegador segue como antes. Enquanto o aviso pergunta de novo, o
+  bloco de medição segura os repasses dessa página (`pendentes`) e os manda depois do "sim", com os mesmos
+  ids. Os outros sites leem só `v`, `e` e `m` e ignoram o `r`. Um `t` mais de um dia no futuro, ou um `r` com
+  mais de dois dígitos, também não vale. Mudou o texto do que vai à Meta: sobe os três números juntos
+  (`MCP_META_REVISAO`, `REVISAO` no aviso e `REVISAO` no bloco de medição da home). A primeira versão (14h50) usava o `t` do cookie e uma data de corte, e isso não dizia
   qual texto a pessoa viu.
 - **O que nunca vai:** CPF (os Termos das Ferramentas de Negócios proíbem números de documento), mensagem do
   chat, dados do cartão e o token das páginas de acompanhamento (o `t=` sai do endereço; os ids são o id da
@@ -137,13 +139,18 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
 - **Uma compra, um Purchase:** o servidor manda o Purchase na hora do pagamento, e a Meta só junta com o do
   Pixel em 48 h. A tela Parabéns não manda o do Pixel quando o pagamento tem mais de 24 h (outro navegador,
   o e-mail de confirmação, a página de horários) nem quando vem do painel.
-- **Freios do repasse (`medicao.php`):** 120 por minuto no site inteiro e 120 em 10 minutos por IP (o /64 no
-  IPv6). Acima disso, os eventos de página ficam só com o Pixel. As duas contagens usam o índice
-  `(tipo, criado_em)` e leem no máximo algumas centenas de linhas. Corpo inválido (evento em lista, id com
+- **Freios do repasse (`medicao.php`):** 120 por minuto no site inteiro, e por IP (o /64 no IPv6) 20 por
+  minuto e 120 em 10 minutos. Acima disso, os eventos de página ficam só com o Pixel. Quando o teto do site é
+  atingido, fica `meta_capi_aviso` `teto` e uma linha no log, no máximo a cada 10 minutos. As contagens usam
+  o índice `(tipo, criado_em)` e leem no máximo algumas centenas de linhas. Corpo inválido (evento em lista, id com
   quebra de linha) responde 204 e não vai a lugar nenhum.
 - **fbclid longo:** o `_fbc` do navegador vai inteiro (até 600 caracteres; os anúncios de hoje passam de
   200). O fbc montado a partir do fbclid do endereço só vai até 254 caracteres: as páginas e o banco guardam
   255, e um fbclid cortado não pode ir (a Meta proíbe mexer nele).
+- **A inscrição nunca depende da Meta:** a escolha e os sinais (`meta_*`) são gravados num UPDATE à parte,
+  depois do INSERT da inscrição, porque a cobrança já existe no provedor. Se esse UPDATE falhar (um valor
+  estranho no cookie, uma coluna nova que ainda não chegou ao banco), a inscrição fica gravada, a escolha
+  fica vazia e o Purchase não sai.
 - **Nunca atrapalha o aluno:** os eventos vão para uma fila e saem depois da resposta
   (`fastcgi_finish_request`/`litespeed_finish_request`), com tempo curto. Um evento de site sem a
   identificação do navegador não entra na fila, porque a Meta recusaria o lote inteiro.
@@ -167,14 +174,17 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
   um aviso antigo valia como o do texto novo; "Personalizar" abria com o marketing pré-marcado; o painel
   sobrescrevia a prova do consentimento; a retirada no PIX refeito não valia; o Purchase do Pixel contava
   duas vezes depois de 48 h; o repasse não tinha teto global; havia o 500 com evento em lista e os padrões
-  aceitavam `\n` no fim; o fbclid longo perdia o fbc; e `config-meta.php` não estava no `.gitignore`.
+  aceitavam `\n` no fim; o fbclid longo perdia o fbc; e `config-meta.php` não estava no `.gitignore`. Na
+  segunda rodada (regressões): as colunas `meta_*` estavam no INSERT feito depois da cobrança (um `r=999` ou
+  uma coluna nova ausente derrubava a inscrição com o PIX já gerado); quem era perguntado de novo perdia o
+  repasse da página em que respondia; e o teto do site se esgotava sem registro.
   Os verificadores não confirmaram dois achados como defeito, mas eles também mudaram: o IP do Purchase
   passou a ser guardado à parte (`meta_ip`), e a faxina ganhou um try próprio.
 - **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento com `r`, id da compra,
-  fila, URL limpa), `scripts/testar_meta_integracao.php` (33 cenários de ponta a ponta com MariaDB local e
-  uma Meta, uma Unicopag e uma Resend falsas, incluindo o link aberto por outra pessoa, o PIX refeito e o
-  teto do repasse) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e no repasse; nada sem
-  permissão).
+  fila, URL limpa), `scripts/testar_meta_integracao.php` (36 cenários de ponta a ponta com MariaDB local e
+  uma Meta, uma Unicopag e uma Resend falsas, incluindo o link aberto por outra pessoa, o PIX refeito, os
+  freios, o `r=999` e a coluna ausente) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e
+  no repasse, também para quem responde ao aviso de novo; nada sem permissão).
 
 ## O que a verificação mostrou e não é problema
 

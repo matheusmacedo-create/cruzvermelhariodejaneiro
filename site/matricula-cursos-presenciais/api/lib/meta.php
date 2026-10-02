@@ -80,7 +80,8 @@ function mcp_meta_escolha_no_cookie(): ?array
         return null;
     }
     $em = is_string($partes['t'] ?? null) && ctype_digit($partes['t']) && strlen($partes['t']) <= 12 ? (int) $partes['t'] : 0;
-    $revisao = is_string($partes['r'] ?? null) && ctype_digit($partes['r']) && strlen($partes['r']) <= 3 ? (int) $partes['r'] : 0;
+    // Até dois dígitos: cabe em meta_revisao (TINYINT) e sobra para muitas revisões do texto.
+    $revisao = is_string($partes['r'] ?? null) && ctype_digit($partes['r']) && strlen($partes['r']) <= 2 ? (int) $partes['r'] : 0;
     if ($partes['m'] === '1' && ($revisao < MCP_META_REVISAO || $em <= 0 || $em > time() + 86400)) {
         return null;
     }
@@ -110,13 +111,15 @@ function mcp_meta_id_valido(mixed $id): ?string
 }
 
 /**
- * _fbp e _fbc do navegador (fb.<n>.<criado em ms>.<valor>), só se tiverem o formato da Meta. O _fbc leva o
- * fbclid inteiro, que passa de 200 caracteres nos anúncios de hoje (meta_fbc guarda até 600).
+ * _fbp e _fbc do navegador (fb.<n>.<criado em ms>.<valor>), só se tiverem o formato da Meta e couberem na
+ * coluna: o _fbc leva o fbclid inteiro, que passa de 200 caracteres nos anúncios de hoje (meta_fbc guarda até
+ * 600); o _fbp é um número aleatório curto (meta_fbp guarda 255).
  */
 function mcp_meta_cookie_fb(string $nome): ?string
 {
     $valor = $_COOKIE[$nome] ?? null;
-    if (!is_string($valor) || strlen($valor) > 600) {
+    $maximo = $nome === '_fbc' ? 600 : 255;
+    if (!is_string($valor) || strlen($valor) > $maximo) {
         return null;
     }
     return preg_match('/^fb\.[0-9]\.[0-9]{10,16}\.[A-Za-z0-9_-]{1,560}\z/', $valor) ? $valor : null;

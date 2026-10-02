@@ -1813,14 +1813,16 @@ permissão. Detalhes, tabela de eventos e o que fica guardado em `docs/rastreame
   Lead e AddPaymentInfo saem de `pagamentos.php`; Purchase, de `mcp_pos_pagamento` (inclusive pelo postback);
   Contact, de `contato.php`. Nome, e-mail e telefone vão em hash SHA-256; o CPF nunca vai.
 - `api/medicao.php`: repasse dos eventos de página (PageView, ViewContent, InitiateCheckout) que o bloco de
-  medição manda (`window.cvrjMedicao.servidor`), com teto de 120 por minuto no site e freio por IP.
+  medição manda (`window.cvrjMedicao.servidor`), com teto de 120 por minuto no site e freio por IP (20 por
+  minuto, 120 em 10 minutos).
 - **Para ligar:** o token vem do Gerenciador de Eventos (conjunto de dados `2224500131617302` >
   Configurações > API de Conversões > Gerar token de acesso). No hPanel, em
   `public_html/matricula-cursos-presenciais/api/`, crie `config-meta.php` com
   `<?php return ['META_CAPI_TOKEN' => 'o token'];`. Para conferir, acrescente `'META_CAPI_TESTE' =>
   'o código da aba Testar eventos'` e tire depois. Sem o token, nada é enviado nem guardado.
-- Mudou o texto do aviso sobre o que vai à Meta: suba `MCP_META_REVISAO` (`api/lib/meta.php`) e `REVISAO`
-  (`site/consentimento/consentimento.js`) juntos e rode `scripts/consentimento.py` e os geradores.
+- Mudou o texto do aviso sobre o que vai à Meta: suba juntos `MCP_META_REVISAO` (`api/lib/meta.php`),
+  `REVISAO` (`site/consentimento/consentimento.js`) e `REVISAO` do bloco de medição de `site/index.html`, rode
+  `scripts/consentimento.py` e os geradores e copie o bloco para `lib/site/analytics.ts` da Redação.
 - Testes: `php scripts/testar_checkout.php` (funções), `scripts/testar_meta_integracao.php` (ponta a ponta,
   com banco local e uma Meta falsa) e `scripts/conferir_pixel.js` (navegador: o mesmo id no Pixel e no repasse).
 

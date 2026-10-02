@@ -46,8 +46,10 @@ async function cenario(nome, url, passos, esperado) {
   const ctx = await navegador.newContext({ locale: 'pt-BR', viewport: { width: 1280, height: 900 },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' });
   await ctx.addInitScript(() => { Object.defineProperty(navigator, 'webdriver', { get: () => undefined }); });
-  if (esperado.jaAceitou) {
-    await ctx.addCookies([{ name: 'cvrj_consentimento', value: encodeURIComponent(`v=1&e=1&m=1&t=${Math.floor(Date.now() / 1000)}&r=2`),
+  if (esperado.jaAceitou || esperado.simAntigo) {
+    // simAntigo: "sim" sem a revisão atual do texto (r), como o do aviso anterior ou o da Punção.
+    const revisao = esperado.simAntigo ? '' : '&r=2';
+    await ctx.addCookies([{ name: 'cvrj_consentimento', value: encodeURIComponent(`v=1&e=1&m=1&t=${Math.floor(Date.now() / 1000)}${revisao}`),
       domain: '.cruzvermelhariodejaneiro.org', path: '/', secure: true, sameSite: 'Lax' }]);
   }
   if (DO_REPOSITORIO) {
@@ -87,6 +89,7 @@ async function cenario(nome, url, passos, esperado) {
     if (['PageView', 'ViewContent', 'InitiateCheckout'].includes(ev) && !repasses.some((x) => x.evento === ev && x.id === eid)) problemas.push(`${ev} sem repasse com o mesmo id`);
   }
   if (esperado.nadaDaMeta && repasses.length) problemas.push('repasse sem consentimento');
+  if (esperado.simAntigo && repasses.some((x) => x.fase === 'chegada')) problemas.push('repasse antes de a pessoa responder ao aviso de novo');
   for (const ev of esperado.eventos || []) if (!eventos.has(ev)) problemas.push(`faltou ${ev}`);
   if (esperado.nadaDaMeta && vistos.length) problemas.push('falou com a Meta sem consentimento');
   if (esperado.semEventosEm) {
@@ -116,6 +119,7 @@ const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
   await cenario('matrícula, aceitar e abrir um curso', '/matricula-cursos-presenciais/', [aceitar, curso(2)], { eventos: ['PageView', 'ViewContent'] });
   await cenario('matrícula, quem já tinha aceitado', '/matricula-cursos-presenciais/', [], { jaAceitou: true, espera: 9000, eventos: ['PageView'] });
   await cenario('checkout com curso, aceitar', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa', [aceitar], { eventos: ['PageView', 'InitiateCheckout'] });
+  await cenario('checkout, "sim" no texto anterior e aceitar de novo', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa', [aceitar], { simAntigo: true, eventos: ['PageView', 'InitiateCheckout'] });
   await cenario('matrícula, rejeitar', '/matricula-cursos-presenciais/', [rejeitar, curso(1)], { nadaDaMeta: true });
   await cenario('matrícula, sem escolher', '/matricula-cursos-presenciais/', [curso(1)], { nadaDaMeta: true });
   await cenario('matrícula, aceitar e retirar', '/matricula-cursos-presenciais/', [aceitar, curso(1), retirar, curso(3)], { eventos: ['PageView', 'ViewContent'], semEventosEm: 'curso 4' });
