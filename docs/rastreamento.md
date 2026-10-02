@@ -131,6 +131,11 @@ da inscrição chegam com nome, e-mail e telefone em hash, o que melhora a quali
 - **Para ligar:** crie `api/config-meta.php` no servidor (veja o README) com `META_CAPI_TOKEN`. Para
   conferir na aba "Testar eventos" do Gerenciador, use também `META_CAPI_TESTE` com o código da aba, e tire
   depois. Um `config-meta.php` com erro de digitação desliga só a API de Conversões; o checkout segue.
+- **Publicado em 02/10/2026, por volta das 14h50 (Brasília):** os 75 arquivos de `scripts/publicacao-capi.txt`,
+  depois de copiar os do ar (iguais à versão anterior do repositório). A migração rodou na primeira consulta
+  (sem 503), `conferir_publicacao.sh` e `conferir_pixel.js` passaram no ar, e o aviso volta a perguntar só a
+  quem tinha ligado o marketing antes de 14h53 (`REVISAO` = `MCP_META_CONSENTIMENTO_DESDE` = 1790963580).
+  Sem o token no servidor, a parte do servidor está desligada: o repasse responde 204 e nada é guardado.
 - **Testes:** `php scripts/testar_checkout.php` (normalização, hash, consentimento, fila, URL limpa),
   `scripts/testar_meta_integracao.php` (25 cenários de ponta a ponta com MariaDB local e uma Meta, uma
   Unicopag e uma Resend falsas) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e no
