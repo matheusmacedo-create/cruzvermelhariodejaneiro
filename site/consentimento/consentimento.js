@@ -22,7 +22,7 @@
   // e-mail e telefone em código) é perguntado de novo. Até escolher outra vez, o servidor não manda nada à Meta:
   // MCP_META_CONSENTIMENTO_DESDE, em api/lib/meta.php, é o mesmo instante. A VERSAO do cookie não muda, porque
   // os outros sites (Punção, Redação, Escola) leem v=1.
-  var REVISAO = 1791000000;
+  var REVISAO = 1790963580;
   var VALIDADE_S = 365 * 24 * 60 * 60;
   var DOMINIO = /(^|\.)cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '.cruzvermelhariodejaneiro.org' : '';
   // As políticas moram no site principal: num subdomínio (Impacto das Cores), o link leva o endereço completo.

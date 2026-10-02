@@ -35,7 +35,7 @@ const MCP_META_ID = '/^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$/';
  * aviso e a política diziam que nome, e-mail e telefone nunca iam à Meta. O aviso de cookies pergunta de novo
  * (REVISAO em consentimento.js, o mesmo instante). Pode ser trocado por META_CONSENTIMENTO_DESDE.
  */
-const MCP_META_CONSENTIMENTO_DESDE = 1791000000;
+const MCP_META_CONSENTIMENTO_DESDE = 1790963580;
 /** Sinais guardados na inscrição só para o Purchase: depois disso, saem (minimização). */
 const MCP_META_GUARDA_SEGUNDOS = 8 * 86400;
 /** Parâmetros de endereço que podem ir à Meta. O resto sai, a começar pelo t= (token que abre a inscrição). */
