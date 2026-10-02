@@ -118,5 +118,8 @@ está atrás na mesma fila e nunca é lido. O script baixava, e nenhum evento sa
    Eventos estimava em 02/10 um custo por resultado 21,7% menor com mais eventos cobertos pela API.
 5. **Correspondência avançada** (e-mail e telefone com hash, de quem deu permissão) no `Lead` e no
    `Purchase`: a qualidade da correspondência do PageView estava em 6,1/10 em 02/10.
-6. **Redação**: o modelo das notícias (`lib/site/analytics.ts`) tem a mesma linha que travava o Pixel.
-   Corrigir lá e usar o "Regerar" para atualizar as páginas publicadas.
+6. **Redação**: o modelo das notícias (`lib/site/analytics.ts`) tinha a mesma linha que travava o
+   Pixel; corrigido em matheusmacedo-create/redacao-cruzvermelhariodejaneiro#287. Depois do merge,
+   usar o "Regerar". Em 02/10, só o índice `/noticias/` tinha o bloco que trava; 17 das 19 matérias
+   estavam sem Pixel, e uma matéria e `/transparencia/` tinham o bloco antigo, que baixa o Pixel
+   sem perguntar.
