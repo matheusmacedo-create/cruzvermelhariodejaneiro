@@ -20,9 +20,15 @@ Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scri
 
 O botão "Fazer matrícula agora" leva ao checkout (CHECKOUT_URL) com ?curso=<slug>; o script da
 página acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript o link já funciona.
+
+Turmas sob demanda (04/10/2026): seção #turmas-sob-demanda, depois do catálogo, para grupos de 15 a 30
+alunos (empresas, escolas, grupos), qualquer curso em inglês e primeiros socorros para jovens de 12 a 14
+anos. O formulário (static/turmas.js) manda para api/turmas.php; as regras estão em api/lib/turmas.php.
+Link de anúncio: ?turma=1&turma_curso=<slug>&idioma=en&alunos=15 abre a seção com o formulário preenchido.
 """
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import os
@@ -43,6 +49,14 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
+STATIC = RAIZ / "site" / "matricula-cursos-presenciais" / "static"
+STATIC_URL = "/matricula-cursos-presenciais/static/"
+
+# Turmas sob demanda: as mesmas regras de api/lib/turmas.php (MCP_TURMA_MINIMO, MCP_TURMA_MAXIMO e
+# MCP_TURMA_CURSOS_EXTRAS). Mudou lá, muda aqui; scripts/testar_checkout.php confere os dois.
+TURMA_MINIMO = 15
+TURMA_MAXIMO = 30
+TURMA_EXTRAS = {"primeiros-socorros-jovens": "Primeiros Socorros para Jovens (12 a 14 anos)"}
 
 # Título e descrição seguem as consultas do Search Console (docs/seo-consultas-2026-09.md): "cruz vermelha cursos",
 # "cursos cruz vermelha rj", "curso de primeiros socorros cruz vermelha rj".
@@ -83,6 +97,18 @@ FAQ_PAGINA = [
     ("Posso ver as turmas abertas antes de pagar?",
      "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem "
      "prefere o caminho completo de inscrição."),
+    ("Vocês fecham turma para empresas, escolas e grupos?",
+     f"Sim. Com {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo "
+     "valor por pessoa dos cursos. As aulas são na sede; em outro local, dependem de aprovação. Peça pela seção "
+     "Turmas sob demanda desta página: a secretaria responde em até 3 dias úteis."),
+    ("Tem curso de primeiros socorros em inglês?",
+     f"Sim. Todos os cursos podem ser dados em inglês, com professor ou tradutor, quando a turma tiver {TURMA_MINIMO} alunos. "
+     "Quem já tem o grupo fecha a turma com prioridade; quem não tem entra na lista de interesse e é avisado quando a "
+     "turma fechar."),
+    ("Tem primeiros socorros para adolescentes?",
+     f"Sim, para jovens de 12 a 14 anos, numa turma só para essa idade, que abre com {TURMA_MINIMO} alunos. Escolas e "
+     "projetos com a turma pronta têm prioridade; famílias entram na lista de interesse. Quem preenche o pedido é o "
+     "responsável ou a instituição."),
     ("Como tiro dúvidas antes de me matricular?",
      "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 3 dias úteis. "
      "Se preferir, escreva para contato@cruzvermelhariodejaneiro.org."),
@@ -112,6 +138,11 @@ def brl(centavos: int | None) -> str:
 def horas_iso(carga: str) -> str | None:
     m = re.search(r"(\d+)", carga or "")
     return f"PT{m.group(1)}H" if m else None
+
+
+def url_estatico(nome: str) -> str:
+    """URL do arquivo em static/ com hash do conteúdo: muda o arquivo, muda a URL, o cache não segura versão velha."""
+    return f"{STATIC_URL}{nome}?v={hashlib.sha256((STATIC / nome).read_bytes()).hexdigest()[:10]}"
 
 
 def bloco(texto: str, inicio: str, fim: str, incluir_fim: bool = True) -> str:
@@ -249,6 +280,7 @@ def main() -> int:
             {sobre}
             {obs}
             {faq_html}
+            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"></i> Tem um grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="{slug}">Monte uma turma</a>.</p>
             <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="{esc(c["url_escola"])}" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
           </div>
         </article>'''
@@ -272,6 +304,141 @@ def main() -> int:
     if chat_widget.atualizar_cursos(para_o_chat):
         print("atualizado site/chat/chat.js (cursos, ficha e dúvidas)")
     chat_tags = chat_widget.tags()
+
+    # --- turmas sob demanda --------------------------------------------------------------
+    opcoes_turma = '<option value="">Escolha o curso</option>'
+    for g in dados["grupos"]:
+        itens = "".join(f'<option value="{s}" data-catalogo="1" data-nome="{esc(cursos[s]["nome"])}">{esc(cursos[s]["nome"])}</option>'
+                        for s in g["cursos"] if s in cursos)
+        opcoes_turma += f'<optgroup label="{esc(g["titulo"])}">{itens}</optgroup>'
+    extras = "".join(f'<option value="{s}" data-catalogo="0" data-nome="{esc(n)}">{esc(n)}</option>' for s, n in TURMA_EXTRAS.items())
+    opcoes_turma += f'<optgroup label="Só sob demanda">{extras}</optgroup>'
+    sob_demanda = f'''
+    <section class="mr-demanda" id="turmas-sob-demanda" aria-labelledby="mr-demanda-titulo">
+      <div class="wrap">
+        <p class="eyebrow">Turmas sob demanda</p>
+        <h2 id="mr-demanda-titulo">Empresas, grupos e turmas em inglês</h2>
+        <p class="lead">Alguns cursos só abrem quando juntamos {TURMA_MINIMO} alunos. Quem já tem o grupo fecha a turma com prioridade; quem ainda não tem entra na lista e é avisado quando a turma fechar.</p>
+        <div class="mr-demanda-cards">
+          <article class="mr-demanda-card destaque">
+            <i class="fa-solid fa-people-group"></i>
+            <h3>Já tem {TURMA_MINIMO} pessoas? Feche sua turma</h3>
+            <p>Para empresas, escolas, igrejas, condomínios e grupos de amigos. Qualquer curso, em português ou inglês.</p>
+            <ul>
+              <li>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos por turma</li>
+              <li>Mesmo valor por pessoa dos cursos</li>
+              <li>Na sede; em outro local, sob aprovação</li>
+              <li>Data combinada com a secretaria</li>
+            </ul>
+            <a class="btn btn-red" href="#turma-form-bloco" data-turma-abrir="fechada" data-pessoas="{TURMA_MINIMO}">Montar minha turma</a>
+          </article>
+          <article class="mr-demanda-card">
+            <i class="fa-solid fa-flag"></i>
+            <h3>Cursos em inglês <span lang="en">· Courses in English</span></h3>
+            <p>Todos os cursos podem ser dados em inglês, com professor ou tradutor. A turma abre com {TURMA_MINIMO} alunos.</p>
+            <p lang="en" class="mr-demanda-en">All our courses can be taught in English. A class opens once {TURMA_MINIMO} students sign up, or right away if you bring your own group.</p>
+            <a class="btn btn-outline" href="#turma-form-bloco" data-turma-abrir="ingles" data-idioma="en">Quero em inglês · In English</a>
+          </article>
+          <article class="mr-demanda-card">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <h3>Primeiros socorros para jovens de 12 a 14 anos</h3>
+            <p>Uma turma só para essa idade, para escolas, projetos sociais e famílias. Abre com {TURMA_MINIMO} jovens; escola ou projeto com a turma pronta tem prioridade.</p>
+            <a class="btn btn-outline" href="#turma-form-bloco" data-turma-abrir="jovens" data-curso="primeiros-socorros-jovens">Quero participar</a>
+          </article>
+        </div>
+
+        <div class="mr-demanda-form" id="turma-form-bloco">
+          <form id="turma-form" novalidate>
+            <h3>Peça sua turma ou entre na lista</h3>
+            <p class="mr-tf-nota">Nada é cobrado agora. A secretaria responde por e-mail ou WhatsApp.</p>
+            <div class="mr-tf-grade">
+              <div class="mr-tf-campo mr-tf-largo">
+                <label for="tf-curso">Curso</label>
+                <select id="tf-curso" name="curso" required>{opcoes_turma}</select>
+                <p class="mr-tf-erro" id="tf-erro-curso" hidden></p>
+              </div>
+              <fieldset class="mr-tf-campo">
+                <legend>Idioma das aulas</legend>
+                <div class="mr-tf-opcoes">
+                  <label><input type="radio" name="idioma" value="pt" checked> Português</label>
+                  <label><input type="radio" name="idioma" value="en"> Inglês <span lang="en">(English)</span></label>
+                </div>
+              </fieldset>
+              <div class="mr-tf-campo">
+                <label for="tf-pessoas">Quantos alunos?</label>
+                <input id="tf-pessoas" name="pessoas" type="number" inputmode="numeric" min="1" max="300" step="1" required placeholder="Ex.: 20">
+                <p class="mr-tf-dica">Conte todos os alunos, inclusive você, se também for fazer o curso.</p>
+                <p class="mr-tf-erro" id="tf-erro-pessoas" hidden></p>
+              </div>
+            </div>
+            <p class="mr-tf-situacao" id="tf-situacao" aria-live="polite">Escolha o curso e diga quantos alunos são para ver como fica a turma.</p>
+            <a class="btn btn-red" id="tf-matricula" href="{CHECKOUT_URL}" hidden>Fazer matrícula agora</a>
+            <div id="tf-dados">
+              <p class="mr-tf-nota" id="tf-nota-jovens" hidden>Para menores de idade, quem preenche é o responsável ou a instituição. Não pedimos dados dos jovens agora.</p>
+              <div class="mr-tf-grade">
+                <fieldset class="mr-tf-campo mr-tf-largo" id="tf-bloco-local" hidden>
+                  <legend>Onde seriam as aulas?</legend>
+                  <div class="mr-tf-opcoes">
+                    <label><input type="radio" name="local" value="sede" checked> Na sede, Praça da Cruz Vermelha, 10</label>
+                    <label><input type="radio" name="local" value="outro"> Em outro local (sujeito a aprovação)</label>
+                  </div>
+                </fieldset>
+                <div class="mr-tf-campo mr-tf-largo" id="tf-bloco-endereco" hidden>
+                  <label for="tf-endereco">Onde?</label>
+                  <input id="tf-endereco" name="local_endereco" maxlength="200" placeholder="Bairro e cidade, ou o endereço">
+                  <p class="mr-tf-erro" id="tf-erro-local_endereco" hidden></p>
+                </div>
+                <div class="mr-tf-campo">
+                  <label for="tf-organizacao">Empresa, escola ou instituição <small>(opcional)</small></label>
+                  <input id="tf-organizacao" name="organizacao" maxlength="160" autocomplete="organization">
+                </div>
+                <div class="mr-tf-campo">
+                  <label for="tf-periodo">Quando seria bom? <small>(opcional)</small></label>
+                  <input id="tf-periodo" name="periodo" maxlength="200" placeholder="Ex.: sábados de manhã, em novembro">
+                </div>
+                <div class="mr-tf-campo">
+                  <label for="tf-nome">Seu nome</label>
+                  <input id="tf-nome" name="nome" maxlength="120" autocomplete="name" required>
+                  <p class="mr-tf-erro" id="tf-erro-nome" hidden></p>
+                </div>
+                <div class="mr-tf-campo">
+                  <label for="tf-email">E-mail</label>
+                  <input id="tf-email" name="email" type="email" maxlength="190" autocomplete="email" required>
+                  <p class="mr-tf-erro" id="tf-erro-email" hidden></p>
+                </div>
+                <div class="mr-tf-campo">
+                  <label for="tf-telefone">WhatsApp com DDD</label>
+                  <input id="tf-telefone" name="telefone" type="tel" maxlength="20" autocomplete="tel" inputmode="tel" required placeholder="(21) 99999-9999">
+                  <p class="mr-tf-erro" id="tf-erro-telefone" hidden></p>
+                </div>
+                <div class="mr-tf-campo mr-tf-largo">
+                  <label for="tf-observacoes">Observações <small>(opcional)</small></label>
+                  <textarea id="tf-observacoes" name="observacoes" maxlength="2000" rows="3" placeholder="Algo que a secretaria precisa saber sobre o grupo"></textarea>
+                  <p class="mr-tf-erro" id="tf-erro-observacoes" hidden></p>
+                </div>
+                <div class="mr-tf-campo mr-tf-largo">
+                  <label class="mr-tf-check"><input type="checkbox" name="consentimento" required> Autorizo a secretaria da Cruz Vermelha Brasileira Rio de Janeiro a falar comigo por e-mail e WhatsApp sobre esta turma.</label>
+                  <p class="mr-tf-erro" id="tf-erro-consentimento" hidden></p>
+                </div>
+              </div>
+              <div class="mr-tf-armadilha" aria-hidden="true"><label for="tf-site">Não preencha</label><input id="tf-site" name="site" tabindex="-1" autocomplete="off"></div>
+              <p class="mr-tf-erro geral" id="tf-erro" tabindex="-1" role="alert" hidden></p>
+              <button class="btn btn-red" id="tf-enviar" type="submit" disabled>Pedir minha turma</button>
+              <p class="mr-tf-dica">Seus dados servem só para falar sobre esta turma. Veja a <a href="/privacidade/">política de privacidade</a>.</p>
+            </div>
+            <noscript><p class="mr-tf-situacao aviso">Para pedir uma turma, escreva para contato@cruzvermelhariodejaneiro.org com o curso, o idioma e quantos alunos são.</p></noscript>
+          </form>
+          <div class="mr-tf-ok" id="turma-ok" tabindex="-1" hidden>
+            <i class="fa-solid fa-circle-check"></i>
+            <h3 id="turma-ok-titulo">Pedido recebido!</h3>
+            <p id="turma-ok-texto"></p>
+            <p class="mr-tf-dica" id="turma-ok-copia"></p>
+            <button class="btn btn-outline" id="turma-ok-outro" type="button">Fazer outro pedido</button>
+          </div>
+        </div>
+      </div>
+    </section>
+'''
 
     faq_pagina = "".join(f"<details><summary>{esc(p)}</summary><p>{esc(r)}</p></details>" for p, r in FAQ_PAGINA)
 
@@ -359,6 +526,57 @@ def main() -> int:
     .mr-passo h3 { color: var(--black); font-size: 1.1rem; margin: 0 0 8px; }
     .mr-passo p { color: var(--text); margin: 0; }
     .mr-regra { border-left: 4px solid var(--red); background: #fff; padding: 16px 20px; border-radius: 0 12px 12px 0; margin-top: 26px; color: var(--text); }
+    .mr-hero-grupos { margin: 18px 0 0; color: var(--text); font-weight: 600; }
+    .mr-hero-grupos i { color: var(--red); margin-right: 6px; }
+    .mr-hero-grupos a, .mr-grupo-link a { color: var(--red); font-weight: 800; text-decoration: underline; }
+    .mr-grupo-link { margin: 18px 0 0; padding: 12px 16px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font-size: .95rem; }
+    .mr-grupo-link i { color: var(--red); margin-right: 6px; }
+    .mr-demanda { padding: 56px 0 64px; border-top: 1px solid var(--line); }
+    /* .btn e os campos têm display próprio, que venceria o atributo hidden. */
+    .mr-demanda [hidden] { display: none !important; }
+    .mr-demanda h2 { color: var(--black); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; margin: 0 0 10px; }
+    .mr-demanda-cards { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 20px; margin-top: 28px; align-items: stretch; }
+    .mr-demanda-card { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+    .mr-demanda-card.destaque { border: 2px solid var(--red); box-shadow: var(--shadow); }
+    .mr-demanda-card > i { color: var(--red); font-size: 1.6rem; }
+    .mr-demanda-card h3 { color: var(--black); font-size: 1.15rem; margin: 0; line-height: 1.25; }
+    .mr-demanda-card p { color: var(--text); margin: 0; }
+    .mr-demanda-card .mr-demanda-en { color: var(--muted); font-size: .92rem; font-style: italic; }
+    .mr-demanda-card ul { margin: 0; padding-left: 18px; color: var(--text); }
+    .mr-demanda-card ul li { margin: 2px 0; }
+    .mr-demanda-card .btn { margin-top: auto; align-self: flex-start; }
+    .mr-demanda-form { margin-top: 28px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; scroll-margin-top: 96px; }
+    .mr-demanda-form h3 { color: var(--black); font-size: 1.3rem; margin: 0 0 4px; }
+    .mr-tf-nota { color: var(--muted); margin: 0 0 18px; }
+    .mr-tf-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+    .mr-tf-largo { grid-column: 1 / -1; }
+    .mr-tf-campo { margin: 0; padding: 0; border: 0; min-width: 0; }
+    .mr-tf-campo label, .mr-tf-campo legend { display: block; font-weight: 700; color: var(--black); margin: 0 0 6px; padding: 0; font-size: .95rem; }
+    .mr-tf-campo label small { color: var(--muted); font-weight: 500; }
+    .mr-tf-campo input:not([type=radio]):not([type=checkbox]), .mr-tf-campo select, .mr-tf-campo textarea { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; }
+    .mr-tf-campo textarea { min-height: 96px; resize: vertical; }
+    .mr-tf-campo input:focus, .mr-tf-campo select:focus, .mr-tf-campo textarea:focus { outline: 0; border-color: var(--red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .14); }
+    .mr-tf-campo.erro input, .mr-tf-campo.erro select, .mr-tf-campo.erro textarea { border-color: var(--red); background: #fff8f8; }
+    .mr-tf-opcoes { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+    .mr-tf-opcoes label, .mr-tf-check { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: var(--text); margin: 0; cursor: pointer; }
+    .mr-tf-opcoes input, .mr-tf-check input { width: 18px; height: 18px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--red); }
+    .mr-tf-dica { color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
+    .mr-tf-dica a { color: var(--red); text-decoration: underline; }
+    .mr-tf-erro { color: #b91c1c; font-size: .88rem; font-weight: 600; margin: 6px 0 0; }
+    .mr-tf-erro.geral { background: #fff0f2; border: 1px solid #f5c2c7; border-radius: 12px; padding: 10px 14px; margin: 16px 0 0; }
+    .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--line); background: #fff; border-radius: 0 12px 12px 0; color: var(--text); }
+    .mr-tf-situacao.fechada { border-left-color: #0f7b3e; }
+    .mr-tf-situacao.lista { border-left-color: var(--red); }
+    .mr-tf-situacao.aviso { border-left-color: #b7791f; background: #fffaf0; }
+    #tf-dados { margin-top: 4px; }
+    #tf-enviar { margin-top: 20px; }
+    #tf-enviar:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .mr-tf-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .mr-tf-ok { text-align: center; padding: 18px 0; }
+    .mr-tf-ok:focus { outline: 0; }
+    .mr-tf-ok > i { color: #0f7b3e; font-size: 2.4rem; }
+    .mr-tf-ok h3 { margin: 10px 0 8px; }
+    .mr-tf-ok p { max-width: 60ch; margin: 0 auto 8px; color: var(--text); }
     .mr-faq-pagina { padding: 56px 0 64px; }
     .mr-faq-pagina .wrap { max-width: 820px; }
     @media (max-width: 920px) {
@@ -367,6 +585,9 @@ def main() -> int:
       .mr-passos { grid-template-columns: 1fr; }
       .mr-preco { grid-template-columns: 1fr; }
       .mr-corpo { padding: 22px; }
+      .mr-demanda-cards { grid-template-columns: 1fr; }
+      .mr-tf-grade { grid-template-columns: 1fr; }
+      .mr-demanda-form { padding: 20px; }
       /* O CSS da home esconde qualquer <nav> abaixo de 920px (regra do menu antigo) e o menu sanfona
          abria sem os links. Nesta página os links voltam a aparecer com o menu aberto. */
       .main-header .header-collapse .nav-links { display: flex !important; }
@@ -495,6 +716,7 @@ def main() -> int:
           <span class="mr-chip"><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10 · Centro</span>
           <span class="mr-chip"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</span>
         </div>
+        <p class="mr-hero-grupos"><i class="fa-solid fa-people-group"></i> Empresas, grupos de {TURMA_MINIMO} pessoas ou mais e turmas em inglês: <a href="#turmas-sob-demanda">feche sua turma</a>.</p>
       </div>
     </section>
 
@@ -512,7 +734,7 @@ def main() -> int:
         </div>
       </div>
     </section>
-
+{sob_demanda}
     <section class="mr-como" aria-labelledby="mr-como-titulo">
       <div class="wrap">
         <p class="eyebrow">Como funciona</p>
@@ -543,6 +765,7 @@ def main() -> int:
 
 {menu_js}
 {js}
+  <script src="{url_estatico("turmas.js")}" defer></script>
 {chat_tags}
 </body>
 </html>

@@ -1,0 +1,17 @@
+# Turmas sob demanda (04/10/2026). Ordem importa: o módulo novo antes do lib.php que o exige, as bibliotecas
+# antes dos endereços, o script da página antes da página que o pede.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-turmas.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-turmas.txt
+# Desfazer: scripts/desfazer_publicacao.sh 9a9049f scripts/publicacao-turmas.txt
+# 1) módulo novo e bibliotecas alteradas (db.php leva a migração: tabela mcp_turmas_pedidos)
+site/matricula-cursos-presenciais/api/lib/turmas.php
+site/matricula-cursos-presenciais/api/lib/meta.php
+site/matricula-cursos-presenciais/api/lib/db.php
+# 2) bootstrap que passa a carregar o módulo novo
+site/matricula-cursos-presenciais/api/lib.php
+# 3) endereços
+site/matricula-cursos-presenciais/api/turmas.php
+site/matricula-cursos-presenciais/api/painel.php
+# 4) script do formulário (o endereço leva o hash do conteúdo) e a página
+site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/index.html

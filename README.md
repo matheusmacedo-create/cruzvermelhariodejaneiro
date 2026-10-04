@@ -364,6 +364,115 @@ cinza para quem ainda não disse os horários. No celular:
 - **Situação:** pronto e testado localmente, com capturas no computador e no celular. Publicar só
   com o OK do Matheus.
 
+## Turmas sob demanda: grupos, inglês e jovens (04/10/2026)
+
+Alguns cursos só abrem quando juntamos alunos suficientes. A página de matrícula ganhou a seção
+**Turmas sob demanda** (`#turmas-sob-demanda`, logo depois do catálogo) para três públicos:
+
+- **grupos fechados**: empresas, escolas, igrejas, condomínios ou amigos com 15 a 30 alunos, em qualquer curso;
+- **cursos em inglês**: qualquer curso, com professor ou tradutor;
+- **primeiros socorros para jovens de 12 a 14 anos**: curso que existe só sob demanda, fora do catálogo da escola.
+
+Regras combinadas com o Matheus em 04/10:
+
+- turma de **15 a 30 alunos**, no **mesmo valor por pessoa** dos cursos do catálogo;
+- aulas **na sede**; em outro local, só com aprovação;
+- **quem já tem o grupo tem prioridade**. Quem não tem entra na lista de interesse e é avisado quando a turma fechar.
+
+**Um formulário só**, e o número de alunos decide o que acontece:
+
+| Alunos | Curso e idioma | O que acontece |
+| --- | --- | --- |
+| 15 ou mais | qualquer | **Pedido de turma fechada**. A secretaria responde em até 3 dias úteis com as datas. |
+| menos de 15 | em inglês, ou o curso dos jovens | **Lista de interesse** daquele curso naquele idioma. A turma abre quando a soma chega a 15. |
+| menos de 15 | curso do catálogo, em português | Não entra em lista: o curso já tem turma aberta, e o botão vira "Fazer matrícula agora". |
+
+Mais de 30 alunos vale, e a secretaria divide em mais de uma turma (limite de 300 no formulário).
+Nada é cobrado nesta etapa. Para o curso dos jovens, quem preenche é o responsável ou a
+instituição: nenhum dado do jovem é pedido.
+
+Onde mais aparece na página:
+
+- uma linha no topo ("Empresas, grupos de 15 pessoas ou mais e turmas em inglês: feche sua turma");
+- um link em cada curso do catálogo ("Monte uma turma"), que abre o formulário com o curso escolhido;
+- três perguntas novas no FAQ, que também entram no FAQPage dos dados estruturados.
+
+**Link para anúncio:**
+`/matricula-cursos-presenciais/?turma=1&turma_curso=suporte-basico-de-vida&idioma=en&alunos=15` abre a
+seção com o formulário já preenchido.
+
+**Portal da secretaria** (`?v=turmas`, item "Turmas sob demanda" no menu). O número no menu soma os
+pedidos de turma fechada ainda sem resposta e as listas que já chegaram a 15. A tela tem:
+
+- **pedidos de turma fechada**, com instituição, WhatsApp clicável, local (com o selo "Fora da sede")
+  e período preferido. A situação de cada pedido muda ali mesmo: Novo, Em contato, Turma marcada ou Arquivado;
+- **listas de interesse** por curso e idioma, com a barra de progresso até 15 e o selo "Pronta para abrir";
+- a **lista de um curso** (`&curso=…&idioma=…`), com quem está nela, a planilha para avisar todos e o
+  botão "Mudar todos", que marca todos os pedidos em aberto da lista de uma vez quando a turma abre.
+
+A planilha não leva IP e neutraliza fórmulas.
+
+**E-mails.** O aviso vai para `EMAIL_SECRETARIA` (sem ele, para `EMAIL_CONTATO`), com responder-para de
+quem pediu. O assunto começa com `[Turma fechada]`, `[Lista de interesse]` ou, quando a soma chega a 15,
+`[Lista completa]`. A pessoa recebe a confirmação com o protocolo `TS-aammdd-NNNN`, o que acontece agora e
+o valor por aluno.
+
+**Medição.** O envio dispara `Lead` no Pixel e `generate_lead` no GA4. A API de Conversões manda o mesmo
+`Lead`, com o mesmo id e só com "sim" para marketing, como o `Contact` do chat.
+
+**Proteções:** as mesmas do chat de contato. Só aceita POST JSON vindo do próprio site, tem campo
+armadilha e freios de 6 pedidos por IP e 4 por e-mail, por hora.
+
+**Código:**
+
+- `api/lib/turmas.php`: regras, conferência, banco, e-mails e planilha;
+- `api/turmas.php`: o endpoint;
+- `pn_turmas` em `api/painel.php`: a tela do portal;
+- `mcp_meta_turma` em `api/lib/meta.php`: o evento da API de Conversões;
+- `static/turmas.js`: o formulário;
+- a seção da página: `scripts/gerar_matricula_presencial.py`.
+
+O mínimo, o máximo e o curso dos jovens estão em `lib/turmas.php` e repetidos no gerador.
+`scripts/testar_checkout.php` confere que os dois batem.
+
+**Tabela:** `mcp_turmas_pedidos`, criada sozinha na primeira requisição depois do deploy (`MCP_DB_VERSAO`
+mudou).
+
+**Testes:**
+
+- 17 dos 350 testes de `scripts/testar_checkout.php`: regras, conferência, e-mails, planilha e a página
+  conferida contra o servidor;
+- `scripts/testar_turmas_integracao.php`, 22 testes contra MariaDB local: API, banco, e-mails e portal,
+  inclusive a mudança de situação e o "Mudar todos";
+- os testes de integração que já existiam (horários, ponto, avisos, meta e doação) passam com o menu novo;
+- formulário testado no navegador (Chromium) no computador e no celular: turma fechada, matrícula na hora,
+  lista em inglês, envio e o link "Monte uma turma" de um curso.
+
+**Não testado:** e-mails de verdade pelo Resend (no teste, o envio cai num `sendmail` falso) e o evento na
+Meta.
+
+**Para publicar** (nesta ordem: os módulos de `lib/` antes do `lib.php`, que passa a exigir `lib/turmas.php`,
+e a página por último):
+
+```
+scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/api/lib/turmas.php \
+  site/matricula-cursos-presenciais/api/lib/meta.php site/matricula-cursos-presenciais/api/lib/db.php \
+  site/matricula-cursos-presenciais/api/lib.php site/matricula-cursos-presenciais/api/turmas.php \
+  site/matricula-cursos-presenciais/api/painel.php site/matricula-cursos-presenciais/static/turmas.js \
+  site/matricula-cursos-presenciais/index.html
+```
+
+Depois, limpar o cache e conferir: o portal abre em `?v=turmas`, e um pedido de teste chega à secretaria.
+Arquive o pedido de teste no portal.
+
+**Situação:** pronto e testado localmente. Ainda não está no ar: publicar só com o OK do Matheus.
+
+**Próximos passos possíveis:**
+
+- botão "Avisar todos que a turma abriu", que manda a data e o link do checkout a quem está na lista;
+- página em `/en/` para os cursos em inglês;
+- pagamento da turma fechada por um link único do responsável.
+
 ## Ponto da sede e comprovante de comparecimento (29/09/2026)
 
 Quem chega à sede registra a chegada em `cruzvermelhariodejaneiro.org/ponto/`, que leva a
