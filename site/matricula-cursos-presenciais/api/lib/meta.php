@@ -514,6 +514,18 @@ function mcp_meta_contato(array $contato, ?string $id): void
         mcp_meta_url_limpa($contato['pagina'] ?? null, mcp_site_url() . '/')));
 }
 
+/** Lead do pedido de turma sob demanda (api/turmas.php), com o mesmo id do Lead que a página manda ao Pixel. */
+function mcp_meta_turma(array $pedido, ?string $id): void
+{
+    if ($id === null || !mcp_meta_configurada() || mcp_meta_marketing_no_cookie() !== true) {
+        return;
+    }
+    $pessoa = ['nome' => $pedido['nome'], 'email' => $pedido['email'], 'telefone' => $pedido['telefone'] ?? ''];
+    $custom = ['content_category' => 'turma-' . $pedido['tipo'], 'content_name' => (string) $pedido['curso_nome'], 'content_ids' => [(string) $pedido['curso_slug']]];
+    mcp_meta_enfileirar(mcp_meta_evento('Lead', $id, mcp_meta_user_data($pessoa, mcp_meta_contexto($pedido['fbclid'] ?? null)), $custom,
+        mcp_meta_url_limpa($pedido['pagina'] ?? null, mcp_site_url() . '/matricula-cursos-presenciais/')));
+}
+
 /** Faxina (rotina de 15 em 15 minutos): sinais do navegador guardados há mais de 8 dias saem. */
 function mcp_meta_faxina(?int $agora = null): int
 {

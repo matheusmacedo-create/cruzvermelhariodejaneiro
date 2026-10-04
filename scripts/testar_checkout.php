@@ -906,6 +906,67 @@ $saida = shell_exec(sprintf('MCP_CONFIG_ARQUIVO=%s MCP_CONFIG_META_ARQUIVO=%s MC
 unlink($quebrado);
 verificar('meta: config-meta.php com erro de sintaxe é ignorado', $saida, '["https:\/\/exemplo.org",false]');
 
+// Turmas sob demanda (lib/turmas.php): o número de alunos decide entre turma fechada e lista de interesse.
+verificar('turmas: 15 ou mais é turma fechada, abaixo é lista', [mcp_turma_tipo(1), mcp_turma_tipo(14), mcp_turma_tipo(15), mcp_turma_tipo(30), mcp_turma_tipo(31)],
+    ['lista', 'lista', 'fechada', 'fechada', 'fechada']);
+verificar('turmas: acima de 30 alunos vira mais de uma turma', [mcp_turma_quantas(15), mcp_turma_quantas(30), mcp_turma_quantas(31), mcp_turma_quantas(61)], [1, 1, 2, 3]);
+verificar('turmas: progresso da lista', [mcp_turma_progresso(0), mcp_turma_progresso(12), mcp_turma_progresso(20)], [
+    ['soma' => 0, 'faltam' => 15, 'pronta' => false, 'pct' => 0], ['soma' => 12, 'faltam' => 3, 'pronta' => false, 'pct' => 80],
+    ['soma' => 20, 'faltam' => 0, 'pronta' => true, 'pct' => 100]]);
+verificar('turmas: rótulo só fala do idioma quando é inglês', [mcp_turma_rotulo('Punção Venosa', 'pt'), mcp_turma_rotulo('Punção Venosa', 'en')],
+    ['Punção Venosa', 'Punção Venosa, em inglês']);
+verificar('turmas: protocolo TS- com a data de Brasília', mcp_turma_protocolo(7, '2026-10-05 02:30:00'), 'TS-261004-0007');
+$cursosTurma = mcp_turma_cursos();
+verificar('turmas: os cursos do catálogo e o dos jovens aceitam turma', [count($cursosTurma), $cursosTurma['primeiros-socorros-jovens'] ?? null, $cursosTurma['puncao-venosa']['catalogo'] ?? null],
+    [count(mcp_catalogo()['cursos']) + 1, ['nome' => 'Primeiros Socorros para Jovens (12 a 14 anos)', 'catalogo' => false], true]);
+$turmaBase = ['curso' => 'puncao-venosa', 'idioma' => 'en', 'pessoas' => 3, 'nome' => 'Ana Lima', 'email' => 'Ana@Exemplo.org', 'telefone' => '+55 (21) 99999-0000', 'consentimento' => true];
+$conf = mcp_turma_conferir($turmaBase);
+verificar('turmas: lista em inglês conferida, e-mail em minúsculas, telefone só com dígitos, sempre na sede', [$conf['ok'], $conf['dados']['tipo'] ?? null, $conf['dados']['email'] ?? null,
+    $conf['dados']['telefone'] ?? null, $conf['dados']['local'] ?? null], [true, 'lista', 'ana@exemplo.org', '21999990000', 'sede']);
+$conf = mcp_turma_conferir(['pessoas' => '20', 'local' => 'outro', 'local_endereco' => 'Duque de Caxias', 'idioma' => 'pt'] + $turmaBase);
+verificar('turmas: grupo de 20 em português, fora da sede', [$conf['ok'], $conf['dados']['tipo'] ?? null, $conf['dados']['pessoas'] ?? null, $conf['dados']['local'] ?? null, $conf['dados']['local_endereco'] ?? null],
+    [true, 'fechada', 20, 'outro', 'Duque de Caxias']);
+$conf = mcp_turma_conferir(['idioma' => 'pt', 'pessoas' => 5] + $turmaBase);
+verificar('turmas: em português, sem grupo, o curso do catálogo vai para a matrícula', [$conf['ok'], $conf['campo'] ?? null, $conf['matricula'] ?? null],
+    [false, 'pessoas', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa']);
+verificar('turmas: jovens em português, sem grupo, vão para a lista', mcp_turma_conferir(['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt', 'pessoas' => 1] + $turmaBase)['dados']['tipo'] ?? null, 'lista');
+$camposErro = [];
+foreach ([['pessoas' => 1.5], ['pessoas' => -2], ['pessoas' => [15]], ['curso' => ['x']], ['consentimento' => 1], ['telefone' => '0219999-0000'], ['email' => 'ana@'],
+    ['pessoas' => 16, 'local' => 'outro', 'local_endereco' => '']] as $troca) {
+    $camposErro[] = mcp_turma_conferir($troca + $turmaBase)['campo'] ?? 'ok';
+}
+verificar('turmas: valores estranhos voltam com o campo certo', $camposErro, ['pessoas', 'pessoas', 'pessoas', 'curso', 'consentimento', 'telefone', 'email', 'local_endereco']);
+verificar('turmas: página de outro site não é guardada', [mcp_turma_conferir(['pagina' => '//outro.exemplo/x'] + $turmaBase)['dados']['pagina'] ?? 'ausente',
+    mcp_turma_conferir(['pagina' => '/matricula-cursos-presenciais/?turma=1'] + $turmaBase)['dados']['pagina'] ?? 'ausente'], ['ausente', '/matricula-cursos-presenciais/?turma=1']);
+
+$pedidoTurma = ['tipo' => 'fechada', 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa', 'idioma' => 'en', 'pessoas' => 40, 'local' => 'outro',
+    'local_endereco' => 'Niterói', 'organizacao' => 'Hospital <Exemplo>', 'periodo' => null, 'nome' => 'Ana Lima', 'email' => 'ana@exemplo.org',
+    'telefone' => '21999990000', 'observacoes' => "linha 1\n<b>linha 2</b>", 'protocolo' => 'TS-261004-0007', 'utm_source' => null, 'utm_campaign' => null];
+$m = mcp_montar_email_turma_equipe($pedidoTurma);
+verificar('turmas: aviso à secretaria escapa o HTML e avisa fora da sede e as duas turmas', [str_contains($m['html'], 'Hospital &lt;Exemplo&gt;'), str_contains($m['html'], '<b>linha 2</b>'),
+    str_contains($m['html'], 'Fora da sede'), str_contains($m['html'], 'são 2 turmas'), $m['assunto']],
+    [true, false, true, true, '[Turma fechada] Punção Venosa, em inglês · 40 alunos · Hospital <Exemplo> · TS-261004-0007']);
+$m = mcp_montar_email_turma_confirmacao($pedidoTurma);
+verificar('turmas: confirmação da turma fechada traz o mesmo valor por aluno e a aprovação do local', [str_contains($m['texto'], 'inscrição de R$ 99,00 e R$ 150,00 do curso'),
+    str_contains($m['texto'], 'dependem de aprovação'), $m['assunto']], [true, true, 'Recebemos o pedido da sua turma · TS-261004-0007']);
+$m = mcp_montar_email_turma_confirmacao(['tipo' => 'lista', 'curso_slug' => 'primeiros-socorros-jovens', 'curso_nome' => 'Primeiros Socorros para Jovens (12 a 14 anos)', 'idioma' => 'pt', 'pessoas' => 1, 'local' => 'sede'] + $pedidoTurma);
+verificar('turmas: confirmação da lista dos jovens, valor na proposta', [str_contains($m['texto'], 'Você entrou na lista de interesse de Primeiros Socorros para Jovens'),
+    str_contains($m['texto'], 'O valor por aluno vem na proposta da secretaria.'), str_contains($m['html'], 'Outro local')], [true, true, false]);
+verificar('turmas: planilha neutraliza fórmula', str_contains(mcp_turma_csv([['criado_em' => '2026-10-04 12:00:00', 'protocolo' => 'TS-1', 'tipo' => 'lista', 'status' => 'novo',
+    'curso_nome' => 'X', 'idioma' => 'en', 'pessoas' => 3, 'local' => 'sede', 'local_endereco' => null, 'organizacao' => '=HYPERLINK("x")', 'nome' => 'A', 'email' => 'a@b.c',
+    'telefone' => '21999990000', 'periodo' => null, 'observacoes' => null]]), "'=HYPERLINK"), true);
+
+// A página e o gerador seguem as mesmas regras do servidor (mínimo, máximo, cursos só sob demanda) e carregam o turmas.js atual.
+$gerador = (string) file_get_contents($raiz . '/scripts/gerar_matricula_presencial.py');
+$paginaMatricula = (string) file_get_contents($raiz . '/site/matricula-cursos-presenciais/index.html');
+$extrasPagina = [];
+foreach (MCP_TURMA_CURSOS_EXTRAS as $slug => $nomeExtra) {
+    $extrasPagina[] = str_contains($paginaMatricula, '<option value="' . $slug . '" data-catalogo="0" data-nome="' . mcp_escapar($nomeExtra) . '">');
+}
+verificar('turmas: gerador e página com as regras do servidor', [str_contains($gerador, 'TURMA_MINIMO = ' . MCP_TURMA_MINIMO . "\n"), str_contains($gerador, 'TURMA_MAXIMO = ' . MCP_TURMA_MAXIMO . "\n"),
+    $extrasPagina, str_contains($paginaMatricula, 'static/turmas.js?v=' . substr(hash_file('sha256', $raiz . '/site/matricula-cursos-presenciais/static/turmas.js'), 0, 10))],
+    [true, true, array_fill(0, count(MCP_TURMA_CURSOS_EXTRAS), true), true]);
+
 // A versão do banco vem de uma constante no código (e não do arquivo em disco): mudou o db.php, muda a constante.
 $versaoDb = substr(md5((string) preg_replace('/^const MCP_DB_VERSAO = .*\n/m', '', (string) file_get_contents(__DIR__ . '/../site/matricula-cursos-presenciais/api/lib/db.php'))), 0, 16);
 verificar("banco: MCP_DB_VERSAO acompanha o db.php (se falhar, troque o valor por '$versaoDb')", MCP_DB_VERSAO, $versaoDb);

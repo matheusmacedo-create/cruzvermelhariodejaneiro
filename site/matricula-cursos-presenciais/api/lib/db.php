@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '8867a1844da8cdde';
+const MCP_DB_VERSAO = '48de1bb16ed6524e';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -416,6 +416,43 @@ function mcp_migrar_tudo(PDO $pdo): void
         criado_em DATETIME NOT NULL,
         atualizado_em DATETIME NOT NULL,
         UNIQUE KEY ux_pessoa (campanha_id, pessoa)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Turmas sob demanda (api/turmas.php, lib/turmas.php): pedido de turma fechada (15 a 30 alunos) ou lista de
+    // interesse (menos de 15). Fonte da verdade: os e-mails à secretaria e à pessoa são cópia.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_turmas_pedidos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        protocolo VARCHAR(24) NULL,
+        tipo ENUM('fechada','lista') NOT NULL,
+        curso_slug VARCHAR(80) NOT NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        idioma CHAR(2) NOT NULL DEFAULT 'pt',
+        pessoas SMALLINT UNSIGNED NOT NULL,
+        `local` ENUM('sede','outro') NOT NULL DEFAULT 'sede',
+        local_endereco VARCHAR(200) NULL,
+        organizacao VARCHAR(160) NULL,
+        periodo VARCHAR(200) NULL,
+        nome VARCHAR(120) NOT NULL,
+        email VARCHAR(190) NOT NULL,
+        telefone VARCHAR(20) NOT NULL,
+        observacoes TEXT NULL,
+        pagina VARCHAR(255) NULL,
+        utm_source VARCHAR(120) NULL,
+        utm_medium VARCHAR(120) NULL,
+        utm_campaign VARCHAR(160) NULL,
+        utm_content VARCHAR(160) NULL,
+        utm_term VARCHAR(160) NULL,
+        fbclid VARCHAR(255) NULL,
+        gclid VARCHAR(255) NULL,
+        ip VARCHAR(45) NULL,
+        email_equipe VARCHAR(20) NULL,
+        email_confirmacao VARCHAR(20) NULL,
+        status ENUM('novo','em_contato','turma_marcada','arquivado') NOT NULL DEFAULT 'novo',
+        status_por VARCHAR(190) NULL,
+        status_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_lista (tipo, status, curso_slug, idioma),
+        KEY ix_email (email, criado_em),
+        KEY ix_ip (ip, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

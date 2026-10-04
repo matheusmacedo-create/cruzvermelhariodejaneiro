@@ -1,11 +1,13 @@
 <?php
 /**
- * Portal da secretaria. Menu no cabeçalho com seis itens:
+ * Portal da secretaria. Menu no cabeçalho com sete itens:
  *   - Início: o que pede ação e o que chegou por último;
  *   - Inscrições (?v=inscricoes): filtros, busca, planilha, e a ficha de cada uma (?v=inscricao&id=)
  *     com o histórico e o lembrete de horários à mão (lib/secretaria.php);
  *   - Horários dos alunos (?v=horarios): mapa por curso, lista e planilha (lib/horarios.php);
  *   - Mensagens do chat (?v=mensagens): lista, detalhe e resposta por e-mail no padrão da instituição;
+ *   - Turmas sob demanda (?v=turmas): pedidos de turma fechada (15 a 30 alunos) e listas de interesse por
+ *     curso e idioma, com a soma de alunos, a situação de cada pedido e a planilha (lib/turmas.php);
  *   - Ponto da sede (?v=ponto): horas doadas por voluntários e diretoria e presença dos outros vínculos,
  *     com a ficha de cada um (?v=colaborador&id=): termo de adesão, correções, declaração de horas e
  *     lembretes; saídas informadas pelas pessoas; importar a planilha (?v=importar); presença dos alunos
@@ -34,6 +36,7 @@ const PN_ICONES = [
     'inscricoes' => '<path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
     'horarios' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
     'mensagens' => '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
+    'turmas' => '<circle cx="9" cy="8" r="3"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14h1a4 4 0 0 1 4 4v1"/>',
     'ponto' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     'comunicacao' => '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
     'escola' => '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
@@ -82,6 +85,7 @@ function pn_menu(string $aba): string
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
         'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
+        'turmas' => ['painel.php?v=turmas', 'Turmas sob demanda', mcp_turma_contar()['acao'], 'pedidos de turma fechada sem resposta ou listas que chegaram a ' . MCP_TURMA_MINIMO],
         'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar() + mcp_ponto_saidas_informadas_contar(),
             'pendências (saídas esquecidas, saídas informadas para conferir e termos de adesão)'],
         'comunicacao' => ['painel.php?v=comunicacao', 'Comunicação', mcp_avisos_fila_manual_contar(), 'mensagens na fila do WhatsApp'],
@@ -228,6 +232,7 @@ table.mapa{width:100%;min-width:320px;border-collapse:separate;border-spacing:4p
 .mapa tbody th{text-align:left;color:var(--black);font-size:.85rem;letter-spacing:0;text-transform:none;white-space:nowrap}
 .mapa th small{display:block;font-weight:500;color:var(--muted);font-size:.74rem}
 .mapa td.celula{text-align:center;font-weight:800;font-size:1.05rem;border:0;border-radius:10px;padding:12px 4px;color:var(--black)}
+.progresso{height:8px;background:var(--soft);border-radius:999px;overflow:hidden;margin:6px 0 2px;box-shadow:inset 0 0 0 1px var(--line)}.progresso i{display:block;height:100%;background:var(--red)}
 .contas{list-style:none;margin:0;padding:0;font-size:.92rem}.contas li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
 .contas li:last-child{border-bottom:0}.contas b{color:var(--black)}
 .destaques{margin:12px 0 0;font-size:.9rem;color:var(--text)}
@@ -349,6 +354,114 @@ function pn_lista(string $usuario): never
         $corpo .= '<div class="paginacao">' . $paginacao . '</div>';
     }
     pn_pagina('Mensagens', $corpo, $usuario, true, 'mensagens');
+}
+
+/** Formulário de situação de um pedido (ou de todos os abertos de uma lista, com $id = 0). */
+function pn_turma_form_status(string $usuario, int $id, string $atual, array $volta, string $rotulo = 'Salvar'): string
+{
+    $acao = $id > 0 ? 'turma_status' : 'turma_lista';
+    $opcoes = '';
+    foreach (MCP_TURMA_STATUS as $chave => $nome) {
+        $opcoes .= '<option value="' . $chave . '"' . ($chave === $atual ? ' selected' : '') . '>' . pn_e($nome) . '</option>';
+    }
+    $ocultos = '';
+    foreach ($volta as $k => $v) {
+        $ocultos .= '<input type="hidden" name="' . pn_e($k) . '" value="' . pn_e($v) . '">';
+    }
+    return '<form class="busca" style="margin:8px 0 0" method="post" action="painel.php"><input type="hidden" name="acao" value="' . $acao . '"><input type="hidden" name="id" value="' . $id . '">'
+        . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, $acao, $id)) . '">' . $ocultos
+        . '<label class="sr" for="st-' . $id . '">Situação</label><select id="st-' . $id . '" name="status" style="flex:1 1 140px">' . $opcoes . '</select>'
+        . '<button class="btn btn-outline" type="submit">' . pn_e($rotulo) . '</button></form>';
+}
+
+/** Linhas da tabela de pedidos (turma fechada ou de uma lista), com a situação editável. */
+function pn_turma_linhas(string $usuario, array $linhas, array $volta): string
+{
+    $tons = ['novo' => 'erro', 'em_contato' => 'alerta', 'turma_marcada' => 'ok', 'arquivado' => 'neutro'];
+    $html = '';
+    foreach ($linhas as $l) {
+        $tel = (string) $l['telefone'];
+        $local = $l['local'] === 'outro' ? '<small><span class="selo alerta">Fora da sede</span> ' . pn_e((string) $l['local_endereco']) . '</small>' : '<small>Na sede</small>';
+        $obs = $l['observacoes'] ? '<details style="margin-top:6px"><summary style="cursor:pointer;font-size:.85rem">Observações</summary><p class="mensagem" style="font-size:.88rem;margin-top:6px">' . pn_e((string) $l['observacoes']) . '</p></details>' : '';
+        $html .= '<tr><td data-rotulo="Recebido">' . pn_e(pn_data((string) $l['criado_em'])) . '<small>' . pn_e((string) $l['protocolo']) . '</small></td>'
+            . '<td class="aluno"><b>' . pn_e((string) $l['nome']) . '</b>' . ($l['organizacao'] ? '<small>' . pn_e((string) $l['organizacao']) . '</small>' : '')
+            . '<small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
+            . '<small class="tel"><a href="https://wa.me/55' . pn_e(mcp_digitos($tel)) . '" target="_blank" rel="noopener">' . pn_e(mcp_telefone_bonito($tel)) . '</a></small></td>'
+            . '<td data-rotulo="Turma"><b>' . pn_e(mcp_turma_alunos((int) $l['pessoas'])) . '</b><small>' . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</small>' . $local
+            . ($l['periodo'] ? '<small>Prefere: ' . pn_e((string) $l['periodo']) . '</small>' : '') . $obs . '</td>'
+            . '<td data-rotulo="Situação"><span class="selo ' . ($tons[$l['status']] ?? 'neutro') . '">' . pn_e(MCP_TURMA_STATUS[$l['status']] ?? (string) $l['status']) . '</span>'
+            . ($l['status_em'] ? '<small>' . pn_e(pn_data((string) $l['status_em'])) . '</small>' : '')
+            . pn_turma_form_status($usuario, (int) $l['id'], (string) $l['status'], $volta) . '</td></tr>';
+    }
+    return $html;
+}
+
+/**
+ * Turmas sob demanda: pedidos de turma fechada (prioridade) e listas de interesse por curso e idioma. Com
+ * ?curso=&idioma=, uma lista só, com quem está nela. ?f=todos inclui marcados e arquivados; ?csv=1 baixa.
+ */
+function pn_turmas(string $usuario, string $aviso, string $classe): never
+{
+    $cursos = mcp_turma_cursos();
+    $curso = mcp_texto($_GET['curso'] ?? '', 80);
+    $idioma = mcp_texto($_GET['idioma'] ?? '', 2);
+    $naLista = isset($cursos[$curso]) && isset(MCP_TURMA_IDIOMAS[$idioma]);
+    $todos = mcp_texto($_GET['f'] ?? '', 10) === 'todos';
+    $params = array_filter(['v' => 'turmas', 'curso' => $naLista ? $curso : '', 'idioma' => $naLista ? $idioma : '', 'f' => $todos ? 'todos' : ''], static fn(string $x): bool => $x !== '');
+    $url = static fn(array $extra): string => 'painel.php?' . http_build_query(array_merge($params, $extra));
+    $volta = array_intersect_key($params, ['curso' => 1, 'idioma' => 1, 'f' => 1]);
+    $filtro = $naLista ? ['tipo' => 'lista', 'curso' => $curso, 'idioma' => $idioma] : ['tipo' => 'fechada'];
+    $filtro['status'] = $todos ? 'todos' : null;
+    if (isset($_GET['csv'])) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="turmas-' . ($naLista ? preg_replace('/[^a-z0-9-]/', '', $curso) . '-' . $idioma : 'fechadas') . '-' . gmdate('Y-m-d') . '.csv"');
+        mcp_registrar(null, 'painel_turmas_csv', $usuario . ' · ' . ($naLista ? "$curso · $idioma" : 'fechadas'));
+        echo mcp_turma_csv(mcp_turma_listar($filtro, 5000));
+        exit;
+    }
+    $linhas = mcp_turma_listar($filtro, 200);
+    $pilulas = '<div class="filtros"><a class="pilula' . (!$todos ? ' ativo' : '') . '" href="' . pn_e($url(['f' => null])) . '">Em aberto</a>'
+        . '<a class="pilula' . ($todos ? ' ativo' : '') . '" href="' . pn_e($url(['f' => 'todos'])) . '">Todos, inclusive marcados e arquivados</a></div>';
+    $tabela = '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Recebido</th><th>Quem</th><th>Turma</th><th>Situação</th></tr></thead><tbody>'
+        . (($html = pn_turma_linhas($usuario, $linhas, $volta)) !== '' ? $html : '<tr><td colspan="4" class="vazio">Nenhum pedido aqui.</td></tr>') . '</tbody></table></div>';
+    $baixar = $linhas ? '<a class="btn btn-outline" href="' . pn_e($url(['csv' => 1])) . '">Baixar planilha</a>' : '';
+    $avisoHtml = $aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '';
+
+    if ($naLista) {
+        $rotulo = mcp_turma_rotulo($cursos[$curso]['nome'], $idioma);
+        $soma = (int) (mcp_turma_demanda($curso, $idioma)[0]['pessoas'] ?? 0);
+        $pr = mcp_turma_progresso($soma);
+        $corpo = '<a class="voltar" href="painel.php?v=turmas">← Voltar para as turmas sob demanda</a>' . $avisoHtml
+            . '<div class="cabeca"><div><p class="eyebrow">Lista de interesse</p><h1>' . pn_e($rotulo) . '</h1>'
+            . '<p class="nota">' . pn_e(mcp_turma_alunos($pr['soma'])) . ' em pedidos abertos. '
+            . ($pr['pronta'] ? 'Já dá para abrir a turma: avise todos e, quando a turma estiver marcada, mude a situação abaixo.' : 'Faltam ' . $pr['faltam'] . ' para ' . MCP_TURMA_MINIMO . '.') . '</p>'
+            . '<div class="progresso" style="max-width:420px"><i style="width:' . $pr['pct'] . '%"></i></div></div>' . $baixar . '</div>'
+            . $pilulas . $tabela
+            . ($pr['soma'] > 0 ? '<div class="cartao" style="margin-top:18px"><h2>Mudar todos os pedidos em aberto desta lista</h2>'
+                . '<p class="nota" style="margin:0">Use quando a turma abrir: "Turma marcada" tira os pedidos da lista. Cada pessoa continua sendo avisada por você, pela planilha.</p>'
+                . pn_turma_form_status($usuario, 0, 'turma_marcada', ['curso' => $curso, 'idioma' => $idioma], 'Mudar todos') . '</div>' : '');
+        pn_pagina($rotulo, $corpo, $usuario, true, 'turmas');
+    }
+
+    $listas = '';
+    foreach (mcp_turma_demanda() as $l) {
+        $pr = mcp_turma_progresso($l['pessoas']);
+        $listas .= '<li><div><a href="' . pn_e('painel.php?' . http_build_query(['v' => 'turmas', 'curso' => $l['curso_slug'], 'idioma' => $l['idioma']])) . '">'
+            . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</a>'
+            . '<div class="progresso"><i style="width:' . $pr['pct'] . '%"></i></div>'
+            . '<small>' . pn_e(mcp_turma_alunos($pr['soma'])) . ' de ' . MCP_TURMA_MINIMO . ' · ' . $l['pedidos'] . ($l['pedidos'] === 1 ? ' pedido' : ' pedidos') . ' · último em ' . pn_e(pn_data((string) $l['ultimo'])) . '</small></div>'
+            . ($pr['pronta'] ? '<span class="selo ok">Pronta para abrir</span>' : '<span class="selo neutro">Faltam ' . $pr['faltam'] . '</span>') . '</li>';
+    }
+    $corpo = $avisoHtml
+        . '<div class="cabeca"><div><p class="eyebrow">Matrícula cursos presenciais</p><h1>Turmas sob demanda</h1>'
+        . '<p class="nota">Turmas de ' . MCP_TURMA_MINIMO . ' a ' . MCP_TURMA_MAXIMO . ' alunos, no mesmo valor por pessoa dos cursos. Quem já tem o grupo tem prioridade; '
+        . 'quem não tem entra na lista de interesse do curso e do idioma e é avisado quando a soma chegar a ' . MCP_TURMA_MINIMO . '. Aulas fora da sede precisam de aprovação.</p></div></div>'
+        . '<h2 style="margin-top:22px">Pedidos de turma fechada</h2>'
+        . '<div class="cabeca" style="align-items:center">' . $pilulas . $baixar . '</div>' . $tabela
+        . '<div class="cartao" style="margin-top:22px"><h2>Listas de interesse em aberto</h2>'
+        . ($listas !== '' ? '<ul class="lista-curta">' . $listas . '</ul>' : '<p class="vazio" style="padding:20px">Ninguém na lista por enquanto.</p>')
+        . '<p class="nota">Cada lista é um curso num idioma. Em português, só o curso dos jovens tem lista: os outros têm turma aberta e a matrícula é na hora.</p></div>';
+    pn_pagina('Turmas sob demanda', $corpo, $usuario, true, 'turmas');
 }
 
 /** Dias e horários preferidos: mapa por curso, destaques, contagens, lista e planilha (?csv=1). */
@@ -1231,6 +1344,8 @@ $avisos = [
     'ap_desat' => ['Aparelho desativado. Ele não registra mais o ponto.', 'ok'],
     'cod_on' => ['Código do dia ligado: o celular passa a pedir os 4 números que aparecem no tablet da recepção.', 'ok'],
     'cod_off' => ['Código do dia desligado: pelo celular, voltam a bastar o CPF e a localização.', 'ok'],
+    'ts_ok' => ['Situação do pedido atualizada.', 'ok'],
+    'ts_lista' => ['Situação atualizada em todos os pedidos em aberto da lista.', 'ok'],
 ] + PC_AVISOS;
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
@@ -1286,6 +1401,28 @@ if ($metodo === 'POST') {
         $resultado = mcp_secretaria_lembrete($inscricao, $sessao);
         mcp_registrar(null, 'painel_lembrete', "#$id · $sessao · $resultado");
         pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago'][$resultado]);
+    }
+
+    // Turmas sob demanda (lib/turmas.php): situação de um pedido ou de todos os abertos de uma lista. Só com sessão.
+    if ($acao === 'turma_status' || $acao === 'turma_lista') {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($sessao === null || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        $status = mcp_texto($_POST['status'] ?? '', 20);
+        $curso = mcp_texto($_POST['curso'] ?? '', 80);
+        $idioma = mcp_texto($_POST['idioma'] ?? '', 2);
+        $lista = isset(mcp_turma_cursos()[$curso]) && isset(MCP_TURMA_IDIOMAS[$idioma]);
+        $volta = 'v=turmas' . ($lista ? '&curso=' . rawurlencode($curso) . '&idioma=' . $idioma : '') . (mcp_texto($_POST['f'] ?? '', 10) === 'todos' ? '&f=todos' : '');
+        if ($acao === 'turma_lista') {
+            $n = $lista ? mcp_turma_status_lista($curso, $idioma, $status, $sessao) : 0;
+            mcp_registrar(null, 'painel_turma_lista', "$curso · $idioma · $status · $n · $sessao");
+            pn_redirecionar($volta . '&ok=ts_lista');
+        }
+        if (mcp_turma_status($id, $status, $sessao)) {
+            mcp_registrar(null, 'painel_turma_status', "#$id · $status · $sessao");
+        }
+        pn_redirecionar($volta . '&ok=ts_ok');
     }
 
     // Comunicação e acréscimos do ponto (lib/painel_comunicacao.php). Só com sessão e o token do formulário.
@@ -1481,6 +1618,9 @@ if ($secao === 'importar') {
 }
 if ($secao === 'comunicacao') {
     pc_comunicacao($sessao, $aviso, $classe);
+}
+if ($secao === 'turmas') {
+    pn_turmas($sessao, $aviso, $classe);
 }
 if ($secao === 'comunicado') {
     pc_comunicado($sessao, isset($_GET['novo']) ? null : (int) ($_GET['id'] ?? 0), $aviso, $classe);
