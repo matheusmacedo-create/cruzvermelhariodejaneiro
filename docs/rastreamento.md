@@ -50,6 +50,15 @@ navegação interna sem UTM, para não reiniciar a sessão do GA4. O e-mail de r
 `utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto` no botão "Concluir pagamento":
 quem volta por ele aparece no GA4 como tráfego desse e-mail.
 
+## Turmas sob demanda (04/10/2026)
+
+| Momento | Meta | GA4 |
+| --- | --- | --- |
+| Pedido de turma fechada ou entrada na lista de interesse | `SubmitApplication` (content_category = `turma-fechada` ou `turma-lista`, content_name = curso) e o mesmo evento pela API de Conversões, com o mesmo id | `turma_pedido` (turma_tipo, curso, idioma, alunos) |
+| Clique num botão ou link que abre o formulário | (nada) | `turma_abrir` (origem, curso) |
+
+Não usa `Lead` de propósito: o `Lead` é do funil pago (envio do formulário do checkout).
+
 ## Carregamento adiado (19/09, à noite)
 
 Os scripts `gtag.js` e `fbevents.js` passaram a carregar depois do `load` da página, em momento

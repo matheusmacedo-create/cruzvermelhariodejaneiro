@@ -156,6 +156,13 @@ try {
     verificar('api: outro site não envia', $pedir([], ['Content-Type: application/json', 'Origin: https://outro-site.exemplo'])[0], 403);
     verificar('api: só POST JSON', [http($base . 'turmas.php')[0], $pedir([], ['Content-Type: text/plain'])[0]], [405, 415]);
 
+    // Reenvio do mesmo e-mail (a confirmação foi para o spam, mudou o número de alunos) não infla a lista: conta o maior.
+    $emailRepetido = "t-$sufixo-99@exemplo.org";
+    $pedir(['curso' => 'primeiros-socorros-basico', 'idioma' => 'en', 'pessoas' => 2, 'email' => $emailRepetido]);
+    $pedir(['curso' => 'primeiros-socorros-basico', 'idioma' => 'en', 'pessoas' => 5, 'email' => $emailRepetido]);
+    $basico = mcp_turma_demanda('primeiros-socorros-basico', 'en')[0] ?? [];
+    verificar('banco: o mesmo e-mail conta uma vez na lista, pelo maior pedido', [$basico['pessoas'] ?? null, $basico['pedidos'] ?? null], [4 + 5, 2]);
+
     // A lista dos jovens chega a 15 com outro pedido de 9: o aviso à secretaria vira "lista completa".
     [$st, $d] = $pedir(['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt', 'pessoas' => 9]);
     $demanda = mcp_turma_demanda('primeiros-socorros-jovens', 'pt')[0] ?? [];
@@ -189,9 +196,18 @@ try {
         $pedido((string) $fechada['protocolo'])['status_por'] ?? null], [303, 'painel.php?v=turmas&ok=ts_ok', 'em_contato', 'contato@exemplo.org']);
     $mudar('turma_status', $id, 'arquivado', 'token-errado');
     verificar('portal: token errado não muda nada', $pedido((string) $fechada['protocolo'])['status'] ?? null, 'em_contato');
-    [$st, $cab] = $mudar('turma_lista', 0, 'turma_marcada', mcp_painel_csrf('contato@exemplo.org', 'turma_lista', 0), ['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt']);
-    verificar('portal: "Mudar todos" marca a lista dos jovens e ela sai das listas em aberto', [$st, $cab['location'] ?? null, mcp_turma_demanda('primeiros-socorros-jovens', 'pt'),
-        count(mcp_turma_demanda('primeiros-socorros-basico', 'en'))], [303, 'painel.php?v=turmas&curso=primeiros-socorros-jovens&idioma=pt&ok=ts_lista', [], 1]);
+    // A secretaria vê a lista dos jovens; antes do clique em "Mudar todos", chega mais um pedido (fica de fora).
+    preg_match('/name="ate" value="(\d+)"/', $html, $ate);
+    // Direto no banco: pelo formulário, seria o 7º pedido do mesmo IP na hora, e o freio (6) recusaria.
+    $tarde = mcp_turma_conferir(['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt', 'pessoas' => 2, 'nome' => 'Pessoa Tarde',
+        'email' => "t-$sufixo-98@exemplo.org", 'telefone' => '21999990000', 'consentimento' => true]);
+    mcp_turma_gravar($tarde['dados']);
+    [$st, $cab] = $mudar('turma_lista', 0, 'turma_marcada', mcp_painel_csrf('contato@exemplo.org', 'turma_lista', 0), ['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt', 'ate' => $ate[1] ?? '0']);
+    verificar('portal: "Mudar todos" marca só quem estava na tela; quem entrou depois continua na lista', [$st, $cab['location'] ?? null,
+        mcp_turma_demanda('primeiros-socorros-jovens', 'pt')[0]['pessoas'] ?? null, count(mcp_turma_demanda('primeiros-socorros-basico', 'en'))],
+        [303, 'painel.php?v=turmas&curso=primeiros-socorros-jovens&idioma=pt&ok=ts_lista', 2, 1]);
+    verificar('portal: "Mudar todos" sem o limite da tela não muda nada', mcp_turma_status_lista('primeiros-socorros-jovens', 'pt', 'arquivado', 'teste', 0), 0);
+    $db->exec("UPDATE mcp_turmas_pedidos SET status = 'arquivado' WHERE email = 't-$sufixo-98@exemplo.org'");
     verificar('portal: nada mais pede ação', mcp_turma_contar(), ['fechadas_novas' => 0, 'listas_prontas' => 0, 'acao' => 0]);
 
     $errosPhp = array_values(array_filter(file($logErros) ?: [], static fn(string $l): bool => (bool) preg_match('/PHP (Warning|Notice|Deprecated|Fatal|Parse)|erro não tratado/', $l)));

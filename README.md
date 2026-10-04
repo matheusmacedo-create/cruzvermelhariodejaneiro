@@ -417,8 +417,16 @@ quem pediu. O assunto começa com `[Turma fechada]`, `[Lista de interesse]` ou, 
 `[Lista completa]`. A pessoa recebe a confirmação com o protocolo `TS-aammdd-NNNN`, o que acontece agora e
 o valor por aluno.
 
-**Medição.** O envio dispara `Lead` no Pixel e `generate_lead` no GA4. A API de Conversões manda o mesmo
-`Lead`, com o mesmo id e só com "sim" para marketing, como o `Contact` do chat.
+**Medição.** O envio dispara `SubmitApplication` no Pixel e `turma_pedido` no GA4 (com `turma_tipo`, `curso`,
+`idioma` e `alunos`). A API de Conversões manda o mesmo `SubmitApplication`, com o mesmo id e só com "sim" para
+marketing, como o `Contact` do chat. Não é `Lead`: o `Lead` e o `generate_lead` são do funil pago do checkout,
+e misturar pedidos de turma neles atrapalharia a otimização dos anúncios de matrícula (corrigido em 04/10,
+depois da publicação; até então o formulário mandava `Lead`).
+
+**Soma da lista:** cada e-mail conta uma vez, pelo maior pedido em aberto. Quem reenvia o formulário não
+infla a lista nem dispara um falso "lista completa". O "Mudar todos" só mexe nos pedidos que estavam na tela
+(id até o maior mostrado): quem entrou na lista depois continua nela. Uma lista de curso que saiu do catálogo
+continua abrindo no portal. As três correções vieram da revisão adversarial de 04/10.
 
 **Proteções:** as mesmas do chat de contato. Só aceita POST JSON vindo do próprio site, tem campo
 armadilha e freios de 6 pedidos por IP e 4 por e-mail, por hora.
