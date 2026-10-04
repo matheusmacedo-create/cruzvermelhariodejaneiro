@@ -262,7 +262,9 @@ Redação a escolha das contas (só a CVB marcada) e tira o CPF do envio. Migra�
    usar o "Regerar". Em 02/10, só o índice `/noticias/` tinha o bloco que trava; 17 das 19 matérias
    estavam sem Pixel, e uma matéria e `/transparencia/` tinham o bloco antigo, que baixa o Pixel
    sem perguntar.
-7. **Escola**: tirar o `fbq('consent', 'revoke');` antes do `init` (seção de 04/10). Enquanto isso, o Pixel
-   da escola não manda nada. A política de privacidade da escola diz que à Meta vão só as páginas vistas, e só
+7. **Escola**: feito em 04/10 (matheusnsp/ESCOLA_CRUZ_VERMELHA#77, publicado às ~18h20). O `revoke` saiu de
+   antes do `init`, e a conferência no navegador mostrou o PageView depois do "Aceitar todos". A política da
+   escola passou a citar as compras avisadas à Meta (legítimo interesse, com oposição). Antes da correção, o Pixel
+   da escola não mandava nada. A política de privacidade da escola diz que à Meta vão só as páginas vistas, e só
    com permissão. Antes de ligar a API de Conversões da Redação para a conta CVB, ela precisa dizer também que
    a compra (nome, e-mail e telefone em código) vai à Meta, e com qual base legal.
