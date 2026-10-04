@@ -193,6 +193,38 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
   freios, o `r=999` e a coluna ausente) e `scripts/conferir_pixel.js` (no navegador, o mesmo id no Pixel e
   no repasse, também para quem responde ao aviso de novo; nada sem permissão).
 
+## Vendas de 03/10 sem Compra no Gerenciador (auditoria de 04/10/2026)
+
+As duas vendas de 03/10 (20h21 e 20h23, cartão, "Taxa de inscrição — Primeiros Socorros Básico") caíram na
+conta **CVB** da Únicopag, a da **plataforma da escola**. O checkout deste site cobra pela conta "Matricula
+automatica", com o produto "<Curso> — Inscrição" (`api/pagamentos.php`), e não teve venda nesse dia. A página
+de matrícula leva à escola pelo link "Veja este curso na plataforma da escola" de cada curso. O caminho exato
+das duas pessoas não aparece: as transações chegam sem origem nem campanha.
+
+Nenhum caminho avisava a Meta dessas compras:
+
+- **O Pixel da escola está travado**, com o mesmo defeito corrigido aqui em 02/10: o bloco de medição da escola
+  (`escola.cursoscruzvermelha.org`, todas as páginas conferidas no ar em 04/10) tem `fbq('consent', 'revoke');`
+  antes do `fbq('init', '2224500131617302')`, e o `fbevents.js` só é baixado depois do "Aceitar". A fila para no
+  `revoke` e nenhum evento sai, nem de quem aceitou. Correção, no repositório da escola: apagar só essa linha.
+  O `aplicar()` do mesmo bloco já chama `fbq('consent', c.marketing ? 'grant' : 'revoke')` com o Pixel carregado.
+- **O pagamento da escola acontece na página da Únicopag**, que o Pixel não vê. Quem avisa é a API de Conversões
+  da Redação (ARQUITETURA §8.6), que lê as vendas da Únicopag. Em 04/10 ela ainda não estava ligada.
+- **A API de Conversões deste site continua sem o token** (`config-meta.php`). Isso não afetou essas duas
+  vendas, mas faz falta nas próximas vendas pelo checkout deste site.
+
+Conferência das páginas no ar (sitemaps e páginas do funil, 83 endereços): todas as deste domínio têm o bloco
+corrigido, menos duas, ambas geradas pela Redação:
+
+- `/acervo/` (publicada em 24/09) está **sem** medição nenhuma. Ela volta com "Atualizar as páginas do acervo", na área Acervo da Redação.
+- `/transparencia/` (26/09) está com o **bloco antigo**, que baixa o Pixel e o GA4 sem perguntar. Ela volta
+  com "Atualizar a página no site", na área Transparência da Redação.
+
+A Redação não pode mandar as vendas da conta "Matricula automatica": o aviso deste site promete que nome, e-mail
+e telefone só vão à Meta com o marketing ligado, e a compra seria contada duas vezes (o id do Pixel é o id da
+compra, o da Redação é `unicopag:<hash>`). Por isso a Redação passou a ter a escolha de contas, e a dessa conta
+fica desmarcada.
+
 ## O que a verificação mostrou e não é problema
 
 - **Cada hit do GA4 sai duas vezes**, para `analytics.google.com` (`G-HDYZZ5JZHF`) e para
@@ -216,7 +248,8 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
    escola com `cruzvermelhariodejaneiro.org`). O site principal já decora os links para a escola.
 2. **Vercel**: GA4 em `doar.` e `puncaovenosav1.`; Pixel `Donate`/`Purchase` na confirmação da
    doação, com `value` e `currency`.
-3. **Redação**: Pixel nas notícias, termos e privacidade.
+3. **Redação**: Pixel nas notícias, termos e privacidade. Feito: em 04/10 as 19 matérias, o índice, termos e
+   privacidade estavam com o bloco corrigido. Faltam `/acervo/` e `/transparencia/` (seção de 04/10).
 4. **API de Conversões**: feita em 02/10/2026 (seção acima). Falta o token no servidor (`config-meta.php`).
 5. **Correspondência avançada no navegador** (e-mail e telefone em hash no `fbq('init')` de quem deu
    permissão): o servidor já manda esses dados na inscrição; no navegador, é opcional.
@@ -225,3 +258,7 @@ revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
    usar o "Regerar". Em 02/10, só o índice `/noticias/` tinha o bloco que trava; 17 das 19 matérias
    estavam sem Pixel, e uma matéria e `/transparencia/` tinham o bloco antigo, que baixa o Pixel
    sem perguntar.
+7. **Escola**: tirar o `fbq('consent', 'revoke');` antes do `init` (seção de 04/10). Enquanto isso, o Pixel
+   da escola não manda nada. A política de privacidade da escola diz que à Meta vão só as páginas vistas, e só
+   com permissão. Antes de ligar a API de Conversões da Redação para a conta CVB, ela precisa dizer também que
+   a compra (nome, e-mail e telefone em código) vai à Meta, e com qual base legal.
