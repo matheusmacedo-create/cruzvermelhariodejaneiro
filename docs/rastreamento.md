@@ -210,8 +210,8 @@ Nenhum caminho avisava a Meta dessas compras:
   O `aplicar()` do mesmo bloco já chama `fbq('consent', c.marketing ? 'grant' : 'revoke')` com o Pixel carregado.
 - **O pagamento da escola acontece na página da Únicopag**, que o Pixel não vê. Quem avisa é a API de Conversões
   da Redação (ARQUITETURA §8.6), que lê as vendas da Únicopag. Em 04/10 ela ainda não estava ligada.
-- **A API de Conversões deste site continua sem o token** (`config-meta.php`). Isso não afetou essas duas
-  vendas, mas faz falta nas próximas vendas pelo checkout deste site.
+- **A API de Conversões deste site estava sem o token** (`config-meta.php`). Isso não afetou essas duas
+  vendas. O token entrou no servidor em 04/10, às 17h26 (Pendências, item 4).
 
 Conferência das páginas no ar (sitemaps e páginas do funil, 83 endereços): todas as deste domínio têm o bloco
 corrigido, menos duas, ambas geradas pela Redação:
@@ -251,7 +251,10 @@ Redação a escolha das contas (só a CVB marcada) e tira o CPF do envio. Migra�
    doação, com `value` e `currency`.
 3. **Redação**: Pixel nas notícias, termos e privacidade. Feito: em 04/10 as 19 matérias, o índice, termos e
    privacidade estavam com o bloco corrigido. Faltam `/acervo/` e `/transparencia/` (seção de 04/10).
-4. **API de Conversões**: feita em 02/10/2026 (seção acima). Falta o token no servidor (`config-meta.php`).
+4. **API de Conversões**: feita em 02/10/2026 (seção acima). Token no servidor desde 04/10/2026, 17h26
+   (`config-meta.php`, criado pelo conector da Hostinger; responde 403 pelo navegador). É o token do conjunto de
+   dados (permissão `read_ads_dataset_quality`): envia eventos, mas não lê o pixel (`GET /{pixel}` dá "Missing
+   Permission"). Ele passou pela conversa em que foi configurado: trocar por um novo quando possível.
 5. **Correspondência avançada no navegador** (e-mail e telefone em hash no `fbq('init')` de quem deu
    permissão): o servidor já manda esses dados na inscrição; no navegador, é opcional.
 6. **Redação**: o modelo das notícias (`lib/site/analytics.ts`) tinha a mesma linha que travava o
