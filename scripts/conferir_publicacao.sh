@@ -46,11 +46,12 @@ api/pagamentos.php|405|
 api/webhook.php|405|
 api/comparecimento.php|404|
 api/medicao.php|405|
+api/turmas.php|405|
 LISTA
 
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
-  api/lib/avisos.php api/lib/db.php api/lib/config.php api/comparecimentos.php api/lembretes.php; do
+  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done
