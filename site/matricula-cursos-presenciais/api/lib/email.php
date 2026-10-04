@@ -348,7 +348,9 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
         . mcp_passos([
             ['Pagamento confirmado na hora', 'O comprovante chega neste e-mail e sua vaga fica reservada.'],
             mcp_email_passo_escola(),
-            ['O valor do curso é pago depois', 'Direto na plataforma da escola, quando a turma estiver confirmada.'],
+            ['O valor do curso é pago depois', mcp_escola_configurada()
+                ? 'Na plataforma da escola, à vista ou parcelado com juros, nas condições informadas lá.'
+                : 'Direto na plataforma da escola, quando a turma estiver confirmada.'],
             ['Você conclui e recebe o certificado', 'O certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária.'],
         ])
         . mcp_email_bloco_certificado((string) $inscricao['curso_slug'], $curso)

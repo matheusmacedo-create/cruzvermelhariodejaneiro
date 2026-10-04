@@ -49,6 +49,9 @@ def pagina(curso: dict, insc: str, formato: str) -> str:
     nome = NOME_CURTO.get(s, curso["nome"])
     promessa = COPY_CURSO[s]["promessa"]
     meta = f'{curso["carga_horaria"]} presenciais · Centro do Rio'
+    # O preço inteiro, como na página: a inscrição agora e o curso depois (nunca só os R$ 99).
+    v = curso.get("valor_curso_centavos")
+    valor_curso = f"+ curso R$ {int(v) // 100}, pago depois" if v else "+ valor do curso, pago depois"
     return f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=block" rel="stylesheet">
 <style>
@@ -81,7 +84,7 @@ def pagina(curso: dict, insc: str, formato: str) -> str:
   <p class="promessa">{html.escape(promessa)}</p>
   <p class="peso">{html.escape(PESO)}</p>
   <div class="rodape">
-    <p class="preco">Inscrição<b>{html.escape(insc)}</b>garante sua vaga</p>
+    <p class="preco">Inscrição<b>{html.escape(insc)}</b>garante sua vaga<br>{html.escape(valor_curso)}</p>
     <span class="cta">Fazer matrícula</span>
   </div>
 </div></body></html>"""

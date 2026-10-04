@@ -205,17 +205,29 @@ Cruz Vermelha. **O PDF não entra no repositório nem no site.**
   matrícula automática, "Sua matrícula entra na turma"; sem ela, "A secretaria confirma turma e horário"), entra o
   passo "Você conclui e recebe o certificado" e o bloco do certificado do curso.
 - **Lembrete único do PIX** (`api/lib/recuperacao.php`, rodado pelo `api/lembretes.php` de hora em hora): a quem
-  gerou o PIX há 2 a 20 horas e não pagou. Só a inscrição mais recente do e-mail e curso, nunca se a pessoa já pagou
-  o curso noutra inscrição, um lembrete por e-mail e curso (o registro `email_pix_lembrete` ou
-  `email_pix_lembrete_falhou` trava o próximo), no máximo 20 por rodada. Antes de mandar, consulta a Unicopag: se a
-  consulta falha, não manda (tenta na hora seguinte); se está pago, aplica o pagamento. Assunto "Sua inscrição em
+  gerou o PIX há 2 a 20 horas e não pagou. A pessoa é o e-mail ou o CPF (quem corrige o e-mail digitado errado e
+  paga não recebe "falta o PIX" no endereço velho). Só a inscrição pendente mais recente (um cartão recusado depois
+  não cancela o lembrete do PIX), nunca se a pessoa já pagou o curso, um lembrete por pessoa e curso (o registro
+  `email_pix_lembrete` ou `email_pix_lembrete_falhou` trava o próximo), no máximo 20 por rodada. Antes de mandar,
+  consulta a Unicopag: se a consulta falha ou vem um status desconhecido, não manda (tenta na hora seguinte); se está
+  pago, aplica o pagamento. O texto de desistência é só o dos 7 dias, depois de pagar: antes do pagamento a vaga não
+  está reservada. Assunto "Sua inscrição em
   <curso> continua aberta: falta só o PIX", com o certificado antes do botão e `utm_campaign=pix-lembrete`.
   Teste: `scripts/testar_recuperacao_integracao.php` (banco local).
 - **Tela do PIX** (checkout e pendente, `static/checkout.js`): o certificado do curso abaixo do código.
 - **Criativos de remarketing** (`scripts/gerar_criativos_certificado.py` → `docs/criativos/`): feed 1080×1080 e
   stories 1080×1920 de Punção Venosa e Primeiros Socorros Básico, "Coloque o seu nome neste certificado.", com
-  "Imagem de modelo". Público sugerido: quem viu a página de matrícula ou iniciou o checkout nos últimos 14 dias e
+  "Imagem de modelo" e o preço inteiro (inscrição agora + curso depois, nunca só os R$ 99). Público sugerido: quem viu a página de matrícula ou iniciou o checkout nos últimos 14 dias e
   não comprou.
+
+**Revisão adversarial (três revisores, cada achado conferido):** além do que está acima, entraram "Inclui Lei Lucas."
+de volta no comparador, a caixa "O que você aprende" em linha cheia nos detalhes (no computador ela empurrava as
+dúvidas para baixo), o certificado do topo com `loading="lazy"` (ele fica escondido no celular e no modo curso), a
+troca de certificado no JS só para curso com imagem (`data-cert`), a pergunta da objeção do Lei Lucas sem perguntar se
+o curso "serve para a Lei Lucas da minha escola", a do Bombeiro Civil sem fechar o custo total (com o parcelamento), o
+passo 3 do e-mail do PIX sem "quando a turma estiver confirmada" com a matrícula automática, e a ordem de publicação
+(recuperacao.php e lib.php antes do email.php). Saiu da seção do certificado a linha "assinado pela Coordenação, com o
+conteúdo no verso": só foi vista no modelo de Punção Venosa.
 
 **Para o responsável decidir:** a observação "Inclui Lei Lucas." do Primeiros Socorros Básico (no `cursos.json`) é
 ambígua ao lado do curso Lei Lucas; o verso do certificado ("registro em livro", "válido por 2 anos") não foi usado

@@ -1,6 +1,7 @@
 # Redesenho da página de matrícula + certificado de amostra, copy por curso e recuperação do lead (04/10/2026).
-# Ordem: imagens antes de quem as cita; recuperacao.php antes de email.php e lib.php (que o carregam); o CSS e o JS
-# antes das páginas que levam o hash; index.html por último.
+# Ordem: imagens antes de quem as cita; recuperacao.php, depois lib.php (que passa a carregá-lo) e só então
+# email.php (que usa as funções dele: antes do lib.php novo, a criação do PIX daria erro); o CSS e o JS antes das
+# páginas que levam o hash; index.html por último.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-certificado.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-certificado.txt
 # Desfazer: scripts/desfazer_publicacao.sh f47323c scripts/publicacao-certificado.txt
@@ -26,8 +27,8 @@ site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-1200.we
 site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-640.webp
 site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-email.jpg
 site/matricula-cursos-presenciais/api/lib/recuperacao.php
-site/matricula-cursos-presenciais/api/lib/email.php
 site/matricula-cursos-presenciais/api/lib.php
+site/matricula-cursos-presenciais/api/lib/email.php
 site/matricula-cursos-presenciais/api/lembretes.php
 site/matricula-cursos-presenciais/static/checkout.css
 site/matricula-cursos-presenciais/static/checkout.js

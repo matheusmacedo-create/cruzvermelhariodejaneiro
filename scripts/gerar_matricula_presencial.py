@@ -148,7 +148,7 @@ COPY_CURSO = {
         "aprende": ["Avaliar a criança e fazer RCP (reanimação cardiopulmonar)", "Agir em engasgo, queda, convulsão, queimadura e hemorragia",
                     "Medidas de prevenção e protocolos atualizados para crianças"],
         "para_quem": "Professores e funcionários de escolas e espaços de recreação infantil (Lei 13.722/2018), creches e famílias que cuidam de crianças.",
-        "objecao": ("Este curso serve para a Lei Lucas da minha escola? E preciso ser da área da saúde?",
+        "objecao": ("O que é a Lei Lucas? Preciso ser da área da saúde para fazer o curso?",
                     "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de "
                     "recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a "
                     "essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece este curso. Não é preciso ser da saúde: os cursos "
@@ -177,11 +177,12 @@ COPY_CURSO = {
         "aprende": ["Prevenção e combate a princípios de incêndio", "Atendimento pré-hospitalar básico e primeiros socorros",
                     "Evacuação, uso de equipamentos e gerenciamento de riscos"],
         "para_quem": "Para quem tem Ensino Médio e quer atuar na prevenção e resposta a emergências, mesmo sem experiência na área.",
-        "objecao": ("A homologação está incluída nos {curso}?",
-                    "Não. A homologação é feita somente ao final do curso, à parte, com valor a consultar e paga pelo aluno. O que você "
-                    "paga é a inscrição de {insc}, que garante a vaga, e os {curso} do curso, pagos depois na plataforma da escola. Quem "
-                    "conclui as 80 horas recebe o certificado de curso livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o "
-                    "nome do curso e a carga horária."),
+        "objecao": ("A homologação está incluída no valor do curso?",
+                    "Não. A homologação é feita somente ao final do curso, à parte, com valor a consultar e paga pelo aluno. "
+                    "Agora você paga só a inscrição de {insc}, que garante a vaga; o valor do curso, {curso}, é pago depois na "
+                    "plataforma da escola, à vista ou parcelado com juros. Quem conclui as 80 horas recebe o certificado de curso "
+                    "livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o nome do curso e a carga horária."),
+
     },
     "cuidador-de-idosos": {
         "titulo": "Cuidador de Idosos: aprenda a cuidar com segurança, na Cruz Vermelha",
@@ -211,7 +212,8 @@ COPY_CURSO = {
 # Comparador dos três cursos de primeiros socorros: só carga, escolaridade, valor e público.
 COMPARAR = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas"]
 PUBLICO_COMPARAR = {
-    "primeiros-socorros-basico": "Para qualquer pessoa, mesmo fora da área da saúde: em casa, na escola, no trabalho ou no esporte.",
+    "primeiros-socorros-basico": ("Inclui Lei Lucas. Para qualquer pessoa, mesmo fora da área da saúde: em casa, na escola, no "
+                                  "trabalho ou no esporte."),
     "suporte-basico-de-vida": "O mais curto: profissionais da saúde, educação, segurança e empresas, e qualquer pessoa, sem experiência prévia.",
     "primeiros-socorros-lei-lucas": ("Para quem trabalha com crianças em escolas de educação básica e espaços de recreação "
                                      "infantil (Lei 13.722/2018)."),
@@ -315,7 +317,6 @@ CERT_ITENS = [
     "Com o seu nome, o curso e a carga horária, emitido pela Cruz Vermelha Brasileira – Filial Rio de Janeiro",
     CERT_PESO,
     CERT_MOVIMENTO,
-    "Assinado pela Coordenação de Cursos Livres, com o conteúdo programático no verso",
 ]
 CERT_NOTA = "Imagem de modelo: o seu sai com o seu nome, o curso que você fez e a data de conclusão."
 CERT_DESTAQUE = "primeiros-socorros-basico"  # o certificado de exemplo do topo e da seção, fora do modo curso
@@ -410,7 +411,7 @@ CSS_PAGINA = """
     .mr-aprende li { display: flex; gap: 8px; align-items: baseline; margin: 4px 0; font-size: .95rem; }
     .mr-aprende li i { color: #0f7b3e; flex: none; }
     .mr-para-quem { font-size: .92rem; color: var(--text); margin: 10px 0 0; }
-    .mr-curso-detalhes > .mr-aprende { margin: 0 0 6px; }
+    .mr-curso-detalhes > .mr-aprende { margin: 0 0 6px; grid-column: 1 / -1; }
     .mr-objecao { margin: 14px 0 0; border-left: 3px solid var(--red); padding: 2px 0 2px 14px; font-size: .93rem; color: var(--text); }
     .mr-objecao p { margin: 4px 0 0; line-height: 1.55; }
     .mr-objecao .mr-objecao-p { font-weight: 800; color: var(--black); margin: 0; }
@@ -710,7 +711,7 @@ JS_PAGINA = """
         // O certificado da seção "No fim do curso" passa a ser o do curso em foco.
         Array.prototype.forEach.call(document.querySelectorAll('.mr-cert-figura img[data-cert-curso]'), function (img) {
           var atual = img.getAttribute('data-cert-curso');
-          if (atual === s) return;
+          if (atual === s || !cards[s].hasAttribute('data-cert')) return;
           img.setAttribute('src', img.getAttribute('src').replace('certificado-' + atual + '-', 'certificado-' + s + '-'));
           img.setAttribute('srcset', img.getAttribute('srcset').split('certificado-' + atual + '-').join('certificado-' + s + '-'));
           img.setAttribute('alt', img.getAttribute('alt').replace(nome(atual), nome(s)));
@@ -1088,8 +1089,11 @@ def main() -> int:
         return (f'<div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>{insc}</b>'
                 f'<span>garante sua vaga</span></p><p class="mr-preco-depois">{depois}</p>{obs}{total}</div>')
 
+    def tem_cert(s: str) -> bool:
+        return (PASTA_IMG / f"certificado-{s}-640.webp").exists()
+
     def cert_img(s: str, loading: str, sizes: str) -> str:
-        if not (PASTA_IMG / f"certificado-{s}-640.webp").exists():
+        if not tem_cert(s):
             return ""
         return (f'<img class="mr-cert-img" src="img/certificado-{s}-640.webp" srcset="img/certificado-{s}-640.webp 640w, '
                 f'img/certificado-{s}-1200.webp 1200w" sizes="{sizes}" alt="Modelo do certificado do curso de {esc(cursos[s]["nome"])} '
@@ -1118,7 +1122,7 @@ def main() -> int:
           </div>
         </div>
         <figure class="mr-hero-cert mr-hero-apoio">
-          {cert_img(CERT_DESTAQUE, "eager", "360px")}
+          {cert_img(CERT_DESTAQUE, "lazy", "360px")}
           <figcaption><b>O seu certificado da Cruz Vermelha</b> <span>Imagem de modelo</span></figcaption>
         </figure>
       </div>
@@ -1187,7 +1191,7 @@ def main() -> int:
         faq_html = f'<div class="mr-faq"><h4>Dúvidas sobre {esc(curto(s))}</h4>{perguntas}</div>' if perguntas else ""
         valor = f'+ {brl_curto(c["valor_curso_centavos"])} do curso, depois' if c.get("valor_curso_centavos") else "+ valor do curso, depois"
         return f'''
-          <article class="mr-curso mr-detalhe" id="curso-{s}" data-curso="{s}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}">
+          <article class="mr-curso mr-detalhe" id="curso-{s}" data-curso="{s}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}"{' data-cert' if tem_cert(s) else ''}>
             <div class="mr-curso-topo">{foto(s, 480, "mr-curso-mini", "eager" if posicao < 2 else "lazy")}
               <div><h3 class="mr-curso-nome">{esc(c["nome"])}</h3><p class="mr-curso-meta">{esc(c["carga_horaria"])} · {esc(c["escolaridade"])}</p></div>
             </div>

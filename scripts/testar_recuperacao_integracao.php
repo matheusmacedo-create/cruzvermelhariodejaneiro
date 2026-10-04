@@ -77,7 +77,7 @@ $ids = [];
 $criar = static function (string $chave, float $horas, array $campos = []) use ($db, $horasAtras, $sufixo, &$ids): array {
     $quando = $horasAtras($horas);
     $linha = $campos + [
-        'token' => mcp_token_novo(), 'cpf' => '52998224725', 'telefone' => '21999990000', 'metodo' => 'pix',
+        'token' => mcp_token_novo(), 'cpf' => (string) random_int(10000000000, 99999999999), 'telefone' => '21999990000', 'metodo' => 'pix',
         'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa', 'nome' => "Pessoa Teste $chave",
         'email' => "pix-$chave-$sufixo@exemplo.org", 'inscricao_centavos' => 9900, 'taxa_centavos' => 0, 'total_centavos' => 9900,
         'status' => 'pendente', 'escola_status' => 'nao_aplicavel', 'unicopag_hash' => 'teste-' . bin2hex(random_bytes(8)),
@@ -111,16 +111,25 @@ try {
     $pagaNaConsulta = $criar('pagaconsulta', 4);
     $consultaFalha = $criar('falhaconsulta', 6);
     $envioFalha = $criar('falhaenvio', 7, ['curso_slug' => 'bombeiro-civil', 'curso_nome' => 'Bombeiro Civil']);
+    // Mesma pessoa pelo CPF: pagou com outro e-mail (ex.: corrigiu o e-mail digitado errado).
+    $cpfPagou = $criar('cpfpagou', 2.5, ['status' => 'pago', 'pago_em' => $horasAtras(2.4)]);
+    $cpfPendente = $criar('cpfpend', 3, ['cpf' => $cpfPagou['cpf']]);
+    // PIX seguido de cartão recusado: o PIX continua pagável e recebe.
+    $pixAntesRecusa = $criar('recusa', 4);
+    $recusado = $criar('recusa', 3.9, ['email' => $pixAntesRecusa['email'], 'token' => mcp_token_novo(), 'metodo' => 'cartao',
+        'pix_copia_cola' => null, 'status' => 'recusado']);
+    $vence = $criar('vence', 5);
 
     $candidatos = array_column(mcp_pix_lembrete_candidatos($T), 'id');
     sort($candidatos);
-    $esperados = [$ok['id'], $nova['id'], $outroCurso['id'], $pagaNaConsulta['id'], $consultaFalha['id'], $envioFalha['id']];
+    $esperados = [$ok['id'], $nova['id'], $outroCurso['id'], $pagaNaConsulta['id'], $consultaFalha['id'], $envioFalha['id'],
+        $pixAntesRecusa['id'], $vence['id']];
     sort($esperados);
-    verificar('candidatos: só PIX pendente de 2 a 20 h, o mais novo do e-mail e curso, sem pagamento do curso', $candidatos, $esperados);
+    verificar('candidatos: só PIX pendente de 2 a 20 h, o mais novo da pessoa (e-mail ou CPF) e curso, sem pagamento do curso', $candidatos, $esperados);
     verificar('candidatos: limite por rodada', count(mcp_pix_lembrete_candidatos($T, 2)), 2);
 
     // ------------------------------------------------------------------------- a rodada
-    $situacao = [$pagaNaConsulta['id'] => 'pago', $consultaFalha['id'] => null];
+    $situacao = [$pagaNaConsulta['id'] => 'pago', $consultaFalha['id'] => null, $vence['id'] => 'expirado'];
     // Como a consulta de verdade, a que acha o pagamento grava o status (aqui sem o pós-pagamento, que mandaria e-mails).
     $consultar = static function (array $i) use ($situacao, $db): ?string {
         $s = array_key_exists((int) $i['id'], $situacao) ? $situacao[(int) $i['id']] : 'pendente';
@@ -135,10 +144,10 @@ try {
         return $para === $envioFalha['email'] ? 'falhou' : 'mail';
     };
     $r = mcp_pix_lembrete_rodar($T, $consultar, $enviar);
-    verificar('rodada 1: contagem', $r, ['enviados' => 3, 'falhas' => 1, 'pulados' => 2, 'vistos' => 6]);
+    verificar('rodada 1: contagem', $r, ['enviados' => 4, 'falhas' => 1, 'pulados' => 3, 'vistos' => 8]);
     verificar('rodada 1: registros', [$eventos($ok['id']), $eventos($nova['id']), $eventos($outroCurso['id']), $eventos($envioFalha['id']),
-        $eventos($pagaNaConsulta['id']), $eventos($consultaFalha['id'])],
-        [['email_pix_lembrete'], ['email_pix_lembrete'], ['email_pix_lembrete'], ['email_pix_lembrete_falhou'], [], []]);
+        $eventos($pagaNaConsulta['id']), $eventos($consultaFalha['id']), $eventos($pixAntesRecusa['id']), $eventos($vence['id'])],
+        [['email_pix_lembrete'], ['email_pix_lembrete'], ['email_pix_lembrete'], ['email_pix_lembrete_falhou'], [], [], ['email_pix_lembrete'], []]);
 
     // Segunda rodada: só a consulta que falhou volta (agora pendente); ninguém recebe duas vezes, nem com inscrição nova.
     $refez = $criar('ok', 2.5, ['email' => $ok['email'], 'token' => mcp_token_novo()]);
@@ -148,8 +157,26 @@ try {
         return 'mail';
     };
     $r2 = mcp_pix_lembrete_rodar($T + 1800, static fn(array $i): string => 'pendente', $enviar2);
-    verificar('rodada 2: só quem ficou sem resposta da Unicopag', [$r2['enviados'], $enviados2], [1, [$consultaFalha['email']]]);
+    // A que venceu continua 'pendente' no banco (o teste não aplica o status), então volta: só a falha e ela.
+    sort($enviados2);
+    $esperados2 = [$consultaFalha['email'], $vence['email']];
+    sort($esperados2);
+    verificar('rodada 2: só quem ficou sem lembrete', [$r2['enviados'], $enviados2], [2, $esperados2]);
     verificar('rodada 2: inscrição nova do mesmo e-mail e curso não recebe outro lembrete', $eventos($refez['id']), []);
+
+    // ------------------------------------------------------------------------- a consulta de verdade
+    verificar('situação: status conhecidos traduzidos, vazio e desconhecido não mandam', [
+        mcp_pix_lembrete_situacao('waiting_payment'), mcp_pix_lembrete_situacao('PAID'), mcp_pix_lembrete_situacao('expired'),
+        mcp_pix_lembrete_situacao('refused'), mcp_pix_lembrete_situacao(''), mcp_pix_lembrete_situacao('in_analysis'),
+    ], ['pendente', 'pago', 'expirado', 'recusado', null, null]);
+    if ((string) mcp_cfg('UNICO_API_KEY', '') === '') {
+        // Sem chave, mcp_unicopag lança exceção: o caminho de falha da consulta real.
+        verificar('consulta real que falha: não manda e registra', [mcp_pix_lembrete_consultar($ok),
+            in_array('consulta_falhou', $db->query('SELECT tipo FROM mcp_eventos WHERE inscricao_id = ' . (int) $ok['id'])->fetchAll(PDO::FETCH_COLUMN), true)],
+            [null, true]);
+    } else {
+        echo "pulado: a configuração de teste tem UNICO_API_KEY; o caminho de falha da consulta real não foi exercitado\n";
+    }
 
     // ------------------------------------------------------------------------- o e-mail do lembrete
     $m = null;
@@ -168,7 +195,9 @@ try {
         str_contains($m['html'], 'reconhecida nacional e internacionalmente'),
         str_contains($m['texto'], 'utm_campaign=pix-lembrete'),
         str_contains($m['html'] . $m['texto'], 'MEC'),
-    ], [true, true, true, true, true, true, false]);
+        str_contains($m['html'] . $m['texto'], 'reserva sua vaga'),
+        str_contains($m['html'], 'desistir em até 7 dias'),
+    ], [true, true, true, true, true, true, false, false, true]);
     verificar('lembrete: sem imagem do curso, sem bloco do certificado', mcp_email_bloco_certificado('curso-que-nao-existe', 'X'), '');
     verificar('lembrete: slug estranho não vira caminho', mcp_certificado_url('../../config'), '');
 
