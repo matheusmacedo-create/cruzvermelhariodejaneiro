@@ -101,18 +101,118 @@ ORDEM_EXIBICAO = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primei
 NOME_CURTO = {"primeiros-socorros-lei-lucas": "Primeiros Socorros Lei Lucas", "cuidador-de-idosos": "Cuidador de Idosos"}
 # Uma linha por curso, só com o que está no cursos.json (sobre, descrição ou FAQ do curso).
 BENEFICIO = {
-    "primeiros-socorros-basico": "RCP, desfibrilador, engasgo e hemorragias",
-    "suporte-basico-de-vida": "Atendimento inicial de emergências",
-    "primeiros-socorros-lei-lucas": "Emergências com crianças: escolas, creches, famílias",
-    "puncao-venosa": "Acesso venoso periférico, para a área da saúde",
-    "bombeiro-civil": "Prevenção e combate a incêndios",
-    "cuidador-de-idosos": "Cuidados, segurança e bem-estar do idoso",
-    "micropigmentacao-labial": "Técnica estética de micropigmentação dos lábios",
+    "primeiros-socorros-basico": "Do engasgo à RCP: agir até o socorro chegar",
+    "suporte-basico-de-vida": "RCP e desfibrilador em 4 horas, com prática",
+    "primeiros-socorros-lei-lucas": "RCP, engasgo, quedas e convulsões em crianças",
+    "puncao-venosa": "Acesso venoso seguro, com prática supervisionada",
+    "bombeiro-civil": "Incêndio, primeiros socorros e evacuação em 80h",
+    "cuidador-de-idosos": "Higiene, mobilização e prevenção de acidentes",
+    "micropigmentacao-labial": "Colorimetria, biossegurança e prática da técnica",
+}
+# Copy de cada curso (revisão de 04/10/2026, cada afirmação conferida contra o cursos.json e a faq-home.json).
+# Ficha (modo curso): título, promessa antes do botão; "aprende", "para quem" e a objeção principal depois dele.
+# Cartão: "aprende" e "para quem" abrem os detalhes. Limites: nada de promessa de emprego ou renda, de habilitação
+# profissional ou de "cumpre a Lei Lucas". Na objeção, {insc} e {curso} viram a inscrição e o valor do curso.
+COPY_CURSO = {
+    "primeiros-socorros-basico": {
+        "titulo": "Primeiros Socorros Básico na Cruz Vermelha: agir até o socorro chegar",
+        "promessa": "Em 8 horas, com prática supervisionada, você aprende RCP, o uso do desfibrilador e o que fazer em engasgos, desmaios e hemorragias.",
+        "aprende": ["RCP e uso do desfibrilador externo automático (DEA)", "O que fazer em engasgos, desmaios e traumas",
+                    "Avaliar a vítima e controlar hemorragias"],
+        "para_quem": "Para qualquer pessoa, mesmo fora da área da saúde, que quer saber agir em casa, na escola, no trabalho ou no esporte.",
+        "objecao": ("Não sou da área da saúde e nunca fiz nada parecido. Posso fazer o curso?",
+                    "Pode. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros, e a escolaridade "
+                    "mínima é o Ensino Fundamental. As aulas são presenciais, na Praça da Cruz Vermelha, 10, no Centro do Rio, com "
+                    "atividades demonstrativas e práticas supervisionadas: RCP, desengasgo e controle de hemorragias são praticados com "
+                    "manequim e instrutor ao lado. Quem conclui recebe o certificado emitido pela Cruz Vermelha Brasileira Rio de "
+                    "Janeiro. O curso prepara para o atendimento inicial até a chegada do serviço especializado e não habilita para o "
+                    "exercício profissional."),
+    },
+    "suporte-basico-de-vida": {
+        "titulo": "Suporte Básico de Vida (BLS) na Cruz Vermelha: RCP e DEA em 4 horas",
+        "promessa": "Aprenda a reconhecer uma emergência, fazer RCP e usar o desfibrilador até a chegada do socorro especializado. Teoria e prática, com certificado da filial.",
+        "aprende": ["Avaliar a vítima e fazer RCP (reanimação cardiopulmonar)", "Usar o desfibrilador externo automático (DEA)",
+                    "Agir em engasgos, desmaios, hemorragias e traumas"],
+        "para_quem": "Profissionais da saúde, educação, segurança e empresas, e qualquer pessoa que queira agir certo numa emergência, sem experiência prévia.",
+        "objecao": ("Nunca fiz nada na área da saúde. Posso fazer este curso?",
+                    "Pode. O curso é aberto tanto a profissionais quanto a pessoas sem experiência prévia, e pede apenas Ensino "
+                    "Fundamental. As 4 horas são presenciais, na Praça da Cruz Vermelha, 10, no Centro do Rio, e combinam teoria e "
+                    "treinamento prático para desenvolver segurança durante os atendimentos: RCP, desengasgo e controle de hemorragias "
+                    "pedem prática com manequim e instrutor ao lado. Quem conclui recebe o certificado emitido pela Cruz Vermelha "
+                    "Brasileira Rio de Janeiro. O curso prepara para o atendimento inicial até a chegada do socorro especializado e não "
+                    "substitui habilitação profissional regulamentada."),
+    },
+    "primeiros-socorros-lei-lucas": {
+        "titulo": "Primeiros Socorros Lei Lucas: o que fazer quando uma criança engasga",
+        "promessa": "Em 8 horas presenciais, com teoria e prática, você aprende a agir em engasgos, quedas, convulsões, queimaduras e hemorragias em crianças, e a fazer RCP.",
+        "aprende": ["Avaliar a criança e fazer RCP (reanimação cardiopulmonar)", "Agir em engasgo, queda, convulsão, queimadura e hemorragia",
+                    "Medidas de prevenção e protocolos atualizados para crianças"],
+        "para_quem": "Professores e funcionários de escolas e espaços de recreação infantil (Lei 13.722/2018), creches e famílias que cuidam de crianças.",
+        "objecao": ("Este curso serve para a Lei Lucas da minha escola? E preciso ser da área da saúde?",
+                    "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de "
+                    "recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a "
+                    "essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece este curso. Não é preciso ser da saúde: os cursos "
+                    "de primeiros socorros são abertos a qualquer pessoa, e a escolaridade mínima é o Ensino Fundamental. São 8 horas "
+                    "presenciais na Praça da Cruz Vermelha, 10, no Centro, com certificado da filial a quem conclui. É curso livre: "
+                    "prepara para o atendimento inicial até a chegada do socorro especializado e não substitui habilitação profissional "
+                    "regulamentada. A escola que quer treinar a equipe inteira pode pedir uma turma fechada, de 15 a 30 pessoas, em "
+                    "“Turmas para empresas e grupos”, nesta página."),
+    },
+    "puncao-venosa": {
+        "titulo": "Punção Venosa na Cruz Vermelha: 8 horas com prática supervisionada",
+        "promessa": "Acesso venoso com segurança e precisão: anatomia, materiais, preparo do paciente e prevenção de complicações, com prática supervisionada e certificado.",
+        "aprende": ["Anatomia do sistema venoso e técnicas de punção", "Escolha de dispositivos, materiais e preparo do paciente",
+                    "Biossegurança e prevenção de complicações"],
+        "para_quem": "Estudantes e profissionais da saúde que querem aperfeiçoar a técnica, conforme as normas da profissão. Pede Ensino Médio.",
+        "objecao": ("Em 8 horas dá para praticar de verdade, ou é só teoria?",
+                    "Grande parte do aprendizado acontece em atividades práticas supervisionadas, na sede da Praça da Cruz Vermelha, 10, "
+                    "no Centro do Rio. Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha "
+                    "de dispositivos e boas práticas assistenciais. Quem conclui recebe o certificado da Cruz Vermelha Brasileira Rio de "
+                    "Janeiro, com o nome do curso e a carga horária. A vaga é garantida com a inscrição de {insc}; os {curso} do curso "
+                    "são pagos depois, na plataforma da escola."),
+    },
+    "bombeiro-civil": {
+        "titulo": "Curso de Bombeiro Civil na Cruz Vermelha: 80 horas no Centro do Rio",
+        "promessa": "Em 80 horas, aprenda a combater princípios de incêndio, prestar primeiros socorros e evacuar ambientes, com aulas práticas que simulam emergências reais.",
+        "aprende": ["Prevenção e combate a princípios de incêndio", "Atendimento pré-hospitalar básico e primeiros socorros",
+                    "Evacuação, uso de equipamentos e gerenciamento de riscos"],
+        "para_quem": "Para quem tem Ensino Médio e quer atuar na prevenção e resposta a emergências, mesmo sem experiência na área.",
+        "objecao": ("A homologação está incluída nos {curso}?",
+                    "Não. A homologação é feita somente ao final do curso, à parte, com valor a consultar e paga pelo aluno. O que você "
+                    "paga é a inscrição de {insc}, que garante a vaga, e os {curso} do curso, pagos depois na plataforma da escola. Quem "
+                    "conclui as 80 horas recebe o certificado de curso livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o "
+                    "nome do curso e a carga horária."),
+    },
+    "cuidador-de-idosos": {
+        "titulo": "Cuidador de Idosos: aprenda a cuidar com segurança, na Cruz Vermelha",
+        "promessa": "Em 160 horas presenciais, você aprende higiene, alimentação, mobilização, prevenção de acidentes e noções de primeiros socorros no cuidado da pessoa idosa.",
+        "aprende": ["Higiene, alimentação e a rotina de cuidados do idoso", "Mobilização, prevenção de acidentes e primeiros socorros",
+                    "Os aspectos físicos, emocionais e sociais do envelhecimento"],
+        "para_quem": "Para quem quer trabalhar como cuidador de idosos ou cuidar de alguém da família. Pede Ensino Fundamental.",
+        "objecao": ("Que certificado eu recebo? Ele é reconhecido pelo MEC?",
+                    "Quem conclui recebe o certificado de curso livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o nome do "
+                    "curso e a carga horária de 160 horas. Ele não é reconhecido pelo MEC, e nenhum curso livre é: o MEC regula a "
+                    "educação formal, como ensino técnico, graduação e pós. É um diferencial valorizado no currículo, mas não substitui "
+                    "habilitação profissional regulamentada."),
+    },
+    "micropigmentacao-labial": {
+        "titulo": "Aprenda micropigmentação labial na prática, na Cruz Vermelha",
+        "promessa": "Em 24 horas presenciais, você aprende a implantar pigmentos, corrigir assimetrias visuais e uniformizar a cor dos lábios, com biossegurança e certificado.",
+        "aprende": ["Colorimetria e técnicas de implantação de pigmentos", "Correção de assimetrias visuais e uniformização da cor",
+                    "Avaliação do cliente e cuidados pré e pós-procedimento"],
+        "para_quem": "Para quem está começando na estética e para profissionais que querem ampliar seus serviços. Pede Ensino Médio, sem exigir experiência.",
+        "objecao": ("Nunca trabalhei com estética. O curso serve para mim?",
+                    "Serve. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços, e não exige "
+                    "experiência prévia: a escolaridade mínima é o Ensino Médio. São 24 horas presenciais na sede, na Praça da Cruz "
+                    "Vermelha, 10, no Centro do Rio, com abordagem prática para desenvolver segurança e qualidade na execução da técnica. "
+                    "Ao concluir todas as etapas, você recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro."),
+    },
 }
 # Comparador dos três cursos de primeiros socorros: só carga, escolaridade, valor e público.
 COMPARAR = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas"]
 PUBLICO_COMPARAR = {
-    "suporte-basico-de-vida": "Atendimento inicial de emergências.",
+    "primeiros-socorros-basico": "Para qualquer pessoa, mesmo fora da área da saúde: em casa, na escola, no trabalho ou no esporte.",
+    "suporte-basico-de-vida": "O mais curto: profissionais da saúde, educação, segurança e empresas, e qualquer pessoa, sem experiência prévia.",
     "primeiros-socorros-lei-lucas": ("Para quem trabalha com crianças em escolas de educação básica e espaços de recreação "
                                      "infantil (Lei 13.722/2018)."),
 }
@@ -186,10 +286,13 @@ FAQ_PAGINA = [
      "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago na plataforma da escola, à vista ou "
      "parcelado com juros, nas condições informadas lá.", None),
     ("Qual curso de primeiros socorros eu faço?", "__COMPARAR__", "__COMPARAR_HTML__"),
-    ("O certificado vale? É reconhecido pelo MEC?",
-     "O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui o curso, com carga horária e "
-     "conteúdo. Nenhum curso livre é reconhecido pelo MEC, aqui ou em qualquer instituição: o MEC regula a educação formal, "
-     "como o ensino técnico, a graduação e a pós. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.",
+    ("O certificado é reconhecido?",
+     "Sim. Quem conclui o curso recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a "
+     "carga horária. A Cruz Vermelha é reconhecida nacional e internacionalmente pela tradição em formação humanitária e em "
+     "emergências, e a Cruz Vermelha Brasileira é a Sociedade Nacional, no Brasil, do Movimento Internacional da Cruz Vermelha "
+     "e do Crescente Vermelho. Como todo curso livre, aqui ou em qualquer instituição, ele não passa pelo MEC, que regula a "
+     "educação formal (ensino técnico, graduação e pós). No Bombeiro Civil, a homologação profissional é feita ao final do "
+     "curso, à parte.",
      None),
     ("Os cursos são gratuitos?",
      "Não. Os sete cursos presenciais são pagos: a inscrição de R$ 99 garante a vaga, e o valor do curso, de R$ 150 a R$ 950, "
@@ -199,6 +302,24 @@ FAQ_PAGINA = [
      "cursos são presenciais.", None),
     ("Preciso criar conta ou escolher turma agora?", RESPOSTA_CONTA, None),
 ]
+# --- o certificado (modelo da filial, 04/10/2026; imagens de amostra de scripts/gerar_certificado_modelo.py) ------
+# Só afirmações com fonte: "reconhecida nacional e internacionalmente pela tradição em formação humanitária" (cursos.json,
+# FAQ do Bombeiro Civil, e faq-home.json); "Sociedade Nacional do Movimento Internacional…" (/historia/). O certificado
+# de curso livre não é reconhecido pelo MEC (faq-home.json): quem tem o reconhecimento é a instituição. Registro em
+# livro e validade (verso do modelo) ficam de fora até a filial confirmar.
+CERT_PESO = ("O certificado leva o nome da Cruz Vermelha, reconhecida nacional e internacionalmente pela tradição em "
+             "formação humanitária e em emergências.")
+CERT_MOVIMENTO = ("A Cruz Vermelha Brasileira é a Sociedade Nacional, no Brasil, do Movimento Internacional da Cruz Vermelha "
+                  "e do Crescente Vermelho.")
+CERT_ITENS = [
+    "Com o seu nome, o curso e a carga horária, emitido pela Cruz Vermelha Brasileira – Filial Rio de Janeiro",
+    CERT_PESO,
+    CERT_MOVIMENTO,
+    "Assinado pela Coordenação de Cursos Livres, com o conteúdo programático no verso",
+]
+CERT_NOTA = "Imagem de modelo: o seu sai com o seu nome, o curso que você fez e a data de conclusão."
+CERT_DESTAQUE = "primeiros-socorros-basico"  # o certificado de exemplo do topo e da seção, fora do modo curso
+
 FAQ_TURMAS = [
     ("Vocês fecham turma para empresas, escolas e grupos?",
      f"Sim. Com {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo "
@@ -237,7 +358,7 @@ CSS_PAGINA = """
 
     /* topo */
     .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 30px 0 26px; }
-    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: center; }
+    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: center; }
     .mr-hero .eyebrow { font-size: .78rem; }
     .mr-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 8px 0 12px; }
     .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
@@ -250,6 +371,28 @@ CSS_PAGINA = """
     .mr-hero-passos li { margin: 6px 0; }
     .mr-selo { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: #0f5132; background: #e9f7ef; border-radius: 999px; padding: 5px 10px; margin: 0; }
 
+    /* certificado (amostra) */
+    .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 10px 30px rgba(16, 24, 40, .16); background: #fff; }
+    .mr-hero-cert { margin: 0; }
+    .mr-hero-cert .mr-cert-img { transform: rotate(-1.5deg); }
+    .mr-hero-cert figcaption { margin-top: 10px; font-size: .82rem; color: var(--apoio); text-align: center; }
+    .mr-hero-cert figcaption b { color: var(--black); font-size: .9rem; }
+    .mr-ficha-cert { margin: 0; }
+    .mr-ficha-cert figcaption { margin-top: 10px; font-size: .85rem; color: var(--apoio); text-align: center; }
+    .mr-cert-curto { display: flex; gap: 12px; align-items: center; margin: 14px 0 0; padding: 10px 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; }
+    .mr-cert-curto .mr-cert-img { width: 96px; flex-shrink: 0; border-radius: 4px; box-shadow: 0 2px 8px rgba(16, 24, 40, .14); }
+    .mr-cert-curto p { margin: 0; font-size: .88rem; color: var(--text); line-height: 1.4; }
+    .mr-cert-curto b { color: var(--black); }
+    .mr-ficha .mr-cert-curto { display: none; }
+    .mr-curso-fecho .mr-cert-curto { margin: 0 0 14px; }
+    .mr-cert { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; margin-top: 22px; scroll-margin-top: 96px; }
+    .mr-cert-figura { margin: 0; }
+    .mr-cert-texto h3 { color: var(--black); font-size: 1.3rem; margin: 4px 0 12px; line-height: 1.2; }
+    .mr-cert-texto ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .mr-cert-texto li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; }
+    .mr-cert-texto li i { color: #0f7b3e; flex-shrink: 0; margin-top: 2px; }
+    .mr-cert-nota { color: var(--apoio); font-size: .82rem; margin: 12px 0 0; }
+
     /* ficha do curso (modo curso) */
     .mr-fichas { margin: 0 auto; }
     .mr-ficha { grid-template-columns: 44% minmax(0, 1fr); gap: 28px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin: 8px 0 28px; }
@@ -260,6 +403,17 @@ CSS_PAGINA = """
     .mr-ficha-meta span { display: inline-flex; align-items: center; gap: 6px; }
     .mr-ficha-meta i { color: var(--red); }
     .mr-ficha .mr-cta { min-width: 280px; }
+    .mr-ficha-promessa { font-size: 1.02rem; line-height: 1.5; color: var(--text); margin: 0 0 12px; }
+    .mr-aprende { margin: 16px 0 0; padding: 14px 16px; background: var(--soft); border-radius: 12px; }
+    .mr-aprende-titulo { font-weight: 800; color: var(--black); margin: 0 0 6px; }
+    .mr-aprende ul { list-style: none; margin: 0; padding: 0; }
+    .mr-aprende li { display: flex; gap: 8px; align-items: baseline; margin: 4px 0; font-size: .95rem; }
+    .mr-aprende li i { color: #0f7b3e; flex: none; }
+    .mr-para-quem { font-size: .92rem; color: var(--text); margin: 10px 0 0; }
+    .mr-curso-detalhes > .mr-aprende { margin: 0 0 6px; }
+    .mr-objecao { margin: 14px 0 0; border-left: 3px solid var(--red); padding: 2px 0 2px 14px; font-size: .93rem; color: var(--text); }
+    .mr-objecao p { margin: 4px 0 0; line-height: 1.55; }
+    .mr-objecao .mr-objecao-p { font-weight: 800; color: var(--black); margin: 0; }
     .mr-mini-passos { margin: 14px 0 0; padding-left: 20px; color: var(--apoio); font-size: .9rem; }
     .mr-mini-passos li { margin: 2px 0; }
     .mr-ficha-links { font-size: .9rem; margin: 14px 0 0; color: var(--apoio); }
@@ -429,7 +583,7 @@ CSS_PAGINA = """
     }
     @media (max-width: 920px) {
       .mr-hero-grid { grid-template-columns: 1fr; }
-      .mr-hero-passos { display: none; }
+      .mr-hero-cert { display: none; }
       .mr-demanda-grade { grid-template-columns: 1fr; gap: 12px; }
       .mr-passos { grid-template-columns: 1fr; }
       .mr-comparar-grade { grid-template-columns: 1fr; }
@@ -446,7 +600,12 @@ CSS_PAGINA = """
       .mr-confianca-linha { font-size: .86rem; gap: 4px 14px; }
       .mr-ficha { grid-template-columns: 1fr; padding: 16px; margin: 6px 0 18px; gap: 0; }
       .mr-ficha-foto { display: none; }
+      .mr-ficha .mr-cert-curto { display: flex; }
+      .mr-cert { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+      .mr-cert-texto h3 { font-size: 1.12rem; }
+      .mr-cert-texto li { font-size: .9rem; }
       .mr-ficha-titulo { font-size: 1.4rem; }
+      .mr-ficha-promessa { font-size: .93rem; line-height: 1.45; margin-bottom: 10px; }
       .mr-ficha .mr-cta { width: 100%; min-width: 0; }
       .mr-catalogo { padding: 14px 0 36px; }
       .mr-cartoes { grid-template-columns: 1fr; gap: 12px; }
@@ -548,6 +707,15 @@ JS_PAGINA = """
         if (!cards[s] || foco === s) return;
         foco = s;
         Object.keys(cards).forEach(function (k) { cards[k].classList.toggle('ativo', k === s); });
+        // O certificado da seção "No fim do curso" passa a ser o do curso em foco.
+        Array.prototype.forEach.call(document.querySelectorAll('.mr-cert-figura img[data-cert-curso]'), function (img) {
+          var atual = img.getAttribute('data-cert-curso');
+          if (atual === s) return;
+          img.setAttribute('src', img.getAttribute('src').replace('certificado-' + atual + '-', 'certificado-' + s + '-'));
+          img.setAttribute('srcset', img.getAttribute('srcset').split('certificado-' + atual + '-').join('certificado-' + s + '-'));
+          img.setAttribute('alt', img.getAttribute('alt').replace(nome(atual), nome(s)));
+          img.setAttribute('data-cert-curso', s);
+        });
         if (barra) {
           document.getElementById('mr-barra-nome').textContent = curto(s);
           barraCta.setAttribute('href', linkCheckout(s, 'barra'));
@@ -889,8 +1057,8 @@ def main() -> int:
     ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
     exibicao = [s for s in ORDEM_EXIBICAO if s in cursos] + [s for s in ordem if s not in ORDEM_EXIBICAO]
     for s in cursos:
-        if s not in ORDEM_EXIBICAO or s not in BENEFICIO:
-            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO; entra no fim, com a descrição cortada")
+        if s not in ORDEM_EXIBICAO or s not in BENEFICIO or s not in COPY_CURSO:
+            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO/COPY_CURSO; entra no fim, com a descrição cortada e sem a copy da ficha")
     grupo_de = {s: g["titulo"] for g in dados["grupos"] for s in g["cursos"]}
 
     def curto(s: str) -> str:
@@ -920,6 +1088,14 @@ def main() -> int:
         return (f'<div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>{insc}</b>'
                 f'<span>garante sua vaga</span></p><p class="mr-preco-depois">{depois}</p>{obs}{total}</div>')
 
+    def cert_img(s: str, loading: str, sizes: str) -> str:
+        if not (PASTA_IMG / f"certificado-{s}-640.webp").exists():
+            return ""
+        return (f'<img class="mr-cert-img" src="img/certificado-{s}-640.webp" srcset="img/certificado-{s}-640.webp 640w, '
+                f'img/certificado-{s}-1200.webp 1200w" sizes="{sizes}" alt="Modelo do certificado do curso de {esc(cursos[s]["nome"])} '
+                f'da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária" loading="{loading}" '
+                f'width="640" height="452" data-cert-curso="{s}">')
+
     micro = ('<p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br>'
              '<i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</p>')
     mini_passos = "".join(f"<li>{esc(p)}</li>" for p in MINI_PASSOS)
@@ -936,33 +1112,54 @@ def main() -> int:
           <div class="mr-hero-apoio">
             <p class="mr-hero-sub">Aulas na sede da Praça da Cruz Vermelha, 10. Para se matricular, você paga agora só a inscrição de {insc}, por PIX ou cartão, sem criar conta. O valor do curso é pago depois.</p>
             <ul class="mr-confianca-linha">
-              <li class="mr-so-largo-flex"><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
-              <li><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</li>
+              <li><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha, reconhecida no Brasil e no mundo</li>
+              <li class="mr-so-largo-flex"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</li>
             </ul>
           </div>
         </div>
-        <aside class="mr-hero-passos mr-hero-apoio" aria-label="Como é a matrícula">
-          <p class="mr-hero-passos-titulo">Sua matrícula em 3 passos</p>
-          <ol>{passos_topo}</ol>
-          <p class="mr-selo"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir · art. 49 do Código de Defesa do Consumidor</p>
-        </aside>
+        <figure class="mr-hero-cert mr-hero-apoio">
+          {cert_img(CERT_DESTAQUE, "eager", "360px")}
+          <figcaption><b>O seu certificado da Cruz Vermelha</b> <span>Imagem de modelo</span></figcaption>
+        </figure>
       </div>
     </section>'''
 
     # --- fichas do modo curso (?curso=<slug>): sem id, fora do JSON-LD, escolhidas por CSS ---------------
+    def aprende_html(s: str, titulo: str) -> str:
+        cc = COPY_CURSO.get(s) or {}
+        if not cc.get("aprende"):
+            return ""
+        itens = "".join(f'<li><i class="fa-solid fa-check"></i> {esc(a)}</li>' for a in cc["aprende"])
+        para = f'<p class="mr-para-quem"><b>Para quem:</b> {esc(cc["para_quem"])}</p>' if cc.get("para_quem") else ""
+        return f'<div class="mr-aprende"><p class="mr-aprende-titulo">{titulo}</p><ul>{itens}</ul>{para}</div>'
+
+    def objecao(s: str) -> tuple[str, str] | None:
+        o = (COPY_CURSO.get(s) or {}).get("objecao")
+        if not o:
+            return None
+        valor = brl_curto(cursos[s]["valor_curso_centavos"]) if cursos[s].get("valor_curso_centavos") else "valor do curso"
+        return tuple(x.replace("{insc}", insc).replace("{curso}", valor) for x in o)
+
     def ficha(s: str) -> str:
         c = cursos[s]
+        cc = COPY_CURSO.get(s) or {}
+        ob = objecao(s)
+        objecao_html = (f'<div class="mr-objecao"><p class="mr-objecao-p">{esc(ob[0])}</p><p>{esc(ob[1])}</p></div>' if ob else "")
         return f'''
         <div class="mr-ficha" data-ficha="{s}">
-          <div class="mr-ficha-foto">{foto(s, 960, "mr-ficha-img", "lazy")}</div>
+          <figure class="mr-ficha-foto mr-ficha-cert">{cert_img(s, "lazy", "(max-width: 920px) 100vw, 480px")}<figcaption>O seu certificado de {esc(curto(s))} ao concluir (modelo)</figcaption></figure>
           <div class="mr-ficha-corpo">
             <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
-            <p class="mr-ficha-titulo">Curso de {esc(curto(s))} na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-titulo">{esc(cc.get("titulo") or f"Curso de {curto(s)} na Cruz Vermelha, no Centro do Rio")}</p>
+            {f'<p class="mr-ficha-promessa">{esc(cc["promessa"])}</p>' if cc.get("promessa") else ""}
             <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</span><span><i class="fa-solid fa-graduation-cap"></i> {esc(c["escolaridade"])}</span><span><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10</span></p>
             {preco(s)}
             <a class="btn btn-red mr-cta" data-local="ficha" data-curso="{s}" href="{checkout(s, "ficha")}">Fazer matrícula · {insc}</a>
             {micro}
+            <div class="mr-cert-curto">{cert_img(s, "lazy", "120px")}<p><b>Certificado da Cruz Vermelha</b>, reconhecida no Brasil e no mundo, com o seu nome, o curso e a carga horária.</p></div>
             <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            {aprende_html(s, "O que você aprende")}
+            {objecao_html}
             <ol class="mr-mini-passos">{mini_passos}</ol>
             <p class="mr-ficha-links"><a href="#curso-{s}" data-abrir-detalhes="{s}">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
           </div>
@@ -1002,9 +1199,11 @@ def main() -> int:
             <details class="mr-curso-mais" data-curso="{s}">
               <summary>Ver detalhes e dúvidas</summary>
               <div class="mr-curso-detalhes">
+                {aprende_html(s, "O que você aprende")}
                 <div class="mr-curso-sobre"><div class="mr-curso-foto-grande">{foto(s, 960, "mr-foto", "lazy", "(max-width: 720px) 100vw, 560px")}</div><h4>Sobre o curso</h4>{sobre_html}</div>
                 {faq_html}
                 <div class="mr-curso-fecho">
+                  <div class="mr-cert-curto">{cert_img(s, "lazy", "120px")}<p><b>Ao concluir, você recebe este certificado</b> da Cruz Vermelha, com o seu nome (modelo).</p></div>
                   {preco(s)}
                   <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Fazer matrícula · {insc}</a>
                   {micro}
@@ -1090,6 +1289,15 @@ def main() -> int:
         <p class="eyebrow">Depois da inscrição</p>
         <h2 id="mr-depois-titulo">O que acontece depois que você paga</h2>
         <ol class="mr-passos">{passos_html}</ol>
+        <div class="mr-cert" id="certificado">
+          <figure class="mr-cert-figura">{cert_img(CERT_DESTAQUE, "lazy", "(max-width: 720px) 100vw, 520px")}</figure>
+          <div class="mr-cert-texto">
+            <p class="eyebrow">No fim do curso</p>
+            <h3>O certificado da Cruz Vermelha, com o seu nome</h3>
+            <ul>{"".join(f"<li><i class='fa-solid fa-circle-check'></i> {esc(t)}</li>" for t in CERT_ITENS)}</ul>
+            <p class="mr-cert-nota">{esc(CERT_NOTA)}</p>
+          </div>
+        </div>
         <p class="mr-nota-curta">O valor do curso é pago depois, na plataforma da escola, nas condições informadas lá.</p>
         <div class="mr-garantia" id="garantia">
           <i class="fa-solid fa-rotate-left"></i>

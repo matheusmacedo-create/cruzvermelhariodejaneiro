@@ -53,6 +53,7 @@ $contato = [
 
 $emails = [
     '1-pix-aberto' => mcp_montar_email_pix_aberto($base),
+    '1b-pix-lembrete' => mcp_montar_email_pix_lembrete(['criado_em' => gmdate('Y-m-d H:i:s', time() - 2 * 3600)] + $base),
     '2-pago-confirmacao' => mcp_montar_email_aluno_pago($pagaB),
     '3-pago-cartao' => mcp_montar_email_aluno_pago($pagaCartao),
     '4-pago-acesso-escola' => mcp_montar_email_aluno_pago($pagaA),

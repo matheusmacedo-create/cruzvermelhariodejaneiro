@@ -49,6 +49,8 @@ Os links que o chat oferece depois do envio ("Fazer matrícula em …", "Ver cur
 navegação interna sem UTM, para não reiniciar a sessão do GA4. O e-mail de recuperação do PIX leva
 `utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto` no botão "Concluir pagamento":
 quem volta por ele aparece no GA4 como tráfego desse e-mail.
+O lembrete único do PIX (2 a 20 h depois, `api/lib/recuperacao.php`) usa `utm_campaign=pix-lembrete`, para separar
+as duas recuperações no GA4.
 
 ## Página de matrícula (04/10/2026, redesenho)
 

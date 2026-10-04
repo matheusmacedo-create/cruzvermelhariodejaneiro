@@ -180,6 +180,47 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Certificado de amostra, copy por curso e recuperação do lead (04/10/2026)
+
+O Matheus mandou o modelo do certificado (Punção Venosa, em PDF, com nome e CPF de uma pessoa) e pediu: revisar a
+copy de cada curso para a conversão e usar o certificado na página e na recuperação do lead, reforçando o peso da
+Cruz Vermelha. **O PDF não entra no repositório nem no site.**
+
+- **Certificado de amostra** (`scripts/gerar_certificado_modelo.py`): a frente do modelo, com a área do aluno
+  apagada (`scripts/certificado/fundo-certificado.png`, sem dado pessoal), recebe "Seu nome aqui", CPF
+  000.000.000-00, o curso e a carga horária do `cursos.json`, só o cargo na assinatura e a marca "MODELO". Saída:
+  `img/certificado-<slug>-640.webp`, `-1200.webp` (página) e `-email.jpg` (e-mail não abre WebP).
+- **Na página:** o certificado no topo (computador), na ficha de cada curso (modo `?curso=`, no lugar da foto), nos
+  detalhes do cartão e na seção "Depois da inscrição", com as frases com fonte: "reconhecida nacional e
+  internacionalmente pela tradição em formação humanitária" (faq-home, FAQ do Bombeiro Civil) e "Sociedade Nacional,
+  no Brasil, do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho" (/historia/). **"Ampla aceitação no
+  mercado" ficou de fora:** não há dado que sustente. Vale o mesmo para MEC, emprego e renda.
+- **Copy por curso** (`COPY_CURSO` e `BENEFICIO` no gerador): título e promessa da ficha antes do botão; "O que você
+  aprende" (3 itens), "Para quem" e a objeção principal depois dele; "aprende" e "para quem" abrem também os
+  detalhes do cartão. Cada frase foi conferida contra o `cursos.json` e a `faq-home.json` por uma segunda leitura
+  adversarial: saíram "vale em todo o país" (Bombeiro Civil), a lista de locais de trabalho (Cuidador de Idosos) e
+  "Vou conseguir aprender? Sim" (sem base). O primeiro botão do modo curso no celular ficou em 666 px no pior caso
+  (Bombeiro Civil, que tem a observação da homologação).
+- **E-mail do PIX aberto** (sai quando o código é gerado): o passo 2 agora segue a configuração da escola (com a
+  matrícula automática, "Sua matrícula entra na turma"; sem ela, "A secretaria confirma turma e horário"), entra o
+  passo "Você conclui e recebe o certificado" e o bloco do certificado do curso.
+- **Lembrete único do PIX** (`api/lib/recuperacao.php`, rodado pelo `api/lembretes.php` de hora em hora): a quem
+  gerou o PIX há 2 a 20 horas e não pagou. Só a inscrição mais recente do e-mail e curso, nunca se a pessoa já pagou
+  o curso noutra inscrição, um lembrete por e-mail e curso (o registro `email_pix_lembrete` ou
+  `email_pix_lembrete_falhou` trava o próximo), no máximo 20 por rodada. Antes de mandar, consulta a Unicopag: se a
+  consulta falha, não manda (tenta na hora seguinte); se está pago, aplica o pagamento. Assunto "Sua inscrição em
+  <curso> continua aberta: falta só o PIX", com o certificado antes do botão e `utm_campaign=pix-lembrete`.
+  Teste: `scripts/testar_recuperacao_integracao.php` (banco local).
+- **Tela do PIX** (checkout e pendente, `static/checkout.js`): o certificado do curso abaixo do código.
+- **Criativos de remarketing** (`scripts/gerar_criativos_certificado.py` → `docs/criativos/`): feed 1080×1080 e
+  stories 1080×1920 de Punção Venosa e Primeiros Socorros Básico, "Coloque o seu nome neste certificado.", com
+  "Imagem de modelo". Público sugerido: quem viu a página de matrícula ou iniciou o checkout nos últimos 14 dias e
+  não comprou.
+
+**Para o responsável decidir:** a observação "Inclui Lei Lucas." do Primeiros Socorros Básico (no `cursos.json`) é
+ambígua ao lado do curso Lei Lucas; o verso do certificado ("registro em livro", "válido por 2 anos") não foi usado
+até alguém confirmar; e se o mesmo modelo vale para todos os cursos.
+
 ## Página de matrícula: redesenho para conversão (04/10/2026)
 
 O Matheus pediu a página "focada em conversão". O diagnóstico no navegador mostrou o problema na ordem, não no

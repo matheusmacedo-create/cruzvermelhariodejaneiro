@@ -48,6 +48,6 @@ set_exception_handler(static function (Throwable $e): void {
     exit;
 });
 
-foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas'] as $modulo) {
+foreach (['config', 'http', 'db', 'unicopag', 'escola', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas', 'recuperacao'] as $modulo) {
     require __DIR__ . '/lib/' . $modulo . '.php';
 }
