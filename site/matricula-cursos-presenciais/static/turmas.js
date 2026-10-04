@@ -95,6 +95,7 @@
 
   function limparErros() {
     Array.prototype.forEach.call(form.querySelectorAll('.mr-tf-campo.erro'), function (el) { el.classList.remove('erro'); });
+    Array.prototype.forEach.call(form.querySelectorAll('[aria-invalid]'), function (el) { el.removeAttribute('aria-invalid'); });
     Array.prototype.forEach.call(form.querySelectorAll('.mr-tf-erro'), function (el) { el.textContent = ''; el.hidden = true; });
     erroGeral.hidden = true; erroGeral.textContent = '';
   }
@@ -105,6 +106,8 @@
     var caixa = alvo.closest('.mr-tf-campo');
     if (caixa) caixa.classList.add('erro');
     alvo.textContent = mensagem; alvo.hidden = false;
+    // O leitor de tela lê a mensagem junto com o campo quando o foco chega nele.
+    if (campo.setAttribute) { campo.setAttribute('aria-invalid', 'true'); campo.setAttribute('aria-describedby', alvo.id); }
     if (campo.focus) campo.focus();
   }
 
@@ -125,8 +128,10 @@
 
   function rastrear(d, corpo) {
     var dados = { content_name: nomeCurso(), content_category: 'turma-' + d.tipo, content_ids: [corpo.curso] };
-    try { if (window.fbq) window.fbq('track', 'Lead', dados, corpo.evento_id ? { eventID: corpo.evento_id } : undefined); } catch (e) { /* pixel ausente */ }
-    try { if (window.gtag) window.gtag('event', 'generate_lead', { lead_tipo: d.tipo, curso: corpo.curso, idioma: corpo.idioma, alunos: corpo.pessoas }); } catch (e) { /* GA4 ausente */ }
+    // Evento próprio (SubmitApplication / turma_pedido): o Lead e o generate_lead são do funil pago do checkout,
+    // e um pedido de turma misturado neles atrapalharia a otimização dos anúncios de matrícula.
+    try { if (window.fbq) window.fbq('track', 'SubmitApplication', dados, corpo.evento_id ? { eventID: corpo.evento_id } : undefined); } catch (e) { /* pixel ausente */ }
+    try { if (window.gtag) window.gtag('event', 'turma_pedido', { turma_tipo: d.tipo, curso: corpo.curso, idioma: corpo.idioma, alunos: corpo.pessoas }); } catch (e) { /* GA4 ausente */ }
   }
 
   function concluir(d) {

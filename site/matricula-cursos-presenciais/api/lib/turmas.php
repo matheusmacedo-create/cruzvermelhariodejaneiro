@@ -47,6 +47,15 @@ function mcp_turma_cursos(): array
     return $cursos;
 }
 
+/**
+ * Curso e idioma de uma lista no portal. Vale também curso que saiu do catálogo depois que a lista começou:
+ * a lista continua aparecendo e precisa abrir. Só o formato é conferido; o nome vem do banco.
+ */
+function mcp_turma_lista_valida(string $curso, string $idioma): bool
+{
+    return (bool) preg_match('/^[a-z0-9-]{1,80}$/', $curso) && isset(MCP_TURMA_IDIOMAS[$idioma]);
+}
+
 /** 'fechada' a partir de 15 alunos; abaixo disso, 'lista' (lista de interesse). */
 function mcp_turma_tipo(int $pessoas): string
 {
@@ -217,19 +226,22 @@ function mcp_turma_contar_recentes(string $coluna, string $valor, int $segundos)
 }
 
 /**
- * Listas de interesse em aberto, por curso e idioma: soma de alunos, número de pedidos e o último pedido.
- * Com $curso e $idioma, só aquela lista. As mais cheias primeiro.
+ * Listas de interesse em aberto, por curso e idioma: soma de alunos, número de pessoas na lista (e-mails) e o
+ * último pedido. Cada e-mail conta uma vez, pelo maior pedido em aberto: quem reenvia o formulário (a
+ * confirmação foi para o spam, mudou o número de alunos) não infla a lista nem dispara um falso "lista
+ * completa". Com $curso e $idioma, só aquela lista. As mais cheias primeiro.
  */
 function mcp_turma_demanda(?string $curso = null, ?string $idioma = null): array
 {
-    $sql = "SELECT curso_slug, MAX(curso_nome) AS curso_nome, idioma, SUM(pessoas) AS pessoas, COUNT(*) AS pedidos, MAX(criado_em) AS ultimo
-        FROM mcp_turmas_pedidos WHERE tipo = 'lista' AND status IN ('novo', 'em_contato')";
+    $sql = "SELECT curso_slug, MAX(curso_nome) AS curso_nome, idioma, SUM(pessoas) AS pessoas, COUNT(*) AS pedidos, MAX(ultimo) AS ultimo
+        FROM (SELECT curso_slug, MAX(curso_nome) AS curso_nome, idioma, email, MAX(pessoas) AS pessoas, MAX(criado_em) AS ultimo
+              FROM mcp_turmas_pedidos WHERE tipo = 'lista' AND status IN ('novo', 'em_contato')";
     $params = [];
     if ($curso !== null && $idioma !== null) {
         $sql .= ' AND curso_slug = ? AND idioma = ?';
         $params = [$curso, $idioma];
     }
-    $stmt = mcp_db()->prepare($sql . ' GROUP BY curso_slug, idioma ORDER BY pessoas DESC, ultimo DESC');
+    $stmt = mcp_db()->prepare($sql . ' GROUP BY curso_slug, idioma, email) por_pessoa GROUP BY curso_slug, idioma ORDER BY pessoas DESC, ultimo DESC');
     $stmt->execute($params);
     return array_map(static fn(array $l): array => ['pessoas' => (int) $l['pessoas'], 'pedidos' => (int) $l['pedidos']] + $l, $stmt->fetchAll());
 }
@@ -284,17 +296,18 @@ function mcp_turma_status(int $id, string $status, string $por): bool
 }
 
 /**
- * Muda de uma vez todos os pedidos em aberto de uma lista de interesse (curso + idioma), por exemplo quando
- * a turma abre. Devolve quantos mudaram.
+ * Muda de uma vez os pedidos em aberto de uma lista de interesse (curso + idioma), por exemplo quando a turma
+ * abre. Só os que a secretaria tinha na tela: id até $ateId. Quem entrou na lista depois continua nela, para
+ * ser avisado da próxima turma. Devolve quantos mudaram.
  */
-function mcp_turma_status_lista(string $curso, string $idioma, string $status, string $por): int
+function mcp_turma_status_lista(string $curso, string $idioma, string $status, string $por, int $ateId): int
 {
-    if (!isset(MCP_TURMA_STATUS[$status])) {
+    if (!isset(MCP_TURMA_STATUS[$status]) || $ateId <= 0) {
         return 0;
     }
     $stmt = mcp_db()->prepare("UPDATE mcp_turmas_pedidos SET status = ?, status_por = ?, status_em = ?
-        WHERE tipo = 'lista' AND curso_slug = ? AND idioma = ? AND status IN ('novo', 'em_contato') AND status <> ?");
-    $stmt->execute([$status, mb_substr($por, 0, 190), mcp_agora(), $curso, $idioma, $status]);
+        WHERE tipo = 'lista' AND curso_slug = ? AND idioma = ? AND status IN ('novo', 'em_contato') AND status <> ? AND id <= ?");
+    $stmt->execute([$status, mb_substr($por, 0, 190), mcp_agora(), $curso, $idioma, $status, $ateId]);
     return $stmt->rowCount();
 }
 
@@ -393,7 +406,7 @@ function mcp_montar_email_turma_equipe(array $p, ?array $progresso = null): arra
         . mcp_nota('Responder este e-mail fala direto com ' . mcp_escapar(mcp_primeiro_nome($nome)) . '.')
         . mcp_subtitulo('Dados do pedido') . mcp_caixa($linhas);
 
-    $texto = strip_tags(str_replace('<br>', "\n", $abertura)) . "\n\n";
+    $texto = html_entity_decode(strip_tags($abertura), ENT_QUOTES, 'UTF-8') . "\n\n";
     foreach ($linhas as $r => $v) {
         $texto .= "$r: " . (is_array($v) ? ($r === 'E-mail' ? $email : mcp_telefone_bonito($telefone)) : $v) . "\n";
     }
@@ -449,7 +462,7 @@ function mcp_montar_email_turma_confirmacao(array $p): array
         . mcp_caixa(mcp_turma_linhas($p))
         . ($fechada ? '' : mcp_p(mcp_escapar($valor)))
         . mcp_nota('O remetente é ' . mcp_escapar($remetente) . '. Para mudar algo no pedido, responda este e-mail. Não foi você? Ignore esta mensagem.');
-    $texto = strip_tags($abertura) . " Protocolo: $protocolo.\n\nO que acontece agora:\n";
+    $texto = html_entity_decode(strip_tags($abertura), ENT_QUOTES, 'UTF-8') . " Protocolo: $protocolo.\n\nO que acontece agora:\n";
     foreach ($passos as $i => [$titulo, $detalhe]) {
         $texto .= ($i + 1) . ") $titulo. " . html_entity_decode(strip_tags($detalhe), ENT_QUOTES, 'UTF-8') . "\n";
     }

@@ -405,7 +405,7 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
     $cursos = mcp_turma_cursos();
     $curso = mcp_texto($_GET['curso'] ?? '', 80);
     $idioma = mcp_texto($_GET['idioma'] ?? '', 2);
-    $naLista = isset($cursos[$curso]) && isset(MCP_TURMA_IDIOMAS[$idioma]);
+    $naLista = mcp_turma_lista_valida($curso, $idioma);
     $todos = mcp_texto($_GET['f'] ?? '', 10) === 'todos';
     $params = array_filter(['v' => 'turmas', 'curso' => $naLista ? $curso : '', 'idioma' => $naLista ? $idioma : '', 'f' => $todos ? 'todos' : ''], static fn(string $x): bool => $x !== '');
     $url = static fn(array $extra): string => 'painel.php?' . http_build_query(array_merge($params, $extra));
@@ -428,8 +428,9 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
     $avisoHtml = $aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '';
 
     if ($naLista) {
-        $rotulo = mcp_turma_rotulo($cursos[$curso]['nome'], $idioma);
-        $soma = (int) (mcp_turma_demanda($curso, $idioma)[0]['pessoas'] ?? 0);
+        $demanda = mcp_turma_demanda($curso, $idioma)[0] ?? null;
+        $rotulo = mcp_turma_rotulo((string) ($cursos[$curso]['nome'] ?? $demanda['curso_nome'] ?? $linhas[0]['curso_nome'] ?? $curso), $idioma);
+        $soma = (int) ($demanda['pessoas'] ?? 0);
         $pr = mcp_turma_progresso($soma);
         $corpo = '<a class="voltar" href="painel.php?v=turmas">← Voltar para as turmas sob demanda</a>' . $avisoHtml
             . '<div class="cabeca"><div><p class="eyebrow">Lista de interesse</p><h1>' . pn_e($rotulo) . '</h1>'
@@ -439,7 +440,8 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
             . $pilulas . $tabela
             . ($pr['soma'] > 0 ? '<div class="cartao" style="margin-top:18px"><h2>Mudar todos os pedidos em aberto desta lista</h2>'
                 . '<p class="nota" style="margin:0">Use quando a turma abrir: "Turma marcada" tira os pedidos da lista. Cada pessoa continua sendo avisada por você, pela planilha.</p>'
-                . pn_turma_form_status($usuario, 0, 'turma_marcada', ['curso' => $curso, 'idioma' => $idioma], 'Mudar todos') . '</div>' : '');
+                . pn_turma_form_status($usuario, 0, 'turma_marcada', ['curso' => $curso, 'idioma' => $idioma,
+                    'ate' => (string) max(array_map('intval', array_column($linhas, 'id')) ?: [0])], 'Mudar todos') . '</div>' : '');
         pn_pagina($rotulo, $corpo, $usuario, true, 'turmas');
     }
 
@@ -1412,10 +1414,10 @@ if ($metodo === 'POST') {
         $status = mcp_texto($_POST['status'] ?? '', 20);
         $curso = mcp_texto($_POST['curso'] ?? '', 80);
         $idioma = mcp_texto($_POST['idioma'] ?? '', 2);
-        $lista = isset(mcp_turma_cursos()[$curso]) && isset(MCP_TURMA_IDIOMAS[$idioma]);
+        $lista = mcp_turma_lista_valida($curso, $idioma);
         $volta = 'v=turmas' . ($lista ? '&curso=' . rawurlencode($curso) . '&idioma=' . $idioma : '') . (mcp_texto($_POST['f'] ?? '', 10) === 'todos' ? '&f=todos' : '');
         if ($acao === 'turma_lista') {
-            $n = $lista ? mcp_turma_status_lista($curso, $idioma, $status, $sessao) : 0;
+            $n = $lista ? mcp_turma_status_lista($curso, $idioma, $status, $sessao, (int) ($_POST['ate'] ?? 0)) : 0;
             mcp_registrar(null, 'painel_turma_lista', "$curso · $idioma · $status · $n · $sessao");
             pn_redirecionar($volta . '&ok=ts_lista');
         }
