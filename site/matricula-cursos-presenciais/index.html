@@ -1331,6 +1331,14 @@
           rastrear('SelecionouCurso', { content_name: b.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' });
         });
       });
+
+      // As mesmas UTMs nos links da plataforma da escola: quem vem do anúncio e se inscreve por lá leva a
+      // campanha até a cobrança na Únicopag (a escola guarda com o consentimento dela e manda no metadata).
+      document.querySelectorAll('a[href^="' + "https://escola.cursoscruzvermelha.org" + '"]').forEach(function (a) {
+        var u = new URL(a.href), mudou = false;
+        extras.forEach(function (v, k) { if (/^utm_/.test(k)) { u.searchParams.set(k, v); mudou = true; } });
+        if (mudou) a.href = u.toString();
+      });
     })();
   </script>
   <script src="/matricula-cursos-presenciais/static/turmas.js?v=567003f8ad" defer></script>
