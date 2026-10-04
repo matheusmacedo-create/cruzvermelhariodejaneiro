@@ -451,8 +451,8 @@ mudou).
 **Não testado:** e-mails de verdade pelo Resend (no teste, o envio cai num `sendmail` falso) e o evento na
 Meta.
 
-**Para publicar** (nesta ordem: os módulos de `lib/` antes do `lib.php`, que passa a exigir `lib/turmas.php`,
-e a página por último):
+**Para publicar** (a lista está em `scripts/publicacao-turmas.txt`; nesta ordem: os módulos de `lib/` antes
+do `lib.php`, que passa a exigir `lib/turmas.php`, e a página por último):
 
 ```
 scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/api/lib/turmas.php \
@@ -465,7 +465,25 @@ scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/api/lib/turmas.p
 Depois, limpar o cache e conferir: o portal abre em `?v=turmas`, e um pedido de teste chega à secretaria.
 Arquive o pedido de teste no portal.
 
-**Situação:** pronto e testado localmente. Ainda não está no ar: publicar só com o OK do Matheus.
+**Situação: publicado em 04/10/2026, às 18h22 (Brasília),** com o OK do Matheus, a partir da `main` depois do
+PR #53, na ordem de `scripts/publicacao-turmas.txt`.
+
+- **Antes:** os 5 arquivos que já existiam foram copiados do ar e eram idênticos aos da `main`; os outros 3
+  eram novos.
+- **Envio:** os 8 arquivos subiram em 11 segundos, e o cache foi limpo.
+- **Conferência no ar:** `scripts/conferir_publicacao.sh scripts/publicacao-turmas.txt` deu 33 de 33.
+  - A página e o `turmas.js` estão iguais aos do repositório.
+  - O `api/turmas.php` responde 405 a GET.
+  - O `api/lib/turmas.php` está bloqueado (403).
+  - O ponto continua respondendo 200, o que prova que a migração da tabela nova rodou.
+  - Pedidos que param na validação foram conferidos em produção, sem gravar nada: matrícula na hora em
+    português, curso inexistente, endereço faltando e outro site (403).
+  - No navegador (Chromium, computador e celular), o link de anúncio preenche o formulário, o catálogo
+    continua abrindo no primeiro curso e não há erro de JavaScript.
+- **Não feito:** nenhum pedido de verdade foi enviado, para não mandar e-mail falso à secretaria. O primeiro
+  pedido real confirma o envio dos e-mails e a gravação.
+- **Desfazer:** `scripts/desfazer_publicacao.sh 9a9049f scripts/publicacao-turmas.txt`. A tabela fica no
+  banco, e o código anterior não a usa.
 
 **Próximos passos possíveis:**
 
