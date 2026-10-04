@@ -426,7 +426,16 @@ depois da publicação; até então o formulário mandava `Lead`).
 **Soma da lista:** cada e-mail conta uma vez, pelo maior pedido em aberto. Quem reenvia o formulário não
 infla a lista nem dispara um falso "lista completa". O "Mudar todos" só mexe nos pedidos que estavam na tela
 (id até o maior mostrado): quem entrou na lista depois continua nela. Uma lista de curso que saiu do catálogo
-continua abrindo no portal. As três correções vieram da revisão adversarial de 04/10.
+continua abrindo no portal. As três correções vieram da revisão adversarial de 04/10 e foram **publicadas em
+04/10, às 18h37 (Brasília)**, com o OK do Matheus, junto com o evento novo (`SubmitApplication`/`turma_pedido`).
+
+- **Lista:** 5 arquivos, em `scripts/publicacao-turmas-correcoes.txt`.
+- **Antes:** os 5 foram copiados do ar e eram idênticos aos da `main` (6855c15).
+- **Conferência:** 33 de 33.
+  - O `turmas.js` no ar tem o hash novo.
+  - O formulário funciona no Chromium, no computador e no celular.
+  - O portal abre (`?v=turmas`).
+- **Desfazer:** `scripts/desfazer_publicacao.sh 6855c15 scripts/publicacao-turmas-correcoes.txt`.
 
 **Proteções:** as mesmas do chat de contato. Só aceita POST JSON vindo do próprio site, tem campo
 armadilha e freios de 6 pedidos por IP e 4 por e-mail, por hora.

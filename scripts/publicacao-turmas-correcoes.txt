@@ -1,0 +1,10 @@
+# Turmas sob demanda: correções da revisão adversarial (04/10/2026). O módulo antes do portal que usa as funções
+# novas (mcp_turma_lista_valida, mcp_turma_status_lista com o limite), o script antes da página que leva o hash.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-turmas-correcoes.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-turmas-correcoes.txt
+# Desfazer: scripts/desfazer_publicacao.sh 6855c15 scripts/publicacao-turmas-correcoes.txt
+site/matricula-cursos-presenciais/api/lib/turmas.php
+site/matricula-cursos-presenciais/api/lib/meta.php
+site/matricula-cursos-presenciais/api/painel.php
+site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/index.html
