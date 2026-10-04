@@ -19,7 +19,8 @@ Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_m
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 
 O botão "Fazer matrícula agora" leva ao checkout (CHECKOUT_URL) com ?curso=<slug>; o script da
-página acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript o link já funciona.
+página acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript o link já funciona. Os links para a
+plataforma da escola ganham as utm_* da URL atual (04/10/2026), para a venda feita lá levar a campanha.
 
 Turmas sob demanda (04/10/2026): seção #turmas-sob-demanda, depois do catálogo, para grupos de 15 a 30
 alunos (empresas, escolas, grupos), qualquer curso em inglês e primeiros socorros para jovens de 12 a 14
@@ -660,6 +661,14 @@ def main() -> int:
         b.addEventListener('click', function () {{
           rastrear('SelecionouCurso', {{ content_name: b.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' }});
         }});
+      }});
+
+      // As mesmas UTMs nos links da plataforma da escola: quem vem do anúncio e se inscreve por lá leva a
+      // campanha até a cobrança na Únicopag (a escola guarda com o consentimento dela e manda no metadata).
+      document.querySelectorAll('a[href^="' + {json.dumps(ESCOLA)} + '"]').forEach(function (a) {{
+        var u = new URL(a.href), mudou = false;
+        extras.forEach(function (v, k) {{ if (/^utm_/.test(k)) {{ u.searchParams.set(k, v); mudou = true; }} }});
+        if (mudou) a.href = u.toString();
       }});
     }})();
   </script>"""
