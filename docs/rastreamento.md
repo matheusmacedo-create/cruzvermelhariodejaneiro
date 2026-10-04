@@ -223,8 +223,8 @@ corrigido, menos duas, ambas geradas pela Redação:
 A Redação não pode mandar as vendas da conta "Matricula automatica": o aviso deste site promete que nome, e-mail
 e telefone só vão à Meta com o marketing ligado, e a compra seria contada duas vezes (o id do Pixel é o id da
 compra, o da Redação é `unicopag:<hash>`). Por isso matheusmacedo-create/redacao-cruzvermelhariodejaneiro#296 dá à
-Redação a escolha das contas (só a CVB marcada) e tira o CPF do envio. A migração foi aplicada em 04/10; o envio
-só deve ser ligado depois do merge e do deploy.
+Redação a escolha das contas (só a CVB marcada) e tira o CPF do envio. Migração aplicada, PR mesclado e publicado em
+04/10; o envio foi ligado às 17h01, só para a conta CVB (página padrão `https://escola.cursoscruzvermelha.org/`).
 
 ## O que a verificação mostrou e não é problema
 
