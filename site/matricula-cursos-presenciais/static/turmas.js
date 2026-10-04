@@ -66,12 +66,13 @@
     mostrar(document.getElementById('tf-bloco-endereco'), c === 'fechada' && valorRadio('local') === 'outro');
     mostrar(document.getElementById('tf-nota-jovens'), campos.curso.value === 'primeiros-socorros-jovens');
     var pode = c === 'fechada' || c === 'lista';
-    mostrar(document.getElementById('tf-dados'), pode || c === 'vazio');
+    // Duas etapas: os dados pessoais só aparecem quando o pedido é possível (turma fechada ou lista).
+    mostrar(document.getElementById('tf-dados'), pode);
     mostrar(botao, c !== 'matricula');
     botao.disabled = !pode || enviando;
     botao.textContent = enviando ? 'Enviando…' : c === 'lista' ? 'Entrar na lista de interesse' : 'Pedir minha turma';
     mostrar(matricula, c === 'matricula');
-    if (c === 'matricula') matricula.href = CHECKOUT + encodeURIComponent(campos.curso.value) + utms('&');
+    if (c === 'matricula') matricula.href = CHECKOUT + encodeURIComponent(campos.curso.value) + '&via=turmas' + utms('&');
   }
 
   /* utm_*, fbclid e gclid da visita, como no chat: só com consentimento de estatística. */
@@ -184,15 +185,26 @@
     if (dados.pessoas && !pessoas()) campos.pessoas.value = dados.pessoas;
     atualizar();
   }
+  // O formulário fica recolhido (hidden) até alguém pedir: botão da faixa, link de um curso ou do catálogo, ou
+  // o link de anúncio. Abre antes de rolar, para a rolagem parar no lugar certo.
+  var botoesFaixa = document.querySelectorAll('[data-turma-abrir][aria-controls="turma-form-bloco"]');
+  function abrirBloco(rolar, suave) {
+    bloco.hidden = false;
+    Array.prototype.forEach.call(botoesFaixa, function (b) { b.setAttribute('aria-expanded', 'true'); });
+    if (rolar) bloco.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' });
+  }
+  function abriu(origem, curso) {
+    try { if (window.gtag) window.gtag('event', 'turma_abrir', { origem: origem, curso: curso || '' }); } catch (err) { /* GA4 ausente */ }
+  }
   Array.prototype.forEach.call(document.querySelectorAll('[data-turma-abrir]'), function (el) {
     el.addEventListener('click', function (e) {
       e.preventDefault();
       if (!ok.hidden) { ok.hidden = true; form.hidden = false; }
       preencher({ curso: el.getAttribute('data-curso'), idioma: el.getAttribute('data-idioma'), pessoas: el.getAttribute('data-pessoas') });
-      bloco.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      abrirBloco(true, true);
       var foco = campos.curso.value ? campos.pessoas : campos.curso;
       setTimeout(function () { try { foco.focus({ preventScroll: true }); } catch (err) { foco.focus(); } }, 350);
-      try { if (window.gtag) window.gtag('event', 'turma_abrir', { origem: el.getAttribute('data-turma-abrir') || 'botao', curso: el.getAttribute('data-curso') || '' }); } catch (err) { /* GA4 ausente */ }
+      abriu(el.getAttribute('data-turma-abrir') || 'botao', el.getAttribute('data-curso'));
     });
   });
   document.getElementById('turma-ok-outro').addEventListener('click', function () {
@@ -203,11 +215,14 @@
   form.addEventListener('change', atualizar);
   form.addEventListener('submit', enviar);
 
-  // Link de anúncio: ?turma=1 (ou o próprio #turmas-sob-demanda) com curso, idioma e alunos já preenchidos.
+  // Link de anúncio: ?turma=1 (ou o próprio #turmas-sob-demanda / #turma-form-bloco) abre o formulário com curso,
+  // idioma e alunos já preenchidos.
   var q = new URLSearchParams(location.search);
-  if (q.get('turma') || location.hash === '#turmas-sob-demanda') {
+  if (q.get('turma') || location.hash === '#turmas-sob-demanda' || location.hash === '#turma-form-bloco') {
     preencher({ curso: q.get('turma_curso') || q.get('curso'), idioma: q.get('idioma'), pessoas: q.get('alunos') });
-    if (q.get('turma')) setTimeout(function () { bloco.scrollIntoView({ block: 'start' }); }, 50);
+    abrirBloco(false);
+    setTimeout(function () { bloco.scrollIntoView({ block: 'start' }); }, 50);
+    abriu(q.get('turma') ? 'anuncio' : 'endereco', campos.curso.value);
   } else {
     atualizar();
   }

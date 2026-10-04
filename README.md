@@ -180,6 +180,108 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Página de matrícula: redesenho para conversão (04/10/2026)
+
+O Matheus pediu a página "focada em conversão". O diagnóstico no navegador mostrou o problema na ordem, não no
+peso da página:
+
+- **Botão longe:** o primeiro botão de matrícula ficava 2 telas abaixo no celular.
+- **Comprimento:** a página tinha 12,1 telas.
+- **Chegada pelo anúncio:** quem chegava de um anúncio com `?curso=` via o topo genérico, e nenhum `ViewContent`
+  saía ao carregar.
+- **Vazamento para a escola:** 11 links levavam à plataforma da escola, sem medição. As vendas de 03/10 caíram lá
+  (`docs/rastreamento.md`).
+- **Turmas:** a seção ocupava 29% da página, com o formulário sempre aberto.
+
+A especificação completa (diagnóstico, três propostas, julgamento e decisões) está em
+[`docs/redesenho-matricula-2026-10.md`](docs/redesenho-matricula-2026-10.md), com o que foi implementado diferente
+dela no topo.
+
+**O que mudou, de cima para baixo:**
+
+- **Topo curto, sem botão-âncora:** o primeiro botão da página leva ao checkout de um curso. O botão "Escolher meu
+  curso" do topo, que foi testado e removido em 18/09, não volta.
+- **Modo curso (`?curso=<slug>`):** um script no `<head>` marca `<html data-curso>` antes da primeira pintura, e a
+  ficha daquele curso aparece por CSS. São 7 fichas pré-geradas, sem `id` e fora do JSON-LD. O `ViewContent` e o
+  `view_item` saem ao carregar, uma vez, e só com consentimento. `#curso-<slug>` abre os detalhes do cartão.
+- **Catálogo em cartões:** cada cartão tem miniatura, carga horária e escolaridade, uma linha de benefício tirada
+  do `cursos.json`, "Inscrição R$ 99 + R$ X do curso, depois" e o botão "Fazer matrícula".
+  - "Ver detalhes e dúvidas" abre a foto, o "Sobre", a FAQ do curso, o preço completo, o botão, o atalho do chat e
+    "Peça uma turma".
+  - O comparador dos três cursos de primeiros socorros fecha o grupo "Emergência e vida".
+- **"O que acontece depois que você paga":** vem logo depois do catálogo, com a garantia dos 7 dias no texto
+  literal de `/reembolso/`.
+- **"Quem dá o curso":** só fatos de `/historia/` e da FAQ da home.
+- **FAQ reescrita:** "Os R$ 99 são o valor do curso?" vem primeiro, e o único link para a escola no corpo da
+  página fica nela. Embaixo, o botão final, que muda para o curso em foco.
+- **Turmas para grupos:** viraram uma faixa compacta no fim, com o formulário recolhido. Ele abre no botão "Pedir
+  turma para grupo", nos links dos cursos e com `?turma=1`. Os dados pessoais só aparecem quando o pedido é
+  possível.
+- **Barra fixa no celular:** aparece com um curso em foco, nenhum botão de matrícula na tela e fora da seção de
+  turmas e do rodapé.
+- **Chat:** o botão ficou branco, para o vermelho forte ficar só nos botões de matrícula. No celular vira um
+  círculo, e ele some enquanto um botão de matrícula passa por baixo dele. É CSS local: `chat.js` e `chat.css` não
+  mudam.
+- **Aviso de cookies:** muda só o espaçamento no celular, também por CSS local. O texto e a REVISAO não mudam.
+
+**Links para a escola:** ficam 4 de 11: "Plataforma" no cabeçalho, 1 na FAQ e 2 no rodapé. Todos levam
+`utm_source=cruzvermelhariodejaneiro&utm_medium=matricula&utm_content=<lugar>` e disparam `saida_escola` (GA4) e
+`SaidaEscola` (Pixel, `trackCustom`).
+
+**Medição:** a tabela está em `docs/rastreamento.md`, seção "Página de matrícula (04/10/2026)". Os eventos são:
+
+- `view_item_list`;
+- `cta_matricula_visto`;
+- `select_item`, com `local` e `modo`;
+- `barra_fixa_vista`;
+- `faq_aberta`;
+- `secao_vista`;
+- `chat_atalho`;
+- `saida_escola`/`SaidaEscola`;
+- `turma_abrir`, com a `origem`;
+- o `ViewContent`, no modo curso e ao abrir detalhes.
+
+Os botões levam `via=<lugar>` no endereço do checkout, que aparece no `page_location` do `begin_checkout`.
+
+**Medidas:** feitas localmente, com o logo e as fotos do ar.
+
+| | Antes | Depois |
+| --- | --- | --- |
+| 1º botão de checkout, celular 390×844 | 2.535 px (2 telas abaixo) | 571 px |
+| 1º botão, modo curso (`?curso=`), celular | 1,84 a 2,1 telas | 570 px |
+| 1º botão, computador 1280×800 | cerca de 1.660 px | 774 px |
+| Comprimento, celular | 12,1 telas | 7,5 com o rodapé (6,5 sem) |
+| Comprimento, computador | 6,9 telas | 6,3 |
+
+**Travas no gerador:**
+
+- recusa gerar com `[INSERIR`, `[CONFIRMAR` ou `[DECIDIR` na página, ou com mais de um `<h1>`;
+- `MOSTRAR_TOTAL` e `GARANTIA_APOS_7_DIAS` ficam desligados até as decisões D1 e D3;
+- `ESCOLA_MATRICULA_AUTOMATICA` está ligada, porque `config-escola.php` existe no servidor (responde 403, e não 404).
+
+**Prova social:** nenhuma foi inventada. O dicionário `PROVA` está vazio até haver dado real e autorizado.
+
+**Decisões do dono** (seção 8 da especificação):
+
+- D1: os R$ 99 quitam a inscrição de R$ 100 da escola? Se sim, liga o total.
+- D3: a matrícula automática numa turma com data já conta como "turma confirmada" para o reembolso?
+- D5: WhatsApp no formulário de turmas.
+- D2: o desenho dos links para a escola. Reavaliar com 4 semanas de `saida_escola`.
+
+**Testes:**
+
+- `scripts/conferir_pixel.js --repositorio`: 15 cenários certos. Os 3 novos são do modo curso: aceitou (`ViewContent`
+  com o mesmo id no repasse), sem escolher e rejeitou (nada vai para a Meta).
+- `php scripts/testar_checkout.php`: 350 testes.
+- O JSON-LD valida sem erro.
+- O formulário de turmas foi testado no Chromium, no celular: abre fechado, o link do curso já preenche, a
+  matrícula na hora aparece sem os dados pessoais, e a lista em inglês foi enviada ao banco local.
+- Capturas no computador e no celular.
+
+**Publicar** (depois do OK do Matheus): `scripts/publicar_hostinger.sh site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/index.html`, limpar o cache e rodar `scripts/conferir_publicacao.sh` e
+`NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js`. Desfazer: republicar as duas versões anteriores do Git.
+
 ## Checkout da inscrição (`/matricula-cursos-presenciais/checkout/`)
 
 Construído e publicado em 18/09/2026. É a alternativa da seção 17 do briefing: backend em **PHP 8.3 + MySQL na própria Hostinger**, no

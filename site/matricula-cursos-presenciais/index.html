@@ -20,6 +20,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Cursos presenciais da Cruz Vermelha Brasileira no Rio de Janeiro">
   <meta name="twitter:card" content="summary_large_image">
+  <script>(function(){try{var q=new URLSearchParams(location.search),c=q.get('curso');if(c&&!q.get('turma')&&["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas", "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos", "micropigmentacao-labial"].indexOf(c)>=0)document.documentElement.setAttribute('data-curso',c);}catch(e){}})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -34,76 +35,165 @@
     .nav-toggle .ico-xmark { display: none; }
     .main-header.nav-open .nav-toggle .ico-bars { display: none; }
     .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
-    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 56px 0 40px; }
-    .mr-hero h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.3rem); line-height: 1.04; letter-spacing: -.035em; margin: 10px 0 16px; }
-    .mr-hero h1 { margin-bottom: 6px; }
-    .mr-hero .mr-h1-sub { font-size: clamp(1rem, 2.3vw, 1.35rem); font-weight: 700; color: var(--muted); letter-spacing: -.01em; line-height: 1.3; margin: 0 0 14px; max-width: 60ch; }
-    .mr-hero .lead { max-width: 72ch; }
-    .mr-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-    .mr-chip { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: .9rem; color: var(--text); }
-    .mr-chip i { color: var(--red); }
-    .mr-catalogo { padding: 48px 0 64px; }
-    .mr-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 32px; align-items: start; }
-    .mr-lista { position: sticky; top: 96px; display: grid; gap: 20px; }
-    .mr-grupo h3 { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
-    .mr-lista a { display: block; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--text); font-weight: 700; margin-bottom: 8px; transition: border-color .2s, box-shadow .2s; }
-    .mr-lista a small { display: block; color: var(--muted); font-weight: 500; font-size: .85rem; margin-top: 2px; }
-    .mr-lista a:hover { border-color: var(--red); }
-    .mr-lista a.ativo { border-color: var(--red); box-shadow: inset 4px 0 0 var(--red); }
-    .mr-detalhe { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px; }
-    .js .mr-detalhe { margin-bottom: 0; }
-    .js .mr-detalhe:not(.ativo) { display: none; }
-    .mr-detalhe .mr-foto { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; background: var(--soft); }
-    .mr-corpo { padding: 32px; }
-    .mr-corpo h2 { color: var(--black); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; margin: 0 0 10px; }
-    .mr-corpo h3 { color: var(--black); font-size: 1.1rem; margin: 26px 0 10px; }
-    .mr-corpo p { color: var(--text); }
-    .mr-preco { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0 18px; padding: 20px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; }
-    .mr-preco span { display: block; color: var(--muted); font-size: .85rem; }
-    .mr-preco b { display: block; font-size: 1.7rem; color: var(--red); line-height: 1.1; margin: 4px 0; }
-    .mr-preco b.mr-preco-curso { color: var(--black); }
-    .mr-regra-curta { color: var(--muted); font-size: .92rem; margin: 14px 0 0; }
-    .mr-link-escola { color: var(--muted); font-size: .92rem; margin: 26px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
-    .mr-link-escola a { color: var(--red); font-weight: 700; text-decoration: underline; }
-    .mr-nota { border-left: 4px solid var(--red); background: var(--soft); padding: 12px 16px; border-radius: 0 12px 12px 0; }
-    .mr-nota i { color: var(--red); margin-right: 6px; }
-    .mr-faq details, .mr-faq-pagina details { border-top: 1px solid var(--line); padding: 12px 0; }
-    .mr-faq summary, .mr-faq-pagina summary { cursor: pointer; font-weight: 700; color: var(--black); }
-    .mr-faq details p, .mr-faq-pagina details p { margin: 10px 0 0; }
-    .mr-como { background: var(--soft); border-top: 1px solid var(--line); padding: 56px 0; }
-    .mr-passos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 28px; }
-    .mr-passo { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-    .mr-passo b { display: inline-flex; width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: #fff; align-items: center; justify-content: center; font-weight: 900; margin-bottom: 12px; }
-    .mr-passo h3 { color: var(--black); font-size: 1.1rem; margin: 0 0 8px; }
-    .mr-passo p { color: var(--text); margin: 0; }
-    .mr-regra { border-left: 4px solid var(--red); background: #fff; padding: 16px 20px; border-radius: 0 12px 12px 0; margin-top: 26px; color: var(--text); }
-    .mr-hero-grupos { margin: 18px 0 0; color: var(--text); font-weight: 600; }
-    .mr-hero-grupos i { color: var(--red); margin-right: 6px; }
-    .mr-hero-grupos a, .mr-grupo-link a { color: var(--red); font-weight: 800; text-decoration: underline; }
-    .mr-grupo-link { margin: 18px 0 0; padding: 12px 16px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font-size: .95rem; }
-    .mr-grupo-link i { color: var(--red); margin-right: 6px; }
-    .mr-demanda { padding: 56px 0 64px; border-top: 1px solid var(--line); }
-    /* .btn e os campos têm display próprio, que venceria o atributo hidden. */
+    :root { --apoio: #4a5568; }
+    /* modo curso (?curso=<slug>): o script do <head> marca <html data-curso>; a ficha certa aparece por CSS */
+    .mr-so-curso { display: none; }
+    html[data-curso] .mr-so-curso { display: inline; }
+    html[data-curso] .mr-so-geral { display: none; }
+    html[data-curso] .mr-hero-apoio { display: none; }
+    html[data-curso] .mr-hero { padding: 14px 0 4px; border-bottom: 0; background: transparent; }
+    html[data-curso] .mr-hero-grid { display: block; }
+    html[data-curso] .mr-hero .eyebrow { display: none; }
+    html[data-curso] .mr-hero h1 { font-size: .95rem; font-weight: 700; color: var(--apoio); letter-spacing: 0; line-height: 1.35; margin: 0; }
+    .mr-ficha { display: none; }
+    html[data-curso="primeiros-socorros-basico"] .mr-ficha[data-ficha="primeiros-socorros-basico"]{display:grid}html[data-curso="suporte-basico-de-vida"] .mr-ficha[data-ficha="suporte-basico-de-vida"]{display:grid}html[data-curso="primeiros-socorros-lei-lucas"] .mr-ficha[data-ficha="primeiros-socorros-lei-lucas"]{display:grid}html[data-curso="puncao-venosa"] .mr-ficha[data-ficha="puncao-venosa"]{display:grid}html[data-curso="bombeiro-civil"] .mr-ficha[data-ficha="bombeiro-civil"]{display:grid}html[data-curso="cuidador-de-idosos"] .mr-ficha[data-ficha="cuidador-de-idosos"]{display:grid}html[data-curso="micropigmentacao-labial"] .mr-ficha[data-ficha="micropigmentacao-labial"]{display:grid}
+
+    /* topo */
+    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 30px 0 26px; }
+    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: center; }
+    .mr-hero .eyebrow { font-size: .78rem; }
+    .mr-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 8px 0 12px; }
+    .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
+    .mr-confianca-linha { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--text); font-weight: 600; font-size: .95rem; }
+    .mr-confianca-linha li { display: inline-flex; align-items: center; gap: 8px; }
+    .mr-confianca-linha i { color: var(--red); }
+    .mr-hero-passos { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+    .mr-hero-passos-titulo { font-weight: 800; color: var(--black); margin: 0 0 8px; }
+    .mr-hero-passos ol { margin: 0 0 14px; padding-left: 20px; color: var(--text); font-size: .95rem; }
+    .mr-hero-passos li { margin: 6px 0; }
+    .mr-selo { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: #0f5132; background: #e9f7ef; border-radius: 999px; padding: 5px 10px; margin: 0; }
+
+    /* ficha do curso (modo curso) */
+    .mr-fichas { margin: 0 auto; }
+    .mr-ficha { grid-template-columns: 44% minmax(0, 1fr); gap: 28px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin: 8px 0 28px; }
+    .mr-ficha-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
+    .mr-ficha-chapeu { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--red); font-weight: 800; margin: 0 0 6px; }
+    .mr-ficha-titulo { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--black); letter-spacing: -.02em; line-height: 1.12; margin: 0 0 10px; }
+    .mr-ficha-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--text); font-size: .92rem; margin: 0 0 14px; }
+    .mr-ficha-meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .mr-ficha-meta i { color: var(--red); }
+    .mr-ficha .mr-cta { min-width: 280px; }
+    .mr-mini-passos { margin: 14px 0 0; padding-left: 20px; color: var(--apoio); font-size: .9rem; }
+    .mr-mini-passos li { margin: 2px 0; }
+    .mr-ficha-links { font-size: .9rem; margin: 14px 0 0; color: var(--apoio); }
+    .mr-ficha-links a { color: var(--red); font-weight: 700; }
+
+    /* preço e botão (ficha, cartão e detalhes) */
+    .mr-preco { margin: 4px 0 16px; }
+    .mr-preco-agora { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 10px; margin: 0; }
+    .mr-preco-agora span { color: var(--apoio); font-size: .88rem; }
+    .mr-preco-agora b { font-size: 1.8rem; font-weight: 800; color: var(--black); line-height: 1.1; }
+    .mr-preco-depois { color: var(--apoio); font-size: .95rem; margin: 4px 0 0; }
+    .mr-preco-obs { font-size: .88rem; color: var(--apoio); border-left: 3px solid var(--line); padding-left: 10px; margin: 8px 0 0; }
+    .mr-preco-total { font-weight: 700; color: var(--black); margin: 6px 0 0; }
+    .mr-cta { min-height: 56px; font-size: 1rem; }
+    .mr-micro { color: var(--apoio); font-size: .85rem; margin: 10px 0 0; line-height: 1.55; }
+    .mr-micro i { color: #0f7b3e; }
+    .mr-chat-atalho { font-size: .9rem; margin: 10px 0 0; color: var(--apoio); }
+    .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
+
+    /* catálogo em cartões */
+    .mr-catalogo { padding: 22px 0 48px; }
+    html[data-curso] .mr-catalogo { padding-top: 4px; }
+    .mr-catalogo-titulo { font-size: 1.15rem; color: var(--black); margin: 0 0 8px; }
+    html:not([data-curso]) .mr-catalogo-titulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .mr-cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .mr-grupo-rotulo { grid-column: 1 / -1; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--apoio); font-weight: 800; margin: 16px 0 -6px; }
+    .mr-grupo-rotulo:first-child { margin-top: 0; }
+    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; }
+    .mr-curso.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
+    .mr-curso.aberto, .mr-curso:has(> .mr-curso-mais[open]) { grid-column: 1 / -1; }
+    /* Cartão compacto (miniatura + nome) em qualquer largura: a 1ª fileira de botões cabe na primeira tela de
+       1280x800, e a foto grande fica nos detalhes. */
+    .mr-curso-topo { display: flex; align-items: center; gap: 14px; padding: 16px 18px 0; }
+    .mr-curso-mini { width: 88px; height: 66px; object-fit: cover; display: block; border-radius: 8px; flex-shrink: 0; background: var(--soft); }
+    .mr-curso-topo > div { min-width: 0; }
+    .mr-curso-nome { font-size: 1.1rem; color: var(--black); margin: 0 0 4px; line-height: 1.2; }
+    .mr-curso-meta { color: var(--apoio); font-size: .88rem; margin: 0; }
+    .mr-curso-beneficio { color: var(--text); font-size: .92rem; margin: 8px 18px 0; }
+    .mr-curso-acao { margin-top: auto; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .mr-preco-curto { margin: 0; display: flex; flex-direction: column; font-size: .88rem; color: var(--apoio); line-height: 1.35; }
+    .mr-preco-curto strong { color: var(--black); font-size: 1.05rem; }
+    .mr-curso-acao .mr-cta { width: 100%; }
+    .mr-curso-mais { border-top: 1px solid var(--line); }
+    .mr-curso-mais > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 0 18px; font-weight: 700; color: var(--red); list-style: none; }
+    .mr-curso-mais > summary::-webkit-details-marker { display: none; }
+    .mr-curso-mais > summary::after { content: "+"; margin-left: auto; font-size: 1.3rem; line-height: 1; }
+    .mr-curso-mais[open] > summary::after { content: "–"; }
+    .mr-curso-detalhes { padding: 4px 18px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 32px; }
+    .mr-curso-foto-grande { margin: 8px 0 4px; }
+    .mr-curso-foto-grande .mr-foto { width: 100%; max-width: 520px; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
+    .mr-curso-sobre h4, .mr-faq h4 { font-size: 1rem; color: var(--black); margin: 12px 0 6px; }
+    .mr-curso-sobre p { margin: 0 0 10px; color: var(--text); font-size: .95rem; }
+    .mr-curso-fecho { grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 16px; max-width: 620px; }
+    .mr-faq details, .mr-faq-pagina details, .mr-demanda-faq details { border-top: 1px solid var(--line); padding: 10px 0; }
+    .mr-faq summary, .mr-faq-pagina summary, .mr-demanda-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 28px; }
+    .mr-faq details p, .mr-faq-pagina details p, .mr-demanda-faq details p { margin: 8px 0 0; color: var(--text); }
+    .mr-turma-linha { color: var(--apoio); font-size: .9rem; margin: 14px 0 0; }
+    .mr-turma-linha a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .mr-turma-linha-catalogo { margin-top: 24px; }
+
+    /* comparador dos cursos de primeiros socorros */
+    .mr-comparar { grid-column: 1 / -1; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 0 18px; scroll-margin-top: 96px; }
+    .mr-comparar > summary { cursor: pointer; min-height: 48px; display: flex; align-items: center; font-weight: 700; color: var(--black); }
+    .mr-comparar-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 4px 0 18px; }
+    .mr-comparar-linha { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+    .mr-comparar-linha p { margin: 0; font-size: .9rem; color: var(--text); }
+    .mr-comparar-linha .mr-comparar-nome { font-weight: 800; color: var(--black); font-size: 1rem; }
+    .mr-comparar-linha .mr-cta { margin-top: auto; min-height: 48px; }
+
+    /* depois da inscrição e garantia */
+    .mr-depois { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 48px 0; }
+    .mr-depois h2, .mr-confianca h2, .mr-faq-pagina h2, .mr-demanda h2 { color: var(--black); font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.02em; margin: 0 0 18px; line-height: 1.15; }
+    .mr-passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .mr-passos li { display: flex; gap: 14px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+    .mr-passos b { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; }
+    .mr-passos h3 { font-size: 1.02rem; color: var(--black); margin: 5px 0 6px; }
+    .mr-passos p { margin: 0; color: var(--text); font-size: .95rem; }
+    .mr-nota-curta { color: var(--apoio); font-size: .92rem; margin: 14px 0 0; }
+    .mr-garantia { display: flex; gap: 16px; background: #fff; border-left: 4px solid var(--red); border-radius: 0 var(--radius) var(--radius) 0; padding: 20px 22px; margin-top: 22px; scroll-margin-top: 96px; }
+    .mr-garantia > i { color: var(--red); font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+    .mr-garantia h3 { margin: 8px 0 6px; color: var(--black); font-size: 1.1rem; }
+    .mr-garantia p { margin: 0 0 8px; color: var(--text); }
+    .mr-garantia-mais summary { cursor: pointer; font-weight: 700; color: var(--red); min-height: 44px; display: flex; align-items: center; }
+    .mr-garantia-mais a { color: var(--red); font-weight: 700; }
+
+    /* confiança */
+    .mr-confianca { padding: 44px 0; }
+    .mr-confianca-texto { max-width: 75ch; color: var(--text); margin: 0 0 18px; }
+    .mr-confianca-itens { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .mr-confianca-itens li { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; color: var(--text); background: var(--soft); border-radius: 12px; padding: 14px; }
+    .mr-confianca-itens i { color: var(--red); flex-shrink: 0; margin-top: 2px; }
+    .mr-confianca-link { margin: 16px 0 0; }
+    .mr-confianca-link a { color: var(--red); font-weight: 700; }
+
+    /* perguntas frequentes */
+    .mr-faq-pagina { padding: 48px 0; border-top: 1px solid var(--line); }
+    .mr-faq-pagina .wrap { max-width: 820px; }
+    .mr-faq-pagina details p a { color: var(--red); font-weight: 600; text-decoration: underline; }
+    .mr-faq-pagina details p a[data-saida] { color: inherit; font-weight: 400; }
+    .mr-faq-chat { margin-top: 20px; }
+    .mr-final { margin-top: 22px; }
+    .mr-final-link { color: var(--red); font-weight: 700; text-decoration: underline; }
+
+    /* turmas para grupos (faixa compacta; o formulário abre no botão) */
+    .mr-demanda { padding: 44px 0 56px; background: var(--soft); border-top: 1px solid var(--line); }
     .mr-demanda [hidden] { display: none !important; }
-    .mr-demanda h2 { color: var(--black); font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; margin: 0 0 10px; }
-    .mr-demanda-cards { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 20px; margin-top: 28px; align-items: stretch; }
-    .mr-demanda-card { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-    .mr-demanda-card.destaque { border: 2px solid var(--red); box-shadow: var(--shadow); }
-    .mr-demanda-card > i { color: var(--red); font-size: 1.6rem; }
-    .mr-demanda-card h3 { color: var(--black); font-size: 1.15rem; margin: 0; line-height: 1.25; }
-    .mr-demanda-card p { color: var(--text); margin: 0; }
-    .mr-demanda-card .mr-demanda-en { color: var(--muted); font-size: .92rem; font-style: italic; }
-    .mr-demanda-card ul { margin: 0; padding-left: 18px; color: var(--text); }
-    .mr-demanda-card ul li { margin: 2px 0; }
-    .mr-demanda-card .btn { margin-top: auto; align-self: flex-start; }
-    .mr-demanda-form { margin-top: 28px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; scroll-margin-top: 96px; }
+    .mr-demanda-grade { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+    .mr-demanda h2 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); }
+    .mr-demanda-abertura { color: var(--text); margin: 0 0 12px; }
+    .mr-demanda-itens { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; }
+    .mr-demanda-itens li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; }
+    .mr-demanda-itens i { color: var(--red); flex-shrink: 0; margin-top: 3px; }
+    .mr-demanda-botao { min-height: 52px; }
+    .mr-demanda-form { margin-top: 24px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; scroll-margin-top: 96px; }
     .mr-demanda-form h3 { color: var(--black); font-size: 1.3rem; margin: 0 0 4px; }
-    .mr-tf-nota { color: var(--muted); margin: 0 0 18px; }
+    .mr-tf-nota { color: var(--apoio); margin: 0 0 18px; }
     .mr-tf-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
     .mr-tf-largo { grid-column: 1 / -1; }
     .mr-tf-campo { margin: 0; padding: 0; border: 0; min-width: 0; }
     .mr-tf-campo label, .mr-tf-campo legend { display: block; font-weight: 700; color: var(--black); margin: 0 0 6px; padding: 0; font-size: .95rem; }
-    .mr-tf-campo label small { color: var(--muted); font-weight: 500; }
+    .mr-tf-campo label small { color: var(--apoio); font-weight: 500; }
     .mr-tf-campo input:not([type=radio]):not([type=checkbox]), .mr-tf-campo select, .mr-tf-campo textarea { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; }
     .mr-tf-campo textarea { min-height: 96px; resize: vertical; }
     .mr-tf-campo input:focus, .mr-tf-campo select:focus, .mr-tf-campo textarea:focus { outline: 0; border-color: var(--red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .14); }
@@ -111,37 +201,109 @@
     .mr-tf-opcoes { display: flex; flex-wrap: wrap; gap: 8px 18px; }
     .mr-tf-opcoes label, .mr-tf-check { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: var(--text); margin: 0; cursor: pointer; }
     .mr-tf-opcoes input, .mr-tf-check input { width: 18px; height: 18px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--red); }
-    .mr-tf-dica { color: var(--muted); font-size: .85rem; margin: 6px 0 0; }
+    .mr-tf-dica { color: var(--apoio); font-size: .85rem; margin: 6px 0 0; }
     .mr-tf-dica a { color: var(--red); text-decoration: underline; }
     .mr-tf-erro { color: #b91c1c; font-size: .88rem; font-weight: 600; margin: 6px 0 0; }
     .mr-tf-erro.geral { background: #fff0f2; border: 1px solid #f5c2c7; border-radius: 12px; padding: 10px 14px; margin: 16px 0 0; }
-    .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--line); background: #fff; border-radius: 0 12px 12px 0; color: var(--text); }
+    .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--line); background: var(--soft); border-radius: 0 12px 12px 0; color: var(--text); }
     .mr-tf-situacao.fechada { border-left-color: #0f7b3e; }
     .mr-tf-situacao.lista { border-left-color: var(--red); }
     .mr-tf-situacao.aviso { border-left-color: #b7791f; background: #fffaf0; }
     #tf-dados { margin-top: 4px; }
-    #tf-enviar { margin-top: 20px; }
-    #tf-enviar:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    #tf-enviar { margin-top: 20px; min-height: 56px; font-size: 1rem; }
+    #tf-enviar:disabled { background: #e2e8f0; color: var(--apoio); box-shadow: none; cursor: not-allowed; transform: none; }
     .mr-tf-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .mr-tf-ok { text-align: center; padding: 18px 0; }
     .mr-tf-ok:focus { outline: 0; }
     .mr-tf-ok > i { color: #0f7b3e; font-size: 2.4rem; }
     .mr-tf-ok h3 { margin: 10px 0 8px; }
     .mr-tf-ok p { max-width: 60ch; margin: 0 auto 8px; color: var(--text); }
-    .mr-faq-pagina { padding: 56px 0 64px; }
-    .mr-faq-pagina .wrap { max-width: 820px; }
+
+    /* barra fixa de matrícula (celular, só com curso em foco) */
+    .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1050; display: flex; align-items: center; gap: 12px; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(16, 24, 40, .12); padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); min-height: 64px; animation: mr-sobe .2s ease; }
+    .mr-barra[hidden] { display: none; }
+    @keyframes mr-sobe { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @media (prefers-reduced-motion: reduce) { .mr-barra { animation: none; } }
+    .mr-barra-texto { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .mr-barra-texto b { font-size: .95rem; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mr-barra-texto span { font-size: .78rem; color: var(--apoio); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mr-barra .mr-cta { min-height: 48px; padding: 10px 16px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
+    html.mr-barra-on body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+
+    /* chat (sem tocar em chat.css): botão branco, para o vermelho forte ficar só nos botões de matrícula */
+    html body .cv-chat .cv-chat-abrir { background: #fff; color: var(--red); border: 1.5px solid var(--red); box-shadow: 0 8px 24px rgba(16, 24, 40, .14); transition: opacity .2s ease, transform .18s ease; }
+    html body .cv-chat .cv-chat-abrir:hover { background: #fff7f7; }
+    html.mr-chat-recolher body .cv-chat:not(.aberto) .cv-chat-abrir { opacity: 0; pointer-events: none; }
+    html.mr-barra-on body .cv-chat { bottom: calc(84px + env(safe-area-inset-bottom)); }
+
+    @media (max-width: 1099px) {
+      .mr-cartoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mr-confianca-itens { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 920px) {
-      .mr-grid { grid-template-columns: 1fr; }
-      .mr-lista { position: static; }
+      .mr-hero-grid { grid-template-columns: 1fr; }
+      .mr-hero-passos { display: none; }
+      .mr-demanda-grade { grid-template-columns: 1fr; gap: 12px; }
       .mr-passos { grid-template-columns: 1fr; }
-      .mr-preco { grid-template-columns: 1fr; }
-      .mr-corpo { padding: 22px; }
-      .mr-demanda-cards { grid-template-columns: 1fr; }
-      .mr-tf-grade { grid-template-columns: 1fr; }
-      .mr-demanda-form { padding: 20px; }
+      .mr-comparar-grade { grid-template-columns: 1fr; }
       /* O CSS da home esconde qualquer <nav> abaixo de 920px (regra do menu antigo) e o menu sanfona
          abria sem os links. Nesta página os links voltam a aparecer com o menu aberto. */
       .main-header .header-collapse .nav-links { display: flex !important; }
+    }
+    @media (max-width: 719px) {
+      .mr-so-largo, .mr-so-largo-flex { display: none !important; }
+      .mr-hero { padding: 20px 0 16px; }
+      .mr-hero .eyebrow { font-size: .7rem; letter-spacing: .1em; }
+      .mr-hero h1 { font-size: clamp(1.5rem, 6.4vw, 1.95rem); margin: 6px 0 10px; }
+      .mr-hero-sub { font-size: .97rem; margin-bottom: 10px; }
+      .mr-confianca-linha { font-size: .86rem; gap: 4px 14px; }
+      .mr-ficha { grid-template-columns: 1fr; padding: 16px; margin: 6px 0 18px; gap: 0; }
+      .mr-ficha-foto { display: none; }
+      .mr-ficha-titulo { font-size: 1.4rem; }
+      .mr-ficha .mr-cta { width: 100%; min-width: 0; }
+      .mr-catalogo { padding: 14px 0 36px; }
+      .mr-cartoes { grid-template-columns: 1fr; gap: 12px; }
+      .mr-grupo-rotulo { margin: 10px 0 -2px; }
+      .mr-curso-topo { gap: 12px; padding: 14px 14px 0; }
+      .mr-curso-mini { width: 64px; height: 48px; }
+      .mr-curso-nome { font-size: 1.05rem; }
+      .mr-curso-meta { font-size: .85rem; }
+      .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .mr-curso-acao { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 14px 14px; }
+      .mr-curso-acao .mr-cta { width: auto; min-height: 48px; padding: 10px 18px; font-size: .95rem; white-space: nowrap; }
+      .mr-curso-mais > summary { padding: 0 14px; }
+      .mr-curso-detalhes { grid-template-columns: 1fr; padding: 4px 14px 18px; }
+      .mr-curso-fecho .mr-cta { width: 100%; }
+      .mr-comparar { padding: 0 14px; }
+      .mr-confianca-itens { grid-template-columns: 1fr; gap: 8px; }
+      .mr-depois h2, .mr-confianca h2, .mr-faq-pagina h2, .mr-demanda h2 { font-size: 1.35rem; margin-bottom: 14px; }
+      .mr-depois { padding: 28px 0; }
+      .mr-passos { gap: 10px; }
+      .mr-passos li { padding: 14px; gap: 12px; }
+      .mr-passos b { width: 30px; height: 30px; font-size: .9rem; }
+      .mr-passos h3 { font-size: .98rem; margin: 3px 0 4px; }
+      .mr-passos p { font-size: .9rem; }
+      .mr-garantia { padding: 16px; gap: 12px; margin-top: 16px; }
+      .mr-garantia h3 { font-size: 1.02rem; }
+      .mr-garantia p { font-size: .93rem; }
+      .mr-confianca, .mr-faq-pagina { padding: 28px 0; }
+      .mr-confianca-texto { font-size: .93rem; margin-bottom: 10px; }
+      .mr-confianca-itens li { background: none; border-radius: 0; border-bottom: 1px solid var(--line); padding: 9px 0; font-size: .88rem; }
+      .mr-confianca-link { margin-top: 10px; }
+      .mr-demanda { padding: 28px 0 36px; }
+      .mr-demanda-abertura { font-size: .93rem; }
+      .mr-demanda-itens li { font-size: .9rem; }
+      .mr-demanda-form { padding: 18px; }
+      .mr-tf-grade { grid-template-columns: 1fr; }
+      html body .cv-chat .cv-chat-abrir { width: 56px; padding: 0; justify-content: center; border-color: var(--line); }
+      html body .cv-chat .cv-chat-abrir-rotulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    }
+    @media (min-width: 720px) { .mr-barra { display: none !important; } }
+    /* aviso de cookies: só o espaço (texto e REVISAO intactos), para cobrir menos a primeira tela do celular */
+    @media (max-width: 559px) {
+      html body .cvrj-ck { padding: 14px; }
+      html body .cvrj-ck .cvrj-ck-botoes { grid-template-columns: repeat(3, 1fr); }
+      html body .cvrj-ck .cvrj-ck-botoes button { font-size: .85rem; padding: 8px 4px; }
     }
   </style>
   <!-- Google tag (gtag.js) -->
@@ -697,18 +859,66 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "O que é a inscrição de R$ 99?",
+      "name": "Os R$ 99 são o valor do curso?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. Ela vale para a matrícula feita por esta página; quem se inscreve direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola, no valor à vista informado em cada curso."
+        "text": "Não. Os R$ 99 são a inscrição: garantem sua vaga no curso escolhido, na Escola de Educação e Saúde, a escola da Cruz Vermelha Brasileira Rio de Janeiro. O valor de cada curso, de R$ 150 a R$ 950, aparece no cartão dele e é pago depois, na plataforma da escola, à vista ou parcelado com juros."
       }
     },
     {
       "@type": "Question",
-      "name": "Quais são as formas de pagamento?",
+      "name": "Quando começa minha aula?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola: à vista, no valor informado em cada curso, ou parcelado, com juros."
+        "text": "Se o curso já tem turma aberta, sua matrícula entra nela assim que o pagamento é confirmado, e a data de início aparece na tela de confirmação e no e-mail. Se ainda não tem, a secretaria coloca você na próxima turma e avisa por e-mail. Depois do pagamento, você também marca os dias e os períodos em que pode vir."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso desistir depois de pagar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você tiver escolhido cobri-lo. Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas estão na página de cancelamento e reembolso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Posso parcelar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago na plataforma da escola, à vista ou parcelado com juros, nas condições informadas lá."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual curso de primeiros socorros eu faço?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Primeiros Socorros Básico: 8 horas, curso R$ 180. Inclui Lei Lucas. Suporte Básico de Vida: 4 horas, curso R$ 150. Atendimento inicial de emergências. Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas, curso R$ 150. Para quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil (Lei 13.722/2018). Os três pedem Ensino Fundamental."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O certificado vale? É reconhecido pelo MEC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui o curso, com carga horária e conteúdo. Nenhum curso livre é reconhecido pelo MEC, aqui ou em qualquer instituição: o MEC regula a educação formal, como o ensino técnico, a graduação e a pós. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os cursos são gratuitos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. Os sete cursos presenciais são pagos: a inscrição de R$ 99 garante a vaga, e o valor do curso, de R$ 150 a R$ 950, é pago depois. Quem quer aprender e servir pode ser voluntário, num caminho separado dos cursos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde são as aulas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Na sede da filial, o Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Todos os cursos são presenciais."
       }
     },
     {
@@ -716,39 +926,7 @@
       "name": "Preciso criar conta ou escolher turma agora?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "E se não houver horário compatível?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A inscrição reserva sua vaga. Você pode desistir em até 7 dias depois do pagamento e recebe o valor de volta. Depois disso, o valor também é estornado se não houver horário compatível ou se você desistir antes da confirmação da aula. O prazo para aparecer na conta depende de PIX ou cartão."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Posso desistir depois de pagar a inscrição?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sim. Em até 7 dias depois do pagamento, você desiste sem precisar dar motivo e recebe o valor integral de volta (art. 49 do Código de Defesa do Consumidor). Depois desse prazo, a inscrição ainda é devolvida se não houver horário compatível ou se você desistir antes da confirmação da aula. O pedido é feito pelo chat da página, e as regras completas estão na página de cancelamento e reembolso."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Os cursos são presenciais? Onde acontecem?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sim. Todos acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Posso ver as turmas abertas antes de pagar?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem prefere o caminho completo de inscrição."
+        "text": "Não. Você informa nome, CPF, e-mail e telefone celular e paga a inscrição. A conta na escola é criada depois do pagamento, com um link para você criar a senha."
       }
     },
     {
@@ -756,7 +934,7 @@
       "name": "Vocês fecham turma para empresas, escolas e grupos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sim. Com 15 a 30 alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo valor por pessoa dos cursos. As aulas são na sede; em outro local, dependem de aprovação. Peça pela seção Turmas sob demanda desta página: a secretaria responde em até 3 dias úteis."
+        "text": "Sim. Com 15 a 30 alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo valor por pessoa dos cursos. As aulas são na sede; em outro local, dependem de aprovação. Peça pelo botão Pedir turma para grupo: a secretaria responde em até 3 dias úteis."
       }
     },
     {
@@ -774,21 +952,13 @@
         "@type": "Answer",
         "text": "Sim, para jovens de 12 a 14 anos, numa turma só para essa idade, que abre com 15 alunos. Escolas e projetos com a turma pronta têm prioridade; famílias entram na lista de interesse. Quem preenche o pedido é o responsável ou a instituição."
       }
-    },
-    {
-      "@type": "Question",
-      "name": "Como tiro dúvidas antes de me matricular?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 3 dias úteis. Se preferir, escreva para contato@cruzvermelhariodejaneiro.org."
-      }
     }
   ]
 }
   </script>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-certificate" viewBox="0 0 512 512"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.3-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/></symbol><symbol id="i-circle-check" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></symbol><symbol id="i-circle-info" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></symbol><symbol id="i-clock" viewBox="0 0 512 512"><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-flag" viewBox="0 0 448 512"><path d="M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32V64 368 480c0 17.7 14.3 32 32 32s32-14.3 32-32V352l64.3-16.1c41.1-10.3 84.6-5.5 122.5 13.4c44.2 22.1 95.5 24.8 141.7 7.4l34.7-13c12.5-4.7 20.8-16.6 20.8-30V66.1c0-23-24.2-38-44.8-27.7l-9.6 4.8c-46.3 23.2-100.8 23.2-147.1 0c-35.1-17.6-75.4-22-113.5-12.5L64 48V32z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-list-check" viewBox="0 0 512 512"><path d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H192c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-people-group" viewBox="0 0 640 512"><path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3V245.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5V416c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V389.2C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112h32c24 0 46.2 7.5 64.4 20.3zM448 416V394.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176h32c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2V416c0 17.7-14.3 32-32 32H480c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3V261.7c-10 11.3-16 26.1-16 42.3zm144-42.3v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2V448c0 17.7-14.3 32-32 32H288c-17.7 0-32-14.3-32-32V405.2c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112h32c61.9 0 112 50.1 112 112z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-certificate" viewBox="0 0 512 512"><path d="M211 7.3C205 1 196-1.4 187.6 .8s-14.9 8.9-17.1 17.3L154.7 80.6l-62-17.5c-8.4-2.4-17.4 0-23.5 6.1s-8.5 15.1-6.1 23.5l17.5 62L18.1 170.6c-8.4 2.1-15 8.7-17.3 17.1S1 205 7.3 211l46.2 45L7.3 301C1 307-1.4 316 .8 324.4s8.9 14.9 17.3 17.1l62.5 15.8-17.5 62c-2.4 8.4 0 17.4 6.1 23.5s15.1 8.5 23.5 6.1l62-17.5 15.8 62.5c2.1 8.4 8.7 15 17.1 17.3s17.3-.2 23.4-6.4l45-46.2 45 46.2c6.1 6.2 15 8.7 23.4 6.4s14.9-8.9 17.1-17.3l15.8-62.5 62 17.5c8.4 2.4 17.4 0 23.5-6.1s8.5-15.1 6.1-23.5l-17.5-62 62.5-15.8c8.4-2.1 15-8.7 17.3-17.1s-.2-17.3-6.4-23.4l-46.2-45 46.2-45c6.2-6.1 8.7-15 6.4-23.4s-8.9-14.9-17.3-17.1l-62.5-15.8 17.5-62c2.4-8.4 0-17.4-6.1-23.5s-15.1-8.5-23.5-6.1l-62 17.5L341.4 18.1c-2.1-8.4-8.7-15-17.1-17.3S307 1 301 7.3L256 53.5 211 7.3z"/></symbol><symbol id="i-circle-check" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></symbol><symbol id="i-clock" viewBox="0 0 512 512"><path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-flag" viewBox="0 0 448 512"><path d="M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32V64 368 480c0 17.7 14.3 32 32 32s32-14.3 32-32V352l64.3-16.1c41.1-10.3 84.6-5.5 122.5 13.4c44.2 22.1 95.5 24.8 141.7 7.4l34.7-13c12.5-4.7 20.8-16.6 20.8-30V66.1c0-23-24.2-38-44.8-27.7l-9.6 4.8c-46.3 23.2-100.8 23.2-147.1 0c-35.1-17.6-75.4-22-113.5-12.5L64 48V32z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-house" viewBox="0 0 576 512"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-people-group" viewBox="0 0 640 512"><path d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3V245.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5V416c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V389.2C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112h32c24 0 46.2 7.5 64.4 20.3zM448 416V394.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176h32c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2V416c0 17.7-14.3 32-32 32H480c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3V261.7c-10 11.3-16 26.1-16 42.3zm144-42.3v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2V448c0 17.7-14.3 32-32 32H288c-17.7 0-32-14.3-32-32V405.2c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112h32c61.9 0 112 50.1 112 112z"/></symbol><symbol id="i-rotate-left" viewBox="0 0 512 512"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></symbol><symbol id="i-scale-balanced" viewBox="0 0 640 512"><path d="M384 32H512c17.7 0 32 14.3 32 32s-14.3 32-32 32H398.4c-5.2 25.8-22.9 47.1-46.4 57.3V448H512c17.7 0 32 14.3 32 32s-14.3 32-32 32H320 128c-17.7 0-32-14.3-32-32s14.3-32 32-32H288V153.3c-23.5-10.3-41.2-31.6-46.4-57.3H128c-17.7 0-32-14.3-32-32s14.3-32 32-32H256c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288H584.4L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320H199.3L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
   <script>document.documentElement.classList.add('js');</script>
   <header class="main-header">
     <div class="header-container">
@@ -819,266 +989,390 @@
             <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
             <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
           </div>
-          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
+          <a href="https://escola.cursoscruzvermelha.org?utm_source=cruzvermelhariodejaneiro&amp;utm_medium=matricula&amp;utm_content=cabecalho" data-saida="cabecalho" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
         </div>
       </div>
     </div>
   </header>
 
   <main id="matricula-cursos-presenciais">
-    <section class="mr-hero" aria-labelledby="mr-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Escola de Educação e Saúde CVB-RJ</p>
-        <h1 id="mr-titulo">O certificado da Cruz Vermelha no seu currículo</h1>
-        <p class="mr-h1-sub">Cursos presenciais no Centro do Rio. Garanta sua vaga hoje: a inscrição de R$ 99,00 reserva seu lugar.</p>
-        <p class="lead">Primeiros socorros, bombeiro civil, cuidador de idosos, punção venosa e mais. Escolha o curso, pague por PIX ou cartão e a vaga é sua.</p>
-        <div class="mr-chips">
-          <span class="mr-chip"><i class="fa-solid fa-list-check"><svg class="ico ico-list-check" aria-hidden="true" focusable="false"><use href="#i-list-check"/></svg></i> 7 cursos presenciais</span>
-          <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10 · Centro</span>
-          <span class="mr-chip"><i class="fa-solid fa-certificate"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</span>
-        </div>
-        <p class="mr-hero-grupos"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Empresas, grupos de 15 pessoas ou mais e turmas em inglês: <a href="#turmas-sob-demanda">feche sua turma</a>.</p>
-      </div>
-    </section>
 
-    <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo">
-      <div class="wrap">
-        <h2 id="mr-catalogo-titulo" class="sr-only" style="position:absolute;left:-9999px">Cursos disponíveis</h2>
-        <div class="mr-grid">
-          <!-- div, e não <nav>: o CSS da home esconde qualquer <nav> abaixo de 920px (menu antigo). -->
-          <div class="mr-lista" role="navigation" aria-label="Cursos">
-            <div class="mr-grupo"><h3>Emergência e vida</h3><a href="?curso=primeiros-socorros-basico" data-curso="primeiros-socorros-basico">Primeiros Socorros Básico<small>8 horas · Ensino Fundamental</small></a><a href="?curso=primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças<small>8 horas · Ensino Fundamental</small></a><a href="?curso=puncao-venosa" data-curso="puncao-venosa">Punção Venosa<small>8 horas · Ensino Médio</small></a><a href="?curso=suporte-basico-de-vida" data-curso="suporte-basico-de-vida">Suporte Básico de Vida<small>4 horas · Ensino Fundamental</small></a></div><div class="mr-grupo"><h3>Formação profissional</h3><a href="?curso=bombeiro-civil" data-curso="bombeiro-civil">Bombeiro Civil<small>80 horas · Ensino Médio</small></a><a href="?curso=cuidador-de-idosos" data-curso="cuidador-de-idosos">Cuidador de Idosos (Curso Livre)<small>160 horas · Ensino Fundamental</small></a></div><div class="mr-grupo"><h3>Outros cursos</h3><a href="?curso=micropigmentacao-labial" data-curso="micropigmentacao-labial">Micropigmentação Labial<small>24 horas · Ensino Médio</small></a></div>
-          </div>
-          <div class="mr-detalhes">
-            
-        <article class="mr-detalhe" id="curso-primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico">
-          <img class="mr-foto" src="img/primeiros-socorros-basico-960.webp" srcset="img/primeiros-socorros-basico-480.webp 480w, img/primeiros-socorros-basico-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" fetchpriority="high" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Primeiros Socorros Básico</h2>
-            <p class="lead">O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 180,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p>
-            <p class="mr-nota"><i class="fa-solid fa-circle-info"><svg class="ico ico-circle-info" aria-hidden="true" focusable="false"><use href="#i-circle-info"/></svg></i> Inclui Lei Lucas.</p>
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Primeiros Socorros Básico</h3><details><summary>Preciso ser da área da saúde?</summary><p>Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p></details><details><summary>Posso trabalhar como socorrista após o curso?</summary><p>Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados.</p></details><details><summary>Existe prática?</summary><p>Sim. O curso possui atividades demonstrativas e práticas supervisionadas.</p></details><details><summary>Há validade para o certificado?</summary><p>Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="primeiros-socorros-basico">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças">
-          <img class="mr-foto" src="img/primeiros-socorros-lei-lucas-960.webp" srcset="img/primeiros-socorros-lei-lucas-480.webp 480w, img/primeiros-socorros-lei-lucas-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Primeiros Socorros Lei Lucas - Ambientes com Crianças</h2>
-            <p class="lead">O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.</p><p>Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência.</p>
-            
-            
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="primeiros-socorros-lei-lucas">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-puncao-venosa" data-curso="puncao-venosa" data-nome="Punção Venosa">
-          <img class="mr-foto" src="img/puncao-venosa-960.webp" srcset="img/puncao-venosa-480.webp 480w, img/puncao-venosa-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Punção Venosa</h2>
-            <p class="lead">Técnica de acesso venoso periférico com segurança.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa" data-curso="puncao-venosa" data-nome="Punção Venosa">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Punção Venosa da Cruz Vermelha forma profissionais capacitados para realizar procedimentos de acesso venoso com segurança, precisão e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre anatomia do sistema venoso, técnicas de punção venosa, identificação e utilização correta dos materiais, preparo do paciente, prevenção de complicações, controle de infecções, biossegurança e boas práticas aplicadas à rotina dos serviços de saúde.</p><p>Após a conclusão, o profissional estará preparado para atuar em hospitais, clínicas, laboratórios, unidades de saúde, serviços de coleta e demais instituições da área da saúde, executando procedimentos de punção venosa com competência, segurança e qualidade.</p>
-            
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Punção Venosa</h3><details><summary>Quem pode fazer esse curso?</summary><p>O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão.</p></details><details><summary>O curso é prático?</summary><p>Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas.</p></details><details><summary>Vou aprender apenas punção?</summary><p>Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais.</p></details><details><summary>Esse curso melhora minhas oportunidades de emprego?</summary><p>Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde.</p></details><details><summary>O certificado é válido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro ao término do curso.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="puncao-venosa">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-suporte-basico-de-vida" data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida">
-          <img class="mr-foto" src="img/suporte-basico-de-vida-960.webp" srcset="img/suporte-basico-de-vida-480.webp 480w, img/suporte-basico-de-vida-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Suporte Básico de Vida</h2>
-            <p class="lead">Atendimento inicial de emergências com diretrizes oficiais.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 4 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 150,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida" data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Suporte Básico de Vida da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p>
-            
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Suporte Básico de Vida</h3><details><summary>Para quem é indicado este curso?</summary><p>É indicado para profissionais da saúde, educação, segurança, empresas e também para qualquer pessoa que deseje aprender a agir corretamente em situações de emergência.</p></details><details><summary>Vou aprender a salvar vidas?</summary><p>Você aprenderá técnicas essenciais para prestar o primeiro atendimento até a chegada do serviço especializado, aumentando as chances de um atendimento seguro e eficiente.</p></details><details><summary>O curso possui prática?</summary><p>Sim. A metodologia combina teoria e treinamento prático para desenvolver segurança durante os atendimentos.</p></details><details><summary>Preciso ser profissional da saúde?</summary><p>Não. O curso é aberto tanto para profissionais quanto para pessoas sem experiência prévia.</p></details><details><summary>O certificado pode enriquecer meu currículo?</summary><p>Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="suporte-basico-de-vida">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-bombeiro-civil" data-curso="bombeiro-civil" data-nome="Bombeiro Civil">
-          <img class="mr-foto" src="img/bombeiro-civil-960.webp" srcset="img/bombeiro-civil-480.webp 480w, img/bombeiro-civil-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Bombeiro Civil</h2>
-            <p class="lead">Formação para atuação em prevenção e combate a incêndios.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 80 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 950,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil" data-curso="bombeiro-civil" data-nome="Bombeiro Civil">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, uso de equipamentos de segurança, gerenciamento de riscos e resposta a emergências.</p><p>Após a conclusão, o profissional poderá atuar em empresas, indústrias, hospitais, condomínios, shopping centers, aeroportos, hotéis, instituições de ensino, eventos e diversos estabelecimentos que necessitam de equipes especializadas em prevenção e atendimento a emergências.</p>
-            <p class="mr-nota"><i class="fa-solid fa-circle-info"><svg class="ico ico-circle-info" aria-hidden="true" focusable="false"><use href="#i-circle-info"/></svg></i> Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p>
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Bombeiro Civil</h3><details><summary>Quem pode fazer o curso de Bombeiro Civil?</summary><p>Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências.</p></details><details><summary>O certificado é reconhecido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências.</p></details><details><summary>Onde posso trabalhar após o curso?</summary><p>O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências.</p></details><details><summary>O curso possui aulas práticas?</summary><p>Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência.</p></details><details><summary>Preciso ter experiência na área?</summary><p>Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="bombeiro-civil">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-cuidador-de-idosos" data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)">
-          <img class="mr-foto" src="img/cuidador-de-idosos-960.webp" srcset="img/cuidador-de-idosos-480.webp 480w, img/cuidador-de-idosos-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Cuidador de Idosos (Curso Livre)</h2>
-            <p class="lead">Cuidados, segurança e bem-estar no atendimento ao idoso.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 160 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 950,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos" data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Cuidador de Idosos da Cruz Vermelha forma profissionais capacitados para prestar assistência à pessoa idosa com segurança, responsabilidade, empatia e respeito, promovendo qualidade de vida e bem-estar em diferentes contextos de cuidado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre higiene, alimentação, administração da rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros, além de compreender os aspectos físicos, emocionais e sociais do processo de envelhecimento, proporcionando um atendimento mais humanizado.</p><p>Após a conclusão, o profissional poderá atuar em residências, instituições de longa permanência para idosos (ILPIs), clínicas, hospitais, centros de convivência, serviços de atendimento domiciliar e demais ambientes voltados ao cuidado e à assistência da pessoa idosa.</p>
-            
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Cuidador de Idosos (Curso Livre)</h3><details><summary>Quem pode fazer esse curso?</summary><p>Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares.</p></details><details><summary>O cuidador de idosos pode trabalhar no exterior?</summary><p>O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação.</p></details><details><summary>Onde posso trabalhar?</summary><p>O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso.</p></details><details><summary>O curso ensina cuidados práticos?</summary><p>Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento.</p></details><details><summary>Existe mercado para cuidadores de idosos?</summary><p>Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="cuidador-de-idosos">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-        <article class="mr-detalhe" id="curso-micropigmentacao-labial" data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial">
-          <img class="mr-foto" src="img/micropigmentacao-labial-960.webp" srcset="img/micropigmentacao-labial-480.webp 480w, img/micropigmentacao-labial-960.webp 960w" sizes="(max-width: 920px) 100vw, 760px" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <div class="mr-corpo">
-            <p class="eyebrow">Curso presencial</p>
-            <h2>Micropigmentação Labial</h2>
-            <p class="lead">Procedimento estético de micropigmentação dos lábios.</p>
-            <div class="mr-chips">
-              <span class="mr-chip"><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 24 horas</span>
-              <span class="mr-chip"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span>
-              <span class="mr-chip"><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Presencial · Centro do Rio</span>
-            </div>
-            <div class="mr-preco">
-              <div><span>Inscrição agora</span><b>R$ 99,00</b><span>garante sua vaga neste curso</span></div>
-              <div><span>Valor do curso</span><b class="mr-preco-curso">R$ 400,00</b><span>à vista, pago depois, na plataforma da escola</span></div>
-            </div>
-            <div class="cta-row">
-              <a class="btn btn-red mr-cta" href="/matricula-cursos-presenciais/checkout/?curso=micropigmentacao-labial" data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial">Fazer matrícula agora</a>
-            </div>
-            <p class="mr-regra-curta">Sem criar conta e sem burocracia. Pagamento por PIX ou cartão.</p>
-            <h3>Sobre o curso</h3>
-            <p>O Curso de Micropigmentação Labial da Cruz Vermelha forma profissionais capacitados para realizar procedimentos estéticos semipermanentes com segurança, precisão e excelência, valorizando a beleza natural dos lábios e proporcionando resultados harmoniosos.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre colorimetria, anatomia e fisiologia da pele, biossegurança, técnicas de implantação de pigmentos, correção de assimetrias visuais, uniformização da coloração labial, cuidados pré e pós-procedimento, além da utilização correta dos equipamentos e materiais utilizados na micropigmentação.</p><p>Após a conclusão, o profissional poderá atuar em clínicas de estética, salões de beleza, estúdios especializados, centros de estética ou como profissional autônomo, oferecendo um dos procedimentos mais valorizados do mercado da beleza, com alto potencial de crescimento e retorno financeiro.</p>
-            
-            <div class="mr-faq"><h3>Dúvidas frequentes sobre Micropigmentação Labial</h3><details><summary>Preciso já trabalhar com estética?</summary><p>Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços.</p></details><details><summary>Vou aprender a técnica na prática?</summary><p>Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica.</p></details><details><summary>Posso começar a atender clientes após o curso?</summary><p>Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos.</p></details><details><summary>Quais são os diferenciais do curso?</summary><p>Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p></details></div>
-            <p class="mr-grupo-link"><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="micropigmentacao-labial">Monte uma turma</a>.</p>
-            <p class="mr-link-escola">Prefere comparar turmas e datas antes? <a href="https://escola.cursoscruzvermelha.org/cursos/b05365c2-c066-4c73-bb4a-f32475a338a2" target="_blank" rel="noopener">Veja este curso na plataforma da escola</a>.</p>
-          </div>
-        </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mr-demanda" id="turmas-sob-demanda" aria-labelledby="mr-demanda-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Turmas sob demanda</p>
-        <h2 id="mr-demanda-titulo">Empresas, grupos e turmas em inglês</h2>
-        <p class="lead">Alguns cursos só abrem quando juntamos 15 alunos. Quem já tem o grupo fecha a turma com prioridade; quem ainda não tem entra na lista e é avisado quando a turma fechar.</p>
-        <div class="mr-demanda-cards">
-          <article class="mr-demanda-card destaque">
-            <i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i>
-            <h3>Já tem 15 pessoas? Feche sua turma</h3>
-            <p>Para empresas, escolas, igrejas, condomínios e grupos de amigos. Qualquer curso, em português ou inglês.</p>
-            <ul>
-              <li>De 15 a 30 alunos por turma</li>
-              <li>Mesmo valor por pessoa dos cursos</li>
-              <li>Na sede; em outro local, sob aprovação</li>
-              <li>Data combinada com a secretaria</li>
+    <section class="mr-hero" aria-labelledby="mr-titulo" data-secao="topo">
+      <div class="wrap mr-hero-grid">
+        <div class="mr-hero-texto">
+          <p class="eyebrow">Escola de Educação e Saúde<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+          <h1 id="mr-titulo">Cursos presenciais com certificado da Cruz Vermelha, no Centro do Rio</h1>
+          <div class="mr-hero-apoio">
+            <p class="mr-hero-sub">Aulas na sede da Praça da Cruz Vermelha, 10. Para se matricular, você paga agora só a inscrição de R$ 99, por PIX ou cartão, sem criar conta. O valor do curso é pago depois.</p>
+            <ul class="mr-confianca-linha">
+              <li class="mr-so-largo-flex"><i class="fa-solid fa-certificate"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
+              <li><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</li>
             </ul>
-            <a class="btn btn-red" href="#turma-form-bloco" data-turma-abrir="fechada" data-pessoas="15">Montar minha turma</a>
-          </article>
-          <article class="mr-demanda-card">
-            <i class="fa-solid fa-flag"><svg class="ico ico-flag" aria-hidden="true" focusable="false"><use href="#i-flag"/></svg></i>
-            <h3>Cursos em inglês <span lang="en">· Courses in English</span></h3>
-            <p>Todos os cursos podem ser dados em inglês, com professor ou tradutor. A turma abre com 15 alunos.</p>
-            <p lang="en" class="mr-demanda-en">All our courses can be taught in English. A class opens once 15 students sign up, or right away if you bring your own group.</p>
-            <a class="btn btn-outline" href="#turma-form-bloco" data-turma-abrir="ingles" data-idioma="en">Quero em inglês · In English</a>
-          </article>
-          <article class="mr-demanda-card">
-            <i class="fa-solid fa-heart-pulse"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></i>
-            <h3>Primeiros socorros para jovens de 12 a 14 anos</h3>
-            <p>Uma turma só para essa idade, para escolas, projetos sociais e famílias. Abre com 15 jovens; escola ou projeto com a turma pronta tem prioridade.</p>
-            <a class="btn btn-outline" href="#turma-form-bloco" data-turma-abrir="jovens" data-curso="primeiros-socorros-jovens">Quero participar</a>
-          </article>
+          </div>
         </div>
+        <aside class="mr-hero-passos mr-hero-apoio" aria-label="Como é a matrícula">
+          <p class="mr-hero-passos-titulo">Sua matrícula em 3 passos</p>
+          <ol><li>Escolha o curso e pague a inscrição de R$ 99</li><li>Se o curso tem turma aberta, você entra nela e vê a data na confirmação</li><li>Você marca os dias e horários em que pode vir</li></ol>
+          <p class="mr-selo"><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir · art. 49 do Código de Defesa do Consumidor</p>
+        </aside>
+      </div>
+    </section>
+    <div class="mr-fichas wrap" id="mr-fichas">
+        <div class="mr-ficha" data-ficha="primeiros-socorros-basico">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/primeiros-socorros-basico-960.webp" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Primeiros Socorros Básico na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 180, pago depois na plataforma da escola, à vista ou parcelado com juros.</p><p class="mr-preco-obs">Inclui Lei Lucas.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-basico" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-primeiros-socorros-basico" data-abrir-detalhes="primeiros-socorros-basico">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="suporte-basico-de-vida">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/suporte-basico-de-vida-960.webp" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Suporte Básico de Vida na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 4 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="suporte-basico-de-vida" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-suporte-basico-de-vida" data-abrir-detalhes="suporte-basico-de-vida">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="primeiros-socorros-lei-lucas">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/primeiros-socorros-lei-lucas-960.webp" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Primeiros Socorros Lei Lucas na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-lei-lucas" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-primeiros-socorros-lei-lucas" data-abrir-detalhes="primeiros-socorros-lei-lucas">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="puncao-venosa">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/puncao-venosa-960.webp" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Punção Venosa na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 8 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="puncao-venosa" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-puncao-venosa" data-abrir-detalhes="puncao-venosa">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="bombeiro-civil">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/bombeiro-civil-960.webp" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Bombeiro Civil na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 80 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 950, pago depois na plataforma da escola, à vista ou parcelado com juros.</p><p class="mr-preco-obs">Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="bombeiro-civil" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="bombeiro-civil" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-bombeiro-civil" data-abrir-detalhes="bombeiro-civil">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="cuidador-de-idosos">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/cuidador-de-idosos-960.webp" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Cuidador de Idosos na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 160 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Fundamental</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 950, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="cuidador-de-idosos" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="cuidador-de-idosos" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-cuidador-de-idosos" data-abrir-detalhes="cuidador-de-idosos">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div>
+        <div class="mr-ficha" data-ficha="micropigmentacao-labial">
+          <div class="mr-ficha-foto"><img class="mr-ficha-img" src="img/micropigmentacao-labial-960.webp" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div>
+          <div class="mr-ficha-corpo">
+            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
+            <p class="mr-ficha-titulo">Curso de Micropigmentação Labial na Cruz Vermelha, no Centro do Rio</p>
+            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"><svg class="ico ico-clock" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg></i> 24 horas</span><span><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Ensino Médio</span><span><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</span></p>
+            <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 400, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="micropigmentacao-labial" href="/matricula-cursos-presenciais/checkout/?curso=micropigmentacao-labial&amp;via=ficha">Fazer matrícula · R$ 99</a>
+            <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="micropigmentacao-labial" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
+            <ol class="mr-mini-passos"><li>Comprovante no seu e-mail</li><li>Se há turma aberta, você entra nela e vê a data</li><li>Você marca os dias e horários em que pode vir</li></ol>
+            <p class="mr-ficha-links"><a href="#curso-micropigmentacao-labial" data-abrir-detalhes="micropigmentacao-labial">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
+          </div>
+        </div></div>
 
-        <div class="mr-demanda-form" id="turma-form-bloco">
+    <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo" data-secao="catalogo">
+      <div class="wrap">
+        <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos da Cruz Vermelha Brasileira Rio de Janeiro</span></h2>
+        <div class="mr-cartoes"><p class="mr-grupo-rotulo">Emergência e vida</p>
+          <article class="mr-curso mr-detalhe" id="curso-primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico" data-curto="Primeiros Socorros Básico">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/primeiros-socorros-basico-480.webp" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Primeiros Socorros Básico</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
+            </div>
+            <p class="mr-curso-beneficio">RCP, desfibrilador, engasgo e hemorragias</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 180 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="primeiros-socorros-basico">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/primeiros-socorros-basico-960.webp" srcset="img/primeiros-socorros-basico-480.webp 480w, img/primeiros-socorros-basico-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Primeiros Socorros Básico</h4><details><summary>Preciso ser da área da saúde?</summary><p>Não. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Certificado emitido pela Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p></details><details><summary>Posso trabalhar como socorrista após o curso?</summary><p>Não. O curso capacita para prestar atendimento inicial até a chegada do serviço especializado, não habilitando o participante para o exercício profissional de atividades privativas de profissionais regulamentados.</p></details><details><summary>Existe prática?</summary><p>Sim. O curso possui atividades demonstrativas e práticas supervisionadas.</p></details><details><summary>Há validade para o certificado?</summary><p>Recomenda-se atualização periódica dos conhecimentos, especialmente em razão das revisões dos protocolos internacionais de atendimento.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 180, pago depois na plataforma da escola, à vista ou parcelado com juros.</p><p class="mr-preco-obs">Inclui Lei Lucas.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-basico" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="primeiros-socorros-basico">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article>
+          <article class="mr-curso mr-detalhe" id="curso-suporte-basico-de-vida" data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida" data-curto="Suporte Básico de Vida">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/suporte-basico-de-vida-480.webp" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Suporte Básico de Vida</h3><p class="mr-curso-meta">4 horas · Ensino Fundamental</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Atendimento inicial de emergências</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 150 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="suporte-basico-de-vida">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/suporte-basico-de-vida-960.webp" srcset="img/suporte-basico-de-vida-480.webp 480w, img/suporte-basico-de-vida-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Suporte Básico de Vida da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da vítima, reanimação cardiopulmonar (RCP), utilização do desfibrilador externo automático (DEA), controle de hemorragias, atendimento inicial em casos de traumas, engasgos, desmaios e outras situações de urgência, sempre seguindo diretrizes atualizadas de atendimento.</p><p>Após a conclusão, o participante estará preparado para prestar os primeiros cuidados em ambientes domésticos, escolares, empresariais, esportivos e comunitários, contribuindo para a preservação da vida e para uma resposta mais eficiente em situações de emergência.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Suporte Básico de Vida</h4><details><summary>Para quem é indicado este curso?</summary><p>É indicado para profissionais da saúde, educação, segurança, empresas e também para qualquer pessoa que deseje aprender a agir corretamente em situações de emergência.</p></details><details><summary>Vou aprender a salvar vidas?</summary><p>Você aprenderá técnicas essenciais para prestar o primeiro atendimento até a chegada do serviço especializado, aumentando as chances de um atendimento seguro e eficiente.</p></details><details><summary>O curso possui prática?</summary><p>Sim. A metodologia combina teoria e treinamento prático para desenvolver segurança durante os atendimentos.</p></details><details><summary>Preciso ser profissional da saúde?</summary><p>Não. O curso é aberto tanto para profissionais quanto para pessoas sem experiência prévia.</p></details><details><summary>O certificado pode enriquecer meu currículo?</summary><p>Sim. A formação em Primeiros Socorros é um diferencial valorizado em diversas áreas profissionais.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="suporte-basico-de-vida" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="suporte-basico-de-vida">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article>
+          <article class="mr-curso mr-detalhe" id="curso-primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças" data-curto="Primeiros Socorros Lei Lucas">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/primeiros-socorros-lei-lucas-480.webp" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Primeiros Socorros Lei Lucas - Ambientes com Crianças</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Emergências com crianças: escolas, creches, famílias</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 150 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="primeiros-socorros-lei-lucas">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/primeiros-socorros-lei-lucas-960.webp" srcset="img/primeiros-socorros-lei-lucas-480.webp 480w, img/primeiros-socorros-lei-lucas-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em avaliação da criança, reanimação cardiopulmonar (RCP), atendimento em casos de engasgos, quedas, traumas, convulsões, queimaduras, hemorragias e outras situações de urgência, além de aprender medidas preventivas e protocolos atualizados de primeiros socorros voltados ao atendimento infantil.</p><p>Após a conclusão, o participante estará preparado para atuar de forma segura em ambientes familiares, escolas, creches, instituições de ensino, projetos sociais, atividades esportivas e demais locais que envolvam o cuidado com crianças, contribuindo para a preservação da vida e para uma resposta eficiente em situações de emergência.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Primeiros Socorros Lei Lucas</h4><details><summary>O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?</summary><p>A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-lei-lucas" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="primeiros-socorros-lei-lucas">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article>
+          <article class="mr-curso mr-detalhe" id="curso-puncao-venosa" data-curso="puncao-venosa" data-nome="Punção Venosa" data-curto="Punção Venosa">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/puncao-venosa-480.webp" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Punção Venosa</h3><p class="mr-curso-meta">8 horas · Ensino Médio</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Acesso venoso periférico, para a área da saúde</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 150 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="puncao-venosa">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/puncao-venosa-960.webp" srcset="img/puncao-venosa-480.webp 480w, img/puncao-venosa-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Punção Venosa da Cruz Vermelha forma profissionais capacitados para realizar procedimentos de acesso venoso com segurança, precisão e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre anatomia do sistema venoso, técnicas de punção venosa, identificação e utilização correta dos materiais, preparo do paciente, prevenção de complicações, controle de infecções, biossegurança e boas práticas aplicadas à rotina dos serviços de saúde.</p><p>Após a conclusão, o profissional estará preparado para atuar em hospitais, clínicas, laboratórios, unidades de saúde, serviços de coleta e demais instituições da área da saúde, executando procedimentos de punção venosa com competência, segurança e qualidade.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Punção Venosa</h4><details><summary>Quem pode fazer esse curso?</summary><p>O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão.</p></details><details><summary>O curso é prático?</summary><p>Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas.</p></details><details><summary>Vou aprender apenas punção?</summary><p>Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais.</p></details><details><summary>Esse curso melhora minhas oportunidades de emprego?</summary><p>Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde.</p></details><details><summary>O certificado é válido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro ao término do curso.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 150, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="puncao-venosa" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="puncao-venosa">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article><details class="mr-comparar" id="comparar"><summary>Em dúvida entre os cursos de primeiros socorros? Compare</summary><div class="mr-comparar-grade">
+              <div class="mr-comparar-linha">
+                <p class="mr-comparar-nome">Primeiros Socorros Básico</p>
+                <p>8 horas · Ensino Fundamental · curso R$ 180</p>
+                <p>Inclui Lei Lucas.</p>
+                <a class="btn btn-red mr-cta" data-local="comparar" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=comparar">Fazer matrícula</a>
+              </div>
+              <div class="mr-comparar-linha">
+                <p class="mr-comparar-nome">Suporte Básico de Vida</p>
+                <p>4 horas · Ensino Fundamental · curso R$ 150</p>
+                <p>Atendimento inicial de emergências.</p>
+                <a class="btn btn-red mr-cta" data-local="comparar" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=comparar">Fazer matrícula</a>
+              </div>
+              <div class="mr-comparar-linha">
+                <p class="mr-comparar-nome">Primeiros Socorros Lei Lucas - Ambientes com Crianças</p>
+                <p>8 horas · Ensino Fundamental · curso R$ 150</p>
+                <p>Para quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil (Lei 13.722/2018).</p>
+                <a class="btn btn-red mr-cta" data-local="comparar" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=comparar">Fazer matrícula</a>
+              </div></div></details><p class="mr-grupo-rotulo">Formação profissional</p>
+          <article class="mr-curso mr-detalhe" id="curso-bombeiro-civil" data-curso="bombeiro-civil" data-nome="Bombeiro Civil" data-curto="Bombeiro Civil">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/bombeiro-civil-480.webp" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Bombeiro Civil</h3><p class="mr-curso-meta">80 horas · Ensino Médio</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Prevenção e combate a incêndios</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 950 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="bombeiro-civil" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="bombeiro-civil">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/bombeiro-civil-960.webp" srcset="img/bombeiro-civil-480.webp 480w, img/bombeiro-civil-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos em prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, uso de equipamentos de segurança, gerenciamento de riscos e resposta a emergências.</p><p>Após a conclusão, o profissional poderá atuar em empresas, indústrias, hospitais, condomínios, shopping centers, aeroportos, hotéis, instituições de ensino, eventos e diversos estabelecimentos que necessitam de equipes especializadas em prevenção e atendimento a emergências.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Bombeiro Civil</h4><details><summary>Quem pode fazer o curso de Bombeiro Civil?</summary><p>Qualquer pessoa que atenda aos pré-requisitos do curso e tenha interesse em atuar na prevenção e combate a incêndios, primeiros socorros e atendimento a emergências.</p></details><details><summary>O certificado é reconhecido?</summary><p>Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, instituição reconhecida nacional e internacionalmente por sua tradição em formação na área humanitária e de emergências.</p></details><details><summary>Onde posso trabalhar após o curso?</summary><p>O profissional pode atuar em empresas, condomínios, indústrias, hospitais, eventos, centros comerciais, instituições de ensino e outros locais que exigem equipes de prevenção e resposta a emergências.</p></details><details><summary>O curso possui aulas práticas?</summary><p>Sim. O aluno desenvolve habilidades por meio de atividades práticas que simulam situações reais de emergência.</p></details><details><summary>Preciso ter experiência na área?</summary><p>Não. O curso foi desenvolvido para formar novos profissionais, desde que atendam aos requisitos de matrícula.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 950, pago depois na plataforma da escola, à vista ou parcelado com juros.</p><p class="mr-preco-obs">Homologação somente no final do curso, valor a consultar, a cargo do aluno.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="bombeiro-civil" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="bombeiro-civil" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="bombeiro-civil">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article>
+          <article class="mr-curso mr-detalhe" id="curso-cuidador-de-idosos" data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)" data-curto="Cuidador de Idosos">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/cuidador-de-idosos-480.webp" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Cuidador de Idosos (Curso Livre)</h3><p class="mr-curso-meta">160 horas · Ensino Fundamental</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Cuidados, segurança e bem-estar do idoso</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 950 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="cuidador-de-idosos" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="cuidador-de-idosos">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/cuidador-de-idosos-960.webp" srcset="img/cuidador-de-idosos-480.webp 480w, img/cuidador-de-idosos-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Cuidador de Idosos da Cruz Vermelha forma profissionais capacitados para prestar assistência à pessoa idosa com segurança, responsabilidade, empatia e respeito, promovendo qualidade de vida e bem-estar em diferentes contextos de cuidado.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre higiene, alimentação, administração da rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros, além de compreender os aspectos físicos, emocionais e sociais do processo de envelhecimento, proporcionando um atendimento mais humanizado.</p><p>Após a conclusão, o profissional poderá atuar em residências, instituições de longa permanência para idosos (ILPIs), clínicas, hospitais, centros de convivência, serviços de atendimento domiciliar e demais ambientes voltados ao cuidado e à assistência da pessoa idosa.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Cuidador de Idosos</h4><details><summary>Quem pode fazer esse curso?</summary><p>Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares.</p></details><details><summary>O cuidador de idosos pode trabalhar no exterior?</summary><p>O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação.</p></details><details><summary>Onde posso trabalhar?</summary><p>O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso.</p></details><details><summary>O curso ensina cuidados práticos?</summary><p>Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento.</p></details><details><summary>Existe mercado para cuidadores de idosos?</summary><p>Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 950, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="cuidador-de-idosos" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="cuidador-de-idosos" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="cuidador-de-idosos">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article><p class="mr-grupo-rotulo">Outros cursos</p>
+          <article class="mr-curso mr-detalhe" id="curso-micropigmentacao-labial" data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial" data-curto="Micropigmentação Labial">
+            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/micropigmentacao-labial-480.webp" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
+              <div><h3 class="mr-curso-nome">Micropigmentação Labial</h3><p class="mr-curso-meta">24 horas · Ensino Médio</p></div>
+            </div>
+            <p class="mr-curso-beneficio">Técnica estética de micropigmentação dos lábios</p>
+            <div class="mr-curso-acao">
+              <p class="mr-preco-curto"><strong>Inscrição R$ 99</strong><span>+ R$ 400 do curso, depois</span></p>
+              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="micropigmentacao-labial" href="/matricula-cursos-presenciais/checkout/?curso=micropigmentacao-labial&amp;via=cartao">Fazer matrícula</a>
+            </div>
+            <details class="mr-curso-mais" data-curso="micropigmentacao-labial">
+              <summary>Ver detalhes e dúvidas</summary>
+              <div class="mr-curso-detalhes">
+                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande"><img class="mr-foto" src="img/micropigmentacao-labial-960.webp" srcset="img/micropigmentacao-labial-480.webp 480w, img/micropigmentacao-labial-960.webp 960w" sizes="(max-width: 720px) 100vw, 560px" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720"></div><h4>Sobre o curso</h4><p>O Curso de Micropigmentação Labial da Cruz Vermelha forma profissionais capacitados para realizar procedimentos estéticos semipermanentes com segurança, precisão e excelência, valorizando a beleza natural dos lábios e proporcionando resultados harmoniosos.</p><p>Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre colorimetria, anatomia e fisiologia da pele, biossegurança, técnicas de implantação de pigmentos, correção de assimetrias visuais, uniformização da coloração labial, cuidados pré e pós-procedimento, além da utilização correta dos equipamentos e materiais utilizados na micropigmentação.</p><p>Após a conclusão, o profissional poderá atuar em clínicas de estética, salões de beleza, estúdios especializados, centros de estética ou como profissional autônomo, oferecendo um dos procedimentos mais valorizados do mercado da beleza, com alto potencial de crescimento e retorno financeiro.</p></div>
+                <div class="mr-faq"><h4>Dúvidas sobre Micropigmentação Labial</h4><details><summary>Preciso já trabalhar com estética?</summary><p>Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços.</p></details><details><summary>Vou aprender a técnica na prática?</summary><p>Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica.</p></details><details><summary>Posso começar a atender clientes após o curso?</summary><p>Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos.</p></details><details><summary>Quais são os diferenciais do curso?</summary><p>Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados.</p></details><details><summary>Recebo certificado?</summary><p>Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p></details></div>
+                <div class="mr-curso-fecho">
+                  <div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>R$ 99</b><span>garante sua vaga</span></p><p class="mr-preco-depois">Valor do curso: R$ 400, pago depois na plataforma da escola, à vista ou parcelado com juros.</p></div>
+                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="micropigmentacao-labial" href="/matricula-cursos-presenciais/checkout/?curso=micropigmentacao-labial&amp;via=detalhes">Fazer matrícula · R$ 99</a>
+                  <p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br><i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i> 7 dias para desistir, com o valor de volta</p>
+                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="micropigmentacao-labial" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
+                  <p class="mr-turma-linha">Tem um grupo de 15 a 30 pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="micropigmentacao-labial">Peça uma turma</a>.</p>
+                </div>
+              </div>
+            </details>
+          </article></div>
+        <p class="mr-turma-linha mr-turma-linha-catalogo">Empresas, escolas e grupos de 15 pessoas ou mais, ou cursos em inglês: <a href="#turmas-sob-demanda" data-turma-abrir="catalogo">veja as turmas para grupos</a>.</p>
+      </div>
+    </section>
+
+    <section class="mr-depois" id="depois-da-inscricao" aria-labelledby="mr-depois-titulo" data-secao="depois">
+      <div class="wrap">
+        <p class="eyebrow">Depois da inscrição</p>
+        <h2 id="mr-depois-titulo">O que acontece depois que você paga</h2>
+        <ol class="mr-passos"><li><b>1</b><div><h3>Confirmação no seu e-mail</h3><p>Assim que o pagamento é confirmado, o comprovante da inscrição chega no seu e-mail.</p></div></li><li><b>2</b><div><h3>Sua matrícula na escola</h3><p>Se o curso já tem turma aberta, sua matrícula entra nela, e a data de início aparece na tela de confirmação e no e-mail. Se ainda não tem, a secretaria coloca você na próxima turma e avisa por e-mail.</p></div></li><li><b>3</b><div><h3>Você diz quando pode vir</h3><p>Você marca os dias e os períodos em que pode vir. A secretaria usa suas respostas para encaixar você na turma.</p></div></li></ol>
+        <p class="mr-nota-curta">O valor do curso é pago depois, na plataforma da escola, nas condições informadas lá.</p>
+        <div class="mr-garantia" id="garantia">
+          <i class="fa-solid fa-rotate-left"><svg class="ico ico-rotate-left" aria-hidden="true" focusable="false"><use href="#i-rotate-left"/></svg></i>
+          <div>
+            <p class="mr-selo">7 dias para desistir · art. 49 do Código de Defesa do Consumidor</p>
+            <h3>7 dias para desistir, com o valor de volta</h3>
+            <p>Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você tiver escolhido cobri-lo.</p>
+            <details class="mr-garantia-mais"><summary>Como pedir e regras completas</summary><p>Peça pelo chat “Fale com a gente”, no canto da página, no assunto “Pagamento ou PIX”. A confirmação de que o pedido chegou vai para o seu e-mail, com número de protocolo. No PIX, o valor volta para a conta de onde saiu o pagamento; no cartão, a cobrança é cancelada ou o estorno aparece em uma das faturas seguintes.</p><p><a href="/reembolso/">Regras completas de cancelamento e reembolso</a></p></details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mr-confianca" aria-labelledby="mr-confianca-titulo" data-secao="confianca">
+      <div class="wrap">
+        <h2 id="mr-confianca-titulo">Quem dá o curso</h2>
+        <p class="mr-confianca-texto">A Escola de Educação e Saúde é a escola da Cruz Vermelha Brasileira Rio de Janeiro. A Cruz Vermelha forma pessoas no Rio desde 20 de outubro de 1914, quando começou o primeiro curso, de Enfermeiras Voluntárias. As aulas são na sede da filial, o Palácio da Cruz Vermelha, no Centro, tombado como patrimônio cultural federal.</p>
+        
+        <ul class="mr-confianca-itens">
+          <li><i class="fa-solid fa-certificate"><svg class="ico ico-certificate" aria-hidden="true" focusable="false"><use href="#i-certificate"/></svg></i> Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com a carga horária do curso</li>
+          <li><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Aulas no Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10, Centro</li>
+          <li><i class="fa-solid fa-house"><svg class="ico ico-house" aria-hidden="true" focusable="false"><use href="#i-house"/></svg></i> Palácio tombado como patrimônio cultural federal</li>
+          <li><i class="fa-solid fa-scale-balanced"><svg class="ico ico-scale-balanced" aria-hidden="true" focusable="false"><use href="#i-scale-balanced"/></svg></i> Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023)</li>
+        </ul>
+        <p class="mr-confianca-link"><a href="/historia/">Conheça a história da Cruz Vermelha no Rio</a></p>
+      </div>
+    </section>
+
+    <section class="mr-faq-pagina" aria-labelledby="mr-faq-titulo" data-secao="faq">
+      <div class="wrap">
+        <p class="eyebrow">Dúvidas frequentes</p>
+        <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
+        <details><summary>Os R$ 99 são o valor do curso?</summary><p>Não. Os R$ 99 são a inscrição: garantem sua vaga no curso escolhido, na Escola de Educação e Saúde, a escola da Cruz Vermelha Brasileira Rio de Janeiro. O valor de cada curso, de R$ 150 a R$ 950, aparece no cartão dele e é pago depois, na <a href="https://escola.cursoscruzvermelha.org/cursos?utm_source=cruzvermelhariodejaneiro&amp;utm_medium=matricula&amp;utm_content=faq" data-saida="faq" target="_blank" rel="noopener">plataforma da escola</a>, à vista ou parcelado com juros.</p></details><details><summary>Quando começa minha aula?</summary><p>Se o curso já tem turma aberta, sua matrícula entra nela assim que o pagamento é confirmado, e a data de início aparece na tela de confirmação e no e-mail. Se ainda não tem, a secretaria coloca você na próxima turma e avisa por e-mail. Depois do pagamento, você também marca os dias e os períodos em que pode vir.</p></details><details><summary>Posso desistir depois de pagar?</summary><p>Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você tiver escolhido cobri-lo. Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas estão na <a href="/reembolso/">página de cancelamento e reembolso</a>.</p></details><details><summary>Posso parcelar?</summary><p>A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago na plataforma da escola, à vista ou parcelado com juros, nas condições informadas lá.</p></details><details><summary>Qual curso de primeiros socorros eu faço?</summary><p>Primeiros Socorros Básico: 8 horas, curso R$ 180. Inclui Lei Lucas. Suporte Básico de Vida: 4 horas, curso R$ 150. Atendimento inicial de emergências. Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas, curso R$ 150. Para quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil (Lei 13.722/2018). Os três pedem Ensino Fundamental. <a href="#comparar" data-abrir-comparar>Compare os três</a>.</p></details><details><summary>O certificado vale? É reconhecido pelo MEC?</summary><p>O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui o curso, com carga horária e conteúdo. Nenhum curso livre é reconhecido pelo MEC, aqui ou em qualquer instituição: o MEC regula a educação formal, como o ensino técnico, a graduação e a pós. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.</p></details><details><summary>Os cursos são gratuitos?</summary><p>Não. Os sete cursos presenciais são pagos: a inscrição de R$ 99 garante a vaga, e o valor do curso, de R$ 150 a R$ 950, é pago depois. Quem quer aprender e servir pode ser voluntário, num caminho separado dos cursos.</p></details><details><summary>Onde são as aulas?</summary><p>Na sede da filial, o Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Todos os cursos são presenciais.</p></details><details><summary>Preciso criar conta ou escolher turma agora?</summary><p>Não. Você informa nome, CPF, e-mail e telefone celular e paga a inscrição. A conta na escola é criada depois do pagamento, com um link para você criar a senha.</p></details>
+        <p class="mr-chat-atalho mr-faq-chat"><a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Não achou sua dúvida? O chat no canto da página responde na hora as perguntas mais comuns.</a> O que ficar de fora, a equipe responde por e-mail em até 3 dias úteis.</p>
+        <div class="mr-final" id="mr-final"><a class="mr-final-link" href="#cursos">Ver os cursos e valores</a></div>
+      </div>
+    </section>
+
+    <section class="mr-demanda" id="turmas-sob-demanda" aria-labelledby="mr-demanda-titulo" data-secao="turmas">
+      <div class="wrap">
+        <div class="mr-demanda-grade">
+          <div>
+            <p class="eyebrow">Turmas para grupos</p>
+            <h2 id="mr-demanda-titulo">Tem um grupo de 15 pessoas ou mais? Fechamos uma turma só para vocês</h2>
+            <p class="mr-demanda-abertura">Os cursos do catálogo, em português, têm matrícula individual: é só usar o botão do curso. Esta parte é para quem quer uma turma só do seu grupo, um curso em inglês ou primeiros socorros para jovens de 12 a 14 anos.</p>
+            <ul class="mr-demanda-itens">
+              <li><i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i> Empresas, escolas, igrejas e condomínios: turma só do grupo, de 15 a 30 alunos, com o mesmo valor por pessoa, na sede (em outro local, com aprovação).</li>
+              <li><i class="fa-solid fa-flag"><svg class="ico ico-flag" aria-hidden="true" focusable="false"><use href="#i-flag"/></svg></i> Qualquer curso em inglês, com professor ou tradutor · <span lang="en">Courses in English</span>. A turma abre com 15 alunos.</li>
+              <li><i class="fa-solid fa-heart-pulse"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></i> Primeiros socorros para jovens de 12 a 14 anos, numa turma só dessa idade, que abre com 15 alunos.</li>
+            </ul>
+            <button class="btn btn-outline mr-demanda-botao" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
+            <p class="mr-tf-dica">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
+          </div>
+          <div class="mr-demanda-faq"><details><summary>Vocês fecham turma para empresas, escolas e grupos?</summary><p>Sim. Com 15 a 30 alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo valor por pessoa dos cursos. As aulas são na sede; em outro local, dependem de aprovação. Peça pelo botão Pedir turma para grupo: a secretaria responde em até 3 dias úteis.</p></details><details><summary>Tem curso de primeiros socorros em inglês?</summary><p>Sim. Todos os cursos podem ser dados em inglês, com professor ou tradutor, quando a turma tiver 15 alunos. Quem já tem o grupo fecha a turma com prioridade; quem não tem entra na lista de interesse e é avisado quando a turma fechar.</p></details><details><summary>Tem primeiros socorros para adolescentes?</summary><p>Sim, para jovens de 12 a 14 anos, numa turma só para essa idade, que abre com 15 alunos. Escolas e projetos com a turma pronta têm prioridade; famílias entram na lista de interesse. Quem preenche o pedido é o responsável ou a instituição.</p></details></div>
+        </div>
+        <noscript><style>#turma-form-bloco{display:block!important}</style></noscript>
+        <div class="mr-demanda-form" id="turma-form-bloco" hidden>
           <form id="turma-form" novalidate>
             <h3>Peça sua turma ou entre na lista</h3>
             <p class="mr-tf-nota">Nada é cobrado agora. A secretaria responde por e-mail ou WhatsApp.</p>
@@ -1104,7 +1398,7 @@
             </div>
             <p class="mr-tf-situacao" id="tf-situacao" aria-live="polite">Escolha o curso e diga quantos alunos são para ver como fica a turma.</p>
             <a class="btn btn-red" id="tf-matricula" href="/matricula-cursos-presenciais/checkout/" hidden>Fazer matrícula agora</a>
-            <div id="tf-dados">
+            <div id="tf-dados" hidden>
               <p class="mr-tf-nota" id="tf-nota-jovens" hidden>Para menores de idade, quem preenche é o responsável ou a instituição. Não pedimos dados dos jovens agora.</p>
               <div class="mr-tf-grade">
                 <fieldset class="mr-tf-campo mr-tf-largo" id="tf-bloco-local" hidden>
@@ -1169,32 +1463,12 @@
         </div>
       </div>
     </section>
-
-    <section class="mr-como" aria-labelledby="mr-como-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Como funciona</p>
-        <h2 id="mr-como-titulo">Três passos, sem burocracia</h2>
-        <div class="mr-passos">
-          <div class="mr-passo"><b>1</b><h3>Escolha o curso</h3><p>Veja carga horária, escolaridade mínima e valor. Todos são presenciais, na sede da Praça da Cruz Vermelha.</p></div>
-          <div class="mr-passo"><b>2</b><h3>Garanta a vaga com a inscrição de R$ 99,00</h3><p>Por PIX ou cartão, à vista. Sem criar conta e sem escolher turma nesta etapa.</p></div>
-          <div class="mr-passo"><b>3</b><h3>A secretaria confirma turma e horário</h3><p>Você recebe o contato por e-mail em até 3 dias úteis. O valor do curso é pago depois, na plataforma da escola.</p></div>
-        </div>
-        <p class="mr-regra">A inscrição reserva sua vaga. Você pode desistir em até 7 dias depois do pagamento e recebe o valor de volta. Depois disso, o valor também é estornado se não houver horário compatível ou se você desistir antes da confirmação da aula. O prazo para aparecer na conta depende de PIX ou cartão. <a href="/reembolso/">Regras de cancelamento e reembolso</a>.</p>
-      </div>
-    </section>
-
-    <section class="mr-faq-pagina" aria-labelledby="mr-faq-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Dúvidas frequentes</p>
-        <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
-        <details><summary>O que é a inscrição de R$ 99?</summary><p>É a taxa que reserva sua vaga e abre a matrícula na Escola de Educação e Saúde CVB-RJ. Ela vale para a matrícula feita por esta página; quem se inscreve direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola, no valor à vista informado em cada curso.</p></details><details><summary>Quais são as formas de pagamento?</summary><p>A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago depois, na plataforma da escola: à vista, no valor informado em cada curso, ou parcelado, com juros.</p></details><details><summary>Preciso criar conta ou escolher turma agora?</summary><p>Não. Você escolhe o curso e paga a inscrição. A secretaria entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário.</p></details><details><summary>E se não houver horário compatível?</summary><p>A inscrição reserva sua vaga. Você pode desistir em até 7 dias depois do pagamento e recebe o valor de volta. Depois disso, o valor também é estornado se não houver horário compatível ou se você desistir antes da confirmação da aula. O prazo para aparecer na conta depende de PIX ou cartão.</p></details><details><summary>Posso desistir depois de pagar a inscrição?</summary><p>Sim. Em até 7 dias depois do pagamento, você desiste sem precisar dar motivo e recebe o valor integral de volta (art. 49 do Código de Defesa do Consumidor). Depois desse prazo, a inscrição ainda é devolvida se não houver horário compatível ou se você desistir antes da confirmação da aula. O pedido é feito pelo chat da página, e as regras completas estão na página de cancelamento e reembolso.</p></details><details><summary>Os cursos são presenciais? Onde acontecem?</summary><p>Sim. Todos acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro, com certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p></details><details><summary>Posso ver as turmas abertas antes de pagar?</summary><p>Sim. As turmas, datas e valores completos estão na plataforma da escola, que continua disponível para quem prefere o caminho completo de inscrição.</p></details><details><summary>Vocês fecham turma para empresas, escolas e grupos?</summary><p>Sim. Com 15 a 30 alunos, a turma é só do grupo, com data combinada com a secretaria e o mesmo valor por pessoa dos cursos. As aulas são na sede; em outro local, dependem de aprovação. Peça pela seção Turmas sob demanda desta página: a secretaria responde em até 3 dias úteis.</p></details><details><summary>Tem curso de primeiros socorros em inglês?</summary><p>Sim. Todos os cursos podem ser dados em inglês, com professor ou tradutor, quando a turma tiver 15 alunos. Quem já tem o grupo fecha a turma com prioridade; quem não tem entra na lista de interesse e é avisado quando a turma fechar.</p></details><details><summary>Tem primeiros socorros para adolescentes?</summary><p>Sim, para jovens de 12 a 14 anos, numa turma só para essa idade, que abre com 15 alunos. Escolas e projetos com a turma pronta têm prioridade; famílias entram na lista de interesse. Quem preenche o pedido é o responsável ou a instituição.</p></details><details><summary>Como tiro dúvidas antes de me matricular?</summary><p>Pelo chat no canto da página: você deixa a mensagem e a equipe responde por e-mail em até 3 dias úteis. Se preferir, escreva para contato@cruzvermelhariodejaneiro.org.</p></details>
-        <div class="cta-row" style="margin-top:28px">
-          <a class="btn btn-red" href="#cursos">Fazer matrícula agora</a>
-          <a class="btn btn-outline" href="https://escola.cursoscruzvermelha.org/cursos" target="_blank" rel="noopener">Ver turmas na plataforma da escola</a>
-        </div>
-      </div>
-    </section>
   </main>
+
+  <div class="mr-barra" id="mr-barra" hidden>
+    <div class="mr-barra-texto"><b id="mr-barra-nome"></b><span>Inscrição R$ 99 · 7 dias para desistir</span></div>
+    <a class="btn btn-red mr-cta" id="mr-barra-cta" data-local="barra" href="/matricula-cursos-presenciais/checkout/">Fazer matrícula</a>
+  </div>
 
   <footer>
     <div class="footer-grid">
@@ -1207,7 +1481,7 @@
         <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
         <p><a href="/historia/">Nossa história</a></p>
         <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
-        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org?utm_source=cruzvermelhariodejaneiro&amp;utm_medium=matricula&amp;utm_content=rodape" data-saida="rodape" target="_blank" rel="noopener">Plataforma da escola</a></p>
         <p><a href="/bio/">Links oficiais</a></p>
         <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a></p>
       </div>
@@ -1232,7 +1506,7 @@
         <span class="sep">|</span>
         <a href="/acervo/">Acervo</a>
         <span class="sep">|</span>
-        <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Escola de Educação e Saúde</a>
+        <a href="https://escola.cursoscruzvermelha.org?utm_source=cruzvermelhariodejaneiro&amp;utm_medium=matricula&amp;utm_content=rodape" data-saida="rodape" target="_blank" rel="noopener">Escola de Educação e Saúde</a>
         <span class="sep">|</span>
         <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
         <span class="sep">|</span>
@@ -1268,72 +1542,257 @@
   <script>
     (function () {
       var CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/";
-      var lista = Array.prototype.slice.call(document.querySelectorAll('.mr-lista a[data-curso]'));
-      var detalhes = Array.prototype.slice.call(document.querySelectorAll('.mr-detalhe'));
-      if (!lista.length || !detalhes.length) return;
+      var INSCRICAO = 99.00;
+      var INSC_CURTO = "R$ 99";
+      var EXIBICAO = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas", "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos", "micropigmentacao-labial"];
+      var LISTA = 'Matrícula cursos presenciais';
+      var raiz = document.documentElement;
+      var celular = window.matchMedia ? window.matchMedia('(max-width: 719px)') : { matches: false };
+      var cards = {};
+      Array.prototype.forEach.call(document.querySelectorAll('.mr-curso[data-curso]'), function (el) { cards[el.getAttribute('data-curso')] = el; });
+      if (!Object.keys(cards).length) return;
+      var modo = raiz.getAttribute('data-curso') ? 'curso' : 'geral';
+      function nome(s) { return cards[s] ? cards[s].getAttribute('data-nome') : s; }
+      function curto(s) { return cards[s] ? cards[s].getAttribute('data-curto') : s; }
 
-      function slugDaUrl() {
-        var q = new URLSearchParams(location.search).get('curso');
-        if (q) return q;
-        var h = location.hash.replace('#curso-', '');
-        return h || null;
-      }
-      // Meta: ViewContent ao abrir um curso (InitiateCheckout dispara na página do checkout), com um id que vai
-      // também no repasse ao servidor (API de Conversões, só com "sim" para marketing): a Meta junta os dois.
-      // GA4: view_item ao abrir um curso e select_item no botão, com o item para os relatórios de funil.
-      function rastrear(nome, dados) {
-        var item = { item_id: dados.content_ids[0], item_name: dados.content_name, item_category: 'Cursos presenciais', price: 99.00, quantity: 1 };
-        var id = '';
-        try { if (nome === 'ViewContent' && window.cvrjMedicao && window.cvrjMedicao.novoId) id = window.cvrjMedicao.novoId('vc'); } catch (e) {}
-        try { if (window.fbq && nome === 'ViewContent') fbq('track', nome, dados, id ? { eventID: id } : undefined); } catch (e) {}
-        try { if (id) window.cvrjMedicao.servidor(nome, id, dados.content_ids[0]); } catch (e) {}
-        try { if (window.gtag) gtag('event', nome === 'ViewContent' ? 'view_item' : 'select_item', { currency: 'BRL', value: 99.00, item_list_name: 'Matrícula cursos presenciais', items: [item] }); } catch (e) {}
-      }
-      function ativar(slug, atualizarUrl) {
-        var alvo = document.getElementById('curso-' + slug);
-        if (!alvo) return false;
-        detalhes.forEach(function (d) { d.classList.toggle('ativo', d === alvo); });
-        lista.forEach(function (a) {
-          var on = a.getAttribute('data-curso') === slug;
-          a.classList.toggle('ativo', on);
-          if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
-        });
-        // A URL não muda ao trocar de curso: GA4 e Pixel contam cada mudança de histórico como
-        // nova visualização de página. Chegar com ?curso= ou #curso- continua funcionando.
-        return true;
-      }
-      var inicial = slugDaUrl();
-      if (!inicial || !ativar(inicial, false)) ativar(lista[0].getAttribute('data-curso'), false);
-
-      lista.forEach(function (a) {
-        a.addEventListener('click', function (e) {
-          e.preventDefault();
-          var slug = a.getAttribute('data-curso');
-          ativar(slug, true);
-          var alvo = document.getElementById('curso-' + slug);
-          if (window.innerWidth < 920 && alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          rastrear('ViewContent', { content_name: alvo.getAttribute('data-nome'), content_ids: [slug], content_type: 'product', content_category: 'matricula-cursos-presenciais', value: 99.00, currency: 'BRL' });
-        });
-      });
-
-      // Repassa UTMs/fbclid/gclid da URL atual para o destino do botão (o href já aponta para o checkout).
+      // UTMs, fbclid e gclid da URL atual vão junto para o checkout (os links já funcionam sem JavaScript).
       var extras = new URLSearchParams();
       new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) extras.set(k, v); });
+      function comExtras(href) {
+        try { var u = new URL(href, location.origin); extras.forEach(function (v, k) { u.searchParams.set(k, v); }); return u.pathname + u.search; } catch (e) { return href; }
+      }
+      function linkCheckout(s, local) { return comExtras(CHECKOUT_URL + '?curso=' + encodeURIComponent(s) + '&via=' + local); }
+      Array.prototype.forEach.call(document.querySelectorAll('a.mr-cta[href*="/checkout/"]'), function (a) { a.setAttribute('href', comExtras(a.getAttribute('href'))); });
 
-      document.querySelectorAll('.mr-cta').forEach(function (b) {
-        var slug = b.getAttribute('data-curso');
-        if (CHECKOUT_URL) {
-          var u = new URL(CHECKOUT_URL, location.origin); u.searchParams.set('curso', slug);
-          extras.forEach(function (v, k) { u.searchParams.set(k, v); });
-          b.href = u.toString();
+      function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
+      function item(s) { return { item_id: s, item_name: nome(s), item_category: 'Cursos presenciais', price: INSCRICAO, quantity: 1 }; }
+
+      // ViewContent (Meta) e view_item (GA4): ao carregar com ?curso= ou #curso-, e ao abrir os detalhes de um curso;
+      // uma vez por curso. Nunca por rolagem: o sinal da Meta tem de ser interesse real. O mesmo id vai ao servidor
+      // (API de Conversões, só com "sim" para marketing).
+      var vistos = {};
+      function verCurso(s, origem) {
+        if (!cards[s] || vistos[s]) return;
+        vistos[s] = true;
+        var id = '';
+        try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) id = window.cvrjMedicao.novoId('vc'); } catch (e) {}
+        var dados = { content_name: nome(s), content_ids: [s], content_type: 'product', content_category: 'matricula-cursos-presenciais', value: INSCRICAO, currency: 'BRL' };
+        try { if (window.fbq) window.fbq('track', 'ViewContent', dados, id ? { eventID: id } : undefined); } catch (e) {}
+        try { if (id) window.cvrjMedicao.servidor('ViewContent', id, s); } catch (e) {}
+        ga('view_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, origem: origem, items: [item(s)] });
+      }
+
+      // Curso em foco: o da URL, o do último "Ver detalhes" aberto ou o de #curso-. Alimenta a barra fixa, o botão
+      // do fim da página e o chat (site/chat/chat.js lê o curso em foco por .mr-detalhe.ativo[data-curso]).
+      var foco = null;
+      var final = document.getElementById('mr-final');
+      var barra = document.getElementById('mr-barra');
+      var barraCta = document.getElementById('mr-barra-cta');
+      function focar(s) {
+        if (!cards[s] || foco === s) return;
+        foco = s;
+        Object.keys(cards).forEach(function (k) { cards[k].classList.toggle('ativo', k === s); });
+        if (barra) {
+          document.getElementById('mr-barra-nome').textContent = curto(s);
+          barraCta.setAttribute('href', linkCheckout(s, 'barra'));
+          barraCta.setAttribute('data-curso', s);
         }
-        b.addEventListener('click', function () {
-          rastrear('SelecionouCurso', { content_name: b.getAttribute('data-nome'), content_ids: [slug], content_category: 'matricula-cursos-presenciais' });
+        if (final) {
+          final.innerHTML = '';
+          var a = document.createElement('a');
+          a.className = 'btn btn-red mr-cta';
+          a.setAttribute('data-local', 'faq_final');
+          a.setAttribute('data-curso', s);
+          a.href = linkCheckout(s, 'faq_final');
+          a.textContent = 'Fazer matrícula em ' + curto(s) + ' · ' + INSC_CURTO;
+          var m = document.createElement('p');
+          m.className = 'mr-micro';
+          m.textContent = 'PIX ou cartão, à vista · sem criar conta · 7 dias para desistir, com o valor de volta';
+          final.appendChild(a);
+          final.appendChild(m);
+          observarCta(a);
+        }
+        avaliarBarra();
+      }
+
+      function abrirDetalhes(s, rolar) {
+        var c = cards[s];
+        if (!c) return;
+        var d = c.querySelector('.mr-curso-mais');
+        if (d && !d.open) d.open = true;
+        if (rolar) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('.mr-curso-mais'), function (d) {
+        d.addEventListener('toggle', function () {
+          var s = d.getAttribute('data-curso');
+          var c = cards[s];
+          if (c) c.classList.toggle('aberto', d.open);
+          if (!d.open) return;
+          focar(s);
+          verCurso(s, 'detalhes');
+          if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start' });
         });
       });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-abrir-detalhes]'), function (a) {
+        a.addEventListener('click', function (e) { e.preventDefault(); abrirDetalhes(a.getAttribute('data-abrir-detalhes'), true); });
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-abrir-comparar]'), function (a) {
+        a.addEventListener('click', function (e) {
+          var d = document.getElementById('comparar');
+          if (!d) return;
+          e.preventDefault();
+          d.open = true;
+          d.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      // A garantia fica aberta no computador; no celular, recolhida.
+      if (!celular.matches) Array.prototype.forEach.call(document.querySelectorAll('.mr-garantia-mais'), function (d) { d.open = true; });
+
+      // Cliques: botão de matrícula (select_item com o lugar do botão), atalho do chat e saída para a escola.
+      document.addEventListener('click', function (e) {
+        var alvo = e.target && e.target.closest ? e.target : null;
+        if (!alvo) return;
+        var cta = alvo.closest('.mr-cta');
+        if (cta && cta.getAttribute('data-curso')) {
+          var s = cta.getAttribute('data-curso');
+          ga('select_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, local: cta.getAttribute('data-local') || '', modo: modo, items: [item(s)] });
+        }
+        var atalho = alvo.closest('[data-abrir-chat][data-local]');
+        if (atalho) ga('chat_atalho', { local: atalho.getAttribute('data-local'), curso: atalho.getAttribute('data-curso') || '' });
+        var escola = alvo.closest('a[href*="escola.cursoscruzvermelha.org"]');
+        if (escola) {
+          var local = escola.getAttribute('data-saida') || 'outro';
+          var caminho = '';
+          try { caminho = new URL(escola.href).pathname; } catch (err) {}
+          var destino = /^\/cursos\/./.test(caminho) ? 'curso' : (/^\/cursos/.test(caminho) ? 'catalogo' : 'home');
+          ga('saida_escola', { local: local, curso: foco || '', destino: destino, tela: 'matricula', transport_type: 'beacon' });
+          try { if (window.fbq) window.fbq('trackCustom', 'SaidaEscola', { content_ids: [foco || ''], content_category: local }); } catch (err) {}
+        }
+      }, true);
+
+      // Perguntas abertas (uma vez por pergunta): mostram quais dúvidas seguram a matrícula.
+      var faqVistas = {};
+      document.addEventListener('toggle', function (e) {
+        var d = e.target;
+        if (!d || d.tagName !== 'DETAILS' || !d.open) return;
+        if (d.classList.contains('mr-curso-mais') || d.classList.contains('mr-garantia-mais')) return;
+        var bloco = d.id === 'comparar' ? 'comparar' : d.closest('.mr-curso') ? 'curso' : d.closest('.mr-demanda') ? 'turmas' : d.closest('.mr-faq-pagina') ? 'pagina' : '';
+        if (!bloco) return;
+        var sum = d.querySelector('summary');
+        var pergunta = sum ? sum.textContent.replace(/\s+/g, ' ').trim().slice(0, 100) : '';
+        if (faqVistas[bloco + '|' + pergunta]) return;
+        faqVistas[bloco + '|' + pergunta] = true;
+        var c = d.closest('.mr-curso');
+        ga('faq_aberta', { bloco: bloco, pergunta: pergunta, curso: c ? c.getAttribute('data-curso') : (foco || '') });
+      }, true);
+
+      // --- visibilidade: lista vista, botão de matrícula visto, seções vistas, barra fixa e chat ----------------
+      var temIO = 'IntersectionObserver' in window;
+      function ctas() { return Array.prototype.filter.call(document.querySelectorAll('.mr-cta'), function (el) { return el !== barraCta; }); }
+      function fracao(en) { return Math.max(en.intersectionRatio, en.intersectionRect.height / Math.max(1, window.innerHeight)); }
+      var degraus = [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1];
+      var naTela = 0;
+      var ctaVisto = false;
+      var ctaObs = temIO ? new IntersectionObserver(function (ents) {
+        ents.forEach(function (en) {
+          var el = en.target, dentro = en.isIntersecting;
+          if (dentro !== !!el.__mrNaTela) { el.__mrNaTela = dentro; naTela += dentro ? 1 : -1; }
+          if (!ctaVisto && en.intersectionRatio >= .5 && !el.__mrTimer) {
+            el.__mrTimer = setTimeout(function () {
+              if (ctaVisto) return;
+              ctaVisto = true;
+              ga('cta_matricula_visto', { curso: el.getAttribute('data-curso') || '', local: el.getAttribute('data-local') || '', modo: modo });
+            }, 1000);
+          } else if (en.intersectionRatio < .5 && el.__mrTimer) { clearTimeout(el.__mrTimer); el.__mrTimer = null; }
+        });
+        avaliarBarra();
+      }, { threshold: [0, .5] }) : null;
+      function observarCta(el) { if (ctaObs) { el.__mrNaTela = false; ctaObs.observe(el); } if (chatObs) chatObs.observe(el); }
+
+      var secoesVistas = {};
+      if (temIO) {
+        var catalogo = document.getElementById('cursos');
+        var listaObs = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) {
+            if (fracao(en) >= .3) {
+              listaObs.disconnect();
+              ga('view_item_list', { item_list_id: 'matricula', item_list_name: LISTA, items: EXIBICAO.filter(function (s) { return cards[s]; }).map(item) });
+            }
+          });
+        }, { threshold: degraus });
+        if (catalogo) listaObs.observe(catalogo);
+        var secaoObs = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) {
+            var s = en.target.getAttribute('data-secao');
+            if (!secoesVistas[s] && fracao(en) >= .4) { secoesVistas[s] = true; secaoObs.unobserve(en.target); ga('secao_vista', { secao: s, modo: modo }); }
+          });
+        }, { threshold: degraus });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-secao]'), function (el) { secaoObs.observe(el); });
+      }
+
+      // Barra fixa (celular): curso em foco, nenhum botão de matrícula na tela, abaixo do primeiro botão, fora da
+      // seção de turmas e do rodapé, e sem o aviso de cookies aberto.
+      var fimObs = 0;
+      var barraVista = false;
+      if (temIO) {
+        var fim = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) { if (en.isIntersecting !== !!en.target.__mrFim) { en.target.__mrFim = en.isIntersecting; fimObs += en.isIntersecting ? 1 : -1; } });
+          avaliarBarra();
+        });
+        ['turmas-sob-demanda'].forEach(function (id) { var el = document.getElementById(id); if (el) fim.observe(el); });
+        var rodape = document.querySelector('footer');
+        if (rodape) fim.observe(rodape);
+      }
+      function passouPrimeiro() {
+        var lista = ctas();
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].offsetParent !== null) return lista[i].getBoundingClientRect().bottom < 0;
+        }
+        return false;
+      }
+      function avaliarBarra() {
+        if (!barra || !temIO) return;
+        var aviso = document.querySelector('.cvrj-ck');
+        var mostrar = !!foco && celular.matches && naTela === 0 && fimObs === 0 && passouPrimeiro() && !(aviso && aviso.offsetParent !== null);
+        if (mostrar === !barra.hidden) return;
+        barra.hidden = !mostrar;
+        raiz.classList.toggle('mr-barra-on', mostrar);
+        if (mostrar && !barraVista) { barraVista = true; ga('barra_fixa_vista', { curso: foco }); }
+      }
+      var agendado = false;
+      window.addEventListener('scroll', function () {
+        if (agendado) return;
+        agendado = true;
+        requestAnimationFrame(function () { agendado = false; avaliarBarra(); });
+      }, { passive: true });
+
+      // Chat: o botão some enquanto um botão de matrícula passa pela faixa de baixo da tela, onde ele fica.
+      var chatObs = null, naFaixa = 0;
+      function montarChatObs() {
+        if (!temIO) return;
+        if (chatObs) chatObs.disconnect();
+        naFaixa = 0;
+        chatObs = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) { if (en.isIntersecting !== !!en.target.__mrFaixa) { en.target.__mrFaixa = en.isIntersecting; naFaixa += en.isIntersecting ? 1 : -1; } });
+          raiz.classList.toggle('mr-chat-recolher', naFaixa > 0);
+        }, { rootMargin: '-' + Math.max(0, window.innerHeight - 96) + 'px 0px 0px 0px' });
+        ctas().forEach(function (el) { el.__mrFaixa = false; chatObs.observe(el); });
+      }
+      montarChatObs();
+      ctas().forEach(function (el) { if (ctaObs) { el.__mrNaTela = false; ctaObs.observe(el); } });
+      var redim = null;
+      window.addEventListener('resize', function () { clearTimeout(redim); redim = setTimeout(function () { montarChatObs(); avaliarBarra(); }, 200); });
+
+      // Chegada: ?curso= (marcado no <head>) ou #curso-<slug> (abre os detalhes daquele curso).
+      var inicial = raiz.getAttribute('data-curso');
+      if (inicial) { focar(inicial); verCurso(inicial, 'url'); }
+      else {
+        var h = location.hash.match(/^#curso-([a-z0-9-]+)$/);
+        if (h && cards[h[1]]) { abrirDetalhes(h[1], false); focar(h[1]); verCurso(h[1], 'url'); }
+      }
     })();
   </script>
-  <script src="/matricula-cursos-presenciais/static/turmas.js?v=567003f8ad" defer></script>
+  <script src="/matricula-cursos-presenciais/static/turmas.js?v=db7d0e4ddc" defer></script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
   <script src="/chat/chat.js?v=aa00cac6d2" defer></script>

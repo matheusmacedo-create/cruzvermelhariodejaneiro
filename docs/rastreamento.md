@@ -50,6 +50,39 @@ navegação interna sem UTM, para não reiniciar a sessão do GA4. O e-mail de r
 `utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto` no botão "Concluir pagamento":
 quem volta por ele aparece no GA4 como tráfego desse e-mail.
 
+## Página de matrícula (04/10/2026, redesenho)
+
+O layout novo está descrito no README, seção "Página de matrícula: redesenho para conversão". Todos os eventos
+passam pelo bloco de medição: sem "Aceitar", nada vai para a Meta.
+
+| Momento | Meta | GA4 |
+| --- | --- | --- |
+| Chega com `?curso=<slug>` (anúncio) ou `#curso-<slug>`: uma vez | `ViewContent` + repasse à API de Conversões com o mesmo id | `view_item` (`origem=url`) |
+| Abre "Ver detalhes" de um curso: uma vez por curso | `ViewContent` + repasse | `view_item` (`origem=detalhes`) |
+| O catálogo ocupa 30% da tela: uma vez | (nada) | `view_item_list` (`item_list_id=matricula`, os cursos na ordem exibida) |
+| O 1º botão de matrícula fica 50% visível por 1 s: uma vez | (nada) | `cta_matricula_visto` (`curso`, `local`, `modo`) |
+| Clique em qualquer botão de matrícula | (nada: o `InitiateCheckout` sai no checkout) | `select_item` (`local` = ficha, cartao, detalhes, comparar, barra ou faq_final; `modo` = curso ou geral) |
+| A barra fixa aparece pela 1ª vez (celular) | (nada) | `barra_fixa_vista` (`curso`) |
+| Abre uma pergunta, uma vez por pergunta | (nada) | `faq_aberta` (`bloco` = pagina, curso, turmas ou comparar; `pergunta`; `curso`) |
+| Uma seção ocupa 40% da tela: uma vez | (nada) | `secao_vista` (`secao`, `modo`) |
+| Clique num atalho do chat | (nada) | `chat_atalho` (`local`, `curso`) |
+| Clique num link para a plataforma da escola | `SaidaEscola` (`trackCustom`) | `saida_escola` (`local` = cabecalho, faq ou rodape; `curso`; `destino`) |
+
+O endereço do checkout leva `via=<lugar do botão>` (fora de `utm_`, para não reiniciar a sessão). Ele aparece no
+`page_location` do `begin_checkout`.
+
+**Para configurar no GA4,** como dimensões personalizadas de evento: `curso`, `origem`, `local`, `modo`,
+`secao`, `pergunta`, `bloco`, `destino` e `tela`. O registro não vale para trás.
+
+**Para ler o antes e o depois:**
+
+- compare as **taxas** (`select_item`/`page_view`, `begin_checkout`/`page_view`, `purchase`/`page_view`) das 2
+  semanas antes e das 2 depois da publicação, por dispositivo e origem;
+- `saida_escola`/`page_view` mostra quanto ainda sai para a escola.
+
+**Na Meta:** o `ViewContent` passa a sair também ao chegar pelo anúncio com `?curso=`, então ele sobe. Anote a
+data da publicação se alguma campanha otimizar por ele.
+
 ## Turmas sob demanda (04/10/2026)
 
 | Momento | Meta | GA4 |
