@@ -210,7 +210,7 @@ entradas `aula-*`). Na página: banner `aula-engasgo-bebe-instrutor`; capas de P
 (`aula-engasgo-bebe`, `aula-dea-sala`, `aula-manobra-heimlich`, `aula-salao-cruz`). Punção Venosa, Bombeiro Civil,
 Cuidador de Idosos e Micropigmentação continuam com as imagens geradas de `img/` até haver foto. Os alunos aparecem
 com rosto visível: **confirmar com a escola a autorização de uso de imagem antes de publicar.** Publicação com a
-lista `scripts/publicacao-modelo-b.txt` (index + originais + WebP; nada de foto vai pelo Git). **Publicado em 05/10/2026**, com autorização de imagem confirmada pelo Matheus: `conferir_publicacao.sh` (21 arquivos iguais, API e bloqueios ok), página no ar com Manrope, 30 imagens carregando e sem erro de JS em 390 e 1280, `conferir_pixel.js` no ar 15/15.
+lista `scripts/publicacao-modelo-b.txt` (index + originais + WebP; nada de foto vai pelo Git). **Publicado em 05/10/2026**, com autorização de imagem confirmada pelo Matheus: `conferir_publicacao.sh` (21 arquivos iguais, API e bloqueios ok), página no ar com Manrope, 30 imagens carregando e sem erro de JS em 390 e 1280, `conferir_pixel.js` no ar 15/15. **Ajuste de 05/10, à tarde:** o cartão "Turma para empresas e grupos" e a chamada final "Pronto para começar?" passaram do preto (`--escuro`) para o vermelho da marca, a pedido do Matheus (prévia em `docs/previas/matricula-computador-empresas.png`).
 
 **Conferido (05/10):** gerador (7 cursos, 1 H1); `conferir_pixel.js --repositorio` 15/15; Playwright em 375, 390,
 430, 768, 1024, 1280 e 1440 sem rolagem horizontal e sem erro de JS (filtro, janela dos detalhes, turma, barra fixa,

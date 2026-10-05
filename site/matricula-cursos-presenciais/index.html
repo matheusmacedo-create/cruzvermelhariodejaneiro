@@ -206,13 +206,13 @@
     .mr-preco-l.agora strong { color: var(--vermelho); }
     .mr-card-acoes { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: auto; }
     .mr-card-acoes .btn { padding-left: 16px; padding-right: 16px; }
-    .mr-card-turma { background: var(--escuro); color: #fff; border-color: var(--escuro); }
+    .mr-card-turma { background: var(--vermelho); color: #fff; border-color: var(--vermelho); }
     .mr-card-turma .mr-capa img { height: 150%; object-position: center top; }
     .mr-card-turma .mr-card-corpo { padding: 18px 20px 22px; gap: 10px; justify-content: center; }
     .mr-card-turma h3 { font-size: 22px; color: #fff; line-height: 1.2; }
-    .mr-card-turma p { color: rgba(255, 255, 255, .92); font-size: 15px; line-height: 1.5; }
+    .mr-card-turma p { color: #fff; font-size: 15px; line-height: 1.5; }
     .mr-card-turma ul { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
-    .mr-card-turma li { font-size: 13px; font-weight: 700; padding: 5px 10px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; color: #fff; }
+    .mr-card-turma li { font-size: 13px; font-weight: 700; padding: 5px 10px; border: 1px solid rgba(255, 255, 255, .55); border-radius: 999px; color: #fff; }
     .mr-card-turma .btn { margin-top: 8px; align-self: flex-start; }
     .mr-nota-preco { margin-top: 16px; font-size: 14px; color: var(--texto-2); display: flex; gap: 8px; align-items: flex-start; }
     .mr-nota-preco svg { width: 18px; height: 18px; flex: none; color: var(--vermelho); margin-top: 2px; }
@@ -296,7 +296,7 @@
     .mr-equipe .btn { width: 100%; }
 
     /* chamada final (fundo escuro) */
-    .mr-final { background: var(--escuro); color: #fff; text-align: center; }
+    .mr-final { background: var(--vermelho); color: #fff; text-align: center; }
     .mr-final h2, .mr-final p { color: #fff; }
     .mr-final-conteudo { max-width: 720px; margin: 0 auto; }
     .mr-final-conteudo > p { margin-top: 10px; font-size: 16px; }
@@ -305,7 +305,7 @@
     .mr-final .btn-red:hover { background: var(--cinza); border-color: var(--cinza); }
     .mr-final .btn-outline { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .75); }
     .mr-final .btn-outline:hover { border-color: #fff; background: rgba(255, 255, 255, .08); color: #fff; }
-    .mr-final .mr-micro { margin-top: 18px; color: rgba(255, 255, 255, .85); }
+    .mr-final .mr-micro { margin-top: 18px; color: #fff; }
 
     /* barra fixa (celular) */
     .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #fff; border-top: 1px solid var(--borda); box-shadow: 0 -8px 24px rgba(15, 19, 24, .08); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; animation: mr-sobe .25s ease-out; }
