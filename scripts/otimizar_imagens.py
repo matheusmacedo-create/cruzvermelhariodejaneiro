@@ -53,6 +53,16 @@ FOTOS = {
     "curso-pratico-sala.jpg": [480, 1080],
     "protocolo-trauma.jpg": [480, 1080],
     "dia-cruz-vermelha.jpg": [640, 1254],
+    # Aulas dos cursos presenciais (fotos da escola, recebidas em 10/2026; as de celular têm no máximo ~900 px).
+    "aula-salao-instrutor.jpg": [480, 960, 1440],
+    "aula-salao-turma.jpg": [480, 960, 1440],
+    "aula-salao-cruz.jpg": [480, 960, 1440],
+    "aula-turma-coletes.jpg": [480, 960],
+    "aula-manobra-heimlich.jpg": [480, 960],
+    "aula-instrutor-manequim.jpg": [480, 960],
+    "aula-engasgo-bebe.jpg": [480, 960],
+    "aula-engasgo-bebe-instrutor.jpg": [480, 960],
+    "aula-dea-sala.jpg": [480, 960],
 }
 # Também em AVIF (o primeiro slide da home, que é o maior elemento da página no computador).
 AVIF = {"forca-tarefa-el-nino-banner.png"}

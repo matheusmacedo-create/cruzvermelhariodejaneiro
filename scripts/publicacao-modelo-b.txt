@@ -1,0 +1,27 @@
+# Página de matrícula no modelo B (vermelho, fotos reais de aula) e as fotos novas da escola (05/10/2026).
+# As fotos ficam fora do Git (site/assets/): os originais vão para public_html/assets/ e as versões otimizadas para
+# public_html/assets/otim/. Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-modelo-b.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-modelo-b.txt
+# Desfazer: scripts/desfazer_publicacao.sh 3aa195d scripts/publicacao-modelo-b.txt (o index.html; as fotos novas
+# podem ficar no servidor, nada mais as referencia).
+site/matricula-cursos-presenciais/index.html
+site/assets/aula-engasgo-bebe-instrutor.jpg
+site/assets/aula-engasgo-bebe.jpg
+site/assets/aula-manobra-heimlich.jpg
+site/assets/aula-dea-sala.jpg
+site/assets/aula-salao-cruz.jpg
+site/assets/aula-salao-instrutor.jpg
+site/assets/aula-salao-turma.jpg
+site/assets/aula-turma-coletes.jpg
+site/assets/aula-instrutor-manequim.jpg
+site/assets/otim/aula-engasgo-bebe-instrutor-480.webp
+site/assets/otim/aula-engasgo-bebe-instrutor-589.webp
+site/assets/otim/aula-engasgo-bebe-480.webp
+site/assets/otim/aula-engasgo-bebe-589.webp
+site/assets/otim/aula-manobra-heimlich-480.webp
+site/assets/otim/aula-manobra-heimlich-899.webp
+site/assets/otim/aula-dea-sala-480.webp
+site/assets/otim/aula-dea-sala-591.webp
+site/assets/otim/aula-salao-cruz-480.webp
+site/assets/otim/aula-salao-cruz-960.webp
+site/assets/otim/aula-salao-cruz-1440.webp
