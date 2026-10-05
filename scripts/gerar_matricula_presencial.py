@@ -403,6 +403,11 @@ FOTO_HISTORIA = {"src": "/assets/otim/historia-varanda-escola-1917-480.webp",
                  "legenda": "Enfermeiras voluntárias e profissionais na varanda da Escola de Enfermeiras, em 1917."}
 FOTO_FACHADA = {"src": "/assets/otim/historia-fachada-noturna-767.webp",
                 "alt": "Fachada iluminada do Palácio da Cruz Vermelha, à noite", "legenda": "Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10"}
+# Mapa estático da sede (imagem gerada com OpenStreetMap, sem terceiros ao carregar; o clique abre o mapa interativo).
+MAPA_ESTATICO = {"src": "/assets/otim/mapa-sede-960.webp",
+                 "srcset": "/assets/otim/mapa-sede-480.webp 480w, /assets/otim/mapa-sede-960.webp 960w",
+                 "alt": "Mapa do Centro do Rio com a sede da Cruz Vermelha marcada na Praça da Cruz Vermelha, 10, perto da Avenida Mem de Sá",
+                 "credito": "Mapa © colaboradores do OpenStreetMap"}
 # Só fatos de /historia/ (literais: "20 de outubro de 1914, começa o primeiro curso de Enfermeiras Voluntárias";
 # "construído entre 1919 e 1923"; "tombado como patrimônio cultural federal"; fundação em 5 de dezembro de 1908).
 TEXTO_HISTORIA = ("A Escola de Educação e Saúde é a escola da Cruz Vermelha Brasileira Rio de Janeiro. A Cruz Vermelha forma pessoas "
@@ -439,7 +444,7 @@ CSS_PAGINA = """
     .mr section { padding: 36px 0; }
     .mr h1, .mr h2, .mr h3 { margin: 0; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; color: var(--texto); }
     .mr h2 { font-size: clamp(26px, 3.4vw, 40px); }
-    .mr p { margin: 0; }
+    :where(.mr) p { margin: 0; }  /* especificidade baixa: as classes (.mr-como-nota, .mr-endereco…) mandam na margem */
     .mr ul, .mr ol { margin: 0; padding: 0; }
     .mr img { max-width: 100%; height: auto; display: block; }
     .mr a { color: var(--vermelho); }
@@ -632,7 +637,7 @@ CSS_PAGINA = """
     .mr-num { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--vermelho); font-weight: 800; font-size: 20px; display: grid; place-items: center; }
     .mr-passo h3 { font-size: 19px; color: #fff; padding-top: 10px; }
     .mr-passo p { margin-top: 6px; font-size: 15px; line-height: 1.5; }
-    .mr-como-nota { margin-top: 26px; font-size: 14px; color: rgba(255, 255, 255, .92); max-width: 860px; }
+    .mr-como-nota { margin-top: 28px; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .35); font-size: 14px; color: #fff; max-width: 860px; }
     .mr-como-nota a { color: #fff; font-weight: 700; }
 
     /* certificado */
@@ -668,8 +673,15 @@ CSS_PAGINA = """
     .mr-local-nota { color: var(--texto-2); font-size: 15px; margin-bottom: 18px; }
     .mr-local-acoes { display: flex; flex-wrap: wrap; gap: 10px; }
     .mr-mapa { margin: 0; }
-    .mr-mapa img, .mr-mapa iframe { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: var(--escuro); border: 0; display: block; }
+    .mr-mapa img, .mr-mapa iframe { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: var(--cinza); border: 0; display: block; }
     .mr-mapa figcaption { font-size: 14px; color: var(--texto-2); margin-top: 8px; }
+    .mr-mapa-abrir { display: block; position: relative; width: 100%; padding: 0; border: 1px solid var(--borda); border-radius: 8px; background: var(--cinza); cursor: pointer; overflow: hidden; font: inherit; }
+    .mr-mapa-abrir:hover img.mr-mapa-img { transform: scale(1.02); }
+    .mr-mapa img.mr-mapa-img { transition: transform .3s; }
+    .mr-mapa-dica { position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; background: rgba(15, 19, 24, .82); color: #fff; font-size: 13px; font-weight: 700; padding: 7px 10px; border-radius: 6px; max-width: calc(100% - 24px); }
+    .mr-mapa-dica svg { width: 16px; height: 16px; flex: none; color: #fff; }
+    .mr-mapa img.mr-mapa-foto { position: absolute; right: 12px; top: 12px; width: 34%; aspect-ratio: 4 / 3; border-radius: 8px; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(15, 19, 24, .3); background: var(--escuro); }
+    .mr-mapa-credito { font-size: 12px; color: var(--texto-2); }
 
     /* dúvidas (sanfona) */
     .mr-faq-lista { max-width: 860px; }
@@ -1057,8 +1069,9 @@ JS_PAGINA = """
 
       // Mapa: carrega só quando a pessoa pede (desempenho e cookies de terceiros).
       var mapaBotao = document.getElementById('mr-mapa-carregar');
-      if (mapaBotao) mapaBotao.addEventListener('click', function () {
+      function abrirMapa(origem) {
         var mapa = document.getElementById('mr-mapa');
+        if (!mapa || !mapaBotao || mapa.querySelector('iframe')) return;
         var f = document.createElement('iframe');
         f.src = mapaBotao.getAttribute('data-src');
         f.title = 'Mapa: Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro';
@@ -1067,8 +1080,13 @@ JS_PAGINA = """
         f.allowFullscreen = true;
         mapa.innerHTML = '';
         mapa.appendChild(f);
-        ga('mapa_aberto', {});
-      });
+        var legenda = document.createElement('figcaption');
+        legenda.textContent = 'Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro · mapa do Google';
+        mapa.appendChild(legenda);
+        ga('mapa_aberto', { origem: origem });
+      }
+      if (mapaBotao) mapaBotao.addEventListener('click', function () { abrirMapa('botao'); });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-mapa-abrir]'), function (b) { b.addEventListener('click', function () { abrirMapa('mapa'); }); });
 
       // --- visibilidade: cursos vistos, lista vista, botão visto, seções vistas, barra fixa, chat e navegação ------
       var temIO = 'IntersectionObserver' in window;
@@ -1818,8 +1836,12 @@ def main() -> int:
           </div>
         </div>
         <figure class="mr-mapa" id="mr-mapa">
-          <img src="{FOTO_FACHADA["src"]}" width="767" height="516" alt="{esc(FOTO_FACHADA["alt"])}" loading="lazy">
-          <figcaption>{esc(FOTO_FACHADA["legenda"])}</figcaption>
+          <button type="button" class="mr-mapa-abrir" data-mapa-abrir aria-label="Abrir o mapa interativo da Praça da Cruz Vermelha, 10">
+            <img class="mr-mapa-img" src="{MAPA_ESTATICO["src"]}" srcset="{MAPA_ESTATICO["srcset"]}" sizes="(min-width: 720px) 50vw, 100vw" width="960" height="720" alt="{esc(MAPA_ESTATICO["alt"])}" loading="lazy">
+            <img class="mr-mapa-foto" src="{FOTO_FACHADA["src"]}" width="767" height="516" alt="{esc(FOTO_FACHADA["alt"])}" loading="lazy">
+            <span class="mr-mapa-dica" aria-hidden="true">{SVG["pino"]}Toque para abrir o mapa interativo</span>
+          </button>
+          <figcaption>{esc(FOTO_FACHADA["legenda"])} <span class="mr-mapa-credito">· {esc(MAPA_ESTATICO["credito"])}</span></figcaption>
         </figure>
       </div>
     </section>'''

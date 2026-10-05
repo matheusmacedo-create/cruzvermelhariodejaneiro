@@ -63,6 +63,8 @@ FOTOS = {
     "aula-engasgo-bebe.jpg": [480, 960],
     "aula-engasgo-bebe-instrutor.jpg": [480, 960],
     "aula-dea-sala.jpg": [480, 960],
+    # Mapa estático da sede (OpenStreetMap, zoom 17, pino vermelho; gerado com Leaflet e salvo como imagem).
+    "mapa-sede.png": [480, 960],
 }
 # Também em AVIF (o primeiro slide da home, que é o maior elemento da página no computador).
 AVIF = {"forca-tarefa-el-nino-banner.png"}
