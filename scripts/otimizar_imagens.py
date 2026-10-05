@@ -96,6 +96,11 @@ OG = {
     "og-matricula.jpg": ("auditorio-voluntarios.jpg", 0.5),
     "og-dia-das-criancas.jpg": ("dia-criancas-juventude.jpg", 0.42),
 }
+# Cartões da página /bio/ (700x367 e 420x220, a proporção de site/bio/img/) com fotos que ficam só no servidor:
+# as fotos com crianças não vão para o Git, então o cartão aponta para /assets/otim/ (ver gerar_bio.py, "pasta").
+CARTOES_BIO = {
+    "dia-criancas-cartao": ("dia-criancas-juventude.jpg", 0.42),
+}
 
 
 def redimensionar(im: Image.Image, largura: int) -> Image.Image:
@@ -103,6 +108,21 @@ def redimensionar(im: Image.Image, largura: int) -> Image.Image:
         return im
     altura = round(im.height * largura / im.width)
     return im.resize((largura, altura), Image.LANCZOS)
+
+
+def gerar_cartoes_bio() -> int:
+    gerados = 0
+    for nome, (fonte, foco) in CARTOES_BIO.items():
+        arq = ORIGEM / fonte
+        if not arq.is_file():
+            print(f"  ! falta {fonte}", file=sys.stderr)
+            continue
+        im = ImageOps.exif_transpose(Image.open(arq)).convert("RGB")
+        for largura, altura in ((700, 367), (420, 220)):
+            recorte = ImageOps.fit(im, (largura, altura), Image.LANCZOS, centering=(0.5, foco))
+            recorte.save(DESTINO / f"{nome}-{largura}.webp", "WEBP", quality=QUALIDADE, method=6)
+            gerados += 1
+    return gerados
 
 
 def main() -> int:
@@ -151,6 +171,7 @@ def main() -> int:
         recorte = ImageOps.fit(im, (1200, 630), Image.LANCZOS, centering=(0.5, foco))
         recorte.save(DESTINO / nome, "JPEG", quality=82, optimize=True, progressive=True)
         gerados += 1
+    gerados += gerar_cartoes_bio()
     print(f"{gerados} arquivos em site/assets/otim/ · originais {antes // 1024} KB → versões {depois // 1024} KB (todas as larguras somadas)")
     return 0
 

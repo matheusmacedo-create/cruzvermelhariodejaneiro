@@ -67,6 +67,12 @@ IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
 # Só os três destinos que o Matheus pediu (19/09/2026), na ordem em que apareciam na página original.
 # Ficaram de fora, por decisão dele: desfile de 7 de Setembro, SOS Venezuela, e-mail do RFL, endereço e Instagram.
 BLOCOS = [
+    # Ação de 13/10/2026: sai daqui depois do evento. A foto fica em /assets/otim/ ("pasta"), fora do Git.
+    {"tipo": "cartao", "imagem": "dia-criancas-cartao", "pasta": "/assets/otim/",
+     "alt": "Coordenadora de Juventude da Cruz Vermelha Brasileira Rio de Janeiro com crianças",
+     "titulo": "Dia das Crianças na Praça: 13/10, das 9h às 16h",
+     "descricao": "Brincadeiras, primeiros socorros e saúde em frente à sede. Aberto e gratuito.",
+     "link": f"{ORIGEM}/dia-das-criancas/", "id": "dia-das-criancas"},
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
      "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
@@ -78,7 +84,7 @@ BLOCOS = [
      "link": "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20",
      "id": "whatsapp-voluntariado"},
 ]
-IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367)}
+IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367), "dia-criancas-cartao": (700, 367)}
 
 
 def externo(link: str) -> str:
@@ -100,10 +106,13 @@ def bloco_html(b: dict, primeiro: bool = False) -> str:
     if tipo == "cartao":
         img = b["imagem"]
         w, h = IMAGENS[img]
-        srcset = f'img/{img}-700.webp 700w, img/{img}-420.webp 420w' if (PASTA / "img" / f"{img}-420.webp").exists() else f'img/{img}-700.webp 700w, img/{img}-1200.webp 1200w'
+        # img/ = site/bio/img/ (no Git); "pasta" = fotos que ficam só no servidor (/assets/otim/, sempre 700 e 420).
+        pasta = b.get("pasta", "img/")
+        tem_420 = pasta != "img/" or (PASTA / "img" / f"{img}-420.webp").exists()
+        srcset = f'{pasta}{img}-700.webp 700w, {pasta}{img}-420.webp 420w' if tem_420 else f'{pasta}{img}-700.webp 700w, {pasta}{img}-1200.webp 1200w'
         carga = 'loading="eager" fetchpriority="high"' if primeiro else 'loading="lazy"'
         return (f'<a class="bio-cartao" href="{esc(b["link"])}" data-bio="{b["id"]}"{externo(b["link"])}>'
-                f'<img src="img/{img}-700.webp" srcset="{srcset}" sizes="(max-width: 680px) 100vw, 640px" alt="" width="{w}" height="{h}" {carga} decoding="async">'
+                f'<img src="{pasta}{img}-700.webp" srcset="{srcset}" sizes="(max-width: 680px) 100vw, 640px" alt="" width="{w}" height="{h}" {carga} decoding="async">'
                 f'<span class="bio-cartao-corpo"><span class="bio-cartao-texto"><b>{esc(b["titulo"])}</b><small>{esc(b["descricao"])}</small></span>'
                 f'<span class="bio-cta" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span></span></a>')
     if tipo == "endereco":

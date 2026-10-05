@@ -1,4 +1,4 @@
-# Página do Dia das Crianças na Praça (ação de 13/10/2026) e card em "Campanhas ativas" na home (05/10/2026).
+# Página do Dia das Crianças na Praça (ação de 13/10/2026), card em "Campanhas ativas" na home e cartão na /bio/ (05/10/2026).
 # As imagens antes das páginas que as pedem. site/assets/ fica fora do Git (só no servidor); as versões de
 # otim/ saem de scripts/otimizar_imagens.py. Fotos com autorização de uso de imagem dos responsáveis
 # (confirmada pelo Matheus em 05/10/2026), sem metadados (EXIF/GPS) nos arquivos.
@@ -27,10 +27,13 @@ site/assets/otim/dia-criancas-primeiros-socorros-960.webp
 site/assets/otim/dia-criancas-voluntaria-480.webp
 site/assets/otim/dia-criancas-voluntaria-960.webp
 site/assets/otim/og-dia-das-criancas.jpg
+site/assets/otim/dia-criancas-cartao-420.webp
+site/assets/otim/dia-criancas-cartao-700.webp
 # 3) .ics como text/calendar (o iPhone abre a tela de "adicionar à agenda"), antes do arquivo
 site/.htaccess
 # 4) a página e o evento para a agenda
 site/dia-das-criancas/dia-das-criancas.ics
 site/dia-das-criancas/index.html
-# 5) a home, com o card
+# 5) a home, com o card, e a bio do Instagram, com o cartão (as duas apontam para a página do item 4)
 site/index.html
+site/bio/index.html

@@ -2653,6 +2653,9 @@ o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home
   data, o horário ou os setores: editar `EVENTO`/`SETORES` e regerar; o card da home é editado à mão.
 - **Card na home**, o primeiro de "Campanhas ativas" (`#campanhas`), com a foto da Juventude (recorte com
   `object-position: 50% 70%`, para os rostos caberem no 16:9).
+- **Cartão na bio do Instagram** (`/bio/`), o primeiro da lista. A foto do cartão fica em `/assets/otim/`
+  (`dia-criancas-cartao-700/420.webp`, de `CARTOES_BIO` em `otimizar_imagens.py`), não em `site/bio/img/`,
+  que vai para o Git: o bloco usa a chave `"pasta"` de `gerar_bio.py`.
 - **Fotos:** cinco fotos de ações anteriores com crianças, com autorização de uso de imagem dos
   responsáveis (confirmada pelo Matheus em 05/10/2026). Ficam fora do Git, como o resto de
   `site/assets/`, e sem EXIF/GPS; as versões otimizadas saem de `scripts/otimizar_imagens.py` (a do topo
@@ -2670,7 +2673,7 @@ o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home
 - **Publicar:** `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas.txt)`
   (com `--copiar-do-ar` antes), limpar o cache e, com a página no ar, rodar `gerar_sitemaps.py` (a página
   já está em `PAGINAS`).
-- **Depois do evento (a partir de 14/10):** tirar o card da home e trocar a página por um "como foi" (com
+- **Depois do evento (a partir de 14/10):** tirar o card da home e o cartão da bio, e trocar a página por um "como foi" (com
   fotos do dia autorizadas) ou tirá-la do sitemap. O Google para de mostrar evento que já passou, mas a
   página continuaria convidando para uma data vencida.
 
