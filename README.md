@@ -2642,7 +2642,7 @@ O verbete ainda não tem item no Wikidata; quando tiver, vale acrescentar o `Q�
 
 ## Dia das Crianças na Praça (`/dia-das-criancas/`, 05/10/2026)
 
-Página da ação de **terça-feira, 13/10/2026, das 9h às 16h**, na praça em frente ao Palácio da Cruz
+Página da ação de **terça-feira, 13/10/2026, à tarde, das 13h às 16h**, na praça em frente ao Palácio da Cruz
 Vermelha, aberta e gratuita (sem inscrição), com os setores do quadro da sede para o dia: **Juventude,
 Primeiros Socorros e Educação e Saúde**. Gerada por `scripts/gerar_dia_das_criancas.py`, com o cabeçalho,
 o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home.
@@ -2660,7 +2660,7 @@ o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home
   responsáveis (confirmada pelo Matheus em 05/10/2026). Ficam fora do Git, como o resto de
   `site/assets/`, e sem EXIF/GPS; as versões otimizadas saem de `scripts/otimizar_imagens.py` (a do topo
   também em AVIF, com preload, de 480 a 1080 px).
-- **No celular,** a foto com o selo "13/10 · 9h às 16h" vem logo depois do título (o topo é uma grade só;
+- **No celular,** a foto com o selo "13/10 · 13h às 16h" vem logo depois do título (o topo é uma grade só;
   no computador a foto ocupa a coluna da direita) e os quatro fatos viram uma lista com divisórias.
 - **Doação de brinquedos (05/10, à noite):** aviso no topo ("Saiba como doar"), seção "Doe brinquedos para
   a criançada" (o que doar e onde entregar: na sede, de segunda a sexta, das 10h às 17h, o horário de
@@ -2699,6 +2699,7 @@ o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home
   linha contra o que estava no ar). Conferido em seguida: os arquivos no ar iguais ao repositório, o PHP
   respondendo, a página sem erro de JavaScript e sem medição antes do aceite dos cookies. Sitemaps
   regerados e publicados às 18h07, com a página nova (53 entradas em `sitemap-paginas.xml`).
+- **Horário mudou (05/10, à noite):** das 9h às 16h para a parte da tarde, **das 13h às 16h**. Mudou em `EVENTO` (página, JSON-LD, Google Agenda, `.ics` com `SEQUENCE:1`, WhatsApp), no card da home, no cartão da bio e no `llms.txt`.
 - **Observação:** o `chat.js` no ar ainda é o anterior; a `main` tem uma versão nova (sem algumas perguntas
   das fichas dos cursos), e a página de matrícula publicada já aponta para ela pelo `?v=`. O número só serve
   para o navegador não usar cópia velha, então nada quebra, mas o arquivo novo não foi enviado.

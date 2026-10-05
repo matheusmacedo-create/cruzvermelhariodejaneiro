@@ -2,7 +2,8 @@
 """Gera site/dia-das-criancas/: a página da ação do Dia das Crianças na Praça da Cruz Vermelha (13/10/2026).
 
 Ação aberta e gratuita na praça em frente ao Palácio da Cruz Vermelha, com três setores da filial
-(Juventude, Primeiros Socorros e Educação e Saúde, como no quadro de setores da sede), das 9h às 16h.
+(Juventude, Primeiros Socorros e Educação e Saúde, como no quadro de setores da sede), à tarde, das 13h às 16h
+(até 05/10 à noite a página dizia das 9h às 16h; o horário mudou para a parte da tarde).
 Os dados do evento ficam num lugar só (EVENTO, abaixo; data e horário por extenso saem dele) e alimentam a
 página, o JSON-LD Event (o que o Google usa para mostrar o evento na busca), o link do Google Agenda e o
 arquivo .ics (iPhone e Outlook). O card da home (site/index.html, "Campanhas ativas") é editado à mão.
@@ -54,7 +55,7 @@ DOACAO_ENTREGA = "Na sede, na Praça da Cruz Vermelha, 10, Centro, de segunda a 
 FUSO = timezone(timedelta(hours=-3))  # Rio de Janeiro: sem horário de verão desde 2019
 EVENTO = {
     "nome": "Dia das Crianças na Praça da Cruz Vermelha",
-    "inicio": datetime(2026, 10, 13, 9, 0, tzinfo=FUSO),
+    "inicio": datetime(2026, 10, 13, 13, 0, tzinfo=FUSO),
     "fim": datetime(2026, 10, 13, 16, 0, tzinfo=FUSO),
     "local": "Praça da Cruz Vermelha, em frente ao Palácio da Cruz Vermelha",
     "endereco": "Praça da Cruz Vermelha, 10",
@@ -75,8 +76,11 @@ DIA_SEMANA = DIAS[_ini.weekday()]                                  # terça-feir
 DIA_CURTO = DIA_SEMANA.split("-")[0].capitalize()                  # Terça
 DATA_LONGA = f"{_ini.day} de {MESES[_ini.month - 1]}"              # 13 de outubro
 DATA_CURTA = f"{_ini:%d/%m}"                                       # 13/10
-HORARIO = f"{_ini.hour}h às {_fim.hour}h"                          # 9h às 16h
+HORARIO = f"{_ini.hour}h às {_fim.hour}h"                          # 13h às 16h
 ARTIGO = "um" if _ini.weekday() >= 5 else "uma"                    # um sábado / uma terça-feira
+# Só de manhã ou só à tarde: o texto diz o período ("Uma tarde de brincadeiras", "à tarde").
+PERIODO = "tarde" if _ini.hour >= 12 else ("manhã" if _fim.hour <= 12 else None)
+NO_PERIODO = {"tarde": "à tarde", "manhã": "de manhã"}.get(PERIODO or "", "")
 ENDERECO_COMPLETO = f'{EVENTO["endereco"]}, {EVENTO["bairro"]}, {EVENTO["cidade"]} - {EVENTO["uf"]}, {EVENTO["cep"]}'
 # O mesmo endereço de mapa do rodapé da home.
 URL_MAPA = "https://www.google.com/maps/search/?api=1&query=" + quote(f'{EVENTO["endereco"]}, {EVENTO["bairro"]}, {EVENTO["cidade"]}, {EVENTO["cep"]}')
@@ -170,7 +174,9 @@ def ics() -> str:
         "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Cruz Vermelha Brasileira Rio de Janeiro//Dia das Criancas//PT",
         "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "BEGIN:VEVENT",
         "UID:dia-das-criancas-2026@cruzvermelhariodejaneiro.org",
-        "DTSTAMP:20261005T120000Z",  # fixo: o gerador reproduz o mesmo arquivo
+        # Fixos (o gerador reproduz o mesmo arquivo). Mudou o evento: SEQUENCE + 1 e DTSTAMP da mudança, para a
+        # agenda que importar o arquivo de novo (mesmo UID) entender que é atualização. 1 = horário das 13h (05/10).
+        "SEQUENCE:1", "DTSTAMP:20261005T213000Z",
         f'DTSTART:{utc(EVENTO["inicio"])}', f'DTEND:{utc(EVENTO["fim"])}',
         f'SUMMARY:{texto(EVENTO["nome"])}',
         f'DESCRIPTION:{texto(EVENTO["resumo"] + chr(10) + chr(10) + URL_PAGINA)}',
@@ -502,7 +508,7 @@ def main() -> int:
                f'imagesrcset="{srcset(base, versoes, "avif")}" imagesizes="{sizes_hero}" fetchpriority="high">')
     fatos = "\n          ".join([
         f'<li><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>{DIA_SEMANA.capitalize()}, {DATA_LONGA}</b> de {_ini.year}</span></li>',
-        f'<li><i class="fa-regular fa-clock" aria-hidden="true"></i><span><b>Das {HORARIO}</b> chegue quando quiser</span></li>',
+        f'<li><i class="fa-regular fa-clock" aria-hidden="true"></i><span><b>{(NO_PERIODO.capitalize() + ", das ") if NO_PERIODO else "Das "}{HORARIO}</b> chegue quando quiser</span></li>',
         '<li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><b>Praça da Cruz Vermelha</b> em frente ao nº 10, Centro</span></li>',
         '<li><i class="fa-solid fa-ticket" aria-hidden="true"></i><span><b>Aberto e gratuito</b> sem inscrição</span></li>',
     ])
@@ -566,7 +572,7 @@ def main() -> int:
         {hero}
           <p class="dc-selo" aria-hidden="true"><b>{DATA_CURTA}</b><span>{HORARIO}</span></p>
         </figure>
-        <p class="lead">{ARTIGO.capitalize()} {DIA_SEMANA} de brincadeiras, cuidado e aprendizado em frente ao Palácio da Cruz Vermelha, no Centro do Rio, com voluntários de vários setores da Cruz Vermelha Brasileira Rio de Janeiro. Aberto a todas as famílias, de graça.</p>
+        <p class="lead">{("Uma " + PERIODO) if PERIODO else (ARTIGO.capitalize() + " " + DIA_SEMANA)} de brincadeiras, cuidado e aprendizado em frente ao Palácio da Cruz Vermelha, no Centro do Rio, com voluntários de vários setores da Cruz Vermelha Brasileira Rio de Janeiro. Aberto a todas as famílias, de graça.</p>
         <ul class="dc-fatos">
           {fatos}
         </ul>

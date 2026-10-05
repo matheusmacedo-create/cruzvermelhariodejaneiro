@@ -1,0 +1,6 @@
+# Dia das Crianças: horário passou para a parte da tarde, das 13h às 16h (05/10/2026, à noite).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas-horario.txt)
+site/dia-das-criancas/dia-das-criancas.ics
+site/dia-das-criancas/index.html
+site/index.html
+site/bio/index.html
