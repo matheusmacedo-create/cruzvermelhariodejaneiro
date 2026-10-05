@@ -17,7 +17,8 @@ Redesenho de 04/10/2026, focado em conversão (especificação, diagnóstico e j
   - turmas para grupos numa faixa compacta no fim, com o formulário recolhido;
   - barra fixa de matrícula no celular quando há um curso em foco e nenhum botão na tela;
   - dez dos treze links para a plataforma da escola saem; os três que ficam (cabeçalho, uma pergunta e o
-    rodapé) levam UTM e disparam saida_escola/SaidaEscola.
+    rodapé) levam UTM e disparam saida_escola/SaidaEscola. Quem chega de um anúncio leva as utm_* dele nesses links (no lugar
+    das nossas), para a venda feita na escola carregar a campanha.
 Regras que continuam: cara institucional, sem urgência falsa, sem depoimento ou número inventado (o gerador
 recusa marcadores [INSERIR …]), sem telefone nem WhatsApp da secretaria, prometer só o que o sistema cumpre.
 
@@ -706,6 +707,19 @@ JS_PAGINA = """
       }
       function linkCheckout(s, local) { return comExtras(CHECKOUT_URL + '?curso=' + encodeURIComponent(s) + '&via=' + local); }
       Array.prototype.forEach.call(document.querySelectorAll('a.mr-cta[href*="/checkout/"]'), function (a) { a.setAttribute('href', comExtras(a.getAttribute('href'))); });
+      // Links da plataforma da escola (04/10/2026, PR #56): quem veio de um anúncio leva a campanha até a cobrança na
+      // Únicopag (a escola guarda com o consentimento dela). As utm_* do anúncio substituem as nossas, para não misturar
+      // campanha com o lugar do link; o lugar continua medido pelo saida_escola (data-saida).
+      var utmAnuncio = [];
+      extras.forEach(function (v, k) { if (/^utm_/.test(k)) utmAnuncio.push([k, v]); });
+      if (utmAnuncio.length) Array.prototype.forEach.call(document.querySelectorAll('a[href^="https://escola.cursoscruzvermelha.org"]'), function (a) {
+        try {
+          var u = new URL(a.href);
+          Array.from(u.searchParams.keys()).forEach(function (k) { if (/^utm_/.test(k)) u.searchParams.delete(k); });
+          utmAnuncio.forEach(function (par) { u.searchParams.set(par[0], par[1]); });
+          a.href = u.toString();
+        } catch (e) { /* link fora do padrão: fica como está */ }
+      });
 
       function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
       function item(s) { return { item_id: s, item_name: nome(s), item_category: 'Cursos presenciais', price: INSCRICAO, quantity: 1 }; }
