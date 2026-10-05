@@ -229,6 +229,13 @@ passo 3 do e-mail do PIX sem "quando a turma estiver confirmada" com a matrícul
 (recuperacao.php e lib.php antes do email.php). Saiu da seção do certificado a linha "assinado pela Coordenação, com o
 conteúdo no verso": só foi vista no modelo de Punção Venosa.
 
+**Publicado na Hostinger em 04/10/2026, 21h08** (com o redesenho da página, que ainda não estava no ar), pela lista
+`scripts/publicacao-certificado.txt`, com o cache limpo em seguida. Conferido no ar: `conferir_publicacao.sh` (62
+itens: estáticos iguais ao repositório, API respondendo, configuração e módulos bloqueados), `conferir_pixel.js` no
+site real e o navegador no celular e no computador (primeiro botão em 592 px no celular e 756 px no computador,
+certificados carregando, nenhum erro de JS). Desfazer: `scripts/desfazer_publicacao.sh f47323c
+scripts/publicacao-certificado.txt`.
+
 **Para o responsável decidir:** a observação "Inclui Lei Lucas." do Primeiros Socorros Básico (no `cursos.json`) é
 ambígua ao lado do curso Lei Lucas; o verso do certificado ("registro em livro", "válido por 2 anos") não foi usado
 até alguém confirmar; e se o mesmo modelo vale para todos os cursos.
