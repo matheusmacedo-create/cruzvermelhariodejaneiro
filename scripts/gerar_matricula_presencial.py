@@ -357,8 +357,8 @@ CSS_PAGINA = """
     /*__FICHAS__*/
 
     /* topo */
-    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 30px 0 26px; }
-    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: center; }
+    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 20px 0 16px; }
+    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 40px; align-items: center; }
     .mr-hero .eyebrow { font-size: .78rem; }
     .mr-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 8px 0 12px; }
     .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
@@ -375,7 +375,7 @@ CSS_PAGINA = """
     .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 10px 30px rgba(16, 24, 40, .16); background: #fff; }
     .mr-hero-cert { margin: 0; }
     .mr-hero-cert .mr-cert-img { transform: rotate(-1.5deg); }
-    .mr-hero-cert figcaption { margin-top: 10px; font-size: .82rem; color: var(--apoio); text-align: center; }
+    .mr-hero-cert figcaption { margin-top: 8px; font-size: .8rem; color: var(--apoio); text-align: center; line-height: 1.35; }
     .mr-hero-cert figcaption b { color: var(--black); font-size: .9rem; }
     .mr-ficha-cert { margin: 0; }
     .mr-ficha-cert figcaption { margin-top: 10px; font-size: .85rem; color: var(--apoio); text-align: center; }
@@ -434,14 +434,39 @@ CSS_PAGINA = """
     .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
 
     /* catálogo em cartões */
-    .mr-catalogo { padding: 22px 0 48px; }
+    .mr-catalogo { padding: 16px 0 48px; }
     html[data-curso] .mr-catalogo { padding-top: 4px; }
     .mr-catalogo-titulo { font-size: 1.25rem; color: var(--black); margin: 8px 0 14px; }
     html:not([data-curso]) .mr-catalogo-titulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-    .mr-cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .mr-cartoes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
     .mr-grupo-rotulo { grid-column: 1 / -1; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--apoio); font-weight: 800; margin: 16px 0 -6px; }
     .mr-grupo-rotulo:first-child { margin-top: 0; }
-    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; }
+    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; transition: box-shadow .2s, transform .2s; }
+    .mr-curso:not(.aberto):hover { box-shadow: 0 12px 28px rgba(16, 24, 40, .10); transform: translateY(-2px); }
+    .mr-curso-capa { position: relative; flex-shrink: 0; }
+    .mr-curso-tag { display: none; }
+    .mr-cartoes .mr-curso-acao .mr-cta { box-shadow: none; min-height: 48px; font-size: .97rem; }
+    /* cartão da turma para grupos */
+    .mr-curso-turma { display: flex; flex-direction: column; gap: 8px; justify-content: center; border: 1px dashed #cbd5e1; border-radius: var(--radius); padding: 22px 20px; background: var(--soft); }
+    .mr-curso-turma > i { color: var(--red); font-size: 1.6rem; }
+    .mr-curso-turma h3 { margin: 0; font-size: 1.1rem; color: var(--black); line-height: 1.25; }
+    .mr-curso-turma p { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
+    .mr-curso-turma .btn { margin-top: 8px; min-height: 46px; font-size: .95rem; background: #fff; }
+    /* computador e tablet: cartão em pé, foto de capa em cima e o grupo como etiqueta; aberto, volta a ficar deitado */
+    @media (min-width: 720px) {
+      .mr-grupo-rotulo { display: none; }
+      .mr-curso:not(.aberto) .mr-curso-topo { display: block; padding: 0; }
+      .mr-curso:not(.aberto) .mr-curso-mini { width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 0; }
+      .mr-curso:not(.aberto) .mr-curso-tag { display: inline-block; position: absolute; left: 12px; bottom: 10px; background: rgba(255, 255, 255, .94);
+        color: var(--black); font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+      .mr-curso:not(.aberto) .mr-curso-titulo { padding: 14px 16px 0; }
+      .mr-curso:not(.aberto) .mr-curso-beneficio { margin: 6px 16px 0; }
+      .mr-curso:not(.aberto) .mr-curso-acao { padding: 14px 16px 16px; }
+      .mr-curso:not(.aberto) .mr-curso-mais > summary { padding: 0 16px; }
+      /* aberto, o cartão ocupa a linha: preço e botão lado a lado, sem botão de 1.100 px */
+      .mr-curso.aberto .mr-curso-acao { flex-direction: row; align-items: center; gap: 28px; }
+      .mr-curso.aberto .mr-curso-acao .mr-cta { width: auto; padding: 0 32px; }
+    }
     .mr-curso.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
     .mr-curso.aberto, .mr-curso:has(> .mr-curso-mais[open]) { grid-column: 1 / -1; }
     /* Cartão compacto (miniatura + nome) em qualquer largura: a 1ª fileira de botões cabe na primeira tela de
@@ -631,7 +656,8 @@ CSS_PAGINA = """
       .mr-cartoes { grid-template-columns: 1fr; gap: 12px; }
       .mr-grupo-rotulo { margin: 10px 0 -2px; }
       .mr-curso-topo { gap: 12px; padding: 14px 14px 0; }
-      .mr-curso-mini { width: 64px; height: 48px; }
+      .mr-curso-mini { width: 72px; height: 54px; }
+      .mr-curso-turma { padding: 18px 16px; }
       .mr-curso-nome { font-size: 1.05rem; }
       .mr-curso-meta { font-size: .85rem; }
       .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; line-height: 1.4; }
@@ -1226,6 +1252,7 @@ def main() -> int:
     # --- cartões do catálogo ---------------------------------------------------------------------------
     def cartao(s: str, posicao: int) -> str:
         c = cursos[s]
+        grupo = grupo_de.get(s, "Outros cursos")
         sobre_html = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"])
         perguntas = "".join(f"<details><summary>{esc(nome_filial(p))}</summary><p>{esc(nome_filial(r))}</p></details>"
                             for p, r in faq_curso(s))
@@ -1233,8 +1260,9 @@ def main() -> int:
         valor = f'+ {brl_curto(c["valor_curso_centavos"])} do curso, depois' if c.get("valor_curso_centavos") else "+ valor do curso, depois"
         return f'''
           <article class="mr-curso mr-detalhe" id="curso-{s}" data-curso="{s}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}"{' data-cert' if tem_cert(s) else ''}>
-            <div class="mr-curso-topo">{foto(s, 480, "mr-curso-mini", "eager" if posicao < 2 else "lazy")}
-              <div><h3 class="mr-curso-nome">{esc(c["nome"])}</h3><p class="mr-curso-meta">{esc(c["carga_horaria"])} · {esc(c["escolaridade"])}</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa">{foto(s, 480, "mr-curso-mini", "eager" if posicao < 4 else "lazy")}<span class="mr-curso-tag">{esc(grupo)}</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">{esc(c["nome"])}</h3><p class="mr-curso-meta">{esc(c["carga_horaria"])} · {esc(c["escolaridade"])}</p></div>
             </div>
             <p class="mr-curso-beneficio">{esc(beneficio(s))}</p>
             <div class="mr-curso-acao">
@@ -1298,12 +1326,19 @@ def main() -> int:
         blocos_catalogo.append(cartao(s, i))
     if titulo_atual == "Emergência e vida":
         blocos_catalogo.append(comparador())
+    # Turma para grupos como o último cartão da grade (fecha a última linha no computador; abre a janela da turma).
+    cartao_turma = f'''
+          <div class="mr-curso-turma">
+            <i class="fa-solid fa-people-group"></i>
+            <h3>Turma para empresas e grupos</h3>
+            <p>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
+            <button class="btn btn-outline" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
+          </div>'''
     catalogo = f'''
     <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo" data-secao="catalogo">
       <div class="wrap">
         <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos presenciais</span></h2>
-        <div class="mr-cartoes">{"".join(blocos_catalogo)}</div>
-        <p class="mr-turma-linha mr-turma-linha-catalogo">Empresas, escolas e grupos de {TURMA_MINIMO} pessoas ou mais, ou cursos em inglês: <a href="#turmas-sob-demanda" data-turma-abrir="catalogo">peça uma turma para o grupo</a>.</p>
+        <div class="mr-cartoes">{"".join(blocos_catalogo)}{cartao_turma}</div>
       </div>
     </section>'''
 

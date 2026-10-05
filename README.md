@@ -244,6 +244,12 @@ certificado (não apareciam), o benefício do cartão sem reticências, dúvidas
 garantia sem o selo repetido e um botão "Escolher meu curso" no fim das dúvidas. Na mesma publicação, as utm_* do anúncio
 nos links da escola (PR #56, portado para o gerador novo). Lista: `scripts/publicacao-layout-celular.txt`.
 
+**Catálogo em grade única (05/10/2026):** os cursos saíam em grupos de 4, 2 e 1 numa grade de 3 colunas, com
+cartões soltos e buracos no computador. Agora é uma grade só (4 colunas no computador, 2 no tablet, lista no celular),
+com foto de capa e o grupo como etiqueta, o comparador entre as duas linhas e, no 8º lugar, o cartão "Turma para
+empresas e grupos", que abre a janela da turma. Aberto, o cartão ocupa a linha com preço e botão lado a lado. O topo do
+computador ficou mais baixo para o primeiro botão caber em 1366×768 (759 px).
+
 **Para o responsável decidir:** a observação "Inclui Lei Lucas." do Primeiros Socorros Básico (no `cursos.json`) é
 ambígua ao lado do curso Lei Lucas; o verso do certificado ("registro em livro", "válido por 2 anos") não foi usado
 até alguém confirmar; e se o mesmo modelo vale para todos os cursos.

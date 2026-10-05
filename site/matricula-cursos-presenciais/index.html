@@ -49,8 +49,8 @@
     html[data-curso="primeiros-socorros-basico"] .mr-ficha[data-ficha="primeiros-socorros-basico"]{display:grid}html[data-curso="suporte-basico-de-vida"] .mr-ficha[data-ficha="suporte-basico-de-vida"]{display:grid}html[data-curso="primeiros-socorros-lei-lucas"] .mr-ficha[data-ficha="primeiros-socorros-lei-lucas"]{display:grid}html[data-curso="puncao-venosa"] .mr-ficha[data-ficha="puncao-venosa"]{display:grid}html[data-curso="bombeiro-civil"] .mr-ficha[data-ficha="bombeiro-civil"]{display:grid}html[data-curso="cuidador-de-idosos"] .mr-ficha[data-ficha="cuidador-de-idosos"]{display:grid}html[data-curso="micropigmentacao-labial"] .mr-ficha[data-ficha="micropigmentacao-labial"]{display:grid}
 
     /* topo */
-    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 30px 0 26px; }
-    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: center; }
+    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 20px 0 16px; }
+    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 40px; align-items: center; }
     .mr-hero .eyebrow { font-size: .78rem; }
     .mr-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 8px 0 12px; }
     .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
@@ -67,7 +67,7 @@
     .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 10px 30px rgba(16, 24, 40, .16); background: #fff; }
     .mr-hero-cert { margin: 0; }
     .mr-hero-cert .mr-cert-img { transform: rotate(-1.5deg); }
-    .mr-hero-cert figcaption { margin-top: 10px; font-size: .82rem; color: var(--apoio); text-align: center; }
+    .mr-hero-cert figcaption { margin-top: 8px; font-size: .8rem; color: var(--apoio); text-align: center; line-height: 1.35; }
     .mr-hero-cert figcaption b { color: var(--black); font-size: .9rem; }
     .mr-ficha-cert { margin: 0; }
     .mr-ficha-cert figcaption { margin-top: 10px; font-size: .85rem; color: var(--apoio); text-align: center; }
@@ -126,14 +126,39 @@
     .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
 
     /* catálogo em cartões */
-    .mr-catalogo { padding: 22px 0 48px; }
+    .mr-catalogo { padding: 16px 0 48px; }
     html[data-curso] .mr-catalogo { padding-top: 4px; }
     .mr-catalogo-titulo { font-size: 1.25rem; color: var(--black); margin: 8px 0 14px; }
     html:not([data-curso]) .mr-catalogo-titulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-    .mr-cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+    .mr-cartoes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
     .mr-grupo-rotulo { grid-column: 1 / -1; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--apoio); font-weight: 800; margin: 16px 0 -6px; }
     .mr-grupo-rotulo:first-child { margin-top: 0; }
-    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; }
+    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; transition: box-shadow .2s, transform .2s; }
+    .mr-curso:not(.aberto):hover { box-shadow: 0 12px 28px rgba(16, 24, 40, .10); transform: translateY(-2px); }
+    .mr-curso-capa { position: relative; flex-shrink: 0; }
+    .mr-curso-tag { display: none; }
+    .mr-cartoes .mr-curso-acao .mr-cta { box-shadow: none; min-height: 48px; font-size: .97rem; }
+    /* cartão da turma para grupos */
+    .mr-curso-turma { display: flex; flex-direction: column; gap: 8px; justify-content: center; border: 1px dashed #cbd5e1; border-radius: var(--radius); padding: 22px 20px; background: var(--soft); }
+    .mr-curso-turma > i { color: var(--red); font-size: 1.6rem; }
+    .mr-curso-turma h3 { margin: 0; font-size: 1.1rem; color: var(--black); line-height: 1.25; }
+    .mr-curso-turma p { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
+    .mr-curso-turma .btn { margin-top: 8px; min-height: 46px; font-size: .95rem; background: #fff; }
+    /* computador e tablet: cartão em pé, foto de capa em cima e o grupo como etiqueta; aberto, volta a ficar deitado */
+    @media (min-width: 720px) {
+      .mr-grupo-rotulo { display: none; }
+      .mr-curso:not(.aberto) .mr-curso-topo { display: block; padding: 0; }
+      .mr-curso:not(.aberto) .mr-curso-mini { width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 0; }
+      .mr-curso:not(.aberto) .mr-curso-tag { display: inline-block; position: absolute; left: 12px; bottom: 10px; background: rgba(255, 255, 255, .94);
+        color: var(--black); font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+      .mr-curso:not(.aberto) .mr-curso-titulo { padding: 14px 16px 0; }
+      .mr-curso:not(.aberto) .mr-curso-beneficio { margin: 6px 16px 0; }
+      .mr-curso:not(.aberto) .mr-curso-acao { padding: 14px 16px 16px; }
+      .mr-curso:not(.aberto) .mr-curso-mais > summary { padding: 0 16px; }
+      /* aberto, o cartão ocupa a linha: preço e botão lado a lado, sem botão de 1.100 px */
+      .mr-curso.aberto .mr-curso-acao { flex-direction: row; align-items: center; gap: 28px; }
+      .mr-curso.aberto .mr-curso-acao .mr-cta { width: auto; padding: 0 32px; }
+    }
     .mr-curso.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
     .mr-curso.aberto, .mr-curso:has(> .mr-curso-mais[open]) { grid-column: 1 / -1; }
     /* Cartão compacto (miniatura + nome) em qualquer largura: a 1ª fileira de botões cabe na primeira tela de
@@ -323,7 +348,8 @@
       .mr-cartoes { grid-template-columns: 1fr; gap: 12px; }
       .mr-grupo-rotulo { margin: 10px 0 -2px; }
       .mr-curso-topo { gap: 12px; padding: 14px 14px 0; }
-      .mr-curso-mini { width: 64px; height: 48px; }
+      .mr-curso-mini { width: 72px; height: 54px; }
+      .mr-curso-turma { padding: 18px 16px; }
       .mr-curso-nome { font-size: 1.05rem; }
       .mr-curso-meta { font-size: .85rem; }
       .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; line-height: 1.4; }
@@ -1216,8 +1242,9 @@
         <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos presenciais</span></h2>
         <div class="mr-cartoes"><p class="mr-grupo-rotulo">Emergência e vida</p>
           <article class="mr-curso mr-detalhe" id="curso-primeiros-socorros-basico" data-curso="primeiros-socorros-basico" data-nome="Primeiros Socorros Básico" data-curto="Primeiros Socorros Básico" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/primeiros-socorros-basico-480.webp" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Primeiros Socorros Básico</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/primeiros-socorros-basico-480.webp" alt="Primeiros Socorros Básico na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360"><span class="mr-curso-tag">Emergência e vida</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Primeiros Socorros Básico</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
             </div>
             <p class="mr-curso-beneficio">Do engasgo à RCP: agir até o socorro chegar</p>
             <div class="mr-curso-acao">
@@ -1241,8 +1268,9 @@
             </details>
           </article>
           <article class="mr-curso mr-detalhe" id="curso-suporte-basico-de-vida" data-curso="suporte-basico-de-vida" data-nome="Suporte Básico de Vida" data-curto="Suporte Básico de Vida" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/suporte-basico-de-vida-480.webp" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Suporte Básico de Vida</h3><p class="mr-curso-meta">4 horas · Ensino Fundamental</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/suporte-basico-de-vida-480.webp" alt="Suporte Básico de Vida na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360"><span class="mr-curso-tag">Emergência e vida</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Suporte Básico de Vida</h3><p class="mr-curso-meta">4 horas · Ensino Fundamental</p></div>
             </div>
             <p class="mr-curso-beneficio">RCP e desfibrilador em 4 horas, com prática</p>
             <div class="mr-curso-acao">
@@ -1266,8 +1294,9 @@
             </details>
           </article>
           <article class="mr-curso mr-detalhe" id="curso-primeiros-socorros-lei-lucas" data-curso="primeiros-socorros-lei-lucas" data-nome="Primeiros Socorros Lei Lucas - Ambientes com Crianças" data-curto="Primeiros Socorros Lei Lucas" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/primeiros-socorros-lei-lucas-480.webp" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Primeiros Socorros Lei Lucas - Ambientes com Crianças</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/primeiros-socorros-lei-lucas-480.webp" alt="Primeiros Socorros Lei Lucas - Ambientes com Crianças na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360"><span class="mr-curso-tag">Emergência e vida</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Primeiros Socorros Lei Lucas - Ambientes com Crianças</h3><p class="mr-curso-meta">8 horas · Ensino Fundamental</p></div>
             </div>
             <p class="mr-curso-beneficio">RCP, engasgo, quedas e convulsões em crianças</p>
             <div class="mr-curso-acao">
@@ -1291,8 +1320,9 @@
             </details>
           </article>
           <article class="mr-curso mr-detalhe" id="curso-puncao-venosa" data-curso="puncao-venosa" data-nome="Punção Venosa" data-curto="Punção Venosa" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/puncao-venosa-480.webp" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Punção Venosa</h3><p class="mr-curso-meta">8 horas · Ensino Médio</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/puncao-venosa-480.webp" alt="Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro" loading="eager" width="480" height="360"><span class="mr-curso-tag">Emergência e vida</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Punção Venosa</h3><p class="mr-curso-meta">8 horas · Ensino Médio</p></div>
             </div>
             <p class="mr-curso-beneficio">Acesso venoso seguro, com prática supervisionada</p>
             <div class="mr-curso-acao">
@@ -1334,8 +1364,9 @@
                 <a class="btn btn-red mr-cta" data-local="comparar" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=comparar">Fazer matrícula</a>
               </div></div></details><p class="mr-grupo-rotulo">Formação profissional</p>
           <article class="mr-curso mr-detalhe" id="curso-bombeiro-civil" data-curso="bombeiro-civil" data-nome="Bombeiro Civil" data-curto="Bombeiro Civil" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/bombeiro-civil-480.webp" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Bombeiro Civil</h3><p class="mr-curso-meta">80 horas · Ensino Médio</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/bombeiro-civil-480.webp" alt="Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360"><span class="mr-curso-tag">Formação profissional</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Bombeiro Civil</h3><p class="mr-curso-meta">80 horas · Ensino Médio</p></div>
             </div>
             <p class="mr-curso-beneficio">Incêndio, primeiros socorros e evacuação em 80h</p>
             <div class="mr-curso-acao">
@@ -1359,8 +1390,9 @@
             </details>
           </article>
           <article class="mr-curso mr-detalhe" id="curso-cuidador-de-idosos" data-curso="cuidador-de-idosos" data-nome="Cuidador de Idosos (Curso Livre)" data-curto="Cuidador de Idosos" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/cuidador-de-idosos-480.webp" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Cuidador de Idosos (Curso Livre)</h3><p class="mr-curso-meta">160 horas · Ensino Fundamental</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/cuidador-de-idosos-480.webp" alt="Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360"><span class="mr-curso-tag">Formação profissional</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Cuidador de Idosos (Curso Livre)</h3><p class="mr-curso-meta">160 horas · Ensino Fundamental</p></div>
             </div>
             <p class="mr-curso-beneficio">Higiene, mobilização e prevenção de acidentes</p>
             <div class="mr-curso-acao">
@@ -1384,8 +1416,9 @@
             </details>
           </article><p class="mr-grupo-rotulo">Outros cursos</p>
           <article class="mr-curso mr-detalhe" id="curso-micropigmentacao-labial" data-curso="micropigmentacao-labial" data-nome="Micropigmentação Labial" data-curto="Micropigmentação Labial" data-cert>
-            <div class="mr-curso-topo"><img class="mr-curso-mini" src="img/micropigmentacao-labial-480.webp" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360">
-              <div><h3 class="mr-curso-nome">Micropigmentação Labial</h3><p class="mr-curso-meta">24 horas · Ensino Médio</p></div>
+            <div class="mr-curso-topo">
+              <div class="mr-curso-capa"><img class="mr-curso-mini" src="img/micropigmentacao-labial-480.webp" alt="Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="480" height="360"><span class="mr-curso-tag">Outros cursos</span></div>
+              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">Micropigmentação Labial</h3><p class="mr-curso-meta">24 horas · Ensino Médio</p></div>
             </div>
             <p class="mr-curso-beneficio">Colorimetria, biossegurança e prática da técnica</p>
             <div class="mr-curso-acao">
@@ -1407,8 +1440,13 @@
                 </div>
               </div>
             </details>
-          </article></div>
-        <p class="mr-turma-linha mr-turma-linha-catalogo">Empresas, escolas e grupos de 15 pessoas ou mais, ou cursos em inglês: <a href="#turmas-sob-demanda" data-turma-abrir="catalogo">peça uma turma para o grupo</a>.</p>
+          </article>
+          <div class="mr-curso-turma">
+            <i class="fa-solid fa-people-group"><svg class="ico ico-people-group" aria-hidden="true" focusable="false"><use href="#i-people-group"/></svg></i>
+            <h3>Turma para empresas e grupos</h3>
+            <p>De 15 a 30 alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
+            <button class="btn btn-outline" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
+          </div></div>
       </div>
     </section>
 
