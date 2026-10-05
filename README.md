@@ -236,6 +236,14 @@ site real e o navegador no celular e no computador (primeiro botão em 592 px no
 certificados carregando, nenhum erro de JS). Desfazer: `scripts/desfazer_publicacao.sh f47323c
 scripts/publicacao-certificado.txt`.
 
+**Ajustes de layout no celular (publicados em 04/10/2026, 23h00):** o Matheus achou a página confusa no celular. Entraram o
+formulário de turma numa janela (dialog: tela inteira no celular, centrada no computador; no link de anúncio abre depois
+do aviso de cookies), os itens das turmas e o "Inglês (English)" sem quebrar em colunas, o certificado citado uma vez por
+bloco (fora das promessas, das objeções, dos detalhes do cartão e da faixa "Quem dá o curso"), os ícones da seção do
+certificado (não apareciam), o benefício do cartão sem reticências, dúvidas e comparador com +/−, passos em lista única,
+garantia sem o selo repetido e um botão "Escolher meu curso" no fim das dúvidas. Na mesma publicação, as utm_* do anúncio
+nos links da escola (PR #56, portado para o gerador novo). Lista: `scripts/publicacao-layout-celular.txt`.
+
 **Para o responsável decidir:** a observação "Inclui Lei Lucas." do Primeiros Socorros Básico (no `cursos.json`) é
 ambígua ao lado do curso Lei Lucas; o verso do certificado ("registro em livro", "válido por 2 anos") não foi usado
 até alguém confirmar; e se o mesmo modelo vale para todos os cursos.
