@@ -1,0 +1,42 @@
+# Redesenho da página de matrícula + certificado de amostra, copy por curso e recuperação do lead (04/10/2026).
+# Ordem: imagens antes de quem as cita; recuperacao.php, depois lib.php (que passa a carregá-lo) e só então
+# email.php (que usa as funções dele: antes do lib.php novo, a criação do PIX daria erro); o CSS e o JS antes das
+# páginas que levam o hash; index.html por último.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-certificado.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-certificado.txt
+# Desfazer: scripts/desfazer_publicacao.sh f47323c scripts/publicacao-certificado.txt
+site/matricula-cursos-presenciais/img/certificado-bombeiro-civil-1200.webp
+site/matricula-cursos-presenciais/img/certificado-bombeiro-civil-640.webp
+site/matricula-cursos-presenciais/img/certificado-bombeiro-civil-email.jpg
+site/matricula-cursos-presenciais/img/certificado-cuidador-de-idosos-1200.webp
+site/matricula-cursos-presenciais/img/certificado-cuidador-de-idosos-640.webp
+site/matricula-cursos-presenciais/img/certificado-cuidador-de-idosos-email.jpg
+site/matricula-cursos-presenciais/img/certificado-micropigmentacao-labial-1200.webp
+site/matricula-cursos-presenciais/img/certificado-micropigmentacao-labial-640.webp
+site/matricula-cursos-presenciais/img/certificado-micropigmentacao-labial-email.jpg
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-basico-1200.webp
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-basico-640.webp
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-basico-email.jpg
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-lei-lucas-1200.webp
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-lei-lucas-640.webp
+site/matricula-cursos-presenciais/img/certificado-primeiros-socorros-lei-lucas-email.jpg
+site/matricula-cursos-presenciais/img/certificado-puncao-venosa-1200.webp
+site/matricula-cursos-presenciais/img/certificado-puncao-venosa-640.webp
+site/matricula-cursos-presenciais/img/certificado-puncao-venosa-email.jpg
+site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-1200.webp
+site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-640.webp
+site/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-email.jpg
+site/matricula-cursos-presenciais/api/lib/recuperacao.php
+site/matricula-cursos-presenciais/api/lib.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lembretes.php
+site/matricula-cursos-presenciais/static/checkout.css
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/index.html

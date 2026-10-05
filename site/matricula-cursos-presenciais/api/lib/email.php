@@ -347,16 +347,21 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
         . mcp_subtitulo('O que acontece depois')
         . mcp_passos([
             ['Pagamento confirmado na hora', 'O comprovante chega neste e-mail e sua vaga fica reservada.'],
-            ['A secretaria confirma turma e horário', 'A Escola de Educação e Saúde CVB-RJ entra em contato por e-mail em até ' . MCP_EMAIL_PRAZO . '. Você não precisa se inscrever de novo.'],
-            ['O valor do curso é pago depois', 'Direto na plataforma da escola, quando a turma estiver confirmada.'],
+            mcp_email_passo_escola(),
+            ['O valor do curso é pago depois', mcp_escola_configurada()
+                ? 'Na plataforma da escola, à vista ou parcelado com juros, nas condições informadas lá.'
+                : 'Direto na plataforma da escola, quando a turma estiver confirmada.'],
+            ['Você conclui e recebe o certificado', 'O certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária.'],
         ])
+        . mcp_email_bloco_certificado((string) $inscricao['curso_slug'], $curso)
         . mcp_nota(mcp_escapar(MCP_TEXTO_ESTORNO));
     $texto = "Oi, $nome. Sua inscrição em $curso já está aberta: só falta o pagamento do PIX de $total para a vaga ficar garantida.\n\n"
         . "Concluir pagamento (QR code e acompanhamento em tempo real): $link\n\n"
         . "PIX copia e cola:\n$codigo\n\n"
         . "O código vale por 24 horas$ateQuando. Passou do prazo? Gere outro pelo mesmo link, sem custo.\n\n"
-        . "O que acontece depois: 1) pagamento confirmado na hora, comprovante neste e-mail; 2) a secretaria da Escola entra em contato por e-mail em até " . MCP_EMAIL_PRAZO
-        . " para confirmar turma e horário; 3) o valor do curso é pago depois, na plataforma da escola.\n\n" . MCP_TEXTO_ESTORNO
+        . 'O que acontece depois: 1) pagamento confirmado na hora, comprovante neste e-mail; 2) ' . mcp_email_passo_escola()[0] . ': ' . lcfirst(mcp_email_passo_escola()[1])
+        . "; 3) o valor do curso é pago depois, na plataforma da escola; 4) você conclui e recebe o certificado da Cruz Vermelha, com o seu nome, o curso e a carga horária. "
+        . MCP_CERT_PESO . "\n\n" . MCP_TEXTO_ESTORNO
         . "\n\nDúvidas? Responda este e-mail ou escreva para " . mcp_email_contato_endereco() . '.';
     return [
         'assunto' => "Falta só o PIX para garantir sua vaga em $curso",

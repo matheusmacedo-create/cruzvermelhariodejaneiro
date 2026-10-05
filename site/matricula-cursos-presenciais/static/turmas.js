@@ -66,12 +66,13 @@
     mostrar(document.getElementById('tf-bloco-endereco'), c === 'fechada' && valorRadio('local') === 'outro');
     mostrar(document.getElementById('tf-nota-jovens'), campos.curso.value === 'primeiros-socorros-jovens');
     var pode = c === 'fechada' || c === 'lista';
-    mostrar(document.getElementById('tf-dados'), pode || c === 'vazio');
+    // Duas etapas: os dados pessoais só aparecem quando o pedido é possível (turma fechada ou lista).
+    mostrar(document.getElementById('tf-dados'), pode);
     mostrar(botao, c !== 'matricula');
     botao.disabled = !pode || enviando;
     botao.textContent = enviando ? 'Enviando…' : c === 'lista' ? 'Entrar na lista de interesse' : 'Pedir minha turma';
     mostrar(matricula, c === 'matricula');
-    if (c === 'matricula') matricula.href = CHECKOUT + encodeURIComponent(campos.curso.value) + utms('&');
+    if (c === 'matricula') matricula.href = CHECKOUT + encodeURIComponent(campos.curso.value) + '&via=turmas' + utms('&');
   }
 
   /* utm_*, fbclid e gclid da visita, como no chat: só com consentimento de estatística. */
@@ -184,15 +185,46 @@
     if (dados.pessoas && !pessoas()) campos.pessoas.value = dados.pessoas;
     atualizar();
   }
+  // O formulário é uma janela (<dialog>, 05/10/2026): abre por cima da página no botão da faixa, no link de um
+  // curso ou do catálogo e no link de anúncio, sem empurrar o resto da página. Fecha no X, no Esc ou fora dela.
+  var botoesFaixa = document.querySelectorAll('[data-turma-abrir][aria-controls="turma-form-bloco"]');
+  function marcarAberto(sim) {
+    document.documentElement.classList.toggle('mr-modal-aberto', sim);
+    Array.prototype.forEach.call(botoesFaixa, function (b) { b.setAttribute('aria-expanded', sim ? 'true' : 'false'); });
+  }
+  function abrirBloco() {
+    if (!bloco.open) {
+      if (typeof bloco.showModal === 'function') bloco.showModal(); else bloco.setAttribute('open', '');
+    }
+    bloco.scrollTop = 0;
+    marcarAberto(true);
+  }
+  function fecharBloco() {
+    if (typeof bloco.close === 'function') bloco.close(); else { bloco.removeAttribute('open'); marcarAberto(false); }
+  }
+  bloco.addEventListener('close', function () { marcarAberto(false); });
+  Array.prototype.forEach.call(bloco.querySelectorAll('[data-turma-fechar]'), function (b) { b.addEventListener('click', fecharBloco); });
+  // Clique no fundo escurecido (fora da caixa) fecha; o clique dentro, inclusive no espaço interno, não.
+  bloco.addEventListener('click', function (e) {
+    if (e.target !== bloco) return;
+    var r = bloco.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) fecharBloco();
+  });
+  function abriu(origem, curso) {
+    try { if (window.gtag) window.gtag('event', 'turma_abrir', { origem: origem, curso: curso || '' }); } catch (err) { /* GA4 ausente */ }
+  }
   Array.prototype.forEach.call(document.querySelectorAll('[data-turma-abrir]'), function (el) {
     el.addEventListener('click', function (e) {
       e.preventDefault();
       if (!ok.hidden) { ok.hidden = true; form.hidden = false; }
       preencher({ curso: el.getAttribute('data-curso'), idioma: el.getAttribute('data-idioma'), pessoas: el.getAttribute('data-pessoas') });
-      bloco.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      var foco = campos.curso.value ? campos.pessoas : campos.curso;
-      setTimeout(function () { try { foco.focus({ preventScroll: true }); } catch (err) { foco.focus(); } }, 350);
-      try { if (window.gtag) window.gtag('event', 'turma_abrir', { origem: el.getAttribute('data-turma-abrir') || 'botao', curso: el.getAttribute('data-curso') || '' }); } catch (err) { /* GA4 ausente */ }
+      abrirBloco();
+      // No celular, o foco num campo abriria o teclado por cima da janela: lá fica no botão de fechar (o do dialog).
+      if (!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)) {
+        var foco = campos.curso.value ? campos.pessoas : campos.curso;
+        try { foco.focus({ preventScroll: true }); } catch (err) { foco.focus(); }
+      }
+      abriu(el.getAttribute('data-turma-abrir') || 'botao', el.getAttribute('data-curso'));
     });
   });
   document.getElementById('turma-ok-outro').addEventListener('click', function () {
@@ -203,11 +235,24 @@
   form.addEventListener('change', atualizar);
   form.addEventListener('submit', enviar);
 
-  // Link de anúncio: ?turma=1 (ou o próprio #turmas-sob-demanda) com curso, idioma e alunos já preenchidos.
+  // Link de anúncio: ?turma=1 (ou o próprio #turmas-sob-demanda / #turma-form-bloco) abre o formulário com curso,
+  // idioma e alunos já preenchidos.
   var q = new URLSearchParams(location.search);
-  if (q.get('turma') || location.hash === '#turmas-sob-demanda') {
+  if (q.get('turma') || location.hash === '#turmas-sob-demanda' || location.hash === '#turma-form-bloco') {
     preencher({ curso: q.get('turma_curso') || q.get('curso'), idioma: q.get('idioma'), pessoas: q.get('alunos') });
-    if (q.get('turma')) setTimeout(function () { bloco.scrollIntoView({ block: 'start' }); }, 50);
+    // A janela fica por cima de tudo: aberta junto com o aviso de cookies, ele não daria para clicar. Com o aviso na
+    // tela, abre quando a pessoa responder (consentimento.js avisa com cvrj:consentimento e tira o aviso).
+    setTimeout(function () {
+      if (document.querySelector('section.cvrj-ck')) {
+        document.addEventListener('cvrj:consentimento', function abrirDepois() {
+          document.removeEventListener('cvrj:consentimento', abrirDepois);
+          setTimeout(abrirBloco, 0);
+        });
+      } else {
+        abrirBloco();
+      }
+    }, 0);
+    abriu(q.get('turma') ? 'anuncio' : 'endereco', campos.curso.value);
   } else {
     atualizar();
   }

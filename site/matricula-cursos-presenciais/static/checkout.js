@@ -98,6 +98,16 @@
     return function () { parado = true; };
   }
 
+  /* O certificado de amostra do curso (scripts/gerar_certificado_modelo.py), abaixo do PIX: o que a pessoa leva ao
+     concluir. Sem a imagem do curso, o bloco some (onerror). */
+  function certificadoPix(d) {
+    var slug = d.curso && d.curso.slug;
+    if (!slug || !/^[a-z0-9-]+$/.test(slug)) return '';
+    return '<div class="ck-cert"><img src="/matricula-cursos-presenciais/img/certificado-' + slug + '-640.webp" alt="Modelo do certificado de '
+      + esc(d.curso.nome || '') + ' da Cruz Vermelha Brasileira Rio de Janeiro" width="640" height="452" loading="lazy" onerror="this.parentNode.hidden=true">'
+      + '<p><b>Ao concluir, você recebe o certificado da Cruz Vermelha</b>, reconhecida no Brasil e no mundo, com o seu nome, o curso e a carga horária. <span>Imagem de modelo.</span></p></div>';
+  }
+
   /* Painel do PIX (checkout e pendente): QR code, copia e cola, botão de copiar. */
   function painelPix(d, alvo) {
     var copia = d.pix && d.pix.copia_cola ? d.pix.copia_cola : '';
@@ -112,6 +122,7 @@
       + (linkPix ? '<a class="btn btn-outline" href="' + esc(linkPix) + '" target="_blank" rel="noopener">Abrir página do PIX</a>' : '') + '</div>'
       + '<div class="ck-status" role="status"><span class="pulso" aria-hidden="true"></span> Aguardando pagamento…</div>'
       + '<p class="ck-nota" style="margin-top:14px">Enviamos este código para <b>' + esc(d.email) + '</b>. Ele vale por 24 horas. Se fechar esta página, volte pelo link do e-mail.</p>'
+      + certificadoPix(d)
       + '</div>';
     var qr = q('#ck-qr', alvo);
     if (window.QRCode && copia) {

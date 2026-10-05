@@ -105,7 +105,8 @@ async function cenario(nome, url, passos, esperado) {
 
 const aceitar = { nome: 'aceitar', fazer: (p) => p.getByRole('button', { name: /^(Aceitar todos|Accept all|Aceptar todas)$/ }).click() };
 const rejeitar = { nome: 'rejeitar', fazer: (p) => p.getByRole('button', { name: /^(Rejeitar|Reject|Rechazar)$/ }).click() };
-const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: (p) => p.locator('.mr-lista a[data-curso]').nth(n).click() });
+// Desde o redesenho de 04/10/2026, abrir um curso é abrir o "Ver detalhes" do cartão (o ViewContent sai aí).
+const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: (p) => p.locator('.mr-curso-mais > summary').nth(n).click() });
 const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
   await p.locator('[data-cvrj-cookies]').first().click();
   await p.waitForTimeout(400);
@@ -118,6 +119,10 @@ const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
   await cenario('home, aceitar', '/', [aceitar], { eventos: ['PageView'] });
   await cenario('matrícula, aceitar e abrir um curso', '/matricula-cursos-presenciais/', [aceitar, curso(2)], { eventos: ['PageView', 'ViewContent'] });
   await cenario('matrícula, quem já tinha aceitado', '/matricula-cursos-presenciais/', [], { jaAceitou: true, espera: 9000, eventos: ['PageView'] });
+  // Modo curso (?curso=<slug>, link de anúncio): o ViewContent sai ao carregar, uma vez, com o mesmo id no repasse.
+  await cenario('matrícula ?curso=, quem já tinha aceitado', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [], { jaAceitou: true, espera: 9000, eventos: ['PageView', 'ViewContent'] });
+  await cenario('matrícula ?curso=, sem escolher', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [], { nadaDaMeta: true });
+  await cenario('matrícula ?curso=, rejeitar', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [rejeitar], { nadaDaMeta: true });
   await cenario('checkout com curso, aceitar', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa', [aceitar], { eventos: ['PageView', 'InitiateCheckout'] });
   await cenario('checkout, "sim" no texto anterior e aceitar de novo', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa', [aceitar], { simAntigo: true, eventos: ['PageView', 'InitiateCheckout'] });
   await cenario('matrícula, rejeitar', '/matricula-cursos-presenciais/', [rejeitar, curso(1)], { nadaDaMeta: true });
