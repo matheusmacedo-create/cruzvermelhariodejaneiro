@@ -124,13 +124,12 @@ COPY_CURSO = {
                     "Pode. O curso foi desenvolvido para qualquer pessoa interessada em aprender primeiros socorros, e a escolaridade "
                     "mínima é o Ensino Fundamental. As aulas são presenciais, na Praça da Cruz Vermelha, 10, no Centro do Rio, com "
                     "atividades demonstrativas e práticas supervisionadas: RCP, desengasgo e controle de hemorragias são praticados com "
-                    "manequim e instrutor ao lado. Quem conclui recebe o certificado emitido pela Cruz Vermelha Brasileira Rio de "
-                    "Janeiro. O curso prepara para o atendimento inicial até a chegada do serviço especializado e não habilita para o "
+                    "manequim e instrutor ao lado. O curso prepara para o atendimento inicial até a chegada do serviço especializado e não habilita para o "
                     "exercício profissional."),
     },
     "suporte-basico-de-vida": {
         "titulo": "Suporte Básico de Vida (BLS) na Cruz Vermelha: RCP e DEA em 4 horas",
-        "promessa": "Aprenda a reconhecer uma emergência, fazer RCP e usar o desfibrilador até a chegada do socorro especializado. Teoria e prática, com certificado da filial.",
+        "promessa": "Aprenda a reconhecer uma emergência, fazer RCP e usar o desfibrilador até a chegada do socorro especializado, com teoria e prática.",
         "aprende": ["Avaliar a vítima e fazer RCP (reanimação cardiopulmonar)", "Usar o desfibrilador externo automático (DEA)",
                     "Agir em engasgos, desmaios, hemorragias e traumas"],
         "para_quem": "Profissionais da saúde, educação, segurança e empresas, e qualquer pessoa que queira agir certo numa emergência, sem experiência prévia.",
@@ -138,8 +137,7 @@ COPY_CURSO = {
                     "Pode. O curso é aberto tanto a profissionais quanto a pessoas sem experiência prévia, e pede apenas Ensino "
                     "Fundamental. As 4 horas são presenciais, na Praça da Cruz Vermelha, 10, no Centro do Rio, e combinam teoria e "
                     "treinamento prático para desenvolver segurança durante os atendimentos: RCP, desengasgo e controle de hemorragias "
-                    "pedem prática com manequim e instrutor ao lado. Quem conclui recebe o certificado emitido pela Cruz Vermelha "
-                    "Brasileira Rio de Janeiro. O curso prepara para o atendimento inicial até a chegada do socorro especializado e não "
+                    "pedem prática com manequim e instrutor ao lado. O curso prepara para o atendimento inicial até a chegada do socorro especializado e não "
                     "substitui habilitação profissional regulamentada."),
     },
     "primeiros-socorros-lei-lucas": {
@@ -153,22 +151,21 @@ COPY_CURSO = {
                     "recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a "
                     "essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece este curso. Não é preciso ser da saúde: os cursos "
                     "de primeiros socorros são abertos a qualquer pessoa, e a escolaridade mínima é o Ensino Fundamental. São 8 horas "
-                    "presenciais na Praça da Cruz Vermelha, 10, no Centro, com certificado da filial a quem conclui. É curso livre: "
+                    "presenciais na Praça da Cruz Vermelha, 10, no Centro. É curso livre: "
                     "prepara para o atendimento inicial até a chegada do socorro especializado e não substitui habilitação profissional "
-                    "regulamentada. A escola que quer treinar a equipe inteira pode pedir uma turma fechada, de 15 a 30 pessoas, em "
-                    "“Turmas para empresas e grupos”, nesta página."),
+                    "regulamentada. A escola que quer treinar a equipe inteira pode pedir uma turma fechada, de 15 a 30 pessoas, no "
+                    "botão “Pedir turma para grupo”, nesta página."),
     },
     "puncao-venosa": {
         "titulo": "Punção Venosa na Cruz Vermelha: 8 horas com prática supervisionada",
-        "promessa": "Acesso venoso com segurança e precisão: anatomia, materiais, preparo do paciente e prevenção de complicações, com prática supervisionada e certificado.",
+        "promessa": "Acesso venoso com segurança e precisão: anatomia, materiais, preparo do paciente e prevenção de complicações.",
         "aprende": ["Anatomia do sistema venoso e técnicas de punção", "Escolha de dispositivos, materiais e preparo do paciente",
                     "Biossegurança e prevenção de complicações"],
         "para_quem": "Estudantes e profissionais da saúde que querem aperfeiçoar a técnica, conforme as normas da profissão. Pede Ensino Médio.",
         "objecao": ("Em 8 horas dá para praticar de verdade, ou é só teoria?",
                     "Grande parte do aprendizado acontece em atividades práticas supervisionadas, na sede da Praça da Cruz Vermelha, 10, "
                     "no Centro do Rio. Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha "
-                    "de dispositivos e boas práticas assistenciais. Quem conclui recebe o certificado da Cruz Vermelha Brasileira Rio de "
-                    "Janeiro, com o nome do curso e a carga horária. A vaga é garantida com a inscrição de {insc}; os {curso} do curso "
+                    "de dispositivos e boas práticas assistenciais. A vaga é garantida com a inscrição de {insc}; os {curso} do curso "
                     "são pagos depois, na plataforma da escola."),
     },
     "bombeiro-civil": {
@@ -180,8 +177,7 @@ COPY_CURSO = {
         "objecao": ("A homologação está incluída no valor do curso?",
                     "Não. A homologação é feita somente ao final do curso, à parte, com valor a consultar e paga pelo aluno. "
                     "Agora você paga só a inscrição de {insc}, que garante a vaga; o valor do curso, {curso}, é pago depois na "
-                    "plataforma da escola, à vista ou parcelado com juros. Quem conclui as 80 horas recebe o certificado de curso "
-                    "livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o nome do curso e a carga horária."),
+                    "plataforma da escola, à vista ou parcelado com juros."),
 
     },
     "cuidador-de-idosos": {
@@ -198,15 +194,14 @@ COPY_CURSO = {
     },
     "micropigmentacao-labial": {
         "titulo": "Aprenda micropigmentação labial na prática, na Cruz Vermelha",
-        "promessa": "Em 24 horas presenciais, você aprende a implantar pigmentos, corrigir assimetrias visuais e uniformizar a cor dos lábios, com biossegurança e certificado.",
+        "promessa": "Em 24 horas presenciais, você aprende a implantar pigmentos, corrigir assimetrias visuais e uniformizar a cor dos lábios, com biossegurança.",
         "aprende": ["Colorimetria e técnicas de implantação de pigmentos", "Correção de assimetrias visuais e uniformização da cor",
                     "Avaliação do cliente e cuidados pré e pós-procedimento"],
         "para_quem": "Para quem está começando na estética e para profissionais que querem ampliar seus serviços. Pede Ensino Médio, sem exigir experiência.",
         "objecao": ("Nunca trabalhei com estética. O curso serve para mim?",
                     "Serve. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços, e não exige "
                     "experiência prévia: a escolaridade mínima é o Ensino Médio. São 24 horas presenciais na sede, na Praça da Cruz "
-                    "Vermelha, 10, no Centro do Rio, com abordagem prática para desenvolver segurança e qualidade na execução da técnica. "
-                    "Ao concluir todas as etapas, você recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro."),
+                    "Vermelha, 10, no Centro do Rio, com abordagem prática para desenvolver segurança e qualidade na execução da técnica."),
     },
 }
 # Comparador dos três cursos de primeiros socorros: só carga, escolaridade, valor e público.
@@ -318,6 +313,9 @@ CERT_ITENS = [
     CERT_PESO,
     CERT_MOVIMENTO,
 ]
+# Na seção do certificado, sem repetir o título ("O certificado da Cruz Vermelha, com o seu nome").
+CERT_LISTA = ["A Cruz Vermelha é reconhecida nacional e internacionalmente pela tradição em formação humanitária e em "
+              "emergências.", CERT_MOVIMENTO]
 CERT_NOTA = "Imagem de modelo: o seu sai com o seu nome, o curso que você fez e a data de conclusão."
 CERT_DESTAQUE = "primeiros-socorros-basico"  # o certificado de exemplo do topo e da seção, fora do modo curso
 
@@ -365,7 +363,7 @@ CSS_PAGINA = """
     .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
     .mr-confianca-linha { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--text); font-weight: 600; font-size: .95rem; }
     .mr-confianca-linha li { display: inline-flex; align-items: center; gap: 8px; }
-    .mr-confianca-linha i { color: var(--red); }
+    .mr-confianca-linha i { color: #0f7b3e; }
     .mr-hero-passos { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
     .mr-hero-passos-titulo { font-weight: 800; color: var(--black); margin: 0 0 8px; }
     .mr-hero-passos ol { margin: 0 0 14px; padding-left: 20px; color: var(--text); font-size: .95rem; }
@@ -385,12 +383,12 @@ CSS_PAGINA = """
     .mr-cert-curto p { margin: 0; font-size: .88rem; color: var(--text); line-height: 1.4; }
     .mr-cert-curto b { color: var(--black); }
     .mr-ficha .mr-cert-curto { display: none; }
-    .mr-curso-fecho .mr-cert-curto { margin: 0 0 14px; }
     .mr-cert { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; margin-top: 22px; scroll-margin-top: 96px; }
     .mr-cert-figura { margin: 0; }
     .mr-cert-texto h3 { color: var(--black); font-size: 1.3rem; margin: 4px 0 12px; line-height: 1.2; }
     .mr-cert-texto ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-    .mr-cert-texto li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; }
+    .mr-cert-texto li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; line-height: 1.5; }
+    .mr-cert-texto li > span { min-width: 0; }
     .mr-cert-texto li i { color: #0f7b3e; flex-shrink: 0; margin-top: 2px; }
     .mr-cert-nota { color: var(--apoio); font-size: .82rem; margin: 12px 0 0; }
 
@@ -437,7 +435,7 @@ CSS_PAGINA = """
     /* catálogo em cartões */
     .mr-catalogo { padding: 22px 0 48px; }
     html[data-curso] .mr-catalogo { padding-top: 4px; }
-    .mr-catalogo-titulo { font-size: 1.15rem; color: var(--black); margin: 0 0 8px; }
+    .mr-catalogo-titulo { font-size: 1.25rem; color: var(--black); margin: 8px 0 14px; }
     html:not([data-curso]) .mr-catalogo-titulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
     .mr-cartoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
     .mr-grupo-rotulo { grid-column: 1 / -1; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--apoio); font-weight: 800; margin: 16px 0 -6px; }
@@ -469,15 +467,24 @@ CSS_PAGINA = """
     .mr-curso-sobre p { margin: 0 0 10px; color: var(--text); font-size: .95rem; }
     .mr-curso-fecho { grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 16px; max-width: 620px; }
     .mr-faq details, .mr-faq-pagina details, .mr-demanda-faq details { border-top: 1px solid var(--line); padding: 10px 0; }
-    .mr-faq summary, .mr-faq-pagina summary, .mr-demanda-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 28px; }
-    .mr-faq details p, .mr-faq-pagina details p, .mr-demanda-faq details p { margin: 8px 0 0; color: var(--text); }
+    .mr-faq summary, .mr-faq-pagina summary, .mr-demanda-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 28px;
+      list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 6px 0; line-height: 1.35; }
+    .mr-faq summary::-webkit-details-marker, .mr-faq-pagina summary::-webkit-details-marker, .mr-demanda-faq summary::-webkit-details-marker,
+    .mr-comparar > summary::-webkit-details-marker { display: none; }
+    .mr-faq summary::after, .mr-faq-pagina summary::after, .mr-demanda-faq summary::after, .mr-comparar > summary::after {
+      content: "+"; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--red);
+      display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
+    .mr-faq details[open] > summary::after, .mr-faq-pagina details[open] > summary::after, .mr-demanda-faq details[open] > summary::after,
+    .mr-comparar[open] > summary::after { content: "−"; }
+    .mr-faq details p, .mr-faq-pagina details p, .mr-demanda-faq details p { margin: 6px 40px 6px 0; color: var(--text); line-height: 1.6; }
     .mr-turma-linha { color: var(--apoio); font-size: .9rem; margin: 14px 0 0; }
     .mr-turma-linha a { color: var(--red); font-weight: 700; text-decoration: underline; }
     .mr-turma-linha-catalogo { margin-top: 24px; }
 
     /* comparador dos cursos de primeiros socorros */
-    .mr-comparar { grid-column: 1 / -1; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 0 18px; scroll-margin-top: 96px; }
-    .mr-comparar > summary { cursor: pointer; min-height: 48px; display: flex; align-items: center; font-weight: 700; color: var(--black); }
+    .mr-comparar { grid-column: 1 / -1; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 0 18px; scroll-margin-top: 96px; }
+    .mr-comparar > summary { cursor: pointer; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      font-weight: 700; color: var(--black); list-style: none; font-size: .95rem; }
     .mr-comparar-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 4px 0 18px; }
     .mr-comparar-linha { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
     .mr-comparar-linha p { margin: 0; font-size: .9rem; color: var(--text); }
@@ -493,9 +500,9 @@ CSS_PAGINA = """
     .mr-passos h3 { font-size: 1.02rem; color: var(--black); margin: 5px 0 6px; }
     .mr-passos p { margin: 0; color: var(--text); font-size: .95rem; }
     .mr-nota-curta { color: var(--apoio); font-size: .92rem; margin: 14px 0 0; }
-    .mr-garantia { display: flex; gap: 16px; background: #fff; border-left: 4px solid var(--red); border-radius: 0 var(--radius) var(--radius) 0; padding: 20px 22px; margin-top: 22px; scroll-margin-top: 96px; }
-    .mr-garantia > i { color: var(--red); font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
-    .mr-garantia h3 { margin: 8px 0 6px; color: var(--black); font-size: 1.1rem; }
+    .mr-garantia { display: flex; gap: 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin-top: 22px; scroll-margin-top: 96px; }
+    .mr-garantia > i { color: #0f7b3e; background: #e9f7ef; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .mr-garantia h3 { margin: 4px 0 6px; color: var(--black); font-size: 1.1rem; }
     .mr-garantia p { margin: 0 0 8px; color: var(--text); }
     .mr-garantia-mais summary { cursor: pointer; font-weight: 700; color: var(--red); min-height: 44px; display: flex; align-items: center; }
     .mr-garantia-mais a { color: var(--red); font-weight: 700; }
@@ -515,8 +522,9 @@ CSS_PAGINA = """
     .mr-faq-pagina details p a { color: var(--red); font-weight: 600; text-decoration: underline; }
     .mr-faq-pagina details p a[data-saida] { color: inherit; font-weight: 400; }
     .mr-faq-chat { margin-top: 20px; }
-    .mr-final { margin-top: 22px; }
-    .mr-final-link { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .mr-final { margin-top: 28px; padding: 22px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); text-align: center; }
+    .mr-final .btn { min-height: 56px; min-width: 280px; font-size: 1rem; }
+    .mr-final .mr-micro { margin-top: 10px; }
 
     /* turmas para grupos (faixa compacta; o formulário abre no botão) */
     .mr-demanda { padding: 44px 0 56px; background: var(--soft); border-top: 1px solid var(--line); }
@@ -526,9 +534,18 @@ CSS_PAGINA = """
     .mr-demanda-abertura { color: var(--text); margin: 0 0 12px; }
     .mr-demanda-itens { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; }
     .mr-demanda-itens li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; }
+    .mr-demanda-itens li > span { min-width: 0; } /* o texto (com o trecho em inglês) é um item só do flex */
     .mr-demanda-itens i { color: var(--red); flex-shrink: 0; margin-top: 3px; }
     .mr-demanda-botao { min-height: 52px; }
-    .mr-demanda-form { margin-top: 24px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; scroll-margin-top: 96px; }
+    .mr-demanda-form { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+    /* O formulário de turma é uma janela (dialog): no computador, centrada; no celular, a tela inteira. */
+    .mr-modal { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow: auto;
+                overscroll-behavior: contain; margin: auto; border: 0; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); color: var(--text); }
+    .mr-modal::backdrop { background: rgba(15, 19, 24, .55); }
+    .mr-modal-fechar { position: sticky; top: 0; float: right; margin: -12px -12px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+                       background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
+    .mr-modal-fechar:hover, .mr-modal-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
+    html.mr-modal-aberto { overflow: hidden; }
     .mr-demanda-form h3 { color: var(--black); font-size: 1.3rem; margin: 0 0 4px; }
     .mr-tf-nota { color: var(--apoio); margin: 0 0 18px; }
     .mr-tf-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
@@ -602,7 +619,8 @@ CSS_PAGINA = """
       .mr-ficha { grid-template-columns: 1fr; padding: 16px; margin: 6px 0 18px; gap: 0; }
       .mr-ficha-foto { display: none; }
       .mr-ficha .mr-cert-curto { display: flex; }
-      .mr-cert { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+      .mr-cert { grid-template-columns: 1fr; gap: 14px; padding: 16px; margin-top: 16px; }
+      .mr-cert-figura { max-width: 340px; margin: 0 auto; }
       .mr-cert-texto h3 { font-size: 1.12rem; }
       .mr-cert-texto li { font-size: .9rem; }
       .mr-ficha-titulo { font-size: 1.4rem; }
@@ -615,9 +633,11 @@ CSS_PAGINA = """
       .mr-curso-mini { width: 64px; height: 48px; }
       .mr-curso-nome { font-size: 1.05rem; }
       .mr-curso-meta { font-size: .85rem; }
-      .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; line-height: 1.4; }
       .mr-curso-acao { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 14px 14px; }
-      .mr-curso-acao .mr-cta { width: auto; min-height: 48px; padding: 10px 18px; font-size: .95rem; white-space: nowrap; }
+      .mr-curso-acao .mr-cta { width: auto; min-height: 48px; padding: 10px 18px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
+      .mr-preco-curto { min-width: 0; }
+      .mr-preco-curto span { font-size: .8rem; white-space: nowrap; }
       .mr-curso-mais > summary { padding: 0 14px; }
       .mr-curso-detalhes { grid-template-columns: 1fr; padding: 4px 14px 18px; }
       .mr-curso-fecho .mr-cta { width: 100%; }
@@ -625,15 +645,20 @@ CSS_PAGINA = """
       .mr-confianca-itens { grid-template-columns: 1fr; gap: 8px; }
       .mr-depois h2, .mr-confianca h2, .mr-faq-pagina h2, .mr-demanda h2 { font-size: 1.35rem; margin-bottom: 14px; }
       .mr-depois { padding: 28px 0; }
-      .mr-passos { gap: 10px; }
-      .mr-passos li { padding: 14px; gap: 12px; }
+      .mr-passos { gap: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 16px; }
+      .mr-passos li { padding: 14px 0; gap: 12px; background: none; border: 0; border-radius: 0; }
+      .mr-passos li + li { border-top: 1px solid var(--line); }
       .mr-passos b { width: 30px; height: 30px; font-size: .9rem; }
       .mr-passos h3 { font-size: .98rem; margin: 3px 0 4px; }
       .mr-passos p { font-size: .9rem; }
       .mr-garantia { padding: 16px; gap: 12px; margin-top: 16px; }
       .mr-garantia h3 { font-size: 1.02rem; }
       .mr-garantia p { font-size: .93rem; }
-      .mr-confianca, .mr-faq-pagina { padding: 28px 0; }
+      .mr-confianca, .mr-faq-pagina { padding: 32px 0; }
+      .mr-faq-pagina summary { font-size: .97rem; }
+      .mr-final { padding: 18px 16px; }
+      .mr-final .btn { width: 100%; min-width: 0; }
+      .mr-demanda-botao { width: 100%; }
       .mr-confianca-texto { font-size: .93rem; margin-bottom: 10px; }
       .mr-confianca-itens li { background: none; border-radius: 0; border-bottom: 1px solid var(--line); padding: 9px 0; font-size: .88rem; }
       .mr-confianca-link { margin-top: 10px; }
@@ -641,6 +666,8 @@ CSS_PAGINA = """
       .mr-demanda-abertura { font-size: .93rem; }
       .mr-demanda-itens li { font-size: .9rem; }
       .mr-demanda-form { padding: 18px; }
+      .mr-modal { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border-radius: 0; padding: 12px 16px 32px; }
+      .mr-modal-fechar { margin: -4px -6px 0 8px; }
       .mr-tf-grade { grid-template-columns: 1fr; }
       html body .cv-chat .cv-chat-abrir { width: 56px; padding: 0; justify-content: center; border-color: var(--line); }
       html body .cv-chat .cv-chat-abrir-rotulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
@@ -1114,9 +1141,9 @@ def main() -> int:
           <p class="eyebrow">Escola de Educação e Saúde<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
           <h1 id="mr-titulo">Cursos presenciais com certificado da Cruz Vermelha, no Centro do Rio</h1>
           <div class="mr-hero-apoio">
-            <p class="mr-hero-sub">Aulas na sede da Praça da Cruz Vermelha, 10. Para se matricular, você paga agora só a inscrição de {insc}, por PIX ou cartão, sem criar conta. O valor do curso é pago depois.</p>
+            <p class="mr-hero-sub">Aulas na Praça da Cruz Vermelha, 10. Você paga agora só a inscrição de {insc}, por PIX ou cartão, sem criar conta, e o valor do curso depois.</p>
             <ul class="mr-confianca-linha">
-              <li><i class="fa-solid fa-certificate"></i> Certificado da Cruz Vermelha, reconhecida no Brasil e no mundo</li>
+              <li><i class="fa-solid fa-circle-check"></i> Cruz Vermelha, reconhecida no Brasil e no mundo</li>
               <li class="mr-so-largo-flex"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</li>
             </ul>
           </div>
@@ -1207,7 +1234,6 @@ def main() -> int:
                 <div class="mr-curso-sobre"><div class="mr-curso-foto-grande">{foto(s, 960, "mr-foto", "lazy", "(max-width: 720px) 100vw, 560px")}</div><h4>Sobre o curso</h4>{sobre_html}</div>
                 {faq_html}
                 <div class="mr-curso-fecho">
-                  <div class="mr-cert-curto">{cert_img(s, "lazy", "120px")}<p><b>Ao concluir, você recebe este certificado</b> da Cruz Vermelha, com o seu nome (modelo).</p></div>
                   {preco(s)}
                   <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Fazer matrícula · {insc}</a>
                   {micro}
@@ -1261,9 +1287,9 @@ def main() -> int:
     catalogo = f'''
     <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo" data-secao="catalogo">
       <div class="wrap">
-        <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos da Cruz Vermelha Brasileira Rio de Janeiro</span></h2>
+        <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos presenciais</span></h2>
         <div class="mr-cartoes">{"".join(blocos_catalogo)}</div>
-        <p class="mr-turma-linha mr-turma-linha-catalogo">Empresas, escolas e grupos de {TURMA_MINIMO} pessoas ou mais, ou cursos em inglês: <a href="#turmas-sob-demanda" data-turma-abrir="catalogo">veja as turmas para grupos</a>.</p>
+        <p class="mr-turma-linha mr-turma-linha-catalogo">Empresas, escolas e grupos de {TURMA_MINIMO} pessoas ou mais, ou cursos em inglês: <a href="#turmas-sob-demanda" data-turma-abrir="catalogo">peça uma turma para o grupo</a>.</p>
       </div>
     </section>'''
 
@@ -1298,15 +1324,13 @@ def main() -> int:
           <div class="mr-cert-texto">
             <p class="eyebrow">No fim do curso</p>
             <h3>O certificado da Cruz Vermelha, com o seu nome</h3>
-            <ul>{"".join(f"<li><i class='fa-solid fa-circle-check'></i> {esc(t)}</li>" for t in CERT_ITENS)}</ul>
+            <ul>{"".join(f'<li><i class="fa-solid fa-circle-check"></i> <span>{esc(t)}</span></li>' for t in CERT_LISTA)}</ul>
             <p class="mr-cert-nota">{esc(CERT_NOTA)}</p>
           </div>
         </div>
-        <p class="mr-nota-curta">O valor do curso é pago depois, na plataforma da escola, nas condições informadas lá.</p>
         <div class="mr-garantia" id="garantia">
           <i class="fa-solid fa-rotate-left"></i>
           <div>
-            <p class="mr-selo">7 dias para desistir · art. 49 do Código de Defesa do Consumidor</p>
             <h3>7 dias para desistir, com o valor de volta</h3>
             <p>{esc(GARANTIA_7_DIAS)}</p>
             <details class="mr-garantia-mais"><summary>Como pedir e regras completas</summary>{depois_7}<p>{esc(GARANTIA_COMO)}</p><p><a href="/reembolso/">Regras completas de cancelamento e reembolso</a></p></details>
@@ -1326,7 +1350,6 @@ def main() -> int:
         <p class="mr-confianca-texto">A Escola de Educação e Saúde é a escola da Cruz Vermelha Brasileira Rio de Janeiro. A Cruz Vermelha forma pessoas no Rio desde 20 de outubro de 1914, quando começou o primeiro curso, de Enfermeiras Voluntárias. As aulas são na sede da filial, o Palácio da Cruz Vermelha, no Centro, tombado como patrimônio cultural federal.</p>
         {prova}
         <ul class="mr-confianca-itens">
-          <li><i class="fa-solid fa-certificate"></i> Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com a carga horária do curso</li>
           <li><i class="fa-solid fa-location-dot"></i> Aulas no Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10, Centro</li>
           <li><i class="fa-solid fa-house"></i> Palácio tombado como patrimônio cultural federal</li>
           <li><i class="fa-solid fa-scale-balanced"></i> Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023)</li>
@@ -1350,7 +1373,7 @@ def main() -> int:
         <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
         {faq_html}
         <p class="mr-chat-atalho mr-faq-chat"><a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Não achou sua dúvida? O chat no canto da página responde na hora as perguntas mais comuns.</a> O que ficar de fora, a equipe responde por e-mail em até 3 dias úteis.</p>
-        <div class="mr-final" id="mr-final"><a class="mr-final-link" href="#cursos">Ver os cursos e valores</a></div>
+        <div class="mr-final" id="mr-final"><a class="btn btn-red mr-final-btn" href="#cursos">Escolher meu curso</a><p class="mr-micro">Inscrição de {insc} · PIX ou cartão · 7 dias para desistir, com o valor de volta</p></div>
       </div>
     </section>'''
 
@@ -1370,21 +1393,22 @@ def main() -> int:
           <div>
             <p class="eyebrow">Turmas para grupos</p>
             <h2 id="mr-demanda-titulo">Tem um grupo de {TURMA_MINIMO} pessoas ou mais? Fechamos uma turma só para vocês</h2>
-            <p class="mr-demanda-abertura">Os cursos do catálogo, em português, têm matrícula individual: é só usar o botão do curso. Esta parte é para quem quer uma turma só do seu grupo, um curso em inglês ou primeiros socorros para jovens de 12 a 14 anos.</p>
+            <p class="mr-demanda-abertura">Para matrícula individual, use o botão do curso. Aqui é para turma só do seu grupo, curso em inglês ou primeiros socorros para jovens de 12 a 14 anos.</p>
             <ul class="mr-demanda-itens">
-              <li><i class="fa-solid fa-people-group"></i> Empresas, escolas, igrejas e condomínios: turma só do grupo, de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede (em outro local, com aprovação).</li>
-              <li><i class="fa-solid fa-flag"></i> Qualquer curso em inglês, com professor ou tradutor · <span lang="en">Courses in English</span>. A turma abre com {TURMA_MINIMO} alunos.</li>
-              <li><i class="fa-solid fa-heart-pulse"></i> Primeiros socorros para jovens de 12 a 14 anos, numa turma só dessa idade, que abre com {TURMA_MINIMO} alunos.</li>
+              <li><i class="fa-solid fa-people-group"></i> <span>Empresas, escolas, igrejas e condomínios: turma só do grupo, de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede (em outro local, com aprovação).</span></li>
+              <li><i class="fa-solid fa-flag"></i> <span>Qualquer curso em inglês, com professor ou tradutor · <span lang="en">Courses in English</span>. A turma abre com {TURMA_MINIMO} alunos.</span></li>
+              <li><i class="fa-solid fa-heart-pulse"></i> <span>Primeiros socorros para jovens de 12 a 14 anos, numa turma só dessa idade, que abre com {TURMA_MINIMO} alunos.</span></li>
             </ul>
             <button class="btn btn-outline mr-demanda-botao" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
             <p class="mr-tf-dica">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
           </div>
           <div class="mr-demanda-faq">{faq_turmas}</div>
         </div>
-        <noscript><style>#turma-form-bloco{{display:block!important}}</style></noscript>
-        <div class="mr-demanda-form" id="turma-form-bloco" hidden>
+        <noscript><style>#turma-form-bloco{{display:block!important;position:static}}</style></noscript>
+        <dialog class="mr-demanda-form mr-modal" id="turma-form-bloco" aria-labelledby="turma-form-titulo">
+          <button class="mr-modal-fechar" type="button" data-turma-fechar aria-label="Fechar">&times;</button>
           <form id="turma-form" novalidate>
-            <h3>Peça sua turma ou entre na lista</h3>
+            <h3 id="turma-form-titulo">Peça sua turma ou entre na lista</h3>
             <p class="mr-tf-nota">Nada é cobrado agora. A secretaria responde por e-mail ou WhatsApp.</p>
             <div class="mr-tf-grade">
               <div class="mr-tf-campo mr-tf-largo">
@@ -1396,7 +1420,7 @@ def main() -> int:
                 <legend>Idioma das aulas</legend>
                 <div class="mr-tf-opcoes">
                   <label><input type="radio" name="idioma" value="pt" checked> Português</label>
-                  <label><input type="radio" name="idioma" value="en"> Inglês <span lang="en">(English)</span></label>
+                  <label><input type="radio" name="idioma" value="en"> <span>Inglês <span lang="en">(English)</span></span></label>
                 </div>
               </fieldset>
               <div class="mr-tf-campo">
@@ -1470,7 +1494,7 @@ def main() -> int:
             <p class="mr-tf-dica" id="turma-ok-copia"></p>
             <button class="btn btn-outline" id="turma-ok-outro" type="button">Fazer outro pedido</button>
           </div>
-        </div>
+        </dialog>
       </div>
     </section>'''
 
