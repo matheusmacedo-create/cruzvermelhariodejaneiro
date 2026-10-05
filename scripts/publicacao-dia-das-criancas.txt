@@ -1,0 +1,36 @@
+# Página do Dia das Crianças na Praça (ação de 13/10/2026) e card em "Campanhas ativas" na home (05/10/2026).
+# As imagens antes das páginas que as pedem. site/assets/ fica fora do Git (só no servidor); as versões de
+# otim/ saem de scripts/otimizar_imagens.py. Fotos com autorização de uso de imagem dos responsáveis
+# (confirmada pelo Matheus em 05/10/2026), sem metadados (EXIF/GPS) nos arquivos.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas.txt)
+# 1) originais (como vieram no WhatsApp, 932 a 1080 px)
+site/assets/dia-criancas-brincadeira-arcos.jpg
+site/assets/dia-criancas-corrida-saco.jpg
+site/assets/dia-criancas-juventude.jpg
+site/assets/dia-criancas-primeiros-socorros.jpg
+site/assets/dia-criancas-voluntaria.jpg
+# 2) versões otimizadas e a imagem de compartilhamento (1200x630)
+site/assets/otim/dia-criancas-brincadeira-arcos-480.webp
+site/assets/otim/dia-criancas-brincadeira-arcos-932.webp
+site/assets/otim/dia-criancas-corrida-saco-480.webp
+site/assets/otim/dia-criancas-corrida-saco-960.webp
+site/assets/otim/dia-criancas-juventude-480.avif
+site/assets/otim/dia-criancas-juventude-480.webp
+site/assets/otim/dia-criancas-juventude-720.avif
+site/assets/otim/dia-criancas-juventude-720.webp
+site/assets/otim/dia-criancas-juventude-960.avif
+site/assets/otim/dia-criancas-juventude-960.webp
+site/assets/otim/dia-criancas-juventude-1080.avif
+site/assets/otim/dia-criancas-juventude-1080.webp
+site/assets/otim/dia-criancas-primeiros-socorros-480.webp
+site/assets/otim/dia-criancas-primeiros-socorros-960.webp
+site/assets/otim/dia-criancas-voluntaria-480.webp
+site/assets/otim/dia-criancas-voluntaria-960.webp
+site/assets/otim/og-dia-das-criancas.jpg
+# 3) .ics como text/calendar (o iPhone abre a tela de "adicionar à agenda"), antes do arquivo
+site/.htaccess
+# 4) a página e o evento para a agenda
+site/dia-das-criancas/dia-das-criancas.ics
+site/dia-das-criancas/index.html
+# 5) a home, com o card
+site/index.html

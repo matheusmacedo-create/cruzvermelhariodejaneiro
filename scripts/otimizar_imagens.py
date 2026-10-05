@@ -31,6 +31,13 @@ FOTOS = {
     # forca-tarefa-el-nino-banner.png é ela com 1920 de largura e 78 linhas brancas a mais na faixa de baixo
     # (42 acima e 36 abaixo da linha do rodapé, que fica centralizada), sem cortar nada da arte.
     "forca-tarefa-el-nino-banner.png": [640, 960, 1200, 1440, 1920],
+    # Dia das Crianças na Praça (13/10/2026): fotos de ações anteriores com crianças, com autorização de uso de
+    # imagem dos responsáveis (confirmada pelo Matheus). Ficam só no servidor, como as outras fotos.
+    "dia-criancas-juventude.jpg": [480, 720, 960, 1440],
+    "dia-criancas-primeiros-socorros.jpg": [480, 960],
+    "dia-criancas-brincadeira-arcos.jpg": [480, 960],
+    "dia-criancas-corrida-saco.jpg": [480, 960],
+    "dia-criancas-voluntaria.jpg": [480, 960],
     "impacto-cores-banner.jpg": [640, 1200, 1920],
     "agasalho-banner.jpg": [640, 1200, 1920],
     "reuniao-cicv.jpg": [480, 960],
@@ -55,7 +62,7 @@ FOTOS = {
     "dia-cruz-vermelha.jpg": [640, 1254],
 }
 # Também em AVIF (o primeiro slide da home, que é o maior elemento da página no computador).
-AVIF = {"forca-tarefa-el-nino-banner.png"}
+AVIF = {"forca-tarefa-el-nino-banner.png", "dia-criancas-juventude.jpg"}
 # Logos com transparência: uma largura só.
 LOGOS = {
     "logo-cvb-rj.png": 520,
@@ -75,6 +82,7 @@ OG = {
     "og-campanha-agasalho.jpg": ("agasalho-hero-rua.jpg", 0.5),
     "og-equipe.jpg": ("equipe-corredor.jpg", 0.4),
     "og-matricula.jpg": ("auditorio-voluntarios.jpg", 0.5),
+    "og-dia-das-criancas.jpg": ("dia-criancas-juventude.jpg", 0.42),
 }
 
 
