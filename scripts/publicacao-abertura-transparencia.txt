@@ -1,0 +1,15 @@
+# Abertura da trilha pública (05/10/2026): /verificar/ deixa de ser escondida; a home e a equipe ganham
+# "Transparência" no menu, os cartões de transparência e verificação e os links no rodapé; llms.txt cita as
+# três páginas. Ordem: o .htaccess da pasta antes da página (o cabeçalho noindex da pasta inteira sai primeiro),
+# a página e o 404 em seguida, depois a home e a equipe (que linkam para ela), e o llms.txt por último.
+# Depois de publicar e limpar o cache: python3 scripts/gerar_sitemaps.py (lê o site no ar: /verificar/,
+# /transparencia/ e /canais-oficiais/ só entram sem noindex) e publicar os quatro sitemaps.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-abertura-transparencia.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-abertura-transparencia.txt
+# Desfazer: scripts/desfazer_publicacao.sh 0f351ac scripts/publicacao-abertura-transparencia.txt
+site/verificar/.htaccess
+site/verificar/index.html
+site/verificar/404.html
+site/index.html
+site/equipe.html
+site/llms.txt

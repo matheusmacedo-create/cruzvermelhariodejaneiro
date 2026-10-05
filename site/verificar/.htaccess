@@ -1,11 +1,13 @@
-# /verificar/: página de verificação de documentos (scripts/gerar_verificar.py), publicada escondida,
-# e em lotes/ os arquivos de prova que a Redação grava por FTP a cada dia. Nada desta pasta vai para a
-# busca: o cabeçalho abaixo vale para a pasta inteira, inclusive para o que chegar depois em lotes/.
+# /verificar/: página pública de verificação de documentos (scripts/gerar_verificar.py; aberta em
+# 05/10/2026) e, em lotes/, os arquivos de prova que a Redação grava por FTP a cada dia. A página entra na
+# busca; os arquivos de prova (json, ots, sig, tsr, pem, bin, txt) não: são dados, não páginas.
 # Sem regra de rewrite, de propósito: os arquivos de lotes/ são servidos como estão.
 Options -Indexes
 
 <IfModule mod_headers.c>
-  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+  <FilesMatch "\.(json|ots|sig|tsr|pem|bin|txt)$">
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+  </FilesMatch>
   # O código consultado vai na URL (?c=, do QR code): nenhum link daqui leva o endereço adiante.
   Header always set Referrer-Policy "no-referrer"
   Header always set X-Content-Type-Options "nosniff"

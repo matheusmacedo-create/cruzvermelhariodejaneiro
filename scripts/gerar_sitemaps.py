@@ -48,8 +48,8 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 AGENTE = "cvb-rj-sitemap/2.0 (+https://cruzvermelhariodejaneiro.org/)"
 
 # Páginas fixas do domínio principal: (caminho, arquivo local com as imagens ou None, changefreq, priority, nota)
-# /verificar/ não entra, de propósito: é página escondida (noindex, sem link; ver o README). Se entrasse por
-# engano, o noindex dela a tiraria daqui mesmo assim (pagina_indexavel).
+# Desde 05/10/2026 /verificar/, /transparencia/ e /canais-oficiais/ são públicas (abertura da trilha). As duas
+# últimas são geradas pela Redação por FTP; se alguma ainda estiver com noindex no ar, pagina_indexavel a deixa fora.
 PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
@@ -60,6 +60,9 @@ PAGINAS = [
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
+    ("/transparencia/", None, "weekly", "0.7", "Portal da transparência (Redação)"),
+    ("/canais-oficiais/", None, "monthly", "0.5", "Canais oficiais (Redação)"),
+    ("/verificar/", "verificar/index.html", "monthly", "0.6", "Verificação de documentos"),
     # Políticas: geradas por gerar_politicas.py, nas três línguas (até 27/09/2026, a Redação gerava
     # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) saiu: está fora do ar.
     ("/privacidade/", "privacidade/index.html", "yearly", "0.3", "Política de Privacidade"),

@@ -35,6 +35,14 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   [espanhol](https://cruzvermelhariodejaneiro.org/es/acervo/).
 - [Links oficiais](https://cruzvermelhariodejaneiro.org/bio/): cursos, cadastro de voluntário e o
   WhatsApp exclusivo do voluntariado.
+- [Portal da transparência](https://cruzvermelhariodejaneiro.org/transparencia/): documentos
+  institucionais (estatuto, atas, balanços, relatórios) e parcerias com o poder público (Lei
+  13.019/2014), cada um com versão imutável, código de registro e impressão digital SHA-256.
+- [Canais oficiais](https://cruzvermelhariodejaneiro.org/canais-oficiais/): a lista registrada de
+  sites, perfis, telefones e e-mails oficiais da filial, com histórico de versões.
+- [Verificação de documentos](https://cruzvermelhariodejaneiro.org/verificar/): confere, pelo código,
+  pelo QR code ou pelo próprio arquivo, se um ofício, certificado, diploma, crachá, publicação ou
+  documento foi registrado pela filial na trilha pública de auditoria e se continua valendo.
 - [Em inglês](https://cruzvermelhariodejaneiro.org/en/): a versão em inglês do site, com as
   notícias traduzidas em [/en/news/](https://cruzvermelhariodejaneiro.org/en/news/), cursos,
   perguntas frequentes, equipe e Campanha do Agasalho.
