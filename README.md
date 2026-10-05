@@ -180,6 +180,52 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Página de matrícula reconstruída do zero (05/10/2026)
+
+O Matheus pediu uma versão nova e completa, "mais curta, mais clara, mais institucional, muito melhor no celular,
+focada em levar o visitante até a matrícula", com a plataforma da escola (escola.cursoscruzvermelha.org) como
+referência, e **sem "próxima turma" nem datas** (não há fonte de dados; o checkout e a escola é que sabem a turma).
+O gerador (`scripts/gerar_matricula_presencial.py`) foi reescrito; o checkout, o formulário de turma, o chat, o
+rastreamento e os links não mudaram.
+
+**Ordem da página:** topo compacto (eyebrow, h1, frase, quatro marcas ✓, "Ver cursos", endereço e uma foto real do
+auditório) → filtro por categoria (Todos, Emergência, Saúde, Formação profissional, Estética) → cursos (7 cartões + o
+cartão "Turma para empresas e grupos") → "Aqui você aprende fazendo" (quatro fotos reais da sede, legendas do site) →
+"Como funciona" (faixa vermelha, quatro passos, com a regra dos 7 dias) → certificado (uma seção só) → "Mais de um
+século de história" (fatos de /historia/, foto de 1917) → local (endereço, "Como chegar", mapa carregado só ao pedir) →
+dúvidas (12 perguntas em acordeão, só com respostas confirmadas; idade mínima: "informação em breve") → empresas e
+grupos ("Solicitar uma turma" abre a janela do pedido) → chamada final.
+
+**Cartão e ficha:** o cartão traz foto, categoria, nome, frase, carga, requisito, o preço em duas linhas ("Inscrição
+R$ 99, paga agora" + "Curso R$ X, pago depois, na escola", PIX ou cartão), "Garantir vaga" (checkout) e "Ver
+detalhes". A ficha completa (sobre, o que aprende, para quem, carga, pré-requisito, materiais = "Informação em
+breve", local, certificação, dúvidas do curso, botão) fica escondida na página (`.mr-det`, indexável) e é movida para
+a janela `#mr-janela` (dialog) ao abrir; volta ao fechar. Sem JavaScript, `#det-<slug>` a mostra por `:target`. Com
+`?curso=<slug>` ela abre no topo antes da primeira pintura (modo curso dos anúncios), e o ViewContent sai ao carregar.
+
+**Celular:** cartão compacto (miniatura ao lado do título, preço numa linha, dois botões lado a lado), barra fixa
+("Ver cursos"; com um curso em foco, "Garantir minha vaga"), chips roláveis, janelas em tela inteira. **Computador:**
+grade de 4 colunas (3 em 1024, 2 no tablet), navegação fixa da página abaixo do cabeçalho (Cursos, Como funciona,
+Certificado, Localização, Dúvidas, "Ver cursos") que aparece depois do topo. Primeiro botão de matrícula em 484 px no
+celular e 584 px no computador. Altura: 9,5 mil px no celular (11 telas), 6,8 mil no computador.
+
+**Dados num só lugar:** `cursos.json` + `COPY_CURSO`, `BENEFICIO`, `CATEGORIA_DE`; `STATUS_TURMA` (selo "Vagas
+abertas", "Últimas vagas", "Turma em formação", "Esgotado", "Nova turma em breve") e `MATERIAIS` ficam vazios até
+haver fonte, e nada é impresso. Fotos reais: `FOTO_TOPO`, `FOTOS_AULAS`, `FOTO_HISTORIA`, `FOTO_FACHADA`
+(`/assets/otim`, fora do Git). JSON-LD: BreadcrumbList, EducationalOrganization, ItemList de Course e FAQPage.
+
+**Rastreamento:** continuam PageView/ViewContent/SelectContent (Meta, com repasse) e view_item_list, view_item,
+select_item, cta_matricula_visto, secao_vista, faq_aberta, chat_atalho, saida_escola, barra_fixa_vista (GA4). Entram
+`view_course` (cartão 50% visível, uma vez), `select_course` ("Ver detalhes"), `view_course_details` (ficha aberta),
+`click_enroll` (botão de matrícula), `select_category` (chip), `contact_company_training` (abriu o pedido de turma) e
+`mapa_aberto`. Não há WhatsApp na página (decisão pendente D5), então `click_whatsapp` não existe. Detalhes em
+`docs/rastreamento.md`.
+
+**Conferido:** Playwright em 375, 390, 430, 768, 1024, 1280 e 1440 (sem rolagem horizontal, sem erro de JS; filtro,
+janela dos detalhes com Esc/X/fora e foco de volta, janela da turma, barra fixa, navegação, modo curso),
+`conferir_pixel.js --repositorio` (15/15, com o passo "abrir um curso" trocado para a janela), `validar_jsonld.py`,
+`testar_checkout.php` (350) e `testar_turmas_integracao.php` (24).
+
 ## Certificado de amostra, copy por curso e recuperação do lead (04/10/2026)
 
 O Matheus mandou o modelo do certificado (Punção Venosa, em PDF, com nome e CPF de uma pessoa) e pediu: revisar a
