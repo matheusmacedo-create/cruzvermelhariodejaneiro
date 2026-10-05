@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gera site/verificar/index.html: a página de verificação de documentos, publicada escondida.
+"""Gera site/verificar/index.html: a página pública de verificação de documentos.
 
 A página confere documentos e publicações que a filial registrou na trilha pública de auditoria
 (registro encadeado por hash, lote diário com carimbo de tempo RFC 3161, âncora no Bitcoin pelo
@@ -11,12 +11,11 @@ A consulta vai para a API da Redação (API, abaixo), que responde pelo contrato
 POST /api/publico/verificar: {"codigo": "..."} ou {"hash": "<64 hex>"}; 200 com "encontrado"
 true/false, 400 entrada_invalida, 429 limite (Retry-After), 5xx indisponível.
 
-Lançamento escondido (24/09/2026). O gerador trava se a página quebrar as regras que dependem dele
-(noindex, cabeçalho da pasta, nada de terceiros, API fixa); link vindo de outra página quem acusa é
-scripts/conferir_links.py (e scripts/rastrear_site.py, no site no ar):
-  - noindex, nofollow, noarchive na página e no cabeçalho X-Robots-Tag da pasta inteira
-    (site/verificar/.htaccess), que cobre também o que a Redação gravar em lotes/ por FTP;
-  - nenhum link para /verificar/ em página, menu, rodapé, sitemap, hreflang, llms.txt ou robots.txt;
+Lançamento escondido de 24/09/2026 a 05/10/2026; aberta ao público em 05/10/2026 (linkada na home, no
+menu, no rodapé, no sitemap e no llms.txt). O gerador trava se a página quebrar as regras que dependem
+dele (indexável, cabeçalho da pasta, nada de terceiros, API fixa):
+  - a página sai indexável; os arquivos de prova que a Redação grava em lotes/ por FTP continuam com
+    X-Robots-Tag noindex, pelo FilesMatch de site/verificar/.htaccess (são dados, não páginas);
   - nada de terceiros: sem GA4, sem Meta Pixel, sem Google Fonts (a "Inter Reserva" do CSS da home
     segura o texto com a fonte do aparelho), sem o chat (ele manda o endereço da página, com o
     código, no aviso à equipe). O código na URL é uma senha de acesso ao registro: não pode vazar.
@@ -69,8 +68,8 @@ HEAD = """<!DOCTYPE html>
   <meta http-equiv="Content-Security-Policy" content="@@CSP@@">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Página escondida: fora da busca, sem link de nenhuma página e sem nada de terceiros (scripts/gerar_verificar.py). -->
-  <meta name="robots" content="noindex, nofollow, noarchive">
+  <!-- Página pública, sem nada de terceiros: nem medição, nem fontes, nem chat (scripts/gerar_verificar.py). -->
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="format-detection" content="telephone=no">
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
@@ -990,8 +989,10 @@ def politica(html: str) -> str:
 
 
 def conferir(html: str, nome: str) -> None:
-    """As travas do lançamento escondido. Qualquer falha interrompe o gerador."""
-    obrigatorio = ['<meta name="robots" content="noindex, nofollow, noarchive">', '<meta name="referrer" content="no-referrer">',
+    """As travas da página de verificação. Qualquer falha interrompe o gerador."""
+    # A página entra na busca; o 404 da pasta, não (é página de erro, e leva o código na URL de quem errou).
+    robots = '<meta name="robots" content="noindex, nofollow, noarchive">' if nome == "404.html" else '<meta name="robots" content="index, follow, max-image-preview:large">'
+    obrigatorio = [robots, '<meta name="referrer" content="no-referrer">',
                    '"Inter Reserva"', '<meta http-equiv="Content-Security-Policy"']
     for trecho in obrigatorio:
         if trecho not in html:
@@ -1028,14 +1029,22 @@ def montar(modelo: str, partes: dict, header: str, js: str | None, titulo: str, 
         if faltando:
             raise SystemExit(f"{nome}: ícones sem desenho em scripts/icones.json: {sorted(faltando)}")
     html = icones.converter(html, extras=extras)
+    if nome == "404.html":
+        html = html.replace('<meta name="robots" content="index, follow, max-image-preview:large">', '<meta name="robots" content="noindex, nofollow, noarchive">')
     html = html.replace("@@CSP@@", politica(html))
     conferir(html, nome)
     return html
 
 
 def main() -> int:
-    if not HTACCESS.exists() or 'X-Robots-Tag "noindex, nofollow, noarchive"' not in HTACCESS.read_text(encoding="utf-8"):
-        raise SystemExit("site/verificar/.htaccess sem o X-Robots-Tag: a pasta não pode ir ao ar sem ele")
+    htaccess = HTACCESS.read_text(encoding="utf-8") if HTACCESS.exists() else ""
+    # A pasta inteira já foi escondida por um "Header always set X-Robots-Tag" solto; hoje só os arquivos de
+    # prova levam o noindex, dentro do FilesMatch (Header set, sem "always").
+    if 'Header always set X-Robots-Tag "noindex' in htaccess:
+        raise SystemExit("site/verificar/.htaccess ainda esconde a pasta inteira: a página é pública desde 05/10/2026")
+    if '<FilesMatch "\\.(json|ots|sig|tsr|pem|bin|txt)$">\n    Header set X-Robots-Tag "noindex, nofollow, noarchive"' not in htaccess \
+            or 'Referrer-Policy "no-referrer"' not in htaccess:
+        raise SystemExit("site/verificar/.htaccess sem o noindex dos arquivos de prova ou sem o Referrer-Policy")
     if not API.startswith("https://"):
         raise SystemExit("a API de verificação tem de ser https")
     for trecho in PROIBIDO_JS:

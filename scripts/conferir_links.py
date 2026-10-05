@@ -33,7 +33,8 @@ NAO_SERVIDAS = {"doacao.html", "cursos.html", "doar/index.html"}
 # documentos em /verificar/"). Ficam fora da conferência, que é das páginas públicas: os arquivos de prova
 # que /verificar/ aponta são gravados pela Redação por FTP e podem ainda não existir. E o contrário vale
 # como falha: página pública com link para uma delas desfaz o lançamento escondido.
-ESCONDIDAS = ("verificar",)
+# Vazio desde a abertura da trilha pública (05/10/2026): /verificar/ é página pública e linkada.
+ESCONDIDAS: tuple[str, ...] = ()
 
 
 def paginas() -> list[Path]:

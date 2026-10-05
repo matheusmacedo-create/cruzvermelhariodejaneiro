@@ -31,7 +31,8 @@ IGNORAR = ("mailto:", "tel:", "javascript:", "data:")
 BINARIO = re.compile(r"\.(png|jpe?g|webp|svg|gif|ico|css|js|xml|txt|pdf|woff2?|mp4)(\?|$)", re.I)
 # Páginas publicadas escondidas (noindex e sem link de nenhuma página; ver o README, "Verificação de
 # documentos em /verificar/"). O rastreio não entra nelas, e link de qualquer página para elas é problema.
-ESCONDIDAS = ("/verificar",)
+# Vazio desde a abertura da trilha pública (05/10/2026): /verificar/ é página pública e linkada.
+ESCONDIDAS: tuple[str, ...] = ()
 
 
 def escondida(url: str) -> bool:
