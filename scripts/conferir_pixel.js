@@ -105,9 +105,12 @@ async function cenario(nome, url, passos, esperado) {
 
 const aceitar = { nome: 'aceitar', fazer: (p) => p.getByRole('button', { name: /^(Aceitar todos|Accept all|Aceptar todas)$/ }).click() };
 const rejeitar = { nome: 'rejeitar', fazer: (p) => p.getByRole('button', { name: /^(Rejeitar|Reject|Rechazar)$/ }).click() };
-// Desde o redesenho de 04/10/2026, abrir um curso é abrir o "Ver detalhes" do cartão (o ViewContent sai aí).
-const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: (p) => p.locator('.mr-curso-mais > summary').nth(n).click() });
+// Desde a reconstrução de 05/10/2026, abrir um curso é o "Ver detalhes" do cartão, que abre uma janela (dialog) com a
+// ficha: o ViewContent sai aí. A janela deixa o resto da página inerte, então os passos seguintes a fecham antes (Esc).
+const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: async (p) => { await p.keyboard.press('Escape'); await p.waitForTimeout(200); await p.locator('.mr-card [data-detalhes]').nth(n).click(); } });
 const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(200);
   await p.locator('[data-cvrj-cookies]').first().click();
   await p.waitForTimeout(400);
   if (await p.locator('#cvrj-ck-marketing').isChecked()) await p.locator('label[for="cvrj-ck-marketing"]').click();

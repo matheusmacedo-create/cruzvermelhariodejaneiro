@@ -1,38 +1,30 @@
 #!/usr/bin/env python3
 """Gera site/matricula-cursos-presenciais/index.html a partir de cursos.json e do padrão visual da home.
 
-A página é montada com o MESMO <style>, cabeçalho, rodapé, GA4, Meta Pixel e script de menu
-de site/index.html, para ficar indistinguível da home. O conteúdo dos cursos vem de
-site/matricula-cursos-presenciais/cursos.json (gerado por scripts/sincronizar_catalogo.py a partir
-do catálogo público da escola) e as fotos de img/ (geradas por scripts/gerar_imagens_matricula.py).
+A página é montada com o MESMO <style>, cabeçalho, rodapé, GA4, Meta Pixel e script de menu de site/index.html.
+O conteúdo dos cursos vem de site/matricula-cursos-presenciais/cursos.json (scripts/sincronizar_catalogo.py, a partir
+do catálogo público da escola) e as fotos de img/ (scripts/gerar_imagens_matricula.py); o certificado de amostra, de
+scripts/gerar_certificado_modelo.py; as fotos reais da sede, de /assets/otim (fora do Git, só no servidor).
 
-Redesenho de 04/10/2026, focado em conversão (especificação, diagnóstico e julgamento no README, seção
-"Página de matrícula: redesenho para conversão"):
-  - topo curto, sem botão-âncora: o primeiro botão da página já leva ao checkout de um curso;
-  - catálogo em cartões, cada um com preço e botão "Fazer matrícula"; detalhes, sobre e dúvidas do curso
-    num <details>; comparador dos três cursos de primeiros socorros;
-  - modo curso: quem chega com ?curso=<slug> (anúncio, home, chat) vê a ficha daquele curso no topo,
-    escolhida por um script no <head> antes da primeira pintura, e o ViewContent dispara ao carregar;
-  - "O que acontece depois que você paga" e os 7 dias para desistir logo depois do catálogo;
-  - turmas para grupos numa faixa compacta no fim, com o formulário recolhido;
-  - barra fixa de matrícula no celular quando há um curso em foco e nenhum botão na tela;
-  - dez dos treze links para a plataforma da escola saem; os três que ficam (cabeçalho, uma pergunta e o
-    rodapé) levam UTM e disparam saida_escola/SaidaEscola. Quem chega de um anúncio leva as utm_* dele nesses links (no lugar
-    das nossas), para a venda feita na escola carregar a campanha.
-Regras que continuam: cara institucional, sem urgência falsa, sem depoimento ou número inventado (o gerador
-recusa marcadores [INSERIR …]), sem telefone nem WhatsApp da secretaria, prometer só o que o sistema cumpre.
+Reconstrução de 05/10/2026 (pedido do Matheus: página curta, clara, institucional, celular primeiro, focada na matrícula;
+referência: escola.cursoscruzvermelha.org). Ordem: topo → categorias → cursos → fotos → como funciona → certificado →
+história → local → dúvidas → empresas e grupos → chamada final. Sem "próxima turma" nem datas (não há fonte de dados;
+decisão do Matheus). Cada curso tem um cartão (foto, categoria, frase, carga, requisito, preço em duas linhas, "Garantir
+vaga" e "Ver detalhes") e uma ficha (.mr-det) escondida: "Ver detalhes" a leva para a janela #mr-janela (dialog) e a devolve
+ao fechar; sem JavaScript, #det-<slug> a mostra por :target; com ?curso=<slug> (anúncio, home, chat) ela abre no topo, antes
+da primeira pintura, e o ViewContent sai ao carregar. Barra fixa no celular ("Ver cursos"; com curso em foco, "Garantir
+minha vaga"), navegação fixa da página no computador. O formulário de turma (static/turmas.js, api/turmas.php) é a janela
+#turma-form-bloco, aberta pelos botões data-turma-abrir. Regras que continuam: cara institucional, sem urgência falsa, sem
+depoimento ou número inventado (o gerador recusa marcadores [INSERIR …]), sem telefone nem WhatsApp da secretaria, só
+afirmações com fonte ("Informação em breve" onde não há dado), prometer só o que o sistema cumpre.
 
 Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_matricula.py
       && python3 scripts/gerar_matricula_presencial.py
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 
-Os botões levam ao checkout (CHECKOUT_URL) com ?curso=<slug>&via=<lugar do botão>; o script da página
-acrescenta as UTMs/fbclid/gclid da URL atual. Sem JavaScript os links já funcionam.
-
-Turmas sob demanda (04/10/2026): seção #turmas-sob-demanda para grupos de 15 a 30 alunos, qualquer curso
-em inglês e primeiros socorros para jovens de 12 a 14 anos. O formulário (static/turmas.js) manda para
-api/turmas.php; as regras estão em api/lib/turmas.php. Link de anúncio:
-?turma=1&turma_curso=<slug>&idioma=en&alunos=15 abre o formulário preenchido.
+Os botões levam ao checkout (CHECKOUT_URL) com ?curso=<slug>&via=<lugar do botão>; o script da página acrescenta as
+UTMs/fbclid/gclid da URL atual, e passa as utm_* do anúncio aos links da escola. Sem JavaScript os links já funcionam.
+Link de anúncio para turma: ?turma=1&turma_curso=<slug>&idioma=en&alunos=15 abre o formulário preenchido.
 """
 from __future__ import annotations
 
@@ -70,9 +62,9 @@ TURMA_EXTRAS = {"primeiros-socorros-jovens": "Primeiros Socorros para Jovens (12
 
 # Título e descrição seguem as consultas do Search Console (docs/seo-consultas-2026-09.md): "cruz vermelha cursos",
 # "cursos cruz vermelha rj", "curso de primeiros socorros cruz vermelha rj".
-TITULO = "Cursos e matrícula | Cruz Vermelha Brasileira Rio de Janeiro"
-DESCRICAO = ("Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro: primeiros socorros, bombeiro civil e "
-             "cuidador de idosos, no Centro do Rio. Inscrição de R$ 99.")
+TITULO = "Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro"
+DESCRICAO = ("Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro, no Centro do Rio: primeiros socorros, bombeiro "
+             "civil, cuidador de idosos e mais. Carga horária, valores e matrícula com inscrição de R$ 99.")
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
 IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
@@ -273,32 +265,45 @@ FAQ_PAGINA = [
      "Não. Os R$ 99 são a inscrição: garantem sua vaga no curso escolhido, na Escola de Educação e Saúde, a escola da Cruz "
      "Vermelha Brasileira Rio de Janeiro. O valor de cada curso, de R$ 150 a R$ 950, aparece no cartão dele e é pago depois, "
      f"na {LINK_ESCOLA_FAQ}, à vista ou parcelado com juros."),
-    ("Quando começa minha aula?", RESPOSTA_QUANDO, None),
-    ("Posso desistir depois de pagar?",
-     GARANTIA_7_DIAS + (" " + GARANTIA_DEPOIS if GARANTIA_APOS_7_DIAS else "") + " Para pedir, use o chat “Fale com a gente”, "
-     "no assunto “Pagamento ou PIX”. As regras completas estão na página de cancelamento e reembolso.",
-     html.escape(GARANTIA_7_DIAS + (" " + GARANTIA_DEPOIS if GARANTIA_APOS_7_DIAS else "")) + " Para pedir, use o chat "
-     "“Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas estão na "
-     '<a href="/reembolso/">página de cancelamento e reembolso</a>.'),
-    ("Posso parcelar?",
+    ("Como funciona a inscrição?",
+     "Você escolhe o curso, informa nome, CPF, e-mail e telefone celular e paga a inscrição de R$ 99, por PIX ou cartão, sem "
+     "criar conta. " + RESPOSTA_QUANDO, None),
+    ("Posso pagar com cartão? Posso parcelar?",
      "A inscrição de R$ 99 é paga à vista, por PIX ou cartão. O valor do curso é pago na plataforma da escola, à vista ou "
      "parcelado com juros, nas condições informadas lá.", None),
-    ("Qual curso de primeiros socorros eu faço?", "__COMPARAR__", "__COMPARAR_HTML__"),
-    ("O certificado é reconhecido?",
-     "Sim. Quem conclui o curso recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a "
-     "carga horária. A Cruz Vermelha é reconhecida nacional e internacionalmente pela tradição em formação humanitária e em "
-     "emergências, e a Cruz Vermelha Brasileira é a Sociedade Nacional, no Brasil, do Movimento Internacional da Cruz Vermelha "
-     "e do Crescente Vermelho. Como todo curso livre, aqui ou em qualquer instituição, ele não passa pelo MEC, que regula a "
-     "educação formal (ensino técnico, graduação e pós). No Bombeiro Civil, a homologação profissional é feita ao final do "
-     "curso, à parte.",
-     None),
-    ("Os cursos são gratuitos?",
-     "Não. Os sete cursos presenciais são pagos: a inscrição de R$ 99 garante a vaga, e o valor do curso, de R$ 150 a R$ 950, "
-     "é pago depois. Quem quer aprender e servir pode ser voluntário, num caminho separado dos cursos.", None),
-    ("Onde são as aulas?",
+    ("Quando pago o restante do curso?",
+     "Depois da inscrição, na plataforma da escola, à vista ou parcelado com juros. Os valores de cada curso estão nos cartões "
+     "desta página.", None),
+    ("Onde acontecem as aulas?",
      "Na sede da filial, o Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Todos os "
      "cursos são presenciais.", None),
-    ("Preciso criar conta ou escolher turma agora?", RESPOSTA_CONTA, None),
+    ("Como recebo as informações da minha turma?", RESPOSTA_QUANDO + " Tudo chega no e-mail informado na inscrição.", None),
+    ("Qual curso de primeiros socorros eu faço?", "__COMPARAR__", None),
+    ("Recebo certificado? Ele é reconhecido?",
+     "Sim. Quem conclui os requisitos do curso recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, "
+     "o curso e a carga horária. A Cruz Vermelha é reconhecida nacional e internacionalmente pela tradição em formação "
+     "humanitária e em emergências. Como todo curso livre, aqui ou em qualquer instituição, ele não passa pelo MEC, que regula "
+     "a educação formal (ensino técnico, graduação e pós). No Bombeiro Civil, a homologação profissional é feita ao final do "
+     "curso, à parte.", None),
+    ("Posso fazer o curso sendo menor de idade?",
+     "Cada curso pede uma escolaridade mínima, informada no cartão dele (Ensino Fundamental ou Ensino Médio). Sobre idade "
+     "mínima: informação em breve. Em caso de dúvida, pergunte no chat da página antes de pagar. Para jovens de 12 a 14 anos "
+     "há uma turma própria de primeiros socorros, pedida pelo responsável ou pela escola em “Solicitar uma turma”.", None),
+    ("Posso cancelar minha inscrição?",
+     GARANTIA_7_DIAS + " Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas estão "
+     "na página de cancelamento e reembolso.",
+     html.escape(GARANTIA_7_DIAS) + " Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras "
+     'completas estão na <a href="/reembolso/">página de cancelamento e reembolso</a>.'),
+    ("O que acontece se a turma não for formada?",
+     "Se não houver turma com horário compatível para você, a inscrição é devolvida por inteiro, mesmo depois dos 7 dias. "
+     "As regras completas estão na página de cancelamento e reembolso.",
+     'Se não houver turma com horário compatível para você, a inscrição é devolvida por inteiro, mesmo depois dos 7 dias. '
+     'As regras completas estão na <a href="/reembolso/">página de cancelamento e reembolso</a>.'),
+    ("Vocês oferecem cursos para empresas e grupos?",
+     f"Sim. Com {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, a turma é só do grupo (empresa, escola, condomínio, instituição), com "
+     "data combinada com a secretaria e o mesmo valor por pessoa dos cursos, na sede; em outro local, depende de aprovação. "
+     "Qualquer curso pode ser dado em inglês, com professor ou tradutor. Peça em “Solicitar uma turma”: nada é cobrado agora e "
+     "a secretaria responde em até 3 dias úteis.", None),
 ]
 # --- o certificado (modelo da filial, 04/10/2026; imagens de amostra de scripts/gerar_certificado_modelo.py) ------
 # Só afirmações com fonte: "reconhecida nacional e internacionalmente pela tradição em formação humanitária" (cursos.json,
@@ -336,245 +341,305 @@ FAQ_TURMAS = [
 ]
 
 
-# --- CSS e script da página (redesenho de 04/10/2026) ----------------------------------------------------
+# --- reconstrução de 05/10/2026 ---------------------------------------------------------------------------------
+# Categorias do filtro (o id vai no data-cat dos cartões). Curso fora de CATEGORIA_DE cai em "formacao" com aviso.
+CATEGORIAS = [("todos", "Todos"), ("emergencia", "Emergência"), ("saude", "Saúde"), ("formacao", "Formação profissional"),
+              ("estetica", "Estética")]
+CATEGORIA_DE = {"primeiros-socorros-basico": "emergencia", "suporte-basico-de-vida": "emergencia",
+                "primeiros-socorros-lei-lucas": "emergencia", "puncao-venosa": "saude", "bombeiro-civil": "formacao",
+                "cuidador-de-idosos": "formacao", "micropigmentacao-labial": "estetica"}
+# Situação da turma por curso (selo no cartão). Sem fonte de dados hoje: fica vazio e nada é impresso. Para usar,
+# preencha {"slug": "vagas_abertas"} com uma das chaves de STATUS_ROTULO. Nunca inventar.
+STATUS_TURMA: dict[str, str] = {}
+STATUS_ROTULO = {"vagas_abertas": "Vagas abertas", "ultimas_vagas": "Últimas vagas", "formacao_turma": "Turma em formação",
+                 "esgotado": "Esgotado", "breve_turma": "Nova turma em breve"}
+# Materiais necessários por curso: a escola ainda não informou. "Informação em breve" até lá.
+MATERIAIS: dict[str, str] = {}
+# Fotos reais da sede (servidas de /assets/otim, fora do Git; legendas de site/index.html e site/historia/index.html).
+FOTO_TOPO = {"src": "/assets/otim/auditorio-voluntarios-960.webp",
+             "srcset": "/assets/otim/auditorio-voluntarios-480.webp 480w, /assets/otim/auditorio-voluntarios-960.webp 960w",
+             "alt": "Turma em formação no auditório da sede da Cruz Vermelha Brasileira Rio de Janeiro",
+             "legenda": "Turma em formação no auditório da sede"}
+FOTOS_AULAS = [
+    {"src": "/assets/otim/auditorio-voluntarios-480.webp", "srcset": "/assets/otim/auditorio-voluntarios-480.webp 480w, /assets/otim/auditorio-voluntarios-960.webp 960w",
+     "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Turma em formação no auditório da sede"},
+    {"src": "/assets/otim/voluntario-microfone-480.webp", "srcset": "/assets/otim/voluntario-microfone-480.webp 480w, /assets/otim/voluntario-microfone-960.webp 960w",
+     "alt": "Instrutor falando ao microfone durante capacitação na sede", "legenda": "Instrutor durante capacitação na sede"},
+    {"src": "/assets/otim/equipe-corredor-480.webp", "srcset": "/assets/otim/equipe-corredor-480.webp 480w, /assets/otim/equipe-corredor-960.webp 960w",
+     "alt": "Equipe da Cruz Vermelha Brasileira Rio de Janeiro no Palácio da Cruz Vermelha", "legenda": "Equipe no Palácio da Cruz Vermelha"},
+    {"src": "/assets/otim/hero-equipe-grupo-960.webp", "srcset": "/assets/otim/hero-equipe-grupo-960.webp 960w",
+     "alt": "Turma reunida no auditório da sede", "legenda": "Turma reunida no auditório da sede"},
+]
+FOTO_HISTORIA = {"src": "/assets/otim/historia-varanda-escola-1917-480.webp",
+                 "srcset": "/assets/otim/historia-varanda-escola-1917-480.webp 480w, /assets/otim/historia-varanda-escola-1917-960.webp 960w",
+                 "alt": "Enfermeiras de uniforme branco e véu enfileiradas na varanda da Escola de Enfermeiras, em 1917",
+                 "legenda": "Enfermeiras voluntárias e profissionais na varanda da Escola de Enfermeiras, em 1917."}
+FOTO_FACHADA = {"src": "/assets/otim/historia-fachada-noturna-767.webp",
+                "alt": "Fachada iluminada do Palácio da Cruz Vermelha, à noite", "legenda": "Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10"}
+# Só fatos de /historia/ (literais: "20 de outubro de 1914, começa o primeiro curso de Enfermeiras Voluntárias";
+# "construído entre 1919 e 1923"; "tombado como patrimônio cultural federal"; fundação em 5 de dezembro de 1908).
+TEXTO_HISTORIA = ("A Escola de Educação e Saúde é a escola da Cruz Vermelha Brasileira Rio de Janeiro. A Cruz Vermelha forma pessoas "
+                  "no Rio desde 1914, quando começou o primeiro curso, de Enfermeiras Voluntárias. As aulas acontecem na sede da "
+                  "filial, o Palácio da Cruz Vermelha, construído entre 1919 e 1923 e tombado como patrimônio cultural federal.")
+FATOS_HISTORIA = [("1908", "Fundação da Cruz Vermelha Brasileira, no Rio"), ("1914", "Primeiro curso, de Enfermeiras Voluntárias"),
+                  ("1923", "Inauguração do Palácio da Cruz Vermelha")]
+MAPA_ROTA = "https://www.google.com/maps/dir/?api=1&amp;destination=Pra%C3%A7a+da+Cruz+Vermelha%2C+10%2C+Centro%2C+Rio+de+Janeiro+-+RJ%2C+20230-130"
+MAPA_EMBED = "https://www.google.com/maps?q=Pra%C3%A7a+da+Cruz+Vermelha%2C+10%2C+Centro%2C+Rio+de+Janeiro+-+RJ&amp;output=embed"
+# Como funciona: o fluxo real do checkout (sem conta antes de pagar; a conta e a turma vêm depois, por e-mail).
+PASSOS_COMO = [
+    ("Escolha seu curso", "Veja os detalhes, a carga horária e o investimento de cada curso."),
+    ("Garanta sua vaga", "Pague a inscrição de R$ 99 por PIX ou cartão, sem criar conta."),
+    ("Complete sua matrícula", "Com o pagamento confirmado, você recebe por e-mail o comprovante e as orientações da Escola: "
+                               "turma, horário e o valor do curso, pago na plataforma da escola."),
+    ("Venha para a aula", "Compareça na data da sua turma, na Praça da Cruz Vermelha, 10, e participe da formação presencial."),
+]
+
+# --- CSS e script da página (reconstrução de 05/10/2026) --------------------------------------------------
 # Texto com contraste de 7:1 sobre o fundo claro: #4a5568 no lugar de --muted (3,8:1) nos textos de apoio.
-# O chat e o aviso de cookies só mudam aqui, por CSS local com mais especificidade (html body …): chat.js,
-# chat.css e consentimento.js são compartilhados pelo site inteiro e não mudam neste redesenho. Este CSS
-# depende das classes .cv-chat / .cv-chat-abrir / .cv-chat-abrir-rotulo (chat.js) e .cvrj-ck (consentimento.js).
+# Celular primeiro: as regras base são as do celular; as de computador ficam em @media (min-width: 720px) e 1024px.
 CSS_PAGINA = """
   <style>
-    :root { --apoio: #4a5568; }
-    /* modo curso (?curso=<slug>): o script do <head> marca <html data-curso>; a ficha certa aparece por CSS */
-    .mr-so-curso { display: none; }
-    html[data-curso] .mr-so-curso { display: inline; }
-    html[data-curso] .mr-so-geral { display: none; }
-    html[data-curso] .mr-hero-apoio { display: none; }
-    html[data-curso] .mr-hero { padding: 14px 0 4px; border-bottom: 0; background: transparent; }
-    html[data-curso] .mr-hero-grid { display: block; }
-    html[data-curso] .mr-hero .eyebrow { display: none; }
-    html[data-curso] .mr-hero h1 { font-size: .95rem; font-weight: 700; color: var(--apoio); letter-spacing: 0; line-height: 1.35; margin: 0; }
-    .mr-ficha { display: none; }
-    /*__FICHAS__*/
+    :root { --apoio: #4a5568; --verde: #0f7b3e; --verde-claro: #e9f7ef; --sombra-leve: 0 10px 24px rgba(16, 24, 40, .08); }
+    #matricula-cursos-presenciais { color: var(--text); }
+    #matricula-cursos-presenciais .wrap { max-width: 1180px; }
+    #matricula-cursos-presenciais section { padding: 32px 0; }
+    #matricula-cursos-presenciais .eyebrow { font-size: .72rem; letter-spacing: .12em; }
+    #matricula-cursos-presenciais h2 { color: var(--black); font-size: clamp(1.5rem, 5.2vw, 2.1rem); letter-spacing: -.025em; line-height: 1.12; margin: 6px 0 10px; }
+    .mr-sub { color: var(--apoio); font-size: 1.02rem; margin: 0 0 22px; max-width: 62ch; }
+    .mr-cta { min-height: 54px; font-size: 1rem; }
+    .mr-micro { color: var(--apoio); font-size: .85rem; margin: 10px 0 0; line-height: 1.55; }
+    .mr-micro i, .mr-ok i { color: var(--verde); }
+    .mr-check { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+    .mr-check li { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: .95rem; color: var(--text); }
+    .mr-check i { color: var(--verde); flex-shrink: 0; }
+    .mr-escondido { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+    /* navegação da página: aparece depois do topo, só no computador */
+    .mr-nav { position: sticky; top: var(--mr-cabecalho, 84px); z-index: 40; background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); transform: translateY(-110%); transition: transform .25s; display: none; }
+    .mr-nav.visivel { transform: none; }
+    .mr-nav .wrap { display: flex; align-items: center; gap: 24px; min-height: 56px; }
+    .mr-nav ul { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; }
+    .mr-nav a { color: var(--black); font-weight: 600; font-size: .92rem; padding: 6px 0; border-bottom: 2px solid transparent; }
+    .mr-nav a.ativo, .mr-nav a:hover { border-bottom-color: var(--red); }
+    .mr-nav .btn { margin-left: auto; min-height: 42px; padding: 8px 18px; font-size: .9rem; }
 
     /* topo */
-    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 20px 0 16px; }
-    .mr-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 40px; align-items: center; }
-    .mr-hero .eyebrow { font-size: .78rem; }
-    .mr-hero h1 { color: var(--black); font-size: clamp(1.8rem, 3.2vw, 2.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 8px 0 12px; }
-    .mr-hero-sub { font-size: 1.05rem; color: var(--apoio); margin: 0 0 14px; max-width: 62ch; }
-    .mr-confianca-linha { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--text); font-weight: 600; font-size: .95rem; }
-    .mr-confianca-linha li { display: inline-flex; align-items: center; gap: 8px; }
-    .mr-confianca-linha i { color: #0f7b3e; }
-    .mr-hero-passos { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
-    .mr-hero-passos-titulo { font-weight: 800; color: var(--black); margin: 0 0 8px; }
-    .mr-hero-passos ol { margin: 0 0 14px; padding-left: 20px; color: var(--text); font-size: .95rem; }
-    .mr-hero-passos li { margin: 6px 0; }
-    .mr-selo { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: #0f5132; background: #e9f7ef; border-radius: 999px; padding: 5px 10px; margin: 0; }
+    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 26px 0 28px !important; }
+    .mr-hero-grid { display: grid; gap: 22px; align-items: center; }
+    .mr-hero h1 { color: var(--black); font-size: clamp(1.65rem, 6.6vw, 2.6rem); line-height: 1.06; letter-spacing: -.03em; margin: 8px 0 10px; }
+    .mr-hero-sub { font-size: 1.05rem; color: var(--text); margin: 0 0 6px; max-width: 54ch; }
+    .mr-hero-ajuda { font-size: .97rem; color: var(--apoio); margin: 0 0 16px; }
+    .mr-hero .mr-check { margin: 0 0 20px; }
+    .mr-hero .mr-cta { width: 100%; }
+    .mr-hero-local { display: flex; align-items: flex-start; gap: 8px; color: var(--apoio); font-size: .92rem; margin: 14px 0 0; }
+    .mr-hero-local i { color: var(--red); flex-shrink: 0; margin-top: 3px; }
+    .mr-hero-foto { margin: 0; position: relative; }
+    .mr-hero-foto img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius); display: block; background: #ddd; box-shadow: var(--sombra-leve); }
+    .mr-hero-foto figcaption { position: absolute; left: 12px; bottom: 12px; background: rgba(255, 255, 255, .94); color: var(--black); font-size: .78rem; font-weight: 600; padding: 6px 10px; border-radius: 8px; }
+    /* modo curso (?curso=): o topo encolhe e a ficha do curso aparece logo abaixo */
+    html[data-curso] .mr-hero { padding: 12px 0 8px !important; border-bottom: 0; background: transparent; }
+    html[data-curso] .mr-hero-grid { display: block; }
+    html[data-curso] .mr-hero .eyebrow, html[data-curso] .mr-hero-sub, html[data-curso] .mr-hero-ajuda, html[data-curso] .mr-hero .mr-check,
+    html[data-curso] .mr-hero .mr-cta, html[data-curso] .mr-hero-local, html[data-curso] .mr-hero-foto { display: none; }
+    html[data-curso] .mr-hero h1 { font-size: .95rem; font-weight: 700; color: var(--apoio); letter-spacing: 0; line-height: 1.35; margin: 0; }
 
-    /* certificado (amostra) */
-    .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 10px; box-shadow: 0 10px 30px rgba(16, 24, 40, .16); background: #fff; }
-    .mr-hero-cert { margin: 0; }
-    .mr-hero-cert .mr-cert-img { transform: rotate(-1.5deg); }
-    .mr-hero-cert figcaption { margin-top: 8px; font-size: .8rem; color: var(--apoio); text-align: center; line-height: 1.35; }
-    .mr-hero-cert figcaption b { color: var(--black); font-size: .9rem; }
-    .mr-ficha-cert { margin: 0; }
-    .mr-ficha-cert figcaption { margin-top: 10px; font-size: .85rem; color: var(--apoio); text-align: center; }
-    .mr-cert-curto { display: flex; gap: 12px; align-items: center; margin: 14px 0 0; padding: 10px 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; }
-    .mr-cert-curto .mr-cert-img { width: 96px; flex-shrink: 0; border-radius: 4px; box-shadow: 0 2px 8px rgba(16, 24, 40, .14); }
-    .mr-cert-curto p { margin: 0; font-size: .88rem; color: var(--text); line-height: 1.4; }
-    .mr-cert-curto b { color: var(--black); }
-    .mr-ficha .mr-cert-curto { display: none; }
-    .mr-cert { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 32px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; margin-top: 22px; scroll-margin-top: 96px; }
-    .mr-cert-figura { margin: 0; }
-    .mr-cert-texto h3 { color: var(--black); font-size: 1.3rem; margin: 4px 0 12px; line-height: 1.2; }
-    .mr-cert-texto ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-    .mr-cert-texto li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; line-height: 1.5; }
-    .mr-cert-texto li > span { min-width: 0; }
-    .mr-cert-texto li i { color: #0f7b3e; flex-shrink: 0; margin-top: 2px; }
-    .mr-cert-nota { color: var(--apoio); font-size: .82rem; margin: 12px 0 0; }
-
-    /* ficha do curso (modo curso) */
-    .mr-fichas { margin: 0 auto; }
-    .mr-ficha { grid-template-columns: 44% minmax(0, 1fr); gap: 28px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin: 8px 0 28px; }
-    .mr-ficha-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
-    .mr-ficha-chapeu { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--red); font-weight: 800; margin: 0 0 6px; }
-    .mr-ficha-titulo { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--black); letter-spacing: -.02em; line-height: 1.12; margin: 0 0 10px; }
-    .mr-ficha-meta { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--text); font-size: .92rem; margin: 0 0 14px; }
-    .mr-ficha-meta span { display: inline-flex; align-items: center; gap: 6px; }
-    .mr-ficha-meta i { color: var(--red); }
-    .mr-ficha .mr-cta { min-width: 280px; }
-    .mr-ficha-promessa { font-size: 1.02rem; line-height: 1.5; color: var(--text); margin: 0 0 12px; }
-    .mr-aprende { margin: 16px 0 0; padding: 14px 16px; background: var(--soft); border-radius: 12px; }
-    .mr-aprende-titulo { font-weight: 800; color: var(--black); margin: 0 0 6px; }
-    .mr-aprende ul { list-style: none; margin: 0; padding: 0; }
-    .mr-aprende li { display: flex; gap: 8px; align-items: baseline; margin: 4px 0; font-size: .95rem; }
-    .mr-aprende li i { color: #0f7b3e; flex: none; }
-    .mr-para-quem { font-size: .92rem; color: var(--text); margin: 10px 0 0; }
-    .mr-curso-detalhes > .mr-aprende { margin: 0 0 6px; grid-column: 1 / -1; }
-    .mr-objecao { margin: 14px 0 0; border-left: 3px solid var(--red); padding: 2px 0 2px 14px; font-size: .93rem; color: var(--text); }
-    .mr-objecao p { margin: 4px 0 0; line-height: 1.55; }
-    .mr-objecao .mr-objecao-p { font-weight: 800; color: var(--black); margin: 0; }
-    .mr-mini-passos { margin: 14px 0 0; padding-left: 20px; color: var(--apoio); font-size: .9rem; }
-    .mr-mini-passos li { margin: 2px 0; }
-    .mr-ficha-links { font-size: .9rem; margin: 14px 0 0; color: var(--apoio); }
-    .mr-ficha-links a { color: var(--red); font-weight: 700; }
-
-    /* preço e botão (ficha, cartão e detalhes) */
-    .mr-preco { margin: 4px 0 16px; }
-    .mr-preco-agora { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 10px; margin: 0; }
-    .mr-preco-agora span { color: var(--apoio); font-size: .88rem; }
-    .mr-preco-agora b { font-size: 1.8rem; font-weight: 800; color: var(--black); line-height: 1.1; }
-    .mr-preco-depois { color: var(--apoio); font-size: .95rem; margin: 4px 0 0; }
-    .mr-preco-obs { font-size: .88rem; color: var(--apoio); border-left: 3px solid var(--line); padding-left: 10px; margin: 8px 0 0; }
-    .mr-preco-total { font-weight: 700; color: var(--black); margin: 6px 0 0; }
-    .mr-cta { min-height: 56px; font-size: 1rem; }
-    .mr-micro { color: var(--apoio); font-size: .85rem; margin: 10px 0 0; line-height: 1.55; }
-    .mr-micro i { color: #0f7b3e; }
+    /* ficha / detalhes de cada curso: escondida na página; aparece na janela, no modo curso ou por #det-<slug> */
+    .mr-dets { padding: 0 !important; }
+    .mr-det { display: none; }
+    .mr-det:target, html[data-curso] .mr-det.mr-det-foco { display: block; }
+    html[data-curso] .mr-dets { padding: 0 0 8px !important; }
+    html[data-curso] .mr-det.mr-det-foco { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--sombra-leve); padding: 18px 16px 20px; }
+    .mr-det-cab { display: grid; gap: 14px; }
+    .mr-det-foto { margin: 0; }
+    .mr-det-foto img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
+    .mr-det-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--red); margin: 0 0 6px; }
+    .mr-det h3 { color: var(--black); font-size: 1.45rem; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 8px; }
+    .mr-det-frase { font-size: 1rem; color: var(--text); margin: 0 0 12px; }
+    .mr-meta { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text); font-size: .9rem; }
+    .mr-meta li { display: inline-flex; align-items: center; gap: 6px; }
+    .mr-meta i { color: var(--red); }
+    .mr-preco { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+    .mr-preco > div { min-width: 0; }
+    .mr-preco small { display: block; color: var(--apoio); font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; font-weight: 700; }
+    .mr-preco b { display: block; color: var(--black); font-size: 1.35rem; line-height: 1.15; }
+    .mr-preco span { display: block; color: var(--apoio); font-size: .82rem; }
+    .mr-preco .mr-mais { color: var(--apoio); font-weight: 800; font-size: 1.2rem; }
+    .mr-preco-pag { grid-column: 1 / -1; margin: 0; font-size: .82rem; color: var(--apoio); display: flex; gap: 6px; align-items: center; }
+    .mr-preco-pag i { color: var(--red); }
+    .mr-det-acoes { display: grid; gap: 8px; margin: 0 0 6px; }
+    .mr-det-acoes .mr-cta { width: 100%; }
+    .mr-det-corpo h4 { color: var(--black); font-size: 1rem; margin: 18px 0 6px; }
+    .mr-det-corpo p, .mr-det-corpo li { color: var(--text); font-size: .95rem; line-height: 1.6; }
+    .mr-det-corpo p { margin: 0 0 8px; }
+    .mr-det-corpo ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+    .mr-det-corpo ul li { display: flex; gap: 8px; align-items: baseline; }
+    .mr-det-corpo ul li i { color: var(--verde); flex: none; }
+    .mr-det-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 0; }
+    .mr-det-grade div { background: var(--soft); border-radius: 10px; padding: 10px 12px; }
+    .mr-det-grade small { display: block; color: var(--apoio); font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+    .mr-det-grade b { color: var(--black); font-size: .95rem; font-weight: 600; }
+    .mr-det-cert { display: flex; gap: 12px; align-items: center; background: var(--soft); border-radius: 12px; padding: 10px 12px; margin: 14px 0 0; }
+    .mr-det-cert img { width: 84px; height: auto; border-radius: 4px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(16, 24, 40, .14); }
+    .mr-det-cert p { margin: 0; font-size: .88rem; }
+    .mr-det-cert a { color: var(--red); font-weight: 700; }
+    .mr-det-faq details { border-top: 1px solid var(--line); }
+    .mr-det-fim { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
+    .mr-det-fim .mr-cta { width: 100%; }
+    .mr-turma-linha { color: var(--apoio); font-size: .9rem; margin: 12px 0 0; }
+    .mr-turma-linha a, .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
     .mr-chat-atalho { font-size: .9rem; margin: 10px 0 0; color: var(--apoio); }
-    .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
-
-    /* catálogo em cartões */
-    .mr-catalogo { padding: 16px 0 48px; }
-    html[data-curso] .mr-catalogo { padding-top: 4px; }
-    .mr-catalogo-titulo { font-size: 1.25rem; color: var(--black); margin: 8px 0 14px; }
-    html:not([data-curso]) .mr-catalogo-titulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-    .mr-cartoes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
-    .mr-grupo-rotulo { grid-column: 1 / -1; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--apoio); font-weight: 800; margin: 16px 0 -6px; }
-    .mr-grupo-rotulo:first-child { margin-top: 0; }
-    .mr-curso { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 96px; transition: box-shadow .2s, transform .2s; }
-    .mr-curso:not(.aberto):hover { box-shadow: 0 12px 28px rgba(16, 24, 40, .10); transform: translateY(-2px); }
-    .mr-curso-capa { position: relative; flex-shrink: 0; }
-    .mr-curso-tag { display: none; }
-    .mr-cartoes .mr-curso-acao .mr-cta { box-shadow: none; min-height: 48px; font-size: .97rem; }
-    /* cartão da turma para grupos */
-    .mr-curso-turma { display: flex; flex-direction: column; gap: 8px; justify-content: center; border: 1px dashed #cbd5e1; border-radius: var(--radius); padding: 22px 20px; background: var(--soft); }
-    .mr-curso-turma > i { color: var(--red); font-size: 1.6rem; }
-    .mr-curso-turma h3 { margin: 0; font-size: 1.1rem; color: var(--black); line-height: 1.25; }
-    .mr-curso-turma p { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
-    .mr-curso-turma .btn { margin-top: 8px; min-height: 46px; font-size: .95rem; background: #fff; }
-    /* computador e tablet: cartão em pé, foto de capa em cima e o grupo como etiqueta; aberto, volta a ficar deitado */
-    @media (min-width: 720px) {
-      .mr-grupo-rotulo { display: none; }
-      .mr-curso:not(.aberto) .mr-curso-topo { display: block; padding: 0; }
-      .mr-curso:not(.aberto) .mr-curso-mini { width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 0; }
-      .mr-curso:not(.aberto) .mr-curso-tag { display: inline-block; position: absolute; left: 12px; bottom: 10px; background: rgba(255, 255, 255, .94);
-        color: var(--black); font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
-      .mr-curso:not(.aberto) .mr-curso-titulo { padding: 14px 16px 0; }
-      .mr-curso:not(.aberto) .mr-curso-beneficio { margin: 6px 16px 0; }
-      .mr-curso:not(.aberto) .mr-curso-acao { padding: 14px 16px 16px; }
-      .mr-curso:not(.aberto) .mr-curso-mais > summary { padding: 0 16px; }
-      /* aberto, o cartão ocupa a linha: preço e botão lado a lado, sem botão de 1.100 px */
-      .mr-curso.aberto .mr-curso-acao { flex-direction: row; align-items: center; gap: 28px; }
-      .mr-curso.aberto .mr-curso-acao .mr-cta { width: auto; padding: 0 32px; }
-    }
-    .mr-curso.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
-    .mr-curso.aberto, .mr-curso:has(> .mr-curso-mais[open]) { grid-column: 1 / -1; }
-    /* Cartão compacto (miniatura + nome) em qualquer largura: a 1ª fileira de botões cabe na primeira tela de
-       1280x800, e a foto grande fica nos detalhes. */
-    .mr-curso-topo { display: flex; align-items: center; gap: 14px; padding: 16px 18px 0; }
-    .mr-curso-mini { width: 88px; height: 66px; object-fit: cover; display: block; border-radius: 8px; flex-shrink: 0; background: var(--soft); }
-    .mr-curso-topo > div { min-width: 0; }
-    .mr-curso-nome { font-size: 1.1rem; color: var(--black); margin: 0 0 4px; line-height: 1.2; }
-    .mr-curso-meta { color: var(--apoio); font-size: .88rem; margin: 0; }
-    .mr-curso-beneficio { color: var(--text); font-size: .92rem; margin: 8px 18px 0; }
-    .mr-curso-acao { margin-top: auto; padding: 14px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
-    .mr-preco-curto { margin: 0; display: flex; flex-direction: column; font-size: .88rem; color: var(--apoio); line-height: 1.35; }
-    .mr-preco-curto strong { color: var(--black); font-size: 1.05rem; }
-    .mr-curso-acao .mr-cta { width: 100%; }
-    .mr-curso-mais { border-top: 1px solid var(--line); }
-    .mr-curso-mais > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; padding: 0 18px; font-weight: 700; color: var(--red); list-style: none; }
-    .mr-curso-mais > summary::-webkit-details-marker { display: none; }
-    .mr-curso-mais > summary::after { content: "+"; margin-left: auto; font-size: 1.3rem; line-height: 1; }
-    .mr-curso-mais[open] > summary::after { content: "–"; }
-    .mr-curso-detalhes { padding: 4px 18px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 32px; }
-    .mr-curso-foto-grande { margin: 8px 0 4px; }
-    .mr-curso-foto-grande .mr-foto { width: 100%; max-width: 520px; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
-    .mr-curso-sobre h4, .mr-faq h4 { font-size: 1rem; color: var(--black); margin: 12px 0 6px; }
-    .mr-curso-sobre p { margin: 0 0 10px; color: var(--text); font-size: .95rem; }
-    .mr-curso-fecho { grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 10px; padding-top: 16px; max-width: 620px; }
-    .mr-faq details, .mr-faq-pagina details, .mr-demanda-faq details { border-top: 1px solid var(--line); padding: 10px 0; }
-    .mr-faq summary, .mr-faq-pagina summary, .mr-demanda-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 28px;
-      list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 6px 0; line-height: 1.35; }
-    .mr-faq summary::-webkit-details-marker, .mr-faq-pagina summary::-webkit-details-marker, .mr-demanda-faq summary::-webkit-details-marker,
-    .mr-comparar > summary::-webkit-details-marker { display: none; }
-    .mr-faq summary::after, .mr-faq-pagina summary::after, .mr-demanda-faq summary::after, .mr-comparar > summary::after {
-      content: "+"; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--red);
-      display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
-    .mr-faq details[open] > summary::after, .mr-faq-pagina details[open] > summary::after, .mr-demanda-faq details[open] > summary::after,
-    .mr-comparar[open] > summary::after { content: "−"; }
-    .mr-faq details p, .mr-faq-pagina details p, .mr-demanda-faq details p { margin: 6px 40px 6px 0; color: var(--text); line-height: 1.6; }
-    .mr-turma-linha { color: var(--apoio); font-size: .9rem; margin: 14px 0 0; }
-    .mr-turma-linha a { color: var(--red); font-weight: 700; text-decoration: underline; }
-    .mr-turma-linha-catalogo { margin-top: 24px; }
-
-    /* comparador dos cursos de primeiros socorros */
-    .mr-comparar { grid-column: 1 / -1; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 0 18px; scroll-margin-top: 96px; }
-    .mr-comparar > summary { cursor: pointer; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      font-weight: 700; color: var(--black); list-style: none; font-size: .95rem; }
-    .mr-comparar-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 4px 0 18px; }
-    .mr-comparar-linha { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
-    .mr-comparar-linha p { margin: 0; font-size: .9rem; color: var(--text); }
-    .mr-comparar-linha .mr-comparar-nome { font-weight: 800; color: var(--black); font-size: 1rem; }
-    .mr-comparar-linha .mr-cta { margin-top: auto; min-height: 48px; }
-
-    /* depois da inscrição e garantia */
-    .mr-depois { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 48px 0; }
-    .mr-depois h2, .mr-confianca h2, .mr-faq-pagina h2, .mr-demanda h2 { color: var(--black); font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -.02em; margin: 0 0 18px; line-height: 1.15; }
-    .mr-passos { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .mr-passos li { display: flex; gap: 14px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-    .mr-passos b { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; }
-    .mr-passos h3 { font-size: 1.02rem; color: var(--black); margin: 5px 0 6px; }
-    .mr-passos p { margin: 0; color: var(--text); font-size: .95rem; }
-    .mr-nota-curta { color: var(--apoio); font-size: .92rem; margin: 14px 0 0; }
-    .mr-garantia { display: flex; gap: 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; margin-top: 22px; scroll-margin-top: 96px; }
-    .mr-garantia > i { color: #0f7b3e; background: #e9f7ef; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-    .mr-garantia h3 { margin: 4px 0 6px; color: var(--black); font-size: 1.1rem; }
-    .mr-garantia p { margin: 0 0 8px; color: var(--text); }
-    .mr-garantia-mais summary { cursor: pointer; font-weight: 700; color: var(--red); min-height: 44px; display: flex; align-items: center; }
-    .mr-garantia-mais a { color: var(--red); font-weight: 700; }
-
-    /* confiança */
-    .mr-confianca { padding: 44px 0; }
-    .mr-confianca-texto { max-width: 75ch; color: var(--text); margin: 0 0 18px; }
-    .mr-confianca-itens { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .mr-confianca-itens li { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; color: var(--text); background: var(--soft); border-radius: 12px; padding: 14px; }
-    .mr-confianca-itens i { color: var(--red); flex-shrink: 0; margin-top: 2px; }
-    .mr-confianca-link { margin: 16px 0 0; }
-    .mr-confianca-link a { color: var(--red); font-weight: 700; }
-
-    /* perguntas frequentes */
-    .mr-faq-pagina { padding: 48px 0; border-top: 1px solid var(--line); }
-    .mr-faq-pagina .wrap { max-width: 820px; }
-    .mr-faq-pagina details p a { color: var(--red); font-weight: 600; text-decoration: underline; }
-    .mr-faq-pagina details p a[data-saida] { color: inherit; font-weight: 400; }
-    .mr-faq-chat { margin-top: 20px; }
-    .mr-final { margin-top: 28px; padding: 22px; background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); text-align: center; }
-    .mr-final .btn { min-height: 56px; min-width: 280px; font-size: 1rem; }
-    .mr-final .mr-micro { margin-top: 10px; }
-
-    /* turmas para grupos (faixa compacta; o formulário abre no botão) */
-    .mr-demanda { padding: 44px 0 56px; background: var(--soft); border-top: 1px solid var(--line); }
-    .mr-demanda [hidden] { display: none !important; }
-    .mr-demanda-grade { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 36px; align-items: start; }
-    .mr-demanda h2 { font-size: clamp(1.3rem, 2.6vw, 1.7rem); }
-    .mr-demanda-abertura { color: var(--text); margin: 0 0 12px; }
-    .mr-demanda-itens { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; }
-    .mr-demanda-itens li { display: flex; gap: 10px; color: var(--text); font-size: .95rem; }
-    .mr-demanda-itens li > span { min-width: 0; } /* o texto (com o trecho em inglês) é um item só do flex */
-    .mr-demanda-itens i { color: var(--red); flex-shrink: 0; margin-top: 3px; }
-    .mr-demanda-botao { min-height: 52px; }
-    .mr-demanda-form { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
-    /* O formulário de turma é uma janela (dialog): no computador, centrada; no celular, a tela inteira. */
-    .mr-modal { width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow: auto;
-                overscroll-behavior: contain; margin: auto; border: 0; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); color: var(--text); }
-    .mr-modal::backdrop { background: rgba(15, 19, 24, .55); }
-    .mr-modal-fechar { position: sticky; top: 0; float: right; margin: -12px -12px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%;
-                       background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
-    .mr-modal-fechar:hover, .mr-modal-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
+    /* janela dos detalhes (dialog) */
+    .mr-janela { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; padding: 10px 16px 32px; color: var(--text); overflow: auto; overscroll-behavior: contain; }
+    .mr-janela::backdrop { background: rgba(15, 19, 24, .55); }
+    .mr-janela .mr-det { display: block; }
+    .mr-janela-fechar { position: sticky; top: 0; float: right; margin: -2px -6px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
+    .mr-janela-fechar:hover, .mr-janela-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
     html.mr-modal-aberto { overflow: hidden; }
+
+    /* filtro por categoria */
+    .mr-filtro { padding: 22px 0 0 !important; overflow: hidden; }
+    .mr-filtro h2 { font-size: 1.15rem; margin: 0 0 10px; }
+    .mr-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .mr-chips::-webkit-scrollbar { display: none; }
+    .mr-chip { flex-shrink: 0; min-height: 40px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--black); font: inherit; font-weight: 600; font-size: .92rem; cursor: pointer; transition: background .15s, border-color .15s; }
+    .mr-chip[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+    .mr-chip:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+    /* cursos */
+    .mr-cursos { padding: 16px 0 36px !important; }
+    .mr-grade { display: grid; gap: 14px; }
+    .mr-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 80px; transition: box-shadow .2s, transform .2s; }
+    .mr-card.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
+    .mr-card.oculto { display: none; }
+    .mr-card-capa { position: relative; margin: 0; }
+    .mr-card-capa img { width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; display: block; background: var(--soft); }
+    .mr-card-tag { position: absolute; left: 12px; bottom: 10px; background: rgba(255, 255, 255, .94); color: var(--black); font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
+    .mr-badge { position: absolute; right: 12px; top: 10px; background: var(--verde-claro); color: #0f5132; font-size: .7rem; font-weight: 800; padding: 4px 9px; border-radius: 999px; }
+    .mr-badge.esgotado { background: #fde8e8; color: #9b1c1c; }
+    .mr-badge.breve, .mr-badge.formacao { background: #fff4e0; color: #7c4a03; }
+    .mr-card-corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
+    .mr-card h3 { color: var(--black); font-size: 1.12rem; line-height: 1.22; margin: 0 0 6px; }
+    .mr-card-frase { color: var(--text); font-size: .93rem; margin: 0 0 10px; }
+    .mr-card .mr-meta { margin-bottom: 12px; font-size: .86rem; gap: 4px 12px; }
+    .mr-card .mr-preco { margin-top: auto; }
+    .mr-card-acoes { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .mr-card-acoes .mr-cta { min-height: 50px; font-size: .97rem; box-shadow: none; }
+    .mr-card-acoes .btn-outline { min-height: 46px; font-size: .95rem; background: #fff; }
+    .mr-card-turma { display: flex; flex-direction: column; gap: 8px; justify-content: center; border: 1px dashed #cbd5e1; border-radius: var(--radius); padding: 20px 16px; background: var(--soft); }
+    .mr-card-turma > i { color: var(--red); font-size: 1.6rem; }
+    .mr-card-turma h3 { margin: 0; font-size: 1.1rem; color: var(--black); line-height: 1.25; }
+    .mr-card-turma p { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
+    .mr-card-turma .btn { margin-top: 8px; min-height: 46px; font-size: .95rem; background: #fff; }
+    .mr-vazio { color: var(--apoio); text-align: center; padding: 24px 0; }
+
+    /* fotos */
+    .mr-fotos { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .mr-fotos-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mr-fotos figure { margin: 0; }
+    .mr-fotos img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: #ddd; }
+    .mr-fotos figcaption { font-size: .8rem; color: var(--apoio); margin: 6px 2px 0; line-height: 1.35; }
+
+    /* como funciona (faixa vermelha) */
+    .mr-como { background: var(--red); color: #fff; }
+    .mr-como .eyebrow, .mr-como h2, .mr-como .mr-sub { color: #fff; }
+    .mr-como .eyebrow { opacity: .9; }
+    .mr-como .mr-sub { opacity: .92; }
+    .mr-passos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    .mr-passos li { display: flex; gap: 14px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .22); border-radius: 14px; padding: 14px; }
+    .mr-passos b { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: .9rem; }
+    .mr-passos h3 { color: #fff; font-size: 1rem; margin: 6px 0 4px; }
+    .mr-passos p { color: rgba(255, 255, 255, .92); margin: 0; font-size: .92rem; line-height: 1.5; }
+    .mr-como-nota { margin: 16px 0 0; font-size: .88rem; color: rgba(255, 255, 255, .9); }
+    .mr-como-nota a { color: #fff; text-decoration: underline; font-weight: 700; }
+
+    /* certificado */
+    .mr-cert-grade { display: grid; gap: 18px; align-items: center; }
+    .mr-cert-figura { margin: 0; max-width: 420px; }
+    .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 16px 40px rgba(16, 24, 40, .16); transform: rotate(-1.5deg); }
+    .mr-cert-itens { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .mr-cert-itens li { background: var(--soft); border-radius: 10px; padding: 10px; text-align: center; }
+    .mr-cert-itens i { color: var(--verde); display: block; margin: 0 auto 4px; font-size: 1.1rem; }
+    .mr-cert-itens span { display: block; font-size: .82rem; font-weight: 700; color: var(--black); line-height: 1.25; }
+    .mr-cert-texto p { color: var(--text); font-size: .95rem; margin: 0 0 8px; }
+    .mr-cert-nota { color: var(--apoio); font-size: .82rem; }
+
+    /* história */
+    .mr-historia { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .mr-historia-grade { display: grid; gap: 18px; align-items: center; }
+    .mr-historia figure { margin: 0; }
+    .mr-historia img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); display: block; background: #ddd; }
+    .mr-historia figcaption { font-size: .8rem; color: var(--apoio); margin: 6px 2px 0; }
+    .mr-historia p { color: var(--text); font-size: .97rem; }
+    .mr-historia-link, .mr-local-link { color: var(--red); font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+    .mr-fatos { list-style: none; padding: 0; margin: 14px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .mr-fatos li { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+    .mr-fatos b { display: block; color: var(--red); font-size: 1.25rem; line-height: 1.1; letter-spacing: -.02em; }
+    .mr-fatos span { display: block; color: var(--apoio); font-size: .78rem; line-height: 1.3; margin-top: 2px; }
+
+    /* local */
+    .mr-local-grade { display: grid; gap: 16px; }
+    .mr-local-cartao { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 16px; }
+    .mr-endereco { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 14px; font-size: 1rem; color: var(--text); }
+    .mr-endereco i { color: var(--red); margin-top: 4px; }
+    .mr-endereco b { display: block; color: var(--black); }
+    .mr-local-acoes { display: grid; gap: 8px; }
+    .mr-local-acoes .btn { min-height: 48px; }
+    .mr-mapa { position: relative; border-radius: var(--radius); overflow: hidden; background: #ddd; aspect-ratio: 4 / 3; }
+    .mr-mapa img, .mr-mapa iframe { width: 100%; height: 100%; display: block; border: 0; object-fit: cover; }
+    .mr-mapa-botao { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); white-space: nowrap; min-height: 44px; box-shadow: var(--sombra-leve); }
+    .mr-mapa figcaption { position: absolute; left: 12px; top: 12px; background: rgba(255, 255, 255, .94); font-size: .78rem; font-weight: 600; padding: 5px 9px; border-radius: 8px; color: var(--black); }
+
+    /* dúvidas */
+    .mr-faq .wrap { max-width: 820px; }
+    .mr-faq details, .mr-det-faq details { border-top: 1px solid var(--line); padding: 4px 0; }
+    .mr-faq details:last-of-type { border-bottom: 1px solid var(--line); }
+    .mr-faq summary, .mr-det-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 44px; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; line-height: 1.35; font-size: .97rem; }
+    .mr-faq summary::-webkit-details-marker, .mr-det-faq summary::-webkit-details-marker { display: none; }
+    .mr-faq summary::after, .mr-det-faq summary::after { content: "+"; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
+    .mr-faq details[open] > summary::after, .mr-det-faq details[open] > summary::after { content: "−"; }
+    .mr-faq details p, .mr-det-faq details p { margin: 2px 40px 12px 0; color: var(--text); line-height: 1.6; }
+    .mr-faq details p a { color: var(--red); font-weight: 600; text-decoration: underline; }
+    .mr-faq details p a[data-saida] { color: inherit; font-weight: 400; }
+    .mr-faq-chat { margin-top: 18px; }
+
+    /* empresas e grupos */
+    .mr-grupos { background: var(--soft); border-top: 1px solid var(--line); }
+    .mr-grupos [hidden] { display: none !important; }
+    .mr-grupos-tipos { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .mr-grupos-tipos li { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: .9rem; font-weight: 600; color: var(--black); }
+    .mr-grupos .btn { min-height: 52px; }
+    .mr-grupos-nota { color: var(--apoio); font-size: .88rem; margin: 10px 0 0; }
+
+    /* chamada final */
+    .mr-final { text-align: center; }
+    .mr-final h2 { margin-bottom: 8px; }
+    .mr-final .mr-sub { margin: 0 auto 22px; }
+    .mr-final-acoes { display: grid; gap: 10px; max-width: 420px; margin: 0 auto; }
+    .mr-final-acoes .btn { min-height: 54px; }
+    .mr-final .mr-micro { margin-top: 14px; }
+
+    /* barra fixa (celular) */
+    .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(16, 24, 40, .12); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; animation: mr-sobe .25s ease-out; }
+    .mr-barra[hidden] { display: none; }
+    @keyframes mr-sobe { from { transform: translateY(100%); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .mr-barra { animation: none; } .mr-card, .mr-nav { transition: none; } }
+    .mr-barra-texto { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .mr-barra-texto b { font-size: .95rem; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mr-barra-texto span { font-size: .78rem; color: var(--apoio); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mr-barra .btn { min-height: 48px; padding: 10px 16px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
+    html.mr-barra-on body .cv-chat { bottom: calc(84px + env(safe-area-inset-bottom)); }
+    html.mr-chat-recolher body .cv-chat:not(.aberto) .cv-chat-abrir { opacity: 0; pointer-events: none; }
+    html body .cv-chat .cv-chat-abrir { transition: opacity .2s; }
+
+    /* formulário da turma (dialog), como antes */
+    .mr-demanda-form { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+    .mr-modal { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; padding: 12px 16px 32px; overflow: auto; overscroll-behavior: contain; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); color: var(--text); }
+    .mr-modal::backdrop { background: rgba(15, 19, 24, .55); }
+    .mr-modal-fechar { position: sticky; top: 0; float: right; margin: -4px -6px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
+    .mr-modal-fechar:hover, .mr-modal-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
     .mr-demanda-form h3 { color: var(--black); font-size: 1.3rem; margin: 0 0 4px; }
     .mr-tf-nota { color: var(--apoio); margin: 0 0 18px; }
-    .mr-tf-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+    .mr-tf-grade { display: grid; grid-template-columns: 1fr; gap: 16px 20px; }
     .mr-tf-largo { grid-column: 1 / -1; }
     .mr-tf-campo { margin: 0; padding: 0; border: 0; min-width: 0; }
     .mr-tf-campo label, .mr-tf-campo legend { display: block; font-weight: 700; color: var(--black); margin: 0 0 6px; padding: 0; font-size: .95rem; }
@@ -585,13 +650,14 @@ CSS_PAGINA = """
     .mr-tf-campo.erro input, .mr-tf-campo.erro select, .mr-tf-campo.erro textarea { border-color: var(--red); background: #fff8f8; }
     .mr-tf-opcoes { display: flex; flex-wrap: wrap; gap: 8px 18px; }
     .mr-tf-opcoes label, .mr-tf-check { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: var(--text); margin: 0; cursor: pointer; }
+    .mr-tf-opcoes label > span { min-width: 0; }
     .mr-tf-opcoes input, .mr-tf-check input { width: 18px; height: 18px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--red); }
     .mr-tf-dica { color: var(--apoio); font-size: .85rem; margin: 6px 0 0; }
     .mr-tf-dica a { color: var(--red); text-decoration: underline; }
     .mr-tf-erro { color: #b91c1c; font-size: .88rem; font-weight: 600; margin: 6px 0 0; }
     .mr-tf-erro.geral { background: #fff0f2; border: 1px solid #f5c2c7; border-radius: 12px; padding: 10px 14px; margin: 16px 0 0; }
     .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--line); background: var(--soft); border-radius: 0 12px 12px 0; color: var(--text); }
-    .mr-tf-situacao.fechada { border-left-color: #0f7b3e; }
+    .mr-tf-situacao.fechada { border-left-color: var(--verde); }
     .mr-tf-situacao.lista { border-left-color: var(--red); }
     .mr-tf-situacao.aviso { border-left-color: #b7791f; background: #fffaf0; }
     #tf-dados { margin-top: 4px; }
@@ -600,112 +666,88 @@ CSS_PAGINA = """
     .mr-tf-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .mr-tf-ok { text-align: center; padding: 18px 0; }
     .mr-tf-ok:focus { outline: 0; }
-    .mr-tf-ok > i { color: #0f7b3e; font-size: 2.4rem; }
-    .mr-tf-ok h3 { margin: 10px 0 8px; }
-    .mr-tf-ok p { max-width: 60ch; margin: 0 auto 8px; color: var(--text); }
+    .mr-tf-ok i { color: var(--verde); font-size: 2.2rem; }
+    .mr-tf-ok h3 { color: var(--black); margin: 10px 0 6px; }
 
-    /* barra fixa de matrícula (celular, só com curso em foco) */
-    .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1050; display: flex; align-items: center; gap: 12px; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(16, 24, 40, .12); padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); min-height: 64px; animation: mr-sobe .2s ease; }
-    .mr-barra[hidden] { display: none; }
-    @keyframes mr-sobe { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    @media (prefers-reduced-motion: reduce) { .mr-barra { animation: none; } }
-    .mr-barra-texto { min-width: 0; flex: 1; display: flex; flex-direction: column; }
-    .mr-barra-texto b { font-size: .95rem; color: var(--black); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .mr-barra-texto span { font-size: .78rem; color: var(--apoio); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .mr-barra .mr-cta { min-height: 48px; padding: 10px 16px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
-    html.mr-barra-on body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
-
-    /* chat (sem tocar em chat.css): botão branco, para o vermelho forte ficar só nos botões de matrícula */
-    html body .cv-chat .cv-chat-abrir { background: #fff; color: var(--red); border: 1.5px solid var(--red); box-shadow: 0 8px 24px rgba(16, 24, 40, .14); transition: opacity .2s ease, transform .18s ease; }
-    html body .cv-chat .cv-chat-abrir:hover { background: #fff7f7; }
-    html.mr-chat-recolher body .cv-chat:not(.aberto) .cv-chat-abrir { opacity: 0; pointer-events: none; }
-    html.mr-barra-on body .cv-chat { bottom: calc(84px + env(safe-area-inset-bottom)); }
-
-    @media (max-width: 1099px) {
-      .mr-cartoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .mr-confianca-itens { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 920px) {
-      .mr-hero-grid { grid-template-columns: 1fr; }
-      .mr-hero-cert { display: none; }
-      .mr-demanda-grade { grid-template-columns: 1fr; gap: 12px; }
-      .mr-passos { grid-template-columns: 1fr; }
-      .mr-comparar-grade { grid-template-columns: 1fr; }
-      /* O CSS da home esconde qualquer <nav> abaixo de 920px (regra do menu antigo) e o menu sanfona
-         abria sem os links. Nesta página os links voltam a aparecer com o menu aberto. */
-      .main-header .header-collapse .nav-links { display: flex !important; }
-    }
+    /* celular: cartão compacto (miniatura ao lado do título, preço numa linha, dois botões lado a lado) */
     @media (max-width: 719px) {
-      .mr-so-largo, .mr-so-largo-flex { display: none !important; }
-      .mr-hero { padding: 20px 0 16px; }
-      .mr-hero .eyebrow { font-size: .7rem; letter-spacing: .1em; }
-      .mr-hero h1 { font-size: clamp(1.5rem, 6.4vw, 1.95rem); margin: 6px 0 10px; }
-      .mr-hero-sub { font-size: .97rem; margin-bottom: 10px; }
-      .mr-confianca-linha { font-size: .86rem; gap: 4px 14px; }
-      .mr-ficha { grid-template-columns: 1fr; padding: 16px; margin: 6px 0 18px; gap: 0; }
-      .mr-ficha-foto { display: none; }
-      .mr-ficha .mr-cert-curto { display: flex; }
-      .mr-cert { grid-template-columns: 1fr; gap: 14px; padding: 16px; margin-top: 16px; }
-      .mr-cert-figura { max-width: 340px; margin: 0 auto; }
-      .mr-cert-texto h3 { font-size: 1.12rem; }
-      .mr-cert-texto li { font-size: .9rem; }
-      .mr-ficha-titulo { font-size: 1.4rem; }
-      .mr-ficha-promessa { font-size: .93rem; line-height: 1.45; margin-bottom: 10px; }
-      .mr-ficha .mr-cta { width: 100%; min-width: 0; }
-      .mr-catalogo { padding: 14px 0 36px; }
-      .mr-cartoes { grid-template-columns: 1fr; gap: 12px; }
-      .mr-grupo-rotulo { margin: 10px 0 -2px; }
-      .mr-curso-topo { gap: 12px; padding: 14px 14px 0; }
-      .mr-curso-mini { width: 72px; height: 54px; }
-      .mr-curso-turma { padding: 18px 16px; }
-      .mr-curso-nome { font-size: 1.05rem; }
-      .mr-curso-meta { font-size: .85rem; }
-      .mr-curso-beneficio { margin: 8px 14px 0; font-size: .9rem; line-height: 1.4; }
-      .mr-curso-acao { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 14px 14px; }
-      .mr-curso-acao .mr-cta { width: auto; min-height: 48px; padding: 10px 18px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
-      .mr-preco-curto { min-width: 0; }
-      .mr-preco-curto span { font-size: .8rem; white-space: nowrap; }
-      .mr-curso-mais > summary { padding: 0 14px; }
-      .mr-curso-detalhes { grid-template-columns: 1fr; padding: 4px 14px 18px; }
-      .mr-curso-fecho .mr-cta { width: 100%; }
-      .mr-comparar { padding: 0 14px; }
-      .mr-confianca-itens { grid-template-columns: 1fr; gap: 8px; }
-      .mr-depois h2, .mr-confianca h2, .mr-faq-pagina h2, .mr-demanda h2 { font-size: 1.35rem; margin-bottom: 14px; }
-      .mr-depois { padding: 28px 0; }
-      .mr-passos { gap: 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 16px; }
-      .mr-passos li { padding: 14px 0; gap: 12px; background: none; border: 0; border-radius: 0; }
-      .mr-passos li + li { border-top: 1px solid var(--line); }
-      .mr-passos b { width: 30px; height: 30px; font-size: .9rem; }
-      .mr-passos h3 { font-size: .98rem; margin: 3px 0 4px; }
-      .mr-passos p { font-size: .9rem; }
-      .mr-garantia { padding: 16px; gap: 12px; margin-top: 16px; }
-      .mr-garantia h3 { font-size: 1.02rem; }
-      .mr-garantia p { font-size: .93rem; }
-      .mr-confianca, .mr-faq-pagina { padding: 32px 0; }
-      .mr-faq-pagina summary { font-size: .97rem; }
-      .mr-final { padding: 18px 16px; }
-      .mr-final .btn { width: 100%; min-width: 0; }
-      .mr-demanda-botao { width: 100%; }
-      .mr-confianca-texto { font-size: .93rem; margin-bottom: 10px; }
-      .mr-confianca-itens li { background: none; border-radius: 0; border-bottom: 1px solid var(--line); padding: 9px 0; font-size: .88rem; }
-      .mr-confianca-link { margin-top: 10px; }
-      .mr-demanda { padding: 28px 0 36px; }
-      .mr-demanda-abertura { font-size: .93rem; }
-      .mr-demanda-itens li { font-size: .9rem; }
-      .mr-demanda-form { padding: 18px; }
-      .mr-modal { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border-radius: 0; padding: 12px 16px 32px; }
-      .mr-modal-fechar { margin: -4px -6px 0 8px; }
-      .mr-tf-grade { grid-template-columns: 1fr; }
+      .mr-card { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 0 12px; padding: 14px 14px 14px; align-items: start; }
+      .mr-card-capa { grid-column: 1; grid-row: 1 / span 3; }
+      .mr-card-capa img { aspect-ratio: 1; border-radius: 10px; }
+      .mr-card-tag { display: none; }
+      .mr-badge { position: static; display: inline-block; margin-top: 6px; font-size: .64rem; }
+      .mr-card-corpo { display: contents; }
+      .mr-card h3 { grid-column: 2; font-size: 1.05rem; margin: 0 0 4px; }
+      .mr-card-frase { grid-column: 2; margin: 0 0 6px; font-size: .9rem; }
+      .mr-card .mr-meta { grid-column: 2; margin: 0 0 12px; font-size: .84rem; gap: 2px 12px; }
+      .mr-meta li.mr-meta-local { display: none; }
+      .mr-card .mr-preco { grid-column: 1 / -1; margin: 0 0 10px; padding: 8px 12px; gap: 6px; }
+      .mr-card .mr-preco small { font-size: .68rem; }
+      .mr-card .mr-preco b { font-size: 1.1rem; display: inline; margin-right: 4px; }
+      .mr-card .mr-preco span { display: inline; font-size: .78rem; }
+      .mr-card .mr-preco .mr-preco-pag { display: none; }
+      .mr-cert-figura { max-width: 300px; margin: 0 auto; }
+      .mr-historia img, .mr-mapa { aspect-ratio: 16 / 9; }
+      .mr-fatos b { font-size: 1.1rem; }
+      .mr-card-acoes { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+      .mr-card-acoes .mr-cta { min-height: 48px; font-size: .95rem; padding: 10px 12px; }
+      .mr-card-acoes .btn-outline { min-height: 48px; font-size: .92rem; padding: 10px 12px; }
+      .mr-det-foto { display: none; }
+      .mr-hero-foto img { aspect-ratio: 2 / 1; }
       html body .cv-chat .cv-chat-abrir { width: 56px; padding: 0; justify-content: center; border-color: var(--line); }
       html body .cv-chat .cv-chat-abrir-rotulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+      .mr-passos b { width: 30px; height: 30px; }
     }
-    @media (min-width: 720px) { .mr-barra { display: none !important; } }
-    /* aviso de cookies: só o espaço (texto e REVISAO intactos), para cobrir menos a primeira tela do celular */
     @media (max-width: 559px) {
       html body .cvrj-ck { padding: 14px; }
       html body .cvrj-ck .cvrj-ck-botoes { grid-template-columns: repeat(3, 1fr); }
       html body .cvrj-ck .cvrj-ck-botoes button { font-size: .85rem; padding: 8px 4px; }
     }
+
+    /* tablet e computador */
+    @media (min-width: 720px) {
+      #matricula-cursos-presenciais section { padding: 56px 0; }
+      .mr-nav { display: block; }
+      .mr-barra { display: none !important; }
+      .mr-hero { padding: 36px 0 40px !important; }
+      .mr-hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; }
+      .mr-hero h1 { font-size: clamp(2.1rem, 3.6vw, 2.9rem); }
+      .mr-hero .mr-cta { width: auto; min-width: 300px; }
+      .mr-check { grid-template-columns: repeat(4, auto); justify-content: start; gap: 8px 22px; }
+      .mr-hero .mr-check { grid-template-columns: 1fr 1fr; max-width: 460px; }
+      .mr-filtro { padding-top: 36px !important; }
+      .mr-chips { margin: 0; padding: 2px 0 8px; overflow: visible; flex-wrap: wrap; }
+      .mr-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+      .mr-card-acoes { grid-template-columns: 1fr 1fr; }
+      .mr-fotos-grade { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+      .mr-passos { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .mr-passos li { flex-direction: column; gap: 10px; padding: 20px; }
+      .mr-passos h3 { margin-top: 0; font-size: 1.05rem; }
+      .mr-cert-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 36px; }
+      .mr-historia-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; }
+      .mr-local-grade { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: stretch; }
+      .mr-mapa { aspect-ratio: auto; min-height: 320px; }
+      .mr-local-acoes { grid-template-columns: 1fr 1fr; }
+      .mr-final-acoes { grid-template-columns: 1fr 1fr; max-width: 560px; }
+      .mr-det-cab { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; align-items: start; }
+      .mr-det-acoes { grid-template-columns: 1fr auto; align-items: center; }
+      .mr-det-acoes .mr-cta { width: auto; min-width: 260px; }
+      .mr-det-fim .mr-cta { width: auto; min-width: 300px; }
+      .mr-janela { width: min(860px, calc(100vw - 32px)); height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: var(--radius); padding: 22px 28px 30px; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); }
+      .mr-janela-fechar { margin: -8px -12px 0 8px; }
+      .mr-modal { width: min(720px, calc(100vw - 32px)); height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: var(--radius); padding: 28px; }
+      .mr-modal-fechar { margin: -12px -12px 0 8px; }
+      .mr-tf-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      html[data-curso] .mr-det.mr-det-foco { padding: 26px 28px 28px; }
+      html[data-curso] .mr-hero { padding: 16px 0 6px !important; }
+    }
+    @media (min-width: 1024px) {
+      .mr-grade { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .mr-card-acoes { grid-template-columns: 1fr; }
+      .mr-passos { grid-template-columns: repeat(4, 1fr); }
+      .mr-hero .mr-check { grid-template-columns: repeat(4, auto); max-width: none; }
+    }
+    @media (min-width: 1024px) and (max-width: 1279px) { .mr-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   </style>"""
 
 JS_PAGINA = """
@@ -719,11 +761,13 @@ JS_PAGINA = """
       var raiz = document.documentElement;
       var celular = window.matchMedia ? window.matchMedia('(max-width: 719px)') : { matches: false };
       var cards = {};
-      Array.prototype.forEach.call(document.querySelectorAll('.mr-curso[data-curso]'), function (el) { cards[el.getAttribute('data-curso')] = el; });
+      Array.prototype.forEach.call(document.querySelectorAll('.mr-card[data-curso]'), function (el) { cards[el.getAttribute('data-curso')] = el; });
       if (!Object.keys(cards).length) return;
       var modo = raiz.getAttribute('data-curso') ? 'curso' : 'geral';
       function nome(s) { return cards[s] ? cards[s].getAttribute('data-nome') : s; }
       function curto(s) { return cards[s] ? cards[s].getAttribute('data-curto') : s; }
+      function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
+      function item(s) { return { item_id: s, item_name: nome(s), item_category: 'Cursos presenciais', price: INSCRICAO, quantity: 1 }; }
 
       // UTMs, fbclid e gclid da URL atual vão junto para o checkout (os links já funcionam sem JavaScript).
       var extras = new URLSearchParams();
@@ -733,9 +777,8 @@ JS_PAGINA = """
       }
       function linkCheckout(s, local) { return comExtras(CHECKOUT_URL + '?curso=' + encodeURIComponent(s) + '&via=' + local); }
       Array.prototype.forEach.call(document.querySelectorAll('a.mr-cta[href*="/checkout/"]'), function (a) { a.setAttribute('href', comExtras(a.getAttribute('href'))); });
-      // Links da plataforma da escola (04/10/2026, PR #56): quem veio de um anúncio leva a campanha até a cobrança na
-      // Únicopag (a escola guarda com o consentimento dela). As utm_* do anúncio substituem as nossas, para não misturar
-      // campanha com o lugar do link; o lugar continua medido pelo saida_escola (data-saida).
+      // Links da plataforma da escola (PR #56): quem veio de um anúncio leva a campanha até a cobrança na Únicopag. As
+      // utm_* do anúncio substituem as nossas; o lugar do link continua medido pelo saida_escola (data-saida).
       var utmAnuncio = [];
       extras.forEach(function (v, k) { if (/^utm_/.test(k)) utmAnuncio.push([k, v]); });
       if (utmAnuncio.length) Array.prototype.forEach.call(document.querySelectorAll('a[href^="https://escola.cursoscruzvermelha.org"]'), function (a) {
@@ -747,12 +790,8 @@ JS_PAGINA = """
         } catch (e) { /* link fora do padrão: fica como está */ }
       });
 
-      function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
-      function item(s) { return { item_id: s, item_name: nome(s), item_category: 'Cursos presenciais', price: INSCRICAO, quantity: 1 }; }
-
-      // ViewContent (Meta) e view_item (GA4): ao carregar com ?curso= ou #curso-, e ao abrir os detalhes de um curso;
-      // uma vez por curso. Nunca por rolagem: o sinal da Meta tem de ser interesse real. O mesmo id vai ao servidor
-      // (API de Conversões, só com "sim" para marketing).
+      // ViewContent (Meta) e view_item + view_course_details (GA4): ao chegar com ?curso= ou #det-/#curso-, e ao abrir os
+      // detalhes de um curso; uma vez por curso. Nunca por rolagem: o sinal da Meta tem de ser interesse real.
       var vistos = {};
       function verCurso(s, origem) {
         if (!cards[s] || vistos[s]) return;
@@ -763,102 +802,146 @@ JS_PAGINA = """
         try { if (window.fbq) window.fbq('track', 'ViewContent', dados, id ? { eventID: id } : undefined); } catch (e) {}
         try { if (id) window.cvrjMedicao.servidor('ViewContent', id, s); } catch (e) {}
         ga('view_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, origem: origem, items: [item(s)] });
+        ga('view_course_details', { curso: s, origem: origem, modo: modo });
       }
 
-      // Curso em foco: o da URL, o do último "Ver detalhes" aberto ou o de #curso-. Alimenta a barra fixa, o botão
-      // do fim da página e o chat (site/chat/chat.js lê o curso em foco por .mr-detalhe.ativo[data-curso]).
+      // --- curso em foco: alimenta a barra fixa, a chamada final, o certificado de amostra e o chat ----------------
+      // (site/chat/chat.js lê o curso em foco por .mr-detalhe.ativo[data-curso]).
       var foco = null;
-      var final = document.getElementById('mr-final');
+      var final = document.getElementById('mr-final-acoes');
       var barra = document.getElementById('mr-barra');
       var barraCta = document.getElementById('mr-barra-cta');
+      var barraNome = document.getElementById('mr-barra-nome');
+      var barraSub = document.getElementById('mr-barra-sub');
       function focar(s) {
         if (!cards[s] || foco === s) return;
         foco = s;
         Object.keys(cards).forEach(function (k) { cards[k].classList.toggle('ativo', k === s); });
-        // O certificado da seção "No fim do curso" passa a ser o do curso em foco.
-        Array.prototype.forEach.call(document.querySelectorAll('.mr-cert-figura img[data-cert-curso]'), function (img) {
+        Array.prototype.forEach.call(document.querySelectorAll('.mr-cert-img[data-cert-curso]'), function (img) {
           var atual = img.getAttribute('data-cert-curso');
           if (atual === s || !cards[s].hasAttribute('data-cert')) return;
           img.setAttribute('src', img.getAttribute('src').replace('certificado-' + atual + '-', 'certificado-' + s + '-'));
-          img.setAttribute('srcset', img.getAttribute('srcset').split('certificado-' + atual + '-').join('certificado-' + s + '-'));
+          if (img.getAttribute('srcset')) img.setAttribute('srcset', img.getAttribute('srcset').split('certificado-' + atual + '-').join('certificado-' + s + '-'));
           img.setAttribute('alt', img.getAttribute('alt').replace(nome(atual), nome(s)));
           img.setAttribute('data-cert-curso', s);
         });
         if (barra) {
-          document.getElementById('mr-barra-nome').textContent = curto(s);
+          barraNome.textContent = curto(s);
+          barraSub.textContent = 'Inscrição ' + INSC_CURTO + ' · 7 dias para desistir';
+          barraCta.textContent = 'Garantir minha vaga';
           barraCta.setAttribute('href', linkCheckout(s, 'barra'));
           barraCta.setAttribute('data-curso', s);
+          barraCta.setAttribute('data-local', 'barra');
+          barraCta.classList.add('mr-cta');
         }
         if (final) {
-          final.innerHTML = '';
-          var a = document.createElement('a');
-          a.className = 'btn btn-red mr-cta';
-          a.setAttribute('data-local', 'faq_final');
-          a.setAttribute('data-curso', s);
-          a.href = linkCheckout(s, 'faq_final');
-          a.textContent = 'Fazer matrícula em ' + curto(s) + ' · ' + INSC_CURTO;
-          var m = document.createElement('p');
-          m.className = 'mr-micro';
-          m.textContent = 'PIX ou cartão, à vista · sem criar conta · 7 dias para desistir, com o valor de volta';
-          final.appendChild(a);
-          final.appendChild(m);
-          observarCta(a);
+          var a = final.querySelector('[data-final-primario]');
+          if (a) {
+            a.className = 'btn btn-red mr-cta';
+            a.setAttribute('data-local', 'final');
+            a.setAttribute('data-curso', s);
+            a.href = linkCheckout(s, 'final');
+            a.textContent = 'Garantir minha vaga em ' + curto(s) + ' · ' + INSC_CURTO;
+            observarCta(a);
+          }
         }
         avaliarBarra();
       }
 
-      function abrirDetalhes(s, rolar) {
-        var c = cards[s];
-        if (!c) return;
-        var d = c.querySelector('.mr-curso-mais');
-        if (d && !d.open) d.open = true;
-        if (rolar) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // --- detalhes: a ficha de cada curso (seção .mr-det, escondida) vai para a janela; volta ao fechar ----------
+      var janela = document.getElementById('mr-janela');
+      var janelaCorpo = document.getElementById('mr-janela-corpo');
+      var detAberto = null, detOrigem = null;
+      function abrirDetalhes(s, origem) {
+        var det = document.getElementById('det-' + s);
+        if (!det || !janela) return;
+        if (raiz.getAttribute('data-curso') === s) {
+          // No modo curso a ficha já está aberta no topo: só rola até ela.
+          det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          focar(s); verCurso(s, origem);
+          return;
+        }
+        fecharDetalhes();
+        detOrigem = document.createElement('span');
+        det.parentNode.insertBefore(detOrigem, det);
+        janelaCorpo.appendChild(det);
+        detAberto = det;
+        janela.setAttribute('aria-labelledby', 'det-titulo-' + s);
+        if (typeof janela.showModal === 'function') janela.showModal(); else janela.setAttribute('open', '');
+        janela.scrollTop = 0;
+        raiz.classList.add('mr-modal-aberto');
+        focar(s);
+        verCurso(s, origem);
       }
-      Array.prototype.forEach.call(document.querySelectorAll('.mr-curso-mais'), function (d) {
-        d.addEventListener('toggle', function () {
-          var s = d.getAttribute('data-curso');
-          var c = cards[s];
-          if (c) c.classList.toggle('aberto', d.open);
-          if (!d.open) return;
-          focar(s);
-          verCurso(s, 'detalhes');
-          if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start' });
+      function fecharDetalhes() {
+        if (detAberto && detOrigem) { detOrigem.parentNode.insertBefore(detAberto, detOrigem); detOrigem.remove(); }
+        detAberto = null; detOrigem = null;
+        if (janela && janela.open) { if (typeof janela.close === 'function') janela.close(); else janela.removeAttribute('open'); }
+        raiz.classList.remove('mr-modal-aberto');
+      }
+      if (janela) {
+        janela.addEventListener('close', function () { if (detAberto) { var d = detAberto; fecharDetalhes(); void d; } raiz.classList.remove('mr-modal-aberto'); });
+        janela.addEventListener('click', function (e) {
+          if (e.target !== janela) return;
+          var r = janela.getBoundingClientRect();
+          if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) fecharDetalhes();
         });
+        Array.prototype.forEach.call(janela.querySelectorAll('[data-janela-fechar]'), function (b) { b.addEventListener('click', fecharDetalhes); });
+      }
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest ? e.target.closest('[data-detalhes]') : null;
+        if (!a) return;
+        e.preventDefault();
+        var s = a.getAttribute('data-detalhes');
+        ga('select_course', { curso: s, local: a.getAttribute('data-local') || 'cartao', modo: modo });
+        abrirDetalhes(s, a.getAttribute('data-local') || 'cartao');
       });
-      Array.prototype.forEach.call(document.querySelectorAll('[data-abrir-detalhes]'), function (a) {
-        a.addEventListener('click', function (e) { e.preventDefault(); abrirDetalhes(a.getAttribute('data-abrir-detalhes'), true); });
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('[data-abrir-comparar]'), function (a) {
-        a.addEventListener('click', function (e) {
-          var d = document.getElementById('comparar');
-          if (!d) return;
-          e.preventDefault();
-          d.open = true;
-          d.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
-      // A garantia fica aberta no computador; no celular, recolhida.
-      if (!celular.matches) Array.prototype.forEach.call(document.querySelectorAll('.mr-garantia-mais'), function (d) { d.open = true; });
 
-      // Cliques: botão de matrícula (select_item com o lugar do botão), atalho do chat e saída para a escola.
+      // --- filtro por categoria -------------------------------------------------------------------------------
+      var chips = document.querySelectorAll('.mr-chip[data-cat]');
+      var vazio = document.getElementById('mr-vazio');
+      function filtrar(cat) {
+        var n = 0;
+        Object.keys(cards).forEach(function (s) {
+          var mostra = cat === 'todos' || cards[s].getAttribute('data-cat') === cat;
+          cards[s].classList.toggle('oculto', !mostra);
+          if (mostra) n++;
+        });
+        Array.prototype.forEach.call(chips, function (c) { c.setAttribute('aria-pressed', c.getAttribute('data-cat') === cat ? 'true' : 'false'); });
+        if (vazio) vazio.hidden = n > 0;
+        var turma = document.getElementById('mr-card-turma');
+        if (turma) turma.classList.toggle('oculto', cat !== 'todos' && cat !== 'formacao');
+      }
+      Array.prototype.forEach.call(chips, function (c) {
+        c.addEventListener('click', function () {
+          var cat = c.getAttribute('data-cat');
+          filtrar(cat);
+          ga('select_category', { categoria: cat, modo: modo });
+        });
+      });
+
+      // --- cliques: matrícula (select_item + click_enroll), chat, saída para a escola, turma para grupos -----------
       document.addEventListener('click', function (e) {
         var alvo = e.target && e.target.closest ? e.target : null;
         if (!alvo) return;
         var cta = alvo.closest('.mr-cta');
         if (cta && cta.getAttribute('data-curso')) {
-          var s = cta.getAttribute('data-curso');
-          ga('select_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, local: cta.getAttribute('data-local') || '', modo: modo, items: [item(s)] });
+          var s = cta.getAttribute('data-curso'), local = cta.getAttribute('data-local') || '';
+          ga('select_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, local: local, modo: modo, items: [item(s)] });
+          ga('click_enroll', { curso: s, local: local, modo: modo });
         }
         var atalho = alvo.closest('[data-abrir-chat][data-local]');
-        if (atalho) ga('chat_atalho', { local: atalho.getAttribute('data-local'), curso: atalho.getAttribute('data-curso') || '' });
+        if (atalho) ga('chat_atalho', { local: atalho.getAttribute('data-local'), curso: atalho.getAttribute('data-curso') || (foco || '') });
+        var turma = alvo.closest('[data-turma-abrir]');
+        if (turma) ga('contact_company_training', { local: turma.getAttribute('data-turma-abrir') || '', curso: turma.getAttribute('data-curso') || (foco || '') });
         var escola = alvo.closest('a[href*="escola.cursoscruzvermelha.org"]');
         if (escola) {
-          var local = escola.getAttribute('data-saida') || 'outro';
+          var lugar = escola.getAttribute('data-saida') || 'outro';
           var caminho = '';
           try { caminho = new URL(escola.href).pathname; } catch (err) {}
           var destino = /^\\/cursos\\/./.test(caminho) ? 'curso' : (/^\\/cursos/.test(caminho) ? 'catalogo' : 'home');
-          ga('saida_escola', { local: local, curso: foco || '', destino: destino, tela: 'matricula', transport_type: 'beacon' });
-          try { if (window.fbq) window.fbq('trackCustom', 'SaidaEscola', { content_ids: [foco || ''], content_category: local }); } catch (err) {}
+          ga('saida_escola', { local: lugar, curso: foco || '', destino: destino, tela: 'matricula', transport_type: 'beacon' });
+          try { if (window.fbq) window.fbq('trackCustom', 'SaidaEscola', { content_ids: [foco || ''], content_category: lugar }); } catch (err) {}
         }
       }, true);
 
@@ -867,18 +950,32 @@ JS_PAGINA = """
       document.addEventListener('toggle', function (e) {
         var d = e.target;
         if (!d || d.tagName !== 'DETAILS' || !d.open) return;
-        if (d.classList.contains('mr-curso-mais') || d.classList.contains('mr-garantia-mais')) return;
-        var bloco = d.id === 'comparar' ? 'comparar' : d.closest('.mr-curso') ? 'curso' : d.closest('.mr-demanda') ? 'turmas' : d.closest('.mr-faq-pagina') ? 'pagina' : '';
+        var bloco = d.closest('.mr-det') ? 'curso' : d.closest('.mr-faq') ? 'pagina' : '';
         if (!bloco) return;
         var sum = d.querySelector('summary');
         var pergunta = sum ? sum.textContent.replace(/\\s+/g, ' ').trim().slice(0, 100) : '';
         if (faqVistas[bloco + '|' + pergunta]) return;
         faqVistas[bloco + '|' + pergunta] = true;
-        var c = d.closest('.mr-curso');
-        ga('faq_aberta', { bloco: bloco, pergunta: pergunta, curso: c ? c.getAttribute('data-curso') : (foco || '') });
+        var det = d.closest('.mr-det');
+        ga('faq_aberta', { bloco: bloco, pergunta: pergunta, curso: det ? det.getAttribute('data-curso') : (foco || '') });
       }, true);
 
-      // --- visibilidade: lista vista, botão de matrícula visto, seções vistas, barra fixa e chat ----------------
+      // Mapa: carrega só quando a pessoa pede (desempenho e cookies de terceiros).
+      var mapaBotao = document.getElementById('mr-mapa-carregar');
+      if (mapaBotao) mapaBotao.addEventListener('click', function () {
+        var mapa = document.getElementById('mr-mapa');
+        var f = document.createElement('iframe');
+        f.src = mapaBotao.getAttribute('data-src');
+        f.title = 'Mapa: Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro';
+        f.loading = 'lazy';
+        f.referrerPolicy = 'no-referrer-when-downgrade';
+        f.allowFullscreen = true;
+        mapa.innerHTML = '';
+        mapa.appendChild(f);
+        ga('mapa_aberto', {});
+      });
+
+      // --- visibilidade: cursos vistos, lista vista, botão visto, seções vistas, barra fixa, chat e navegação ------
       var temIO = 'IntersectionObserver' in window;
       function ctas() { return Array.prototype.filter.call(document.querySelectorAll('.mr-cta'), function (el) { return el !== barraCta; }); }
       function fracao(en) { return Math.max(en.intersectionRatio, en.intersectionRect.height / Math.max(1, window.innerHeight)); }
@@ -901,7 +998,7 @@ JS_PAGINA = """
       }, { threshold: [0, .5] }) : null;
       function observarCta(el) { if (ctaObs) { el.__mrNaTela = false; ctaObs.observe(el); } if (chatObs) chatObs.observe(el); }
 
-      var secoesVistas = {};
+      var secoesVistas = {}, cursosVistos = {};
       if (temIO) {
         var catalogo = document.getElementById('cursos');
         var listaObs = new IntersectionObserver(function (ents) {
@@ -913,6 +1010,13 @@ JS_PAGINA = """
           });
         }, { threshold: degraus });
         if (catalogo) listaObs.observe(catalogo);
+        var cardObs = new IntersectionObserver(function (ents) {
+          ents.forEach(function (en) {
+            var s = en.target.getAttribute('data-curso');
+            if (!cursosVistos[s] && en.intersectionRatio >= .5) { cursosVistos[s] = true; cardObs.unobserve(en.target); ga('view_course', { curso: s, modo: modo }); }
+          });
+        }, { threshold: [.5] });
+        Object.keys(cards).forEach(function (s) { cardObs.observe(cards[s]); });
         var secaoObs = new IntersectionObserver(function (ents) {
           ents.forEach(function (en) {
             var s = en.target.getAttribute('data-secao');
@@ -922,8 +1026,23 @@ JS_PAGINA = """
         Array.prototype.forEach.call(document.querySelectorAll('[data-secao]'), function (el) { secaoObs.observe(el); });
       }
 
-      // Barra fixa (celular): curso em foco, nenhum botão de matrícula na tela, abaixo do primeiro botão, fora da
-      // seção de turmas e do rodapé, e sem o aviso de cookies aberto.
+      // Navegação da página (computador): aparece depois do topo e marca a seção atual.
+      var nav = document.getElementById('mr-nav');
+      var hero = document.querySelector('.mr-hero');
+      var navLinks = nav ? nav.querySelectorAll('a[href^="#"]') : [];
+      var alvosNav = Array.prototype.map.call(navLinks, function (a) { return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+      function atualizarNav() {
+        if (!nav || !hero) return;
+        var cab = document.querySelector('.main-header');
+        if (cab) raiz.style.setProperty('--mr-cabecalho', Math.round(cab.getBoundingClientRect().height) + 'px');
+        nav.classList.toggle('visivel', hero.getBoundingClientRect().bottom < 0);
+        var melhor = null, melhorY = -Infinity;
+        alvosNav.forEach(function (el) { var y = el.getBoundingClientRect().top; if (y <= 120 && y > melhorY) { melhorY = y; melhor = el; } });
+        Array.prototype.forEach.call(navLinks, function (a) { a.classList.toggle('ativo', !!melhor && a.getAttribute('href') === '#' + melhor.id); });
+      }
+
+      // Barra fixa (celular): depois do topo, sem botão de matrícula na tela, fora do rodapé e sem o aviso de cookies.
+      // Sem curso em foco leva aos cursos; com curso em foco, "Garantir minha vaga".
       var fimObs = 0;
       var barraVista = false;
       if (temIO) {
@@ -931,31 +1050,30 @@ JS_PAGINA = """
           ents.forEach(function (en) { if (en.isIntersecting !== !!en.target.__mrFim) { en.target.__mrFim = en.isIntersecting; fimObs += en.isIntersecting ? 1 : -1; } });
           avaliarBarra();
         });
-        ['turmas-sob-demanda'].forEach(function (id) { var el = document.getElementById(id); if (el) fim.observe(el); });
         var rodape = document.querySelector('footer');
         if (rodape) fim.observe(rodape);
+        var grupos = document.getElementById('empresas');
+        if (grupos) fim.observe(grupos);
       }
-      function passouPrimeiro() {
-        var lista = ctas();
-        for (var i = 0; i < lista.length; i++) {
-          if (lista[i].offsetParent !== null) return lista[i].getBoundingClientRect().bottom < 0;
-        }
-        return false;
+      function passouTopo() {
+        if (!hero) return true;
+        return hero.getBoundingClientRect().bottom < 0;
       }
       function avaliarBarra() {
         if (!barra || !temIO) return;
         var aviso = document.querySelector('.cvrj-ck');
-        var mostrar = !!foco && celular.matches && naTela === 0 && fimObs === 0 && passouPrimeiro() && !(aviso && aviso.offsetParent !== null);
+        var janelaAberta = (janela && janela.open) || raiz.classList.contains('mr-modal-aberto');
+        var mostrar = celular.matches && naTela === 0 && fimObs === 0 && passouTopo() && !janelaAberta && !(aviso && aviso.offsetParent !== null);
         if (mostrar === !barra.hidden) return;
         barra.hidden = !mostrar;
         raiz.classList.toggle('mr-barra-on', mostrar);
-        if (mostrar && !barraVista) { barraVista = true; ga('barra_fixa_vista', { curso: foco }); }
+        if (mostrar && !barraVista) { barraVista = true; ga('barra_fixa_vista', { curso: foco || '' }); }
       }
       var agendado = false;
       window.addEventListener('scroll', function () {
         if (agendado) return;
         agendado = true;
-        requestAnimationFrame(function () { agendado = false; avaliarBarra(); });
+        requestAnimationFrame(function () { agendado = false; avaliarBarra(); atualizarNav(); });
       }, { passive: true });
 
       // Chat: o botão some enquanto um botão de matrícula passa pela faixa de baixo da tela, onde ele fica.
@@ -971,16 +1089,17 @@ JS_PAGINA = """
         ctas().forEach(function (el) { el.__mrFaixa = false; chatObs.observe(el); });
       }
       montarChatObs();
+      atualizarNav();
       ctas().forEach(function (el) { if (ctaObs) { el.__mrNaTela = false; ctaObs.observe(el); } });
       var redim = null;
       window.addEventListener('resize', function () { clearTimeout(redim); redim = setTimeout(function () { montarChatObs(); avaliarBarra(); }, 200); });
 
-      // Chegada: ?curso= (marcado no <head>) ou #curso-<slug> (abre os detalhes daquele curso).
+      // Chegada: ?curso= (marcado no <head>: a ficha já está aberta no topo) ou #det-<slug> / #curso-<slug>.
       var inicial = raiz.getAttribute('data-curso');
       if (inicial) { focar(inicial); verCurso(inicial, 'url'); }
       else {
-        var h = location.hash.match(/^#curso-([a-z0-9-]+)$/);
-        if (h && cards[h[1]]) { abrirDetalhes(h[1], false); focar(h[1]); verCurso(h[1], 'url'); }
+        var h = location.hash.match(/^#(?:det|curso)-([a-z0-9-]+)$/);
+        if (h && cards[h[1]]) { abrirDetalhes(h[1], 'url'); }
       }
     })();
   </script>"""
@@ -1102,357 +1221,9 @@ def links_escola_medidos(trecho: str, local: str) -> str:
     return re.sub(r'<a [^>]*href="(https://escola\.cursoscruzvermelha\.org[^"]*)"[^>]*>', troca, trecho)
 
 
-def main() -> int:
-    home = HOME.read_text(encoding="utf-8")
-    dados = json.loads(DADOS.read_text(encoding="utf-8"))
-    cursos = {c["slug"]: c for c in dados["cursos"]}
-    inscricao = dados["inscricao_centavos"]
-    insc = brl_curto(inscricao)
-
-    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
-    home_nova = atualizar_seletor_home(home, dados, cursos)
-    if home_nova != home:
-        HOME.write_text(home_nova, encoding="utf-8")
-        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
-        home = home_nova
-
-    partes = partes_da_home(home)
-    estilo, header, footer, menu_js, ga4, pixel = (partes[k] for k in ("estilo", "header", "footer", "menu_js", "ga4", "pixel"))
-    header = links_escola_medidos(header, "cabecalho")
-    footer = links_escola_medidos(footer, "rodape")
-
-    # Ordem do JSON-LD e do chat (grupos do cursos.json) e ordem de exibição dos cartões.
-    ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
-    exibicao = [s for s in ORDEM_EXIBICAO if s in cursos] + [s for s in ordem if s not in ORDEM_EXIBICAO]
-    for s in cursos:
-        if s not in ORDEM_EXIBICAO or s not in BENEFICIO or s not in COPY_CURSO:
-            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO/COPY_CURSO; entra no fim, com a descrição cortada e sem a copy da ficha")
-    grupo_de = {s: g["titulo"] for g in dados["grupos"] for s in g["cursos"]}
-
-    def curto(s: str) -> str:
-        return NOME_CURTO.get(s, cursos[s]["nome"])
-
-    def beneficio(s: str) -> str:
-        return BENEFICIO.get(s) or nome_filial(cursos[s]["descricao"])[:60]
-
-    def checkout(s: str, via: str) -> str:
-        return f"{CHECKOUT_URL}?curso={s}&amp;via={via}"
-
-    def foto(s: str, largura: int, classe: str, loading: str = "lazy", sizes: str = "") -> str:
-        img = cursos[s]["imagem"]
-        if not (PASTA_IMG / f"{img}-960.webp").exists():
-            return ""
-        srcset = f'srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" sizes="{sizes}" ' if sizes else ""
-        return (f'<img class="{classe}" src="img/{img}-{largura}.webp" {srcset}alt="{esc(cursos[s]["nome"])} na Cruz Vermelha '
-                f'Brasileira Rio de Janeiro" loading="{loading}" width="{largura}" height="{largura * 3 // 4}">')
-
-    def preco(s: str) -> str:
-        c = cursos[s]
-        obs = "".join(f'<p class="mr-preco-obs">{esc(nome_filial(o))}</p>' for o in c["observacoes"])
-        total = (f'<p class="mr-preco-total">Total do curso com a inscrição: {brl_curto(inscricao + c["valor_curso_centavos"])}</p>'
-                 if MOSTRAR_TOTAL and c.get("valor_curso_centavos") else "")
-        depois = (f'Valor do curso: {brl_curto(c["valor_curso_centavos"])}, pago depois na plataforma da escola, à vista ou '
-                  'parcelado com juros.' if c.get("valor_curso_centavos") else "Valor do curso: informado pela escola.")
-        return (f'<div class="mr-preco"><p class="mr-preco-agora"><span>Inscrição agora</span><b>{insc}</b>'
-                f'<span>garante sua vaga</span></p><p class="mr-preco-depois">{depois}</p>{obs}{total}</div>')
-
-    def tem_cert(s: str) -> bool:
-        return (PASTA_IMG / f"certificado-{s}-640.webp").exists()
-
-    def cert_img(s: str, loading: str, sizes: str) -> str:
-        if not tem_cert(s):
-            return ""
-        return (f'<img class="mr-cert-img" src="img/certificado-{s}-640.webp" srcset="img/certificado-{s}-640.webp 640w, '
-                f'img/certificado-{s}-1200.webp 1200w" sizes="{sizes}" alt="Modelo do certificado do curso de {esc(cursos[s]["nome"])} '
-                f'da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária" loading="{loading}" '
-                f'width="640" height="452" data-cert-curso="{s}">')
-
-    micro = ('<p class="mr-micro">PIX ou cartão, à vista · sem criar conta · confirmação no seu e-mail<br>'
-             '<i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</p>')
-    mini_passos = "".join(f"<li>{esc(p)}</li>" for p in MINI_PASSOS)
-
-    # --- topo, modo geral -----------------------------------------------------------------------------
-    passos_topo = "".join(f"<li>{esc(p)}</li>" for p in [f"Escolha o curso e pague a inscrição de {insc}", PASSO_2_TOPO,
-                                                         "Você marca os dias e horários em que pode vir"])
-    hero = f'''
-    <section class="mr-hero" aria-labelledby="mr-titulo" data-secao="topo">
-      <div class="wrap mr-hero-grid">
-        <div class="mr-hero-texto">
-          <p class="eyebrow">Escola de Educação e Saúde<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
-          <h1 id="mr-titulo">Cursos presenciais com certificado da Cruz Vermelha, no Centro do Rio</h1>
-          <div class="mr-hero-apoio">
-            <p class="mr-hero-sub">Aulas na Praça da Cruz Vermelha, 10. Você paga agora só a inscrição de {insc}, por PIX ou cartão, sem criar conta, e o valor do curso depois.</p>
-            <ul class="mr-confianca-linha">
-              <li><i class="fa-solid fa-circle-check"></i> Cruz Vermelha, reconhecida no Brasil e no mundo</li>
-              <li class="mr-so-largo-flex"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</li>
-            </ul>
-          </div>
-        </div>
-        <figure class="mr-hero-cert mr-hero-apoio">
-          {cert_img(CERT_DESTAQUE, "lazy", "360px")}
-          <figcaption><b>O seu certificado da Cruz Vermelha</b> <span>Imagem de modelo</span></figcaption>
-        </figure>
-      </div>
-    </section>'''
-
-    # --- fichas do modo curso (?curso=<slug>): sem id, fora do JSON-LD, escolhidas por CSS ---------------
-    def aprende_html(s: str, titulo: str) -> str:
-        cc = COPY_CURSO.get(s) or {}
-        if not cc.get("aprende"):
-            return ""
-        itens = "".join(f'<li><i class="fa-solid fa-check"></i> {esc(a)}</li>' for a in cc["aprende"])
-        para = f'<p class="mr-para-quem"><b>Para quem:</b> {esc(cc["para_quem"])}</p>' if cc.get("para_quem") else ""
-        return f'<div class="mr-aprende"><p class="mr-aprende-titulo">{titulo}</p><ul>{itens}</ul>{para}</div>'
-
-    def objecao(s: str) -> tuple[str, str] | None:
-        o = (COPY_CURSO.get(s) or {}).get("objecao")
-        if not o:
-            return None
-        valor = brl_curto(cursos[s]["valor_curso_centavos"]) if cursos[s].get("valor_curso_centavos") else "valor do curso"
-        return tuple(x.replace("{insc}", insc).replace("{curso}", valor) for x in o)
-
-    def ficha(s: str) -> str:
-        c = cursos[s]
-        cc = COPY_CURSO.get(s) or {}
-        ob = objecao(s)
-        objecao_html = (f'<div class="mr-objecao"><p class="mr-objecao-p">{esc(ob[0])}</p><p>{esc(ob[1])}</p></div>' if ob else "")
-        return f'''
-        <div class="mr-ficha" data-ficha="{s}">
-          <figure class="mr-ficha-foto mr-ficha-cert">{cert_img(s, "lazy", "(max-width: 920px) 100vw, 480px")}<figcaption>O seu certificado de {esc(curto(s))} ao concluir (modelo)</figcaption></figure>
-          <div class="mr-ficha-corpo">
-            <p class="mr-ficha-chapeu">Curso presencial<span class="mr-so-largo"> · Cruz Vermelha Brasileira Rio de Janeiro</span></p>
-            <p class="mr-ficha-titulo">{esc(cc.get("titulo") or f"Curso de {curto(s)} na Cruz Vermelha, no Centro do Rio")}</p>
-            {f'<p class="mr-ficha-promessa">{esc(cc["promessa"])}</p>' if cc.get("promessa") else ""}
-            <p class="mr-ficha-meta"><span><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</span><span><i class="fa-solid fa-graduation-cap"></i> {esc(c["escolaridade"])}</span><span><i class="fa-solid fa-location-dot"></i> Praça da Cruz Vermelha, 10</span></p>
-            {preco(s)}
-            <a class="btn btn-red mr-cta" data-local="ficha" data-curso="{s}" href="{checkout(s, "ficha")}">Fazer matrícula · {insc}</a>
-            {micro}
-            <div class="mr-cert-curto">{cert_img(s, "lazy", "120px")}<p><b>Certificado da Cruz Vermelha</b>, reconhecida no Brasil e no mundo, com o seu nome, o curso e a carga horária.</p></div>
-            <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="ficha">Dúvida antes de pagar? Pergunte no chat.</a></p>
-            {aprende_html(s, "O que você aprende")}
-            {objecao_html}
-            <ol class="mr-mini-passos">{mini_passos}</ol>
-            <p class="mr-ficha-links"><a href="#curso-{s}" data-abrir-detalhes="{s}">Detalhes, conteúdo e dúvidas deste curso</a> · <a href="#cursos">Ver os outros cursos</a></p>
-          </div>
-        </div>'''
-
-    fichas = f'<div class="mr-fichas wrap" id="mr-fichas">{"".join(ficha(s) for s in exibicao)}</div>'
-
-    # --- FAQ da Lei Lucas: o cursos.json vem vazio; a pergunta sai da FAQ da home ---------------------
-    faq_home = json.loads(FAQ_HOME.read_text(encoding="utf-8")) if FAQ_HOME.exists() else {"grupos": []}
-    lei_lucas = [q for g in faq_home.get("grupos", []) for q in g.get("perguntas", [])
-                 if q.get("pergunta", "").startswith("O que é a Lei Lucas")]
-
-    def faq_curso(s: str) -> list[tuple[str, str]]:
-        itens = [(q["pergunta"], q["resposta"]) for q in (cursos[s].get("faq") or []) if q.get("pergunta") and q.get("resposta")]
-        if not itens and s == "primeiros-socorros-lei-lucas":
-            itens = [(q["pergunta"], q["resposta"]) for q in lei_lucas]
-        return itens
-
-    # --- cartões do catálogo ---------------------------------------------------------------------------
-    def cartao(s: str, posicao: int) -> str:
-        c = cursos[s]
-        grupo = grupo_de.get(s, "Outros cursos")
-        sobre_html = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"])
-        perguntas = "".join(f"<details><summary>{esc(nome_filial(p))}</summary><p>{esc(nome_filial(r))}</p></details>"
-                            for p, r in faq_curso(s))
-        faq_html = f'<div class="mr-faq"><h4>Dúvidas sobre {esc(curto(s))}</h4>{perguntas}</div>' if perguntas else ""
-        valor = f'+ {brl_curto(c["valor_curso_centavos"])} do curso, depois' if c.get("valor_curso_centavos") else "+ valor do curso, depois"
-        return f'''
-          <article class="mr-curso mr-detalhe" id="curso-{s}" data-curso="{s}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}"{' data-cert' if tem_cert(s) else ''}>
-            <div class="mr-curso-topo">
-              <div class="mr-curso-capa">{foto(s, 480, "mr-curso-mini", "eager" if posicao < 4 else "lazy")}<span class="mr-curso-tag">{esc(grupo)}</span></div>
-              <div class="mr-curso-titulo"><h3 class="mr-curso-nome">{esc(c["nome"])}</h3><p class="mr-curso-meta">{esc(c["carga_horaria"])} · {esc(c["escolaridade"])}</p></div>
-            </div>
-            <p class="mr-curso-beneficio">{esc(beneficio(s))}</p>
-            <div class="mr-curso-acao">
-              <p class="mr-preco-curto"><strong>Inscrição {insc}</strong><span>{valor}</span></p>
-              <a class="btn btn-red mr-cta" data-local="cartao" data-curso="{s}" href="{checkout(s, "cartao")}">Fazer matrícula</a>
-            </div>
-            <details class="mr-curso-mais" data-curso="{s}">
-              <summary>Ver detalhes e dúvidas</summary>
-              <div class="mr-curso-detalhes">
-                {aprende_html(s, "O que você aprende")}
-                <div class="mr-curso-sobre"><div class="mr-curso-foto-grande">{foto(s, 960, "mr-foto", "lazy", "(max-width: 720px) 100vw, 560px")}</div><h4>Sobre o curso</h4>{sobre_html}</div>
-                {faq_html}
-                <div class="mr-curso-fecho">
-                  {preco(s)}
-                  <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Fazer matrícula · {insc}</a>
-                  {micro}
-                  <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="detalhes">Dúvidas sobre este curso? O chat responde na hora as perguntas mais comuns.</a></p>
-                  <p class="mr-turma-linha">Tem um grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas ou quer este curso em inglês? <a href="#turmas-sob-demanda" data-turma-abrir="curso" data-curso="{s}">Peça uma turma</a>.</p>
-                </div>
-              </div>
-            </details>
-          </article>'''
-
-    def comparador() -> str:
-        linhas = []
-        for s in COMPARAR:
-            if s not in cursos:
-                continue
-            c = cursos[s]
-            publico = PUBLICO_COMPARAR.get(s) or (nome_filial(c["observacoes"][0]) if c["observacoes"] else beneficio(s))
-            linhas.append(f'''
-              <div class="mr-comparar-linha">
-                <p class="mr-comparar-nome">{esc(c["nome"])}</p>
-                <p>{esc(c["carga_horaria"])} · {esc(c["escolaridade"])} · curso {brl_curto(c["valor_curso_centavos"])}</p>
-                <p>{esc(publico)}</p>
-                <a class="btn btn-red mr-cta" data-local="comparar" data-curso="{s}" href="{checkout(s, "comparar")}">Fazer matrícula</a>
-              </div>''')
-        return (f'<details class="mr-comparar" id="comparar"><summary>Em dúvida entre os cursos de primeiros socorros? Compare</summary>'
-                f'<div class="mr-comparar-grade">{"".join(linhas)}</div></details>')
-
-    def texto_comparar() -> str:
-        partes = []
-        for s in COMPARAR:
-            if s in cursos:
-                c = cursos[s]
-                publico = PUBLICO_COMPARAR.get(s) or (nome_filial(c["observacoes"][0]) if c["observacoes"] else beneficio(s))
-                partes.append(f'{c["nome"]}: {c["carga_horaria"]}, curso {brl_curto(c["valor_curso_centavos"])}. {publico}')
-        return " ".join(partes) + " Os três pedem Ensino Fundamental."
-
-    # O comparador fecha o grupo "Emergência e vida" (depois dos cartões): antes deles, empurrava o primeiro botão
-    # de matrícula para fora da primeira tela.
-    blocos_catalogo = []
-    titulo_atual = None
-    for i, s in enumerate(exibicao):
-        g = grupo_de.get(s, "Outros cursos")
-        if g != titulo_atual:
-            if titulo_atual == "Emergência e vida":
-                blocos_catalogo.append(comparador())
-            blocos_catalogo.append(f'<p class="mr-grupo-rotulo">{esc(g)}</p>')
-            titulo_atual = g
-        blocos_catalogo.append(cartao(s, i))
-    if titulo_atual == "Emergência e vida":
-        blocos_catalogo.append(comparador())
-    # Turma para grupos como o último cartão da grade (fecha a última linha no computador; abre a janela da turma).
-    cartao_turma = f'''
-          <div class="mr-curso-turma">
-            <i class="fa-solid fa-people-group"></i>
-            <h3>Turma para empresas e grupos</h3>
-            <p>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
-            <button class="btn btn-outline" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
-          </div>'''
-    catalogo = f'''
-    <section class="mr-catalogo" id="cursos" aria-labelledby="mr-catalogo-titulo" data-secao="catalogo">
-      <div class="wrap">
-        <h2 id="mr-catalogo-titulo" class="mr-catalogo-titulo"><span class="mr-so-geral">Cursos presenciais e valores</span><span class="mr-so-curso">Outros cursos presenciais</span></h2>
-        <div class="mr-cartoes">{"".join(blocos_catalogo)}{cartao_turma}</div>
-      </div>
-    </section>'''
-
-    # Chat de contato: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo.
-    # Vai junto a ficha e a FAQ de cada curso: o chat responde na hora, com o texto da escola.
-    para_o_chat = []
-    for s in ordem:
-        c = cursos[s]
-        valor = brl(c["valor_curso_centavos"]) if c.get("valor_curso_centavos") else ""
-        para_o_chat.append({
-            "slug": s, "nome": c["nome"], "carga": c.get("carga_horaria", ""),
-            "escolaridade": c.get("escolaridade", ""), "valor": valor,
-            "descricao": nome_filial(c.get("descricao", "")),
-            "faq": [{"pergunta": q["pergunta"], "resposta": nome_filial(q["resposta"])}
-                    for q in (c.get("faq") or []) if q.get("pergunta") and q.get("resposta")],
-        })
-    if chat_widget.atualizar_cursos(para_o_chat):
-        print("atualizado site/chat/chat.js (cursos, ficha e dúvidas)")
-    chat_tags = chat_widget.tags()
-
-    # --- depois da inscrição + garantia ------------------------------------------------------------------
-    passos_html = "".join(f'<li><b>{i}</b><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>' for i, (t, d) in enumerate(PASSOS_DEPOIS, 1))
-    depois_7 = f"<p>{esc(GARANTIA_DEPOIS)} Com a turma confirmada, a inscrição não é devolvida, salvo se a própria filial cancelar ou adiar a turma e você não puder participar em outra data.</p>" if GARANTIA_APOS_7_DIAS else ""
-    depois = f'''
-    <section class="mr-depois" id="depois-da-inscricao" aria-labelledby="mr-depois-titulo" data-secao="depois">
-      <div class="wrap">
-        <p class="eyebrow">Depois da inscrição</p>
-        <h2 id="mr-depois-titulo">O que acontece depois que você paga</h2>
-        <ol class="mr-passos">{passos_html}</ol>
-        <div class="mr-cert" id="certificado">
-          <figure class="mr-cert-figura">{cert_img(CERT_DESTAQUE, "lazy", "(max-width: 720px) 100vw, 520px")}</figure>
-          <div class="mr-cert-texto">
-            <p class="eyebrow">No fim do curso</p>
-            <h3>O certificado da Cruz Vermelha, com o seu nome</h3>
-            <ul>{"".join(f'<li><i class="fa-solid fa-circle-check"></i> <span>{esc(t)}</span></li>' for t in CERT_LISTA)}</ul>
-            <p class="mr-cert-nota">{esc(CERT_NOTA)}</p>
-          </div>
-        </div>
-        <div class="mr-garantia" id="garantia">
-          <i class="fa-solid fa-rotate-left"></i>
-          <div>
-            <h3>7 dias para desistir, com o valor de volta</h3>
-            <p>{esc(GARANTIA_7_DIAS)}</p>
-            <details class="mr-garantia-mais"><summary>Como pedir e regras completas</summary>{depois_7}<p>{esc(GARANTIA_COMO)}</p><p><a href="/reembolso/">Regras completas de cancelamento e reembolso</a></p></details>
-          </div>
-        </div>
-      </div>
-    </section>'''
-
-    # --- confiança (só fatos de /historia/ e da FAQ da home) ------------------------------------------
-    prova = ""
-    if PROVA.get("numero"):
-        prova += f'<p class="mr-prova-numero">{esc(PROVA["numero"])}</p>'
-    confianca = f'''
-    <section class="mr-confianca" aria-labelledby="mr-confianca-titulo" data-secao="confianca">
-      <div class="wrap">
-        <h2 id="mr-confianca-titulo">Quem dá o curso</h2>
-        <p class="mr-confianca-texto">A Escola de Educação e Saúde é a escola da Cruz Vermelha Brasileira Rio de Janeiro. A Cruz Vermelha forma pessoas no Rio desde 20 de outubro de 1914, quando começou o primeiro curso, de Enfermeiras Voluntárias. As aulas são na sede da filial, o Palácio da Cruz Vermelha, no Centro, tombado como patrimônio cultural federal.</p>
-        {prova}
-        <ul class="mr-confianca-itens">
-          <li><i class="fa-solid fa-location-dot"></i> Aulas no Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10, Centro</li>
-          <li><i class="fa-solid fa-house"></i> Palácio tombado como patrimônio cultural federal</li>
-          <li><i class="fa-solid fa-scale-balanced"></i> Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023)</li>
-        </ul>
-        <p class="mr-confianca-link"><a href="/historia/">Conheça a história da Cruz Vermelha no Rio</a></p>
-      </div>
-    </section>'''
-
-    # --- perguntas frequentes ----------------------------------------------------------------------------
-    faq_lista = []
-    for p, r, r_html in FAQ_PAGINA:
-        if r == "__COMPARAR__":
-            r = texto_comparar()
-            r_html = esc(r) + ' <a href="#comparar" data-abrir-comparar>Compare os três</a>.'
-        faq_lista.append((p, r, r_html or esc(r)))
-    faq_html = "".join(f"<details><summary>{esc(p)}</summary><p>{rh}</p></details>" for p, _, rh in faq_lista)
-    faq_sec = f'''
-    <section class="mr-faq-pagina" aria-labelledby="mr-faq-titulo" data-secao="faq">
-      <div class="wrap">
-        <p class="eyebrow">Dúvidas frequentes</p>
-        <h2 id="mr-faq-titulo">Perguntas sobre a matrícula</h2>
-        {faq_html}
-        <p class="mr-chat-atalho mr-faq-chat"><a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Não achou sua dúvida? O chat no canto da página responde na hora as perguntas mais comuns.</a> O que ficar de fora, a equipe responde por e-mail em até 3 dias úteis.</p>
-        <div class="mr-final" id="mr-final"><a class="btn btn-red mr-final-btn" href="#cursos">Escolher meu curso</a><p class="mr-micro">Inscrição de {insc} · PIX ou cartão · 7 dias para desistir, com o valor de volta</p></div>
-      </div>
-    </section>'''
-
-    # --- turmas para grupos (faixa compacta, formulário recolhido) --------------------------------------
-    opcoes_turma = '<option value="">Escolha o curso</option>'
-    for g in dados["grupos"]:
-        itens = "".join(f'<option value="{s}" data-catalogo="1" data-nome="{esc(cursos[s]["nome"])}">{esc(cursos[s]["nome"])}</option>'
-                        for s in g["cursos"] if s in cursos)
-        opcoes_turma += f'<optgroup label="{esc(g["titulo"])}">{itens}</optgroup>'
-    extras = "".join(f'<option value="{s}" data-catalogo="0" data-nome="{esc(n)}">{esc(n)}</option>' for s, n in TURMA_EXTRAS.items())
-    opcoes_turma += f'<optgroup label="Só sob demanda">{extras}</optgroup>'
-    faq_turmas = "".join(f"<details><summary>{esc(p)}</summary><p>{esc(r)}</p></details>" for p, r in FAQ_TURMAS)
-    turmas = f'''
-    <section class="mr-demanda" id="turmas-sob-demanda" aria-labelledby="mr-demanda-titulo" data-secao="turmas">
-      <div class="wrap">
-        <div class="mr-demanda-grade">
-          <div>
-            <p class="eyebrow">Turmas para grupos</p>
-            <h2 id="mr-demanda-titulo">Tem um grupo de {TURMA_MINIMO} pessoas ou mais? Fechamos uma turma só para vocês</h2>
-            <p class="mr-demanda-abertura">Para matrícula individual, use o botão do curso. Aqui é para turma só do seu grupo, curso em inglês ou primeiros socorros para jovens de 12 a 14 anos.</p>
-            <ul class="mr-demanda-itens">
-              <li><i class="fa-solid fa-people-group"></i> <span>Empresas, escolas, igrejas e condomínios: turma só do grupo, de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede (em outro local, com aprovação).</span></li>
-              <li><i class="fa-solid fa-flag"></i> <span>Qualquer curso em inglês, com professor ou tradutor · <span lang="en">Courses in English</span>. A turma abre com {TURMA_MINIMO} alunos.</span></li>
-              <li><i class="fa-solid fa-heart-pulse"></i> <span>Primeiros socorros para jovens de 12 a 14 anos, numa turma só dessa idade, que abre com {TURMA_MINIMO} alunos.</span></li>
-            </ul>
-            <button class="btn btn-outline mr-demanda-botao" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Pedir turma para grupo</button>
-            <p class="mr-tf-dica">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
-          </div>
-          <div class="mr-demanda-faq">{faq_turmas}</div>
-        </div>
+def turma_dialog(opcoes_turma: str) -> str:
+    """A janela (dialog) do pedido de turma para grupos: static/turmas.js e api/turmas.php esperam estes ids."""
+    return f'''
         <noscript><style>#turma-form-bloco{{display:block!important;position:static}}</style></noscript>
         <dialog class="mr-demanda-form mr-modal" id="turma-form-bloco" aria-labelledby="turma-form-titulo">
           <button class="mr-modal-fechar" type="button" data-turma-fechar aria-label="Fechar">&times;</button>
@@ -1543,62 +1314,470 @@ def main() -> int:
             <p class="mr-tf-dica" id="turma-ok-copia"></p>
             <button class="btn btn-outline" id="turma-ok-outro" type="button">Fazer outro pedido</button>
           </div>
-        </dialog>
+        </dialog>'''
+
+
+def main() -> int:
+    home = HOME.read_text(encoding="utf-8")
+    dados = json.loads(DADOS.read_text(encoding="utf-8"))
+    cursos = {c["slug"]: c for c in dados["cursos"]}
+    inscricao = dados["inscricao_centavos"]
+    insc = brl_curto(inscricao)
+
+    # Seletor de curso da home: sempre com o mesmo catálogo desta página.
+    home_nova = atualizar_seletor_home(home, dados, cursos)
+    if home_nova != home:
+        HOME.write_text(home_nova, encoding="utf-8")
+        print(f"atualizado {HOME.relative_to(RAIZ)} (seletor de cursos)")
+        home = home_nova
+
+    partes = partes_da_home(home)
+    estilo, header, footer, menu_js, ga4, pixel = (partes[k] for k in ("estilo", "header", "footer", "menu_js", "ga4", "pixel"))
+    header = links_escola_medidos(header, "cabecalho")
+    footer = links_escola_medidos(footer, "rodape")
+
+    # Ordem do JSON-LD e do chat (grupos do cursos.json) e ordem de exibição dos cartões.
+    ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
+    exibicao = [s for s in ORDEM_EXIBICAO if s in cursos] + [s for s in ordem if s not in ORDEM_EXIBICAO]
+    for s in cursos:
+        if s not in ORDEM_EXIBICAO or s not in BENEFICIO or s not in COPY_CURSO or s not in CATEGORIA_DE:
+            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO/COPY_CURSO/CATEGORIA_DE; entra no fim, com a descrição cortada")
+
+    def curto(s: str) -> str:
+        return NOME_CURTO.get(s, cursos[s]["nome"])
+
+    def beneficio(s: str) -> str:
+        return BENEFICIO.get(s) or nome_filial(cursos[s]["descricao"])[:60]
+
+    def checkout(s: str, via: str) -> str:
+        return f"{CHECKOUT_URL}?curso={s}&amp;via={via}"
+
+    def categoria(s: str) -> tuple[str, str]:
+        cid = CATEGORIA_DE.get(s, "formacao")
+        return cid, dict(CATEGORIAS)[cid]
+
+    def foto(s: str, largura: int, classe: str = "", loading: str = "lazy", sizes: str = "") -> str:
+        img = cursos[s]["imagem"]
+        if not (PASTA_IMG / f"{img}-960.webp").exists():
+            return ""
+        srcset = f'srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" sizes="{sizes}" ' if sizes else ""
+        cls = f'class="{classe}" ' if classe else ""
+        return (f'<img {cls}src="img/{img}-{largura}.webp" {srcset}alt="{esc(cursos[s]["nome"])} na Cruz Vermelha '
+                f'Brasileira Rio de Janeiro" loading="{loading}" width="{largura}" height="{largura // 2}">')
+
+    def tem_cert(s: str) -> bool:
+        return (PASTA_IMG / f"certificado-{s}-640.webp").exists()
+
+    def cert_img(s: str, loading: str, sizes: str) -> str:
+        if not tem_cert(s):
+            return ""
+        return (f'<img class="mr-cert-img" src="img/certificado-{s}-640.webp" srcset="img/certificado-{s}-640.webp 640w, '
+                f'img/certificado-{s}-1200.webp 1200w" sizes="{sizes}" alt="Modelo do certificado do curso de {esc(cursos[s]["nome"])} '
+                f'da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária" loading="{loading}" '
+                f'width="640" height="452" data-cert-curso="{s}">')
+
+    def valor_curso(s: str) -> str:
+        v = cursos[s].get("valor_curso_centavos")
+        return brl_curto(v) if v else "Informação em breve"
+
+    def preco(s: str) -> str:
+        return (f'<div class="mr-preco"><div><small>Inscrição</small><b>{insc}</b><span>paga agora</span></div>'
+                f'<span class="mr-mais" aria-hidden="true">+</span>'
+                f'<div><small>Curso</small><b>{esc(valor_curso(s))}</b><span>pago depois, na escola</span></div>'
+                f'<p class="mr-preco-pag"><i class="fa-solid fa-credit-card"></i> PIX ou cartão</p></div>')
+
+    def meta(s: str, com_local: bool = True) -> str:
+        c = cursos[s]
+        itens = [f'<li><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</li>']
+        if com_local:
+            itens.append('<li class="mr-meta-local"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</li>')
+        itens.append(f'<li><i class="fa-solid fa-graduation-cap"></i> Requisito: {esc(c["escolaridade"])}</li>')
+        return f'<ul class="mr-meta">{"".join(itens)}</ul>'
+
+    def badge(s: str) -> str:
+        st = STATUS_TURMA.get(s)
+        if not st or st not in STATUS_ROTULO:
+            return ""
+        return f'<span class="mr-badge {st.split("_")[0] if st != "vagas_abertas" else "aberto"}">{esc(STATUS_ROTULO[st])}</span>'
+
+    # --- FAQ de cada curso (a Lei Lucas não tem no cursos.json: sai da FAQ da home) ---------------------------
+    faq_home = json.loads(FAQ_HOME.read_text(encoding="utf-8")) if FAQ_HOME.exists() else {"grupos": []}
+    lei_lucas = [q for g in faq_home.get("grupos", []) for q in g.get("perguntas", [])
+                 if q.get("pergunta", "").startswith("O que é a Lei Lucas")]
+
+    def faq_curso(s: str) -> list[tuple[str, str]]:
+        itens = [(q["pergunta"], q["resposta"]) for q in (cursos[s].get("faq") or []) if q.get("pergunta") and q.get("resposta")]
+        if not itens and s == "primeiros-socorros-lei-lucas":
+            itens = [(q["pergunta"], q["resposta"]) for q in lei_lucas]
+        return itens
+
+    def objecao(s: str) -> tuple[str, str] | None:
+        o = (COPY_CURSO.get(s) or {}).get("objecao")
+        if not o:
+            return None
+        return tuple(x.replace("{insc}", insc).replace("{curso}", valor_curso(s)) for x in o)
+
+    # --- cartão de curso -------------------------------------------------------------------------------------
+    def cartao(s: str, posicao: int) -> str:
+        c = cursos[s]
+        cid, cnome = categoria(s)
+        return f'''
+          <article class="mr-card mr-detalhe" id="curso-{s}" data-curso="{s}" data-cat="{cid}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}"{' data-cert' if tem_cert(s) else ''}>
+            <figure class="mr-card-capa">{foto(s, 480, "", "eager" if posicao < 2 else "lazy", "(max-width: 719px) 100vw, (max-width: 1023px) 50vw, 300px")}<span class="mr-card-tag">{esc(cnome)}</span>{badge(s)}</figure>
+            <div class="mr-card-corpo">
+              <h3>{esc(curto(s))}</h3>
+              <p class="mr-card-frase">{esc(beneficio(s))}</p>
+              {meta(s)}
+              {preco(s)}
+              <div class="mr-card-acoes">
+                <a class="btn btn-red mr-cta" data-local="cartao" data-curso="{s}" href="{checkout(s, "cartao")}">Garantir vaga</a>
+                <a class="btn btn-outline" href="#det-{s}" data-detalhes="{s}" data-local="cartao">Ver detalhes</a>
+              </div>
+            </div>
+          </article>'''
+
+    # --- ficha / detalhes do curso (escondida; vai para a janela, ou abre no topo no modo curso) ----------------
+    def detalhes(s: str) -> str:
+        c = cursos[s]
+        cc = COPY_CURSO.get(s) or {}
+        cid, cnome = categoria(s)
+        sobre = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"])
+        aprende = "".join(f'<li><i class="fa-solid fa-check"></i> <span>{esc(a)}</span></li>' for a in cc.get("aprende", []))
+        aprende_html = f'<h4>O que você vai aprender</h4><ul>{aprende}</ul>' if aprende else ""
+        para_quem = f'<h4>Para quem é indicado</h4><p>{esc(cc["para_quem"])}</p>' if cc.get("para_quem") else ""
+        ob = objecao(s)
+        perguntas = ([(ob[0], ob[1])] if ob else []) + faq_curso(s)
+        faq = "".join(f"<details><summary>{esc(nome_filial(p))}</summary><p>{esc(nome_filial(r))}</p></details>" for p, r in perguntas)
+        faq_html = f'<div class="mr-det-faq"><h4>Dúvidas sobre {esc(curto(s))}</h4>{faq}</div>' if faq else ""
+        obs = "".join(f"<p>{esc(nome_filial(o))}</p>" for o in c["observacoes"])
+        materiais = esc(MATERIAIS.get(s, "Informação em breve"))
+        return f'''
+        <section class="mr-det" id="det-{s}" data-curso="{s}" aria-labelledby="det-titulo-{s}">
+          <div class="mr-det-cab">
+            <figure class="mr-det-foto">{foto(s, 960, "", "lazy", "(max-width: 719px) 100vw, 380px")}</figure>
+            <div>
+              <p class="mr-det-tag">{esc(cnome)} · Curso presencial</p>
+              <h3 id="det-titulo-{s}">{esc(cc.get("titulo") or curto(s))}</h3>
+              <p class="mr-det-frase">{esc(cc.get("promessa") or beneficio(s))}</p>
+              {meta(s)}
+              {preco(s)}
+              <div class="mr-det-acoes">
+                <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Garantir minha vaga · {insc}</a>
+                <p class="mr-micro"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</p>
+              </div>
+            </div>
+          </div>
+          <div class="mr-det-corpo">
+            <h4>Sobre o curso</h4>{sobre}{obs}
+            {aprende_html}
+            {para_quem}
+            <div class="mr-det-grade">
+              <div><small>Carga horária</small><b>{esc(c["carga_horaria"])}</b></div>
+              <div><small>Pré-requisito</small><b>{esc(c["escolaridade"])}</b></div>
+              <div><small>Materiais necessários</small><b>{materiais}</b></div>
+              <div><small>Local</small><b>Praça da Cruz Vermelha, 10 · Centro</b></div>
+            </div>
+            <div class="mr-det-cert">{cert_img(s, "lazy", "84px")}<p><b>Certificação:</b> ao concluir os requisitos do curso, você recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. <a href="#certificado">Veja o certificado</a>.</p></div>
+            {faq_html}
+            <div class="mr-det-fim">
+              <a class="btn btn-red mr-cta" data-local="detalhes_fim" data-curso="{s}" href="{checkout(s, "detalhes_fim")}">Garantir minha vaga · {insc}</a>
+              <p class="mr-micro">Inscrição de {insc} agora, por PIX ou cartão · curso {esc(valor_curso(s))} pago depois, na escola · sem criar conta</p>
+              <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="detalhes">Dúvida antes de pagar? Pergunte no chat.</a></p>
+              <p class="mr-turma-linha">Tem um grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas ou quer este curso em inglês? <a href="#empresas" data-turma-abrir="curso" data-curso="{s}" aria-controls="turma-form-bloco">Peça uma turma</a>.</p>
+            </div>
+          </div>
+        </section>'''
+
+    # --- chat: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo -----------------
+    para_o_chat = []
+    for s in ordem:
+        c = cursos[s]
+        valor = brl(c["valor_curso_centavos"]) if c.get("valor_curso_centavos") else ""
+        para_o_chat.append({
+            "slug": s, "nome": c["nome"], "carga": c.get("carga_horaria", ""),
+            "escolaridade": c.get("escolaridade", ""), "valor": valor,
+            "descricao": nome_filial(c.get("descricao", "")),
+            "faq": [{"pergunta": q["pergunta"], "resposta": nome_filial(q["resposta"])}
+                    for q in (c.get("faq") or []) if q.get("pergunta") and q.get("resposta")],
+        })
+    if chat_widget.atualizar_cursos(para_o_chat):
+        print("atualizado site/chat/chat.js (cursos, ficha e dúvidas)")
+    chat_tags = chat_widget.tags()
+
+    # --- 1. navegação da página (computador) ------------------------------------------------------------------
+    nav = '''
+  <nav class="mr-nav" id="mr-nav" aria-label="Seções desta página">
+    <div class="wrap">
+      <ul>
+        <li><a href="#cursos">Cursos</a></li>
+        <li><a href="#como-funciona">Como funciona</a></li>
+        <li><a href="#certificado">Certificado</a></li>
+        <li><a href="#local">Localização</a></li>
+        <li><a href="#duvidas">Dúvidas</a></li>
+      </ul>
+      <a class="btn btn-red" href="#cursos">Ver cursos</a>
+    </div>
+  </nav>'''
+
+    # --- 2. topo ---------------------------------------------------------------------------------------------
+    hero = f'''
+    <section class="mr-hero" aria-labelledby="mr-titulo" data-secao="topo">
+      <div class="wrap mr-hero-grid">
+        <div>
+          <p class="eyebrow">Escola de Educação e Saúde</p>
+          <h1 id="mr-titulo">Cursos presenciais da Cruz Vermelha no Rio de Janeiro</h1>
+          <p class="mr-hero-sub">Aprenda na prática, na sede da Cruz Vermelha Brasileira Rio de Janeiro, no Centro.</p>
+          <p class="mr-hero-ajuda">Escolha seu curso, veja os detalhes e garanta sua vaga.</p>
+          <ul class="mr-check">
+            <li><i class="fa-solid fa-circle-check"></i> Aulas presenciais</li>
+            <li><i class="fa-solid fa-circle-check"></i> Certificado</li>
+            <li><i class="fa-solid fa-circle-check"></i> PIX ou cartão</li>
+            <li><i class="fa-solid fa-circle-check"></i> Formação prática</li>
+          </ul>
+          <a class="btn btn-red mr-cta-topo" href="#cursos">Ver cursos</a>
+          <p class="mr-hero-local"><i class="fa-solid fa-location-dot"></i> <span>Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro</span></p>
+        </div>
+        <figure class="mr-hero-foto">
+          <img src="{FOTO_TOPO["src"]}" srcset="{FOTO_TOPO["srcset"]}" sizes="(max-width: 719px) 100vw, 520px" width="960" height="727" alt="{esc(FOTO_TOPO["alt"])}" fetchpriority="high">
+          <figcaption>{esc(FOTO_TOPO["legenda"])}</figcaption>
+        </figure>
       </div>
     </section>'''
 
+    # --- fichas (escondidas) --------------------------------------------------------------------------------
+    dets = f'''
+    <div class="mr-dets wrap" id="mr-dets">{"".join(detalhes(s) for s in exibicao)}</div>'''
+
+    # --- 3. categorias e 4. cursos ----------------------------------------------------------------------------
+    chips = "".join(f'<button class="mr-chip" type="button" data-cat="{cid}" aria-pressed="{"true" if cid == "todos" else "false"}">{esc(n)}</button>'
+                    for cid, n in CATEGORIAS)
+    cartao_turma = f'''
+          <div class="mr-card-turma" id="mr-card-turma">
+            <i class="fa-solid fa-people-group"></i>
+            <h3>Turma para empresas e grupos</h3>
+            <p>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
+            <button class="btn btn-outline" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Solicitar uma turma</button>
+          </div>'''
+    cursos_sec = f'''
+    <section class="mr-filtro" aria-labelledby="mr-filtro-titulo" data-secao="categorias">
+      <div class="wrap">
+        <h2 id="mr-filtro-titulo">Qual formação você procura?</h2>
+        <div class="mr-chips" role="group" aria-label="Filtrar cursos por categoria">{chips}</div>
+      </div>
+    </section>
+    <section class="mr-cursos" id="cursos" aria-labelledby="mr-cursos-titulo" data-secao="cursos">
+      <div class="wrap">
+        <h2 id="mr-cursos-titulo" class="mr-escondido">Cursos presenciais e valores</h2>
+        <div class="mr-grade">{"".join(cartao(s, i) for i, s in enumerate(exibicao))}{cartao_turma}</div>
+        <p class="mr-vazio" id="mr-vazio" hidden>Nenhum curso nesta categoria.</p>
+      </div>
+    </section>'''
+
+    # --- 6. fotos --------------------------------------------------------------------------------------------
+    fotos = "".join(f'<figure><img src="{f["src"]}" srcset="{f["srcset"]}" sizes="(max-width: 719px) 50vw, 280px" width="480" height="360" '
+                    f'alt="{esc(f["alt"])}" loading="lazy"><figcaption>{esc(f["legenda"])}</figcaption></figure>' for f in FOTOS_AULAS)
+    galeria = f'''
+    <section class="mr-fotos" aria-labelledby="mr-fotos-titulo" data-secao="fotos">
+      <div class="wrap">
+        <p class="eyebrow">Na sede</p>
+        <h2 id="mr-fotos-titulo">Aqui você aprende fazendo.</h2>
+        <p class="mr-sub">Conhecimento para entender. Prática para saber como agir.</p>
+        <div class="mr-fotos-grade">{fotos}</div>
+      </div>
+    </section>'''
+
+    # --- 7. como funciona -------------------------------------------------------------------------------------
+    passos = "".join(f'<li><b>0{i}</b><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>' for i, (t, d) in enumerate(PASSOS_COMO, 1))
+    como = f'''
+    <section class="mr-como" id="como-funciona" aria-labelledby="mr-como-titulo" data-secao="como_funciona">
+      <div class="wrap">
+        <p class="eyebrow">Matrícula</p>
+        <h2 id="mr-como-titulo">Como funciona</h2>
+        <p class="mr-sub">Quatro passos, sem criar conta antes de pagar.</p>
+        <ol class="mr-passos">{passos}</ol>
+        <p class="mr-como-nota">{esc(GARANTIA_7_DIAS)} <a href="/reembolso/">Regras de cancelamento e reembolso</a>.</p>
+      </div>
+    </section>'''
+
+    # --- 8. certificado ---------------------------------------------------------------------------------------
+    certificado = f'''
+    <section class="mr-cert" id="certificado" aria-labelledby="mr-cert-titulo" data-secao="certificado">
+      <div class="wrap mr-cert-grade">
+        <figure class="mr-cert-figura">{cert_img(CERT_DESTAQUE, "lazy", "(max-width: 719px) 100vw, 420px")}</figure>
+        <div class="mr-cert-texto">
+          <p class="eyebrow">Certificado</p>
+          <h2 id="mr-cert-titulo">Sua formação também fica registrada.</h2>
+          <p class="mr-sub">Após concluir os requisitos do curso, o aluno recebe seu certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
+          <ul class="mr-cert-itens">
+            <li><i class="fa-solid fa-circle-check"></i><span>Nome do aluno</span></li>
+            <li><i class="fa-solid fa-circle-check"></i><span>Nome do curso</span></li>
+            <li><i class="fa-solid fa-circle-check"></i><span>Carga horária</span></li>
+          </ul>
+          <p>{esc(CERT_PESO)}</p>
+          <p class="mr-cert-nota">{esc(CERT_NOTA)}</p>
+        </div>
+      </div>
+    </section>'''
+
+    # --- 9. história -----------------------------------------------------------------------------------------
+    fatos = "".join(f'<li><b>{esc(n)}</b><span>{esc(t)}</span></li>' for n, t in FATOS_HISTORIA)
+    historia = f'''
+    <section class="mr-historia" id="historia" aria-labelledby="mr-historia-titulo" data-secao="historia">
+      <div class="wrap mr-historia-grade">
+        <div>
+          <p class="eyebrow">Quem dá o curso</p>
+          <h2 id="mr-historia-titulo">Mais de um século de história no Rio de Janeiro.</h2>
+          <p>{esc(TEXTO_HISTORIA)}</p>
+          <ul class="mr-fatos">{fatos}</ul>
+          <a class="mr-historia-link" href="/historia/">Conheça nossa história <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <figure>
+          <img src="{FOTO_HISTORIA["src"]}" srcset="{FOTO_HISTORIA["srcset"]}" sizes="(max-width: 719px) 100vw, 560px" width="960" height="720" alt="{esc(FOTO_HISTORIA["alt"])}" loading="lazy">
+          <figcaption>{esc(FOTO_HISTORIA["legenda"])}</figcaption>
+        </figure>
+      </div>
+    </section>'''
+
+    # --- 10. local -------------------------------------------------------------------------------------------
+    local = f'''
+    <section class="mr-local" id="local" aria-labelledby="mr-local-titulo" data-secao="local">
+      <div class="wrap">
+        <p class="eyebrow">Localização</p>
+        <h2 id="mr-local-titulo">Onde acontecem as aulas?</h2>
+        <div class="mr-local-grade">
+          <div class="mr-local-cartao">
+            <p class="mr-endereco"><i class="fa-solid fa-location-dot"></i><span><b>Cruz Vermelha Brasileira Rio de Janeiro</b>Praça da Cruz Vermelha, 10<br>Centro — Rio de Janeiro, RJ · CEP 20230-130</span></p>
+            <p class="mr-micro" style="margin:0 0 14px">Todos os cursos são presenciais, no Palácio da Cruz Vermelha, sede da filial. Os dias e horários são os de cada turma.</p>
+            <div class="mr-local-acoes">
+              <a class="btn btn-red" href="{MAPA_ROTA}" target="_blank" rel="noopener">Como chegar</a>
+              <button class="btn btn-outline" type="button" id="mr-mapa-carregar" data-src="{MAPA_EMBED}">Ver no mapa</button>
+            </div>
+          </div>
+          <figure class="mr-mapa" id="mr-mapa">
+            <img src="{FOTO_FACHADA["src"]}" width="767" height="516" alt="{esc(FOTO_FACHADA["alt"])}" loading="lazy">
+            <figcaption>{esc(FOTO_FACHADA["legenda"])}</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>'''
+
+    # --- 11. dúvidas -------------------------------------------------------------------------------------------
+    faq_lista = []
+    for p, r, r_html in FAQ_PAGINA:
+        if r == "__COMPARAR__":
+            partes_cmp = []
+            for s in COMPARAR:
+                if s in cursos:
+                    c = cursos[s]
+                    publico = PUBLICO_COMPARAR.get(s) or beneficio(s)
+                    partes_cmp.append(f'{c["nome"]}: {c["carga_horaria"]}, curso {brl_curto(c["valor_curso_centavos"])}. {publico}')
+            r = " ".join(partes_cmp) + " Os três pedem Ensino Fundamental."
+            r_html = None
+        faq_lista.append((p, r, r_html or esc(r)))
+    faq_html = "".join(f"<details><summary>{esc(p)}</summary><p>{rh}</p></details>" for p, _, rh in faq_lista)
+    faq_sec = f'''
+    <section class="mr-faq" id="duvidas" aria-labelledby="mr-faq-titulo" data-secao="faq">
+      <div class="wrap">
+        <p class="eyebrow">Dúvidas frequentes</p>
+        <h2 id="mr-faq-titulo">Antes de se inscrever</h2>
+        {faq_html}
+        <p class="mr-chat-atalho mr-faq-chat"><a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Não achou sua dúvida? Pergunte no chat da página.</a> O que ficar de fora, a equipe responde por e-mail em até 3 dias úteis.</p>
+      </div>
+    </section>'''
+
+    # --- 12. empresas e grupos (o formulário é a janela #turma-form-bloco, de static/turmas.js) ---------------------
+    opcoes_turma = '<option value="">Escolha o curso</option>'
+    for g in dados["grupos"]:
+        itens = "".join(f'<option value="{s}" data-catalogo="1" data-nome="{esc(cursos[s]["nome"])}">{esc(cursos[s]["nome"])}</option>'
+                        for s in g["cursos"] if s in cursos)
+        opcoes_turma += f'<optgroup label="{esc(g["titulo"])}">{itens}</optgroup>'
+    extras = "".join(f'<option value="{s}" data-catalogo="0" data-nome="{esc(n)}">{esc(n)}</option>' for s, n in TURMA_EXTRAS.items())
+    opcoes_turma += f'<optgroup label="Só sob demanda">{extras}</optgroup>'
+    tipos = "".join(f"<li>{esc(t)}</li>" for t in ["Empresas", "Escolas", "Condomínios", "Instituições", "Grupos organizados"])
+    grupos = f'''
+    <section class="mr-grupos" id="empresas" aria-labelledby="mr-grupos-titulo" data-secao="empresas">
+      <div class="wrap">
+        <p class="eyebrow">Para empresas e grupos</p>
+        <h2 id="mr-grupos-titulo">Precisa capacitar uma equipe?</h2>
+        <p class="mr-sub">Também organizamos turmas para empresas, escolas, condomínios, instituições e grupos: de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede. Qualquer curso também em inglês, e primeiros socorros para jovens de 12 a 14 anos.</p>
+        <ul class="mr-grupos-tipos">{tipos}</ul>
+        <button class="btn btn-red" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Solicitar uma turma</button>
+        <p class="mr-grupos-nota">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
+        __TURMA_DIALOG__
+      </div>
+    </section>'''
+
+    # --- 13. chamada final ------------------------------------------------------------------------------------
+    final = f'''
+    <section class="mr-final" aria-labelledby="mr-final-titulo" data-secao="final">
+      <div class="wrap">
+        <p class="eyebrow">Matrícula</p>
+        <h2 id="mr-final-titulo">Pronto para começar?</h2>
+        <p class="mr-sub">Escolha sua formação, veja os detalhes e garanta sua vaga.</p>
+        <div class="mr-final-acoes" id="mr-final-acoes">
+          <a class="btn btn-red" href="#cursos" data-final-primario>Ver cursos disponíveis</a>
+          <a class="btn btn-outline" href="#chat" data-abrir-chat data-assunto="matricula" data-local="final">Falar com a escola</a>
+        </div>
+        <p class="mr-micro">Inscrição de {insc} por PIX ou cartão · valor do curso pago depois, na escola · 7 dias para desistir, com o valor de volta</p>
+      </div>
+    </section>'''
+
+    # --- janela dos detalhes e barra fixa ---------------------------------------------------------------------
+    janela = '''
+  <dialog class="mr-janela" id="mr-janela" aria-label="Detalhes do curso">
+    <button class="mr-janela-fechar" type="button" data-janela-fechar aria-label="Fechar">&times;</button>
+    <div id="mr-janela-corpo"></div>
+  </dialog>'''
     barra = f'''
   <div class="mr-barra" id="mr-barra" hidden>
-    <div class="mr-barra-texto"><b id="mr-barra-nome"></b><span>Inscrição {insc} · 7 dias para desistir</span></div>
-    <a class="btn btn-red mr-cta" id="mr-barra-cta" data-local="barra" href="{CHECKOUT_URL}">Fazer matrícula</a>
+    <div class="mr-barra-texto"><b id="mr-barra-nome">Cursos presenciais</b><span id="mr-barra-sub">Inscrição {insc} · PIX ou cartão</span></div>
+    <a class="btn btn-red" id="mr-barra-cta" data-local="barra" href="#cursos">Ver cursos</a>
   </div>'''
 
-    # --- dados estruturados (ItemList e BreadcrumbList como antes; FAQPage = página + turmas) -------------
+    # --- dados estruturados ------------------------------------------------------------------------------------
     provedor = {"@type": "EducationalOrganization", "@id": f"{ESCOLA}/#escola",
-                "name": "Escola de Educação e Saúde CVB-RJ", "url": f"{ESCOLA}/",
+                "name": "Escola de Educação e Saúde CVB-RJ", "url": f"{ESCOLA}/", "address": ENDERECO,
                 "parentOrganization": {"@id": f"{ORIGEM}/#organizacao"}}
     itens = []
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
         curso = {"@type": "Course", "name": c["nome"], "description": nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else "")),
-                 "url": f"{URL_PAGINA}#curso-{s}", "provider": provedor,
+                 "url": f"{URL_PAGINA}#det-{s}", "provider": provedor,
                  "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro"}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
         ofertas = [{"@type": "Offer", "category": "Paid", "name": "Inscrição", "price": f"{inscricao / 100:.2f}",
-                    "priceCurrency": "BRL", "url": f"{URL_PAGINA}#curso-{s}", "availability": "https://schema.org/InStock"}]
+                    "priceCurrency": "BRL", "url": f"{URL_PAGINA}#det-{s}", "availability": "https://schema.org/InStock"}]
         if c["valor_curso_centavos"]:
             ofertas.append({"@type": "Offer", "category": "Paid", "name": "Valor do curso (pago depois, na plataforma da escola)",
                             "price": f"{c['valor_curso_centavos'] / 100:.2f}", "priceCurrency": "BRL"})
         curso["offers"] = ofertas
-        # courseMode é propriedade de CourseInstance, não de Course: no Course o validador recusa.
         instancia = {"@type": "CourseInstance", "courseMode": "Onsite", "location": LOCAL}
         if horas_iso(c["carga_horaria"]):
             curso["timeRequired"] = horas_iso(c["carga_horaria"])
             instancia["courseWorkload"] = horas_iso(c["carga_horaria"])
         curso["hasCourseInstance"] = [instancia]
         itens.append({"@type": "ListItem", "position": i, "item": curso})
-    perguntas_ld = [(p, r) for p, r, _ in faq_lista] + FAQ_TURMAS
     ld = [
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
-            {"@type": "ListItem", "position": 2, "name": "Matrícula cursos presenciais", "item": URL_PAGINA}]},
-        {"@context": "https://schema.org", "@type": "ItemList", "name": "Matrícula em cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro",
-                 "numberOfItems": len(dados["cursos"]),
-         "url": URL_PAGINA, "itemListElement": itens},
+            {"@type": "ListItem", "position": 2, "name": "Cursos presenciais", "item": URL_PAGINA}]},
+        {"@context": "https://schema.org", **provedor},
+        {"@context": "https://schema.org", "@type": "ItemList", "name": "Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro",
+         "numberOfItems": len(dados["cursos"]), "url": URL_PAGINA, "itemListElement": itens},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-            {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r in perguntas_ld]},
+            {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r, _ in faq_lista]},
     ]
     ld_html = "".join(f'\n  <script type="application/ld+json">\n{json.dumps(d, ensure_ascii=False, indent=2)}\n  </script>' for d in ld)
     for d in ld:
         assert "</" not in json.dumps(d, ensure_ascii=False)
 
-    # --- CSS: modo curso por slug (antes da primeira pintura) + o da página --------------------------------
-    css_fichas = "".join(f'html[data-curso="{s}"] .mr-ficha[data-ficha="{s}"]{{display:grid}}' for s in exibicao)
+    # --- CSS do modo curso (antes da primeira pintura) e scripts ------------------------------------------------
+    css_foco = "".join(f'html[data-curso="{s}"] #det-{s}{{display:block}}' for s in exibicao)
     modo_curso_js = ("(function(){try{var q=new URLSearchParams(location.search),c=q.get('curso');"
                      f"if(c&&!q.get('turma')&&{json.dumps(exibicao)}.indexOf(c)>=0)document.documentElement.setAttribute('data-curso',c);"
                      "}catch(e){}})();")
-    css = (CSS_PAGINA.replace("/*__FICHAS__*/", css_fichas))
+    css = CSS_PAGINA.replace("  </style>", f"    {css_foco}\n  </style>")
     js = (JS_PAGINA.replace("__CHECKOUT__", json.dumps(CHECKOUT_URL)).replace("__INSCRICAO__", f"{inscricao / 100:.2f}")
           .replace("__INSC_CURTO__", json.dumps(insc)).replace("__EXIBICAO__", json.dumps(exibicao)))
 
@@ -1607,15 +1786,13 @@ def main() -> int:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
   <title>{esc(TITULO)}</title>
   <meta name="description" content="{esc(DESCRICAO)}">
   <link rel="canonical" href="{URL_PAGINA}">
-  <meta name="robots" content="index, follow">
+  <link rel="icon" href="/favicon.ico">
   <meta property="og:type" content="website">
-  <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
+  <meta property="og:locale" content="pt_BR">
   <meta property="og:title" content="{esc(TITULO)}">
   <meta property="og:description" content="{esc(DESCRICAO)}">
   <meta property="og:url" content="{URL_PAGINA}">
@@ -1629,9 +1806,6 @@ def main() -> int:
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <!-- Estilos copiados da home (site/index.html) para a página ficar idêntica ao padrão da filial. -->
 {estilo}
 {css}
@@ -1642,16 +1816,21 @@ def main() -> int:
 <body>
   <script>document.documentElement.classList.add('js');</script>
 {header}
-
+{nav}
   <main id="matricula-cursos-presenciais">
 {hero}
-    {fichas}
-{catalogo}
-{depois}
-{confianca}
+{dets}
+{cursos_sec}
+{galeria}
+{como}
+{certificado}
+{historia}
+{local}
 {faq_sec}
-{turmas}
+{grupos}
+{final}
   </main>
+{janela}
 {barra}
 
 {footer}
@@ -1663,6 +1842,7 @@ def main() -> int:
 </body>
 </html>
 """
+    pagina = pagina.replace("__TURMA_DIALOG__", turma_dialog(opcoes_turma))
     pagina = icones.converter(pagina)  # ícones em SVG inline, sem Font Awesome
     achados = [m for m in MARCADORES_PROIBIDOS if m in pagina]
     if achados:
