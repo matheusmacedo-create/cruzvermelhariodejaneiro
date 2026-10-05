@@ -1,0 +1,7 @@
+# Página de matrícula: leitura no celular, formulário de turma em janela, menos repetição do certificado e as UTMs do
+# anúncio nos links da escola (05/10/2026). O script antes da página que leva o hash dele.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-layout-celular.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-layout-celular.txt
+# Desfazer: scripts/desfazer_publicacao.sh e96c071 scripts/publicacao-layout-celular.txt
+site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/index.html
