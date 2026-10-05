@@ -2691,6 +2691,17 @@ o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home
   (com `--copiar-do-ar` antes), limpar o cache e, com a página no ar, rodar `gerar_sitemaps.py` (a página
   já está em `PAGINAS`). A atualização das doações e da medição está em
   `scripts/publicacao-dia-das-criancas-doacoes.txt` (o PHP antes da página).
+- **Publicado em 05/10/2026:** a primeira versão por volta das 17h35 (fotos, página, `.ics`, `.htaccess`,
+  home e bio) e a das doações e da medição por volta das 18h05 (`lib/email.php`, `medicao.php`, página,
+  home e bio), com cópia do que estava no ar antes de cada envio e o cache limpo depois. Na segunda, o
+  `lib/email.php` no ar já tinha o certificado de amostra que outra sessão publicou da `main`; a branch foi
+  rebaseada sobre a `main` e foi publicado o arquivo da `main` com as mudanças daqui (conferido linha a
+  linha contra o que estava no ar). Conferido em seguida: os arquivos no ar iguais ao repositório, o PHP
+  respondendo, a página sem erro de JavaScript e sem medição antes do aceite dos cookies. Sitemaps
+  regerados e publicados às 18h07, com a página nova (53 entradas em `sitemap-paginas.xml`).
+- **Observação:** o `chat.js` no ar ainda é o anterior; a `main` tem uma versão nova (sem algumas perguntas
+  das fichas dos cursos), e a página de matrícula publicada já aponta para ela pelo `?v=`. O número só serve
+  para o navegador não usar cópia velha, então nada quebra, mas o arquivo novo não foi enviado.
 - **Depois do evento (a partir de 14/10):** tirar o card da home e o cartão da bio, e trocar a página por um "como foi" (com
   fotos do dia autorizadas) ou tirá-la do sitemap. O Google para de mostrar evento que já passou, mas a
   página continuaria convidando para uma data vencida.
