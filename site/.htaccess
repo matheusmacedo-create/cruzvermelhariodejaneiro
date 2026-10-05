@@ -44,6 +44,8 @@
 <IfModule mod_mime.c>
   # AVIF (o banner do topo da home): sem isto, o LiteSpeed da Hostinger mandava .avif como text/plain.
   AddType image/avif .avif
+  # Evento para a agenda (/dia-das-criancas/dia-das-criancas.ics): com text/calendar o iPhone abre "Adicionar à agenda".
+  AddType text/calendar .ics
 </IfModule>
 
 ErrorDocument 404 /404.html

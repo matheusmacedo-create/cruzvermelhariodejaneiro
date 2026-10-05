@@ -2292,7 +2292,7 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 ### Ordem de geração
 
 `consentimento.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
-`gerar_checkout.py` → `gerar_bio.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
+`gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
 `gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`, e
 `gerar_ingles.py` depois de `gerar_idiomas.py` (notícias e 404 em inglês).
 Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
@@ -2640,6 +2640,40 @@ O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org
 
 O verbete ainda não tem item no Wikidata; quando tiver, vale acrescentar o `Q…` ao `sameAs`.
 
+## Dia das Crianças na Praça (`/dia-das-criancas/`, 05/10/2026)
+
+Página da ação de **terça-feira, 13/10/2026, das 9h às 16h**, na praça em frente ao Palácio da Cruz
+Vermelha, aberta e gratuita (sem inscrição), com os setores do quadro da sede para o dia: **Juventude,
+Primeiros Socorros e Educação e Saúde**. Gerada por `scripts/gerar_dia_das_criancas.py`, com o cabeçalho,
+o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home.
+
+- **Fonte única do evento:** o dicionário `EVENTO` do gerador alimenta a página, o JSON-LD `Event` (o que
+  o Google usa para mostrar o evento na busca: data, local, gratuito), o link do Google Agenda e o
+  `dia-das-criancas.ics` (iPhone e Outlook: horários em UTC, linhas dobradas em 75 bytes, CRLF). Mudou a
+  data, o horário ou os setores: editar `EVENTO`/`SETORES` e regerar; o card da home é editado à mão.
+- **Card na home**, o primeiro de "Campanhas ativas" (`#campanhas`), com a foto da Juventude (recorte com
+  `object-position: 50% 70%`, para os rostos caberem no 16:9).
+- **Fotos:** cinco fotos de ações anteriores com crianças, com autorização de uso de imagem dos
+  responsáveis (confirmada pelo Matheus em 05/10/2026). Ficam fora do Git, como o resto de
+  `site/assets/`, e sem EXIF/GPS; as versões otimizadas saem de `scripts/otimizar_imagens.py` (a do topo
+  também em AVIF, com preload, de 480 a 1080 px).
+- **No celular,** a foto com o selo "13/10 · 9h às 16h" vem logo depois do título (o topo é uma grade só;
+  no computador a foto ocupa a coluna da direita) e os quatro fatos viram uma lista com divisórias.
+- **Medição:** os cliques em agenda, mapa, WhatsApp, copiar link e voluntário viram o evento
+  `dia_criancas_click` (parâmetro `acao`) no GA4, só com consentimento. O link compartilhado leva
+  `utm_source=whatsapp` ou `utm_source=link`, com `utm_campaign=dia-das-criancas`.
+- **Contraste:** os textos de apoio usam `#5b6576` (5,9:1 no branco) no lugar do `--muted` da home
+  (`#718096`, 4,0:1, abaixo do AA), e o verde do botão do WhatsApp é `#0e7266` (5,8:1). O que o
+  Lighthouse ainda aponta é o rodapé da home, igual em todas as páginas.
+- **Lighthouse (local, 05/10):** celular 98 (LCP 2,2 s, CLS 0), computador 100; acessibilidade 96.
+- **`.ics` como `text/calendar`** (`site/.htaccess`), para o iPhone abrir "Adicionar à agenda".
+- **Publicar:** `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas.txt)`
+  (com `--copiar-do-ar` antes), limpar o cache e, com a página no ar, rodar `gerar_sitemaps.py` (a página
+  já está em `PAGINAS`).
+- **Depois do evento (a partir de 14/10):** tirar o card da home e trocar a página por um "como foi" (com
+  fotos do dia autorizadas) ou tirá-la do sitemap. O Google para de mostrar evento que já passou, mas a
+  página continuaria convidando para uma data vencida.
+
 ## Slider de campanhas da home (02/10/2026)
 
 O topo da home é um slider (`#campaignSlider`): troca sozinho a cada 6 s, e a altura dele é a do banner
@@ -2823,6 +2857,7 @@ tag, não do código.
 site/                                   páginas estáticas mantidas à mão (espelho do public_html; .htaccess e 404.html incluídos)
   assets/otim/                          imagens otimizadas geradas (fora do Git, como o resto de assets/; publicar junto)
   matricula-cursos-presenciais/         página gerada (index.html), cursos.json e img/*.webp
+  dia-das-criancas/                     página gerada da ação de 13/10/2026 (index.html) e o evento para a agenda (.ics)
   sitemap-index.xml                     índice de sitemaps (o endereço a enviar no Search Console)
   sitemap-paginas.xml                   páginas fixas com data real e imagens (gerado)
   sitemap-noticias.xml                  notícias da Redação com data e imagens (gerado)
@@ -2845,6 +2880,7 @@ scripts/otimizar_imagens.py             versões WebP e imagens de compartilhame
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/calcular_reserva_fonte.py      medidas da "Inter Reserva" (fonte do aparelho do tamanho da Inter, sem CLS)
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
+scripts/gerar_dia_das_criancas.py       gera site/dia-das-criancas/ (página, JSON-LD Event e .ics) com o cabeçalho e o rodapé da home
 scripts/gerar_verificar.py              gera site/verificar/ (verificação de documentos, escondida: noindex, nada de terceiros)
 site/verificar/                         página de verificação e 404 próprio (gerados) e .htaccess (X-Robots-Tag da pasta)
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)
@@ -2852,6 +2888,7 @@ docs/rastreamento.md                    cobertura de GA4 e Pixel por página e e
 docs/seo-revisao-2026-09.md             relatório da revisão de SEO e velocidade (antes/depois e pendências por projeto)
 scripts/publicar_hostinger.sh           envia arquivos de site/ para a Hostinger (TUS); --copiar-do-ar guarda o que está no ar, --apagar desfaz os novos
 scripts/publicacao-comunicacao.txt      os 41 arquivos da publicação dos lembretes e comunicados, na ordem de envio
+scripts/publicacao-dia-das-criancas.txt os arquivos da página do Dia das Crianças (fotos, .htaccess, página, .ics, home), na ordem de envio
 scripts/conferir_publicacao.sh          confere uma publicação no ar (estáticos, API, bloqueios, localização do ponto)
 scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versão do commit anterior (Git), na ordem inversa
 ```

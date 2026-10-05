@@ -113,6 +113,22 @@ data da publicação se alguma campanha otimizar por ele.
 
 Não usa `Lead` de propósito: o `Lead` é do funil pago (envio do formulário do checkout).
 
+## Dia das Crianças na Praça (`/dia-das-criancas/`, 05/10/2026)
+
+GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `eventos`. Sem evento de conversão no
+Pixel: a ação é aberta e sem inscrição.
+
+| Clique | GA4 |
+| --- | --- |
+| Salvar na agenda (Google) / baixar o `.ics` | `dia_criancas_click` (acao = `agenda-google` / `agenda-ics`) |
+| Como chegar (topo) / abrir no mapa (Informações) | `dia_criancas_click` (acao = `mapa` / `mapa-informacoes`) |
+| Compartilhar no WhatsApp / Copiar o link | `dia_criancas_click` (acao = `whatsapp` / `copiar`) |
+| Quero ser voluntário | `dia_criancas_click` (acao = `voluntario`) |
+
+O link compartilhado leva `utm_medium=compartilhamento&utm_campaign=dia-das-criancas`, com
+`utm_source=whatsapp` (botão do WhatsApp) ou `utm_source=link` (botão de copiar): quem chega por um
+convite aparece no GA4 com a origem do convite.
+
 ## Carregamento adiado (19/09, à noite)
 
 Os scripts `gtag.js` e `fbevents.js` passaram a carregar depois do `load` da página, em momento
