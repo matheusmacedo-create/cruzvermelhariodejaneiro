@@ -1,0 +1,8 @@
+# Página de matrícula: blocos em vermelho, mapa estático da sede e margens das notas (05/10/2026, à tarde).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-vermelho-mapa.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-vermelho-mapa.txt
+# Desfazer: scripts/desfazer_publicacao.sh 7ef25ae scripts/publicacao-vermelho-mapa.txt (o index.html; o mapa pode ficar).
+site/matricula-cursos-presenciais/index.html
+site/assets/mapa-sede.png
+site/assets/otim/mapa-sede-480.webp
+site/assets/otim/mapa-sede-960.webp
