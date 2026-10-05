@@ -71,7 +71,7 @@ BLOCOS = [
     {"tipo": "cartao", "imagem": "dia-criancas-cartao", "pasta": "/assets/otim/",
      "alt": "Coordenadora de Juventude da Cruz Vermelha Brasileira Rio de Janeiro com crianças",
      "titulo": "Dia das Crianças na Praça: 13/10, das 9h às 16h",
-     "descricao": "Brincadeiras, primeiros socorros e saúde em frente à sede. Aberto e gratuito.",
+     "descricao": "Aberto e gratuito, em frente à sede. Estamos recebendo doações de brinquedos.",
      "link": f"{ORIGEM}/dia-das-criancas/", "id": "dia-das-criancas"},
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
      "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",

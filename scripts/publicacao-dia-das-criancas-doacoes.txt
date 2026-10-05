@@ -1,0 +1,11 @@
+# Dia das Crianças: doação de brinquedos (seção, formulário), notícias no lugar do voluntário e medição completa (05/10/2026).
+# O PHP antes da página: com a página nova e o PHP antigo, o formulário cairia no assunto "outro" e o
+# ViewContent/Schedule da página não iriam à API de Conversões (nada quebra, mas fica mal registrado).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas-doacoes.txt)
+# 1) servidor: assunto "brinquedos" e textos dos e-mails; repasse da página (ViewContent e Schedule)
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/medicao.php
+# 2) a página, a home (card com a doação) e a bio (cartão com a doação)
+site/dia-das-criancas/index.html
+site/index.html
+site/bio/index.html

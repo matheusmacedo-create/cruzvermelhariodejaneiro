@@ -1,8 +1,8 @@
 <?php
 /**
  * POST (JSON): repasse dos eventos de página para a API de Conversões da Meta (PageView, ViewContent,
- * InitiateCheckout), com o mesmo id que o Pixel usou no navegador. Quem chama é o bloco de medição das
- * páginas (window.cvrjMedicao.servidor), só depois do "sim" para marketing.
+ * InitiateCheckout e, nas páginas de evento, Schedule), com o mesmo id que o Pixel usou no navegador. Quem
+ * chama é o bloco de medição das páginas (window.cvrjMedicao.servidor), só depois do "sim" para marketing.
  *
  * Responde sempre 204 e sem corpo: a página não espera nem lê a resposta. Sem token configurado, sem
  * consentimento de marketing no cookie, origem de fora do site, evento desconhecido ou freio estourado, nada
@@ -19,7 +19,15 @@ const MCP_MEDICAO_LIMITE_POR_MINUTO = 20;
 // dele, e as duas contagens leem no máximo umas centenas de linhas do índice (tipo, criado_em). Acima disso,
 // os eventos de página ficam só com o Pixel.
 const MCP_MEDICAO_TETO_POR_MINUTO = 120;
-const MCP_MEDICAO_EVENTOS = ['PageView', 'ViewContent', 'InitiateCheckout'];
+const MCP_MEDICAO_EVENTOS = ['PageView', 'ViewContent', 'InitiateCheckout', 'Schedule'];
+// Páginas que não são de curso: a página manda só a chave ("conteudo"); o que vai à Meta sai daqui, como o
+// catálogo faz com os cursos. Schedule é o "salvar na agenda" da página do evento.
+const MCP_MEDICAO_CONTEUDOS = [
+    'dia-das-criancas-2026' => [
+        'eventos' => ['ViewContent', 'Schedule'],
+        'dados' => ['content_name' => 'Dia das Crianças na Praça', 'content_category' => 'evento', 'content_ids' => ['dia-das-criancas-2026']],
+    ],
+];
 
 function mcp_medicao_fim(): never
 {
@@ -42,6 +50,16 @@ $id = is_array($b) ? mcp_meta_id_valido($b['id'] ?? null) : null;
 if (!in_array($evento, MCP_MEDICAO_EVENTOS, true) || $id === null) {
     mcp_medicao_fim();
 }
+// Página de evento: a chave tem de existir e o evento tem de ser um dos dela. Schedule só existe nelas.
+$conteudo = null;
+if (array_key_exists('conteudo', $b)) {
+    $conteudo = is_string($b['conteudo']) ? (MCP_MEDICAO_CONTEUDOS[$b['conteudo']] ?? null) : null;
+    if ($conteudo === null || !in_array($evento, $conteudo['eventos'], true)) {
+        mcp_medicao_fim();
+    }
+} elseif ($evento === 'Schedule') {
+    mcp_medicao_fim();
+}
 
 [$maximo, $janela] = MCP_MEDICAO_LIMITE;
 $balde = mcp_ip_balde();
@@ -61,7 +79,9 @@ mcp_registrar(null, 'meta_repasse', $balde);
 
 // Os dados do curso vêm do catálogo, não da página: o valor é o da inscrição.
 $custom = [];
-if ($evento !== 'PageView') {
+if ($conteudo !== null) {
+    $custom = $conteudo['dados'];
+} elseif ($evento !== 'PageView') {
     $curso = mcp_curso(mcp_texto($b['curso'] ?? '', 80));
     if (!$curso) {
         mcp_medicao_fim();
