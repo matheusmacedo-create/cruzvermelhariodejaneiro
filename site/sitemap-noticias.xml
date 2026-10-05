@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-09-29T23:42:33+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-05T21:07:26+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/</loc>
@@ -26,7 +26,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/sala-de-aula-infantil-vazia-com-um-estojo-de-primeiros-socor.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/sala-de-aula-infantil-vazia-com-um-estojo-de-primeiros-socor.jpg</image:loc>
       <image:title>Sala de aula infantil vazia com um estojo de primeiros socorros na prateleira</image:title>
     </image:image>
   </url>
@@ -36,7 +36,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer/desfibrilador-externo-automatico-em-um-armario-de-parede-no.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer/desfibrilador-externo-automatico-em-um-armario-de-parede-no.jpg</image:loc>
       <image:title>Desfibrilador externo automático em um armário de parede no saguão de um prédio</image:title>
     </image:image>
   </url>
@@ -46,7 +46,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda/bandeja-com-cateter-venoso-embalado-garrote-e-materiais-de-a.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda/bandeja-com-cateter-venoso-embalado-garrote-e-materiais-de-a.jpg</image:loc>
       <image:title>Bandeja com cateter venoso embalado, garrote e materiais de antissepsia</image:title>
     </image:image>
   </url>
@@ -56,7 +56,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.jpg</image:loc>
       <image:title>Kit de primeiros socorros aberto sobre a bancada de uma cozinha</image:title>
     </image:image>
   </url>
@@ -66,7 +66,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/bancada-de-micropigmentacao-com-dermografo-pigmentos-e-mater.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/bancada-de-micropigmentacao-com-dermografo-pigmentos-e-mater.jpg</image:loc>
       <image:title>Bancada de micropigmentação com dermógrafo, pigmentos e materiais descartáveis</image:title>
     </image:image>
   </url>
@@ -76,7 +76,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/quarto-adaptado-com-poltrona-andador-barra-de-apoio-e-organi.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/quarto-adaptado-com-poltrona-andador-barra-de-apoio-e-organi.jpg</image:loc>
       <image:title>Quarto adaptado com poltrona, andador, barra de apoio e organizador de remédios</image:title>
     </image:image>
   </url>
@@ -86,7 +86,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/extintor-de-incendio-e-abrigo-de-hidrante-no-corredor-de-um.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/extintor-de-incendio-e-abrigo-de-hidrante-no-corredor-de-um.jpg</image:loc>
       <image:title>Extintor de incêndio e abrigo de hidrante no corredor de um edifício</image:title>
     </image:image>
   </url>
@@ -96,7 +96,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/imagem-ilustrativa-criada-por-ia.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/imagem-ilustrativa-criada-por-ia.jpg</image:loc>
       <image:title>imagem ilustrativa criada por IA</image:title>
     </image:image>
   </url>
@@ -120,7 +120,7 @@
       <image:title>Voz das Comunidades: CAPS e CAPSi atendem Maré, Alemão, Penha e bairros vizinhos</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/caps-e-servico-publico-de-saude-mental-do-sus-o-capsi-atende.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/caps-e-servico-publico-de-saude-mental-do-sus-o-capsi-atende.jpg</image:loc>
       <image:title>CAPS é serviço público de saúde mental do SUS; o CAPSi atende crianças e adolescentes</image:title>
     </image:image>
   </url>
@@ -134,7 +134,7 @@
       <image:title>Card da Secretaria de Estado de Saúde do RJ com estudante e agente comemorando acertos no quiz sobre vape, HPV e prevenção.</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/cigarro-eletronico-frasco-de-vacina-e-preservativo-sobre-car.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/cigarro-eletronico-frasco-de-vacina-e-preservativo-sobre-car.jpg</image:loc>
       <image:title>Cigarro eletrônico, frasco de vacina e preservativo sobre carteira escolar: os três temas do quiz aplicado aos estudantes.</image:title>
     </image:image>
   </url>
@@ -144,10 +144,12 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-1.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-1.jpg</image:loc>
+      <image:title>Foto da matéria: Deam Digital RJ: como denunciar violência doméstica online</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-2.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/deam-digital-rj-como-denunciar-violencia-domestica-online-2.jpg</image:loc>
+      <image:title>Foto da matéria: Deam Digital RJ: como denunciar violência doméstica online</image:title>
     </image:image>
   </url>
   <url>
@@ -160,7 +162,8 @@
       <image:title>Voluntárias da Cruz Vermelha Colombiana organizam kits de alimentos para as famílias atingidas em Chocó, com apoio do apelo de emergência da IFRC.</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombi-2.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombi-2.jpg</image:loc>
+      <image:title>Foto da matéria: Chocó: apelo de emergência da IFRC apoia Cruz Roja Colombiana</image:title>
     </image:image>
   </url>
   <url>
@@ -189,7 +192,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida-1.png</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/setembro-amarelo-a-cruz-vermelha-brasileira-rio-de-janeir-1.jpg</image:loc>
+      <image:title>Foto da matéria: Setembro Amarelo: a Cruz Vermelha Brasileira Rio de Janeiro e a valorização da vida</image:title>
     </image:image>
   </url>
   <url>
@@ -198,8 +202,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/midia-1.jpg</image:loc>
-      <image:title>aaa</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-r-1.jpg</image:loc>
+      <image:title>Foto da matéria: Recebemos na sede da Cruz Vermelha do Rio de Janeiro os representantes da Associação de Bombeiros Civis</image:title>
     </image:image>
   </url>
   <url>
@@ -208,8 +212,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/midia-1.jpg</image:loc>
-      <image:title>Informações rápidas sobre cursos, doações e voluntariado na Cruz Vermelha RJ.</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/cartaz-do-cadastro-de-voluntarios-para-o-desfile-de-7-de-set.jpg</image:loc>
+      <image:title>Cartaz do cadastro de voluntários para o Desfile de 7 de Setembro, com voluntários da Cruz Vermelha Brasileira Rio de Janeiro em fila e a bandeira do Brasil</image:title>
     </image:image>
   </url>
 </urlset>

@@ -590,7 +590,21 @@ function mcp_contato_assuntos(): array
     return [
         'matricula' => 'Matrícula em cursos', 'curso' => 'Dúvida sobre um curso', 'pagamento' => 'Pagamento ou PIX',
         'voluntariado' => 'Voluntariado', 'doacoes' => 'Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
+        // Só do formulário da página /dia-das-criancas/ (o chat não oferece este assunto).
+        'brinquedos' => 'Doação de brinquedos (Dia das Crianças)',
     ];
+}
+
+/**
+ * Por onde a mensagem chegou, para os textos dos e-mails. O chat é o canal de sempre; a doação de brinquedos
+ * chega pelo formulário da página do Dia das Crianças.
+ */
+function mcp_contato_canal(string $assunto): array
+{
+    return $assunto === 'brinquedos'
+        ? ['nome' => 'formulário de doação do Dia das Crianças', 'rotulo' => 'Formulário de doação',
+            'site' => 'formulário de doação do Dia das Crianças, em cruzvermelhariodejaneiro.org']
+        : ['nome' => 'chat do site', 'rotulo' => 'Chat do site', 'site' => 'chat de cruzvermelhariodejaneiro.org'];
 }
 
 function mcp_contato_assunto_rotulo(string $chave): string
@@ -612,6 +626,7 @@ function mcp_contato_com_curso(string $assunto): bool
 function mcp_montar_email_contato_equipe(array $c): array
 {
     $assunto = mcp_contato_assunto_rotulo((string) $c['assunto']);
+    $canal = mcp_contato_canal((string) $c['assunto']);
     $nome = (string) $c['nome'];
     $primeiro = mcp_primeiro_nome($nome);
     $protocolo = (string) ($c['protocolo'] ?? '');
@@ -649,7 +664,7 @@ function mcp_montar_email_contato_equipe(array $c): array
             . mcp_nota('A pessoa leu estas respostas no chat e ainda assim abriu o chamado.')
         : '';
 
-    $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong> escreveu pelo chat do site sobre <strong>' . mcp_escapar(mb_strtolower($assunto)) . '</strong>'
+    $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong> escreveu pelo ' . mcp_escapar($canal['nome']) . ' sobre <strong>' . mcp_escapar(mb_strtolower($assunto)) . '</strong>'
             . ($curso !== '' ? ' (' . mcp_escapar($curso) . ')' : '') . '. A pessoa já foi avisada de que a resposta chega por e-mail em até ' . MCP_EMAIL_PRAZO . '.')
         . mcp_citacao((string) $c['mensagem'])
         . $jaLido
@@ -662,7 +677,7 @@ function mcp_montar_email_contato_equipe(array $c): array
         . mcp_subtitulo('Dados do contato')
         . mcp_caixa($linhas);
 
-    $texto = "$nome escreveu pelo chat do site sobre " . mb_strtolower($assunto) . ($curso !== '' ? " ($curso)" : '') . ".\n\nMensagem:\n{$c['mensagem']}\n\n"
+    $texto = "$nome escreveu pelo {$canal['nome']} sobre " . mb_strtolower($assunto) . ($curso !== '' ? " ($curso)" : '') . ".\n\nMensagem:\n{$c['mensagem']}\n\n"
         . ($linkPainel !== '' ? "Responder no painel: $linkPainel\n" : '')
         . "Responder por e-mail: $email (ou responda este e-mail).\n\n";
     foreach ($linhas as $rotulo => $valor) {
@@ -671,9 +686,9 @@ function mcp_montar_email_contato_equipe(array $c): array
     return [
         'assunto' => "[Site] $assunto: $nome" . ($curso !== '' ? " · $curso" : '') . ($protocolo !== '' ? " · $protocolo" : ''),
         'html' => mcp_moldura("Nova mensagem de $primeiro", $corpo, [
-            'eyebrow' => 'Chat do site' . ($protocolo !== '' ? " · $protocolo" : ''),
+            'eyebrow' => $canal['rotulo'] . ($protocolo !== '' ? " · $protocolo" : ''),
             'preheader' => mb_substr((string) $c['mensagem'], 0, 140),
-            'motivo' => 'Aviso automático do chat de cruzvermelhariodejaneiro.org para ' . mcp_email_contato_endereco() . '.',
+            'motivo' => 'Aviso automático do ' . $canal['site'] . ' para ' . mcp_email_contato_endereco() . '.',
         ]),
         'texto' => $texto,
     ];
@@ -691,6 +706,7 @@ function mcp_montar_email_contato_confirmacao(array $c): array
     $email = (string) $c['email'];
     $telefone = (string) ($c['telefone'] ?? '');
     $comCurso = mcp_contato_com_curso((string) $c['assunto']);
+    $canal = mcp_contato_canal((string) $c['assunto']);
     $contato = mcp_email_contato_endereco();
     $remetente = mcp_email_endereco(mcp_email_remetente_contato());
     $inscricao = mcp_brl(mcp_inscricao_centavos());
@@ -755,13 +771,17 @@ function mcp_montar_email_contato_confirmacao(array $c): array
             . mcp_botao($link, 'Ver cursos presenciais', true);
         $texto .= "\nCursos presenciais, valores e dúvidas frequentes: $link\n";
     }
+    if ((string) $c['assunto'] === 'brinquedos') {
+        $corpo .= mcp_p('Obrigado por ajudar a fazer o Dia das Crianças na Praça. A equipe responde para combinar a entrega da doação.');
+        $texto .= "\nObrigado por ajudar a fazer o Dia das Crianças na Praça. A equipe responde para combinar a entrega da doação.\n";
+    }
     $corpo .= mcp_nota('Não foi você quem enviou esta mensagem? Ignore este e-mail.');
     return [
         'assunto' => "Recebemos sua mensagem · $protocolo",
         'html' => mcp_moldura("Recebemos sua mensagem, $nome.", $corpo, [
             'eyebrow' => 'Atendimento por e-mail',
             'preheader' => "Protocolo $protocolo. A resposta chega por e-mail em até " . MCP_EMAIL_PRAZO . '.',
-            'motivo' => 'Você recebeu este e-mail porque enviou uma mensagem pelo chat de cruzvermelhariodejaneiro.org.',
+            'motivo' => 'Você recebeu este e-mail porque enviou uma mensagem pelo ' . $canal['site'] . '.',
         ]),
         'texto' => $texto,
     ];

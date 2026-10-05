@@ -8,8 +8,9 @@
  * Confere: o repasse de PageView/ViewContent (api/medicao.php) só com "sim" para marketing e do próprio site;
  * Lead e AddPaymentInfo na cobrança (com dados em hash, IP, navegador e _fbp); Purchase no postback, com o
  * event_id = token e os sinais guardados na inscrição, que saem do banco depois do envio; nada com "não";
- * a escolha retirada na página de acompanhamento vale para o Purchase; Contact do chat; falha da Meta
- * registrada sem atrapalhar o aluno; o freio do repasse.
+ * a escolha retirada na página de acompanhamento vale para o Purchase; Contact do chat; ViewContent e Schedule da
+ * página do Dia das Crianças; o formulário de doação de brinquedos (contato.php, assunto próprio, e-mails); falha
+ * da Meta registrada sem atrapalhar o aluno; o freio do repasse.
  *
  * Uso:
  *   MCP_TESTE_DB_NOME=mcp_capi_teste MCP_TESTE_DB_USUARIO=... MCP_TESTE_DB_SENHA=... php scripts/testar_meta_integracao.php
@@ -262,6 +263,22 @@ pedir('POST', 'medicao.php', ['evento' => 'ViewContent', 'id' => 'vc.mgb2k1.zzzz
 $e = eventos_meta($marca);
 verificar('repasse do ViewContent com os dados do catálogo (curso inexistente não vai)', [count($e), $e[0]['custom_data']['content_ids'] ?? null, $e[0]['custom_data']['value'] ?? null, $e[0]['custom_data']['currency'] ?? null],
     [1, ['puncao-venosa'], 99, 'BRL']);
+// Página do Dia das Crianças: ViewContent e Schedule ("salvar na agenda") com a chave da página; os dados saem do
+// servidor. Schedule sem a chave, chave desconhecida ou em lista, e evento que não é da página não vão.
+$urlCriancas = 'https://cruzvermelhariodejaneiro.org/dia-das-criancas/?utm_source=whatsapp';
+pedir('POST', 'medicao.php', ['evento' => 'ViewContent', 'id' => 'vc.mgb2k1.criancas', 'url' => $urlCriancas, 'conteudo' => 'dia-das-criancas-2026'], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'Schedule', 'id' => 'sc.mgb2k1.criancas', 'url' => $urlCriancas, 'conteudo' => 'dia-das-criancas-2026'], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'Schedule', 'id' => 'sc.mgb2k1.semchave'], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'Schedule', 'id' => 'sc.mgb2k1.outrapag', 'conteudo' => 'pagina-que-nao-existe'], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'Schedule', 'id' => 'sc.mgb2k1.emlista', 'conteudo' => ['dia-das-criancas-2026']], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'InitiateCheckout', 'id' => 'ic.mgb2k1.criancas', 'conteudo' => 'dia-das-criancas-2026'], $SIM);
+pedir('POST', 'medicao.php', ['evento' => 'Schedule', 'id' => 'sc.mgb2k1.comnao', 'conteudo' => 'dia-das-criancas-2026'], $NAO);
+$e = eventos_meta($marca);
+verificar('Dia das Crianças: ViewContent e Schedule com os dados do servidor; o resto não vai', [array_column($e, 'event_name'), array_column($e, 'event_id'),
+    $e[0]['custom_data'] ?? null, $e[1]['custom_data'] ?? null, $e[1]['event_source_url'] ?? null],
+    [['ViewContent', 'Schedule'], ['vc.mgb2k1.criancas', 'sc.mgb2k1.criancas'],
+        ['content_name' => 'Dia das Crianças na Praça', 'content_category' => 'evento', 'content_ids' => ['dia-das-criancas-2026']],
+        ['content_name' => 'Dia das Crianças na Praça', 'content_category' => 'evento', 'content_ids' => ['dia-das-criancas-2026']], $urlCriancas]);
 
 // ----------------------------------------------------------------------------- cobrança, postback e Purchase
 $aluno = ['curso' => 'puncao-venosa', 'nome' => 'Maria da Silva Teste', 'cpf' => cpf_ficticio('900000001'), 'email' => 'Maria.Teste@Exemplo.org', 'telefone' => '(21) 99999-8888',
@@ -373,6 +390,43 @@ $e = eventos_meta($marca);
 verificar('chat com "sim": Contact com o id do chat, e-mail em hash e página limpa', [$r['http'], array_column($e, 'event_name'), $e[0]['event_id'] ?? null,
     $e[0]['user_data']['em'] ?? null, isset($e[0]['user_data']['ph']), $e[0]['event_source_url'] ?? null],
     [201, ['Contact'], 'ct.mgb2k1.a8f3k2l1', hash('sha256', 'ana@exemplo.org'), false, 'https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/?utm_source=ig']);
+
+// Formulário de doação de brinquedos da página do Dia das Crianças: o mesmo contato.php, com assunto próprio.
+$doacao = ['nome' => 'Beatriz Souza', 'email' => 'bia@exemplo.org', 'telefone' => '(21) 98765-4321', 'assunto' => 'brinquedos', 'curso' => 'puncao-venosa',
+    'mensagem' => "Empresa ou grupo: Loja Exemplo\n\nTemos 40 bonecas novas para doar.", 'pagina' => '/dia-das-criancas/',
+    'origem' => ['utm_source' => 'instagram', 'utm_campaign' => 'dia-das-criancas'], 'site' => '', 'evento_id' => 'ct.mgb2k1.brinqued'];
+$linhasAntes = count(file("$dir/pedidos.jsonl"));
+$r = pedir('POST', 'contato.php', $doacao, $SIM);
+$e = eventos_meta($marca);
+$linhaDoacao = $pdo->query("SELECT assunto, curso_slug, pagina, utm_source, telefone FROM mcp_contatos WHERE email = 'bia@exemplo.org'")->fetch();
+$emails = [];
+foreach (array_slice(file("$dir/pedidos.jsonl", FILE_IGNORE_NEW_LINES), $linhasAntes) as $l) {
+    $pedido = json_decode($l, true);
+    if ($pedido['caminho'] === '/emails') {
+        $emails[] = json_decode($pedido['corpo'], true);
+    }
+}
+$paraEquipe = array_values(array_filter($emails, static fn($m) => in_array('contato@exemplo.org', (array) ($m['to'] ?? []), true)))[0] ?? [];
+$paraPessoa = array_values(array_filter($emails, static fn($m) => in_array('bia@exemplo.org', (array) ($m['to'] ?? []), true)))[0] ?? [];
+verificar('doação de brinquedos: 201, gravada com o assunto próprio e sem curso, Contact com a categoria e o id do formulário', [$r['http'],
+    $linhaDoacao, array_column($e, 'event_name'), $e[0]['event_id'] ?? null, $e[0]['custom_data'] ?? null, isset($e[0]['user_data']['ph'])],
+    [201, ['assunto' => 'brinquedos', 'curso_slug' => null, 'pagina' => '/dia-das-criancas/', 'utm_source' => 'instagram', 'telefone' => '21987654321'],
+        ['Contact'], 'ct.mgb2k1.brinqued', ['content_category' => 'brinquedos', 'content_name' => 'brinquedos'], true]);
+verificar('doação de brinquedos: aviso à equipe diz de onde veio (formulário, não o chat) e confirmação fala da entrega', [
+    $paraEquipe['subject'] ?? null, str_contains($paraEquipe['text'] ?? '', 'escreveu pelo formulário de doação do Dia das Crianças sobre doação de brinquedos'),
+    str_contains($paraEquipe['html'] ?? '', 'Formulário de doação'), str_contains($paraEquipe['html'] ?? '', 'pelo chat'),
+    str_contains($paraPessoa['text'] ?? '', 'combinar a entrega da doação'), str_contains($paraPessoa['html'] ?? '', 'pelo formulário de doação do Dia das Crianças')],
+    ['[Site] Doação de brinquedos (Dia das Crianças): Beatriz Souza · ' . ($r['corpo']['protocolo'] ?? ''), true, true, false, true, true]);
+// O chat continua com os textos de sempre.
+$textoChat = '';
+foreach (array_slice(file("$dir/pedidos.jsonl", FILE_IGNORE_NEW_LINES), 0, $linhasAntes) as $l) {
+    $pedido = json_decode($l, true);
+    $m = $pedido['caminho'] === '/emails' ? json_decode($pedido['corpo'], true) : [];
+    if (in_array('contato@exemplo.org', (array) ($m['to'] ?? []), true) && str_contains((string) ($m['subject'] ?? ''), 'Ana Lima')) {
+        $textoChat = (string) $m['text'];
+    }
+}
+verificar('chat: o aviso à equipe continua dizendo "pelo chat do site"', str_contains($textoChat, 'Ana Lima escreveu pelo chat do site sobre matrícula em cursos'), true);
 
 // ----------------------------------------------------------------------------- Meta recusando (token vencido)
 touch("$dir/recusar");

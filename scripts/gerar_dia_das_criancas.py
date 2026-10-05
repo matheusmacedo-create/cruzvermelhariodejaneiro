@@ -11,6 +11,14 @@ Fotos: ações anteriores dos voluntários com crianças, com autorização de u
 (confirmada pelo Matheus em 05/10/2026). Ficam só no servidor, como as outras fotos do site
 (site/assets/, fora do Git); as versões otimizadas saem de scripts/otimizar_imagens.py.
 
+Doação de brinquedos: a página diz como doar (entrega na sede) e tem um formulário para doações maiores ou
+específicas, que vai para o mesmo atendimento do chat (api/contato.php, assunto "brinquedos"): painel da
+secretaria, e-mail à equipe e confirmação para a pessoa. Doação em dinheiro pelo site segue suspensa.
+
+Medição (docs/rastreamento.md): GA4 com o grupo de conteúdo "eventos", cliques (dia_criancas_click), seções
+vistas, share, form_start e generate_lead; Pixel com ViewContent, Schedule (salvar na agenda), Contact (o
+formulário) e DiaCriancasClick; API de Conversões com os mesmos ids (medicao.php e contato.php).
+
 Cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de cookies) e o script do menu vêm de site/index.html,
 como nos outros geradores; o chat de contato entra no fim.
 
@@ -34,7 +42,13 @@ SAIDA_ICS = PASTA / "dia-das-criancas.ics"
 OTIM = RAIZ / "site" / "assets" / "otim"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/dia-das-criancas/"
-URL_VOLUNTARIO = "https://form.spotform.com.br/voluntariocruzvermelharj"
+URL_NOTICIAS = "/noticias/"
+API_CONTATO = "/matricula-cursos-presenciais/api/contato.php"
+# Chave da página na medição: o servidor só aceita a que está em MCP_MEDICAO_CONTEUDOS (api/medicao.php).
+CONTEUDO_MEDICAO = "dia-das-criancas-2026"
+NOME_MEDICAO = "Dia das Crianças na Praça"
+# Entrega dos brinquedos: na sede, no horário de recebimento de doações (o mesmo da Campanha do Agasalho).
+DOACAO_ENTREGA = "Na sede, na Praça da Cruz Vermelha, 10, Centro, de segunda a sexta, das 10h às 17h."
 
 # ----------------------------------------------------------------------------- o evento (fonte única)
 FUSO = timezone(timedelta(hours=-3))  # Rio de Janeiro: sem horário de verão desde 2019
@@ -130,6 +144,7 @@ def url_agenda_google() -> str:
 def url_whatsapp() -> str:
     texto = (f'{EVENTO["nome"]}! {DIA_CURTO}, {DATA_CURTA}, das {HORARIO}, em frente ao Palácio da Cruz Vermelha, no Centro do Rio. '
              "Brincadeiras, primeiros socorros e saúde para as crianças. Aberto e gratuito. "
+             "Também estamos recebendo doações de brinquedos. "
              f"{URL_PAGINA}?utm_source=whatsapp&utm_medium=compartilhamento&utm_campaign=dia-das-criancas")
     return "https://api.whatsapp.com/send?" + urlencode({"text": texto})
 
@@ -206,7 +221,7 @@ CSS = """
     .dc-topo { background: linear-gradient(180deg, #fff 0%, var(--soft) 100%); border-bottom: 1px solid var(--line); padding: 56px 0 64px; }
     /* Topo sem caixas aninhadas: texto na coluna 1, foto na 2 (ocupando as linhas do texto). No celular a ordem
        do HTML vale, e a foto aparece logo depois do título. A última linha (1fr) absorve sobra se a foto for mais alta. */
-    .dc-topo-grade { display: grid; grid-template-columns: 1.1fr .9fr; grid-template-rows: repeat(6, auto) 1fr; column-gap: 48px; }
+    .dc-topo-grade { display: grid; grid-template-columns: 1.1fr .9fr; grid-template-rows: repeat(7, auto) 1fr; column-gap: 48px; }
     .dc-topo-grade > * { grid-column: 1; }
     .dc-topo-grade > .dc-topo-foto { grid-column: 2; grid-row: 1 / -1; align-self: center; }
     .dc-topo h1 { color: var(--black); font-size: clamp(2rem, 4.6vw, 3.2rem); line-height: 1.05; letter-spacing: -.035em; margin: 10px 0 16px; }
@@ -219,6 +234,9 @@ CSS = """
     .dc-acoes .btn i { margin-right: 8px; }
     .dc-ics { margin: 12px 0 0; font-size: .9rem; color: var(--dc-suave); }
     .dc-ics a, .dc-dl a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .dc-doe-aviso { display: flex; gap: 12px; align-items: center; margin: 18px 0 0; padding: 12px 14px; border-radius: 14px; background: #fff7f7; border: 1px solid #f5c2c7; color: var(--text); font-size: .95rem; line-height: 1.4; }
+    .dc-doe-aviso > i { width: 34px; height: 34px; border-radius: 10px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .dc-doe-aviso a { color: var(--red); font-weight: 800; text-decoration: underline; white-space: nowrap; }
     .dc-topo-foto { margin: 0; position: relative; }
     .dc-topo-foto img { width: 100%; height: auto; display: block; border-radius: 22px; box-shadow: 0 24px 60px rgba(16, 24, 40, .18); aspect-ratio: 1080 / 943; object-fit: cover; background: var(--soft); }
     .dc-selo { position: absolute; left: -14px; bottom: 22px; background: var(--red); color: #fff; border-radius: 16px; padding: 12px 16px; box-shadow: 0 14px 30px rgba(204, 0, 0, .3); line-height: 1.1; text-align: center; }
@@ -237,12 +255,46 @@ CSS = """
     .dc-galeria figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
     .dc-galeria img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--line); }
     .dc-galeria figcaption { padding: 10px 12px 12px; font-size: .85rem; color: var(--dc-suave); line-height: 1.35; }
+    /* O cabeçalho da home é fixo no topo: o link "Saiba como doar" para a seção sem escondê-la atrás dele. */
+    .dc-doacoes { scroll-margin-top: 72px; }
+    .dc-doacoes-grade { display: grid; grid-template-columns: .9fr 1.1fr; gap: 44px; align-items: start; }
+    .dc-doacoes .lead { color: var(--dc-suave); }
+    .dc-passos { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 16px; }
+    .dc-passos li { display: flex; gap: 14px; align-items: flex-start; line-height: 1.45; color: var(--text); }
+    .dc-passos li > i { width: 44px; height: 44px; border-radius: 13px; background: #fdecec; color: var(--red); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
+    .dc-passos b { display: block; color: var(--black); }
+    .dc-form-cartao { background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; }
+    .dc-form-cartao h3 { margin: 0 0 6px; color: var(--black); font-size: 1.3rem; }
+    .dc-form-cartao > p { margin: 0 0 18px; color: var(--dc-suave); }
+    .dc-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .dc-form[hidden], .dc-form-ok[hidden], .dc-erro[hidden] { display: none; }
+    .dc-campo { display: grid; gap: 6px; align-content: start; }
+    .dc-campo-largo, .dc-erro, .dc-form button, .dc-privacidade { grid-column: 1 / -1; }
+    .dc-campo label { font-weight: 700; font-size: .92rem; color: var(--black); }
+    .dc-campo label small { font-weight: 500; color: var(--dc-suave); }
+    /* Borda #8a94a6: 3:1 no branco (contorno de campo, WCAG 1.4.11). */
+    .dc-campo input, .dc-campo textarea { width: 100%; box-sizing: border-box; font: inherit; color: var(--text); background: #fff; border: 1.5px solid #8a94a6; border-radius: 12px; padding: 11px 13px; }
+    .dc-campo textarea { resize: vertical; min-height: 112px; }
+    .dc-campo input:focus, .dc-campo textarea:focus { outline: 3px solid rgba(204, 0, 0, .2); outline-offset: 1px; border-color: var(--red); }
+    .dc-campo [aria-invalid="true"] { border-color: var(--red); background: #fff7f7; }
+    .dc-erro { margin: 0; padding: 10px 12px; border-radius: 10px; background: #fff7f7; border: 1px solid #f5c2c7; color: #a30000; font-weight: 600; font-size: .92rem; }
+    .dc-form button { justify-self: start; }
+    .dc-form button i { margin-right: 8px; }
+    .dc-form button[disabled] { opacity: .7; cursor: progress; }
+    .dc-privacidade { margin: 0; font-size: .85rem; color: var(--dc-suave); }
+    .dc-privacidade a { color: var(--red); text-decoration: underline; }
+    .dc-armadilha { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .dc-form-ok { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid #b7e4c7; border-radius: 14px; padding: 18px; }
+    .dc-form-ok > i { color: #1b7f3b; font-size: 1.6rem; flex-shrink: 0; }
+    .dc-form-ok p { margin: 0; color: var(--text); }
+    .dc-form-ok:focus { outline: none; }
+    .dc-servico { background: var(--soft); }
     .dc-servico-grade { display: grid; grid-template-columns: 1.25fr .75fr; gap: 40px; align-items: start; }
     .dc-dl { display: grid; grid-template-columns: 150px 1fr; gap: 0; margin: 22px 0 0; border-top: 1px solid var(--line); }
     .dc-dl dt, .dc-dl dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); }
     .dc-dl dt { font-weight: 800; color: var(--black); }
     .dc-dl dd { color: var(--text); }
-    .dc-compartilhar { background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; display: grid; gap: 12px; }
+    .dc-compartilhar { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; display: grid; gap: 12px; }
     .dc-compartilhar h3 { margin: 0; color: var(--black); font-size: 1.25rem; }
     .dc-compartilhar p { margin: 0; color: var(--dc-suave); }
     .dc-compartilhar .btn { width: 100%; }
@@ -250,12 +302,13 @@ CSS = """
     .dc-whats { background: #0e7266; color: #fff; box-shadow: 0 10px 24px rgba(14, 114, 102, .25); }
     .dc-whats:hover { background: #075e54; }
     .dc-copiado { min-height: 1.2em; font-size: .88rem; color: #0e7266; font-weight: 700; }
-    .dc-voluntario { background: var(--red); color: #fff; text-align: center; padding: 64px 0; }
-    .dc-voluntario-titulo { color: #fff; margin: 0 0 10px; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
-    .dc-voluntario p:not(.dc-voluntario-titulo) { margin: 0 auto 22px; max-width: 56ch; color: rgba(255, 255, 255, .92); }
+    .dc-noticias { background: var(--red); color: #fff; text-align: center; padding: 64px 0; }
+    .dc-noticias-titulo { color: #fff; margin: 0 0 10px; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+    .dc-noticias p:not(.dc-noticias-titulo) { margin: 0 auto 22px; max-width: 56ch; color: rgba(255, 255, 255, .92); }
+    .dc-noticias .btn i { margin-right: 8px; }
     @media (max-width: 920px) {
       .dc-topo { padding: 34px 0 44px; }
-      .dc-servico-grade { grid-template-columns: 1fr; gap: 30px; }
+      .dc-servico-grade, .dc-doacoes-grade { grid-template-columns: 1fr; gap: 30px; }
       .dc-topo-grade { grid-template-columns: 1fr; grid-template-rows: none; }
       .dc-topo-grade > .dc-topo-foto { grid-column: 1; grid-row: auto; margin: 4px 0 22px; }
       .dc-cartoes { grid-template-columns: 1fr; gap: 14px; }
@@ -273,6 +326,9 @@ CSS = """
       .dc-fatos li > i { width: 34px; height: 34px; border-radius: 10px; font-size: .95rem; }
       .dc-acoes .btn { flex: 1 1 100%; }
       .dc-dl { grid-template-columns: 1fr; }
+      .dc-form { grid-template-columns: 1fr; }
+      .dc-form button { justify-self: stretch; }
+      .dc-form-cartao { padding: 22px 18px; }
       .dc-dl dt { padding-bottom: 2px; border-bottom: 0; }
       .dc-dl dd { padding-top: 0; }
     }
@@ -281,6 +337,59 @@ CSS = """
 JS = """
   <script>
     (function () {
+      var CONTEUDO = '__CONTEUDO__', NOME = '__NOME__', API = '__API__';
+      var medicao = window.cvrjMedicao;
+      function novoId(prefixo) {
+        try { if (medicao && medicao.novoId) return medicao.novoId(prefixo); } catch (e) {}
+        return prefixo + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+      }
+      // GA4 só sai com a permissão de estatística (Consent Mode); o Pixel, só com a de marketing (sem ela, o
+      // fbevents.js nem é baixado e a fila fica parada). Nada aqui depende de um ou de outro para a página funcionar.
+      function ga(evento, dados) { try { if (window.gtag) gtag('event', evento, dados || {}); } catch (e) {} }
+      function pixel(tipo, evento, dados, id) { try { if (window.fbq) fbq(tipo, evento, dados || {}, id ? { eventID: id } : undefined); } catch (e) {} }
+      // API de Conversões: o mesmo evento, com o mesmo id, pelo servidor do site (medicao.php, só com "sim" para
+      // marketing). Nesta página o terceiro parâmetro é a chave da página, não um curso.
+      function servidor(evento, id) { try { if (medicao && medicao.servidor) medicao.servidor(evento, id, CONTEUDO); } catch (e) {} }
+      var dadosMeta = { content_name: NOME, content_category: 'evento', content_ids: [CONTEUDO] };
+
+      // Abriu a página: ViewContent.
+      var idVisto = novoId('vc');
+      pixel('track', 'ViewContent', dadosMeta, idVisto);
+      servidor('ViewContent', idVisto);
+
+      // Cada clique que importa: dia_criancas_click (GA4) e DiaCriancasClick (Meta), com a ação. Salvar na agenda
+      // também é o Schedule (uma vez por visita); WhatsApp e copiar o link, o share do GA4.
+      var agendou = false;
+      document.querySelectorAll('[data-dc]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var acao = el.getAttribute('data-dc');
+          ga('dia_criancas_click', { acao: acao });
+          pixel('trackCustom', 'DiaCriancasClick', { acao: acao });
+          if ((acao === 'agenda-google' || acao === 'agenda-ics') && !agendou) {
+            agendou = true;
+            var id = novoId('sc');
+            pixel('track', 'Schedule', dadosMeta, id);
+            servidor('Schedule', id);
+          }
+          if (acao === 'whatsapp' || acao === 'copiar') ga('share', { method: acao === 'whatsapp' ? 'whatsapp' : 'link', content_type: 'evento', item_id: CONTEUDO });
+        });
+      });
+
+      // Até onde a pessoa chegou: cada seção vista conta uma vez (dia_criancas_secao).
+      if ('IntersectionObserver' in window) {
+        var vistas = {};
+        var observador = new IntersectionObserver(function (itens) {
+          itens.forEach(function (item) {
+            var secao = item.target.getAttribute('data-dc-secao');
+            if (!item.isIntersecting || vistas[secao]) return;
+            vistas[secao] = 1;
+            observador.unobserve(item.target);
+            ga('dia_criancas_secao', { secao: secao });
+          });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('[data-dc-secao]').forEach(function (s) { observador.observe(s); });
+      }
+
       // Copiar o link da página (para colar no Instagram, no grupo da escola...). Sem a API, mostra o endereço.
       var copiar = document.querySelector('[data-dc="copiar"]');
       var aviso = document.querySelector('.dc-copiado');
@@ -291,12 +400,78 @@ JS = """
           navigator.clipboard.writeText(url).then(function () { mostrar('Link copiado!'); }, function () { mostrar(url); });
         } else { mostrar(url); }
       });
-      // Cliques que importam (agenda, mapa, compartilhar, voluntário) viram o evento dia_criancas_click no GA4.
-      // O gtag só manda com a permissão de estatística (Consent Mode e aviso de cookies).
-      document.querySelectorAll('[data-dc]').forEach(function (el) {
-        el.addEventListener('click', function () {
-          try { if (window.gtag) gtag('event', 'dia_criancas_click', { acao: el.getAttribute('data-dc') }); } catch (e) {}
-        });
+
+      // Formulário de doação maior ou específica: o mesmo atendimento do chat (contato.php, assunto "brinquedos"):
+      // fica no painel da secretaria, vai por e-mail à equipe e a pessoa recebe a confirmação com o protocolo.
+      var form = document.getElementById('dc-form');
+      if (!form) return;
+      var erro = form.querySelector('.dc-erro');
+      var botao = form.querySelector('button[type="submit"]');
+      var ok = document.querySelector('.dc-form-ok');
+      var comecou = false, enviando = false;
+      form.addEventListener('input', function () {
+        if (comecou) return;
+        comecou = true;
+        ga('form_start', { form_id: 'doacao-brinquedos' });
+      });
+      function mostrarErro(texto, campo) {
+        form.querySelectorAll('[aria-invalid]').forEach(function (c) { c.removeAttribute('aria-invalid'); });
+        erro.textContent = texto || '';
+        erro.hidden = !texto;
+        var c = campo && form.elements[campo];
+        if (c) { c.setAttribute('aria-invalid', 'true'); c.focus(); }
+      }
+      // utm_*, fbclid e gclid da visita, só com a permissão de estatística (como no chat).
+      function origem() {
+        var o = {}, c = null;
+        try { c = medicao && medicao.ler(); } catch (e) { c = null; }
+        if (!c || !c.estatistica) return o;
+        new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) o[k] = v.slice(0, 255); });
+        try {
+          var salvo = JSON.parse(sessionStorage.getItem('mcp_origem') || '{}');
+          Object.keys(salvo).forEach(function (k) { if (!o[k]) o[k] = salvo[k]; });
+        } catch (e) { /* armazenamento bloqueado */ }
+        return o;
+      }
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (enviando) return;
+        var f = form.elements;
+        var nome = f.nome.value.trim(), email = f.email.value.trim(), telefone = f.telefone.value.trim();
+        var grupo = f.organizacao.value.trim(), texto = f.mensagem.value.trim();
+        if (nome.length < 2) return mostrarErro('Digite seu nome para a gente saber com quem fala.', 'nome');
+        if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return mostrarErro('Esse e-mail não parece válido. Confira e envie de novo.', 'email');
+        if (texto.length < 10) return mostrarErro('Conte o que você quer doar (pelo menos 10 caracteres).', 'mensagem');
+        mostrarErro('');
+        var corpo = {
+          nome: nome, email: email, telefone: telefone, assunto: 'brinquedos', curso: '',
+          mensagem: (grupo ? 'Empresa ou grupo: ' + grupo + '\\n\\n' : '') + texto,
+          pagina: location.pathname + location.search, origem: origem(), site: f.site.value,
+          // O id do Contact do Pixel: o servidor manda o mesmo Contact à API de Conversões (só com "sim" para marketing).
+          evento_id: novoId('ct')
+        };
+        enviando = true;
+        botao.disabled = true;
+        botao.setAttribute('aria-busy', 'true');
+        fetch(API, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })
+          .then(function (r) { return r.json()['catch'](function () { return null; }).then(function (d) { return { http: r.status, d: d }; }); })
+          ['catch'](function () { return { http: 0, d: null }; })
+          .then(function (x) {
+            enviando = false;
+            botao.disabled = false;
+            botao.removeAttribute('aria-busy');
+            var d = x.d && typeof x.d === 'object' ? x.d : { ok: false, erro: x.http === 0 ? 'Sem conexão. Verifique a internet e tente de novo.' : 'Não consegui enviar agora. Tente de novo em instantes.' };
+            if (!d.ok) {
+              return mostrarErro(d.erro || 'Não consegui enviar agora. Tente de novo em instantes.', ['nome', 'email', 'telefone', 'mensagem'].indexOf(d.campo) >= 0 ? d.campo : null);
+            }
+            ok.querySelector('[data-dc-protocolo]').textContent = d.protocolo || '';
+            ok.querySelector('[data-dc-prazo]').textContent = d.prazo || '3 dias úteis';
+            form.hidden = true;
+            ok.hidden = false;
+            ok.focus();
+            ga('generate_lead', { form_id: 'doacao-brinquedos', lead_source: 'dia-das-criancas' });
+            pixel('track', 'Contact', { content_category: 'brinquedos', content_name: 'brinquedos' }, corpo.evento_id);
+          });
       });
     })();
   </script>"""
@@ -310,6 +485,13 @@ def main() -> int:
     # GA4: a página entra no grupo de conteúdo "eventos" (relatórios por grupo). O snippet vem da home.
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'eventos' });\n    gtag('config', 'G-", 1)
     assert "content_group: 'eventos'" in ga4, "não achei o gtag('config') da home para inserir o content_group"
+    # Bloco de medição da home: nesta página o terceiro parâmetro de cvrjMedicao.servidor() é a chave da página
+    # ("conteudo", que medicao.php confere em MCP_MEDICAO_CONTEUDOS), não um curso.
+    pixel = partes["pixel"]
+    curso_no_corpo = "if (curso) corpo.curso = String(curso);"
+    assert curso_no_corpo in pixel, "o bloco de medição da home mudou; ajuste gerar_dia_das_criancas.py"
+    pixel = pixel.replace(curso_no_corpo, "if (curso) corpo.conteudo = String(curso); // aqui: a chave da página, não um curso", 1)
+    js = JS.replace("__CONTEUDO__", CONTEUDO_MEDICAO).replace("__NOME__", NOME_MEDICAO).replace("__API__", API_CONTATO)
 
     base, versoes, alt_hero = HERO
     sizes_hero = "(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(100vw - 40px), 473px"  # .wrap da home
@@ -369,7 +551,7 @@ def main() -> int:
 {partes["estilo"]}
 {CSS}
 {ga4}
-{partes["pixel"]}
+{pixel}
 {json_ld()}
 </head>
 <body>
@@ -393,10 +575,11 @@ def main() -> int:
           <a class="btn btn-outline" href="{esc(URL_MAPA)}" target="_blank" rel="noopener" data-dc="mapa"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Como chegar</a>
         </div>
         <p class="dc-ics">No iPhone ou no Outlook: <a href="dia-das-criancas.ics" download data-dc="agenda-ics">baixe o evento para a agenda (.ics)</a>.</p>
+        <p class="dc-doe-aviso"><i class="fa-solid fa-gift" aria-hidden="true"></i><span><b>Estamos recebendo doações de brinquedos</b> para a ação. <a href="#doar-brinquedos" data-dc="doar">Saiba como doar</a></span></p>
       </div>
     </section>
 
-    <section class="dc-setores" aria-labelledby="dc-setores-titulo">
+    <section class="dc-setores" data-dc-secao="programacao" aria-labelledby="dc-setores-titulo">
       <div class="wrap">
         <p class="eyebrow">Programação</p>
         <h2 id="dc-setores-titulo">O que vai ter na praça</h2>
@@ -408,7 +591,7 @@ def main() -> int:
       </div>
     </section>
 
-    <section class="dc-fotos" aria-labelledby="dc-fotos-titulo">
+    <section class="dc-fotos" data-dc-secao="fotos" aria-labelledby="dc-fotos-titulo">
       <div class="wrap">
         <p class="eyebrow">Como são as nossas ações</p>
         <h2 id="dc-fotos-titulo">A Cruz Vermelha RJ com as crianças</h2>
@@ -419,7 +602,41 @@ def main() -> int:
       </div>
     </section>
 
-    <section class="dc-servico" aria-labelledby="dc-servico-titulo">
+    <section class="dc-doacoes" id="doar-brinquedos" data-dc-secao="doacoes" aria-labelledby="dc-doacoes-titulo">
+      <div class="wrap dc-doacoes-grade">
+        <div>
+          <p class="eyebrow">Doações</p>
+          <h2 id="dc-doacoes-titulo">Doe brinquedos para a criançada</h2>
+          <p class="lead">Estamos recebendo doações de brinquedos para presentear as crianças na ação de {DATA_LONGA}.</p>
+          <ul class="dc-passos">
+            <li><i class="fa-solid fa-gift" aria-hidden="true"></i><span><b>O que doar</b> Brinquedos novos ou em bom estado, limpos e com todas as peças.</span></li>
+            <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span><b>Onde entregar</b> {esc(DOACAO_ENTREGA)}</span></li>
+            <li><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i><span><b>Doação maior ou específica</b> Empresa, escola, grupo ou uma doação em quantidade: combine a entrega com a equipe pelo formulário.</span></li>
+          </ul>
+        </div>
+        <div class="dc-form-cartao">
+          <h3 id="dc-form-titulo">Doação maior ou específica?</h3>
+          <p>Conte o que você quer doar e a quantidade. A equipe responde por e-mail para combinar a entrega.</p>
+          <form class="dc-form" id="dc-form" aria-labelledby="dc-form-titulo" novalidate>
+            <div class="dc-campo"><label for="dc-nome">Nome</label><input id="dc-nome" name="nome" autocomplete="name" required maxlength="120"></div>
+            <div class="dc-campo"><label for="dc-email">E-mail</label><input id="dc-email" name="email" type="email" autocomplete="email" required maxlength="190"></div>
+            <div class="dc-campo"><label for="dc-telefone">Telefone ou WhatsApp <small>(opcional)</small></label><input id="dc-telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30"></div>
+            <div class="dc-campo"><label for="dc-organizacao">Empresa ou grupo <small>(opcional)</small></label><input id="dc-organizacao" name="organizacao" autocomplete="organization" maxlength="120"></div>
+            <div class="dc-campo dc-campo-largo"><label for="dc-mensagem">O que você quer doar?</label><textarea id="dc-mensagem" name="mensagem" rows="4" required minlength="10" maxlength="2800" placeholder="Ex.: 40 bonecas novas, jogos educativos, bolas..."></textarea></div>
+            <div class="dc-armadilha" aria-hidden="true"><label for="dc-site">Não preencha este campo</label><input id="dc-site" name="site" tabindex="-1" autocomplete="off"></div>
+            <p class="dc-erro" role="alert" hidden></p>
+            <button type="submit" class="btn btn-red"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Enviar</button>
+            <p class="dc-privacidade">Seus dados são usados só para responder sobre a doação. <a href="/privacidade/">Política de Privacidade</a></p>
+          </form>
+          <div class="dc-form-ok" role="status" tabindex="-1" hidden>
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <p><b>Recebemos sua mensagem!</b> Protocolo <span data-dc-protocolo></span>. A equipe responde por e-mail em até <span data-dc-prazo></span> para combinar a entrega. Obrigado por ajudar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dc-servico" data-dc-secao="informacoes" aria-labelledby="dc-servico-titulo">
       <div class="wrap dc-servico-grade">
         <div>
           <p class="eyebrow">Anote</p>
@@ -428,6 +645,7 @@ def main() -> int:
             <dt>Quando</dt><dd>{DIA_SEMANA.capitalize()}, {DATA_LONGA} de {_ini.year}, das {HORARIO}</dd>
             <dt>Onde</dt><dd>Na praça em frente ao Palácio da Cruz Vermelha: {esc(EVENTO["endereco"])}, {esc(EVENTO["bairro"])}, {esc(EVENTO["cidade"])} - {esc(EVENTO["uf"])}, CEP {esc(EVENTO["cep"])} · <a href="{esc(URL_MAPA)}" target="_blank" rel="noopener" data-dc="mapa-informacoes">abrir no mapa</a></dd>
             <dt>Entrada</dt><dd>Gratuita e aberta ao público, sem inscrição</dd>
+            <dt>Doações</dt><dd>Brinquedos novos ou em bom estado, entregues na sede · <a href="#doar-brinquedos" data-dc="doar-informacoes">como doar</a></dd>
             <dt>Quem organiza</dt><dd>Cruz Vermelha Brasileira Rio de Janeiro, com os setores de Juventude, Primeiros Socorros e Educação e Saúde</dd>
             <dt>Dúvidas</dt><dd>Fale com a gente pelo chat deste site, no botão "Fale com a gente".</dd>
           </dl>
@@ -442,11 +660,11 @@ def main() -> int:
       </div>
     </section>
 
-    <section class="dc-voluntario" aria-label="Voluntariado">
+    <section class="dc-noticias" data-dc-secao="noticias" aria-label="Notícias da Cruz Vermelha Brasileira Rio de Janeiro">
       <div class="wrap">
-        <p class="dc-voluntario-titulo">Quer fazer parte das próximas ações?</p>
-        <p>Os voluntários da Cruz Vermelha Brasileira Rio de Janeiro estão nas ruas, nas escolas e na sede o ano todo.</p>
-        <a class="btn btn-white" href="{URL_VOLUNTARIO}" target="_blank" rel="noopener" data-dc="voluntario">Quero ser voluntário</a>
+        <p class="dc-noticias-titulo">Acompanhe as ações da Cruz Vermelha RJ</p>
+        <p>Campanhas, ações nas ruas e atendimentos da Cruz Vermelha Brasileira Rio de Janeiro, contados nas nossas notícias.</p>
+        <a class="btn btn-white" href="{URL_NOTICIAS}" data-dc="noticias"><i class="fa-solid fa-newspaper" aria-hidden="true"></i>Ver as notícias</a>
       </div>
     </section>
   </main>
@@ -454,7 +672,7 @@ def main() -> int:
 {partes["footer"]}
 
 {partes["menu_js"]}
-{JS}
+{js}
 {chat_widget.tags()}
 </body>
 </html>
