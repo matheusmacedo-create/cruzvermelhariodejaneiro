@@ -221,6 +221,20 @@ select_item, cta_matricula_visto, secao_vista, faq_aberta, chat_atalho, saida_es
 `mapa_aberto`. Não há WhatsApp na página (decisão pendente D5), então `click_whatsapp` não existe. Detalhes em
 `docs/rastreamento.md`.
 
+**Revisão adversarial (três revisores + verificação, 05/10):** corrigidos chat, "Veja o certificado" e "Peça uma turma" de
+dentro da janela dos detalhes (fechavam atrás do dialog ou soltavam a trava de rolagem); chegada por `#det-<slug>` deixava a
+ficha impressa solta ao fechar (`:target`, agora só sem JS, e o hash é limpo); a janela não abre por cima do aviso de
+cookies; navegação fixa fora do fluxo (deixava 57 px em branco) e com `scroll-margin-top` nas seções; botão da navegação
+com texto branco; barra fixa com nome em duas linhas e subtítulo curto; moldura da ficha no modo curso; copy alinhada à
+regra pública da escola ("a entrada na aula é liberada com a matrícula paga"), "sem criar conta **antes de pagar**" e a
+pergunta "Preciso criar conta?"; FAQ da turma não formada sem prometer além dos 7 dias; frases do catálogo que prometem
+emprego ou renda ficam fora da página e do chat (`EXCLUIR_CATALOGO`); legendas das fotos com o que elas mostram
+(formação de voluntários, equipe), não "turma" nem "instrutor". **Achados fora desta página, para tratar à parte:**
+`scripts/sincronizar_catalogo.py` não lê mais a escola (zera preço, carga e escolaridade se rodado); `faq-home.json`
+descreve o fluxo antigo (secretaria confirma em 3 dias úteis) e cita R$ 100 de matrícula da escola (a escola cobra R$ 99
+nos cartões e diz R$ 100 no passo 02); o aviso de cookies cobre 58% da primeira tela em 375×667; o cinza `--muted` do
+cabeçalho e rodapé da home tem contraste abaixo de 4,5:1 em 12–13 px.
+
 **Conferido:** Playwright em 375, 390, 430, 768, 1024, 1280 e 1440 (sem rolagem horizontal, sem erro de JS; filtro,
 janela dos detalhes com Esc/X/fora e foco de volta, janela da turma, barra fixa, navegação, modo curso),
 `conferir_pixel.js --repositorio` (15/15, com o passo "abrir um curso" trocado para a janela), `validar_jsonld.py`,
