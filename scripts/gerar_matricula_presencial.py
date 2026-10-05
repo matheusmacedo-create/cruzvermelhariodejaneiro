@@ -18,6 +18,11 @@ minha vaga"), navegação fixa da página no computador. O formulário de turma 
 depoimento ou número inventado (o gerador recusa marcadores [INSERIR …]), sem telefone nem WhatsApp da secretaria, só
 afirmações com fonte ("Informação em breve" onde não há dado), prometer só o que o sistema cumpre.
 
+Porte visual do modelo B (05/10/2026): Manrope, paleta --vermelho/--escuro, cartões com capa e véu, faixa vermelha
+dos passos, chamada final escura, ficha com rodapé fixo. Só a camada visual mudou (CSS_PAGINA, hero_html() e o HTML
+montado em main()); textos, JS_PAGINA, ganchos do DOM, checkout, JSON-LD, consentimento e chat são os mesmos. O banner
+é o banner-6-branco, escolhido pelo dono; a troca fica restrita a hero_html() e ao bloco /* Hero */ do CSS.
+
 Uso:  python3 scripts/sincronizar_catalogo.py && python3 scripts/gerar_imagens_matricula.py
       && python3 scripts/gerar_matricula_presencial.py
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
@@ -359,21 +364,39 @@ STATUS_ROTULO = {"vagas_abertas": "Vagas abertas", "ultimas_vagas": "Últimas va
 EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno financeiro|renda|iniciar seus atendimentos", re.I)
 # Materiais necessários por curso: a escola ainda não informou. "Informação em breve" até lá.
 MATERIAIS: dict[str, str] = {}
-# Fotos reais da sede (servidas de /assets/otim, fora do Git; legendas de site/index.html e site/historia/index.html).
-FOTO_TOPO = {"src": "/assets/otim/auditorio-voluntarios-960.webp",
-             "srcset": "/assets/otim/auditorio-voluntarios-480.webp 480w, /assets/otim/auditorio-voluntarios-960.webp 960w",
-             "alt": "Formação de voluntários no auditório da sede da Cruz Vermelha Brasileira Rio de Janeiro",
-             "legenda": "Formação de voluntários no auditório da sede"}
+# Fotos reais da sede e das aulas (servidas de /assets/otim, fora do Git; só o servidor as tem). As legendas dizem o que
+# a foto mostra, sem citar curso quando a imagem não o mostra. Arquivos novos de 05/10 (aula-*.webp) ainda não estavam no
+# servidor quando o porte foi feito: publicar junto com a página.
+FOTO_TOPO = {"base": "aula-engasgo-bebe-instrutor", "larguras": [480, 589], "largura": 589, "altura": 1280,
+             "alt": "Instrutor da Cruz Vermelha orientando alunos na prática de desengasgo em bebê, com manequins",
+             "legenda": "<b>Aula prática</b> · desengasgo em bebê"}
 FOTOS_AULAS = [
-    {"src": "/assets/otim/auditorio-voluntarios-480.webp", "srcset": "/assets/otim/auditorio-voluntarios-480.webp 480w, /assets/otim/auditorio-voluntarios-960.webp 960w",
-     "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Turma de voluntários em formação no auditório"},
-    {"src": "/assets/otim/voluntario-microfone-480.webp", "srcset": "/assets/otim/voluntario-microfone-480.webp 480w, /assets/otim/voluntario-microfone-960.webp 960w",
-     "alt": "Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação", "legenda": "Voluntário durante formação na sede"},
-    {"src": "/assets/otim/equipe-corredor-480.webp", "srcset": "/assets/otim/equipe-corredor-480.webp 480w, /assets/otim/equipe-corredor-960.webp 960w",
-     "alt": "Equipe da Cruz Vermelha Brasileira Rio de Janeiro no Palácio da Cruz Vermelha", "legenda": "Equipe da filial no Palácio da Cruz Vermelha"},
-    {"src": "/assets/otim/hero-equipe-grupo-960.webp", "srcset": "/assets/otim/hero-equipe-grupo-960.webp 960w",
-     "alt": "Equipe de voluntários reunida no auditório da sede", "legenda": "Equipe de voluntários reunida no auditório da sede"},
+    {"base": "aula-engasgo-bebe", "larguras": [480, 589], "largura": 480, "altura": 1043, "pos": "center 58%",
+     "alt": "Alunos ajoelhados praticando a manobra de desengasgo em manequins de bebê durante a aula",
+     "legenda": "Prática de desengasgo em bebê, com manequins"},
+    {"base": "aula-dea-sala", "larguras": [480, 591], "largura": 480, "altura": 1040, "pos": "center 55%",
+     "alt": "Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa",
+     "legenda": "Aula com manequins e DEA de treino"},
+    {"base": "aula-manobra-heimlich", "larguras": [480, 899], "largura": 480, "altura": 854, "pos": "center 45%",
+     "alt": "Instrutor demonstrando a manobra de Heimlich em uma aluna durante a aula",
+     "legenda": "Demonstração da manobra de Heimlich"},
+    {"base": "aula-salao-cruz", "larguras": [480, 960, 1440], "largura": 960, "altura": 540, "pos": "center",
+     "alt": "Turma sentada no salão da sede, com a cruz vermelha ao fundo e um manequim sobre a mesa",
+     "legenda": "Turma no salão da sede"},
 ]
+# Capa real de três cursos (as outras continuam com img/<slug>-*.webp, de gerar_imagens_matricula.py). O JSON-LD
+# segue apontando para img/: metadados não mudam com o porte visual.
+CAPA_CURSO = {
+    "primeiros-socorros-basico": {"base": "aula-manobra-heimlich", "larguras": [480, 899], "largura": 480, "altura": 854,
+                                  "pos": "center 35%", "alt": "Instrutor demonstrando a manobra de Heimlich em uma aluna durante a aula"},
+    "primeiros-socorros-lei-lucas": {"base": "aula-engasgo-bebe", "larguras": [480, 589], "largura": 480, "altura": 1043,
+                                     "pos": "center 60%", "alt": "Alunos praticando a manobra de desengasgo em manequins de bebê durante a aula"},
+    "suporte-basico-de-vida": {"base": "aula-dea-sala", "larguras": [480, 591], "largura": 480, "altura": 1040,
+                               "pos": "center 48%", "alt": "Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa"},
+}
+# Foto do cartão "Turma para empresas e grupos" (recorte alto: height 150%, topo).
+FOTO_GRUPOS = {"src": "/assets/otim/hero-equipe-grupo-960.webp", "srcset": "/assets/otim/hero-equipe-grupo-960.webp 960w",
+               "alt": "Equipe de voluntários reunida no auditório da sede", "largura": 960, "altura": 723}
 FOTO_HISTORIA = {"src": "/assets/otim/historia-varanda-escola-1917-480.webp",
                  "srcset": "/assets/otim/historia-varanda-escola-1917-480.webp 480w, /assets/otim/historia-varanda-escola-1917-960.webp 960w",
                  "alt": "Enfermeiras de uniforme branco e véu enfileiradas na varanda da Escola de Enfermeiras, em 1917",
@@ -400,310 +423,347 @@ PASSOS_COMO = [
                           "na aula é liberada com a matrícula paga."),
 ]
 
-# --- CSS e script da página (reconstrução de 05/10/2026) --------------------------------------------------
-# Texto com contraste de 7:1 sobre o fundo claro: #4a5568 no lugar de --muted (3,8:1) nos textos de apoio.
-# Celular primeiro: as regras base são as do celular; as de computador ficam em @media (min-width: 720px) e 1024px.
+# --- CSS da página (porte do modelo B, 05/10/2026) -------------------------------------------------------
+# A página copia o CSS da home (Inter, botões redondos, .wrap de 1100 px) para o cabeçalho e o rodapé ficarem iguais
+# ao resto do site. Tudo o que é desta página fica sob a classe .mr (o <main>, a navegação fixa, a janela dos
+# detalhes e a barra do celular): Manrope, botões de canto 6 px, .wrap de 1240 px, paleta --vermelho/--escuro.
+# Celular primeiro: as regras base são as do celular; tablet em 640 px, computador em 720 px (o JS da barra fixa
+# usa 719 px), passos em 1024 px e a grade de 3 colunas em 1200 px.
+# O banner principal fica entre /* Hero */ e /* /Hero */ (inclusive as regras responsivas), e o HTML dele em
+# hero_html(): trocar o banner é mexer só nesses dois lugares.
 CSS_PAGINA = """
   <style>
-    :root { --apoio: #4a5568; --verde: #0f7b3e; --verde-claro: #e9f7ef; --sombra-leve: 0 10px 24px rgba(16, 24, 40, .08); }
-    #matricula-cursos-presenciais { color: var(--text); }
-    #matricula-cursos-presenciais .wrap { max-width: 1180px; }
-    #matricula-cursos-presenciais section { padding: 32px 0; }
-    #matricula-cursos-presenciais .eyebrow { font-size: .72rem; letter-spacing: .12em; }
-    #matricula-cursos-presenciais h2 { color: var(--black); font-size: clamp(1.5rem, 5.2vw, 2.1rem); letter-spacing: -.025em; line-height: 1.12; margin: 6px 0 10px; }
-    .mr-sub { color: var(--apoio); font-size: 1.02rem; margin: 0 0 22px; max-width: 62ch; }
-    .mr-cta { min-height: 54px; font-size: 1rem; }
-    .mr-micro { color: var(--apoio); font-size: .85rem; margin: 10px 0 0; line-height: 1.55; }
-    .mr-micro i, .mr-ok i { color: var(--verde); }
-    .mr-check { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
-    .mr-check li { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: .95rem; color: var(--text); }
-    .mr-check i { color: var(--verde); flex-shrink: 0; }
+    :root { --vermelho: #cc0000; --vermelho-escuro: #a30000; --cinza: #f5f6f8; --texto: #0f1318; --texto-2: #2d3748; --borda: #e1e5ea; --borda-forte: #c6cdd5; --escuro: #0f1318; --verde: #0f7b3e; --fonte-mr: Manrope, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .mr { font-family: var(--fonte-mr); color: var(--texto); line-height: 1.5; font-size: 16px; }
+    .mr .wrap { width: min(1176px, calc(100% - 32px)); margin: 0 auto; }
+    .mr section { padding: 36px 0; }
+    .mr h1, .mr h2, .mr h3 { margin: 0; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; color: var(--texto); }
+    .mr h2 { font-size: clamp(26px, 3.4vw, 40px); }
+    .mr p { margin: 0; }
+    .mr ul, .mr ol { margin: 0; padding: 0; }
+    .mr img { max-width: 100%; height: auto; display: block; }
+    .mr a { color: var(--vermelho); }
+    .mr :focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+    .mr-hero :focus-visible, .mr-como :focus-visible, .mr-card-turma :focus-visible, .mr-final :focus-visible { outline-color: #fff; }
+    .mr-cinza { background: var(--cinza); }
+    .mr-cab { max-width: 760px; margin-bottom: 18px; }
+    .mr-cab p { margin-top: 10px; font-size: 16px; color: var(--texto-2); }
     .mr-escondido { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .mr-micro { font-size: 14px; color: var(--texto-2); line-height: 1.5; }
+    .mr-micro svg { width: 18px; height: 18px; vertical-align: -4px; color: var(--vermelho); margin-right: 4px; }
+    .mr .eyebrow { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--vermelho); padding: 7px 11px; border-radius: 4px; }
+
+    /* botões: os mesmos nomes da home (.btn-red, .btn-outline), com a forma do modelo B */
+    .mr .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 22px; border-radius: 6px; font-weight: 800; font-size: 16px; text-decoration: none; border: 2px solid transparent; cursor: pointer; font-family: inherit; line-height: 1.2; text-align: center; box-shadow: none; transition: background-color .15s, border-color .15s, color .15s; }
+    .mr .btn:hover { transform: none; }
+    .mr .btn svg { width: 18px; height: 18px; flex: none; }
+    .mr .btn-red { background: var(--vermelho); color: #fff; border-color: var(--vermelho); box-shadow: none; }
+    .mr .btn-red:hover { background: var(--vermelho-escuro); border-color: var(--vermelho-escuro); }
+    .mr .btn-branco { background: #fff; color: var(--vermelho); border-color: #fff; }
+    .mr .btn-branco:hover { background: var(--cinza); border-color: var(--cinza); color: var(--vermelho); }
+    .mr .btn-outline { background: #fff; color: var(--texto); border-color: var(--borda-forte); }
+    .mr .btn-outline:hover { border-color: var(--texto); color: var(--texto); }
+    .mr .btn-contorno-branco { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .75); }
+    .mr .btn-contorno-branco:hover { border-color: #fff; background: rgba(255, 255, 255, .08); color: #fff; }
 
     /* navegação da página: aparece depois do topo, só no computador */
-    .mr-nav { position: fixed; left: 0; right: 0; top: var(--mr-cabecalho, 84px); z-index: 40; background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); transform: translateY(-110%); visibility: hidden; transition: transform .25s, visibility 0s .25s; display: none; }
+    .mr-nav { position: fixed; left: 0; right: 0; top: var(--mr-cabecalho, 84px); z-index: 40; background: #fff; border-bottom: 1px solid var(--borda); transform: translateY(-110%); visibility: hidden; transition: transform .25s, visibility 0s .25s; display: none; }
     .mr-nav.visivel { transform: none; visibility: visible; transition: transform .25s; }
-    #matricula-cursos-presenciais section[id], .mr-card, .mr-det { scroll-margin-top: calc(var(--mr-cabecalho, 84px) + 16px); }
-    .mr-nav .wrap { display: flex; align-items: center; gap: 24px; min-height: 56px; }
-    .mr-nav ul { list-style: none; display: flex; gap: 22px; margin: 0; padding: 0; }
-    .mr-nav ul a { color: var(--black); font-weight: 600; font-size: .92rem; padding: 6px 0; border-bottom: 2px solid transparent; }
-    .mr-nav ul a.ativo, .mr-nav ul a:hover { border-bottom-color: var(--red); }
-    .mr-nav .btn { margin-left: auto; min-height: 44px; padding: 8px 18px; font-size: .9rem; color: #fff; border-bottom: 0; }
+    .mr section[id], .mr-card, .mr-det { scroll-margin-top: calc(var(--mr-cabecalho, 84px) + 16px); }
+    .mr-nav .wrap { display: flex; align-items: center; gap: 28px; min-height: 60px; }
+    .mr-nav ul { list-style: none; display: flex; gap: 28px; }
+    .mr-nav ul a { color: var(--texto); text-decoration: none; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px; border-bottom: 2px solid transparent; }
+    .mr-nav ul a.ativo, .mr-nav ul a:hover { border-bottom-color: var(--vermelho); }
+    .mr-nav .btn { margin-left: auto; min-height: 44px; padding: 10px 18px; font-size: 15px; }
 
-    /* topo */
-    .mr-hero { background: var(--soft); border-bottom: 1px solid var(--line); padding: 26px 0 28px !important; }
-    .mr-hero-grid { display: grid; gap: 22px; align-items: center; }
-    .mr-hero h1 { color: var(--black); font-size: clamp(1.65rem, 6.6vw, 2.6rem); line-height: 1.06; letter-spacing: -.03em; margin: 8px 0 10px; }
-    .mr-hero-sub { font-size: 1.05rem; color: var(--text); margin: 0 0 6px; max-width: 54ch; }
-    .mr-hero-ajuda { font-size: .97rem; color: var(--apoio); margin: 0 0 16px; }
-    .mr-hero .mr-check { margin: 0 0 20px; }
-    .mr-hero .mr-cta-topo { width: 100%; }
-    .mr-hero-local { display: flex; align-items: flex-start; gap: 8px; color: var(--apoio); font-size: .92rem; margin: 14px 0 0; }
-    .mr-hero-local i { color: var(--red); flex-shrink: 0; margin-top: 3px; }
-    .mr-hero-foto { margin: 0; position: relative; }
-    .mr-hero-foto img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--radius); display: block; background: #ddd; box-shadow: var(--sombra-leve); }
-    .mr-hero-foto figcaption { position: absolute; left: 12px; bottom: 12px; background: rgba(255, 255, 255, .94); color: var(--black); font-size: .78rem; font-weight: 600; padding: 6px 10px; border-radius: 8px; }
-    /* modo curso (?curso=): o topo encolhe e a ficha do curso aparece logo abaixo */
-    html[data-curso] .mr-hero { padding: 12px 0 8px !important; border-bottom: 0; background: transparent; }
-    html[data-curso] .mr-hero-grid { display: block; }
-    html[data-curso] .mr-hero .eyebrow, html[data-curso] .mr-hero-sub, html[data-curso] .mr-hero-ajuda, html[data-curso] .mr-hero .mr-check,
-    html[data-curso] .mr-hero .mr-cta-topo, html[data-curso] .mr-hero-local, html[data-curso] .mr-hero-foto { display: none; }
-    html[data-curso] .mr-hero h1 { font-size: .95rem; font-weight: 700; color: var(--apoio); letter-spacing: 0; line-height: 1.35; margin: 0; }
+    /* Hero */
+    /* Banner escolhido pelo dono (banner-6-branco): fundo branco, foto vertical ao lado, painel de preço cinza com
+       borda vermelha. Tudo do topo, inclusive o modo curso e as regras responsivas, fica neste bloco. */
+    .mr-hero { background: #fff; color: var(--texto); padding: 0 !important; }
+    .mr-hero .wrap { padding-top: 28px; padding-bottom: 36px; display: grid; gap: 22px; }
+    .mr-hero h1 { font-size: clamp(32px, 5vw, 54px); color: var(--texto); margin: 14px 0 12px; letter-spacing: -.02em; line-height: 1.1; }
+    .mr-hero-frase { font-size: clamp(17px, 1.5vw, 20px); color: var(--texto-2); line-height: 1.45; max-width: 640px; }
+    .mr-hero-acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    .mr-hero-endereco { display: flex; gap: 8px; align-items: flex-start; margin: 18px 0 0; font-size: 15px; color: var(--texto-2); font-weight: 600; }
+    .mr-hero-endereco svg { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--vermelho); }
+    .mr-hero-painel { background: var(--cinza); border: 1px solid var(--borda); border-top: 4px solid var(--vermelho); border-radius: 12px; padding: 20px; }
+    .mr-hero-painel strong { display: block; font-size: 26px; letter-spacing: -.01em; color: var(--texto); line-height: 1.15; }
+    .mr-hero-painel strong small { display: block; font-size: 14px; font-weight: 700; color: var(--texto-2); margin-top: 4px; }
+    .mr-hero-painel ul { list-style: none; display: grid; gap: 10px; margin-top: 14px; }
+    .mr-hero-painel li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--texto); font-weight: 600; line-height: 1.4; }
+    .mr-hero-painel li svg { width: 20px; height: 20px; flex: none; color: var(--vermelho); margin-top: 1px; }
+    .mr-hero-painel .btn { width: 100%; margin-top: 16px; }
+    .mr-hero-midia { position: relative; margin: 0; }
+    .mr-hero-foto { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center 58%; display: block; border-radius: 14px; box-shadow: 0 18px 44px rgba(15, 19, 24, .16); background: var(--cinza); }
+    .mr-hero-legenda { position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(15, 19, 24, .82); color: #fff; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 6px; max-width: calc(100% - 32px); margin: 0; }
+    .mr-hero-legenda svg { width: 16px; height: 16px; flex: none; color: var(--vermelho); }
+    .mr-hero-legenda b { color: #fff; font-weight: 800; }
+    /* modo curso (?curso=): o topo encolhe a uma linha e a ficha do curso aparece logo abaixo */
+    html[data-curso] .mr-hero .wrap { display: block; padding: 12px 0 8px; }
+    html[data-curso] .mr-hero .eyebrow, html[data-curso] .mr-hero-frase, html[data-curso] .mr-hero-acoes, html[data-curso] .mr-hero-endereco,
+    html[data-curso] .mr-hero-painel, html[data-curso] .mr-hero-midia { display: none; }
+    html[data-curso] .mr-hero h1 { font-size: 15px; font-weight: 700; color: var(--texto-2); letter-spacing: 0; line-height: 1.35; margin: 0; }
+    @media (min-width: 720px) {
+      html[data-curso] .mr-hero .wrap { padding: 16px 0 6px; }
+    }
+    @media (min-width: 768px) {
+      .mr-hero .wrap { padding-top: 44px; padding-bottom: 52px; grid-template-columns: 1fr 1fr; align-items: center; gap: 32px; }
+      .mr-hero-conteudo { grid-column: 1; grid-row: 1; }
+      .mr-hero-painel { grid-column: 1; grid-row: 2; padding: 24px 28px; }
+      .mr-hero-midia { grid-row: 1 / 3; grid-column: 2; }
+      .mr-hero-foto { aspect-ratio: 4 / 5; }
+    }
+    @media (min-width: 1024px) {
+      .mr-hero .wrap { grid-template-columns: 1.1fr .9fr; gap: 56px; padding-top: 56px; padding-bottom: 64px; }
+    }
+    /* /Hero */
+
+    /* faixa de marcas (logo abaixo do topo) */
+    .mr-marcas { background: #fff; border-top: 1px solid var(--borda); border-bottom: 1px solid var(--borda); }
+    .mr-marcas ul { list-style: none; padding: 16px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+    .mr-marcas li { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; color: var(--texto); }
+    .mr-marcas svg { width: 30px; height: 30px; color: var(--vermelho); flex: none; }
+    html[data-curso] .mr-marcas { display: none; }
 
     /* ficha / detalhes de cada curso: escondida na página; aparece na janela, no modo curso ou por #det-<slug> */
     .mr-dets { padding: 0 !important; }
-    .mr-det { display: none; }
+    .mr-det { display: none; padding: 0 !important; }
     html:not(.js) .mr-det:target { display: block; }
-    html[data-curso] .mr-dets { padding: 0 0 8px !important; }
-    html[data-curso] .mr-det-foco { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--sombra-leve); padding: 18px 16px 20px; }
-    .mr-det-cab { display: grid; gap: 14px; }
-    .mr-det-foto { margin: 0; }
-    .mr-det-foto img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; display: block; background: var(--soft); }
-    .mr-det-tag { display: inline-block; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--red); margin: 0 0 6px; }
-    .mr-det h3 { color: var(--black); font-size: 1.45rem; line-height: 1.15; letter-spacing: -.02em; margin: 0 0 8px; }
-    .mr-det-frase { font-size: 1rem; color: var(--text); margin: 0 0 12px; }
-    .mr-meta { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--text); font-size: .9rem; }
-    .mr-meta li { display: inline-flex; align-items: center; gap: 6px; }
-    .mr-meta i { color: var(--red); }
-    .mr-preco { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
-    .mr-preco > div { min-width: 0; }
-    .mr-preco small { display: block; color: var(--apoio); font-size: .76rem; letter-spacing: .04em; text-transform: uppercase; font-weight: 700; }
-    .mr-preco b { display: block; color: var(--black); font-size: 1.35rem; line-height: 1.15; }
-    .mr-preco span { display: block; color: var(--apoio); font-size: .82rem; }
-    .mr-preco .mr-mais { color: var(--apoio); font-weight: 800; font-size: 1.2rem; }
-    .mr-preco-pag { grid-column: 1 / -1; margin: 0; font-size: .82rem; color: var(--apoio); display: flex; gap: 6px; align-items: center; }
-    .mr-preco-pag i { color: var(--red); }
-    .mr-det-acoes { display: grid; gap: 8px; margin: 0 0 6px; }
-    .mr-det-acoes .mr-cta { width: 100%; }
-    .mr-det-corpo h4 { color: var(--black); font-size: 1rem; margin: 18px 0 6px; }
-    .mr-det-corpo p, .mr-det-corpo li { color: var(--text); font-size: .95rem; line-height: 1.6; }
-    .mr-det-corpo p { margin: 0 0 8px; }
-    .mr-det-corpo ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-    .mr-det-corpo ul li { display: flex; gap: 8px; align-items: baseline; }
-    .mr-det-corpo ul li i { color: var(--verde); flex: none; }
-    .mr-det-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 0; }
-    .mr-det-grade div { background: var(--soft); border-radius: 10px; padding: 10px 12px; }
-    .mr-det-grade small { display: block; color: var(--apoio); font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
-    .mr-det-grade b { color: var(--black); font-size: .95rem; font-weight: 600; }
-    .mr-det-cert { display: flex; gap: 12px; align-items: center; background: var(--soft); border-radius: 12px; padding: 10px 12px; margin: 14px 0 0; }
-    .mr-det-cert img { width: 84px; height: auto; border-radius: 4px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(16, 24, 40, .14); }
-    .mr-det-cert p { margin: 0; font-size: .88rem; }
-    .mr-det-cert a { color: var(--red); font-weight: 700; }
-    .mr-det-faq details { border-top: 1px solid var(--line); }
-    .mr-det-fim { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
-    .mr-det-fim .mr-cta { width: 100%; }
-    .mr-turma-linha { color: var(--apoio); font-size: .9rem; margin: 12px 0 0; }
-    .mr-turma-linha a, .mr-chat-atalho a { color: var(--red); font-weight: 700; text-decoration: underline; }
-    .mr-chat-atalho { font-size: .9rem; margin: 10px 0 0; color: var(--apoio); }
-    /* janela dos detalhes (dialog) */
-    .mr-janela { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; padding: 10px 16px 32px; color: var(--text); overflow: auto; overscroll-behavior: contain; }
-    .mr-janela::backdrop { background: rgba(15, 19, 24, .55); }
     .mr-janela .mr-det { display: block; }
-    .mr-janela-fechar { position: sticky; top: 0; float: right; margin: -2px -6px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
-    .mr-janela-fechar:hover, .mr-janela-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
+    html[data-curso] .mr-dets { padding: 0 0 8px !important; }
+    html[data-curso] .mr-det-foco { background: #fff; border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(15, 19, 24, .08); }
+    .mr-det-capa { position: relative; aspect-ratio: 16 / 9; max-height: 360px; background: var(--escuro); overflow: hidden; margin: 0; }
+    .mr-det-capa img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .mr-det-veu { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 20px; background: rgba(15, 19, 24, .8); color: #fff; }
+    .mr-det-veu .mr-capa-tag { position: static; display: inline-block; margin-bottom: 8px; }
+    .mr-det-veu h3 { color: #fff; font-size: clamp(20px, 2.6vw, 28px); }
+    .mr-det-corpo { padding: 20px 20px 24px; display: grid; gap: 22px; }
+    .mr-det-promessa { font-size: 18px; font-weight: 700; line-height: 1.45; }
+    .mr-det-oferta { border: 1px solid var(--borda); border-radius: 8px; padding: 14px 16px; display: grid; gap: 12px; }
+    .mr-det-oferta .mr-preco { border-top: 0; padding-top: 0; }
+    .mr-det-oferta .btn { width: 100%; }
+    .mr-det-grade { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mr-det-grade li { display: flex; flex-direction: column; gap: 2px; background: var(--cinza); border-radius: 8px; padding: 12px 14px; font-size: 15px; }
+    .mr-det-grade small { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--texto-2); font-weight: 800; }
+    .mr-det-grade b { font-weight: 700; color: var(--texto); }
+    .mr-det-corpo h4 { font-size: 17px; margin: 0 0 8px; color: var(--texto); font-weight: 800; }
+    .mr-det-bloco p { color: var(--texto-2); line-height: 1.6; }
+    .mr-det-bloco p + p { margin-top: 10px; }
+    .mr-det-lista { list-style: none; display: grid; gap: 8px; }
+    .mr-det-lista li { display: flex; gap: 10px; align-items: flex-start; color: var(--texto-2); line-height: 1.5; }
+    .mr-det-lista li i { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--vermelho); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; margin-top: 3px; }
+    .mr-det-cert { display: grid; gap: 14px; }
+    .mr-det-cert img { border: 1px solid var(--borda); border-radius: 8px; width: 100%; max-width: 360px; }
+    .mr-det-cert a { color: var(--vermelho); font-weight: 700; }
+    .mr-det-faq details { border-bottom: 1px solid var(--borda); }
+    .mr-det-faq details:first-of-type { border-top: 1px solid var(--borda); }
+    .mr-det-fim { border-top: 1px solid var(--borda); padding-top: 18px; display: grid; gap: 8px; font-size: 15px; color: var(--texto-2); }
+    .mr-chat-atalho a, .mr-turma-linha a, .mr-faq-chat a { color: var(--vermelho); font-weight: 700; }
+    .mr-det-rodape { position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--borda); padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .mr-det-rodape .btn { white-space: nowrap; flex: none; }
+    .mr-det-rodape-preco { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+    .mr-det-rodape-preco strong { color: var(--vermelho); font-size: 16px; }
+    .mr-det-rodape-preco span { font-size: 12px; color: var(--texto-2); font-weight: 700; }
+    html[data-curso] .mr-det-rodape { position: static; }
+    /* janela dos detalhes (dialog) */
+    .mr-janela { border: 0; padding: 0; width: min(100%, 760px); max-width: 100%; height: 100vh; height: 100dvh; max-height: 100dvh; margin: 0; border-radius: 0; background: #fff; color: var(--texto); overflow: auto; overscroll-behavior: contain; }
+    .mr-janela::backdrop { background: rgba(15, 19, 24, .72); }
+    .mr-janela-fechar { position: sticky; top: 12px; float: right; margin: 12px 12px 0 0; width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 0; color: var(--texto); font-size: 26px; line-height: 1; cursor: pointer; display: grid; place-items: center; font-family: inherit; z-index: 2; box-shadow: 0 2px 8px rgba(15, 19, 24, .25); }
+    .mr-janela-fechar:hover, .mr-janela-fechar:focus-visible { background: var(--cinza); }
     html.mr-modal-aberto { overflow: hidden; }
 
-    /* filtro por categoria */
-    .mr-filtro { padding: 22px 0 0 !important; overflow: hidden; }
-    .mr-filtro h2 { font-size: 1.15rem; margin: 0 0 10px; }
-    .mr-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    /* categorias e cursos (um bloco cinza só) */
+    .mr-filtro { padding: 36px 0 0 !important; }
+    .mr-cursos { padding: 0 0 40px !important; }
+    .mr-chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 16px 14px; margin: 0 -16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .mr-chips::-webkit-scrollbar { display: none; }
-    .mr-chip { flex-shrink: 0; min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--black); font: inherit; font-weight: 600; font-size: .92rem; cursor: pointer; transition: background .15s, border-color .15s; }
-    .mr-chip[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
-    .mr-chip:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .mr-chip { flex: none; white-space: nowrap; min-height: 44px; padding: 10px 18px; border-radius: 999px; border: 2px solid var(--borda-forte); background: #fff; font-weight: 700; font-size: 15px; color: var(--texto-2); cursor: pointer; font-family: inherit; transition: background-color .15s, border-color .15s, color .15s; }
+    .mr-chip:hover { border-color: var(--texto); }
+    .mr-chip[aria-pressed="true"] { background: var(--vermelho); color: #fff; border-color: var(--vermelho); }
+    .mr-grade { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 6px; }
+    .mr-card, .mr-card-turma { background: #fff; border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .2s; }
+    .mr-card.ativo { border-color: var(--vermelho); box-shadow: 0 0 0 2px var(--vermelho); }
+    .mr-card.oculto, .mr-card-turma.oculto { display: none; }
+    .mr-capa { position: relative; aspect-ratio: 16 / 9; max-height: 160px; background: var(--escuro); overflow: hidden; margin: 0; }
+    .mr-capa img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .mr-capa-tag { position: absolute; top: 12px; left: 12px; background: var(--vermelho); color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 4px; line-height: 1.2; }
+    .mr-badge { position: absolute; right: 12px; top: 12px; background: #fff; color: #0f5132; font-size: 12px; font-weight: 800; padding: 5px 9px; border-radius: 4px; }
+    .mr-badge.esgotado { color: #9b1c1c; }
+    .mr-badge.breve, .mr-badge.formacao { color: #7c4a03; }
+    .mr-veu { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px; background: rgba(15, 19, 24, .78); color: #fff; }
+    .mr-veu h3 { font-size: 20px; color: #fff; line-height: 1.2; }
+    .mr-veu p { margin-top: 4px; font-size: 14px; color: #fff; font-weight: 600; }
+    .mr-card-corpo { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .mr-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; list-style: none; font-size: 14px; color: var(--texto-2); font-weight: 700; }
+    .mr-meta li { display: inline-flex; align-items: center; gap: 6px; }
+    .mr-meta svg { width: 17px; height: 17px; color: var(--vermelho); flex: none; }
+    .mr-preco { display: grid; gap: 6px; border-top: 1px solid var(--borda); padding-top: 10px; }
+    .mr-preco-l { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .mr-preco-l strong { font-size: 17px; font-weight: 800; white-space: nowrap; color: var(--texto); }
+    .mr-preco-l span { font-size: 13px; color: var(--texto-2); font-weight: 700; text-align: right; }
+    .mr-preco-l.agora strong { color: var(--vermelho); }
+    .mr-card-acoes { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: auto; }
+    .mr-card-acoes .btn { padding-left: 16px; padding-right: 16px; }
+    .mr-card-turma { background: var(--escuro); color: #fff; border-color: var(--escuro); }
+    .mr-card-turma .mr-capa img { height: 150%; object-position: center top; }
+    .mr-card-turma .mr-card-corpo { padding: 18px 20px 22px; gap: 10px; justify-content: center; }
+    .mr-card-turma h3 { font-size: 22px; color: #fff; line-height: 1.2; }
+    .mr-card-turma p { color: rgba(255, 255, 255, .92); font-size: 15px; line-height: 1.5; }
+    .mr-card-turma ul { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
+    .mr-card-turma li { font-size: 13px; font-weight: 700; padding: 5px 10px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; color: #fff; }
+    .mr-card-turma .btn { margin-top: 8px; align-self: flex-start; }
+    .mr-nota-preco { margin-top: 16px; font-size: 14px; color: var(--texto-2); display: flex; gap: 8px; align-items: flex-start; }
+    .mr-nota-preco svg { width: 18px; height: 18px; flex: none; color: var(--vermelho); margin-top: 2px; }
+    .mr-vazio { color: var(--texto-2); text-align: center; padding: 24px 0; }
 
-    /* cursos */
-    .mr-cursos { padding: 16px 0 36px !important; }
-    .mr-grade { display: grid; gap: 14px; }
-    .mr-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; scroll-margin-top: 80px; transition: box-shadow .2s, transform .2s; }
-    .mr-card.ativo { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
-    .mr-card.oculto { display: none; }
-    .mr-card-capa { position: relative; margin: 0; }
-    .mr-card-capa img { width: 100%; height: auto; aspect-ratio: 2 / 1; object-fit: cover; display: block; background: var(--soft); }
-    .mr-card-tag { position: absolute; left: 12px; bottom: 10px; background: rgba(255, 255, 255, .94); color: var(--black); font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; }
-    .mr-badge { position: absolute; right: 12px; top: 10px; background: var(--verde-claro); color: #0f5132; font-size: .7rem; font-weight: 800; padding: 4px 9px; border-radius: 999px; }
-    .mr-badge.esgotado { background: #fde8e8; color: #9b1c1c; }
-    .mr-badge.breve, .mr-badge.formacao { background: #fff4e0; color: #7c4a03; }
-    .mr-card-corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
-    .mr-card h3 { color: var(--black); font-size: 1.12rem; line-height: 1.22; margin: 0 0 6px; }
-    .mr-card-frase { color: var(--text); font-size: .93rem; margin: 0 0 10px; }
-    .mr-card .mr-meta { margin-bottom: 12px; font-size: .86rem; gap: 4px 12px; }
-    .mr-card .mr-preco { margin-top: auto; }
-    .mr-card-acoes { display: grid; grid-template-columns: 1fr; gap: 8px; }
-    .mr-card-acoes .mr-cta { min-height: 50px; font-size: .97rem; box-shadow: none; }
-    .mr-card-acoes .btn-outline { min-height: 46px; font-size: .95rem; background: #fff; }
-    .mr-card-turma { display: flex; flex-direction: column; gap: 8px; justify-content: center; border: 1px dashed #cbd5e1; border-radius: var(--radius); padding: 20px 16px; background: var(--soft); }
-    .mr-card-turma > i { color: var(--red); font-size: 1.6rem; }
-    .mr-card-turma h3 { margin: 0; font-size: 1.1rem; color: var(--black); line-height: 1.25; }
-    .mr-card-turma p { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
-    .mr-card-turma .btn { margin-top: 8px; min-height: 46px; font-size: .95rem; background: #fff; }
-    .mr-vazio { color: var(--apoio); text-align: center; padding: 24px 0; }
-
-    /* fotos */
-    .mr-fotos { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .mr-fotos-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* fotos: rolagem lateral no celular, grade de 4 no computador */
+    .mr-fotos { display: flex; gap: 12px; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .mr-fotos::-webkit-scrollbar { display: none; }
+    .mr-fotos li { flex: 0 0 70%; scroll-snap-align: start; }
     .mr-fotos figure { margin: 0; }
-    .mr-fotos img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; background: #ddd; }
-    .mr-fotos figcaption { font-size: .8rem; color: var(--apoio); margin: 6px 2px 0; line-height: 1.35; }
+    .mr-fotos img { aspect-ratio: 3 / 2; object-fit: cover; width: 100%; border-radius: 8px; background: var(--cinza); }
+    .mr-fotos figcaption { font-size: 14px; color: var(--texto-2); margin-top: 6px; font-weight: 600; line-height: 1.35; }
 
     /* como funciona (faixa vermelha) */
-    .mr-como { background: var(--red); color: #fff; }
-    .mr-como .eyebrow, .mr-como h2, .mr-como .mr-sub { color: #fff; }
-    .mr-como .eyebrow { opacity: .9; }
-    .mr-como .mr-sub { opacity: .92; }
-    .mr-passos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-    .mr-passos li { display: flex; gap: 14px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .22); border-radius: 14px; padding: 14px; }
-    .mr-passos b { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: .9rem; }
-    .mr-passos h3 { color: #fff; font-size: 1rem; margin: 6px 0 4px; }
-    .mr-passos p { color: rgba(255, 255, 255, .92); margin: 0; font-size: .92rem; line-height: 1.5; }
-    .mr-como-nota { margin: 16px 0 0; font-size: .88rem; color: rgba(255, 255, 255, .9); }
-    .mr-como-nota a { color: #fff; text-decoration: underline; font-weight: 700; }
+    .mr-como { background: var(--vermelho); color: #fff; }
+    .mr-como h2, .mr-como p { color: #fff; }
+    .mr-passos { list-style: none; display: grid; gap: 14px; margin-top: 4px; }
+    .mr-passo { display: flex; gap: 16px; align-items: flex-start; }
+    .mr-num { flex: none; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--vermelho); font-weight: 800; font-size: 20px; display: grid; place-items: center; }
+    .mr-passo h3 { font-size: 19px; color: #fff; padding-top: 10px; }
+    .mr-passo p { margin-top: 6px; font-size: 15px; line-height: 1.5; }
+    .mr-como-nota { margin-top: 26px; font-size: 14px; color: rgba(255, 255, 255, .92); max-width: 860px; }
+    .mr-como-nota a { color: #fff; font-weight: 700; }
 
     /* certificado */
-    .mr-cert-grade { display: grid; gap: 18px; align-items: center; }
-    .mr-cert-figura { margin: 0; max-width: 420px; }
-    .mr-cert-img { width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 16px 40px rgba(16, 24, 40, .16); transform: rotate(-1.5deg); }
-    .mr-cert-itens { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .mr-cert-itens li { background: var(--soft); border-radius: 10px; padding: 10px; text-align: center; }
-    .mr-cert-itens i { color: var(--verde); display: block; margin: 0 auto 4px; font-size: 1.1rem; }
-    .mr-cert-itens span { display: block; font-size: .82rem; font-weight: 700; color: var(--black); line-height: 1.25; }
-    .mr-cert-texto p { color: var(--text); font-size: .95rem; margin: 0 0 8px; }
-    .mr-cert-nota { color: var(--apoio); font-size: .82rem; }
+    .mr-cert-grade { display: grid; gap: 20px; }
+    .mr-cert-figura { margin: 0; }
+    .mr-cert-img { border: 1px solid var(--borda); border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(15, 19, 24, .08); width: 100%; }
+    .mr-destaques { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; list-style: none; margin: 22px 0; }
+    .mr-destaques li { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 12px 10px; font-weight: 800; font-size: 14px; display: flex; flex-direction: column; gap: 8px; line-height: 1.25; }
+    .mr-destaques svg { width: 22px; height: 22px; color: var(--vermelho); }
+    .mr-cert-texto p { color: var(--texto-2); }
+    .mr-cert-texto p + p { margin-top: 12px; }
+    .mr-cert-nota { font-size: 14px; }
 
     /* história */
-    .mr-historia { background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .mr-historia-grade { display: grid; gap: 18px; align-items: center; }
+    .mr-historia-grade { display: grid; gap: 28px; }
+    .mr-historia-grade > div > p { color: var(--texto-2); }
+    .mr-fatos { list-style: none; margin: 18px 0; display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .mr-fatos li { display: grid; grid-template-columns: 64px 1fr; gap: 2px 12px; align-items: baseline; padding: 10px 12px; border-left: 3px solid var(--vermelho); background: var(--cinza); border-radius: 0 6px 6px 0; }
+    .mr-fatos b { font-weight: 800; color: var(--vermelho); font-size: 22px; letter-spacing: -.01em; }
+    .mr-fatos span { font-weight: 600; color: var(--texto-2); font-size: 13px; line-height: 1.3; }
     .mr-historia figure { margin: 0; }
-    .mr-historia img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); display: block; background: #ddd; }
-    .mr-historia figcaption { font-size: .8rem; color: var(--apoio); margin: 6px 2px 0; }
-    .mr-historia p { color: var(--text); font-size: .97rem; }
-    .mr-historia-link, .mr-local-link { color: var(--red); font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
-    .mr-fatos { list-style: none; padding: 0; margin: 14px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .mr-fatos li { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
-    .mr-fatos b { display: block; color: var(--red); font-size: 1.25rem; line-height: 1.1; letter-spacing: -.02em; }
-    .mr-fatos span { display: block; color: var(--apoio); font-size: .78rem; line-height: 1.3; margin-top: 2px; }
+    .mr-historia img { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 8px; background: var(--cinza); }
+    .mr-historia figcaption { font-size: 14px; color: var(--texto-2); margin-top: 6px; }
+    .mr-link-seta { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: var(--vermelho); text-decoration: none; min-height: 44px; margin-top: 10px; border-bottom: 2px solid transparent; }
+    .mr-link-seta:hover { border-bottom-color: var(--vermelho); }
+    .mr-link-seta svg { width: 18px; height: 18px; }
 
     /* local */
-    .mr-local-grade { display: grid; gap: 16px; }
-    .mr-local-cartao { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 16px; }
-    .mr-endereco { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 14px; font-size: 1rem; color: var(--text); }
-    .mr-endereco i { color: var(--red); margin-top: 4px; }
-    .mr-endereco b { display: block; color: var(--black); }
-    .mr-local-acoes { display: grid; gap: 8px; }
-    .mr-local-acoes .btn { min-height: 48px; }
-    .mr-mapa { position: relative; border-radius: var(--radius); overflow: hidden; background: #ddd; aspect-ratio: 4 / 3; }
-    .mr-mapa img, .mr-mapa iframe { width: 100%; height: 100%; display: block; border: 0; object-fit: cover; }
-    .mr-mapa-botao { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); white-space: nowrap; min-height: 44px; box-shadow: var(--sombra-leve); }
-    .mr-mapa figcaption { position: absolute; left: 12px; top: 12px; background: rgba(255, 255, 255, .94); font-size: .78rem; font-weight: 600; padding: 5px 9px; border-radius: 8px; color: var(--black); }
+    .mr-local-grade { display: grid; gap: 24px; }
+    .mr-endereco { display: flex; gap: 10px; align-items: flex-start; font-size: 17px; font-weight: 700; margin: 14px 0 12px; color: var(--texto); }
+    .mr-endereco svg { width: 22px; height: 22px; color: var(--vermelho); flex: none; margin-top: 2px; }
+    .mr-endereco b { display: block; }
+    .mr-local-nota { color: var(--texto-2); font-size: 15px; margin-bottom: 18px; }
+    .mr-local-acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+    .mr-mapa { margin: 0; }
+    .mr-mapa img, .mr-mapa iframe { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: var(--escuro); border: 0; display: block; }
+    .mr-mapa figcaption { font-size: 14px; color: var(--texto-2); margin-top: 8px; }
 
-    /* dúvidas */
-    .mr-faq .wrap { max-width: 820px; }
-    .mr-faq details, .mr-det-faq details { border-top: 1px solid var(--line); padding: 4px 0; }
-    .mr-faq details:last-of-type { border-bottom: 1px solid var(--line); }
-    .mr-faq summary, .mr-det-faq summary { cursor: pointer; font-weight: 700; color: var(--black); min-height: 44px; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; line-height: 1.35; font-size: .97rem; }
+    /* dúvidas (sanfona) */
+    .mr-faq-lista { max-width: 860px; }
+    .mr-faq details { border-bottom: 1px solid var(--borda); }
+    .mr-faq details:first-of-type { border-top: 1px solid var(--borda); }
+    .mr-faq summary, .mr-det-faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 11px 0; font-weight: 800; font-size: 16px; min-height: 50px; line-height: 1.3; color: var(--texto); }
     .mr-faq summary::-webkit-details-marker, .mr-det-faq summary::-webkit-details-marker { display: none; }
-    .mr-faq summary::after, .mr-det-faq summary::after { content: "+"; flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
+    .mr-faq summary::after, .mr-det-faq summary::after { content: "+"; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--cinza); color: var(--vermelho); font-size: 24px; font-weight: 700; display: grid; place-items: center; line-height: 1; }
     .mr-faq details[open] > summary::after, .mr-det-faq details[open] > summary::after { content: "−"; }
-    .mr-faq details p, .mr-det-faq details p { margin: 2px 40px 12px 0; color: var(--text); line-height: 1.6; }
-    .mr-faq details p a { color: var(--red); font-weight: 600; text-decoration: underline; }
-    .mr-faq details p a[data-saida] { color: inherit; font-weight: 400; }
-    .mr-faq-chat { margin-top: 18px; }
+    .mr-faq details p, .mr-det-faq details p { margin: 0 0 16px; color: var(--texto-2); line-height: 1.6; padding-right: 48px; }
+    .mr-faq details p a { color: var(--vermelho); font-weight: 700; }
+    .mr-faq details p a[data-saida] { color: inherit; font-weight: 400; text-decoration: underline; }
+    .mr-faq-chat { margin-top: 18px; font-size: 15px; color: var(--texto-2); }
 
     /* empresas e grupos */
-    .mr-grupos { background: var(--soft); border-top: 1px solid var(--line); }
     .mr-grupos [hidden] { display: none !important; }
-    .mr-grupos-tipos { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .mr-grupos-tipos li { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font-size: .9rem; font-weight: 600; color: var(--black); }
-    .mr-grupos .btn { min-height: 52px; }
-    .mr-grupos-nota { color: var(--apoio); font-size: .88rem; margin: 10px 0 0; }
+    .mr-equipe { display: grid; gap: 16px; background: #fff; border: 1px solid var(--borda); border-left: 6px solid var(--vermelho); border-radius: 10px; padding: 24px 18px; }
+    .mr-equipe p { color: var(--texto-2); }
+    .mr-publicos { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 14px 0 16px; }
+    .mr-publicos li { background: var(--cinza); border: 1px solid var(--borda); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 13px; color: var(--texto-2); }
+    .mr-equipe-nota { font-size: 14px; margin-top: 10px; }
+    .mr-equipe .btn { width: 100%; }
 
-    /* chamada final */
-    .mr-final { text-align: center; }
-    .mr-final h2 { margin-bottom: 8px; }
-    .mr-final .mr-sub { margin: 0 auto 22px; }
-    .mr-final-acoes { display: grid; gap: 10px; max-width: 420px; margin: 0 auto; }
-    .mr-final-acoes .btn { min-height: 54px; }
-    .mr-final .mr-micro { margin-top: 14px; }
+    /* chamada final (fundo escuro) */
+    .mr-final { background: var(--escuro); color: #fff; text-align: center; }
+    .mr-final h2, .mr-final p { color: #fff; }
+    .mr-final-conteudo { max-width: 720px; margin: 0 auto; }
+    .mr-final-conteudo > p { margin-top: 10px; font-size: 16px; }
+    .mr-final-acoes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+    .mr-final .btn-red { background: #fff; color: var(--vermelho); border-color: #fff; }
+    .mr-final .btn-red:hover { background: var(--cinza); border-color: var(--cinza); }
+    .mr-final .btn-outline { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .75); }
+    .mr-final .btn-outline:hover { border-color: #fff; background: rgba(255, 255, 255, .08); color: #fff; }
+    .mr-final .mr-micro { margin-top: 18px; color: rgba(255, 255, 255, .85); }
 
     /* barra fixa (celular) */
-    .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(16, 24, 40, .12); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; animation: mr-sobe .25s ease-out; }
+    .mr-barra { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #fff; border-top: 1px solid var(--borda); box-shadow: 0 -8px 24px rgba(15, 19, 24, .08); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; animation: mr-sobe .25s ease-out; }
     .mr-barra[hidden] { display: none; }
     @keyframes mr-sobe { from { transform: translateY(100%); } to { transform: none; } }
-    @media (prefers-reduced-motion: reduce) { .mr-barra { animation: none; } .mr-card, .mr-nav { transition: none; } }
-    .mr-barra-texto { min-width: 0; flex: 1; display: flex; flex-direction: column; }
-    .mr-barra-texto b { font-size: .92rem; color: var(--black); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .mr-barra-texto span { font-size: .78rem; color: var(--apoio); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .mr-barra .btn { min-height: 48px; padding: 10px 16px; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
+    @media (prefers-reduced-motion: reduce) { .mr-barra { animation: none; } .mr-card, .mr-nav, .mr .btn, .mr-chip { transition: none; } }
+    .mr-barra-texto { min-width: 0; flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
+    .mr-barra-texto b { font-size: 15px; color: var(--texto); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .mr-barra-texto span { font-size: 12px; color: var(--texto-2); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mr-barra .btn { min-height: 48px; padding: 10px 18px; white-space: nowrap; flex: none; }
     html.mr-barra-on body .cv-chat { bottom: calc(84px + env(safe-area-inset-bottom)); }
     html.mr-chat-recolher body .cv-chat:not(.aberto) .cv-chat-abrir { opacity: 0; pointer-events: none; }
     html body .cv-chat .cv-chat-abrir { transition: opacity .2s; }
 
-    /* formulário da turma (dialog), como antes */
-    .mr-demanda-form { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
-    .mr-modal { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; padding: 12px 16px 32px; overflow: auto; overscroll-behavior: contain; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); color: var(--text); }
-    .mr-modal::backdrop { background: rgba(15, 19, 24, .55); }
-    .mr-modal-fechar { position: sticky; top: 0; float: right; margin: -4px -6px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--black); font-size: 1.9rem; line-height: 1; cursor: pointer; z-index: 1; }
-    .mr-modal-fechar:hover, .mr-modal-fechar:focus-visible { background: var(--soft); outline: 2px solid var(--red); outline-offset: 2px; }
-    .mr-demanda-form h3 { color: var(--black); font-size: 1.3rem; margin: 0 0 4px; }
-    .mr-tf-nota { color: var(--apoio); margin: 0 0 18px; }
+    /* formulário da turma (dialog), como antes, com a paleta do modelo B */
+    .mr-demanda-form { background: #fff; border: 1px solid var(--borda); border-radius: 10px; padding: 18px; font-family: var(--fonte-mr); color: var(--texto); }
+    .mr-modal { width: 100vw; max-width: 100vw; height: 100vh; height: 100dvh; max-height: none; margin: 0; border: 0; border-radius: 0; padding: 12px 16px 32px; overflow: auto; overscroll-behavior: contain; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); }
+    .mr-modal::backdrop { background: rgba(15, 19, 24, .72); }
+    .mr-modal-fechar { position: sticky; top: 0; float: right; margin: -4px -6px 0 8px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--texto); font-size: 26px; line-height: 1; cursor: pointer; z-index: 1; display: grid; place-items: center; font-family: inherit; }
+    .mr-modal-fechar:hover, .mr-modal-fechar:focus-visible { background: var(--cinza); }
+    .mr-demanda-form h3 { color: var(--texto); font-size: 22px; margin: 0 0 4px; }
+    .mr-tf-nota { color: var(--texto-2); margin: 0 0 18px; }
     .mr-tf-grade { display: grid; grid-template-columns: 1fr; gap: 16px 20px; }
     .mr-tf-largo { grid-column: 1 / -1; }
     .mr-tf-campo { margin: 0; padding: 0; border: 0; min-width: 0; }
-    .mr-tf-campo label, .mr-tf-campo legend { display: block; font-weight: 700; color: var(--black); margin: 0 0 6px; padding: 0; font-size: .95rem; }
-    .mr-tf-campo label small { color: var(--apoio); font-weight: 500; }
-    .mr-tf-campo input:not([type=radio]):not([type=checkbox]), .mr-tf-campo select, .mr-tf-campo textarea { width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 12px; font: inherit; font-size: 1rem; color: var(--text); background: #fff; }
+    .mr-tf-campo label, .mr-tf-campo legend { display: block; font-weight: 700; color: var(--texto); margin: 0 0 6px; padding: 0; font-size: 15px; }
+    .mr-tf-campo label small { color: var(--texto-2); font-weight: 500; }
+    .mr-tf-campo input:not([type=radio]):not([type=checkbox]), .mr-tf-campo select, .mr-tf-campo textarea { width: 100%; min-height: 48px; padding: 10px 14px; border: 2px solid var(--borda-forte); border-radius: 6px; font: inherit; font-size: 16px; color: var(--texto); background: #fff; }
     .mr-tf-campo textarea { min-height: 96px; resize: vertical; }
-    .mr-tf-campo input:focus, .mr-tf-campo select:focus, .mr-tf-campo textarea:focus { outline: 0; border-color: var(--red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .14); }
-    .mr-tf-campo.erro input, .mr-tf-campo.erro select, .mr-tf-campo.erro textarea { border-color: var(--red); background: #fff8f8; }
+    .mr-tf-campo input:focus, .mr-tf-campo select:focus, .mr-tf-campo textarea:focus { outline: 0; border-color: var(--vermelho); box-shadow: 0 0 0 4px rgba(204, 0, 0, .14); }
+    .mr-tf-campo.erro input, .mr-tf-campo.erro select, .mr-tf-campo.erro textarea { border-color: var(--vermelho); background: #fff8f8; }
     .mr-tf-opcoes { display: flex; flex-wrap: wrap; gap: 8px 18px; }
-    .mr-tf-opcoes label, .mr-tf-check { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: var(--text); margin: 0; cursor: pointer; }
+    .mr-tf-opcoes label, .mr-tf-check { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; color: var(--texto); margin: 0; cursor: pointer; }
     .mr-tf-opcoes label > span { min-width: 0; }
-    .mr-tf-opcoes input, .mr-tf-check input { width: 18px; height: 18px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--red); }
-    .mr-tf-dica { color: var(--apoio); font-size: .85rem; margin: 6px 0 0; }
-    .mr-tf-dica a { color: var(--red); text-decoration: underline; }
-    .mr-tf-erro { color: #b91c1c; font-size: .88rem; font-weight: 600; margin: 6px 0 0; }
-    .mr-tf-erro.geral { background: #fff0f2; border: 1px solid #f5c2c7; border-radius: 12px; padding: 10px 14px; margin: 16px 0 0; }
-    .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--line); background: var(--soft); border-radius: 0 12px 12px 0; color: var(--text); }
+    .mr-tf-opcoes input, .mr-tf-check input { width: 18px; height: 18px; margin: 3px 0 0; flex-shrink: 0; accent-color: var(--vermelho); }
+    .mr-tf-dica { color: var(--texto-2); font-size: 14px; margin: 6px 0 0; }
+    .mr-tf-dica a { color: var(--vermelho); text-decoration: underline; }
+    .mr-tf-erro { color: #b91c1c; font-size: 14px; font-weight: 600; margin: 6px 0 0; }
+    .mr-tf-erro.geral { background: #fff0f2; border: 1px solid #f5c2c7; border-radius: 6px; padding: 10px 14px; margin: 16px 0 0; }
+    .mr-tf-situacao { margin: 18px 0; padding: 14px 18px; border-left: 4px solid var(--borda-forte); background: var(--cinza); border-radius: 0 6px 6px 0; color: var(--texto); }
     .mr-tf-situacao.fechada { border-left-color: var(--verde); }
-    .mr-tf-situacao.lista { border-left-color: var(--red); }
+    .mr-tf-situacao.lista { border-left-color: var(--vermelho); }
     .mr-tf-situacao.aviso { border-left-color: #b7791f; background: #fffaf0; }
     #tf-dados { margin-top: 4px; }
-    #tf-enviar { margin-top: 20px; min-height: 56px; font-size: 1rem; }
-    #tf-enviar:disabled { background: #e2e8f0; color: var(--apoio); box-shadow: none; cursor: not-allowed; transform: none; }
+    #tf-enviar { margin-top: 20px; min-height: 56px; width: 100%; }
+    #tf-enviar:disabled { background: #e2e8f0; border-color: #e2e8f0; color: var(--texto-2); cursor: not-allowed; }
     .mr-tf-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .mr-tf-ok { text-align: center; padding: 18px 0; }
     .mr-tf-ok:focus { outline: 0; }
-    .mr-tf-ok i { color: var(--verde); font-size: 2.2rem; }
-    .mr-tf-ok h3 { color: var(--black); margin: 10px 0 6px; }
+    .mr-tf-ok i { color: var(--verde); font-size: 36px; }
+    .mr-tf-ok h3 { color: var(--texto); margin: 10px 0 6px; }
 
-    /* celular: cartão compacto (miniatura ao lado do título, preço numa linha, dois botões lado a lado) */
+    /* celular */
     @media (max-width: 719px) {
-      .mr-card { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 0 12px; padding: 14px 14px 14px; align-items: start; }
-      .mr-card-capa { grid-column: 1; grid-row: 1 / span 3; }
-      .mr-card-capa img { aspect-ratio: 1; border-radius: 10px; }
-      .mr-card-tag { display: none; }
-      .mr-badge { position: static; display: inline-block; margin-top: 6px; font-size: .64rem; }
-      .mr-card-corpo { display: contents; }
-      .mr-card h3 { grid-column: 2; font-size: 1.05rem; margin: 0 0 4px; }
-      .mr-card-frase { grid-column: 2; margin: 0 0 6px; font-size: .9rem; }
-      .mr-card .mr-meta { grid-column: 2; margin: 0 0 12px; font-size: .84rem; gap: 2px 12px; }
-      .mr-meta li.mr-meta-local { display: none; }
-      .mr-card .mr-preco { grid-column: 1 / -1; margin: 0 0 10px; padding: 8px 12px; gap: 6px; }
-      .mr-card .mr-preco small { font-size: .68rem; }
-      .mr-card .mr-preco b { font-size: 1.1rem; display: inline; margin-right: 4px; }
-      .mr-card .mr-preco span { display: inline; font-size: .78rem; }
-      .mr-card .mr-preco .mr-preco-pag { display: none; }
-      .mr-cert-figura { max-width: 300px; margin: 0 auto; }
-      .mr-historia img, .mr-mapa { aspect-ratio: 16 / 9; }
-      .mr-fatos b { font-size: 1.1rem; }
-      .mr-card-acoes { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
-      .mr-card-acoes .mr-cta { min-height: 48px; font-size: .95rem; padding: 10px 12px; }
-      .mr-card-acoes .btn-outline { min-height: 48px; font-size: .92rem; padding: 10px 12px; }
-      .mr-det-foto { display: none; }
-      .mr-hero-foto img { aspect-ratio: 2 / 1; }
-      html body .cv-chat .cv-chat-abrir { width: 56px; padding: 0; justify-content: center; border-color: var(--line); }
+      html body .cv-chat .cv-chat-abrir { width: 56px; padding: 0; justify-content: center; border-color: var(--borda); }
       html body .cv-chat .cv-chat-abrir-rotulo { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-      .mr-passos b { width: 30px; height: 30px; }
+      /* modo curso: a ficha abre no topo; sem a foto, o primeiro botão fica mais perto da primeira tela */
+      html[data-curso] .mr-det-capa { aspect-ratio: auto; max-height: none; }
+      html[data-curso] .mr-det-capa img { display: none; }
+      html[data-curso] .mr-det-veu { position: static; }
     }
     @media (max-width: 559px) {
       html body .cvrj-ck { padding: 14px; }
@@ -711,50 +771,64 @@ CSS_PAGINA = """
       html body .cvrj-ck .cvrj-ck-botoes button { font-size: .85rem; padding: 8px 4px; }
     }
 
-    /* tablet e computador */
+    /* tablet */
+    @media (min-width: 640px) {
+      .mr-grade { grid-template-columns: repeat(2, 1fr); }
+      .mr-fatos { grid-template-columns: repeat(3, 1fr); }
+      .mr-fatos li { grid-template-columns: 1fr; gap: 4px; align-content: start; }
+      .mr-cert-grade { grid-template-columns: 1fr 1fr; align-items: center; }
+      .mr-equipe { grid-template-columns: 1.4fr 1fr; align-items: center; padding: 32px 28px; }
+    }
+    /* computador */
     @media (min-width: 720px) {
-      #matricula-cursos-presenciais section { padding: 56px 0; }
+      .mr .wrap { width: min(1176px, calc(100% - 64px)); }
       .mr-nav { display: block; }
       .mr-barra { display: none !important; }
-      .mr-hero { padding: 36px 0 40px !important; }
-      .mr-hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; }
-      .mr-hero h1 { font-size: clamp(2.1rem, 3.6vw, 2.9rem); }
-      .mr-hero .mr-cta-topo { width: auto; min-width: 300px; }
-      .mr-check { grid-template-columns: repeat(4, auto); justify-content: start; gap: 8px 22px; }
-      .mr-hero .mr-check { grid-template-columns: 1fr 1fr; max-width: 460px; }
-      .mr-filtro { padding-top: 36px !important; }
-      .mr-chips { margin: 0; padding: 2px 0 8px; overflow: visible; flex-wrap: wrap; }
-      .mr-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-      .mr-card-acoes { grid-template-columns: 1fr 1fr; }
-      .mr-fotos-grade { grid-template-columns: repeat(4, 1fr); gap: 14px; }
-      .mr-passos { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-      .mr-passos li { flex-direction: column; gap: 10px; padding: 20px; }
-      .mr-passos h3 { margin-top: 0; font-size: 1.05rem; }
-      .mr-cert-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 36px; }
-      .mr-historia-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; }
-      .mr-local-grade { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: stretch; }
-      .mr-mapa { aspect-ratio: auto; min-height: 320px; }
-      .mr-local-acoes { grid-template-columns: 1fr 1fr; }
-      .mr-final-acoes { grid-template-columns: 1fr 1fr; max-width: 560px; }
-      .mr-det-cab { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 24px; align-items: start; }
-      .mr-det-acoes { grid-template-columns: 1fr auto; align-items: center; }
-      .mr-det-acoes .mr-cta { width: auto; min-width: 260px; }
-      .mr-det-fim .mr-cta { width: auto; min-width: 300px; }
-      .mr-janela { width: min(860px, calc(100vw - 32px)); height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: var(--radius); padding: 22px 28px 30px; box-shadow: 0 24px 64px rgba(15, 19, 24, .35); }
-      .mr-janela-fechar { margin: -8px -12px 0 8px; }
-      .mr-modal { width: min(720px, calc(100vw - 32px)); height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: var(--radius); padding: 28px; }
+      .mr section { padding: 72px 0; }
+      .mr-filtro { padding: 72px 0 0 !important; }
+      .mr-cursos { padding: 0 0 72px !important; }
+      .mr section[id], .mr-card, .mr-det { scroll-margin-top: calc(var(--mr-cabecalho, 84px) + 76px); }
+      .mr-cab { margin-bottom: 28px; }
+      .mr-cab p { font-size: 17px; }
+      .mr-marcas ul { grid-template-columns: repeat(4, 1fr); padding: 22px 0; }
+      .mr-marcas li { font-size: 16px; }
+      .mr-chips { margin: 0; padding: 4px 0 14px; flex-wrap: wrap; overflow: visible; }
+      .mr-capa { max-height: none; }
+      .mr-card-corpo { padding: 16px; gap: 14px; }
+      .mr-preco { gap: 8px; padding-top: 14px; }
+      .mr-grade { gap: 20px; }
+      .mr-fotos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; overflow: visible; margin: 0; padding: 0; }
+      .mr-fotos li { flex: none; }
+      .mr-fotos img { aspect-ratio: 4 / 3; }
+      .mr-passos { grid-template-columns: repeat(2, 1fr); gap: 28px 32px; margin-top: 8px; }
+      .mr-historia-grade { grid-template-columns: 1fr 1fr; align-items: center; }
+      .mr-historia img, .mr-mapa img, .mr-mapa iframe { aspect-ratio: 4 / 3; }
+      .mr-fatos { gap: 12px; }
+      .mr-fatos span { font-size: 14px; }
+      .mr-local-grade { grid-template-columns: 1fr 1fr; align-items: center; }
+      .mr-faq summary, .mr-det-faq summary { min-height: 56px; padding: 14px 0; font-size: 17px; }
+      .mr-det-cert { grid-template-columns: 1fr 300px; align-items: center; }
+      .mr-det-oferta { grid-template-columns: 1fr auto; align-items: center; }
+      .mr-det-oferta .btn { width: auto; min-width: 240px; }
+      .mr-det-oferta .mr-micro { grid-column: 1 / -1; }
+      .mr-janela { height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: 12px; }
+      .mr-modal { width: min(720px, calc(100vw - 32px)); height: auto; max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); margin: auto; border-radius: 12px; padding: 28px; }
       .mr-modal-fechar { margin: -12px -12px 0 8px; }
       .mr-tf-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      html[data-curso] .mr-det-foco { padding: 26px 28px 28px; }
-      #matricula-cursos-presenciais section[id], .mr-card, .mr-det { scroll-margin-top: calc(var(--mr-cabecalho, 84px) + 73px); }
-      html[data-curso] .mr-hero { padding: 16px 0 6px !important; }
+      #tf-enviar { width: auto; min-width: 260px; }
     }
     @media (min-width: 1024px) {
-      .mr-grade { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .mr-card-acoes { grid-template-columns: 1fr; }
       .mr-passos { grid-template-columns: repeat(4, 1fr); }
+      .mr-passo { flex-direction: column; gap: 14px; }
+      .mr-passo h3 { padding-top: 0; }
     }
-    @media (min-width: 1024px) and (max-width: 1279px) { .mr-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1200px) {
+      .mr-grade { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+      .mr-card-turma { grid-column: span 2; flex-direction: row; }
+      .mr-card-turma .mr-capa { flex: 0 0 44%; aspect-ratio: auto; max-height: none; }
+      .mr-card-turma .mr-card-corpo { padding: 28px 32px; }
+      .mr-card-turma p { max-width: 560px; }
+    }
   </style>"""
 
 JS_PAGINA = """
@@ -1149,6 +1223,37 @@ JS_PAGINA = """
 def esc(s: str) -> str:
     return html.escape(s, quote=True)
 
+# Ícones de traço do modelo B, em SVG inline (os de Font Awesome, via scripts/icones.py, são sólidos e continuam
+# servindo onde já estavam: formulário da turma, lista "o que você aprende").
+def _svg(caminho: str, traco: float = 2, cheio: bool = False) -> str:
+    atrs = 'fill="currentColor"' if cheio else f'fill="none" stroke="currentColor" stroke-width="{traco}" stroke-linecap="round" stroke-linejoin="round"'
+    return f'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {atrs}>{caminho}</svg>'
+
+
+SVG = {
+    "seta": _svg('<path d="M5 12h14M13 6l6 6-6 6"/>', 2.2),
+    "pino": _svg('<path d="M12 22s7-7.1 7-12a7 7 0 1 0-14 0c0 4.9 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>'),
+    "cruz": _svg('<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>', cheio=True),
+    "check": _svg('<path d="m5 12 5 5 9-10"/>', 2.4),
+    "check-circulo": _svg('<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>', 2.2),
+    "pessoas": _svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    "medalha": _svg('<circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/>'),
+    "cartao": _svg('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>'),
+    "pulso": _svg('<path d="M3 12h4l2-5 4 10 2-5h6"/>'),
+    "relogio": _svg('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+    "capelo": _svg('<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>'),
+}
+MARCAS = [("pessoas", "Aulas presenciais"), ("medalha", "Certificado"), ("cartao", "PIX ou cartão"), ("pulso", "Formação prática")]
+
+
+def foto_real(f: dict, sizes: str, loading: str = "lazy", classe: str = "", extra: str = "") -> str:
+    """<img> de uma foto de /assets/otim com srcset pelas larguras disponíveis; `pos` vira object-position."""
+    srcset = ", ".join(f"/assets/otim/{f['base']}-{w}.webp {w}w" for w in f["larguras"])
+    estilo = f' style="object-position:{f["pos"]}"' if f.get("pos") and f["pos"] != "center" else ""
+    cls = f' class="{classe}"' if classe else ""
+    return (f'<img{cls} src="/assets/otim/{f["base"]}-{f["largura"]}.webp" srcset="{srcset}" sizes="{sizes}" '
+            f'width="{f["largura"]}" height="{f["altura"]}" alt="{esc(f["alt"])}" loading="{loading}"{estilo}{extra}>')
+
 
 # "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Nos textos da filial (inclusive os que vêm
 # do catálogo da escola) o nome é sempre o completo, para não confundir as duas (decisão de 19/09/2026).
@@ -1358,6 +1463,43 @@ def turma_dialog(opcoes_turma: str) -> str:
         </dialog>'''
 
 
+def hero_html(insc: str) -> str:
+    """O banner principal (banner-6-branco, escolhido pelo dono em 05/10/2026). Trocar o banner é mexer aqui e no bloco
+    /* Hero */ do CSS_PAGINA. Ganchos que o resto da página espera: section.mr-hero (JS da navegação e da barra fixa),
+    h1#mr-titulo, o primeiro botão com .mr-cta-topo (primeira tela) e data-secao="topo"."""
+    itens = [
+        "O valor do curso é pago depois, na escola",
+        "PIX ou cartão, sem criar conta antes de pagar",
+        "Devolução integral se desistir em até 7 dias",  # GARANTIA_7_DIAS: 7 dias corridos do pagamento, valor de volta por inteiro
+        "Certificado da Cruz Vermelha ao concluir",
+    ]
+    lista = "".join(f'<li>{SVG["check"]}<span>{esc(t)}</span></li>' for t in itens)
+    return f'''
+    <section class="mr-hero" aria-labelledby="mr-titulo" data-secao="topo">
+      <div class="wrap">
+        <div class="mr-hero-conteudo">
+          <p class="eyebrow">Escola de Educação e Saúde</p>
+          <h1 id="mr-titulo">Cursos presenciais da Cruz Vermelha no Rio de Janeiro</h1>
+          <p class="mr-hero-frase">Aprenda na prática, na sede da Cruz Vermelha Brasileira Rio de Janeiro, no Centro. Escolha seu curso, veja os detalhes e garanta sua vaga.</p>
+          <div class="mr-hero-acoes">
+            <a class="btn btn-red mr-cta-topo" href="#cursos">Ver cursos {SVG["seta"]}</a>
+            <a class="btn btn-outline" href="#como-funciona">Como funciona</a>
+          </div>
+          <p class="mr-hero-endereco">{SVG["pino"]}<span>Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro, RJ</span></p>
+        </div>
+        <aside class="mr-hero-painel" aria-label="Como funciona o valor">
+          <strong>Inscrição {insc}<small>paga agora, garante a sua vaga</small></strong>
+          <ul>{lista}</ul>
+          <a class="btn btn-red" href="#cursos">Escolher meu curso</a>
+        </aside>
+        <figure class="mr-hero-midia">
+          {foto_real(FOTO_TOPO, "(min-width: 768px) 46vw, 100vw", "eager", "mr-hero-foto", ' fetchpriority="high"')}
+          <figcaption class="mr-hero-legenda">{SVG["cruz"]}<span>{FOTO_TOPO["legenda"]}</span></figcaption>
+        </figure>
+      </div>
+    </section>'''
+
+
 def main() -> int:
     home = HOME.read_text(encoding="utf-8")
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
@@ -1397,13 +1539,17 @@ def main() -> int:
         cid = CATEGORIA_DE.get(s, "formacao")
         return cid, dict(CATEGORIAS)[cid]
 
-    def foto(s: str, largura: int, classe: str = "", loading: str = "lazy", sizes: str = "") -> str:
+    def foto(s: str, largura: int, loading: str = "lazy", sizes: str = "") -> str:
+        """Capa do curso: a foto real de CAPA_CURSO, se houver; senão a imagem gerada em img/."""
+        real = CAPA_CURSO.get(s)
+        if real:
+            f = dict(real, largura=real["larguras"][-1] if largura > 480 else real["larguras"][0])
+            return foto_real(f, sizes, loading)
         img = cursos[s]["imagem"]
         if not (PASTA_IMG / f"{img}-960.webp").exists():
             return ""
         srcset = f'srcset="img/{img}-480.webp 480w, img/{img}-960.webp 960w" sizes="{sizes}" ' if sizes else ""
-        cls = f'class="{classe}" ' if classe else ""
-        return (f'<img {cls}src="img/{img}-{largura}.webp" {srcset}alt="{esc(cursos[s]["nome"])} na Cruz Vermelha '
+        return (f'<img src="img/{img}-{largura}.webp" {srcset}alt="{esc(cursos[s]["nome"])} na Cruz Vermelha '
                 f'Brasileira Rio de Janeiro" loading="{loading}" width="{largura}" height="{largura // 2}">')
 
     def tem_cert(s: str) -> bool:
@@ -1422,18 +1568,14 @@ def main() -> int:
         return brl_curto(v) if v else "Informação em breve"
 
     def preco(s: str) -> str:
-        return (f'<div class="mr-preco"><div><small>Inscrição</small><b>{insc}</b><span>paga agora</span></div>'
-                f'<span class="mr-mais" aria-hidden="true">+</span>'
-                f'<div><small>Curso</small><b>{esc(valor_curso(s))}</b><span>pago depois, na escola</span></div>'
-                f'<p class="mr-preco-pag"><i class="fa-solid fa-credit-card"></i> PIX ou cartão</p></div>')
+        """Preço em duas linhas (modelo B): inscrição agora, curso depois."""
+        return (f'<div class="mr-preco"><div class="mr-preco-l agora"><strong>Inscrição {insc}</strong><span>paga agora</span></div>'
+                f'<div class="mr-preco-l"><strong>Curso {esc(valor_curso(s))}</strong><span>pago depois, na escola</span></div></div>')
 
-    def meta(s: str, com_local: bool = True) -> str:
+    def meta(s: str) -> str:
         c = cursos[s]
-        itens = [f'<li><i class="fa-regular fa-clock"></i> {esc(c["carga_horaria"])}</li>']
-        if com_local:
-            itens.append('<li class="mr-meta-local"><i class="fa-solid fa-location-dot"></i> Presencial · Centro do Rio</li>')
-        itens.append(f'<li><i class="fa-solid fa-graduation-cap"></i> Requisito: {esc(c["escolaridade"])}</li>')
-        return f'<ul class="mr-meta">{"".join(itens)}</ul>'
+        return (f'<ul class="mr-meta"><li>{SVG["relogio"]}{esc(c["carga_horaria"])}</li>'
+                f'<li>{SVG["capelo"]}{esc(c["escolaridade"])}</li></ul>')
 
     def badge(s: str) -> str:
         st = STATUS_TURMA.get(s)
@@ -1459,16 +1601,16 @@ def main() -> int:
             return None
         return tuple(x.replace("{insc}", insc).replace("{curso}", valor_curso(s)) for x in o)
 
-    # --- cartão de curso -------------------------------------------------------------------------------------
+    # --- cartão de curso (modelo B: capa com etiqueta e véu com título, meta, preço em duas linhas, dois botões) ----
+    SIZES_CARTAO = "(min-width: 1200px) 380px, (min-width: 640px) 50vw, 100vw"
+
     def cartao(s: str, posicao: int) -> str:
         c = cursos[s]
         cid, cnome = categoria(s)
         return f'''
           <article class="mr-card mr-detalhe" id="curso-{s}" data-curso="{s}" data-cat="{cid}" data-nome="{esc(c["nome"])}" data-curto="{esc(curto(s))}"{' data-cert' if tem_cert(s) else ''}>
-            <figure class="mr-card-capa">{foto(s, 480, "", "eager" if posicao < 2 else "lazy", "(max-width: 719px) 100vw, (max-width: 1023px) 50vw, 300px")}<span class="mr-card-tag">{esc(cnome)}</span>{badge(s)}</figure>
+            <figure class="mr-capa">{foto(s, 480, "eager" if posicao < 2 else "lazy", SIZES_CARTAO)}<span class="mr-capa-tag">{esc(cnome)}</span>{badge(s)}<figcaption class="mr-veu"><h3>{esc(curto(s))}</h3><p>{esc(beneficio(s))}</p></figcaption></figure>
             <div class="mr-card-corpo">
-              <h3>{esc(curto(s))}</h3>
-              <p class="mr-card-frase">{esc(beneficio(s))}</p>
               {meta(s)}
               {preco(s)}
               <div class="mr-card-acoes">
@@ -1479,14 +1621,16 @@ def main() -> int:
           </article>'''
 
     # --- ficha / detalhes do curso (escondida; vai para a janela, ou abre no topo no modo curso) ----------------
+    # Ordem: capa com título → promessa → preço e botão → carga, pré-requisito, local, materiais → sobre → aprende →
+    # para quem → certificação → dúvidas do curso → chat e turma → rodapé fixo com preço e botão.
     def detalhes(s: str) -> str:
         c = cursos[s]
         cc = COPY_CURSO.get(s) or {}
         cid, cnome = categoria(s)
         sobre = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c["sobre"] if not EXCLUIR_CATALOGO.search(p))
-        aprende = "".join(f'<li><i class="fa-solid fa-check"></i> <span>{esc(a)}</span></li>' for a in cc.get("aprende", []))
-        aprende_html = f'<h4>O que você vai aprender</h4><ul>{aprende}</ul>' if aprende else ""
-        para_quem = f'<h4>Para quem é indicado</h4><p>{esc(cc["para_quem"])}</p>' if cc.get("para_quem") else ""
+        aprende = "".join(f'<li><i class="fa-solid fa-check"></i><span>{esc(a)}</span></li>' for a in cc.get("aprende", []))
+        aprende_html = f'<div class="mr-det-bloco"><h4>O que você vai aprender</h4><ul class="mr-det-lista">{aprende}</ul></div>' if aprende else ""
+        para_quem = f'<div class="mr-det-bloco"><h4>Para quem é indicado</h4><p>{esc(cc["para_quem"])}</p></div>' if cc.get("para_quem") else ""
         ob = objecao(s)
         perguntas = ([(ob[0], ob[1])] if ob else []) + faq_curso(s)
         faq = "".join(f"<details><summary>{esc(nome_filial(p))}</summary><p>{esc(nome_filial(r))}</p></details>" for p, r in perguntas)
@@ -1495,39 +1639,32 @@ def main() -> int:
         materiais = esc(MATERIAIS.get(s, "Informação em breve"))
         return f'''
         <section class="mr-det" id="det-{s}" data-curso="{s}" aria-labelledby="det-titulo-{s}">
-          <div class="mr-det-cab">
-            <figure class="mr-det-foto">{foto(s, 960, "", "lazy", "(max-width: 719px) 100vw, 380px")}</figure>
-            <div>
-              <p class="mr-det-tag">{esc(cnome)} · Curso presencial</p>
-              <h3 id="det-titulo-{s}">{esc(cc.get("titulo") or curto(s))}</h3>
-              <p class="mr-det-frase">{esc(cc.get("promessa") or beneficio(s))}</p>
-              {meta(s)}
-              {preco(s)}
-              <div class="mr-det-acoes">
-                <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Garantir minha vaga · {insc}</a>
-                <p class="mr-micro"><i class="fa-solid fa-rotate-left"></i> 7 dias para desistir, com o valor de volta</p>
-              </div>
-            </div>
-          </div>
+          <figure class="mr-det-capa">{foto(s, 960, "lazy", "(min-width: 760px) 760px, 100vw")}<figcaption class="mr-det-veu"><span class="mr-capa-tag">{esc(cnome)}</span><h3 id="det-titulo-{s}">{esc(cc.get("titulo") or curto(s))}</h3></figcaption></figure>
           <div class="mr-det-corpo">
-            <h4>Sobre o curso</h4>{sobre}{obs}
+            <p class="mr-det-promessa">{esc(cc.get("promessa") or beneficio(s))}</p>
+            <div class="mr-det-oferta">
+              {preco(s)}
+              <a class="btn btn-red mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Garantir minha vaga · {insc}</a>
+              <p class="mr-micro">{SVG["check-circulo"]}7 dias para desistir, com o valor de volta</p>
+            </div>
+            <ul class="mr-det-grade">
+              <li><small>Carga horária</small><b>{esc(c["carga_horaria"])}</b></li>
+              <li><small>Pré-requisito</small><b>{esc(c["escolaridade"])}</b></li>
+              <li><small>Local</small><b>Praça da Cruz Vermelha, 10 · Centro</b></li>
+              <li><small>Materiais necessários</small><b>{materiais}</b></li>
+            </ul>
+            <div class="mr-det-bloco"><h4>Sobre o curso</h4>{sobre}{obs}</div>
             {aprende_html}
             {para_quem}
-            <div class="mr-det-grade">
-              <div><small>Carga horária</small><b>{esc(c["carga_horaria"])}</b></div>
-              <div><small>Pré-requisito</small><b>{esc(c["escolaridade"])}</b></div>
-              <div><small>Materiais necessários</small><b>{materiais}</b></div>
-              <div><small>Local</small><b>Praça da Cruz Vermelha, 10 · Centro</b></div>
-            </div>
-            <div class="mr-det-cert">{cert_img(s, "lazy", "84px")}<p><b>Certificação:</b> ao concluir os requisitos do curso, você recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. <a href="#certificado">Veja o certificado</a>.</p></div>
+            <div class="mr-det-bloco mr-det-cert"><div><h4>Certificação</h4><p>Ao concluir os requisitos do curso, você recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. <a href="#certificado">Veja o certificado</a>.</p></div>{cert_img(s, "lazy", "(min-width: 720px) 300px, 100vw")}</div>
             {faq_html}
             <div class="mr-det-fim">
-              <a class="btn btn-red mr-cta" data-local="detalhes_fim" data-curso="{s}" href="{checkout(s, "detalhes_fim")}">Garantir minha vaga · {insc}</a>
               <p class="mr-micro">Inscrição de {insc} agora, por PIX ou cartão · curso {esc(valor_curso(s))} pago depois, na escola, antes da aula · sem criar conta antes de pagar</p>
               <p class="mr-chat-atalho"><a href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="detalhes">Dúvida antes de pagar? Pergunte no chat.</a></p>
               <p class="mr-turma-linha">Tem um grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas ou quer este curso em inglês? <a href="#empresas" data-turma-abrir="curso" data-curso="{s}" aria-controls="turma-form-bloco">Peça uma turma</a>.</p>
             </div>
           </div>
+          <div class="mr-det-rodape"><div class="mr-det-rodape-preco"><strong>Inscrição {insc}</strong><span>Curso {esc(valor_curso(s))} pago depois, na escola</span></div><a class="btn btn-red mr-cta" data-local="detalhes_fim" data-curso="{s}" href="{checkout(s, "detalhes_fim")}">Garantir vaga</a></div>
         </section>'''
 
     # --- chat: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo -----------------
@@ -1549,7 +1686,7 @@ def main() -> int:
 
     # --- 1. navegação da página (computador) ------------------------------------------------------------------
     nav = '''
-  <nav class="mr-nav" id="mr-nav" aria-label="Seções desta página">
+  <nav class="mr-nav mr" id="mr-nav" aria-label="Seções desta página">
     <div class="wrap">
       <ul>
         <li><a href="#cursos">Cursos</a></li>
@@ -1562,103 +1699,90 @@ def main() -> int:
     </div>
   </nav>'''
 
-    # --- 2. topo ---------------------------------------------------------------------------------------------
-    hero = f'''
-    <section class="mr-hero" aria-labelledby="mr-titulo" data-secao="topo">
-      <div class="wrap mr-hero-grid">
-        <div>
-          <p class="eyebrow">Escola de Educação e Saúde</p>
-          <h1 id="mr-titulo">Cursos presenciais da Cruz Vermelha no Rio de Janeiro</h1>
-          <p class="mr-hero-sub">Aprenda na prática, na sede da Cruz Vermelha Brasileira Rio de Janeiro, no Centro.</p>
-          <p class="mr-hero-ajuda">Escolha seu curso, veja os detalhes e garanta sua vaga.</p>
-          <ul class="mr-check">
-            <li><i class="fa-solid fa-circle-check"></i> Aulas presenciais</li>
-            <li><i class="fa-solid fa-circle-check"></i> Certificado</li>
-            <li><i class="fa-solid fa-circle-check"></i> PIX ou cartão</li>
-            <li><i class="fa-solid fa-circle-check"></i> Formação prática</li>
-          </ul>
-          <a class="btn btn-red mr-cta-topo" href="#cursos">Ver cursos</a>
-          <p class="mr-hero-local"><i class="fa-solid fa-location-dot"></i> <span>Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro</span></p>
-        </div>
-        <figure class="mr-hero-foto">
-          <img src="{FOTO_TOPO["src"]}" srcset="{FOTO_TOPO["srcset"]}" sizes="(max-width: 719px) 100vw, 520px" width="960" height="727" alt="{esc(FOTO_TOPO["alt"])}" fetchpriority="high">
-          <figcaption>{esc(FOTO_TOPO["legenda"])}</figcaption>
-        </figure>
+    # --- 2. topo (hero_html) e faixa de marcas ------------------------------------------------------------------
+    hero = hero_html(insc)
+    marcas = f'''
+    <div class="mr-marcas">
+      <div class="wrap">
+        <ul aria-label="O que você encontra na escola">{"".join(f'<li>{SVG[i]}<span>{esc(t)}</span></li>' for i, t in MARCAS)}</ul>
       </div>
-    </section>'''
+    </div>'''
 
     # --- fichas (escondidas) --------------------------------------------------------------------------------
     dets = f'''
     <div class="mr-dets wrap" id="mr-dets">{"".join(detalhes(s) for s in exibicao)}</div>'''
 
-    # --- 3. categorias e 4. cursos ----------------------------------------------------------------------------
+    # --- 3. categorias e 4. cursos (um bloco cinza só; duas seções para o secao_vista continuar igual) ----------
     chips = "".join(f'<button class="mr-chip" type="button" data-cat="{cid}" aria-pressed="{"true" if cid == "todos" else "false"}">{esc(n)}</button>'
                     for cid, n in CATEGORIAS)
+    tipos = ["Empresas", "Escolas", "Condomínios", "Instituições", "Grupos organizados"]
     cartao_turma = f'''
-          <div class="mr-card-turma" id="mr-card-turma">
-            <i class="fa-solid fa-people-group"></i>
-            <h3>Turma para empresas e grupos</h3>
-            <p>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
-            <button class="btn btn-outline" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Solicitar uma turma</button>
-          </div>'''
+          <article class="mr-card-turma" id="mr-card-turma">
+            <figure class="mr-capa"><img src="{FOTO_GRUPOS["src"]}" srcset="{FOTO_GRUPOS["srcset"]}" sizes="(min-width: 1200px) 520px, (min-width: 640px) 50vw, 100vw" width="{FOTO_GRUPOS["largura"]}" height="{FOTO_GRUPOS["altura"]}" alt="{esc(FOTO_GRUPOS["alt"])}" loading="lazy"><span class="mr-capa-tag">Empresas e grupos</span></figure>
+            <div class="mr-card-corpo">
+              <h3>Turma para empresas e grupos</h3>
+              <p>De {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa. Qualquer curso também em inglês.</p>
+              <ul aria-label="Para quem">{"".join(f"<li>{esc(t)}</li>" for t in tipos[:4])}</ul>
+              <p>Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
+              <button class="btn btn-branco" type="button" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Solicitar uma turma</button>
+            </div>
+          </article>'''
     cursos_sec = f'''
-    <section class="mr-filtro" aria-labelledby="mr-filtro-titulo" data-secao="categorias">
+    <section class="mr-filtro mr-cinza" aria-labelledby="mr-filtro-titulo" data-secao="categorias">
       <div class="wrap">
-        <h2 id="mr-filtro-titulo">Qual formação você procura?</h2>
+        <div class="mr-cab"><h2 id="mr-filtro-titulo">Qual formação você procura?</h2></div>
         <div class="mr-chips" role="group" aria-label="Filtrar cursos por categoria">{chips}</div>
       </div>
     </section>
-    <section class="mr-cursos" id="cursos" aria-labelledby="mr-cursos-titulo" data-secao="cursos">
+    <section class="mr-cursos mr-cinza" id="cursos" aria-labelledby="mr-cursos-titulo" data-secao="cursos">
       <div class="wrap">
         <h2 id="mr-cursos-titulo" class="mr-escondido">Cursos presenciais e valores</h2>
         <div class="mr-grade">{"".join(cartao(s, i) for i, s in enumerate(exibicao))}{cartao_turma}</div>
         <p class="mr-vazio" id="mr-vazio" hidden>Nenhum curso nesta categoria.</p>
+        <p class="mr-nota-preco">{SVG["check-circulo"]}<span>Inscrição de {insc} por PIX ou cartão · valor do curso pago depois, na escola · 7 dias para desistir, com o valor de volta</span></p>
       </div>
     </section>'''
 
     # --- 6. fotos --------------------------------------------------------------------------------------------
-    fotos = "".join(f'<figure><img src="{f["src"]}" srcset="{f["srcset"]}" sizes="(max-width: 719px) 50vw, 280px" width="480" height="360" '
-                    f'alt="{esc(f["alt"])}" loading="lazy"><figcaption>{esc(f["legenda"])}</figcaption></figure>' for f in FOTOS_AULAS)
+    fotos = "".join(f'<li><figure>{foto_real(f, "(min-width: 720px) 25vw, 76vw")}<figcaption>{esc(f["legenda"])}</figcaption></figure></li>' for f in FOTOS_AULAS)
     galeria = f'''
-    <section class="mr-fotos" aria-labelledby="mr-fotos-titulo" data-secao="fotos">
+    <section class="mr-fotos-sec" aria-labelledby="mr-fotos-titulo" data-secao="fotos">
       <div class="wrap">
-        <p class="eyebrow">A sede onde acontecem as aulas</p>
-        <h2 id="mr-fotos-titulo">Aqui você aprende fazendo.</h2>
-        <p class="mr-sub">Conhecimento para entender. Prática para saber como agir.</p>
-        <div class="mr-fotos-grade">{fotos}</div>
+        <div class="mr-cab">
+          <h2 id="mr-fotos-titulo">Aqui você aprende fazendo.</h2>
+          <p>Conhecimento para entender. Prática para saber como agir.</p>
+        </div>
+        <ul class="mr-fotos">{fotos}</ul>
       </div>
     </section>'''
 
     # --- 7. como funciona -------------------------------------------------------------------------------------
-    passos = "".join(f'<li><b>0{i}</b><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>' for i, (t, d) in enumerate(PASSOS_COMO, 1))
+    passos = "".join(f'<li class="mr-passo"><span class="mr-num" aria-hidden="true">{i}</span><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>' for i, (t, d) in enumerate(PASSOS_COMO, 1))
     como = f'''
     <section class="mr-como" id="como-funciona" aria-labelledby="mr-como-titulo" data-secao="como_funciona">
       <div class="wrap">
-        <p class="eyebrow">Matrícula</p>
-        <h2 id="mr-como-titulo">Como funciona</h2>
-        <p class="mr-sub">Quatro passos, sem criar conta antes de pagar.</p>
+        <div class="mr-cab">
+          <h2 id="mr-como-titulo">Como funciona</h2>
+          <p>Quatro passos, sem criar conta antes de pagar.</p>
+        </div>
         <ol class="mr-passos">{passos}</ol>
         <p class="mr-como-nota">{esc(GARANTIA_7_DIAS)} <a href="/reembolso/">Regras de cancelamento e reembolso</a>.</p>
       </div>
     </section>'''
 
     # --- 8. certificado ---------------------------------------------------------------------------------------
+    destaques = [("pessoas", "Nome do aluno"), ("medalha", "Nome do curso"), ("relogio", "Carga horária")]
     certificado = f'''
-    <section class="mr-cert" id="certificado" aria-labelledby="mr-cert-titulo" data-secao="certificado">
+    <section class="mr-cert mr-cinza" id="certificado" aria-labelledby="mr-cert-titulo" data-secao="certificado">
       <div class="wrap mr-cert-grade">
-        <figure class="mr-cert-figura">{cert_img(CERT_DESTAQUE, "lazy", "(max-width: 719px) 100vw, 420px")}</figure>
         <div class="mr-cert-texto">
-          <p class="eyebrow">Certificado</p>
           <h2 id="mr-cert-titulo">Sua formação também fica registrada.</h2>
-          <p class="mr-sub">Após concluir os requisitos do curso, o aluno recebe seu certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
-          <ul class="mr-cert-itens">
-            <li><i class="fa-solid fa-circle-check"></i><span>Nome do aluno</span></li>
-            <li><i class="fa-solid fa-circle-check"></i><span>Nome do curso</span></li>
-            <li><i class="fa-solid fa-circle-check"></i><span>Carga horária</span></li>
-          </ul>
+          <p>Após concluir os requisitos do curso, o aluno recebe seu certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
+          <ul class="mr-destaques" aria-label="O que consta no certificado">{"".join(f'<li>{SVG[i]}{esc(t)}</li>' for i, t in destaques)}</ul>
           <p>{esc(CERT_PESO)}</p>
           <p class="mr-cert-nota">{esc(CERT_NOTA)}</p>
         </div>
+        <figure class="mr-cert-figura">{cert_img(CERT_DESTAQUE, "lazy", "(min-width: 640px) 50vw, 100vw")}</figure>
       </div>
     </section>'''
 
@@ -1668,14 +1792,13 @@ def main() -> int:
     <section class="mr-historia" id="historia" aria-labelledby="mr-historia-titulo" data-secao="historia">
       <div class="wrap mr-historia-grade">
         <div>
-          <p class="eyebrow">Quem dá o curso</p>
           <h2 id="mr-historia-titulo">Mais de um século de história no Rio de Janeiro.</h2>
-          <p>{esc(TEXTO_HISTORIA)}</p>
           <ul class="mr-fatos">{fatos}</ul>
-          <a class="mr-historia-link" href="/historia/">Conheça nossa história <i class="fa-solid fa-arrow-right"></i></a>
+          <p>{esc(TEXTO_HISTORIA)}</p>
+          <a class="mr-link-seta" href="/historia/">Conheça nossa história {SVG["seta"]}</a>
         </div>
         <figure>
-          <img src="{FOTO_HISTORIA["src"]}" srcset="{FOTO_HISTORIA["srcset"]}" sizes="(max-width: 719px) 100vw, 560px" width="960" height="720" alt="{esc(FOTO_HISTORIA["alt"])}" loading="lazy">
+          <img src="{FOTO_HISTORIA["src"]}" srcset="{FOTO_HISTORIA["srcset"]}" sizes="(min-width: 720px) 50vw, 100vw" width="960" height="720" alt="{esc(FOTO_HISTORIA["alt"])}" loading="lazy">
           <figcaption>{esc(FOTO_HISTORIA["legenda"])}</figcaption>
         </figure>
       </div>
@@ -1683,24 +1806,21 @@ def main() -> int:
 
     # --- 10. local -------------------------------------------------------------------------------------------
     local = f'''
-    <section class="mr-local" id="local" aria-labelledby="mr-local-titulo" data-secao="local">
-      <div class="wrap">
-        <p class="eyebrow">Localização</p>
-        <h2 id="mr-local-titulo">Onde acontecem as aulas?</h2>
-        <div class="mr-local-grade">
-          <div class="mr-local-cartao">
-            <p class="mr-endereco"><i class="fa-solid fa-location-dot"></i><span><b>Cruz Vermelha Brasileira Rio de Janeiro</b>Praça da Cruz Vermelha, 10<br>Centro — Rio de Janeiro, RJ · CEP 20230-130</span></p>
-            <p class="mr-micro" style="margin:0 0 14px">Todos os cursos são presenciais, no Palácio da Cruz Vermelha, sede da filial. Os dias e horários são os de cada turma.</p>
-            <div class="mr-local-acoes">
-              <a class="btn btn-red" href="{MAPA_ROTA}" target="_blank" rel="noopener">Como chegar</a>
-              <button class="btn btn-outline" type="button" id="mr-mapa-carregar" data-src="{MAPA_EMBED}">Ver no mapa</button>
-            </div>
+    <section class="mr-local mr-cinza" id="local" aria-labelledby="mr-local-titulo" data-secao="local">
+      <div class="wrap mr-local-grade">
+        <div>
+          <h2 id="mr-local-titulo">Onde acontecem as aulas?</h2>
+          <p class="mr-endereco">{SVG["pino"]}<span><b>Cruz Vermelha Brasileira Rio de Janeiro</b>Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro, RJ · CEP 20230-130</span></p>
+          <p class="mr-local-nota">Todos os cursos são presenciais, no Palácio da Cruz Vermelha, sede da filial. Os dias e horários são os de cada turma.</p>
+          <div class="mr-local-acoes">
+            <a class="btn btn-red" href="{MAPA_ROTA}" target="_blank" rel="noopener">Como chegar {SVG["seta"]}</a>
+            <button class="btn btn-outline" type="button" id="mr-mapa-carregar" data-src="{MAPA_EMBED}">Ver no mapa</button>
           </div>
-          <figure class="mr-mapa" id="mr-mapa">
-            <img src="{FOTO_FACHADA["src"]}" width="767" height="516" alt="{esc(FOTO_FACHADA["alt"])}" loading="lazy">
-            <figcaption>{esc(FOTO_FACHADA["legenda"])}</figcaption>
-          </figure>
         </div>
+        <figure class="mr-mapa" id="mr-mapa">
+          <img src="{FOTO_FACHADA["src"]}" width="767" height="516" alt="{esc(FOTO_FACHADA["alt"])}" loading="lazy">
+          <figcaption>{esc(FOTO_FACHADA["legenda"])}</figcaption>
+        </figure>
       </div>
     </section>'''
 
@@ -1721,9 +1841,8 @@ def main() -> int:
     faq_sec = f'''
     <section class="mr-faq" id="duvidas" aria-labelledby="mr-faq-titulo" data-secao="faq">
       <div class="wrap">
-        <p class="eyebrow">Dúvidas frequentes</p>
-        <h2 id="mr-faq-titulo">Antes de se inscrever</h2>
-        {faq_html}
+        <div class="mr-cab"><h2 id="mr-faq-titulo">Dúvidas frequentes</h2></div>
+        <div class="mr-faq-lista">{faq_html}</div>
         <p class="mr-chat-atalho mr-faq-chat"><a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Não achou sua dúvida? Pergunte no chat da página.</a> O que ficar de fora, a equipe responde por e-mail em até 3 dias úteis.</p>
       </div>
     </section>'''
@@ -1736,43 +1855,46 @@ def main() -> int:
         opcoes_turma += f'<optgroup label="{esc(g["titulo"])}">{itens}</optgroup>'
     extras = "".join(f'<option value="{s}" data-catalogo="0" data-nome="{esc(n)}">{esc(n)}</option>' for s, n in TURMA_EXTRAS.items())
     opcoes_turma += f'<optgroup label="Só sob demanda">{extras}</optgroup>'
-    tipos = "".join(f"<li>{esc(t)}</li>" for t in ["Empresas", "Escolas", "Condomínios", "Instituições", "Grupos organizados"])
     grupos = f'''
-    <section class="mr-grupos" id="empresas" aria-labelledby="mr-grupos-titulo" data-secao="empresas">
+    <section class="mr-grupos mr-cinza" id="empresas" aria-labelledby="mr-grupos-titulo" data-secao="empresas">
       <div class="wrap">
-        <p class="eyebrow">Para empresas e grupos</p>
-        <h2 id="mr-grupos-titulo">Precisa capacitar uma equipe?</h2>
-        <p class="mr-sub">Também organizamos turmas para empresas, escolas, condomínios, instituições e grupos: de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede. Qualquer curso também em inglês, e primeiros socorros para jovens de 12 a 14 anos.</p>
-        <ul class="mr-grupos-tipos">{tipos}</ul>
-        <button class="btn btn-red" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Solicitar uma turma</button>
-        <p class="mr-grupos-nota">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
+        <div class="mr-equipe">
+          <div>
+            <h2 id="mr-grupos-titulo">Precisa capacitar uma equipe?</h2>
+            <ul class="mr-publicos" aria-label="Para quem">{"".join(f"<li>{esc(t)}</li>" for t in tipos)}</ul>
+            <p>Também organizamos turmas para empresas, escolas, condomínios, instituições e grupos: de {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, com o mesmo valor por pessoa, na sede. Qualquer curso também em inglês, e primeiros socorros para jovens de 12 a 14 anos.</p>
+            <p class="mr-equipe-nota">Nada é cobrado agora. A secretaria responde em até 3 dias úteis.</p>
+          </div>
+          <div><button class="btn btn-red" type="button" data-turma-abrir="faixa" aria-expanded="false" aria-controls="turma-form-bloco">Solicitar uma turma</button></div>
+        </div>
         __TURMA_DIALOG__
       </div>
     </section>'''
 
-    # --- 13. chamada final ------------------------------------------------------------------------------------
+    # --- 13. chamada final (fundo escuro) -----------------------------------------------------------------------
     final = f'''
     <section class="mr-final" aria-labelledby="mr-final-titulo" data-secao="final">
       <div class="wrap">
-        <p class="eyebrow">Matrícula</p>
-        <h2 id="mr-final-titulo">Pronto para começar?</h2>
-        <p class="mr-sub">Escolha sua formação, veja os detalhes e garanta sua vaga.</p>
-        <div class="mr-final-acoes" id="mr-final-acoes">
-          <a class="btn btn-red" href="#cursos" data-final-primario>Ver cursos disponíveis</a>
-          <a class="btn btn-outline" href="#chat" data-abrir-chat data-assunto="matricula" data-local="final">Falar com a escola</a>
+        <div class="mr-final-conteudo">
+          <h2 id="mr-final-titulo">Pronto para começar?</h2>
+          <p>Escolha sua formação, veja os detalhes e garanta sua vaga.</p>
+          <div class="mr-final-acoes" id="mr-final-acoes">
+            <a class="btn btn-red" href="#cursos" data-final-primario>Ver cursos disponíveis</a>
+            <a class="btn btn-outline" href="#chat" data-abrir-chat data-assunto="matricula" data-local="final">Falar com a escola</a>
+          </div>
+          <p class="mr-micro">Inscrição de {insc} por PIX ou cartão · valor do curso pago depois, na escola · 7 dias para desistir, com o valor de volta</p>
         </div>
-        <p class="mr-micro">Inscrição de {insc} por PIX ou cartão · valor do curso pago depois, na escola · 7 dias para desistir, com o valor de volta</p>
       </div>
     </section>'''
 
     # --- janela dos detalhes e barra fixa ---------------------------------------------------------------------
     janela = '''
-  <dialog class="mr-janela" id="mr-janela" aria-label="Detalhes do curso">
+  <dialog class="mr-janela mr" id="mr-janela" aria-label="Detalhes do curso">
     <button class="mr-janela-fechar" type="button" data-janela-fechar aria-label="Fechar">&times;</button>
     <div id="mr-janela-corpo"></div>
   </dialog>'''
     barra = f'''
-  <div class="mr-barra" id="mr-barra" hidden>
+  <div class="mr-barra mr" id="mr-barra" hidden>
     <div class="mr-barra-texto"><b id="mr-barra-nome">Cursos presenciais</b><span id="mr-barra-sub">Inscrição {insc} · PIX ou cartão</span></div>
     <a class="btn btn-red" id="mr-barra-cta" data-local="barra" href="#cursos">Ver cursos</a>
   </div>'''
@@ -1849,6 +1971,8 @@ def main() -> int:
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&display=swap"></noscript>
   <!-- Estilos copiados da home (site/index.html) para a página ficar idêntica ao padrão da filial. -->
 {estilo}
 {css}
@@ -1860,8 +1984,9 @@ def main() -> int:
   <script>document.documentElement.classList.add('js');</script>
 {header}
 {nav}
-  <main id="matricula-cursos-presenciais">
+  <main id="matricula-cursos-presenciais" class="mr">
 {hero}
+{marcas}
 {dets}
 {cursos_sec}
 {galeria}

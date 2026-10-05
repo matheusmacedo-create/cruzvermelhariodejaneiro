@@ -180,6 +180,45 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   as 14 fotos antigas (`img/curso-*.webp`) ficaram órfãs no servidor e podem ser apagadas pelo
   hPanel (o script de publicação só envia arquivos).
 
+## Página de matrícula no modelo B: vermelho, fotos reais de aula (05/10/2026)
+
+O Matheus não gostou do visual da página reconstruída ("pelos modelos que me mandou eu ainda não gostei do layout").
+Antes de aplicar qualquer coisa, foram feitos **três mockups completos** (A editorial em serifa, B vermelho com foto em
+destaque, C saúde clara) e, depois da escolha do B, **seis variantes do banner principal** (foto de fundo com véu,
+cartão branco sobre a foto, vermelho com foto emoldurada, panorâmica com painel de preço, e as duas últimas com as
+fotos de prática). Ficou o B com o **banner 6**: fundo branco, título, dois botões, endereço, painel de preço ("Inscrição
+R$ 99, paga agora, garante a sua vaga" + quatro itens: curso pago depois na escola, PIX ou cartão sem criar conta antes
+de pagar, devolução integral em 7 dias, certificado) e, à direita, a foto do instrutor orientando a prática de
+desengasgo em bebê. Os mockups e as variantes não estão no repositório (ficaram na sessão).
+
+**O que mudou no gerador** (`scripts/gerar_matricula_presencial.py`): só a camada visual. `CSS_PAGINA` reescrito
+(fonte Manrope do Google Fonts, como a home já faz com a Inter; paleta `--vermelho:#cc0000`, `--escuro`, `--cinza`),
+bloco `/* Hero */ … /* /Hero */` isolado com `hero_html()`, faixa de quatro marcas abaixo do banner, cartões com foto
+de capa + etiqueta de categoria + título sobre véu escuro + carga e requisito + preço em duas linhas + dois botões,
+cartão "Turma para empresas e grupos" escuro com foto (ocupa duas colunas no computador), faixa vermelha "Como
+funciona", ficha de detalhes com capa e rodapé fixo. `JS_PAGINA`, `turma_dialog()`, textos, FAQ, passos, fatos, JSON-LD,
+metadados, eventos e seletores usados pelos testes **não mudaram**. Mudanças de rótulo: eyebrows das seções saíram
+(o B só tem no banner), "Requisito:" e "Presencial · Centro do Rio" saíram do cartão (o local segue na ficha), a FAQ
+tem "Dúvidas frequentes" como título. Pontos de quebra: 640 (2 colunas), 720 (computador), 768 (grade do banner),
+1024 (4 passos), 1200 (3 colunas).
+
+**Fotos reais das aulas (10/2026).** A escola mandou 20 fotos e 7 vídeos pelo WhatsApp. Aproveitadas 9 fotos (as
+nítidas e que mostram a aula; vídeos descartados: verticais, 478×850, tremidos). Originais sem EXIF em `site/assets/`
+e versões WebP em `site/assets/otim/` (as duas pastas fora do Git; `scripts/otimizar_imagens.py` ganhou as 9
+entradas `aula-*`). Na página: banner `aula-engasgo-bebe-instrutor`; capas de Primeiros Socorros Básico
+(`aula-manobra-heimlich`), Lei Lucas (`aula-engasgo-bebe`) e Suporte Básico de Vida (`aula-dea-sala`); galeria
+(`aula-engasgo-bebe`, `aula-dea-sala`, `aula-manobra-heimlich`, `aula-salao-cruz`). Punção Venosa, Bombeiro Civil,
+Cuidador de Idosos e Micropigmentação continuam com as imagens geradas de `img/` até haver foto. Os alunos aparecem
+com rosto visível: **confirmar com a escola a autorização de uso de imagem antes de publicar.** Publicação com a
+lista `scripts/publicacao-modelo-b.txt` (index + originais + WebP; nada de foto vai pelo Git).
+
+**Conferido (05/10):** gerador (7 cursos, 1 H1); `conferir_pixel.js --repositorio` 15/15; Playwright em 375, 390,
+430, 768, 1024, 1280 e 1440 sem rolagem horizontal e sem erro de JS (filtro, janela dos detalhes, turma, barra fixa,
+modo curso, chegada por `#det-`, sem JS); `validar_jsonld.py` 0 erros; `testar_checkout.php` 350/350;
+`testar_turmas_integracao.php` 24/24. Primeiro botão de matrícula em 444 px no celular e 530 px no computador.
+Altura: 10,7 mil px em 390 (12,7 telas; o banner escolhido e o cabeçalho e rodapé da home somam 2,1 mil) e 7,7 mil em
+1280. Não testado: site no ar, Safari e aparelhos reais, leitor de tela. Prévias em `docs/previas/`.
+
 ## Página de matrícula reconstruída do zero (05/10/2026)
 
 O Matheus pediu uma versão nova e completa, "mais curta, mais clara, mais institucional, muito melhor no celular,
