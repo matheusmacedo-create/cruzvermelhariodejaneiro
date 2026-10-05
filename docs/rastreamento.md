@@ -52,6 +52,25 @@ quem volta por ele aparece no GA4 como tráfego desse e-mail.
 O lembrete único do PIX (2 a 20 h depois, `api/lib/recuperacao.php`) usa `utm_campaign=pix-lembrete`, para separar
 as duas recuperações no GA4.
 
+## Página de matrícula (05/10/2026, reconstrução)
+
+A página foi reconstruída (README, "Página de matrícula reconstruída do zero"). Os eventos abaixo continuam; a tabela
+da seção seguinte vale com estas mudanças: abrir um curso é o "Ver detalhes" do cartão, que abre a ficha numa janela
+(dialog), e não mais um `<details>`. Eventos novos no GA4, todos pelo bloco de medição:
+
+| Evento | Quando | Parâmetros |
+| --- | --- | --- |
+| `view_course` | o cartão do curso fica 50% visível (uma vez por curso) | curso, modo |
+| `select_course` | clique em "Ver detalhes" | curso, local, modo |
+| `view_course_details` | a ficha abre (junto do `view_item` e do ViewContent da Meta) | curso, origem (cartao, url), modo |
+| `click_enroll` | clique num botão de matrícula (junto do `select_item`) | curso, local (cartao, detalhes, detalhes_fim, barra, final), modo |
+| `select_category` | clique num chip do filtro | categoria, modo |
+| `contact_company_training` | clique em "Solicitar uma turma" / "Peça uma turma" (o turmas.js manda também `turma_abrir`) | local, curso |
+| `mapa_aberto` | clique em "Ver no mapa" (o mapa do Google só carrega aí) | — |
+
+`click_whatsapp` e `view_next_classes` da especificação não existem: a página não tem WhatsApp (decisão D5 pendente) nem
+seção de próximas turmas (sem fonte de datas).
+
 ## Página de matrícula (04/10/2026, redesenho)
 
 O layout novo está descrito no README, seção "Página de matrícula: redesenho para conversão". Todos os eventos

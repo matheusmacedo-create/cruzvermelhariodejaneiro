@@ -1,0 +1,5 @@
+# Catálogo da página de matrícula em grade única, com foto de capa e o cartão da turma para grupos (05/10/2026).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-catalogo.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-catalogo.txt
+# Desfazer: scripts/desfazer_publicacao.sh a7d3a7c scripts/publicacao-catalogo.txt
+site/matricula-cursos-presenciais/index.html

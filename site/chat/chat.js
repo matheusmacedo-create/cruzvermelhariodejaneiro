@@ -35,7 +35,6 @@
         { p: "Quem pode fazer esse curso?", r: "O curso é destinado a estudantes e profissionais da área da saúde que desejam aperfeiçoar suas habilidades técnicas, conforme as normas da profissão." },
         { p: "O curso é prático?", r: "Sim. Grande parte do aprendizado acontece em atividades práticas supervisionadas." },
         { p: "Vou aprender apenas punção?", r: "Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha de dispositivos e boas práticas assistenciais." },
-        { p: "Esse curso melhora minhas oportunidades de emprego?", r: "Sim. A punção venosa é uma competência bastante valorizada em hospitais, clínicas, laboratórios e serviços de saúde." },
         { p: "O certificado é válido?", r: "Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro ao término do curso." }
       ] },
     { slug: "suporte-basico-de-vida", nome: "Suporte Básico de Vida", carga: "4 horas", escolaridade: "Ensino Fundamental", valor: "R$ 150,00", descricao: "Atendimento inicial de emergências com diretrizes oficiais.", faq: [
@@ -56,13 +55,11 @@
         { p: "Quem pode fazer esse curso?", r: "Qualquer pessoa interessada em atuar no cuidado de pessoas idosas, seja profissionalmente ou para cuidar de familiares." },
         { p: "O cuidador de idosos pode trabalhar no exterior?", r: "O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação." },
         { p: "Onde posso trabalhar?", r: "O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso." },
-        { p: "O curso ensina cuidados práticos?", r: "Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento." },
-        { p: "Existe mercado para cuidadores de idosos?", r: "Sim. Com o aumento da população idosa, a demanda por profissionais qualificados cresce continuamente, tornando essa uma área com excelentes oportunidades." }
+        { p: "O curso ensina cuidados práticos?", r: "Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento." }
       ] },
     { slug: "micropigmentacao-labial", nome: "Micropigmentação Labial", carga: "24 horas", escolaridade: "Ensino Médio", valor: "R$ 400,00", descricao: "Procedimento estético de micropigmentação dos lábios.", faq: [
         { p: "Preciso já trabalhar com estética?", r: "Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços." },
         { p: "Vou aprender a técnica na prática?", r: "Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica." },
-        { p: "Posso começar a atender clientes após o curso?", r: "Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos." },
         { p: "Quais são os diferenciais do curso?", r: "Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados." },
         { p: "Recebo certificado?", r: "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro." }
       ] }
