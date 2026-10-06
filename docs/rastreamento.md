@@ -113,30 +113,29 @@ data da publicação se alguma campanha otimizar por ele.
 
 Não usa `Lead` de propósito: o `Lead` é do funil pago (envio do formulário do checkout).
 
-## Dia das Crianças na Praça (`/dia-das-criancas/`, 05/10/2026)
+## Doação de brinquedos para o Dia das Crianças (`/dia-das-criancas/`, 05 e 06/10/2026)
 
-GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `eventos`. A página manda à API de
-Conversões, com o mesmo id do Pixel, o ViewContent e o Schedule (pelo `medicao.php`, com a chave
-`conteudo` = `dia-das-criancas-2026`) e o Contact do formulário de doação (pelo `contato.php`).
+GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `campanhas` (até 06/10, `eventos`). A página
+manda à API de Conversões, com o mesmo id do Pixel, o ViewContent (pelo `medicao.php`, com a chave
+`conteudo` = `dia-das-criancas-2026`) e o Contact do formulário de doação (pelo `contato.php`). A ação de
+13/10 é fechada: desde 06/10 a página não tem agenda, e o Schedule (salvar na agenda) não sai mais.
 
 | Momento | GA4 | Meta (Pixel e API de Conversões) |
 | --- | --- | --- |
-| Abre a página | `page_view` (grupo `eventos`) | `PageView` e `ViewContent` (content_ids `dia-das-criancas-2026`, categoria `evento`), id `vc.…` |
-| Salvar na agenda (Google) / baixar o `.ics` | `dia_criancas_click` (acao `agenda-google` / `agenda-ics`) | `Schedule` (uma vez por visita), id `sc.…`, e `DiaCriancasClick` |
-| Como chegar / abrir no mapa | `dia_criancas_click` (acao `mapa` / `mapa-informacoes`) | `DiaCriancasClick` (só Pixel) |
-| Saiba como doar / como doar | `dia_criancas_click` (acao `doar` / `doar-informacoes`) | `DiaCriancasClick` (só Pixel) |
+| Abre a página | `page_view` (grupo `campanhas`) | `PageView` e `ViewContent` (content_ids `dia-das-criancas-2026`), id `vc.…` |
+| Quero doar (topo) | `dia_criancas_click` (acao `doar`) | `DiaCriancasClick` (só Pixel) |
+| Como chegar à sede (topo) / abrir no mapa (como doar) | `dia_criancas_click` (acao `mapa-sede` / `mapa-doacao`) | `DiaCriancasClick` (só Pixel) |
 | Compartilhar no WhatsApp / Copiar o link | `dia_criancas_click` (acao `whatsapp` / `copiar`) e `share` (method `whatsapp` / `link`) | `DiaCriancasClick` (só Pixel) |
 | Ver as notícias | `dia_criancas_click` (acao `noticias`) | `DiaCriancasClick` (só Pixel) |
-| Chega a uma seção (programação, fotos, doações, informações, notícias) | `dia_criancas_secao` (secao), uma vez cada | nada |
+| Chega a uma seção (para quem, fotos, doações, compartilhe, notícias) | `dia_criancas_secao` (secao), uma vez cada | nada |
 | Começa a preencher o formulário de doação | `form_start` (form_id `doacao-brinquedos`) | nada |
 | Envia o formulário (gravado no servidor) | `generate_lead` (form_id `doacao-brinquedos`, lead_source `dia-das-criancas`) | `Contact` (categoria `brinquedos`), id `ct.…`, com nome, e-mail e telefone em hash no servidor |
 
 O link compartilhado leva `utm_medium=compartilhamento&utm_campaign=dia-das-criancas`, com
-`utm_source=whatsapp` (botão do WhatsApp) ou `utm_source=link` (botão de copiar): quem chega por um
-convite aparece no GA4 com a origem do convite. O formulário guarda a origem da visita (utm, fbclid,
-gclid) só com a permissão de estatística, como o chat. Para medir conversão no GA4, marcar
-`generate_lead` como evento principal ("key event"); no Gerenciador de Eventos, o Contact com categoria
-`brinquedos` e o Schedule da página podem virar conversões personalizadas.
+`utm_source=whatsapp` (botão do WhatsApp) ou `utm_source=link` (botão de copiar). O formulário guarda a
+origem da visita (utm, fbclid, gclid) só com a permissão de estatística, como o chat. Para medir conversão
+no GA4, marcar `generate_lead` como evento principal ("key event"); no Gerenciador de Eventos, o Contact com
+categoria `brinquedos` pode virar uma conversão personalizada.
 
 ## Carregamento adiado (19/09, à noite)
 
@@ -196,7 +195,7 @@ páginas o recebem de `status.php` como `id_compra`. O token abre a inscrição 
 pagamento, o link de criar senha na escola) e não pode aparecer no Gerenciador de Eventos nem no GA. Até a
 revisão de 02/10 à tarde, o Pixel e o GA recebiam o próprio token.
 | Contact | `api/contato.php` (chat e formulário de doação do Dia das Crianças) | `ct.…` (vai no corpo da mensagem) | nome, e-mail e telefone (se houver) em hash |
-| ViewContent e Schedule da página do Dia das Crianças | `api/medicao.php`, com `conteudo` (os dados saem de `MCP_MEDICAO_CONTEUDOS`) | `vc.…` / `sc.…` | não |
+| ViewContent da página do Dia das Crianças (o Schedule ainda é aceito, mas a página não o manda desde 06/10) | `api/medicao.php`, com `conteudo` (os dados saem de `MCP_MEDICAO_CONTEUDOS`) | `vc.…` | não |
 
 - **Consentimento:** só com marketing ligado (`m=1` no cookie `cvrj_consentimento`) **e** a revisão atual do
   texto do aviso no cookie (`r=2`; `MCP_META_REVISAO` em `api/lib/meta.php` e `REVISAO` em

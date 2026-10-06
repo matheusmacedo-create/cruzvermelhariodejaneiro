@@ -1,0 +1,8 @@
+# Dia das Crianças vira só a campanha de doação de brinquedos (06/10/2026): a ação de 13/10 é fechada.
+# Sai o convite (horário, local, agenda, JSON-LD Event); home e bio passam a falar só da doação.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas-doacao.txt)
+# Depois, apagar o .ics do servidor (não é mais gerado nem citado):
+#   scripts/publicar_hostinger.sh --apagar site/dia-das-criancas/dia-das-criancas.ics
+site/dia-das-criancas/index.html
+site/index.html
+site/bio/index.html

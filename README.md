@@ -2640,71 +2640,55 @@ O verbete **[Cruz Vermelha Brasileira - Rio de Janeiro](https://pt.wikipedia.org
 
 O verbete ainda não tem item no Wikidata; quando tiver, vale acrescentar o `Q…` ao `sameAs`.
 
-## Dia das Crianças na Praça (`/dia-das-criancas/`, 05/10/2026)
+## Doação de brinquedos para o Dia das Crianças (`/dia-das-criancas/`, 05 e 06/10/2026)
 
-Página da ação de **terça-feira, 13/10/2026, das 9h às 16h**, na praça em frente ao Palácio da Cruz
-Vermelha, aberta e gratuita (sem inscrição), com os setores do quadro da sede para o dia: **Juventude,
-Primeiros Socorros e Educação e Saúde**. Gerada por `scripts/gerar_dia_das_criancas.py`, com o cabeçalho,
-o rodapé, o CSS, o GA4 (grupo de conteúdo `eventos`), o Pixel e o chat da home.
+Campanha de doação de brinquedos para as crianças da ação de Dia das Crianças da filial, em **13/10/2026**.
+**A ação é fechada**, só para as crianças participantes; o que é público é a doação. Gerada por
+`scripts/gerar_dia_das_criancas.py`, com o cabeçalho, o rodapé, o CSS, o GA4 (grupo de conteúdo
+`campanhas`), o Pixel e o chat da home.
 
-- **Fonte única do evento:** o dicionário `EVENTO` do gerador alimenta a página, o JSON-LD `Event` (o que
-  o Google usa para mostrar o evento na busca: data, local, gratuito), o link do Google Agenda e o
-  `dia-das-criancas.ics` (iPhone e Outlook: horários em UTC, linhas dobradas em 75 bytes, CRLF). Mudou a
-  data, o horário ou os setores: editar `EVENTO`/`SETORES` e regerar; o card da home é editado à mão.
-- **Card na home**, o primeiro de "Campanhas ativas" (`#campanhas`), com a foto da Juventude (recorte com
-  `object-position: 50% 70%`, para os rostos caberem no 16:9).
-- **Cartão na bio do Instagram** (`/bio/`), o primeiro da lista. A foto do cartão fica em `/assets/otim/`
-  (`dia-criancas-cartao-700/420.webp`, de `CARTOES_BIO` em `otimizar_imagens.py`), não em `site/bio/img/`,
-  que vai para o Git: o bloco usa a chave `"pasta"` de `gerar_bio.py`.
-- **Fotos:** cinco fotos de ações anteriores com crianças, com autorização de uso de imagem dos
-  responsáveis (confirmada pelo Matheus em 05/10/2026). Ficam fora do Git, como o resto de
-  `site/assets/`, e sem EXIF/GPS; as versões otimizadas saem de `scripts/otimizar_imagens.py` (a do topo
-  também em AVIF, com preload, de 480 a 1080 px).
-- **No celular,** a foto com o selo "13/10 · 9h às 16h" vem logo depois do título (o topo é uma grade só;
-  no computador a foto ocupa a coluna da direita) e os quatro fatos viram uma lista com divisórias.
-- **Doação de brinquedos (05/10, à noite):** aviso no topo ("Saiba como doar"), seção "Doe brinquedos para
-  a criançada" (o que doar e onde entregar: na sede, de segunda a sexta, das 10h às 17h, o horário de
-  recebimento da Campanha do Agasalho) e linha "Doações" nas informações. Doação em dinheiro segue suspensa.
+- **Histórico:** a primeira versão (05/10, à tarde) era um convite aberto para a praça, com horário, agenda
+  (`.ics` e Google Agenda) e JSON-LD `Event`. No mesmo dia entraram a doação de brinquedos, o formulário e a
+  medição completa, saiu o cadastro de voluntário (inscrições fechadas) e o horário passou para as 13h às
+  16h. Em 06/10 o Matheus avisou que a ação é fechada: a página virou só a campanha de doação, sem horário
+  nem local da ação, sem agenda (o `.ics` saiu do repositório e do servidor) e sem `Event` (o Google
+  mostraria um evento aberto). O `AddType text/calendar .ics` do `.htaccess` ficou, sem uso.
+- **O que a página diz:** o que doar (brinquedos novos ou em bom estado, limpos e com todas as peças), onde
+  entregar (na sede, de segunda a sexta, das 10h às 17h, o horário de recebimento da Campanha do Agasalho)
+  e para quem (as crianças da ação de 13/10, com os setores de Juventude, Primeiros Socorros e Educação e
+  Saúde como contexto), com a nota "a ação é fechada; a doação é aberta a todos".
 - **Formulário de doação maior ou específica:** nome, e-mail, telefone (opcional), empresa ou grupo
   (opcional) e o que quer doar. Vai para `api/contato.php` com o assunto `brinquedos` ("Doação de brinquedos
   (Dia das Crianças)"), o mesmo atendimento do chat: grava em `mcp_contatos`, aparece no painel da
   secretaria, manda o aviso à equipe e a confirmação com protocolo. A empresa entra no começo da mensagem.
   Os e-mails dizem que veio do formulário, não do chat (`mcp_contato_canal`). Sem campo novo no banco.
-- **No fim da página**, a chamada para as **notícias** (`/noticias/`) no lugar do cadastro de voluntário
-  (inscrições fechadas em 05/10/2026).
-- **Medição completa** (detalhe em `docs/rastreamento.md`): GA4 com o grupo `eventos`, `dia_criancas_click`
-  (acao), `dia_criancas_secao` (cada seção vista uma vez), `share` (WhatsApp e copiar o link),
-  `form_start` e `generate_lead`; Pixel com `ViewContent` ao abrir, `Schedule` ao salvar na agenda (uma vez
-  por visita), `Contact` no envio do formulário e `DiaCriancasClick` (acao); API de Conversões com os mesmos
-  ids: ViewContent e Schedule pelo `medicao.php` (chave `conteudo` = `dia-das-criancas-2026`, aceita só se
-  estiver em `MCP_MEDICAO_CONTEUDOS`) e Contact pelo `contato.php`. Tudo com o consentimento do aviso de
-  cookies; o formulário funciona igual para quem recusa. O link compartilhado leva `utm_source=whatsapp` ou
-  `utm_source=link`, com `utm_campaign=dia-das-criancas`.
-- **Testes:** `scripts/testar_meta_integracao.php` cobre o repasse da página (ViewContent e Schedule; sem a
-  chave, com chave desconhecida ou com "não", nada) e o formulário (assunto, Contact e os dois e-mails).
+- **Card na home** ("Campanha de doação", o primeiro de "Campanhas ativas") e **cartão na bio** (o primeiro
+  da lista; a foto fica em `/assets/otim/dia-criancas-cartao-700/420.webp`, de `CARTOES_BIO` em
+  `otimizar_imagens.py`, com a chave `"pasta"` de `gerar_bio.py`, porque `site/bio/img/` vai para o Git).
+- **Fotos:** cinco fotos de ações anteriores com crianças, com autorização de uso de imagem dos
+  responsáveis (confirmada pelo Matheus em 05/10/2026). Ficam fora do Git, como o resto de `site/assets/`,
+  e sem EXIF/GPS; as versões otimizadas saem de `scripts/otimizar_imagens.py` (a do topo também em AVIF).
+- **No fim da página**, "Ajude a espalhar a campanha" (WhatsApp e copiar o link) e a chamada para as
+  notícias. No celular, a foto vem logo depois do título e os quatro fatos viram uma lista.
+- **Medição** (detalhe em `docs/rastreamento.md`): GA4 com `dia_criancas_click` (acao), `dia_criancas_secao`
+  (cada seção vista uma vez), `share`, `form_start` e `generate_lead`; Pixel com `ViewContent`, `Contact`
+  (o formulário) e `DiaCriancasClick`; API de Conversões com os mesmos ids (ViewContent pelo `medicao.php`,
+  com a chave `conteudo` = `dia-das-criancas-2026`; Contact pelo `contato.php`). O `medicao.php` ainda
+  aceita o Schedule dessa chave, mas a página não o manda mais. Tudo com o consentimento do aviso de
+  cookies; o formulário funciona igual para quem recusa.
 - **Contraste:** os textos de apoio usam `#5b6576` (5,9:1 no branco) no lugar do `--muted` da home
-  (`#718096`, 4,0:1, abaixo do AA), e o verde do botão do WhatsApp é `#0e7266` (5,8:1). O que o
-  Lighthouse ainda aponta é o rodapé da home, igual em todas as páginas.
-- **Lighthouse (local, 05/10):** celular 98 (LCP 2,2 s, CLS 0), computador 100; acessibilidade 96.
-- **`.ics` como `text/calendar`** (`site/.htaccess`), para o iPhone abrir "Adicionar à agenda".
-- **Publicar:** `scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-dia-das-criancas.txt)`
-  (com `--copiar-do-ar` antes), limpar o cache e, com a página no ar, rodar `gerar_sitemaps.py` (a página
-  já está em `PAGINAS`). A atualização das doações e da medição está em
-  `scripts/publicacao-dia-das-criancas-doacoes.txt` (o PHP antes da página).
-- **Publicado em 05/10/2026:** a primeira versão por volta das 17h35 (fotos, página, `.ics`, `.htaccess`,
-  home e bio) e a das doações e da medição por volta das 18h05 (`lib/email.php`, `medicao.php`, página,
-  home e bio), com cópia do que estava no ar antes de cada envio e o cache limpo depois. Na segunda, o
-  `lib/email.php` no ar já tinha o certificado de amostra que outra sessão publicou da `main`; a branch foi
-  rebaseada sobre a `main` e foi publicado o arquivo da `main` com as mudanças daqui (conferido linha a
-  linha contra o que estava no ar). Conferido em seguida: os arquivos no ar iguais ao repositório, o PHP
-  respondendo, a página sem erro de JavaScript e sem medição antes do aceite dos cookies. Sitemaps
-  regerados e publicados às 18h07, com a página nova (53 entradas em `sitemap-paginas.xml`).
+  (`#718096`, 4,0:1), e o verde do WhatsApp é `#0e7266` (5,8:1). O que o Lighthouse ainda aponta é o rodapé
+  da home, igual em todas as páginas.
+- **Testes:** `scripts/testar_meta_integracao.php` (repasse da página e formulário: assunto, Contact e os
+  dois e-mails) e o teste no navegador (cliques, seções, formulário com e sem cookies).
+- **Publicações:** 05/10 às 17h35 (primeira versão: fotos, página, `.ics`, `.htaccess`, home e bio), 05/10 às
+  18h05 (`lib/email.php`, `medicao.php`, página, home e bio; o `lib/email.php` do ar já tinha o certificado
+  de amostra da `main`, e a branch foi rebaseada sobre a `main` antes) e sitemaps às 18h07. A campanha de
+  doação: `scripts/publicacao-dia-das-criancas-doacao.txt` (e apagar o `.ics` do servidor).
 - **Observação:** o `chat.js` no ar ainda é o anterior; a `main` tem uma versão nova (sem algumas perguntas
-  das fichas dos cursos), e a página de matrícula publicada já aponta para ela pelo `?v=`. O número só serve
-  para o navegador não usar cópia velha, então nada quebra, mas o arquivo novo não foi enviado.
-- **Depois do evento (a partir de 14/10):** tirar o card da home e o cartão da bio, e trocar a página por um "como foi" (com
-  fotos do dia autorizadas) ou tirá-la do sitemap. O Google para de mostrar evento que já passou, mas a
-  página continuaria convidando para uma data vencida.
+  das fichas dos cursos), e a página de matrícula publicada já aponta para ela pelo `?v=`. Nada quebra.
+- **Depois da ação (a partir de 14/10):** tirar o card da home, o cartão da bio e a página do sitemap (ou
+  trocá-la por um "como foi", com fotos do dia autorizadas).
 
 ## Slider de campanhas da home (02/10/2026)
 
@@ -2889,7 +2873,7 @@ tag, não do código.
 site/                                   páginas estáticas mantidas à mão (espelho do public_html; .htaccess e 404.html incluídos)
   assets/otim/                          imagens otimizadas geradas (fora do Git, como o resto de assets/; publicar junto)
   matricula-cursos-presenciais/         página gerada (index.html), cursos.json e img/*.webp
-  dia-das-criancas/                     página gerada da ação de 13/10/2026 (index.html) e o evento para a agenda (.ics)
+  dia-das-criancas/                     página gerada da campanha de doação de brinquedos para o Dia das Crianças (index.html)
   sitemap-index.xml                     índice de sitemaps (o endereço a enviar no Search Console)
   sitemap-paginas.xml                   páginas fixas com data real e imagens (gerado)
   sitemap-noticias.xml                  notícias da Redação com data e imagens (gerado)
@@ -2912,7 +2896,7 @@ scripts/otimizar_imagens.py             versões WebP e imagens de compartilhame
 scripts/aplicar_imagens_otimizadas.py   reescreve as <img> das páginas à mão com srcset, sizes, dimensões e lazy
 scripts/calcular_reserva_fonte.py      medidas da "Inter Reserva" (fonte do aparelho do tamanho da Inter, sem CLS)
 scripts/gerar_404.py                    gera site/404.html com o cabeçalho e o rodapé da home
-scripts/gerar_dia_das_criancas.py       gera site/dia-das-criancas/ (página, JSON-LD Event e .ics) com o cabeçalho e o rodapé da home
+scripts/gerar_dia_das_criancas.py       gera site/dia-das-criancas/ (campanha de doação de brinquedos) com o cabeçalho e o rodapé da home
 scripts/gerar_verificar.py              gera site/verificar/ (verificação de documentos, escondida: noindex, nada de terceiros)
 site/verificar/                         página de verificação e 404 próprio (gerados) e .htaccess (X-Robots-Tag da pasta)
 scripts/icones.py + icones.json         ícones em SVG inline no lugar do Font Awesome (sprite por página)

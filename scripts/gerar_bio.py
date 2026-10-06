@@ -67,11 +67,12 @@ IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
 # Só os três destinos que o Matheus pediu (19/09/2026), na ordem em que apareciam na página original.
 # Ficaram de fora, por decisão dele: desfile de 7 de Setembro, SOS Venezuela, e-mail do RFL, endereço e Instagram.
 BLOCOS = [
-    # Ação de 13/10/2026: sai daqui depois do evento. A foto fica em /assets/otim/ ("pasta"), fora do Git.
+    # Campanha de doação de brinquedos para a ação (fechada) de 13/10/2026: sai daqui depois dela. A foto fica em
+    # /assets/otim/ ("pasta"), fora do Git.
     {"tipo": "cartao", "imagem": "dia-criancas-cartao", "pasta": "/assets/otim/",
      "alt": "Coordenadora de Juventude da Cruz Vermelha Brasileira Rio de Janeiro com crianças",
-     "titulo": "Dia das Crianças na Praça: 13/10, das 9h às 16h",
-     "descricao": "Aberto e gratuito, em frente à sede. Estamos recebendo doações de brinquedos.",
+     "titulo": "Dia das Crianças: doe brinquedos",
+     "descricao": "Brinquedos novos ou em bom estado, entregues na sede. Veja como doar.",
      "link": f"{ORIGEM}/dia-das-criancas/", "id": "dia-das-criancas"},
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
      "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",

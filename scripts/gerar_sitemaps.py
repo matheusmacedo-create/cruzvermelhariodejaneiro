@@ -55,8 +55,8 @@ PAGINAS = [
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
     ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
     ("/historia/", "historia/index.html", "monthly", "0.7", "História da filial"),
-    # Ação de 13/10/2026: sai da lista (e a página vira um "como foi") depois do evento.
-    ("/dia-das-criancas/", "dia-das-criancas/index.html", "weekly", "0.7", "Dia das Crianças na Praça (13/10/2026)"),
+    # Campanha de doação de brinquedos para a ação (fechada) de 13/10/2026: sai da lista depois dela.
+    ("/dia-das-criancas/", "dia-das-criancas/index.html", "weekly", "0.7", "Doação de brinquedos para o Dia das Crianças"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
