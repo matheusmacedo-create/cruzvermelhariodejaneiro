@@ -2684,7 +2684,12 @@ Campanha de doação de brinquedos para as crianças da ação de Dia das Crian�
 - **Publicações:** 05/10 às 17h35 (primeira versão: fotos, página, `.ics`, `.htaccess`, home e bio), 05/10 às
   18h05 (`lib/email.php`, `medicao.php`, página, home e bio; o `lib/email.php` do ar já tinha o certificado
   de amostra da `main`, e a branch foi rebaseada sobre a `main` antes) e sitemaps às 18h07. A campanha de
-  doação: `scripts/publicacao-dia-das-criancas-doacao.txt` (e apagar o `.ics` do servidor).
+  doação foi publicada em **06/10 às 11h40** (`scripts/publicacao-dia-das-criancas-doacao.txt`): página, home
+  e bio na versão do PR #64 (`a888bdc`), **sem** o PR #63 (transparência no menu, na home e no rodapé, de
+  outra sessão, que ainda não estava no ar), o `.ics` apagado do servidor (404) e os sitemaps regerados com o
+  gerador da mesma versão, para não adiantar `/transparencia/` e `/canais-oficiais/` (entram quando o PR #63
+  for publicado, pela lista dele). Conferido: os arquivos no ar iguais aos do PR #64, a página sem convite,
+  horário, agenda ou `Event`, sem erro de JavaScript e sem medição antes do aceite dos cookies.
 - **Observação:** o `chat.js` no ar ainda é o anterior; a `main` tem uma versão nova (sem algumas perguntas
   das fichas dos cursos), e a página de matrícula publicada já aponta para ela pelo `?v=`. Nada quebra.
 - **Depois da ação (a partir de 14/10):** tirar o card da home, o cartão da bio e a página do sitemap (ou
