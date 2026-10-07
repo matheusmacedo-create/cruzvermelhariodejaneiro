@@ -607,6 +607,13 @@ a mais pessoas, começando um teste com R$ 14,90.
   `db.php`) e uma chamada a `status.php` que abre o banco e roda a migração; depois de uns minutos,
   `scripts/publicacao-divulgacao.txt` (catálogo, módulos, endpoints, `checkout.js`, as seis páginas do checkout e as
   três de reembolso, nessa ordem) e limpar o cache.
+- **Publicado em 07/10/2026, com OK do Matheus**: os 21 arquivos no ar eram iguais aos do Git de antes da mudança
+  (cópia em `--copiar-do-ar` antes de sobrescrever). Etapa 1 às 17h04 (Brasília): `db.php` e `status.php` abrindo o
+  banco sem erro (404), de novo depois de 75 s (opcache). Etapa 2 às 17h06, cache limpo em seguida. Conferido no
+  ar: os 21 arquivos do servidor iguais aos do Git; `info.php` com 1490; `pagamentos.php` recusando valor
+  desatualizado já na validação (422, sem banco, cobrança nem e-mail); checkout com a opção e o `checkout.js` novo
+  nas seis páginas; reembolso nas três línguas com a frase e a data; e, no navegador (computador e celular), a opção
+  desmarcada com "+ R$ 14,90" e o total indo de R$ 99,00 para R$ 113,90 ao marcar, sem erro de JavaScript.
 
 ## Matrícula paga entra na plataforma da escola (28/09/2026)
 
