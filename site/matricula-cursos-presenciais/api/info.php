@@ -1,5 +1,5 @@
 <?php
-/** Dados públicos para as páginas: preços, custos por método, catálogo e modo de teste. */
+/** Dados públicos para as páginas: preços, custos por método, contribuição para a divulgação, catálogo e modo de teste. */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
 mcp_exigir_metodo('GET');
@@ -19,6 +19,7 @@ mcp_json([
     'versao' => MCP_VERSAO,
     'inscricao_centavos' => $inscricao,
     'taxa' => ['pix' => mcp_taxa('pix', $inscricao), 'cartao' => mcp_taxa('cartao', $inscricao)],
+    'divulgacao_centavos' => mcp_divulgacao_centavos(),
     'teste' => mcp_modo_teste(),
     'grupos' => $catalogo['grupos'] ?? [],
     'cursos' => $cursos,

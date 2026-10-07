@@ -329,6 +329,7 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
     $curso = (string) $inscricao['curso_nome'];
     $total = mcp_brl((int) $inscricao['total_centavos']);
     $taxa = (int) ($inscricao['taxa_centavos'] ?? 0);
+    $divulgacao = (int) ($inscricao['divulgacao_centavos'] ?? 0);
     $codigo = (string) ($inscricao['pix_copia_cola'] ?? '');
     $link = mcp_url_pagina('pendente', (string) $inscricao['token']) . '&utm_source=email&utm_medium=transacional&utm_campaign=pix-aberto';
     $validade = mcp_pix_validade($inscricao);
@@ -337,6 +338,9 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
     $linhas = ['Curso' => $curso, 'Inscrição' => mcp_brl((int) $inscricao['inscricao_centavos'])];
     if ($taxa > 0) {
         $linhas['Custos de processamento (você escolheu cobrir)'] = mcp_brl($taxa);
+    }
+    if ($divulgacao > 0) {
+        $linhas['Contribuição para a divulgação (você escolheu ajudar)'] = mcp_brl($divulgacao);
     }
     $corpo = mcp_p('Oi, ' . mcp_escapar($nome) . '. Sua inscrição em <strong>' . mcp_escapar($curso) . '</strong> já está aberta: só falta o pagamento do PIX para a vaga ficar garantida. Assim que ele cair, você recebe a confirmação por e-mail, na hora.')
         . mcp_caixa($linhas, ['Total do PIX' => $total])
@@ -422,6 +426,7 @@ function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = tr
     $curso = (string) $inscricao['curso_nome'];
     $total = mcp_brl((int) $inscricao['total_centavos']);
     $taxa = (int) ($inscricao['taxa_centavos'] ?? 0);
+    $divulgacao = (int) ($inscricao['divulgacao_centavos'] ?? 0);
     $escolaUrl = (string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org');
     $acesso = mcp_escola_acesso($inscricao);
     $linkParabens = mcp_url_pagina('parabens', (string) $inscricao['token']);
@@ -432,12 +437,20 @@ function mcp_montar_email_aluno_pago(array $inscricao, bool $comComprovante = tr
     if ($taxa > 0) {
         $linhas['Custos de processamento (você escolheu cobrir)'] = mcp_brl($taxa);
     }
+    if ($divulgacao > 0) {
+        $linhas['Contribuição para a divulgação (você escolheu ajudar)'] = mcp_brl($divulgacao);
+    }
     $linhas['Pago por'] = $pagoPor;
     if ($quando !== '') {
         $linhas['Data'] = $quando . ' (Brasília)';
     }
     $caixa = mcp_caixa($linhas, ['Total pago' => $total]);
-    $obrigado = $taxa > 0 ? ' Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a inscrição integral.' : '';
+    $obrigado = match (true) {
+        $taxa > 0 && $divulgacao > 0 => ' Obrigado por cobrir os custos de processamento e por ajudar a divulgar os cursos.',
+        $taxa > 0 => ' Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a inscrição integral.',
+        $divulgacao > 0 => ' Obrigado por ajudar a divulgar os cursos: assim eles chegam a mais pessoas.',
+        default => '',
+    };
 
     if ($acesso) {
         // Versão A: a matrícula já está na plataforma da escola (ou só a conta, se não há turma aberta).
@@ -542,7 +555,8 @@ function mcp_email_aluno_pago(array $inscricao): void
 function mcp_montar_email_secretaria(array $inscricao): array
 {
     $pago = mcp_brl((int) $inscricao['total_centavos']) . ' (inscrição ' . mcp_brl((int) $inscricao['inscricao_centavos'])
-        . ((int) $inscricao['taxa_centavos'] > 0 ? ' + custos ' . mcp_brl((int) $inscricao['taxa_centavos']) : '') . ')';
+        . ((int) $inscricao['taxa_centavos'] > 0 ? ' + custos ' . mcp_brl((int) $inscricao['taxa_centavos']) : '')
+        . ((int) ($inscricao['divulgacao_centavos'] ?? 0) > 0 ? ' + divulgação ' . mcp_brl((int) $inscricao['divulgacao_centavos']) : '') . ')';
     $linhas = [
         'Curso' => $inscricao['curso_nome'],
         'Aluno' => $inscricao['nome'],

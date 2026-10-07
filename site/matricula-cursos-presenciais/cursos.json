@@ -1,6 +1,7 @@
 {
   "fonte": "https://escola.cursoscruzvermelha.org/cursos",
   "inscricao_centavos": 9900,
+  "divulgacao_centavos": 1490,
   "grupos": [
     {
       "id": "emergencia",

@@ -6,8 +6,9 @@
  *
  * Uso:  php scripts/previsualizar_comprovante.php [pasta de saída]   (padrão: <tmp>/mcp-comprovantes)
  *
- * Três casos: o do modelo (cartão, mesmo minuto), PIX pago horas depois com custos de processamento
- * e nome em caixa alta, e o pior caso de layout (nome e curso longos, que precisam quebrar linha).
+ * Quatro casos: o do modelo (cartão, mesmo minuto), PIX pago horas depois com custos de processamento
+ * e nome em caixa alta, nome e curso longos (que precisam quebrar linha) e o pior caso de layout (tudo isso,
+ * mais a contribuição para a divulgação).
  * Os CPFs são os de exemplo que scripts/testar_checkout.php já usa — nunca dado de aluno real.
  */
 declare(strict_types=1);
@@ -53,7 +54,7 @@ $casos = [
     'pior-caso' => [
         'nome' => 'Maria Eduarda Albuquerque de Vasconcelos Cavalcanti Sampaio dos Santos Pereira Guimarães de Oliveira Montenegro',
         'cpf' => '11144477735', 'curso_nome' => 'Primeiros Socorros Lei Lucas - Ambientes com Crianças', 'metodo' => 'pix',
-        'inscricao_centavos' => 9900, 'taxa_centavos' => 495, 'total_centavos' => 10395,
+        'inscricao_centavos' => 9900, 'taxa_centavos' => 495, 'divulgacao_centavos' => 1490, 'total_centavos' => 11885,
         'criado_em' => '2026-09-22 12:05:00', 'pago_em' => '2026-09-23 09:48:00', 'unicopag_hash' => 'z9y8x7w6v5',
     ] + $base,
 ];

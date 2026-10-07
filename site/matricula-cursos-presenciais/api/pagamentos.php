@@ -2,7 +2,7 @@
 /**
  * POST: cria a cobrança da inscrição na Unicopag (PIX ou cartão à vista) e devolve a visão pública
  * da inscrição, com o token que as páginas usam para acompanhar. Cobrança PIX pendente do mesmo
- * CPF, curso e valor é reaproveitada em vez de gerar outro código.
+ * CPF, curso e valor (com os mesmos opcionais) é reaproveitada em vez de gerar outro código.
  *
  * O dado do cartão entra por aqui, vai direto para a Unicopag e é descartado: não é gravado,
  * logado nem devolvido (só bandeira e os quatro últimos dígitos, que vêm da resposta).
@@ -44,11 +44,24 @@ function mcp_validar_aluno(array $b): array
         mcp_falhar(422, 'Confirme que leu os requisitos do curso.', ['campo' => 'requisitos']);
     }
     $metodo = ($b['metodo'] ?? 'pix') === 'cartao' ? 'cartao' : 'pix';
+    // Contribuição opcional para a divulgação (07/10/2026). A página manda o valor que mostrou; só se cobra se for o
+    // valor de agora (nunca um total diferente do que a pessoa viu). Oferta: o valor mostrado, nulo se a opção não
+    // apareceu (página antiga em cache), para a adesão do teste contar só quem viu a opção.
+    $divulgacao = mcp_divulgacao_centavos();
+    $vista = filter_var($b['divulgacao_centavos'] ?? null, FILTER_VALIDATE_INT);
+    $mostrou = $divulgacao > 0 && $vista === $divulgacao;
+    if (!empty($b['ajuda_divulgacao']) && !$mostrou) {
+        mcp_falhar(422, $divulgacao > 0
+            ? 'O valor da contribuição para a divulgação mudou para ' . mcp_brl($divulgacao) . '. Confira o novo total e pague de novo.'
+            : 'A contribuição para a divulgação não está mais disponível. Confira o total e pague de novo.',
+            ['campo' => 'divulgacao', 'divulgacao_centavos' => $divulgacao]);
+    }
     $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
     $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
     return [
         'slug' => $slug, 'curso' => $curso, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email,
         'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => !empty($b['cobre_taxa']),
+        'divulgacao' => $mostrou && !empty($b['ajuda_divulgacao']) ? $divulgacao : 0, 'divulgacao_oferta' => $mostrou ? $divulgacao : null,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -98,12 +111,15 @@ function mcp_aplicar_limites(array $aluno): void
     }
 }
 
-/** PIX pendente recente do mesmo CPF, curso e valor: devolve o mesmo código, se ainda estiver aberto. */
-function mcp_pix_aberto(array $aluno, int $total): ?array
+/**
+ * PIX pendente recente do mesmo CPF, curso e valor: devolve o mesmo código, se ainda estiver aberto. Os opcionais
+ * (custos e divulgação) entram na comparação: dois valores iguais por caminhos diferentes não trocam o que se registra.
+ */
+function mcp_pix_aberto(array $aluno, int $total, int $taxa): ?array
 {
     $stmt = mcp_db()->prepare("SELECT * FROM mcp_inscricoes WHERE cpf = ? AND curso_slug = ? AND metodo = 'pix' AND status = 'pendente'
-        AND total_centavos = ? AND pix_copia_cola IS NOT NULL AND criado_em > ? ORDER BY id DESC LIMIT 1");
-    $stmt->execute([$aluno['cpf'], $aluno['slug'], $total, gmdate('Y-m-d H:i:s', time() - MCP_PIX_REAPROVEITA_SEGUNDOS)]);
+        AND total_centavos = ? AND taxa_centavos = ? AND divulgacao_centavos = ? AND pix_copia_cola IS NOT NULL AND criado_em > ? ORDER BY id DESC LIMIT 1");
+    $stmt->execute([$aluno['cpf'], $aluno['slug'], $total, $taxa, $aluno['divulgacao'], gmdate('Y-m-d H:i:s', time() - MCP_PIX_REAPROVEITA_SEGUNDOS)]);
     $aberta = $stmt->fetch();
     if (!$aberta) {
         return null;
@@ -122,8 +138,11 @@ function mcp_montar_cobranca(array $aluno, string $token, int $inscricaoCentavos
     if ($taxa > 0) {
         $cart[] = ['hash' => 'custos-processamento', 'title' => 'Custos de processamento (opcional)', 'price' => $taxa, 'quantity' => 1];
     }
+    if ($aluno['divulgacao'] > 0) {
+        $cart[] = ['hash' => 'divulgacao', 'title' => 'Contribuição para a divulgação dos cursos (opcional)', 'price' => $aluno['divulgacao'], 'quantity' => 1];
+    }
     return [
-        'amount' => $inscricaoCentavos + $taxa,
+        'amount' => $inscricaoCentavos + $taxa + $aluno['divulgacao'],
         'payment_method' => $aluno['metodo'] === 'pix' ? 'pix' : 'credit_card',
         'installments' => 1,
         'customer' => ['name' => $aluno['nome'], 'email' => $aluno['email'], 'phone_number' => $aluno['telefone'], 'document' => $aluno['cpf']],
@@ -133,7 +152,8 @@ function mcp_montar_cobranca(array $aluno, string $token, int $inscricaoCentavos
         'origin' => 'matricula-cursos-presenciais',
         'metadata' => [
             'token' => $token, 'curso' => $aluno['slug'], 'curso_nome' => $aluno['curso']['nome'], 'aluno' => $aluno['nome'],
-            'cobre_taxa' => $aluno['cobre_taxa'], 'utm_source' => $aluno['utm_source'], 'utm_campaign' => $aluno['utm_campaign'],
+            'cobre_taxa' => $aluno['cobre_taxa'], 'ajuda_divulgacao' => $aluno['divulgacao'] > 0,
+            'utm_source' => $aluno['utm_source'], 'utm_campaign' => $aluno['utm_campaign'],
         ],
     ];
 }
@@ -146,11 +166,13 @@ function mcp_gravar_inscricao(array $aluno, string $token, int $inscricaoCentavo
     $status = mcp_traduzir_status($statusOrigem);
     $agora = mcp_agora();
     $limitar = static fn(mixed $v, int $n): ?string => mb_substr((string) ($v ?? ''), 0, $n) ?: null;
+    $total = $inscricaoCentavos + $taxa + $aluno['divulgacao'];
     $linha = [
         'token' => $token, 'curso_slug' => $aluno['slug'], 'curso_nome' => $aluno['curso']['nome'], 'nome' => $aluno['nome'],
         'cpf' => $aluno['cpf'], 'email' => $aluno['email'], 'telefone' => $aluno['telefone'], 'metodo' => $aluno['metodo'],
-        'inscricao_centavos' => $inscricaoCentavos, 'taxa_centavos' => $taxa, 'total_centavos' => $inscricaoCentavos + $taxa,
-        'cobre_taxa' => $aluno['cobre_taxa'] ? 1 : 0, 'status' => $status === 'pago' ? 'pendente' : $status,
+        'inscricao_centavos' => $inscricaoCentavos, 'taxa_centavos' => $taxa, 'divulgacao_centavos' => $aluno['divulgacao'],
+        'total_centavos' => $total, 'cobre_taxa' => $aluno['cobre_taxa'] ? 1 : 0, 'divulgacao_oferta_centavos' => $aluno['divulgacao_oferta'],
+        'status' => $status === 'pago' ? 'pendente' : $status,
         'unicopag_hash' => $limitar($cobranca['hash'] ?? null, 64), 'unicopag_status' => $statusOrigem ?: null,
         'pix_copia_cola' => $pix ? ($pix['pix_qr_code'] ?? null) : null,
         'pix_url' => $pix ? $limitar($pix['pix_url'] ?? null, 255) : null,
@@ -162,12 +184,26 @@ function mcp_gravar_inscricao(array $aluno, string $token, int $inscricaoCentavo
         'ip' => mcp_ip(), 'escola_status' => mcp_escola_configurada() ? 'pendente' : 'nao_aplicavel',
         'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
     ];
-    $colunas = implode(', ', array_keys($linha));
-    $marcadores = implode(', ', array_fill(0, count($linha), '?'));
     $pdo = mcp_db();
-    $pdo->prepare("INSERT INTO mcp_inscricoes ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
+    $inserir = static function (array $linha) use ($pdo): void {
+        $colunas = implode(', ', array_keys($linha));
+        $marcadores = implode(', ', array_fill(0, count($linha), '?'));
+        $pdo->prepare("INSERT INTO mcp_inscricoes ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
+    };
+    try {
+        $inserir($linha);
+    } catch (PDOException $e) {
+        // Código novo com o esquema anterior (logo depois de um deploy, db.php antigo no opcache): a cobrança já existe
+        // no provedor, então a inscrição é gravada sem as colunas da contribuição (o total já a inclui; o item fica na Unicopag).
+        if (($e->errorInfo[0] ?? '') !== '42S22') {
+            throw $e;
+        }
+        error_log('[matricula] inscrição gravada sem as colunas da divulgação: ' . $e->getMessage());
+        unset($linha['divulgacao_centavos'], $linha['divulgacao_oferta_centavos']);
+        $inserir($linha);
+    }
     $id = (int) $pdo->lastInsertId();
-    mcp_registrar($id, 'cobranca_criada', "{$aluno['metodo']} · $statusOrigem · " . mcp_brl($inscricaoCentavos + $taxa));
+    mcp_registrar($id, 'cobranca_criada', "{$aluno['metodo']} · $statusOrigem · " . mcp_brl($total));
     // A escolha de marketing e os sinais para o Purchase (lib/meta.php) à parte, depois da inscrição gravada: a
     // cobrança já existe no provedor, e nada que venha do cookie ou de uma coluna nova pode impedir a inscrição.
     // Se não gravar, meta_marketing fica vazio e o Purchase não sai (falha fechada).
@@ -197,11 +233,11 @@ unset($b);
 
 $inscricaoCentavos = mcp_inscricao_centavos();
 $taxa = $aluno['cobre_taxa'] ? mcp_taxa($aluno['metodo'], $inscricaoCentavos) : 0;
-$total = $inscricaoCentavos + $taxa;
+$total = $inscricaoCentavos + $taxa + $aluno['divulgacao'];
 
 mcp_aplicar_limites($aluno);
 
-if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $total))) {
+if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $total, $taxa))) {
     mcp_registrar((int) $aberta['id'], 'pix_reaproveitado');
     mcp_meta_cobranca_criada($aberta, $aluno, $aluno['meta_lead'], false);
     mcp_json(mcp_publico($aberta) + ['reaproveitado' => true]);

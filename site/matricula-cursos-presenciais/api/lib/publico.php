@@ -23,6 +23,7 @@ function mcp_publico(array $inscricao, ?array $preferencia = null): array
         'email' => $inscricao['email'],
         'inscricao_centavos' => (int) $inscricao['inscricao_centavos'],
         'taxa_centavos' => (int) $inscricao['taxa_centavos'],
+        'divulgacao_centavos' => (int) ($inscricao['divulgacao_centavos'] ?? 0),
         'total_centavos' => (int) $inscricao['total_centavos'],
         'pix' => $inscricao['metodo'] === 'pix' ? [
             'copia_cola' => $inscricao['pix_copia_cola'],

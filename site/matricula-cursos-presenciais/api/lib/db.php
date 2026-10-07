@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '48de1bb16ed6524e';
+const MCP_DB_VERSAO = 'a4ae9e5e2053bcfe';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -71,8 +71,10 @@ function mcp_migrar_tudo(PDO $pdo): void
         metodo ENUM('pix','cartao') NOT NULL,
         inscricao_centavos INT UNSIGNED NOT NULL,
         taxa_centavos INT UNSIGNED NOT NULL DEFAULT 0,
+        divulgacao_centavos INT UNSIGNED NOT NULL DEFAULT 0,
         total_centavos INT UNSIGNED NOT NULL,
         cobre_taxa TINYINT(1) NOT NULL DEFAULT 0,
+        divulgacao_oferta_centavos INT UNSIGNED NULL,
         status ENUM('pendente','pago','recusado','expirado','estornado') NOT NULL DEFAULT 'pendente',
         unicopag_hash VARCHAR(64) NULL,
         unicopag_status VARCHAR(40) NULL,
@@ -127,6 +129,10 @@ function mcp_migrar_tudo(PDO $pdo): void
     // _fbc leva o fbclid inteiro, que passa de 200 caracteres: a coluna cresce (MODIFY é idempotente).
     mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['meta_revisao' => 'TINYINT UNSIGNED NULL', 'meta_ip' => 'VARCHAR(45) NULL']);
     $pdo->exec('ALTER TABLE mcp_inscricoes MODIFY meta_fbc VARCHAR(600) NULL');
+    // Contribuição opcional para a divulgação dos cursos (07/10/2026): o valor cobrado (0 = não quis) e o valor que o
+    // checkout ofereceu (nulo = a opção não apareceu: inscrição de antes, opção desligada ou página antiga em cache).
+    // As duas juntas dão a adesão de cada valor testado (painel, Início).
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['divulgacao_centavos' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'divulgacao_oferta_centavos' => 'INT UNSIGNED NULL']);
     // Mensagens do chat de contato do site (api/contato.php). Fonte da verdade: o e-mail à equipe é cópia.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_contatos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

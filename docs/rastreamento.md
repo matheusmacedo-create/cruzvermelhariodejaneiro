@@ -31,6 +31,10 @@ API simulada, sem criar transação.
 | Provedor aceita PIX ou cartão | `AddPaymentInfo` (eventID `<token>-pagamento`) | `add_payment_info` (payment_type pix/cartao) |
 | Tela Parabéns com status pago | `Purchase` (eventID = token) | `purchase` (transaction_id = token, items, value com custos) |
 
+O `value` do `AddPaymentInfo` e do `Purchase` (no Pixel, no GA4 e na API de Conversões) é o total pago: a inscrição
+mais os opcionais que a pessoa marcou, os custos de processamento e a contribuição para a divulgação (07/10/2026). O
+`Lead` leva só o valor da inscrição.
+
 `Purchase`/`purchase` dispara uma vez por inscrição (marca no `localStorage`), e só quando a API
 confirma `pago`. Os `eventID` permitem deduplicar com a API de Conversões do Meta, se ela for ligada.
 Antes de 19/09 o GA4 recebia nomes próprios (`matricula_dados`, `matricula_pix_gerado`) que não
