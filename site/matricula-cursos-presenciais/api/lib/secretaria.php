@@ -191,6 +191,17 @@ function mcp_secretaria_pagas_recentes(int $dias = 7): int
     return (int) $stmt->fetchColumn();
 }
 
+/**
+ * Teste da contribuição para a divulgação (07/10/2026), por valor oferecido no checkout: inscrições pagas que viram a
+ * opção, quantas contribuíram, quanto somou e desde quando o valor aparece. Estorno não entra (deixa de ser "pago").
+ */
+function mcp_secretaria_divulgacao(): array
+{
+    return mcp_db()->query("SELECT divulgacao_oferta_centavos AS oferta, COUNT(*) AS pagas, SUM(divulgacao_centavos > 0) AS contribuiram,
+        SUM(divulgacao_centavos) AS arrecadado, MIN(criado_em) AS desde FROM mcp_inscricoes
+        WHERE status = 'pago' AND divulgacao_oferta_centavos IS NOT NULL GROUP BY divulgacao_oferta_centavos ORDER BY desde")->fetchAll();
+}
+
 /** Cursos que têm inscrição, para o filtro: slug => nome. */
 function mcp_secretaria_cursos(): array
 {

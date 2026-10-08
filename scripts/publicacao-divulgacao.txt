@@ -1,0 +1,26 @@
+# Contribuição opcional para a divulgação no checkout (07/10/2026), ETAPA 2 de 2 (depois de publicacao-divulgacao-banco.txt).
+# Ordem de propósito: catálogo e módulos de lib/ antes dos endpoints (pagamentos.php chama mcp_divulgacao_centavos);
+# os endpoints antes do checkout.js e das páginas (a página nova só aparece com o servidor já cobrando a contribuição).
+# As páginas do checkout e a /reembolso/ são as do ar com só a mudança da contribuição (sem o cabeçalho do PR #63).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-divulgacao.txt)
+# Depois, limpar o cache da Hostinger.
+site/matricula-cursos-presenciais/cursos.json
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/publico.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/comprovante.php
+site/matricula-cursos-presenciais/api/lib/secretaria.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/api/info.php
+site/matricula-cursos-presenciais/api/painel.php
+site/matricula-cursos-presenciais/api/config.example.php
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/reembolso/index.html
+site/en/refunds/index.html
+site/es/reembolsos/index.html

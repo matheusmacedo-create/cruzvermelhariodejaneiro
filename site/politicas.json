@@ -1,5 +1,5 @@
 {
-  "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão. Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
+  "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
   "revisao": "2026-10-02",
   "rotulos": {
     "pt": {
@@ -1670,6 +1670,7 @@
       }
     },
     "reembolso": {
+      "revisao": "2026-10-07",
       "pt": {
         "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
@@ -1722,6 +1723,9 @@
             "id": "devolucao",
             "titulo": "Como o valor volta",
             "blocos": [
+              {
+                "p": "A devolução é sempre do valor inteiro que você pagou: a inscrição e, se você tiver escolhido, os custos de processamento e a contribuição para a divulgação dos cursos."
+              },
               {
                 "p": "Assim que o pedido chega, pedimos o estorno à ÚnicoPag, a empresa que processou o pagamento, que avisa o banco ou a administradora do cartão."
               },
@@ -1812,6 +1816,9 @@
             "titulo": "How the money is returned",
             "blocos": [
               {
+                "p": "The refund is always the full amount you paid: the enrolment fee and, if you chose them, the processing cost and the contribution to promoting the courses."
+              },
+              {
                 "p": "As soon as the request arrives, we ask ÚnicoPag, the company that processed the payment, for a refund, and it notifies the bank or the card issuer."
               },
               {
@@ -1900,6 +1907,9 @@
             "id": "devolucion",
             "titulo": "Cómo se devuelve el dinero",
             "blocos": [
+              {
+                "p": "La devolución es siempre del importe íntegro que pagó: la inscripción y, si los eligió, el costo de procesamiento y la contribución para la difusión de los cursos."
+              },
               {
                 "p": "En cuanto llega el pedido, solicitamos el reembolso a ÚnicoPag, la empresa que procesó el pago, que avisa al banco o a la emisora de la tarjeta."
               },

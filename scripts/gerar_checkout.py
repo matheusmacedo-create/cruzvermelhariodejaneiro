@@ -126,6 +126,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                   <p class="ck-nota"><i class="fa-solid fa-lock" aria-hidden="true"></i> Os dados do cartão vão direto para o processador de pagamento e não ficam guardados no site.</p>
                 </div>
                 <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small>Opcional. Assim a Cruz Vermelha recebe o valor integral da inscrição.</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
+                <label class="ck-check" id="ck-divulgacao-opcao"@@DIVULGACAO_OCULTA@@><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao" data-centavos="@@DIVULGACAO_CENTAVOS@@"><span class="ck-check-texto">Quero ajudar a divulgar os cursos<small>Opcional. O valor vai para a divulgação dos cursos, para que cheguem a mais pessoas.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ @@DIVULGACAO@@</span></label>
                 <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required><span class="ck-check-texto">Li os requisitos do curso (<span id="ck-escolaridade">escolaridade mínima</span>) e confirmo que os atendo.</span></label>
                 <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
                 <button class="btn btn-red ck-btn" type="submit" id="ck-pagar">Pagar inscrição · <span id="ck-total-btn">R$ 99,00</span></button>
@@ -147,6 +148,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
             <span class="ck-resumo-meta" id="ck-r-meta">7 cursos presenciais no Centro do Rio</span>
             <div class="ck-linha"><span>Inscrição</span><span id="ck-r-inscricao">R$ 99,00</span></div>
             <div class="ck-linha" id="ck-r-taxa-linha" hidden><span>Custos de processamento</span><span id="ck-r-taxa">R$ 0,00</span></div>
+            <div class="ck-linha" id="ck-r-divulgacao-linha" hidden><span>Divulgação dos cursos</span><span id="ck-r-divulgacao">@@DIVULGACAO@@</span></div>
             <div class="ck-linha total"><span>Total agora</span><span id="ck-r-total">R$ 99,00</span></div>
             <p class="ck-nota">O valor do curso (<span id="ck-r-curso-valor">—</span>) é pago depois, na plataforma da escola.</p>
             <ul class="ck-depois" aria-label="O que você garante">
@@ -415,6 +417,9 @@ def main() -> int:
     cursos = {c["slug"]: c for c in dados["cursos"]}
     partes = partes_da_home(home)
     inscricao = brl(dados["inscricao_centavos"])
+    # Contribuição opcional para a divulgação (07/10/2026): o valor vem no HTML para a opção não "pular" na tela; o
+    # checkout.js confirma pelo info.php (o config do servidor pode mudar o valor ou desligar a opção, com 0).
+    divulgacao = int(dados.get("divulgacao_centavos") or 0)
 
     opcoes = ""
     for g in dados["grupos"]:
@@ -432,7 +437,9 @@ def main() -> int:
         "checkout": montar(partes, "Pagar a inscrição | Cruz Vermelha Brasileira Rio de Janeiro", "checkout",
                            "Pagar a inscrição e garantir a vaga",
                            f"Inscrição de {inscricao}, por PIX ou cartão. Sem criar conta e sem escolher turma agora.",
-                           CORPO_CHECKOUT.replace("@@OPCOES@@", opcoes).replace("@@CURSOS_JSON@@", cursos_json), qrcode=True, passo=2),
+                           CORPO_CHECKOUT.replace("@@OPCOES@@", opcoes).replace("@@CURSOS_JSON@@", cursos_json)
+                           .replace("@@DIVULGACAO_OCULTA@@", "" if divulgacao > 0 else " hidden")
+                           .replace("@@DIVULGACAO_CENTAVOS@@", str(divulgacao)).replace("@@DIVULGACAO@@", brl(divulgacao)), qrcode=True, passo=2),
         "pendente": montar(partes, "Pagamento ainda não confirmado | Cruz Vermelha Brasileira Rio de Janeiro", "pendente",
                            "Pagamento ainda não confirmado",
                            "Esta tela não cria login. Quando o pagamento for aprovado, a matrícula é aberta e os dados aparecem aqui e no seu e-mail.",

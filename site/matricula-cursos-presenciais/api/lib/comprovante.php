@@ -96,6 +96,7 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
     $curso = trim((string) ($inscricao['curso_nome'] ?? ''));
     $produto = $curso . ' — Inscrição';
     $taxa = (int) ($inscricao['taxa_centavos'] ?? 0);
+    $divulgacao = (int) ($inscricao['divulgacao_centavos'] ?? 0);
     $pedido = mcp_data_brt((string) ($inscricao['criado_em'] ?? ''), 'd/m/Y H:i');
     $pago = mcp_data_brt((string) ($inscricao['pago_em'] ?? ''), 'd/m/Y H:i');
     $hash = trim((string) ($inscricao['unicopag_hash'] ?? ''));
@@ -103,6 +104,9 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
     $dados = [['Produto', $produto], ['Quantidade', '1'], ['Valor', mcp_brl((int) ($inscricao['inscricao_centavos'] ?? 0))]];
     if ($taxa > 0) {
         $dados[] = ['Custos de processamento', mcp_brl($taxa)];
+    }
+    if ($divulgacao > 0) {
+        $dados[] = ['Contribuição para a divulgação', mcp_brl($divulgacao)];
     }
     $pagamento = [['Status do pagamento', 'Pago'], ['Método de pagamento', mcp_comprovante_metodo($inscricao)]];
     if ($pedido !== '') {
@@ -137,8 +141,8 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
 /**
  * Os bytes do PDF. Lança exceção se algo falhar (o logo sumir, por exemplo).
  *
- * Cada linha a mais (custos de processamento, data do pagamento no PIX, nome ou curso em duas
- * linhas) empurra o resto para baixo. No pior caso realista o rodapé passaria da borda do A4, então
+ * Cada linha a mais (custos de processamento, contribuição para a divulgação, data do pagamento no PIX,
+ * nome ou curso em duas linhas) empurra o resto para baixo. No pior caso realista o rodapé passaria da borda do A4, então
  * o desenho é feito com um fator de espaçamento e, se não couber, refeito mais apertado — só os
  * espaços entre linhas diminuem, nunca a fonte.
  */

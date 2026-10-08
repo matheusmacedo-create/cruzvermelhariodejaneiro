@@ -498,6 +498,8 @@ validado no projeto da Punção Venosa.
 - **Custos de processamento**: checkbox opcional; valor por método em `config.php`. Decisão de
   18/09: **5% em todos os métodos** (média de PIX, cartão e checkout), sem parcela fixa: R$ 4,95
   sobre R$ 99. Para referência, o PIX medido pela API em 18/09 custou 1,00% + R$ 1,48.
+- **Contribuição para a divulgação** (07/10/2026): segundo checkbox opcional, R$ 14,90 em teste. Ver a seção
+  própria, logo abaixo.
 - **Pós-pagamento**: e-mail ao aluno pelo Resend, remetente
   `matricula@info.cruzvermelhariodejaneiro.org` (domínio verificado; sem `RESEND_API_KEY` cairia
   no `mail()` da Hostinger) e aviso à secretaria (`EMAIL_SECRETARIA`). Com `ESCOLA_API_URL` configurada, chama a
@@ -548,6 +550,70 @@ validado no projeto da Punção Venosa.
   código, tela pendente e celular. Preço de teste removido em seguida. **Não testado**:
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
+
+## Contribuição opcional para a divulgação no checkout (07/10/2026)
+
+Pedido do Matheus: no passo "3 Pagamento" do checkout, a opção de o aluno ajudar a divulgar os cursos para chegarem
+a mais pessoas, começando um teste com R$ 14,90.
+
+- **Na página**: segundo cartão opcional, logo abaixo do de custos de processamento: "Quero ajudar a divulgar os
+  cursos", "Opcional. O valor vai para a divulgação dos cursos, para que cheguem a mais pessoas." e "+ R$ 14,90".
+  Começa sempre desmarcado. Marcado, entra a linha "Divulgação dos cursos" no resumo, e o total e o botão sobem
+  (R$ 113,90; R$ 118,85 com os custos). Prévias em `docs/previas/checkout-divulgacao-computador.png`,
+  `checkout-divulgacao-resumo.png` e `checkout-divulgacao-celular.png`.
+- **Onde mais aparece, em linha própria**: tela Parabéns ("incluindo R$ 14,90 de contribuição para a divulgação dos
+  cursos"), e-mail do PIX aberto, e-mail de inscrição paga (com obrigado próprio), aviso à secretaria ("inscrição
+  R$ 99,00 + divulgação R$ 14,90"), comprovante em PDF ("Contribuição para a divulgação") e ficha da inscrição no
+  portal. A planilha CSV continua com o valor total.
+- **Valor**: `divulgacao_centavos` em `cursos.json` (1490). Para trocar o valor do teste: mudar ali, rodar
+  `scripts/gerar_checkout.py` (o valor vem no HTML, para a opção não aparecer "pulando" na tela) e publicar
+  `cursos.json` e `checkout/index.html`. No servidor, `DIVULGACAO_CENTAVOS` no `config.php` vale por cima do
+  catálogo, e `0` tira a opção do checkout sem publicar nada (o `checkout.js` esconde o cartão). O
+  `scripts/sincronizar_catalogo.py` mantém o valor que estiver no arquivo.
+- **Cobrança**: item próprio no carrinho da ÚnicoPag (`hash` `divulgacao`, "Contribuição para a divulgação dos
+  cursos (opcional)"), somado ao `amount`, e `metadata.ajuda_divulgacao`. A página manda o valor que mostrou, e o
+  servidor só cobra se for o valor de agora: se o valor mudou (ou a opção saiu) depois que a página abriu, responde
+  422 com o valor novo, a página atualiza o total e pede para pagar de novo. Nunca se cobra um total diferente do que
+  a pessoa viu. O reaproveitamento do PIX pendente passou a exigir os mesmos opcionais (custos e contribuição), além
+  do mesmo total. Os custos de processamento continuam calculados só sobre a inscrição.
+- **Banco**: duas colunas novas em `mcp_inscricoes`, criadas sozinhas na primeira requisição depois do deploy
+  (`MCP_DB_VERSAO` mudou): `divulgacao_centavos` (o valor cobrado; 0 = não quis) e `divulgacao_oferta_centavos` (o
+  valor que o checkout ofereceu; nulo = a opção não apareceu: inscrição antiga, opção desligada ou página antiga em
+  cache). O `total_centavos` já inclui a contribuição. Se o `pagamentos.php` novo rodar com o esquema antigo
+  (opcache, logo depois do deploy), a inscrição é gravada sem as duas colunas, com o total certo, porque a cobrança
+  já existe no provedor.
+- **Medir o teste**: no Início do portal da secretaria, o cartão "Contribuição para a divulgação" mostra, por valor
+  oferecido, quantas inscrições pagas viram a opção, quantas contribuíram (com a porcentagem) e quanto somou, desde
+  quando. Estornos não entram. Para testar outro valor, basta trocar o valor: cada um aparece em sua linha.
+- **Escola**: nada muda. A função `matricula_rapida` lança como taxa só o `valor_centavos` (a inscrição); o
+  `total_centavos` vai só como informação (`total_cobrado_centavos`).
+- **Medição**: o `value` do `AddPaymentInfo` e do `Purchase` (Pixel, GA4 e API de Conversões) é o total pago, com os
+  opcionais; o `Lead` segue com o valor da inscrição (`docs/rastreamento.md`).
+- **Reembolso**: a política, nas três línguas (`site/politicas.json`), ganhou em "Como o valor volta" a frase de que
+  a devolução é sempre do valor inteiro pago: a inscrição e, se escolhidos, os custos e a contribuição. A data de
+  revisão mudou só nesta política (07/10/2026; o gerador passou a aceitar `paginas.<chave>.revisao`). O texto dos 7
+  dias na página de matrícula (`GARANTIA_7_DIAS`) já dizia que "o valor pago volta por inteiro" e não mudou.
+- **Páginas atualizadas sem o PR #63**: o cabeçalho e o rodapé da home na `main` já têm os links de Transparência do
+  PR #63, que ainda não está no ar. Para não publicá-los junto, as seis páginas do checkout e a `/reembolso/` levam
+  só a mudança da contribuição sobre o que está no ar, conferidas contra os geradores: a única diferença que sobra é
+  a do PR #63 (as mesmas 11 linhas de antes). Quem publicar o PR #63 regenera tudo.
+- **Testes**: `scripts/testar_checkout.php` (361; 11 novos: valor do catálogo, e-mails, visão pública, comprovante e
+  o pior caso do PDF cabendo no A4); `scripts/testar_meta_integracao.php` (52; 12 novos, com MariaDB local e
+  ÚnicoPag falsa: cobrança com o item, colunas, reaproveitamento, valor desatualizado, página antiga, e-mails,
+  Purchase com o total, a conta do painel e a gravação sem as colunas); no navegador (Chromium, computador e
+  celular), 9 verificações: total e botão, PIX com o item, tela Parabéns, valor desatualizado e sem rolagem lateral.
+  `scripts/previsualizar_comprovante.php` põe a contribuição no pior caso (cabe com espaçamento 0,78).
+- **Publicar**, em duas etapas por causa do banco: primeiro `scripts/publicacao-divulgacao-banco.txt` (só o
+  `db.php`) e uma chamada a `status.php` que abre o banco e roda a migração; depois de uns minutos,
+  `scripts/publicacao-divulgacao.txt` (catálogo, módulos, endpoints, `checkout.js`, as seis páginas do checkout e as
+  três de reembolso, nessa ordem) e limpar o cache.
+- **Publicado em 07/10/2026, com OK do Matheus**: os 21 arquivos no ar eram iguais aos do Git de antes da mudança
+  (cópia em `--copiar-do-ar` antes de sobrescrever). Etapa 1 às 17h04 (Brasília): `db.php` e `status.php` abrindo o
+  banco sem erro (404), de novo depois de 75 s (opcache). Etapa 2 às 17h06, cache limpo em seguida. Conferido no
+  ar: os 21 arquivos do servidor iguais aos do Git; `info.php` com 1490; `pagamentos.php` recusando valor
+  desatualizado já na validação (422, sem banco, cobrança nem e-mail); checkout com a opção e o `checkout.js` novo
+  nas seis páginas; reembolso nas três línguas com a frase e a data; e, no navegador (computador e celular), a opção
+  desmarcada com "+ R$ 14,90" e o total indo de R$ 99,00 para R$ 113,90 ao marcar, sem erro de JavaScript.
 
 ## Matrícula paga entra na plataforma da escola (28/09/2026)
 

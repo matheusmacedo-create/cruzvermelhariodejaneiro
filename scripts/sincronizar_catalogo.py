@@ -187,9 +187,12 @@ def main() -> int:
         if membros:
             grupos.append({"id": gid, "titulo": titulo, "cursos": membros})
 
+    # Contribuição opcional para a divulgação (07/10/2026): o valor em teste não vem da escola; fica o do arquivo.
+    anterior = json.loads(SAIDA.read_text(encoding="utf-8")) if SAIDA.exists() else {}
     dados = {
         "fonte": f"{ORIGEM}/cursos",
         "inscricao_centavos": 9900,
+        "divulgacao_centavos": anterior.get("divulgacao_centavos", 1490),
         "grupos": grupos,
         "cursos": cursos,
     }

@@ -367,7 +367,9 @@ def main() -> int:
             subs = {"email": idiomas.EMAIL, "inscricao": inscricao, "matricula": "/matricula-cursos-presenciais/",
                     "escola": idiomas.ESCOLA, "links": "/bio/", "puncao": URL_PUNCAO}
             subs.update({k: idiomas.PAGINAS[k][lingua] for k in ORDEM})
-            pagina = Pagina(chave, lingua, dados["paginas"][chave][lingua], dados["rotulos"][lingua], subs, revisao)
+            # Data de revisão: a da política, se ela mudou sozinha (paginas.<chave>.revisao); senão, a de todas.
+            revisao_pagina = date.fromisoformat(dados["paginas"][chave]["revisao"]) if "revisao" in dados["paginas"][chave] else revisao
+            pagina = Pagina(chave, lingua, dados["paginas"][chave][lingua], dados["rotulos"][lingua], subs, revisao_pagina)
             saida = pagina.html_pt(partes) if lingua == "pt" else pagina.html_idioma(idiomas_json[lingua], partes_idioma)
             destino = SITE / pagina.caminho.strip("/") / "index.html"
             destino.parent.mkdir(parents=True, exist_ok=True)

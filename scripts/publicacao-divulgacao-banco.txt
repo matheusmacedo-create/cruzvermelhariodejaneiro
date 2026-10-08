@@ -1,0 +1,8 @@
+# Contribuição opcional para a divulgação no checkout (07/10/2026), ETAPA 1 de 2: só o banco.
+# O db.php novo cria as colunas divulgacao_centavos e divulgacao_oferta_centavos em mcp_inscricoes na primeira
+# requisição que abre o banco; o código no ar continua funcionando com elas (têm valor padrão).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-divulgacao-banco.txt)
+# Depois, abrir o banco para a migração rodar (resposta esperada: 404, inscrição não encontrada):
+#   curl -s -o /dev/null -w '%{http_code}\n' "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/status.php?t=0000000000000000000000000000000000000000"
+# Esperar uns minutos (opcache) e repetir o curl antes da etapa 2 (scripts/publicacao-divulgacao.txt).
+site/matricula-cursos-presenciais/api/lib/db.php

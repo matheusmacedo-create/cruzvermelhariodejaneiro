@@ -180,6 +180,14 @@ verificar('pix validade no corpo', str_contains($m['html'], 'até 20/09 às 09h0
 verificar('pix texto puro', str_contains($m['texto'], '00020126BR.GOV.BCB.PIX<teste>') && str_contains($m['texto'], 'R$ 103,95'), true);
 verificar('pix sem whatsapp', stripos($m['html'] . $m['texto'], 'whatsapp'), false);
 
+// Contribuição opcional para a divulgação (07/10/2026): valor do catálogo e linha própria nos e-mails e na visão pública.
+verificar('divulgação: valor do catálogo', mcp_divulgacao_centavos(), 1490);
+$comDivulgacao = ['divulgacao_centavos' => 1490, 'total_centavos' => 11885] + $inscricao;
+$mDiv = mcp_montar_email_pix_aberto(['pix_copia_cola' => '000201PIX', 'metodo' => 'pix'] + $comDivulgacao);
+verificar('divulgação: linha no e-mail do PIX, com o total', str_contains($mDiv['html'], 'Contribuição para a divulgação (você escolheu ajudar)')
+    && str_contains($mDiv['html'], 'R$ 14,90') && str_contains($mDiv['html'], 'R$ 118,85'), true);
+verificar('divulgação: sem ela, o e-mail do PIX não tem a linha', str_contains($m['html'], 'Contribuição para a divulgação'), false);
+
 // Inscrição paga: versão A (com acesso da escola) e versão B (a secretaria escreve por e-mail).
 $a = mcp_montar_email_aluno_pago($inscricao);
 verificar('pago A tipo', $a['tipo'], 'acesso');
@@ -232,6 +240,16 @@ verificar('secretaria linha da escola', str_contains($sec['texto'], "Escola: mat
 verificar('secretaria: aluno já matriculado', str_contains($sec['html'], 'já está matriculado na plataforma da escola'), true);
 verificar('secretaria: sem integração pede contato', str_contains(mcp_montar_email_secretaria($conflito)['html'], 'Entrar em contato com o aluno'), true);
 verificar('secretaria sem whatsapp', stripos($sec['html'] . $sec['texto'], 'whatsapp'), false);
+$aDiv = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $comDivulgacao);
+verificar('divulgação: e-mail pago com a linha e o obrigado pelos dois opcionais', str_contains($aDiv['html'], 'Contribuição para a divulgação (você escolheu ajudar)')
+    && str_contains($aDiv['html'], 'Obrigado por cobrir os custos de processamento e por ajudar a divulgar os cursos.'), true);
+$aSoDiv = mcp_montar_email_aluno_pago(['taxa_centavos' => 0, 'total_centavos' => 11390] + $comDivulgacao);
+verificar('divulgação: só ela, obrigado próprio e sem a linha dos custos', str_contains($aSoDiv['html'], 'Obrigado por ajudar a divulgar os cursos: assim eles chegam a mais pessoas.')
+    && !str_contains($aSoDiv['html'], 'Custos de processamento (você escolheu cobrir)'), true);
+verificar('divulgação: o obrigado dos custos continua igual sem ela', str_contains($b['html'], 'Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a inscrição integral.'), true);
+verificar('divulgação: aviso à secretaria com a conta do valor pago', str_contains(mcp_montar_email_secretaria($comDivulgacao)['texto'],
+    "Pago: R$ 118,85 (inscrição R$ 99,00 + custos R$ 4,95 + divulgação R$ 14,90)\n"), true);
+verificar('divulgação: visão pública (0 quando a inscrição não tem)', [mcp_publico($comDivulgacao)['divulgacao_centavos'], mcp_publico($inscricao)['divulgacao_centavos']], [1490, 0]);
 
 // Chat de contato: aviso à equipe e confirmação à pessoa.
 $contato = [
@@ -318,6 +336,21 @@ verificar('comprovante: custos entram nos dados', end($ccPix['inscricao']), ['Cu
 verificar('comprovante: PIX pago depois mostra as duas datas', array_slice($ccPix['pagamento'], 2, 2), [['Data do pedido', '22/09/2026 12:10'], ['Data do pagamento', '22/09/2026 16:48']]);
 verificar('comprovante: sem hash vira travessão', $ccPix['pagamento'][4], ['Código da compra', '—']);
 verificar('comprovante: total com custos', end($ccPix['pagamento']), ['Total', 'R$ 103,95']);
+$ccDiv = mcp_comprovante_conteudo(['metodo' => 'pix', 'taxa_centavos' => 495, 'divulgacao_centavos' => 1490, 'total_centavos' => 11885, 'pago_em' => '2026-09-22 19:48:00'] + $inscComprovante);
+verificar('comprovante: contribuição para a divulgação depois dos custos', array_slice($ccDiv['inscricao'], 3), [['Custos de processamento', 'R$ 4,95'], ['Contribuição para a divulgação', 'R$ 14,90']]);
+verificar('comprovante: total com a contribuição', end($ccDiv['pagamento']), ['Total', 'R$ 118,85']);
+// Pior caso realista do comprovante: nome e curso em duas linhas, custos, contribuição e data do PIX; tem de caber no A4.
+$piorCaso = mcp_comprovante_conteudo(['nome' => 'Maria Aparecida dos Santos Albuquerque de Oliveira Figueiredo Nascimento',
+    'curso_nome' => 'Primeiros Socorros – Lei Lucas (ambientes com crianças)', 'metodo' => 'pix', 'taxa_centavos' => 495,
+    'divulgacao_centavos' => 1490, 'total_centavos' => 11885, 'pago_em' => '2026-09-22 19:48:00'] + $inscComprovante, '2026-09-23 17:00:00');
+$cabeEm = null;
+foreach ([1.0, 0.92, 0.85, 0.78, 0.72] as $fator) {
+    if (mcp_comprovante_desenhar($piorCaso, $fator)[1] <= McpPdf::ALTURA - 28) {
+        $cabeEm = $fator;
+        break;
+    }
+}
+verificar('comprovante: pior caso com a contribuição cabe numa página', $cabeEm !== null, true);
 verificar('comprovante: rodapé avisa que não é nota fiscal, com e sem código da compra',
     [str_contains($cc['rodape'], '. Este comprovante não substitui nota fiscal. Dúvidas: '),
      str_contains($ccPix['rodape'], '(horário de Brasília). Este comprovante não substitui nota fiscal. Dúvidas: ')], [true, true]);

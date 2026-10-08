@@ -603,6 +603,16 @@ function pn_inicio(string $usuario): never
         $horarios .= '<li><span>' . pn_e($rotulo) . '</span><b>' . $n . ' aluno' . ($n > 1 ? 's' : '') . '</b></li>';
     }
 
+    // Teste da contribuição para a divulgação: adesão de cada valor oferecido, entre as inscrições pagas.
+    $divulgacao = '';
+    foreach (mcp_secretaria_divulgacao() as $d) {
+        $pagas = (int) $d['pagas'];
+        $contribuiram = (int) $d['contribuiram'];
+        $divulgacao .= '<li><span>' . pn_e(mcp_brl((int) $d['oferta'])) . ', desde ' . pn_e(mcp_data_brt((string) $d['desde'], 'd/m/Y')) . '</span><b>'
+            . $contribuiram . ' de ' . $pagas . ' (' . ($pagas > 0 ? (int) round(100 * $contribuiram / $pagas) : 0) . '%) · '
+            . pn_e(mcp_brl((int) $d['arrecadado'])) . '</b></li>';
+    }
+
     $naSede = count(mcp_ponto_na_sede());
     $termos = mcp_ponto_termos_pendentes_contar();
     $informadas = mcp_ponto_saidas_informadas_contar();
@@ -624,7 +634,10 @@ function pn_inicio(string $usuario): never
         . '<p class="nota"><a href="painel.php?v=mensagens">Ver todas as mensagens →</a></p></div></div>'
         . '<div class="cartao" style="margin-top:18px"><h2>Horários mais pedidos, em todos os cursos</h2>'
         . ($horarios !== '' ? '<ul class="lista-curta">' . $horarios . '</ul>' : '<p class="nota">Ainda não há respostas ao questionário de horários.</p>')
-        . '<p class="nota"><a href="painel.php?v=horarios">Ver o mapa por curso →</a></p></div>';
+        . '<p class="nota"><a href="painel.php?v=horarios">Ver o mapa por curso →</a></p></div>'
+        . '<div class="cartao" style="margin-top:18px"><h2>Contribuição para a divulgação</h2>'
+        . ($divulgacao !== '' ? '<ul class="lista-curta">' . $divulgacao . '</ul>' : '<p class="nota">Nenhuma inscrição paga desde que a opção entrou no checkout.</p>')
+        . '<p class="nota">Inscrições pagas que viram a opção no checkout e quantas escolheram contribuir, por valor oferecido. Estornos não entram.</p></div>';
     pn_pagina('Início', $corpo, $usuario, true, 'inicio');
 }
 
@@ -732,7 +745,11 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
     ]);
     $pagamento = $dl([
         'Situação' => '<span class="selo ' . ($pago ? 'ok' : ($i['status'] === 'pendente' ? 'neutro' : 'erro')) . '">' . pn_e(MCP_SECRETARIA_STATUS[$i['status']] ?? (string) $i['status']) . '</span>',
-        'Valor' => pn_e(mcp_brl((int) $i['total_centavos'])) . ((int) $i['taxa_centavos'] > 0 ? ' <span style="color:var(--muted);font-weight:400">(inscrição ' . pn_e(mcp_brl((int) $i['inscricao_centavos'])) . ' + custos ' . pn_e(mcp_brl((int) $i['taxa_centavos'])) . ')</span>' : ''),
+        'Valor' => pn_e(mcp_brl((int) $i['total_centavos'])) . ((int) $i['taxa_centavos'] > 0 || (int) $i['divulgacao_centavos'] > 0
+            ? ' <span style="color:var(--muted);font-weight:400">(inscrição ' . pn_e(mcp_brl((int) $i['inscricao_centavos']))
+                . ((int) $i['taxa_centavos'] > 0 ? ' + custos ' . pn_e(mcp_brl((int) $i['taxa_centavos'])) : '')
+                . ((int) $i['divulgacao_centavos'] > 0 ? ' + divulgação ' . pn_e(mcp_brl((int) $i['divulgacao_centavos'])) : '') . ')</span>'
+            : ''),
         'Método' => $i['metodo'] === 'pix' ? 'PIX' : pn_e(trim('Cartão ' . mb_convert_case((string) ($i['bandeira'] ?? ''), MB_CASE_TITLE) . ($i['ultimos4'] ? ' final ' . $i['ultimos4'] : ''))),
         'Iniciada em' => pn_e(pn_data((string) $i['criado_em'])),
         'Paga em' => $i['pago_em'] ? pn_e(pn_data((string) $i['pago_em'])) : '—',

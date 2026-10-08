@@ -197,6 +197,11 @@
 
     function metodo() { return (form.querySelector('input[name=metodo]:checked') || {}).value || 'pix'; }
     function taxaAtual() { return info ? (metodo() === 'pix' ? info.taxa.pix : info.taxa.cartao) : 0; }
+    /* Contribuição para a divulgação: o valor do info.php; antes dele, o que veio no HTML. 0 = opção desligada. */
+    function divulgacaoAtual() {
+      if (info && typeof info.divulgacao_centavos === 'number') return info.divulgacao_centavos;
+      return parseInt(q('#ck-divulgacao').getAttribute('data-centavos'), 10) || 0;
+    }
 
     function fichaDoCurso(c) {
       q('#ck-r-curso').textContent = c ? c.nome : 'Escolha o curso';
@@ -215,14 +220,22 @@
       var inscricao = info ? info.inscricao_centavos : 9900;
       var taxa = taxaAtual();
       var cobre = q('#ck-cobre').checked;
-      var total = inscricao + (cobre ? taxa : 0);
+      var divulgacao = divulgacaoAtual();
+      if (divulgacao <= 0) q('#ck-divulgacao').checked = false;
+      var ajuda = q('#ck-divulgacao').checked;
+      var total = inscricao + (cobre ? taxa : 0) + (ajuda ? divulgacao : 0);
       fichaDoCurso(c);
       q('#ck-cobre-opcao').classList.toggle('marcado', cobre);
+      q('#ck-divulgacao-opcao').hidden = divulgacao <= 0;
+      q('#ck-divulgacao-opcao').classList.toggle('marcado', ajuda);
+      q('#ck-divulgacao-valor').textContent = '+ ' + brl(divulgacao);
       marcarInicio();
       q('#ck-taxa-valor').textContent = '+ ' + brl(taxa);
       q('#ck-r-inscricao').textContent = brl(inscricao);
       q('#ck-r-taxa-linha').hidden = !cobre;
       q('#ck-r-taxa').textContent = brl(taxa);
+      q('#ck-r-divulgacao-linha').hidden = !ajuda;
+      q('#ck-r-divulgacao').textContent = brl(divulgacao);
       q('#ck-r-total').textContent = brl(total);
       q('#ck-total-btn').textContent = brl(total);
       var cartao = metodo() === 'cartao';
@@ -261,6 +274,8 @@
       var dados = {
         curso: sel.value, nome: q('#ck-nome').value.trim(), cpf: digitos(q('#ck-cpf').value), email: q('#ck-email').value.trim(),
         telefone: digitos(q('#ck-telefone').value), metodo: metodo(), cobre_taxa: q('#ck-cobre').checked,
+        // O valor mostrado vai junto: o servidor só cobra a contribuição se for o valor de agora.
+        ajuda_divulgacao: q('#ck-divulgacao').checked, divulgacao_centavos: divulgacaoAtual(),
         requisitos: q('#ck-requisitos').checked, site: q('#ck-site').value, origem: origemAtual
       };
       if (dados.metodo === 'cartao') {
@@ -287,6 +302,12 @@
         if (!r.ok) {
           btn.disabled = false;
           btn.innerHTML = rotulo;
+          // A contribuição mudou de valor (ou saiu) depois que a página abriu: mostra o valor novo antes da mensagem.
+          if (r.campo === 'divulgacao' && typeof r.divulgacao_centavos === 'number') {
+            if (info) info.divulgacao_centavos = r.divulgacao_centavos;
+            else q('#ck-divulgacao').setAttribute('data-centavos', String(r.divulgacao_centavos));
+            atualizar();
+          }
           erro(r.erro || 'Não foi possível processar. Tente novamente.', r.campo);
           return;
         }
@@ -407,7 +428,10 @@
 
     function render(d) {
       var metodo = d.metodo === 'pix' ? 'PIX' : 'cartão' + (d.cartao && d.cartao.ultimos4 ? ' final ' + esc(d.cartao.ultimos4) : '');
-      var custos = d.taxa_centavos ? ', incluindo ' + brl(d.taxa_centavos) + ' de custos de processamento que você escolheu cobrir. Obrigado.' : '.';
+      var extras = [];
+      if (d.taxa_centavos) extras.push(brl(d.taxa_centavos) + ' de custos de processamento que você escolheu cobrir');
+      if (d.divulgacao_centavos) extras.push(brl(d.divulgacao_centavos) + ' de contribuição para a divulgação dos cursos');
+      var custos = extras.length ? ', incluindo ' + extras.join(' e ') + '. Obrigado.' : '.';
       card.innerHTML = alertaHorarios(d)
         + '<div class="ck-bloco"><p class="ck-ok"><i class="fa-solid fa-circle-check" aria-hidden="true"><svg class="ico ico-circle-check" aria-hidden="true" focusable="false"><use href="#i-circle-check"/></svg></i> Inscrição paga</p><h2>' + esc(d.curso.nome) + ' · ' + brl(d.total_centavos) + '</h2><p class="ck-nota">Pago por ' + metodo + custos + '</p></div>'
         + blocoEscola(d)
