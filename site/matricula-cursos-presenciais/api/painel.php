@@ -386,7 +386,8 @@ function pn_turma_linhas(string $usuario, array $linhas, array $volta): string
         $html .= '<tr><td data-rotulo="Recebido">' . pn_e(pn_data((string) $l['criado_em'])) . '<small>' . pn_e((string) $l['protocolo']) . '</small></td>'
             . '<td class="aluno"><b>' . pn_e((string) $l['nome']) . '</b>' . ($l['organizacao'] ? '<small>' . pn_e((string) $l['organizacao']) . '</small>' : '')
             . '<small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
-            . '<small class="tel"><a href="https://wa.me/55' . pn_e(mcp_digitos($tel)) . '" target="_blank" rel="noopener">' . pn_e(mcp_telefone_bonito($tel)) . '</a></small></td>'
+            . ($tel !== '' ? '<small class="tel"><a href="https://wa.me/55' . pn_e(mcp_digitos($tel)) . '" target="_blank" rel="noopener">' . pn_e(mcp_telefone_bonito($tel)) . '</a></small>'
+                : '<small>Só e-mail (aviso da data)</small>') . '</td>'
             . '<td data-rotulo="Turma"><b>' . pn_e(mcp_turma_alunos((int) $l['pessoas'])) . '</b><small>' . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</small>' . $local
             . ($l['periodo'] ? '<small>Prefere: ' . pn_e((string) $l['periodo']) . '</small>' : '') . $obs . '</td>'
             . '<td data-rotulo="Situação"><span class="selo ' . ($tons[$l['status']] ?? 'neutro') . '">' . pn_e(MCP_TURMA_STATUS[$l['status']] ?? (string) $l['status']) . '</span>'
@@ -432,11 +433,16 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
         $rotulo = mcp_turma_rotulo((string) ($cursos[$curso]['nome'] ?? $demanda['curso_nome'] ?? $linhas[0]['curso_nome'] ?? $curso), $idioma);
         $soma = (int) ($demanda['pessoas'] ?? 0);
         $pr = mcp_turma_progresso($soma);
+        $deAviso = mcp_turma_lista_de_aviso($curso, $idioma);
         $corpo = '<a class="voltar" href="painel.php?v=turmas">← Voltar para as turmas sob demanda</a>' . $avisoHtml
-            . '<div class="cabeca"><div><p class="eyebrow">Lista de interesse</p><h1>' . pn_e($rotulo) . '</h1>'
-            . '<p class="nota">' . pn_e(mcp_turma_alunos($pr['soma'])) . ' em pedidos abertos. '
-            . ($pr['pronta'] ? 'Já dá para abrir a turma: avise todos e, quando a turma estiver marcada, mude a situação abaixo.' : 'Faltam ' . $pr['faltam'] . ' para ' . MCP_TURMA_MINIMO . '.') . '</p>'
-            . '<div class="progresso" style="max-width:420px"><i style="width:' . $pr['pct'] . '%"></i></div></div>' . $baixar . '</div>'
+            . '<div class="cabeca"><div><p class="eyebrow">' . ($deAviso ? 'Avisos da data' : 'Lista de interesse') . '</p><h1>' . pn_e($rotulo) . '</h1>'
+            . ($deAviso
+                ? '<p class="nota">' . pn_e(mcp_turma_pediram($pr['soma'])) . ' o aviso da data na página do curso (só e-mail, sem telefone). '
+                    . 'Quando a data da próxima turma sair, avise todos por e-mail (planilha) e mude a situação abaixo.</p></div>'
+                : '<p class="nota">' . pn_e(mcp_turma_alunos($pr['soma'])) . ' em pedidos abertos. '
+                    . ($pr['pronta'] ? 'Já dá para abrir a turma: avise todos e, quando a turma estiver marcada, mude a situação abaixo.' : 'Faltam ' . $pr['faltam'] . ' para ' . MCP_TURMA_MINIMO . '.') . '</p>'
+                    . '<div class="progresso" style="max-width:420px"><i style="width:' . $pr['pct'] . '%"></i></div></div>')
+            . $baixar . '</div>'
             . $pilulas . $tabela
             . ($pr['soma'] > 0 ? '<div class="cartao" style="margin-top:18px"><h2>Mudar todos os pedidos em aberto desta lista</h2>'
                 . '<p class="nota" style="margin:0">Use quando a turma abrir: "Turma marcada" tira os pedidos da lista. Cada pessoa continua sendo avisada por você, pela planilha.</p>'
@@ -448,8 +454,15 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
     $listas = '';
     foreach (mcp_turma_demanda() as $l) {
         $pr = mcp_turma_progresso($l['pessoas']);
-        $listas .= '<li><div><a href="' . pn_e('painel.php?' . http_build_query(['v' => 'turmas', 'curso' => $l['curso_slug'], 'idioma' => $l['idioma']])) . '">'
-            . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</a>'
+        $link = '<a href="' . pn_e('painel.php?' . http_build_query(['v' => 'turmas', 'curso' => $l['curso_slug'], 'idioma' => $l['idioma']])) . '">'
+            . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</a>';
+        if (mcp_turma_lista_de_aviso((string) $l['curso_slug'], (string) $l['idioma'])) {
+            // Avisos da data (página do curso): esperam a data da turma regular, não 15 pessoas.
+            $listas .= '<li><div>' . $link . '<small>' . pn_e(mcp_turma_pediram($l['pedidos'])) . ' o aviso da data · último em ' . pn_e(pn_data((string) $l['ultimo'])) . '</small></div>'
+                . '<span class="selo neutro">Aviso da data</span></li>';
+            continue;
+        }
+        $listas .= '<li><div>' . $link
             . '<div class="progresso"><i style="width:' . $pr['pct'] . '%"></i></div>'
             . '<small>' . pn_e(mcp_turma_alunos($pr['soma'])) . ' de ' . MCP_TURMA_MINIMO . ' · ' . $l['pedidos'] . ($l['pedidos'] === 1 ? ' pedido' : ' pedidos') . ' · último em ' . pn_e(pn_data((string) $l['ultimo'])) . '</small></div>'
             . ($pr['pronta'] ? '<span class="selo ok">Pronta para abrir</span>' : '<span class="selo neutro">Faltam ' . $pr['faltam'] . '</span>') . '</li>';
@@ -462,7 +475,8 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
         . '<div class="cabeca" style="align-items:center">' . $pilulas . $baixar . '</div>' . $tabela
         . '<div class="cartao" style="margin-top:22px"><h2>Listas de interesse em aberto</h2>'
         . ($listas !== '' ? '<ul class="lista-curta">' . $listas . '</ul>' : '<p class="vazio" style="padding:20px">Ninguém na lista por enquanto.</p>')
-        . '<p class="nota">Cada lista é um curso num idioma. Em português, só o curso dos jovens tem lista: os outros têm turma aberta e a matrícula é na hora.</p></div>';
+        . '<p class="nota">Cada lista é um curso num idioma. Em português, nos cursos do catálogo, a lista junta quem pediu o aviso da data na página do curso: '
+        . 'avise todos por e-mail quando a data da turma sair. A soma de ' . MCP_TURMA_MINIMO . ' vale para as turmas em inglês e para o curso dos jovens.</p></div>';
     pn_pagina('Turmas sob demanda', $corpo, $usuario, true, 'turmas');
 }
 

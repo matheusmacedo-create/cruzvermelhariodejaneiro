@@ -26,6 +26,14 @@ if (!$conferido['ok']) {
 }
 $pedido = $conferido['dados'];
 
+// Aviso da data reenviado (a pessoa fechou e abriu o formulário de novo): o mesmo protocolo, sem outra linha, sem
+// outros e-mails e sem outro SubmitApplication. A página não mede de novo quando vem 'repetido'.
+if (!empty($pedido['aviso']) && ($existente = mcp_turma_aviso_aberto($pedido['curso_slug'], $pedido['email'])) !== null) {
+    mcp_registrar(null, 'turma_aviso_repetido', '#' . $existente['id'] . ' · ' . $pedido['curso_slug']);
+    mcp_json(['ok' => true, 'repetido' => true, 'protocolo' => (string) $existente['protocolo'], 'tipo' => 'lista', 'nome' => mcp_primeiro_nome($pedido['nome']),
+        'email' => $pedido['email'], 'curso' => mcp_turma_rotulo($pedido['curso_nome'], 'pt'), 'prazo' => MCP_EMAIL_PRAZO, 'copia_enviada' => true]);
+}
+
 foreach ([['ip', mcp_ip(), MCP_TURMA_LIMITE_IP], ['email', $pedido['email'], MCP_TURMA_LIMITE_EMAIL]] as [$coluna, $valor, [$maximo, $janela]]) {
     if (mcp_turma_contar_recentes($coluna, $valor, $janela) >= $maximo) {
         mcp_registrar(null, 'limite', "turmas · $coluna · $maximo em {$janela}s");
@@ -40,7 +48,7 @@ $registro = mcp_turma_por_id($id) ?? ($pedido + ['id' => $id, 'protocolo' => $pr
 
 // Na lista de interesse, a soma do curso naquele idioma (já com este pedido) vai no aviso à secretaria.
 $progresso = null;
-if ($pedido['tipo'] === 'lista') {
+if ($pedido['tipo'] === 'lista' && empty($pedido['aviso'])) {
     $lista = mcp_turma_demanda($pedido['curso_slug'], $pedido['idioma'])[0] ?? null;
     $progresso = mcp_turma_progresso((int) ($lista['pessoas'] ?? $pedido['pessoas']));
 }

@@ -962,6 +962,9 @@ verificar('turmas: grupo de 20 em português, fora da sede', [$conf['ok'], $conf
 $conf = mcp_turma_conferir(['idioma' => 'pt', 'pessoas' => 5] + $turmaBase);
 verificar('turmas: em português, sem grupo, o curso do catálogo vai para a matrícula', [$conf['ok'], $conf['campo'] ?? null, $conf['matricula'] ?? null],
     [false, 'pessoas', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa']);
+// A frase vale com e sem turma aberta (6 dos 7 cursos estão sem turma): nada de "já tem turma aberta" nem "matrícula na hora".
+verificar('turmas: em português, sem grupo, a mensagem não promete turma aberta', [str_contains($conf['erro'] ?? '', 'cada pessoa faz a própria inscrição nesta página'),
+    str_contains($conf['erro'] ?? '', 'turma aberta'), str_contains($conf['erro'] ?? '', 'na hora')], [true, false, false]);
 verificar('turmas: jovens em português, sem grupo, vão para a lista', mcp_turma_conferir(['curso' => 'primeiros-socorros-jovens', 'idioma' => 'pt', 'pessoas' => 1] + $turmaBase)['dados']['tipo'] ?? null, 'lista');
 $camposErro = [];
 foreach ([['pessoas' => 1.5], ['pessoas' => -2], ['pessoas' => [15]], ['curso' => ['x']], ['consentimento' => 1], ['telefone' => '0219999-0000'], ['email' => 'ana@'],
@@ -980,8 +983,20 @@ verificar('turmas: aviso à secretaria escapa o HTML e avisa fora da sede e as d
     str_contains($m['html'], 'Fora da sede'), str_contains($m['html'], 'são 2 turmas'), $m['assunto']],
     [true, false, true, true, '[Turma fechada] Punção Venosa, em inglês · 40 alunos · Hospital <Exemplo> · TS-261004-0007']);
 $m = mcp_montar_email_turma_confirmacao($pedidoTurma);
-verificar('turmas: confirmação da turma fechada traz o mesmo valor por aluno e a aprovação do local', [str_contains($m['texto'], 'inscrição de R$ 99,00 e R$ 150,00 do curso'),
+verificar('turmas: confirmação da turma fechada traz o mesmo valor por aluno (matrícula + taxa = total) e a aprovação do local',
+    [str_contains($m['texto'], 'matrícula de R$ 150,00 à vista e taxa de inscrição de R$ 99,00 (total à vista R$ 249,00)'),
     str_contains($m['texto'], 'dependem de aprovação'), $m['assunto']], [true, true, 'Recebemos o pedido da sua turma · TS-261004-0007']);
+// 6.18 e D22: os e-mails ao público não falam de WhatsApp nem de "garantir a vaga"; a secretaria recebe o celular com tel:.
+$confirmacoes = $m['html'] . $m['texto'] . implode('', mcp_montar_email_turma_confirmacao(['tipo' => 'lista', 'pessoas' => 3] + $pedidoTurma));
+verificar('turmas: confirmações (turma fechada e lista) sem WhatsApp e sem "garantir a vaga"', [str_contains($confirmacoes, 'WhatsApp'),
+    (bool) preg_match('/garant\w* (a |sua |minha )?vaga/iu', $confirmacoes), str_contains($confirmacoes, 'Cada aluno reserva a vaga ao pagar a taxa de inscrição'),
+    str_contains($confirmacoes, 'Por e-mail, com a data e o link para fazer a inscrição.')], [false, false, true, true]);
+$equipeFechada = mcp_montar_email_turma_equipe($pedidoTurma);
+verificar('turmas: aviso à secretaria com o celular (tel:), sem wa.me; planilha com a coluna Celular', [str_contains($equipeFechada['html'], 'wa.me'),
+    str_contains($equipeFechada['html'], 'href="tel:+5521999990000"'), str_contains($equipeFechada['texto'], 'Celular: '),
+    str_contains(mcp_turma_csv([]), ';Celular;'), str_contains(mcp_turma_csv([]), 'WhatsApp')], [false, true, true, true, false]);
+verificar('turmas: lista de aviso da data = curso do catálogo em português', [mcp_turma_lista_de_aviso('bombeiro-civil', 'pt'), mcp_turma_lista_de_aviso('bombeiro-civil', 'en'),
+    mcp_turma_lista_de_aviso('primeiros-socorros-jovens', 'pt'), mcp_turma_pediram(1), mcp_turma_pediram(3)], [true, false, false, '1 pessoa pediu', '3 pessoas pediram']);
 $m = mcp_montar_email_turma_confirmacao(['tipo' => 'lista', 'curso_slug' => 'primeiros-socorros-jovens', 'curso_nome' => 'Primeiros Socorros para Jovens (12 a 14 anos)', 'idioma' => 'pt', 'pessoas' => 1, 'local' => 'sede'] + $pedidoTurma);
 verificar('turmas: confirmação da lista dos jovens, valor na proposta', [str_contains($m['texto'], 'Você entrou na lista de interesse de Primeiros Socorros para Jovens'),
     str_contains($m['texto'], 'O valor por aluno vem na proposta da secretaria.'), str_contains($m['html'], 'Outro local')], [true, true, false]);
@@ -999,6 +1014,62 @@ foreach (MCP_TURMA_CURSOS_EXTRAS as $slug => $nomeExtra) {
 verificar('turmas: gerador e página com as regras do servidor', [str_contains($gerador, 'TURMA_MINIMO = ' . MCP_TURMA_MINIMO . "\n"), str_contains($gerador, 'TURMA_MAXIMO = ' . MCP_TURMA_MAXIMO . "\n"),
     $extrasPagina, str_contains($paginaMatricula, 'static/turmas.js?v=' . substr(hash_file('sha256', $raiz . '/site/matricula-cursos-presenciais/static/turmas.js'), 0, 10))],
     [true, true, array_fill(0, count(MCP_TURMA_CURSOS_EXTRAS), true), true]);
+
+// "Prefiro ser avisado da data" (página do curso sem turma): só nome, e-mail e autorização, sem telefone; entra na
+// lista de interesse do curso em português, com a marca de aviso, e os e-mails não falam de WhatsApp nem dos 15 alunos.
+$avisoBase = ['aviso' => true, 'curso' => 'bombeiro-civil', 'nome' => 'Ana Lima', 'email' => 'Ana@Exemplo.org', 'consentimento' => true,
+    'telefone' => 'ignorado', 'idioma' => 'en', 'pessoas' => 40, 'pagina' => '/matricula-cursos-presenciais/?curso=bombeiro-civil'];
+$conf = mcp_turma_conferir($avisoBase);
+verificar('turmas: aviso da data vira lista de 1 pessoa em português, sem telefone', [$conf['ok'], $conf['dados']['tipo'] ?? null, $conf['dados']['aviso'] ?? null,
+    $conf['dados']['idioma'] ?? null, $conf['dados']['pessoas'] ?? null, $conf['dados']['telefone'] ?? null, $conf['dados']['email'] ?? null, $conf['dados']['observacoes'] ?? null,
+    $conf['dados']['pagina'] ?? null], [true, 'lista', true, 'pt', 1, '', 'ana@exemplo.org', MCP_TURMA_AVISO_OBS, '/matricula-cursos-presenciais/?curso=bombeiro-civil']);
+$camposAviso = [];
+foreach ([['email' => 'ana@'], ['consentimento' => 1], ['nome' => 'A'], ['curso' => 'primeiros-socorros-jovens'], ['curso' => 'nao-existe']] as $troca) {
+    $r = mcp_turma_conferir($troca + $avisoBase);
+    $camposAviso[] = $r['campo'] ?? 'ok';
+}
+verificar('turmas: aviso da data recusa e-mail, autorização, nome e curso fora do catálogo', $camposAviso, ['email', 'consentimento', 'nome', 'curso', 'curso']);
+verificar('turmas: aviso da data com o erro de e-mail da página', mcp_turma_conferir(['email' => 'ana@'] + $avisoBase)['erro'] ?? null, 'Confira o e-mail: falta o @ ou o domínio.');
+verificar('turmas: aviso não muda o pedido de turma (sem "aviso", o telefone continua obrigatório)', mcp_turma_conferir(['telefone' => ''] + $turmaBase)['campo'] ?? null, 'telefone');
+$pedidoAviso = $conf['dados'] + ['protocolo' => 'TS-261008-0009'];
+$m = mcp_montar_email_turma_confirmacao($pedidoAviso);
+verificar('turmas: confirmação do aviso da data, sem WhatsApp e sem os 15 alunos', [$m['assunto'], str_contains($m['texto'], 'avisamos neste e-mail'),
+    str_contains($m['html'] . $m['texto'], 'WhatsApp'), str_contains($m['texto'], 'juntarmos')], ['Vamos avisar a data de Bombeiro Civil · TS-261008-0009', true, false, false]);
+$m = mcp_montar_email_turma_equipe($pedidoAviso, null);
+verificar('turmas: aviso da data à secretaria, sem link de WhatsApp', [str_starts_with($m['assunto'], '[Aviso da data] Bombeiro Civil'), str_contains($m['html'], 'wa.me'),
+    str_contains($m['html'], 'pediu o aviso da data')], [true, false, true]);
+
+// A página nova (scripts/gerar_matricula_presencial.py): total à vista em todo curso, vocabulário da especificação, os
+// ganchos que o chat.js, o turmas.js e o checkout esperam, e o formulário do aviso apontando para api/turmas.php.
+$textoPagina = html_entity_decode((string) preg_replace('/<[^>]+>/', ' ', $paginaMatricula), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+$totaisPagina = [];
+foreach (mcp_catalogo()['cursos'] as $c) {
+    $totalCurso = (int) $c['valor_curso_centavos'] + mcp_inscricao_centavos();
+    $totaisPagina[$c['slug']] = str_contains($paginaMatricula, 'Total à vista: R$' . "\u{a0}" . number_format($totalCurso / 100, 0, ',', '.'));
+}
+verificar('página: os 7 totais à vista (matrícula + taxa) nos blocos de preço', $totaisPagina, array_fill_keys(array_keys($totaisPagina), true));
+$proibidasPagina = [];
+foreach (['/pag[oa] (depois, )?na escola/iu', '/na escola,/iu', '/pago depois/iu', '/plataforma da escola/iu', '/garant\w* (a |sua |minha )?vaga/iu',
+    '/vaga (fica |ficar )?garantida/iu', '/Inscrição R\$/iu', '/Fazer matrícula/iu', '/parcelad/iu', '/WhatsApp/iu', '/wa\.me/iu', '/cruzvermelharj\.org\.br/iu', '/voluntariado/iu'] as $padrao) {
+    if (preg_match($padrao, $paginaMatricula) || preg_match($padrao, $textoPagina)) {
+        $proibidasPagina[] = $padrao;
+    }
+}
+verificar('página: nenhuma palavra proibida (preço, vaga, WhatsApp, voluntariado)', $proibidasPagina, []);
+verificar('página: um <h1>, modo curso no <head>, ganchos do chat, das turmas e da barra, aviso da data', [substr_count($paginaMatricula, '<h1'),
+    str_contains($paginaMatricula, "setAttribute('data-curso',c)"), str_contains($paginaMatricula, 'class="v-curso mr-detalhe"'),
+    str_contains($paginaMatricula, 'id="turma-form-bloco"'), str_contains($paginaMatricula, 'id="tf-matricula"'), str_contains($paginaMatricula, 'id="mr-barra-cta"'),
+    str_contains($paginaMatricula, 'id="mr-mapa-carregar"'), str_contains($paginaMatricula, 'id="aviso-form"'), str_contains($paginaMatricula, '"/matricula-cursos-presenciais/api/turmas.php"'),
+    (bool) preg_match('/<a class="[^"]*mr-cta[^"]*" data-local="cartao_turma" data-curso="primeiros-socorros-basico" href="\/matricula-cursos-presenciais\/checkout\/\?curso=primeiros-socorros-basico&amp;via=cartao_turma"/', $paginaMatricula)],
+    [1, true, true, true, true, true, true, true, true, true]);
+verificar('turmas.js: sem WhatsApp (D22)', str_contains((string) file_get_contents($raiz . '/site/matricula-cursos-presenciais/static/turmas.js'), 'WhatsApp'), false);
+// Correções da revisão de 08/10: o "(sem a homologação)" só no cartão "Turmas em breve" do Bombeiro Civil (3.3.2), o card
+// compacto com a linha "Total à vista" (princípio 2), a página sem matchMedia(...).addEventListener sem proteção (o script
+// parava no Safari/iOS até 13) e o reenvio do aviso da data sem medir de novo.
+$compactos = substr_count($paginaMatricula, '<p class="v-pc-total">Total à vista: R$' . "\u{a0}");
+verificar('página: correções da revisão (homologação, card compacto, matchMedia, aviso repetido)', [substr_count($paginaMatricula, '(sem a homologação)'),
+    $compactos, (bool) preg_match('/matchMedia\([^)]*\)\.addEventListener/', $paginaMatricula), str_contains($paginaMatricula, 'if (!d.repetido)')],
+    [1, count(mcp_catalogo()['cursos']), false, true]);
 
 // A versão do banco vem de uma constante no código (e não do arquivo em disco): mudou o db.php, muda a constante.
 $versaoDb = substr(md5((string) preg_replace('/^const MCP_DB_VERSAO = .*\n/m', '', (string) file_get_contents(__DIR__ . '/../site/matricula-cursos-presenciais/api/lib/db.php'))), 0, 16);

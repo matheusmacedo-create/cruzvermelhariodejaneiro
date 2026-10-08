@@ -1,6 +1,6 @@
 /* Turmas sob demanda (seção #turmas-sob-demanda da página de matrícula).
    Um formulário só: com 15 alunos ou mais é pedido de turma fechada; com menos, lista de interesse do curso
-   naquele idioma. Em português, curso do catálogo tem turma aberta: sem grupo, o caminho é a matrícula na hora.
+   naquele idioma. Em português, curso do catálogo: sem grupo, cada pessoa faz a própria inscrição na página.
    As regras são as mesmas de api/lib/turmas.php; o servidor confere tudo de novo. */
 (function () {
   'use strict';
@@ -52,11 +52,11 @@
         + '. A secretaria responde em até 3 dias úteis com as datas. Mesmo valor por pessoa dos cursos; nada é cobrado agora.';
       classe = 'fechada';
     } else if (c === 'matricula') {
-      texto = '<strong>Este curso já tem turma aberta em português.</strong> Com menos de ' + MINIMO + ' alunos, cada pessoa faz a matrícula na hora, sem esperar. Turma exclusiva é a partir de ' + MINIMO + '.';
+      texto = '<strong>Em português, este curso está no catálogo.</strong> Com menos de ' + MINIMO + ' alunos, cada pessoa faz a própria inscrição nesta página. Turma exclusiva é a partir de ' + MINIMO + '.';
       classe = 'aviso';
     } else {
       texto = '<strong>Lista de interesse.</strong> ' + (n > 1 ? 'Vocês entram com ' + alunos(n) : 'Você entra') + ' na lista de ' + rotulo
-        + '. A turma abre quando juntarmos ' + MINIMO + ' alunos, e avisamos por e-mail e WhatsApp. Se você conseguir ' + MINIMO + ', a turma é sua, com prioridade.';
+        + '. A turma abre quando juntarmos ' + MINIMO + ' alunos, e avisamos por e-mail. Se você conseguir ' + MINIMO + ', a turma é sua, com prioridade.';
       classe = 'lista';
     }
     situacao.innerHTML = texto;
@@ -122,7 +122,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campos.email.value.trim())) return ['email', 'Esse e-mail não parece válido.'];
     var tel = campos.telefone.value.replace(/\D/g, '');
     if (tel.length === 13 && tel.indexOf('55') === 0) tel = tel.slice(2);
-    if ((tel.length !== 10 && tel.length !== 11) || tel.charAt(0) === '0') return ['telefone', 'Informe o WhatsApp com DDD: é por ele que avisamos quando a turma fechar.'];
+    if ((tel.length !== 10 && tel.length !== 11) || tel.charAt(0) === '0') return ['telefone', 'Informe o celular com DDD.'];
     if (!campos.consentimento.checked) return ['consentimento', 'Marque a autorização para a secretaria falar com você sobre esta turma.'];
     return null;
   }
@@ -140,7 +140,7 @@
     document.getElementById('turma-ok-titulo').textContent = fechada ? 'Pedido de turma recebido, ' + d.nome + '!' : 'Você está na lista, ' + d.nome + '!';
     document.getElementById('turma-ok-texto').textContent = fechada
       ? 'A secretaria responde em até ' + d.prazo + ' com as datas para a turma de ' + d.curso + '. Guarde o protocolo ' + d.protocolo + '.'
-      : 'Quando juntarmos ' + MINIMO + ' alunos para ' + d.curso + ', avisamos por e-mail e WhatsApp. Guarde o protocolo ' + d.protocolo + '.';
+      : 'Quando juntarmos ' + MINIMO + ' alunos para ' + d.curso + ', avisamos por e-mail. Guarde o protocolo ' + d.protocolo + '.';
     document.getElementById('turma-ok-copia').textContent = d.copia_enviada
       ? 'Mandamos a confirmação para ' + d.email + '. Se não aparecer, olhe no spam.'
       : 'Não conseguimos mandar a confirmação por e-mail agora, mas o pedido está registrado.';
