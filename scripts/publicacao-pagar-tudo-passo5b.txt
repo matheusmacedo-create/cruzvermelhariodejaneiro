@@ -1,0 +1,25 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 5b (venda sem turma, 10.14), só com a P4 = B, o jurídico (5.3 item 6), as respostas (e) e (g) do
+# passo 0 e o passo 4b conferido. Deixar no site/matricula-cursos-presenciais/oferta.json, em "sem_turma", só os cursos
+# liberados (hoje os 7, max_fila 30; decisões 5, 11 e 12). Gerar:
+#   scripts/pagar_tudo/gerar.sh conferir-ar && PLANO_COMPLETO_HTML=1 VENDA_SEM_TURMA_HTML=1 POLITICAS_DATA=AAAA-MM-DD scripts/pagar_tudo/gerar.sh chat pagina checkout politicas
+# (conferir-ar compara com a base: depois do passo 5, a base do chat.js e das políticas passa a ser a do passo 5; antes,
+# atualizar docs/pagar-tudo/base-ar com o que está no ar e o SHA256SUMS.) Config: PLANO_COMPLETO_SEM_TURMA=true.
+# Cópia do ar antes: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-passo5b $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo5b.txt)
+# Publicar nesta ordem: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo5b.txt)
+# Desfazer: a cópia do ar (como no passo 5), PLANO_COMPLETO_SEM_TURMA=false e "sem_turma": {} (a rotina continua para quem já está na fila).
+site/chat/chat.js
+site/matricula-cursos-presenciais/oferta.json
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/matricula-cursos-presenciais/index.html

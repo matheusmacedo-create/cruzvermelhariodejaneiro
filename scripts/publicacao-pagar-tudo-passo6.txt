@@ -1,0 +1,22 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 6 (parcelado), só com o jurídico (5.3 item 3), a P1 e a compra de teste em 2× (duas bandeiras).
+# Antes: PARCELAS_MAX=12 no config e "parcelado_no_ar": true no oferta.json. Gerar (com VENDA_SEM_TURMA_HTML=1 se o 5b
+# já estiver no ar):
+#   scripts/pagar_tudo/gerar.sh conferir-ar && PLANO_COMPLETO_HTML=1 PARCELADO_HTML=1 [VENDA_SEM_TURMA_HTML=1] POLITICAS_DATA=AAAA-MM-DD scripts/pagar_tudo/gerar.sh chat pagina checkout politicas
+# Cópia do ar antes, publicar e desfazer como no passo 5 (lista abaixo). Volta rápida: PARCELAS_MAX=1 (o JS da página
+# volta a "à vista" sozinho).
+site/chat/chat.js
+site/matricula-cursos-presenciais/oferta.json
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/matricula-cursos-presenciais/index.html

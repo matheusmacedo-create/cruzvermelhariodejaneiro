@@ -224,8 +224,11 @@ function mcp_horarios_para_tela(array $inscricao, ?array $preferencia): array
 /** Respostas com o aluno e o curso, mais recentes primeiro. $curso null = todos os cursos. */
 function mcp_horarios_listar(?string $curso, int $limite = 1000): array
 {
-    $sql = 'SELECT p.*, i.nome, i.email, i.telefone, i.curso_nome, i.escola_acesso, i.pago_em
-        FROM mcp_preferencias p JOIN mcp_inscricoes i ON i.id = p.inscricao_id';
+    // Pagar tudo (E13): o plano vai junto para o feed da escola tirar as compras "taxa + matrícula" não marcadas como
+    // pagas. Só com a coluna no banco (migração da 3.3 já feita); sem ela, todas são só a taxa.
+    $plano = function_exists('mcp_colunas_plano_ok') && mcp_colunas_plano_ok() ? ', i.plano' : '';
+    $sql = "SELECT p.*, i.nome, i.email, i.telefone, i.curso_nome, i.escola_acesso, i.pago_em$plano
+        FROM mcp_preferencias p JOIN mcp_inscricoes i ON i.id = p.inscricao_id";
     $params = [];
     if ($curso !== null) {
         $sql .= ' WHERE p.curso_slug = ?';
@@ -498,6 +501,14 @@ function mcp_horarios_sem_resposta(int $limite = 1000): array
  */
 function mcp_horarios_para_escola(array $respostas, array $semResposta, ?string $agora = null): array
 {
+    // Pagar tudo (E13, spec 3.2): a compra "taxa + matrícula" cuja resposta da escola não trouxe matricula_paga = true
+    // não vai à escola (nem em respostas nem em sem_resposta). Sem o inscricaoId, o "Encaixar" e o batimento da escola
+    // não a alcançam e não criam uma matrícula PARCELADO PENDENTE (cobrança em dobro). Os horários dela continuam no
+    // portal da secretaria do site. Não voltam ao feed nem depois de resolvidas à mão (sem a anotação da v2, o batimento
+    // reescreveria a taxa com o valor inteiro).
+    $vai = static fn(array $l): bool => ($l['plano'] ?? 'so_taxa') !== 'taxa_e_matricula' || mcp_escola_matricula_paga($l) === true;
+    $respostas = array_values(array_filter($respostas, $vai));
+    $semResposta = array_values(array_filter($semResposta, $vai));
     $uuid = static fn(string $slug): ?string => is_string(mcp_curso($slug)['uuid'] ?? null) ? mcp_curso($slug)['uuid'] : null;
     $aluno = static function (array $l) use ($uuid): array {
         $acesso = mcp_escola_acesso($l);

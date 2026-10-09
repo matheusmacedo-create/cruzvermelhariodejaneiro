@@ -26,6 +26,8 @@ const MCP_TURMA_STATUS = ['novo' => 'Novo', 'em_contato' => 'Em contato', 'turma
 /** Situações em que o pedido ainda conta para a lista de interesse. */
 const MCP_TURMA_STATUS_ABERTOS = ['novo', 'em_contato'];
 const MCP_TURMA_IDIOMAS = ['pt' => 'Português', 'en' => 'Inglês'];
+/** Observação gravada no pedido de aviso da data (sem telefone): é o que a secretaria lê no portal. */
+const MCP_TURMA_AVISO_OBS = 'Pediu só o aviso da data, por e-mail, na página do curso (sem telefone).';
 
 /** Cursos que só existem sob demanda (fora do catálogo da escola). */
 const MCP_TURMA_CURSOS_EXTRAS = [
@@ -85,6 +87,12 @@ function mcp_turma_rotulo(string $cursoNome, string $idioma): string
     return $cursoNome . ($idioma === 'en' ? ', em inglês' : '');
 }
 
+/** "1 pessoa pediu" / "3 pessoas pediram" (avisos da data, no portal). */
+function mcp_turma_pediram(int $n): string
+{
+    return $n === 1 ? '1 pessoa pediu' : $n . ' pessoas pediram';
+}
+
 /** "20 alunos" / "1 aluno". */
 function mcp_turma_alunos(int $n): string
 {
@@ -104,6 +112,9 @@ function mcp_turma_conferir(array $b): array
     if (!isset($cursos[$slug])) {
         return $falha('curso', 'Escolha o curso.');
     }
+    if (($b['aviso'] ?? false) === true) {
+        return mcp_turma_conferir_aviso($b, $slug, $cursos[$slug], $falha);
+    }
     $idioma = mcp_texto($b['idioma'] ?? 'pt', 2);
     if (!isset(MCP_TURMA_IDIOMAS[$idioma])) {
         return $falha('idioma', 'Escolha o idioma das aulas.');
@@ -118,9 +129,9 @@ function mcp_turma_conferir(array $b): array
     }
     $tipo = mcp_turma_tipo($pessoas);
     $curso = $cursos[$slug];
-    // Em português, curso do catálogo tem turma aberta: sem grupo de 15, a matrícula é na hora, não numa lista.
+    // Em português, curso do catálogo: sem grupo de 15, cada pessoa se inscreve na página (com ou sem turma aberta), não numa lista.
     if ($tipo === 'lista' && $idioma === 'pt' && $curso['catalogo']) {
-        return $falha('pessoas', 'Em português, ' . $curso['nome'] . ' já tem turma aberta: cada pessoa faz a matrícula na hora. '
+        return $falha('pessoas', 'Em português, ' . $curso['nome'] . ' está no catálogo: cada pessoa faz a própria inscrição nesta página. '
             . 'Turma exclusiva é a partir de ' . MCP_TURMA_MINIMO . ' alunos.', ['matricula' => '/matricula-cursos-presenciais/checkout/?curso=' . rawurlencode($slug)]);
     }
     // Lista de interesse é sempre na sede; outro local só para grupo fechado, e depende de aprovação.
@@ -139,7 +150,7 @@ function mcp_turma_conferir(array $b): array
     }
     $telefone = mcp_telefone(mcp_texto($b['telefone'] ?? '', 30));
     if ($telefone === '') {
-        return $falha('telefone', 'Informe o WhatsApp com DDD: é por ele que avisamos quando a turma fechar.');
+        return $falha('telefone', 'Informe o celular com DDD.');
     }
     if (($b['consentimento'] ?? false) !== true) {
         return $falha('consentimento', 'Marque a autorização para a secretaria falar com você sobre esta turma.');
@@ -165,6 +176,69 @@ function mcp_turma_conferir(array $b): array
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
     ]];
+}
+
+/**
+ * "Prefiro ser avisado da data" (página do curso, curso do catálogo sem turma aberta): só nome, e-mail e a
+ * autorização, sem telefone. Entra na lista de interesse do curso em português (1 pessoa), para a secretaria avisar
+ * todos com o "Mudar todos" do portal quando a data sair. 'aviso' => true vai junto para o e-mail e a Meta.
+ */
+function mcp_turma_conferir_aviso(array $b, string $slug, array $curso, callable $falha): array
+{
+    if (!$curso['catalogo']) {
+        return $falha('curso', 'Escolha o curso.');
+    }
+    $nome = mcp_texto($b['nome'] ?? '', 120);
+    if (mb_strlen($nome) < 2) {
+        return $falha('nome', 'Digite seu nome.');
+    }
+    $email = mb_strtolower(mcp_texto($b['email'] ?? '', 190));
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return $falha('email', 'Confira o e-mail: falta o @ ou o domínio.');
+    }
+    if (($b['consentimento'] ?? false) !== true) {
+        return $falha('consentimento', 'Marque a autorização para receber o aviso por e-mail.');
+    }
+    $pagina = mcp_texto($b['pagina'] ?? '', 255);
+    if ($pagina !== '' && (!str_starts_with($pagina, '/') || str_starts_with($pagina, '//'))) {
+        $pagina = '';
+    }
+    $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
+    $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
+    return ['ok' => true, 'dados' => [
+        'tipo' => 'lista', 'aviso' => true, 'curso_slug' => $slug, 'curso_nome' => $curso['nome'], 'idioma' => 'pt', 'pessoas' => 1,
+        'local' => 'sede', 'local_endereco' => null, 'organizacao' => null, 'periodo' => null,
+        'nome' => $nome, 'email' => $email, 'telefone' => '', 'observacoes' => MCP_TURMA_AVISO_OBS,
+        'pagina' => $pagina ?: null,
+        'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
+        'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
+        'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
+    ]];
+}
+
+/** O pedido de aviso da data: lista de interesse sem telefone (a marca fica gravada nas observações). */
+function mcp_turma_e_aviso(array $p): bool
+{
+    return ($p['tipo'] ?? '') === 'lista' && (string) ($p['telefone'] ?? '') === '';
+}
+
+/**
+ * Lista que só junta avisos da data: curso do catálogo em português. A página não abre lista comum para ele (o pedido
+ * sem grupo em português é recusado), então quem está nela pediu o aviso na página do curso. O portal mostra essas
+ * listas sem "de 15" e sem "faltam N": a secretaria avisa todos quando a data da turma regular sair (6.21).
+ */
+function mcp_turma_lista_de_aviso(string $slug, string $idioma): bool
+{
+    return $idioma === 'pt' && (bool) (mcp_turma_cursos()[$slug]['catalogo'] ?? false);
+}
+
+/** Aviso da data em aberto do mesmo e-mail e curso (quem reenvia o formulário recebe o mesmo protocolo). */
+function mcp_turma_aviso_aberto(string $slug, string $email): ?array
+{
+    $stmt = mcp_db()->prepare("SELECT * FROM mcp_turmas_pedidos WHERE tipo = 'lista' AND curso_slug = ? AND idioma = 'pt' AND email = ?
+        AND telefone = '' AND status IN ('novo', 'em_contato') ORDER BY id DESC LIMIT 1");
+    $stmt->execute([$slug, $email]);
+    return $stmt->fetch() ?: null;
 }
 
 /** Protocolo legível: TS-aammdd-NNNN (data de Brasília, id do pedido). */
@@ -280,7 +354,9 @@ function mcp_turma_listar(array $filtro, int $limite = 50, int $deslocamento = 0
 function mcp_turma_contar(): array
 {
     $novas = (int) mcp_db()->query("SELECT COUNT(*) FROM mcp_turmas_pedidos WHERE tipo = 'fechada' AND status = 'novo'")->fetchColumn();
-    $prontas = count(array_filter(mcp_turma_demanda(), static fn(array $l): bool => $l['pessoas'] >= MCP_TURMA_MINIMO));
+    // Lista de avisos da data não "fica pronta" com 15: ela espera a data da turma regular.
+    $prontas = count(array_filter(mcp_turma_demanda(), static fn(array $l): bool => $l['pessoas'] >= MCP_TURMA_MINIMO
+        && !mcp_turma_lista_de_aviso((string) $l['curso_slug'], (string) $l['idioma'])));
     return ['fechadas_novas' => $novas, 'listas_prontas' => $prontas, 'acao' => $novas + $prontas];
 }
 
@@ -315,7 +391,7 @@ function mcp_turma_status_lista(string $curso, string $idioma, string $status, s
 function mcp_turma_csv(array $linhas): string
 {
     $f = fopen('php://temp', 'w+');
-    fputcsv($f, ['Recebido em (Brasília)', 'Protocolo', 'Tipo', 'Situação', 'Curso', 'Idioma', 'Alunos', 'Local', 'Instituição', 'Nome', 'E-mail', 'WhatsApp', 'Período', 'Observações'], ';', '"', '');
+    fputcsv($f, ['Recebido em (Brasília)', 'Protocolo', 'Tipo', 'Situação', 'Curso', 'Idioma', 'Alunos', 'Local', 'Instituição', 'Nome', 'E-mail', 'Celular', 'Período', 'Observações'], ';', '"', '');
     foreach ($linhas as $l) {
         fputcsv($f, array_map('mcp_horarios_celula', [
             mcp_data_brt((string) $l['criado_em'], 'd/m/Y H:i'), (string) $l['protocolo'],
@@ -357,13 +433,15 @@ function mcp_turma_linhas(array $p): array
     return $linhas;
 }
 
-/** Valor por aluno, como na página: o mesmo dos cursos do catálogo; o curso dos jovens, sob consulta. */
+/** Valor por pessoa, como na página (6.5): matrícula à vista + taxa = total à vista; o curso dos jovens, sob consulta. */
 function mcp_turma_valor_texto(array $p): string
 {
     $curso = mcp_curso((string) $p['curso_slug']);
     $inscricao = mcp_brl(mcp_inscricao_centavos());
     if ($curso && !empty($curso['valor_curso_centavos'])) {
-        return "O valor por aluno é o mesmo do curso: inscrição de $inscricao e " . mcp_brl((int) $curso['valor_curso_centavos']) . ' do curso.';
+        $matricula = (int) $curso['valor_curso_centavos'];
+        return 'O valor por pessoa é o mesmo dos cursos: matrícula de ' . mcp_brl($matricula) . " à vista e taxa de inscrição de $inscricao (total à vista "
+            . mcp_brl($matricula + mcp_inscricao_centavos()) . '). Nada é cobrado agora.';
     }
     return 'O valor por aluno vem na proposta da secretaria.';
 }
@@ -376,10 +454,12 @@ function mcp_montar_email_turma_equipe(array $p, ?array $progresso = null): arra
     $nome = (string) $p['nome'];
     $email = (string) $p['email'];
     $telefone = (string) $p['telefone'];
+    $aviso = mcp_turma_e_aviso($p);
     $linhas = ['Nome' => $nome,
         'E-mail' => ['html' => '<a href="mailto:' . mcp_escapar($email) . '" style="color:#cc0000;text-decoration:none">' . mcp_escapar($email) . '</a>'],
-        'WhatsApp' => ['html' => '<a href="https://wa.me/55' . mcp_escapar(mcp_digitos($telefone)) . '" style="color:#1a202c;text-decoration:none">' . mcp_escapar(mcp_telefone_bonito($telefone)) . '</a>'],
-    ] + mcp_turma_linhas($p);
+    ] + ($aviso ? ['Telefone' => 'não pedido (só o aviso da data, por e-mail)'] : [
+        'Celular' => ['html' => '<a href="tel:+55' . mcp_escapar(mcp_digitos($telefone)) . '" style="color:#1a202c;text-decoration:none">' . mcp_escapar(mcp_telefone_bonito($telefone)) . '</a>'],
+    ]) + mcp_turma_linhas($p);
     $linhas['Origem'] = trim(($p['utm_source'] ?? '') . ' ' . ($p['utm_campaign'] ?? '')) ?: 'direto';
     $portal = mcp_site_url() . '/matricula-cursos-presenciais/api/painel.php?v=turmas'
         . ($fechada ? '' : '&curso=' . rawurlencode((string) $p['curso_slug']) . '&idioma=' . rawurlencode((string) $p['idioma']));
@@ -390,6 +470,10 @@ function mcp_montar_email_turma_equipe(array $p, ?array $progresso = null): arra
             . ' Grupo fechado tem prioridade: a pessoa foi avisada de que a resposta chega em até ' . MCP_EMAIL_PRAZO . '.';
         $alertas = ($p['local'] === 'outro' ? mcp_nota('<strong>Fora da sede:</strong> as aulas em outro local precisam de aprovação antes de confirmar a data.') : '')
             . ((int) $p['pessoas'] > MCP_TURMA_MAXIMO ? mcp_nota('<strong>Mais de ' . MCP_TURMA_MAXIMO . ' alunos:</strong> são ' . mcp_turma_quantas((int) $p['pessoas']) . ' turmas.') : '');
+    } elseif ($aviso) {
+        $abertura = '<strong>' . mcp_escapar($nome) . '</strong> pediu o aviso da data de <strong>' . mcp_escapar($rotulo) . '</strong>, na página do curso. '
+            . 'Quando a turma abrir, avise por e-mail (fica na lista de interesse do curso).';
+        $alertas = '';
     } else {
         $abertura = '<strong>' . mcp_escapar($nome) . '</strong> entrou na lista de interesse de <strong>' . mcp_escapar($rotulo) . '</strong> com '
             . mcp_escapar(mcp_turma_alunos((int) $p['pessoas'])) . '.';
@@ -417,7 +501,7 @@ function mcp_montar_email_turma_equipe(array $p, ?array $progresso = null): arra
         $texto .= "\nA lista soma " . mcp_turma_alunos($progresso['soma']) . ($progresso['pronta'] ? ': já dá para abrir a turma.' : '; faltam ' . $progresso['faltam'] . '.') . "\n";
     }
     $texto .= "\nPortal: $portal\n";
-    $prefixo = $fechada ? '[Turma fechada]' : ($progresso !== null && $progresso['pronta'] ? '[Lista completa]' : '[Lista de interesse]');
+    $prefixo = $fechada ? '[Turma fechada]' : ($aviso ? '[Aviso da data]' : ($progresso !== null && $progresso['pronta'] ? '[Lista completa]' : '[Lista de interesse]'));
     return [
         'assunto' => "$prefixo $rotulo · " . mcp_turma_alunos((int) $p['pessoas']) . (!empty($p['organizacao']) ? ' · ' . $p['organizacao'] : ' · ' . $nome) . ' · ' . $p['protocolo'],
         'html' => mcp_moldura($fechada ? 'Pedido de turma fechada' : 'Nova pessoa na lista de interesse', $corpo, [
@@ -438,20 +522,26 @@ function mcp_montar_email_turma_confirmacao(array $p): array
     $protocolo = (string) $p['protocolo'];
     $remetente = mcp_email_endereco(mcp_email_remetente_contato());
     $valor = mcp_turma_valor_texto($p);
-    $whats = mcp_telefone_bonito((string) $p['telefone']);
-    if ($fechada) {
+    $aviso = mcp_turma_e_aviso($p);
+    if ($aviso) {
         $passos = [
-            ['A secretaria responde em até ' . MCP_EMAIL_PRAZO, 'Por e-mail ou pelo WhatsApp ' . mcp_escapar($whats) . ', com as datas possíveis para a turma. Grupo fechado tem prioridade.'],
+            ['Anotamos o seu pedido', 'Quando a próxima turma de ' . mcp_escapar($rotulo) . ' tiver data, avisamos neste e-mail. Nada é cobrado.'],
+            ['Depois, você decide', 'Com a data na mão, você escolhe se faz a inscrição. Usamos o seu e-mail só para este aviso.'],
+        ];
+        $abertura = 'Oi, ' . mcp_escapar($nome) . '. Você pediu o aviso da data de <strong>' . mcp_escapar($rotulo) . '</strong>.';
+    } elseif ($fechada) {
+        $passos = [
+            ['A secretaria responde em até ' . MCP_EMAIL_PRAZO, 'Por e-mail, com as datas possíveis para a turma. Grupo fechado tem prioridade.'],
             ['Vocês combinam a data', 'Turmas de ' . MCP_TURMA_MINIMO . ' a ' . MCP_TURMA_MAXIMO . ' alunos, na sede da Praça da Cruz Vermelha'
                 . ($p['local'] === 'outro' ? '. Aulas em outro local dependem de aprovação, e a secretaria confirma se dá' : '') . '.'],
-            ['Cada aluno garante a vaga', mcp_escapar($valor) . ' Nada é cobrado agora.'],
+            ['Cada aluno reserva a vaga ao pagar a taxa de inscrição', mcp_escapar($valor) . (str_contains($valor, 'Nada é cobrado') ? '' : ' Nada é cobrado agora.')],
         ];
         $abertura = 'Oi, ' . mcp_escapar($nome) . '. Recebemos o pedido de uma turma de <strong>' . mcp_escapar($rotulo) . '</strong> para <strong>'
             . mcp_escapar(mcp_turma_alunos((int) $p['pessoas'])) . '</strong>.';
     } else {
         $passos = [
             ['Você está na lista de interesse', 'A turma de ' . mcp_escapar($rotulo) . ' abre quando juntarmos ' . MCP_TURMA_MINIMO . ' alunos. Nada é cobrado agora.'],
-            ['Avisamos quando a turma fechar', 'Por e-mail e pelo WhatsApp ' . mcp_escapar($whats) . ', com a data e o link para garantir a vaga.'],
+            ['Avisamos quando a turma fechar', 'Por e-mail, com a data e o link para fazer a inscrição.'],
             ['Tem um grupo? Ele tem prioridade', 'Se você juntar ' . MCP_TURMA_MINIMO . ' pessoas (colegas, escola, empresa), a turma é de vocês e a data é combinada direto com a secretaria. Responda este e-mail contando quantos são.'],
         ];
         $abertura = 'Oi, ' . mcp_escapar($nome) . '. Você entrou na lista de interesse de <strong>' . mcp_escapar($rotulo) . '</strong>'
@@ -460,7 +550,7 @@ function mcp_montar_email_turma_confirmacao(array $p): array
     $corpo = mcp_p($abertura . ' Guarde o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>.')
         . mcp_subtitulo('O que acontece agora') . mcp_passos($passos)
         . mcp_caixa(mcp_turma_linhas($p))
-        . ($fechada ? '' : mcp_p(mcp_escapar($valor)))
+        . ($fechada || $aviso ? '' : mcp_p(mcp_escapar($valor)))
         . mcp_nota('O remetente é ' . mcp_escapar($remetente) . '. Para mudar algo no pedido, responda este e-mail. Não foi você? Ignore esta mensagem.');
     $texto = html_entity_decode(strip_tags($abertura), ENT_QUOTES, 'UTF-8') . " Protocolo: $protocolo.\n\nO que acontece agora:\n";
     foreach ($passos as $i => [$titulo, $detalhe]) {
@@ -470,15 +560,15 @@ function mcp_montar_email_turma_confirmacao(array $p): array
     foreach (mcp_turma_linhas($p) as $r => $v) {
         $texto .= "$r: $v\n";
     }
-    if (!$fechada) {
+    if (!$fechada && !$aviso) {
         $texto .= "\n$valor\n";
     }
     $texto .= "\nPara mudar algo no pedido, responda este e-mail.\n";
     return [
-        'assunto' => ($fechada ? 'Recebemos o pedido da sua turma' : 'Você está na lista de interesse') . " · $protocolo",
-        'html' => mcp_moldura($fechada ? "Pedido de turma recebido, $nome." : "Você está na lista, $nome.", $corpo, [
-            'eyebrow' => 'Turmas sob demanda',
-            'preheader' => $fechada ? 'A secretaria responde em até ' . MCP_EMAIL_PRAZO . ' com as datas.' : 'Avisamos quando juntarmos ' . MCP_TURMA_MINIMO . ' alunos.',
+        'assunto' => ($aviso ? 'Vamos avisar a data de ' . $p['curso_nome'] : ($fechada ? 'Recebemos o pedido da sua turma' : 'Você está na lista de interesse')) . " · $protocolo",
+        'html' => mcp_moldura($aviso ? "Aviso anotado, $nome." : ($fechada ? "Pedido de turma recebido, $nome." : "Você está na lista, $nome."), $corpo, [
+            'eyebrow' => $aviso ? 'Aviso da data' : 'Turmas sob demanda',
+            'preheader' => $aviso ? 'Quando a turma abrir, avisamos por e-mail.' : ($fechada ? 'A secretaria responde em até ' . MCP_EMAIL_PRAZO . ' com as datas.' : 'Avisamos quando juntarmos ' . MCP_TURMA_MINIMO . ' alunos.'),
             'motivo' => 'Você recebeu este e-mail porque pediu uma turma na página de matrícula de cruzvermelhariodejaneiro.org.',
         ]),
         'texto' => $texto,

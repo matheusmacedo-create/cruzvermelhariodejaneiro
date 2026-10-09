@@ -2,6 +2,9 @@
 /**
  * GET ?t=<token>: estado da inscrição para as telas de acompanhamento. Enquanto pendente,
  * reconsulta a Unicopag (no máximo a cada 6 s, por inscrição) e vence a cobrança após 25 h.
+ * Pagar tudo (10/2026): a visão pública ganha o plano, as parcelas, os juros, a turma (da resposta da escola), os
+ * avisos da escola e o objeto espera (venda sem turma). A escola é tentada de novo também quando ficou 'pendente'
+ * mais de 120 s depois do pagamento (T4), nunca numa compra que espera turma (ela tem a rotina própria, 10.8).
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
@@ -30,4 +33,4 @@ if ($inscricao['status'] === 'pendente') {
     }
 }
 $inscricao = mcp_escola_retentar_se_preciso($inscricao);
-mcp_json(mcp_publico($inscricao, $inscricao['status'] === 'pago' ? mcp_horarios_por_inscricao((int) $inscricao['id']) : null));
+mcp_json(mcp_publico_completo($inscricao, $inscricao['status'] === 'pago' ? mcp_horarios_por_inscricao((int) $inscricao['id']) : null));

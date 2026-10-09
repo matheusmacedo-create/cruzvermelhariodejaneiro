@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <title>Cruz Vermelha Brasileira Rio de Janeiro | Site oficial</title>
+  <meta name="description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/">
+  <meta property="og:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Site oficial">
+  <meta property="og:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Site oficial">
+  <meta name="twitter:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
+  <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/">
+  <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
+  <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
+  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="assets/otim/forca-tarefa-el-nino-banner-1920.avif" imagesrcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" imagesizes="100vw" fetchpriority="high">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+  <style>
+    /* Ícones em SVG inline (scripts/icones.py) */
+    i[class*="fa-"] { display: inline-block; font-style: normal; line-height: 1; }
+    .ico { display: inline-block; width: 1em; height: 1em; fill: currentColor; vertical-align: -.125em; overflow: visible; }
+    .nav-toggle .ico-xmark { display: none; }
+    .main-header.nav-open .nav-toggle .ico-bars { display: none; }
+    .main-header.nav-open .nav-toggle .ico-xmark { display: inline-block; }
+    /* Reserva da Inter com as mesmas medidas: enquanto a Inter não chega, o texto sai na fonte do
+       aparelho redimensionada para ocupar o mesmo espaço, e a troca não empurra o layout (CLS).
+       Medidas calculadas com fontTools sobre o texto do próprio site: Arial e suas gêmeas métricas
+       (iPhone, Mac, Windows, Linux) e Roboto (Android). Conferidas no navegador; ver o README. */
+    @font-face { font-family: "Inter Reserva"; src: local("Arial"), local("ArialMT"), local("Arimo Regular"), local("Arimo"), local("Liberation Sans"), local("LiberationSans"); font-weight: 400; size-adjust: 106.02%; ascent-override: 91.37%; descent-override: 22.75%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva"; src: local("Arial Bold"), local("Arial-BoldMT"), local("Arimo Bold"), local("Arimo-Bold"), local("Liberation Sans Bold"), local("LiberationSans-Bold"); font-weight: 700; size-adjust: 102.4%; ascent-override: 94.6%; descent-override: 23.55%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto"), local("Roboto Regular"), local("Roboto-Regular"); font-weight: 400; size-adjust: 106.84%; ascent-override: 90.68%; descent-override: 22.58%; line-gap-override: 0%; }
+    @font-face { font-family: "Inter Reserva Android"; src: local("Roboto Bold"), local("Roboto-Bold"); font-weight: 700; size-adjust: 108.31%; ascent-override: 89.45%; descent-override: 22.27%; line-gap-override: 0%; }
+    :root {
+      --red: #cc0000;
+      --red-dark: #a30000;
+      --black: #0f1318;
+      --text: #1a202c;
+      --muted: #718096;
+      --line: #e2e8f0;
+      --soft: #f7f8fa;
+      --paper: #ffffff;
+      --max: 1100px;
+      --radius: 16px;
+      --shadow: 0 12px 28px rgba(16, 24, 40, .10);
+    }
+
+    * {
+      box-sizing: border-box;
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect x='13' y='2' width='6' height='28' rx='2' fill='%23cc0000'/%3E%3Crect x='2' y='13' width='28' height='6' rx='2' fill='%23cc0000'/%3E%3C/svg%3E") 16 16, crosshair;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Inter Reserva", "Inter Reserva Android", Arial, sans-serif;
+      color: var(--text);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .eyebrow {
+      color: var(--red);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      color: #fff;
+      font-size: clamp(2.6rem, 5.5vw, 5.1rem);
+      line-height: .96;
+      letter-spacing: -.055em;
+      margin-bottom: 1.2rem;
+    }
+    h2 {
+      color: var(--black);
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+      margin: .45rem 0 1rem;
+    }
+    h3 { color: var(--black); line-height: 1.18; }
+    section { padding: 86px 0; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      border-radius: 999px;
+      padding: .9rem 1.35rem;
+      border: 1px solid transparent;
+      font-weight: 850;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+      min-height: 46px;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-red { background: var(--red); color: #fff; box-shadow: 0 12px 30px rgba(237, 27, 46, .28); }
+    .btn-red:hover { background: var(--red-dark); }
+    .btn-white { background: #fff; color: var(--red); }
+    .btn-outline { border-color: var(--line); color: var(--black); background: #fff; }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+    /* ============================================================
+       HEADER / NAVBAR (Escola)
+       ============================================================ */
+    .main-header {
+      background-color: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 12px 28px rgba(16,24,40,0.10);
+    }
+
+    .header-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+      gap: 16px;
+      position: relative;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      height: 52px;
+      width: auto;
+      display: block;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-title {
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--ink);
+      letter-spacing: 0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 9.5px;
+      color: var(--red);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      justify-content: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13.5px;
+      letter-spacing: 0.2px;
+      transition: color 0.2s;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--red);
+      transition: width 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--red); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      border: 0;
+      background: transparent;
+      font-size: 24px;
+      color: var(--ink);
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    .header-collapse {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-left: auto;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Seletor de idioma (as páginas /en/ e /es/ usam as mesmas classes, via gerar_idiomas.py).
+       Sigla em texto, e não bandeira: bandeira é país, não idioma — espanhol não é a Espanha,
+       inglês não é o Reino Unido. Texto também é melhor para a busca: é um link rastreável com
+       hreflang, e imagem de bandeira não carrega sinal nenhum. */
+    .seletor-idioma {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .seletor-idioma a,
+    .seletor-idioma .idioma-atual {
+      padding: 5px 9px;
+      border-radius: 8px;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .seletor-idioma a { color: var(--muted); }
+
+    .seletor-idioma a:hover,
+    .seletor-idioma a:focus-visible { color: var(--red); background: rgba(204, 0, 0, .08); }
+
+    .seletor-idioma .idioma-atual { color: var(--red); background: rgba(204, 0, 0, .08); }
+
+    .btn-login-sutil {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-login-sutil:hover {
+      background: rgba(204, 0, 0, 0.08);
+    }
+
+    .footer-col p a { color: var(--black); font-weight: 600; }
+    .footer-col p a:hover { color: var(--red); }
+
+    /* Faixa de matrícula acima do cabeçalho (visível também no celular, sem abrir o menu). */
+    .faixa-matricula { background: var(--red); color: #fff; font-size: .9rem; }
+    .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; padding: 8px 0; text-align: center; }
+    .faixa-matricula span { color: #fff; font-weight: 600; }
+    .faixa-matricula a { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--red); font-weight: 800; padding: .32rem .9rem; border-radius: 999px; white-space: nowrap; transition: background .2s, transform .18s; }
+    .faixa-matricula a:hover { background: #ffe9e9; transform: translateY(-1px); }
+    .faixa-matricula a i { font-size: .8em; }
+    @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 8px 0; gap: 6px 12px; } }
+
+    /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
+    /* Menu compacto até 1440 px e sanfona até 1320 px: o menu é centralizado com position:absolute e não vê o
+       seletor de idioma à direita; entre 1181 e 1300 px e entre 1367 e 1420 px ele encavalava no PT/EN/ES. */
+    @media (max-width: 1440px) {
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: .86rem; }
+    }
+    @media (max-width: 1320px) {
+      .header-container { flex-wrap: nowrap; justify-content: space-between; gap: 10px; padding: 12px 16px; }
+      .nav-toggle { display: inline-flex; }
+      .header-collapse {
+        display: none;
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: var(--paper);
+        flex-direction: column;
+        padding: 8px 20px 18px;
+        box-shadow: 0 18px 40px rgba(11,18,32,.12);
+        border-top: 1px solid var(--line);
+        margin-left: 0;
+      }
+      .main-header.nav-open .header-collapse { display: flex; }
+      .nav-links {
+        position: static;
+        transform: none;
+        left: auto;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+      }
+      .nav-links a {
+        padding: 14px 4px;
+        border-bottom: 1px solid var(--line);
+        width: 100%;
+      }
+      .nav-links a::after { display: none; }
+      .header-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .header-actions .btn-login-sutil { justify-content: center; width: 100%; }
+      .header-container { padding: 14px 20px !important; }
+      .logo-area {
+        display: flex !important;
+        align-items: center !important;
+        gap: 16px !important;
+        min-width: 0 !important;
+      }
+      .logo-img {
+        height: 56px !important;
+        width: auto !important;
+        flex-shrink: 0 !important;
+      }
+      .brand-text {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        line-height: 1.15 !important;
+        border-left: 2px solid var(--line) !important;
+        padding-left: 14px !important;
+      }
+      .brand-title {
+        font-size: 19px !important;
+        font-weight: 900 !important;
+        color: var(--ink) !important;
+        text-transform: uppercase !important;
+        letter-spacing: -0.3px !important;
+      }
+      .brand-subtitle {
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        color: var(--red) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-top: 2px !important;
+      }
+    }
+
+    .hero {
+      min-height: 690px;
+      padding: 0;
+      position: relative;
+      color: #fff;
+      overflow: hidden;
+      background: #111;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .88) 0%, rgba(0, 0, 0, .68) 42%, rgba(0, 0, 0, .22) 100%),
+        url("assets/otim/hero-equipe-grupo-1440.webp") center 30% / cover no-repeat;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 12px;
+      height: auto;
+      background: var(--red);
+      opacity: .96;
+    }
+    .hero .wrap {
+      min-height: 690px;
+      display: grid;
+      grid-template-columns: minmax(0, 680px) 1fr;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      padding: 76px 0;
+    }
+    .hero .eyebrow { color: #fff; }
+    .hero p {
+      max-width: 620px;
+      color: rgba(255, 255, 255, .88);
+      font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+      margin-bottom: 1.7rem;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-card {
+      position: absolute;
+      right: 0;
+      bottom: 44px;
+      max-width: 430px;
+      background: rgba(255,255,255,.92);
+      color: var(--black);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border-left: 5px solid var(--red);
+    }
+    .hero-card strong { display: block; color: var(--red); font-size: .82rem; text-transform: uppercase; letter-spacing: .1em; margin-bottom: .35rem; }
+    .hero-card p { color: #333; font-size: .95rem; margin: 0; }
+
+    .info-strip {
+      background: var(--red);
+      color: #fff;
+      padding: 22px 0;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr;
+      gap: 18px;
+    }
+    .info-item { border-left: 1px solid rgba(255,255,255,.34); padding-left: 18px; }
+    .info-item b { display: block; font-size: 1rem; }
+    .info-item span { color: rgba(255,255,255,.84); font-size: .9rem; }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
+      align-items: center;
+    }
+    .lead { color: var(--muted); font-size: 1.1rem; max-width: 68ch; }
+    .photo-stack {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+    .photo-stack img {
+      width: 100%;
+      border-radius: var(--radius);
+      object-fit: cover;
+      box-shadow: 0 14px 32px rgba(0,0,0,.12);
+    }
+    .photo-stack img:first-child { aspect-ratio: 4 / 5; }
+    .photo-stack img:last-child { aspect-ratio: 4 / 4.7; transform: translateY(34px); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 34px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      min-height: 225px;
+    }
+    .card .num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff0f2;
+      color: var(--red);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .card p { color: var(--muted); margin-bottom: 0; }
+
+    .courses { background: var(--soft); }
+    .course-box {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 46px rgba(0,0,0,.08);
+    }
+    .course-box img { height: 100%; min-height: 430px; width: 100%; object-fit: cover; object-position: top; }
+    .course-copy { padding: 42px; }
+    .check-list { list-style: none; padding: 0; margin: 22px 0 28px; display: grid; gap: 12px; }
+    .check-list li { display: flex; gap: 10px; color: #444; }
+    .check-list li::before { content: "+"; color: var(--red); font-weight: 900; }
+
+    /* ============================================================
+       NOVO: SLIDER DE CURSOS EM DESTAQUE
+       ============================================================ */
+    .course-slide { display: none; }
+    .course-slide.active { display: block; animation: campaignFade .4s ease; }
+    .courses-slider-nav { display: flex; gap: 10px; margin: 28px 0 0; flex-wrap: wrap; }
+    .course-tab {
+      background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 10px 20px;
+      font-weight: 700; font-size: 13.5px; color: var(--muted); cursor: pointer; transition: all .2s ease;
+    }
+    .course-tab.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .courses-dots { display: flex; gap: 8px; justify-content: center; margin-top: 24px; }
+    .course-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); border: none; cursor: pointer; padding: 0; }
+    .course-dot.active { background: var(--red); }
+
+    /* ============================================================
+       NOVO: OUTROS CURSOS (mini-cards)
+       ============================================================ */
+    .more-courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 36px; }
+    .mini-course-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease; text-align: left;
+    }
+    .mini-course-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,.1); }
+    .mini-course-thumb { aspect-ratio: 4/3; overflow: hidden; background: #eee; }
+    .mini-course-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .mini-course-body { padding: 18px 20px 22px; }
+    .mini-course-body h4 { font-size: 15.5px; margin: 0 0 6px; color: var(--black); }
+    .mini-course-body p { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
+    .mini-course-body .btn { width: 100%; padding: 10px 18px; font-size: 13px; }
+    @media (max-width: 920px) { .more-courses-grid { grid-template-columns: 1fr; } }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .alert { background: var(--black); color: #fff; padding: 72px 0; }
+    .alert-grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 48px; align-items: center; }
+    .alert-foto { margin: 0; position: relative; border-radius: var(--radius); overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
+    .alert-foto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .alert-foto figcaption { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; align-items: center; gap: 9px; padding: 10px 14px; border-radius: 12px; background: rgba(15, 19, 24, .78); color: #fff; font-size: .85rem; backdrop-filter: blur(6px); }
+    .alert-foto figcaption i { color: #ff6b6b; }
+    .alert h2 { color: #fff; }
+    .alert .lead { color: rgba(255,255,255,.76); }
+    .alert-list { list-style: none; display: grid; gap: 12px; margin: 24px 0; padding: 0; }
+    .alert-item { display: flex; gap: 14px; align-items: flex-start; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 14px 16px; }
+    .alert-item > i { width: 40px; height: 40px; border-radius: 12px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1rem; }
+    .alert-item b { color: #fff; display: block; }
+    .alert-item span { color: rgba(255,255,255,.72); font-size: .93rem; }
+    .alert-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; }
+    .alert-link { color: #fff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.35); padding-bottom: 2px; }
+    .alert-link:hover { border-color: #fff; }
+    .alert-nota { margin: 14px 0 0; color: rgba(255,255,255,.55); font-size: .85rem; }
+    @media (max-width: 920px) { .alert { padding: 48px 0; } .alert-grid { gap: 28px; } }
+
+    .actions {
+      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+    }
+    .actions-head {
+      display: grid;
+      grid-template-columns: minmax(0, 690px) minmax(280px, 1fr);
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+    .actions-head .lead { margin-bottom: 0; }
+    .actions-kicker {
+      border-left: 5px solid var(--red);
+      padding: 18px 0 18px 20px;
+      color: #4f4f4f;
+      font-weight: 650;
+    }
+    .actions-layout {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+    .feature-action {
+      position: relative;
+      min-height: 560px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 18px 46px rgba(0,0,0,.12);
+      background: #111;
+    }
+    .feature-action img,
+    .action-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .feature-action img {
+      position: absolute;
+      inset: 0;
+    }
+    .feature-action::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.78));
+    }
+    .feature-caption {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 28px;
+      z-index: 2;
+      color: #fff;
+    }
+    .feature-caption .eyebrow { color: #fff; }
+    .feature-caption h3 {
+      color: #fff;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: -.04em;
+      margin: .35rem 0 .65rem;
+    }
+    .feature-caption p {
+      color: rgba(255,255,255,.84);
+      max-width: 58ch;
+      margin-bottom: 0;
+    }
+    .action-list {
+      display: grid;
+      gap: 18px;
+    }
+    .action-tile {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      min-height: 174px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(0,0,0,.06);
+    }
+    .action-copy {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .action-copy span {
+      color: var(--red);
+      font-size: .73rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 6px;
+    }
+    .action-copy h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .action-copy p {
+      color: var(--muted);
+      font-size: .94rem;
+      margin: 0;
+    }
+    .actions-cta {
+      margin-top: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .contact { background: var(--soft); }
+    .contact-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 28px; align-items: stretch; }
+    .contact-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 34px; display: flex; flex-direction: column; }
+    .contact-card .lead { font-size: 1rem; margin: 4px 0 20px; }
+    .contact-mail { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; padding: 16px 18px; border: 1.5px solid var(--red); border-radius: 14px; background: #fff7f7; text-decoration: none; color: var(--black); transition: box-shadow .15s, transform .15s; }
+    .contact-mail:hover { box-shadow: 0 10px 24px rgba(204, 0, 0, .14); transform: translateY(-1px); }
+    .contact-mail-icone { width: 46px; height: 46px; border-radius: 12px; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+    .contact-mail-texto { flex: 1; min-width: 0; }
+    .contact-mail-texto b { display: block; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--red); }
+    .contact-mail-texto span { display: block; font-weight: 700; font-size: .92rem; color: var(--black); overflow-wrap: anywhere; }
+    .contact-mail-acao { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--red); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-size: .9rem; transition: background .15s, color .15s; }
+    .contact-mail:hover .contact-mail-acao { background: var(--red); color: #fff; }
+    .contact-copiar { align-self: flex-start; margin: 10px 0 20px; background: none; border: 0; color: var(--muted); font: inherit; font-size: .88rem; cursor: pointer; padding: 4px 0; display: inline-flex; gap: 7px; align-items: center; }
+    .contact-copiar:hover { color: var(--red); }
+    .contact-copiar.ok { color: #0f7b3e; }
+    .contact-canais { display: grid; gap: 10px; }
+    .contact-canal { display: flex; align-items: center; gap: 14px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 14px; text-decoration: none; color: var(--text); background: #fff; transition: border-color .15s, background .15s; }
+    .contact-canal:hover { border-color: #cbd5e1; background: var(--soft); }
+    .contact-canal > i:first-child { width: 40px; height: 40px; border-radius: 12px; background: var(--soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .contact-canal > span { flex: 1; min-width: 0; font-size: .93rem; color: var(--muted); overflow-wrap: anywhere; }
+    .contact-canal > span b { display: block; color: var(--black); }
+    .contact-canal .seta { color: #a0aec0; font-size: .8rem; }
+    .contact-cnpj { margin: auto 0 0; padding-top: 18px; font-size: .8rem; color: var(--muted); }
+    .insta-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .insta-topo { display: flex; align-items: center; gap: 12px; }
+    .insta-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #f4a3a3; }
+    .insta-topo > div { flex: 1; min-width: 0; }
+    .insta-topo b { display: block; color: var(--black); font-size: .95rem; overflow-wrap: anywhere; }
+    .insta-topo small { color: var(--muted); font-size: .84rem; }
+    .insta-seguir { padding: 10px 16px; font-size: .9rem; white-space: nowrap; }
+    .insta-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; align-content: start; }
+    .insta-foto { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 10px; background: var(--soft); }
+    .insta-foto.grande { grid-column: span 2; grid-row: span 2; }
+    .insta-foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease, opacity .4s ease; }
+    .insta-foto:hover img { transform: scale(1.06); }
+    .insta-foto.trocando img { opacity: 0; }
+    .insta-foto span { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px; background: linear-gradient(transparent, rgba(0, 0, 0, .65)); color: #fff; font-size: .76rem; font-weight: 700; opacity: 0; transition: opacity .25s; }
+    .insta-foto.grande span { font-size: .9rem; padding-bottom: 12px; }
+    .insta-foto:hover span, .insta-foto:focus-visible span { opacity: 1; }
+    .insta-rodape { margin: auto 0 0; color: var(--muted); font-size: .85rem; display: flex; gap: 7px; align-items: center; }
+    .insta-rodape i { color: var(--red); }
+    @media (max-width: 620px) {
+      .contact-card { padding: 24px 20px; }
+      .contact-mail { padding: 14px; gap: 10px; }
+      .contact-mail-icone { display: none; }
+      .contact-mail-texto span { font-size: .88rem; }
+      .insta-topo { flex-wrap: wrap; }
+      .insta-topo > div { flex: 1 1 200px; }
+      .insta-seguir { width: 100%; justify-content: center; }
+      .contact-canal { padding: 12px 14px; }
+      .insta-card { padding: 14px; }
+      .insta-seguir { padding: 8px 12px; font-size: .85rem; }
+    }
+
+    footer {
+      background: var(--stone);
+      border-top: 3px solid var(--red);
+      color: var(--muted);
+      padding: 0;
+    }
+
+    .footer-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 36px;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1.3fr 1fr;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-logo {
+      height: 64px;
+      width: auto;
+      display: block;
+      margin-bottom: 12px;
+      object-fit: contain;
+    }
+
+    .footer-brand p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .footer-col h4 {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--black);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 14px;
+    }
+
+    .footer-col p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0 0 8px;
+    }
+
+    .footer-col p i {
+      color: var(--red);
+      width: 16px;
+      margin-right: 6px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .footer-social a {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--line);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .footer-social a:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--line);
+      background: var(--line);
+      padding: 16px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer-inner a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .footer-inner a:hover { color: var(--red); }
+    .footer-inner .sep { color: var(--line); }
+
+    @media (max-width: 920px) {
+      nav { display: none !important; }
+      /* Regra do menu antigo acima; o menu sanfona atual (.header-collapse) precisa dos links visíveis quando aberto. */
+      .main-header .header-collapse .nav-links { display: flex !important; }
+      .menu-btn { display: block; }
+      .nav.open nav {
+        display: flex;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 76px;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px 20px 22px;
+        transform: none;
+      }
+      .nav .btn-red { display: none; }
+      .hero .wrap { grid-template-columns: 1fr; }
+      .hero-card { position: static; margin-top: 28px; }
+      .info-grid, .cards, .split, .course-box, .alert-grid, .contact-grid, .footer-grid, .actions-head, .actions-layout { grid-template-columns: 1fr; }
+      .photo-stack img:last-child { transform: none; }
+      .feature-action { min-height: 420px; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 28px, var(--max)); }
+      section { padding: 62px 0; }
+      .topbar .wrap { align-items: flex-start; flex-direction: column; }
+      .brand img { width: 46px; height: 46px; }
+      .hero, .hero .wrap { min-height: 670px; }
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.52) 58%, rgba(0,0,0,.2) 100%),
+          url("assets/otim/hero-equipe-grupo-960.webp") center 20% / cover no-repeat;
+      }
+      .hero-actions, .cta-row { flex-direction: column; align-items: stretch; }
+      .course-copy { padding: 28px; }
+      .action-tile { display: block; }
+      .action-tile img {
+        display: block; position: static; width: 100%; height: auto;
+        aspect-ratio: 16 / 9; object-fit: cover;
+      }
+      .action-copy { position: static; }
+      .feature-action { min-height: 500px; }
+      .feature-caption { left: 20px; right: 20px; bottom: 22px; }
+    }
+
+    /* ============================================================
+       NOVO: SLIDER DE CAMPANHAS ATIVAS
+       ============================================================ */
+    .campaign-slider { position: relative; overflow: hidden; background: #0d0d0d; cursor: pointer; }
+    .campaign-slide { display: none; }
+    .campaign-slide.active { display: block; animation: campaignFade .5s ease; }
+    @keyframes campaignFade { from { opacity: 0; } to { opacity: 1; } }
+    .campaign-slide a { display: block; width: 100%; }
+    .campaign-slide img { width: 100%; height: auto; display: block; }
+    .campaign-slider-dots {
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 5;
+    }
+    .campaign-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.45);
+      border: none; padding: 0; cursor: pointer;
+    }
+    .campaign-dot.active { background: #fff; }
+    .campaign-slider-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.4); color: #fff;
+      width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .campaign-slider-arrow:hover { background: rgba(255,255,255,.3); }
+    .campaign-slider-arrow.prev { left: 16px; }
+    .campaign-slider-arrow.next { right: 16px; }
+    @media (max-width: 620px) { .campaign-slider-arrow { display: none; } }
+
+    /* ============================================================
+       NOVO: CAMPANHAS ATIVAS (cards)
+       ============================================================ */
+    .campaigns-section { background: var(--soft); }
+    .campaigns-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+    .campaign-card {
+      background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line);
+      transition: transform .2s ease, box-shadow .2s ease; display: flex; flex-direction: column;
+    }
+    .campaign-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .campaign-card-thumb { aspect-ratio: 16/9; overflow: hidden; background: #0d0d0d; }
+    .campaign-card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .campaign-card-thumb.placeholder {
+      display: flex; align-items: center; justify-content: center; color: var(--muted);
+      font-size: 13px; background: var(--soft); border-bottom: 1px dashed var(--line);
+    }
+    .campaign-card-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+    .campaign-card-body h3 { font-size: 19px; margin: 8px 0 10px; color: var(--black); }
+    .campaign-card-body p { font-size: 14px; color: var(--muted); margin-bottom: 18px; flex: 1; }
+    @media (max-width: 920px) { .campaigns-grid { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       NOVO: PARCEIROS CNPJ
+       ============================================================ */
+    .partners-section { background: #fff; }
+    .partners-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 18px; margin: 40px 0; }
+    .partner-slot {
+      background: var(--soft); border: 1px solid var(--line); border-radius: 10px; height: 90px;
+      display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .partner-slot img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(20%); }
+    .partner-slot.placeholder { border: 1px dashed var(--line); color: #b7b7b7; font-size: 12px; }
+    .partner-cta {
+      background: var(--soft); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 32px; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .partner-cta h3 { font-size: 20px; margin-bottom: 6px; color: var(--black); }
+    .partner-cta p { color: var(--muted); font-size: 14px; margin: 0; }
+    @media (max-width: 920px) { .partners-logos { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ============================================================
+       NOVO: NEWSLETTER
+       ============================================================ */
+    .newsletter-section { background: var(--red); color: #fff; text-align: center; }
+    .newsletter-section .eyebrow { color: #fff; opacity: .85; }
+    .newsletter-section h2 { color: #fff; }
+    .newsletter-section p.lead { color: rgba(255,255,255,.92); max-width: 560px; margin: 0 auto 28px; }
+    .newsletter-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .newsletter-form input {
+      flex: 1; min-width: 200px; padding: 14px 16px; border-radius: 999px; border: none; font-size: 14px;
+    }
+    .newsletter-form .btn { background: var(--black); color: #fff; white-space: nowrap; }
+    .newsletter-form .btn:hover { background: #000; }
+
+    /* ============================================================
+       NOVO: MATRÍCULA CURSOS PRESENCIAIS (seletor de curso na home)
+       ============================================================ */
+    .matricula-section { background: #fff; }
+    .matricula-box { background: #fff; border: 1px solid var(--line); border-left: 6px solid var(--red); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow); }
+    .matricula-box .lead { max-width: 70ch; }
+    .matricula-form { margin-top: 8px; position: relative; }
+    .matricula-opcoes { border: 0; margin: 0 0 18px; padding: 0; min-width: 0; }
+    .matricula-grupo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 8px; }
+    .matricula-grupo-titulo { flex: 0 0 100%; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 8px 0 2px; }
+    .matricula-opcoes input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .matricula-pilula { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 1.5px solid var(--line); border-radius: 999px; background: #fff; color: var(--black); font-weight: 600; font-size: .93rem; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s; }
+    .matricula-pilula small { color: var(--muted); font-weight: 500; font-size: .82rem; white-space: nowrap; }
+    .matricula-pilula:hover { border-color: #cbd5e1; }
+    .matricula-opcoes input:checked + .matricula-pilula { border-color: var(--red); background: #fff5f5; color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
+    .matricula-opcoes input:checked + .matricula-pilula small { color: var(--red); }
+    .matricula-opcoes input:focus-visible + .matricula-pilula { outline: 2px solid var(--red); outline-offset: 2px; }
+    .matricula-acao { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+    .matricula-escolhido { color: var(--muted); font-size: .92rem; }
+    .matricula-escolhido.ok { color: var(--black); font-weight: 600; }
+    .matricula-escolhido.erro { color: var(--red); font-weight: 600; }
+    .matricula-nota { margin: 16px 0 0; font-size: .92rem; color: var(--muted); }
+    .matricula-nota a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    @media (max-width: 620px) { .matricula-box { padding: 24px 20px; } .matricula-form .btn { width: 100%; } .matricula-pilula { padding: 9px 13px; font-size: .88rem; } }
+
+    /* ============================================================
+       NOVO: FAQ
+       ============================================================ */
+    .faq-section { background: #fff; }
+    .faq-list { max-width: 760px; }
+    .faq-item {
+      background: var(--soft); border: 1px solid var(--line); border-radius: 12px;
+      margin-bottom: 14px; overflow: hidden;
+    }
+    .faq-item summary {
+      list-style: none; cursor: pointer; padding: 20px 24px; font-weight: 800; font-size: 15.5px;
+      color: var(--black); display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: "+"; color: var(--red); font-size: 22px; font-weight: 900; flex-shrink: 0;
+      transition: transform .2s ease;
+    }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+    .faq-item .faq-answer a { color: var(--red); font-weight: 700; text-decoration: underline; }
+    .faq-grupo { margin: 30px 0 12px; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 900; }
+    .faq-list .faq-grupo:first-child { margin-top: 0; }
+  </style>
+  <style>
+    /* Slider de campanhas. Fica fora do primeiro <style>, que os geradores copiam para as outras páginas (só a
+       home tem o slider). Todos os banners em 1920x901: com a proporção fixa, a altura do slider não muda a
+       cada troca automática, nem quando o navegador escolhe uma largura com altura arredondada. */
+    .campaign-slide picture { display: block; }
+    .campaign-slide img { aspect-ratio: 1920 / 901; object-fit: cover; }
+    .campaign-slide.sem-link { cursor: default; } /* banner só informativo: sem a mãozinha de link */
+    /* Pontos e setas sobre um fundo escuro translúcido: brancos puros sumiam nos banners de fundo claro. */
+    .campaign-slider-dots { background: rgba(0,0,0,.32); padding: 6px 10px; border-radius: 999px; }
+    .campaign-slider-arrow { background: rgba(0,0,0,.32); border-color: rgba(255,255,255,.55); }
+    .campaign-slider-arrow:hover { background: rgba(0,0,0,.5); }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+  <script>
+    // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
+    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    gtag('js', new Date());
+
+    gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
+  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[]}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
+  // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
+  fbq('init', '2224500131617302');
+  // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
+  window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
+  fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
+  </script>
+  <script>
+    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
+    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
+    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
+    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    (function () {
+      var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
+      var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
+      var baixados = {};
+      function ler() {
+        var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/);
+        if (!m) return null;
+        var p = {};
+        try { decodeURIComponent(m[1]).split('&').forEach(function (par) { var i = par.indexOf('='); if (i > 0) p[par.slice(0, i)] = par.slice(i + 1); }); } catch (e) { return null; }
+        return p.v === '1' ? { estatistica: p.e === '1', marketing: p.m === '1', revisao: parseInt(p.r, 10) || 0 } : null;
+      }
+      function baixar(src) {
+        if (baixados[src]) return;
+        baixados[src] = 1;
+        var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s);
+      }
+      // API de Conversões: com "sim" para marketing, o evento vai também ao servidor do site, com o mesmo
+      // eventID do Pixel, e de lá à Meta. Só no site principal (o endereço é relativo a ele).
+      var SERVIDOR = /^(www\.)?cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '/matricula-cursos-presenciais/api/medicao.php' : '';
+      // Revisão do texto do aviso que vale para o servidor (r no cookie; MCP_META_REVISAO em api/lib/meta.php e
+      // REVISAO em consentimento.js são o mesmo número). O Pixel não depende dela.
+      var REVISAO = 2;
+      var repassados = {};
+      function novoId(prefixo) { return (prefixo || 'ev') + '.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10); }
+      var pendentes = [];
+      function servidor(evento, id, curso) {
+        if (!SERVIDOR || !id || repassados[id] || !window.fetch) return;
+        var c = ler();
+        // Sem escolha ainda (o checkout dispara ao abrir), ou "sim" num texto anterior que o aviso está
+        // perguntando de novo: espera, como a fila do Pixel. "Não" descarta.
+        if (!c || (c.marketing && c.revisao < REVISAO)) { if (pendentes.length < 20) pendentes.push([evento, id, curso]); return; }
+        if (!c.marketing) return;
+        repassados[id] = 1;
+        var corpo = { evento: evento, id: id, url: location.href };
+        if (curso) corpo.curso = String(curso);
+        try {
+          fetch(SERVIDOR, { method: 'POST', keepalive: true, credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) })['catch'](function () {});
+        } catch (e) { /* navegador sem fetch: fica só o Pixel */ }
+      }
+      function aplicar(c) {
+        c = c || ler();
+        if (!c) return;
+        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
+        gtag('consent', 'update', {
+          analytics_storage: c.estatistica ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+        fbq('consent', c.marketing ? 'grant' : 'revoke');
+        if (c.estatistica) baixar(GTAG);
+        var esperando = pendentes;
+        pendentes = [];
+        if (c.marketing) {
+          baixar(PIXEL);
+          servidor('PageView', window.cvrjIdPageView);
+          esperando.forEach(function (p) { servidor(p[0], p[1], p[2]); });
+        }
+      }
+      window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
+      function agendar() {
+        if (!ler()) return;
+        if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
+        else setTimeout(function () { aplicar(); }, 800);
+      }
+      if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
+    })();
+  </script>
+  <script src="/consentimento/consentimento.js?v=73b1fa99d5" defer></script>
+  <!-- End Meta Pixel Code -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "@id": "https://cruzvermelhariodejaneiro.org/#organizacao",
+  "name": "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro",
+  "alternateName": [
+    "Cruz Vermelha RJ",
+    "CVB-RJ"
+  ],
+  "url": "https://cruzvermelhariodejaneiro.org/",
+  "logo": "https://cruzvermelhariodejaneiro.org/assets/logo-cvb-rj.png",
+  "image": "https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg",
+  "email": "contato@cruzvermelhariodejaneiro.org",
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "customer service", "email": "contato@cruzvermelhariodejaneiro.org", "availableLanguage": ["pt-BR", "en", "es"]}],
+  "telephone": "+55-21-99992-2864",
+  "taxID": "08.560.973/0001-97",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Praça da Cruz Vermelha, 10",
+    "addressLocality": "Rio de Janeiro",
+    "addressRegion": "RJ",
+    "postalCode": "20230-130",
+    "addressCountry": "BR"
+  },
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "Estado do Rio de Janeiro"
+  },
+  "sameAs": [
+    "https://www.instagram.com/cruzvermelhabrasileirarj/",
+    "https://www.facebook.com/profile.php?id=61591390052128",
+    "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
+  ],
+  "subOrganization": {
+    "@type": "EducationalOrganization",
+    "@id": "https://escola.cursoscruzvermelha.org/#escola",
+    "name": "Escola de Educação e Saúde CVB-RJ",
+    "url": "https://escola.cursoscruzvermelha.org/",
+    "parentOrganization": {
+      "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
+    }
+  }
+}
+  </script>
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://cruzvermelhariodejaneiro.org/#site",
+    "url": "https://cruzvermelhariodejaneiro.org/",
+    "name": "Cruz Vermelha Brasileira Rio de Janeiro",
+    "inLanguage": "pt-BR",
+    "publisher": {
+      "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
+    }
+  }
+]
+  </script>
+  <script type="application/ld+json" id="faq-ld">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://cruzvermelhariodejaneiro.org/#faq",
+  "url": "https://cruzvermelhariodejaneiro.org/#faq",
+  "name": "Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro",
+  "inLanguage": "pt-BR",
+  "isPartOf": {
+    "@id": "https://cruzvermelhariodejaneiro.org/#site"
+  },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Cruz Vermelha Brasileira Rio de Janeiro oferece sete cursos presenciais na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Primeiros Socorros Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida, o BLS (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos, curso livre (160 horas), e Micropigmentação Labial (24 horas). Todos têm certificado da filial, e a vaga é garantida com a inscrição de R$ 99, por PIX ou cartão. Não há cursos técnicos nem curso de enfermagem. Veja carga horária, escolaridade mínima e valor de cada curso na página de matrícula em cursos presenciais."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Escolha o curso na página de matrícula em cursos presenciais e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em escola.cursoscruzvermelha.org. Dúvidas? Use o chat do site, que responde por e-mail."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pelo site, a inscrição em qualquer curso presencial da Cruz Vermelha Brasileira Rio de Janeiro custa R$ 99, por PIX ou cartão, e reserva a vaga; quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola: à vista, R$ 150 em Suporte Básico de Vida, Punção Venosa e Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte. Há parcelamento, com juros. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada. Confira na página de matrícula."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na página de matrícula antes de garantir a vaga com a inscrição de R$ 99."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui todas as etapas de cada curso presencial, por uma instituição reconhecida nacional e internacionalmente pela tradição em formação humanitária e de emergências. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na página de matrícula."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na página de matrícula; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O certificado dos cursos é reconhecido pelo MEC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde fazer curso de primeiros socorros no Rio de Janeiro com certificado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Na Cruz Vermelha Brasileira Rio de Janeiro os cursos de primeiros socorros são presenciais, na Praça da Cruz Vermelha, 10, Centro, com certificado da filial e abertos a qualquer pessoa, mesmo fora da saúde. São três opções, todas exigindo apenas Ensino Fundamental: Primeiros Socorros Básico (8 horas, R$ 180), Lei Lucas - Ambientes com Crianças (8 horas, R$ 150) e Suporte Básico de Vida (4 horas, R$ 150), valores à vista pagos depois, na plataforma da escola. Você aprende avaliação da vítima, RCP, controle de hemorragias, engasgos e traumas, com prática supervisionada. A inscrição de R$ 99 garante a vaga: escolha o seu na página de matrícula em cursos presenciais."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que faz um bombeiro civil e quais são os requisitos para fazer o curso?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago depois na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como se tornar cuidador de idosos e o que o curso ensina?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da filial. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na matrícula do curso de Cuidador de Idosos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social, e podem somar esforços em campanhas como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como comparar os cursos de primeiros socorros no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compare quatro coisas, e não só o preço anunciado: carga horária, prática real com manequim, quem emite o certificado e o custo total. Na Cruz Vermelha Brasileira Rio de Janeiro o custo total é fechado e aparece antes do pagamento: inscrição de R$ 99 mais o valor do curso - R$ 180 no Primeiros Socorros Básico, de 8 horas, R$ 150 na Lei Lucas, de 8 horas, e R$ 150 no Suporte Básico de Vida, de 4 horas. Sem mensalidade, sem taxa de certificado e sem material à parte. Confira na página de matrícula."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Existe curso de cuidador de idosos gratuito no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da filial, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. Para garantir a vaga agora, faça a matrícula em Cuidador de Idosos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da filial. Veja o curso Lei Lucas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O que é a Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação de voluntários, em cursos de primeiros socorros e formação profissional, em educação preventiva e em campanhas de apoio comunitário. A história da filial, do edifício e das atividades está no verbete da Wikipédia; os canais oficiais estão neste site, na página de links."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail. Os canais oficiais da filial estão na página de links."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-copy" viewBox="0 0 512 512"><path d="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V336c0 1.5 0 3.1 .1 4.6L67.6 283c-16-15.2-41.3-14.6-56.6 1.4s-14.6 41.3 1.4 56.6L124.8 448c43.1 41.1 100.4 64 160 64H304c97.2 0 176-78.8 176-176V128c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V32z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
+  <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
+    <div class="wrap">
+      <span>Cursos presenciais da Cruz Vermelha: inscrição de R$ 99 e vaga garantida.</span>
+      <a href="/matricula-cursos-presenciais/">Fazer matrícula agora <i class="fa-solid fa-arrow-right" aria-hidden="true"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></a>
+    </div>
+  </div>
+  <header class="main-header">
+    <div class="header-container">
+      <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
+        <img alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img" src="assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
+      </button>
+
+      <div class="header-collapse">
+        <nav class="nav-links">
+          <a href="#institucional">Sobre</a>
+          <a href="/historia/">História</a>
+          <a href="/noticias/">Notícias</a>
+          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
+          <a href="#campanhas">Campanhas</a>
+          <a href="#parceiros">Parceiros</a>
+          <a href="#faq">FAQ</a>
+          <a href="equipe.html">Equipe</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="header-actions">
+          <div class="seletor-idioma" role="navigation" aria-label="Idioma">
+            <span class="idioma-atual" aria-current="true" lang="pt-BR">PT</span>
+            <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
+            <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
+          </div>
+          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
+  <div class="campaign-slider" id="campaignSlider">
+    <div class="campaign-slide active sem-link" data-slide="0">
+      <picture>
+        <source type="image/avif" srcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" sizes="100vw" width="1920" height="901">
+        <img alt="Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Evento interno." src="assets/otim/forca-tarefa-el-nino-banner-1200.webp" srcset="assets/otim/forca-tarefa-el-nino-banner-640.webp 640w, assets/otim/forca-tarefa-el-nino-banner-960.webp 960w, assets/otim/forca-tarefa-el-nino-banner-1200.webp 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.webp 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
+      </picture>
+    </div>
+    <div class="campaign-slide" data-slide="1">
+      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
+        <img alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/impacto-cores-banner-1920.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" loading="lazy" decoding="async">
+      </a>
+    </div>
+    <div class="campaign-slide" data-slide="2">
+      <a href="campanha-agasalho.html">
+        <img alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/agasalho-banner-1920.webp" srcset="assets/otim/agasalho-banner-640.webp 640w, assets/otim/agasalho-banner-1200.webp 1200w, assets/otim/agasalho-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 1100px" width="1920" height="901" loading="lazy" decoding="async">
+      </a>
+    </div>
+    <button class="campaign-slider-arrow prev" onclick="changeCampaignSlide(-1)" aria-label="Campanha anterior">&#8249;</button>
+    <button class="campaign-slider-arrow next" onclick="changeCampaignSlide(1)" aria-label="Próxima campanha">&#8250;</button>
+    <div class="campaign-slider-dots">
+      <button class="campaign-dot active" onclick="goToCampaignSlide(0)" aria-label="Slide 1"></button>
+      <button class="campaign-dot" onclick="goToCampaignSlide(1)" aria-label="Slide 2"></button>
+      <button class="campaign-dot" onclick="goToCampaignSlide(2)" aria-label="Slide 3"></button>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var current = 0;
+      var slides = document.querySelectorAll('.campaign-slide');
+      var dots = document.querySelectorAll('.campaign-dot');
+      var timer;
+      // Só a imagem do primeiro slide entra na carga da página; as outras têm loading="lazy". Um pouco antes da
+      // troca, a do próximo slide começa a baixar, para a troca não mostrar o fundo vazio: só com a página já
+      // carregada, a aba visível, o slider na tela e sem a economia de dados ligada (quem não vai ver a troca
+      // não paga por ela).
+      var slider = document.getElementById('campaignSlider');
+      var preparo;
+      function prepararProximo(){
+        if (document.readyState !== 'complete' || document.visibilityState !== 'visible') return;
+        if (navigator.connection && navigator.connection.saveData) return;
+        var r = slider.getBoundingClientRect();
+        if (r.bottom <= 0 || r.top >= window.innerHeight) return;
+        var img = slides[(current + 1) % slides.length].querySelector('img');
+        if (img && img.loading === 'lazy') img.loading = 'eager';
+      }
+      function render(){
+        slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
+        dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
+      }
+      window.goToCampaignSlide = function(i){ current = i; render(); resetTimer(); };
+      window.changeCampaignSlide = function(dir){
+        current = (current + dir + slides.length) % slides.length;
+        render(); resetTimer();
+      };
+      function resetTimer(){
+        clearInterval(timer);
+        clearTimeout(preparo);
+        timer = setInterval(function(){ changeCampaignSlide(1); }, 6000);
+        preparo = setTimeout(prepararProximo, 4500);
+      }
+      resetTimer();
+    })();
+  </script>
+
+  <main id="inicio">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">Filial do Estado do Rio de Janeiro</p>
+          <h1 id="hero-title">Preparados para servir. Prontos para cuidar.</h1>
+          <p>Formação, voluntariado e presença humanitária para fortalecer comunidades, orientar a população e agir com técnica quando cada minuto importa.</p>
+          <div class="hero-actions">
+            <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conheça os cursos</a>
+            <a class="btn btn-white" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Seja voluntário</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Dados institucionais">
+          <strong>Palácio da Cruz Vermelha</strong>
+          <p><b>Capacitação contínua no Rio de Janeiro.</b> Voluntários, instrutores e equipes preparados para transformar cuidado em ação.</p>
+          <p style="margin-top:.55rem"><b>CNPJ:</b> 08.560.973/0001-97</p>
+        </aside>
+      </div>
+    </section>
+
+    <div class="info-strip">
+      <div class="wrap info-grid">
+        <div class="info-item"><b>CNPJ</b><span>08.560.973/0001-97</span></div>
+        <div class="info-item"><b>E-mail</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
+        <div class="info-item"><b>Instagram</b><span>@cruzvermelhabrasileirarj</span></div>
+        <div class="info-item"><b>Endereço</b><span>Praça da Cruz Vermelha, 10 - Rio de Janeiro</span></div>
+      </div>
+    </div>
+
+    <section id="institucional">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">Institucional</p>
+          <h2>Uma filial histórica, conectada a uma missão mundial.</h2>
+          <p class="lead">A Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro integra um movimento humanitário guiado pelos princípios de humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+          <p class="lead">No Rio de Janeiro, a filial atua na formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, mantendo viva uma tradição de cuidado, preparo e serviço à população.</p>
+          <p class="lead">A filial é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Sua trajetória desde 1908 e a do Palácio da Cruz Vermelha estão na página <a href="/historia/">Nossa história</a>.</p>
+          <div class="cta-row" style="margin-top:24px">
+            <a class="btn btn-red" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver Instagram</a>
+            <a class="btn btn-outline" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Ver Facebook</a>
+          </div>
+        </div>
+        <div class="photo-stack" aria-label="Fotos reais da Cruz Vermelha Brasileira Rio de Janeiro">
+          <img alt="Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV" src="assets/otim/reuniao-cicv-480.webp" srcset="assets/otim/reuniao-cicv-480.webp 480w, assets/otim/reuniao-cicv-960.webp 960w" sizes="(max-width: 620px) 174px, 255px" width="480" height="600" loading="lazy" decoding="async">
+          <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional" src="assets/otim/reuniao-cicv-grupo-480.webp" srcset="assets/otim/reuniao-cicv-grupo-480.webp 480w, assets/otim/reuniao-cicv-grupo-960.webp 960w" sizes="(max-width: 620px) 174px, 255px" width="480" height="600" loading="lazy" decoding="async">
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: CAMPANHAS ATIVAS -->
+    <section class="campaigns-section" id="campanhas">
+      <div class="wrap">
+        <p class="eyebrow">Fique atualizado</p>
+        <h2>Campanhas ativas</h2>
+        <p class="lead">Ações em andamento agora pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
+        <div class="campaigns-grid">
+          <a class="campaign-card" href="dia-das-criancas/">
+            <div class="campaign-card-thumb"><img alt="Coordenadora de Juventude da Cruz Vermelha com crianças do projeto Impacto das Cores" src="assets/otim/dia-criancas-juventude-480.webp" srcset="assets/otim/dia-criancas-juventude-480.webp 480w, assets/otim/dia-criancas-juventude-960.webp 960w" sizes="(max-width: 620px) 100vw, 349px" width="480" height="419" loading="lazy" decoding="async" style="object-position:50% 70%"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Campanha de doação</p>
+              <h3>Dia das Crianças: doe brinquedos</h3>
+              <p>Estamos recebendo brinquedos novos ou em bom estado para as crianças da nossa ação de Dia das Crianças. Entregue na sede, no Centro do Rio.</p>
+              <span class="btn btn-outline">Quero doar</span>
+            </div>
+          </a>
+          <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
+            <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Ação Comunitária</p>
+              <h3>Impacto das Cores</h3>
+              <p>Mutirões de pintura que revitalizam espaços comunitários e fortalecem vínculos entre voluntários e moradores.</p>
+              <span class="btn btn-outline">Conhecer o Projeto</span>
+            </div>
+          </a>
+          <a class="campaign-card" href="campanha-agasalho.html">
+            <div class="campaign-card-thumb"><img alt="Campanha do Agasalho" src="assets/otim/agasalho-hero-rua-640.webp" srcset="assets/otim/agasalho-hero-rua-640.webp 640w, assets/otim/agasalho-hero-rua-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="429" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Campanha de Inverno</p>
+              <h3>Campanha do Agasalho</h3>
+              <p>Arrecadação de agasalhos, cobertores e calçados para levar aquecimento e dignidade a famílias em situação de vulnerabilidade durante o frio.</p>
+              <span class="btn btn-outline">Ver Como Ajudar</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="courses" id="cursos">
+      <div class="wrap">
+        <p class="eyebrow">Escola e capacitação</p>
+        <h2>Formação que prepara pessoas para agir com segurança.</h2>
+
+        <div class="courses-slider-nav">
+          <button class="course-tab active" onclick="goToCourseSlide(0)">Primeiros Socorros</button>
+          <button class="course-tab" onclick="goToCourseSlide(1)">Punção Venosa</button>
+          <button class="course-tab" onclick="goToCourseSlide(2)">Cuidador de Idosos</button>
+        </div>
+
+        <div id="coursesSlider">
+          <div class="course-slide active" data-course-slide="0">
+            <div class="course-box">
+              <img alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-primeiros-socorros-novo-768.webp" srcset="assets/otim/curso-primeiros-socorros-novo-480.webp 480w, assets/otim/curso-primeiros-socorros-novo-768.webp 768w" sizes="(max-width: 620px) 100vw, 576px" width="768" height="1024" loading="lazy" decoding="async">
+              <div class="course-copy">
+                <h3>Curso de Primeiros Socorros Básico</h3>
+                <p class="lead">Capacitação para reconhecer riscos, acionar ajuda e aplicar condutas iniciais com técnica. O objetivo é reduzir improvisos perigosos e aumentar a segurança em situações críticas.</p>
+                <ul class="check-list">
+                  <li>Conteúdo com foco em prevenção, atendimento inicial e resposta adequada.</li>
+                  <li>Orientação sobre trauma, engasgo, parada cardiorrespiratória e emergências comuns.</li>
+                  <li>Carga horária de 8 horas, com certificação da Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Quero Aprender</a>
+                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="primeiros-socorros-basico">Tirar dúvidas</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide" data-course-slide="1">
+            <div class="course-box">
+              <img alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-puncao-venosa-768.webp" srcset="assets/otim/curso-puncao-venosa-480.webp 480w, assets/otim/curso-puncao-venosa-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
+              <div class="course-copy">
+                <h3>Curso de Punção Venosa</h3>
+                <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
+                <ul class="check-list">
+                  <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
+                  <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                  <li>Datas das próximas turmas na plataforma da escola.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Faça sua Inscrição</a>
+                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="puncao-venosa">Tirar dúvidas</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide" data-course-slide="2">
+            <div class="course-box">
+              <img alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-cuidador-idosos-768.webp" srcset="assets/otim/curso-cuidador-idosos-480.webp 480w, assets/otim/curso-cuidador-idosos-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
+              <div class="course-copy">
+                <h3>Curso de Cuidador de Idosos</h3>
+                <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
+                <ul class="check-list">
+                  <li>Carga horária de 160 horas, presenciais.</li>
+                  <li>Escolaridade mínima: Ensino Fundamental.</li>
+                  <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                </ul>
+                <div class="cta-row">
+                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Faça sua Inscrição</a>
+                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="cuidador-de-idosos">Tirar dúvidas</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="courses-dots">
+          <button class="course-dot active" onclick="goToCourseSlide(0)" aria-label="Curso 1"></button>
+          <button class="course-dot" onclick="goToCourseSlide(1)" aria-label="Curso 2"></button>
+          <button class="course-dot" onclick="goToCourseSlide(2)" aria-label="Curso 3"></button>
+        </div>
+
+        <div class="more-courses-grid">
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img alt="Curso de Bombeiro Civil" src="assets/otim/curso-bombeiro-civil-768.webp" srcset="assets/otim/curso-bombeiro-civil-480.webp 480w, assets/otim/curso-bombeiro-civil-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
+            <div class="mini-course-body">
+              <h4>Bombeiro Civil</h4>
+              <p>Formação para atuação em prevenção e combate a incêndios. 80 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img alt="Curso Lei Lucas - Ambientes com Crianças" src="assets/otim/curso-lei-lucas-768.webp" srcset="assets/otim/curso-lei-lucas-480.webp 480w, assets/otim/curso-lei-lucas-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
+            <div class="mini-course-body">
+              <h4>Lei Lucas — Ambientes com Crianças</h4>
+              <p>Capacitação essencial para escolas e creches: RCP, engasgos, quedas e hemorragias. 8 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">
+            <div class="mini-course-thumb"><img alt="Curso de Suporte Básico de Vida" src="assets/otim/curso-suporte-basico-vida-768.webp" srcset="assets/otim/curso-suporte-basico-vida-480.webp 480w, assets/otim/curso-suporte-basico-vida-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
+            <div class="mini-course-body">
+              <h4>Suporte Básico de Vida</h4>
+              <p>Atendimento inicial de emergências com diretrizes oficiais. 4 horas.</p>
+              <span class="btn btn-outline">Saiba Mais</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="cta-row" style="justify-content:center;margin-top:32px">
+          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos" target="_blank" rel="noopener">Ver todos os cursos</a>
+        </div>
+      </div>
+    </section>
+    <script>
+      (function(){
+        var current = 0;
+        var slides = document.querySelectorAll('.course-slide');
+        var tabs = document.querySelectorAll('.course-tab');
+        var dots = document.querySelectorAll('.course-dot');
+        var timer;
+        function render(){
+          slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
+          tabs.forEach(function(t,i){ t.classList.toggle('active', i===current); });
+          dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
+        }
+        window.goToCourseSlide = function(i){ current = i; render(); resetTimer(); };
+        function resetTimer(){
+          clearInterval(timer);
+          timer = setInterval(function(){ current = (current + 1) % slides.length; render(); }, 7000);
+        }
+        resetTimer();
+      })();
+    </script>
+
+    <section class="matricula-section" id="matricula" aria-labelledby="matricula-title">
+      <div class="wrap">
+        <div class="matricula-box">
+          <p class="eyebrow">Matrícula cursos presenciais</p>
+          <h2 id="matricula-title">Já escolheu seu curso?</h2>
+          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na plataforma da escola.</p>
+          <form class="matricula-form" action="/matricula-cursos-presenciais/checkout/" method="get" novalidate>
+            <fieldset class="matricula-opcoes">
+              <legend style="position:absolute;left:-9999px">Curso</legend>
+              <!-- matricula:cursos (preenchido por scripts/gerar_matricula_presencial.py a partir de cursos.json) -->
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Emergência e vida</span>
+                <input type="radio" name="curso" value="primeiros-socorros-basico" id="mc-primeiros-socorros-basico">
+                <label class="matricula-pilula" for="mc-primeiros-socorros-basico">Primeiros Socorros Básico <small>8 horas</small></label>
+                <input type="radio" name="curso" value="primeiros-socorros-lei-lucas" id="mc-primeiros-socorros-lei-lucas">
+                <label class="matricula-pilula" for="mc-primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças <small>8 horas</small></label>
+                <input type="radio" name="curso" value="puncao-venosa" id="mc-puncao-venosa">
+                <label class="matricula-pilula" for="mc-puncao-venosa">Punção Venosa <small>8 horas</small></label>
+                <input type="radio" name="curso" value="suporte-basico-de-vida" id="mc-suporte-basico-de-vida">
+                <label class="matricula-pilula" for="mc-suporte-basico-de-vida">Suporte Básico de Vida <small>4 horas</small></label>
+              </div>
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Formação profissional</span>
+                <input type="radio" name="curso" value="bombeiro-civil" id="mc-bombeiro-civil">
+                <label class="matricula-pilula" for="mc-bombeiro-civil">Bombeiro Civil <small>80 horas</small></label>
+                <input type="radio" name="curso" value="cuidador-de-idosos" id="mc-cuidador-de-idosos">
+                <label class="matricula-pilula" for="mc-cuidador-de-idosos">Cuidador de Idosos (Curso Livre) <small>160 horas</small></label>
+              </div>
+              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Outros cursos</span>
+                <input type="radio" name="curso" value="micropigmentacao-labial" id="mc-micropigmentacao-labial">
+                <label class="matricula-pilula" for="mc-micropigmentacao-labial">Micropigmentação Labial <small>24 horas</small></label>
+              </div>
+              <!-- /matricula:cursos -->
+            </fieldset>
+            <div class="matricula-acao">
+              <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
+              <span class="matricula-escolhido" id="matricula-escolhido" aria-live="polite">Toque no curso para escolher</span>
+            </div>
+          </form>
+          <p class="matricula-nota"><a href="/matricula-cursos-presenciais/">Ver todos os cursos, valores e dúvidas frequentes</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="alert" aria-labelledby="trauma-title">
+      <div class="wrap alert-grid">
+        <figure class="alert-foto">
+          <img src="matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp" alt="Alunos praticando reanimação em manequim na aula de Primeiros Socorros da Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
+          <figcaption><i class="fa-solid fa-heart-pulse" aria-hidden="true"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></i> Aula prática de Primeiros Socorros na sede, no Centro do Rio</figcaption>
+        </figure>
+        <div>
+          <p class="eyebrow">Educação salva vidas</p>
+          <h2 id="trauma-title">No trauma, ajudar é fazer a coisa certa.</h2>
+          <p class="lead">Uma boa intenção pode causar danos quando vira improviso. Em um acidente com motociclista, por exemplo, tirar o capacete sem técnica pode agravar uma lesão na coluna. Três atitudes que salvam:</p>
+          <ol class="alert-list">
+            <li class="alert-item"><i class="fa-solid fa-phone" aria-hidden="true"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i><div><b>Acione ajuda especializada</b><span>SAMU 192 ou Bombeiros 193. Diga onde está e o que aconteceu.</span></div></li>
+            <li class="alert-item"><i class="fa-solid fa-hand" aria-hidden="true"><svg class="ico ico-hand" aria-hidden="true" focusable="false"><use href="#i-hand"/></svg></i><div><b>Não mova a vítima</b><span>Cabeça e pescoço só se movem com técnica. Fique ao lado, mantenha a calma e converse com a pessoa até a ajuda chegar.</span></div></li>
+            <li class="alert-item"><i class="fa-solid fa-graduation-cap" aria-hidden="true"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i><div><b>Aprenda com quem sabe</b><span>Primeiros socorros se aprendem na prática, com orientação profissional. É o que o curso ensina em 8 horas.</span></div></li>
+          </ol>
+          <div class="alert-cta">
+            <a class="btn btn-red" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico">Fazer o curso de Primeiros Socorros</a>
+            <a class="alert-link" href="/matricula-cursos-presenciais/">Ver todos os cursos <i class="fa-solid fa-arrow-right" aria-hidden="true"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></a>
+          </div>
+          <p class="alert-nota">Presencial, 8 horas, certificado da Cruz Vermelha Brasileira Rio de Janeiro. A inscrição de R$ 99 garante a vaga.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions" id="acoes">
+      <div class="wrap">
+        <div class="actions-head">
+          <div>
+            <p class="eyebrow">A Cruz Vermelha Brasileira Rio de Janeiro em ação</p>
+            <h2>O trabalho humanitário exige preparo contínuo.</h2>
+            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
+          </div>
+          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
+        </div>
+
+        <div class="actions-layout">
+          <article class="feature-action">
+            <img alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/hero-formacao-voluntarios-1080.webp" srcset="assets/otim/hero-formacao-voluntarios-540.webp 540w, assets/otim/hero-formacao-voluntarios-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 620px" width="1080" height="1350" loading="lazy" decoding="async">
+            <div class="feature-caption">
+              <p class="eyebrow">Formação de voluntários</p>
+              <h3>Capacitação que salva vidas.</h3>
+              <p>A cada turma formada, a Cruz Vermelha Brasileira Rio de Janeiro amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
+            </div>
+          </article>
+
+          <div class="action-list">
+            <article class="action-tile">
+              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação" src="assets/otim/voluntario-microfone-480.webp" srcset="assets/otim/voluntario-microfone-480.webp 480w, assets/otim/voluntario-microfone-960.webp 960w, assets/otim/voluntario-microfone-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Capacitação</span>
+                <h3>Treinamento com orientação técnica</h3>
+                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em atividade no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-480.webp" srcset="assets/otim/equipe-corredor-480.webp 480w, assets/otim/equipe-corredor-960.webp 960w, assets/otim/equipe-corredor-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Voluntariado</span>
+                <h3>Presença que acolhe</h3>
+                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img alt="Ação comunitária com voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" srcset="assets/otim/acao-comunitaria-morro-480.webp 480w, assets/otim/acao-comunitaria-morro-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="480" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Comunidade</span>
+                <h3>Cuidado também se constrói no território</h3>
+                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="actions-cta">
+          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conhecer cursos e capacitações</a>
+          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: PARCEIROS CNPJ -->
+    <section class="partners-section" id="parceiros">
+      <div class="wrap">
+        <p class="eyebrow">Empresas parceiras</p>
+        <h2>Parcerias que salvam vidas</h2>
+        <p class="lead">Empresas que apoiam a Cruz Vermelha Brasileira Rio de Janeiro através da Lei Lucas, treinamentos corporativos de NR e programas de responsabilidade social.</p>
+        <div class="partners-logos">
+          <div class="partner-slot"><img alt="Johnson & Johnson" src="assets/otim/parceiros/johnson-johnson-400.webp" width="400" height="225" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Embelleze" src="assets/otim/parceiros/embelleze-400.webp" width="400" height="105" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Lojas Renner" src="assets/otim/parceiros/renner-400.webp" width="400" height="74" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Carrefour" src="assets/otim/parceiros/carrefour-400.webp" width="400" height="78" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Leite de Rosas" src="assets/otim/parceiros/leite-de-rosas-320.webp" width="320" height="320" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Avon" src="assets/otim/parceiros/avon-400.webp" width="400" height="107" loading="lazy" decoding="async"></div>
+          <div class="partner-slot"><img alt="Ortobom" src="assets/otim/parceiros/ortobom-400.webp" width="400" height="58" loading="lazy" decoding="async"></div>
+        </div>
+        <div class="partner-cta">
+          <div>
+            <h3>Sua empresa também pode ser parceira do Rio</h3>
+            <p>Treinamentos de NR, Lei Lucas e programas customizados para sua equipe.</p>
+          </div>
+          <a href="#contato" class="btn btn-red">Quero ser Parceiro</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOVO: FAQ -->
+    <section class="faq-section" id="faq">
+      <div class="wrap">
+        <!-- faq:inicio -->
+        <p class="eyebrow">Perguntas frequentes</p>
+        <h2>Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro</h2>
+        <p class="lead" style="margin-bottom:28px">Cursos, matrícula, voluntariado, como ajudar, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.</p>
+        <div class="faq-list">
+          <h3 class="faq-grupo">Cursos e matrícula</h3>
+          <details class="faq-item" open>
+            <summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary>
+            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro oferece sete cursos presenciais na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Primeiros Socorros Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida, o BLS (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos, curso livre (160 horas), e Micropigmentação Labial (24 horas). Todos têm certificado da filial, e a vaga é garantida com a inscrição de R$ 99, por PIX ou cartão. Não há cursos técnicos nem curso de enfermagem. Veja carga horária, escolaridade mínima e valor de cada curso na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">Escolha o curso na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a> e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">escola.cursoscruzvermelha.org</a>. Dúvidas? Use o <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">Pelo site, a inscrição em qualquer curso presencial da Cruz Vermelha Brasileira Rio de Janeiro custa R$ 99, por PIX ou cartão, e reserva a vaga; quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola: à vista, R$ 150 em Suporte Básico de Vida, Punção Venosa e Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte. Há parcelamento, com juros. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada. Confira na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?</summary>
+            <div class="faq-answer">Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">cadastrar como voluntário</a>: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas <a href="/noticias/">notícias do site</a> e no Instagram @cruzvermelhabrasileirarj.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?</summary>
+            <div class="faq-answer">Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na <a href="/matricula-cursos-presenciais/">página de matrícula</a> antes de garantir a vaga com a inscrição de R$ 99.</div>
+          </details>
+          <details class="faq-item">
+            <summary>O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?</summary>
+            <div class="faq-answer">Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui todas as etapas de cada curso presencial, por uma instituição reconhecida nacional e internacionalmente pela tradição em formação humanitária e de emergências. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?</summary>
+            <div class="faq-answer">Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; a secretaria confirma turma e horário por e-mail.</div>
+          </details>
+          <details class="faq-item">
+            <summary>O certificado dos cursos é reconhecido pelo MEC?</summary>
+            <div class="faq-answer">Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.</div>
+          </details>
+          <h3 class="faq-grupo">Primeiros socorros, Lei Lucas e formação profissional</h3>
+          <details class="faq-item">
+            <summary>Onde fazer curso de primeiros socorros no Rio de Janeiro com certificado?</summary>
+            <div class="faq-answer">Na Cruz Vermelha Brasileira Rio de Janeiro os cursos de primeiros socorros são presenciais, na Praça da Cruz Vermelha, 10, Centro, com certificado da filial e abertos a qualquer pessoa, mesmo fora da saúde. São três opções, todas exigindo apenas Ensino Fundamental: <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">Primeiros Socorros Básico</a> (8 horas, R$ 180), <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Lei Lucas - Ambientes com Crianças</a> (8 horas, R$ 150) e <a href="/matricula-cursos-presenciais/?curso=suporte-basico-de-vida">Suporte Básico de Vida</a> (4 horas, R$ 150), valores à vista pagos depois, na plataforma da escola. Você aprende avaliação da vítima, RCP, controle de hemorragias, engasgos e traumas, com prática supervisionada. A inscrição de R$ 99 garante a vaga: escolha o seu na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?</summary>
+            <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
+          </details>
+          <details class="faq-item">
+            <summary>O que faz um bombeiro civil e quais são os requisitos para fazer o curso?</summary>
+            <div class="faq-answer">O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago depois na <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">plataforma da escola</a>; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a <a href="/matricula-cursos-presenciais/?curso=bombeiro-civil">matrícula no curso de Bombeiro Civil</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como se tornar cuidador de idosos e o que o curso ensina?</summary>
+            <div class="faq-answer">Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da filial. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na <a href="/matricula-cursos-presenciais/?curso=cuidador-de-idosos">matrícula do curso de Cuidador de Idosos</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?</summary>
+            <div class="faq-answer">Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Lei Lucas</a> (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social, e podem somar esforços em campanhas como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como comparar os cursos de primeiros socorros no Rio de Janeiro?</summary>
+            <div class="faq-answer">Compare quatro coisas, e não só o preço anunciado: carga horária, prática real com manequim, quem emite o certificado e o custo total. Na Cruz Vermelha Brasileira Rio de Janeiro o custo total é fechado e aparece antes do pagamento: inscrição de R$ 99 mais o valor do curso - R$ 180 no Primeiros Socorros Básico, de 8 horas, R$ 150 na Lei Lucas, de 8 horas, e R$ 150 no Suporte Básico de Vida, de 4 horas. Sem mensalidade, sem taxa de certificado e sem material à parte. Confira na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Existe curso de cuidador de idosos gratuito no Rio de Janeiro?</summary>
+            <div class="faq-answer">Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da filial, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. Para garantir a vaga agora, faça a <a href="/matricula-cursos-presenciais/?curso=cuidador-de-idosos">matrícula em Cuidador de Idosos</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?</summary>
+            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da filial. Veja o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">curso Lei Lucas</a>.</div>
+          </details>
+          <h3 class="faq-grupo">Voluntariado</h3>
+          <details class="faq-item">
+            <summary>Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas <a href="/noticias/">notícias do site</a>. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no <a href="/#chat">chat de contato do site</a>. Os canais oficiais estão reunidos na <a href="/bio/">página de links da filial</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?</summary>
+            <div class="faq-answer">Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial</a>, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a> e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">curso de Primeiros Socorros Básico</a>.</div>
+          </details>
+          <h3 class="faq-grupo">Instituição, como ajudar, sede e contato</h3>
+          <details class="faq-item">
+            <summary>O que é a Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação de voluntários, em cursos de primeiros socorros e formação profissional, em educação preventiva e em campanhas de apoio comunitário. A história da filial, do edifício e das atividades está no <a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">verbete da Wikipédia</a>; os canais oficiais estão neste site, na <a href="/bio/">página de links</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?</summary>
+            <div class="faq-answer">A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo <a href="/#chat">chat do site</a>, que responde por e-mail. Os canais oficiais da filial estão na <a href="/bio/">página de links</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?</summary>
+            <div class="faq-answer">Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
+          </details>
+          <details class="faq-item">
+            <summary>A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?</summary>
+            <div class="faq-answer">Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">cursos de Primeiros Socorros</a> e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail em até 3 dias úteis.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?</summary>
+            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a> e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
+            <div class="faq-answer">Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo <a href="/#chat">chat do site</a>. Veja carga horária, valores e requisitos na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?</summary>
+            <div class="faq-answer">O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o <a href="/#chat">chat Fale com a gente</a>, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na <a href="/#contato">seção de contato</a>. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário do voluntariado</a>. Para acompanhar as ações da filial, veja as <a href="/noticias/">notícias</a> e o Instagram @cruzvermelhabrasileirarj.</div>
+          </details>
+        </div>
+      <!-- faq:fim -->
+      </div>
+    </section>
+
+    <!-- NOVO: NEWSLETTER -->
+    <section class="newsletter-section" data-newsletter-cvrj="ligado">
+      <style>
+        .newsletter-form{align-items:flex-start}
+        /* O CSS da home tem .newsletter-form input{flex:1;min-width:200px} para
+           os campos de texto. Sem as duas regras abaixo, essa mesma regra
+           estica a caixinha de aceite para 200px de largura e a joga longe do
+           texto dela. */
+        .newsletter-aceite{flex:1 0 100%;display:flex;gap:8px;align-items:flex-start;max-width:480px;margin:14px auto 0;text-align:left;font-size:13px;line-height:1.5;color:rgba(255,255,255,.92)}
+        .newsletter-aceite input[type=checkbox]{flex:0 0 auto;width:16px;height:16px;min-width:0;margin:2px 0 0;padding:0;border-radius:3px;-webkit-appearance:checkbox;appearance:checkbox}
+        .newsletter-armadilha{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+        .newsletter-recado{max-width:480px;margin:16px auto 0;font-size:14.5px;line-height:1.55;color:#fff;min-height:1.2em}
+        .newsletter-recado[data-erro]{color:#ffe08a}
+      </style>
+      <div class="wrap">
+        <p class="eyebrow">Fique por dentro</p>
+        <h2>Receba novidades da Cruz Vermelha Brasileira Rio de Janeiro</h2>
+        <p class="lead">Cursos, campanhas e ações humanitárias, direto no seu e-mail.</p>
+        <form class="newsletter-form" id="newsletter-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post">
+          <label class="newsletter-armadilha" aria-hidden="true">Não preencha este campo
+            <input type="text" name="site" tabindex="-1" autocomplete="off"></label>
+          <input type="text" name="nome" placeholder="Seu nome" autocomplete="name" required>
+          <input type="email" name="email" placeholder="Seu e-mail" autocomplete="email" required>
+          <button type="submit" class="btn">Quero Receber</button>
+          <label class="newsletter-aceite">
+            <input type="checkbox" name="consentimento" value="1" required>
+            <span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span>
+          </label>
+        </form>
+        <p class="newsletter-recado" id="newsletter-recado" role="status" aria-live="polite"></p>
+      </div>
+      <script>
+      (function(){
+        var f=document.getElementById('newsletter-form'),r=document.getElementById('newsletter-recado')
+        if(!f||!r||!window.fetch)return
+        f.addEventListener('submit',function(ev){
+          ev.preventDefault()
+          var b=f.querySelector('button[type=submit]'),rot=b.textContent
+          b.disabled=true;b.textContent='Enviando…';r.removeAttribute('data-erro');r.textContent=''
+          var d=new FormData(f)
+          fetch(f.action,{method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({nome:d.get('nome'),email:d.get('email'),site:d.get('site'),consentimento:d.get('consentimento')==='1'})})
+            .then(function(x){return x.json().catch(function(){return{}})})
+            .then(function(resp){
+              if(resp&&resp.ok){r.textContent=resp.recado||'Quase lá! Confira seu e-mail para confirmar.';f.reset()}
+              else{r.setAttribute('data-erro','1');r.textContent=(resp&&resp.erro)||'Não foi possível concluir agora. Tente de novo.'}
+            })
+            .catch(function(){r.setAttribute('data-erro','1');r.textContent='Não foi possível concluir agora. Confira sua conexão e tente de novo.'})
+            .then(function(){b.disabled=false;b.textContent=rot})
+        })
+      })()
+      </script>
+    </section>
+
+    <section class="contact" id="contato">
+      <div class="wrap contact-grid">
+        <div class="contact-card">
+          <p class="eyebrow">Contato</p>
+          <h2>Fale com a Cruz Vermelha Brasileira Rio de Janeiro.</h2>
+          <p class="lead">Cursos, voluntariado, campanhas ou parcerias: escreva para a gente. A equipe responde pelo e-mail institucional.</p>
+          <a class="contact-mail" href="mailto:contato@cruzvermelhariodejaneiro.org?subject=Contato%20pelo%20site">
+            <span class="contact-mail-icone"><i class="fa-regular fa-envelope" aria-hidden="true"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i></span>
+            <span class="contact-mail-texto"><b>E-mail institucional</b><span>contato@<wbr>cruzvermelhariodejaneiro.org</span></span>
+            <span class="contact-mail-acao" aria-hidden="true"><i class="fa-solid fa-arrow-right"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></span>
+          </a>
+          <button type="button" class="contact-copiar" data-copiar="contato@cruzvermelhariodejaneiro.org"><i class="fa-regular fa-copy" aria-hidden="true"><svg class="ico ico-copy" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg></i> <span>Copiar e-mail</span></button>
+          <div class="contact-canais">
+            <a class="contact-canal" href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130" target="_blank" rel="noopener">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i>
+              <span><b>Sede</b>Praça da Cruz Vermelha, 10 · Centro, Rio de Janeiro · CEP 20230-130</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
+            <a class="contact-canal" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">
+              <i class="fa-brands fa-instagram" aria-hidden="true"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i>
+              <span><b>Instagram</b>@cruzvermelhabrasileirarj</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
+            <a class="contact-canal" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">
+              <i class="fa-brands fa-facebook-f" aria-hidden="true"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i>
+              <span><b>Facebook</b>Cruz Vermelha Brasileira Rio de Janeiro</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
+          </div>
+          <p class="contact-cnpj">Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro · CNPJ 08.560.973/0001-97</p>
+        </div>
+        <aside class="insta-card" aria-label="Instagram da Cruz Vermelha Brasileira Rio de Janeiro">
+          <div class="insta-topo">
+            <span class="insta-avatar"><i class="fa-brands fa-instagram" aria-hidden="true"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></span>
+            <div><b>@cruzvermelhabrasileirarj</b><small>Ações, cursos e voluntariado da filial, todos os dias</small></div>
+            <a class="btn btn-red insta-seguir" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Seguir</a>
+          </div>
+          <div class="insta-grade" id="insta-grade">
+            <a class="insta-foto grande" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntárias da Cruz Vermelha Brasileira Rio de Janeiro no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-960.webp" width="960" height="727" loading="lazy" decoding="async"><span>Voluntariado</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário entregando cobertor a morador em situação de rua" src="assets/otim/agasalho-hero-rua-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Campanha do Agasalho</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Equipe de voluntários reunida no auditório da sede" src="assets/otim/hero-equipe-grupo-960.webp" width="960" height="723" loading="lazy" decoding="async"><span>Nossa equipe</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário entregando agasalho a morador de comunidade" src="assets/otim/agasalho-hero-favela-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Ação nas comunidades</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Voluntário falando ao microfone em formação na sede" src="assets/otim/voluntario-microfone-480.webp" width="480" height="364" loading="lazy" decoding="async"><span>Formação</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Ação comunitária em morro do Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" width="480" height="480" loading="lazy" decoding="async"><span>Ação comunitária</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Turma de voluntários em formação no auditório da sede" src="assets/otim/auditorio-voluntarios-480.webp" width="480" height="364" loading="lazy" decoding="async"><span>Formação de voluntários</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Comunidade recebendo doações da Campanha do Agasalho" src="assets/otim/agasalho-fila-comunidade-640.webp" width="640" height="429" loading="lazy" decoding="async"><span>Doações</span></a>
+            <a class="insta-foto" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener"><img alt="Reunião com representantes do CICV na sede da filial" src="assets/otim/reuniao-cicv-grupo-480.webp" width="480" height="600" loading="lazy" decoding="async"><span>Parcerias</span></a>
+          </div>
+          <script type="application/json" id="insta-fotos">[
+            {"src": "assets/otim/reuniao-cicv-480.webp", "grande": "assets/otim/reuniao-cicv-960.webp", "alt": "Representantes da filial e do CICV na sede", "legenda": "Parcerias"},
+            {"src": "assets/otim/curso-pratico-sala-480.webp", "grande": "assets/otim/curso-pratico-sala-1080.webp", "alt": "Post do Instagram sobre a prática em sala dos cursos", "legenda": "Cursos"},
+            {"src": "assets/otim/auditorio-voluntarios-480.webp", "grande": "assets/otim/auditorio-voluntarios-960.webp", "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Formação de voluntários"},
+            {"src": "assets/otim/agasalho-fila-comunidade-640.webp", "grande": "assets/otim/agasalho-fila-comunidade-1264.webp", "alt": "Comunidade recebendo doações da Campanha do Agasalho", "legenda": "Doações"},
+            {"src": "assets/otim/reuniao-cicv-grupo-480.webp", "grande": "assets/otim/reuniao-cicv-grupo-960.webp", "alt": "Reunião com representantes do CICV na sede da filial", "legenda": "Parcerias"},
+            {"src": "assets/otim/equipe-corredor-480.webp", "grande": "assets/otim/equipe-corredor-960.webp", "alt": "Voluntárias da Cruz Vermelha Brasileira Rio de Janeiro no Palácio da Cruz Vermelha", "legenda": "Voluntariado"},
+            {"src": "assets/otim/agasalho-hero-rua-640.webp", "grande": "assets/otim/agasalho-hero-rua-1264.webp", "alt": "Voluntário entregando cobertor a morador em situação de rua", "legenda": "Campanha do Agasalho"},
+            {"src": "assets/otim/hero-equipe-grupo-960.webp", "grande": "assets/otim/hero-equipe-grupo-960.webp", "alt": "Equipe de voluntários reunida no auditório da sede", "legenda": "Nossa equipe"},
+            {"src": "assets/otim/agasalho-hero-favela-640.webp", "grande": "assets/otim/agasalho-hero-favela-1264.webp", "alt": "Voluntário entregando agasalho a morador de comunidade", "legenda": "Ação nas comunidades"},
+            {"src": "assets/otim/voluntario-microfone-480.webp", "grande": "assets/otim/voluntario-microfone-960.webp", "alt": "Voluntário falando ao microfone em formação na sede", "legenda": "Formação"},
+            {"src": "assets/otim/acao-comunitaria-morro-480.webp", "grande": "assets/otim/acao-comunitaria-morro-1080.webp", "alt": "Ação comunitária em morro do Rio de Janeiro", "legenda": "Ação comunitária"}
+          ]</script>
+          <p class="insta-rodape"><i class="fa-solid fa-location-dot" aria-hidden="true"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="assets/otim/logo-cvb-rj-520.webp" width="520" height="156" loading="lazy" decoding="async">
+        <p>Humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Sobre</h4>
+        <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <p><a href="/historia/">Nossa história</a></p>
+        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
+        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
+        <p><a href="/bio/">Links oficiais</a></p>
+        <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a></p>
+      </div>
+      <div class="footer-col">
+        <h4>Contato</h4>
+        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</p>
+        <p><i class="fa-solid fa-phone"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i> (21) 99992-2864</p>
+        <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
+      </div>
+      <div class="footer-col">
+        <h4>Siga-nos</h4>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
+          <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-inner">
+        <span>&copy; 2026 Cruz Vermelha Brasileira Rio de Janeiro</span>
+        <span class="sep">|</span>
+        <a href="/noticias/">Notícias</a>
+        <span class="sep">|</span>
+        <a href="/acervo/">Acervo</a>
+        <span class="sep">|</span>
+        <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Escola de Educação e Saúde</a>
+        <span class="sep">|</span>
+        <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
+        <span class="sep">|</span>
+        <a href="/privacidade/">Política de Privacidade</a>
+        <span class="sep">|</span>
+        <a href="/termos/">Termos de Uso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/">Política de Cookies</a>
+        <span class="sep">|</span>
+        <a href="/reembolso/">Cancelamento e reembolso</a>
+        <span class="sep">|</span>
+        <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelector('.nav-toggle')?.addEventListener('click', function() {
+      const header = this.closest('.main-header');
+      const isOpen = header.classList.toggle('nav-open');
+      this.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', function() {
+        const header = this.closest('.main-header');
+        header.classList.remove('nav-open');
+        document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+  <script>
+    // Bloco "Já escolheu seu curso?": mostra o curso escolhido e impede enviar sem escolha.
+    (function () {
+      var form = document.querySelector('.matricula-form'), aviso = document.getElementById('matricula-escolhido');
+      if (!form || !aviso) return;
+      form.addEventListener('change', function (e) {
+        if (e.target.name !== 'curso') return;
+        var rotulo = form.querySelector('label[for="' + e.target.id + '"]');
+        aviso.textContent = 'Curso escolhido: ' + (rotulo ? rotulo.firstChild.textContent.trim() : e.target.value);
+        aviso.className = 'matricula-escolhido ok';
+      });
+      form.addEventListener('submit', function (e) {
+        if (form.querySelector('input[name="curso"]:checked')) return;
+        e.preventDefault();
+        aviso.textContent = 'Escolha um curso para continuar.';
+        aviso.className = 'matricula-escolhido erro';
+        var primeira = form.querySelector('input[name="curso"]');
+        if (primeira) primeira.focus();
+      });
+    })();
+  </script>
+  <script>
+    // Contato: copiar o e-mail e trocar as fotos do mosaico do Instagram de tempos em tempos.
+    (function () {
+      var botao = document.querySelector('.contact-copiar');
+      if (botao) {
+        botao.addEventListener('click', function () {
+          var email = botao.getAttribute('data-copiar'), rotulo = botao.querySelector('span');
+          var feito = function (ok) { rotulo.textContent = ok ? 'E-mail copiado' : email; botao.classList.toggle('ok', ok); setTimeout(function () { rotulo.textContent = 'Copiar e-mail'; botao.classList.remove('ok'); }, 2500); };
+          if (navigator.clipboard) navigator.clipboard.writeText(email).then(function () { feito(true); }, function () { feito(false); });
+          else feito(false);
+        });
+      }
+      var grade = document.getElementById('insta-grade'), dados = document.getElementById('insta-fotos');
+      if (!grade || !dados || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+      var fotos; try { fotos = JSON.parse(dados.textContent); } catch (e) { return; }
+      var blocos = Array.prototype.slice.call(grade.querySelectorAll('.insta-foto')), vez = 1;
+      setInterval(function () {
+        if (document.hidden) return;
+        var base = function (s) { return String(s || '').replace(/-\d+\.webp$/, ''); };
+        var visiveis = blocos.map(function (b) { return base(b.querySelector('img').getAttribute('src')); });
+        var ocultas = fotos.filter(function (f) { return visiveis.indexOf(base(f.src)) < 0; });
+        if (!ocultas.length) return;
+        var nova = ocultas[Math.floor(Math.random() * ocultas.length)], bloco = blocos[vez++ % blocos.length];
+        var caminho = bloco.classList.contains('grande') && nova.grande ? nova.grande : nova.src;
+        var img = bloco.querySelector('img'), legenda = bloco.querySelector('span'), pre = new Image();
+        pre.onload = function () {
+          bloco.classList.add('trocando');
+          setTimeout(function () { img.src = caminho; img.alt = nova.alt; legenda.textContent = nova.legenda; bloco.classList.remove('trocando'); }, 400);
+        };
+        pre.src = caminho;
+      }, 3500);
+    })();
+  </script>
+  <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
+  <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
+  <script src="/chat/chat.js?v=aa00cac6d2" defer></script>
+</body>
+</html>

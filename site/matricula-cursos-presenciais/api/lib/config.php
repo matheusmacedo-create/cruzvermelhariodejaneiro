@@ -2,6 +2,13 @@
 /** Configuração, catálogo e preços. */
 declare(strict_types=1);
 
+/** Chaves que o config-pagar-tudo.php pode definir (as demais, nele, são ignoradas). */
+const MCP_CHAVES_PAGAR_TUDO = [
+    'PLANO_COMPLETO', 'PLANO_COMPLETO_SEM_TURMA', 'PLANO_COMPLETO_SO_TESTE', 'PARCELAS_MAX', 'PARCELA_MINIMA_CENTAVOS',
+    'PRECO_TESTE_CENTAVOS', 'PRECO_TESTE_MATRICULA_CENTAVOS', 'TESTE_CPFS', 'ESPERA_PRAZO_DIAS', 'ESPERA_LOTE',
+    'ESTORNO_CARTAO_LIMITE_DIAS', 'AGENTE_FINANCIADOR', 'AGENTE_CNPJ', 'ESCOLA_MATRICULA_PAGA',
+];
+
 function mcp_config(): array
 {
     static $config = null;
@@ -15,11 +22,14 @@ function mcp_config(): array
         // A chave da escola, as do WhatsApp e o token da API de Conversões da Meta ficam em arquivos à parte (só
         // no servidor, fora do Git), para não mexer no config.php. De config-escola.php só valem as chaves
         // ESCOLA_* e SITE_HORARIOS_TOKEN; de config-whatsapp.php, só as WHATSAPP_*; de config-meta.php, só as
-        // META_*. O resto continua no config.php.
+        // META_*. As chaves de liga e desliga do "pagar tudo" (09/10/2026) ficam em config-pagar-tudo.php, que vem por
+        // último e vale só para a lista MCP_CHAVES_PAGAR_TUDO (inclusive ESCOLA_MATRICULA_PAGA, sem mexer no
+        // config-escola.php, que guarda a chave da escola). O resto continua no config.php.
         $extras = [
             [getenv('MCP_CONFIG_ESCOLA_ARQUIVO') ?: dirname(__DIR__) . '/config-escola.php', static fn(string $c): bool => str_starts_with($c, 'ESCOLA_') || $c === 'SITE_HORARIOS_TOKEN'],
             [getenv('MCP_CONFIG_WHATSAPP_ARQUIVO') ?: dirname(__DIR__) . '/config-whatsapp.php', static fn(string $c): bool => str_starts_with($c, 'WHATSAPP_')],
             [getenv('MCP_CONFIG_META_ARQUIVO') ?: dirname(__DIR__) . '/config-meta.php', static fn(string $c): bool => str_starts_with($c, 'META_')],
+            [getenv('MCP_CONFIG_PAGAR_TUDO_ARQUIVO') ?: dirname(__DIR__) . '/config-pagar-tudo.php', static fn(string $c): bool => in_array($c, MCP_CHAVES_PAGAR_TUDO, true)],
         ];
         foreach ($extras as [$arquivoExtra, $vale]) {
             if (is_file($arquivoExtra)) {
@@ -121,15 +131,88 @@ function mcp_modo_teste(): bool
     return (int) mcp_cfg('PRECO_TESTE_CENTAVOS', 0) > 0;
 }
 
-/** Valor da inscrição em centavos: preço de teste > config > catálogo. */
-function mcp_inscricao_centavos(): int
+/**
+ * Chave de liga e desliga do config (pagar tudo, 10/2026): só o booleano true liga. A string 'false', o número 1 ou
+ * 'true' entre aspas não ligam nada (T17): uma chave escrita errado deixa o recurso desligado, que é o lado seguro.
+ */
+function mcp_cfg_ligada(string $chave): bool
+{
+    return mcp_cfg($chave) === true;
+}
+
+/**
+ * O CPF está na lista TESTE_CPFS (só dígitos)? Só esses pagam o preço de teste (E16, T1): com o preço de teste
+ * ligado, todo outro visitante continua pagando o preço real.
+ */
+function mcp_cpf_de_teste(?string $cpf): bool
+{
+    $lista = mcp_cfg('TESTE_CPFS', []);
+    if ($cpf === null || $cpf === '' || !is_array($lista)) {
+        return false;
+    }
+    foreach ($lista as $item) {
+        if (is_scalar($item) && mcp_digitos((string) $item) === $cpf) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Valor da inscrição em centavos: preço de teste (só para o CPF da lista TESTE_CPFS) > config > catálogo. Sem CPF
+ * (info.php, parcelas.php, medição, e-mails), sempre o preço real.
+ */
+function mcp_inscricao_centavos(?string $cpf = null): int
 {
     $teste = (int) mcp_cfg('PRECO_TESTE_CENTAVOS', 0);
-    if ($teste > 0) {
+    if ($teste > 0 && mcp_cpf_de_teste($cpf)) {
         return $teste;
     }
     $config = (int) mcp_cfg('INSCRICAO_CENTAVOS', 0);
     return $config > 0 ? $config : (int) (mcp_catalogo()['inscricao_centavos'] ?? 9900);
+}
+
+/** Teto de parcelas no cartão (1 a 12). Fica 1 até a compra de teste em 2x e o OK do jurídico (3.5, passo 6). */
+function mcp_parcelas_max(): int
+{
+    return max(1, min(12, (int) mcp_cfg('PARCELAS_MAX', 1)));
+}
+
+/** Parcela mínima mostrada, em centavos (o mínimo real da Unicopag não está documentado). */
+function mcp_parcela_minima_centavos(): int
+{
+    return max(1, (int) mcp_cfg('PARCELA_MINIMA_CENTAVOS', 500));
+}
+
+/** Data limite da venda sem turma, em dias da compra (P6; 90 no padrão). */
+function mcp_espera_prazo_dias(): int
+{
+    return max(11, min(365, (int) mcp_cfg('ESPERA_PRAZO_DIAS', 90)));
+}
+
+/**
+ * Quem vende e recebe (decisão 6 do dono, 08/10/2026): a empresa de ensino, com um nome só em página, checkout,
+ * /reembolso/, e-mails e comprovante. RECEBEDOR_NOME e RECEBEDOR_CNPJ no config.php sobrepõem.
+ */
+const MCP_RECEBEDOR_NOME_PADRAO = 'O-CVB Filial Rio de Janeiro Ensino Ltda';
+const MCP_RECEBEDOR_CNPJ_PADRAO = '67.733.551/0001-35';
+
+function mcp_recebedor(): array
+{
+    return [
+        'nome' => (string) mcp_cfg('RECEBEDOR_NOME', MCP_RECEBEDOR_NOME_PADRAO),
+        'cnpj' => (string) mcp_cfg('RECEBEDOR_CNPJ', MCP_RECEBEDOR_CNPJ_PADRAO),
+    ];
+}
+
+/** Quem concede o parcelamento (CDC, art. 54-B, § 3º). Vazio = o recebedor; o jurídico define (5.3, item 3). */
+function mcp_agente_financiador(): array
+{
+    $recebedor = mcp_recebedor();
+    return [
+        'nome' => (string) mcp_cfg('AGENTE_FINANCIADOR', $recebedor['nome']),
+        'cnpj' => (string) mcp_cfg('AGENTE_CNPJ', $recebedor['cnpj']),
+    ];
 }
 
 /** Custos de processamento que o aluno pode escolher cobrir: percentual + parcela fixa, por método. */

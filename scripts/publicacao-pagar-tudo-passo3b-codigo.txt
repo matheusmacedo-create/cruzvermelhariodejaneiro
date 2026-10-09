@@ -1,0 +1,43 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 3 (spec 3.5 e 10.14): o código desligado. Config: PLANO_COMPLETO=false, PLANO_COMPLETO_SEM_TURMA=false,
+# PLANO_COMPLETO_SO_TESTE=false, PARCELAS_MAX=1, ESCOLA_MATRICULA_PAGA=false (config-escola.php), TESTE_CPFS=[],
+# PRECO_TESTE_MATRICULA_CENTAVOS=0. À noite, uns minutos depois do passo 2 (opcache), logo depois do passo3a (oferta.json).
+# Antes, a cópia do ar (os PHP do ar são os do Git origin/main; a cópia cobre também o que não estiver no Git):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-passo3 $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3b-codigo.txt)
+# Publicar, nesta ordem, uma linha por vez (o script já envia em sequência):
+#   scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3b-codigo.txt)
+# Depois, o passo3c (telas do checkout). Desfazer (só os PHP e o checkout.js, iguais ao Git do ar):
+#   scripts/desfazer_publicacao.sh af46c1c scripts/publicacao-pagar-tudo-passo3b-codigo.txt
+# Ordem (janelas do opcache, T10): o lib.php vem logo depois dos módulos novos e antes dos outros lib/*.php; o config.php
+# antes do publico.php (mcp_cpf_de_teste); lib/turmas.php antes do painel.php e do turmas.php (mcp_turma_lista_de_aviso,
+# mcp_turma_pediram, mcp_turma_aviso_aberto).
+# (1) módulos novos: o lib.php antigo não os carrega
+site/matricula-cursos-presenciais/api/lib/compra.php
+site/matricula-cursos-presenciais/api/lib/espera.php
+# (2) o lib.php: passa a carregar compra e espera; com os lib/*.php antigos nada muda (sem colisão de nomes)
+site/matricula-cursos-presenciais/api/lib.php
+# (3) os lib/*.php alterados
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/publico.php
+site/matricula-cursos-presenciais/api/lib/turmas.php
+site/matricula-cursos-presenciais/api/lib/comprovante.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/escola.php
+site/matricula-cursos-presenciais/api/lib/horarios.php
+site/matricula-cursos-presenciais/api/lib/meta.php
+site/matricula-cursos-presenciais/api/lib/recuperacao.php
+site/matricula-cursos-presenciais/api/lib/secretaria.php
+site/matricula-cursos-presenciais/api/lib/unicopag.php
+# (4) os endpoints (parcelas.php é novo) e a rotina
+site/matricula-cursos-presenciais/api/parcelas.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/api/info.php
+site/matricula-cursos-presenciais/api/status.php
+site/matricula-cursos-presenciais/api/medicao.php
+site/matricula-cursos-presenciais/api/turmas.php
+site/matricula-cursos-presenciais/api/painel.php
+site/matricula-cursos-presenciais/api/comparecimentos.php
+site/matricula-cursos-presenciais/api/config.example.php
+# (5) o checkout.js (antes das telas). Conferir que o servidor entrega o novo (o hash vem do nome ?v=):
+#   v=$(sha256sum site/matricula-cursos-presenciais/static/checkout.js | cut -c1-10); curl -s "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/static/checkout.js?v=$v" | sha256sum   # começa com $v
+site/matricula-cursos-presenciais/static/checkout.js

@@ -1,0 +1,27 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 5 (ligar à vista), só com a P4 = B (decisão 10), o jurídico (5.3 itens 1, 2 e 4) e o passo 4 conferido.
+# Gerar (o ar não pode ter mudado depois da base; a data é a da publicação):
+#   scripts/pagar_tudo/gerar.sh conferir-ar && PLANO_COMPLETO_HTML=1 POLITICAS_DATA=AAAA-MM-DD scripts/pagar_tudo/gerar.sh chat pagina checkout politicas
+# Config: ESCOLA_MATRICULA_PAGA=true, PLANO_COMPLETO=true, PARCELAS_MAX=1, PLANO_COMPLETO_SO_TESTE=false
+# (PLANO_COMPLETO_SEM_TURMA continua false). O oferta.json fica o do passo 3 ("sem_turma": {}) até o passo 5b.
+# Antes, a cópia do ar (é a volta atrás destes arquivos: o Git não tem o chat.js nem as páginas do ar):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-passo5 $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo5.txt)
+# Publicar, nesta ordem: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo5.txt)
+# Desfazer (nunca scripts/desfazer_publicacao.sh nesta lista: o chat.js e as páginas do Git não são as do ar):
+#   C=/tmp/no-ar-passo5; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo5.txt | tac | sed "s|^site/|$C/|")
+#   e PLANO_COMPLETO=false no config.
+site/chat/chat.js
+site/matricula-cursos-presenciais/static/turmas.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/matricula-cursos-presenciais/index.html

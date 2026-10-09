@@ -1347,6 +1347,7 @@
       }
     },
     "termos": {
+      "revisao": "2026-10-08",
       "pt": {
         "titulo_aba": "Termos de Uso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Regras de uso do site da Cruz Vermelha Brasileira Rio de Janeiro: conteúdo, emblema da cruz vermelha, matrícula em cursos, doações, responsabilidade e foro.",
@@ -1388,7 +1389,7 @@
             "titulo": "Cursos e matrícula",
             "blocos": [
               {
-                "p": "A matrícula em cursos presenciais é feita na [página de matrícula]({matricula}): a inscrição de {inscricao}, paga por PIX ou cartão, reserva a vaga, e o valor do curso é pago depois, na [plataforma da escola]({escola}), com as condições informadas lá. A secretaria confirma turma, data e horário por e-mail."
+                "p": "A matrícula em cursos presenciais é feita na [página de matrícula]({matricula}): você paga a taxa de inscrição de {inscricao} e, se escolher, a matrícula (o valor do curso) junto, por PIX ou cartão, à vista. Quem paga só a taxa de inscrição paga a matrícula depois, antes da aula. A entrada na aula é liberada com a matrícula paga. A taxa de inscrição e a matrícula são vendidas por O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35, que emite a nota fiscal."
               },
               {
                 "p": "As regras para desistir e receber o valor de volta, incluindo o direito de arrependimento de 7 dias, estão em [Cancelamento e reembolso]({reembolso})."
@@ -1495,7 +1496,7 @@
             "titulo": "Courses and enrolment",
             "blocos": [
               {
-                "p": "Enrolment in in-person courses is done on the [enrolment page]({matricula}), in Portuguese: the {inscricao} enrolment fee, paid by PIX or card, holds your place, and the course fee is paid afterwards on the [school platform]({escola}), under the conditions stated there. The school office confirms the class, date and time by e-mail."
+                "p": "Enrolment in in-person courses is done on the [enrolment page]({matricula}), in Portuguese: you pay the {inscricao} enrolment fee and, if you choose, the course fee at the same time, by PIX or card, in a single payment. Anyone who pays only the enrolment fee pays the course fee later, before the class. Entry to the class is allowed once the course fee is paid. The enrolment fee and the course fee are sold by O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ (Brazilian company number) 67.733.551/0001-35, which issues the invoice."
               },
               {
                 "p": "The rules for withdrawing and getting your money back, including the 7-day right of withdrawal, are in [Cancellation and refunds]({reembolso})."
@@ -1602,7 +1603,7 @@
             "titulo": "Cursos y matrícula",
             "blocos": [
               {
-                "p": "La matrícula en los cursos presenciales se hace en la [página de matrícula]({matricula}), en portugués: la inscripción de {inscricao}, pagada con PIX o tarjeta, reserva la plaza, y el valor del curso se paga después, en la [plataforma de la escuela]({escola}), con las condiciones que allí se informan. La secretaría confirma el grupo, la fecha y el horario por correo."
+                "p": "La matrícula en los cursos presenciales se hace en la [página de matrícula]({matricula}), en portugués: usted paga la tasa de inscripción de {inscricao} y, si lo elige, la matrícula (el valor del curso) junto, con PIX o tarjeta, al contado. Quien paga solo la tasa de inscripción paga la matrícula después, antes de la clase. La entrada a la clase se habilita con la matrícula pagada. La tasa de inscripción y la matrícula las vende O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ (registro de personas jurídicas de Brasil) 67.733.551/0001-35, que emite la factura."
               },
               {
                 "p": "Las reglas para desistir y recuperar el dinero, incluido el derecho de arrepentimiento de 7 días, están en [Cancelación y reembolso]({reembolso})."
@@ -1670,14 +1671,14 @@
       }
     },
     "reembolso": {
-      "revisao": "2026-10-07",
+      "revisao": "2026-10-08",
       "pt": {
         "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
         "sobrancelha": "Matrícula em cursos",
         "h1": "Cancelamento e reembolso",
         "intro": [
-          "Estas regras valem para a inscrição de {inscricao} paga na [página de matrícula em cursos presenciais]({matricula}). Elas seguem o Código de Defesa do Consumidor (Lei nº 8.078/1990) e o Decreto nº 7.962/2013, que trata das compras pela internet."
+          "Estas regras valem para o que você paga na [página de cursos presenciais]({matricula}): a taxa de inscrição de {inscricao} e, se você escolher pagar junto, a matrícula (o valor do curso), à vista. Elas seguem o Código de Defesa do Consumidor (Lei nº 8.078/1990) e o Decreto nº 7.962/2013, que trata das compras pela internet."
         ],
         "secoes": [
           {
@@ -1685,7 +1686,7 @@
             "titulo": "Direito de arrependimento: 7 dias",
             "blocos": [
               {
-                "p": "Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você tiver escolhido cobri-lo."
+                "p": "Você pode desistir em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do CDC). O valor pago volta por inteiro: a taxa de inscrição, a matrícula, os juros do parcelamento e, se você tiver escolhido, os custos de processamento e a contribuição para a divulgação."
               }
             ]
           },
@@ -1694,16 +1695,26 @@
             "titulo": "Depois dos 7 dias",
             "blocos": [
               {
-                "p": "Passado o prazo de arrependimento, a inscrição ainda é devolvida por inteiro:"
+                "p": "Passado o prazo de arrependimento, tudo o que você pagou ainda volta por inteiro:"
               },
               {
                 "lista": [
-                  "se não houver turma com horário compatível para você; ou",
+                  "se não houver turma com horário compatível para você;",
+                  "se a filial cancelar ou adiar a turma e você não puder participar em outra data; ou",
                   "se você desistir antes de a secretaria confirmar a sua turma (data e horário da aula)."
                 ]
               },
               {
-                "p": "Com a turma confirmada, a inscrição não é devolvida, salvo se a própria filial cancelar ou adiar a turma e você não puder participar em outra data."
+                "p": "Com a turma confirmada, se você desistir antes da primeira aula, a matrícula paga neste site é devolvida, com os juros do parcelamento que correspondem a ela, e a taxa de inscrição fica com O-CVB Filial Rio de Janeiro Ensino Ltda."
+              }
+            ]
+          },
+          {
+            "id": "turma-confirmada",
+            "titulo": "Turma confirmada",
+            "blocos": [
+              {
+                "p": "A turma é confirmada quando a secretaria envia o e-mail “Turma confirmada”, com data, horário e local, depois de atingido o número mínimo de alunos. Matrícula confirmada (pagamento recebido) não é o mesmo que turma confirmada."
               }
             ]
           },
@@ -1724,7 +1735,7 @@
             "titulo": "Como o valor volta",
             "blocos": [
               {
-                "p": "A devolução é sempre do valor inteiro que você pagou: a inscrição e, se você tiver escolhido, os custos de processamento e a contribuição para a divulgação dos cursos."
+                "p": "Quando a devolução é por inteiro, ela inclui tudo o que você pagou: a taxa de inscrição, a matrícula, os juros do parcelamento e, se você tiver escolhido, os custos de processamento e a contribuição para a divulgação dos cursos."
               },
               {
                 "p": "Assim que o pedido chega, pedimos o estorno à ÚnicoPag, a empresa que processou o pagamento, que avisa o banco ou a administradora do cartão."
@@ -1736,16 +1747,19 @@
                 ]
               },
               {
+                "p": "Quando só uma parte do valor volta (por exemplo, só a matrícula), a devolução é feita por PIX, para uma conta no seu nome, com os juros do parcelamento que correspondem a essa parte, porque o processador de pagamento só estorna a compra inteira."
+              },
+              {
                 "p": "Avisamos por e-mail quando o estorno for feito."
               }
             ]
           },
           {
             "id": "curso",
-            "titulo": "O valor do curso, na plataforma da escola",
+            "titulo": "A matrícula",
             "blocos": [
               {
-                "p": "O valor do curso é pago à parte, na [plataforma da escola]({escola}), e segue as condições informadas lá no momento do pagamento. O direito de arrependimento de 7 dias vale também para essa compra, feita pela internet. Dúvidas sobre esse pagamento podem ser enviadas pelo mesmo chat ou por e-mail."
+                "p": "A matrícula paga junto com a inscrição, neste site, segue estas regras e é devolvida por aqui. Quem paga só a taxa de inscrição paga a matrícula depois, antes da aula, como a secretaria da Escola orientar por e-mail; essa compra segue as condições informadas no momento do pagamento, e o direito de arrependimento de 7 dias vale também para ela."
               }
             ]
           },
@@ -1754,10 +1768,10 @@
             "titulo": "Quem vende",
             "blocos": [
               {
-                "p": "A inscrição é vendida pela filial abaixo, que responde por estas regras:"
+                "p": "A taxa de inscrição e a matrícula pagas neste site são vendidas por **O-CVB Filial Rio de Janeiro Ensino Ltda**, CNPJ 67.733.551/0001-35, que responde por estas regras e emite a nota fiscal."
               },
               {
-                "filial": true
+                "p": "Contato: chat “Fale com a gente”, na [página de matrícula]({matricula}), ou [{email}](mailto:{email})."
               }
             ]
           }
@@ -1769,7 +1783,7 @@
         "sobrancelha": "Course enrolment",
         "h1": "Cancellation and refunds",
         "intro": [
-          "These rules apply to the {inscricao} enrolment fee paid on the [in-person course enrolment page]({matricula}). They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases."
+          "These rules apply to what you pay on the [in-person courses page]({matricula}): the {inscricao} enrolment fee and, if you choose to pay it at the same time, the course fee, in a single payment. They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases."
         ],
         "secoes": [
           {
@@ -1777,7 +1791,7 @@
             "titulo": "Right of withdrawal: 7 days",
             "blocos": [
               {
-                "p": "You may withdraw from the enrolment within 7 calendar days of payment, without giving a reason (Art. 49 of the Consumer Protection Code). The full amount paid is refunded, including the processing cost if you chose to cover it."
+                "p": "You may withdraw within 7 calendar days of payment, without giving a reason (Art. 49 of the Consumer Protection Code). The full amount paid is refunded: the enrolment fee, the course fee, the instalment interest and, if you chose them, the processing cost and the contribution to promoting the courses."
               }
             ]
           },
@@ -1786,16 +1800,26 @@
             "titulo": "After the 7 days",
             "blocos": [
               {
-                "p": "After the withdrawal period, the enrolment fee is still refunded in full:"
+                "p": "After the withdrawal period, everything you paid is still refunded in full:"
               },
               {
                 "lista": [
-                  "if there is no class at a time that suits you; or",
+                  "if there is no class at a time that suits you;",
+                  "if the branch cancels or postpones the class and you cannot attend on another date; or",
                   "if you withdraw before the school office confirms your class (date and time)."
                 ]
               },
               {
-                "p": "Once the class is confirmed, the enrolment fee is not refunded, unless the branch itself cancels or postpones the class and you cannot attend on another date."
+                "p": "Once the class is confirmed, if you withdraw before the first lesson, the course fee paid on this site is refunded, with the instalment interest that corresponds to it, and the enrolment fee is kept by O-CVB Filial Rio de Janeiro Ensino Ltda."
+              }
+            ]
+          },
+          {
+            "id": "class-confirmed",
+            "titulo": "Confirmed class",
+            "blocos": [
+              {
+                "p": "A class is confirmed when the school office sends the “Turma confirmada” (class confirmed) e-mail, with the date, time and place, once the minimum number of students has been reached. A confirmed enrolment (payment received) is not the same as a confirmed class."
               }
             ]
           },
@@ -1816,7 +1840,7 @@
             "titulo": "How the money is returned",
             "blocos": [
               {
-                "p": "The refund is always the full amount you paid: the enrolment fee and, if you chose them, the processing cost and the contribution to promoting the courses."
+                "p": "When the refund is in full, it covers everything you paid: the enrolment fee, the course fee, the instalment interest and, if you chose them, the processing cost and the contribution to promoting the courses."
               },
               {
                 "p": "As soon as the request arrives, we ask ÚnicoPag, the company that processed the payment, for a refund, and it notifies the bank or the card issuer."
@@ -1828,16 +1852,19 @@
                 ]
               },
               {
+                "p": "When only part of the amount is refunded (for example, only the course fee), the refund is made by PIX, to an account in your name, with the instalment interest that corresponds to that part, because the payment processor only refunds whole purchases."
+              },
+              {
                 "p": "We let you know by e-mail when the refund has been made."
               }
             ]
           },
           {
             "id": "course-fee",
-            "titulo": "The course fee, on the school platform",
+            "titulo": "The course fee",
             "blocos": [
               {
-                "p": "The course fee is paid separately, on the [school platform]({escola}), and follows the conditions stated there at the time of payment. The 7-day right of withdrawal also applies to that purchase, made online. Questions about that payment can be sent through the same chat or by e-mail."
+                "p": "A course fee paid together with the enrolment fee, on this site, follows these rules and is refunded here. Anyone who pays only the enrolment fee pays the course fee later, before the class, as the School office explains by e-mail; that purchase follows the conditions stated at the time of payment, and the 7-day right of withdrawal also applies to it."
               }
             ]
           },
@@ -1846,10 +1873,10 @@
             "titulo": "Who is selling",
             "blocos": [
               {
-                "p": "The enrolment is sold by the branch below, which is responsible for these rules:"
+                "p": "The enrolment fee and the course fee paid on this site are sold by **O-CVB Filial Rio de Janeiro Ensino Ltda**, CNPJ (Brazilian company number) 67.733.551/0001-35, which is responsible for these rules and issues the invoice."
               },
               {
-                "filial": true
+                "p": "Contact: the “Fale com a gente” chat on the [enrolment page]({matricula}), or [{email}](mailto:{email})."
               }
             ]
           }
@@ -1861,7 +1888,7 @@
         "sobrancelha": "Matrícula en cursos",
         "h1": "Cancelación y reembolso",
         "intro": [
-          "Estas reglas se aplican a la inscripción de {inscricao} pagada en la [página de matrícula en cursos presenciales]({matricula}). Siguen el Código de Defensa del Consumidor de Brasil (Ley n.º 8.078/1990) y el Decreto n.º 7.962/2013, sobre las compras por internet."
+          "Estas reglas se aplican a lo que usted paga en la [página de cursos presenciales]({matricula}): la tasa de inscripción de {inscricao} y, si elige pagarla junto, la matrícula (el valor del curso), al contado. Siguen el Código de Defensa del Consumidor de Brasil (Ley n.º 8.078/1990) y el Decreto n.º 7.962/2013, sobre las compras por internet."
         ],
         "secoes": [
           {
@@ -1869,7 +1896,7 @@
             "titulo": "Derecho de arrepentimiento: 7 días",
             "blocos": [
               {
-                "p": "Puede desistir de la inscripción en hasta 7 días corridos contados desde el pago, sin tener que dar el motivo (art. 49 del Código de Defensa del Consumidor). Se devuelve el importe íntegro, incluido el costo de procesamiento, si eligió cubrirlo."
+                "p": "Puede desistir en hasta 7 días corridos contados desde el pago, sin tener que dar el motivo (art. 49 del Código de Defensa del Consumidor). Se devuelve el importe íntegro: la tasa de inscripción, la matrícula, los intereses de las cuotas y, si los eligió, el costo de procesamiento y la contribución para la difusión de los cursos."
               }
             ]
           },
@@ -1878,16 +1905,26 @@
             "titulo": "Después de los 7 días",
             "blocos": [
               {
-                "p": "Pasado el plazo de arrepentimiento, la inscripción todavía se devuelve íntegramente:"
+                "p": "Pasado el plazo de arrepentimiento, todo lo que pagó todavía se devuelve íntegramente:"
               },
               {
                 "lista": [
-                  "si no hay un grupo con un horario compatible para usted; o",
+                  "si no hay un grupo con un horario compatible para usted;",
+                  "si la filial cancela o aplaza el grupo y usted no puede participar en otra fecha; o",
                   "si desiste antes de que la secretaría confirme su grupo (fecha y horario de la clase)."
                 ]
               },
               {
-                "p": "Con el grupo confirmado, la inscripción no se devuelve, salvo que la propia filial cancele o aplace el grupo y usted no pueda participar en otra fecha."
+                "p": "Con el grupo confirmado, si desiste antes de la primera clase, se devuelve la matrícula pagada en este sitio, con los intereses de las cuotas que le corresponden, y la tasa de inscripción queda para O-CVB Filial Rio de Janeiro Ensino Ltda."
+              }
+            ]
+          },
+          {
+            "id": "grupo-confirmado",
+            "titulo": "Grupo confirmado",
+            "blocos": [
+              {
+                "p": "El grupo se confirma cuando la secretaría envía el correo “Turma confirmada” (grupo confirmado), con la fecha, el horario y el lugar, después de alcanzar el número mínimo de alumnos. Matrícula confirmada (pago recibido) no es lo mismo que grupo confirmado."
               }
             ]
           },
@@ -1908,7 +1945,7 @@
             "titulo": "Cómo se devuelve el dinero",
             "blocos": [
               {
-                "p": "La devolución es siempre del importe íntegro que pagó: la inscripción y, si los eligió, el costo de procesamiento y la contribución para la difusión de los cursos."
+                "p": "Cuando la devolución es íntegra, incluye todo lo que pagó: la tasa de inscripción, la matrícula, los intereses de las cuotas y, si los eligió, el costo de procesamiento y la contribución para la difusión de los cursos."
               },
               {
                 "p": "En cuanto llega el pedido, solicitamos el reembolso a ÚnicoPag, la empresa que procesó el pago, que avisa al banco o a la emisora de la tarjeta."
@@ -1920,16 +1957,19 @@
                 ]
               },
               {
+                "p": "Cuando solo se devuelve una parte del importe (por ejemplo, solo la matrícula), la devolución se hace por PIX, a una cuenta a su nombre, con los intereses de las cuotas que corresponden a esa parte, porque el procesador de pagos solo reembolsa la compra entera."
+              },
+              {
                 "p": "Le avisamos por correo cuando se haga el reembolso."
               }
             ]
           },
           {
             "id": "valor-del-curso",
-            "titulo": "El valor del curso, en la plataforma de la escuela",
+            "titulo": "La matrícula",
             "blocos": [
               {
-                "p": "El valor del curso se paga aparte, en la [plataforma de la escuela]({escola}), y sigue las condiciones informadas allí en el momento del pago. El derecho de arrepentimiento de 7 días también se aplica a esa compra, hecha por internet. Las dudas sobre ese pago pueden enviarse por el mismo chat o por correo."
+                "p": "La matrícula pagada junto con la inscripción, en este sitio, sigue estas reglas y se devuelve por aquí. Quien paga solo la tasa de inscripción paga la matrícula después, antes de la clase, como la secretaría de la Escuela le indique por correo; esa compra sigue las condiciones informadas en el momento del pago, y el derecho de arrepentimiento de 7 días también se aplica a ella."
               }
             ]
           },
@@ -1938,10 +1978,10 @@
             "titulo": "Quién vende",
             "blocos": [
               {
-                "p": "La inscripción la vende la filial que se indica abajo, responsable de estas reglas:"
+                "p": "La tasa de inscripción y la matrícula pagadas en este sitio las vende **O-CVB Filial Rio de Janeiro Ensino Ltda**, CNPJ (registro de personas jurídicas de Brasil) 67.733.551/0001-35, responsable de estas reglas y emisora de la factura."
               },
               {
-                "filial": true
+                "p": "Contacto: el chat “Fale com a gente”, en la [página de matrícula]({matricula}), o [{email}](mailto:{email})."
               }
             ]
           }

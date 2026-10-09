@@ -60,6 +60,7 @@ function limpar(PDO $db): void
 {
     $db->exec("DELETE FROM mcp_turmas_pedidos WHERE email REGEXP '^t-[0-9a-f]{6}-[0-9]+@exemplo[.]org$'");
     $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('turma_pedido', 'painel_turma_status', 'painel_turma_lista', 'painel_turmas_csv', 'armadilha') AND (detalhe LIKE '%contato@exemplo.org%' OR detalhe LIKE 'turmas · %' OR detalhe REGEXP '^#[0-9]+ · (fechada|lista) ')");
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'turma_aviso_repetido' AND detalhe REGEXP '^#[0-9]+ · bombeiro-civil$'");
 }
 
 $db = mcp_db();
@@ -187,6 +188,27 @@ try {
     verificar('portal: planilha da lista, com BOM e sem IP', [$st, str_contains((string) ($cab['content-type'] ?? ''), 'text/csv'), str_starts_with($csv, "\xEF\xBB\xBF"),
         substr_count($csv, "\n"), str_contains($csv, '127.0.0.1')], [200, true, true, 3, false]);
     verificar('portal: sem sessão, pede para entrar', str_contains(http($base . 'painel.php?v=turmas')[2], '<h1>Entrar</h1>'), true);
+
+    // "Prefiro ser avisado da data" (página do curso): o 1º aviso vai direto ao banco (o freio de 6 pedidos por IP na
+    // hora já foi usado acima); o reenvio pelo formulário devolve o mesmo protocolo, sem gravar outra linha. No portal, a
+    // lista em português de curso do catálogo aparece como avisos da data: sem "de 15", sem "faltam" e sem link de
+    // WhatsApp vazio (o aviso não tem telefone).
+    $emailAviso = "t-$sufixo-97@exemplo.org";
+    $avisoConf = mcp_turma_conferir(['aviso' => true, 'curso' => 'bombeiro-civil', 'nome' => 'Pessoa Aviso', 'email' => $emailAviso, 'consentimento' => true]);
+    $avisoId = mcp_turma_gravar($avisoConf['dados']);
+    mcp_turma_atualizar($avisoId, ['protocolo' => mcp_turma_protocolo($avisoId)]);
+    $linhasAviso = static fn(): int => (int) $db->query("SELECT COUNT(*) FROM mcp_turmas_pedidos WHERE email = " . $db->quote($emailAviso))->fetchColumn();
+    [$st, , $resposta] = http($base . 'turmas.php', 'POST', json_encode(['aviso' => true, 'curso' => 'bombeiro-civil', 'nome' => 'Pessoa Aviso', 'email' => $emailAviso,
+        'consentimento' => true, 'site' => '']), ['Content-Type: application/json']);
+    $d = json_decode($resposta, true) ?? [];
+    verificar('api: aviso da data reenviado devolve o mesmo protocolo, sem gravar outra linha', [$st, $d['repetido'] ?? null, $d['protocolo'] ?? null, $linhasAviso()],
+        [200, true, mcp_turma_protocolo($avisoId), 1]);
+    [$st, , $html] = http($base . 'painel.php?v=turmas', 'GET', null, [$cookie]);
+    verificar('portal: lista de avisos da data sem "de 15" e sem progresso', [str_contains($html, '1 pessoa pediu o aviso da data'), str_contains($html, '>Aviso da data<'),
+        (bool) preg_match('/Bombeiro Civil<\/a><div class="progresso"/', $html)], [true, true, false]);
+    [$st, , $html] = http($base . 'painel.php?v=turmas&curso=bombeiro-civil&idioma=pt', 'GET', null, [$cookie]);
+    verificar('portal: a lista de avisos mostra só e-mail, sem link de WhatsApp vazio', [$st, str_contains($html, 'Avisos da data'), str_contains($html, 'Só e-mail (aviso da data)'),
+        str_contains($html, 'href="https://wa.me/55"'), str_contains($html, 'Faltam')], [200, true, true, false, false]);
 
     $id = (int) $fechada['id'];
     $mudar = static fn(string $acao, int $alvo, string $status, string $t, array $extra = []): array => http($base . 'painel.php', 'POST',

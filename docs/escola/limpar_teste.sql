@@ -10,7 +10,7 @@ declare
 begin
   select m.id, m."alunoId" into v_matricula, v_usuario
     from public."Pagamento" p join public."Matricula" m on m.id = p."matriculaId"
-   where p.gateway = 'site' and p."gatewayHash" = v_transacao;
+   where p.gateway in ('site', 'unicopag-2') and p."gatewayHash" = v_transacao;  -- unicopag-2: o "pagou tudo" da v2
   if v_usuario is null then
     select l."alvoId" into v_usuario from public."LogAuditoria" l
      where l.acao = 'TAXA_PAGA_SEM_TURMA_PELO_SITE' and l.detalhe->>'transacao' = v_transacao;
@@ -31,6 +31,9 @@ begin
   delete from public."Pagamento" where "matriculaId" = v_matricula;  -- Avaliacao sai junto (ON DELETE CASCADE)
   delete from public."Matricula" where id = v_matricula;
   delete from public."TokenAuth" where "usuarioId" = v_usuario;
+  -- v2 (pagar tudo): a anotação matricularapida:<referencia>, achada pela referência do log, antes de apagar o log
+  -- (sem converter todas as anotações para JSON: uma anotação com JSON inválido derrubaria a limpeza; T23).
+  delete from public."Configuracao" where chave = 'matricularapida:' || (select l.detalhe->>'referencia' from public."LogAuditoria" l where l.detalhe->>'transacao' = v_transacao and l.detalhe ? 'referencia' limit 1);
   delete from public."LogAuditoria" where detalhe->>'transacao' = v_transacao;
   delete from public."Usuario" where id = v_usuario;
   raise notice 'Transação de teste % apagada da escola.', v_transacao;

@@ -3,7 +3,11 @@
  * Portal da secretaria. Menu no cabeçalho com sete itens:
  *   - Início: o que pede ação e o que chegou por último;
  *   - Inscrições (?v=inscricoes): filtros, busca, planilha, e a ficha de cada uma (?v=inscricao&id=)
- *     com o histórico e o lembrete de horários à mão (lib/secretaria.php);
+ *     com o histórico e o lembrete de horários à mão (lib/secretaria.php). Pagar tudo (10/2026): selos do
+ *     plano completo e da fila sem turma, filtro "Esperam turma", coluna Pagamento com plano e parcelas, e as
+ *     ações "Já resolvi na escola", "Devolver", "Continua esperando", "Já cancelei na escola" (ficha) e
+ *     "Turma confirmada" (Início), que chamam lib/espera.php; no Início, os cartões "Plano completo",
+ *     "Pagaram tudo e esperam turma" e "Reserva para devoluções" e a planilha mensal da espera;
  *   - Horários dos alunos (?v=horarios): mapa por curso, lista e planilha (lib/horarios.php);
  *   - Mensagens do chat (?v=mensagens): lista, detalhe e resposta por e-mail no padrão da instituição;
  *   - Turmas sob demanda (?v=turmas): pedidos de turma fechada (15 a 30 alunos) e listas de interesse por
@@ -210,7 +214,11 @@ radial-gradient(farthest-side at 0 50%,rgba(16,24,40,.18),rgba(16,24,40,0)) 0 0/
 .lista-curta a{font-weight:700;color:var(--black);text-decoration:none}.lista-curta a:hover{color:var(--red)}
 .lista-curta small{display:block;color:var(--muted);font-size:.82rem}
 .selo{display:inline-block;border-radius:999px;padding:3px 10px;font-size:.74rem;font-weight:800;white-space:nowrap}
-.selo.ok{background:#e9f7ef;color:#0f7b3e}.selo.alerta{background:#fff4e5;color:#8a5200}.selo.erro{background:#fff0f2;color:#b91c1c}.selo.neutro{background:var(--soft);color:#4a5568}
+.selo.ok{background:#e9f7ef;color:#0f7b3e}.selo.alerta{background:#fff4e5;color:#8a5200}.selo.erro{background:#fff0f2;color:#b91c1c}.selo.neutro{background:var(--soft);color:#4a5568}.selo.info{background:#eef4ff;color:#1d4ed8}
+.selos{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}.selos .selo{white-space:normal}
+.orientacoes{margin:12px 0 0;padding:0;list-style:none}.orientacoes li{background:var(--soft);border-radius:12px;padding:10px 14px;margin:0 0 8px;font-size:.92rem}
+.mini select{padding:8px 10px;font:inherit;font-size:.92rem;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:var(--text)}.mini textarea{min-height:90px;font-size:.92rem;padding:8px 10px;border-radius:10px}
+.espera-cursos li b{font-weight:700}
 .busca{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
 .busca input,.busca select{flex:1 1 220px;width:auto;font:inherit;font-size:.95rem;padding:10px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:var(--text)}
 .busca select{flex:0 1 240px}.busca .btn{min-height:44px;padding:10px 18px}
@@ -386,7 +394,8 @@ function pn_turma_linhas(string $usuario, array $linhas, array $volta): string
         $html .= '<tr><td data-rotulo="Recebido">' . pn_e(pn_data((string) $l['criado_em'])) . '<small>' . pn_e((string) $l['protocolo']) . '</small></td>'
             . '<td class="aluno"><b>' . pn_e((string) $l['nome']) . '</b>' . ($l['organizacao'] ? '<small>' . pn_e((string) $l['organizacao']) . '</small>' : '')
             . '<small><a href="mailto:' . pn_e((string) $l['email']) . '">' . pn_e((string) $l['email']) . '</a></small>'
-            . '<small class="tel"><a href="https://wa.me/55' . pn_e(mcp_digitos($tel)) . '" target="_blank" rel="noopener">' . pn_e(mcp_telefone_bonito($tel)) . '</a></small></td>'
+            . ($tel !== '' ? '<small class="tel"><a href="https://wa.me/55' . pn_e(mcp_digitos($tel)) . '" target="_blank" rel="noopener">' . pn_e(mcp_telefone_bonito($tel)) . '</a></small>'
+                : '<small>Só e-mail (aviso da data)</small>') . '</td>'
             . '<td data-rotulo="Turma"><b>' . pn_e(mcp_turma_alunos((int) $l['pessoas'])) . '</b><small>' . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</small>' . $local
             . ($l['periodo'] ? '<small>Prefere: ' . pn_e((string) $l['periodo']) . '</small>' : '') . $obs . '</td>'
             . '<td data-rotulo="Situação"><span class="selo ' . ($tons[$l['status']] ?? 'neutro') . '">' . pn_e(MCP_TURMA_STATUS[$l['status']] ?? (string) $l['status']) . '</span>'
@@ -432,11 +441,16 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
         $rotulo = mcp_turma_rotulo((string) ($cursos[$curso]['nome'] ?? $demanda['curso_nome'] ?? $linhas[0]['curso_nome'] ?? $curso), $idioma);
         $soma = (int) ($demanda['pessoas'] ?? 0);
         $pr = mcp_turma_progresso($soma);
+        $deAviso = mcp_turma_lista_de_aviso($curso, $idioma);
         $corpo = '<a class="voltar" href="painel.php?v=turmas">← Voltar para as turmas sob demanda</a>' . $avisoHtml
-            . '<div class="cabeca"><div><p class="eyebrow">Lista de interesse</p><h1>' . pn_e($rotulo) . '</h1>'
-            . '<p class="nota">' . pn_e(mcp_turma_alunos($pr['soma'])) . ' em pedidos abertos. '
-            . ($pr['pronta'] ? 'Já dá para abrir a turma: avise todos e, quando a turma estiver marcada, mude a situação abaixo.' : 'Faltam ' . $pr['faltam'] . ' para ' . MCP_TURMA_MINIMO . '.') . '</p>'
-            . '<div class="progresso" style="max-width:420px"><i style="width:' . $pr['pct'] . '%"></i></div></div>' . $baixar . '</div>'
+            . '<div class="cabeca"><div><p class="eyebrow">' . ($deAviso ? 'Avisos da data' : 'Lista de interesse') . '</p><h1>' . pn_e($rotulo) . '</h1>'
+            . ($deAviso
+                ? '<p class="nota">' . pn_e(mcp_turma_pediram($pr['soma'])) . ' o aviso da data na página do curso (só e-mail, sem telefone). '
+                    . 'Quando a data da próxima turma sair, avise todos por e-mail (planilha) e mude a situação abaixo.</p></div>'
+                : '<p class="nota">' . pn_e(mcp_turma_alunos($pr['soma'])) . ' em pedidos abertos. '
+                    . ($pr['pronta'] ? 'Já dá para abrir a turma: avise todos e, quando a turma estiver marcada, mude a situação abaixo.' : 'Faltam ' . $pr['faltam'] . ' para ' . MCP_TURMA_MINIMO . '.') . '</p>'
+                    . '<div class="progresso" style="max-width:420px"><i style="width:' . $pr['pct'] . '%"></i></div></div>')
+            . $baixar . '</div>'
             . $pilulas . $tabela
             . ($pr['soma'] > 0 ? '<div class="cartao" style="margin-top:18px"><h2>Mudar todos os pedidos em aberto desta lista</h2>'
                 . '<p class="nota" style="margin:0">Use quando a turma abrir: "Turma marcada" tira os pedidos da lista. Cada pessoa continua sendo avisada por você, pela planilha.</p>'
@@ -448,8 +462,15 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
     $listas = '';
     foreach (mcp_turma_demanda() as $l) {
         $pr = mcp_turma_progresso($l['pessoas']);
-        $listas .= '<li><div><a href="' . pn_e('painel.php?' . http_build_query(['v' => 'turmas', 'curso' => $l['curso_slug'], 'idioma' => $l['idioma']])) . '">'
-            . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</a>'
+        $link = '<a href="' . pn_e('painel.php?' . http_build_query(['v' => 'turmas', 'curso' => $l['curso_slug'], 'idioma' => $l['idioma']])) . '">'
+            . pn_e(mcp_turma_rotulo((string) $l['curso_nome'], (string) $l['idioma'])) . '</a>';
+        if (mcp_turma_lista_de_aviso((string) $l['curso_slug'], (string) $l['idioma'])) {
+            // Avisos da data (página do curso): esperam a data da turma regular, não 15 pessoas.
+            $listas .= '<li><div>' . $link . '<small>' . pn_e(mcp_turma_pediram($l['pedidos'])) . ' o aviso da data · último em ' . pn_e(pn_data((string) $l['ultimo'])) . '</small></div>'
+                . '<span class="selo neutro">Aviso da data</span></li>';
+            continue;
+        }
+        $listas .= '<li><div>' . $link
             . '<div class="progresso"><i style="width:' . $pr['pct'] . '%"></i></div>'
             . '<small>' . pn_e(mcp_turma_alunos($pr['soma'])) . ' de ' . MCP_TURMA_MINIMO . ' · ' . $l['pedidos'] . ($l['pedidos'] === 1 ? ' pedido' : ' pedidos') . ' · último em ' . pn_e(pn_data((string) $l['ultimo'])) . '</small></div>'
             . ($pr['pronta'] ? '<span class="selo ok">Pronta para abrir</span>' : '<span class="selo neutro">Faltam ' . $pr['faltam'] . '</span>') . '</li>';
@@ -462,7 +483,8 @@ function pn_turmas(string $usuario, string $aviso, string $classe): never
         . '<div class="cabeca" style="align-items:center">' . $pilulas . $baixar . '</div>' . $tabela
         . '<div class="cartao" style="margin-top:22px"><h2>Listas de interesse em aberto</h2>'
         . ($listas !== '' ? '<ul class="lista-curta">' . $listas . '</ul>' : '<p class="vazio" style="padding:20px">Ninguém na lista por enquanto.</p>')
-        . '<p class="nota">Cada lista é um curso num idioma. Em português, só o curso dos jovens tem lista: os outros têm turma aberta e a matrícula é na hora.</p></div>';
+        . '<p class="nota">Cada lista é um curso num idioma. Em português, nos cursos do catálogo, a lista junta quem pediu o aviso da data na página do curso: '
+        . 'avise todos por e-mail quando a data da turma sair. A soma de ' . MCP_TURMA_MINIMO . ' vale para as turmas em inglês e para o curso dos jovens.</p></div>';
     pn_pagina('Turmas sob demanda', $corpo, $usuario, true, 'turmas');
 }
 
@@ -562,8 +584,86 @@ function pn_horarios(string $usuario): never
     pn_pagina('Dias e horários', $corpo, $usuario, true, 'horarios');
 }
 
+/**
+ * Cartão "Plano completo" (pagar tudo): adesão à taxa + matrícula entre as pagas que viram as duas opções, com turma e
+ * sem turma, e a distribuição das parcelas. Sem as colunas novas, nada.
+ */
+function pn_cartao_plano_completo(): string
+{
+    if (!mcp_secretaria_colunas_ok()) {
+        return '';
+    }
+    $dados = mcp_secretaria_plano_completo();
+    $linhas = '';
+    foreach (['com_turma' => 'Cursos com turma', 'sem_turma' => 'Cursos sem turma'] as $chave => $rotulo) {
+        $d = $dados[$chave] ?? null;
+        if ($d === null) {
+            continue;
+        }
+        $pct = $d['viram'] > 0 ? (int) round(100 * $d['completo'] / $d['viram']) : 0;
+        $linhas .= '<li><div>' . pn_e($rotulo) . '<small>1×: ' . $d['a_vista'] . ' · 2 a 6×: ' . $d['p2a6'] . ' · 7 a 12×: ' . $d['p7a12'] . '</small></div><b>'
+            . $d['completo'] . ' de ' . $d['viram'] . " ($pct%) pagaram tudo</b></li>";
+    }
+    return '<div class="cartao" style="margin-top:18px"><h2>Plano completo (taxa + matrícula)</h2>'
+        . ($linhas !== '' ? '<ul class="lista-curta">' . $linhas . '</ul>' : '<p class="nota">Nenhuma inscrição paga desde que a opção de pagar tudo entrou no checkout.</p>')
+        . '<p class="nota">Entre as inscrições pagas que viram as duas opções no checkout, quantas escolheram pagar a taxa de inscrição e a matrícula juntas, e em quantas parcelas. Estornos não entram.</p></div>';
+}
+
+/**
+ * Cartões da venda sem turma (10.9): "Pagaram tudo e esperam turma" (uma linha por curso, só contagens e somas, e as
+ * turmas definidas nos últimos 7 dias, com o botão "Turma confirmada") e "Reserva para devoluções" (F4).
+ */
+function pn_cartao_espera(string $usuario): string
+{
+    if (!mcp_secretaria_colunas_ok() || !function_exists('mcp_espera_cursos')) {
+        return '';
+    }
+    $cursos = mcp_espera_cursos();
+    $turmas = function_exists('mcp_espera_turmas_recentes') ? mcp_espera_turmas_recentes(7) : [];
+    $reserva = function_exists('mcp_espera_reserva') ? mcp_espera_reserva() : 0;
+    $saldo = function_exists('mcp_espera_saldo') ? mcp_espera_saldo() : null;
+    if (!$cursos && !$turmas && $reserva <= 0) {
+        return '';
+    }
+    $linhas = '';
+    foreach ($cursos as $c) {
+        $max = $c['max_fila'] !== null ? ' (máximo ' . (int) $c['max_fila'] . ')' : ' (fora da lista de venda sem turma)';
+        $linhas .= '<li><div><a href="painel.php?v=inscricoes&amp;f=espera&amp;curso=' . pn_e(rawurlencode((string) $c['curso_slug'])) . '">' . pn_e((string) $c['curso_nome']) . '</a><small>'
+            . pn_e(mcp_brl((int) $c['recebido_centavos'])) . ' recebidos, sem juros · a mais antiga espera há ' . (int) $c['dias_mais_antiga'] . ' dias'
+            . ((int) $c['devolucao_em_15_dias'] > 0 ? ' · <strong>' . (int) $c['devolucao_em_15_dias'] . ' chega' . ((int) $c['devolucao_em_15_dias'] > 1 ? 'm' : '') . ' à devolução automática em 15 dias</strong>' : '')
+            . ($c['motivo'] ? ' · escola: ' . pn_e((string) $c['motivo']) : '')
+            . ((int) $c['faltam_para_minimo'] > 0 ? ' · faltam ' . (int) $c['faltam_para_minimo'] . ' para o mínimo de 15 alunos' : ' · já dá o mínimo de 15 alunos')
+            . '</small></div><b>' . (int) $c['pessoas'] . ' na fila' . pn_e($max) . '</b></li>';
+    }
+    $definidas = '';
+    foreach ($turmas as $t) {
+        $turmaId = (string) $t['turma_id'];
+        $faltam = (int) $t['pessoas'] - (int) $t['confirmadas'];
+        $definidas .= '<li><div>' . pn_e((string) $t['curso_nome']) . ($t['data'] !== '' ? ', turma de ' . pn_e((string) $t['data']) : '')
+            . '<small>' . (int) $t['pessoas'] . ((int) $t['pessoas'] === 1 ? ' pagou' : ' pagaram') . ' tudo (' . (int) ($t['da_fila'] ?? 0) . ' da fila) · ' . (int) $t['confirmadas'] . ' com o e-mail "Turma confirmada"</small></div>'
+            . ($faltam > 0
+                ? '<form method="post" action="painel.php" onsubmit="return confirm(\'Marcar a turma como confirmada? Quem pagou tudo nesta turma recebe o e-mail &quot;Turma confirmada&quot;, e a desistência passa a seguir a regra depois da confirmação.\')">'
+                  . '<input type="hidden" name="acao" value="espera_confirmada"><input type="hidden" name="turma" value="' . pn_e($turmaId) . '">'
+                  . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, 'espera_confirmada', crc32($turmaId))) . '">'
+                  . '<button class="btn btn-outline" type="submit" style="min-height:34px;padding:5px 12px;font-size:.85rem">Turma confirmada</button></form>'
+                : '<span class="selo ok">Confirmada</span>') . '</li>';
+    }
+    $html = '<div class="cartao" style="margin-top:18px"><h2>Pagaram tudo e esperam turma</h2>'
+        . ($linhas !== '' ? '<ul class="lista-curta espera-cursos">' . $linhas . '</ul>' : '<p class="nota">Ninguém na fila agora.</p>')
+        . ($definidas !== '' ? '<h3 style="margin:16px 0 4px;font-size:1rem">Turmas com quem pagou tudo</h3><ul class="lista-curta">' . $definidas . '</ul>'
+            . '<p class="nota">Quando a turma atingir o mínimo de alunos, marque "Turma confirmada": quem pagou tudo nela (com a data ou pela fila) recebe o e-mail, e a partir daí a desistência segue a regra depois da confirmação.</p>' : '')
+        . '<p class="nota">Só contagens e somas. Por ordem de pagamento, a rotina do site matricula a fila sozinha quando a escola abre turma do curso com vaga. '
+        . '<a href="painel.php?v=inscricoes&amp;f=espera">Ver a fila →</a> · <a href="painel.php?v=inscricoes&amp;csv=espera_mensal">Planilha mensal da espera (financeiro)</a></p></div>';
+    $html .= '<div class="cartao" style="margin-top:18px"><h2>Reserva para devoluções</h2><ul class="lista-curta"><li><div>Pago por quem espera turma ou ainda não teve a primeira aula<small>As devoluções da espera saem do saldo da Unicopag.</small></div><b>'
+        . pn_e(mcp_brl($reserva)) . '</b></li><li><div>Saldo disponível na Unicopag'
+        . ($saldo ? '<small>Lido pela rotina em ' . pn_e(pn_data((string) $saldo['lido_em'])) . '</small>' : '<small>A rotina ainda não leu o saldo.</small>') . '</div><b>'
+        . ($saldo ? '<span class="selo ' . ((int) $saldo['saldo'] < $reserva ? 'erro' : 'ok') . '">' . pn_e(mcp_brl((int) $saldo['saldo'])) . '</span>' : '—') . '</b></li></ul>'
+        . '<p class="nota">Regra do financeiro: não sacar abaixo da reserva.</p></div>';
+    return $html;
+}
+
 /** Início: o que pede ação agora e o que chegou por último. Cada número leva à lista correspondente. */
-function pn_inicio(string $usuario): never
+function pn_inicio(string $usuario, string $aviso = '', string $classe = 'ok'): never
 {
     $contas = mcp_secretaria_contar();
     $novas = mcp_contatos_contar()['novo'];
@@ -571,7 +671,7 @@ function pn_inicio(string $usuario): never
         '<a class="numero' . ($alerta && $n > 0 ? ' alerta' : '') . '" href="' . pn_e($href) . '"><b>' . $n . '</b><span>' . pn_e($rotulo) . '</span><small>' . pn_e($explica) . '</small></a>';
     $numeros = '<div class="numeros">'
         . $numero('painel.php?v=inscricoes&f=pagas', $contas['pagas'], 'Inscrições pagas', mcp_secretaria_pagas_recentes(7) . ' nos últimos 7 dias')
-        . $numero('painel.php?v=inscricoes&f=atencao', $contas['atencao'], 'Precisam de atenção', 'matrícula na escola com pendência', true)
+        . $numero('painel.php?v=inscricoes&f=atencao', $contas['atencao'], 'Precisam de atenção', 'matrícula na escola, devolução ou fila com pendência', true)
         . $numero('painel.php?v=inscricoes&f=sem_horarios', $contas['sem_horarios'], 'Sem horários', 'pagaram e ainda não disseram os horários')
         . $numero('painel.php?v=mensagens&f=novo', $novas, 'Mensagens novas', 'do chat do site, sem resposta', true)
         . '</div>';
@@ -637,7 +737,12 @@ function pn_inicio(string $usuario): never
         . '<p class="nota"><a href="painel.php?v=horarios">Ver o mapa por curso →</a></p></div>'
         . '<div class="cartao" style="margin-top:18px"><h2>Contribuição para a divulgação</h2>'
         . ($divulgacao !== '' ? '<ul class="lista-curta">' . $divulgacao . '</ul>' : '<p class="nota">Nenhuma inscrição paga desde que a opção entrou no checkout.</p>')
-        . '<p class="nota">Inscrições pagas que viram a opção no checkout e quantas escolheram contribuir, por valor oferecido. Estornos não entram.</p></div>';
+        . '<p class="nota">Inscrições pagas que viram a opção no checkout e quantas escolheram contribuir, por valor oferecido. Estornos não entram.</p></div>'
+        . pn_cartao_plano_completo()
+        . pn_cartao_espera($usuario);
+    if ($aviso !== '') {
+        $corpo = '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' . $corpo;
+    }
     pn_pagina('Início', $corpo, $usuario, true, 'inicio');
 }
 
@@ -657,6 +762,13 @@ function pn_inscricoes(string $usuario): never
     $pagina = min(max(1, (int) ($_GET['p'] ?? 1)), 10000);
     $params = array_filter(['v' => 'inscricoes', 'f' => $f, 'curso' => $curso, 'q' => $q], static fn(string $x): bool => $x !== '');
     $url = static fn(array $extra): string => 'painel.php?' . http_build_query(array_merge($params, $extra));
+    if (($_GET['csv'] ?? '') === 'espera_mensal') {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="espera-mensal-' . gmdate('Y-m-d') . '.csv"');
+        mcp_registrar(null, 'painel_espera_csv', $usuario);
+        echo mcp_secretaria_csv_espera_mensal();
+        exit;
+    }
     if (isset($_GET['csv'])) {
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="inscricoes-' . $f . ($curso !== '' ? '-' . preg_replace('/[^a-z0-9-]/', '', $curso) : '') . '-' . gmdate('Y-m-d') . '.csv"');
@@ -694,29 +806,131 @@ function pn_inscricoes(string $usuario): never
             . '<td class="aluno"><a class="nome" href="' . $ficha . '">' . pn_e((string) $l['nome']) . '</a><small>' . pn_e((string) $l['email']) . '</small>'
             . ($l['telefone'] ? '<small class="tel">' . pn_e(mcp_telefone_bonito((string) $l['telefone'])) . '</small>' : '') . '</td>'
             . '<td data-rotulo="Curso">' . pn_e((string) $l['curso_nome']) . '</td>'
-            . '<td class="comeco" data-rotulo="Pagamento">' . pn_e(mcp_brl((int) $l['total_centavos'])) . '<small>' . ($l['metodo'] === 'pix' ? 'PIX' : 'Cartão') . ' · ' . pn_e(MCP_SECRETARIA_STATUS[$l['status']] ?? (string) $l['status']) . '</small></td>'
+            . '<td class="comeco" data-rotulo="Pagamento">' . pn_e(mcp_secretaria_pagamento_resumo($l)) . '<small>' . ($l['metodo'] === 'pix' ? 'PIX' : 'Cartão') . ' · ' . pn_e(MCP_SECRETARIA_STATUS[$l['status']] ?? (string) $l['status']) . '</small></td>'
             . '<td data-rotulo="Escola"><span class="selo ' . $esc['tom'] . '">' . pn_e($esc['rotulo']) . '</span></td>'
             . '<td class="horarios" data-rotulo="Horários">' . $horas . '</td>'
             . '<td class="abrir"><a class="btn btn-outline" style="min-height:36px;padding:6px 14px" href="' . $ficha . '">Abrir ficha</a></td></tr>';
     }
     $explica = [
         'pagas' => 'Inscrições com o pagamento confirmado.',
-        'atencao' => 'Pagas, mas a matrícula na escola tem pendência: não foi feita, falhou, ficou sem turma ou a taxa já estava paga. Abra a ficha para ver o que fazer.',
+        'atencao' => 'Pedem ação: a matrícula na escola não foi feita, falhou, ficou sem turma, não foi marcada como paga ou está em outra turma; a taxa ou o curso já estavam pagos; há diferença a devolver; a compra sem turma precisa ser devolvida ou chega à data limite; ou uma compra estornada ainda tem matrícula na escola. Abra a ficha para ver o que fazer.',
+        'espera' => 'Pagaram tudo (taxa + matrícula) num curso sem turma e esperam a turma, na ordem da fila: quem pagou primeiro entra primeiro. O site matricula sozinho quando a escola abre turma com vaga.',
         'sem_horarios' => 'Pagas, e o aluno ainda não disse em quais dias e horários consegue vir. Na ficha, dá para mandar um lembrete por e-mail.',
         'pendentes' => 'Começaram a inscrição e ainda não pagaram (PIX em aberto ou cartão não concluído).',
         'todas' => 'Todas as inscrições, inclusive recusadas, expiradas e estornadas.',
     ][$f];
+    if ($f === 'espera') {
+        $tabela = pn_tabela_espera($curso, $q);
+    }
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Matrícula cursos presenciais</p><h1>Inscrições</h1><p class="nota">' . pn_e($explica) . '</p></div>'
         . ($linhas ? '<a class="btn btn-outline" href="' . pn_e($url(['csv' => 1, 'p' => null])) . '">Baixar planilha</a>' : '') . '</div>'
         . '<div class="filtros">' . $pilulas . '</div>' . $busca
-        . '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Data</th><th>Aluno</th><th>Curso</th><th>Pagamento</th><th>Escola</th><th>Horários</th><th class="abrir"></th></tr></thead><tbody>'
-        . ($tabela !== '' ? $tabela : '<tr><td colspan="7" class="vazio">Nenhuma inscrição aqui.</td></tr>') . '</tbody></table></div>';
+        . ($f === 'espera'
+            ? $tabela
+            : '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Data</th><th>Aluno</th><th>Curso</th><th>Pagamento</th><th>Escola</th><th>Horários</th><th class="abrir"></th></tr></thead><tbody>'
+              . ($tabela !== '' ? $tabela : '<tr><td colspan="7" class="vazio">Nenhuma inscrição aqui.</td></tr>') . '</tbody></table></div>');
     $paginacao = ($pagina > 1 ? '<a href="' . pn_e($url(['p' => $pagina - 1])) . '">Mais recentes</a>' : '')
         . (count($linhas) === MCP_PAINEL_POR_PAGINA ? '<a href="' . pn_e($url(['p' => $pagina + 1])) . '">Mais antigas</a>' : '');
     if ($paginacao !== '') {
         $corpo .= '<div class="paginacao">' . $paginacao . '</div>';
     }
     pn_pagina('Inscrições', $corpo, $usuario, true, 'inscricoes');
+}
+
+/**
+ * A fila "Esperam turma" (10.9), na ordem: posição no curso, nome, curso, pago em, dias na fila, data limite, valor,
+ * e-mails da espera enviados e o último motivo da escola. A busca filtra por nome ou e-mail sem mudar a posição.
+ */
+function pn_tabela_espera(string $curso, string $busca): string
+{
+    $lista = function_exists('mcp_espera_lista') ? mcp_espera_lista($curso !== '' ? $curso : null, 1000) : [];
+    $termo = mb_strtolower(trim($busca));
+    $linhas = '';
+    foreach ($lista as $l) {
+        if ($termo !== '' && !str_contains(mb_strtolower((string) $l['nome']), $termo)) {
+            continue;
+        }
+        $bits = (int) ($l['espera_avisos_enviados'] ?? 0);
+        $emails = implode(', ', array_filter([($bits & 1) ? '30 dias' : '', ($bits & 2) ? '60 dias' : '', ($bits & 4) ? 'aviso do prazo' : ''])) ?: 'nenhum';
+        $dias = !empty($l['espera_desde']) ? intdiv(time() - (int) strtotime($l['espera_desde'] . ' UTC'), 86400) : 0;
+        $prazo = !empty($l['espera_prazo']) ? (int) strtotime($l['espera_prazo'] . ' UTC') : 0;
+        $cobrado = (int) ($l['total_cobrado_centavos'] ?? 0) > 0 ? (int) $l['total_cobrado_centavos'] : (int) $l['total_centavos'];
+        $ficha = 'painel.php?v=inscricao&amp;id=' . (int) $l['id'];
+        $linhas .= '<tr><td data-rotulo="Posição">' . (int) $l['posicao'] . 'ª</td>'
+            . '<td class="aluno"><a class="nome" href="' . $ficha . '">' . pn_e((string) $l['nome']) . '</a></td>'
+            . '<td data-rotulo="Curso">' . pn_e((string) $l['curso_nome']) . '</td>'
+            . '<td data-rotulo="Pago em">' . pn_e(pn_data((string) $l['pago_em'])) . '<small>' . $dias . ' dias na fila</small></td>'
+            . '<td data-rotulo="Data limite"><span class="selo ' . ($prazo && $prazo < time() + 20 * 86400 ? 'alerta' : 'info') . '">' . pn_e((string) $l['data_limite']) . '</span></td>'
+            . '<td data-rotulo="Valor">' . pn_e(mcp_brl($cobrado)) . '</td>'
+            . '<td data-rotulo="E-mails da espera">' . pn_e($emails) . '</td>'
+            . '<td data-rotulo="Escola">' . pn_e((string) ($l['motivo_rotulo'] ?? '—'))
+            . ((int) ($l['espera_falhas'] ?? 0) >= 5 ? '<small>' . (int) $l['espera_falhas'] . ' falhas seguidas</small>' : '')
+            . (!empty($l['espera_erro']) ? '<small>recusa: ' . pn_e((string) $l['espera_erro']) . '</small>' : '') . '</td>'
+            . '<td class="abrir"><a class="btn btn-outline" style="min-height:36px;padding:6px 14px" href="' . $ficha . '">Abrir ficha</a></td></tr>';
+    }
+    return '<div class="tabela rolagem"><table class="respostas"><thead><tr><th>Fila</th><th>Pessoa</th><th>Curso</th><th>Pago em</th><th>Data limite</th><th>Valor</th><th>E-mails da espera</th><th>Último motivo da escola</th><th class="abrir"></th></tr></thead><tbody>'
+        . ($linhas !== '' ? $linhas : '<tr><td colspan="9" class="vazio">Ninguém na fila.</td></tr>') . '</tbody></table></div>';
+}
+
+/** Formulário de uma ação da ficha (POST com a sessão e o CSRF da ação e da inscrição). */
+function pn_form_acao(string $usuario, string $acao, int $id, string $conteudo, string $confirmar = ''): string
+{
+    return '<form method="post" action="painel.php" class="mini"' . ($confirmar !== '' ? ' onsubmit="return confirm(' . pn_e((string) json_encode($confirmar, JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP)) . ')"' : '') . '>'
+        . '<input type="hidden" name="acao" value="' . pn_e($acao) . '"><input type="hidden" name="id" value="' . $id . '">'
+        . '<input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($usuario, $acao, $id)) . '">' . $conteudo . '</form>';
+}
+
+/** Cartão da venda sem turma na ficha (10.8, 10.9): a situação na fila e os botões Devolver, Continua esperando e Já cancelei. */
+function pn_ficha_espera(string $usuario, array $i): string
+{
+    if (($i['plano'] ?? '') !== 'taxa_e_matricula' || empty($i['espera_status']) || !mcp_secretaria_colunas_ok()) {
+        return '';
+    }
+    $id = (int) $i['id'];
+    $espera = (string) $i['espera_status'];
+    $pago = ($i['status'] ?? '') === 'pago';
+    $bits = (int) ($i['espera_avisos_enviados'] ?? 0);
+    $dl = '';
+    $linhas = array_filter([
+        'Situação' => ['aguardando' => 'Na fila da próxima turma', 'turma' => 'Turma definida', 'devolver' => 'Devolver'][$espera] ?? $espera,
+        'Na fila desde' => !empty($i['espera_desde']) ? pn_data((string) $i['espera_desde']) : null,
+        'Data limite' => !empty($i['espera_prazo']) ? mcp_data_brt((string) $i['espera_prazo'], 'd/m/Y') . ((int) ($i['espera_prorrogada'] ?? 0) === 1 ? ' (prorrogada)' : '') : null,
+        'Último motivo da escola' => !empty($i['espera_motivo']) ? (defined('MCP_ESPERA_MOTIVOS_ROTULO') ? (MCP_ESPERA_MOTIVOS_ROTULO[$i['espera_motivo']] ?? $i['espera_motivo']) : $i['espera_motivo']) : null,
+        'Última consulta à escola' => !empty($i['espera_consultada_em']) ? pn_data((string) $i['espera_consultada_em']) : null,
+        'E-mails da espera' => implode(', ', array_filter([($bits & 1) ? '30 dias' : '', ($bits & 2) ? '60 dias' : '', ($bits & 4) ? 'aviso do prazo' : '',
+            !empty($i['espera_turma_email_em']) ? '"Sua turma abriu" em ' . mcp_data_brt((string) $i['espera_turma_email_em'], 'd/m') : ''])) ?: 'nenhum ainda',
+        'Prazo da "data não serve"' => !empty($i['espera_janela_ate']) ? pn_data((string) $i['espera_janela_ate']) : null,
+        'Motivo da devolução' => !empty($i['espera_devolver_motivo']) ? (MCP_SECRETARIA_DEVOLVER[$i['espera_devolver_motivo']] ?? $i['espera_devolver_motivo']) . (!empty($i['espera_devolver_em']) ? ', em ' . pn_data((string) $i['espera_devolver_em']) : '') : null,
+        'Matrícula na escola a cancelar' => !empty($i['espera_matricula_escola']) ? (string) $i['espera_matricula_escola'] . (!empty($i['escola_resolvido_em']) ? ' (cancelada)' : '') : null,
+    ], static fn($v): bool => $v !== null && $v !== '');
+    foreach ($linhas as $rotulo => $valor) {
+        $dl .= '<dt>' . pn_e($rotulo) . '</dt><dd>' . pn_e((string) $valor) . '</dd>';
+    }
+    $acoes = '';
+    if ($pago && in_array($espera, ['aguardando', 'turma'], true) && function_exists('mcp_espera_devolver')) {
+        $janelaPassou = !empty($i['espera_janela_ate']) && strtotime($i['espera_janela_ate'] . ' UTC') < time();
+        $acoes .= '<details class="ajustar"><summary>Devolver</summary>' . pn_form_acao($usuario, 'espera_devolver', $id,
+            '<label for="motivo-' . $id . '">Motivo</label><select id="motivo-' . $id . '" name="motivo">'
+            . '<option value="pedido">Pedido da pessoa</option><option value="data_nao_serve">A data ou o horário não servem</option>'
+            . '<option value="requisito">Requisito do curso</option><option value="secretaria">Decisão da secretaria</option></select>'
+            . ($janelaPassou ? '<p class="nota">O prazo da "data não serve" já passou: com a turma confirmada, vale a regra da desistência depois da confirmação.</p>' : '')
+            . '<p class="nota">A pessoa recebe o e-mail "Pedido de devolução recebido" e sai da fila. Regra da casa: sempre "Devolver" antes de estornar na Unicopag'
+            . ($espera === 'turma' ? '; com a turma definida, cancele a matrícula na escola antes do estorno' : '') . '.</p>'
+            . '<button class="btn btn-red" type="submit">Devolver</button>', 'Marcar esta compra para devolver? A pessoa recebe o e-mail e sai da fila.') . '</details>';
+    }
+    if (function_exists('mcp_espera_pode_prorrogar') && mcp_espera_pode_prorrogar($i)) {
+        $acoes .= '<details class="ajustar"><summary>Continua esperando</summary>' . pn_form_acao($usuario, 'espera_continuar', $id,
+            '<label for="msg-id-' . $id . '">Identificação da mensagem da pessoa ("Quero continuar")</label><input id="msg-id-' . $id . '" name="mensagem_id" required maxlength="120" placeholder="Protocolo do chat ou data e assunto do e-mail">'
+            . '<label for="msg-' . $id . '">Texto da mensagem</label><textarea id="msg-' . $id . '" name="mensagem" required maxlength="4000"></textarea>'
+            . '<p class="nota">Soma ' . (function_exists('mcp_espera_prazo_dias') ? mcp_espera_prazo_dias() : 90) . ' dias à data limite, uma vez só, e a pessoa recebe "Você continua na fila". O texto fica guardado só como impressão digital (sha256).'
+            . (($i['metodo'] ?? '') === 'pix' ? ' Se esta pessoa desistir depois, a devolução será por transferência PIX manual, para uma conta no nome dela.' : '') . '</p>'
+            . '<button class="btn btn-outline" type="submit">Continua esperando</button>') . '</details>';
+    }
+    if ($pago && !empty($i['espera_matricula_escola']) && empty($i['escola_resolvido_em']) && function_exists('mcp_espera_cancelada_na_escola')) {
+        $acoes .= pn_form_acao($usuario, 'espera_cancelei', $id, '<button class="btn btn-red" type="submit">Já cancelei na escola</button>',
+            'Confirmar que a matrícula ' . $i['espera_matricula_escola'] . ' foi cancelada na escola? Depois disso, pode estornar.');
+    }
+    return '<div class="cartao" style="margin-top:18px"><h2>Venda sem turma</h2><dl>' . $dl . '</dl>' . ($acoes !== '' ? '<div style="margin-top:10px">' . $acoes . '</div>' : '') . '</div>';
 }
 
 /** Ficha da inscrição: aluno, pagamento, escola, horários (com o lembrete à mão) e histórico. */
@@ -727,7 +941,9 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
         pn_redirecionar('v=inscricoes');
     }
     $pago = $i['status'] === 'pago';
-    $esc = mcp_secretaria_escola($i);
+    $eventos = mcp_secretaria_eventos((int) $i['id']);
+    $selos = mcp_secretaria_selos($i, ['eventos' => $eventos]);
+    $esc = ['rotulo' => $selos[0]['rotulo'], 'tom' => $selos[0]['tom']];
     $pref = $i['preferencia'];
     $dl = static function (array $linhas): string {
         $html = '';
@@ -745,11 +961,7 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
     ]);
     $pagamento = $dl([
         'Situação' => '<span class="selo ' . ($pago ? 'ok' : ($i['status'] === 'pendente' ? 'neutro' : 'erro')) . '">' . pn_e(MCP_SECRETARIA_STATUS[$i['status']] ?? (string) $i['status']) . '</span>',
-        'Valor' => pn_e(mcp_brl((int) $i['total_centavos'])) . ((int) $i['taxa_centavos'] > 0 || (int) $i['divulgacao_centavos'] > 0
-            ? ' <span style="color:var(--muted);font-weight:400">(inscrição ' . pn_e(mcp_brl((int) $i['inscricao_centavos']))
-                . ((int) $i['taxa_centavos'] > 0 ? ' + custos ' . pn_e(mcp_brl((int) $i['taxa_centavos'])) : '')
-                . ((int) $i['divulgacao_centavos'] > 0 ? ' + divulgação ' . pn_e(mcp_brl((int) $i['divulgacao_centavos'])) : '') . ')</span>'
-            : ''),
+    ] + array_map('pn_e', mcp_secretaria_valores($i)) + [
         'Método' => $i['metodo'] === 'pix' ? 'PIX' : pn_e(trim('Cartão ' . mb_convert_case((string) ($i['bandeira'] ?? ''), MB_CASE_TITLE) . ($i['ultimos4'] ? ' final ' . $i['ultimos4'] : ''))),
         'Iniciada em' => pn_e(pn_data((string) $i['criado_em'])),
         'Paga em' => $i['pago_em'] ? pn_e(pn_data((string) $i['pago_em'])) : '—',
@@ -757,8 +969,23 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
         'Origem' => pn_e(implode(' · ', array_filter([(string) ($i['utm_source'] ?? ''), (string) ($i['utm_campaign'] ?? '')], 'strlen')) ?: 'direto'),
     ]);
     $escolaUrl = rtrim((string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org'), '/') . '/login';
-    $escola = '<p><span class="selo ' . $esc['tom'] . '">' . pn_e($esc['rotulo']) . '</span></p>'
-        . '<p class="orientacao">' . pn_e(mcp_secretaria_escola_orientacao($i)) . '</p>'
+    $seloHtml = '';
+    foreach ($selos as $selo) {
+        $seloHtml .= '<span class="selo ' . pn_e($selo['tom']) . '">' . pn_e($selo['rotulo']) . '</span>';
+    }
+    $orientacoes = '';
+    foreach (mcp_secretaria_orientacoes($i) as $frase) {
+        $orientacoes .= '<li>' . pn_e($frase) . '</li>';
+    }
+    // "Já resolvi na escola" (F15): plano completo com selo de erro ou alerta da escola, ou estornado com matrícula.
+    $pedeResolver = ($i['plano'] ?? '') === 'taxa_e_matricula' && empty($i['escola_resolvido_em']) && empty($i['espera_matricula_escola'])
+        && array_filter($selos, static fn(array $s): bool => $s['grupo'] === 'escola' && in_array($s['tom'], ['erro', 'alerta'], true));
+    $escola = '<div class="selos">' . $seloHtml . '</div>'
+        . '<ul class="orientacoes">' . $orientacoes . '</ul>'
+        . ($pedeResolver && function_exists('mcp_escola_resolvido')
+            ? pn_form_acao($usuario, 'escola_resolvido', (int) $i['id'], '<button class="btn btn-outline" type="submit">Já resolvi na escola</button>',
+                'Confirmar que a situação desta inscrição foi resolvida na escola? Os selos de pendência da escola somem e ela sai de "Precisam de atenção".')
+            : '')
         . (($conta = mcp_secretaria_escola_conta($i)) !== null ? '<p class="nota">' . pn_e($conta) . '.</p>' : '')
         . '<p class="nota"><a href="' . pn_e($escolaUrl) . '" target="_blank" rel="noopener">Abrir a plataforma da escola ↗</a></p>';
 
@@ -790,7 +1017,7 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
     $horarios .= $pago ? '<p class="nota"><a href="' . pn_e(mcp_url_pagina('parabens', (string) $i['token']) . '&painel=1') . '" target="_blank" rel="noopener">Ver a página da inscrição, como o aluno vê ↗</a></p>' : '';
 
     $tempo = '';
-    foreach (mcp_secretaria_eventos((int) $i['id']) as $e) {
+    foreach ($eventos as $e) {
         $rotulo = mcp_secretaria_evento((string) $e['tipo'], $e['detalhe']);
         if ($rotulo !== null) {
             $tempo .= '<li><time>' . pn_e(pn_data((string) $e['criado_em'])) . '</time><span>' . pn_e($rotulo) . '</span></li>';
@@ -803,6 +1030,7 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
         . '<p class="nota">' . pn_e(MCP_SECRETARIA_STATUS[$i['status']] ?? (string) $i['status']) . ($i['pago_em'] ? ' em ' . pn_e(pn_data((string) $i['pago_em'])) : '') . '</p></div></div>'
         . '<div class="ficha"><div class="cartao"><h2>Aluno</h2>' . $aluno . '</div><div class="cartao"><h2>Pagamento</h2>' . $pagamento . '</div>'
         . '<div class="cartao"><h2>Matrícula na escola</h2>' . $escola . '</div><div class="cartao"><h2>Horários</h2>' . $horarios . '</div></div>'
+        . pn_ficha_espera($usuario, $i)
         . '<div class="cartao" style="margin-top:18px"><h2>Histórico</h2>' . ($tempo !== '' ? '<ul class="tempo">' . $tempo . '</ul>' : '<p class="nota" style="margin:0">Sem registros.</p>') . '</div>';
     pn_pagina((string) $i['nome'], $corpo, $usuario, true, 'inscricoes');
 }
@@ -1365,6 +1593,18 @@ $avisos = [
     'cod_off' => ['Código do dia desligado: pelo celular, voltam a bastar o CPF e a localização.', 'ok'],
     'ts_ok' => ['Situação do pedido atualizada.', 'ok'],
     'ts_lista' => ['Situação atualizada em todos os pedidos em aberto da lista.', 'ok'],
+    // Pagar tudo (10/2026): ações da ficha e do Início (lib/espera.php).
+    'er_ok' => ['Marcado como resolvido na escola. Os selos de pendência da escola saíram da ficha.', 'ok'],
+    'er_nada' => ['Nada mudou: esta inscrição já estava marcada como resolvida.', 'erro'],
+    'ed_ok' => ['Compra marcada para devolver. A pessoa recebeu o e-mail e saiu da fila. Agora, estorne no painel da Unicopag em até 2 dias úteis.', 'ok'],
+    'ed_nada' => ['Nada mudou: a compra não está mais na fila nem com turma definida (ou o motivo não vale).', 'erro'],
+    'ec_ok' => ['Data limite prorrogada. A pessoa recebeu o e-mail "Você continua na fila".', 'ok'],
+    'ec_nada' => ['Nada mudou: esta compra não pode mais ser prorrogada (já foi uma vez, ou o cartão não permite).', 'erro'],
+    'ec_falta' => ['Informe a identificação e o texto da mensagem em que a pessoa pediu para continuar.', 'erro'],
+    'ek_ok' => ['Registrado: a matrícula foi cancelada na escola. Pode estornar.', 'ok'],
+    'ek_nada' => ['Nada mudou: não há matrícula a cancelar nesta compra (ou já foi registrada).', 'erro'],
+    'tc_ok' => ['Turma confirmada. Quem pagou tudo nesta turma recebeu o e-mail "Turma confirmada".', 'ok'],
+    'tc_nada' => ['Nada mudou: ninguém que pagou tudo nesta turma estava sem a confirmação.', 'erro'],
 ] + PC_AVISOS;
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
@@ -1420,6 +1660,42 @@ if ($metodo === 'POST') {
         $resultado = mcp_secretaria_lembrete($inscricao, $sessao);
         mcp_registrar(null, 'painel_lembrete', "#$id · $sessao · $resultado");
         pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago'][$resultado]);
+    }
+
+    // Pagar tudo (lib/espera.php): "Já resolvi na escola", "Devolver", "Continua esperando" e "Já cancelei na escola",
+    // pela ficha da inscrição. Só com sessão.
+    if (in_array($acao, ['escola_resolvido', 'espera_devolver', 'espera_continuar', 'espera_cancelei'], true)) {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($sessao === null || $id <= 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        if (!mcp_inscricao_por('id', (string) $id)) {
+            pn_redirecionar('v=inscricoes');
+        }
+        if ($acao === 'escola_resolvido') {
+            $codigo = function_exists('mcp_escola_resolvido') && mcp_escola_resolvido($id, $sessao) ? 'er_ok' : 'er_nada';
+        } elseif ($acao === 'espera_devolver') {
+            $codigo = function_exists('mcp_espera_devolver') && mcp_espera_devolver($id, mcp_texto($_POST['motivo'] ?? '', 20), $sessao) ? 'ed_ok' : 'ed_nada';
+        } elseif ($acao === 'espera_continuar') {
+            $mensagemId = mcp_texto($_POST['mensagem_id'] ?? '', 120);
+            $mensagem = mcp_texto_longo($_POST['mensagem'] ?? '', 4000);
+            $codigo = $mensagemId === '' || trim($mensagem) === '' ? 'ec_falta'
+                : (function_exists('mcp_espera_prorrogar') && mcp_espera_prorrogar($id, $mensagemId, $mensagem, $sessao) ? 'ec_ok' : 'ec_nada');
+        } else {
+            $codigo = function_exists('mcp_espera_cancelada_na_escola') && mcp_espera_cancelada_na_escola($id, $sessao) ? 'ek_ok' : 'ek_nada';
+        }
+        mcp_registrar(null, 'painel_' . $acao, "#$id · $sessao · $codigo");
+        pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . $codigo);
+    }
+    // "Turma confirmada" (Início): todas as inscrições da fila naquela turma. O CSRF leva o id da turma.
+    if ($acao === 'espera_confirmada') {
+        $turma = mcp_texto($_POST['turma'] ?? '', 64);
+        if ($sessao === null || $turma === '' || !hash_equals(mcp_painel_csrf($sessao, $acao, crc32($turma)), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        $n = function_exists('mcp_espera_turma_confirmada') ? mcp_espera_turma_confirmada($turma, $sessao) : 0;
+        mcp_registrar(null, 'painel_espera_confirmada', mb_substr($turma, 0, 64) . " · $n · $sessao");
+        pn_redirecionar('ok=' . ($n > 0 ? 'tc_ok' : 'tc_nada'));
     }
 
     // Turmas sob demanda (lib/turmas.php): situação de um pedido ou de todos os abertos de uma lista. Só com sessão.
@@ -1654,4 +1930,4 @@ if (isset($_GET['id'])) {
 if ($secao === 'mensagens' || isset($_GET['f'])) {
     pn_lista($sessao);
 }
-pn_inicio($sessao);
+pn_inicio($sessao, $aviso, $classe);

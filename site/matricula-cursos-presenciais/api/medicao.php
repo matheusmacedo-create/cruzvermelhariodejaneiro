@@ -1,7 +1,8 @@
 <?php
 /**
  * POST (JSON): repasse dos eventos de página para a API de Conversões da Meta (PageView, ViewContent,
- * InitiateCheckout e, nas páginas de evento, Schedule), com o mesmo id que o Pixel usou no navegador. Quem
+ * InitiateCheckout e, nas páginas de evento, Schedule), com o mesmo id que o Pixel usou no navegador. Do navegador
+ * vêm só o evento, o id, o curso e, no InitiateCheckout, o plano marcado (conferido contra a lista do servidor). Quem
  * chama é o bloco de medição das páginas (window.cvrjMedicao.servidor), só depois do "sim" para marketing.
  *
  * Responde sempre 204 e sem corpo: a página não espera nem lê a resposta. Sem token configurado, sem
@@ -77,7 +78,9 @@ if (mcp_contar_eventos_recentes('meta_repasse', $balde, 60) >= MCP_MEDICAO_LIMIT
 }
 mcp_registrar(null, 'meta_repasse', $balde);
 
-// Os dados do curso vêm do catálogo, não da página: o valor é o da inscrição.
+// Os dados do curso vêm do catálogo e dos planos que o servidor oferece, não da página (pagar tudo, spec 4.1, T20):
+// ViewContent vale o plano padrão do curso (taxa + matrícula quando a opção 1 está à venda) e InitiateCheckout, o plano
+// marcado, se ele estiver na lista do servidor (lib/meta.php, mcp_meta_dados_medicao).
 $custom = [];
 if ($conteudo !== null) {
     $custom = $conteudo['dados'];
@@ -86,8 +89,7 @@ if ($conteudo !== null) {
     if (!$curso) {
         mcp_medicao_fim();
     }
-    $extra = $evento === 'InitiateCheckout' ? ['num_items' => 1] : ['content_category' => 'matricula-cursos-presenciais'];
-    $custom = mcp_meta_dados_do_curso((string) $curso['slug'], (string) $curso['nome'], mcp_inscricao_centavos(), $extra);
+    $custom = mcp_meta_dados_medicao($curso, $evento, is_string($b['plano'] ?? null) ? mcp_texto($b['plano'], 20) : null);
 }
 
 $url = mcp_meta_url_limpa(is_string($b['url'] ?? null) ? $b['url'] : ($_SERVER['HTTP_REFERER'] ?? null), mcp_site_url() . '/');

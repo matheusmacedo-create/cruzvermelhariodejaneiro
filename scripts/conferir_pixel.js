@@ -105,9 +105,10 @@ async function cenario(nome, url, passos, esperado) {
 
 const aceitar = { nome: 'aceitar', fazer: (p) => p.getByRole('button', { name: /^(Aceitar todos|Accept all|Aceptar todas)$/ }).click() };
 const rejeitar = { nome: 'rejeitar', fazer: (p) => p.getByRole('button', { name: /^(Rejeitar|Reject|Rechazar)$/ }).click() };
-// Desde a reconstrução de 05/10/2026, abrir um curso é o "Ver detalhes" do cartão, que abre uma janela (dialog) com a
-// ficha: o ViewContent sai aí. A janela deixa o resto da página inerte, então os passos seguintes a fecham antes (Esc).
-const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: async (p) => { await p.keyboard.press('Escape'); await p.waitForTimeout(200); await p.locator('.mr-card [data-detalhes]').nth(n).click(); } });
+// Página no padrão da Escola (08/10/2026): abrir um curso é clicar num card (a.v-card), que liga o modo curso sem
+// recarregar; o ViewContent sai aí. No modo curso, os cards visíveis são os de "Outros cursos" (o atual some).
+// O Esc fecha o que estiver aberto (o painel de preferências de cookies) antes do clique.
+const curso = (n) => ({ nome: `curso ${n + 1}`, fazer: async (p) => { await p.keyboard.press('Escape'); await p.waitForTimeout(200); await p.locator('a.v-card[data-curso]:visible').nth(n).click(); } });
 const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
   await p.keyboard.press('Escape');
   await p.waitForTimeout(200);

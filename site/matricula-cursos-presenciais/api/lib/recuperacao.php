@@ -14,6 +14,10 @@
  *    a cota diária do Resend é dividida com o resto do site.
  *
  * Só afirmações com fonte sobre o certificado (as mesmas da página: CERT_PESO no gerador da página).
+ *
+ * Pagar tudo (10/2026; spec 1.14 e 10.6): o lembrete da taxa + matrícula diz "inscrição e matrícula" e "Matrícula
+ * confirmada"; o da compra sem turma fala da fila da próxima turma. O lembrete não sai para taxa + matrícula com a turma
+ * vendida fechada (passou o prazo, lotou ou saiu do oferta.json; T8): ele chegaria depois do fim das inscrições.
  */
 declare(strict_types=1);
 
@@ -51,57 +55,79 @@ function mcp_email_bloco_certificado(string $slug, string $curso): string
         . mcp_escapar(MCP_CERT_PESO) . ' <span style="color:#718096">(Imagem de modelo.)</span></td></tr></table>';
 }
 
-/** "Sua matrícula na escola": o passo que depende da matrícula automática (config-escola.php). */
-function mcp_email_passo_escola(): array
+/**
+ * "Você entra na turma": o passo que depende da matrícula automática (config-escola.php). Só a taxa num curso sem turma
+ * da venda sem turma (chave ligada e curso na lista do oferta.json): a lista é de interesse, e quem pagou tudo entra
+ * primeiro (10.4, F5), como dizem o checkout e a confirmação.
+ */
+function mcp_email_passo_escola(array $i = []): array
 {
-    return mcp_escola_configurada()
-        ? ['Sua matrícula entra na turma', 'Se o curso já tem turma aberta, sua matrícula entra nela e a data aparece na confirmação. Se ainda não tem, a secretaria coloca você na próxima turma e avisa por e-mail.']
-        : ['A secretaria confirma turma e horário', 'A Escola de Educação e Saúde CVB-RJ entra em contato por e-mail em até ' . MCP_EMAIL_PRAZO . '. Você não precisa se inscrever de novo.'];
+    if (!mcp_escola_configurada()) {
+        return ['A secretaria confirma turma e horário', 'A Escola de Educação e Saúde CVB-RJ entra em contato por e-mail em até ' . MCP_EMAIL_PRAZO . '. Você não precisa se inscrever de novo.'];
+    }
+    $slug = (string) ($i['curso_slug'] ?? '');
+    if ($i && empty($i['turma_id']) && $slug !== '' && mcp_email_ligada('PLANO_COMPLETO_SEM_TURMA')
+        && function_exists('mcp_oferta') && isset(mcp_oferta()['sem_turma'][$slug])) {
+        return ['Você entra na lista de interesse', 'Quando a turma for marcada, a secretaria avisa por e-mail e diz como pagar a matrícula. O lugar fica com quem pagar primeiro, enquanto houver vaga. Quem já pagou tudo entra primeiro.'];
+    }
+    return ['Você entra na turma (ou na lista da próxima)', 'Se o curso já tem turma aberta, você entra nela e a data aparece na confirmação. Se ainda não tem, você entra na lista da próxima turma: quando a data sair, a secretaria coloca você na turma e avisa por e-mail.'];
 }
 
 // ----------------------------------------------------------------------------- lembrete do PIX em aberto
-/** Lembrete a quem gerou o PIX e não pagou. Puro: devolve assunto, html e texto. */
+/** Lembrete a quem gerou o PIX e não pagou, por plano (spec 1.14 e 10.6). Puro: devolve assunto, html e texto. */
 function mcp_montar_email_pix_lembrete(array $inscricao): array
 {
     $nome = mcp_primeiro_nome((string) $inscricao['nome']);
     $curso = (string) $inscricao['curso_nome'];
     $total = mcp_brl((int) $inscricao['total_centavos']);
+    $completo = mcp_email_completo($inscricao);
+    $semTurma = $completo && empty($inscricao['turma_id']);
     $codigo = (string) ($inscricao['pix_copia_cola'] ?? '');
     $link = mcp_url_pagina('pendente', (string) $inscricao['token']) . '&utm_source=email&utm_medium=transacional&utm_campaign=pix-lembrete';
     $validade = mcp_pix_validade($inscricao);
-    $corpo = mcp_p('Oi, ' . mcp_escapar($nome) . '. Sua inscrição em <strong>' . mcp_escapar($curso) . '</strong> continua aberta, esperando só o PIX de <strong>' . mcp_escapar($total) . '</strong>. Assim que ele cair, a vaga fica garantida e a confirmação chega neste e-mail.')
-        . mcp_email_bloco_certificado((string) $inscricao['curso_slug'], $curso)
-        . mcp_botao($link, 'Concluir pagamento')
-        . mcp_nota('Pelo botão você vê o QR code e acompanha a confirmação na hora. Ou pague agora com o código:')
-        . mcp_bloco_pix($codigo)
-        . mcp_p('<strong>O código vale' . ($validade !== '' ? ' até ' . mcp_escapar($validade) : ' por 24 horas') . '.</strong> Passou do prazo? Gere outro pelo mesmo botão, sem custo.')
-        . mcp_subtitulo('Depois do pagamento')
-        . mcp_passos([
-            ['Confirmação neste e-mail', 'O comprovante da inscrição chega na hora.'],
-            mcp_email_passo_escola(),
-            ['Você conclui e recebe o certificado', 'O certificado da Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária.'],
-        ])
-        . mcp_nota(mcp_escapar(MCP_PIX_LEMBRETE_DESISTIR) . ' Já pagou? Ignore este e-mail: a confirmação chega em instantes. Não quer seguir? É só não pagar: o PIX vence sozinho e nada é cobrado.');
-    $texto = "Oi, $nome. Sua inscrição em $curso continua aberta, esperando só o PIX de $total. Assim que ele cair, a vaga fica garantida.\n\n"
-        . "Ao concluir, você recebe o certificado da Cruz Vermelha, com o seu nome, o curso e a carga horária. " . MCP_CERT_PESO . "\n\n"
-        . "Concluir pagamento: $link\n\nPIX copia e cola:\n$codigo\n\n"
-        . 'O código vale' . ($validade !== '' ? " até $validade" : ' por 24 horas') . ". Passou do prazo? Gere outro pelo mesmo link, sem custo.\n\n"
-        . MCP_PIX_LEMBRETE_DESISTIR . " Já pagou? Ignore este e-mail.\n\nDúvidas? Responda este e-mail ou escreva para " . mcp_email_contato_endereco() . ".\n";
+    $pagueAte = mcp_email_pague_ate($inscricao);
+    $abertura = match (true) {
+        $semTurma => 'Oi, ' . mcp_escapar($nome) . '. Sua inscrição e matrícula em <strong>' . mcp_escapar($curso) . '</strong> estão abertas: só falta o pagamento do PIX. Assim que ele cair, você entra na fila da próxima turma deste curso, por ordem de pagamento, e recebe a confirmação por e-mail, na hora.',
+        $completo => 'Oi, ' . mcp_escapar($nome) . '. Sua inscrição e matrícula em <strong>' . mcp_escapar($curso) . '</strong> continuam abertas, esperando só o PIX de <strong>' . mcp_escapar($total) . '</strong>. Assim que ele cair, a matrícula é confirmada e a confirmação chega neste e-mail.',
+        default => 'Oi, ' . mcp_escapar($nome) . '. Sua inscrição em <strong>' . mcp_escapar($curso) . '</strong> continua aberta, esperando só o PIX de <strong>' . mcp_escapar($total) . '</strong>. Assim que ele cair, a confirmação chega neste e-mail.',
+    };
+    // Os passos do lembrete: a confirmação, o passo do plano e o certificado (o da só a taxa fica como era).
+    $passos = mcp_email_passos_pix($inscricao, ['Confirmação neste e-mail', $completo ? 'O comprovante da inscrição e da matrícula chega na hora.' : 'O comprovante da inscrição chega na hora.']);
+    if (!$completo) {
+        $passos = [$passos[0], mcp_email_passo_escola($inscricao), mcp_email_passo_certificado()];
+    } elseif (!$semTurma) {
+        $passos = [$passos[0], $passos[1], mcp_email_passo_certificado()];
+    }
+    $c = mcp_email_juntar([
+        mcp_email_b_p($abertura),
+        mcp_email_b_html(mcp_email_bloco_certificado((string) $inscricao['curso_slug'], $curso),
+            'Ao concluir, você recebe o certificado da Cruz Vermelha, com o seu nome, o curso e a carga horária. ' . MCP_CERT_PESO),
+        mcp_email_b_botao($link, 'Concluir pagamento'),
+        mcp_email_b_nota('Pelo botão você vê o QR code e acompanha a confirmação na hora. Ou pague agora com o código:'),
+        mcp_email_b_html(mcp_bloco_pix($codigo), "PIX copia e cola:\n$codigo"),
+        mcp_email_b_p('<strong>O código vale' . ($validade !== '' ? ' até ' . mcp_escapar($validade) : ' por 24 horas') . '.</strong> Passou do prazo? Gere outro pelo mesmo botão, sem custo.'),
+        $pagueAte !== '' ? mcp_email_b_p('<strong>' . mcp_escapar($pagueAte) . '</strong>') : [],
+        mcp_email_b_subtitulo('Depois do pagamento'),
+        mcp_email_b_passos($passos),
+        $semTurma ? mcp_email_b_acompanhe($inscricao) : [],
+        mcp_email_b_nota(mcp_escapar(MCP_PIX_LEMBRETE_DESISTIR) . ' Já pagou? Ignore este e-mail: a confirmação chega em instantes. Não quer seguir? É só não pagar: o PIX vence sozinho e nada é cobrado.'),
+    ]);
+    $preheader = $semTurma
+        ? "Seu código de $total vale por 24 horas. Assim que o PIX cair, você entra na fila da próxima turma."
+        : 'Falta só o PIX de ' . $total . ($validade !== '' ? ". O código vale até $validade." : '.');
     return [
-        'assunto' => "Sua inscrição em $curso continua aberta: falta só o PIX",
-        'html' => mcp_moldura("Falta só o PIX, $nome.", $corpo, [
-            'eyebrow' => 'Matrícula cursos presenciais',
-            'preheader' => 'Falta só o PIX de ' . $total . ($validade !== '' ? ". O código vale até $validade." : '.'),
-            'motivo' => 'Você recebeu este e-mail porque iniciou uma matrícula em cruzvermelhariodejaneiro.org com este endereço. É o único lembrete.',
-        ]),
-        'texto' => $texto,
+        'assunto' => $completo ? "Sua inscrição e matrícula em $curso continuam abertas: falta só o PIX" : "Sua inscrição em $curso continua aberta: falta só o PIX",
+        'html' => mcp_moldura("Falta só o PIX, $nome.", $c['html'], mcp_email_opcoes_aluno($preheader,
+            'Você recebeu este e-mail porque iniciou uma inscrição em cruzvermelhariodejaneiro.org com este endereço. É o único lembrete.')),
+        'texto' => $c['texto'] . "\n\nDúvidas? Responda este e-mail ou escreva para " . mcp_email_contato_endereco() . ".\n",
     ];
 }
 
 /**
  * Inscrições que recebem o lembrete agora: PIX pendente gerado há 2 a 20 horas, sem inscrição paga nem pendente mais
  * nova da mesma pessoa (e-mail ou CPF) e curso, e sem lembrete já enviado (ou tentado) para ela nesse curso. Uma
- * tentativa recusada ou vencida depois do PIX não conta: o PIX continua pagável.
+ * tentativa recusada ou vencida depois do PIX não conta: o PIX continua pagável. Fica de fora a taxa + matrícula cuja
+ * turma vendida já não está à venda (mcp_pix_lembrete_turma_fechada; T8). A compra sem turma recebe o lembrete.
  */
 function mcp_pix_lembrete_candidatos(?int $agora = null, int $limite = MCP_PIX_LEMBRETE_LIMITE): array
 {
@@ -116,9 +142,25 @@ function mcp_pix_lembrete_candidatos(?int $agora = null, int $limite = MCP_PIX_L
           AND NOT EXISTS (SELECT 1 FROM mcp_eventos e JOIN mcp_inscricoes o ON o.id = e.inscricao_id
                           WHERE (o.email = i.email OR o.cpf = i.cpf) AND o.curso_slug = i.curso_slug
                             AND e.tipo IN ('email_pix_lembrete', 'email_pix_lembrete_falhou'))
-        ORDER BY i.criado_em LIMIT " . max(1, $limite));
+        ORDER BY i.criado_em LIMIT " . (max(1, $limite) * 3));
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - $min * 3600), gmdate('Y-m-d H:i:s', $agora - $max * 3600)]);
-    return $stmt->fetchAll();
+    $candidatos = array_values(array_filter($stmt->fetchAll(), static fn(array $i): bool => !mcp_pix_lembrete_turma_fechada($i, $agora)));
+    return array_slice($candidatos, 0, max(1, $limite));
+}
+
+/**
+ * Taxa + matrícula com turma vendida que fechou: a turma do turma_id saiu do oferta.json, passou o inscricoes_ate ou
+ * está lotada (spec 1.14, T8). A só a taxa e a compra sem turma (turma_id nulo) nunca fecham aqui.
+ */
+function mcp_pix_lembrete_turma_fechada(array $inscricao, ?int $agora = null): bool
+{
+    if (function_exists('mcp_pix_turma_fechada')) {
+        return mcp_pix_turma_fechada($inscricao, $agora); // fonte única (compra.php, T8): a mesma da tela Pendente
+    }
+    if (!mcp_email_completo($inscricao) || empty($inscricao['turma_id'])) {
+        return false;
+    }
+    return !mcp_email_turma_da_inscricao($inscricao, false, $agora)['aberta'];
 }
 
 /**

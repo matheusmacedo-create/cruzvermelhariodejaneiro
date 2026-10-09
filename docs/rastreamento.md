@@ -141,6 +141,18 @@ origem da visita (utm, fbclid, gclid) só com a permissão de estatística, como
 no GA4, marcar `generate_lead` como evento principal ("key event"); no Gerenciador de Eventos, o Contact com
 categoria `brinquedos` pode virar uma conversão personalizada.
 
+## Pagar tudo, passos 2 e 3 publicados (09/10/2026, 16h30 a 16h45 de Brasília)
+
+Código novo da matrícula no ar com todas as chaves desligadas (`config-pagar-tudo.php` ainda não existe no
+servidor): o checkout continua vendendo só a taxa de inscrição (R$ 99) e o servidor recusa a opção "taxa +
+matrícula" com 422 (`motivo: desligado`). Banco do site migrado pelo `db.php` novo (colunas do plano, parcelas e
+espera). Duas mudanças pequenas que já valem:
+- o `Lead` do site passa a levar `content_category: taxa-inscricao` (antes, `matricula-cursos-presenciais`):
+  conversões personalizadas ou públicos que filtrem pela categoria antiga precisam ser revistos no Gerenciador;
+- o assunto do e-mail do PIX "só a taxa" passa a "Falta só o PIX para concluir sua inscrição em {curso}".
+A página `/matricula-cursos-presenciais/` não mudou. Próximos: função da escola (v2), teste real de R$ 2 e a página
+nova com a venda de tudo à vista (passos 1, 4 e 5 de `scripts/publicacao-pagar-tudo-passo*.txt`).
+
 ## Carregamento adiado (19/09, à noite)
 
 Os scripts `gtag.js` e `fbevents.js` passaram a carregar depois do `load` da página, em momento

@@ -1,0 +1,14 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 3, grupo (6): as telas do checkout com a opção 1 escondida (T24), a nota legal e o fornecedor de hoje
+# (com o plano completo desligado, iguais a /reembolso/ e /termos/ do ar) e o chat.js?v= do ar (aa00cac6d2). A página
+# index.html AINDA NÃO. Geradas por: scripts/pagar_tudo/gerar.sh passo3 (em $PASSO3_DIR, padrão /tmp/pagar-tudo-passo3).
+#   P3=/tmp/pagar-tudo-passo3; scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-passo3 $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3c-telas.txt)
+#   RAIZ=$P3/site scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3c-telas.txt | sed "s|^site/|$P3/site/|")
+# Desfazer: republicar a cópia do ar, em ordem inversa, e apagar o que era novo:
+#   C=/tmp/no-ar-passo3; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3c-telas.txt | tac | sed "s|^site/|$C/|")
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html

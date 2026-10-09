@@ -416,3 +416,119 @@ chamando as duas funções por HTTP. Ele precisa de três coisas:
   `ESCOLA_PG_USUARIO` e `ESCOLA_PG_SENHA`.
 
 O script recusa rodar se a URL da escola não for local.
+
+## v2: pagar tudo (taxa de inscrição + matrícula pagas no site)
+
+**Situação (09/10/2026): proposta, NÃO aplicada na escola.** O arquivo é `matricula_rapida_v2.sql` (versão final,
+com a venda sem turma e as correções da revisão de dinheiro de 09/10; `matricula_rapida_versao()` responde **3**):
+957 linhas, sha256 `7d7a32e25098917e5964bfd5503e25c285c40b258165f32aecbb1f33f82054c7`. Antes de aplicar, conferir o
+sha256:
+
+```bash
+sha256sum docs/escola/matricula_rapida_v2.sql
+```
+
+Decisões do dono (08/10/2026) que a v2 atende: o site vende "Taxa de inscrição + matrícula" já marcada, também nos
+cursos sem turma; o dinheiro do curso cai na mesma conta Unicopag da taxa; a escola registra a matrícula como paga;
+no cartão, até 12x com os juros por conta do aluno, numa cobrança só (juros sobre o total); PIX sempre à vista.
+
+### O que muda em relação à v1
+
+- **Sem os campos novos, a v2 faz exatamente o que a v1 faz** (só a taxa: matrícula `A_VISTA` `PENDENTE` com a taxa
+  confirmada e um `Pagamento` `TAXA`, gateway `site`). A resposta ganha `matricula_paga: false` e `avisos`, que o
+  site de hoje ignora. Prova: a suíte da v1 (`03_testes_pgtap.sql`) passa inteira contra a v2 (84/84). Por isso a v2
+  pode ir ao ar antes do site novo.
+- **"Pagou tudo"** (`matricula_centavos > 0`): matrícula `A_VISTA`, `PAGO`, `valorCurso` = taxa + matrícula (sem
+  juros), um `Pagamento` `CURSO` `PAGO` no gateway `unicopag-2` (a conta da instituição) com ref = hash, a anotação
+  `matricularapida:<referencia>` (assim o "Encaixar" e o batimento da aba Matrícula rápida não cobram de novo) e um
+  `LogAuditoria`. As cobranças `PENDENTE` que a matrícula tinha na escola viram `CANCELADO`.
+- **Turma vendida** (`turma_id`): a v2 matricula nela enquanto for do curso, estiver `ABERTA`/`CONFIRMADA` e começar
+  depois do dia do pagamento, mesmo lotada (aviso `turma_lotada`; o site trata como matrícula confirmada e avisa a
+  secretaria para ajustar as vagas). Se a turma vendida não servir mais (fechou, começou, é de outro curso), **não** cai
+  na próxima turma (isso furava a fila): fica sem turma, com o aviso `matricula_paga_sem_turma`, e o site põe a compra
+  na fila da próxima turma, por ordem de pagamento (correção de 09/10).
+- **Fila antes de "só a taxa"** (`fila_espera`, correção de 09/10): na chamada de "só a taxa", o site manda quantas
+  pessoas pagaram tudo e esperam turma do curso. Com fila, a "só a taxa" só entra numa turma criada há 6 h ou mais,
+  com aulas e com vaga além da fila; senão, fica sem turma (lista de interesse). Sem o campo, a regra de antes.
+- **Venda sem turma** (`espera_turma`, `inicio_ate`, `so_conta`): a primeira chamada (`so_conta`) cria só a conta. A
+  rotina do site chama de novo, por ordem de pagamento, até achar uma turma `ABERTA`/`CONFIRMADA` do curso, com
+  vaga (nunca acima dela), com aulas cadastradas, criada há 6 h ou mais e com a primeira aula entre hoje + 10 dias e
+  `inicio_ate`. Aí grava a matrícula paga, como no "pagou tudo" com turma.
+
+### Contrato (campos opcionais no `{"dados": {...}}`)
+
+| Campo | Regra |
+|---|---|
+| `valor_centavos` | Continua só a taxa (1 a 100000) |
+| `matricula_centavos` | 0 a 500000. Maior que 0 liga o "pagou tudo" |
+| `parcelas` | 1 a 12 (padrão 1). PIX só 1 |
+| `juros_centavos` | 0 até (total − taxa − matrícula); 0 no 1x |
+| `total_centavos` | No "pagou tudo", obrigatório: de taxa + matrícula até 2 × (taxa + matrícula) + 10000 |
+| `referencia` | No "pagou tudo", obrigatória e numérica (o id da inscrição no site) |
+| `turma_id` | Só no "pagou tudo": a turma vendida (`[A-Za-z0-9_-]{1,64}`); nunca com `espera_turma` |
+| `espera_turma` | Booleano, só no "pagou tudo" e sem `turma_id` |
+| `inicio_ate` | "AAAA-MM-DD", obrigatório com `espera_turma`: a data limite da compra |
+| `so_conta` | Booleano, só com `espera_turma`: cria a conta, não procura turma |
+| `fila_espera` | 0 a 9999, só na "só a taxa" (ignorado no "pagou tudo"): quem pagou tudo e espera turma do curso |
+
+Resposta: `matricula_paga` (bool), `avisos` (lista; `aviso` continua com o primeiro), `matricula_status`,
+`espera_motivo` (no `sem_turma` da espera: `turmas_lotadas`, `turma_sem_aulas`, `turma_recente`,
+`turma_muito_distante`, `turma_muito_proxima`, `nenhuma_turma` ou `na_fila`) e, em `turma`, `primeira_aula`, `horario`
+e `status`. Avisos do "pagou tudo": `curso_ja_pago`, `taxa_em_dobro`, `turma_lotada`, `turma_diferente`,
+`matricula_paga_sem_turma`, `preco_divergente`, `cobranca_escola_aberta`, `matricula_nao_marcada`, `taxa_paga_antes` e
+`pendente_antiga`.
+
+`public.matricula_rapida_versao()` (só o `service_role`): o site só oferece "taxa + matrícula" com a resposta 2 ou
+mais, e só vende sem turma e roda a rotina da espera com 3. Sem a função, ou com erro, o site oferece só a taxa
+(falha fechada).
+
+### Passo a passo (cada passo só com o anterior conferido; os de produção, com o OK do dono)
+
+1. **Testar localmente** (Postgres 16 descartável, dados fictícios; nunca o banco da escola):
+   ```bash
+   docs/escola/teste-local/rodar_testes_v2.sh docs/escola/matricula_rapida_v2.sql docs/escola/teste-local
+   # Esperado: duas linhas de conferência; 03: 84 ok; 06: 74 ok; 09: 47 ok; 10: 70 ok; 13: 46 ok; 0 falhas.
+   docs/escola/teste-local/rodar_testes_sem_turma.sh docs/escola/matricula_rapida_v2.sql docs/escola/teste-local
+   # Tudo: as seis suítes (com a 14, fila antes de "só a taxa": 19 ok), o batimento (07), a concorrência da mesma
+   # transação (08, 6 em paralelo: 1|1|1|1), a concorrência da última vaga na espera (11, 2 em paralelo) e a trava de
+   # projeto (0 funções num banco vazio). Rodado em 09/10/2026: 03 84/84, 06 74/74, 09 47/47, 10 70/70, 13 46/46, 14 19/19.
+   ```
+2. **Aplicar na escola** (com o OK do dono): no SQL Editor do projeto da escola, conferir o sha256 e rodar
+   `matricula_rapida_v2.sql`. A conferência no fim tem de dar duas linhas:
+   `matricula_rapida | dados jsonb | true | true | false` e `matricula_rapida_versao | | false | true | false`; e
+   `select public.matricula_rapida_versao();` tem de dar 3. Uma inscrição real só da taxa no dia seguinte continua
+   matriculando como antes.
+3. **Site com o código novo, desligado**: `PLANO_COMPLETO = false`, `PLANO_COMPLETO_SEM_TURMA = false`,
+   `PARCELAS_MAX = 1` e `ESCOLA_MATRICULA_PAGA = false` (é o padrão: sem o `api/config-pagar-tudo.php` no servidor, tudo
+   fica desligado). As chaves do pagar tudo vão só nesse arquivo, nunca no `config.php` nem no `config-escola.php`.
+   Publicado em 09/10/2026, 16h45.
+4. **Teste real** (R$ 2,00, só para o CPF de quem testa: `TESTE_CPFS`, `PRECO_TESTE_CENTAVOS = 100`,
+   `PRECO_TESTE_MATRICULA_CENTAVOS = 100`, `ESCOLA_MATRICULA_PAGA = true`, todas em `api/config-pagar-tudo.php`,
+   `PLANO_COMPLETO = true` e `PLANO_COMPLETO_SO_TESTE = true`, para nenhum visitante comprar a opção 1 pelo preço real
+   durante o teste). Na escola: matrícula `PAGO` na turma do `turma_id`, sem a faixa "Falta pagar a matrícula",
+   Pagamento `CURSO` `unicopag-2`. Depois: estornar pelo painel da Unicopag, limpar a escola com `limpar_teste.sql`
+   (já cobre o gateway `unicopag-2` e a anotação) e voltar as chaves de teste.
+5. **Ligar** só com as pendências do dono e o jurídico (spec `pagar-tudo`, seções 3.5, 9 e 10.14).
+
+### Volta atrás
+
+- Qualquer problema: `PLANO_COMPLETO = false` (e `PLANO_COMPLETO_SEM_TURMA = false`). Em segundos, o checkout
+  oferece só a taxa. A v2 sem `matricula_centavos` é a v1: voltar a função quase nunca é necessário.
+- Voltar para a v1 **só** com `PLANO_COMPLETO = false` e esta consulta dando 0 no banco do site:
+  ```sql
+  SELECT COUNT(*) FROM mcp_inscricoes WHERE plano = 'taxa_e_matricula' AND (
+    (status = 'pendente' AND criado_em > UTC_TIMESTAMP() - INTERVAL 25 HOUR)
+    OR (status = 'pago' AND escola_status IN ('pendente','erro') AND escola_tentativas < 5)
+    OR (status = 'pago' AND espera_status IN ('aguardando','turma')));
+  ```
+  Depois, `ESCOLA_MATRICULA_PAGA = false`, rodar de novo `matricula_rapida.sql` (a v1) e
+  `drop function if exists public.matricula_rapida_versao();`. **Nunca** o `desfazer.sql` para isso (ele tira o
+  `USAGE` do `service_role` e derruba `aulas_do_aluno` e `aulas_do_dia`).
+
+### Pedido a quem mantém a escola (recomendado, não bloqueia)
+
+Em `encaixar()` e em `ligarComEscola()`, recusar com "Esta inscrição pagou taxa + matrícula: matricule como À vista
+PAGO" quando o valor pago passar de 1,2 × a taxa, ou quando o feed trouxer `plano = 'taxa_e_matricula'`; e reconhecer
+o `LogAuditoria` `TAXA_PAGA_SEM_TURMA_PELO_SITE` com `pagouMatricula: true` (tirar essas contas da lista Alunos >
+"sem inscrição" e do convite de prospecção). Enquanto isso, o site não manda ao feed da aba Matrícula rápida as
+compras "taxa + matrícula" que a escola não confirmou como pagas.

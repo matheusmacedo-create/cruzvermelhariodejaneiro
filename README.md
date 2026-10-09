@@ -551,6 +551,93 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
+## Pagar tudo: taxa de inscrição + matrícula no site (preparado em 08/10/2026, corrigido em 09/10, NÃO publicado)
+
+**Situação:** construído e testado só na máquina; nada foi publicado, cobrado ou aplicado na escola. Todas as chaves novas
+começam desligadas (`api/config.example.php`); desligado, o site faz o de hoje (só a taxa, sem parcelas, sem chamar a
+escola para conferir a versão nem a Unicopag para simular). Decisões do dono de 08/10: copy literal da página da escola,
+"Taxa de inscrição + matrícula, à vista" já marcada e "Só a taxa de inscrição" em segundo, também nos cursos sem turma
+(fila da próxima turma, 90 dias para a primeira aula), cartão em até 12x com os juros do aluno numa cobrança só, PIX à
+vista, vendedor e emissor da nota: O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35.
+
+**O que entra:** `api/lib/compra.php` (planos, valores, parcelas, cobrança, visão pública) e `api/lib/espera.php` (fila da
+venda sem turma e rotina de 15 minutos em `comparecimentos.php`), `api/parcelas.php` (simulação `/installments` da
+Unicopag), migração automática de 35 colunas em `mcp_inscricoes` e duas tabelas (`mcp_parcelas_cache`,
+`mcp_parcelas_exibidas`), e-mails, comprovante, medição e painel novos, checkout (`static/checkout.js`,
+`scripts/gerar_checkout.py`), página no layout da escola (`scripts/gerar_matricula_presencial.py`), turmas em
+`oferta.json` (mantido à mão pela TI: o `cursos.json` é regravado pelo sincronizador), /reembolso/ e /termos/ (PT, EN, ES)
+e três respostas do chat (`site/chat/chat.js`, publicado = o do ar com só as três respostas trocadas; a `faq-home.json`
+do repositório tem as mesmas três, e não é publicada). A função da escola é a `docs/escola/matricula_rapida_v2.sql`
+(versão 3, 957 linhas, sha256 `7d7a32e2…54c7`, com o campo `fila_espera`: quem pagou tudo entra antes de "só a taxa"),
+aplicada só com o OK do dono (seção "v2: pagar tudo" em `docs/escola/README.md`).
+
+**Geração (sempre por `scripts/pagar_tudo/gerar.sh`):** a home, o `chat.js` e as seis políticas **que estão no ar** ficam
+em `docs/pagar-tudo/base-ar/` (com `SHA256SUMS`), porque a `site/index.html` e a `site/faq-home.json` do repositório têm
+mudanças que não estão no ar. O script gera a página e as telas com o cabeçalho e o rodapé da home do ar (e devolve a
+`site/index.html` ao Git), monta o `chat.js` = o do ar + só as três respostas (`trocar_respostas.py`; nunca a partir da
+`faq-home.json`) e as políticas = as do ar + só os nossos trechos (`aplicar_textos.py`, com `POLITICAS_DATA`). Alvos:
+`conferir-ar` (para se o ar mudou depois da base), `chat`, `pagina`, `checkout`, `politicas`, `passo3`; variáveis
+`PLANO_COMPLETO_HTML`, `VENDA_SEM_TURMA_HTML`, `PARCELADO_HTML`. Estado no Git (chaves desligadas):
+`POLITICAS_DATA=2026-10-08 scripts/pagar_tudo/gerar.sh chat pagina checkout politicas`.
+
+**Ordem de publicação:** a da spec (3.5 e 10.14), com as listas prontas em `scripts/publicacao-pagar-tudo-passo*.txt`
+(cada uma diz como gerar, a cópia do ar antes, a ordem e como desfazer): v2 na escola → passo 2 `db.php` sozinho (antes,
+`SELECT VERSION();` no MySQL: a migração usa `ALGORITHM=INSTANT` ou `INPLACE, LOCK=NONE`, nunca `COPY`) → passo 3a o
+`oferta.json` do passo 3 (`"sem_turma": {}`) → passo 3b o código desligado (módulos novos, o `lib.php`, os outros
+`lib/*.php` com `publico.php` e `lib/turmas.php`, os endpoints com `turmas.php` e `painel.php`, o `checkout.js`) → passo
+3c as telas do checkout com a opção 1 escondida, a nota legal de hoje e o `chat.js?v=` do ar (`gerar.sh passo3`) → teste
+real de R$ 2,00 (`TESTE_CPFS` e `PLANO_COMPLETO_SO_TESTE = true`: só esses CPFs compram a opção 1) → passo 5 ligar à vista
+(`PLANO_COMPLETO_HTML=1`) → passo 5b venda sem turma (`VENDA_SEM_TURMA_HTML=1`, `PLANO_COMPLETO_SEM_TURMA`) → passo 6
+parcelado (`PARCELADO_HTML=1`, `PARCELAS_MAX = 12`, `"parcelado_no_ar": true`, só depois de uma compra de teste em 2x e
+do OK do jurídico). Volta atrás: `PLANO_COMPLETO = false` (o checkout volta a só a taxa e à nota legal de hoje em
+segundos); as páginas, pela cópia do ar feita antes de cada passo (`publicar_hostinger.sh --copiar-do-ar`), nunca pelo
+Git (o `chat.js` e as políticas do Git não são os do ar).
+
+**Onde ficam as chaves:** no servidor, só em `api/config-pagar-tudo.php` (fora do Git), que vem por último e aceita
+apenas a lista `MCP_CHAVES_PAGAR_TUDO` de `api/lib/config.php` (inclusive `ESCOLA_MATRICULA_PAGA` e `TESTE_CPFS`). Nunca
+mexer no `config.php` nem no `config-escola.php` (que guarda a chave da escola). Sem esse arquivo, tudo fica desligado.
+
+**Situação (09/10/2026, 16h45):** passos 2 e 3 publicados e conferidos no ar (32 arquivos iguais ao enviado, checkout
+só com a taxa, opção 1 recusada com 422 `desligado`). Faltam: a v2 na escola (passo 1, no SQL Editor da escola, que
+não está ao alcance dos conectores), o teste real de R$ 2,00 (passo 4) e a página nova com a venda de tudo à vista
+(passo 5; decisão do dono: à vista agora, parcelado e venda sem turma depois do jurídico).
+
+**Testes:** `php scripts/testar_checkout.php` (inclui `scripts/testar_pagar_tudo.php` e
+`scripts/testar_pagar_tudo_emails.php`), `scripts/testar_meta_integracao.php` (com `MCP_TESTE_DB_PORTA` para um MariaDB
+local fora da 3306; casos do pagar tudo no fim: PIX e 10x com o value sem juros, e o SQL de "Precisam de atenção"
+executado no banco) e as suítes da v2 em `docs/escola/teste-local/` (`rodar_testes_v2.sh`, `rodar_testes_sem_turma.sh`,
+que inclui a `14_testes_fila_pgtap.sql`). O `testar_checkout.php` não roda JavaScript: depois de mexer no `checkout.js`,
+abrir o checkout no navegador nos dois estados (chaves ligadas e desligadas) antes de publicar.
+
+**Fora desta construção (spec, seção 8):**
+- a FAQ da home (`site/index.html`) ainda diz "R$ 100" e "pago depois na plataforma da escola": regerar com
+  `gerar_faq_home.py` quando a outra construção liberar a home;
+- textos que repetem o modelo antigo: bio, páginas em inglês e espanhol, criativos e anúncios (precisam acompanhar a copy
+  nova antes de rodar verba);
+- o botão "Estornar" no painel (E10): `mcp_unicopag_estornar()` existe, sem botão;
+- o evento `MatriculaPaga`; o ajuste do "Encaixar" e do batimento na escola; mostrar na área do aluno as parcelas do
+  `gatewayResponse`; mostrar em "Minha conta" a compra paga que espera turma; tirar do convite "sem inscrição" quem
+  espera turma; a aba Matrícula rápida contar a vaga como o `FILTRO_VAGA` (pedidos à escola);
+- v2.1 da função (P2 "Só a matrícula" ou fila única), nomes de arquivo com hash em `static/`, devolução pela API para a
+  espera.
+
+**Fora desta construção, registrado nas correções de 09/10 (aceito, não corrigido):**
+- quatro respostas do `chat.js` do ar ainda falam do modelo antigo ("garantir a vaga com a inscrição de R$ 99" na
+  escolaridade e em outras cidades; "plataforma da escola" na duração; "a secretaria confirma turma e horário" em online ou
+  presencial): a regra desta construção é o `chat.js` do ar com só as três respostas da 1.16/10.3;
+- o `chat.js` novo fica sob o `?v=aa00cac6d2` em 12 páginas do ar fora desta construção (home, história, equipe, bio, 404,
+  privacidade, cookies, dia das crianças, doação, campanha do agasalho, doe e doe/obrigado), servido com `immutable`: quem
+  já tem o arquivo em cache vê as respostas antigas no chat dessas páginas por até um ano;
+- a descrição (`meta description`) da página de cursos muda (o `<title>` volta a ser o do ar, como manda a 1.1);
+- a medição muda já no passo 3, com as chaves desligadas: o `Lead` passa de `content_category: matricula-cursos-presenciais`
+  para `taxa-inscricao`, e `AddPaymentInfo`/`Purchase` ganham `content_category`, `plano`, `parcelas` e `estado_turma`.
+  Antes do passo 3, conferir no Gerenciador da Meta se alguma conversão ou público usa a categoria antiga, e anotar a data;
+- o assunto do e-mail do PIX "só a taxa" muda no passo 3: de "Falta só o PIX para garantir sua vaga em {curso}" para
+  "Falta só o PIX para concluir sua inscrição em {curso}" (o texto novo evita "garantir a vaga" nos e-mails ao público);
+- página publicada no passo 5 com `PLANO_COMPLETO` desligado depois (volta atrás): o passo 02 e a FAQ 2 continuam dizendo
+  que a matrícula "pode ser paga junto"; o checkout já volta sozinho a só a taxa e à nota legal de hoje. Na volta atrás
+  da página, republicar a cópia do ar.
+
 ## Contribuição opcional para a divulgação no checkout (07/10/2026)
 
 Pedido do Matheus: no passo "3 Pagamento" do checkout, a opção de o aluno ajudar a divulgar os cursos para chegarem
