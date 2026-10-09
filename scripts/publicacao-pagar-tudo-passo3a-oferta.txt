@@ -1,0 +1,8 @@
+# "Config" = api/config-pagar-tudo.php no servidor (só as chaves de MCP_CHAVES_PAGAR_TUDO). Nunca editar o config.php nem o config-escola.php.
+# Pagar tudo, passo 3, grupo (0): o oferta.json do passo 3 ("sem_turma": {}, "parcelado_no_ar": false), ANTES dos PHP:
+# o código do ar não lê este arquivo, e o código novo, já na primeira requisição, acha a turma de 21/10.
+# Gerado por scripts/pagar_tudo/gerar.sh passo3 em $PASSO3_DIR (padrão /tmp/pagar-tudo-passo3). Publicar de lá:
+#   P3=/tmp/pagar-tudo-passo3; RAIZ=$P3/site scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3a-oferta.txt | sed "s|^site/|$P3/site/|")
+# Cópia do ar antes (o arquivo ainda não existe no ar: vai para novos.txt):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-passo3 $(grep -vE '^(#|$)' scripts/publicacao-pagar-tudo-passo3a-oferta.txt)
+site/matricula-cursos-presenciais/oferta.json

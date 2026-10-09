@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = 'a4ae9e5e2053bcfe';
+const MCP_DB_VERSAO = '3ef798dcf5f528ae';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -45,16 +45,74 @@ const MCP_DB_VERSAO = 'a4ae9e5e2053bcfe';
 function mcp_migrar(PDO $pdo): void
 {
     $versao = 'db:' . MCP_DB_VERSAO;
+    $existe = false;
     try {
-        if ($pdo->query("SELECT valor FROM mcp_chaves WHERE nome = 'versao_banco'")->fetchColumn() === $versao) {
+        $chaves = $pdo->query("SELECT nome, valor FROM mcp_chaves WHERE nome IN ('versao_banco', 'migracao_adiada_em')")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $existe = true;
+        if (($chaves['versao_banco'] ?? null) === $versao) {
+            return;
+        }
+        // Migração adiada há menos de 60 s (uma transação longa segurava a tabela): sem nova tentativa por enquanto, para
+        // cada requisição não ficar 5 s presa atrás de um ALTER que vai desistir de novo. O código aguenta o esquema antigo.
+        $adiada = isset($chaves['migracao_adiada_em']) ? strtotime($chaves['migracao_adiada_em'] . ' UTC') : false;
+        if ($adiada !== false && time() - $adiada < 60) {
             return;
         }
     } catch (PDOException) {
         // Primeira vez: mcp_chaves ainda não existe.
     }
-    mcp_migrar_tudo($pdo);
-    $pdo->prepare("INSERT INTO mcp_chaves (nome, valor, criado_em) VALUES ('versao_banco', ?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor), criado_em = VALUES(criado_em)")
-        ->execute([$versao, gmdate('Y-m-d H:i:s')]);
+    // Pagar tudo (10/2026, T12): uma migração por vez (GET_LOCK) e, com a trava, metadados com espera de no máximo
+    // 5 s. Um ALTER preso atrás de uma consulta longa (a planilha do painel) desiste em 5 s, em vez de enfileirar o
+    // checkout e o webhook atrás dele. Sem a trava, ou com a migração desistindo, a requisição segue sem gravar a
+    // versão: a próxima tenta de novo. O código novo aguenta o esquema antigo (só a taxa grava sem as colunas novas;
+    // o plano completo responde 503 antes de cobrar: mcp_colunas_plano_ok()).
+    // Banco que já existe (atualização): quem não pega a trava na hora segue sem esperar, no esquema antigo. Banco vazio
+    // (instalação nova): espera até 5 s, porque sem as tabelas nada funciona.
+    try {
+        $trava = (int) $pdo->query("SELECT GET_LOCK('mcp_migrar', " . ($existe ? 0 : 5) . ')')->fetchColumn();
+    } catch (PDOException $e) {
+        error_log('[matricula] migração sem a trava: ' . $e->getMessage());
+        return;
+    }
+    if ($trava !== 1) {
+        return;
+    }
+    $esperaAntes = null;
+    try {
+        // Outra requisição pode ter migrado enquanto esta esperava a trava.
+        if ($pdo->query("SELECT valor FROM mcp_chaves WHERE nome = 'versao_banco'")->fetchColumn() === $versao) {
+            $pdo->query("SELECT RELEASE_LOCK('mcp_migrar')");
+            return;
+        }
+    } catch (PDOException) {
+        // mcp_chaves ainda não existe: segue para criar.
+    }
+    try {
+        $esperaAntes = (int) $pdo->query('SELECT @@SESSION.lock_wait_timeout')->fetchColumn();
+        $pdo->exec('SET SESSION lock_wait_timeout = 5');
+        mcp_migrar_tudo($pdo);
+        $pdo->prepare("INSERT INTO mcp_chaves (nome, valor, criado_em) VALUES ('versao_banco', ?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor), criado_em = VALUES(criado_em)")
+            ->execute([$versao, gmdate('Y-m-d H:i:s')]);
+    } catch (PDOException $e) {
+        // Tabela nova que não se cria (banco vazio sem permissão) derruba a requisição mais adiante, com a mensagem de
+        // sempre; o que importa aqui é não gravar a versão de uma migração pela metade.
+        error_log('[matricula] migração adiada: ' . $e->getMessage());
+        try {
+            $pdo->prepare("INSERT INTO mcp_chaves (nome, valor, criado_em) VALUES ('migracao_adiada_em', ?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor), criado_em = VALUES(criado_em)")
+                ->execute([gmdate('Y-m-d H:i:s'), gmdate('Y-m-d H:i:s')]);
+        } catch (PDOException) {
+            // Sem mcp_chaves: a próxima requisição tenta de novo.
+        }
+    } finally {
+        try {
+            if ($esperaAntes !== null && $esperaAntes > 0) {
+                $pdo->exec('SET SESSION lock_wait_timeout = ' . $esperaAntes);
+            }
+            $pdo->query("SELECT RELEASE_LOCK('mcp_migrar')");
+        } catch (PDOException) {
+            // A trava cai sozinha com a conexão.
+        }
+    }
 }
 
 function mcp_migrar_tudo(PDO $pdo): void
@@ -109,6 +167,7 @@ function mcp_migrar_tudo(PDO $pdo): void
         atualizado_em DATETIME NOT NULL,
         pago_em DATETIME NULL,
         consultado_em DATETIME NULL,
+" . mcp_db_colunas_sql(MCP_DB_COLUNAS_PAGAR_TUDO) . "
         UNIQUE KEY uq_token (token),
         KEY ix_hash (unicopag_hash),
         KEY ix_email (email, criado_em),
@@ -133,6 +192,26 @@ function mcp_migrar_tudo(PDO $pdo): void
     // checkout ofereceu (nulo = a opção não apareceu: inscrição de antes, opção desligada ou página antiga em cache).
     // As duas juntas dão a adesão de cada valor testado (painel, Início).
     mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['divulgacao_centavos' => 'INT UNSIGNED NOT NULL DEFAULT 0', 'divulgacao_oferta_centavos' => 'INT UNSIGNED NULL']);
+    // Pagar tudo (10/2026): plano (só a taxa ou taxa + matrícula), parcelas no cartão, juros, turma vendida, o que a
+    // secretaria resolveu na escola e a venda sem turma (fila da próxima turma, aceite guardado). total_centavos
+    // continua o amount sem juros (a soma dos itens); o cobrado com juros fica em total_cobrado_centavos (amount_total
+    // da reconsulta). Num ALTER só (mcp_garantir_colunas), com a trava de metadados de 5 s de mcp_migrar.
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', MCP_DB_COLUNAS_PAGAR_TUDO);
+    // Simulação de parcelas da Unicopag: a lista crua por amount (10 min) e o que o servidor mostrou ao navegador
+    // (validade de 48 h da oferta a prazo, CDC art. 54-B; faxina em 7 dias pela rotina de 15 minutos).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_parcelas_cache (
+        amount_centavos INT UNSIGNED NOT NULL PRIMARY KEY,
+        opcoes TEXT NOT NULL,
+        consultado_em DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_parcelas_exibidas (
+        amount_centavos INT UNSIGNED NOT NULL,
+        n TINYINT UNSIGNED NOT NULL,
+        total_centavos INT UNSIGNED NOT NULL,
+        exibido_em DATETIME NOT NULL,
+        PRIMARY KEY (amount_centavos, n, total_centavos),
+        KEY ix_exibido (exibido_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Mensagens do chat de contato do site (api/contato.php). Fonte da verdade: o e-mail à equipe é cópia.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_contatos (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -480,6 +559,60 @@ const MCP_DB_COLUNAS_AVISOS = [
 ];
 
 /**
+ * Colunas do pagar tudo (10/2026) em mcp_inscricoes: entram no CREATE TABLE dos bancos novos e, nos que já existem,
+ * num ALTER só (mcp_garantir_colunas). Linhas antigas ficam com os padrões (so_taxa, 0, 1, nulos).
+ */
+const MCP_DB_COLUNAS_PAGAR_TUDO = [
+    'plano' => "ENUM('so_taxa','taxa_e_matricula') NOT NULL DEFAULT 'so_taxa'",
+    'plano_oferta' => 'VARCHAR(20) NULL',
+    'matricula_centavos' => 'INT UNSIGNED NOT NULL DEFAULT 0',
+    'matricula_preco_centavos' => 'INT UNSIGNED NULL',
+    'parcelas' => 'TINYINT UNSIGNED NOT NULL DEFAULT 1',
+    'juros_centavos' => 'INT UNSIGNED NOT NULL DEFAULT 0',
+    'total_mostrado_centavos' => 'INT UNSIGNED NULL',
+    'total_cobrado_centavos' => 'INT UNSIGNED NULL',
+    'taxa_mes_pct' => 'DECIMAL(6,3) NULL',
+    'cet_ano_pct' => 'DECIMAL(7,3) NULL',
+    'diferenca_devolver_centavos' => 'INT UNSIGNED NOT NULL DEFAULT 0',
+    'turma_id' => 'VARCHAR(64) NULL',
+    'turma_inicio' => 'DATETIME NULL',
+    'escola_resolvido_em' => 'DATETIME NULL',
+    'pre_chargeback_avisado_em' => 'DATETIME NULL',
+    // Venda sem turma (08/10/2026, spec 10.8): a fila da próxima turma do curso.
+    'espera_status' => "ENUM('aguardando','turma','devolver') NULL",
+    'espera_desde' => 'DATETIME NULL',
+    'espera_prazo' => 'DATETIME NULL',
+    'espera_prorrogada' => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+    'espera_consultada_em' => 'DATETIME NULL',
+    'espera_motivo' => 'VARCHAR(24) NULL',
+    'espera_erro' => 'VARCHAR(40) NULL',
+    'espera_falhas' => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+    'espera_avisos_enviados' => 'TINYINT UNSIGNED NOT NULL DEFAULT 0',
+    'espera_turma_email_em' => 'DATETIME NULL',
+    'espera_janela_ate' => 'DATETIME NULL',
+    'espera_turma_confirmada_em' => 'DATETIME NULL',
+    'espera_reconsulta_em' => 'DATETIME NULL',
+    'espera_turma_dados' => 'VARCHAR(160) NULL',
+    'espera_matricula_escola' => 'VARCHAR(64) NULL',
+    'espera_devolver_motivo' => 'VARCHAR(20) NULL',
+    'espera_devolver_em' => 'DATETIME NULL',
+    // F12: prova do aceite (versão do texto, hash do texto exato mostrado e hora). O IP já é guardado.
+    'aceite_versao' => 'VARCHAR(20) NULL',
+    'aceite_sha256' => 'CHAR(64) NULL',
+    'aceite_em' => 'DATETIME NULL',
+];
+
+/** As colunas acima no formato do CREATE TABLE ("nome definição,\n"). */
+function mcp_db_colunas_sql(array $colunas): string
+{
+    $sql = '';
+    foreach ($colunas as $nome => $definicao) {
+        $sql .= "        $nome $definicao,\n";
+    }
+    return $sql;
+}
+
+/**
  * Índices das tabelas que já existiam antes deles (freios, "na sede", presenças por e-mail, cota de e-mail).
  * Roda só na rotina da linha de comando (a cada 15 minutos), para não pesar em cada visita.
  */
@@ -488,15 +621,40 @@ const MCP_DB_INDICES = [
     'mcp_eventos' => ['ix_tipo_criado' => 'tipo, criado_em'],
     'mcp_ponto' => ['ix_sem_saida' => 'saida, entrada'],
     'mcp_presencas' => ['ix_email' => 'email, chegada'],
+    // Pagar tudo (10/2026): planos no painel e a fila da venda sem turma. Aparecem na rodada seguinte da rotina,
+    // não na publicação (T25).
+    'mcp_inscricoes' => ['ix_plano' => 'plano, status', 'ix_espera' => 'espera_status, curso_slug, pago_em'],
 ];
 
+/**
+ * Cria os índices que faltam, sem travar o site: espera de metadados de no máximo 5 s e o índice construído com a tabela
+ * aberta a leituras e escritas (ALGORITHM=INPLACE, LOCK=NONE). Se a tabela estiver presa (1205, transação longa) ou o
+ * banco recusar o modo online, registra no log e deixa para a próxima rodada: o checkout nunca fica na fila do ALTER.
+ */
 function mcp_garantir_indices(PDO $pdo): void
 {
-    foreach (MCP_DB_INDICES as $tabela => $indices) {
-        $existentes = array_column($pdo->query("SHOW INDEX FROM $tabela")->fetchAll(), 'Key_name');
-        foreach ($indices as $nome => $colunas) {
-            if (!in_array($nome, $existentes, true)) {
-                $pdo->exec("ALTER TABLE $tabela ADD KEY $nome ($colunas)");
+    $esperaAntes = null;
+    try {
+        $esperaAntes = (int) $pdo->query('SELECT @@SESSION.lock_wait_timeout')->fetchColumn();
+        $pdo->exec('SET SESSION lock_wait_timeout = 5');
+        foreach (MCP_DB_INDICES as $tabela => $indices) {
+            $existentes = array_column($pdo->query("SHOW INDEX FROM $tabela")->fetchAll(), 'Key_name');
+            foreach ($indices as $nome => $colunas) {
+                if (in_array($nome, $existentes, true)) {
+                    continue;
+                }
+                try {
+                    $pdo->exec("ALTER TABLE $tabela ADD KEY $nome ($colunas), ALGORITHM=INPLACE, LOCK=NONE");
+                } catch (PDOException $e) {
+                    error_log("[matricula] índice $tabela.$nome adiado (" . (int) ($e->errorInfo[1] ?? 0) . '): ' . $e->getMessage());
+                }
+            }
+        }
+    } finally {
+        if ($esperaAntes !== null && $esperaAntes > 0) {
+            try {
+                $pdo->exec('SET SESSION lock_wait_timeout = ' . $esperaAntes);
+            } catch (PDOException) {
             }
         }
     }
@@ -509,24 +667,53 @@ function mcp_garantir_indices(PDO $pdo): void
 function mcp_eventos_apagar_freios(?int $agora = null): int
 {
     $agora ??= time();
-    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse')
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse', 'parcelas_consulta', 'recusa_checkout')
         AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
     return $stmt->rowCount();
 }
 
-/** Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). */
+/**
+ * Acrescenta à tabela as colunas que ainda não existem (migração idempotente, barata: um SHOW COLUMNS). As que faltam
+ * entram num único ALTER TABLE (pagar tudo, T12): uma reconstrução da tabela, não uma por coluna.
+ */
 function mcp_garantir_colunas(PDO $pdo, string $tabela, array $colunas): void
 {
     $existentes = array_column($pdo->query("SHOW COLUMNS FROM $tabela")->fetchAll(), 'Field');
-    foreach ($colunas as $nome => $definicao) {
-        if (!in_array($nome, $existentes, true)) {
+    $faltam = array_filter($colunas, static fn(string $nome): bool => !in_array($nome, $existentes, true), ARRAY_FILTER_USE_KEY);
+    if (!$faltam) {
+        return;
+    }
+    $partes = [];
+    foreach ($faltam as $nome => $definicao) {
+        $partes[] = "ADD COLUMN $nome $definicao";
+    }
+    // Nunca COPY (que bloqueia a escrita durante a reconstrução da tabela): INSTANT quando o banco tem (MariaDB 10.3+,
+    // MySQL 8.0); senão, INPLACE com a tabela aberta (LOCK=NONE). 1845/1846: modo não suportado; 1064: banco que não
+    // conhece INSTANT. Se nenhum servir, a migração é adiada e o plano completo continua fora (503 antes de cobrar).
+    $online = static function (string $alter) use ($pdo): void {
+        try {
+            $pdo->exec("$alter, ALGORITHM=INSTANT");
+        } catch (PDOException $e0) {
+            if (!in_array((int) ($e0->errorInfo[1] ?? 0), [1845, 1846, 1064], true)) {
+                throw $e0;
+            }
+            $pdo->exec("$alter, ALGORITHM=INPLACE, LOCK=NONE");
+        }
+    };
+    try {
+        $online("ALTER TABLE $tabela " . implode(', ', $partes));
+    } catch (PDOException $e) {
+        // Outra requisição acrescentou uma das colunas no mesmo instante (1060: Duplicate column name): uma por vez.
+        if ((int) ($e->errorInfo[1] ?? 0) !== 1060) {
+            throw $e;
+        }
+        foreach ($faltam as $nome => $definicao) {
             try {
-                $pdo->exec("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
-            } catch (PDOException $e) {
-                // Outra requisição acrescentou a coluna no mesmo instante (1060: Duplicate column name).
-                if ((int) ($e->errorInfo[1] ?? 0) !== 1060) {
-                    throw $e;
+                $online("ALTER TABLE $tabela ADD COLUMN $nome $definicao");
+            } catch (PDOException $e2) {
+                if ((int) ($e2->errorInfo[1] ?? 0) !== 1060) {
+                    throw $e2;
                 }
             }
         }

@@ -72,8 +72,7 @@
         }
       ],
       "imagem": "bombeiro-civil",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787054066-56ea71861ef7.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787054066-56ea71861ef7.webp"
     },
     {
       "slug": "cuidador-de-idosos",
@@ -115,8 +114,7 @@
         }
       ],
       "imagem": "cuidador-de-idosos",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp"
     },
     {
       "slug": "micropigmentacao-labial",
@@ -158,8 +156,7 @@
         }
       ],
       "imagem": "micropigmentacao-labial",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787194666-cff317cf7b7a.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787194666-cff317cf7b7a.webp"
     },
     {
       "slug": "primeiros-socorros-basico",
@@ -203,16 +200,7 @@
         }
       ],
       "imagem": "primeiros-socorros-basico",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787217265-1eb3b399f771.webp",
-      "turmas": [
-        {
-          "id": "47d694b2-b2bc-4885-a0aa-67637b847957",
-          "inicio": "2026-10-21T09:00:00-03:00",
-          "fim": "2026-10-21T17:00:00-03:00",
-          "local": "Praça da Cruz Vermelha, 10 · Centro",
-          "inscricoes_ate": "2026-10-20T23:59:59-03:00"
-        }
-      ]
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787217265-1eb3b399f771.webp"
     },
     {
       "slug": "primeiros-socorros-lei-lucas",
@@ -233,8 +221,7 @@
       "total_escola_centavos": 25000,
       "faq": [],
       "imagem": "primeiros-socorros-lei-lucas",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787244064-e1a66aa9dff5.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787244064-e1a66aa9dff5.webp"
     },
     {
       "slug": "puncao-venosa",
@@ -276,8 +263,7 @@
         }
       ],
       "imagem": "puncao-venosa",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787266061-226838379cba.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787266061-226838379cba.webp"
     },
     {
       "slug": "suporte-basico-de-vida",
@@ -319,8 +305,7 @@
         }
       ],
       "imagem": "suporte-basico-de-vida",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787285667-954a9ec93b34.webp",
-      "turmas": []
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787285667-954a9ec93b34.webp"
     }
   ]
 }

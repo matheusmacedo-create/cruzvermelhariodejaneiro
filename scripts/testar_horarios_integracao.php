@@ -383,8 +383,9 @@ try {
     }
     fclose($fh);
     $porNome = array_column(array_slice($linhasInscricoes, 1), null, 2);
-    verificar('planilha de inscrições: 7 linhas, 12 colunas, sem CPF', [str_starts_with($csv, "\xEF\xBB\xBF"), count($linhasInscricoes), count($linhasInscricoes[0]),
-        array_values(array_filter($todos, static fn(array $p): bool => str_contains($csv, $p['cpf'])))], [true, 8, 12, []]);
+    // Pagar tudo (spec 3.2 e 10.9): 22 colunas (Plano, Parcelas, Juros, Total cobrado e as seis da espera depois das 12 de antes).
+    verificar('planilha de inscrições: 7 linhas, 22 colunas, sem CPF', [str_starts_with($csv, "\xEF\xBB\xBF"), count($linhasInscricoes), count($linhasInscricoes[0]),
+        array_values(array_filter($todos, static fn(array $p): bool => str_contains($csv, $p['cpf'])))], [true, 8, 22, []]);
     verificar('planilha de inscrições: situação, escola, horários e fórmula', [$porNome[$a['nome']][1] ?? null, $porNome[$a['nome']][9] ?? null, $porNome[$c['nome']][1] ?? null,
         $porNome[$d['nome']][9] ?? null, $porNome[$recusada['nome']][8] ?? null, $porNome[$semTurma['nome']][8] ?? null, $porNome[$b['nome']][11] ?? null],
         ['Paga', 'Ter de manhã e à tarde', 'Aguardando pagamento', 'não respondeu', 'Não matriculado', 'Sem turma aberta', "'=HYPERLINK(\"http://golpe\")"]);

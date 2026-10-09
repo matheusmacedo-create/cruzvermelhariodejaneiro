@@ -170,7 +170,8 @@ verificar('pix validade', mcp_pix_validade(['criado_em' => '2026-09-19 12:00:00'
 // E-mail de recuperação do PIX: copy de conversão, valores certos, link com UTM, tudo escapado, sem WhatsApp.
 $pix = ['pix_copia_cola' => '00020126BR.GOV.BCB.PIX<teste>', 'metodo' => 'pix', 'nome' => '<b>Maria</b> da Silva', 'criado_em' => '2026-09-19 12:00:00'] + $inscricao;
 $m = mcp_montar_email_pix_aberto($pix);
-verificar('pix assunto', $m['assunto'], 'Falta só o PIX para garantir sua vaga em Curso X');
+// Pagar tudo (spec 1.14): opção 2 (só a taxa) fica com o assunto de hoje, "concluir sua inscrição" ("garantir sua vaga" saiu na Fase 0).
+verificar('pix assunto', $m['assunto'], 'Falta só o PIX para concluir sua inscrição em Curso X');
 verificar('pix título com primeiro nome escapado', str_contains($m['html'], 'Falta só o PIX, &lt;b&gt;Maria&lt;/b&gt;.') && !str_contains($m['html'], '<b>Maria</b>'), true);
 verificar('pix botão', str_contains($m['html'], 'Concluir pagamento'), true);
 verificar('pix link com utm', str_contains($m['html'], 'https://exemplo.org/matricula-cursos-presenciais/pendente/?t=' . $token . '&amp;utm_source=email&amp;utm_medium=transacional&amp;utm_campaign=pix-aberto'), true);
@@ -191,7 +192,10 @@ verificar('divulgação: sem ela, o e-mail do PIX não tem a linha', str_contain
 // Inscrição paga: versão A (com acesso da escola) e versão B (a secretaria escreve por e-mail).
 $a = mcp_montar_email_aluno_pago($inscricao);
 verificar('pago A tipo', $a['tipo'], 'acesso');
-verificar('pago A assunto', $a['assunto'], 'Matrícula feita: seu acesso à plataforma da escola — Curso X');
+// Pagar tudo (spec 1.14): opção 2 com turma.
+verificar('pago A assunto', $a['assunto'], 'Taxa de inscrição confirmada em Curso X: falta só o pagamento da matrícula');
+verificar('pago A caixa da matrícula a pagar e sem "Entrar e pagar a matrícula"', str_contains($a['html'], 'Falta pagar a matrícula.') && !str_contains($a['html'] . $a['texto'], 'Entrar e pagar a matrícula')
+    && !str_contains($a['html'] . $a['texto'], 'próximo passo, pagar a matrícula'), true);
 verificar('pago A conta nova: botão de criar senha com o link', str_contains($a['html'], 'Criar minha senha') && str_contains($a['html'], $linkEscola) && str_contains($a['texto'], $linkEscola), true);
 verificar('pago A conta nova: validade do link', str_contains($a['html'], 'o link vale até 01/01 às 12h00'), true);
 verificar('pago A nunca usa os 4 últimos dígitos do CPF', str_contains($a['html'] . $a['texto'], '4 últimos') || str_contains($a['html'] . $a['texto'], '4725'), false);
@@ -199,7 +203,7 @@ $vencido = ['escola_acesso' => json_encode(['link_expira_em' => '2020-01-01T00:0
 $aVencido = mcp_montar_email_aluno_pago($vencido);
 verificar('pago A link vencido: Esqueci minha senha', str_contains($aVencido['html'], 'Esqueci minha senha') && !str_contains($aVencido['html'], 'redefinir-senha'), true);
 verificar('pago A turma', str_contains($a['html'], '21/10/2026') && str_contains($a['texto'], '21/10/2026'), true);
-verificar('pago A link de entrada', str_contains($a['html'], 'https://escola.exemplo.org/login') && str_contains($a['html'], 'Entrar na plataforma da escola'), true);
+verificar('pago A link de entrada', str_contains($a['html'], 'https://escola.exemplo.org/login') && str_contains($a['html'], 'Ver minhas inscrições'), true);
 $existente = ['escola_acesso' => json_encode(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_conta' => 'o***@exemplo.com', 'email_confere' => false,
     'turma_inicio' => '2026-10-21', 'aviso' => null, 'url_login' => 'https://escola.exemplo.org/login'])] + $inscricao;
 $aExistente = mcp_montar_email_aluno_pago($existente);
@@ -208,8 +212,9 @@ verificar('pago A conta existente com outro e-mail', str_contains($aExistente['h
 $semTurma = ['escola_acesso' => json_encode(['resultado' => 'sem_turma', 'aluno_novo' => true, 'email_conta' => 'm***@exemplo.org', 'email_confere' => true,
     'turma_inicio' => null, 'aviso' => null, 'url_login' => 'https://escola.exemplo.org/login'])] + $inscricao;
 $aSemTurma = mcp_montar_email_aluno_pago($semTurma);
-verificar('pago A sem turma', $aSemTurma['assunto'] === 'Inscrição paga: sua conta na plataforma da escola — Curso X'
-    && str_contains($aSemTurma['html'], 'matricula você na próxima turma'), true);
+// Opção 2 sem turma (spec 1.14): o de hoje, com o passo 3 "A matrícula, depois".
+verificar('pago A sem turma', $aSemTurma['assunto'] === 'Você está na lista da próxima turma de Curso X'
+    && str_contains($aSemTurma['html'], 'Quando a turma abrir, a secretaria coloca você nela, avisa por e-mail e orienta o pagamento da matrícula'), true);
 $conflito = ['escola_status' => 'erro', 'escola_tentativas' => 5, 'escola_acesso' => json_encode(['erro' => 'email_em_uso'])] + $inscricao;
 verificar('pago com conflito na escola vai na versão B', mcp_montar_email_aluno_pago($conflito)['tipo'], 'confirmacao');
 verificar('escola: resumo matriculado', mcp_escola_resumo($inscricao), 'matriculado na turma que começa em 21/10/2026, conta criada pelo site, taxa confirmada');
@@ -230,14 +235,18 @@ verificar('data da turma', [mcp_escola_data('2026-10-21'), mcp_escola_data('onte
 verificar('config escola: só ESCOLA_* valem', [mcp_cfg('ESCOLA_API_TOKEN'), mcp_site_url(), mcp_escola_configurada()], ['chave-de-teste', 'https://exemplo.org', true]);
 $b = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
 verificar('pago B tipo', $b['tipo'], 'confirmacao');
-verificar('pago B assunto', $b['assunto'], 'Inscrição confirmada: sua vaga em Curso X');
+verificar('pago B assunto', $b['assunto'], 'Taxa de inscrição paga: a secretaria vai concluir sua inscrição em Curso X');
 verificar('pago B próximos passos por e-mail', str_contains($b['html'], 'por e-mail em até 3 dias úteis') && str_contains($b['html'], 'Ver minha inscrição'), true);
-verificar('pago B cartão final', str_contains($b['html'], 'Cartão final 1111'), true);
+// "Pago por" (spec 1.14): PIX, "Crédito, final 1234" ou "Crédito em n parcelas…".
+verificar('pago B cartão final', str_contains($b['html'], 'Crédito, final 1111'), true);
 verificar('pago sem whatsapp', stripos($a['html'] . $b['html'] . $a['texto'] . $b['texto'], 'whatsapp'), false);
 $sec = mcp_montar_email_secretaria($inscricao);
 verificar('secretaria telefone', str_contains($sec['html'], 'Telefone') && str_contains($sec['texto'], "Telefone: 21999998888\n"), true);
-verificar('secretaria linha da escola', str_contains($sec['texto'], "Escola: matriculado na turma que começa em 21/10/2026, conta criada pelo site, taxa confirmada\n"), true);
-verificar('secretaria: aluno já matriculado', str_contains($sec['html'], 'já está matriculado na plataforma da escola'), true);
+verificar('secretaria linha da escola', str_contains($sec['texto'], "\nEscola: matriculado na turma que começa em 21/10/2026, conta criada pelo site, taxa confirmada"), true);
+// Primeira frase da opção 2 com turma (spec 1.14) e as linhas novas da caixa.
+verificar('secretaria: aluno já matriculado', str_contains($sec['html'], 'Nova inscrição paga (só a taxa). O aluno está matriculado com a taxa confirmada'), true);
+verificar('secretaria: linhas Plano, Matrícula e Parcelas', str_contains($sec['texto'], "Plano: Só a taxa de inscrição\n") && str_contains($sec['texto'], "Parcelas: à vista\n")
+    && str_contains($sec['texto'], 'Matrícula: '), true);
 verificar('secretaria: sem integração pede contato', str_contains(mcp_montar_email_secretaria($conflito)['html'], 'Entrar em contato com o aluno'), true);
 verificar('secretaria sem whatsapp', stripos($sec['html'] . $sec['texto'], 'whatsapp'), false);
 $aDiv = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $comDivulgacao);
@@ -246,9 +255,9 @@ verificar('divulgação: e-mail pago com a linha e o obrigado pelos dois opciona
 $aSoDiv = mcp_montar_email_aluno_pago(['taxa_centavos' => 0, 'total_centavos' => 11390] + $comDivulgacao);
 verificar('divulgação: só ela, obrigado próprio e sem a linha dos custos', str_contains($aSoDiv['html'], 'Obrigado por ajudar a divulgar os cursos: assim eles chegam a mais pessoas.')
     && !str_contains($aSoDiv['html'], 'Custos de processamento (você escolheu cobrir)'), true);
-verificar('divulgação: o obrigado dos custos continua igual sem ela', str_contains($b['html'], 'Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a inscrição integral.'), true);
+verificar('divulgação: o obrigado dos custos continua igual sem ela', str_contains($b['html'], 'Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a taxa de inscrição inteira.'), true);
 verificar('divulgação: aviso à secretaria com a conta do valor pago', str_contains(mcp_montar_email_secretaria($comDivulgacao)['texto'],
-    "Pago: R$ 118,85 (inscrição R$ 99,00 + custos R$ 4,95 + divulgação R$ 14,90)\n"), true);
+    "Pago: R$ 118,85 (taxa R$ 99,00 + custos R$ 4,95 + divulgação R$ 14,90)\n"), true);
 verificar('divulgação: visão pública (0 quando a inscrição não tem)', [mcp_publico($comDivulgacao)['divulgacao_centavos'], mcp_publico($inscricao)['divulgacao_centavos']], [1490, 0]);
 
 // Chat de contato: aviso à equipe e confirmação à pessoa.
@@ -321,14 +330,15 @@ $inscComprovante = [
     'criado_em' => '2026-09-22 15:10:10', 'pago_em' => '2026-09-22 15:10:41', 'unicopag_hash' => 'exemplo001',
 ];
 $cc = mcp_comprovante_conteudo($inscComprovante, '2026-09-23 17:00:00');
-verificar('comprovante: produto', $cc['subtitulo'], 'Punção Venosa — Inscrição');
+// Comprovante da opção 2 (spec 1.15): "— Taxa de inscrição" e a linha "Taxa de inscrição" no lugar de "Valor"; recebedor da decisão 6.
+verificar('comprovante: produto', $cc['subtitulo'], 'Punção Venosa — Taxa de inscrição');
 verificar('comprovante: nome', $cc['nome'], 'Ana Paula de Souza');
 verificar('comprovante: cpf', $cc['cpf'], 'CPF: 529.982.247-25');
-verificar('comprovante: dados sem custos', $cc['inscricao'], [['Produto', 'Punção Venosa — Inscrição'], ['Quantidade', '1'], ['Valor', 'R$ 99,00']]);
+verificar('comprovante: dados sem custos', $cc['inscricao'], [['Produto', 'Punção Venosa — Taxa de inscrição'], ['Quantidade', '1'], ['Taxa de inscrição', 'R$ 99,00']]);
 verificar('comprovante: pagamento no mesmo minuto não repete a data', $cc['pagamento'], [
     ['Status do pagamento', 'Pago'], ['Método de pagamento', 'Cartão de crédito'], ['Data do pedido', '22/09/2026 12:10'],
     ['Código da compra', 'exemplo001'], ['Total', 'R$ 99,00']]);
-verificar('comprovante: recebedor padrão', [$cc['recebedor'], $cc['recebedor_cnpj']], ['O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP', 'CNPJ 67.733.551/0001-35']);
+verificar('comprovante: recebedor padrão', [$cc['recebedor'], $cc['recebedor_cnpj']], ['O-CVB Filial Rio de Janeiro Ensino Ltda', 'CNPJ 67.733.551/0001-35']);
 verificar('comprovante: rodapé com a transação', str_contains($cc['rodape'], 'transação exemplo001') && str_contains($cc['rodape'], '23/09/2026 às 14h00'), true);
 
 $ccPix = mcp_comprovante_conteudo(['metodo' => 'pix', 'taxa_centavos' => 495, 'total_centavos' => 10395, 'pago_em' => '2026-09-22 19:48:00', 'unicopag_hash' => ''] + $inscComprovante);
@@ -377,8 +387,8 @@ verificar('pdf: 9 entradas na xref e todas certas', $xrefOk, true);
 preg_match('/\/Length (\d+) \/Filter \/FlateDecode >>\nstream\n/', $pdfBytes, $ml, PREG_OFFSET_CAPTURE);
 $fluxo = gzuncompress(substr($pdfBytes, $ml[0][1] + strlen($ml[0][0]), (int) $ml[1][0])) ?: '';
 verificar('pdf: título em cp1252 no conteúdo', str_contains($fluxo, "(COMPROVANTE DE INSCRI\xC7\xC3O)"), true);
-verificar('pdf: travessão em cp1252', str_contains($fluxo, "(Pun\xE7\xE3o Venosa \x97 Inscri\xE7\xE3o)"), true);
-verificar('pdf: empresa recebedora', str_contains($fluxo, '(O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP)'), true);
+verificar('pdf: travessão em cp1252', str_contains($fluxo, "(Pun\xE7\xE3o Venosa \x97 Taxa de inscri\xE7\xE3o)"), true);
+verificar('pdf: empresa recebedora', str_contains($fluxo, '(O-CVB Filial Rio de Janeiro Ensino Ltda)'), true);
 verificar('pdf: logo embutido como paleta', (bool) preg_match('/\/ColorSpace \[\/Indexed \/DeviceRGB \d+ </', $pdfBytes), true);
 verificar('pdf: tamanho razoável para anexo', strlen($pdfBytes) > 20000 && strlen($pdfBytes) < 80000, true);
 verificar('pdf: parênteses do texto escapados', str_contains((function () {
@@ -480,13 +490,14 @@ verificar('horários: aviso sem whatsapp', stripos($avisoHorarios['html'] . $avi
 $emailA = mcp_montar_email_aluno_pago($inscricao);
 $emailB = mcp_montar_email_aluno_pago(['escola_acesso' => null] + $inscricao);
 $emailSemTurma = mcp_montar_email_aluno_pago($semTurma);
-verificar('horários: e-mail pago A traz o quadro "Falta 1 passo"', str_contains($emailA['html'], 'Falta 1 passo') && str_contains($emailA['html'], 'Quando você pode fazer as aulas?')
+// O título "Falta 1 passo" saiu (texto proibido pela spec 6.1); o quadro é "Responda em 30 segundos" / "Quando você pode vir?".
+verificar('horários: e-mail pago A traz o quadro dos horários', !str_contains($emailA['html'], 'Falta 1 passo') && str_contains($emailA['html'], 'Responda em 30 segundos') && str_contains($emailA['html'], 'Quando você pode vir?')
     && str_contains($emailA['html'], $urlHorarios) && str_contains($emailA['texto'], $urlHorarios), true);
-verificar('horários: no A o quadro vem antes dos próximos passos e o botão é contornado', strpos($emailA['html'], 'Falta 1 passo') < strpos($emailA['html'], 'Próximos passos')
+verificar('horários: no A o quadro vem antes dos próximos passos e o botão é contornado', strpos($emailA['html'], 'Responda em 30 segundos') < strpos($emailA['html'], 'Próximos passos')
     && str_contains($emailA['html'], 'bgcolor="#ffffff" style="border-radius:999px;background:#ffffff;border:1.5px solid #cc0000"><a href="' . $urlHorarios), true);
 verificar('horários: e-mail com turma fala da data', str_contains($emailA['html'], 'se a da sua turma não servir'), true);
 verificar('horários: e-mail sem turma não fala de data', str_contains($emailSemTurma['html'], $urlHorarios) && !str_contains($emailSemTurma['html'], 'da sua turma não servir'), true);
-verificar('horários: no B o quadro vem logo depois do valor, com botão cheio', strpos($emailB['html'], 'Falta 1 passo') < strpos($emailB['html'], 'Próximos passos')
+verificar('horários: no B o quadro vem logo depois do valor, com botão cheio', strpos($emailB['html'], 'Responda em 30 segundos') < strpos($emailB['html'], 'Próximos passos')
     && str_contains($emailB['html'], 'bgcolor="#cc0000" style="border-radius:999px;background:#cc0000;border:1.5px solid #cc0000"><a href="' . $urlHorarios)
     && str_contains($emailB['texto'], $urlHorarios), true);
 
@@ -531,7 +542,8 @@ verificar('secretaria: situação na escola', array_map('mcp_secretaria_escola',
     'recusado' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
     'recusa_nova' => ['rotulo' => 'Não matriculado', 'tom' => 'erro'],
     'falha' => ['rotulo' => 'Falha na integração', 'tom' => 'erro'],
-    'andamento' => ['rotulo' => 'Matrícula em andamento', 'tom' => 'neutro'],
+    // Pagar tudo (spec 3.2): escola_status 'pendente' com o pagamento há mais de 10 min vira erro (T4).
+    'andamento' => ['rotulo' => 'Escola sem resposta há mais de 10 min', 'tom' => 'erro'],
     'antes' => ['rotulo' => 'Sem integração na época', 'tom' => 'neutro'],
     'pendente' => ['rotulo' => '—', 'tom' => 'neutro'],
 ]);
@@ -540,22 +552,28 @@ verificar('secretaria: conta do aluno na escola', [mcp_secretaria_escola_conta($
     mcp_secretaria_escola_conta($comEscola(['resultado' => 'matriculado', 'aluno_novo' => false, 'email_confere' => false, 'email_conta' => 'm***@exemplo.org']))],
     ['Conta criada pelo site, com o e-mail da inscrição', null, 'O aluno já tinha conta na escola, com o mesmo e-mail', 'O aluno já tinha conta na escola, com outro e-mail: m***@exemplo.org']);
 verificar('secretaria: precisa de atenção só quando pago com pendência na escola', array_map('mcp_secretaria_precisa_atencao', $situacoes),
-    ['matriculado' => false, 'sem_turma' => true, 'taxa' => true, 'recusado' => true, 'recusa_nova' => true, 'falha' => true, 'andamento' => false, 'antes' => false, 'pendente' => false]);
+    ['matriculado' => false, 'sem_turma' => true, 'taxa' => true, 'recusado' => true, 'recusa_nova' => true, 'falha' => true, 'andamento' => true, 'antes' => false, 'pendente' => false]);
 $orientacoes = array_map('mcp_secretaria_escola_orientacao', $situacoes);
 verificar('secretaria: orientação diz o que fazer', [
-    str_starts_with($orientacoes['matriculado'], 'Nada a fazer'), str_contains($orientacoes['sem_turma'], 'quando abrir turma'),
+    // Opção 2 com turma (spec 1.14): a matrícula não está paga, a secretaria combina o pagamento antes da aula.
+    str_contains($orientacoes['matriculado'], 'combine com ele o pagamento antes da aula'), str_contains($orientacoes['sem_turma'], 'quando abrir turma'),
     str_contains($orientacoes['taxa'], 'estorno'), str_contains($orientacoes['recusado'], 'o e-mail já está em outra conta da escola, com outro CPF'),
     str_contains($orientacoes['recusa_nova'], 'motivo_novo'), str_contains($orientacoes['falha'], 'problema técnico'), str_contains($orientacoes['antes'], '28/09/2026'),
 ], [true, true, true, true, true, true, true]);
 // O filtro "Precisam de atenção" no banco tem de achar o mesmo que a regra em PHP: o JSON gravado pela escola casa com o LIKE.
 $casaAtencao = static function (array $i): bool {
     $acesso = (string) $i['escola_acesso'];
-    return $i['status'] === 'pago' && ($i['escola_status'] === 'erro' || str_contains($acesso, '"resultado":"sem_turma"') || str_contains($acesso, '"aviso":"taxa_ja_confirmada"'));
+    // Com as colunas do pagar tudo (o SQL novo de mcp_secretaria_condicao_atencao): também o 'pendente' há mais de 10 min.
+    // O SQL é executado no MariaDB em scripts/testar_meta_integracao.php (spec 6.2, caso 16), uma linha por situação.
+    $preso = $i['escola_status'] === 'pendente' && (int) strtotime($i['pago_em'] . ' UTC') < time() - 600;
+    return $i['status'] === 'pago' && ($i['escola_status'] === 'erro' || $preso || str_contains($acesso, '"resultado":"sem_turma"') || str_contains($acesso, '"aviso":"taxa_ja_confirmada"'));
 };
 verificar('secretaria: condição SQL espelha a regra em PHP', array_map($casaAtencao, $situacoes), array_map('mcp_secretaria_precisa_atencao', $situacoes));
 verificar('secretaria: condição de cada filtro', array_map('mcp_secretaria_condicao', array_keys(MCP_SECRETARIA_FILTROS)), [
     "i.status = 'pago'",
     "i.status = 'pago' AND (i.escola_status = 'erro' OR i.escola_acesso LIKE '%\"resultado\":\"sem_turma\"%' OR i.escola_acesso LIKE '%\"aviso\":\"taxa_ja_confirmada\"%')",
+    // sem banco (estes testes), as colunas do pagar tudo não existem: "Esperam turma" não acha ninguém
+    '1 = 0',
     "i.status = 'pago' AND p.inscricao_id IS NULL", "i.status = 'pendente'", '1 = 1',
 ]);
 verificar('secretaria: filtro desconhecido não filtra', mcp_secretaria_condicao('<x>'), '1 = 1');
@@ -591,9 +609,11 @@ $linhaPortal = ['preferencia' => ['horarios' => ['seg-noite', 'sab-manha'], 'ini
 $csvPortal = mcp_secretaria_csv([$linhaPortal, ['preferencia' => null, 'nome' => 'João', 'telefone' => '', 'status' => 'pendente', 'metodo' => 'pix', 'pago_em' => null] + $linhaPortal,
     ['preferencia' => null, 'nome' => 'Rita'] + $semTurma]);
 $linhasPortal = array_map(static fn(string $l): array => str_getcsv($l, ';', '"', ''), explode("\n", trim(substr($csvPortal, 3))));
-verificar('secretaria: planilha com BOM e 12 colunas', [str_starts_with($csvPortal, "\xEF\xBB\xBF"), count($linhasPortal), array_unique(array_map('count', $linhasPortal))], [true, 4, [12]]);
+// Pagar tudo (spec 3.2 e 10.9): 10 colunas novas (Plano, Parcelas, Juros, Total cobrado e as da espera).
+verificar('secretaria: planilha com BOM e 22 colunas', [str_starts_with($csvPortal, "\xEF\xBB\xBF"), count($linhasPortal), array_unique(array_map('count', $linhasPortal))], [true, 4, [22]]);
 verificar('secretaria: planilha da inscrição paga', $linhasPortal[1],
-    ['17/09/2026 21:01', 'Paga', 'Maria da Silva', 'maria@exemplo.org', '(21) 99999-8888', 'Curso X', 'R$ 103,95', 'Cartão', 'Matriculado · turma de 21/10/2026', 'Seg à noite; Sáb de manhã', 'Já na próxima turma', "'=HYPERLINK(\"http://x\")"]);
+    ['17/09/2026 21:01', 'Paga', 'Maria da Silva', 'maria@exemplo.org', '(21) 99999-8888', 'Curso X', 'R$ 103,95', 'Cartão', 'Matriculado · turma de 21/10/2026', 'Seg à noite; Sáb de manhã', 'Já na próxima turma', "'=HYPERLINK(\"http://x\")",
+     'Só a taxa', '1×', 'R$ 0,00', 'R$ 103,95', '', '', '', '', '', '']);
 verificar('secretaria: planilha de pendente e de quem não respondeu', [$linhasPortal[2][1], $linhasPortal[2][7], $linhasPortal[2][8], $linhasPortal[2][9], $linhasPortal[3][8], $linhasPortal[3][9]],
     ['Aguardando pagamento', 'PIX', '—', '', 'Sem turma aberta', 'não respondeu']);
 verificar('secretaria: planilha sem CPF', [str_contains($csvPortal, '52998224725'), str_contains($csvPortal, '529.982.247-25'), str_contains($csvPortal, 'CPF')], [false, false, false]);
@@ -939,6 +959,26 @@ $saida = shell_exec(sprintf('MCP_CONFIG_ARQUIVO=%s MCP_CONFIG_META_ARQUIVO=%s MC
 unlink($quebrado);
 verificar('meta: config-meta.php com erro de sintaxe é ignorado', $saida, '["https:\/\/exemplo.org",false]');
 
+// config-pagar-tudo.php (09/10/2026): liga as chaves do "pagar tudo" sem mexer no config.php nem no config-escola.php.
+// Só as chaves da lista valem; ele vem por último e passa por cima do ESCOLA_MATRICULA_PAGA do config-escola.php.
+$pagarTudo = tempnam(sys_get_temp_dir(), 'mcp-pagar-tudo-');
+$escolaFalse = tempnam(sys_get_temp_dir(), 'mcp-escola-false-');
+file_put_contents($escolaFalse, "<?php return ['ESCOLA_MATRICULA_PAGA' => false, 'ESCOLA_API_URL' => 'https://escola-db.exemplo.org/rest/v1/rpc/matricula_rapida'];");
+file_put_contents($pagarTudo, "<?php return ['PLANO_COMPLETO' => true, 'PARCELAS_MAX' => 12, 'TESTE_CPFS' => ['52998224725'],
+    'ESCOLA_MATRICULA_PAGA' => true, 'UNICO_API_KEY' => 'nao-pode-valer', 'SITE_URL' => 'https://nao-pode-valer.exemplo.org',
+    'ESCOLA_API_URL' => 'https://nao-pode-valer.exemplo.org'];");
+$lerPagarTudo = static fn(string $arquivo): ?string => shell_exec(sprintf('MCP_CONFIG_ARQUIVO=%s MCP_CONFIG_ESCOLA_ARQUIVO=%s MCP_CONFIG_PAGAR_TUDO_ARQUIVO=%s MCP_CATALOGO_ARQUIVO=%s %s -d log_errors=0 -r %s 2>/dev/null',
+    escapeshellarg($configTeste), escapeshellarg($escolaFalse), escapeshellarg($arquivo), escapeshellarg($raiz . '/site/matricula-cursos-presenciais/cursos.json'), escapeshellarg(PHP_BINARY),
+    escapeshellarg('$_SERVER["REQUEST_METHOD"]="CLI"; require ' . var_export($raiz . '/site/matricula-cursos-presenciais/api/lib.php', true)
+        . '; echo json_encode([mcp_cfg("PLANO_COMPLETO"), mcp_cfg("PARCELAS_MAX"), mcp_cfg("TESTE_CPFS"), mcp_cfg("ESCOLA_MATRICULA_PAGA"), mcp_cfg("UNICO_API_KEY") === "nao-pode-valer", mcp_site_url(), mcp_cfg("ESCOLA_API_URL")]);')));
+verificar('pagar tudo: config-pagar-tudo.php liga só as chaves da lista e vence o config-escola.php', $lerPagarTudo($pagarTudo),
+    '[true,12,["52998224725"],true,false,"https:\/\/exemplo.org","https:\/\/escola-db.exemplo.org\/rest\/v1\/rpc\/matricula_rapida"]');
+file_put_contents($pagarTudo, "<?php return ['PLANO_COMPLETO' => true 'faltou a vírgula'];");
+verificar('pagar tudo: config-pagar-tudo.php com erro de sintaxe é ignorado (tudo desligado)', $lerPagarTudo($pagarTudo),
+    '[null,null,null,false,false,"https:\/\/exemplo.org","https:\/\/escola-db.exemplo.org\/rest\/v1\/rpc\/matricula_rapida"]');
+unlink($pagarTudo);
+unlink($escolaFalse);
+
 // Turmas sob demanda (lib/turmas.php): o número de alunos decide entre turma fechada e lista de interesse.
 verificar('turmas: 15 ou mais é turma fechada, abaixo é lista', [mcp_turma_tipo(1), mcp_turma_tipo(14), mcp_turma_tipo(15), mcp_turma_tipo(30), mcp_turma_tipo(31)],
     ['lista', 'lista', 'fechada', 'fechada', 'fechada']);
@@ -1039,37 +1079,201 @@ $m = mcp_montar_email_turma_equipe($pedidoAviso, null);
 verificar('turmas: aviso da data à secretaria, sem link de WhatsApp', [str_starts_with($m['assunto'], '[Aviso da data] Bombeiro Civil'), str_contains($m['html'], 'wa.me'),
     str_contains($m['html'], 'pediu o aviso da data')], [true, false, true]);
 
-// A página nova (scripts/gerar_matricula_presencial.py): total à vista em todo curso, vocabulário da especificação, os
-// ganchos que o chat.js, o turmas.js e o checkout esperam, e o formulário do aviso apontando para api/turmas.php.
+// A página de matrícula do pagar tudo (scripts/gerar_matricula_presencial.py; spec 1.1 a 1.11, 6.1 e 10.3): a copy da escola, o
+// Investimento com as três linhas em todo curso, a trava de vocabulário da 6.1, os ganchos que o chat.js, o turmas.js e o
+// checkout esperam, a venda sem turma ao lado da ficha da 1.7 (volta automática) e a FAQ na ordem da 1.11.
 $textoPagina = html_entity_decode((string) preg_replace('/<[^>]+>/', ' ', $paginaMatricula), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-$totaisPagina = [];
+$ofertaPagina = json_decode((string) file_get_contents($raiz . '/site/matricula-cursos-presenciais/oferta.json'), true) ?: [];
+$recorte = static function (string $html, string $inicio, string $fim): string {
+    $a = strpos($html, $inicio);
+    if ($a === false) {
+        return '';
+    }
+    $b = strpos($html, $fim, $a);
+    return $b === false ? '' : substr($html, $a, $b - $a);
+};
+$nbsp = "\u{a0}";
+$investimentos = [];
 foreach (mcp_catalogo()['cursos'] as $c) {
-    $totalCurso = (int) $c['valor_curso_centavos'] + mcp_inscricao_centavos();
-    $totaisPagina[$c['slug']] = str_contains($paginaMatricula, 'Total à vista: R$' . "\u{a0}" . number_format($totalCurso / 100, 0, ',', '.'));
+    $inv = $recorte($paginaMatricula, '<aside class="v-inv" id="inv-' . $c['slug'] . '"', '</aside>');
+    $brl = static fn(int $v): string => 'R$' . $nbsp . number_format($v / 100, 2, ',', '.');
+    $investimentos[$c['slug']] = $inv !== '' && str_contains($inv, 'Valor da matrícula, à vista') && str_contains($inv, '<dd>' . $brl((int) $c['valor_curso_centavos']) . '</dd>')
+        && str_contains($inv, 'Taxa de inscrição') && str_contains($inv, '<dd>' . $brl(mcp_inscricao_centavos()) . '</dd>')
+        && str_contains($inv, 'Total à vista, com a inscrição') && str_contains($inv, '<dd>' . $brl((int) $c['valor_curso_centavos'] + mcp_inscricao_centavos()) . '</dd>')
+        // Revisão visual (09/10): o aviso rosa sai do Investimento (igual ao da escola) e vai para o cartão da oferta (1.6).
+        && !str_contains($inv, 'Quem pagou apenas a inscrição não tem a entrada liberada.')
+        && str_contains($recorte($paginaMatricula, '<article class="v-curso mr-detalhe" id="det-' . $c['slug'] . '"', '<div class="v-curso-corpo-sec">'), 'Quem pagou apenas a inscrição não tem a entrada liberada.');
 }
-verificar('página: os 7 totais à vista (matrícula + taxa) nos blocos de preço', $totaisPagina, array_fill_keys(array_keys($totaisPagina), true));
+verificar('página: os 7 Investimentos com as três linhas da escola e o total à vista; o aviso rosa no cartão da oferta', $investimentos, array_fill_keys(array_keys($investimentos), true));
+// Trava da spec 6.1 (só o que é da página): saem "parcelad" (volta com "parcelado_no_ar": false) e "o que vestir"; "Fale/Falar
+// com a secretaria" passam; "sem a homologação" saiu pela decisão 12 do dono (Bombeiro Civil). WhatsApp e "R$ 100" ficam.
 $proibidasPagina = [];
-foreach (['/pag[oa] (depois, )?na escola/iu', '/na escola,/iu', '/pago depois/iu', '/plataforma da escola/iu', '/garant\w* (a |sua |minha )?vaga/iu',
-    '/vaga (fica |ficar )?garantida/iu', '/Inscrição R\$/iu', '/Fazer matrícula/iu', '/parcelad/iu', '/WhatsApp/iu', '/wa\.me/iu', '/cruzvermelharj\.org\.br/iu', '/voluntariado/iu'] as $padrao) {
-    if (preg_match($padrao, $paginaMatricula) || preg_match($padrao, $textoPagina)) {
-        $proibidasPagina[] = $padrao;
+$travaPagina = ['/pag[oa]s? (depois, )?na escola|na escola,|plataforma da escola|garant\w* (a |sua |minha )?vaga|vaga (fica |ficar )?garantida|Inscrição R\$|R\$ ?100\b/iu',
+    '/matricula você|matricular você|Fazer matrícula|Escolha sua turma|aprovação em segundos|wa\.me|cruzvermelharj\.org\.br/iu',
+    '/pag[oa]s? depois|curso depois|(?<!combinada )(?<!Fale )(?<!Falar )com a secretaria|no valor à vista|Matrícula feita|secretaria matricula|Falta 1 passo/iu',
+    '/Reservar minha vaga|Pague a matrícula na área do aluno|Entrar e pagar a matrícula|Próximo passo: pagar a matrícula/iu',
+    '/Agora: R\$|Antes da aula: R\$|Agora você paga só a taxa|WhatsApp|voluntariado/iu'];
+if (($ofertaPagina['parcelado_no_ar'] ?? false) !== true) {
+    $travaPagina[] = '/parcelad/iu';
+}
+foreach ($travaPagina as $padrao) {
+    if (preg_match($padrao, $paginaMatricula, $m1) || preg_match($padrao, $textoPagina, $m1)) {
+        $proibidasPagina[] = $padrao . ' → ' . $m1[0];
     }
 }
-verificar('página: nenhuma palavra proibida (preço, vaga, WhatsApp, voluntariado)', $proibidasPagina, []);
-verificar('página: um <h1>, modo curso no <head>, ganchos do chat, das turmas e da barra, aviso da data', [substr_count($paginaMatricula, '<h1'),
+verificar('página: trava de vocabulário da spec 6.1 (sem "parcelad" com o parcelado fora do ar)', $proibidasPagina, []);
+verificar('página: um <h1>, modo curso no <head>, ganchos do chat, das turmas, da barra e do info.php', [substr_count($paginaMatricula, '<h1'),
     str_contains($paginaMatricula, "setAttribute('data-curso',c)"), str_contains($paginaMatricula, 'class="v-curso mr-detalhe"'),
     str_contains($paginaMatricula, 'id="turma-form-bloco"'), str_contains($paginaMatricula, 'id="tf-matricula"'), str_contains($paginaMatricula, 'id="mr-barra-cta"'),
-    str_contains($paginaMatricula, 'id="mr-mapa-carregar"'), str_contains($paginaMatricula, 'id="aviso-form"'), str_contains($paginaMatricula, '"/matricula-cursos-presenciais/api/turmas.php"'),
-    (bool) preg_match('/<a class="[^"]*mr-cta[^"]*" data-local="cartao_turma" data-curso="primeiros-socorros-basico" href="\/matricula-cursos-presenciais\/checkout\/\?curso=primeiros-socorros-basico&amp;via=cartao_turma"/', $paginaMatricula)],
-    [1, true, true, true, true, true, true, true, true, true]);
+    str_contains($paginaMatricula, 'id="mr-mapa-carregar"'), str_contains($paginaMatricula, '"/matricula-cursos-presenciais/api/info.php"'),
+    str_contains($paginaMatricula, 'id="aviso-form"'), (bool) preg_match('/matchMedia\([^)]*\)\.addEventListener/', $paginaMatricula)],
+    [1, true, true, true, true, true, true, true, false, false]);
+// Revisões de 09/10: o <title> do ar (1.1), sem PreOrder no JSON-LD antes do passo 5b, a ficha sem turma com o bloco de
+// turmas da venda (sem "Ver outros cursos" na variante de venda) e o pedido de turma fora do Investimento.
+verificar('página: <title> do ar, sem PreOrder antes do 5b, bloco de turmas da venda, grupo fora do Investimento', [
+    str_contains($paginaMatricula, '<title>Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro</title>'),
+    str_contains($paginaMatricula, 'schema.org/PreOrder'),
+    str_contains($paginaMatricula, 'Quando a Escola marcar uma turma deste curso, quem já pagou tudo entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.'),
+    str_contains($recorte($paginaMatricula, '<aside class="v-inv" id="inv-primeiros-socorros-basico"', '</aside>'), 'Peça uma turma'),
+    str_contains($paginaMatricula, 'class="v-turmas-grupo"'), str_contains($paginaMatricula, 'Entrar na lista da próxima turma ·')],
+    [true, false, true, false, true, false]);
+// Ficha com turma aberta (1.6): Primeiros Socorros Básico com o aviso rosa, as 3 linhas do Investimento e "Inscrever-se →".
+$fichaPsb = $recorte($paginaMatricula, '<article class="v-curso mr-detalhe" id="det-primeiros-socorros-basico"', '</article>');
+verificar('página: ficha de Primeiros Socorros Básico com a turma, "Inscrever-se" e a micro do pagamento', [str_contains($fichaPsb, 'Início em 21 de outubro de 2026'),
+    str_contains($fichaPsb, '09:00 - 17:00'), (bool) preg_match('/<a class="[^"]*mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="\/matricula-cursos-presenciais\/checkout\/\?curso=primeiros-socorros-basico&amp;via=detalhes">Inscrever-se/', $fichaPsb),
+    str_contains($fichaPsb, 'PIX ou cartão, à vista.'), str_contains($fichaPsb, '(+Lei Lucas)')], [true, true, true, true, true]);
+// Fichas sem turma (10.3 e 1.7): os cursos da lista "sem_turma" têm a venda (Inscrever-se, promessa com a data limite, sem
+// "Saber a próxima turma") e a ficha da 1.7 (Saber a próxima turma, sem Inscrever-se); fora da lista, só a 1.7.
+$fichasSem = [];
+foreach (mcp_catalogo()['cursos'] as $c) {
+    $s = $c['slug'];
+    $ficha = $recorte($paginaMatricula, '<article class="v-curso mr-detalhe" id="det-' . $s . '"', '</article>');
+    $venda = $recorte($ficha, '<div class="v-se-venda" data-curso-de="' . $s . '">', '<div class="v-se-lista"');
+    $lista = $recorte($ficha, '<div class="v-se-lista" data-curso-de="' . $s . '">', '</div>' . "\n" . '          <ul class="v-prova"');
+    $naLista = isset(($ofertaPagina['sem_turma'] ?? [])[$s]);
+    $fichasSem[$s] = $naLista
+        ? [str_contains($venda, '>Inscrever-se'), str_contains($venda, 'data-espera-limite'), str_contains($venda, 'Saber a próxima turma'), (bool) preg_match('/reserv|garant/iu', $venda),
+           str_contains($lista, 'Saber a próxima turma'), str_contains($lista, '>Inscrever-se')]
+        : [false, false, false, false, str_contains($ficha, 'Saber a próxima turma'), false];
+}
+verificar('página: fichas sem turma (venda da 10.3 ao lado da 1.7)', $fichasSem, array_map(static fn($s) => isset(($ofertaPagina['sem_turma'] ?? [])[$s])
+    ? [true, true, false, false, true, false] : [false, false, false, false, true, false], array_combine(array_keys($fichasSem), array_keys($fichasSem))));
+// FAQ geral na ordem da 1.11 (com a 4 só com o parcelado no ar), a primeira aberta.
+preg_match_all('/<section class="v-secao v-so-geral" id="duvidas".*?<\/section>/s', $paginaMatricula, $secFaq);
+preg_match_all('/<summary>(.*?)<\/summary>/', $secFaq[0][0] ?? '', $perguntasFaq);
+$ordemFaq = array_values(array_filter(['Como faço minha inscrição?', 'Qual a diferença entre taxa de inscrição e matrícula?', 'Os cursos possuem certificado?',
+    ($ofertaPagina['parcelado_no_ar'] ?? false) === true ? 'Posso parcelar?' : null, 'Onde acontecem as aulas?', 'Preciso criar conta?',
+    'E se o curso ainda não tiver turma aberta?', 'Posso cancelar minha inscrição?', 'O que acontece se a turma não for formada?',
+    'Qual curso de primeiros socorros eu faço?', 'Posso fazer o curso sendo menor de idade?', 'Vocês oferecem cursos para empresas e grupos?']));
+verificar('página: FAQ na ordem da 1.11, a primeira aberta', [array_map(static fn($q) => html_entity_decode($q, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $perguntasFaq[1] ?? []),
+    str_contains($secFaq[0][0] ?? '', '<details data-pergunta="1" open>')], [$ordemFaq, true]);
+// Decisão 12 do dono: o total do Bombeiro Civil com "(sem a homologação)" e a observação literal da escola.
+verificar('página: Bombeiro Civil com "(sem a homologação)" e "Homologação somente no final do curso…"', [substr_count($paginaMatricula, '(sem a homologação)'),
+    substr_count($recorte($paginaMatricula, '<aside class="v-inv" id="inv-bombeiro-civil"', '</aside>'), 'Homologação somente no final do curso, valor a consultar, a cargo do aluno.')], [1, 1]);
 verificar('turmas.js: sem WhatsApp (D22)', str_contains((string) file_get_contents($raiz . '/site/matricula-cursos-presenciais/static/turmas.js'), 'WhatsApp'), false);
-// Correções da revisão de 08/10: o "(sem a homologação)" só no cartão "Turmas em breve" do Bombeiro Civil (3.3.2), o card
-// compacto com a linha "Total à vista" (princípio 2), a página sem matchMedia(...).addEventListener sem proteção (o script
-// parava no Safari/iOS até 13) e o reenvio do aviso da data sem medir de novo.
-$compactos = substr_count($paginaMatricula, '<p class="v-pc-total">Total à vista: R$' . "\u{a0}");
-verificar('página: correções da revisão (homologação, card compacto, matchMedia, aviso repetido)', [substr_count($paginaMatricula, '(sem a homologação)'),
-    $compactos, (bool) preg_match('/matchMedia\([^)]*\)\.addEventListener/', $paginaMatricula), str_contains($paginaMatricula, 'if (!d.repetido)')],
-    [1, count(mcp_catalogo()['cursos']), false, true]);
+
+// Pagar tudo: checkout gerado (spec 1.12, 6.1 e T24) e a trava de vocabulário da 6.1 no checkout e nas telas.
+$pastaMatricula = $raiz . '/site/matricula-cursos-presenciais';
+$checkoutHtml = (string) file_get_contents("$pastaMatricula/checkout/index.html");
+$checkoutJs = (string) file_get_contents("$pastaMatricula/static/checkout.js");
+verificar('checkout gerado: <title> "Inscrição | …"', str_starts_with((string) (preg_match('/<title>([^<]*)<\/title>/', $checkoutHtml, $mt) ? $mt[1] : ''), 'Inscrição | '), true);
+preg_match_all('/<input type="radio" name="plano" value="([a-z_]+)"/', $checkoutHtml, $mPlanos);
+verificar('checkout gerado: input[name=plano] com os dois valores', $mPlanos[1], ['taxa_e_matricula', 'so_taxa']);
+verificar('checkout gerado sem PLANO_COMPLETO_HTML: a opção 1 vem com hidden e a 2 marcada (T24)',
+    [str_contains($checkoutHtml, '<label class="ck-plano" id="ck-plano-completo" hidden>'), str_contains($checkoutHtml, '<input type="radio" name="plano" value="so_taxa" checked>')], [true, true]);
+verificar('checkout gerado: os ids que o checkout.js e os testes usam', array_map(static fn(string $id): bool => str_contains($checkoutHtml, 'id="' . $id . '"'),
+    ['ck-planos', 'ck-parcelas-box', 'ck-parcelas', 'ck-juros-conta', 'ck-r-matricula-linha', 'ck-r-juros-linha', 'ck-r-total-rotulo', 'ck-pix-aviso', 'ck-acao-rotulo',
+     'ck-total-btn', 'ck-r-total', 'ck-cobre', 'ck-divulgacao']), array_fill(0, 13, true));
+// Revisões de 09/10: nota legal e fornecedor de hoje com o plano completo desligado (os novos só com PLANO_COMPLETO_HTML=1
+// ou o info.php com plano_completo); CNPJ sem quebra no hífen; linha completa das parcelas no celular.
+verificar('checkout gerado sem PLANO_COMPLETO_HTML: nota legal e fornecedor de hoje à vista, os novos escondidos', [
+    str_contains($checkoutHtml, '<div id="ck-legal-hoje">'), str_contains($checkoutHtml, '<div id="ck-legal-novo" hidden>'),
+    str_contains($checkoutHtml, 'receber o valor de volta (art. 49'), str_contains($checkoutHtml, 'CNPJ <span class="ck-nowrap">67.733.551/0001-35</span>'),
+    str_contains($checkoutHtml, 'id="ck-parcelas-linha"')], [true, true, true, true, true]);
+$jsCk = (string) file_get_contents("$pastaMatricula/static/checkout.js");
+verificar('checkout.js: selo de teste só com ?teste=1; turma_id sempre na opção 1; prazo_fila não esconde a opção 1; resumo solto se não couber', [
+    str_contains($jsCk, "param('teste') === '1'"), str_contains($jsCk, "dados.turma_id = atual.turma && atual.turma.id_escola ? atual.turma.id_escola : ''"),
+    str_contains($jsCk, "r.motivo === 'prazo_fila' || r.motivo === 'condicoes'"), str_contains($jsCk, "a.classList.add('ck-resumo-solto')"),
+    !str_contains($jsCk, "av.indexOf('turma_lotada')")], [true, true, true, true, true]);
+$travaCheckout = '/pag[oa]s? (depois, )?na escola|na escola,|plataforma da escola|garant\w* (a |sua |minha )?vaga|vaga (fica |ficar )?garantida|Inscrição R\$|R\$ ?100\b'
+    . '|matricula você|matricular você|Fazer matrícula|Escolha sua turma|aprovação em segundos|wa\.me|cruzvermelharj\.org\.br'
+    // "com a secretaria da Escola, que escreve para você por e-mail": a legenda literal da opção 2 (spec 1.12).
+    . '|pag[oa]s? depois|curso depois|(?<!combinada )(?<!Fale )(?<!Falar )com a secretaria(?! da Escola, que escreve para você por e-mail)|no valor à vista|Matrícula feita|secretaria matricula|Falta 1 passo'
+    . '|Reservar minha vaga|sem a homologação|Pague a matrícula na área do aluno|Entrar e pagar a matrícula|Próximo passo: pagar a matrícula/iu';
+$achadosCheckout = [];
+foreach (['static/checkout.js', 'checkout/index.html', 'pendente/index.html', 'parabens/index.html', 'horarios/index.html'] as $arquivoTrava) {
+    $conteudo = (string) file_get_contents("$pastaMatricula/$arquivoTrava");
+    if (preg_match_all($travaCheckout, $conteudo, $mTrava)) {
+        $achadosCheckout[] = "$arquivoTrava: " . implode(' | ', array_unique($mTrava[0]));
+    }
+    if (stripos($conteudo, 'whatsapp') !== false) {
+        $achadosCheckout[] = "$arquivoTrava: WhatsApp";
+    }
+}
+verificar('checkout: trava de vocabulário da spec 6.1 e sem WhatsApp (checkout.js, checkout, Pendente, Parabéns, horários)', $achadosCheckout, []);
+verificar('checkout e gerador sem COM_TURMA (E5)', [str_contains($checkoutJs, 'COM_TURMA'), str_contains($gerador, 'COM_TURMA'),
+    str_contains((string) file_get_contents($raiz . '/scripts/gerar_checkout.py'), 'COM_TURMA')], [false, false, false]);
+// oferta.json (spec 2.5 e 6.1): JSON válido, cada turma com os 6 campos, datas ISO com fuso e inscricoes_ate antes do início.
+$ofertaArquivo = json_decode((string) file_get_contents("$pastaMatricula/oferta.json"), true);
+$turmasOk = is_array($ofertaArquivo) && is_array($ofertaArquivo['turmas'] ?? null) && is_bool($ofertaArquivo['parcelado_no_ar'] ?? null);
+foreach (is_array($ofertaArquivo['turmas'] ?? null) ? $ofertaArquivo['turmas'] : [] as $t) {
+    $iso = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/';
+    $turmasOk = $turmasOk && array_keys($t) === ['curso', 'id_escola', 'inicio', 'fim', 'inscricoes_ate', 'lotada'] && mcp_curso((string) $t['curso']) !== null
+        && preg_match($iso, (string) $t['inicio']) && preg_match($iso, (string) $t['fim']) && preg_match($iso, (string) $t['inscricoes_ate'])
+        && strtotime($t['inscricoes_ate']) < strtotime($t['inicio']) && strtotime($t['inicio']) < strtotime($t['fim']) && is_bool($t['lotada']);
+}
+verificar('oferta.json: válido, turmas com os 6 campos e datas coerentes', $turmasOk, true);
+verificar('oferta.json: a lista "sem_turma" só com cursos do catálogo', array_values(array_filter(array_keys((array) ($ofertaArquivo['sem_turma'] ?? [])),
+    static fn(string $s): bool => mcp_curso($s) === null)), []);
+// Feed da escola (E13, spec 3.2): taxa + matrícula sem matricula_paga = true não vai à escola (nem respondeu, nem falta responder).
+$acessoPago = json_decode($inscricao['escola_acesso'], true);
+$feedCompleto = ['plano' => 'taxa_e_matricula', 'escola_acesso' => json_encode(['matricula_paga' => true] + $acessoPago)];
+$feedNaoMarcado = ['plano' => 'taxa_e_matricula', 'escola_acesso' => json_encode(['matricula_paga' => false, 'avisos' => ['matricula_nao_marcada']] + $acessoPago)];
+$feedSemChave = ['plano' => 'taxa_e_matricula'];
+$feed = mcp_horarios_para_escola([
+    ['inscricao_id' => 11] + $feedCompleto + $respostaEscola, ['inscricao_id' => 12] + $feedNaoMarcado + $respostaEscola,
+    ['inscricao_id' => 13] + $feedSemChave + $respostaEscola, ['inscricao_id' => 14, 'plano' => 'so_taxa'] + $respostaEscola, ['inscricao_id' => 15] + $respostaEscola,
+], [['id' => 21] + $feedCompleto + $inscricao, ['id' => 22] + $feedNaoMarcado + $inscricao, ['id' => 23, 'plano' => 'so_taxa'] + $inscricao], '2026-09-29 16:00:00');
+verificar('feed da escola (E13): sai taxa + matrícula sem matricula_paga = true; ficam a paga e todas as só a taxa',
+    [array_column($feed['respostas'], 'inscricao_id'), array_column($feed['sem_resposta'], 'inscricao_id')], [[11, 14, 15], [21, 23]]);
+// Visão pública do pagar tudo (status.php e pagamentos.php): campos novos e nunca CPF, hash ou IP.
+$publicoCompleto = mcp_publico_completo(['plano' => 'taxa_e_matricula', 'matricula_centavos' => 18000, 'matricula_preco_centavos' => 18000, 'parcelas' => 10,
+    'juros_centavos' => 7533, 'total_centavos' => 27900, 'total_cobrado_centavos' => 35433, 'taxa_mes_pct' => '4.600', 'cet_ano_pct' => '71.550',
+    'turma_id' => 'turma-que-saiu', 'turma_inicio' => '2026-10-21 12:00:00', 'escola_acesso' => json_encode(['matricula_paga' => true, 'avisos' => ['turma_diferente', 'aviso_inventado'],
+        'turma_id' => 'outra', 'turma_inicio' => '2026-11-04', 'turma_primeira_aula' => '2026-11-04', 'turma_horario' => '18:00 - 22:00'] + $acessoPago)] + $inscricao);
+verificar('público do pagar tudo: plano, parcelas, juros, total cobrado e 1ª parcela',
+    [$publicoCompleto['plano'], $publicoCompleto['parcelas'], $publicoCompleto['juros_centavos'], $publicoCompleto['total_cobrado_centavos'], $publicoCompleto['parcela_centavos'],
+     $publicoCompleto['primeira_parcela_centavos'], $publicoCompleto['cet_ano_pct']], ['taxa_e_matricula', 10, 7533, 35433, 3543, 3546, 71.55]);
+verificar('público do pagar tudo: avisos só da lista permitida, turma da escola e a turma vendida (turma_diferente)',
+    [$publicoCompleto['escola']['avisos'], $publicoCompleto['escola']['matricula_paga'], $publicoCompleto['turma']['data'] ?? null, $publicoCompleto['turma']['origem'] ?? null,
+     $publicoCompleto['turma_vendida']['data'] ?? null], [['turma_diferente'], true, '04/11/2026', 'escola', '21/10/2026']);
+$serialCompleto = json_encode($publicoCompleto);
+verificar('público do pagar tudo: sem CPF, hash nem IP', [str_contains($serialCompleto, '52998224725'), str_contains($serialCompleto, 'h4sh'), str_contains($serialCompleto, '10.0.0.1')], [false, false, false]);
+verificar('público de inscrição antiga (sem as colunas): padrões de só a taxa', array_intersect_key(mcp_publico_completo($inscricao),
+    array_flip(['plano', 'parcelas', 'juros_centavos', 'total_cobrado_centavos', 'turma_vendida', 'espera'])),
+    ['plano' => 'so_taxa', 'parcelas' => 1, 'juros_centavos' => 0, 'total_cobrado_centavos' => 10395, 'turma_vendida' => null, 'espera' => null]);
+
+// Pagar tudo: as suítes da spec 6.1 e 10.13 que precisam de outra configuração (chaves ligadas, CPF de teste, oferta.json
+// temporário) rodam em processo próprio e entram na conta: backend (compra, planos, parcelas, cobrança, escola, espera,
+// visão pública, cenários de chave) e comunicação (e-mails da 1.14 e da 10.6, lembrete do PIX, comprovante).
+foreach (['testar_pagar_tudo.php', 'testar_pagar_tudo_emails.php'] as $suite) {
+    $saidaSuite = [];
+    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(__DIR__ . '/' . $suite) . ' 2>&1', $saidaSuite, $rcSuite);
+    $resumo = (string) end($saidaSuite);
+    if (!preg_match('/^(\d+) testes, (\d+) falhas$/', $resumo, $mSuite)) {
+        $total++;
+        $falhas++;
+        fwrite(STDERR, "FALHOU $suite não terminou: " . implode("\n", array_slice($saidaSuite, -5)) . "\n");
+        continue;
+    }
+    $total += (int) $mSuite[1];
+    $falhas += (int) $mSuite[2];
+    foreach ($saidaSuite as $linhaSuite) {
+        if (str_starts_with($linhaSuite, 'FALHOU') || str_starts_with($linhaSuite, '  ')) {
+            fwrite(STDERR, "[$suite] $linhaSuite\n");
+        }
+    }
+}
 
 // A versão do banco vem de uma constante no código (e não do arquivo em disco): mudou o db.php, muda a constante.
 $versaoDb = substr(md5((string) preg_replace('/^const MCP_DB_VERSAO = .*\n/m', '', (string) file_get_contents(__DIR__ . '/../site/matricula-cursos-presenciais/api/lib/db.php'))), 0, 16);

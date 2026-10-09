@@ -17,7 +17,7 @@
         },
         {
           "pergunta": "Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "Escolha o curso na página de matrícula em cursos presenciais e clique em Fazer matrícula agora: você informa nome, CPF, e-mail e telefone e paga a inscrição de R$ 99 por PIX ou cartão, à vista. Não é preciso criar conta nem escolher turma nessa etapa. Com o pagamento confirmado, a secretaria da Cruz Vermelha Brasileira Rio de Janeiro entra em contato por e-mail em até 3 dias úteis para confirmar turma e horário; o valor do curso é pago depois, na plataforma da escola. Quer ver as turmas abertas antes de pagar? Elas estão em escola.cursoscruzvermelha.org. Dúvidas? Use o chat do site, que responde por e-mail.",
+          "resposta": "Escolha o curso na página de cursos presenciais e clique em “Inscrever-se”. Você preenche nome, CPF, e-mail e telefone e escolhe o que pagar: a taxa de inscrição (R$ 99) junto com a matrícula, que é o valor do curso, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Não é preciso criar conta antes: a conta na área do aluno é criada depois do pagamento, e o link para criar a senha chega no seu e-mail. Dúvidas? Use o chat do site, que responde por e-mail.",
           "links": [
             {
               "texto": "página de matrícula em cursos presenciais",
@@ -40,7 +40,7 @@
         },
         {
           "pergunta": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "Pelo site, a inscrição em qualquer curso presencial da Cruz Vermelha Brasileira Rio de Janeiro custa R$ 99, por PIX ou cartão, e reserva a vaga; quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100. O valor do curso é pago depois, na plataforma da escola: à vista, R$ 150 em Suporte Básico de Vida, Punção Venosa e Lei Lucas; R$ 180 em Primeiros Socorros Básico; R$ 400 em Micropigmentação Labial; R$ 950 em Bombeiro Civil e em Cuidador de Idosos, com a homologação do Bombeiro Civil à parte. Há parcelamento, com juros. Sem horário compatível, ou se você desistir antes da confirmação da aula, a inscrição é estornada. Confira na página de matrícula.",
+          "resposta": "Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Micropigmentação Labial, R$ 400 + R$ 99 = R$ 499; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na página de cursos presenciais.",
           "links": [
             {
               "texto": "página de matrícula",
@@ -56,7 +56,7 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
-          "resposta": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: a inscrição de R$ 99 garante a vaga e o valor do curso, de R$ 150 a R$ 950, é pago depois na plataforma da escola. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj.",
+          "resposta": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj.",
           "links": [
             {
               "texto": "cadastrar como voluntário",

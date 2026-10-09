@@ -6,7 +6,10 @@
  *  - apaga a presença de empregados, terceirizados e outros vínculos registrada há mais de 90 dias
  *    (lib/ponto.php). As horas de voluntários e diretoria ficam;
  *  - avisos do ponto (lib/avisos.php): lembretes ligados no portal, comunicados agendados, envio da fila
- *    (só das 8h às 20h) e faxina do registro. Tudo começa desligado: sem nada ligado no portal, não sai nada.
+ *    (só das 8h às 20h) e faxina do registro. Tudo começa desligado: sem nada ligado no portal, não sai nada;
+ *  - pagar tudo (10/2026): a varredura do pós-pagamento interrompido (E17: escola, e-mails e cartões pendentes) e a
+ *    rotina da venda sem turma (lib/espera.php, spec 10.8), cada uma no seu try, antes dos comprovantes; e a faxina
+ *    do histórico das parcelas mostradas (7 dias).
  *
  * Só pela linha de comando, rodado pelo cron da hospedagem a cada 15 minutos:
  *   php /caminho/public_html/matricula-cursos-presenciais/api/comparecimentos.php
@@ -35,6 +38,29 @@ try {
     } catch (Throwable $e) {
         error_log('[matricula] faxina da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }
+    // Pagar tudo: cada parte no seu try, antes dos comprovantes (que ficam fora de try): uma exceção numa não derruba a
+    // outra nem a rodada (T14). Com as chaves desligadas e ninguém na fila, nada é chamado fora do banco.
+    $pagarTudo = [];
+    try {
+        mcp_parcelas_faxina();
+    } catch (Throwable $e) {
+        error_log('[matricula] faxina das parcelas: ' . get_class($e) . ': ' . $e->getMessage());
+    }
+    try {
+        $v = mcp_pos_pagamento_varrer();
+        $pagarTudo[] = sprintf('pós-pagamento: %d escola, %d e-mails, %d avisos, %d cartões', $v['escola'], $v['emails'], $v['secretaria'], $v['cartoes']);
+    } catch (Throwable $e) {
+        error_log('[matricula] varredura do pós-pagamento: ' . get_class($e) . ': ' . $e->getMessage());
+        $pagarTudo[] = 'pós-pagamento: erro (' . get_class($e) . ')';
+    }
+    try {
+        $w = mcp_espera_varrer();
+        $pagarTudo[] = !empty($w['ocupada']) ? 'espera: outra rodada em andamento'
+            : sprintf('espera: %d chamadas, %d matriculados, %d reconsultas, %d a devolver, %d lembretes%s', $w['chamadas'], $w['matriculados'], $w['reconsultas'], $w['devolver'], $w['lembretes'], $w['falha_rede'] ? ', escola sem resposta' : '');
+    } catch (Throwable $e) {
+        error_log('[matricula] rotina da espera: ' . get_class($e) . ': ' . $e->getMessage());
+        $pagarTudo[] = 'espera: erro (' . get_class($e) . ')';
+    }
     $r = mcp_presencas_enviar_pendentes();
     $apagadas = mcp_ponto_presencas_apagar_antigas();
     // Os avisos não podem derrubar os comprovantes: erro aqui vai para o log e a rodada termina normalmente.
@@ -58,8 +84,9 @@ try {
     } catch (Throwable $e) {
         error_log('[matricula] índices da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }
-    printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s\n",
-        gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, $avisos);
+    // O resumo do pagar tudo vem antes do dos avisos: a linha continua terminando em "avisos: … vencidos", como antes.
+    printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s; %s\n",
+        gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, implode('; ', $pagarTudo), $avisos);
     exit($r['falhas'] > 0 || $a['falhas'] > 0 ? 1 : 0);
 } finally {
     $db->query("SELECT RELEASE_LOCK('mcp_comparecimentos')");

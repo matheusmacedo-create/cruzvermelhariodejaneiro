@@ -1,34 +1,44 @@
 #!/usr/bin/env python3
 """Gera site/matricula-cursos-presenciais/index.html: os cursos presenciais no padrão da Escola de Educação e Saúde.
 
-Fonte da copy e do design: a especificação final de 08/10/2026 (scratchpad/escola/spec-final.md, seções 1 a 4 e 7),
-com PAGAMENTO = "A" e MATRICULA_PARCELADA = False. Pedido do dono: copy e design no padrão de
-escola.cursoscruzvermelha.org, com a mesma estrutura, e o fim do "R$ 99" apresentado como preço do curso.
+Copy: a da página da escola (escola.cursoscruzvermelha.org), literal, que leva o aluno a pagar tudo já (taxa de inscrição +
+matrícula), conforme a especificação "pagar tudo" (scratchpad/pagar-tudo/spec-pagar-tudo.md, 1.1 a 1.11 e 10.3; a seção 10
+prevalece) e as decisões do dono de 08/10/2026 (pagar-tudo/decisoes-dono.md). O layout é o da escola (cartão "Próxima
+turma"/"Turmas em breve", card Investimento, aviso rosa, barra fixa, cards, dúvidas).
 
 Um HTML estático só, com dois modos:
-  - modo geral (sem parâmetro): faixa vermelha, cabeçalho da Escola, topo com foto e "Próxima turma em destaque",
-    destaques, cursos em cards, como funciona, certificado, quem somos (sede, fotos, como chegar), dúvidas, turmas
-    para grupos, chamada final e rodapé;
-  - modo curso (?curso=<slug>, #det-<slug> ou #curso-<slug>, ou o clique num card, sem recarregar): topo do curso com
-    o cartão "Próxima turma" (ou "Turmas em breve"), faixa de prova, Investimento, como funciona a inscrição, seu
-    certificado, sobre o curso, turmas, dúvidas do curso, como chegar e "Outros cursos da Escola" (o próprio #cursos).
-O script do <head> decide o modo antes da primeira pintura (html[data-curso]; não liga com ?turma=), marca as turmas
-vencidas pelo relógio (html[data-breve], com as duas variantes no HTML) e calcula o "Começa em N dias" (só dias).
-O HTML segue a ordem do celular; no computador a grade só leva o Investimento para a lateral fixa.
+  - modo geral (sem parâmetro): faixa vermelha, cabeçalho da Escola, topo com foto e "Próxima turma em destaque" (só com
+    turma aberta), destaques, cursos em cards (com a agenda "Próximas turmas." antes da grade), como funciona,
+    certificado, quem somos (sede, fotos, como chegar), dúvidas, turmas para grupos e rodapé;
+  - modo curso (?curso=<slug>, #det-<slug> ou #curso-<slug>, ou o clique num card, sem recarregar): topo do curso com o
+    cartão "Próxima turma" (ou "Turmas em breve"), faixa de prova, Investimento, seu certificado, sobre o curso, turmas,
+    dúvidas do curso, como chegar e "Outros cursos da Escola" (o próprio #cursos).
 
-Os preços e as turmas vêm de site/matricula-cursos-presenciais/cursos.json (campo "turmas": a secretaria avisa e a TI
-regera). O total à vista é calculado: valor_curso_centavos + inscricao_centavos. O gerador recusa a página se ela tiver
-uma palavra de PALAVRAS_PROIBIDAS (preço, vaga, WhatsApp, voluntariado…), um marcador sem dado real, mais de um
-<h1>, ou "reserv" numa variante "sem turma".
+As turmas vêm de site/matricula-cursos-presenciais/oferta.json (mantido à mão pela TI; o cursos.json é regravado por
+scripts/sincronizar_catalogo.py e não guarda turma). Os preços vêm do cursos.json (matrícula = valor_curso_centavos; total
+à vista = matrícula + inscricao_centavos). Do oferta.json saem também:
+  - "parcelado_no_ar": com false, os textos usam a variante "à vista" (R5 da spec); com true, o literal "à vista ou
+    parcelado" e a linha de exemplo do parcelado, preenchida pelo JS a partir do info.php e do parcelas.php;
+  - "sem_turma": os cursos que podem vender tudo sem turma (10.3). Só esses ganham, no HTML, a ficha da venda sem turma
+    ("Inscrever-se →", a promessa de devolução e o Investimento com botão), ao lado da ficha da 1.7 ("Saber a próxima
+    turma", no chat). O JS da página escolhe pela resposta do api/info.php (planos do curso): sem "taxa_e_matricula"
+    (chave desligada, escola sem a v2 3, fila cheia ou info.php fora do ar), fica a da 1.7. Antes da resposta e sem JS,
+    vale a padrão: a da 1.7, ou a da venda com VENDA_SEM_TURMA_HTML=1 (geração do passo 5b).
+
+O script do <head> decide o modo antes da primeira pintura (html[data-curso]; não liga com ?turma=), marca as turmas
+vencidas pelo relógio (html[data-breve]), a ficha sem turma padrão (html[data-lista]) e calcula o "Começa em N dias".
+O gerador recusa a página se ela tiver uma palavra de PALAVRAS_PROIBIDAS, um marcador sem dado real, mais de um <h1>, ou
+"reserv"/"garant" numa variante "sem turma".
 
 Continua igual: o bloco de medição e consentimento (GA4, Pixel, cvrjMedicao) copiado da home por partes_da_home(), o
 chat "Fale com a gente" (chat_widget), o aviso de cookies, o dialog de turmas para grupos (ids tf-*/turma-ok*, ?turma=1,
 static/turmas.js), o certificado de amostra, as fotos das aulas, o mapa estático com clique que carrega o iframe, os
 links para o checkout com ?curso=<slug>&via=<lugar> (o script acrescenta as UTMs, fbclid e gclid) e os efeitos
-colaterais: o seletor de cursos da home (só o bloco marcado) e a lista de cursos do chat.js. Outros geradores importam
-daqui partes_da_home, esc, DADOS, HOME, RAIZ, COPY_CURSO e NOME_CURTO: os nomes continuam.
+colaterais: o seletor de cursos da home (só o bloco marcado) e a lista de cursos do chat.js (CHAT_JS_FIXO=1 não mexe no
+chat.js: é o que o pagar-tudo-build/gerar.sh usa, porque o chat.js publicado é o do ar com três respostas trocadas).
+Outros geradores importam daqui partes_da_home, esc, DADOS, HOME, RAIZ, COPY_CURSO e NOME_CURTO: os nomes continuam.
 
-Uso:  python3 scripts/gerar_matricula_presencial.py
+Uso:  python3 scripts/gerar_matricula_presencial.py      (no pagar tudo: pagar-tudo-build/gerar.sh pagina)
 Depois: publicar site/matricula-cursos-presenciais/ (index.html + img/) com scripts/publicar_hostinger.sh.
 Link de anúncio para turma de grupo: ?turma=1&turma_curso=<slug>&idioma=en&alunos=15 abre o formulário preenchido.
 """
@@ -50,8 +60,8 @@ import minificar_css
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
 DADOS = RAIZ / "site" / "matricula-cursos-presenciais" / "cursos.json"
-FAQ_HOME = RAIZ / "site" / "faq-home.json"
-SAIDA = RAIZ / "site" / "matricula-cursos-presenciais" / "index.html"
+# SAIDA_ARQUIVO e OFERTA_ARQUIVO: só para testes (gerar a página com outro oferta.json, fora do site/).
+SAIDA = Path(os.environ.get("SAIDA_ARQUIVO") or RAIZ / "site" / "matricula-cursos-presenciais" / "index.html")
 PASTA_IMG = RAIZ / "site" / "matricula-cursos-presenciais" / "img"
 
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
@@ -61,7 +71,6 @@ ESCOLA_LOGIN = f"{ESCOLA}/login"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 STATIC = RAIZ / "site" / "matricula-cursos-presenciais" / "static"
 STATIC_URL = "/matricula-cursos-presenciais/static/"
-API_TURMAS = "/matricula-cursos-presenciais/api/turmas.php"
 
 # Turmas sob demanda: as mesmas regras de api/lib/turmas.php (MCP_TURMA_MINIMO, MCP_TURMA_MAXIMO e
 # MCP_TURMA_CURSOS_EXTRAS). Mudou lá, muda aqui; scripts/testar_checkout.php confere os dois.
@@ -69,16 +78,27 @@ TURMA_MINIMO = 15
 TURMA_MAXIMO = 30
 TURMA_EXTRAS = {"primeiros-socorros-jovens": "Primeiros Socorros para Jovens (12 a 14 anos)"}
 
-# --- chaves da especificação (seção 2.4) ------------------------------------------------------------------------
-# PAGAMENTO: "A" (só a taxa aqui; a matrícula na área do aluno), "B1", "B2" ou "C" (seção 5). Só a A está escrita:
-# as outras dependem de mudanças no checkout e de decisões do dono (D11, D12), e o gerador recusa até lá.
-PAGAMENTO = "A"
-# Só vira True depois da compra de teste (4.7, item 12) e da D12, com parcelas, juros e total. Com False, nenhuma frase
-# fala em parcelar a matrícula nem em PIX ou cartão para ela.
-MATRICULA_PARCELADA = False
+# --- oferta (turmas, parcelado e venda sem turma: site/matricula-cursos-presenciais/oferta.json, spec 2.5 e 10.8) -----
+OFERTA = Path(os.environ.get("OFERTA_ARQUIVO") or RAIZ / "site" / "matricula-cursos-presenciais" / "oferta.json")
+API_INFO = "/matricula-cursos-presenciais/api/info.php"
+API_PARCELAS = "/matricula-cursos-presenciais/api/parcelas.php"
+# Data limite da primeira aula na venda sem turma (ESPERA_PRAZO_DIAS do config.example.php; P6/decisão 13). É o número
+# que vai no HTML sem JavaScript; com JavaScript, a página usa o espera_prazo_dias e o espera_data_limite do info.php.
+ESPERA_PRAZO_DIAS_PADRAO = 90
+# Ficha padrão dos cursos da lista "sem_turma" antes da resposta do info.php e sem JavaScript: a da 1.7 (padrão, seguro)
+# ou a da venda sem turma (10.3), com VENDA_SEM_TURMA_HTML=1 na geração do passo 5b (10.14).
+VENDA_SEM_TURMA_HTML = os.environ.get("VENDA_SEM_TURMA_HTML") == "1"
+# O chat.js publicado no pagar tudo é o do ar com três respostas trocadas (pagar-tudo-build/gerar.sh): com
+# CHAT_JS_FIXO=1, o gerador não reescreve a lista de cursos do chat.js e só calcula o hash dele.
+CHAT_JS_FIXO = os.environ.get("CHAT_JS_FIXO") == "1"
+# Quem vende e emite a nota (decisão 6 do dono; o mesmo do checkout, de /reembolso/ e do comprovante: RECEBEDOR_* do
+# config.php, com estes padrões em api/lib/config.php).
+RECEBEDOR_NOME = "O-CVB Filial Rio de Janeiro Ensino Ltda"
+RECEBEDOR_CNPJ = "67.733.551/0001-35"
 
-TITULO = "Cursos presenciais no Rio | Cruz Vermelha Brasileira RJ"
-TITULO_CURSO = "{curso} | Cursos presenciais Cruz Vermelha RJ"
+# Spec 1.1: o <title> fica como está no ar (busca). A descrição nova fica (exceção registrada no README).
+TITULO = "Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro"
+TITULO_CURSO = "{curso} | Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro"
 OG_TITULO = "Cursos presenciais da Cruz Vermelha no Rio de Janeiro"
 # og-matricula.jpg conferida em 08/10/2026 (D13): foto de turma no salão, sem preço. Pode continuar.
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
@@ -86,42 +106,44 @@ IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
             "addressRegion": "RJ", "postalCode": "20230-130", "addressCountry": "BR"}
 LOCAL = {"@type": "Place", "name": "Palácio da Cruz Vermelha", "address": ENDERECO}
-CNPJ_FILIAL = "08.560.973/0001-97"
 EMAIL_CONTATO = "contato@cruzvermelhariodejaneiro.org"
 UTM_ESCOLA = "utm_source=cruzvermelhariodejaneiro&utm_medium=matricula&utm_content={local}"
 
-# Texto literal de /reembolso/ (seção "Direito de arrependimento: 7 dias"). Fica como referência para quem importa;
-# a página usa as frases curtas da especificação ("Desistiu em até 7 dias? Você recebe de volta tudo o que pagou.").
-GARANTIA_7_DIAS = ("Você pode desistir da inscrição em até 7 dias corridos, contados do pagamento, sem precisar dizer o "
-                   "motivo (art. 49 do CDC). O valor pago volta por inteiro, inclusive o custo de processamento, se você "
-                   "tiver escolhido cobri-lo.")
+# Texto literal de /reembolso/ (seção "Direito de arrependimento: 7 dias", spec 5.2), a partir de "Você pode desistir…".
+GARANTIA_7_DIAS = ("Você pode desistir em até 7 dias corridos, contados do pagamento, sem precisar dizer o motivo (art. 49 do "
+                   "CDC). O valor pago volta por inteiro: a taxa de inscrição, a matrícula paga neste site, os juros do "
+                   "parcelamento e, se você tiver escolhido, os custos de processamento e a contribuição para a divulgação.")
 
 # Ordem dos cards depois dos cursos com turma aberta (3.0). Curso novo fora da lista entra no fim, com aviso.
 ORDEM_EXIBICAO = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas",
                   "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos", "micropigmentacao-labial"]
 NOME_CURTO = {"primeiros-socorros-lei-lucas": "Primeiros Socorros Lei Lucas", "cuidador-de-idosos": "Cuidador de Idosos"}
-# Linha de apoio de cada curso (tabela 3.0): só o que está na FAQ ou no "sobre" do cursos.json.
-APOIO = {
-    "primeiros-socorros-basico": "Para qualquer pessoa. Inclui o conteúdo da Lei Lucas.",
-    "suporte-basico-de-vida": "Em 4 horas. Para profissionais e para qualquer pessoa.",
-    "primeiros-socorros-lei-lucas": "Foco em crianças: engasgo, quedas e convulsões.",
-    "puncao-venosa": "Para estudantes e profissionais da saúde.",
-    "bombeiro-civil": "Homologação à parte, no fim do curso.",
-    "cuidador-de-idosos": "Curso livre.",
-    "micropigmentacao-labial": "Para iniciantes e para quem já trabalha com estética.",
-}
-# Descrição curta do card (uma linha por curso, só com o que está no cursos.json).
+# Descrição curta de cada curso, literal da escola (spec 1.5): linha sob o título do card e linha de apoio da ficha.
 BENEFICIO = {
-    "primeiros-socorros-basico": "Do engasgo à RCP: agir até o socorro chegar",
-    "suporte-basico-de-vida": "RCP e desfibrilador em 4 horas, com prática",
-    "primeiros-socorros-lei-lucas": "RCP, engasgo, quedas e convulsões em crianças",
-    "puncao-venosa": "Acesso venoso seguro, com prática supervisionada",
-    "bombeiro-civil": "Incêndio, primeiros socorros e evacuação em 80h",
-    "cuidador-de-idosos": "Higiene, mobilização e prevenção de acidentes",
-    "micropigmentacao-labial": "Colorimetria, biossegurança e prática da técnica",
+    "primeiros-socorros-basico": "(+Lei Lucas)",
+    "suporte-basico-de-vida": "Atendimento inicial de emergências com diretrizes oficiais.",
+    "primeiros-socorros-lei-lucas": "Capacitação essencial.",
+    "puncao-venosa": "Técnica de acesso venoso periférico com segurança.",
+    "bombeiro-civil": "Formação para atuação em prevenção e combate a incêndios. (VALOR DE HOMOLOGAÇÃO A PARTE)",
+    "cuidador-de-idosos": "Cuidados, segurança e bem-estar no atendimento ao idoso.",
+    "micropigmentacao-labial": "Procedimento estético de micropigmentação dos lábios.",
 }
-# Cursos com homologação paga à parte (o total à vista vem "sem a homologação").
+# Cursos com homologação paga à parte. Decisão 12 do dono: o total sai com "(sem a homologação)" e a observação literal
+# da escola, "Homologação somente no final do curso, valor a consultar, a cargo do aluno.", vai no Investimento e no fim
+# do "Sobre o curso".
 HOMOLOGACAO = {"bombeiro-civil"}
+HOMOLOGACAO_OBS = "Homologação somente no final do curso, valor a consultar, a cargo do aluno."
+# Observações do cursos.json que não entram na página (spec 1.6: "Inclui Lei Lucas." sai; o "(+Lei Lucas)" já diz).
+OBS_FORA = {"Inclui Lei Lucas."}
+# Pergunta "Qual curso de primeiros socorros eu faço?" (spec 1.11, item 10, fica): carga, matrícula, total e público.
+COMPARAR = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas"]
+PUBLICO_COMPARAR = {
+    "primeiros-socorros-basico": ("Inclui Lei Lucas. Para qualquer pessoa, mesmo fora da área da saúde: em casa, no trabalho, "
+                                  "na escola ou no esporte."),
+    "suporte-basico-de-vida": "O mais curto: profissionais da saúde, educação, segurança e empresas, e qualquer pessoa, sem experiência prévia.",
+    "primeiros-socorros-lei-lucas": ("Para quem trabalha com crianças em escolas de educação básica e espaços de recreação "
+                                     "infantil (Lei 13.722/2018)."),
+}
 # Copy de cada curso (revisão de 04/10/2026, cada afirmação conferida contra o cursos.json e a faq-home.json). A
 # "promessa" vai nos criativos (gerar_criativos_certificado.py); a "objecao" é a 4ª pergunta de "Sobre este curso."
 # (3.3.8), sem frase de preço. No Bombeiro Civil a objeção é a pergunta da homologação, que a página já faz na 2ª.
@@ -194,19 +216,22 @@ COPY_CURSO = {
 # Vazio = a seção não é impressa. Nunca inventar nem reaproveitar depoimento da escola sem autorização para o nosso site.
 PROVA: list[dict] = []
 MARCADORES_PROIBIDOS = ("[INSERIR", "[CONFIRMAR", "[DECIDIR")
-# Trava de vocabulário (2.4), sem diferença de maiúsculas e minúsculas. Os padrões não pegam "Escola de Educação".
+# Trava de vocabulário (spec 6.1), sem diferença de maiúsculas e minúsculas, no HTML e no texto da página. Saem da trava
+# de antes "parcelad" (agora existe parcelamento; com "parcelado_no_ar": false ele volta a valer, logo abaixo) e "o que
+# vestir" (passo 03 literal). "com a secretaria" passa a aceitar "Fale/Falar com a secretaria" (botões literais da escola,
+# que abrem o chat). Entram os textos do só-a-taxa antigo, que não podem sobrar. "sem a homologação" saiu da trava pela
+# decisão 12 do dono (Bombeiro Civil com o total "(sem a homologação)"). WhatsApp e "R$ 100" continuam proibidos.
 PALAVRAS_PROIBIDAS = [
-    r"pag[oa] (depois, )?na escola", r"na escola,", r"pago depois", r"plataforma da escola",
-    r"garant\w* (a |sua |minha )?vaga", r"vaga (fica |ficar )?garantida",
-    r"Inscrição R\$", r"R\$\s?100\b", r"matricula você", r"matricular você", r"Fazer matrícula",
-    r"o que vestir", r"Escolha sua turma", r"aprovação em segundos", r"sua área do aluno",
-    r"WhatsApp", r"wa\.me", r"cruzvermelharj\.org\.br", r"seja voluntári", r"voluntariado",
-] + ([] if MATRICULA_PARCELADA else [r"parcelad"])
+    r"pag[oa]s? (depois, )?na escola", r"na escola,", r"plataforma da escola", r"garant\w* (a |sua |minha )?vaga",
+    r"vaga (fica |ficar )?garantida", r"Inscrição R\$", r"R\$\s?100\b", r"matricula você", r"matricular você",
+    r"Fazer matrícula", r"Escolha sua turma", r"aprovação em segundos", r"sua área do aluno", r"pag[oa]s? depois",
+    r"curso depois", r"(?<!combinada )(?<!Fale )(?<!Falar )com a secretaria", r"no valor à vista", r"Matrícula feita",
+    r"secretaria matricula", r"Falta 1 passo", r"Reservar minha vaga", r"Reservar vaga", r"Pague a matrícula na área do aluno",
+    r"Entrar e pagar a matrícula", r"Próximo passo: pagar a matrícula", r"Agora: R\$", r"Antes da aula: R\$",
+    r"Agora você paga só a taxa", r"WhatsApp", r"wa\.me", r"cruzvermelharj\.org\.br", r"seja voluntári", r"voluntariado",
+]
 # Frases do catálogo da escola que prometem emprego, renda ou mercado ficam fora da página e do chat.
 EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno financeiro|\brenda\b|iniciar seus atendimentos", re.I)
-# Dúvidas do curso (3.3.8): a pergunta do catálogo que trata do mesmo tema da objeção de COPY_CURSO não entra (a
-# objeção já responde; repetir fere o princípio 6). Ex.: "Não sou da área da saúde…" e "Preciso ser da área da saúde?".
-TEMAS_FAQ = [re.compile(p, re.I) for p in (r"\bsaúde\b", r"Lei Lucas", r"pr[aá]tic", r"estética", r"certificad", r"\bMEC\b")]
 
 # --- o certificado (modelo da filial, 04/10/2026; imagens de amostra de scripts/gerar_certificado_modelo.py) ------
 CERT_PESO = ("O certificado leva o nome da Cruz Vermelha, reconhecida nacional e internacionalmente pela tradição em "
@@ -302,6 +327,7 @@ CSS_PAGINA = """
     .v button { font-family: inherit; }
     .v svg { flex: none; }
     .v-wrap { width: var(--v-wrap); margin: 0 auto; }
+    .v [hidden] { display: none !important; }
     .v-sr { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
     .v *:focus-visible { outline: 3px solid var(--v-ink); outline-offset: 2px; }
     .v [tabindex="-1"]:focus { outline: none; }
@@ -314,7 +340,13 @@ CSS_PAGINA = """
     html:not([data-curso]) .v-so-curso { display: none !important; }
     .v-curso { display: none; }
     html:not(.js) .v-curso:target { display: block; }
-    div.v-se-aberta, span.v-se-aberta, div.v-se-breve, span.v-se-breve { display: contents; }
+    div.v-se-aberta, span.v-se-aberta, div.v-se-breve, span.v-se-breve, div.v-se-venda, span.v-se-venda, div.v-se-lista, span.v-se-lista,
+    div.v-se-parc, span.v-se-parc, div.v-se-vista, span.v-se-vista, div.v-se-venda-geral, div.v-se-lista-geral { display: contents; }
+    /* ficha sem turma: venda (10.3) ou 1.7, por curso (html[data-lista~=slug], gerado no fim); FAQ 7 e o resto da página
+       seguem html[data-venda-geral]; pagamento a prazo (R5): html[data-aprazo="0"] mostra a variante "à vista" */
+    html[data-venda-geral="1"] .v-se-lista-geral, html:not([data-venda-geral="1"]) .v-se-venda-geral { display: none !important; }
+    html[data-aprazo="0"] .v-se-parc, html:not([data-aprazo="0"]) .v-se-vista { display: none !important; }
+    html[data-agenda="0"] .v-agenda { display: none !important; }
     .v-data-caixa { flex: none; }
     .v-destaque { display: none; }
     html:not([data-destaque]) .v-destaque-padrao { display: block; }
@@ -443,9 +475,9 @@ CSS_PAGINA = """
     .v-cartao .v-preco-valor { font-size: 30px; }
 
     /* bloco de data */
-    .v-data { background: var(--v-red); color: #fff; border-radius: var(--v-r-data); padding: 10px 15px; min-width: 82px; text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; flex: none; }
+    .v-data { background: var(--v-red); color: #fff; border-radius: var(--v-r-data); padding: 10px 14px 11px; min-width: 82px; text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1; flex: none; }
     .v-data span { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.92); }
-    .v-data b { font-size: 28px; font-weight: 800; margin: 4px 0; letter-spacing: -.03em; }
+    .v-data b { font-size: 28px; font-weight: 800; margin: 0 0 4px; letter-spacing: -.03em; }
 
     /* faixa de destaques (sobreposta ao topo) */
     .v-destaques { position: relative; z-index: 2; margin-top: -52px; }
@@ -478,6 +510,8 @@ CSS_PAGINA = """
     .v-card-titulo { font-size: 25px; font-weight: 800; letter-spacing: -.045em; line-height: 1.08; color: var(--v-titulo); }
     .v-card-largo .v-card-titulo { font-size: 35px; }
     .v-card-apoio { margin-top: 6px; font-size: 14px; color: var(--v-texto); font-weight: 600; }
+    .v-card-titulo { hyphens: auto; -webkit-hyphens: auto; }
+    @media (max-width: 360px) { .v-card-compacto .v-card-titulo { font-size: 16px; } }
     .v-card-desc { margin-top: 8px; font-size: 14px; line-height: 1.55; color: var(--v-texto); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .v-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
     .v-chip { display: inline-flex; align-items: center; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; background: var(--v-chip); color: #3d3d3d; border-radius: var(--v-r-pilula); padding: 6px 10px; line-height: 1.1; }
@@ -640,7 +674,7 @@ CSS_PAGINA = """
     .v-cartao-hora, .v-cartao-insc, .v-cartao-local { font-size: 14px; font-weight: 600; color: var(--v-texto); margin-top: 4px; line-height: 1.45; }
     .v-cartao-hora { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
     .v-dias { align-items: center; background: var(--v-green-bg); color: var(--v-green-ink); font-size: 13px; font-weight: 700; border-radius: var(--v-r-pilula); padding: 3px 10px; line-height: 1.4; }
-    .v-cartao-breve-titulo { font-size: 20px; font-weight: 800; letter-spacing: -.02em; margin-top: 10px; color: var(--v-ink); }
+    .v-cartao-breve-titulo { font-size: 20px; font-weight: 800; letter-spacing: -.02em; margin: 10px 0 0; line-height: 1.25; color: var(--v-ink); }
     .v-cartao-breve-texto { font-size: 14px; color: var(--v-texto); margin-top: 6px; line-height: 1.5; }
     .v-cartao .v-destaque-linha { margin: 18px 0 16px; }
     .v-cartao .v-btn { width: 100%; margin-top: 16px; }
@@ -649,8 +683,17 @@ CSS_PAGINA = """
     .v-cartao .v-btn + .v-btn { margin-top: 10px; }
     .v-homolog { margin-top: 10px; font-size: 13px; line-height: 1.5; color: var(--v-texto); }
     .v-homolog a { color: var(--v-red); font-weight: 700; text-decoration: underline; display: inline-block; padding: 3px 0; line-height: 18px; }
-    .v-nota-pagamento { margin-top: 12px; display: grid; gap: 4px; font-size: 13px; line-height: 1.5; color: var(--v-texto); }
-    .v-nota-pagamento b { color: var(--v-ink); font-weight: 700; }
+    .v-micro { margin-top: 10px; font-size: 13px; line-height: 1.5; color: var(--v-texto); }
+    .v-promessa { margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--v-green-ink); font-weight: 600; }
+    .v-inv-exemplo { font-size: 12px; color: var(--v-muted); margin-top: 6px; line-height: 1.45; }
+    .v-inv-exemplo:empty { display: none; }
+    .v-agenda { margin-bottom: 44px; }
+    .v-agenda .v-h3 { font-size: clamp(26px, 2.6vw, 34px); font-weight: 800; letter-spacing: -.04em; line-height: 1.05; margin-top: 10px; color: var(--v-titulo); }
+    .v-agenda-sub { margin-top: 8px; font-size: 15px; color: var(--v-texto); }
+    .v-agenda-linha { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .v-agenda-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--v-texto); }
+    .v-agenda-preco { margin-top: 6px; font-size: 14px; color: var(--v-ink); }
+    .v-agenda-preco b { font-weight: 800; }
     .v-devolucao { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; min-height: 24px; font-size: 13px; font-weight: 600; color: var(--v-green-ink); text-decoration: none; line-height: 1.35; }
     .v-devolucao:hover { text-decoration: underline; }
     .v-devolucao svg { width: 16px; height: 16px; }
@@ -668,13 +711,16 @@ CSS_PAGINA = """
     .v-inv dl { margin-top: 4px; }
     .v-inv dl div { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--v-line); font-size: 14px; }
     .v-inv dl div:first-child { border-top: 0; }
-    .v-inv dt { color: var(--v-ink); }
+    .v-inv dt { color: var(--v-texto); }
+    .v-inv .v-inv-total dt { color: var(--v-ink); }
     .v-inv dd { font-weight: 700; white-space: nowrap; color: var(--v-ink); }
     .v-inv dd.v-inv-leg { grid-column: 1 / -1; margin-top: 2px; font-size: 12px; font-weight: 400; line-height: 1.4; white-space: normal; color: var(--v-muted); }
     .v-inv .v-inv-total { align-items: center; }
     .v-inv .v-inv-total dt { font-weight: 800; }
     .v-inv .v-inv-total dd { font-size: 22px; font-weight: 800; color: var(--v-red); letter-spacing: -.02em; }
-    .v-inv-obs { font-size: 13px; color: var(--v-texto); margin-top: 4px; line-height: 1.5; }
+    .v-inv-obs { font-size: 13px; color: var(--v-muted); margin-top: 4px; line-height: 1.5; }
+    .v-inv .v-inv-exemplo { display: block; }
+    .v-inv .v-inv-exemplo:empty { display: none; }
     .v-aviso { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; background: var(--v-aviso-bg); border: 1px solid var(--v-aviso-borda); color: var(--v-aviso-ink); border-radius: var(--v-r-caixa); padding: 12px 14px; font-size: 13px; line-height: 1.5; }
     .v-aviso svg { width: 18px; height: 18px; color: var(--v-red); margin-top: 1px; }
     .v-aviso b { font-weight: 800; }
@@ -684,7 +730,13 @@ CSS_PAGINA = """
     .v-inv .v-devolucao { margin-top: 10px; }
     .v-inv .v-chat-link { margin-top: 6px; }
     .v-inv-grupo a { color: var(--v-ink); font-weight: 700; text-decoration: underline; }
-    .v-inv-pes { display: flex; flex-direction: column; align-items: flex-start; }
+    .v-inv-pes { display: flex; flex-direction: column; align-items: center; }
+    /* Como na escola: "Dúvidas? Fale com a secretaria" centralizado, em negrito, sem sublinhado e sem ícone. */
+    .v-inv .v-chat-link { text-decoration: none; justify-content: center; width: 100%; }
+    .v-inv .v-chat-link svg { display: none; }
+    .v-turmas-grupo { margin-top: 18px; font-size: 14px; color: var(--v-texto); line-height: 1.5; }
+    .v-turmas-grupo a { color: var(--v-ink); font-weight: 700; text-decoration: underline; }
+    .v-turma-aviso { margin-top: 14px; }
 
     .v-passos-curso { counter-reset: passo; margin-top: 22px; display: grid; gap: 14px; }
     .v-passos-curso li { counter-increment: passo; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; background: #fff; border: 1px solid var(--v-line); border-radius: 20px; padding: 20px; }
@@ -807,6 +859,11 @@ CSS_PAGINA = """
       .v-curso-corpo { grid-template-columns: minmax(0, 1fr); }
       .v-inv { grid-column: 1; grid-row: auto; position: static; margin-bottom: 44px; max-width: 640px; }
       .v-curso-corpo > .v-bloco:nth-child(2) { padding-top: 44px; border-top: 1px solid var(--v-line); }
+      /* Uma coluna: a ordem da escola (oferta, Sobre o curso, turmas e só então o Investimento). */
+      .v-curso-corpo > [data-secao="sobre"], .v-curso-corpo > [data-secao="turmas"] { order: 1; }
+      .v-curso-corpo > .v-inv { order: 2; margin-top: 44px; }
+      .v-curso-corpo > [data-secao="certificado_curso"], .v-curso-corpo > .v-bloco:not([data-secao="sobre"]):not([data-secao="turmas"]) { order: 3; }
+      .v-curso-corpo > [data-secao="sobre"] { padding-top: 0; border-top: 0; }
       .v-cert-grade, .v-escola-grade, .v-faq-grade { grid-template-columns: 1fr; }
       .v-sede { min-height: 380px; }
     }
@@ -871,6 +928,8 @@ CSS_PAGINA = """
       .v-card-compacto .v-card-corpo { padding: 0; }
       .v-card-compacto .v-card-estado { display: block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--v-muted); line-height: 1.2; margin-bottom: 4px; }
       .v-card-compacto .v-card-titulo { font-size: 18px; }
+      /* Bombeiro Civil: a ressalva "(VALOR DE HOMOLOGAÇÃO A PARTE)" continua no card compacto. */
+      .v-card-compacto .v-card-desc.v-card-desc-fixa { display: block; margin-top: 4px; font-size: 12px; -webkit-line-clamp: 2; }
       .v-card-compacto .v-chips { margin: 8px 0 10px; gap: 4px; }
       .v-card-compacto .v-chip { font-size: 11px; padding: 5px 6px; letter-spacing: .03em; }
       .v-card-compacto .v-chip:nth-child(3) { display: none; }  /* "Presencial": todos são; no card compacto só carga e escolaridade */
@@ -975,7 +1034,7 @@ CSS_PAGINA = """
       .v-barra-curto { display: inline; }
       .v-barra .v-btn { padding: 12px 12px; font-size: 14px; gap: 6px; }
       .v-barra .v-btn svg { width: 16px; height: 16px; }
-      /* botões grandes em 320 px: uma linha só ("Reservar minha vaga →") */
+      /* botões grandes em 320 px: uma linha só ("Ver cursos disponíveis →") */
       .v-btn-grande { padding-left: 16px; padding-right: 16px; font-size: 15px; gap: 8px; }
       .v-hero-h1, .v-curso-h1 { font-size: 34px; }
     }
@@ -989,10 +1048,12 @@ JS_PAGINA = """
     (function () {
       var CHECKOUT_URL = __CHECKOUT__;
       var INSCRICAO = __INSCRICAO__;
-      var INSC_CURTO = __INSC_CURTO__;
       var CURSOS = __CURSOS__;
       var EXIBICAO = __EXIBICAO__;
-      var API_TURMAS = __API_TURMAS__;
+      var ORDEM_TURMAS = __ORDEM_TURMAS__;
+      var API_INFO = __API_INFO__;
+      var API_PARCELAS = __API_PARCELAS__;
+      var EXEMPLO = __EXEMPLO__;
       var LISTA = 'Cursos presenciais';
       var raiz = document.documentElement;
       var TITULO_GERAL = document.title;
@@ -1006,9 +1067,27 @@ JS_PAGINA = """
       function todos(sel, base) { return Array.prototype.slice.call((base || document).querySelectorAll(sel)); }
       function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
       function modo() { return raiz.getAttribute('data-curso') || ''; }
-      function breve(s) { return (' ' + (raiz.getAttribute('data-breve') || '') + ' ').indexOf(' ' + s + ' ') >= 0; }
+      function naLista(attr, s) { return (' ' + (raiz.getAttribute(attr) || '') + ' ').indexOf(' ' + s + ' ') >= 0; }
+      function marcar(attr, s, sim) {
+        var l = (raiz.getAttribute(attr) || '').split(' ').filter(function (x) { return x && x !== s; });
+        if (sim) l.push(s);
+        if (l.length) raiz.setAttribute(attr, l.join(' ')); else raiz.removeAttribute(attr);
+      }
+      function breve(s) { return naLista('data-breve', s); }
+      // estado da turma (medição): 'aberta' ou 'breve' (spec 4.1).
       function estado(s) { return CURSOS[s] && CURSOS[s].turma && !breve(s) ? 'aberta' : 'breve'; }
-      function item(s) { return { item_id: s, item_name: CURSOS[s].nome, item_category: 'Cursos presenciais', item_category2: estado(s), price: INSCRICAO, quantity: 1 }; }
+      // A ficha leva à inscrição ("Inscrever-se →", barra, cabeçalho) com turma aberta ou com a venda sem turma (10.3); na
+      // ficha da 1.7 (data-lista), não.
+      function vende(s) { return !!CURSOS[s] && (estado(s) === 'aberta' || (CURSOS[s].venda && !naLista('data-lista', s))); }
+      // Plano padrão do curso (o que vem marcado no checkout), pelo info.php; sem resposta, só a taxa (valor seguro).
+      var INFO = null;
+      function planoPadrao(s) {
+        var c = INFO && INFO.porCurso[s];
+        if (!c) return 'so_taxa';
+        return c.plano_padrao || (Array.isArray(c.planos) && c.planos[0]) || 'so_taxa';
+      }
+      function valorPlano(s) { return planoPadrao(s) === 'taxa_e_matricula' ? CURSOS[s].total : INSCRICAO; }
+      function item(s) { return { item_id: s, item_name: CURSOS[s].nome, item_category: 'Cursos presenciais', item_category2: estado(s), price: valorPlano(s), quantity: 1 }; }
 
       // UTMs, fbclid e gclid da URL atual vão junto para o checkout (os links já funcionam sem JavaScript).
       var extras = new URLSearchParams();
@@ -1049,7 +1128,7 @@ JS_PAGINA = """
         el.parentNode.replaceChild(novo, el);
         return novo;
       }
-      var barra = $('mr-barra'), barraCta = $('mr-barra-cta'), barraNome = $('mr-barra-nome'), barraSub = $('mr-barra-sub');
+      var barra = $('mr-barra'), barraCta = $('mr-barra-cta'), barraNome = $('mr-barra-nome'), barraRotulo = $('mr-barra-rotulo');
       var cabCta = $('v-cab-cta');
       function aplicarModo(s) {
         // Um título principal só (h1): no modo curso, o do curso; no geral, o do topo.
@@ -1058,7 +1137,11 @@ JS_PAGINA = """
         // Menu: no modo curso, só âncoras do curso ativo (nenhum link para seção escondida).
         todos('[data-alvo]').forEach(function (a) {
           var alvo = a.getAttribute('data-alvo').split('|');
-          a.setAttribute('href', s ? (alvo[1] === 'cursos' ? '#cursos' : '#' + alvo[1] + '-' + s) : '#' + alvo[0]);
+          var destino = s ? (alvo[1] === 'cursos' ? 'cursos' : alvo[1] + '-' + s) : alvo[0];
+          a.setAttribute('href', '#' + destino);
+          // Curso sem dúvidas no catálogo (Lei Lucas): o bloco não é impresso, e o item do menu some.
+          var li = a.closest('li');
+          if (li) li.hidden = !$(destino);
         });
         todos('.v-curso').forEach(function (el) { el.classList.toggle('ativo', el.getAttribute('data-curso') === s); });
         ajustarInv();
@@ -1068,19 +1151,16 @@ JS_PAGINA = """
         if (s && cabCta) {
           cabCta.setAttribute('href', linkCheckout(s, 'cabecalho'));
           cabCta.setAttribute('data-curso', s);
-          cabCta.querySelector('.v-cab-cta-longo').textContent = estado(s) === 'aberta' ? 'Reservar minha vaga' : 'Inscrever-se';
-          cabCta.querySelector('.v-cab-cta-curto').textContent = estado(s) === 'aberta' ? 'Reservar vaga' : 'Inscrever-se';
+          cabCta.hidden = !vende(s);
         }
         if (s && barra) {
-          var c = CURSOS[s], aberta = estado(s) === 'aberta';
+          var c = CURSOS[s];
           barraNome.textContent = '';
           var nomeSr = document.createElement('span'); nomeSr.className = 'v-sr'; nomeSr.textContent = c.nome + ': ';
           barraNome.appendChild(nomeSr); barraNome.appendChild(document.createTextNode(c.total_txt));
-          barraSub.textContent = 'Agora: taxa de ' + INSC_CURTO;
+          barraRotulo.textContent = c.homolog ? 'Total à vista, sem a homologação' : 'Total à vista';
           barraCta.setAttribute('href', linkCheckout(s, 'barra'));
           barraCta.setAttribute('data-curso', s);
-          barraCta.querySelector('.v-barra-longo').textContent = aberta ? 'Reservar vaga' : 'Inscrever-se';
-          barraCta.querySelector('.v-barra-curto').textContent = aberta ? 'Reservar' : 'Inscrever-se';
         }
         avaliarBarra();
       }
@@ -1095,17 +1175,22 @@ JS_PAGINA = """
         });
       }
       var vistos = {};
+      // ViewContent / view_item (spec 4.1): value = o valor do plano padrão do curso (taxa + matrícula quando a opção 1 é
+      // oferecida, senão a taxa), com estado_turma e plano_padrao. Espera o info.php (no máximo 2,5 s).
       function verCurso(s, origem) {
         if (!CURSOS[s] || vistos[s]) return;
         vistos[s] = true;
-        var c = CURSOS[s], id = '';
-        try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) id = window.cvrjMedicao.novoId('vc'); } catch (e) {}
-        var dados = { content_name: c.nome, content_ids: [s], content_type: 'product', content_category: 'matricula-cursos-presenciais', value: INSCRICAO, currency: 'BRL',
-                      estado_turma: estado(s), valor_matricula: c.matricula, total_a_vista: c.total };
-        try { if (window.fbq) window.fbq('track', 'ViewContent', dados, id ? { eventID: id } : undefined); } catch (e) {}
-        try { if (id) window.cvrjMedicao.servidor('ViewContent', id, s); } catch (e) {}
-        ga('view_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, origem: origem, estado_turma: estado(s), valor_matricula: c.matricula, total_a_vista: c.total, items: [item(s)] });
-        ga('view_course_details', { curso: s, origem: origem, modo: 'curso' });
+        quandoInfo(function () {
+          var c = CURSOS[s], id = '', valor = valorPlano(s), plano = planoPadrao(s);
+          try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) id = window.cvrjMedicao.novoId('vc'); } catch (e) {}
+          var dados = { content_name: c.nome, content_ids: [s], content_type: 'product', content_category: 'matricula-cursos-presenciais', value: valor, currency: 'BRL',
+                        estado_turma: estado(s), plano_padrao: plano, valor_matricula: c.matricula, total_a_vista: c.total };
+          try { if (window.fbq) window.fbq('track', 'ViewContent', dados, id ? { eventID: id } : undefined); } catch (e) {}
+          try { if (id) window.cvrjMedicao.servidor('ViewContent', id, s); } catch (e) {}
+          ga('view_item', { currency: 'BRL', value: valor, item_list_name: LISTA, origem: origem, estado_turma: estado(s), plano_padrao: plano, valor_matricula: c.matricula, total_a_vista: c.total, items: [item(s)] });
+          ga('view_course_details', { curso: s, origem: origem, modo: 'curso' });
+        });
+        exemploPrazo(s);
       }
       function urlCom(s) {
         var q = new URLSearchParams(location.search);
@@ -1178,8 +1263,9 @@ JS_PAGINA = """
         var cta = alvo.closest('a.mr-cta[data-curso]');
         if (cta && cta.getAttribute('data-curso') && /\\/checkout\\//.test(cta.getAttribute('href') || '')) {
           var s = cta.getAttribute('data-curso'), local = cta.getAttribute('data-local') || '', c = CURSOS[s] || {};
-          ga('select_item', { currency: 'BRL', value: INSCRICAO, item_list_name: LISTA, local: local, modo: modo() ? 'curso' : 'geral', estado_turma: CURSOS[s] ? estado(s) : '', total_a_vista: c.total, items: CURSOS[s] ? [item(s)] : [] });
-          ga('click_enroll', { curso: s, local: local, modo: modo() ? 'curso' : 'geral', estado_turma: CURSOS[s] ? estado(s) : '', total_a_vista: c.total });
+          var valor = CURSOS[s] ? valorPlano(s) : INSCRICAO, plano = CURSOS[s] ? planoPadrao(s) : '';
+          ga('select_item', { currency: 'BRL', value: valor, item_list_name: LISTA, local: local, modo: modo() ? 'curso' : 'geral', estado_turma: CURSOS[s] ? estado(s) : '', plano_padrao: plano, total_a_vista: c.total, items: CURSOS[s] ? [item(s)] : [] });
+          ga('click_enroll', { curso: s, local: local, modo: modo() ? 'curso' : 'geral', estado_turma: CURSOS[s] ? estado(s) : '', plano_padrao: plano, total_a_vista: c.total });
         }
         var dev = alvo.closest('[data-devolucao]');
         if (dev) ga('devolucao_clique', { local: dev.getAttribute('data-devolucao'), curso: modo() });
@@ -1283,77 +1369,6 @@ JS_PAGINA = """
       });
       aoMudar(window.matchMedia ? window.matchMedia('(min-width: 981px)') : null, function (m) { if (m.matches) fecharMenu(); });
 
-      // --- "Prefiro ser avisado da data" (api/turmas.php, lista de interesse sem telefone) -----------------------
-      var aviso = $('aviso-data'), avisoForm = $('aviso-form'), avisoOk = $('aviso-ok'), avisoErro = $('aviso-erro');
-      var avisoEnviando = false;
-      function avisoCampoErro(nome, msg) {
-        var p = $('aviso-erro-' + nome), campo = avisoForm.elements[nome];
-        if (!p || !campo) { avisoErro.textContent = msg; avisoErro.hidden = false; avisoErro.focus(); return; }
-        p.textContent = msg; p.hidden = false; p.closest('.mr-tf-campo').classList.add('erro');
-        campo.setAttribute('aria-invalid', 'true'); campo.setAttribute('aria-describedby', p.id); campo.focus();
-      }
-      function avisoLimpar() {
-        todos('.mr-tf-campo.erro', avisoForm).forEach(function (el) { el.classList.remove('erro'); });
-        todos('[aria-invalid]', avisoForm).forEach(function (el) { el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
-        todos('.mr-tf-erro', avisoForm).forEach(function (el) { el.textContent = ''; el.hidden = true; });
-      }
-      function abrirAviso(s) {
-        if (!aviso || !CURSOS[s]) return;
-        avisoForm.reset(); avisoLimpar(); avisoForm.hidden = false; avisoOk.hidden = true;
-        avisoForm.elements.curso.value = s;
-        todos('[data-aviso-curso]', aviso).forEach(function (el) { el.textContent = CURSOS[s].nome; });
-        if (typeof aviso.showModal === 'function') aviso.showModal(); else aviso.setAttribute('open', '');
-        raiz.classList.add('mr-modal-aberto');
-        ga('aviso_abrir', { curso: s });
-      }
-      function fecharAviso() { if (!aviso) return; if (typeof aviso.close === 'function') aviso.close(); else aviso.removeAttribute('open'); raiz.classList.remove('mr-modal-aberto'); }
-      document.addEventListener('click', function (e) {
-        var b = e.target && e.target.closest ? e.target.closest('[data-aviso-abrir]') : null;
-        if (!b) return;
-        e.preventDefault();
-        abrirAviso(b.getAttribute('data-curso'));
-      });
-      if (aviso) {
-        aviso.addEventListener('close', function () { raiz.classList.remove('mr-modal-aberto'); });
-        todos('[data-aviso-fechar]', aviso).forEach(function (b) { b.addEventListener('click', fecharAviso); });
-        aviso.addEventListener('click', function (e) {
-          if (e.target !== aviso) return;
-          var r = aviso.getBoundingClientRect();
-          if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) fecharAviso();
-        });
-        avisoForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          if (avisoEnviando) return;
-          avisoLimpar(); avisoErro.hidden = true;
-          var f = avisoForm.elements, s = f.curso.value;
-          if (f.nome.value.trim().length < 2) return avisoCampoErro('nome', 'Digite seu nome.');
-          if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(f.email.value.trim())) return avisoCampoErro('email', 'Confira o e-mail: falta o @ ou o domínio.');
-          if (!f.consentimento.checked) return avisoCampoErro('consentimento', 'Marque a autorização para receber o aviso por e-mail.');
-          var origem = {};
-          try { var c = window.cvrjMedicao && window.cvrjMedicao.ler(); if (c && c.estatistica) extras.forEach(function (v, k) { origem[k] = v.slice(0, 255); }); } catch (err) {}
-          var corpo = { aviso: true, curso: s, idioma: 'pt', pessoas: 1, nome: f.nome.value, email: f.email.value, consentimento: true,
-                        pagina: location.pathname + location.search, origem: origem, site: f.site.value };
-          try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) corpo.evento_id = window.cvrjMedicao.novoId('ld'); } catch (err) {}
-          avisoEnviando = true;
-          var botao = $('aviso-enviar'); botao.disabled = true; botao.textContent = 'Enviando…';
-          fetch(API_TURMAS, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })
-            .then(function (r) { return r.json().catch(function () { return null; }).then(function (d) { return { http: r.status, d: d }; }); })
-            .catch(function () { return { http: 0, d: null }; })
-            .then(function (x) {
-              avisoEnviando = false; botao.disabled = false; botao.textContent = 'Avise-me';
-              var d = x.d && typeof x.d === 'object' ? x.d : { ok: false, erro: x.http === 0 ? 'Sem conexão. Verifique a internet e tente de novo.' : 'Não conseguimos enviar agora. Tente de novo em instantes.' };
-              if (!d.ok) { if (d.campo && avisoForm.elements[d.campo]) avisoCampoErro(d.campo, d.erro); else { avisoErro.textContent = d.erro || 'Não conseguimos enviar agora.'; avisoErro.hidden = false; avisoErro.focus(); } return; }
-              // Reenvio do mesmo aviso (o servidor devolve o protocolo que já existia, 'repetido'): não mede de novo.
-              if (!d.repetido) {
-                try { if (window.fbq) window.fbq('track', 'SubmitApplication', { content_name: CURSOS[s].nome, content_category: 'aviso-data', content_ids: [s] }, corpo.evento_id ? { eventID: corpo.evento_id } : undefined); } catch (err) {}
-                ga('turma_pedido', { turma_tipo: 'aviso', curso: s, idioma: 'pt', alunos: 1 });
-              }
-              $('aviso-ok-texto').textContent = 'Pronto. Quando a data de ' + CURSOS[s].nome + ' sair, avisamos em ' + d.email + '. Guarde o protocolo ' + d.protocolo + '.';
-              avisoForm.hidden = true; avisoOk.hidden = false; avisoOk.focus();
-            });
-        });
-      }
-
       // --- visibilidade: seções, Investimento e aviso vistos, lista e cards, barra fixa e chat -------------------
       var temIO = 'IntersectionObserver' in window;
       function fracao(en) { return Math.max(en.intersectionRatio, en.intersectionRect.height / Math.max(1, window.innerHeight)); }
@@ -1412,7 +1427,7 @@ JS_PAGINA = """
       function avaliarBarra() {
         if (!barra || !temIO) return;
         var avisoCookies = document.querySelector('.cvrj-ck');
-        var mostrar = !!modo() && celular.matches && naTela === 0 && fimObs === 0 && !menuAberto() && !raiz.classList.contains('mr-modal-aberto')
+        var mostrar = !!modo() && vende(modo()) && celular.matches && naTela === 0 && fimObs === 0 && !menuAberto() && !raiz.classList.contains('mr-modal-aberto')
           && !(avisoCookies && avisoCookies.getClientRects().length > 0);
         if (mostrar === !barra.hidden) return;
         barra.hidden = !mostrar;
@@ -1456,7 +1471,7 @@ JS_PAGINA = """
       aoMudar(celular, function () { avaliarBarra(); });
 
       // Chat: o botão some enquanto passa por baixo dele (a faixa de baixo da tela, da altura do botão) um botão de
-      // inscrição, o cartão do curso (data, preço, nota, 7 dias, "Prefiro ser avisado"), o destaque do topo, o
+      // inscrição, o cartão do curso (data, preço, notas), o destaque do topo, o
       // Investimento ou a faixa de links legais do rodapé. Os escondidos (outro modo) nunca cruzam a faixa.
       var chatObs = null, naFaixa = 0;
       function montarChatObs() {
@@ -1469,9 +1484,11 @@ JS_PAGINA = """
           ents.forEach(function (en) { if (en.isIntersecting !== !!en.target.__vFaixa) { en.target.__vFaixa = en.isIntersecting; naFaixa += en.isIntersecting ? 1 : -1; } });
           raiz.classList.toggle('mr-chat-recolher', naFaixa > 0);
         }, { rootMargin: '-' + Math.max(0, Math.round(topoChat) - 8) + 'px 0px 0px 0px' });
-        ctas().concat(todos('.v-cartao, .v-hero-cartao, .v-inv, .v-rodape-faixa')).forEach(function (el) { el.__vFaixa = false; chatObs.observe(el); });
+        ctas().concat(todos('.v-cartao, .v-hero-cartao, .v-inv, .v-rodape-faixa, .v-destaques')).forEach(function (el) { el.__vFaixa = false; chatObs.observe(el); });
       }
       montarChatObs();
+      // O Investimento muda de altura depois de pronto (linha "Exemplo no cartão", fontes): a trava do fixo mede de novo.
+      if (window.ResizeObserver) { var roInv = new ResizeObserver(function () { ajustarInv(); }); todos('.v-inv').forEach(function (el) { roInv.observe(el); }); }
       // Depois das fontes e do chat.js (o botão do chat só existe depois deste script): mede de novo.
       window.addEventListener('load', function () { ajustarInv(); montarChatObs(); });
 
@@ -1497,6 +1514,57 @@ JS_PAGINA = """
       var redim = null;
       window.addEventListener('resize', function () { clearTimeout(redim); redim = setTimeout(function () { ajustarInv(); montarChatObs(); avaliarBarra(); }, 200); });
 
+      // --- info.php: o servidor diz o que cada curso vende (spec 2.1, 10.3, R5) ------------------------------------
+      // planos sem "taxa_e_matricula" num curso da lista sem turma = ficha da 1.7 (data-lista); turma que o servidor não
+      // traz mais (fechou ou lotou) = "turmas em breve" (data-breve); parcelas_max = 1 = variante "à vista"; e a data
+      // limite da venda sem turma (espera_data_limite). Sem resposta (fora do ar): 1.7 e "à vista".
+      var infoPronto = false, infoEspera = [];
+      function quandoInfo(f) { if (infoPronto) f(); else infoEspera.push(f); }
+      function infoFim() { if (infoPronto) return; infoPronto = true; infoEspera.splice(0).forEach(function (f) { try { f(); } catch (e) {} }); }
+      function atualizarTopo() {
+        var dest = 'breve', abertas = 0;
+        ORDEM_TURMAS.forEach(function (s) { if (!breve(s)) { abertas++; if (dest === 'breve') dest = s; } });
+        raiz.setAttribute('data-destaque', dest);
+        raiz.setAttribute('data-agenda', abertas ? '1' : '0');
+      }
+      function dataLimite(dias) {
+        try {
+          var hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).split('-');
+          var d = new Date(Date.UTC(+hoje[0], hoje[1] - 1, +hoje[2] + dias));
+          return ('0' + d.getUTCDate()).slice(-2) + '/' + ('0' + (d.getUTCMonth() + 1)).slice(-2) + '/' + d.getUTCFullYear();
+        } catch (e) { return ''; }
+      }
+      function aplicarInfo(d) {
+        var porCurso = {};
+        if (d) d.cursos.forEach(function (c) { if (c && c.slug) porCurso[c.slug] = c; });
+        INFO = d ? { dados: d, porCurso: porCurso } : null;
+        var vendaGeral = false;
+        Object.keys(CURSOS).forEach(function (s) {
+          var c = porCurso[s], planos = c && Array.isArray(c.planos) ? c.planos : [];
+          // turma da página que o servidor não oferece mais (prazo ou "lotada": true no oferta.json)
+          if (c && CURSOS[s].turma && c.turma === null) marcar('data-breve', s, true);
+          if (!CURSOS[s].venda) return;
+          var vendeSemTurma = !!c && planos.indexOf('taxa_e_matricula') >= 0 && (c.sem_turma === true || !c.turma);
+          marcar('data-lista', s, !vendeSemTurma);
+          if (vendeSemTurma) vendaGeral = true;
+        });
+        raiz.setAttribute('data-venda-geral', vendaGeral ? '1' : '0');
+__INFO_PRAZO__
+        var dias = d && +d.espera_prazo_dias > 0 ? +d.espera_prazo_dias : 0;
+        var limite = d && /^\d{2}\/\d{2}\/\d{4}$/.test(d.espera_data_limite || '') ? d.espera_data_limite : (dias ? dataLimite(dias) : '');
+        if (limite) todos('[data-espera-limite]').forEach(function (el) { el.textContent = 'até ' + limite; });
+        if (dias) todos('[data-espera-dias]').forEach(function (el) { el.textContent = String(dias); });
+        atualizarTopo();
+        aplicarModo(modo());
+        setTimeout(function () { avaliarBarra(); montarChatObs(); ajustarInv(); }, 0);
+      }
+__JS_PRAZO__
+      setTimeout(infoFim, 2500);
+      fetch(API_INFO, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+        .then(function (d) { aplicarInfo(d && d.ok && Array.isArray(d.cursos) ? d : null); infoFim(); });
+      exemploPrazo(EXEMPLO);
+
       // Chegada: ?curso= ou #det-/#curso- (marcados no <head>, antes da primeira pintura).
       var inicial = modo();
       if (inicial && CURSOS[inicial]) {
@@ -1511,6 +1579,37 @@ JS_PAGINA = """
       marcarNav();
     })();
   </script>"""
+
+
+# Pedaços do JS que só entram com "parcelado_no_ar": true (com false, a página não tem "parcelad" nenhum: R5 e 6.1).
+JS_INFO_PRAZO = """        raiz.setAttribute('data-aprazo', d && d.parcelado_no_ar === true && +d.parcelas_max > 1 ? '1' : '0');"""
+JS_PRAZO = """      // Linha de exemplo do parcelado (1.6 e FAQ 4): a simulação do maior número de parcelas do parcelas.php, só com
+      // "parcelado_no_ar": true e parcelas_max > 1. Sem resposta, a linha não aparece.
+      var exemplos = {};
+      function brl(c) { return 'R$\u00a0' + (c / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+      function exemploPrazo(s) {
+        if (!s || !CURSOS[s] || exemplos[s]) return;
+        exemplos[s] = true;
+        quandoInfo(function () {
+          if (raiz.getAttribute('data-aprazo') === '0' || !INFO) return;
+          var agente = INFO.dados.agente_financiador && INFO.dados.agente_financiador.nome;
+          fetch(API_PARCELAS + '?curso=' + encodeURIComponent(s) + '&cobre=0&divulgacao=0', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+            .then(function (p) {
+              if (!p || !p.ok || !p.parcelado || !Array.isArray(p.opcoes)) return;
+              var o = p.opcoes.filter(function (x) { return x && x.n > 1; }).pop();
+              if (!o || !agente) return;
+              var parcelas = o.primeira_centavos && o.primeira_centavos !== o.parcela_centavos
+                ? o.n + ' parcelas mensais (1ª de ' + brl(o.primeira_centavos) + ' e ' + (o.n - 1) + ' de ' + brl(o.parcela_centavos) + ')'
+                : o.n + ' parcelas mensais de ' + brl(o.parcela_centavos);
+              var texto = 'Exemplo no cartão: ' + parcelas + ', total ' + brl(o.total_centavos) + ', juros de ' + o.taxa_mes_rotulo + ' ao mês, CET de '
+                + o.cet_ano_rotulo + ' ao ano. Parcelamento concedido por ' + agente + '.';
+              todos('[data-exemplo="' + s + '"]').forEach(function (el) { el.textContent = texto; });
+              ajustarInv(); // a linha nova aumenta o Investimento: a trava do fixo mede de novo
+            });
+        });
+      }"""
+JS_PRAZO_DESLIGADO = "      function exemploPrazo() {}"
 
 
 def esc(s: str) -> str:
@@ -1688,9 +1787,8 @@ def link_escola(local: str, caminho: str = "/login") -> str:
     return f"{ESCOLA}{caminho}?{UTM_ESCOLA.format(local=local)}".replace("&", "&amp;")
 
 
-# --- turmas (2.4) --------------------------------------------------------------------------------------------------
-def _hora(dt: datetime) -> str:
-    return f"{dt.hour}h" + (f"{dt.minute:02d}" if dt.minute else "")
+# --- turmas (oferta.json, spec 2.5) ----------------------------------------------------------------------------------
+LOCAL_TURMA = "Praça da Cruz Vermelha, 10 · Centro"
 
 
 @dataclass
@@ -1698,74 +1796,65 @@ class Turma:
     id: str
     inicio: datetime
     fim: datetime
-    local: str
     inscricoes_ate: datetime
+    lotada: bool
 
     @property
-    def mesmo_dia(self) -> bool:
-        return self.inicio.date() == self.fim.date()
-
-    @property
-    def dia(self) -> str:
+    def dia_semana(self) -> str:
         return DIAS[self.inicio.weekday()]
 
     @property
-    def data_extenso(self) -> str:
-        return f"{self.inicio.day} de {MESES[self.inicio.month - 1]}"
+    def horario(self) -> str:
+        """09:00 - 17:00 (rótulo da escola)."""
+        return f"{self.inicio:%H:%M} - {self.fim:%H:%M}"
+
+    @property
+    def data_longa(self) -> str:
+        """21 de outubro de 2026."""
+        return f"{self.inicio.day} de {MESES[self.inicio.month - 1]} de {self.inicio.year}"
 
     @property
     def ddmm(self) -> str:
         return f"{self.inicio.day:02d}/{self.inicio.month:02d}"
 
     @property
-    def horario(self) -> str:
-        return f"Das {_hora(self.inicio)} às {_hora(self.fim)}"
-
-    @property
-    def linha_data(self) -> str:
-        """Quarta, 21 de outubro / Início na quarta, 21 de outubro."""
-        if self.mesmo_dia:
-            return f"{self.dia.capitalize()}, {self.data_extenso}"
-        artigo = "no" if self.inicio.weekday() >= 5 else "na"
-        return f"Início {artigo} {self.dia}, {self.data_extenso}"
-
-    @property
-    def linha_horario(self) -> str:
-        return self.horario + (" · aula única" if self.mesmo_dia else "")
-
-    @property
-    def inscricoes(self) -> str:
-        a = self.inscricoes_ate
-        return f"Inscrições até {DIAS[a.weekday()]}, {a.day:02d}/{a.month:02d}"
-
-    @property
-    def chip(self) -> str:
-        return f"{self.dia[:3].capitalize()}, {self.ddmm} · {_hora(self.inicio)} às {_hora(self.fim)}"
-
-    @property
     def leitor(self) -> str:
         sufixo = "" if self.inicio.weekday() >= 5 else "-feira"
-        return f"{self.dia}{sufixo}, {self.data_extenso} de {self.inicio.year}"
+        return f"{self.dia_semana}{sufixo}, {self.data_longa}"
 
     def bloco_data(self) -> str:
+        """Bloco vermelho da escola: "21" / "outubro" (o leitor de tela ouve a data por extenso)."""
         return (f'<div class="v-data-caixa"><span class="v-sr">{esc(self.leitor)}</span><div class="v-data" aria-hidden="true">'
-                f'<span>{esc(self.dia[:3])}</span><b>{self.inicio.day}</b><span>{esc(MESES[self.inicio.month - 1])}</span></div></div>')
+                f'<b>{self.inicio.day}</b><span>{esc(MESES[self.inicio.month - 1])}</span></div></div>')
 
 
-def turmas_abertas(curso: dict, agora: datetime) -> list[Turma]:
-    """As turmas do cursos.json com inscrições abertas na hora de gerar, da mais próxima para a mais distante."""
-    lista = []
-    for t in curso.get("turmas") or []:
+def ler_oferta() -> dict:
+    """O oferta.json (mantido à mão pela TI). Recusa a geração se faltar campo ou se as datas não tiverem fuso."""
+    if not OFERTA.exists():
+        raise SystemExit(f"falta {OFERTA} (turmas, parcelado_no_ar e sem_turma: spec 2.5 e 10.8)")
+    dados = json.loads(OFERTA.read_text(encoding="utf-8"))
+    turmas: dict[str, list[Turma]] = {}
+    for t in dados.get("turmas") or []:
         try:
-            turma = Turma(str(t["id"]), datetime.fromisoformat(t["inicio"]), datetime.fromisoformat(t["fim"]),
-                          str(t.get("local") or "Praça da Cruz Vermelha, 10 · Centro"), datetime.fromisoformat(t["inscricoes_ate"]))
+            turma = Turma(str(t["id_escola"]), datetime.fromisoformat(t["inicio"]), datetime.fromisoformat(t["fim"]),
+                          datetime.fromisoformat(t["inscricoes_ate"]), t.get("lotada") is True)
+            curso = str(t["curso"])
         except (KeyError, ValueError, TypeError) as erro:
-            raise SystemExit(f"turma inválida em {curso.get('slug')}: {t!r} ({erro})")
-        if turma.inicio.tzinfo is None or turma.inscricoes_ate.tzinfo is None:
-            raise SystemExit(f"turma sem fuso em {curso.get('slug')}: use -03:00 nas datas")
-        if turma.inscricoes_ate >= agora:
-            lista.append(turma)
-    return sorted(lista, key=lambda x: x.inicio)
+            raise SystemExit(f"turma inválida no oferta.json: {t!r} ({erro})")
+        if turma.inicio.tzinfo is None or turma.fim.tzinfo is None or turma.inscricoes_ate.tzinfo is None:
+            raise SystemExit(f"turma sem fuso no oferta.json ({curso}): use -03:00 nas datas")
+        if turma.inscricoes_ate >= turma.inicio:
+            raise SystemExit(f"turma de {curso} no oferta.json com inscricoes_ate depois do início")
+        turmas.setdefault(curso, []).append(turma)
+    sem = dados.get("sem_turma") or {}
+    if not isinstance(sem, dict):
+        raise SystemExit('oferta.json: "sem_turma" tem de ser um objeto {"curso": {"max_fila": 30}}')
+    return {"parcelado_no_ar": dados.get("parcelado_no_ar") is True, "turmas": turmas, "sem_turma": set(sem)}
+
+
+def turmas_abertas(lista: list[Turma], agora: datetime) -> list[Turma]:
+    """As turmas do curso com inscrições abertas e sem "lotada" na hora de gerar, da mais próxima para a mais distante."""
+    return sorted([t for t in lista if t.inscricoes_ate >= agora and not t.lotada], key=lambda x: x.inicio)
 
 
 def local_junto(local: str) -> str:
@@ -1783,17 +1872,13 @@ def juntar(itens: list[str]) -> str:
 
 
 def main() -> int:
-    if PAGAMENTO != "A" or MATRICULA_PARCELADA:
-        print("recusado: só a opção A com a matrícula à vista está escrita (PAGAMENTO = 'A', MATRICULA_PARCELADA = False). "
-              "As outras precisam do checkout e das decisões D11/D12 (seção 5 da especificação).")
-        return 1
+    oferta = ler_oferta()
+    parcelado = oferta["parcelado_no_ar"]
     home = HOME.read_text(encoding="utf-8")
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     cursos = {c["slug"]: c for c in dados["cursos"]}
     inscricao = int(dados["inscricao_centavos"])
     taxa = brl_curto(inscricao)
-    taxa_c = brl(inscricao)
-    divulgacao = brl(int(dados.get("divulgacao_centavos") or 1490))
     agora = datetime.now(timezone.utc)
 
     # Seletor de curso da home: sempre com o mesmo catálogo desta página (só o bloco marcado muda).
@@ -1809,18 +1894,19 @@ def main() -> int:
         if not c.get("valor_curso_centavos"):
             print(f"recusado: o curso {s} não tem valor_curso_centavos no cursos.json (a página mostra a matrícula de todo curso)")
             return 1
-        if s not in ORDEM_EXIBICAO or s not in BENEFICIO or s not in APOIO or s not in COPY_CURSO:
-            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO/APOIO/COPY_CURSO; entra no fim, com a descrição do catálogo")
-    # Todo curso tem o campo "turmas" (lista vazia = turmas em breve). Campo ausente quer dizer que alguém regravou o
-    # cursos.json sem ele (o sincronizar_catalogo.py monta o arquivo do zero): a turma marcada sumiria da página sem aviso.
-    sem_campo = [s for s, c in cursos.items() if "turmas" not in c]
-    if sem_campo:
-        print("AVISO: sem o campo \"turmas\" no cursos.json: " + ", ".join(sem_campo) + ". A página sai com \"Turmas em breve\" "
-              "nesses cursos. Se havia turma marcada, recoloque o campo (git diff do cursos.json) antes de publicar.")
+        if s not in ORDEM_EXIBICAO or s not in BENEFICIO:
+            print(f"aviso: o curso {s} não está em ORDEM_EXIBICAO/BENEFICIO; entra no fim, com a descrição do catálogo")
+    fora = sorted(set(oferta["turmas"]) - set(cursos)) + sorted(oferta["sem_turma"] - set(cursos))
+    if fora:
+        print(f"recusado: o oferta.json cita cursos que não estão no cursos.json: {', '.join(fora)}")
+        return 1
+    # Cursos que podem vender tudo sem turma (lista "sem_turma" do oferta.json, 10.3/10.8): só eles ganham a ficha da venda
+    # sem turma no HTML. O info.php decide, na hora, se ela aparece (chave, versão da escola, fila máxima).
+    venda_sem_turma = [s for s in cursos if s in oferta["sem_turma"]]
 
     # Ordem do JSON-LD e do chat (grupos do cursos.json); cards: com turma aberta primeiro, depois ORDEM_EXIBICAO.
     ordem = [s for g in dados["grupos"] for s in g["cursos"] if s in cursos]
-    turmas = {s: turmas_abertas(cursos[s], agora) for s in cursos}
+    turmas = {s: turmas_abertas(oferta["turmas"].get(s, []), agora) for s in cursos}
     com_turma = [s for s in cursos if turmas[s]]
     base_ordem = [s for s in ORDEM_EXIBICAO if s in cursos] + [s for s in ordem if s not in ORDEM_EXIBICAO]
     exibicao = sorted(base_ordem, key=lambda s: (0 if s in com_turma else 1, base_ordem.index(s)))
@@ -1835,33 +1921,43 @@ def main() -> int:
     def total(s: str) -> int:
         return mat(s) + inscricao
 
-    def esc_min(s: str) -> str:
-        return re.sub(r"^Ensino\s+", "", cursos[s].get("escolaridade") or "").strip()
-
-    def apoio(s: str) -> str:
-        return APOIO.get(s) or nome_filial(cursos[s].get("descricao") or "")
+    def escolaridade(s: str) -> str:
+        return (cursos[s].get("escolaridade") or "").strip()
 
     def beneficio(s: str) -> str:
-        return BENEFICIO.get(s) or nome_filial(cursos[s].get("descricao") or "")[:80]
+        return BENEFICIO.get(s) or nome_filial(cursos[s].get("descricao") or "")[:120]
 
     def checkout(s: str, via: str) -> str:
         return f"{CHECKOUT_URL}?curso={s}&amp;via={via}"
 
-    def total_sufixo(s: str) -> str:
-        return " (sem a homologação)" if s in HOMOLOGACAO else ""
-
     def variantes(s: str, aberta: str, breve: str, tag: str = "div") -> str:
-        """As duas variantes no HTML (o relógio do navegador escolhe); sem turma, só a "em breve"."""
+        """Turma aberta e "turmas em breve" no HTML (o relógio do navegador e o info.php escolhem); sem turma, só a breve."""
         if s in com_turma:
             return (f'<{tag} class="v-se-aberta" data-turma-de="{s}">{aberta}</{tag}>'
                     f'<{tag} class="v-se-breve" data-turma-de="{s}">{breve}</{tag}>')
         return breve
 
-    sem_turma_variantes: list[tuple[str, str]] = []   # conferidas contra "reserv" no fim
+    sem_turma_variantes: list[tuple[str, str]] = []   # conferidas contra "reserv"/"garant" no fim (10.3)
 
     def so_breve(nome: str, trecho: str) -> str:
         sem_turma_variantes.append((nome, trecho))
         return trecho
+
+    def sem(s: str, venda: str, lista: str, tag: str = "div") -> str:
+        """Sem turma: a venda sem turma (10.3) e a ficha da 1.7, para os cursos da lista "sem_turma"; os outros, só a 1.7."""
+        so_breve(f"venda sem turma {s}", venda)
+        so_breve(f"ficha 1.7 {s}", lista)
+        if s not in venda_sem_turma:
+            return lista
+        return (f'<{tag} class="v-se-venda" data-curso-de="{s}">{venda}</{tag}>'
+                f'<{tag} class="v-se-lista" data-curso-de="{s}">{lista}</{tag}>')
+
+    def parc(com: str, sem_parc: str, tag: str = "span") -> str:
+        """R5: com "parcelado_no_ar": false, só a variante "à vista"; com true, as duas (o JS volta à "à vista" se o
+        info.php trouxer parcelas_max = 1)."""
+        if not parcelado:
+            return sem_parc
+        return f'<{tag} class="v-se-parc">{com}</{tag}><{tag} class="v-se-vista">{sem_parc}</{tag}>'
 
     def foto_curso(s: str, sizes: str, classe: str = "", loading: str = "lazy") -> str:
         """Capa do curso: a foto real de CAPA_CURSO, se houver; senão a imagem gerada em img/."""
@@ -1886,134 +1982,132 @@ def main() -> int:
                 f'da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária" loading="lazy" decoding="async" '
                 f'width="640" height="452" data-cert-curso="{s}">')
 
-    def preco(s: str, sufixo: bool = False) -> str:
-        """Bloco de preço (princípio 2). O "(sem a homologação)" só vai no cartão "Turmas em breve" (3.3.2): no card do
-        catálogo (3.2.5) a homologação já está na linha de apoio e o parêntese quebrava a linha do total."""
+    def preco(s: str) -> str:
+        """Bloco de preço da escola (1.5): "Matrícula à vista" / "R$ 180" / "+ R$ 99 de taxa de inscrição". O total fica no
+        Investimento e na barra."""
         return (f'<div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p>'
-                f'<p class="v-preco-valor">{brl_curto(mat(s))}</p><p class="v-preco-taxa">+ {taxa} de taxa de inscrição</p>'
-                f'<p class="v-preco-total">Total à vista: {brl_curto(total(s))}{total_sufixo(s) if sufixo else ""}</p></div>')
+                f'<p class="v-preco-valor">{brl_curto(mat(s))}</p><p class="v-preco-taxa">+ {taxa} de taxa de inscrição</p></div>')
 
-    def devolucao(local: str) -> str:
-        return (f'<a class="v-devolucao" href="/reembolso/" data-devolucao="{local}">{SVG["check-circulo"]}'
-                f'<span>Desistiu em até 7 dias? Você recebe de volta tudo o que pagou.</span></a>')
-
-    def chat_link(texto: str, s: str, local: str, assunto: str = "curso") -> str:
+    def chat_link(texto: str, s: str, local: str, assunto: str = "matricula") -> str:
         return (f'<a class="v-chat-link" href="#chat" data-abrir-chat data-assunto="{assunto}" data-curso="{s}" data-local="{local}">'
                 f'{SVG["chat"]}<span>{esc(texto)}</span></a>')
 
-    def homologacao_linha(s: str, nao_entra: bool = False) -> str:
-        if s not in HOMOLOGACAO:
-            return ""
-        return (f'<p class="v-homolog">Homologação: à parte, paga pelo aluno no fim do curso.{" Não entra no total." if nao_entra else ""} '
-                f'<a href="#chat" data-abrir-chat data-assunto="curso" data-curso="{s}" data-local="homologacao">Pergunte o valor no chat</a></p>')
+    def micro_pagamento() -> str:
+        return parc("PIX ou cartão, à vista ou parcelado. As parcelas aparecem na hora da inscrição.", "PIX ou cartão, à vista.")
 
-    def botao_aviso(s: str, classe: str = "v-btn-contorno") -> str:
-        return (f'<button class="v-btn {classe}" type="button" data-aviso-abrir data-curso="{s}" aria-haspopup="dialog">'
-                f'Prefiro ser avisado da data</button>')
+    def promessa_sem_turma() -> str:
+        # 10.3, micro 2. Sem JavaScript: "em até 90 dias da inscrição"; com ele, "até {data limite}" (info.php).
+        return ("Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você "
+                "pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada "
+                f'para começar <span data-espera-limite>em até {ESPERA_PRAZO_DIAS_PADRAO} dias da inscrição</span>, sem você precisar pedir.')
 
-    # --- FAQ de cada curso (a Lei Lucas não tem no cursos.json: sai da FAQ da home, com o preço refeito) --------
-    faq_home = json.loads(FAQ_HOME.read_text(encoding="utf-8")) if FAQ_HOME.exists() else {"grupos": []}
-    lei_lucas = [q for g in faq_home.get("grupos", []) for q in g.get("perguntas", [])
-                 if q.get("pergunta", "").startswith("O que é a Lei Lucas")]
-
+    # --- FAQ de cada curso: as perguntas do cursos.json, literais da escola (1.6). Curso sem perguntas: sem o bloco. ------
     def faq_catalogo(s: str) -> list[tuple[str, str]]:
-        itens = [(q["pergunta"], q["resposta"]) for q in (cursos[s].get("faq") or []) if q.get("pergunta") and q.get("resposta")
-                 and not EXCLUIR_CATALOGO.search(q["pergunta"] + " " + q["resposta"])]
-        if not itens and s == "primeiros-socorros-lei-lucas":
-            for q in lei_lucas:
-                antes = q["resposta"].split(" Escolaridade mínima:")[0]
-                if antes != q["resposta"]:
-                    itens.append((q["pergunta"], f"{antes} Escolaridade mínima: Ensino Fundamental. Matrícula à vista: "
-                                                 f"{brl_curto(mat(s))}, mais {taxa} de taxa de inscrição (total à vista {brl_curto(total(s))})."))
-        return itens
+        return [(nome_filial(q["pergunta"]), nome_filial(q["resposta"])) for q in (cursos[s].get("faq") or [])
+                if q.get("pergunta") and q.get("resposta") and not EXCLUIR_CATALOGO.search(q["pergunta"] + " " + q["resposta"])]
 
-    # --- textos que se repetem (FAQ geral 3.4 e FAQ do curso) ----------------------------------------------
-    exemplo = com_turma[0] if com_turma else exibicao[0]
+    # --- FAQ geral (spec 1.11, com a 7 da 10.3): (pergunta, texto puro do FAQPage, HTML) ---------------------------
+    exemplo = com_turma[0] if com_turma else (venda_sem_turma[0] if venda_sem_turma else exibicao[0])
     valores = sorted({mat(s) for s in cursos})
-    faixa_mat = f"de {brl_curto(valores[0])} a {brl_curto(valores[-1])}"
     menor_total = brl_curto(valores[0] + inscricao)
-    faq6_texto = ("Você não entra na aula. Se desistir em até 7 dias depois do pagamento, recebe de volta tudo o que pagou, sem "
-                  "precisar explicar. Depois disso, valem as regras de cancelamento e reembolso.")
-    faq6_html = ("Você não entra na aula. Se desistir em até 7 dias depois do pagamento, recebe de volta tudo o que pagou, sem "
-                 'precisar explicar. Depois disso, valem as <a href="/reembolso/">regras de cancelamento e reembolso</a>.')
-    grupos_valor: dict[int, list[str]] = {}
-    for s in exibicao:
-        grupos_valor.setdefault(mat(s), []).append(s)
-    linhas_total = sorted(grupos_valor.items(), key=lambda kv: (0 if any(x in com_turma for x in kv[1]) else 1, kv[0]))
-    lista_totais = [f"{juntar([curto(x) for x in ss])}: {taxa} + {brl_curto(v)} = {brl_curto(v + inscricao)}." for v, ss in linhas_total]
-    homolog_frase = (" No Bombeiro Civil, a homologação é paga à parte, no fim do curso; pergunte o valor no chat." if HOMOLOGACAO & set(cursos) else "")
-    extras_frase = ("No pagamento da taxa há dois extras opcionais, que vêm desmarcados: cobrir os custos de processamento (o valor "
-                    f"aparece no pagamento, antes de você confirmar) e contribuir com {divulgacao} para a divulgação dos cursos. "
-                    f"Se não marcar nenhum, você paga só {taxa} de taxa.")
-    area = "área do aluno, no site da Escola (escola.cursoscruzvermelha.org)"
+    chat_faq = '<a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">chat</a>'
+    reembolso_link = '<a href="/reembolso/">página de cancelamento e reembolso</a>'
+
+    def item_faq(pergunta: str, texto: str, html_: str | None = None) -> tuple[str, str, str]:
+        return (pergunta, texto, html_ if html_ is not None else esc(texto))
+
+    faq2_parc = "que pode ser pago junto com a inscrição, à vista ou parcelado no cartão."
+    faq2_vista = "que pode ser pago junto com a inscrição, à vista."
+    faq2_a = "A taxa de inscrição reserva a sua vaga na turma"
+    faq2_b = ". A matrícula é o valor do curso, "
+    aberta_faq = '<span class="v-se-venda-geral"> aberta</span>' if venda_sem_turma else ""
+    aberta_txt = " aberta" if (venda_sem_turma and VENDA_SEM_TURMA_HTML) else ""
+    faq2_ini = faq2_a + aberta_txt + faq2_b
+    faq2_fim = " A entrada na aula é liberada com a matrícula paga."
+    faq7_ini = "Nenhuma turma aberta agora? Volte em breve para conferir as próximas datas ou fale com a secretaria pelo chat."
+    faq7_lista = (" Se preferir, você pode pagar só a taxa de inscrição, de " + taxa + ", e entrar na lista da próxima turma: quando a "
+                  "data sair, a secretaria coloca você na turma e avisa por e-mail. Até a turma ser confirmada, você pode desistir e "
+                  "pedir a taxa inteira de volta, pelo chat.")
+    faq7_venda_a = (" Se preferir, você pode se inscrever agora e pagar tudo (a taxa de inscrição e a matrícula) ou só a taxa de "
+                    "inscrição. Quem paga tudo entra na primeira turma do curso que tiver vaga, por ordem de pagamento, e recebe a "
+                    "data e o horário por e-mail, pelo menos 10 dias antes da primeira aula. Se a data ou o horário não servirem "
+                    "(avise em até 7 dias depois desse e-mail), ou se você desistir antes de a turma ser confirmada, devolvemos tudo "
+                    "o que você pagou. Se não houver turma marcada para começar em até ")
+    faq7_venda_b = (" dias da inscrição, devolvemos tudo, sem você precisar pedir. Quem paga só a taxa entra na lista de interesse: "
+                    "quando a turma for marcada, a secretaria avisa por e-mail, e o lugar fica com quem pagar a matrícula enquanto "
+                    "houver vaga. Quem já pagou tudo entra primeiro.")
+    faq7_venda_txt = faq7_ini + faq7_venda_a + str(ESPERA_PRAZO_DIAS_PADRAO) + faq7_venda_b
+    faq7_venda_html = (esc(faq7_ini) + esc(faq7_venda_a) + f'<span data-espera-dias>{ESPERA_PRAZO_DIAS_PADRAO}</span>' + esc(faq7_venda_b))
+    faq7_lista_txt = faq7_ini + faq7_lista
+    if venda_sem_turma:
+        faq7_html = (f'<span class="v-se-venda-geral">{faq7_venda_html}</span><span class="v-se-lista-geral">{esc(faq7_lista_txt)}</span>')
+        so_breve("FAQ 7, venda sem turma", faq7_venda_html)
+    else:
+        faq7_html = esc(faq7_lista_txt)
+    faq7_txt = faq7_venda_txt if (venda_sem_turma and VENDA_SEM_TURMA_HTML) else faq7_lista_txt
+    comparar = []
+    for s_ in COMPARAR:
+        if s_ in cursos:
+            comparar.append(f'{cursos[s_]["nome"]}: {cursos[s_]["carga_horaria"]}, matrícula de {brl_curto(mat(s_))} (total à vista '
+                            f'{brl_curto(total(s_))}). {PUBLICO_COMPARAR.get(s_) or beneficio(s_)}')
+    comparar_txt = " ".join(comparar) + " Os três pedem Ensino Fundamental."
+    faq8 = (GARANTIA_7_DIAS + " Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas estão "
+            "na página de cancelamento e reembolso.")
+    faq9 = ("Se a turma não for formada, ou se não houver turma com horário compatível para você, tudo o que você pagou neste site "
+            "volta por inteiro: a taxa de inscrição e, se você pagou, a matrícula e os juros do parcelamento. As regras completas, com "
+            "os prazos, estão na página de cancelamento e reembolso.")
+    faq4 = ("Sim. No cartão, a inscrição e a matrícula podem ser parceladas juntas, e as opções aparecem com o valor exato de cada "
+            "parcela na hora da inscrição. No parcelamento incide juros sobre o total, então o total parcelado é maior que o valor à vista.")
     FAQ_GERAL = [
-        ("Qual a diferença entre taxa de inscrição e matrícula?",
-         [f"Exemplo: em {cursos[exemplo]['nome']}, são {taxa} de taxa de inscrição + {brl_curto(mat(exemplo))} de matrícula = "
-          f"{brl_curto(total(exemplo))} à vista. A taxa de inscrição custa {taxa}, é igual em todos os cursos e é paga neste site, por "
-          f"PIX ou cartão, sem criar conta antes. Com turma aberta, ela reserva a sua vaga. A matrícula é o valor do curso, {faixa_mat}, "
-          f"e é paga pela internet, na {area}. Para entrar na aula, a matrícula precisa estar paga."], None),
-        ("Onde e quando eu pago a matrícula?",
-         [f"Pela internet, na {area}, antes da aula. Se você ainda não tem conta lá, ela é criada assim que a taxa de inscrição é "
-          "confirmada, e o link para criar a senha chega no seu e-mail. O link vale 72 horas; depois disso, use “Esqueci minha "
-          "senha”, com o e-mail da inscrição. Já tem conta? Entre com a senha de sempre. Se o curso tem turma aberta, a matrícula "
-          "aparece lá para você pagar. Se ainda não tem, ela aparece quando a secretaria colocar você na próxima turma. A área do "
-          "aluno é o site oficial da Escola de Educação e Saúde da Cruz Vermelha Brasileira do Rio de Janeiro."], None),
-        ("Quanto custa no total?",
-         ["O total à vista é a taxa de inscrição mais a matrícula:", lista_totais, homolog_frase.strip() + " " + extras_frase], None),
-        ("Posso parcelar?",
-         ["A taxa de inscrição, não: ela é paga à vista, por PIX ou cartão. A matrícula aparece na área do aluno pelo valor à vista "
-          "de cada curso. Quer saber se dá para pagar a matrícula de outro jeito? Pergunte no chat “Fale com a gente” antes de se "
-          "inscrever."], None),
-        ("Posso ir à aula só com a taxa de inscrição paga?",
-         ["Não. Para entrar na aula, a matrícula precisa estar paga. Só com a taxa de inscrição, você tem a vaga reservada (ou, se o "
-          "curso ainda não tem data, o lugar na lista da próxima turma), mas ainda não pode assistir à aula. A data, o horário e o "
-          "local da turma estão no seu e-mail de confirmação e na área do aluno."], None),
-        ("E se eu pagar a taxa e não pagar a matrícula?", [faq6_texto], faq6_html),
-        ("E se o curso ainda não tiver turma aberta?",
-         ["Você pode pagar a taxa de inscrição e entrar na lista da próxima turma. Quando a data sair, a secretaria coloca você na "
-          "turma e avisa por e-mail. Depois do pagamento, você também marca os dias e horários em que pode vir. Até a turma ser "
-          "confirmada, você pode desistir e pedir a taxa inteira de volta, pelo chat. Se preferir não pagar agora, toque em "
-          "“Prefiro ser avisado da data” na página do curso: avisamos por e-mail quando a turma abrir."], None),
-        ("Posso desistir depois de pagar?",
-         ["Sim. Você tem 7 dias corridos depois de cada pagamento para desistir, sem dizer o motivo, e recebe de volta o valor pago "
-          "(art. 49 do Código de Defesa do Consumidor). Peça pelo chat “Fale com a gente”, no assunto “Pagamento ou PIX”. A taxa de "
-          "inscrição, a nossa equipe devolve. O pedido da matrícula, paga na área do aluno, a equipe passa para a secretaria da "
-          "Escola. As regras completas estão em Cancelamento e reembolso."],
-         "Sim. Você tem 7 dias corridos depois de cada pagamento para desistir, sem dizer o motivo, e recebe de volta o valor pago "
-         "(art. 49 do Código de Defesa do Consumidor). Peça pelo chat “Fale com a gente”, no assunto “Pagamento ou PIX”. A taxa de "
-         "inscrição, a nossa equipe devolve. O pedido da matrícula, paga na área do aluno, a equipe passa para a secretaria da "
-         'Escola. As regras completas estão em <a href="/reembolso/">Cancelamento e reembolso</a>.'),
-        ("Recebo certificado? Ele é reconhecido pelo MEC?",
-         ["Sim, você recebe certificado. Quem conclui os requisitos do curso recebe o certificado da Cruz Vermelha Brasileira Rio de "
-          "Janeiro, com o seu nome, o curso e a carga horária. Como todo curso livre, aqui ou em qualquer instituição, ele não passa "
-          "pelo MEC, que regula a educação formal (ensino técnico, graduação e pós)." +
-          (" No Bombeiro Civil, a homologação profissional é feita no fim do curso, à parte." if HOMOLOGACAO & set(cursos) else "")], None),
-        ("Onde são as aulas?",
-         ["Na sede da Cruz Vermelha Brasileira do Rio de Janeiro, o Palácio da Cruz Vermelha: Praça da Cruz Vermelha, 10, Centro. "
-          "Todos os cursos são presenciais."], None),
+        item_faq("Como faço minha inscrição?",
+                 "Escolha o curso, veja as turmas abertas e clique em “Inscrever-se”. Você preenche seus dados, paga a taxa de inscrição "
+                 "para reservar a vaga" + (" na turma aberta" if aberta_txt else "") + " e escolhe como pagar a matrícula. Se preferir, a secretaria orienta pelo chat.",
+                 esc("Escolha o curso, veja as turmas abertas e clique em “Inscrever-se”. Você preenche seus dados, paga a taxa de "
+                     "inscrição para reservar a vaga") + ('<span class="v-se-venda-geral"> na turma aberta</span>' if venda_sem_turma else "")
+                 + esc(" e escolhe como pagar a matrícula. Se preferir, a secretaria orienta pelo ") + chat_faq + "."),
+        item_faq("Qual a diferença entre taxa de inscrição e matrícula?",
+                 faq2_ini + (faq2_parc if parcelado else faq2_vista) + faq2_fim,
+                 esc(faq2_a) + aberta_faq + esc(faq2_b) + parc(esc(faq2_parc), esc(faq2_vista)) + esc(faq2_fim)),
+        item_faq("Os cursos possuem certificado?",
+                 "Sim. Todos os cursos oferecem certificado aos alunos que concluírem os requisitos previstos."),
+    ]
+    if parcelado:
+        FAQ_GERAL.append(("Posso parcelar?", faq4, esc(faq4) + f' <span class="v-inv-exemplo" data-exemplo="{exemplo}"></span>'))
+    FAQ_GERAL += [
+        item_faq("Onde acontecem as aulas?",
+                 "Na sede da Cruz Vermelha Brasileira do Rio de Janeiro: Praça da Cruz Vermelha, 10, Centro. As orientações da turma "
+                 "chegam por e-mail antes da primeira aula."),
+        item_faq("Preciso criar conta?",
+                 "Não. Você preenche nome, CPF, e-mail e telefone celular e paga. Se você ainda não tem conta na área do aluno, no site "
+                 "da Escola (escola.cursoscruzvermelha.org), ela é criada depois do pagamento, e o link para criar a senha chega no seu "
+                 "e-mail. Ele vale 72 horas; depois disso, use “Esqueci minha senha”. Já tem conta? Entre com a senha de sempre."),
+        ("E se o curso ainda não tiver turma aberta?", faq7_txt, faq7_html),
+        item_faq("Posso cancelar minha inscrição?", faq8,
+                 esc(GARANTIA_7_DIAS + " Para pedir, use o chat “Fale com a gente”, no assunto “Pagamento ou PIX”. As regras completas "
+                     "estão na ") + reembolso_link + "."),
+        item_faq("O que acontece se a turma não for formada?", faq9,
+                 esc(faq9.replace(" página de cancelamento e reembolso.", "")) + " " + reembolso_link + "."),
+        item_faq("Qual curso de primeiros socorros eu faço?", comparar_txt),
+        item_faq("Posso fazer o curso sendo menor de idade?",
+                 "Cada curso pede uma escolaridade mínima, informada no cartão dele (Ensino Fundamental ou Ensino Médio). Sobre idade "
+                 "mínima: informação em breve. Em caso de dúvida, pergunte no chat da página antes de pagar. Para jovens de 12 a 14 anos "
+                 "há uma turma própria de primeiros socorros, pedida pelo responsável ou pela escola em “Solicitar uma turma”."),
+        item_faq("Vocês oferecem cursos para empresas e grupos?",
+                 f"Sim. Com {TURMA_MINIMO} a {TURMA_MAXIMO} alunos, a turma é só do grupo (empresa, escola, condomínio, instituição), com "
+                 "data combinada com a secretaria e o mesmo valor por pessoa dos cursos, na sede; em outro local, depende de aprovação. "
+                 "Qualquer curso pode ser dado em inglês, com professor ou tradutor. Peça em “Solicitar uma turma”: nada é cobrado agora e "
+                 "a secretaria responde em até 3 dias úteis."),
     ]
 
-    def faq_texto(partes_r: list) -> str:
-        """Resposta em texto puro (FAQPage), sem frase que dependa da data de hoje."""
-        saida = []
-        for p in partes_r:
-            saida.append(" ".join(p) if isinstance(p, list) else p)
-        return " ".join(x for x in saida if x)
-
-    def faq_html(partes_r: list, html_pronto: str | None) -> str:
-        if html_pronto:
-            return f"<p>{html_pronto}</p>"
-        saida = []
-        for p in partes_r:
-            if isinstance(p, list):
-                saida.append("<ul>" + "".join(f"<li>{esc(x)}</li>" for x in p) + "</ul>")
-            elif p:
-                saida.append(f"<p>{esc(p)}</p>")
-        return "".join(saida)
-
     def detalhes(perguntas: list[tuple[str, str]], abrir_primeira: bool = True) -> str:
-        return "".join(f'<details data-pergunta="{i}"{" open" if i == 1 and abrir_primeira else ""}><summary>{esc(p)}</summary>'
-                       f'<div class="v-faq-resp">{r}</div></details>' for i, (p, r) in enumerate(perguntas, 1))
+        """Perguntas em <details>; a primeira começa aberta, como na escola. A "Posso parcelar?" (só com o parcelado no
+        ar) vai dentro da variante do parcelado, que o JS esconde com parcelas_max = 1."""
+        saida = []
+        for i, (p, r) in enumerate(perguntas, 1):
+            d = (f'<details data-pergunta="{i}"{" open" if i == 1 and abrir_primeira else ""}><summary>{esc(p)}</summary>'
+                 f'<div class="v-faq-resp"><p>{r}</p></div></details>')
+            saida.append(f'<div class="v-se-parc">{d}</div>' if p == "Posso parcelar?" else d)
+        return "".join(saida)
 
     # --- chat: a lista de cursos do chat.js segue este catálogo; as tags levam o hash do arquivo -----------------
     para_o_chat = []
@@ -2028,7 +2122,9 @@ def main() -> int:
                     for q in (c.get("faq") or []) if q.get("pergunta") and q.get("resposta")
                     and not EXCLUIR_CATALOGO.search(q["pergunta"] + " " + q["resposta"])],
         })
-    if chat_widget.atualizar_cursos(para_o_chat):
+    if CHAT_JS_FIXO:
+        print("chat.js não mexido (CHAT_JS_FIXO=1): as tags levam o hash do chat.js atual")
+    elif chat_widget.atualizar_cursos(para_o_chat):
         print("atualizado site/chat/chat.js (cursos, ficha e dúvidas)")
     chat_tags = chat_widget.tags()
 
@@ -2037,7 +2133,7 @@ def main() -> int:
     # ============================================================================================================
     marca = (f'<img src="{LOGO["src"]}" width="{LOGO["largura"]}" height="{LOGO["altura"]}" alt="{esc(LOGO["alt"])}">'
              f'<span class="v-marca-escola"><b>Escola de Educação</b><span>e Saúde CVB-RJ</span></span>')
-    nav_itens = [("cursos|inv", "Cursos", "Turma e valores"), ("como-funciona|como", "Como funciona", "Como funciona"),
+    nav_itens = [("cursos|inv", "Cursos", "Turma e valores"), ("como-funciona|sobre", "Como funciona", "Sobre o curso"),
                  ("escola|duvidas", "Quem somos", "Dúvidas"), ("duvidas|cursos", "Dúvidas", "Outros cursos")]
 
     def rotulos(geral: str, curso_: str) -> str:
@@ -2062,16 +2158,16 @@ def main() -> int:
       <a class="v-marca" href="/matricula-cursos-presenciais/" data-voltar="">{marca}</a>
       <nav class="v-nav" aria-label="Principal"><ul>{nav}</ul></nav>
       <div class="v-cab-acoes">
-        <a class="v-btn v-btn-contorno" href="{link_escola("cabecalho")}" target="_blank" rel="noopener" data-saida="area_aluno" data-origem="cabecalho">Já sou aluno {SVG["externo"]}</a>
+        <a class="v-btn v-btn-contorno" href="{link_escola("cabecalho")}" target="_blank" rel="noopener" data-saida="area_aluno" data-origem="cabecalho">Área do aluno {SVG["externo"]}</a>
         <a class="v-btn v-btn-vermelho v-so-geral" href="#cursos">Ver cursos</a>
-        <a class="v-btn v-btn-vermelho mr-cta v-so-curso" id="v-cab-cta" data-local="cabecalho" data-curso="" href="{CHECKOUT_URL}?via=cabecalho"><span class="v-cab-cta-longo">Reservar minha vaga</span><span class="v-cab-cta-curto">Reservar vaga</span>{SVG["seta"]}</a>
+        <a class="v-btn v-btn-vermelho mr-cta v-so-curso" id="v-cab-cta" data-local="cabecalho" data-curso="" href="{CHECKOUT_URL}?via=cabecalho"><span class="v-cab-cta-longo">Inscrever-se</span><span class="v-cab-cta-curto">Inscrever-se</span>{SVG["seta"]}</a>
       </div>
       <button class="v-menu-botao" id="v-menu-botao" type="button" aria-expanded="false" aria-controls="v-menu" aria-label="Abrir menu"><span class="v-ico-abrir">{SVG["menu"]}</span><span class="v-ico-fechar">{SVG["fechar"]}</span></button>
     </div>
     <div class="v-menu" id="v-menu" hidden>
       <div class="v-wrap">
         <nav aria-label="Menu do celular"><ol>{menu_itens}</ol></nav>
-        <div class="v-menu-aluno"><span>Já sou aluno</span><a class="v-btn v-btn-contorno" href="{link_escola("menu")}" target="_blank" rel="noopener" data-saida="area_aluno" data-origem="menu">Entrar {SVG["externo"]}</a></div>
+        <div class="v-menu-aluno"><span>Área do aluno</span><a class="v-btn v-btn-contorno" href="{link_escola("menu")}" target="_blank" rel="noopener" data-saida="area_aluno" data-origem="menu">Entrar {SVG["externo"]}</a></div>
         <a class="v-menu-chat" href="#chat" data-abrir-chat data-assunto="matricula" data-local="menu">{SVG["chat"]}<span>Dúvidas? Fale com a gente<small>Abre o chat desta página</small></span></a>
         <p class="v-menu-endereco">{SVG["pino"]}<span>Praça da Cruz Vermelha, 10 · Centro</span></p>
       </div>
@@ -2081,51 +2177,43 @@ def main() -> int:
     # ============================================================================================================
     # 3–4. topo com foto, "Próxima turma em destaque" e faixa de destaques (3.2.3, 3.2.4)
     # ============================================================================================================
+    # Painel "Próxima turma em destaque" (1.2): só com turma aberta. Sem turma, não é impresso; quando a turma vence, o JS
+    # o esconde (html[data-destaque="breve"]).
     destaques_topo = []
     for i, s in enumerate(ordem_turmas):
         t = turmas[s][0]
-        rotulo_aria = (f"{cursos[s]['nome']}, {t.dia}, {t.data_extenso}: matrícula à vista {brl_curto(mat(s))}, mais {taxa} de taxa de "
-                       f"inscrição, total à vista {brl_curto(total(s))}. Ver turma e valores")
         destaques_topo.append(f'''
           <div class="v-destaque{" v-destaque-padrao" if i == 0 else ""}" data-curso="{s}">
-            <a class="v-destaque-link v-flutuante" href="?curso={s}#det-{s}" data-abrir-curso="{s}" data-local-curso="destaque_topo" aria-label="{esc(rotulo_aria)}">
+            <a class="v-destaque-link v-flutuante" href="?curso={s}#det-{s}" data-abrir-curso="{s}" data-local-curso="destaque_topo" aria-label="{esc(cursos[s]["nome"])}: ver turmas e valores">
               <p class="v-kicker">Próxima turma em destaque</p>
-              <p class="v-destaque-titulo">{esc(cursos[s]["nome"])}</p>
-              <p class="v-destaque-meta">{esc(cursos[s]["carga_horaria"])} · Escolaridade mínima: {esc(esc_min(s))} · Presencial no Centro do Rio</p>
+              <h2 class="v-destaque-titulo">{esc(cursos[s]["nome"])}</h2>
+              <p class="v-destaque-meta">{esc(cursos[s]["carga_horaria"])} · {esc(escolaridade(s))} · Presencial no Centro do Rio</p>
               <hr class="v-destaque-linha">
               <div class="v-destaque-preco">{preco(s)}{t.bloco_data()}</div>
-              <span class="v-destaque-ver">Ver turma e valores {SVG["seta"]}</span>
+              <span class="v-destaque-ver">Ver turma e inscrever-se {SVG["seta"]}</span>
             </a>
           </div>''')
-    destaques_topo.append(so_breve("destaque do topo", f'''
-          <div class="v-destaque v-destaque-breve{"" if ordem_turmas else " v-destaque-padrao"}">
-            <a class="v-destaque-link v-flutuante" href="#cursos">
-              <p class="v-kicker">Turmas em breve</p>
-              <p class="v-destaque-titulo">As próximas datas saem aqui</p>
-              <p class="v-texto-breve">Os valores de cada curso já estão abaixo. Escolha o curso para entrar na lista da próxima turma ou pedir o aviso da data.</p>
-              <span class="v-destaque-ver">Ver cursos {SVG["seta"]}</span>
-            </a>
-          </div>'''))
+    hero_cartao = f'''
+        <div class="v-hero-cartao">{"".join(destaques_topo)}
+        </div>''' if destaques_topo else ""
     hero = f'''
     <section class="v-hero v-escuro-fundo v-so-geral" aria-labelledby="v-titulo" data-secao="topo">
       {foto_topo()}
       <div class="v-hero-grade">
         <div class="v-hero-texto">
-          <p class="v-olho">Formação presencial no Centro do Rio</p>
-          <h1 class="v-hero-h1" id="v-titulo" tabindex="-1">Cursos presenciais que preparam para&nbsp;<em>agir.</em></h1>
-          <p class="v-hero-lead">Cursos da Escola de Educação e Saúde da Cruz Vermelha Brasileira do Rio de Janeiro, na sede da Praça da Cruz Vermelha, 10. Aulas práticas, com certificado da Cruz Vermelha.</p>
+          <p class="v-olho">Formação presencial no Rio de Janeiro</p>
+          <h1 class="v-hero-h1" id="v-titulo" tabindex="-1">Capacitação que prepara para&nbsp;<em class="v-vermelho">agir.</em></h1>
+          <p class="v-hero-lead">Cursos presenciais da Escola de Educação e Saúde da Cruz Vermelha Brasileira do Rio de Janeiro. Formação prática, responsabilidade e conhecimento para situações que exigem preparo.</p>
           <div class="v-hero-acoes">
-            <a class="v-btn v-btn-vermelho v-btn-grande" href="#cursos">Ver cursos e valores {SVG["seta"]}</a>
-            <a class="v-btn v-btn-contorno-branco v-btn-grande" href="#como-funciona">Como funciona</a>
+            <a class="v-btn v-btn-vermelho v-btn-grande" href="#cursos">Ver cursos disponíveis {SVG["seta"]}</a>
+            <a class="v-btn v-btn-contorno-branco v-btn-grande" href="#escola">Conheça a Escola</a>
           </div>
           <ul class="v-selos" aria-label="Destaques">
             <li><span>{SVG["check"]}</span>Certificado</li>
             <li><span>{SVG["check"]}</span>Aulas presenciais</li>
-            <li><span>{SVG["check"]}</span>Inscrição por PIX ou cartão</li>
+            <li><span>{SVG["check"]}</span>PIX ou cartão</li>
           </ul>
-        </div>
-        <div class="v-hero-cartao">{"".join(destaques_topo)}
-        </div>
+        </div>{hero_cartao}
       </div>
     </section>'''
     destaques = f'''
@@ -2134,17 +2222,29 @@ def main() -> int:
         <ul>
           <li><h2>{SVG["predio"]}Formação presencial</h2><p>Aulas práticas na sede da Cruz Vermelha Brasileira do Rio de Janeiro.</p></li>
           <li><h2>{SVG["medalha"]}Certificação</h2><p>Certificado da Cruz Vermelha ao concluir os requisitos do curso.</p></li>
-          <li><h2>{SVG["calendario"]}Turmas e datas</h2><p>Veja a próxima turma e o total à vista de cada curso antes de se inscrever.</p></li>
-          <li><h2>{SVG["chat"]}Atendimento humano</h2><p>Dúvidas? Pergunte no chat “Fale com a gente”. O que o chat não responder na hora, a equipe responde por e-mail.</p></li>
+          <li><h2>{SVG["calendario"]}Turmas e datas</h2><p>Veja as turmas abertas e as datas antes de fazer sua inscrição.</p></li>
+          <li><h2>{SVG["chat"]}Atendimento humano</h2><p>A secretaria orienta pelo <a href="#chat" data-abrir-chat data-assunto="matricula" data-local="destaques">chat</a> e por e-mail, do primeiro contato à aula.</p></li>
         </ul>
       </div>
     </section>'''
 
     # ============================================================================================================
-    # Modo curso (3.3): uma seção por curso, escondida até o modo curso ligar
+    # Modo curso (1.6, 1.7 e 10.3): uma seção por curso, escondida até o modo curso ligar
     # ============================================================================================================
     fotos_aulas = "".join(f'<li><figure>{foto_real(f, "(min-width: 860px) 25vw, 76vw")}<figcaption>{esc(f["legenda"])}</figcaption></figure></li>'
                           for f in FOTOS_AULAS)
+    aviso_rosa = (f'<p class="v-aviso">{SVG["exclamacao"]}<span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, '
+                  'além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p>')
+
+    def inscrever(s: str, via: str, classe: str = "v-btn v-btn-vermelho v-btn-grande") -> str:
+        return f'<a class="{classe} mr-cta" data-local="{via}" data-curso="{s}" href="{checkout(s, via)}">Inscrever-se {SVG["seta"]}</a>'
+
+    def ver_outros(classe: str = "v-btn v-btn-contorno") -> str:
+        return f'<a class="{classe}" href="./#cursos" data-voltar="cursos">Ver outros cursos {SVG["seta"]}</a>'
+
+    def saber_proxima(s: str, classe: str = "v-btn v-btn-vermelho v-btn-grande") -> str:
+        return (f'<a class="{classe}" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="sem_turma">'
+                'Saber a próxima turma</a>')
 
     def cartao_aberta(s: str) -> str:
         t = turmas[s][0]
@@ -2153,146 +2253,131 @@ def main() -> int:
             <div class="v-cartao-dataline">
               {t.bloco_data()}
               <div>
-                <p class="v-cartao-dia">{esc(t.linha_data)}</p>
-                <p class="v-cartao-hora"><span>{esc(t.linha_horario)}</span><span class="v-dias" data-turma-de="{s}"></span></p>
-                <p class="v-cartao-insc">{esc(t.inscricoes)}</p>
-                <p class="v-cartao-local">{local_junto(t.local)}</p>
+                <p class="v-cartao-dia">Início em {esc(t.data_longa)}</p>
+                <p class="v-cartao-hora"><span>{esc(t.horario)}</span><span class="v-dias" data-turma-de="{s}"></span></p>
               </div>
             </div>
             <hr class="v-destaque-linha">
             {preco(s)}
-            <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="cartao_turma" data-curso="{s}" href="{checkout(s, "cartao_turma")}">Reservar minha vaga {SVG["seta"]}</a>
-            <ul class="v-nota-pagamento">
-              <li><b>Agora: {taxa}.</b> Só a taxa de inscrição, por PIX ou cartão.</li>
-              <li><b>Antes da aula: {brl_curto(mat(s))}.</b> A matrícula, pela internet, na área do aluno. Sem ela, você não entra na aula.</li>
-            </ul>
-            <div class="v-cartao-pes">
-              {devolucao("cartao_turma")}
-              {chat_link("Dúvida antes de se inscrever? Pergunte no chat.", s, "cartao_turma")}
-            </div>'''
+            {inscrever(s, "detalhes")}
+            <p class="v-micro">{micro_pagamento()}</p>
+            {aviso_rosa}'''
 
-    def cartao_breve(s: str) -> str:
-        return so_breve(f"cartão {s}", f'''
+    def cartao_venda(s: str) -> str:
+        """10.3: o curso ainda sem data vende tudo; a pessoa entra na primeira turma que tiver vaga."""
+        return f'''
             <p class="v-kicker">Turmas em breve</p>
-            <p class="v-cartao-breve-titulo">Ainda não há data marcada</p>
-            <p class="v-cartao-breve-texto">A data da próxima turma aparece aqui assim que abrir.</p>
+            <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
+            <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            {preco(s, sufixo=True)}
-            {homologacao_linha(s)}
-            <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="cartao_turma" data-curso="{s}" href="{checkout(s, "cartao_turma")}">Inscrever-se para a próxima turma {SVG["seta"]}</a>
-            <ul class="v-nota-pagamento">
-              <li><b>Agora: {taxa}.</b> Só a taxa de inscrição. Você entra na lista da próxima turma.</li>
-              <li><b>Quando a turma abrir: {brl_curto(mat(s))}.</b> A matrícula, pela internet, na área do aluno.</li>
-              <li><b>Até a turma ser confirmada, você pode desistir e pedir a taxa inteira de volta.</b></li>
-            </ul>
-            {botao_aviso(s)}
-            <div class="v-cartao-pes">{chat_link("Dúvida antes de se inscrever? Pergunte no chat.", s, "cartao_turma")}</div>''')
+            {preco(s)}
+            {inscrever(s, "detalhes")}
+            <p class="v-micro">{micro_pagamento()}</p>
+            <p class="v-promessa">{promessa_sem_turma()}</p>
+            {aviso_rosa}'''
+
+    def cartao_lista(s: str) -> str:
+        """1.7 (volta automática): sem a venda sem turma, o cartão literal da escola, com o chat e a lista de interesse (P2)."""
+        return f'''
+            <p class="v-kicker">Turmas em breve</p>
+            <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
+            <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
+            <hr class="v-destaque-linha">
+            {preco(s)}
+            {saber_proxima(s)}
+            <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="{s}" href="{checkout(s, "detalhes")}">Entrar na lista da próxima turma</a>
+            {aviso_rosa}'''
+
+    def cartao(s: str) -> str:
+        sem_turma_html = sem(s, cartao_venda(s), cartao_lista(s))
+        return variantes(s, cartao_aberta(s), sem_turma_html) if s in com_turma else sem_turma_html
 
     def investimento(s: str) -> str:
-        legenda_aberta = "antes da aula, pela internet, na área do aluno"
-        legenda_breve = "quando a turma abrir, pela internet, na área do aluno"
-        legenda = variantes(s, esc(legenda_aberta), so_breve(f"legenda Investimento {s}", esc(legenda_breve)), "span")
-        aviso_aberta = (f'<p class="v-aviso">{SVG["exclamacao"]}<span><b>Para entrar na aula, a matrícula precisa estar paga.</b> Só com a '
-                        'taxa de inscrição, a sua vaga fica reservada, mas você ainda não pode assistir à aula.</span></p>')
-        aviso_breve = so_breve(f"aviso Investimento {s}", f'<p class="v-aviso">{SVG["exclamacao"]}<span><b>Para entrar na aula, a matrícula precisa estar paga.</b> '
-                               'Com a taxa de inscrição, você entra na lista da próxima turma. A matrícula aparece na área do aluno quando a '
-                               'secretaria colocar você na turma.</span></p>')
-        botao_aberta = f'<a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="investimento" data-curso="{s}" href="{checkout(s, "investimento")}">Reservar minha vaga {SVG["seta"]}</a>'
-        botao_breve = so_breve(f"botão Investimento {s}", f'<a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="investimento" data-curso="{s}" href="{checkout(s, "investimento")}">Inscrever-se para a próxima turma {SVG["seta"]}</a>')
+        homolog = s in HOMOLOGACAO
+        total_rotulo = "Total à vista, com a inscrição" + (' <small>(sem a homologação)</small>' if homolog else "")
+        obs = parc("Valores para pagamento à vista. No parcelamento no cartão incide juros, então o total parcelado é maior; o "
+                   "valor exato de cada parcela aparece na hora da inscrição.", "Valores para pagamento à vista.")
+        exemplo_html = f'<span class="v-se-parc"><span class="v-inv-exemplo" data-exemplo="{s}"></span></span>' if parcelado else ""
+        botao = inscrever(s, "investimento")
+        botao_sem = sem(s, botao, ver_outros("v-btn v-btn-contorno v-btn-largo"))
+        acao = variantes(s, botao, botao_sem) if s in com_turma else botao_sem
         return f'''
           <aside class="v-inv" id="inv-{s}" aria-labelledby="inv-titulo-{s}" data-secao="investimento">
             <p class="v-kicker" id="inv-titulo-{s}">Investimento</p>
             <dl>
-              <div><dt>Taxa de inscrição</dt><dd>{taxa_c}</dd><dd class="v-inv-leg">agora, neste site, por PIX ou cartão</dd></div>
-              <div><dt>Matrícula (o valor do curso), à vista</dt><dd>{brl(mat(s))}</dd><dd class="v-inv-leg">{legenda}</dd></div>
-              <div class="v-inv-total"><dt>Total à vista</dt><dd>{brl(total(s))}</dd></div>
+              <div><dt>Valor da matrícula, à vista</dt><dd>{brl(mat(s))}</dd></div>
+              <div><dt>Taxa de inscrição</dt><dd>{brl(inscricao)}</dd></div>
+              <div class="v-inv-total"><dt>{total_rotulo}</dt><dd>{brl(total(s))}</dd></div>
             </dl>
-            {homologacao_linha(s, nao_entra=True)}
-            <p class="v-inv-obs">Valores para pagamento à vista.</p>
-            {variantes(s, aviso_aberta, aviso_breve)}
-            {variantes(s, botao_aberta, botao_breve)}
+            {f'<p class="v-homolog">{esc(HOMOLOGACAO_OBS)}</p>' if homolog else ""}
+            <p class="v-inv-obs">{obs}</p>{exemplo_html}
+            {acao}
             <div class="v-inv-pes">
-              {devolucao("investimento")}
-              <p class="v-inv-grupo">Grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas? <a href="#empresas" data-turma-abrir="curso" data-curso="{s}" aria-controls="turma-form-bloco">Peça uma turma só de vocês</a></p>
-              {chat_link("Dúvidas? Fale com a gente", s, "investimento")}
+              {chat_link("Dúvidas? Fale com a secretaria", s, "investimento")}
             </div>
           </aside>'''
 
     def turmas_bloco(s: str) -> str:
-        breve = so_breve(f"turmas {s}", f'''
-              <p class="v-kicker">Turmas</p>
+        grupo = (f'<p class="v-turmas-grupo">Grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas? <a href="#empresas" data-turma-abrir="curso" '
+                 f'data-curso="{s}" aria-controls="turma-form-bloco">Peça uma turma só de vocês</a></p>')
+        lista = f'''
+              <p class="v-kicker">Turmas abertas</p>
               <h2 class="v-h2-bloco">Sem turma aberta no momento</h2>
-              <p class="v-turma-caixa">Este curso ainda não tem data. Pagando agora a taxa de inscrição ({taxa}), você entra na lista da próxima turma. Quando a data sair, a secretaria coloca você na turma e avisa por e-mail. Depois do pagamento, você também marca os dias e horários em que pode vir. Até a turma ser confirmada, você pode desistir e pedir a taxa inteira de volta.</p>
+              <p class="v-turma-caixa">Nenhuma turma aberta agora. Volte em breve para conferir as próximas datas ou fale com a secretaria pelo chat.</p>
               <div class="v-turma-botoes">
-                <a class="v-btn v-btn-vermelho mr-cta" data-local="turma" data-curso="{s}" href="{checkout(s, "turma")}">Inscrever-se para a próxima turma {SVG["seta"]}</a>
-                {botao_aviso(s)}
-              </div>''')
+                <a class="v-btn v-btn-vermelho" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="turmas">Falar com a secretaria</a>
+                {ver_outros()}
+              </div>'''
+        # 10.3: com a venda sem turma, o bloco não convida a esperar nem manda a outros cursos; a pessoa se inscreve aqui.
+        venda = f'''
+              <p class="v-kicker">Turmas abertas</p>
+              <h2 class="v-h2-bloco">Ainda não há turma aberta</h2>
+              <p class="v-turma-caixa">Quando a Escola marcar uma turma deste curso, quem já pagou tudo entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
+              <div class="v-turma-botoes">
+                {inscrever(s, "detalhes_fim", "v-btn v-btn-vermelho")}
+                <a class="v-btn v-btn-contorno" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="{s}" data-local="turmas">Falar com a secretaria</a>
+              </div>'''
+        breve = sem(s, venda, lista)
         if s not in com_turma:
-            return breve
-        t = turmas[s][0]
-        depois = turmas[s][1:]
-        depois_html = f'<p class="v-turma-depois">Depois: {esc(", ".join(x.ddmm for x in depois))}</p>' if depois else ""
-        aberta = f'''
-              <p class="v-kicker">Turmas</p>
-              <h2 class="v-h2-bloco">Próxima turma</h2>
+            return breve + grupo
+        linhas = "".join(f'''
               <div class="v-turma-linha">
                 {t.bloco_data()}
                 <div>
-                  <p class="v-cartao-dia">{esc(t.linha_data)}</p>
-                  <p class="v-cartao-hora">{esc(t.linha_horario)} · {local_junto(t.local)}</p>
-                  <p class="v-cartao-insc">{esc(t.inscricoes)}</p>
+                  <p class="v-cartao-dia">Início em {esc(t.data_longa)}</p>
+                  <p class="v-cartao-hora">{esc(t.horario)} · {local_junto(LOCAL_TURMA)}</p>
                 </div>
-                <a class="v-btn v-btn-vermelho mr-cta" data-local="turma" data-curso="{s}" href="{checkout(s, "turma")}">Reservar minha vaga {SVG["seta"]}</a>
-              </div>
-              {depois_html}
-              <p class="v-turma-fina">A inscrição feita aqui entra na próxima turma com vaga. As vagas são limitadas: se a turma lotar antes de o seu pagamento ser confirmado, você entra na lista da próxima e pode pedir a taxa de volta.</p>'''
-        return variantes(s, aberta, breve)
+                {inscrever(s, "detalhes_fim", "v-btn v-btn-vermelho")}
+              </div>''' for t in turmas[s][:1])
+        aberta = f'''
+              <p class="v-kicker">Turmas abertas</p>
+              <h2 class="v-h2-bloco">Próximas turmas.</h2>{linhas}
+              <div class="v-turma-aviso">{aviso_rosa}</div>'''
+        return variantes(s, aberta, breve) + grupo
 
     def faq_do_curso(s: str) -> str:
-        c1_a = (f"Taxa de inscrição: {taxa}. Matrícula (o valor do curso), à vista: {brl_curto(mat(s))}. Total à vista: "
-                f"{brl_curto(total(s))}. ")
-        fim_aberta = (f"A taxa você paga agora, neste site, por PIX ou cartão, e ela reserva a sua vaga. A matrícula você paga antes "
-                      f"da aula, pela internet, na {area}.")
-        fim_breve = ("A taxa você paga agora, neste site, por PIX ou cartão, e você entra na lista da próxima turma. A matrícula você "
-                     "paga quando a turma abrir, pela internet, na área do aluno; a secretaria avisa por e-mail.")
-        perguntas = [("Quanto custa e onde pago cada parte?",
-                      f"<p>{esc(c1_a)}{variantes(s, esc(fim_aberta), so_breve(f'FAQ 1 {s}', esc(fim_breve)), 'span')}</p>")]
-        if s in HOMOLOGACAO:
-            perguntas.append(("A homologação está incluída?",
-                              f"<p>Não. A homologação é feita no fim do curso, à parte, e é paga pelo aluno. Ela não entra no total à vista "
-                              f"de {brl_curto(total(s))}. Pergunte o valor no chat “Fale com a gente” antes de se inscrever.</p>"))
-        perguntas.append(("E se eu pagar a taxa e não pagar a matrícula?", f"<p>{faq6_html}</p>"))
-        ob = (COPY_CURSO.get(s) or {}).get("objecao")
-        temas_ob = [t for t in TEMAS_FAQ if ob and t.search(ob[0])]
-        if ob:
-            perguntas.append((nome_filial(ob[0]), f"<p>{esc(nome_filial(ob[1]))}</p>"))
-        for p, r in faq_catalogo(s):
-            if len(perguntas) >= 7:
-                break
-            if any(p.strip().lower() == x[0].strip().lower() for x in perguntas) or any(t.search(p) for t in temas_ob):
-                continue
-            perguntas.append((nome_filial(p), f"<p>{esc(nome_filial(r))}</p>"))
-        return detalhes(perguntas[:7])
+        return detalhes([(p, esc(r)) for p, r in faq_catalogo(s)])
 
     def secao_curso(s: str) -> str:
         c = cursos[s]
-        chip_presencial = f'{SVG["pino"]}Presencial no Centro do Rio'
-        if s in com_turma:
-            # A data entra no lugar de "Presencial no Centro do Rio" (3.3.1); vencida, volta o presencial.
-            antes = (f'<li class="v-chip-data v-se-aberta" data-turma-de="{s}">{SVG["calendario"]}{esc(turmas[s][0].chip)}</li>'
-                     f'<li class="v-se-breve" data-turma-de="{s}">{chip_presencial}</li>')
-            meio = ""
-        else:
-            antes, meio = "", f"<li>{chip_presencial}</li>"
-        chips_html = (f'{antes}<li>{SVG["relogio"]}{esc(c["carga_horaria"])}</li>'
-                      f'<li>{SVG["capelo"]}Escolaridade mínima: {esc(esc_min(s))}</li>{meio}<li>{SVG["medalha"]}Certificado</li>')
+        chips_html = (f'<li>{SVG["relogio"]}{esc(c["carga_horaria"])}</li><li>{SVG["capelo"]}{esc(escolaridade(s))}</li>'
+                      f'<li>{SVG["pino"]}Presencial no Centro do Rio</li><li>{SVG["medalha"]}Certificado</li>')
         sobre = "".join(f"<p>{esc(nome_filial(p))}</p>" for p in c.get("sobre") or [] if not EXCLUIR_CATALOGO.search(p))
-        obs = "".join(f'<p class="v-obs">{esc(nome_filial(o))}</p>' for o in c.get("observacoes") or [])
-        passo3_aberta = (f'<h3>Pague a matrícula antes da aula</h3><p>{brl_curto(mat(s))} à vista, pela internet, na área do aluno. '
-                         'Com ela paga, você pode entrar na aula.</p>')
-        passo3_breve = so_breve(f"passo 3 {s}", f'<h3>Pague a matrícula quando a turma abrir</h3><p>{brl_curto(mat(s))} à vista, na área do aluno. '
-                                'A secretaria avisa a data por e-mail.</p>')
+        sobre += "".join(f"<p>{esc(nome_filial(o))}</p>" for o in c.get("observacoes") or [] if o.strip() not in OBS_FORA)
         cert = cert_img(s, "(min-width: 980px) 380px, 100vw")
+        perguntas = faq_catalogo(s)
+        faq_bloco = f'''
+      <section class="v-curso-faq" id="duvidas-{s}" aria-labelledby="duvidas-titulo-{s}" data-secao="faq_curso">
+        <div class="v-wrap v-faq-grade">
+          <div class="v-faq-cab">
+            <p class="v-kicker">Dúvidas frequentes</p>
+            <h2 class="v-h2" id="duvidas-titulo-{s}">Sobre este curso.</h2>
+            <p class="v-faq-texto">Não encontrou o que procura? <a href="#chat" data-abrir-chat data-assunto="curso" data-curso="{s}" data-local="faq">Fale com a secretaria pelo chat.</a></p>
+            <a class="v-btn v-btn-preto" href="#chat" data-abrir-chat data-assunto="curso" data-curso="{s}" data-local="faq">Falar com a secretaria {SVG["chat"]}</a>
+          </div>
+          <div class="v-faq-lista">{faq_do_curso(s)}</div>
+        </div>
+      </section>''' if perguntas else ""
         return f'''
     <article class="v-curso mr-detalhe" id="det-{s}" data-curso="{s}" aria-labelledby="titulo-{s}">
       <div class="v-curso-topo v-escuro-fundo" data-secao="curso_topo">
@@ -2302,10 +2387,10 @@ def main() -> int:
             <a class="v-voltar" href="./#cursos" data-voltar="cursos">{SVG["voltar"]}Todos os cursos</a>
             <p class="v-olho">Curso presencial</p>
             <h2 class="v-curso-h1" id="titulo-{s}" tabindex="-1">{esc(c["nome"])}</h2>
-            <p class="v-curso-apoio">{esc(apoio(s))}</p>
+            <p class="v-curso-apoio">{esc(beneficio(s))}</p>
             <ul class="v-chips-topo" aria-label="Sobre o curso">{chips_html}</ul>
           </div>
-          <div class="v-cartao v-flutuante">{variantes(s, cartao_aberta(s), cartao_breve(s)) if s in com_turma else cartao_breve(s)}
+          <div class="v-cartao v-flutuante">{cartao(s)}
           </div>
           <ul class="v-prova" aria-label="Por que a Cruz Vermelha" data-secao="prova">
             <li>{SVG["historia"]}Forma pessoas no Rio desde 1914</li>
@@ -2316,43 +2401,22 @@ def main() -> int:
       </div>
       <div class="v-curso-corpo-sec">
         <div class="v-wrap v-curso-corpo">{investimento(s)}
-          <section class="v-bloco" id="como-{s}" aria-labelledby="como-titulo-{s}" data-secao="como_inscrever">
-            <p class="v-kicker">Inscrição</p>
-            <h2 class="v-h2-bloco" id="como-titulo-{s}">Como funciona a inscrição</h2>
-            <ol class="v-passos-curso">
-              <li><div><h3>Pague a taxa de inscrição aqui</h3><p>{taxa}, por PIX ou cartão, sem criar conta antes.</p></div></li>
-              <li><div><h3>Receba o acesso à área do aluno</h3><p>A área do aluno fica no site da Escola (escola.cursoscruzvermelha.org). Se você ainda não tem conta, ela é criada para você, com o e-mail da inscrição. O link para criar a senha chega assim que a taxa é confirmada e vale 72 horas. Se já tem conta, use a mesma senha.</p></div></li>
-              <li><div>{variantes(s, passo3_aberta, passo3_breve)}</div></li>
-            </ol>
+          <section class="v-bloco" id="sobre-{s}" aria-labelledby="sobre-titulo-{s}" data-secao="sobre">
+            <p class="v-kicker">Sobre o curso</p>
+            <h2 class="v-h2-bloco" id="sobre-titulo-{s}">O que você vai aprender</h2>
+            <div class="v-prosa" style="margin-top:18px">{sobre}</div>
+            <h3 class="v-fotos-curso-titulo">Aqui você aprende fazendo.</h3>
+            <ul class="v-fotos" tabindex="0" aria-label="Fotos das aulas">{fotos_aulas}</ul>
+          </section>
+          <section class="v-bloco" id="turmas-{s}" aria-label="Turmas" data-secao="turmas">{turmas_bloco(s)}
           </section>
           <section class="v-bloco" aria-labelledby="cert-titulo-{s}" data-secao="certificado_curso">
             <p class="v-kicker">Certificado</p>
             <h2 class="v-h2-bloco" id="cert-titulo-{s}">Seu certificado</h2>
             <figure class="v-cert-curso">{cert}<figcaption>{esc(CERT_NOTA)}</figcaption></figure>
           </section>
-          <section class="v-bloco" aria-labelledby="sobre-titulo-{s}" data-secao="sobre">
-            <p class="v-kicker">Sobre o curso</p>
-            <h2 class="v-h2-bloco" id="sobre-titulo-{s}">O que você vai aprender</h2>
-            <div class="v-prosa" style="margin-top:18px">{sobre}</div>
-            {obs}
-            <h3 class="v-fotos-curso-titulo">Aqui você aprende fazendo.</h3>
-            <ul class="v-fotos" tabindex="0" aria-label="Fotos das aulas">{fotos_aulas}</ul>
-          </section>
-          <section class="v-bloco" id="turmas-{s}" aria-label="Turmas" data-secao="turmas">{turmas_bloco(s)}
-          </section>
         </div>
-      </div>
-      <section class="v-curso-faq" id="duvidas-{s}" aria-labelledby="duvidas-titulo-{s}" data-secao="faq_curso">
-        <div class="v-wrap v-faq-grade">
-          <div class="v-faq-cab">
-            <p class="v-kicker">Dúvidas frequentes</p>
-            <h2 class="v-h2" id="duvidas-titulo-{s}">Sobre este curso.</h2>
-            <p class="v-faq-texto">Não encontrou o que procura? Pergunte no chat “Fale com a gente”.</p>
-            <a class="v-btn v-btn-preto" href="#chat" data-abrir-chat data-assunto="curso" data-curso="{s}" data-local="faq">Abrir o chat {SVG["chat"]}</a>
-          </div>
-          <div class="v-faq-lista">{faq_do_curso(s)}</div>
-        </div>
-      </section>
+      </div>{faq_bloco}
     </article>'''
 
     secoes_curso = "".join(secao_curso(s) for s in exibicao)
@@ -2364,8 +2428,8 @@ def main() -> int:
           <div class="v-chegar-curso-texto">
             <p class="v-kicker">Como chegar</p>
             <h2 id="chegar-curso-titulo">Praça da Cruz Vermelha, 10</h2>
-            <p>Centro · Rio de Janeiro – RJ · CEP 20230-130</p>
-            <p>As aulas acontecem aqui, na sede da Cruz Vermelha Brasileira.</p>
+            <p>Centro · Rio de Janeiro – RJ</p>
+            <p>As aulas acontecem aqui, na sede da Cruz Vermelha Brasileira Rio de Janeiro.</p>
             <div class="v-chegar-acoes"><a class="v-btn v-btn-vermelho" href="{MAPA_ROTA}" target="_blank" rel="noopener">Abrir no Google Maps {SVG["externo"]}</a></div>
             <small>{esc(MAPA_ESTATICO["credito"])}</small>
           </div>
@@ -2393,51 +2457,68 @@ def main() -> int:
             restantes -= 1
 
     def card(s: str, posicao: int) -> str:
+        """Card da escola (1.5): selo, nome completo, descrição curta, meta, preço em três linhas e o círculo "Ver curso"."""
         c = cursos[s]
         largo = s in com_turma and posicao == 0
-        aria_breve = (f"{c['nome']}, turmas em breve: matrícula à vista {brl_curto(mat(s))}, mais {taxa} de taxa de inscrição, "
-                      f"total à vista {brl_curto(total(s))}. Ver turma e valores")
+        aria = f"{c['nome']}: ver turmas e valores"
         if s in com_turma:
             t = turmas[s][0]
-            aria = (f"{c['nome']}, {t.dia}, {t.data_extenso}: matrícula à vista {brl_curto(mat(s))}, mais {taxa} de taxa de inscrição, "
-                    f"total à vista {brl_curto(total(s))}. Ver turma e valores")
             selo = variantes(s, '<span class="v-selo"><i class="v-ponto" aria-hidden="true"></i>Inscrições abertas</span>',
                              '<span class="v-selo">Turmas em breve</span>', "span")
-            chip_turma = variantes(s, f'<span class="v-chip">Turma {t.ddmm}</span>', "", "span")
-            extra = f' data-aria-breve="{esc(aria_breve)}"'
+            chip_turma = variantes(s, f'<span class="v-chip">Início {t.ddmm}</span>', "", "span")
         else:
-            aria, selo, chip_turma, extra = aria_breve, '<span class="v-selo">Turmas em breve</span>', "", ""
+            selo, chip_turma = '<span class="v-selo">Turmas em breve</span>', ""
         classes = "v-card" + (" v-card-largo" if largo else "") + ("" if s in com_turma else " v-card-compacto")
         return f'''
-          <a class="{classes}" id="curso-{s}" data-curso="{s}" data-abrir-curso="{s}" href="?curso={s}#det-{s}" aria-label="{esc(aria)}"{extra} style="--span:{spans[posicao] if posicao < len(spans) else 4}">
+          <a class="{classes}" id="curso-{s}" data-curso="{s}" data-abrir-curso="{s}" href="?curso={s}#det-{s}" aria-label="{esc(aria)}" style="--span:{spans[posicao] if posicao < len(spans) else 4}">
             <div class="v-card-foto">{foto_curso(s, "(min-width: 980px) 40vw, (min-width: 651px) 50vw, 100vw", "", "lazy")}{selo}</div>
             <div class="v-card-corpo">
               {"" if s in com_turma else '<p class="v-card-estado">Turmas em breve</p>'}
-              <h3 class="v-card-titulo">{esc(curto(s) if not largo else c["nome"])}</h3>
-              <p class="v-card-apoio">{esc(apoio(s))}</p>
-              <p class="v-card-desc">{esc(beneficio(s))}</p>
-              <p class="v-chips"><span class="v-chip">{esc(c["carga_horaria"])}</span><span class="v-chip">Mín. {esc(esc_min(s))}</span><span class="v-chip">Presencial</span>{chip_turma}</p>
+              <h3 class="v-card-titulo">{esc(c["nome"])}</h3>
+              <p class="v-card-desc{' v-card-desc-fixa' if s in HOMOLOGACAO else ''}">{esc(beneficio(s))}</p>
+              <p class="v-chips"><span class="v-chip">{esc(c["carga_horaria"])}</span><span class="v-chip">{esc(escolaridade(s))}</span><span class="v-chip">Presencial</span>{chip_turma}</p>
               <div class="v-card-rodape">
                 {preco(s)}
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>{brl_curto(mat(s))}</b></p><p class="v-pc-taxa">+ {taxa} de taxa de inscrição</p><p class="v-pc-total">Total à vista: {brl_curto(total(s))}</p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>{brl_curto(mat(s))}</b></p><p class="v-pc-taxa">+ {taxa} de taxa de inscrição</p></div>
                 <span class="v-card-seta" aria-hidden="true">{SVG["seta"]}</span>
               </div>
             </div>
           </a>'''
+
+    # Agenda "Próximas turmas." (1.4): antes da grade, só com turma aberta; cada linha some quando a turma vence.
+    linhas_agenda = []
+    for s in ordem_turmas:
+        for t in turmas[s]:
+            linhas_agenda.append(f'''
+          <div class="v-se-aberta" data-turma-de="{s}"><div class="v-turma-linha v-agenda-linha">
+            {t.bloco_data()}
+            <div>
+              <p class="v-cartao-dia">{esc(cursos[s]["nome"])}</p>
+              <p class="v-agenda-meta"><span class="v-dias" data-turma-de="{s}"></span><span>{esc(t.horario)}</span><span>{esc(cursos[s]["carga_horaria"])}</span><span>Centro do Rio</span></p>
+              <p class="v-agenda-preco">Matrícula à vista <b>{brl_curto(mat(s))}</b> + {taxa} de taxa de inscrição</p>
+            </div>
+            {inscrever(s, "agenda", "v-btn v-btn-vermelho")}
+          </div></div>''')
+    agenda = f'''
+        <div class="v-agenda v-so-geral" aria-labelledby="agenda-titulo">
+          <p class="v-kicker">Inscrições abertas</p>
+          <h3 class="v-h3" id="agenda-titulo">Próximas turmas.</h3>
+          <p class="v-agenda-sub">Turmas com inscrições abertas, da mais próxima para a mais distante.</p>{"".join(linhas_agenda)}
+        </div>''' if linhas_agenda else ""
 
     cursos_sec = f'''
     <section class="v-cursos v-secao" id="cursos" aria-labelledby="cursos-titulo" data-secao="cursos">
       <div class="v-wrap">
         <div class="v-cab-secao">
           <div>
-            <p class="v-kicker"><span class="v-so-geral">Cursos presenciais</span><span class="v-so-curso">Veja também</span></p>
+            <p class="v-kicker"><span class="v-so-geral">Cursos em destaque</span><span class="v-so-curso">Veja também</span></p>
             <h2 class="v-h2" id="cursos-titulo" tabindex="-1"><span class="v-so-geral">Formação para cuidar, prevenir e responder.</span><span class="v-so-curso">Outros cursos da Escola.</span></h2>
           </div>
-          <p class="v-so-geral">Turmas presenciais no Centro do Rio. Escolha o curso para ver a próxima turma, a carga horária, os valores e fazer sua inscrição.</p>
-        </div>
+          <p class="v-so-geral">Turmas presenciais no Centro do Rio. Escolha o curso para ver as datas, a carga horária, os valores e fazer sua inscrição.</p>
+        </div>{agenda}
+        <h3 class="v-sr v-so-geral">Cursos disponíveis.</h3>
         <div class="v-grade">{"".join(card(s, i) for i, s in enumerate(exibicao))}
         </div>
-        <p class="v-nota-preco v-so-geral">Valores à vista. Você paga em duas partes: a taxa de inscrição, de {taxa}, igual em todos os cursos, neste site, na hora da inscrição; e a matrícula (o valor do curso), antes da aula, pela internet, na {area}.</p>
         <p class="v-linha-grupos v-so-geral">Empresa, escola ou grupo de {TURMA_MINIMO} a {TURMA_MAXIMO} pessoas? <a class="v-link" href="#empresas" data-turma-abrir="catalogo" aria-controls="turma-form-bloco">Peça uma turma só de vocês {SVG["seta"]}</a></p>
       </div>
     </section>'''
@@ -2445,14 +2526,16 @@ def main() -> int:
     # ============================================================================================================
     # 6–12. como funciona, certificado, quem somos, depoimentos, dúvidas, empresas e chamada final
     # ============================================================================================================
+    # Com a venda sem turma no ar (html[data-venda-geral="1"]), "na turma aberta": sem turma, quem paga só a taxa entra na
+    # lista de interesse (10.4).
+    aberta_geral = '<span class="v-se-venda-geral"> aberta</span>' if venda_sem_turma else ""
+    passo2_a = "Preencha seus dados e pague a taxa de inscrição (" + taxa + "), que reserva a sua vaga na turma"
+    passo2_b = ". A matrícula, que é o valor do curso, pode ser paga junto com a inscrição, "
     passos = [
-        ("Escolha seu curso.", "Veja a carga horária, a escolaridade mínima, o total à vista e a próxima turma de cada curso."),
-        ("Pague a taxa de inscrição.", f"{taxa}, por PIX ou cartão, neste site, sem criar conta antes. Com turma aberta, a taxa reserva a "
-                                       "sua vaga. Sem turma, você entra na lista da próxima."),
-        ("Pague a matrícula e venha para a aula.", f"A matrícula (o valor do curso) é paga antes da aula, pela internet, na {area}. Se você "
-                                                   "ainda não tem conta lá, ela é criada para você, e o link para criar a senha chega no "
-                                                   "seu e-mail. Com a matrícula paga, você pode entrar na aula. A data, o horário e o "
-                                                   "local estão no e-mail de confirmação e na área do aluno."),
+        ("Encontre sua formação.", esc("Veja carga horária, escolaridade mínima, valores e as próximas turmas de cada curso.")),
+        ("Faça sua inscrição.", esc(passo2_a) + aberta_geral + esc(passo2_b) + parc("à vista ou parcelada no cartão.", "à vista.")),
+        ("Receba as orientações da Escola.", esc("Antes da primeira aula, você recebe por e-mail e na sua conta as orientações da turma: "
+                                                 "data, horário, local e o que vestir. A entrada na aula é liberada com a matrícula paga.")),
     ]
     como = f'''
     <section class="v-como v-secao v-escuro-fundo v-so-geral" id="como-funciona" aria-labelledby="como-titulo" data-secao="como_funciona">
@@ -2462,9 +2545,8 @@ def main() -> int:
           <p class="v-kicker">Como funciona</p>
           <h2 class="v-como-h2" id="como-titulo"><span>Escolha.</span> <span>Inscreva-se.</span> <span>Prepare-se.</span></h2>
           <div class="v-como-acoes"><a class="v-btn v-btn-branco v-btn-grande" href="#cursos">Escolher meu curso {SVG["seta"]}</a></div>
-          <p class="v-como-nota">Desistiu? Em até 7 dias depois de cada pagamento, você recebe de volta o que pagou, sem precisar explicar. <a href="/reembolso/">Regras de cancelamento e reembolso</a></p>
         </div>
-        <ol class="v-passos">{"".join(f'<li><span class="v-passos-num" aria-hidden="true">0{i}</span><div><h3>{esc(t)}</h3><p>{esc(d)}</p></div></li>' for i, (t, d) in enumerate(passos, 1))}</ol>
+        <ol class="v-passos">{"".join(f'<li><span class="v-passos-num" aria-hidden="true">0{i}</span><div><h3>{esc(t)}</h3><p>{d}</p></div></li>' for i, (t, d) in enumerate(passos, 1))}</ol>
       </div>
     </section>'''
     certificado = f'''
@@ -2491,13 +2573,13 @@ def main() -> int:
             <h2 id="escola-titulo">Uma escola dentro de uma instituição humanitária.</h2>
             <div class="v-painel-prosa">
               <p>A Escola de Educação e Saúde é o centro de formação da Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p>
-              <p>As turmas são presenciais e práticas. Ao concluir, o aluno recebe o certificado da Cruz Vermelha Brasileira.</p>
-              <p>A Cruz Vermelha forma pessoas no Rio desde 20 de outubro de 1914, quando começou o primeiro curso, de Enfermeiras Voluntárias. As aulas são no Palácio da Cruz Vermelha, tombado como patrimônio cultural federal. <a href="/historia/">Conheça nossa história →</a></p>
+              <p>As turmas são presenciais e práticas, com instrutores qualificados. Ao concluir, o aluno recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro.</p>
+              <p><a href="/historia/">Conheça nossa história →</a></p>
             </div>
             <dl>
               <div><dt>Local</dt><dd>Praça da Cruz Vermelha, 10 · Centro</dd></div>
               <div><dt>Modalidade</dt><dd>Presencial</dd></div>
-              <div><dt>Pagamento</dt><dd>Taxa de inscrição neste site, por PIX ou cartão. Matrícula antes da aula, pela internet, na área do aluno, pelo valor à vista.</dd></div>
+              <div><dt>Pagamento</dt><dd>{parc("PIX ou cartão, à vista ou parcelado", "PIX ou cartão, à vista")}</dd></div>
               <div><dt>Atendimento</dt><dd>Chat “Fale com a gente” e {EMAIL_CONTATO}</dd></div>
             </dl>
           </div>
@@ -2513,8 +2595,8 @@ def main() -> int:
           <div class="v-chegar-cartao v-flutuante">
             <p class="v-kicker">Como chegar</p>
             <h3>Praça da Cruz Vermelha, 10</h3>
-            <p class="v-chegar-end">Centro · Rio de Janeiro – RJ · CEP 20230-130</p>
-            <p class="v-chegar-texto">As aulas acontecem aqui, na sede da Cruz Vermelha Brasileira.</p>
+            <p class="v-chegar-end">Centro · Rio de Janeiro – RJ</p>
+            <p class="v-chegar-texto">As aulas acontecem aqui, na sede da Cruz Vermelha Brasileira Rio de Janeiro.</p>
             <div class="v-chegar-acoes">
               <a class="v-btn v-btn-vermelho" href="{MAPA_ROTA}" target="_blank" rel="noopener">Abrir no Google Maps {SVG["externo"]}</a>
               <button class="v-btn v-btn-contorno" type="button" id="mr-mapa-carregar" data-src="{MAPA_EMBED}">Ver mapa interativo</button>
@@ -2539,15 +2621,15 @@ def main() -> int:
     </section>'''
     else:
         depoimentos = ""
-    faq_lista = [(p, faq_texto(r), faq_html(r, h)) for p, r, h in FAQ_GERAL]
+    faq_lista = FAQ_GERAL
     faq_sec = f'''
     <section class="v-secao v-so-geral" id="duvidas" aria-labelledby="faq-titulo" data-secao="faq">
       <div class="v-wrap v-faq-grade">
         <div class="v-faq-cab">
           <p class="v-kicker">Perguntas frequentes</p>
           <h2 class="v-h2" id="faq-titulo">Antes de se inscrever.</h2>
-          <p class="v-faq-texto">Não encontrou o que procura? Pergunte no chat “Fale com a gente”.</p>
-          <a class="v-btn v-btn-preto" href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Abrir o chat {SVG["chat"]}</a>
+          <p class="v-faq-texto">Não encontrou o que procura? <a href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Fale com a secretaria pelo chat.</a></p>
+          <a class="v-btn v-btn-preto" href="#chat" data-abrir-chat data-assunto="matricula" data-local="faq">Falar com a secretaria {SVG["chat"]}</a>
         </div>
         <div class="v-faq-lista">{detalhes([(p, h) for p, _, h in faq_lista])}</div>
       </div>
@@ -2575,17 +2657,7 @@ def main() -> int:
       </div>
       __TURMA_DIALOG__
     </section>'''
-    final = f'''
-    <section class="v-final v-secao v-escuro-fundo v-so-geral" aria-labelledby="final-titulo" data-secao="final">
-      <div class="v-wrap">
-        <h2 id="final-titulo">Pronto para começar?</h2>
-        <p>Escolha o curso, veja a próxima turma e o total à vista, e faça sua inscrição.</p>
-        <div class="v-final-acoes">
-          <a class="v-btn v-btn-branco v-btn-grande" href="#cursos">Ver cursos e valores {SVG["seta"]}</a>
-          <a class="v-btn v-btn-contorno-branco v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-local="final">Tirar dúvida no chat</a>
-        </div>
-      </div>
-    </section>'''
+    final = ""  # chamada final "Pronto para começar?" sai (R0 da spec)
 
     # ============================================================================================================
     # 13. rodapé, barra fixa e dialogs
@@ -2619,7 +2691,8 @@ def main() -> int:
     </div>
     <div class="v-rodape-faixa">
       <div class="v-wrap">
-        <p>© 2026 Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro · CNPJ {CNPJ_FILIAL}</p>
+        <p>© 2026 Escola de Educação e Saúde · Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro</p>
+        <p>Quem vende os cursos: {RECEBEDOR_NOME} · CNPJ <span style="white-space:nowrap">{RECEBEDOR_CNPJ}</span></p>
         <p class="v-rodape-legal">
           <a href="/privacidade/">Política de Privacidade</a>
           <a href="/termos/">Termos de Uso</a>
@@ -2632,43 +2705,10 @@ def main() -> int:
   </footer>'''
     barra = f'''
   <div class="v-barra" id="mr-barra" role="region" aria-label="Inscrição no curso" hidden>
-    <div class="v-barra-texto"><span class="v-barra-rotulo">Total à vista</span><b class="v-barra-valor" id="mr-barra-nome"></b><span class="v-barra-agora" id="mr-barra-sub">Agora: taxa de {taxa}</span></div>
-    <a class="v-btn v-btn-vermelho mr-cta" id="mr-barra-cta" data-local="barra" data-curso="" href="{CHECKOUT_URL}?via=barra"><span class="v-barra-longo">Reservar vaga</span><span class="v-barra-curto">Reservar</span>{SVG["seta"]}</a>
+    <div class="v-barra-texto"><span class="v-barra-rotulo" id="mr-barra-rotulo">Total à vista</span><b class="v-barra-valor" id="mr-barra-nome"></b></div>
+    <a class="v-btn v-btn-vermelho mr-cta" id="mr-barra-cta" data-local="barra" data-curso="" href="{CHECKOUT_URL}?via=barra"><span class="v-barra-longo">Inscrever-se</span><span class="v-barra-curto">Inscrever-se</span>{SVG["seta"]}</a>
   </div>'''
-    aviso_dialog = f'''
-  <dialog class="mr-modal v-aviso-dialog" id="aviso-data" aria-labelledby="aviso-titulo">
-    <button class="mr-modal-fechar" type="button" data-aviso-fechar aria-label="Fechar">&times;</button>
-    <form id="aviso-form" novalidate>
-      <h2 id="aviso-titulo">Avisamos quando abrir a turma de <span data-aviso-curso>este curso</span></h2>
-      <input type="hidden" name="curso" value="">
-      <div class="mr-tf-grade" style="margin-top:18px">
-        <div class="mr-tf-campo mr-tf-largo">
-          <label for="aviso-nome">Seu nome</label>
-          <input id="aviso-nome" name="nome" maxlength="120" autocomplete="name" required>
-          <p class="mr-tf-erro" id="aviso-erro-nome" hidden></p>
-        </div>
-        <div class="mr-tf-campo mr-tf-largo">
-          <label for="aviso-email">Seu e-mail</label>
-          <input id="aviso-email" name="email" type="email" maxlength="190" autocomplete="email" required>
-          <p class="mr-tf-erro" id="aviso-erro-email" hidden></p>
-        </div>
-        <div class="mr-tf-campo mr-tf-largo">
-          <label class="mr-tf-check"><input type="checkbox" name="consentimento" required> Autorizo a Cruz Vermelha Brasileira Rio de Janeiro a me avisar por e-mail quando abrir a turma deste curso.</label>
-          <p class="mr-tf-erro" id="aviso-erro-consentimento" hidden></p>
-        </div>
-      </div>
-      <div class="mr-tf-armadilha" aria-hidden="true"><label for="aviso-site">Não preencha</label><input id="aviso-site" name="site" tabindex="-1" autocomplete="off"></div>
-      <p class="mr-tf-erro geral" id="aviso-erro" tabindex="-1" role="alert" hidden></p>
-      <button class="v-btn v-btn-vermelho" id="aviso-enviar" type="submit">Avise-me</button>
-      <p class="mr-tf-dica">Nada é cobrado. Usamos o seu e-mail só para este aviso.</p>
-    </form>
-    <div class="mr-tf-ok" id="aviso-ok" tabindex="-1" hidden>
-      {SVG["check-circulo"]}
-      <h2>Aviso anotado</h2>
-      <p id="aviso-ok-texto"></p>
-      <button class="v-btn v-btn-contorno" type="button" data-aviso-fechar>Fechar</button>
-    </div>
-  </dialog>'''
+    aviso_dialog = ""  # "Prefiro ser avisado da data" sai: sem turma, a ficha segue a 10.3 ou a 1.7 (chat)
 
     # --- dados estruturados (3.1) ------------------------------------------------------------------------------
     provedor = {"@type": "EducationalOrganization", "@id": f"{ESCOLA}/#escola",
@@ -2679,10 +2719,9 @@ def main() -> int:
         c = cursos[s]
         descricao = nome_filial(c["descricao"] or (c["sobre"][0] if c["sobre"] else ""))
         if s in HOMOLOGACAO:
-            descricao = descricao.rstrip() + " Homologação à parte, paga pelo aluno no fim do curso."
+            descricao = descricao.rstrip() + " " + HOMOLOGACAO_OBS
         oferta = {"@type": "Offer", "category": "Paid", "name": "Matrícula à vista + taxa de inscrição",
                   "price": f"{total(s) / 100:.2f}", "priceCurrency": "BRL",
-                  "availability": "https://schema.org/InStock" if s in com_turma else "https://schema.org/PreOrder",
                   "url": f"{URL_PAGINA}?curso={s}",
                   "priceSpecification": {"@type": "CompoundPriceSpecification", "price": f"{total(s) / 100:.2f}", "priceCurrency": "BRL",
                                          "priceComponent": [
@@ -2690,6 +2729,12 @@ def main() -> int:
                                               "price": f"{mat(s) / 100:.2f}", "priceCurrency": "BRL"},
                                              {"@type": "UnitPriceSpecification", "name": "Taxa de inscrição",
                                               "price": f"{inscricao / 100:.2f}", "priceCurrency": "BRL"}]}}
+        # PreOrder só quando a página publicada vende sem turma (passo 5b, VENDA_SEM_TURMA_HTML=1); antes, o curso sem turma
+        # fica sem availability (o checkout ainda não vende tudo nele).
+        if s in com_turma:
+            oferta["availability"] = "https://schema.org/InStock"
+        elif VENDA_SEM_TURMA_HTML and s in venda_sem_turma:
+            oferta["availability"] = "https://schema.org/PreOrder"
         instancia = {"@type": "CourseInstance", "courseMode": "Onsite"}
         if horas_iso(c["carga_horaria"]):
             instancia["courseWorkload"] = horas_iso(c["carga_horaria"])
@@ -2727,6 +2772,9 @@ def main() -> int:
     for s in exibicao:
         css_modo.append(f'html[data-curso="{s}"] .v-curso[data-curso="{s}"]{{display:block}}')
         css_modo.append(f'html[data-curso="{s}"] .v-card[data-curso="{s}"]{{display:none}}')
+    for s in venda_sem_turma:
+        css_modo.append(f'html[data-lista~="{s}"] .v-se-venda[data-curso-de="{s}"],'
+                        f'html:not([data-lista~="{s}"]) .v-se-lista[data-curso-de="{s}"]{{display:none!important}}')
     for s in com_turma:
         css_modo.append(f'html[data-breve~="{s}"] .v-se-aberta[data-turma-de="{s}"],'
                         f'html:not([data-breve~="{s}"]) .v-se-breve[data-turma-de="{s}"]{{display:none!important}}')
@@ -2750,32 +2798,42 @@ def main() -> int:
     topo_pc = f"/assets/otim/{FOTO_TOPO_PC['base']}-{FOTO_TOPO_PC['largura']}.webp"
     preload_geral = (f"pl({json.dumps(topo_cel)},{json.dumps(srcset_otim(FOTO_TOPO))},'(max-width: 650px)');"
                      f"pl({json.dumps(topo_pc)},{json.dumps(srcset_otim(FOTO_TOPO_PC))},'(min-width: 651px)');")
+    # Ficha sem turma padrão (antes do info.php e sem JS): a da 1.7 em todos os cursos da lista, salvo com
+    # VENDA_SEM_TURMA_HTML=1. Parcelado: "1" só com "parcelado_no_ar": true (o JS volta a "0" com parcelas_max = 1).
+    lista_padrao = [] if VENDA_SEM_TURMA_HTML else venda_sem_turma
+    lista_js = ((f"d.setAttribute('data-lista',{json.dumps(' '.join(lista_padrao))});" if lista_padrao else "")
+                + f"d.setAttribute('data-venda-geral','{'1' if (VENDA_SEM_TURMA_HTML and venda_sem_turma) else '0'}');"
+                + f"d.setAttribute('data-aprazo','{'1' if parcelado else '0'}');")
     modo_js = ("(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{"
                f"{preload_fn}var S={json.dumps(exibicao)},T={json.dumps(turmas_js)},O={json.dumps(ordem_turmas)},P={json.dumps(capas_js)},agora=Date.now(),breve=[],dias=[],dest='breve',hoje;"
+               f"{lista_js}"
                "try{hoje=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(agora));}"
                "catch(e){hoje=new Date(agora-108e5).toISOString().slice(0,10);}"
                "var h=hoje.split('-');"
                "for(var k in T){if(agora>T[k][0])breve.push(k);else{var i=T[k][1].split('-'),"
                "n=Math.round((Date.UTC(+i[0],i[1]-1,+i[2])-Date.UTC(+h[0],h[1]-1,+h[2]))/864e5);"
-               "if(n>=1){dias.push(k);d.style.setProperty('--v-dias-'+k,'\"'+(n===1?'Começa amanhã':'Começa em '+n+' dias')+'\"');}}}"
+               "if(n>=0){dias.push(k);d.style.setProperty('--v-dias-'+k,'\"'+(n===0?'Começa hoje':n===1?'Começa em 1 dia':'Começa em '+n+' dias')+'\"');}}}"
                "for(var j=0;j<O.length;j++)if(breve.indexOf(O[j])<0){dest=O[j];break;}"
                "if(breve.length)d.setAttribute('data-breve',breve.join(' '));"
                "if(dias.length)d.setAttribute('data-dias',dias.join(' '));"
-               "d.setAttribute('data-destaque',dest);"
+               "d.setAttribute('data-destaque',dest);d.setAttribute('data-agenda',dest==='breve'?'0':'1');"
                "var q=new URLSearchParams(location.search),c=q.get('curso');"
                "if(!c){var m=location.hash.match(/^#(?:det|curso)-([a-z0-9-]+)$/);if(m)c=m[1];}"
                "if(c&&!q.get('turma')&&S.indexOf(c)>=0){d.setAttribute('data-curso',c);if(P[c])pl(P[c][0],P[c][1],'');}"
                f"else{{{preload_geral}}}"
                "}catch(e){}})();")
 
-    dados_js = {s: {"nome": cursos[s]["nome"], "curto": curto(s), "matricula": mat(s) / 100, "total": total(s) / 100,
-                    "total_txt": brl_curto(total(s)), "turma": s in com_turma,
-                    "titulo": TITULO_CURSO.format(curso=cursos[s]["nome"])} for s in exibicao}
+    dados_js = {s: {"nome": cursos[s]["nome"], "matricula": mat(s) / 100, "total": total(s) / 100,
+                    "total_txt": brl_curto(total(s)), "turma": s in com_turma, "venda": s in venda_sem_turma,
+                    "homolog": s in HOMOLOGACAO, "titulo": TITULO_CURSO.format(curso=cursos[s]["nome"])} for s in exibicao}
     css = (CSS_PAGINA.replace("@@FONTES@@", fontes_da_home(home))
            .replace("@@CSS_MODO@@", "/* modo curso, turmas e dias (gerado por slug) */\n    " + "\n    ".join(css_modo)))
     js = (JS_PAGINA.replace("__CHECKOUT__", json.dumps(CHECKOUT_URL)).replace("__INSCRICAO__", f"{inscricao / 100:.2f}")
-          .replace("__INSC_CURTO__", json.dumps(taxa)).replace("__CURSOS__", json.dumps(dados_js, ensure_ascii=False))
-          .replace("__EXIBICAO__", json.dumps(exibicao)).replace("__API_TURMAS__", json.dumps(API_TURMAS)))
+          .replace("__CURSOS__", json.dumps(dados_js, ensure_ascii=False)).replace("__EXIBICAO__", json.dumps(exibicao))
+          .replace("__ORDEM_TURMAS__", json.dumps(ordem_turmas)).replace("__API_INFO__", json.dumps(API_INFO))
+          .replace("__API_PARCELAS__", json.dumps(API_PARCELAS))
+          .replace("__INFO_PRAZO__", JS_INFO_PRAZO if parcelado else "").replace("__JS_PRAZO__", JS_PRAZO if parcelado else JS_PRAZO_DESLIGADO)
+          .replace("__EXEMPLO__", json.dumps(exemplo)))
     descricao = (f"Primeiros socorros, bombeiro civil, cuidador de idosos e mais, com certificado da Cruz Vermelha. Total à vista a "
                  f"partir de {menor_total}, já com a taxa de inscrição.")
 
@@ -2850,7 +2908,8 @@ def main() -> int:
         return 1
     so_texto = html.unescape(re.sub(r"<[^>]+>", " ", pagina))
     proibidas = []
-    for padrao in PALAVRAS_PROIBIDAS:
+    # Com "parcelado_no_ar": false, nenhuma frase fala em parcelado (R5 e 6.1).
+    for padrao in PALAVRAS_PROIBIDAS + ([] if parcelado else [r"parcelad"]):
         for alvo in (pagina, so_texto):
             m = re.search(padrao, alvo, re.I)
             if m:
@@ -2859,19 +2918,24 @@ def main() -> int:
     if proibidas:
         print("recusado: a página tem palavras proibidas (PALAVRAS_PROIBIDAS):\n  " + "\n  ".join(proibidas))
         return 1
-    reservas = [nome for nome, trecho in sem_turma_variantes if re.search(r"\breserv", html.unescape(re.sub(r"<[^>]+>", " ", trecho)), re.I)]
+    reservas = [nome for nome, trecho in sem_turma_variantes
+                if re.search(r"\breserv|\bgarant", html.unescape(re.sub(r"<[^>]+>", " ", trecho)), re.I)]
     if reservas:
-        print(f"recusado: variante sem turma fala em reservar ({', '.join(reservas)})")
+        print(f"recusado: variante sem turma fala em reservar ou garantir ({', '.join(reservas)})")
         return 1
-    totais = {s: total(s) for s in cursos}
+    # Investimento de cada curso com as três linhas da escola e o total à vista certo (1.6).
     for s in cursos:
-        if f"Total à vista: {brl_curto(totais[s])}" not in pagina:
-            print(f"recusado: o bloco de preço de {s} não mostra o total à vista")
+        inv = pagina[pagina.index(f'<aside class="v-inv" id="inv-{s}"'):]
+        inv = inv[:inv.index("</aside>")]
+        linhas = ["Valor da matrícula, à vista", f"<dd>{brl(mat(s))}</dd>", "Taxa de inscrição", f"<dd>{brl(inscricao)}</dd>",
+                  "Total à vista, com a inscrição", f"<dd>{brl(total(s))}</dd>"]
+        if any(x not in inv for x in linhas):
+            print(f"recusado: o Investimento de {s} não tem as três linhas com os valores do cursos.json")
             return 1
     # "R$" e o número na mesma linha (espaço que não quebra), na página, no JSON-LD e nos textos do JS.
     pagina = re.sub(r"R\$ (?=\d)", "R$\u00a0", pagina)
     SAIDA.write_text(pagina, encoding="utf-8")
-    print(f"gravado {SAIDA.relative_to(RAIZ)} ({len(pagina.encode('utf-8'))} bytes, {len(ordem)} cursos, "
+    print(f"gravado {SAIDA} ({len(pagina.encode('utf-8'))} bytes, {len(ordem)} cursos, "
           f"{len(com_turma)} com turma aberta: {', '.join(com_turma) or 'nenhum'})")
     return 0
 

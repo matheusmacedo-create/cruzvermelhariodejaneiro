@@ -53,6 +53,7 @@ function mcp_publico(array $inscricao, ?array $preferencia = null): array
             'pendente' => mcp_url_pagina('pendente', $token),
             'parabens' => mcp_url_pagina('parabens', $token),
         ],
-        'teste' => mcp_modo_teste(),
+        // Compra de teste só a de um CPF da lista TESTE_CPFS (E16): com o preço de teste ligado, os outros pagam o preço real.
+        'teste' => mcp_modo_teste() && mcp_cpf_de_teste((string) ($inscricao['cpf'] ?? '')),
     ];
 }

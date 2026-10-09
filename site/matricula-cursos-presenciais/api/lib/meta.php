@@ -20,6 +20,12 @@
  * inscrição saem de um hash dele (mcp_meta_id_da_compra).
  * Sem token (META_CAPI_TOKEN, em config.php ou config-meta.php), nada acontece e nada é gravado.
  *
+ * Pagar tudo (10/2026; spec seção 4 e 10.12): o value é sempre sem juros (os juros não são receita da instituição). O
+ * Lead vale a taxa + a matrícula do plano escolhido; AddPaymentInfo e Purchase, o total_centavos (o amount, com os
+ * opcionais), com content_category (taxa-e-matricula | taxa-inscricao), plano e parcelas; o Purchase leva também
+ * estado_turma (aberta | breve) e order_id. ViewContent e InitiateCheckout do repasse (medicao.php) saem dos planos que o
+ * servidor oferece (mcp_planos_do_curso), nunca do valor da página: mcp_meta_dados_medicao().
+ *
  * Nunca lança nem atrasa o aluno: os eventos entram numa fila e saem depois da resposta
  * (fastcgi_finish_request/litespeed_finish_request), com tempo curto. O resultado de cada envio ligado a uma
  * inscrição fica em mcp_eventos (meta_capi / meta_capi_falha); dos repasses anônimos, só as falhas.
@@ -264,6 +270,80 @@ function mcp_meta_dados_do_curso(string $slug, string $nome, int $centavos, arra
     return array_merge(['content_name' => $nome, 'content_ids' => [$slug], 'content_type' => 'product', 'value' => round($centavos / 100, 2), 'currency' => 'BRL'], $extra);
 }
 
+/** O plano gravado na inscrição; linha antiga, sem a coluna, é só a taxa. */
+function mcp_meta_plano(array $inscricao): string
+{
+    return ($inscricao['plano'] ?? '') === 'taxa_e_matricula' ? 'taxa_e_matricula' : 'so_taxa';
+}
+
+/** content_category das conversões personalizadas (spec 4.1): "Taxa + matrícula paga" e "Taxa de inscrição paga". */
+function mcp_meta_categoria(string $plano): string
+{
+    return $plano === 'taxa_e_matricula' ? 'taxa-e-matricula' : 'taxa-inscricao';
+}
+
+/**
+ * Parâmetros do plano nos eventos da inscrição (AddPaymentInfo e Purchase): content_category, plano e parcelas (1 no
+ * PIX e na só a taxa). O Purchase leva também estado_turma (10.12): na taxa + matrícula, aberta quando a compra foi de
+ * uma turma com data (turma_id gravado na criação) e breve quando foi sem turma; na só a taxa, que não grava turma, se
+ * o curso tem turma aberta no oferta.json na hora do pagamento.
+ */
+function mcp_meta_extra_da_inscricao(array $inscricao, bool $comEstadoTurma = false): array
+{
+    $plano = mcp_meta_plano($inscricao);
+    $parcelas = ($inscricao['metodo'] ?? 'pix') === 'pix' || $plano !== 'taxa_e_matricula' ? 1 : max(1, min(12, (int) ($inscricao['parcelas'] ?? 1)));
+    $extra = ['content_category' => mcp_meta_categoria($plano), 'plano' => $plano, 'parcelas' => $parcelas];
+    if ($comEstadoTurma) {
+        if ($plano === 'taxa_e_matricula' || !function_exists('mcp_turma_aberta')) {
+            $aberta = !empty($inscricao['turma_id']);
+        } else {
+            try {
+                $aberta = mcp_turma_aberta((string) ($inscricao['curso_slug'] ?? '')) !== null;
+            } catch (Throwable) {
+                $aberta = false;
+            }
+        }
+        $extra['estado_turma'] = $aberta ? 'aberta' : 'breve';
+    }
+    return $extra;
+}
+
+/**
+ * Valor e parâmetros do ViewContent e do InitiateCheckout do repasse (medicao.php; spec 4.1, T20), sempre do servidor:
+ *  - ViewContent: o valor do plano padrão do curso (taxa + matrícula quando o servidor oferece a opção 1; a taxa, nos
+ *    outros casos), com estado_turma (aberta | breve) e plano_padrao;
+ *  - InitiateCheckout: o valor do plano marcado na hora, sem opcionais. Do navegador vale só um plano que esteja na
+ *    lista do servidor; fora dela (ou sem ele), o plano padrão.
+ * Sem compra.php (mcp_planos_do_curso), tudo é a taxa, como antes do pagar tudo.
+ */
+function mcp_meta_dados_medicao(array $curso, string $evento, mixed $planoDoNavegador = null): array
+{
+    $planos = ['so_taxa'];
+    try {
+        if (function_exists('mcp_planos_do_curso')) {
+            $lista = mcp_planos_do_curso($curso);
+            $planos = is_array($lista) && $lista ? array_values(array_filter($lista, 'is_string')) : ['so_taxa'];
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] medição: planos do curso indisponíveis: ' . $e->getMessage());
+    }
+    $padrao = in_array('taxa_e_matricula', $planos, true) ? 'taxa_e_matricula' : 'so_taxa';
+    $plano = $evento === 'InitiateCheckout' && is_string($planoDoNavegador) && in_array($planoDoNavegador, $planos, true) ? $planoDoNavegador : $padrao;
+    $matricula = 0;
+    if ($plano === 'taxa_e_matricula') {
+        $matricula = function_exists('mcp_matricula_centavos') ? mcp_matricula_centavos($curso) : (int) ($curso['valor_curso_centavos'] ?? 0);
+    }
+    $valor = mcp_inscricao_centavos() + $matricula;
+    $slug = (string) ($curso['slug'] ?? '');
+    if ($evento === 'InitiateCheckout') {
+        $extra = ['num_items' => 1, 'content_category' => mcp_meta_categoria($plano), 'plano' => $plano];
+    } else {
+        $aberta = function_exists('mcp_turma_aberta') ? mcp_turma_aberta($slug) !== null : false;
+        $extra = ['content_category' => 'matricula-cursos-presenciais', 'estado_turma' => $aberta ? 'aberta' : 'breve', 'plano_padrao' => $padrao];
+    }
+    return mcp_meta_dados_do_curso($slug, (string) ($curso['nome'] ?? ''), $valor, $extra);
+}
+
 // ----------------------------------------------------------------------------- fila e envio
 
 /** @return array<int, array{0: array, 1: ?int}> */
@@ -465,14 +545,18 @@ function mcp_meta_cobranca_criada(array $inscricao, array $aluno, ?string $idLea
     $userData = mcp_meta_user_data($pessoa, $contexto);
     $url = mcp_meta_url_limpa($_SERVER['HTTP_REFERER'] ?? null, mcp_url_pagina('checkout') . '?curso=' . rawurlencode((string) $aluno['slug']));
     $nomeCurso = (string) $inscricao['curso_nome'];
+    $plano = mcp_meta_plano($inscricao);
     if ($idLead !== null) {
+        // Lead: a taxa + a matrícula do plano escolhido, sem opcionais e sem juros (spec 4.1).
+        $matricula = $plano === 'taxa_e_matricula' ? (int) ($inscricao['matricula_centavos'] ?? 0) : 0;
         mcp_meta_enfileirar(mcp_meta_evento('Lead', $idLead, $userData,
-            ['content_name' => $nomeCurso, 'content_ids' => [(string) $aluno['slug']], 'content_category' => 'matricula-cursos-presenciais',
-             'value' => round((int) $inscricao['inscricao_centavos'] / 100, 2), 'currency' => 'BRL'], $url), $id);
+            ['content_name' => $nomeCurso, 'content_ids' => [(string) $aluno['slug']], 'content_category' => mcp_meta_categoria($plano),
+             'value' => round(((int) $inscricao['inscricao_centavos'] + $matricula) / 100, 2), 'currency' => 'BRL'], $url), $id);
     }
     if ($cobrancaNova) {
+        // AddPaymentInfo: o total_centavos (o amount, com os opcionais), nunca o total com juros.
         mcp_meta_enfileirar(mcp_meta_evento('AddPaymentInfo', mcp_meta_id_da_compra((string) $inscricao['token']) . '-pagamento', $userData,
-            mcp_meta_dados_do_curso((string) $aluno['slug'], $nomeCurso, (int) $inscricao['total_centavos']), $url), $id);
+            mcp_meta_dados_do_curso((string) $aluno['slug'], $nomeCurso, (int) $inscricao['total_centavos'], mcp_meta_extra_da_inscricao($inscricao)), $url), $id);
     }
 }
 
@@ -495,9 +579,11 @@ function mcp_meta_compra(array $inscricao): void
     ], static fn($v) => $v !== null);
     $pessoa = ['nome' => $inscricao['nome'], 'email' => $inscricao['email'], 'telefone' => $inscricao['telefone'], 'external_id' => (string) $inscricao['token']];
     $idCompra = mcp_meta_id_da_compra((string) $inscricao['token']);
+    // value = total_centavos (o amount, sem juros: os juros não são receita da instituição; spec E9), com o plano, as
+    // parcelas e o estado da turma. Ex.: taxa + matrícula em 10x = 279, plano taxa_e_matricula, parcelas 10.
     mcp_meta_enfileirar(mcp_meta_evento('Purchase', $idCompra, mcp_meta_user_data($pessoa, $contexto),
         mcp_meta_dados_do_curso((string) $inscricao['curso_slug'], (string) $inscricao['curso_nome'], (int) $inscricao['total_centavos'],
-            ['order_id' => $idCompra]),
+            ['order_id' => $idCompra] + mcp_meta_extra_da_inscricao($inscricao, true)),
         mcp_url_pagina('parabens')), (int) $inscricao['id']);
 }
 

@@ -18,16 +18,23 @@
  *
  * mcp_comprovante_pdf() é pura: recebe a inscrição e devolve os bytes. Se falhar, quem envia segue
  * sem o anexo — o e-mail do aluno nunca deixa de sair por causa do PDF.
+ *
+ * Pagar tudo (10/2026; spec 1.15 e 10.6): na compra da taxa + matrícula, o título é "COMPROVANTE DE INSCRIÇÃO E
+ * MATRÍCULA", as linhas separam a taxa, a matrícula, os opcionais e os juros do parcelamento, o método diz as parcelas
+ * mensais, o total é o cobrado com juros, e entra a seção "CONDIÇÕES" com a linha do crédito (parcelado) e o Resumo
+ * das condições do checkout (sem turma, com a data limite). Na só a taxa, o produto é "{curso} — Taxa de inscrição".
+ * Quem vende e recebe é um nome só (decisão 6 do dono): mcp_recebedor() do config.php.
  */
 declare(strict_types=1);
 
 const MCP_COMPROVANTE_LOGO = __DIR__ . '/comprovante-logo.png';
 /**
- * Quem recebe os pagamentos da matrícula: a empresa de ensino da filial, com CNPJ próprio — não é o
- * CNPJ da filial (08.560.973/0001-97), que é o das doações. Dado tirado do comprovante UnicoPag de
- * uma compra real pelo checkout; RECEBEDOR_NOME e RECEBEDOR_CNPJ no config.php sobrepõem.
+ * Quem vende e recebe os pagamentos da matrícula: a empresa de ensino da filial, com CNPJ próprio — não é o
+ * CNPJ da filial (08.560.973/0001-97), que é o das doações. O nome é o da decisão 6 do dono (08/10/2026), o mesmo
+ * da página, do checkout, de /reembolso/ e dos e-mails: vem de mcp_recebedor() (config.php); estas constantes só
+ * valem se ele não existir. RECEBEDOR_NOME e RECEBEDOR_CNPJ no config.php sobrepõem.
  */
-const MCP_COMPROVANTE_RECEBEDOR = 'O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP';
+const MCP_COMPROVANTE_RECEBEDOR = 'O-CVB Filial Rio de Janeiro Ensino Ltda';
 const MCP_COMPROVANTE_RECEBEDOR_CNPJ = '67.733.551/0001-35';
 
 const MCP_CP_VERMELHO = '#e1262f';
@@ -38,6 +45,12 @@ const MCP_CP_FIO = '#e8e9eb';
 const MCP_CP_MARGEM = 48.0;
 const MCP_CP_VALOR_X = 225.0;   // coluna dos valores
 const MCP_CP_ROTULO_X = 65.5;   // coluna dos rótulos (recuada, como no modelo)
+/**
+ * Fatores de espaçamento tentados, do mais folgado ao mais apertado (só os espaços entre linhas mudam, nunca a fonte do
+ * corpo). Os dois últimos existem para a compra da taxa + matrícula, que tem mais linhas (matrícula, juros, data limite,
+ * parcelas) e as condições.
+ */
+const MCP_CP_FATORES = [1.0, 0.92, 0.85, 0.78, 0.72, 0.64, 0.56];
 
 /** Partículas que ficam minúsculas no meio do nome. */
 const MCP_PARTICULAS = ['da', 'das', 'de', 'do', 'dos', 'e', 'di', 'du', 'del', 'van', 'von'];
@@ -72,7 +85,7 @@ function mcp_cpf_formatado(string $cpf): string
     return strlen($d) === 11 ? substr($d, 0, 3) . '.' . substr($d, 3, 3) . '.' . substr($d, 6, 3) . '-' . substr($d, 9, 2) : $cpf;
 }
 
-/** "Cartão de crédito · Visa final 4242", ou "PIX". */
+/** "Cartão de crédito · Visa final 4242" (no parcelado, mais " · 10 parcelas mensais de R$ 35,43"), ou "PIX". */
 function mcp_comprovante_metodo(array $inscricao): string
 {
     if (($inscricao['metodo'] ?? 'pix') === 'pix') {
@@ -81,7 +94,16 @@ function mcp_comprovante_metodo(array $inscricao): string
     $bandeira = trim((string) ($inscricao['bandeira'] ?? ''));
     $final = trim((string) ($inscricao['ultimos4'] ?? ''));
     $detalhe = trim(($bandeira !== '' ? mb_convert_case($bandeira, MB_CASE_TITLE) : '') . ($final !== '' ? " final $final" : ''));
-    return 'Cartão de crédito' . ($detalhe !== '' ? " · $detalhe" : '');
+    $n = function_exists('mcp_email_parcelas') ? mcp_email_parcelas($inscricao) : 1;
+    $parcelas = $n > 1 ? ' · ' . mcp_email_parcelas_texto(mcp_email_divisao(mcp_email_total_pago_centavos($inscricao), $n)) : '';
+    return 'Cartão de crédito' . ($detalhe !== '' ? " · $detalhe" : '') . $parcelas;
+}
+
+/** Quem vende e recebe: ['nome', 'cnpj'] (mcp_recebedor do config.php, ou as constantes daqui). */
+function mcp_comprovante_recebedor(): array
+{
+    return function_exists('mcp_recebedor') ? mcp_recebedor()
+        : ['nome' => (string) mcp_cfg('RECEBEDOR_NOME', MCP_COMPROVANTE_RECEBEDOR), 'cnpj' => (string) mcp_cfg('RECEBEDOR_CNPJ', MCP_COMPROVANTE_RECEBEDOR_CNPJ)];
 }
 
 /**
@@ -89,24 +111,46 @@ function mcp_comprovante_metodo(array $inscricao): string
  *
  * @return array{titulo:string, subtitulo:string, nome:string, cpf:string,
  *   inscricao:list<array{0:string,1:string}>, pagamento:list<array{0:string,1:string}>,
- *   recebedor:string, recebedor_cnpj:string, rodape:string}
+ *   condicoes:list<string>, recebedor:string, recebedor_cnpj:string, rodape:string}
  */
 function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): array
 {
     $curso = trim((string) ($inscricao['curso_nome'] ?? ''));
-    $produto = $curso . ' — Inscrição';
+    $completo = function_exists('mcp_email_completo') && mcp_email_completo($inscricao);
+    $produto = $curso . ($completo ? ' — Inscrição e matrícula' : ' — Taxa de inscrição');
     $taxa = (int) ($inscricao['taxa_centavos'] ?? 0);
     $divulgacao = (int) ($inscricao['divulgacao_centavos'] ?? 0);
     $pedido = mcp_data_brt((string) ($inscricao['criado_em'] ?? ''), 'd/m/Y H:i');
     $pago = mcp_data_brt((string) ($inscricao['pago_em'] ?? ''), 'd/m/Y H:i');
     $hash = trim((string) ($inscricao['unicopag_hash'] ?? ''));
 
-    $dados = [['Produto', $produto], ['Quantidade', '1'], ['Valor', mcp_brl((int) ($inscricao['inscricao_centavos'] ?? 0))]];
+    $dados = [['Produto', $produto], ['Quantidade', '1'], ['Taxa de inscrição', mcp_brl((int) ($inscricao['inscricao_centavos'] ?? 0))]];
+    if ($completo) {
+        $dados[] = ['Matrícula', mcp_brl(mcp_email_matricula_cobrada($inscricao))];
+    }
     if ($taxa > 0) {
         $dados[] = ['Custos de processamento', mcp_brl($taxa)];
     }
     if ($divulgacao > 0) {
         $dados[] = ['Contribuição para a divulgação', mcp_brl($divulgacao)];
+    }
+    $juros = $completo ? mcp_email_juros_centavos($inscricao) : 0;
+    if ($juros > 0) {
+        $dados[] = ['Juros do parcelamento (acréscimo de ' . mcp_email_acrescimo($inscricao) . ')', mcp_brl($juros)];
+    }
+    $condicoes = [];
+    if ($completo) {
+        if (mcp_email_sem_turma($inscricao) && ($inscricao['espera_status'] ?? '') !== 'turma' && ($limite = mcp_email_data_limite($inscricao)) !== '') {
+            $dados[] = ['Data limite', $limite];
+        }
+        $credito = mcp_email_linha_credito($inscricao);
+        if ($credito !== '') {
+            $condicoes[] = $credito . '.';
+        }
+        $resumo = mcp_email_resumo_condicoes($inscricao);
+        if ($resumo !== '') {
+            $condicoes[] = 'Resumo das condições: ' . $resumo;
+        }
     }
     $pagamento = [['Status do pagamento', 'Pago'], ['Método de pagamento', mcp_comprovante_metodo($inscricao)]];
     if ($pedido !== '') {
@@ -118,22 +162,24 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
         $pagamento[] = ['Data do pagamento', $pago];
     }
     $pagamento[] = ['Código da compra', $hash !== '' ? $hash : '—'];
-    $pagamento[] = ['Total', mcp_brl((int) ($inscricao['total_centavos'] ?? 0))];
+    $pagamento[] = ['Total', mcp_brl(function_exists('mcp_email_total_pago_centavos') ? mcp_email_total_pago_centavos($inscricao) : (int) ($inscricao['total_centavos'] ?? 0))];
 
     $emitido = mcp_data_brt($agoraUtc ?? gmdate('Y-m-d H:i:s'), 'd/m/Y \à\s H\hi');
     $rodape = "Comprovante gerado automaticamente em $emitido (horário de Brasília)"
         . ($hash !== '' ? ", a partir da transação $hash processada pela UnicoPag" : '')
         . '. Este comprovante não substitui nota fiscal. Dúvidas: ' . mcp_email_contato_endereco() . '.';
 
+    $recebedor = mcp_comprovante_recebedor();
     return [
-        'titulo' => 'COMPROVANTE DE INSCRIÇÃO',
+        'titulo' => $completo ? 'COMPROVANTE DE INSCRIÇÃO E MATRÍCULA' : 'COMPROVANTE DE INSCRIÇÃO',
         'subtitulo' => $produto,
         'nome' => mcp_nome_proprio((string) ($inscricao['nome'] ?? '')),
         'cpf' => 'CPF: ' . mcp_cpf_formatado((string) ($inscricao['cpf'] ?? '')),
         'inscricao' => $dados,
         'pagamento' => $pagamento,
-        'recebedor' => (string) mcp_cfg('RECEBEDOR_NOME', MCP_COMPROVANTE_RECEBEDOR),
-        'recebedor_cnpj' => 'CNPJ ' . (string) mcp_cfg('RECEBEDOR_CNPJ', MCP_COMPROVANTE_RECEBEDOR_CNPJ),
+        'condicoes' => $condicoes,
+        'recebedor' => $recebedor['nome'],
+        'recebedor_cnpj' => 'CNPJ ' . $recebedor['cnpj'],
         'rodape' => $rodape,
     ];
 }
@@ -148,25 +194,46 @@ function mcp_comprovante_conteudo(array $inscricao, ?string $agoraUtc = null): a
  */
 function mcp_comprovante_pdf(array $inscricao, ?string $agoraUtc = null): string
 {
-    $c = mcp_comprovante_conteudo($inscricao, $agoraUtc);
-    foreach ([1.0, 0.92, 0.85, 0.78, 0.72] as $fator) {
-        [$pdf, $fimY] = mcp_comprovante_desenhar($c, $fator);
-        if ($fimY <= McpPdf::ALTURA - 28) {
-            break;
-        }
-    }
-    return $pdf->gerar();
+    return mcp_comprovante_layout(mcp_comprovante_conteudo($inscricao, $agoraUtc))['pdf']->gerar();
 }
 
 /**
- * Desenha o comprovante com os espaços verticais multiplicados por $f.
- *
- * @return array{0: McpPdf, 1: float} o PDF e a linha de base da última linha do rodapé
+ * Escolhe o desenho: tudo numa página, com o maior fator que couber. Se nem o mais apertado couber com as condições
+ * (o Resumo das condições da compra sem turma tem uns 1.500 caracteres), as condições vão para uma 2ª página e a 1ª
+ * fica com o resto, no maior fator que couber. Devolve ['pdf', 'fim' (linha de base do rodapé da 1ª página), 'fator',
+ * 'paginas'].
  */
-function mcp_comprovante_desenhar(array $c, float $f): array
+function mcp_comprovante_layout(array $c): array
+{
+    $limite = McpPdf::ALTURA - 28;
+    $tentativas = [false];
+    if (!empty($c['condicoes'])) {
+        $tentativas[] = true;
+    }
+    $ultimo = null;
+    foreach ($tentativas as $naPagina2) {
+        foreach (MCP_CP_FATORES as $fator) {
+            [$pdf, $fimY] = mcp_comprovante_desenhar($c, $fator, $naPagina2);
+            $ultimo = ['pdf' => $pdf, 'fim' => $fimY, 'fator' => $fator, 'paginas' => $pdf->totalPaginas()];
+            if ($fimY <= $limite) {
+                return $ultimo;
+            }
+        }
+    }
+    return $ultimo;
+}
+
+/**
+ * Desenha o comprovante com os espaços verticais multiplicados por $f. $condicoesNaPagina2: as condições (pagar tudo)
+ * saem numa 2ª página, depois do rodapé da 1ª.
+ *
+ * @return array{0: McpPdf, 1: float} o PDF e a linha de base da última linha do rodapé (da 1ª página)
+ */
+function mcp_comprovante_desenhar(array $c, float $f, bool $condicoesNaPagina2 = false): array
 {
     $pdf = new McpPdf();
-    $pdf->metadados('Comprovante de inscrição — ' . $c['subtitulo'], MCP_NOME_FILIAL, 'Comprovante de inscrição de ' . $c['nome']);
+    $pdf->metadados(($c['titulo'] === 'COMPROVANTE DE INSCRIÇÃO E MATRÍCULA' ? 'Comprovante de inscrição e matrícula — ' : 'Comprovante de inscrição — ') . $c['subtitulo'],
+        MCP_NOME_FILIAL, 'Comprovante de ' . $c['nome']);
     $direita = McpPdf::LARGURA - MCP_CP_MARGEM;
     $largura = $direita - MCP_CP_MARGEM;
 
@@ -218,6 +285,25 @@ function mcp_comprovante_desenhar(array $c, float $f): array
     $y = $secao('DADOS DA INSCRIÇÃO', $c['inscricao'], $y + 34.5 * $f);
     $y = $secao('PAGAMENTO', $c['pagamento'], $y + 41 * $f);
 
+    // Condições (pagar tudo): a linha do crédito e o Resumo das condições, em parágrafos de letra menor. Só elas
+    // encolhem a fonte, um pouco, quando o fator aperta: o resto do comprovante mantém o tamanho do modelo.
+    $condicoes = (array) ($c['condicoes'] ?? []);
+    if ($condicoes && !$condicoesNaPagina2) {
+        $y += 34 * $f;
+        $pdf->texto(MCP_CP_MARGEM, $y, 'CONDIÇÕES', 'negrito', 10.1, MCP_CP_VERMELHO, 0.6);
+        $pdf->linha(MCP_CP_MARGEM, $y + 10, $direita, $y + 10, MCP_CP_FIO, 0.8);
+        $corpo = $f < 0.85 ? ($f < 0.7 ? 7.0 : 7.6) : 8.2;
+        $entre = $corpo * ($f < 0.7 ? 1.25 : 1.32);
+        $y += 10 + 16 * $f;
+        foreach ($condicoes as $k => $paragrafo) {
+            $partes = McpPdf::quebrar((string) $paragrafo, 'normal', $corpo, $largura);
+            foreach ($partes as $j => $l) {
+                $pdf->texto(MCP_CP_MARGEM, $y + $j * $entre, $l, 'normal', $corpo, MCP_CP_TEXTO);
+            }
+            $y += (count($partes) - 1) * $entre + ($k < count($condicoes) - 1 ? $entre + 4 * $f : 0);
+        }
+    }
+
     // Empresa recebedora.
     $y += 41 * $f;
     $pdf->texto(MCP_CP_MARGEM, $y, 'EMPRESA RECEBEDORA', 'negrito', 10.1, MCP_CP_VERMELHO, 0.6);
@@ -238,7 +324,32 @@ function mcp_comprovante_desenhar(array $c, float $f): array
     foreach ($rodape as $i => $l) {
         $pdf->texto(MCP_CP_MARGEM, $y + $i * 11.5, $l, 'normal', 8.4, MCP_CP_CINZA);
     }
-    return [$pdf, $y + (count($rodape) - 1) * 11.5];
+    $fimPagina1 = $y + (count($rodape) - 1) * 11.5;
+
+    if ($condicoes && $condicoesNaPagina2) {
+        // 2ª página: a faixa, o título, de quem é o comprovante e as condições, em letra legível.
+        $pdf->novaPagina();
+        $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
+        $pdf->texto(MCP_CP_MARGEM, 62, 'CONDIÇÕES', 'negrito', 16, MCP_CP_TEXTO, 0.5);
+        $quem = McpPdf::quebrar($c['subtitulo'] . ' · ' . $c['nome'] . ' · ' . $c['cpf'], 'normal', 10.5, $largura);
+        foreach ($quem as $i => $l) {
+            $pdf->texto(MCP_CP_MARGEM, 84 + $i * 13.5, $l, 'normal', 10.5, MCP_CP_CINZA);
+        }
+        $y = 84 + (count($quem) - 1) * 13.5 + 14;
+        $pdf->linha(MCP_CP_MARGEM, $y, $direita, $y, MCP_CP_FIO, 0.8);
+        $y += 24;
+        foreach ($condicoes as $paragrafo) {
+            foreach (McpPdf::quebrar((string) $paragrafo, 'normal', 9.4, $largura) as $l) {
+                $pdf->texto(MCP_CP_MARGEM, $y, $l, 'normal', 9.4, MCP_CP_TEXTO);
+                $y += 13.2;
+            }
+            $y += 8;
+        }
+        $y += 6;
+        $pdf->linha(MCP_CP_MARGEM, $y, $direita, $y, MCP_CP_FIO, 0.8);
+        $pdf->texto(MCP_CP_MARGEM, $y + 17, 'Página 2 de 2 do comprovante. ' . $c['recebedor'] . ' · ' . $c['recebedor_cnpj'] . '.', 'normal', 8.4, MCP_CP_CINZA);
+    }
+    return [$pdf, $fimPagina1];
 }
 
 /** "Comprovante_de_Inscricao_Puncao_Venosa_Joana_Maria_dos_Santos.pdf" — o mesmo padrão do modelo. */

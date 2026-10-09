@@ -17,9 +17,43 @@ return [
 
     // Inscrição em centavos. Deixe vazio para ler de cursos.json (9900).
     'INSCRICAO_CENTAVOS' => '',
-    // Só em teste operacional: cobra este valor no lugar da inscrição e mostra um aviso na
-    // página. Ex.: 100 = R$ 1,00. REMOVA antes de receber aluno.
+    // Só em teste operacional: cobra este valor no lugar da inscrição, e só para os CPFs de TESTE_CPFS (abaixo).
+    // Todo outro visitante paga o preço real. Ex.: 100 = R$ 1,00. Volte para '' depois do teste.
     'PRECO_TESTE_CENTAVOS' => '',
+
+    // Pagar tudo (10/2026; docs na spec pagar-tudo, seção 3.1). Todas DESLIGADAS: o checkout oferece só a taxa,
+    // como antes. Liga e desliga só com o booleano true/false, sem aspas (a string 'false' não liga nada).
+    // No servidor, estas chaves (e ESCOLA_MATRICULA_PAGA) vão em api/config-pagar-tudo.php, só no servidor e fora do
+    // Git, para não mexer neste config.php nem no config-escola.php (que guarda a chave da escola). Ele vem por último
+    // e só aceita as chaves de MCP_CHAVES_PAGAR_TUDO (lib/config.php), por exemplo:
+    //   <?php return ['PLANO_COMPLETO' => true, 'ESCOLA_MATRICULA_PAGA' => true, 'PARCELAS_MAX' => 1];
+    // Liga a opção "Taxa de inscrição + matrícula" nos cursos com turma aberta (exige ESCOLA_MATRICULA_PAGA em
+    // config-escola.php e a escola respondendo matricula_rapida_versao() >= 2). Volta atrás: false.
+    'PLANO_COMPLETO' => false,
+    // Liga a mesma opção nos cursos sem turma da lista "sem_turma" do oferta.json (fila da próxima turma; escola na versão 3).
+    'PLANO_COMPLETO_SEM_TURMA' => false,
+    // Teto de parcelas no cartão (1 a 12). Fica 1 até a compra de teste em 2x e o OK do jurídico (passo 6).
+    'PARCELAS_MAX' => 1,
+    // Parcela mínima mostrada, em centavos (500 = R$ 5,00).
+    'PARCELA_MINIMA_CENTAVOS' => 500,
+    // Preço da matrícula para os CPFs de teste, em centavos. 0 = a opção completa some para eles (nunca se cobra a
+    // matrícula real numa compra de teste).
+    'PRECO_TESTE_MATRICULA_CENTAVOS' => 0,
+    // CPFs (só dígitos) que pagam os preços de teste. Fora desta lista, ninguém paga preço de teste. Ex.: ['52998224725'].
+    'TESTE_CPFS' => [],
+    // Testes reais (passos 4, 4b e 6): com true, só os CPFs de TESTE_CPFS conseguem pagar a opção "Taxa de inscrição +
+    // matrícula"; qualquer outro visitante que a escolher recebe "No momento, a matrícula não pode ser paga junto" e paga
+    // só a taxa. Volte para false depois do teste.
+    'PLANO_COMPLETO_SO_TESTE' => false,
+    // Venda sem turma: data limite da primeira aula, em dias da compra (P6), e máximo de chamadas à escola por rodada.
+    'ESPERA_PRAZO_DIAS' => 90,
+    'ESPERA_LOTE' => 30,
+    // Até quantos dias depois da venda a Unicopag aceita o estorno no cartão (pergunta e do passo 0). Vazio = o botão
+    // "Continua esperando" não aparece nas compras no cartão.
+    'ESTORNO_CARTAO_LIMITE_DIAS' => '',
+    // Quem concede o parcelamento (CDC, art. 54-B, § 3º), definido pelo jurídico. Vazio = o recebedor (RECEBEDOR_*).
+    'AGENTE_FINANCIADOR' => '',
+    'AGENTE_CNPJ' => '',
 
     // Custos de processamento que o aluno pode escolher cobrir (opcional, por vontade própria).
     // Percentual sobre a inscrição + parcela fixa em centavos, por método.
@@ -63,6 +97,9 @@ return [
     // Vazio = versão B (a secretaria fecha turma e horário por e-mail). Passo a passo: docs/escola/README.md.
     'ESCOLA_API_URL'   => '',
     'ESCOLA_API_TOKEN' => '',
+    // Pagar tudo: true só depois da matricula_rapida v2 aplicada na escola (docs/escola/matricula_rapida_v2.sql).
+    // Também vai no api/config-escola.php. Desligada, a escola nunca recebe a matrícula paga junto.
+    'ESCOLA_MATRICULA_PAGA' => false,
     // Aba "Horários" do painel da secretaria da escola: ela lê as respostas do questionário de dias e
     // horários em api/escola-horarios.php com esta chave (32 caracteres ou mais; gere com
     // `openssl rand -hex 24`). Também vai no api/config-escola.php, e a mesma chave vai na variável
@@ -125,9 +162,9 @@ return [
     'META_CAPI_VERSAO' => '',
     'META_PIXEL_ID' => '',
 
-    // Empresa recebedora no comprovante de inscrição em PDF anexado ao e-mail do aluno. Vazio = o
-    // padrão de lib/comprovante.php: O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA - EPP, 67.733.551/0001-35
-    // (a empresa de ensino da filial, que recebe a matrícula; não é o CNPJ da filial).
+    // Quem vende e recebe (decisão do dono, 08/10/2026): um nome só em página, checkout, /reembolso/, e-mails e
+    // comprovante. Vazio = O-CVB Filial Rio de Janeiro Ensino Ltda, 67.733.551/0001-35 (lib/config.php: a empresa de
+    // ensino da filial, que recebe a taxa e a matrícula; não é o CNPJ da filial).
     'RECEBEDOR_NOME'   => '',
     'RECEBEDOR_CNPJ'   => '',
 ];
