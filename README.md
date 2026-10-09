@@ -593,6 +593,15 @@ do OK do jurídico). Volta atrás: `PLANO_COMPLETO = false` (o checkout volta a 
 segundos); as páginas, pela cópia do ar feita antes de cada passo (`publicar_hostinger.sh --copiar-do-ar`), nunca pelo
 Git (o `chat.js` e as políticas do Git não são os do ar).
 
+**Onde ficam as chaves:** no servidor, só em `api/config-pagar-tudo.php` (fora do Git), que vem por último e aceita
+apenas a lista `MCP_CHAVES_PAGAR_TUDO` de `api/lib/config.php` (inclusive `ESCOLA_MATRICULA_PAGA` e `TESTE_CPFS`). Nunca
+mexer no `config.php` nem no `config-escola.php` (que guarda a chave da escola). Sem esse arquivo, tudo fica desligado.
+
+**Situação (09/10/2026, 16h45):** passos 2 e 3 publicados e conferidos no ar (32 arquivos iguais ao enviado, checkout
+só com a taxa, opção 1 recusada com 422 `desligado`). Faltam: a v2 na escola (passo 1, no SQL Editor da escola, que
+não está ao alcance dos conectores), o teste real de R$ 2,00 (passo 4) e a página nova com a venda de tudo à vista
+(passo 5; decisão do dono: à vista agora, parcelado e venda sem turma depois do jurídico).
+
 **Testes:** `php scripts/testar_checkout.php` (inclui `scripts/testar_pagar_tudo.php` e
 `scripts/testar_pagar_tudo_emails.php`), `scripts/testar_meta_integracao.php` (com `MCP_TESTE_DB_PORTA` para um MariaDB
 local fora da 3306; casos do pagar tudo no fim: PIX e 10x com o value sem juros, e o SQL de "Precisam de atenção"

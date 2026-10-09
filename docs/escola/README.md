@@ -499,9 +499,11 @@ mais, e só vende sem turma e roda a rotina da espera com 3. Sem a função, ou 
    `select public.matricula_rapida_versao();` tem de dar 3. Uma inscrição real só da taxa no dia seguinte continua
    matriculando como antes.
 3. **Site com o código novo, desligado**: `PLANO_COMPLETO = false`, `PLANO_COMPLETO_SEM_TURMA = false`,
-   `PARCELAS_MAX = 1` no `config.php` e `ESCOLA_MATRICULA_PAGA = false` no `config-escola.php`.
+   `PARCELAS_MAX = 1` e `ESCOLA_MATRICULA_PAGA = false` (é o padrão: sem o `api/config-pagar-tudo.php` no servidor, tudo
+   fica desligado). As chaves do pagar tudo vão só nesse arquivo, nunca no `config.php` nem no `config-escola.php`.
+   Publicado em 09/10/2026, 16h45.
 4. **Teste real** (R$ 2,00, só para o CPF de quem testa: `TESTE_CPFS`, `PRECO_TESTE_CENTAVOS = 100`,
-   `PRECO_TESTE_MATRICULA_CENTAVOS = 100`, `ESCOLA_MATRICULA_PAGA = true` em `config-escola.php`,
+   `PRECO_TESTE_MATRICULA_CENTAVOS = 100`, `ESCOLA_MATRICULA_PAGA = true`, todas em `api/config-pagar-tudo.php`,
    `PLANO_COMPLETO = true` e `PLANO_COMPLETO_SO_TESTE = true`, para nenhum visitante comprar a opção 1 pelo preço real
    durante o teste). Na escola: matrícula `PAGO` na turma do `turma_id`, sem a faixa "Falta pagar a matrícula",
    Pagamento `CURSO` `unicopag-2`. Depois: estornar pelo painel da Unicopag, limpar a escola com `limpar_teste.sql`
