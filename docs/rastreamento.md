@@ -141,6 +141,18 @@ origem da visita (utm, fbclid, gclid) só com a permissão de estatística, como
 no GA4, marcar `generate_lead` como evento principal ("key event"); no Gerenciador de Eventos, o Contact com
 categoria `brinquedos` pode virar uma conversão personalizada.
 
+## Pagar tudo, passo 5: venda de tudo à vista ligada (10/10/2026)
+
+A função da escola v2 foi aplicada pelo dono no SQL Editor (responde `matricula_rapida_versao() = 3`). Publicados: o
+`chat.js` com as três respostas novas, o `turmas.js`, as seis telas do checkout com a opção "Taxa de inscrição +
+matrícula, à vista" já marcada, /reembolso/ e /termos/ (PT, EN, ES) com data de 10/10/2026, o `api/config-pagar-tudo.php`
+(PLANO_COMPLETO e ESCOLA_MATRICULA_PAGA ligados, PARCELAS_MAX 1, venda sem turma desligada) e, por último, a página nova
+no padrão da escola. O `.htaccess` da API passou a negar também `config-*.php` com hífen no nome (403).
+**A partir daqui o Purchase e o InitiateCheckout passam a valer até R$ 279 em vez de R$ 99** (o valor sem juros):
+anotar no Gerenciador de Eventos e evitar mudar verba e público na mesma semana. Um CPF fictício de teste paga R$ 2
+(R$ 1 de taxa + R$ 1 de matrícula) no lugar do preço real; os demais pagam o preço real. Parcelado e venda sem turma
+continuam desligados até o jurídico (decisão do dono).
+
 ## Pagar tudo, passos 2 e 3 publicados (09/10/2026, 16h30 a 16h45 de Brasília)
 
 Código novo da matrícula no ar com todas as chaves desligadas (`config-pagar-tudo.php` ainda não existe no

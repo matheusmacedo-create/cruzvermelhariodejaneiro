@@ -597,7 +597,12 @@ Git (o `chat.js` e as políticas do Git não são os do ar).
 apenas a lista `MCP_CHAVES_PAGAR_TUDO` de `api/lib/config.php` (inclusive `ESCOLA_MATRICULA_PAGA` e `TESTE_CPFS`). Nunca
 mexer no `config.php` nem no `config-escola.php` (que guarda a chave da escola). Sem esse arquivo, tudo fica desligado.
 
-**Situação (09/10/2026, 16h45):** passos 2 e 3 publicados e conferidos no ar (32 arquivos iguais ao enviado, checkout
+**Situação (10/10/2026):** passo 5 publicado: página nova no padrão da escola e venda de tudo à vista ligada, conferidas
+no ar (checkout com "Taxa de inscrição + matrícula, à vista — R$ 279,00" marcada, sem erro de JavaScript, sem rolagem
+lateral). A v2 da escola foi aplicada pelo dono (versão 3). Faltam o teste real de R$ 2 com o CPF de teste e, depois do
+jurídico, os passos 5b (venda sem turma) e 6 (parcelado).
+
+**Situação anterior (09/10/2026, 16h45):** passos 2 e 3 publicados e conferidos no ar (32 arquivos iguais ao enviado, checkout
 só com a taxa, opção 1 recusada com 422 `desligado`). Faltam: a v2 na escola (passo 1, no SQL Editor da escola, que
 não está ao alcance dos conectores), o teste real de R$ 2,00 (passo 4) e a página nova com a venda de tudo à vista
 (passo 5; decisão do dono: à vista agora, parcelado e venda sem turma depois do jurídico).
