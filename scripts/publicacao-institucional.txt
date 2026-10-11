@@ -3,6 +3,14 @@
 # Matheus em 11/10: home e equipe com o link, os cartões e o rodapé; /verificar/ indexável).
 # O ar antes da publicação = o Git em 1c9df6f, menos a abertura da transparência (home, equipe, llms.txt,
 # verificar) e a entrada do Dia das Crianças no llms.txt (conferido em 11/10, por HTTP, arquivo por arquivo).
+# ESTADO (11/10/2026): publicação APROVADA pelo Matheus ("sim publique", depois da revisão final, commit
+# b465ca4) e ainda NÃO feita: o conector da Hostinger pediu novo login na sessão e as credenciais TUS não
+# puderam ser geradas. Conferência por HTTP no mesmo dia, antes do envio: as 8 páginas e as 4 imagens não
+# existem no ar; chat.js, história, equipes EN/ES, FAQ EN/ES, políticas PT, 404, bio, Dia das Crianças e
+# doação indisponível iguais à base 1c9df6f; home, equipe, verificar e llms.txt diferem da base só pela
+# abertura da transparência (e o llms.txt também pela entrada do Dia das Crianças); /voluntariado/ ainda
+# redireciona para /bio/; faq-home.json no ar é anterior (ainda tem "Como doar"). Ao retomar: repetir
+# esta conferência, fazer a cópia do ar (com os .htaccess) e publicar como abaixo.
 # Gerar antes: python3 scripts/gerar_institucional.py (as 8 páginas, de site/institucional.json).
 # site/faq-home.json também é servido no ar (fonte da FAQ da home): vai junto com a home.
 # Ordem: imagens e chat.js primeiro (as páginas citam), depois as páginas novas, o .htaccess da raiz (só depois
