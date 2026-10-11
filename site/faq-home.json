@@ -7,8 +7,12 @@
       "perguntas": [
         {
           "pergunta": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro oferece sete cursos presenciais na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Primeiros Socorros Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida, o BLS (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos, curso livre (160 horas), e Micropigmentação Labial (24 horas). Todos têm certificado da filial, e a vaga é garantida com a inscrição de R$ 99, por PIX ou cartão. Não há cursos técnicos nem curso de enfermagem. Veja carga horária, escolaridade mínima e valor de cada curso na página de matrícula em cursos presenciais.",
+          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro há dois caminhos. A filial oferece formações gratuitas de primeiros socorros e de voluntariado (veja os cursos gratuitos). E a Escola de Educação e Saúde oferece sete cursos presenciais pagos na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos (160 horas) e Micropigmentação Labial (24 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. Não há cursos técnicos nem curso de enfermagem. Veja carga horária, escolaridade e valor na página de matrícula em cursos presenciais.",
           "links": [
+            {
+              "texto": "cursos gratuitos",
+              "url": "/cursos-gratuitos/"
+            },
             {
               "texto": "página de matrícula em cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
@@ -20,12 +24,8 @@
           "resposta": "Escolha o curso na página de cursos presenciais e clique em “Inscrever-se”. Você preenche nome, CPF, e-mail e telefone e escolhe o que pagar: a taxa de inscrição (R$ 99) junto com a matrícula, que é o valor do curso, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Não é preciso criar conta antes: a conta na área do aluno é criada depois do pagamento, e o link para criar a senha chega no seu e-mail. Dúvidas? Use o chat do site, que responde por e-mail.",
           "links": [
             {
-              "texto": "página de matrícula em cursos presenciais",
+              "texto": "página de cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
-            },
-            {
-              "texto": "escola.cursoscruzvermelha.org",
-              "url": "https://escola.cursoscruzvermelha.org"
             },
             {
               "texto": "chat do site",
@@ -43,7 +43,7 @@
           "resposta": "Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Micropigmentação Labial, R$ 400 + R$ 99 = R$ 499; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na página de cursos presenciais.",
           "links": [
             {
-              "texto": "página de matrícula",
+              "texto": "página de cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
             }
           ],
@@ -56,11 +56,11 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
-          "resposta": "Hoje os sete cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro são pagos: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99. Não há curso gratuito de enfermagem, técnico ou de primeiros socorros no catálogo. Quem quer aprender e servir pode se cadastrar como voluntário: a filial forma os próprios voluntários, em um caminho separado dos cursos. Novas turmas e ações abertas ao público são divulgadas nas notícias do site e no Instagram @cruzvermelhabrasileirarj.",
+          "resposta": "Sim. A filial, que é uma associação sem fins lucrativos, oferece formações gratuitas de primeiros socorros e de voluntariado, em vários formatos: há turmas abertas ao público e turmas só para voluntários, com ou sem certificado, conforme a turma. Um exemplo é a formação da Força-Tarefa Humanitária – Ações El Niño. As próximas turmas são divulgadas na página de cursos gratuitos, nas notícias do site e no Instagram @cruzvermelhabrasileirarj. Já os sete cursos presenciais do catálogo são pagos e vendidos pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99.",
           "links": [
             {
-              "texto": "cadastrar como voluntário",
-              "url": "https://form.spotform.com.br/voluntariocruzvermelharj"
+              "texto": "página de cursos gratuitos",
+              "url": "/cursos-gratuitos/"
             },
             {
               "texto": "notícias do site",
@@ -90,7 +90,7 @@
         },
         {
           "pergunta": "O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?",
-          "resposta": "Sim. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro a quem conclui todas as etapas de cada curso presencial, por uma instituição reconhecida nacional e internacionalmente pela tradição em formação humanitária e de emergências. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na página de matrícula.",
+          "resposta": "Sim. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, a quem conclui todas as etapas de cada curso presencial, dado na sede da filial, no Palácio da Cruz Vermelha. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na página de matrícula.",
           "links": [
             {
               "texto": "página de matrícula",
@@ -115,7 +115,7 @@
         },
         {
           "pergunta": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
-          "resposta": "Todos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado é emitido pela Cruz Vermelha Brasileira Rio de Janeiro e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail.",
+          "resposta": "Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail.",
           "links": [
             {
               "texto": "página de matrícula",
@@ -130,7 +130,7 @@
         },
         {
           "pergunta": "O certificado dos cursos é reconhecido pelo MEC?",
-          "resposta": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O nosso é emitido pela Cruz Vermelha Brasileira Rio de Janeiro, reconhecida nacional e internacionalmente pela tradição em formação humanitária. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.",
+          "resposta": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.",
           "links": [],
           "chat": [
             "curso",
@@ -145,7 +145,7 @@
       "perguntas": [
         {
           "pergunta": "Onde fazer curso de primeiros socorros no Rio de Janeiro com certificado?",
-          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro os cursos de primeiros socorros são presenciais, na Praça da Cruz Vermelha, 10, Centro, com certificado da filial e abertos a qualquer pessoa, mesmo fora da saúde. São três opções, todas exigindo apenas Ensino Fundamental: Primeiros Socorros Básico (8 horas, R$ 180), Lei Lucas - Ambientes com Crianças (8 horas, R$ 150) e Suporte Básico de Vida (4 horas, R$ 150), valores à vista pagos depois, na plataforma da escola. Você aprende avaliação da vítima, RCP, controle de hemorragias, engasgos e traumas, com prática supervisionada. A inscrição de R$ 99 garante a vaga: escolha o seu na página de matrícula em cursos presenciais.",
+          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro os cursos de primeiros socorros são presenciais, na Praça da Cruz Vermelha, 10, Centro, com certificado da escola e abertos a qualquer pessoa. São três opções, todas exigindo apenas Ensino Fundamental: Primeiros Socorros Básico (8 horas, R$ 180), Lei Lucas - Ambientes com Crianças (8 horas, R$ 150) e Suporte Básico de Vida (4 horas, R$ 150), valores à vista da matrícula. Você aprende avaliação da vítima, RCP, controle de hemorragias, engasgos e traumas, com prática supervisionada. A inscrição de R$ 99 garante a vaga: escolha o seu na página de matrícula em cursos presenciais. A filial também oferece formações gratuitas de primeiros socorros, divulgadas na página de cursos gratuitos.",
           "links": [
             {
               "texto": "Primeiros Socorros Básico",
@@ -162,6 +162,10 @@
             {
               "texto": "página de matrícula em cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
+            },
+            {
+              "texto": "página de cursos gratuitos",
+              "url": "/cursos-gratuitos/"
             }
           ]
         },
@@ -181,7 +185,7 @@
         },
         {
           "pergunta": "O que faz um bombeiro civil e quais são os requisitos para fazer o curso?",
-          "resposta": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago depois na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil.",
+          "resposta": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil.",
           "links": [
             {
               "texto": "matrícula no curso de Bombeiro Civil",
@@ -195,7 +199,7 @@
         },
         {
           "pergunta": "Como se tornar cuidador de idosos e o que o curso ensina?",
-          "resposta": "Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da filial. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na matrícula do curso de Cuidador de Idosos.",
+          "resposta": "Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da escola. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na matrícula do curso de Cuidador de Idosos.",
           "links": [
             {
               "texto": "matrícula do curso de Cuidador de Idosos",
@@ -205,7 +209,7 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
-          "resposta": "Sim. A Cruz Vermelha Brasileira Rio de Janeiro atende empresas e escolas com treinamentos corporativos de NR, capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e programas customizados para cada equipe. É assim que as empresas parceiras apoiam a filial, junto com programas de responsabilidade social, e podem somar esforços em campanhas como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.",
+          "resposta": "Sim. Os treinamentos corporativos de NR, a capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e os programas customizados para cada equipe são contratados com a escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro e uma das fontes de financiamento da instituição. Empresas parceiras também podem somar esforços com a filial em campanhas como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.",
           "links": [
             {
               "texto": "Lei Lucas",
@@ -238,7 +242,7 @@
         },
         {
           "pergunta": "Existe curso de cuidador de idosos gratuito no Rio de Janeiro?",
-          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da filial, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. Para garantir a vaga agora, faça a matrícula em Cuidador de Idosos.",
+          "resposta": "Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago e vendido pela escola, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da escola, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. As formações gratuitas da filial são de primeiros socorros e de voluntariado, não de cuidador. Para garantir a vaga agora, faça a matrícula em Cuidador de Idosos.",
           "links": [
             {
               "texto": "matrícula em Cuidador de Idosos",
@@ -248,7 +252,7 @@
         },
         {
           "pergunta": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
-          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da filial. Veja o curso Lei Lucas.",
+          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o curso Lei Lucas.",
           "links": [
             {
               "texto": "curso Lei Lucas",
@@ -316,15 +320,15 @@
       "perguntas": [
         {
           "pergunta": "O que é a Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação de voluntários, em cursos de primeiros socorros e formação profissional, em educação preventiva e em campanhas de apoio comunitário. A história da filial, do edifício e das atividades está no verbete da Wikipédia; os canais oficiais estão neste site, na página de links.",
+          "resposta": "A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada sem fins lucrativos, integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação de voluntários, em formações gratuitas de primeiros socorros, em educação preventiva e em campanhas de apoio comunitário. Os princípios, o Movimento e a base legal estão na página Quem somos; a história, em Nossa história.",
           "links": [
             {
-              "texto": "verbete da Wikipédia",
-              "url": "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
+              "texto": "página Quem somos",
+              "url": "/quem-somos/"
             },
             {
-              "texto": "página de links",
-              "url": "/bio/"
+              "texto": "Nossa história",
+              "url": "/historia/"
             }
           ]
         },
@@ -375,10 +379,10 @@
         },
         {
           "pergunta": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
-          "resposta": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial oferece é preparo para agir até a chegada do socorro: os cursos de Primeiros Socorros e de Suporte Básico de Vida ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa, com certificado. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
+          "resposta": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: as formações gratuitas da filial e os cursos pagos da escola, como Primeiros Socorros, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
           "links": [
             {
-              "texto": "cursos de Primeiros Socorros",
+              "texto": "Primeiros Socorros",
               "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-basico"
             },
             {

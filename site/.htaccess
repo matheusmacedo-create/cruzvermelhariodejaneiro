@@ -27,7 +27,8 @@
   RewriteRule ^(matricula|inscricao)/?$ /matricula-cursos-presenciais/ [R=301,L]
   RewriteRule ^equipe/?$ /equipe.html [R=301,L]
   RewriteRule ^campanha-agasalho/?$ /campanha-agasalho.html [R=301,L]
-  RewriteRule ^(voluntario|voluntariado|seja-voluntario)/?$ /bio/ [R=301,L]
+  # /voluntariado/ é página própria desde 11/10/2026 (scripts/gerar_institucional.py); os outros dois endereços levam a ela.
+  RewriteRule ^(voluntario|seja-voluntario)/?$ /voluntariado/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]
 
   # Ponto da sede: o QR code do cartaz da recepção aponta para /ponto/. /conferir/ é o endereço

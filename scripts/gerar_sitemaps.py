@@ -55,6 +55,15 @@ PAGINAS = [
     ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
     ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
     ("/historia/", "historia/index.html", "monthly", "0.7", "História da filial"),
+    # Páginas institucionais (11/10/2026, scripts/gerar_institucional.py): só entram depois de publicadas (pagina_indexavel).
+    ("/quem-somos/", "quem-somos/index.html", "monthly", "0.7", "Quem somos"),
+    ("/principios-fundamentais/", "principios-fundamentais/index.html", "yearly", "0.7", "Princípios Fundamentais"),
+    ("/movimento-internacional/", "movimento-internacional/index.html", "yearly", "0.6", "Movimento Internacional"),
+    ("/emblema/", "emblema/index.html", "yearly", "0.6", "O emblema"),
+    ("/direito-internacional-humanitario/", "direito-internacional-humanitario/index.html", "yearly", "0.6", "Direito Internacional Humanitário"),
+    ("/base-legal/", "base-legal/index.html", "monthly", "0.6", "Base legal"),
+    ("/cursos-gratuitos/", "cursos-gratuitos/index.html", "weekly", "0.8", "Cursos gratuitos"),
+    ("/voluntariado/", "voluntariado/index.html", "monthly", "0.7", "Voluntariado"),
     # Campanha de doação de brinquedos para a ação (fechada) de 13/10/2026: sai da lista depois dela.
     ("/dia-das-criancas/", "dia-das-criancas/index.html", "weekly", "0.7", "Doação de brinquedos para o Dia das Crianças"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
