@@ -56,13 +56,15 @@ DOMINIO_PROIBIDO = "cruzvermelharj.org.br"
 
 CSS = """  <style>
     /* Páginas institucionais (scripts/gerar_institucional.py). */
-    .inst-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 40px 0 34px; }
-    .inst-trilha { font-size: .82rem; color: var(--muted); margin: 0 0 18px; }
+    main.inst-pagina .inst-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 40px 0 34px; }
+    main.inst-pagina .inst-relacionadas { padding: 40px 0 48px; }
+    .inst-trilha { display: block !important; font-size: .82rem; color: var(--muted); margin: 0 0 18px; }  /* a home esconde todo <nav> no celular */
+    main.inst-pagina section.inst-secao, main.inst-pagina section.inst-perguntas { padding: 0; }  /* a home dá 86 px a todo <section> */
     .inst-trilha ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
     .inst-trilha li + li::before { content: "›"; margin-right: 6px; color: var(--line); }
     .inst-trilha a { color: var(--muted); }
     .inst-trilha a:hover { color: var(--red); }
-    .inst-topo h1 { font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.08; letter-spacing: -.03em; margin: 6px 0 14px; max-width: 22ch; }
+    .inst-topo h1 { color: var(--black); font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1.08; letter-spacing: -.03em; margin: 6px 0 14px; max-width: 22ch; }
     .inst-topo .lead { max-width: 66ch; }
     .inst-indice { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
     .inst-indice a { display: inline-block; padding: 7px 12px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); font-size: .84rem; font-weight: 600; color: var(--text); }
@@ -96,7 +98,7 @@ CSS = """  <style>
     .inst-fontes a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); }
     .inst-fontes a:hover { color: var(--red); }
     .inst-atualizado { font-size: .82rem; color: var(--muted); margin: 0 0 40px; }
-    .inst-relacionadas { background: var(--soft); border-top: 1px solid var(--line); padding: 40px 0 48px; }
+    .inst-relacionadas { background: var(--soft); border-top: 1px solid var(--line); }
     .inst-relacionadas h2 { font-size: 1.35rem; margin: 0 0 18px; }
     .inst-cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
     .inst-cartao { display: block; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); color: var(--text); transition: border-color .2s, transform .18s; }
@@ -104,7 +106,7 @@ CSS = """  <style>
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
     @media (max-width: 620px) {
-      .inst-topo { padding: 28px 0 26px; }
+      main.inst-pagina .inst-topo { padding: 28px 0 26px; }
       .inst-corpo { padding: 32px 0 12px; }
       .inst-oficial { padding: 14px 16px; }
     }

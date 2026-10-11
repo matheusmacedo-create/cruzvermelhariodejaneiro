@@ -1,0 +1,53 @@
+# Pacote institucional (11/10/2026): menus novos, 8 páginas institucionais, correções (história, equipe, FAQ,
+# chat, llms.txt), separação ONG × escola e, junto, a abertura da transparência de 05/10/2026 (aprovada pelo
+# Matheus em 11/10: home e equipe com o link, os cartões e o rodapé; /verificar/ indexável).
+# O ar antes da publicação = o Git em 1c9df6f, menos a abertura da transparência (home, equipe, llms.txt,
+# verificar) e a entrada do Dia das Crianças no llms.txt (conferido em 11/10, por HTTP, arquivo por arquivo).
+# Gerar antes: python3 scripts/gerar_institucional.py (as 8 páginas, de site/institucional.json).
+# Ordem: imagens e chat.js primeiro (as páginas citam), depois as páginas novas, o .htaccess da raiz (só depois
+# que /voluntariado/ existe), a abertura (.htaccess da pasta verificar antes da página), as páginas que linkam
+# para as novas e o llms.txt por último.
+# Antes, a cópia do ar (volta atrás; o .htaccess e as páginas novas não existem no ar ou não vêm por HTTP):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-institucional $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt)
+# Depois: limpar o cache (hosting_cache_clear-website), python3 scripts/gerar_sitemaps.py (lê o site no ar) e
+# publicar os quatro sitemaps; conferir com scripts/conferir_publicacao.sh scripts/publicacao-institucional.txt.
+# Desfazer: republicar a cópia do ar em ordem inversa
+#   C=/tmp/no-ar-institucional; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt | tac | sed "s|^site/|$C/|")
+# (as páginas novas e as imagens novas podem ficar: nada mais aponta para elas depois da volta).
+# Fica de fora: as telas da matrícula e do checkout (processo do pagar tudo: menu antigo por enquanto), as
+# políticas EN/ES e as páginas EN/ES geradas por gerar_idiomas.py (menu próprio, ainda o antigo).
+site/assets/otim/presidente-luiz-carlos-dos-santos-480.webp
+site/assets/otim/presidente-luiz-carlos-dos-santos-960.webp
+site/assets/otim/presidente-e-vice-presidente-473.webp
+site/assets/otim/presidente-e-vice-gabinete-473.webp
+site/chat/chat.js
+site/quem-somos/index.html
+site/principios-fundamentais/index.html
+site/movimento-internacional/index.html
+site/emblema/index.html
+site/direito-internacional-humanitario/index.html
+site/base-legal/index.html
+site/cursos-gratuitos/index.html
+site/voluntariado/index.html
+site/.htaccess
+site/verificar/.htaccess
+site/verificar/index.html
+site/verificar/404.html
+site/historia/index.html
+site/en/history/index.html
+site/equipe.html
+site/en/our-team/index.html
+site/es/nuestro-equipo/index.html
+site/en/faq/index.html
+site/es/preguntas-frecuentes/index.html
+site/privacidade/index.html
+site/cookies/index.html
+site/termos/index.html
+site/reembolso/index.html
+site/404.html
+site/bio/index.html
+site/dia-das-criancas/index.html
+site/doacao-indisponivel.html
+site/index.html
+site/llms.txt
