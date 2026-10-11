@@ -944,6 +944,51 @@
     }
     .faq-item[open] summary::after { transform: rotate(45deg); }
     .faq-item .faq-answer { padding: 0 24px 22px; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+    /* Menu em grupos (11/10/2026): "Quem somos" e "Cursos" abrem uma lista; no computador ao passar o mouse,
+       focar ou clicar; no menu sanfona (até 1320 px), por clique, dentro da lista. */
+    .nav-links { align-items: center; }
+    .nav-links > a, .nav-grupo-botao { line-height: 1.5; }
+    .nav-grupo { position: relative; }
+    .nav-grupo-botao {
+      font: inherit; font-weight: 600; font-size: 13.5px; letter-spacing: 0.2px; color: var(--muted);
+      background: none; border: 0; padding: 0 0 2px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .nav-grupo-botao::after {
+      content: ""; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+      transform: translateY(-2px) rotate(45deg); transition: transform .2s;
+    }
+    .nav-grupo-botao:hover, .nav-grupo.aberto .nav-grupo-botao, .nav-grupo-botao[aria-current="true"] { color: var(--red); }
+    .nav-grupo.aberto .nav-grupo-botao::after { transform: translateY(1px) rotate(-135deg); }
+    .nav-sub {
+      display: none; position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%);
+      min-width: 260px; padding: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+      box-shadow: 0 18px 40px rgba(11,18,32,.14); z-index: 1001;
+    }
+    .nav-sub::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }
+    .nav-grupo.aberto .nav-sub { display: grid; }
+    @media (min-width: 1321px) and (hover: hover) { .nav-grupo:hover .nav-sub { display: grid; } }
+    .nav-links .nav-sub a { display: block; padding: 9px 12px; border-radius: 9px; color: var(--text); font-size: 13.5px; white-space: nowrap; }
+    .nav-links .nav-sub a::after { display: none; }
+    .nav-links .nav-sub a:hover, .nav-links .nav-sub a:focus-visible { background: rgba(204,0,0,.07); color: var(--red); }
+    .nav-links .nav-sub a[aria-current="page"] { color: var(--red); background: rgba(204,0,0,.07); }
+    .nav-sub-rotulo { margin: 8px 12px 2px; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .nav-sub-rotulo:first-child { margin-top: 2px; }
+    @media (max-width: 1320px) {
+      .nav-links { align-items: stretch; }
+      .nav-grupo { width: 100%; border-bottom: 1px solid var(--line); }
+      .nav-grupo-botao { width: 100%; justify-content: space-between; padding: 14px 4px; font-size: .95rem; }
+      .nav-sub { position: static; transform: none; min-width: 0; box-shadow: none; border: 0; border-radius: 0; padding: 0 0 10px 10px; }
+      .nav-sub::before { display: none; }
+      .nav-links .nav-sub a { padding: 10px 8px; border-bottom: 0; white-space: normal; }
+    }
+
+    /* Rodapé reorganizado (11/10/2026): cinco colunas por assunto. */
+    footer .footer-grid { max-width: 1180px; grid-template-columns: 1.5fr 1.2fr 1fr 1.1fr 1.5fr; gap: 28px; }
+    .footer-principios a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+    .footer-principios a:hover { color: var(--red); }
+    .footer-brand p + p { margin-top: 10px; }
+    @media (max-width: 1100px) { footer .footer-grid { grid-template-columns: 1fr 1fr 1fr; } footer .footer-brand { grid-column: 1 / -1; } }
+    @media (max-width: 620px) { footer .footer-grid { grid-template-columns: 1fr 1fr; gap: 22px 18px; padding: 36px 16px 28px; } footer .footer-col:last-child { grid-column: 1 / -1; } }
   </style>
   <style>
     [id] { scroll-margin-top: 110px; }
@@ -1253,7 +1298,7 @@
         "name": "O prédio da Cruz Vermelha no Rio é tombado?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Sim. O tombamento foi pedido pela própria Cruz Vermelha Brasileira em 1988. O Iphan publicou o tombamento provisório em julho de 2021, e o tombamento definitivo foi aprovado em 10 de novembro de 2021."
+          "text": "Sim. O tombamento foi pedido pela própria Cruz Vermelha Brasileira em 1988. O Iphan publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Iphan aprovou o tombamento, por unanimidade, em 10 de novembro de 2021."
         }
       },
       {
@@ -1314,21 +1359,43 @@
       </button>
 
       <div class="header-collapse">
-        <nav class="nav-links">
-          <a href="/#institucional">Sobre</a>
-          <a href="/historia/" aria-current="page">História</a>
-          <a href="/matricula-cursos-presenciais/" style="white-space:nowrap">Matrícula cursos presenciais</a>
+        <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
+             gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
+        <nav class="nav-links" aria-label="Menu principal">
+          <div class="nav-grupo">
+            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-quem-somos">Quem somos</button>
+            <div class="nav-sub" id="menu-quem-somos">
+              <a href="/quem-somos/">Quem somos</a>
+              <a href="/historia/" aria-current="page">Nossa história</a>
+              <a href="/principios-fundamentais/">Princípios Fundamentais</a>
+              <a href="/movimento-internacional/">Movimento Internacional</a>
+              <a href="/emblema/">O emblema</a>
+              <a href="/direito-internacional-humanitario/">Direito Internacional Humanitário</a>
+              <a href="/base-legal/">Base legal</a>
+              <a href="/equipe.html">Equipe</a>
+              <a href="/transparencia/">Transparência</a>
+            </div>
+          </div>
+          <div class="nav-grupo">
+            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-cursos">Cursos</button>
+            <div class="nav-sub" id="menu-cursos">
+              <p class="nav-sub-rotulo">Gratuitos · da filial</p>
+              <a href="/cursos-gratuitos/">Cursos gratuitos</a>
+              <p class="nav-sub-rotulo">Pagos · Escola de Educação e Saúde</p>
+              <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
+              <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a>
+            </div>
+          </div>
+          <a href="/voluntariado/">Voluntariado</a>
           <a href="/#campanhas">Campanhas</a>
-          <a href="/#parceiros">Parceiros</a>
-          <a href="/#faq">FAQ</a>
-          <a href="/equipe.html">Equipe</a>
+          <a href="/noticias/">Notícias</a>
           <a href="/#contato">Contato</a>
         </nav>
 
         <div class="header-actions">
           <div class="seletor-idioma" role="navigation" aria-label="Idioma">
             <span class="idioma-atual" aria-current="true" lang="pt-BR">PT</span>
-            <a href="/en/history/" hreflang="en" lang="en" aria-label="English">EN</a>
+            <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
             <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
           </div>
           <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
@@ -1404,7 +1471,7 @@
 
 <h2 id="movimento">O Movimento Internacional da Cruz Vermelha</h2>
 <p>A Cruz Vermelha Brasileira é a Sociedade Nacional do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho no Brasil. O Movimento reúne o Comitê Internacional da Cruz Vermelha (CICV), a Federação Internacional das Sociedades da Cruz Vermelha e do Crescente Vermelho (FICV) e as Sociedades Nacionais de cada país, orientados pelos mesmos sete princípios fundamentais: humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
-<p>O emblema da cruz vermelha sobre fundo branco não é uma marca: é um símbolo de proteção previsto nas Convenções de Genebra. Suas cores invertem as do pavilhão suíço, em homenagem à Suíça, país de Henry Dunant, idealizador do Movimento<sup class="ref">[<a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. No Brasil, o uso do nome e do emblema é protegido por lei desde o Decreto nº 2.380, de 1910.</p>
+<p>O emblema da cruz vermelha sobre fundo branco não é uma marca: é um símbolo de proteção previsto nas Convenções de Genebra. Suas cores invertem as do pavilhão suíço, em homenagem à Suíça, país de Henri Dunant, idealizador do Movimento<sup class="ref">[<a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. No Brasil, o uso do nome e do emblema é protegido por lei desde o Decreto nº 2.380, de 1910 (veja <a href="/emblema/">o emblema</a> e a <a href="/base-legal/">base legal</a>).</p>
 
 <h2 id="fundacao">1907 e 1908: a fundação</h2>
 <figure class="hv-fig hv-fig-lado">
@@ -1416,7 +1483,7 @@
 <p>Em 5 de dezembro de 1908, em reunião no salão da Sociedade de Geografia do Rio de Janeiro, foram discutidos e aprovados os estatutos da sociedade. Essa é a data oficial de fundação da Cruz Vermelha Brasileira, e Thaumaturgo de Azevedo foi eleito para presidi-la, cargo em que permaneceu até 1918<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-4" aria-label="Fonte 4">4</a>]</sup>.</p>
 
 <h2 id="reconhecimento">1910 a 1919: reconhecimento e primeiras filiais</h2>
-<p>Em 31 de dezembro de 1910, o Decreto nº 2.380 reconheceu oficialmente a Cruz Vermelha Brasileira como a única sociedade organizada para os fins previstos nas Convenções de Genebra, autorizada a estender sua ação por todos os estados. Isso tornou possível fundar associações de Cruz Vermelha numa composição federativa, com um Órgão Central na capital federal para coordenar os esforços de cada uma<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em 16 de março de 1912, o CICV a reconheceu como a Sociedade Nacional do Brasil e, em 13 de junho do mesmo ano, o Decreto nº 9.620 a declarou de caráter nacional e de utilidade pública internacional<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
+<p>Em 31 de dezembro de 1910, o Decreto nº 2.380, com força de lei, regulou as associações da Cruz Vermelha no país e protegeu o nome e o sinal da cruz vermelha. É por ele que o governo brasileiro reconhece oficialmente a Cruz Vermelha Brasileira, como registra o Estatuto em vigor. O decreto exigiu uma composição federativa, com um Órgão Central na capital federal para coordenar os esforços de cada associação<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em 16 de março de 1912, o CICV a reconheceu como a Sociedade Nacional do Brasil e, em 13 de junho do mesmo ano, o Decreto nº 9.620 registrou que ela era a única organizada conforme aquela norma e a declarou de caráter nacional e de utilidade internacional<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
 <figure class="hv-fig hv-fig-lado">
   <a class="hv-zoom" href="/assets/otim/historia-ac-diploma-socio.webp" data-cap="Diploma de sócio da Cruz Vermelha Brasileira." data-alt="Diploma de sócio da Cruz Vermelha Brasileira, com moldura decorada e a cruz vermelha"><img src="/assets/otim/historia-ac-diploma-socio-th.webp" width="520" height="717" alt="Diploma de sócio da Cruz Vermelha Brasileira, com moldura decorada e a cruz vermelha" loading="lazy" decoding="async"></a>
   <figcaption>Diploma de sócio da Cruz Vermelha Brasileira.</figcaption>
@@ -1461,14 +1528,14 @@
     <dt>Estilo</dt><dd>Eclético</dd>
     <dt>Estrutura</dt><dd>Pedra e tijolo maciço</dd>
     <dt>Local</dt><dd>Praça da Cruz Vermelha, Centro do Rio de Janeiro</dd>
-    <dt>Proteção</dt><dd>Tombamento federal definitivo, em 10 de novembro de 2021</dd>
+    <dt>Proteção</dt><dd>Tombamento federal aprovado pelo Conselho Consultivo do Iphan em 10 de novembro de 2021</dd>
   </dl>
 </aside>
 <figure class="hv-fig hv-fig-lado">
   <a class="hv-zoom" href="/assets/otim/historia-relevo-fachada-855.webp" data-cap="Detalhe da fachada: o grupo escultórico sobre a entrada principal. (Foto: blog O Rio que o Rio não vê)" data-alt="Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada"><img src="/assets/otim/historia-relevo-fachada-480.webp" srcset="/assets/otim/historia-relevo-fachada-480.webp 480w, /assets/otim/historia-relevo-fachada-855.webp 855w" sizes="(max-width: 920px) calc(100vw - 40px), 420px" width="480" height="349" alt="Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada" loading="lazy" decoding="async"></a>
   <figcaption>Detalhe da fachada: o grupo escultórico sobre a entrada principal.<span class="hv-cred">Foto: blog O Rio que o Rio não vê</span></figcaption>
 </figure>
-<p>Em 1984, o edifício foi tombado pelo patrimônio histórico municipal do Rio de Janeiro<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. O tombamento federal foi pedido pela própria Cruz Vermelha Brasileira em 26 de setembro de 1988<sup class="ref">[<a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. O Instituto do Patrimônio Histórico e Artístico Nacional (Iphan) publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Patrimônio Cultural aprovou o tombamento definitivo em 10 de novembro de 2021, em sua 98ª reunião. Desde então, o edifício tem proteção federal em caráter permanente<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>.</p>
+<p>Em 1984, o edifício foi tombado pelo patrimônio histórico municipal do Rio de Janeiro<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. O tombamento federal foi pedido pela própria Cruz Vermelha Brasileira em setembro de 1988<sup class="ref">[<a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. O Instituto do Patrimônio Histórico e Artístico Nacional (Iphan) publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Patrimônio Cultural aprovou o tombamento por unanimidade em 10 de novembro de 2021, em sua <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">98ª reunião</a>, com a inscrição do edifício no Livro do Tombo Histórico<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>.</p>
 
 <h2 id="escola">A Escola de Enfermagem</h2>
 <p>A formação de enfermeiras é uma das marcas da Cruz Vermelha no Rio de Janeiro. A história da Escola se confunde com a da própria enfermagem no Brasil: foi a Primeira Guerra Mundial (1914–1918) que despertou na população o interesse pela prestação de serviço voluntário<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
@@ -1682,8 +1749,8 @@
 </details>
 
 <h2 id="federacao">Uma federação em todo o país</h2>
-<p>A criação de filiais começou a partir da Lei Federal nº 2.380, de 31 de dezembro de 1910, que regulou a existência das Associações da Cruz Vermelha no país e permitiu que adquirissem personalidade jurídica. A primeira filial foi a de São Paulo, em 1912, e a segunda, a de Minas Gerais, em 1914. Em 1916 foi fundada a do Amazonas e já estavam reconhecidas as filiais Sírio-Brasileiro (no Rio de Janeiro), de Sergipe e de São José dos Campos, Cachoeira e Santos (SP). Em 1917 fundou-se a do Paraná e, no ano seguinte, as de Barra do Piraí (RJ), Cruz Alta (RS), Santa Catarina, Rio Grande do Norte, Maranhão e Ubá (MG). Muitas tiveram curta duração<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
-<p>Em 21 de novembro de 1933, o Decreto nº 23.482 definiu a Cruz Vermelha Brasileira como órgão central da organização federativa de todas as associações de Cruz Vermelha no país. Entre 1941 e 1943, durante a Segunda Guerra Mundial, foram criadas 61 filiais<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em levantamento do Centro de Memória e Documentação, eram 18 filiais estaduais e 52 municipais. Hoje, o Decreto nº 8.714, de 2016, organiza a instituição como uma federação formada por órgão central, filiais estaduais e filiais municipais<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>]</sup>.</p>
+<p>A criação de filiais começou a partir do Decreto nº 2.380, de 31 de dezembro de 1910 (decreto legislativo, com força de lei), que regulou a existência das Associações da Cruz Vermelha no país e permitiu que adquirissem personalidade jurídica. A primeira filial foi a de São Paulo, em 1912, e a segunda, a de Minas Gerais, em 1914. Em 1916 foi fundada a do Amazonas e já estavam reconhecidas as filiais Sírio-Brasileiro (no Rio de Janeiro), de Sergipe e de São José dos Campos, Cachoeira e Santos (SP). Em 1917 fundou-se a do Paraná e, no ano seguinte, as de Barra do Piraí (RJ), Cruz Alta (RS), Santa Catarina, Rio Grande do Norte, Maranhão e Ubá (MG). Muitas tiveram curta duração<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
+<p>Em 21 de novembro de 1933, o Decreto nº 23.482 definiu a Cruz Vermelha Brasileira como órgão central da organização federativa de todas as associações de Cruz Vermelha no país. Entre 1941 e 1943, durante a Segunda Guerra Mundial, foram criadas 61 filiais<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em levantamento do Centro de Memória e Documentação, eram 18 filiais estaduais e 52 municipais. Hoje, o Estatuto aprovado pelo <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Decreto nº 8.885, de 24 de outubro de 2016</a>, organiza a instituição como uma federação formada por órgão central, filiais estaduais e filiais municipais<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>]</sup>.</p>
 <p>Em 3 de setembro de 1945, o Decreto-Lei nº 7.928 instituiu as condecorações da Cruz Vermelha Brasileira, entre elas a Cruz de Honra e a Cruz de Benemerência, destinadas a reconhecer serviços prestados à humanidade<sup class="ref">[<a href="#fonte-13" aria-label="Fonte 13">13</a>]</sup>.</p>
 <figure class="hv-fig ">
   <a class="hv-zoom" href="/assets/otim/historia-distribuicao-donativos-550.webp" data-cap="Voluntário da Filial do Rio de Janeiro em uma distribuição de donativos." data-alt="Voluntário de costas, com colete da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos"><img src="/assets/otim/historia-distribuicao-donativos-550.webp" width="550" height="360" alt="Voluntário de costas, com colete da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos" loading="lazy" decoding="async"></a>
@@ -1724,7 +1791,7 @@
   </article>
   <article class="hv-card" id="pres-09">
     <img src="/assets/otim/historia-ac-pres-09-th.webp" width="360" height="445" alt="Retrato de Senador Vivaldo Palma Lima Filho" loading="lazy" decoding="async">
-    <div><span class="hv-card-per">9º · 1947–1966</span><h4>Senador Vivaldo Palma Lima Filho</h4><p>Cirurgião ortopedista, foi professor da Escola de Enfermagem e diretor do Hospital da CVB, e senador pelo Amazonas. Inaugurou em 1956 a estátua de Ana Nery na Praça da Cruz Vermelha, ampliou o patrimônio da CVB e propôs mudanças estatutárias que permitiram a mulheres concorrer à presidência. É autor da Lei nº 3.960, que institui o uso obrigatório de emblema distintivo das organizações nacionais de saúde.</p></div>
+    <div><span class="hv-card-per">9º · 1947–1966</span><h4>Senador Vivaldo Palma Lima Filho</h4><p>Cirurgião ortopedista, foi professor da Escola de Enfermagem e diretor do Hospital da CVB, e senador pelo Amazonas. Inaugurou em 1956 a estátua de Ana Nery na Praça da Cruz Vermelha, ampliou o patrimônio da CVB e propôs mudanças estatutárias que permitiram a mulheres concorrer à presidência. É autor da Lei nº 3.960, que institui o uso obrigatório de emblema distintivo das organizações nacionais de saúde (o bastão serpentário, não a cruz).</p></div>
   </article>
   <article class="hv-card" id="pres-10">
     <img src="/assets/otim/historia-ac-pres-10-th.webp" width="360" height="340" alt="Retrato de Ministro Álvaro Tolentino Borge Dias" loading="lazy" decoding="async">
@@ -1990,7 +2057,7 @@
 </div>
 <div class="hv-era">
   <h3>2001–2023 · Memória, patrimônio e reconhecimento</h3>
-  <p class="hv-era-resumo">Reunificação, novos estatutos, a Filial do Rio de Janeiro e a proteção federal definitiva do Palácio.</p>
+  <p class="hv-era-resumo">Reunificação, novos estatutos, a Filial do Rio de Janeiro e a proteção federal do Palácio.</p>
   <ol class="hv-tl">
       <li><span class="ano">2001</span><span class="txt">Em novembro, conclui-se o processo de reunificação e pacificação da instituição, coordenado por Milton Segala Pauletto.</span></li>
       <li><span class="ano">2004</span><span class="txt">Estatutos revistos, aprovados por decreto presidencial em janeiro; em 27 de dezembro, a CVB lança a campanha para as vítimas do tsunami na Ásia.</span></li>
@@ -1999,9 +2066,9 @@
       <li><span class="ano">2010</span><span class="txt">Utilidade pública municipal (Lei nº 5.153).</span></li>
       <li><span class="ano">2011</span><span class="txt">Assistência na catástrofe climática da Região Serrana.</span></li>
       <li><span class="ano">2012</span><span class="txt">Em 29 de novembro, é criado o Centro de Memória e Documentação (Portaria nº 49/2012).</span></li>
-      <li><span class="ano">2016</span><span class="txt">O Decreto nº 8.714 organiza a CVB em órgão central e filiais.</span></li>
+      <li><span class="ano">2016</span><span class="txt">O Estatuto aprovado pelo Decreto nº 8.885 organiza a CVB em órgão central e filiais.</span></li>
       <li><span class="ano">2019</span><span class="txt">Começa a restauração e a reformulação de documentos e do acervo do Centro de Memória e Documentação.</span></li>
-      <li class="destaque"><span class="ano">2021</span><span class="txt">Tombamento definitivo do Palácio da Cruz Vermelha, em 10 de novembro.</span></li>
+      <li class="destaque"><span class="ano">2021</span><span class="txt">O Conselho Consultivo do Iphan aprova o tombamento do Palácio da Cruz Vermelha, em 10 de novembro.</span></li>
       <li><span class="ano">2023</span><span class="txt">Utilidade pública estadual (Lei nº 9.984).</span></li>
   </ol>
 </div>
@@ -2042,7 +2109,7 @@
   </details>
   <details class="faq-item">
     <summary>O prédio da Cruz Vermelha no Rio é tombado?</summary>
-    <div class="faq-answer"><p>Sim. O tombamento foi pedido pela própria Cruz Vermelha Brasileira em 1988. O Iphan publicou o tombamento provisório em julho de 2021, e o tombamento definitivo foi aprovado em 10 de novembro de 2021.</p></div>
+    <div class="faq-answer"><p>Sim. O tombamento foi pedido pela própria Cruz Vermelha Brasileira em 1988. O Iphan publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Iphan aprovou o tombamento, por unanimidade, em 10 de novembro de 2021.</p></div>
   </details>
   <details class="faq-item">
     <summary>Por que a praça se chama Praça da Cruz Vermelha?</summary>
@@ -2104,7 +2171,7 @@
     <tr><th>Reconhecimento</th><td>Decreto nº 2.380, de 1910; CICV, em 1912</td></tr>
     <tr><th>Primeiro curso de enfermagem</th><td>20 de outubro de 1914</td></tr>
     <tr><th>Sede histórica</th><td>Palácio da Cruz Vermelha, Praça da Cruz Vermelha, Centro do Rio de Janeiro</td></tr>
-    <tr><th>Tombamento</th><td>Federal, definitivo, em 10 de novembro de 2021</td></tr>
+    <tr><th>Tombamento</th><td>Federal, aprovado pelo Conselho Consultivo do Iphan em 10 de novembro de 2021</td></tr>
     <tr><th>Filial do Rio de Janeiro</th><td>Fundada em 2006</td></tr>
   </table>
 </aside>
@@ -2115,28 +2182,45 @@
   <dialog id="hv-lb" aria-label="Foto ampliada"><figure><img alt=""><figcaption></figcaption></figure></dialog>
 
   <footer>
+    <!-- Rodapé reorganizado em 11/10/2026: colunas por assunto; a faixa de baixo fica só com as políticas. -->
     <div class="footer-grid">
       <div class="footer-brand">
-        <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
-        <p>Humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+        <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156" loading="lazy" decoding="async">
+        <p>Associação privada sem fins lucrativos, filial estadual da Cruz Vermelha Brasileira e parte do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho.</p>
+        <p class="footer-principios"><a href="/principios-fundamentais/#humanidade">Humanidade</a>, <a href="/principios-fundamentais/#imparcialidade">imparcialidade</a>, <a href="/principios-fundamentais/#neutralidade">neutralidade</a>, <a href="/principios-fundamentais/#independencia">independência</a>, <a href="/principios-fundamentais/#voluntariado">voluntariado</a>, <a href="/principios-fundamentais/#unidade">unidade</a> e <a href="/principios-fundamentais/#universalidade">universalidade</a>.</p>
       </div>
       <div class="footer-col">
-        <h4>Sobre</h4>
-        <p>Cruz Vermelha Brasileira<br>Filial Rio de Janeiro</p>
+        <h4>Quem somos</h4>
+        <p><a href="/quem-somos/">Quem somos</a></p>
         <p><a href="/historia/">Nossa história</a></p>
-        <p><a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a></p>
-        <p><a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a></p>
+        <p><a href="/principios-fundamentais/">Princípios Fundamentais</a></p>
+        <p><a href="/movimento-internacional/">Movimento Internacional</a></p>
+        <p><a href="/emblema/">O emblema</a></p>
+        <p><a href="/direito-internacional-humanitario/">Direito Internacional Humanitário</a></p>
+        <p><a href="/base-legal/">Base legal</a></p>
+        <p><a href="/equipe.html">Equipe</a></p>
+      </div>
+      <div class="footer-col">
+        <h4>Atuação</h4>
+        <p><a href="/cursos-gratuitos/">Cursos gratuitos</a></p>
+        <p><a href="/voluntariado/">Voluntariado</a></p>
+        <p><a href="/#campanhas">Campanhas</a></p>
+        <p><a href="/noticias/">Notícias</a></p>
+        <p><a href="/acervo/">Acervo</a></p>
+        <p><a href="/#faq">Perguntas frequentes</a></p>
+      </div>
+      <div class="footer-col">
+        <h4>Transparência</h4>
+        <p><a href="/transparencia/">Portal da transparência</a></p>
+        <p><a href="/canais-oficiais/">Canais oficiais</a></p>
+        <p><a href="/verificar/">Verificar um documento</a></p>
         <p><a href="/bio/">Links oficiais</a></p>
         <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
         <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</p>
-        <p><i class="fa-solid fa-phone"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i> (21) 99992-2864</p>
         <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
-      </div>
-      <div class="footer-col">
-        <h4>Siga-nos</h4>
         <div class="footer-social">
           <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
           <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></a>
@@ -2145,9 +2229,7 @@
     </div>
     <div class="footer-bottom">
       <div class="container footer-inner">
-        <span>&copy; 2026 Cruz Vermelha Brasileira Rio de Janeiro</span>
-        <span class="sep">|</span>
-        <a href="/acervo/">Acervo</a>
+        <span>&copy; 2026 Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro · CNPJ 08.560.973/0001-97</span>
         <span class="sep">|</span>
         <a href="/privacidade/">Política de Privacidade</a>
         <span class="sep">|</span>
@@ -2177,6 +2259,30 @@
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
       });
     });
+
+    // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
+    (function () {
+      const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
+      function fechar(exceto) {
+        grupos.forEach(g => { if (g !== exceto) { g.classList.remove('aberto'); g.querySelector('.nav-grupo-botao')?.setAttribute('aria-expanded', 'false'); } });
+      }
+      grupos.forEach(g => {
+        const botao = g.querySelector('.nav-grupo-botao');
+        botao?.addEventListener('click', () => {
+          const abrir = !g.classList.contains('aberto');
+          fechar(g);
+          g.classList.toggle('aberto', abrir);
+          botao.setAttribute('aria-expanded', String(abrir));
+        });
+        if (g.querySelector('a[aria-current="page"]')) botao?.setAttribute('aria-current', 'true');
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('.nav-grupo')) fechar(null); });
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        const aberto = grupos.find(g => g.classList.contains('aberto'));
+        if (aberto) { fechar(null); aberto.querySelector('.nav-grupo-botao')?.focus(); }
+      });
+    })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">

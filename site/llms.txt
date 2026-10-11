@@ -1,22 +1,47 @@
 # Cruz Vermelha Brasileira Rio de Janeiro
 
-> Filial do Estado do Rio de Janeiro da Cruz Vermelha Brasileira, com sede no Palácio da Cruz
-> Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. CNPJ 08.560.973/0001-97.
-> Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua em formação de
-> voluntários, cursos presenciais de primeiros socorros e formação profissional, educação
-> preventiva e campanhas de apoio comunitário.
+> Filial do Estado do Rio de Janeiro da Cruz Vermelha Brasileira: associação privada sem fins
+> lucrativos, parte do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho, com sede no
+> Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. CNPJ
+> 08.560.973/0001-97. Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua
+> em formação de voluntários, formações gratuitas de primeiros socorros, educação preventiva e
+> campanhas de apoio comunitário. Os cursos pagos de formação profissional são da Escola de Educação
+> e Saúde, vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ
+> 67.733.551/0001-35), empresa ligada à filial, com sistemas independentes.
 
 Atenção ao nome: "Cruz Vermelha Brasileira" sozinha é a instituição nacional. Esta é a filial do
 Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro**.
+
+## Institucional
+
+- [Quem somos](https://cruzvermelhariodejaneiro.org/quem-somos/): o que é a filial, o que faz no Rio, a sede, os reconhecimentos e a
+  diretoria, com links para as páginas abaixo.
+- [Princípios Fundamentais](https://cruzvermelhariodejaneiro.org/principios-fundamentais/): os sete princípios (humanidade,
+  imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade), com o texto
+  oficial do Estatuto da Cruz Vermelha Brasileira (Decreto nº 8.885/2016, art. 8º).
+- [Movimento Internacional](https://cruzvermelhariodejaneiro.org/movimento-internacional/): CICV, Federação Internacional, Sociedades
+  Nacionais e onde a filial fica nessa estrutura.
+- [O emblema](https://cruzvermelhariodejaneiro.org/emblema/): uso protetor e indicativo, quem pode usar, a proteção legal no Brasil e
+  como avisar a filial sobre uso indevido.
+- [Direito Internacional Humanitário](https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/): as Convenções de
+  Genebra, os Protocolos e os decretos que os promulgaram no Brasil.
+- [Base legal](https://cruzvermelhariodejaneiro.org/base-legal/): as leis e decretos da Cruz Vermelha Brasileira e da filial, com link
+  para o texto oficial e a situação (vigente ou revogado). O estatuto em vigor é o do Decreto nº
+  8.885/2016.
 
 ## Páginas principais
 
 - [Início](https://cruzvermelhariodejaneiro.org/): apresentação da filial, ações, parceiros e
   perguntas frequentes sobre cursos, voluntariado, como ajudar, endereço e contato.
-- [Cursos e matrícula](https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/): os sete
-  cursos presenciais na sede, com carga horária, escolaridade mínima e valor. A vaga é garantida
-  com uma inscrição de R$ 99 por PIX ou cartão; o valor do curso é pago depois, na plataforma da
-  escola.
+- [Cursos gratuitos](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/): formações gratuitas da filial em primeiros socorros e
+  voluntariado, em vários formatos (abertas ao público ou só para voluntários, com ou sem
+  certificado, conforme a turma).
+- [Voluntariado](https://cruzvermelhariodejaneiro.org/voluntariado/): como entrar, a formação e o termo de adesão (Lei 9.608/1998).
+- [Cursos pagos e matrícula](https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/): os sete cursos presenciais da Escola
+  de Educação e Saúde na sede, com carga horária, escolaridade mínima e valor, vendidos pela O-CVB
+  Filial Rio de Janeiro Ensino Ltda. Com turma aberta, dá para pagar tudo de uma vez na inscrição, à
+  vista, ou só a taxa de inscrição de R$ 99, que reserva a vaga; a matrícula é paga depois, na
+  plataforma da escola.
 - [Campanha do Agasalho](https://cruzvermelhariodejaneiro.org/campanha-agasalho.html): entrega de
   roupas de frio, cobertores e calçados na sede, de segunda a sexta, das 10h às 17h.
 - [Doação de brinquedos para o Dia das Crianças](https://cruzvermelhariodejaneiro.org/dia-das-criancas/): a
@@ -55,11 +80,12 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 A doação online em dinheiro pelo site está suspensa desde 25/09/2026. Dá para ajudar como
 voluntário ou entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho.
 
-## Cursos presenciais
+## Cursos presenciais pagos (Escola de Educação e Saúde)
 
-Todos acontecem na sede, no Centro do Rio, com certificado da filial. Inscrição de R$ 99 pelo site
-(quem se matricula direto na plataforma da escola paga lá a matrícula de R$ 100). Os valores abaixo
-são à vista; a plataforma da escola também parcela, com juros. Datas e horários variam por turma.
+Todos acontecem na sede, no Centro do Rio, vendidos e certificados pela O-CVB Filial Rio de Janeiro
+Ensino Ltda, empresa ligada à filial. Cada curso tem a taxa de inscrição de R$ 99 e a matrícula (os
+valores abaixo, à vista); a plataforma da escola também parcela, com juros. Datas e horários variam
+por turma.
 
 - Primeiros Socorros Básico: 8 horas, Ensino Fundamental, R$ 180. Inclui a Lei Lucas.
 - Primeiros Socorros Lei Lucas (ambientes com crianças): 8 horas, Ensino Fundamental, R$ 150.
@@ -69,7 +95,8 @@ são à vista; a plataforma da escola também parcela, com juros. Datas e horár
 - Cuidador de Idosos (curso livre): 160 horas, Ensino Fundamental, R$ 950.
 - Micropigmentação Labial: 24 horas, Ensino Médio, R$ 400.
 
-Não há cursos gratuitos, cursos técnicos nem curso de enfermagem no catálogo.
+Não há cursos técnicos nem curso de enfermagem no catálogo. A filial oferece formações gratuitas de
+primeiros socorros e de voluntariado, em vários formatos: veja [cursos gratuitos](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/).
 
 ## Respostas diretas às dúvidas mais comuns
 
@@ -78,12 +105,14 @@ Não há cursos gratuitos, cursos técnicos nem curso de enfermagem no catálogo
 - **Duração.** De 4 horas (Suporte Básico de Vida) a 160 horas (Cuidador de Idosos). Para
   atualização rápida em primeiros socorros, de 4 a 8 horas, em um dia de treinamento.
 - **O certificado é reconhecido pelo MEC?** Não, e nenhum curso livre é: o MEC regula a educação
-  formal. O certificado é emitido pela filial, com carga horária e conteúdo, e vale em todo o país
-  — certificado de curso livre não tem validade por região.
-- **Custo total.** Inscrição de R$ 99 pelo site mais o valor do curso, sem mensalidade, sem taxa de
+  formal. O certificado dos cursos pagos é emitido pela escola (O-CVB Filial Rio de Janeiro Ensino
+  Ltda), com carga horária e conteúdo, e vale em todo o país — certificado de curso livre não tem
+  validade por região.
+- **Custo total.** Taxa de inscrição de R$ 99 mais o valor do curso (matrícula), sem mensalidade, sem taxa de
   certificado e sem material à parte. No Bombeiro Civil, a homologação profissional é à parte.
-- **Curso gratuito de cuidador de idosos?** Não na filial; o curso é pago. Programas gratuitos
-  costumam vir de prefeituras, secretarias e fundos sociais, por edital.
+- **Curso gratuito de cuidador de idosos?** Não: o curso do catálogo é pago e vendido pela escola.
+  As formações gratuitas da filial são de primeiros socorros e de voluntariado. Programas gratuitos
+  de cuidador costumam vir de prefeituras, secretarias e fundos sociais, por edital.
 - **Atendimento de saúde.** A filial não agenda consultas nem atende urgências.
 
 ## Contato
