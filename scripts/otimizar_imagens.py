@@ -43,9 +43,12 @@ FOTOS = {
     # Seção Institucional e mosaico da home (11/10/2026; as fotos do CICV saíram por estarem desatualizadas).
     # Retrato do presidente Luiz Carlos dos Santos na Galeria dos Presidentes, recortado em 4:5 (1333x1666)
     # a partir do original 1333x2000; montagem do post do vice-presidente Antônio Pedregal, recortada em 4:4,7
-    # (473x556) para tirar o ícone de marcação do Instagram. Originais em site/assets/, só no servidor.
+    # (473x556) para tirar o ícone de marcação do Instagram (usada no mosaico), e a foto de cima dessa montagem,
+    # presidente e vice à mesa do gabinete, cortada acima do logo (473x232; cartão sobreposto ao retrato na seção
+    # Institucional). Originais em site/assets/, só no servidor.
     "presidente-luiz-carlos-dos-santos.jpg": [480, 960],
     "presidente-e-vice-presidente.jpg": [480],
+    "presidente-e-vice-gabinete.jpg": [480],
     "agasalho-hero-rua.jpg": [640, 1264],
     "agasalho-hero-favela.jpg": [640, 1264],
     "agasalho-fila-comunidade.jpg": [640, 1264],

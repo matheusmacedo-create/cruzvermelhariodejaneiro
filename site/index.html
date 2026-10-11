@@ -467,6 +467,19 @@
     }
     .photo-stack img:first-child { aspect-ratio: 4 / 5; }
     .photo-stack img:last-child { aspect-ratio: 4 / 4.7; transform: translateY(34px); }
+    /* Seção Institucional: retrato do presidente em destaque e cartão do gabinete sobreposto. */
+    .inst-fotos { position: relative; width: min(100%, 430px); margin: 0 0 0 auto; padding: 0 0 92px; }
+    .inst-retrato { position: relative; margin: 0; border-radius: var(--radius); overflow: hidden; box-shadow: 0 18px 40px rgba(16,24,40,.16); }
+    .inst-retrato img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+    .inst-retrato figcaption { position: absolute; top: 16px; left: 16px; display: grid; gap: 2px; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.95); box-shadow: 0 6px 18px rgba(0,0,0,.12); line-height: 1.25; }
+    .inst-retrato figcaption b { font-size: .98rem; color: var(--black); }
+    .inst-retrato figcaption span { font-size: .8rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: .06em; }
+    .inst-gabinete { position: absolute; left: -44px; bottom: 0; width: 64%; margin: 0; padding: 8px; border-radius: 16px; background: #fff; box-shadow: 0 16px 36px rgba(16,24,40,.18); }
+    .inst-gabinete img { display: block; width: 100%; height: auto; aspect-ratio: 473 / 232; object-fit: cover; border-radius: 10px; }
+    .inst-gabinete figcaption { padding: 8px 4px 2px; font-size: .8rem; line-height: 1.35; color: var(--muted); }
+    .inst-gabinete figcaption b { color: var(--text); }
+    @media (max-width: 920px) { .inst-fotos { margin: 8px auto 0; } .inst-gabinete { left: -12px; } }
+    @media (max-width: 620px) { .inst-fotos { padding-bottom: 76px; } .inst-gabinete { left: -6px; width: 74%; } .inst-retrato figcaption { top: 12px; left: 12px; padding: 8px 12px; } }
 
     .cards {
       display: grid;
@@ -1568,9 +1581,15 @@
             <a class="btn btn-outline" href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener">Ver Facebook</a>
           </div>
         </div>
-        <div class="photo-stack" aria-label="Fotos reais da Cruz Vermelha Brasileira Rio de Janeiro">
-          <img alt="Luiz Carlos dos Santos, presidente da Cruz Vermelha Brasileira Rio de Janeiro, na Galeria dos Presidentes do Palácio da Cruz Vermelha" src="assets/otim/presidente-luiz-carlos-dos-santos-480.webp" srcset="assets/otim/presidente-luiz-carlos-dos-santos-480.webp 480w, assets/otim/presidente-luiz-carlos-dos-santos-960.webp 960w" sizes="(max-width: 620px) 174px, 255px" width="480" height="600" loading="lazy" decoding="async">
-          <img alt="O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal no gabinete e na Galeria dos Presidentes do Palácio da Cruz Vermelha" src="assets/otim/presidente-e-vice-presidente-473.webp" width="473" height="556" loading="lazy" decoding="async">
+        <div class="inst-fotos">
+          <figure class="inst-retrato">
+            <img alt="Luiz Carlos dos Santos, presidente da Cruz Vermelha Brasileira Rio de Janeiro, na Galeria dos Presidentes do Palácio da Cruz Vermelha" src="assets/otim/presidente-luiz-carlos-dos-santos-480.webp" srcset="assets/otim/presidente-luiz-carlos-dos-santos-480.webp 480w, assets/otim/presidente-luiz-carlos-dos-santos-960.webp 960w" sizes="(max-width: 620px) calc(100vw - 28px), 430px" width="960" height="1200" loading="lazy" decoding="async">
+            <figcaption><b>Luiz Carlos dos Santos</b><span>Presidente da filial</span></figcaption>
+          </figure>
+          <figure class="inst-gabinete">
+            <img alt="O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal à mesa do gabinete da presidência, no Palácio da Cruz Vermelha" src="assets/otim/presidente-e-vice-gabinete-473.webp" width="473" height="232" loading="lazy" decoding="async">
+            <figcaption>Com o vice-presidente <b>Antônio Pedregal</b>, no gabinete do Palácio da Cruz Vermelha</figcaption>
+          </figure>
         </div>
       </div>
     </section>
