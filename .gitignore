@@ -23,3 +23,5 @@ site/sitemap.xml
 site/noticias/
 # /privacidade/ e /termos/ eram páginas da Redação até 27/09/2026; agora saem de scripts/gerar_politicas.py
 # (com /cookies/, /reembolso/ e as versões em inglês e espanhol) e entram no repositório.
+# Chaves de liga e desliga do pagar tudo: só no servidor (o .htaccess nega config-*.php, inclusive com hífen).
+site/matricula-cursos-presenciais/api/config-pagar-tudo.php

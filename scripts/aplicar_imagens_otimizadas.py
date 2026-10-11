@@ -23,7 +23,7 @@ OTIM = SITE / "assets" / "otim"
 # página, medida ao vivo em 19/09/2026 com Playwright. 0 = escondida (slide inativo).
 MEDIDAS = {
     "index.html": [("logo-cvb-rj.png", 173, 186), ("impacto-cores-banner.jpg", 1366, 390), ("agasalho-banner.jpg", 0, 0),
-                   ("reuniao-cicv.jpg", 255, 174), ("reuniao-cicv-grupo.jpg", 255, 174), ("impacto-cores-banner.jpg", 349, 360),
+                   ("presidente-luiz-carlos-dos-santos.jpg", 430, 362), ("presidente-e-vice-gabinete.jpg", 275, 268), ("impacto-cores-banner.jpg", 349, 360),
                    ("agasalho-hero-rua.jpg", 349, 360), ("curso-primeiros-socorros-novo.jpg", 576, 360), ("curso-puncao-venosa.jpg", 0, 0),
                    ("curso-cuidador-idosos.jpg", 0, 0), ("curso-bombeiro-civil.jpg", 351, 360), ("curso-lei-lucas.jpg", 351, 360),
                    ("curso-suporte-basico-vida.jpg", 351, 360), ("hero-formacao-voluntarios.jpg", 620, 362), ("voluntario-microfone.jpg", 150, 360),
