@@ -32,6 +32,7 @@ TITULO = "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais"
 DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de "
              "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
+URL_GRATUITOS = f"{ORIGEM}/cursos-gratuitos/"
 URL_AGASALHO = f"{ORIGEM}/campanha-agasalho.html"
 
 # Perguntas que as pessoas fazem ao Google sobre a filial: cada resposta cita os caminhos oficiais e liga
@@ -42,11 +43,13 @@ FAQ = [
      "para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem "
      "ser tiradas no WhatsApp do voluntariado ou no chat deste site.", []),
     ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-     "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e "
-     "micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. "
-     "As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser "
-     "feita na página de matrícula em cursos presenciais.",
-     [("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
+     "Há dois caminhos. A filial oferece formações gratuitas de primeiros socorros e de voluntariado (veja os cursos "
+     "gratuitos). E a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial, vende "
+     "e certifica os cursos pagos: primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro "
+     "civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio. As turmas e os "
+     "valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de "
+     "matrícula em cursos presenciais.",
+     [("cursos gratuitos", "URL_GRATUITOS"), ("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
      "Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
@@ -228,7 +231,7 @@ def main() -> int:
     def faq_html(pergunta: str, resposta: str, links: list) -> str:
         texto = esc(resposta)
         for rotulo, alvo in links:
-            url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO}[alvo]
+            url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO, "URL_GRATUITOS": URL_GRATUITOS}[alvo]
             texto = texto.replace(esc(rotulo), f'<a href="{url}">{esc(rotulo)}</a>', 1)
         return f"<details><summary>{esc(pergunta)}</summary><p>{texto}</p></details>"
     faq = "".join(faq_html(p, r, l) for p, r, l in FAQ)

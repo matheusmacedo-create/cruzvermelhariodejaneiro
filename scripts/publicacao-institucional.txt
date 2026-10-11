@@ -4,6 +4,7 @@
 # O ar antes da publicação = o Git em 1c9df6f, menos a abertura da transparência (home, equipe, llms.txt,
 # verificar) e a entrada do Dia das Crianças no llms.txt (conferido em 11/10, por HTTP, arquivo por arquivo).
 # Gerar antes: python3 scripts/gerar_institucional.py (as 8 páginas, de site/institucional.json).
+# site/faq-home.json também é servido no ar (fonte da FAQ da home): vai junto com a home.
 # Ordem: imagens e chat.js primeiro (as páginas citam), depois as páginas novas, o .htaccess da raiz (só depois
 # que /voluntariado/ existe), a abertura (.htaccess da pasta verificar antes da página), as páginas que linkam
 # para as novas e o llms.txt por último.
@@ -12,8 +13,10 @@
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt)
 # Depois: limpar o cache (hosting_cache_clear-website), python3 scripts/gerar_sitemaps.py (lê o site no ar) e
 # publicar os quatro sitemaps; conferir com scripts/conferir_publicacao.sh scripts/publicacao-institucional.txt.
-# Desfazer: republicar a cópia do ar em ordem inversa
-#   C=/tmp/no-ar-institucional; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt | tac | sed "s|^site/|$C/|")
+# Desfazer: republicar a cópia do ar em ordem inversa, sem os arquivos que não existiam no ar (a cópia os lista
+# em novos.txt; não há o que republicar para eles)
+#   C=/tmp/no-ar-institucional; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|")
+# e, se quiser tirá-los do ar também: scripts/publicar_hostinger.sh --apagar $(cat $C/novos.txt)
 # (as páginas novas e as imagens novas podem ficar: nada mais aponta para elas depois da volta).
 # Fica de fora: as telas da matrícula e do checkout (processo do pagar tudo: menu antigo por enquanto), as
 # políticas EN/ES e as páginas EN/ES geradas por gerar_idiomas.py (menu próprio, ainda o antigo).
@@ -50,4 +53,5 @@ site/bio/index.html
 site/dia-das-criancas/index.html
 site/doacao-indisponivel.html
 site/index.html
+site/faq-home.json
 site/llms.txt

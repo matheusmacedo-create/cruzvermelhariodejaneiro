@@ -969,7 +969,13 @@
     }
     .nav-sub::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }
     .nav-grupo.aberto .nav-sub { display: grid; }
-    @media (min-width: 1321px) and (hover: hover) { .nav-grupo:hover .nav-sub { display: grid; } }
+    @media (min-width: 1321px) and (hover: hover) {
+      .nav-grupo:hover .nav-sub { display: grid; }
+      /* Um grupo aberto por clique some quando o mouse passa para o outro: nunca duas listas ao mesmo tempo. */
+      .nav-links:has(.nav-grupo:hover) .nav-grupo.aberto:not(:hover) .nav-sub { display: none; }
+    }
+    .nav-links > a[aria-current="page"] { color: var(--red); }
+    .nav-links > a[aria-current="page"]::after { width: 100%; }
     .nav-links .nav-sub a { display: block; padding: 9px 12px; border-radius: 9px; color: var(--text); font-size: 13.5px; white-space: nowrap; }
     .nav-links .nav-sub a::after { display: none; }
     .nav-links .nav-sub a:hover, .nav-links .nav-sub a:focus-visible { background: rgba(204,0,0,.07); color: var(--red); }
@@ -983,6 +989,8 @@
       .nav-sub { position: static; transform: none; min-width: 0; box-shadow: none; border: 0; border-radius: 0; padding: 0 0 10px 10px; }
       .nav-sub::before { display: none; }
       .nav-links .nav-sub a { padding: 10px 8px; border-bottom: 0; white-space: normal; }
+      /* Com os dois grupos abertos, a lista passa da altura da tela: o painel rola sozinho, sem rolar a página. */
+      .main-header.nav-open .header-collapse { max-height: calc(100vh - 84px); max-height: calc(100dvh - 84px); overflow-y: auto; overscroll-behavior: contain; }
     }
 
     /* Rodapé reorganizado (11/10/2026): cinco colunas por assunto. */
@@ -1142,11 +1150,11 @@
         <img alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
       </a>
 
-      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-painel">
         <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
       </button>
 
-      <div class="header-collapse">
+      <div class="header-collapse" id="menu-painel">
         <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
              gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
         <nav class="nav-links" aria-label="Menu principal">
@@ -1395,7 +1403,7 @@
               <div class="area-icon"><i class="fa-solid fa-book-medical"><svg class="ico ico-book-medical" aria-hidden="true" focusable="false"><use href="#i-book-medical"/></svg></i></div>
               <div class="area-name">Educação e Saúde</div>
             </div>
-            <p class="area-sobre">A Escola de Educação e Saúde CVB-RJ e os cursos presenciais na sede.</p>
+            <p class="area-sobre">A relação da filial com a Escola de Educação e Saúde CVB-RJ, empresa ligada à filial que dá os cursos presenciais na sede.</p>
             <ul>
               <li>Marcio Romero</li>
               <li>Alessandra Rachel</li>
@@ -1505,7 +1513,7 @@
         <div class="team-cta">
           <div>
             <h3>Quer fazer parte da equipe?</h3>
-            <p>O voluntariado é aberto a qualquer pessoa, sem exigência de formação na área da saúde: a
+            <p>O voluntariado não exige formação na área da saúde: a
               filial forma os próprios voluntários, e há frentes para perfis diferentes. Depois do cadastro,
               a equipe do voluntariado apresenta as áreas e a formação inicial.</p>
             <a class="btn btn-red" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Cadastrar-se como voluntário</a>
@@ -1590,6 +1598,10 @@
       const header = this.closest('.main-header');
       const isOpen = header.classList.toggle('nav-open');
       this.setAttribute('aria-expanded', String(isOpen));
+      this.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+      // O painel vai até o pé da tela, mesmo com a faixa acima do cabeçalho (o CSS supõe o cabeçalho no topo).
+      const painel = header.querySelector('.header-collapse');
+      if (painel) painel.style.maxHeight = isOpen ? Math.max(240, window.innerHeight - painel.getBoundingClientRect().top) + 'px' : '';
     });
 
     document.querySelectorAll('.nav-links a').forEach(link => {
@@ -1597,12 +1609,14 @@
         const header = this.closest('.main-header');
         header.classList.remove('nav-open');
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+        document.querySelector('.nav-toggle')?.setAttribute('aria-label', 'Abrir menu');
       });
     });
 
     // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
     (function () {
       const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
+      const mouse = window.matchMedia('(min-width: 1321px) and (hover: hover)');
       function fechar(exceto) {
         grupos.forEach(g => { if (g !== exceto) { g.classList.remove('aberto'); g.querySelector('.nav-grupo-botao')?.setAttribute('aria-expanded', 'false'); } });
       }
@@ -1615,6 +1629,11 @@
           botao.setAttribute('aria-expanded', String(abrir));
         });
         if (g.querySelector('a[aria-current="page"]')) botao?.setAttribute('aria-current', 'true');
+        // No computador, passar o mouse num grupo fecha o outro; sair com o Tab de um grupo o fecha.
+        g.addEventListener('mouseenter', () => { if (mouse.matches) fechar(g); });
+        g.addEventListener('focusout', e => {
+          if (e.relatedTarget && !g.contains(e.relatedTarget)) { g.classList.remove('aberto'); botao?.setAttribute('aria-expanded', 'false'); }
+        });
       });
       document.addEventListener('click', e => { if (!e.target.closest('.nav-grupo')) fechar(null); });
       document.addEventListener('keydown', e => {
@@ -1626,6 +1645,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=aa00cac6d2" defer></script>
+  <script src="/chat/chat.js?v=f3d413a050" defer></script>
 </body>
 </html>

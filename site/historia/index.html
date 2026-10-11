@@ -966,7 +966,13 @@
     }
     .nav-sub::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }
     .nav-grupo.aberto .nav-sub { display: grid; }
-    @media (min-width: 1321px) and (hover: hover) { .nav-grupo:hover .nav-sub { display: grid; } }
+    @media (min-width: 1321px) and (hover: hover) {
+      .nav-grupo:hover .nav-sub { display: grid; }
+      /* Um grupo aberto por clique some quando o mouse passa para o outro: nunca duas listas ao mesmo tempo. */
+      .nav-links:has(.nav-grupo:hover) .nav-grupo.aberto:not(:hover) .nav-sub { display: none; }
+    }
+    .nav-links > a[aria-current="page"] { color: var(--red); }
+    .nav-links > a[aria-current="page"]::after { width: 100%; }
     .nav-links .nav-sub a { display: block; padding: 9px 12px; border-radius: 9px; color: var(--text); font-size: 13.5px; white-space: nowrap; }
     .nav-links .nav-sub a::after { display: none; }
     .nav-links .nav-sub a:hover, .nav-links .nav-sub a:focus-visible { background: rgba(204,0,0,.07); color: var(--red); }
@@ -980,6 +986,8 @@
       .nav-sub { position: static; transform: none; min-width: 0; box-shadow: none; border: 0; border-radius: 0; padding: 0 0 10px 10px; }
       .nav-sub::before { display: none; }
       .nav-links .nav-sub a { padding: 10px 8px; border-bottom: 0; white-space: normal; }
+      /* Com os dois grupos abertos, a lista passa da altura da tela: o painel rola sozinho, sem rolar a página. */
+      .main-header.nav-open .header-collapse { max-height: calc(100vh - 84px); max-height: calc(100dvh - 84px); overflow-y: auto; overscroll-behavior: contain; }
     }
 
     /* Rodapé reorganizado (11/10/2026): cinco colunas por assunto. */
@@ -1354,11 +1362,11 @@
         <img alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
       </a>
 
-      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-painel">
         <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
       </button>
 
-      <div class="header-collapse">
+      <div class="header-collapse" id="menu-painel">
         <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
              gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
         <nav class="nav-links" aria-label="Menu principal">
@@ -1413,7 +1421,7 @@
       </header>
       <div class="hv-layout">
         <div class="hv-corpo">
-<p class="hv-lead"><b>A Cruz Vermelha Brasileira (CVB)</b> foi fundada no Rio de Janeiro em 1908. Na cidade começaram os primeiros cursos de enfermagem da instituição, em 1914, e está o Palácio da Cruz Vermelha, construído entre 1919 e 1923 e tombado como patrimônio cultural federal. Esta página reúne essa trajetória, com a Escola de Enfermagem, os presidentes, os socorros, a linha do tempo, fotografias do acervo e as fontes.</p>
+<p class="hv-lead"><b>A Cruz Vermelha Brasileira (CVB)</b> foi fundada no Rio de Janeiro em 1908. Na cidade começaram os primeiros cursos de enfermagem da instituição, em 1914, e está o Palácio da Cruz Vermelha, construído entre 1919 e 1923, cujo tombamento federal foi aprovado por unanimidade pelo Conselho Consultivo do Iphan em 10 de novembro de 2021. Esta página reúne essa trajetória, com a Escola de Enfermagem, os presidentes, os socorros, a linha do tempo, fotografias do acervo e as fontes.</p>
 
 <nav class="hv-toc" aria-label="Sumário">
   <div class="hv-toc-titulo">Sumário</div>
@@ -1488,7 +1496,7 @@
   <a class="hv-zoom" href="/assets/otim/historia-ac-diploma-socio.webp" data-cap="Diploma de sócio da Cruz Vermelha Brasileira." data-alt="Diploma de sócio da Cruz Vermelha Brasileira, com moldura decorada e a cruz vermelha"><img src="/assets/otim/historia-ac-diploma-socio-th.webp" width="520" height="717" alt="Diploma de sócio da Cruz Vermelha Brasileira, com moldura decorada e a cruz vermelha" loading="lazy" decoding="async"></a>
   <figcaption>Diploma de sócio da Cruz Vermelha Brasileira.</figcaption>
 </figure>
-<p>A rede de filiais começou em 1912, com a de São Paulo, fundada pela médica belga Marie Rennotte<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-3" aria-label="Fonte 3">3</a>]</sup>. Vieram em seguida as de Minas Gerais, em 1914, e do Amazonas, em 1916<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em 23 de maio de 1919, a Cruz Vermelha Brasileira passou a integrar a Liga das Sociedades da Cruz Vermelha, criada naquele ano e hoje chamada FICV<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
+<p>A rede de filiais começou em 1912, com a de São Paulo, fundada pela médica belga Marie Rennotte<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-3" aria-label="Fonte 3">3</a>]</sup>. Vieram em seguida as de Minas Gerais, em 1914, e do Amazonas, em 1916<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em 17 de junho de 1919, a Cruz Vermelha Brasileira foi admitida na Liga das Sociedades da Cruz Vermelha, criada naquele ano e hoje chamada FICV, como registra o art. 7º do <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Estatuto em vigor</a>.</p>
 
 <h2 id="palacio">O Palácio da Cruz Vermelha</h2>
 <p>A Cruz Vermelha Brasileira requereu ao Governo Federal, em 1911, um terreno no Centro do Rio de Janeiro. Só em 1916 o Governo, autorizado pelo Congresso Nacional, o concedeu: a área, no Morro do Senado, era limitada pela então Praça Vieira Souto e pelas ruas Henrique Valadares, Prefeito Barata (hoje Ubaldino do Amaral), Carlos de Carvalho e Carlos Sampaio, com 6.789 m²<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. O morro havia sido desmontado entre 1880 e 1906; nas reformas urbanas da gestão do prefeito Pereira Passos, o local ganhou o traçado circular que tem até hoje. A praça, no cruzamento da Avenida Henrique Valadares com a Avenida Mem de Sá e a Rua Carlos Sampaio, recebeu o nome de Praça da Cruz Vermelha por ficar em frente ao Hospital da Cruz Vermelha<sup class="ref">[<a href="#fonte-6" aria-label="Fonte 6">6</a>]</sup>.</p>
@@ -1535,7 +1543,7 @@
   <a class="hv-zoom" href="/assets/otim/historia-relevo-fachada-855.webp" data-cap="Detalhe da fachada: o grupo escultórico sobre a entrada principal. (Foto: blog O Rio que o Rio não vê)" data-alt="Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada"><img src="/assets/otim/historia-relevo-fachada-480.webp" srcset="/assets/otim/historia-relevo-fachada-480.webp 480w, /assets/otim/historia-relevo-fachada-855.webp 855w" sizes="(max-width: 920px) calc(100vw - 40px), 420px" width="480" height="349" alt="Grupo escultórico sobre a entrada do Palácio: uma enfermeira amparando um ferido, sob o arco da fachada" loading="lazy" decoding="async"></a>
   <figcaption>Detalhe da fachada: o grupo escultórico sobre a entrada principal.<span class="hv-cred">Foto: blog O Rio que o Rio não vê</span></figcaption>
 </figure>
-<p>Em 1984, o edifício foi tombado pelo patrimônio histórico municipal do Rio de Janeiro<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. O tombamento federal foi pedido pela própria Cruz Vermelha Brasileira em setembro de 1988<sup class="ref">[<a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. O Instituto do Patrimônio Histórico e Artístico Nacional (Iphan) publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Patrimônio Cultural aprovou o tombamento por unanimidade em 10 de novembro de 2021, em sua <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">98ª reunião</a>, com a inscrição do edifício no Livro do Tombo Histórico<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>.</p>
+<p>O edifício é tombado pelo patrimônio histórico municipal do Rio de Janeiro: a <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">ata do Iphan</a> cita o Decreto municipal nº 6.932, de 8 de setembro de 1987 (o Centro de Memória da CVB registra o ano de 1984<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>). O tombamento federal foi pedido pela própria Cruz Vermelha Brasileira em setembro de 1988<sup class="ref">[<a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. O Instituto do Patrimônio Histórico e Artístico Nacional (Iphan) publicou o tombamento provisório em julho de 2021, e o Conselho Consultivo do Patrimônio Cultural aprovou o tombamento por unanimidade em 10 de novembro de 2021, em sua <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">98ª reunião</a>, com a inscrição do edifício no Livro do Tombo Histórico<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>.</p>
 
 <h2 id="escola">A Escola de Enfermagem</h2>
 <p>A formação de enfermeiras é uma das marcas da Cruz Vermelha no Rio de Janeiro. A história da Escola se confunde com a da própria enfermagem no Brasil: foi a Primeira Guerra Mundial (1914–1918) que despertou na população o interesse pela prestação de serviço voluntário<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
@@ -2049,7 +2057,7 @@
       <li><span class="ano">1979–1980</span><span class="txt">Acolhimento de refugiados vietnamitas e resgate de 41 brasileiros na Nicarágua (1979).</span></li>
       <li><span class="ano">1980</span><span class="txt">Na seca do Nordeste, 124.982 toneladas de donativos distribuídos.</span></li>
       <li><span class="ano">1983–1985</span><span class="txt">Operação Nordeste, em fases; intermediação da CVB na libertação de brasileiros mantidos por um grupo armado na África.</span></li>
-      <li><span class="ano">1984</span><span class="txt">O edifício-sede é tombado pelo patrimônio histórico municipal.</span></li>
+      <li><span class="ano">1987</span><span class="txt">O edifício-sede é tombado pelo município (Decreto municipal nº 6.932, de 8 de setembro).</span></li>
       <li><span class="ano">1987</span><span class="txt">O Rio sedia a VI Assembleia Geral da Liga das Sociedades da Cruz Vermelha, em novembro.</span></li>
       <li><span class="ano">1988</span><span class="txt">A CVB pede ao Instituto do Patrimônio Histórico e Artístico Nacional (Iphan) o tombamento do edifício-sede.</span></li>
       <li><span class="ano">1990–1991</span><span class="txt">Operação Ararajuba, ação comunitária com estudantes voluntários em 64 cidades.</span></li>
@@ -2250,6 +2258,10 @@
       const header = this.closest('.main-header');
       const isOpen = header.classList.toggle('nav-open');
       this.setAttribute('aria-expanded', String(isOpen));
+      this.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+      // O painel vai até o pé da tela, mesmo com a faixa acima do cabeçalho (o CSS supõe o cabeçalho no topo).
+      const painel = header.querySelector('.header-collapse');
+      if (painel) painel.style.maxHeight = isOpen ? Math.max(240, window.innerHeight - painel.getBoundingClientRect().top) + 'px' : '';
     });
 
     document.querySelectorAll('.nav-links a').forEach(link => {
@@ -2257,12 +2269,14 @@
         const header = this.closest('.main-header');
         header.classList.remove('nav-open');
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+        document.querySelector('.nav-toggle')?.setAttribute('aria-label', 'Abrir menu');
       });
     });
 
     // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
     (function () {
       const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
+      const mouse = window.matchMedia('(min-width: 1321px) and (hover: hover)');
       function fechar(exceto) {
         grupos.forEach(g => { if (g !== exceto) { g.classList.remove('aberto'); g.querySelector('.nav-grupo-botao')?.setAttribute('aria-expanded', 'false'); } });
       }
@@ -2275,6 +2289,11 @@
           botao.setAttribute('aria-expanded', String(abrir));
         });
         if (g.querySelector('a[aria-current="page"]')) botao?.setAttribute('aria-current', 'true');
+        // No computador, passar o mouse num grupo fecha o outro; sair com o Tab de um grupo o fecha.
+        g.addEventListener('mouseenter', () => { if (mouse.matches) fechar(g); });
+        g.addEventListener('focusout', e => {
+          if (e.relatedTarget && !g.contains(e.relatedTarget)) { g.classList.remove('aberto'); botao?.setAttribute('aria-expanded', 'false'); }
+        });
       });
       document.addEventListener('click', e => { if (!e.target.closest('.nav-grupo')) fechar(null); });
       document.addEventListener('keydown', e => {
@@ -2286,7 +2305,7 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=aa00cac6d2" defer></script>
+  <script src="/chat/chat.js?v=f3d413a050" defer></script>
 
   <script>
     (function () {

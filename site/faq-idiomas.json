@@ -33,7 +33,7 @@
         "perguntas": [
           {
             "pergunta": "What courses does the branch offer?",
-            "resposta": "Seven in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). Every one ends with a certificate issued by the branch. There are no technical or nursing degree programmes."
+            "resposta": "Seven paid in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). They are sold and certified by the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), a company linked to the branch. The branch itself, a non-profit association, also runs free first-aid and volunteer training. There are no technical or nursing degree programmes."
           },
           {
             "pergunta": "Are the courses taught in English or Spanish?",
@@ -41,7 +41,7 @@
           },
           {
             "pergunta": "Are the courses online or in person?",
-            "resposta": "All in person, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. The branch does not teach first aid remotely: CPR, choking response and bleeding control need a manikin and an instructor beside you, and that practice is what gives the certificate its weight. Enrolment, on the other hand, is done online. The certificate is issued by the branch and is valid across Brazil, not only in Rio de Janeiro State."
+            "resposta": "All in person, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. First aid is not taught remotely here: CPR, choking response and bleeding control need a manikin and an instructor beside you, and that practice is what gives the certificate its weight. Enrolment, on the other hand, is done online. The certificate is issued by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, and is valid across Brazil, not only in Rio de Janeiro State."
           },
           {
             "pergunta": "What does a course cost, and how do I enrol?",
@@ -59,11 +59,11 @@
           },
           {
             "pergunta": "Is the certificate recognised?",
-            "resposta": "It is issued by the Brazilian Red Cross — Rio de Janeiro Branch to whoever completes every stage of the course, by an institution recognised in Brazil and abroad for its record in humanitarian and emergency training. It is not accredited by Brazil's Ministry of Education, and no course of this kind is: the ministry regulates formal education — technical, undergraduate and postgraduate — and neither issues nor recognises certificates for non-accredited courses, here or anywhere else. For Civil Firefighter, professional accreditation is arranged separately at the end."
+            "resposta": "It is issued by the branch's school, O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), a company linked to the Brazilian Red Cross — Rio de Janeiro Branch, to whoever completes every stage of the course. It is not accredited by Brazil's Ministry of Education, and no course of this kind is: the ministry regulates formal education — technical, undergraduate and postgraduate — and neither issues nor recognises certificates for non-accredited courses, here or anywhere else. For Civil Firefighter, professional accreditation is arranged separately at the end."
           },
           {
             "pergunta": "What is the Lucas Law, and who needs that course?",
-            "resposta": "The Lucas Law (Federal Law 13,722/2018) requires every basic-education school in Brazil, state and private, and every children's play facility, to train teachers and staff in basic first aid. The branch runs the course built for it: First Aid under the Lucas Law — Settings with Children, eight in-person hours covering assessment of a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention and up-to-date paediatric first-aid protocols. If you teach or work with children in Brazil, this is the course the law means.",
+            "resposta": "The Lucas Law (Federal Law 13,722/2018) requires every basic-education school in Brazil, state and private, and every children's play facility, to train teachers and staff in basic first aid. The branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda), runs the course built for it: First Aid under the Lucas Law — Settings with Children, eight in-person hours covering assessment of a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention and up-to-date paediatric first-aid protocols. If you teach or work with children in Brazil, this is the course the law means.",
             "links": [
               {
                 "texto": "First Aid under the Lucas Law — Settings with Children",
@@ -73,7 +73,7 @@
           },
           {
             "pergunta": "Can you train my company's or my school's team?",
-            "resposta": "Yes. The branch runs closed training for companies and schools: occupational-safety (NR) training, first-aid training under the Lucas Law — which schools, nurseries and teams working with children need — and programmes built around a particular team. Organisations anywhere in Rio de Janeiro State can request one. This is also one of the ways partner organisations support the branch, alongside support for campaigns such as the Winter Clothing Drive. Write to contato@cruzvermelhariodejaneiro.org to ask for a proposal."
+            "resposta": "Yes. Closed training for companies and schools is contracted with the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda): occupational-safety (NR) training, first-aid training under the Lucas Law — which schools, nurseries and teams working with children need — and programmes built around a particular team. Organisations anywhere in Rio de Janeiro State can request one. Partner organisations can also support the branch's campaigns, such as the Winter Clothing Drive. Write to contato@cruzvermelhariodejaneiro.org to ask for a proposal."
           }
         ]
       },
@@ -180,7 +180,7 @@
         "perguntas": [
           {
             "pergunta": "¿Qué cursos ofrece la filial?",
-            "resposta": "Siete cursos presenciales, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas), Cuidador de Personas Mayores, curso libre (160 horas), y Micropigmentación Labial (24 horas). Cada uno termina con un certificado emitido por la filial. No hay carreras técnicas ni de enfermería."
+            "resposta": "Siete cursos presenciales pagos, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas), Cuidador de Personas Mayores, curso libre (160 horas), y Micropigmentación Labial (24 horas). Los vende y certifica la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), empresa vinculada a la filial. La filial, una asociación sin fines de lucro, también ofrece formaciones gratuitas de primeros auxilios y de voluntariado. No hay carreras técnicas ni de enfermería."
           },
           {
             "pergunta": "¿Los cursos se dictan en español o en inglés?",
@@ -188,7 +188,7 @@
           },
           {
             "pergunta": "¿Los cursos son en línea o presenciales?",
-            "resposta": "Todos son presenciales, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. La filial no enseña primeros auxilios a distancia: la RCP, la desobstrucción de la vía aérea y el control de hemorragias exigen un maniquí y un instructor al lado, y es esa práctica la que da peso al certificado. La matrícula, en cambio, se hace por internet. El certificado lo emite la filial y vale en todo Brasil, no solo en el estado de Río de Janeiro."
+            "resposta": "Todos son presenciales, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. Aquí no se enseñan primeros auxilios a distancia: la RCP, la desobstrucción de la vía aérea y el control de hemorragias exigen un maniquí y un instructor al lado, y es esa práctica la que da peso al certificado. La matrícula, en cambio, se hace por internet. El certificado lo emite la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda, y vale en todo Brasil, no solo en el estado de Río de Janeiro."
           },
           {
             "pergunta": "¿Cuánto cuesta un curso y cómo me inscribo?",
@@ -206,11 +206,11 @@
           },
           {
             "pergunta": "¿El certificado está reconocido?",
-            "resposta": "Lo emite la Cruz Roja Brasileña — Filial Río de Janeiro a quien completa todas las etapas del curso, una institución reconocida en Brasil y en el exterior por su tradición en formación humanitaria y de emergencias. No está acreditado por el Ministerio de Educación de Brasil, y ningún curso libre lo está: el ministerio regula la educación formal — técnica, de grado y de posgrado — y no emite ni reconoce certificados de curso libre, aquí ni en ninguna otra institución. En Bombero Civil, la homologación profesional se hace aparte, al final."
+            "resposta": "Lo emite la escuela de la filial, la O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa vinculada a la Cruz Roja Brasileña — Filial Río de Janeiro, a quien completa todas las etapas del curso. No está acreditado por el Ministerio de Educación de Brasil, y ningún curso libre lo está: el ministerio regula la educación formal — técnica, de grado y de posgrado — y no emite ni reconoce certificados de curso libre, aquí ni en ninguna otra institución. En Bombero Civil, la homologación profesional se hace aparte, al final."
           },
           {
             "pergunta": "¿Qué es la Ley Lucas y quién necesita ese curso?",
-            "resposta": "La Ley Lucas (Ley Federal 13.722/2018) obliga a toda escuela de educación básica de Brasil, pública o privada, y a todo espacio de recreación infantil, a capacitar a docentes y personal en nociones básicas de primeros auxilios. La filial dicta el curso hecho para eso: Primeros Auxilios Ley Lucas — Entornos con Niños, ocho horas presenciales sobre evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, además de prevención y protocolos actualizados de primeros auxilios infantiles. Si enseña o trabaja con niños en Brasil, es el curso que la ley exige.",
+            "resposta": "La Ley Lucas (Ley Federal 13.722/2018) obliga a toda escuela de educación básica de Brasil, pública o privada, y a todo espacio de recreación infantil, a capacitar a docentes y personal en nociones básicas de primeros auxilios. La escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda), dicta el curso hecho para eso: Primeros Auxilios Ley Lucas — Entornos con Niños, ocho horas presenciales sobre evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, además de prevención y protocolos actualizados de primeros auxilios infantiles. Si enseña o trabaja con niños en Brasil, es el curso que la ley exige.",
             "links": [
               {
                 "texto": "Primeros Auxilios Ley Lucas — Entornos con Niños",
@@ -220,7 +220,7 @@
           },
           {
             "pergunta": "¿Pueden capacitar al equipo de mi empresa o de mi escuela?",
-            "resposta": "Sí. La filial dicta capacitaciones cerradas para empresas y escuelas: formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirla cualquier organización del estado de Río de Janeiro. Es también una de las formas en que las organizaciones aliadas apoyan a la filial, junto con el apoyo a campañas como la Campaña de Ropa de Abrigo. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
+            "resposta": "Sí. Las capacitaciones cerradas para empresas y escuelas se contratan con la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda): formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirla cualquier organización del estado de Río de Janeiro. Las organizaciones aliadas también pueden apoyar las campañas de la filial, como la Campaña de Ropa de Abrigo. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
           }
         ]
       },

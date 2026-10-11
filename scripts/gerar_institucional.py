@@ -49,13 +49,15 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
-              "transparencia": ("/transparencia/", "Transparência", "O portal da transparência da filial.")}
+              "transparencia": ("/transparencia/", "Transparência", "O portal da transparência da filial, em implantação.")}
 FORCA_LEGAL = {"vigente": "https://schema.org/InForce", "revogado": "https://schema.org/NotInForce",
                "revogada": "https://schema.org/NotInForce", "revogado em parte": "https://schema.org/PartiallyInForce"}
 DOMINIO_PROIBIDO = "cruzvermelharj.org.br"
 
 CSS = """  <style>
-    /* Páginas institucionais (scripts/gerar_institucional.py). */
+    /* Páginas institucionais (scripts/gerar_institucional.py). O cinza da home (#718096) não chega a 4,5:1 sobre
+       o fundo claro; aqui o texto secundário usa um cinza mais escuro. */
+    main.inst-pagina { --muted: #5f6b7a; }
     main.inst-pagina .inst-topo { background: var(--soft); border-bottom: 1px solid var(--line); padding: 40px 0 34px; }
     main.inst-pagina .inst-relacionadas { padding: 40px 0 48px; }
     .inst-trilha { display: block !important; font-size: .82rem; color: var(--muted); margin: 0 0 18px; }  /* a home esconde todo <nav> no celular */
@@ -84,6 +86,7 @@ CSS = """  <style>
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }
     .inst-oficial cite a { color: var(--muted); }
     .inst-tabela-rolagem { overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--line); border-radius: 12px; }
+    .inst-tabela-rolagem:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
     .inst-tabela { width: 100%; border-collapse: collapse; font-size: .95rem; min-width: 620px; }
     .inst-tabela th, .inst-tabela td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); line-height: 1.5; }
     .inst-tabela thead th { background: var(--soft); font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
@@ -138,7 +141,9 @@ def tratar_html(html: str) -> str:
             attrs += ' target="_blank" rel="noopener"'
         return f"<a{attrs}>"
     html = re.sub(r"<a(\s[^>]*)>", link, html)
-    html = re.sub(r'<table class="inst-tabela">', '<div class="inst-tabela-rolagem"><table class="inst-tabela">', html)
+    # A caixa rola na horizontal no celular: tabindex deixa rolar pelo teclado, e o rótulo diz o que é.
+    html = re.sub(r'<table class="inst-tabela">', '<div class="inst-tabela-rolagem" tabindex="0" role="region" '
+                  'aria-label="Tabela (role para o lado para ver todas as colunas)"><table class="inst-tabela">', html)
     html = html.replace("</table>", "</table></div>")
     return html
 
