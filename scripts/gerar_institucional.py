@@ -12,8 +12,10 @@ Regras do conteúdo (docs/institucional/mapa-leis-principios-2026-10.md):
   (Lei 9.610/1998, art. 8º, IV); textos do CICV só em citação curta, com crédito e link.
 - Cada página tem mais texto próprio da filial do que trechos citados e links (regra do Google contra páginas
   copiadas ou feitas só de links). O canonical é sempre a própria página, nunca a fonte.
-- Cursos gratuitos (filial) e pagos (escola, O-CVB Filial Rio de Janeiro Ensino Ltda) ficam em ambientes
-  separados; a página dos gratuitos só aponta para os pagos num bloco final, dizendo quem vende.
+- A formação de voluntários (filial, gratuita e só para voluntários aceitos) e os cursos pagos (escola, O-CVB
+  Filial Rio de Janeiro Ensino Ltda) ficam em ambientes separados; a página da formação (/cursos-gratuitos/) só
+  aponta para os pagos num bloco final, dizendo quem vende. A filial não abre curso gratuito ao público: nenhum
+  texto pode dar a entender o contrário (pedido do Matheus, 11/10/2026).
 
 JSON-LD: WebPage (AboutPage em /quem-somos/) ligado a #site e #organizacao, BreadcrumbList, FAQPage (só
 semântica: o Google tirou o resultado rico de FAQ da busca em 2026), DefinedTermSet com os 7 princípios e
@@ -45,7 +47,7 @@ QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "
 NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princípios Fundamentais",
                 "movimento-internacional": "Movimento Internacional", "emblema": "O emblema",
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
-                "cursos-gratuitos": "Cursos gratuitos", "voluntariado": "Voluntariado"}
+                "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),

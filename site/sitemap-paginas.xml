@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-06T14:41:58+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-11T23:21:24+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -8,7 +8,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
-    <lastmod>2026-10-06T14:34:44+00:00</lastmod>
+    <lastmod>2026-10-11T23:13:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -24,12 +24,12 @@
       <image:title>Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/reuniao-cicv-480.webp</image:loc>
-      <image:title>Representantes da Cruz Vermelha Brasileira Rio de Janeiro em reunião institucional com o CICV</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-luiz-carlos-dos-santos-480.webp</image:loc>
+      <image:title>Luiz Carlos dos Santos, presidente da Cruz Vermelha Brasileira Rio de Janeiro, na Galeria dos Presidentes do Palácio da Cruz Vermelha</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/reuniao-cicv-grupo-480.webp</image:loc>
-      <image:title>Equipe da Cruz Vermelha Brasileira Rio de Janeiro em encontro institucional</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-e-vice-gabinete-473.webp</image:loc>
+      <image:title>O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal à mesa do gabinete da presidência, no Palácio da Cruz Vermelha</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-juventude-480.webp</image:loc>
@@ -108,6 +108,10 @@
       <image:title>Comunidade recebendo doações da Campanha do Agasalho</image:title>
     </image:image>
     <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-e-vice-presidente-473.webp</image:loc>
+      <image:title>O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal no gabinete e na Galeria dos Presidentes do Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
     <image:image>
@@ -116,32 +120,36 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc>
-    <lastmod>2026-10-05T13:30:23+00:00</lastmod>
+    <lastmod>2026-10-10T05:15:53+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-engasgo-bebe-instrutor-589.webp</image:loc>
-      <image:title>Instrutor da Cruz Vermelha orientando alunos na prática de desengasgo em bebê, com manequins</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-591.webp</image:loc>
+      <image:title>Aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com instrutor e alunos</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-manobra-heimlich-899.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-manobra-heimlich-480.webp</image:loc>
       <image:title>Instrutor demonstrando a manobra de Heimlich em uma aluna durante a aula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-engasgo-bebe-480.webp</image:loc>
+      <image:title>Alunos ajoelhados praticando a manobra de desengasgo em manequins de bebê durante a aula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-480.webp</image:loc>
+      <image:title>Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-salao-cruz-960.webp</image:loc>
+      <image:title>Turma sentada no salão da sede, com a cruz vermelha ao fundo e um manequim sobre a mesa</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/certificado-primeiros-socorros-basico-640.webp</image:loc>
       <image:title>Modelo do certificado do curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-591.webp</image:loc>
-      <image:title>Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa</image:title>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/certificado-suporte-basico-de-vida-640.webp</image:loc>
       <image:title>Modelo do certificado do curso de Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-engasgo-bebe-589.webp</image:loc>
-      <image:title>Alunos praticando a manobra de desengasgo em manequins de bebê durante a aula</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/certificado-primeiros-socorros-lei-lucas-640.webp</image:loc>
@@ -180,46 +188,6 @@
       <image:title>Modelo do certificado do curso de Micropigmentação Labial da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-manobra-heimlich-480.webp</image:loc>
-      <image:title>Instrutor demonstrando a manobra de Heimlich em uma aluna durante a aula</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-480.webp</image:loc>
-      <image:title>Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-engasgo-bebe-480.webp</image:loc>
-      <image:title>Alunos praticando a manobra de desengasgo em manequins de bebê durante a aula</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/puncao-venosa-480.webp</image:loc>
-      <image:title>Punção Venosa na Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/bombeiro-civil-480.webp</image:loc>
-      <image:title>Bombeiro Civil na Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/cuidador-de-idosos-480.webp</image:loc>
-      <image:title>Cuidador de Idosos (Curso Livre) na Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/micropigmentacao-labial-480.webp</image:loc>
-      <image:title>Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-      <image:title>Equipe de voluntários reunida no auditório da sede</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-salao-cruz-960.webp</image:loc>
-      <image:title>Turma sentada no salão da sede, com a cruz vermelha ao fundo e um manequim sobre a mesa</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-varanda-escola-1917-480.webp</image:loc>
-      <image:title>Enfermeiras de uniforme branco e véu enfileiradas na varanda da Escola de Enfermeiras, em 1917</image:title>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/mapa-sede-960.webp</image:loc>
       <image:title>Mapa do Centro do Rio com a sede da Cruz Vermelha marcada na Praça da Cruz Vermelha, 10, perto da Avenida Mem de Sá</image:title>
     </image:image>
@@ -228,15 +196,12 @@
       <image:title>Fachada iluminada do Palácio da Cruz Vermelha, à noite</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-matricula.jpg</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/bio/</loc>
-    <lastmod>2026-10-06T14:34:46+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:10+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -267,7 +232,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/historia/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/history/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/historia/"/>
-    <lastmod>2026-10-02T18:37:03+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:21+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -713,8 +678,128 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/quem-somos/</loc>
+    <lastmod>2026-10-11T23:14:27+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/principios-fundamentais/</loc>
+    <lastmod>2026-10-11T23:14:24+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/movimento-internacional/</loc>
+    <lastmod>2026-10-11T23:14:23+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/emblema/</loc>
+    <lastmod>2026-10-11T23:14:17+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/</loc>
+    <lastmod>2026-10-11T23:14:15+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/base-legal/</loc>
+    <lastmod>2026-10-11T23:14:08+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/cursos-gratuitos/</loc>
+    <lastmod>2026-10-11T23:14:12+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/voluntariado/</loc>
+    <lastmod>2026-10-11T23:14:32+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/dia-das-criancas/</loc>
-    <lastmod>2026-10-06T14:34:43+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -752,7 +837,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/campanha-agasalho.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/winter-clothing-drive/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/campanha-agasalho.html"/>
-    <lastmod>2026-10-02T18:36:02+00:00</lastmod>
+    <lastmod>2026-10-11T23:13:53+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -784,7 +869,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/our-team/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/nuestro-equipo/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/equipe.html"/>
-    <lastmod>2026-10-02T18:36:49+00:00</lastmod>
+    <lastmod>2026-10-11T23:13:55+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -807,12 +892,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/transparencia/</loc>
+    <lastmod>2026-10-06T01:56:26+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/canais-oficiais/</loc>
+    <lastmod>2026-10-05T21:33:29+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/verificar/</loc>
+    <lastmod>2026-10-11T23:14:31+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/privacidade/</loc>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/privacidade/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/privacidad/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/privacidade/"/>
-    <lastmod>2026-10-02T18:37:15+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:26+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <image:image>
@@ -831,7 +940,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/cookies/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/cookies/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/cookies/"/>
-    <lastmod>2026-10-02T18:36:03+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:11+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <image:image>
@@ -850,7 +959,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/terms/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/terminos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/termos/"/>
-    <lastmod>2026-10-02T18:37:19+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:30+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <image:image>
@@ -869,7 +978,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/refunds/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/reembolsos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/reembolso/"/>
-    <lastmod>2026-10-02T18:37:18+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:28+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <image:image>
@@ -926,7 +1035,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/terms/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/terminos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/termos/"/>
-    <lastmod>2026-10-02T18:36:46+00:00</lastmod>
+    <lastmod>2026-10-10T05:14:48+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
@@ -945,7 +1054,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/refunds/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/reembolsos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/reembolso/"/>
-    <lastmod>2026-10-02T18:36:45+00:00</lastmod>
+    <lastmod>2026-10-10T05:14:47+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
@@ -1002,7 +1111,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/terms/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/terminos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/termos/"/>
-    <lastmod>2026-10-02T18:37:01+00:00</lastmod>
+    <lastmod>2026-10-10T05:14:50+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
@@ -1021,7 +1130,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/refunds/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/reembolsos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/reembolso/"/>
-    <lastmod>2026-10-02T18:37:00+00:00</lastmod>
+    <lastmod>2026-10-10T05:14:49+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
@@ -1087,7 +1196,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/faq/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/preguntas-frecuentes/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
-    <lastmod>2026-10-02T18:36:11+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1105,7 +1214,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/faq/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/preguntas-frecuentes/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
-    <lastmod>2026-10-02T18:36:57+00:00</lastmod>
+    <lastmod>2026-10-11T23:14:20+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1160,7 +1269,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/our-team/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/nuestro-equipo/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/equipe.html"/>
-    <lastmod>2026-10-02T18:36:42+00:00</lastmod>
+    <lastmod>2026-10-11T22:52:59+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -1179,7 +1288,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/our-team/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/nuestro-equipo/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/equipe.html"/>
-    <lastmod>2026-10-02T18:36:55+00:00</lastmod>
+    <lastmod>2026-10-11T22:53:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -1344,7 +1453,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/historia/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/history/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/historia/"/>
-    <lastmod>2026-10-02T18:36:13+00:00</lastmod>
+    <lastmod>2026-10-11T22:52:56+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>

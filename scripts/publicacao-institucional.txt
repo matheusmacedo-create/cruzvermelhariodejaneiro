@@ -1,3 +1,9 @@
+# PUBLICADO em 11/10/2026, 19h59 (horário de Brasília), na ordem abaixo, com o cache limpo e os quatro sitemaps
+# republicados. As 4 fotos de assets/otim/presidente-* tinham ficado só na sessão que as gerou; foram refeitas dos
+# originais que o Matheus reenviou (mesmos recortes de scripts/otimizar_imagens.py) e continuam fora do Git.
+# Conferido no ar: conferir_publicacao.sh "Tudo certo" (63 itens); /voluntario/ e /seja-voluntario/ -> 301
+# /voluntariado/; /verificar/ com index, follow; navegador no celular e no computador nas páginas novas, na home e na
+# equipe sem imagem quebrada, erro de JS nem rolagem horizontal.
 # Pacote institucional (11/10/2026): menus novos, 8 páginas institucionais, correções (história, equipe, FAQ,
 # chat, llms.txt), separação ONG × escola e, junto, a abertura da transparência de 05/10/2026 (aprovada pelo
 # Matheus em 11/10: home e equipe com o link, os cartões e o rodapé; /verificar/ indexável).
