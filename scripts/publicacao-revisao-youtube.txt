@@ -1,0 +1,41 @@
+# Revisão final do pacote institucional + canal do YouTube (13/10/2026). Publicação aprovada pelo Matheus
+# ("sim publique", 11/10, para o pacote revisado; "inclua o link do nosso canal em nosso site", 13/10).
+# O ar antes desta publicação = a main em 6d4d350 (pacote publicado em 11/10 a partir de 24305b3 + formação
+# só para voluntários, 94e75be), conferido por HTTP arquivo por arquivo em 13/10; o faq-home.json do ar é
+# anterior a tudo isso (ainda tinha "Como doar") e passa a ser o do Git. Estes 29 arquivos são os que diferem
+# do ar; os .htaccess e as imagens não mudam.
+# Antes, a cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-revisao $(grep -vE '^(#|$)' scripts/publicacao-revisao-youtube.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-revisao-youtube.txt)
+# Depois: limpar o cache (hosting_cache_clear-website) e conferir por HTTP que cada arquivo ficou igual ao Git.
+# Desfazer: C=/tmp/no-ar-revisao; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-revisao-youtube.txt | tac | sed "s|^site/|$C/|")
+# Ordem: chat.js primeiro (as páginas citam o hash novo), depois as páginas, a home, o faq-home.json e o llms.txt.
+site/chat/chat.js
+site/quem-somos/index.html
+site/principios-fundamentais/index.html
+site/movimento-internacional/index.html
+site/emblema/index.html
+site/direito-internacional-humanitario/index.html
+site/base-legal/index.html
+site/cursos-gratuitos/index.html
+site/voluntariado/index.html
+site/verificar/index.html
+site/verificar/404.html
+site/historia/index.html
+site/en/history/index.html
+site/equipe.html
+site/en/our-team/index.html
+site/es/nuestro-equipo/index.html
+site/en/faq/index.html
+site/es/preguntas-frecuentes/index.html
+site/privacidade/index.html
+site/cookies/index.html
+site/termos/index.html
+site/reembolso/index.html
+site/404.html
+site/bio/index.html
+site/dia-das-criancas/index.html
+site/doacao-indisponivel.html
+site/index.html
+site/faq-home.json
+site/llms.txt
