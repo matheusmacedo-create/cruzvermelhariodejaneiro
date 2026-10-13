@@ -113,6 +113,34 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Canal do YouTube e revisão final do pacote institucional (publicados em 13/10/2026)
+
+- **Canal oficial no YouTube:** https://www.youtube.com/@cruzvermelhariodejaneiro-org (título "CVBRJ", canal
+  `UCxe2kWUJkD-tuJaO1lastUA`). Está no `sameAs` do JSON-LD da filial, num cartão da seção de contato da home,
+  no ícone do rodapé de todas as páginas em português (ícone `youtube` do Font Awesome Free 6.4.0 em
+  `scripts/icones.json`), na resposta "Como falar com..." da FAQ e do chat, no `llms.txt` (redes oficiais) e
+  num botão da `/bio/`. As páginas EN/ES não têm ícones de rede no rodapé (nem o Instagram), por isso não
+  ganharam o canal. A página `/canais-oficiais/` (Redação) ainda não lista nenhuma rede: precisa de uma
+  versão nova lá.
+- **O que aconteceu antes:** em 11/10 outra sessão publicou o pacote institucional a partir de `24305b3`
+  (sem as correções da revisão final) e, em seguida, a decisão de que a formação gratuita é só para
+  voluntários (`94e75be`: cadastro, ficha de entrevista e CBFI; `/cursos-gratuitos/` virou "Formação de
+  voluntários"). Esta branch trouxe a `main` por merge (`6e92f92`), manteve essa decisão em todos os
+  conflitos e reaplicou por cima as correções da revisão final e o YouTube.
+- **Revisão independente antes de publicar (13/10):** 16 achados confirmados e corrigidos (`0d05708`):
+  certificados e treinamentos atribuídos à escola também nos cartões de curso da home e nas páginas EN/ES
+  de home, cursos, FAQ e reembolso; linha do tempo da história com a admissão na Liga em 17/06/1919;
+  tombamento federal "aprovado pelo Conselho Consultivo" também em inglês; transparência descrita como em
+  implantação; rótulos únicos nas tabelas roláveis. As páginas EN/ES foram corrigidas por troca de texto,
+  sem `gerar_idiomas.py`/`gerar_politicas.py`: esses geradores copiam o CSS e o script do menu da home e
+  hoje mudariam o menu das páginas EN/ES (rótulos "Abrir/Fechar menu" em português). Antes de regerar
+  EN/ES, traduzir esses rótulos no gerador.
+- **Publicação:** 36 arquivos de `scripts/publicacao-revisao-youtube.txt`, em 13/10/2026 às 16h46
+  (horário de Brasília), depois da cópia do ar em `/tmp/no-ar-revisao` (28 iguais à `main`, o
+  `faq-home.json` antigo, que ainda tinha "Como doar", e as 7 páginas acrescentadas depois da revisão, também
+  iguais à `main`). Cache limpo; os 36 conferidos por HTTP, idênticos ao Git; navegador sem erro em PT/EN/ES,
+  no computador e no celular.
+
 ## Matrícula cursos presenciais (página `/matricula-cursos-presenciais/`)
 
 - **O que é**: o atalho de matrícula definido em `docs/briefing-matricula-cursos-presenciais.md`.
