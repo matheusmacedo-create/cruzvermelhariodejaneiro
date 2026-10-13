@@ -87,6 +87,9 @@ BLOCOS = [
     {"tipo": "botao", "estilo": "claro whatsapp", "icone": "fa-brands fa-whatsapp", "titulo": "Falar com o voluntariado no WhatsApp",
      "link": "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20",
      "id": "whatsapp-voluntariado"},
+    {"tipo": "titulo", "texto": "Canal no YouTube"},
+    {"tipo": "botao", "estilo": "claro", "icone": "fa-brands fa-youtube", "titulo": "Assistir ao canal da filial no YouTube",
+     "link": "https://www.youtube.com/@cruzvermelhariodejaneiro-org", "id": "youtube"},
 ]
 IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367), "dia-criancas-cartao": (700, 367)}
 
