@@ -39,14 +39,14 @@
           {
             "titulo": "What we do",
             "paragrafos": [
-              "We train volunteers, teach in-person first-aid and vocational courses at our headquarters, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
-              "Our training arm is the Escola de Educação e Saúde CVB-RJ (School of Education and Health), which offers seven in-person courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+              "We train our own volunteers, including in first aid, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
+              "The paid in-person courses at the headquarters belong to the Escola de Educação e Saúde CVB-RJ (School of Education and Health), run by O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch, which sells and certifies seven courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
             ]
           },
           {
             "titulo": "Our headquarters",
             "paragrafos": [
-              "The branch operates from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in the centre of Rio de Janeiro. The building is the historic headquarters of the Brazilian Red Cross and was granted provisional heritage protection by IPHAN, Brazil's National Historic and Artistic Heritage Institute, in 2021.",
+              "The branch operates from the Red Cross Palace, at Praça da Cruz Vermelha, 10, in the centre of Rio de Janeiro. The building is the historic headquarters of the Brazilian Red Cross and its federal listing was unanimously approved in 2021 by the Advisory Council of IPHAN, Brazil's National Historic and Artistic Heritage Institute.",
               "The branch does not run a clinic, schedule medical appointments or respond to emergencies. In an emergency in Brazil, call 192 (ambulance) or 193 (fire brigade)."
             ]
           }
@@ -61,11 +61,11 @@
         "programas": [
           [
             "Volunteer training",
-            "The branch trains its own volunteers, with no requirement of a health background. After registering, each volunteer goes through initial training at the headquarters and then joins one of the coordination teams — humanitarian action, first aid, disaster risk management, youth, sport, psychosocial support."
+            "The branch trains its own volunteers, with no requirement of a health background. After registering and a selection interview, those accepted take the CBFI, the initial volunteer training held at the headquarters four times a year, and then join one of the coordination teams — humanitarian action, first aid, disaster risk management, youth, sport, psychosocial support."
           ],
           [
             "First-aid training",
-            "In-person courses in basic first aid, first aid for settings with children under the Lucas Law, and Basic Life Support, open to anyone. This is also what the branch brings to events and field operations."
+            "The branch trains its volunteers in first aid and brings that preparation to events and field operations. The paid in-person courses open to anyone (basic first aid, the Lucas Law course for settings with children and Basic Life Support) are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda."
           ],
           [
             "Impacto das Cores",
@@ -77,7 +77,7 @@
           ],
           [
             "Training for companies and schools",
-            "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team. It is one of the main ways partner organisations support the branch."
+            "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team, contracted with the branch's school, O-CVB Filial Rio de Janeiro Ensino Ltda."
           ]
         ],
         "caminhos_titulo": "Get involved",
@@ -151,7 +151,7 @@
         "descricao": "The seven in-person courses of the Brazilian Red Cross Rio de Janeiro branch: hours, entry requirements, fees and how enrolment works.",
         "sobrancelha": "School of Education and Health",
         "h1": "Courses at the Brazilian Red Cross — Rio de Janeiro",
-        "linha": "Seven in-person courses taught at the branch headquarters in central Rio de Janeiro, each ending with a certificate issued by the branch.",
+        "linha": "Seven in-person courses taught at the branch headquarters in central Rio de Janeiro, each ending with a certificate issued by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch.",
         "aviso_titulo": "Read this first",
         "aviso_paragrafos": [
           "Every course is taught in Portuguese, in person, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. There is no interpreting, no online option and no group in another language. Practical first aid is learned with a manikin and an instructor beside you, and that is what gives the certificate its weight — which is also why it cannot be done remotely.",
@@ -180,7 +180,7 @@
         },
         "tabela_nota": "Fees are in Brazilian reais and are the prices for payment in full; the school platform also offers instalments, with interest, so the instalment total is higher. On top of the course fee there is a one-off enrolment charge of R$ 99, paid in full on this site, which holds your place. For Civil Firefighter, professional accreditation at the end of the course is paid separately.",
         "detalhe_titulo": "What each course covers",
-        "detalhe_nota": "Every course ends with a certificate issued by the branch. It is not accredited by Brazil's Ministry of Education — no course of this kind is — and it does not replace a regulated professional licence.",
+        "detalhe_nota": "Every course ends with a certificate issued by the school, O-CVB Filial Rio de Janeiro Ensino Ltda. It is not accredited by Brazil's Ministry of Education — no course of this kind is — and it does not replace a regulated professional licence.",
         "detalhes": {
           "primeiros-socorros-basico": "Recognising an emergency and giving safe initial care until the ambulance arrives: assessing the casualty, CPR, using an automated external defibrillator, bleeding control, and the first response to trauma, choking and fainting. It prepares you to act at home, at school, at work, in sport and in the community.",
           "primeiros-socorros-lei-lucas": "The same ground, worked through for children: assessing a child, CPR, choking, falls, trauma, seizures, burns and bleeding, plus prevention. Built for the people the Lucas Law covers — teachers and staff in schools, nurseries, social projects and sports activities — and for parents who want the same preparation.",
@@ -422,14 +422,14 @@
           {
             "titulo": "Qué hacemos",
             "paragrafos": [
-              "Formamos voluntarios, impartimos cursos presenciales de primeros auxilios y de formación profesional en nuestra sede, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores.",
-              "Nuestro brazo formativo es la Escola de Educação e Saúde CVB-RJ, con siete cursos presenciales: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil, Cuidador de Personas Mayores y Micropigmentación Labial. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
+              "Formamos a nuestros propios voluntarios, también en primeros auxilios, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores.",
+              "Los cursos presenciales pagos en la sede son de la Escola de Educação e Saúde CVB-RJ, de la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial, que vende y certifica siete cursos: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil, Cuidador de Personas Mayores y Micropigmentación Labial. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
             ]
           },
           {
             "titulo": "Nuestra sede",
             "paragrafos": [
-              "La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. El edificio es la sede histórica de la Cruz Roja Brasileña y recibió protección patrimonial provisional del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil, en 2021.",
+              "La filial funciona en el Palacio de la Cruz Roja, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. El edificio es la sede histórica de la Cruz Roja Brasileña y su protección como patrimonio federal fue aprobada por unanimidad en 2021 por el Consejo Consultivo del IPHAN, el Instituto del Patrimonio Histórico y Artístico Nacional de Brasil.",
               "La filial no tiene consultorio, no agenda citas médicas ni atiende urgencias. En una emergencia en Brasil, llame al 192 (ambulancia) o al 193 (bomberos)."
             ]
           }
@@ -444,11 +444,11 @@
         "programas": [
           [
             "Formación de voluntarios",
-            "La filial forma a sus propios voluntarios, sin exigir formación en salud. Tras el registro, cada voluntario pasa por la formación inicial en la sede y luego se integra a una de las coordinaciones — acción humanitaria, primeros auxilios, gestión de riesgos de desastres, juventud, deportes, apoyo psicosocial."
+            "La filial forma a sus propios voluntarios, sin exigir formación en salud. Tras el registro y una entrevista de selección, quienes son aceptados hacen el CBFI, la formación inicial de voluntarios, que se dicta en la sede cuatro veces al año, y luego se integran a una de las coordinaciones — acción humanitaria, primeros auxilios, gestión de riesgos de desastres, juventud, deportes, apoyo psicosocial."
           ],
           [
             "Capacitación en primeros auxilios",
-            "Cursos presenciales de primeros auxilios básicos, de primeros auxilios para entornos con niños según la Ley Lucas y de Soporte Vital Básico, abiertos a cualquier persona. Es también lo que la filial lleva a eventos y acciones de campo."
+            "La filial forma a sus voluntarios en primeros auxilios y lleva esa preparación a eventos y acciones de campo. Los cursos presenciales pagos abiertos a cualquier persona (primeros auxilios básicos, el curso Ley Lucas para entornos con niños y Soporte Vital Básico) los vende y certifica la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda."
           ],
           [
             "Impacto das Cores",
@@ -460,7 +460,7 @@
           ],
           [
             "Capacitación para empresas y escuelas",
-            "Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto. Es una de las principales formas en que las organizaciones aliadas apoyan a la filial."
+            "Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto, que se contratan con la escuela de la filial, la O-CVB Filial Rio de Janeiro Ensino Ltda."
           ]
         ],
         "caminhos_titulo": "Por dónde entrar",
@@ -534,7 +534,7 @@
         "descricao": "Los siete cursos presenciales de la filial de Río de Janeiro de la Cruz Roja Brasileña: horas, requisitos, valores y cómo funciona la matrícula.",
         "sobrancelha": "Escuela de Educación y Salud",
         "h1": "Cursos de la Cruz Roja Brasileña — Río de Janeiro",
-        "linha": "Siete cursos presenciales dictados en la sede de la filial, en el centro de Río de Janeiro, cada uno con certificado emitido por la filial.",
+        "linha": "Siete cursos presenciales dictados en la sede de la filial, en el centro de Río de Janeiro, cada uno con certificado emitido por la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial.",
         "aviso_titulo": "Lea esto primero",
         "aviso_paragrafos": [
           "Todos los cursos se dictan en portugués, de forma presencial, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. No hay interpretación, no hay versión en línea y no hay grupos en otro idioma. Los primeros auxilios prácticos se aprenden con un maniquí y un instructor al lado, y es eso lo que da peso al certificado — y también el motivo por el que no se pueden hacer a distancia.",
@@ -563,7 +563,7 @@
         },
         "tabela_nota": "Los valores están en reales brasileños y son precios al contado; la plataforma de la escuela también ofrece pago en cuotas, con intereses, por lo que el total en cuotas es mayor. Además del valor del curso hay una inscripción única de R$ 99, pagada al contado en este sitio, que reserva la plaza. En Bombero Civil, la homologación profesional al final del curso se paga aparte.",
         "detalhe_titulo": "Qué enseña cada curso",
-        "detalhe_nota": "Cada curso termina con un certificado emitido por la filial. No está acreditado por el Ministerio de Educación de Brasil — ningún curso libre lo está — y no sustituye una habilitación profesional regulada.",
+        "detalhe_nota": "Cada curso termina con un certificado emitido por la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda. No está acreditado por el Ministerio de Educación de Brasil — ningún curso libre lo está — y no sustituye una habilitación profesional regulada.",
         "detalhes": {
           "primeiros-socorros-basico": "Reconocer una emergencia y dar la atención inicial con seguridad hasta que llegue la ambulancia: evaluación de la víctima, RCP, uso del desfibrilador externo automático, control de hemorragias y primera respuesta ante traumatismos, atragantamientos y desmayos. Prepara para actuar en casa, en la escuela, en el trabajo, en el deporte y en la comunidad.",
           "primeiros-socorros-lei-lucas": "El mismo terreno, trabajado para niños: evaluación del niño, RCP, atragantamiento, caídas, traumatismos, convulsiones, quemaduras y hemorragias, además de prevención. Hecho para quienes alcanza la Ley Lucas — docentes y personal de escuelas, guarderías, proyectos sociales y actividades deportivas — y para madres y padres que quieren la misma preparación.",

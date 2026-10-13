@@ -134,7 +134,7 @@ def carregar() -> dict:
     return paginas
 
 
-def tratar_html(html: str) -> str:
+def tratar_html(html: str, titulo: str = "") -> str:
     """Links externos abrem em outra aba; tabelas ganham rolagem horizontal no celular."""
     def link(m: re.Match) -> str:
         attrs = m.group(1)
@@ -143,9 +143,18 @@ def tratar_html(html: str) -> str:
             attrs += ' target="_blank" rel="noopener"'
         return f"<a{attrs}>"
     html = re.sub(r"<a(\s[^>]*)>", link, html)
-    # A caixa rola na horizontal no celular: tabindex deixa rolar pelo teclado, e o rótulo diz o que é.
-    html = re.sub(r'<table class="inst-tabela">', '<div class="inst-tabela-rolagem" tabindex="0" role="region" '
-                  'aria-label="Tabela (role para o lado para ver todas as colunas)"><table class="inst-tabela">', html)
+    # A caixa rola na horizontal no celular: tabindex deixa rolar pelo teclado, e o rótulo diz o que é. O rótulo
+    # leva o título da seção (e um número, se a seção tiver mais de uma tabela) para cada região ter nome único.
+    tabelas = html.count('<table class="inst-tabela">')
+    contador = iter(range(1, tabelas + 1))
+    def caixa(_m: re.Match) -> str:
+        n = next(contador)
+        nome = f"Tabela: {titulo}" if titulo else "Tabela"
+        if tabelas > 1:
+            nome += f" ({n} de {tabelas})"
+        return (f'<div class="inst-tabela-rolagem" tabindex="0" role="region" aria-label="{esc(nome)}, '
+                'role para o lado para ver todas as colunas"><table class="inst-tabela">')
+    html = re.sub(r'<table class="inst-tabela">', caixa, html)
     html = html.replace("</table>", "</table></div>")
     return html
 
@@ -251,7 +260,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
     secoes = "\n\n".join(
         f'      <section class="inst-secao" id="{esc(s["id"])}" aria-labelledby="{esc(s["id"])}-titulo">\n'
         f'        <h2 id="{esc(s["id"])}-titulo">{esc(s["h2"])}</h2>\n'
-        f'        {tratar_html(s["html"])}\n      </section>' for s in p["secoes"])
+        f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"])
     perguntas = ""
     if p.get("perguntas"):
         itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{esc(q['resposta'])}</p></details>" for q in p["perguntas"])

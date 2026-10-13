@@ -12,15 +12,15 @@
         "perguntas": [
           {
             "pergunta": "What is the Brazilian Red Cross — Rio de Janeiro Branch?",
-            "resposta": "It is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. It is a non-profit association, registered under CNPJ 08.560.973/0001-97 and officially recognised as a public-interest organisation by Municipal Law 5,153/2010 and State Law 9,984/2023. It works in volunteer training, first-aid and vocational courses, preventive education and community campaigns, from the Red Cross Palace in central Rio de Janeiro."
+            "resposta": "It is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. It is a non-profit association, registered under CNPJ 08.560.973/0001-97 and officially recognised as a public-interest organisation by Municipal Law 5,153/2010 and State Law 9,984/2023. It trains its own volunteers, including in first aid, and works in preventive education and community campaigns (the paid courses are run by its school, a separate company), from the Red Cross Palace in central Rio de Janeiro."
           },
           {
             "pergunta": "Is this the national Brazilian Red Cross?",
-            "resposta": "No. The Brazilian Red Cross is the National Society for the whole country; this site belongs to its Rio de Janeiro State branch, one of the branches within that national structure. If you are looking for the National Society itself — for official positions, national programmes or matters covering other states — that is a different body. What you will find here is what the Rio de Janeiro branch runs directly: courses, volunteering, campaigns and community work in this state."
+            "resposta": "No. The Brazilian Red Cross is the National Society for the whole country; this site belongs to its Rio de Janeiro State branch, one of the branches within that national structure. If you are looking for the National Society itself — for official positions, national programmes or matters covering other states — that is a different body. What you will find here is what the Rio de Janeiro branch runs directly: volunteer training, campaigns and community work in this state."
           },
           {
             "pergunta": "Does the branch respond to emergencies or schedule medical appointments?",
-            "resposta": "No. The branch does not run a clinic, does not schedule medical appointments and does not answer emergency calls. In an emergency anywhere in Brazil, call 192 for an ambulance or 193 for the fire brigade; both are free and answer in Portuguese. What the branch does is prepare people to act until professional help arrives: the first-aid and Basic Life Support courses teach CPR, bleeding control and choking response to anyone, with a certificate at the end."
+            "resposta": "No. The branch does not run a clinic, does not schedule medical appointments and does not answer emergency calls. In an emergency anywhere in Brazil, call 192 for an ambulance or 193 for the fire brigade; both are free and answer in Portuguese. What the branch does is prepare people to act until professional help arrives: the paid first-aid and Basic Life Support courses of the branch's school teach CPR, bleeding control and choking response to anyone, with a certificate at the end."
           },
           {
             "pergunta": "Where is the branch, and when is it open?",
@@ -159,15 +159,15 @@
         "perguntas": [
           {
             "pergunta": "¿Qué es la Cruz Roja Brasileña — Filial Río de Janeiro?",
-            "resposta": "Es la filial del Estado de Río de Janeiro de la Cruz Roja Brasileña, la Sociedad Nacional del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja en Brasil. Es una asociación sin fines de lucro, registrada con el CNPJ 08.560.973/0001-97 y reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. Trabaja en formación de voluntarios, cursos de primeros auxilios y formación profesional, educación preventiva y campañas comunitarias, desde el Palacio de la Cruz Roja, en el centro de Río de Janeiro."
+            "resposta": "Es la filial del Estado de Río de Janeiro de la Cruz Roja Brasileña, la Sociedad Nacional del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja en Brasil. Es una asociación sin fines de lucro, registrada con el CNPJ 08.560.973/0001-97 y reconocida de utilidad pública municipal por la Ley 5.153/2010 y de utilidad pública estatal por la Ley 9.984/2023. Forma a sus propios voluntarios, también en primeros auxilios, y trabaja en educación preventiva y campañas comunitarias (los cursos pagos son de su escuela, una empresa aparte), desde el Palacio de la Cruz Roja, en el centro de Río de Janeiro."
           },
           {
             "pergunta": "¿Esta es la Cruz Roja Brasileña nacional?",
-            "resposta": "No. La Cruz Roja Brasileña es la Sociedad Nacional de todo el país; este sitio pertenece a su filial del Estado de Río de Janeiro, una de las filiales dentro de esa estructura nacional. Si busca a la Sociedad Nacional en sí — posiciones oficiales, programas nacionales o asuntos de otros estados —, ese es otro organismo. Aquí encontrará lo que la filial de Río de Janeiro hace directamente: cursos, voluntariado, campañas y acción comunitaria en este estado."
+            "resposta": "No. La Cruz Roja Brasileña es la Sociedad Nacional de todo el país; este sitio pertenece a su filial del Estado de Río de Janeiro, una de las filiales dentro de esa estructura nacional. Si busca a la Sociedad Nacional en sí — posiciones oficiales, programas nacionales o asuntos de otros estados —, ese es otro organismo. Aquí encontrará lo que la filial de Río de Janeiro hace directamente: formación de voluntarios, campañas y acción comunitaria en este estado."
           },
           {
             "pergunta": "¿La filial atiende urgencias o agenda citas médicas?",
-            "resposta": "No. La filial no tiene consultorio, no agenda citas médicas y no atiende llamadas de urgencia. En una emergencia en cualquier lugar de Brasil, llame al 192 para una ambulancia o al 193 para los bomberos; ambos son gratuitos y atienden en portugués. Lo que la filial hace es preparar a las personas para actuar hasta que llegue la ayuda profesional: los cursos de primeros auxilios y de Soporte Vital Básico enseñan RCP, control de hemorragias y desobstrucción de la vía aérea a cualquier persona, con certificado al final."
+            "resposta": "No. La filial no tiene consultorio, no agenda citas médicas y no atiende llamadas de urgencia. En una emergencia en cualquier lugar de Brasil, llame al 192 para una ambulancia o al 193 para los bomberos; ambos son gratuitos y atienden en portugués. Lo que la filial hace es preparar a las personas para actuar hasta que llegue la ayuda profesional: los cursos pagos de primeros auxilios y de Soporte Vital Básico de la escuela de la filial enseñan RCP, control de hemorragias y desobstrucción de la vía aérea a cualquier persona, con certificado al final."
           },
           {
             "pergunta": "¿Dónde está la filial y cuál es el horario?",
@@ -192,7 +192,7 @@
           },
           {
             "pergunta": "¿Cuánto cuesta un curso y cómo me inscribo?",
-            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, R$ 400 en Micropigmentación Labial, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los venden y certifican la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial no ofrece cursos gratuitos al público: forma solo a sus propios voluntarios, sin costo y tras un proceso de selección (vea la página en portugués Formação de voluntários, /cursos-gratuitos/). El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
+            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, R$ 400 en Micropigmentación Labial, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los vende y certifica la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial no ofrece cursos gratuitos al público: forma solo a sus propios voluntarios, sin costo y tras un proceso de selección (vea la página en portugués Formação de voluntários, /cursos-gratuitos/). El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
             "links": [
               {
                 "texto": "formulario de inscripción",
@@ -220,7 +220,7 @@
           },
           {
             "pergunta": "¿Pueden capacitar al equipo de mi empresa o de mi escuela?",
-            "resposta": "Sí. Las capacitaciones cerradas para empresas y escuelas se contratan con la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda): formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirla cualquier organización del estado de Río de Janeiro. Las organizaciones aliadas también pueden apoyar las campañas de la filial, como la Campaña de Ropa de Abrigo. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
+            "resposta": "Sí. Las capacitaciones cerradas para empresas y escuelas se contratan con la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda): formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas — que necesitan escuelas, guarderías y equipos que trabajan con niños — y programas armados para un equipo concreto. Puede pedirlas cualquier organización del estado de Río de Janeiro. Las organizaciones aliadas también pueden apoyar las campañas de la filial, como la Campaña de Ropa de Abrigo. Escriba a contato@cruzvermelhariodejaneiro.org para pedir una propuesta."
           }
         ]
       },

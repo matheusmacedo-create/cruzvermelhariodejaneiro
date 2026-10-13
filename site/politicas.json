@@ -1671,7 +1671,7 @@
       }
     },
     "reembolso": {
-      "revisao": "2026-10-10",
+      "revisao": "2026-10-13",
       "pt": {
         "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
@@ -1805,7 +1805,7 @@
               {
                 "lista": [
                   "if there is no class at a time that suits you;",
-                  "if the branch cancels or postpones the class and you cannot attend on another date; or",
+                  "if the school cancels or postpones the class and you cannot attend on another date; or",
                   "if you withdraw before the school office confirms your class (date and time)."
                 ]
               },
@@ -1910,7 +1910,7 @@
               {
                 "lista": [
                   "si no hay un grupo con un horario compatible para usted;",
-                  "si la filial cancela o aplaza el grupo y usted no puede participar en otra fecha; o",
+                  "si la escuela cancela o aplaza el grupo y usted no puede participar en otra fecha; o",
                   "si desiste antes de que la secretaría confirme su grupo (fecha y horario de la clase)."
                 ]
               },
