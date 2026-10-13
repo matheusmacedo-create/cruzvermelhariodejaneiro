@@ -33,7 +33,7 @@
         "perguntas": [
           {
             "pergunta": "What courses does the branch offer?",
-            "resposta": "Seven paid in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). They are sold and certified by the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), a company linked to the branch. The branch itself, a non-profit association, also runs free first-aid and volunteer training. There are no technical or nursing degree programmes."
+            "resposta": "Seven paid in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). They are sold and certified by the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), a company linked to the branch. The branch itself, a non-profit association, trains its own volunteers free of charge; it does not run free courses open to the public. There are no technical or nursing degree programmes."
           },
           {
             "pergunta": "Are the courses taught in English or Spanish?",
@@ -45,7 +45,7 @@
           },
           {
             "pergunta": "What does a course cost, and how do I enrol?",
-            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee can be paid together with the enrolment fee or afterwards on the school platform: R$ 150 for Basic Life Support, Peripheral IV Cannulation and the Lucas Law course, R$ 180 for Basic First Aid, R$ 400 for Lip Micropigmentation, and R$ 950 for Civil Firefighter and for Carer for Older People. These courses are paid, and they are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch. The branch itself also runs free first-aid and volunteer training, announced on its Portuguese page Cursos gratuitos (/cursos-gratuitos/) and on Instagram. The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
+            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee can be paid together with the enrolment fee or afterwards on the school platform: R$ 150 for Basic Life Support, Peripheral IV Cannulation and the Lucas Law course, R$ 180 for Basic First Aid, R$ 400 for Lip Micropigmentation, and R$ 950 for Civil Firefighter and for Carer for Older People. These courses are paid, and they are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch. The branch itself does not run free courses for the public: it trains only its own volunteers, free of charge, after a selection process (see the Portuguese page Formação de voluntários, /cursos-gratuitos/). The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
             "links": [
               {
                 "texto": "enrolment form",
@@ -111,7 +111,7 @@
           },
           {
             "pergunta": "Who can volunteer? Do I need a health background or a paid course?",
-            "resposta": "Neither is needed: the branch trains its own volunteers. Once you fill in the official form, the volunteering team presents the areas of work and the initial training, held at the headquarters. The branch works in volunteer training, first-aid training, preventive education and community support, through campaigns such as the Winter Clothing Drive and the Impacto das Cores project, so there is room for very different profiles. Volunteering and the paid courses are separate paths, with separate teams.",
+            "resposta": "Neither is needed: the branch trains its own volunteers. After you fill in the official form, the volunteering team gets in touch and holds a selection interview; those accepted take the CBFI, the initial volunteer training, which opens four times a year at the headquarters. The branch works in volunteer training, first-aid training, preventive education and community support, through campaigns such as the Winter Clothing Drive and the Impacto das Cores project, so there is room for very different profiles. Volunteering and the paid courses are separate paths, with separate teams.",
             "links": [
               {
                 "texto": "official form",
@@ -180,7 +180,7 @@
         "perguntas": [
           {
             "pergunta": "¿Qué cursos ofrece la filial?",
-            "resposta": "Siete cursos presenciales pagos, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas), Cuidador de Personas Mayores, curso libre (160 horas), y Micropigmentación Labial (24 horas). Los vende y certifica la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), empresa vinculada a la filial. La filial, una asociación sin fines de lucro, también ofrece formaciones gratuitas de primeros auxilios y de voluntariado. No hay carreras técnicas ni de enfermería."
+            "resposta": "Siete cursos presenciales pagos, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas), Cuidador de Personas Mayores, curso libre (160 horas), y Micropigmentación Labial (24 horas). Los vende y certifica la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), empresa vinculada a la filial. La filial, una asociación sin fines de lucro, forma gratis a sus propios voluntarios; no ofrece cursos gratuitos abiertos al público. No hay carreras técnicas ni de enfermería."
           },
           {
             "pergunta": "¿Los cursos se dictan en español o en inglés?",
@@ -192,7 +192,7 @@
           },
           {
             "pergunta": "¿Cuánto cuesta un curso y cómo me inscribo?",
-            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, R$ 400 en Micropigmentación Labial, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los venden y certifican la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial también ofrece formaciones gratuitas de primeros auxilios y de voluntariado, anunciadas en su página en portugués Cursos gratuitos (/cursos-gratuitos/) y en Instagram. El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
+            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, R$ 400 en Micropigmentación Labial, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los venden y certifican la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial no ofrece cursos gratuitos al público: forma solo a sus propios voluntarios, sin costo y tras un proceso de selección (vea la página en portugués Formação de voluntários, /cursos-gratuitos/). El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
             "links": [
               {
                 "texto": "formulario de inscripción",
@@ -258,7 +258,7 @@
           },
           {
             "pergunta": "¿Quién puede ser voluntario? ¿Necesito formación en salud o un curso pago?",
-            "resposta": "Ninguna de las dos cosas: la filial forma a sus propios voluntarios. Una vez completado el formulario oficial, el equipo de voluntariado presenta las áreas de actuación y la formación inicial, realizada en la sede. La filial trabaja en formación de voluntarios, capacitación en primeros auxilios, educación preventiva y apoyo comunitario, con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores, así que hay lugar para perfiles muy distintos. El voluntariado y los cursos pagos son caminos separados, con equipos separados.",
+            "resposta": "Ninguna de las dos cosas: la filial forma a sus propios voluntarios. Tras completar el formulario oficial, el equipo de voluntariado se pone en contacto y hace una entrevista de selección; quienes son aceptados hacen el CBFI, la formación inicial de voluntarios, que abre cuatro veces al año en la sede. La filial trabaja en formación de voluntarios, capacitación en primeros auxilios, educación preventiva y apoyo comunitario, con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores, así que hay lugar para perfiles muy distintos. El voluntariado y los cursos pagos son caminos separados, con equipos separados.",
             "links": [
               {
                 "texto": "formulario oficial",

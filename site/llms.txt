@@ -4,7 +4,7 @@
 > lucrativos, parte do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho, com sede no
 > Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. CNPJ
 > 08.560.973/0001-97. Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua
-> em formação de voluntários, formações gratuitas de primeiros socorros, educação preventiva e
+> na formação dos próprios voluntários (inclusive em primeiros socorros), educação preventiva e
 > campanhas de apoio comunitário. Os cursos pagos de formação profissional são da Escola de Educação
 > e Saúde, vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ
 > 67.733.551/0001-35), empresa ligada à filial, com sistemas independentes.
@@ -33,9 +33,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 
 - [Início](https://cruzvermelhariodejaneiro.org/): apresentação da filial, ações, parceiros e
   perguntas frequentes sobre cursos, voluntariado, como ajudar, endereço e contato.
-- [Cursos gratuitos](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/): formações gratuitas da filial em primeiros socorros e
-  voluntariado, em vários formatos (abertas ao público ou só para voluntários, com ou sem
-  certificado, conforme a turma).
+- [Formação de voluntários](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/): a formação gratuita da filial, só
+  para voluntários aceitos: cadastro, ficha de entrevista e o CBFI (quatro turmas por ano); as
+  formações internas, como primeiros socorros, vêm depois. Não há curso gratuito aberto ao público.
 - [Voluntariado](https://cruzvermelhariodejaneiro.org/voluntariado/): como entrar, a formação e o termo de adesão (Lei 9.608/1998).
 - [Cursos pagos e matrícula](https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/): os sete cursos presenciais da Escola
   de Educação e Saúde na sede, com carga horária, escolaridade mínima e valor, vendidos pela O-CVB
@@ -96,8 +96,8 @@ por turma.
 - Cuidador de Idosos (curso livre): 160 horas, Ensino Fundamental, R$ 950.
 - Micropigmentação Labial: 24 horas, Ensino Médio, R$ 400.
 
-Não há cursos técnicos nem curso de enfermagem no catálogo. A filial oferece formações gratuitas de
-primeiros socorros e de voluntariado, em vários formatos: veja [cursos gratuitos](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/).
+Não há cursos técnicos nem curso de enfermagem no catálogo. A filial não abre curso gratuito ao
+público: ela forma de graça só os próprios voluntários, depois da seleção (veja [formação de voluntários](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/)).
 
 ## Respostas diretas às dúvidas mais comuns
 
@@ -112,7 +112,7 @@ primeiros socorros e de voluntariado, em vários formatos: veja [cursos gratuito
 - **Custo total.** Taxa de inscrição de R$ 99 mais o valor do curso (matrícula), sem mensalidade, sem taxa de
   certificado e sem material à parte. No Bombeiro Civil, a homologação profissional é à parte.
 - **Curso gratuito de cuidador de idosos?** Não: o curso do catálogo é pago e vendido pela escola.
-  As formações gratuitas da filial são de primeiros socorros e de voluntariado. Programas gratuitos
+  A filial não oferece curso gratuito ao público (forma só os próprios voluntários). Programas gratuitos
   de cuidador costumam vir de prefeituras, secretarias e fundos sociais, por edital.
 - **Atendimento de saúde.** A filial não agenda consultas nem atende urgências.
 

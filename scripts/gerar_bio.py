@@ -43,13 +43,13 @@ FAQ = [
      "para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem "
      "ser tiradas no WhatsApp do voluntariado ou no chat deste site.", []),
     ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-     "Há dois caminhos. A filial oferece formações gratuitas de primeiros socorros e de voluntariado (veja os cursos "
-     "gratuitos). E a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial, vende "
+     "Há dois caminhos. A filial forma de graça os próprios voluntários, depois da seleção (veja a formação de "
+     "voluntários); não há curso gratuito aberto ao público. E a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial, vende "
      "e certifica os cursos pagos: primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro "
      "civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio. As turmas e os "
      "valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de "
      "matrícula em cursos presenciais.",
-     [("cursos gratuitos", "URL_GRATUITOS"), ("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
+     [("formação de voluntários", "URL_GRATUITOS"), ("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
      "Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
