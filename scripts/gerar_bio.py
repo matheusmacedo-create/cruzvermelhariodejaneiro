@@ -70,13 +70,6 @@ IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
 # Só os três destinos que o Matheus pediu (19/09/2026), na ordem em que apareciam na página original.
 # Ficaram de fora, por decisão dele: desfile de 7 de Setembro, SOS Venezuela, e-mail do RFL, endereço e Instagram.
 BLOCOS = [
-    # Campanha de doação de brinquedos para a ação (fechada) de 13/10/2026: sai daqui depois dela. A foto fica em
-    # /assets/otim/ ("pasta"), fora do Git.
-    {"tipo": "cartao", "imagem": "dia-criancas-cartao", "pasta": "/assets/otim/",
-     "alt": "Coordenadora de Juventude da Cruz Vermelha Brasileira Rio de Janeiro com crianças",
-     "titulo": "Dia das Crianças: doe brinquedos",
-     "descricao": "Brinquedos novos ou em bom estado, entregues na sede. Veja como doar.",
-     "link": f"{ORIGEM}/dia-das-criancas/", "id": "dia-das-criancas"},
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
      "titulo": "Saiba mais sobre os cursos da escola", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
@@ -91,7 +84,7 @@ BLOCOS = [
     {"tipo": "botao", "estilo": "claro", "icone": "fa-brands fa-youtube", "titulo": "Assistir ao canal da filial no YouTube",
      "link": "https://www.youtube.com/@cruzvermelhariodejaneiro-org", "id": "youtube"},
 ]
-IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367), "dia-criancas-cartao": (700, 367)}
+IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367)}
 
 
 def externo(link: str) -> str:

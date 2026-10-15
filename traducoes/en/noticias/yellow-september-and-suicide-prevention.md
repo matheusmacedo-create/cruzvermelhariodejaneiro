@@ -45,4 +45,4 @@ This page is for information only and does not replace a professional assessment
 
 Yellow September is a starting point, not an isolated date on the calendar. The branch keeps up its training and community mobilisation throughout the year, and there are open paths for anyone who wants to get involved.
 
-See the [in-person courses](/en/courses/), follow the branch's activities and volunteer calls in the [news section](/en/news/) and find out [how to donate](/en/donate/) to sustain humanitarian work in Rio de Janeiro. Each of these helps sustain the work that lets the branch reach people — including those whose suffering is not visible at first sight.
+See the [in-person courses](/en/courses/), follow the branch's activities and volunteer calls in the [news section](/en/news/) and find out [how to support the branch's campaigns](/en/winter-clothing-drive/) to sustain humanitarian work in Rio de Janeiro. Each of these helps sustain the work that lets the branch reach people — including those whose suffering is not visible at first sight.

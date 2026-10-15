@@ -46,6 +46,6 @@ Cyclists and pedestrians are asked to respect the physical barriers and the sign
 
 Updates on sea conditions, the status of the cycle path and any changes to traffic arrangements should be followed on Rio City Hall's official channels. For the branch's articles and guidance, see the [news section](/en/news/).
 
-Anyone who wants to strengthen community preparedness and humanitarian response can look at the branch's [in-person courses](/en/courses/), taught in Portuguese, and find out how to [support the branch](/en/donate/).
+Anyone who wants to strengthen community preparedness and humanitarian response can look at the branch's [in-person courses](/en/courses/), taught in Portuguese, and find out how to [support the branch's campaigns](/en/winter-clothing-drive/).
 
 Based on information from COR-Rio — Operations and Resilience Centre (@operacoesrio), published on 2 September 2026 — [original post, in Portuguese](https://www.instagram.com/p/DcxXBQrAJ-x/).

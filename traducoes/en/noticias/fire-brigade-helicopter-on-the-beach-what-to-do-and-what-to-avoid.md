@@ -40,7 +40,7 @@ Besides the guidance specific to air operations, the basic recommendations for a
 
 Knowing how to act in the first minutes of an emergency saves lives. The Brazilian Red Cross — Rio de Janeiro Branch, part of the world's largest humanitarian movement, offers training open to the public in first aid and related subjects: see the [in-person courses](/en/courses/), taught in Portuguese, and take that knowledge home, to work and to your community.
 
-For safety alerts, notices about the seafront and other public-interest information, visit the [news section](/en/news/). Anyone who wants to sustain humanitarian work in the city can [support the branch](/en/donate/).
+For safety alerts, notices about the seafront and other public-interest information, visit the [news section](/en/news/). Anyone who wants to sustain humanitarian work in the city can [support the branch's campaigns](/en/winter-clothing-drive/).
 
 The full PodBradar episode, with the behind-the-scenes story of air operations told by the people who carry them out, is available on the CBMERJ's official channels, in Portuguese. In an emergency in Brazil, call the Fire Brigade on 193.
 

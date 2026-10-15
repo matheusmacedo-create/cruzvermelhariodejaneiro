@@ -49,6 +49,9 @@ NOME_MEDICAO = "Dia das Crianças na Praça"
 
 # ----------------------------------------------------------------------------- a campanha
 FUSO = timezone(timedelta(hours=-3))  # Rio de Janeiro: sem horário de verão desde 2019
+# 15/10/2026: a ação já aconteceu. Com ENCERRADA, a página vira um registro de agradecimento (sem pedir brinquedos,
+# sem formulário, sem botão de compartilhar) e sai da busca; o cartão da home, o llms.txt e o sitemap já não a citam.
+ENCERRADA = True
 DATA_ACAO = datetime(2026, 10, 13, tzinfo=FUSO)  # só a data: horário e local da ação (fechada) não vão à página
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro",
          "novembro", "dezembro"]
@@ -61,9 +64,16 @@ HORARIO_ENTREGA = "de segunda a sexta, das 10h às 17h"
 # O mesmo endereço de mapa do rodapé da home.
 URL_MAPA = "https://www.google.com/maps/search/?api=1&query=" + quote(f'{SEDE["endereco"]}, {SEDE["bairro"]}, {SEDE["cidade"]}, {SEDE["cep"]}')
 
-TITULO = "Doe brinquedos para o Dia das Crianças – Cruz Vermelha RJ"
-DESCRICAO = ("A Cruz Vermelha RJ está recebendo brinquedos novos ou em bom estado para as crianças da sua ação de "
-             "Dia das Crianças. Entregue na sede, no Centro do Rio.")
+if ENCERRADA:
+    TITULO = "Dia das Crianças 2026: obrigado a quem doou brinquedos – Cruz Vermelha RJ"
+    DESCRICAO = ("A campanha de brinquedos para o Dia das Crianças da Cruz Vermelha RJ terminou: a ação com as crianças "
+                 "aconteceu em 13 de outubro de 2026. Obrigado a quem doou.")
+    ROBOTS = "noindex, follow"
+else:
+    TITULO = "Doe brinquedos para o Dia das Crianças – Cruz Vermelha RJ"
+    DESCRICAO = ("A Cruz Vermelha RJ está recebendo brinquedos novos ou em bom estado para as crianças da sua ação de "
+                 "Dia das Crianças. Entregue na sede, no Centro do Rio.")
+    ROBOTS = "index, follow, max-image-preview:large"
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-dia-das-criancas.jpg"
 
 # Os setores do quadro da sede para a ação do dia 13 ("Juventude, PS e Educação e Saúde"): o que as crianças vão ter.
@@ -424,50 +434,31 @@ def main() -> int:
         for b, v, alt, legenda in GALERIA)
     url_compartilhada = f"{URL_PAGINA}?utm_source=link&utm_medium=compartilhamento&utm_campaign=dia-das-criancas"
 
-    pagina = f"""<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <title>{esc(TITULO)}</title>
-  <meta name="description" content="{esc(DESCRICAO)}">
-  <link rel="canonical" href="{URL_PAGINA}">
-  <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
-  <meta property="og:title" content="{esc(TITULO)}">
-  <meta property="og:description" content="{esc(DESCRICAO)}">
-  <meta property="og:url" content="{URL_PAGINA}">
-  <meta property="og:image" content="{IMAGEM_OG}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="{esc(alt_hero)}">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{esc(TITULO)}">
-  <meta name="twitter:description" content="{esc(DESCRICAO)}">
-  <meta name="twitter:image" content="{IMAGEM_OG}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
-{preload}
-  <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
-{partes["estilo"]}
-{CSS}
-{ga4}
-{pixel}
-{json_ld()}
-</head>
-<body>
-{header}
-
-  <main id="dia-das-criancas">
-    <section class="dc-topo" aria-labelledby="dc-titulo">
-      <div class="wrap dc-topo-grade">
-        <p class="eyebrow">Campanha de doação · Dia das Crianças</p>
+    if ENCERRADA:
+        fatos = "\n          ".join([
+            f'<li><i class="fa-regular fa-clock" aria-hidden="true"></i><span><b>Quando foi</b> {DATA_LONGA} de 2026, na sede</span></li>',
+            f'<li><i class="fa-solid fa-children" aria-hidden="true"></i><span><b>Para quem</b> as crianças da nossa ação de {DATA_CURTA}</span></li>',
+            '<li><i class="fa-solid fa-gift" aria-hidden="true"></i><span><b>Brinquedos</b> entregues às crianças participantes</span></li>',
+        ])
+        topo_html = f'''        <p class="eyebrow">Dia das Crianças · 13 de outubro de 2026</p>
+        <h1 id="dc-titulo">A campanha de brinquedos terminou. Obrigado a quem doou!</h1>
+        <figure class="dc-topo-foto">
+        {hero}
+          <p class="dc-selo" aria-hidden="true"><b>{DATA_CURTA}</b><span>Dia das Crianças</span></p>
+        </figure>
+        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro recebeu brinquedos novos e em bom estado para as crianças da sua ação de Dia das Crianças, realizada em {DATA_LONGA}. A campanha está encerrada; os brinquedos doados foram entregues às crianças participantes.</p>
+        <ul class="dc-fatos">
+          {fatos}
+        </ul>
+        <div class="dc-acoes">
+          <a class="btn btn-red" href="/#campanhas"><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i>Ver as campanhas ativas</a>
+          <a class="btn btn-outline" href="/voluntariado/"><i class="fa-solid fa-people-group" aria-hidden="true"></i>Seja voluntário</a>
+        </div>
+      </div>
+    </section>'''
+        secao_doacoes = secao_compartilhe = ""
+    else:
+        topo_html = f'''        <p class="eyebrow">Campanha de doação · Dia das Crianças</p>
         <h1 id="dc-titulo">Doe brinquedos para o Dia das Crianças</h1>
         <figure class="dc-topo-foto">
         {hero}
@@ -482,32 +473,8 @@ def main() -> int:
           <a class="btn btn-outline" href="{esc(URL_MAPA)}" target="_blank" rel="noopener" data-dc="mapa-sede"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Como chegar à sede</a>
         </div>
       </div>
-    </section>
-
-    <section class="dc-setores" data-dc-secao="para-quem" aria-labelledby="dc-setores-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Para quem vai a sua doação</p>
-        <h2 id="dc-setores-titulo">Um dia especial para as crianças</h2>
-        <p class="lead">No dia {DATA_LONGA}, as crianças da nossa ação passam o dia com três setores da Cruz Vermelha Brasileira Rio de Janeiro. Os brinquedos doados vão para elas.</p>
-        <div class="dc-cartoes">
-        {cartoes}
-        </div>
-        <p class="dc-nota">A ação do dia {DATA_CURTA} é fechada, para as crianças participantes. A doação de brinquedos é aberta a todos.</p>
-      </div>
-    </section>
-
-    <section class="dc-fotos" data-dc-secao="fotos" aria-labelledby="dc-fotos-titulo">
-      <div class="wrap">
-        <p class="eyebrow">Como são as nossas ações</p>
-        <h2 id="dc-fotos-titulo">A Cruz Vermelha RJ com as crianças</h2>
-        <p class="lead">Fotos de ações anteriores dos nossos voluntários com crianças, publicadas com a autorização dos responsáveis.</p>
-        <div class="dc-galeria">
-        {galeria}
-        </div>
-      </div>
-    </section>
-
-    <section class="dc-doacoes" id="doar-brinquedos" data-dc-secao="doacoes" aria-labelledby="dc-doacoes-titulo">
+    </section>'''
+        secao_doacoes = f'''    <section class="dc-doacoes" id="doar-brinquedos" data-dc-secao="doacoes" aria-labelledby="dc-doacoes-titulo">
       <div class="wrap dc-doacoes-grade">
         <div>
           <p class="eyebrow">Como doar</p>
@@ -540,8 +507,8 @@ def main() -> int:
         </div>
       </div>
     </section>
-
-    <section class="dc-espalhe" data-dc-secao="compartilhe" aria-labelledby="dc-compartilhar-titulo">
+'''
+        secao_compartilhe = f'''    <section class="dc-espalhe" data-dc-secao="compartilhe" aria-labelledby="dc-compartilhar-titulo">
       <div class="wrap">
         <aside class="dc-compartilhar">
           <h2 id="dc-compartilhar-titulo">Ajude a espalhar a campanha</h2>
@@ -554,7 +521,77 @@ def main() -> int:
         </aside>
       </div>
     </section>
+'''
+    pagina = f"""<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <title>{esc(TITULO)}</title>
+  <meta name="description" content="{esc(DESCRICAO)}">
+  <link rel="canonical" href="{URL_PAGINA}">
+  <meta name="robots" content="{ROBOTS}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
+  <meta property="og:title" content="{esc(TITULO)}">
+  <meta property="og:description" content="{esc(DESCRICAO)}">
+  <meta property="og:url" content="{URL_PAGINA}">
+  <meta property="og:image" content="{IMAGEM_OG}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{esc(alt_hero)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{esc(TITULO)}">
+  <meta name="twitter:description" content="{esc(DESCRICAO)}">
+  <meta name="twitter:image" content="{IMAGEM_OG}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
+{preload}
+  <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
+{partes["estilo"]}
+{CSS}
+{ga4}
+{pixel}
+{json_ld()}
+</head>
+<body>
+{header}
 
+  <main id="dia-das-criancas">
+    <section class="dc-topo" aria-labelledby="dc-titulo">
+      <div class="wrap dc-topo-grade">
+{topo_html}
+
+    <section class="dc-setores" data-dc-secao="para-quem" aria-labelledby="dc-setores-titulo">
+      <div class="wrap">
+        <p class="eyebrow">Para quem vai a sua doação</p>
+        <h2 id="dc-setores-titulo">Um dia especial para as crianças</h2>
+        <p class="lead">No dia {DATA_LONGA}, as crianças da nossa ação {"passaram" if ENCERRADA else "passam"} o dia com três setores da Cruz Vermelha Brasileira Rio de Janeiro. Os brinquedos doados {"foram" if ENCERRADA else "vão"} para elas.</p>
+        <div class="dc-cartoes">
+        {cartoes}
+        </div>
+        <p class="dc-nota">{"A ação do dia " + DATA_CURTA + " foi fechada, para as crianças participantes." if ENCERRADA else "A ação do dia " + DATA_CURTA + " é fechada, para as crianças participantes. A doação de brinquedos é aberta a todos."}</p>
+      </div>
+    </section>
+
+    <section class="dc-fotos" data-dc-secao="fotos" aria-labelledby="dc-fotos-titulo">
+      <div class="wrap">
+        <p class="eyebrow">Como são as nossas ações</p>
+        <h2 id="dc-fotos-titulo">A Cruz Vermelha RJ com as crianças</h2>
+        <p class="lead">Fotos de ações anteriores dos nossos voluntários com crianças, publicadas com a autorização dos responsáveis.</p>
+        <div class="dc-galeria">
+        {galeria}
+        </div>
+      </div>
+    </section>
+
+{secao_doacoes}
+{secao_compartilhe}
     <section class="dc-noticias" data-dc-secao="noticias" aria-label="Notícias da Cruz Vermelha Brasileira Rio de Janeiro">
       <div class="wrap">
         <p class="dc-noticias-titulo">Acompanhe as ações da Cruz Vermelha RJ</p>

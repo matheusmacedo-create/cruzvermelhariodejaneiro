@@ -37,6 +37,6 @@ For the branch, working with technical organisations reinforces a long-standing 
 
 The next steps of this and other partnerships are published in the branch's [news section](/en/news/), where institutional activities, campaigns and calls for volunteers are announced.
 
-The branch's humanitarian work also depends on the support of society. You can contribute through the official [donation channels](/en/donate/), which sustain assistance, training and emergency response across the state.
+The branch's humanitarian work also depends on the support of society. You can contribute as a volunteer or with items for the [Winter Clothing Drive](/en/winter-clothing-drive/), which sustains assistance to people in vulnerable situations across the state.
 
 Based on information from the Brazilian Red Cross — Rio de Janeiro Branch (@cruzvermelhabrasileirarj), published on 28 August 2026 — [original post, in Portuguese](https://www.instagram.com/p/DclQSboxXLh/).

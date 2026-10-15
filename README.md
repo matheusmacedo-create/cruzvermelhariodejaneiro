@@ -113,6 +113,45 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Google Ad Grants: recusa e correções do site (15/10/2026)
+
+O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
+não atende aos padrões das políticas para sites do Ad Grants". O cadastro no Google para ONGs está verificado
+(organização "Cruz Vermelha Brasileira filial Rio de Janeiro", código 08.560.973/0001-97), então o problema é
+só o site. Conferência contra a política (support.google.com/nonprofits/answer/1657899), feita em 15/10:
+
+- **Em ordem:** HTTPS em tudo, sem conteúdo misto (varredura nas páginas principais e no repositório); nenhum
+  anúncio de terceiros nem afiliado; CNPJ e endereço na home e em /quem-somos/; páginas institucionais com
+  texto próprio; 434 links internos em 81 páginas, nenhum 404 além do `/favicon.ico`; velocidade boa nas
+  páginas institucionais (LCP ≈ 1 s em celular com 4G lento emulado) e aceitável na home (1,9 a 3,4 s nas
+  medições; o elemento é a foto de fundo do hero, 78 KB, já com preload).
+- **O que provavelmente reprovou:** (1) venda em primeiro plano sem dizer como sustenta a missão: faixa
+  "inscrição de R$ 99" no topo, primeiro botão para a plataforma da escola, 4 das 12 seções da home e 17 das
+  26 perguntas da FAQ sobre cursos pagos, e nenhuma explicação de como esse dinheiro sustenta a filial (a
+  política aceita venda limitada "desde que o uso dos lucros seja divulgado"); (2) links de doação para páginas
+  com erro 503 (`/en/donate/`) na campanha do agasalho em inglês, na 404 em inglês e em 5 notícias em inglês;
+  (3) páginas "em construção" ligadas pela home: transparência sem documentos e acervo "Em breve"; (4) cartão
+  do Dia das Crianças (13/10) ainda em "Campanhas ativas".
+- **Correções (lista `scripts/publicacao-ad-grants.txt`):** home sem a faixa de venda, hero com a missão e os
+  botões "Seja voluntário"/"Conheça a filial", seções institucionais (Institucional, Campanhas, Em ação,
+  Transparência) antes das de curso, missão citada do art. 10 do Estatuto da CVB (Decreto 8.885/2016) na
+  seção Institucional, meta description nova, FAQ com os grupos "Instituição" e "Voluntariado" primeiro;
+  /quem-somos/ com a missão (arts. 10 e 11) e a seção "Como a filial se financia" (art. 75: patrimônio
+  "totalmente destinado às ações humanitárias, filantrópicas e para sua subsistência"; arts. 73-74: repasses;
+  resultado da escola destinado ao Palácio e às atividades; doações de bens; parcerias; doação em dinheiro
+  suspensa desde 25/09/2026); llms.txt com a missão; /dia-das-criancas/ em modo encerrado
+  (`ENCERRADA = True` em `scripts/gerar_dia_das_criancas.py`: agradecimento, sem formulário, `noindex`),
+  fora da home, da bio, do llms.txt e do sitemap; páginas em inglês sem links para a doação suspensa
+  (fontes `traducoes/en/paginas.json` e `traducoes/en/noticias/*.md` alteradas por troca de texto; os geradores
+  EN/ES não foram rodados porque hoje trariam o menu novo com rótulos em português: traduzir antes);
+  `site/favicon.ico` (ICO com 16, 32, 48 e 64 px a partir do `assets/favicon.png`).
+- **Depende do Matheus:** subir os documentos da transparência (estatuto, diretoria, balanço) na Redação, o que
+  resolve a página vazia; confirmar o texto do financiamento; confirmar que o domínio está registrado em nome
+  da filial; depois de publicar, reenviar o pedido de ativação na conta do Google para ONGs.
+- **Fica como risco conhecido:** `/cursos/` continua redirecionando para a matrícula paga (decisão de 11/10);
+  o botão "Plataforma" no cabeçalho e o grupo "Cursos" do menu continuam; a página /acervo/ ainda diz
+  "Em breve".
+
 ## Canal do YouTube e revisão final do pacote institucional (publicados em 13/10/2026)
 
 - **Canal oficial no YouTube:** https://www.youtube.com/@cruzvermelhariodejaneiro-org (título "CVBRJ", canal

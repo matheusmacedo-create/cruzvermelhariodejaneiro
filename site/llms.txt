@@ -5,7 +5,9 @@
 > Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. CNPJ
 > 08.560.973/0001-97. Utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua
 > na formação dos próprios voluntários (inclusive em primeiros socorros), educação preventiva e
-> campanhas de apoio comunitário. Os cursos pagos de formação profissional são da Escola de Educação
+> campanhas de apoio comunitário. Missão (Estatuto da Cruz Vermelha Brasileira, art. 10): prevenir e
+> aliviar, com absoluta imparcialidade, os sofrimentos humanos, contribuindo para a defesa da vida, da
+> saúde e da dignidade humana. Os cursos pagos de formação profissional são da Escola de Educação
 > e Saúde, vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ
 > 67.733.551/0001-35), empresa ligada à filial, com sistemas independentes.
 
@@ -16,6 +18,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 
 - [Quem somos](https://cruzvermelhariodejaneiro.org/quem-somos/): o que é a filial, o que faz no Rio, a sede, os reconhecimentos e a
   diretoria, com links para as páginas abaixo.
+  Traz a missão (art. 10 do Estatuto) e a seção “Como a filial se financia” (resultado da escola
+  destinado à manutenção do Palácio e às atividades; doações de bens; parcerias; doação em dinheiro
+  pelo site suspensa desde 25/09/2026).
 - [Princípios Fundamentais](https://cruzvermelhariodejaneiro.org/principios-fundamentais/): os sete princípios (humanidade,
   imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade), com o texto
   oficial do Estatuto da Cruz Vermelha Brasileira (Decreto nº 8.885/2016, art. 8º).
@@ -44,11 +49,7 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   plataforma da escola.
 - [Campanha do Agasalho](https://cruzvermelhariodejaneiro.org/campanha-agasalho.html): entrega de
   roupas de frio, cobertores e calçados na sede, de segunda a sexta, das 10h às 17h.
-- [Doação de brinquedos para o Dia das Crianças](https://cruzvermelhariodejaneiro.org/dia-das-criancas/): a
-  filial recebe brinquedos novos ou em bom estado na sede, de segunda a sexta, das 10h às 17h, para as
-  crianças da sua ação de Dia das Crianças (13 de outubro de 2026). A ação é fechada, só para as crianças
-  participantes; a doação é aberta a todos. Doações maiores ou específicas são combinadas pelo formulário
-  da página.
+
 - [Equipe](https://cruzvermelhariodejaneiro.org/equipe.html): diretoria e coordenação da filial.
 - [Nossa história](https://cruzvermelhariodejaneiro.org/historia/): da fundação da Cruz Vermelha
   Brasileira, em 1908, no Rio, ao Palácio da Cruz Vermelha e à Escola de Enfermagem, com linha do
