@@ -1,0 +1,30 @@
+# Ad Grants (15/10/2026): correções para a política de site do Google Ad Grants, depois da recusa genérica de
+# 15/10 ("o site da organização não atende aos padrões"). O cadastro no Google para ONGs já está verificado
+# (Cruz Vermelha Brasileira filial Rio de Janeiro, código 08.560.973/0001-97); o problema é só o site.
+# O que muda: home sem a faixa de venda no topo e com a missão (art. 10 do Estatuto) na primeira dobra, seções
+# institucionais antes das de curso, FAQ com instituição e voluntariado primeiro, cartão do Dia das Crianças
+# fora; /quem-somos/ com a missão citada e a seção "Como a filial se financia"; llms.txt; /dia-das-criancas/
+# encerrada (agradecimento, noindex); /bio/ sem o cartão; páginas em inglês sem links para /en/donate/ (503):
+# campanha do agasalho, 404 e 5 notícias; favicon.ico (o /favicon.ico respondia 404).
+# O ar antes = o Git em 18e8a81 (conferido em 15/10 por HTTP, arquivo por arquivo, antes de editar).
+# Antes, a cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-ad-grants $(grep -vE '^(#|$)' scripts/publicacao-ad-grants.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants.txt)
+# Depois: limpar o cache (hosting_cache_clear-website), conferir por HTTP que cada arquivo ficou igual ao Git,
+# rodar python3 scripts/gerar_sitemaps.py (lê o ar; o Dia das Crianças sai) e publicar os sitemaps que mudarem.
+# Desfazer: C=/tmp/no-ar-ad-grants; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|")
+# Depois de publicar: reenviar o pedido de ativação do Ad Grants na conta do Google para ONGs.
+site/favicon.ico
+site/en/404.html
+site/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/index.html
+site/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/index.html
+site/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/index.html
+site/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/index.html
+site/en/news/yellow-september-and-suicide-prevention/index.html
+site/en/winter-clothing-drive/index.html
+site/dia-das-criancas/index.html
+site/bio/index.html
+site/quem-somos/index.html
+site/index.html
+site/faq-home.json
+site/llms.txt

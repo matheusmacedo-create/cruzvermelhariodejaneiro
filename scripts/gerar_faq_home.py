@@ -23,7 +23,7 @@ DADOS = RAIZ / "site" / "faq-home.json"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 MARCA_INI = "<!-- faq:inicio -->"
 MARCA_FIM = "<!-- faq:fim -->"
-PERMITIDOS = re.compile(r"^(/[a-z0-9\-./#?=&]*|https://escola\.cursoscruzvermelha\.org(/.*)?|https://form\.spotform\.com\.br/voluntariocruzvermelharj|https://pt\.wikipedia\.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)$")
+PERMITIDOS = re.compile(r"^(/[a-z0-9\-./#?=&]*|https://escola\.cursoscruzvermelha\.org(/.*)?|https://form\.spotform\.com\.br/voluntariocruzvermelharj|https://www\.youtube\.com/@cruzvermelhariodejaneiro-org|https://pt\.wikipedia\.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro)$")
 NACIONAL_SOZINHA = re.compile(r"Cruz Vermelha Brasileira(?!\s*(?:[–\-—·,])?\s*(?:Filial|Rio de Janeiro|do Rio|no Rio|RJ\b|Rio\b))")
 
 

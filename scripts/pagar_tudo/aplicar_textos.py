@@ -47,7 +47,7 @@ def reembolso_pt(pg):
     s["depois"]["blocos"] = [
         p("Passado o prazo de arrependimento, tudo o que você pagou ainda volta por inteiro:"),
         lista("se não houver turma com horário compatível para você;",
-              "se a filial cancelar ou adiar a turma e você não puder participar em outra data; ou",
+              "se a escola cancelar ou adiar a turma e você não puder participar em outra data; ou",
               "se você desistir antes de a secretaria confirmar a sua turma (data e horário da aula)."),
         *se(VENDA_SEM_TURMA, p("Nos cursos comprados sem turma aberta, valem também as regras da seção [“Cursos sem turma aberta”](#sem-turma).")),
         p(f"Com a turma confirmada, se você desistir antes da primeira aula, a matrícula paga neste site é devolvida, com os juros do parcelamento que correspondem a ela, e a taxa de inscrição fica com {RECEBEDOR}."),

@@ -6,19 +6,19 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <title>Cruz Vermelha Brasileira Rio de Janeiro | Site oficial</title>
-  <meta name="description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta name="description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: associação sem fins lucrativos que forma voluntários e faz campanhas humanitárias. Sede no Centro do Rio.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/">
   <meta property="og:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Site oficial">
-  <meta property="og:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta property="og:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: associação sem fins lucrativos que forma voluntários e faz campanhas humanitárias. Sede no Centro do Rio.">
   <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Cruz Vermelha Brasileira Rio de Janeiro | Site oficial">
-  <meta name="twitter:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: cursos presenciais com certificado, voluntariado, campanhas humanitárias e contato. Sede no Centro do Rio.">
+  <meta name="twitter:description" content="Cruz Vermelha Brasileira, filial do Rio de Janeiro: associação sem fins lucrativos que forma voluntários e faz campanhas humanitárias. Sede no Centro do Rio.">
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/">
@@ -283,6 +283,8 @@
     .footer-col p a:hover { color: var(--red); }
 
     /* Faixa de matrícula acima do cabeçalho (visível também no celular, sem abrir o menu). */
+    /* A faixa de matrícula saiu do topo em 15/10/2026 (política do Ad Grants). O CSS fica porque as páginas geradas
+       copiam este <style> da home; tirar as regras mudaria todas elas. Se a faixa voltar, o HTML é o do commit 18e8a81. */
     .faixa-matricula { background: var(--red); color: #fff; font-size: .9rem; }
     .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; padding: 8px 0; text-align: center; }
     .faixa-matricula span { color: #fff; font-weight: 600; }
@@ -872,7 +874,13 @@
     }
     .nav-sub::before { content: ""; position: absolute; left: 0; right: 0; top: -16px; height: 16px; }
     .nav-grupo.aberto .nav-sub { display: grid; }
-    @media (min-width: 1321px) and (hover: hover) { .nav-grupo:hover .nav-sub { display: grid; } }
+    @media (min-width: 1321px) and (hover: hover) {
+      .nav-grupo:hover .nav-sub { display: grid; }
+      /* Um grupo aberto por clique some quando o mouse passa para o outro: nunca duas listas ao mesmo tempo. */
+      .nav-links:has(.nav-grupo:hover) .nav-grupo.aberto:not(:hover) .nav-sub { display: none; }
+    }
+    .nav-links > a[aria-current="page"] { color: var(--red); }
+    .nav-links > a[aria-current="page"]::after { width: 100%; }
     .nav-links .nav-sub a { display: block; padding: 9px 12px; border-radius: 9px; color: var(--text); font-size: 13.5px; white-space: nowrap; }
     .nav-links .nav-sub a::after { display: none; }
     .nav-links .nav-sub a:hover, .nav-links .nav-sub a:focus-visible { background: rgba(204,0,0,.07); color: var(--red); }
@@ -886,6 +894,8 @@
       .nav-sub { position: static; transform: none; min-width: 0; box-shadow: none; border: 0; border-radius: 0; padding: 0 0 10px 10px; }
       .nav-sub::before { display: none; }
       .nav-links .nav-sub a { padding: 10px 8px; border-bottom: 0; white-space: normal; }
+      /* Com os dois grupos abertos, a lista passa da altura da tela: o painel rola sozinho, sem rolar a página. */
+      .main-header.nav-open .header-collapse { max-height: calc(100vh - 84px); max-height: calc(100dvh - 84px); overflow-y: auto; overscroll-behavior: contain; }
     }
 
     /* Rodapé reorganizado (11/10/2026): cinco colunas por assunto. */
@@ -993,6 +1003,7 @@
     .campaign-card-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
     .campaign-card-body h3 { font-size: 19px; margin: 8px 0 10px; color: var(--black); }
     .campaign-card-body p { font-size: 14px; color: var(--muted); margin-bottom: 18px; flex: 1; }
+    .campaign-card-body p.eyebrow { flex: 0 0 auto; margin-bottom: 0; }  /* o texto cresce, a etiqueta não: títulos alinhados */
     @media (max-width: 920px) { .campaigns-grid { grid-template-columns: 1fr; } }
 
     /* ============================================================
@@ -1276,6 +1287,7 @@
       "sameAs": [
         "https://www.instagram.com/cruzvermelhabrasileirarj/",
         "https://www.facebook.com/profile.php?id=61591390052128",
+        "https://www.youtube.com/@cruzvermelhariodejaneiro-org",
         "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
       ]
     },
@@ -1330,6 +1342,70 @@
     "@id": "https://cruzvermelhariodejaneiro.org/#site"
   },
   "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é a Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada sem fins lucrativos, integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação dos próprios voluntários, inclusive em primeiros socorros, em educação preventiva e em campanhas de apoio comunitário. Os princípios, o Movimento e a base legal estão na página Quem somos; a história, em Nossa história."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail. Os canais oficiais da filial estão na página de links."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: os cursos pagos da escola, como Primeiros Socorros, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias, o Instagram @cruzvermelhabrasileirarj e o canal da filial no YouTube."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico."
+      }
+    },
     {
       "@type": "Question",
       "name": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
@@ -1391,7 +1467,7 @@
       "name": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail."
+        "text": "Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não há curso de primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail."
       }
     },
     {
@@ -1400,6 +1476,14 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais."
       }
     },
     {
@@ -1415,7 +1499,7 @@
       "name": "O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola."
+        "text": "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Escola de Educação e Saúde, ligada à Cruz Vermelha Brasileira Rio de Janeiro, oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a matrícula no curso Lei Lucas ou fale com a gente para treinar toda a equipe da sua escola."
       }
     },
     {
@@ -1423,7 +1507,7 @@
       "name": "O que faz um bombeiro civil e quais são os requisitos para fazer o curso?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil."
+        "text": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil."
       }
     },
     {
@@ -1463,79 +1547,7 @@
       "name": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o curso Lei Lucas."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "O que é a Cruz Vermelha Brasileira Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada sem fins lucrativos, integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação dos próprios voluntários, inclusive em primeiros socorros, em educação preventiva e em campanhas de apoio comunitário. Os princípios, o Movimento e a base legal estão na página Quem somos; a história, em Nossa história."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail. Os canais oficiais da filial estão na página de links."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo chat do site, que responde por e-mail."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: os cursos pagos da escola, como Primeiros Socorros, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias e o Instagram @cruzvermelhabrasileirarj."
+        "text": "O catálogo da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, não tem curso de cuidador infantil nem de babá. O que a escola oferece, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o curso Lei Lucas."
       }
     }
   ]
@@ -1543,24 +1555,18 @@
   </script>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-copy" viewBox="0 0 512 512"><path d="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V336c0 1.5 0 3.1 .1 4.6L67.6 283c-16-15.2-41.3-14.6-56.6 1.4s-14.6 41.3 1.4 56.6L124.8 448c43.1 41.1 100.4 64 160 64H304c97.2 0 176-78.8 176-176V128c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V32z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol></svg>
-  <div class="faixa-matricula" role="region" aria-label="Matrícula em cursos presenciais">
-    <div class="wrap">
-      <span>Cursos presenciais da Cruz Vermelha: inscrição de R$ 99 e vaga garantida.</span>
-      <a href="/matricula-cursos-presenciais/">Fazer matrícula agora <i class="fa-solid fa-arrow-right" aria-hidden="true"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></a>
-    </div>
-  </div>
+<svg xmlns="http://www.w3.org/2000/svg" id="sprite-icones" style="display:none" aria-hidden="true"><symbol id="i-arrow-right" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol><symbol id="i-bars" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></symbol><symbol id="i-copy" viewBox="0 0 512 512"><path d="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></symbol><symbol id="i-envelope" viewBox="0 0 512 512"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></symbol><symbol id="i-facebook-f" viewBox="0 0 320 512"><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></symbol><symbol id="i-graduation-cap" viewBox="0 0 640 512"><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></symbol><symbol id="i-hand" viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V336c0 1.5 0 3.1 .1 4.6L67.6 283c-16-15.2-41.3-14.6-56.6 1.4s-14.6 41.3 1.4 56.6L124.8 448c43.1 41.1 100.4 64 160 64H304c97.2 0 176-78.8 176-176V128c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V64c0-17.7-14.3-32-32-32s-32 14.3-32 32V240c0 8.8-7.2 16-16 16s-16-7.2-16-16V32z"/></symbol><symbol id="i-heart-pulse" viewBox="0 0 512 512"><path d="M228.3 469.1L47.6 300.4c-4.2-3.9-8.2-8.1-11.9-12.4h87c22.6 0 43-13.6 51.7-34.5l10.5-25.2 49.3 109.5c3.8 8.5 12.1 14 21.4 14.1s17.8-5 22-13.3L320 253.7l1.7 3.4c9.5 19 28.9 31 50.1 31H476.3c-3.7 4.3-7.7 8.5-11.9 12.4L283.7 469.1c-7.5 7-17.4 10.9-27.7 10.9s-20.2-3.9-27.7-10.9zM503.7 240h-132c-3 0-5.8-1.7-7.2-4.4l-23.2-46.3c-4.1-8.1-12.4-13.3-21.5-13.3s-17.4 5.1-21.5 13.3l-41.4 82.8L205.9 158.2c-3.9-8.7-12.7-14.3-22.2-14.1s-18.1 5.9-21.8 14.8l-31.8 76.3c-1.2 3-4.2 4.9-7.4 4.9H16c-2.6 0-5 .4-7.3 1.1C3 225.2 0 208.2 0 190.9v-5.8c0-69.9 50.5-129.5 119.4-141C165 36.5 211.4 51.4 244 84l12 12 12-12c32.6-32.6 79-47.5 124.6-39.9C461.5 55.6 512 115.2 512 185.1v5.8c0 16.9-2.8 33.5-8.3 49.1z"/></symbol><symbol id="i-instagram" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></symbol><symbol id="i-location-dot" viewBox="0 0 384 512"><path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></symbol><symbol id="i-phone" viewBox="0 0 512 512"><path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/></symbol><symbol id="i-xmark" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></symbol><symbol id="i-youtube" viewBox="0 0 576 512"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></symbol></svg>
   <header class="main-header">
     <div class="header-container">
       <a href="#inicio" class="logo-area" style="text-decoration:none;color:inherit;">
         <img alt="Cruz Vermelha Brasileira — Rio de Janeiro" class="logo-img" src="assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
       </a>
 
-      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+      <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu-painel">
         <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
       </button>
 
-      <div class="header-collapse">
+      <div class="header-collapse" id="menu-painel">
         <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
              gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
         <nav class="nav-links" aria-label="Menu principal">
@@ -1677,15 +1683,15 @@
         <div>
           <p class="eyebrow">Filial do Estado do Rio de Janeiro</p>
           <h1 id="hero-title">Preparados para servir. Prontos para cuidar.</h1>
-          <p>Formação, voluntariado e presença humanitária para fortalecer comunidades, orientar a população e agir com técnica quando cada minuto importa.</p>
+          <p>Somos uma associação sem fins lucrativos, parte do Movimento Internacional da Cruz Vermelha. Nossa missão é prevenir e aliviar o sofrimento humano, com imparcialidade: formamos voluntários, atuamos em campanhas humanitárias e levamos educação preventiva às comunidades do Rio de Janeiro.</p>
           <div class="hero-actions">
-            <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conheça os cursos</a>
-            <a class="btn btn-white" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Seja voluntário</a>
+            <a class="btn btn-red" href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">Seja voluntário</a>
+            <a class="btn btn-white" href="/quem-somos/">Conheça a filial</a>
           </div>
         </div>
         <aside class="hero-card" aria-label="Dados institucionais">
           <strong>Palácio da Cruz Vermelha</strong>
-          <p><b>Capacitação contínua no Rio de Janeiro.</b> Voluntários, instrutores e equipes preparados para transformar cuidado em ação.</p>
+          <p><b>Associação privada sem fins lucrativos.</b> Sede no Palácio da Cruz Vermelha, construído entre 1919 e 1923, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro.</p>
           <p style="margin-top:.55rem"><b>CNPJ:</b> 08.560.973/0001-97</p>
         </aside>
       </div>
@@ -1706,8 +1712,9 @@
           <p class="eyebrow">Institucional</p>
           <h2>Uma filial histórica, conectada a uma missão mundial.</h2>
           <p class="lead">A Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro é uma associação privada sem fins lucrativos, filial estadual da Cruz Vermelha Brasileira e parte do <a href="/movimento-internacional/">Movimento Internacional da Cruz Vermelha e do Crescente Vermelho</a>, guiado pelos <a href="/principios-fundamentais/">sete Princípios Fundamentais</a>: humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+          <p class="lead"><strong>Nossa missão</strong>, nas palavras do <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Estatuto da Cruz Vermelha Brasileira</a> (art. 10): prevenir e aliviar, com absoluta imparcialidade, os sofrimentos humanos, sem distinção de raça, nacionalidade, idioma, gênero, nível social, religião e opinião política ou qualquer outro viés discriminatório, contribuindo para a defesa da vida, da saúde e da dignidade humana.</p>
           <p class="lead">No Rio de Janeiro, a filial atua em educação preventiva e apoio comunitário e forma os próprios voluntários, inclusive em primeiros socorros. Essa formação é gratuita, mas não é um curso aberto ao público: é só para quem entra no voluntariado, é aceito na ficha de entrevista e faz o CBFI, que abre quatro vezes por ano (veja <a href="/cursos-gratuitos/">como funciona a formação de voluntários</a>). Cursos de primeiros socorros com data marcada e certificado são os pagos da escola.</p>
-          <p class="lead">A sede é o Palácio da Cruz Vermelha, no Centro do Rio, patrimônio histórico nacional: seu tombamento foi aprovado por unanimidade pelo <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">Conselho Consultivo do Iphan</a> em 10 de novembro de 2021. A filial é reconhecida como de utilidade pública municipal (<a href="https://doweb.rio.rj.gov.br/portal/edicoes/download/1135" target="_blank" rel="noopener">Lei 5.153/2010</a>) e estadual (<a href="https://alerjln1.alerj.rj.gov.br/contlei.nsf/c8aa0900025feef6032564ec0060dfff/592ba21d1eb9875a03258987006dbb6e?OpenDocument" target="_blank" rel="noopener">Lei 9.984/2023</a>). As leis que regem a Cruz Vermelha estão na <a href="/base-legal/">base legal</a>, e a trajetória desde a fundação da Cruz Vermelha Brasileira, em 1908, em <a href="/historia/">Nossa história</a>.</p>
+          <p class="lead">A sede é o Palácio da Cruz Vermelha, no Centro do Rio. O tombamento federal do prédio foi aprovado por unanimidade pelo <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">Conselho Consultivo do Iphan</a> em 10 de novembro de 2021. A filial é reconhecida como de utilidade pública municipal (<a href="https://doweb.rio.rj.gov.br/portal/edicoes/download/1135" target="_blank" rel="noopener">Lei 5.153/2010</a>) e estadual (<a href="https://alerjln1.alerj.rj.gov.br/contlei.nsf/c8aa0900025feef6032564ec0060dfff/592ba21d1eb9875a03258987006dbb6e?OpenDocument" target="_blank" rel="noopener">Lei 9.984/2023</a>). As leis que regem a Cruz Vermelha estão na <a href="/base-legal/">base legal</a>, e a trajetória desde a fundação da Cruz Vermelha Brasileira, em 1908, em <a href="/historia/">Nossa história</a>. Veja também <a href="/quem-somos/#como-nos-financiamos">como a filial se financia</a>.</p>
           <div class="cta-row" style="margin-top:24px">
             <a class="btn btn-red" href="/quem-somos/">Quem somos</a>
             <a class="btn btn-outline" href="/principios-fundamentais/">Os 7 Princípios</a>
@@ -1733,15 +1740,6 @@
         <h2>Campanhas ativas</h2>
         <p class="lead">Ações em andamento agora pela Cruz Vermelha Brasileira Rio de Janeiro.</p>
         <div class="campaigns-grid">
-          <a class="campaign-card" href="dia-das-criancas/">
-            <div class="campaign-card-thumb"><img alt="Coordenadora de Juventude da Cruz Vermelha com crianças do projeto Impacto das Cores" src="assets/otim/dia-criancas-juventude-480.webp" srcset="assets/otim/dia-criancas-juventude-480.webp 480w, assets/otim/dia-criancas-juventude-960.webp 960w" sizes="(max-width: 620px) 100vw, 349px" width="480" height="419" loading="lazy" decoding="async" style="object-position:50% 70%"></div>
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Campanha de doação</p>
-              <h3>Dia das Crianças: doe brinquedos</h3>
-              <p>Estamos recebendo brinquedos novos ou em bom estado para as crianças da nossa ação de Dia das Crianças. Entregue na sede, no Centro do Rio.</p>
-              <span class="btn btn-outline">Quero doar</span>
-            </div>
-          </a>
           <a class="campaign-card" href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
             <div class="campaign-card-thumb"><img alt="Impacto das Cores" src="assets/otim/impacto-cores-banner-640.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="300" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
@@ -1758,6 +1756,98 @@
               <h3>Campanha do Agasalho</h3>
               <p>Arrecadação de agasalhos, cobertores e calçados para levar aquecimento e dignidade a famílias em situação de vulnerabilidade durante o frio.</p>
               <span class="btn btn-outline">Ver Como Ajudar</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions" id="acoes">
+      <div class="wrap">
+        <div class="actions-head">
+          <div>
+            <p class="eyebrow">A Cruz Vermelha Brasileira Rio de Janeiro em ação</p>
+            <h2>O trabalho humanitário exige preparo contínuo.</h2>
+            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
+          </div>
+          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
+        </div>
+
+        <div class="actions-layout">
+          <article class="feature-action">
+            <img alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/hero-formacao-voluntarios-1080.webp" srcset="assets/otim/hero-formacao-voluntarios-540.webp 540w, assets/otim/hero-formacao-voluntarios-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 620px" width="1080" height="1350" loading="lazy" decoding="async">
+            <div class="feature-caption">
+              <p class="eyebrow">Formação de voluntários</p>
+              <h3>Capacitação que salva vidas.</h3>
+              <p>A cada turma formada, a Cruz Vermelha Brasileira Rio de Janeiro amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
+            </div>
+          </article>
+
+          <div class="action-list">
+            <article class="action-tile">
+              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação" src="assets/otim/voluntario-microfone-480.webp" srcset="assets/otim/voluntario-microfone-480.webp 480w, assets/otim/voluntario-microfone-960.webp 960w, assets/otim/voluntario-microfone-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Capacitação</span>
+                <h3>Treinamento com orientação técnica</h3>
+                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em atividade no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-480.webp" srcset="assets/otim/equipe-corredor-480.webp 480w, assets/otim/equipe-corredor-960.webp 960w, assets/otim/equipe-corredor-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Voluntariado</span>
+                <h3>Presença que acolhe</h3>
+                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
+              </div>
+            </article>
+            <article class="action-tile">
+              <img alt="Ação comunitária com voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" srcset="assets/otim/acao-comunitaria-morro-480.webp 480w, assets/otim/acao-comunitaria-morro-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="480" loading="lazy" decoding="async">
+              <div class="action-copy">
+                <span>Comunidade</span>
+                <h3>Cuidado também se constrói no território</h3>
+                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="actions-cta">
+          <a class="btn btn-red" href="/cursos-gratuitos/">Como funciona a formação de voluntários</a>
+          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparência e verificação de documentos: abertura da trilha pública (05/10/2026). Os três cartões
+         usam o mesmo desenho das campanhas, sem imagem; as páginas são do Palácio Virtual (Redação). -->
+    <section class="campaigns-section" id="transparencia" style="background:#fff">
+      <div class="wrap">
+        <p class="eyebrow">Confiança se comprova</p>
+        <h2>Transparência e verificação de documentos</h2>
+        <p class="lead">Canais oficiais publicados com registro verificável; o portal de documentos e parcerias está em implantação. Ofícios, certificados de curso e publicações registrados na trilha podem ser conferidos pelo código ou pelo próprio arquivo.</p>
+        <div class="campaigns-grid">
+          <a class="campaign-card" href="/transparencia/">
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Portal da transparência</p>
+              <h3>Documentos e parcerias</h3>
+              <p>O portal está em implantação: é ali que a filial vai publicar estatuto, diretoria, demonstrações contábeis, relatórios e parcerias com o poder público, cada documento com versão imutável, código de registro e impressão digital.</p>
+              <span class="btn btn-outline">Abrir o portal</span>
+            </div>
+          </a>
+          <a class="campaign-card" href="/verificar/">
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Verificação</p>
+              <h3>Conferir um documento oficial</h3>
+              <p>Digite o código impresso no documento, abra o QR code ou solte o arquivo que recebeu: a página diz se foi emitido pela filial e se continua valendo.</p>
+              <span class="btn btn-outline">Verificar agora</span>
+            </div>
+          </a>
+          <a class="campaign-card" href="/canais-oficiais/">
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Canais oficiais</p>
+              <h3>Onde a filial fala de verdade</h3>
+              <p>A lista registrada de sites, perfis, telefones e e-mails oficiais da Cruz Vermelha Brasileira Rio de Janeiro, com histórico de versões.</p>
+              <span class="btn btn-outline">Ver os canais</span>
             </div>
           </a>
         </div>
@@ -1785,7 +1875,7 @@
                 <ul class="check-list">
                   <li>Conteúdo com foco em prevenção, atendimento inicial e resposta adequada.</li>
                   <li>Orientação sobre trauma, engasgo, parada cardiorrespiratória e emergências comuns.</li>
-                  <li>Carga horária de 8 horas, com certificação da Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                  <li>Carga horária de 8 horas, com certificado da escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
                 </ul>
                 <div class="cta-row">
                   <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Quero Aprender</a>
@@ -1803,7 +1893,7 @@
                 <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
                 <ul class="check-list">
                   <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
-                  <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                  <li>Certificado emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
                   <li>Datas das próximas turmas na plataforma da escola.</li>
                 </ul>
                 <div class="cta-row">
@@ -1823,7 +1913,7 @@
                 <ul class="check-list">
                   <li>Carga horária de 160 horas, presenciais.</li>
                   <li>Escolaridade mínima: Ensino Fundamental.</li>
-                  <li>Certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro.</li>
+                  <li>Certificado emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
                 </ul>
                 <div class="cta-row">
                   <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Faça sua Inscrição</a>
@@ -1954,99 +2044,7 @@
             <a class="btn btn-red" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico">Fazer o curso de Primeiros Socorros</a>
             <a class="alert-link" href="/matricula-cursos-presenciais/">Ver todos os cursos <i class="fa-solid fa-arrow-right" aria-hidden="true"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></a>
           </div>
-          <p class="alert-nota">Presencial, 8 horas, certificado da Cruz Vermelha Brasileira Rio de Janeiro. A inscrição de R$ 99 garante a vaga.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="actions" id="acoes">
-      <div class="wrap">
-        <div class="actions-head">
-          <div>
-            <p class="eyebrow">A Cruz Vermelha Brasileira Rio de Janeiro em ação</p>
-            <h2>O trabalho humanitário exige preparo contínuo.</h2>
-            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
-          </div>
-          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
-        </div>
-
-        <div class="actions-layout">
-          <article class="feature-action">
-            <img alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/hero-formacao-voluntarios-1080.webp" srcset="assets/otim/hero-formacao-voluntarios-540.webp 540w, assets/otim/hero-formacao-voluntarios-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 620px" width="1080" height="1350" loading="lazy" decoding="async">
-            <div class="feature-caption">
-              <p class="eyebrow">Formação de voluntários</p>
-              <h3>Capacitação que salva vidas.</h3>
-              <p>A cada turma formada, a Cruz Vermelha Brasileira Rio de Janeiro amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
-            </div>
-          </article>
-
-          <div class="action-list">
-            <article class="action-tile">
-              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação" src="assets/otim/voluntario-microfone-480.webp" srcset="assets/otim/voluntario-microfone-480.webp 480w, assets/otim/voluntario-microfone-960.webp 960w, assets/otim/voluntario-microfone-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Capacitação</span>
-                <h3>Treinamento com orientação técnica</h3>
-                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em atividade no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-480.webp" srcset="assets/otim/equipe-corredor-480.webp 480w, assets/otim/equipe-corredor-960.webp 960w, assets/otim/equipe-corredor-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Voluntariado</span>
-                <h3>Presença que acolhe</h3>
-                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img alt="Ação comunitária com voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" srcset="assets/otim/acao-comunitaria-morro-480.webp 480w, assets/otim/acao-comunitaria-morro-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="480" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Comunidade</span>
-                <h3>Cuidado também se constrói no território</h3>
-                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="actions-cta">
-          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Conhecer cursos e capacitações</a>
-          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Transparência e verificação de documentos: abertura da trilha pública (05/10/2026). Os três cartões
-         usam o mesmo desenho das campanhas, sem imagem; as páginas são do Palácio Virtual (Redação). -->
-    <section class="campaigns-section" id="transparencia" style="background:#fff">
-      <div class="wrap">
-        <p class="eyebrow">Confiança se comprova</p>
-        <h2>Transparência e verificação de documentos</h2>
-        <p class="lead">Documentos institucionais, parcerias com o poder público e canais oficiais publicados com registro verificável. Qualquer ofício, certificado, diploma, crachá ou publicação da filial pode ser conferido pelo código ou pelo próprio arquivo.</p>
-        <div class="campaigns-grid">
-          <a class="campaign-card" href="/transparencia/">
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Portal da transparência</p>
-              <h3>Documentos e parcerias</h3>
-              <p>Estatuto, atas, balanços, relatórios e as parcerias da Lei 13.019/2014, cada um com versão imutável, código de registro e impressão digital.</p>
-              <span class="btn btn-outline">Abrir o portal</span>
-            </div>
-          </a>
-          <a class="campaign-card" href="/verificar/">
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Verificação</p>
-              <h3>Conferir um documento oficial</h3>
-              <p>Digite o código impresso no documento, abra o QR code ou solte o arquivo que recebeu: a página diz se foi emitido pela filial e se continua valendo.</p>
-              <span class="btn btn-outline">Verificar agora</span>
-            </div>
-          </a>
-          <a class="campaign-card" href="/canais-oficiais/">
-            <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Canais oficiais</p>
-              <h3>Onde a filial fala de verdade</h3>
-              <p>A lista registrada de sites, perfis, telefones e e-mails oficiais da Cruz Vermelha Brasileira Rio de Janeiro, com histórico de versões.</p>
-              <span class="btn btn-outline">Ver os canais</span>
-            </div>
-          </a>
+          <p class="alert-nota">Presencial, 8 horas, certificado da Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda). A inscrição de R$ 99 garante a vaga.</p>
         </div>
       </div>
     </section>
@@ -2056,7 +2054,7 @@
       <div class="wrap">
         <p class="eyebrow">Empresas parceiras</p>
         <h2>Parcerias que salvam vidas</h2>
-        <p class="lead">Empresas que apoiam a Cruz Vermelha Brasileira Rio de Janeiro através da Lei Lucas, treinamentos corporativos de NR e programas de responsabilidade social.</p>
+        <p class="lead">Empresas que apoiam a Cruz Vermelha Brasileira Rio de Janeiro com programas de responsabilidade social e treinamentos corporativos. Os treinamentos de primeiros socorros, Lei Lucas e NR são contratados com a Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda).</p>
         <div class="partners-logos">
           <div class="partner-slot"><img alt="Johnson & Johnson" src="assets/otim/parceiros/johnson-johnson-400.webp" width="400" height="225" loading="lazy" decoding="async"></div>
           <div class="partner-slot"><img alt="Embelleze" src="assets/otim/parceiros/embelleze-400.webp" width="400" height="105" loading="lazy" decoding="async"></div>
@@ -2069,7 +2067,7 @@
         <div class="partner-cta">
           <div>
             <h3>Sua empresa também pode ser parceira do Rio</h3>
-            <p>Treinamentos de NR, Lei Lucas e programas customizados para sua equipe.</p>
+            <p>Programas de responsabilidade social com a filial e, pela Escola de Educação e Saúde, treinamentos de NR, Lei Lucas e programas sob medida para sua equipe.</p>
           </div>
           <a href="#contato" class="btn btn-red">Quero ser Parceiro</a>
         </div>
@@ -2082,10 +2080,44 @@
         <!-- faq:inicio -->
         <p class="eyebrow">Perguntas frequentes</p>
         <h2>Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro</h2>
-        <p class="lead" style="margin-bottom:28px">Cursos, matrícula, voluntariado, como ajudar, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.</p>
+        <p class="lead" style="margin-bottom:28px">A instituição, como ajudar, voluntariado, cursos e matrícula, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.</p>
         <div class="faq-list">
-          <h3 class="faq-grupo">Cursos e matrícula</h3>
+          <h3 class="faq-grupo">Instituição, como ajudar, sede e contato</h3>
           <details class="faq-item" open>
+            <summary>O que é a Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada sem fins lucrativos, integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação dos próprios voluntários, inclusive em primeiros socorros, em educação preventiva e em campanhas de apoio comunitário. Os princípios, o Movimento e a base legal estão na <a href="/quem-somos/">página Quem somos</a>; a história, em <a href="/historia/">Nossa história</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?</summary>
+            <div class="faq-answer">A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo <a href="/#chat">chat do site</a>, que responde por e-mail. Os canais oficiais da filial estão na <a href="/bio/">página de links</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?</summary>
+            <div class="faq-answer">Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
+          </details>
+          <details class="faq-item">
+            <summary>A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?</summary>
+            <div class="faq-answer">Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: os cursos pagos da escola, como <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">Primeiros Socorros</a>, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail em até 3 dias úteis.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?</summary>
+            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a> e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?</summary>
+            <div class="faq-answer">O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o <a href="/#chat">chat Fale com a gente</a>, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na <a href="/#contato">seção de contato</a>. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário do voluntariado</a>. Para acompanhar as ações da filial, veja as <a href="/noticias/">notícias</a>, o Instagram @cruzvermelhabrasileirarj e o <a href="https://www.youtube.com/@cruzvermelhariodejaneiro-org" target="_blank" rel="noopener">canal da filial no YouTube</a>.</div>
+          </details>
+          <h3 class="faq-grupo">Voluntariado</h3>
+          <details class="faq-item">
+            <summary>Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
+            <div class="faq-answer">Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas <a href="/noticias/">notícias do site</a>. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no <a href="/#chat">chat de contato do site</a>. Os canais oficiais estão reunidos na <a href="/bio/">página de links da filial</a>.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?</summary>
+            <div class="faq-answer">Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial</a>, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a> e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">curso de Primeiros Socorros Básico</a>.</div>
+          </details>
+          <h3 class="faq-grupo">Cursos e matrícula</h3>
+          <details class="faq-item">
             <summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary>
             <div class="faq-answer">Os cursos abertos ao público na Cruz Vermelha Brasileira Rio de Janeiro são os sete cursos presenciais pagos da Escola de Educação e Saúde, na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos (160 horas) e Micropigmentação Labial (24 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. A filial não vende cursos: forma os próprios voluntários, depois da seleção (veja a <a href="/cursos-gratuitos/">formação de voluntários</a>). Valores e escolaridade estão na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
           </details>
@@ -2115,11 +2147,15 @@
           </details>
           <details class="faq-item">
             <summary>Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?</summary>
-            <div class="faq-answer">Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não oferecemos primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; a secretaria confirma turma e horário por e-mail.</div>
+            <div class="faq-answer">Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não há curso de primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; a secretaria confirma turma e horário por e-mail.</div>
           </details>
           <details class="faq-item">
             <summary>O certificado dos cursos é reconhecido pelo MEC?</summary>
             <div class="faq-answer">Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
+            <div class="faq-answer">Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo <a href="/#chat">chat do site</a>. Veja carga horária, valores e requisitos na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
           </details>
           <h3 class="faq-grupo">Primeiros socorros, Lei Lucas e formação profissional</h3>
           <details class="faq-item">
@@ -2128,11 +2164,11 @@
           </details>
           <details class="faq-item">
             <summary>O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?</summary>
-            <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
+            <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Escola de Educação e Saúde, ligada à Cruz Vermelha Brasileira Rio de Janeiro, oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
           </details>
           <details class="faq-item">
             <summary>O que faz um bombeiro civil e quais são os requisitos para fazer o curso?</summary>
-            <div class="faq-answer">O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Cruz Vermelha Brasileira Rio de Janeiro exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">plataforma da escola</a>; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a <a href="/matricula-cursos-presenciais/?curso=bombeiro-civil">matrícula no curso de Bombeiro Civil</a>.</div>
+            <div class="faq-answer">O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">plataforma da escola</a>; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a <a href="/matricula-cursos-presenciais/?curso=bombeiro-civil">matrícula no curso de Bombeiro Civil</a>.</div>
           </details>
           <details class="faq-item">
             <summary>Como se tornar cuidador de idosos e o que o curso ensina?</summary>
@@ -2152,45 +2188,7 @@
           </details>
           <details class="faq-item">
             <summary>Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?</summary>
-            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro não tem curso de cuidador infantil nem de babá no catálogo. O que oferecemos, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">curso Lei Lucas</a>.</div>
-          </details>
-          <h3 class="faq-grupo">Voluntariado</h3>
-          <details class="faq-item">
-            <summary>Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas <a href="/noticias/">notícias do site</a>. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no <a href="/#chat">chat de contato do site</a>. Os canais oficiais estão reunidos na <a href="/bio/">página de links da filial</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?</summary>
-            <div class="faq-answer">Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial</a>, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a> e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">curso de Primeiros Socorros Básico</a>.</div>
-          </details>
-          <h3 class="faq-grupo">Instituição, como ajudar, sede e contato</h3>
-          <details class="faq-item">
-            <summary>O que é a Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha no Brasil: uma associação privada sem fins lucrativos, integrante da estrutura federativa nacional e do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Tem sede no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, e é reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Atua na formação dos próprios voluntários, inclusive em primeiros socorros, em educação preventiva e em campanhas de apoio comunitário. Os princípios, o Movimento e a base legal estão na <a href="/quem-somos/">página Quem somos</a>; a história, em <a href="/historia/">Nossa história</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?</summary>
-            <div class="faq-answer">A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário oficial do voluntariado</a>, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo <a href="/#chat">chat do site</a>, que responde por e-mail. Os canais oficiais da filial estão na <a href="/bio/">página de links</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Onde doar roupas, agasalhos e cobertores para a Cruz Vermelha no Rio de Janeiro?</summary>
-            <div class="faq-answer">Roupas de frio, cobertores e calçados são recebidos na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro, pela <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. A triagem prioriza casacos e agasalhos, cobertores e mantas sem rasgos, meias, luvas, gorros, cachecóis, blusas de manga longa e calçados fechados, em pares. Leve as peças limpas, em bom estado e separadas por tipo e tamanho: assim a ajuda chega mais rápido a quem precisa, sem desperdício. Para outros itens, confirme antes com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
-          </details>
-          <details class="faq-item">
-            <summary>A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?</summary>
-            <div class="faq-answer">Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: os cursos pagos da escola, como <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">Primeiros Socorros</a>, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo <a href="/#chat">chat do site</a>, que responde por e-mail em até 3 dias úteis.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?</summary>
-            <div class="faq-answer">A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os <a href="/matricula-cursos-presenciais/">cursos presenciais</a> e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da <a href="/campanha-agasalho.html">Campanha do Agasalho</a>, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A <a href="/#contato">seção de contato</a> traz o endereço com link para o mapa.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
-            <div class="faq-answer">Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo <a href="/#chat">chat do site</a>. Veja carga horária, valores e requisitos na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?</summary>
-            <div class="faq-answer">O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o <a href="/#chat">chat Fale com a gente</a>, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na <a href="/#contato">seção de contato</a>. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no <a href="https://form.spotform.com.br/voluntariocruzvermelharj" target="_blank" rel="noopener">formulário do voluntariado</a>. Para acompanhar as ações da filial, veja as <a href="/noticias/">notícias</a> e o Instagram @cruzvermelhabrasileirarj.</div>
+            <div class="faq-answer">O catálogo da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, não tem curso de cuidador infantil nem de babá. O que a escola oferece, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">curso Lei Lucas</a>.</div>
           </details>
         </div>
       <!-- faq:fim -->
@@ -2279,6 +2277,11 @@
               <span><b>Facebook</b>Cruz Vermelha Brasileira Rio de Janeiro</span>
               <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
             </a>
+            <a class="contact-canal" href="https://www.youtube.com/@cruzvermelhariodejaneiro-org" target="_blank" rel="noopener">
+              <i class="fa-brands fa-youtube" aria-hidden="true"><svg class="ico ico-youtube" aria-hidden="true" focusable="false"><use href="#i-youtube"/></svg></i>
+              <span><b>YouTube</b>@cruzvermelhariodejaneiro-org</span>
+              <i class="fa-solid fa-arrow-up-right-from-square seta" aria-hidden="true"></i>
+            </a>
           </div>
           <p class="contact-cnpj">Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro · CNPJ 08.560.973/0001-97</p>
         </div>
@@ -2362,6 +2365,7 @@
         <div class="footer-social">
           <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
           <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"><svg class="ico ico-instagram" aria-hidden="true" focusable="false"><use href="#i-instagram"/></svg></i></a>
+          <a href="https://www.youtube.com/@cruzvermelhariodejaneiro-org" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"><svg class="ico ico-youtube" aria-hidden="true" focusable="false"><use href="#i-youtube"/></svg></i></a>
         </div>
       </div>
     </div>
@@ -2387,6 +2391,10 @@
       const header = this.closest('.main-header');
       const isOpen = header.classList.toggle('nav-open');
       this.setAttribute('aria-expanded', String(isOpen));
+      this.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+      // O painel vai até o pé da tela, mesmo com a faixa acima do cabeçalho (o CSS supõe o cabeçalho no topo).
+      const painel = header.querySelector('.header-collapse');
+      if (painel) painel.style.maxHeight = isOpen ? Math.max(240, window.innerHeight - painel.getBoundingClientRect().top) + 'px' : '';
     });
 
     document.querySelectorAll('.nav-links a').forEach(link => {
@@ -2394,12 +2402,14 @@
         const header = this.closest('.main-header');
         header.classList.remove('nav-open');
         document.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+        document.querySelector('.nav-toggle')?.setAttribute('aria-label', 'Abrir menu');
       });
     });
 
     // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
     (function () {
       const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
+      const mouse = window.matchMedia('(min-width: 1321px) and (hover: hover)');
       function fechar(exceto) {
         grupos.forEach(g => { if (g !== exceto) { g.classList.remove('aberto'); g.querySelector('.nav-grupo-botao')?.setAttribute('aria-expanded', 'false'); } });
       }
@@ -2412,6 +2422,11 @@
           botao.setAttribute('aria-expanded', String(abrir));
         });
         if (g.querySelector('a[aria-current="page"]')) botao?.setAttribute('aria-current', 'true');
+        // No computador, passar o mouse num grupo fecha o outro; sair com o Tab de um grupo o fecha.
+        g.addEventListener('mouseenter', () => { if (mouse.matches) fechar(g); });
+        g.addEventListener('focusout', e => {
+          if (e.relatedTarget && !g.contains(e.relatedTarget)) { g.classList.remove('aberto'); botao?.setAttribute('aria-expanded', 'false'); }
+        });
       });
       document.addEventListener('click', e => { if (!e.target.closest('.nav-grupo')) fechar(null); });
       document.addEventListener('keydown', e => {
@@ -2477,6 +2492,6 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=a1ed0b08aa" defer></script>
+  <script src="/chat/chat.js?v=d971b7bcea" defer></script>
 </body>
 </html>

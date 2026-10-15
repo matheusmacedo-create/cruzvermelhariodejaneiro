@@ -61,6 +61,22 @@ def aplicar(html: str) -> str:
     return html.replace("</body>", novo + "\n</body>", 1)
 
 
+# Quem emite o certificado dos cursos pagos é a escola (empresa ligada à filial, CNPJ próprio), não a
+# filial. A FAQ que a escola publica diz "emitido pela Cruz Vermelha Brasileira"; no chat, a resposta
+# nomeia a escola, como a FAQ da home e as páginas institucionais.
+ESCOLA = "a escola, a O-CVB Filial Rio de Janeiro Ensino Ltda"
+EMISSOR = re.compile(r"emitido pela Cruz Vermelha Brasileira(?: – Filial do Estado do Rio de Janeiro| Rio de Janeiro)?")
+
+
+def certificado_da_escola(resposta: str) -> str:
+    """Troca o emissor do certificado pela escola. Idempotente."""
+    nome = ESCOLA.split(", ", 1)[1]
+    novo = EMISSOR.sub("emitido pela escola, " + nome, resposta)
+    novo = re.sub(re.escape(nome) + r"(?= [a-zà-ú])", nome + ",", novo)
+    return novo.replace(nome + ", instituição reconhecida",
+                        nome + ", empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, instituição reconhecida")
+
+
 def atualizar_cursos(cursos: list[dict]) -> bool:
     """Reescreve a lista de cursos do chat.js entre os marcadores. Devolve True se mudou.
 
@@ -83,7 +99,7 @@ def atualizar_cursos(cursos: list[dict]) -> bool:
                 campos.append(f"{chave}: {j(c[chave])}")
         if c.get("faq"):
             duvidas = ",\n".join(
-                f"        {{ p: {j(q['pergunta'])}, r: {j(q['resposta'])} }}" for q in c["faq"])
+                f"        {{ p: {j(q['pergunta'])}, r: {j(certificado_da_escola(q['resposta']))} }}" for q in c["faq"])
             campos.append("faq: [\n" + duvidas + "\n      ]")
         linhas.append("    { " + ", ".join(campos) + " }")
     novo = js[:a] + "\n  var CURSOS = [\n" + ",\n".join(linhas) + "\n  ];\n  " + js[b:]

@@ -33,7 +33,7 @@ By enabling the Colombian Red Cross to act, the Emergency Appeal allows teams to
 
 ## How to follow and support
 
-In Rio de Janeiro, the branch keeps up its permanent work in humanitarian action, training and volunteering. Anyone who wants to follow the work of the branch and of the Movement can read the [news section](/en/news/), get to know the [teams and areas of work](/en/our-team/) or [support the branch](/en/donate/). It is also possible to prepare to act in emergencies by taking one of the [in-person courses](/en/courses/) the branch offers, taught in Portuguese.
+In Rio de Janeiro, the branch keeps up its permanent work in humanitarian action, training and volunteering. Anyone who wants to follow the work of the branch and of the Movement can read the [news section](/en/news/), get to know the [teams and areas of work](/en/our-team/) or [support the branch's campaigns](/en/winter-clothing-drive/). It is also possible to prepare to act in emergencies by taking one of the [in-person courses](/en/courses/) the branch offers, taught in Portuguese.
 
 Based on information from the IFRC — International Federation (@ifrc), published on 1 September 2026 — [original post](https://www.instagram.com/p/Dcv5dAbiGFN/).
 

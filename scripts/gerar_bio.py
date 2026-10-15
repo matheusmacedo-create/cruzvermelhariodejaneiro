@@ -32,6 +32,7 @@ TITULO = "Cruz Vermelha Brasileira Rio de Janeiro | Links oficiais"
 DESCRICAO = ("Links oficiais da Cruz Vermelha Brasileira Rio de Janeiro: cursos presenciais com certificado, cadastro de "
              "voluntário e WhatsApp do voluntariado.")
 URL_MATRICULA = f"{ORIGEM}/matricula-cursos-presenciais/"
+URL_GRATUITOS = f"{ORIGEM}/cursos-gratuitos/"
 URL_AGASALHO = f"{ORIGEM}/campanha-agasalho.html"
 
 # Perguntas que as pessoas fazem ao Google sobre a filial: cada resposta cita os caminhos oficiais e liga
@@ -42,11 +43,13 @@ FAQ = [
      "para explicar as frentes de atuação, a formação inicial e os próximos encontros. Dúvidas antes de se cadastrar podem "
      "ser tiradas no WhatsApp do voluntariado ou no chat deste site.", []),
     ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-     "Primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro civil, cuidador de idosos e "
-     "micropigmentação labial, todos presenciais na sede, no Centro do Rio, com certificado da Cruz Vermelha Brasileira Rio de Janeiro. "
-     "As turmas e os valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser "
-     "feita na página de matrícula em cursos presenciais.",
-     [("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
+     "Há dois caminhos. A filial forma de graça os próprios voluntários, depois da seleção (veja a formação de "
+     "voluntários); não há curso gratuito aberto ao público. E a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial, vende "
+     "e certifica os cursos pagos: primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro "
+     "civil, cuidador de idosos e micropigmentação labial, todos presenciais na sede, no Centro do Rio. As turmas e os "
+     "valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de "
+     "matrícula em cursos presenciais.",
+     [("formação de voluntários", "URL_GRATUITOS"), ("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",
      "Pelo WhatsApp do voluntariado, no botão acima: é o número exclusivo dessa equipe, diferente da secretaria de cursos. "
      "Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
@@ -67,15 +70,8 @@ IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
 # Só os três destinos que o Matheus pediu (19/09/2026), na ordem em que apareciam na página original.
 # Ficaram de fora, por decisão dele: desfile de 7 de Setembro, SOS Venezuela, e-mail do RFL, endereço e Instagram.
 BLOCOS = [
-    # Campanha de doação de brinquedos para a ação (fechada) de 13/10/2026: sai daqui depois dela. A foto fica em
-    # /assets/otim/ ("pasta"), fora do Git.
-    {"tipo": "cartao", "imagem": "dia-criancas-cartao", "pasta": "/assets/otim/",
-     "alt": "Coordenadora de Juventude da Cruz Vermelha Brasileira Rio de Janeiro com crianças",
-     "titulo": "Dia das Crianças: doe brinquedos",
-     "descricao": "Brinquedos novos ou em bom estado, entregues na sede. Veja como doar.",
-     "link": f"{ORIGEM}/dia-das-criancas/", "id": "dia-das-criancas"},
     {"tipo": "cartao", "imagem": "cursos", "alt": "Descubra quais cursos temos disponíveis: Cruz Vermelha Brasileira, Rio de Janeiro",
-     "titulo": "Saiba mais sobre os nossos cursos", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
+     "titulo": "Saiba mais sobre os cursos da escola", "descricao": "Turmas, valores e inscrição na plataforma da escola.",
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
     {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira Rio de Janeiro",
      "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
@@ -84,8 +80,11 @@ BLOCOS = [
     {"tipo": "botao", "estilo": "claro whatsapp", "icone": "fa-brands fa-whatsapp", "titulo": "Falar com o voluntariado no WhatsApp",
      "link": "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20",
      "id": "whatsapp-voluntariado"},
+    {"tipo": "titulo", "texto": "Canal no YouTube"},
+    {"tipo": "botao", "estilo": "claro", "icone": "fa-brands fa-youtube", "titulo": "Assistir ao canal da filial no YouTube",
+     "link": "https://www.youtube.com/@cruzvermelhariodejaneiro-org", "id": "youtube"},
 ]
-IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367), "dia-criancas-cartao": (700, 367)}
+IMAGENS = {"cursos": (700, 367), "voluntario": (700, 367)}
 
 
 def externo(link: str) -> str:
@@ -228,7 +227,7 @@ def main() -> int:
     def faq_html(pergunta: str, resposta: str, links: list) -> str:
         texto = esc(resposta)
         for rotulo, alvo in links:
-            url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO}[alvo]
+            url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO, "URL_GRATUITOS": URL_GRATUITOS}[alvo]
             texto = texto.replace(esc(rotulo), f'<a href="{url}">{esc(rotulo)}</a>', 1)
         return f"<details><summary>{esc(pergunta)}</summary><p>{texto}</p></details>"
     faq = "".join(faq_html(p, r, l) for p, r, l in FAQ)

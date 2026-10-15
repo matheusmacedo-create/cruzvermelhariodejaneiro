@@ -113,6 +113,94 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Google Ad Grants: recusa e correções do site (15/10/2026)
+
+O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
+não atende aos padrões das políticas para sites do Ad Grants". O cadastro no Google para ONGs está verificado
+(organização "Cruz Vermelha Brasileira filial Rio de Janeiro", código 08.560.973/0001-97), então o problema é
+só o site. Conferência contra a política (support.google.com/nonprofits/answer/1657899), feita em 15/10:
+
+- **Em ordem:** HTTPS em tudo, sem conteúdo misto (varredura nas páginas principais e no repositório); nenhum
+  anúncio de terceiros nem afiliado; CNPJ e endereço na home e em /quem-somos/; páginas institucionais com
+  texto próprio; 434 links internos em 81 páginas, nenhum 404 além do `/favicon.ico`; velocidade boa nas
+  páginas institucionais (LCP ≈ 1 s em celular com 4G lento emulado) e aceitável na home (1,9 a 3,4 s nas
+  medições; o elemento é a foto de fundo do hero, 78 KB, já com preload).
+- **O que provavelmente reprovou:** (1) venda em primeiro plano sem dizer como sustenta a missão: faixa
+  "inscrição de R$ 99" no topo, primeiro botão para a plataforma da escola, 4 das 12 seções da home e 17 das
+  26 perguntas da FAQ sobre cursos pagos, e nenhuma explicação de como esse dinheiro sustenta a filial (a
+  política aceita venda limitada "desde que o uso dos lucros seja divulgado"); (2) links de doação para páginas
+  com erro 503 (`/en/donate/`) na campanha do agasalho em inglês, na 404 em inglês e em 5 notícias em inglês;
+  (3) páginas "em construção" ligadas pela home: transparência sem documentos e acervo "Em breve"; (4) cartão
+  do Dia das Crianças (13/10) ainda em "Campanhas ativas".
+- **Correções (lista `scripts/publicacao-ad-grants.txt`):** home sem a faixa de venda, hero com a missão e os
+  botões "Seja voluntário"/"Conheça a filial", seções institucionais (Institucional, Campanhas, Em ação,
+  Transparência) antes das de curso, missão citada do art. 10 do Estatuto da CVB (Decreto 8.885/2016) na
+  seção Institucional, meta description nova, FAQ com os grupos "Instituição" e "Voluntariado" primeiro;
+  /quem-somos/ com a missão (arts. 10 e 11) e a seção "Como a filial se financia" (art. 75: patrimônio
+  "totalmente destinado às ações humanitárias, filantrópicas e para sua subsistência"; arts. 73-74: repasses;
+  resultado da escola destinado ao Palácio e às atividades; doações de bens; parcerias; doação em dinheiro
+  suspensa desde 25/09/2026); llms.txt com a missão; /dia-das-criancas/ em modo encerrado
+  (`ENCERRADA = True` em `scripts/gerar_dia_das_criancas.py`: agradecimento, sem formulário, `noindex`),
+  fora da home, da bio, do llms.txt e do sitemap; páginas em inglês sem links para a doação suspensa
+  (fontes `traducoes/en/paginas.json` e `traducoes/en/noticias/*.md` alteradas por troca de texto; os geradores
+  EN/ES não foram rodados porque hoje trariam o menu novo com rótulos em português: traduzir antes);
+  `site/favicon.ico` (ICO com 16, 32, 48 e 64 px a partir do `assets/favicon.png`).
+- **Revisão independente (15/10, 23 agentes, 18 achados confirmados, todos corrigidos):** `</div>` órfão da faixa removida (o CSS
+  dela ficou de propósito: as páginas geradas copiam o `<style>` da home, e tirá-lo mudaria todas); "desde a década de 1920" no cartão do hero (sem fonte) trocado por "Palácio
+  construído entre 1919 e 1923"; o botão da seção "Em ação" apontava para a plataforma da escola e passou a
+  apontar para /cursos-gratuitos/; meta description encurtada para 157 caracteres; missão na home com o
+  texto literal do art. 10; em /quem-somos/, "Hoje" retirado da lista de fontes, o art. 73 descrito como
+  contribuição da filial ao órgão central e a transparência no futuro ("será publicada") enquanto o portal
+  não tiver documentos; FAQ com subtítulo na nova ordem e a pergunta de Nova Iguaçu/Cabo Frio no grupo de
+  cursos; eyebrow da página encerrada do Dia das Crianças; campanha do agasalho em inglês com "How to take
+  part" e dois cartões reais (entrega na sede e doações grandes), botões com destinos distintos (#itens e
+  #entregar) e caixa da nota só quando há texto (gerar_ingles.py); wordCount das 5 notícias em inglês;
+  linha em branco a mais no llms.txt. O sitemap só sai atualizado depois de publicar (gerar_sitemaps.py lê o
+  ar).
+- **Respostas do Matheus (15/10):** OK para publicar ("mete marcha") e o texto do financiamento vale como está. O
+  domínio `cruzvermelhariodejaneiro.org` está na conta da Unicopag e dele, como gestores que o compraram, não
+  no CNPJ da filial; a política do Ad Grants pede que a ONG seja dona do domínio, e o Google pode cobrar isso
+  numa nova recusa. Decisão: um documento futuro (termo de cessão/uso do domínio à filial, bem detalhado)
+  deixa a situação formalizada; até lá, fica como risco declarado. Ainda depende dele: subir os documentos da
+  transparência (estatuto, diretoria, balanço) na Redação, o que resolve a página vazia, e, depois de
+  publicar, reenviar o pedido de ativação na conta do Google para ONGs.
+- **Publicação travada em 15/10:** o conector da Hostinger pediu nova autorização e sem ele não há credencial
+  TUS (`hosting_files_generate-upload-url`) nem limpeza de cache. Conferido por HTTP em 15/10, depois do OK:
+  os 13 arquivos da lista que já existem no ar continuam idênticos a `18e8a81`, e `/favicon.ico` segue 404.
+  Assim que o conector voltar: cópia do ar, publicar, cache, conferir, sitemaps (roteiro no cabeçalho de
+  `scripts/publicacao-ad-grants.txt`).
+- **Fica como risco conhecido:** `/cursos/` continua redirecionando para a matrícula paga (decisão de 11/10);
+  o botão "Plataforma" no cabeçalho e o grupo "Cursos" do menu continuam; a página /acervo/ ainda diz
+  "Em breve".
+
+## Canal do YouTube e revisão final do pacote institucional (publicados em 13/10/2026)
+
+- **Canal oficial no YouTube:** https://www.youtube.com/@cruzvermelhariodejaneiro-org (título "CVBRJ", canal
+  `UCxe2kWUJkD-tuJaO1lastUA`). Está no `sameAs` do JSON-LD da filial, num cartão da seção de contato da home,
+  no ícone do rodapé de todas as páginas em português (ícone `youtube` do Font Awesome Free 6.4.0 em
+  `scripts/icones.json`), na resposta "Como falar com..." da FAQ e do chat, no `llms.txt` (redes oficiais) e
+  num botão da `/bio/`. As páginas EN/ES não têm ícones de rede no rodapé (nem o Instagram), por isso não
+  ganharam o canal. A página `/canais-oficiais/` (Redação) ainda não lista nenhuma rede: precisa de uma
+  versão nova lá.
+- **O que aconteceu antes:** em 11/10 outra sessão publicou o pacote institucional a partir de `24305b3`
+  (sem as correções da revisão final) e, em seguida, a decisão de que a formação gratuita é só para
+  voluntários (`94e75be`: cadastro, ficha de entrevista e CBFI; `/cursos-gratuitos/` virou "Formação de
+  voluntários"). Esta branch trouxe a `main` por merge (`6e92f92`), manteve essa decisão em todos os
+  conflitos e reaplicou por cima as correções da revisão final e o YouTube.
+- **Revisão independente antes de publicar (13/10):** 16 achados confirmados e corrigidos (`0d05708`):
+  certificados e treinamentos atribuídos à escola também nos cartões de curso da home e nas páginas EN/ES
+  de home, cursos, FAQ e reembolso; linha do tempo da história com a admissão na Liga em 17/06/1919;
+  tombamento federal "aprovado pelo Conselho Consultivo" também em inglês; transparência descrita como em
+  implantação; rótulos únicos nas tabelas roláveis. As páginas EN/ES foram corrigidas por troca de texto,
+  sem `gerar_idiomas.py`/`gerar_politicas.py`: esses geradores copiam o CSS e o script do menu da home e
+  hoje mudariam o menu das páginas EN/ES (rótulos "Abrir/Fechar menu" em português). Antes de regerar
+  EN/ES, traduzir esses rótulos no gerador.
+- **Publicação:** 36 arquivos de `scripts/publicacao-revisao-youtube.txt`, em 13/10/2026 às 16h46
+  (horário de Brasília), depois da cópia do ar em `/tmp/no-ar-revisao` (28 iguais à `main`, o
+  `faq-home.json` antigo, que ainda tinha "Como doar", e as 7 páginas acrescentadas depois da revisão, também
+  iguais à `main`). Cache limpo; os 36 conferidos por HTTP, idênticos ao Git; navegador sem erro em PT/EN/ES,
+  no computador e no celular.
+
 ## Matrícula cursos presenciais (página `/matricula-cursos-presenciais/`)
 
 - **O que é**: o atalho de matrícula definido em `docs/briefing-matricula-cursos-presenciais.md`.
