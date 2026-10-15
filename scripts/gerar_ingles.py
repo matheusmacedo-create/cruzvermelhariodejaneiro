@@ -487,7 +487,7 @@ def pagina_campanha(idioma: dict, partes: dict, P: dict) -> str:
         {foto('agasalho-cartaz', '768x1376', c['cartaz_alt'])}
       </div>
     </section>
-    <section class="i18n-bloco">
+    <section class="i18n-bloco" id="itens">
       <div class="wrap">
         <h2>{esc(c['itens_titulo'])}</h2>
         <p>{esc(c['itens_linha'])}</p>
@@ -506,7 +506,7 @@ def pagina_campanha(idioma: dict, partes: dict, P: dict) -> str:
         <div>
           <h2>{esc(c['agradecimento_titulo'])}</h2>
           {agradecimento}
-          <div class="i18n-caixa"><p>{c['agradecimento_nota']}</p></div>
+          {f'<div class="i18n-caixa"><p>{c["agradecimento_nota"]}</p></div>' if c.get('agradecimento_nota') else ''}
         </div>
         {foto('agasalho-fila-comunidade', '1264x848', c['fila_alt'])}
       </div>

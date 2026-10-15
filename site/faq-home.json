@@ -1,6 +1,6 @@
 {
   "titulo": "Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro",
-  "subtitulo": "Cursos, matrícula, voluntariado, como ajudar, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.",
+  "subtitulo": "A instituição, como ajudar, voluntariado, cursos e matrícula, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.",
   "grupos": [
     {
       "titulo": "Instituição, como ajudar, sede e contato",
@@ -108,25 +108,6 @@
             "matricula"
           ],
           "chatRotulo": "Onde fica e qual o horário?"
-        },
-        {
-          "pergunta": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
-          "resposta": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais.",
-          "links": [
-            {
-              "texto": "chat do site",
-              "url": "/#chat"
-            },
-            {
-              "texto": "página de matrícula em cursos presenciais",
-              "url": "/matricula-cursos-presenciais/"
-            }
-          ],
-          "chat": [
-            "curso",
-            "matricula"
-          ],
-          "chatRotulo": "Tem curso em outras cidades?"
         },
         {
           "pergunta": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
@@ -344,6 +325,25 @@
             "matricula"
           ],
           "chatRotulo": "O certificado é reconhecido pelo MEC?"
+        },
+        {
+          "pergunta": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
+          "resposta": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais.",
+          "links": [
+            {
+              "texto": "chat do site",
+              "url": "/#chat"
+            },
+            {
+              "texto": "página de matrícula em cursos presenciais",
+              "url": "/matricula-cursos-presenciais/"
+            }
+          ],
+          "chat": [
+            "curso",
+            "matricula"
+          ],
+          "chatRotulo": "Tem curso em outras cidades?"
         }
       ]
     },

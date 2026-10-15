@@ -569,7 +569,7 @@ def main() -> int:
 
     <section class="dc-setores" data-dc-secao="para-quem" aria-labelledby="dc-setores-titulo">
       <div class="wrap">
-        <p class="eyebrow">Para quem vai a sua doação</p>
+        <p class="eyebrow">{"Para quem foram os brinquedos" if ENCERRADA else "Para quem vai a sua doação"}</p>
         <h2 id="dc-setores-titulo">Um dia especial para as crianças</h2>
         <p class="lead">No dia {DATA_LONGA}, as crianças da nossa ação {"passaram" if ENCERRADA else "passam"} o dia com três setores da Cruz Vermelha Brasileira Rio de Janeiro. Os brinquedos doados {"foram" if ENCERRADA else "vão"} para elas.</p>
         <div class="dc-cartoes">

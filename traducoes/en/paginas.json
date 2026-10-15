@@ -116,18 +116,18 @@
         "Closed shoes, in pairs, following the campaign team's guidance."
       ]
     ],
-    "como_titulo": "Two ways to take part",
+    "como_titulo": "How to take part",
     "como_linha": "Drop off items at the headquarters of the Brazilian Red Cross — Rio de Janeiro Branch. Online donations to the branch are suspended.",
     "como": [
       [
-        "Online donation suspended",
-        "Online donations to the branch have been suspended since 25 September 2026. The drive continues with items dropped off in person at the headquarters.",
-        "How to drop off items",
-        "#entregar"
+        "Drop off in person",
+        "Monday to Friday, 10am to 5pm, at Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro. Coats, blankets and closed shoes in good condition: see the list above.",
+        "What we are receiving",
+        "#itens"
       ],
       [
-        "Drop off in person",
-        "Monday to Friday, 10am to 5pm, at Praça da Cruz Vermelha, 10 — Centro, Rio de Janeiro. For large quantities or items not on the list, write to the team first.",
+        "Large or specific donations",
+        "Companies, schools, groups, or anyone with a large quantity or with items not on the list: write to the team first to arrange the delivery.",
         "Write to the team",
         "mailto:contato@cruzvermelhariodejaneiro.org?subject=Winter%20Clothing%20Drive%20donation"
       ]
@@ -156,7 +156,7 @@
     ],
     "final_titulo": "Your donation helps bring warmth and hope to those who need it most",
     "final_texto": "Someone may be waiting for exactly the coat you can give today.",
-    "final_doar": "What and where to donate",
+    "final_doar": "What to donate",
     "final_entregar": "How to drop off items",
     "portugues": "This page in Portuguese"
   },

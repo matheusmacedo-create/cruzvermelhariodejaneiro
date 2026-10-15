@@ -145,6 +145,18 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
   (fontes `traducoes/en/paginas.json` e `traducoes/en/noticias/*.md` alteradas por troca de texto; os geradores
   EN/ES não foram rodados porque hoje trariam o menu novo com rótulos em português: traduzir antes);
   `site/favicon.ico` (ICO com 16, 32, 48 e 64 px a partir do `assets/favicon.png`).
+- **Revisão independente (15/10, 23 agentes, 18 achados confirmados, todos corrigidos):** `</div>` órfão da faixa removida (o CSS
+  dela ficou de propósito: as páginas geradas copiam o `<style>` da home, e tirá-lo mudaria todas); "desde a década de 1920" no cartão do hero (sem fonte) trocado por "Palácio
+  construído entre 1919 e 1923"; o botão da seção "Em ação" apontava para a plataforma da escola e passou a
+  apontar para /cursos-gratuitos/; meta description encurtada para 157 caracteres; missão na home com o
+  texto literal do art. 10; em /quem-somos/, "Hoje" retirado da lista de fontes, o art. 73 descrito como
+  contribuição da filial ao órgão central e a transparência no futuro ("será publicada") enquanto o portal
+  não tiver documentos; FAQ com subtítulo na nova ordem e a pergunta de Nova Iguaçu/Cabo Frio no grupo de
+  cursos; eyebrow da página encerrada do Dia das Crianças; campanha do agasalho em inglês com "How to take
+  part" e dois cartões reais (entrega na sede e doações grandes), botões com destinos distintos (#itens e
+  #entregar) e caixa da nota só quando há texto (gerar_ingles.py); wordCount das 5 notícias em inglês;
+  linha em branco a mais no llms.txt. O sitemap só sai atualizado depois de publicar (gerar_sitemaps.py lê o
+  ar).
 - **Depende do Matheus:** subir os documentos da transparência (estatuto, diretoria, balanço) na Redação, o que
   resolve a página vazia; confirmar o texto do financiamento; confirmar que o domínio está registrado em nome
   da filial; depois de publicar, reenviar o pedido de ativação na conta do Google para ONGs.
