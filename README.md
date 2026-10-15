@@ -113,7 +113,7 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
-## Página do emblema: os símbolos do Movimento com imagens públicas (15/10/2026, não publicado)
+## Página do emblema: os símbolos do Movimento com imagens públicas (publicada em 15/10/2026)
 
 - **Pedido do Matheus:** deixar `/emblema/` "mais completa", com "imagens de logo e tudo", e "todos os símbolos que a
   Cruz Vermelha usa no mundo explicando toda essa parte de simbolismos com imagens reais públicas".
@@ -156,8 +156,12 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
   limite de taxa na conferência, 4 dão 403 a robôs: icrc.org, iso.org, redcross.org.uk); Playwright em 1280 e 390: sem
   erro de JS, sem rolagem horizontal, nenhuma imagem quebrada depois do carregamento preguiçoso (as capturas de página
   inteira mostram galerias vazias só porque o lazy loading ainda não tinha disparado).
-- **Publicação (com OK):** `scripts/publicacao-emblema.txt` (74 arquivos: a página, as 7 outras institucionais, llms.txt,
-  og-emblema.jpg e os 64 assets). Depois: cache, conferência por HTTP, `gerar_sitemaps.py` e sitemaps. Risco jurídico
+- **Publicado em 15/10/2026 (OK do Matheus):** `scripts/publicacao-emblema.txt` (74 arquivos: a página, as 7 outras
+  institucionais, llms.txt, og-emblema.jpg e os 64 assets). Cópia do ar em `/tmp/no-ar-emblema` (9 arquivos, idênticos a
+  `a91584e`; 65 novos em `novos.txt`), envio por TUS, cache limpo, conferência por HTTP: 74 idênticos ao local, SVG/WebP/JPG
+  com o content-type certo; Playwright na página ao vivo: 48 imagens carregadas, nenhuma quebrada, sem erro de JS, sem
+  resposta 4xx. `gerar_sitemaps.py` lido do ar: `sitemap-paginas.xml` ganhou as imagens da página; os 4 sitemaps
+  publicados e conferidos. Credencial TUS apagada. Risco jurídico
   declarado: a foto de Shams Pahlavi (leão e sol) está em domínio público pela idade (publicada antes de 1956), mas a
   ficha do Commons não traz o ano; se o jurídico preferir, trocar pelo selo de 1969, que já está na página.
 - **Pendências:** /quem-somos/ também diz "fundada em 5 de dezembro de 1908, no Rio de Janeiro" com a mesma atribuição

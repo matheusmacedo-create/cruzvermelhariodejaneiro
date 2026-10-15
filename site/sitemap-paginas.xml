@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-15T13:15:32+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-15T18:59:42+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -672,7 +672,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/quem-somos/</loc>
-    <lastmod>2026-10-15T13:09:24+00:00</lastmod>
+    <lastmod>2026-10-15T18:50:57+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -687,7 +687,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/principios-fundamentais/</loc>
-    <lastmod>2026-10-13T19:45:51+00:00</lastmod>
+    <lastmod>2026-10-15T18:50:59+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -702,7 +702,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/movimento-internacional/</loc>
-    <lastmod>2026-10-13T19:45:53+00:00</lastmod>
+    <lastmod>2026-10-15T18:51:00+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -717,9 +717,89 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/emblema/</loc>
-    <lastmod>2026-10-13T19:45:54+00:00</lastmod>
+    <lastmod>2026-10-15T18:50:56+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/dunant-jovem-960.webp</image:loc>
+      <image:title>Henry Dunant jovem: barba, bigode, gravata-borboleta e casaco escuro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/batalha-solferino-bossoli-960.webp</image:loc>
+      <image:title>Batalha de Solferino, 1859, em pintura de Carlo Bossoli: soldados avançam entre fumaça diante das ruínas e das torres de uma vila</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/assinatura-convencao-genebra-1864-960.webp</image:loc>
+      <image:title>Assinatura da Primeira Convenção de Genebra, 1864, em pintura de Armand-Dumaresq: delegados de casaca reunidos em volta de uma mesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/convencao-genebra-1864-documento-960.webp</image:loc>
+      <image:title>Fac-símile da Convenção de Genebra de 1864 aberto, com texto manuscrito, assinaturas e lacres de cera vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-hospital-de-campanha-1944-960.webp</image:loc>
+      <image:title>Tendas de um hospital de campanha em 1944, com grandes cruzes em discos brancos, e uma enorme cruz de pano estendida no chão</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-bracadeira-enfermeiro-feb-1944-960.webp</image:loc>
+      <image:title>Soldado do serviço de saúde da FEB em 1944 com braçadeira da cruz vermelha e, às costas, um estojo de material de saúde marcado com a cruz</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-navio-hospital-usns-mercy-960.webp</image:loc>
+      <image:title>Navio-hospital USNS Mercy, pintado de branco com grandes cruzes vermelhas no casco e na chaminé</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-bracadeira-enfermeiro-militar-canada-960.webp</image:loc>
+      <image:title>Oficial enfermeiro militar canadense, de uniforme camuflado e braçadeira branca com a cruz vermelha, orientando dois soldados numa tenda de hospital de campanha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-de-macau-960.webp</image:loc>
+      <image:title>Ambulância da Cruz Vermelha de Macau com a inscrição “Cruz Vermelha de Macau” em português</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-italiana-960.webp</image:loc>
+      <image:title>Ambulância branca e vermelha da Cruz Vermelha Italiana numa praça de Parma, com o nome em letras grandes e o emblema pequeno</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-voluntarios-coletes-cruz-vermelha-americana-960.webp</image:loc>
+      <image:title>Voluntários da Cruz Vermelha Americana de coletes vermelhos com o emblema, posando sorrindo diante de uma tenda com cartazes da organização</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/ambulancia-crescente-vermelho-1877-960.webp</image:loc>
+      <image:title>Ambulância nº 5 do Crescente Vermelho a caminho do front na Guerra Russo-Turca, em gravura de 1885</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/hospital-crescente-vermelho-1916-960.webp</image:loc>
+      <image:title>Fileiras de tendas do acampamento-hospital do Crescente Vermelho em Hafir el Auja, em 1916, com um mastro e uma bandeira pequena ao centro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/leao-e-sol-vermelhos-bracal-960.webp</image:loc>
+      <image:title>Shams Pahlavi de uniforme escuro da Sociedade do Leão e Sol Vermelhos do Irã, com o emblema num distintivo costurado na manga esquerda e uma insígnia no peito</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/selo-leao-e-sol-vermelhos-1969-960.webp</image:loc>
+      <image:title>Selo postal da Alemanha Oriental de 1969 com o crescente vermelho, a cruz vermelha e o leão e sol vermelhos, pelos 50 anos da Liga das Sociedades da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-crescente-vermelho-turco-veiculo-960.webp</image:loc>
+      <image:title>Veículo de doação de sangue do Crescente Vermelho Turco, com o crescente vermelho e o nome Türk Kızılay</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-veiculo-cicv-land-cruiser-960.webp</image:loc>
+      <image:title>Veículo branco do CICV visto de frente, com o selo redondo da cruz vermelha e a inscrição Comité international Genève no capô, na porta e no para-choque</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/cruz-vermelha-brasileira-feb-1944-960.webp</image:loc>
+      <image:title>Voluntária da Cruz Vermelha Brasileira, de uniforme, chapéu e braçadeira da cruz vermelha no braço esquerdo, entrega itens a soldados da FEB, com enfermeiras de branco ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-cvb-hospital-curitiba-fachada-960.webp</image:loc>
+      <image:title>Fachada modernista do Hospital da Cruz Vermelha em Curitiba, com uma cruz vermelha grande no alto da entrada</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/uso-cvb-predio-porto-alegre-960.webp</image:loc>
+      <image:title>Casarão histórico da Cruz Vermelha Brasileira em Porto Alegre, com uma placa vermelha com o emblema e o nome junto ao portão e uma cruz vermelha pintada no portão</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -727,12 +807,12 @@
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-emblema.jpg</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/</loc>
-    <lastmod>2026-10-13T19:45:55+00:00</lastmod>
+    <lastmod>2026-10-15T18:51:02+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -747,7 +827,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/base-legal/</loc>
-    <lastmod>2026-10-13T19:45:57+00:00</lastmod>
+    <lastmod>2026-10-15T18:51:04+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -762,7 +842,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/cursos-gratuitos/</loc>
-    <lastmod>2026-10-13T19:45:59+00:00</lastmod>
+    <lastmod>2026-10-15T18:51:05+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -777,7 +857,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/voluntariado/</loc>
-    <lastmod>2026-10-13T19:46:00+00:00</lastmod>
+    <lastmod>2026-10-15T18:51:07+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -851,7 +931,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/transparencia/</loc>
-    <lastmod>2026-10-06T01:56:26+00:00</lastmod>
+    <lastmod>2026-10-15T15:09:05+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
