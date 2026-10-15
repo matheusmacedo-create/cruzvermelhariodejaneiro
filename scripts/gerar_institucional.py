@@ -21,7 +21,12 @@ JSON-LD: WebPage (AboutPage em /quem-somos/) ligado a #site e #organizacao, Brea
 semântica: o Google tirou o resultado rico de FAQ da busca em 2026), DefinedTermSet com os 7 princípios e
 Legislation para cada norma da base legal (vocabulário schema.org, sem resultado rico prometido).
 
-Uso:  python3 scripts/gerar_institucional.py
+Figuras (15/10/2026): o html das seções aceita <figure class="inst-figura"> com <img> e <figcaption>, galerias em
+<div class="inst-figuras"> (ícones; com inst-figuras-fotos para fotos) e <figure class="inst-figura inst-figura-emblema">
+para emblemas centralizados. Toda <img> ganha loading="lazy". A página pode ter imagem_og (1200x630) e atualizado
+(AAAA-MM-DD) próprios; as figuras entram no JSON-LD (WebPage.image).
+
+Uso:  python3 scripts/gerar_institucional.py [slug ...]
 Depois: publicar as pastas geradas (lista em scripts/publicacao-institucional.txt) e o sitemap.
 """
 from __future__ import annotations
@@ -110,6 +115,17 @@ CSS = """  <style>
     .inst-cartao:hover { border-color: var(--red); transform: translateY(-2px); }
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    /* Figuras (15/10/2026, página do emblema): figura isolada, galeria de emblemas (ícones) e galeria de fotos. */
+    .inst-figura { margin: 18px 0 22px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
+    .inst-figura img { display: block; width: 100%; height: auto; }
+    .inst-figura figcaption { padding: 10px 14px 12px; font-size: .88rem; line-height: 1.5; color: var(--muted); border-top: 1px solid var(--line); }
+    .inst-figura figcaption a { color: var(--muted); }
+    .inst-figuras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 18px 0 22px; }
+    .inst-figuras .inst-figura { margin: 0; display: flex; flex-direction: column; }
+    .inst-figuras .inst-figura figcaption { margin-top: auto; }
+    .inst-figuras-fotos { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .inst-figura-emblema img { width: auto; max-width: 170px; max-height: 140px; margin: 22px auto 14px; }
+    .inst-figura-emblema figcaption b { display: block; color: var(--black); font-size: .95rem; margin: 0 0 2px; }
     @media (max-width: 620px) {
       main.inst-pagina .inst-topo { padding: 28px 0 26px; }
       .inst-corpo { padding: 32px 0 12px; }
@@ -143,6 +159,8 @@ def tratar_html(html: str, titulo: str = "") -> str:
             attrs += ' target="_blank" rel="noopener"'
         return f"<a{attrs}>"
     html = re.sub(r"<a(\s[^>]*)>", link, html)
+    # Figuras ficam abaixo da primeira dobra: carregam quando se aproximam da tela.
+    html = re.sub(r"<img(?![^>]*\bloading=)", '<img loading="lazy" decoding="async"', html)
     # A caixa rola na horizontal no celular: tabindex deixa rolar pelo teclado, e o rótulo diz o que é. O rótulo
     # leva o título da seção (e um número, se a seção tiver mais de uma tabela) para cada região ter nome único.
     tabelas = html.count('<table class="inst-tabela">')
@@ -186,9 +204,15 @@ def json_ld(p: dict, paginas: dict) -> str:
         "@type": tipo, "@id": f"{url}#pagina", "url": url, "name": p["h1"], "description": p["descricao_seo"],
         "inLanguage": "pt-BR", "isPartOf": {"@id": f"{ORIGEM}/#site"},
         "publisher": {"@id": f"{ORIGEM}/#organizacao"}, "breadcrumb": {"@id": f"{url}#trilha"},
-        "dateModified": ATUALIZADO.isoformat(),
+        "dateModified": atualizado_em(p).isoformat(),
         "citation": [f["url"] for f in p["fontes"]],
     }
+    if p.get("imagem_og"):
+        pagina["primaryImageOfPage"] = {"@type": "ImageObject", "url": imagem_og(p), "width": 1200, "height": 630}
+    figuras = [m if m.startswith("http") else f"{ORIGEM}{m}" for s in p["secoes"]
+               for m in re.findall(r'<img[^>]*\ssrc="([^"]+)"', s["html"])]
+    if figuras:
+        pagina["image"] = figuras
     if p["slug"] == "quem-somos":
         pagina["about"] = {"@id": f"{ORIGEM}/#organizacao"}
         pagina["mainEntity"] = {"@id": f"{ORIGEM}/#organizacao"}
@@ -249,6 +273,15 @@ def relacionadas(p: dict, paginas: dict) -> str:
     </section>"""
 
 
+def imagem_og(p: dict) -> str:
+    """A página pode ter a própria imagem de compartilhamento (1200x630), em imagem_og (caminho a partir da raiz do site)."""
+    return f"{ORIGEM}{p['imagem_og']}" if p.get("imagem_og") else IMAGEM_OG
+
+
+def atualizado_em(p: dict) -> date:
+    return date.fromisoformat(p["atualizado"]) if p.get("atualizado") else ATUALIZADO
+
+
 def gerar(p: dict, paginas: dict, partes: dict) -> str:
     slug, url = p["slug"], url_de(p["slug"])
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'institucional' });\n    gtag('config', 'G-", 1)
@@ -288,13 +321,13 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
   <meta property="og:title" content="{esc(titulo)}">
   <meta property="og:description" content="{esc(p['descricao_seo'])}">
   <meta property="og:url" content="{url}">
-  <meta property="og:image" content="{IMAGEM_OG}">
+  <meta property="og:image" content="{imagem_og(p)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{esc(titulo)}">
   <meta name="twitter:description" content="{esc(p['descricao_seo'])}">
-  <meta name="twitter:image" content="{IMAGEM_OG}">
+  <meta name="twitter:image" content="{imagem_og(p)}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -333,7 +366,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
           {fontes}
         </ul>
       </aside>
-      <p class="inst-atualizado">Atualizado em {ATUALIZADO:%d/%m/%Y}.</p>
+      <p class="inst-atualizado">Atualizado em {atualizado_em(p):%d/%m/%Y}.</p>
       </div>
     </div>
 
