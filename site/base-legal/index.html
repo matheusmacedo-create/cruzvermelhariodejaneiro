@@ -88,6 +88,19 @@
     .inst-cartao:hover { border-color: var(--red); transform: translateY(-2px); }
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    /* Figuras (15/10/2026, página do emblema): figura isolada, galeria de emblemas (ícones) e galeria de fotos. */
+    .inst-figura { margin: 18px 0 22px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
+    .inst-figura img { display: block; width: 100%; height: auto; }
+    .inst-figura figcaption { padding: 10px 14px 12px; font-size: .88rem; line-height: 1.5; color: var(--muted); border-top: 1px solid var(--line); }
+    .inst-figura figcaption a { color: var(--muted); }
+    .inst-figuras { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 18px 0 22px; }
+    .inst-figuras .inst-figura { margin: 0; display: flex; flex-direction: column; }
+    .inst-figuras .inst-figura figcaption { margin-top: auto; }
+    .inst-figuras-fotos { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .inst-figura-emblema img { width: auto; max-width: 170px; max-height: 140px; margin: 22px auto 14px; }
+    .inst-figura-emblema figcaption b { display: block; color: var(--black); font-size: .95rem; margin: 0 0 2px; }
+    .inst-figura-logo { max-width: 540px; margin-left: auto; margin-right: auto; }
+    .inst-figura-logo img { padding: 18px 22px; box-sizing: border-box; }
     @media (max-width: 620px) {
       main.inst-pagina .inst-topo { padding: 28px 0 26px; }
       .inst-corpo { padding: 32px 0 12px; }
@@ -669,7 +682,7 @@
       <div class="wrap">
         <h2 id="inst-relacionadas-titulo">Veja também</h2>
         <div class="inst-cartoes">
-          <a class="inst-cartao" href="/emblema/"><b>O emblema</b><span>A cruz vermelha sobre fundo branco não é marca nem enfeite: é um sinal de proteção previsto em tratados e em lei brasileira. Veja quem pode usá-la, como ela se diferencia do símbolo da saúde e como avisar a filial sobre uso indevido.</span></a>
+          <a class="inst-cartao" href="/emblema/"><b>O emblema</b><span>A cruz vermelha sobre fundo branco não é marca nem enfeite: é um sinal de proteção previsto em tratados e em lei brasileira. Veja de onde ela vem, como é desenhada, quais emblemas existem no mundo, quem pode usá-los no Brasil e como avisar sobre uso indevido.</span></a>
           <a class="inst-cartao" href="/quem-somos/"><b>Quem somos</b><span>Somos a filial estadual da Cruz Vermelha Brasileira no Rio de Janeiro: uma associação privada sem fins lucrativos, parte do Movimento Internacional da Cruz Vermelha e do Crescente Vermelho. Aqui você vê o que fazemos, onde estamos e quem nos dirige.</span></a>
           <a class="inst-cartao" href="/direito-internacional-humanitario/"><b>Direito Internacional Humanitário</b><span>O Direito Internacional Humanitário reúne as regras que limitam os efeitos da guerra. Aqui a filial explica, em linguagem simples, o que ele protege, quais tratados o Brasil adotou e por que a Cruz Vermelha ajuda a divulgá-lo.</span></a>
           <a class="inst-cartao" href="/historia/"><b>Nossa história</b><span>Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha.</span></a>

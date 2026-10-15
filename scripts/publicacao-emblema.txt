@@ -1,0 +1,83 @@
+# Emblema (15/10/2026): página /emblema/ refeita com os símbolos do Movimento e imagens públicas (Wikimedia Commons, domínio
+# público/CC) e desenhos próprios; as outras 7 páginas institucionais só ganham o CSS das figuras e o cartão novo do emblema;
+# llms.txt com a descrição nova; og-emblema.jpg (1200x630). Os assets ficam fora do Git (site/assets/ no .gitignore).
+# O ar antes = o Git em a91584e para as 8 páginas e o llms.txt (conferido por HTTP em 15/10 antes de editar); os assets são novos.
+# Antes, a cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-emblema $(grep -vE '^(#|$)' scripts/publicacao-emblema.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-emblema.txt)
+# Depois: limpar o cache (hosting_cache_clear-website), conferir por HTTP, rodar python3 scripts/gerar_sitemaps.py e publicar os sitemaps.
+# Desfazer: C=/tmp/no-ar-emblema; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-emblema.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|"); scripts/publicar_hostinger.sh --apagar $(cat $C/novos.txt)
+site/emblema/index.html
+site/quem-somos/index.html
+site/principios-fundamentais/index.html
+site/movimento-internacional/index.html
+site/direito-internacional-humanitario/index.html
+site/base-legal/index.html
+site/cursos-gratuitos/index.html
+site/voluntariado/index.html
+site/llms.txt
+site/assets/otim/og-emblema.jpg
+site/assets/emblema/commons/bandeira-suica.svg
+site/assets/emblema/commons/bastao-de-asclepio-vermelho.svg
+site/assets/emblema/commons/bens-culturais.svg
+site/assets/emblema/commons/crescente-vermelho.svg
+site/assets/emblema/commons/cristal-com-crescente.svg
+site/assets/emblema/commons/cristal-com-cruz-e-crescente.svg
+site/assets/emblema/commons/cristal-com-cruz.svg
+site/assets/emblema/commons/cristal-com-estrela.svg
+site/assets/emblema/commons/cristal-vermelho.svg
+site/assets/emblema/commons/cruz-verde-farmacia.svg
+site/assets/emblema/commons/cruz-vermelha.svg
+site/assets/emblema/commons/estrela-da-vida.svg
+site/assets/emblema/commons/forcas-perigosas.svg
+site/assets/emblema/commons/iso-7010-e003.svg
+site/assets/emblema/commons/leao-e-sol-vermelhos.svg
+site/assets/emblema/commons/protecao-civil.svg
+site/assets/emblema/commons/tres-emblemas.svg
+site/assets/emblema/fotos/ambulancia-crescente-vermelho-1877-480.webp
+site/assets/emblema/fotos/ambulancia-crescente-vermelho-1877-960.webp
+site/assets/emblema/fotos/assinatura-convencao-genebra-1864-480.webp
+site/assets/emblema/fotos/assinatura-convencao-genebra-1864-960.webp
+site/assets/emblema/fotos/batalha-solferino-bossoli-480.webp
+site/assets/emblema/fotos/batalha-solferino-bossoli-960.webp
+site/assets/emblema/fotos/convencao-genebra-1864-documento-480.webp
+site/assets/emblema/fotos/convencao-genebra-1864-documento-960.webp
+site/assets/emblema/fotos/cruz-vermelha-brasileira-feb-1944-480.webp
+site/assets/emblema/fotos/cruz-vermelha-brasileira-feb-1944-960.webp
+site/assets/emblema/fotos/dunant-jovem-480.webp
+site/assets/emblema/fotos/dunant-jovem-960.webp
+site/assets/emblema/fotos/hospital-crescente-vermelho-1916-480.webp
+site/assets/emblema/fotos/hospital-crescente-vermelho-1916-960.webp
+site/assets/emblema/fotos/leao-e-sol-vermelhos-bracal-480.webp
+site/assets/emblema/fotos/leao-e-sol-vermelhos-bracal-960.webp
+site/assets/emblema/fotos/selo-leao-e-sol-vermelhos-1969-480.webp
+site/assets/emblema/fotos/selo-leao-e-sol-vermelhos-1969-960.webp
+site/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-de-macau-480.webp
+site/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-de-macau-960.webp
+site/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-italiana-480.webp
+site/assets/emblema/fotos/uso-ambulancia-cruz-vermelha-italiana-960.webp
+site/assets/emblema/fotos/uso-bracadeira-enfermeiro-feb-1944-480.webp
+site/assets/emblema/fotos/uso-bracadeira-enfermeiro-feb-1944-960.webp
+site/assets/emblema/fotos/uso-bracadeira-enfermeiro-militar-canada-480.webp
+site/assets/emblema/fotos/uso-bracadeira-enfermeiro-militar-canada-960.webp
+site/assets/emblema/fotos/uso-crescente-vermelho-turco-veiculo-480.webp
+site/assets/emblema/fotos/uso-crescente-vermelho-turco-veiculo-960.webp
+site/assets/emblema/fotos/uso-cvb-hospital-curitiba-fachada-480.webp
+site/assets/emblema/fotos/uso-cvb-hospital-curitiba-fachada-960.webp
+site/assets/emblema/fotos/uso-cvb-predio-porto-alegre-480.webp
+site/assets/emblema/fotos/uso-cvb-predio-porto-alegre-960.webp
+site/assets/emblema/fotos/uso-hospital-de-campanha-1944-480.webp
+site/assets/emblema/fotos/uso-hospital-de-campanha-1944-960.webp
+site/assets/emblema/fotos/uso-navio-hospital-usns-mercy-480.webp
+site/assets/emblema/fotos/uso-navio-hospital-usns-mercy-960.webp
+site/assets/emblema/fotos/uso-veiculo-cicv-land-cruiser-480.webp
+site/assets/emblema/fotos/uso-veiculo-cicv-land-cruiser-960.webp
+site/assets/emblema/fotos/uso-voluntarios-coletes-cruz-vermelha-americana-480.webp
+site/assets/emblema/fotos/uso-voluntarios-coletes-cruz-vermelha-americana-960.webp
+site/assets/emblema/indevido-app.svg
+site/assets/emblema/indevido-farmacia.svg
+site/assets/emblema/indevido-kit.svg
+site/assets/emblema/proporcoes-errado.svg
+site/assets/emblema/proporcoes.svg
+site/assets/emblema/uso-indicativo.svg
+site/assets/emblema/uso-protetor.svg
