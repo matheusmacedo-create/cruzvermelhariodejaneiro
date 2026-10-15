@@ -23,7 +23,8 @@ Legislation para cada norma da base legal (vocabulário schema.org, sem resultad
 
 Figuras (15/10/2026): o html das seções aceita <figure class="inst-figura"> com <img> e <figcaption>, galerias em
 <div class="inst-figuras"> (ícones; com inst-figuras-fotos para fotos) e <figure class="inst-figura inst-figura-emblema">
-para emblemas centralizados. Toda <img> ganha loading="lazy". A página pode ter imagem_og (1200x630) e atualizado
+para emblemas centralizados, inst-figura-media (600 px centralizada) e inst-figura-lado (flutua à direita no
+computador, 42%; vira bloco no celular). Toda <img> ganha loading="lazy". A página pode ter imagem_og (1200x630) e atualizado
 (AAAA-MM-DD) próprios; as figuras entram no JSON-LD (WebPage.image).
 
 Uso:  python3 scripts/gerar_institucional.py [slug ...]
@@ -127,6 +128,10 @@ CSS = """  <style>
     .inst-figura-emblema img { width: auto; max-width: 170px; max-height: 140px; margin: 22px auto 14px; }
     .inst-figura-emblema figcaption b { display: block; color: var(--black); font-size: .95rem; margin: 0 0 2px; }
     .inst-figura-logo { max-width: 540px; margin-left: auto; margin-right: auto; }
+    .inst-figura-media { max-width: 600px; margin-left: auto; margin-right: auto; }
+    .inst-figura-lado { float: right; width: 42%; margin: 6px 0 14px 24px; }
+    .inst-secao::after { content: ""; display: table; clear: both; }
+    @media (max-width: 720px) { .inst-figura-lado { float: none; width: auto; margin: 18px 0 22px; } }
     .inst-figura-logo img { padding: 18px 22px; box-sizing: border-box; }
     @media (max-width: 620px) {
       main.inst-pagina .inst-topo { padding: 28px 0 26px; }
