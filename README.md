@@ -164,11 +164,20 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
   deixa a situação formalizada; até lá, fica como risco declarado. Ainda depende dele: subir os documentos da
   transparência (estatuto, diretoria, balanço) na Redação, o que resolve a página vazia, e, depois de
   publicar, reenviar o pedido de ativação na conta do Google para ONGs.
-- **Publicação travada em 15/10:** o conector da Hostinger pediu nova autorização e sem ele não há credencial
-  TUS (`hosting_files_generate-upload-url`) nem limpeza de cache. Conferido por HTTP em 15/10, depois do OK:
-  os 13 arquivos da lista que já existem no ar continuam idênticos a `18e8a81`, e `/favicon.ico` segue 404.
-  Assim que o conector voltar: cópia do ar, publicar, cache, conferir, sitemaps (roteiro no cabeçalho de
-  `scripts/publicacao-ad-grants.txt`).
+- **Publicado em 15/10/2026 (OK do Matheus, "mete marcha"):** o conector da Hostinger pediu nova autorização
+  antes; reconectado, a publicação seguiu o roteiro do cabeçalho de `scripts/publicacao-ad-grants.txt`. Cópia
+  do ar em `/tmp/no-ar-ad-grants` (13 arquivos, todos idênticos a `18e8a81`; `favicon.ico` era novo, está em
+  `novos.txt`), envio dos 14 arquivos por TUS, cache limpo (`hosting_cache_clear-website`), conferência por
+  HTTP arquivo por arquivo (os 14 idênticos ao Git, `/favicon.ico` 200 `image/x-icon`, `/dia-das-criancas/`
+  com `noindex, follow`, `/doe/`, `/en/donate/` e `/es/donar/` seguem 503). Depois, `gerar_sitemaps.py` lido
+  do ar: `/dia-das-criancas/` saiu de `sitemap-paginas.xml` (63 entradas) e os 4 sitemaps foram publicados e
+  conferidos. `conferir_links.py` ao vivo: 432 URLs internas em 81 páginas, só as 3 URLs de doação (503)
+  com problema, e elas só aparecem nas próprias páginas de doação (que também respondem 503). Credencial TUS
+  apagada depois do uso.
+- **Reenvio do pedido (Matheus):** na conta do Google para ONGs (google.com/nonprofits), em Produtos → Google
+  Ad Grants, pedir a ativação de novo com `https://cruzvermelhariodejaneiro.org`. Antes de reenviar: os
+  documentos da transparência no ar (estatuto, diretoria, balanço); a análise do Google leva alguns dias úteis
+  e a resposta chega no e-mail da conta (mmatheusmmacedo@gmail.com).
 - **Fica como risco conhecido:** `/cursos/` continua redirecionando para a matrícula paga (decisão de 11/10);
   o botão "Plataforma" no cabeçalho e o grupo "Cursos" do menu continuam; a página /acervo/ ainda diz
   "Em breve".
