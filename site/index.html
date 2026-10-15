@@ -283,6 +283,15 @@
     .footer-col p a:hover { color: var(--red); }
 
     /* Faixa de matrícula acima do cabeçalho (visível também no celular, sem abrir o menu). */
+    /* A faixa de matrícula saiu do topo em 15/10/2026 (política do Ad Grants). O CSS fica porque as páginas geradas
+       copiam este <style> da home; tirar as regras mudaria todas elas. Se a faixa voltar, o HTML é o do commit 18e8a81. */
+    .faixa-matricula { background: var(--red); color: #fff; font-size: .9rem; }
+    .faixa-matricula .wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 16px; padding: 8px 0; text-align: center; }
+    .faixa-matricula span { color: #fff; font-weight: 600; }
+    .faixa-matricula a { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--red); font-weight: 800; padding: .32rem .9rem; border-radius: 999px; white-space: nowrap; transition: background .2s, transform .18s; }
+    .faixa-matricula a:hover { background: #ffe9e9; transform: translateY(-1px); }
+    .faixa-matricula a i { font-size: .8em; }
+    @media (max-width: 620px) { .faixa-matricula { font-size: .84rem; } .faixa-matricula .wrap { padding: 8px 0; gap: 6px 12px; } }
 
     /* Menu completo compacto em telas médias: cabe com o item "Matrícula cursos presenciais". */
     /* Menu compacto até 1440 px e sanfona até 1320 px: o menu é centralizado com position:absolute e não vê o
