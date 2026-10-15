@@ -157,9 +157,18 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
   #entregar) e caixa da nota só quando há texto (gerar_ingles.py); wordCount das 5 notícias em inglês;
   linha em branco a mais no llms.txt. O sitemap só sai atualizado depois de publicar (gerar_sitemaps.py lê o
   ar).
-- **Depende do Matheus:** subir os documentos da transparência (estatuto, diretoria, balanço) na Redação, o que
-  resolve a página vazia; confirmar o texto do financiamento; confirmar que o domínio está registrado em nome
-  da filial; depois de publicar, reenviar o pedido de ativação na conta do Google para ONGs.
+- **Respostas do Matheus (15/10):** OK para publicar ("mete marcha") e o texto do financiamento vale como está. O
+  domínio `cruzvermelhariodejaneiro.org` está na conta da Unicopag e dele, como gestores que o compraram, não
+  no CNPJ da filial; a política do Ad Grants pede que a ONG seja dona do domínio, e o Google pode cobrar isso
+  numa nova recusa. Decisão: um documento futuro (termo de cessão/uso do domínio à filial, bem detalhado)
+  deixa a situação formalizada; até lá, fica como risco declarado. Ainda depende dele: subir os documentos da
+  transparência (estatuto, diretoria, balanço) na Redação, o que resolve a página vazia, e, depois de
+  publicar, reenviar o pedido de ativação na conta do Google para ONGs.
+- **Publicação travada em 15/10:** o conector da Hostinger pediu nova autorização e sem ele não há credencial
+  TUS (`hosting_files_generate-upload-url`) nem limpeza de cache. Conferido por HTTP em 15/10, depois do OK:
+  os 13 arquivos da lista que já existem no ar continuam idênticos a `18e8a81`, e `/favicon.ico` segue 404.
+  Assim que o conector voltar: cópia do ar, publicar, cache, conferir, sitemaps (roteiro no cabeçalho de
+  `scripts/publicacao-ad-grants.txt`).
 - **Fica como risco conhecido:** `/cursos/` continua redirecionando para a matrícula paga (decisão de 11/10);
   o botão "Plataforma" no cabeçalho e o grupo "Cursos" do menu continuam; a página /acervo/ ainda diz
   "Em breve".
