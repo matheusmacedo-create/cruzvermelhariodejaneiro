@@ -26,8 +26,10 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   oficial do Estatuto da Cruz Vermelha Brasileira (Decreto nº 8.885/2016, art. 8º).
 - [Movimento Internacional](https://cruzvermelhariodejaneiro.org/movimento-internacional/): CICV, Federação Internacional, Sociedades
   Nacionais e onde a filial fica nessa estrutura.
-- [O emblema](https://cruzvermelhariodejaneiro.org/emblema/): uso protetor e indicativo, quem pode usar, a proteção legal no Brasil e
-  como avisar a filial sobre uso indevido.
+- [O emblema](https://cruzvermelhariodejaneiro.org/emblema/): de onde vem a cruz vermelha, como é desenhada, uso protetor e
+  indicativo, os emblemas usados no mundo (cruz, crescente, cristal e o histórico leão e sol) e o que significam, os logotipos
+  do Movimento, quem pode usar no Brasil, os símbolos da saúde que não se confundem com ela, outros sinais do DIH e como
+  avisar a filial sobre uso indevido. Com imagens históricas e atuais em domínio público ou Creative Commons.
 - [Direito Internacional Humanitário](https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/): as Convenções de
   Genebra, os Protocolos e os decretos que os promulgaram no Brasil.
 - [Base legal](https://cruzvermelhariodejaneiro.org/base-legal/): as leis e decretos da Cruz Vermelha Brasileira e da filial, com link

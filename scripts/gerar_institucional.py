@@ -126,6 +126,8 @@ CSS = """  <style>
     .inst-figuras-fotos { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
     .inst-figura-emblema img { width: auto; max-width: 170px; max-height: 140px; margin: 22px auto 14px; }
     .inst-figura-emblema figcaption b { display: block; color: var(--black); font-size: .95rem; margin: 0 0 2px; }
+    .inst-figura-logo { max-width: 540px; margin-left: auto; margin-right: auto; }
+    .inst-figura-logo img { padding: 18px 22px; box-sizing: border-box; }
     @media (max-width: 620px) {
       main.inst-pagina .inst-topo { padding: 28px 0 26px; }
       .inst-corpo { padding: 32px 0 12px; }
