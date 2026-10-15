@@ -113,6 +113,56 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Página do emblema: os símbolos do Movimento com imagens públicas (15/10/2026, não publicado)
+
+- **Pedido do Matheus:** deixar `/emblema/` "mais completa", com "imagens de logo e tudo", e "todos os símbolos que a
+  Cruz Vermelha usa no mundo explicando toda essa parte de simbolismos com imagens reais públicas".
+- **Página nova (13 seções, 45 figuras, 1 tabela, 8 perguntas, 27 fontes; cerca de 3.350 palavras com legendas):** De onde
+  vem o emblema (Solferino, Dunant, 1863, 1864, bandeira suíça) · Como o emblema deve ser desenhado (art. 5º do Regulamento
+  de 1965/1991, transcrito no Estudo do CICV de 2011: duas barras cruzadas no meio, nada acrescentado, sem tocar as bordas,
+  vermelho livre, fundo branco; "braços iguais são costume, não regra") · Uso protetor e indicativo, com fotos reais de cada
+  um · Os emblemas usados no mundo (cruz, crescente, cristal, leão e sol; cristal com cruz/crescente/combinação/estrela;
+  estrela vermelha de Davi; tabela Emblema/Quem usa/Base no Brasil; o que significam; emblema digital) · Emblema e logotipo
+  (CICV e Federação só descritos; veículo do CICV em foto CC0; logotipo da filial) · A Cruz Vermelha Brasileira e o emblema
+  (FEB 1944, hospital de Curitiba, sede de Porto Alegre) · Quem pode usar no Brasil (+ arts. 53 e 54 da Convenção I) ·
+  Não confunda: símbolos da saúde (bastão de Esculápio em vermelho, estrela da vida, cruz verde, ISO 7010 E003) · Outros
+  sinais do DIH (proteção civil, bens culturais, forças perigosas) · Como reconhecer o uso indevido (3 desenhos) · Avise ·
+  PL 8.754/2017 · Créditos das imagens.
+- **Imagens:** 21 desenhos oficiais em SVG do Wikimedia Commons (domínio público/CC0; formas simples), 16 fotos e obras
+  históricas e atuais do Commons (domínio público, CC0, CC BY 2.0/4.0, CC BY-SA 3.0/4.0; cada licença conferida na API do
+  Commons, originais reduzidos a 960/480 px em WebP) e 8 desenhos próprios (proporções certas e erradas, uso protetor e
+  indicativo, farmácia, kit e aplicativo). Crédito: as CC BY/CC BY-SA levam autor, link do arquivo e link da licença na
+  legenda (com "redimensionada pela filial", como pede a 4.0); as de domínio público/CC0 ficam na seção final, um link
+  por arquivo. Inventário completo (58 imagens avaliadas, com autor, licença e o que mostra, inclusive as não usadas) em
+  `docs/institucional/emblema-imagens-inventario-2026-10-15.json`. `site/assets/emblema/` (64 arquivos, 3,1 MB) fica fora
+  do Git, como todo `site/assets/`; os 38 arquivos não usados foram tirados da pasta (o inventário diz de onde baixar).
+  Imagem de compartilhamento própria: `site/assets/otim/og-emblema.jpg` (três emblemas + logotipo, fonte Inter).
+- **Gerador (`scripts/gerar_institucional.py`):** `<figure class="inst-figura">`, galerias `inst-figuras` (ícones) e
+  `inst-figuras-fotos`, `inst-figura-emblema` (ícone centralizado a 170 px), `inst-figura-logo` (540 px); toda `<img>`
+  ganha `loading="lazy"`; `imagem_og` e `atualizado` por página; figuras entram no JSON-LD (`WebPage.image` e
+  `primaryImageOfPage`). As outras 7 páginas institucionais só mudam pelo CSS novo e pelo cartão "O emblema" (lead novo).
+- **Como foi feito:** dois fluxos de agentes (15 agentes, 3,7 milhões de tokens): pesquisa de normas com citação literal
+  (Regulamento de 1991 via Estudo do CICV, Convenção I arts. 38/44/53/54, Protocolo III arts. 2º-3º, Lei 3.960, Estatuto,
+  manual do SAMU, Federal Register da NHTSA, CFF, ISO 7010 via STN EN ISO 7010:2023, Decretos 849/1993 e 44.851/1958),
+  três curadorias no Commons, dois ilustradores, redator, 5 revisores adversariais (84 achados, todos tratados) e 2
+  corretores. Decisões: nada de "cruz de braços iguais" ou "sem contorno" como regra (não existe na norma); a estrela
+  do SAMU é vermelha e laranja, não azul; a cruz verde não tem lei no Brasil (o CFF recomenda desde 2024); o emblema
+  digital "ainda não existe juridicamente"; logotipos do CICV e da Federação não reproduzidos (só descrição e uma foto
+  CC0 do veículo do CICV). Ficaram de fora: a medalha da Liga (obra de Jacques Devigne, protegida; só a foto era CC), a foto
+  da fachada do Palácio (licença não documentada; segue em /historia/), uma foto do Magen David Adom com o cristal (não
+  há no Commons com licença livre), o link do Regulamento na International Review (WAF do CICV bloqueia a conferência).
+- **Validação:** JSON-LD 0 erros; HTML balanceado (45 figure/figcaption, 193 links); 47 `<img>` com alt, width/height e
+  lazy; 65 arquivos de imagem existem; sem `style=`; 70 links externos (54 respondem 200; 12 do Commons deram 429 por
+  limite de taxa na conferência, 4 dão 403 a robôs: icrc.org, iso.org, redcross.org.uk); Playwright em 1280 e 390: sem
+  erro de JS, sem rolagem horizontal, nenhuma imagem quebrada depois do carregamento preguiçoso (as capturas de página
+  inteira mostram galerias vazias só porque o lazy loading ainda não tinha disparado).
+- **Publicação (com OK):** `scripts/publicacao-emblema.txt` (74 arquivos: a página, as 7 outras institucionais, llms.txt,
+  og-emblema.jpg e os 64 assets). Depois: cache, conferência por HTTP, `gerar_sitemaps.py` e sitemaps. Risco jurídico
+  declarado: a foto de Shams Pahlavi (leão e sol) está em domínio público pela idade (publicada antes de 1956), mas a
+  ficha do Commons não traz o ano; se o jurídico preferir, trocar pelo selo de 1969, que já está na página.
+- **Pendências:** /quem-somos/ também diz "fundada em 5 de dezembro de 1908, no Rio de Janeiro" com a mesma atribuição
+  imprecisa (o Estatuto dá só a data; o Rio vem de /historia/); foto própria da fachada do Palácio com o emblema.
+
 ## Google Ad Grants: recusa e correções do site (15/10/2026)
 
 O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
