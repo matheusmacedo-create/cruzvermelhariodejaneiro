@@ -49,6 +49,15 @@ set_exception_handler(static function (Throwable $e): void {
     exit;
 });
 
-foreach (['config', 'http', 'db', 'unicopag', 'compra', 'escola', 'espera', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas', 'recuperacao'] as $modulo) {
+foreach (['config', 'http', 'db', 'unicopag', 'compra', 'escola', 'espera', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas', 'recuperacao', 'voluntarios'] as $modulo) {
     require __DIR__ . '/lib/' . $modulo . '.php';
+}
+// Ligação com o Google Drive (10/2026): fila de trabalhos, exportações e espelho dos assets. Os dois módulos são
+// opcionais: publicados à parte, o site continua funcionando sem eles (lib/voluntarios.php só enfileira a ficha se
+// mcp_drive_enfileirar existir).
+if (is_file(__DIR__ . '/lib/google_drive.php')) {
+    require_once __DIR__ . '/lib/google_drive.php';
+}
+if (is_file(__DIR__ . '/lib/drive_espelho.php')) {
+    require_once __DIR__ . '/lib/drive_espelho.php';
 }

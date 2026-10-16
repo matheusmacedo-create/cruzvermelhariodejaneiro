@@ -1,7 +1,11 @@
 # Backend do checkout da matrícula. Só os endpoints públicos respondem por HTTP; configuração,
 # bootstrap e módulos são incluídos pelo PHP e nunca servidos.
 Options -Indexes
-<FilesMatch "^(config(-[a-z-]+)?\.php|config\.example\.php|lib\.php|lembretes\.php|comparecimentos\.php)$">
+<FilesMatch "^(config(-[a-z-]+)?\.php|config\.example\.php|lib\.php|lembretes\.php|comparecimentos\.php|drive\.php)$">
+  Require all denied
+</FilesMatch>
+# Arquivos que começam com ponto (.google-token.json, .htaccess…) nunca são servidos.
+<FilesMatch "^\.">
   Require all denied
 </FilesMatch>
 # Cópias de editor e de segurança (config.php~, config.php.bak, .swp…) nunca são servidas: o texto sairia cru.
