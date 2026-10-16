@@ -127,6 +127,8 @@ Socorros e Lei Lucas, mais um banner "Leve a Cruz Vermelha para a sua empresa" n
   por HTTP e no Chromium (1280 e 390 px), sem erro nem imagem quebrada. Cópia do ar guardada antes.
 - Fotos novas (16/10, mais tarde): topo com a turma do CBFI de 10/10 no salão nobre, foto do voluntariado trocada e galeria
   "A filial em ação" com 6 fotos de ações, tiradas da pasta do Drive enviada pelo Matheus. Publicado e conferido.
+- Banner de empresas (16/10): a montagem com recorte saiu a pedido do Matheus; entrou a foto inteira da aula de
+  Heimlich, sem tinta, em moldura branca com legenda (assets/otim/empresas-heimlich-480/720.webp). Publicado e conferido.
 - Pendências: confirmar Agasalho, Impacto das Cores e logos de parceiros; homes EN/ES; chat com o fluxo antigo do
   voluntariado; "em implantação" em /quem-somos/, /base-legal/ e llms.txt.
 
