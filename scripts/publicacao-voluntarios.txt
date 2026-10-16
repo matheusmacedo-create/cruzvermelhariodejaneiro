@@ -1,0 +1,44 @@
+# Cadastro de voluntários no próprio site + ligação com o Google Drive (16/10/2026): formulário em /voluntariado/cadastro/,
+# API, tabelas novas (mcp_voluntarios, mcp_voluntarios_notas, mcp_drive_fila, mcp_drive_arquivos), telas do portal, rotina do
+# Drive e Política de Privacidade revisada (pt, en, es). Passo a passo e LGPD operacional em docs/voluntariado.md.
+# A ordem importa: db.php antes dos endpoints (a migração cria as tabelas na primeira requisição); os módulos novos antes do
+# lib.php que passa a carregá-los. site/politicas.json fica de fora: é só a fonte de scripts/gerar_politicas.py.
+# Antes, a cópia do ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-voluntarios $(grep -vE '^(#|$)' scripts/publicacao-voluntarios.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-voluntarios.txt)
+# Depois: cache (hosting_cache_clear-website), conferência por HTTP (formulário, políticas, POST de teste na API com a armadilha
+# preenchida), gerar_sitemaps.py e sitemaps. O cron do Drive (php .../api/drive.php) só faz algo com config-google.php no servidor.
+# Desfazer: C=/tmp/no-ar-voluntarios; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-voluntarios.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|"); scripts/publicar_hostinger.sh --apagar $(cat $C/novos.txt)
+
+# 1. Bloqueios e configuração de exemplo (independentes; o .htaccess nega config-google.php, drive.php e .google-token.json).
+site/matricula-cursos-presenciais/api/.htaccess
+site/matricula-cursos-presenciais/api/config.example.php
+
+# 2. Módulos novos (o lib.php que está no ar não os carrega).
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/google_drive.php
+site/matricula-cursos-presenciais/api/lib/drive_espelho.php
+
+# 3. Módulos alterados; db.php primeiro, para as 4 tabelas novas existirem antes das telas e do endpoint.
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/config.php
+
+# 4. lib.php, que passa a carregar os módulos novos.
+site/matricula-cursos-presenciais/api/lib.php
+
+# 5. Endereços da API e a rotina do Drive (só por linha de comando).
+site/matricula-cursos-presenciais/api/voluntarios.php
+site/matricula-cursos-presenciais/api/drive.php
+# <<< telas do portal (api/painel.php e lib/painel_*.php novo, se houver): conferir com `git status --short site/matricula-cursos-presenciais/api` e acrescentar aqui, depois do db.php >>>
+
+# 6. Página do formulário.
+site/voluntariado/cadastro/index.html
+site/voluntariado/cadastro/cadastro.js
+
+# 7. Páginas com o link do Spotform trocado pelo formulário próprio.
+# <<< lista final das páginas com o link do Spotform trocado: completar com `git status --short site` antes de publicar >>>
+
+# 8. Política de Privacidade (português, inglês e espanhol).
+# <<< páginas de políticas que mudaram: confirmar com `git status --short site` antes de publicar >>>
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
