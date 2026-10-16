@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-15T18:59:42+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-16T00:02:30+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -672,14 +672,59 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/quem-somos/</loc>
-    <lastmod>2026-10-15T18:50:57+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:43+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+      <image:title>Voluntários da filial do Rio de Janeiro, de camiseta branca e coletes vermelhos com a cruz vermelha, reunidos no auditório do Palácio da Cruz Vermelha, sob a cruz da parede e as bandeiras</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-brincadeira-arcos-932.webp</image:loc>
+      <image:title>Voluntária da filial, de colete vermelho, acompanha dois meninos que pulam dentro de arcos coloridos no chão de uma quadra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-corrida-saco-960.webp</image:loc>
+      <image:title>Voluntária da Cruz Vermelha, de colete vermelho, ajuda dois meninos a entrar no saco para a corrida, numa quadra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-juventude-960.webp</image:loc>
+      <image:title>Coordenadora de Juventude da filial, de camisa vermelha do uniforme, sorri cercada de crianças do projeto Impacto das Cores, diante de uma parede pintada com formas geométricas coloridas</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-pedra-1919-th.webp</image:loc>
+      <image:title>Autoridades e enfermeiras de branco em volta da escavação, sob bandeirolas, enquanto um oficial assenta a pedra fundamental do edifício</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1920-960.webp</image:loc>
+      <image:title>Edifício da Cruz Vermelha em obras, cercado por andaimes e por um muro, ainda sem os andares superiores</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-960.webp</image:loc>
+      <image:title>Fachada do Palácio da Cruz Vermelha coberta de andaimes, já com os andares superiores e a estrutura da cúpula, em 1923</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-pedro-ernesto-960.webp</image:loc>
+      <image:title>Palácio Pedro Ernesto, na Cinelândia: fachada branca com duas torres de relógio e a bandeira do Brasil, com pedestres no calçadão em frente</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-tiradentes-960.webp</image:loc>
+      <image:title>Fachada do Palácio Tiradentes vista da escadaria: colunas coríntias e estátuas no alto da fachada, sob céu azul</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-e-vice-gabinete-473.webp</image:loc>
+      <image:title>O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal sentados à mesa do gabinete da presidência, com as bandeiras e um painel de boas-vindas ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-luiz-carlos-dos-santos-960.webp</image:loc>
+      <image:title>Luiz Carlos dos Santos, presidente da filial, de braços cruzados e colete vermelho da Cruz Vermelha Brasileira, diante dos retratos da Galeria dos Presidentes</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/agasalho-hero-rua-640.webp</image:loc>
+      <image:title>Voluntário da Cruz Vermelha, agachado e de colete vermelho, entrega um cobertor a um homem idoso sentado numa cadeira na calçada, ao lado de um ponto de ônibus</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
@@ -687,9 +732,49 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/principios-fundamentais/</loc>
-    <lastmod>2026-10-15T18:50:59+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:45+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/jean-pictet-1937-960.webp</image:loc>
+      <image:title>Jean Pictet, de terno escuro e gravata listrada, sentado à mesa de trabalho com uma caneta na mão e estantes de pastas ao fundo, na sede do CICV em Genebra, em 1937</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-primeiros-socorros-960.webp</image:loc>
+      <image:title>Voluntária da Cruz Vermelha, de colete vermelho, orienta jovens numa atividade prática de primeiros socorros, com um deles deitado no chão de uma quadra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-acao-1-th.webp</image:loc>
+      <image:title>Enfermeiras da Cruz Vermelha Brasileira, de uniforme branco e touca com a cruz, atendem pacientes numa enfermaria; em primeiro plano, uma delas, de óculos, cuida de um paciente deitado numa maca</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-distribuicao-donativos-550.webp</image:loc>
+      <image:title>Voluntário de costas, de camiseta vermelha com o emblema da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de pessoas que separam caixas e sacolas de donativos na entrada de um prédio</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-profilaxia-inauguracao-th.webp</image:loc>
+      <image:title>Autoridades e dirigentes sentados em torno de uma mesa, numa sala com cartazes de saúde na parede, na inauguração do Departamento de Profilaxia da Tuberculose</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/equipe-corredor-960.webp</image:loc>
+      <image:title>Três voluntárias da Cruz Vermelha Brasileira, duas de colete vermelho e uma de camiseta branca com o nome da instituição, sorrindo num corredor do Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/cruz-roja-chilena-rcp-2012-960.webp</image:loc>
+      <image:title>Vistos de cima, jovens voluntários da Cruz Vermelha Chilena ajoelhados em volta de dois manequins praticam compressões torácicas, acompanhados por uma pessoa de colete azul com a cruz vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/crescente-vermelho-tunisino-2021-960.webp</image:loc>
+      <image:title>Pessoa voluntária do Crescente Vermelho Tunisiano, de costas, com colete vermelho com o crescente vermelho num círculo branco, faz continência à bandeira da Tunísia hasteada diante de um prédio baixo, sob céu azul</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-619.webp</image:loc>
+      <image:title>Cartaz colorido da Primeira Guerra Mundial, sobre fundo amarelo: bandeiras do Brasil e dos Estados Unidos cruzadas, uma enfermeira da Cruz Vermelha de braços abertos no alto e, embaixo, uma figura feminina sentada sobre uma cruz vermelha, com os títulos “A Cruz Vermelha, Mãe de Todas as Nações” e “Symbolos da Liberdade y da Humanidade”</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-holanda-th.webp</image:loc>
+      <image:title>Página impressa com o título “O maremoto da Holanda”, uma gravura em medalhão e o agradecimento, em francês, assinado pela Cruz Vermelha Neerlandesa à Cruz Vermelha Brasileira</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -702,9 +787,53 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/movimento-internacional/</loc>
-    <lastmod>2026-10-15T18:51:00+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:46+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/comite-dos-cinco-1863-960.webp</image:loc>
+      <image:title>Fotomontagem de 1863 com os cinco fundadores do Comitê Internacional: o general Dufour em pé, ao centro, e, em quatro medalhões ovais, Moynier, Dunant, Appia e Maunoir, com os nomes em caligrafia e uma cruz no rodapé</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/dunant-1901-retrato-960.webp</image:loc>
+      <image:title>Henri Dunant idoso, sentado numa cadeira de madeira, com longa barba branca, gorro escuro e casaco grosso de lã, olhando para a câmera</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/cicv-sede-genebra-960.webp</image:loc>
+      <image:title>Fachada da sede do CICV em Genebra: prédio claro com o letreiro CICR ladeado por cruzes vermelhas no alto, bandeira hasteada, árvores e gramado à frente</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/ficv-sede-genebra-960.webp</image:loc>
+      <image:title>Entrada da sede da Federação Internacional em Genebra: fachada de vidro escuro com os Princípios Fundamentais gravados, porta giratória e totem com o logotipo IFRC</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/cruz-vermelha-fiji-entrega-2012-960.webp</image:loc>
+      <image:title>Homem de colete refletivo entrega a uma moradora uma caixa com a cruz vermelha e o nome Fiji Red Cross Society, diante de um caminhão; ao lado, uma voluntária de colete branco com o emblema faz anotações</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/crescente-vermelho-tunisino-2021-960.webp</image:loc>
+      <image:title>Pessoa voluntária do Crescente Vermelho Tunisiano, de costas, com colete vermelho com o crescente branco, faz continência à bandeira da Tunísia diante de um prédio baixo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-c1935-instalacao-th.webp</image:loc>
+      <image:title>Recorte de jornal de 1935 com fotografias da sessão de instalação da III Conferência Pan-Americana da Cruz Vermelha, no Theatro Municipal</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-holanda-th.webp</image:loc>
+      <image:title>Página da Revista da Cruz Vermelha Brasileira com o título O maremoto da Holanda e o agradecimento assinado pela Cruz Vermelha Neerlandesa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-distribuicao-donativos-550.webp</image:loc>
+      <image:title>Voluntário de costas, com camiseta vermelha da Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/agasalho-hero-favela-640.webp</image:loc>
+      <image:title>Voluntário da filial, de colete com a cruz vermelha, entrega um agasalho a um morador sentado numa rua de comunidade</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-corrida-saco-960.webp</image:loc>
+      <image:title>Voluntária da Cruz Vermelha, de colete vermelho, ajuda dois meninos a entrar no saco para a corrida, numa quadra</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -717,7 +846,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/emblema/</loc>
-    <lastmod>2026-10-15T18:50:56+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:54+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -812,14 +941,51 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/</loc>
-    <lastmod>2026-10-15T18:51:02+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:48+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/haia-1899-conferencia-da-paz-960.webp</image:loc>
+      <image:title>Delegados de terno escuro sentados em mesas dispostas em U, num salão com grandes pinturas murais, na Primeira Conferência Internacional da Paz, em Haia, 1899</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-960.webp</image:loc>
+      <image:title>Portão de madeira e arame farpado do campo de prisioneiros Stalag X B, em Sandbostel, com prisioneiros de uniforme conversando junto à cerca e barracões ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp</image:loc>
+      <image:title>Delegados sentados lado a lado a uma longa mesa, assinando e folheando documentos, com assessores em pé atrás, na assinatura das Convenções de Genebra de 1949</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp</image:loc>
+      <image:title>Caixa de papelão da Cruz Vermelha Canadense para prisioneiros de guerra, com a cruz vermelha, a inscrição Prisoners' Parcels e a lista do conteúdo em inglês e alemão</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-britanica-960.webp</image:loc>
+      <image:title>Caixa de encomenda da Cruz Vermelha Britânica para prisioneiros de guerra, com a cruz vermelha, o emblema da Ordem de São João e a inscrição Comité International Croix Rouge, Genève-Transit</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/convencao-genebra-1864-documento-960.webp</image:loc>
+      <image:title>Fac-símile da Convenção de Genebra de 1864 aberto, com texto manuscrito, assinaturas e lacres de cera vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/protecao-civil-sinal-veiculo-960.webp</image:loc>
+      <image:title>Triângulo azul sobre fundo laranja, sinal da defesa civil, em adesivo redondo na porta branca de um veículo da proteção civil alemã</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp</image:loc>
+      <image:title>Fachada do Palácio do Itamaraty, em Brasília, com arcos de concreto sobre vidro, espelho d'água com escultura branca e a guarda de honra em uniforme de gala sobre um tapete vermelho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-960.webp</image:loc>
+      <image:title>Voluntário da Cruz Vermelha Brasileira Rio de Janeiro, de colete vermelho, fala ao microfone durante uma capacitação no salão da sede, com participantes de costas em primeiro plano</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+      <image:title>Equipe de voluntários da Cruz Vermelha Brasileira Rio de Janeiro, de camiseta branca com a cruz vermelha e coletes vermelhos, reunida em pé no auditório da sede, diante de uma grande cruz vermelha na parede e de retratos emoldurados</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
@@ -827,9 +993,49 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/base-legal/</loc>
-    <lastmod>2026-10-15T18:51:04+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:49+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-do-catete-960.webp</image:loc>
+      <image:title>Palácio do Catete, no Rio de Janeiro: fachada neoclássica clara, de três pavimentos, com esquadrias altas e águias de bronze sobre a platibanda, vista da esquina em dia de sol</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-do-planalto-960.webp</image:loc>
+      <image:title>Palácio do Planalto, em Brasília, visto em diagonal: colunas curvas brancas, fachada de vidro, gramado e espelho d'água sob céu azul-escuro</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-pedro-ernesto-960.webp</image:loc>
+      <image:title>Palácio Pedro Ernesto, na Cinelândia: fachada branca eclética com duas torres de relógio e a bandeira do Brasil no mastro, pedestres no calçadão de pedras portuguesas e prédios altos ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-tiradentes-960.webp</image:loc>
+      <image:title>Fachada principal do Palácio Tiradentes, no Centro do Rio: colunata de seis colunas coríntias, frontão com estátuas e duas esculturas sentadas ao lado da escadaria, sob céu azul no fim da tarde</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-luiz-carlos-dos-santos-960.webp</image:loc>
+      <image:title>Luiz Carlos dos Santos, presidente da filial, de braços cruzados e sorrindo, com colete vermelho com o emblema e o nome Cruz Vermelha Brasileira, diante dos retratos da Galeria dos Presidentes</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Fotografia antiga em preto e branco: alunas de uniforme branco e touca atendem uma pessoa deitada no chão, ao lado de um veículo branco, enquanto uma pessoa de uniforme escuro observa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-brincadeira-arcos-932.webp</image:loc>
+      <image:title>Voluntária da filial, de colete vermelho, conduz dois meninos numa brincadeira de pular dentro de arcos coloridos numa quadra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-voluntaria-960.webp</image:loc>
+      <image:title>Voluntária da filial sorri abraçada a três meninas numa rua; no colete vermelho, o emblema da cruz vermelha com o nome Cruz Vermelha Brasileira embaixo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/congresso-nacional-960.webp</image:loc>
+      <image:title>Congresso Nacional, em Brasília: as duas torres gêmeas entre a cúpula convexa do Senado e a côncava da Câmara, com gramado e espelho d'água em primeiro plano</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-e-vice-gabinete-473.webp</image:loc>
+      <image:title>O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal sentados à mesa do gabinete da presidência, com as bandeiras do Brasil e do estado e a faixa da Cruz Vermelha Brasileira ao fundo</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -842,9 +1048,53 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/cursos-gratuitos/</loc>
-    <lastmod>2026-10-15T18:51:05+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:50+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-formacao-voluntarios-1080.webp</image:loc>
+      <image:title>Peça de divulgação da filial: equipe de voluntários de camiseta branca com a cruz vermelha reunida num salão da sede, e o texto Prontos para servir, o trabalho humanitário exige preparo contínuo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/auditorio-voluntarios-960.webp</image:loc>
+      <image:title>Turma de voluntários de camiseta branca com a cruz vermelha, sentada no auditório da sede, ouve um instrutor de colete vermelho</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/equipe-corredor-960.webp</image:loc>
+      <image:title>Três voluntárias da filial, de colete e camiseta com a cruz vermelha e papéis na mão, num corredor do Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-sala-de-aula-th.webp</image:loc>
+      <image:title>Alunas de uniforme branco com a cruz vermelha, sentadas em carteiras de madeira numa sala de aula</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-aula-anatomia-th.webp</image:loc>
+      <image:title>Enfermeiras de uniforme branco e véu, sentadas, assistem a uma aula de anatomia; à esquerda, o professor junto a um esqueleto</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-exames-1922-th.webp</image:loc>
+      <image:title>Sala de exame com alunas de uniforme branco sentadas de costas e a banca examinadora à mesa, sob uma cruz vermelha na parede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/forca-tarefa-el-nino-banner-1200.webp</image:loc>
+      <image:title>Banner da Força-Tarefa Humanitária, Ações El Niño: voluntário de colete vermelho da Cruz Vermelha Brasileira Rio de Janeiro, de costas, diante de casas numa área alagada; texto: mobilização interna com voluntários para preparação e resposta humanitária, evento interno</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Fotografia em preto e branco do acervo: mulheres de uniforme branco atendem uma pessoa deitada no chão, ao lado de um veículo, enquanto uma mulher de uniforme escuro observa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-varanda-escola-1917-960.webp</image:loc>
+      <image:title>Enfermeiras de uniforme branco e véu enfileiradas na varanda da Escola de Enfermeiras, sob a placa com o nome da instituição</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-voluntaria-th.webp</image:loc>
+      <image:title>Diploma de Enfermeira Voluntária da Cruz Vermelha Brasileira, com moldura ilustrada, a cruz vermelha e o nome da Escola de Enfermeiras</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-profissional-th.webp</image:loc>
+      <image:title>Diploma de Enfermeira Profissional da Escola Prática de Enfermeiras da Cruz Vermelha Brasileira, com moldura ilustrada e a cruz vermelha</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -857,9 +1107,49 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/voluntariado/</loc>
-    <lastmod>2026-10-15T18:51:07+00:00</lastmod>
+    <lastmod>2026-10-15T23:52:52+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-juventude-960.webp</image:loc>
+      <image:title>Coordenadora de Juventude da filial sorrindo com crianças do projeto Impacto das Cores, de camiseta do projeto, diante de um muro pintado</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-primeiros-socorros-960.webp</image:loc>
+      <image:title>Voluntária da filial, de colete vermelho, orienta jovens numa atividade prática de primeiros socorros, com um deles deitado no chão de uma quadra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-distribuicao-donativos-550.webp</image:loc>
+      <image:title>Voluntário de costas, com camisa vermelha da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-960.webp</image:loc>
+      <image:title>Voluntário da filial, de colete vermelho, fala ao microfone diante da turma, numa capacitação na sede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/cruz-roja-chilena-rcp-2012-960.webp</image:loc>
+      <image:title>Vistos de cima, jovens, a maioria de jaleco branco, ajoelhados em volta de dois manequins, praticam compressões torácicas, orientados por um voluntário da Cruz Vermelha Chilena de colete azul</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/auditorio-voluntarios-960.webp</image:loc>
+      <image:title>Turma de voluntários, de camisa branca com a cruz vermelha, sentada no auditório da sede, com um instrutor de colete à frente</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Fotografia antiga em preto e branco: duas voluntárias de uniforme branco, ajoelhadas, atendem uma pessoa deitada no chão ao lado de uma Kombi; uma terceira, de touca, acompanha de pé, e uma mulher de roupa escura observa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-diploma-voluntaria-th.webp</image:loc>
+      <image:title>Diploma de Enfermeira Voluntária da Cruz Vermelha Brasileira, com moldura ornamentada, a cruz vermelha e o nome da Escola de Enfermeiras</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/congresso-nacional-960.webp</image:loc>
+      <image:title>Congresso Nacional, em Brasília: as duas torres, a cúpula do Senado e a da Câmara, com o espelho d'água em frente</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/dia-criancas-voluntaria-960.webp</image:loc>
+      <image:title>Voluntária da filial, de colete vermelho com o emblema da Cruz Vermelha, sorrindo abraçada a três meninas numa calçada</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>

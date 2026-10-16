@@ -1,0 +1,696 @@
+{
+ "commons": [
+  {
+   "arquivo": "assets/institucional/fotos/comite-dos-cinco-1863-960.webp",
+   "largura": 960,
+   "altura": 755,
+   "bytes": 75654,
+   "variantes": [
+    "assets/institucional/fotos/comite-dos-cinco-1863-480.webp"
+   ],
+   "o_que_mostra": "Fotomontagem de 1863 com os retratos dos cinco fundadores do Comitê Internacional: ao centro, em pé, o general Guillaume-Henri Dufour; nos quatro medalhões ovais, Gustave Moynier (alto, à esquerda), Henry Dunant (alto, à direita), Dr. Louis Appia (baixo, à esquerda) e Dr. Théodore Maunoir (baixo, à direita), cada um com o nome em caligrafia; no rodapé, a legenda “Comité international Fondateur de l'oeuvre de la Croix-Rouge, Genève, 1863” e uma cruz vermelha. Conferido visualmente: preto e branco, nítida, nomes legíveis.",
+   "alt_sugerido": "Fotomontagem de 1863 com os retratos dos cinco fundadores do Comitê Internacional: Dufour ao centro e Moynier, Dunant, Appia e Maunoir em medalhões",
+   "uso_sugerido": "Movimento Internacional, seção “Uma rede, e não uma organização só” (o Comitê dos Cinco de 1863 e a criação do CICV). Cobre de uma vez os cinco fundadores.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Les_5_fondateurs.jpg",
+   "titulo_original": "File:Les 5 fondateurs.jpg",
+   "autor": "Arquivos audiovisuais do CICV (ICRC Audiovisual archives); fotomontagem de 1863, autor da montagem não indicado",
+   "licenca": "CC BY-SA 4.0 (conforme o Commons; a fotomontagem de 1863 em si está em domínio público pela idade)",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "1863 (data registrada no Commons: 1863-01-02)",
+   "credito_pronto": "Foto: Arquivos audiovisuais do CICV, via <a href=\"https://commons.wikimedia.org/wiki/File:Les_5_fondateurs.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/dufour-daguerreotipo-1848-960.webp",
+   "largura": 960,
+   "altura": 1190,
+   "bytes": 84294,
+   "variantes": [
+    "assets/institucional/fotos/dufour-daguerreotipo-1848-480.webp"
+   ],
+   "o_que_mostra": "Daguerreótipo oval, em moldura clara, do general Guillaume-Henri Dufour (1787–1875) em uniforme militar, com bicorne emplumado, dragonas, botões e a condecoração da Legião de Honra ao peito; olhar para a esquerda. Conferido visualmente: imagem de época com leve irisação nas bordas, rosto nítido.",
+   "alt_sugerido": "Daguerreótipo do general Guillaume-Henri Dufour em uniforme militar, por volta de 1848",
+   "uso_sugerido": "Movimento Internacional, seção “Uma rede, e não uma organização só” (fundadores do CICV), como retrato individual ao lado da fotomontagem.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Henri_dufour_daguerreotype_1850.jpg",
+   "titulo_original": "File:Henri dufour daguerreotype 1850.jpg",
+   "autor": "Jean de Humnicki (1803–?)",
+   "licenca": "Domínio público",
+   "licenca_url": "",
+   "data_da_imagem": "c. 1848 (segundo o Commons)",
+   "credito_pronto": "Imagem: Jean de Humnicki, c. 1848, via <a href=\"https://commons.wikimedia.org/wiki/File:Henri_dufour_daguerreotype_1850.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/moynier-gabinete-1910-960.webp",
+   "largura": 768,
+   "altura": 1200,
+   "bytes": 201848,
+   "variantes": [
+    "assets/institucional/fotos/moynier-gabinete-1910-480.webp"
+   ],
+   "o_que_mostra": "Gustave Moynier, de barba branca, sentado de perfil à escrivaninha do seu gabinete de trabalho (8, rue de l'Athénée, Genebra), escrevendo, com estante de livros e cortinas ao fundo. É a reprodução de uma página impressa: traz no rodapé a legenda em francês “Gustave Moynier dans son cabinet de travail, 8, rue de l'Athénée” e o crédito “Photo Ad. Moynier”. Conferido visualmente: preto e branco, nítida; não é foto post-mortem (apesar da data de 21/08/1910 no Commons).",
+   "alt_sugerido": "Gustave Moynier escrevendo à escrivaninha do seu gabinete, em foto de Adolphe Moynier",
+   "uso_sugerido": "Movimento Internacional, seção “Uma rede, e não uma organização só” (fundadores do CICV). A legenda impressa em francês faz parte da imagem; se incomodar, pode-se cortar a faixa inferior na integração.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:V-P-HIST-01831.jpg",
+   "titulo_original": "File:V-P-HIST-01831.jpg",
+   "autor": "Adolphe Moynier (1860–1933)",
+   "licenca": "Domínio público",
+   "licenca_url": "",
+   "data_da_imagem": "1910 (data registrada no Commons: 21/08/1910)",
+   "credito_pronto": "Imagem: Adolphe Moynier, 1910, via <a href=\"https://commons.wikimedia.org/wiki/File:V-P-HIST-01831.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/dunant-1901-retrato-960.webp",
+   "largura": 894,
+   "altura": 1200,
+   "bytes": 109472,
+   "variantes": [
+    "assets/institucional/fotos/dunant-1901-retrato-480.webp"
+   ],
+   "o_que_mostra": "Retrato de Henry Dunant idoso, sentado numa cadeira de madeira, com longa barba branca, gorro escuro e casaco grosso de lã, olhando para a câmera. Foto da Library of Congress datada de 1901, ano do primeiro Nobel da Paz. Conferido visualmente: preto e branco, nítida, sem marca d'água.",
+   "alt_sugerido": "Henry Dunant idoso, de barba branca e gorro escuro, em retrato de 1901",
+   "uso_sugerido": "Movimento Internacional (Dunant e o Nobel da Paz de 1901) ou abertura da página de DIH. Não foi encontrada foto livre dele com a medalha; este retrato é do ano do prêmio.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Jean_Henri_Dunant.jpg",
+   "titulo_original": "File:Jean Henri Dunant.jpg",
+   "autor": "autor desconhecido (Library of Congress, Prints & Photographs Division, LC-USW33-042485; o Commons registra “Time Life Pictures” como fonte)",
+   "licenca": "Domínio público",
+   "licenca_url": "",
+   "data_da_imagem": "1901 (segundo o Commons)",
+   "credito_pronto": "Imagem: autor desconhecido, 1901, via <a href=\"https://commons.wikimedia.org/wiki/File:Jean_Henri_Dunant.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cicv-sede-genebra-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 63898,
+   "variantes": [
+    "assets/institucional/fotos/cicv-sede-genebra-480.webp"
+   ],
+   "o_que_mostra": "Fachada da sede do Comitê Internacional da Cruz Vermelha em Genebra: prédio claro de quatro andares com mansardas, letreiro “CICR” ladeado por cruzes vermelhas no alto do corpo central, bandeira hasteada, árvores e gramado à frente, céu azul com nuvens. Conferido visualmente: colorida, nítida, letreiro legível.",
+   "alt_sugerido": "Sede do Comitê Internacional da Cruz Vermelha em Genebra, com o letreiro CICR no telhado",
+   "uso_sugerido": "Movimento Internacional, seção “Os três componentes do Movimento” (linha do CICV) ou “Uma rede, e não uma organização só”.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:IKRK_Hauptquartier.jpg",
+   "titulo_original": "File:IKRK Hauptquartier.jpg",
+   "autor": "Alexander Umbricht",
+   "licenca": "Domínio público (liberada pelo autor)",
+   "licenca_url": "",
+   "data_da_imagem": "30 de setembro de 2004",
+   "credito_pronto": "Imagem: Alexander Umbricht, 2004, via <a href=\"https://commons.wikimedia.org/wiki/File:IKRK_Hauptquartier.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/ficv-sede-genebra-960.webp",
+   "largura": 960,
+   "altura": 640,
+   "bytes": 71366,
+   "variantes": [
+    "assets/institucional/fotos/ficv-sede-genebra-480.webp"
+   ],
+   "o_que_mostra": "Entrada do prédio central da Federação Internacional das Sociedades da Cruz Vermelha e do Crescente Vermelho em Genebra: fachada de vidro escuro com os Princípios Fundamentais gravados em várias línguas, porta giratória e totem com o logotipo “IFRC” e o nome em francês (“Fédération internationale des Sociétés de la Croix-Rouge et du Croissant-Rouge”), canteiro com plantas à frente. Conferido visualmente: colorida, nítida, totem legível.",
+   "alt_sugerido": "Entrada da sede da Federação Internacional em Genebra, com o totem IFRC e a fachada de vidro com os Princípios Fundamentais",
+   "uso_sugerido": "Movimento Internacional, seção “Os três componentes do Movimento” (linha da Federação).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:IFRC-headquarters-Geneva-02.jpg",
+   "titulo_original": "File:IFRC-headquarters-Geneva-02.jpg",
+   "autor": "MHM55 (usuário do Wikimedia Commons)",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "18 de agosto de 2023",
+   "credito_pronto": "Foto: MHM55, via <a href=\"https://commons.wikimedia.org/wiki/File:IFRC-headquarters-Geneva-02.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/haia-1899-conferencia-da-paz-960.webp",
+   "largura": 960,
+   "altura": 603,
+   "bytes": 93850,
+   "variantes": [
+    "assets/institucional/fotos/haia-1899-conferencia-da-paz-480.webp"
+   ],
+   "o_que_mostra": "Sessão da Primeira Conferência Internacional da Paz, em Haia (maio–junho de 1899): dezenas de delegados de terno escuro sentados em mesas dispostas em U, num salão decorado com grandes pinturas murais e cortinas ao fundo. Coleção do Imperial War Museum (HU 67224). Conferido visualmente: preto e branco, nítida, sem marca d'água.",
+   "alt_sugerido": "Delegados da Conferência da Paz de Haia de 1899 reunidos em sessão num salão decorado com pinturas",
+   "uso_sugerido": "DIH, seção “O que é o Direito Internacional Humanitário” (a parte do “direito de Haia”, sobre meios e métodos de guerra) ou “Os Protocolos Adicionais” (condução das hostilidades).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:The_First_International_Peace_Conference,_the_Hague,_May_-_June_1899_HU67224.jpg",
+   "titulo_original": "File:The First International Peace Conference, the Hague, May - June 1899 HU67224.jpg",
+   "autor": "autor desconhecido (coleção do Imperial War Museum, Londres, HU 67224)",
+   "licenca": "Domínio público",
+   "licenca_url": "",
+   "data_da_imagem": "maio–junho de 1899",
+   "credito_pronto": "Imagem: autor desconhecido, 1899, via <a href=\"https://commons.wikimedia.org/wiki/File:The_First_International_Peace_Conference,_the_Hague,_May_-_June_1899_HU67224.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp",
+   "largura": 909,
+   "altura": 612,
+   "bytes": 59724,
+   "variantes": [
+    "assets/institucional/fotos/genebra-1949-assinatura-convencoes-480.webp"
+   ],
+   "o_que_mostra": "Assinatura das Convenções de Genebra de 1949: delegados sentados lado a lado a uma longa mesa, assinando e folheando documentos, alguns em uniforme militar, com assessores em pé atrás e uma tribuna com flores ao fundo. Conferido visualmente: preto e branco, nítida. O original tem 909 px de largura, por isso a variante “960” ficou com 909 px (não foi ampliada).",
+   "alt_sugerido": "Delegados assinam as Convenções de Genebra de 1949 numa longa mesa, em foto em preto e branco",
+   "uso_sugerido": "DIH, seção “As quatro Convenções de Genebra de 1949”.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Geneva_Conventions_-_signing_in_1949.jpg",
+   "titulo_original": "File:Geneva Conventions - signing in 1949.jpg",
+   "autor": "British Red Cross (conta oficial no Flickr)",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "data_da_imagem": "1949 (foto); publicada no Flickr em 2009",
+   "credito_pronto": "Foto: British Red Cross, via <a href=\"https://commons.wikimedia.org/wiki/File:Geneva_Conventions_-_signing_in_1949.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/2.0\">CC BY 2.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 65750,
+   "variantes": [
+    "assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-480.webp"
+   ],
+   "o_que_mostra": "Caixa de papelão de encomenda da Cruz Vermelha Canadense para prisioneiros de guerra da Segunda Guerra, fotografada em museu sobre fundo azul claro: impressos “Prisoners' Parcels – The Canadian Red Cross Society – Kriegsgefangenenpost”, cruz vermelha, “Comité International Croix Rouge, Genève-Transit, Suisse” e a lista do conteúdo em inglês e alemão (15 pacotes de comida, 1 sabonete). Objeto enviado a um campo alemão e guardado por um aviador neozelandês. Conferido visualmente: colorida, nítida, textos legíveis.",
+   "alt_sugerido": "Caixa de encomenda da Cruz Vermelha Canadense para prisioneiros de guerra, com a inscrição do Comitê Internacional em Genebra",
+   "uso_sugerido": "DIH, seção “As quatro Convenções de Genebra de 1949” (Terceira Convenção, prisioneiros de guerra) ou “O que é o DIH” (proteção de quem deixou de lutar).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Parcel,_prisoner%27s_(AM_2008.22.1-1).jpg",
+   "titulo_original": "File:Parcel, prisoner's (AM 2008.22.1-1).jpg",
+   "autor": "Auckland War Memorial Museum Tāmaki Paenga Hira (foto); objeto da Canadian Red Cross Society",
+   "licenca": "CC BY 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/4.0",
+   "data_da_imagem": "foto de 25/03/2008; objeto de 1940–1945",
+   "credito_pronto": "Foto: Auckland War Memorial Museum Tāmaki Paenga Hira, via <a href=\"https://commons.wikimedia.org/wiki/File:Parcel,_prisoner%27s_(AM_2008.22.1-1).jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/4.0\">CC BY 4.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-britanica-960.webp",
+   "largura": 960,
+   "altura": 749,
+   "bytes": 52450,
+   "variantes": [
+    "assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-britanica-480.webp"
+   ],
+   "o_que_mostra": "Caixa de encomenda da British Red Cross & Order of St. John War Organisation para prisioneiros de guerra (“Prisoners' Parcels”, “Kriegsgefangenenpost”), com cruz vermelha, o emblema da Ordem de São João e a inscrição “Comité International Croix Rouge, Genève-Transit, Suisse”; carimbos vermelhos apagados no canto. Fotografada sobre fundo claro, em museu. Conferido visualmente: colorida, nítida; original de 1586 px.",
+   "alt_sugerido": "Caixa de encomenda da Cruz Vermelha Britânica para prisioneiros de guerra, com cruz vermelha e emblema da Ordem de São João",
+   "uso_sugerido": "DIH, prisioneiros de guerra (segunda opção; pode formar uma dupla com a encomenda canadense).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Prisoner_of_War_Parcel,_British_Red_Cross.JPG",
+   "titulo_original": "File:Prisoner of War Parcel, British Red Cross.JPG",
+   "autor": "Nationaal Bevrijdingsmuseum 1944-1945 (usuário NationalLiberationMuseum19441945)",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "foto de 04/08/2015; objeto da Segunda Guerra",
+   "credito_pronto": "Foto: Nationaal Bevrijdingsmuseum 1944-1945, via <a href=\"https://commons.wikimedia.org/wiki/File:Prisoner_of_War_Parcel,_British_Red_Cross.JPG\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-960.webp",
+   "largura": 960,
+   "altura": 637,
+   "bytes": 105784,
+   "variantes": [
+    "assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-480.webp"
+   ],
+   "o_que_mostra": "Portão de madeira e arame farpado do campo de prisioneiros de guerra Stalag X B, em Sandbostel (oeste de Hamburgo), com prisioneiros em uniforme conversando junto à cerca e barracões ao fundo; foto do CICV da Segunda Guerra (1939–1945). Conferido visualmente: preto e branco, nítida. Mostra prisioneiros, sem cenas de violência ou sofrimento explícito; pede legenda sóbria.",
+   "alt_sugerido": "Prisioneiros de guerra junto ao portão de arame farpado do campo Stalag X B, em Sandbostel, em foto do CICV",
+   "uso_sugerido": "DIH, Terceira Convenção (prisioneiros de guerra) e o papel do CICV; uso opcional, como complemento às encomendas.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Gate_of_Stalag_X_B_Sandbostel,_ICRC_photo.jpg",
+   "titulo_original": "File:Gate of Stalag X B Sandbostel, ICRC photo.jpg",
+   "autor": "CICV (arquivos audiovisuais; o Commons registra “publication without restrictions”)",
+   "licenca": "Domínio público (conforme o Commons)",
+   "licenca_url": "",
+   "data_da_imagem": "1939–1945 (Segunda Guerra; dia não indicado)",
+   "credito_pronto": "Imagem: CICV, década de 1940, via <a href=\"https://commons.wikimedia.org/wiki/File:Gate_of_Stalag_X_B_Sandbostel,_ICRC_photo.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/escudo-azul-placa-vaduz-960.webp",
+   "largura": 553,
+   "altura": 1200,
+   "bytes": 102412,
+   "variantes": [
+    "assets/institucional/fotos/escudo-azul-placa-vaduz-480.webp"
+   ],
+   "o_que_mostra": "Placa do Escudo Azul (emblema da Convenção de Haia de 1954 para a proteção de bens culturais) fixada numa parede de pedra do Engländerbau, em Vaduz (Liechtenstein): escudo branco e azul em ponta, com o texto “Nationales Kulturgut – Haager Abkommen, 1954 (Art. 16 und 17)” em alemão, francês e italiano. Conferido visualmente: colorida, nítida, texto legível; foto em pé (variante grande limitada a 1200 px de altura).",
+   "alt_sugerido": "Placa com o Escudo Azul da Convenção de Haia de 1954 fixada numa parede de pedra em Vaduz",
+   "uso_sugerido": "DIH, seção “O que é o DIH” ou “Os Protocolos Adicionais” (proteção de bens culturais); também serve à página do Emblema (sinal dos bens culturais em uso real).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:LIE_%E2%80%93_Gde._Vaduz_%E2%80%94_Vaduz_Stadt_%E2%80%94_St%C3%A4dtle_37_(Denkmalplakette_Nationales_Kulturgut_im_Sinne_der_Haager_Konvention_zum_Schutz_von_Kulturgut_bei_bewaffneten_Konflikten_1954)_2023-05-28_Mattes.jpg",
+   "titulo_original": "File:LIE – Gde. Vaduz — Vaduz Stadt — Städtle 37 (Denkmalplakette Nationales Kulturgut im Sinne der Haager Konvention zum Schutz von Kulturgut bei bewaffneten Konflikten 1954) 2023-05-28 Mattes.jpg",
+   "autor": "Mateus2019 (usuário do Wikimedia Commons)",
+   "licenca": "CC BY 3.0 DE",
+   "licenca_url": "https://creativecommons.org/licenses/by/3.0/de/deed.en",
+   "data_da_imagem": "28 de maio de 2023",
+   "credito_pronto": "Foto: Mateus2019, via <a href=\"https://commons.wikimedia.org/wiki/File:LIE_%E2%80%93_Gde._Vaduz_%E2%80%94_Vaduz_Stadt_%E2%80%94_St%C3%A4dtle_37_(Denkmalplakette_Nationales_Kulturgut_im_Sinne_der_Haager_Konvention_zum_Schutz_von_Kulturgut_bei_bewaffneten_Konflikten_1954)_2023-05-28_Mattes.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/3.0/de/deed.en\">CC BY 3.0 DE</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/protecao-civil-sinal-veiculo-960.webp",
+   "largura": 960,
+   "altura": 640,
+   "bytes": 19960,
+   "variantes": [
+    "assets/institucional/fotos/protecao-civil-sinal-veiculo-480.webp"
+   ],
+   "o_que_mostra": "Sinal distintivo internacional da proteção civil (triângulo azul sobre fundo laranja) em adesivo circular na porta branca de um veículo da “Medizinische Task Force 8” da proteção civil alemã, na entrega de veículos federais à Baixa Saxônia em 2016. Conferido visualmente: colorida, nítida, sinal em destaque; contém o texto em alemão “Medizinische Task Force” e o número 8.",
+   "alt_sugerido": "Sinal da proteção civil, triângulo azul sobre fundo laranja, na porta de um veículo da proteção civil alemã",
+   "uso_sugerido": "DIH, seção “Os Protocolos Adicionais” (Protocolo I e a proteção civil) e/ou página do Emblema (outros sinais protetores em uso real).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Zivilschutzzeichen_bei_der_%C3%9Cbergabe_von_Zivilschutzfahrzeugen_an_Niedersachsen_2016_19.jpg",
+   "titulo_original": "File:Zivilschutzzeichen bei der Übergabe von Zivilschutzfahrzeugen an Niedersachsen 2016 19.jpg",
+   "autor": "Bundesamt für Bevölkerungsschutz und Katastrophenhilfe (BBK, Alemanha)",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "22 de outubro de 2016",
+   "credito_pronto": "Foto: Bundesamt für Bevölkerungsschutz und Katastrophenhilfe, via <a href=\"https://commons.wikimedia.org/wiki/File:Zivilschutzzeichen_bei_der_%C3%9Cbergabe_von_Zivilschutzfahrzeugen_an_Niedersachsen_2016_19.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp",
+   "largura": 960,
+   "altura": 528,
+   "bytes": 57976,
+   "variantes": [
+    "assets/institucional/fotos/palacio-itamaraty-brasilia-480.webp"
+   ],
+   "o_que_mostra": "Fachada do Palácio do Itamaraty, em Brasília (sede do Ministério das Relações Exteriores): arcos de concreto sobre fachada de vidro, espelho d'água com escultura branca à esquerda e, em primeiro plano, a guarda de honra em uniforme de gala, com lanças e bandeirolas, sobre um tapete vermelho; céu com nuvens. Foto oficial publicada pela Agência Brasília. Conferido visualmente: colorida, nítida.",
+   "alt_sugerido": "Palácio do Itamaraty em Brasília, com arcos de concreto, espelho d'água e guarda de honra sobre tapete vermelho",
+   "uso_sugerido": "DIH, seção “A Comissão Nacional de DIH” (o Ministério das Relações Exteriores preside a Comissão).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Pal%C3%A1cio_do_Itamaraty_(48206263506).jpg",
+   "titulo_original": "File:Palácio do Itamaraty (48206263506).jpg",
+   "autor": "Luis Tajes/SETUR, publicada pela Agência Brasília (Flickr)",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "data_da_imagem": "12 de abril de 2019",
+   "credito_pronto": "Foto: Luis Tajes/SETUR (Agência Brasília), via <a href=\"https://commons.wikimedia.org/wiki/File:Pal%C3%A1cio_do_Itamaraty_(48206263506).jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/2.0\">CC BY 2.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cruz-vermelha-fiji-entrega-2012-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 93840,
+   "variantes": [
+    "assets/institucional/fotos/cruz-vermelha-fiji-entrega-2012-480.webp"
+   ],
+   "o_que_mostra": "Entrega de suprimentos pela Cruz Vermelha de Fiji após enchentes em Ba (Fiji), em 2012: um funcionário de colete refletivo com o emblema da Sociedade Nacional entrega uma caixa com cruz vermelha a uma moradora, diante de um caminhão que transporta uma unidade portátil de purificação de água; ao lado, uma voluntária de camiseta da Cruz Vermelha faz anotações. Pessoas sorrindo; sem cenas de sofrimento. Conferido visualmente: colorida, nítida.",
+   "alt_sugerido": "Funcionário da Cruz Vermelha de Fiji entrega uma caixa de suprimentos a uma moradora após enchentes, em 2012",
+   "uso_sugerido": "Movimento Internacional, seção “Os três componentes do Movimento” (Sociedades Nacionais, universalidade: Oceania); também serve aos Princípios Fundamentais (Humanidade, Universalidade).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Fiji_Red_Cross,_Fiji_(10695132256).jpg",
+   "titulo_original": "File:Fiji Red Cross, Fiji (10695132256).jpg",
+   "autor": "Department of Foreign Affairs and Trade (Austrália), via Flickr",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "data_da_imagem": "2 de fevereiro de 2012",
+   "credito_pronto": "Foto: Department of Foreign Affairs and Trade (Austrália), via <a href=\"https://commons.wikimedia.org/wiki/File:Fiji_Red_Cross,_Fiji_(10695132256).jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/2.0\">CC BY 2.0</a> (redimensionada pela filial)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cruz-vermelha-filipina-covid-19-960.webp",
+   "largura": 960,
+   "altura": 639,
+   "bytes": 56158,
+   "variantes": [
+    "assets/institucional/fotos/cruz-vermelha-filipina-covid-19-480.webp"
+   ],
+   "o_que_mostra": "Membros da Cruz Vermelha Filipina, de uniforme vermelho com o emblema, luvas, máscara e protetor facial, fazem triagem térmica de motoristas numa fila de carros na entrada do Capitólio provincial de Bayombong (Nueva Vizcaya, Filipinas), durante a pandemia de COVID-19. Conferido visualmente: colorida, nítida; pessoas em ação, sem sofrimento. ARQUIVO JÁ EXISTENTE na pasta, gerado por outro curador a partir do mesmo arquivo do Commons (conferido pixel a pixel: idêntico); a minha cópia duplicada foi apagada para não repetir.",
+   "alt_sugerido": "Equipe da Cruz Vermelha Filipina com máscaras e protetores faciais faz triagem térmica de motoristas numa fila de carros",
+   "uso_sugerido": "Movimento Internacional, Sociedades Nacionais em ação (universalidade: Ásia), como segunda imagem ao lado da de Fiji.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Philippine_Red_Cross_thermal_scanning_COVID19_Bayombong.jpg",
+   "titulo_original": "File:Philippine Red Cross thermal scanning COVID19 Bayombong.jpg",
+   "autor": "Philippine Information Agency (agência oficial do governo filipino)",
+   "licenca": "Domínio público (obra do governo filipino, conforme o Commons)",
+   "licenca_url": "",
+   "data_da_imagem": "2020 (pandemia de COVID-19; a data de câmera registrada no Commons, 21/03/2019, é incompatível com a descrição, por isso não citar o dia)",
+   "credito_pronto": "Imagem: Philippine Information Agency, 2020, via <a href=\"https://commons.wikimedia.org/wiki/File:Philippine_Red_Cross_thermal_scanning_COVID19_Bayombong.jpg\">Wikimedia Commons</a> (domínio público)"
+  },
+  {
+   "arquivo": "assets/institucional/fotos/nilo-pecanha-1909-960.webp",
+   "largura": 803,
+   "altura": 1200,
+   "bytes": 53630,
+   "o_que_mostra": "Retrato oficial de Nilo Peçanha em preto e branco: busto de frente, terno escuro, colarinho alto e gravata-borboleta, bigode e cavanhaque, olhar levemente para a esquerda, fundo claro. Conferido visualmente: nítido, sem marca d'água, sem texto.",
+   "alt_sugerido": "Nilo Peçanha, presidente da República entre 1909 e 1910, em retrato oficial: terno escuro, gravata-borboleta, bigode e cavanhaque",
+   "uso_sugerido": "Base legal, seção 'Por que a Cruz Vermelha tem leis próprias' ou ao lado da linha do Decreto nº 2.380/1910 na tabela (decreto assinado na presidência de Nilo Peçanha, 31/12/1910); também Quem somos, 'Reconhecimentos'.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Nilo_Peçanha_02.jpg",
+   "titulo_original": "File:Nilo Peçanha 02.jpg",
+   "autor": "Governo do Brasil (Galeria de Presidentes), fotógrafo não identificado",
+   "licenca": "Domínio público (foto oficial brasileira de c. 1909, publicada antes de 1956)",
+   "licenca_url": "",
+   "data_da_imagem": "c. 1909 (segundo o Commons: foto oficial do presidente, 1909-1910)",
+   "credito_pronto": "Imagem: Governo do Brasil (Galeria de Presidentes), c. 1909, via <a href=\"https://commons.wikimedia.org/wiki/File:Nilo_Peçanha_02.jpg\">Wikimedia Commons</a> (domínio público)",
+   "variantes": [
+    "assets/institucional/fotos/nilo-pecanha-1909-960.webp (803x1200, 53630 B)",
+    "assets/institucional/fotos/nilo-pecanha-1909-480.webp (480x717, 25012 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/palacio-do-catete-960.webp",
+   "largura": 960,
+   "altura": 640,
+   "bytes": 148578,
+   "o_que_mostra": "O Palácio do Catete visto da esquina, em dia de sol: prédio neoclássico de três pavimentos, fachada clara com esquadrias altas e as águias (condores) de bronze sobre a platibanda; árvores, postes e carros estacionados em frente. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Palácio do Catete, no Rio de Janeiro, hoje Museu da República: fachada neoclássica clara com águias de bronze no alto, vista da esquina",
+   "uso_sugerido": "Base legal, seção 'Por que a Cruz Vermelha tem leis próprias' ('de onde vêm as leis'): o Decreto nº 2.380/1910 e o Decreto nº 9.620/1912 são da época em que o Catete era a sede da Presidência. A legenda sobre 'sede da Presidência' precisa de fonte na página (site do Museu da República); o Commons só repete a informação.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Palácio_do_Catete_-_Museu_da_República.jpg",
+   "titulo_original": "File:Palácio do Catete - Museu da República.jpg",
+   "autor": "Halley Pacheco de Oliveira",
+   "licenca": "CC BY-SA 3.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "data_da_imagem": "11/02/2010",
+   "credito_pronto": "Foto: Halley Pacheco de Oliveira, via <a href=\"https://commons.wikimedia.org/wiki/File:Palácio_do_Catete_-_Museu_da_República.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0\">CC BY-SA 3.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/palacio-do-catete-960.webp (960x640, 148578 B)",
+    "assets/institucional/fotos/palacio-do-catete-480.webp (480x320, 41764 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/palacio-do-planalto-960.webp",
+   "largura": 960,
+   "altura": 640,
+   "bytes": 42426,
+   "o_que_mostra": "O Palácio do Planalto, em Brasília, visto de frente e de baixo: as colunas curvas brancas de Niemeyer, a fachada de vidro, o gramado e o espelho d'água em primeiro plano, céu azul-escuro. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Palácio do Planalto, em Brasília, sede da Presidência da República: colunas brancas curvas, fachada de vidro e espelho d'água",
+   "uso_sugerido": "Base legal, seções 'Por que' ou 'O Estatuto de 2016' (o Estatuto da CVB é aprovado por decreto do Presidente da República: Decreto nº 8.885/2016; Decreto-Lei nº 426/1969).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Palácio_do_Planalto_em_2020.jpg",
+   "titulo_original": "File:Palácio do Planalto em 2020.jpg",
+   "autor": "Senado Federal (Agência Senado, Flickr)",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "data_da_imagem": "22/07/2020",
+   "credito_pronto": "Foto: Senado Federal, via <a href=\"https://commons.wikimedia.org/wiki/File:Palácio_do_Planalto_em_2020.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by/2.0\">CC BY 2.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/palacio-do-planalto-960.webp (960x640, 42426 B)",
+    "assets/institucional/fotos/palacio-do-planalto-480.webp (480x320, 10930 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/congresso-nacional-960.webp",
+   "largura": 960,
+   "altura": 544,
+   "bytes": 35064,
+   "o_que_mostra": "O Congresso Nacional, em Brasília: as duas torres gêmeas, a cúpula convexa do Senado à esquerda e a côncava da Câmara à direita, o edifício horizontal, o gramado e o espelho d'água; céu azul com nuvens. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Congresso Nacional, em Brasília: torres gêmeas, cúpula do Senado e cúpula da Câmara dos Deputados, com espelho d'água em frente",
+   "uso_sugerido": "Base legal, 'de onde vêm as leis': leis federais citadas na página (Lei nº 9.608/1998, Lei nº 13.019/2014, Lei nº 13.204/2015).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Brasilia_Congresso_Nacional_05_2007_221.jpg",
+   "titulo_original": "File:Brasilia Congresso Nacional 05 2007 221.jpg",
+   "autor": "Mario Roberto Duran Ortiz (Mariordo)",
+   "licenca": "Domínio público (liberada pelo autor)",
+   "licenca_url": "",
+   "data_da_imagem": "20/05/2007",
+   "credito_pronto": "Imagem: Mario Roberto Duran Ortiz, 2007, via <a href=\"https://commons.wikimedia.org/wiki/File:Brasilia_Congresso_Nacional_05_2007_221.jpg\">Wikimedia Commons</a> (domínio público)",
+   "variantes": [
+    "assets/institucional/fotos/congresso-nacional-960.webp (960x544, 35064 B)",
+    "assets/institucional/fotos/congresso-nacional-480.webp (480x272, 12550 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/palacio-tiradentes-960.webp",
+   "largura": 960,
+   "altura": 641,
+   "bytes": 105534,
+   "o_que_mostra": "Fachada principal do Palácio Tiradentes, sede da ALERJ, vista da base da escadaria: colunata de seis colunas coríntias, frontão com estátuas no alto, duas esculturas sentadas ladeando a escada; céu azul com nuvens no fim da tarde. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Palácio Tiradentes, sede da Assembleia Legislativa do Estado do Rio de Janeiro: escadaria e colunata de seis colunas com estátuas no alto",
+   "uso_sugerido": "Base legal, seção 'As leis que reconhecem a filial no Rio' (Lei estadual nº 9.984/2023, ALERJ); Quem somos, 'Reconhecimentos'.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Palácio_Tiradentes_-_Rio_de_Janeiro_-_20220826172929.jpg",
+   "titulo_original": "File:Palácio Tiradentes - Rio de Janeiro - 20220826172929.jpg",
+   "autor": "Donatas Dabravolskas",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "26/08/2022",
+   "credito_pronto": "Foto: Donatas Dabravolskas, via <a href=\"https://commons.wikimedia.org/wiki/File:Palácio_Tiradentes_-_Rio_de_Janeiro_-_20220826172929.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/palacio-tiradentes-960.webp (960x641, 105534 B)",
+    "assets/institucional/fotos/palacio-tiradentes-480.webp (480x320, 28844 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/palacio-pedro-ernesto-960.webp",
+   "largura": 960,
+   "altura": 752,
+   "bytes": 178814,
+   "o_que_mostra": "O Palácio Pedro Ernesto, sede da Câmara Municipal do Rio, na Cinelândia: fachada branca eclética com duas torres de relógio, bandeira do Brasil no mastro, pedestres e carros no calçadão de pedras portuguesas em frente, prédios altos ao fundo. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Palácio Pedro Ernesto, sede da Câmara Municipal do Rio de Janeiro, na Cinelândia: fachada branca com duas torres de relógio e bandeira do Brasil",
+   "uso_sugerido": "Base legal, seção 'As leis que reconhecem a filial no Rio' (Lei municipal nº 5.153/2010); Quem somos, 'Reconhecimentos'.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Palácio_Pedro_Ernesto_na_Cinelândia.jpg",
+   "titulo_original": "File:Palácio Pedro Ernesto na Cinelândia.jpg",
+   "autor": "Halley Pacheco de Oliveira",
+   "licenca": "CC BY-SA 3.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "data_da_imagem": "20/12/2011",
+   "credito_pronto": "Foto: Halley Pacheco de Oliveira, via <a href=\"https://commons.wikimedia.org/wiki/File:Palácio_Pedro_Ernesto_na_Cinelândia.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0\">CC BY-SA 3.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/palacio-pedro-ernesto-960.webp (960x752, 178814 B)",
+    "assets/institucional/fotos/palacio-pedro-ernesto-480.webp (480x376, 48140 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/praca-da-cruz-vermelha-ambulancias-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 106444,
+   "o_que_mostra": "Prédio de fachada eclética clara na Praça da Cruz Vermelha, com árvores em frente, um portão em arco com grade de ferro, dois emblemas da cruz vermelha pintados na parede ao lado da entrada e ambulâncias estacionadas (uma com cruz vermelha e inscrição de uma prefeitura municipal, outra com a palavra 'Ambulância'); carros na rua. Foto de câmera compacta, um pouco desbotada, sem marca d'água. Conferido visualmente: os emblemas na parede e as ambulâncias apontam para o prédio da Cruz Vermelha Brasileira (muito provavelmente a entrada de ambulâncias do Palácio da Cruz Vermelha), mas a descrição no Commons diz só 'Praça da Cruz Vermelha' e a vista não é a da entrada principal com o grupo escultórico.",
+   "alt_sugerido": "Prédio com emblemas da cruz vermelha na fachada e ambulâncias estacionadas em frente, na Praça da Cruz Vermelha, no Centro do Rio de Janeiro",
+   "uso_sugerido": "Quem somos, seção 'Nossa sede: o Palácio da Cruz Vermelha', e Base legal, 'As leis que reconhecem a filial no Rio' (tombamento pelo Iphan). Usar só depois de a filial confirmar que é o Palácio (comparar com a fachada em /historia/); até lá, legendar como 'Praça da Cruz Vermelha'. É a única foto do Commons que mostra o prédio: para a necessidade (h) não há foto da fachada principal.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Praça_da_Cruz_Vemelha_(3).JPG",
+   "titulo_original": "File:Praça da Cruz Vemelha (3).JPG (o título no Commons tem o erro 'Vemelha')",
+   "autor": "Quintinense (usuário do Commons)",
+   "licenca": "Domínio público (liberada pelo autor)",
+   "licenca_url": "",
+   "data_da_imagem": "não informada no Commons para este arquivo (o arquivo irmão da mesma série, 'Praça da Cruz Vemelha.JPG', é de 23/09/2010)",
+   "credito_pronto": "Imagem: Quintinense, sem data, via <a href=\"https://commons.wikimedia.org/wiki/File:Praça_da_Cruz_Vemelha_(3).JPG\">Wikimedia Commons</a> (domínio público)",
+   "variantes": [
+    "assets/institucional/fotos/praca-da-cruz-vermelha-ambulancias-960.webp (960x720, 106444 B)",
+    "assets/institucional/fotos/praca-da-cruz-vermelha-ambulancias-480.webp (480x360, 39720 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/jean-pictet-1937-960.webp",
+   "largura": 954,
+   "altura": 1200,
+   "bytes": 53482,
+   "o_que_mostra": "Jean Pictet jovem, em 1937, sentado à mesa de trabalho na sede do CICV em Genebra: terno escuro, gravata listrada, lenço no bolso, caneta na mão sobre papéis; estantes com pastas e livros ao fundo. Foto em preto e branco, nítida, sem marca d'água. Pictet morreu em 2002 (não é pessoa viva).",
+   "alt_sugerido": "Jean Pictet, jurista do CICV, em 1937, sentado à mesa de trabalho em Genebra, de terno escuro, escrevendo",
+   "uso_sugerido": "Princípios Fundamentais, seção 'De onde vêm os princípios' (Pictet é o autor do comentário oficial aos Princípios, 1979; a página precisa citar a fonte do CICV ao mencioná-lo).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Fondation_Archives_Pictet_Jean_Pictet_CICR_1937.jpg",
+   "titulo_original": "File:Fondation Archives Pictet Jean Pictet CICR 1937.jpg",
+   "autor": "autor desconhecido; acervo da Fondation des Archives de la Famille Pictet",
+   "licenca": "CC BY-SA 4.0 (declarada no Commons em nome da Fondation des Archives de la Famille Pictet; sem registro VRT visível nos metadados)",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "1937",
+   "credito_pronto": "Foto: autor desconhecido, Fondation des Archives de la Famille Pictet, via <a href=\"https://commons.wikimedia.org/wiki/File:Fondation_Archives_Pictet_Jean_Pictet_CICR_1937.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/jean-pictet-1937-960.webp (954x1200, 53482 B)",
+    "assets/institucional/fotos/jean-pictet-1937-480.webp (480x604, 18756 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cruz-roja-chilena-rcp-2012-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 97706,
+   "o_que_mostra": "Visto de cima, grupo de jovens voluntários da Cruz Roja Chilena ajoelhados no chão em volta de dois manequins de treino de reanimação (RCP), praticando compressões; uma instrutora de colete azul com cruz vermelha orienta; rostos parcialmente visíveis. Conferido visualmente: nítido para o tamanho, sem marca d'água. O original tem só 960 px de largura: a variante de 960 está na resolução original, sem ampliação.",
+   "alt_sugerido": "Voluntários da Cruz Vermelha Chilena ajoelhados em torno de manequins, treinando reanimação cardiopulmonar",
+   "uso_sugerido": "Princípios Fundamentais, seção 'Voluntariado' (formação de voluntários em primeiros socorros em outra Sociedade Nacional); serve também a Voluntariado e Formação de voluntários.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Voluntarios_enseñando_RCP.jpg",
+   "titulo_original": "File:Voluntarios enseñando RCP.jpg",
+   "autor": "Sebastian.oliveros (usuário do Commons)",
+   "licenca": "CC BY-SA 3.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "data_da_imagem": "13/02/2012",
+   "credito_pronto": "Foto: Sebastian.oliveros, via <a href=\"https://commons.wikimedia.org/wiki/File:Voluntarios_enseñando_RCP.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/3.0\">CC BY-SA 3.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/cruz-roja-chilena-rcp-2012-960.webp (960x720, 97706 B)",
+    "assets/institucional/fotos/cruz-roja-chilena-rcp-2012-480.webp (480x360, 26760 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/croix-rouge-francaise-2021-960.webp",
+   "largura": 960,
+   "altura": 1022,
+   "bytes": 208112,
+   "o_que_mostra": "Voluntários da Cruz Vermelha Francesa de colete laranja atendem uma pessoa sentada numa cadeira sob uma tenda vermelha e branca, diante de um prédio da Croix-Rouge em Villefranche-sur-Saône; público em volta, alguns de máscara. Várias pessoas identificáveis (o Commons marca 'direitos de personalidade'). Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Voluntários da Cruz Vermelha Francesa, de colete laranja, atendem uma pessoa sentada sob uma tenda, em evento público",
+   "uso_sugerido": "Princípios Fundamentais, seções 'Voluntariado' ou 'Humanidade' (posto de primeiros socorros de outra Sociedade Nacional). Se a equipe preferir evitar rostos identificáveis, usar no lugar a foto do Crescente Vermelho Tunisiano ou a da Cruz Vermelha Filipina.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Croix_Rouge_Française_(Villefranche-sur-Saône)_-_bénévoles_en_juillet_2021.jpg",
+   "titulo_original": "File:Croix Rouge Française (Villefranche-sur-Saône) - bénévoles en juillet 2021.jpg",
+   "autor": "Benoît Prieur",
+   "licenca": "CC0 1.0",
+   "licenca_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "data_da_imagem": "02/07/2021",
+   "credito_pronto": "Foto: Benoît Prieur, via <a href=\"https://commons.wikimedia.org/wiki/File:Croix_Rouge_Française_(Villefranche-sur-Saône)_-_bénévoles_en_juillet_2021.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/publicdomain/zero/1.0/\">CC0 1.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/croix-rouge-francaise-2021-960.webp (960x1022, 208112 B)",
+    "assets/institucional/fotos/croix-rouge-francaise-2021-480.webp (480x511, 59830 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/crescente-vermelho-tunisino-2021-960.webp",
+   "largura": 960,
+   "altura": 640,
+   "bytes": 27788,
+   "o_que_mostra": "Voluntária do Crescente Vermelho Tunisiano, de costas, com colete vermelho com o crescente branco, faz continência à bandeira da Tunísia hasteada num mastro, diante de um prédio escolar, durante campanha de vacinação contra a covid-19 em Ben Arous; céu azul. Sem rosto visível. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Voluntária do Crescente Vermelho Tunisiano, de costas, com colete vermelho com o crescente branco, diante da bandeira da Tunísia",
+   "uso_sugerido": "Princípios Fundamentais, seção 'Universalidade' (o crescente vermelho é a mesma rede em outros países); também Movimento Internacional, seção 'Emblemas'.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Vaccination_campaign_Covd-19_Tunisian_Red_Crescent_Tunisia_Ben_Arous_01.jpg",
+   "titulo_original": "File:Vaccination campaign Covd-19 Tunisian Red Crescent Tunisia Ben Arous 01.jpg",
+   "autor": "Brahim Guedich",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "data_da_imagem": "15/08/2021",
+   "credito_pronto": "Foto: Brahim Guedich, via <a href=\"https://commons.wikimedia.org/wiki/File:Vaccination_campaign_Covd-19_Tunisian_Red_Crescent_Tunisia_Ben_Arous_01.jpg\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/licenses/by-sa/4.0\">CC BY-SA 4.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/crescente-vermelho-tunisino-2021-960.webp (960x640, 27788 B)",
+    "assets/institucional/fotos/crescente-vermelho-tunisino-2021-480.webp (480x320, 11434 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/crescente-vermelho-iraniano-2010-960.webp",
+   "largura": 960,
+   "altura": 720,
+   "bytes": 112452,
+   "o_que_mostra": "Voluntário do Crescente Vermelho Iraniano (filial de Nishapur), de capacete vermelho e uniforme branco e vermelho, desce de rapel pela fachada de um prédio de tijolos claros, em exercício de resgate; faixa com texto em persa no canto inferior esquerdo. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Voluntário do Crescente Vermelho Iraniano, de capacete e uniforme vermelho e branco, desce de rapel pela fachada de um prédio em treinamento de resgate",
+   "uso_sugerido": "Princípios Fundamentais, seções 'Universalidade' ou 'Voluntariado' (segunda opção; a foto tunisiana é a primeira).",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Red_Crescent_Society_of_Nishapur_-_Volunteers_-_02.JPG",
+   "titulo_original": "File:Red Crescent Society of Nishapur - Volunteers - 02.JPG",
+   "autor": "آرمین (usuário do Commons)",
+   "licenca": "CC0 1.0",
+   "licenca_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "data_da_imagem": "24/07/2010",
+   "credito_pronto": "Foto: آرمین, via <a href=\"https://commons.wikimedia.org/wiki/File:Red_Crescent_Society_of_Nishapur_-_Volunteers_-_02.JPG\">Wikimedia Commons</a>, <a href=\"https://creativecommons.org/publicdomain/zero/1.0/\">CC0 1.0</a> (redimensionada pela filial)",
+   "variantes": [
+    "assets/institucional/fotos/crescente-vermelho-iraniano-2010-960.webp (960x720, 112452 B)",
+    "assets/institucional/fotos/crescente-vermelho-iraniano-2010-480.webp (480x360, 32810 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cruz-vermelha-filipina-covid-19-960.webp",
+   "largura": 960,
+   "altura": 639,
+   "bytes": 56158,
+   "o_que_mostra": "Integrante da Cruz Vermelha Filipina, de uniforme vermelho com o emblema, máscara, protetor facial e luvas, ao lado de uma fila de carros numa barreira sanitária em Bayombong (Nueva Vizcaya, Filipinas), fazendo triagem térmica de motoristas durante a pandemia de covid-19. A placa de um carro está legível. Conferido visualmente: nítido, sem marca d'água.",
+   "alt_sugerido": "Integrante da Cruz Vermelha Filipina, de uniforme vermelho, máscara e protetor facial, faz triagem térmica de motoristas numa fila de carros",
+   "uso_sugerido": "Princípios Fundamentais, seções 'Universalidade' ou 'Humanidade'. Legendar sem ano: a descrição no Commons não traz data e o EXIF (21/03/2019) é incompatível com a covid-19.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Philippine_Red_Cross_thermal_scanning_COVID19_Bayombong.jpg",
+   "titulo_original": "File:Philippine Red Cross thermal scanning COVID19 Bayombong.jpg",
+   "autor": "Philippine Information Agency (agência do governo das Filipinas)",
+   "licenca": "Domínio público (obra do governo das Filipinas)",
+   "licenca_url": "",
+   "data_da_imagem": "sem data confirmada (pandemia de covid-19; EXIF registra 21/03/2019, incompatível)",
+   "credito_pronto": "Imagem: Philippine Information Agency, sem data, via <a href=\"https://commons.wikimedia.org/wiki/File:Philippine_Red_Cross_thermal_scanning_COVID19_Bayombong.jpg\">Wikimedia Commons</a> (domínio público)",
+   "variantes": [
+    "assets/institucional/fotos/cruz-vermelha-filipina-covid-19-960.webp (960x639, 56158 B)",
+    "assets/institucional/fotos/cruz-vermelha-filipina-covid-19-480.webp (480x320, 21514 B)"
+   ]
+  },
+  {
+   "arquivo": "assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-619.webp",
+   "largura": 619,
+   "altura": 845,
+   "bytes": 66618,
+   "o_que_mostra": "Cartaz litográfico colorido da Primeira Guerra Mundial, acervo da Library of Congress: sobre fundo amarelo, as bandeiras do Brasil e dos Estados Unidos cruzadas; no alto, uma enfermeira da Cruz Vermelha de braços abertos; embaixo, uma figura feminina sentada sobre uma cruz vermelha com a legenda 'A Cruz Vermelha, Mãe de Todas as Nações' e o título 'Symbolos da Liberdade y da Humanidade' (grafia da época, com 'y'). Recortado pela filial para tirar as barras de cor e a moldura do scan. Conferido visualmente: nítido, sem marca d'água. O cartaz tem só 619 px de largura no scan do Commons: não há variante de 960; exibir com no máximo 480 px de largura (ou 619 px em telas comuns).",
+   "alt_sugerido": "Cartaz da Primeira Guerra Mundial com as bandeiras do Brasil e dos Estados Unidos cruzadas, uma enfermeira da Cruz Vermelha e a frase 'A Cruz Vermelha, Mãe de Todas as Nações'",
+   "uso_sugerido": "Princípios Fundamentais, seção 'Universalidade' (a Cruz Vermelha como rede de todas as nações), ou Quem somos, 'Conheça mais' (história). Legenda sugerida: 'Cartaz da Primeira Guerra Mundial (1914-1918), acervo da Library of Congress', com link para o registro https://lccn.loc.gov/00651574.",
+   "pagina_commons": "https://commons.wikimedia.org/wiki/File:Symbolos_da_liberdade_y_da_humanidade_A_Crux_Vermelha,_Mãe_de_todas_as_nacões._LCCN00651574.jpg",
+   "titulo_original": "File:Symbolos da liberdade y da humanidade A Crux Vermelha, Mãe de todas as nacões. LCCN00651574.jpg",
+   "autor": "autor desconhecido (cartaz da coleção World War I Posters, Library of Congress, LCCN 00651574)",
+   "licenca": "Domínio público (cartaz de 1914-1918)",
+   "licenca_url": "",
+   "data_da_imagem": "entre 1914 e 1918 (segundo a Library of Congress)",
+   "credito_pronto": "Imagem: autor desconhecido, 1914-1918, via <a href=\"https://commons.wikimedia.org/wiki/File:Symbolos_da_liberdade_y_da_humanidade_A_Crux_Vermelha,_Mãe_de_todas_as_nacões._LCCN00651574.jpg\">Wikimedia Commons</a> (domínio público; original na Library of Congress)",
+   "variantes": [
+    "assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-619.webp (619x845, 66618 B; largura máxima disponível)",
+    "assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-480.webp (480x655, 44704 B)"
+   ]
+  }
+ ],
+ "descartadas": [
+  "File:Gustave Moynier.jpg (500×699), File:Gustave Moynier - Lacroix phot.jpg (590×912), File:Gustave Moynier (cropped).jpg (239×363), File:Gustave Moynier young.jpg (420×600): largura original menor que 700 px; Moynier ficou coberto pela fotomontagem Les 5 fondateurs e pela foto V-P-HIST-01831.",
+  "File:Louis Appia.jpg (497×602): pequena. File:ICRC-Library LouisAppia 1859.jpg: é a folha de rosto de um livro, não retrato. File:Louis Appia Jusserands.jpg (CC0): placa comemorativa numa casa, não retrato. Appia ficou coberto pela fotomontagem.",
+  "File:Theodore Maunoir.jpg (497×657), File:PortraitTheodoreMaunoir-ca1860 BibliothequeDeGeneveCentreDIconographie.jpg (606×735), File:TheodoreMaunoir-ByJeanJosephTemporel-before1869 BibliothequeDeGeneveCentreDIconographie.jpg (409×698): pequenas; Maunoir ficou coberto pela fotomontagem.",
+  "File:Guillaume Henri Dufour.jpg (772×938, pintura de Anne-Octavie L'Hardy, PD): preterida pelo daguerreótipo de 2541 px.",
+  "File:Committee of Five Geneva 1863.jpg (697×503): pequena e repete a mesma montagem. File:ICRC-founders-collage-1914 V-P-HIST-03357.jpg (PD): colagem de 1914 com fundadores e primeiros membros; não baixada, redundante.",
+  "File:Henry Dunant Museum Heiden Friedensnobelpreis KB-038258.jpg (CC BY-SA 4.0): baixada e descartada após conferência visual: mostra uma sala de exposição com um vídeo de ator; o diploma do Nobel não é identificável (ambígua).",
+  "File:Henry Dunant Nobel Peace Prize.jpg (CICV, CC BY-SA 2.0), File:Friedensnobelpreis Henry Dunant 2010-07-01.jpg (CC BY-SA 3.0), File:Henry Dunant. Photograph. Wellcome M0017054.jpg (CC BY 4.0), File:Henri Dunant.jpg (gravura 1895–96, PD): alternativas não baixadas por limite de downloads; o retrato PD de 1901 (Library of Congress) atendeu. File:J.H. Dunant & F. Passy.jpg (444×296): pequena, montagem.",
+  "File:International Red Cross and Red Crescent Museum 2010-07-01.jpg (CC BY-SA 3.0, Henry Mühlpfordt) e File:Musée de la Croix-Rouge 2011-04-01.jpg (CC BY-SA 3.0, B1mbo): baixadas e descartadas: apesar do título, as duas mostram o prédio do CICV (letreiro CICR) visto do pátio do museu, não o museu.",
+  "File:APART - Genf, 2022.jpg (CC BY 4.0): instalação artística exposta no museu, não o museu. File:Capsule temporelle et \"les Jardins du Musée\" © Aline Bovard Rudaz.jpg (CC BY-SA 4.0): estrutura temporária nos jardins; não representa o museu.",
+  "File:Delegates of the First International Peace Conference at The Hague, 1899.png (PD, 6145×4148, 34 MB): não baixada pelo tamanho; a foto do IWM cobriu a necessidade. File:Russian delegation at the Hague Peace Conference 1899.jpg (630×471): pequena. File:Делегаты Гаагской конференции 1899 года.jpg (gravura de 1901, PD, 10 MB): não baixada, redundante.",
+  "File:Geneva Conventions 1949-08-12 (final act) - CH-BAR - 29355732.pdf (PD, Arquivo Federal Suíço, 23 MB): PDF do Ato Final da Conferência Diplomática de 1949; não baixado (exigiria renderizar página); a foto da assinatura cobriu a necessidade. Os demais arquivos da categoria CH-BAR são PDFs dos textos.",
+  "File:American Red Cross - Warehouses - ... Bumpliz ... NARA - 20805376.jpg (PD, NARA): é de 1917–1918 (Primeira Guerra), não da Segunda. File:Red Cross Parcel.jpg (Muckleburgh Collection, 'domínio público' declarado pelo fotógrafo, sem data do objeto): preterida pelas duas encomendas de museus com licença clara.",
+  "File:Postkaart van het Rode Kruis van een Belgische Krijgsgevangene, asset k2REaoolXkHrDPJE7iv3KzCz.jpg (444×336, CC0) e File:Kriegsgefangenschaftskarte ikrk.jpg (640×455): pequenas. File:1943 Irl-POW Japan censor.jpg (PD): envelope censurado sem ligação explícita com a Cruz Vermelha. File:Oflag XIA - 2.jpg (PD): verso de foto-postal privada, ligação com a Cruz Vermelha não explícita.",
+  "File:Agence de prisonniers de guerre Genève.jpg (PD, 1217×780): Agência Internacional de Prisioneiros de Guerra de 1914 (Primeira Guerra), fora da necessidade; poderia servir à história do CICV. File:Avis prisonniers de guerre 1943.jpg (CC BY-SA 3.0): cartaz de ocupação alemã; foto de documento, não ilustra proteção.",
+  "File:Hagos konvencija.jpg (500×500) e File:Signe distinctive de la Convention de La Haye pour la protection des biens culturels en cas de conflit armé.jpg (355×533): pequenas.",
+  "File:Civil Protection Bulgaria.jpg (160×160): logotipo, pequena. File:Väestönsuoja 20171109.jpg (CC BY-SA 4.0, 12,5 MB): não baixada; a foto do BBK atendeu. File:Väestönsuojan ovi.jpg (CC BY-SA 1.0 fi): porta de abrigo, sinal não garantido. File:LKM Ourøgade.jpg (CC BY 2.5): veículo dinamarquês, sinal não garantido.",
+  "File:Fardeen Bin Abdullah volunteering for Bangladesh Red Crescent Society.jpg (1032×774, CC0): retrato de pessoa viva identificada pelo nome; descartada. File:Rode Kruis hulp in Bangladesj na overstromingen, Bestanddeelnr 927-4183.jpg (CC0, 1974): não é recente. File:Loon 3 earthquake.JPG (CC BY-SA 3.0): hospital de campanha sem Sociedade Nacional identificada. File:Humanitarian assistance Afghanistan.jpg (CICV, CC BY-SA 2.0): ação do CICV, não de Sociedade Nacional. File:Disastrous floods in Bangladesh.jpg: imagem de satélite Copernicus. File:Bangladesh Red Crescent Society, National Head Quarter, Dhaka.jpg e File:Barangay Potrero, Malabon City Metro Manila 36.jpg: prédios, não ação.",
+  "File:Palácio do Itamaraty, Brasília, Brasil.jpg (olho-de-peixe), File:Palácio do Itamaraty 1.jpg, File:Palácio do Itamaraty 3.jpg, File:Itamaraty (47946683752).jpg, File:Palácio Itamaraty, Brasília, noite.jpg: alternativas válidas (CC BY-SA 2.0/4.0), não baixadas; preferida a foto oficial da Agência Brasília (CC BY 2.0).",
+  "File:International Committee of the Red Cross, Geneva (46907115094).jpg (CC BY-SA 2.0, 15 MB), File:International Committee of the Red Cross in Geneva.jpg (CC BY-SA 4.0, 12000 px), File:Comite international de la Croix-Rouge Geneve.JPG (CC BY-SA 3.0), File:Switzerland-02529 - Red Cross & Cresent Movement (23248481892).jpg (CC BY-SA 2.0): alternativas não baixadas; preferida a foto em domínio público (IKRK Hauptquartier.jpg).",
+  "File:IFRC-headquarters-Geneva-01.jpg, -03, -04, -05 (CC BY-SA 4.0, mesma série): não baixadas; a -02 mostra a entrada com o totem identificado.",
+  "File:CICR ICRC-Archives-HQ-Geneva-ReadingRoom CommemorativePlaque1870s RomanDeckert09062020.jpg (CC BY-SA 4.0): placa interna da sala de leitura dos arquivos; fora das necessidades. File:Geneva Convention 1864 from Flickr 160753851 743dd85bb4 o.jpg (CC BY 2.0, 768×1024): pequena e já coberta pela página do Emblema.",
+  "Buscas por texto no Commons para 'Kenya Red Cross', 'Red Crescent volunteers' e 'civil defence sign' só devolveram PDFs, medalhas e fotos militares; por isso a seleção de Sociedades Nacionais recorreu a categorias (Fiji e Filipinas).",
+  "(a) File:Nilo Peçanha.jpg (Arquivo Nacional, Fundo Correio da Manhã, domínio público, 1966x3283): baixada e conferida; retrato de corpo inteiro, desbotado e de baixo contraste; o retrato oficial (Nilo Peçanha 02) é melhor. Não convertida.",
+  "(a) File:Nilo Peçanha 2.jpg: original de 138 px (pequeno).",
+  "(a) File:Nilo Procópio Peçanha.jpg: 450 px (pequeno).",
+  "(a) File:NiloProcópioPeçanha.jpg: 536 px (pequeno).",
+  "(a) File:Nilo Peçanha presidente do Senado.jpg: 180 px e licença 'Attribution' genérica do Senado, que não está na lista aceita.",
+  "(a) File:Nilo Peçanha, sem data.tif (Arquivo Nacional, domínio público): não baixada por causa do limite de 20 arquivos; o retrato oficial atende.",
+  "(b) File:PalaciodoplanaltoFR.jpg (CC BY-SA 4.0): relâmpago e palácio com as cores da bandeira francesa após atentados de 2015; contexto inadequado.",
+  "(b) File:Palácio do Catete - Rio de Janeiro - 20220826065059.jpg e ...065008.jpg (Donatas Dabravolskas, CC BY-SA 4.0): boas alternativas, não baixadas (limite de 20; a foto de Halley Pacheco de Oliveira atende).",
+  "(b) File:Brazilian National Congress.jpg (CC BY-SA 2.5), File:Congresso Nacional, Brasília-DF, Brasil.jpg (CC BY 2.0), File:Congresso Nacional BSB 06 2014 8856 cropped.jpg (CC BY-SA 4.0), File:Congresso do Brasil.jpg (CC BY-SA 2.0): alternativas válidas, não baixadas; a foto em domínio público de 2007 atende.",
+  "(c) File:Palácio Tiradentes, Rio de Janeiro, Brazil.jpg (Wilfredor, CC0): baixada e conferida; mostra um corredor interno com vitrais, não a fachada; substituída pela foto de Donatas Dabravolskas.",
+  "(c) File:Palácio Tiradentes 2.JPG: 800x600 (pequena). File:Palácio Tiradentes. Rio de Janeiro (1).jpg (CC0) e File:Palácio Tiradentes - Rio de Janeiro, Brasil.jpg (CC BY 2.0): não baixadas (limite).",
+  "(c) File:Palácio Pedro Ernesto Flickr.jpg: 1024x768 (resolução baixa para a variante de 960 em retina); File:Palácio Pedro Ernesto visto de noite.jpg: foto de exposição na praça, prédio ao fundo; File:Palácio Pedro Ernesto, atual Câmara Municipal do Rio de Janeiro (002095RJ001033).jpg (IMS, domínio público): foto histórica sem data no Commons; a necessidade pedia o prédio atual.",
+  "(d) File:Praça da Cruz Vemelha.JPG (Quintinense, domínio público, 23/09/2010): baixada e conferida; bancos, árvores e um prédio alto ao fundo; não mostra o Palácio; qualidade baixa.",
+  "(d) File:Praça da Cruz Vemelha (2).JPG e File:Praça da Cruz Vemelha (4).JPG (Quintinense, domínio público): baixadas e conferidas; palmeiras da praça com cartazes de campanha eleitoral (nomes e números de candidatos) em primeiro plano; incompatíveis com o princípio da neutralidade.",
+  "(d) File:Incacruzvermelha.jpg (Agência Brasil, CC BY-SA 3.0, 800 px): mostra o hospital do INCA, não a Cruz Vermelha. File:INCA unidade I - panoramio.jpg: 179 px. File:Hospital do Câncer 1 - Instituto Nacional de Câncer.jpg (CC BY-SA 4.0): fachada do INCA, não da Cruz Vermelha.",
+  "(e) File:Red cross volunteers.jpg (Flygklubben, CC BY-SA 4.0, 2025): baixada e conferida; três socorristas de colete vermelho, de costas, num evento em pista de pouso; a descrição não diz o país nem a Sociedade Nacional (ambígua). Não convertida.",
+  "(e) File:Fardeen Bin Abdullah volunteering for Bangladesh Red Crescent Society.jpg (CC0): foto de pessoa viva identificada pelo nome (retrato); descartada sem baixar.",
+  "(e) File:Red Crescent Society of Nishapur - Volunteers - 01.JPG: 640 px (pequena). File:Voluntarios Juventud Santiago.jpg: 720x471 (pequena e de baixa qualidade).",
+  "(e) File:Entrega Ayuda humanitaria.jpg (Cruz Roja Chilena, CC BY-SA 3.0, 960x720): entrega de ajuda a pessoas em situação de rua; dúvida sobre a dignidade das pessoas retratadas; não baixada.",
+  "(e) File:TERREMOTO PEDERNALES (26257166310).jpg (Agencia ANDES, CC BY-SA 2.0): a descrição cita polícia, Cruz Roja, bombeiros e exército juntos; não dá para garantir que a Cruz Roja apareça; não baixada.",
+  "(e) Série 'Ukrainian Red Cross Society volunteers administering first aid to a wounded Euromaidan protester' (2014, CC BY-SA): cenas de confronto político com feridos; inadequadas para a página.",
+  "(e) File:Camion de la Croix Rouge et bénévoles - Loire-sur-Rhône (2018).JPG (Benoît Prieur, CC0): não baixada; preterida pela foto de 2021 do mesmo autor (limite de 20).",
+  "(e) File:Hiroshima Red Cross 20130616-1.JPG (CC BY 3.0): a descrição diz só 'filial de Hiroshima'; conteúdo não conferido e sem orçamento de download. File:Jrc emergency 01.jpg e 02.jpg: certificados de curso, não voluntários em ação. File:Earthquake aftercare (3524682159).jpg (British Red Cross, CC BY 2.0, foto de 1923): 550 px. File:Hôpital de campagne.jpg (1904, domínio público): 582 px. File:Loon 3 earthquake.JPG (CC BY-SA 3.0): hospital de campanha sem menção à Cruz Vermelha.",
+  "(e) Fotos 'IBPA ...' da Prefeitura de Porto Alegre (Cruz Vermelha do Brasil, 2017-2025): licença 'Attribution' genérica do Banco de Imagens da PMPA, fora da lista aceita; além disso são da CVB, não de outra Sociedade Nacional.",
+  "(f) 20ª Conferência Internacional da Cruz Vermelha (Viena, 1965): nenhuma imagem encontrada no Commons. Buscas feitas: 'International Conference of the Red Cross Vienna 1965', 'XXth International Conference Red Cross 1965', 'Internationale Rotkreuzkonferenz Wien 1965', 'Rotes Kreuz Konferenz Wien 1965', 'Conférence internationale Croix-Rouge Vienne 1965'; as categorias 'International Conferences of the Red Cross and Red Crescent', '20th International Conference of the Red Cross' e 'International Conference of the Red Cross' não existem. Só apareceram PDFs sem relação. Registrado: sem foto ou cartaz livre para a Conferência de 1965.",
+  "(g) File:GeorgesKuehne-JacquesCheneviere-JeanPictet RTS ICRC AV-Archives V-P-RAD-E-00024.jpg (CC BY-SA 4.0, 1953): Pictet aparece pequeno, ao fundo, numa recepção de rádio; ambígua. A foto de 1937 da Fondation Pictet foi a escolhida.",
+  "(h) Série 'File:2019 Visita à Sede do Orgão Central da Cruz Vermelha Brasileira' (cerca de 40 fotos, Palácio do Planalto/Flickr, CC BY 2.0, Romério Cunha/VPR, Rio de Janeiro, 24/09/2019): metadados conferidos; todas descrevem cerimônia interna com o então presidente da República em exercício (político) e o presidente da CVB; nenhuma descreve a fachada. Descartadas por neutralidade (nada de políticos nas páginas) e por não mostrarem o prédio.",
+  "(h) File:Brazilian Red Cross 1920s.jpg (domínio público, 1923): 394 px e é um documento, não o prédio. File:Nice Camargo Riesemberg Braga, primeira dama do Paraná, visita a Cruz Vermelha Brasileira..tif (Arquivo Nacional, domínio público, 1965, 1399 px): a descrição não diz o que mostra; não baixada (limite de 20); candidata para outra rodada. File:Maria Carneiro Pereira Gomes.jpg: 353 px, sem relação direta. Não existe no Commons a categoria 'Palácio da Cruz Vermelha' nem 'Cruz Vermelha Brasileira' (só 'Brazilian Red Cross' e 'Praça da Cruz Vermelha'): não há foto livre da fachada principal do Palácio."
+ ],
+ "desenhos": [
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/linha-do-tempo-dih.svg",
+   "largura": 860,
+   "altura": 420,
+   "bytes": 5705,
+   "o_que_mostra": "Linha do tempo horizontal, estilo flat sobre fundo branco, com dez marcos alternados acima e abaixo de um eixo cinza-claro: 1864, 1906, 1929, 1949, 1977 e 2005 (tratados internacionais, em preto) e 1957, 1993, 2010 e 2023 (decretos brasileiros, em vermelho). Cada marco tem o ano em negrito e um rótulo curto; legenda pequena no canto superior esquerdo (ponto preto = Tratados internacionais; ponto vermelho = Atos do Brasil). Renderizado com Playwright a 860 px e a 820 px e conferido visualmente: sem sobreposição, texto mínimo 13 px no viewBox. Caminho público: /assets/institucional/desenhos/linha-do-tempo-dih.svg. Fontes das datas: página direito-internacional-humanitario do institucional.json e texto do Decreto nº 42.121/1957 no Planalto (art. 59 da I Convenção cita as Convenções de 22/08/1864, 06/07/1906 e 27/07/1929).",
+   "texto_no_desenho": "Marcos do Direito Internacional Humanitário e sua promulgação no Brasil · Legenda: Tratados internacionais · Atos do Brasil · 1864 Primeira Convenção de Genebra · 1906 Primeira revisão da Convenção · 1929 Convenção de Genebra revista · 1949 As quatro Convenções de Genebra · 1957 Promulgação no Brasil, Decreto 42.121 · 1977 Protocolos Adicionais I e II · 1993 Promulgação no Brasil, Decreto 849 · 2005 Protocolo III: cristal vermelho · 2010 Promulgação no Brasil, Decreto 7.196 · 2023 Comissão Nacional de DIH, Decreto 11.752",
+   "alt_sugerido": "Linha do tempo do Direito Internacional Humanitário: Convenções de Genebra de 1864, 1906, 1929 e 1949, Protocolos de 1977 e 2005 (em preto) e os decretos brasileiros de 1957, 1993 e 2010 que os promulgaram, mais a Comissão Nacional de DIH de 2023 (em vermelho)"
+  },
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/linha-do-tempo-base-legal.svg",
+   "largura": 860,
+   "altura": 420,
+   "bytes": 7051,
+   "o_que_mostra": "Linha do tempo horizontal, estilo flat sobre fundo branco, com doze marcos em vermelho alternados acima e abaixo de um eixo cinza-claro, de 1908 a 2023: a fundação da CVB (losango) e onze normas, cada uma com o ano em negrito, o identificador curto da norma e um rótulo do tema. Normas federais em ponto vermelho cheio; a lei municipal (2010) e a lei estadual (2023) em anel vermelho. O ano 2010 aparece duas vezes, lado a lado (Decreto 7.196 e Lei municipal 5.153). Legenda pequena no canto superior esquerdo (Norma federal · Lei do Rio de Janeiro · Fundação da CVB). Renderizado a 860 px e a 820 px e conferido visualmente: sem sobreposição, texto mínimo 13 px. Caminho público: /assets/institucional/desenhos/linha-do-tempo-base-legal.svg. Fonte única das normas: lista 'normas' da página base-legal no institucional.json; a data de fundação vem do art. 1º do Estatuto (Decreto nº 8.885/2016, conferido no Planalto: 05/12/1908).",
+   "texto_no_desenho": "Leis e decretos da Cruz Vermelha Brasileira e da filial do Rio · Legenda: Norma federal · Lei do Rio de Janeiro · Fundação da CVB · 1908 Fundação da CVB · 1910 Decreto 2.380, Associações da Cruz Vermelha · 1912 Decreto 9.620, Caráter nacional · 1957 Decreto 42.121, Convenções de Genebra · 1961 Lei 3.960, Emblema distintivo de saúde · 1993 Decreto 849, Protocolos I e II · 1998 Lei 9.608, Serviço voluntário · 2010 Decreto 7.196, Protocolo III · 2010 Lei municipal 5.153, Utilidade pública · 2014 Lei 13.019, Parcerias (MROSC) · 2016 Decreto 8.885, Estatuto da CVB · 2023 Lei estadual 9.984, Utilidade pública",
+   "alt_sugerido": "Linha do tempo da base legal da Cruz Vermelha Brasileira, de 1908 a 2023: fundação em 1908, Decretos 2.380 (1910), 9.620 (1912), 42.121 (1957), 849 (1993), 7.196 (2010) e 8.885 (2016), Leis 3.960 (1961), 9.608 (1998) e 13.019 (2014), Lei municipal 5.153 (2010) e Lei estadual 9.984 (2023)"
+  },
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/estrutura-movimento.svg",
+   "largura": 860,
+   "altura": 464,
+   "bytes": 7188,
+   "o_que_mostra": "Diagrama flat da estrutura do Movimento Internacional: no alto, três caixas brancas com borda preta para os componentes (CICV e Federação com a cruz vermelha desenhada em quadrado branco; Sociedades Nacionais com quatro cruzes pequenas). Dentro da caixa das Sociedades Nacionais há uma caixa aninhada com borda vermelha destacando a Cruz Vermelha Brasileira. Linhas cinza descem dos três componentes a um barramento e setas levam aos fóruns (caixas cinza-claro): Conferência Internacional, Conselho de Delegados e Comissão Permanente. À esquerda, uma caixa tracejada 'Estados das Convenções de Genebra' aponta para a Conferência; uma seta em cotovelo liga a Conferência à Comissão Permanente (grupo <g id=\"comissao-permanente\">, removível). Caminho público: /assets/institucional/desenhos/estrutura-movimento.svg",
+   "texto_no_desenho": "O Movimento Internacional da Cruz Vermelha e do Crescente Vermelho | Três componentes, unidos pelos sete Princípios Fundamentais, e os fóruns onde eles se reúnem | Comitê Internacional da Cruz Vermelha (CICV): Criado em 1863. Protege e ajuda pessoas em conflitos armados e zela pelo Direito Humanitário. | Federação Internacional das Sociedades (FICV): Reúne as 191 Sociedades Nacionais e cuida da integridade e dos interesses delas. | 191 Sociedades Nacionais: No máximo uma por país. Auxiliam as autoridades, respondem a emergências e apoiam pessoas vulneráveis no próprio país. | Cruz Vermelha Brasileira: Sociedade Nacional do Brasil, no Movimento desde 1912; inclui a filial do Rio. | Estados das Convenções de Genebra | Conferência Internacional: Órgão deliberativo supremo. Reúne os componentes e os Estados; costuma acontecer a cada quatro anos. | Conselho de Delegados: Só os componentes do Movimento, sem os Estados, a cada dois anos. | Comissão Permanente: Atua entre duas Conferências.",
+   "alt_sugerido": "Diagrama do Movimento Internacional: três caixas no alto para o CICV, a Federação Internacional e as 191 Sociedades Nacionais, com a Cruz Vermelha Brasileira destacada em vermelho dentro desta última; setas levam aos fóruns embaixo, a Conferência Internacional, da qual também participam os Estados das Convenções de Genebra, o Conselho de Delegados e a Comissão Permanente"
+  },
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/organizacao-cvb.svg",
+   "largura": 860,
+   "altura": 400,
+   "bytes": 6322,
+   "o_que_mostra": "Organograma flat da organização federativa da CVB em três faixas. Coluna esquerda com o nome de cada nível (1 · Órgão Central, 2 · Filiais estaduais, 3 · Filiais municipais) e o resumo das atribuições do art. 13 do Estatuto. À direita: caixa do Órgão Central com a cruz vermelha; setas descem a quatro filiais estaduais, três genéricas tracejadas em cinza e a Filial do Estado do Rio de Janeiro em destaque com borda vermelha (sede no Palácio da Cruz Vermelha, Centro do Rio); dela saem setas para duas filiais municipais genéricas. Nota cinza no canto inferior direito sobre municípios sem filial. Sem 'Brasília' e sem Assembleia/Conselho/Diretoria, porque a página não os cita. Caminho público: /assets/institucional/desenhos/organizacao-cvb.svg",
+   "texto_no_desenho": "Como a Cruz Vermelha Brasileira se organiza | A CVB, Sociedade Nacional do Brasil, funciona como uma federação em três níveis (Estatuto da CVB, art. 13) | 1 · Órgão Central: Cria normas, coordena e fiscaliza as filiais, planeja programas nacionais e representa a CVB fora do país. | Órgão Central – Cruz Vermelha Brasileira | 2 · Filiais estaduais: Implantam programas, promovem treinamentos, divulgam as Convenções de Genebra e coordenam as filiais municipais. | Filial estadual (três caixas) | Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro. Sede: Palácio da Cruz Vermelha, no Centro do Rio | 3 · Filiais municipais: Respondem pelas ações no seu município e aplicam ali o Plano Estratégico Nacional da CVB. | Filial municipal (duas caixas) | Onde não há filial municipal, quem responde pelas ações é a filial estadual (art. 13, §2º).",
+   "alt_sugerido": "Organograma da Cruz Vermelha Brasileira em três níveis: o Órgão Central no topo, ligado por setas às filiais estaduais, entre as quais a Filial do Estado do Rio de Janeiro aparece destacada em vermelho, com sede no Palácio da Cruz Vermelha; abaixo dela, as filiais municipais. À esquerda, o resumo das atribuições de cada nível segundo o art. 13 do Estatuto"
+  },
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/caminho-voluntario.svg",
+   "largura": 860,
+   "altura": 232,
+   "bytes": 4326,
+   "o_que_mostra": "Passo a passo horizontal com cinco círculos vermelhos numerados (1 a 5) ligados por setas cinza; sob cada círculo, o nome da etapa em negrito e duas ou três linhas de explicação, seguindo exatamente a ordem da seção 'como-entrar' da página voluntariado (cadastro, ficha de entrevista, CBFI, termo de adesão, atuação). Linha final em cinza lembra que a formação é gratuita. Caminho público: /assets/institucional/desenhos/caminho-voluntario.svg",
+   "texto_no_desenho": "Como ser voluntário na filial do Rio: cinco passos | 1 Cadastro: Preencha o formulário oficial do voluntariado | 2 Ficha de entrevista: A equipe entra em contato e explica as frentes de atuação | 3 CBFI: Curso de formação inicial, gratuito, quatro vezes por ano | 4 Termo de adesão: Assinatura prevista na Lei nº 9.608/1998 | 5 Atuação: Participe das ações e das formações internas da filial | A formação é gratuita: não é preciso comprar nenhum curso para ser voluntário.",
+   "alt_sugerido": "Passo a passo para ser voluntário, em cinco círculos numerados ligados por setas: cadastro no formulário oficial, ficha de entrevista com a equipe, CBFI (curso de formação inicial, gratuito, quatro vezes por ano), assinatura do termo de adesão previsto na Lei nº 9.608/1998 e atuação nas ações e formações internas da filial"
+  },
+  {
+   "arquivo": "/home/user/cruzvermelhariodejaneiro/site/assets/institucional/desenhos/principios-icones.svg",
+   "largura": 860,
+   "altura": 184,
+   "bytes": 4903,
+   "o_que_mostra": "Sete ícones geométricos em linha, cada um dentro de um círculo cinza-claro, com o numeral romano em cima e o nome do princípio em negrito embaixo: coração vermelho (Humanidade), balança (Imparcialidade), nível de bolha com a bolha vermelha centrada (Neutralidade), bússola com agulha vermelha e preta (Independência), mão levantada preta (Voluntariado), anel preto com a cruz vermelha dentro (Unidade) e globo com meridianos e paralelos (Universalidade). Sem símbolos religiosos. Caminho público: /assets/institucional/desenhos/principios-icones.svg",
+   "texto_no_desenho": "Os sete Princípios Fundamentais (Viena, 1965) | I Humanidade | II Imparcialidade | III Neutralidade | IV Independência | V Voluntariado | VI Unidade | VII Universalidade",
+   "alt_sugerido": "Sete ícones em linha, um para cada Princípio Fundamental: coração (Humanidade), balança (Imparcialidade), nível de bolha (Neutralidade), bússola (Independência), mão levantada (Voluntariado), anel com a cruz vermelha (Unidade) e globo (Universalidade)"
+  }
+ ]
+}

@@ -1,0 +1,68 @@
+# Páginas institucionais com imagens (15/10/2026): fotos próprias já no ar, imagens públicas do Commons e diagramas da filial.
+# 8 páginas (as 7 revisadas + /emblema/, que só muda pelo CSS novo) e os assets novos em assets/institucional/. As fotos de
+# /assets/otim/ e /assets/emblema/ referidas já estão no ar e não entram aqui. Assets fora do Git (site/assets/ no .gitignore).
+# O ar antes = o Git em 6d29371 para as 8 páginas (conferido por HTTP antes de publicar).
+# Antes, a cópia do ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-institucional $(grep -vE '^(#|$)' scripts/publicacao-institucional-imagens.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional-imagens.txt)
+# Depois: cache (hosting_cache_clear-website), conferência por HTTP, gerar_sitemaps.py e sitemaps.
+# Desfazer: C=/tmp/no-ar-institucional; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-institucional-imagens.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|"); scripts/publicar_hostinger.sh --apagar $(cat $C/novos.txt)
+site/quem-somos/index.html
+site/principios-fundamentais/index.html
+site/movimento-internacional/index.html
+site/direito-internacional-humanitario/index.html
+site/base-legal/index.html
+site/cursos-gratuitos/index.html
+site/voluntariado/index.html
+site/emblema/index.html
+site/assets/institucional/desenhos/caminho-voluntario-vertical.svg
+site/assets/institucional/desenhos/caminho-voluntario.svg
+site/assets/institucional/desenhos/estrutura-movimento-vertical.svg
+site/assets/institucional/desenhos/estrutura-movimento.svg
+site/assets/institucional/desenhos/linha-do-tempo-base-legal-vertical.svg
+site/assets/institucional/desenhos/linha-do-tempo-base-legal.svg
+site/assets/institucional/desenhos/linha-do-tempo-dih.svg
+site/assets/institucional/desenhos/organizacao-cvb-vertical.svg
+site/assets/institucional/desenhos/organizacao-cvb.svg
+site/assets/institucional/desenhos/principios-icones.svg
+site/assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-480.webp
+site/assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-960.webp
+site/assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-480.webp
+site/assets/institucional/fotos/cartaz-cruz-vermelha-brasileira-1914-1918-619.webp
+site/assets/institucional/fotos/cicv-sede-genebra-480.webp
+site/assets/institucional/fotos/cicv-sede-genebra-960.webp
+site/assets/institucional/fotos/comite-dos-cinco-1863-480.webp
+site/assets/institucional/fotos/comite-dos-cinco-1863-960.webp
+site/assets/institucional/fotos/congresso-nacional-480.webp
+site/assets/institucional/fotos/congresso-nacional-960.webp
+site/assets/institucional/fotos/crescente-vermelho-tunisino-2021-480.webp
+site/assets/institucional/fotos/crescente-vermelho-tunisino-2021-960.webp
+site/assets/institucional/fotos/cruz-roja-chilena-rcp-2012-480.webp
+site/assets/institucional/fotos/cruz-roja-chilena-rcp-2012-960.webp
+site/assets/institucional/fotos/cruz-vermelha-fiji-entrega-2012-480.webp
+site/assets/institucional/fotos/cruz-vermelha-fiji-entrega-2012-960.webp
+site/assets/institucional/fotos/dunant-1901-retrato-480.webp
+site/assets/institucional/fotos/dunant-1901-retrato-960.webp
+site/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-britanica-480.webp
+site/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-britanica-960.webp
+site/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-480.webp
+site/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp
+site/assets/institucional/fotos/ficv-sede-genebra-480.webp
+site/assets/institucional/fotos/ficv-sede-genebra-960.webp
+site/assets/institucional/fotos/genebra-1949-assinatura-convencoes-480.webp
+site/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp
+site/assets/institucional/fotos/haia-1899-conferencia-da-paz-480.webp
+site/assets/institucional/fotos/haia-1899-conferencia-da-paz-960.webp
+site/assets/institucional/fotos/jean-pictet-1937-480.webp
+site/assets/institucional/fotos/jean-pictet-1937-960.webp
+site/assets/institucional/fotos/palacio-do-catete-480.webp
+site/assets/institucional/fotos/palacio-do-catete-960.webp
+site/assets/institucional/fotos/palacio-do-planalto-480.webp
+site/assets/institucional/fotos/palacio-do-planalto-960.webp
+site/assets/institucional/fotos/palacio-itamaraty-brasilia-480.webp
+site/assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp
+site/assets/institucional/fotos/palacio-pedro-ernesto-480.webp
+site/assets/institucional/fotos/palacio-pedro-ernesto-960.webp
+site/assets/institucional/fotos/palacio-tiradentes-480.webp
+site/assets/institucional/fotos/palacio-tiradentes-960.webp
+site/assets/institucional/fotos/protecao-civil-sinal-veiculo-480.webp
+site/assets/institucional/fotos/protecao-civil-sinal-veiculo-960.webp
