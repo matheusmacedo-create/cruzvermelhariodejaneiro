@@ -28,6 +28,7 @@
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
 require __DIR__ . '/lib/painel_comunicacao.php';
+require __DIR__ . '/lib/painel_voluntarios.php';
 
 const MCP_PAINEL_LIMITE_LINKS = [5, 3600];
 const MCP_PAINEL_RESPOSTA_MIN = 5;
@@ -40,6 +41,7 @@ const PN_ICONES = [
     'inscricoes' => '<path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
     'horarios' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
     'mensagens' => '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
+    'voluntarios' => '<path d="M12 20.5s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.5 2.3c0 5.6-7.5 10.2-7.5 10.2z"/><path d="M9 3.5h6M12 2v3"/>',
     'turmas' => '<circle cx="9" cy="8" r="3"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14h1a4 4 0 0 1 4 4v1"/>',
     'ponto' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     'comunicacao' => '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
@@ -89,6 +91,7 @@ function pn_menu(string $aba): string
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
         'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
+        'voluntarios' => ['painel.php?v=voluntarios', 'Voluntários', mcp_voluntarios_novas_contar(), 'fichas novas'],
         'turmas' => ['painel.php?v=turmas', 'Turmas sob demanda', mcp_turma_contar()['acao'], 'pedidos de turma fechada sem resposta ou listas que chegaram a ' . MCP_TURMA_MINIMO],
         'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar() + mcp_ponto_saidas_informadas_contar(),
             'pendências (saídas esquecidas, saídas informadas para conferir e termos de adesão)'],
@@ -732,6 +735,7 @@ function pn_inicio(string $usuario, string $aviso = '', string $classe = 'ok'): 
         . '<div class="cartao"><h2>Mensagens recentes</h2>'
         . ($mensagens !== '' ? '<ul class="lista-curta">' . $mensagens . '</ul>' : '<p class="nota">Nenhuma mensagem ainda.</p>')
         . '<p class="nota"><a href="painel.php?v=mensagens">Ver todas as mensagens →</a></p></div></div>'
+        . pv_cartao_inicio()
         . '<div class="cartao" style="margin-top:18px"><h2>Horários mais pedidos, em todos os cursos</h2>'
         . ($horarios !== '' ? '<ul class="lista-curta">' . $horarios . '</ul>' : '<p class="nota">Ainda não há respostas ao questionário de horários.</p>')
         . '<p class="nota"><a href="painel.php?v=horarios">Ver o mapa por curso →</a></p></div>'
@@ -1605,7 +1609,7 @@ $avisos = [
     'ek_nada' => ['Nada mudou: não há matrícula a cancelar nesta compra (ou já foi registrada).', 'erro'],
     'tc_ok' => ['Turma confirmada. Quem pagou tudo nesta turma recebeu o e-mail "Turma confirmada".', 'ok'],
     'tc_nada' => ['Nada mudou: ninguém que pagou tudo nesta turma estava sem a confirmação.', 'erro'],
-] + PC_AVISOS;
+] + PC_AVISOS + PV_AVISOS;
 
 if ($metodo === 'GET' && isset($_GET['sair'])) {
     mcp_painel_sessao_fechar();
@@ -1727,6 +1731,15 @@ if ($metodo === 'POST') {
             pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
         }
         pc_post($sessao, $acao, $id);
+    }
+
+    // Voluntários (lib/painel_voluntarios.php): situação, aceitação, notas, planilha e PDF das fichas. Só com sessão e o token do formulário.
+    if (in_array($acao, PV_ACOES, true)) {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($sessao === null || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, $acao, $id), mcp_texto($_POST['t'] ?? '', 40))) {
+            pn_login('Sua sessão venceu ou o formulário não é mais válido. Entre de novo.');
+        }
+        pv_post($sessao, $acao, $id);
     }
 
     // Ponto da sede (lib/ponto.php e lib/presenca.php): cadastro, correções, presenças e aparelhos. Só com sessão.
@@ -1919,6 +1932,12 @@ if ($secao === 'turmas') {
 }
 if ($secao === 'comunicado') {
     pc_comunicado($sessao, isset($_GET['novo']) ? null : (int) ($_GET['id'] ?? 0), $aviso, $classe);
+}
+if ($secao === 'voluntarios') {
+    pv_lista($sessao, $aviso, $classe);
+}
+if ($secao === 'voluntario') {
+    pv_ficha($sessao, (int) ($_GET['id'] ?? 0), $aviso, $classe);
 }
 if (isset($_GET['id'])) {
     $c = mcp_contato_por_id((int) $_GET['id']);

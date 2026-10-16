@@ -513,7 +513,7 @@ function mcp_drive_ficha_pdf_simples(array $ficha, string $protocolo): string
     $campos = [
         'Nome' => $linha[2], 'Idade' => $linha[3] . ' anos', 'CPF' => $cpf !== '' ? substr($cpf, 0, 3) . '.***.***-**' : 'não informado',
         'E-mail' => $linha[4], 'Telefone' => $linha[5], 'Cidade' => $linha[6], 'Escolaridade' => $linha[7], 'Profissão' => $linha[8],
-        'Saúde' => $linha[9], 'Frentes' => $linha[10], 'Dias' => $linha[11], 'Períodos' => $linha[12], 'Experiência' => (string) ($ficha['experiencia'] ?? ''),
+        'Formação em saúde' => $linha[9], 'Frentes' => $linha[10], 'Dias' => $linha[11], 'Períodos' => $linha[12], 'Experiência' => (string) ($ficha['experiencia'] ?? ''),
         'Habilidades' => (string) ($ficha['habilidades'] ?? ''), 'Motivação' => $linha[13], 'Como conheceu' => $linha[14], 'Status' => $linha[15],
         'Consentimento' => mcp_drive_data_brt((string) ($ficha['consentimento_em'] ?? '')) . ' (política ' . (string) ($ficha['politica_versao'] ?? '') . ')',
         'Veracidade' => mcp_drive_data_brt((string) ($ficha['veracidade_em'] ?? '')),

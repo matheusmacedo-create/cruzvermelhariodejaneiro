@@ -137,8 +137,8 @@ verificar('consentimento ausente', campo_erro(mcp_voluntario_validar(array_diff_
 verificar('consentimento "on" (formulário) vale', campo_erro($com(['consentimento' => 'on'])), 'ok');
 verificar('veracidade falsa', campo_erro($com(['veracidade' => false])), 'veracidade');
 verificar('veracidade "0" não vale', campo_erro($com(['veracidade' => '0'])), 'veracidade');
-$saude = $com(['saude' => 'sim', 'saude_qual' => ' Asma leve ']);
-verificar('saúde sim com qual', [$saude['dados']['saude'], $saude['dados']['saude_qual']], [1, 'Asma leve']);
+$saude = $com(['saude' => 'sim', 'saude_qual' => ' Técnico de enfermagem ']);
+verificar('saúde sim com qual', [$saude['dados']['saude'], $saude['dados']['saude_qual']], [1, 'Técnico de enfermagem']);
 $saudeNao = $com(['saude' => 'nao', 'saude_qual' => 'texto perdido']);
 verificar('saúde não descarta o "qual"', [$saudeNao['dados']['saude'], $saudeNao['dados']['saude_qual']], [0, null]);
 verificar('como conheceu desconhecido vira outro', $com(['como_conheceu' => 'tiktok'])['dados']['como_conheceu'] ?? null, 'outro');

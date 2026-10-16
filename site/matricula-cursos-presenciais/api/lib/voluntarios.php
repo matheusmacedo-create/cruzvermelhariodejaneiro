@@ -705,7 +705,7 @@ function mcp_voluntario_grupos(array $f, bool $comCpf = false): array
     $pessoa[] = ['Onde mora', mcp_voluntario_local_texto($f)];
     $pessoa[] = ['Escolaridade', MCP_VOL_ESCOLARIDADES[$f['escolaridade']] ?? (string) $f['escolaridade']];
     $pessoa[] = ['Profissão', (string) ($f['profissao'] ?: 'não informada')];
-    $pessoa[] = ['Condição de saúde a considerar', $saude];
+    $pessoa[] = ['Formação na área da saúde', $saude];
     $grupos = [['Quem é', $pessoa]];
     $grupos[] = ['Como quer ajudar', [
         ['Frentes', mcp_voluntario_rotulos((string) $f['frentes'], MCP_VOL_FRENTES)],
@@ -898,7 +898,7 @@ function mcp_voluntarios_csv_linhas(array $linhas): string
 {
     $f = fopen('php://temp', 'w+');
     fputcsv($f, ['Recebida em (Brasília)', 'Protocolo', 'Situação', 'Nome', 'Nascimento', 'Idade', 'E-mail', 'Telefone', 'Cidade', 'Bairro', 'UF',
-        'Escolaridade', 'Profissão', 'Condição de saúde', 'Qual', 'Frentes', 'Dias', 'Períodos', 'Experiência', 'Habilidades', 'Motivação',
+        'Escolaridade', 'Profissão', 'Formação em saúde', 'Qual', 'Frentes', 'Dias', 'Períodos', 'Experiência', 'Habilidades', 'Motivação',
         'Como conheceu', 'Aceita contato', 'Consentimento em (UTC)', 'Política (revisão)', 'Veracidade em (UTC)', 'Origem', 'Colaborador do ponto'], ';', '"', '');
     foreach ($linhas as $l) {
         fputcsv($f, array_map('mcp_horarios_celula', [
@@ -965,7 +965,7 @@ function mcp_montar_email_voluntario_equipe(array $f): array
         'Onde mora' => mcp_voluntario_local_texto($f),
         'Escolaridade' => MCP_VOL_ESCOLARIDADES[$f['escolaridade']] ?? (string) $f['escolaridade'],
         'Profissão' => (string) ($f['profissao'] ?: 'não informada'),
-        'Condição de saúde' => (int) ($f['saude'] ?? 0) === 1 ? 'Sim' . (!empty($f['saude_qual']) ? ': ' . $f['saude_qual'] : '') : 'Não',
+        'Formação na área da saúde' => (int) ($f['saude'] ?? 0) === 1 ? 'Sim' . (!empty($f['saude_qual']) ? ': ' . $f['saude_qual'] : '') : 'Não',
         'Frentes' => $frentes,
         'Disponibilidade' => mcp_voluntario_rotulos((string) $f['dias'], MCP_VOL_DIAS) . ' · ' . mcp_voluntario_rotulos((string) $f['periodos'], MCP_VOL_PERIODOS),
         'Como conheceu' => !empty($f['como_conheceu']) ? (MCP_VOL_COMO_CONHECEU[$f['como_conheceu']] ?? (string) $f['como_conheceu']) : 'não informado',

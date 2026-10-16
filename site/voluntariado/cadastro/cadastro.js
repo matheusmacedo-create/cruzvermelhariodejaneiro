@@ -351,7 +351,8 @@
       consentimento: 'Para seguir, você precisa ler e aceitar a Política de Privacidade.',
       veracidade: 'Confirme que as informações são verdadeiras.'
     };
-    if (caixa(erroUrl)) {
+    // Só nomes de campo conhecidos viram seletor: qualquer outro valor cai na mensagem genérica abaixo.
+    if (/^[a-z_]{1,30}$/.test(erroUrl) && caixa(erroUrl)) {
       var textoErro = MENSAGENS[erroUrl] || 'Confira este campo e envie de novo.';
       marcarErro(erroUrl, textoErro);
       mostrarAviso('<p><b>O cadastro ainda não foi recebido.</b></p>' + resumoErros([{ campo: erroUrl, texto: textoErro }]), false);

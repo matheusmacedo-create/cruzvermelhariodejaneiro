@@ -113,6 +113,37 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Cadastro de voluntários no próprio site e ligação com o Google Drive (16/10/2026, ainda não publicado)
+
+Pedido do Matheus: "crie o formulário do voluntário e comece a guardar a ficha em nosso banco" e "temos agora 100 tera do
+Google, faça a ligação de todo o nosso projeto com o Drive". O formulário externo (Spotform) sai de todo o site.
+
+- **Página** `/voluntariado/cadastro/` (gerador `scripts/gerar_voluntariado_cadastro.py`, script `cadastro.js`): etapas
+  (cadastro, entrevista, CBFI, termo de adesão), formulário em seções, validação no navegador igual à da API, envio em
+  JSON e, sem JavaScript, POST comum com redirect. UTMs só com consentimento de estatística, como no chat.
+- **API** `api/voluntarios.php` + `api/lib/voluntarios.php`: 16 anos ou mais, CPF opcional, armadilha, 5 fichas por IP
+  por hora, 2 por e-mail por dia, ficha repetida em 30 dias recusada com aviso. Grava em `mcp_voluntarios` com a data e
+  a versão do consentimento, gera o protocolo `VOL-aammdd-NNNN`, avisa a equipe (`EMAIL_VOLUNTARIADO`, ou
+  `EMAIL_CONTATO`) e confirma à pessoa. A ficha manda `CompleteRegistration` à API de Conversões com o mesmo id do Pixel.
+- **Portal** `painel.php?v=voluntarios`: lista com situação, busca e planilha sem CPF; ficha com histórico, notas, PDF e
+  as ações (em análise, entrevista, aceitar, recusar, arquivar, reabrir). Aceitar cria o colaborador no ponto da sede
+  com vínculo de voluntário, de onde sai o termo de adesão.
+- **LGPD**: fichas não aceitas são apagadas depois de 12 meses (rotina diária em `comparecimentos.php`), com o PDF e a
+  linha da planilha no Drive. Política de Privacidade revista em pt, en e es (revisão 2026-10-16).
+- **Google Drive** (`lib/google_drive.php`, `lib/drive_espelho.php`, rotina `api/drive.php`): conta de serviço; PDF de
+  cada ficha em `Voluntariado/Fichas` e linha na planilha "Fichas de voluntários"; exportação diária sem CPF em
+  `Secretaria/Exportações`; cópia do banco em `Backups/banco`; espelho de `public_html/assets` em `Site/assets`.
+  Só funciona depois de criar `config-google.php` no servidor: passo a passo em `docs/google-drive.md`.
+- **Documentação**: `docs/voluntariado.md` (fluxo, situações, pedido de exclusão) e `docs/google-drive.md`.
+- **Testes**: `scripts/testar_voluntarios.php` (113), `testar_voluntarios_integracao.php` (57),
+  `testar_voluntarios_portal_integracao.php` (25) e `testar_drive.php` (93), todos passando com MariaDB local;
+  `testar_avisos_integracao.php` e `testar_ponto_integracao.php` seguem passando. As 2 falhas de `testar_checkout.php`
+  (T24, `PLANO_COMPLETO_HTML`) já existiam antes desta rodada.
+- **Publicação**: `scripts/publicacao-voluntarios.txt` (35 arquivos). A migração cria 4 tabelas na primeira requisição.
+  Depois de publicar: rodar `scripts/gerar_sitemaps.py` (a página nova entrou na lista).
+- **Pendências do Matheus**: OK para publicar; montar o Google Cloud, o Drive compartilhado, a planilha e o
+  `config-google.php` no Workspace da filial (o Drive ligado a esta sessão é o da Unicopag); criar o cron do `drive.php`.
+
 ## Páginas institucionais com vida: imagens nas 7 páginas de texto (publicado em 16/10/2026)
 
 - **Pedido do Matheus (15/10):** "existe mais parte da nossa história que está sem referência visual, direito internacional por

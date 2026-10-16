@@ -74,7 +74,7 @@ pessoa (se ela sair, nada some), e uma conta de serviço não tem cota própria 
 3. Na linha 1, escreva o cabeçalho, uma coluna por célula, nesta ordem:
 
    `Protocolo` · `Data` · `Nome` · `Idade` · `E-mail` · `Telefone` · `Cidade/bairro` · `Escolaridade` · `Profissão` ·
-   `Saúde` · `Frentes` · `Dias` · `Períodos` · `Motivação` · `Como conheceu` · `Status`
+   `Formação em saúde` · `Frentes` · `Dias` · `Períodos` · `Motivação` · `Como conheceu` · `Status`
 
    A rotina acrescenta cada ficha na primeira linha vazia abaixo do que já existe, nessa mesma ordem. Pode congelar a
    linha 1 (**Visualizar › Congelar › 1 linha**) e colorir à vontade; só não mude a ordem das colunas nem o nome da
