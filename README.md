@@ -113,6 +113,21 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Home reorganizada (publicada em 16/10/2026)
+
+Pedido do Matheus: personalizar a home com as novidades e organizar a escola num bloco só, focado em Primeiros
+Socorros e Lei Lucas, mais um banner "Leve a Cruz Vermelha para a sua empresa" no estilo do bloco da CVB-MG.
+- Sai o carrossel acima do hero (o slide do El Niño era evento interno encerrado). Entram faixa de identidade com
+  fontes, "Por onde você quer começar?", voluntariado em 4 etapas, Movimento/Princípios/emblema, transparência
+  atualizada, área única da escola (#cursos) e o banner de empresas (#parceiros), com recorte do instrutor e da
+  aluna da foto da aula de Heimlich sobre o salão nobre (assets/otim/empresas-*). Cartazes de curso saíram.
+- FAQ: campo "home": false em site/faq-home.json (13 perguntas visíveis; as de curso seguem no chat).
+  gerar_matricula_presencial.py tolera a ausência do seletor de cursos na home.
+- Publicação: home + 4 imagens, depois de conferir que a home no ar era igual à versão anterior do Git; conferido
+  por HTTP e no Chromium (1280 e 390 px), sem erro nem imagem quebrada. Cópia do ar guardada antes.
+- Pendências: confirmar Agasalho, Impacto das Cores e logos de parceiros; homes EN/ES; chat com o fluxo antigo do
+  voluntariado; "em implantação" em /quem-somos/, /base-legal/ e llms.txt.
+
 ## Cadastro de voluntários no próprio site e ligação com o Google Drive (publicado em 16/10/2026)
 
 Pedido do Matheus: "crie o formulário do voluntário e comece a guardar a ficha em nosso banco" e "temos agora 100 tera do
