@@ -146,23 +146,15 @@
       "perguntas": [
         {
           "pergunta": "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial.",
+          "resposta": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, faça o cadastro aqui no site: leva uns dez minutos, e a confirmação chega por e-mail, com o protocolo. Depois vem a ficha de entrevista: a equipe do voluntariado entra em contato por e-mail para conhecer você. Quem é aceito faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano, na sede, no Centro do Rio, e é gratuito. Por fim, assina o termo de adesão ao serviço voluntário, como manda a Lei 9.608/1998. Veja o passo a passo completo na página do voluntariado.",
           "links": [
             {
-              "texto": "formulário oficial do voluntariado",
+              "texto": "cadastro aqui no site",
               "url": "/voluntariado/cadastro/"
             },
             {
-              "texto": "notícias do site",
-              "url": "/noticias/"
-            },
-            {
-              "texto": "chat de contato do site",
-              "url": "/#chat"
-            },
-            {
-              "texto": "página de links da filial",
-              "url": "/bio/"
+              "texto": "página do voluntariado",
+              "url": "/voluntariado/"
             }
           ],
           "chat": [
@@ -172,19 +164,15 @@
         },
         {
           "pergunta": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
-          "resposta": "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico.",
+          "resposta": "Não precisa ser da área da saúde nem comprar curso nenhum: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários, e essa formação é gratuita. A idade mínima é 16 anos; menores de 18 assinam o termo de adesão com um responsável. O caminho é o mesmo para todos: cadastro no site, ficha de entrevista, CBFI (o curso de formação inicial dos voluntários, quatro vezes por ano, na sede) e termo de adesão. Há espaço para perfis diferentes, em frentes como formação e primeiros socorros, campanhas e ações, juventude, comunicação e gestão de riscos e desastres. Saiba mais na página do voluntariado.",
           "links": [
             {
-              "texto": "formulário oficial",
+              "texto": "cadastro no site",
               "url": "/voluntariado/cadastro/"
             },
             {
-              "texto": "Campanha do Agasalho",
-              "url": "/campanha-agasalho.html"
-            },
-            {
-              "texto": "curso de Primeiros Socorros Básico",
-              "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-basico"
+              "texto": "página do voluntariado",
+              "url": "/voluntariado/"
             }
           ],
           "chat": [
@@ -209,7 +197,8 @@
               "texto": "página de matrícula em cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?",
@@ -244,7 +233,8 @@
             "curso",
             "pagamento"
           ],
-          "chatRotulo": "Quanto custa?"
+          "chatRotulo": "Quanto custa?",
+          "home": false
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
@@ -274,7 +264,8 @@
             "matricula",
             "curso"
           ],
-          "chatRotulo": "Qual a escolaridade mínima?"
+          "chatRotulo": "Qual a escolaridade mínima?",
+          "home": false
         },
         {
           "pergunta": "O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?",
@@ -284,7 +275,8 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
@@ -299,7 +291,8 @@
             "matricula",
             "curso"
           ],
-          "chatRotulo": "Quanto tempo dura?"
+          "chatRotulo": "Quanto tempo dura?",
+          "home": false
         },
         {
           "pergunta": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
@@ -314,7 +307,8 @@
             "matricula",
             "curso"
           ],
-          "chatRotulo": "É online ou presencial?"
+          "chatRotulo": "É online ou presencial?",
+          "home": false
         },
         {
           "pergunta": "O certificado dos cursos é reconhecido pelo MEC?",
@@ -324,7 +318,8 @@
             "curso",
             "matricula"
           ],
-          "chatRotulo": "O certificado é reconhecido pelo MEC?"
+          "chatRotulo": "O certificado é reconhecido pelo MEC?",
+          "home": false
         },
         {
           "pergunta": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
@@ -343,7 +338,8 @@
             "curso",
             "matricula"
           ],
-          "chatRotulo": "Tem curso em outras cidades?"
+          "chatRotulo": "Tem curso em outras cidades?",
+          "home": false
         }
       ]
     },
@@ -398,7 +394,8 @@
               "texto": "plataforma da escola",
               "url": "https://escola.cursoscruzvermelha.org"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "Como se tornar cuidador de idosos e o que o curso ensina?",
@@ -408,7 +405,8 @@
               "texto": "matrícula do curso de Cuidador de Idosos",
               "url": "/matricula-cursos-presenciais/?curso=cuidador-de-idosos"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
@@ -441,7 +439,8 @@
               "texto": "página de matrícula",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "Existe curso de cuidador de idosos gratuito no Rio de Janeiro?",
@@ -451,7 +450,8 @@
               "texto": "matrícula em Cuidador de Idosos",
               "url": "/matricula-cursos-presenciais/?curso=cuidador-de-idosos"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
@@ -461,7 +461,8 @@
               "texto": "curso Lei Lucas",
               "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas"
             }
-          ]
+          ],
+          "home": false
         }
       ]
     }

@@ -1712,6 +1712,10 @@ MARCA_FIM = "<!-- /matricula:cursos -->"
 
 def atualizar_seletor_home(home: str, dados: dict, cursos: dict) -> str:
     """Reescreve as pílulas (radios) do bloco "Já escolheu seu curso?" da home entre os marcadores."""
+    # O seletor "Já escolheu seu curso?" saiu da home em 16/10/2026 (a home ficou com uma área só da escola, de
+    # Primeiros Socorros e Lei Lucas). Sem o marcador, a home volta sem mudança; se o bloco voltar, ele é preenchido.
+    if MARCA_INI not in home or MARCA_FIM not in home:
+        return home
     a = home.index(MARCA_INI)
     a = home.index("-->", a) + len("-->")
     b = home.index(MARCA_FIM)
