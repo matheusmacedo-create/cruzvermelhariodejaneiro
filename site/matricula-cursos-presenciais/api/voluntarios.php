@@ -94,9 +94,9 @@ $registro = mcp_voluntario_por_id($id) ?? ($ficha + ['id' => $id, 'protocolo' =>
 $envios = mcp_email_voluntario_ficha($registro);
 mcp_voluntario_atualizar($id, ['email_equipe' => $envios['equipe'], 'email_confirmacao' => $envios['confirmacao']]);
 mcp_registrar(null, 'voluntario', "#$id · $protocolo · equipe {$envios['equipe']} · confirmação {$envios['confirmacao']}");
-// API de Conversões (só com "sim" para marketing): o mesmo id que a página manda ao Pixel, como no contato.
-mcp_meta_contato(['nome' => $ficha['nome'], 'email' => $ficha['email'], 'telefone' => $ficha['telefone'], 'assunto' => 'voluntariado',
-    'curso_nome' => 'Cadastro de voluntário', 'fbclid' => $ficha['fbclid'], 'pagina' => $ficha['pagina']], $metaId);
+// API de Conversões (só com "sim" para marketing): CompleteRegistration com o mesmo id que a página manda ao Pixel.
+mcp_meta_voluntario(['nome' => $ficha['nome'], 'email' => $ficha['email'], 'telefone' => $ficha['telefone'],
+    'fbclid' => $ficha['fbclid'], 'pagina' => $ficha['pagina']], $metaId);
 
 if ($formulario) {
     mcp_voluntario_redirecionar('protocolo=' . rawurlencode($protocolo));
