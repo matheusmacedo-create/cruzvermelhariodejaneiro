@@ -6,10 +6,11 @@ automática num Drive compartilhado do Google Workspace da filial (`cruzvermelha
 secretaria abre sem precisar de senha de servidor. O Drive é **cópia**: o banco do site continua sendo a fonte da
 verdade.
 
-> **Atenção ao Drive certo.** O Google Drive conectado a esta sessão do Claude é o da **Unicopag**
-> (matheus.macedo@unicopag.com), e **não** o da filial. Nada deste guia usa esse Drive. Todos os passos abaixo são
-> feitos por uma pessoa com conta no Workspace da filial, pelo navegador, e as chaves ficam só no servidor da
-> Hostinger — nunca neste chat, nunca no Git.
+> **Qual Drive.** O Google Drive conectado ao Claude é o da conta **contato@cruzvermelhariodejaneiro.org**, ou seja,
+> o da filial (conferido em 16/10/2026: o "Meu Drive" e os arquivos pertencem a essa conta). Foi por ele que a pasta
+> raiz e a planilha dos passos 2 e 3 foram criadas. O que o conector **não** faz: criar Drive compartilhado, mexer em
+> membros de Drive compartilhado, nem nada no Google Cloud — isso continua sendo feito por uma pessoa, pelo
+> navegador. As chaves ficam só no servidor da Hostinger — nunca neste chat, nunca no Git.
 
 Código: `site/matricula-cursos-presenciais/api/lib/google_drive.php` (fala com o Google), `lib/drive_espelho.php`
 (fila, exportações, cópia do banco, espelho das imagens), `api/drive.php` (a rotina do cron). Teste local, sem
@@ -51,22 +52,34 @@ Com uma conta de administrador do Workspace da filial:
 
 ## Passo 2 — Criar o Drive compartilhado e dar acesso à conta de serviço
 
+**Já feito em 16/10/2026 (pelo Claude, no Drive de contato@):** a pasta **Cruz Vermelha RJ – Site**, no "Meu
+Drive" da conta contato@, com a subpasta `Voluntariado` e a planilha do passo 3 dentro. Falta ela ir para um Drive
+compartilhado: a conta de serviço não tem cota no Meu Drive, então enquanto a pasta estiver lá o PDF da ficha não
+sobe (o `--testar` avisa "no Meu Drive de alguém"). Ao mover, os ids não mudam.
+
 1. Em <https://drive.google.com>, menu à esquerda, **Drives compartilhados › Novo**. Nome:
-   **Cruz Vermelha RJ – Site**.
+   **Cruz Vermelha RJ – Site**. Depois, no **Meu Drive**, arraste a pasta **Cruz Vermelha RJ – Site** para dentro
+   desse Drive compartilhado (ou botão direito › **Organizar › Mover**). O Google pergunta se pode mudar quem tem
+   acesso: confirme.
 2. Abra o Drive compartilhado, clique no nome dele (em cima) › **Gerenciar membros**. Cole o e-mail da conta de
    serviço (`site-drive@...iam.gserviceaccount.com`) e escolha o papel **Gestor de conteúdo**. Desmarque "Notificar"
    (é um robô, não lê e-mail). **Enviar**.
 3. Adicione também as pessoas da secretaria que vão abrir as cópias (**Leitor** basta) e, se quiser, deixe a pasta
    `Backups/` só para quem precisa: depois que a rotina criar as pastas, você pode restringir o acesso a `Backups/`
    pelo botão direito › **Compartilhar**.
-4. **Id da pasta raiz**: com o Drive compartilhado aberto, o endereço do navegador termina em algo como
-   `https://drive.google.com/drive/folders/0AF3kQ9xYz...`. O trecho depois de `/folders/` é o
-   `GOOGLE_DRIVE_RAIZ_ID`. Copie.
+4. **Id da pasta raiz**: abra a pasta **Cruz Vermelha RJ – Site** (a que foi movida, não a raiz do Drive
+   compartilhado). O endereço do navegador termina em algo como `https://drive.google.com/drive/folders/1clK...`.
+   O trecho depois de `/folders/` é o `GOOGLE_DRIVE_RAIZ_ID`. Copie. (A raiz do próprio Drive compartilhado, com id
+   começando por `0A`, também serviria, mas aí `Voluntariado` e a planilha ficariam fora dela.)
 
 Por que um Drive compartilhado e não uma pasta no "Meu Drive" de alguém: os arquivos ficam da instituição, não da
 pessoa (se ela sair, nada some), e uma conta de serviço não tem cota própria de armazenamento no Meu Drive.
 
 ## Passo 3 — Criar a planilha das fichas
+
+**Já feito em 16/10/2026 (pelo Claude):** `Cruz Vermelha RJ – Site/Voluntariado/Fichas de voluntários`, aba
+**Fichas**, cabeçalho na linha 1, na ordem abaixo. Conferido lendo a planilha de volta. Basta o item 4 (copiar o
+id). Os itens 1 a 3 ficam para o caso de precisar refazê-la.
 
 1. Dentro do Drive compartilhado, crie uma pasta `Voluntariado` e, nela, **Novo › Planilhas Google**. Nome:
    **Fichas de voluntários**.
