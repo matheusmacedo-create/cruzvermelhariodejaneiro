@@ -61,6 +61,16 @@ try {
         error_log('[matricula] rotina da espera: ' . get_class($e) . ': ' . $e->getMessage());
         $pagarTudo[] = 'espera: erro (' . get_class($e) . ')';
     }
+    // Voluntariado (10/2026): a Política de Privacidade promete apagar as fichas não aceitas depois de 12 meses. Uma vez por
+    // dia (data de Brasília em mcp_chaves 'voluntarios_expurgo_em', lib/voluntarios.php), no próprio try: um erro aqui não
+    // segura os comprovantes.
+    try {
+        $x = mcp_voluntarios_expurgo_diario();
+        $voluntariado = $x === null ? 'voluntariado: expurgo já feito hoje' : sprintf('voluntariado: %d fichas apagadas', $x['apagadas']);
+    } catch (Throwable $e) {
+        error_log('[matricula] expurgo das fichas de voluntariado: ' . get_class($e) . ': ' . $e->getMessage());
+        $voluntariado = 'voluntariado: erro (' . get_class($e) . ')';
+    }
     $r = mcp_presencas_enviar_pendentes();
     $apagadas = mcp_ponto_presencas_apagar_antigas();
     // Os avisos não podem derrubar os comprovantes: erro aqui vai para o log e a rodada termina normalmente.
@@ -85,8 +95,8 @@ try {
         error_log('[matricula] índices da rotina: ' . get_class($e) . ': ' . $e->getMessage());
     }
     // O resumo do pagar tudo vem antes do dos avisos: a linha continua terminando em "avisos: … vencidos", como antes.
-    printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s; %s\n",
-        gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, implode('; ', $pagarTudo), $avisos);
+    printf("%s comparecimentos: %d enviados, %d falhas, %d presenças vistas; ponto: %d presenças antigas apagadas; %s; %s; %s\n",
+        gmdate('Y-m-d H:i:s'), $r['enviados'], $r['falhas'], $r['vistos'], $apagadas, implode('; ', $pagarTudo), $voluntariado, $avisos);
     exit($r['falhas'] > 0 || $a['falhas'] > 0 ? 1 : 0);
 } finally {
     $db->query("SELECT RELEASE_LOCK('mcp_comparecimentos')");

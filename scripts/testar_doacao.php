@@ -115,7 +115,7 @@ contem('agradecimento abre pelo nome', 'Obrigado, Maria.', $ok['html']);
 contem('selo com o valor doado', 'Doação confirmada', $ok['html']);
 contem('impacto da faixa de R$ 100', 'Voluntariado preparado', $ok['html']);
 contem('reconhece quem cobriu os custos', 'chegam inteiros à filial', $ok['html']);
-contem('convida para o voluntariado', 'form.spotform.com.br/voluntariocruzvermelharj', $ok['html']);
+contem('convida para o voluntariado', 'cruzvermelhariodejaneiro.org/voluntariado/cadastro/', $ok['html']);
 contem('assina como equipe', 'Equipe da Cruz Vermelha Brasileira Rio de Janeiro', $ok['html']);
 verificar('impacto muda com o valor', mcp_doacao_impacto(3000)[0] . '|' . mcp_doacao_impacto(8000)[0] . '|' . mcp_doacao_impacto(15000)[0] . '|' . mcp_doacao_impacto(50000)[0], 'Material de primeiros socorros|Educação preventiva|Voluntariado preparado|Ação comunitária');
 verificar('doação sem custos cobertos não fala neles', str_contains(mcp_doacao_montar_email_confirmada(['taxa_centavos' => 0, 'total_centavos' => 10000] + $doacao)['html'], 'chegam inteiros'), false);

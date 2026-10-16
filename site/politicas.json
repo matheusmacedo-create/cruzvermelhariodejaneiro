@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-10-02",
+  "revisao": "2026-10-16",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -103,7 +103,7 @@
     "privacidade": {
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
-        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat e na newsletter, para quê, com quem compartilha e seus direitos pela LGPD.",
+        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, para quê, com quem compartilha e seus direitos pela LGPD.",
         "sobrancelha": "Proteção de dados",
         "h1": "Política de Privacidade",
         "intro": [
@@ -167,13 +167,13 @@
                   },
                   {
                     "titulo": "Origem da visita, só com a permissão de estatística",
-                    "dados": "Os parâmetros de campanha do endereço da página (utm, fbclid e gclid), gravados junto com a inscrição ou o contato.",
-                    "finalidade": "Saber de onde vêm as inscrições e os contatos.",
+                    "dados": "Os parâmetros de campanha do endereço da página (utm, fbclid e gclid), gravados junto com a inscrição, o contato ou a ficha de voluntário.",
+                    "finalidade": "Saber de onde vêm as inscrições, os contatos e as fichas de voluntário.",
                     "base": "Consentimento (art. 7º, I)."
                   },
                   {
                     "titulo": "Segurança dos formulários",
-                    "dados": "Endereço IP, data e hora de cada envio de matrícula ou de mensagem.",
+                    "dados": "Endereço IP, data e hora de cada envio de matrícula, de mensagem ou de ficha de voluntário.",
                     "finalidade": "Limitar tentativas repetidas e proteger os formulários contra robôs e fraudes.",
                     "base": "Legítimo interesse (art. 7º, IX) e prevenção à fraude."
                   },
@@ -184,10 +184,10 @@
                     "base": "Cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
                   },
                   {
-                    "titulo": "Voluntariado",
-                    "dados": "Os dados que você informa no formulário do voluntariado, que fica no serviço Spotform (form.spotform.com.br).",
-                    "finalidade": "A equipe do voluntariado entrar em contato e organizar a formação. O WhatsApp (21) 97036-0264 é exclusivo dessa equipe.",
-                    "base": "Procedimentos preliminares à adesão ao serviço voluntário, a seu pedido (art. 7º, V)."
+                    "titulo": "Cadastro de voluntários",
+                    "dados": "Nome, data de nascimento, e-mail, telefone, cidade, bairro e estado, CPF (opcional), escolaridade, profissão, formação na área da saúde, experiência e habilidades, áreas de interesse, dias e períodos disponíveis, motivação, como conheceu a instituição e, do envio, o endereço IP, a página e os parâmetros de campanha. O detalhe está na seção [Voluntariado](#voluntariado).",
+                    "finalidade": "Selecionar e organizar o voluntariado: analisar a ficha, chamar para a entrevista e para o Curso Básico de Formação Institucional (CBFI) e emitir o termo de adesão de quem for aceito.",
+                    "base": "Consentimento (art. 7º, I) e procedimentos preliminares ao termo de adesão ao serviço voluntário, a seu pedido (art. 7º, V)."
                   },
                   {
                     "titulo": "Ponto da sede: voluntários, diretoria e equipe",
@@ -213,7 +213,27 @@
                 "p": "O pagamento da inscrição é processado pela ÚnicoPag. Os dados do cartão passam pelo nosso servidor só a caminho dela, no momento do pagamento, e não são gravados."
               },
               {
-                "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site e não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal."
+                "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site: a pergunta do cadastro de voluntários sobre formação na área da saúde é sobre a sua profissão, não sobre a sua saúde. Não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal; o cadastro de voluntários aceita a partir de 16 anos e, para quem tem menos de 18, o termo de adesão é assinado também pelo responsável legal."
+              }
+            ]
+          },
+          {
+            "id": "voluntariado",
+            "titulo": "Voluntariado",
+            "blocos": [
+              {
+                "p": "Quem quer ser voluntário se cadastra em [cruzvermelhariodejaneiro.org/voluntariado/cadastro/](/voluntariado/cadastro/), um formulário do nosso próprio site. O formulário externo que usávamos antes (Spotform) deixou de ser usado, e a filial não coleta mais dados por ele."
+              },
+              {
+                "lista": [
+                  "**O que pedimos:** nome, data de nascimento, e-mail, telefone, cidade, bairro e estado, CPF (opcional: serve para preparar o termo de adesão e o cadastro no ponto de quem for aceito), escolaridade, profissão, se você tem formação na área da saúde e qual (uma pergunta sobre a sua profissão, não sobre a sua saúde), experiência e habilidades, as áreas em que quer atuar, os dias e períodos em que pode, a sua motivação e como conheceu a instituição. Com a ficha ficam a data e a hora em que você aceitou esta política e declarou que as informações são verdadeiras, a versão da política aceita e os dados técnicos do envio: o endereço IP, a página de onde você enviou e, só com a sua permissão de estatística, os parâmetros de campanha do endereço (utm, fbclid e gclid).",
+                  "**Para quê:** selecionar e organizar o voluntariado. A equipe analisa a ficha, entra em contato pelo e-mail ou pelo telefone informado para marcar a entrevista e o Curso Básico de Formação Institucional (CBFI) e, se você for aceito, emite o termo de adesão ao serviço voluntário (Lei nº 9.608/1998) e cadastra você no ponto da sede. A ficha não é usada para outra finalidade.",
+                  "**Base legal:** o seu consentimento, registrado com data, hora e a versão desta política (art. 7º, I), e os procedimentos preliminares ao termo de adesão, a seu pedido (art. 7º, V).",
+                  "**Com quem é compartilhada:** com a equipe do voluntariado e a secretaria da filial, pelo portal interno. Como operadores, que tratam os dados só em nosso nome e sob as nossas instruções: a **Hostinger**, onde ficam o site e o banco de dados; o **Google**, no Google Workspace da filial (Drive e Planilhas), onde guardamos a cópia da ficha em PDF e as exportações da secretaria; e a **Resend**, que envia a confirmação a você e o aviso à equipe.",
+                  "**Transferência para fora do Brasil:** a cópia no Drive e na planilha fica com o Google LLC, nos Estados Unidos, e os e-mails saem por servidores da Resend fora do Brasil. As transferências seguem o art. 33 da LGPD e a regulamentação da ANPD, com as cláusulas contratuais padrão do Google e as garantias contratuais da Resend, além das medidas de segurança desses serviços e do acesso restrito às contas da filial.",
+                  "**Por quanto tempo:** ficha não aceita, recusada ou sem resposta, por 12 meses depois do envio; depois disso é apagada, com a cópia em PDF e a linha da planilha. Ficha aceita, enquanto durar o voluntariado e por até 5 anos depois do fim, como os registros do ponto, para comprovar a natureza voluntária do serviço.",
+                  "**Seus direitos:** você pode pedir o acesso à ficha (enviamos a cópia em PDF), a correção, a exclusão e a revogação do consentimento escrevendo para [{email}](mailto:{email}) com o assunto “Privacidade”. Respondemos em até 15 dias. Revogado o consentimento, a ficha é apagada, salvo o que a lei mandar guardar. Veja também [Seus direitos](#direitos)."
+                ]
               }
             ]
           },
@@ -229,11 +249,11 @@
                   "**ÚnicoPag**, que processa os pagamentos: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
                   "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso; no ponto da sede, o CPF e a data, para saber as aulas do aluno naquele dia.",
                   "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
-                  "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula e do chat saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.",
+                  "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, a confirmação da ficha de voluntário, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula, do chat e do voluntariado saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.",
                   "**Meta, pelo WhatsApp**, só para quem autorizou receber mensagens por ali: o número e o texto de cada lembrete ou comunicado. Se a instituição usar um intermediário para mandar o WhatsApp (o Make ou o servidor do WhatsApp do Palácio Virtual, mantido pela filial), ele recebe o mesmo, só para o envio. Alunos só recebem WhatsApp com a autorização registrada na plataforma da escola.",
                   "**Vercel e Supabase**, que hospedam o sistema que publica as notícias e guarda a lista da newsletter.",
                   "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
-                  "**Spotform**, onde fica o formulário do voluntariado.",
+                  "**Google**, pelo Google Workspace da filial, como operador: o Drive e as Planilhas guardam a cópia em PDF das fichas de voluntário, as exportações diárias da secretaria (sem CPF) e as cópias de segurança do banco de dados; o e-mail da filial recebe as mensagens que você nos envia e os avisos internos dos formulários.",
                   "**Autoridades públicas**, quando a lei ou uma ordem judicial exigir."
                 ]
               },
@@ -247,7 +267,7 @@
             "titulo": "Transferência para fora do Brasil",
             "blocos": [
               {
-                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos, no Canadá e na União Europeia (Google, Meta, inclusive no WhatsApp, Resend, Vercel, Supabase e, se for usado para o WhatsApp, o Make). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
+                "p": "Alguns desses fornecedores guardam ou processam dados fora do Brasil, como nos Estados Unidos, no Canadá e na União Europeia (Google, inclusive o Google Workspace da filial, Meta, inclusive no WhatsApp, Resend, Vercel, Supabase e, se for usado para o WhatsApp, o Make). Essas transferências seguem o art. 33 da LGPD e a regulamentação da ANPD: apoiam-se nas garantias contratuais oferecidas pelos fornecedores (no Google Workspace, as cláusulas contratuais padrão do Google e as medidas de segurança do serviço) e, no caso das ferramentas de estatística e de marketing, também no seu consentimento, dado no aviso de cookies."
               }
             ]
           },
@@ -275,6 +295,7 @@
                   "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
                   "**Registros de segurança (IP):** junto com o envio a que se referem; os limites de tentativas do ponto, das páginas pessoais e do repasse das páginas à Meta guardam o IP (e, no código do dia do ponto, um código gerado a partir do CPF, que não permite ler o CPF) por 2 dias, e o registro de robôs barrados nos formulários, por 30 dias.",
                   "**Ponto da sede, de voluntários e diretoria:** enquanto durar o voluntariado e por até 5 anos depois do fim, para comprovar as horas doadas e a natureza voluntária do serviço.",
+                  "**Cadastro de voluntários:** ficha não aceita ou sem resposta, 12 meses depois do envio; ficha aceita, enquanto durar o voluntariado e por até 5 anos depois do fim, como os registros do ponto (seção [Voluntariado](#voluntariado)).",
                   "**Presença na sede de empregados, terceirizados e outros vínculos:** 90 dias. Depois, é apagada automaticamente.",
                   "**Presença nas aulas e comprovantes de comparecimento:** pelo mesmo prazo da matrícula.",
                   "**Lembretes, comunicados e pesquisa do ponto:** o registro das mensagens e as respostas da pesquisa são apagados automaticamente depois de 1 ano; um mês depois do comunicado, as respostas deixam de ficar ligadas a quem respondeu. As escolhas sobre o que receber ficam enquanto durar o cadastro no ponto. De quem pediu para não receber mais nada, guardamos só um código gerado a partir do e-mail ou do número (e não o e-mail ou o número), enquanto for preciso para respeitar o pedido.",
@@ -338,7 +359,7 @@
       },
       "en": {
         "titulo_aba": "Privacy Policy | Brazilian Red Cross Rio de Janeiro",
-        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat and the newsletter, why, who receives it, and your rights under the LGPD.",
+        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat, the newsletter and the volunteer registration, why, who receives it, and your rights under the LGPD.",
         "sobrancelha": "Data protection",
         "h1": "Privacy Policy",
         "intro": [
@@ -402,13 +423,13 @@
                   },
                   {
                     "titulo": "Where the visit came from, only with statistics permission",
-                    "dados": "The campaign parameters in the page address (utm, fbclid and gclid), stored with the enrolment or the message.",
-                    "finalidade": "To know where enrolments and messages come from.",
+                    "dados": "The campaign parameters in the page address (utm, fbclid and gclid), stored with the enrolment, the message or the volunteer form.",
+                    "finalidade": "To know where enrolments, messages and volunteer forms come from.",
                     "base": "Consent (Art. 7, I)."
                   },
                   {
                     "titulo": "Form security",
-                    "dados": "IP address, date and time of each enrolment or message sent.",
+                    "dados": "IP address, date and time of each enrolment, message or volunteer form sent.",
                     "finalidade": "To limit repeated attempts and protect the forms against bots and fraud.",
                     "base": "Legitimate interest (Art. 7, IX) and fraud prevention."
                   },
@@ -419,10 +440,10 @@
                     "base": "Compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
                   },
                   {
-                    "titulo": "Volunteering",
-                    "dados": "The data you enter in the volunteer form, hosted on the Spotform service (form.spotform.com.br).",
-                    "finalidade": "So the volunteering team can contact you and organise your training. The WhatsApp number (21) 97036-0264 belongs to that team only.",
-                    "base": "Steps prior to joining the volunteer service, at your request (Art. 7, V)."
+                    "titulo": "Volunteer registration",
+                    "dados": "Name, date of birth, e-mail, phone number, city, neighbourhood and state, CPF (optional), education, occupation, training in the health field, experience and skills, areas of interest, available days and periods, motivation, how you heard about us and, from the submission, the IP address, the page and the campaign parameters. Details in the [Volunteering](#volunteering) section.",
+                    "finalidade": "To select and organise volunteering: review the form, invite you to the interview and to the Basic Institutional Training Course (CBFI) and issue the volunteer service agreement for those accepted.",
+                    "base": "Consent (Art. 7, I) and steps prior to the volunteer service agreement, at your request (Art. 7, V)."
                   },
                   {
                     "titulo": "Headquarters time clock: volunteers, board and staff",
@@ -448,7 +469,27 @@
                 "p": "Enrolment payments are processed by ÚnicoPag. Card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored."
               },
               {
-                "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site, and we make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian."
+                "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site: the volunteer registration question about training in the health field is about your occupation, not your health. We make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian; volunteer registration is open from age 16 and, for those under 18, the volunteer service agreement is also signed by the legal guardian."
+              }
+            ]
+          },
+          {
+            "id": "volunteering",
+            "titulo": "Volunteering",
+            "blocos": [
+              {
+                "p": "Anyone who wants to volunteer registers at [cruzvermelhariodejaneiro.org/voluntariado/cadastro/](/voluntariado/cadastro/), a form on our own website, in Portuguese. The external form we used before (Spotform) is no longer in use, and the branch no longer collects data through it."
+              },
+              {
+                "lista": [
+                  "**What we ask for:** name, date of birth, e-mail, phone number, city, neighbourhood and state, CPF (optional: it is used to prepare the volunteer service agreement and the time clock registration of those accepted), education, occupation, whether you have training in the health field and which (a question about your occupation, not your health), experience and skills, the areas you want to work in, the days and periods you are available, your motivation and how you heard about us. Stored with the form are the date and time you accepted this policy and declared the information true, the version of the policy accepted and the technical data of the submission: the IP address, the page you sent it from and, only with your statistics permission, the campaign parameters in the address (utm, fbclid and gclid).",
+                  "**Purpose:** to select and organise volunteering. The team reviews the form, contacts you by e-mail or by the phone number given to arrange the interview and the Basic Institutional Training Course (CBFI) and, if you are accepted, issues the volunteer service agreement (Law No. 9,608/1998) and registers you on the headquarters time clock. The form is not used for any other purpose.",
+                  "**Legal basis:** your consent, recorded with the date, time and version of this policy (Art. 7, I), and the steps prior to the volunteer service agreement, at your request (Art. 7, V).",
+                  "**Who receives it:** the volunteering team and the branch office, through the internal portal. As processors, handling the data only on our behalf and under our instructions: **Hostinger**, which hosts the site and the database; **Google**, in the branch's Google Workspace (Drive and Sheets), where we keep a PDF copy of the form and the office's exports; and **Resend**, which sends the confirmation to you and the notice to the team.",
+                  "**Transfers outside Brazil:** the copy in Drive and in the spreadsheet is held by Google LLC, in the United States, and the e-mails go out through Resend servers outside Brazil. These transfers follow Article 33 of the LGPD and the ANPD's regulations, relying on Google's standard contractual clauses and Resend's contractual safeguards, as well as the security measures of those services and restricted access to the branch's accounts.",
+                  "**How long:** a form not accepted, declined or unanswered, for 12 months after submission; it is then deleted, together with the PDF copy and the spreadsheet row. An accepted form, for as long as the volunteering lasts and for up to 5 years after it ends, like the time clock records, to prove the voluntary nature of the service.",
+                  "**Your rights:** you can ask for access to the form (we send the PDF copy), correction, deletion and withdrawal of consent by writing to [{email}](mailto:{email}) with the subject “Privacy”. We reply within 15 days. Once consent is withdrawn, the form is deleted, except for what the law requires us to keep. See also [Your rights](#rights)."
+                ]
               }
             ]
           },
@@ -464,11 +505,11 @@
                   "**ÚnicoPag**, which processes payments: name, CPF, e-mail and phone number and, for cards, the card details.",
                   "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access; at the headquarters time clock, the CPF and the date, to find the student's classes that day.",
                   "**Hostinger**, which hosts the site, the forms and their database.",
-                  "**Resend**, which sends the e-mails (receipts, chat reference numbers, the newsletter and the time clock reminders and announcements). If it is unavailable, enrolment and chat e-mails go out through the hosting server; the time clock reminders and announcements wait for Resend to come back.",
+                  "**Resend**, which sends the e-mails (receipts, chat reference numbers, the volunteer form confirmation, the newsletter and the time clock reminders and announcements). If it is unavailable, enrolment, chat and volunteering e-mails go out through the hosting server; the time clock reminders and announcements wait for Resend to come back.",
                   "**Meta, through WhatsApp**, only for people who agreed to receive messages there: the number and the text of each reminder or announcement. If the institution uses an intermediary to send WhatsApp messages (Make, or the server of the Palácio Virtual WhatsApp, run by the branch), it receives the same, only for sending. Students only receive WhatsApp messages if their authorisation is recorded on the school platform.",
                   "**Vercel and Supabase**, which host the system that publishes the news and keeps the newsletter list.",
                   "**Google and Meta**, through the statistics and marketing tools, only with your permission. Meta also receives from our server a copy of the marketing events, with the data described above (Conversions API). Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
-                  "**Spotform**, which hosts the volunteer form.",
+                  "**Google**, through the branch's Google Workspace, as a processor: Drive and Sheets hold the PDF copies of the volunteer forms, the office's daily exports (without CPF) and the database backups; the branch's e-mail receives the messages you send us and the internal notices from the forms.",
                   "**Public authorities**, when the law or a court order requires it."
                 ]
               },
@@ -482,7 +523,7 @@
             "titulo": "Transfers outside Brazil",
             "blocos": [
               {
-                "p": "Some of these providers store or process data outside Brazil, such as in the United States, Canada and the European Union (Google, Meta, including WhatsApp, Resend, Vercel, Supabase and, if used for WhatsApp, Make). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
+                "p": "Some of these providers store or process data outside Brazil, such as in the United States, Canada and the European Union (Google, including the branch's Google Workspace, Meta, including WhatsApp, Resend, Vercel, Supabase and, if used for WhatsApp, Make). These transfers follow Article 33 of the LGPD and the ANPD's regulations: they rely on the contractual safeguards offered by the providers (for Google Workspace, Google's standard contractual clauses and the service's security measures) and, for the statistics and marketing tools, also on your consent, given in the cookie notice."
               }
             ]
           },
@@ -510,6 +551,7 @@
                   "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
                   "**Security records (IP):** together with the submission they relate to; the attempt limits of the time clock, the personal pages and the relay of page views to Meta keep the IP (and, for the time clock's code of the day, a code derived from the CPF that does not reveal it) for 2 days, and the record of robots blocked on the forms, for 30 days.",
                   "**Headquarters time clock, for volunteers and board members:** while the volunteering lasts and for up to 5 years after it ends, to prove the hours donated and the voluntary nature of the service.",
+                  "**Volunteer registration:** a form not accepted or unanswered, 12 months after submission; an accepted form, for as long as the volunteering lasts and for up to 5 years after it ends, like the time clock records ([Volunteering](#volunteering) section).",
                   "**Presence of employees, contractors and other relationships at the headquarters:** 90 days. After that, it is deleted automatically.",
                   "**Class attendance and attendance certificates:** for the same period as the enrolment.",
                   "**Time clock reminders, announcements and survey:** the record of messages and the survey answers are deleted automatically after 1 year; one month after the announcement, the answers are no longer linked to whoever gave them. Choices about what to receive are kept while the person remains registered on the time clock. For people who asked to receive nothing more, we keep only a code generated from the e-mail address or number (not the address or number itself), for as long as needed to honour the request.",
@@ -573,7 +615,7 @@
       },
       "es": {
         "titulo_aba": "Privacidad | Cruz Roja Brasileña Río de Janeiro",
-        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat y el boletín, para qué, con quién se comparte y sus derechos según la LGPD.",
+        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat, el boletín y el registro de voluntarios, para qué, con quién se comparte y sus derechos según la LGPD.",
         "sobrancelha": "Protección de datos",
         "h1": "Política de Privacidad",
         "intro": [
@@ -637,13 +679,13 @@
                   },
                   {
                     "titulo": "Origen de la visita, solo con el permiso de estadística",
-                    "dados": "Los parámetros de campaña de la dirección de la página (utm, fbclid y gclid), guardados junto con la inscripción o el mensaje.",
-                    "finalidade": "Saber de dónde vienen las inscripciones y los contactos.",
+                    "dados": "Los parámetros de campaña de la dirección de la página (utm, fbclid y gclid), guardados junto con la inscripción, el mensaje o la ficha de voluntario.",
+                    "finalidade": "Saber de dónde vienen las inscripciones, los contactos y las fichas de voluntarios.",
                     "base": "Consentimiento (art. 7, I)."
                   },
                   {
                     "titulo": "Seguridad de los formularios",
-                    "dados": "Dirección IP, fecha y hora de cada envío de matrícula o de mensaje.",
+                    "dados": "Dirección IP, fecha y hora de cada envío de matrícula, de mensaje o de ficha de voluntario.",
                     "finalidade": "Limitar los intentos repetidos y proteger los formularios contra robots y fraudes.",
                     "base": "Interés legítimo (art. 7, IX) y prevención del fraude."
                   },
@@ -654,10 +696,10 @@
                     "base": "Cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
                   },
                   {
-                    "titulo": "Voluntariado",
-                    "dados": "Los datos que usted informa en el formulario del voluntariado, alojado en el servicio Spotform (form.spotform.com.br).",
-                    "finalidade": "Que el equipo de voluntariado se ponga en contacto y organice la formación. El WhatsApp (21) 97036-0264 es exclusivo de ese equipo.",
-                    "base": "Pasos previos a la adhesión al servicio voluntario, a su pedido (art. 7, V)."
+                    "titulo": "Registro de voluntarios",
+                    "dados": "Nombre, fecha de nacimiento, correo, teléfono, ciudad, barrio y estado, CPF (opcional), escolaridad, profesión, formación en el área de la salud, experiencia y habilidades, áreas de interés, días y horarios disponibles, motivación, cómo conoció la institución y, del envío, la dirección IP, la página y los parámetros de campaña. El detalle está en la sección [Voluntariado](#voluntariado).",
+                    "finalidade": "Seleccionar y organizar el voluntariado: analizar la ficha, convocar a la entrevista y al Curso Básico de Formación Institucional (CBFI) y emitir el acuerdo de adhesión de quien sea aceptado.",
+                    "base": "Consentimiento (art. 7, I) y pasos previos al acuerdo de adhesión al servicio voluntario, a su pedido (art. 7, V)."
                   },
                   {
                     "titulo": "Control de asistencia de la sede: voluntarios, directiva y equipo",
@@ -683,7 +725,27 @@
                 "p": "El pago de la inscripción lo procesa ÚnicoPag. Los datos de la tarjeta pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan."
               },
               {
-                "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio ni tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal."
+                "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio: la pregunta del registro de voluntarios sobre formación en el área de la salud se refiere a su profesión, no a su salud. No tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal; el registro de voluntarios se acepta a partir de los 16 años y, para menores de 18, el acuerdo de adhesión lo firma también el responsable legal."
+              }
+            ]
+          },
+          {
+            "id": "voluntariado",
+            "titulo": "Voluntariado",
+            "blocos": [
+              {
+                "p": "Quien quiere ser voluntario se registra en [cruzvermelhariodejaneiro.org/voluntariado/cadastro/](/voluntariado/cadastro/), un formulario de nuestro propio sitio, en portugués. El formulario externo que usábamos antes (Spotform) dejó de usarse, y la filial ya no recoge datos por él."
+              },
+              {
+                "lista": [
+                  "**Qué pedimos:** nombre, fecha de nacimiento, correo, teléfono, ciudad, barrio y estado, CPF (opcional: sirve para preparar el acuerdo de adhesión y el registro en el control de asistencia de quien sea aceptado), escolaridad, profesión, si tiene formación en el área de la salud y cuál (una pregunta sobre su profesión, no sobre su salud), experiencia y habilidades, las áreas en las que quiere actuar, los días y horarios en que puede, su motivación y cómo conoció la institución. Con la ficha quedan la fecha y la hora en que usted aceptó esta política y declaró que la información es verdadera, la versión de la política aceptada y los datos técnicos del envío: la dirección IP, la página desde la que envió y, solo con su permiso de estadística, los parámetros de campaña de la dirección (utm, fbclid y gclid).",
+                  "**Para qué:** seleccionar y organizar el voluntariado. El equipo analiza la ficha, se pone en contacto por el correo o el teléfono informado para fijar la entrevista y el Curso Básico de Formación Institucional (CBFI) y, si usted es aceptado, emite el acuerdo de adhesión al servicio voluntario (Ley n.º 9.608/1998) y lo registra en el control de asistencia de la sede. La ficha no se usa para ninguna otra finalidad.",
+                  "**Base legal:** su consentimiento, registrado con fecha, hora y la versión de esta política (art. 7, I), y los pasos previos al acuerdo de adhesión, a su pedido (art. 7, V).",
+                  "**Con quién se comparte:** con el equipo de voluntariado y la secretaría de la filial, por el portal interno. Como encargados, que tratan los datos solo en nuestro nombre y bajo nuestras instrucciones: **Hostinger**, donde están el sitio y la base de datos; **Google**, en el Google Workspace de la filial (Drive y Hojas de cálculo), donde guardamos la copia de la ficha en PDF y las exportaciones de la secretaría; y **Resend**, que envía la confirmación a usted y el aviso al equipo.",
+                  "**Transferencia fuera de Brasil:** la copia en Drive y en la hoja de cálculo queda con Google LLC, en Estados Unidos, y los correos salen por servidores de Resend fuera de Brasil. Las transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD, con las cláusulas contractuales tipo de Google y las garantías contractuales de Resend, además de las medidas de seguridad de esos servicios y del acceso restringido a las cuentas de la filial.",
+                  "**Cuánto tiempo:** la ficha no aceptada, rechazada o sin respuesta, durante 12 meses después del envío; luego se elimina, con la copia en PDF y la fila de la hoja de cálculo. La ficha aceptada, mientras dure el voluntariado y hasta 5 años después de su fin, como los registros del control de asistencia, para comprobar la naturaleza voluntaria del servicio.",
+                  "**Sus derechos:** puede pedir el acceso a la ficha (enviamos la copia en PDF), la corrección, la eliminación y la revocación del consentimiento escribiendo a [{email}](mailto:{email}) con el asunto “Privacidad”. Respondemos en hasta 15 días. Revocado el consentimiento, la ficha se elimina, salvo lo que la ley obligue a conservar. Vea también [Sus derechos](#derechos)."
+                ]
               }
             ]
           },
@@ -699,11 +761,11 @@
                   "**ÚnicoPag**, que procesa los pagos: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
                   "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso; en el control de asistencia de la sede, el CPF y la fecha, para saber las clases del alumno ese día.",
                   "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",
-                  "**Resend**, que envía los correos (comprobantes, protocolos del chat, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula y del chat salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.",
+                  "**Resend**, que envía los correos (comprobantes, protocolos del chat, la confirmación de la ficha de voluntario, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula, del chat y del voluntariado salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.",
                   "**Meta, por WhatsApp**, solo para quien autorizó recibir mensajes por ahí: el número y el texto de cada recordatorio o comunicado. Si la institución usa un intermediario para enviar el WhatsApp (Make o el servidor del WhatsApp del Palácio Virtual, mantenido por la filial), este recibe lo mismo, solo para el envío. Los alumnos solo reciben WhatsApp si su autorización está registrada en la plataforma de la escuela.",
                   "**Vercel y Supabase**, que alojan el sistema que publica las noticias y guarda la lista del boletín.",
                   "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Meta también recibe de nuestro servidor una copia de los eventos de marketing, con los datos descritos arriba (API de Conversiones). Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
-                  "**Spotform**, donde está el formulario del voluntariado.",
+                  "**Google**, por el Google Workspace de la filial, como encargado: Drive y Hojas de cálculo guardan la copia en PDF de las fichas de voluntarios, las exportaciones diarias de la secretaría (sin CPF) y las copias de seguridad de la base de datos; el correo de la filial recibe los mensajes que usted nos envía y los avisos internos de los formularios.",
                   "**Autoridades públicas**, cuando la ley o una orden judicial lo exija."
                 ]
               },
@@ -717,7 +779,7 @@
             "titulo": "Transferencia fuera de Brasil",
             "blocos": [
               {
-                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos, Canadá y la Unión Europea (Google, Meta, también en WhatsApp, Resend, Vercel, Supabase y, si se usa para WhatsApp, Make). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
+                "p": "Algunos de estos proveedores guardan o procesan datos fuera de Brasil, como en Estados Unidos, Canadá y la Unión Europea (Google, incluido el Google Workspace de la filial, Meta, también en WhatsApp, Resend, Vercel, Supabase y, si se usa para WhatsApp, Make). Estas transferencias siguen el art. 33 de la LGPD y la reglamentación de la ANPD: se apoyan en las garantías contractuales que ofrecen los proveedores (en Google Workspace, las cláusulas contractuales tipo de Google y las medidas de seguridad del servicio) y, en el caso de las herramientas de estadística y de marketing, también en su consentimiento, dado en el aviso de cookies."
               }
             ]
           },
@@ -745,6 +807,7 @@
                   "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
                   "**Registros de seguridad (IP):** junto con el envío al que se refieren; los límites de intentos del control de asistencia, de las páginas personales y del reenvío de las páginas a Meta guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.",
                   "**Control de asistencia de la sede, de voluntarios y directiva:** mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.",
+                  "**Registro de voluntarios:** la ficha no aceptada o sin respuesta, 12 meses después del envío; la ficha aceptada, mientras dure el voluntariado y hasta 5 años después de su fin, como los registros del control de asistencia (sección [Voluntariado](#voluntariado)).",
                   "**Presencia en la sede de empleados, tercerizados y otros vínculos:** 90 días. Después, se elimina automáticamente.",
                   "**Asistencia a las clases y comprobantes de asistencia:** por el mismo plazo de la matrícula.",
                   "**Recordatorios, comunicados y encuesta del control de asistencia:** el registro de los mensajes y las respuestas de la encuesta se eliminan automáticamente después de 1 año; un mes después del comunicado, las respuestas dejan de estar vinculadas a quien respondió. Las elecciones sobre qué recibir se guardan mientras dure el registro en el control de asistencia. De quien pidió no recibir nada más, guardamos solo un código generado a partir del correo o del número (y no el correo o el número), mientras sea necesario para respetar el pedido.",
@@ -808,6 +871,7 @@
       }
     },
     "cookies": {
+      "revisao": "2026-10-02",
       "pt": {
         "titulo_aba": "Cookies | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Quais cookies o site da Cruz Vermelha Brasileira Rio de Janeiro usa, para quê e por quanto tempo, e como aceitar, recusar ou mudar a sua escolha.",

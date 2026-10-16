@@ -40,7 +40,7 @@ ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
 NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
-VOLUNTARIO = "https://form.spotform.com.br/voluntariocruzvermelharj"
+VOLUNTARIO = "/voluntariado/cadastro/"  # formulário próprio (scripts/gerar_voluntariado_cadastro.py), em português
 # Doação online suspensa desde 25/09/2026 (pedido do Matheus): sem "Donate/Donar" no menu, sem a
 # porta de doação na home e sem gerar /en/donate/ e /es/donar/ (que respondem 503 com o aviso,
 # ver site/en/donate/.htaccess). Para a doação voltar, True aqui, rodar e publicar.
@@ -301,7 +301,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         """Uma porta de entrada: página gerada deste idioma, ou o formulário do voluntariado."""
         if chave == "voluntario":
             url = VOLUNTARIO
-            extra = ' target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR"'
+            extra = ' hreflang="pt-BR" lang="pt-BR"'
         else:
             url, extra = PAGINAS[chave][idioma["codigo"]], ""
         return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
@@ -311,7 +311,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     if DOACAO_NO_AR:
         cta = f'<a class="btn btn-red" href="{PAGINAS["doar"][idioma["codigo"]]}">{esc(h["cta_doar"])}</a>'
     else:
-        cta = (f'<a class="btn btn-red" href="{VOLUNTARIO}" target="_blank" rel="noopener" hreflang="pt-BR" '
+        cta = (f'<a class="btn btn-red" href="{VOLUNTARIO}" hreflang="pt-BR" '
                f'lang="pt-BR">{esc(h["cta_voluntario"])}</a>')
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap">
@@ -547,7 +547,7 @@ def pagina_equipe(idioma: dict, partes: dict, equipe: tuple) -> str:
         {parceria}
         <div class="cta-row" style="margin-top:22px">
           <a class="btn btn-red" href="mailto:{EMAIL}">{EMAIL}</a>
-          <a class="btn btn-outline" href="{VOLUNTARIO}" target="_blank" rel="noopener" hreflang="pt-BR" lang="pt-BR">{esc(e['cta_voluntario'])}</a>
+          <a class="btn btn-outline" href="{VOLUNTARIO}" hreflang="pt-BR" lang="pt-BR">{esc(e['cta_voluntario'])}</a>
         </div>
       </div>
     </section>"""

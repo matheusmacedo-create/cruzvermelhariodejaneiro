@@ -601,6 +601,21 @@ function mcp_meta_contato(array $contato, ?string $id): void
 }
 
 /**
+ * CompleteRegistration da ficha de voluntário (api/voluntarios.php). A página manda o mesmo evento ao Pixel com este id;
+ * o nome precisa ser igual nos dois lados para a Meta juntar as duas cópias em vez de contar duas vezes.
+ */
+function mcp_meta_voluntario(array $ficha, ?string $id): void
+{
+    if ($id === null || !mcp_meta_configurada() || mcp_meta_marketing_no_cookie() !== true) {
+        return;
+    }
+    $pessoa = ['nome' => $ficha['nome'], 'email' => $ficha['email'], 'telefone' => $ficha['telefone'] ?? ''];
+    $custom = ['content_category' => 'voluntariado', 'content_name' => 'voluntariado', 'status' => 'recebida'];
+    mcp_meta_enfileirar(mcp_meta_evento('CompleteRegistration', $id, mcp_meta_user_data($pessoa, mcp_meta_contexto($ficha['fbclid'] ?? null)), $custom,
+        mcp_meta_url_limpa($ficha['pagina'] ?? null, mcp_site_url() . '/voluntariado/cadastro/')));
+}
+
+/**
  * SubmitApplication do pedido de turma sob demanda (api/turmas.php), com o mesmo id que a página manda ao Pixel.
  * Não é Lead: o Lead é do funil pago do checkout.
  */

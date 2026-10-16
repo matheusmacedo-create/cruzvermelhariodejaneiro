@@ -9,7 +9,7 @@
  */
 declare(strict_types=1);
 
-const MCP_DOACAO_FORMULARIO_VOLUNTARIO = 'https://form.spotform.com.br/voluntariocruzvermelharj';
+const MCP_DOACAO_FORMULARIO_VOLUNTARIO = 'https://cruzvermelhariodejaneiro.org/voluntariado/cadastro/'; // formulário próprio (16/10/2026)
 const MCP_DOACAO_AGRADECIMENTO = 'Como agradecimento, quem doa pelo site recebe acesso futuro a cursos gravados gratuitos da Cruz Vermelha Brasileira Rio de Janeiro.';
 
 function mcp_doacao_remetente(): string

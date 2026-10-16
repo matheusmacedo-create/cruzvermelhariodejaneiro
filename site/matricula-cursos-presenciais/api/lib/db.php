@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '3ef798dcf5f528ae';
+const MCP_DB_VERSAO = '34cf86a37ad5e17b';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -538,6 +538,94 @@ function mcp_migrar_tudo(PDO $pdo): void
         KEY ix_lista (tipo, status, curso_slug, idioma),
         KEY ix_email (email, criado_em),
         KEY ix_ip (ip, criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Cadastro de voluntários (10/2026, api/voluntarios.php e lib/voluntarios.php): a ficha preenchida no site
+    // (/voluntariado/cadastro/). Fonte da verdade: os e-mails à equipe e à pessoa e o PDF no Drive são cópias.
+    // LGPD: consentimento_em e politica_versao guardam quando e sob qual revisão da Política de Privacidade a pessoa
+    // concordou; veracidade_em, quando declarou que as informações são verdadeiras. O CPF é opcional (vira obrigatório
+    // só na aceitação, para criar o colaborador do ponto), e nunca sai no CSV nem nos e-mails.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        protocolo VARCHAR(24) NULL,
+        nome VARCHAR(160) NOT NULL,
+        data_nascimento DATE NOT NULL,
+        email VARCHAR(190) NOT NULL,
+        telefone VARCHAR(20) NOT NULL,
+        cpf CHAR(11) NULL,
+        cidade VARCHAR(120) NOT NULL,
+        bairro VARCHAR(120) NULL,
+        estado CHAR(2) NOT NULL DEFAULT 'RJ',
+        escolaridade VARCHAR(30) NOT NULL,
+        profissao VARCHAR(120) NULL,
+        saude TINYINT(1) NOT NULL DEFAULT 0,
+        saude_qual VARCHAR(160) NULL,
+        experiencia TEXT NULL,
+        habilidades TEXT NULL,
+        frentes VARCHAR(255) NOT NULL,
+        dias VARCHAR(40) NOT NULL,
+        periodos VARCHAR(30) NOT NULL,
+        motivacao TEXT NOT NULL,
+        como_conheceu VARCHAR(30) NULL,
+        aceita_contato TINYINT(1) NOT NULL DEFAULT 0,
+        consentimento_em DATETIME NOT NULL,
+        politica_versao VARCHAR(10) NOT NULL,
+        veracidade_em DATETIME NOT NULL,
+        pagina VARCHAR(255) NULL,
+        utm_source VARCHAR(120) NULL,
+        utm_medium VARCHAR(120) NULL,
+        utm_campaign VARCHAR(160) NULL,
+        utm_content VARCHAR(160) NULL,
+        utm_term VARCHAR(160) NULL,
+        fbclid VARCHAR(255) NULL,
+        gclid VARCHAR(255) NULL,
+        ip VARCHAR(45) NULL,
+        email_equipe VARCHAR(20) NULL,
+        email_confirmacao VARCHAR(20) NULL,
+        status ENUM('nova','em_analise','entrevista','aceita','recusada','arquivada') NOT NULL DEFAULT 'nova',
+        status_em DATETIME NULL,
+        status_por VARCHAR(190) NULL,
+        colaborador_id INT UNSIGNED NULL,
+        drive_pdf_id VARCHAR(80) NULL,
+        drive_planilha_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_status (status, criado_em),
+        KEY ix_email (email, criado_em),
+        KEY ix_ip (ip, criado_em),
+        KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Anotações da equipe sobre cada ficha (entrevista, retorno, pendências), com quem escreveu e quando.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios_notas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        ficha_id INT UNSIGNED NOT NULL,
+        quem VARCHAR(190) NOT NULL,
+        texto TEXT NOT NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_ficha (ficha_id, criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Ligação com o Google Drive (lib/google_drive.php, lib/drive_espelho.php, api/drive.php): fila de trabalhos
+    // (ficha_voluntario, exportacao_diaria, backup_banco) processada pela rotina da linha de comando, com
+    // tentativas e a próxima hora de tentar; e o manifesto dos arquivos de public_html/assets já espelhados
+    // (tamanho + data de modificação decidem o que precisa subir de novo).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_drive_fila (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        tipo VARCHAR(30) NOT NULL,
+        referencia INT UNSIGNED NULL,
+        dados TEXT NULL,
+        estado ENUM('pendente','feito','falhou') NOT NULL DEFAULT 'pendente',
+        tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        erro VARCHAR(255) NULL,
+        proxima_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_estado (estado, proxima_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_drive_arquivos (
+        caminho VARCHAR(255) NOT NULL PRIMARY KEY,
+        tamanho INT UNSIGNED NOT NULL,
+        modificado_em DATETIME NOT NULL,
+        drive_id VARCHAR(80) NOT NULL,
+        enviado_em DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

@@ -75,7 +75,7 @@ BLOCOS = [
      "link": "https://escola.cruzvermelhariodejaneiro.org", "id": "escola"},
     {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira Rio de Janeiro",
      "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
-     "link": "https://form.spotform.com.br/voluntariocruzvermelharj", "id": "voluntario"},
+     "link": "/voluntariado/cadastro/", "id": "voluntario"},
     {"tipo": "titulo", "texto": "WhatsApp do voluntariado"},
     {"tipo": "botao", "estilo": "claro whatsapp", "icone": "fa-brands fa-whatsapp", "titulo": "Falar com o voluntariado no WhatsApp",
      "link": "https://api.whatsapp.com/send?phone=+5521970360264&text=Ol%C3%A1%20vim%20pelo%20link%20da%20bio%20do%20Instagram%2C%20gostaria%20de%20ajuda%20sobre%20o%20voluntariado.%20",
