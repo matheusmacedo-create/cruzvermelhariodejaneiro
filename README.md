@@ -125,6 +125,8 @@ Socorros e Lei Lucas, mais um banner "Leve a Cruz Vermelha para a sua empresa" n
   gerar_matricula_presencial.py tolera a ausência do seletor de cursos na home.
 - Publicação: home + 4 imagens, depois de conferir que a home no ar era igual à versão anterior do Git; conferido
   por HTTP e no Chromium (1280 e 390 px), sem erro nem imagem quebrada. Cópia do ar guardada antes.
+- Fotos novas (16/10, mais tarde): topo com a turma do CBFI de 10/10 no salão nobre, foto do voluntariado trocada e galeria
+  "A filial em ação" com 6 fotos de ações, tiradas da pasta do Drive enviada pelo Matheus. Publicado e conferido.
 - Pendências: confirmar Agasalho, Impacto das Cores e logos de parceiros; homes EN/ES; chat com o fluxo antigo do
   voluntariado; "em implantação" em /quem-somos/, /base-legal/ e llms.txt.
 

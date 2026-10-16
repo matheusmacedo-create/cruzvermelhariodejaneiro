@@ -25,8 +25,8 @@
   <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/">
   <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-1440.webp" media="(min-width: 921px)">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-960.webp" media="(max-width: 920px)" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -1228,6 +1228,28 @@
     }
     @media (max-width: 620px) { .hp-emp-botao { width: 100%; } .hp-emp-cartao { padding: 14px; gap: 12px; } .hp-emp-circulo { width: 46px; height: 46px; font-size: 1.15rem; } }
     .hp-parceiros { padding-top: 64px; }
+
+    /* Fundo do hero (16/10/2026): turma do CBFI de 10/10 no salão nobre. Sobrescreve a regra do primeiro <style>,
+       que os geradores copiam para as outras páginas. */
+    .hero::before {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .86) 0%, rgba(0, 0, 0, .66) 42%, rgba(0, 0, 0, .25) 100%),
+        url("assets/otim/hero-turma-cbfi-1440.webp") center 40% / cover no-repeat;
+    }
+    @media (max-width: 620px) {
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.25) 100%),
+          url("assets/otim/hero-turma-cbfi-960.webp") center 30% / cover no-repeat;
+      }
+    }
+    /* Galeria "A filial em ação" */
+    .hp-acao-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+    .hp-acao-grade figure { margin: 0; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid var(--line); }
+    .hp-acao-grade img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .hp-acao-grade figcaption { padding: 10px 14px 12px; font-size: .9rem; color: var(--muted); }
+    @media (max-width: 920px) { .hp-acao-grade { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .hp-acao-grade { gap: 10px; } .hp-acao-grade figcaption { font-size: .82rem; padding: 8px 10px 10px; } }
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -1743,8 +1765,8 @@
             <p class="lead">Não é preciso ser da área da saúde. Quem entra no voluntariado passa pela formação da filial, gratuita, e atua em campanhas humanitárias e na educação preventiva nas comunidades do Rio de Janeiro.</p>
           </div>
           <figure class="hp-vol-foto">
-            <img alt="Turma de voluntários em formação no auditório da sede" src="assets/otim/auditorio-voluntarios-960.webp" srcset="assets/otim/auditorio-voluntarios-480.webp 480w, assets/otim/auditorio-voluntarios-960.webp 960w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(100vw - 40px), 523px" width="960" height="727" loading="lazy" decoding="async">
-            <figcaption>No auditório da sede acontece o CBFI.</figcaption>
+            <img alt="Voluntários de camiseta da Cruz Vermelha Brasileira, vistos de costas, na formação do CBFI no salão nobre da sede" src="assets/otim/turma-cbfi-salao-960.webp" srcset="assets/otim/turma-cbfi-salao-480.webp 480w, assets/otim/turma-cbfi-salao-960.webp 960w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(100vw - 40px), 523px" width="960" height="720" loading="lazy" decoding="async">
+            <figcaption>Turma do CBFI no salão nobre da sede, em outubro de 2026.</figcaption>
           </figure>
         </div>
         <ol class="cards">
@@ -1770,6 +1792,22 @@
             <a class="btn btn-red" href="/voluntariado/cadastro/">Fazer meu cadastro</a>
             <a class="btn btn-outline" href="/voluntariado/">Como funciona o voluntariado</a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaigns-section" id="em-acao" aria-labelledby="acao-titulo" style="background:#fff">
+      <div class="wrap">
+        <p class="eyebrow">Em ação</p>
+        <h2 id="acao-titulo">A filial em ação</h2>
+        <p class="lead">Voluntários formados pela filial atuando em ações, eventos e atendimentos no Rio de Janeiro. Acompanhe as próximas no <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Instagram da filial</a>.</p>
+        <div class="hp-acao-grade">
+          <figure><img src="assets/otim/acao-coordenacao-movel-640.webp" width="640" height="480" alt="Equipe da filial, de uniforme e capacete, diante do Centro de Coordenação Móvel da Cruz Vermelha Brasileira" loading="lazy" decoding="async"><figcaption>Equipe com o Centro de Coordenação Móvel</figcaption></figure>
+          <figure><img src="assets/otim/acao-primeiros-socorros-rua-640.webp" width="640" height="480" alt="Voluntários de uniforme vermelho fazem atendimento de primeiros socorros a uma pessoa deitada no chão, ao lado de carros" loading="lazy" decoding="async"><figcaption>Primeiros socorros na prática</figcaption></figure>
+          <figure><img src="assets/otim/acao-tenda-640.webp" width="640" height="480" alt="Voluntários reunidos em frente à tenda da Cruz Vermelha Brasileira" loading="lazy" decoding="async"><figcaption>Tenda de atendimento em evento</figcaption></figure>
+          <figure><img src="assets/otim/acao-capacetes-640.webp" width="640" height="480" alt="Voluntárias sorridentes com capacete branco e uniforme vermelho da Cruz Vermelha" loading="lazy" decoding="async"><figcaption>Equipe pronta para atuar</figcaption></figure>
+          <figure><img src="assets/otim/acao-equipe-uniforme-640.webp" width="640" height="480" alt="Voluntárias com uniforme de campo vermelho da Cruz Vermelha, ao ar livre" loading="lazy" decoding="async"><figcaption>Voluntárias com uniforme de campo</figcaption></figure>
+          <figure><img src="assets/otim/acao-evento-ar-livre-640.webp" width="640" height="480" alt="Voluntários de camiseta branca e calça vermelha em um evento ao ar livre" loading="lazy" decoding="async"><figcaption>Apoio em evento ao ar livre</figcaption></figure>
         </div>
       </div>
     </section>
