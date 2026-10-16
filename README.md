@@ -113,7 +113,7 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
-## Cadastro de voluntários no próprio site e ligação com o Google Drive (16/10/2026, ainda não publicado)
+## Cadastro de voluntários no próprio site e ligação com o Google Drive (publicado em 16/10/2026)
 
 Pedido do Matheus: "crie o formulário do voluntário e comece a guardar a ficha em nosso banco" e "temos agora 100 tera do
 Google, faça a ligação de todo o nosso projeto com o Drive". O formulário externo (Spotform) sai de todo o site.
@@ -139,10 +139,15 @@ Google, faça a ligação de todo o nosso projeto com o Drive". O formulário ex
   `testar_voluntarios_portal_integracao.php` (25) e `testar_drive.php` (93), todos passando com MariaDB local;
   `testar_avisos_integracao.php` e `testar_ponto_integracao.php` seguem passando. As 2 falhas de `testar_checkout.php`
   (T24, `PLANO_COMPLETO_HTML`) já existiam antes desta rodada.
-- **Publicação**: `scripts/publicacao-voluntarios.txt` (35 arquivos). A migração cria 4 tabelas na primeira requisição.
-  Depois de publicar: rodar `scripts/gerar_sitemaps.py` (a página nova entrou na lista).
-- **Pendências do Matheus**: OK para publicar; montar o Google Cloud, o Drive compartilhado, a planilha e o
-  `config-google.php` no Workspace da filial (o Drive ligado a esta sessão é o da Unicopag); criar o cron do `drive.php`.
+- **Publicação (16/10/2026, com o OK do Matheus)**: os 35 arquivos de `scripts/publicacao-voluntarios.txt`, depois
+  de conferir que os 27 que já existiam no ar eram idênticos ao commit 5e2e602. Cópia do que estava no ar guardada antes
+  do envio. Conferido depois: os 35 idênticos no servidor, as 20 páginas estáticas servidas iguais por HTTP,
+  `scripts/conferir_publicacao.sh` sem falha, a armadilha da API respondendo 422, origem externa recusada, módulos e
+  rotinas com 403, e as páginas abertas no Chromium sem erro em 1280 e 390 px. Uma sonda temporária, apagada em
+  seguida, confirmou no banco de produção a versão nova e as 4 tabelas. Sitemaps regenerados com a página nova.
+- **Pendências do Matheus**: montar o Google Cloud, o Drive compartilhado, a planilha e o `config-google.php` no
+  Workspace da filial (o Drive ligado a esta sessão é o da Unicopag) e criar o cron do `drive.php` no hPanel. Até lá, o
+  formulário e o portal funcionam e nada vai para o Drive.
 
 ## Páginas institucionais com vida: imagens nas 7 páginas de texto (publicado em 16/10/2026)
 
