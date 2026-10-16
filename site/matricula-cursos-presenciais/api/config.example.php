@@ -167,4 +167,23 @@ return [
     // ensino da filial, que recebe a taxa e a matrícula; não é o CNPJ da filial).
     'RECEBEDOR_NOME'   => '',
     'RECEBEDOR_CNPJ'   => '',
+
+    // Google Drive da filial (10/2026, docs/google-drive.md): fichas de voluntários em PDF e na planilha, exportações
+    // diárias em CSV, cópia do banco e espelho de public_html/assets, pela rotina api/drive.php (cron a cada 15 min).
+    // Estas chaves NÃO ficam aqui: moram em api/config-google.php (só no servidor, fora do Git; de lá só valem as
+    // GOOGLE_*), escrito pelo gerenciador de arquivos da Hostinger. Sem GOOGLE_SA e GOOGLE_DRIVE_RAIZ_ID, tudo fica
+    // desligado. Modelo do config-google.php:
+    //   <?php return [
+    //       // O JSON da chave da conta de serviço, colado como array PHP (todas as chaves do arquivo baixado).
+    //       'GOOGLE_SA' => ['type' => 'service_account', 'project_id' => '...', 'private_key_id' => '...',
+    //                       'private_key' => "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+    //                       'client_email' => 'site-drive@....iam.gserviceaccount.com', 'client_id' => '...',
+    //                       'token_uri' => 'https://oauth2.googleapis.com/token'],
+    //       // Id da pasta raiz (o Drive compartilhado "Cruz Vermelha RJ – Site"): o trecho final da URL no navegador.
+    //       'GOOGLE_DRIVE_RAIZ_ID' => '',
+    //       // Id da planilha "Fichas de voluntários" (entre /d/ e /edit na URL). Vazio = só o PDF, sem linha na planilha.
+    //       'GOOGLE_SHEET_FICHAS_ID' => '',
+    //   ];
+    // Só para testes locais com um servidor falso do Google (scripts/testar_drive.php); nunca no servidor de verdade:
+    //   'GOOGLE_API_URL' => 'https://www.googleapis.com', 'GOOGLE_TOKEN_URL' => 'https://oauth2.googleapis.com/token'.
 ];
