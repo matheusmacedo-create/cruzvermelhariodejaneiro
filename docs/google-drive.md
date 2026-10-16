@@ -77,9 +77,14 @@ pessoa (se ela sair, nada some), e uma conta de serviço não tem cota própria 
 
 ## Passo 3 — Criar a planilha das fichas
 
-**Já feito em 16/10/2026 (pelo Claude):** `Cruz Vermelha RJ – Site/Voluntariado/Fichas de voluntários`, aba
-**Fichas**, cabeçalho na linha 1, na ordem abaixo. Conferido lendo a planilha de volta. Basta o item 4 (copiar o
-id). Os itens 1 a 3 ficam para o caso de precisar refazê-la.
+**Já feito em 16/10/2026 (pelo Claude):** planilha **Fichas de voluntários**, aba **Fichas**, cabeçalho na linha 1,
+na ordem abaixo, conferida lendo de volta. A pedido do Matheus, ela mora em `Cursos/voluntariado` no Meu Drive de
+contato@, e não dentro da pasta raiz: o site acha a planilha pelo id, não pelo lugar, então isso não muda nada no
+código. Os itens 1 a 3 ficam para o caso de precisar refazê-la; faltam os itens 4 e 5.
+
+> **Antes de configurar o servidor:** a pasta `voluntariado` estava (16/10) com "qualquer pessoa com o link pode
+> ver". A planilha herda isso, e ela vai ter nome, telefone e e-mail de cada voluntário. Troque para **Restrito**
+> (botão direito › Compartilhar › Acesso geral) antes de pôr o id no `config-google.php`.
 
 1. Dentro do Drive compartilhado, crie uma pasta `Voluntariado` e, nela, **Novo › Planilhas Google**. Nome:
    **Fichas de voluntários**.
@@ -95,8 +100,14 @@ id). Os itens 1 a 3 ficam para o caso de precisar refazê-la.
 4. **Id da planilha**: no endereço `https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit`,
    o id é o trecho entre `/d/` e `/edit`. Copie: é o `GOOGLE_SHEET_FICHAS_ID`.
 
-A conta de serviço já é gestora de conteúdo do Drive compartilhado, então não precisa compartilhar a planilha com ela
-de novo.
+5. **Compartilhar com a conta de serviço.** Como a planilha está no Meu Drive, e não no Drive compartilhado, a conta
+   de serviço não a enxerga sozinha: abra a planilha › **Compartilhar**, cole o e-mail
+   `site-drive@...iam.gserviceaccount.com`, papel **Editor**, desmarque "Notificar" › **Enviar**. (Escrever linhas
+   numa planilha que é de contato@ não gasta cota da conta de serviço; só os PDFs, CSVs e backups, que ela cria,
+   precisam do Drive compartilhado.) Se um dia a planilha for para dentro do Drive compartilhado, este item deixa de
+   ser necessário.
+
+Sem o item 5, o `--testar` passa mas a primeira ficha falha com `HTTP 403` ou `404` na planilha.
 
 ## Passo 4 — Montar o `config-google.php` no servidor (pelo gerenciador de arquivos, nunca pelo Git)
 
