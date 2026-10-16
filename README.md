@@ -113,6 +113,44 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Páginas institucionais com vida: imagens nas 7 páginas de texto (publicado em 16/10/2026)
+
+- **Pedido do Matheus (15/10):** "existe mais parte da nossa história que está sem referência visual, direito internacional por
+  exemplo... faça uma revisão completa nessas páginas e veja o que é possível acrescentar de imagem para não ficar apenas
+  texto, faça o site ter vida"; e "ao terminar publique tudo".
+- **Resultado:** /quem-somos/ (13 figuras), /principios-fundamentais/ (13), /movimento-internacional/ (16),
+  /direito-internacional-humanitario/ (14), /base-legal/ (14), /cursos-gratuitos/ (12) e /voluntariado/ (12): 94 figuras, nenhum
+  texto cortado (só legendas e frases curtas de ligação). Três fontes de imagem: (1) **fotos próprias da filial já no ar**
+  (home, Dia das Crianças, equipe e o acervo de /historia/; inventário de 138 em
+  `docs/institucional/fotos-proprias-no-ar-2026-10-15.json`, com crédito "Acervo do Centro de Memória e Documentação da
+  Cruz Vermelha Brasileira" nas históricas); (2) **30 imagens do Wikimedia Commons** com licença conferida na API (Comitê dos
+  Cinco de 1863, Dufour, Moynier, Dunant em 1901, sedes do CICV e da Federação, Haia 1899, assinatura das Convenções de 1949,
+  encomendas da Cruz Vermelha a prisioneiros de guerra, Stalag X B, Escudo Azul e sinal da proteção civil em uso, Itamaraty,
+  Catete, Planalto, Congresso, Palácio Tiradentes, Palácio Pedro Ernesto, Praça da Cruz Vermelha, Nilo Peçanha, Jean Pictet,
+  Sociedades Nacionais de Fiji, Filipinas, Chile, França, Tunísia e Irã, cartaz de 1914-1918; inventário em
+  `docs/institucional/institucional-imagens-inventario-2026-10-15.json`); (3) **diagramas próprios em SVG**
+  (`site/assets/institucional/desenhos/`): linha do tempo do DIH, linha do tempo da base legal, estrutura do Movimento,
+  organização federativa da CVB, caminho do voluntário em cinco passos e ícones dos sete princípios, cada um com versão
+  vertical para o celular via `<picture>`.
+- **Gerador:** classes `inst-figura-media` (600 px) e `inst-figura-lado` (flutua à direita, 42%; bloco no celular), além das
+  da página do emblema. `/emblema/` foi republicada só por causa do CSS.
+- **Como foi feito:** fluxo de 26 agentes (6,2 milhões de tokens): 2 curadores do Commons, 2 ilustradores, 7 redatores
+  (um por página), 8 críticos (licenças, pertinência, marcação, texto intacto, consistência entre páginas; 86 achados) e 7
+  corretores. Decisões do fluxo: fotos de terceiros de /historia/ (fachada noturna e relevo) e cartazes de curso fora;
+  foto com crianças só as já publicadas em /dia-das-criancas/; medalhas e obras recentes fora; Jean Pictet entrou (CC BY-SA
+  da Fondation des Archives de la Famille Pictet); Stalag X B entrou com legenda sóbria (foto do CICV marcada "publication
+  without restrictions"). As 28 fotos próprias referidas que não existiam na cópia local foram baixadas do ar (idênticas).
+- **Validação:** JSON-LD 0 erros nas 8 páginas; HTML balanceado; 94 `<img>` com alt, width/height e lazy; todo src/srcset
+  existe; sem `style=`; Playwright em 1280 nas 7 páginas (local e ao vivo): nenhuma imagem quebrada, sem erro de JS, sem
+  resposta 4xx, sem rolagem horizontal.
+- **Publicado em 16/10/2026:** `scripts/publicacao-institucional-imagens.txt` (60 arquivos: 8 páginas + 52 assets novos em
+  `assets/institucional/`; as fotos próprias e as do emblema já estavam no ar). Cópia do ar em `/tmp/no-ar-institucional`
+  (8 páginas idênticas a `6d29371`), TUS, cache, conferência por HTTP (60 idênticos), sitemaps regenerados do ar (26
+  imagens institucionais e 452 fotos próprias indexadas) e conferidos. Credencial TUS apagada.
+- **Pendências:** foto limpa da equipe (a de abertura de /quem-somos/ é um cartão de rede social com moldura); foto própria
+  da fachada do Palácio; versões de 960 px das fotos do gabinete (473 px) e da pedra fundamental (520 px);
+  /quem-somos/ ainda atribui "no Rio de Janeiro" (1908) ao Estatuto, que só dá a data (o Rio vem de /historia/).
+
 ## Página do emblema: os símbolos do Movimento com imagens públicas (publicada em 15/10/2026)
 
 - **Pedido do Matheus:** deixar `/emblema/` "mais completa", com "imagens de logo e tudo", e "todos os símbolos que a
