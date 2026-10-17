@@ -25,9 +25,8 @@
   <link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/">
   <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-1440.webp" media="(min-width: 921px)">
-  <link rel="preload" as="image" href="assets/otim/hero-equipe-grupo-960.webp" media="(max-width: 920px)" fetchpriority="high">
-  <link rel="preload" as="image" type="image/avif" href="assets/otim/forca-tarefa-el-nino-banner-1920.avif" imagesrcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" imagesizes="100vw" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-1440.webp" media="(min-width: 921px)">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-960.webp" media="(max-width: 920px)" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -1090,16 +1089,163 @@
     .faq-list .faq-grupo:first-child { margin-top: 0; }
   </style>
   <style>
-    /* Slider de campanhas. Fica fora do primeiro <style>, que os geradores copiam para as outras páginas (só a
-       home tem o slider). Todos os banners em 1920x901: com a proporção fixa, a altura do slider não muda a
-       cada troca automática, nem quando o navegador escolhe uma largura com altura arredondada. */
-    .campaign-slide picture { display: block; }
-    .campaign-slide img { aspect-ratio: 1920 / 901; object-fit: cover; }
-    .campaign-slide.sem-link { cursor: default; } /* banner só informativo: sem a mãozinha de link */
-    /* Pontos e setas sobre um fundo escuro translúcido: brancos puros sumiam nos banners de fundo claro. */
-    .campaign-slider-dots { background: rgba(0,0,0,.32); padding: 6px 10px; border-radius: 999px; }
-    .campaign-slider-arrow { background: rgba(0,0,0,.32); border-color: rgba(255,255,255,.55); }
-    .campaign-slider-arrow:hover { background: rgba(0,0,0,.5); }
+    /* Home (16/10/2026). Fica fora do primeiro <style>, que os geradores copiam para as outras páginas; só a home usa
+       estas regras, todas com o prefixo .hp- (exceto o --muted local, que só vale dentro do <main> da home). */
+    main#inicio { --muted: #5f6b7a; } /* 5,4:1 no branco e 5,1:1 no #f7f8fa; o :root (#718096) segue nas outras páginas */
+    .hp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    /* Hero no celular: espaço para o botão flutuante do chat não cobrir "Seja voluntário". */
+    @media (max-width: 620px) { main#inicio .hero .wrap { padding-bottom: 150px; } }
+
+    /* Faixa de identidade: números com fonte, cada item é um link. */
+    .hp-info a.info-item { color: #fff; display: block; transition: background .15s; border-radius: 4px; }
+    .hp-info a.info-item:hover b, .hp-info a.info-item:focus-visible b { text-decoration: underline; text-underline-offset: 3px; }
+    .hp-info .info-item b { font-size: 1.6rem; line-height: 1.1; font-weight: 900; letter-spacing: -.02em; }
+    .hp-info .info-item span { color: #fff; display: block; line-height: 1.4; }
+    .hp-info .info-grid { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 920px) { .hp-info .info-grid { grid-template-columns: 1fr 1fr; gap: 18px 14px; } .hp-info .info-item { padding-left: 12px; } }
+
+    /* Por onde você quer começar? */
+    .hp-comecar { background: var(--soft); padding: 44px 0 48px; border-bottom: 1px solid var(--line); }
+    .hp-comecar h2 { font-size: clamp(1.35rem, 2.2vw, 1.75rem); letter-spacing: -.02em; margin: 0 0 20px; }
+    .hp-comecar-grade { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .hp-comecar-item { display: flex; gap: 14px; align-items: flex-start; height: 100%; padding: 18px; background: #fff; border: 1px solid var(--line); border-radius: 14px; transition: border-color .15s, box-shadow .15s, transform .15s; }
+    .hp-comecar-item:hover, .hp-comecar-item:focus-visible { border-color: var(--red); box-shadow: var(--shadow); transform: translateY(-2px); }
+    .hp-comecar-ico { width: 44px; height: 44px; border-radius: 50%; background: #fff0f2; color: var(--red); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
+    .hp-comecar-item b { display: block; color: var(--black); font-size: 1rem; line-height: 1.25; margin-bottom: 4px; }
+    .hp-comecar-item span span { display: block; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+    @media (max-width: 920px) { .hp-comecar-grade { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) {
+      .hp-comecar { padding: 36px 0 40px; }
+      .hp-comecar-grade { gap: 10px; }
+      .hp-comecar-item { flex-direction: column; gap: 10px; padding: 14px; }
+      .hp-comecar-ico { width: 38px; height: 38px; font-size: 1.05rem; }
+      .hp-comecar-item b { font-size: .95rem; }
+      .hp-comecar-item span span { font-size: .84rem; }
+    }
+
+    /* Institucional enxuto: lista curta de reconhecimentos. */
+    .hp-inst-lista { margin: 4px 0 18px; color: var(--muted); }
+    .hp-inst-lista li { color: var(--muted); }
+    .hp-inst-lista a, .hp-inst-mais a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .hp-inst-mais { color: var(--muted); margin: 0; }
+
+    /* Voluntariado */
+    .hp-vol { background: var(--soft); }
+    .hp-vol-foto { margin: 0; }
+    .hp-vol-foto img { width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow); }
+    .hp-vol-foto figcaption { margin-top: 10px; font-size: .88rem; color: var(--muted); }
+    .hp-vol .cards { grid-template-columns: repeat(4, 1fr); list-style: none; padding: 0; margin: 40px 0 0; }
+    .hp-vol .card { min-height: 0; }
+    .hp-vol .card h3 { font-size: 1.1rem; margin: 0 0 8px; }
+    .hp-vol .card p { font-size: .95rem; }
+    .hp-vol-rodape { margin-top: 32px; }
+    .hp-vol-idade { font-weight: 800; color: var(--black); margin: 0 0 18px; }
+    .hp-vol-rodape h3 { font-size: 1rem; margin: 0 0 10px; }
+    .hp-pilulas { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .hp-pilulas li > span, .hp-pilulas a { display: inline-block; padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: #2d3748; font-size: .9rem; font-weight: 600; }
+    .hp-pilulas a { color: var(--red); border-color: #f1c4c4; transition: background .15s, border-color .15s; }
+    .hp-pilulas a:hover, .hp-pilulas a:focus-visible { background: #fff5f5; border-color: var(--red); }
+    @media (max-width: 920px) { .hp-vol .cards { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) {
+      .hp-vol .cards { grid-template-columns: 1fr; gap: 10px; margin-top: 28px; }
+      .hp-vol .card { padding: 16px; display: grid; grid-template-columns: 42px 1fr; column-gap: 14px; }
+      .hp-vol .card .num { margin: 0; grid-row: span 2; }
+      .hp-vol .card h3 { margin: 2px 0 4px; }
+    }
+
+    /* Movimento, Princípios e emblema */
+    .hp-mov { background: #fff; }
+    .hp-mov .hp-pilulas { margin: 22px 0 0; }
+    .hp-mov .campaigns-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .hp-mov .campaign-card-thumb { background: #fff; border-bottom: 1px solid var(--line); }
+    .hp-mov .campaign-card-thumb img { object-fit: contain; padding: 14px; }
+    .hp-mov .campaign-card-thumb.hp-foto img { object-fit: cover; padding: 0; }
+    .hp-mov .campaign-card-body h3 { font-size: 17px; }
+    .hp-credito { font-size: 11.5px !important; line-height: 1.35; color: var(--muted); margin: -8px 0 14px !important; flex: 0 0 auto !important; }
+    .hp-mov-avise { margin: 28px 0 0; font-weight: 700; }
+    .hp-mov-avise a, .hp-links-linha a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 1000px) { .hp-mov .campaigns-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) { .hp-mov .campaigns-grid { grid-template-columns: 1fr; gap: 14px; } .hp-mov .campaign-card-thumb { aspect-ratio: 5 / 2; } .hp-mov .campaign-card-body { padding: 18px; } }
+
+    /* Transparência: linha de links abaixo dos cartões */
+    .hp-links-linha { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 24px 0 0; font-weight: 700; }
+
+    /* Escola: Primeiros Socorros e Lei Lucas */
+    .hp-escola { background: var(--soft); }
+    .hp-escola .lead a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; }
+    .hp-escola-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
+    .hp-curso { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+    .hp-curso img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .hp-curso-dea img { object-position: center 55%; }
+    .hp-curso-bebe img { object-position: center 58%; }
+    .hp-curso-corpo { padding: 24px 26px 26px; display: flex; flex-direction: column; flex: 1; }
+    .hp-curso h3 { font-size: 1.3rem; margin: 0 0 10px; }
+    .hp-curso h3 small { color: var(--red); font-size: .85rem; font-weight: 800; white-space: nowrap; }
+    .hp-curso p { color: var(--muted); margin: 0 0 20px; flex: 1; }
+    .hp-curso .btn { align-self: flex-start; }
+    .hp-escola-valor { margin: 18px 0 0; color: var(--muted); font-size: .95rem; text-align: center; }
+    .hp-alerta { border-radius: var(--radius); padding: 40px; margin-top: 40px; }
+    .hp-alerta .eyebrow { color: #ff6b6b; }
+    .hp-alerta h3 { color: #fff; font-size: clamp(1.5rem, 2.6vw, 2.1rem); letter-spacing: -.03em; margin: .4rem 0 .8rem; }
+    .hp-alerta .alert-list { grid-template-columns: repeat(3, 1fr); }
+    .hp-escola-outros { margin: 28px 0 0; color: var(--muted); font-size: .95rem; text-align: center; }
+    .hp-escola-outros a { color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+    @media (max-width: 920px) { .hp-alerta .alert-list { grid-template-columns: 1fr; } }
+    @media (max-width: 620px) {
+      .hp-escola-grade { grid-template-columns: 1fr; }
+      .hp-curso-corpo { padding: 20px; }
+      .hp-curso .btn { align-self: stretch; }
+      .hp-alerta { padding: 26px 20px; }
+      .hp-escola-valor, .hp-escola-outros { text-align: left; }
+    }
+
+    /* Banner "Leve a Cruz Vermelha para a sua empresa" (modelo: bloco da CVB-MG) */
+    .hp-emp { background: var(--red); color: #fff; padding: 56px 0 60px; overflow: hidden; }
+    .hp-emp h2 { color: #fff; text-align: center; font-size: clamp(1.9rem, 4.2vw, 3.1rem); margin: 0 0 .5rem; }
+    .hp-emp-sub { text-align: center; font-weight: 700; font-size: clamp(1rem, 1.6vw, 1.2rem); margin: 0 auto 40px; max-width: 46ch; }
+    .hp-emp-grade { display: grid; grid-template-columns: 45fr 55fr; gap: 44px; align-items: center; }
+    .hp-emp-foto { margin: 0; justify-self: center; width: 100%; max-width: 440px; background: #fff; padding: 10px 10px 0; border-radius: 14px; box-shadow: 0 20px 44px rgba(0, 0, 0, .25); transform: rotate(-1.5deg); }
+    .hp-emp-foto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; }
+    .hp-emp-foto figcaption { color: #4a5568; font-size: .84rem; line-height: 1.4; padding: 10px 4px 12px; text-align: center; }
+    .hp-emp-cartoes { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .hp-emp-cartao { display: flex; gap: 16px; align-items: center; background: #fff; border-radius: 10px; padding: 16px 18px; box-shadow: 0 8px 22px rgba(0, 0, 0, .14); }
+    .hp-emp-circulo { width: 52px; height: 52px; border-radius: 50%; background: var(--red); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.35rem; }
+    .hp-emp-cartao h3 { color: var(--black); font-size: 1.02rem; margin: 0 0 3px; }
+    .hp-emp-cartao p { color: #4a5568; font-size: .92rem; line-height: 1.45; margin: 0; }
+    .hp-emp-nota { font-size: .82rem; line-height: 1.5; color: #fff; margin: 18px 0 20px; }
+    .hp-emp-botao { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: #fff; color: var(--red); font-weight: 800; border-radius: 999px; padding: .95rem 1.6rem; box-shadow: 0 10px 24px rgba(0, 0, 0, .18); transition: transform .18s, box-shadow .18s; cursor: pointer; }
+    .hp-emp-botao:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0, 0, 0, .24); }
+    .hp-emp-botao:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+    @media (max-width: 920px) {
+      .hp-emp { padding: 44px 0 48px; }
+      .hp-emp-grade { grid-template-columns: 1fr; gap: 28px; }
+      .hp-emp-foto { max-width: 420px; transform: none; }
+      .hp-emp-sub { margin-bottom: 28px; }
+    }
+    @media (max-width: 620px) { .hp-emp-botao { width: 100%; } .hp-emp-cartao { padding: 14px; gap: 12px; } .hp-emp-circulo { width: 46px; height: 46px; font-size: 1.15rem; } }
+    .hp-parceiros { padding-top: 64px; }
+
+    /* Fundo do hero (16/10/2026): turma do CBFI de 10/10 no salão nobre. Sobrescreve a regra do primeiro <style>,
+       que os geradores copiam para as outras páginas. */
+    .hero::before {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .86) 0%, rgba(0, 0, 0, .66) 42%, rgba(0, 0, 0, .25) 100%),
+        url("assets/otim/hero-turma-cbfi-1440.webp") center 40% / cover no-repeat;
+    }
+    @media (max-width: 620px) {
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.25) 100%),
+          url("assets/otim/hero-turma-cbfi-960.webp") center 30% / cover no-repeat;
+      }
+    }
+    /* Galeria "A filial em ação" */
+    .hp-acao-grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+    .hp-acao-grade figure { margin: 0; border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid var(--line); }
+    .hp-acao-grade img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+    .hp-acao-grade figcaption { padding: 10px 14px 12px; font-size: .9rem; color: var(--muted); }
+    @media (max-width: 920px) { .hp-acao-grade { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .hp-acao-grade { gap: 10px; } .hp-acao-grade figcaption { font-size: .82rem; padding: 8px 10px 10px; } }
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -1311,6 +1457,32 @@
       "legalName": "O-CVB FILIAL RIO DE JANEIRO ENSINO LTDA",
       "taxID": "67.733.551/0001-35",
       "url": "https://escola.cursoscruzvermelha.org/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://cruzvermelhariodejaneiro.org/#webpage",
+      "url": "https://cruzvermelhariodejaneiro.org/",
+      "name": "Cruz Vermelha Brasileira Rio de Janeiro | Site oficial",
+      "isPartOf": {
+        "@id": "https://cruzvermelhariodejaneiro.org/#site"
+      },
+      "about": {
+        "@id": "https://cruzvermelhariodejaneiro.org/#organizacao"
+      },
+      "inLanguage": "pt-BR",
+      "significantLink": [
+        "https://cruzvermelhariodejaneiro.org/voluntariado/cadastro/",
+        "https://cruzvermelhariodejaneiro.org/voluntariado/",
+        "https://cruzvermelhariodejaneiro.org/quem-somos/",
+        "https://cruzvermelhariodejaneiro.org/historia/",
+        "https://cruzvermelhariodejaneiro.org/principios-fundamentais/",
+        "https://cruzvermelhariodejaneiro.org/movimento-internacional/",
+        "https://cruzvermelhariodejaneiro.org/emblema/",
+        "https://cruzvermelhariodejaneiro.org/direito-internacional-humanitario/",
+        "https://cruzvermelhariodejaneiro.org/base-legal/",
+        "https://cruzvermelhariodejaneiro.org/transparencia/",
+        "https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/"
+      ]
     }
   ]
 }
@@ -1395,7 +1567,7 @@
       "name": "Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no formulário oficial do voluntariado. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas notícias do site. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no chat de contato do site. Os canais oficiais estão reunidos na página de links da filial."
+        "text": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, faça o cadastro aqui no site: leva uns dez minutos, e a confirmação chega por e-mail, com o protocolo. Depois vem a ficha de entrevista: a equipe do voluntariado entra em contato por e-mail para conhecer você. Quem é aceito faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano, na sede, no Centro do Rio, e é gratuito. Por fim, assina o termo de adesão ao serviço voluntário, como manda a Lei 9.608/1998. Veja o passo a passo completo na página do voluntariado."
       }
     },
     {
@@ -1403,15 +1575,7 @@
       "name": "Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no formulário oficial, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a Campanha do Agasalho e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o curso de Primeiros Socorros Básico."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Os cursos abertos ao público na Cruz Vermelha Brasileira Rio de Janeiro são os sete cursos presenciais pagos da Escola de Educação e Saúde, na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos (160 horas) e Micropigmentação Labial (24 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. A filial não vende cursos: forma os próprios voluntários, depois da seleção (veja a formação de voluntários). Valores e escolaridade estão na página de matrícula em cursos presenciais."
+        "text": "Não precisa ser da área da saúde nem comprar curso nenhum: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários, e essa formação é gratuita. A idade mínima é 16 anos; menores de 18 assinam o termo de adesão com um responsável. O caminho é o mesmo para todos: cadastro no site, ficha de entrevista, CBFI (o curso de formação inicial dos voluntários, quatro vezes por ano, na sede) e termo de adesão. Há espaço para perfis diferentes, em frentes como formação e primeiros socorros, campanhas e ações, juventude, comunicação e gestão de riscos e desastres. Saiba mais na página do voluntariado."
       }
     },
     {
@@ -1424,66 +1588,10 @@
     },
     {
       "@type": "Question",
-      "name": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Micropigmentação Labial, R$ 400 + R$ 99 = R$ 499; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na página de cursos presenciais."
-      }
-    },
-    {
-      "@type": "Question",
       "name": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Não há curso gratuito aberto ao público. A filial, associação sem fins lucrativos, forma de graça só os próprios voluntários, e com seleção: quem quer entrar faz o cadastro, passa pela ficha de entrevista e, se for aceito, faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano. Só depois dele o voluntário participa das formações internas, como as de primeiros socorros. Veja a formação de voluntários. Quem precisa de um curso com data marcada e certificado encontra os sete cursos presenciais da escola, a O-CVB Filial Rio de Janeiro Ensino Ltda: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na página de matrícula antes de garantir a vaga com a inscrição de R$ 99."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sim. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, a quem conclui todas as etapas de cada curso presencial, dado na sede da filial, no Palácio da Cruz Vermelha. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na página de matrícula."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na página de matrícula; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não há curso de primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na página de matrícula; a secretaria confirma turma e horário por e-mail."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "O certificado dos cursos é reconhecido pelo MEC?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo chat do site. Veja carga horária, valores e requisitos na página de matrícula em cursos presenciais."
       }
     },
     {
@@ -1504,50 +1612,10 @@
     },
     {
       "@type": "Question",
-      "name": "O que faz um bombeiro civil e quais são os requisitos para fazer o curso?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na plataforma da escola; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a matrícula no curso de Bombeiro Civil."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Como se tornar cuidador de idosos e o que o curso ensina?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da escola. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na matrícula do curso de Cuidador de Idosos."
-      }
-    },
-    {
-      "@type": "Question",
       "name": "A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Sim. Os treinamentos corporativos de NR, a capacitação em primeiros socorros pela Lei Lucas (indicada para escolas, creches e equipes que trabalham com crianças) e os programas customizados para cada equipe são contratados com a escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro e uma das fontes de financiamento da instituição. Empresas parceiras também podem somar esforços com a filial em campanhas como a Campanha do Agasalho. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Como comparar os cursos de primeiros socorros no Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Compare quatro coisas, e não só o preço anunciado: carga horária, prática real com manequim, quem emite o certificado e o custo total. Na Cruz Vermelha Brasileira Rio de Janeiro o custo total é fechado e aparece antes do pagamento: inscrição de R$ 99 mais o valor do curso - R$ 180 no Primeiros Socorros Básico, de 8 horas, R$ 150 na Lei Lucas, de 8 horas, e R$ 150 no Suporte Básico de Vida, de 4 horas. Sem mensalidade, sem taxa de certificado e sem material à parte. Confira na página de matrícula."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Existe curso de cuidador de idosos gratuito no Rio de Janeiro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago e vendido pela escola, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da escola, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. A filial não oferece curso gratuito ao público: a formação gratuita dela é só para os próprios voluntários. Para garantir a vaga agora, faça a matrícula em Cuidador de Idosos."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O catálogo da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, não tem curso de cuidador infantil nem de babá. O que a escola oferece, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o curso Lei Lucas."
       }
     }
   ]
@@ -1612,71 +1680,6 @@
     </div>
   </header>
 
-  <!-- NOVO: SLIDER DE CAMPANHAS ATIVAS -->
-  <div class="campaign-slider" id="campaignSlider">
-    <div class="campaign-slide active sem-link" data-slide="0">
-      <picture>
-        <source type="image/avif" srcset="assets/otim/forca-tarefa-el-nino-banner-640.avif 640w, assets/otim/forca-tarefa-el-nino-banner-960.avif 960w, assets/otim/forca-tarefa-el-nino-banner-1200.avif 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.avif 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.avif 1920w" sizes="100vw" width="1920" height="901">
-        <img alt="Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Evento interno." src="assets/otim/forca-tarefa-el-nino-banner-1200.webp" srcset="assets/otim/forca-tarefa-el-nino-banner-640.webp 640w, assets/otim/forca-tarefa-el-nino-banner-960.webp 960w, assets/otim/forca-tarefa-el-nino-banner-1200.webp 1200w, assets/otim/forca-tarefa-el-nino-banner-1440.webp 1440w, assets/otim/forca-tarefa-el-nino-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" fetchpriority="high">
-      </picture>
-    </div>
-    <div class="campaign-slide" data-slide="1">
-      <a href="https://projetocores.cruzvermelhariodejaneiro.org/" target="_blank" rel="noopener">
-        <img alt="Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/impacto-cores-banner-1920.webp" srcset="assets/otim/impacto-cores-banner-640.webp 640w, assets/otim/impacto-cores-banner-1200.webp 1200w, assets/otim/impacto-cores-banner-1920.webp 1920w" sizes="100vw" width="1920" height="901" loading="lazy" decoding="async">
-      </a>
-    </div>
-    <div class="campaign-slide" data-slide="2">
-      <a href="campanha-agasalho.html">
-        <img alt="Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/agasalho-banner-1920.webp" srcset="assets/otim/agasalho-banner-640.webp 640w, assets/otim/agasalho-banner-1200.webp 1200w, assets/otim/agasalho-banner-1920.webp 1920w" sizes="(max-width: 620px) 100vw, 1100px" width="1920" height="901" loading="lazy" decoding="async">
-      </a>
-    </div>
-    <button class="campaign-slider-arrow prev" onclick="changeCampaignSlide(-1)" aria-label="Campanha anterior">&#8249;</button>
-    <button class="campaign-slider-arrow next" onclick="changeCampaignSlide(1)" aria-label="Próxima campanha">&#8250;</button>
-    <div class="campaign-slider-dots">
-      <button class="campaign-dot active" onclick="goToCampaignSlide(0)" aria-label="Slide 1"></button>
-      <button class="campaign-dot" onclick="goToCampaignSlide(1)" aria-label="Slide 2"></button>
-      <button class="campaign-dot" onclick="goToCampaignSlide(2)" aria-label="Slide 3"></button>
-    </div>
-  </div>
-  <script>
-    (function(){
-      var current = 0;
-      var slides = document.querySelectorAll('.campaign-slide');
-      var dots = document.querySelectorAll('.campaign-dot');
-      var timer;
-      // Só a imagem do primeiro slide entra na carga da página; as outras têm loading="lazy". Um pouco antes da
-      // troca, a do próximo slide começa a baixar, para a troca não mostrar o fundo vazio: só com a página já
-      // carregada, a aba visível, o slider na tela e sem a economia de dados ligada (quem não vai ver a troca
-      // não paga por ela).
-      var slider = document.getElementById('campaignSlider');
-      var preparo;
-      function prepararProximo(){
-        if (document.readyState !== 'complete' || document.visibilityState !== 'visible') return;
-        if (navigator.connection && navigator.connection.saveData) return;
-        var r = slider.getBoundingClientRect();
-        if (r.bottom <= 0 || r.top >= window.innerHeight) return;
-        var img = slides[(current + 1) % slides.length].querySelector('img');
-        if (img && img.loading === 'lazy') img.loading = 'eager';
-      }
-      function render(){
-        slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
-        dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
-      }
-      window.goToCampaignSlide = function(i){ current = i; render(); resetTimer(); };
-      window.changeCampaignSlide = function(dir){
-        current = (current + dir + slides.length) % slides.length;
-        render(); resetTimer();
-      };
-      function resetTimer(){
-        clearInterval(timer);
-        clearTimeout(preparo);
-        timer = setInterval(function(){ changeCampaignSlide(1); }, 6000);
-        preparo = setTimeout(prepararProximo, 4500);
-      }
-      resetTimer();
-    })();
-  </script>
-
   <main id="inicio">
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap">
@@ -1697,24 +1700,39 @@
       </div>
     </section>
 
-    <div class="info-strip">
+    <div class="info-strip hp-info">
       <div class="wrap info-grid">
-        <div class="info-item"><b>CNPJ</b><span>08.560.973/0001-97</span></div>
-        <div class="info-item"><b>E-mail</b><span>contato@cruzvermelhariodejaneiro.org</span></div>
-        <div class="info-item"><b>Instagram</b><span>@cruzvermelhabrasileirarj</span></div>
-        <div class="info-item"><b>Endereço</b><span>Praça da Cruz Vermelha, 10 - Rio de Janeiro</span></div>
+        <a class="info-item" href="/historia/"><b>1908</b><span>Fundação da Cruz Vermelha Brasileira, no Rio de Janeiro</span></a>
+        <a class="info-item" href="/principios-fundamentais/"><b>7</b><span>Princípios Fundamentais, os mesmos em todo o Movimento</span></a>
+        <a class="info-item" href="/movimento-internacional/"><b>191</b><span>Sociedades Nacionais no Movimento Internacional</span></a>
+        <a class="info-item" href="/quem-somos/"><b>1923</b><span>Palácio da Cruz Vermelha, sede da filial, com tombamento federal aprovado em 2021</span></a>
       </div>
     </div>
+
+    <section class="hp-comecar" id="comecar" aria-labelledby="comecar-titulo">
+      <div class="wrap">
+        <h2 id="comecar-titulo">Por onde você quer começar?</h2>
+        <ul class="hp-comecar-grade">
+          <li><a class="hp-comecar-item" href="#voluntariado"><span class="hp-comecar-ico"><svg class="ico ico-hand" aria-hidden="true" focusable="false"><use href="#i-hand"/></svg></span><span><b>Quero ser voluntário</b><span>Cadastro aqui no site, entrevista e formação gratuita na sede.</span></span></a></li>
+          <li><a class="hp-comecar-item" href="#cursos"><span class="hp-comecar-ico"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></span><span><b>Quero aprender primeiros socorros</b><span>Cursos presenciais de 8 horas na sede, com a Escola de Educação e Saúde.</span></span></a></li>
+          <li><a class="hp-comecar-item" href="#movimento"><span class="hp-comecar-ico"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 2h7v6.5H22v7h-6.5V22h-7v-6.5H2v-7h6.5z"/></svg></span><span><b>Quero conhecer a Cruz Vermelha</b><span>O Movimento, os sete Princípios, o emblema e a nossa história.</span></span></a></li>
+          <li><a class="hp-comecar-item" href="#parceiros"><span class="hp-comecar-ico"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></span><span><b>Sou de uma escola ou empresa</b><span>Treinamentos de primeiros socorros, Lei Lucas e NR para a sua equipe.</span></span></a></li>
+        </ul>
+      </div>
+    </section>
 
     <section id="institucional">
       <div class="wrap split">
         <div>
           <p class="eyebrow">Institucional</p>
           <h2>Uma filial histórica, conectada a uma missão mundial.</h2>
-          <p class="lead">A Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro é uma associação privada sem fins lucrativos, filial estadual da Cruz Vermelha Brasileira e parte do <a href="/movimento-internacional/">Movimento Internacional da Cruz Vermelha e do Crescente Vermelho</a>, guiado pelos <a href="/principios-fundamentais/">sete Princípios Fundamentais</a>: humanidade, imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade.</p>
+          <p class="lead">A Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro é uma associação privada sem fins lucrativos, filial estadual da Cruz Vermelha Brasileira e parte do <a href="/movimento-internacional/">Movimento Internacional da Cruz Vermelha e do Crescente Vermelho</a>, guiado pelos <a href="/principios-fundamentais/">sete Princípios Fundamentais</a>. No Rio de Janeiro, a filial atua em educação preventiva e apoio comunitário e forma os próprios voluntários, inclusive em primeiros socorros.</p>
           <p class="lead"><strong>Nossa missão</strong>, nas palavras do <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Estatuto da Cruz Vermelha Brasileira</a> (art. 10): prevenir e aliviar, com absoluta imparcialidade, os sofrimentos humanos, sem distinção de raça, nacionalidade, idioma, gênero, nível social, religião e opinião política ou qualquer outro viés discriminatório, contribuindo para a defesa da vida, da saúde e da dignidade humana.</p>
-          <p class="lead">No Rio de Janeiro, a filial atua em educação preventiva e apoio comunitário e forma os próprios voluntários, inclusive em primeiros socorros. Essa formação é gratuita, mas não é um curso aberto ao público: é só para quem entra no voluntariado, é aceito na ficha de entrevista e faz o CBFI, que abre quatro vezes por ano (veja <a href="/cursos-gratuitos/">como funciona a formação de voluntários</a>). Cursos de primeiros socorros com data marcada e certificado são os pagos da escola.</p>
-          <p class="lead">A sede é o Palácio da Cruz Vermelha, no Centro do Rio. O tombamento federal do prédio foi aprovado por unanimidade pelo <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">Conselho Consultivo do Iphan</a> em 10 de novembro de 2021. A filial é reconhecida como de utilidade pública municipal (<a href="https://doweb.rio.rj.gov.br/portal/edicoes/download/1135" target="_blank" rel="noopener">Lei 5.153/2010</a>) e estadual (<a href="https://alerjln1.alerj.rj.gov.br/contlei.nsf/c8aa0900025feef6032564ec0060dfff/592ba21d1eb9875a03258987006dbb6e?OpenDocument" target="_blank" rel="noopener">Lei 9.984/2023</a>). As leis que regem a Cruz Vermelha estão na <a href="/base-legal/">base legal</a>, e a trajetória desde a fundação da Cruz Vermelha Brasileira, em 1908, em <a href="/historia/">Nossa história</a>. Veja também <a href="/quem-somos/#como-nos-financiamos">como a filial se financia</a>.</p>
+          <ul class="check-list hp-inst-lista">
+            <li><span>Sede no Palácio da Cruz Vermelha, no Centro do Rio, com tombamento federal aprovado por unanimidade pelo <a href="https://www.gov.br/iphan/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/atas-do-conselho-consultivo-do-patrimonio-cultural/de-2021-ate-2030/98a-reuniao-ordinaria-do-conselho-consultivo-10-e-11-11-2021" target="_blank" rel="noopener">Conselho Consultivo do Iphan</a> em 10 de novembro de 2021.</span></li>
+            <li><span>Utilidade pública municipal (<a href="https://doweb.rio.rj.gov.br/portal/edicoes/download/1135" target="_blank" rel="noopener">Lei 5.153/2010</a>) e estadual (<a href="https://alerjln1.alerj.rj.gov.br/contlei.nsf/c8aa0900025feef6032564ec0060dfff/592ba21d1eb9875a03258987006dbb6e?OpenDocument" target="_blank" rel="noopener">Lei 9.984/2023</a>).</span></li>
+          </ul>
+          <p class="hp-inst-mais">Veja também <a href="/historia/">Nossa história</a>, desde a fundação da Cruz Vermelha Brasileira, em 1908, a <a href="/base-legal/">base legal</a> e <a href="/quem-somos/#como-nos-financiamos">como a filial se financia</a>.</p>
           <div class="cta-row" style="margin-top:24px">
             <a class="btn btn-red" href="/quem-somos/">Quem somos</a>
             <a class="btn btn-outline" href="/principios-fundamentais/">Os 7 Princípios</a>
@@ -1730,6 +1748,116 @@
             <figcaption>Com o vice-presidente <b>Antônio Pedregal</b>, no gabinete do Palácio da Cruz Vermelha</figcaption>
           </figure>
         </div>
+      </div>
+    </section>
+
+    <section class="hp-vol" id="voluntariado" aria-labelledby="vol-titulo">
+      <span id="acoes"></span>
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow">Voluntariado</p>
+            <h2 id="vol-titulo">A filial forma os próprios voluntários</h2>
+            <p class="lead">Não é preciso ser da área da saúde. Quem entra no voluntariado passa pela formação da filial, gratuita, e atua em campanhas humanitárias e na educação preventiva nas comunidades do Rio de Janeiro.</p>
+          </div>
+          <figure class="hp-vol-foto">
+            <img alt="Voluntários de camiseta da Cruz Vermelha Brasileira, vistos de costas, na formação do CBFI no salão nobre da sede" src="assets/otim/turma-cbfi-salao-960.webp" srcset="assets/otim/turma-cbfi-salao-480.webp 480w, assets/otim/turma-cbfi-salao-960.webp 960w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(100vw - 40px), 523px" width="960" height="720" loading="lazy" decoding="async">
+            <figcaption>Turma do CBFI no salão nobre da sede, em outubro de 2026.</figcaption>
+          </figure>
+        </div>
+        <ol class="cards">
+          <li class="card"><span class="num">1</span><h3>Cadastro</h3><p>Aqui no site, leva uns dez minutos. A confirmação chega por e-mail, com o protocolo.</p></li>
+          <li class="card"><span class="num">2</span><h3>Ficha de entrevista</h3><p>A equipe do voluntariado entra em contato por e-mail para conhecer você.</p></li>
+          <li class="card"><span class="num">3</span><h3>CBFI</h3><p>O curso de formação inicial dos voluntários: quatro vezes por ano, na sede, gratuito.</p></li>
+          <li class="card"><span class="num">4</span><h3>Termo de adesão</h3><p>Formaliza o serviço voluntário, que não é emprego (Lei 9.608/1998). Menores de 18 assinam com um responsável.</p></li>
+        </ol>
+        <div class="hp-vol-rodape">
+          <p class="hp-vol-idade">Idade mínima: 16 anos.</p>
+          <h3>Frentes em que você pode atuar</h3>
+          <ul class="hp-pilulas">
+            <li><span>Formação e primeiros socorros</span></li>
+            <li><span>Campanhas e ações</span></li>
+            <li><span>Juventude</span></li>
+            <li><span>Comunicação</span></li>
+            <li><span>Gestão de riscos e desastres</span></li>
+            <li><span>Psicologia e serviço social</span></li>
+            <li><span>Esportes e eventos</span></li>
+            <li><span>Administrativo</span></li>
+          </ul>
+          <div class="cta-row">
+            <a class="btn btn-red" href="/voluntariado/cadastro/">Fazer meu cadastro</a>
+            <a class="btn btn-outline" href="/voluntariado/">Como funciona o voluntariado</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaigns-section" id="em-acao" aria-labelledby="acao-titulo" style="background:#fff">
+      <div class="wrap">
+        <p class="eyebrow">Em ação</p>
+        <h2 id="acao-titulo">A filial em ação</h2>
+        <p class="lead">Voluntários formados pela filial atuando em ações, eventos e atendimentos no Rio de Janeiro. Acompanhe as próximas no <a href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Instagram da filial</a>.</p>
+        <div class="hp-acao-grade">
+          <figure><img src="assets/otim/acao-coordenacao-movel-640.webp" width="640" height="480" alt="Equipe da filial, de uniforme e capacete, diante do Centro de Coordenação Móvel da Cruz Vermelha Brasileira" loading="lazy" decoding="async"><figcaption>Equipe com o Centro de Coordenação Móvel</figcaption></figure>
+          <figure><img src="assets/otim/acao-primeiros-socorros-rua-640.webp" width="640" height="480" alt="Voluntários de uniforme vermelho fazem atendimento de primeiros socorros a uma pessoa deitada no chão, ao lado de carros" loading="lazy" decoding="async"><figcaption>Primeiros socorros na prática</figcaption></figure>
+          <figure><img src="assets/otim/acao-tenda-640.webp" width="640" height="480" alt="Voluntários reunidos em frente à tenda da Cruz Vermelha Brasileira" loading="lazy" decoding="async"><figcaption>Tenda de atendimento em evento</figcaption></figure>
+          <figure><img src="assets/otim/acao-capacetes-640.webp" width="640" height="480" alt="Voluntárias sorridentes com capacete branco e uniforme vermelho da Cruz Vermelha" loading="lazy" decoding="async"><figcaption>Equipe pronta para atuar</figcaption></figure>
+          <figure><img src="assets/otim/acao-equipe-uniforme-640.webp" width="640" height="480" alt="Voluntárias com uniforme de campo vermelho da Cruz Vermelha, ao ar livre" loading="lazy" decoding="async"><figcaption>Voluntárias com uniforme de campo</figcaption></figure>
+          <figure><img src="assets/otim/acao-evento-ar-livre-640.webp" width="640" height="480" alt="Voluntários de camiseta branca e calça vermelha em um evento ao ar livre" loading="lazy" decoding="async"><figcaption>Apoio em evento ao ar livre</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="campaigns-section hp-mov" id="movimento" aria-labelledby="mov-titulo">
+      <div class="wrap">
+        <p class="eyebrow">Movimento Internacional</p>
+        <h2 id="mov-titulo">Parte de um movimento humanitário presente no mundo inteiro</h2>
+        <p class="lead">A filial integra a Cruz Vermelha Brasileira e o Movimento Internacional da Cruz Vermelha e do Crescente Vermelho, formado pelo CICV, pela Federação Internacional e por 191 Sociedades Nacionais, todos guiados pelos mesmos sete Princípios Fundamentais.</p>
+        <ul class="hp-pilulas" aria-label="Os sete Princípios Fundamentais">
+          <li><a href="/principios-fundamentais/#humanidade">Humanidade</a></li>
+          <li><a href="/principios-fundamentais/#imparcialidade">Imparcialidade</a></li>
+          <li><a href="/principios-fundamentais/#neutralidade">Neutralidade</a></li>
+          <li><a href="/principios-fundamentais/#independencia">Independência</a></li>
+          <li><a href="/principios-fundamentais/#voluntariado">Voluntariado</a></li>
+          <li><a href="/principios-fundamentais/#unidade">Unidade</a></li>
+          <li><a href="/principios-fundamentais/#universalidade">Universalidade</a></li>
+        </ul>
+        <div class="campaigns-grid">
+          <a class="campaign-card" href="/emblema/">
+            <div class="campaign-card-thumb"><img alt="Cruz vermelha, crescente vermelho e cristal vermelho lado a lado, sobre fundo branco" src="assets/emblema/commons/tres-emblemas.svg" width="290" height="95" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">O emblema</p>
+              <h3>Um sinal de proteção, não uma marca</h3>
+              <p>A cruz, o crescente e o cristal vermelhos: o que significam, como são desenhados e quem pode usar o emblema no Brasil.</p>
+            </div>
+          </a>
+          <a class="campaign-card" href="/movimento-internacional/">
+            <div class="campaign-card-thumb"><img alt="Diagrama da estrutura do Movimento Internacional: CICV, Federação Internacional e Sociedades Nacionais" src="assets/institucional/desenhos/estrutura-movimento.svg" width="860" height="464" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Movimento Internacional</p>
+              <h3>CICV, Federação e Sociedades Nacionais</h3>
+              <p>Como o Movimento se organiza, desde o comitê criado em Genebra em 1863.</p>
+            </div>
+          </a>
+          <a class="campaign-card" href="/direito-internacional-humanitario/">
+            <div class="campaign-card-thumb"><img alt="Linha do tempo do Direito Internacional Humanitário" src="assets/institucional/desenhos/linha-do-tempo-dih.svg" width="860" height="420" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Direito Internacional Humanitário</p>
+              <h3>As regras que protegem as pessoas na guerra</h3>
+              <p>As Convenções de Genebra de 1949, promulgadas no Brasil pelo Decreto 42.121/1957, e o papel da Cruz Vermelha.</p>
+            </div>
+          </a>
+          <a class="campaign-card" href="/historia/">
+            <div class="campaign-card-thumb hp-foto"><img alt="Fachada do Palácio da Cruz Vermelha com andaimes, durante as obras, em 1923" src="assets/otim/historia-obras-1923-480.webp" width="480" height="348" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow" style="font-size:.7rem">Nossa história</p>
+              <h3>Do Rio de 1908 ao Palácio da Cruz Vermelha</h3>
+              <p class="hp-credito">Foto: Acervo do Centro de Memória e Documentação da Cruz Vermelha Brasileira</p>
+              <p>A fundação em 1908, a Escola Prática de Enfermeiras de 1916 e a sede erguida entre 1919 e 1923.</p>
+            </div>
+          </a>
+        </div>
+        <p class="hp-mov-avise"><a href="/emblema/#avise">Viu uso indevido do emblema? Avise a filial</a></p>
       </div>
     </section>
 
@@ -1752,68 +1880,12 @@
           <a class="campaign-card" href="campanha-agasalho.html">
             <div class="campaign-card-thumb"><img alt="Campanha do Agasalho" src="assets/otim/agasalho-hero-rua-640.webp" srcset="assets/otim/agasalho-hero-rua-640.webp 640w, assets/otim/agasalho-hero-rua-1264.webp 1264w" sizes="(max-width: 620px) 100vw, 349px" width="640" height="429" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem">Campanha de Inverno</p>
+              <p class="eyebrow" style="font-size:.7rem">Campanha do Agasalho</p>
               <h3>Campanha do Agasalho</h3>
-              <p>Arrecadação de agasalhos, cobertores e calçados para levar aquecimento e dignidade a famílias em situação de vulnerabilidade durante o frio.</p>
+              <p>Roupas de frio, cobertores e calçados são recebidos na sede, de segunda a sexta, das 10h às 17h, e levados a famílias em situação de vulnerabilidade.</p>
               <span class="btn btn-outline">Ver Como Ajudar</span>
             </div>
           </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="actions" id="acoes">
-      <div class="wrap">
-        <div class="actions-head">
-          <div>
-            <p class="eyebrow">A Cruz Vermelha Brasileira Rio de Janeiro em ação</p>
-            <h2>O trabalho humanitário exige preparo contínuo.</h2>
-            <p class="lead">Da formação de novos voluntários à orientação pública em situações de risco, a filial do Rio de Janeiro trabalha para que solidariedade venha acompanhada de técnica, organização e responsabilidade.</p>
-          </div>
-          <p class="actions-kicker">Mais do que presença: preparo para servir, orientar e proteger vidas em momentos decisivos.</p>
-        </div>
-
-        <div class="actions-layout">
-          <article class="feature-action">
-            <img alt="Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/hero-formacao-voluntarios-1080.webp" srcset="assets/otim/hero-formacao-voluntarios-540.webp 540w, assets/otim/hero-formacao-voluntarios-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 620px" width="1080" height="1350" loading="lazy" decoding="async">
-            <div class="feature-caption">
-              <p class="eyebrow">Formação de voluntários</p>
-              <h3>Capacitação que salva vidas.</h3>
-              <p>A cada turma formada, a Cruz Vermelha Brasileira Rio de Janeiro amplia sua rede de pessoas preparadas para atuar com humanidade, disciplina e segurança.</p>
-            </div>
-          </article>
-
-          <div class="action-list">
-            <article class="action-tile">
-              <img alt="Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação" src="assets/otim/voluntario-microfone-480.webp" srcset="assets/otim/voluntario-microfone-480.webp 480w, assets/otim/voluntario-microfone-960.webp 960w, assets/otim/voluntario-microfone-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Capacitação</span>
-                <h3>Treinamento com orientação técnica</h3>
-                <p>Aulas, encontros e práticas para preparar equipes diante de emergências reais.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img alt="Equipe da Cruz Vermelha Brasileira Rio de Janeiro em atividade no Palácio da Cruz Vermelha" src="assets/otim/equipe-corredor-480.webp" srcset="assets/otim/equipe-corredor-480.webp 480w, assets/otim/equipe-corredor-960.webp 960w, assets/otim/equipe-corredor-1440.webp 1440w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="364" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Voluntariado</span>
-                <h3>Presença que acolhe</h3>
-                <p>Pessoas mobilizadas para servir com empatia, organização e compromisso social.</p>
-              </div>
-            </article>
-            <article class="action-tile">
-              <img alt="Ação comunitária com voluntários da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/acao-comunitaria-morro-480.webp" srcset="assets/otim/acao-comunitaria-morro-480.webp 480w, assets/otim/acao-comunitaria-morro-1080.webp 1080w" sizes="(max-width: 620px) 100vw, 150px" width="480" height="480" loading="lazy" decoding="async">
-              <div class="action-copy">
-                <span>Comunidade</span>
-                <h3>Cuidado também se constrói no território</h3>
-                <p>Ações locais aproximam a instituição das comunidades e fortalecem vínculos de confiança.</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="actions-cta">
-          <a class="btn btn-red" href="/cursos-gratuitos/">Como funciona a formação de voluntários</a>
-          <a class="btn btn-outline" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener">Ver mais ações no Instagram</a>
         </div>
       </div>
     </section>
@@ -1824,13 +1896,13 @@
       <div class="wrap">
         <p class="eyebrow">Confiança se comprova</p>
         <h2>Transparência e verificação de documentos</h2>
-        <p class="lead">Canais oficiais publicados com registro verificável; o portal de documentos e parcerias está em implantação. Ofícios, certificados de curso e publicações registrados na trilha podem ser conferidos pelo código ou pelo próprio arquivo.</p>
+        <p class="lead">O portal já publica o Estatuto e a escritura pública de ata notarial de 02/02/2026, cada documento com código de verificação e impressão digital (SHA-256). Ofícios, certificados de curso e publicações registrados na trilha podem ser conferidos pelo código ou pelo próprio arquivo.</p>
         <div class="campaigns-grid">
           <a class="campaign-card" href="/transparencia/">
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Portal da transparência</p>
               <h3>Documentos e parcerias</h3>
-              <p>O portal está em implantação: é ali que a filial vai publicar estatuto, diretoria, demonstrações contábeis, relatórios e parcerias com o poder público, cada documento com versão imutável, código de registro e impressão digital.</p>
+              <p>Documentos da filial com versão imutável, código de registro e impressão digital. Já publicados: o Estatuto e a escritura pública de ata notarial de 02/02/2026.</p>
               <span class="btn btn-outline">Abrir o portal</span>
             </div>
           </a>
@@ -1846,194 +1918,43 @@
             <div class="campaign-card-body">
               <p class="eyebrow" style="font-size:.7rem">Canais oficiais</p>
               <h3>Onde a filial fala de verdade</h3>
-              <p>A lista registrada de sites, perfis, telefones e e-mails oficiais da Cruz Vermelha Brasileira Rio de Janeiro, com histórico de versões.</p>
+              <p>A lista registrada de site, e-mail, telefone, endereço e CNPJ oficiais da Cruz Vermelha Brasileira Rio de Janeiro, com histórico de versões.</p>
               <span class="btn btn-outline">Ver os canais</span>
             </div>
           </a>
         </div>
+        <p class="hp-links-linha"><a href="/quem-somos/#como-nos-financiamos">Como a filial se financia</a><a href="/base-legal/">Base legal</a><a href="/pedido-de-documentos/">Pedir a íntegra de um documento</a><a href="/gestao/">Como funciona a nossa gestão</a></p>
       </div>
     </section>
 
-    <section class="courses" id="cursos">
+    <section class="hp-escola" id="cursos" aria-labelledby="escola-titulo">
       <div class="wrap">
-        <p class="eyebrow">Escola e capacitação</p>
-        <h2>Formação que prepara pessoas para agir com segurança.</h2>
-
-        <div class="courses-slider-nav">
-          <button class="course-tab active" onclick="goToCourseSlide(0)">Primeiros Socorros</button>
-          <button class="course-tab" onclick="goToCourseSlide(1)">Punção Venosa</button>
-          <button class="course-tab" onclick="goToCourseSlide(2)">Cuidador de Idosos</button>
+        <p class="eyebrow">Escola de Educação e Saúde</p>
+        <h2 id="escola-titulo">Primeiros socorros: preparar pessoas para salvar vidas</h2>
+        <p class="lead">Ensinar a agir numa emergência faz parte da missão da Cruz Vermelha. Os cursos presenciais são da escola ligada à filial, a O-CVB Filial Rio de Janeiro Ensino Ltda, e acontecem na sede, no Centro do Rio. <a href="/quem-somos/#como-nos-financiamos">O resultado da escola</a> ajuda a manter o Palácio e as atividades humanitárias.</p>
+        <div class="hp-escola-grade">
+          <article class="hp-curso hp-curso-dea">
+            <img alt="Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa" src="assets/otim/aula-dea-sala-480.webp" srcset="assets/otim/aula-dea-sala-480.webp 480w, assets/otim/aula-dea-sala-591.webp 591w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(50vw - 32px), 538px" width="480" height="1040" loading="lazy" decoding="async">
+            <div class="hp-curso-corpo">
+              <h3>Primeiros Socorros Básico <small>· 8 horas</small></h3>
+              <p>Reconhecer riscos, acionar ajuda e aplicar as condutas iniciais com técnica: trauma, engasgo, parada cardiorrespiratória e emergências comuns. Com certificado da escola.</p>
+              <a class="btn btn-red" href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">Fazer matrícula</a>
+            </div>
+          </article>
+          <article class="hp-curso hp-curso-bebe">
+            <img alt="Alunos ajoelhados praticando a manobra de desengasgo em manequins de bebê durante a aula" src="assets/otim/aula-engasgo-bebe-480.webp" srcset="assets/otim/aula-engasgo-bebe-480.webp 480w, assets/otim/aula-engasgo-bebe-589.webp 589w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) calc(50vw - 32px), 538px" width="480" height="1043" loading="lazy" decoding="async">
+            <div class="hp-curso-corpo">
+              <h3>Primeiros Socorros Lei Lucas <small>· 8 horas</small></h3>
+              <p>A Lei Lucas (Lei 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. O curso trata de primeiros socorros infantis: avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias.</p>
+              <a class="btn btn-red" href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Fazer matrícula</a>
+            </div>
+          </article>
         </div>
+        <p class="hp-escola-valor">Matrícula com inscrição de R$ 99,00, por PIX ou cartão; o valor do curso é pago depois, na plataforma da escola.</p>
 
-        <div id="coursesSlider">
-          <div class="course-slide active" data-course-slide="0">
-            <div class="course-box">
-              <img alt="Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-primeiros-socorros-novo-768.webp" srcset="assets/otim/curso-primeiros-socorros-novo-480.webp 480w, assets/otim/curso-primeiros-socorros-novo-768.webp 768w" sizes="(max-width: 620px) 100vw, 576px" width="768" height="1024" loading="lazy" decoding="async">
-              <div class="course-copy">
-                <h3>Curso de Primeiros Socorros Básico</h3>
-                <p class="lead">Capacitação para reconhecer riscos, acionar ajuda e aplicar condutas iniciais com técnica. O objetivo é reduzir improvisos perigosos e aumentar a segurança em situações críticas.</p>
-                <ul class="check-list">
-                  <li>Conteúdo com foco em prevenção, atendimento inicial e resposta adequada.</li>
-                  <li>Orientação sobre trauma, engasgo, parada cardiorrespiratória e emergências comuns.</li>
-                  <li>Carga horária de 8 horas, com certificado da escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b" target="_blank" rel="noopener">Quero Aprender</a>
-                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="primeiros-socorros-basico">Tirar dúvidas</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="course-slide" data-course-slide="1">
-            <div class="course-box">
-              <img alt="Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-puncao-venosa-768.webp" srcset="assets/otim/curso-puncao-venosa-480.webp 480w, assets/otim/curso-puncao-venosa-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
-              <div class="course-copy">
-                <h3>Curso de Punção Venosa</h3>
-                <p class="lead">Técnica de acesso venoso periférico realizada com segurança, com teoria e prática supervisionada para profissionais e estudantes da área da saúde.</p>
-                <ul class="check-list">
-                  <li>Curso prático de 8 horas, com teoria + prática supervisionada.</li>
-                  <li>Certificado emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
-                  <li>Datas das próximas turmas na plataforma da escola.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0" target="_blank" rel="noopener">Faça sua Inscrição</a>
-                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="puncao-venosa">Tirar dúvidas</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="course-slide" data-course-slide="2">
-            <div class="course-box">
-              <img alt="Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro" src="assets/otim/curso-cuidador-idosos-768.webp" srcset="assets/otim/curso-cuidador-idosos-480.webp 480w, assets/otim/curso-cuidador-idosos-768.webp 768w" sizes="(max-width: 620px) 100vw, 1100px" width="768" height="1024" loading="lazy" decoding="async">
-              <div class="course-copy">
-                <h3>Curso de Cuidador de Idosos</h3>
-                <p class="lead">Curso livre que aborda cuidados, segurança e bem-estar no atendimento humanizado ao idoso, transformando cuidado em profissão.</p>
-                <ul class="check-list">
-                  <li>Carga horária de 160 horas, presenciais.</li>
-                  <li>Escolaridade mínima: Ensino Fundamental.</li>
-                  <li>Certificado emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda.</li>
-                </ul>
-                <div class="cta-row">
-                  <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3" target="_blank" rel="noopener">Faça sua Inscrição</a>
-                  <a class="btn btn-outline" href="#contato" data-abrir-chat data-assunto="curso" data-curso="cuidador-de-idosos">Tirar dúvidas</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="courses-dots">
-          <button class="course-dot active" onclick="goToCourseSlide(0)" aria-label="Curso 1"></button>
-          <button class="course-dot" onclick="goToCourseSlide(1)" aria-label="Curso 2"></button>
-          <button class="course-dot" onclick="goToCourseSlide(2)" aria-label="Curso 3"></button>
-        </div>
-
-        <div class="more-courses-grid">
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img alt="Curso de Bombeiro Civil" src="assets/otim/curso-bombeiro-civil-768.webp" srcset="assets/otim/curso-bombeiro-civil-480.webp 480w, assets/otim/curso-bombeiro-civil-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
-            <div class="mini-course-body">
-              <h4>Bombeiro Civil</h4>
-              <p>Formação para atuação em prevenção e combate a incêndios. 80 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img alt="Curso Lei Lucas - Ambientes com Crianças" src="assets/otim/curso-lei-lucas-768.webp" srcset="assets/otim/curso-lei-lucas-480.webp 480w, assets/otim/curso-lei-lucas-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
-            <div class="mini-course-body">
-              <h4>Lei Lucas — Ambientes com Crianças</h4>
-              <p>Capacitação essencial para escolas e creches: RCP, engasgos, quedas e hemorragias. 8 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-          <a class="mini-course-card" href="https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4" target="_blank" rel="noopener">
-            <div class="mini-course-thumb"><img alt="Curso de Suporte Básico de Vida" src="assets/otim/curso-suporte-basico-vida-768.webp" srcset="assets/otim/curso-suporte-basico-vida-480.webp 480w, assets/otim/curso-suporte-basico-vida-768.webp 768w" sizes="(max-width: 620px) 100vw, 351px" width="768" height="1024" loading="lazy" decoding="async"></div>
-            <div class="mini-course-body">
-              <h4>Suporte Básico de Vida</h4>
-              <p>Atendimento inicial de emergências com diretrizes oficiais. 4 horas.</p>
-              <span class="btn btn-outline">Saiba Mais</span>
-            </div>
-          </a>
-        </div>
-
-        <div class="cta-row" style="justify-content:center;margin-top:32px">
-          <a class="btn btn-red" href="https://escola.cursoscruzvermelha.org/cursos" target="_blank" rel="noopener">Ver todos os cursos</a>
-        </div>
-      </div>
-    </section>
-    <script>
-      (function(){
-        var current = 0;
-        var slides = document.querySelectorAll('.course-slide');
-        var tabs = document.querySelectorAll('.course-tab');
-        var dots = document.querySelectorAll('.course-dot');
-        var timer;
-        function render(){
-          slides.forEach(function(s,i){ s.classList.toggle('active', i===current); });
-          tabs.forEach(function(t,i){ t.classList.toggle('active', i===current); });
-          dots.forEach(function(d,i){ d.classList.toggle('active', i===current); });
-        }
-        window.goToCourseSlide = function(i){ current = i; render(); resetTimer(); };
-        function resetTimer(){
-          clearInterval(timer);
-          timer = setInterval(function(){ current = (current + 1) % slides.length; render(); }, 7000);
-        }
-        resetTimer();
-      })();
-    </script>
-
-    <section class="matricula-section" id="matricula" aria-labelledby="matricula-title">
-      <div class="wrap">
-        <div class="matricula-box">
-          <p class="eyebrow">Matrícula cursos presenciais</p>
-          <h2 id="matricula-title">Já escolheu seu curso?</h2>
-          <p class="lead">Faça sua matrícula agora e garanta sua vaga com a inscrição de R$ 99,00, por PIX ou cartão. Sem criar conta e sem escolher turma nesta etapa; o valor do curso é pago depois, na plataforma da escola.</p>
-          <form class="matricula-form" action="/matricula-cursos-presenciais/checkout/" method="get" novalidate>
-            <fieldset class="matricula-opcoes">
-              <legend style="position:absolute;left:-9999px">Curso</legend>
-              <!-- matricula:cursos (preenchido por scripts/gerar_matricula_presencial.py a partir de cursos.json) -->
-              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Emergência e vida</span>
-                <input type="radio" name="curso" value="primeiros-socorros-basico" id="mc-primeiros-socorros-basico">
-                <label class="matricula-pilula" for="mc-primeiros-socorros-basico">Primeiros Socorros Básico <small>8 horas</small></label>
-                <input type="radio" name="curso" value="primeiros-socorros-lei-lucas" id="mc-primeiros-socorros-lei-lucas">
-                <label class="matricula-pilula" for="mc-primeiros-socorros-lei-lucas">Primeiros Socorros Lei Lucas - Ambientes com Crianças <small>8 horas</small></label>
-                <input type="radio" name="curso" value="puncao-venosa" id="mc-puncao-venosa">
-                <label class="matricula-pilula" for="mc-puncao-venosa">Punção Venosa <small>8 horas</small></label>
-                <input type="radio" name="curso" value="suporte-basico-de-vida" id="mc-suporte-basico-de-vida">
-                <label class="matricula-pilula" for="mc-suporte-basico-de-vida">Suporte Básico de Vida <small>4 horas</small></label>
-              </div>
-              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Formação profissional</span>
-                <input type="radio" name="curso" value="bombeiro-civil" id="mc-bombeiro-civil">
-                <label class="matricula-pilula" for="mc-bombeiro-civil">Bombeiro Civil <small>80 horas</small></label>
-                <input type="radio" name="curso" value="cuidador-de-idosos" id="mc-cuidador-de-idosos">
-                <label class="matricula-pilula" for="mc-cuidador-de-idosos">Cuidador de Idosos (Curso Livre) <small>160 horas</small></label>
-              </div>
-              <div class="matricula-grupo"><span class="matricula-grupo-titulo">Outros cursos</span>
-                <input type="radio" name="curso" value="micropigmentacao-labial" id="mc-micropigmentacao-labial">
-                <label class="matricula-pilula" for="mc-micropigmentacao-labial">Micropigmentação Labial <small>24 horas</small></label>
-              </div>
-              <!-- /matricula:cursos -->
-            </fieldset>
-            <div class="matricula-acao">
-              <button class="btn btn-red" type="submit">Fazer matrícula agora</button>
-              <span class="matricula-escolhido" id="matricula-escolhido" aria-live="polite">Toque no curso para escolher</span>
-            </div>
-          </form>
-          <p class="matricula-nota"><a href="/matricula-cursos-presenciais/">Ver todos os cursos, valores e dúvidas frequentes</a></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="alert" aria-labelledby="trauma-title">
-      <div class="wrap alert-grid">
-        <figure class="alert-foto">
-          <img src="matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp" alt="Alunos praticando reanimação em manequim na aula de Primeiros Socorros da Cruz Vermelha Brasileira Rio de Janeiro" loading="lazy" width="960" height="720">
-          <figcaption><i class="fa-solid fa-heart-pulse" aria-hidden="true"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></i> Aula prática de Primeiros Socorros na sede, no Centro do Rio</figcaption>
-        </figure>
-        <div>
+        <div class="alert hp-alerta">
           <p class="eyebrow">Educação salva vidas</p>
-          <h2 id="trauma-title">No trauma, ajudar é fazer a coisa certa.</h2>
+          <h3>No trauma, ajudar é fazer a coisa certa.</h3>
           <p class="lead">Uma boa intenção pode causar danos quando vira improviso. Em um acidente com motociclista, por exemplo, tirar o capacete sem técnica pode agravar uma lesão na coluna. Três atitudes que salvam:</p>
           <ol class="alert-list">
             <li class="alert-item"><i class="fa-solid fa-phone" aria-hidden="true"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i><div><b>Acione ajuda especializada</b><span>SAMU 192 ou Bombeiros 193. Diga onde está e o que aconteceu.</span></div></li>
@@ -2041,19 +1962,41 @@
             <li class="alert-item"><i class="fa-solid fa-graduation-cap" aria-hidden="true"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i><div><b>Aprenda com quem sabe</b><span>Primeiros socorros se aprendem na prática, com orientação profissional. É o que o curso ensina em 8 horas.</span></div></li>
           </ol>
           <div class="alert-cta">
-            <a class="btn btn-red" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico">Fazer o curso de Primeiros Socorros</a>
-            <a class="alert-link" href="/matricula-cursos-presenciais/">Ver todos os cursos <i class="fa-solid fa-arrow-right" aria-hidden="true"><svg class="ico ico-arrow-right" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg></i></a>
+            <a class="btn btn-red" href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">Fazer o curso de Primeiros Socorros</a>
           </div>
-          <p class="alert-nota">Presencial, 8 horas, certificado da Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda). A inscrição de R$ 99 garante a vaga.</p>
         </div>
+
+        <p class="hp-escola-outros">A escola também oferece Suporte Básico de Vida, Punção Venosa, Cuidador de Idosos, Bombeiro Civil e Micropigmentação Labial. <a href="/matricula-cursos-presenciais/">Ver todos os cursos e valores →</a></p>
       </div>
     </section>
 
     <!-- NOVO: PARCEIROS CNPJ -->
-    <section class="partners-section" id="parceiros">
+    <section class="hp-emp" id="parceiros" aria-labelledby="emp-titulo">
+      <div class="wrap">
+        <h2 id="emp-titulo">Leve a Cruz Vermelha para a sua empresa</h2>
+        <p class="hp-emp-sub">Treinamentos práticos para a sua equipe agir com segurança numa emergência.</p>
+        <div class="hp-emp-grade">
+          <figure class="hp-emp-foto">
+            <img alt="Instrutor da Cruz Vermelha Brasileira Rio de Janeiro orienta uma aluna na prática da manobra de Heimlich, durante aula na sede" src="assets/otim/empresas-heimlich-720.webp" srcset="assets/otim/empresas-heimlich-480.webp 480w, assets/otim/empresas-heimlich-720.webp 720w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 920px) 420px, 440px" width="720" height="900" loading="lazy" decoding="async">
+            <figcaption>Aula prática de primeiros socorros na sede: manobra de Heimlich.</figcaption>
+          </figure>
+          <div>
+            <ul class="hp-emp-cartoes">
+              <li class="hp-emp-cartao"><span class="hp-emp-circulo"><svg class="ico ico-heart-pulse" aria-hidden="true" focusable="false"><use href="#i-heart-pulse"/></svg></span><div><h3>Primeiros socorros para equipes</h3><p>Prática com orientação profissional para reconhecer riscos, acionar ajuda e agir até o socorro chegar.</p></div></li>
+              <li class="hp-emp-cartao"><span class="hp-emp-circulo"><svg class="ico ico-hand" aria-hidden="true" focusable="false"><use href="#i-hand"/></svg></span><div><h3>Lei Lucas (Lei 13.722/2018)</h3><p>Capacitação em primeiros socorros para escolas, creches e equipes que trabalham com crianças.</p></div></li>
+              <li class="hp-emp-cartao"><span class="hp-emp-circulo"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></span><div><h3>NR e programas sob medida</h3><p>Treinamentos de NR e programas montados para a realidade da sua equipe.</p></div></li>
+            </ul>
+            <p class="hp-emp-nota">Treinamentos contratados com a Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro.</p>
+            <a class="hp-emp-botao" href="mailto:contato@cruzvermelhariodejaneiro.org?subject=Treinamento%20para%20minha%20empresa" data-hp-proposta>Pedir uma proposta</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="partners-section hp-parceiros" aria-labelledby="parceiros-titulo">
       <div class="wrap">
         <p class="eyebrow">Empresas parceiras</p>
-        <h2>Parcerias que salvam vidas</h2>
+        <h2 id="parceiros-titulo">Parcerias que salvam vidas</h2>
         <p class="lead">Empresas que apoiam a Cruz Vermelha Brasileira Rio de Janeiro com programas de responsabilidade social e treinamentos corporativos. Os treinamentos de primeiros socorros, Lei Lucas e NR são contratados com a Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda).</p>
         <div class="partners-logos">
           <div class="partner-slot"><img alt="Johnson & Johnson" src="assets/otim/parceiros/johnson-johnson-400.webp" width="400" height="225" loading="lazy" decoding="async"></div>
@@ -2063,13 +2006,6 @@
           <div class="partner-slot"><img alt="Leite de Rosas" src="assets/otim/parceiros/leite-de-rosas-320.webp" width="320" height="320" loading="lazy" decoding="async"></div>
           <div class="partner-slot"><img alt="Avon" src="assets/otim/parceiros/avon-400.webp" width="400" height="107" loading="lazy" decoding="async"></div>
           <div class="partner-slot"><img alt="Ortobom" src="assets/otim/parceiros/ortobom-400.webp" width="400" height="58" loading="lazy" decoding="async"></div>
-        </div>
-        <div class="partner-cta">
-          <div>
-            <h3>Sua empresa também pode ser parceira do Rio</h3>
-            <p>Programas de responsabilidade social com a filial e, pela Escola de Educação e Saúde, treinamentos de NR, Lei Lucas e programas sob medida para sua equipe.</p>
-          </div>
-          <a href="#contato" class="btn btn-red">Quero ser Parceiro</a>
         </div>
       </div>
     </section>
@@ -2110,52 +2046,20 @@
           <h3 class="faq-grupo">Voluntariado</h3>
           <details class="faq-item">
             <summary>Como ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, preencha o cadastro no <a href="/voluntariado/cadastro/">formulário oficial do voluntariado</a>. Depois, a equipe do voluntariado entra em contato para explicar as frentes de atuação, a formação inicial, que acontece na sede, no Centro do Rio, e os próximos encontros. Convocações para ações, campanhas e turmas de formação também são divulgadas no Instagram @cruzvermelhabrasileirarj e nas <a href="/noticias/">notícias do site</a>. Dúvidas antes de se cadastrar? Fale com a equipe pelo WhatsApp do voluntariado, (21) 97036-0264, número exclusivo dessa equipe, ou deixe sua mensagem no <a href="/#chat">chat de contato do site</a>. Os canais oficiais estão reunidos na <a href="/bio/">página de links da filial</a>.</div>
+            <div class="faq-answer">Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, faça o <a href="/voluntariado/cadastro/">cadastro aqui no site</a>: leva uns dez minutos, e a confirmação chega por e-mail, com o protocolo. Depois vem a ficha de entrevista: a equipe do voluntariado entra em contato por e-mail para conhecer você. Quem é aceito faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano, na sede, no Centro do Rio, e é gratuito. Por fim, assina o termo de adesão ao serviço voluntário, como manda a Lei 9.608/1998. Veja o passo a passo completo na <a href="/voluntariado/">página do voluntariado</a>.</div>
           </details>
           <details class="faq-item">
             <summary>Quem pode ser voluntário? Precisa ser da área da saúde ou fazer um curso pago?</summary>
-            <div class="faq-answer">Não precisa ser profissional de saúde: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários. Depois do cadastro no <a href="/voluntariado/cadastro/">formulário oficial</a>, a equipe do voluntariado apresenta as frentes de atuação e a formação inicial, realizada na sede, no Centro do Rio. A filial atua em formação de voluntários, capacitação em primeiros socorros, educação preventiva e apoio comunitário, com ações como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a> e o Impacto das Cores: há espaço para perfis diferentes. Voluntariado e cursos são caminhos separados, com equipes e canais próprios; quem quiser se aprofundar em emergências pode, à parte, fazer o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-basico">curso de Primeiros Socorros Básico</a>.</div>
+            <div class="faq-answer">Não precisa ser da área da saúde nem comprar curso nenhum: a Cruz Vermelha Brasileira Rio de Janeiro forma os próprios voluntários, e essa formação é gratuita. A idade mínima é 16 anos; menores de 18 assinam o termo de adesão com um responsável. O caminho é o mesmo para todos: <a href="/voluntariado/cadastro/">cadastro no site</a>, ficha de entrevista, CBFI (o curso de formação inicial dos voluntários, quatro vezes por ano, na sede) e termo de adesão. Há espaço para perfis diferentes, em frentes como formação e primeiros socorros, campanhas e ações, juventude, comunicação e gestão de riscos e desastres. Saiba mais na <a href="/voluntariado/">página do voluntariado</a>.</div>
           </details>
           <h3 class="faq-grupo">Cursos e matrícula</h3>
-          <details class="faq-item">
-            <summary>Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?</summary>
-            <div class="faq-answer">Os cursos abertos ao público na Cruz Vermelha Brasileira Rio de Janeiro são os sete cursos presenciais pagos da Escola de Educação e Saúde, na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos (160 horas) e Micropigmentação Labial (24 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. A filial não vende cursos: forma os próprios voluntários, depois da seleção (veja a <a href="/cursos-gratuitos/">formação de voluntários</a>). Valores e escolaridade estão na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
-          </details>
           <details class="faq-item">
             <summary>Como me matricular em um curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
             <div class="faq-answer">Escolha o curso na <a href="/matricula-cursos-presenciais/">página de cursos presenciais</a> e clique em “Inscrever-se”. Você preenche nome, CPF, e-mail e telefone e escolhe o que pagar: a taxa de inscrição (R$ 99) junto com a matrícula, que é o valor do curso, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Não é preciso criar conta antes: a conta na área do aluno é criada depois do pagamento, e o link para criar a senha chega no seu e-mail. Dúvidas? Use o <a href="/#chat">chat do site</a>, que responde por e-mail.</div>
           </details>
           <details class="faq-item">
-            <summary>Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Micropigmentação Labial, R$ 400 + R$ 99 = R$ 499; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na <a href="/matricula-cursos-presenciais/">página de cursos presenciais</a>.</div>
-          </details>
-          <details class="faq-item">
             <summary>A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?</summary>
             <div class="faq-answer">Não há curso gratuito aberto ao público. A filial, associação sem fins lucrativos, forma de graça só os próprios voluntários, e com seleção: quem quer entrar faz o cadastro, passa pela ficha de entrevista e, se for aceito, faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano. Só depois dele o voluntário participa das formações internas, como as de primeiros socorros. Veja a <a href="/cursos-gratuitos/">formação de voluntários</a>. Quem precisa de um curso com data marcada e certificado encontra os sete cursos presenciais da escola, a O-CVB Filial Rio de Janeiro Ensino Ltda: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?</summary>
-            <div class="faq-answer">Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na <a href="/matricula-cursos-presenciais/">página de matrícula</a> antes de garantir a vaga com a inscrição de R$ 99.</div>
-          </details>
-          <details class="faq-item">
-            <summary>O certificado dos cursos da Cruz Vermelha Brasileira Rio de Janeiro é reconhecido?</summary>
-            <div class="faq-answer">Sim. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, a quem conclui todas as etapas de cada curso presencial, dado na sede da filial, no Palácio da Cruz Vermelha. É um diferencial valorizado no currículo, mas não substitui habilitação profissional regulamentada: o curso de Primeiros Socorros, por exemplo, prepara para o atendimento inicial até a chegada do socorro especializado e não habilita a trabalhar como socorrista. No Bombeiro Civil, a homologação é feita ao final do curso, à parte. Em primeiros socorros, recomenda-se atualização periódica, porque os protocolos internacionais são revisados. Veja cada curso na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?</summary>
-            <div class="faq-answer">As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Os cursos da Cruz Vermelha Brasileira Rio de Janeiro são online ou presenciais?</summary>
-            <div class="faq-answer">Os cursos são presenciais, na Praça da Cruz Vermelha, 10, Centro do Rio de Janeiro. Não há curso de primeiros socorros a distância: RCP, desengasgo e controle de hemorragias pedem prática com manequim e instrutor ao lado, e é isso que dá peso ao certificado. A matrícula, essa sim, é feita pela internet. O certificado dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, e vale em todo o país, não apenas no estado do Rio: certificado de curso livre não tem validade por região. Faça a inscrição na <a href="/matricula-cursos-presenciais/">página de matrícula</a>; a secretaria confirma turma e horário por e-mail.</div>
-          </details>
-          <details class="faq-item">
-            <summary>O certificado dos cursos é reconhecido pelo MEC?</summary>
-            <div class="faq-answer">Não, e nenhum curso livre é: o MEC regula a educação formal - ensino técnico, graduação e pós - e não emite nem reconhece diploma de curso livre de primeiros socorros, cuidador de idosos ou bombeiro civil, aqui ou em qualquer outra instituição. O que existe é o certificado de quem formou você, com carga horária e conteúdo descritos. O dos cursos pagos é emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro. No Bombeiro Civil, a homologação profissional é feita ao final do curso, à parte.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Tem cursos da Cruz Vermelha em Nova Iguaçu, Cabo Frio ou em outras cidades do estado?</summary>
-            <div class="faq-answer">Os cursos presenciais divulgados neste site acontecem na sede da Cruz Vermelha Brasileira Rio de Janeiro, na Praça da Cruz Vermelha, 10, Centro do Rio, região servida por metrô, trem, VLT e ônibus. Quem mora em Nova Iguaçu, Cabo Frio, na Baixada, na Região dos Lagos ou em outra cidade do estado participa das turmas no Centro; a secretaria confirma turma e horário por e-mail depois da inscrição de R$ 99. Empresas e escolas de qualquer município podem pedir um treinamento fechado para a equipe pelo <a href="/#chat">chat do site</a>. Veja carga horária, valores e requisitos na <a href="/matricula-cursos-presenciais/">página de matrícula em cursos presenciais</a>.</div>
           </details>
           <h3 class="faq-grupo">Primeiros socorros, Lei Lucas e formação profissional</h3>
           <details class="faq-item">
@@ -2167,28 +2071,8 @@
             <div class="faq-answer">A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a essa exigência, a Escola de Educação e Saúde, ligada à Cruz Vermelha Brasileira Rio de Janeiro, oferece o curso Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgos, quedas, traumas, convulsões, queimaduras e hemorragias, com medidas preventivas e protocolos atualizados de primeiros socorros infantis. Escolaridade mínima: Ensino Fundamental; valor do curso: R$ 150, além da inscrição de R$ 99. Faça a <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">matrícula no curso Lei Lucas</a> ou <a href="/#chat">fale com a gente</a> para treinar toda a equipe da sua escola.</div>
           </details>
           <details class="faq-item">
-            <summary>O que faz um bombeiro civil e quais são os requisitos para fazer o curso?</summary>
-            <div class="faq-answer">O bombeiro civil previne acidentes, combate princípios de incêndio, presta primeiros socorros e protege pessoas e patrimônio em empresas, indústrias, hospitais, condomínios, shoppings e eventos. O Curso de Bombeiro Civil da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, exige Ensino Médio e não pede experiência prévia. São 80 horas presenciais, com aulas práticas: prevenção e combate a incêndios, atendimento pré-hospitalar básico, evacuação de ambientes, equipamentos de segurança e gerenciamento de riscos. O curso custa R$ 950 à vista, pago junto com a inscrição ou depois, na <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">plataforma da escola</a>; a homologação, ao final, é paga à parte pelo aluno. A inscrição de R$ 99 garante a vaga: faça a <a href="/matricula-cursos-presenciais/?curso=bombeiro-civil">matrícula no curso de Bombeiro Civil</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como se tornar cuidador de idosos e o que o curso ensina?</summary>
-            <div class="faq-answer">Para ser cuidador de idosos, faça o Curso de Cuidador de Idosos (Curso Livre) da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro: 160 horas presenciais, escolaridade mínima de Ensino Fundamental, aberto a quem quer atuar profissionalmente ou cuidar de um familiar. Você aprende higiene, alimentação, rotina de cuidados, prevenção de acidentes, técnicas de mobilização, noções de primeiros socorros e os aspectos físicos, emocionais e sociais do envelhecimento. Pode trabalhar em residências, ILPIs, clínicas, hospitais, centros de convivência e atendimento domiciliar, com certificado da escola. O curso custa R$ 950 à vista; garanta a vaga com a inscrição de R$ 99 na <a href="/matricula-cursos-presenciais/?curso=cuidador-de-idosos">matrícula do curso de Cuidador de Idosos</a>.</div>
-          </details>
-          <details class="faq-item">
             <summary>A Cruz Vermelha Brasileira Rio de Janeiro faz treinamento de primeiros socorros, Lei Lucas e NR para empresas e escolas?</summary>
             <div class="faq-answer">Sim. Os treinamentos corporativos de NR, a capacitação em primeiros socorros pela <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">Lei Lucas</a> (indicada para escolas, creches e equipes que trabalham com crianças) e os programas customizados para cada equipe são contratados com a escola, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro e uma das fontes de financiamento da instituição. Empresas parceiras também podem somar esforços com a filial em campanhas como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Para pedir uma proposta ou um treinamento para sua equipe, fale com a gente pelo <a href="/#chat">chat do site</a> ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde por e-mail em até 3 dias úteis.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Como comparar os cursos de primeiros socorros no Rio de Janeiro?</summary>
-            <div class="faq-answer">Compare quatro coisas, e não só o preço anunciado: carga horária, prática real com manequim, quem emite o certificado e o custo total. Na Cruz Vermelha Brasileira Rio de Janeiro o custo total é fechado e aparece antes do pagamento: inscrição de R$ 99 mais o valor do curso - R$ 180 no Primeiros Socorros Básico, de 8 horas, R$ 150 na Lei Lucas, de 8 horas, e R$ 150 no Suporte Básico de Vida, de 4 horas. Sem mensalidade, sem taxa de certificado e sem material à parte. Confira na <a href="/matricula-cursos-presenciais/">página de matrícula</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Existe curso de cuidador de idosos gratuito no Rio de Janeiro?</summary>
-            <div class="faq-answer">Na Cruz Vermelha Brasileira Rio de Janeiro, não: o curso de Cuidador de Idosos é pago e vendido pela escola, R$ 950 além da inscrição de R$ 99, tem 160 horas presenciais e exige apenas Ensino Fundamental. É curso livre, com certificado da escola, e ensina higiene, mobilidade, administração de medicamentos sob orientação, primeiros socorros e cuidado com a pessoa idosa. Cursos gratuitos de cuidador costumam surgir em programas de prefeituras, secretarias e fundos sociais, com vagas por edital e prazo de inscrição. A filial não oferece curso gratuito ao público: a formação gratuita dela é só para os próprios voluntários. Para garantir a vaga agora, faça a <a href="/matricula-cursos-presenciais/?curso=cuidador-de-idosos">matrícula em Cuidador de Idosos</a>.</div>
-          </details>
-          <details class="faq-item">
-            <summary>Que curso precisa fazer quem trabalha como babá ou cuidadora de crianças?</summary>
-            <div class="faq-answer">O catálogo da Escola de Educação e Saúde, na Cruz Vermelha Brasileira Rio de Janeiro, não tem curso de cuidador infantil nem de babá. O que a escola oferece, e que a Lei Lucas exige de quem trabalha com crianças em escolas de educação básica e espaços de recreação infantil, é o Primeiros Socorros Lei Lucas - Ambientes com Crianças: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, convulsões, queimaduras e hemorragias, por R$ 150 além da inscrição de R$ 99, com Ensino Fundamental como escolaridade mínima. É curso livre, com certificado da escola. Veja o <a href="/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas">curso Lei Lucas</a>.</div>
           </details>
         </div>
       <!-- faq:fim -->
@@ -2304,7 +2188,6 @@
           </div>
           <script type="application/json" id="insta-fotos">[
             {"src": "assets/otim/presidente-luiz-carlos-dos-santos-480.webp", "grande": "assets/otim/presidente-luiz-carlos-dos-santos-960.webp", "alt": "Luiz Carlos dos Santos, presidente da Cruz Vermelha Brasileira Rio de Janeiro, na Galeria dos Presidentes do Palácio da Cruz Vermelha", "legenda": "Diretoria"},
-            {"src": "assets/otim/curso-pratico-sala-480.webp", "grande": "assets/otim/curso-pratico-sala-1080.webp", "alt": "Post do Instagram sobre a prática em sala dos cursos", "legenda": "Cursos"},
             {"src": "assets/otim/auditorio-voluntarios-480.webp", "grande": "assets/otim/auditorio-voluntarios-960.webp", "alt": "Turma de voluntários em formação no auditório da sede", "legenda": "Formação de voluntários"},
             {"src": "assets/otim/agasalho-fila-comunidade-640.webp", "grande": "assets/otim/agasalho-fila-comunidade-1264.webp", "alt": "Comunidade recebendo doações da Campanha do Agasalho", "legenda": "Doações"},
             {"src": "assets/otim/presidente-e-vice-presidente-473.webp", "grande": "assets/otim/presidente-e-vice-presidente-473.webp", "alt": "O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal no gabinete e na Galeria dos Presidentes do Palácio da Cruz Vermelha", "legenda": "Diretoria"},
@@ -2437,23 +2320,12 @@
     })();
   </script>
   <script>
-    // Bloco "Já escolheu seu curso?": mostra o curso escolhido e impede enviar sem escolha.
+    // Banner de empresas: "Pedir uma proposta" abre o chat (assunto "outro"); sem o chat, segue o mailto.
     (function () {
-      var form = document.querySelector('.matricula-form'), aviso = document.getElementById('matricula-escolhido');
-      if (!form || !aviso) return;
-      form.addEventListener('change', function (e) {
-        if (e.target.name !== 'curso') return;
-        var rotulo = form.querySelector('label[for="' + e.target.id + '"]');
-        aviso.textContent = 'Curso escolhido: ' + (rotulo ? rotulo.firstChild.textContent.trim() : e.target.value);
-        aviso.className = 'matricula-escolhido ok';
-      });
-      form.addEventListener('submit', function (e) {
-        if (form.querySelector('input[name="curso"]:checked')) return;
-        e.preventDefault();
-        aviso.textContent = 'Escolha um curso para continuar.';
-        aviso.className = 'matricula-escolhido erro';
-        var primeira = form.querySelector('input[name="curso"]');
-        if (primeira) primeira.focus();
+      var botao = document.querySelector('[data-hp-proposta]');
+      if (!botao) return;
+      botao.addEventListener('click', function (e) {
+        if (window.cvChat && typeof window.cvChat.abrir === 'function') { e.preventDefault(); window.cvChat.abrir({ assunto: 'outro' }); }
       });
     })();
   </script>

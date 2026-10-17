@@ -7,6 +7,11 @@ estruturados (script id="faq-ld"), para a FAQ ranquear em buscas orgânicas. Reg
 completo "Cruz Vermelha Brasileira Rio de Janeiro", respostas de 45 a 110 palavras, links só internos, dos
 canais oficiais ou do verbete da filial na Wikipédia (lista PERMITIDOS).
 
+Campo opcional "home": false numa pergunta: ela continua no JSON (e no chat, se tiver "chat", que é o que o
+scripts/chat_widget.py lê), mas fica fora do HTML da home e do FAQPage (script id="faq-ld"). Grupo sem nenhuma
+pergunta visível na home não aparece. Sem o campo, a pergunta entra na home, como sempre. (16/10/2026: a home
+mostra só 5 perguntas de curso; as outras ficaram para a página de matrícula e para o chat.)
+
 Uso:  python3 scripts/gerar_faq_home.py     (depois, publicar site/index.html)
 """
 from __future__ import annotations
@@ -55,8 +60,11 @@ def main() -> int:
     entidades = []
     primeira = True
     for g in dados["grupos"]:
+        visiveis = [q for q in g["perguntas"] if q.get("home", True) is not False]
+        if not visiveis:
+            continue
         partes.append(f'          <h3 class="faq-grupo">{esc(g["titulo"])}</h3>')
-        for q in g["perguntas"]:
+        for q in visiveis:
             pergunta, resposta = q["pergunta"].strip(), q["resposta"].strip()
             if NACIONAL_SOZINHA.search(pergunta + " " + resposta):
                 raise SystemExit(f"nome incompleto da filial em: {pergunta}")
@@ -80,7 +88,8 @@ def main() -> int:
     else:
         home = home.replace("</head>", "  " + bloco + "\n</head>", 1)
     HOME.write_text(home, encoding="utf-8")
-    print(f"gravado {HOME.relative_to(RAIZ)}: {len(entidades)} perguntas em {len(dados['grupos'])} grupos")
+    fora = sum(1 for g in dados["grupos"] for q in g["perguntas"] if q.get("home", True) is False)
+    print(f"gravado {HOME.relative_to(RAIZ)}: {len(entidades)} perguntas na home ({fora} só no JSON/chat, \"home\": false)")
     return 0
 
 
