@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-10-16",
+  "revisao": "2026-10-17",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -148,6 +148,12 @@
                     "base": "Atendimento a pedido seu (art. 7º, V) e legítimo interesse em responder e manter o histórico do atendimento (art. 7º, IX)."
                   },
                   {
+                    "titulo": "Pedido de documentos",
+                    "dados": "Nome completo, e-mail, telefone (opcional), em nome de quem você pede (e o órgão ou a pessoa representada, se for o caso), o documento pedido, o motivo do pedido e os comprovantes que você anexa (documento de identidade com foto e, se for o caso, procuração ou ofício).",
+                    "finalidade": "Conferir quem você é, decidir o que pode ser enviado e responder por e-mail, com número de protocolo. Os comprovantes não ficam guardados no site: vão anexados só ao e-mail da equipe que analisa o pedido; no site fica o registro do pedido, com o nome e o tamanho dos arquivos.",
+                    "base": "Atendimento a pedido seu (art. 7º, V), cumprimento de obrigação legal ao responder pedidos de acesso a dados pessoais (art. 7º, II, e art. 18) e legítimo interesse em proteger os dados pessoais de terceiros que estão nos documentos (art. 7º, IX)."
+                  },
+                  {
                     "titulo": "Newsletter",
                     "dados": "Nome, e-mail e o registro do consentimento: o texto aceito, a data, o endereço IP e a identificação do navegador.",
                     "finalidade": "Enviar notícias, campanhas e informações sobre cursos, só depois de você confirmar a inscrição pelo link enviado ao seu e-mail (válido por 72 horas). Todo envio traz um link para sair da lista em um clique.",
@@ -292,6 +298,7 @@
                   "**Matrícula e pagamentos:** durante a inscrição e o curso e, depois, pelo prazo de guarda que a lei exige para registros fiscais e de consumo (em geral, 5 anos).",
                   "**Doações anteriores à suspensão:** pelo prazo legal de guarda dos registros contábeis e fiscais.",
                   "**Chat:** enquanto for útil para acompanhar o atendimento. Você pode pedir a exclusão a qualquer momento.",
+                  "**Pedido de documentos:** o registro do pedido, pelo mesmo prazo do chat; os comprovantes, só pelo tempo necessário para analisar o pedido e registrar a resposta. Você pode pedir a exclusão a qualquer momento.",
                   "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
                   "**Registros de segurança (IP):** junto com o envio a que se referem; os limites de tentativas do ponto, das páginas pessoais e do repasse das páginas à Meta guardam o IP (e, no código do dia do ponto, um código gerado a partir do CPF, que não permite ler o CPF) por 2 dias, e o registro de robôs barrados nos formulários, por 30 dias.",
                   "**Ponto da sede, de voluntários e diretoria:** enquanto durar o voluntariado e por até 5 anos depois do fim, para comprovar as horas doadas e a natureza voluntária do serviço.",
@@ -402,6 +409,12 @@
                     "dados": "Subject, course (when the subject is enrolment, a course or payment), name, e-mail, phone number (optional), your message and the page you wrote from.",
                     "finalidade": "To answer you by e-mail, with a reference number, and keep a record of the exchange.",
                     "base": "Handling a request of yours (Art. 7, V) and legitimate interest in answering and keeping a record of the exchange (Art. 7, IX)."
+                  },
+                  {
+                    "titulo": "Document requests",
+                    "dados": "Full name, e-mail, phone number (optional), on whose behalf you are asking (and the body or person represented, if any), the document requested, the reason for the request and the proof you attach (photo ID and, where applicable, a power of attorney or an official letter).",
+                    "finalidade": "To check who you are, decide what can be sent and reply by e-mail, with a reference number. The proof is not stored on the site: it is attached only to the e-mail sent to the team that reviews the request; the site keeps the record of the request, with the names and sizes of the files.",
+                    "base": "Handling your request (art. 7, V), compliance with a legal obligation when answering requests for access to personal data (art. 7, II, and art. 18) and legitimate interest in protecting the personal data of third parties contained in the documents (art. 7, IX)."
                   },
                   {
                     "titulo": "Newsletter",
@@ -548,6 +561,7 @@
                   "**Enrolment and payments:** during the enrolment and the course and then for the retention period the law requires for tax and consumer records (generally 5 years).",
                   "**Donations made before the suspension:** for the legal retention period for accounting and tax records.",
                   "**Chat:** for as long as it is useful to follow up the exchange. You can ask for deletion at any time.",
+                  "**Document requests:** the record of the request, for the same period as the chat; the proof you attach, only for as long as needed to review the request and record the reply. You can ask for deletion at any time.",
                   "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
                   "**Security records (IP):** together with the submission they relate to; the attempt limits of the time clock, the personal pages and the relay of page views to Meta keep the IP (and, for the time clock's code of the day, a code derived from the CPF that does not reveal it) for 2 days, and the record of robots blocked on the forms, for 30 days.",
                   "**Headquarters time clock, for volunteers and board members:** while the volunteering lasts and for up to 5 years after it ends, to prove the hours donated and the voluntary nature of the service.",
@@ -658,6 +672,12 @@
                     "dados": "Asunto, curso (cuando el asunto es matrícula, curso o pago), nombre, correo, teléfono (opcional), su mensaje y la página desde la que escribió.",
                     "finalidade": "Responderle por correo, con número de protocolo, y registrar la atención.",
                     "base": "Atención a un pedido suyo (art. 7, V) e interés legítimo en responder y mantener el historial de la atención (art. 7, IX)."
+                  },
+                  {
+                    "titulo": "Solicitud de documentos",
+                    "dados": "Nombre completo, correo, teléfono (opcional), en nombre de quién hace la solicitud (y el organismo o la persona representada, si corresponde), el documento solicitado, el motivo y los comprobantes que adjunta (documento de identidad con foto y, si corresponde, poder u oficio).",
+                    "finalidade": "Verificar su identidad, decidir qué se puede enviar y responder por correo, con número de protocolo. Los comprobantes no se guardan en el sitio: van adjuntos solo al correo del equipo que analiza la solicitud; en el sitio queda el registro de la solicitud, con el nombre y el tamaño de los archivos.",
+                    "base": "Atención a su solicitud (art. 7, V), cumplimiento de obligación legal al responder solicitudes de acceso a datos personales (art. 7, II, y art. 18) e interés legítimo en proteger los datos personales de terceros que figuran en los documentos (art. 7, IX)."
                   },
                   {
                     "titulo": "Boletín",
@@ -804,6 +824,7 @@
                   "**Matrícula y pagos:** durante la inscripción y el curso y, después, por el plazo de conservación que la ley exige para los registros fiscales y de consumo (en general, 5 años).",
                   "**Donaciones anteriores a la suspensión:** por el plazo legal de conservación de los registros contables y fiscales.",
                   "**Chat:** mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.",
+                  "**Solicitud de documentos:** el registro de la solicitud, por el mismo plazo que el chat; los comprobantes, solo el tiempo necesario para analizar la solicitud y registrar la respuesta. Puede pedir la eliminación en cualquier momento.",
                   "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
                   "**Registros de seguridad (IP):** junto con el envío al que se refieren; los límites de intentos del control de asistencia, de las páginas personales y del reenvío de las páginas a Meta guardan la IP (y, en el código del día del control de asistencia, un código generado a partir del CPF, que no permite leerlo) durante 2 días, y el registro de robots bloqueados en los formularios, durante 30 días.",
                   "**Control de asistencia de la sede, de voluntarios y directiva:** mientras dure el voluntariado y hasta 5 años después de su fin, para comprobar las horas donadas y la naturaleza voluntaria del servicio.",

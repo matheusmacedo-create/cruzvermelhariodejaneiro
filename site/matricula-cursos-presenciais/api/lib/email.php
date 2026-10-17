@@ -2033,6 +2033,8 @@ function mcp_contato_assuntos(): array
         'voluntariado' => 'Voluntariado', 'doacoes' => 'Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
         // Só do formulário da página /dia-das-criancas/ (o chat não oferece este assunto).
         'brinquedos' => 'Doação de brinquedos (Dia das Crianças)',
+        // Só da página /pedido-de-documentos/ (api/documentos.php); os comprovantes vão só por e-mail.
+        'documentos' => 'Pedido de documento',
     ];
 }
 
@@ -2042,10 +2044,13 @@ function mcp_contato_assuntos(): array
  */
 function mcp_contato_canal(string $assunto): array
 {
-    return $assunto === 'brinquedos'
-        ? ['nome' => 'formulário de doação do Dia das Crianças', 'rotulo' => 'Formulário de doação',
-            'site' => 'formulário de doação do Dia das Crianças, em cruzvermelhariodejaneiro.org']
-        : ['nome' => 'chat do site', 'rotulo' => 'Chat do site', 'site' => 'chat de cruzvermelhariodejaneiro.org'];
+    return match ($assunto) {
+        'brinquedos' => ['nome' => 'formulário de doação do Dia das Crianças', 'rotulo' => 'Formulário de doação',
+            'site' => 'formulário de doação do Dia das Crianças, em cruzvermelhariodejaneiro.org'],
+        'documentos' => ['nome' => 'página de pedido de documentos', 'rotulo' => 'Pedido de documento',
+            'site' => 'página de pedido de documentos de cruzvermelhariodejaneiro.org'],
+        default => ['nome' => 'chat do site', 'rotulo' => 'Chat do site', 'site' => 'chat de cruzvermelhariodejaneiro.org'],
+    };
 }
 
 function mcp_contato_assunto_rotulo(string $chave): string
@@ -2266,7 +2271,7 @@ function mcp_montar_email_resposta_contato(array $c, string $resposta, string $a
         'html' => mcp_moldura("Respondemos sua mensagem, $nome.", $corpo, [
             'eyebrow' => 'Atendimento por e-mail · ' . $assunto,
             'preheader' => mb_substr(preg_replace('/\s+/u', ' ', $resposta) ?? '', 0, 140),
-            'motivo' => "Você recebeu este e-mail porque enviou uma mensagem pelo chat de cruzvermelhariodejaneiro.org (protocolo $protocolo).",
+            'motivo' => 'Você recebeu este e-mail porque enviou uma mensagem pelo ' . mcp_contato_canal((string) $c['assunto'])['site'] . " (protocolo $protocolo).",
         ]),
         'texto' => $texto,
     ];
