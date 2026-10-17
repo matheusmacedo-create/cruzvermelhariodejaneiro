@@ -64,7 +64,7 @@ CSS = """  <style>
     .pd-fatos li { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; gap: 12px; align-items: flex-start; }
     .pd-fatos i { color: var(--red); font-size: 1.3rem; margin-top: 2px; flex-shrink: 0; }
     .pd-fatos b { display: block; font-size: .98rem; }
-    .pd-fatos span { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+    .pd-fatos span { color: #5b6576; font-size: .9rem; line-height: 1.45; }
     .pd-secao { padding: 52px 0; }
     .pd-secao + .pd-secao { border-top: 1px solid var(--line); }
     .pd-secao h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); margin: .2rem 0 .8rem; }
@@ -86,12 +86,12 @@ CSS = """  <style>
     .pd-campo-largo { grid-column: 1 / -1; }
     .pd-campo[hidden], .pd-erro[hidden], .pd-ok[hidden], .pd-form[hidden] { display: none; }
     .pd-campo label, .pd-campo legend { font-weight: 700; font-size: .93rem; }
-    .pd-campo small { font-weight: 400; color: var(--muted); }
+    .pd-campo small { font-weight: 400; color: #5b6576; }
     .pd-campo input, .pd-campo select, .pd-campo textarea { width: 100%; min-height: 46px; border: 1px solid #cbd5e0; border-radius: 10px; padding: 10px 12px; font: inherit; background: #fff; color: inherit; }
     .pd-campo textarea { min-height: 120px; resize: vertical; }
     .pd-campo input:focus, .pd-campo select:focus, .pd-campo textarea:focus { outline: 3px solid rgba(204,0,0,.25); border-color: var(--red); }
     .pd-campo [aria-invalid="true"] { border-color: var(--red); background: #fff7f7; }
-    .pd-dica { color: var(--muted); font-size: .86rem; line-height: 1.45; margin: 0; }
+    .pd-dica { color: #5b6576; font-size: .86rem; line-height: 1.45; margin: 0; }
     .pd-arquivos { position: relative; border: 2px dashed #cbd5e0; border-radius: 12px; padding: 22px 16px; text-align: center; background: var(--soft); transition: border-color .15s, background .15s; }
     .pd-arquivos.pd-arrastando { border-color: var(--red); background: #fff7f7; }
     .pd-arquivos input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -100,7 +100,7 @@ CSS = """  <style>
     .pd-arquivos:focus-within { outline: 3px solid rgba(204,0,0,.25); }
     .pd-lista-arquivos { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
     .pd-lista-arquivos li { display: flex; justify-content: space-between; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: .9rem; }
-    .pd-lista-arquivos span:last-child { color: var(--muted); white-space: nowrap; }
+    .pd-lista-arquivos span:last-child { color: #5b6576; white-space: nowrap; }
     .pd-confirmar { display: flex; gap: 10px; align-items: flex-start; font-size: .93rem; line-height: 1.5; }
     .pd-confirmar input { width: 20px; height: 20px; min-height: 0; margin-top: 2px; flex-shrink: 0; accent-color: var(--red); }
     .pd-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
@@ -125,7 +125,7 @@ CSS = """  <style>
       .pd-tabela thead { display: none; }
       .pd-tabela tr { display: block; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; padding: 4px 0; }
       .pd-tabela td, .pd-tabela td:first-child { display: block; width: auto; border: 0; padding: 8px 14px; }
-      .pd-tabela td[data-rotulo]::before { content: attr(data-rotulo); display: block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 2px; }
+      .pd-tabela td[data-rotulo]::before { content: attr(data-rotulo); display: block; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #5b6576; margin-bottom: 2px; }
     }
   </style>"""
 

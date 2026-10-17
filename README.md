@@ -113,6 +113,27 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Como funciona a nossa gestão (`/gestao/`, 17/10/2026)
+
+Página que explica, com diagrama, gráfico e uma demonstração, como a filial registra os documentos oficiais
+e o papel da criptografia e da IA. `scripts/gerar_gestao.py` grava `site/gestao/index.html`.
+
+- **Seções**: o caminho de um documento (5 passos); demonstração da impressão digital (SHA-256 calculado no
+  navegador com `crypto.subtle`, o texto não sai do aparelho e não gera evento); os três selos de cada dia
+  (RFC 3161/FreeTSA, Bitcoin/OpenTimestamps, Ed25519); a corrente ao vivo; o que já funciona; onde entra a IA
+  (ajuda a construir e manter, não decide, não aprova, não assina, não é a base da confiança); o que prova e o que
+  não prova.
+- **A corrente ao vivo** lê `/verificar/lotes/indice.json` no navegador e desenha os três últimos lotes (cada um
+  apontando para o resumo do anterior), a grade de todos os dias (verde com ícone = selado; tracejado = hoje;
+  borda vermelha = dia sem lote) com dica ao passar o mouse e uma tabela equivalente. O gerador embute a cópia do
+  índice do dia da geração, usada se a leitura falhar. Conferido em 17/10: nos 23 manifestos, `anterior` é o
+  `compromisso` do dia anterior, e todos têm `.sig`, `.tsr` e `.ots` publicados.
+- GA4 (grupo `institucional`), Pixel com o aviso de cookies e o chat, como as páginas comuns.
+- Link na home (linha de links da seção de transparência) e no `gerar_sitemaps.py`.
+- Regerar quando mudarem o cabeçalho, o rodapé ou o CSS da home (o gráfico se atualiza sozinho).
+- O portal `/transparencia/` (Redação) ganha os links para esta página e para o pedido de documentos no PR
+  matheusmacedo-create/redacao-cruzvermelhariodejaneiro#305; aparece no site quando o portal for regravado.
+
 ## Pedido de documentos (`/pedido-de-documentos/`, 17/10/2026)
 
 Canal para pedir a íntegra de um documento da filial (ou um que não está publicado). Regras do Matheus:
@@ -136,7 +157,7 @@ tudo por e-mail, quem pede comprova quem é e diz para que quer, e a página avi
 - Testado localmente (MariaDB + Resend falso + PHP embutido + Chromium): envio completo, arquivo disfarçado,
   arquivo grande, mais de 4 arquivos, sem motivo, sem declaração, órgão sem nome, outra origem, freio por e-mail,
   falha do e-mail à equipe (502) e o formulário no navegador em 1280 e 390 px, sem pedido a terceiros.
-- **Pendências**: (1) a página `/transparencia/` é da Redação e ainda não aponta para cá: pôr o link lá;
+- **Pendências**: (1) o link no portal `/transparencia/` está no PR #305 da Redação (aparece quando o portal for regravado);
   (2) trocar a ata notarial do portal por versão tarjada (CPF, CNH, endereço e e-mail pessoal do presidente estão
   legíveis hoje), como versão nova na Redação, quando o fluxo estiver pronto (decisão do Matheus em 17/10);
   (3) conferir o `upload_max_filesize`/`post_max_size` da Hostinger com um envio real.
