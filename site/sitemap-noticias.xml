@@ -1,7 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-16T02:02:32+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:20:06+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/</loc>
+    <lastmod>2026-10-17T18:07:40+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona-1.jpg</image:loc>
+      <image:title>Foto da matéria: Homologação de bombeiro civil no CBMERJ: como funciona</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/</loc>
+    <lastmod>2026-10-17T18:02:04+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/termo-de-adesao-voluntario-o-que-e-e-o-que-deve-ter-1.jpg</image:loc>
+      <image:title>Foto da matéria: Termo de adesão voluntário: o que é e o que deve ter</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/</loc>
+    <lastmod>2026-10-17T17:59:47+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha-1.jpg</image:loc>
+      <image:title>Foto da matéria: Henry Dunant: quem foi o fundador da Cruz Vermelha</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/</loc>
+    <lastmod>2026-10-17T17:57:06+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/sms-40199-como-receber-alertas-da-defesa-civil-no-rio-1.jpg</image:loc>
+      <image:title>Foto da matéria: SMS 40199: como receber alertas da Defesa Civil no Rio</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/</loc>
+    <lastmod>2026-10-17T17:54:35+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/sinais-de-infarto-o-que-nao-ignorar-e-quando-ligar-192-1.jpg</image:loc>
+      <image:title>Foto da matéria: Sinais de infarto: o que não ignorar e quando ligar 192</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/</loc>
+    <lastmod>2026-10-16T15:17:06+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-1.jpg</image:loc>
+      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-2.jpg</image:loc>
+      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-3.jpg</image:loc>
+      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/</loc>
+    <lastmod>2026-10-16T15:15:50+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-1.jpg</image:loc>
+      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-2.jpg</image:loc>
+      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-3.jpg</image:loc>
+      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/</loc>
+    <lastmod>2026-10-16T15:15:13+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/lei-do-voluntariado-o-que-diz-a-lei-9-608-1998-1.jpg</image:loc>
+      <image:title>Foto da matéria: Lei do voluntariado: o que diz a Lei 9.608/1998</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/</loc>
+    <lastmod>2026-10-16T15:14:35+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina-1.jpg</image:loc>
+      <image:title>Foto da matéria: Curso de socorrista: o que é e o que um curso livre ensina</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/</loc>
+    <lastmod>2026-10-16T15:09:24+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-1.jpg</image:loc>
+      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-2.jpg</image:loc>
+      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-3.jpg</image:loc>
+      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
+    </image:image>
+  </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/</loc>
     <lastmod>2026-09-25T21:04:15+00:00</lastmod>

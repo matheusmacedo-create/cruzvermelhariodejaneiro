@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-16T02:02:03+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:19:22+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -8,21 +8,9 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/"/>
-    <lastmod>2026-10-16T01:50:30+00:00</lastmod>
+    <lastmod>2026-10-17T20:10:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/forca-tarefa-el-nino-banner-1200.webp</image:loc>
-      <image:title>Força-Tarefa Humanitária: ações El Niño. Mobilização interna com voluntários da Cruz Vermelha Brasileira Rio de Janeiro para preparação e resposta humanitária. Evento interno.</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/impacto-cores-banner-1920.webp</image:loc>
-      <image:title>Impacto das Cores - Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/agasalho-banner-1920.webp</image:loc>
-      <image:title>Campanha do Agasalho - Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-luiz-carlos-dos-santos-480.webp</image:loc>
       <image:title>Luiz Carlos dos Santos, presidente da Cruz Vermelha Brasileira Rio de Janeiro, na Galeria dos Presidentes do Palácio da Cruz Vermelha</image:title>
@@ -30,6 +18,38 @@
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/presidente-e-vice-gabinete-473.webp</image:loc>
       <image:title>O presidente Luiz Carlos dos Santos e o vice-presidente Antônio Pedregal à mesa do gabinete da presidência, no Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/turma-cbfi-salao-960.webp</image:loc>
+      <image:title>Voluntários de camiseta da Cruz Vermelha Brasileira, vistos de costas, na formação do CBFI no salão nobre da sede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-coordenacao-movel-640.webp</image:loc>
+      <image:title>Equipe da filial, de uniforme e capacete, diante do Centro de Coordenação Móvel da Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-primeiros-socorros-rua-640.webp</image:loc>
+      <image:title>Voluntários de uniforme vermelho fazem atendimento de primeiros socorros a uma pessoa deitada no chão, ao lado de carros</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-tenda-640.webp</image:loc>
+      <image:title>Voluntários reunidos em frente à tenda da Cruz Vermelha Brasileira</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-capacetes-640.webp</image:loc>
+      <image:title>Voluntárias sorridentes com capacete branco e uniforme vermelho da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-equipe-uniforme-640.webp</image:loc>
+      <image:title>Voluntárias com uniforme de campo vermelho da Cruz Vermelha, ao ar livre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-evento-ar-livre-640.webp</image:loc>
+      <image:title>Voluntários de camiseta branca e calça vermelha em um evento ao ar livre</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-480.webp</image:loc>
+      <image:title>Fachada do Palácio da Cruz Vermelha com andaimes, durante as obras, em 1923</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/impacto-cores-banner-640.webp</image:loc>
@@ -40,48 +60,16 @@
       <image:title>Campanha do Agasalho</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-formacao-voluntarios-1080.webp</image:loc>
-      <image:title>Formação de novos voluntários da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-480.webp</image:loc>
+      <image:title>Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-480.webp</image:loc>
-      <image:title>Voluntário da Cruz Vermelha Brasileira Rio de Janeiro falando durante capacitação</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-engasgo-bebe-480.webp</image:loc>
+      <image:title>Alunos ajoelhados praticando a manobra de desengasgo em manequins de bebê durante a aula</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/equipe-corredor-480.webp</image:loc>
-      <image:title>Equipe da Cruz Vermelha Brasileira Rio de Janeiro em atividade no Palácio da Cruz Vermelha</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-comunitaria-morro-480.webp</image:loc>
-      <image:title>Ação comunitária com voluntários da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-primeiros-socorros-novo-768.webp</image:loc>
-      <image:title>Curso de Primeiros Socorros Básico da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-puncao-venosa-768.webp</image:loc>
-      <image:title>Curso de Punção Venosa da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-cuidador-idosos-768.webp</image:loc>
-      <image:title>Curso de Cuidador de Idosos da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-bombeiro-civil-768.webp</image:loc>
-      <image:title>Curso de Bombeiro Civil</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-lei-lucas-768.webp</image:loc>
-      <image:title>Curso Lei Lucas - Ambientes com Crianças</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/curso-suporte-basico-vida-768.webp</image:loc>
-      <image:title>Curso de Suporte Básico de Vida</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/primeiros-socorros-basico-960.webp</image:loc>
-      <image:title>Alunos praticando reanimação em manequim na aula de Primeiros Socorros da Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/empresas-heimlich-720.webp</image:loc>
+      <image:title>Instrutor da Cruz Vermelha Brasileira Rio de Janeiro orienta uma aluna na prática da manobra de Heimlich, durante aula na sede</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/equipe-corredor-960.webp</image:loc>
@@ -94,6 +82,14 @@
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/agasalho-hero-favela-640.webp</image:loc>
       <image:title>Voluntário entregando agasalho a morador de comunidade</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-480.webp</image:loc>
+      <image:title>Voluntário falando ao microfone em formação na sede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/acao-comunitaria-morro-480.webp</image:loc>
+      <image:title>Ação comunitária em morro do Rio de Janeiro</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/auditorio-voluntarios-480.webp</image:loc>
@@ -109,6 +105,12 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-turma-cbfi-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-turma-cbfi-960.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
@@ -1176,6 +1178,21 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/pedido-de-documentos/</loc>
+    <lastmod>2026-10-17T20:10:06+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/campanha-agasalho.html</loc>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/campanha-agasalho.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/winter-clothing-drive/"/>
@@ -1230,7 +1247,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/</loc>
-    <lastmod>2026-10-05T21:28:23+00:00</lastmod>
+    <lastmod>2026-10-17T18:07:53+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1264,7 +1281,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/privacidad/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/privacidade/"/>
-    <lastmod>2026-10-16T01:50:50+00:00</lastmod>
+    <lastmod>2026-10-17T20:10:08+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <image:image>
@@ -1340,7 +1357,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/privacidad/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/privacidade/"/>
-    <lastmod>2026-10-16T01:50:52+00:00</lastmod>
+    <lastmod>2026-10-17T20:10:10+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
@@ -1416,7 +1433,7 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/privacy/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/privacidad/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/privacidade/"/>
-    <lastmod>2026-10-16T01:50:53+00:00</lastmod>
+    <lastmod>2026-10-17T20:10:11+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
     <image:image>
