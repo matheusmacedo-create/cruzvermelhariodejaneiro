@@ -113,6 +113,29 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Ata notarial: versão pública tarjada no portal (17/10/2026)
+
+O PDF da escritura pública de ata notarial de 02/02/2026 no portal `/transparencia/` expunha CPF, CNH, filiação,
+nascimento, endereço e e-mail pessoal do presidente, os CPFs dos dirigentes, as assinaturas e o código do
+e-notariado. A pedido do Matheus, foi trocado por uma versão pública:
+
+- **Tarja**: cada página virou imagem (300 dpi), recebeu 46 tarjas (camada de texto, OCR dos CPFs nas páginas
+  digitalizadas e regiões das assinaturas conferidas à mão) e entrou num PDF só de imagens (200 dpi, 8 páginas com
+  capa explicativa e faixa "VERSÃO PÚBLICA" em todas). OCR no PDF final: nenhum CPF, CNH, e-mail, endereço ou código
+  do e-notariado. SHA-256 `a3669180c1d6…`. O script e o original ficaram fora do repositório (têm os dados) e
+  foram apagados do ambiente de trabalho.
+- **Publicação pelo caminho da Redação** (mesmas funções do banco, em nome da conta do Matheus):
+  `transparencia_salvar_documento` (documento novo "Escritura pública de ata notarial (versão pública)"), PDF no
+  Storage `transparencia` (política temporária só para aquele caminho), `transparencia_registrar_versao`, PDF em
+  `/transparencia/arquivos/…-a3669180c1d6.pdf`, `transparencia_publicar_versao` (código da trilha
+  `5KD6P26P1RCAA797MF65H3VJ5M`, vigente), `transparencia_retirar_documento` no antigo, com motivo (o código antigo
+  responde "retirado"), PDF antigo apagado do site (404) e `transparencia_marcar_removidos`. A página foi regerada
+  com `paginaDaTransparencia` da Redação; o diff contra a página no ar mostrou só as mudanças esperadas (data, bloco da
+  ata e o parágrafo com os links do PR #305).
+- **Pendência**: a política temporária `tmp_envio_ata_versao_publica` em `storage.objects` está neutralizada
+  (`with check (false)`, não permite nada), mas o `drop policy` trava no gatilho `sql_drop` do Supabase pelo MCP.
+  Apagar pelo SQL Editor do Supabase: `drop policy tmp_envio_ata_versao_publica on storage.objects;`.
+
 ## Como funciona a nossa gestão (`/gestao/`, 17/10/2026)
 
 Página que explica, com diagrama, gráfico e uma demonstração, como a filial registra os documentos oficiais
