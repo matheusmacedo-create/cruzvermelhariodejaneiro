@@ -113,6 +113,26 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Portal da transparência com visual novo (17/10/2026)
+
+Pedido do Matheus: deixar `/transparencia/` mais bonita, a partir dos melhores portais do mercado. Três agentes
+pesquisaram (ONGs brasileiras: Todos pela Educação, ChildFund, MSF Brasil; Cruz Vermelha e ONGs internacionais:
+Cruz Roja Española, charity: water, Wikimedia, Oxfam; UX: NN/g, GOV.UK, USWDS). Modelo escolhido, híbrido:
+
+- estrutura em 4 grupos (Cruz Roja Española): Institucional e jurídico, Governança, Prestação de contas, Atividades,
+  cobrindo as 10 categorias; navegação lateral fixa no computador e em botões no celular;
+- topo com compromisso, 4 números (documentos, seções com documento, dias seguidos de selo lidos ao vivo de
+  `/verificar/lotes/indice.json`, última publicação) e faixa com as provas da trilha (charity: water);
+- destaque do documento mais recente; documentos em lista com "Baixar PDF (tamanho)", "Verificar autenticidade",
+  SHA-256 encurtado com botão de copiar e dados completos recolhidos (NN/g, GOV.UK);
+- categorias vazias sempre ditas, com link para o pedido de documentos; parcerias (Lei 13.019, art. 11) sempre
+  visíveis ("nenhuma parceria em vigor"); "Como conferir" em 3 passos; cartões "Quem publica" e "Precisa de mais?".
+
+O gerador é da Redação: PR matheusmacedo-create/redacao-cruzvermelhariodejaneiro#307 (mesclado; tsc, eslint,
+build e CI verdes). A página no ar foi regerada com esse código e os dados do banco (aviso de cookies e chat
+recolocados como a Redação faz) e publicada; conferida no Chromium em 1280 e 390 px. A página de canais oficiais
+não mudou.
+
 ## Ata notarial: versão pública tarjada no portal (17/10/2026)
 
 O PDF da escritura pública de ata notarial de 02/02/2026 no portal `/transparencia/` expunha CPF, CNH, filiação,
