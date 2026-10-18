@@ -3425,3 +3425,11 @@ scripts/publicacao-dia-das-criancas.txt os arquivos da página do Dia das Crian�
 scripts/conferir_publicacao.sh          confere uma publicação no ar (estáticos, API, bloqueios, localização do ponto)
 scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versão do commit anterior (Git), na ordem inversa
 ```
+
+## Verificação do domínio na Meta (18/10/2026)
+
+- `site/index.html`: meta `facebook-domain-verification` (`do9q0dflq8ccbbgi7alfkxf0tyoex9`) no `<head>`, logo depois do
+  viewport, para o Gerenciador de Negócios da Meta verificar `cruzvermelhariodejaneiro.org` (identificação
+  2284862222364226). Não tirar: a Meta confere de tempos em tempos e o domínio volta a "Not Verified".
+- Publicado: cópia do ar idêntica ao HEAD antes, envio por TUS, cache limpo, conferência por HTTP e HTTPS (a meta
+  aparece dentro do `<head>`; o ar é idêntico ao local). Credencial TUS apagada.
