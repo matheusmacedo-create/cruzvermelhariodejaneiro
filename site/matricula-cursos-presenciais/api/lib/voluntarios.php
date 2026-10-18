@@ -25,6 +25,8 @@ const MCP_VOL_MAIORIDADE = 18;
 const MCP_VOL_LIMITE_IP = [5, 3600];
 const MCP_VOL_LIMITE_EMAIL = [2, 86400];
 const MCP_VOL_MOTIVACAO_MIN = 20;
+// Novas entradas no voluntariado (decisão do Matheus, 18/10/2026): o contato com quem se cadastra é só nessa época.
+const MCP_VOL_PROXIMAS_ENTRADAS = 'janeiro de 2027';
 const MCP_VOL_MOTIVACAO_MAX = 1500;
 const MCP_VOL_TEXTO_LONGO_MAX = 1000;
 /** Janela da ficha repetida: mesmo e-mail com ficha 'nova' ou 'em_analise' (409). */
@@ -980,7 +982,7 @@ function mcp_montar_email_voluntario_equipe(array $f): array
     $linhas['Protocolo'] = $protocolo;
 
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong>' . ($idade !== '' ? ', ' . mcp_escapar($idade) . ',' : '') . ' de ' . mcp_escapar(mcp_voluntario_local_texto($f))
-            . ', quer ser voluntário(a) em <strong>' . mcp_escapar($frentes) . '</strong>. A pessoa já foi avisada de que a equipe entra em contato por e-mail em até ' . MCP_EMAIL_PRAZO . '.')
+            . ', quer ser voluntário(a) em <strong>' . mcp_escapar($frentes) . '</strong>. A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato da equipe vem nessa época.')
         . ($menor ? mcp_nota('<strong>Menor de 18 anos:</strong> o termo de adesão é assinado também pelo responsável legal.') : '')
         . mcp_subtitulo('Motivação') . mcp_citacao((string) $f['motivacao'])
         . (!empty($f['experiencia']) ? mcp_subtitulo('Experiência com voluntariado') . mcp_citacao((string) $f['experiencia']) : '')
@@ -1029,8 +1031,8 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
     $quando = mcp_data_brt((string) ($f['criado_em'] ?? ''), 'd/m/Y \à\s H\hi');
 
     $passos = [
-        ['A equipe de voluntariado lê a sua ficha e entra em contato',
-            'Por e-mail, em até ' . MCP_EMAIL_PRAZO . ', para <strong>' . mcp_escapar($email) . '</strong>, com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong> no assunto. O remetente é <strong>'
+        ['A equipe de voluntariado entra em contato em ' . MCP_VOL_PROXIMAS_ENTRADAS,
+            'As novas entradas no voluntariado abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . '. A sua ficha fica guardada, e a equipe escreve para todos os cadastrados nessa época: até lá, não é preciso esperar resposta nem enviar a ficha de novo. O contato vem por e-mail, para <strong>' . mcp_escapar($email) . '</strong>, com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong> no assunto. O remetente é <strong>'
             . mcp_escapar($remetente) . '</strong>; se não achar, olhe o spam.'],
         ['Entrevista e ficha de entrevista',
             'Uma conversa com a coordenação do voluntariado, na sede (Praça da Cruz Vermelha, 10, Centro) ou por vídeo, para conhecer você, alinhar expectativas e preencher a ficha de entrevista.'],
@@ -1073,7 +1075,7 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
         'assunto' => "Recebemos sua ficha de voluntariado · $protocolo",
         'html' => mcp_moldura("Recebemos sua ficha, $nome.", $corpo, [
             'eyebrow' => 'Voluntariado',
-            'preheader' => "Protocolo $protocolo. A equipe entra em contato por e-mail em até " . MCP_EMAIL_PRAZO . '.',
+            'preheader' => "Protocolo $protocolo. As novas entradas no voluntariado abrem em " . MCP_VOL_PROXIMAS_ENTRADAS . ', e a equipe entra em contato nessa época.',
             'motivo' => 'Você recebeu este e-mail porque preencheu a ficha de voluntariado em cruzvermelhariodejaneiro.org.',
         ]),
         'texto' => $texto,

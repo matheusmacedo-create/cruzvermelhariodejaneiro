@@ -259,7 +259,7 @@
     texto('saudacao', o.nome ? 'Obrigado, ' + o.nome + '! Recebemos o seu cadastro.' : 'Obrigado! Recebemos o seu cadastro.');
     var emailFrase = $('[data-vc="email-frase"]', sucesso);
     if (emailFrase) emailFrase.innerHTML = o.email ? 'Enviamos a confirmação para <b>' + esc(o.email) + '</b>.' : 'Enviamos a confirmação para o e-mail que você informou.';
-    texto('prazo-frase', o.prazo ? 'A equipe do voluntariado responde em até ' + o.prazo + '.' : 'A equipe do voluntariado entra em contato por e-mail para a próxima etapa.');
+    texto('prazo-frase', o.prazo ? 'As novas entradas abrem em ' + o.prazo + ': a equipe do voluntariado entra em contato com você nessa época, e até lá não é preciso esperar resposta.' : 'A equipe do voluntariado entra em contato por e-mail para a próxima etapa.');
     $$('[data-vc="menor"]', sucesso).forEach(function (el) { el.hidden = !o.menor; });
     var intro = document.getElementById('vc-intro-form');
     if (intro) intro.hidden = true;

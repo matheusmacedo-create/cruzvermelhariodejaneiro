@@ -113,6 +113,67 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Voluntariado: novas entradas em janeiro de 2027 (18/10/2026)
+
+Pedido do Matheus: avisar que só haverá novas entradas em janeiro e que o contato é só nessa época, para ninguém
+ficar esperando resposta antes. O texto é um só, em `MCP_VOL_PROXIMAS_ENTRADAS` (api/lib/voluntarios.php) e
+`PROXIMAS_ENTRADAS` (scripts/gerar_voluntariado_cadastro.py): "janeiro de 2027". Onde mudou:
+
+- `/voluntariado/cadastro/`: aviso no topo, etapa "Ficha de entrevista", tela de sucesso e a frase de prazo do
+  `cadastro.js` (a API devolve `prazo` = "janeiro de 2027");
+- `/voluntariado/`: aviso no início da primeira seção, etapa 2 do passo a passo e uma pergunta nova na FAQ da página
+  (`site/institucional.json`, regerada só esta página);
+- e-mail de confirmação ao voluntário (passo 1 e pré-cabeçalho), aviso à equipe, mensagem de ficha repetida e o
+  painel de voluntários;
+- home (card 2 e linha da idade mínima), resposta da FAQ "Como ser voluntário" e o `chat.js` (respostas sincronizadas
+  com a FAQ; `chat_widget.py` atualizou o hash nas páginas manuais). `scripts/testar_voluntarios.php` confere o texto.
+- Publicado e conferido no ar. `doacao.html` ficou de fora: a do ar é uma versão antiga da página de doação, que
+  está fora do ar de propósito.
+- **Em janeiro**: trocar o texto nas duas constantes (ou tirar o aviso) e republicar as mesmas páginas.
+
+## Portal da transparência com visual novo (17/10/2026)
+
+Pedido do Matheus: deixar `/transparencia/` mais bonita, a partir dos melhores portais do mercado. Três agentes
+pesquisaram (ONGs brasileiras: Todos pela Educação, ChildFund, MSF Brasil; Cruz Vermelha e ONGs internacionais:
+Cruz Roja Española, charity: water, Wikimedia, Oxfam; UX: NN/g, GOV.UK, USWDS). Modelo escolhido, híbrido:
+
+- estrutura em 4 grupos (Cruz Roja Española): Institucional e jurídico, Governança, Prestação de contas, Atividades,
+  cobrindo as 10 categorias; navegação lateral fixa no computador e em botões no celular;
+- topo com compromisso, 4 números (documentos, seções com documento, dias seguidos de selo lidos ao vivo de
+  `/verificar/lotes/indice.json`, última publicação) e faixa com as provas da trilha (charity: water);
+- destaque do documento mais recente; documentos em lista com "Baixar PDF (tamanho)", "Verificar autenticidade",
+  SHA-256 encurtado com botão de copiar e dados completos recolhidos (NN/g, GOV.UK);
+- categorias vazias sempre ditas, com link para o pedido de documentos; parcerias (Lei 13.019, art. 11) sempre
+  visíveis ("nenhuma parceria em vigor"); "Como conferir" em 3 passos; cartões "Quem publica" e "Precisa de mais?".
+
+O gerador é da Redação: PR matheusmacedo-create/redacao-cruzvermelhariodejaneiro#307 (mesclado; tsc, eslint,
+build e CI verdes). A página no ar foi regerada com esse código e os dados do banco (aviso de cookies e chat
+recolocados como a Redação faz) e publicada; conferida no Chromium em 1280 e 390 px. A página de canais oficiais
+não mudou.
+
+## Ata notarial: versão pública tarjada no portal (17/10/2026)
+
+O PDF da escritura pública de ata notarial de 02/02/2026 no portal `/transparencia/` expunha CPF, CNH, filiação,
+nascimento, endereço e e-mail pessoal do presidente, os CPFs dos dirigentes, as assinaturas e o código do
+e-notariado. A pedido do Matheus, foi trocado por uma versão pública:
+
+- **Tarja**: cada página virou imagem (300 dpi), recebeu 46 tarjas (camada de texto, OCR dos CPFs nas páginas
+  digitalizadas e regiões das assinaturas conferidas à mão) e entrou num PDF só de imagens (200 dpi, 8 páginas com
+  capa explicativa e faixa "VERSÃO PÚBLICA" em todas). OCR no PDF final: nenhum CPF, CNH, e-mail, endereço ou código
+  do e-notariado. SHA-256 `a3669180c1d6…`. O script e o original ficaram fora do repositório (têm os dados) e
+  foram apagados do ambiente de trabalho.
+- **Publicação pelo caminho da Redação** (mesmas funções do banco, em nome da conta do Matheus):
+  `transparencia_salvar_documento` (documento novo "Escritura pública de ata notarial (versão pública)"), PDF no
+  Storage `transparencia` (política temporária só para aquele caminho), `transparencia_registrar_versao`, PDF em
+  `/transparencia/arquivos/…-a3669180c1d6.pdf`, `transparencia_publicar_versao` (código da trilha
+  `5KD6P26P1RCAA797MF65H3VJ5M`, vigente), `transparencia_retirar_documento` no antigo, com motivo (o código antigo
+  responde "retirado"), PDF antigo apagado do site (404) e `transparencia_marcar_removidos`. A página foi regerada
+  com `paginaDaTransparencia` da Redação; o diff contra a página no ar mostrou só as mudanças esperadas (data, bloco da
+  ata e o parágrafo com os links do PR #305).
+- **Pendência**: a política temporária `tmp_envio_ata_versao_publica` em `storage.objects` está neutralizada
+  (`with check (false)`, não permite nada), mas o `drop policy` trava no gatilho `sql_drop` do Supabase pelo MCP.
+  Apagar pelo SQL Editor do Supabase: `drop policy tmp_envio_ata_versao_publica on storage.objects;`.
+
 ## Como funciona a nossa gestão (`/gestao/`, 17/10/2026)
 
 Página que explica, com diagrama, gráfico e uma demonstração, como a filial registra os documentos oficiais
