@@ -78,9 +78,12 @@ UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "
        "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
 ORIGEM_CHAVES = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"]
 
+# Novas entradas no voluntariado (decisão do Matheus, 18/10/2026): o mesmo texto de MCP_VOL_PROXIMAS_ENTRADAS (api/lib/voluntarios.php).
+PROXIMAS_ENTRADAS = "janeiro de 2027"
+
 ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
-    ("Ficha de entrevista", "A equipe do voluntariado entra em contato por e-mail para conhecer você."),
+    ("Ficha de entrevista", f"A equipe do voluntariado entra em contato por e-mail em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas."),
     ("CBFI", "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado."),
     ("Termo de adesão", "Formaliza o vínculo e você começa a atuar. Menores de 18 anos assinam com um responsável."),
 ]
@@ -199,6 +202,8 @@ CSS = """
     .vc-trilha a:hover { color: var(--red); }
     .vc-topo h1 { color: var(--black); font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.08; letter-spacing: -.03em; margin: 6px 0 14px; max-width: 22ch; }
     .vc-topo .lead { max-width: 66ch; margin-bottom: 0; }
+    .vc-entradas { display: flex; gap: 12px; align-items: flex-start; max-width: 66ch; margin: 18px 0 0; background: #fff7f7; border: 1px solid #f5c2c7; border-left: 4px solid var(--red); border-radius: 12px; padding: 14px 16px; color: var(--text); line-height: 1.55; }
+    .vc-entradas i { color: var(--red); font-size: 1.25rem; margin-top: 2px; flex-shrink: 0; }
     .vc-etapas { list-style: none; counter-reset: etapa; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 26px 0 0; padding: 0; }
     .vc-etapas li { counter-increment: etapa; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 14px 54px; position: relative; font-size: .92rem; line-height: 1.4; color: var(--text); }
     .vc-etapas li::before { content: counter(etapa); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
@@ -371,7 +376,7 @@ def sucesso() -> str:
           <p class="vc-menor" data-vc="menor" hidden><b>Você tem menos de 18 anos:</b> um responsável assina o termo de adesão com você. A equipe explica como fazer isso na entrevista.</p>
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
-            <li><b>Ficha de entrevista.</b> A equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.</li>
+            <li><b>Ficha de entrevista.</b> Em """ + PROXIMAS_ENTRADAS + """, quando abrem as novas entradas, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.</li>
             <li><b>CBFI, o Curso Básico de Formação Institucional.</b> Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.</li>
             <li><b>Termo de adesão.</b> Depois da formação, você assina o termo que formaliza o vínculo e começa a atuar na sua frente.</li>
           </ol>
@@ -440,6 +445,7 @@ def main() -> int:
         <p class="eyebrow">Voluntariado</p>
         <h1 id="vc-titulo">{esc(H1)}</h1>
         <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 16 anos; menores de 18 assinam o termo com um responsável.</p>
+        <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.</span></p>
         <ol class="vc-etapas" aria-label="As quatro etapas para ser voluntário">
           {etapas}
         </ol>

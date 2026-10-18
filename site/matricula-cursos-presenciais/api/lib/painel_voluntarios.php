@@ -163,7 +163,7 @@ function pv_lista(string $usuario, string $aviso = '', string $classe = 'ok'): n
         : 'Nenhuma ficha aqui.';
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Voluntariado</p><h1>Fichas de voluntariado</h1>'
         . '<p class="nota">As fichas preenchidas em cruzvermelhariodejaneiro.org/voluntariado/cadastro. Abra cada uma para ler, anotar, marcar a entrevista e aceitar; aceitar cria o cadastro da pessoa no ponto da sede. '
-        . 'A pessoa já foi avisada de que a equipe responde por e-mail em até ' . MCP_EMAIL_PRAZO . '. As fichas não aceitas são apagadas depois de 12 meses, como diz a Política de Privacidade.</p></div>'
+        . 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato vem nessa época. As fichas não aceitas são apagadas depois de 12 meses, como diz a Política de Privacidade.</p></div>'
         . ($baixar !== '' ? '<div class="acoes" style="margin-top:0">' . $baixar . '</div>' : '') . '</div>'
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . '<div class="filtros">' . $pilulas . '</div>' . $busca

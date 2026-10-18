@@ -113,6 +113,24 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Voluntariado: novas entradas em janeiro de 2027 (18/10/2026)
+
+Pedido do Matheus: avisar que só haverá novas entradas em janeiro e que o contato é só nessa época, para ninguém
+ficar esperando resposta antes. O texto é um só, em `MCP_VOL_PROXIMAS_ENTRADAS` (api/lib/voluntarios.php) e
+`PROXIMAS_ENTRADAS` (scripts/gerar_voluntariado_cadastro.py): "janeiro de 2027". Onde mudou:
+
+- `/voluntariado/cadastro/`: aviso no topo, etapa "Ficha de entrevista", tela de sucesso e a frase de prazo do
+  `cadastro.js` (a API devolve `prazo` = "janeiro de 2027");
+- `/voluntariado/`: aviso no início da primeira seção, etapa 2 do passo a passo e uma pergunta nova na FAQ da página
+  (`site/institucional.json`, regerada só esta página);
+- e-mail de confirmação ao voluntário (passo 1 e pré-cabeçalho), aviso à equipe, mensagem de ficha repetida e o
+  painel de voluntários;
+- home (card 2 e linha da idade mínima), resposta da FAQ "Como ser voluntário" e o `chat.js` (respostas sincronizadas
+  com a FAQ; `chat_widget.py` atualizou o hash nas páginas manuais). `scripts/testar_voluntarios.php` confere o texto.
+- Publicado e conferido no ar. `doacao.html` ficou de fora: a do ar é uma versão antiga da página de doação, que
+  está fora do ar de propósito.
+- **Em janeiro**: trocar o texto nas duas constantes (ou tirar o aviso) e republicar as mesmas páginas.
+
 ## Portal da transparência com visual novo (17/10/2026)
 
 Pedido do Matheus: deixar `/transparencia/` mais bonita, a partir dos melhores portais do mercado. Três agentes

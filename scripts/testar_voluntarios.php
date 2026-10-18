@@ -242,7 +242,7 @@ verificar('e-mail à equipe: menor de 18 leva o aviso', str_contains($equipeMeno
 $confirmacao = mcp_montar_email_voluntario_confirmacao($ficha);
 $tudo = $confirmacao['assunto'] . $confirmacao['html'] . $confirmacao['texto'];
 verificar('confirmação: assunto com o protocolo', $confirmacao['assunto'], 'Recebemos sua ficha de voluntariado · VOL-261016-0042');
-verificar('confirmação: próximos passos (contato, entrevista, CBFI, termo de adesão)', [str_contains($tudo, 'ficha de entrevista'), str_contains($tudo, 'CBFI'), str_contains($tudo, 'quatro vezes por ano'), str_contains($tudo, 'Termo de adesão'), str_contains($tudo, '3 dias úteis')], [true, true, true, true, true]);
+verificar('confirmação: próximos passos (contato, entrevista, CBFI, termo de adesão)', [str_contains($tudo, 'ficha de entrevista'), str_contains($tudo, 'CBFI'), str_contains($tudo, 'quatro vezes por ano'), str_contains($tudo, 'Termo de adesão'), str_contains($tudo, 'janeiro de 2027'), str_contains($tudo, '3 dias úteis')], [true, true, true, true, true, false]);
 verificar('confirmação: protocolo, frentes e política', [str_contains($confirmacao['html'], 'VOL-261016-0042'), str_contains($confirmacao['html'], 'Formação e primeiros socorros, Juventude'), str_contains($confirmacao['html'], 'https://exemplo.org/privacidade/'), str_contains($confirmacao['html'], '2026-10-02')], [true, true, true, true]);
 verificar('confirmação: sem CPF, sem WhatsApp, sem doação, sem o domínio antigo', [str_contains($tudo, $cpf), stripos($tudo, 'whatsapp') !== false, stripos($tudo, 'doaç') !== false, str_contains($tudo, 'cruzvermelharj')], [false, false, false, false]);
 verificar('confirmação: adulto não leva o aviso do responsável', str_contains($tudo, 'responsável legal'), false);
