@@ -80,7 +80,8 @@ def main() -> int:
 
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{ORIGEM}/#faq", "url": f"{ORIGEM}/#faq",
           "name": dados["titulo"], "inLanguage": "pt-BR", "isPartOf": {"@id": f"{ORIGEM}/#site"}, "mainEntity": entidades}
-    ld_json = json.dumps(ld, ensure_ascii=False, indent=2)
+    # Compacto: o bloco vai inteiro no HTML da home, e o espaço da indentação era só peso (19/10/2026).
+    ld_json = json.dumps(ld, ensure_ascii=False, separators=(",", ":"))
     assert "</" not in ld_json
     bloco = f'<script type="application/ld+json" id="faq-ld">\n{ld_json}\n  </script>'
     if 'id="faq-ld"' in home:

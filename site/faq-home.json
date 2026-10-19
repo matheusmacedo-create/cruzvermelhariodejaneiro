@@ -1,6 +1,6 @@
 {
   "titulo": "Tire suas dúvidas sobre a Cruz Vermelha Brasileira Rio de Janeiro",
-  "subtitulo": "A instituição, como ajudar, voluntariado, cursos e matrícula, endereço e contato da filial, com as regras oficiais e o canal certo para cada assunto.",
+  "subtitulo": "A instituição, como ajudar, doação, voluntariado, endereço e contato da filial, e a escola ligada a ela, com as regras oficiais e o canal certo para cada assunto.",
   "grupos": [
     {
       "titulo": "Instituição, como ajudar, sede e contato",
@@ -21,8 +21,12 @@
         },
         {
           "pergunta": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",
-          "resposta": "A doação em dinheiro pelo site da Cruz Vermelha Brasileira Rio de Janeiro está suspensa no momento. Dá para ajudar de três jeitos: sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail. Os canais oficiais da filial estão na página de links.",
+          "resposta": "Pode. A doação em dinheiro para a Cruz Vermelha Brasileira Rio de Janeiro é feita na página de doação, por PIX ou cartão, e o comprovante chega por e-mail, com o CNPJ da filial. Também dá para ajudar sendo voluntário, com o cadastro no formulário oficial do voluntariado, já que a filial forma os próprios voluntários; entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho, de segunda a sexta, das 10h às 17h; ou propondo uma parceria de empresa, escola ou instituição pelo chat do site, que responde por e-mail.",
           "links": [
+            {
+              "texto": "página de doação",
+              "url": "/doe/"
+            },
             {
               "texto": "formulário oficial do voluntariado",
               "url": "/voluntariado/cadastro/"
@@ -34,10 +38,6 @@
             {
               "texto": "chat do site",
               "url": "/#chat"
-            },
-            {
-              "texto": "página de links",
-              "url": "/bio/"
             }
           ],
           "chat": [
@@ -66,11 +66,15 @@
         },
         {
           "pergunta": "A Cruz Vermelha no Rio de Janeiro atende emergências ou marca consultas?",
-          "resposta": "Neste site você encontra os cursos, o voluntariado, as campanhas e o contato da Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio. Aqui não há agendamento de consultas nem atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a Cruz Vermelha RJ oferece é preparo para agir até a chegada do socorro: os cursos pagos da escola, como Primeiros Socorros, ensinam RCP, controle de hemorragias e desengasgo a qualquer pessoa. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
+          "resposta": "Não. A Cruz Vermelha Brasileira Rio de Janeiro, sediada no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro do Rio, não agenda consultas nem faz atendimento de urgência: em uma emergência, ligue 192 (SAMU) ou 193 (Corpo de Bombeiros). O que a filial faz é educação preventiva, campanhas de apoio comunitário e a formação dos próprios voluntários, que aprendem a agir até a chegada do socorro. Quem quer um curso com certificado encontra os da escola ligada à filial. Para outros assuntos, fale com a equipe pelo chat do site, que responde por e-mail em até 3 dias úteis.",
           "links": [
             {
-              "texto": "Primeiros Socorros",
-              "url": "/matricula-cursos-presenciais/?curso=primeiros-socorros-basico"
+              "texto": "formação dos próprios voluntários",
+              "url": "/cursos-gratuitos/"
+            },
+            {
+              "texto": "escola ligada à filial",
+              "url": "/matricula-cursos-presenciais/"
             },
             {
               "texto": "chat do site",
@@ -84,10 +88,10 @@
         },
         {
           "pergunta": "Onde fica a Cruz Vermelha Brasileira Rio de Janeiro e qual é o horário?",
-          "resposta": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem os cursos presenciais e a formação de voluntários, nos dias e horários de cada turma, e o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa.",
+          "resposta": "A sede da Cruz Vermelha Brasileira Rio de Janeiro fica no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É lá que acontecem a formação de voluntários, nos dias e horários de cada turma, o recebimento de donativos da Campanha do Agasalho, de segunda a sexta, das 10h às 17h, e os cursos presenciais da escola. O CNPJ da filial é 08.560.973/0001-97. Antes de ir, confirme o que precisa pelo chat do site ou pelo e-mail contato@cruzvermelhariodejaneiro.org: a equipe responde em até 3 dias úteis. A seção de contato traz o endereço com link para o mapa.",
           "links": [
             {
-              "texto": "cursos presenciais",
+              "texto": "cursos presenciais da escola",
               "url": "/matricula-cursos-presenciais/"
             },
             {
@@ -111,7 +115,7 @@
         },
         {
           "pergunta": "Como falar com a Cruz Vermelha Brasileira Rio de Janeiro? Tem telefone ou WhatsApp?",
-          "resposta": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende cursos, matrícula, campanhas e parcerias, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias, o Instagram @cruzvermelhabrasileirarj e o canal da filial no YouTube.",
+          "resposta": "O atendimento da Cruz Vermelha Brasileira Rio de Janeiro é por e-mail: use o chat Fale com a gente, no canto de qualquer página, ou escreva para contato@cruzvermelhariodejaneiro.org. A equipe responde em até 3 dias úteis, com o número de protocolo no assunto; vale conferir a caixa de spam. Esse canal atende voluntariado, doações, campanhas, parcerias e dúvidas sobre os cursos da escola, e os dados completos estão na seção de contato. Para o voluntariado existe um WhatsApp próprio, (21) 97036-0264, exclusivo para quem quer ser voluntário; o cadastro é feito no formulário do voluntariado. Para acompanhar as ações da filial, veja as notícias, o Instagram @cruzvermelhabrasileirarj e o canal da filial no YouTube.",
           "links": [
             {
               "texto": "chat Fale com a gente",
@@ -183,11 +187,11 @@
       ]
     },
     {
-      "titulo": "Cursos e matrícula",
+      "titulo": "Escola de Educação e Saúde",
       "perguntas": [
         {
           "pergunta": "Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
-          "resposta": "Os cursos abertos ao público na Cruz Vermelha Brasileira Rio de Janeiro são os sete cursos presenciais pagos da Escola de Educação e Saúde, na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas), Cuidador de Idosos (160 horas) e Micropigmentação Labial (24 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. A filial não vende cursos: forma os próprios voluntários, depois da seleção (veja a formação de voluntários). Valores e escolaridade estão na página de matrícula em cursos presenciais.",
+          "resposta": "Os cursos abertos ao público na Cruz Vermelha Brasileira Rio de Janeiro são os cursos presenciais pagos da Escola de Educação e Saúde, na sede, no Centro do Rio: Primeiros Socorros Básico (8 horas), Lei Lucas para ambientes com crianças (8 horas), Suporte Básico de Vida (4 horas), Punção Venosa (8 horas), Bombeiro Civil (80 horas) e Cuidador de Idosos (160 horas), vendidos e certificados pela O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial. A filial não vende cursos: forma os próprios voluntários, depois da seleção (veja a formação de voluntários). Valores e escolaridade estão na página de matrícula em cursos presenciais.",
           "links": [
             {
               "texto": "formação de voluntários",
@@ -217,11 +221,12 @@
             "matricula",
             "curso"
           ],
-          "chatRotulo": "Como faço a matrícula?"
+          "chatRotulo": "Como faço a matrícula?",
+          "home": false
         },
         {
           "pergunta": "Quanto custa fazer um curso na Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Micropigmentação Labial, R$ 400 + R$ 99 = R$ 499; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na página de cursos presenciais.",
+          "resposta": "Cada curso tem a matrícula (o valor do curso) e a taxa de inscrição de R$ 99. À vista: Suporte Básico de Vida, Punção Venosa e Lei Lucas, R$ 150 + R$ 99 = R$ 249; Primeiros Socorros Básico, R$ 180 + R$ 99 = R$ 279; Bombeiro Civil e Cuidador de Idosos, R$ 950 + R$ 99 = R$ 1.049, com a homologação do Bombeiro Civil à parte. Com turma aberta, você pode pagar tudo de uma vez na inscrição, por PIX ou cartão, à vista, ou só a taxa de inscrição, que reserva a vaga. A entrada na aula é liberada com a matrícula paga. Confira na página de cursos presenciais.",
           "links": [
             {
               "texto": "página de cursos presenciais",
@@ -238,11 +243,19 @@
         },
         {
           "pergunta": "A Cruz Vermelha Brasileira Rio de Janeiro tem cursos gratuitos?",
-          "resposta": "Não há curso gratuito aberto ao público. A filial, associação sem fins lucrativos, forma de graça só os próprios voluntários, e com seleção: quem quer entrar faz o cadastro, passa pela ficha de entrevista e, se for aceito, faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano. Só depois dele o voluntário participa das formações internas, como as de primeiros socorros. Veja a formação de voluntários. Quem precisa de um curso com data marcada e certificado encontra os sete cursos presenciais da escola, a O-CVB Filial Rio de Janeiro Ensino Ltda: cada um tem a matrícula, de R$ 150 a R$ 950, e a taxa de inscrição de R$ 99.",
+          "resposta": "Não há curso gratuito aberto ao público. A filial, associação sem fins lucrativos, forma de graça só os próprios voluntários, e com seleção: quem quer entrar faz o cadastro, passa pela ficha de entrevista e, se for aceito, faz o CBFI, o curso de formação inicial dos voluntários, que abre quatro vezes por ano. Só depois dele o voluntário participa das formações internas, como as de primeiros socorros. Veja a formação de voluntários. Quem precisa de um curso com data marcada e certificado encontra os cursos presenciais pagos da Escola de Educação e Saúde, empresa ligada à filial, cujo resultado ajuda a manter o Palácio da Cruz Vermelha e as atividades da filial.",
           "links": [
             {
               "texto": "formação de voluntários",
               "url": "/cursos-gratuitos/"
+            },
+            {
+              "texto": "Escola de Educação e Saúde",
+              "url": "/matricula-cursos-presenciais/"
+            },
+            {
+              "texto": "ajuda a manter o Palácio da Cruz Vermelha",
+              "url": "/quem-somos/#como-nos-financiamos"
             }
           ],
           "chat": [
@@ -253,7 +266,7 @@
         },
         {
           "pergunta": "Qual é a escolaridade mínima dos cursos? Preciso ser da área da saúde?",
-          "resposta": "Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil, Punção Venosa e Micropigmentação Labial pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil e Micropigmentação Labial não exigem experiência prévia. Confira os requisitos de cada curso na página de matrícula antes de garantir a vaga com a inscrição de R$ 99.",
+          "resposta": "Depende do curso. Primeiros Socorros Básico, Primeiros Socorros Lei Lucas, Suporte Básico de Vida e Cuidador de Idosos pedem Ensino Fundamental; Bombeiro Civil e Punção Venosa pedem Ensino Médio. Os cursos de primeiros socorros e o Suporte Básico de Vida da Cruz Vermelha Brasileira Rio de Janeiro são abertos a qualquer pessoa, sem experiência na área da saúde. Punção Venosa é voltado a estudantes e profissionais da saúde, conforme as normas da profissão. Bombeiro Civil não exige experiência prévia. Confira os requisitos de cada curso na página de matrícula antes de garantir a vaga com a inscrição de R$ 99.",
           "links": [
             {
               "texto": "página de matrícula",
@@ -280,7 +293,7 @@
         },
         {
           "pergunta": "Quanto tempo dura cada curso da Cruz Vermelha Brasileira Rio de Janeiro?",
-          "resposta": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Micropigmentação Labial, 24 horas; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na página de matrícula; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição.",
+          "resposta": "As cargas horárias são: Suporte Básico de Vida, 4 horas; Primeiros Socorros Básico, Lei Lucas - Ambientes com Crianças e Punção Venosa, 8 horas cada; Bombeiro Civil, 80 horas; Cuidador de Idosos, 160 horas. Quem busca atualização rápida em primeiros socorros resolve em um dia de treinamento, de 4 a 8 horas presenciais, com prática supervisionada e certificado ao final. Os cursos mais longos são divididos em encontros, conforme a turma. Veja a carga horária de cada um na página de matrícula; as datas das próximas turmas ficam na plataforma da escola, e a secretaria confirma turma e horário depois da inscrição.",
           "links": [
             {
               "texto": "página de matrícula",
@@ -366,7 +379,8 @@
               "texto": "página de matrícula em cursos presenciais",
               "url": "/matricula-cursos-presenciais/"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "O que é a Lei Lucas e quem precisa fazer o curso de primeiros socorros?",
@@ -380,7 +394,8 @@
               "texto": "fale com a gente",
               "url": "/#chat"
             }
-          ]
+          ],
+          "home": false
         },
         {
           "pergunta": "O que faz um bombeiro civil e quais são os requisitos para fazer o curso?",
@@ -429,7 +444,8 @@
             "curso",
             "outro"
           ],
-          "chatRotulo": "Treinamento para minha empresa ou escola"
+          "chatRotulo": "Treinamento para minha empresa ou escola",
+          "home": false
         },
         {
           "pergunta": "Como comparar os cursos de primeiros socorros no Rio de Janeiro?",
