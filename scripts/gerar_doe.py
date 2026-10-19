@@ -309,7 +309,7 @@ CONFIANCA = [
     ("scale-balanced", "<b>Utilidade pública municipal e estadual</b>: lei municipal 5.153/2010 e lei estadual 9.984/2023."),
     ("certificate", "<b>CNPJ 08.560.973/0001-97</b>, Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro."),
     ("lock", "<b>Pagamento em ambiente seguro</b>, com comprovante por e-mail logo após a confirmação."),
-    ("hand-holding-heart", "<b>Acesso futuro a cursos gravados gratuitos</b> para quem doa pelo site."),
+    ("hand-holding-heart", "<b>Conheça o destino da sua contribuição</b>: <a href=\"/quem-somos/#como-nos-financiamos\">como a filial se financia</a> e <a href=\"/transparencia/\">documentos publicados</a>."),
 ]
 
 

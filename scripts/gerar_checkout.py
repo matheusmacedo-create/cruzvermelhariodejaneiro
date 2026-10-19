@@ -274,7 +274,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                   </div>
                 </div>
                 <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">@@COBRE_LEGENDA@@</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
-                <label class="ck-check" id="ck-divulgacao-opcao"@@DIVULGACAO_OCULTA@@><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao" data-centavos="@@DIVULGACAO_CENTAVOS@@"><span class="ck-check-texto">Quero ajudar a divulgar os cursos<small>Opcional. O valor vai para a divulgação dos cursos, para que cheguem a mais pessoas.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ @@DIVULGACAO@@</span></label>
+                <div id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" data-centavos="0" disabled hidden><span id="ck-divulgacao-valor" hidden></span></div>
                 <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="@@ACEITE_VERSAO@@"><span class="ck-check-texto" id="ck-requisitos-texto">@@ACEITE@@</span></label>
                 <span id="ck-escolaridade" hidden></span>
                 <div class="ck-condicoes" id="ck-condicoes"@@P1_OCULTO@@><h3>Resumo das condições</h3><p id="ck-condicoes-texto"></p></div>
@@ -291,7 +291,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 </ul>
                 <div id="ck-legal-hoje"@@LEGAL_HOJE_OCULTO@@>
                   <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber o valor de volta (art. 49 do Código de Defesa do Consumidor). Seus dados são usados para a matrícula, a cobrança e os avisos sobre as suas aulas, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>
-                  <p class="ck-nota ck-legal" style="margin:8px 0 0">Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro · CNPJ <span class="ck-nowrap">08.560.973/0001-97</span> · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ · contato@cruzvermelhariodejaneiro.org</p>
+                  <p class="ck-nota ck-legal" style="margin:8px 0 0">Venda e recebimento: @@RECEBEDOR_NOME@@, CNPJ <span class="ck-nowrap">@@RECEBEDOR_CNPJ@@</span> · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ · contato@cruzvermelhariodejaneiro.org.</p>
                 </div>
                 <div id="ck-legal-novo"@@LEGAL_NOVO_OCULTO@@>
                   <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber de volta tudo o que pagou, inclusive a matrícula e os juros do parcelamento (art. 49 do Código de Defesa do Consumidor). Seus dados são usados para a inscrição, o acesso à área do aluno, a cobrança e os avisos sobre as suas aulas, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>
@@ -691,9 +691,8 @@ def main() -> int:
     partes = medicao_com_plano(vocabulario_checkout(partes_da_home(home)))
     inscricao_c = int(dados["inscricao_centavos"])
     inscricao = brl(inscricao_c)
-    # Contribuição opcional para a divulgação (07/10/2026): o valor vem no HTML para a opção não "pular" na tela; o
-    # checkout.js confirma pelo info.php (o config do servidor pode mudar o valor ou desligar a opção, com 0).
-    divulgacao = int(dados.get("divulgacao_centavos") or 0)
+    # Compatibilidade com os resumos de inscrições antigas; novas inscrições não oferecem divulgação.
+    divulgacao = 0
     # Opção 1 visível e marcada no HTML só na geração do passo 5 (T24). Sem isso, o checkout.js a mostra quando o
     # info.php a trouxer em "planos".
     completo_html = os.environ.get("PLANO_COMPLETO_HTML") == "1"
@@ -739,7 +738,7 @@ def main() -> int:
                       .replace("@@ACAO_ROTULO@@", "Total" if completo_html else "Agora")
                       .replace("@@INSCRICAO_ROTULO@@", "Taxa de inscrição" if completo_html else "Taxa de inscrição (agora)")
                       .replace("@@COBRE_LEGENDA@@", "Opcional. Cobre os custos de processamento da taxa de inscrição." if completo_html
-                               else "Opcional. Assim a Cruz Vermelha recebe a taxa de inscrição inteira.")
+                               else "Opcional. Cobre os custos de processamento da taxa de inscrição da escola.")
                       .replace("@@ACEITE_VERSAO@@", aceite_versao).replace("@@ACEITE@@", aceite)
                       .replace("@@RECEBEDOR_NOME@@", esc(RECEBEDOR_NOME)).replace("@@RECEBEDOR_CNPJ@@", RECEBEDOR_CNPJ)
                       .replace("@@SUSTENTA_TITULO@@", esc(SUSTENTA_TITULO)).replace("@@SUSTENTA_CURTO@@", esc(SUSTENTA_CURTO))
