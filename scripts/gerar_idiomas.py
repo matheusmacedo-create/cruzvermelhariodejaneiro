@@ -35,8 +35,8 @@ SITE = RAIZ / "site"
 DADOS = SITE / "idiomas.json"
 HOME = SITE / "index.html"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
-# Só no sameAs do JSON-LD: o link do rodapé saiu em 19/10/2026 (achado K3, verbete criado pela conta da própria filial).
-WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
+# O verbete da Wikipédia saiu do rodapé e do sameAs em 19/10/2026 (achado K3: criado pela conta da própria filial). Perfis oficiais iguais aos da home.
+PERFIS = ["https://www.instagram.com/cruzvermelhabrasileirarj/", "https://www.facebook.com/profile.php?id=61591390052128", "https://www.youtube.com/@cruzvermelhariodejaneiro-org"]
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
 NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
@@ -455,7 +455,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
            "address": {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10",
                        "addressLocality": "Rio de Janeiro", "addressRegion": "RJ",
                        "postalCode": "20230-130", "addressCountry": "BR"},
-           "sameAs": [WIKI]},
+           "sameAs": PERFIS},
           {"@context": "https://schema.org", "@type": "WebPage",
            "url": f"{ORIGEM}{PAGINAS['home'][idioma['codigo']]}", "name": idioma["home"]["titulo"],
            "description": idioma["home"]["descricao"], "inLanguage": idioma["codigo"],
