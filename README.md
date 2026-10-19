@@ -370,6 +370,59 @@ Google, faça a ligação de todo o nosso projeto com o Drive". O formulário ex
 - **Pendências:** /quem-somos/ também diz "fundada em 5 de dezembro de 1908, no Rio de Janeiro" com a mesma atribuição
   imprecisa (o Estatuto dá só a data; o Rio vem de /historia/); foto própria da fachada do Palácio com o emblema.
 
+## Google Ad Grants, 2ª recusa (19/10/2026): home, menu, rodapé e textos institucionais
+
+O pedido foi recusado de novo em 19/10/2026 ("velocidade, navegação clara, conteúdo significativo e atualizado,
+calls-to-action"). Auditoria em `resultado.json` (fora do repositório; achados C, L, M, T e K). Decisões do Matheus:
+home 100% institucional, doação online religada, Micropigmentação Labial fora do domínio da filial, sem o banner de
+empresas e sem a parede de logos, menu com "Escola" num link só e "Doe" como botão de destaque. Esta etapa (site 1
+de 4) mexeu só nas fontes; nada foi publicado e a regeração completa fica para a etapa 4.
+
+- **Menu (home e todas as páginas que copiam o cabeçalho):** seis itens, nesta ordem: "Quem somos" (grupo: Quem
+  somos, Nossa história, Equipe, Princípios, Emblema, Movimento, DIH, Base legal), "Como ajudar" (grupo: Doe, Seja
+  voluntário, Formação de voluntários, Campanhas), Notícias, Transparência, Escola (`/matricula-cursos-presenciais/`)
+  e Contato; à direita, o seletor de idioma e o botão vermelho "Doe" (`.btn-doe-topo`) no lugar de "Plataforma". O
+  mesmo menu está em `lib/site/esqueleto.ts` da Redação. `partes_da_home()` marca a página de matrícula pelo item
+  "Escola"; `menu_com_doe()` (`gerar_doe.py`) não mexe no cabeçalho que já tem `/doe/`; `vocabulario_checkout()`
+  (`gerar_checkout.py`) não avisa mais quando não acha "Plataforma". `equipe.html` e `historia/index.html` (cópias à
+  mão) receberam o cabeçalho e o rodapé novos; a Campanha do Agasalho, que tem desenho próprio, o menu simples sem
+  matrícula.
+- **Rodapé:** endereço completo (Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ, CEP 20230-130) e CNPJ em
+  toda página; saíram a Wikipédia (verbete criado pela conta da própria filial, achado K3; o `sameAs` do JSON-LD
+  fica), o Acervo (ainda "Em breve", L02/M10) e a plataforma da escola; entrou "Escola de Educação e Saúde".
+- **Home:** hero com "Doe agora" (`/doe/?utm_source=site&utm_medium=home`) e "Seja voluntário"; "Por onde
+  começar" sem curso nem empresas (voluntário, doar, conhecer, conferir a filial); seção "Últimas notícias" com
+  data; a seção da escola virou um cartão sem preço, com a frase do financiamento e os links para
+  `/quem-somos/#como-nos-financiamos` e para a matrícula; saíram o banner de empresas, os logos de parceiros, os
+  cartões de curso e o bloco "No trauma, ajudar é fazer a coisa certa" (que terminava em venda); newsletter e
+  contato com a missão antes dos cursos (o texto do aceite da newsletter não mudou: é o mesmo gravado pela Redação
+  em `lib/newsletter/inscricao.ts`).
+- **Últimas notícias:** `scripts/gerar_noticias_home.py` lê o índice `/noticias/` da Redação e escreve as 3 mais
+  recentes entre `<!-- noticias:inicio -->` e `<!-- noticias:fim -->`; as matérias de venda de curso (11 slugs,
+  achado C7) ficam fora. Um script no fim da home refaz a lista no navegador com o mesmo índice, depois do
+  `load`, para a home acompanhar cada publicação da Redação sem republicar `index.html`.
+- **FAQ da home:** 9 perguntas (instituição, como ajudar, voluntariado e uma da escola, "tem cursos gratuitos?"),
+  nenhuma com preço; a resposta da doação diz que ela é feita em `/doe/`, por PIX ou cartão; a de emergências não
+  apresenta mais curso como o que a filial oferece. As outras perguntas de curso seguem no JSON (`"home": false`)
+  para o chat e a matrícula, sem Micropigmentação Labial. O FAQPage sai compacto (11,6 KB → 7,5 KB).
+- **JSON-LD (K4):** o nó `EducationalOrganization` saiu do grafo da home; na matrícula, a escola não é mais
+  `parentOrganization` da filial, ganha `legalName`/`taxID` da Ltda, é `seller` das ofertas e quem certifica, e a
+  lista se chama "Cursos da Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda)".
+- **Textos:** /quem-somos/ com a doação em dinheiro de volta e a transparência no presente (o que o portal já
+  publica), sem "será publicada"/"em implantação"; /base-legal/ idem; /historia/ diz que os cursos pagos são da
+  escola, não da filial (M17), e troca "Visitar o Acervo" por doar/ser voluntário/falar com a filial; /gestao/
+  sem o cartão do acervo "catalogado" (M10); /doe/ cita Nossa história em vez do verbete da Wikipédia.
+- **Bloco de ação:** as páginas de `gerar_institucional.py` terminam com "Doe agora", "Seja voluntário" e "Fale
+  com a filial" antes de "Veja também".
+- **Velocidade:** saíram do primeiro `<style>` da home as 122 regras sem uso em nenhuma página gerada (faixa de
+  matrícula, sliders e cartões de curso antigos, parceiros, seletor de matrícula, rótulos do menu "Cursos"),
+  conferidas contra todas as páginas regeradas, os JS do site e os geradores: o `<style>` foi de 47,5 KB para
+  33 KB, e o HTML da home de 164,6 KB para cerca de 135 KB. O preload do hero não mudou.
+- **Fica para as outras etapas:** religar a doação (`DOACAO_NO_AR`, `.htaccess`, FAQ de `/doe/`, chat, bio, 404,
+  `llms.txt`, que ainda fala em doação suspensa, Plataforma, Micropigmentação e Wikipédia); EN/ES (menu e rodapé
+  próprios em `gerar_idiomas.py`); a matrícula e o chat sem Micropigmentação; as notícias da Redação; a
+  regeração e a publicação.
+
 ## Google Ad Grants: recusa e correções do site (15/10/2026)
 
 O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
@@ -2803,7 +2856,7 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 
 ### Ordem de geração
 
-`consentimento.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
+`consentimento.py` → `gerar_noticias_home.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
 `gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
 `gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`, e
 `gerar_ingles.py` depois de `gerar_idiomas.py` (notícias e 404 em inglês).
