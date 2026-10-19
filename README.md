@@ -423,6 +423,58 @@ de 4) mexeu só nas fontes; nada foi publicado e a regeração completa fica par
   próprios em `gerar_idiomas.py`); a matrícula e o chat sem Micropigmentação; as notícias da Redação; a
   regeração e a publicação.
 
+## Google Ad Grants, 2ª recusa (19/10/2026): doação religada e páginas que vendem (etapa site 2 de 4)
+
+Continuação da etapa 1 (acima). Só as fontes mudaram: nada foi publicado, nada foi gravado no banco, e a regeração
+e a publicação ficam para a etapa 4.
+
+- **Doação de volta:** `DOACAO_NO_AR = True` em `gerar_doe.py` e `gerar_idiomas.py` (o menu em inglês e em espanhol
+  volta a ter "Donate/Donar", e `/en/donate/` e `/es/donar/` voltam a ser geradas). Os três `.htaccess` do 503
+  (`site/doe/`, `site/en/donate/`, `site/es/donar/`) só tinham as regras do 503 e foram apagados do repositório.
+  **No servidor, também precisam ser apagados à mão** (pelo gerenciador de arquivos da Hostinger, como diz a seção
+  "Doação em `/doe/`"): `publicar_hostinger.sh` nunca apaga `.htaccess`. Depois, limpar o cache e conferir que
+  `/doe/`, `/en/donate/` e `/es/donar/` respondem 200. O backend (`site/doe/api/`) não tinha trava própria; o
+  `config.php` da doação precisa continuar no servidor. `site/doacao-indisponivel.html` (e o gerador) ficam para
+  uma suspensão futura: `noindex`, sem nenhum link para ele.
+- **Textos que diziam "suspensa":** FAQ em inglês e espanhol (`faq-idiomas.json`, com link para a página de doação
+  de cada língua), bio, 404 (ganhou "Doe" e "Seja voluntário"), `llms.txt` (também sem Micropigmentação, sem
+  Wikipédia, sem o acervo "Em breve" e com a transparência no presente), políticas (`politicas.json`: tratamento
+  "Doações" no presente, com o que `mcp_doacoes` guarda, e Termos com a doação feita só em `/doe/`; `{doar}` é
+  substituído por `gerar_politicas.py` pela página de cada língua; revisão da privacidade e dos termos em
+  19/10/2026), Impacto das Cores, Campanha do Agasalho em inglês (`traducoes/en/paginas.json`) e o assunto do chat
+  ("Doações, Campanha do Agasalho e parcerias", igual em `chat.js` e em `api/lib/email.php`). A Campanha do Agasalho
+  em português ganhou uma linha discreta para a página de doação, depois das duas formas de participar.
+- **Wikipédia (K3):** saiu também do rodapé das páginas em inglês e espanhol (`rodape()` de `gerar_idiomas.py`); o
+  `sameAs` do JSON-LD fica.
+- **Matrícula e checkout (C1):** bloco "Como esta escola sustenta a Cruz Vermelha RJ" logo depois dos destaques do
+  topo, uma nota com o mesmo título no fim de cada Investimento, uma frase no "Quem somos" da escola, uma coluna
+  "Cruz Vermelha RJ" no rodapé (site da filial, como a escola sustenta a filial, Doe, Transparência) e, no checkout,
+  uma nota logo acima de "Gerar QR Code". O texto (`SUSTENTA_*` em `gerar_matricula_presencial.py`, importado pelo
+  checkout) é o de `/quem-somos/#como-nos-financiamos`, sem número novo, e leva para lá.
+- **Certificado da escola (C9/M09, decisão de 13/10):** textos da matrícula, do checkout (`checkout.js` e a lista de
+  confiança), as respostas do catálogo (`certificado_da_escola()` do chat, aplicada também na página) e a meta
+  description. "Forma pessoas no Rio desde 1914" virou "Escola ligada à Cruz Vermelha Brasileira RJ"; o rodapé leva
+  o CNPJ e o endereço da filial. **Fica em aberto:** a imagem de amostra do certificado reproduz o modelo enviado pela
+  filial em 04/10, que diz "ministrado pela Cruz Vermelha Brasileira – Filial Rio de Janeiro" e assina como
+  "Cruz Vermelha Brasileira - Rio de Janeiro"; os e-mails ao aluno (`api/lib/email.php`, `api/lib/recuperacao.php`)
+  e a legenda "Assim a Cruz Vermelha recebe a taxa de inscrição inteira" também não mudaram (têm testes próprios).
+  Precisa do Matheus: qual é o texto do certificado de verdade.
+- **Micropigmentação Labial fora do domínio:** `FORA_DO_DOMINIO` em `scripts/sincronizar_catalogo.py` (slug, motivo
+  e data); a sincronização não a traz de volta e `gerar_matricula_presencial.py` recusa gerar se o `cursos.json`
+  ainda a tiver. Saiu do `cursos.json`, do `oferta.json`, de `COPY_CURSO`/`ORDEM_EXIBICAO`/`BENEFICIO`, de
+  `idiomas.json` e `faq-idiomas.json` (seis cursos) e, na regeração, do `chat.js`. Continua só na plataforma da
+  escola. `testar_pagar_tudo.php` passou a comparar o `sem_turma` do `oferta.json` com os cursos do catálogo.
+- **Sitemaps (`gerar_sitemaps.py`):** `/doe/` (0.8), `/en/donate/` e `/es/donar/` (0.5) de volta, com hreflang;
+  matrícula de 0.9 para 0.5 e cursos em inglês e espanhol de 0.7 para 0.4, abaixo das institucionais; `/bio/` fora
+  (agora `noindex`); a landing de Punção Venosa (`puncaovenosav1.`) fora do `sitemap-subdominios.xml` (continua no
+  ar). O `sitemap-paginas.xml` só muda quando `gerar_sitemaps.py` rodar depois da publicação (ele lê o ar).
+- **Impacto das Cores (L01/T03):** os 5 links relativos `/voluntariado/cadastro/` davam 404 no subdomínio
+  (conferido em 19/10: `projetocores.…/voluntariado/cadastro/` 404, `cruzvermelhariodejaneiro.org/voluntariado/cadastro/`
+  200); agora são absolutos para o domínio principal. A pergunta "Posso doar dinheiro?" responde com a página de doação.
+- **Bio (M14):** `noindex, follow`, fora do sitemap, chamada sem emoji, voluntariado primeiro, botão de doação
+  (`/doe/?utm_source=ig…`), WhatsApp, YouTube e a escola por último; FAQ com as novas entradas do voluntariado
+  (`PROXIMAS_ENTRADAS`) e sem Micropigmentação.
+
 ## Google Ad Grants: recusa e correções do site (15/10/2026)
 
 O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
@@ -528,7 +580,8 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
 - **Só os cursos da escola**: `scripts/sincronizar_catalogo.py` lê
   `escola.cursoscruzvermelha.org/cursos` e cada página de curso e grava
   `site/matricula-cursos-presenciais/cursos.json`. Curso que a escola tirar do ar sai daqui na
-  próxima sincronização. Nada é digitado à mão.
+  próxima sincronização. Nada é digitado à mão. Os cursos de `FORA_DO_DOMINIO` (desde 19/10/2026, a
+  Micropigmentação Labial) não entram: ficam só na plataforma da escola.
 - **Página**: `scripts/gerar_matricula_presencial.py` monta `index.html` com o `<style>`,
   cabeçalho, rodapé, GA4 e Meta Pixel copiados de `site/index.html`, mais dados estruturados
   (BreadcrumbList, ItemList de Course, FAQPage). Não edite o `index.html` gerado à mão: mude o
@@ -2378,7 +2431,10 @@ porque `EMAIL_REMETENTE_DOACAO` estava vazio e caía no remetente da matrícula.
 
 ## Doação em `/doe/` (20/09/2026)
 
-> **Fora do ar desde 25/09/2026, a pedido do Matheus.** `/doe/`, `/en/donate/` e `/es/donar/`
+> **Religada em 19/10/2026** (seção "Google Ad Grants, 2ª recusa … etapa site 2"): o texto abaixo descreve a
+> suspensão e serve de roteiro para suspender de novo.
+>
+> **Fora do ar de 25/09 a 19/10/2026, a pedido do Matheus.** `/doe/`, `/en/donate/` e `/es/donar/`
 > respondem **503** com o aviso `site/doacao-indisponivel.html` (gerado por
 > `scripts/gerar_doacao_indisponivel.py`, com o cabeçalho e o rodapé da home). 503 diz à busca que a
 > saída é temporária. As regras ficam num `.htaccess` em cada uma das três pastas, e não na raiz: um
@@ -2849,7 +2905,8 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 - Bio, 404, `llms.txt` e sitemaps sem doação. `/en/donate/` e `/es/donar/` deixam de ser geradas.
 - Para a doação voltar: `DOACAO_NO_AR = True` em `gerar_idiomas.py` e `gerar_doe.py`, rodar os
   geradores, tirar as regras 503 de `site/doe/.htaccess`, `site/en/donate/.htaccess` e
-  `site/es/donar/.htaccess` e rever a FAQ, a campanha e as políticas.
+  `site/es/donar/.htaccess` e rever a FAQ, a campanha e as políticas. **Feito nas fontes em 19/10/2026**
+  (etapa site 2 do Ad Grants); falta apagar os três `.htaccess` no servidor ao publicar.
 - As 5 matérias da Redação que chamavam para a página de doação (Chocó, Helicóptero, Ciclovia,
   Setembro Amarelo, "Recebemos") passam a chamar para o voluntariado, no padrão da revisão de 25/09
   (versões guardadas, `updated_at` intacto, `conteudo_corrigido_na_revisao`), depois do "Regerar".
