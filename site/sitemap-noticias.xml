@@ -1,152 +1,164 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:39:17+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-19T18:51:52+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/</loc>
-    <lastmod>2026-10-17T18:07:40+00:00</lastmod>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/</loc>
+    <lastmod>2026-10-19T01:36:11+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona-1.jpg</image:loc>
-      <image:title>Foto da matéria: Homologação de bombeiro civil no CBMERJ: como funciona</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/sala-cheia-de-alunos-de-camiseta-branca-assistindo-a-uma-aul.jpg</image:loc>
+      <image:title>Sala cheia de alunos de camiseta branca assistindo a uma aula de primeiros socorros da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/bonecos-de-treinamento-de-reanimacao-de-bebe-sobre-uma-mesa.jpg</image:loc>
+      <image:title>Bonecos de treinamento de reanimação de bebê sobre uma mesa, durante uma demonstração</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/</loc>
+    <lastmod>2026-10-19T01:35:34+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/homologacao-de-bombeiro-civil-no-cbmerj-como-funciona/capacete-vermelho-de-bombeiro-civil-sobre-uma-mesa-ao-lado-d.jpg</image:loc>
+      <image:title>Capacete vermelho de bombeiro civil sobre uma mesa, ao lado de uma pasta de documentos</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/</loc>
-    <lastmod>2026-10-17T18:02:04+00:00</lastmod>
+    <lastmod>2026-10-18T18:36:17+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/termo-de-adesao-voluntario-o-que-e-e-o-que-deve-ter-1.jpg</image:loc>
-      <image:title>Foto da matéria: Termo de adesão voluntário: o que é e o que deve ter</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/voluntarios-de-colete-com-o-emblema-da-cruz-vermelha-de-cost.jpg</image:loc>
+      <image:title>Voluntários de colete com o emblema da Cruz Vermelha, de costas, em um salão do Palácio da Cruz Vermelha</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/documento-impresso-sobre-uma-mesa-com-uma-caneta-tinteiro-po.jpg</image:loc>
+      <image:title>Documento impresso sobre uma mesa, com uma caneta-tinteiro pousada sobre as páginas</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/</loc>
-    <lastmod>2026-10-17T17:59:47+00:00</lastmod>
+    <lastmod>2026-10-18T17:59:48+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha-1.jpg</image:loc>
-      <image:title>Foto da matéria: Henry Dunant: quem foi o fundador da Cruz Vermelha</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/retrato-em-preto-e-branco-de-henry-dunant-ainda-jovem-de-ter.jpg</image:loc>
+      <image:title>Retrato em preto e branco de Henry Dunant ainda jovem, de terno e gravata borboleta</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/fachada-do-museu-henry-dunant-em-heiden-na-suica-onde-ele-vi.jpg</image:loc>
+      <image:title>Fachada do Museu Henry Dunant, em Heiden, na Suíça, onde ele viveu seus últimos anos</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/</loc>
-    <lastmod>2026-10-17T17:57:06+00:00</lastmod>
+    <lastmod>2026-10-19T01:35:02+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/sms-40199-como-receber-alertas-da-defesa-civil-no-rio-1.jpg</image:loc>
-      <image:title>Foto da matéria: SMS 40199: como receber alertas da Defesa Civil no Rio</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/celular-com-conversa-de-mensagens-sobre-mesa-de-madeira-ao-l.jpg</image:loc>
+      <image:title>Celular com conversa de mensagens sobre mesa de madeira, ao lado de xícara e caderno, com o morro ao fundo</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/</loc>
-    <lastmod>2026-10-17T17:54:35+00:00</lastmod>
+    <lastmod>2026-10-18T18:35:46+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/sinais-de-infarto-o-que-nao-ignorar-e-quando-ligar-192-1.jpg</image:loc>
-      <image:title>Foto da matéria: Sinais de infarto: o que não ignorar e quando ligar 192</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/desfibrilador-externo-automatico-dea-em-uma-caixa-verde-fixa.jpg</image:loc>
+      <image:title>Desfibrilador externo automático (DEA) em uma caixa verde fixada na parede de uma rua</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-infarto-o-que-nao-ignorar/desfibrilador-externo-automatico-portatil-aberto-com-a-tela.jpg</image:loc>
+      <image:title>Desfibrilador externo automático portátil aberto, com a tela de instruções acesa</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/</loc>
-    <lastmod>2026-10-16T15:17:06+00:00</lastmod>
+    <lastmod>2026-10-19T01:34:25+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-1.jpg</image:loc>
-      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/celular-com-icone-de-alerta-na-tela-diante-de-uma-janela-com.jpg</image:loc>
+      <image:title>Celular com ícone de alerta na tela, diante de uma janela com vista do Rio de Janeiro ao entardecer</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-2.jpg</image:loc>
-      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/celular-com-alerta-vermelho-aceso-sobre-mesa-de-madeira-com.jpg</image:loc>
+      <image:title>Celular com alerta vermelho aceso sobre mesa de madeira, com a paisagem do Rio embaçada pela chuva na janela</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/alerta-da-defesa-civil-no-celular-como-funciona-no-rio-3.jpg</image:loc>
-      <image:title>Foto da matéria: Alerta da Defesa Civil no celular: como funciona no Rio</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/alerta-da-defesa-civil-no-celular-como-funciona-no-rio/celular-com-simbolo-amarelo-de-alerta-na-tela-ao-lado-de-uma.jpg</image:loc>
+      <image:title>Celular com símbolo amarelo de alerta na tela, ao lado de uma janela com vista para a cidade e o morro</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/</loc>
-    <lastmod>2026-10-16T15:15:50+00:00</lastmod>
+    <lastmod>2026-10-18T18:35:13+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-1.jpg</image:loc>
-      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg</image:loc>
+      <image:title>Fachada da sede do Comitê Internacional da Cruz Vermelha em Genebra, na Suíça</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-2.jpg</image:loc>
-      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha-3.jpg</image:loc>
-      <image:title>Foto da matéria: CICV: o que é o Comitê Internacional da Cruz Vermelha</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/placa-emoldurada-do-seculo-xix-com-os-nomes-dos-membros-do-c.jpg</image:loc>
+      <image:title>Placa emoldurada do século XIX com os nomes dos membros do Comitê Internacional da Cruz Vermelha, na sala de leitura do arquivo do CICV</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/</loc>
-    <lastmod>2026-10-16T15:15:13+00:00</lastmod>
+    <lastmod>2026-10-18T18:36:57+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/lei-do-voluntariado-o-que-diz-a-lei-9-608-1998-1.jpg</image:loc>
-      <image:title>Foto da matéria: Lei do voluntariado: o que diz a Lei 9.608/1998</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/voluntarios-de-colete-da-cruz-vermelha-reunidos-no-auditorio.jpg</image:loc>
+      <image:title>Voluntários de colete da Cruz Vermelha reunidos no Auditório Oswaldo Cruz, no Palácio da Cruz Vermelha</image:title>
     </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/</loc>
-    <lastmod>2026-10-16T15:14:35+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina/curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina-1.jpg</image:loc>
-      <image:title>Foto da matéria: Curso de socorrista: o que é e o que um curso livre ensina</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/lei-do-voluntariado-o-que-diz-a-lei-9608/voluntarios-de-colete-da-cruz-vermelha-de-costas-no-auditori.jpg</image:loc>
+      <image:title>Voluntários de colete da Cruz Vermelha, de costas, no Auditório Oswaldo Cruz, no Palácio da Cruz Vermelha</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/</loc>
-    <lastmod>2026-10-16T15:09:24+00:00</lastmod>
+    <lastmod>2026-10-18T18:34:15+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-1.jpg</image:loc>
-      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sala-de-exame-de-tomografia-computadorizada-do-cranio-com-o.jpg</image:loc>
+      <image:title>Sala de exame de tomografia computadorizada do crânio, com o monitor de imagens em primeiro plano</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-2.jpg</image:loc>
-      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/sinais-de-avc-como-reconhecer-e-quando-ligar-para-o-192-3.jpg</image:loc>
-      <image:title>Foto da matéria: Sinais de AVC: como reconhecer e quando ligar para o 192</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/sinais-de-avc-como-reconhecer-e-quando-ligar-192/detalhe-da-lateral-de-uma-ambulancia-do-samu-com-o-numero-19.jpg</image:loc>
+      <image:title>Detalhe da lateral de uma ambulância do SAMU com o número 192</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/</loc>
-    <lastmod>2026-09-25T21:04:15+00:00</lastmod>
+    <lastmod>2026-10-19T01:27:30+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro.jpg</image:loc>
-      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/equipe-da-cruz-vermelha-de-camisetas-vermelhas-e-brancas-pos.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha, de camisetas vermelhas e brancas, posa em frente ao portão da sede</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro-2.jpg</image:loc>
-      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/equipe-da-cruz-vermelha-segura-folheto-de-matriculas-abertas.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha segura folheto de matrículas abertas em ação de rua, com os Arcos da Lapa ao fundo</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro-3.jpg</image:loc>
-      <image:title>Cruz Vermelha Brasileira Rio de Janeiro</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/equipe-da-cruz-vermelha-posa-no-calcadao-em-frente-a-um-pred.jpg</image:loc>
+      <image:title>Equipe da Cruz Vermelha posa no calçadão, em frente a um prédio, durante a ação de divulgação dos cursos</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas/</loc>
-    <lastmod>2026-09-24T21:28:49+00:00</lastmod>
+    <lastmod>2026-10-19T01:12:32+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -156,7 +168,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer/</loc>
-    <lastmod>2026-09-24T21:22:01+00:00</lastmod>
+    <lastmod>2026-10-19T01:11:28+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -166,7 +178,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda/</loc>
-    <lastmod>2026-09-24T21:21:05+00:00</lastmod>
+    <lastmod>2026-10-19T01:13:26+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -186,7 +198,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/</loc>
-    <lastmod>2026-09-24T21:20:14+00:00</lastmod>
+    <lastmod>2026-10-19T01:13:02+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -196,7 +208,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/</loc>
-    <lastmod>2026-09-24T21:19:49+00:00</lastmod>
+    <lastmod>2026-10-19T01:13:48+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -206,7 +218,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/</loc>
-    <lastmod>2026-09-24T21:19:14+00:00</lastmod>
+    <lastmod>2026-10-19T01:12:05+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -278,7 +290,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/</loc>
-    <lastmod>2026-09-03T04:14:21+00:00</lastmod>
+    <lastmod>2026-10-19T01:32:52+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -286,8 +298,8 @@
       <image:title>Voluntárias da Cruz Vermelha Colombiana organizam kits de alimentos para as famílias atingidas em Chocó, com apoio do apelo de emergência da IFRC.</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombi-2.jpg</image:loc>
-      <image:title>Foto da matéria: Chocó: apelo de emergência da IFRC apoia Cruz Roja Colombiana</image:title>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/choco-apelo-da-ifrc-apoia-a-cruz-roja-colombiana-2.jpg</image:loc>
+      <image:title>Foto da matéria: Chocó: apelo da IFRC apoia a Cruz Roja Colombiana</image:title>
     </image:image>
   </url>
   <url>
