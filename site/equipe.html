@@ -504,6 +504,12 @@
     .mini-course-body .btn { width: 100%; padding: 10px 18px; font-size: 13px; }
     @media (max-width: 920px) { .more-courses-grid { grid-template-columns: 1fr; } }
     .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    /* Bloco de ação no fim da página (19/10/2026, Ad Grants): doar, ser voluntário ou falar com a filial. */
+    .fim-acao { padding: 8px 0 52px; }
+    .fim-acao-caixa { max-width: 860px; margin: 0 auto; padding: 26px 28px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .fim-acao h2 { font-size: 1.35rem; letter-spacing: -.01em; margin: 0 0 8px; }
+    .fim-acao p { color: var(--muted); margin: 0 0 18px; max-width: 64ch; }
+    @media (max-width: 620px) { .fim-acao-caixa { padding: 22px 18px; } }
 
     .alert {
       background: var(--black);
@@ -1532,6 +1538,19 @@
         </div>
       </div>
     </section>
+    <section class="fim-acao" aria-labelledby="fim-acao-titulo">
+      <div class="wrap">
+        <div class="fim-acao-caixa">
+          <h2 id="fim-acao-titulo">Ajude a Cruz Vermelha Brasileira Rio de Janeiro</h2>
+          <p>Doe para manter a formação de voluntários e as ações da filial, cadastre-se no voluntariado ou fale com a equipe, que responde pelo e-mail institucional.</p>
+          <div class="cta-row">
+            <a class="btn btn-red" href="/doe/">Doe agora</a>
+            <a class="btn btn-outline" href="/voluntariado/cadastro/">Seja voluntário</a>
+            <a class="btn btn-outline" href="/#contato">Fale com a filial</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -1650,7 +1669,7 @@
     })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
-  <link rel="stylesheet" href="/chat/chat.min.css?v=bc4c1ef474">
-  <script src="/chat/chat.js?v=e1540124a6" defer></script>
+  <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
+  <script src="/chat/chat.js?v=5640573d60" defer></script>
 </body>
 </html>

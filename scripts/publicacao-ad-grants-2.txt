@@ -6,6 +6,8 @@
 # O ar antes = o Git em 278b675 (origin/main). Conferir por HTTP antes de editar, como na rodada de 15/10.
 # Antes, a cópia do ar:
 #   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-ad-grants-2 $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-2.txt)
+# Revisão pós-merge: doacao.html saiu da lista (o 301 do .htaccess raiz o esconde) e a imagem nova assets/otim/hero-turma-cbfi-640.webp
+# (38 KB, fora do Git; guardada em scratchpad/revisao-velocidade/assets-pool/assets/otim/) sobe junto com index.html.
 # Publicar (a lista é a de baixo, em ordem alfabética; as imagens novas de site/assets/otim, se alguma página citar uma que
 # não esteja no ar, vão junto: assets/ fica fora do Git, ver "Estrutura do repositório"):
 #   scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-2.txt)
@@ -36,7 +38,6 @@ site/cursos-gratuitos/index.html
 site/dia-das-criancas/index.html
 site/direito-internacional-humanitario/index.html
 site/doacao-indisponivel.html
-site/doacao.html
 site/doe/index.html
 site/doe/obrigado/index.html
 site/emblema/index.html
