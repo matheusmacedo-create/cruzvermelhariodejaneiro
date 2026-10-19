@@ -2716,9 +2716,11 @@ def main() -> int:
     aviso_dialog = ""  # "Prefiro ser avisado da data" sai: sem turma, a ficha segue a 10.3 ou a 1.7 (chat)
 
     # --- dados estruturados (3.1) ------------------------------------------------------------------------------
+    # A escola é outra pessoa jurídica (a Ltda), não uma parte da ONG: sem parentOrganization apontando para
+    # #organizacao, e a Ltda como quem vende (seller) e certifica (achado K4 do Ad Grants, 19/10/2026).
     provedor = {"@type": "EducationalOrganization", "@id": f"{ESCOLA}/#escola",
-                "name": "Escola de Educação e Saúde CVB-RJ", "url": f"{ESCOLA}/", "address": ENDERECO,
-                "parentOrganization": {"@id": f"{ORIGEM}/#organizacao"}}
+                "name": "Escola de Educação e Saúde CVB-RJ", "legalName": RECEBEDOR_NOME, "taxID": RECEBEDOR_CNPJ,
+                "url": f"{ESCOLA}/", "address": ENDERECO}
     itens_ld = []
     for i, s in enumerate(ordem, 1):
         c = cursos[s]
@@ -2727,7 +2729,7 @@ def main() -> int:
             descricao = descricao.rstrip() + " " + HOMOLOGACAO_OBS
         oferta = {"@type": "Offer", "category": "Paid", "name": "Matrícula à vista + taxa de inscrição",
                   "price": f"{total(s) / 100:.2f}", "priceCurrency": "BRL",
-                  "url": f"{URL_PAGINA}?curso={s}",
+                  "url": f"{URL_PAGINA}?curso={s}", "seller": {"@id": provedor["@id"]},
                   "priceSpecification": {"@type": "CompoundPriceSpecification", "price": f"{total(s) / 100:.2f}", "priceCurrency": "BRL",
                                          "priceComponent": [
                                              {"@type": "UnitPriceSpecification", "name": "Matrícula (valor do curso), à vista",
@@ -2751,7 +2753,7 @@ def main() -> int:
         instancia["location"] = LOCAL
         curso_ld = {"@type": "Course", "name": c["nome"], "description": descricao, "url": f"{URL_PAGINA}?curso={s}",
                     "provider": {"@id": provedor["@id"]},
-                    "educationalCredentialAwarded": "Certificado da Cruz Vermelha Brasileira Rio de Janeiro",
+                    "educationalCredentialAwarded": "Certificado da Escola de Educação e Saúde",
                     "offers": [oferta], "hasCourseInstance": [instancia]}
         if (PASTA_IMG / f"{c['imagem']}-960.webp").exists():
             curso_ld["image"] = f"{URL_PAGINA}img/{c['imagem']}-960.webp"
@@ -2763,7 +2765,7 @@ def main() -> int:
             {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
             {"@type": "ListItem", "position": 2, "name": "Cursos presenciais", "item": URL_PAGINA}]},
         {"@context": "https://schema.org", **provedor},
-        {"@context": "https://schema.org", "@type": "ItemList", "name": "Cursos presenciais da Cruz Vermelha Brasileira Rio de Janeiro",
+        {"@context": "https://schema.org", "@type": "ItemList", "name": f"Cursos da Escola de Educação e Saúde ({RECEBEDOR_NOME})",
          "numberOfItems": len(dados["cursos"]), "url": URL_PAGINA, "itemListElement": itens_ld},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r, _ in faq_lista]},
