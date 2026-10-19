@@ -337,8 +337,13 @@ def seletor_da_doacao(html: str) -> str:
 
 
 def menu_com_doe(home: str) -> str:
-    """Acrescenta o link da doação ao menu da home (uma vez). Todas as páginas herdam o cabeçalho."""
-    if 'href="/doe/"' in home:
+    """Acrescenta o link da doação ao menu da home (uma vez). Todas as páginas herdam o cabeçalho.
+
+    Desde 19/10/2026 o menu da home já tem a doação (item "Doe" do grupo "Como ajudar" e o botão "Doe" do
+    cabeçalho), escrita à mão em site/index.html: com qualquer link para /doe/ no cabeçalho, a home fica como está.
+    """
+    a = home.index('<header class="main-header">')
+    if 'href="/doe/"' in home[a:home.index("</header>", a)]:
         return home
     alvo = '          <a href="#contato">Contato</a>\n'
     if alvo not in home:

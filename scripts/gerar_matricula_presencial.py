@@ -1770,10 +1770,11 @@ def partes_da_home(home: str) -> dict:
     footer_sem_telefone = re.sub(r'\s*<p><i class="fa-solid fa-phone"[^>]*>(?:<svg.*?</svg>)*</i>[^<]*</p>', "", footer, flags=re.S)
     assert footer_sem_telefone != footer, "linha do telefone não encontrada no rodapé da home"
     footer = footer_sem_telefone
-    padrao_menu = re.compile(r'<a href="/matricula-cursos-presenciais/"([^>]*)>Matrícula cursos presenciais</a>')
+    # O item do menu que leva à matrícula ("Escola" desde 19/10/2026; antes, "Matrícula cursos presenciais").
+    padrao_menu = re.compile(r'<a href="/matricula-cursos-presenciais/"([^>]*)>(Escola|Matrícula cursos presenciais)</a>')
     if not padrao_menu.search(header):
-        raise SystemExit("o menu da home ainda não tem o link Matrícula cursos presenciais; rode as edições do menu antes")
-    header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">Matrícula cursos presenciais</a>', header, count=1)
+        raise SystemExit("o menu da home não tem o link da escola (/matricula-cursos-presenciais/); rode as edições do menu antes")
+    header = padrao_menu.sub(lambda m: f'<a href="/matricula-cursos-presenciais/"{m.group(1)} aria-current="page">{m.group(2)}</a>', header, count=1)
     return {"estilo": estilo, "header": header, "footer": footer, "menu_js": menu_js, "ga4": ga4, "pixel": pixel}
 
 

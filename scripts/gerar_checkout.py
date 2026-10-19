@@ -644,16 +644,14 @@ def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, 
 def vocabulario_checkout(partes: dict) -> dict:
     """Só nas telas do checkout (spec 1.1 e trava de vocabulário da 6.1): o botão "Plataforma" do cabeçalho da home vira
     "Área do aluno" (o rótulo da escola) e o link "Plataforma da escola" do rodapé vira "Área do aluno". A home, as
-    políticas e as outras páginas que usam o mesmo cabeçalho não mudam aqui. Sem o texto esperado, avisa e segue."""
+    políticas e as outras páginas que usam o mesmo cabeçalho não mudam aqui. Desde 19/10/2026 a home não tem mais
+    nenhum dos dois (o botão do cabeçalho é "Doe", e o rodapé leva à escola por "Escola de Educação e Saúde"): sem o
+    texto, o cabeçalho e o rodapé ficam como os da home."""
     header, footer = partes["header"], partes["footer"]
     if header.count("</i> Plataforma</a>") == 1:
         header = header.replace("</i> Plataforma</a>", "</i> Área do aluno</a>")
-    elif "Área do aluno</a>" not in header:
-        print("aviso: botão Plataforma não encontrado no cabeçalho da home; ficou como está", file=sys.stderr)
     if footer.count(">Plataforma da escola</a>") == 1:
         footer = footer.replace(">Plataforma da escola</a>", ">Área do aluno</a>")
-    elif ">Área do aluno</a>" not in footer:
-        print("aviso: link Plataforma da escola não encontrado no rodapé da home; ficou como está", file=sys.stderr)
     return dict(partes, header=header, footer=footer)
 
 
