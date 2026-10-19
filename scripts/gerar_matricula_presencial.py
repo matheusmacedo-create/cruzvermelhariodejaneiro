@@ -230,7 +230,8 @@ EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno
 # "Cruz Vermelha". A imagem de amostra continua a do modelo enviado pela filial em 04/10 (ver o README).
 CERT_PESO = ("Quem emite é a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz "
              "Vermelha Brasileira Rio de Janeiro.")
-CERT_NOTA = "Imagem de modelo: o seu sai com o seu nome, o curso que você fez e a data de conclusão."
+CERT_NOTA = ("Imagem ilustrativa do modelo fornecido pela filial. Confirme com a escola o modelo, o emissor e as condições "
+             "do certificado da sua turma antes de se inscrever.")
 CERT_DESTAQUE = "primeiros-socorros-basico"  # o certificado de exemplo da seção do modo geral
 
 # --- como a escola sustenta a filial (achado C1 do Ad Grants, 19/10/2026) ------------------------------------------
@@ -2007,7 +2008,7 @@ def main() -> int:
             return ""
         return (f'<img class="mr-cert-img" src="img/certificado-{s}-640.webp" srcset="img/certificado-{s}-640.webp 640w, '
                 f'img/certificado-{s}-1200.webp 1200w" sizes="{sizes}" alt="Modelo do certificado do curso de {esc(cursos[s]["nome"])} '
-                f'da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária" loading="lazy" decoding="async" '
+                f'fornecido pela filial para ilustração, com o nome do aluno, o curso e a carga horária" loading="lazy" decoding="async" '
                 f'width="640" height="452" data-cert-curso="{s}">')
 
     def preco(s: str) -> str:

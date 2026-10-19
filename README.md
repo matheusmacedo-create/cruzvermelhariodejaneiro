@@ -1,5 +1,7 @@
 # Cruz Vermelha Brasileira – Rio de Janeiro · site institucional e ligação com a escola
 
+Revisão para Ad Grants de 19/10/2026: [correções, testes e roteiro de publicação](docs/revisao-ad-grants-2026-10-19.md). Novas inscrições sem contribuição de divulgação, identificação da escola no checkout, doação sem promessa futura e imagem móvel versionada. A documentação abaixo preserva o histórico anterior; consulte a revisão para o estado desta entrega.
+
 Este repositório guarda a parte **institucional (social)** da presença digital da
 CVB-RJ: as páginas estáticas do site principal `cruzvermelhariodejaneiro.org`, o kit de
 SEO da escola e os scripts para publicar. A Redação, a intranet e os demais sistemas são
