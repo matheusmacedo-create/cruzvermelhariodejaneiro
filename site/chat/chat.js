@@ -95,7 +95,7 @@
     ['curso', 'Dúvida sobre um curso'],
     ['pagamento', 'Pagamento ou PIX'],
     ['voluntariado', 'Voluntariado'],
-    ['doacoes', 'Campanha do Agasalho e parcerias'],
+    ['doacoes', 'Doações, Campanha do Agasalho e parcerias'],
     ['outro', 'Outro assunto']
   ];
   var COM_CURSO = ['matricula', 'curso', 'pagamento'];

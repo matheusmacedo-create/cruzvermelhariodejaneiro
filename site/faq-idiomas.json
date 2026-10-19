@@ -82,8 +82,12 @@
         "perguntas": [
           {
             "pergunta": "How can I help? Can I donate money online?",
-            "resposta": "Online money donations through this site are suspended for now. You can help in three ways: by volunteering, registering on the official volunteer form (the branch trains its own volunteers, and the working language is Portuguese); by bringing winter clothing, blankets and shoes to the headquarters for the Winter Clothing Drive, Monday to Friday, 10am to 5pm; or, for companies, schools and institutions, by proposing a partnership at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, in English, Spanish or Portuguese.",
+            "resposta": "Yes. Money donations to the Brazilian Red Cross Rio de Janeiro branch are made on the donation page, by PIX or card, and the receipt arrives by e-mail with the branch's CNPJ (the payment screen is in Portuguese). You can also help by volunteering, registering on the official volunteer form (the branch trains its own volunteers, and the working language is Portuguese); by bringing winter clothing, blankets and shoes to the headquarters for the Winter Clothing Drive, Monday to Friday, 10am to 5pm; or, for companies, schools and institutions, by proposing a partnership at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, in English, Spanish or Portuguese.",
             "links": [
+              {
+                "texto": "donation page",
+                "url": "/en/donate/"
+              },
               {
                 "texto": "official volunteer form",
                 "url": "/voluntariado/cadastro/"
@@ -229,8 +233,12 @@
         "perguntas": [
           {
             "pergunta": "¿Cómo puedo ayudar? ¿Puedo donar dinero en línea?",
-            "resposta": "La donación de dinero en línea por este sitio está suspendida por ahora. Puede ayudar de tres maneras: como voluntario, con el registro en el formulario oficial del voluntariado (la filial forma a sus propios voluntarios y el idioma de trabajo es el portugués); llevando ropa de abrigo, mantas y calzado a la sede para la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas; o, si es una empresa, escuela o institución, proponiendo una alianza en contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
+            "resposta": "Sí. La donación de dinero a la filial de Río de Janeiro de la Cruz Roja Brasileña se hace en la página de donación, por PIX o tarjeta, y el comprobante llega por correo electrónico con el CNPJ de la filial (la pantalla de pago está en portugués). También puede ayudar como voluntario, con el registro en el formulario oficial del voluntariado (la filial forma a sus propios voluntarios y el idioma de trabajo es el portugués); llevando ropa de abrigo, mantas y calzado a la sede para la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas; o, si es una empresa, escuela o institución, proponiendo una alianza en contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
             "links": [
+              {
+                "texto": "página de donación",
+                "url": "/es/donar/"
+              },
               {
                 "texto": "formulario oficial del voluntariado",
                 "url": "/voluntariado/cadastro/"

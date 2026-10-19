@@ -35,16 +35,17 @@ SITE = RAIZ / "site"
 DADOS = SITE / "idiomas.json"
 HOME = SITE / "index.html"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
+# Só no sameAs do JSON-LD: o link do rodapé saiu em 19/10/2026 (achado K3, verbete criado pela conta da própria filial).
 WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
 NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
 ENDERECO = "Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · 20230-130"
 VOLUNTARIO = "/voluntariado/cadastro/"  # formulário próprio (scripts/gerar_voluntariado_cadastro.py), em português
-# Doação online suspensa desde 25/09/2026 (pedido do Matheus): sem "Donate/Donar" no menu, sem a
-# porta de doação na home e sem gerar /en/donate/ e /es/donar/ (que respondem 503 com o aviso,
-# ver site/en/donate/.htaccess). Para a doação voltar, True aqui, rodar e publicar.
-DOACAO_NO_AR = False
+# A doação online ficou suspensa de 25/09 a 19/10/2026: sem "Donate/Donar" no menu, sem a porta de
+# doação na home e sem gerar /en/donate/ e /es/donar/ (que respondiam 503 pelos .htaccess). Religada
+# em 19/10/2026 (decisão do Matheus): True aqui e em gerar_doe.py, sem os .htaccess.
+DOACAO_NO_AR = True
 # Caminho de cada página, por idioma. O português é o x-default.
 PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "doar": {"pt": "/doe/", "en": "/en/donate/", "es": "/es/donar/"},
@@ -205,7 +206,6 @@ def rodape(idioma: dict) -> str:
         <p>{esc(idioma['instituicao'])}</p>{noticias}
         <p><a href="/">{esc(r['portugues'])}</a></p>
         <p><a href="{ESCOLA}" target="_blank" rel="noopener">{esc(r['plataforma'])}</a></p>
-        <p><a href="{WIKI}" target="_blank" rel="noopener">{esc(r['wikipedia'])}</a></p>
       </div>
       <div class="footer-col">
         <h4>{esc(r['contato'])}</h4>

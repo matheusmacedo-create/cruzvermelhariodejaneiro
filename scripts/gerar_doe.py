@@ -28,13 +28,12 @@ PASTA = RAIZ / "site" / "doe"
 STATIC = PASTA / "static"
 STATIC_URL = "/doe/static/"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
-# Doação online suspensa desde 25/09/2026 (pedido do Matheus): /doe/ responde 503 com o aviso
-# (site/doe/.htaccess) e a home ficou sem o link "Doe". Com False, este script só regenera as páginas
-# (/doe/obrigado/ continua no ar para quem já doou) e não põe o link de volta no menu da home. Para a
-# doação voltar: True aqui e em gerar_idiomas.py, rodar os geradores e tirar as regras 503 dos .htaccess.
-DOACAO_NO_AR = False
+# A doação online ficou suspensa de 25/09 a 19/10/2026 (/doe/ respondia 503 pelos .htaccess das três pastas).
+# Religada em 19/10/2026 (decisão do Matheus, segunda recusa do Ad Grants): True aqui e em gerar_idiomas.py,
+# sem os .htaccess. Com False, este script só regenera as páginas (/doe/obrigado/ fica no ar para quem já doou)
+# e não põe o link "Doe" no menu da home; para suspender de novo, voltar os .htaccess (ver o README).
+DOACAO_NO_AR = True
 URL_PAGINA = f"{ORIGEM}/doe/"
-WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 
 TITULO = "Doar para a Cruz Vermelha Brasileira Rio de Janeiro"
 H1 = "Doe para a Cruz Vermelha Brasileira Rio de Janeiro"
@@ -473,7 +472,7 @@ def main() -> int:
 
     html = (PAGINA
             .replace("@@TITULO@@", esc(TITULO)).replace("@@DESCRICAO@@", esc(DESCRICAO))
-            .replace("@@URL@@", URL_PAGINA).replace("@@ORIGEM@@", ORIGEM).replace("@@WIKI@@", WIKI)
+            .replace("@@URL@@", URL_PAGINA).replace("@@ORIGEM@@", ORIGEM)
             .replace("@@ESTILO@@", partes["estilo"]).replace("@@LD@@", ld_json)
             .replace("@@CSS_URL@@", url_estatico("doe.css")).replace("@@JS_URL@@", url_estatico("doe.js"))
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])

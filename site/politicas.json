@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-10-17",
+  "revisao": "2026-10-19",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -184,10 +184,10 @@
                     "base": "Legítimo interesse (art. 7º, IX) e prevenção à fraude."
                   },
                   {
-                    "titulo": "Doações feitas até 25 de setembro de 2026",
-                    "dados": "Nome, CPF, e-mail, telefone, valor e forma de pagamento (no cartão, só a bandeira e os quatro últimos dígitos).",
-                    "finalidade": "Reenviar comprovantes e cumprir obrigações legais e contábeis. A doação online está suspensa desde essa data, e nenhum dado novo de doação é coletado.",
-                    "base": "Cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
+                    "titulo": "Doações",
+                    "dados": "Nome, CPF, e-mail, telefone, valor, forma de pagamento (no cartão, só a bandeira e os quatro últimos dígitos), se a doação é anônima, a origem da visita (parâmetros de campanha da URL) e o endereço IP.",
+                    "finalidade": "Emitir a cobrança da doação, enviar o código PIX e o comprovante por e-mail, avisar a equipe da filial, reenviar comprovantes e cumprir obrigações legais e contábeis.",
+                    "base": "Execução de contrato, a doação (art. 7º, V), cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
                   },
                   {
                     "titulo": "Cadastro de voluntários",
@@ -216,7 +216,7 @@
                 ]
               },
               {
-                "p": "O pagamento da inscrição é processado pela ÚnicoPag. Os dados do cartão passam pelo nosso servidor só a caminho dela, no momento do pagamento, e não são gravados."
+                "p": "O pagamento da inscrição e o da doação são processados pela ÚnicoPag. Os dados do cartão passam pelo nosso servidor só a caminho dela, no momento do pagamento, e não são gravados."
               },
               {
                 "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site: a pergunta do cadastro de voluntários sobre formação na área da saúde é sobre a sua profissão, não sobre a sua saúde. Não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal; o cadastro de voluntários aceita a partir de 16 anos e, para quem tem menos de 18, o termo de adesão é assinado também pelo responsável legal."
@@ -296,7 +296,7 @@
               {
                 "lista": [
                   "**Matrícula e pagamentos:** durante a inscrição e o curso e, depois, pelo prazo de guarda que a lei exige para registros fiscais e de consumo (em geral, 5 anos).",
-                  "**Doações anteriores à suspensão:** pelo prazo legal de guarda dos registros contábeis e fiscais.",
+                  "**Doações:** pelo prazo legal de guarda dos registros contábeis e fiscais.",
                   "**Chat:** enquanto for útil para acompanhar o atendimento. Você pode pedir a exclusão a qualquer momento.",
                   "**Pedido de documentos:** o registro do pedido, pelo mesmo prazo do chat; os comprovantes, só pelo tempo necessário para analisar o pedido e registrar a resposta. Você pode pedir a exclusão a qualquer momento.",
                   "**Newsletter:** até você sair da lista. Depois, fica só o registro de que saiu, para não ser inscrito de novo por engano, que também é apagado se você pedir a exclusão.",
@@ -447,10 +447,10 @@
                     "base": "Legitimate interest (Art. 7, IX) and fraud prevention."
                   },
                   {
-                    "titulo": "Donations made up to 25 September 2026",
-                    "dados": "Name, CPF, e-mail, phone number, amount and payment method (for cards, only the brand and the last four digits).",
-                    "finalidade": "To resend receipts and meet legal and accounting obligations. Online donations have been suspended since that date, and no new donation data is collected.",
-                    "base": "Compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
+                    "titulo": "Donations",
+                    "dados": "Name, CPF, e-mail, phone number, amount, payment method (for cards, only the brand and the last four digits), whether the donation is anonymous, where the visit came from (campaign parameters in the URL) and the IP address.",
+                    "finalidade": "To issue the donation charge, send the PIX code and the receipt by e-mail, notify the branch team, resend receipts and meet legal and accounting obligations.",
+                    "base": "Performance of a contract, the donation (Art. 7, V), compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
                   },
                   {
                     "titulo": "Volunteer registration",
@@ -479,7 +479,7 @@
                 ]
               },
               {
-                "p": "Enrolment payments are processed by ÚnicoPag. Card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored."
+                "p": "Enrolment and donation payments are processed by ÚnicoPag. Card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored."
               },
               {
                 "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site: the volunteer registration question about training in the health field is about your occupation, not your health. We make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian; volunteer registration is open from age 16 and, for those under 18, the volunteer service agreement is also signed by the legal guardian."
@@ -559,7 +559,7 @@
               {
                 "lista": [
                   "**Enrolment and payments:** during the enrolment and the course and then for the retention period the law requires for tax and consumer records (generally 5 years).",
-                  "**Donations made before the suspension:** for the legal retention period for accounting and tax records.",
+                  "**Donations:** for the legal retention period for accounting and tax records.",
                   "**Chat:** for as long as it is useful to follow up the exchange. You can ask for deletion at any time.",
                   "**Document requests:** the record of the request, for the same period as the chat; the proof you attach, only for as long as needed to review the request and record the reply. You can ask for deletion at any time.",
                   "**Newsletter:** until you unsubscribe. After that, only a record that you left is kept, so you are not subscribed again by mistake, and it is also deleted if you ask.",
@@ -710,10 +710,10 @@
                     "base": "Interés legítimo (art. 7, IX) y prevención del fraude."
                   },
                   {
-                    "titulo": "Donaciones hechas hasta el 25 de septiembre de 2026",
-                    "dados": "Nombre, CPF, correo, teléfono, importe y forma de pago (con tarjeta, solo la marca y los cuatro últimos dígitos).",
-                    "finalidade": "Reenviar comprobantes y cumplir obligaciones legales y contables. La donación en línea está suspendida desde esa fecha y no se recogen datos nuevos de donación.",
-                    "base": "Cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
+                    "titulo": "Donaciones",
+                    "dados": "Nombre, CPF, correo, teléfono, importe, forma de pago (con tarjeta, solo la marca y los cuatro últimos dígitos), si la donación es anónima, el origen de la visita (parámetros de campaña de la URL) y la dirección IP.",
+                    "finalidade": "Emitir el cobro de la donación, enviar el código PIX y el comprobante por correo, avisar al equipo de la filial, reenviar comprobantes y cumplir obligaciones legales y contables.",
+                    "base": "Ejecución de un contrato, la donación (art. 7, V), cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
                   },
                   {
                     "titulo": "Registro de voluntarios",
@@ -742,7 +742,7 @@
                 ]
               },
               {
-                "p": "El pago de la inscripción lo procesa ÚnicoPag. Los datos de la tarjeta pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan."
+                "p": "El pago de la inscripción y el de la donación los procesa ÚnicoPag. Los datos de la tarjeta pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan."
               },
               {
                 "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio: la pregunta del registro de voluntarios sobre formación en el área de la salud se refiere a su profesión, no a su salud. No tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal; el registro de voluntarios se acepta a partir de los 16 años y, para menores de 18, el acuerdo de adhesión lo firma también el responsable legal."
@@ -822,7 +822,7 @@
               {
                 "lista": [
                   "**Matrícula y pagos:** durante la inscripción y el curso y, después, por el plazo de conservación que la ley exige para los registros fiscales y de consumo (en general, 5 años).",
-                  "**Donaciones anteriores a la suspensión:** por el plazo legal de conservación de los registros contables y fiscales.",
+                  "**Donaciones:** por el plazo legal de conservación de los registros contables y fiscales.",
                   "**Chat:** mientras sea útil para dar seguimiento a la atención. Puede pedir la eliminación en cualquier momento.",
                   "**Solicitud de documentos:** el registro de la solicitud, por el mismo plazo que el chat; los comprobantes, solo el tiempo necesario para analizar la solicitud y registrar la respuesta. Puede pedir la eliminación en cualquier momento.",
                   "**Boletín:** hasta que se dé de baja. Después, queda solo el registro de la baja, para no volver a suscribirle por error, que también se elimina si lo pide.",
@@ -1432,7 +1432,7 @@
       }
     },
     "termos": {
-      "revisao": "2026-10-10",
+      "revisao": "2026-10-19",
       "pt": {
         "titulo_aba": "Termos de Uso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Regras de uso do site da Cruz Vermelha Brasileira Rio de Janeiro: conteúdo, emblema da cruz vermelha, matrícula em cursos, doações, responsabilidade e foro.",
@@ -1486,7 +1486,7 @@
             "titulo": "Doações",
             "blocos": [
               {
-                "p": "A doação online pelo site está suspensa desde 25 de setembro de 2026: nenhuma página deste site gera cobrança de doação. Desconfie de qualquer cobrança em nome da Cruz Vermelha feita fora dos canais oficiais, listados na [página de links]({links}), e avise pelo e-mail acima."
+                "p": "A doação em dinheiro pelo site é feita só na [página de doação]({doar}), por PIX ou cartão, processada pela ÚnicoPag, que repassa o valor à filial; o comprovante chega por e-mail, com o CNPJ da filial. A doação é voluntária e não dá direito a produto ou serviço. Desconfie de qualquer cobrança em nome da Cruz Vermelha feita fora dos canais oficiais, listados na [página de links]({links}), e avise pelo e-mail acima."
               }
             ]
           },
@@ -1593,7 +1593,7 @@
             "titulo": "Donations",
             "blocos": [
               {
-                "p": "Online donations through this site have been suspended since 25 September 2026: no page on this site issues donation charges. Be wary of any charge in the name of the Red Cross made outside the official channels, listed on the [links page]({links}), and let us know at the e-mail above."
+                "p": "Money donations through this site are made only on the [donation page]({doar}), by PIX or card, processed by ÚnicoPag, which passes the amount on to the branch; the receipt arrives by e-mail with the branch's CNPJ. A donation is voluntary and does not entitle the donor to any product or service. Be wary of any charge in the name of the Red Cross made outside the official channels, listed on the [links page]({links}), and let us know at the e-mail above."
               }
             ]
           },
@@ -1700,7 +1700,7 @@
             "titulo": "Donaciones",
             "blocos": [
               {
-                "p": "La donación en línea por este sitio está suspendida desde el 25 de septiembre de 2026: ninguna página de este sitio genera cobros de donación. Desconfíe de cualquier cobro en nombre de la Cruz Roja hecho fuera de los canales oficiales, indicados en la [página de enlaces]({links}), y avísenos al correo de arriba."
+                "p": "La donación de dinero por este sitio se hace solo en la [página de donación]({doar}), por PIX o tarjeta, procesada por ÚnicoPag, que transfiere el importe a la filial; el comprobante llega por correo con el CNPJ de la filial. La donación es voluntaria y no da derecho a ningún producto ni servicio. Desconfíe de cualquier cobro en nombre de la Cruz Roja hecho fuera de los canales oficiales, indicados en la [página de enlaces]({links}), y avísenos al correo de arriba."
               }
             ]
           },
