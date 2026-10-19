@@ -416,8 +416,8 @@ banco: a publicação é a lista de `scripts/publicacao-ad-grants-2.txt`.
 - Restos nos arquivos de `site/` (fora de noticias, termos e privacidade), todos de propósito: "plataforma da escola" em texto que explica
   quem vende (quem-somos, cursos-gratuitos, FAQ, políticas, ES); `institucional.json` guarda "doação suspensa" só em `notas_internas`
   (histórico, não vai para página); a lista de slugs de venda excluídos da home em `site/index.html` cita o slug do curso de
-  micropigmentação (é filtro, não texto); `/historia/` e `/en/history/` citam a Wikipédia como fonte bibliográfica (a fonte 10 é o
-  verbete da K3: tirar quando a diretoria decidir); `/en/archive/` e `/es/acervo/` existem, ligados só entre si e fora do sitemap.
+  micropigmentação (é filtro, não texto); `/historia/` e `/en/history/` citam a Wikipédia como fonte bibliográfica (a fonte 10, o
+  verbete da K3, saiu na revisão: ver "Ajustes pós-revisão"); `/en/archive/` e `/es/acervo/` existem, ligados só entre si e fora do sitemap.
 
 ### Medições (Lighthouse mobile, espelho local sem compressão, 3 execuções cada)
 
@@ -439,16 +439,65 @@ Resultado: sem rolagem horizontal nos quatro tamanhos; a faixa de cookies ocupa 
 acima do h1 (h1 a partir de 239 px, faixa termina em 237 px em 360x740), sem cobrir a missão nem "Doe agora"; menu móvel abre e mostra os seis itens mais
 o botão "Doe". Em 360x740 o segundo botão do hero ("Seja voluntário") passa da primeira dobra por 23 px.
 
+### Ajustes pós-revisão (19/10/2026)
+
+Revisores independentes apontaram dez itens; todos foram conferidos contra o código.
+
+- **Home EN/ES com conteúdo de loja (corrigido).** Em `site/idiomas.json`: sem a lista nominal dos seis cursos, sem a área "Training for
+  companies and schools" (o banner B2B que saiu da home PT; a home passa a ter quatro áreas) e o cartão "Take a course" virou "Talk to the
+  branch" (âncora `#contato`). A frase da escola ficou, ligada à filial, com link para `/en/courses/` e `/es/cursos/` (campo novo `link` nos
+  blocos, lido por `pagina_home` em `gerar_idiomas.py`). "Partner with us" perdeu o "training for your team". As duas descrições
+  trocaram "courses" por "training". A frase de resultado da escola (mantém a sede e o trabalho da filial) é a que já estava no JSON.
+- **Cabeçalhos desalinhados (corrigido em parte).** `campanha-agasalho.html`: botão "Doe" (`/doe/?utm_source=site&utm_medium=campanha-agasalho`)
+  e item "Escola" no menu (saiu "Campanha do Agasalho", a própria página). `projetocores/`: "Quem somos", "Seja voluntário" e "Escola" no menu e botão
+  "Doe" no lugar de "Seja voluntário". `doacao.html` saiu da lista de publicação (o 301 do `.htaccess` raiz leva a `/doe/`; a do ar
+  continua escondida). **Fica para o responsável:** seletor de idioma e menu agrupado nessas duas páginas (têm CSS próprio, não o da home).
+- **Bloco de ação no fim (corrigido).** `equipe.html`, `/pedido-de-documentos/` e `/verificar/` terminam com "Doe agora / Seja voluntário / Fale
+  com a filial" (classe `.fim-acao`, CSS junto; nos dois geradores). Em `/historia/` o bloco saiu do meio e foi para o fim, depois das fontes.
+  `/gestao/` continua sem, de propósito.
+- **C13, "Quero ajudar a divulgar os cursos" (+ R$ 14,90) no checkout: fica para o responsável.** É dinheiro extra para a divulgação da
+  empresa dentro do domínio da ONG. Tirar exige mexer junto no gerador (`gerar_checkout.py`) e no backend do checkout (PHP, preço e testes),
+  e não está nas decisões do Matheus. Não foi alterado; entra na lista de itens abertos (C2, C5, K1, K5, T04).
+- **Fonte 10 da Wikipédia em `/historia/` e `/en/history/` (corrigido).** Saíram a fonte e as três citações; as fontes 11 a 18 foram
+  renumeradas (10 a 17). A frase da inauguração de 1923 mantém a fonte 8; o Decreto 8.885/2016 já tinha link no texto; as Leis 5.153/2010 e
+  9.984/2023 ficaram sem nota (os verbetes gerais da Wikipédia, fontes 3 e 6, não são o da K3 e continuam).
+- **Cartão de doação ES x EN (corrigido).** ES passou a "Tarjeta o PIX, con CPF brasileño. Desde fuera de Brasil, escríbanos". Os títulos das
+  duas páginas de doação (`Donating from outside Brazil: card only`, `Donar desde fuera de Brasil: solo con tarjeta`) perderam o "card
+  only"/"solo con tarjeta" e o primeiro parágrafo diz que o cartão estrangeiro "pode, em princípio" chegar, mas que o formulário pede CPF.
+- **Chat cobrindo "Doe agora" em 360x740 (corrigido).** O hero da home ganhou `data-cv-chat-depois-do-hero`: no celular o ícone do chat
+  (`chat.js`, classe `cv-chat-recolhido`) só aparece depois de rolar 240 px; o painel, `#chat` e `data-abrir-chat` seguem funcionando. Medido
+  no Chromium: no topo `elementFromPoint` no canto do botão devolve o próprio botão da home; ao rolar o ícone volta; `window.cvChat.abrir()` abre.
+- **"Seja voluntário" abaixo da primeira dobra em 360x740 (corrigido).** O conteúdo do hero deixou de ser centrado numa caixa de 670 px no celular
+  (`align-content: start`, `min-height: 0`), com `padding-top: 104px` para o título continuar abaixo da faixa de cookies, e o parágrafo passou a
+  1rem. Antes: botões em 640-695 e 707-763. Depois (com a faixa aberta): 596-651 e 663-719; em 390x844: 572-627 e 639-695; em 412x915: 548-603 e
+  615-671. Sem rolagem horizontal.
+- **Hero de 640 px no celular (corrigido, falta publicar a imagem).** `assets/otim/hero-turma-cbfi-640.webp` (38 KB, 640x480, a partir da
+  versão de 960 px: o recorte do celular é 4:3) com preload e fundo em `max-width: 480px`; a de 960 px segue para 481-920 px. `assets/` está fora
+  do Git: a imagem foi guardada em `scratchpad/revisao-velocidade/assets-pool/assets/otim/` e **precisa subir junto** com a home (não há
+  `scripts/otimizar-fotos.mjs` neste repositório, que é do funil; a conversão foi feita com Pillow, qualidade 68). Não medi o LCP de novo: o
+  ganho esperado é o de 41 KB a menos no 4G simulado.
+- **Aviso de cookies no alto da home (não procede como defeito; mantido).** É a decisão do achado T01: embaixo ele cobriria "Doe agora" e
+  "Seja voluntário" na primeira tela, e no alto ele não cobre h1 nem botões (h1 a 246 px, faixa até 237 px em 360x740). O revisor aceita
+  manter. Se a diretoria preferir a faixa embaixo também no celular, é trocar `noAlto()` em `consentimento.js` por um teste de largura.
+- **Contraste e h4 do rodapé (corrigido).** `--muted` de `:root` na home passou de `#718096` (4,0:1) para `#5a6577` (5,9:1), o que vale para
+  todas as páginas geradas a partir dela; o eyebrow da seção de newsletter perdeu o `opacity: .85` (dava `#f7d9d9`, 4,45:1); os títulos do rodapé da
+  home e das páginas copiadas dela são `h3` (a mesma regra de CSS, `.footer-col h4, .footer-col h3`). As páginas em inglês e espanhol e as
+  manuais (equipe, campanha, `projetocores`) mantêm o `h4` e o `#718096` até a próxima rodada.
+
+Verificação: todos os geradores na ordem do README (mais `gerar_pedido_documentos.py`, `gerar_institucional.py`, `gerar_gestao.py` e
+`gerar_voluntariado_cadastro.py`, que também carregam o hash do chat) rc=0; `validar_jsonld.py` 0 erro em 85 arquivos; `conferir_links.py --local`
+com o mesmo conjunto de falhas antes e depois (330, todas de rotas só do ar). `gerar_sitemap_escola.py` precisa do catálogo ao vivo e não rodou.
+
 ### Publicação e roteiro de desfazer
 
-- Lista: `scripts/publicacao-ad-grants-2.txt` (96 arquivos de `site/`, mais a remoção do servidor de `site/doe/.htaccess`,
+- Lista: `scripts/publicacao-ad-grants-2.txt` (95 arquivos de `site/`, mais a remoção do servidor de `site/doe/.htaccess`,
   `site/en/donate/.htaccess`, `site/es/donar/.htaccess` e da notícia em inglês sobre micropigmentação). `publicar_hostinger.sh` nunca apaga
   `.htaccess`: apagar pela API de arquivos, com o `curl -X DELETE` do cabeçalho da lista; sem isso a doação continua em 503.
 - Ordem: copiar do ar, publicar, apagar os `.htaccess`, limpar o cache, conferir por HTTP, `gerar_sitemaps.py`, `conferir_links.py` ao vivo,
   reenviar o pedido no Google para ONGs.
 - Desfazer: republicar a cópia do ar (comando no cabeçalho da lista), restaurar os três `.htaccess` do 503 com `git show origin/main:site/<pasta>/.htaccess`
   (a doação volta a 503) e republicar a notícia removida. A Redação tem a parte dela (menu, `/noticias/`) no repositório próprio.
-- Fora deste repositório e ainda aberto: C2, C5, K1, K5 e T04 (demonstração contábil, ofício da CVB nacional, titularidade do domínio) dependem da
+- Fora deste repositório e ainda aberto: C2, C5, C13, K1, K5 e T04 (demonstração contábil, ofício da CVB nacional, titularidade do domínio) dependem da
   diretoria; a Redação precisa do menu novo no `esqueleto.ts` e do plano de correção das notícias (ninguém gravou no banco).
 
 ## Google Ad Grants, 2ª recusa (19/10/2026): home, menu, rodapé e textos institucionais
