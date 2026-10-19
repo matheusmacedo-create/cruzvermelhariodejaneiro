@@ -171,20 +171,24 @@
         "/en/"
       ],
       [
-        "Courses",
-        "/en/courses/"
+        "Donate",
+        "/en/donate/"
       ],
       [
         "News",
         "/en/news/"
       ],
       [
-        "Contact",
-        "/en/#contato"
+        "School",
+        "/en/courses/"
       ],
       [
         "Frequently asked questions",
         "/en/faq/"
+      ],
+      [
+        "Contact",
+        "/en/#contato"
       ],
       [
         "Site em português",

@@ -64,7 +64,19 @@ PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "privacidade": {"pt": "/privacidade/", "en": "/en/privacy/", "es": "/es/privacidad/"},
            "termos": {"pt": "/termos/", "en": "/en/terms/", "es": "/es/terminos/"},
            "cookies": {"pt": "/cookies/", "en": "/en/cookies/", "es": "/es/cookies/"},
-           "reembolso": {"pt": "/reembolso/", "en": "/en/refunds/", "es": "/es/reembolsos/"}}
+           "reembolso": {"pt": "/reembolso/", "en": "/en/refunds/", "es": "/es/reembolsos/"},
+           # A história só existe em português e em inglês (site/en/history/, mantida à mão): sem "es", o
+           # seletor de idioma não mostra o ES nela.
+           "historia": {"pt": "/historia/", "en": "/en/history/", "es": None},
+           # Páginas de erro: /404.html, /en/404.html (gerar_ingles.py) e /es/404.html (aqui).
+           "erro": {"pt": "/404.html", "en": "/en/404.html", "es": "/es/404.html"}}
+# Páginas que só existem em português e entram no menu e no rodapé de EN/ES: o link leva hreflang/lang="pt-BR".
+TRANSPARENCIA = "/transparencia/"
+NOTICIAS_PT = "/noticias/"
+CAMPANHA_PT = "/campanha-agasalho.html"
+FINANCIAMENTO = "/quem-somos/#como-nos-financiamos"
+ERRO_ES = SITE / "es" / "404.html"
+HISTORIA_EN = SITE / "en" / "history" / "index.html"  # mantida à mão; o cabeçalho, o rodapé e o CSS saem daqui
 EQUIPE = SITE / "equipe.html"
 FAQ = SITE / "faq-idiomas.json"
 CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
@@ -98,12 +110,16 @@ def seletor(pagina: str, atual: str) -> str:
     siglas = {"pt": ("PT", "Português", "pt-BR"), "en": ("EN", "English", "en"), "es": ("ES", "Español", "es")}
     itens = []
     for codigo, caminho in PAGINAS[pagina].items():
+        if caminho is None:  # página que não existe nesse idioma
+            continue
         sigla, nome, marca = siglas[codigo]
         if codigo == atual:
             itens.append(f'<span class="idioma-atual" aria-current="true" lang="{marca}">{sigla}</span>')
         else:
             itens.append(f'<a href="{caminho}" hreflang="{marca}" lang="{marca}" aria-label="{nome}">{sigla}</a>')
-    return '<div class="seletor-idioma" role="navigation" aria-label="Language">' + " ".join(itens) + "</div>"
+    # "Language" no português também: gerar_politicas.py troca por "Idioma" na versão em português.
+    rotulo = "Idioma" if atual == "es" else "Language"
+    return f'<div class="seletor-idioma" role="navigation" aria-label="{rotulo}">' + " ".join(itens) + "</div>"
 
 
 ESTILO_EXTRA = """
@@ -154,47 +170,102 @@ ESTILO_EXTRA = """
 """
 
 
+def link(url: str, texto: str, extra: str = "") -> str:
+    """Um <a>. Página que só existe em português leva hreflang/lang="pt-BR" (avisa o buscador e o leitor de tela)."""
+    so_pt = url.startswith("/") and not url.startswith(("/en/", "/es/")) and url != "/"
+    marca = ' hreflang="pt-BR" lang="pt-BR"' if so_pt else ""
+    return f'<a href="{esc(url)}"{marca}{extra}>{esc(texto)}</a>'
+
+
 def cabecalho(idioma: dict, pagina: str) -> str:
-    """Cabeçalho da home com o menu traduzido e o seletor de idioma."""
-    m, pasta = idioma["menu"], idioma["pasta"]
-    links = [(f'/{pasta}/#sobre', m["sobre"]), (f'/{pasta}/#principios', m["principios"]),
-             (PAGINAS["equipe"][idioma["codigo"]], m["equipe"]),
-             (PAGINAS["cursos"][idioma["codigo"]], m["cursos"]),
-             (PAGINAS["faq"][idioma["codigo"]], m["faq"])]
+    """O cabeçalho da home em português, com os rótulos do idioma (menu de 19/10/2026, Ad Grants).
+
+    Seis itens, como no português: "Quem somos" e "Como ajudar" em grupo (nav-grupo, o mesmo HTML que o
+    script do menu da home abre e fecha), Notícias, Transparência, Escola e Contato; à direita, o seletor
+    de idioma e o botão vermelho de doação. A escola é a página de cursos do idioma, não a matrícula.
+    """
+    m, pasta, codigo = idioma["menu"], idioma["pasta"], idioma["codigo"]
+    sobre = [(f"/{pasta}/#sobre", m["quem_somos"])]
+    if PAGINAS["historia"].get(codigo):
+        sobre.append((PAGINAS["historia"][codigo], m["historia"]))
+    sobre += [(PAGINAS["equipe"][codigo], m["equipe"]), (f"/{pasta}/#principios", m["principios"]),
+              (f"/{pasta}/#movimento", m["movimento"]), (PAGINAS["faq"][codigo], m["faq"])]
+    ajudar = []
     if DOACAO_NO_AR:
-        links.append((PAGINAS["doar"][idioma["codigo"]], m["doar"]))
-    links += [(f'/{pasta}/#contato', m["contato"]), ("/", m["portugues"])]
-    # Notícias traduzidas só existem no idioma que tem "noticias" no menu (hoje, o inglês:
-    # scripts/gerar_ingles.py); sem a chave, o menu fica como estava. Entram no lugar dos
-    # princípios (seção da home, também no rodapé): com um item a mais, o menu quebrava linha
-    # entre 1321 e 1440 px. A ordem fica a do português: Sobre, Notícias...
-    if m.get("noticias"):
-        links[1] = (idioma["caminho_noticias"], m["noticias"])
-    nav = "\n          ".join(f'<a href="{a}">{esc(b)}</a>' for a, b in links)
+        ajudar.append((PAGINAS["doar"][codigo], m["doar"]))
+    ajudar.append((VOLUNTARIO, m["voluntario"]))
+    ajudar.append((idioma.get("caminho_campanha") or CAMPANHA_PT, m["campanha"]))
+
+    def grupo(ident: str, rotulo: str, itens: list) -> str:
+        filhos = "\n              ".join(link(a, b) for a, b in itens)
+        return f"""<div class="nav-grupo">
+            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-{ident}">{esc(rotulo)}</button>
+            <div class="nav-sub" id="menu-{ident}">
+              {filhos}
+            </div>
+          </div>"""
+    itens = [grupo("sobre", m["sobre"], sobre), grupo("ajudar", m["ajudar"], ajudar),
+             link(idioma.get("caminho_noticias") or NOTICIAS_PT, m["noticias"]),
+             link(TRANSPARENCIA, m["transparencia"]),
+             link(PAGINAS["cursos"][codigo], m["escola"]),
+             link(f"/{pasta}/#contato", m["contato"])]
+    nav = "\n          ".join(itens)
+    doar = (f'\n          <a href="{PAGINAS["doar"][codigo]}" class="btn-doe-topo">{esc(m["botao_doar"])}</a>'
+            if DOACAO_NO_AR else "")
     return f"""  <header class="main-header">
     <div class="header-container">
       <a href="/{pasta}/" class="logo-area" style="text-decoration:none;color:inherit;">
         <img alt="{esc(idioma['instituicao'])}" class="logo-img" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156">
       </a>
-      <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <button class="nav-toggle" type="button" aria-label="{esc(m['abrir'])}" aria-expanded="false" aria-controls="menu-painel">
         <i class="fa-solid fa-bars"><svg class="ico ico-bars" aria-hidden="true" focusable="false"><use href="#i-bars"/></svg><svg class="ico ico-xmark" aria-hidden="true" focusable="false"><use href="#i-xmark"/></svg></i>
       </button>
-      <div class="header-collapse">
-        <nav class="nav-links">
+      <div class="header-collapse" id="menu-painel">
+        <nav class="nav-links" aria-label="{esc(m['principal'])}">
           {nav}
         </nav>
         <div class="header-actions">
-          {seletor(pagina, idioma['codigo'])}
+          {seletor(pagina, codigo)}{doar}
         </div>
       </div>
     </div>
   </header>"""
 
 
+def menu_js(idioma: dict, partes: dict) -> str:
+    """O script do menu da home com os rótulos do botão no idioma da página.
+
+    O script é copiado da home (partes_da_home) e diz "Abrir menu"/"Fechar menu": sem a troca, o leitor de tela
+    anunciaria o botão em português numa página em inglês ou espanhol (aviso do README, 13/10/2026). Se a home
+    mudar esses textos, o gerador para em vez de publicar o rótulo errado.
+    """
+    js, m = partes["menu_js"], idioma["menu"]
+    trocas = [("isOpen ? 'Fechar menu' : 'Abrir menu'", f"isOpen ? '{m['fechar']}' : '{m['abrir']}'"),
+              ("setAttribute('aria-label', 'Abrir menu')", f"setAttribute('aria-label', '{m['abrir']}')")]
+    for velho, novo in trocas:
+        if velho not in js:
+            raise SystemExit(f"o script do menu da home mudou (não achei {velho!r}): ajuste menu_js() em gerar_idiomas.py")
+        js = js.replace(velho, novo)
+    if "Abrir menu" in js or "Fechar menu" in js:
+        raise SystemExit("sobrou rótulo do menu em português no script do menu")
+    return js
+
+
 def rodape(idioma: dict) -> str:
-    r, pasta = idioma["rodape"], idioma["pasta"]
-    noticias = (f'\n        <p><a href="{idioma["caminho_noticias"]}">{esc(r["noticias"])}</a></p>'
-                if r.get("noticias") else "")
+    """Rodapé com CNPJ e endereço; sem a plataforma da escola, o acervo ("Em breve") e a Wikipédia (19/10/2026).
+
+    A escola entra como "Escola de Educação e Saúde", na página de cursos do idioma; a história em inglês
+    (/en/history/) ganha um link aqui e no menu (achado L09: estava no sitemap sem nenhum link interno).
+    """
+    r, codigo = idioma["rodape"], idioma["codigo"]
+    sobre = []
+    if r.get("noticias"):
+        sobre.append(link(idioma["caminho_noticias"], r["noticias"]))
+    if r.get("historia") and PAGINAS["historia"].get(codigo):
+        sobre.append(link(PAGINAS["historia"][codigo], r["historia"]))
+    sobre += [link(TRANSPARENCIA, r["transparencia"]), link(PAGINAS["cursos"][codigo], r["escola"]), link("/", r["portugues"])]
+    ajudar = ([link(PAGINAS["doar"][codigo], r["doar"])] if DOACAO_NO_AR else []) + [link(VOLUNTARIO, r["voluntario"])]
+    linhas = lambda xs: "".join(f"\n        <p>{x}</p>" for x in xs)
     return f"""  <footer>
     <div class="footer-grid">
       <div class="footer-brand">
@@ -203,9 +274,10 @@ def rodape(idioma: dict) -> str:
       </div>
       <div class="footer-col">
         <h4>{esc(r['sobre'])}</h4>
-        <p>{esc(idioma['instituicao'])}</p>{noticias}
-        <p><a href="/">{esc(r['portugues'])}</a></p>
-        <p><a href="{ESCOLA}" target="_blank" rel="noopener">{esc(r['plataforma'])}</a></p>
+        <p>{esc(idioma['instituicao'])}</p>{linhas(sobre)}
+      </div>
+      <div class="footer-col">
+        <h4>{esc(r['ajudar'])}</h4>{linhas(ajudar)}
       </div>
       <div class="footer-col">
         <h4>{esc(r['contato'])}</h4>
@@ -218,17 +290,15 @@ def rodape(idioma: dict) -> str:
       <div class="wrap">
         <span>&copy; 2026 {esc(idioma['instituicao'])}</span>
         <span class="sep">|</span>
-        <a href="{PAGINAS['acervo'][idioma['codigo']]}">{esc(r['acervo'])}</a>
+        <a href="{PAGINAS['privacidade'][codigo]}">{esc(r['privacidade'])}</a>
         <span class="sep">|</span>
-        <a href="{PAGINAS['privacidade'][idioma['codigo']]}">{esc(r['privacidade'])}</a>
+        <a href="{PAGINAS['termos'][codigo]}">{esc(r['termos'])}</a>
         <span class="sep">|</span>
-        <a href="{PAGINAS['termos'][idioma['codigo']]}">{esc(r['termos'])}</a>
+        <a href="{PAGINAS['cookies'][codigo]}">{esc(r['cookies'])}</a>
         <span class="sep">|</span>
-        <a href="{PAGINAS['cookies'][idioma['codigo']]}">{esc(r['cookies'])}</a>
+        <a href="{PAGINAS['reembolso'][codigo]}">{esc(r['reembolso'])}</a>
         <span class="sep">|</span>
-        <a href="{PAGINAS['reembolso'][idioma['codigo']]}">{esc(r['reembolso'])}</a>
-        <span class="sep">|</span>
-        <a href="{PAGINAS['cookies'][idioma['codigo']]}#preferencias" data-cvrj-cookies>{esc(r['preferencias'])}</a>
+        <a href="{PAGINAS['cookies'][codigo]}#preferencias" data-cvrj-cookies>{esc(r['preferencias'])}</a>
       </div>
     </div>
   </footer>"""
@@ -274,7 +344,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
 {corpo}
   </main>
 {rodape(idioma)}
-{partes['menu_js']}
+{menu_js(idioma, partes)}
 </body>
 </html>
 """
@@ -307,17 +377,27 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
                 f'<p class="i18n-porta"><a href="{url}"{extra}>{esc(rotulo)} &rarr;</a></p></article>')
 
-    caminhos = "\n          ".join(porta(*x) for x in h["caminhos"] if DOACAO_NO_AR or x[3] != "doar")
+    portas = [x for x in h["caminhos"] if DOACAO_NO_AR or x[3] != "doar"]
+    caminhos = "\n          ".join(porta(*x) for x in portas)
+    # "Four ways" com três cartões (achados M15/C12): o número sai da lista que de fato aparece.
+    caminhos_linha = h["caminhos_linha"].replace("{n}", h["numeros"][len(portas)])
     if DOACAO_NO_AR:
         cta = f'<a class="btn btn-red" href="{PAGINAS["doar"][idioma["codigo"]]}">{esc(h["cta_doar"])}</a>'
     else:
         cta = (f'<a class="btn btn-red" href="{VOLUNTARIO}" hreflang="pt-BR" '
                f'lang="pt-BR">{esc(h["cta_voluntario"])}</a>')
+    voluntario = (f'<a class="btn btn-outline" href="{VOLUNTARIO}" hreflang="pt-BR" '
+                  f'lang="pt-BR">{esc(h["cta_voluntario"])}</a>')
+    # As duas ações da missão já no topo, como na home em português (doar e ser voluntário).
+    topo = cta + "\n          " + voluntario if DOACAO_NO_AR else cta
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap">
         <p class="eyebrow">{esc(h['sobrancelha'])}</p>
         <h1>{esc(h['h1'])}</h1>
         <p>{esc(h['linha'])}</p>
+        <div class="cta-row" style="margin-top:24px">
+          {topo}
+        </div>
       </div>
     </section>
 {chr(10).join(blocos)}
@@ -339,7 +419,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     <section class="i18n-bloco" id="caminhos">
       <div class="wrap">
         <h2>{esc(h['caminhos_titulo'])}</h2>
-        <p>{esc(h['caminhos_linha'])}</p>
+        <p>{esc(caminhos_linha)}</p>
         <div class="i18n-fichas i18n-portas">
           {caminhos}
         </div>
@@ -358,7 +438,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
         <h2>{esc(h['cta_titulo'])}</h2>
         <p>{esc(h['cta_texto'])}</p>
         <div class="cta-row" style="margin-top:20px">
-          {cta}
+          {topo}
           <a class="btn btn-outline" href="/matricula-cursos-presenciais/" hreflang="pt-BR" lang="pt-BR">{esc(h['cta_cursos'])}</a>
           <a class="btn btn-outline" href="mailto:{EMAIL}">{EMAIL}</a>
         </div>
@@ -558,7 +638,7 @@ def pagina_equipe(idioma: dict, partes: dict, equipe: tuple) -> str:
 
 
 def pagina_cursos(idioma: dict, partes: dict, cursos: dict) -> str:
-    """Os sete cursos em inglês e espanhol.
+    """Os cursos em inglês e espanhol, com o bloco de como a escola sustenta a filial (achado C12).
 
     Não é tradução da página de vendas: é a ficha honesta, com a restrição dita antes da tabela
     (aula em português, presencial, no Rio, e matrícula que pede CPF). Carga horária, escolaridade
@@ -589,6 +669,15 @@ def pagina_cursos(idioma: dict, partes: dict, cursos: dict) -> str:
         <p class="eyebrow">{esc(c['sobrancelha'])}</p>
         <h1>{esc(c['h1'])}</h1>
         <p>{esc(c['linha'])}</p>
+      </div>
+    </section>
+    <section class="i18n-bloco" id="financiamento">
+      <div class="wrap">
+        <h2>{esc(c['financiamento_titulo'])}</h2>
+        <div class="i18n-caixa">
+          <p>{esc(c['financiamento_texto'])}</p>
+          <p class="i18n-porta">{link(FINANCIAMENTO, c['financiamento_link'] + " →")}</p>
+        </div>
       </div>
     </section>
     <section class="i18n-bloco">
@@ -747,6 +836,65 @@ def pagina_acervo(idioma: dict, partes: dict) -> str:
     return moldura(idioma, "acervo", a["titulo"], a["descricao"], corpo, ld, partes, imagem="og-acervo.jpg")
 
 
+ESTILO_ERRO = """
+    .i18n-erro-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px }
+"""
+
+
+def pagina_erro(idioma: dict, partes: dict) -> str:
+    """A página 404 do idioma (hoje, só o espanhol: a inglesa sai de gerar_ingles.py, com o mesmo formato).
+
+    site/es/.htaccess aponta o ErrorDocument de /es/ para ela; sem isso, /es/<qualquer coisa> mostrava a 404
+    em português (achado L09).
+    """
+    e = idioma["erro"]
+    pt = ' hreflang="pt-BR" lang="pt-BR"'
+    links = "".join(f'<a class="btn {"btn-red" if i == 0 else "btn-outline"}" href="{u}"{pt if u == "/" else ""}>{esc(n)}</a>'
+                    for i, (n, u) in enumerate(e["links"]))
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap">
+        <p class="eyebrow">{esc(e['sobrancelha'])}</p>
+        <h1>{esc(e['h1'])}</h1>
+        <p>{esc(e['texto'])}</p>
+        <div class="i18n-erro-links">{links}</div>
+      </div>
+    </section>"""
+    html_ = moldura(idioma, "erro", e["titulo"], e["texto"], corpo, [], partes, css=ESTILO_ERRO)
+    # Página de erro: sem canonical nem hreflang, e fora da busca (como a /en/404.html).
+    html_ = re.sub(r'  <link rel="(canonical|alternate)"[^>]*>\n', "", html_)
+    html_ = re.sub(r'  <meta property="og:url"[^>]*>\n', "", html_)
+    return html_.replace('<meta name="viewport"', '<meta name="robots" content="noindex">\n  <meta name="viewport"', 1)
+
+
+def trecho(html_: str, inicio: str, fim: str, desde: int = 0) -> tuple[int, int]:
+    """Onde está o trecho que começa em `inicio` e termina no primeiro `fim` depois dele."""
+    a = html_.index(inicio, desde)
+    return a, html_.index(fim, a) + len(fim)
+
+
+def atualizar_historia_en(idioma: dict, partes: dict) -> bool:
+    """/en/history/ é mantida à mão, mas o cabeçalho, o rodapé, o CSS da moldura e o script do menu são os daqui.
+
+    Sem isso ela ficava com o menu antigo (Courses, Site em português) e sem o CSS dos grupos do menu. O
+    conteúdo da página (o <style> próprio, o <main> e o script da galeria) não muda.
+    """
+    if not HISTORIA_EN.exists():
+        return False
+    pagina = HISTORIA_EN.read_text(encoding="utf-8")
+    modelo = moldura(idioma, "historia", "", "", "", [], partes)
+    novo = pagina
+    for inicio, fim in (("  <style>", "</style>"), ('  <header class="main-header">', "  </header>"),
+                        ("  <footer>", "  </footer>"), ("  <script>\n    document.querySelector('.nav-toggle')", "</script>")):
+        a, b = trecho(modelo, inicio, fim)
+        x, y = trecho(novo, inicio, fim)
+        novo = novo[:x] + modelo[a:b] + novo[y:]
+    novo = icones.injetar_sprite(icones.trocar_tags(novo))
+    if novo == pagina:
+        return False
+    HISTORIA_EN.write_text(novo, encoding="utf-8")
+    return True
+
+
 def main() -> int:
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     partes = base.partes_da_home(HOME.read_text(encoding="utf-8"))
@@ -773,6 +921,12 @@ def main() -> int:
             destino.write_text(html_, encoding="utf-8")
             print(f"gravado {destino.relative_to(RAIZ)} ({len(html_.encode('utf-8'))} bytes)")
             total += 1
+    html_ = pagina_erro(dados["idiomas"]["es"], partes)
+    ERRO_ES.write_text(html_, encoding="utf-8")
+    print(f"gravado {ERRO_ES.relative_to(RAIZ)} ({len(html_.encode('utf-8'))} bytes)")
+    total += 1
+    if atualizar_historia_en(dados["idiomas"]["en"], partes):
+        print(f"atualizado {HISTORIA_EN.relative_to(RAIZ)} (cabeçalho, rodapé e CSS da moldura)")
     print(f"{total} páginas em {len(dados['idiomas'])} idiomas")
     return 0
 

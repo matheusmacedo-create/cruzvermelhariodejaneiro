@@ -11,16 +11,27 @@
       "instituicao_curta": "Brazilian Red Cross Rio de Janeiro",
       "nacional": "Brazilian Red Cross (Cruz Vermelha Brasileira)",
       "menu": {
+        "abrir": "Open menu",
+        "fechar": "Close menu",
+        "principal": "Main menu",
+        "idioma": "Language",
         "sobre": "About us",
-        "principios": "Our principles",
+        "quem_somos": "Who we are",
+        "historia": "Our history",
         "equipe": "Our team",
-        "cursos": "Courses",
+        "principios": "Fundamental Principles",
+        "movimento": "International Movement",
         "faq": "FAQ",
+        "ajudar": "Get involved",
         "doar": "Donate",
+        "voluntario": "Volunteer",
+        "campanha": "Winter Clothing Drive",
+        "noticias": "News",
+        "transparencia": "Transparency",
+        "escola": "School",
         "contato": "Contact",
-        "portugues": "Site em português",
-        "plataforma": "Courses platform",
-        "noticias": "News"
+        "botao_doar": "Donate",
+        "plataforma": "Courses platform"
       },
       "home": {
         "titulo": "Brazilian Red Cross — Rio de Janeiro Branch",
@@ -81,14 +92,8 @@
           ]
         ],
         "caminhos_titulo": "Get involved",
-        "caminhos_linha": "Four ways to take part, depending on what brings you here.",
+        "caminhos_linha": "{n} to take part, depending on what brings you here.",
         "caminhos": [
-          [
-            "Take a course",
-            "Six in-person courses at the headquarters, each with a certificate. Taught in Portuguese.",
-            "See the courses",
-            "cursos"
-          ],
           [
             "Volunteer",
             "Open to anyone, with no health background required. The working language is Portuguese.",
@@ -106,6 +111,12 @@
             "Sister National Societies, institutions and companies, and training for your team.",
             "See who does what",
             "equipe"
+          ],
+          [
+            "Take a course",
+            "Six in-person courses at the headquarters, taught in Portuguese, sold and certified by the branch's school. The school's result goes to the upkeep of the headquarters and to the branch's work.",
+            "See the courses",
+            "cursos"
           ]
         ],
         "principios_titulo": "The seven fundamental principles",
@@ -144,7 +155,15 @@
         "cta_doar": "Support our work",
         "cta_cursos": "Courses (in Portuguese)",
         "aviso_cursos": "Course pages, enrolment and the payment screen are in Portuguese, because the courses themselves are taught in Portuguese, in person, in Rio de Janeiro.",
-        "cta_voluntario": "Volunteer with us"
+        "cta_voluntario": "Volunteer with us",
+        "numeros": [
+          "",
+          "One way",
+          "Two ways",
+          "Three ways",
+          "Four ways",
+          "Five ways"
+        ]
       },
       "cursos": {
         "titulo_aba": "Courses — Brazilian Red Cross Rio de Janeiro",
@@ -207,7 +226,10 @@
         "botao_nota": "The enrolment page is in Portuguese.",
         "faq_titulo": "Still deciding?",
         "faq_texto": "The questions people ask most — about certificates, entry requirements, the Lucas Law and training a team at your company or school — are answered on the FAQ page.",
-        "faq_link": "Read the FAQ"
+        "faq_link": "Read the FAQ",
+        "financiamento_titulo": "How this school supports the branch",
+        "financiamento_texto": "The courses are sold by the Escola de Educação e Saúde (School of Education and Health), O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), a company linked to the Brazilian Red Cross — Rio de Janeiro Branch (CNPJ 08.560.973/0001-97), a non-profit organisation. The school's result goes to the upkeep of the Palácio da Cruz Vermelha and to the branch's activities: it is one of the organisation's sources of funding.",
+        "financiamento_link": "How the branch is funded (in Portuguese)"
       },
       "equipe": {
         "titulo_aba": "Our team — Brazilian Red Cross Rio de Janeiro",
@@ -327,16 +349,19 @@
         "siga": "Follow us",
         "principios": "Humanity, impartiality, neutrality, independence, voluntary service, unity and universality.",
         "direitos": "Brazilian Red Cross — Rio de Janeiro Branch",
-        "wikipedia": "Wikipedia",
-        "plataforma": "Courses platform",
         "portugues": "Site em português",
         "privacidade": "Privacy Policy",
         "termos": "Terms of Use",
-        "acervo": "Archive",
         "noticias": "News",
         "cookies": "Cookie Policy",
         "reembolso": "Cancellation and refunds",
-        "preferencias": "Cookie preferences"
+        "preferencias": "Cookie preferences",
+        "historia": "Our history",
+        "transparencia": "Transparency",
+        "escola": "School of Education and Health",
+        "ajudar": "Get involved",
+        "doar": "Donate",
+        "voluntario": "Volunteer"
       },
       "acervo": {
         "titulo": "Archive | Brazilian Red Cross Rio de Janeiro",
@@ -381,7 +406,8 @@
         "uso_titulo": "Using the material",
         "uso": "Each item states its authorship, credit and terms of use. Items under a Creative Commons licence or in the public domain may be used as the licence allows, always with credit. To reproduce an item with all rights reserved, ask for permission at contato@cruzvermelhariodejaneiro.org, including the address of the item's page."
       },
-      "caminho_noticias": "/en/news/"
+      "caminho_noticias": "/en/news/",
+      "caminho_campanha": "/en/winter-clothing-drive/"
     },
     "es": {
       "codigo": "es",
@@ -393,14 +419,25 @@
       "instituicao_curta": "Cruz Roja Brasileña Río de Janeiro",
       "nacional": "Cruz Roja Brasileña (Cruz Vermelha Brasileira)",
       "menu": {
+        "abrir": "Abrir menú",
+        "fechar": "Cerrar menú",
+        "principal": "Menú principal",
+        "idioma": "Idioma",
         "sobre": "Quiénes somos",
-        "principios": "Nuestros principios",
+        "quem_somos": "Quiénes somos",
         "equipe": "Nuestro equipo",
-        "cursos": "Cursos",
-        "faq": "Preguntas",
+        "principios": "Principios Fundamentales",
+        "movimento": "Movimiento Internacional",
+        "faq": "Preguntas frecuentes",
+        "ajudar": "Cómo ayudar",
         "doar": "Donar",
+        "voluntario": "Ser voluntario",
+        "campanha": "Campaña de Ropa de Abrigo",
+        "noticias": "Noticias",
+        "transparencia": "Transparencia",
+        "escola": "Escuela",
         "contato": "Contacto",
-        "portugues": "Site em português",
+        "botao_doar": "Dona",
         "plataforma": "Plataforma de cursos"
       },
       "home": {
@@ -462,14 +499,8 @@
           ]
         ],
         "caminhos_titulo": "Por dónde entrar",
-        "caminhos_linha": "Cuatro puertas, según lo que le trajo hasta aquí.",
+        "caminhos_linha": "{n}, según lo que le trajo hasta aquí.",
         "caminhos": [
-          [
-            "Hacer un curso",
-            "Seis cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.",
-            "Ver los cursos",
-            "cursos"
-          ],
           [
             "Ser voluntario",
             "Abierto a cualquier persona, sin exigir formación en salud. El idioma de trabajo es el portugués.",
@@ -487,6 +518,12 @@
             "Sociedades Nacionales hermanas, instituciones y empresas, y capacitación para su equipo.",
             "Ver quién hace qué",
             "equipe"
+          ],
+          [
+            "Hacer un curso",
+            "Seis cursos presenciales en la sede, dictados en portugués, que vende y certifica la escuela de la filial. El resultado de la escuela se destina al mantenimiento de la sede y a las actividades de la filial.",
+            "Ver los cursos",
+            "cursos"
           ]
         ],
         "principios_titulo": "Los siete principios fundamentales",
@@ -525,7 +562,15 @@
         "cta_doar": "Apoye nuestro trabajo",
         "cta_cursos": "Cursos (en portugués)",
         "aviso_cursos": "Las páginas de los cursos, la matrícula y la pantalla de pago están en portugués, porque los cursos se imparten en portugués, de forma presencial, en Río de Janeiro.",
-        "cta_voluntario": "Sea voluntario"
+        "cta_voluntario": "Sea voluntario",
+        "numeros": [
+          "",
+          "Una puerta",
+          "Dos puertas",
+          "Tres puertas",
+          "Cuatro puertas",
+          "Cinco puertas"
+        ]
       },
       "cursos": {
         "titulo_aba": "Cursos — Cruz Roja Brasileña Río de Janeiro",
@@ -588,7 +633,10 @@
         "botao_nota": "La página de matrícula está en portugués.",
         "faq_titulo": "¿Todavía decidiendo?",
         "faq_texto": "Las preguntas más frecuentes — sobre certificados, requisitos, la Ley Lucas y capacitaciones para el equipo de su empresa o escuela — están respondidas en la página de preguntas frecuentes.",
-        "faq_link": "Ver las preguntas frecuentes"
+        "faq_link": "Ver las preguntas frecuentes",
+        "financiamento_titulo": "Cómo esta escuela sostiene a la filial",
+        "financiamento_texto": "Los cursos los vende la Escola de Educação e Saúde (Escuela de Educación y Salud), la O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa vinculada a la Cruz Roja Brasileña — Filial Río de Janeiro (CNPJ 08.560.973/0001-97), entidad sin fines de lucro. El resultado de la escuela se destina al mantenimiento del Palácio da Cruz Vermelha y a las actividades de la filial: es una de las fuentes de financiamiento de la institución.",
+        "financiamento_link": "Cómo se financia la filial (en portugués)"
       },
       "equipe": {
         "titulo_aba": "Nuestro equipo — Cruz Roja Brasileña Río de Janeiro",
@@ -708,15 +756,17 @@
         "siga": "Síganos",
         "principios": "Humanidad, imparcialidad, neutralidad, independencia, voluntariado, unidad y universalidad.",
         "direitos": "Cruz Roja Brasileña — Filial Río de Janeiro",
-        "wikipedia": "Wikipedia",
-        "plataforma": "Plataforma de cursos",
         "portugues": "Site em português",
         "privacidade": "Política de Privacidad",
         "termos": "Términos de Uso",
-        "acervo": "Acervo",
         "cookies": "Política de Cookies",
         "reembolso": "Cancelación y reembolso",
-        "preferencias": "Preferencias de cookies"
+        "preferencias": "Preferencias de cookies",
+        "transparencia": "Transparencia",
+        "escola": "Escuela de Educación y Salud",
+        "ajudar": "Cómo ayudar",
+        "doar": "Donar",
+        "voluntario": "Ser voluntario"
       },
       "acervo": {
         "titulo": "Acervo | Cruz Roja Brasileña Río de Janeiro",
@@ -760,6 +810,38 @@
         "contribua": "¿Tiene fotografías, documentos, recortes de prensa o recuerdos relacionados con la filial? Escriba a contato@cruzvermelhariodejaneiro.org contando lo que tiene, la fecha aproximada, el lugar y quién produjo el material o aparece en él. Respondemos en español, inglés o portugués.",
         "uso_titulo": "Cómo usar el material",
         "uso": "Cada ítem indica la autoría, el crédito y las condiciones de uso. Los ítems con licencia Creative Commons o en dominio público pueden usarse como indica la licencia, siempre con el crédito. Para reproducir un ítem con todos los derechos reservados, pida autorización a contato@cruzvermelhariodejaneiro.org, indicando la dirección de la página del ítem."
+      },
+      "erro": {
+        "titulo": "Página no encontrada | Cruz Roja Brasileña Río de Janeiro",
+        "sobrancelha": "Error 404",
+        "h1": "Esta página no existe.",
+        "texto": "La dirección puede haber cambiado o estar mal escrita. Estas son las páginas más buscadas:",
+        "links": [
+          [
+            "Inicio",
+            "/es/"
+          ],
+          [
+            "Donar",
+            "/es/donar/"
+          ],
+          [
+            "Escuela",
+            "/es/cursos/"
+          ],
+          [
+            "Preguntas frecuentes",
+            "/es/preguntas-frecuentes/"
+          ],
+          [
+            "Contacto",
+            "/es/#contato"
+          ],
+          [
+            "Site em português",
+            "/"
+          ]
+        ]
       }
     }
   }
