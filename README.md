@@ -475,6 +475,56 @@ e a publicação ficam para a etapa 4.
   (`/doe/?utm_source=ig…`), WhatsApp, YouTube e a escola por último; FAQ com as novas entradas do voluntariado
   (`PROXIMAS_ENTRADAS`) e sem Micropigmentação.
 
+## Google Ad Grants, 2ª recusa (19/10/2026): aviso de cookies, chat e páginas em inglês e espanhol (etapa site 3 de 4)
+
+Continuação das etapas 1 e 2. Só as fontes mudaram (mais o `chat.js`, que é fonte e saída ao mesmo tempo): nada foi
+publicado, nada foi gravado no banco, e a regeração completa e a publicação ficam para a etapa 4.
+
+- **Aviso de cookies (T01), `site/consentimento/consentimento.js`:** o primeiro nível virou uma faixa de largura total
+  com uma frase ("Usamos cookies necessários e, com a sua permissão, de estatística (Google Analytics) e de marketing
+  (Meta). Detalhes em “Personalizar” e na Política de Cookies.") e os três botões do mesmo tamanho e estilo, lado a
+  lado também no celular. O detalhe do que o servidor manda à Meta (nome, e-mail e telefone em hash) ficou no segundo
+  nível ("Personalizar", categoria Marketing) e na `/cookies/`, em camadas, como admite o Guia de Cookies da ANPD. O
+  cookie `cvrj_consentimento` não mudou (`v=1&e&m&t&r`), nem a `REVISAO` (2): o texto do que vai à Meta continua o
+  mesmo, só mudou de camada. Medido no Chromium (cópia regerada): 61 px no computador (8,5% de 1280x720, 7,9% de
+  1366x768), 153 px em 360x740 (20,7%), 133 px em 390x844 (15,7%). Na home (`data-cvrj-ck-topo` na seção do topo de
+  `site/index.html`) a faixa fica logo abaixo do cabeçalho, sobre o respiro acima do título: em 1280x720, 1366x768 e
+  1920x1080 não cobre nada do topo; no celular cobre só a linha "Filial do Estado do Rio de Janeiro" e deixa o título,
+  a missão e os botões à vista. Nas outras páginas fica embaixo, e no computador o chat sobe acima dela
+  (`--cvrj-ck-altura`). **Atenção:** o aviso gêmeo do projeto Punção (`components/aviso-de-cookies.tsx`, que diz ser
+  "o mesmo do site principal") não foi mexido; a Redação pega o arquivo novo sozinha, pelo hash, quando regerar.
+- **Chat (T06):** no celular, só o ícone (o rótulo "Fale com a gente" continua para leitor de tela), em `chat.css`.
+  Página com botão fixo embaixo sobe o chat com `--cv-chat-acima` (a Campanha do Agasalho: 70 px; medido em 390x844,
+  sem sobreposição com "Como doar agasalhos e cobertores"). Assuntos na ordem da missão: Voluntariado, Doações,
+  Matrícula, Curso, Pagamento, Outro (os rótulos continuam iguais aos de `mcp_contato_assuntos()`). A abertura diz o
+  que a filial é; Voluntariado e Doações ganharam um botão de ação ("Fazer o cadastro de voluntário",
+  "Doar pelo site", `/doe/?utm_source=site&utm_medium=chat`); "O que é a Cruz Vermelha RJ?" (`faq-home.json`, marcada
+  com `"chat": ["outro"]`) responde a missão. `chat_widget.py` agora para se o `chat.js` citar um curso de
+  `FORA_DO_DOMINIO`; o `chat.js` do repositório já saiu sem a Micropigmentação (lista de cursos e respostas regeradas).
+- **Inglês e espanhol (`gerar_idiomas.py`, `idiomas.json`):** cabeçalho no formato da home — About us / Get involved
+  (Donate, Volunteer, Winter Clothing Drive) / News / Transparency / School / Contact; Quiénes somos / Cómo ayudar
+  (Donar, Ser voluntario, Campaña de Ropa de Abrigo) / Noticias / Transparencia / Escuela / Contacto —, com o seletor
+  de idioma e o botão vermelho "Donate"/"Dona". Página que só existe em português (voluntariado, transparência,
+  notícias em espanhol, campanha em espanhol) leva `hreflang`/`lang="pt-BR"`. "Escola" leva à página de cursos do
+  idioma. Os rótulos "Abrir/Fechar menu" do script copiado da home são traduzidos em `menu_js()` (e o gerador para se
+  a home mudar esses textos). Rodapé: sem plataforma, acervo e Wikipédia; com notícias, história (EN), transparência,
+  "School of Education and Health"/"Escuela de Educación y Salud", uma coluna Get involved/Cómo ayudar, CNPJ e
+  endereço. Home: Donate e Volunteer no topo e no contato; as portas na ordem Volunteer, Donate, Partner, Take a
+  course, e o número ("Four ways"/"Cuatro puertas") sai da lista exibida (M15). Cursos: bloco "How this school
+  supports the branch"/"Cómo esta escuela sostiene a la filial" logo depois do topo, com o texto de
+  `/quem-somos/#como-nos-financiamos` (C12); a porta da escola na home diz o mesmo.
+- **/en/history/ (L09):** no menu (About us) e no rodapé; o cabeçalho, o rodapé, o CSS da moldura e o script do menu
+  dela saem de `gerar_idiomas.py` (`atualizar_historia_en()`), o resto continua à mão.
+- **404 em espanhol:** `site/es/404.html` (gerada, `noindex`) e `site/es/.htaccess` com `ErrorDocument 404
+  /es/404.html` — publicar os dois. A 404 em inglês tem Donate em segundo.
+- **Micropigmentação em inglês:** `NOTICIAS_FORA` em `gerar_ingles.py` deixa de gerar a tradução da matéria do curso
+  (o `.md` fica); a página saiu do repositório e **precisa ser apagada no servidor**
+  (`/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/`). A matéria "Knowledge saves lives too" passou
+  a dizer seis cursos. O `mapa-hreflang.json` e o sitemap mudam na regeração.
+- **Fica para depois:** `/en/archive/` e `/es/acervo/` continuam gerados (sem link no rodapé; o botão deles leva ao
+  `/acervo/` "Em breve"); o título da página de cursos em inglês e espanhol ("Courses at the Brazilian Red Cross")
+  ainda nomeia a filial.
+
 ## Google Ad Grants: recusa e correções do site (15/10/2026)
 
 O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
@@ -565,7 +615,7 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
   implantação; rótulos únicos nas tabelas roláveis. As páginas EN/ES foram corrigidas por troca de texto,
   sem `gerar_idiomas.py`/`gerar_politicas.py`: esses geradores copiam o CSS e o script do menu da home e
   hoje mudariam o menu das páginas EN/ES (rótulos "Abrir/Fechar menu" em português). Antes de regerar
-  EN/ES, traduzir esses rótulos no gerador.
+  EN/ES, traduzir esses rótulos no gerador. (Feito em 19/10/2026: `menu_js()` em `gerar_idiomas.py`.)
 - **Publicação:** 36 arquivos de `scripts/publicacao-revisao-youtube.txt`, em 13/10/2026 às 16h46
   (horário de Brasília), depois da cópia do ar em `/tmp/no-ar-revisao` (28 iguais à `main`, o
   `faq-home.json` antigo, que ainda tinha "Como doar", e as 7 páginas acrescentadas depois da revisão, também
