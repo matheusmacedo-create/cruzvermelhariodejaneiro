@@ -1,8 +1,8 @@
 ---
 slug_pt: curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa
 grupo: curso
-titulo: Basic First Aid course: what to do in the first minutes
-titulo_seo: Basic First Aid course: what to do in the first minutes
+titulo: First Aid Course at the Brazilian Red Cross in Rio: the basics
+titulo_seo: First Aid Course at the Brazilian Red Cross in Rio: the basics
 linha_fina: What to do in the first minutes of an emergency at home, when to call 192 or 193 in Brazil, what to keep in a kit, and the 8-hour course in Rio.
 publicado: 2026-09-24T21:20:38.451Z
 capa: kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png
