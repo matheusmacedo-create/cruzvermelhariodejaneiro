@@ -90,7 +90,8 @@ PAGINAS = [
     ("/es/cookies/", "es/cookies/index.html", "yearly", "0.2", "Cookies em espanhol"),
     ("/es/terminos/", "es/terminos/index.html", "yearly", "0.2", "Termos em espanhol"),
     ("/es/reembolsos/", "es/reembolsos/index.html", "yearly", "0.2", "Reembolso em espanhol"),
-    ("/acervo/", None, "weekly", "0.7", "Acervo (Redação)"),
+    # O acervo (/acervo/, /en/archive/, /es/acervo/) saiu em 19/10/2026: as cinco coleções ainda dizem "Em breve"
+    # (achados L02/M10 da segunda recusa do Ad Grants). Volta para cá quando houver itens publicados.
     ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
     ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
@@ -101,9 +102,6 @@ PAGINAS = [
     ("/es/cursos/", "es/cursos/index.html", "monthly", "0.4", "Cursos em espanhol"),
     ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
     ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
-    # As coleções e os itens do acervo ficam no sitemap.xml da Redação, que gera essas páginas.
-    ("/en/archive/", "en/archive/index.html", "monthly", "0.5", "Acervo em inglês"),
-    ("/es/acervo/", "es/acervo/index.html", "monthly", "0.5", "Acervo em espanhol"),
     # Páginas só em inglês (scripts/gerar_ingles.py); as notícias em inglês entram logo abaixo.
     ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
     ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
@@ -133,10 +131,7 @@ ALTERNATIVAS = {
     "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
-    # Acervo: cluster completo; o português é gerado pela Redação e declara os mesmos hreflang.
-    "/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    # Acervo (/acervo/ + /en/archive/ + /es/acervo/): cluster fora desde 19/10/2026, junto com as páginas (ver PAGINAS).
     # Pares pt-BR + en. A campanha declara o par nas duas páginas. /noticias/, /privacidade/ e
     # /termos/ são da Redação e ainda não declaram hreflang: até declararem, só o lado em inglês
     # entra aqui, para o sitemap não dizer mais do que as páginas dizem.
