@@ -56,6 +56,7 @@ from pathlib import Path
 
 import chat_widget
 import minificar_css
+from sincronizar_catalogo import FORA_DO_DOMINIO
 
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
@@ -116,7 +117,7 @@ GARANTIA_7_DIAS = ("Você pode desistir em até 7 dias corridos, contados do pag
 
 # Ordem dos cards depois dos cursos com turma aberta (3.0). Curso novo fora da lista entra no fim, com aviso.
 ORDEM_EXIBICAO = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas",
-                  "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos", "micropigmentacao-labial"]
+                  "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos"]
 NOME_CURTO = {"primeiros-socorros-lei-lucas": "Primeiros Socorros Lei Lucas", "cuidador-de-idosos": "Cuidador de Idosos"}
 # Descrição curta de cada curso, literal da escola (spec 1.5): linha sob o título do card e linha de apoio da ficha.
 BENEFICIO = {
@@ -126,7 +127,6 @@ BENEFICIO = {
     "puncao-venosa": "Técnica de acesso venoso periférico com segurança.",
     "bombeiro-civil": "Formação para atuação em prevenção e combate a incêndios. (VALOR DE HOMOLOGAÇÃO A PARTE)",
     "cuidador-de-idosos": "Cuidados, segurança e bem-estar no atendimento ao idoso.",
-    "micropigmentacao-labial": "Procedimento estético de micropigmentação dos lábios.",
 }
 # Cursos com homologação paga à parte. Decisão 12 do dono: o total sai com "(sem a homologação)" e a observação literal
 # da escola, "Homologação somente no final do curso, valor a consultar, a cargo do aluno.", vai no Investimento e no fim
@@ -174,7 +174,7 @@ COPY_CURSO = {
         "objecao": ("O que é a Lei Lucas? Preciso ser da área da saúde para fazer o curso?",
                     "A Lei Lucas (Lei Federal 13.722/2018) obriga escolas de educação básica, públicas e privadas, e espaços de "
                     "recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Para atender a "
-                    "essa exigência, a Cruz Vermelha Brasileira Rio de Janeiro oferece este curso. Não é preciso ser da saúde: os cursos "
+                    "essa exigência, a Escola de Educação e Saúde oferece este curso. Não é preciso ser da saúde: os cursos "
                     "de primeiros socorros são abertos a qualquer pessoa, e a escolaridade mínima é o Ensino Fundamental. São 8 horas "
                     "presenciais na Praça da Cruz Vermelha, 10, no Centro. É curso livre: "
                     "prepara para o atendimento inicial até a chegada do socorro especializado e não substitui habilitação profissional "
@@ -198,18 +198,10 @@ COPY_CURSO = {
         "titulo": "Cuidador de Idosos: aprenda a cuidar com segurança, na Cruz Vermelha",
         "promessa": "Em 160 horas presenciais, você aprende higiene, alimentação, mobilização, prevenção de acidentes e noções de primeiros socorros no cuidado da pessoa idosa.",
         "objecao": ("Que certificado eu recebo? Ele é reconhecido pelo MEC?",
-                    "Quem conclui recebe o certificado de curso livre emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o nome do "
+                    "Quem conclui recebe o certificado de curso livre emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, com o nome do "
                     "curso e a carga horária de 160 horas. Ele não é reconhecido pelo MEC, e nenhum curso livre é: o MEC regula a "
                     "educação formal, como ensino técnico, graduação e pós. É um diferencial valorizado no currículo, mas não substitui "
                     "habilitação profissional regulamentada."),
-    },
-    "micropigmentacao-labial": {
-        "titulo": "Aprenda micropigmentação labial na prática, na Cruz Vermelha",
-        "promessa": "Em 24 horas presenciais, você aprende a implantar pigmentos, corrigir assimetrias visuais e uniformizar a cor dos lábios, com biossegurança.",
-        "objecao": ("Nunca trabalhei com estética. O curso serve para mim?",
-                    "Serve. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços, e não exige "
-                    "experiência prévia: a escolaridade mínima é o Ensino Médio. São 24 horas presenciais na sede, na Praça da Cruz "
-                    "Vermelha, 10, no Centro do Rio, com abordagem prática para desenvolver segurança e qualidade na execução da técnica."),
     },
 }
 # Depoimentos (3.2.9): só entram com 2 ou mais, cada um com nome abreviado, curso, texto e autorização registrada (D8).
@@ -234,10 +226,27 @@ PALAVRAS_PROIBIDAS = [
 EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno financeiro|\brenda\b|iniciar seus atendimentos", re.I)
 
 # --- o certificado (modelo da filial, 04/10/2026; imagens de amostra de scripts/gerar_certificado_modelo.py) ------
-CERT_PESO = ("O certificado leva o nome da Cruz Vermelha, reconhecida nacional e internacionalmente pela tradição em "
-             "formação humanitária e em emergências.")
+# Desde 19/10/2026 (achados C9/M09, na linha da decisão de 13/10): o texto atribui o certificado à escola, a Ltda, e não à
+# "Cruz Vermelha". A imagem de amostra continua a do modelo enviado pela filial em 04/10 (ver o README).
+CERT_PESO = ("Quem emite é a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz "
+             "Vermelha Brasileira Rio de Janeiro.")
 CERT_NOTA = "Imagem de modelo: o seu sai com o seu nome, o curso que você fez e a data de conclusão."
 CERT_DESTAQUE = "primeiros-socorros-basico"  # o certificado de exemplo da seção do modo geral
+
+# --- como a escola sustenta a filial (achado C1 do Ad Grants, 19/10/2026) ------------------------------------------
+# O mesmo conteúdo de /quem-somos/#como-nos-financiamos (site/institucional.json), sem número novo: a política do Ad
+# Grants aceita venda limitada se a página disser como a receita sustenta a ONG. Vai perto do topo (modo geral), junto
+# do Investimento de cada curso, no "Quem somos" da escola e no rodapé. Sem as palavras da trava (PALAVRAS_PROIBIDAS).
+SUSTENTA_TITULO = "Como esta escola sustenta a Cruz Vermelha RJ"
+SUSTENTA_URL = "/quem-somos/#como-nos-financiamos"
+SUSTENTA_TEXTO = ("Os cursos são vendidos pela Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ "
+                  "67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro "
+                  "(CNPJ 08.560.973/0001-97), associação sem fins lucrativos. O resultado da escola é destinado à manutenção "
+                  "do Palácio da Cruz Vermelha e às atividades da filial: é uma das fontes de financiamento da instituição.")
+SUSTENTA_ESTATUTO = ("O Estatuto diz que o patrimônio da Cruz Vermelha Brasileira, incluído o das filiais, é “totalmente "
+                     "destinado às ações humanitárias, filantrópicas e para sua subsistência” (art. 75).")
+SUSTENTA_CURTO = ("O resultado da escola é destinado à manutenção do Palácio da Cruz Vermelha e às atividades da filial, "
+                  "associação sem fins lucrativos.")
 
 # Fotos reais da sede e das aulas (servidas de /assets/otim, fora do Git; só o servidor as tem).
 FOTO_TOPO = {"base": "aula-dea-sala", "larguras": [480, 591], "largura": 591, "altura": 1280, "pos": "center 47%",
@@ -491,6 +500,14 @@ CSS_PAGINA = """
     /* seções */
     .v-secao { padding: 90px 0; }
     .v-secao-branca { background: #fff; }
+    /* como a escola sustenta a filial (C1) */
+    .v-sustenta { padding: 56px 0 0; }
+    .v-sustenta-caixa { background: var(--v-bege-bg); border: 1px solid var(--v-line); border-radius: var(--v-r-card); padding: 30px 34px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 12px 40px; align-items: start; }
+    .v-sustenta-caixa .v-h2-bloco { font-size: clamp(26px, 2.6vw, 34px); margin-top: 8px; }
+    .v-sustenta-caixa .v-prosa { font-size: 15px; line-height: 26px; }
+    .v-inv-sustenta { font-size: 13px; color: var(--v-texto); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--v-line); line-height: 1.5; }
+    .v-inv-sustenta a { color: var(--v-red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 860px) { .v-sustenta { padding-top: 40px; } .v-sustenta-caixa { grid-template-columns: 1fr; padding: 24px 22px; } }
     .v-cab-secao { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; margin-bottom: 30px; }
     .v-cab-secao > div { max-width: 720px; }
     .v-cab-secao > p { max-width: 460px; font-size: 15px; line-height: 1.6; color: var(--v-texto); }
@@ -627,7 +644,7 @@ CSS_PAGINA = """
 
     /* rodapé */
     .v-rodape { background: #fff; border-top: 1px solid var(--v-line); }
-    .v-rodape-grade { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 48px; padding: 64px 0 48px; }
+    .v-rodape-grade { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 48px; padding: 64px 0 48px; }
     .v-rodape-marca p { margin-top: 18px; font-size: 14px; line-height: 1.6; color: var(--v-texto); max-width: 360px; }
     .v-selo-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 10px 16px; min-height: 44px; border: 1px solid var(--v-line); border-radius: var(--v-r-pilula); font-size: 13px; font-weight: 800; color: var(--v-ink); text-decoration: none; }
     .v-selo-link:hover { border-color: var(--v-ink); }
@@ -1882,6 +1899,12 @@ def main() -> int:
     home = HOME.read_text(encoding="utf-8")
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     cursos = {c["slug"]: c for c in dados["cursos"]}
+    # Cursos que só a plataforma da escola vende (sincronizar_catalogo.FORA_DO_DOMINIO) não podem voltar por um cursos.json
+    # antigo ou editado à mão: a página, o checkout e o chat sairiam com eles.
+    fora = sorted(set(cursos) & set(FORA_DO_DOMINIO))
+    if fora:
+        print(f"recusado: o cursos.json traz curso que não é vendido no domínio da filial: {fora} (rode sincronizar_catalogo.py)")
+        return 1
     inscricao = int(dados["inscricao_centavos"])
     taxa = brl_curto(inscricao)
     agora = datetime.now(timezone.utc)
@@ -2008,7 +2031,7 @@ def main() -> int:
 
     # --- FAQ de cada curso: as perguntas do cursos.json, literais da escola (1.6). Curso sem perguntas: sem o bloco. ------
     def faq_catalogo(s: str) -> list[tuple[str, str]]:
-        return [(nome_filial(q["pergunta"]), nome_filial(q["resposta"])) for q in (cursos[s].get("faq") or [])
+        return [(nome_filial(q["pergunta"]), chat_widget.certificado_da_escola(nome_filial(q["resposta"]))) for q in (cursos[s].get("faq") or [])
                 if q.get("pergunta") and q.get("resposta") and not EXCLUIR_CATALOGO.search(q["pergunta"] + " " + q["resposta"])]
 
     # --- FAQ geral (spec 1.11, com a 7 da 10.3): (pergunta, texto puro do FAQPage, HTML) ---------------------------
@@ -2208,7 +2231,7 @@ def main() -> int:
         <div class="v-hero-texto">
           <p class="v-olho">Formação presencial no Rio de Janeiro</p>
           <h1 class="v-hero-h1" id="v-titulo" tabindex="-1">Capacitação que prepara para&nbsp;<em class="v-vermelho">agir.</em></h1>
-          <p class="v-hero-lead">Cursos presenciais da Escola de Educação e Saúde da Cruz Vermelha Brasileira do Rio de Janeiro. Formação prática, responsabilidade e conhecimento para situações que exigem preparo.</p>
+          <p class="v-hero-lead">Cursos presenciais da Escola de Educação e Saúde, empresa ligada à Cruz Vermelha Brasileira do Rio de Janeiro. Formação prática, responsabilidade e conhecimento para situações que exigem preparo.</p>
           <div class="v-hero-acoes">
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#cursos">Ver cursos disponíveis {SVG["seta"]}</a>
             <a class="v-btn v-btn-contorno-branco v-btn-grande" href="#escola">Conheça a Escola</a>
@@ -2226,10 +2249,25 @@ def main() -> int:
       <div class="v-wrap">
         <ul>
           <li><h2>{SVG["predio"]}Formação presencial</h2><p>Aulas práticas na sede da Cruz Vermelha Brasileira do Rio de Janeiro.</p></li>
-          <li><h2>{SVG["medalha"]}Certificação</h2><p>Certificado da Cruz Vermelha ao concluir os requisitos do curso.</p></li>
+          <li><h2>{SVG["medalha"]}Certificação</h2><p>Certificado da Escola de Educação e Saúde ao concluir os requisitos do curso.</p></li>
           <li><h2>{SVG["calendario"]}Turmas e datas</h2><p>Veja as turmas abertas e as datas antes de fazer sua inscrição.</p></li>
           <li><h2>{SVG["chat"]}Atendimento humano</h2><p>A secretaria orienta pelo <a href="#chat" data-abrir-chat data-assunto="matricula" data-local="destaques">chat</a> e por e-mail, do primeiro contato à aula.</p></li>
         </ul>
+      </div>
+    </section>
+    <section class="v-sustenta v-so-geral" id="sustenta" aria-labelledby="sustenta-titulo" data-secao="sustenta">
+      <div class="v-wrap">
+        <div class="v-sustenta-caixa">
+          <div>
+            <p class="v-kicker">Para onde vai o valor</p>
+            <h2 class="v-h2-bloco" id="sustenta-titulo">{esc(SUSTENTA_TITULO)}</h2>
+          </div>
+          <div class="v-prosa">
+            <p>{esc(SUSTENTA_TEXTO)}</p>
+            <p>{esc(SUSTENTA_ESTATUTO)}</p>
+            <p><a class="v-link" href="{SUSTENTA_URL}">Veja como a filial se financia {SVG["seta"]}</a></p>
+          </div>
+        </div>
       </div>
     </section>'''
 
@@ -2320,6 +2358,7 @@ def main() -> int:
             <div class="v-inv-pes">
               {chat_link("Dúvidas? Fale com a secretaria", s, "investimento")}
             </div>
+            <p class="v-inv-sustenta"><b>{esc(SUSTENTA_TITULO)}.</b> {esc(SUSTENTA_CURTO)} <a href="{SUSTENTA_URL}">Veja como a filial se financia</a>.</p>
           </aside>'''
 
     def turmas_bloco(s: str) -> str:
@@ -2398,7 +2437,7 @@ def main() -> int:
           <div class="v-cartao v-flutuante">{cartao(s)}
           </div>
           <ul class="v-prova" aria-label="Por que a Cruz Vermelha" data-secao="prova">
-            <li>{SVG["historia"]}Forma pessoas no Rio desde 1914</li>
+            <li>{SVG["historia"]}Escola ligada à Cruz Vermelha Brasileira RJ</li>
             <li>{SVG["predio"]}Aulas práticas no Palácio da Cruz Vermelha</li>
             <li>{SVG["medalha"]}Certificado com o seu nome</li>
           </ul>
@@ -2560,7 +2599,7 @@ def main() -> int:
         <div class="v-cert-texto">
           <p class="v-kicker">Certificado</p>
           <h2 class="v-h2" id="cert-titulo">Sua formação fica registrada.</h2>
-          <div class="v-prosa"><p>Ao concluir os requisitos do curso, você recebe o certificado emitido pela Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. {esc(CERT_PESO)}</p></div>
+          <div class="v-prosa"><p>Ao concluir os requisitos do curso, você recebe o certificado com o seu nome, o curso e a carga horária. {esc(CERT_PESO)}</p></div>
         </div>
         <figure class="v-cert-figura">{cert_img(CERT_DESTAQUE, "(min-width: 980px) 50vw, 100vw")}<figcaption class="v-cert-nota">{esc(CERT_NOTA)}</figcaption></figure>
       </div>
@@ -2577,9 +2616,10 @@ def main() -> int:
             <p class="v-kicker">Quem somos</p>
             <h2 id="escola-titulo">Uma escola dentro de uma instituição humanitária.</h2>
             <div class="v-painel-prosa">
-              <p>A Escola de Educação e Saúde é o centro de formação da Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro.</p>
-              <p>As turmas são presenciais e práticas, com instrutores qualificados. Ao concluir, o aluno recebe o certificado da Cruz Vermelha Brasileira Rio de Janeiro.</p>
-              <p><a href="/historia/">Conheça nossa história →</a></p>
+              <p>A Escola de Educação e Saúde é a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro, com aulas na sede da filial.</p>
+              <p>As turmas são presenciais e práticas, com instrutores qualificados. Ao concluir, o aluno recebe o certificado emitido pela escola.</p>
+              <p>{esc(SUSTENTA_CURTO)} <a href="{SUSTENTA_URL}">Veja como a filial se financia →</a></p>
+              <p><a href="/historia/">Conheça a história da Cruz Vermelha no Rio →</a></p>
             </div>
             <dl>
               <div><dt>Local</dt><dd>Praça da Cruz Vermelha, 10 · Centro</dd></div>
@@ -2685,10 +2725,19 @@ def main() -> int:
           <li><a href="{link_escola("rodape")}" target="_blank" rel="noopener" data-saida="area_aluno" data-origem="rodape">Área do aluno {SVG["externo"]}</a><small>para quem já se inscreveu</small></li>
         </ul>
       </nav>
+      <nav aria-label="Cruz Vermelha Brasileira Rio de Janeiro">
+        <p class="v-rodape-titulo">Cruz Vermelha RJ</p>
+        <ul class="v-rodape-lista">
+          <li><a href="/">Site da filial</a></li>
+          <li><a href="{SUSTENTA_URL}">Como a escola sustenta a filial</a></li>
+          <li><a href="/doe/">Doe</a></li>
+          <li><a href="/transparencia/">Transparência</a></li>
+        </ul>
+      </nav>
       <div>
         <p class="v-rodape-titulo">Contato</p>
         <ul class="v-rodape-contato">
-          <li>{SVG["pino"]}<span>Praça da Cruz Vermelha, 10<br>Centro · Rio de Janeiro</span></li>
+          <li>{SVG["pino"]}<span>Praça da Cruz Vermelha, 10<br>Centro · Rio de Janeiro – RJ</span></li>
           <li>{SVG["email"]}<a href="mailto:{EMAIL_CONTATO}">{EMAIL_CONTATO}</a></li>
           <li>{SVG["chat"]}<a href="#chat" data-abrir-chat data-assunto="matricula" data-local="rodape">Chat “Fale com a gente”</a></li>
         </ul>
@@ -2696,7 +2745,7 @@ def main() -> int:
     </div>
     <div class="v-rodape-faixa">
       <div class="v-wrap">
-        <p>© 2026 Escola de Educação e Saúde · Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro</p>
+        <p>© 2026 Escola de Educação e Saúde, empresa ligada à Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro · CNPJ da filial <span style="white-space:nowrap">08.560.973/0001-97</span> · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ</p>
         <p>Quem vende os cursos: {RECEBEDOR_NOME} · CNPJ <span style="white-space:nowrap">{RECEBEDOR_CNPJ}</span></p>
         <p class="v-rodape-legal">
           <a href="/privacidade/">Política de Privacidade</a>
@@ -2841,7 +2890,7 @@ def main() -> int:
           .replace("__API_PARCELAS__", json.dumps(API_PARCELAS))
           .replace("__INFO_PRAZO__", JS_INFO_PRAZO if parcelado else "").replace("__JS_PRAZO__", JS_PRAZO if parcelado else JS_PRAZO_DESLIGADO)
           .replace("__EXEMPLO__", json.dumps(exemplo)))
-    descricao = (f"Primeiros socorros, bombeiro civil, cuidador de idosos e mais, com certificado da Cruz Vermelha. Total à vista a "
+    descricao = (f"Primeiros socorros, bombeiro civil, cuidador de idosos e mais, com certificado da escola. Total à vista a "
                  f"partir de {menor_total}, já com a taxa de inscrição.")
 
     pagina = f"""<!DOCTYPE html>

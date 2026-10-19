@@ -40,7 +40,7 @@
             "titulo": "What we do",
             "paragrafos": [
               "We train our own volunteers, including in first aid, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
-              "The paid in-person courses at the headquarters belong to the Escola de Educação e Saúde CVB-RJ (School of Education and Health), run by O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch, which sells and certifies seven courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter, Carer for Older People and Lip Micropigmentation. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+              "The paid in-person courses at the headquarters belong to the Escola de Educação e Saúde CVB-RJ (School of Education and Health), run by O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch, which sells and certifies six courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter and Carer for Older People. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
             ]
           },
           {
@@ -85,7 +85,7 @@
         "caminhos": [
           [
             "Take a course",
-            "Seven in-person courses at the headquarters, each with a certificate. Taught in Portuguese.",
+            "Six in-person courses at the headquarters, each with a certificate. Taught in Portuguese.",
             "See the courses",
             "cursos"
           ],
@@ -148,17 +148,17 @@
       },
       "cursos": {
         "titulo_aba": "Courses — Brazilian Red Cross Rio de Janeiro",
-        "descricao": "The seven in-person courses of the Brazilian Red Cross Rio de Janeiro branch: hours, entry requirements, fees and how enrolment works.",
+        "descricao": "The six in-person courses of the school linked to the Brazilian Red Cross Rio de Janeiro branch: hours, entry requirements, fees and how enrolment works.",
         "sobrancelha": "School of Education and Health",
         "h1": "Courses at the Brazilian Red Cross — Rio de Janeiro",
-        "linha": "Seven in-person courses taught at the branch headquarters in central Rio de Janeiro, each ending with a certificate issued by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch.",
+        "linha": "Six in-person courses taught at the branch headquarters in central Rio de Janeiro, each ending with a certificate issued by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch.",
         "aviso_titulo": "Read this first",
         "aviso_paragrafos": [
           "Every course is taught in Portuguese, in person, at Praça da Cruz Vermelha, 10, in central Rio de Janeiro. There is no interpreting, no online option and no group in another language. Practical first aid is learned with a manikin and an instructor beside you, and that is what gives the certificate its weight — which is also why it cannot be done remotely.",
           "Enrolment is online, and the form asks for a CPF, the Brazilian individual taxpayer number, and a phone number with a Brazilian area code. Foreign residents in Brazil normally have both. If you do not, write to us before paying anything and we will tell you where you stand.",
           "So this page is useful to you if you live in or near Rio de Janeiro and follow a class in Portuguese comfortably. If that is not you, the honest answer is that these courses are not the right fit — and we would rather say so here than take your money first."
         ],
-        "tabela_titulo": "The seven courses",
+        "tabela_titulo": "The six courses",
         "cabecalho": [
           "Course",
           "Hours",
@@ -171,8 +171,7 @@
           "suporte-basico-de-vida": "Basic Life Support (BLS)",
           "puncao-venosa": "Peripheral IV Cannulation",
           "bombeiro-civil": "Civil Firefighter",
-          "cuidador-de-idosos": "Carer for Older People (non-accredited course)",
-          "micropigmentacao-labial": "Lip Micropigmentation"
+          "cuidador-de-idosos": "Carer for Older People (non-accredited course)"
         },
         "escolaridade": {
           "Ensino Fundamental": "Lower secondary (ensino fundamental)",
@@ -187,8 +186,7 @@
           "suporte-basico-de-vida": "The short, protocol-led version: assessing the casualty, CPR, the automated external defibrillator, bleeding control and the first response to trauma, choking and fainting, following current international guidelines. Four hours, the quickest route to being useful in a cardiac arrest.",
           "puncao-venosa": "Peripheral venous access done safely: anatomy of the venous system, puncture technique, choosing and handling the materials, preparing the patient, preventing complications, infection control and biosafety. Aimed at health students and professionals, for work in hospitals, clinics, laboratories and collection services.",
           "bombeiro-civil": "Eighty hours of fire prevention and response, basic pre-hospital care, evacuation, safety equipment and risk management, theory and practice. It leads to work in companies, industry, hospitals, residential buildings, shopping centres, airports, hotels, schools and events. Professional accreditation is arranged separately at the end.",
-          "cuidador-de-idosos": "Hygiene, feeding, running a care routine, accident prevention, moving and handling, basic first aid, and the physical, emotional and social sides of ageing. It leads to work in homes, long-stay institutions, clinics, hospitals, day centres and home care — and it serves just as well someone caring for a relative.",
-          "micropigmentacao-labial": "Semi-permanent lip work: colour theory, skin anatomy and physiology, biosafety, pigment implantation technique, correcting asymmetry, evening out lip colour, before and after care, and correct handling of the equipment. It leads to work in aesthetic clinics, salons, specialist studios or self-employment."
+          "cuidador-de-idosos": "Hygiene, feeding, running a care routine, accident prevention, moving and handling, basic first aid, and the physical, emotional and social sides of ageing. It leads to work in homes, long-stay institutions, clinics, hospitals, day centres and home care — and it serves just as well someone caring for a relative."
         },
         "como_titulo": "How enrolment works",
         "como": [
@@ -423,7 +421,7 @@
             "titulo": "Qué hacemos",
             "paragrafos": [
               "Formamos a nuestros propios voluntarios, también en primeros auxilios, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores.",
-              "Los cursos presenciales pagos en la sede son de la Escola de Educação e Saúde CVB-RJ, de la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial, que vende y certifica siete cursos: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil, Cuidador de Personas Mayores y Micropigmentación Labial. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
+              "Los cursos presenciales pagos en la sede son de la Escola de Educação e Saúde CVB-RJ, de la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial, que vende y certifica seis cursos: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil y Cuidador de Personas Mayores. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
             ]
           },
           {
@@ -468,7 +466,7 @@
         "caminhos": [
           [
             "Hacer un curso",
-            "Siete cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.",
+            "Seis cursos presenciales en la sede, cada uno con certificado. Se dictan en portugués.",
             "Ver los cursos",
             "cursos"
           ],
@@ -531,17 +529,17 @@
       },
       "cursos": {
         "titulo_aba": "Cursos — Cruz Roja Brasileña Río de Janeiro",
-        "descricao": "Los siete cursos presenciales de la filial de Río de Janeiro de la Cruz Roja Brasileña: horas, requisitos, valores y cómo funciona la matrícula.",
+        "descricao": "Los seis cursos presenciales de la escuela vinculada a la filial de Río de Janeiro de la Cruz Roja Brasileña: horas, requisitos, valores y cómo funciona la matrícula.",
         "sobrancelha": "Escuela de Educación y Salud",
         "h1": "Cursos de la Cruz Roja Brasileña — Río de Janeiro",
-        "linha": "Siete cursos presenciales dictados en la sede de la filial, en el centro de Río de Janeiro, cada uno con certificado emitido por la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial.",
+        "linha": "Seis cursos presenciales dictados en la sede de la filial, en el centro de Río de Janeiro, cada uno con certificado emitido por la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial.",
         "aviso_titulo": "Lea esto primero",
         "aviso_paragrafos": [
           "Todos los cursos se dictan en portugués, de forma presencial, en la Praça da Cruz Vermelha, 10, en el centro de Río de Janeiro. No hay interpretación, no hay versión en línea y no hay grupos en otro idioma. Los primeros auxilios prácticos se aprenden con un maniquí y un instructor al lado, y es eso lo que da peso al certificado — y también el motivo por el que no se pueden hacer a distancia.",
           "La matrícula sí se hace por internet, y el formulario pide el CPF, el número de contribuyente individual brasileño, y un teléfono con código de área de Brasil. Quien vive en Brasil como extranjero normalmente tiene los dos. Si no es su caso, escríbanos antes de pagar nada y le decimos en qué situación está.",
           "Así que esta página le sirve si vive en Río de Janeiro o cerca y sigue una clase en portugués con comodidad. Si no es su caso, la respuesta honesta es que estos cursos no son lo adecuado para usted — y preferimos decirlo aquí antes que cobrarle primero."
         ],
-        "tabela_titulo": "Los siete cursos",
+        "tabela_titulo": "Los seis cursos",
         "cabecalho": [
           "Curso",
           "Horas",
@@ -554,8 +552,7 @@
           "suporte-basico-de-vida": "Soporte Vital Básico (BLS)",
           "puncao-venosa": "Punción Venosa",
           "bombeiro-civil": "Bombero Civil",
-          "cuidador-de-idosos": "Cuidador de Personas Mayores (curso libre)",
-          "micropigmentacao-labial": "Micropigmentación Labial"
+          "cuidador-de-idosos": "Cuidador de Personas Mayores (curso libre)"
         },
         "escolaridade": {
           "Ensino Fundamental": "Enseñanza básica (ensino fundamental)",
@@ -570,8 +567,7 @@
           "suporte-basico-de-vida": "La versión corta y guiada por protocolo: evaluación de la víctima, RCP, desfibrilador externo automático, control de hemorragias y primera respuesta ante traumatismos, atragantamientos y desmayos, según las directrices internacionales vigentes. Cuatro horas, el camino más rápido para ser útil en un paro cardíaco.",
           "puncao-venosa": "Acceso venoso periférico con seguridad: anatomía del sistema venoso, técnica de punción, elección y manejo de los materiales, preparación del paciente, prevención de complicaciones, control de infecciones y bioseguridad. Dirigido a estudiantes y profesionales de la salud, para trabajar en hospitales, clínicas, laboratorios y servicios de extracción.",
           "bombeiro-civil": "Ochenta horas de prevención y combate de incendios, atención prehospitalaria básica, evacuación, equipos de seguridad y gestión de riesgos, en teoría y en práctica. Habilita para trabajar en empresas, industrias, hospitales, edificios, centros comerciales, aeropuertos, hoteles, escuelas y eventos. La homologación profesional se gestiona aparte, al final.",
-          "cuidador-de-idosos": "Higiene, alimentación, administración de la rutina de cuidados, prevención de accidentes, técnicas de movilización, nociones de primeros auxilios y los aspectos físicos, emocionales y sociales del envejecimiento. Habilita para trabajar en domicilios, residencias de larga estadía, clínicas, hospitales, centros de día y atención domiciliaria — y sirve igual a quien cuida de un familiar.",
-          "micropigmentacao-labial": "Trabajo labial semipermanente: colorimetría, anatomía y fisiología de la piel, bioseguridad, técnica de implantación de pigmentos, corrección de asimetrías, uniformización del color labial, cuidados antes y después, y manejo correcto de los equipos. Habilita para trabajar en clínicas de estética, salones, estudios especializados o de forma autónoma."
+          "cuidador-de-idosos": "Higiene, alimentación, administración de la rutina de cuidados, prevención de accidentes, técnicas de movilización, nociones de primeros auxilios y los aspectos físicos, emocionales y sociales del envejecimiento. Habilita para trabajar en domicilios, residencias de larga estadía, clínicas, hospitales, centros de día y atención domiciliaria — y sirve igual a quien cuida de un familiar."
         },
         "como_titulo": "Cómo funciona la matrícula",
         "como": [

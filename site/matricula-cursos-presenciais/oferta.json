@@ -13,7 +13,6 @@
   "sem_turma": {
     "bombeiro-civil": {"max_fila": 30},
     "cuidador-de-idosos": {"max_fila": 30},
-    "micropigmentacao-labial": {"max_fila": 30},
     "primeiros-socorros-basico": {"max_fila": 30},
     "primeiros-socorros-lei-lucas": {"max_fila": 30},
     "puncao-venosa": {"max_fila": 30},
