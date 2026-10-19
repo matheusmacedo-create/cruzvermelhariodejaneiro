@@ -1,7 +1,12 @@
 /* Aviso de cookies do site (LGPD; Guia de Cookies da ANPD, 2022).
  *
- * Primeiro nível: um aviso com três botões do mesmo tamanho (Rejeitar, Personalizar, Aceitar todos).
- * Segundo nível: as categorias, com estatística e marketing desligados até a pessoa ligar.
+ * Primeiro nível: uma faixa baixa, com uma frase curta, o link da Política de Cookies e três botões do
+ * mesmo tamanho e estilo, lado a lado (Rejeitar, Personalizar, Aceitar todos). Não cobre a missão nem os
+ * botões do topo da home: no celular fica em até 25% da tela; no computador, uma faixa de largura total. Fica
+ * colada embaixo, ou logo abaixo do cabeçalho na página que pede (data-cvrj-ck-topo, a home).
+ * Segundo nível ("Personalizar"): as categorias, com estatística e marketing desligados até a pessoa ligar,
+ * e o detalhe de cada uma (o que vai à Meta pelo servidor está na categoria Marketing). Camadas, como admite
+ * o Guia de Cookies da ANPD; o texto completo também está na Política de Cookies.
  * A escolha fica no cookie cvrj_consentimento (necessário), em todo *.cruzvermelhariodejaneiro.org,
  * por 12 meses: quem escolheu no site principal não é perguntado de novo nos subdomínios.
  *
@@ -18,8 +23,9 @@
 
   var NOME = 'cvrj_consentimento';
   var VERSAO = '1';
-  // Revisão do texto, gravada no cookie (r=). A partir da 2, o texto inclui a cópia dos eventos pelo servidor,
-  // com nome, e-mail e telefone em código. Quem ligou o marketing sem ela (no texto anterior, no aviso da
+  // Revisão do texto, gravada no cookie (r=). A partir da 2, o aviso informa a cópia dos eventos pelo servidor,
+  // com nome, e-mail e telefone em código (desde 19/10/2026, na categoria Marketing do segundo nível e na
+  // Política de Cookies; o primeiro nível nomeia a Meta e leva a esse detalhe). Quem ligou o marketing sem ela (no texto anterior, no aviso da
   // Punção ou num consentimento.js antigo guardado no cache) é perguntado de novo, e até lá o servidor não
   // manda nada à Meta (MCP_META_REVISAO, em api/lib/meta.php, é o mesmo número). A VERSAO do cookie não muda,
   // porque os outros sites (Punção, Redação, Escola) leem v=1 e ignoram o r.
@@ -32,11 +38,11 @@
   var TEXTOS = {
     pt: {
       titulo: 'Sua privacidade',
-      texto: 'Usamos cookies necessários para o site funcionar. Com a sua permissão, usamos também cookies de estatística (Google Analytics), para saber quais páginas são lidas, e de marketing (Pixel da Meta), para medir nossas campanhas; com o marketing, se você escrever pelo chat ou se inscrever, o nosso servidor também envia à Meta o seu nome, e-mail e telefone em código. Você escolhe, e pode mudar quando quiser em “Preferências de cookies”, no rodapé.',
+      texto: 'Usamos cookies necessários e, com a sua permissão, de estatística (Google Analytics) e de marketing (Meta). Detalhes em “Personalizar” e na',
       politica: 'Política de Cookies', url: '/cookies/',
       rejeitar: 'Rejeitar', personalizar: 'Personalizar', aceitar: 'Aceitar todos',
       painel: 'Preferências de cookies',
-      intro: 'Escolha quais cookies podemos usar. Os necessários ficam sempre ligados, porque sem eles o site não funciona.',
+      intro: 'Escolha quais cookies podemos usar. Os necessários ficam sempre ligados, porque sem eles o site não funciona. Você pode mudar a escolha quando quiser em “Preferências de cookies”, no rodapé.',
       categorias: {
         necessarios: ['Necessários', 'Fazem o site funcionar: guardam a sua escolha sobre cookies e a conversa do chat enquanto você navega.'],
         estatistica: ['Estatística', 'Google Analytics: conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.'],
@@ -47,11 +53,11 @@
     },
     en: {
       titulo: 'Your privacy',
-      texto: 'We use necessary cookies to make this site work. With your permission, we also use statistics cookies (Google Analytics) to see which pages are read, and marketing cookies (Meta Pixel) to measure our campaigns; with marketing on, if you use the chat or enrol, our server also sends Meta your name, e-mail and phone number in coded form. It is your choice, and you can change it at any time under “Cookie preferences” in the footer.',
+      texto: 'We use necessary cookies and, with your permission, statistics (Google Analytics) and marketing (Meta) cookies. Details under “Customize” and in our',
       politica: 'Cookie Policy', url: '/en/cookies/',
       rejeitar: 'Reject', personalizar: 'Customize', aceitar: 'Accept all',
       painel: 'Cookie preferences',
-      intro: 'Choose which cookies we may use. Necessary cookies are always on, because the site does not work without them.',
+      intro: 'Choose which cookies we may use. Necessary cookies are always on, because the site does not work without them. You can change your choice at any time under “Cookie preferences” in the footer.',
       categorias: {
         necessarios: ['Necessary', 'Keep the site working: they store your cookie choice and the chat conversation while you browse.'],
         estatistica: ['Statistics', 'Google Analytics: counts visits and shows which pages are read, without identifying you by name.'],
@@ -62,11 +68,11 @@
     },
     es: {
       titulo: 'Su privacidad',
-      texto: 'Usamos cookies necesarias para que el sitio funcione. Con su permiso, usamos también cookies de estadística (Google Analytics), para saber qué páginas se leen, y de marketing (Píxel de Meta), para medir nuestras campañas; con el marketing, si escribe por el chat o se inscribe, nuestro servidor también envía a Meta su nombre, correo y teléfono en código. Usted elige y puede cambiar su elección cuando quiera en “Preferencias de cookies”, en el pie de página.',
+      texto: 'Usamos cookies necesarias y, con su permiso, de estadística (Google Analytics) y de marketing (Meta). Detalles en “Personalizar” y en la',
       politica: 'Política de Cookies', url: '/es/cookies/',
       rejeitar: 'Rechazar', personalizar: 'Personalizar', aceitar: 'Aceptar todas',
       painel: 'Preferencias de cookies',
-      intro: 'Elija qué cookies podemos usar. Las necesarias siempre están activas, porque sin ellas el sitio no funciona.',
+      intro: 'Elija qué cookies podemos usar. Las necesarias siempre están activas, porque sin ellas el sitio no funciona. Puede cambiar su elección cuando quiera en “Preferencias de cookies”, en el pie de página.',
       categorias: {
         necessarios: ['Necesarias', 'Hacen que el sitio funcione: guardan su elección sobre cookies y la conversación del chat mientras navega.'],
         estatistica: ['Estadística', 'Google Analytics: cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.'],
@@ -130,9 +136,16 @@
   var CSS = '' +
     '.cvrj-ck,.cvrj-ck-painel{font-family:inherit;color:#111;box-sizing:border-box}' +
     '.cvrj-ck *,.cvrj-ck-painel *{box-sizing:border-box}' +
-    '.cvrj-ck{position:fixed;z-index:2147483000;left:16px;bottom:16px;max-width:520px;width:calc(100% - 32px);background:#fff;border:1px solid #dcdfe4;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:20px}' +
-    '.cvrj-ck h2,.cvrj-ck-painel h2{margin:0 0 8px;font-size:1.05rem;line-height:1.3;font-weight:800;color:#111}' +
-    '.cvrj-ck p,.cvrj-ck-painel p{margin:0 0 12px;font-size:.92rem;line-height:1.55;color:#333}' +
+    // Primeiro nível: faixa de largura total, colada embaixo, com a frase e os três botões numa linha (no
+    // computador, cerca de 60 px de altura, abaixo dos botões do topo da home em 1280x720 e 1366x768).
+    '.cvrj-ck{position:fixed;z-index:2147483000;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:8px 20px;background:#fff;border-top:1px solid #dcdfe4;box-shadow:0 -8px 24px rgba(0,0,0,.12);padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px))}' +
+    // No alto (data-cvrj-ck-topo): abaixo do cabeçalho, que continua por cima (o menu do celular abre sobre a faixa).
+    '.cvrj-ck.cvrj-ck-alto{z-index:999;bottom:auto;border-top:0;border-bottom:1px solid #dcdfe4;box-shadow:0 8px 24px rgba(0,0,0,.12);padding-bottom:10px}' +
+    '.cvrj-ck p{flex:0 1 auto;max-width:760px;margin:0;font-size:.86rem;line-height:1.45;color:#333}' +
+    '.cvrj-ck .cvrj-ck-botoes{flex:0 0 auto;grid-template-columns:repeat(3,132px);margin:0}' +
+    '.cvrj-ck .cvrj-ck-botoes button{min-height:40px;padding:8px 10px;font-size:.86rem}' +
+    '.cvrj-ck-painel h2{margin:0 0 8px;font-size:1.05rem;line-height:1.3;font-weight:800;color:#111}' +
+    '.cvrj-ck-painel p{margin:0 0 12px;font-size:.92rem;line-height:1.55;color:#333}' +
     '.cvrj-ck a,.cvrj-ck-painel a{color:#b00000;font-weight:700}' +
     '.cvrj-ck-botoes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}' +
     '.cvrj-ck-botoes button{min-height:44px;padding:10px 8px;border:1.5px solid #111;border-radius:10px;background:#fff;color:#111;font:inherit;font-size:.9rem;font-weight:700;line-height:1.2;cursor:pointer}' +
@@ -151,7 +164,10 @@
     '.cvrj-ck-cat input:checked+span.cvrj-ck-chave:after{transform:translateX(18px)}' +
     '.cvrj-ck-cat input:disabled+span.cvrj-ck-chave{opacity:.55}' +
     '.cvrj-ck-sempre{font-size:.78rem;font-weight:700;color:#555;margin-left:auto;margin-right:8px}' +
-    '@media (max-width:560px){.cvrj-ck{left:8px;right:8px;bottom:8px;width:auto;padding:16px}.cvrj-ck-botoes{grid-template-columns:1fr}.cvrj-ck-painel{padding:20px 16px}}' +
+    // Celular: a frase em cima e os três botões embaixo, ainda lado a lado e do mesmo tamanho (em 360x740, cerca
+    // de 18% da tela). Só o painel do segundo nível empilha os botões, que lá têm rótulos longos.
+    '@media (max-width:760px){.cvrj-ck{flex-direction:column;align-items:stretch;padding:10px 12px calc(10px + env(safe-area-inset-bottom, 0px))}.cvrj-ck p{max-width:none}.cvrj-ck .cvrj-ck-botoes{grid-template-columns:repeat(3,1fr);gap:6px}.cvrj-ck .cvrj-ck-botoes button{min-height:44px;padding:6px 4px;font-size:.84rem}}' +
+    '@media (max-width:560px){.cvrj-ck-painel .cvrj-ck-botoes{grid-template-columns:1fr}.cvrj-ck-painel{padding:20px 16px}}' +
     '@media print{.cvrj-ck,.cvrj-ck-fundo{display:none!important}}';
 
   function el(tag, attrs, filhos) {
@@ -179,8 +195,31 @@
 
   var aviso = null, fundo = null, voltarFoco = null;
 
-  function fecharTudo() {
+  // Altura da faixa em --cvrj-ck-altura no <html>: o chat (site/chat/chat.css) sobe acima dela no computador,
+  // em vez de ficar meio escondido atrás. Sai junto com a faixa.
+  // Página que marca um elemento com data-cvrj-ck-topo (a home, no topo): a faixa fica logo abaixo do cabeçalho
+  // fixo, sobre o respiro acima do título, e não sobre a missão e os botões "Doe agora" e "Seja voluntário",
+  // que ficam na base da primeira tela (em 1280x720, a 632 px do topo). Nas outras páginas, embaixo.
+  function noAlto() { return !!document.querySelector('[data-cvrj-ck-topo]'); }
+  function marcarAltura() {
+    var raiz = document.documentElement;
+    if (aviso && noAlto()) {
+      var cab = document.querySelector('.main-header');
+      aviso.style.top = (cab ? Math.max(0, cab.getBoundingClientRect().bottom) : 0) + 'px';
+      raiz.style.removeProperty('--cvrj-ck-altura');
+    } else if (aviso) raiz.style.setProperty('--cvrj-ck-altura', aviso.offsetHeight + 'px');
+    else raiz.style.removeProperty('--cvrj-ck-altura');
+  }
+  window.addEventListener('resize', function () { if (aviso) marcarAltura(); });
+  window.addEventListener('scroll', function () { if (aviso && noAlto()) marcarAltura(); }, { passive: true });
+
+  function tirarAviso() {
     if (aviso) { aviso.remove(); aviso = null; }
+    marcarAltura();
+  }
+
+  function fecharTudo() {
+    tirarAviso();
     if (fundo) { fundo.remove(); fundo = null; document.removeEventListener('keydown', teclado, true); }
     if (voltarFoco && document.contains(voltarFoco)) { try { voltarFoco.focus(); } catch (e) { /* segue */ } }
     voltarFoco = null;
@@ -189,8 +228,8 @@
   function mostrarAviso() {
     if (aviso || fundo) return;
     estilos();
-    aviso = el('section', { class: 'cvrj-ck', role: 'region', 'aria-labelledby': 'cvrj-ck-t1' }, [
-      el('h2', { id: 'cvrj-ck-t1', texto: T.titulo }),
+    // Sem título visível (a faixa precisa caber em uma ou duas linhas): o nome da região vai no aria-label.
+    aviso = el('section', { class: 'cvrj-ck' + (noAlto() ? ' cvrj-ck-alto' : ''), role: 'region', 'aria-label': T.titulo }, [
       el('p', {}, [T.texto + ' ', el('a', { href: URL_POLITICA, texto: T.politica }), '.']),
       el('div', { class: 'cvrj-ck-botoes' }, [
         botao(T.rejeitar, function () { escolher({ estatistica: false, marketing: false }); }),
@@ -199,6 +238,7 @@
       ])
     ]);
     document.body.appendChild(aviso);
+    marcarAltura();
   }
 
   function categoria(chave, ligada, fixa) {
@@ -244,7 +284,7 @@
 
   function abrirPainel() {
     estilos();
-    if (aviso) { aviso.remove(); aviso = null; }
+    tirarAviso();
     if (fundo) return;
     voltarFoco = document.activeElement;
     var atual = ler() || { estatistica: false, marketing: false };
