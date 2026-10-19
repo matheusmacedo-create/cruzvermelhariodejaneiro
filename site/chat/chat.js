@@ -551,6 +551,18 @@
     function porHash() { if (location.hash === '#chat') abrir(); }
     window.addEventListener('hashchange', porHash);
 
+    // Home no celular (data-cv-chat-depois-do-hero): o ícone só aparece depois de rolar um pouco. No topo ele cobria o
+    // canto do botão "Doe agora" (360x740); o painel e o gatilho #chat/data-abrir-chat continuam funcionando.
+    if (document.querySelector('[data-cv-chat-depois-do-hero]') && window.matchMedia) {
+      var estreito = window.matchMedia('(max-width: 620px)');
+      var atualizarRecolhimento = function () {
+        raiz.classList.toggle('cv-chat-recolhido', estreito.matches && (window.pageYOffset || 0) < 240);
+      };
+      window.addEventListener('scroll', atualizarRecolhimento, { passive: true });
+      window.addEventListener('resize', atualizarRecolhimento);
+      atualizarRecolhimento();
+    }
+
     render();
     porHash();
   }

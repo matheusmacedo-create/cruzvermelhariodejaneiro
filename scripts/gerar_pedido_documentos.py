@@ -57,6 +57,12 @@ PERFIS = [
 ]
 
 CSS = """  <style>
+    /* Bloco de ação no fim da página (19/10/2026, Ad Grants): doar, ser voluntário ou falar com a filial. */
+    .fim-acao { padding: 8px 0 52px; }
+    .fim-acao-caixa { max-width: 860px; margin: 0 auto; padding: 26px 28px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .fim-acao h2 { font-size: 1.35rem; letter-spacing: -.01em; margin: 0 0 8px; }
+    .fim-acao p { color: var(--muted); margin: 0 0 18px; max-width: 64ch; }
+    @media (max-width: 620px) { .fim-acao-caixa { padding: 22px 18px; } }
     .pd-topo { background: var(--soft); padding: 56px 0 44px; }
     .pd-topo h1 { color: var(--black); font-size: clamp(2rem, 4.4vw, 3rem); line-height: 1.1; margin: .2rem 0 1rem; }
     .pd-topo .lead { max-width: 62ch; }
@@ -382,6 +388,19 @@ def main() -> int:
               <p>Respondemos por e-mail em até {PRAZO}, sempre com o número de protocolo. A resposta pode ser o documento, a versão pública dele ou a explicação de por que não podemos enviar.</p>
             </div>
           </aside>
+        </div>
+      </div>
+    </section>
+    <section class="fim-acao" aria-labelledby="fim-acao-titulo">
+      <div class="wrap">
+        <div class="fim-acao-caixa">
+          <h2 id="fim-acao-titulo">Ajude a Cruz Vermelha Brasileira Rio de Janeiro</h2>
+          <p>Doe para manter a formação de voluntários e as ações da filial, cadastre-se no voluntariado ou fale com a equipe, que responde pelo e-mail institucional.</p>
+          <div class="cta-row">
+            <a class="btn btn-red" href="/doe/">Doe agora</a>
+            <a class="btn btn-outline" href="/voluntariado/cadastro/">Seja voluntário</a>
+            <a class="btn btn-outline" href="/#contato">Fale com a filial</a>
+          </div>
         </div>
       </div>
     </section>

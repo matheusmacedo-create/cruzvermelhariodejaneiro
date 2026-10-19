@@ -35,8 +35,8 @@ SITE = RAIZ / "site"
 DADOS = SITE / "idiomas.json"
 HOME = SITE / "index.html"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
-# Só no sameAs do JSON-LD: o link do rodapé saiu em 19/10/2026 (achado K3, verbete criado pela conta da própria filial).
-WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
+# O verbete da Wikipédia saiu do rodapé e do sameAs em 19/10/2026 (achado K3: criado pela conta da própria filial). Perfis oficiais iguais aos da home.
+PERFIS = ["https://www.instagram.com/cruzvermelhabrasileirarj/", "https://www.facebook.com/profile.php?id=61591390052128", "https://www.youtube.com/@cruzvermelhariodejaneiro-org"]
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 EMAIL = "contato@cruzvermelhariodejaneiro.org"
 NOME_OFICIAL = "Cruz Vermelha Brasileira - Filial do Estado do Rio de Janeiro"  # o "name" do NGO na home em português
@@ -357,6 +357,9 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     for i, b in enumerate(h["blocos"]):
         ident = ["sobre", "atuacao", "sede"][i] if i < 3 else f"bloco{i}"
         paras = "\n        ".join(f"<p>{esc(p)}</p>" for p in b["paragrafos"])
+        if b.get("link"):  # [rótulo, chave de PAGINAS]: o link da frase da escola, na língua da página
+            paras += (f'\n        <p class="i18n-porta"><a href="{PAGINAS[b["link"][1]][idioma["codigo"]]}">'
+                      f'{esc(b["link"][0])} &rarr;</a></p>')
         blocos.append(f"""    <section class="i18n-bloco" id="{ident}">
       <div class="wrap">
         <h2>{esc(b['titulo'])}</h2>
@@ -373,7 +376,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
             url = VOLUNTARIO
             extra = ' hreflang="pt-BR" lang="pt-BR"'
         else:
-            url, extra = PAGINAS[chave][idioma["codigo"]], ""
+            url, extra = (PAGINAS[chave][idioma["codigo"]] if chave in PAGINAS else "#" + chave), ""
         return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
                 f'<p class="i18n-porta"><a href="{url}"{extra}>{esc(rotulo)} &rarr;</a></p></article>')
 
@@ -455,7 +458,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
            "address": {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10",
                        "addressLocality": "Rio de Janeiro", "addressRegion": "RJ",
                        "postalCode": "20230-130", "addressCountry": "BR"},
-           "sameAs": [WIKI]},
+           "sameAs": PERFIS},
           {"@context": "https://schema.org", "@type": "WebPage",
            "url": f"{ORIGEM}{PAGINAS['home'][idioma['codigo']]}", "name": idioma["home"]["titulo"],
            "description": idioma["home"]["descricao"], "inLanguage": idioma["codigo"],

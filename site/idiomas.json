@@ -35,7 +35,7 @@
       },
       "home": {
         "titulo": "Brazilian Red Cross — Rio de Janeiro Branch",
-        "descricao": "The Rio de Janeiro State Branch of the Brazilian Red Cross: volunteer training, first-aid courses and community support, in downtown Rio de Janeiro.",
+        "descricao": "The Rio de Janeiro State Branch of the Brazilian Red Cross: volunteer training, first-aid training and community support, in downtown Rio de Janeiro.",
         "sobrancelha": "Rio de Janeiro State Branch",
         "h1": "Brazilian Red Cross — Rio de Janeiro Branch",
         "linha": "Part of the International Red Cross and Red Crescent Movement, serving the state of Rio de Janeiro.",
@@ -51,7 +51,11 @@
             "titulo": "What we do",
             "paragrafos": [
               "We train our own volunteers, including in first aid, run preventive education and support communities across the state through campaigns such as the Winter Clothing Drive and the Impacto das Cores project.",
-              "The paid in-person courses at the headquarters belong to the Escola de Educação e Saúde CVB-RJ (School of Education and Health), run by O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch, which sells and certifies six courses: Basic First Aid, First Aid under the Lucas Law (for settings with children), Basic Life Support, Peripheral IV Cannulation, Civil Firefighter and Carer for Older People. Classes are taught in Portuguese, in person, in downtown Rio de Janeiro."
+              "The branch's school, the Escola de Educação e Saúde CVB-RJ (School of Education and Health), is run by O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch. Its in-person classes are taught in Portuguese in downtown Rio de Janeiro, and its result goes to the upkeep of the headquarters and to the branch's work."
+            ],
+            "link": [
+              "About the school and its courses",
+              "cursos"
             ]
           },
           {
@@ -68,7 +72,7 @@
           "This branch is the Rio de Janeiro State arm of that National Society. The emblem is not a brand: it is a protective sign defined in international humanitarian law, and its use is restricted. That is also why the seven fundamental principles below are not a statement of values but the conditions under which the Movement is allowed to work — neutrality and impartiality are what let a Red Cross team reach people that no one else can reach."
         ],
         "programas_titulo": "What the branch runs",
-        "programas_linha": "Five areas of work, all carried out from the headquarters in central Rio de Janeiro and across the state.",
+        "programas_linha": "Four areas of work, all carried out from the headquarters in central Rio de Janeiro and across the state.",
         "programas": [
           [
             "Volunteer training",
@@ -76,7 +80,7 @@
           ],
           [
             "First-aid training",
-            "The branch trains its volunteers in first aid and brings that preparation to events and field operations. The paid in-person courses open to anyone (basic first aid, the Lucas Law course for settings with children and Basic Life Support) are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda."
+            "The branch trains its volunteers in first aid and brings that preparation to events and field operations."
           ],
           [
             "Impacto das Cores",
@@ -85,10 +89,6 @@
           [
             "Winter Clothing Drive",
             "Collection of coats, blankets and shoes for families in vulnerable situations, received at the headquarters from Monday to Friday, 10am to 5pm, and sorted before distribution."
-          ],
-          [
-            "Training for companies and schools",
-            "Occupational-safety (NR) training, first-aid training under the Lucas Law and programmes built around a particular team, contracted with the branch's school, O-CVB Filial Rio de Janeiro Ensino Ltda."
           ]
         ],
         "caminhos_titulo": "Get involved",
@@ -108,15 +108,15 @@
           ],
           [
             "Partner with us",
-            "Sister National Societies, institutions and companies, and training for your team.",
+            "Sister National Societies, institutions and companies.",
             "See who does what",
             "equipe"
           ],
           [
-            "Take a course",
-            "Six in-person courses at the headquarters, taught in Portuguese, sold and certified by the branch's school. The school's result goes to the upkeep of the headquarters and to the branch's work.",
-            "See the courses",
-            "cursos"
+            "Talk to the branch",
+            "Questions about volunteering, donations, the headquarters or the school? Write to us in English, Spanish or Portuguese.",
+            "Get in touch",
+            "contato"
           ]
         ],
         "principios_titulo": "The seven fundamental principles",
@@ -335,9 +335,9 @@
         "transparencia": "The Brazilian Red Cross — Rio de Janeiro Branch is a non-profit organisation, CNPJ 08.560.973/0001-97, officially recognised as a public-interest organisation by municipal and state law. Donations fund volunteer training, first-aid training, preventive education, community campaigns and the running costs of the branch. Payments are processed by ÚnicoPag, which transfers the funds to the branch.",
         "botao": "Go to the donation page",
         "botao_nota": "The donation page is in Portuguese.",
-        "exterior_titulo": "Donating from outside Brazil: card only",
+        "exterior_titulo": "Donating from outside Brazil",
         "exterior_paragrafos": [
-          "From outside Brazil a card is the only way to give, and the reason is structural rather than a rule of ours. PIX is Brazil’s instant payment system, operated by the country’s Central Bank, and every PIX payment moves money between accounts held at Brazilian banks — there is no way to send one from a bank abroad. Card networks, by contrast, settle across borders, so a card issued in any country can reach the branch.",
+          "From outside Brazil, PIX is not an option, and the reason is structural rather than a rule of ours. PIX is Brazil’s instant payment system, operated by the country’s Central Bank, and every PIX payment moves money between accounts held at Brazilian banks — there is no way to send one from a bank abroad. Card networks, by contrast, settle across borders, so a card issued abroad can in principle reach the branch.",
           "What holds the online form back today is the identification, not the card. The payment provider requires an identification number to issue each charge, and the form asks for a CPF. Foreign residents in Brazil who already have one can use the form in full, by card or by PIX. If you have no CPF, write to us with the amount you would like to give and we will arrange the payment with you directly."
         ],
         "outra_forma_titulo": "Other ways to help",
@@ -442,7 +442,7 @@
       },
       "home": {
         "titulo": "Cruz Roja Brasileña — Filial Río de Janeiro",
-        "descricao": "Filial del Estado de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, cursos de primeros auxilios y apoyo comunitario, en el centro de Río.",
+        "descricao": "Filial del Estado de Río de Janeiro de la Cruz Roja Brasileña: formación de voluntarios, formación en primeros auxilios y apoyo comunitario, en el centro de Río.",
         "sobrancelha": "Filial del Estado de Río de Janeiro",
         "h1": "Cruz Roja Brasileña — Filial Río de Janeiro",
         "linha": "Parte del Movimiento Internacional de la Cruz Roja y de la Media Luna Roja, al servicio del estado de Río de Janeiro.",
@@ -458,7 +458,11 @@
             "titulo": "Qué hacemos",
             "paragrafos": [
               "Formamos a nuestros propios voluntarios, también en primeros auxilios, desarrollamos educación preventiva y apoyamos a comunidades de todo el estado con campañas como la Campaña de Ropa de Abrigo y el proyecto Impacto das Cores.",
-              "Los cursos presenciales pagos en la sede son de la Escola de Educação e Saúde CVB-RJ, de la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial, que vende y certifica seis cursos: Primeros Auxilios Básicos, Primeros Auxilios Ley Lucas (entornos con niños), Soporte Vital Básico, Punción Venosa, Bombero Civil y Cuidador de Personas Mayores. Las clases son presenciales y en portugués, en el centro de Río de Janeiro."
+              "La escuela de la filial, la Escola de Educação e Saúde CVB-RJ, la administra la O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. Sus clases presenciales son en portugués, en el centro de Río de Janeiro, y su resultado se destina al mantenimiento de la sede y a las actividades de la filial."
+            ],
+            "link": [
+              "Sobre la escuela y sus cursos",
+              "cursos"
             ]
           },
           {
@@ -475,7 +479,7 @@
           "Esta filial es el brazo del Estado de Río de Janeiro de esa Sociedad Nacional. El emblema no es una marca: es un signo de protección definido por el derecho internacional humanitario, y su uso está restringido. Por eso también los siete principios fundamentales que aparecen más abajo no son una declaración de valores, sino las condiciones bajo las cuales el Movimiento puede trabajar — la neutralidad y la imparcialidad son lo que permite que un equipo de la Cruz Roja llegue a donde nadie más llega."
         ],
         "programas_titulo": "Qué hace la filial",
-        "programas_linha": "Cinco frentes, llevadas adelante desde la sede, en el centro de Río de Janeiro, y en todo el estado.",
+        "programas_linha": "Cuatro frentes, llevados adelante desde la sede, en el centro de Río de Janeiro, y en todo el estado.",
         "programas": [
           [
             "Formación de voluntarios",
@@ -483,7 +487,7 @@
           ],
           [
             "Capacitación en primeros auxilios",
-            "La filial forma a sus voluntarios en primeros auxilios y lleva esa preparación a eventos y acciones de campo. Los cursos presenciales pagos abiertos a cualquier persona (primeros auxilios básicos, el curso Ley Lucas para entornos con niños y Soporte Vital Básico) los vende y certifica la escuela, la O-CVB Filial Rio de Janeiro Ensino Ltda."
+            "La filial forma a sus voluntarios en primeros auxilios y lleva esa preparación a eventos y acciones de campo."
           ],
           [
             "Impacto das Cores",
@@ -492,10 +496,6 @@
           [
             "Campaña de Ropa de Abrigo",
             "Recolección de abrigos, mantas y calzado para familias en situación de vulnerabilidad, recibidos en la sede de lunes a viernes, de 10 a 17 horas, y seleccionados antes de la distribución."
-          ],
-          [
-            "Capacitación para empresas y escuelas",
-            "Formación en normas de seguridad laboral (NR), capacitación en primeros auxilios por la Ley Lucas y programas armados para un equipo concreto, que se contratan con la escuela de la filial, la O-CVB Filial Rio de Janeiro Ensino Ltda."
           ]
         ],
         "caminhos_titulo": "Por dónde entrar",
@@ -509,21 +509,21 @@
           ],
           [
             "Donar",
-            "Tarjeta o PIX. Desde fuera de Brasil, solo con tarjeta — la página de donación explica por qué.",
+            "Tarjeta o PIX, con CPF brasileño. Desde fuera de Brasil, escríbanos — la página de donación explica cómo.",
             "Ir a la página de donación",
             "doar"
           ],
           [
             "Ser aliado",
-            "Sociedades Nacionales hermanas, instituciones y empresas, y capacitación para su equipo.",
+            "Sociedades Nacionales hermanas, instituciones y empresas.",
             "Ver quién hace qué",
             "equipe"
           ],
           [
-            "Hacer un curso",
-            "Seis cursos presenciales en la sede, dictados en portugués, que vende y certifica la escuela de la filial. El resultado de la escuela se destina al mantenimiento de la sede y a las actividades de la filial.",
-            "Ver los cursos",
-            "cursos"
+            "Hablar con la filial",
+            "¿Dudas sobre el voluntariado, las donaciones, la sede o la escuela? Escríbanos en español, inglés o portugués.",
+            "Contactar",
+            "contato"
           ]
         ],
         "principios_titulo": "Los siete principios fundamentales",
@@ -742,9 +742,9 @@
         "transparencia": "La Cruz Roja Brasileña — Filial Río de Janeiro es una entidad sin fines de lucro, CNPJ 08.560.973/0001-97, reconocida de utilidad pública municipal y estatal. Las donaciones sostienen la formación de voluntarios, la capacitación en primeros auxilios, la educación preventiva, las campañas comunitarias y el funcionamiento de la filial. Los pagos son procesados por ÚnicoPag, que transfiere los fondos a la filial.",
         "botao": "Ir a la página de donación",
         "botao_nota": "La página de donación está en portugués.",
-        "exterior_titulo": "Donar desde fuera de Brasil: solo con tarjeta",
+        "exterior_titulo": "Donar desde fuera de Brasil",
         "exterior_paragrafos": [
-          "Desde fuera de Brasil la tarjeta es la única forma de donar, y el motivo es estructural, no una regla nuestra. El PIX es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y cada pago por PIX mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. Las redes de tarjetas, en cambio, liquidan entre países, así que una tarjeta emitida en cualquier lugar llega a la filial.",
+          "Desde fuera de Brasil el PIX no es una opción, y el motivo es estructural, no una regla nuestra. El PIX es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y cada pago por PIX mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. Las redes de tarjetas, en cambio, liquidan entre países, así que una tarjeta emitida en el exterior puede, en principio, llegar a la filial.",
           "Lo que hoy frena el formulario en línea es la identificación, no la tarjeta. El proveedor de pagos exige un número de identificación para emitir cada cobro, y el formulario pide el CPF. Quien vive en Brasil como extranjero y ya lo tiene puede usar el formulario completo, con tarjeta o con PIX. Si no tiene CPF, escríbanos con el importe que desea donar y organizamos el pago directamente con usted."
         ],
         "outra_forma_titulo": "Otras formas de ayudar",

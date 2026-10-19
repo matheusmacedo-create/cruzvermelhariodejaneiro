@@ -27,7 +27,8 @@
   <link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/">
   <link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/">
   <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-1440.webp" media="(min-width: 921px)">
-  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-960.webp" media="(max-width: 920px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-960.webp" media="(min-width: 481px) and (max-width: 920px)" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/otim/hero-turma-cbfi-640.webp" media="(max-width: 480px)" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -52,7 +53,7 @@
       --red-dark: #a30000;
       --black: #0f1318;
       --text: #1a202c;
-      --muted: #718096;
+      --muted: #5a6577; /* 5,9:1 no branco (era #718096, 4,0:1: reprovava o contraste do rodapé; revisão de 19/10/2026) */
       --line: #e2e8f0;
       --soft: #f7f8fa;
       --paper: #ffffff;
@@ -549,7 +550,7 @@
       margin: 0;
     }
 
-    .footer-col h4 {
+    .footer-col h4, .footer-col h3 {
       font-size: 10px;
       font-weight: 800;
       color: var(--black);
@@ -738,7 +739,7 @@
        NOVO: NEWSLETTER
        ============================================================ */
     .newsletter-section { background: var(--red); color: #fff; text-align: center; }
-    .newsletter-section .eyebrow { color: #fff; opacity: .85; }
+    .newsletter-section .eyebrow { color: #fff; }
     .newsletter-section h2 { color: #fff; }
     .newsletter-section p.lead { color: rgba(255,255,255,.92); max-width: 560px; margin: 0 auto 28px; }
     .newsletter-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
@@ -786,8 +787,15 @@
     /* Home (16/10/2026). Fica fora do primeiro <style>, que os geradores copiam para as outras páginas; só a home usa
        estas regras, todas com o prefixo .hp- (exceto o --muted local, que só vale dentro do <main> da home). */
     main#inicio { --muted: #5f6b7a; } /* 5,4:1 no branco e 5,1:1 no #f7f8fa; o :root (#718096) segue nas outras páginas */
-    /* Hero no celular: espaço para o botão flutuante do chat não cobrir "Seja voluntário". */
-    @media (max-width: 620px) { main#inicio .hero .wrap { padding-bottom: 150px; } }
+    /* Hero no celular: os dois botões ("Doe agora" e "Seja voluntário") cabem na primeira tela de 360x740 (revisão de
+       19/10/2026): o título continua logo abaixo da faixa de cookies (153 px de altura), mas o texto é um pouco menor e o conteúdo
+       não é mais centrado numa caixa de 670 px. O ícone do chat só aparece depois de rolar (data-cv-chat-depois-do-hero,
+       site/chat/chat.js), então não cobre o canto de "Doe agora" nem de "Seja voluntário". */
+    @media (max-width: 620px) {
+      main#inicio .hero .wrap { min-height: 0; align-content: start; padding-top: 104px; padding-bottom: 96px; }
+      main#inicio .hero p { font-size: 1rem; line-height: 1.5; margin-bottom: 1.2rem; }
+      main#inicio .hero .eyebrow { margin-bottom: .6rem; }
+    }
 
     /* Faixa de identidade: números com fonte, cada item é um link. */
     .hp-info a.info-item { color: #fff; display: block; transition: background .15s; border-radius: 4px; }
@@ -885,6 +893,14 @@
         background:
           linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.25) 100%),
           url("assets/otim/hero-turma-cbfi-960.webp") center 30% / cover no-repeat;
+      }
+    }
+    /* Celular estreito: a versão de 640 px (38 KB em vez de 79 KB) é o elemento de LCP da home. */
+    @media (max-width: 480px) {
+      .hero::before {
+        background:
+          linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.25) 100%),
+          url("assets/otim/hero-turma-cbfi-640.webp") center 30% / cover no-repeat;
       }
     }
     /* Galeria "A filial em ação" */
@@ -1081,8 +1097,7 @@
       "sameAs": [
         "https://www.instagram.com/cruzvermelhabrasileirarj/",
         "https://www.facebook.com/profile.php?id=61591390052128",
-        "https://www.youtube.com/@cruzvermelhariodejaneiro-org",
-        "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
+        "https://www.youtube.com/@cruzvermelhariodejaneiro-org"
       ]
     },
     {
@@ -1207,7 +1222,7 @@
   <main id="inicio">
     <!-- data-cvrj-ck-topo: o aviso de cookies (site/consentimento/consentimento.js) fica no alto desta página, abaixo
          do cabeçalho, para não cobrir a missão e os botões da base da primeira tela (achado T01). -->
-    <section class="hero" aria-labelledby="hero-title" data-cvrj-ck-topo>
+    <section class="hero" aria-labelledby="hero-title" data-cvrj-ck-topo data-cv-chat-depois-do-hero>
       <div class="wrap">
         <div>
           <p class="eyebrow">Filial do Estado do Rio de Janeiro</p>
@@ -1695,7 +1710,7 @@
         <p class="footer-principios"><a href="/principios-fundamentais/#humanidade">Humanidade</a>, <a href="/principios-fundamentais/#imparcialidade">imparcialidade</a>, <a href="/principios-fundamentais/#neutralidade">neutralidade</a>, <a href="/principios-fundamentais/#independencia">independência</a>, <a href="/principios-fundamentais/#voluntariado">voluntariado</a>, <a href="/principios-fundamentais/#unidade">unidade</a> e <a href="/principios-fundamentais/#universalidade">universalidade</a>.</p>
       </div>
       <div class="footer-col">
-        <h4>Quem somos</h4>
+        <h3>Quem somos</h3>
         <p><a href="/quem-somos/">Quem somos</a></p>
         <p><a href="/historia/">Nossa história</a></p>
         <p><a href="/principios-fundamentais/">Princípios Fundamentais</a></p>
@@ -1706,7 +1721,7 @@
         <p><a href="equipe.html">Equipe</a></p>
       </div>
       <div class="footer-col">
-        <h4>Como ajudar</h4>
+        <h3>Como ajudar</h3>
         <p><a href="/doe/">Doe</a></p>
         <p><a href="/voluntariado/">Seja voluntário</a></p>
         <p><a href="/cursos-gratuitos/">Formação de voluntários</a></p>
@@ -1716,14 +1731,14 @@
         <p><a href="/matricula-cursos-presenciais/">Escola de Educação e Saúde</a></p>
       </div>
       <div class="footer-col">
-        <h4>Transparência</h4>
+        <h3>Transparência</h3>
         <p><a href="/transparencia/">Portal da transparência</a></p>
         <p><a href="/canais-oficiais/">Canais oficiais</a></p>
         <p><a href="/verificar/">Verificar um documento</a></p>
         <p><a href="/bio/">Links oficiais</a></p>
       </div>
       <div class="footer-col">
-        <h4>Contato</h4>
+        <h3>Contato</h3>
         <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ, CEP 20230-130</p>
         <p><i class="fa-solid fa-phone"><svg class="ico ico-phone" aria-hidden="true" focusable="false"><use href="#i-phone"/></svg></i> (21) 99992-2864</p>
         <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
@@ -1873,7 +1888,7 @@
     })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
-  <link rel="stylesheet" href="/chat/chat.min.css?v=bc4c1ef474">
-  <script src="/chat/chat.js?v=e1540124a6" defer></script>
+  <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
+  <script src="/chat/chat.js?v=5640573d60" defer></script>
 </body>
 </html>
