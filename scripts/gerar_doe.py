@@ -187,7 +187,7 @@ PAGINA = """<!DOCTYPE html>
       <div class="wrap">
         <p class="eyebrow">Transparência</p>
         <h2>Você sabe exatamente quem está apoiando.</h2>
-        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>.</p>
+        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está em <a href="/historia/">Nossa história</a>, e quem dirige a filial, em <a href="/quem-somos/">Quem somos</a>.</p>
         <div class="doe-dados">
 @@DADOS@@
         </div>
