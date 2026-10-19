@@ -17,7 +17,11 @@
               "texto": "Nossa história",
               "url": "/historia/"
             }
-          ]
+          ],
+          "chat": [
+            "outro"
+          ],
+          "chatRotulo": "O que é a Cruz Vermelha RJ?"
         },
         {
           "pergunta": "Como ajudar a Cruz Vermelha Brasileira Rio de Janeiro? Posso doar dinheiro pelo site?",

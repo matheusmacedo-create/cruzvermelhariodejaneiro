@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 import minificar_css
+from sincronizar_catalogo import FORA_DO_DOMINIO
 
 RAIZ = Path(__file__).resolve().parent.parent
 PASTA = RAIZ / "site" / "chat"
@@ -135,9 +136,21 @@ def atualizar_respostas() -> bool:
     return True
 
 
+def conferir_fora_do_dominio() -> None:
+    """Curso que só a plataforma da escola vende (FORA_DO_DOMINIO) não aparece no chat do site, nem na lista de
+    cursos nem numa resposta. Sem isso, um chat.js antigo ou uma FAQ copiada traria a Micropigmentação de volta."""
+    js = (PASTA / "chat.js").read_text(encoding="utf-8").lower()
+    nomes = {"micropigmentacao-labial": "micropigmentação"}
+    achados = [slug for slug in FORA_DO_DOMINIO if slug in js or nomes.get(slug, slug) in js]
+    if achados:
+        raise SystemExit(f"site/chat/chat.js cita curso fora do domínio da filial ({', '.join(achados)}): rode "
+                         "gerar_matricula_presencial.py (lista de cursos) e confira a site/faq-home.json")
+
+
 def main() -> int:
     if atualizar_respostas():
         print("atualizado site/chat/chat.js (respostas da FAQ)")
+    conferir_fora_do_dominio()
     for caminho in PAGINAS_MANUAIS:
         p = RAIZ / caminho
         if not p.exists():
