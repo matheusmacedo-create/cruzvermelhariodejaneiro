@@ -27,6 +27,8 @@
   RewriteRule ^(matricula|inscricao)/?$ /matricula-cursos-presenciais/ [R=301,L]
   RewriteRule ^equipe/?$ /equipe.html [R=301,L]
   RewriteRule ^campanha-agasalho/?$ /campanha-agasalho.html [R=301,L]
+  # Notícia publicada com o endereço cortado (…os-representantes-da); o endereço longo dava 404 no Search Console.
+  RewriteRule ^noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da-associacao-de-bombeiros-civis/?$ /noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/ [R=301,L]
   # /voluntariado/ é página própria desde 11/10/2026 (scripts/gerar_institucional.py); os outros dois endereços levam a ela.
   RewriteRule ^(voluntario|seja-voluntario)/?$ /voluntariado/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]
