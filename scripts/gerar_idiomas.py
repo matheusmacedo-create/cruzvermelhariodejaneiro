@@ -357,6 +357,9 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     for i, b in enumerate(h["blocos"]):
         ident = ["sobre", "atuacao", "sede"][i] if i < 3 else f"bloco{i}"
         paras = "\n        ".join(f"<p>{esc(p)}</p>" for p in b["paragrafos"])
+        if b.get("link"):  # [rótulo, chave de PAGINAS]: o link da frase da escola, na língua da página
+            paras += (f'\n        <p class="i18n-porta"><a href="{PAGINAS[b["link"][1]][idioma["codigo"]]}">'
+                      f'{esc(b["link"][0])} &rarr;</a></p>')
         blocos.append(f"""    <section class="i18n-bloco" id="{ident}">
       <div class="wrap">
         <h2>{esc(b['titulo'])}</h2>
@@ -373,7 +376,7 @@ def pagina_home(idioma: dict, partes: dict) -> str:
             url = VOLUNTARIO
             extra = ' hreflang="pt-BR" lang="pt-BR"'
         else:
-            url, extra = PAGINAS[chave][idioma["codigo"]], ""
+            url, extra = (PAGINAS[chave][idioma["codigo"]] if chave in PAGINAS else "#" + chave), ""
         return (f"<article><h3>{esc(titulo)}</h3><p>{esc(texto)}</p>"
                 f'<p class="i18n-porta"><a href="{url}"{extra}>{esc(rotulo)} &rarr;</a></p></article>')
 
