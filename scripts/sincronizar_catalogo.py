@@ -8,7 +8,8 @@ publica. As fotos em WebP são geradas por scripts/gerar_imagens_matricula.py e 
 site/matricula-cursos-presenciais/index.html por scripts/gerar_matricula_presencial.py.
 
 Regra do projeto: só existem aqui os cursos que a escola publica. Curso que sair do catálogo
-da escola sai daqui na próxima sincronização.
+da escola sai daqui na próxima sincronização. E nem todo curso da escola entra: os de FORA_DO_DOMINIO
+ficam só na plataforma da escola, e a sincronização não os traz de volta.
 
 Uso:  python3 scripts/sincronizar_catalogo.py
 Sem dependências além da biblioteca padrão.
@@ -26,6 +27,13 @@ from pathlib import Path
 ORIGEM = "https://escola.cursoscruzvermelha.org"
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "site" / "matricula-cursos-presenciais" / "cursos.json"
+
+# Cursos que a escola publica e que não são vendidos no domínio da filial (cruzvermelhariodejaneiro.org): ficam só
+# na plataforma da escola. Slug -> motivo e data da decisão. Tirar daqui é o único jeito de o curso voltar.
+FORA_DO_DOMINIO = {
+    "micropigmentacao-labial": ("procedimento estético, sem relação com a missão humanitária da filial; decisão do "
+                                "Matheus de 19/10/2026, na segunda recusa do Google Ad Grants"),
+}
 
 GRUPOS = [
     ("emergencia", "Emergência e vida", ["primeiros-socorros-basico", "primeiros-socorros-lei-lucas", "suporte-basico-de-vida", "puncao-venosa"]),
@@ -177,6 +185,10 @@ def main() -> int:
         return 1
 
     cursos = [extrair_curso(uuid, nome) for uuid, nome in vistos.items()]
+    for c in cursos:
+        if c["slug"] in FORA_DO_DOMINIO:
+            print(f"  fora do domínio da filial: {c['nome']} [{c['slug']}] ({FORA_DO_DOMINIO[c['slug']]})")
+    cursos = [c for c in cursos if c["slug"] not in FORA_DO_DOMINIO]
     cursos.sort(key=lambda c: c["nome"].lower())
 
     # Grupos: os slugs listados primeiro; o resto cai em "Outros cursos".

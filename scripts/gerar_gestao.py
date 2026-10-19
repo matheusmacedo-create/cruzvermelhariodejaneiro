@@ -11,7 +11,7 @@ a inteligência artificial tornaram isso possível. Tudo o que a página afirma 
   da geração na página, que vale se a leitura falhar; o encadeamento ("anterior" de um dia = "compromisso" do dia
   anterior) foi conferido no manifesto de 16/10/2026;
 - os sistemas citados em "O que já funciona assim" estão publicados (portal, verificação, canais oficiais, pedido de
-  documentos, acervo, ponto da sede, cadastro de voluntários, atendimento por e-mail);
+  documentos, ponto da sede, cadastro de voluntários, atendimento por e-mail);
 - a parte da IA diz só o que é fato: os sistemas foram construídos e são mantidos com assistentes de IA, sob
   direção e revisão da equipe; a IA não decide, não aprova, não assina; a confiança vem da matemática.
 
@@ -466,7 +466,6 @@ def main() -> int:
           <a class="gs-cartao" href="/verificar/"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><h3>Verificar um documento</h3><p>Ofícios, certificados e publicações conferidos pelo código, pelo QR code ou pelo arquivo.</p></a>
           <a class="gs-cartao" href="/canais-oficiais/"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><h3>Canais oficiais</h3><p>A lista registrada de site, e-mail, telefone e endereço oficiais, com histórico de versões.</p></a>
           <a class="gs-cartao" href="/pedido-de-documentos/"><i class="fa-solid fa-envelope" aria-hidden="true"></i><h3>Pedido de documentos</h3><p>Para pedir a íntegra de um documento, com comprovação de quem pede e resposta por e-mail.</p></a>
-          <a class="gs-cartao" href="/acervo/"><i class="fa-solid fa-book-medical" aria-hidden="true"></i><h3>Acervo histórico</h3><p>Documentos e fotos da história da filial, catalogados e guardados com cópia de segurança.</p></a>
           <a class="gs-cartao" href="/quem-somos/#como-nos-financiamos"><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i><h3>Como a filial se financia</h3><p>De onde vem o dinheiro que mantém o Palácio e as atividades humanitárias.</p></a>
         </div>
         <h3 class="gs-subtitulo">E na gestão do dia a dia</h3>

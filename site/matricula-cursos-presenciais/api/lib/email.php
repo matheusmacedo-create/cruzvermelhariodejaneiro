@@ -2030,7 +2030,7 @@ function mcp_contato_assuntos(): array
 {
     return [
         'matricula' => 'Matrícula em cursos', 'curso' => 'Dúvida sobre um curso', 'pagamento' => 'Pagamento ou PIX',
-        'voluntariado' => 'Voluntariado', 'doacoes' => 'Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
+        'voluntariado' => 'Voluntariado', 'doacoes' => 'Doações, Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
         // Só do formulário da página /dia-das-criancas/ (o chat não oferece este assunto).
         'brinquedos' => 'Doação de brinquedos (Dia das Crianças)',
         // Só da página /pedido-de-documentos/ (api/documentos.php); os comprovantes vão só por e-mail.

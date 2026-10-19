@@ -52,8 +52,11 @@ AGENTE = "cvb-rj-sitemap/2.0 (+https://cruzvermelhariodejaneiro.org/)"
 # últimas são geradas pela Redação por FTP; se alguma ainda estiver com noindex no ar, pagina_indexavel a deixa fora.
 PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
-    ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
-    ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
+    # Doação de volta em 19/10/2026 (DOACAO_NO_AR = True em gerar_doe.py e gerar_idiomas.py, sem os .htaccess do 503).
+    ("/doe/", "doe/index.html", "monthly", "0.8", "Doação"),
+    # A matrícula vende os cursos da escola (a Ltda): desde 19/10/2026 (segunda recusa do Ad Grants, achado M09) fica
+    # abaixo das páginas institucionais, que têm de 0.6 a 0.8. /bio/ saiu no mesmo dia: é noindex (gerar_bio.py, M14).
+    ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "monthly", "0.5", "Matrícula em cursos presenciais"),
     ("/historia/", "historia/index.html", "monthly", "0.7", "História da filial"),
     # Páginas institucionais (11/10/2026, scripts/gerar_institucional.py): só entram depois de publicadas (pagina_indexavel).
     ("/quem-somos/", "quem-somos/index.html", "monthly", "0.7", "Quem somos"),
@@ -74,7 +77,7 @@ PAGINAS = [
     ("/canais-oficiais/", None, "monthly", "0.5", "Canais oficiais (Redação)"),
     ("/verificar/", "verificar/index.html", "monthly", "0.6", "Verificação de documentos"),
     # Políticas: geradas por gerar_politicas.py, nas três línguas (até 27/09/2026, a Redação gerava
-    # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) saiu: está fora do ar.
+    # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) ficou fora de 25/09 a 19/10/2026.
     ("/privacidade/", "privacidade/index.html", "yearly", "0.3", "Política de Privacidade"),
     ("/cookies/", "cookies/index.html", "yearly", "0.3", "Política de Cookies"),
     ("/termos/", "termos/index.html", "yearly", "0.3", "Termos de Uso"),
@@ -87,18 +90,18 @@ PAGINAS = [
     ("/es/cookies/", "es/cookies/index.html", "yearly", "0.2", "Cookies em espanhol"),
     ("/es/terminos/", "es/terminos/index.html", "yearly", "0.2", "Termos em espanhol"),
     ("/es/reembolsos/", "es/reembolsos/index.html", "yearly", "0.2", "Reembolso em espanhol"),
-    ("/acervo/", None, "weekly", "0.7", "Acervo (Redação)"),
+    # O acervo (/acervo/, /en/archive/, /es/acervo/) saiu em 19/10/2026: as cinco coleções ainda dizem "Em breve"
+    # (achados L02/M10 da segunda recusa do Ad Grants). Volta para cá quando houver itens publicados.
     ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
     ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
     ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
-    ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
-    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
+    ("/en/donate/", "en/donate/index.html", "monthly", "0.5", "Doação em inglês"),
+    ("/es/donar/", "es/donar/index.html", "monthly", "0.5", "Doação em espanhol"),
+    ("/en/courses/", "en/courses/index.html", "monthly", "0.4", "Cursos em inglês"),
+    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.4", "Cursos em espanhol"),
     ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
     ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
-    # As coleções e os itens do acervo ficam no sitemap.xml da Redação, que gera essas páginas.
-    ("/en/archive/", "en/archive/index.html", "monthly", "0.5", "Acervo em inglês"),
-    ("/es/acervo/", "es/acervo/index.html", "monthly", "0.5", "Acervo em espanhol"),
     # Páginas só em inglês (scripts/gerar_ingles.py); as notícias em inglês entram logo abaixo.
     ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
     ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
@@ -128,10 +131,7 @@ ALTERNATIVAS = {
     "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
-    # Acervo: cluster completo; o português é gerado pela Redação e declara os mesmos hreflang.
-    "/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    # Acervo (/acervo/ + /en/archive/ + /es/acervo/): cluster fora desde 19/10/2026, junto com as páginas (ver PAGINAS).
     # Pares pt-BR + en. A campanha declara o par nas duas páginas. /noticias/, /privacidade/ e
     # /termos/ são da Redação e ainda não declaram hreflang: até declararem, só o lado em inglês
     # entra aqui, para o sitemap não dizer mais do que as páginas dizem.
@@ -145,15 +145,19 @@ ALTERNATIVAS = {
     "/en/terms/": {"pt-BR": "/termos/", "en": "/en/terms/"},
 }
 ALTERNATIVAS.update({en: {"pt-BR": pt, "en": en} for pt, en in NOTICIAS_EN.items()})
-for _chave in ("privacidade", "cookies", "termos", "reembolso"):
+# Doação: cluster completo com x-default no português, como declaram gerar_doe.py e gerar_idiomas.py.
+for _chave in ("privacidade", "cookies", "termos", "reembolso", "doar"):
     _c = idiomas.PAGINAS[_chave]
     for _url in _c.values():
         ALTERNATIVAS[_url] = {"pt-BR": _c["pt"], "en": _c["en"], "es": _c["es"]}
+        if _chave == "doar":
+            ALTERNATIVAS[_url]["x-default"] = _c["pt"]
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
+# A landing de Punção Venosa (puncaovenosav1., Vercel) saiu em 19/10/2026: é página de venda de um curso da escola
+# (achados M09/C9), e o sitemap do domínio da ONG não a anuncia mais. A página continua no ar.
 SUBDOMINIOS = [
     ("https://projetocores.cruzvermelhariodejaneiro.org/", "monthly", "0.6", "Projeto Impacto das Cores (Hostinger)"),
-    ("https://puncaovenosav1.cruzvermelhariodejaneiro.org", "monthly", "0.7", "Curso de Punção Venosa (Vercel)"),
 ]
 
 SITEMAP_REDACAO = f"{ORIGEM}/sitemap.xml"

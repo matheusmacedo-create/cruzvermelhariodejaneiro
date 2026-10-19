@@ -273,7 +273,13 @@ v('oferta.json do repositório vale', (static function () use ($raiz): bool {
             return false;
         }
     }
-    return $o['parcelado_no_ar'] === false && count($o['sem_turma']) === 7;
+    // Um max_fila por curso do catálogo publicado (seis desde 19/10/2026, sem a Micropigmentação Labial).
+    $catalogo = json_decode((string) file_get_contents("$raiz/site/matricula-cursos-presenciais/cursos.json"), true);
+    $slugs = array_column($catalogo['cursos'], 'slug');
+    sort($slugs);
+    $fila = array_keys($o['sem_turma']);
+    sort($fila);
+    return $o['parcelado_no_ar'] === false && $fila === $slugs;
 })(), true);
 
 // --- cenários de chave em processo próprio (mcp_config guarda num static)

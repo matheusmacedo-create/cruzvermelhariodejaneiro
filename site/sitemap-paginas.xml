@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:38:32+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:38:32+00:00. Não editar à mão.
+     Ajustado à mão em 19/10/2026 (segunda recusa do Ad Grants): doação de volta, sem /bio/, sem o acervo
+     "Em breve" e sem a Micropigmentação Labial. Rodar gerar_sitemaps.py de novo depois de publicar. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -117,10 +119,19 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/doe/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/</loc>
     <lastmod>2026-10-10T05:15:53+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/aula-dea-sala-591.webp</image:loc>
       <image:title>Aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com instrutor e alunos</image:title>
@@ -178,14 +189,6 @@
       <image:title>Modelo do certificado do curso de Cuidador de Idosos (Curso Livre) da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/micropigmentacao-labial-960.webp</image:loc>
-      <image:title>Micropigmentação Labial na Cruz Vermelha Brasileira Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/img/certificado-micropigmentacao-labial-640.webp</image:loc>
-      <image:title>Modelo do certificado do curso de Micropigmentação Labial da Cruz Vermelha Brasileira Rio de Janeiro, com o nome do aluno, o curso e a carga horária</image:title>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/mapa-sede-960.webp</image:loc>
       <image:title>Mapa do Centro do Rio com a sede da Cruz Vermelha marcada na Praça da Cruz Vermelha, 10, perto da Avenida Mem de Sá</image:title>
     </image:image>
@@ -195,31 +198,6 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-matricula.jpg</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/bio/</loc>
-    <lastmod>2026-10-16T01:50:36+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/bio/img/avatar-256.webp</image:loc>
-      <image:title>Cruz Vermelha Brasileira – Rio de Janeiro</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/bio/img/cursos-700.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/bio/img/voluntario-700.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/bio/img/og-bio.jpg</image:loc>
     </image:image>
   </url>
   <url>
@@ -1523,16 +1501,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://cruzvermelhariodejaneiro.org/acervo/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/archive/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <lastmod>2026-10-04T21:40:42+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://cruzvermelhariodejaneiro.org/en/</loc>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/"/>
@@ -1607,13 +1575,31 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/donate/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/es/donar/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/donate/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/donar/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/doe/"/>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/en/courses/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/courses/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/cursos/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/"/>
     <lastmod>2026-10-13T19:46:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.4</priority>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -1631,7 +1617,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/"/>
     <lastmod>2026-10-13T19:46:19+00:00</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.4</priority>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
@@ -1678,44 +1664,6 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/en/archive/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/archive/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <lastmod>2026-10-02T18:36:07+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/es/acervo/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/archive/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/acervo/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/acervo/"/>
-    <lastmod>2026-10-02T18:36:50+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
     </image:image>
   </url>
   <url>
@@ -1770,9 +1718,6 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/bancada-de-micropigmentacao-com-dermografo-pigmentos-e-mater.png</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar/quarto-adaptado-com-poltrona-andador-barra-de-apoio-e-organi.png</image:loc>
@@ -2372,25 +2317,6 @@
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa/kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png</image:loc>
       <image:title>An open first-aid kit on a kitchen worktop.</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/"/>
-    <lastmod>2026-10-02T18:36:36+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar/bancada-de-micropigmentacao-com-dermografo-pigmentos-e-mater.png</image:loc>
-      <image:title>A micropigmentation workstation with a dermograph, pigments and disposable supplies.</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>

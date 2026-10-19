@@ -1000,7 +1000,12 @@
     .footer-brand p + p { margin-top: 10px; }
     @media (max-width: 1100px) { footer .footer-grid { grid-template-columns: 1fr 1fr 1fr; } footer .footer-brand { grid-column: 1 / -1; } }
     @media (max-width: 620px) { footer .footer-grid { grid-template-columns: 1fr 1fr; gap: 22px 18px; padding: 36px 16px 28px; } footer .footer-col:last-child { grid-column: 1 / -1; } }
-  </style>
+  
+/* Botão "Doe" do cabeçalho (19/10/2026), o mesmo da home (site/index.html), que substituiu o botão "Plataforma". */
+.btn-doe-topo { background: var(--red); color: #fff; text-decoration: none; font-weight: 800; font-size: 13.5px; display: inline-flex; align-items: center; justify-content: center; padding: 9px 20px; border-radius: 999px; transition: background 0.2s; }
+.btn-doe-topo:hover, .btn-doe-topo:focus-visible, .btn-doe-topo[aria-current="page"] { background: var(--red-dark); color: #fff; }
+@media (max-width: 1320px) { .header-actions .btn-doe-topo { width: 100%; padding: 12px 20px; font-size: .95rem; } }
+</style>
 
   <!-- Google tag (gtag.js) -->
   <script>
@@ -1102,7 +1107,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=73b1fa99d5" defer></script>
+  <script src="/consentimento/consentimento.js?v=5ad82fa582" defer></script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 [
@@ -1155,36 +1160,35 @@
       </button>
 
       <div class="header-collapse" id="menu-painel">
-        <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
-             gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
+        <!-- Menu reorganizado em 19/10/2026 (Ad Grants): seis itens, a missão primeiro. "Como ajudar" junta doação,
+             voluntariado, formação de voluntários e campanhas; a escola (outra empresa) é um link só, perto do fim.
+             A ação de destaque do cabeçalho é a doação. -->
         <nav class="nav-links" aria-label="Menu principal">
           <div class="nav-grupo">
             <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-quem-somos">Quem somos</button>
             <div class="nav-sub" id="menu-quem-somos">
               <a href="/quem-somos/">Quem somos</a>
               <a href="/historia/">Nossa história</a>
+              <a href="/equipe.html" aria-current="page">Equipe</a>
               <a href="/principios-fundamentais/">Princípios Fundamentais</a>
-              <a href="/movimento-internacional/">Movimento Internacional</a>
               <a href="/emblema/">O emblema</a>
+              <a href="/movimento-internacional/">Movimento Internacional</a>
               <a href="/direito-internacional-humanitario/">Direito Internacional Humanitário</a>
               <a href="/base-legal/">Base legal</a>
-              <a href="/equipe.html" aria-current="page">Equipe</a>
-              <a href="/transparencia/">Transparência</a>
             </div>
           </div>
           <div class="nav-grupo">
-            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-cursos">Cursos</button>
-            <div class="nav-sub" id="menu-cursos">
-              <p class="nav-sub-rotulo">Para voluntários · da filial</p>
+            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-como-ajudar">Como ajudar</button>
+            <div class="nav-sub" id="menu-como-ajudar">
+              <a href="/doe/">Doe</a>
+              <a href="/voluntariado/">Seja voluntário</a>
               <a href="/cursos-gratuitos/">Formação de voluntários</a>
-              <p class="nav-sub-rotulo">Pagos · Escola de Educação e Saúde</p>
-              <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
-              <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a>
+              <a href="/#campanhas">Campanhas</a>
             </div>
           </div>
-          <a href="/voluntariado/">Voluntariado</a>
-          <a href="/#campanhas">Campanhas</a>
           <a href="/noticias/">Notícias</a>
+          <a href="/transparencia/">Transparência</a>
+          <a href="/matricula-cursos-presenciais/">Escola</a>
           <a href="/#contato">Contato</a>
         </nav>
 
@@ -1194,7 +1198,7 @@
             <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
             <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
           </div>
-          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
+          <a href="/doe/" class="btn-doe-topo">Doe</a>
         </div>
       </div>
     </div>
@@ -1531,7 +1535,8 @@
   </main>
 
   <footer>
-    <!-- Rodapé reorganizado em 11/10/2026: colunas por assunto; a faixa de baixo fica só com as políticas. -->
+    <!-- Rodapé reorganizado em 11/10/2026: colunas por assunto; a faixa de baixo fica só com as políticas. Em 19/10/2026
+         saíram a Wikipédia (verbete criado pela própria filial) e o acervo (ainda sem itens); CNPJ e endereço completo ficam. -->
     <div class="footer-grid">
       <div class="footer-brand">
         <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156" loading="lazy" decoding="async">
@@ -1550,13 +1555,14 @@
         <p><a href="/equipe.html">Equipe</a></p>
       </div>
       <div class="footer-col">
-        <h4>Atuação</h4>
+        <h4>Como ajudar</h4>
+        <p><a href="/doe/">Doe</a></p>
+        <p><a href="/voluntariado/">Seja voluntário</a></p>
         <p><a href="/cursos-gratuitos/">Formação de voluntários</a></p>
-        <p><a href="/voluntariado/">Voluntariado</a></p>
         <p><a href="/#campanhas">Campanhas</a></p>
         <p><a href="/noticias/">Notícias</a></p>
-        <p><a href="/acervo/">Acervo</a></p>
         <p><a href="/#faq">Perguntas frequentes</a></p>
+        <p><a href="/matricula-cursos-presenciais/">Escola de Educação e Saúde</a></p>
       </div>
       <div class="footer-col">
         <h4>Transparência</h4>
@@ -1564,11 +1570,10 @@
         <p><a href="/canais-oficiais/">Canais oficiais</a></p>
         <p><a href="/verificar/">Verificar um documento</a></p>
         <p><a href="/bio/">Links oficiais</a></p>
-        <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
-        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</p>
+        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ, CEP 20230-130</p>
         <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
         <div class="footer-social">
           <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
@@ -1614,7 +1619,7 @@
       });
     });
 
-    // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
+    // Grupos do menu ("Quem somos", "Como ajudar"): abrem por clique ou teclado; Esc ou clique fora fecham.
     (function () {
       const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
       const mouse = window.matchMedia('(min-width: 1321px) and (hover: hover)');
@@ -1645,7 +1650,7 @@
     })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
-  <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=443723b84d" defer></script>
+  <link rel="stylesheet" href="/chat/chat.min.css?v=bc4c1ef474">
+  <script src="/chat/chat.js?v=e1540124a6" defer></script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+# Página de erro em espanhol para tudo que estiver sob /es/ (a raiz continua com /404.html).
+# A página é gerada por scripts/gerar_idiomas.py.
+ErrorDocument 404 /es/404.html

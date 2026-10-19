@@ -33,7 +33,8 @@ from pathlib import Path
 
 import chat_widget
 import icones
-from gerar_matricula_presencial import DADOS, HOME, RAIZ, esc, partes_da_home
+from gerar_matricula_presencial import (DADOS, HOME, RAIZ, SUSTENTA_CURTO, SUSTENTA_TITULO, SUSTENTA_URL, esc,
+                                        partes_da_home)
 
 PASTA = RAIZ / "site" / "matricula-cursos-presenciais"
 STATIC = PASTA / "static"
@@ -192,6 +193,9 @@ CSS_PAGAR_TUDO = """  <style>/* Pagar tudo (10/2026): planos, parcelas, oferta a
     /* Textos longos (e-mail, caixa da oferta a prazo) quebram dentro da caixa a 320 px; o CNPJ não quebra no hífen. */
     .ck-oferta, .ck-legal { overflow-wrap: anywhere; }
     .ck-nowrap { white-space: nowrap; }
+    /* Como a escola sustenta a filial (achado C1 do Ad Grants), logo acima do botão de pagar. */
+    .ck-sustenta { margin: 12px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); line-height: 1.5; }
+    .ck-sustenta a { color: var(--red); font-weight: 700; text-decoration: underline; }
     /* Seletor de parcelas no celular: o rótulo curto (N× · total) e, abaixo, a linha completa das parcelas. */
     .ck-parcelas-linha { margin: -4px 0 10px; font-size: .86rem; line-height: 1.45; color: var(--text); }
     /* Resumo lateral preso (desktop): a foto encolhe e some em telas baixas; se ainda passar da altura da tela, o resumo
@@ -274,13 +278,14 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                 <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="@@ACEITE_VERSAO@@"><span class="ck-check-texto" id="ck-requisitos-texto">@@ACEITE@@</span></label>
                 <span id="ck-escolaridade" hidden></span>
                 <div class="ck-condicoes" id="ck-condicoes"@@P1_OCULTO@@><h3>Resumo das condições</h3><p id="ck-condicoes-texto"></p></div>
+                <p class="ck-nota ck-sustenta" id="ck-sustenta"><b>@@SUSTENTA_TITULO@@.</b> @@SUSTENTA_CURTO@@ <a href="@@SUSTENTA_URL@@">Veja como a filial se financia</a>.</p>
                 <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
                 <div class="ck-acao">
                   <div class="ck-acao-valor"><em id="ck-acao-rotulo">@@ACAO_ROTULO@@</em><strong id="ck-total-btn">@@INSCRICAO@@</strong></div>
                   <button class="btn btn-red ck-btn" type="submit" id="ck-pagar"><span id="ck-pagar-texto">Gerar QR Code</span></button>
                 </div>
                 <ul class="ck-confianca">
-                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Cruz Vermelha Brasileira Rio de Janeiro</li>
+                  <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Escola de Educação e Saúde</li>
                   <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Aulas presenciais no Centro do Rio</li>
                   <li><i class="fa-solid fa-lock" aria-hidden="true"></i> <span id="ck-selo-pagamento">PIX ou cartão, à vista</span></li>
                 </ul>
@@ -644,16 +649,14 @@ def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, 
 def vocabulario_checkout(partes: dict) -> dict:
     """Só nas telas do checkout (spec 1.1 e trava de vocabulário da 6.1): o botão "Plataforma" do cabeçalho da home vira
     "Área do aluno" (o rótulo da escola) e o link "Plataforma da escola" do rodapé vira "Área do aluno". A home, as
-    políticas e as outras páginas que usam o mesmo cabeçalho não mudam aqui. Sem o texto esperado, avisa e segue."""
+    políticas e as outras páginas que usam o mesmo cabeçalho não mudam aqui. Desde 19/10/2026 a home não tem mais
+    nenhum dos dois (o botão do cabeçalho é "Doe", e o rodapé leva à escola por "Escola de Educação e Saúde"): sem o
+    texto, o cabeçalho e o rodapé ficam como os da home."""
     header, footer = partes["header"], partes["footer"]
     if header.count("</i> Plataforma</a>") == 1:
         header = header.replace("</i> Plataforma</a>", "</i> Área do aluno</a>")
-    elif "Área do aluno</a>" not in header:
-        print("aviso: botão Plataforma não encontrado no cabeçalho da home; ficou como está", file=sys.stderr)
     if footer.count(">Plataforma da escola</a>") == 1:
         footer = footer.replace(">Plataforma da escola</a>", ">Área do aluno</a>")
-    elif ">Área do aluno</a>" not in footer:
-        print("aviso: link Plataforma da escola não encontrado no rodapé da home; ficou como está", file=sys.stderr)
     return dict(partes, header=header, footer=footer)
 
 
@@ -739,6 +742,8 @@ def main() -> int:
                                else "Opcional. Assim a Cruz Vermelha recebe a taxa de inscrição inteira.")
                       .replace("@@ACEITE_VERSAO@@", aceite_versao).replace("@@ACEITE@@", aceite)
                       .replace("@@RECEBEDOR_NOME@@", esc(RECEBEDOR_NOME)).replace("@@RECEBEDOR_CNPJ@@", RECEBEDOR_CNPJ)
+                      .replace("@@SUSTENTA_TITULO@@", esc(SUSTENTA_TITULO)).replace("@@SUSTENTA_CURTO@@", esc(SUSTENTA_CURTO))
+                      .replace("@@SUSTENTA_URL@@", SUSTENTA_URL)
                       # Nota legal e fornecedor (reg. 7): com o plano completo desligado (passos 3 e 4, e a volta atrás),
                       # os textos de hoje, iguais aos de /reembolso/ e /termos/ do ar; os novos só com a opção 1 (passo 5).
                       # O checkout.js troca pelo info.php (plano_completo).

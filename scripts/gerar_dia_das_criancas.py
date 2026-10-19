@@ -13,7 +13,8 @@ Fotos: ações anteriores dos voluntários com crianças, com autorização de u
 
 Doação: a página diz o que doar e onde entregar (na sede) e tem um formulário para doações maiores ou
 específicas, que vai para o mesmo atendimento do chat (api/contato.php, assunto "brinquedos"): painel da
-secretaria, e-mail à equipe e confirmação para a pessoa. Doação em dinheiro pelo site segue suspensa.
+secretaria, e-mail à equipe e confirmação para a pessoa. A campanha não pediu doação em dinheiro (a doação online
+ficou suspensa de 25/09 a 19/10/2026).
 
 Medição (docs/rastreamento.md): GA4 com o grupo de conteúdo "campanhas", cliques (dia_criancas_click), seções
 vistas, share, form_start e generate_lead; Pixel com ViewContent, Contact (o formulário) e DiaCriancasClick;

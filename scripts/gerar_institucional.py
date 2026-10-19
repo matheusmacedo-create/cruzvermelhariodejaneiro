@@ -57,7 +57,7 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
-              "transparencia": ("/transparencia/", "Transparência", "O portal da transparência da filial, em implantação.")}
+              "transparencia": ("/transparencia/", "Transparência", "Os documentos publicados pela filial, cada um com código de verificação.")}
 FORCA_LEGAL = {"vigente": "https://schema.org/InForce", "revogado": "https://schema.org/NotInForce",
                "revogada": "https://schema.org/NotInForce", "revogado em parte": "https://schema.org/PartiallyInForce"}
 DOMINIO_PROIBIDO = "cruzvermelharj.org.br"
@@ -133,7 +133,13 @@ CSS = """  <style>
     .inst-secao::after { content: ""; display: table; clear: both; }
     @media (max-width: 720px) { .inst-figura-lado { float: none; width: auto; margin: 18px 0 22px; } }
     .inst-figura-logo img { padding: 18px 22px; box-sizing: border-box; }
+    /* Bloco de ação no fim de cada página (19/10/2026): doar, ser voluntário ou falar com a filial. */
+    main.inst-pagina .inst-acao { padding: 0 0 44px; }
+    .inst-acao-caixa { max-width: 860px; margin: 0 auto; padding: 26px 28px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .inst-acao h2 { font-size: 1.35rem; letter-spacing: -.01em; margin: 0 0 8px; }
+    .inst-acao p { color: var(--muted); margin: 0 0 18px; max-width: 64ch; }
     @media (max-width: 620px) {
+      .inst-acao-caixa { padding: 22px 18px; }
       main.inst-pagina .inst-topo { padding: 28px 0 26px; }
       .inst-corpo { padding: 32px 0 12px; }
       .inst-oficial { padding: 14px 16px; }
@@ -259,6 +265,22 @@ def json_ld(p: dict, paginas: dict) -> str:
     return f'  <script type="application/ld+json">\n{texto}\n  </script>'
 
 
+# O bloco de ação: os três caminhos que funcionam hoje (a doação online, o cadastro do voluntariado e o contato).
+ACAO = """    <section class="inst-acao" aria-labelledby="inst-acao-titulo">
+      <div class="wrap">
+        <div class="inst-acao-caixa">
+          <h2 id="inst-acao-titulo">Ajude a Cruz Vermelha Brasileira Rio de Janeiro</h2>
+          <p>Doe para manter a formação de voluntários e as ações da filial, cadastre-se no voluntariado ou fale com a equipe, que responde pelo e-mail institucional.</p>
+          <div class="cta-row">
+            <a class="btn btn-red" href="/doe/">Doe agora</a>
+            <a class="btn btn-outline" href="/voluntariado/cadastro/">Seja voluntário</a>
+            <a class="btn btn-outline" href="/#contato">Fale com a filial</a>
+          </div>
+        </div>
+      </div>
+    </section>"""
+
+
 def relacionadas(p: dict, paginas: dict) -> str:
     cartoes = []
     for slug in p.get("relacionadas", []):
@@ -376,6 +398,8 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
       <p class="inst-atualizado">Atualizado em {atualizado_em(p):%d/%m/%Y}.</p>
       </div>
     </div>
+
+{ACAO}
 
 {relacionadas(p, paginas)}
   </main>

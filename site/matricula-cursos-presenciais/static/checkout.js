@@ -165,7 +165,7 @@
     if (!slug || !/^[a-z0-9-]+$/.test(slug)) return '';
     return '<div class="ck-cert"><img src="/matricula-cursos-presenciais/img/certificado-' + slug + '-640.webp" alt="Modelo do certificado de '
       + esc(d.curso.nome || '') + ' da Cruz Vermelha Brasileira Rio de Janeiro" width="640" height="452" loading="lazy" onerror="this.parentNode.hidden=true">'
-      + '<p><b>Ao concluir, você recebe o certificado da Cruz Vermelha</b>, reconhecida no Brasil e no mundo, com o seu nome, o curso e a carga horária. <span>Imagem de modelo.</span></p></div>';
+      + '<p><b>Ao concluir, você recebe o certificado da Escola de Educação e Saúde</b>, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. <span>Imagem de modelo.</span></p></div>';
   }
 
   /* Etapas do PIX (spec 1.13): QR Code gerado (Pronto), Aguardando pagamento, Banco confirma a transação, e o último

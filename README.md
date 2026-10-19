@@ -370,6 +370,161 @@ Google, faça a ligação de todo o nosso projeto com o Drive". O formulário ex
 - **Pendências:** /quem-somos/ também diz "fundada em 5 de dezembro de 1908, no Rio de Janeiro" com a mesma atribuição
   imprecisa (o Estatuto dá só a data; o Rio vem de /historia/); foto própria da fachada do Palácio com o emblema.
 
+## Google Ad Grants, 2ª recusa (19/10/2026): home, menu, rodapé e textos institucionais
+
+O pedido foi recusado de novo em 19/10/2026 ("velocidade, navegação clara, conteúdo significativo e atualizado,
+calls-to-action"). Auditoria em `resultado.json` (fora do repositório; achados C, L, M, T e K). Decisões do Matheus:
+home 100% institucional, doação online religada, Micropigmentação Labial fora do domínio da filial, sem o banner de
+empresas e sem a parede de logos, menu com "Escola" num link só e "Doe" como botão de destaque. Esta etapa (site 1
+de 4) mexeu só nas fontes; nada foi publicado e a regeração completa fica para a etapa 4.
+
+- **Menu (home e todas as páginas que copiam o cabeçalho):** seis itens, nesta ordem: "Quem somos" (grupo: Quem
+  somos, Nossa história, Equipe, Princípios, Emblema, Movimento, DIH, Base legal), "Como ajudar" (grupo: Doe, Seja
+  voluntário, Formação de voluntários, Campanhas), Notícias, Transparência, Escola (`/matricula-cursos-presenciais/`)
+  e Contato; à direita, o seletor de idioma e o botão vermelho "Doe" (`.btn-doe-topo`) no lugar de "Plataforma". O
+  mesmo menu está em `lib/site/esqueleto.ts` da Redação. `partes_da_home()` marca a página de matrícula pelo item
+  "Escola"; `menu_com_doe()` (`gerar_doe.py`) não mexe no cabeçalho que já tem `/doe/`; `vocabulario_checkout()`
+  (`gerar_checkout.py`) não avisa mais quando não acha "Plataforma". `equipe.html` e `historia/index.html` (cópias à
+  mão) receberam o cabeçalho e o rodapé novos; a Campanha do Agasalho, que tem desenho próprio, o menu simples sem
+  matrícula.
+- **Rodapé:** endereço completo (Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ, CEP 20230-130) e CNPJ em
+  toda página; saíram a Wikipédia (verbete criado pela conta da própria filial, achado K3; o `sameAs` do JSON-LD
+  fica), o Acervo (ainda "Em breve", L02/M10) e a plataforma da escola; entrou "Escola de Educação e Saúde".
+- **Home:** hero com "Doe agora" (`/doe/?utm_source=site&utm_medium=home`) e "Seja voluntário"; "Por onde
+  começar" sem curso nem empresas (voluntário, doar, conhecer, conferir a filial); seção "Últimas notícias" com
+  data; a seção da escola virou um cartão sem preço, com a frase do financiamento e os links para
+  `/quem-somos/#como-nos-financiamos` e para a matrícula; saíram o banner de empresas, os logos de parceiros, os
+  cartões de curso e o bloco "No trauma, ajudar é fazer a coisa certa" (que terminava em venda); newsletter e
+  contato com a missão antes dos cursos (o texto do aceite da newsletter não mudou: é o mesmo gravado pela Redação
+  em `lib/newsletter/inscricao.ts`).
+- **Últimas notícias:** `scripts/gerar_noticias_home.py` lê o índice `/noticias/` da Redação e escreve as 3 mais
+  recentes entre `<!-- noticias:inicio -->` e `<!-- noticias:fim -->`; as matérias de venda de curso (11 slugs,
+  achado C7) ficam fora. Um script no fim da home refaz a lista no navegador com o mesmo índice, depois do
+  `load`, para a home acompanhar cada publicação da Redação sem republicar `index.html`.
+- **FAQ da home:** 9 perguntas (instituição, como ajudar, voluntariado e uma da escola, "tem cursos gratuitos?"),
+  nenhuma com preço; a resposta da doação diz que ela é feita em `/doe/`, por PIX ou cartão; a de emergências não
+  apresenta mais curso como o que a filial oferece. As outras perguntas de curso seguem no JSON (`"home": false`)
+  para o chat e a matrícula, sem Micropigmentação Labial. O FAQPage sai compacto (11,6 KB → 7,5 KB).
+- **JSON-LD (K4):** o nó `EducationalOrganization` saiu do grafo da home; na matrícula, a escola não é mais
+  `parentOrganization` da filial, ganha `legalName`/`taxID` da Ltda, é `seller` das ofertas e quem certifica, e a
+  lista se chama "Cursos da Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda)".
+- **Textos:** /quem-somos/ com a doação em dinheiro de volta e a transparência no presente (o que o portal já
+  publica), sem "será publicada"/"em implantação"; /base-legal/ idem; /historia/ diz que os cursos pagos são da
+  escola, não da filial (M17), e troca "Visitar o Acervo" por doar/ser voluntário/falar com a filial; /gestao/
+  sem o cartão do acervo "catalogado" (M10); /doe/ cita Nossa história em vez do verbete da Wikipédia.
+- **Bloco de ação:** as páginas de `gerar_institucional.py` terminam com "Doe agora", "Seja voluntário" e "Fale
+  com a filial" antes de "Veja também".
+- **Velocidade:** saíram do primeiro `<style>` da home as 122 regras sem uso em nenhuma página gerada (faixa de
+  matrícula, sliders e cartões de curso antigos, parceiros, seletor de matrícula, rótulos do menu "Cursos"),
+  conferidas contra todas as páginas regeradas, os JS do site e os geradores: o `<style>` foi de 47,5 KB para
+  33 KB, e o HTML da home de 164,6 KB para cerca de 135 KB. O preload do hero não mudou.
+- **Fica para as outras etapas:** religar a doação (`DOACAO_NO_AR`, `.htaccess`, FAQ de `/doe/`, chat, bio, 404,
+  `llms.txt`, que ainda fala em doação suspensa, Plataforma, Micropigmentação e Wikipédia); EN/ES (menu e rodapé
+  próprios em `gerar_idiomas.py`); a matrícula e o chat sem Micropigmentação; as notícias da Redação; a
+  regeração e a publicação.
+
+## Google Ad Grants, 2ª recusa (19/10/2026): doação religada e páginas que vendem (etapa site 2 de 4)
+
+Continuação da etapa 1 (acima). Só as fontes mudaram: nada foi publicado, nada foi gravado no banco, e a regeração
+e a publicação ficam para a etapa 4.
+
+- **Doação de volta:** `DOACAO_NO_AR = True` em `gerar_doe.py` e `gerar_idiomas.py` (o menu em inglês e em espanhol
+  volta a ter "Donate/Donar", e `/en/donate/` e `/es/donar/` voltam a ser geradas). Os três `.htaccess` do 503
+  (`site/doe/`, `site/en/donate/`, `site/es/donar/`) só tinham as regras do 503 e foram apagados do repositório.
+  **No servidor, também precisam ser apagados à mão** (pelo gerenciador de arquivos da Hostinger, como diz a seção
+  "Doação em `/doe/`"): `publicar_hostinger.sh` nunca apaga `.htaccess`. Depois, limpar o cache e conferir que
+  `/doe/`, `/en/donate/` e `/es/donar/` respondem 200. O backend (`site/doe/api/`) não tinha trava própria; o
+  `config.php` da doação precisa continuar no servidor. `site/doacao-indisponivel.html` (e o gerador) ficam para
+  uma suspensão futura: `noindex`, sem nenhum link para ele.
+- **Textos que diziam "suspensa":** FAQ em inglês e espanhol (`faq-idiomas.json`, com link para a página de doação
+  de cada língua), bio, 404 (ganhou "Doe" e "Seja voluntário"), `llms.txt` (também sem Micropigmentação, sem
+  Wikipédia, sem o acervo "Em breve" e com a transparência no presente), políticas (`politicas.json`: tratamento
+  "Doações" no presente, com o que `mcp_doacoes` guarda, e Termos com a doação feita só em `/doe/`; `{doar}` é
+  substituído por `gerar_politicas.py` pela página de cada língua; revisão da privacidade e dos termos em
+  19/10/2026), Impacto das Cores, Campanha do Agasalho em inglês (`traducoes/en/paginas.json`) e o assunto do chat
+  ("Doações, Campanha do Agasalho e parcerias", igual em `chat.js` e em `api/lib/email.php`). A Campanha do Agasalho
+  em português ganhou uma linha discreta para a página de doação, depois das duas formas de participar.
+- **Wikipédia (K3):** saiu também do rodapé das páginas em inglês e espanhol (`rodape()` de `gerar_idiomas.py`); o
+  `sameAs` do JSON-LD fica.
+- **Matrícula e checkout (C1):** bloco "Como esta escola sustenta a Cruz Vermelha RJ" logo depois dos destaques do
+  topo, uma nota com o mesmo título no fim de cada Investimento, uma frase no "Quem somos" da escola, uma coluna
+  "Cruz Vermelha RJ" no rodapé (site da filial, como a escola sustenta a filial, Doe, Transparência) e, no checkout,
+  uma nota logo acima de "Gerar QR Code". O texto (`SUSTENTA_*` em `gerar_matricula_presencial.py`, importado pelo
+  checkout) é o de `/quem-somos/#como-nos-financiamos`, sem número novo, e leva para lá.
+- **Certificado da escola (C9/M09, decisão de 13/10):** textos da matrícula, do checkout (`checkout.js` e a lista de
+  confiança), as respostas do catálogo (`certificado_da_escola()` do chat, aplicada também na página) e a meta
+  description. "Forma pessoas no Rio desde 1914" virou "Escola ligada à Cruz Vermelha Brasileira RJ"; o rodapé leva
+  o CNPJ e o endereço da filial. **Fica em aberto:** a imagem de amostra do certificado reproduz o modelo enviado pela
+  filial em 04/10, que diz "ministrado pela Cruz Vermelha Brasileira – Filial Rio de Janeiro" e assina como
+  "Cruz Vermelha Brasileira - Rio de Janeiro"; os e-mails ao aluno (`api/lib/email.php`, `api/lib/recuperacao.php`)
+  e a legenda "Assim a Cruz Vermelha recebe a taxa de inscrição inteira" também não mudaram (têm testes próprios).
+  Precisa do Matheus: qual é o texto do certificado de verdade.
+- **Micropigmentação Labial fora do domínio:** `FORA_DO_DOMINIO` em `scripts/sincronizar_catalogo.py` (slug, motivo
+  e data); a sincronização não a traz de volta e `gerar_matricula_presencial.py` recusa gerar se o `cursos.json`
+  ainda a tiver. Saiu do `cursos.json`, do `oferta.json`, de `COPY_CURSO`/`ORDEM_EXIBICAO`/`BENEFICIO`, de
+  `idiomas.json` e `faq-idiomas.json` (seis cursos) e, na regeração, do `chat.js`. Continua só na plataforma da
+  escola. `testar_pagar_tudo.php` passou a comparar o `sem_turma` do `oferta.json` com os cursos do catálogo.
+- **Sitemaps (`gerar_sitemaps.py`):** `/doe/` (0.8), `/en/donate/` e `/es/donar/` (0.5) de volta, com hreflang;
+  matrícula de 0.9 para 0.5 e cursos em inglês e espanhol de 0.7 para 0.4, abaixo das institucionais; `/bio/` fora
+  (agora `noindex`); a landing de Punção Venosa (`puncaovenosav1.`) fora do `sitemap-subdominios.xml` (continua no
+  ar). O `sitemap-paginas.xml` só muda quando `gerar_sitemaps.py` rodar depois da publicação (ele lê o ar).
+- **Impacto das Cores (L01/T03):** os 5 links relativos `/voluntariado/cadastro/` davam 404 no subdomínio
+  (conferido em 19/10: `projetocores.…/voluntariado/cadastro/` 404, `cruzvermelhariodejaneiro.org/voluntariado/cadastro/`
+  200); agora são absolutos para o domínio principal. A pergunta "Posso doar dinheiro?" responde com a página de doação.
+- **Bio (M14):** `noindex, follow`, fora do sitemap, chamada sem emoji, voluntariado primeiro, botão de doação
+  (`/doe/?utm_source=ig…`), WhatsApp, YouTube e a escola por último; FAQ com as novas entradas do voluntariado
+  (`PROXIMAS_ENTRADAS`) e sem Micropigmentação.
+
+## Google Ad Grants, 2ª recusa (19/10/2026): aviso de cookies, chat e páginas em inglês e espanhol (etapa site 3 de 4)
+
+Continuação das etapas 1 e 2. Só as fontes mudaram (mais o `chat.js`, que é fonte e saída ao mesmo tempo): nada foi
+publicado, nada foi gravado no banco, e a regeração completa e a publicação ficam para a etapa 4.
+
+- **Aviso de cookies (T01), `site/consentimento/consentimento.js`:** o primeiro nível virou uma faixa de largura total
+  com uma frase ("Usamos cookies necessários e, com a sua permissão, de estatística (Google Analytics) e de marketing
+  (Meta). Detalhes em “Personalizar” e na Política de Cookies.") e os três botões do mesmo tamanho e estilo, lado a
+  lado também no celular. O detalhe do que o servidor manda à Meta (nome, e-mail e telefone em hash) ficou no segundo
+  nível ("Personalizar", categoria Marketing) e na `/cookies/`, em camadas, como admite o Guia de Cookies da ANPD. O
+  cookie `cvrj_consentimento` não mudou (`v=1&e&m&t&r`), nem a `REVISAO` (2): o texto do que vai à Meta continua o
+  mesmo, só mudou de camada. Medido no Chromium (cópia regerada): 61 px no computador (8,5% de 1280x720, 7,9% de
+  1366x768), 153 px em 360x740 (20,7%), 133 px em 390x844 (15,7%). Na home (`data-cvrj-ck-topo` na seção do topo de
+  `site/index.html`) a faixa fica logo abaixo do cabeçalho, sobre o respiro acima do título: em 1280x720, 1366x768 e
+  1920x1080 não cobre nada do topo; no celular cobre só a linha "Filial do Estado do Rio de Janeiro" e deixa o título,
+  a missão e os botões à vista. Nas outras páginas fica embaixo, e no computador o chat sobe acima dela
+  (`--cvrj-ck-altura`). **Atenção:** o aviso gêmeo do projeto Punção (`components/aviso-de-cookies.tsx`, que diz ser
+  "o mesmo do site principal") não foi mexido; a Redação pega o arquivo novo sozinha, pelo hash, quando regerar.
+- **Chat (T06):** no celular, só o ícone (o rótulo "Fale com a gente" continua para leitor de tela), em `chat.css`.
+  Página com botão fixo embaixo sobe o chat com `--cv-chat-acima` (a Campanha do Agasalho: 70 px; medido em 390x844,
+  sem sobreposição com "Como doar agasalhos e cobertores"). Assuntos na ordem da missão: Voluntariado, Doações,
+  Matrícula, Curso, Pagamento, Outro (os rótulos continuam iguais aos de `mcp_contato_assuntos()`). A abertura diz o
+  que a filial é; Voluntariado e Doações ganharam um botão de ação ("Fazer o cadastro de voluntário",
+  "Doar pelo site", `/doe/?utm_source=site&utm_medium=chat`); "O que é a Cruz Vermelha RJ?" (`faq-home.json`, marcada
+  com `"chat": ["outro"]`) responde a missão. `chat_widget.py` agora para se o `chat.js` citar um curso de
+  `FORA_DO_DOMINIO`; o `chat.js` do repositório já saiu sem a Micropigmentação (lista de cursos e respostas regeradas).
+- **Inglês e espanhol (`gerar_idiomas.py`, `idiomas.json`):** cabeçalho no formato da home — About us / Get involved
+  (Donate, Volunteer, Winter Clothing Drive) / News / Transparency / School / Contact; Quiénes somos / Cómo ayudar
+  (Donar, Ser voluntario, Campaña de Ropa de Abrigo) / Noticias / Transparencia / Escuela / Contacto —, com o seletor
+  de idioma e o botão vermelho "Donate"/"Dona". Página que só existe em português (voluntariado, transparência,
+  notícias em espanhol, campanha em espanhol) leva `hreflang`/`lang="pt-BR"`. "Escola" leva à página de cursos do
+  idioma. Os rótulos "Abrir/Fechar menu" do script copiado da home são traduzidos em `menu_js()` (e o gerador para se
+  a home mudar esses textos). Rodapé: sem plataforma, acervo e Wikipédia; com notícias, história (EN), transparência,
+  "School of Education and Health"/"Escuela de Educación y Salud", uma coluna Get involved/Cómo ayudar, CNPJ e
+  endereço. Home: Donate e Volunteer no topo e no contato; as portas na ordem Volunteer, Donate, Partner, Take a
+  course, e o número ("Four ways"/"Cuatro puertas") sai da lista exibida (M15). Cursos: bloco "How this school
+  supports the branch"/"Cómo esta escuela sostiene a la filial" logo depois do topo, com o texto de
+  `/quem-somos/#como-nos-financiamos` (C12); a porta da escola na home diz o mesmo.
+- **/en/history/ (L09):** no menu (About us) e no rodapé; o cabeçalho, o rodapé, o CSS da moldura e o script do menu
+  dela saem de `gerar_idiomas.py` (`atualizar_historia_en()`), o resto continua à mão.
+- **404 em espanhol:** `site/es/404.html` (gerada, `noindex`) e `site/es/.htaccess` com `ErrorDocument 404
+  /es/404.html` — publicar os dois. A 404 em inglês tem Donate em segundo.
+- **Micropigmentação em inglês:** `NOTICIAS_FORA` em `gerar_ingles.py` deixa de gerar a tradução da matéria do curso
+  (o `.md` fica); a página saiu do repositório e **precisa ser apagada no servidor**
+  (`/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/`). A matéria "Knowledge saves lives too" passou
+  a dizer seis cursos. O `mapa-hreflang.json` e o sitemap mudam na regeração.
+- **Fica para depois:** `/en/archive/` e `/es/acervo/` continuam gerados (sem link no rodapé; o botão deles leva ao
+  `/acervo/` "Em breve"); o título da página de cursos em inglês e espanhol ("Courses at the Brazilian Red Cross")
+  ainda nomeia a filial.
+
 ## Google Ad Grants: recusa e correções do site (15/10/2026)
 
 O pedido de ativação do Ad Grants foi recusado em 15/10/2026 com a mensagem genérica "o site da organização
@@ -460,7 +615,7 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
   implantação; rótulos únicos nas tabelas roláveis. As páginas EN/ES foram corrigidas por troca de texto,
   sem `gerar_idiomas.py`/`gerar_politicas.py`: esses geradores copiam o CSS e o script do menu da home e
   hoje mudariam o menu das páginas EN/ES (rótulos "Abrir/Fechar menu" em português). Antes de regerar
-  EN/ES, traduzir esses rótulos no gerador.
+  EN/ES, traduzir esses rótulos no gerador. (Feito em 19/10/2026: `menu_js()` em `gerar_idiomas.py`.)
 - **Publicação:** 36 arquivos de `scripts/publicacao-revisao-youtube.txt`, em 13/10/2026 às 16h46
   (horário de Brasília), depois da cópia do ar em `/tmp/no-ar-revisao` (28 iguais à `main`, o
   `faq-home.json` antigo, que ainda tinha "Como doar", e as 7 páginas acrescentadas depois da revisão, também
@@ -475,7 +630,8 @@ só o site. Conferência contra a política (support.google.com/nonprofits/answe
 - **Só os cursos da escola**: `scripts/sincronizar_catalogo.py` lê
   `escola.cursoscruzvermelha.org/cursos` e cada página de curso e grava
   `site/matricula-cursos-presenciais/cursos.json`. Curso que a escola tirar do ar sai daqui na
-  próxima sincronização. Nada é digitado à mão.
+  próxima sincronização. Nada é digitado à mão. Os cursos de `FORA_DO_DOMINIO` (desde 19/10/2026, a
+  Micropigmentação Labial) não entram: ficam só na plataforma da escola.
 - **Página**: `scripts/gerar_matricula_presencial.py` monta `index.html` com o `<style>`,
   cabeçalho, rodapé, GA4 e Meta Pixel copiados de `site/index.html`, mais dados estruturados
   (BreadcrumbList, ItemList de Course, FAQPage). Não edite o `index.html` gerado à mão: mude o
@@ -2325,7 +2481,10 @@ porque `EMAIL_REMETENTE_DOACAO` estava vazio e caía no remetente da matrícula.
 
 ## Doação em `/doe/` (20/09/2026)
 
-> **Fora do ar desde 25/09/2026, a pedido do Matheus.** `/doe/`, `/en/donate/` e `/es/donar/`
+> **Religada em 19/10/2026** (seção "Google Ad Grants, 2ª recusa … etapa site 2"): o texto abaixo descreve a
+> suspensão e serve de roteiro para suspender de novo.
+>
+> **Fora do ar de 25/09 a 19/10/2026, a pedido do Matheus.** `/doe/`, `/en/donate/` e `/es/donar/`
 > respondem **503** com o aviso `site/doacao-indisponivel.html` (gerado por
 > `scripts/gerar_doacao_indisponivel.py`, com o cabeçalho e o rodapé da home). 503 diz à busca que a
 > saída é temporária. As regras ficam num `.htaccess` em cada uma das três pastas, e não na raiz: um
@@ -2796,14 +2955,15 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 - Bio, 404, `llms.txt` e sitemaps sem doação. `/en/donate/` e `/es/donar/` deixam de ser geradas.
 - Para a doação voltar: `DOACAO_NO_AR = True` em `gerar_idiomas.py` e `gerar_doe.py`, rodar os
   geradores, tirar as regras 503 de `site/doe/.htaccess`, `site/en/donate/.htaccess` e
-  `site/es/donar/.htaccess` e rever a FAQ, a campanha e as políticas.
+  `site/es/donar/.htaccess` e rever a FAQ, a campanha e as políticas. **Feito nas fontes em 19/10/2026**
+  (etapa site 2 do Ad Grants); falta apagar os três `.htaccess` no servidor ao publicar.
 - As 5 matérias da Redação que chamavam para a página de doação (Chocó, Helicóptero, Ciclovia,
   Setembro Amarelo, "Recebemos") passam a chamar para o voluntariado, no padrão da revisão de 25/09
   (versões guardadas, `updated_at` intacto, `conteudo_corrigido_na_revisao`), depois do "Regerar".
 
 ### Ordem de geração
 
-`consentimento.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
+`consentimento.py` → `gerar_noticias_home.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
 `gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
 `gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`, e
 `gerar_ingles.py` depois de `gerar_idiomas.py` (notícias e 404 em inglês).

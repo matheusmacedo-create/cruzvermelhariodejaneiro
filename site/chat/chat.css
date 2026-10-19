@@ -2,7 +2,7 @@
    Complementa o CSS de cada página e usa os mesmos tokens da home (--red, --black, --muted, --line,
    --soft), com valores de reserva para páginas sem :root. Fonte: este arquivo; as páginas referenciam
    /chat/chat.css?v=<hash> (scripts/chat_widget.py). Entrou em 19/09/2026 no lugar do botão do WhatsApp. */
-.cv-chat { position: fixed; right: 20px; bottom: 20px; z-index: 1100; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.45; color: var(--text, #1a202c);
+.cv-chat { position: fixed; right: 20px; bottom: calc(20px + var(--cv-chat-acima, 0px) + var(--cvrj-ck-altura, 0px)); z-index: 1100; font-family: Inter, Arial, sans-serif; font-size: 15px; line-height: 1.45; color: var(--text, #1a202c);
   --cv-red: var(--red, #cc0000); --cv-red-dark: var(--red-dark, #a30000); --cv-black: var(--black, #0f1318); --cv-muted: var(--muted, #718096); --cv-line: var(--line, #e2e8f0); --cv-soft: var(--soft, #f7f8fa); }
 .cv-chat *, .cv-chat *::before, .cv-chat *::after { box-sizing: border-box; }
 .cv-chat [hidden] { display: none !important; }
@@ -73,10 +73,14 @@
 .cv-chat-rodape { margin: 0; padding: 0 14px 10px; font-size: .74rem; line-height: 1.4; color: var(--cv-muted); background: #fff; text-align: center; }
 .cv-chat-rodape a { color: var(--cv-muted); text-decoration: underline; }
 
-/* ---------- celular: painel vira uma folha colada embaixo */
+/* ---------- celular: só o ícone (o rótulo continua lá para leitor de tela) e o painel vira uma folha colada embaixo.
+   Com o rótulo, o botão ocupava 192 px e cobria metade dos botões fixos e dos cartões do fim da tela (achado T06).
+   Página com botão fixo embaixo sobe o chat com --cv-chat-acima (ex.: campanha-agasalho.html). Aqui o chat fica atrás da
+   faixa do aviso de cookies (--cvrj-ck-altura, que no computador o levanta), para os dois não somarem mais tela. */
 @media (max-width: 620px) {
-  .cv-chat { right: 14px; bottom: 14px; }
-  .cv-chat-abrir { min-height: 54px; padding: 0 18px 0 16px; font-size: .95rem; }
+  .cv-chat { right: 14px; bottom: calc(14px + var(--cv-chat-acima, 0px)); }
+  .cv-chat-abrir { width: 54px; min-height: 54px; padding: 0; justify-content: center; font-size: .95rem; }
+  .cv-chat-abrir .cv-chat-abrir-rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .cv-chat-painel { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-width: none; height: min(88vh, 700px); max-height: none; border-radius: 18px 18px 0 0; border-bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0); }
   .cv-chat.aberto .cv-chat-abrir { display: none; }
   .cv-chat-msg { max-width: 90%; }
