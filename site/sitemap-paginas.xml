@@ -1726,9 +1726,6 @@
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/extintor-de-incendio-e-abrigo-de-hidrante-no-corredor-de-um.png</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/imagem-ilustrativa-criada-por-ia.png</image:loc>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
     </image:image>
     <image:image>
@@ -2355,25 +2352,6 @@
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-bombeiro-civil-o-que-faz-e-como-se-formar/extintor-de-incendio-e-abrigo-de-hidrante-no-corredor-de-um.png</image:loc>
       <image:title>A fire extinguisher and a fire hose cabinet in the corridor of a building.</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://cruzvermelhariodejaneiro.org/en/news/first-aid-course-learn-the-essentials-in-a-few-lessons/</loc>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/first-aid-course-learn-the-essentials-in-a-few-lessons/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/"/>
-    <lastmod>2026-10-02T18:36:30+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/curso-de-primeiros-socorros-domine-com-poucas-aulas/imagem-ilustrativa-criada-por-ia.png</image:loc>
-      <image:title>AI-generated illustrative image about first-aid training.</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
