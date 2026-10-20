@@ -27,6 +27,9 @@
   RewriteRule ^(matricula|inscricao)/?$ /matricula-cursos-presenciais/ [R=301,L]
   RewriteRule ^equipe/?$ /equipe.html [R=301,L]
   RewriteRule ^campanha-agasalho/?$ /campanha-agasalho.html [R=301,L]
+  # 19/10/2026: a matéria "Domine com poucas aulas" foi fundida ao pilar de Primeiros Socorros Básico.
+  # A versão em português tem o 301 no .htaccess de /noticias/ (Redação); a em inglês é daqui.
+  RewriteRule ^en/news/first-aid-course-learn-the-essentials-in-a-few-lessons(/.*)?$ /en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/ [R=301,L]
   # /voluntariado/ é página própria desde 11/10/2026 (scripts/gerar_institucional.py); os outros dois endereços levam a ela.
   RewriteRule ^(voluntario|seja-voluntario)/?$ /voluntariado/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]

@@ -133,6 +133,8 @@ def ler_cabecalho(texto: str, arquivo: Path) -> tuple[dict, str]:
 NOTICIAS_FORA = {
     "curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar":
         "Micropigmentação Labial fora do domínio da filial (decisão do Matheus, 19/10/2026, Ad Grants)",
+    "curso-de-primeiros-socorros-domine-com-poucas-aulas":
+        "Fundida ao pilar de Primeiros Socorros Básico; 301 no .htaccess da raiz (Daniel, 19/10/2026)",
 }
 
 
