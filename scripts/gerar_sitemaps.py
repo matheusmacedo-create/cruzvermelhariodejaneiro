@@ -3,15 +3,15 @@
 
 Saídas (em site/, publicadas na raiz do public_html):
 
-  sitemap-index.xml        índice: aponta para os quatro sitemaps abaixo (é o único endereço que
+  sitemap-index.xml        índice: aponta para os três sitemaps abaixo (é o único endereço que
                            precisa ser enviado no Search Console)
   sitemap-paginas.xml      páginas fixas do domínio principal, com a data de modificação real
                            (cabeçalho Last-Modified do servidor) e as imagens de cada página
-  sitemap-noticias.xml     notícias publicadas pela Redação (lidas do sitemap.xml dela), com a data
-                           de modificação do artigo (article:modified_time) e suas imagens
   sitemap-subdominios.xml  landing pages nos subdomínios (projetocores., puncaovenosav1.),
                            cobertos pela propriedade de domínio do Search Console
-  + sitemap.xml            o da Redação (páginas fixas + notícias, sempre atual): só referenciado
+  + sitemap.xml            o da Redação (páginas fixas + notícias, sempre atual): só referenciado;
+                           é a fonte única das notícias (o sitemap-noticias.xml saiu do índice em 19/10/2026,
+                           por ficar defasado em relação a ele)
 
 Fora do índice, de propósito: sitemap-escola.xml (a escola fica em cursoscruzvermelha.org, outro
 domínio; gerado por gerar_sitemap_escola.py e enviado à parte, depois que a escola estiver verificada
@@ -337,28 +337,6 @@ def gerar_paginas() -> tuple[str, int]:
     return urlset("Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.", entradas), len(entradas)
 
 
-def gerar_noticias() -> tuple[str, int]:
-    status, _, xml = requisitar(SITEMAP_REDACAO)
-    if status != 200:
-        raise SystemExit(f"não consegui ler {SITEMAP_REDACAO} (HTTP {status})")
-    entradas = []
-    for bloco in re.findall(r"<url>(.*?)</url>", xml, re.S):
-        loc = html.unescape(re.search(r"<loc>(.*?)</loc>", bloco, re.S).group(1).strip())
-        if "/noticias/" not in loc or loc.rstrip("/") == ORIGEM + "/noticias":
-            continue
-        data_sitemap = re.search(r"<lastmod>(.*?)</lastmod>", bloco)
-        print(f"- notícia: {loc}")
-        ok, corpo, _ = pagina_indexavel(loc, loc)
-        if not ok:
-            continue
-        lastmod = w3c_de_iso(meta(corpo, "article:modified_time") or meta(corpo, "article:published_time")) \
-            or (data_sitemap.group(1).strip() if data_sitemap else None)
-        imagens = conferir_imagens(imagens_de(corpo, loc))
-        entradas.append(entrada(loc, lastmod, "monthly", "0.6", imagens))
-        print(f"  lastmod {lastmod or '(sem fonte)'} · {len(imagens)} imagens")
-    return urlset("Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens "
-                  "de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.", entradas), len(entradas)
-
 
 def gerar_subdominios() -> tuple[str, int]:
     entradas = []
@@ -378,7 +356,7 @@ def gerar_indice(gerados: list[str]) -> str:
     linhas = ['<?xml version="1.0" encoding="UTF-8"?>',
               "<!-- Índice de sitemaps da Cruz Vermelha Brasileira, filial Rio de Janeiro. Envie este endereço no Google\n"
               f"     Search Console (propriedade de domínio cruzvermelhariodejaneiro.org). Gerado por scripts/gerar_sitemaps.py em {agora_w3c()}.\n"
-              "     sitemap.xml é mantido pela Redação (regenerado a cada notícia); os outros três vêm deste repositório. -->",
+              "     sitemap.xml é mantido pela Redação (regenerado a cada notícia); os outros dois vêm deste repositório. -->",
               f'<sitemapindex xmlns="{NS_SITEMAP}">']
     for nome in gerados:
         linhas += ["  <sitemap>", f"    <loc>{ORIGEM}/{nome}</loc>", f"    <lastmod>{agora_w3c()}</lastmod>", "  </sitemap>"]
@@ -390,7 +368,7 @@ def gerar_indice(gerados: list[str]) -> str:
 
 def main() -> int:
     saidas = {}
-    for nome, gerador in (("sitemap-paginas.xml", gerar_paginas), ("sitemap-noticias.xml", gerar_noticias), ("sitemap-subdominios.xml", gerar_subdominios)):
+    for nome, gerador in (("sitemap-paginas.xml", gerar_paginas), ("sitemap-subdominios.xml", gerar_subdominios)):
         print(f"\n== {nome}")
         xml, quantidade = gerador()
         if quantidade == 0:
