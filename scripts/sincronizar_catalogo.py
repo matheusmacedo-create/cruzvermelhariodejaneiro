@@ -204,7 +204,7 @@ def main() -> int:
     dados = {
         "fonte": f"{ORIGEM}/cursos",
         "inscricao_centavos": 9900,
-        "divulgacao_centavos": anterior.get("divulgacao_centavos", 1490),
+        "divulgacao_centavos": 0,
         "grupos": grupos,
         "cursos": cursos,
     }

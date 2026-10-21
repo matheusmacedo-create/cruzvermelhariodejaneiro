@@ -64,9 +64,8 @@ return [
     'TAXA_CARTAO_PCT'   => 5.0,
     'TAXA_CARTAO_FIXA'  => 0,
 
-    // Contribuição opcional para a divulgação dos cursos, em centavos (07/10/2026, teste com 1490).
-    // Deixe vazio para ler de cursos.json (divulgacao_centavos); 0 tira a opção do checkout.
-    'DIVULGACAO_CENTAVOS' => '',
+    // Legado: novas inscrições não cobram divulgação, mesmo com um valor antigo no servidor.
+    'DIVULGACAO_CENTAVOS' => 0,
 
     // E-mail: Resend. O remetente precisa estar num domínio verificado na conta (em 18/09/2026:
     // info., noticias. e parceria.cruzvermelhariodejaneiro.org). Sem chave, cai no mail() da Hostinger.

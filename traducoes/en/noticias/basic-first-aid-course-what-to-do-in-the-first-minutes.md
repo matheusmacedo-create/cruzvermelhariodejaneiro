@@ -1,8 +1,8 @@
 ---
 slug_pt: curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa
 grupo: curso
-titulo: Basic First Aid course: what to do in the first minutes
-titulo_seo: Basic First Aid course: what to do in the first minutes
+titulo: First Aid Course at the Brazilian Red Cross in Rio: the basics
+titulo_seo: First Aid Course at the Brazilian Red Cross in Rio: the basics
 linha_fina: What to do in the first minutes of an emergency at home, when to call 192 or 193 in Brazil, what to keep in a kit, and the 8-hour course in Rio.
 publicado: 2026-09-24T21:20:38.451Z
 capa: kit-de-primeiros-socorros-aberto-sobre-a-bancada-de-uma-cozi.png
@@ -61,7 +61,21 @@ The programme is designed for anyone, with no prior training in health care requ
 - Procedures for choking and fainting
 - Other everyday urgent situations
 
-It is an 8-hour in-person course, with demonstrations and supervised practice — enough to move beyond theory and practise the response before you really need it. See also [how to learn the essentials of first aid in a few lessons](/en/news/first-aid-course-learn-the-essentials-in-a-few-lessons/).
+It is an 8-hour in-person course, with demonstrations and supervised practice — enough to move beyond theory and practise the response before you really need it.
+
+## In person or online? How to choose a course
+
+An online course helps you grasp the concepts and review procedures at your own pace. Manoeuvres such as CPR and using an AED, however, need practice: training with an instructor, simulating the situation and having your technique corrected. That is why the course at the Escola de Educação e Saúde is in person, with supervised practice.
+
+When comparing first-aid courses, check:
+
+- **Syllabus:** does it cover the emergencies you are most likely to face?
+- **Practical hours:** are the manoeuvres demonstrated and practised, not just lectured?
+- **Language:** is the material clear for people with no health-care background?
+- **Currency:** does the content follow current guidance? Protocols change.
+- **Certificate:** if you need it for work, an internship or a school requirement, check beforehand that it will be accepted.
+
+A good course also makes clear the limits of a lay responder: it teaches you to give first care and to call 192 or 193, not to replace professional help.
 
 ## The course at the Brazilian Red Cross — Rio de Janeiro Branch
 

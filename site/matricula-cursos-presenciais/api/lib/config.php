@@ -226,13 +226,13 @@ function mcp_taxa(string $metodo, int $base): int
 }
 
 /**
- * Contribuição opcional para a divulgação dos cursos (07/10/2026, teste com R$ 14,90): config > catálogo.
- * DIVULGACAO_CENTAVOS = 0 no config tira a opção do checkout; vazio, vale o divulgacao_centavos de cursos.json.
+ * Não há contribuição para divulgar cursos nas novas inscrições.
+ * Ignora configurações e catálogos antigos, inclusive em páginas que ficaram em cache.
+ * Os valores de inscrições anteriores continuam nos comprovantes e nos estornos.
  */
 function mcp_divulgacao_centavos(): int
 {
-    $valor = mcp_cfg('DIVULGACAO_CENTAVOS');
-    return max(0, (int) ($valor ?? mcp_catalogo()['divulgacao_centavos'] ?? 0));
+    return 0;
 }
 
 function mcp_escola_configurada(): bool

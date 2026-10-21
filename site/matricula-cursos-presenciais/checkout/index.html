@@ -114,7 +114,7 @@
       .ck-grid { padding-bottom: 72px; }
     }
   </style>
-  <script src="/matricula-cursos-presenciais/static/checkout.js?v=9733ad8805" defer></script>
+  <script src="/matricula-cursos-presenciais/static/checkout.js?v=266b655575" defer></script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -361,9 +361,9 @@
                     <div class="ck-vocepaga"><span>Você paga</span><strong id="ck-vocepaga-valor"></strong><small>no cartão de crédito</small></div>
                   </div>
                 </div>
-                <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">Opcional. Assim a Cruz Vermelha recebe a taxa de inscrição inteira.</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
-                <label class="ck-check" id="ck-divulgacao-opcao"><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao" data-centavos="1490"><span class="ck-check-texto">Quero ajudar a divulgar os cursos<small>Opcional. O valor vai para a divulgação dos cursos, para que cheguem a mais pessoas.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ R$ 14,90</span></label>
-                <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="ck-9733ad8805"><span class="ck-check-texto" id="ck-requisitos-texto">Tenho a escolaridade mínima do curso. Sei que a participação nas aulas é liberada só com a matrícula paga, além da taxa de inscrição.</span></label>
+                <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">Opcional. Cobre os custos de processamento da taxa de inscrição da escola.</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
+                <div id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" data-centavos="0" disabled hidden><span id="ck-divulgacao-valor" hidden></span></div>
+                <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="ck-266b655575"><span class="ck-check-texto" id="ck-requisitos-texto">Tenho a escolaridade mínima do curso. Sei que a participação nas aulas é liberada só com a matrícula paga, além da taxa de inscrição.</span></label>
                 <span id="ck-escolaridade" hidden></span>
                 <div class="ck-condicoes" id="ck-condicoes" hidden><h3>Resumo das condições</h3><p id="ck-condicoes-texto"></p></div>
                 <p class="ck-nota ck-sustenta" id="ck-sustenta"><b>Como esta escola sustenta a Cruz Vermelha RJ.</b> O resultado da escola é destinado à manutenção do Palácio da Cruz Vermelha e às atividades da filial, associação sem fins lucrativos. <a href="/quem-somos/#como-nos-financiamos">Veja como a filial se financia</a>.</p>
@@ -379,7 +379,7 @@
                 </ul>
                 <div id="ck-legal-hoje">
                   <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber o valor de volta (art. 49 do Código de Defesa do Consumidor). Seus dados são usados para a matrícula, a cobrança e os avisos sobre as suas aulas, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>
-                  <p class="ck-nota ck-legal" style="margin:8px 0 0">Cruz Vermelha Brasileira — Filial do Estado do Rio de Janeiro · CNPJ <span class="ck-nowrap">08.560.973/0001-97</span> · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ · contato@cruzvermelhariodejaneiro.org</p>
+                  <p class="ck-nota ck-legal" style="margin:8px 0 0">Venda e recebimento: O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ <span class="ck-nowrap">67.733.551/0001-35</span> · Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro/RJ · contato@cruzvermelhariodejaneiro.org.</p>
                 </div>
                 <div id="ck-legal-novo" hidden>
                   <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber de volta tudo o que pagou, inclusive a matrícula e os juros do parcelamento (art. 49 do Código de Defesa do Consumidor). Seus dados são usados para a inscrição, o acesso à área do aluno, a cobrança e os avisos sobre as suas aulas, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>
@@ -397,7 +397,7 @@
             <div class="ck-linha" id="ck-r-matricula-linha" hidden><span>Valor da matrícula</span><span id="ck-r-matricula">—</span></div>
             <div class="ck-linha"><span id="ck-r-inscricao-rotulo">Taxa de inscrição (agora)</span><span id="ck-r-inscricao">R$ 99,00</span></div>
             <div class="ck-linha" id="ck-r-taxa-linha" hidden><span>Custos de processamento</span><span id="ck-r-taxa">R$ 0,00</span></div>
-            <div class="ck-linha" id="ck-r-divulgacao-linha" hidden><span>Divulgação dos cursos</span><span id="ck-r-divulgacao">R$ 14,90</span></div>
+            <div class="ck-linha" id="ck-r-divulgacao-linha" hidden><span>Divulgação dos cursos</span><span id="ck-r-divulgacao">R$ 0,00</span></div>
             <div class="ck-linha" id="ck-r-juros-linha" hidden><span id="ck-r-juros-rotulo">Juros do parcelamento</span><span id="ck-r-juros">R$ 0,00</span></div>
             <div class="ck-linha total"><span id="ck-r-total-rotulo">Agora</span><span id="ck-r-total">R$ 99,00</span></div>
             <div class="ck-r-taxa-so" id="ck-r-so-taxa" hidden>

@@ -1,5 +1,7 @@
 # Cruz Vermelha Brasileira – Rio de Janeiro · site institucional e ligação com a escola
 
+Revisão para Ad Grants de 19/10/2026: [correções, testes e roteiro de publicação](docs/revisao-ad-grants-2026-10-19.md). Novas inscrições sem contribuição de divulgação, identificação da escola no checkout, doação sem promessa futura e imagem móvel versionada. A documentação abaixo preserva o histórico anterior; consulte a revisão para o estado desta entrega.
+
 Este repositório guarda a parte **institucional (social)** da presença digital da
 CVB-RJ: as páginas estáticas do site principal `cruzvermelhariodejaneiro.org`, o kit de
 SEO da escola e os scripts para publicar. A Redação, a intranet e os demais sistemas são
@@ -63,28 +65,28 @@ Publicados na Hostinger em 16/09/2026, com a fonte em `site/` (ver `site/README.
 Desde 19/09/2026 o domínio tem um **índice de sitemaps**:
 `https://cruzvermelhariodejaneiro.org/sitemap-index.xml`. É o único endereço a enviar no Google
 Search Console (propriedade de domínio `cruzvermelhariodejaneiro.org`, verificada por DNS, que cobre
-todos os subdomínios). Ele aponta para quatro arquivos:
+todos os subdomínios). Ele aponta para três arquivos:
 
 | Arquivo | Conteúdo | Fonte |
 | --- | --- | --- |
 | `sitemap-paginas.xml` | 8 páginas fixas do domínio principal, com `lastmod` real (`Last-Modified` do servidor), `changefreq`, `priority` e as imagens de cada página (37, com título tirado do `alt`) | `scripts/gerar_sitemaps.py` |
-| `sitemap-noticias.xml` | as notícias da Redação (12 em 19/09), com `article:modified_time` e as imagens de cada artigo (15) | idem, lendo o `sitemap.xml` da Redação |
 | `sitemap-subdominios.xml` | landing pages `doar.`, `projetocores.` e `puncaovenosav1.` (11 imagens) | idem |
-| `sitemap.xml` | páginas fixas + notícias, sempre atual (a Redação regenera a cada notícia) | Redação; não editar aqui |
+| `sitemap.xml` | páginas fixas + notícias, sempre atual (a Redação regenera a cada notícia); **fonte única das notícias** | Redação; não editar aqui |
 
 Regras do gerador: confere ao vivo cada URL e cada imagem (só entra o que responde 200); deixa de
 fora página com `noindex` ou com canonical apontando para outro endereço; nunca inventa `lastmod`
-(sem fonte confiável, omite); ignora logotipos, logos de parceiros e pixels de rastreio. Os quatro
-arquivos validam contra os XSD oficiais (sitemaps.org e extensão de imagem do Google). Para
+(sem fonte confiável, omite); ignora logotipos, logos de parceiros e pixels de rastreio. Os arquivos
+validam contra os XSD oficiais (sitemaps.org e extensão de imagem do Google). Para
 regenerar e publicar:
 
 ```
 python3 scripts/gerar_sitemaps.py
-scripts/publicar_hostinger.sh site/sitemap-index.xml site/sitemap-paginas.xml site/sitemap-noticias.xml site/sitemap-subdominios.xml
+scripts/publicar_hostinger.sh site/sitemap-index.xml site/sitemap-paginas.xml site/sitemap-subdominios.xml
 ```
 
 e limpar o cache. Vale rodar de novo quando uma página fixa mudar ou quando entrarem notícias (o
-`sitemap.xml` da Redação já cobre as novas; o `sitemap-noticias.xml` só acrescenta data e imagens).
+`sitemap.xml` da Redação já cobre as novas). O `sitemap-noticias.xml` saiu do índice em 19/10/2026:
+fora do ar ele ficava defasado e listava notícias diferentes das do `sitemap.xml`.
 
 Ficam fora do índice, de propósito: `www.` (canonical no apex); `escola.cruzvermelhariodejaneiro.org`
 (apelido da escola, cujo canonical é `escola.cursoscruzvermelha.org`); `redacao.` (ferramenta
@@ -3682,7 +3684,6 @@ site/                                   páginas estáticas mantidas à mão (es
   dia-das-criancas/                     página gerada da campanha de doação de brinquedos para o Dia das Crianças (index.html)
   sitemap-index.xml                     índice de sitemaps (o endereço a enviar no Search Console)
   sitemap-paginas.xml                   páginas fixas com data real e imagens (gerado)
-  sitemap-noticias.xml                  notícias da Redação com data e imagens (gerado)
   sitemap-subdominios.xml               landing pages doar., projetocores. e puncaovenosav1. (gerado)
   sitemap-escola.xml                    cópia do sitemap da escola (outro domínio; enviar à parte)
 escola/                                 kit de SEO para o app da escola (robots, sitemap, canonical, JSON-LD)
