@@ -1,0 +1,12 @@
+# Página de matrícula: banner, galeria e imagem de compartilhamento com a turma de 21/10/2026.
+# O index.html que vai ao ar é a cópia do que está no ar + só as trocas de imagem (o main tem 14 linhas ainda não
+# publicadas): RAIZ=<pasta com site/> e python3 trocar_imagens_turma.py sobre a cópia do ar, não o arquivo do Git.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-turma-nova.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-turma-nova.txt
+site/matricula-cursos-presenciais/index.html
+site/assets/otim/aula-turma-salao-480.webp
+site/assets/otim/aula-turma-salao-960.webp
+site/assets/otim/aula-turma-salao-1200.webp
+site/assets/otim/aula-turma-vertical-480.webp
+site/assets/otim/aula-turma-vertical-591.webp
+site/assets/otim/og-matricula-turma.jpg
