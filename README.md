@@ -3759,3 +3759,13 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   "em breve" da doação mensal. `/bio/` sem o valor da inscrição; `/en/history/` troca "Visit the Archive" por "Donate".
 - Cache limpo; os três no ar idênticos ao branch (HTTP 200), sem a frase antiga, sem erro de recurso ou de JS a 1366 px e
   390 px. Credencial TUS apagada.
+
+### Publicado em 21/10/2026 (legenda do certificado na matrícula)
+
+- `site/matricula-cursos-presenciais/index.html` da `main` (`d8d89d3`): as 7 legendas do modelo de certificado passam a dizer
+  "Imagem ilustrativa do modelo fornecido pela filial. Confirme com a escola o modelo, o emissor e as condições do certificado da
+  sua turma antes de se inscrever." (de `d7f4e82`, revisão do Ad Grants). Era a única diferença entre a `main` e o ar nessa página.
+- Cópia do ar antes, envio por TUS, cache limpo; no ar idêntico à `main`, sem erro de recurso ou de JS a 1366 px e 390 px.
+  Credencial TUS apagada.
+- Ainda fora do ar, da mesma revisão (`scripts/publicacao-ad-grants-revisao.txt`): `checkout/`, `comparecimento/`, `conferir/`,
+  `horarios/`, `parabens/`, `pendente/`, `cursos.json` e `static/checkout.js` (no ar ≠ `main`; os `.php` não foram conferidos).
