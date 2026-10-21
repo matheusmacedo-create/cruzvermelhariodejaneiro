@@ -56,7 +56,7 @@ URL_PUNCAO = "https://puncaovenosav1.cruzvermelhariodejaneiro.org/politica-de-pr
 # Definir (date(AAAA, M, D)) no dia da virada, junto com DOACAO_GATEWAY = donaty no servidor. Sem ela, o gerador
 # se recusa a rodar: publicar "{virada}" solto seria pior que não publicar. Para conferir páginas antes da virada,
 # exporte VIRADA_DOACAO_DATA=AAAA-MM-DD só naquela execução e NÃO publique o resultado.
-DATA_VIRADA_DOACAO: date | None = None
+DATA_VIRADA_DOACAO: date | None = date(2026, 10, 21)
 
 
 def data_da_virada() -> date | None:

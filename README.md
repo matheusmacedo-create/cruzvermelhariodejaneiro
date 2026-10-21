@@ -3773,3 +3773,18 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
 - **Não provado ao vivo**: o caminho da matrícula pela Unicopag (nenhuma consulta real chegou a ela) e a coluna `gateway` em
   `mcp_doacoes` (criada no primeiro acesso ao banco; a consulta de status não deu erro). Cobertura: 871 testes do checkout, 59 e 19 da doação.
 - Próximo: `docs/virada-donaty.md`, passo 2 em diante (precisa da chave nova, da cobrança de teste real e dos textos).
+
+### Virada das doações para a Donaty feita em 21/10/2026
+
+- **No ar desde 21/10/2026**: `/doe/api/config.php` (servidor, fora do Git) ganhou `DOACAO_GATEWAY='donaty'`, `DONATY_API_KEY` e
+  `DONATY_BASE_URL`; as 9 chaves antigas ficaram intactas (conferido por comparação, valores nunca impressos). `info.php` devolve
+  `"metodos":["pix"]`. Voltar atrás: `DOACAO_GATEWAY='unicopag'` no mesmo arquivo; cada doação consulta o gateway em que nasceu.
+- **Provado ao vivo**: uma doação de teste (R$ 5, protocolo CVD-261021-0004, PIX, e-mail da filial) criou a cobrança na Donaty com os campos
+  extras aceitos (CPF, telefone, `metadata`), devolveu o código PIX válido e a consulta de status responde `pendente`.
+- **NÃO provado**: que um PIX **pago** vira "pago" (nome de `payment_status` e postback `transaction.updated`). A Donaty não tem rota
+  de listagem. Pagar o PIX do teste (R$ 5) e conferir que `status.php` muda para `pago` e o comprovante chega por e-mail.
+- **Textos publicados** (38 arquivos, política e termos com revisão de 21/10/2026, `DATA_VIRADA_DOACAO = 2026-10-21`): doação por PIX
+  e Donaty; inscrição segue na ÚnicoPag. Sem os acréscimos opcionais F1 a F9 (razão social, repasse, país dos dados) e sem revisão
+  jurídica final. Cópia do ar antes em `/tmp/no-ar-virada-textos`; backend em `/tmp/no-ar-backend-donaty`.
+- **Pendente**: trocar a chave (foi colada no chat e a filial decidiu mantê-la), F1 a F9, revisão jurídica, e o merge do branch na `main`
+  (a `main` ganhou o parâmetro `?de=home` nos links "Doe agora" da home, enquanto o ar usa `?utm_source=site&utm_medium=home`: resolver no merge).

@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-10-19",
+  "revisao": "2026-10-21",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -1435,7 +1435,7 @@
       }
     },
     "termos": {
-      "revisao": "2026-10-19",
+      "revisao": "2026-10-21",
       "pt": {
         "titulo_aba": "Termos de Uso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Regras de uso do site da Cruz Vermelha Brasileira Rio de Janeiro: conteúdo, emblema da cruz vermelha, matrícula em cursos, doações, responsabilidade e foro.",
