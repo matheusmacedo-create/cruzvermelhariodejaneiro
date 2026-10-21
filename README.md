@@ -3759,3 +3759,23 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   "em breve" da doação mensal. `/bio/` sem o valor da inscrição; `/en/history/` troca "Visit the Archive" por "Donate".
 - Cache limpo; os três no ar idênticos ao branch (HTTP 200), sem a frase antiga, sem erro de recurso ou de JS a 1366 px e
   390 px. Credencial TUS apagada.
+
+### Publicado em 21/10/2026 (legenda do certificado na matrícula)
+
+- `site/matricula-cursos-presenciais/index.html` da `main` (`d8d89d3`): as 7 legendas do modelo de certificado passam a dizer
+  "Imagem ilustrativa do modelo fornecido pela filial. Confirme com a escola o modelo, o emissor e as condições do certificado da
+  sua turma antes de se inscrever." (de `d7f4e82`, revisão do Ad Grants). Era a única diferença entre a `main` e o ar nessa página.
+- Cópia do ar antes, envio por TUS, cache limpo; no ar idêntico à `main`, sem erro de recurso ou de JS a 1366 px e 390 px.
+  Credencial TUS apagada.
+
+### Publicado em 21/10/2026, 20h26 UTC (revisão Ad Grants na matrícula)
+
+- `scripts/publicacao-ad-grants-matricula.txt`, na ordem da lista: os 10 arquivos da matrícula de `d7f4e82` que estavam no ar
+  como em `d7f4e82^` (conferido antes, `.php` incluídos, pela API de arquivos) e a página principal (só o comentário do CSS).
+  Sai a contribuição de R$ 14,90 para a divulgação (`info.php` responde `divulgacao_centavos: 0`); nota legal do checkout com a
+  O-CVB Filial Rio de Janeiro Ensino Ltda; custos de processamento "da taxa de inscrição da escola".
+- Cópia do ar antes, envio por TUS, cache limpo. Conferido: os dois `.php` no servidor iguais ao Git; `conferir_publicacao.sh` e
+  `conferir_ad_grants.py --url` sem falhas (antes: 2); checkout no Chromium a 1366 px e 390 px sem a opção de divulgação, com a
+  nota nova e o `checkout.js?v=266b655575`, sem erro de recurso ou de JS (POSTs bloqueados no teste: nenhuma inscrição ou cobrança
+  criada). Credencial TUS apagada.
+- Para desfazer: roteiro no cabeçalho da lista.

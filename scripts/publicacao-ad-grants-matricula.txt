@@ -1,0 +1,27 @@
+# Revisão Ad Grants (d7f4e82, 19/10/2026), parte da matrícula que não chegou ao ar. Conferido em 21/10: os 10 primeiros
+# arquivos no ar são idênticos a d7f4e82^ e a main é exatamente d7f4e82 neles (nada mais misturado).
+# O que muda: sem a contribuição de R$ 14,90 para a divulgação dos cursos (servidor, catálogo, checkout.js e checkout);
+# custos de processamento "da taxa de inscrição da escola" no checkout e no e-mail; nota legal do checkout com a O-CVB Filial
+# Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35); checkout.js?v= novo nas telas. Mais o comentário do CSS da página
+# principal sem "WhatsApp" (trava de vocabulário de testar_checkout.php); o resto dela já está no ar.
+# Ordem: o primeiro arquivo antes dos demais (o servidor para de cobrar a divulgação; a página antiga que ainda mandar 1490
+# recebe 422 com o valor novo e atualiza o total), depois o e-mail, o catálogo, o JS e por fim as telas.
+# Antes: credenciais TUS exportadas e cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-ad-grants-matricula $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-matricula.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-matricula.txt)
+# Depois de limpar o cache:
+#   scripts/conferir_publicacao.sh scripts/publicacao-ad-grants-matricula.txt
+#   python3 scripts/conferir_ad_grants.py --url https://cruzvermelhariodejaneiro.org   (em 21/10, antes: 2 falhas, oferta e API)
+# Desfazer: os 10 primeiros com scripts/desfazer_publicacao.sh d7f4e82^ (lista sem a última linha); a página principal com
+# a cópia do ar (RAIZ=/tmp/no-ar-ad-grants-matricula), nunca com d7f4e82^, que tem as fotos e as legendas antigas.
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/cursos.json
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/index.html
