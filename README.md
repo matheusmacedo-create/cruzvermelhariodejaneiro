@@ -3737,3 +3737,9 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
 - Pendente fora do código: deploy da Redação (menu novo nas notícias, transparência e canais), correções de conteúdo das matérias
   (`plano.sql`), prestação de contas no portal, CNPJ "Inapta", domínio no nome da filial e reenvio do pedido no Google for Nonprofits.
 - Para desfazer: roteiro no cabeçalho de `scripts/publicacao-ad-grants-2.txt`.
+
+### Correções pontuais publicadas em 21/10/2026
+
+- `/doe/` (FAQ sem promessa de doação mensal "em breve", também no FAQPage), `/bio/` (sem o valor da inscrição) e `/en/history/`
+  (botão "Donate" no lugar de "Visit the Archive"). Cópia do ar antes em `/tmp/no-ar-3-correcoes`; cache limpo; os 3 arquivos
+  conferidos por HTTP, idênticos ao Git.
