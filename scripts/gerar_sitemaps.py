@@ -3,15 +3,15 @@
 
 Saídas (em site/, publicadas na raiz do public_html):
 
-  sitemap-index.xml        índice: aponta para os quatro sitemaps abaixo (é o único endereço que
+  sitemap-index.xml        índice: aponta para os três sitemaps abaixo (é o único endereço que
                            precisa ser enviado no Search Console)
   sitemap-paginas.xml      páginas fixas do domínio principal, com a data de modificação real
                            (cabeçalho Last-Modified do servidor) e as imagens de cada página
-  sitemap-noticias.xml     notícias publicadas pela Redação (lidas do sitemap.xml dela), com a data
-                           de modificação do artigo (article:modified_time) e suas imagens
   sitemap-subdominios.xml  landing pages nos subdomínios (projetocores., puncaovenosav1.),
                            cobertos pela propriedade de domínio do Search Console
-  + sitemap.xml            o da Redação (páginas fixas + notícias, sempre atual): só referenciado
+  + sitemap.xml            o da Redação (páginas fixas + notícias, sempre atual): só referenciado;
+                           é a fonte única das notícias (o sitemap-noticias.xml saiu do índice em 19/10/2026,
+                           por ficar defasado em relação a ele)
 
 Fora do índice, de propósito: sitemap-escola.xml (a escola fica em cursoscruzvermelha.org, outro
 domínio; gerado por gerar_sitemap_escola.py e enviado à parte, depois que a escola estiver verificada
@@ -52,8 +52,11 @@ AGENTE = "cvb-rj-sitemap/2.0 (+https://cruzvermelhariodejaneiro.org/)"
 # últimas são geradas pela Redação por FTP; se alguma ainda estiver com noindex no ar, pagina_indexavel a deixa fora.
 PAGINAS = [
     ("/", "index.html", "weekly", "1.0", "Home"),
-    ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "weekly", "0.9", "Matrícula em cursos presenciais"),
-    ("/bio/", "bio/index.html", "monthly", "0.6", "Links da bio do Instagram"),
+    # Doação de volta em 19/10/2026 (DOACAO_NO_AR = True em gerar_doe.py e gerar_idiomas.py, sem os .htaccess do 503).
+    ("/doe/", "doe/index.html", "monthly", "0.8", "Doação"),
+    # A matrícula vende os cursos da escola (a Ltda): desde 19/10/2026 (segunda recusa do Ad Grants, achado M09) fica
+    # abaixo das páginas institucionais, que têm de 0.6 a 0.8. /bio/ saiu no mesmo dia: é noindex (gerar_bio.py, M14).
+    ("/matricula-cursos-presenciais/", "matricula-cursos-presenciais/index.html", "monthly", "0.5", "Matrícula em cursos presenciais"),
     ("/historia/", "historia/index.html", "monthly", "0.7", "História da filial"),
     # Páginas institucionais (11/10/2026, scripts/gerar_institucional.py): só entram depois de publicadas (pagina_indexavel).
     ("/quem-somos/", "quem-somos/index.html", "monthly", "0.7", "Quem somos"),
@@ -74,7 +77,7 @@ PAGINAS = [
     ("/canais-oficiais/", None, "monthly", "0.5", "Canais oficiais (Redação)"),
     ("/verificar/", "verificar/index.html", "monthly", "0.6", "Verificação de documentos"),
     # Políticas: geradas por gerar_politicas.py, nas três línguas (até 27/09/2026, a Redação gerava
-    # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) saiu: está fora do ar.
+    # só /termos/ e /privacidade/). A doação (/doe/, /en/donate/, /es/donar/) ficou fora de 25/09 a 19/10/2026.
     ("/privacidade/", "privacidade/index.html", "yearly", "0.3", "Política de Privacidade"),
     ("/cookies/", "cookies/index.html", "yearly", "0.3", "Política de Cookies"),
     ("/termos/", "termos/index.html", "yearly", "0.3", "Termos de Uso"),
@@ -87,18 +90,18 @@ PAGINAS = [
     ("/es/cookies/", "es/cookies/index.html", "yearly", "0.2", "Cookies em espanhol"),
     ("/es/terminos/", "es/terminos/index.html", "yearly", "0.2", "Termos em espanhol"),
     ("/es/reembolsos/", "es/reembolsos/index.html", "yearly", "0.2", "Reembolso em espanhol"),
-    ("/acervo/", None, "weekly", "0.7", "Acervo (Redação)"),
+    # O acervo (/acervo/, /en/archive/, /es/acervo/) saiu em 19/10/2026: as cinco coleções ainda dizem "Em breve"
+    # (achados L02/M10 da segunda recusa do Ad Grants). Volta para cá quando houver itens publicados.
     ("/en/", "en/index.html", "monthly", "0.7", "Institucional em inglês"),
     ("/es/", "es/index.html", "monthly", "0.7", "Institucional em espanhol"),
     ("/en/faq/", "en/faq/index.html", "monthly", "0.6", "Perguntas frequentes em inglês"),
     ("/es/preguntas-frecuentes/", "es/preguntas-frecuentes/index.html", "monthly", "0.6", "Perguntas frequentes em espanhol"),
-    ("/en/courses/", "en/courses/index.html", "monthly", "0.7", "Cursos em inglês"),
-    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.7", "Cursos em espanhol"),
+    ("/en/donate/", "en/donate/index.html", "monthly", "0.5", "Doação em inglês"),
+    ("/es/donar/", "es/donar/index.html", "monthly", "0.5", "Doação em espanhol"),
+    ("/en/courses/", "en/courses/index.html", "monthly", "0.4", "Cursos em inglês"),
+    ("/es/cursos/", "es/cursos/index.html", "monthly", "0.4", "Cursos em espanhol"),
     ("/en/our-team/", "en/our-team/index.html", "monthly", "0.5", "Equipe em inglês"),
     ("/es/nuestro-equipo/", "es/nuestro-equipo/index.html", "monthly", "0.5", "Equipe em espanhol"),
-    # As coleções e os itens do acervo ficam no sitemap.xml da Redação, que gera essas páginas.
-    ("/en/archive/", "en/archive/index.html", "monthly", "0.5", "Acervo em inglês"),
-    ("/es/acervo/", "es/acervo/index.html", "monthly", "0.5", "Acervo em espanhol"),
     # Páginas só em inglês (scripts/gerar_ingles.py); as notícias em inglês entram logo abaixo.
     ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
     ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
@@ -128,10 +131,7 @@ ALTERNATIVAS = {
     "/equipe.html": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/en/our-team/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
     "/es/nuestro-equipo/": {"pt-BR": "/equipe.html", "en": "/en/our-team/", "es": "/es/nuestro-equipo/"},
-    # Acervo: cluster completo; o português é gerado pela Redação e declara os mesmos hreflang.
-    "/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/en/archive/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
-    "/es/acervo/": {"pt-BR": "/acervo/", "en": "/en/archive/", "es": "/es/acervo/"},
+    # Acervo (/acervo/ + /en/archive/ + /es/acervo/): cluster fora desde 19/10/2026, junto com as páginas (ver PAGINAS).
     # Pares pt-BR + en. A campanha declara o par nas duas páginas. /noticias/, /privacidade/ e
     # /termos/ são da Redação e ainda não declaram hreflang: até declararem, só o lado em inglês
     # entra aqui, para o sitemap não dizer mais do que as páginas dizem.
@@ -145,15 +145,19 @@ ALTERNATIVAS = {
     "/en/terms/": {"pt-BR": "/termos/", "en": "/en/terms/"},
 }
 ALTERNATIVAS.update({en: {"pt-BR": pt, "en": en} for pt, en in NOTICIAS_EN.items()})
-for _chave in ("privacidade", "cookies", "termos", "reembolso"):
+# Doação: cluster completo com x-default no português, como declaram gerar_doe.py e gerar_idiomas.py.
+for _chave in ("privacidade", "cookies", "termos", "reembolso", "doar"):
     _c = idiomas.PAGINAS[_chave]
     for _url in _c.values():
         ALTERNATIVAS[_url] = {"pt-BR": _c["pt"], "en": _c["en"], "es": _c["es"]}
+        if _chave == "doar":
+            ALTERNATIVAS[_url]["x-default"] = _c["pt"]
 
 # Landing pages nos subdomínios: (URL exatamente como o canonical, changefreq, priority, nota)
+# A landing de Punção Venosa (puncaovenosav1., Vercel) saiu em 19/10/2026: é página de venda de um curso da escola
+# (achados M09/C9), e o sitemap do domínio da ONG não a anuncia mais. A página continua no ar.
 SUBDOMINIOS = [
     ("https://projetocores.cruzvermelhariodejaneiro.org/", "monthly", "0.6", "Projeto Impacto das Cores (Hostinger)"),
-    ("https://puncaovenosav1.cruzvermelhariodejaneiro.org", "monthly", "0.7", "Curso de Punção Venosa (Vercel)"),
 ]
 
 SITEMAP_REDACAO = f"{ORIGEM}/sitemap.xml"
@@ -333,28 +337,6 @@ def gerar_paginas() -> tuple[str, int]:
     return urlset("Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.", entradas), len(entradas)
 
 
-def gerar_noticias() -> tuple[str, int]:
-    status, _, xml = requisitar(SITEMAP_REDACAO)
-    if status != 200:
-        raise SystemExit(f"não consegui ler {SITEMAP_REDACAO} (HTTP {status})")
-    entradas = []
-    for bloco in re.findall(r"<url>(.*?)</url>", xml, re.S):
-        loc = html.unescape(re.search(r"<loc>(.*?)</loc>", bloco, re.S).group(1).strip())
-        if "/noticias/" not in loc or loc.rstrip("/") == ORIGEM + "/noticias":
-            continue
-        data_sitemap = re.search(r"<lastmod>(.*?)</lastmod>", bloco)
-        print(f"- notícia: {loc}")
-        ok, corpo, _ = pagina_indexavel(loc, loc)
-        if not ok:
-            continue
-        lastmod = w3c_de_iso(meta(corpo, "article:modified_time") or meta(corpo, "article:published_time")) \
-            or (data_sitemap.group(1).strip() if data_sitemap else None)
-        imagens = conferir_imagens(imagens_de(corpo, loc))
-        entradas.append(entrada(loc, lastmod, "monthly", "0.6", imagens))
-        print(f"  lastmod {lastmod or '(sem fonte)'} · {len(imagens)} imagens")
-    return urlset("Notícias publicadas pela Redação (redacao.cruzvermelhariodejaneiro.org), com data de modificação e imagens "
-                  "de cada artigo. Complementa o sitemap.xml da Redação, que continua sendo a lista sempre atual.", entradas), len(entradas)
-
 
 def gerar_subdominios() -> tuple[str, int]:
     entradas = []
@@ -374,7 +356,7 @@ def gerar_indice(gerados: list[str]) -> str:
     linhas = ['<?xml version="1.0" encoding="UTF-8"?>',
               "<!-- Índice de sitemaps da Cruz Vermelha Brasileira, filial Rio de Janeiro. Envie este endereço no Google\n"
               f"     Search Console (propriedade de domínio cruzvermelhariodejaneiro.org). Gerado por scripts/gerar_sitemaps.py em {agora_w3c()}.\n"
-              "     sitemap.xml é mantido pela Redação (regenerado a cada notícia); os outros três vêm deste repositório. -->",
+              "     sitemap.xml é mantido pela Redação (regenerado a cada notícia); os outros dois vêm deste repositório. -->",
               f'<sitemapindex xmlns="{NS_SITEMAP}">']
     for nome in gerados:
         linhas += ["  <sitemap>", f"    <loc>{ORIGEM}/{nome}</loc>", f"    <lastmod>{agora_w3c()}</lastmod>", "  </sitemap>"]
@@ -386,7 +368,7 @@ def gerar_indice(gerados: list[str]) -> str:
 
 def main() -> int:
     saidas = {}
-    for nome, gerador in (("sitemap-paginas.xml", gerar_paginas), ("sitemap-noticias.xml", gerar_noticias), ("sitemap-subdominios.xml", gerar_subdominios)):
+    for nome, gerador in (("sitemap-paginas.xml", gerar_paginas), ("sitemap-subdominios.xml", gerar_subdominios)):
         print(f"\n== {nome}")
         xml, quantidade = gerador()
         if quantidade == 0:

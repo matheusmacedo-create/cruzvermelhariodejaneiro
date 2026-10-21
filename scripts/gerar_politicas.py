@@ -365,7 +365,8 @@ def main() -> int:
     for chave in ORDEM:
         for lingua in ("pt", "en", "es"):
             subs = {"email": idiomas.EMAIL, "inscricao": inscricao, "matricula": "/matricula-cursos-presenciais/",
-                    "escola": idiomas.ESCOLA, "links": "/bio/", "puncao": URL_PUNCAO}
+                    "escola": idiomas.ESCOLA, "links": "/bio/", "puncao": URL_PUNCAO,
+                    "doar": idiomas.PAGINAS["doar"][lingua]}
             subs.update({k: idiomas.PAGINAS[k][lingua] for k in ORDEM})
             # Data de revisão: a da política, se ela mudou sozinha (paginas.<chave>.revisao); senão, a de todas.
             revisao_pagina = date.fromisoformat(dados["paginas"][chave]["revisao"]) if "revisao" in dados["paginas"][chave] else revisao

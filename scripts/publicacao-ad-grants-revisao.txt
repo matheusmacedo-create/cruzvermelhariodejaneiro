@@ -1,0 +1,18 @@
+# Revisão Ad Grants — 19/10/2026. Lista incremental de publicação.
+# Guardar cópia do ar primeiro; publicar o primeiro arquivo antes dos demais.
+# Não inclui configurações privadas, config.example.php, scripts de teste ou documentos internos.
+# Depois de limpar o cache: python3 scripts/conferir_ad_grants.py --url https://cruzvermelhariodejaneiro.org
+# O portal de transparência é atualizado pelo deploy do Palácio Virtual e por “Atualizar a página no site”.
+site/matricula-cursos-presenciais/api/lib/config.php
+site/assets/otim/hero-turma-cbfi-640.webp
+site/doe/index.html
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/cursos.json
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/static/checkout.js

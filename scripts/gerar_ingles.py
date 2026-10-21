@@ -127,10 +127,24 @@ def ler_cabecalho(texto: str, arquivo: Path) -> tuple[dict, str]:
     return campos, m.group(2).strip() + "\n"
 
 
+# Traduções que ficam fora do site em inglês: matérias de curso que só a plataforma da escola vende
+# (sincronizar_catalogo.FORA_DO_DOMINIO). O .md continua aqui; a página, o índice, as "relacionadas", o mapa
+# de hreflang e o sitemap deixam de citá-la. A página que já estava no ar precisa ser apagada no servidor.
+NOTICIAS_FORA = {
+    "curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar":
+        "Micropigmentação Labial fora do domínio da filial (decisão do Matheus, 19/10/2026, Ad Grants)",
+    "curso-de-primeiros-socorros-domine-com-poucas-aulas":
+        "Fundida ao pilar de Primeiros Socorros Básico; 301 no .htaccess da raiz (Daniel, 19/10/2026)",
+}
+
+
 def ler_noticias() -> list[dict]:
     noticias = []
     for arquivo in sorted((FONTE / "noticias").glob("*.md")):
         campos, corpo = ler_cabecalho(arquivo.read_text(encoding="utf-8"), arquivo)
+        if campos.get("slug_pt") in NOTICIAS_FORA:
+            print(f"  fora do site: {arquivo.name} ({NOTICIAS_FORA[campos['slug_pt']]})")
+            continue
         campos["slug"], campos["corpo"] = arquivo.stem, corpo
         for chave, limite in LIMITES.items():
             if len(campos[chave]) > limite:

@@ -21,7 +21,7 @@ The team's message was direct. The branch's courses are for people who want to l
 
 ## Which courses are open
 
-Classes take place in person at the Red Cross Palace, Praça da Cruz Vermelha, 10, Centro. The current programme has seven courses:
+Classes take place in person at the Red Cross Palace, Praça da Cruz Vermelha, 10, Centro. The current programme has six courses:
 
 - **Basic First Aid** — 8 hours. Recognising an emergency, giving initial care and calling for help until the emergency services arrive.
 - **First Aid under the Lucas Law** — 8 hours. Training for schools, nurseries and other settings with children, covering what the law requires of their staff.
@@ -29,7 +29,6 @@ Classes take place in person at the Red Cross Palace, Praça da Cruz Vermelha, 1
 - **Peripheral IV Cannulation** — 8 hours. Venous access for health professionals.
 - **Civil Firefighter** — 80 hours. Prevention, emergency response and safety in places where many people gather.
 - **Carer for Older People** — a non-accredited course of 160 hours.
-- **Lip Micropigmentation** — 24 hours, with an emphasis on biosafety.
 
 ![Brazilian Red Cross Rio de Janeiro team at the Lapa Arches, with course leaflets held up in the foreground.](cruz-vermelha-brasileira-rio-de-janeiro-2.jpg "960x1280")
 *The team at the Lapa Arches, handing out leaflets about the courses — Photo: CVBRJ - Cursos*

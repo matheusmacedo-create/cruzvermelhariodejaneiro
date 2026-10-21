@@ -1,7 +1,7 @@
 {
   "fonte": "https://escola.cursoscruzvermelha.org/cursos",
   "inscricao_centavos": 9900,
-  "divulgacao_centavos": 1490,
+  "divulgacao_centavos": 0,
   "grupos": [
     {
       "id": "emergencia",
@@ -19,13 +19,6 @@
       "cursos": [
         "bombeiro-civil",
         "cuidador-de-idosos"
-      ]
-    },
-    {
-      "id": "outros",
-      "titulo": "Outros cursos",
-      "cursos": [
-        "micropigmentacao-labial"
       ]
     }
   ],
@@ -115,48 +108,6 @@
       ],
       "imagem": "cuidador-de-idosos",
       "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp"
-    },
-    {
-      "slug": "micropigmentacao-labial",
-      "uuid": "b05365c2-c066-4c73-bb4a-f32475a338a2",
-      "nome": "Micropigmentação Labial",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/b05365c2-c066-4c73-bb4a-f32475a338a2",
-      "descricao": "Procedimento estético de micropigmentação dos lábios.",
-      "sobre": [
-        "O Curso de Micropigmentação Labial da Cruz Vermelha forma profissionais capacitados para realizar procedimentos estéticos semipermanentes com segurança, precisão e excelência, valorizando a beleza natural dos lábios e proporcionando resultados harmoniosos.",
-        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre colorimetria, anatomia e fisiologia da pele, biossegurança, técnicas de implantação de pigmentos, correção de assimetrias visuais, uniformização da coloração labial, cuidados pré e pós-procedimento, além da utilização correta dos equipamentos e materiais utilizados na micropigmentação.",
-        "Após a conclusão, o profissional poderá atuar em clínicas de estética, salões de beleza, estúdios especializados, centros de estética ou como profissional autônomo, oferecendo um dos procedimentos mais valorizados do mercado da beleza, com alto potencial de crescimento e retorno financeiro."
-      ],
-      "observacoes": [],
-      "carga_horaria": "24 horas",
-      "escolaridade": "Ensino Médio",
-      "valor_curso_centavos": 40000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 50000,
-      "faq": [
-        {
-          "pergunta": "Preciso já trabalhar com estética?",
-          "resposta": "Não. O curso atende tanto iniciantes quanto profissionais que desejam ampliar seus serviços."
-        },
-        {
-          "pergunta": "Vou aprender a técnica na prática?",
-          "resposta": "Sim. O curso possui abordagem prática para desenvolver segurança e qualidade na execução da técnica."
-        },
-        {
-          "pergunta": "Posso começar a atender clientes após o curso?",
-          "resposta": "Após concluir o curso e respeitando a legislação aplicável à sua profissão, você estará preparado para iniciar seus atendimentos."
-        },
-        {
-          "pergunta": "Quais são os diferenciais do curso?",
-          "resposta": "Você aprenderá técnicas atuais, biossegurança, avaliação do cliente, colorimetria, cuidados pré e pós-procedimento e orientações para melhores resultados."
-        },
-        {
-          "pergunta": "Recebo certificado?",
-          "resposta": "Sim. Ao concluir todas as etapas do curso, o aluno recebe certificado emitido pela Cruz Vermelha Brasileira."
-        }
-      ],
-      "imagem": "micropigmentacao-labial",
-      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787194666-cff317cf7b7a.webp"
     },
     {
       "slug": "primeiros-socorros-basico",

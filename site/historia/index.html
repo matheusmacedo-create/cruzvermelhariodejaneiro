@@ -997,7 +997,12 @@
     .footer-brand p + p { margin-top: 10px; }
     @media (max-width: 1100px) { footer .footer-grid { grid-template-columns: 1fr 1fr 1fr; } footer .footer-brand { grid-column: 1 / -1; } }
     @media (max-width: 620px) { footer .footer-grid { grid-template-columns: 1fr 1fr; gap: 22px 18px; padding: 36px 16px 28px; } footer .footer-col:last-child { grid-column: 1 / -1; } }
-  </style>
+  
+/* Botão "Doe" do cabeçalho (19/10/2026), o mesmo da home (site/index.html), que substituiu o botão "Plataforma". */
+.btn-doe-topo { background: var(--red); color: #fff; text-decoration: none; font-weight: 800; font-size: 13.5px; display: inline-flex; align-items: center; justify-content: center; padding: 9px 20px; border-radius: 999px; transition: background 0.2s; }
+.btn-doe-topo:hover, .btn-doe-topo:focus-visible, .btn-doe-topo[aria-current="page"] { background: var(--red-dark); color: #fff; }
+@media (max-width: 1320px) { .header-actions .btn-doe-topo { width: 100%; padding: 12px 20px; font-size: .95rem; } }
+</style>
   <style>
     [id] { scroll-margin-top: 110px; }
     .hv-pagina { padding: 30px 0 80px; }
@@ -1219,7 +1224,7 @@
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=73b1fa99d5" defer></script>
+  <script src="/consentimento/consentimento.js?v=5ad82fa582" defer></script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 [
@@ -1367,36 +1372,35 @@
       </button>
 
       <div class="header-collapse" id="menu-painel">
-        <!-- Menu reorganizado em 11/10/2026: dois grupos (Quem somos e Cursos) e quatro links diretos. Cursos
-             gratuitos (filial) e pagos (escola, outra empresa) ficam em ambientes separados. -->
+        <!-- Menu reorganizado em 19/10/2026 (Ad Grants): seis itens, a missão primeiro. "Como ajudar" junta doação,
+             voluntariado, formação de voluntários e campanhas; a escola (outra empresa) é um link só, perto do fim.
+             A ação de destaque do cabeçalho é a doação. -->
         <nav class="nav-links" aria-label="Menu principal">
           <div class="nav-grupo">
             <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-quem-somos">Quem somos</button>
             <div class="nav-sub" id="menu-quem-somos">
               <a href="/quem-somos/">Quem somos</a>
               <a href="/historia/" aria-current="page">Nossa história</a>
+              <a href="/equipe.html">Equipe</a>
               <a href="/principios-fundamentais/">Princípios Fundamentais</a>
-              <a href="/movimento-internacional/">Movimento Internacional</a>
               <a href="/emblema/">O emblema</a>
+              <a href="/movimento-internacional/">Movimento Internacional</a>
               <a href="/direito-internacional-humanitario/">Direito Internacional Humanitário</a>
               <a href="/base-legal/">Base legal</a>
-              <a href="/equipe.html">Equipe</a>
-              <a href="/transparencia/">Transparência</a>
             </div>
           </div>
           <div class="nav-grupo">
-            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-cursos">Cursos</button>
-            <div class="nav-sub" id="menu-cursos">
-              <p class="nav-sub-rotulo">Para voluntários · da filial</p>
+            <button class="nav-grupo-botao" type="button" aria-expanded="false" aria-controls="menu-como-ajudar">Como ajudar</button>
+            <div class="nav-sub" id="menu-como-ajudar">
+              <a href="/doe/">Doe</a>
+              <a href="/voluntariado/">Seja voluntário</a>
               <a href="/cursos-gratuitos/">Formação de voluntários</a>
-              <p class="nav-sub-rotulo">Pagos · Escola de Educação e Saúde</p>
-              <a href="/matricula-cursos-presenciais/">Matrícula cursos presenciais</a>
-              <a href="https://escola.cursoscruzvermelha.org" target="_blank" rel="noopener">Plataforma da escola</a>
+              <a href="/#campanhas">Campanhas</a>
             </div>
           </div>
-          <a href="/voluntariado/">Voluntariado</a>
-          <a href="/#campanhas">Campanhas</a>
           <a href="/noticias/">Notícias</a>
+          <a href="/transparencia/">Transparência</a>
+          <a href="/matricula-cursos-presenciais/">Escola</a>
           <a href="/#contato">Contato</a>
         </nav>
 
@@ -1406,7 +1410,7 @@
             <a href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
             <a href="/es/" hreflang="es" lang="es" aria-label="Español">ES</a>
           </div>
-          <a href="https://escola.cursoscruzvermelha.org" class="btn-login-sutil"><i class="fa-solid fa-graduation-cap"><svg class="ico ico-graduation-cap" aria-hidden="true" focusable="false"><use href="#i-graduation-cap"/></svg></i> Plataforma</a>
+          <a href="/doe/" class="btn-doe-topo">Doe</a>
         </div>
       </div>
     </div>
@@ -1516,7 +1520,7 @@
     <figcaption>Enfermeiras e convidados na cerimônia de 5 de outubro de 1919, quando foram entregues braçais e diplomas.</figcaption>
   </figure>
 </div>
-<p>O projeto do edifício-sede, escolhido em concurso público, é do arquiteto italiano Pedro Campofiorito (1875–1945)<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>, <a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. As obras começaram em 5 de outubro de 1919, e o prédio foi inaugurado em 1923<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>. Em 1920, a CVB atendeu ao pedido do então prefeito, Carlos Sampaio, para que a fachada do novo prédio chegasse ao nível da Praça Vieira Souto, uniformizando a frente das casas da praça<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>.</p>
+<p>O projeto do edifício-sede, escolhido em concurso público, é do arquiteto italiano Pedro Campofiorito (1875–1945)<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>, <a href="#fonte-9" aria-label="Fonte 9">9</a>]</sup>. As obras começaram em 5 de outubro de 1919, e o prédio foi inaugurado em 1923<sup class="ref">[<a href="#fonte-8" aria-label="Fonte 8">8</a>]</sup>. Em 1920, a CVB atendeu ao pedido do então prefeito, Carlos Sampaio, para que a fachada do novo prédio chegasse ao nível da Praça Vieira Souto, uniformizando a frente das casas da praça<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>.</p>
 <div class="hv-par">
 <figure class="hv-fig ">
   <a class="hv-zoom" href="/assets/otim/historia-obras-1920-960.webp" data-cap="A construção antes da modificação do projeto, em 1920." data-alt="Prédio da Cruz Vermelha em obras, cercado por andaimes e por um muro, ainda sem os andares superiores"><img src="/assets/otim/historia-obras-1920-480.webp" srcset="/assets/otim/historia-obras-1920-480.webp 480w, /assets/otim/historia-obras-1920-960.webp 960w" sizes="(max-width: 920px) calc(100vw - 40px), 420px" width="480" height="345" alt="Prédio da Cruz Vermelha em obras, cercado por andaimes e por um muro, ainda sem os andares superiores" loading="lazy" decoding="async"></a>
@@ -1575,7 +1579,7 @@
 </div>
 
 <h3 id="escola-pratica">A Escola Prática de Enfermeiras (1916)</h3>
-<p>Das enfermeiras diplomadas partiu a iniciativa de ampliar o curso para formar profissionais. Nasceu assim a Escola Prática de Enfermeiras, a primeira do gênero fundada no país, criada em março de 1916<sup class="ref">[<a href="#fonte-11" aria-label="Fonte 11">11</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>. Seu primeiro diretor e professor foi o Dr. Getúlio dos Santos, médico do Exército. Na lição inaugural, ele citou as escolas já estabelecidas em Buenos Aires (1885), no Chile (1902) e em Cuba (1906) e descreveu a enfermeira ideal: forte, calma, precisa, paciente, discreta e fiel ao dever, com um papel moral junto ao doente, de “confidente natural” e “companheira carinhosa nas longas horas de vigília”<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
+<p>Das enfermeiras diplomadas partiu a iniciativa de ampliar o curso para formar profissionais. Nasceu assim a Escola Prática de Enfermeiras, a primeira do gênero fundada no país, criada em março de 1916<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>. Seu primeiro diretor e professor foi o Dr. Getúlio dos Santos, médico do Exército. Na lição inaugural, ele citou as escolas já estabelecidas em Buenos Aires (1885), no Chile (1902) e em Cuba (1906) e descreveu a enfermeira ideal: forte, calma, precisa, paciente, discreta e fiel ao dever, com um papel moral junto ao doente, de “confidente natural” e “companheira carinhosa nas longas horas de vigília”<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
 <p>A primeira turma de enfermeiras profissionais recebeu os diplomas em 3 de maio de 1917, na inauguração oficial da sede provisória, na Rua Prefeito Barata, nº 75: oito enfermeiras, com o Dr. Estellita Lins como paraninfo e Irany Baggi de Araújo como oradora. Serviu de madrinha do edifício a Sra. Hermínia Ottoni, esposa do sócio fundador Dr. Julio Ottoni<sup class="ref">[<a href="#fonte-1" aria-label="Fonte 1">1</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>. Ainda em 1917, o curso profissional passou a ter dois anos, os estatutos foram modificados e o programa foi ampliado<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
 <div class="hv-par">
 <figure class="hv-fig ">
@@ -1622,7 +1626,7 @@
 </div>
 
 <h3 id="escola-gripe">A gripe espanhola de 1918</h3>
-<p>Na epidemia de gripe espanhola, em 1918, a Escola foi transformada em posto de isolamento, e suas enfermeiras atuaram em hospitais, postos de socorro e residências da cidade<sup class="ref">[<a href="#fonte-11" aria-label="Fonte 11">11</a>, <a href="#fonte-12" aria-label="Fonte 12">12</a>]</sup>. Em outubro, diante da falta de postos de socorro públicos, o diretor Getúlio dos Santos propôs instalar enfermarias na sede da Escola: os primeiros leitos foram colocados em 15 de outubro, salas de aula viraram enfermarias e os medicamentos passaram a ser distribuídos gratuitamente<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
+<p>Na epidemia de gripe espanhola, em 1918, a Escola foi transformada em posto de isolamento, e suas enfermeiras atuaram em hospitais, postos de socorro e residências da cidade<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-11" aria-label="Fonte 11">11</a>]</sup>. Em outubro, diante da falta de postos de socorro públicos, o diretor Getúlio dos Santos propôs instalar enfermarias na sede da Escola: os primeiros leitos foram colocados em 15 de outubro, salas de aula viraram enfermarias e os medicamentos passaram a ser distribuídos gratuitamente<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
 <p>Segundo o relatório do diretor, foram distribuídos medicamentos a 4.084 pessoas e internados 105 doentes, com 14 óbitos. A aluna-enfermeira Cherubina Angélica Guimarães, que auxiliou nos primeiros dias, morreu da gripe; o próprio Getúlio dos Santos adoeceu e foi substituído pelo Dr. Estellita Lins<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. A experiência foi chamada de “batismo de sangue” das enfermeiras da turma de 1918<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
 <details class="hv-mais"><summary>Trechos do relatório do Dr. Getúlio dos Santos sobre a gripe de 1918</summary>
 <div class="hv-mais-corpo">
@@ -1646,7 +1650,7 @@
 </div>
 
 <h3 id="escola-visitadoras">Enfermeiras visitadoras e a luta contra a tuberculose</h3>
-<p>Em 1920, a Escola criou o primeiro curso de enfermeiras visitadoras do país, idealizado pelo Dr. Amaury de Medeiros e dedicado à enfermagem em visitas domiciliares, voltada à saúde pública. A enfermeira visitadora foi considerada fundamental para levar a educação sanitária à população e formar um elo entre a família e o serviço de saúde. Em 1940, começou também o curso de Assistência Social<sup class="ref">[<a href="#fonte-11" aria-label="Fonte 11">11</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
+<p>Em 1920, a Escola criou o primeiro curso de enfermeiras visitadoras do país, idealizado pelo Dr. Amaury de Medeiros e dedicado à enfermagem em visitas domiciliares, voltada à saúde pública. A enfermeira visitadora foi considerada fundamental para levar a educação sanitária à população e formar um elo entre a família e o serviço de saúde. Em 1940, começou também o curso de Assistência Social<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>.</p>
 <p>No mesmo ano de 1920, a CVB criou dois departamentos de assistência: o de Profilaxia da Tuberculose, também chamado de Cruzada Nacional contra a Tuberculose (1º de julho), e o de Profilaxia das Moléstias Venéreas (23 de março), dirigido pelo Dr. Estellita Lins — a primeira campanha organizada contra essas doenças no Brasil, com postos, ambulatório, laboratório e 42 conferências públicas gratuitas entre maio de 1920 e dezembro de 1922<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-4" aria-label="Fonte 4">4</a>]</sup>.</p>
 <div class="hv-galeria-leg">
   <figure class="hv-fig ">
@@ -1661,7 +1665,7 @@
 
 <h3 id="escola-guerra">Seção Central de Enfermeiras e a Segunda Guerra Mundial</h3>
 <p>Em 1º de setembro de 1941, foi criada a Seção Central de Enfermeiras, para estudar a instrução, a formação e o alistamento de enfermeiras e auxiliares voluntárias, chefiada por Mabel Henriete Lisboa Shaw, com Maria Sylvia Franco e Irene de Miranda Cotegipe Milanez como adjuntas. Por nota de 31 de janeiro de 1940, o Ministro da Guerra havia regulado o registro dos diplomas de Enfermeiras Profissionais e Samaritanas da CVB, reconhecendo-os para o exercício da profissão em todo o território nacional<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
-<p>Durante a participação do Brasil na Segunda Guerra Mundial, alunas da Escola atuaram na Itália junto à Força Expedicionária Brasileira (FEB). Antonieta Ferreira, enfermeira profissional, e as samaritanas Carmem Bebiano, Elza Cansanção Medeiros e Virgínia Portocarrero, da turma de 1941/42, estão entre as formadas pela Escola incorporadas à FEB<sup class="ref">[<a href="#fonte-11" aria-label="Fonte 11">11</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. Em carta de 15 de março de 1945 ao presidente Ivo Soares, o general Mascarenhas de Moraes, comandante em chefe no front italiano, destacou as cerca de cinco toneladas de agasalhos recebidas e o carinho dispensado às enfermeiras brasileiras nos hospitais do teatro de operações, reconhecendo a “valiosíssima cooperação” da CVB<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>.</p>
+<p>Durante a participação do Brasil na Segunda Guerra Mundial, alunas da Escola atuaram na Itália junto à Força Expedicionária Brasileira (FEB). Antonieta Ferreira, enfermeira profissional, e as samaritanas Carmem Bebiano, Elza Cansanção Medeiros e Virgínia Portocarrero, da turma de 1941/42, estão entre as formadas pela Escola incorporadas à FEB<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. Em carta de 15 de março de 1945 ao presidente Ivo Soares, o general Mascarenhas de Moraes, comandante em chefe no front italiano, destacou as cerca de cinco toneladas de agasalhos recebidas e o carinho dispensado às enfermeiras brasileiras nos hospitais do teatro de operações, reconhecendo a “valiosíssima cooperação” da CVB<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>.</p>
 <div class="hv-par">
 <figure class="hv-fig ">
   <a class="hv-zoom" href="/assets/otim/historia-ac-oficiais-italia.webp" data-cap="Primeiras oficiais brasileiras a chegar à Itália na Segunda Guerra Mundial. Nápoles, 15 de julho de 1944." data-alt="Montagem de retratos de cinco enfermeiras uniformizadas, com os nomes impressos abaixo de cada uma"><img src="/assets/otim/historia-ac-oficiais-italia-th.webp" width="520" height="634" alt="Montagem de retratos de cinco enfermeiras uniformizadas, com os nomes impressos abaixo de cada uma" loading="lazy" decoding="async"></a>
@@ -1679,7 +1683,7 @@
   </div>
 
 <h3 id="escola-medalha">Enfermeiras de destaque</h3>
-<p>Por duas vezes alunas da Escola receberam a Medalha Florence Nightingale, a mais alta distinção internacional dada a um profissional de enfermagem: Idália de Araújo Porto Alegre, em 1927, primeira brasileira e primeira enfermeira da América do Sul a recebê-la, e Irene de Miranda Cotegipe Milanez, em 1948<sup class="ref">[<a href="#fonte-11" aria-label="Fonte 11">11</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>. Irene chefiou a Seção Central de Enfermeiras, coordenou campanhas em favor das vítimas da guerra, inaugurou em 1948 a Cantina da Criança da CVB Juvenil, dirigiu a Escola a partir de 1963 e foi nomeada “Enfermeira nº 1 da Cruz Vermelha Brasileira”<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. As duas aparecem, com outras figuras da história da Cruz Vermelha, na <a href="#notaveis">galeria de notáveis</a>.</p>
+<p>Por duas vezes alunas da Escola receberam a Medalha Florence Nightingale, a mais alta distinção internacional dada a um profissional de enfermagem: Idália de Araújo Porto Alegre, em 1927, primeira brasileira e primeira enfermeira da América do Sul a recebê-la, e Irene de Miranda Cotegipe Milanez, em 1948<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>, <a href="#fonte-2" aria-label="Fonte 2">2</a>, <a href="#fonte-7" aria-label="Fonte 7">7</a>]</sup>. Irene chefiou a Seção Central de Enfermeiras, coordenou campanhas em favor das vítimas da guerra, inaugurou em 1948 a Cantina da Criança da CVB Juvenil, dirigiu a Escola a partir de 1963 e foi nomeada “Enfermeira nº 1 da Cruz Vermelha Brasileira”<sup class="ref">[<a href="#fonte-7" aria-label="Fonte 7">7</a>, <a href="#fonte-1" aria-label="Fonte 1">1</a>]</sup>. As duas aparecem, com outras figuras da história da Cruz Vermelha, na <a href="#notaveis">galeria de notáveis</a>.</p>
 
 <h3 id="escola-ritos">Uniformes e ritos</h3>
 <div class="hv-par">
@@ -1758,15 +1762,15 @@
 
 <h2 id="federacao">Uma federação em todo o país</h2>
 <p>A criação de filiais começou a partir do Decreto nº 2.380, de 31 de dezembro de 1910 (decreto legislativo, com força de lei), que regulou a existência das Associações da Cruz Vermelha no país e permitiu que adquirissem personalidade jurídica. A primeira filial foi a de São Paulo, em 1912, e a segunda, a de Minas Gerais, em 1914. Em 1916 foi fundada a do Amazonas e já estavam reconhecidas as filiais Sírio-Brasileiro (no Rio de Janeiro), de Sergipe e de São José dos Campos, Cachoeira e Santos (SP). Em 1917 fundou-se a do Paraná e, no ano seguinte, as de Barra do Piraí (RJ), Cruz Alta (RS), Santa Catarina, Rio Grande do Norte, Maranhão e Ubá (MG). Muitas tiveram curta duração<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>.</p>
-<p>Em 21 de novembro de 1933, o Decreto nº 23.482 definiu a Cruz Vermelha Brasileira como órgão central da organização federativa de todas as associações de Cruz Vermelha no país. Entre 1941 e 1943, durante a Segunda Guerra Mundial, foram criadas 61 filiais<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em levantamento do Centro de Memória e Documentação, eram 18 filiais estaduais e 52 municipais. Hoje, o Estatuto aprovado pelo <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Decreto nº 8.885, de 24 de outubro de 2016</a>, organiza a instituição como uma federação formada por órgão central, filiais estaduais e filiais municipais<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>]</sup>.</p>
-<p>Em 3 de setembro de 1945, o Decreto-Lei nº 7.928 instituiu as condecorações da Cruz Vermelha Brasileira, entre elas a Cruz de Honra e a Cruz de Benemerência, destinadas a reconhecer serviços prestados à humanidade<sup class="ref">[<a href="#fonte-13" aria-label="Fonte 13">13</a>]</sup>.</p>
+<p>Em 21 de novembro de 1933, o Decreto nº 23.482 definiu a Cruz Vermelha Brasileira como órgão central da organização federativa de todas as associações de Cruz Vermelha no país. Entre 1941 e 1943, durante a Segunda Guerra Mundial, foram criadas 61 filiais<sup class="ref">[<a href="#fonte-2" aria-label="Fonte 2">2</a>]</sup>. Em levantamento do Centro de Memória e Documentação, eram 18 filiais estaduais e 52 municipais. Hoje, o Estatuto aprovado pelo <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm" target="_blank" rel="noopener">Decreto nº 8.885, de 24 de outubro de 2016</a>, organiza a instituição como uma federação formada por órgão central, filiais estaduais e filiais municipais.</p>
+<p>Em 3 de setembro de 1945, o Decreto-Lei nº 7.928 instituiu as condecorações da Cruz Vermelha Brasileira, entre elas a Cruz de Honra e a Cruz de Benemerência, destinadas a reconhecer serviços prestados à humanidade<sup class="ref">[<a href="#fonte-12" aria-label="Fonte 12">12</a>]</sup>.</p>
 <figure class="hv-fig ">
   <a class="hv-zoom" href="/assets/otim/historia-distribuicao-donativos-550.webp" data-cap="Voluntário da Filial do Rio de Janeiro em uma distribuição de donativos." data-alt="Voluntário de costas, com colete da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos"><img src="/assets/otim/historia-distribuicao-donativos-550.webp" width="550" height="360" alt="Voluntário de costas, com colete da Cruz Vermelha Brasileira, Filial do Estado do Rio de Janeiro, diante de uma distribuição de donativos" loading="lazy" decoding="async"></a>
   <figcaption>Voluntário da Filial do Rio de Janeiro em uma distribuição de donativos.</figcaption>
 </figure>
 
 <h2 id="presidentes">Presidentes</h2>
-<p>O Centro de Memória e Documentação numera 21 presidências nacionais desde 1908: duas pessoas exerceram dois mandatos, Sebastião Ivo Soares (6º e 8º) e Mavy Harmon (13ª e 15ª). Esta seção apresenta os presidentes nacionais até 2010, além dos presidentes provisórios e interventores do período<sup class="ref">[<a href="#fonte-4" aria-label="Fonte 4">4</a>, <a href="#fonte-14" aria-label="Fonte 14">14</a>]</sup>. Os retratos e os nomes são os da Galeria de Presidentes do acervo.</p>
+<p>O Centro de Memória e Documentação numera 21 presidências nacionais desde 1908: duas pessoas exerceram dois mandatos, Sebastião Ivo Soares (6º e 8º) e Mavy Harmon (13ª e 15ª). Esta seção apresenta os presidentes nacionais até 2010, além dos presidentes provisórios e interventores do período<sup class="ref">[<a href="#fonte-4" aria-label="Fonte 4">4</a>, <a href="#fonte-13" aria-label="Fonte 13">13</a>]</sup>. Os retratos e os nomes são os da Galeria de Presidentes do acervo.</p>
 <h3 id="presidentes-nacionais">Presidentes nacionais</h3>
 <div class="hv-cards">
   <article class="hv-card" id="pres-01">
@@ -1883,7 +1887,7 @@
 </div>
 
 <h2 id="socorros">Guerras, acidentes, epidemias e desastres</h2>
-<p>As primeiras ações de socorro e de assistência social da Cruz Vermelha Brasileira começaram em 1914, com a Seção Feminina, e passaram a incluir campanhas de arrecadação para a Guerra do Contestado, a Primeira Guerra Mundial, o Hospital de Indigentes do Ceará (1915) e as vítimas do desabamento do Hotel York, no Rio, em 1917<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. No Rio de Janeiro, a instituição registra ainda atuação no incêndio da Favela do Esqueleto, em 1953; no incêndio da Praia do Pinto, em 1969; no temporal que atingiu a Guanabara e o Estado do Rio, em 1971; nas enchentes de Jacarepaguá, em 1996; e na catástrofe climática da Região Serrana, em janeiro de 2011<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
+<p>As primeiras ações de socorro e de assistência social da Cruz Vermelha Brasileira começaram em 1914, com a Seção Feminina, e passaram a incluir campanhas de arrecadação para a Guerra do Contestado, a Primeira Guerra Mundial, o Hospital de Indigentes do Ceará (1915) e as vítimas do desabamento do Hotel York, no Rio, em 1917<sup class="ref">[<a href="#fonte-5" aria-label="Fonte 5">5</a>]</sup>. No Rio de Janeiro, a instituição registra ainda atuação no incêndio da Favela do Esqueleto, em 1953; no incêndio da Praia do Pinto, em 1969; no temporal que atingiu a Guanabara e o Estado do Rio, em 1971; nas enchentes de Jacarepaguá, em 1996; e na catástrofe climática da Região Serrana, em janeiro de 2011<sup class="ref">[<a href="#fonte-14" aria-label="Fonte 14">14</a>]</sup>.</p>
 
 <h3 id="conflitos">Conflitos e guerras</h3>
 <ul>
@@ -1958,16 +1962,16 @@
 </figure>
 
 <h2 id="conferencia-1935">A Conferência Pan-Americana de 1935</h2>
-<p>De 15 a 26 de setembro de 1935, o Rio de Janeiro sediou a III Conferência Pan-Americana da Cruz Vermelha, a primeira reunião internacional da Cruz Vermelha realizada no Brasil. Participaram as Sociedades Nacionais de 20 países do continente, além da Liga das Sociedades da Cruz Vermelha, do CICV e de Sociedades convidadas de 15 países da Europa, da Ásia e da África<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
-<p>A CVB recebera, em 1926, a incumbência de sediar a conferência, mas precisou adiá-la várias vezes: as obras do edifício-sede ainda não estavam concluídas, e a Revolução de 1930 e a Revolução Constitucionalista de 1932 mudaram os planos. Em 1934, a CVB participou da 15ª Conferência Internacional, em Tóquio, onde o presidente Álvaro Tourinho foi eleito membro da Comissão Permanente e a CVB e o Governo brasileiro foram felicitados por sediar o encontro. No início de 1935 foram enviados os convites, e em julho a CVB recebeu a visita de A. R. Larrosa, subsecretário-geral da Liga, para tratar dos últimos detalhes<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
-<p>A sessão inaugural foi realizada no Teatro Municipal, sob a presidência do Presidente da República, Getúlio Vargas, recebido ao som do Hino Nacional cantado por alunos de escolas públicas municipais. Getúlio Vargas saudou o encontro como “uma demonstração palpável e inconfundível do anseio universal de paz e solidariedade humana”; o almirante Cary T. Grayson, presidente do Conselho de Governadores da Liga, lembrou que “o campo que se oferece em todas as partes à ação da Cruz Vermelha é quase ilimitado”<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
-<p>Foram aprovadas 28 resoluções. A de nº 3, proposta pelo secretário-geral da Cruz Vermelha Peruana, Dr. Guilhermo Fernandez Davilla, tratou do erguimento de uma estátua de Ana Nery na Praça da Cruz Vermelha; a pedra fundamental do monumento foi lançada em 26 de setembro de 1935, e a estátua, inaugurada em dezembro de 1956, em cerimônia com discurso do senador Vivaldo Palma Lima Filho, então presidente da CVB. O Departamento de Correios e Telégrafos pôs em circulação selos de 200, 300 e 700 réis, com acréscimo de 100 réis para a CVB, e o encerramento, em 25 de setembro, no Teatro Municipal, teve uma festa escolar em homenagem aos delegados, com um coral sob a regência do maestro Villa-Lobos<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
+<p>De 15 a 26 de setembro de 1935, o Rio de Janeiro sediou a III Conferência Pan-Americana da Cruz Vermelha, a primeira reunião internacional da Cruz Vermelha realizada no Brasil. Participaram as Sociedades Nacionais de 20 países do continente, além da Liga das Sociedades da Cruz Vermelha, do CICV e de Sociedades convidadas de 15 países da Europa, da Ásia e da África<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
+<p>A CVB recebera, em 1926, a incumbência de sediar a conferência, mas precisou adiá-la várias vezes: as obras do edifício-sede ainda não estavam concluídas, e a Revolução de 1930 e a Revolução Constitucionalista de 1932 mudaram os planos. Em 1934, a CVB participou da 15ª Conferência Internacional, em Tóquio, onde o presidente Álvaro Tourinho foi eleito membro da Comissão Permanente e a CVB e o Governo brasileiro foram felicitados por sediar o encontro. No início de 1935 foram enviados os convites, e em julho a CVB recebeu a visita de A. R. Larrosa, subsecretário-geral da Liga, para tratar dos últimos detalhes<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
+<p>A sessão inaugural foi realizada no Teatro Municipal, sob a presidência do Presidente da República, Getúlio Vargas, recebido ao som do Hino Nacional cantado por alunos de escolas públicas municipais. Getúlio Vargas saudou o encontro como “uma demonstração palpável e inconfundível do anseio universal de paz e solidariedade humana”; o almirante Cary T. Grayson, presidente do Conselho de Governadores da Liga, lembrou que “o campo que se oferece em todas as partes à ação da Cruz Vermelha é quase ilimitado”<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
+<p>Foram aprovadas 28 resoluções. A de nº 3, proposta pelo secretário-geral da Cruz Vermelha Peruana, Dr. Guilhermo Fernandez Davilla, tratou do erguimento de uma estátua de Ana Nery na Praça da Cruz Vermelha; a pedra fundamental do monumento foi lançada em 26 de setembro de 1935, e a estátua, inaugurada em dezembro de 1956, em cerimônia com discurso do senador Vivaldo Palma Lima Filho, então presidente da CVB. O Departamento de Correios e Telégrafos pôs em circulação selos de 200, 300 e 700 réis, com acréscimo de 100 réis para a CVB, e o encerramento, em 25 de setembro, no Teatro Municipal, teve uma festa escolar em homenagem aos delegados, com um coral sob a regência do maestro Villa-Lobos<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
 <details class="hv-mais"><summary>Participantes e pauta da conferência</summary>
 <div class="hv-mais-corpo">
 <p><b>Sociedades Nacionais americanas:</b> Argentina, Bolívia, Brasil, Canadá, Colômbia, Costa Rica, Chile, Cuba, Equador, El Salvador, Estados Unidos, Guatemala, México, Nicarágua, Panamá, Paraguai, Peru, República Dominicana, Uruguai e Venezuela. <b>Convidadas:</b> Alemanha, Áustria, Bélgica, China, Egito, Espanha, França, Grécia, Itália, Japão, Holanda, Polônia, Romênia, Suíça e Tchecoslováquia.</p>
 <p><b>Associações brasileiras:</b> Associação Brasileira de Educação, Assistência Hospitalar, Caixa de Aposentadorias e Pensões da Light, Diretoria de Saúde e Assistência Médico-Social, Escola de Enfermeiras Anna Nery, Faculdade de Medicina do Rio de Janeiro, Hospital São Francisco de Assis, Serviço de Saúde da Marinha, Serviço de Saúde do Exército, Superintendência do Serviço de Enfermeiras, Sindicato Médico Brasileiro, Pró-Matre, Assistência Pública Municipal, Instituto Oswaldo Cruz e Escola de Educação Física do Exército. Participaram ainda representantes dos governos de Alagoas, Amazonas, Goiás, Paraná, Rio Grande do Norte, Rio Grande do Sul e Santa Catarina.</p>
-<p><b>Pauta:</b> organização e desenvolvimento das Sociedades Nacionais; colaboração com instituições de objetivos semelhantes; evolução da obra da Cruz Vermelha no continente desde a segunda conferência; adaptação do programa geral em tempo de paz às condições das nações americanas; socorros em calamidades; higiene e assistência; enfermeiras; Cruz Vermelha Juvenil<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
-<p>Em 1936, a Liga registrou em seu boletim “viva satisfação” com o “grande sucesso” da conferência e agradeceu à CVB pela “generosa hospitalidade”<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>.</p>
+<p><b>Pauta:</b> organização e desenvolvimento das Sociedades Nacionais; colaboração com instituições de objetivos semelhantes; evolução da obra da Cruz Vermelha no continente desde a segunda conferência; adaptação do programa geral em tempo de paz às condições das nações americanas; socorros em calamidades; higiene e assistência; enfermeiras; Cruz Vermelha Juvenil<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
+<p>Em 1936, a Liga registrou em seu boletim “viva satisfação” com o “grande sucesso” da conferência e agradeceu à CVB pela “generosa hospitalidade”<sup class="ref">[<a href="#fonte-15" aria-label="Fonte 15">15</a>]</sup>.</p>
 </div></details>
 <div class="hv-galeria-leg">
   <figure class="hv-fig ">
@@ -2082,17 +2086,12 @@
 </div>
 
 <h2 id="filial-hoje">A Filial do Rio de Janeiro hoje</h2>
-<p>A Filial do Estado do Rio de Janeiro é uma das filiais estaduais da Cruz Vermelha Brasileira. Seu grupo de fundação se formou em 2006<sup class="ref">[<a href="#fonte-4" aria-label="Fonte 4">4</a>]</sup>, e ela é reconhecida como de utilidade pública municipal pela Lei nº 5.153, de 30 de abril de 2010, e de utilidade pública estadual pela Lei nº 9.984, de 29 de março de 2023<sup class="ref">[<a href="#fonte-10" aria-label="Fonte 10">10</a>]</sup>.</p>
-<p>Hoje, a Filial forma voluntários, oferece <a href="/matricula-cursos-presenciais/">cursos presenciais de primeiros socorros e de formação profissional</a> pela Escola de Educação e Saúde CVB-RJ, atua em educação preventiva e organiza campanhas de apoio comunitário, como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Quem conduz esse trabalho está na página da <a href="/equipe.html">equipe</a>.</p>
+<p>A Filial do Estado do Rio de Janeiro é uma das filiais estaduais da Cruz Vermelha Brasileira. Seu grupo de fundação se formou em 2006<sup class="ref">[<a href="#fonte-4" aria-label="Fonte 4">4</a>]</sup>, e ela é reconhecida como de utilidade pública municipal pela Lei nº 5.153, de 30 de abril de 2010, e de utilidade pública estadual pela Lei nº 9.984, de 29 de março de 2023.</p>
+<p>Hoje, a Filial forma os próprios voluntários, atua em educação preventiva e organiza campanhas de apoio comunitário, como a <a href="/campanha-agasalho.html">Campanha do Agasalho</a>. Os cursos pagos de primeiros socorros e de formação profissional não são da Filial: são da Escola de Educação e Saúde, empresa ligada a ela (veja <a href="/quem-somos/#filial-e-escola">Quem somos</a>). Quem conduz o trabalho da Filial está na página da <a href="/equipe.html">equipe</a>.</p>
 
 <h2 id="acervo">O Centro de Memória e Documentação</h2>
-<p>Seguindo a Resolução 6 do Conselho de Delegados de 2011 (Genebra), que incentiva a preservação e a divulgação do patrimônio histórico e cultural dos componentes do Movimento, a Cruz Vermelha Brasileira criou o Centro de Memória e Documentação (CMD) pela Portaria nº 49/2012 do Presidente Nacional, em 29 de novembro de 2012. Em 2019, começou um longo processo de restauração e reformulação de documentos e do acervo, para garantir sua preservação e o acesso a pesquisadores<sup class="ref">[<a href="#fonte-17" aria-label="Fonte 17">17</a>]</sup>. O CMD se organiza em Arquivo Central, Arquivo Institucional, Arquivo Histórico, Museologia, Relações Públicas e Biblioteca<sup class="ref">[<a href="#fonte-18" aria-label="Fonte 18">18</a>]</sup>.</p>
-<p>A maior parte das fotografias desta página vem desse acervo. O Acervo da Cruz Vermelha Brasileira Rio de Janeiro reúne documentos, fotografias, vídeos e recortes de imprensa da Filial, com data, autoria e condições de uso de cada item. Quem tiver fotografias, documentos ou relatos sobre a história da Filial pode escrever para <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>.</p>
-<div class="hv-acoes">
-<a class="btn btn-red" href="/acervo/">Visitar o Acervo</a>
-<a class="btn btn-outline" href="/equipe.html">Conhecer a equipe</a>
-</div>
-
+<p>Seguindo a Resolução 6 do Conselho de Delegados de 2011 (Genebra), que incentiva a preservação e a divulgação do patrimônio histórico e cultural dos componentes do Movimento, a Cruz Vermelha Brasileira criou o Centro de Memória e Documentação (CMD) pela Portaria nº 49/2012 do Presidente Nacional, em 29 de novembro de 2012. Em 2019, começou um longo processo de restauração e reformulação de documentos e do acervo, para garantir sua preservação e o acesso a pesquisadores<sup class="ref">[<a href="#fonte-16" aria-label="Fonte 16">16</a>]</sup>. O CMD se organiza em Arquivo Central, Arquivo Institucional, Arquivo Histórico, Museologia, Relações Públicas e Biblioteca<sup class="ref">[<a href="#fonte-17" aria-label="Fonte 17">17</a>]</sup>.</p>
+<p>A maior parte das fotografias desta página vem desse acervo. Quem tiver fotografias, documentos ou relatos sobre a história da Filial pode escrever para <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>.</p>
 <h2 id="perguntas">Perguntas frequentes</h2>
 <div class="faq-list">
   <details class="faq-item">
@@ -2153,20 +2152,25 @@
     <li id="fonte-7">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb/servios-2" target="_blank" rel="noopener">Escola de Enfermeiras</a>.</li>
     <li id="fonte-8">Diário do Rio de Janeiro. <a href="https://diariodorio.com/iphan-tomba-edificio-da-cruz-vermelha-e-aviao-catalina/" target="_blank" rel="noopener">Iphan tomba Edifício da Cruz Vermelha e Avião Catalina, 10 nov. 2021</a>.</li>
     <li id="fonte-9">Consultor Jurídico (ConJur). <a href="https://www.conjur.com.br/2021-jul-20/edificio-sede-cruz-vermelha-rio-tombado-acao-mpf/" target="_blank" rel="noopener">Edifício-sede da Cruz Vermelha, no Rio, é tombado após ação do MPF, 20 jul. 2021</a>.</li>
-    <li id="fonte-10">Wikipédia. <a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Cruz Vermelha Brasileira - Rio de Janeiro</a>.</li>
-    <li id="fonte-11">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/escola-de-enfermeiras/" target="_blank" rel="noopener">Escola de Enfermeiras</a>.</li>
-    <li id="fonte-12">Diário do Rio de Janeiro. <a href="https://diariodorio.com/historia-do-predio-da-cruz-vermelha/" target="_blank" rel="noopener">História do prédio da Cruz Vermelha</a>.</li>
-    <li id="fonte-13">Câmara dos Deputados. <a href="https://www2.camara.leg.br/legin/fed/declei/1940-1949/decreto-lei-7928-3-setembro-1945-416577-publicacaooriginal-1-pe.html" target="_blank" rel="noopener">Decreto-Lei nº 7.928, de 3 de setembro de 1945 (publicação original)</a>.</li>
-    <li id="fonte-14">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/presidentes-nacionais-1908-2015/" target="_blank" rel="noopener">Presidentes nacionais</a>.</li>
-    <li id="fonte-15">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/fatos-e-fotos/" target="_blank" rel="noopener">Fatos e fotos</a>.</li>
-    <li id="fonte-16">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb/1-reunio-internacional-no-brasil" target="_blank" rel="noopener">1ª Reunião Internacional no Brasil</a>.</li>
-    <li id="fonte-17">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb" target="_blank" rel="noopener">Início</a>.</li>
-    <li id="fonte-18">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb/c%C3%B3pia-cruz-vermelha-brasileira" target="_blank" rel="noopener">O Centro de Memória e Documentação</a>.</li>
+    <li id="fonte-10">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/escola-de-enfermeiras/" target="_blank" rel="noopener">Escola de Enfermeiras</a>.</li>
+    <li id="fonte-11">Diário do Rio de Janeiro. <a href="https://diariodorio.com/historia-do-predio-da-cruz-vermelha/" target="_blank" rel="noopener">História do prédio da Cruz Vermelha</a>.</li>
+    <li id="fonte-12">Câmara dos Deputados. <a href="https://www2.camara.leg.br/legin/fed/declei/1940-1949/decreto-lei-7928-3-setembro-1945-416577-publicacaooriginal-1-pe.html" target="_blank" rel="noopener">Decreto-Lei nº 7.928, de 3 de setembro de 1945 (publicação original)</a>.</li>
+    <li id="fonte-13">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/presidentes-nacionais-1908-2015/" target="_blank" rel="noopener">Presidentes nacionais</a>.</li>
+    <li id="fonte-14">Cruz Vermelha Brasileira. <a href="https://cruzvermelha.org.br/en/cmd/fatos-e-fotos/" target="_blank" rel="noopener">Fatos e fotos</a>.</li>
+    <li id="fonte-15">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb/1-reunio-internacional-no-brasil" target="_blank" rel="noopener">1ª Reunião Internacional no Brasil</a>.</li>
+    <li id="fonte-16">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb" target="_blank" rel="noopener">Início</a>.</li>
+    <li id="fonte-17">Cruz Vermelha Brasileira, Centro de Memória e Documentação (Memória CVB). <a href="https://memoriadacruzverme.wixsite.com/memoriacvb/c%C3%B3pia-cruz-vermelha-brasileira" target="_blank" rel="noopener">O Centro de Memória e Documentação</a>.</li>
   </ol>
 </div>
 <h3>Créditos das imagens</h3>
 <p class="hv-creditos">Fachada do Palácio (topo): Diário do Rio de Janeiro. Detalhe da fachada: blog O Rio que o Rio não vê. Todas as demais fotografias, documentos e recortes: Acervo do Centro de Memória e Documentação da Cruz Vermelha Brasileira. Os nomes nos retratos são os que constam na Galeria de Presidentes e na Galeria de Notáveis do acervo.</p>
 <p class="hv-revisao">Texto revisado em setembro de 2026. Correções e novas informações: <a href="mailto:contato@cruzvermelhariodejaneiro.org">contato@cruzvermelhariodejaneiro.org</a>.</p>
+
+<div class="hv-acoes">
+<a class="btn btn-red" href="/doe/">Doe agora</a>
+<a class="btn btn-outline" href="/voluntariado/cadastro/">Seja voluntário</a>
+<a class="btn btn-outline" href="/#contato">Fale com a filial</a>
+</div>
 
         </div>
         <aside class="hv-infobox" aria-label="A Cruz Vermelha Brasileira em resumo">
@@ -2190,7 +2194,8 @@
   <dialog id="hv-lb" aria-label="Foto ampliada"><figure><img alt=""><figcaption></figcaption></figure></dialog>
 
   <footer>
-    <!-- Rodapé reorganizado em 11/10/2026: colunas por assunto; a faixa de baixo fica só com as políticas. -->
+    <!-- Rodapé reorganizado em 11/10/2026: colunas por assunto; a faixa de baixo fica só com as políticas. Em 19/10/2026
+         saíram a Wikipédia (verbete criado pela própria filial) e o acervo (ainda sem itens); CNPJ e endereço completo ficam. -->
     <div class="footer-grid">
       <div class="footer-brand">
         <img class="footer-logo" alt="Cruz Vermelha Brasileira — Rio de Janeiro" src="/assets/otim/logo-cvb-rj-520.webp" width="520" height="156" loading="lazy" decoding="async">
@@ -2209,13 +2214,14 @@
         <p><a href="/equipe.html">Equipe</a></p>
       </div>
       <div class="footer-col">
-        <h4>Atuação</h4>
+        <h4>Como ajudar</h4>
+        <p><a href="/doe/">Doe</a></p>
+        <p><a href="/voluntariado/">Seja voluntário</a></p>
         <p><a href="/cursos-gratuitos/">Formação de voluntários</a></p>
-        <p><a href="/voluntariado/">Voluntariado</a></p>
         <p><a href="/#campanhas">Campanhas</a></p>
         <p><a href="/noticias/">Notícias</a></p>
-        <p><a href="/acervo/">Acervo</a></p>
         <p><a href="/#faq">Perguntas frequentes</a></p>
+        <p><a href="/matricula-cursos-presenciais/">Escola de Educação e Saúde</a></p>
       </div>
       <div class="footer-col">
         <h4>Transparência</h4>
@@ -2223,11 +2229,10 @@
         <p><a href="/canais-oficiais/">Canais oficiais</a></p>
         <p><a href="/verificar/">Verificar um documento</a></p>
         <p><a href="/bio/">Links oficiais</a></p>
-        <p><a href="https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro" target="_blank" rel="noopener">Wikipédia</a></p>
       </div>
       <div class="footer-col">
         <h4>Contato</h4>
-        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10</p>
+        <p><i class="fa-solid fa-location-dot"><svg class="ico ico-location-dot" aria-hidden="true" focusable="false"><use href="#i-location-dot"/></svg></i> Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro – RJ, CEP 20230-130</p>
         <p><i class="fa-regular fa-envelope"><svg class="ico ico-envelope" aria-hidden="true" focusable="false"><use href="#i-envelope"/></svg></i> contato@cruzvermelhariodejaneiro.org</p>
         <div class="footer-social">
           <a href="https://www.facebook.com/profile.php?id=61591390052128" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"><svg class="ico ico-facebook-f" aria-hidden="true" focusable="false"><use href="#i-facebook-f"/></svg></i></a>
@@ -2274,7 +2279,7 @@
       });
     });
 
-    // Grupos do menu ("Quem somos", "Cursos"): abrem por clique ou teclado; Esc ou clique fora fecham.
+    // Grupos do menu ("Quem somos", "Como ajudar"): abrem por clique ou teclado; Esc ou clique fora fecham.
     (function () {
       const grupos = Array.from(document.querySelectorAll('.nav-grupo'));
       const mouse = window.matchMedia('(min-width: 1321px) and (hover: hover)');
@@ -2305,8 +2310,8 @@
     })();
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
-  <link rel="stylesheet" href="/chat/chat.min.css?v=9b9c781f1b">
-  <script src="/chat/chat.js?v=443723b84d" defer></script>
+  <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
+  <script src="/chat/chat.js?v=5640573d60" defer></script>
 
   <script>
     (function () {

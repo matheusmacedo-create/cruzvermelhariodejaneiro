@@ -33,7 +33,7 @@
         "perguntas": [
           {
             "pergunta": "What courses does the branch offer?",
-            "resposta": "Seven paid in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours), Carer for Older People, a non-accredited course (160 hours), and Lip Micropigmentation (24 hours). They are sold and certified by the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), a company linked to the branch. The branch itself, a non-profit association, trains its own volunteers free of charge; it does not run free courses open to the public. There are no technical or nursing degree programmes."
+            "resposta": "Six paid in-person courses, all taught at the headquarters in central Rio de Janeiro: Basic First Aid (8 hours), First Aid under the Lucas Law, for settings with children (8 hours), Basic Life Support, or BLS (4 hours), Peripheral IV Cannulation (8 hours), Civil Firefighter (80 hours) and Carer for Older People, a non-accredited course (160 hours). They are sold and certified by the branch's school, the Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), a company linked to the branch. The branch itself, a non-profit association, trains its own volunteers free of charge; it does not run free courses open to the public. There are no technical or nursing degree programmes."
           },
           {
             "pergunta": "Are the courses taught in English or Spanish?",
@@ -45,7 +45,7 @@
           },
           {
             "pergunta": "What does a course cost, and how do I enrol?",
-            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee can be paid together with the enrolment fee or afterwards on the school platform: R$ 150 for Basic Life Support, Peripheral IV Cannulation and the Lucas Law course, R$ 180 for Basic First Aid, R$ 400 for Lip Micropigmentation, and R$ 950 for Civil Firefighter and for Carer for Older People. These courses are paid, and they are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch. The branch itself does not run free courses for the public: it trains only its own volunteers, free of charge, after a selection process (see the Portuguese page Formação de voluntários, /cursos-gratuitos/). The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
+            "resposta": "Enrolment costs R$ 99, paid once by card or PIX, and holds your place. The course fee can be paid together with the enrolment fee or afterwards on the school platform: R$ 150 for Basic Life Support, Peripheral IV Cannulation and the Lucas Law course, R$ 180 for Basic First Aid, and R$ 950 for Civil Firefighter and for Carer for Older People. These courses are paid, and they are sold and certified by the school, O-CVB Filial Rio de Janeiro Ensino Ltda, a company linked to the branch. The branch itself does not run free courses for the public: it trains only its own volunteers, free of charge, after a selection process (see the Portuguese page Formação de voluntários, /cursos-gratuitos/). The enrolment form asks for a CPF, the Brazilian individual taxpayer number, so if you do not have one, write to us first.",
             "links": [
               {
                 "texto": "enrolment form",
@@ -55,7 +55,7 @@
           },
           {
             "pergunta": "What are the entry requirements? Do I need a health background?",
-            "resposta": "It depends on the course. Basic First Aid, the Lucas Law course, Basic Life Support and Carer for Older People ask for completed lower secondary schooling (ensino fundamental); Civil Firefighter, Peripheral IV Cannulation and Lip Micropigmentation ask for completed secondary schooling (ensino médio). The first-aid courses and Basic Life Support are open to anyone, with no health background at all. Peripheral IV Cannulation is aimed at health students and professionals, following the rules of the profession."
+            "resposta": "It depends on the course. Basic First Aid, the Lucas Law course, Basic Life Support and Carer for Older People ask for completed lower secondary schooling (ensino fundamental); Civil Firefighter and Peripheral IV Cannulation ask for completed secondary schooling (ensino médio). The first-aid courses and Basic Life Support are open to anyone, with no health background at all. Peripheral IV Cannulation is aimed at health students and professionals, following the rules of the profession."
           },
           {
             "pergunta": "Is the certificate recognised?",
@@ -82,8 +82,12 @@
         "perguntas": [
           {
             "pergunta": "How can I help? Can I donate money online?",
-            "resposta": "Online money donations through this site are suspended for now. You can help in three ways: by volunteering, registering on the official volunteer form (the branch trains its own volunteers, and the working language is Portuguese); by bringing winter clothing, blankets and shoes to the headquarters for the Winter Clothing Drive, Monday to Friday, 10am to 5pm; or, for companies, schools and institutions, by proposing a partnership at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, in English, Spanish or Portuguese.",
+            "resposta": "Yes. Money donations to the Brazilian Red Cross Rio de Janeiro branch are made on the donation page, by PIX or card, and the receipt arrives by e-mail with the branch's CNPJ (the payment screen is in Portuguese). You can also help by volunteering, registering on the official volunteer form (the branch trains its own volunteers, and the working language is Portuguese); by bringing winter clothing, blankets and shoes to the headquarters for the Winter Clothing Drive, Monday to Friday, 10am to 5pm; or, for companies, schools and institutions, by proposing a partnership at contato@cruzvermelhariodejaneiro.org. The team replies within three business days, in English, Spanish or Portuguese.",
             "links": [
+              {
+                "texto": "donation page",
+                "url": "/en/donate/"
+              },
               {
                 "texto": "official volunteer form",
                 "url": "/voluntariado/cadastro/"
@@ -180,7 +184,7 @@
         "perguntas": [
           {
             "pergunta": "¿Qué cursos ofrece la filial?",
-            "resposta": "Siete cursos presenciales pagos, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas), Cuidador de Personas Mayores, curso libre (160 horas), y Micropigmentación Labial (24 horas). Los vende y certifica la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), empresa vinculada a la filial. La filial, una asociación sin fines de lucro, forma gratis a sus propios voluntarios; no ofrece cursos gratuitos abiertos al público. No hay carreras técnicas ni de enfermería."
+            "resposta": "Seis cursos presenciales pagos, todos en la sede, en el centro de Río de Janeiro: Primeros Auxilios Básicos (8 horas), Primeros Auxilios Ley Lucas, para entornos con niños (8 horas), Soporte Vital Básico, el BLS (4 horas), Punción Venosa (8 horas), Bombero Civil (80 horas) y Cuidador de Personas Mayores, curso libre (160 horas). Los vende y certifica la escuela de la filial, la Escola de Educação e Saúde (O-CVB Filial Rio de Janeiro Ensino Ltda, CNPJ 67.733.551/0001-35), empresa vinculada a la filial. La filial, una asociación sin fines de lucro, forma gratis a sus propios voluntarios; no ofrece cursos gratuitos abiertos al público. No hay carreras técnicas ni de enfermería."
           },
           {
             "pergunta": "¿Los cursos se dictan en español o en inglés?",
@@ -192,7 +196,7 @@
           },
           {
             "pergunta": "¿Cuánto cuesta un curso y cómo me inscribo?",
-            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, R$ 400 en Micropigmentación Labial, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los vende y certifica la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial no ofrece cursos gratuitos al público: forma solo a sus propios voluntarios, sin costo y tras un proceso de selección (vea la página en portugués Formação de voluntários, /cursos-gratuitos/). El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
+            "resposta": "La inscripción cuesta R$ 99, se paga una vez con tarjeta o PIX y reserva la plaza. El valor del curso se puede pagar junto con la inscripción o después, en la plataforma de la escuela: R$ 150 en Soporte Vital Básico, Punción Venosa y el curso Ley Lucas, R$ 180 en Primeros Auxilios Básicos, y R$ 950 en Bombero Civil y en Cuidador de Personas Mayores. Estos cursos son pagos y los vende y certifica la escuela, O-CVB Filial Rio de Janeiro Ensino Ltda, empresa vinculada a la filial. La propia filial no ofrece cursos gratuitos al público: forma solo a sus propios voluntarios, sin costo y tras un proceso de selección (vea la página en portugués Formação de voluntários, /cursos-gratuitos/). El formulario de inscripción pide el CPF, el número de contribuyente individual brasileño, así que si no lo tiene, escríbanos antes.",
             "links": [
               {
                 "texto": "formulario de inscripción",
@@ -202,7 +206,7 @@
           },
           {
             "pergunta": "¿Qué requisitos hay? ¿Necesito formación en salud?",
-            "resposta": "Depende del curso. Primeros Auxilios Básicos, el curso Ley Lucas, Soporte Vital Básico y Cuidador de Personas Mayores piden enseñanza básica completa (ensino fundamental); Bombero Civil, Punción Venosa y Micropigmentación Labial piden enseñanza media completa (ensino médio). Los cursos de primeros auxilios y el Soporte Vital Básico están abiertos a cualquier persona, sin ninguna formación en salud. Punción Venosa está dirigido a estudiantes y profesionales de la salud, conforme a las normas de la profesión."
+            "resposta": "Depende del curso. Primeros Auxilios Básicos, el curso Ley Lucas, Soporte Vital Básico y Cuidador de Personas Mayores piden enseñanza básica completa (ensino fundamental); Bombero Civil y Punción Venosa piden enseñanza media completa (ensino médio). Los cursos de primeros auxilios y el Soporte Vital Básico están abiertos a cualquier persona, sin ninguna formación en salud. Punción Venosa está dirigido a estudiantes y profesionales de la salud, conforme a las normas de la profesión."
           },
           {
             "pergunta": "¿El certificado está reconocido?",
@@ -229,8 +233,12 @@
         "perguntas": [
           {
             "pergunta": "¿Cómo puedo ayudar? ¿Puedo donar dinero en línea?",
-            "resposta": "La donación de dinero en línea por este sitio está suspendida por ahora. Puede ayudar de tres maneras: como voluntario, con el registro en el formulario oficial del voluntariado (la filial forma a sus propios voluntarios y el idioma de trabajo es el portugués); llevando ropa de abrigo, mantas y calzado a la sede para la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas; o, si es una empresa, escuela o institución, proponiendo una alianza en contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
+            "resposta": "Sí. La donación de dinero a la filial de Río de Janeiro de la Cruz Roja Brasileña se hace en la página de donación, por PIX o tarjeta, y el comprobante llega por correo electrónico con el CNPJ de la filial (la pantalla de pago está en portugués). También puede ayudar como voluntario, con el registro en el formulario oficial del voluntariado (la filial forma a sus propios voluntarios y el idioma de trabajo es el portugués); llevando ropa de abrigo, mantas y calzado a la sede para la Campaña de Ropa de Abrigo, de lunes a viernes, de 10 a 17 horas; o, si es una empresa, escuela o institución, proponiendo una alianza en contato@cruzvermelhariodejaneiro.org. El equipo responde en hasta tres días hábiles, en español, inglés o portugués.",
             "links": [
+              {
+                "texto": "página de donación",
+                "url": "/es/donar/"
+              },
               {
                 "texto": "formulario oficial del voluntariado",
                 "url": "/voluntariado/cadastro/"

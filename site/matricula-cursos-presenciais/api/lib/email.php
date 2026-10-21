@@ -1101,7 +1101,7 @@ function mcp_email_contexto_pago(array $i, bool $comComprovante): array
             "SEU ACESSO À ÁREA DO ALUNO\n" . mcp_email_html_texto($entrada)) : [],
         'obrigado' => match (true) {
             $taxa > 0 && $divulgacao > 0 => ' Obrigado por cobrir os custos de processamento e por ajudar a divulgar os cursos.',
-            $taxa > 0 => ' Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a taxa de inscrição inteira.',
+            $taxa > 0 => ' Obrigado por cobrir os custos de processamento da taxa de inscrição da escola.',
             $divulgacao > 0 => ' Obrigado por ajudar a divulgar os cursos: assim eles chegam a mais pessoas.',
             default => '',
         },
@@ -2030,7 +2030,7 @@ function mcp_contato_assuntos(): array
 {
     return [
         'matricula' => 'Matrícula em cursos', 'curso' => 'Dúvida sobre um curso', 'pagamento' => 'Pagamento ou PIX',
-        'voluntariado' => 'Voluntariado', 'doacoes' => 'Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
+        'voluntariado' => 'Voluntariado', 'doacoes' => 'Doações, Campanha do Agasalho e parcerias', 'outro' => 'Outro assunto',
         // Só do formulário da página /dia-das-criancas/ (o chat não oferece este assunto).
         'brinquedos' => 'Doação de brinquedos (Dia das Crianças)',
         // Só da página /pedido-de-documentos/ (api/documentos.php); os comprovantes vão só por e-mail.

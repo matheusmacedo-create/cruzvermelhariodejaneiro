@@ -1,0 +1,122 @@
+# Ad Grants, 2ª recusa (19/10/2026): o Google pediu "VELOCIDADE de carregamento", "NAVEGAÇÃO CLARA",
+# "CONTEÚDO SIGNIFICATIVO E ATUALIZADO" e "CALLS-TO-ACTION". O que muda: home institucional (sem cursos nem preço, menu de
+# seis itens, botão "Doe", CNPJ e endereço no rodapé, notícias com data), doação online religada (/doe/, /en/donate/,
+# /es/donar/), Micropigmentação Labial fora do domínio da ONG, aviso de cookies em faixa baixa, chat só com o ícone no
+# celular, inglês e espanhol com o menu novo, 404 e .htaccess em espanhol, JSON-LD sem o nó da escola e sem a Wikipédia.
+# O ar antes = o Git em 278b675 (origin/main). Conferir por HTTP antes de editar, como na rodada de 15/10.
+# Antes, a cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-ad-grants-2 $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-2.txt)
+# Revisão pós-merge: doacao.html saiu da lista (o 301 do .htaccess raiz o esconde) e a imagem nova assets/otim/hero-turma-cbfi-640.webp
+# (38 KB, fora do Git; guardada em scratchpad/revisao-velocidade/assets-pool/assets/otim/) sobe junto com index.html.
+# Publicar (a lista é a de baixo, em ordem alfabética; as imagens novas de site/assets/otim, se alguma página citar uma que
+# não esteja no ar, vão junto: assets/ fica fora do Git, ver "Estrutura do repositório"):
+#   scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-2.txt)
+# DEPOIS de publicar, remover do servidor o que saiu do Git (o script não apaga .htaccess; use a API de arquivos, a mesma
+# credencial; 204 = apagado). Sem isso /doe/, /en/donate/ e /es/donar/ continuam respondendo 503:
+#   for p in doe/.htaccess en/donate/.htaccess es/donar/.htaccess; do curl -sS -o /dev/null -w "%{http_code} $p\n" -X DELETE "${HOSTINGER_TUS_URL/\/api\/tus\//\/api\/resources\/}/$p" -H "X-Auth: $HOSTINGER_TUS_AUTH" -H "X-Auth-Rest: $HOSTINGER_TUS_AUTH_REST"; done
+#   scripts/publicar_hostinger.sh --apagar site/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/index.html
+# Depois: limpar o cache (hosting_cache_clear-website), conferir por HTTP que cada arquivo ficou igual ao Git, conferir que
+# /doe/ responde 200 (não 503), rodar python3 scripts/gerar_sitemaps.py (lê o ar) e publicar os sitemaps que mudarem, e
+# rodar python3 scripts/conferir_links.py (ao vivo).
+# Desfazer (ver o README, "Google Ad Grants: segunda recusa e correções"): republicar a cópia do ar e restaurar os três
+# .htaccess do 503 a partir do Git:
+#   C=/tmp/no-ar-ad-grants-2; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ad-grants-2.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|")
+#   for p in doe en/donate es/donar; do mkdir -p /tmp/htaccess-503/$p; git show 278b675:site/$p/.htaccess > /tmp/htaccess-503/$p/.htaccess; done
+#   RAIZ=/tmp/htaccess-503 scripts/publicar_hostinger.sh /tmp/htaccess-503/doe/.htaccess /tmp/htaccess-503/en/donate/.htaccess /tmp/htaccess-503/es/donar/.htaccess
+#   e republicar site/en/news/lip-micropigmentation-course-what-it-is-and-how-to-learn/index.html (git show 278b675:...); apagar site/es/.htaccess só depois de publicar o espanhol de volta ao estado anterior.
+# Depois de publicar: reenviar o pedido de ativação do Ad Grants na conta do Google para ONGs.
+site/404.html
+site/base-legal/index.html
+site/bio/index.html
+site/campanha-agasalho.html
+site/chat/chat.css
+site/chat/chat.js
+site/chat/chat.min.css
+site/consentimento/consentimento.js
+site/cookies/index.html
+site/cursos-gratuitos/index.html
+site/dia-das-criancas/index.html
+site/direito-internacional-humanitario/index.html
+site/doacao-indisponivel.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/en/404.html
+site/en/archive/index.html
+site/en/cookies/index.html
+site/en/courses/index.html
+site/en/donate/index.html
+site/en/faq/index.html
+site/en/history/index.html
+site/en/index.html
+site/en/news/7-september-parade-registration-of-branch-volunteers/index.html
+site/en/news/alcoholics-anonymous-sign-language-meeting-in-leblon-marks-79-years/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/index.html
+site/en/news/caps-and-capsi-public-mental-health-services-in-mare-alemao-and-penha/index.html
+site/en/news/carer-for-older-people-course-what-carers-do-and-how-to-train/index.html
+site/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/index.html
+site/en/news/civil-firefighter-course-what-the-job-involves-and-how-to-qualify-in-rio/index.html
+site/en/news/deam-digital-rj-how-to-report-domestic-violence-online/index.html
+site/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/index.html
+site/en/news/first-aid-course-learn-the-essentials-in-a-few-lessons/index.html
+site/en/news/health-in-schools-quiz-on-vaping-hpv-and-condoms-in-rio/index.html
+site/en/news/index.html
+site/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/index.html
+site/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/index.html
+site/en/news/peripheral-iv-cannulation-course-who-it-is-for-and-what-you-learn/index.html
+site/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/index.html
+site/en/news/yellow-september-and-suicide-prevention/index.html
+site/en/our-team/index.html
+site/en/privacy/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/en/winter-clothing-drive/index.html
+site/equipe.html
+site/es/.htaccess
+site/es/404.html
+site/es/acervo/index.html
+site/es/cookies/index.html
+site/es/cursos/index.html
+site/es/donar/index.html
+site/es/index.html
+site/es/nuestro-equipo/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/faq-home.json
+site/faq-idiomas.json
+site/gestao/index.html
+site/historia/index.html
+site/idiomas.json
+site/index.html
+site/institucional.json
+site/llms.txt
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/cursos.json
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/oferta.json
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/static/checkout.js
+site/movimento-internacional/index.html
+site/pedido-de-documentos/index.html
+site/politicas.json
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/projetocores/index.html
+site/quem-somos/index.html
+site/reembolso/index.html
+site/sitemap-paginas.xml
+site/sitemap-subdominios.xml
+site/termos/index.html
+site/verificar/404.html
+site/verificar/index.html
+site/voluntariado/cadastro/index.html
+site/voluntariado/index.html

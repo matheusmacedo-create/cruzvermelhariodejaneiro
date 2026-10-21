@@ -165,7 +165,7 @@
     if (!slug || !/^[a-z0-9-]+$/.test(slug)) return '';
     return '<div class="ck-cert"><img src="/matricula-cursos-presenciais/img/certificado-' + slug + '-640.webp" alt="Modelo do certificado de '
       + esc(d.curso.nome || '') + ' da Cruz Vermelha Brasileira Rio de Janeiro" width="640" height="452" loading="lazy" onerror="this.parentNode.hidden=true">'
-      + '<p><b>Ao concluir, você recebe o certificado da Cruz Vermelha</b>, reconhecida no Brasil e no mundo, com o seu nome, o curso e a carga horária. <span>Imagem de modelo.</span></p></div>';
+      + '<p><b>Ao concluir, você recebe o certificado da Escola de Educação e Saúde</b>, empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro, com o seu nome, o curso e a carga horária. <span>Imagem de modelo.</span></p></div>';
   }
 
   /* Etapas do PIX (spec 1.13): QR Code gerado (Pronto), Aguardando pagamento, Banco confirma a transação, e o último
@@ -316,11 +316,9 @@
     function planoMarcado() { var r = form.querySelector('input[name=plano]:checked'); return r ? r.value : 'so_taxa'; }
     function inscricaoAtual() { return info && typeof info.inscricao_centavos === 'number' ? info.inscricao_centavos : inscricaoHtml; }
     function taxaAtual() { return info ? (metodo() === 'pix' ? info.taxa.pix : info.taxa.cartao) : 0; }
-    /* Contribuição para a divulgação: o valor do info.php; antes dele, o que veio no HTML. 0 = opção desligada. */
+    /* Novas inscrições não cobram divulgação, mesmo com resposta antiga da API em cache. */
     function divulgacaoAtual() {
-      if (info && typeof info.divulgacao_centavos === 'number') return info.divulgacao_centavos;
-      var d = q('#ck-divulgacao');
-      return d ? parseInt(d.getAttribute('data-centavos'), 10) || 0 : 0;
+      return 0;
     }
     function matriculaDe(c) {
       if (!c) return 0;
@@ -551,7 +549,7 @@
 
       // Opcionais (E4: os custos são 5% só da taxa, nos dois planos).
       q('#ck-cobre-opcao').classList.toggle('marcado', cobre);
-      texto('#ck-cobre-legenda', completo ? 'Opcional. Cobre os custos de processamento da taxa de inscrição.' : 'Opcional. Assim a Cruz Vermelha recebe a taxa de inscrição inteira.');
+      texto('#ck-cobre-legenda', 'Opcional. Cobre os custos de processamento da taxa de inscrição da escola.');
       q('#ck-divulgacao-opcao').hidden = divulgacao <= 0;
       q('#ck-divulgacao-opcao').classList.toggle('marcado', ajuda);
       texto('#ck-divulgacao-valor', '+ ' + brl(divulgacao));

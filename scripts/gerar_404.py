@@ -44,9 +44,11 @@ PAGINA = """<!DOCTYPE html>
         <p class="lead">O endereço pode ter mudado ou sido digitado errado. Estes são os caminhos mais procurados:</p>
         <div class="e404-links">
           <a href="/"><i class="fa-solid fa-house" aria-hidden="true"></i> Página inicial</a>
-          <a href="/matricula-cursos-presenciais/"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Matrícula em cursos presenciais</a>
+          <a href="/doe/"><i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Doe</a>
+          <a href="/voluntariado/"><i class="fa-solid fa-people-group" aria-hidden="true"></i> Seja voluntário</a>
           <a href="/noticias/"><i class="fa-regular fa-newspaper" aria-hidden="true"></i> Notícias</a>
           <a href="/campanha-agasalho.html"><i class="fa-solid fa-heart" aria-hidden="true"></i> Campanha do Agasalho</a>
+          <a href="/matricula-cursos-presenciais/"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Escola de Educação e Saúde</a>
           <a href="/#contato"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Fale com a gente</a>
         </div>
       </div>

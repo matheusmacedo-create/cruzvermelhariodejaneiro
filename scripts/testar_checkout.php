@@ -13,6 +13,7 @@ $raiz = dirname(__DIR__);
 $configTeste = tempnam(sys_get_temp_dir(), 'mcp-config-');
 file_put_contents($configTeste, "<?php return [
     'SITE_URL' => 'https://exemplo.org', 'INSCRICAO_CENTAVOS' => '', 'PRECO_TESTE_CENTAVOS' => '',
+    'DIVULGACAO_CENTAVOS' => 1490,
     'TAXA_PIX_PCT' => 5.0, 'TAXA_PIX_FIXA' => 0, 'TAXA_CARTAO_PCT' => 5.0, 'TAXA_CARTAO_FIXA' => 0,
     'ESCOLA_API_URL' => '', 'ESCOLA_URL' => 'https://escola.exemplo.org', 'EMAIL_CONTATO' => 'contato@exemplo.org',
 ];");
@@ -181,8 +182,9 @@ verificar('pix validade no corpo', str_contains($m['html'], 'até 20/09 às 09h0
 verificar('pix texto puro', str_contains($m['texto'], '00020126BR.GOV.BCB.PIX<teste>') && str_contains($m['texto'], 'R$ 103,95'), true);
 verificar('pix sem whatsapp', stripos($m['html'] . $m['texto'], 'whatsapp'), false);
 
-// Contribuição opcional para a divulgação (07/10/2026): valor do catálogo e linha própria nos e-mails e na visão pública.
-verificar('divulgação: valor do catálogo', mcp_divulgacao_centavos(), 1490);
+// Novas inscrições não cobram divulgação; registros anteriores continuam legíveis nos recibos.
+verificar('divulgação: novas inscrições não cobram', mcp_divulgacao_centavos(), 0);
+verificar('divulgação: configuração antiga não reativa a cobrança', [mcp_cfg('DIVULGACAO_CENTAVOS'), mcp_divulgacao_centavos()], [1490, 0]);
 $comDivulgacao = ['divulgacao_centavos' => 1490, 'total_centavos' => 11885] + $inscricao;
 $mDiv = mcp_montar_email_pix_aberto(['pix_copia_cola' => '000201PIX', 'metodo' => 'pix'] + $comDivulgacao);
 verificar('divulgação: linha no e-mail do PIX, com o total', str_contains($mDiv['html'], 'Contribuição para a divulgação (você escolheu ajudar)')
@@ -255,7 +257,7 @@ verificar('divulgação: e-mail pago com a linha e o obrigado pelos dois opciona
 $aSoDiv = mcp_montar_email_aluno_pago(['taxa_centavos' => 0, 'total_centavos' => 11390] + $comDivulgacao);
 verificar('divulgação: só ela, obrigado próprio e sem a linha dos custos', str_contains($aSoDiv['html'], 'Obrigado por ajudar a divulgar os cursos: assim eles chegam a mais pessoas.')
     && !str_contains($aSoDiv['html'], 'Custos de processamento (você escolheu cobrir)'), true);
-verificar('divulgação: o obrigado dos custos continua igual sem ela', str_contains($b['html'], 'Obrigado por cobrir os custos de processamento: assim a Cruz Vermelha recebe a taxa de inscrição inteira.'), true);
+verificar('custos: e-mail identifica a taxa da escola', str_contains($b['html'], 'Obrigado por cobrir os custos de processamento da taxa de inscrição da escola.'), true);
 verificar('divulgação: aviso à secretaria com a conta do valor pago', str_contains(mcp_montar_email_secretaria($comDivulgacao)['texto'],
     "Pago: R$ 118,85 (taxa R$ 99,00 + custos R$ 4,95 + divulgação R$ 14,90)\n"), true);
 verificar('divulgação: visão pública (0 quando a inscrição não tem)', [mcp_publico($comDivulgacao)['divulgacao_centavos'], mcp_publico($inscricao)['divulgacao_centavos']], [1490, 0]);

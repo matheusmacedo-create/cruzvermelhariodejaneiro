@@ -28,13 +28,12 @@ PASTA = RAIZ / "site" / "doe"
 STATIC = PASTA / "static"
 STATIC_URL = "/doe/static/"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
-# Doação online suspensa desde 25/09/2026 (pedido do Matheus): /doe/ responde 503 com o aviso
-# (site/doe/.htaccess) e a home ficou sem o link "Doe". Com False, este script só regenera as páginas
-# (/doe/obrigado/ continua no ar para quem já doou) e não põe o link de volta no menu da home. Para a
-# doação voltar: True aqui e em gerar_idiomas.py, rodar os geradores e tirar as regras 503 dos .htaccess.
-DOACAO_NO_AR = False
+# A doação online ficou suspensa de 25/09 a 19/10/2026 (/doe/ respondia 503 pelos .htaccess das três pastas).
+# Religada em 19/10/2026 (decisão do Matheus, segunda recusa do Ad Grants): True aqui e em gerar_idiomas.py,
+# sem os .htaccess. Com False, este script só regenera as páginas (/doe/obrigado/ fica no ar para quem já doou)
+# e não põe o link "Doe" no menu da home; para suspender de novo, voltar os .htaccess (ver o README).
+DOACAO_NO_AR = True
 URL_PAGINA = f"{ORIGEM}/doe/"
-WIKI = "https://pt.wikipedia.org/wiki/Cruz_Vermelha_Brasileira_-_Rio_de_Janeiro"
 
 TITULO = "Doar para a Cruz Vermelha Brasileira Rio de Janeiro"
 H1 = "Doe para a Cruz Vermelha Brasileira Rio de Janeiro"
@@ -187,7 +186,7 @@ PAGINA = """<!DOCTYPE html>
       <div class="wrap">
         <p class="eyebrow">Transparência</p>
         <h2>Você sabe exatamente quem está apoiando.</h2>
-        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está no <a href="@@WIKI@@" target="_blank" rel="noopener">verbete da Wikipédia</a>.</p>
+        <p class="lead">A Cruz Vermelha Brasileira Rio de Janeiro é a filial do Estado do Rio de Janeiro da sociedade nacional da Cruz Vermelha, com sede própria no Centro do Rio. A história da filial e do edifício está em <a href="/historia/">Nossa história</a>, e quem dirige a filial, em <a href="/quem-somos/">Quem somos</a>.</p>
         <div class="doe-dados">
 @@DADOS@@
         </div>
@@ -310,7 +309,7 @@ CONFIANCA = [
     ("scale-balanced", "<b>Utilidade pública municipal e estadual</b>: lei municipal 5.153/2010 e lei estadual 9.984/2023."),
     ("certificate", "<b>CNPJ 08.560.973/0001-97</b>, Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro."),
     ("lock", "<b>Pagamento em ambiente seguro</b>, com comprovante por e-mail logo após a confirmação."),
-    ("hand-holding-heart", "<b>Acesso futuro a cursos gravados gratuitos</b> para quem doa pelo site."),
+    ("hand-holding-heart", "<b>Conheça o destino da sua contribuição</b>: <a href=\"/quem-somos/#como-nos-financiamos\">como a filial se financia</a> e <a href=\"/transparencia/\">documentos publicados</a>."),
 ]
 
 
@@ -337,8 +336,13 @@ def seletor_da_doacao(html: str) -> str:
 
 
 def menu_com_doe(home: str) -> str:
-    """Acrescenta o link da doação ao menu da home (uma vez). Todas as páginas herdam o cabeçalho."""
-    if 'href="/doe/"' in home:
+    """Acrescenta o link da doação ao menu da home (uma vez). Todas as páginas herdam o cabeçalho.
+
+    Desde 19/10/2026 o menu da home já tem a doação (item "Doe" do grupo "Como ajudar" e o botão "Doe" do
+    cabeçalho), escrita à mão em site/index.html: com qualquer link para /doe/ no cabeçalho, a home fica como está.
+    """
+    a = home.index('<header class="main-header">')
+    if 'href="/doe/"' in home[a:home.index("</header>", a)]:
         return home
     alvo = '          <a href="#contato">Contato</a>\n'
     if alvo not in home:
@@ -468,7 +472,7 @@ def main() -> int:
 
     html = (PAGINA
             .replace("@@TITULO@@", esc(TITULO)).replace("@@DESCRICAO@@", esc(DESCRICAO))
-            .replace("@@URL@@", URL_PAGINA).replace("@@ORIGEM@@", ORIGEM).replace("@@WIKI@@", WIKI)
+            .replace("@@URL@@", URL_PAGINA).replace("@@ORIGEM@@", ORIGEM)
             .replace("@@ESTILO@@", partes["estilo"]).replace("@@LD@@", ld_json)
             .replace("@@CSS_URL@@", url_estatico("doe.css")).replace("@@JS_URL@@", url_estatico("doe.js"))
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
