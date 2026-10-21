@@ -3723,3 +3723,17 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   2284862222364226). Não tirar: a Meta confere de tempos em tempos e o domínio volta a "Not Verified".
 - Publicado: cópia do ar idêntica ao HEAD antes, envio por TUS, cache limpo, conferência por HTTP e HTTPS (a meta
   aparece dentro do `<head>`; o ar é idêntico ao local). Credencial TUS apagada.
+
+### Publicado em 19/10/2026 (segunda recusa do Ad Grants)
+
+- Publicação por TUS na Hostinger, na ordem do cabeçalho de `scripts/publicacao-ad-grants-2.txt`: 95 arquivos de `site/` mais
+  `assets/otim/hero-turma-cbfi-640.webp` (fora do Git). Cópia do ar antes em `/tmp/no-ar-ad-grants-2` (90 arquivos; 5 eram novos:
+  `es/.htaccess`, `es/404.html`, `faq-idiomas.json`, `institucional.json`, `politicas.json`).
+- Removidos do servidor (204): `doe/.htaccess`, `en/donate/.htaccess`, `es/donar/.htaccess` (a doação voltou) e a notícia em inglês
+  sobre micropigmentação. Cache limpo (`hosting_cache_clear-website`).
+- Conferido por HTTP: os 93 arquivos publicáveis idênticos ao Git; `/doe/`, `/en/donate/` e `/es/donar/` em 200; home sem "Plataforma".
+  `gerar_sitemaps.py` lido do ar e os 4 sitemaps publicados e conferidos. A matéria em português sobre micropigmentação segue no
+  `sitemap-noticias.xml` porque vem da Redação (decisão pendente: tirar do ar ou do sitemap pelo plano de conteúdo).
+- Pendente fora do código: deploy da Redação (menu novo nas notícias, transparência e canais), correções de conteúdo das matérias
+  (`plano.sql`), prestação de contas no portal, CNPJ "Inapta", domínio no nome da filial e reenvio do pedido no Google for Nonprofits.
+- Para desfazer: roteiro no cabeçalho de `scripts/publicacao-ad-grants-2.txt`.
