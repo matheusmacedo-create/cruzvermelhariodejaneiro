@@ -3723,3 +3723,16 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   2284862222364226). Não tirar: a Meta confere de tempos em tempos e o domínio volta a "Not Verified".
 - Publicado: cópia do ar idêntica ao HEAD antes, envio por TUS, cache limpo, conferência por HTTP e HTTPS (a meta
   aparece dentro do `<head>`; o ar é idêntico ao local). Credencial TUS apagada.
+
+### Publicado em 21/10/2026 (turma nova na matrícula)
+
+- Banner do computador (`aula-turma-salao`, 480/960/1200), banner do celular e galeria (`aula-turma-vertical`, 480/591) e
+  `og-matricula-turma.jpg`, gerados das fotos da turma de 21/10 (WhatsApp, 1200×1600; ficam fora do Git). Paisagem e imagem de
+  compartilhamento são faixas da foto `14.35.58`; o retrato é a coluna da esquerda da mesma foto (instrutor, manequim e bolsa).
+- O `index.html` enviado é a cópia do ar + só as trocas de imagem (o patch de `b4ad945..a265752`), não o arquivo do Git: o
+  `main` ainda tem 14 linhas da matrícula não publicadas. Cópia do ar antes tirada com `--copiar-do-ar` (as 6 imagens eram novas).
+- Envio por TUS, cache limpo (`hosting_cache_clear-website`), `scripts/conferir_publicacao.sh` tudo certo (os 7 arquivos idênticos
+  ao enviado; API e bloqueios como esperado) e página conferida no Chromium a 1366 px e 390 px: banner certo em cada largura,
+  galeria com a foto nova, nenhum recurso com erro. Credencial TUS apagada.
+- Para desfazer: republicar a cópia do ar do `index.html` (ou a versão de `b4ad945` com as 14 linhas pendentes, se já for a hora)
+  e apagar as 6 imagens com `publicar_hostinger.sh --apagar`.
