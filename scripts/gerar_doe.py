@@ -89,9 +89,8 @@ FAQ = [
      "em alguns minutos, confira a caixa de spam ou fale com a gente pelo chat do site.",
      [("chat do site", "/#chat")]),
     ("Posso doar todo mês?",
-     "Em breve, sim, nesta mesma página: por PIX Automático ou por cartão, você autoriza uma vez e a cobrança se repete "
-     "todo mês, com aviso antes de cada uma e cancelamento quando quiser. Enquanto a opção não aparece no formulário, "
-     "dá para repetir a doação avulsa em menos de um minuto ou combinar a mensalidade com a equipe pelo chat do site.",
+     "Ainda não: hoje a doação é avulsa, por PIX ou cartão, e leva menos de um minuto. Para contribuir todo mês, basta "
+     "repetir a doação na data que preferir ou combinar a mensalidade com a equipe pelo chat do site.",
      [("chat do site", "/#chat")]),
     ("Quero doar roupas e cobertores. Como faço?",
      "Doações de roupas de frio, cobertores e calçados são recebidas na sede da Cruz Vermelha Brasileira Rio de "
