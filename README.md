@@ -3761,3 +3761,15 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   "pendente", então um PIX pago não confirmaria) e o formato do postback; (2) trocar nos textos públicos a ÚnicoPag como processadora
   das doações (`gerar_doe.py` FAQ, `politicas.json` PT/EN/ES, `traducoes/en/paginas/privacy.md`, termos e reembolso) e republicar;
   (3) colocar `DOACAO_GATEWAY` e `DONATY_API_KEY` no `config.php` do servidor; (4) cadastrar no painel da Donaty o domínio autorizado, se pedir.
+
+### Backend da Donaty publicado em 21/10/2026 (ainda na Unicopag)
+
+- Publicados por TUS: `matricula-cursos-presenciais/api/lib/unicopag.php`, `doe/api/lib/doacao.php`, `doe/api/doacoes.php`,
+  `doe/api/info.php`, `doe/api/webhook.php` e `doe/static/doe.js`, nessa ordem (bibliotecas antes dos endpoints). Cópia do ar antes em
+  `/tmp/no-ar-backend-donaty` (os 6 arquivos estavam idênticos ao Git). Cache limpo; os 6 conferidos, idênticos ao branch.
+- Comportamento igual ao de antes: `DOACAO_GATEWAY` não existe no `config.php` do servidor, então vale `unicopag`. `info.php` devolve
+  `"metodos":["pix","cartao"]`; `/doe/`, `/doe/obrigado/`, a matrícula e a home respondem 200; `status.php` com token inexistente
+  responde 404 JSON.
+- **Não provado ao vivo**: o caminho da matrícula pela Unicopag (nenhuma consulta real chegou a ela) e a coluna `gateway` em
+  `mcp_doacoes` (criada no primeiro acesso ao banco; a consulta de status não deu erro). Cobertura: 871 testes do checkout, 59 e 19 da doação.
+- Próximo: `docs/virada-donaty.md`, passo 2 em diante (precisa da chave nova, da cobrança de teste real e dos textos).
