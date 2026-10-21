@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Landing pages nos subdomínios de cruzvermelhariodejaneiro.org (propriedade de domínio no Search Console).
-     Gerado por scripts/gerar_sitemaps.py em 2026-10-17T20:39:24+00:00. Não editar à mão.
-     Ajustado à mão em 19/10/2026: a landing de Punção Venosa (puncaovenosav1.) saiu. Rodar gerar_sitemaps.py depois de publicar. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-10-21T02:29:56+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://projetocores.cruzvermelhariodejaneiro.org/</loc>
-    <lastmod>2026-10-16T01:50:39+00:00</lastmod>
+    <lastmod>2026-10-19T18:41:20+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
