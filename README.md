@@ -3743,3 +3743,21 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
 - `/doe/` (FAQ sem promessa de doação mensal "em breve", também no FAQPage), `/bio/` (sem o valor da inscrição) e `/en/history/`
   (botão "Donate" no lugar de "Visit the Archive"). Cópia do ar antes em `/tmp/no-ar-3-correcoes`; cache limpo; os 3 arquivos
   conferidos por HTTP, idênticos ao Git.
+
+### Doações na Donaty (código pronto, desligado; 21/10/2026)
+
+- **O que é**: `DOACAO_GATEWAY` em `/doe/api/config.php` (só no servidor) escolhe o gateway **das doações**: `unicopag` (padrão) ou `donaty`.
+  A matrícula dos cursos não muda. `mcp_unicopag()` ganhou o parâmetro `$gateway` (base, prefixo e Bearer); `mcp_doacao_api()` e
+  `mcp_doacao_gateway_opcoes()` em `lib/doacao.php` o usam. Voltar atrás é trocar a configuração para `unicopag`, sem deploy.
+- **Contrato da Donaty** (documentação que a filial recebeu): `POST https://api.donaty.com.br/api/public/v1/payments` com
+  `Authorization: Bearer dnt_sk_…`; a resposta traz `hash`, `payment_status` e `pix.pix_qr_code`; consulta em
+  `GET /api/public/v1/transactions/{hash}`; o aviso `transaction.updated` vai para `postback_url` (`/doe/api/webhook.php`, que só usa o
+  hash como gatilho e confirma pela consulta). Só PIX está documentado: com `donaty` a página oferece apenas PIX (`info.php` devolve
+  `metodos`; `doe.js` esconde o cartão; o servidor recusa `cartao`).
+- **Chave**: `DONATY_API_KEY` (e, se preciso, `DONATY_BASE_URL`) só em `/doe/api/config.php` no servidor. Nunca no repositório.
+- **Testes**: `php scripts/testar_doacao_donaty.php` (11), `testar_doacao.php` (59) e `testar_checkout.php` passam.
+- **O que NÃO foi feito, e precisa antes de ligar**: (1) uma cobrança PIX real de teste (R$ 5, paga pela própria filial) para conferir que os
+  campos extras (CPF, telefone, `metadata`, `expire_in_days`) são aceitos, os nomes de `payment_status` (status desconhecido vira
+  "pendente", então um PIX pago não confirmaria) e o formato do postback; (2) trocar nos textos públicos a ÚnicoPag como processadora
+  das doações (`gerar_doe.py` FAQ, `politicas.json` PT/EN/ES, `traducoes/en/paginas/privacy.md`, termos e reembolso) e republicar;
+  (3) colocar `DOACAO_GATEWAY` e `DONATY_API_KEY` no `config.php` do servidor; (4) cadastrar no painel da Donaty o domínio autorizado, se pedir.

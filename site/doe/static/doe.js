@@ -363,6 +363,14 @@
     api('info.php').then(function (d) {
       if (!d.ok) { erro('A doação está indisponível no momento. Tente novamente em instantes.'); q('#doe-continuar').disabled = true; return; }
       info = d;
+      // Formas de pagamento que o servidor aceita: sem cartão, some o botão e o PIX fica marcado.
+      if (d.metodos && d.metodos.indexOf('cartao') === -1) {
+        qa('.doe-metodo[data-metodo="cartao"]').forEach(function (b) { b.hidden = true; });
+        qa('.doe-metodo').forEach(function (b) { b.classList.toggle('ativo', b.getAttribute('data-metodo') === 'pix'); });
+        q('#doe-cartao').hidden = true;
+        qa('#doe-cartao input').forEach(function (i) { i.disabled = true; });
+        atualizarTotais();
+      }
       if (d.teste) q('#doe-teste').hidden = false;
       if (d.mensal) q('#doe-frequencia').hidden = false;
       var pedido = parseInt(digitos(param('valor')) || '0', 10);
