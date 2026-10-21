@@ -134,6 +134,7 @@ function mcp_doacao_gravar(array $doador, string $token, int $valor, int $taxa, 
         'ultimos4' => $ultimos4,
         'utm_source' => $doador['utm_source'], 'utm_medium' => $doador['utm_medium'], 'utm_campaign' => $doador['utm_campaign'],
         'utm_content' => $doador['utm_content'], 'utm_term' => $doador['utm_term'], 'fbclid' => $doador['fbclid'], 'gclid' => $doador['gclid'],
+        'gateway' => mcp_doacao_gateway(),
         'ip' => mcp_ip(), 'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
     ];
     $colunas = implode(', ', array_keys($linha));

@@ -62,8 +62,8 @@ FAQ = [
      "Para cursos, matrícula, campanhas e parcerias, use o chat de contato deste site: a equipe responde por e-mail em até "
      "3 dias úteis.", []),
     ("Como ajudar a Cruz Vermelha no Rio de Janeiro?",
-     "Sendo voluntário, com o cadastro no formulário oficial, no botão acima; doando pela página de doação, por PIX ou "
-     "cartão; ou entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho. Empresas e escolas "
+     "Sendo voluntário, com o cadastro no formulário oficial, no botão acima; doando pela página de doação, por PIX; ou "
+     "entregando roupas de frio, cobertores e calçados na sede, pela Campanha do Agasalho. Empresas e escolas "
      "que queiram propor uma parceria podem usar o chat de contato deste site.",
      [("página de doação", "URL_DOE"), ("Campanha do Agasalho", "URL_AGASALHO")]),
     ("Onde fica a Cruz Vermelha no Rio de Janeiro?",

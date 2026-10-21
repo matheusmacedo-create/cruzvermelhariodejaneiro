@@ -1,0 +1,56 @@
+# Virada das doações para a Donaty: lista de publicação (preparada em 21/10/2026, NADA publicado).
+# Roteiro completo, ordem e volta atrás: docs/virada-donaty.md. Resumo da ORDEM:
+#   0. Fatos F1 a F9 confirmados com a Donaty e cobrança PIX de teste paga (docs/doacoes-donaty-textos-juridicos.md).
+#   1. Definir DATA_VIRADA_DOACAO em scripts/gerar_politicas.py e rodar a ordem de geração do README; commitar a saída.
+#   2. Publicar o BLOCO "backend" (continua na Unicopag: DOACAO_GATEWAY ainda não existe no config.php do servidor).
+#   3. Pôr DOACAO_GATEWAY='donaty' e DONATY_API_KEY no /doe/api/config.php (só no servidor) e testar uma doação real.
+#   4. Publicar o BLOCO "textos e páginas" e limpar o cache. Se algo falhar: DOACAO_GATEWAY='unicopag' (sem deploy).
+# Os arquivos de "textos e páginas" abaixo são os que a ordem de geração altera; confira com git status depois de gerar.
+#
+# --- backend (publicar primeiro; comportamento igual ao de hoje enquanto o config.php não muda)
+site/doe/api/doacoes.php
+site/doe/api/info.php
+site/doe/api/webhook.php
+site/doe/api/lib/doacao.php
+site/matricula-cursos-presenciais/api/lib/unicopag.php
+site/doe/static/doe.js
+#
+# --- textos e páginas (publicar depois do config.php; precisam da data real da virada nas políticas)
+site/index.html
+site/llms.txt
+site/campanha-agasalho.html
+site/chat/chat.js
+site/faq-home.json
+site/faq-idiomas.json
+site/idiomas.json
+site/politicas.json
+site/institucional.json
+site/404.html
+site/base-legal/index.html
+site/bio/index.html
+site/cookies/index.html
+site/cursos-gratuitos/index.html
+site/direito-internacional-humanitario/index.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/en/donate/index.html
+site/en/faq/index.html
+site/en/index.html
+site/en/privacy/index.html
+site/en/terms/index.html
+site/en/winter-clothing-drive/index.html
+site/equipe.html
+site/es/donar/index.html
+site/es/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/terminos/index.html
+site/historia/index.html
+site/movimento-internacional/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/quem-somos/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/voluntariado/index.html

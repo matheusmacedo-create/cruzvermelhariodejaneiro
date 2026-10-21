@@ -47,10 +47,10 @@ function mcp_doacao_gateway(): string
     return mb_strtolower((string) mcp_doacao_cfg('DOACAO_GATEWAY', 'unicopag')) === 'donaty' ? 'donaty' : 'unicopag';
 }
 
-/** Conta do gateway das doações. Sem chave própria, a Unicopag usa a do checkout (útil em teste). */
-function mcp_doacao_chave(): string
+/** Conta do gateway das doações (o atual, ou o `$gateway` de uma doação antiga). Sem chave própria, a Unicopag usa a do checkout. */
+function mcp_doacao_chave(?string $gateway = null): string
 {
-    if (mcp_doacao_gateway() === 'donaty') {
+    if (($gateway ?? mcp_doacao_gateway()) === 'donaty') {
         return (string) mcp_doacao_cfg('DONATY_API_KEY', '');
     }
     return (string) mcp_doacao_cfg('UNICO_API_KEY_DOACAO', mcp_doacao_cfg('UNICO_API_KEY', ''));
@@ -60,9 +60,9 @@ function mcp_doacao_chave(): string
  * Opções de transporte do gateway para mcp_unicopag(). A Donaty serve em /api/public/v1 com o
  * token em Authorization: Bearer; a Unicopag usa o padrão (api_token na URL, sem prefixo).
  */
-function mcp_doacao_gateway_opcoes(): array
+function mcp_doacao_gateway_opcoes(?string $gateway = null): array
 {
-    if (mcp_doacao_gateway() !== 'donaty') {
+    if (($gateway ?? mcp_doacao_gateway()) !== 'donaty') {
         return [];
     }
     return [
@@ -73,9 +73,10 @@ function mcp_doacao_gateway_opcoes(): array
 }
 
 /** Chamada à API do gateway das doações (a mesma assinatura de mcp_unicopag, sem a chave). */
-function mcp_doacao_api(string $metodo, string $caminho, ?array $corpo = null, ?int $tempo = null): array
+function mcp_doacao_api(string $metodo, string $caminho, ?array $corpo = null, ?int $tempo = null, ?string $gateway = null): array
 {
-    $resposta = mcp_unicopag($metodo, $caminho, $corpo, mcp_doacao_chave(), $tempo, mcp_doacao_gateway_opcoes());
+    $gateway = $gateway === 'donaty' ? 'donaty' : ($gateway === 'unicopag' ? 'unicopag' : mcp_doacao_gateway());
+    $resposta = mcp_unicopag($metodo, $caminho, $corpo, mcp_doacao_chave($gateway), $tempo, mcp_doacao_gateway_opcoes($gateway));
     // Respostas embrulhadas em "data" (padrão de API Laravel) são desembrulhadas: o resto do código lê hash,
     // payment_status e pix.pix_qr_code no nível de cima, como a Unicopag devolve.
     if (!isset($resposta['hash']) && !isset($resposta['payment_status']) && is_array($resposta['data'] ?? null)) {
@@ -208,7 +209,9 @@ function mcp_doacao_db(): PDO
         KEY ix_ip (ip, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Colunas acrescentadas depois da primeira versão da tabela.
-    mcp_garantir_colunas($pdo, 'mcp_doacoes', ['anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0']);
+    // gateway: com qual provedor a cobrança nasceu. A consulta de status e o postback usam o da própria doação,
+    // então uma doação pendente da Unicopag continua confirmando depois da virada para a Donaty (e vice-versa).
+    mcp_garantir_colunas($pdo, 'mcp_doacoes', ['anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0', 'gateway' => "VARCHAR(12) NOT NULL DEFAULT 'unicopag'"]);
     $pronto = true;
     return $pdo;
 }
@@ -269,7 +272,7 @@ function mcp_doacao_sincronizar(array $doacao): array
     }
     $id = (int) $doacao['id'];
     try {
-        $transacao = mcp_doacao_api('GET', '/public/v1/transactions/' . rawurlencode((string) $doacao['unicopag_hash']));
+        $transacao = mcp_doacao_api('GET', '/public/v1/transactions/' . rawurlencode((string) $doacao['unicopag_hash']), null, null, (string) ($doacao['gateway'] ?? 'unicopag'));
     } catch (McpUnicopagErro $e) {
         mcp_doacao_registrar($id, 'consulta_falhou', $e->status . ' ' . $e->getMessage());
         mcp_doacao_atualizar($id, ['consultado_em' => mcp_agora()]);

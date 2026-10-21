@@ -27,6 +27,9 @@ if (($argv[1] ?? '') === '--filho') {
     echo json_encode([
         'gateway' => mcp_doacao_gateway(), 'chave' => mcp_doacao_chave(),
         'opcoes' => mcp_doacao_gateway_opcoes(), 'metodos' => mcp_doacao_metodos(),
+        // Uma doação antiga usa o gateway em que nasceu, não o atual.
+        'chave_unicopag' => mcp_doacao_chave('unicopag'), 'chave_donaty' => mcp_doacao_chave('donaty'),
+        'opcoes_unicopag' => mcp_doacao_gateway_opcoes('unicopag'), 'opcoes_donaty' => mcp_doacao_gateway_opcoes('donaty'),
     ]);
     exit(0);
 }
@@ -69,6 +72,14 @@ verificar('donaty: base, prefixo e Bearer', $donaty['opcoes'] ?? null, [
     'base_url' => 'https://api.donaty.com.br', 'prefixo' => '/api', 'bearer' => true,
 ]);
 verificar('donaty oferece só PIX', $donaty['metodos'] ?? null, ['pix']);
+
+// Doação criada num gateway continua sendo consultada nele depois da troca (e na volta atrás).
+foreach (['unicopag' => $unicopag, 'donaty' => $donaty] as $atual => $dados) {
+    verificar("[$atual atual] doação da Unicopag usa a chave da Unicopag", $dados['chave_unicopag'] ?? null, 'chave-doacao');
+    verificar("[$atual atual] doação da Donaty usa a chave da Donaty", $dados['chave_donaty'] ?? null, 'dnt_sk_ficticia');
+    verificar("[$atual atual] doação da Unicopag usa o transporte padrão", $dados['opcoes_unicopag'] ?? null, []);
+    verificar("[$atual atual] doação da Donaty usa Bearer em /api", $dados['opcoes_donaty']['bearer'] ?? null, true);
+}
 
 // Valor desconhecido não liga a Donaty por engano.
 $estranho = rodar('qualquer-coisa');
