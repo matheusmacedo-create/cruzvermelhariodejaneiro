@@ -3736,3 +3736,12 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   galeria com a foto nova, nenhum recurso com erro. Credencial TUS apagada.
 - Para desfazer: republicar a cópia do ar do `index.html` (ou a versão de `b4ad945` com as 14 linhas pendentes, se já for a hora)
   e apagar as 6 imagens com `publicar_hostinger.sh --apagar`.
+
+### Publicado em 21/10/2026 (doação, bio e história em inglês)
+
+- `site/doe/index.html`, `site/bio/index.html` e `site/en/history/index.html` do branch `claude/magical-einstein-kz4v7i`
+  (commit `d40798f`), por TUS, com cópia do ar antes. `/doe/` estava atrás do Git: ainda prometia "Acesso futuro a cursos
+  gravados gratuitos" (a correção de `d7f4e82`, de 19/10, não tinha chegado ao ar); agora sai também sem essa promessa e sem o
+  "em breve" da doação mensal. `/bio/` sem o valor da inscrição; `/en/history/` troca "Visit the Archive" por "Donate".
+- Cache limpo; os três no ar idênticos ao branch (HTTP 200), sem a frase antiga, sem erro de recurso ou de JS a 1366 px e
+  390 px. Credencial TUS apagada.
