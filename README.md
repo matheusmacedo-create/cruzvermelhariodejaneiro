@@ -3788,3 +3788,15 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   jurídica final. Cópia do ar antes em `/tmp/no-ar-virada-textos`; backend em `/tmp/no-ar-backend-donaty`.
 - **Pendente**: trocar a chave (foi colada no chat e a filial decidiu mantê-la), F1 a F9, revisão jurídica, e o merge do branch na `main`
   (a `main` ganhou o parâmetro `?de=home` nos links "Doe agora" da home, enquanto o ar usa `?utm_source=site&utm_medium=home`: resolver no merge).
+
+### SEO: títulos, descrições e links das notícias em inglês (22/10/2026, não publicado)
+
+- Conferência de 22/10 (`auditar_seo.py`, `rastrear_site.py`, `conferir_pixel.js`): rastreio sem 4xx/5xx nem órfãs; Pixel e GA4 só com consentimento.
+- **Títulos acima de 60** passam a ≤ 59: `/campanha-agasalho.html`, `/historia/`, `/gestao/`, `/pedido-de-documentos/`, `/reembolso/`,
+  `/en/history/`, `/en/refunds/` e `titulo_seo` da notícia em inglês do curso de primeiros socorros (o H1 não mudou).
+- **Descrições acima de 160** passam a ≤ 159: `/historia/`, `/gestao/`, `/privacidade/`, `/en/privacy/`, `/es/privacidad/`, `/es/cursos/`,
+  `/es/index`, `/en/history/`, `/voluntariado/cadastro/`, `/projetocores/`. Textos novos medidos antes de aplicar; `og:title` acompanha o `<title>`.
+- **Links sem texto** em `/en/news/`: o link só com imagem (já `aria-hidden`) agora leva o título da notícia no `alt` (`gerar_ingles.py`);
+  o verificador usa o `alt` como âncora. 0 de 36 links sem texto.
+- Fora do escopo: `/bio/` (`noindex`) e `/dia-das-criancas/` (encerrada); ferramentas internas da matrícula; subdomínios.
+- `scripts/conferir_pixel.js` passou a ler o evento do Pixel em POST multipart (a home em português envia assim); antes dava falso "FALHA".

@@ -103,7 +103,7 @@
     "privacidade": {
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
-        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, para quê, com quem compartilha e seus direitos pela LGPD.",
+        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.",
         "sobrancelha": "Proteção de dados",
         "h1": "Política de Privacidade",
         "intro": [
@@ -367,7 +367,7 @@
       },
       "en": {
         "titulo_aba": "Privacy Policy | Brazilian Red Cross Rio de Janeiro",
-        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat, the newsletter and the volunteer registration, why, who receives it, and your rights under the LGPD.",
+        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat, the newsletter and volunteer registration, and your LGPD rights.",
         "sobrancelha": "Data protection",
         "h1": "Privacy Policy",
         "intro": [
@@ -631,7 +631,7 @@
       },
       "es": {
         "titulo_aba": "Privacidad | Cruz Roja Brasileña Río de Janeiro",
-        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat, el boletín y el registro de voluntarios, para qué, con quién se comparte y sus derechos según la LGPD.",
+        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat, el boletín y el registro de voluntarios, y sus derechos según la LGPD.",
         "sobrancelha": "Protección de datos",
         "h1": "Política de Privacidad",
         "intro": [
@@ -1761,7 +1761,7 @@
     "reembolso": {
       "revisao": "2026-10-13",
       "pt": {
-        "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
+        "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira RJ",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
         "sobrancelha": "Matrícula em cursos",
         "h1": "Cancelamento e reembolso",
@@ -1866,7 +1866,7 @@
         ]
       },
       "en": {
-        "titulo_aba": "Cancellation and refunds | Brazilian Red Cross Rio de Janeiro",
+        "titulo_aba": "Cancellation and refunds | Brazilian Red Cross RJ",
         "descricao": "How to withdraw from a course enrolment with the Brazilian Red Cross Rio de Janeiro: the 7-day right of withdrawal, when the money is returned and how to ask.",
         "sobrancelha": "Course enrolment",
         "h1": "Cancellation and refunds",

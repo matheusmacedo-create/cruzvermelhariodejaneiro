@@ -418,7 +418,7 @@ def pagina_indice(idioma: dict, partes: dict, P: dict, todas: list[dict]) -> str
             largura, altura = medidas(n["capa_medidas"])
             cartoes.append(
                 f'<article><a class="capa" href="{n["url"]}" tabindex="-1" aria-hidden="true"><img src="{esc(n["pasta_img"] + n["capa"])}" '
-                f'alt="" width="{largura}" height="{altura}" loading="lazy" decoding="async"></a>'
+                f'alt="{esc(n["titulo"])}" width="{largura}" height="{altura}" loading="lazy" decoding="async"></a>'
                 f'<div class="corpo"><h3><a href="{n["url"]}">{esc(n["titulo"])}</a></h3>'
                 f'<time datetime="{n["publicado"]}">{data_extenso(n["publicado"])}</time>'
                 f'<p>{esc(n["linha_fina"])}</p></div></article>')
