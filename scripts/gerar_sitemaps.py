@@ -82,6 +82,9 @@ PAGINAS = [
     ("/cookies/", "cookies/index.html", "yearly", "0.3", "Política de Cookies"),
     ("/termos/", "termos/index.html", "yearly", "0.3", "Termos de Uso"),
     ("/reembolso/", "reembolso/index.html", "yearly", "0.3", "Cancelamento e reembolso"),
+    ("/como-produzimos-nosso-conteudo/", "como-produzimos-nosso-conteudo/index.html", "yearly", "0.4", "Política editorial"),
+    ("/en/how-we-produce-our-content/", "en/how-we-produce-our-content/index.html", "yearly", "0.2", "Política editorial em inglês"),
+    ("/es/como-producimos-nuestro-contenido/", "es/como-producimos-nuestro-contenido/index.html", "yearly", "0.2", "Política editorial em espanhol"),
     ("/en/privacy/", "en/privacy/index.html", "yearly", "0.2", "Privacidade em inglês"),
     ("/en/cookies/", "en/cookies/index.html", "yearly", "0.2", "Cookies em inglês"),
     ("/en/terms/", "en/terms/index.html", "yearly", "0.2", "Termos em inglês"),
@@ -146,7 +149,7 @@ ALTERNATIVAS = {
 }
 ALTERNATIVAS.update({en: {"pt-BR": pt, "en": en} for pt, en in NOTICIAS_EN.items()})
 # Doação: cluster completo com x-default no português, como declaram gerar_doe.py e gerar_idiomas.py.
-for _chave in ("privacidade", "cookies", "termos", "reembolso", "doar"):
+for _chave in ("privacidade", "cookies", "termos", "reembolso", "editorial", "doar"):
     _c = idiomas.PAGINAS[_chave]
     for _url in _c.values():
         ALTERNATIVAS[_url] = {"pt-BR": _c["pt"], "en": _c["en"], "es": _c["es"]}

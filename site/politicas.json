@@ -31,7 +31,8 @@
         "privacidade": "Política de Privacidade",
         "cookies": "Política de Cookies",
         "termos": "Termos de Uso",
-        "reembolso": "Cancelamento e reembolso"
+        "reembolso": "Cancelamento e reembolso",
+        "editorial": "Como produzimos nosso conteúdo"
       }
     },
     "en": {
@@ -63,7 +64,8 @@
         "privacidade": "Privacy Policy",
         "cookies": "Cookie Policy",
         "termos": "Terms of Use",
-        "reembolso": "Cancellation and refunds"
+        "reembolso": "Cancellation and refunds",
+        "editorial": "How we produce our content"
       }
     },
     "es": {
@@ -95,7 +97,8 @@
         "privacidade": "Política de Privacidad",
         "cookies": "Política de Cookies",
         "termos": "Términos de Uso",
-        "reembolso": "Cancelación y reembolso"
+        "reembolso": "Cancelación y reembolso",
+        "editorial": "Cómo producimos nuestro contenido"
       }
     }
   },
@@ -2067,6 +2070,330 @@
               },
               {
                 "p": "Contacto: el chat “Fale com a gente”, en la [página de matrícula]({matricula}), o [{email}](mailto:{email})."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "editorial": {
+      "revisao": "2026-10-22",
+      "pt": {
+        "titulo_aba": "Como produzimos nosso conteúdo | Cruz Vermelha RJ",
+        "descricao": "Como a Cruz Vermelha Brasileira Rio de Janeiro escreve as notícias e guias do site: fontes oficiais, uso de IA, revisão, saúde e pedidos de correção.",
+        "sobrancelha": "Política editorial",
+        "h1": "Como produzimos nosso conteúdo",
+        "intro": [
+          "A Cruz Vermelha Brasileira Rio de Janeiro publica em [Notícias](/noticias/) matérias sobre a Filial e guias sobre primeiros socorros, emergências e prevenção no estado do Rio, o Movimento Internacional da Cruz Vermelha e do Crescente Vermelho, o Direito Internacional Humanitário, voluntariado, história e os cursos da nossa Escola de Educação e Saúde.",
+          "Esta página explica quem escreve, de onde vêm as informações, como usamos inteligência artificial e como pedir uma correção. O objetivo é que você saiba como cada texto foi feito antes de confiar nele."
+        ],
+        "secoes": [
+          {
+            "id": "quem-escreve",
+            "titulo": "Quem escreve",
+            "blocos": [
+              {
+                "p": "Os textos são produzidos pelo Departamento de Comunicação Social da Filial. Nenhum texto vai ao ar sem ser lido e aprovado por uma pessoa da equipe, que responde pelo que foi publicado."
+              }
+            ]
+          },
+          {
+            "id": "inteligencia-artificial",
+            "titulo": "Como usamos inteligência artificial",
+            "blocos": [
+              {
+                "p": "Usamos ferramentas de inteligência artificial para apoiar a pesquisa e a redação dos guias: organizar o tema, sugerir a estrutura e propor uma primeira versão do texto."
+              },
+              {
+                "p": "A inteligência artificial não decide o que publicamos e não é fonte de informação. Toda fonte citada é aberta e lida por uma pessoa da equipe antes de entrar no texto. Todo texto é revisado e aprovado pela equipe antes de ir ao ar. Dado que não se confirma na fonte sai do texto."
+              }
+            ]
+          },
+          {
+            "id": "fontes",
+            "titulo": "De onde vêm as informações",
+            "blocos": [
+              {
+                "lista": [
+                  "Usamos fontes oficiais e primárias: o Movimento Internacional da Cruz Vermelha e do Crescente Vermelho (Federação Internacional e Comitê Internacional da Cruz Vermelha), o Ministério da Saúde, o SAMU, o Corpo de Bombeiros Militar do Estado do Rio de Janeiro, a Defesa Civil, leis e normas publicadas e documentos da própria Cruz Vermelha Brasileira.",
+                  "O link para a fonte fica na frase do fato, e todas as fontes aparecem na lista \"Fontes e referências\" ao fim do texto.",
+                  "Números trazem o lugar e o ano a que se referem. Preferimos o dado do estado do Rio; na falta dele, o do Brasil; por último, o mundial.",
+                  "Não usamos como fonte resumo de buscador, página que exige login ou texto que repete outro sem citar a origem."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "saude",
+            "titulo": "Temas de saúde",
+            "blocos": [
+              {
+                "lista": [
+                  "Nos textos sobre primeiros socorros e saúde, explicamos o que dizem as orientações oficiais, sem criar procedimento próprio.",
+                  "Não publicamos passo a passo de técnicas, doses, quantidades ou outras medidas clínicas, nem orientação sobre procedimentos invasivos.",
+                  "Em toda situação de emergência, o texto orienta a ligar para o SAMU (192) ou para o Corpo de Bombeiros (193).",
+                  "Nossos textos informam e não substituem atendimento de profissional de saúde nem um curso com prática. Para aprender a agir, procure um curso presencial com instrutor."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cursos",
+            "titulo": "Textos sobre os cursos da Escola",
+            "blocos": [
+              {
+                "p": "Parte dos textos apresenta os cursos da Escola de Educação e Saúde da Filial e leva à página de matrícula. Esses textos são identificados como divulgação de curso, seguem as mesmas regras de fonte e de saúde dos demais e não trazem preço no corpo do texto: valores e condições ficam na página de matrícula."
+              }
+            ]
+          },
+          {
+            "id": "imagens",
+            "titulo": "Imagens",
+            "blocos": [
+              {
+                "lista": [
+                  "As fotos vêm do acervo da Filial ou de bancos com licença aberta, sempre com crédito do autor e da licença.",
+                  "Pessoas atendidas, alunos e voluntários só aparecem com rosto reconhecível se houver autorização registrada."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "neutralidade",
+            "titulo": "Neutralidade",
+            "blocos": [
+              {
+                "p": "Seguimos os sete Princípios Fundamentais do Movimento: Humanidade, Imparcialidade, Neutralidade, Independência, Voluntariado, Unidade e Universalidade. Nossos textos não tomam partido político, não tratam de questões religiosas e não julgam as pessoas nem as suas escolhas. Quando citamos um órgão público, é como fonte de informação, não como propaganda."
+              }
+            ]
+          },
+          {
+            "id": "correcoes",
+            "titulo": "Atualizações e correções",
+            "blocos": [
+              {
+                "lista": [
+                  "Revisamos os textos publicados. Quando uma orientação oficial muda ou um dado envelhece, o texto é atualizado e a data de atualização aparece na página.",
+                  "Encontrou um erro, uma informação desatualizada ou um link quebrado? Escreva para [{email}](mailto:{email}) com o assunto \"Correção\" e o endereço da página.",
+                  "A equipe confere o pedido na fonte e, se houver erro, corrige o texto."
+                ]
+              },
+              {
+                "filial": true
+              }
+            ]
+          }
+        ]
+      },
+      "en": {
+        "titulo_aba": "How we produce our content | Brazilian Red Cross Rio de Janeiro",
+        "descricao": "How the Brazilian Red Cross Rio de Janeiro writes the news and guides on its website: official sources, use of AI, review, health and corrections.",
+        "sobrancelha": "Editorial policy",
+        "h1": "How we produce our content",
+        "intro": [
+          "The Brazilian Red Cross Rio de Janeiro publishes, in its [News](/noticias/) section (in Portuguese), stories about the Branch and guides on first aid, emergencies and prevention in the state of Rio de Janeiro, the International Red Cross and Red Crescent Movement, International Humanitarian Law, volunteering, history and the courses of our School of Education and Health.",
+          "This page explains who writes, where the information comes from, how we use artificial intelligence and how to ask for a correction. The aim is for you to know how each text was made before you rely on it."
+        ],
+        "secoes": [
+          {
+            "id": "who-writes",
+            "titulo": "Who writes",
+            "blocos": [
+              {
+                "p": "The texts are produced by the Branch's Communications Department. No text is published without being read and approved by a member of the team, who is accountable for what was published."
+              }
+            ]
+          },
+          {
+            "id": "artificial-intelligence",
+            "titulo": "How we use artificial intelligence",
+            "blocos": [
+              {
+                "p": "We use artificial intelligence tools to support research and writing of the guides: organising the topic, suggesting a structure and proposing a first draft."
+              },
+              {
+                "p": "Artificial intelligence does not decide what we publish and is not a source of information. Every source cited is opened and read by a member of the team before it goes into the text. Every text is reviewed and approved by the team before it is published. Any data that cannot be confirmed in the source is removed."
+              }
+            ]
+          },
+          {
+            "id": "sources",
+            "titulo": "Where the information comes from",
+            "blocos": [
+              {
+                "lista": [
+                  "We use official and primary sources: the International Red Cross and Red Crescent Movement (International Federation and International Committee of the Red Cross), the Brazilian Ministry of Health, SAMU (emergency medical service), the Rio de Janeiro State Military Fire Brigade, Civil Defence, published laws and regulations and documents of the Brazilian Red Cross itself.",
+                  "The link to the source sits in the sentence that states the fact, and all sources are listed under \"Sources and references\" at the end of the text.",
+                  "Figures state the place and year they refer to. We prefer data for the state of Rio de Janeiro; failing that, for Brazil; and lastly, global data.",
+                  "We do not use as a source search-engine summaries, pages that require a login or texts that repeat others without citing the origin."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "health",
+            "titulo": "Health topics",
+            "blocos": [
+              {
+                "lista": [
+                  "In texts on first aid and health, we explain what official guidance says, without creating procedures of our own.",
+                  "We do not publish step-by-step techniques, doses, quantities or other clinical measures, nor guidance on invasive procedures.",
+                  "In every emergency situation, the text tells readers to call SAMU (192) or the Fire Brigade (193).",
+                  "Our texts inform and do not replace care by a health professional or a hands-on course. To learn what to do, look for an in-person course with an instructor."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "courses",
+            "titulo": "Texts about the School's courses",
+            "blocos": [
+              {
+                "p": "Some texts present the courses of the Branch's School of Education and Health and lead to the enrolment page. These texts are labelled as course promotion, follow the same source and health rules as the others and do not state prices in the body of the text: fees and conditions are on the enrolment page."
+              }
+            ]
+          },
+          {
+            "id": "images",
+            "titulo": "Images",
+            "blocos": [
+              {
+                "lista": [
+                  "Photos come from the Branch's archive or from openly licensed image banks, always credited with the author and the licence.",
+                  "People we assist, students and volunteers only appear with a recognisable face if there is a recorded authorisation."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "neutrality",
+            "titulo": "Neutrality",
+            "blocos": [
+              {
+                "p": "We follow the seven Fundamental Principles of the Movement: Humanity, Impartiality, Neutrality, Independence, Voluntary Service, Unity and Universality. Our texts do not take political sides, do not address religious matters and do not judge people or their choices. When we cite a public body, it is as a source of information, not as publicity."
+              }
+            ]
+          },
+          {
+            "id": "corrections",
+            "titulo": "Updates and corrections",
+            "blocos": [
+              {
+                "lista": [
+                  "We review published texts. When official guidance changes or data becomes outdated, the text is updated and the update date is shown on the page.",
+                  "Found an error, outdated information or a broken link? Write to [{email}](mailto:{email}) with the subject \"Correção\" (correction) and the page address.",
+                  "The team checks the request against the source and, if there is an error, corrects the text."
+                ]
+              },
+              {
+                "filial": true
+              }
+            ]
+          }
+        ]
+      },
+      "es": {
+        "titulo_aba": "Cómo producimos nuestro contenido | Cruz Roja Brasileña Río de Janeiro",
+        "descricao": "Cómo la Cruz Roja Brasileña Río de Janeiro escribe las noticias y guías de su sitio: fuentes oficiales, uso de IA, revisión, salud y correcciones.",
+        "sobrancelha": "Política editorial",
+        "h1": "Cómo producimos nuestro contenido",
+        "intro": [
+          "La Cruz Roja Brasileña Río de Janeiro publica en su sección de [Noticias](/noticias/) (en portugués) artículos sobre la Filial y guías sobre primeros auxilios, emergencias y prevención en el estado de Río de Janeiro, el Movimiento Internacional de la Cruz Roja y de la Media Luna Roja, el Derecho Internacional Humanitario, el voluntariado, la historia y los cursos de nuestra Escuela de Educación y Salud.",
+          "Esta página explica quién escribe, de dónde viene la información, cómo usamos la inteligencia artificial y cómo pedir una corrección. El objetivo es que sepa cómo se hizo cada texto antes de confiar en él."
+        ],
+        "secoes": [
+          {
+            "id": "quien-escribe",
+            "titulo": "Quién escribe",
+            "blocos": [
+              {
+                "p": "Los textos los produce el Departamento de Comunicación Social de la Filial. Ningún texto se publica sin que una persona del equipo lo lea y lo apruebe, y esa persona responde por lo publicado."
+              }
+            ]
+          },
+          {
+            "id": "inteligencia-artificial",
+            "titulo": "Cómo usamos la inteligencia artificial",
+            "blocos": [
+              {
+                "p": "Usamos herramientas de inteligencia artificial para apoyar la investigación y la redacción de las guías: organizar el tema, sugerir la estructura y proponer una primera versión del texto."
+              },
+              {
+                "p": "La inteligencia artificial no decide lo que publicamos y no es fuente de información. Toda fuente citada la abre y la lee una persona del equipo antes de que entre en el texto. Todo texto lo revisa y lo aprueba el equipo antes de publicarse. El dato que no se confirma en la fuente sale del texto."
+              }
+            ]
+          },
+          {
+            "id": "fuentes",
+            "titulo": "De dónde viene la información",
+            "blocos": [
+              {
+                "lista": [
+                  "Usamos fuentes oficiales y primarias: el Movimiento Internacional de la Cruz Roja y de la Media Luna Roja (Federación Internacional y Comité Internacional de la Cruz Roja), el Ministerio de Salud de Brasil, el SAMU (servicio de atención médica de urgencia), el Cuerpo de Bomberos Militar del Estado de Río de Janeiro, la Defensa Civil, leyes y normas publicadas y documentos de la propia Cruz Roja Brasileña.",
+                  "El enlace a la fuente está en la frase del hecho, y todas las fuentes aparecen en la lista \"Fuentes y referencias\" al final del texto.",
+                  "Las cifras indican el lugar y el año a que se refieren. Preferimos el dato del estado de Río de Janeiro; a falta de él, el de Brasil; por último, el mundial.",
+                  "No usamos como fuente resúmenes de buscadores, páginas que exigen inicio de sesión ni textos que repiten otros sin citar el origen."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "salud",
+            "titulo": "Temas de salud",
+            "blocos": [
+              {
+                "lista": [
+                  "En los textos sobre primeros auxilios y salud, explicamos lo que dicen las orientaciones oficiales, sin crear procedimientos propios.",
+                  "No publicamos paso a paso de técnicas, dosis, cantidades ni otras medidas clínicas, ni orientación sobre procedimientos invasivos.",
+                  "En toda situación de emergencia, el texto indica llamar al SAMU (192) o a los Bomberos (193).",
+                  "Nuestros textos informan y no sustituyen la atención de un profesional de salud ni un curso con práctica. Para aprender a actuar, busque un curso presencial con instructor."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cursos",
+            "titulo": "Textos sobre los cursos de la Escuela",
+            "blocos": [
+              {
+                "p": "Parte de los textos presenta los cursos de la Escuela de Educación y Salud de la Filial y lleva a la página de matrícula. Estos textos se identifican como divulgación de curso, siguen las mismas reglas de fuentes y de salud que los demás y no incluyen precios en el cuerpo del texto: los valores y condiciones están en la página de matrícula."
+              }
+            ]
+          },
+          {
+            "id": "imagenes",
+            "titulo": "Imágenes",
+            "blocos": [
+              {
+                "lista": [
+                  "Las fotos provienen del archivo de la Filial o de bancos con licencia abierta, siempre con el crédito del autor y de la licencia.",
+                  "Las personas atendidas, los alumnos y los voluntarios solo aparecen con el rostro reconocible si existe una autorización registrada."
+                ]
+              }
+            ]
+          },
+          {
+            "id": "neutralidad",
+            "titulo": "Neutralidad",
+            "blocos": [
+              {
+                "p": "Seguimos los siete Principios Fundamentales del Movimiento: Humanidad, Imparcialidad, Neutralidad, Independencia, Voluntariado, Unidad y Universalidad. Nuestros textos no toman partido político, no tratan cuestiones religiosas y no juzgan a las personas ni sus decisiones. Cuando citamos un órgano público, es como fuente de información, no como propaganda."
+              }
+            ]
+          },
+          {
+            "id": "correcciones",
+            "titulo": "Actualizaciones y correcciones",
+            "blocos": [
+              {
+                "lista": [
+                  "Revisamos los textos publicados. Cuando una orientación oficial cambia o un dato queda desactualizado, el texto se actualiza y la fecha de actualización aparece en la página.",
+                  "¿Encontró un error, una información desactualizada o un enlace roto? Escriba a [{email}](mailto:{email}) con el asunto \"Correção\" (corrección) y la dirección de la página.",
+                  "El equipo verifica el pedido en la fuente y, si hay un error, corrige el texto."
+                ]
+              },
+              {
+                "filial": true
               }
             ]
           }
