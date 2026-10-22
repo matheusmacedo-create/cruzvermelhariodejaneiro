@@ -65,6 +65,9 @@ PAGINAS = {"home": {"pt": "/", "en": "/en/", "es": "/es/"},
            "termos": {"pt": "/termos/", "en": "/en/terms/", "es": "/es/terminos/"},
            "cookies": {"pt": "/cookies/", "en": "/en/cookies/", "es": "/es/cookies/"},
            "reembolso": {"pt": "/reembolso/", "en": "/en/refunds/", "es": "/es/reembolsos/"},
+           # Política editorial (como produzimos as notícias e os guias): no molde das políticas, nas três línguas.
+           "editorial": {"pt": "/como-produzimos-nosso-conteudo/", "en": "/en/how-we-produce-our-content/",
+                         "es": "/es/como-producimos-nuestro-contenido/"},
            # A história só existe em português e em inglês (site/en/history/, mantida à mão): sem "es", o
            # seletor de idioma não mostra o ES nela.
            "historia": {"pt": "/historia/", "en": "/en/history/", "es": None},
@@ -297,6 +300,8 @@ def rodape(idioma: dict) -> str:
         <a href="{PAGINAS['cookies'][codigo]}">{esc(r['cookies'])}</a>
         <span class="sep">|</span>
         <a href="{PAGINAS['reembolso'][codigo]}">{esc(r['reembolso'])}</a>
+        <span class="sep">|</span>
+        <a href="{PAGINAS['editorial'][codigo]}">{esc(r['editorial'])}</a>
         <span class="sep">|</span>
         <a href="{PAGINAS['cookies'][codigo]}#preferencias" data-cvrj-cookies>{esc(r['preferencias'])}</a>
       </div>

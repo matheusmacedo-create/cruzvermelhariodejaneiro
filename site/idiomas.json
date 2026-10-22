@@ -361,7 +361,8 @@
         "escola": "School of Education and Health",
         "ajudar": "Get involved",
         "doar": "Donate",
-        "voluntario": "Volunteer"
+        "voluntario": "Volunteer",
+        "editorial": "How we produce our content"
       },
       "acervo": {
         "titulo": "Archive | Brazilian Red Cross Rio de Janeiro",
@@ -766,7 +767,8 @@
         "escola": "Escuela de Educación y Salud",
         "ajudar": "Cómo ayudar",
         "doar": "Donar",
-        "voluntario": "Ser voluntario"
+        "voluntario": "Ser voluntario",
+        "editorial": "Cómo producimos nuestro contenido"
       },
       "acervo": {
         "titulo": "Acervo | Cruz Roja Brasileña Río de Janeiro",

@@ -5,6 +5,8 @@
   /cookies/       /en/cookies/   /es/cookies/       Política de Cookies (Guia de Cookies da ANPD, 2022)
   /termos/        /en/terms/     /es/terminos/      Termos de Uso
   /reembolso/     /en/refunds/   /es/reembolsos/    Cancelamento e reembolso (CDC, art. 49; Decreto 7.962/2013)
+  /como-produzimos-nosso-conteudo/   /en/how-we-produce-our-content/   /es/como-producimos-nuestro-contenido/
+                                                    Como produzimos nosso conteúdo (política editorial, desde 22/10/2026)
 
 Até 27/09/2026, /privacidade/ e /termos/ eram gerados pela Redação (lib/site/juridico.ts), só em
 português. Passaram para cá para ficarem junto do resto do site, nas três línguas, com a Política de
@@ -40,7 +42,7 @@ SITE = RAIZ / "site"
 DADOS = SITE / "politicas.json"
 CURSOS = SITE / "matricula-cursos-presenciais" / "cursos.json"
 ORIGEM = idiomas.ORIGEM
-ORDEM = ["privacidade", "cookies", "termos", "reembolso"]
+ORDEM = ["privacidade", "cookies", "termos", "reembolso", "editorial"]
 LINGUA_HTML = {"pt": "pt-BR", "en": "en", "es": "es"}
 MESES = {
     "pt": ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro",

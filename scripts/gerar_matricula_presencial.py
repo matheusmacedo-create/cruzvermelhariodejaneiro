@@ -2754,6 +2754,8 @@ def main() -> int:
           <a href="/termos/">Termos de Uso</a>
           <a href="/cookies/">Cookies</a>
           <a href="/reembolso/">Cancelamento e reembolso</a>
+          <span class="sep">|</span>
+          <a href="/como-produzimos-nosso-conteudo/">Como produzimos nosso conteúdo</a>
           <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
         </p>
       </div>
