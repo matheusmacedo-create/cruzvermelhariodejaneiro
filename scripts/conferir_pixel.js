@@ -32,8 +32,22 @@ function arquivoLocal(u) {
   return f.startsWith(RAIZ) && fs.existsSync(f) && fs.statSync(f).isFile() ? f : null;
 }
 
-function tipo(u) {
-  if (/facebook\.com\/tr/.test(u)) { const x = new URL(u); return 'meta:' + (x.searchParams.get('ev') || 'automático') + (x.searchParams.get('eid') ? '#' + x.searchParams.get('eid') : ''); }
+// O Pixel manda o evento por GET (campos na URL) ou, quando o corpo é grande (a home em português leva os dados
+// estruturados da página, ~9,5 KB), por POST multipart: ev e eid vêm no corpo. Sem ler o corpo, o PageView dessas
+// páginas parecia não existir (falso "FALHA" até 22/10/2026).
+function campoDoCorpo(corpo, nome) {
+  if (!corpo) return null;
+  const m = corpo.match(new RegExp('name="' + nome + '"\\r?\\n\\r?\\n([^\\r\\n]*)'));
+  return m ? m[1] : (new URLSearchParams(corpo).get(nome) || null);
+}
+
+function tipo(u, corpo) {
+  if (/facebook\.com\/tr/.test(u)) {
+    const x = new URL(u);
+    const ev = x.searchParams.get('ev') || campoDoCorpo(corpo, 'ev') || 'automático';
+    const eid = x.searchParams.get('eid') || campoDoCorpo(corpo, 'eid');
+    return 'meta:' + ev + (eid ? '#' + eid : '');
+  }
   if (/connect\.facebook\.net\/signals\/config/.test(u)) return 'meta:config';
   if (/connect\.facebook\.net\/.*fbevents\.js/.test(u)) return 'meta:fbevents.js';
   return null;
@@ -72,7 +86,7 @@ async function cenario(nome, url, passos, esperado) {
   const p = await ctx.newPage();
   const vistos = [];
   const erros = [];
-  p.on('request', (r) => { const t = tipo(r.url()); if (t) vistos.push({ fase, t }); });
+  p.on('request', (r) => { const t = tipo(r.url(), r.postData()); if (t) vistos.push({ fase, t }); });
   p.on('pageerror', (e) => erros.push(e.message.slice(0, 160)));
   await p.goto(BASE + url + (url.includes('?') ? '&' : '?') + 'conferir_pixel=1', { waitUntil: 'load' });
   await p.waitForTimeout(esperado.espera || 6000);
