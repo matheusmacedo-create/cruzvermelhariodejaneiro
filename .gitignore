@@ -29,3 +29,10 @@ site/noticias/
 # (com /cookies/, /reembolso/ e as versões em inglês e espanhol) e entram no repositório.
 # Chaves de liga e desliga do pagar tudo: só no servidor (o .htaccess nega config-*.php, inclusive com hífen).
 site/matricula-cursos-presenciais/api/config-pagar-tudo.php
+
+# Credenciais locais (variáveis de ambiente, chaves e certificados): nunca versionar.
+.env*
+*.pem
+*.key
+*.pfx
+*.p12
