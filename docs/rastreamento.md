@@ -55,9 +55,11 @@ nenhum "ok" do `pagamentos.php`). Só GA4, sem Meta, e sem dado pessoal: vai o n
 | `cadastro_erro` | o cadastro de voluntário é recusado na validação do navegador | `form_id=voluntariado-cadastro`, `tipo=validacao`, `campo` (o 1º), `erros` (quantos) |
 | `cadastro_erro` | o `api/voluntarios.php` não aceita a ficha | `form_id`, `tipo=servidor`, `http` (409, 422, 429…; 0 = sem conexão), `campo` |
 
-O cadastro de voluntário já mandava `form_start` (começou a preencher) e `generate_lead` (`form_id=voluntariado-cadastro`,
-ficha aceita), além do `CompleteRegistration` da Meta. O `generate_lead` é o mesmo nome do envio do checkout: se ele
-virar evento-chave, os dois só se separam pelo `form_id`.
+O cadastro de voluntário já mandava `form_start` (começou a preencher) e, com a ficha aceita, o `CompleteRegistration`
+da Meta e um `generate_lead` (`form_id=voluntariado-cadastro`). Esse `generate_lead` tinha o mesmo nome do envio do
+checkout; desde 24/10/2026 a ficha aceita manda **`sign_up`** (`method=voluntariado`, `form_id`, `lead_source`), e os
+eventos-chave são dois, separados: `generate_lead` (checkout) e `sign_up` (voluntariado). Até 24/10, o `generate_lead`
+soma checkout, voluntariado e a doação de brinquedos de 05 e 06/10 (separe pelo `form_id`).
 
 O bloco "curso" quase sempre já vem escolhido pela URL: o `checkout_etapa` com `etapa=curso` só sai se a pessoa mexer
 nele. A chegada ao checkout continua sendo o `begin_checkout`.

@@ -252,7 +252,8 @@
   });
   function concluir(d, corpo) {
     mostrarSucesso({ protocolo: d.protocolo, nome: d.nome, email: d.email || corpo.email, prazo: d.prazo, menor: d.menor === true });
-    ga('generate_lead', { form_id: FORM_ID, lead_source: 'site' });
+    // sign_up, não generate_lead: o generate_lead é o envio do checkout, e os dois são eventos-chave separados (24/10/2026).
+    ga('sign_up', { method: 'voluntariado', form_id: FORM_ID, lead_source: 'site' });
     pixel('CompleteRegistration', { content_name: 'voluntariado', content_category: 'voluntariado' }, corpo.evento_id);
   }
 
