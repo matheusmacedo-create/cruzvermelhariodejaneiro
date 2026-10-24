@@ -40,8 +40,8 @@ IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 
 TITULO = "Cadastro de voluntário – Cruz Vermelha RJ"
 H1 = "Quero ser voluntário da Cruz Vermelha no Rio"
-DESCRICAO = ("Cadastre-se para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro: depois do cadastro vêm a "
-             "entrevista, o curso básico de formação (gratuito) e o termo de adesão. A partir de 16 anos.")
+DESCRICAO = ("Cadastre-se como voluntário da Cruz Vermelha Brasileira Rio de Janeiro: "
+             "entrevista, curso básico de formação (gratuito) e termo de adesão. A partir de 16 anos.")
 
 # --- valores dos campos (os mesmos da API) --------------------------------------------------------------------------
 ESCOLARIDADES = [

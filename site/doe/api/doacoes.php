@@ -46,6 +46,9 @@ function mcp_doacao_validar(array $b): array
         mcp_falhar(422, 'Confirme que leu o aviso de privacidade para concluir.', ['campo' => 'aceite']);
     }
     $metodo = ($b['metodo'] ?? 'pix') === 'cartao' ? 'cartao' : 'pix';
+    if (!in_array($metodo, mcp_doacao_metodos(), true)) {
+        mcp_falhar(422, 'Por enquanto as doações são por PIX. Escolha PIX para continuar.', ['campo' => 'metodo']);
+    }
     $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
     $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
     return [
@@ -88,6 +91,10 @@ function mcp_doacao_montar_cobranca(array $doador, string $token, int $valor, in
     if ($taxa > 0) {
         $cart[] = ['hash' => 'custos-processamento', 'title' => 'Custos de processamento (opcional)', 'price' => $taxa, 'quantity' => 1];
     }
+    if (mcp_doacao_gateway() === 'donaty') {
+        // A Donaty pede operation_type em cada item do carrinho (1 = venda, no exemplo da documentação).
+        $cart = array_map(static fn(array $item): array => $item + ['operation_type' => 1], $cart);
+    }
     return [
         'amount' => $valor + $taxa,
         'payment_method' => $doador['metodo'] === 'pix' ? 'pix' : 'credit_card',
@@ -127,6 +134,7 @@ function mcp_doacao_gravar(array $doador, string $token, int $valor, int $taxa, 
         'ultimos4' => $ultimos4,
         'utm_source' => $doador['utm_source'], 'utm_medium' => $doador['utm_medium'], 'utm_campaign' => $doador['utm_campaign'],
         'utm_content' => $doador['utm_content'], 'utm_term' => $doador['utm_term'], 'fbclid' => $doador['fbclid'], 'gclid' => $doador['gclid'],
+        'gateway' => mcp_doacao_gateway(),
         'ip' => mcp_ip(), 'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
     ];
     $colunas = implode(', ', array_keys($linha));
@@ -168,9 +176,9 @@ if ($cartao) {
     $payload['card'] = $cartao['card'];
 }
 try {
-    $cobranca = mcp_unicopag('POST', '/public/v1/payments', $payload, mcp_doacao_chave());
+    $cobranca = mcp_doacao_api('POST', '/public/v1/payments', $payload);
 } catch (McpUnicopagErro $e) {
-    mcp_doacao_registrar(null, 'unicopag_recusou', $e->status . ' ' . $e->getMessage());
+    mcp_doacao_registrar(null, mcp_doacao_gateway() . '_recusou', $e->status . ' ' . $e->getMessage());
     mcp_falhar(in_array($e->status, [400, 402, 422], true) ? 422 : 502, $e->paraOAluno());
 } finally {
     unset($payload, $cartao['card']);

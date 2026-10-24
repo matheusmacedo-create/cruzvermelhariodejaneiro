@@ -10,6 +10,16 @@
 declare(strict_types=1);
 
 return [
+    // Gateway das doações: 'unicopag' (padrão) ou 'donaty'. Só as doações trocam; a matrícula dos
+    // cursos segue na Unicopag. Para voltar atrás, troque para 'unicopag' (sem deploy). Com 'donaty'
+    // a página oferece só PIX (a Donaty só documenta PIX) e o postback vai para /doe/api/webhook.php.
+    'DOACAO_GATEWAY' => 'unicopag',
+
+    // Donaty: chave secreta (dnt_sk_…, Authorization: Bearer) e base da API. NUNCA no repositório:
+    // só neste arquivo, no servidor.
+    'DONATY_API_KEY' => '',
+    'DONATY_BASE_URL' => 'https://api.donaty.com.br',
+
     // Conta da Unicopag dedicada às doações (diferente da conta do checkout de cursos).
     'UNICO_API_KEY_DOACAO' => '',
 

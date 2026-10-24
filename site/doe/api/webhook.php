@@ -8,7 +8,22 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 $b = mcp_ler_postback();
-$hash = mcp_texto($b['hash'] ?? $b['id'] ?? $b['transaction'] ?? '', 64);
+// Unicopag manda o hash no nível de cima; a Donaty (evento transaction.updated) pode aninhá-lo em data/transaction.
+$candidatos = [$b['hash'] ?? null, $b['id'] ?? null, $b['transaction'] ?? null];
+foreach (['data', 'transaction', 'payload'] as $envelope) {
+    if (is_array($b[$envelope] ?? null)) {
+        $candidatos[] = $b[$envelope]['hash'] ?? null;
+        $candidatos[] = $b[$envelope]['id'] ?? null;
+        $candidatos[] = is_array($b[$envelope]['transaction'] ?? null) ? ($b[$envelope]['transaction']['hash'] ?? null) : null;
+    }
+}
+$hash = '';
+foreach ($candidatos as $candidato) {
+    if (is_string($candidato) && $candidato !== '') {
+        $hash = mcp_texto($candidato, 64);
+        break;
+    }
+}
 if ($hash === '') {
     mcp_falhar(400, 'Postback sem hash da transação.');
 }

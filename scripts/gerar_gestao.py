@@ -37,9 +37,9 @@ SAIDA = PASTA / "index.html"
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/gestao/"
 URL_INDICE = f"{ORIGEM}/verificar/lotes/indice.json"
-TITULO = "Como funciona a nossa gestão – Cruz Vermelha Brasileira Rio de Janeiro"
-DESCRICAO = ("Como a Cruz Vermelha Brasileira Rio de Janeiro registra seus documentos oficiais de um jeito que qualquer "
-             "pessoa confere: impressão digital, selo diário no Bitcoin e o papel da inteligência artificial.")
+TITULO = "Como funciona a nossa gestão – Cruz Vermelha Brasileira RJ"
+DESCRICAO = ("Como a Cruz Vermelha Brasileira Rio de Janeiro registra seus documentos "
+             "oficiais para qualquer pessoa conferir: impressão digital, selo diário e o papel da IA.")
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ESTATUTO_SHA = "1ad2bd0bdafbba622fa0b6b553053444d4bdcc2c9ee69b4fd08bf4d92d88b601"
 

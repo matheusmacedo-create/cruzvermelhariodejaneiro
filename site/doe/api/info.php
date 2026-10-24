@@ -17,6 +17,7 @@ mcp_json([
     'minimo_centavos' => mcp_doacao_minimo(),
     'maximo_centavos' => mcp_doacao_maximo(),
     'mensal' => mcp_doacao_mensal_ativa(),
+    'metodos' => mcp_doacao_metodos(),
     'taxa' => [
         'pix' => ['pct' => (float) mcp_doacao_cfg('TAXA_PIX_PCT', 0), 'fixa' => (int) mcp_doacao_cfg('TAXA_PIX_FIXA', 0)],
         'cartao' => ['pct' => (float) mcp_doacao_cfg('TAXA_CARTAO_PCT', 0), 'fixa' => (int) mcp_doacao_cfg('TAXA_CARTAO_FIXA', 0)],

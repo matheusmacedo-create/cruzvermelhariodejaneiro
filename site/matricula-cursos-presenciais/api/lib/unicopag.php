@@ -33,19 +33,28 @@ class McpUnicopagErro extends RuntimeException
  * (as doações têm conta própria); sem ela vale a UNICO_API_KEY do checkout. `$tempo`: segundos de espera
  * (a simulação de parcelas usa menos que a cobrança).
  */
-function mcp_unicopag(string $metodo, string $caminho, ?array $corpo = null, ?string $chave = null, ?int $tempo = null): array
+function mcp_unicopag(string $metodo, string $caminho, ?array $corpo = null, ?string $chave = null, ?int $tempo = null, array $gateway = []): array
 {
     $chave = (string) ($chave ?? mcp_cfg('UNICO_API_KEY', ''));
     if ($chave === '') {
         throw new McpUnicopagErro(500, 'Gateway de pagamento não configurado.');
     }
-    $url = rtrim((string) mcp_cfg('UNICO_BASE_URL', 'https://api.cloud.unicopag.com.br'), '/') . $caminho
-        . (str_contains($caminho, '?') ? '&' : '?') . 'api_token=' . rawurlencode($chave);
+    // `$gateway` troca de provedor sem tocar nos outros chamadores (as doações podem usar a Donaty):
+    // base_url, prefixo do caminho (a Donaty serve em /api/public/v1) e bearer (token no cabeçalho
+    // Authorization em vez de na URL).
+    $base = (string) ($gateway['base_url'] ?? mcp_cfg('UNICO_BASE_URL', 'https://api.cloud.unicopag.com.br'));
+    $cabecalhos = ['Accept: application/json', 'Content-Type: application/json'];
+    $url = rtrim($base, '/') . ($gateway['prefixo'] ?? '') . $caminho;
+    if (!empty($gateway['bearer'])) {
+        $cabecalhos[] = 'Authorization: Bearer ' . $chave;
+    } else {
+        $url .= (str_contains($caminho, '?') ? '&' : '?') . 'api_token=' . rawurlencode($chave);
+    }
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CUSTOMREQUEST => $metodo,
-        CURLOPT_HTTPHEADER => ['Accept: application/json', 'Content-Type: application/json'],
+        CURLOPT_HTTPHEADER => $cabecalhos,
         CURLOPT_CONNECTTIMEOUT => min(10, $tempo ?? 10),
         CURLOPT_TIMEOUT => $tempo ?? 55,
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
