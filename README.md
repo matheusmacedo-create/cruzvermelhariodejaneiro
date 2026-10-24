@@ -3738,6 +3738,19 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   (`plano.sql`), prestação de contas no portal, CNPJ "Inapta", domínio no nome da filial e reenvio do pedido no Google for Nonprofits.
 - Para desfazer: roteiro no cabeçalho de `scripts/publicacao-ad-grants-2.txt`.
 
+### Publicado em 24/10/2026 (tudo o que estava pendente na `main`)
+
+- Inventário de todos os arquivos de `site/` contra o servidor (API de arquivos): 167 iguais, 74 diferentes, nenhum faltando.
+  Os 74 eram a `main` mais nova: 23 estavam no ar numa versão antiga da própria `main`, 35 só diferiam em espaços e quebras de
+  linha, e 16 tinham conteúdo antigo (revisão de SEO de 22/10, Pixel sem o `revoke`, e `cursos.html`/`doar/` com o GA4 carregado
+  sem consentimento). Nenhum PHP, JS ou CSS estava diferente.
+- Publicados 72 por TUS, depois cache limpo. Os dois `.htaccess` (raiz e `/en/`) ficaram de fora: só diferiam em espaços, e um
+  `.htaccess` errado derruba o site. Cópia de todo o ar antes, fora do Git.
+- Conferido: 72/72 no servidor iguais à `main`; páginas principais em 200 (`cursos.html`, `doacao.html` e `doar/` em 301, como
+  antes); `conferir_ad_grants.py --url`, `conferir_pixel.js` e `conferir_ga4_conversoes.js` no ar sem falhas. Credencial TUS apagada.
+- Não publicado: regerar as páginas em inglês ainda acrescenta o link "How we produce our content" ao rodapé de 43 páginas (já
+  era assim na `main`); isso pede regerar e publicar à parte.
+
 ### Publicado em 21/10/2026 (turma nova na matrícula)
 
 - Banner do computador (`aula-turma-salao`, 480/960/1200), banner do celular e galeria (`aula-turma-vertical`, 480/591) e
