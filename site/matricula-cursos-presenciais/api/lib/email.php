@@ -1085,7 +1085,7 @@ function mcp_email_contexto_pago(array $i, bool $comComprovante): array
     $entrada = $novo
         ? ($link
             ? 'Sua conta foi criada com o seu CPF. Para entrar pela primeira vez, <strong>crie sua senha no botão abaixo</strong>'
-              . ($validade !== '' ? ' (o link vale até ' . mcp_escapar($validade) . ')' : '') . '. Depois é só entrar com seu <strong>CPF</strong> ou e-mail e a senha que você criou.'
+              . ($validade !== '' ? ' (o link vale até ' . mcp_escapar($validade) . ')' : '') . '. Depois é só entrar com seu <strong>CPF</strong> ou e-mail e a senha que você criou. O link funciona uma vez só: se já criou a senha, entre direto.'
             : 'Sua conta foi criada com o seu CPF. Para entrar pela primeira vez, use <strong>"Esqueci minha senha"</strong> na tela de entrada, com o e-mail <strong>'
               . mcp_escapar($emailConta) . '</strong>: você recebe um link para criar sua senha.')
         : 'Você já tinha conta na área do aluno' . ($outroEmail !== '' ? ', com o e-mail <strong>' . mcp_escapar($outroEmail) . '</strong>' : '')
@@ -1112,7 +1112,8 @@ function mcp_email_contexto_pago(array $i, bool $comComprovante): array
 }
 
 /**
- * Botões do acesso. $modo: 'senha' (com link, "Criar minha senha"; sem link, nada), 'inscricoes' ("Ver minhas
+ * Botões do acesso. $modo: 'senha' (com link, "Criar minha senha" e "Já criou a senha? Entrar na área do aluno", porque o
+ * link vale uma vez só; sem link, nada), 'inscricoes' ("Ver minhas
  * inscrições"; com link, "Criar minha senha" antes) e 'senha_e_inscricoes' (com link, "Criar minha senha" e "Já criou a
  * senha? Ver minhas inscrições"; sem link, "Ver minhas inscrições").
  */
@@ -1122,7 +1123,7 @@ function mcp_email_b_botoes_acesso(array $ctx, string $modo): array
     if ($ctx['link']) {
         $criar = mcp_email_b_botao($ctx['link'], 'Criar minha senha');
         return match ($modo) {
-            'senha' => $criar,
+            'senha' => mcp_email_bloco(mcp_email_juntar([$criar, mcp_email_b_p('Já criou a senha? <a href="' . mcp_escapar($url) . '" style="color:#cc0000">Entrar na área do aluno</a>.')])),
             'inscricoes' => mcp_email_bloco(mcp_email_juntar([$criar, mcp_email_b_botao($url, 'Ver minhas inscrições', true)])),
             default => mcp_email_bloco(mcp_email_juntar([$criar, mcp_email_b_p('Já criou a senha? <a href="' . mcp_escapar($url) . '" style="color:#cc0000">Ver minhas inscrições</a>.')])),
         };
