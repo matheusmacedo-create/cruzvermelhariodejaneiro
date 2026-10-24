@@ -842,7 +842,7 @@
       var link = e.aluno_novo ? urlSegura(e.link) : '';
       var textoAcesso = e.aluno_novo
         ? (link
-          ? 'Sua conta na área do aluno foi criada com o seu CPF. Para entrar pela primeira vez, <b>crie sua senha no botão abaixo</b>' + (e.link_validade ? ' (o link vale até ' + esc(e.link_validade) + ')' : '') + '. Depois é só entrar com seu <b>CPF</b> ou e-mail e a senha que você criou.'
+          ? 'Sua conta na área do aluno foi criada com o seu CPF. Para entrar pela primeira vez, <b>crie sua senha no botão abaixo</b>' + (e.link_validade ? ' (o link vale até ' + esc(e.link_validade) + ')' : '') + '. Depois é só entrar com seu <b>CPF</b> ou e-mail e a senha que você criou. O link funciona uma vez só: se você já criou a senha, use <b>Já criei: entrar</b>.'
           : 'Sua conta na área do aluno foi criada com o seu CPF. Para entrar pela primeira vez, use <b>"Esqueci minha senha"</b> na tela de entrada, com o e-mail <b>' + esc(d.email) + '</b>: você recebe um link para criar sua senha.')
         : 'Você já tinha conta na área do aluno' + (!e.email_confere && e.email_conta ? ', com o e-mail <b>' + esc(e.email_conta) + '</b>' : '')
           + '. Entre com seu <b>CPF</b> ou e-mail e a senha de sempre. Esqueceu? Use "Esqueci minha senha" na tela de entrada.';
@@ -852,9 +852,14 @@
     function botoes(ac, d, extra) {
       var url = ac ? ac.url : urlSegura(d.escola_url);
       var html = ac && ac.link
-        ? '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a><a class="btn btn-outline" href="' + esc(url) + '">Ver minhas inscrições</a>'
+        ? '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a><a class="btn btn-outline" href="' + esc(url) + '">Já criei: entrar</a>'
         : (url ? '<a class="btn btn-red" href="' + esc(url) + '">Ver minhas inscrições</a>' : '');
       return '<div class="cta-row">' + html + (extra || '') + '</div>';
+    }
+    /* "Criar minha senha" com "Já criei: entrar" ao lado: o link só vale uma vez, e quem volta a ele depois de criar a senha cai no erro da escola. */
+    function botaoSenha(ac) {
+      if (!(ac && ac.link)) return '';
+      return '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a>' + (ac.url ? '<a class="btn btn-outline" href="' + esc(ac.url) + '">Já criei: entrar</a>' : '');
     }
     function linhaTurma(t) {
       if (!t || !t.data_longa) return '';
@@ -900,14 +905,14 @@
           return { h1: 'Pagamento confirmado', esperar: aguardar, html: '<div class="ck-bloco"><p>Recebemos o pagamento da inscrição e da matrícula em ' + nome + ', mas as inscrições da turma de ' + esc(d.turma.data)
             + ' fecharam antes da confirmação do seu pagamento. Você fica na fila da próxima turma, com tudo pago: quando ela for marcada, você entra na primeira que tiver vaga e recebe a data por e-mail. '
             + 'Se preferir, peça pelo chat a devolução de tudo o que pagou. Se não houver turma marcada para começar ' + ateLimite + ', devolvemos tudo, sem você precisar pedir.</p>'
-            + (ac ? ac.html : emInstantes) + '<div class="cta-row">' + (ac && ac.link ? '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a>' : '') + chat + '</div></div>' };
+            + (ac ? ac.html : emInstantes) + '<div class="cta-row">' + botaoSenha(ac) + chat + '</div></div>' };
         }
         return { h1: 'Inscrição e matrícula pagas', esperar: aguardar, html: '<div class="ck-bloco"><p class="ck-pilula breve">Turmas em breve</p>'
           + '<p>Recebemos o pagamento da inscrição e da matrícula em ' + nome + '. Ainda não há turma marcada: quando a Escola marcar uma, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe por e-mail a data, o horário e o local.</p>'
           + '<p>Se a data ou o horário não servirem, avise em até 7 dias depois desse e-mail e você recebe tudo de volta. Se não houver turma marcada para começar ' + ateLimite + ', devolvemos tudo, sem você precisar pedir.</p>'
           + (ac ? ac.html : emInstantes)
           + '<p class="ck-nota">Na área do aluno, este curso só aparece quando a turma abrir. Não pague de novo e não se inscreva pela Escola: você entra sozinho na turma.</p>'
-          + '<div class="cta-row">' + (ac && ac.link ? '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a>' : '') + chat + '</div></div>' };
+          + '<div class="cta-row">' + botaoSenha(ac) + chat + '</div></div>' };
       }
       if (e.configurada && (e.status === 'pendente' || (e.status === 'erro' && !e.esgotado))) return processando(true);
       var dobro = av.indexOf('taxa_em_dobro') >= 0 ? notaTaxaEmDobro(d) : '';
