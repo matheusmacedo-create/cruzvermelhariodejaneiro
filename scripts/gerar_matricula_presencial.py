@@ -101,8 +101,8 @@ RECEBEDOR_CNPJ = "67.733.551/0001-35"
 TITULO = "Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro"
 TITULO_CURSO = "{curso} | Cursos presenciais | Cruz Vermelha Brasileira Rio de Janeiro"
 OG_TITULO = "Cursos presenciais da Cruz Vermelha no Rio de Janeiro"
-# og-matricula.jpg conferida em 08/10/2026 (D13): foto de turma no salão, sem preço. Pode continuar.
-IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula.jpg"
+# og-matricula-turma.jpg (21/10/2026): faixa da foto da turma de 21/10, com o instrutor, sem preço.
+IMAGEM_OG = f"{ORIGEM}/assets/otim/og-matricula-turma.jpg"
 IMAGEM_OG_TAMANHO = (1200, 630)
 ENDERECO = {"@type": "PostalAddress", "streetAddress": "Praça da Cruz Vermelha, 10", "addressLocality": "Rio de Janeiro",
             "addressRegion": "RJ", "postalCode": "20230-130", "addressCountry": "BR"}
@@ -250,12 +250,13 @@ SUSTENTA_CURTO = ("O resultado da escola é destinado à manutenção do Paláci
                   "associação sem fins lucrativos.")
 
 # Fotos reais da sede e das aulas (servidas de /assets/otim, fora do Git; só o servidor as tem).
-FOTO_TOPO = {"base": "aula-dea-sala", "larguras": [480, 591], "largura": 591, "altura": 1280, "pos": "center 47%",
-             "alt": "Instrutor da Cruz Vermelha em sala de aula, com manequins e um DEA de treino sobre a mesa"}
-# Acima de 650 px o topo usa a foto em paisagem do salão (1440 px): o retrato acima só tem 591 px e ficava ampliado de
-# 2 a 3 vezes, borrado, no computador (revisão visual de 08/10). O alt do <picture> serve às duas fotos.
-FOTO_TOPO_PC = {"base": "aula-salao-cruz", "larguras": [960, 1440], "largura": 1440, "altura": 810}
-FOTO_TOPO_ALT = "Aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com instrutor e alunos"
+FOTO_TOPO = {"base": "aula-turma-vertical", "larguras": [480, 591], "largura": 591, "altura": 1280, "pos": "center 47%",
+             "alt": "Turma em aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com o instrutor de primeiros socorros"}
+# Acima de 650 px o topo usa a mesma aula em paisagem: o retrato acima só tem 591 px e ficava ampliado de 2 a 3 vezes,
+# borrado, no computador (revisão visual de 08/10). Turma de 21/10: a paisagem tem 1200 px (a foto original veio nesse
+# tamanho; com uma maior, gerar a de 1440). O alt do <picture> serve às duas fotos.
+FOTO_TOPO_PC = {"base": "aula-turma-salao", "larguras": [960, 1200], "largura": 1200, "altura": 675}
+FOTO_TOPO_ALT = "Turma em aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com o instrutor de primeiros socorros"
 FOTOS_AULAS = [
     {"base": "aula-engasgo-bebe", "larguras": [480, 589], "largura": 480, "altura": 1043, "pos": "center 58%",
      "alt": "Alunos ajoelhados praticando a manobra de desengasgo em manequins de bebê durante a aula",
@@ -266,9 +267,9 @@ FOTOS_AULAS = [
     {"base": "aula-manobra-heimlich", "larguras": [480, 899], "largura": 480, "altura": 854, "pos": "center 45%",
      "alt": "Instrutor demonstrando a manobra de Heimlich em uma aluna durante a aula",
      "legenda": "Demonstração da manobra de Heimlich"},
-    {"base": "aula-salao-cruz", "larguras": [480, 960, 1440], "largura": 960, "altura": 540, "pos": "center",
-     "alt": "Turma sentada no salão da sede, com a cruz vermelha ao fundo e um manequim sobre a mesa",
-     "legenda": "Turma no salão da sede"},
+    {"base": "aula-turma-vertical", "larguras": [480, 591], "largura": 480, "altura": 1040, "pos": "center 55%",
+     "alt": "Turma sentada na sala de aula da sede, com o instrutor, um manequim de treino e a bolsa de primeiros socorros em primeiro plano",
+     "legenda": "Turma em aula, com manequim e bolsa de primeiros socorros"},
 ]
 # Capa real de três cursos (as outras continuam com img/<slug>-*.webp, de gerar_imagens_matricula.py).
 CAPA_CURSO = {
@@ -445,8 +446,8 @@ CSS_PAGINA = """
 
     /* topo do modo geral */
     .v-hero { position: relative; color: #fff; background: #111; min-height: clamp(560px, calc(100vh - 126px), 760px); min-height: clamp(560px, calc(100svh - 126px), 760px); display: flex; isolation: isolate; }
-    /* direção de arte: no celular o retrato da aula (aula-dea-sala); acima de 650 px a foto em paisagem do salão, que tem
-       1440 px e não fica ampliada nem borrada no computador */
+    /* direção de arte: no celular o retrato da turma com o manequim (aula-turma-vertical); acima de 650 px a mesma aula em
+       paisagem (aula-turma-salao, 1200 px; com o original em alta, gerar a de 1440) */
     .v-hero-foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; object-position: center 47%; }
     @media (min-width: 651px) { .v-hero-foto { object-position: 62% 58%; } }
     .v-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(11,11,11,.92) 0%, rgba(11,11,11,.74) 37%, rgba(11,11,11,.24) 67%, rgba(11,11,11,.08) 100%); }
@@ -2753,6 +2754,8 @@ def main() -> int:
           <a href="/termos/">Termos de Uso</a>
           <a href="/cookies/">Cookies</a>
           <a href="/reembolso/">Cancelamento e reembolso</a>
+          <span class="sep">|</span>
+          <a href="/como-produzimos-nosso-conteudo/">Como produzimos nosso conteúdo</a>
           <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
         </p>
       </div>
@@ -2913,7 +2916,7 @@ def main() -> int:
   <meta property="og:image" content="{IMAGEM_OG}">
   <meta property="og:image:width" content="{IMAGEM_OG_TAMANHO[0]}">
   <meta property="og:image:height" content="{IMAGEM_OG_TAMANHO[1]}">
-  <meta property="og:image:alt" content="Turma da Cruz Vermelha Brasileira Rio de Janeiro no salão da sede">
+  <meta property="og:image:alt" content="Turma em aula na sede da Cruz Vermelha Brasileira Rio de Janeiro, com o instrutor">
   <meta name="twitter:card" content="summary_large_image">
   <script>{modo_js}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">

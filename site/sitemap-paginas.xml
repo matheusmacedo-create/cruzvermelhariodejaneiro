@@ -2603,4 +2603,34 @@
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
     </image:image>
   </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/how-we-produce-our-content/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/como-producimos-nuestro-contenido/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <lastmod>2026-10-22T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/how-we-produce-our-content/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/how-we-produce-our-content/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/como-producimos-nuestro-contenido/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <lastmod>2026-10-22T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/es/como-producimos-nuestro-contenido/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/how-we-produce-our-content/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://cruzvermelhariodejaneiro.org/es/como-producimos-nuestro-contenido/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/como-produzimos-nosso-conteudo/"/>
+    <lastmod>2026-10-22T00:00:00+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 </urlset>

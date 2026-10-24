@@ -54,7 +54,7 @@ FAQ = [
      "voluntários); não há curso gratuito aberto ao público. E a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda, empresa ligada à filial, vende "
      "e certifica os cursos pagos: primeiros socorros (básico e Lei Lucas), suporte básico de vida, punção venosa, bombeiro "
      "civil e cuidador de idosos, todos presenciais na sede, no Centro do Rio. As turmas e os "
-     "valores completos estão na plataforma da escola; a inscrição de R$ 99 que garante a vaga pode ser feita na página de "
+     "valores completos estão na plataforma da escola; a inscrição é feita na página de "
      "matrícula em cursos presenciais.",
      [("formação de voluntários", "URL_GRATUITOS"), ("página de matrícula em cursos presenciais", "URL_MATRICULA")]),
     ("Como falar com o voluntariado da Cruz Vermelha Brasileira Rio de Janeiro?",

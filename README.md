@@ -3723,3 +3723,59 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   2284862222364226). Não tirar: a Meta confere de tempos em tempos e o domínio volta a "Not Verified".
 - Publicado: cópia do ar idêntica ao HEAD antes, envio por TUS, cache limpo, conferência por HTTP e HTTPS (a meta
   aparece dentro do `<head>`; o ar é idêntico ao local). Credencial TUS apagada.
+
+### Publicado em 19/10/2026 (segunda recusa do Ad Grants)
+
+- Publicação por TUS na Hostinger, na ordem do cabeçalho de `scripts/publicacao-ad-grants-2.txt`: 95 arquivos de `site/` mais
+  `assets/otim/hero-turma-cbfi-640.webp` (fora do Git). Cópia do ar antes em `/tmp/no-ar-ad-grants-2` (90 arquivos; 5 eram novos:
+  `es/.htaccess`, `es/404.html`, `faq-idiomas.json`, `institucional.json`, `politicas.json`).
+- Removidos do servidor (204): `doe/.htaccess`, `en/donate/.htaccess`, `es/donar/.htaccess` (a doação voltou) e a notícia em inglês
+  sobre micropigmentação. Cache limpo (`hosting_cache_clear-website`).
+- Conferido por HTTP: os 93 arquivos publicáveis idênticos ao Git; `/doe/`, `/en/donate/` e `/es/donar/` em 200; home sem "Plataforma".
+  `gerar_sitemaps.py` lido do ar e os 4 sitemaps publicados e conferidos. A matéria em português sobre micropigmentação segue no
+  `sitemap-noticias.xml` porque vem da Redação (decisão pendente: tirar do ar ou do sitemap pelo plano de conteúdo).
+- Pendente fora do código: deploy da Redação (menu novo nas notícias, transparência e canais), correções de conteúdo das matérias
+  (`plano.sql`), prestação de contas no portal, CNPJ "Inapta", domínio no nome da filial e reenvio do pedido no Google for Nonprofits.
+- Para desfazer: roteiro no cabeçalho de `scripts/publicacao-ad-grants-2.txt`.
+
+### Publicado em 21/10/2026 (turma nova na matrícula)
+
+- Banner do computador (`aula-turma-salao`, 480/960/1200), banner do celular e galeria (`aula-turma-vertical`, 480/591) e
+  `og-matricula-turma.jpg`, gerados das fotos da turma de 21/10 (WhatsApp, 1200×1600; ficam fora do Git). Paisagem e imagem de
+  compartilhamento são faixas da foto `14.35.58`; o retrato é a coluna da esquerda da mesma foto (instrutor, manequim e bolsa).
+- O `index.html` enviado é a cópia do ar + só as trocas de imagem (o patch de `b4ad945..a265752`), não o arquivo do Git: o
+  `main` ainda tem 14 linhas da matrícula não publicadas. Cópia do ar antes tirada com `--copiar-do-ar` (as 6 imagens eram novas).
+- Envio por TUS, cache limpo (`hosting_cache_clear-website`), `scripts/conferir_publicacao.sh` tudo certo (os 7 arquivos idênticos
+  ao enviado; API e bloqueios como esperado) e página conferida no Chromium a 1366 px e 390 px: banner certo em cada largura,
+  galeria com a foto nova, nenhum recurso com erro. Credencial TUS apagada.
+- Para desfazer: republicar a cópia do ar do `index.html` (ou a versão de `b4ad945` com as 14 linhas pendentes, se já for a hora)
+  e apagar as 6 imagens com `publicar_hostinger.sh --apagar`.
+
+### Publicado em 21/10/2026 (doação, bio e história em inglês)
+
+- `site/doe/index.html`, `site/bio/index.html` e `site/en/history/index.html` do branch `claude/magical-einstein-kz4v7i`
+  (commit `d40798f`), por TUS, com cópia do ar antes. `/doe/` estava atrás do Git: ainda prometia "Acesso futuro a cursos
+  gravados gratuitos" (a correção de `d7f4e82`, de 19/10, não tinha chegado ao ar); agora sai também sem essa promessa e sem o
+  "em breve" da doação mensal. `/bio/` sem o valor da inscrição; `/en/history/` troca "Visit the Archive" por "Donate".
+- Cache limpo; os três no ar idênticos ao branch (HTTP 200), sem a frase antiga, sem erro de recurso ou de JS a 1366 px e
+  390 px. Credencial TUS apagada.
+
+### Publicado em 21/10/2026 (legenda do certificado na matrícula)
+
+- `site/matricula-cursos-presenciais/index.html` da `main` (`d8d89d3`): as 7 legendas do modelo de certificado passam a dizer
+  "Imagem ilustrativa do modelo fornecido pela filial. Confirme com a escola o modelo, o emissor e as condições do certificado da
+  sua turma antes de se inscrever." (de `d7f4e82`, revisão do Ad Grants). Era a única diferença entre a `main` e o ar nessa página.
+- Cópia do ar antes, envio por TUS, cache limpo; no ar idêntico à `main`, sem erro de recurso ou de JS a 1366 px e 390 px.
+  Credencial TUS apagada.
+
+### Publicado em 21/10/2026, 20h26 UTC (revisão Ad Grants na matrícula)
+
+- `scripts/publicacao-ad-grants-matricula.txt`, na ordem da lista: os 10 arquivos da matrícula de `d7f4e82` que estavam no ar
+  como em `d7f4e82^` (conferido antes, `.php` incluídos, pela API de arquivos) e a página principal (só o comentário do CSS).
+  Sai a contribuição de R$ 14,90 para a divulgação (`info.php` responde `divulgacao_centavos: 0`); nota legal do checkout com a
+  O-CVB Filial Rio de Janeiro Ensino Ltda; custos de processamento "da taxa de inscrição da escola".
+- Cópia do ar antes, envio por TUS, cache limpo. Conferido: os dois `.php` no servidor iguais ao Git; `conferir_publicacao.sh` e
+  `conferir_ad_grants.py --url` sem falhas (antes: 2); checkout no Chromium a 1366 px e 390 px sem a opção de divulgação, com a
+  nota nova e o `checkout.js?v=266b655575`, sem erro de recurso ou de JS (POSTs bloqueados no teste: nenhuma inscrição ou cobrança
+  criada). Credencial TUS apagada.
+- Para desfazer: roteiro no cabeçalho da lista.
