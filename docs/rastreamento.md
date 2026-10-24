@@ -62,8 +62,9 @@ virar evento-chave, os dois só se separam pelo `form_id`.
 O bloco "curso" quase sempre já vem escolhido pela URL: o `checkout_etapa` com `etapa=curso` só sai se a pessoa mexer
 nele. A chegada ao checkout continua sendo o `begin_checkout`.
 
-**Para configurar no GA4,** como dimensões personalizadas de evento: `etapa`, `tipo`, `campo`, `http` e `motivo`
-(`curso`, `metodo` e `plano` já existem ou entram junto). O registro não vale para trás.
+**Dimensões no GA4** (personalizadas, de evento): `etapa`, `tipo`, `campo`, `http`, `motivo`, `curso`, `metodo`,
+`plano` e `form_id`, registradas em 24/10/2026. O registro não vale para trás: os relatórios só têm esses valores a
+partir daí. Lista completa das dimensões em "Dimensões registradas no GA4", abaixo.
 
 ## Chat de contato por e-mail (19/09, à noite)
 
@@ -119,8 +120,9 @@ passam pelo bloco de medição: sem "Aceitar", nada vai para a Meta.
 O endereço do checkout leva `via=<lugar do botão>` (fora de `utm_`, para não reiniciar a sessão). Ele aparece no
 `page_location` do `begin_checkout`.
 
-**Para configurar no GA4,** como dimensões personalizadas de evento: `curso`, `origem`, `local`, `modo`,
-`secao`, `pergunta`, `bloco`, `destino` e `tela`. O registro não vale para trás.
+**Dimensões no GA4:** `curso`, `origem`, `local`, `modo`, `secao`, `pergunta`, `bloco`, `destino` e `tela` só foram
+registradas em 24/10/2026; de 04 a 23/10 os valores chegaram, mas não aparecem nos relatórios (o registro não vale
+para trás). Lista completa em "Dimensões registradas no GA4", abaixo.
 
 **Para ler o antes e o depois:**
 
@@ -380,6 +382,16 @@ Redação a escolha das contas (só a CVB marcada) e tira o CPF do envio. Migra�
   navegação real.
 - O Pixel não envia nada quando detecta navegador automatizado; em navegador comum envia
   `PageView` e os eventos normalmente (conferido com o sinal de automação desligado).
+
+## Dimensões registradas no GA4 (conferido em 24/10/2026)
+
+Todas personalizadas, de escopo Evento, com o nome igual ao do parâmetro. Um parâmetro novo só aparece nos relatórios
+depois de registrado aqui, e o registro não vale para trás. Limite da propriedade: 50.
+
+| Desde | Dimensões |
+| --- | --- |
+| 03/10/2026 | `assunto`, `payment_type` |
+| 24/10/2026 | `curso`, `metodo`, `plano`, `form_id`, `origem`, `local`, `modo`, `secao`, `pergunta`, `bloco`, `destino`, `tela`, `etapa`, `tipo`, `campo`, `http`, `motivo`, `link_id` |
 
 ## Pendências
 
