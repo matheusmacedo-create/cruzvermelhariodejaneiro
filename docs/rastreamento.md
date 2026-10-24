@@ -42,6 +42,46 @@ alimentam os relatórios de funil; `AddPaymentInfo` só disparava no PIX; `Purch
 `transaction_id`; o `InitiateCheckout` disparava no clique da matrícula e não cobria quem entrava
 no checkout pela home.
 
+## Conversões para o Google Ads: `generate_lead` e `purchase` (conferido em 24/10/2026)
+
+Antes de ligar as campanhas de pesquisa, as duas conversões que o Google Ads importa do GA4 foram conferidas num
+Chromium de verdade com `scripts/conferir_ga4_conversoes.js` (lê o que vai ao `/g/collect`, responde no lugar do
+Google e simula as APIs de pagamento: nada é cobrado nem chega à propriedade).
+
+| Conversão | Onde sai | O que leva | Estado |
+| --- | --- | --- | --- |
+| `generate_lead` | checkout, no envio do formulário | `value` (inscrição + matrícula do plano), `currency=BRL`, `curso`, `metodo`, `plano` | certo |
+| `purchase` (curso) | Parabéns, com `status=pago` | `transaction_id` = `id_compra` (hash do token), `value`, `currency`, `items`; uma vez por inscrição, até 24 h do pagamento | certo |
+| `purchase` (doação) | `/doe/obrigado/`, com `status=pago` | `transaction_id` = **protocolo** (`CVD-…`), `value`, `currency`, `items` | **corrigido** |
+
+Corrigido em 24/10/2026:
+
+- **Doação**: o `transaction_id` do GA4 e o `eventID` do Pixel eram o token da doação, que abre no `status.php` o
+  nome e o e-mail de quem doou. Passaram a ser o protocolo do comprovante. A compra também passou a sair uma vez só
+  (marca no `localStorage`, como no curso), só com consentimento e até 24 h do pagamento: antes, cada volta ao link
+  do obrigado contava a doação de novo. Não há API de Conversões na doação, então o `eventID` novo não desfaz
+  nenhuma deduplicação.
+- **Clique de iPhone**: a matrícula já levava `utm_*`, `fbclid` e `gclid` para o link do checkout, mas não `gbraid`
+  e `wbraid`, que o Google Ads usa no lugar do `gclid` em clique de iOS. Quem só aceitava o aviso de cookies no
+  checkout chegava lá sem a origem do anúncio, e a conversão não voltava ao Google Ads.
+
+Para importar no Google Ads (Metas → Conversões → Importar → Google Analytics 4): `purchase` como **principal** e
+`generate_lead` como **secundária**. O `generate_lead` sai no envio, antes da resposta do `pagamentos.php`: conta
+também quem foi recusado pelo servidor (o `checkout_erro` com `tipo=servidor` mostra quantos). Serve para
+acompanhar, não para o lance. O `purchase` reúne curso e doação; separe pelo `item_category` (`Cursos presenciais`
+ou `Doação`) nos relatórios do GA4.
+
+O que a conferência também mostrou:
+
+- O gtag manda os lotes de eventos (o `generate_lead` vai junto com `checkout_etapa` e `checkout_erro`) para
+  `analytics.google.com/g/collect`, não só para `google-analytics.com`, com `fetch` em `keepalive`. A rota do
+  Playwright não intercepta esse envio: quem conferir pela rota não vê o `generate_lead` e não deve concluir que ele
+  falta. A `conferir_pixel.js` só bloqueia `google-analytics.com`.
+- Cada evento sai uma vez para `G-HDYZZ5JZHF` e uma para `G-Z5NWV4RBTT` (seção "O que a verificação mostrou e não
+  é problema"). Na importação para o Google Ads, escolha a propriedade `G-HDYZZ5JZHF`.
+- As telas com `?t=<token>` (Parabéns, pendente, horários, obrigado da doação) mandam o endereço inteiro no
+  `page_view` do GA4 e no `PageView` da Meta. Ver Pendências.
+
 ## Etapa e erro no checkout e no cadastro de voluntário (24/10/2026)
 
 Para saber onde as pessoas param entre o `begin_checkout` e o `add_payment_info` (de 19 a 23/10, 9 `generate_lead` e
@@ -421,3 +461,7 @@ depois de registrado aqui, e o registro não vale para trás. Limite da propried
    da escola não mandava nada. A política de privacidade da escola diz que à Meta vão só as páginas vistas, e só
    com permissão. Antes de ligar a API de Conversões da Redação para a conta CVB, ela precisa dizer também que
    a compra (nome, e-mail e telefone em código) vai à Meta, e com qual base legal.
+8. **Token no endereço** (visto em 24/10/2026): Parabéns, pendente, horários e o obrigado da doação abrem com
+   `?t=<token>`, e o GA4 (`page_view`, `dl`) e o Pixel (`PageView`) recebem o endereço inteiro. O token abre a
+   inscrição ou a doação. Caminho: no gtag dessas telas, `page_location` sem o `t` (gerado por `gerar_checkout.py`
+   e `gerar_doe.py`); no Pixel, não carregar nessas telas ou tirar o `t` da barra depois de ler.

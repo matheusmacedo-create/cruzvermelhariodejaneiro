@@ -209,9 +209,27 @@
       + '<a class="btn btn-outline doe-acao" href="https://www.instagram.com/cruzvermelhabrasileirarj/" target="_blank" rel="noopener" style="margin-top:8px">Seguir no Instagram</a>'
       + '</div>';
     mostrar('obrigado');
+    registrarDoacao(d);
+  }
+
+  /* A doação conta uma vez. O id é o protocolo (o do comprovante), e não o token: o token abre a doação no
+     status.php, com o nome e o e-mail de quem doou, e não vai ao GA nem à Meta (24/10/2026). Quem volta ao link do
+     obrigado (e-mail, histórico) mais de um dia depois, ou de novo no mesmo navegador, não manda outra compra: sem isso,
+     o purchase importado no Google Ads contava a mesma doação a cada visita. */
+  function registrarDoacao(d) {
+    var id = d.protocolo, c = null;
+    try { c = window.cvrjMedicao && window.cvrjMedicao.ler(); } catch (e) { /* bloco de medição ausente */ }
+    if (!id || !c || (!c.estatistica && !c.marketing)) return; // sem consentimento, nada a medir nem a marcar
+    var pagoEm = d.pago_em ? Date.parse(String(d.pago_em).replace(' ', 'T') + 'Z') : NaN;
+    if (!isNaN(pagoEm) && Date.now() - pagoEm > 864e5) return;
+    try {
+      var chave = 'doe_purchase_' + id;
+      if (localStorage.getItem(chave)) return;
+      localStorage.setItem(chave, '1');
+    } catch (e) { /* sem localStorage: registra assim mesmo */ }
     rastrear('Purchase', { content_name: 'Doação', content_category: 'doacao', value: d.total_centavos / 100, currency: 'BRL' },
-      'purchase', { transaction_id: d.token, value: d.total_centavos / 100, currency: 'BRL', items: [{ item_id: 'doacao', item_name: 'Doação', price: d.total_centavos / 100, quantity: 1 }] },
-      { eventID: d.token + '-doacao' });
+      'purchase', { transaction_id: id, value: d.total_centavos / 100, currency: 'BRL', items: [{ item_id: 'doacao', item_name: 'Doação', item_category: 'Doação', price: d.total_centavos / 100, quantity: 1 }] },
+      { eventID: id + '-doacao' });
   }
 
   function esperandoCartao() {
