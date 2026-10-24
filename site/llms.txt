@@ -19,7 +19,7 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 - [Quem somos](https://cruzvermelhariodejaneiro.org/quem-somos/): o que é a filial, o que faz no Rio, a sede, os reconhecimentos e a
   diretoria, com links para as páginas abaixo.
   Traz a missão (art. 10 do Estatuto) e a seção “Como a filial se financia” (resultado da escola
-  destinado à manutenção do Palácio e às atividades; doações em dinheiro, por PIX ou cartão;
+  destinado à manutenção do Palácio e às atividades; doações em dinheiro, por PIX;
   doações de bens; parcerias; repasse do órgão central).
 - [Princípios Fundamentais](https://cruzvermelhariodejaneiro.org/principios-fundamentais/): os sete princípios (humanidade,
   imparcialidade, neutralidade, independência, voluntariado, unidade e universalidade), com o texto
@@ -40,7 +40,7 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 
 - [Início](https://cruzvermelhariodejaneiro.org/): apresentação da filial, campanhas, últimas notícias e
   perguntas frequentes sobre a instituição, como ajudar, voluntariado, endereço e contato.
-- [Doe](https://cruzvermelhariodejaneiro.org/doe/): doação em dinheiro para a filial, por PIX ou cartão,
+- [Doe](https://cruzvermelhariodejaneiro.org/doe/): doação em dinheiro para a filial, por PIX,
   a partir de R$ 5, com comprovante por e-mail com o CNPJ da filial. Também em
   [inglês](https://cruzvermelhariodejaneiro.org/en/donate/) e [espanhol](https://cruzvermelhariodejaneiro.org/es/donar/).
 - [Formação de voluntários](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/): a formação gratuita da filial, só
@@ -77,7 +77,7 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
   [Cancelamento e reembolso](https://cruzvermelhariodejaneiro.org/reembolso/) da inscrição (7 dias
   para desistir). Também em inglês e espanhol.
 
-Dá para ajudar doando em dinheiro em /doe/, por PIX ou cartão, como voluntário ou entregando roupas
+Dá para ajudar doando em dinheiro em /doe/, por PIX, como voluntário ou entregando roupas
 de frio, cobertores e calçados na sede, pela Campanha do Agasalho.
 
 ## Cursos presenciais pagos (Escola de Educação e Saúde)

@@ -1,6 +1,6 @@
 {
   "_leia": "Texto das políticas do site (privacidade, cookies, termos, cancelamento e reembolso) em pt, en e es. Fonte única: scripts/gerar_politicas.py gera as 12 páginas a partir daqui. Cada fato vem do código que coleta o dado (matrícula, chat, newsletter da Redação, bloco de medição, aviso de cookies). Mudou o que o site coleta, muda o texto e a data de revisão (revisao vale para todas; uma política que mude sozinha leva a sua, em paginas.<chave>.revisao). Marcações: [texto](url), **negrito**, {chave} (ver SUBSTITUICOES no gerador).",
-  "revisao": "2026-10-19",
+  "revisao": "2026-10-21",
   "rotulos": {
     "pt": {
       "atualizada": "Atualizada em",
@@ -106,7 +106,7 @@
     "privacidade": {
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
-        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, para quê, com quem compartilha e seus direitos pela LGPD.",
+        "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.",
         "sobrancelha": "Proteção de dados",
         "h1": "Política de Privacidade",
         "intro": [
@@ -188,7 +188,7 @@
                   },
                   {
                     "titulo": "Doações",
-                    "dados": "Nome, CPF, e-mail, telefone, valor, forma de pagamento (no cartão, só a bandeira e os quatro últimos dígitos), se a doação é anônima, a origem da visita (parâmetros de campanha da URL) e o endereço IP.",
+                    "dados": "Nome, CPF, e-mail, telefone, valor, forma de pagamento (PIX), se a doação é anônima, se o doador cobriu os custos de processamento, a origem da visita (parâmetros de campanha da URL) e o endereço IP. Nas doações por cartão feitas até {virada}, guardamos só a bandeira e os quatro últimos dígitos.",
                     "finalidade": "Emitir a cobrança da doação, enviar o código PIX e o comprovante por e-mail, avisar a equipe da filial, reenviar comprovantes e cumprir obrigações legais e contábeis.",
                     "base": "Execução de contrato, a doação (art. 7º, V), cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
                   },
@@ -219,7 +219,7 @@
                 ]
               },
               {
-                "p": "O pagamento da inscrição e o da doação são processados pela ÚnicoPag. Os dados do cartão passam pelo nosso servidor só a caminho dela, no momento do pagamento, e não são gravados."
+                "p": "O pagamento da inscrição é processado pela ÚnicoPag, e o da doação, pela Donaty. Os dados do cartão da inscrição passam pelo nosso servidor só a caminho da ÚnicoPag, no momento do pagamento, e não são gravados. A doação é só por PIX: não coletamos dados de cartão nela. As doações feitas até {virada} foram processadas pela ÚnicoPag."
               },
               {
                 "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site: a pergunta do cadastro de voluntários sobre formação na área da saúde é sobre a sua profissão, não sobre a sua saúde. Não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal; o cadastro de voluntários aceita a partir de 16 anos e, para quem tem menos de 18, o termo de adesão é assinado também pelo responsável legal."
@@ -255,7 +255,8 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, que processa os pagamentos: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
+                  "**ÚnicoPag**, que processa os pagamentos das inscrições: nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
+                  "**Donaty**, que processa os pagamentos das doações: nome, CPF, e-mail e telefone, o valor, se a doação é anônima, se o doador cobriu os custos de processamento e a origem da visita (campanha). Não enviamos a ela o endereço IP nem dados de cartão.",
                   "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso; no ponto da sede, o CPF e a data, para saber as aulas do aluno naquele dia.",
                   "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
                   "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, a confirmação da ficha de voluntário, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula, do chat e do voluntariado saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.",
@@ -369,7 +370,7 @@
       },
       "en": {
         "titulo_aba": "Privacy Policy | Brazilian Red Cross Rio de Janeiro",
-        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat, the newsletter and the volunteer registration, why, who receives it, and your rights under the LGPD.",
+        "descricao": "What the Brazilian Red Cross Rio de Janeiro website collects through enrolment, the chat, the newsletter and volunteer registration, and your LGPD rights.",
         "sobrancelha": "Data protection",
         "h1": "Privacy Policy",
         "intro": [
@@ -451,7 +452,7 @@
                   },
                   {
                     "titulo": "Donations",
-                    "dados": "Name, CPF, e-mail, phone number, amount, payment method (for cards, only the brand and the last four digits), whether the donation is anonymous, where the visit came from (campaign parameters in the URL) and the IP address.",
+                    "dados": "Name, CPF, e-mail, phone number, amount, payment method (PIX), whether the donation is anonymous, whether the donor covered the processing costs, where the visit came from (campaign parameters in the URL) and the IP address. For card donations made up to {virada}, we kept only the card brand and the last four digits.",
                     "finalidade": "To issue the donation charge, send the PIX code and the receipt by e-mail, notify the branch team, resend receipts and meet legal and accounting obligations.",
                     "base": "Performance of a contract, the donation (Art. 7, V), compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
                   },
@@ -482,7 +483,7 @@
                 ]
               },
               {
-                "p": "Enrolment and donation payments are processed by ÚnicoPag. Card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored."
+                "p": "Enrolment payments are processed by ÚnicoPag, and donation payments by Donaty. Card details for enrolments pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored. Donations are by PIX only: we do not collect card details for them. Donations made up to {virada} were processed by ÚnicoPag."
               },
               {
                 "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site: the volunteer registration question about training in the health field is about your occupation, not your health. We make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian; volunteer registration is open from age 16 and, for those under 18, the volunteer service agreement is also signed by the legal guardian."
@@ -518,7 +519,8 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, which processes payments: name, CPF, e-mail and phone number and, for cards, the card details.",
+                  "**ÚnicoPag**, which processes enrolment payments: name, CPF, e-mail and phone number and, for cards, the card details.",
+                  "**Donaty**, which processes donation payments: name, CPF, e-mail and phone number, the amount, whether the donation is anonymous, whether the donor covered the processing costs and the origin of the visit (campaign). We do not send it the IP address or card details.",
                   "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access; at the headquarters time clock, the CPF and the date, to find the student's classes that day.",
                   "**Hostinger**, which hosts the site, the forms and their database.",
                   "**Resend**, which sends the e-mails (receipts, chat reference numbers, the volunteer form confirmation, the newsletter and the time clock reminders and announcements). If it is unavailable, enrolment, chat and volunteering e-mails go out through the hosting server; the time clock reminders and announcements wait for Resend to come back.",
@@ -632,7 +634,7 @@
       },
       "es": {
         "titulo_aba": "Privacidad | Cruz Roja Brasileña Río de Janeiro",
-        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat, el boletín y el registro de voluntarios, para qué, con quién se comparte y sus derechos según la LGPD.",
+        "descricao": "Qué recoge el sitio de la Cruz Roja Brasileña Río de Janeiro en la matrícula, el chat, el boletín y el registro de voluntarios, y sus derechos según la LGPD.",
         "sobrancelha": "Protección de datos",
         "h1": "Política de Privacidad",
         "intro": [
@@ -714,7 +716,7 @@
                   },
                   {
                     "titulo": "Donaciones",
-                    "dados": "Nombre, CPF, correo, teléfono, importe, forma de pago (con tarjeta, solo la marca y los cuatro últimos dígitos), si la donación es anónima, el origen de la visita (parámetros de campaña de la URL) y la dirección IP.",
+                    "dados": "Nombre, CPF, correo, teléfono, importe, forma de pago (PIX), si la donación es anónima, si el donante cubrió los costos de procesamiento, el origen de la visita (parámetros de campaña de la URL) y la dirección IP. En las donaciones con tarjeta hechas hasta el {virada}, guardamos solo la marca y los cuatro últimos dígitos.",
                     "finalidade": "Emitir el cobro de la donación, enviar el código PIX y el comprobante por correo, avisar al equipo de la filial, reenviar comprobantes y cumplir obligaciones legales y contables.",
                     "base": "Ejecución de un contrato, la donación (art. 7, V), cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
                   },
@@ -745,7 +747,7 @@
                 ]
               },
               {
-                "p": "El pago de la inscripción y el de la donación los procesa ÚnicoPag. Los datos de la tarjeta pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan."
+                "p": "El pago de la inscripción lo procesa ÚnicoPag, y el de la donación, Donaty. Los datos de la tarjeta de la inscripción pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan. La donación es solo por PIX: no recopilamos datos de tarjeta en ella. Las donaciones hechas hasta el {virada} fueron procesadas por ÚnicoPag."
               },
               {
                 "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio: la pregunta del registro de voluntarios sobre formación en el área de la salud se refiere a su profesión, no a su salud. No tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal; el registro de voluntarios se acepta a partir de los 16 años y, para menores de 18, el acuerdo de adhesión lo firma también el responsable legal."
@@ -781,7 +783,8 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, que procesa los pagos: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
+                  "**ÚnicoPag**, que procesa los pagos de las inscripciones: nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
+                  "**Donaty**, que procesa los pagos de las donaciones: nombre, CPF, correo y teléfono, el monto, si la donación es anónima, si el donante cubrió los costos de procesamiento y el origen de la visita (campaña). No le enviamos la dirección IP ni datos de tarjeta.",
                   "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso; en el control de asistencia de la sede, el CPF y la fecha, para saber las clases del alumno ese día.",
                   "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",
                   "**Resend**, que envía los correos (comprobantes, protocolos del chat, la confirmación de la ficha de voluntario, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula, del chat y del voluntariado salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.",
@@ -1435,7 +1438,7 @@
       }
     },
     "termos": {
-      "revisao": "2026-10-19",
+      "revisao": "2026-10-21",
       "pt": {
         "titulo_aba": "Termos de Uso | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Regras de uso do site da Cruz Vermelha Brasileira Rio de Janeiro: conteúdo, emblema da cruz vermelha, matrícula em cursos, doações, responsabilidade e foro.",
@@ -1489,7 +1492,7 @@
             "titulo": "Doações",
             "blocos": [
               {
-                "p": "A doação em dinheiro pelo site é feita só na [página de doação]({doar}), por PIX ou cartão, processada pela ÚnicoPag, que repassa o valor à filial; o comprovante chega por e-mail, com o CNPJ da filial. A doação é voluntária e não dá direito a produto ou serviço. Desconfie de qualquer cobrança em nome da Cruz Vermelha feita fora dos canais oficiais, listados na [página de links]({links}), e avise pelo e-mail acima."
+                "p": "A doação em dinheiro pelo site é feita só na [página de doação]({doar}), por PIX, processada pela Donaty; o comprovante chega por e-mail, com o CNPJ da filial. A doação é voluntária e não dá direito a produto ou serviço. Desconfie de qualquer cobrança em nome da Cruz Vermelha feita fora dos canais oficiais, listados na [página de links]({links}), e avise pelo e-mail acima."
               }
             ]
           },
@@ -1596,7 +1599,7 @@
             "titulo": "Donations",
             "blocos": [
               {
-                "p": "Money donations through this site are made only on the [donation page]({doar}), by PIX or card, processed by ÚnicoPag, which passes the amount on to the branch; the receipt arrives by e-mail with the branch's CNPJ. A donation is voluntary and does not entitle the donor to any product or service. Be wary of any charge in the name of the Red Cross made outside the official channels, listed on the [links page]({links}), and let us know at the e-mail above."
+                "p": "Money donations through this site are made only on the [donation page]({doar}), by PIX, processed by Donaty; the receipt arrives by e-mail with the branch's CNPJ. A donation is voluntary and does not entitle the donor to any product or service. Be wary of any charge in the name of the Red Cross made outside the official channels, listed on the [links page]({links}), and let us know at the e-mail above."
               }
             ]
           },
@@ -1703,7 +1706,7 @@
             "titulo": "Donaciones",
             "blocos": [
               {
-                "p": "La donación de dinero por este sitio se hace solo en la [página de donación]({doar}), por PIX o tarjeta, procesada por ÚnicoPag, que transfiere el importe a la filial; el comprobante llega por correo con el CNPJ de la filial. La donación es voluntaria y no da derecho a ningún producto ni servicio. Desconfíe de cualquier cobro en nombre de la Cruz Roja hecho fuera de los canales oficiales, indicados en la [página de enlaces]({links}), y avísenos al correo de arriba."
+                "p": "La donación de dinero por este sitio se hace solo en la [página de donación]({doar}), por PIX, procesada por Donaty; el comprobante llega por correo con el CNPJ de la filial. La donación es voluntaria y no da derecho a ningún producto ni servicio. Desconfíe de cualquier cobro en nombre de la Cruz Roja hecho fuera de los canales oficiales, indicados en la [página de enlaces]({links}), y avísenos al correo de arriba."
               }
             ]
           },
@@ -1761,7 +1764,7 @@
     "reembolso": {
       "revisao": "2026-10-13",
       "pt": {
-        "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira Rio de Janeiro",
+        "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira RJ",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
         "sobrancelha": "Matrícula em cursos",
         "h1": "Cancelamento e reembolso",
@@ -1866,7 +1869,7 @@
         ]
       },
       "en": {
-        "titulo_aba": "Cancellation and refunds | Brazilian Red Cross Rio de Janeiro",
+        "titulo_aba": "Cancellation and refunds | Brazilian Red Cross RJ",
         "descricao": "How to withdraw from a course enrolment with the Brazilian Red Cross Rio de Janeiro: the 7-day right of withdrawal, when the money is returned and how to ask.",
         "sobrancelha": "Course enrolment",
         "h1": "Cancellation and refunds",

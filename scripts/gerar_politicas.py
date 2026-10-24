@@ -54,6 +54,18 @@ MESES = {
 }
 URL_PUNCAO = "https://puncaovenosav1.cruzvermelhariodejaneiro.org/politica-de-privacidade"
 
+# Dia em que as doações passaram da ÚnicoPag para a Donaty: entra nos textos como {virada} ("doações feitas até ...").
+# Definir (date(AAAA, M, D)) no dia da virada, junto com DOACAO_GATEWAY = donaty no servidor. Sem ela, o gerador
+# se recusa a rodar: publicar "{virada}" solto seria pior que não publicar. Para conferir páginas antes da virada,
+# exporte VIRADA_DOACAO_DATA=AAAA-MM-DD só naquela execução e NÃO publique o resultado.
+DATA_VIRADA_DOACAO: date | None = date(2026, 10, 21)
+
+
+def data_da_virada() -> date | None:
+    import os
+    bruta = os.environ.get("VIRADA_DOACAO_DATA", "").strip()
+    return date.fromisoformat(bruta) if bruta else DATA_VIRADA_DOACAO
+
 CSS = """
     .pol-topo { background:var(--soft); border-bottom:1px solid var(--line); padding:56px 0 40px }
     .pol-topo h1 { color:var(--black); font-size:clamp(2rem,4vw,2.8rem); letter-spacing:-.03em; line-height:1.1; margin:6px 0 10px }
@@ -357,6 +369,11 @@ class Pagina:
 def main() -> int:
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     revisao = date.fromisoformat(dados["revisao"])
+    virada = data_da_virada()
+    if virada is None and "{virada}" in DADOS.read_text(encoding="utf-8"):
+        print("ERRO: politicas.json usa {virada} e DATA_VIRADA_DOACAO não está definida em gerar_politicas.py "
+              "(ou VIRADA_DOACAO_DATA=AAAA-MM-DD, só para conferência).")
+        return 1
     inscricao = brl(json.loads(CURSOS.read_text(encoding="utf-8"))["inscricao_centavos"])
     home = HOME.read_text(encoding="utf-8")
     partes = partes_da_home(home)
@@ -368,7 +385,8 @@ def main() -> int:
         for lingua in ("pt", "en", "es"):
             subs = {"email": idiomas.EMAIL, "inscricao": inscricao, "matricula": "/matricula-cursos-presenciais/",
                     "escola": idiomas.ESCOLA, "links": "/bio/", "puncao": URL_PUNCAO,
-                    "doar": idiomas.PAGINAS["doar"][lingua]}
+                    "doar": idiomas.PAGINAS["doar"][lingua],
+                    "virada": data_legivel(virada, lingua) if virada else ""}
             subs.update({k: idiomas.PAGINAS[k][lingua] for k in ORDEM})
             # Data de revisão: a da política, se ela mudou sozinha (paginas.<chave>.revisao); senão, a de todas.
             revisao_pagina = date.fromisoformat(dados["paginas"][chave]["revisao"]) if "revisao" in dados["paginas"][chave] else revisao

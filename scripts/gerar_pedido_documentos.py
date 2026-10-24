@@ -29,7 +29,7 @@ LIB_PHP = RAIZ / "site" / "matricula-cursos-presenciais" / "api" / "lib" / "docu
 ORIGEM = "https://cruzvermelhariodejaneiro.org"
 URL_PAGINA = f"{ORIGEM}/pedido-de-documentos/"
 API = "/matricula-cursos-presenciais/api/documentos.php"
-TITULO = "Pedido de documentos – Cruz Vermelha Brasileira Rio de Janeiro"
+TITULO = "Pedido de documentos – Cruz Vermelha Brasileira RJ"
 DESCRICAO = ("Como pedir a íntegra de um documento da Cruz Vermelha Brasileira Rio de Janeiro: quem pode receber, "
              "o que comprovar e como enviar o pedido. Resposta por e-mail.")
 PRAZO = "20 dias"

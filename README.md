@@ -3779,3 +3779,66 @@ scripts/desfazer_publicacao.sh          desfaz uma publicação: volta à versã
   nota nova e o `checkout.js?v=266b655575`, sem erro de recurso ou de JS (POSTs bloqueados no teste: nenhuma inscrição ou cobrança
   criada). Credencial TUS apagada.
 - Para desfazer: roteiro no cabeçalho da lista.
+
+### Correções pontuais publicadas em 21/10/2026
+
+- `/doe/` (FAQ sem promessa de doação mensal "em breve", também no FAQPage), `/bio/` (sem o valor da inscrição) e `/en/history/`
+  (botão "Donate" no lugar de "Visit the Archive"). Cópia do ar antes em `/tmp/no-ar-3-correcoes`; cache limpo; os 3 arquivos
+  conferidos por HTTP, idênticos ao Git.
+
+### Doações na Donaty (código pronto, desligado; 21/10/2026)
+
+- **O que é**: `DOACAO_GATEWAY` em `/doe/api/config.php` (só no servidor) escolhe o gateway **das doações**: `unicopag` (padrão) ou `donaty`.
+  A matrícula dos cursos não muda. `mcp_unicopag()` ganhou o parâmetro `$gateway` (base, prefixo e Bearer); `mcp_doacao_api()` e
+  `mcp_doacao_gateway_opcoes()` em `lib/doacao.php` o usam. Voltar atrás é trocar a configuração para `unicopag`, sem deploy.
+- **Contrato da Donaty** (documentação que a filial recebeu): `POST https://api.donaty.com.br/api/public/v1/payments` com
+  `Authorization: Bearer dnt_sk_…`; a resposta traz `hash`, `payment_status` e `pix.pix_qr_code`; consulta em
+  `GET /api/public/v1/transactions/{hash}`; o aviso `transaction.updated` vai para `postback_url` (`/doe/api/webhook.php`, que só usa o
+  hash como gatilho e confirma pela consulta). Só PIX está documentado: com `donaty` a página oferece apenas PIX (`info.php` devolve
+  `metodos`; `doe.js` esconde o cartão; o servidor recusa `cartao`).
+- **Chave**: `DONATY_API_KEY` (e, se preciso, `DONATY_BASE_URL`) só em `/doe/api/config.php` no servidor. Nunca no repositório.
+- **Testes**: `php scripts/testar_doacao_donaty.php` (11), `testar_doacao.php` (59) e `testar_checkout.php` passam.
+- **O que NÃO foi feito, e precisa antes de ligar**: (1) uma cobrança PIX real de teste (R$ 5, paga pela própria filial) para conferir que os
+  campos extras (CPF, telefone, `metadata`, `expire_in_days`) são aceitos, os nomes de `payment_status` (status desconhecido vira
+  "pendente", então um PIX pago não confirmaria) e o formato do postback; (2) trocar nos textos públicos a ÚnicoPag como processadora
+  das doações (`gerar_doe.py` FAQ, `politicas.json` PT/EN/ES, `traducoes/en/paginas/privacy.md`, termos e reembolso) e republicar;
+  (3) colocar `DOACAO_GATEWAY` e `DONATY_API_KEY` no `config.php` do servidor; (4) cadastrar no painel da Donaty o domínio autorizado, se pedir.
+
+### Backend da Donaty publicado em 21/10/2026 (ainda na Unicopag)
+
+- Publicados por TUS: `matricula-cursos-presenciais/api/lib/unicopag.php`, `doe/api/lib/doacao.php`, `doe/api/doacoes.php`,
+  `doe/api/info.php`, `doe/api/webhook.php` e `doe/static/doe.js`, nessa ordem (bibliotecas antes dos endpoints). Cópia do ar antes em
+  `/tmp/no-ar-backend-donaty` (os 6 arquivos estavam idênticos ao Git). Cache limpo; os 6 conferidos, idênticos ao branch.
+- Comportamento igual ao de antes: `DOACAO_GATEWAY` não existe no `config.php` do servidor, então vale `unicopag`. `info.php` devolve
+  `"metodos":["pix","cartao"]`; `/doe/`, `/doe/obrigado/`, a matrícula e a home respondem 200; `status.php` com token inexistente
+  responde 404 JSON.
+- **Não provado ao vivo**: o caminho da matrícula pela Unicopag (nenhuma consulta real chegou a ela) e a coluna `gateway` em
+  `mcp_doacoes` (criada no primeiro acesso ao banco; a consulta de status não deu erro). Cobertura: 871 testes do checkout, 59 e 19 da doação.
+- Próximo: `docs/virada-donaty.md`, passo 2 em diante (precisa da chave nova, da cobrança de teste real e dos textos).
+
+### Virada das doações para a Donaty feita em 21/10/2026
+
+- **No ar desde 21/10/2026**: `/doe/api/config.php` (servidor, fora do Git) ganhou `DOACAO_GATEWAY='donaty'`, `DONATY_API_KEY` e
+  `DONATY_BASE_URL`; as 9 chaves antigas ficaram intactas (conferido por comparação, valores nunca impressos). `info.php` devolve
+  `"metodos":["pix"]`. Voltar atrás: `DOACAO_GATEWAY='unicopag'` no mesmo arquivo; cada doação consulta o gateway em que nasceu.
+- **Provado ao vivo**: uma doação de teste (R$ 5, protocolo CVD-261021-0004, PIX, e-mail da filial) criou a cobrança na Donaty com os campos
+  extras aceitos (CPF, telefone, `metadata`), devolveu o código PIX válido e a consulta de status responde `pendente`.
+- **NÃO provado**: que um PIX **pago** vira "pago" (nome de `payment_status` e postback `transaction.updated`). A Donaty não tem rota
+  de listagem. Pagar o PIX do teste (R$ 5) e conferir que `status.php` muda para `pago` e o comprovante chega por e-mail.
+- **Textos publicados** (38 arquivos, política e termos com revisão de 21/10/2026, `DATA_VIRADA_DOACAO = 2026-10-21`): doação por PIX
+  e Donaty; inscrição segue na ÚnicoPag. Sem os acréscimos opcionais F1 a F9 (razão social, repasse, país dos dados) e sem revisão
+  jurídica final. Cópia do ar antes em `/tmp/no-ar-virada-textos`; backend em `/tmp/no-ar-backend-donaty`.
+- **Pendente**: trocar a chave (foi colada no chat e a filial decidiu mantê-la), F1 a F9, revisão jurídica, e o merge do branch na `main`
+  (a `main` ganhou o parâmetro `?de=home` nos links "Doe agora" da home, enquanto o ar usa `?utm_source=site&utm_medium=home`: resolver no merge).
+
+### SEO: títulos, descrições e links das notícias em inglês (22/10/2026, não publicado)
+
+- Conferência de 22/10 (`auditar_seo.py`, `rastrear_site.py`, `conferir_pixel.js`): rastreio sem 4xx/5xx nem órfãs; Pixel e GA4 só com consentimento.
+- **Títulos acima de 60** passam a ≤ 59: `/campanha-agasalho.html`, `/historia/`, `/gestao/`, `/pedido-de-documentos/`, `/reembolso/`,
+  `/en/history/`, `/en/refunds/` e `titulo_seo` da notícia em inglês do curso de primeiros socorros (o H1 não mudou).
+- **Descrições acima de 160** passam a ≤ 159: `/historia/`, `/gestao/`, `/privacidade/`, `/en/privacy/`, `/es/privacidad/`, `/es/cursos/`,
+  `/es/index`, `/en/history/`, `/voluntariado/cadastro/`, `/projetocores/`. Textos novos medidos antes de aplicar; `og:title` acompanha o `<title>`.
+- **Links sem texto** em `/en/news/`: o link só com imagem (já `aria-hidden`) agora leva o título da notícia no `alt` (`gerar_ingles.py`);
+  o verificador usa o `alt` como âncora. 0 de 36 links sem texto.
+- Fora do escopo: `/bio/` (`noindex`) e `/dia-das-criancas/` (encerrada); ferramentas internas da matrícula; subdomínios.
+- `scripts/conferir_pixel.js` passou a ler o evento do Pixel em POST multipart (a home em português envia assim); antes dava falso "FALHA".

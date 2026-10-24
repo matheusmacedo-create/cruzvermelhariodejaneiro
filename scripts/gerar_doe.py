@@ -3,7 +3,7 @@
 
 Substitui o subdomínio doar.cruzvermelhariodejaneiro.org (app separado na Vercel): a doação passa
 a acontecer dentro do domínio principal, em /doe/, no mesmo padrão visual da home (cabeçalho,
-rodapé, CSS, GA4, Meta Pixel e chat) e com o pagamento pela Unicopag no backend /doe/api/.
+rodapé, CSS, GA4, Meta Pixel e chat) e com o pagamento pela Donaty (ou Unicopag, conforme DOACAO_GATEWAY) no backend /doe/api/.
 
 Inspiração de fluxo: a página da Cruz Vermelha de São Paulo (paybox.doare.org) — um cartão só,
 com valor, dados e pagamento em dois passos, sem sair da página.
@@ -37,7 +37,7 @@ URL_PAGINA = f"{ORIGEM}/doe/"
 
 TITULO = "Doar para a Cruz Vermelha Brasileira Rio de Janeiro"
 H1 = "Doe para a Cruz Vermelha Brasileira Rio de Janeiro"
-DESCRICAO = ("Doe para a Cruz Vermelha Brasileira Rio de Janeiro por PIX ou cartão, em menos de um minuto. "
+DESCRICAO = ("Doe para a Cruz Vermelha Brasileira Rio de Janeiro por PIX, em menos de um minuto. "
              "Sua doação mantém a formação de voluntários e as ações no estado.")
 
 # Referências de impacto: valores sugeridos com o que cada um sustenta. Não são pacotes fechados,
@@ -59,7 +59,7 @@ DADOS = [
 PASSOS = [
     ("Escolha quanto doar", "Um dos valores sugeridos ou o que você quiser, a partir de R$ 5."),
     ("Informe seus dados", "Nome, e-mail, CPF e telefone. O CPF é exigido pelo meio de pagamento."),
-    ("Pague por PIX ou cartão", "A confirmação aparece na tela e o comprovante chega no seu e-mail."),
+    ("Pague por PIX", "A confirmação aparece na tela e o comprovante chega no seu e-mail."),
 ]
 
 FAQ = [
@@ -70,18 +70,15 @@ FAQ = [
      "são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês.",
      []),
     ("A doação é segura? Quem processa o pagamento?",
-     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. O pagamento é processado pela "
-     "ÚnicoPag, instituição de pagamento autorizada, que recebe a doação e repassa o valor à Cruz Vermelha Brasileira "
-     "Rio de Janeiro; por isso é o nome dela que aparece no PIX e na fatura do cartão, como acontece com as outras "
-     "filiais da Cruz Vermelha e os meios de pagamento que usam. Seus dados de cartão passam direto para o processador "
-     "e não são gravados no nosso servidor. Ficam conosco apenas nome, e-mail, CPF e telefone, para emitir a cobrança "
-     "e enviar o comprovante.",
+     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. A doação é feita por PIX e "
+     "processada pela Donaty, plataforma de pagamentos que gera o código PIX e confirma o pagamento para a filial. "
+     "Para emitir a cobrança, a Donaty recebe seu nome, CPF, e-mail e telefone; esses dados também ficam conosco, "
+     "para enviar o comprovante e cumprir obrigações contábeis. Esta página não coleta dados de cartão.",
      []),
     ("Posso doar por PIX? E por cartão?",
-     "Pode pelos dois. No PIX, a página gera o QR code e o código copia e cola na hora, e a confirmação aparece "
-     "sozinha assim que o banco processa, sem você precisar avisar ninguém. No cartão de crédito, a doação é "
-     "aprovada em segundos. Se fechar a página antes de pagar o PIX, o código também vai para o seu e-mail e vale "
-     "por 24 horas.",
+     "Por enquanto, a doação é só por PIX. A página gera o QR code e o código copia e cola na hora, e a confirmação "
+     "aparece sozinha assim que o banco processa, sem você precisar avisar ninguém. Se fechar a página antes de "
+     "pagar, o código também vai para o seu e-mail e vale por 24 horas.",
      []),
     ("Recebo algum comprovante da doação?",
      "Sim. Assim que o pagamento é confirmado, você recebe um e-mail com o valor, a forma de pagamento, a data, o "
@@ -89,7 +86,7 @@ FAQ = [
      "em alguns minutos, confira a caixa de spam ou fale com a gente pelo chat do site.",
      [("chat do site", "/#chat")]),
     ("Posso doar todo mês?",
-     "Ainda não: hoje a doação é avulsa, por PIX ou cartão, e leva menos de um minuto. Para contribuir todo mês, basta "
+     "Ainda não: hoje a doação é avulsa, por PIX, e leva menos de um minuto. Para contribuir todo mês, basta "
      "repetir a doação na data que preferir ou combinar a mensalidade com a equipe pelo chat do site.",
      [("chat do site", "/#chat")]),
     ("Quero doar roupas e cobertores. Como faço?",
@@ -477,7 +474,7 @@ def main() -> int:
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", header).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
             .replace("@@CHAT@@", chat_widget.tags())
-            .replace("@@H1@@", esc(H1)).replace("@@LEAD@@", "Em menos de um minuto, por PIX ou cartão. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
+            .replace("@@H1@@", esc(H1)).replace("@@LEAD@@", "Em menos de um minuto, por PIX. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
             .replace("@@CARTAO@@", CARTAO.replace("@@VALORES@@", valores))
             .replace("@@CONFIANCA@@", confianca).replace("@@IMPACTO@@", impacto)
             .replace("@@DADOS@@", dados).replace("@@PASSOS@@", passos).replace("@@FAQ@@", faq_html))
