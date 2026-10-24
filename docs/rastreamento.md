@@ -42,6 +42,29 @@ alimentam os relatórios de funil; `AddPaymentInfo` só disparava no PIX; `Purch
 `transaction_id`; o `InitiateCheckout` disparava no clique da matrícula e não cobria quem entrava
 no checkout pela home.
 
+## Etapa e erro no checkout e no cadastro de voluntário (24/10/2026)
+
+Para saber onde as pessoas param entre o `begin_checkout` e o `add_payment_info` (de 19 a 23/10, 9 `generate_lead` e
+nenhum "ok" do `pagamentos.php`). Só GA4, sem Meta, e sem dado pessoal: vai o nome do campo, nunca o que foi digitado.
+
+| Evento | Quando | Parâmetros |
+| --- | --- | --- |
+| `checkout_etapa` | a pessoa entra num bloco do formulário (foco ou mudança), uma vez por bloco na visita | `etapa` (curso, dados, pagamento), `curso` |
+| `checkout_erro` | o envio é recusado na validação do navegador | `tipo=validacao`, `campo` (o 1º recusado: curso, nome, cpf, email, telefone, cartao_*, requisitos), `curso`, `metodo`, `plano` |
+| `checkout_erro` | o `pagamentos.php` não devolve "ok" | `tipo=servidor`, `http` (422, 429, 503…; 0 = sem conexão), `campo` e `motivo` da recusa (vazios quando não vêm), `curso`, `metodo`, `plano` |
+| `cadastro_erro` | o cadastro de voluntário é recusado na validação do navegador | `form_id=voluntariado-cadastro`, `tipo=validacao`, `campo` (o 1º), `erros` (quantos) |
+| `cadastro_erro` | o `api/voluntarios.php` não aceita a ficha | `form_id`, `tipo=servidor`, `http` (409, 422, 429…; 0 = sem conexão), `campo` |
+
+O cadastro de voluntário já mandava `form_start` (começou a preencher) e `generate_lead` (`form_id=voluntariado-cadastro`,
+ficha aceita), além do `CompleteRegistration` da Meta. O `generate_lead` é o mesmo nome do envio do checkout: se ele
+virar evento-chave, os dois só se separam pelo `form_id`.
+
+O bloco "curso" quase sempre já vem escolhido pela URL: o `checkout_etapa` com `etapa=curso` só sai se a pessoa mexer
+nele. A chegada ao checkout continua sendo o `begin_checkout`.
+
+**Para configurar no GA4,** como dimensões personalizadas de evento: `etapa`, `tipo`, `campo`, `http` e `motivo`
+(`curso`, `metodo` e `plano` já existem ou entram junto). O registro não vale para trás.
+
 ## Chat de contato por e-mail (19/09, à noite)
 
 | Momento | Meta | GA4 |

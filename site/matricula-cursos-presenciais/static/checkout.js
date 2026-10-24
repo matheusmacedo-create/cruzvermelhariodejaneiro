@@ -355,6 +355,20 @@
         'begin_checkout', Object.assign({ plano: plano }, itemGa(sel.value, c.nome, plano, inscricao, matricula, inscricao + matricula)), { eventID: novoIdEvento('ic'), repassar: true, curso: sel.value, plano: plano });
     }
 
+    /* Onde a pessoa para (24/10/2026; docs/rastreamento.md): só GA4, sem dado pessoal. checkout_etapa sai uma vez por
+       bloco na visita, quando a pessoa entra nele; checkout_erro, a cada tentativa recusada (no navegador ou no servidor). */
+    var ETAPAS = { 'ck-t1': 'curso', 'ck-t2': 'dados', 'ck-t3': 'pagamento' }, etapasVistas = {};
+    function marcarEtapa(e) {
+      var bloco = e.target && e.target.closest ? e.target.closest('.ck-bloco-form') : null;
+      var etapa = bloco && ETAPAS[bloco.getAttribute('aria-labelledby')];
+      if (!etapa || etapasVistas[etapa]) return;
+      etapasVistas[etapa] = true;
+      rastrear(null, null, 'checkout_etapa', { etapa: etapa, curso: sel.value });
+    }
+    function rastrearErro(dados, extra) {
+      rastrear(null, null, 'checkout_erro', Object.assign({ curso: dados.curso, metodo: dados.metodo, plano: dados.plano || 'so_taxa' }, extra));
+    }
+
     // ---------------------------------------------------------------- parcelas (spec 2.4; api/parcelas.php)
     function chaveSimulacao(slug, cobre, ajuda) { return slug + '|' + (cobre ? 1 : 0) + '|' + (ajuda ? 1 : 0); }
     /* Pede as parcelas 300 ms depois da última mudança de curso ou opcionais. A pedida que ficou para trás é esquecida. */
@@ -638,20 +652,22 @@
       else erroEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    /* Validação local: as mesmas regras do servidor, para a mensagem aparecer sem ida e volta. */
+    /* Validação local: as mesmas regras do servidor, para a mensagem aparecer sem ida e volta. Devolve true ou o campo
+       recusado (o nome do campo, nunca o que foi digitado, vai para o checkout_erro). */
+    function falhou(mensagem, campo) { erro(mensagem, campo); return campo || 'requisitos'; }
     function validar(dados) {
-      if (!dados.curso) return erro('Escolha o curso.', 'curso');
-      if (dados.nome.length < 5 || dados.nome.indexOf(' ') < 0) return erro('Informe seu nome completo.', 'nome');
-      if (!cpfValido(dados.cpf)) return erro('CPF inválido. Confira os 11 números.', 'cpf');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return erro('E-mail inválido.', 'email');
-      if (dados.telefone.length < 10 || dados.telefone.length > 11) return erro('Informe o telefone com DDD.', 'telefone');
+      if (!dados.curso) return falhou('Escolha o curso.', 'curso');
+      if (dados.nome.length < 5 || dados.nome.indexOf(' ') < 0) return falhou('Informe seu nome completo.', 'nome');
+      if (!cpfValido(dados.cpf)) return falhou('CPF inválido. Confira os 11 números.', 'cpf');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return falhou('E-mail inválido.', 'email');
+      if (dados.telefone.length < 10 || dados.telefone.length > 11) return falhou('Informe o telefone com DDD.', 'telefone');
       if (dados.cartao) {
-        if (dados.cartao.numero.length < 13 || !luhnValido(dados.cartao.numero)) return erro('Número do cartão inválido.', 'cartao_numero');
-        if (dados.cartao.nome.length < 3) return erro('Informe o nome como está no cartão.', 'cartao_nome');
-        if (digitos(dados.cartao.validade).length !== 4) return erro('Validade inválida. Use MM/AA.', 'cartao_validade');
-        if (digitos(dados.cartao.cvv).length < 3) return erro('Código de segurança inválido.', 'cartao_cvv');
+        if (dados.cartao.numero.length < 13 || !luhnValido(dados.cartao.numero)) return falhou('Número do cartão inválido.', 'cartao_numero');
+        if (dados.cartao.nome.length < 3) return falhou('Informe o nome como está no cartão.', 'cartao_nome');
+        if (digitos(dados.cartao.validade).length !== 4) return falhou('Validade inválida. Use MM/AA.', 'cartao_validade');
+        if (digitos(dados.cartao.cvv).length < 3) return falhou('Código de segurança inválido.', 'cartao_cvv');
       }
-      if (!dados.requisitos) return erro('Confirme que leu os requisitos do curso.');
+      if (!dados.requisitos) return falhou('Confirme que leu os requisitos do curso.');
       return true;
     }
 
@@ -724,7 +740,8 @@
       erro('');
       atualizar(); // o prazo da turma e o total mostrado conferidos na hora de pagar
       var dados = lerFormulario();
-      if (validar(dados) !== true) return;
+      var recusado = validar(dados);
+      if (recusado !== true) { rastrearErro(dados, { tipo: 'validacao', campo: recusado }); return; }
       var rotulo = btn.innerHTML;
       btn.disabled = true;
       btn.textContent = dados.metodo === 'pix' ? 'Gerando o QR Code…' : 'Processando…';
@@ -741,6 +758,8 @@
         if (!r.ok) {
           btn.disabled = false;
           btn.innerHTML = rotulo;
+          // http 0 = sem conexão; 422 traz campo e motivo (códigos do servidor, sem dado da pessoa).
+          rastrearErro(dados, { tipo: 'servidor', http: r.http || 0, campo: String(r.campo || '').slice(0, 40), motivo: String(r.motivo || '').slice(0, 40) });
           tratarRecusa(r, dados);
           return;
         }
@@ -773,6 +792,9 @@
       atualizar();
     });
     form.addEventListener('submit', enviar);
+    // focusin pega teclado e toque; change cobre o clique em opção que não recebe foco (Safari).
+    form.addEventListener('focusin', marcarEtapa);
+    form.addEventListener('change', marcarEtapa);
     var pedido = param('curso');
     if (pedido && cursos[pedido]) sel.value = pedido;
     atualizar();

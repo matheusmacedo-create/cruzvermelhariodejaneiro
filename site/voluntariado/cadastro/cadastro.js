@@ -214,6 +214,8 @@
     limparErros();
     var erros = validar();
     if (erros.length) {
+      // Só o nome do primeiro campo recusado e quantos foram; nunca o que foi digitado (docs/rastreamento.md, 24/10/2026).
+      ga('cadastro_erro', { form_id: FORM_ID, tipo: 'validacao', campo: erros[0].campo, erros: erros.length });
       erros.forEach(function (e) { marcarErro(e.campo, e.texto); });
       mostrarAviso(resumoErros(erros), false);
       focar(erros[0].campo);
@@ -229,7 +231,10 @@
         var d = x.d && typeof x.d === 'object' ? x.d : {};
         if (d.ok === true || x.http === 201) {
           concluir(d, corpo);
-        } else if (x.http === 0) {
+          return;
+        }
+        ga('cadastro_erro', { form_id: FORM_ID, tipo: 'servidor', http: x.http, campo: String(d.campo || '').slice(0, 40) });
+        if (x.http === 0) {
           mostrarAviso(p('Sem conexão. Verifique a internet e tente de novo.'), true);
         } else if (x.http === 422 && d.campo && caixa(d.campo)) {
           var texto = d.erro || 'Confira este campo.';
