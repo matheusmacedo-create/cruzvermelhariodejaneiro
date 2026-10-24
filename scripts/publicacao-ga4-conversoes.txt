@@ -1,0 +1,7 @@
+# Conversões do GA4 para o Google Ads (24/10/2026): purchase da doação sem o token e uma vez só; gbraid/wbraid até o checkout.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ga4-conversoes.txt)
+# Conferir: NODE_PATH=$(npm root -g) node scripts/conferir_ga4_conversoes.js
+site/doe/static/doe.js
+site/doe/index.html
+site/doe/obrigado/index.html
+site/matricula-cursos-presenciais/index.html

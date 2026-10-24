@@ -1108,9 +1108,10 @@ JS_PAGINA = """
       function valorPlano(s) { return planoPadrao(s) === 'taxa_e_matricula' ? CURSOS[s].total : INSCRICAO; }
       function item(s) { return { item_id: s, item_name: CURSOS[s].nome, item_category: 'Cursos presenciais', item_category2: estado(s), price: valorPlano(s), quantity: 1 }; }
 
-      // UTMs, fbclid e gclid da URL atual vão junto para o checkout (os links já funcionam sem JavaScript).
+      // UTMs, fbclid e gclid da URL atual vão junto para o checkout (os links já funcionam sem JavaScript). gbraid e wbraid
+      // são o gclid do Google Ads em clique vindo de iPhone/iPad: sem eles, a conversão desse clique não volta ao anúncio.
       var extras = new URLSearchParams();
-      new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$)/.test(k)) extras.set(k, v); });
+      new URLSearchParams(location.search).forEach(function (v, k) { if (/^(utm_|fbclid$|gclid$|gbraid$|wbraid$)/.test(k)) extras.set(k, v); });
       function comExtras(href) {
         try { var u = new URL(href, location.origin); extras.forEach(function (v, k) { u.searchParams.set(k, v); }); return u.pathname + u.search; } catch (e) { return href; }
       }
