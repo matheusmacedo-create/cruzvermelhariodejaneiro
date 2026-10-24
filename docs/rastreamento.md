@@ -61,6 +61,10 @@ Corrigido em 24/10/2026:
   (marca no `localStorage`, como no curso), só com consentimento e até 24 h do pagamento: antes, cada volta ao link
   do obrigado contava a doação de novo. Não há API de Conversões na doação, então o `eventID` novo não desfaz
   nenhuma deduplicação.
+- **Publicado em 24/10/2026** (cache limpo em seguida; `conferir_ga4_conversoes.js` no ar: 3 de 3). Os três arquivos
+  da doação no ar eram os do branch `claude/magical-einstein-kz4v7i` (virada para a Donaty, só PIX, ainda fora da
+  `main`): a correção foi aplicada sobre eles, e não sobre os da `main`, para não desfazer a virada. No ar,
+  `doe.js?v=06a36decdc`. Quem mesclar os dois branches resolve o `doe.js` juntando os dois trechos.
 - **Clique de iPhone**: a matrícula já levava `utm_*`, `fbclid` e `gclid` para o link do checkout, mas não `gbraid`
   e `wbraid`, que o Google Ads usa no lugar do `gclid` em clique de iOS. Quem só aceitava o aviso de cookies no
   checkout chegava lá sem a origem do anúncio, e a conversão não voltava ao Google Ads.
