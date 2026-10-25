@@ -1141,7 +1141,7 @@ verificar('página: <title> do ar, sem PreOrder antes do 5b, bloco de turmas da 
     [true, false, true, false, true, false]);
 // Ficha com turma aberta (1.6): Primeiros Socorros Básico com o aviso rosa, as 3 linhas do Investimento e "Inscrever-se →".
 $fichaPsb = $recorte($paginaMatricula, '<article class="v-curso mr-detalhe" id="det-primeiros-socorros-basico"', '</article>');
-verificar('página: ficha de Primeiros Socorros Básico com a turma, "Inscrever-se" e a micro do pagamento', [str_contains($fichaPsb, 'Início em 21 de outubro de 2026'),
+verificar('página: ficha de Primeiros Socorros Básico com a turma, "Inscrever-se" e a micro do pagamento', [(bool) preg_match('/Início em \d{1,2} de [a-zç]+ de \d{4}/u', $fichaPsb), // a data muda com o oferta.json (sincronizar_turmas.py)
     str_contains($fichaPsb, '09:00 - 17:00'), (bool) preg_match('/<a class="[^"]*mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="\/matricula-cursos-presenciais\/checkout\/\?curso=primeiros-socorros-basico&amp;via=detalhes">Inscrever-se/', $fichaPsb),
     str_contains($fichaPsb, 'PIX ou cartão, à vista.'), str_contains($fichaPsb, '(+Lei Lucas)')], [true, true, true, true, true]);
 // Fichas sem turma (10.3 e 1.7): os cursos da lista "sem_turma" têm a venda (Inscrever-se, promessa com a data limite, sem

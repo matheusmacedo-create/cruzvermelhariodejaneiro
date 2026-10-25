@@ -14,7 +14,8 @@ Um HTML estático só, com dois modos:
     cartão "Próxima turma" (ou "Turmas em breve"), faixa de prova, Investimento, seu certificado, sobre o curso, turmas,
     dúvidas do curso, como chegar e "Outros cursos da Escola" (o próprio #cursos).
 
-As turmas vêm de site/matricula-cursos-presenciais/oferta.json (mantido à mão pela TI; o cursos.json é regravado por
+As turmas vêm de site/matricula-cursos-presenciais/oferta.json (sincronizado com a escola por scripts/sincronizar_turmas.py,
+docs/turmas.md; o cursos.json é regravado por
 scripts/sincronizar_catalogo.py e não guarda turma). Os preços vêm do cursos.json (matrícula = valor_curso_centavos; total
 à vista = matrícula + inscricao_centavos). Do oferta.json saem também:
   - "parcelado_no_ar": com false, os textos usam a variante "à vista" (R5 da spec); com true, o literal "à vista ou
