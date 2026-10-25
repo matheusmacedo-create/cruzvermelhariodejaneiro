@@ -75,7 +75,7 @@ HEAD = """<!DOCTYPE html>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <title>@@TITULO@@</title>
   <meta name="description" content="@@DESCRICAO@@">
-  <!-- Estilos copiados da home (site/index.html), com a "Inter Reserva": sem Google Fonts, o texto usa a fonte do aparelho nas medidas da Inter. -->
+@@CANONICAL@@  <!-- Estilos copiados da home (site/index.html), com a "Inter Reserva": sem Google Fonts, o texto usa a fonte do aparelho nas medidas da Inter. -->
 @@ESTILO@@
 @@CSS@@
 </head>
@@ -1027,6 +1027,8 @@ def conferir(html: str, nome: str) -> None:
         if not src.startswith("/") or src.startswith("//"):
             raise SystemExit(f"{nome}: recurso de fora do site: {src}")
     for link in re.findall(r"<link\b[^>]*>", html):
+        if link == '<link rel="canonical" href="https://cruzvermelhariodejaneiro.org/verificar/">':
+            continue  # o próprio endereço da página, não um recurso de fora
         if 'rel="icon"' not in link or 'href="/' not in link:
             raise SystemExit(f"{nome}: <link> inesperado: {link}")
     for url in re.findall(r"url\(\s*['\"]?([^'\")]+)", html):
@@ -1035,7 +1037,12 @@ def conferir(html: str, nome: str) -> None:
 
 
 def montar(modelo: str, partes: dict, header: str, js: str | None, titulo: str, descricao: str, nome: str) -> str:
-    html = (modelo.replace("@@TITULO@@", esc(titulo)).replace("@@DESCRICAO@@", esc(descricao))
+    # O endereço oficial só na página: sem ele, o Search Console marcava "sem canonical declarado" (25/10/2026).
+    # A 404 é noindex e não declara endereço.
+    canonical = ('  <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/verificar/">\n'
+                 if nome == "index.html" else "")
+    html = (modelo.replace("@@CANONICAL@@", canonical)
+            .replace("@@TITULO@@", esc(titulo)).replace("@@DESCRICAO@@", esc(descricao))
             .replace("@@ESTILO@@", partes["estilo"]).replace("@@CSS@@", CSS)
             .replace("@@HEADER@@", header).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"]))
     extras: set[str] = set()
