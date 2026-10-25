@@ -31,7 +31,7 @@ Código: `site/voluntariado/cadastro/index.html` e `cadastro.js` (página), `api
    é `VOL-aammdd-NNNN` (data de Brasília do envio + id com 4 dígitos), como o `CV-...` do chat. Se o
    Drive estiver ligado, a gravação enfileira `ficha_voluntario` em `mcp_drive_fila`.
 4. **E-mails** (`mcp_email_voluntario_ficha`, pela Resend): aviso à equipe, para `EMAIL_VOLUNTARIADO`
-   (ou, vazio, `EMAIL_CONTATO`), com responder-para o e-mail da pessoa e o botão "Abrir no portal"; e
+   (ou, vazio, `voluntariado@cruzvermelhariodejaneiro.org`, a coordenação), com responder-para o e-mail da pessoa e o botão "Abrir no portal"; e
    confirmação à pessoa, com o protocolo, os próximos passos (ficha de entrevista, CBFI, que acontece
    4 vezes por ano, e termo de adesão) e, para quem tem menos de 18 anos, o aviso de que um responsável
    assina o termo. O resultado de cada envio fica em `email_equipe` e `email_confirmacao`.
@@ -137,8 +137,9 @@ também deve ser entregue se ela pedir. Correções (telefone, e-mail, endereço
 
 ## Configuração (nomes, só no servidor)
 
-- `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova. Vazio ou ausente =
-  `EMAIL_CONTATO`. O responder-para é sempre o e-mail da pessoa que se cadastrou. Modelo em
+- `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova e das mensagens do chat com o
+  assunto "Voluntariado". Vazio ou ausente = `voluntariado@cruzvermelhariodejaneiro.org`, a coordenação de voluntariado
+  (até 25/10/2026 era `EMAIL_CONTATO`, e tudo de voluntariado chegava em contato@). O contato não recebe cópia. O responder-para é sempre o e-mail da pessoa que se cadastrou. Modelo em
   `config.example.php`.
 - `GOOGLE_SA`, `GOOGLE_DRIVE_RAIZ_ID`, `GOOGLE_SHEET_FICHAS_ID` (e, só para testes locais,
   `GOOGLE_API_URL` e `GOOGLE_TOKEN_URL`) ficam em `api/config-google.php`, fora do Git, carregado por

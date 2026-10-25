@@ -1,7 +1,7 @@
 <?php
 /**
  * POST: ficha de cadastro de voluntário(a) da página /voluntariado/cadastro/. Grava em mcp_voluntarios, manda o aviso
- * à equipe de voluntariado (EMAIL_VOLUNTARIADO ou EMAIL_CONTATO, com responder-para de quem preencheu) e a
+ * à equipe de voluntariado (EMAIL_VOLUNTARIADO ou, vazio, voluntariado@, com responder-para de quem preencheu) e a
  * confirmação à pessoa, enfileira o PDF e a planilha no Drive (quando o módulo existe) e devolve o protocolo.
  *
  * Dois jeitos de chamar, com os mesmos nomes de campo (contrato em lib/voluntarios.php):
