@@ -924,11 +924,18 @@ function mcp_voluntarios_csv_linhas(array $linhas): string
 }
 
 // ----------------------------------------------------------------------------- e-mails
-/** Quem recebe as fichas: EMAIL_VOLUNTARIADO (chave opcional do config) ou, vazio, o contato do site. */
+/** Caixa da coordenação de voluntariado, a mesma que a página da equipe publica. */
+const MCP_EMAIL_VOLUNTARIADO_PADRAO = 'voluntariado@cruzvermelhariodejaneiro.org';
+
+/**
+ * Quem recebe as fichas e as mensagens do chat sobre voluntariado: EMAIL_VOLUNTARIADO (chave opcional do config) ou,
+ * vazio, a coordenação de voluntariado. Até 25/10/2026 o padrão era o contato do site, e como o servidor não tinha a
+ * chave, tudo de voluntariado chegava em contato@; a coordenação pediu para receber só ela.
+ */
 function mcp_voluntarios_email_destino(): string
 {
     $destino = trim((string) (mcp_config()['EMAIL_VOLUNTARIADO'] ?? ''));
-    return filter_var($destino, FILTER_VALIDATE_EMAIL) ? $destino : mcp_email_contato_endereco();
+    return filter_var($destino, FILTER_VALIDATE_EMAIL) ? $destino : MCP_EMAIL_VOLUNTARIADO_PADRAO;
 }
 
 /** Link da ficha no portal da secretaria (botão "Abrir no portal"). */
@@ -1083,7 +1090,7 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
 }
 
 /**
- * Envia o aviso à equipe (EMAIL_VOLUNTARIADO ou EMAIL_CONTATO, responder-para = a pessoa) e a confirmação à pessoa.
+ * Envia o aviso à equipe (EMAIL_VOLUNTARIADO ou, vazio, voluntariado@, responder-para = a pessoa) e a confirmação à pessoa.
  * Devolve o resultado dos dois ('resend', 'mail' ou 'falhou'); falha de e-mail nunca derruba a requisição.
  *
  * @return array{equipe: string, confirmacao: string}

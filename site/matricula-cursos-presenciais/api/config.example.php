@@ -77,6 +77,9 @@ return [
     // serviço de e-mail contratado, então contato@ só passa a receber quando o MX for para o Google
     // Workspace. Até lá, coloque aqui um e-mail que funcione.
     'EMAIL_CONTATO'    => 'contato@cruzvermelhariodejaneiro.org',
+    // Fichas de voluntário e mensagens do chat sobre voluntariado (só essa caixa; o contato não recebe cópia).
+    // Vazio = voluntariado@cruzvermelhariodejaneiro.org, a coordenação de voluntariado.
+    'EMAIL_VOLUNTARIADO' => '',
     // Responder-para dos e-mails ao aluno. Vazio = EMAIL_CONTATO.
     'EMAIL_RESPOSTA'   => '',
     // Aviso interno de inscrição paga (responder-para = o aluno). Vazio = desligado.

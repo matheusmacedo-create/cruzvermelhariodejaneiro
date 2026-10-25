@@ -158,6 +158,9 @@ verificar('versão da política vem de site/politicas.json', mcp_voluntario_poli
 verificar('versão da política cabe em VARCHAR(10)', strlen(mcp_voluntario_politica_versao()) <= 10, true);
 verificar('cpf parcial', [mcp_voluntario_cpf_parcial($cpf), mcp_voluntario_cpf_parcial(''), mcp_voluntario_cpf_parcial(null)], [substr($cpf, 0, 3) . '.***.***-**', '', '']);
 verificar('e-mail de destino: EMAIL_VOLUNTARIADO', mcp_voluntarios_email_destino(), 'voluntariado@exemplo.org');
+verificar('sem EMAIL_VOLUNTARIADO, a coordenação (não o contato)', MCP_EMAIL_VOLUNTARIADO_PADRAO, 'voluntariado@cruzvermelhariodejaneiro.org');
+verificar('chat sobre voluntariado vai só à coordenação', mcp_email_contato_destino('voluntariado'), 'voluntariado@exemplo.org');
+verificar('chat sobre outros assuntos continua no contato', [mcp_email_contato_destino('matricula'), mcp_email_contato_destino('doacoes'), mcp_email_contato_destino('outro')], ['contato@exemplo.org', 'contato@exemplo.org', 'contato@exemplo.org']);
 verificar('link do portal', mcp_voluntario_link_portal(42), 'https://exemplo.org/matricula-cursos-presenciais/api/painel.php?v=voluntario&id=42');
 
 // ----------------------------------------------------------------------------- rótulos completos

@@ -2236,11 +2236,17 @@ function mcp_montar_email_contato_confirmacao(array $c): array
     ];
 }
 
+/** Quem recebe uma mensagem do chat: voluntariado vai só à coordenação (mcp_voluntarios_email_destino); o resto, ao contato. */
+function mcp_email_contato_destino(string $assunto): string
+{
+    return $assunto === 'voluntariado' ? mcp_voluntarios_email_destino() : mcp_email_contato_endereco();
+}
+
 /** Envia o aviso à equipe (responder-para = quem escreveu) e a confirmação à pessoa. Devolve o resultado dos dois. */
 function mcp_email_contato(array $c): array
 {
     $equipe = mcp_montar_email_contato_equipe($c);
-    $r1 = mcp_enviar_email(mcp_email_contato_endereco(), $equipe['assunto'], $equipe['html'], $equipe['texto'], (string) $c['email']);
+    $r1 = mcp_enviar_email(mcp_email_contato_destino((string) ($c['assunto'] ?? '')), $equipe['assunto'], $equipe['html'], $equipe['texto'], (string) $c['email']);
     $confirmacao = mcp_montar_email_contato_confirmacao($c);
     $r2 = mcp_enviar_email((string) $c['email'], $confirmacao['assunto'], $confirmacao['html'], $confirmacao['texto']);
     return ['equipe' => $r1, 'confirmacao' => $r2];

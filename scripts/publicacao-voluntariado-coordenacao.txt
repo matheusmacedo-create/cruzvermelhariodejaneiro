@@ -1,0 +1,8 @@
+# E-mails de voluntariado só para a coordenação (25/10/2026): fichas e chat com assunto "Voluntariado" vão a
+# voluntariado@ (ou EMAIL_VOLUNTARIADO do config.php do servidor); o contato@ deixa de receber.
+# Bibliotecas antes do endpoint. Antes de publicar, conferir que o config.php do servidor não tem
+# EMAIL_VOLUNTARIADO apontando para contato@ (se tiver, ajustar lá: este código respeita a chave).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-voluntariado-coordenacao.txt)
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/voluntarios.php
