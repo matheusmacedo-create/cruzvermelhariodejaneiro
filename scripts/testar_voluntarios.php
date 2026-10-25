@@ -102,14 +102,13 @@ verificar('data vazia', campo_erro($com(['data_nascimento' => ''])), 'data_nasci
 verificar('data inválida (mês 13)', campo_erro($com(['data_nascimento' => '2000-13-01'])), 'data_nascimento');
 verificar('data no futuro', campo_erro($com(['data_nascimento' => '2027-01-01'])), 'data_nascimento');
 verificar('data em dd/mm/aaaa (sem JavaScript) é aceita', $com(['data_nascimento' => '20/05/1990'])['dados']['data_nascimento'] ?? null, '1990-05-20');
-$menos16 = $com(['data_nascimento' => '2010-10-17']);
-verificar('menor de 16: campo data_nascimento com o e-mail de contato', [campo_erro($menos16), str_contains($menos16['erro'], 'contato@exemplo.org'), str_contains($menos16['erro'], '16 anos')], ['data_nascimento', true, true]);
-$faz16 = $com(['data_nascimento' => '2010-10-16']);
-verificar('faz 16 hoje: passa, menor de 18', [$faz16['ok'], $faz16['dados']['idade'], $faz16['dados']['menor']], [true, 16, true]);
-$com17 = $com(['data_nascimento' => '2009-01-01']);
-verificar('17 anos: passa com menor = true', [$com17['ok'], $com17['dados']['menor']], [true, true]);
+// Idade mínima de 18 anos desde 25/10/2026 (antes, 16). A mensagem não manda escrever para o contato.
+$com16 = $com(['data_nascimento' => '2010-10-16']);
+verificar('16 anos: recusa no campo data_nascimento, sem o e-mail de contato', [campo_erro($com16), str_contains($com16['erro'], '18 anos'), str_contains($com16['erro'], '@')], ['data_nascimento', true, false]);
+$quase18 = $com(['data_nascimento' => '2008-10-17']);
+verificar('faz 18 amanhã (17 anos): recusa', campo_erro($quase18), 'data_nascimento');
 $faz18 = $com(['data_nascimento' => '2008-10-16']);
-verificar('faz 18 hoje: não é menor', [$faz18['ok'], $faz18['dados']['menor']], [true, false]);
+verificar('faz 18 hoje: passa e não é menor', [$faz18['ok'], $faz18['dados']['idade'], $faz18['dados']['menor']], [true, 18, false]);
 verificar('e-mail inválido', campo_erro($com(['email' => 'maria@'])), 'email');
 verificar('telefone vazio', campo_erro($com(['telefone' => ''])), 'telefone');
 verificar('telefone sem DDD', campo_erro($com(['telefone' => '9999-8888'])), 'telefone');

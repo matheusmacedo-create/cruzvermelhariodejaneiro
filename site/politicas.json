@@ -104,6 +104,7 @@
   },
   "paginas": {
     "privacidade": {
+      "revisao": "2026-10-25",
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.",
@@ -222,7 +223,7 @@
                 "p": "O pagamento da inscrição é processado pela ÚnicoPag, e o da doação, pela Donaty. Os dados do cartão da inscrição passam pelo nosso servidor só a caminho da ÚnicoPag, no momento do pagamento, e não são gravados. A doação é só por PIX: não coletamos dados de cartão nela. As doações feitas até {virada} foram processadas pela ÚnicoPag."
               },
               {
-                "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site: a pergunta do cadastro de voluntários sobre formação na área da saúde é sobre a sua profissão, não sobre a sua saúde. Não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal; o cadastro de voluntários aceita a partir de 16 anos e, para quem tem menos de 18, o termo de adesão é assinado também pelo responsável legal."
+                "p": "Não pedimos dados sensíveis (como saúde, religião ou origem racial) em nenhum formulário do site: a pergunta do cadastro de voluntários sobre formação na área da saúde é sobre a sua profissão, não sobre a sua saúde. Não tomamos decisões automatizadas com base nos seus dados. Os formulários não são dirigidos a crianças: se um adolescente for se matricular, a inscrição deve ser feita com o acompanhamento do responsável legal; o cadastro de voluntários aceita só maiores de 18 anos."
               }
             ]
           },
@@ -486,7 +487,7 @@
                 "p": "Enrolment payments are processed by ÚnicoPag, and donation payments by Donaty. Card details for enrolments pass through our server only on their way to ÚnicoPag, at the moment of payment, and are never stored. Donations are by PIX only: we do not collect card details for them. Donations made up to {virada} were processed by ÚnicoPag."
               },
               {
-                "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site: the volunteer registration question about training in the health field is about your occupation, not your health. We make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian; volunteer registration is open from age 16 and, for those under 18, the volunteer service agreement is also signed by the legal guardian."
+                "p": "We do not ask for sensitive data (such as health, religion or racial origin) in any form on the site: the volunteer registration question about training in the health field is about your occupation, not your health. We make no automated decisions based on your data. The forms are not aimed at children: if a teenager enrols, it should be done with a parent or legal guardian; volunteer registration is open only to people aged 18 or over."
               }
             ]
           },
@@ -750,7 +751,7 @@
                 "p": "El pago de la inscripción lo procesa ÚnicoPag, y el de la donación, Donaty. Los datos de la tarjeta de la inscripción pasan por nuestro servidor solo camino a ÚnicoPag, en el momento del pago, y no se guardan. La donación es solo por PIX: no recopilamos datos de tarjeta en ella. Las donaciones hechas hasta el {virada} fueron procesadas por ÚnicoPag."
               },
               {
-                "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio: la pregunta del registro de voluntarios sobre formación en el área de la salud se refiere a su profesión, no a su salud. No tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal; el registro de voluntarios se acepta a partir de los 16 años y, para menores de 18, el acuerdo de adhesión lo firma también el responsable legal."
+                "p": "No pedimos datos sensibles (como salud, religión u origen racial) en ningún formulario del sitio: la pregunta del registro de voluntarios sobre formación en el área de la salud se refiere a su profesión, no a su salud. No tomamos decisiones automatizadas con base en sus datos. Los formularios no están dirigidos a niños: si un adolescente se matricula, debe hacerlo con el acompañamiento de su responsable legal; el registro de voluntarios solo acepta a mayores de 18 años."
               }
             ]
           },

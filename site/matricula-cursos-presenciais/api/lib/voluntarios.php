@@ -5,8 +5,8 @@
  * equipe de voluntariado e confirmação à pessoa).
  *
  * Regras:
- *  - idade mínima de 16 anos; de 16 a 17, a ficha entra com o aviso de que o responsável legal assina o termo de
- *    adesão (Lei 9.608/1998, cláusula 10 do termo em lib/ponto.php);
+ *  - idade mínima de 18 anos (desde 25/10/2026; antes era 16, e de 16 a 17 o responsável legal assinava o termo de
+ *    adesão). As fichas de menores que já existem continuam marcadas no portal e nos e-mails (MCP_VOL_MAIORIDADE);
  *  - CPF opcional na ficha e obrigatório só na aceitação, quando a pessoa vira colaboradora do ponto da sede
  *    (mcp_colaboradores, vínculo 'voluntario'); nunca sai no CSV nem nos e-mails, e no PDF só os 3 primeiros dígitos;
  *  - LGPD: a ficha guarda quando a pessoa concordou com a Política de Privacidade (consentimento_em), sob qual
@@ -19,7 +19,7 @@
  */
 declare(strict_types=1);
 
-const MCP_VOL_IDADE_MINIMA = 16;
+const MCP_VOL_IDADE_MINIMA = 18;
 const MCP_VOL_MAIORIDADE = 18;
 /** Fichas por IP na hora e por e-mail no dia (429). */
 const MCP_VOL_LIMITE_IP = [5, 3600];
@@ -252,8 +252,7 @@ function mcp_voluntario_validar(array $b, ?string $hoje = null): array
         return $falha('data_nascimento', 'Confira a data de nascimento.');
     }
     if ($idade < MCP_VOL_IDADE_MINIMA) {
-        return $falha('data_nascimento', 'O voluntariado é a partir de ' . MCP_VOL_IDADE_MINIMA . ' anos. Se você tem menos, escreva para '
-            . $contato . ' e a equipe explica como participar quando chegar a idade.');
+        return $falha('data_nascimento', 'No momento, o voluntariado aceita só quem tem ' . MCP_VOL_IDADE_MINIMA . ' anos ou mais.');
     }
     $email = mb_strtolower(mcp_texto($b['email'] ?? '', 190));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
