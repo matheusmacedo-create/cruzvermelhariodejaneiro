@@ -261,9 +261,13 @@ JS = """  <script>
 
       // tabela (a mesma informação, para quem não vê o gráfico)
       var corpo = document.getElementById('gs-tabela-corpo'), linhas = '';
+      // O endereço do manifesto é montado por partes: o trecho de HTML com o caminho inteiro, escrito direto no código,
+      // era lido pelo Google como link e virava um 404 no Search Console (20/10/2026).
+      var arquivo = ['manifesto', 'json'].join('.');
       lotes.slice().reverse().forEach(function (l) {
+        var endereco = ['', 'verificar', 'lotes', l.dia, arquivo].join('/');
         linhas += '<tr><td>' + br(l.dia) + '</td><td>' + (l.bloco ? milhar(l.bloco) : 'em confirmação') + '</td><td>' + (l.tsa ? 'sim' : 'não') + '</td>'
-          + '<td><a href="/verificar/lotes/' + l.dia + '/manifesto.json">manifesto</a></td></tr>';
+          + '<td><a href="' + endereco + '">manifesto</a></td></tr>';
       });
       corpo.innerHTML = linhas;
     }
