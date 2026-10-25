@@ -12,7 +12,7 @@ mostra a tela de sucesso. O cadastro.js entra com um hash do conteúdo na query 
 não segurar versão velha.
 
 Regras de texto desta página: sem WhatsApp, sem pedido de doação, sem o domínio antigo; o e-mail de contato só
-aparece no rodapé da home (que a página herda) e na mensagem de erro para menores de 16 anos (em cadastro.js).
+aparece no rodapé da home (que a página herda). Idade mínima: 18 anos (desde 25/10/2026; antes, 16).
 Valores dos campos (escolaridade, frentes, dias, períodos, como_conheceu): os mesmos que a API aceita.
 
 Cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de cookies) e o script do menu vêm de site/index.html, como
@@ -41,7 +41,7 @@ IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 TITULO = "Cadastro de voluntário – Cruz Vermelha RJ"
 H1 = "Quero ser voluntário da Cruz Vermelha no Rio"
 DESCRICAO = ("Cadastre-se como voluntário da Cruz Vermelha Brasileira Rio de Janeiro: "
-             "entrevista, curso básico de formação (gratuito) e termo de adesão. A partir de 16 anos.")
+             "entrevista, curso básico de formação (gratuito) e termo de adesão. A partir de 18 anos.")
 
 # --- valores dos campos (os mesmos da API) --------------------------------------------------------------------------
 ESCOLARIDADES = [
@@ -85,7 +85,7 @@ ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
     ("Ficha de entrevista", f"A equipe do voluntariado entra em contato por e-mail em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas."),
     ("CBFI", "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado."),
-    ("Termo de adesão", "Formaliza o vínculo e você começa a atuar. Menores de 18 anos assinam com um responsável."),
+    ("Termo de adesão", "Formaliza o vínculo e você começa a atuar."),
 ]
 
 
@@ -307,7 +307,7 @@ def formulario() -> str:
     dados = cartao("vc-dados", "Seus dados", "", '<div class="vc-grade">' + "".join([
         entrada("nome", "Nome completo", obrigatorio=True, largo=True, atributos='autocomplete="name" maxlength="160" autocapitalize="words"'),
         entrada("data_nascimento", "Data de nascimento", tipo="date", obrigatorio=True,
-                dica="A partir de 16 anos. Menores de 18 assinam o termo de adesão com um responsável.",
+                dica="A partir de 18 anos.",
                 atributos='autocomplete="bday" min="1900-01-01" placeholder="dd/mm/aaaa"'),
         entrada("cpf", "CPF", dica="Só é obrigatório se você for aceito, para o termo de adesão. Pode deixar em branco agora.",
                 atributos='inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00"'),
@@ -444,7 +444,7 @@ def main() -> int:
         <nav class="vc-trilha" aria-label="Você está em"><ol><li><a href="/">Início</a></li><li><a href="/voluntariado/">Voluntariado</a></li><li aria-current="page">Cadastro</li></ol></nav>
         <p class="eyebrow">Voluntariado</p>
         <h1 id="vc-titulo">{esc(H1)}</h1>
-        <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 16 anos; menores de 18 assinam o termo com um responsável.</p>
+        <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 18 anos.</p>
         <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.</span></p>
         <ol class="vc-etapas" aria-label="As quatro etapas para ser voluntário">
           {etapas}

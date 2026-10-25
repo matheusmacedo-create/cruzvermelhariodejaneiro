@@ -14,7 +14,6 @@
   var form = document.getElementById('ficha');
   if (!form) return;
   var API = form.getAttribute('action') || '/matricula-cursos-presenciais/api/voluntarios.php';
-  var EMAIL_CONTATO = 'contato@cruzvermelhariodejaneiro.org';
   var FORM_ID = 'voluntariado-cadastro';
   var aviso = document.getElementById('vc-aviso');
   var sucesso = document.getElementById('vc-sucesso');
@@ -142,7 +141,7 @@
     }
     return true;
   }
-  var MSG_MENOR_16 = 'O voluntariado é para quem tem 16 anos ou mais. Se você tem menos de 16, escreva para ' + EMAIL_CONTATO + ' e a equipe explica as opções.';
+  var MSG_MENOR = 'No momento, o voluntariado aceita só quem tem 18 anos ou mais.';
   function validar() {
     var erros = [];
     function erro(campo, texto) { erros.push({ campo: campo, texto: texto }); }
@@ -152,7 +151,7 @@
     var anos = idade(dataIso(valor('data_nascimento')));
     if (anos === null) erro('data_nascimento', 'Digite a data de nascimento completa: dia, mês e ano.');
     else if (anos < 0 || anos > 110) erro('data_nascimento', 'Confira a data de nascimento.');
-    else if (anos < 16) erro('data_nascimento', MSG_MENOR_16);
+    else if (anos < 18) erro('data_nascimento', MSG_MENOR);
     var cpf = digitos(valor('cpf'));
     if (cpf && !cpfValido(cpf)) erro('cpf', 'Esse CPF não parece válido. Confira os números ou deixe em branco por enquanto.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor('email'))) erro('email', 'Digite um e-mail válido: é por ele que a confirmação chega.');
@@ -349,7 +348,7 @@
     mostrarSucesso({ protocolo: protocolo, menor: false });
   } else if (erroUrl) {
     var MENSAGENS = {
-      data_nascimento: MSG_MENOR_16,
+      data_nascimento: MSG_MENOR,
       email: 'Confira o e-mail: é por ele que a confirmação chega.',
       telefone: 'Digite o telefone com DDD, por exemplo (21) 99999-9999.',
       cpf: 'Esse CPF não parece válido. Confira os números ou deixe em branco por enquanto.',

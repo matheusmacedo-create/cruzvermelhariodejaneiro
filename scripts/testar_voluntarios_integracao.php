@@ -3,7 +3,7 @@
 /**
  * Teste de ponta a ponta do cadastro de voluntários, contra um MariaDB LOCAL. Cobre:
  *   - api/voluntarios.php em JSON: ficha válida (201, linha com consentimento e versão da política), repetida (409),
- *     menor de 16 (422 em data_nascimento), menor de 18 (201 com menor = true), armadilha (422), freios por e-mail e
+ *     menor de 18 (422 em data_nascimento), adulta (201 com menor = false), armadilha (422), freios por e-mail e
  *     por IP (429), registro em mcp_eventos sem CPF;
  *   - o modo sem JavaScript (formulário): 303 com ?protocolo= ou ?erro=<campo>;
  *   - o acompanhamento (lib/voluntarios.php): situação, notas, aceitação com CPF (cria o colaborador do ponto com
@@ -207,20 +207,20 @@ try {
         verificar('gancho do Drive: sem o módulo, a ficha segue sem fila', true, true);
     }
 
-    // ------------------------------------------------------------------------- JSON: repetida, menor de 16, armadilha, menor de 18
+    // ------------------------------------------------------------------------- JSON: repetida, menor de 18 (recusa), armadilha, adulta
     [$st, $r] = enviar($base, $ficha($emailAna));
     verificar('ficha repetida (mesmo e-mail, em aberto): 409 com a data e o protocolo da anterior',
         [$st, array_keys($r), str_contains((string) ($r['erro'] ?? ''), 'Já recebemos a sua ficha em ' . mcp_data_brt((string) $ana['criado_em'], 'd/m')), str_contains((string) ($r['erro'] ?? ''), (string) $ana['protocolo'])],
         [409, ['ok', 'erro'], true, true]);
     $hoje = new DateTimeImmutable(mcp_voluntario_hoje(), mcp_voluntario_fuso());
-    [$st, $r] = enviar($base, $ficha("crianca-$sufixo@exemplo.org", ['data_nascimento' => $hoje->modify('-16 years +1 day')->format('Y-m-d')]));
-    verificar('menor de 16: 422 no campo data_nascimento, com o e-mail de contato', [$st, $r['campo'] ?? null, str_contains((string) ($r['erro'] ?? ''), 'contato@exemplo.org')], [422, 'data_nascimento', true]);
+    [$st, $r] = enviar($base, $ficha("crianca-$sufixo@exemplo.org", ['data_nascimento' => $hoje->modify('-18 years +1 day')->format('Y-m-d')]));
+    verificar('menor de 18 (faz 18 amanhã): 422 no campo data_nascimento', [$st, $r['campo'] ?? null, str_contains((string) ($r['erro'] ?? ''), '18 anos')], [422, 'data_nascimento', true]);
     [$st, $r] = enviar($base, $ficha("robo-$sufixo@exemplo.org", ['site' => 'http://spam']));
     verificar('armadilha preenchida: 422 genérico, sem campo', [$st, campo($r, 'campo'), $r['erro'] ?? null], [422, 'ausente', 'Não foi possível enviar. Tente novamente.']);
-    verificar('nem a menor de 16 nem o robô geraram linha', (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE nome LIKE '%$marca%'")->fetchColumn(), 1);
+    verificar('nem a menor de 18 nem o robô geraram linha', (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE nome LIKE '%$marca%'")->fetchColumn(), 1);
     $emailBia = "bia-$sufixo@exemplo.org";
-    [$st, $r] = enviar($base, $ficha($emailBia, ['nome' => "Bia $marca", 'data_nascimento' => $hoje->modify('-17 years')->format('Y-m-d'), 'escolaridade' => 'medio', 'profissao' => '']));
-    verificar('menor de 18: 201 com menor = true', [$st, $r['menor'] ?? null], [201, true]);
+    [$st, $r] = enviar($base, $ficha($emailBia, ['nome' => "Bia $marca", 'data_nascimento' => $hoje->modify('-25 years')->format('Y-m-d'), 'escolaridade' => 'medio', 'profissao' => '']));
+    verificar('adulta: 201 com menor = false', [$st, $r['menor'] ?? null], [201, false]);
     $biaId = (int) $db->query("SELECT id FROM mcp_voluntarios WHERE email = " . $db->quote($emailBia))->fetchColumn();
     [$st, $r] = enviar($base, $ficha("x-$sufixo@exemplo.org", ['frentes' => ['juventude', 'cozinha']]));
     verificar('frente desconhecida: 422 no campo frentes', [$st, $r['campo'] ?? null], [422, 'frentes']);
