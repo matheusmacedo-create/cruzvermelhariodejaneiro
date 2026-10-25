@@ -8,6 +8,30 @@
       "fim": "2026-10-21T17:00:00-03:00",
       "inscricoes_ate": "2026-10-20T23:59:59-03:00",
       "lotada": false
+    },
+    {
+      "curso": "puncao-venosa",
+      "id_escola": "7c4f6681-5ea0-44bc-ba7e-54674cd9416a",
+      "inicio": "2026-11-07T09:00:00-03:00",
+      "fim": "2026-11-07T17:00:00-03:00",
+      "inscricoes_ate": "2026-11-06T23:59:59-03:00",
+      "lotada": false
+    },
+    {
+      "curso": "primeiros-socorros-lei-lucas",
+      "id_escola": "bd0e9f3c-5268-4572-bc9f-04237aa9de38",
+      "inicio": "2026-11-12T09:00:00-03:00",
+      "fim": "2026-11-12T17:00:00-03:00",
+      "inscricoes_ate": "2026-11-11T23:59:59-03:00",
+      "lotada": false
+    },
+    {
+      "curso": "primeiros-socorros-basico",
+      "id_escola": "f79a3772-313a-417e-b513-9bb7f203e0b3",
+      "inicio": "2026-11-17T09:00:00-03:00",
+      "fim": "2026-11-17T17:00:00-03:00",
+      "inscricoes_ate": "2026-11-16T23:59:59-03:00",
+      "lotada": false
     }
   ],
   "sem_turma": {
