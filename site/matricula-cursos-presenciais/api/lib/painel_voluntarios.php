@@ -19,7 +19,7 @@
 declare(strict_types=1);
 
 /** Ações dos formulários desta parte do portal (cada uma com o token do formulário, como as outras). */
-const PV_ACOES = ['voluntario_status', 'voluntario_aceitar', 'voluntario_nota', 'voluntarios_csv', 'voluntario_pdf'];
+const PV_ACOES = ['voluntario_status', 'voluntario_aceitar', 'voluntario_nota', 'voluntarios_csv', 'voluntario_pdf', 'voluntario_foto_del'];
 const PV_POR_PAGINA = 50;
 /** Chips da lista: "todas" mais as situações do ENUM, com o rótulo no plural. */
 const PV_FILTROS = ['todas' => 'Todas', 'nova' => 'Novas', 'em_analise' => 'Em análise', 'entrevista' => 'Entrevista', 'aceita' => 'Aceitas', 'recusada' => 'Recusadas', 'arquivada' => 'Arquivadas'];
@@ -35,6 +35,7 @@ const PV_AVISOS = [
     'vs_reaberta' => ['Ficha reaberta: voltou para "Em análise".', 'ok'],
     'va_ok' => ['Ficha aceita. O cadastro no ponto da sede está pronto: abra a ficha do colaborador (link em "Situação e ações") para imprimir o termo de adesão.', 'ok'],
     'vn_ok' => ['Nota adicionada ao histórico.', 'ok'],
+    'vf_apagada' => ['Selfie apagada. A ficha continua como estava.', 'ok'],
 ];
 
 // ----------------------------------------------------------------------------- utilidades de página
@@ -163,7 +164,9 @@ function pv_lista(string $usuario, string $aviso = '', string $classe = 'ok'): n
         : 'Nenhuma ficha aqui.';
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Voluntariado</p><h1>Fichas de voluntariado</h1>'
         . '<p class="nota">As fichas preenchidas em cruzvermelhariodejaneiro.org/voluntariado/cadastro. Abra cada uma para ler, anotar, marcar a entrevista e aceitar; aceitar cria o cadastro da pessoa no ponto da sede. '
-        . 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato vem nessa época. As fichas não aceitas são apagadas depois de 12 meses, como diz a Política de Privacidade.</p></div>'
+        . (mcp_vol_cbfi_aberto()
+            ? 'A pessoa foi avisada da turma do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO . ' e de que a equipe entra em contato pelo WhatsApp antes dela. As fichas'
+            : 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato vem nessa época, pelo WhatsApp. As fichas') . ' não aceitas são apagadas depois de 12 meses, como diz a Política de Privacidade.</p></div>'
         . ($baixar !== '' ? '<div class="acoes" style="margin-top:0">' . $baixar . '</div>' : '') . '</div>'
         . ($aviso !== '' ? '<div class="aviso ' . pn_e($classe) . '">' . pn_e($aviso) . '</div>' : '')
         . '<div class="filtros">' . $pilulas . '</div>' . $busca
@@ -213,6 +216,21 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
     if (!$f) {
         pn_redirecionar('v=voluntarios');
     }
+    $selfie = mcp_voluntario_selfie($id);
+    // A imagem da selfie (a <img> do cartão abaixo): só com a sessão do portal, sem cache em lugar nenhum.
+    if (isset($_GET['selfie'])) {
+        if ($selfie === null) {
+            http_response_code(404);
+            exit;
+        }
+        header('Content-Type: image/jpeg');
+        header('Content-Length: ' . strlen($selfie['jpeg']));
+        header('Cache-Control: no-store, private');
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Disposition: inline; filename="selfie-' . preg_replace('/[^A-Za-z0-9-]/', '', (string) ($f['protocolo'] ?: $id)) . '.jpg"');
+        echo $selfie['jpeg'];
+        exit;
+    }
     $protocolo = (string) ($f['protocolo'] ?: "ficha #$id");
     $status = (string) $f['status'];
     $menor = mcp_voluntario_menor($f);
@@ -255,6 +273,15 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
         $consentimentos[$rotulo] = pn_e($valor);
     }
     $consentimentos['Guarda dos dados'] = 'Só para a seleção e o acompanhamento do voluntariado. Ficha não aceita é apagada depois de 12 meses; a aceita segue o termo de adesão.';
+    // Selfie opcional: só para reconhecer a pessoa na entrevista e no CBFI (Política de Privacidade). Não sai do portal.
+    $cartaoSelfie = $selfie !== null
+        ? '<img src="' . pn_e("painel.php?v=voluntario&id=$id&selfie=1") . '" alt="Selfie enviada por ' . pn_e((string) $f['nome']) . '" width="' . $selfie['largura'] . '" height="' . $selfie['altura'] . '"'
+            . ' style="display:block;max-width:100%;height:auto;max-height:360px;width:auto;border-radius:12px;border:1px solid var(--line, #e2e8f0)">'
+            . '<p class="nota">Enviada com a ficha, em ' . pn_e(pn_data($selfie['criado_em'])) . '. Serve só para reconhecer a pessoa na entrevista e no CBFI: não copie para outro lugar.</p>'
+            . '<details class="ajustar"><summary>Apagar a selfie</summary>' . pv_form($usuario, 'voluntario_foto_del', $id, '<div class="mini">'
+                . '<p class="nota" style="margin:0">Use quando a pessoa pedir ou quando a foto não for dela. A ficha continua; só a imagem some.</p>'
+                . '<button class="btn btn-outline" type="submit">Apagar a selfie</button></div>') . '</details>'
+        : pv_vazio('A pessoa não enviou selfie (é opcional).');
     $origem = array_filter([
         'Página' => !empty($f['pagina']) ? '<a href="' . pn_e(mcp_site_url() . (string) $f['pagina']) . '" target="_blank" rel="noopener">' . pn_e((string) $f['pagina']) . '</a>' : null,
         'Origem' => pn_e(trim((string) ($f['utm_source'] ?? '') . ' ' . (string) ($f['utm_campaign'] ?? '')) ?: 'direto (sem UTM)'),
@@ -339,6 +366,7 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
         . '<div class="cartao"><h2>Perfil</h2>' . $perfil . '</div>'
         . '<div class="cartao"><h2>Como quer ajudar</h2>' . $ajudar . '</div>'
         . '<div class="cartao"><h2>Consentimentos (LGPD)</h2>' . pv_dl($consentimentos) . '</div>'
+        . '<div class="cartao"><h2>Selfie</h2>' . $cartaoSelfie . '</div>'
         . '</div>'
         . '<div class="cartao" style="margin-top:18px"><h2>Sobre a pessoa</h2>' . $sobre . '</div>'
         . '<div class="ficha">'
@@ -402,6 +430,10 @@ function pv_post(string $sessao, string $acao, int $id): never
             }
             mcp_registrar(null, 'painel_voluntario_aceitar', "#$id · colaborador #{$r['colaborador_id']} · $sessao");
             pn_redirecionar("v=voluntario&id=$id&ok=va_ok");
+        case 'voluntario_foto_del':
+            mcp_voluntario_selfie_apagar([$id]);
+            mcp_registrar(null, 'painel_voluntario_selfie_apagada', "#$id · $sessao");
+            pn_redirecionar("v=voluntario&id=$id&ok=vf_apagada");
         case 'voluntario_nota':
             if ($nota === '') {
                 pv_ficha($sessao, $id, 'Escreva a nota antes de adicionar.', 'erro');

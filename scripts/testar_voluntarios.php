@@ -153,7 +153,7 @@ verificar('protocolo com id grande', mcp_voluntario_protocolo(12345, '2026-10-16
 verificar('idade', [mcp_voluntario_idade('2010-10-16', '2026-10-16'), mcp_voluntario_idade('2010-10-17', '2026-10-16'), mcp_voluntario_idade('x', '2026-10-16')], [16, 15, null]);
 verificar('hoje em Brasília', mcp_voluntario_hoje((int) strtotime('2026-10-16 01:20:00 UTC')), '2026-10-15'); // 01:20 UTC = 22:20 do dia anterior em Brasília
 $politicas = json_decode((string) file_get_contents($raiz . '/site/politicas.json'), true);
-verificar('versão da política vem de site/politicas.json', mcp_voluntario_politica_versao(), (string) $politicas['revisao']);
+verificar('versão da política vem de site/politicas.json (a da Política de Privacidade)', mcp_voluntario_politica_versao(), (string) ($politicas['paginas']['privacidade']['revisao'] ?? $politicas['revisao']));
 verificar('versão da política cabe em VARCHAR(10)', strlen(mcp_voluntario_politica_versao()) <= 10, true);
 verificar('cpf parcial', [mcp_voluntario_cpf_parcial($cpf), mcp_voluntario_cpf_parcial(''), mcp_voluntario_cpf_parcial(null)], [substr($cpf, 0, 3) . '.***.***-**', '', '']);
 verificar('e-mail de destino: EMAIL_VOLUNTARIADO', mcp_voluntarios_email_destino(), 'voluntariado@exemplo.org');
@@ -264,6 +264,48 @@ verificar('confirmação: adulto não leva o aviso do responsável', str_contain
 $confirmacaoMenor = mcp_montar_email_voluntario_confirmacao(['data_nascimento' => '2009-06-01'] + $ficha);
 verificar('confirmação: menor de 18 leva o aviso do responsável no HTML e no texto', [str_contains($confirmacaoMenor['html'], 'responsável legal'), str_contains($confirmacaoMenor['texto'], 'responsável legal'), str_contains($confirmacaoMenor['html'], 'Você tem menos de 18 anos')], [true, true, true]);
 verificar('confirmação: texto puro tem os passos numerados', (bool) preg_match('/^1\) .+\n2\) .+\n3\) .+\n4\) .+$/m', $confirmacao['texto']), true);
+
+// ----------------------------------------------------------------------------- selfie (opcional, 27/10/2026)
+// Uma foto 1200x600 com EXIF de rotação (6 = girar 90°) e um bloco de GPS: tem de sair em pé, com no máximo 800 px e sem EXIF.
+$tela = imagecreatetruecolor(1200, 600);
+imagefill($tela, 0, 0, (int) imagecolorallocate($tela, 200, 30, 30));
+ob_start();
+imagejpeg($tela, null, 90);
+$jpegCru = (string) ob_get_clean();
+imagedestroy($tela);
+// TIFF little-endian com 2 entradas no IFD0: Orientation (0x0112) = 6 e GPSInfo (0x8825) apontando para um IFD de GPS com GPSLatitudeRef = 'S'.
+$tiff = "II*\x00" . pack('V', 8) . pack('v', 2)
+    . pack('vvVv', 0x0112, 3, 1, 6) . "\x00\x00"
+    . pack('vvVV', 0x8825, 4, 1, 38) . pack('V', 0)
+    . pack('v', 1) . pack('vvV', 0x0001, 2, 2) . "S\x00\x00\x00" . pack('V', 0);
+$app1 = "Exif\x00\x00" . $tiff;
+$jpegComExif = "\xFF\xD8" . "\xFF\xE1" . pack('n', strlen($app1) + 2) . $app1 . substr($jpegCru, 2);
+verificar('selfie: a foto de teste tem EXIF com rotação', function_exists('exif_read_data') ? (int) (@exif_read_data('data://image/jpeg;base64,' . base64_encode($jpegComExif))['Orientation'] ?? 0) : 6, 6);
+$pronta = mcp_voluntario_selfie_preparar($jpegComExif);
+verificar('selfie: sai em JPG, girada (em pé) e com no máximo 800 px', [$pronta['ok'], $pronta['largura'] ?? 0, $pronta['altura'] ?? 0, str_starts_with((string) ($pronta['jpeg'] ?? ''), "\xFF\xD8\xFF")], [true, 400, 800, true]);
+verificar('selfie: sem EXIF nem GPS depois de regravada', [str_contains((string) ($pronta['jpeg'] ?? ''), "Exif\x00"), str_contains((string) ($pronta['jpeg'] ?? ''), "\xFF\xE1")], [false, false]);
+$png = (static function (): string {
+    $i = imagecreatetruecolor(300, 200);
+    ob_start();
+    imagepng($i);
+    imagedestroy($i);
+    return (string) ob_get_clean();
+})();
+$pngPronta = mcp_voluntario_selfie_preparar($png);
+verificar('selfie: PNG pequeno vira JPG do mesmo tamanho', [$pngPronta['ok'], $pngPronta['largura'] ?? 0, $pngPronta['altura'] ?? 0], [true, 300, 200]);
+verificar('selfie: o que não é foto é recusado', [mcp_voluntario_selfie_preparar('%PDF-1.4 qualquer coisa')['motivo'] ?? '', mcp_voluntario_selfie_preparar("\xFF\xD8\xFF quebrado")['motivo'] ?? ''], ['formato', 'formato']);
+verificar('selfie: campo vazio = sem selfie', [mcp_voluntario_selfie_entrada(null, null), mcp_voluntario_selfie_entrada('', ['error' => UPLOAD_ERR_NO_FILE])], [null, null]);
+verificar('selfie: data URL JPG/PNG vira bytes', mcp_voluntario_selfie_entrada('data:image/png;base64,' . base64_encode($png), null), ['bruto' => $png]);
+$grande = 'data:image/jpeg;base64,' . base64_encode(str_repeat("\xFF\xD8\xFF\xE0", 150000));
+verificar('selfie: data URL de ~800 KB passa pela expressão regular inteira', strlen((string) (mcp_voluntario_selfie_entrada($grande, null)['bruto'] ?? '')), 600000);
+verificar('memória do php.ini em bytes', [mcp_bytes_ini('128M'), mcp_bytes_ini('1G'), mcp_bytes_ini('-1'), mcp_bytes_ini('512k')], [134217728, 1073741824, 0, 524288]);
+verificar('selfie: outro tipo de data URL é recusado', isset(mcp_voluntario_selfie_entrada('data:image/gif;base64,R0lGODlhAQABAAAAACw=', null)['erro']), true);
+verificar('selfie: arquivo grande demais é recusado', str_contains((string) (mcp_voluntario_selfie_entrada(null, ['error' => UPLOAD_ERR_INI_SIZE, 'size' => 0, 'tmp_name' => ''])['erro'] ?? ''), 'até 10 MB'), true);
+verificar('selfie: arquivo que não veio pelo upload é recusado', isset(mcp_voluntario_selfie_entrada(null, ['error' => UPLOAD_ERR_OK, 'size' => 10, 'tmp_name' => __FILE__])['erro']), true);
+$comSelfie = mcp_montar_email_voluntario_equipe(['selfie' => 'recebida'] + $ficha);
+$semGd = mcp_montar_email_voluntario_equipe(['selfie' => 'nao_tratada'] + $ficha);
+verificar('selfie: e-mail à equipe diz se veio, sem anexar a foto', [str_contains($comSelfie['html'], 'veja na ficha, no portal'), str_contains($semGd['html'], 'não conseguiu guardar'), str_contains($equipe['html'], 'não enviada (é opcional)'), str_contains($comSelfie['html'], 'data:image')], [true, true, true, false]);
+verificar('selfie: confirmação cita a selfie recebida', [str_contains(mcp_montar_email_voluntario_confirmacao(['selfie' => 'recebida'] + $ficha)['html'], 'Selfie'), str_contains($confirmacao['html'], 'Selfie')], [true, false]);
 
 unlink($configTeste);
 unlink($semExtra);

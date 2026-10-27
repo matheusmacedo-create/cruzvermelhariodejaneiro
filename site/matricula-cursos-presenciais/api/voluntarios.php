@@ -5,9 +5,10 @@
  * confirmação à pessoa, enfileira o PDF e a planilha no Drive (quando o módulo existe) e devolve o protocolo.
  *
  * Dois jeitos de chamar, com os mesmos nomes de campo (contrato em lib/voluntarios.php):
- *  - JSON (a página com JavaScript): 201 {ok, protocolo, nome, email, prazo, menor}; 422 {erro, campo}; 409 {erro}
- *    (ficha repetida); 429 {erro} (freios);
- *  - formulário (application/x-www-form-urlencoded, sem JavaScript; listas como frentes[], dias[], periodos[]):
+ *  - JSON (a página com JavaScript): 201 {ok, protocolo, nome, email, prazo, aviso, menor, selfie}; 422 {erro, campo};
+ *    409 {erro} (ficha repetida); 429 {erro} (freios). A selfie opcional vem no campo "selfie" como data URL (até
+ *    MCP_VOL_CORPO_MAX no corpo inteiro);
+ *  - formulário (multipart/form-data, sem JavaScript, com a selfie no arquivo "selfie"; listas como frentes[], dias[], periodos[]):
  *    redirect 303 para /voluntariado/cadastro/?protocolo=VOL-... ou ?erro=<campo> (duplicada, limite e envio para os
  *    erros que não são de um campo).
  *
@@ -39,7 +40,7 @@ if ($formulario) {
     }
     $b = is_array($_POST) ? $_POST : [];
 } else {
-    $b = mcp_exigir_post_json();
+    $b = mcp_exigir_post_json(MCP_VOL_CORPO_MAX);
 }
 $metaId = mcp_meta_id_valido($b['evento_id'] ?? null); // id do evento do Pixel, como no contato (lib/meta.php)
 
@@ -61,11 +62,32 @@ if (mcp_texto($b['site'] ?? '', 10) !== '') {
 }
 
 $conferido = mcp_voluntario_validar($b);
+$selfieEntrada = mcp_voluntario_selfie_entrada($formulario ? null : ($b['selfie'] ?? null), $formulario && isset($_FILES['selfie']) && is_array($_FILES['selfie']) ? $_FILES['selfie'] : null);
 unset($b);
 if (!$conferido['ok']) {
     $falhar(422, $conferido['erro'], $conferido['campo']);
 }
 $ficha = $conferido['dados'];
+
+// Selfie opcional: foto que não abre volta como erro do campo; servidor sem GD guarda a ficha sem ela (nunca a foto crua,
+// que levaria a localização do celular) e avisa a equipe.
+$selfie = null;
+$selfieSituacao = null;
+if ($selfieEntrada !== null) {
+    if (isset($selfieEntrada['erro'])) {
+        $falhar(422, $selfieEntrada['erro'], 'selfie');
+    }
+    $preparada = mcp_voluntario_selfie_preparar($selfieEntrada['bruto']);
+    unset($selfieEntrada);
+    if ($preparada['ok']) {
+        $selfie = $preparada;
+    } elseif ($preparada['motivo'] === 'gd') {
+        error_log('[matricula] voluntarios: selfie recebida, mas o PHP está sem GD; a ficha segue sem ela');
+        $selfieSituacao = 'nao_tratada';
+    } else {
+        $falhar(422, $preparada['erro'], 'selfie');
+    }
+}
 
 // Freios: 5 fichas por IP na hora e 2 por e-mail no dia. Folga para uma família, freio para robô.
 foreach ([['ip', mcp_ip(), MCP_VOL_LIMITE_IP], ['email', $ficha['email'], MCP_VOL_LIMITE_EMAIL]] as [$coluna, $valor, [$maximo, $janela]]) {
@@ -87,13 +109,24 @@ if ($anterior !== null) {
 $id = mcp_voluntario_gravar($ficha);
 $protocolo = mcp_voluntario_protocolo($id);
 mcp_voluntario_atualizar($id, ['protocolo' => $protocolo]);
+if ($selfie !== null) {
+    try {
+        mcp_voluntario_selfie_gravar($id, $selfie);
+        $selfieSituacao = 'recebida';
+    } catch (Throwable $e) {
+        error_log("[matricula] voluntarios: selfie da ficha #$id não gravada: " . $e->getMessage());
+        $selfieSituacao = 'nao_tratada';
+    }
+    unset($selfie);
+}
 mcp_voluntario_drive_enfileirar($id);
 $registro = mcp_voluntario_por_id($id) ?? ($ficha + ['id' => $id, 'protocolo' => $protocolo, 'criado_em' => mcp_agora(),
     'consentimento_em' => mcp_agora(), 'veracidade_em' => mcp_agora(), 'politica_versao' => mcp_voluntario_politica_versao(), 'status' => 'nova']);
 
+$registro['selfie'] = $selfieSituacao;
 $envios = mcp_email_voluntario_ficha($registro);
 mcp_voluntario_atualizar($id, ['email_equipe' => $envios['equipe'], 'email_confirmacao' => $envios['confirmacao']]);
-mcp_registrar(null, 'voluntario', "#$id · $protocolo · equipe {$envios['equipe']} · confirmação {$envios['confirmacao']}");
+mcp_registrar(null, 'voluntario', "#$id · $protocolo · equipe {$envios['equipe']} · confirmação {$envios['confirmacao']}" . ($selfieSituacao !== null ? " · selfie $selfieSituacao" : ''));
 // API de Conversões (só com "sim" para marketing): CompleteRegistration com o mesmo id que a página manda ao Pixel.
 mcp_meta_voluntario(['nome' => $ficha['nome'], 'email' => $ficha['email'], 'telefone' => $ficha['telefone'],
     'fbclid' => $ficha['fbclid'], 'pagina' => $ficha['pagina']], $metaId);
@@ -109,4 +142,5 @@ mcp_json([
     'prazo' => MCP_VOL_PROXIMAS_ENTRADAS,
     'aviso' => mcp_vol_aviso_prazo(),
     'menor' => $ficha['menor'],
+    'selfie' => $selfieSituacao === 'recebida',
 ], 201);

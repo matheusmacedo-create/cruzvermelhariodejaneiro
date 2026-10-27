@@ -56,7 +56,7 @@ function mcp_corpo_bruto(int $maximo = MCP_CORPO_MAX): string
  * autenticação (não há sessão a proteger), é só para nenhum outro site conseguir usar o
  * checkout como se fosse o nosso.
  */
-function mcp_exigir_post_json(): array
+function mcp_exigir_post_json(int $maximo = MCP_CORPO_MAX): array
 {
     mcp_exigir_metodo('POST');
     $tipo = strtolower(trim((string) ($_SERVER['CONTENT_TYPE'] ?? '')));
@@ -66,7 +66,7 @@ function mcp_exigir_post_json(): array
     if (!mcp_origem_do_site()) {
         mcp_falhar(403, 'Origem não permitida.');
     }
-    $dados = json_decode(mcp_corpo_bruto() ?: '', true);
+    $dados = json_decode(mcp_corpo_bruto($maximo) ?: '', true);
     if (!is_array($dados)) {
         mcp_falhar(400, 'Corpo da requisição inválido.');
     }

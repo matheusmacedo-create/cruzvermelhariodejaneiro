@@ -1,0 +1,19 @@
+# Selfie opcional no cadastro de voluntários (27/10/2026). Detalhes em docs/voluntariado.md, "Selfie opcional".
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria mcp_voluntarios_selfies, só acrescenta), as
+# bibliotecas, o endpoint e o portal; a política antes da página que pede o aceite dela; o cadastro.js antes da página
+# que o cita pelo hash.
+# Antes: conferir no servidor que o PHP tem GD (sem ele, a ficha é gravada sem a selfie e o aviso à equipe diz isso).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-selfie.txt)
+# Depois: limpar o cache e mandar uma ficha de teste com selfie (e apagá-la pelo portal).
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/http.php
+site/matricula-cursos-presenciais/api/lib/drive_espelho.php
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/painel_voluntarios.php
+site/matricula-cursos-presenciais/api/voluntarios.php
+site/politicas.json
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
+site/voluntariado/cadastro/cadastro.js
+site/voluntariado/cadastro/index.html

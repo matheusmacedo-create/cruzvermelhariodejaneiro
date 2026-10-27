@@ -101,6 +101,7 @@ function limpar(PDO $db): void
     if ($ids) {
         $lista = implode(', ', array_map('intval', $ids));
         $db->exec("DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN ($lista)");
+        $db->exec("DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_drive_fila WHERE tipo = 'ficha_voluntario' AND referencia IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios WHERE id IN ($lista)");
     }
@@ -210,6 +211,28 @@ try {
     verificar('ficha: consentimento com a versão da política e a origem', [str_contains($html, mcp_voluntario_politica_versao()), str_contains($html, 'instagram outubro')], [true, true]);
     [, , $htmlBruno] = $get("v=voluntario&id=$bruno");
     verificar('ficha do menor: aviso do responsável legal', str_contains($htmlBruno, 'Menor de 18 anos'), true);
+
+    // Selfie (27/10/2026): aparece na ficha, a imagem só sai com a sessão e sem cache, e o botão apaga só a foto.
+    verificar('ficha sem selfie: diz que não veio, sem imagem', [str_contains($html, 'não enviou selfie'), str_contains($html, 'selfie=1')], [true, false]);
+    $img = imagecreatetruecolor(900, 1200);
+    ob_start();
+    imagejpeg($img);
+    imagedestroy($img);
+    mcp_voluntario_selfie_gravar($ana, mcp_voluntario_selfie_preparar((string) ob_get_clean()));
+    [, , $html] = $get("v=voluntario&id=$ana");
+    verificar('ficha com selfie: imagem e botão de apagar', [str_contains($html, 'v=voluntario&amp;id=' . $ana . '&amp;selfie=1'), str_contains($html, 'Apagar a selfie'), str_contains($html, 'width="600" height="800"')], [true, true, true]);
+    [$st, $h, $jpeg] = $get("v=voluntario&id=$ana&selfie=1");
+    verificar('imagem da selfie: JPG, sem cache, com a sessão', [$st, $h['content-type'] ?? null, $h['cache-control'] ?? null, str_starts_with($jpeg, "\xFF\xD8\xFF")], [200, 'image/jpeg', 'no-store, private', true]);
+    [$st, $h, $semSessao] = http($base . "painel.php?v=voluntario&id=$ana&selfie=1");
+    verificar('imagem da selfie sem sessão: não sai', [str_starts_with($semSessao, "\xFF\xD8\xFF"), str_starts_with((string) ($h['content-type'] ?? ''), 'image/')], [false, false]);
+    [$st] = $get("v=voluntario&id=$bruno&selfie=1");
+    verificar('imagem de ficha sem selfie: 404', $st, 404);
+    portal($base, $sessao, ['acao' => 'voluntario_foto_del', 'id' => $ana, 't' => 'falso']);
+    verificar('apagar a selfie com token falso: nada muda', mcp_voluntario_selfie($ana) !== null, true);
+    [$st, $h] = portal($base, $sessao, ['acao' => 'voluntario_foto_del', 'id' => $ana, 't' => $csrf('voluntario_foto_del', $ana)]);
+    verificar('apagar a selfie: 303 com aviso, a foto some e a ficha fica', [$st, $h['location'] ?? null, mcp_voluntario_selfie($ana), mcp_voluntario_por_id($ana) !== null], [303, "painel.php?v=voluntario&id=$ana&ok=vf_apagada", null, true]);
+    [, , $html] = $get("v=voluntario&id=$ana&ok=vf_apagada");
+    verificar('depois de apagar: aviso e ficha sem a imagem', [str_contains($html, 'Selfie apagada'), str_contains($html, 'selfie=1')], [true, false]);
 
     // CSRF.
     [$st, , $html] = portal($base, $sessao, ['acao' => 'voluntario_status', 'id' => $ana, 'status' => 'em_analise', 't' => 'falso']);

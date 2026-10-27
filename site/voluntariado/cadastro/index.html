@@ -144,6 +144,9 @@
     @media (max-width: 480px) {
       .vc-etapas { grid-template-columns: 1fr; }
     }
+    .vc-selfie-previa { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 10px; }
+    .vc-selfie-previa[hidden] { display: none; }
+    .vc-selfie-previa img { display: block; width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0; }
   </style>
   <!-- Sem JavaScript, o campo "Qual formação?" fica sempre visível (com JavaScript ele aparece só com "Sim"). -->
   <noscript><style>#vc-saude-qual-caixa[hidden] { display: grid; }</style></noscript>
@@ -386,7 +389,7 @@
     <p class="vc-intro-form" id="vc-intro-form">Campos com <span class="vc-obrig" aria-hidden="true">*</span><span class="vc-sr">asterisco</span> são obrigatórios. Os dados são usados só para o seu cadastro no voluntariado da Cruz Vermelha Brasileira Rio de Janeiro.</p>
     <noscript><p class="vc-noscript">Sem JavaScript o formulário funciona do mesmo jeito: ao enviar, você volta para esta página e a confirmação com o protocolo chega no e-mail informado. Se algum campo não for aceito, confira os campos e envie de novo.</p></noscript>
     <div class="vc-aviso" id="vc-aviso" role="alert" tabindex="-1" hidden></div>
-    <form class="vc-form" id="ficha" method="post" action="/matricula-cursos-presenciais/api/voluntarios.php" novalidate aria-labelledby="vc-titulo">
+    <form class="vc-form" id="ficha" method="post" action="/matricula-cursos-presenciais/api/voluntarios.php" enctype="multipart/form-data" novalidate aria-labelledby="vc-titulo">
       <input type="hidden" name="pagina" value="/voluntariado/cadastro/"><input type="hidden" name="origem[utm_source]" value=""><input type="hidden" name="origem[utm_medium]" value=""><input type="hidden" name="origem[utm_campaign]" value=""><input type="hidden" name="origem[utm_content]" value=""><input type="hidden" name="origem[utm_term]" value=""><input type="hidden" name="origem[fbclid]" value=""><input type="hidden" name="origem[gclid]" value="">
       <fieldset class="vc-cartao" id="vc-dados">
         <legend>Seus dados</legend>
@@ -395,7 +398,7 @@
       </fieldset>
       <fieldset class="vc-cartao" id="vc-contato">
         <legend>Contato</legend>
-        <p class="vc-intro">É por e-mail que a confirmação e os próximos passos chegam.</p>
+        <p class="vc-intro">A confirmação chega por e-mail; a equipe do voluntariado chama pelo WhatsApp.</p>
         <div class="vc-grade"><div class="vc-campo" data-campo="email"><label for="vc-email">E-mail <span class="vc-obrig" aria-hidden="true">*</span></label><input type="email" id="vc-email" name="email" required aria-required="true" autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"><p class="vc-erro" id="vc-email-erro" hidden></p></div><div class="vc-campo" data-campo="telefone"><label for="vc-telefone">Telefone com DDD <span class="vc-obrig" aria-hidden="true">*</span></label><input type="tel" id="vc-telefone" name="telefone" required aria-required="true" aria-describedby="vc-telefone-dica" autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"><p class="vc-dica" id="vc-telefone-dica">De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.</p><p class="vc-erro" id="vc-telefone-erro" hidden></p></div><div class="vc-campo" data-campo="cidade"><label for="vc-cidade">Cidade <span class="vc-obrig" aria-hidden="true">*</span></label><input type="text" id="vc-cidade" name="cidade" required aria-required="true" autocomplete="address-level2" maxlength="120"><p class="vc-erro" id="vc-cidade-erro" hidden></p></div><div class="vc-campo" data-campo="bairro"><label for="vc-bairro">Bairro <small>(opcional)</small></label><input type="text" id="vc-bairro" name="bairro" autocomplete="address-level3" maxlength="120"><p class="vc-erro" id="vc-bairro-erro" hidden></p></div><div class="vc-campo" data-campo="estado"><label for="vc-estado">Estado <span class="vc-obrig" aria-hidden="true">*</span></label><select id="vc-estado" name="estado" required aria-required="true" autocomplete="address-level1"><option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option><option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option><option value="RJ" selected>RJ</option><option value="RN">RN</option><option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option><option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option></select><p class="vc-erro" id="vc-estado-erro" hidden></p></div></div>
       </fieldset>
       <fieldset class="vc-cartao" id="vc-perfil">
@@ -412,6 +415,11 @@
         <legend>Sobre você</legend>
         
         <div class="vc-grade"><div class="vc-campo vc-campo-largo" data-campo="motivacao"><label for="vc-motivacao">Por que você quer ser voluntário da Cruz Vermelha? <span class="vc-obrig" aria-hidden="true">*</span></label><textarea id="vc-motivacao" name="motivacao" rows="5" required aria-required="true" minlength="20" maxlength="1500"></textarea><p class="vc-contador" id="vc-motivacao-contador" aria-hidden="true"></p><p class="vc-sr" id="vc-motivacao-contador-sr" aria-live="polite" aria-atomic="true"></p><p class="vc-erro" id="vc-motivacao-erro" hidden></p></div><div class="vc-campo vc-campo-largo" data-campo="experiencia"><label for="vc-experiencia">Experiência com voluntariado ou trabalho social <small>(opcional)</small></label><textarea id="vc-experiencia" name="experiencia" rows="5" aria-describedby="vc-experiencia-dica" maxlength="1000"></textarea><p class="vc-dica" id="vc-experiencia-dica">Onde você já atuou, por quanto tempo e o que fazia.</p><p class="vc-erro" id="vc-experiencia-erro" hidden></p></div><div class="vc-campo vc-campo-largo" data-campo="habilidades"><label for="vc-habilidades">Habilidades que você quer colocar à disposição <small>(opcional)</small></label><textarea id="vc-habilidades" name="habilidades" rows="5" aria-describedby="vc-habilidades-dica" maxlength="1000"></textarea><p class="vc-dica" id="vc-habilidades-dica">Idiomas, fotografia, informática, direção, organização de eventos, o que vier à cabeça.</p><p class="vc-erro" id="vc-habilidades-erro" hidden></p></div><div class="vc-campo" data-campo="como_conheceu"><label for="vc-como_conheceu">Como você conheceu a Cruz Vermelha RJ? <small>(opcional)</small></label><select id="vc-como_conheceu" name="como_conheceu"><option value="">Selecione</option><option value="instagram">Instagram</option><option value="site">Pesquisando na internet</option><option value="amigos">Amigos ou família</option><option value="escola">Escola ou faculdade</option><option value="campanha">Uma campanha ou ação da Cruz Vermelha</option><option value="imprensa">Jornal, TV ou rádio</option><option value="outro">Outro</option></select><p class="vc-erro" id="vc-como_conheceu-erro" hidden></p></div></div>
+      </fieldset>
+      <fieldset class="vc-cartao" id="vc-selfie-cartao">
+        <legend>Sua selfie (opcional)</legend>
+        <p class="vc-intro">Se quiser, mande uma foto do seu rosto. Não é obrigatório e não muda nada na seleção.</p>
+        <div class="vc-campo vc-campo-largo" data-campo="selfie"><label for="vc-selfie">Selfie <small>(opcional)</small></label><input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" aria-describedby="vc-selfie-dica"><p class="vc-dica" id="vc-selfie-dica">Uma foto de frente, em JPG ou PNG, de até 10 MB. Serve só para a equipe reconhecer você na entrevista e no CBFI: fica no portal da equipe, não é publicada e é apagada junto com a ficha.</p><div class="vc-selfie-previa" id="vc-selfie-previa" hidden><img id="vc-selfie-img" alt="Prévia da sua selfie"><button type="button" class="btn btn-outline" id="vc-selfie-remover">Remover a selfie</button></div><p class="vc-erro" id="vc-selfie-erro" hidden></p></div>
       </fieldset>
       <fieldset class="vc-cartao" id="vc-consentimentos">
         <legend>Consentimentos</legend>
@@ -571,7 +579,7 @@
       });
     })();
   </script>
-  <script src="/voluntariado/cadastro/cadastro.js?v=aa027341f3" defer></script>
+  <script src="/voluntariado/cadastro/cadastro.js?v=22d72f9167" defer></script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
   <script src="/chat/chat.js?v=9ed9084114" defer></script>

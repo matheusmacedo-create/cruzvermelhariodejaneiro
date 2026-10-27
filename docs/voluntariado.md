@@ -135,6 +135,32 @@ também deve ser entregue se ela pedir. Correções (telefone, e-mail, endereço
 
 **Pedido de portabilidade**: o PDF e o CSV da ficha atendem.
 
+## Selfie opcional (27/10/2026)
+
+Pedido do Matheus: a pessoa pode mandar uma selfie com a ficha, se quiser, **só para a equipe reconhecê-la na
+entrevista e no CBFI** (é a finalidade escrita na Política de Privacidade; não serve para divulgação).
+
+- **Página**: cartão "Sua selfie (opcional)" antes dos consentimentos, campo `selfie` (`accept` JPG/PNG; no iPhone a
+  foto HEIC já chega convertida em JPG). Com JavaScript, `cadastro.js` mostra a prévia, deixa remover e reduz a foto no
+  navegador (até 800 px, JPG 0,82) antes de mandá-la no JSON como data URL; o envio espera a redução terminar. Sem
+  JavaScript, o formulário é `multipart/form-data` e a foto vai como arquivo.
+- **API** (`api/voluntarios.php` e `mcp_voluntario_selfie_*` em `api/lib/voluntarios.php`): o JSON deste endpoint aceita
+  até 768 KB (`MCP_VOL_CORPO_MAX`; os outros seguem com 64 KB); o arquivo, até 10 MB. A foto é conferida pelos primeiros
+  bytes, virada conforme o EXIF, reduzida a 800 px e **regravada em JPG pelo GD, o que tira os metadados** (EXIF, com a
+  localização do celular). O que não é foto volta 422 no campo `selfie` (sem JavaScript, `?erro=selfie`). Se o PHP
+  estiver sem GD, a ficha é gravada **sem** a selfie (nunca a foto crua) e o aviso à equipe diz isso. A resposta 201
+  ganhou `selfie` (true/false).
+- **Banco**: `mcp_voluntarios_selfies` (uma por ficha, `ficha_id`, base64 em `conteudo`, porque a cópia do banco no
+  Drive é JSON; ela vai em lotes de 20). Não entra nas exportações CSV, no PDF, na planilha nem nos e-mails (o aviso à
+  equipe só diz se veio).
+- **Portal**: cartão "Selfie" na ficha; a imagem sai por `painel.php?v=voluntario&id=N&selfie=1`, só com a sessão e
+  `Cache-Control: no-store`. "Apagar a selfie" (ação `voluntario_foto_del`: o portal corta o nome da ação em 20
+  caracteres) apaga só a foto, a pedido da pessoa.
+- **Prazo**: a selfie segue a ficha; o expurgo de 12 meses apaga as duas.
+- **Testes**: `testar_voluntarios.php` (rotação, redução, EXIF/GPS removidos, PNG, recusas, e-mails),
+  `testar_voluntarios_integracao.php` (JSON, multipart, 422, 413, expurgo) e `testar_voluntarios_portal_integracao.php`
+  (imagem com e sem sessão, apagar).
+
 ## Configuração (nomes, só no servidor)
 
 - `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova e das mensagens do chat com o
@@ -156,8 +182,10 @@ A seção "Voluntariado" de `/privacidade/` (âncora `#voluntariado`; em inglês
 em espanhol `/es/privacidad/#voluntariado`) descreve os dados, a finalidade, a base legal
 (consentimento, art. 7º, I, e procedimentos preliminares ao termo de adesão, art. 7º, V), os operadores
 (Hostinger, Google Workspace, Resend), a transferência internacional, os prazos e os direitos, e diz que
-o Spotform deixou de ser usado. A data de revisão passou para 16/10/2026 e é esse valor (`revisao` em
-`site/politicas.json`) que a API grava em `politica_versao`. Mudou o que o formulário coleta, muda o
+o Spotform deixou de ser usado. A API grava em `politica_versao` a data de revisão da própria Política de
+Privacidade (`paginas.privacidade.revisao` em `site/politicas.json`; até 27/10/2026 gravava, por engano, a data geral
+`revisao`, que ficou para trás quando a privacidade passou a ter a sua). Desde 27/10/2026 a política fala da selfie
+opcional. Mudou o que o formulário coleta, muda o
 texto, a data e, com `python3 scripts/gerar_politicas.py`, as 12 páginas; o gerador hoje troca também o
 cabeçalho e o menu das páginas em inglês e espanhol (rótulos em português), então, para elas, só o
 `<main>`, a descrição e o JSON-LD gerados devem ser aproveitados (foi assim em 16/10/2026).

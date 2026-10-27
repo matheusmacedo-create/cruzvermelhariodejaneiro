@@ -33,6 +33,12 @@ const MCP_VOL_PROXIMAS_ENTRADAS = 'janeiro de 2027';
 const MCP_VOL_CBFI_DATA = '2026-11-28';
 const MCP_VOL_CBFI_DATA_TEXTO = '28 de novembro de 2026';
 const MCP_VOL_MOTIVACAO_MAX = 1500;
+// Selfie opcional (27/10/2026): o arquivo pode chegar com até 10 MB (sem JavaScript, direto da câmera); fica guardada
+// com no máximo 800 px no lado maior, em JPG. A ficha em JSON com a selfie já reduzida pelo navegador cabe em 768 KB.
+const MCP_VOL_SELFIE_BYTES = 10 * 1024 * 1024;
+const MCP_VOL_SELFIE_LADO = 800;
+const MCP_VOL_SELFIE_QUALIDADE = 82;
+const MCP_VOL_CORPO_MAX = 786432;
 const MCP_VOL_TEXTO_LONGO_MAX = 1000;
 /** Janela da ficha repetida: mesmo e-mail com ficha 'nova' ou 'em_analise' (409). */
 const MCP_VOL_DUPLICADA_DIAS = 30;
@@ -211,14 +217,17 @@ function mcp_voluntario_idade(string $nascimento, ?string $hoje = null): ?int
     return $n->diff($h)->y;
 }
 
-/** Revisão da Política de Privacidade publicada (campo "revisao" de site/politicas.json), gravada em cada ficha. */
+/**
+ * Revisão da Política de Privacidade publicada, gravada em cada ficha: a própria (paginas.privacidade.revisao de
+ * site/politicas.json) ou, sem ela, a de todas as políticas (revisao). Até 27/10/2026 lia sempre a de todas.
+ */
 function mcp_voluntario_politica_versao(): string
 {
     static $versao = null;
     if ($versao === null) {
         $arquivo = getenv('MCP_POLITICAS_ARQUIVO') ?: dirname(__DIR__, 3) . '/politicas.json';
         $dados = is_file($arquivo) ? json_decode((string) file_get_contents($arquivo), true) : null;
-        $lida = is_array($dados) ? mcp_texto($dados['revisao'] ?? '', 10) : '';
+        $lida = is_array($dados) ? mcp_texto($dados['paginas']['privacidade']['revisao'] ?? $dados['revisao'] ?? '', 10) : '';
         $versao = $lida !== '' ? $lida : MCP_VOL_POLITICA_SEM_VERSAO;
     }
     return $versao;
@@ -413,6 +422,167 @@ function mcp_voluntario_gravar(array $f): int
     $pdo = mcp_db();
     $pdo->prepare("INSERT INTO mcp_voluntarios ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
     return (int) $pdo->lastInsertId();
+}
+
+// ----------------------------------------------------------------------------- selfie (opcional)
+/**
+ * Selfie opcional da ficha (pedido do Matheus, 27/10/2026): só para a equipe reconhecer a pessoa na entrevista e no
+ * CBFI, como diz a Política de Privacidade. Chega como arquivo do formulário (sem JavaScript, campo "selfie") ou como
+ * data URL JPG/PNG que cadastro.js já reduziu (campo "selfie" do JSON). Aqui ela é conferida pelos primeiros bytes,
+ * virada conforme o EXIF, reduzida a MCP_VOL_SELFIE_LADO e regravada em JPG pelo GD: a regravação descarta os
+ * metadados (EXIF, com a localização do celular). Nunca vai para e-mail, PDF, CSV nem planilha; aparece só no portal.
+ */
+
+/**
+ * O que a pessoa mandou no campo "selfie": null (não mandou), ['bruto' => bytes] ou ['erro' => mensagem].
+ * $arquivo é $_FILES['selfie'] (formulário sem JavaScript); $dataUrl, o campo do JSON.
+ */
+function mcp_voluntario_selfie_entrada(mixed $dataUrl, ?array $arquivo): ?array
+{
+    $muitoGrande = 'A selfie pode ter até ' . (MCP_VOL_SELFIE_BYTES >> 20) . ' MB. Tire outra ou envie sem a selfie.';
+    if (is_array($arquivo) && isset($arquivo['error']) && !is_array($arquivo['error']) && (int) $arquivo['error'] !== UPLOAD_ERR_NO_FILE) {
+        $erro = (int) $arquivo['error'];
+        if (in_array($erro, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) || (int) ($arquivo['size'] ?? 0) > MCP_VOL_SELFIE_BYTES) {
+            return ['erro' => $muitoGrande];
+        }
+        $tmp = (string) ($arquivo['tmp_name'] ?? '');
+        if ($erro !== UPLOAD_ERR_OK || !is_uploaded_file($tmp)) {
+            return ['erro' => 'A selfie não chegou inteira. Envie de novo ou siga sem ela.'];
+        }
+        return ['bruto' => (string) file_get_contents($tmp)];
+    }
+    if (!is_string($dataUrl) || $dataUrl === '') {
+        return null;
+    }
+    if (!preg_match('#^data:image/(?:jpeg|png);base64,([A-Za-z0-9+/=\s]+)$#', $dataUrl, $m)) {
+        return ['erro' => 'A selfie precisa ser uma foto em JPG ou PNG.'];
+    }
+    $bruto = base64_decode(preg_replace('/\s+/', '', $m[1]) ?? '', true);
+    if ($bruto === false || $bruto === '') {
+        return ['erro' => 'A selfie não chegou inteira. Envie de novo ou siga sem ela.'];
+    }
+    return strlen($bruto) > MCP_VOL_SELFIE_BYTES ? ['erro' => $muitoGrande] : ['bruto' => $bruto];
+}
+
+/**
+ * Confere, vira, reduz e regrava em JPG sem metadados. Devolve ['ok' => true, 'jpeg', 'largura', 'altura'] ou
+ * ['ok' => false, 'motivo' => 'formato'|'gd', 'erro' => mensagem]. 'gd': o servidor não tem como tratar imagens (a ficha
+ * segue sem a selfie, para não guardar a foto com a localização).
+ */
+function mcp_voluntario_selfie_preparar(string $bruto): array
+{
+    $formato = ['ok' => false, 'motivo' => 'formato', 'erro' => 'A selfie precisa ser uma foto em JPG ou PNG.'];
+    $jpeg = str_starts_with($bruto, "\xFF\xD8\xFF");
+    if (!$jpeg && !str_starts_with($bruto, "\x89PNG\r\n\x1A\n")) {
+        return $formato;
+    }
+    if (!function_exists('imagecreatefromstring') || !function_exists('imagejpeg')) {
+        return ['ok' => false, 'motivo' => 'gd', 'erro' => 'O servidor não conseguiu tratar a imagem.'];
+    }
+    $dim = @getimagesizefromstring($bruto);
+    if ($dim === false || $dim[0] < 1 || $dim[1] < 1) {
+        return $formato;
+    }
+    // Acima de 50 megapixels (bomba de descompressão, ou câmera no modo de resolução máxima) a foto nem é aberta.
+    if ($dim[0] * $dim[1] > 50_000_000) {
+        return ['ok' => false, 'motivo' => 'formato', 'erro' => 'Essa foto tem resolução alta demais. Tire outra com a câmera no modo normal, ou siga sem ela.'];
+    }
+    // O GD guarda ~5 bytes por pixel: uma foto de 48 MP pede ~240 MB. Sobe o limite só se o atual não der conta.
+    $precisa = (int) ($dim[0] * $dim[1] * 5) + 64 * 1024 * 1024;
+    $limite = mcp_bytes_ini((string) ini_get('memory_limit'));
+    if ($limite > 0 && $limite < $precisa) {
+        @ini_set('memory_limit', (string) $precisa);
+    }
+    $img = @imagecreatefromstring($bruto);
+    if ($img === false) {
+        return $formato;
+    }
+    // A câmera grava a foto "deitada" e diz no EXIF como girar; o JPG regravado não leva o EXIF, então gira aqui.
+    if ($jpeg && function_exists('exif_read_data')) {
+        // Lido de um fluxo em memória: não depende de allow_url_fopen (o data:// dependeria).
+        $fluxo = fopen('php://memory', 'r+b');
+        $exif = false;
+        if ($fluxo !== false) {
+            fwrite($fluxo, $bruto);
+            rewind($fluxo);
+            $exif = @exif_read_data($fluxo);
+            fclose($fluxo);
+        }
+        $giro = match ((int) ($exif['Orientation'] ?? 1)) { 3 => 180, 6 => -90, 8 => 90, default => 0 };
+        if ($giro !== 0) {
+            $girada = imagerotate($img, $giro, 0);
+            if ($girada !== false) {
+                imagedestroy($img);
+                $img = $girada;
+            }
+        }
+    }
+    $largura = imagesx($img);
+    $altura = imagesy($img);
+    $escala = min(1, MCP_VOL_SELFIE_LADO / max($largura, $altura));
+    $novaLargura = max(1, (int) round($largura * $escala));
+    $novaAltura = max(1, (int) round($altura * $escala));
+    // Fundo branco: o PNG transparente não fica preto no JPG.
+    $tela = imagecreatetruecolor($novaLargura, $novaAltura);
+    imagefill($tela, 0, 0, (int) imagecolorallocate($tela, 255, 255, 255));
+    imagecopyresampled($tela, $img, 0, 0, 0, 0, $novaLargura, $novaAltura, $largura, $altura);
+    imagedestroy($img);
+    ob_start();
+    imagejpeg($tela, null, MCP_VOL_SELFIE_QUALIDADE);
+    $saida = (string) ob_get_clean();
+    imagedestroy($tela);
+    return $saida === '' ? $formato : ['ok' => true, 'jpeg' => $saida, 'largura' => $novaLargura, 'altura' => $novaAltura];
+}
+
+function mcp_voluntario_selfie_gravar(int $fichaId, array $selfie): void
+{
+    mcp_db()->prepare('REPLACE INTO mcp_voluntarios_selfies (ficha_id, tipo, largura, altura, bytes, conteudo, criado_em) VALUES (?, ?, ?, ?, ?, ?, ?)')
+        ->execute([$fichaId, 'image/jpeg', (int) $selfie['largura'], (int) $selfie['altura'], strlen((string) $selfie['jpeg']), base64_encode((string) $selfie['jpeg']), mcp_agora()]);
+}
+
+/** "128M", "1G", "-1" (sem limite = 0) em bytes. */
+function mcp_bytes_ini(string $valor): int
+{
+    $valor = trim($valor);
+    if ($valor === '' || $valor === '-1') {
+        return 0;
+    }
+    $n = (int) $valor;
+    return match (strtolower(substr($valor, -1))) { 'g' => $n << 30, 'm' => $n << 20, 'k' => $n << 10, default => $n };
+}
+
+/** A selfie da ficha (['jpeg', 'largura', 'altura', 'bytes', 'criado_em']) ou null. Sem a tabela (antes da migração), null. */
+function mcp_voluntario_selfie(int $fichaId): ?array
+{
+    try {
+        $stmt = mcp_db()->prepare('SELECT largura, altura, bytes, conteudo, criado_em FROM mcp_voluntarios_selfies WHERE ficha_id = ? LIMIT 1');
+        $stmt->execute([$fichaId]);
+        $linha = $stmt->fetch();
+    } catch (PDOException) {
+        return null;
+    }
+    if (!$linha) {
+        return null;
+    }
+    $jpeg = base64_decode((string) $linha['conteudo'], true);
+    return $jpeg === false ? null : ['jpeg' => $jpeg, 'largura' => (int) $linha['largura'], 'altura' => (int) $linha['altura'],
+        'bytes' => (int) $linha['bytes'], 'criado_em' => (string) $linha['criado_em']];
+}
+
+/** Apaga a selfie das fichas (pedido da pessoa pelo portal, ou expurgo). Devolve quantas apagou. */
+function mcp_voluntario_selfie_apagar(array $fichaIds): int
+{
+    $ids = array_values(array_filter(array_map('intval', $fichaIds), static fn(int $i): bool => $i > 0));
+    if (!$ids) {
+        return 0;
+    }
+    try {
+        $stmt = mcp_db()->prepare('DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN (' . implode(', ', array_fill(0, count($ids), '?')) . ')');
+        $stmt->execute($ids);
+        return $stmt->rowCount();
+    } catch (PDOException) {
+        return 0;
+    }
 }
 
 function mcp_voluntario_por_id(int $id): ?array
@@ -673,6 +843,7 @@ function mcp_voluntarios_expurgar(int $meses = 12, ?string $agoraUtc = null): ar
     $ids = array_map('intval', array_column($fichas, 'id'));
     $marcadores = implode(', ', array_fill(0, count($ids), '?'));
     $pdo->prepare("DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN ($marcadores)")->execute($ids);
+    mcp_voluntario_selfie_apagar($ids);
     $pdo->prepare("DELETE FROM mcp_voluntarios WHERE id IN ($marcadores)")->execute($ids);
     $apagadas = count($ids);
     mcp_registrar(null, 'voluntarios_expurgo', $apagadas . ($apagadas === 1 ? ' ficha' : ' fichas'));
@@ -1022,6 +1193,12 @@ function mcp_montar_email_voluntario_equipe(array $f): array
         $linhas['Recebida em'] = $quando . ' (Brasília)';
     }
     $linhas['Protocolo'] = $protocolo;
+    // A foto não vai no e-mail: fica só no portal.
+    $linhas['Selfie'] = match ($f['selfie'] ?? null) {
+        'recebida' => 'enviada (veja na ficha, no portal)',
+        'nao_tratada' => 'a pessoa enviou, mas o servidor não conseguiu guardar; peça de novo no contato',
+        default => 'não enviada (é opcional)',
+    };
 
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong>' . ($idade !== '' ? ', ' . mcp_escapar($idade) . ',' : '') . ' de ' . mcp_escapar(mcp_voluntario_local_texto($f))
             . ', quer ser voluntário(a) em <strong>' . mcp_escapar($frentes) . '</strong>. ' . (mcp_vol_cbfi_aberto()
@@ -1094,6 +1271,9 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
         'Dias' => mcp_voluntario_rotulos((string) $f['dias'], MCP_VOL_DIAS),
         'Períodos' => mcp_voluntario_rotulos((string) $f['periodos'], MCP_VOL_PERIODOS),
     ];
+    if (($f['selfie'] ?? null) === 'recebida') {
+        $linhas['Selfie'] = 'recebida';
+    }
     if ($quando !== '') {
         $linhas['Enviada em'] = $quando . ' (Brasília)';
     }

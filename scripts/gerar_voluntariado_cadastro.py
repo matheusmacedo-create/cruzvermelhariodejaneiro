@@ -306,6 +306,9 @@ CSS = """
     @media (max-width: 480px) {
       .vc-etapas { grid-template-columns: 1fr; }
     }
+    .vc-selfie-previa { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 10px; }
+    .vc-selfie-previa[hidden] { display: none; }
+    .vc-selfie-previa img { display: block; width: 140px; height: 140px; object-fit: cover; border-radius: 12px; border: 1px solid #e2e8f0; }
   </style>"""
 
 
@@ -320,7 +323,7 @@ def formulario() -> str:
         entrada("cpf", "CPF", dica="Só é obrigatório se você for aceito, para o termo de adesão. Pode deixar em branco agora.",
                 atributos='inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00"'),
     ]) + "</div>")
-    contato = cartao("vc-contato", "Contato", "É por e-mail que a confirmação e os próximos passos chegam.", '<div class="vc-grade">' + "".join([
+    contato = cartao("vc-contato", "Contato", "A confirmação chega por e-mail; a equipe do voluntariado chama pelo WhatsApp.", '<div class="vc-grade">' + "".join([
         entrada("email", "E-mail", tipo="email", obrigatorio=True, atributos='autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"'),
         entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, dica="De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.", atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
         entrada("cidade", "Cidade", obrigatorio=True, atributos='autocomplete="address-level2" maxlength="120"'),
@@ -350,6 +353,17 @@ def formulario() -> str:
              dica="Idiomas, fotografia, informática, direção, organização de eventos, o que vier à cabeça."),
         selecao("como_conheceu", "Como você conheceu a Cruz Vermelha RJ?", COMO_CONHECEU),
     ]) + "</div>")
+    # Selfie opcional (27/10/2026): só para a equipe reconhecer a pessoa na entrevista e no CBFI. Sem JavaScript vai como
+    # arquivo (o formulário é multipart); com ele, cadastro.js reduz a foto no navegador e manda junto do JSON.
+    selfie = cartao("vc-selfie-cartao", "Sua selfie (opcional)", "Se quiser, mande uma foto do seu rosto. Não é obrigatório e não muda nada na seleção.",
+                    '<div class="vc-campo vc-campo-largo" data-campo="selfie">'
+                    '<label for="vc-selfie">Selfie <small>(opcional)</small></label>'
+                    '<input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" aria-describedby="vc-selfie-dica">'
+                    '<p class="vc-dica" id="vc-selfie-dica">Uma foto de frente, em JPG ou PNG, de até 10 MB. Serve só para a equipe '
+                    'reconhecer você na entrevista e no CBFI: fica no portal da equipe, não é publicada e é apagada junto com a ficha.</p>'
+                    '<div class="vc-selfie-previa" id="vc-selfie-previa" hidden><img id="vc-selfie-img" alt="Prévia da sua selfie">'
+                    '<button type="button" class="btn btn-outline" id="vc-selfie-remover">Remover a selfie</button></div>'
+                    + _erro("selfie") + '</div>')
     consentimentos = cartao("vc-consentimentos", "Consentimentos", "", '<div class="vc-grade">' + "".join([
         caixa_unica("consentimento",
                     'Li e aceito a <a href="/privacidade/#voluntariado" target="_blank" rel="noopener">Política de Privacidade<span class="vc-sr"> (abre em nova aba)</span></a>, '
@@ -362,9 +376,9 @@ def formulario() -> str:
     envio = ('<div class="vc-envio"><button type="submit" class="btn btn-red"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Enviar meu cadastro</button>'
              '<p>Depois de enviar, você recebe a confirmação com o protocolo por e-mail.</p></div>')
     return "\n".join([
-        f'    <form class="vc-form" id="ficha" method="post" action="{API}" novalidate aria-labelledby="vc-titulo">',
+        f'    <form class="vc-form" id="ficha" method="post" action="{API}" enctype="multipart/form-data" novalidate aria-labelledby="vc-titulo">',
         f"      {ocultos}",
-        dados, contato, perfil, ajuda, sobre, consentimentos,
+        dados, contato, perfil, ajuda, sobre, selfie, consentimentos,
         f"      {armadilha}",
         f"      {envio}",
         "    </form>",
