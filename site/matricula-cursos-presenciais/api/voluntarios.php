@@ -6,7 +6,7 @@
  *
  * Dois jeitos de chamar, com os mesmos nomes de campo (contrato em lib/voluntarios.php):
  *  - JSON (a página com JavaScript): 201 {ok, protocolo, nome, email, prazo, aviso, menor, selfie}; 422 {erro, campo};
- *    409 {erro} (ficha repetida); 429 {erro} (freios). A selfie opcional vem no campo "selfie" como data URL (até
+ *    409 {erro} (ficha repetida); 429 {erro} (freios). A selfie, obrigatória, vem no campo "selfie" como data URL (até
  *    MCP_VOL_CORPO_MAX no corpo inteiro);
  *  - formulário (multipart/form-data, sem JavaScript, com a selfie no arquivo "selfie"; listas como frentes[], dias[], periodos[]):
  *    redirect 303 para /voluntariado/cadastro/?protocolo=VOL-... ou ?erro=<campo> (duplicada, limite e envio para os
@@ -69,10 +69,13 @@ if (!$conferido['ok']) {
 }
 $ficha = $conferido['dados'];
 
-// Selfie opcional: foto que não abre volta como erro do campo; servidor sem GD guarda a ficha sem ela (nunca a foto crua,
-// que levaria a localização do celular) e avisa a equipe.
+// Selfie obrigatória: sem ela, ou com foto que não abre, volta como erro do campo; servidor sem GD guarda a ficha sem ela
+// (nunca a foto crua, que levaria a localização do celular) e avisa a equipe.
 $selfie = null;
 $selfieSituacao = null;
+if ($selfieEntrada === null) {
+    $falhar(422, 'Envie uma selfie: uma foto do seu rosto, em JPG ou PNG.', 'selfie');
+}
 if ($selfieEntrada !== null) {
     if (isset($selfieEntrada['erro'])) {
         $falhar(422, $selfieEntrada['erro'], 'selfie');

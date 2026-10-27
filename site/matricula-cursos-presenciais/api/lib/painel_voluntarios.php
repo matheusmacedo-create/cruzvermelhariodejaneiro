@@ -273,7 +273,7 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
         $consentimentos[$rotulo] = pn_e($valor);
     }
     $consentimentos['Guarda dos dados'] = 'Só para a seleção e o acompanhamento do voluntariado. Ficha não aceita é apagada depois de 12 meses; a aceita segue o termo de adesão.';
-    // Selfie opcional: só para reconhecer a pessoa na entrevista e no CBFI (Política de Privacidade). Não sai do portal.
+    // Selfie (obrigatória desde 27/10/2026): só para reconhecer a pessoa na entrevista e no CBFI (Política de Privacidade). Não sai do portal.
     $cartaoSelfie = $selfie !== null
         ? '<img src="' . pn_e("painel.php?v=voluntario&id=$id&selfie=1") . '" alt="Selfie enviada por ' . pn_e((string) $f['nome']) . '" width="' . $selfie['largura'] . '" height="' . $selfie['altura'] . '"'
             . ' style="display:block;max-width:100%;height:auto;max-height:360px;width:auto;border-radius:12px;border:1px solid var(--line, #e2e8f0)">'
@@ -281,7 +281,7 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
             . '<details class="ajustar"><summary>Apagar a selfie</summary>' . pv_form($usuario, 'voluntario_foto_del', $id, '<div class="mini">'
                 . '<p class="nota" style="margin:0">Use quando a pessoa pedir ou quando a foto não for dela. A ficha continua; só a imagem some.</p>'
                 . '<button class="btn btn-outline" type="submit">Apagar a selfie</button></div>') . '</details>'
-        : pv_vazio('A pessoa não enviou selfie (é opcional).');
+        : pv_vazio('Esta ficha não tem selfie (as de antes de 27/10/2026 não tinham o campo, ou ela foi apagada).');
     $origem = array_filter([
         'Página' => !empty($f['pagina']) ? '<a href="' . pn_e(mcp_site_url() . (string) $f['pagina']) . '" target="_blank" rel="noopener">' . pn_e((string) $f['pagina']) . '</a>' : null,
         'Origem' => pn_e(trim((string) ($f['utm_source'] ?? '') . ' ' . (string) ($f['utm_campaign'] ?? '')) ?: 'direto (sem UTM)'),

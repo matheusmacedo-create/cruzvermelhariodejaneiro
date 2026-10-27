@@ -163,15 +163,19 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
 - Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
-## Voluntariado: selfie opcional no cadastro (27/10/2026)
+## Voluntariado: selfie obrigatória no cadastro (27/10/2026)
 
-Pedido do Matheus: pedir ao voluntário uma selfie, se ele quiser, só para a equipe reconhecê-lo na entrevista e no
-CBFI. Campo opcional em `/voluntariado/cadastro/`; a foto é reduzida (800 px), regravada sem metadados (sai a
+Pedido do Matheus: pedir ao voluntário uma selfie, só para a equipe reconhecê-lo na entrevista e no CBFI (nasceu
+opcional e passou a ser obrigatória no mesmo dia). Campo obrigatório em `/voluntariado/cadastro/`; a foto é reduzida (800 px), regravada sem metadados (sai a
 localização do celular), guardada em `mcp_voluntarios_selfies` e vista só na ficha do portal, que tem o botão "Apagar a
 selfie"; some com a ficha no expurgo de 12 meses. Política de Privacidade (PT/EN/ES) com a selfie, revisão 27/10/2026, e
 a ficha passa a gravar a revisão da própria política. Detalhes em [docs/voluntariado.md](docs/voluntariado.md), "Selfie
 opcional". A tabela nasce sozinha na primeira requisição depois de publicar o `db.php` (`MCP_DB_VERSAO` nova).
 Publicação: `scripts/publicacao-selfie.txt`.
+
+No mesmo dia, a confirmação (tela e e-mail) passou a dizer que a coordenadora do voluntariado chama pelo WhatsApp para
+explicar como será a entrevista (sem citar a sede) e que o cadastro ainda não é a aprovação: quem for aprovado recebe um
+código de aprovação da coordenação. Ver "Contato e aprovação" em [docs/voluntariado.md](docs/voluntariado.md).
 
 ## Portal da transparência com visual novo (17/10/2026)
 

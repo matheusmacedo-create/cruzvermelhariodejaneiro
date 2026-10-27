@@ -280,6 +280,7 @@ CSS = """
     .vc-sucesso p { color: var(--text); }
     .vc-protocolo-rotulo { margin: 18px 0 4px; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
     .vc-protocolo { margin: 0 0 16px; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: .02em; color: var(--black); font-variant-numeric: tabular-nums; }
+    .vc-aprovacao { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #fff7f7; border: 1px solid #f5c2c7; border-left: 4px solid var(--red); line-height: 1.55; }
     .vc-menor { padding: 12px 14px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); }
     .vc-sucesso h3 { margin: 22px 0 10px; color: var(--black); font-size: 1.1rem; }
     .vc-passos { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
@@ -353,12 +354,12 @@ def formulario() -> str:
              dica="Idiomas, fotografia, informática, direção, organização de eventos, o que vier à cabeça."),
         selecao("como_conheceu", "Como você conheceu a Cruz Vermelha RJ?", COMO_CONHECEU),
     ]) + "</div>")
-    # Selfie opcional (27/10/2026): só para a equipe reconhecer a pessoa na entrevista e no CBFI. Sem JavaScript vai como
+    # Selfie obrigatória (27/10/2026; nasceu opcional no mesmo dia): só para a equipe reconhecer a pessoa na entrevista e no CBFI. Sem JavaScript vai como
     # arquivo (o formulário é multipart); com ele, cadastro.js reduz a foto no navegador e manda junto do JSON.
-    selfie = cartao("vc-selfie-cartao", "Sua selfie (opcional)", "Se quiser, mande uma foto do seu rosto. Não é obrigatório e não muda nada na seleção.",
+    selfie = cartao("vc-selfie-cartao", "Sua selfie", "Mande uma foto do seu rosto. Ela é obrigatória para enviar o cadastro.",
                     '<div class="vc-campo vc-campo-largo" data-campo="selfie">'
-                    '<label for="vc-selfie">Selfie <small>(opcional)</small></label>'
-                    '<input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" aria-describedby="vc-selfie-dica">'
+                    '<label for="vc-selfie">Selfie <span class="vc-obrig" aria-hidden="true">*</span></label>'
+                    '<input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" required aria-required="true" aria-describedby="vc-selfie-dica">'
                     '<p class="vc-dica" id="vc-selfie-dica">Uma foto de frente, em JPG ou PNG, de até 10 MB. Serve só para a equipe '
                     'reconhecer você na entrevista e no CBFI: fica no portal da equipe, não é publicada e é apagada junto com a ficha.</p>'
                     '<div class="vc-selfie-previa" id="vc-selfie-previa" hidden><img id="vc-selfie-img" alt="Prévia da sua selfie">'
@@ -395,13 +396,15 @@ def sucesso() -> str:
           <p class="vc-protocolo-rotulo">Seu protocolo</p>
           <p class="vc-protocolo" data-vc="protocolo"></p>
           <p><span data-vc="email-frase">Enviamos a confirmação para o e-mail que você informou.</span> Guarde o protocolo: ele identifica a sua ficha nas conversas com a equipe. <span data-vc="prazo-frase"></span></p>
+          <p class="vc-aprovacao" role="note"><b>Seu cadastro ainda não é a aprovação.</b> Para ser aprovado(a), você passa pela coordenação do voluntariado. Se for aprovado(a), você recebe um <b>código de aprovação</b>; sem ele, a sua entrada no voluntariado ainda não está confirmada.</p>
           <p class="vc-menor" data-vc="menor" hidden><b>Você tem menos de 18 anos:</b> um responsável assina o termo de adesão com você. A equipe explica como fazer isso na entrevista.</p>
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
-            <li><b>Ficha de entrevista.</b> """ + cbfi.alternar(
-                f"Antes do CBFI de {cbfi.DATA_CURTA}, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.",
-                f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.") + """</li>
-            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> """ + cbfi.alternar(
+            <li><b>Contato da coordenação.</b> """ + cbfi.alternar(
+                f"Antes do CBFI de {cbfi.DATA_CURTA}, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.",
+                f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.") + """</li>
+            <li><b>Entrevista e aprovação.</b> Na entrevista, a coordenação conhece você, a sua disponibilidade e as frentes de interesse. Se você for aprovado(a), recebe o código de aprovação.</li>
+            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> Só para quem foi aprovado(a). """ + cbfi.alternar(
                 f"A próxima turma é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. {CBFI_LINK}.",
                 "Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.") + """</li>
             <li><b>Termo de adesão.</b> Depois da formação, você assina o termo que formaliza o vínculo e começa a atuar na sua frente.</li>
