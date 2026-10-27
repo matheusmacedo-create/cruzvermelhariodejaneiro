@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '345c5be99ecd9e3b';
+const MCP_DB_VERSAO = '5043d33ee9fd915a';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -606,6 +606,18 @@ function mcp_migrar_tudo(PDO $pdo): void
         conteudo MEDIUMTEXT NOT NULL,
         criado_em DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=ascii");
+    // Código de aprovação do voluntariado (27/10/2026): gerado pelo portal quando a coordenação aceita a ficha, entregue à
+    // pessoa em QR code e conferido em /conferir/ (o mesmo alfabeto de 8 caracteres das declarações). Um por ficha; cancelar
+    // e gerar de novo troca o código. Ficha aceita não entra no expurgo de 12 meses, então o código vive com ela.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios_aprovacoes (
+        ficha_id INT UNSIGNED NOT NULL PRIMARY KEY,
+        codigo CHAR(8) NOT NULL,
+        emitida_em DATETIME NOT NULL,
+        emitida_por VARCHAR(190) NOT NULL,
+        cancelada_em DATETIME NULL,
+        cancelada_por VARCHAR(190) NULL,
+        UNIQUE KEY uq_codigo (codigo)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Anotações da equipe sobre cada ficha (entrevista, retorno, pendências), com quem escreveu e quando.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios_notas (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

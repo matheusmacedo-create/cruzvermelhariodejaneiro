@@ -109,6 +109,7 @@ function limpar(PDO $db): void
         $lista = implode(', ', array_map('intval', $ids));
         $db->exec("DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN ($lista)");
+        $db->exec("DELETE FROM mcp_voluntarios_aprovacoes WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_drive_fila WHERE tipo = 'ficha_voluntario' AND referencia IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios WHERE id IN ($lista)");
     }
@@ -118,7 +119,7 @@ function limpar(PDO $db): void
         $db->exec("DELETE FROM mcp_ponto WHERE colaborador_id IN ($lista)");
         $db->exec("DELETE FROM mcp_colaboradores WHERE id IN ($lista)");
     }
-    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo')
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo', 'voluntario_aprovacao')
         OR (tipo IN ('limite', 'armadilha') AND detalhe LIKE 'voluntarios%')");
     $db->exec("DELETE FROM mcp_chaves WHERE nome = 'voluntarios_expurgo_em'");
 }
@@ -392,6 +393,7 @@ try {
     verificar('freios registrados em mcp_eventos', (int) $db->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'limite' AND detalhe LIKE 'voluntarios · %'")->fetchColumn(), 3);
 
     // ------------------------------------------------------------------------- aceitação: cria o colaborador do ponto
+    verificar('código de aprovação antes do aceite: recusado', mcp_voluntario_aprovacao_emitir($biaId, $quem), ['ok' => false, 'erro' => 'O código de aprovação só é gerado para ficha aceita.']);
     $semCpf = mcp_voluntario_aceitar($biaId, $quem, '');
     verificar('aceitar sem CPF (a ficha também não tem): erro pedindo o CPF', [$semCpf['ok'], str_contains((string) ($semCpf['erro'] ?? ''), 'CPF'), campo($semCpf, 'colaborador_id')], [false, true, 'ausente']);
     verificar('aceitar com CPF inválido: erro', mcp_voluntario_aceitar($biaId, $quem, '123.456.789-00')['ok'], false);
@@ -404,6 +406,22 @@ try {
         [true, 'voluntario', 'Voluntário(a)', 1, "Bia $marca", $cpfBia, $emailBia, '21998765432', $quem]);
     verificar('aceitar: a ficha fica aceita, com o colaborador e o CPF informado', [$bia['status'], (int) $bia['colaborador_id'], $bia['cpf'], $bia['status_por']], ['aceita', (int) $aceite['colaborador_id'], $cpfBia, $quem]);
     verificar('termo de adesão pendente para o novo voluntário (a secretaria registra a assinatura no portal)', mcp_ponto_termo_pendente($colaborador), true);
+
+    // ------------------------------------------------------------------------- código de aprovação (27/10/2026)
+    $cod = mcp_voluntario_aprovacao_emitir($biaId, $quem);
+    verificar('código de aprovação: gerado na ficha aceita, 8 caracteres do alfabeto das declarações', [$cod['ok'], $cod['novo'], mcp_codigo_normalizar($cod['codigo'] ?? '') === ($cod['codigo'] ?? 'x')], [true, true, true]);
+    verificar('código de aprovação: pedir de novo devolve o mesmo (não troca o que a pessoa recebeu)', mcp_voluntario_aprovacao_emitir($biaId, $quem), ['ok' => true, 'codigo' => $cod['codigo'], 'novo' => false]);
+    $conf = mcp_conferir((string) $cod['codigo']);
+    verificar('conferir: aprovação válida, nome, CPF mascarado e a data', [$conf['tipo'] ?? null, $conf['valido'] ?? null, $conf['nome'] ?? null, $conf['cpf'] ?? null, $conf['linhas'][1][1] ?? null],
+        ['Aprovação no voluntariado', true, mcp_nome_proprio("Bia $marca"), mcp_cpf_mascarado($cpfBia), mcp_data_brt(mcp_agora(), 'd/m/Y')]);
+    [$st, , $corpoConf] = http($base . 'conferir.php?c=' . strtolower(mcp_codigo_formatado((string) $cod['codigo'])));
+    $jsonConf = json_decode($corpoConf, true) ?: [];
+    verificar('conferir.php pela URL (minúsculas e hífen): 200 com a aprovação, sem o CPF inteiro', [$st, $jsonConf['tipo'] ?? null, $jsonConf['situacao'] ?? null, str_contains($corpoConf, $cpfBia)], [200, 'Aprovação no voluntariado', 'Aprovação válida', false]);
+    $msg = mcp_voluntario_aprovacao_mensagem(mcp_voluntario_por_id($biaId), (string) $cod['codigo']);
+    verificar('mensagem do WhatsApp: código formatado e o link de conferência', [str_contains($msg, mcp_codigo_formatado((string) $cod['codigo'])), str_contains($msg, mcp_conferir_url((string) $cod['codigo']))], [true, true]);
+    verificar('cancelar o código: some da validade; cancelar de novo não faz nada', [mcp_voluntario_aprovacao_cancelar($biaId, $quem), mcp_voluntario_aprovacao_cancelar($biaId, $quem), mcp_conferir((string) $cod['codigo'])['valido'] ?? null, str_starts_with((string) (mcp_conferir((string) $cod['codigo'])['situacao'] ?? ''), 'Aprovação cancelada')], [true, false, false, true]);
+    $cod2 = mcp_voluntario_aprovacao_emitir($biaId, $quem);
+    verificar('gerar de novo depois de cancelar: código novo e válido; o antigo deixa de existir', [$cod2['novo'], $cod2['codigo'] !== $cod['codigo'], mcp_conferir((string) $cod2['codigo'])['valido'] ?? null, mcp_conferir((string) $cod['codigo'])], [true, true, true, null]);
     // A mesma pessoa (mesmo CPF) numa segunda ficha, com o colaborador desativado: reaproveita e reativa, sem outro cadastro.
     $colId = (int) $aceite['colaborador_id'];
     mcp_colaborador_salvar($colId, ['nome' => $colaborador['nome'], 'cpf' => $cpfBia, 'email' => $colaborador['email'], 'telefone' => $colaborador['telefone'], 'funcao' => 'Socorrista', 'vinculo' => 'voluntario', 'ativo' => 0], $quem);

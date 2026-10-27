@@ -780,8 +780,8 @@ def main() -> int:
                                  "O comprovante da sua aula presencial. Ele fica disponível quando a aula termina e também chega no seu e-mail.",
                                  CORPO_COMPARECIMENTO, qrcode=False, wrap_extra=' style="max-width:820px"', passo=0, eyebrow="Escola de Educação e Saúde"),
         "conferir": montar(partes, "Conferir documento | Cruz Vermelha Brasileira Rio de Janeiro", "conferir",
-                           "Conferir um comprovante ou declaração",
-                           "Digite o código de verificação impresso no documento para confirmar que ele foi emitido pela Cruz Vermelha Brasileira Rio de Janeiro.",
+                           "Conferir um documento ou aprovação",
+                           "Digite o código de verificação do documento ou da aprovação no voluntariado para confirmar que ele foi emitido pela Cruz Vermelha Brasileira Rio de Janeiro.",
                            CORPO_CONFERIR, qrcode=False, wrap_extra=' style="max-width:820px"', passo=0, eyebrow="Conferência de documentos"),
     }
     # Ícones que o checkout.js desenha depois (sprite): o selo de pago, as etapas e os avisos.

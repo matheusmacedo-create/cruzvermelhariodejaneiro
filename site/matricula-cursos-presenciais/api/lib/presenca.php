@@ -378,5 +378,23 @@ function mcp_conferir(string $codigo, ?int $agora = null): ?array
             ])),
         ];
     }
+    // Código de aprovação do voluntariado (lib/voluntarios.php, 27/10/2026).
+    $a = mcp_voluntario_aprovacao_por_codigo($codigo);
+    if ($a) {
+        $valido = empty($a['cancelada_em']);
+        return [
+            'tipo' => 'Aprovação no voluntariado',
+            'valido' => $valido,
+            'situacao' => $valido ? 'Aprovação válida' : 'Aprovação cancelada pela coordenação em ' . mcp_data_brt((string) $a['cancelada_em'], 'd/m/Y'),
+            'nome' => mcp_nome_proprio((string) $a['nome']),
+            'cpf' => mcp_cpf_mascarado((string) ($a['cpf'] ?? '')) ?: 'não informado',
+            'codigo' => mcp_codigo_formatado($codigo),
+            'linhas' => [
+                ['Programa', 'Voluntariado da ' . MCP_NOME_FILIAL],
+                ['Aprovado(a) em', mcp_data_brt((string) $a['emitida_em'], 'd/m/Y')],
+                ['Próximas etapas', 'CBFI e termo de adesão ao serviço voluntário (Lei nº 9.608/1998)'],
+            ],
+        ];
+    }
     return null;
 }

@@ -585,6 +585,83 @@ function mcp_voluntario_selfie_apagar(array $fichaIds): int
     }
 }
 
+// ----------------------------------------------------------------------------- código de aprovação
+/**
+ * Código de aprovação (pedido do Matheus, 27/10/2026): a confirmação do cadastro promete que quem for aprovado recebe um
+ * código. O portal gera o código quando a coordenação aceita a ficha (ou pelo botão, nas fichas já aceitas) e mostra o QR
+ * code, que abre /conferir/?c=<código>; lá qualquer pessoa vê o nome, o CPF mascarado, a data e se a aprovação vale. A
+ * coordenação entrega pelo WhatsApp (mensagem pronta no portal). Cancelar marca a data; gerar de novo troca o código.
+ */
+function mcp_voluntario_aprovacao(int $fichaId): ?array
+{
+    try {
+        $stmt = mcp_db()->prepare('SELECT * FROM mcp_voluntarios_aprovacoes WHERE ficha_id = ? LIMIT 1');
+        $stmt->execute([$fichaId]);
+        return $stmt->fetch() ?: null;
+    } catch (PDOException) {
+        return null; // antes da migração
+    }
+}
+
+/** A aprovação com os dados da ficha (nome, CPF) pelo código já normalizado, ou null. */
+function mcp_voluntario_aprovacao_por_codigo(string $codigo): ?array
+{
+    if ($codigo === '') {
+        return null;
+    }
+    try {
+        $stmt = mcp_db()->prepare('SELECT a.*, v.nome, v.cpf, v.status FROM mcp_voluntarios_aprovacoes a JOIN mcp_voluntarios v ON v.id = a.ficha_id WHERE a.codigo = ? LIMIT 1');
+        $stmt->execute([$codigo]);
+        return $stmt->fetch() ?: null;
+    } catch (PDOException) {
+        return null;
+    }
+}
+
+/**
+ * Gera o código da ficha aceita. Já existindo um válido, devolve o mesmo (o portal pode chamar de novo sem trocar o que a
+ * pessoa já recebeu); cancelado, gera outro. Devolve ['ok' => true, 'codigo', 'novo' => bool] ou ['ok' => false, 'erro'].
+ */
+function mcp_voluntario_aprovacao_emitir(int $fichaId, string $quem): array
+{
+    $f = mcp_voluntario_por_id($fichaId);
+    if (!$f) {
+        return ['ok' => false, 'erro' => 'Ficha não encontrada.'];
+    }
+    if ((string) $f['status'] !== 'aceita') {
+        return ['ok' => false, 'erro' => 'O código de aprovação só é gerado para ficha aceita.'];
+    }
+    $atual = mcp_voluntario_aprovacao($fichaId);
+    if ($atual && empty($atual['cancelada_em'])) {
+        return ['ok' => true, 'codigo' => (string) $atual['codigo'], 'novo' => false];
+    }
+    $codigo = mcp_codigo_novo();
+    mcp_db()->prepare('REPLACE INTO mcp_voluntarios_aprovacoes (ficha_id, codigo, emitida_em, emitida_por, cancelada_em, cancelada_por) VALUES (?, ?, ?, ?, NULL, NULL)')
+        ->execute([$fichaId, $codigo, mcp_agora(), mb_substr($quem, 0, 190)]);
+    mcp_registrar(null, 'voluntario_aprovacao', "#$fichaId · código emitido · $quem");
+    return ['ok' => true, 'codigo' => $codigo, 'novo' => true];
+}
+
+/** Cancela o código válido da ficha. Devolve false se não havia código válido. */
+function mcp_voluntario_aprovacao_cancelar(int $fichaId, string $quem): bool
+{
+    $stmt = mcp_db()->prepare('UPDATE mcp_voluntarios_aprovacoes SET cancelada_em = ?, cancelada_por = ? WHERE ficha_id = ? AND cancelada_em IS NULL');
+    $stmt->execute([mcp_agora(), mb_substr($quem, 0, 190), $fichaId]);
+    if ($stmt->rowCount() === 0) {
+        return false;
+    }
+    mcp_registrar(null, 'voluntario_aprovacao', "#$fichaId · código cancelado · $quem");
+    return true;
+}
+
+/** A mensagem que a coordenação manda pelo WhatsApp com o código e o link de conferência. */
+function mcp_voluntario_aprovacao_mensagem(array $f, string $codigo): string
+{
+    return 'Olá, ' . mcp_primeiro_nome((string) $f['nome']) . '! Aqui é a coordenação do voluntariado da Cruz Vermelha Brasileira Rio de Janeiro. '
+        . 'Sua ficha foi aprovada. Seu código de aprovação é ' . mcp_codigo_formatado($codigo) . '. '
+        . 'Qualquer pessoa pode conferir em ' . mcp_conferir_url($codigo) . ' . Guarde este código: ele mostra que você foi aprovado(a) para seguir para o CBFI e o termo de adesão.';
+}
+
 function mcp_voluntario_por_id(int $id): ?array
 {
     $stmt = mcp_db()->prepare('SELECT * FROM mcp_voluntarios WHERE id = ? LIMIT 1');

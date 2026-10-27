@@ -29,8 +29,15 @@ function mcp_codigo_novo(): string
 {
     for ($tentativa = 0; $tentativa < 8; $tentativa++) {
         $codigo = mcp_codigo_gerar();
-        $stmt = mcp_db()->prepare('SELECT (SELECT COUNT(*) FROM mcp_presencas WHERE codigo = ?) + (SELECT COUNT(*) FROM mcp_declaracoes_horas WHERE codigo = ?)');
-        $stmt->execute([$codigo, $codigo]);
+        // Também os códigos de aprovação do voluntariado (27/10/2026); antes da migração a tabela não existe e vale a conta antiga.
+        try {
+            $stmt = mcp_db()->prepare('SELECT (SELECT COUNT(*) FROM mcp_presencas WHERE codigo = ?) + (SELECT COUNT(*) FROM mcp_declaracoes_horas WHERE codigo = ?)'
+                . ' + (SELECT COUNT(*) FROM mcp_voluntarios_aprovacoes WHERE codigo = ?)');
+            $stmt->execute([$codigo, $codigo, $codigo]);
+        } catch (PDOException) {
+            $stmt = mcp_db()->prepare('SELECT (SELECT COUNT(*) FROM mcp_presencas WHERE codigo = ?) + (SELECT COUNT(*) FROM mcp_declaracoes_horas WHERE codigo = ?)');
+            $stmt->execute([$codigo, $codigo]);
+        }
         if ((int) $stmt->fetchColumn() === 0) {
             return $codigo;
         }

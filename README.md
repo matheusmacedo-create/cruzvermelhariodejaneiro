@@ -177,6 +177,14 @@ No mesmo dia, a confirmação (tela e e-mail) passou a dizer que a coordenadora 
 explicar como será a entrevista (sem citar a sede) e que o cadastro ainda não é a aprovação: quem for aprovado recebe um
 código de aprovação da coordenação. Ver "Contato e aprovação" em [docs/voluntariado.md](docs/voluntariado.md).
 
+## Voluntariado: código de aprovação em QR code (27/10/2026)
+
+O portal gera o código de aprovação ao aceitar a ficha (ou pelo botão, nas já aceitas) e mostra o QR code, com envio
+pelo WhatsApp, download do QR e cancelamento. O QR abre `cruzvermelhariodejaneiro.org/conferir/?c=<código>`, a mesma
+conferência das declarações do ponto, que mostra "Aprovação no voluntariado" com nome, CPF mascarado, data e se vale.
+Tabela nova `mcp_voluntarios_aprovacoes` (criada sozinha, `MCP_DB_VERSAO` nova). Detalhes em
+[docs/voluntariado.md](docs/voluntariado.md), "Código de aprovação em QR code". Publicação: `scripts/publicacao-aprovacao.txt`.
+
 ## Portal da transparência com visual novo (17/10/2026)
 
 Pedido do Matheus: deixar `/transparencia/` mais bonita, a partir dos melhores portais do mercado. Três agentes
