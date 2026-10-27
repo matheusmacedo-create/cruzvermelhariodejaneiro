@@ -25,13 +25,15 @@ function mcp_config(): array
         // META_*. As chaves de liga e desliga do "pagar tudo" (09/10/2026) ficam em config-pagar-tudo.php, que vem por
         // último e vale só para a lista MCP_CHAVES_PAGAR_TUDO (inclusive ESCOLA_MATRICULA_PAGA, sem mexer no
         // config-escola.php, que guarda a chave da escola). A conta de serviço do Google Drive (10/2026) fica em
-        // config-google.php, de onde só valem as chaves GOOGLE_*. O resto continua no config.php.
+        // config-google.php, de onde só valem as chaves GOOGLE_*. A ligação com a Redação (27/10/2026: fichas de
+        // voluntariado e aprovação) fica em config-redacao.php, de onde só valem as REDACAO_*. O resto continua no config.php.
         $extras = [
             [getenv('MCP_CONFIG_ESCOLA_ARQUIVO') ?: dirname(__DIR__) . '/config-escola.php', static fn(string $c): bool => str_starts_with($c, 'ESCOLA_') || $c === 'SITE_HORARIOS_TOKEN'],
             [getenv('MCP_CONFIG_WHATSAPP_ARQUIVO') ?: dirname(__DIR__) . '/config-whatsapp.php', static fn(string $c): bool => str_starts_with($c, 'WHATSAPP_')],
             [getenv('MCP_CONFIG_META_ARQUIVO') ?: dirname(__DIR__) . '/config-meta.php', static fn(string $c): bool => str_starts_with($c, 'META_')],
             [getenv('MCP_CONFIG_PAGAR_TUDO_ARQUIVO') ?: dirname(__DIR__) . '/config-pagar-tudo.php', static fn(string $c): bool => in_array($c, MCP_CHAVES_PAGAR_TUDO, true)],
             [getenv('MCP_CONFIG_GOOGLE_ARQUIVO') ?: dirname(__DIR__) . '/config-google.php', static fn(string $c): bool => str_starts_with($c, 'GOOGLE_')],
+            [getenv('MCP_CONFIG_REDACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-redacao.php', static fn(string $c): bool => str_starts_with($c, 'REDACAO_')],
         ];
         foreach ($extras as [$arquivoExtra, $vale]) {
             if (is_file($arquivoExtra)) {

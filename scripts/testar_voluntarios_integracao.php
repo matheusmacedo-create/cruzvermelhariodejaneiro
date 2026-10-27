@@ -10,7 +10,8 @@
  *     vínculo voluntário, reaproveita e reativa o que já existe), aceitação sem CPF (erro), lista, contagens, CSV sem
  *     CPF, PDF e o expurgo de 12 meses (apaga a recusada antiga, poupa a aceita);
  *   - a selfie opcional (27/10/2026): no JSON (data URL) e no formulário (multipart), recusa do que não é foto, corpo
- *     grande demais (413), gravação reduzida e sem EXIF e a exclusão junto com a ficha no expurgo.
+ *     grande demais (413), gravação reduzida e sem EXIF e a exclusão junto com a ficha no expurgo;
+ *   - a ligação com a Redação (api/redacao-voluntarios.php): token, lista paginada com a selfie, aprovar e recusar.
  * As chamadas passam pelo servidor embutido do PHP, como as de um navegador; o teste sobe e derruba o servidor pelo PID.
  *
  * Precisa de MCP_CONFIG_ARQUIVO com o banco local (DB_HOST 127.0.0.1 ou localhost) e sem RESEND_API_KEY (nenhum e-mail
@@ -29,7 +30,7 @@ if ($configOriginal === '' || !is_file($configOriginal)) {
 $portaSite = (int) (getenv('MCP_TESTE_PORTA') ?: 18900 + random_int(0, 499));
 $config = tempnam(sys_get_temp_dir(), 'mcp-vol-');
 file_put_contents($config, '<?php return [\'SITE_URL\' => \'http://127.0.0.1:' . $portaSite . '\', \'EMAIL_CONTATO\' => \'contato@exemplo.org\', '
-    . '\'EMAIL_VOLUNTARIADO\' => \'voluntariado@exemplo.org\', \'PAINEL_EMAILS\' => \'vol@exemplo.org\', \'ESCOLA_API_URL\' => \'\'] + (require '
+    . '\'EMAIL_VOLUNTARIADO\' => \'voluntariado@exemplo.org\', \'PAINEL_EMAILS\' => \'vol@exemplo.org\', \'ESCOLA_API_URL\' => \'\', \'REDACAO_TOKEN\' => \'' . str_repeat('r', 40) . '\'] + (require '
     . var_export($configOriginal, true) . ');');
 $semExtra = tempnam(sys_get_temp_dir(), 'mcp-vol-extra-');
 file_put_contents($semExtra, '<?php return [];');
@@ -119,7 +120,7 @@ function limpar(PDO $db): void
         $db->exec("DELETE FROM mcp_ponto WHERE colaborador_id IN ($lista)");
         $db->exec("DELETE FROM mcp_colaboradores WHERE id IN ($lista)");
     }
-    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo', 'voluntario_aprovacao')
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo', 'voluntario_aprovacao', 'redacao_negado', 'redacao_voluntario')
         OR (tipo IN ('limite', 'armadilha') AND detalhe LIKE 'voluntarios%')");
     $db->exec("DELETE FROM mcp_chaves WHERE nome = 'voluntarios_expurgo_em'");
 }
@@ -449,6 +450,63 @@ try {
     verificar('pdf da ficha do banco: começa com %PDF', [str_starts_with($pdf, '%PDF-1.4'), strlen($pdf) > 5000], [true, true]);
     $equipe = mcp_montar_email_voluntario_equipe(mcp_voluntario_por_id($biaId));
     verificar('e-mail à equipe da ficha do banco: botão do portal com o id', str_contains($equipe['html'], 'painel.php?v=voluntario&amp;id=' . $biaId), true);
+
+    // ------------------------------------------------------------------------- ligação com a Redação (27/10/2026)
+    $tokenRedacao = str_repeat('r', 40);
+    $redacao = static function (string $metodo, string $q = '', ?array $corpo = null, ?string $token = null) use ($base, $tokenRedacao): array {
+        $cab = ['Authorization: Bearer ' . ($token ?? $tokenRedacao)];
+        if ($corpo !== null) {
+            $cab[] = 'Content-Type: application/json';
+        }
+        [$st, , $r] = http($base . 'redacao-voluntarios.php' . $q, $metodo, $corpo !== null ? json_encode($corpo) : null, $cab);
+        return [$st, json_decode($r, true) ?? []];
+    };
+    [$st] = http($base . 'redacao-voluntarios.php');
+    [$stErrado] = $redacao('GET', '', null, str_repeat('x', 40));
+    verificar('Redação: sem token e com token errado, 401', [$st, $stErrado], [401, 401]);
+    [$st, $r] = $redacao('GET', '?desde=0&limite=200');
+    $doTeste = array_values(array_filter($r['fichas'] ?? [], static fn(array $f): bool => str_contains((string) $f['nome'], $marca)));
+    $anaR = current(array_filter($doTeste, static fn(array $f): bool => $f['id'] === $anaId)) ?: [];
+    verificar('Redação: lista as fichas com protocolo, situação, rótulos legíveis e a selfie em base64',
+        [$st, count($doTeste) >= 2, $anaR['protocolo'] ?? null, $anaR['frentes'] ?? null, str_starts_with((string) base64_decode((string) ($anaR['selfie'] ?? '')), "\xFF\xD8\xFF"), isset($anaR['cpf'])],
+        [200, true, (string) mcp_voluntario_por_id($anaId)['protocolo'], ['Campanhas e ações humanitárias', 'Juventude'], true, true]);
+    [, $p1] = $redacao('GET', '?desde=0&limite=1');
+    [, $p2] = $redacao('GET', '?desde=' . (int) ($p1['ultimo'] ?? 0) . '&limite=1');
+    verificar('Redação: paginação por id (limite 1 = uma ficha, mais = true; a seguinte vem depois)', [count($p1['fichas'] ?? []), $p1['mais'] ?? null, ($p2['fichas'][0]['id'] ?? 0) > ($p1['ultimo'] ?? 0)], [1, true, true]);
+    // Fichas gravadas direto (o freio por IP já está no limite neste ponto do teste).
+    $gravarFicha = static function (string $nome, string $email): array {
+        $id = mcp_voluntario_gravar(['nome' => $nome, 'data_nascimento' => '1990-01-01', 'email' => $email, 'telefone' => '21999990000', 'cidade' => 'Rio de Janeiro',
+            'escolaridade' => 'medio', 'frentes' => 'juventude', 'dias' => 'sab', 'periodos' => 'manha', 'motivacao' => 'Quero ajudar a minha comunidade.']);
+        mcp_voluntario_atualizar($id, ['protocolo' => mcp_voluntario_protocolo($id)]);
+        return mcp_voluntario_por_id($id) ?? [];
+    };
+    $rita = $gravarFicha("Rita $marca", "red-$sufixo@exemplo.org");
+    $cpfRita = cpf_de_teste();
+    [$st, $r] = $redacao('POST', '', ['acao' => 'aprovar', 'protocolo' => $rita['protocolo'] ?? '', 'quem' => 'coord@exemplo.org']);
+    verificar('Redação: aprovar ficha sem CPF e sem mandar CPF: 422 pedindo o CPF', [$st, str_contains((string) ($r['erro'] ?? ''), 'CPF')], [422, true]);
+    [$st, $r] = $redacao('POST', '', ['acao' => 'aprovar', 'protocolo' => $rita['protocolo'] ?? '', 'quem' => 'coord@exemplo.org', 'cpf' => mcp_cpf_formatado($cpfRita)]);
+    $ritaDepois = mcp_voluntario_por_id((int) ($rita['id'] ?? 0));
+    verificar('Redação: aprovar com CPF aceita a ficha, cria o colaborador e devolve o código e o link de conferência',
+        [$st, $r['ok'] ?? null, $ritaDepois['status'] ?? null, !empty($ritaDepois['colaborador_id']), mcp_codigo_normalizar((string) ($r['codigo'] ?? '')) !== '', str_contains((string) ($r['conferir_url'] ?? ''), '/conferir/?c='), str_starts_with((string) ($ritaDepois['status_por'] ?? ''), 'Redação · ')],
+        [200, true, 'aceita', true, true, true, true]);
+    [, $r2] = $redacao('POST', '', ['acao' => 'aprovar', 'protocolo' => $rita['protocolo'] ?? '', 'quem' => 'coord@exemplo.org']);
+    verificar('Redação: aprovar de novo devolve o mesmo código (sem duplicar)', $r2['codigo'] ?? null, $r['codigo'] ?? 'x');
+    [$st, $r3] = $redacao('POST', '', ['acao' => 'recusar', 'protocolo' => $rita['protocolo'] ?? '', 'quem' => 'coord@exemplo.org']);
+    verificar('Redação: recusar ficha já aceita é recusado (422)', [$st, (string) ($r3['erro'] ?? '') !== ''], [422, true]);
+    $raul = $gravarFicha("Raul $marca", "rec-$sufixo@exemplo.org");
+    [$st, $r4] = $redacao('POST', '', ['acao' => 'recusar', 'protocolo' => $raul['protocolo'] ?? '', 'quem' => 'coord@exemplo.org']);
+    verificar('Redação: recusar marca a ficha recusada no site, com a nota', [$st, mcp_voluntario_por_id((int) $raul['id'])['status'] ?? null, mcp_voluntario_notas((int) $raul['id'])[0]['texto'] ?? null], [200, 'recusada', 'Recusada na Redação.']);
+    [$st] = $redacao('POST', '', ['acao' => 'aprovar', 'protocolo' => 'VOL-000000-0000', 'quem' => 'x']);
+    verificar('Redação: protocolo que não existe, 422', $st, 422);
+    $ritaR = current(array_filter($redacao('GET', '?desde=' . ((int) $rita['id'] - 1) . '&limite=1')[1]['fichas'] ?? [], static fn(array $f): bool => true)) ?: [];
+    verificar('Redação: a lista leva a situação e o código de aprovação da ficha aceita', [$ritaR['situacao'] ?? null, $ritaR['codigo_aprovacao'] ?? null], ['aceita', $r['codigo'] ?? 'x']);
+    // As fichas deste bloco saem daqui (o resto do teste conta fichas e freios).
+    $deste = array_map('intval', [$rita['id'] ?? 0, $raul['id'] ?? 0]);
+    $db->exec('DELETE FROM mcp_voluntarios_aprovacoes WHERE ficha_id IN (' . implode(', ', $deste) . ')');
+    $db->exec('DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN (' . implode(', ', $deste) . ')');
+    $db->exec('DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN (' . implode(', ', $deste) . ')');
+    $db->exec('DELETE FROM mcp_drive_fila WHERE tipo = \'ficha_voluntario\' AND referencia IN (' . implode(', ', $deste) . ')');
+    $db->exec('DELETE FROM mcp_voluntarios WHERE id IN (' . implode(', ', $deste) . ')');
 
     // ------------------------------------------------------------------------- expurgo de 12 meses (Política de Privacidade)
     $antiga = static function (string $nome, string $status, string $criadoEm) use ($db, $marca, $sufixo): int {
