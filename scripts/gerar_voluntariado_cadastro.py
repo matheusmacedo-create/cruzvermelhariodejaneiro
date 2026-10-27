@@ -11,7 +11,7 @@ Progressivo: sem JavaScript o <form> faz POST comum para a API, que redireciona 
 mostra a tela de sucesso. O cadastro.js entra com um hash do conteúdo na query string (como o chat), para o cache
 não segurar versão velha.
 
-Regras de texto desta página: sem WhatsApp, sem pedido de doação, sem o domínio antigo; o e-mail de contato só
+Regras de texto desta página: sem número nem link de WhatsApp (o contato da equipe é por ele, desde 27/10/2026), sem pedido de doação, sem o domínio antigo; o e-mail de contato só
 aparece no rodapé da home (que a página herda). Idade mínima: 18 anos (desde 25/10/2026; antes, 16).
 Valores dos campos (escolaridade, frentes, dias, períodos, como_conheceu): os mesmos que a API aceita.
 
@@ -88,8 +88,8 @@ CBFI_LINK = f'<a href="{cbfi.URL}">Saiba mais sobre o CBFI</a>'
 ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
     ("Ficha de entrevista", cbfi.alternar(
-        f"A equipe do voluntariado entra em contato por e-mail com os cadastrados, antes do CBFI de {cbfi.DATA_CURTA}.",
-        f"A equipe do voluntariado entra em contato por e-mail em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas.")),
+        f"A equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, antes do CBFI de {cbfi.DATA_CURTA}.",
+        f"A equipe do voluntariado entra em contato pelo WhatsApp em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas.")),
     ("CBFI", cbfi.alternar(
         f"Curso Básico de Formação Institucional: próxima turma no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_CURTA}, na sede. Gratuito e só para quem entra no voluntariado.",
         "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado.")),
@@ -322,7 +322,7 @@ def formulario() -> str:
     ]) + "</div>")
     contato = cartao("vc-contato", "Contato", "É por e-mail que a confirmação e os próximos passos chegam.", '<div class="vc-grade">' + "".join([
         entrada("email", "E-mail", tipo="email", obrigatorio=True, atributos='autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"'),
-        entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
+        entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, dica="De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.", atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
         entrada("cidade", "Cidade", obrigatorio=True, atributos='autocomplete="address-level2" maxlength="120"'),
         entrada("bairro", "Bairro", atributos='autocomplete="address-level3" maxlength="120"'),
         selecao("estado", "Estado", [(uf, uf) for uf in UFS], obrigatorio=True, selecionado="RJ", atributos='autocomplete="address-level1"'),
@@ -385,8 +385,8 @@ def sucesso() -> str:
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
             <li><b>Ficha de entrevista.</b> """ + cbfi.alternar(
-                f"Antes do CBFI de {cbfi.DATA_CURTA}, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.",
-                f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.") + """</li>
+                f"Antes do CBFI de {cbfi.DATA_CURTA}, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.",
+                f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.") + """</li>
             <li><b>CBFI, o Curso Básico de Formação Institucional.</b> """ + cbfi.alternar(
                 f"A próxima turma é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. {CBFI_LINK}.",
                 "Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.") + """</li>
@@ -458,7 +458,7 @@ def main() -> int:
         <h1 id="vc-titulo">{esc(H1)}</h1>
         <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 18 anos.</p>
         <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>{cbfi.alternar(
-            f"<b>Próxima turma do CBFI: {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato por e-mail com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
+            f"<b>Próxima turma do CBFI: {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
             f"<b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.")}</span></p>
         <ol class="vc-etapas" aria-label="As quatro etapas para ser voluntário">
           {etapas}
@@ -493,7 +493,8 @@ def main() -> int:
 """
     pagina = cbfi.resolver(icones.converter(pagina))
     baixo = pagina.lower()
-    assert "whatsapp" not in baixo, "a página de cadastro não cita WhatsApp"
+    # O contato da equipe é pelo WhatsApp (27/10/2026), mas a página não leva o número nem link: o canal de entrada é o formulário.
+    assert "970360264" not in baixo and "97036-0264" not in baixo and "api.whatsapp" not in baixo and "wa.me" not in baixo, "a página de cadastro não leva número nem link de WhatsApp"
     assert "cruzvermelharj.org.br" not in baixo, "domínio antigo na página de cadastro"
     assert "spotform" not in baixo, "formulário antigo na página de cadastro"
     assert baixo.count("contato@cruzvermelhariodejaneiro.org") == 1, "o e-mail de contato só aparece no rodapé"

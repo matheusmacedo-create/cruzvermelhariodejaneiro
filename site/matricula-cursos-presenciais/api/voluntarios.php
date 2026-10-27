@@ -80,7 +80,7 @@ $anterior = mcp_voluntario_duplicada($ficha['email']);
 if ($anterior !== null) {
     mcp_registrar(null, 'voluntario_repetida', '#' . $anterior['id'] . ' · ' . (string) $anterior['protocolo']);
     $falhar(409, 'Já recebemos a sua ficha em ' . mcp_data_brt((string) $anterior['criado_em'], 'd/m') . ' (protocolo ' . (string) $anterior['protocolo']
-        . '); a equipe entra em contato por e-mail ' . mcp_vol_prazo() . (mcp_vol_cbfi_aberto() ? '' : ', quando abrem as novas entradas') . '. Se quiser corrigir algo, escreva para ' . mcp_email_contato_endereco() . '.', 'duplicada');
+        . '); a equipe entra em contato pelo WhatsApp ' . mcp_vol_prazo() . (mcp_vol_cbfi_aberto() ? '' : ', quando abrem as novas entradas') . '. Se quiser corrigir algo, escreva para ' . mcp_email_contato_endereco() . '.', 'duplicada');
 }
 
 // ----------------------------------------------------------------------------- grava, avisa, confirma

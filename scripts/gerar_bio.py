@@ -47,7 +47,7 @@ URL_DOE = f"{ORIGEM}/doe/"
 FAQ = [
     ("Como ser voluntário da Cruz Vermelha no Rio de Janeiro?",
      "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. As novas entradas abrem em "
-     f"{PROXIMAS_ENTRADAS}: só nessa época a equipe do voluntariado entra em contato por e-mail com todos os cadastrados, "
+     f"{PROXIMAS_ENTRADAS}: só nessa época a equipe do voluntariado entra em contato pelo WhatsApp com todos os cadastrados, "
      "para a ficha de entrevista. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat "
      "deste site.", []),
     ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
@@ -76,7 +76,7 @@ FAQ_CBFI = {
     "Como ser voluntário da Cruz Vermelha no Rio de Janeiro?":
         "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A próxima turma do CBFI, o curso de "
         f"formação inicial dos voluntários, é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, e está aberta a quem se cadastra agora: "
-        "a equipe do voluntariado entra em contato por e-mail com os cadastrados antes dela, para a ficha de entrevista. "
+        "a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados antes dela, para a ficha de entrevista. "
         "Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.",
 }
 NOME = "Cruz Vermelha Brasileira – Filial Rio de Janeiro"

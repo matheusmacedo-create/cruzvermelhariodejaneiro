@@ -155,6 +155,12 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
   republicar; com a data passada eles gravam só o texto de janeiro. **Outra turma**: trocar a data em `scripts/cbfi.py` e
   em `MCP_VOL_CBFI_DATA`, os textos com "28/11" em `institucional.json`, `faq-home.json`, `site/index.html` e
   `gerar_bio.py`, e gerar de novo.
+- **Contato pelo WhatsApp** (Matheus, 27/10/2026): a equipe do voluntariado chama os cadastrados pelo WhatsApp, no
+  telefone da ficha, e não por e-mail. Vale para os textos da turma e para os de janeiro; o e-mail de confirmação
+  continua saindo (é ele que leva o protocolo) e mostra o telefone informado. O campo de telefone do cadastro pede, de
+  preferência, um celular com WhatsApp. A página de cadastro e os e-mails seguem sem o número e sem link de WhatsApp (o
+  gerador e `testar_voluntarios.php` conferem).
+- Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
 ## Portal da transparência com visual novo (17/10/2026)

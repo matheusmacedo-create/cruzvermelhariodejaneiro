@@ -114,9 +114,9 @@ function mcp_vol_prazo(): string
 function mcp_vol_aviso_prazo(): string
 {
     if (mcp_vol_cbfi_aberto()) {
-        return 'A próxima turma do CBFI é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', e você pode participar: a equipe do voluntariado entra em contato por e-mail antes dela, para a ficha de entrevista e as orientações da turma.';
+        return 'A próxima turma do CBFI é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', e você pode participar: a equipe do voluntariado entra em contato pelo WhatsApp antes dela, para a ficha de entrevista e as orientações da turma.';
     }
-    return 'As novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ': a equipe do voluntariado entra em contato com você nessa época, e até lá não é preciso esperar resposta.';
+    return 'As novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ': a equipe do voluntariado entra em contato com você pelo WhatsApp nessa época, e até lá não é preciso esperar resposta.';
 }
 function mcp_voluntarios_frentes(): array
 {
@@ -1025,8 +1025,8 @@ function mcp_montar_email_voluntario_equipe(array $f): array
 
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong>' . ($idade !== '' ? ', ' . mcp_escapar($idade) . ',' : '') . ' de ' . mcp_escapar(mcp_voluntario_local_texto($f))
             . ', quer ser voluntário(a) em <strong>' . mcp_escapar($frentes) . '</strong>. ' . (mcp_vol_cbfi_aberto()
-                ? 'A pessoa foi avisada da turma do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO . ' e de que a equipe entra em contato por e-mail antes dela, para a ficha de entrevista.'
-                : 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato da equipe vem nessa época.'))
+                ? 'A pessoa foi avisada da turma do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO . ' e de que a equipe entra em contato pelo WhatsApp antes dela, para a ficha de entrevista.'
+                : 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato da equipe vem nessa época, pelo WhatsApp.'))
         . ($menor ? mcp_nota('<strong>Menor de 18 anos:</strong> o termo de adesão é assinado também pelo responsável legal.') : '')
         . mcp_subtitulo('Motivação') . mcp_citacao((string) $f['motivacao'])
         . (!empty($f['experiencia']) ? mcp_subtitulo('Experiência com voluntariado') . mcp_citacao((string) $f['experiencia']) : '')
@@ -1078,10 +1078,9 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
     $passos = [
         [$cbfi ? 'A equipe de voluntariado entra em contato antes do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO : 'A equipe de voluntariado entra em contato em ' . MCP_VOL_PROXIMAS_ENTRADAS,
             ($cbfi
-                ? 'A próxima turma do CBFI, no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', na sede, está aberta a quem se cadastra agora. A equipe escreve para os cadastrados antes dela, para a ficha de entrevista e as orientações da turma; não é preciso enviar a ficha de novo.'
-                : 'As novas entradas no voluntariado abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . '. A sua ficha fica guardada, e a equipe escreve para todos os cadastrados nessa época: até lá, não é preciso esperar resposta nem enviar a ficha de novo.')
-            . ' O contato vem por e-mail, para <strong>' . mcp_escapar($email) . '</strong>, com o protocolo <strong>' . mcp_escapar($protocolo) . '</strong> no assunto. O remetente é <strong>'
-            . mcp_escapar($remetente) . '</strong>; se não achar, olhe o spam.'],
+                ? 'A próxima turma do CBFI, no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', na sede, está aberta a quem se cadastra agora. A equipe chama os cadastrados pelo WhatsApp antes dela, para a ficha de entrevista e as orientações da turma; não é preciso enviar a ficha de novo.'
+                : 'As novas entradas no voluntariado abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . '. A sua ficha fica guardada, e a equipe chama todos os cadastrados pelo WhatsApp nessa época: até lá, não é preciso esperar resposta nem enviar a ficha de novo.')
+            . ' O contato vem pelo WhatsApp, no telefone informado na ficha, <strong>' . mcp_escapar(mcp_telefone_bonito((string) ($f['telefone'] ?? ''))) . '</strong>. Tenha à mão o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>. Se o número estiver errado, responda este e-mail com o certo.'],
         ['Entrevista e ficha de entrevista',
             'Uma conversa com a coordenação do voluntariado, na sede (Praça da Cruz Vermelha, 10, Centro) ou por vídeo, para conhecer você, alinhar expectativas e preencher a ficha de entrevista.'],
         ['Curso Básico de Formação Institucional (CBFI)',
@@ -1124,8 +1123,8 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
         'html' => mcp_moldura("Recebemos sua ficha, $nome.", $corpo, [
             'eyebrow' => 'Voluntariado',
             'preheader' => $cbfi
-                ? "Protocolo $protocolo. A próxima turma do CBFI é no dia " . MCP_VOL_CBFI_DATA_TEXTO . ', e a equipe entra em contato antes dela.'
-                : "Protocolo $protocolo. As novas entradas no voluntariado abrem em " . MCP_VOL_PROXIMAS_ENTRADAS . ', e a equipe entra em contato nessa época.',
+                ? "Protocolo $protocolo. A próxima turma do CBFI é no dia " . MCP_VOL_CBFI_DATA_TEXTO . ', e a equipe entra em contato pelo WhatsApp antes dela.'
+                : "Protocolo $protocolo. As novas entradas no voluntariado abrem em " . MCP_VOL_PROXIMAS_ENTRADAS . ', e a equipe entra em contato pelo WhatsApp nessa época.',
             'motivo' => 'Você recebeu este e-mail porque preencheu a ficha de voluntariado em cruzvermelhariodejaneiro.org.',
         ]),
         'texto' => $texto,
