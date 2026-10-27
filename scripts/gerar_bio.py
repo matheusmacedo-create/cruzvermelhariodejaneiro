@@ -23,6 +23,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import cbfi
 import chat_widget
 import icones
 from gerar_matricula_presencial import HOME, RAIZ, esc, partes_da_home
@@ -46,7 +47,7 @@ URL_DOE = f"{ORIGEM}/doe/"
 FAQ = [
     ("Como ser voluntário da Cruz Vermelha no Rio de Janeiro?",
      "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. As novas entradas abrem em "
-     f"{PROXIMAS_ENTRADAS}: só nessa época a equipe do voluntariado entra em contato por e-mail com todos os cadastrados, "
+     f"{PROXIMAS_ENTRADAS}: só nessa época a equipe do voluntariado entra em contato pelo WhatsApp com todos os cadastrados, "
      "para a ficha de entrevista. Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat "
      "deste site.", []),
     ("Quais cursos a Cruz Vermelha Brasileira Rio de Janeiro oferece?",
@@ -70,6 +71,14 @@ FAQ = [
      "Na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro, CEP 20230-130. É na sede que acontecem os cursos presenciais e "
      "a formação de voluntários.", []),
 ]
+# Respostas que valem até a turma do CBFI de 28/11/2026 (scripts/cbfi.py): a página leva as duas e o navegador escolhe.
+FAQ_CBFI = {
+    "Como ser voluntário da Cruz Vermelha no Rio de Janeiro?":
+        "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A próxima turma do CBFI, o curso de "
+        f"formação inicial dos voluntários, é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, e está aberta a quem se cadastra agora: "
+        "a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados antes dela, para a ficha de entrevista. "
+        "Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.",
+}
 NOME = "Cruz Vermelha Brasileira – Filial Rio de Janeiro"
 CHAMADA = "Maior rede de ajuda humanitária do mundo.<br>Seja voluntário e ajude a salvar vidas!"
 IMAGEM_OG = f"{URL_PAGINA}img/og-bio.jpg"
@@ -81,6 +90,9 @@ BLOCOS = [
     {"tipo": "cartao", "imagem": "voluntario", "alt": "Seja voluntário: junte-se à equipe de voluntários da Cruz Vermelha Brasileira Rio de Janeiro",
      "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
      "link": "/voluntariado/cadastro/", "id": "voluntario"},
+    # Só até a turma do CBFI de 28/11/2026 (scripts/cbfi.py): some sozinho no navegador no dia seguinte.
+    *([{"tipo": "botao", "icone": "fa-solid fa-calendar-days", "titulo": f"CBFI: próxima turma de voluntários em {cbfi.DATA_CURTA}",
+        "link": cbfi.URL, "id": "cbfi", "cbfi": True}] if cbfi.aberto() else []),
     {"tipo": "botao", "icone": "fa-solid fa-hand-holding-heart", "titulo": "Doar para a Cruz Vermelha Brasileira Rio de Janeiro",
      "link": "/doe/?utm_source=ig&utm_medium=social&utm_content=link_in_bio", "id": "doe"},
     {"tipo": "titulo", "texto": "WhatsApp do voluntariado"},
@@ -111,7 +123,8 @@ def bloco_html(b: dict, primeiro: bool = False) -> str:
         return f'<p class="bio-titulo">{esc(b["texto"])}</p>'
     if tipo == "botao":
         estilo = f' {b["estilo"]}' if b.get("estilo") else ""
-        return (f'<a class="bio-botao{estilo}" href="{esc(b["link"])}" data-bio="{b["id"]}"{externo(b["link"])}>'
+        so_ate = ' data-cbfi="ate"' if b.get("cbfi") else ""
+        return (f'<a class="bio-botao{estilo}" href="{esc(b["link"])}" data-bio="{b["id"]}"{so_ate}{externo(b["link"])}>'
                 f'<i class="{b["icone"]}" aria-hidden="true"></i><span>{esc(b["titulo"])}</span>'
                 f'<span class="bio-seta" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span></a>')
     if tipo == "cartao":
@@ -241,6 +254,8 @@ def main() -> int:
             url = {"URL_MATRICULA": URL_MATRICULA, "URL_AGASALHO": URL_AGASALHO, "URL_GRATUITOS": URL_GRATUITOS,
                    "URL_DOE": URL_DOE}[alvo]
             texto = texto.replace(esc(rotulo), f'<a href="{url}">{esc(rotulo)}</a>', 1)
+        if pergunta in FAQ_CBFI:
+            texto = cbfi.alternar(esc(FAQ_CBFI[pergunta]), texto)
         return f"<details><summary>{esc(pergunta)}</summary><p>{texto}</p></details>"
     faq = "".join(faq_html(p, r, l) for p, r, l in FAQ)
 
@@ -264,7 +279,7 @@ def main() -> int:
          "primaryImageOfPage": {"@type": "ImageObject", "url": IMAGEM_OG, "width": 1200, "height": 630},
          "significantLink": [b["link"] for b in BLOCOS if b.get("link") and b["link"].startswith("http")]},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-            {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": r}} for p, r, _ in FAQ]},
+            {"@type": "Question", "name": p, "acceptedAnswer": {"@type": "Answer", "text": FAQ_CBFI[p] if p in FAQ_CBFI and cbfi.aberto() else r}} for p, r, _ in FAQ]},
     ]
     ld_html = "".join(f'\n  <script type="application/ld+json">\n{json.dumps(d, ensure_ascii=False, indent=2)}\n  </script>' for d in ld)
     for d in ld:
@@ -343,7 +358,7 @@ def main() -> int:
 </body>
 </html>
 """
-    pagina = icones.converter(pagina)
+    pagina = cbfi.resolver(icones.converter(pagina))
     SAIDA.parent.mkdir(parents=True, exist_ok=True)
     SAIDA.write_text(pagina, encoding="utf-8")
     print(f"gravado {SAIDA.relative_to(RAIZ)} ({len(pagina.encode('utf-8'))} bytes, {len(BLOCOS)} blocos)")

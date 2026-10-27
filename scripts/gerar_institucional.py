@@ -2,7 +2,7 @@
 """Gera as páginas institucionais da filial a partir de site/institucional.json (11/10/2026).
 
 Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /movimento-internacional/,
-/direito-internacional-humanitario/, /cursos-gratuitos/ e /voluntariado/. O conteúdo (textos, fontes oficiais,
+/direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/ e /cbfi/ (o link do CBFI, 27/10/2026). O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -38,6 +38,7 @@ import sys
 from datetime import date
 from html import escape
 
+import cbfi
 import chat_widget
 import icones
 from gerar_matricula_presencial import HOME, RAIZ, partes_da_home
@@ -47,13 +48,15 @@ CONTEUDO = RAIZ / "site" / "institucional.json"
 ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema",
-         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado"]
-# Páginas de "Quem somos" (trilha Início › Quem somos › Página) e de "Atuação" (Início › Página).
+         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi"]
+# Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página) e
+# de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "direito-internacional-humanitario", "base-legal"}
+VOLUNTARIADO = {"cbfi"}
 NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princípios Fundamentais",
                 "movimento-internacional": "Movimento Internacional", "emblema": "O emblema",
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
-                "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado"}
+                "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
@@ -89,6 +92,7 @@ CSS = """  <style>
     .inst-secao ul, .inst-secao ol { margin: 0 0 16px; padding-left: 22px; }
     .inst-secao li { margin: 0 0 6px; }
     .inst-secao a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .inst-secao a.btn { color: #fff; text-decoration: none; }
     .inst-oficial { margin: 18px 0 18px; padding: 18px 22px; border-left: 4px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; }
     .inst-oficial p { font-size: 1rem; font-style: italic; margin: 0 0 8px; }
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }
@@ -151,6 +155,17 @@ def esc(t: str) -> str:
     return escape(str(t), quote=True)
 
 
+def resposta_texto(q: dict) -> str:
+    """Resposta do FAQPage: "resposta_cbfi" (opcional) vale até a turma do CBFI de 28/11 (scripts/cbfi.py)."""
+    return q["resposta_cbfi"] if q.get("resposta_cbfi") and cbfi.aberto() else q["resposta"]
+
+
+def resposta_html(q: dict) -> str:
+    if q.get("resposta_cbfi"):
+        return cbfi.alternar(esc(q["resposta_cbfi"]), esc(q["resposta"]))
+    return esc(q["resposta"])
+
+
 def carregar() -> dict:
     dados = json.loads(CONTEUDO.read_text(encoding="utf-8"))
     paginas = {p["slug"]: p for p in dados["paginas"]}
@@ -198,6 +213,8 @@ def trilha(p: dict) -> list[tuple[str, str]]:
     itens = [("Início", f"{ORIGEM}/")]
     if p["slug"] in QUEM_SOMOS:
         itens.append(("Quem somos", url_de("quem-somos")))
+    elif p["slug"] in VOLUNTARIADO:
+        itens.append(("Voluntariado", url_de("voluntariado")))
     itens.append((NOMES_CURTOS[p["slug"]], url_de(p["slug"])))
     return itens
 
@@ -259,7 +276,7 @@ def json_ld(p: dict, paginas: dict) -> str:
     if p.get("perguntas"):
         grafo.append({"@type": "FAQPage", "@id": f"{url}#perguntas", "isPartOf": {"@id": f"{url}#pagina"},
                       "mainEntity": [{"@type": "Question", "name": q["pergunta"],
-                                      "acceptedAnswer": {"@type": "Answer", "text": q["resposta"]}} for q in p["perguntas"]]})
+                                      "acceptedAnswer": {"@type": "Answer", "text": resposta_texto(q)}} for q in p["perguntas"]]})
     ld = {"@context": "https://schema.org", "@graph": grafo}
     texto = json.dumps(ld, ensure_ascii=False, indent=1).replace("</", "<\\/")
     return f'  <script type="application/ld+json">\n{texto}\n  </script>'
@@ -325,7 +342,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"])
     perguntas = ""
     if p.get("perguntas"):
-        itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{esc(q['resposta'])}</p></details>" for q in p["perguntas"])
+        itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{resposta_html(q)}</p></details>" for q in p["perguntas"])
         perguntas = f"""
       <section class="inst-secao inst-perguntas" id="perguntas" aria-labelledby="perguntas-titulo">
         <h2 id="perguntas-titulo">Perguntas frequentes</h2>
@@ -420,7 +437,7 @@ def main() -> int:
     for slug in ORDEM:
         if slug not in so:
             continue
-        html = icones.converter(gerar(paginas[slug], paginas, partes))
+        html = cbfi.resolver(icones.converter(gerar(paginas[slug], paginas, partes)))
         pasta = RAIZ / "site" / slug
         pasta.mkdir(parents=True, exist_ok=True)
         (pasta / "index.html").write_text(html, encoding="utf-8")

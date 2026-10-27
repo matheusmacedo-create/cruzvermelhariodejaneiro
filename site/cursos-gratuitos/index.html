@@ -61,6 +61,7 @@
     .inst-secao ul, .inst-secao ol { margin: 0 0 16px; padding-left: 22px; }
     .inst-secao li { margin: 0 0 6px; }
     .inst-secao a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .inst-secao a.btn { color: #fff; text-decoration: none; }
     .inst-oficial { margin: 18px 0 18px; padding: 18px 22px; border-left: 4px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; }
     .inst-oficial p { font-size: 1rem; font-style: italic; margin: 0 0 8px; }
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }
@@ -399,7 +400,7 @@
 
       <section class="inst-secao" id="caminho" aria-labelledby="caminho-titulo">
         <h2 id="caminho-titulo">O caminho até a formação gratuita</h2>
-        <ol><li><strong>Cadastro no voluntariado.</strong> O primeiro passo é o <a href="/voluntariado/cadastro/">formulário oficial do voluntariado</a>.</li><li><strong>Ficha de entrevista.</strong> A equipe do voluntariado entra em contato e faz a ficha de entrevista. Ser aceito depende dessa etapa: o cadastro sozinho não garante vaga.</li><li><strong>CBFI.</strong> Quem é aceito faz o CBFI, o curso de formação inicial dos voluntários. Ele abre <strong>quatro vezes por ano</strong>, na sede, no Palácio da Cruz Vermelha, no Centro do Rio. Não se paga nada por ele.</li><li><strong>Formações internas.</strong> Só depois do CBFI o voluntário passa a participar das formações internas da filial, como as de primeiros socorros, conforme a frente em que atua e a necessidade das ações.</li></ol><figure class="inst-figura"><picture><source media="(max-width: 720px)" srcset="/assets/institucional/desenhos/caminho-voluntario-vertical.svg" width="400" height="612"><img loading="lazy" decoding="async" src="/assets/institucional/desenhos/caminho-voluntario.svg" width="860" height="232" alt="Como ser voluntário na filial do Rio, em cinco passos: 1, cadastro no formulário oficial do voluntariado; 2, ficha de entrevista, em que a equipe entra em contato e explica as frentes de atuação; 3, CBFI, curso de formação inicial, gratuito, quatro vezes por ano; 4, termo de adesão, assinatura prevista na Lei nº 9.608/1998; 5, atuação nas ações e nas formações internas da filial. A formação é gratuita: não é preciso comprar nenhum curso para ser voluntário"></picture><figcaption>Os passos até a atuação como voluntário, incluindo o termo de adesão previsto na Lei nº 9.608/1998. A formação é gratuita em todas as etapas.</figcaption></figure><p>O passo a passo completo para entrar, com o termo de adesão e o que diz a lei, está em <a href="/voluntariado/">Seja voluntário</a>.</p>
+        <ol><li><strong>Cadastro no voluntariado.</strong> O primeiro passo é o <a href="/voluntariado/cadastro/">formulário oficial do voluntariado</a>.</li><li><strong>Ficha de entrevista.</strong> A equipe do voluntariado entra em contato e faz a ficha de entrevista. Ser aceito depende dessa etapa: o cadastro sozinho não garante vaga.</li><li><strong>CBFI.</strong> Quem é aceito faz o CBFI, o curso de formação inicial dos voluntários. Ele abre <strong>quatro vezes por ano</strong>, na sede, no Palácio da Cruz Vermelha, no Centro do Rio. Não se paga nada por ele.<span data-cbfi="ate"> A próxima turma é no sábado, 28 de novembro de 2026: <a href="/cbfi/">veja como participar</a>.</span><span data-cbfi="depois" hidden></span></li><li><strong>Formações internas.</strong> Só depois do CBFI o voluntário passa a participar das formações internas da filial, como as de primeiros socorros, conforme a frente em que atua e a necessidade das ações.</li></ol><figure class="inst-figura"><picture><source media="(max-width: 720px)" srcset="/assets/institucional/desenhos/caminho-voluntario-vertical.svg" width="400" height="612"><img loading="lazy" decoding="async" src="/assets/institucional/desenhos/caminho-voluntario.svg" width="860" height="232" alt="Como ser voluntário na filial do Rio, em cinco passos: 1, cadastro no formulário oficial do voluntariado; 2, ficha de entrevista, em que a equipe entra em contato e explica as frentes de atuação; 3, CBFI, curso de formação inicial, gratuito, quatro vezes por ano; 4, termo de adesão, assinatura prevista na Lei nº 9.608/1998; 5, atuação nas ações e nas formações internas da filial. A formação é gratuita: não é preciso comprar nenhum curso para ser voluntário"></picture><figcaption>Os passos até a atuação como voluntário, incluindo o termo de adesão previsto na Lei nº 9.608/1998. A formação é gratuita em todas as etapas.</figcaption></figure><p>O passo a passo completo para entrar, com o termo de adesão e o que diz a lei, está em <a href="/voluntariado/">Seja voluntário</a>.</p>
       </section>
 
       <section class="inst-secao" id="quem-oferece" aria-labelledby="quem-oferece-titulo">
@@ -531,6 +532,8 @@
         <span class="sep">|</span>
         <a href="/reembolso/">Cancelamento e reembolso</a>
         <span class="sep">|</span>
+        <a href="/como-produzimos-nosso-conteudo/">Como produzimos nosso conteúdo</a>
+        <span class="sep">|</span>
         <a href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a>
       </div>
     </div>
@@ -588,6 +591,7 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
-  <script src="/chat/chat.js?v=437628c4c5" defer></script>
+  <script src="/chat/chat.js?v=9ed9084114" defer></script>
+  <script>/* CBFI de 28/11 (scripts/cbfi.py): a partir do dia seguinte, o texto de janeiro */(function(){var h=new Date(Date.now()-108e5).toISOString().slice(0,10);if(h<="2026-11-28")return;var l=document.querySelectorAll("[data-cbfi]");for(var i=0;i<l.length;i++){var a=l[i].getAttribute("data-cbfi")==="ate";l[i].hidden=a;if(a)l[i].style.display="none";}})();</script>
 </body>
 </html>

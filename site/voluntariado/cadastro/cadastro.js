@@ -241,7 +241,7 @@
           mostrarAviso(resumoErros([{ campo: d.campo, texto: texto }]), false);
           focar(d.campo);
         } else if (x.http === 409) {
-          mostrarAviso(p(d.erro || 'Já recebemos a sua ficha há pouco tempo. A equipe do voluntariado entra em contato pelo e-mail informado.'), true);
+          mostrarAviso(p(d.erro || 'Já recebemos a sua ficha há pouco tempo. A equipe do voluntariado entra em contato pelo WhatsApp, no telefone informado.'), true);
         } else if (x.http === 429) {
           mostrarAviso(p(d.erro || 'Recebemos muitos envios em pouco tempo. Aguarde um pouco e tente de novo.'), true);
         } else {
@@ -250,7 +250,7 @@
       });
   });
   function concluir(d, corpo) {
-    mostrarSucesso({ protocolo: d.protocolo, nome: d.nome, email: d.email || corpo.email, prazo: d.prazo, menor: d.menor === true });
+    mostrarSucesso({ protocolo: d.protocolo, nome: d.nome, email: d.email || corpo.email, prazo: d.prazo, aviso: d.aviso, menor: d.menor === true });
     // sign_up, não generate_lead: o generate_lead é o envio do checkout, e os dois são eventos-chave separados (24/10/2026).
     ga('sign_up', { method: 'voluntariado', form_id: FORM_ID, lead_source: 'site' });
     pixel('CompleteRegistration', { content_name: 'voluntariado', content_category: 'voluntariado' }, corpo.evento_id);
@@ -264,7 +264,8 @@
     texto('saudacao', o.nome ? 'Obrigado, ' + o.nome + '! Recebemos o seu cadastro.' : 'Obrigado! Recebemos o seu cadastro.');
     var emailFrase = $('[data-vc="email-frase"]', sucesso);
     if (emailFrase) emailFrase.innerHTML = o.email ? 'Enviamos a confirmação para <b>' + esc(o.email) + '</b>.' : 'Enviamos a confirmação para o e-mail que você informou.';
-    texto('prazo-frase', o.prazo ? 'As novas entradas abrem em ' + o.prazo + ': a equipe do voluntariado entra em contato com você nessa época, e até lá não é preciso esperar resposta.' : 'A equipe do voluntariado entra em contato por e-mail para a próxima etapa.');
+    // "aviso" é a frase pronta da API (turma do CBFI até 28/11, depois as novas entradas em janeiro); "prazo" ficou para respostas antigas.
+    texto('prazo-frase', o.aviso ? o.aviso : o.prazo ? 'As novas entradas abrem em ' + o.prazo + ': a equipe do voluntariado entra em contato com você pelo WhatsApp nessa época, e até lá não é preciso esperar resposta.' : 'A equipe do voluntariado entra em contato pelo WhatsApp para a próxima etapa.');
     $$('[data-vc="menor"]', sucesso).forEach(function (el) { el.hidden = !o.menor; });
     var intro = document.getElementById('vc-intro-form');
     if (intro) intro.hidden = true;
@@ -363,7 +364,7 @@
       mostrarAviso('<p><b>O cadastro ainda não foi recebido.</b></p>' + resumoErros([{ campo: erroUrl, texto: textoErro }]), false);
       focar(erroUrl);
     } else if (erroUrl === 'duplicada') {
-      mostrarAviso(p('Já recebemos a sua ficha nos últimos 30 dias. Não precisa enviar de novo: a equipe do voluntariado entra em contato pelo e-mail informado.'), true);
+      mostrarAviso(p('Já recebemos a sua ficha nos últimos 30 dias. Não precisa enviar de novo: a equipe do voluntariado entra em contato pelo WhatsApp, no telefone informado.'), true);
     } else if (erroUrl === 'limite') {
       mostrarAviso(p('Recebemos muitos envios em pouco tempo. Aguarde um pouco e tente de novo.'), true);
     } else {

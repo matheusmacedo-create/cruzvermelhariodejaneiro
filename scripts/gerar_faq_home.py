@@ -12,6 +12,10 @@ scripts/chat_widget.py lê), mas fica fora do HTML da home e do FAQPage (script 
 pergunta visível na home não aparece. Sem o campo, a pergunta entra na home, como sempre. (16/10/2026: a home
 mostra só 5 perguntas de curso; as outras ficaram para a página de matrícula e para o chat.)
 
+Campos opcionais "resposta_cbfi" e "links_cbfi": a resposta que vale até a turma do CBFI de 28/11/2026
+(scripts/cbfi.py). Até lá a home leva as duas e o navegador escolhe pela data; o FAQPage e o chat levam a da turma
+(o chat também escolhe pela data). Gerada a partir de 29/11, fica só a "resposta".
+
 Uso:  python3 scripts/gerar_faq_home.py     (depois, publicar site/index.html)
 """
 from __future__ import annotations
@@ -21,6 +25,8 @@ import json
 import re
 import sys
 from pathlib import Path
+
+import cbfi
 
 RAIZ = Path(__file__).resolve().parent.parent
 HOME = RAIZ / "site" / "index.html"
@@ -71,8 +77,16 @@ def main() -> int:
             palavras = len(resposta.split())
             if not 40 <= palavras <= 120:
                 print(f"  ! {palavras} palavras em: {pergunta}", file=sys.stderr)
+            corpo = resposta_html(resposta, q.get("links", []))
+            if q.get("resposta_cbfi"):
+                turma = q["resposta_cbfi"].strip()
+                if NACIONAL_SOZINHA.search(turma):
+                    raise SystemExit(f"nome incompleto da filial em: {pergunta} (resposta_cbfi)")
+                corpo = cbfi.alternar(resposta_html(turma, q.get("links_cbfi", q.get("links", []))), corpo)
+                if cbfi.aberto():
+                    resposta = turma
             partes.append(f'          <details class="faq-item"{" open" if primeira else ""}>\n            <summary>{esc(pergunta)}</summary>\n'
-                          f'            <div class="faq-answer">{resposta_html(resposta, q.get("links", []))}</div>\n          </details>')
+                          f'            <div class="faq-answer">{corpo}</div>\n          </details>')
             entidades.append({"@type": "Question", "name": pergunta, "acceptedAnswer": {"@type": "Answer", "text": resposta}})
             primeira = False
     partes.append("        </div>\n      ")
@@ -88,7 +102,7 @@ def main() -> int:
         home = re.sub(r'<script type="application/ld\+json" id="faq-ld">.*?</script>', lambda m: bloco, home, count=1, flags=re.S)
     else:
         home = home.replace("</head>", "  " + bloco + "\n</head>", 1)
-    HOME.write_text(home, encoding="utf-8")
+    HOME.write_text(cbfi.resolver(home), encoding="utf-8")
     fora = sum(1 for g in dados["grupos"] for q in g["perguntas"] if q.get("home", True) is False)
     print(f"gravado {HOME.relative_to(RAIZ)}: {len(entidades)} perguntas na home ({fora} só no JSON/chat, \"home\": false)")
     return 0
