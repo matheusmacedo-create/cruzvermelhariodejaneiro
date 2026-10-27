@@ -194,6 +194,32 @@ para `/matricula-cursos-presenciais/conferir/` mantendo o `?c=`).
   WhatsApp e cancelamento, gerar de novo, ficha não aceita). O QR baixado do portal foi lido por um leitor independente
   (OpenCV) e abre `/conferir/?c=<código>` com a aprovação válida.
 
+## Fichas na Redação / Palácio Virtual (27/10/2026)
+
+Pedido do Matheus: todas as fichas do cadastro aparecem na Redação (Pessoas → Voluntários → Inscrições pendentes), e a
+decisão passa a ser **lá**: aprovar na Redação aceita a ficha aqui e gera o código de aprovação; recusar lá recusa aqui.
+O portal continua para consulta e para cancelar um código. Lado da Redação: `ARQUITETURA.md` §7.38 do repositório dela.
+
+- **API** `api/redacao-voluntarios.php`, servidor a servidor, `Authorization: Bearer <REDACAO_TOKEN>` (32+ caracteres).
+  Sem a chave configurada, 404; chave errada, 401 e freio `redacao_negado` (20 por hora por IP).
+  - `GET ?desde=<id>&limite=<1..50>`: as fichas com `id` maior, em ordem, com os rótulos legíveis, o CPF, a selfie em
+    base64 e o código de aprovação, se houver; `ultimo` e `mais` para a próxima página. A Redação só importa as fichas
+    `nova`, `em_analise` e `entrevista`.
+  - `POST {"acao":"aprovar","protocolo","quem","cpf"?}`: aceita a ficha (cria o colaborador do ponto) e emite o código
+    (`mcp_redacao_aprovar`). Ficha sem CPF precisa do CPF da Redação; sem ele, 422. Repetir devolve o mesmo código.
+  - `POST {"acao":"recusar","protocolo","quem"}`: recusa com a nota "Recusada na Redação."; ficha aceita não se recusa (422).
+  - Quem decidiu fica em `status_por` como `Redação · <nome>`.
+- **Aviso de ficha nova**: depois da resposta ao formulário (`register_shutdown_function` + `fastcgi_finish_request`,
+  como a Meta), `mcp_redacao_avisar_ficha_nova` faz um POST com a mesma chave para `REDACAO_AVISO_URL` (padrão
+  `https://palacio.cruzvermelhariodejaneiro.org/api/voluntariado/fichas-do-site`), 3 s no máximo; falha só vai ao log.
+  A Redação também busca numa rotina diária e pelo botão "Buscar fichas do site".
+- **Configuração**: `REDACAO_TOKEN` (e, só em testes, `REDACAO_AVISO_URL`) em `api/config-redacao.php`, fora do Git; o
+  mesmo valor fica na Redação em Configurações → Integrações → "Site — fichas de voluntariado" (ou `SITE_VOLUNTARIOS_TOKEN`).
+- **Política de Privacidade**: a seção Voluntariado diz que a ficha (com selfie e CPF) vai para o Palácio Virtual,
+  hospedado na Vercel e no Supabase, e a transferência internacional correspondente.
+- **Testes**: `testar_voluntarios_integracao.php` (401, lista com a selfie, paginação, aprovar sem e com CPF,
+  idempotência, recusar, protocolo desconhecido e o aviso chegando a um receptor local com a chave).
+
 ## Configuração (nomes, só no servidor)
 
 - `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova e das mensagens do chat com o

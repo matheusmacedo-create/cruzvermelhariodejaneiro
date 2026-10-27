@@ -28,9 +28,10 @@ if ($configOriginal === '' || !is_file($configOriginal)) {
     exit(2);
 }
 $portaSite = (int) (getenv('MCP_TESTE_PORTA') ?: 18900 + random_int(0, 499));
+$portaAviso = $portaSite + 1000;
 $config = tempnam(sys_get_temp_dir(), 'mcp-vol-');
 file_put_contents($config, '<?php return [\'SITE_URL\' => \'http://127.0.0.1:' . $portaSite . '\', \'EMAIL_CONTATO\' => \'contato@exemplo.org\', '
-    . '\'EMAIL_VOLUNTARIADO\' => \'voluntariado@exemplo.org\', \'PAINEL_EMAILS\' => \'vol@exemplo.org\', \'ESCOLA_API_URL\' => \'\', \'REDACAO_TOKEN\' => \'' . str_repeat('r', 40) . '\'] + (require '
+    . '\'EMAIL_VOLUNTARIADO\' => \'voluntariado@exemplo.org\', \'PAINEL_EMAILS\' => \'vol@exemplo.org\', \'ESCOLA_API_URL\' => \'\', \'REDACAO_TOKEN\' => \'' . str_repeat('r', 40) . '\', \'REDACAO_AVISO_URL\' => \'http://127.0.0.1:' . $portaAviso . '/aviso\'] + (require '
     . var_export($configOriginal, true) . ');');
 $semExtra = tempnam(sys_get_temp_dir(), 'mcp-vol-extra-');
 file_put_contents($semExtra, '<?php return [];');
@@ -133,6 +134,13 @@ $servidor = proc_open([PHP_BINARY, '-S', "127.0.0.1:$portaSite", '-t', $raiz . '
     '-d', 'display_errors=0', '-d', 'log_errors=1', '-d', "error_log=$logErros"], $nulo, $tubos, null, $ambiente);
 $pidServidor = (int) (proc_get_status($servidor)['pid'] ?? 0);
 $base = "http://127.0.0.1:$portaSite/matricula-cursos-presenciais/api/";
+// No lugar da Redação: um receptor que anota cada aviso de ficha nova (método e chave) e responde 202.
+$pastaAviso = sys_get_temp_dir() . '/mcp-vol-aviso-' . bin2hex(random_bytes(4));
+mkdir($pastaAviso);
+$avisos = "$pastaAviso/avisos.txt";
+file_put_contents("$pastaAviso/index.php", '<?php file_put_contents(' . var_export($avisos, true) . ', $_SERVER["REQUEST_METHOD"] . " " . ($_SERVER["HTTP_AUTHORIZATION"] ?? "") . "\\n", FILE_APPEND); http_response_code(202);');
+$receptor = proc_open([PHP_BINARY, '-S', "127.0.0.1:$portaAviso", "$pastaAviso/index.php"], $nulo, $tubosAviso);
+$pidReceptor = (int) (proc_get_status($receptor)['pid'] ?? 0);
 for ($i = 0; $i < 50 && @fsockopen('127.0.0.1', $portaSite) === false; $i++) {
     usleep(100000);
 }
@@ -243,6 +251,11 @@ try {
     verificar('ficha válida: protocolo bate com o id e a data', $ana['protocolo'] ?? null, mcp_voluntario_protocolo($anaId, (string) ($ana['criado_em'] ?? mcp_agora())));
     verificar('nenhum e-mail sai (sem Resend), mas o resultado fica registrado', [in_array($ana['email_equipe'] ?? null, ['mail', 'falhou'], true), in_array($ana['email_confirmacao'] ?? null, ['mail', 'falhou'], true)], [true, true]);
     $evento = (string) ($db->query("SELECT detalhe FROM mcp_eventos WHERE tipo = 'voluntario' ORDER BY id DESC LIMIT 1")->fetchColumn() ?: '');
+    for ($i = 0; $i < 30 && !is_file($avisos); $i++) {
+        usleep(100000);
+    }
+    verificar('ficha nova avisa a Redação depois da resposta: POST com a chave da ligação',
+        explode("\n", (string) @file_get_contents($avisos))[0], 'POST Bearer ' . str_repeat('r', 40));
     verificar('registro em mcp_eventos: id e protocolo, sem CPF, e-mail ou nome', [str_contains($evento, "#$anaId · " . $ana['protocolo']), str_contains($evento, $cpfAna), str_contains($evento, $emailAna), str_contains($evento, 'Ana')], [true, false, false, false]);
     if (function_exists('mcp_drive_enfileirar')) {
         verificar('gancho do Drive: com o módulo publicado e o Drive desligado, nada entra na fila', (int) $db->query("SELECT COUNT(*) FROM mcp_drive_fila WHERE tipo = 'ficha_voluntario' AND referencia = $anaId")->fetchColumn(), function_exists('mcp_drive_ligado') && mcp_drive_ligado() ? 1 : 0);
@@ -548,6 +561,14 @@ try {
         proc_terminate($servidor);
     }
     proc_close($servidor);
+    if ($pidReceptor > 0 && function_exists('posix_kill')) {
+        posix_kill($pidReceptor, SIGKILL);
+    }
+    proc_close($receptor);
+    foreach (glob("$pastaAviso/*") ?: [] as $arquivo) {
+        @unlink($arquivo);
+    }
+    @rmdir($pastaAviso);
     limpar($db);
     foreach ([$config, $semExtra, $logErros] as $arquivo) {
         @unlink($arquivo);

@@ -664,7 +664,7 @@ function mcp_voluntario_aprovacao_mensagem(array $f, string $codigo): string
 
 // ----------------------------------------------------------------------------- ligação com a Redação
 /**
- * Fichas para a Redação (pedido do Matheus, 27/10/2026): a Redação (redacao.cruzvermelhariodejaneiro.org, Supabase)
+ * Fichas para a Redação (pedido do Matheus, 27/10/2026): a Redação (palacio.cruzvermelhariodejaneiro.org, Supabase)
  * busca as fichas pela API api/redacao-voluntarios.php e as mostra em Voluntários → Inscrições pendentes; a coordenação
  * aprova ou recusa lá, e a Redação avisa o site pela mesma API (o aceite cria o colaborador do ponto e o código de
  * aprovação). Servidor a servidor, com "Authorization: Bearer <REDACAO_TOKEN>" (config-redacao.php, só no servidor; o
@@ -746,6 +746,42 @@ function mcp_redacao_fichas(int $desde, int $limite): array
         'ultimo' => $linhas ? (int) end($linhas)['id'] : max(0, $desde),
         'mais' => $mais,
     ];
+}
+
+/**
+ * Avisa a Redação de que chegou ficha nova, para ela buscar na hora em vez de esperar a rotina diária. Roda depois da
+ * resposta (como o envio da Meta, lib/meta.php): quem preencheu não espera. A Redação responde 202 e importa depois;
+ * aqui, no máximo 3 s, e qualquer falha só vai para o log (a ficha já está gravada e a rotina diária da Redação pega do
+ * mesmo jeito). Endereço: REDACAO_AVISO_URL ou o padrão; sem REDACAO_TOKEN, nada.
+ */
+function mcp_redacao_avisar_ficha_nova(): void
+{
+    if (mcp_redacao_configurado() && function_exists('curl_init')) {
+        register_shutdown_function('mcp_redacao_enviar_aviso');
+    }
+}
+
+function mcp_redacao_enviar_aviso(): void
+{
+    $url = (string) mcp_cfg('REDACAO_AVISO_URL', 'https://palacio.cruzvermelhariodejaneiro.org/api/voluntariado/fichas-do-site');
+    try {
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } elseif (function_exists('litespeed_finish_request')) {
+            litespeed_finish_request();
+        }
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 2, CURLOPT_TIMEOUT => 3,
+            CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . (string) mcp_cfg('REDACAO_TOKEN'), 'Content-Type: application/json']]);
+        curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        curl_close($ch);
+        if ($status !== 202 && $status !== 200) {
+            error_log("[matricula] aviso à Redação (ficha nova): HTTP $status");
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] aviso à Redação (ficha nova): ' . $e->getMessage());
+    }
 }
 
 function mcp_voluntario_por_protocolo(string $protocolo): ?array
