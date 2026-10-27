@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Índice de sitemaps da Cruz Vermelha Brasileira, filial Rio de Janeiro. Envie este endereço no Google
-     Search Console (propriedade de domínio cruzvermelhariodejaneiro.org). Gerado por scripts/gerar_sitemaps.py em 2026-10-21T02:29:56+00:00.
+     Search Console (propriedade de domínio cruzvermelhariodejaneiro.org). Gerado por scripts/gerar_sitemaps.py em 2026-10-27T20:03:39+00:00.
      sitemap.xml é mantido pela Redação (regenerado a cada notícia); os outros dois vêm deste repositório. -->
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://cruzvermelhariodejaneiro.org/sitemap-paginas.xml</loc>
-    <lastmod>2026-10-21T02:29:56+00:00</lastmod>
+    <lastmod>2026-10-27T20:03:39+00:00</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://cruzvermelhariodejaneiro.org/sitemap-subdominios.xml</loc>
-    <lastmod>2026-10-21T02:29:56+00:00</lastmod>
+    <lastmod>2026-10-27T20:03:39+00:00</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://cruzvermelhariodejaneiro.org/sitemap.xml</loc>
-    <lastmod>2026-10-20T18:48:17+00:00</lastmod>
+    <lastmod>2026-10-26T18:41:23+00:00</lastmod>
   </sitemap>
 </sitemapindex>
