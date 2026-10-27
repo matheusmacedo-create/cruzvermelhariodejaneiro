@@ -6,7 +6,9 @@
    - envia a ficha em JSON (fetch, mesmo padrão de site/chat/chat.js) e trata 201, 409, 422, 429 e falha de rede;
    - troca o formulário pela tela de sucesso, com o protocolo em destaque e os próximos passos;
    - lê ?protocolo= e ?erro= da URL (o caminho sem JavaScript, quando a página volta da API);
-   - aplica máscaras simples de telefone e CPF.
+   - aplica máscaras simples de telefone e CPF;
+   - selfie opcional: mostra a prévia e reduz a foto no navegador (até 800 px, JPG, sem os metadados da câmera) antes
+     de mandar junto do JSON, no campo "selfie" (data URL). O servidor confere e regrava de novo.
    O CPF nunca vai para o GA4 nem para o Pixel: os eventos de medição levam só o id do formulário.
    Fonte: site/voluntariado/cadastro/cadastro.js; a página referencia cadastro.js?v=<hash> (scripts/gerar_voluntariado_cadastro.py). */
 (function () {
@@ -175,6 +177,68 @@
     return erros;
   }
 
+  // ------------------------------------------------------------------ selfie (opcional)
+  var selfieCampo = form.elements.selfie;
+  var selfiePrevia = document.getElementById('vc-selfie-previa');
+  var selfieImg = document.getElementById('vc-selfie-img');
+  var selfieDados = null;              // data URL já reduzida
+  var selfiePronta = Promise.resolve(); // a redução é assíncrona: o envio espera por ela
+  function limparSelfie() {
+    selfieDados = null;
+    if (selfieCampo) selfieCampo.value = '';
+    if (selfiePrevia) selfiePrevia.hidden = true;
+    if (selfieImg) selfieImg.removeAttribute('src');
+  }
+  function carregarImagem(arquivo) {
+    // createImageBitmap aplica a rotação do EXIF; o <img> é o caminho dos navegadores mais antigos (que também giram, desde 2020).
+    if (window.createImageBitmap) {
+      return createImageBitmap(arquivo, { imageOrientation: 'from-image' }).catch(function () { return createImageBitmap(arquivo); });
+    }
+    return new Promise(function (ok, falha) {
+      var url = URL.createObjectURL(arquivo), img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); ok(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); falha(new Error('imagem')); };
+      img.src = url;
+    });
+  }
+  function reduzir(arquivo) {
+    return carregarImagem(arquivo).then(function (img) {
+      var w = img.width, h = img.height, escala = Math.min(1, 800 / Math.max(w, h));
+      var tela = document.createElement('canvas');
+      tela.width = Math.max(1, Math.round(w * escala));
+      tela.height = Math.max(1, Math.round(h * escala));
+      var ctx = tela.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, tela.width, tela.height);
+      ctx.drawImage(img, 0, 0, tela.width, tela.height);
+      if (img.close) img.close();
+      return tela.toDataURL('image/jpeg', 0.82);
+    });
+  }
+  if (selfieCampo) {
+    selfieCampo.addEventListener('change', function () {
+      var w = caixa('selfie'), e = w && $('.vc-erro', w);
+      if (e) { e.textContent = ''; e.hidden = true; }
+      if (w) w.classList.remove('vc-invalido');
+      selfieCampo.removeAttribute('aria-invalid');
+      var arquivo = selfieCampo.files && selfieCampo.files[0];
+      selfieDados = null;
+      if (!arquivo) { limparSelfie(); return; }
+      if (!/^image\/(jpeg|png)$/.test(arquivo.type)) { limparSelfie(); marcarErro('selfie', 'A selfie precisa ser uma foto em JPG ou PNG.'); return; }
+      if (arquivo.size > 10 * 1024 * 1024) { limparSelfie(); marcarErro('selfie', 'A selfie pode ter até 10 MB. Tire outra ou siga sem ela.'); return; }
+      selfiePronta = reduzir(arquivo).then(function (dados) {
+        selfieDados = dados;
+        if (selfieImg) selfieImg.src = dados;
+        if (selfiePrevia) selfiePrevia.hidden = false;
+      }).catch(function () {
+        limparSelfie();
+        marcarErro('selfie', 'Não consegui abrir essa foto. Tente outra, em JPG ou PNG, ou siga sem ela.');
+      });
+    });
+  }
+  var selfieRemover = document.getElementById('vc-selfie-remover');
+  if (selfieRemover) selfieRemover.addEventListener('click', function () { limparSelfie(); if (selfieCampo) selfieCampo.focus(); });
+
   // ------------------------------------------------------------------ envio
   function montarCorpo() {
     var saude = marcados('saude')[0] || '';
@@ -193,6 +257,7 @@
       evento_id: novoId('vol')
     };
     if (cpf) corpo.cpf = cpf;
+    if (selfieDados) corpo.selfie = selfieDados;
     return corpo;
   }
   function ocupado(sim) {
@@ -220,8 +285,10 @@
       focar(erros[0].campo);
       return;
     }
-    var corpo = montarCorpo();
     ocupado(true);
+    selfiePronta.then(function () { enviar(montarCorpo()); });
+  });
+  function enviar(corpo) {
     fetch(API, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })
       .then(function (resp) { return resp.json().catch(function () { return null; }).then(function (d) { return { http: resp.status, d: d }; }); })
       .catch(function () { return { http: 0, d: null }; })
@@ -248,7 +315,7 @@
           mostrarAviso(p(d.erro || 'Não consegui enviar agora. Tente de novo em instantes.'), true);
         }
       });
-  });
+  }
   function concluir(d, corpo) {
     mostrarSucesso({ protocolo: d.protocolo, nome: d.nome, email: d.email || corpo.email, prazo: d.prazo, aviso: d.aviso, menor: d.menor === true });
     // sign_up, não generate_lead: o generate_lead é o envio do checkout, e os dois são eventos-chave separados (24/10/2026).
@@ -355,7 +422,8 @@
       cpf: 'Esse CPF não parece válido. Confira os números ou deixe em branco por enquanto.',
       motivacao: 'A motivação precisa ter de 20 a 1500 caracteres.',
       consentimento: 'Para seguir, você precisa ler e aceitar a Política de Privacidade.',
-      veracidade: 'Confirme que as informações são verdadeiras.'
+      veracidade: 'Confirme que as informações são verdadeiras.',
+      selfie: 'Não conseguimos usar essa foto. Envie uma selfie em JPG ou PNG, de até 10 MB, ou siga sem ela.'
     };
     // Só nomes de campo conhecidos viram seletor: qualquer outro valor cai na mensagem genérica abaixo.
     if (/^[a-z_]{1,30}$/.test(erroUrl) && caixa(erroUrl)) {

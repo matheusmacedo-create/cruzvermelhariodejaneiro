@@ -8,7 +8,9 @@
  *   - o modo sem JavaScript (formulário): 303 com ?protocolo= ou ?erro=<campo>;
  *   - o acompanhamento (lib/voluntarios.php): situação, notas, aceitação com CPF (cria o colaborador do ponto com
  *     vínculo voluntário, reaproveita e reativa o que já existe), aceitação sem CPF (erro), lista, contagens, CSV sem
- *     CPF, PDF e o expurgo de 12 meses (apaga a recusada antiga, poupa a aceita).
+ *     CPF, PDF e o expurgo de 12 meses (apaga a recusada antiga, poupa a aceita);
+ *   - a selfie opcional (27/10/2026): no JSON (data URL) e no formulário (multipart), recusa do que não é foto, corpo
+ *     grande demais (413), gravação reduzida e sem EXIF e a exclusão junto com a ficha no expurgo.
  * As chamadas passam pelo servidor embutido do PHP, como as de um navegador; o teste sobe e derruba o servidor pelo PID.
  *
  * Precisa de MCP_CONFIG_ARQUIVO com o banco local (DB_HOST 127.0.0.1 ou localhost) e sem RESEND_API_KEY (nenhum e-mail
@@ -106,6 +108,7 @@ function limpar(PDO $db): void
     if ($ids) {
         $lista = implode(', ', array_map('intval', $ids));
         $db->exec("DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN ($lista)");
+        $db->exec("DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_drive_fila WHERE tipo = 'ficha_voluntario' AND referencia IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios WHERE id IN ($lista)");
     }
@@ -178,7 +181,8 @@ $ficha = static fn(string $email, array $muda = []): array => $muda + [
     'aceita_contato' => true, 'consentimento' => true, 'veracidade' => true, 'site' => '', 'pagina' => '/voluntariado/cadastro/',
     'origem' => ['utm_source' => 'teste', 'utm_campaign' => 'integracao'],
 ];
-$politica = (string) (json_decode((string) file_get_contents($raiz . '/site/politicas.json'), true)['revisao'] ?? '');
+$politicas = json_decode((string) file_get_contents($raiz . '/site/politicas.json'), true);
+$politica = (string) ($politicas['paginas']['privacidade']['revisao'] ?? $politicas['revisao'] ?? '');
 $cpfAna = cpf_de_teste();
 $cpfBia = cpf_de_teste();
 
@@ -186,10 +190,11 @@ try {
     // ------------------------------------------------------------------------- JSON: ficha válida
     $emailAna = "ana-$sufixo@exemplo.org";
     [$st, $r] = enviar($base, $ficha($emailAna, ['cpf' => mcp_cpf_formatado($cpfAna)]));
-    verificar('ficha válida: 201 com as chaves do contrato', [$st, array_keys($r)], [201, ['ok', 'protocolo', 'nome', 'email', 'prazo', 'menor']]);
+    $respostaAna = $r;
+    verificar('ficha válida: 201 com as chaves do contrato', [$st, array_keys($r)], [201, ['ok', 'protocolo', 'nome', 'email', 'prazo', 'aviso', 'menor', 'selfie']]);
     verificar('ficha válida: protocolo VOL-aammdd-NNNN, primeiro nome, e-mail, prazo, maior de idade',
         [(bool) preg_match('/^VOL-\d{6}-\d{4,}$/', (string) ($r['protocolo'] ?? '')), $r['nome'] ?? null, $r['email'] ?? null, $r['prazo'] ?? null, $r['menor'] ?? null],
-        [true, 'Ana', $emailAna, MCP_EMAIL_PRAZO, false]);
+        [true, 'Ana', $emailAna, MCP_VOL_PROXIMAS_ENTRADAS, false]);
     $ana = $db->query("SELECT * FROM mcp_voluntarios WHERE email = " . $db->quote($emailAna))->fetch() ?: [];
     $anaId = (int) ($ana['id'] ?? 0);
     verificar('ficha válida: linha gravada com protocolo, consentimento, versão da política e veracidade', [
@@ -248,6 +253,72 @@ try {
     verificar('formulário de outro site: 303 com ?erro=envio', [$st, $cab['location'] ?? null], [303, '/voluntariado/cadastro/?erro=envio']);
     [$st] = http($base . 'voluntarios.php', 'POST', json_encode($ficha("y-$sufixo@exemplo.org")), ['Content-Type: application/json', 'Origin: https://outro.site']);
     verificar('JSON de outro site: 403', $st, 403);
+
+    // ------------------------------------------------------------------------- selfie opcional
+    $foto = (static function (int $w, int $h, string $tipo = 'jpeg'): string {
+        $i = imagecreatetruecolor($w, $h);
+        imagefill($i, 0, 0, (int) imagecolorallocate($i, 20, 120, 200));
+        ob_start();
+        $tipo === 'png' ? imagepng($i) : imagejpeg($i, null, 85);
+        imagedestroy($i);
+        return (string) ob_get_clean();
+    });
+    verificar('ficha válida sem selfie: selfie = false e nada na tabela', [$respostaAna['selfie'] ?? null, mcp_voluntario_selfie($anaId)], [false, null]);
+    $emailDani = "dani-$sufixo@exemplo.org";
+    [$st, $r] = enviar($base, $ficha($emailDani, ['nome' => "Dani $marca", 'selfie' => 'data:image/jpeg;base64,' . base64_encode($foto(1600, 1200))]));
+    $daniId = (int) $db->query("SELECT id FROM mcp_voluntarios WHERE email = " . $db->quote($emailDani))->fetchColumn();
+    $selfieDani = mcp_voluntario_selfie($daniId);
+    verificar('JSON com selfie: 201, selfie = true, guardada com 800 px e em JPG', [$st, $r['selfie'] ?? null, $selfieDani['largura'] ?? 0, $selfieDani['altura'] ?? 0, str_starts_with((string) ($selfieDani['jpeg'] ?? ''), "\xFF\xD8\xFF")], [201, true, 800, 600, true]);
+    verificar('JSON com selfie: registrado em mcp_eventos', str_contains((string) $db->query("SELECT detalhe FROM mcp_eventos WHERE tipo = 'voluntario' ORDER BY id DESC LIMIT 1")->fetchColumn(), 'selfie recebida'), true);
+    $emailEdu = "edu-$sufixo@exemplo.org";
+    [$st, $r] = enviar($base, $ficha($emailEdu, ['nome' => "Edu $marca", 'selfie' => 'data:image/gif;base64,R0lGODlhAQABAAAAACw=']));
+    verificar('JSON com selfie que não é JPG/PNG: 422 no campo selfie, nada gravado', [$st, $r['campo'] ?? null, (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE email = " . $db->quote($emailEdu))->fetchColumn()], [422, 'selfie', 0]);
+    [$st] = http($base . 'voluntarios.php', 'POST', json_encode($ficha("grande-$sufixo@exemplo.org", ['selfie' => 'data:image/jpeg;base64,' . str_repeat('A', 800000)])), ['Content-Type: application/json']);
+    verificar('JSON maior que 768 KB: 413', $st, 413);
+    $multipart = static function (array $campos): array {
+        $planos = [];
+        foreach ($campos as $k => $v) {
+            if (is_array($v)) {
+                foreach (array_values($v) as $i => $item) {
+                    $planos["{$k}[$i]"] = $item;
+                }
+            } else {
+                $planos[$k] = $v;
+            }
+        }
+        return $planos;
+    };
+    $arquivo = tempnam(sys_get_temp_dir(), 'mcp-selfie-');
+    file_put_contents($arquivo, $foto(500, 900, 'png'));
+    $emailFe = "fe-$sufixo@exemplo.org";
+    $camposFe = $ficha($emailFe, ['nome' => "Fe $marca", 'aceita_contato' => 'on', 'consentimento' => 'on', 'veracidade' => 'on']);
+    unset($camposFe['origem']);
+    $ch = curl_init($base . 'voluntarios.php');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_POST => true, CURLOPT_TIMEOUT => 30,
+        CURLOPT_POSTFIELDS => $multipart($camposFe) + ['selfie' => new CURLFile($arquivo, 'image/png', 'eu.png')]]);
+    $resposta = (string) curl_exec($ch);
+    $stFe = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    $fe = $db->query("SELECT id, protocolo FROM mcp_voluntarios WHERE email = " . $db->quote($emailFe))->fetch() ?: [];
+    $selfieFe = mcp_voluntario_selfie((int) ($fe['id'] ?? 0));
+    verificar('formulário com selfie (multipart): 303 com o protocolo e a selfie guardada em pé, com 800 px', [$stFe, str_contains($resposta, '?protocolo=' . ($fe['protocolo'] ?? 'x')), $selfieFe['largura'] ?? 0, $selfieFe['altura'] ?? 0], [303, true, 444, 800]);
+    file_put_contents($arquivo, 'isto não é uma foto');
+    $ch = curl_init($base . 'voluntarios.php');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_POST => true, CURLOPT_TIMEOUT => 30,
+        CURLOPT_POSTFIELDS => $multipart($ficha("gui-$sufixo@exemplo.org", ['nome' => "Gui $marca", 'consentimento' => 'on', 'veracidade' => 'on', 'origem' => ''])) + ['selfie' => new CURLFile($arquivo, 'image/jpeg', 'eu.jpg')]]);
+    $resposta = (string) curl_exec($ch);
+    curl_close($ch);
+    unlink($arquivo);
+    verificar('formulário com arquivo que não é foto: 303 com ?erro=selfie', str_contains($resposta, '/voluntariado/cadastro/?erro=selfie'), true);
+    verificar('apagar a selfie (pedido da pessoa): some só a foto', [mcp_voluntario_selfie_apagar([$daniId]), mcp_voluntario_selfie($daniId), mcp_voluntario_por_id($daniId) !== null], [1, null, true]);
+    // As fichas deste bloco saem daqui: o resto do teste conta as fichas e os freios por IP.
+    $deste = array_map('intval', $db->query("SELECT id FROM mcp_voluntarios WHERE nome IN (" . $db->quote("Dani $marca") . ', ' . $db->quote("Fe $marca") . ', ' . $db->quote("Gui $marca") . ')')->fetchAll(PDO::FETCH_COLUMN));
+    if ($deste) {
+        mcp_voluntario_selfie_apagar($deste);
+        $db->exec('DELETE FROM mcp_drive_fila WHERE tipo = \'ficha_voluntario\' AND referencia IN (' . implode(', ', $deste) . ')');
+        $db->exec('DELETE FROM mcp_voluntarios WHERE id IN (' . implode(', ', $deste) . ')');
+    }
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'limite' AND detalhe LIKE 'voluntarios%'");
 
     // ------------------------------------------------------------------------- acompanhamento: situação e notas
     $quem = 'vol@exemplo.org';
@@ -331,7 +402,10 @@ try {
     $aceitaAntiga = $antiga('Aceita', 'aceita', $ha13Meses);
     $novaRecente = $antiga('Recente', 'nova', $ha11Meses);
     mcp_voluntario_nota_registrar($recusada, $quem, 'Nota que vai embora com a ficha.');
+    mcp_voluntario_selfie_gravar($recusada, mcp_voluntario_selfie_preparar($foto(300, 300)));
+    mcp_voluntario_selfie_gravar($aceitaAntiga, mcp_voluntario_selfie_preparar($foto(300, 300)));
     $x = mcp_voluntarios_expurgar(12);
+    verificar('expurgo: a selfie vai junto com a ficha apagada e fica na aceita', [mcp_voluntario_selfie($recusada), mcp_voluntario_selfie($aceitaAntiga) !== null], [null, true]);
     verificar('expurgo: apaga a recusada de 13 meses (e a nota dela), poupa a aceita antiga e a recente',
         [$x, mcp_voluntario_por_id($recusada), mcp_voluntario_notas($recusada), mcp_voluntario_por_id($aceitaAntiga) !== null, mcp_voluntario_por_id($novaRecente) !== null, mcp_voluntario_por_id($anaId) !== null],
         [['apagadas' => 1], null, [], true, true, true]);

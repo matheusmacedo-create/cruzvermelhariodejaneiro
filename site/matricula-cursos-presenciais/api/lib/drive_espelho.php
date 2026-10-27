@@ -654,8 +654,11 @@ function mcp_drive_tabela_json_gz(PDO $pdo, string $tabela): string
     if (!preg_match('/^mcp_[a-z0-9_]+$/', $tabela)) {
         throw new InvalidArgumentException('tabela inválida: ' . $tabela);
     }
-    $ordem = in_array('id', mcp_drive_tabela_colunas($pdo, $tabela), true) ? ' ORDER BY id' : '';
+    $colunas = mcp_drive_tabela_colunas($pdo, $tabela);
+    $ordem = in_array('id', $colunas, true) ? ' ORDER BY id' : (in_array('ficha_id', $colunas, true) ? ' ORDER BY ficha_id' : '');
     $contexto = function_exists('deflate_init') ? deflate_init(ZLIB_ENCODING_GZIP, ['level' => 6]) : null;
+    // As selfies dos voluntários (~100 KB cada, em base64) vão em lotes de 20: 500 delas seguraria ~50 MB na memória.
+    $loteMax = $tabela === 'mcp_voluntarios_selfies' ? 20 : MCP_DRIVE_BACKUP_LOTE;
     $saida = '';
     $cru = '';
     $escrever = static function (string $pedaco) use (&$saida, &$cru, $contexto): void {
@@ -669,15 +672,15 @@ function mcp_drive_tabela_json_gz(PDO $pdo, string $tabela): string
     $primeira = true;
     $deslocamento = 0;
     while (true) {
-        $lote = $pdo->query("SELECT * FROM `$tabela`$ordem LIMIT " . MCP_DRIVE_BACKUP_LOTE . " OFFSET $deslocamento")->fetchAll();
+        $lote = $pdo->query("SELECT * FROM `$tabela`$ordem LIMIT " . $loteMax . " OFFSET $deslocamento")->fetchAll();
         foreach ($lote as $linha) {
             $escrever(($primeira ? '' : ',') . json_encode($linha, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR));
             $primeira = false;
         }
-        if (count($lote) < MCP_DRIVE_BACKUP_LOTE) {
+        if (count($lote) < $loteMax) {
             break;
         }
-        $deslocamento += MCP_DRIVE_BACKUP_LOTE;
+        $deslocamento += $loteMax;
     }
     $escrever(']}');
     if ($contexto) {

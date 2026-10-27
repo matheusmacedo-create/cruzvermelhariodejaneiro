@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '34cf86a37ad5e17b';
+const MCP_DB_VERSAO = '345c5be99ecd9e3b';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -594,6 +594,18 @@ function mcp_migrar_tudo(PDO $pdo): void
         KEY ix_ip (ip, criado_em),
         KEY ix_criado (criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Selfie opcional da ficha (27/10/2026), para a equipe reconhecer a pessoa na entrevista e no CBFI. Uma por ficha,
+    // já reduzida e regravada em JPG sem metadados (lib/voluntarios.php), em base64: a cópia do banco no Drive é JSON.
+    // Some com a ficha (expurgo de 12 meses) ou pelo botão "Apagar a selfie" do portal.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios_selfies (
+        ficha_id INT UNSIGNED NOT NULL PRIMARY KEY,
+        tipo VARCHAR(20) NOT NULL DEFAULT 'image/jpeg',
+        largura SMALLINT UNSIGNED NOT NULL,
+        altura SMALLINT UNSIGNED NOT NULL,
+        bytes INT UNSIGNED NOT NULL,
+        conteudo MEDIUMTEXT NOT NULL,
+        criado_em DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=ascii");
     // Anotações da equipe sobre cada ficha (entrevista, retorno, pendências), com quem escreveu e quando.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_voluntarios_notas (
         id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
