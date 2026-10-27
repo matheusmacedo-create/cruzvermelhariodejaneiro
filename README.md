@@ -133,6 +133,30 @@ ficar esperando resposta antes. O texto é um só, em `MCP_VOL_PROXIMAS_ENTRADAS
   está fora do ar de propósito.
 - **Em janeiro**: trocar o texto nas duas constantes (ou tirar o aviso) e republicar as mesmas páginas.
 
+## CBFI de 28/11/2026 e volta automática para janeiro (27/10/2026)
+
+Pedido do Matheus: uma página para ser "o link do CBFI" na divulgação, a turma de **28/11/2026** aberta a quem se
+cadastrar agora e, depois dela, as comunicações de volta para "novas entradas em janeiro de 2027", sem publicar de novo.
+
+- **Página nova `/cbfi/`** (`site/institucional.json`, slug `cbfi`, gerada por `gerar_institucional.py`; trilha
+  Início › Voluntariado › CBFI): próxima turma (quando, onde, custo, para quem), botão para o cadastro, o que é o CBFI,
+  como participar e perguntas. O horário não é publicado: vai por e-mail para quem for chamado. Entrou na lista do
+  `gerar_sitemaps.py`.
+- **Onde a data aparece**: aviso e etapas de `/voluntariado/cadastro/`, aviso, passo a passo e FAQ de `/voluntariado/`,
+  passo do CBFI em `/cursos-gratuitos/`, cards e linha do voluntariado na home, FAQ "Como ser voluntário" (home e chat,
+  campos `resposta_cbfi`/`links_cbfi` de `site/faq-home.json`), FAQ e um botão "CBFI" na `/bio/`, e-mail de confirmação,
+  aviso à equipe, frase da tela de sucesso (campo `aviso` da API) e mensagem de ficha repetida.
+- **A troca**: as páginas levam os dois textos (`<span data-cbfi="ate">` e `<span data-cbfi="depois" hidden>`) e um
+  script que, a partir de 29/11 pela data de Brasília, esconde o da turma; sem JavaScript fica o da turma. O chat
+  escolhe a resposta pela data (`rc`/`ate` em `chat.js`) e a API, por `mcp_vol_cbfi_aberto()`. Fonte única nas páginas:
+  `scripts/cbfi.py`; na API: `MCP_VOL_CBFI_DATA`. `scripts/testar_voluntarios.php` confere os dois lados da data.
+- **Depois de 28/11** (opcional, para limpar o HTML): rodar de novo `gerar_voluntariado_cadastro.py`,
+  `gerar_institucional.py cbfi voluntariado cursos-gratuitos`, `gerar_bio.py`, `gerar_faq_home.py`, `chat_widget.py` e
+  republicar; com a data passada eles gravam só o texto de janeiro. **Outra turma**: trocar a data em `scripts/cbfi.py` e
+  em `MCP_VOL_CBFI_DATA`, os textos com "28/11" em `institucional.json`, `faq-home.json`, `site/index.html` e
+  `gerar_bio.py`, e gerar de novo.
+- Publicação: `scripts/publicacao-cbfi.txt`.
+
 ## Portal da transparência com visual novo (17/10/2026)
 
 Pedido do Matheus: deixar `/transparencia/` mais bonita, a partir dos melhores portais do mercado. Três agentes

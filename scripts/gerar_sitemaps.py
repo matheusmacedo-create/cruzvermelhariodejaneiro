@@ -68,6 +68,7 @@ PAGINAS = [
     ("/cursos-gratuitos/", "cursos-gratuitos/index.html", "weekly", "0.8", "Formação de voluntários"),
     ("/voluntariado/", "voluntariado/index.html", "monthly", "0.7", "Voluntariado"),
     ("/voluntariado/cadastro/", "voluntariado/cadastro/index.html", "monthly", "0.6", "Cadastro de voluntário"),
+    ("/cbfi/", "cbfi/index.html", "monthly", "0.6", "CBFI, formação inicial dos voluntários"),
     ("/gestao/", "gestao/index.html", "monthly", "0.6", "Como funciona a nossa gestão"),
     ("/pedido-de-documentos/", "pedido-de-documentos/index.html", "yearly", "0.4", "Pedido de documentos"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),

@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import json
 
+import cbfi
 import chat_widget
 import icones
 from gerar_matricula_presencial import HOME, RAIZ, esc, partes_da_home
@@ -79,12 +80,19 @@ UFS = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "
 ORIGEM_CHAVES = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"]
 
 # Novas entradas no voluntariado (decisão do Matheus, 18/10/2026): o mesmo texto de MCP_VOL_PROXIMAS_ENTRADAS (api/lib/voluntarios.php).
-PROXIMAS_ENTRADAS = "janeiro de 2027"
+# Até 28/11/2026 vale a turma do CBFI aberta a quem se cadastra agora (scripts/cbfi.py); depois, volta sozinho para janeiro.
+PROXIMAS_ENTRADAS = cbfi.PROXIMAS_ENTRADAS
+CBFI_LINK = f'<a href="{cbfi.URL}">Saiba mais sobre o CBFI</a>'
 
+# (título, HTML do detalhe)
 ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
-    ("Ficha de entrevista", f"A equipe do voluntariado entra em contato por e-mail em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas."),
-    ("CBFI", "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado."),
+    ("Ficha de entrevista", cbfi.alternar(
+        f"A equipe do voluntariado entra em contato por e-mail com os cadastrados, antes do CBFI de {cbfi.DATA_CURTA}.",
+        f"A equipe do voluntariado entra em contato por e-mail em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas.")),
+    ("CBFI", cbfi.alternar(
+        f"Curso Básico de Formação Institucional: próxima turma no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_CURTA}, na sede. Gratuito e só para quem entra no voluntariado.",
+        "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado.")),
     ("Termo de adesão", "Formaliza o vínculo e você começa a atuar."),
 ]
 
@@ -376,8 +384,12 @@ def sucesso() -> str:
           <p class="vc-menor" data-vc="menor" hidden><b>Você tem menos de 18 anos:</b> um responsável assina o termo de adesão com você. A equipe explica como fazer isso na entrevista.</p>
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
-            <li><b>Ficha de entrevista.</b> Em """ + PROXIMAS_ENTRADAS + """, quando abrem as novas entradas, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.</li>
-            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.</li>
+            <li><b>Ficha de entrevista.</b> """ + cbfi.alternar(
+                f"Antes do CBFI de {cbfi.DATA_CURTA}, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.",
+                f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a equipe do voluntariado entra em contato por e-mail para conhecer você, a sua disponibilidade e as frentes de interesse.") + """</li>
+            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> """ + cbfi.alternar(
+                f"A próxima turma é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. {CBFI_LINK}.",
+                "Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.") + """</li>
             <li><b>Termo de adesão.</b> Depois da formação, você assina o termo que formaliza o vínculo e começa a atuar na sua frente.</li>
           </ol>
           <div class="vc-sucesso-acoes">
@@ -396,7 +408,7 @@ def main() -> int:
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'voluntariado' });\n    gtag('config', 'G-", 1)
     assert "content_group: 'voluntariado'" in ga4, "não achei o gtag('config') da home para inserir o content_group"
     versao_js = hashlib.sha256(JS_ARQUIVO.read_bytes()).hexdigest()[:10]
-    etapas = "\n          ".join(f"<li><b>{esc(t)}</b>{esc(d)}</li>" for t, d in ETAPAS)
+    etapas = "\n          ".join(f"<li><b>{esc(t)}</b>{d}</li>" for t, d in ETAPAS)
 
     pagina = f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -445,7 +457,9 @@ def main() -> int:
         <p class="eyebrow">Voluntariado</p>
         <h1 id="vc-titulo">{esc(H1)}</h1>
         <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 18 anos.</p>
-        <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span><b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.</span></p>
+        <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>{cbfi.alternar(
+            f"<b>Próxima turma do CBFI: {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato por e-mail com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
+            f"<b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.")}</span></p>
         <ol class="vc-etapas" aria-label="As quatro etapas para ser voluntário">
           {etapas}
         </ol>
@@ -477,7 +491,7 @@ def main() -> int:
 </body>
 </html>
 """
-    pagina = icones.converter(pagina)
+    pagina = cbfi.resolver(icones.converter(pagina))
     baixo = pagina.lower()
     assert "whatsapp" not in baixo, "a página de cadastro não cita WhatsApp"
     assert "cruzvermelharj.org.br" not in baixo, "domínio antigo na página de cadastro"

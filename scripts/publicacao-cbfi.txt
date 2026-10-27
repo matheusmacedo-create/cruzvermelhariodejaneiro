@@ -1,0 +1,48 @@
+# CBFI de 28/11/2026 (27/10/2026, pedido do Matheus): página nova /cbfi/ (o link do CBFI para a divulgação) e as
+# comunicações do voluntariado falando da turma de 28/11, aberta a quem se cadastra agora. A partir de 29/11 (Brasília)
+# tudo volta sozinho para "novas entradas em janeiro de 2027": nas páginas, por um script no navegador; na API (e-mails,
+# tela de sucesso, ficha repetida), por mcp_vol_cbfi_aberto(). Não é preciso publicar de novo em 29/11 (ver README,
+# "CBFI de 28/11/2026"). Datas e textos: scripts/cbfi.py e MCP_VOL_CBFI_DATA em api/lib/voluntarios.php.
+# Ordem: biblioteca antes do endpoint, chat.js antes das páginas que o citam pelo hash, a página nova antes das
+# que linkam para ela. As páginas só com o hash novo do chat.js vão junto para o cache não segurar o chat antigo.
+# Depois: limpar o cache e rodar python3 scripts/gerar_sitemaps.py (a /cbfi/ só entra no mapa depois de no ar)
+# e publicar os três sitemaps.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-cbfi.txt)
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/voluntarios.php
+site/chat/chat.js
+site/voluntariado/cadastro/cadastro.js
+site/cbfi/index.html
+site/faq-home.json
+site/index.html
+site/voluntariado/index.html
+site/voluntariado/cadastro/index.html
+site/cursos-gratuitos/index.html
+site/bio/index.html
+site/404.html
+site/base-legal/index.html
+site/campanha-agasalho.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/dia-das-criancas/index.html
+site/direito-internacional-humanitario/index.html
+site/doacao.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/equipe.html
+site/gestao/index.html
+site/historia/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/movimento-internacional/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/quem-somos/index.html
+site/reembolso/index.html
+site/termos/index.html

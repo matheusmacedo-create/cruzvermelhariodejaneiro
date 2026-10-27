@@ -18,6 +18,7 @@ import re
 import sys
 from pathlib import Path
 
+import cbfi
 import minificar_css
 from sincronizar_catalogo import FORA_DO_DOMINIO
 
@@ -127,8 +128,13 @@ def atualizar_respostas() -> bool:
     j = lambda v: json.dumps(v, ensure_ascii=False)
     # "rotulo" é o texto curto do botão; "p" é a pergunta completa, que vai na conversa. A pergunta
     # da página carrega o nome completo da filial, que num botão de celular vira três linhas.
+    # "rc" é a resposta que vale até a turma do CBFI ("ate", AAAA-MM-DD; scripts/cbfi.py): o chat escolhe pela data.
+    def turma(q: dict) -> str:
+        if not (q.get("resposta_cbfi") and cbfi.aberto()):
+            return ""
+        return f", rc: {j(q['resposta_cbfi'])}, ate: {j(cbfi.DATA_ISO)}"
     linhas = [f"    {{ assuntos: {j(q['chat'])}, rotulo: {j(q.get('chatRotulo') or q['pergunta'])}, "
-              f"p: {j(q['pergunta'])}, r: {j(q['resposta'])} }}" for q in itens]
+              f"p: {j(q['pergunta'])}, r: {j(q['resposta'])}{turma(q)} }}" for q in itens]
     novo = js[:a] + "\n  var RESPOSTAS = [\n" + ",\n".join(linhas) + "\n  ];\n  " + js[b:]
     if novo == js:
         return False

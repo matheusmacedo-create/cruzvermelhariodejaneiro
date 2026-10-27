@@ -165,6 +165,17 @@
               "url": "/voluntariado/"
             }
           ],
+          "resposta_cbfi": "Para ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro, faça o cadastro aqui no site: leva uns dez minutos, e a confirmação chega por e-mail, com o protocolo. A próxima turma do CBFI, o curso de formação inicial dos voluntários, é no sábado, 28 de novembro de 2026, na sede, no Centro do Rio. É gratuita e está aberta a quem se cadastra agora: a equipe entra em contato por e-mail com os cadastrados antes dela, para a ficha de entrevista. Por fim, o voluntário assina o termo de adesão ao serviço voluntário, como manda a Lei 9.608/1998. Veja como participar na página do CBFI.",
+          "links_cbfi": [
+            {
+              "texto": "cadastro aqui no site",
+              "url": "/voluntariado/cadastro/"
+            },
+            {
+              "texto": "página do CBFI",
+              "url": "/cbfi/"
+            }
+          ],
           "chat": [
             "voluntariado"
           ],
