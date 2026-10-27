@@ -304,7 +304,7 @@ verificar('selfie: arquivo grande demais é recusado', str_contains((string) (mc
 verificar('selfie: arquivo que não veio pelo upload é recusado', isset(mcp_voluntario_selfie_entrada(null, ['error' => UPLOAD_ERR_OK, 'size' => 10, 'tmp_name' => __FILE__])['erro']), true);
 $comSelfie = mcp_montar_email_voluntario_equipe(['selfie' => 'recebida'] + $ficha);
 $semGd = mcp_montar_email_voluntario_equipe(['selfie' => 'nao_tratada'] + $ficha);
-verificar('selfie: e-mail à equipe diz se veio, sem anexar a foto', [str_contains($comSelfie['html'], 'veja na ficha, no portal'), str_contains($semGd['html'], 'não conseguiu guardar'), str_contains($equipe['html'], 'não enviada (é opcional)'), str_contains($comSelfie['html'], 'data:image')], [true, true, true, false]);
+verificar('selfie: e-mail à equipe diz se veio, sem anexar a foto', [str_contains($comSelfie['html'], 'veja na ficha, no portal'), str_contains($semGd['html'], 'não conseguiu guardar'), str_contains($equipe['html'], 'não enviada (fichas de antes'), str_contains($comSelfie['html'], 'data:image')], [true, true, true, false]);
 verificar('selfie: confirmação cita a selfie recebida', [str_contains(mcp_montar_email_voluntario_confirmacao(['selfie' => 'recebida'] + $ficha)['html'], 'Selfie'), str_contains($confirmacao['html'], 'Selfie')], [true, false]);
 
 unlink($configTeste);

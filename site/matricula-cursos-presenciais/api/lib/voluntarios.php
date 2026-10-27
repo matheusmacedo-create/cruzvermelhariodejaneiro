@@ -33,7 +33,7 @@ const MCP_VOL_PROXIMAS_ENTRADAS = 'janeiro de 2027';
 const MCP_VOL_CBFI_DATA = '2026-11-28';
 const MCP_VOL_CBFI_DATA_TEXTO = '28 de novembro de 2026';
 const MCP_VOL_MOTIVACAO_MAX = 1500;
-// Selfie opcional (27/10/2026): o arquivo pode chegar com até 10 MB (sem JavaScript, direto da câmera); fica guardada
+// Selfie obrigatória (27/10/2026; nasceu opcional no mesmo dia): o arquivo pode chegar com até 10 MB (sem JavaScript, direto da câmera); fica guardada
 // com no máximo 800 px no lado maior, em JPG. A ficha em JSON com a selfie já reduzida pelo navegador cabe em 768 KB.
 const MCP_VOL_SELFIE_BYTES = 10 * 1024 * 1024;
 const MCP_VOL_SELFIE_LADO = 800;
@@ -120,9 +120,9 @@ function mcp_vol_prazo(): string
 function mcp_vol_aviso_prazo(): string
 {
     if (mcp_vol_cbfi_aberto()) {
-        return 'A próxima turma do CBFI é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', e você pode participar: a equipe do voluntariado entra em contato pelo WhatsApp antes dela, para a ficha de entrevista e as orientações da turma.';
+        return 'A próxima turma do CBFI é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . '. Antes dela, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.';
     }
-    return 'As novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ': a equipe do voluntariado entra em contato com você pelo WhatsApp nessa época, e até lá não é preciso esperar resposta.';
+    return 'As novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ': nessa época a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista, e até lá não é preciso esperar resposta.';
 }
 function mcp_voluntarios_frentes(): array
 {
@@ -424,9 +424,9 @@ function mcp_voluntario_gravar(array $f): int
     return (int) $pdo->lastInsertId();
 }
 
-// ----------------------------------------------------------------------------- selfie (opcional)
+// ----------------------------------------------------------------------------- selfie (obrigatória)
 /**
- * Selfie opcional da ficha (pedido do Matheus, 27/10/2026): só para a equipe reconhecer a pessoa na entrevista e no
+ * Selfie da ficha, obrigatória (pedido do Matheus, 27/10/2026; no começo do dia era opcional): só para a equipe reconhecer a pessoa na entrevista e no
  * CBFI, como diz a Política de Privacidade. Chega como arquivo do formulário (sem JavaScript, campo "selfie") ou como
  * data URL JPG/PNG que cadastro.js já reduziu (campo "selfie" do JSON). Aqui ela é conferida pelos primeiros bytes,
  * virada conforme o EXIF, reduzida a MCP_VOL_SELFIE_LADO e regravada em JPG pelo GD: a regravação descarta os
@@ -439,7 +439,7 @@ function mcp_voluntario_gravar(array $f): int
  */
 function mcp_voluntario_selfie_entrada(mixed $dataUrl, ?array $arquivo): ?array
 {
-    $muitoGrande = 'A selfie pode ter até ' . (MCP_VOL_SELFIE_BYTES >> 20) . ' MB. Tire outra ou envie sem a selfie.';
+    $muitoGrande = 'A selfie pode ter até ' . (MCP_VOL_SELFIE_BYTES >> 20) . ' MB. Tire outra foto.';
     if (is_array($arquivo) && isset($arquivo['error']) && !is_array($arquivo['error']) && (int) $arquivo['error'] !== UPLOAD_ERR_NO_FILE) {
         $erro = (int) $arquivo['error'];
         if (in_array($erro, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) || (int) ($arquivo['size'] ?? 0) > MCP_VOL_SELFIE_BYTES) {
@@ -447,7 +447,7 @@ function mcp_voluntario_selfie_entrada(mixed $dataUrl, ?array $arquivo): ?array
         }
         $tmp = (string) ($arquivo['tmp_name'] ?? '');
         if ($erro !== UPLOAD_ERR_OK || !is_uploaded_file($tmp)) {
-            return ['erro' => 'A selfie não chegou inteira. Envie de novo ou siga sem ela.'];
+            return ['erro' => 'A selfie não chegou inteira. Envie de novo.'];
         }
         return ['bruto' => (string) file_get_contents($tmp)];
     }
@@ -459,7 +459,7 @@ function mcp_voluntario_selfie_entrada(mixed $dataUrl, ?array $arquivo): ?array
     }
     $bruto = base64_decode(preg_replace('/\s+/', '', $m[1]) ?? '', true);
     if ($bruto === false || $bruto === '') {
-        return ['erro' => 'A selfie não chegou inteira. Envie de novo ou siga sem ela.'];
+        return ['erro' => 'A selfie não chegou inteira. Envie de novo.'];
     }
     return strlen($bruto) > MCP_VOL_SELFIE_BYTES ? ['erro' => $muitoGrande] : ['bruto' => $bruto];
 }
@@ -485,7 +485,7 @@ function mcp_voluntario_selfie_preparar(string $bruto): array
     }
     // Acima de 50 megapixels (bomba de descompressão, ou câmera no modo de resolução máxima) a foto nem é aberta.
     if ($dim[0] * $dim[1] > 50_000_000) {
-        return ['ok' => false, 'motivo' => 'formato', 'erro' => 'Essa foto tem resolução alta demais. Tire outra com a câmera no modo normal, ou siga sem ela.'];
+        return ['ok' => false, 'motivo' => 'formato', 'erro' => 'Essa foto tem resolução alta demais. Tire outra com a câmera no modo normal.'];
     }
     // O GD guarda ~5 bytes por pixel: uma foto de 48 MP pede ~240 MB. Sobe o limite só se o atual não der conta.
     $precisa = (int) ($dim[0] * $dim[1] * 5) + 64 * 1024 * 1024;
@@ -1197,7 +1197,7 @@ function mcp_montar_email_voluntario_equipe(array $f): array
     $linhas['Selfie'] = match ($f['selfie'] ?? null) {
         'recebida' => 'enviada (veja na ficha, no portal)',
         'nao_tratada' => 'a pessoa enviou, mas o servidor não conseguiu guardar; peça de novo no contato',
-        default => 'não enviada (é opcional)',
+        default => 'não enviada (fichas de antes de 27/10/2026 não tinham o campo)',
     };
 
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong>' . ($idade !== '' ? ', ' . mcp_escapar($idade) . ',' : '') . ' de ' . mcp_escapar(mcp_voluntario_local_texto($f))
@@ -1253,15 +1253,15 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
 
     $cbfi = mcp_vol_cbfi_aberto();
     $passos = [
-        [$cbfi ? 'A equipe de voluntariado entra em contato antes do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO : 'A equipe de voluntariado entra em contato em ' . MCP_VOL_PROXIMAS_ENTRADAS,
+        [$cbfi ? 'A coordenadora do voluntariado chama você pelo WhatsApp antes do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO : 'A coordenadora do voluntariado chama você pelo WhatsApp em ' . MCP_VOL_PROXIMAS_ENTRADAS,
             ($cbfi
-                ? 'A próxima turma do CBFI, no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', na sede, está aberta a quem se cadastra agora. A equipe chama os cadastrados pelo WhatsApp antes dela, para a ficha de entrevista e as orientações da turma; não é preciso enviar a ficha de novo.'
-                : 'As novas entradas no voluntariado abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . '. A sua ficha fica guardada, e a equipe chama todos os cadastrados pelo WhatsApp nessa época: até lá, não é preciso esperar resposta nem enviar a ficha de novo.')
+                ? 'Ela explica como será a entrevista. A próxima turma do CBFI, no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', está aberta a quem se cadastra agora; não é preciso enviar a ficha de novo.'
+                : 'Ela explica como será a entrevista. As novas entradas no voluntariado abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e a sua ficha fica guardada: até lá, não é preciso esperar resposta nem enviar a ficha de novo.')
             . ' O contato vem pelo WhatsApp, no telefone informado na ficha, <strong>' . mcp_escapar(mcp_telefone_bonito((string) ($f['telefone'] ?? ''))) . '</strong>. Tenha à mão o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>. Se o número estiver errado, responda este e-mail com o certo.'],
-        ['Entrevista e ficha de entrevista',
-            'Uma conversa com a coordenação do voluntariado, na sede (Praça da Cruz Vermelha, 10, Centro) ou por vídeo, para conhecer você, alinhar expectativas e preencher a ficha de entrevista.'],
+        ['Entrevista e aprovação',
+            'Na entrevista, a coordenação do voluntariado conhece você, alinha expectativas e preenche a ficha de entrevista; como ela vai ser, a coordenadora explica pelo WhatsApp. Se você for aprovado(a), recebe um <strong>código de aprovação</strong>.'],
         ['Curso Básico de Formação Institucional (CBFI)',
-            ($cbfi ? 'A próxima turma é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', na sede. ' : '') . 'Acontece quatro vezes por ano. Apresenta o Movimento Internacional da Cruz Vermelha, os Princípios Fundamentais e o funcionamento da filial. Todo voluntário passa por ele antes de começar.'],
+            'Só para quem foi aprovado(a). ' . ($cbfi ? 'A próxima turma é no dia ' . MCP_VOL_CBFI_DATA_TEXTO . ', na sede. ' : '') . 'Acontece quatro vezes por ano. Apresenta o Movimento Internacional da Cruz Vermelha, os Princípios Fundamentais e o funcionamento da filial. Todo voluntário passa por ele antes de começar.'],
         ['Termo de adesão ao serviço voluntário',
             'Assinado na sede, em duas vias, conforme a Lei nº 9.608/1998. É ele que formaliza o voluntariado' . ($menor ? ', e, como você tem menos de 18 anos, o seu responsável legal assina junto' : '') . '.'],
     ];
@@ -1281,6 +1281,7 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
             . 'Guarde o protocolo <strong>' . mcp_escapar($protocolo) . '</strong>: ele identifica o seu cadastro.')
         . ($menor ? '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#fff7f7" style="margin:0 0 14px;background:#fff7f7;border:1px solid #f5c2c7;border-radius:12px"><tr><td style="padding:12px 16px;font-size:15px;line-height:1.5;color:#1a202c">'
             . '<strong>Você tem menos de 18 anos.</strong> Pode participar, sim: o termo de adesão é assinado também pelo seu responsável legal, que autoriza a sua participação nas atividades. Combine isso com a equipe na entrevista.</td></tr></table>' : '')
+        . mcp_nota('<strong>Este e-mail confirma que a ficha chegou, não a aprovação.</strong> Para ser aprovado(a), você passa pela coordenação do voluntariado. Se for aprovado(a), recebe um código de aprovação; sem ele, a sua entrada no voluntariado ainda não está confirmada.')
         . mcp_subtitulo('Próximos passos') . mcp_passos($passos)
         . mcp_caixa($linhas)
         . mcp_nota('Seus dados são usados só para o processo de seleção e acompanhamento do voluntariado, conforme a <a href="' . mcp_escapar($privacidade) . '" style="color:#cc0000">Política de Privacidade</a> (revisão '
@@ -1288,6 +1289,7 @@ function mcp_montar_email_voluntario_confirmacao(array $f): array
         . mcp_nota('Não foi você quem enviou esta ficha? Ignore este e-mail.');
     $texto = "Oi, $nome. Obrigado por querer ser voluntário(a) da Cruz Vermelha Brasileira no Rio de Janeiro. Sua ficha chegou e já está com a equipe de voluntariado. Protocolo: $protocolo.\n\n"
         . ($menor ? "Você tem menos de 18 anos. Pode participar, sim: o termo de adesão é assinado também pelo seu responsável legal. Combine isso com a equipe na entrevista.\n\n" : '')
+        . "Este e-mail confirma que a ficha chegou, não a aprovação. Para ser aprovado(a), você passa pela coordenação do voluntariado. Se for aprovado(a), recebe um código de aprovação; sem ele, a sua entrada no voluntariado ainda não está confirmada.\n\n"
         . "Próximos passos:\n";
     foreach ($passos as $i => [$titulo, $detalhe]) {
         $texto .= ($i + 1) . ") $titulo. " . html_entity_decode(strip_tags($detalhe), ENT_QUOTES, 'UTF-8') . "\n";

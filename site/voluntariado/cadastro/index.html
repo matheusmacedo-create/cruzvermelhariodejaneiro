@@ -118,6 +118,7 @@
     .vc-sucesso p { color: var(--text); }
     .vc-protocolo-rotulo { margin: 18px 0 4px; font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
     .vc-protocolo { margin: 0 0 16px; font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 900; letter-spacing: .02em; color: var(--black); font-variant-numeric: tabular-nums; }
+    .vc-aprovacao { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #fff7f7; border: 1px solid #f5c2c7; border-left: 4px solid var(--red); line-height: 1.55; }
     .vc-menor { padding: 12px 14px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); }
     .vc-sucesso h3 { margin: 22px 0 10px; color: var(--black); font-size: 1.1rem; }
     .vc-passos { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
@@ -417,9 +418,9 @@
         <div class="vc-grade"><div class="vc-campo vc-campo-largo" data-campo="motivacao"><label for="vc-motivacao">Por que você quer ser voluntário da Cruz Vermelha? <span class="vc-obrig" aria-hidden="true">*</span></label><textarea id="vc-motivacao" name="motivacao" rows="5" required aria-required="true" minlength="20" maxlength="1500"></textarea><p class="vc-contador" id="vc-motivacao-contador" aria-hidden="true"></p><p class="vc-sr" id="vc-motivacao-contador-sr" aria-live="polite" aria-atomic="true"></p><p class="vc-erro" id="vc-motivacao-erro" hidden></p></div><div class="vc-campo vc-campo-largo" data-campo="experiencia"><label for="vc-experiencia">Experiência com voluntariado ou trabalho social <small>(opcional)</small></label><textarea id="vc-experiencia" name="experiencia" rows="5" aria-describedby="vc-experiencia-dica" maxlength="1000"></textarea><p class="vc-dica" id="vc-experiencia-dica">Onde você já atuou, por quanto tempo e o que fazia.</p><p class="vc-erro" id="vc-experiencia-erro" hidden></p></div><div class="vc-campo vc-campo-largo" data-campo="habilidades"><label for="vc-habilidades">Habilidades que você quer colocar à disposição <small>(opcional)</small></label><textarea id="vc-habilidades" name="habilidades" rows="5" aria-describedby="vc-habilidades-dica" maxlength="1000"></textarea><p class="vc-dica" id="vc-habilidades-dica">Idiomas, fotografia, informática, direção, organização de eventos, o que vier à cabeça.</p><p class="vc-erro" id="vc-habilidades-erro" hidden></p></div><div class="vc-campo" data-campo="como_conheceu"><label for="vc-como_conheceu">Como você conheceu a Cruz Vermelha RJ? <small>(opcional)</small></label><select id="vc-como_conheceu" name="como_conheceu"><option value="">Selecione</option><option value="instagram">Instagram</option><option value="site">Pesquisando na internet</option><option value="amigos">Amigos ou família</option><option value="escola">Escola ou faculdade</option><option value="campanha">Uma campanha ou ação da Cruz Vermelha</option><option value="imprensa">Jornal, TV ou rádio</option><option value="outro">Outro</option></select><p class="vc-erro" id="vc-como_conheceu-erro" hidden></p></div></div>
       </fieldset>
       <fieldset class="vc-cartao" id="vc-selfie-cartao">
-        <legend>Sua selfie (opcional)</legend>
-        <p class="vc-intro">Se quiser, mande uma foto do seu rosto. Não é obrigatório e não muda nada na seleção.</p>
-        <div class="vc-campo vc-campo-largo" data-campo="selfie"><label for="vc-selfie">Selfie <small>(opcional)</small></label><input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" aria-describedby="vc-selfie-dica"><p class="vc-dica" id="vc-selfie-dica">Uma foto de frente, em JPG ou PNG, de até 10 MB. Serve só para a equipe reconhecer você na entrevista e no CBFI: fica no portal da equipe, não é publicada e é apagada junto com a ficha.</p><div class="vc-selfie-previa" id="vc-selfie-previa" hidden><img id="vc-selfie-img" alt="Prévia da sua selfie"><button type="button" class="btn btn-outline" id="vc-selfie-remover">Remover a selfie</button></div><p class="vc-erro" id="vc-selfie-erro" hidden></p></div>
+        <legend>Sua selfie</legend>
+        <p class="vc-intro">Mande uma foto do seu rosto. Ela é obrigatória para enviar o cadastro.</p>
+        <div class="vc-campo vc-campo-largo" data-campo="selfie"><label for="vc-selfie">Selfie <span class="vc-obrig" aria-hidden="true">*</span></label><input type="file" id="vc-selfie" name="selfie" accept="image/jpeg,image/png" required aria-required="true" aria-describedby="vc-selfie-dica"><p class="vc-dica" id="vc-selfie-dica">Uma foto de frente, em JPG ou PNG, de até 10 MB. Serve só para a equipe reconhecer você na entrevista e no CBFI: fica no portal da equipe, não é publicada e é apagada junto com a ficha.</p><div class="vc-selfie-previa" id="vc-selfie-previa" hidden><img id="vc-selfie-img" alt="Prévia da sua selfie"><button type="button" class="btn btn-outline" id="vc-selfie-remover">Remover a selfie</button></div><p class="vc-erro" id="vc-selfie-erro" hidden></p></div>
       </fieldset>
       <fieldset class="vc-cartao" id="vc-consentimentos">
         <legend>Consentimentos</legend>
@@ -438,11 +439,13 @@
           <p class="vc-protocolo-rotulo">Seu protocolo</p>
           <p class="vc-protocolo" data-vc="protocolo"></p>
           <p><span data-vc="email-frase">Enviamos a confirmação para o e-mail que você informou.</span> Guarde o protocolo: ele identifica a sua ficha nas conversas com a equipe. <span data-vc="prazo-frase"></span></p>
+          <p class="vc-aprovacao" role="note"><b>Seu cadastro ainda não é a aprovação.</b> Para ser aprovado(a), você passa pela coordenação do voluntariado. Se for aprovado(a), você recebe um <b>código de aprovação</b>; sem ele, a sua entrada no voluntariado ainda não está confirmada.</p>
           <p class="vc-menor" data-vc="menor" hidden><b>Você tem menos de 18 anos:</b> um responsável assina o termo de adesão com você. A equipe explica como fazer isso na entrevista.</p>
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
-            <li><b>Ficha de entrevista.</b> <span data-cbfi="ate">Antes do CBFI de 28/11, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.</span><span data-cbfi="depois" hidden>Em janeiro de 2027, quando abrem as novas entradas, a equipe do voluntariado entra em contato pelo WhatsApp para conhecer você, a sua disponibilidade e as frentes de interesse.</span></li>
-            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> <span data-cbfi="ate">A próxima turma é no sábado, 28 de novembro de 2026, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. <a href="/cbfi/">Saiba mais sobre o CBFI</a>.</span><span data-cbfi="depois" hidden>Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.</span></li>
+            <li><b>Contato da coordenação.</b> <span data-cbfi="ate">Antes do CBFI de 28/11, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.</span><span data-cbfi="depois" hidden>Em janeiro de 2027, quando abrem as novas entradas, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.</span></li>
+            <li><b>Entrevista e aprovação.</b> Na entrevista, a coordenação conhece você, a sua disponibilidade e as frentes de interesse. Se você for aprovado(a), recebe o código de aprovação.</li>
+            <li><b>CBFI, o Curso Básico de Formação Institucional.</b> Só para quem foi aprovado(a). <span data-cbfi="ate">A próxima turma é no sábado, 28 de novembro de 2026, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. <a href="/cbfi/">Saiba mais sobre o CBFI</a>.</span><span data-cbfi="depois" hidden>Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.</span></li>
             <li><b>Termo de adesão.</b> Depois da formação, você assina o termo que formaliza o vínculo e começa a atuar na sua frente.</li>
           </ol>
           <div class="vc-sucesso-acoes">
@@ -579,7 +582,7 @@
       });
     })();
   </script>
-  <script src="/voluntariado/cadastro/cadastro.js?v=22d72f9167" defer></script>
+  <script src="/voluntariado/cadastro/cadastro.js?v=f6f1641b49" defer></script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
   <script src="/chat/chat.js?v=9ed9084114" defer></script>

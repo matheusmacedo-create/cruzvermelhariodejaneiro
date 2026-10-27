@@ -135,19 +135,19 @@ também deve ser entregue se ela pedir. Correções (telefone, e-mail, endereço
 
 **Pedido de portabilidade**: o PDF e o CSV da ficha atendem.
 
-## Selfie opcional (27/10/2026)
+## Selfie obrigatória (27/10/2026)
 
-Pedido do Matheus: a pessoa pode mandar uma selfie com a ficha, se quiser, **só para a equipe reconhecê-la na
-entrevista e no CBFI** (é a finalidade escrita na Política de Privacidade; não serve para divulgação).
+Pedido do Matheus: a ficha leva uma selfie (nasceu opcional e, no mesmo dia, passou a ser **obrigatória**), **só para a
+equipe reconhecer a pessoa na entrevista e no CBFI** (é a finalidade escrita na Política de Privacidade; não serve para divulgação).
 
-- **Página**: cartão "Sua selfie (opcional)" antes dos consentimentos, campo `selfie` (`accept` JPG/PNG; no iPhone a
+- **Página**: cartão "Sua selfie" antes dos consentimentos, campo obrigatório (`cadastro.js` barra o envio sem ela), campo `selfie` (`accept` JPG/PNG; no iPhone a
   foto HEIC já chega convertida em JPG). Com JavaScript, `cadastro.js` mostra a prévia, deixa remover e reduz a foto no
   navegador (até 800 px, JPG 0,82) antes de mandá-la no JSON como data URL; o envio espera a redução terminar. Sem
   JavaScript, o formulário é `multipart/form-data` e a foto vai como arquivo.
 - **API** (`api/voluntarios.php` e `mcp_voluntario_selfie_*` em `api/lib/voluntarios.php`): o JSON deste endpoint aceita
   até 768 KB (`MCP_VOL_CORPO_MAX`; os outros seguem com 64 KB); o arquivo, até 10 MB. A foto é conferida pelos primeiros
   bytes, virada conforme o EXIF, reduzida a 800 px e **regravada em JPG pelo GD, o que tira os metadados** (EXIF, com a
-  localização do celular). O que não é foto volta 422 no campo `selfie` (sem JavaScript, `?erro=selfie`). Se o PHP
+  localização do celular). Sem selfie, ou com o que não é foto, volta 422 no campo `selfie` (sem JavaScript, `?erro=selfie`). Se o PHP
   estiver sem GD, a ficha é gravada **sem** a selfie (nunca a foto crua) e o aviso à equipe diz isso. A resposta 201
   ganhou `selfie` (true/false).
 - **Banco**: `mcp_voluntarios_selfies` (uma por ficha, `ficha_id`, base64 em `conteudo`, porque a cópia do banco no
@@ -160,6 +160,14 @@ entrevista e no CBFI** (é a finalidade escrita na Política de Privacidade; nã
 - **Testes**: `testar_voluntarios.php` (rotação, redução, EXIF/GPS removidos, PNG, recusas, e-mails),
   `testar_voluntarios_integracao.php` (JSON, multipart, 422, 413, expurgo) e `testar_voluntarios_portal_integracao.php`
   (imagem com e sem sessão, apagar).
+
+## Contato e aprovação (texto da confirmação, 27/10/2026)
+
+Pedido do Matheus: quem chama a pessoa é **a coordenadora do voluntariado, pelo WhatsApp, para explicar como será a
+entrevista** (o e-mail não diz mais que a entrevista é na sede ou por vídeo). A tela de sucesso e o e-mail de
+confirmação dizem com destaque que **o cadastro ainda não é a aprovação**: a pessoa passa pela coordenação e, se for
+aprovada, recebe um **código de aprovação**. O código é dado pela coordenação; o site não gera nem confere esse código.
+Os passos ficaram: contato da coordenação → entrevista e aprovação → CBFI (só para aprovados) → termo de adesão.
 
 ## Configuração (nomes, só no servidor)
 

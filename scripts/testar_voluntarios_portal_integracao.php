@@ -213,7 +213,7 @@ try {
     verificar('ficha do menor: aviso do responsável legal', str_contains($htmlBruno, 'Menor de 18 anos'), true);
 
     // Selfie (27/10/2026): aparece na ficha, a imagem só sai com a sessão e sem cache, e o botão apaga só a foto.
-    verificar('ficha sem selfie: diz que não veio, sem imagem', [str_contains($html, 'não enviou selfie'), str_contains($html, 'selfie=1')], [true, false]);
+    verificar('ficha sem selfie: diz que não veio, sem imagem', [str_contains($html, 'não tem selfie'), str_contains($html, 'selfie=1')], [true, false]);
     $img = imagecreatetruecolor(900, 1200);
     ob_start();
     imagejpeg($img);

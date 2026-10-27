@@ -1,0 +1,13 @@
+# Selfie obrigatória e texto da confirmação (27/10/2026): a coordenadora chama pelo WhatsApp para explicar a entrevista
+# (sem citar a sede) e o cadastro ainda não é a aprovação (código de aprovação). Sem migração de banco.
+# Ordem: bibliotecas, endpoint e portal; a política antes da página; o cadastro.js antes da página que o cita pelo hash.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-selfie-obrigatoria.txt)
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/painel_voluntarios.php
+site/matricula-cursos-presenciais/api/voluntarios.php
+site/politicas.json
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
+site/voluntariado/cadastro/cadastro.js
+site/voluntariado/cadastro/index.html

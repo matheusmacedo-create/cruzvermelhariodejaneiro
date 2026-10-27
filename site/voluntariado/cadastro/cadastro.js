@@ -7,7 +7,7 @@
    - troca o formulário pela tela de sucesso, com o protocolo em destaque e os próximos passos;
    - lê ?protocolo= e ?erro= da URL (o caminho sem JavaScript, quando a página volta da API);
    - aplica máscaras simples de telefone e CPF;
-   - selfie opcional: mostra a prévia e reduz a foto no navegador (até 800 px, JPG, sem os metadados da câmera) antes
+   - selfie obrigatória (27/10/2026): mostra a prévia e reduz a foto no navegador (até 800 px, JPG, sem os metadados da câmera) antes
      de mandar junto do JSON, no campo "selfie" (data URL). O servidor confere e regrava de novo.
    O CPF nunca vai para o GA4 nem para o Pixel: os eventos de medição levam só o id do formulário.
    Fonte: site/voluntariado/cadastro/cadastro.js; a página referencia cadastro.js?v=<hash> (scripts/gerar_voluntariado_cadastro.py). */
@@ -172,12 +172,14 @@
     if (motivacao.length < 20) erro('motivacao', 'Conte um pouco mais: a motivação precisa ter pelo menos 20 caracteres.');
     else if (motivacao.length > 1500) erro('motivacao', 'A motivação pode ter até 1500 caracteres.');
     ['experiencia', 'habilidades'].forEach(function (c) { if (valor(c).length > 1000) erro(c, 'Esse texto pode ter até 1000 caracteres.'); });
+    // A selfie é obrigatória; a redução ainda em curso conta como enviada (o envio espera por ela).
+    if (selfieCampo && !selfieDados && !(selfieCampo.files && selfieCampo.files.length)) erro('selfie', 'Envie uma selfie: uma foto do seu rosto, em JPG ou PNG.');
     if (!marcado('consentimento')) erro('consentimento', 'Para seguir, você precisa ler e aceitar a Política de Privacidade.');
     if (!marcado('veracidade')) erro('veracidade', 'Confirme que as informações são verdadeiras.');
     return erros;
   }
 
-  // ------------------------------------------------------------------ selfie (opcional)
+  // ------------------------------------------------------------------ selfie (obrigatória)
   var selfieCampo = form.elements.selfie;
   var selfiePrevia = document.getElementById('vc-selfie-previa');
   var selfieImg = document.getElementById('vc-selfie-img');
@@ -225,14 +227,14 @@
       selfieDados = null;
       if (!arquivo) { limparSelfie(); return; }
       if (!/^image\/(jpeg|png)$/.test(arquivo.type)) { limparSelfie(); marcarErro('selfie', 'A selfie precisa ser uma foto em JPG ou PNG.'); return; }
-      if (arquivo.size > 10 * 1024 * 1024) { limparSelfie(); marcarErro('selfie', 'A selfie pode ter até 10 MB. Tire outra ou siga sem ela.'); return; }
+      if (arquivo.size > 10 * 1024 * 1024) { limparSelfie(); marcarErro('selfie', 'A selfie pode ter até 10 MB. Tire outra foto.'); return; }
       selfiePronta = reduzir(arquivo).then(function (dados) {
         selfieDados = dados;
         if (selfieImg) selfieImg.src = dados;
         if (selfiePrevia) selfiePrevia.hidden = false;
       }).catch(function () {
         limparSelfie();
-        marcarErro('selfie', 'Não consegui abrir essa foto. Tente outra, em JPG ou PNG, ou siga sem ela.');
+        marcarErro('selfie', 'Não consegui abrir essa foto. Tente outra, em JPG ou PNG.');
       });
     });
   }
@@ -423,7 +425,7 @@
       motivacao: 'A motivação precisa ter de 20 a 1500 caracteres.',
       consentimento: 'Para seguir, você precisa ler e aceitar a Política de Privacidade.',
       veracidade: 'Confirme que as informações são verdadeiras.',
-      selfie: 'Não conseguimos usar essa foto. Envie uma selfie em JPG ou PNG, de até 10 MB, ou siga sem ela.'
+      selfie: 'Envie uma selfie: uma foto do seu rosto, em JPG ou PNG, de até 10 MB.'
     };
     // Só nomes de campo conhecidos viram seletor: qualquer outro valor cai na mensagem genérica abaixo.
     if (/^[a-z_]{1,30}$/.test(erroUrl) && caixa(erroUrl)) {

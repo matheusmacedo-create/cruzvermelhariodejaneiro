@@ -136,7 +136,7 @@ for ($i = 0; $i < 50 && @fsockopen('127.0.0.1', $portaSite) === false; $i++) {
 }
 
 /** [status, cabeçalhos (minúsculos), corpo]. Não segue redirecionamentos: o 303 é o que se confere. */
-function http(string $url, string $metodo = 'GET', ?string $corpo = null, array $cabecalhos = []): array
+function http(string $url, string $metodo = 'GET', string|array|null $corpo = null, array $cabecalhos = []): array
 {
     $recebidos = [];
     $ch = curl_init($url);
@@ -166,10 +166,45 @@ function enviar(string $base, array $corpo): array
     return [$st, json_decode($r, true) ?? [], $h];
 }
 
-/** POST de formulário (sem JavaScript) em api/voluntarios.php: [status, cabeçalhos, corpo]. */
-function formulario(string $base, array $campos): array
+/** Uma selfie de teste (JPG 300x300), a mesma para todas as fichas. */
+function selfie_de_teste(): string
 {
-    return http($base . 'voluntarios.php', 'POST', http_build_query($campos), ['Content-Type: application/x-www-form-urlencoded']);
+    static $jpeg = null;
+    if ($jpeg === null) {
+        $i = imagecreatetruecolor(300, 300);
+        ob_start();
+        imagejpeg($i, null, 80);
+        imagedestroy($i);
+        $jpeg = (string) ob_get_clean();
+    }
+    return $jpeg;
+}
+
+/**
+ * POST de formulário (sem JavaScript) em api/voluntarios.php: [status, cabeçalhos, corpo]. É multipart, como a página
+ * manda, com a selfie (obrigatória desde 27/10/2026) no arquivo "selfie"; $semSelfie manda sem ela.
+ */
+function formulario(string $base, array $campos, bool $semSelfie = false): array
+{
+    $planos = [];
+    foreach ($campos as $k => $v) {
+        if ($k === 'selfie') {
+            continue;
+        }
+        if (is_array($v)) {
+            foreach (array_values($v) as $i => $item) {
+                $planos["{$k}[$i]"] = (string) $item;
+            }
+        } else {
+            $planos[$k] = is_bool($v) ? ($v ? 'on' : '') : (string) $v;
+        }
+    }
+    if (!$semSelfie) {
+        $arquivo = sys_get_temp_dir() . '/mcp-selfie-teste.jpg';
+        file_put_contents($arquivo, selfie_de_teste());
+        $planos['selfie'] = new CURLFile($arquivo, 'image/jpeg', 'eu.jpg');
+    }
+    return http($base . 'voluntarios.php', 'POST', $planos, []);
 }
 
 $ficha = static fn(string $email, array $muda = []): array => $muda + [
@@ -180,6 +215,7 @@ $ficha = static fn(string $email, array $muda = []): array => $muda + [
     'motivacao' => 'Quero contribuir com a comunidade e aprender com a equipe.', 'como_conheceu' => 'site',
     'aceita_contato' => true, 'consentimento' => true, 'veracidade' => true, 'site' => '', 'pagina' => '/voluntariado/cadastro/',
     'origem' => ['utm_source' => 'teste', 'utm_campaign' => 'integracao'],
+    'selfie' => 'data:image/jpeg;base64,' . base64_encode(selfie_de_teste()),
 ];
 $politicas = json_decode((string) file_get_contents($raiz . '/site/politicas.json'), true);
 $politica = (string) ($politicas['paginas']['privacidade']['revisao'] ?? $politicas['revisao'] ?? '');
@@ -263,7 +299,14 @@ try {
         imagedestroy($i);
         return (string) ob_get_clean();
     });
-    verificar('ficha válida sem selfie: selfie = false e nada na tabela', [$respostaAna['selfie'] ?? null, mcp_voluntario_selfie($anaId)], [false, null]);
+    verificar('ficha válida: selfie = true e guardada', [$respostaAna['selfie'] ?? null, mcp_voluntario_selfie($anaId)['largura'] ?? 0], [true, 300]);
+    $emailSem = "sem-selfie-$sufixo@exemplo.org";
+    $semSelfie = $ficha($emailSem, ['nome' => "Sem $marca"]);
+    unset($semSelfie['selfie']);
+    [$st, $r] = enviar($base, $semSelfie);
+    verificar('JSON sem selfie (obrigatória): 422 no campo selfie, nada gravado', [$st, $r['campo'] ?? null, (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE email = " . $db->quote($emailSem))->fetchColumn()], [422, 'selfie', 0]);
+    [$st, $cab] = formulario($base, ['aceita_contato' => 'on', 'consentimento' => 'on', 'veracidade' => 'on'] + $semSelfie, true);
+    verificar('formulário sem selfie: 303 com ?erro=selfie', [$st, $cab['location'] ?? null], [303, '/voluntariado/cadastro/?erro=selfie']);
     $emailDani = "dani-$sufixo@exemplo.org";
     [$st, $r] = enviar($base, $ficha($emailDani, ['nome' => "Dani $marca", 'selfie' => 'data:image/jpeg;base64,' . base64_encode($foto(1600, 1200))]));
     $daniId = (int) $db->query("SELECT id FROM mcp_voluntarios WHERE email = " . $db->quote($emailDani))->fetchColumn();
@@ -292,7 +335,7 @@ try {
     file_put_contents($arquivo, $foto(500, 900, 'png'));
     $emailFe = "fe-$sufixo@exemplo.org";
     $camposFe = $ficha($emailFe, ['nome' => "Fe $marca", 'aceita_contato' => 'on', 'consentimento' => 'on', 'veracidade' => 'on']);
-    unset($camposFe['origem']);
+    unset($camposFe['origem'], $camposFe['selfie']);
     $ch = curl_init($base . 'voluntarios.php');
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_POST => true, CURLOPT_TIMEOUT => 30,
         CURLOPT_POSTFIELDS => $multipart($camposFe) + ['selfie' => new CURLFile($arquivo, 'image/png', 'eu.png')]]);
