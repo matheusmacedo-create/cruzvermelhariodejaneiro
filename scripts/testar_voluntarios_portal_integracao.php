@@ -102,6 +102,7 @@ function limpar(PDO $db): void
         $lista = implode(', ', array_map('intval', $ids));
         $db->exec("DELETE FROM mcp_voluntarios_notas WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios_selfies WHERE ficha_id IN ($lista)");
+        $db->exec("DELETE FROM mcp_voluntarios_aprovacoes WHERE ficha_id IN ($lista)");
         $db->exec("DELETE FROM mcp_drive_fila WHERE tipo = 'ficha_voluntario' AND referencia IN ($lista)");
         $db->exec("DELETE FROM mcp_voluntarios WHERE id IN ($lista)");
     }
@@ -111,7 +112,7 @@ function limpar(PDO $db): void
         $db->exec("DELETE FROM mcp_ponto WHERE colaborador_id IN ($lista)");
         $db->exec("DELETE FROM mcp_colaboradores WHERE id IN ($lista)");
     }
-    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo')
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('voluntario', 'voluntario_status', 'voluntario_repetida', 'voluntarios_expurgo', 'voluntario_aprovacao')
         OR (tipo IN ('limite', 'armadilha') AND detalhe LIKE 'voluntarios%')");
     $db->exec("DELETE FROM mcp_chaves WHERE nome = 'voluntarios_expurgo_em'");
 }
@@ -259,6 +260,21 @@ try {
         [303, "painel.php?v=voluntario&id=$carla&ok=va_ok", 'aceita', 'voluntario', 1, $cpfCarla]);
     [, , $html] = $get("v=voluntario&id=$carla&ok=va_ok");
     verificar('ficha aceita: link para o colaborador do ponto', str_contains($html, 'painel.php?v=colaborador&amp;id=' . (int) $c['colaborador_id']), true);
+    // Código de aprovação: o aceite já gera; o cartão mostra o código, o QR (qrcodejs), o WhatsApp e o cancelamento.
+    $aprov = mcp_voluntario_aprovacao($carla);
+    verificar('aceitar pelo portal: código de aprovação gerado', [$aprov !== null, empty($aprov['cancelada_em'] ?? null), str_contains($html, 'código de aprovação gerado')], [true, true, true]);
+    $codCarla = (string) ($aprov['codigo'] ?? '');
+    verificar('ficha aceita: cartão com o código, o QR code, o link de conferência, o WhatsApp e o cancelamento',
+        [str_contains($html, mcp_codigo_formatado($codCarla)), str_contains($html, 'qrcode.min.js'), str_contains($html, '/conferir/?c=' . $codCarla), str_contains($html, 'https://wa.me/55'), str_contains($html, 'Cancelar o código')], [true, true, true, true, true]);
+    [$st, $h] = portal($base, $sessao, ['acao' => 'voluntario_cod_canc', 'id' => $carla, 't' => $csrf('voluntario_cod_canc', $carla)]);
+    verificar('cancelar o código pelo portal: 303 e cancelado', [$st, $h['location'] ?? null, !empty(mcp_voluntario_aprovacao($carla)['cancelada_em'])], [303, "painel.php?v=voluntario&id=$carla&ok=vc_cancelado#aprovacao", true]);
+    [, , $html] = $get("v=voluntario&id=$carla&ok=vc_cancelado");
+    verificar('ficha com código cancelado: mostra cancelado e o botão de gerar outro', [str_contains($html, '>cancelado<'), str_contains($html, 'Gerar novo código'), str_contains($html, 'qrcode.min.js')], [true, true, false]);
+    [$st, $h] = portal($base, $sessao, ['acao' => 'voluntario_cod_gerar', 'id' => $carla, 't' => $csrf('voluntario_cod_gerar', $carla)]);
+    $novo = mcp_voluntario_aprovacao($carla);
+    verificar('gerar novo código pelo portal: 303, código trocado e válido', [$st, $h['location'] ?? null, ($novo['codigo'] ?? '') !== $codCarla, ($novo['cancelada_em'] ?? null) === null], [303, "painel.php?v=voluntario&id=$carla&ok=vc_gerado#aprovacao", true, true]);
+    [$st, , $html] = portal($base, $sessao, ['acao' => 'voluntario_cod_gerar', 'id' => $ana, 't' => $csrf('voluntario_cod_gerar', $ana)]);
+    verificar('gerar código em ficha não aceita: recusado com aviso', [str_contains($html, 'só é gerado para ficha aceita'), mcp_voluntario_aprovacao($ana)], [true, null]);
 
     // CSV e PDF.
     [$st, $h, $csv] = portal($base, $sessao, ['acao' => 'voluntarios_csv', 'id' => 0, 'status' => '', 'busca' => '', 'frente' => '', 't' => $csrf('voluntarios_csv', 0)]);

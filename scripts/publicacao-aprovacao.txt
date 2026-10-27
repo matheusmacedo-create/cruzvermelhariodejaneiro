@@ -1,0 +1,15 @@
+# Código de aprovação do voluntariado em QR code (27/10/2026). Detalhes em docs/voluntariado.md.
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria mcp_voluntarios_aprovacoes, só acrescenta), depois
+# as bibliotecas (declaracao.php antes de voluntarios.php; presenca.php chama a função nova) e o portal; a política e a página
+# /conferir/ (só título e texto mudaram) por último.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-aprovacao.txt)
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/declaracao.php
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/presenca.php
+site/matricula-cursos-presenciais/api/lib/painel_voluntarios.php
+site/politicas.json
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
+site/matricula-cursos-presenciais/conferir/index.html

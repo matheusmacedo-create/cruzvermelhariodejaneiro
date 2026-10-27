@@ -19,7 +19,7 @@
 declare(strict_types=1);
 
 /** Ações dos formulários desta parte do portal (cada uma com o token do formulário, como as outras). */
-const PV_ACOES = ['voluntario_status', 'voluntario_aceitar', 'voluntario_nota', 'voluntarios_csv', 'voluntario_pdf', 'voluntario_foto_del'];
+const PV_ACOES = ['voluntario_status', 'voluntario_aceitar', 'voluntario_nota', 'voluntarios_csv', 'voluntario_pdf', 'voluntario_foto_del', 'voluntario_cod_gerar', 'voluntario_cod_canc'];
 const PV_POR_PAGINA = 50;
 /** Chips da lista: "todas" mais as situações do ENUM, com o rótulo no plural. */
 const PV_FILTROS = ['todas' => 'Todas', 'nova' => 'Novas', 'em_analise' => 'Em análise', 'entrevista' => 'Entrevista', 'aceita' => 'Aceitas', 'recusada' => 'Recusadas', 'arquivada' => 'Arquivadas'];
@@ -33,9 +33,11 @@ const PV_AVISOS = [
     'vs_recusada' => ['Ficha recusada. A pessoa não é avisada sozinha: se quiser, escreva o e-mail pelo botão da ficha.', 'ok'],
     'vs_arquivada' => ['Ficha arquivada.', 'ok'],
     'vs_reaberta' => ['Ficha reaberta: voltou para "Em análise".', 'ok'],
-    'va_ok' => ['Ficha aceita. O cadastro no ponto da sede está pronto: abra a ficha do colaborador (link em "Situação e ações") para imprimir o termo de adesão.', 'ok'],
+    'va_ok' => ['Ficha aceita e código de aprovação gerado (veja o QR code abaixo). O cadastro no ponto da sede está pronto: abra a ficha do colaborador (link em "Situação e ações") para imprimir o termo de adesão.', 'ok'],
     'vn_ok' => ['Nota adicionada ao histórico.', 'ok'],
     'vf_apagada' => ['Selfie apagada. A ficha continua como estava.', 'ok'],
+    'vc_gerado' => ['Código de aprovação gerado. Mande o QR code ou a mensagem pelo WhatsApp.', 'ok'],
+    'vc_cancelado' => ['Código de aprovação cancelado: na conferência ele aparece como cancelado. Se for o caso, gere outro.', 'ok'],
 ];
 
 // ----------------------------------------------------------------------------- utilidades de página
@@ -359,6 +361,7 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
         . '<a class="btn btn-outline" href="' . pn_e($mailto) . '">Escrever e-mail</a></div></div>'
         . ($menor ? '<div class="orientacao" role="note" style="background:#fff7e6;border:1px solid #f6d7a7;color:#6b4400"><b>Menor de 18 anos.</b> Pode ser voluntário(a): o termo de adesão é assinado também pelo responsável legal (Lei 9.608/1998). Combine isso na entrevista.</div>' : '');
     $corpo = $topo
+        . pv_cartao_aprovacao($usuario, $f)
         . '<div class="ficha">'
         . '<div class="cartao"><h2>Situação e ações</h2>' . $situacao . $acoes . '</div>'
         . '<div class="cartao"><h2>Dados pessoais</h2>' . $pessoais . '</div>'
@@ -376,6 +379,66 @@ function pv_ficha(string $usuario, int $id, string $aviso = '', string $classe =
         . '<div class="cartao" id="historico" style="margin-top:18px"><h2>Histórico</h2><ul class="tempo">' . $tempo . '</ul>'
         . '<h2 style="margin-top:18px">Adicionar nota</h2>' . $nota . '</div>';
     pn_pagina((string) $f['nome'], $corpo, $usuario, true, 'voluntarios');
+}
+
+/**
+ * Cartão do código de aprovação (27/10/2026), no topo da ficha aceita: o código, o QR code (abre /conferir/?c=), a
+ * mensagem pronta para o WhatsApp e o cancelamento. O QR é desenhado no navegador, com a mesma biblioteca do PIX do
+ * checkout e do cartaz do ponto (qrcodejs, cdnjs), e pode ser baixado em PNG para mandar como imagem.
+ */
+function pv_cartao_aprovacao(string $usuario, array $f): string
+{
+    $id = (int) $f['id'];
+    if ((string) $f['status'] !== 'aceita') {
+        return '';
+    }
+    $a = mcp_voluntario_aprovacao($id);
+    $gerar = static fn(string $rotulo): string => pv_form($usuario, 'voluntario_cod_gerar', $id, '<button class="btn btn-red" type="submit">' . pn_e($rotulo) . '</button>');
+    if (!$a) {
+        return '<div class="cartao" id="aprovacao" style="margin-bottom:18px"><h2>Código de aprovação</h2>'
+            . '<p class="nota" style="margin-top:0">Esta ficha foi aceita, mas ainda não tem código de aprovação. Gere o código para mandar à pessoa: ela confere em ' . pn_e(mcp_conferir_url_curta()) . '.</p>'
+            . '<div class="acoes" style="margin-top:0">' . $gerar('Gerar código de aprovação') . '</div></div>';
+    }
+    $codigo = (string) $a['codigo'];
+    if (!empty($a['cancelada_em'])) {
+        return '<div class="cartao" id="aprovacao" style="margin-bottom:18px"><h2>Código de aprovação</h2>'
+            . '<p style="margin:0 0 8px"><span class="selo erro">cancelado</span> <b>' . pn_e(mcp_codigo_formatado($codigo)) . '</b> <small style="color:var(--muted)">em ' . pn_e(pn_data((string) $a['cancelada_em']))
+            . (!empty($a['cancelada_por']) ? ' · por ' . pn_e((string) $a['cancelada_por']) : '') . '</small></p>'
+            . '<p class="nota">Na conferência, este código aparece como cancelado. Gerar outro troca o código; avise a pessoa.</p>'
+            . '<div class="acoes" style="margin-top:0">' . $gerar('Gerar novo código') . '</div></div>';
+    }
+    $url = mcp_conferir_url($codigo);
+    $mensagem = mcp_voluntario_aprovacao_mensagem($f, $codigo);
+    $telefone = mcp_digitos((string) $f['telefone']);
+    $whatsapp = $telefone !== '' ? 'https://wa.me/55' . $telefone . '?text=' . rawurlencode($mensagem) : '';
+    $arquivo = 'aprovacao-' . preg_replace('/[^A-Za-z0-9-]/', '', (string) ($f['protocolo'] ?: $id)) . '.png';
+    $dados = json_encode(['url' => $url, 'arquivo' => $arquivo, 'mensagem' => $mensagem], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP);
+    return '<div class="cartao" id="aprovacao" style="margin-bottom:18px"><h2>Código de aprovação</h2>'
+        . '<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">'
+        . '<div id="pv-qr" style="background:#fff;padding:10px;border:1px solid var(--line);border-radius:12px;width:200px;height:200px" aria-label="QR code que abre a conferência do código ' . pn_e(mcp_codigo_formatado($codigo)) . '"></div>'
+        . '<div style="flex:1;min-width:240px">'
+        . '<p style="margin:0 0 4px"><span class="selo ok">válido</span> <small style="color:var(--muted)">gerado em ' . pn_e(pn_data((string) $a['emitida_em'])) . ' · por ' . pn_e((string) $a['emitida_por']) . '</small></p>'
+        . '<p style="margin:0 0 6px;font-size:2rem;font-weight:800;letter-spacing:.06em">' . pn_e(mcp_codigo_formatado($codigo)) . '</p>'
+        . '<p class="nota" style="margin:0 0 10px">O QR code abre <a href="' . pn_e($url) . '" target="_blank" rel="noopener">' . pn_e(mcp_conferir_url_curta() . '/?c=' . $codigo) . '</a>, onde qualquer pessoa confere o nome, o CPF mascarado e a data da aprovação.</p>'
+        . '<div class="acoes" style="margin-top:0">'
+        . ($whatsapp !== '' ? '<a class="btn btn-red" href="' . pn_e($whatsapp) . '" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>' : '')
+        . '<button class="btn btn-outline" type="button" id="pv-qr-baixar">Baixar o QR code</button>'
+        . '<button class="btn btn-outline" type="button" id="pv-msg-copiar">Copiar a mensagem</button></div>'
+        . '<p class="nota" id="pv-msg-aviso" role="status" style="min-height:1.2em;margin:6px 0 0"></p>'
+        . '<details class="ajustar"><summary>Cancelar o código</summary>' . pv_form($usuario, 'voluntario_cod_canc', $id, '<div class="mini">'
+            . '<p class="nota" style="margin:0">Use se a aprovação não vale mais ou se o código foi parar com outra pessoa. Na conferência ele passa a aparecer como cancelado.</p>'
+            . '<button class="btn btn-outline" type="submit">Cancelar o código</button></div>') . '</details>'
+        . '</div></div></div>'
+        . '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>'
+        . '<script>(function(){var d=' . $dados . ',caixa=document.getElementById("pv-qr"),aviso=document.getElementById("pv-msg-aviso");'
+        . 'function dizer(t){if(aviso)aviso.textContent=t;}'
+        . 'if(window.QRCode&&caixa){try{new window.QRCode(caixa,{text:d.url,width:200,height:200,correctLevel:window.QRCode.CorrectLevel.M});}catch(e){caixa.textContent="Não consegui desenhar o QR code. Use o link ao lado.";}}'
+        . 'else if(caixa){caixa.textContent="Sem o QR code agora (a biblioteca não carregou). Use o link ao lado.";}'
+        . 'var b=document.getElementById("pv-qr-baixar");if(b)b.addEventListener("click",function(){var c=caixa&&caixa.querySelector("canvas");'
+        . 'if(!c){dizer("O QR code ainda não está pronto.");return;}var t=document.createElement("canvas"),m=24;t.width=c.width+2*m;t.height=c.height+2*m;var x=t.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,t.width,t.height);x.drawImage(c,m,m);'
+        . 'var a=document.createElement("a");a.href=t.toDataURL("image/png");a.download=d.arquivo;document.body.appendChild(a);a.click();a.remove();});'
+        . 'var k=document.getElementById("pv-msg-copiar");if(k)k.addEventListener("click",function(){if(navigator.clipboard){navigator.clipboard.writeText(d.mensagem).then(function(){dizer("Mensagem copiada.");},function(){dizer(d.mensagem);});}else{dizer(d.mensagem);}});'
+        . '})();</script></div>';
 }
 
 // ----------------------------------------------------------------------------- formulários (POST)
@@ -429,7 +492,28 @@ function pv_post(string $sessao, string $acao, int $id): never
                 mcp_voluntario_nota_registrar($id, $sessao, $nota);
             }
             mcp_registrar(null, 'painel_voluntario_aceitar', "#$id · colaborador #{$r['colaborador_id']} · $sessao");
+            // A ficha aceita já sai com o código de aprovação, que a confirmação do cadastro promete. Se falhar (banco ainda
+            // sem a tabela), a aceitação vale do mesmo jeito e o cartão da ficha oferece o botão de gerar.
+            try {
+                mcp_voluntario_aprovacao_emitir($id, $sessao);
+            } catch (Throwable $e) {
+                error_log("[matricula] código de aprovação da ficha #$id não gerado no aceite: " . $e->getMessage());
+            }
             pn_redirecionar("v=voluntario&id=$id&ok=va_ok");
+        case 'voluntario_cod_gerar':
+            try {
+                $r = mcp_voluntario_aprovacao_emitir($id, $sessao);
+            } catch (Throwable $e) {
+                error_log("[matricula] código de aprovação da ficha #$id: " . $e->getMessage());
+                $r = ['ok' => false, 'erro' => 'Não consegui gerar o código agora. Tente de novo em alguns minutos.'];
+            }
+            if (!$r['ok']) {
+                pv_ficha($sessao, $id, (string) $r['erro'], 'erro');
+            }
+            pn_redirecionar("v=voluntario&id=$id&ok=vc_gerado#aprovacao");
+        case 'voluntario_cod_canc':
+            mcp_voluntario_aprovacao_cancelar($id, $sessao);
+            pn_redirecionar("v=voluntario&id=$id&ok=vc_cancelado#aprovacao");
         case 'voluntario_foto_del':
             mcp_voluntario_selfie_apagar([$id]);
             mcp_registrar(null, 'painel_voluntario_selfie_apagada', "#$id · $sessao");

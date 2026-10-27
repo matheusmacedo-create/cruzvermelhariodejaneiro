@@ -169,6 +169,31 @@ confirmação dizem com destaque que **o cadastro ainda não é a aprovação**:
 aprovada, recebe um **código de aprovação**. O código é dado pela coordenação; o site não gera nem confere esse código.
 Os passos ficaram: contato da coordenação → entrevista e aprovação → CBFI (só para aprovados) → termo de adesão.
 
+## Código de aprovação em QR code (27/10/2026)
+
+Pedido do Matheus: o portal gera o código de aprovação que a confirmação do cadastro promete, em QR code, conferível na
+página que o site já tem, **`/conferir/`** (endereço curto `cruzvermelhariodejaneiro.org/conferir`, que redireciona
+para `/matricula-cursos-presenciais/conferir/` mantendo o `?c=`).
+
+- **Quando nasce**: ao aceitar a ficha no portal (o aceite chama `mcp_voluntario_aprovacao_emitir`); ficha aceita antes
+  disso ganha o código pelo botão "Gerar código de aprovação". Só ficha `aceita` recebe código.
+- **O código**: 8 caracteres do mesmo alfabeto das declarações do ponto (`lib/declaracao.php`, sem 0/O nem 1/I);
+  `mcp_codigo_novo` passou a evitar também os códigos de aprovação. Tabela `mcp_voluntarios_aprovacoes` (um por ficha,
+  `codigo` único, quem emitiu e quando, cancelamento). Pedir de novo devolve o mesmo código válido; cancelar marca a data;
+  gerar depois de cancelar troca o código (o antigo deixa de existir na conferência).
+- **Portal** (`pv_cartao_aprovacao`, no topo da ficha aceita): o código, o QR code desenhado no navegador (qrcodejs do
+  cdnjs, a mesma biblioteca do PIX e do cartaz do ponto), "Enviar pelo WhatsApp" (wa.me com a mensagem pronta para o
+  telefone da ficha), "Baixar o QR code" (PNG com margem branca), "Copiar a mensagem" e "Cancelar o código". Ações
+  `voluntario_cod_gerar` e `voluntario_cod_canc` (o portal corta o nome da ação em 20 caracteres).
+- **Conferência** (`mcp_conferir` em `lib/presenca.php`, `api/conferir.php`): "Aprovação no voluntariado", "Aprovação
+  válida" ou "cancelada pela coordenação em dd/mm/aaaa", nome, CPF mascarado (`***.982.247-**`), data da aprovação e as
+  próximas etapas. Mesmo freio de consultas por IP das declarações.
+- **Política de Privacidade** (PT/EN/ES, seção Voluntariado): diz que o aprovado recebe o código e o que quem o tiver vê.
+- **Testes**: `testar_voluntarios_integracao.php` (antes do aceite, emissão, idempotência, conferência pela função e
+  pela URL, cancelamento, novo código) e `testar_voluntarios_portal_integracao.php` (código no aceite, cartão com QR,
+  WhatsApp e cancelamento, gerar de novo, ficha não aceita). O QR baixado do portal foi lido por um leitor independente
+  (OpenCV) e abre `/conferir/?c=<código>` com a aprovação válida.
+
 ## Configuração (nomes, só no servidor)
 
 - `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova e das mensagens do chat com o
