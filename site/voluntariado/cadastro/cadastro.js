@@ -148,20 +148,24 @@
     var erros = [];
     function erro(campo, texto) { erros.push({ campo: campo, texto: texto }); }
     var nome = valor('nome');
-    // As mesmas regras da API (api/voluntarios.php): nome com 5+ caracteres e um espaço, textos livres até 1000, motivação 20 a 1500.
+    // As mesmas regras da API (api/voluntarios.php): nome com 5+ caracteres e um espaço, ficha completa (CPF, bairro, profissão,
+    // experiência e habilidades de 3 a 1000, como conheceu), motivação 20 a 1500.
     if (nome.length < 5 || nome.indexOf(' ') < 0) erro('nome', 'Digite seu nome completo, com nome e sobrenome.');
     var anos = idade(dataIso(valor('data_nascimento')));
     if (anos === null) erro('data_nascimento', 'Digite a data de nascimento completa: dia, mês e ano.');
     else if (anos < 0 || anos > 110) erro('data_nascimento', 'Confira a data de nascimento.');
     else if (anos < 18) erro('data_nascimento', MSG_MENOR);
     var cpf = digitos(valor('cpf'));
-    if (cpf && !cpfValido(cpf)) erro('cpf', 'Esse CPF não parece válido. Confira os números ou deixe em branco por enquanto.');
+    if (!cpf) erro('cpf', 'Digite o seu CPF.');
+    else if (!cpfValido(cpf)) erro('cpf', 'Esse CPF não parece válido. Confira os números.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor('email'))) erro('email', 'Digite um e-mail válido: é por ele que a confirmação chega.');
     var tel = digitos(valor('telefone'));
     if (tel.length < 10 || tel.length > 11) erro('telefone', 'Digite o telefone com DDD, por exemplo (21) 99999-9999.');
     if (valor('cidade').length < 2) erro('cidade', 'Digite a cidade onde você mora.');
+    if (valor('bairro').length < 2) erro('bairro', 'Digite o bairro onde você mora.');
     if (!valor('estado')) erro('estado', 'Escolha o estado.');
     if (!valor('escolaridade')) erro('escolaridade', 'Escolha a sua escolaridade.');
+    if (valor('profissao').length < 2) erro('profissao', 'Digite a sua profissão ou ocupação (estudante, aposentado e desempregado também valem).');
     var saude = marcados('saude')[0];
     if (!saude) erro('saude', 'Diga se você tem formação na área da saúde.');
     else if (saude === 'sim' && valor('saude_qual').length < 2) erro('saude_qual', 'Conte qual é a sua formação na área da saúde.');
@@ -171,7 +175,10 @@
     var motivacao = valor('motivacao');
     if (motivacao.length < 20) erro('motivacao', 'Conte um pouco mais: a motivação precisa ter pelo menos 20 caracteres.');
     else if (motivacao.length > 1500) erro('motivacao', 'A motivação pode ter até 1500 caracteres.');
+    if (valor('experiencia').length < 3) erro('experiencia', 'Conte a sua experiência com voluntariado ou trabalho social. Se ainda não teve, escreva "nenhuma".');
+    if (valor('habilidades').length < 3) erro('habilidades', 'Conte as habilidades que você quer colocar à disposição.');
     ['experiencia', 'habilidades'].forEach(function (c) { if (valor(c).length > 1000) erro(c, 'Esse texto pode ter até 1000 caracteres.'); });
+    if (!valor('como_conheceu')) erro('como_conheceu', 'Escolha como você conheceu a Cruz Vermelha RJ.');
     // A selfie é obrigatória; a redução ainda em curso conta como enviada (o envio espera por ela).
     if (selfieCampo && !selfieDados && !(selfieCampo.files && selfieCampo.files.length)) erro('selfie', 'Envie uma selfie: uma foto do seu rosto, em JPG ou PNG.');
     if (!marcado('consentimento')) erro('consentimento', 'Para seguir, você precisa ler e aceitar a Política de Privacidade.');
@@ -421,7 +428,14 @@
       data_nascimento: MSG_MENOR,
       email: 'Confira o e-mail: é por ele que a confirmação chega.',
       telefone: 'Digite o telefone com DDD, por exemplo (21) 99999-9999.',
-      cpf: 'Esse CPF não parece válido. Confira os números ou deixe em branco por enquanto.',
+      cpf: 'Digite um CPF válido.',
+      bairro: 'Digite o bairro onde você mora.',
+      profissao: 'Digite a sua profissão ou ocupação.',
+      saude: 'Diga se você tem formação na área da saúde.',
+      saude_qual: 'Conte qual é a sua formação na área da saúde.',
+      experiencia: 'Conte a sua experiência com voluntariado. Se ainda não teve, escreva "nenhuma".',
+      habilidades: 'Conte as habilidades que você quer colocar à disposição.',
+      como_conheceu: 'Escolha como você conheceu a Cruz Vermelha RJ.',
       motivacao: 'A motivação precisa ter de 20 a 1500 caracteres.',
       consentimento: 'Para seguir, você precisa ler e aceitar a Política de Privacidade.',
       veracidade: 'Confirme que as informações são verdadeiras.',

@@ -218,7 +218,7 @@ function formulario(string $base, array $campos, bool $semSelfie = false): array
 }
 
 $ficha = static fn(string $email, array $muda = []): array => $muda + [
-    'nome' => "Ana $marca", 'data_nascimento' => '1992-03-10', 'email' => $email, 'telefone' => '(21) 99876-5432', 'cpf' => '',
+    'nome' => "Ana $marca", 'data_nascimento' => '1992-03-10', 'email' => $email, 'telefone' => '(21) 99876-5432', 'cpf' => mcp_cpf_formatado(cpf_de_teste()),
     'cidade' => 'Rio de Janeiro', 'bairro' => 'Tijuca', 'estado' => 'RJ', 'escolaridade' => 'superior', 'profissao' => 'Professora',
     'saude' => 'nao', 'experiencia' => 'Fui voluntária na escola do bairro.', 'habilidades' => 'Primeiros socorros básicos',
     'frentes' => ['juventude', 'campanhas_acoes'], 'dias' => ['sab', 'dom'], 'periodos' => ['manha'],
@@ -275,9 +275,17 @@ try {
     verificar('armadilha preenchida: 422 genérico, sem campo', [$st, campo($r, 'campo'), $r['erro'] ?? null], [422, 'ausente', 'Não foi possível enviar. Tente novamente.']);
     verificar('nem a menor de 18 nem o robô geraram linha', (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE nome LIKE '%$marca%'")->fetchColumn(), 1);
     $emailBia = "bia-$sufixo@exemplo.org";
-    [$st, $r] = enviar($base, $ficha($emailBia, ['nome' => "Bia $marca", 'data_nascimento' => $hoje->modify('-25 years')->format('Y-m-d'), 'escolaridade' => 'medio', 'profissao' => '']));
+    [$st, $r] = enviar($base, $ficha($emailBia, ['nome' => "Bia $marca", 'data_nascimento' => $hoje->modify('-25 years')->format('Y-m-d'), 'escolaridade' => 'medio', 'profissao' => 'Estudante', 'cpf' => $cpfBia]));
     verificar('adulta: 201 com menor = false', [$st, $r['menor'] ?? null], [201, false]);
     $biaId = (int) $db->query("SELECT id FROM mcp_voluntarios WHERE email = " . $db->quote($emailBia))->fetchColumn();
+    // Ficha completa (28/10/2026): sem CPF, bairro, profissão, experiência, habilidades ou "como conheceu", 422 no campo e nada gravado.
+    $recusas = [];
+    foreach (['cpf', 'bairro', 'profissao', 'experiencia', 'habilidades', 'como_conheceu'] as $obrigatorio) {
+        [$st, $r] = enviar($base, $ficha("incompleta-$obrigatorio-$sufixo@exemplo.org", [$obrigatorio => '']));
+        $recusas[$obrigatorio] = [$st, $r['campo'] ?? null];
+    }
+    verificar('ficha incompleta: 422 no campo que falta', $recusas, array_map(static fn(string $c): array => [422, $c], array_combine(array_keys($recusas), array_keys($recusas))));
+    verificar('ficha incompleta: nenhuma linha gravada', (int) $db->query("SELECT COUNT(*) FROM mcp_voluntarios WHERE email LIKE 'incompleta-%-$sufixo@exemplo.org'")->fetchColumn(), 0);
     [$st, $r] = enviar($base, $ficha("x-$sufixo@exemplo.org", ['frentes' => ['juventude', 'cozinha']]));
     verificar('frente desconhecida: 422 no campo frentes', [$st, $r['campo'] ?? null], [422, 'frentes']);
     [$st, $r] = enviar($base, $ficha("x-$sufixo@exemplo.org", ['consentimento' => false]));
@@ -408,6 +416,8 @@ try {
 
     // ------------------------------------------------------------------------- aceitação: cria o colaborador do ponto
     verificar('código de aprovação antes do aceite: recusado', mcp_voluntario_aprovacao_emitir($biaId, $quem), ['ok' => false, 'erro' => 'O código de aprovação só é gerado para ficha aceita.']);
+    // A Bia vira uma ficha de antes de 28/10/2026, quando o CPF era opcional: o aceite ainda precisa pedir o CPF a essas.
+    $db->exec('UPDATE mcp_voluntarios SET cpf = NULL WHERE id = ' . $biaId);
     $semCpf = mcp_voluntario_aceitar($biaId, $quem, '');
     verificar('aceitar sem CPF (a ficha também não tem): erro pedindo o CPF', [$semCpf['ok'], str_contains((string) ($semCpf['erro'] ?? ''), 'CPF'), campo($semCpf, 'colaborador_id')], [false, true, 'ausente']);
     verificar('aceitar com CPF inválido: erro', mcp_voluntario_aceitar($biaId, $quem, '123.456.789-00')['ok'], false);

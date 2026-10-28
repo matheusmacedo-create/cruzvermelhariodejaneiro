@@ -66,8 +66,8 @@ verificar('cpf sintético com o último dígito trocado é inválido', mcp_cpf_v
 
 $base = [
     'nome' => '  maria  da Silva ', 'data_nascimento' => '1990-05-20', 'email' => 'Maria@Exemplo.org', 'telefone' => '(21) 99999-8888',
-    'cpf' => '', 'cidade' => 'Rio de Janeiro', 'bairro' => 'Centro', 'estado' => '', 'escolaridade' => 'superior', 'profissao' => 'Enfermeira',
-    'saude' => 'nao', 'saude_qual' => '', 'experiencia' => '', 'habilidades' => "Primeiros socorros\n\n\n\nInglês",
+    'cpf' => mcp_cpf_formatado($cpf), 'cidade' => 'Rio de Janeiro', 'bairro' => 'Centro', 'estado' => 'RJ', 'escolaridade' => 'superior', 'profissao' => 'Enfermeira',
+    'saude' => 'nao', 'saude_qual' => '', 'experiencia' => 'nenhuma', 'habilidades' => "Primeiros socorros\n\n\n\nInglês",
     'frentes' => ['juventude', 'formacao_primeiros_socorros'], 'dias' => ['sab', 'seg'], 'periodos' => ['noite', 'manha'],
     'motivacao' => 'Quero ajudar as pessoas da minha cidade em emergências.', 'como_conheceu' => 'instagram',
     'aceita_contato' => true, 'consentimento' => true, 'veracidade' => true, 'site' => '',
@@ -81,15 +81,15 @@ $d = $r['dados'];
 verificar('nome normalizado', $d['nome'], 'maria da Silva');
 verificar('e-mail em minúsculas', $d['email'], 'maria@exemplo.org');
 verificar('telefone só dígitos', $d['telefone'], '21999998888');
-verificar('cpf vazio vira null', $d['cpf'], null);
-verificar('estado vazio vira RJ', $d['estado'], 'RJ');
+verificar('cpf só com os dígitos', $d['cpf'], $cpf);
+verificar('estado', $d['estado'], 'RJ');
 verificar('frentes em CSV na ordem da tabela', $d['frentes'], 'formacao_primeiros_socorros,juventude');
 verificar('dias em CSV na ordem da semana', $d['dias'], 'seg,sab');
 verificar('períodos em CSV na ordem do dia', $d['periodos'], 'manha,noite');
 verificar('saúde não', [$d['saude'], $d['saude_qual']], [0, null]);
 verificar('idade e maior de idade', [$d['idade'], $d['menor']], [36, false]);
 verificar('aceita contato', $d['aceita_contato'], 1);
-verificar('experiência vazia vira null; habilidades sem excesso de linhas em branco', [$d['experiencia'], $d['habilidades']], [null, "Primeiros socorros\n\nInglês"]);
+verificar('experiência "nenhuma" vale; habilidades sem excesso de linhas em branco', [$d['experiencia'], $d['habilidades']], ['nenhuma', "Primeiros socorros\n\nInglês"]);
 verificar('como conheceu', $d['como_conheceu'], 'instagram');
 verificar('página do site e origem', [$d['pagina'], $d['utm_source'], $d['utm_campaign'], $d['fbclid'], $d['utm_medium']], ['/voluntariado/cadastro/?utm_source=ig', 'instagram', 'voluntariado-2026', 'abc', null]);
 verificar('profissão e bairro', [$d['profissao'], $d['bairro']], ['Enfermeira', 'Centro']);
@@ -113,6 +113,16 @@ verificar('e-mail inválido', campo_erro($com(['email' => 'maria@'])), 'email');
 verificar('telefone vazio', campo_erro($com(['telefone' => ''])), 'telefone');
 verificar('telefone sem DDD', campo_erro($com(['telefone' => '9999-8888'])), 'telefone');
 verificar('cpf inválido', campo_erro($com(['cpf' => $cpfInvalido])), 'cpf');
+// Ficha completa desde 28/10/2026: nada do que a equipe usa na análise pode chegar em branco.
+foreach (['cpf', 'bairro', 'estado', 'profissao', 'saude', 'experiencia', 'habilidades', 'como_conheceu'] as $obrigatorio) {
+    verificar("ficha completa: $obrigatorio vazio é recusado no próprio campo", [campo_erro($com([$obrigatorio => ''])), campo_erro(mcp_voluntario_validar(array_diff_key($base, [$obrigatorio => 1]), $hoje))], [$obrigatorio, $obrigatorio]);
+}
+verificar('ficha completa: texto de 1 caractere não conta (bairro, profissão) nem de 2 (experiência, habilidades)',
+    [campo_erro($com(['bairro' => 'x'])), campo_erro($com(['profissao' => 'x'])), campo_erro($com(['experiencia' => 'ok'])), campo_erro($com(['habilidades' => ' a '])), campo_erro($com(['experiencia' => 'Não']))],
+    ['bairro', 'profissao', 'experiencia', 'habilidades', 'ok']);
+verificar('ficha completa: saúde "sim" sem dizer qual é recusada', campo_erro($com(['saude' => 'sim', 'saude_qual' => ''])), 'saude_qual');
+verificar('ficha completa: saúde com valor desconhecido é recusada; "não" com acento vale', [campo_erro($com(['saude' => 'talvez'])), $com(['saude' => 'Não'])['dados']['saude'] ?? null], ['saude', 0]);
+verificar('experiência e habilidades acima de 1000 caracteres', [campo_erro($com(['experiencia' => str_repeat('a', 1001)])), campo_erro($com(['habilidades' => str_repeat('a', 1001)]))], ['experiencia', 'habilidades']);
 verificar('cpf válido formatado vira só dígitos', $com(['cpf' => mcp_cpf_formatado($cpf)])['dados']['cpf'] ?? null, $cpf);
 verificar('cidade vazia', campo_erro($com(['cidade' => ''])), 'cidade');
 verificar('estado desconhecido', campo_erro($com(['estado' => 'XX'])), 'estado');
@@ -141,7 +151,6 @@ verificar('saúde sim com qual', [$saude['dados']['saude'], $saude['dados']['sau
 $saudeNao = $com(['saude' => 'nao', 'saude_qual' => 'texto perdido']);
 verificar('saúde não descarta o "qual"', [$saudeNao['dados']['saude'], $saudeNao['dados']['saude_qual']], [0, null]);
 verificar('como conheceu desconhecido vira outro', $com(['como_conheceu' => 'tiktok'])['dados']['como_conheceu'] ?? null, 'outro');
-verificar('como conheceu vazio vira null', $com(['como_conheceu' => ''])['dados']['como_conheceu'], null);
 verificar('página de outro site é descartada', [$com(['pagina' => 'https://outro.site/'])['dados']['pagina'], $com(['pagina' => '//outro.site/'])['dados']['pagina']], [null, null]);
 verificar('aceita contato ausente é 0', mcp_voluntario_validar(array_diff_key($base, ['aceita_contato' => 1]), $hoje)['dados']['aceita_contato'], 0);
 verificar('booleanos do formulário', array_map('mcp_voluntario_bool', [true, '1', 'on', 'sim', 'true', 1, false, '0', '', 'nao', null, 0]), [true, true, true, true, true, true, false, false, false, false, false, false]);
@@ -213,7 +222,8 @@ function pdf_texto(string $pdf): string
 $pdf = mcp_voluntario_pdf($ficha);
 $conteudo = pdf_texto($pdf);
 verificar('pdf: começa com %PDF e termina com %%EOF', [str_starts_with($pdf, '%PDF-1.4'), str_ends_with($pdf, "%%EOF\n")], [true, true]);
-verificar('pdf: 1 página para a ficha curta', substr_count($pdf, '/Type /Page /Parent'), 1);
+// Desde 28/10/2026 a ficha mais curta já é completa (CPF, experiência, habilidades): cabe em até 2 páginas.
+verificar('pdf: até 2 páginas para a ficha completa mais curta', substr_count($pdf, '/Type /Page /Parent') <= 2, true);
 verificar('pdf: protocolo, nome e CPF só com os 3 primeiros dígitos', [str_contains($conteudo, 'VOL-261016-0042'), str_contains($conteudo, 'maria da Silva'),
     str_contains($conteudo, substr($cpf, 0, 3) . '.***.***-**'), str_contains($conteudo, $cpf), str_contains($conteudo, mcp_cpf_formatado($cpf)), str_contains($conteudo, substr($cpf, 3, 3) . '.' . substr($cpf, 6, 3))], [true, true, true, false, false, false]);
 verificar('pdf: consentimentos com data em Brasília e revisão da política', [str_contains($conteudo, '16/10/2026'), str_contains($conteudo, '2026-10-02'), str_contains($conteudo, 'CONSENTIMENTOS \\(LGPD\\)')], [true, true, true]);
