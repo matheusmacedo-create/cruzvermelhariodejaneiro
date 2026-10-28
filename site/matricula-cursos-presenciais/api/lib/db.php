@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '5043d33ee9fd915a';
+const MCP_DB_VERSAO = '4e047f387193bda3';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -779,7 +779,7 @@ function mcp_garantir_indices(PDO $pdo): void
 function mcp_eventos_apagar_freios(?int $agora = null): int
 {
     $agora ??= time();
-    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse', 'parcelas_consulta', 'recusa_checkout')
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'redacao_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse', 'parcelas_consulta', 'recusa_checkout')
         AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
     return $stmt->rowCount();

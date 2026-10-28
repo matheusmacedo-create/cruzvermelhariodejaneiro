@@ -662,6 +662,177 @@ function mcp_voluntario_aprovacao_mensagem(array $f, string $codigo): string
         . 'Qualquer pessoa pode conferir em ' . mcp_conferir_url($codigo) . ' . Guarde este código: ele mostra que você foi aprovado(a) para seguir para o CBFI e o termo de adesão.';
 }
 
+// ----------------------------------------------------------------------------- ligação com a Redação
+/**
+ * Fichas para a Redação (pedido do Matheus, 27/10/2026): a Redação (palacio.cruzvermelhariodejaneiro.org, Supabase)
+ * busca as fichas pela API api/redacao-voluntarios.php e as mostra em Voluntários → Inscrições pendentes; a coordenação
+ * aprova ou recusa lá, e a Redação avisa o site pela mesma API (o aceite cria o colaborador do ponto e o código de
+ * aprovação). Servidor a servidor, com "Authorization: Bearer <REDACAO_TOKEN>" (config-redacao.php, só no servidor; o
+ * mesmo valor fica na Vercel como SITE_VOLUNTARIOS_TOKEN). Sem a chave, a API responde 404.
+ */
+const MCP_REDACAO_TOKEN_MIN = 32;
+const MCP_REDACAO_FALHAS = [20, 3600];
+const MCP_REDACAO_LOTE_MAX = 50;
+
+function mcp_redacao_configurado(): bool
+{
+    return strlen((string) mcp_cfg('REDACAO_TOKEN', '')) >= MCP_REDACAO_TOKEN_MIN;
+}
+
+/** Confere o cabeçalho "Authorization: Bearer <chave>" em tempo constante. */
+function mcp_redacao_autorizado(string $cabecalho): bool
+{
+    if (!mcp_redacao_configurado() || !preg_match('/^Bearer\s+(\S+)$/', trim($cabecalho), $m)) {
+        return false;
+    }
+    return hash_equals(hash('sha256', (string) mcp_cfg('REDACAO_TOKEN')), hash('sha256', $m[1]));
+}
+
+/** 'AAAA-MM-DD HH:MM:SS' (UTC, como o banco guarda) em ISO 8601, ou null. */
+function mcp_redacao_iso(?string $utc): ?string
+{
+    return $utc ? (new DateTimeImmutable($utc, new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s\Z') : null;
+}
+
+/** Uma ficha no formato que a Redação lê (rótulos legíveis, datas ISO, a selfie em base64). */
+function mcp_redacao_ficha(array $f): array
+{
+    $lista = static fn(string $csv, array $tabela): array => array_values(array_filter(array_map(
+        static fn(string $c): string => (string) ($tabela[$c] ?? ''), array_filter(explode(',', $csv)))));
+    $selfie = mcp_voluntario_selfie((int) $f['id']);
+    $aprovacao = mcp_voluntario_aprovacao((int) $f['id']);
+    return [
+        'id' => (int) $f['id'],
+        'protocolo' => (string) $f['protocolo'],
+        'situacao' => (string) $f['status'],
+        'criado_em' => mcp_redacao_iso((string) $f['criado_em']),
+        'nome' => (string) $f['nome'],
+        'data_nascimento' => (string) $f['data_nascimento'],
+        'email' => (string) $f['email'],
+        'telefone' => (string) $f['telefone'],
+        'cpf' => !empty($f['cpf']) ? (string) $f['cpf'] : null,
+        'cidade' => (string) $f['cidade'],
+        'bairro' => (string) ($f['bairro'] ?? ''),
+        'estado' => (string) $f['estado'],
+        'escolaridade' => (string) (MCP_VOL_ESCOLARIDADES[$f['escolaridade']] ?? $f['escolaridade']),
+        'profissao' => (string) ($f['profissao'] ?? ''),
+        'formacao_saude' => (int) ($f['saude'] ?? 0) === 1 ? ((string) ($f['saude_qual'] ?? '') ?: 'sim') : '',
+        'experiencia' => (string) ($f['experiencia'] ?? ''),
+        'habilidades' => (string) ($f['habilidades'] ?? ''),
+        'frentes' => $lista((string) $f['frentes'], MCP_VOL_FRENTES),
+        'dias' => $lista((string) $f['dias'], MCP_VOL_DIAS),
+        'periodos' => $lista((string) $f['periodos'], MCP_VOL_PERIODOS),
+        'motivacao' => (string) $f['motivacao'],
+        'como_conheceu' => (string) (MCP_VOL_COMO_CONHECEU[$f['como_conheceu'] ?? ''] ?? ''),
+        'aceita_contato' => (int) ($f['aceita_contato'] ?? 0) === 1,
+        'consentimento_em' => mcp_redacao_iso((string) $f['consentimento_em']),
+        'politica_versao' => (string) $f['politica_versao'],
+        'selfie' => $selfie ? base64_encode($selfie['jpeg']) : null,
+        'codigo_aprovacao' => $aprovacao && empty($aprovacao['cancelada_em']) ? (string) $aprovacao['codigo'] : null,
+    ];
+}
+
+/** As fichas com id maior que $desde, em ordem, no máximo $limite. ['fichas' => [...], 'ultimo' => id, 'mais' => bool] */
+function mcp_redacao_fichas(int $desde, int $limite): array
+{
+    $limite = max(1, min(MCP_REDACAO_LOTE_MAX, $limite));
+    $stmt = mcp_db()->prepare('SELECT * FROM mcp_voluntarios WHERE id > ? ORDER BY id LIMIT ' . ($limite + 1));
+    $stmt->execute([max(0, $desde)]);
+    $linhas = $stmt->fetchAll();
+    $mais = count($linhas) > $limite;
+    $linhas = array_slice($linhas, 0, $limite);
+    return [
+        'fichas' => array_map('mcp_redacao_ficha', $linhas),
+        'ultimo' => $linhas ? (int) end($linhas)['id'] : max(0, $desde),
+        'mais' => $mais,
+    ];
+}
+
+/**
+ * Avisa a Redação de que chegou ficha nova, para ela buscar na hora em vez de esperar a rotina diária. Roda depois da
+ * resposta (como o envio da Meta, lib/meta.php): quem preencheu não espera. A Redação responde 202 e importa depois;
+ * aqui, no máximo 3 s, e qualquer falha só vai para o log (a ficha já está gravada e a rotina diária da Redação pega do
+ * mesmo jeito). Endereço: REDACAO_AVISO_URL ou o padrão; sem REDACAO_TOKEN, nada.
+ */
+function mcp_redacao_avisar_ficha_nova(): void
+{
+    if (mcp_redacao_configurado() && function_exists('curl_init')) {
+        register_shutdown_function('mcp_redacao_enviar_aviso');
+    }
+}
+
+function mcp_redacao_enviar_aviso(): void
+{
+    $url = (string) mcp_cfg('REDACAO_AVISO_URL', 'https://palacio.cruzvermelhariodejaneiro.org/api/voluntariado/fichas-do-site');
+    try {
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } elseif (function_exists('litespeed_finish_request')) {
+            litespeed_finish_request();
+        }
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => '{}', CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 2, CURLOPT_TIMEOUT => 3,
+            CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . (string) mcp_cfg('REDACAO_TOKEN'), 'Content-Type: application/json']]);
+        curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        curl_close($ch);
+        if ($status !== 202 && $status !== 200) {
+            error_log("[matricula] aviso à Redação (ficha nova): HTTP $status");
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] aviso à Redação (ficha nova): ' . $e->getMessage());
+    }
+}
+
+function mcp_voluntario_por_protocolo(string $protocolo): ?array
+{
+    if (!preg_match('/^VOL-\d{6}-\d{4,}$/', $protocolo)) {
+        return null;
+    }
+    $stmt = mcp_db()->prepare('SELECT * FROM mcp_voluntarios WHERE protocolo = ? LIMIT 1');
+    $stmt->execute([$protocolo]);
+    return $stmt->fetch() ?: null;
+}
+
+/**
+ * A Redação aprovou: aceita a ficha (cria ou reativa o colaborador do ponto) e gera o código de aprovação. O CPF vem
+ * da Redação quando a ficha não tem. Repetir não duplica nada: a ficha aceita devolve o mesmo código.
+ */
+function mcp_redacao_aprovar(string $protocolo, string $quem, string $cpf = ''): array
+{
+    $f = mcp_voluntario_por_protocolo($protocolo);
+    if (!$f) {
+        return ['ok' => false, 'erro' => 'Ficha não encontrada no site.'];
+    }
+    $quem = 'Redação · ' . (mb_substr(trim($quem), 0, 150) ?: 'coordenação');
+    if ((string) $f['status'] !== 'aceita') {
+        $r = mcp_voluntario_aceitar((int) $f['id'], $quem, $cpf);
+        if (!$r['ok']) {
+            return $r;
+        }
+    }
+    $c = mcp_voluntario_aprovacao_emitir((int) $f['id'], $quem);
+    if (!$c['ok']) {
+        return $c;
+    }
+    return ['ok' => true, 'protocolo' => $protocolo, 'codigo' => $c['codigo'], 'codigo_formatado' => mcp_codigo_formatado($c['codigo']),
+        'conferir_url' => mcp_conferir_url($c['codigo'])];
+}
+
+/** A Redação recusou: a ficha fica recusada no site (com a nota de quem recusou). Ficha já aceita não volta atrás por aqui. */
+function mcp_redacao_recusar(string $protocolo, string $quem): array
+{
+    $f = mcp_voluntario_por_protocolo($protocolo);
+    if (!$f) {
+        return ['ok' => false, 'erro' => 'Ficha não encontrada no site.'];
+    }
+    if ((string) $f['status'] === 'aceita') {
+        return ['ok' => false, 'erro' => 'A ficha já foi aceita no site; para desfazer, use o portal do site.'];
+    }
+    $erro = mcp_voluntario_mudar_status((int) $f['id'], 'recusada', 'Redação · ' . (mb_substr(trim($quem), 0, 150) ?: 'coordenação'), 'Recusada na Redação.');
+    return $erro === null ? ['ok' => true, 'protocolo' => $protocolo] : ['ok' => false, 'erro' => $erro];
+}
+
 function mcp_voluntario_por_id(int $id): ?array
 {
     $stmt = mcp_db()->prepare('SELECT * FROM mcp_voluntarios WHERE id = ? LIMIT 1');

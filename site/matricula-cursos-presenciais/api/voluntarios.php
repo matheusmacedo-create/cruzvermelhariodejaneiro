@@ -130,6 +130,8 @@ $registro['selfie'] = $selfieSituacao;
 $envios = mcp_email_voluntario_ficha($registro);
 mcp_voluntario_atualizar($id, ['email_equipe' => $envios['equipe'], 'email_confirmacao' => $envios['confirmacao']]);
 mcp_registrar(null, 'voluntario', "#$id · $protocolo · equipe {$envios['equipe']} · confirmação {$envios['confirmacao']}" . ($selfieSituacao !== null ? " · selfie $selfieSituacao" : ''));
+// A Redação (Voluntários → Inscrições pendentes) busca a ficha na hora, depois da resposta (lib/voluntarios.php).
+mcp_redacao_avisar_ficha_nova();
 // API de Conversões (só com "sim" para marketing): CompleteRegistration com o mesmo id que a página manda ao Pixel.
 mcp_meta_voluntario(['nome' => $ficha['nome'], 'email' => $ficha['email'], 'telefone' => $ficha['telefone'],
     'fbclid' => $ficha['fbclid'], 'pagina' => $ficha['pagina']], $metaId);
