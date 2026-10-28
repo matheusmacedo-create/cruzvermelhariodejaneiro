@@ -54,10 +54,10 @@ verificar('site vem da configuração geral', mcp_site_url(), 'https://exemplo.o
 verificar('url da página', mcp_doacao_url(), 'https://exemplo.org/doe/');
 verificar('url com token', mcp_doacao_url('abc'), 'https://exemplo.org/doe/?t=abc');
 
-// A trava da doação mensal vale mesmo com DOACAO_MENSAL = 1 na configuração: enquanto a
-// integração de assinaturas não existir, a página nunca oferece o que o servidor não cobra.
-verificar('mensal travada até a integração existir', mcp_doacao_mensal_ativa(), false);
-verificar('constante da trava', MCP_DOACAO_MENSAL_IMPLEMENTADA, false);
+// DOACAO_MENSAL = 1 sozinho não liga a doação mensal: sem o plano (DOACAO_MENSAL_PLANO_ID), a página
+// nunca oferece o que o servidor não consegue cobrar.
+verificar('mensal desligada sem o plano', mcp_doacao_mensal_ativa(), false);
+verificar('sem plano configurado', mcp_doacao_plano_mensal(), '');
 
 // Valores sugeridos: fora dos limites saem, o resto vem ordenado.
 verificar('valores sugeridos', mcp_doacao_valores(), [3000, 6000, 10000, 15000, 25000, 50000]);
