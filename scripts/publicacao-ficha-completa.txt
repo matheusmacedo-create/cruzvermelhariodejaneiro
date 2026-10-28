@@ -1,0 +1,10 @@
+# Ficha de voluntário completa (28/10/2026): nenhum campo da análise em branco. Detalhes em docs/voluntariado.md.
+# Ordem: a API primeiro (passa a recusar ficha incompleta), depois a página e o script (que já pedem tudo) e a política.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-ficha-completa.txt)
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/voluntariado/cadastro/cadastro.js
+site/voluntariado/cadastro/index.html
+site/politicas.json
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html

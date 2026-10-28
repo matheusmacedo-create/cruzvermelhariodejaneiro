@@ -118,7 +118,8 @@ def _descricao(nome: str, dica: str) -> tuple[str, str]:
 def entrada(nome: str, rotulo: str, *, tipo: str = "text", obrigatorio: bool = False, dica: str = "", largo: bool = False,
             atributos: str = "", caixa_id: str = "", oculta: bool = False) -> str:
     dica_html, describedby = _descricao(nome, dica)
-    req = ' required aria-required="true"' if obrigatorio else ""
+    # Campo que começa escondido não leva "required": sem JavaScript, ele travaria o envio de quem nem o vê. A API cobra.
+    req = ' required aria-required="true"' if obrigatorio and not oculta else ""
     classes = "vc-campo" + (" vc-campo-largo" if largo else "")
     extra_caixa = (f' id="{caixa_id}"' if caixa_id else "") + (" hidden" if oculta else "")
     return (f'<div class="{classes}" data-campo="{nome}"{extra_caixa}>'
@@ -321,22 +322,23 @@ def formulario() -> str:
         entrada("data_nascimento", "Data de nascimento", tipo="date", obrigatorio=True,
                 dica="A partir de 18 anos.",
                 atributos='autocomplete="bday" min="1900-01-01" placeholder="dd/mm/aaaa"'),
-        entrada("cpf", "CPF", dica="Só é obrigatório se você for aceito, para o termo de adesão. Pode deixar em branco agora.",
+        entrada("cpf", "CPF", obrigatorio=True, dica="Para o termo de adesão e o cadastro no ponto da sede. Fica só com a equipe.",
                 atributos='inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00"'),
     ]) + "</div>")
     contato = cartao("vc-contato", "Contato", "A confirmação chega por e-mail; a equipe do voluntariado chama pelo WhatsApp.", '<div class="vc-grade">' + "".join([
         entrada("email", "E-mail", tipo="email", obrigatorio=True, atributos='autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"'),
         entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, dica="De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.", atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
         entrada("cidade", "Cidade", obrigatorio=True, atributos='autocomplete="address-level2" maxlength="120"'),
-        entrada("bairro", "Bairro", atributos='autocomplete="address-level3" maxlength="120"'),
+        entrada("bairro", "Bairro", obrigatorio=True, atributos='autocomplete="address-level3" minlength="2" maxlength="120"'),
         selecao("estado", "Estado", [(uf, uf) for uf in UFS], obrigatorio=True, selecionado="RJ", atributos='autocomplete="address-level1"'),
     ]) + "</div>")
     perfil = cartao("vc-perfil", "Perfil", "", '<div class="vc-grade">' + "".join([
         selecao("escolaridade", "Escolaridade", ESCOLARIDADES, obrigatorio=True),
-        entrada("profissao", "Profissão ou ocupação", atributos='autocomplete="organization-title" maxlength="120"'),
+        entrada("profissao", "Profissão ou ocupação", obrigatorio=True, dica="Estudante, aposentado ou desempregado também valem.",
+                atributos='autocomplete="organization-title" minlength="2" maxlength="120"'),
         grupo("saude", "Você tem formação na área da saúde?", [("sim", "Sim"), ("nao", "Não")], tipo="radio", classe="vc-opcoes-linha",
               dica="Não é preciso: a Cruz Vermelha forma os próprios voluntários."),
-        entrada("saude_qual", "Qual formação?", largo=True, caixa_id="vc-saude-qual-caixa", oculta=True,
+        entrada("saude_qual", "Qual formação?", obrigatorio=True, largo=True, caixa_id="vc-saude-qual-caixa", oculta=True,
                 atributos='maxlength="160" placeholder="Ex.: técnica em enfermagem, estudante de medicina"'),
     ]) + "</div>")
     ajuda = cartao("vc-ajuda", "Como você quer ajudar", "Marque tudo o que fizer sentido. A equipe apresenta as frentes com mais detalhe na entrevista.",
@@ -348,11 +350,11 @@ def formulario() -> str:
     sobre = cartao("vc-sobre", "Sobre você", "", '<div class="vc-grade">' + "".join([
         area("motivacao", "Por que você quer ser voluntário da Cruz Vermelha?", obrigatorio=True, contador=True,
              atributos='minlength="20" maxlength="1500"'),
-        area("experiencia", "Experiência com voluntariado ou trabalho social", atributos='maxlength="1000"',
-             dica="Onde você já atuou, por quanto tempo e o que fazia."),
-        area("habilidades", "Habilidades que você quer colocar à disposição", atributos='maxlength="1000"',
+        area("experiencia", "Experiência com voluntariado ou trabalho social", obrigatorio=True, atributos='minlength="3" maxlength="1000"',
+             dica="Onde você já atuou, por quanto tempo e o que fazia. Se ainda não teve, escreva \"nenhuma\"."),
+        area("habilidades", "Habilidades que você quer colocar à disposição", obrigatorio=True, atributos='minlength="3" maxlength="1000"',
              dica="Idiomas, fotografia, informática, direção, organização de eventos, o que vier à cabeça."),
-        selecao("como_conheceu", "Como você conheceu a Cruz Vermelha RJ?", COMO_CONHECEU),
+        selecao("como_conheceu", "Como você conheceu a Cruz Vermelha RJ?", COMO_CONHECEU, obrigatorio=True),
     ]) + "</div>")
     # Selfie obrigatória (27/10/2026; nasceu opcional no mesmo dia): só para a equipe reconhecer a pessoa na entrevista e no CBFI. Sem JavaScript vai como
     # arquivo (o formulário é multipart); com ele, cadastro.js reduz a foto no navegador e manda junto do JSON.

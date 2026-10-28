@@ -40,6 +40,10 @@ const MCP_VOL_SELFIE_LADO = 800;
 const MCP_VOL_SELFIE_QUALIDADE = 82;
 const MCP_VOL_CORPO_MAX = 786432;
 const MCP_VOL_TEXTO_LONGO_MAX = 1000;
+// Ficha completa (28/10/2026, pedido do Matheus: fichas chegavam sem CPF, bairro, profissão, experiência e habilidades).
+// Experiência e habilidades aceitam "nenhuma": a resposta conta, o campo em branco não.
+const MCP_VOL_TEXTO_CURTO_MIN = 2;
+const MCP_VOL_TEXTO_LIVRE_MIN = 3;
 /** Janela da ficha repetida: mesmo e-mail com ficha 'nova' ou 'em_analise' (409). */
 const MCP_VOL_DUPLICADA_DIAS = 30;
 const MCP_VOL_FUSO = 'America/Sao_Paulo';
@@ -307,29 +311,48 @@ function mcp_voluntario_validar(array $b, ?string $hoje = null): array
     if ($telefone === '') {
         return $falha('telefone', 'Informe um telefone com DDD (celular, de preferência).');
     }
-    $cpfBruto = mcp_texto($b['cpf'] ?? '', 20);
-    $cpf = mcp_digitos($cpfBruto);
-    if ($cpfBruto !== '' && !mcp_cpf_valido($cpf)) {
-        return $falha('cpf', 'CPF inválido. Confira os números ou deixe em branco.');
+    $cpf = mcp_digitos(mcp_texto($b['cpf'] ?? '', 20));
+    if ($cpf === '') {
+        return $falha('cpf', 'Informe o seu CPF.');
+    }
+    if (!mcp_cpf_valido($cpf)) {
+        return $falha('cpf', 'CPF inválido. Confira os números.');
     }
     $cidade = mcp_texto($b['cidade'] ?? '', 120);
     if (mb_strlen($cidade) < 2) {
         return $falha('cidade', 'Informe a cidade onde você mora.');
     }
+    $bairro = mcp_texto($b['bairro'] ?? '', 120);
+    if (mb_strlen($bairro) < MCP_VOL_TEXTO_CURTO_MIN) {
+        return $falha('bairro', 'Informe o bairro onde você mora.');
+    }
     $estado = mb_strtoupper(mcp_texto($b['estado'] ?? '', 2));
-    if ($estado === '') {
-        $estado = 'RJ';
-    } elseif (!in_array($estado, MCP_VOL_UFS, true)) {
+    if (!in_array($estado, MCP_VOL_UFS, true)) {
         return $falha('estado', 'Escolha o estado (UF).');
     }
     $escolaridade = mcp_texto($b['escolaridade'] ?? '', 30);
     if (!isset(MCP_VOL_ESCOLARIDADES[$escolaridade])) {
         return $falha('escolaridade', 'Escolha a sua escolaridade.');
     }
-    // Saúde: 'sim' ou 'nao' no contrato; booleano também vale. "Qual" só faz sentido com 'sim'.
-    $saudeBruto = $b['saude'] ?? 'nao';
-    $saude = (is_string($saudeBruto) && mb_strtolower(trim($saudeBruto)) === 'sim') || (!is_string($saudeBruto) && mcp_voluntario_bool($saudeBruto)) ? 1 : 0;
+    $profissao = mcp_texto($b['profissao'] ?? '', 120);
+    if (mb_strlen($profissao) < MCP_VOL_TEXTO_CURTO_MIN) {
+        return $falha('profissao', 'Informe a sua profissão ou ocupação (estudante, aposentado e desempregado também valem).');
+    }
+    // Saúde: 'sim' ou 'nao' no contrato; booleano também vale. A resposta é obrigatória; "qual", com 'sim', também.
+    $saudeBruto = $b['saude'] ?? null;
+    if (is_string($saudeBruto)) {
+        $saudeTexto = mb_strtolower(trim($saudeBruto));
+        $saude = $saudeTexto === 'sim' ? 1 : ($saudeTexto === 'nao' || $saudeTexto === 'não' ? 0 : null);
+    } else {
+        $saude = is_bool($saudeBruto) || is_int($saudeBruto) ? (mcp_voluntario_bool($saudeBruto) ? 1 : 0) : null;
+    }
+    if ($saude === null) {
+        return $falha('saude', 'Diga se você tem formação na área da saúde.');
+    }
     $saudeQual = $saude === 1 ? mcp_texto($b['saude_qual'] ?? '', 160) : '';
+    if ($saude === 1 && mb_strlen($saudeQual) < MCP_VOL_TEXTO_CURTO_MIN) {
+        return $falha('saude_qual', 'Conte qual é a sua formação na área da saúde.');
+    }
 
     $frentes = mcp_voluntario_lista($b['frentes'] ?? [], MCP_VOL_FRENTES);
     if ($frentes === null) {
@@ -359,8 +382,24 @@ function mcp_voluntario_validar(array $b, ?string $hoje = null): array
     if (mb_strlen($motivacao) > MCP_VOL_MOTIVACAO_MAX) {
         return $falha('motivacao', 'A motivação pode ter até ' . number_format(MCP_VOL_MOTIVACAO_MAX, 0, ',', '.') . ' caracteres.');
     }
+    $experiencia = mcp_texto_longo($b['experiencia'] ?? '', MCP_VOL_TEXTO_LONGO_MAX + 1);
+    if (mb_strlen($experiencia) < MCP_VOL_TEXTO_LIVRE_MIN) {
+        return $falha('experiencia', 'Conte a sua experiência com voluntariado ou trabalho social. Se ainda não teve, escreva "nenhuma".');
+    }
+    $habilidades = mcp_texto_longo($b['habilidades'] ?? '', MCP_VOL_TEXTO_LONGO_MAX + 1);
+    if (mb_strlen($habilidades) < MCP_VOL_TEXTO_LIVRE_MIN) {
+        return $falha('habilidades', 'Conte as habilidades que você quer colocar à disposição.');
+    }
+    foreach (['experiencia' => $experiencia, 'habilidades' => $habilidades] as $campoLongo => $textoLongo) {
+        if (mb_strlen($textoLongo) > MCP_VOL_TEXTO_LONGO_MAX) {
+            return $falha($campoLongo, 'Esse texto pode ter até ' . number_format(MCP_VOL_TEXTO_LONGO_MAX, 0, ',', '.') . ' caracteres.');
+        }
+    }
     $comoConheceu = mcp_texto($b['como_conheceu'] ?? '', 30);
-    if ($comoConheceu !== '' && !isset(MCP_VOL_COMO_CONHECEU[$comoConheceu])) {
+    if ($comoConheceu === '') {
+        return $falha('como_conheceu', 'Conte como você conheceu a Cruz Vermelha RJ.');
+    }
+    if (!isset(MCP_VOL_COMO_CONHECEU[$comoConheceu])) {
         $comoConheceu = 'outro';
     }
     if (!mcp_voluntario_bool($b['consentimento'] ?? false)) {
@@ -379,14 +418,13 @@ function mcp_voluntario_validar(array $b, ?string $hoje = null): array
 
     return ['ok' => true, 'dados' => [
         'nome' => $nome, 'data_nascimento' => $nascimento, 'idade' => $idade, 'menor' => $idade < MCP_VOL_MAIORIDADE,
-        'email' => $email, 'telefone' => $telefone, 'cpf' => $cpf !== '' ? $cpf : null,
-        'cidade' => $cidade, 'bairro' => mcp_texto($b['bairro'] ?? '', 120) ?: null, 'estado' => $estado,
-        'escolaridade' => $escolaridade, 'profissao' => mcp_texto($b['profissao'] ?? '', 120) ?: null,
+        'email' => $email, 'telefone' => $telefone, 'cpf' => $cpf,
+        'cidade' => $cidade, 'bairro' => $bairro, 'estado' => $estado,
+        'escolaridade' => $escolaridade, 'profissao' => $profissao,
         'saude' => $saude, 'saude_qual' => $saudeQual !== '' ? $saudeQual : null,
-        'experiencia' => mcp_texto_longo($b['experiencia'] ?? '', MCP_VOL_TEXTO_LONGO_MAX) ?: null,
-        'habilidades' => mcp_texto_longo($b['habilidades'] ?? '', MCP_VOL_TEXTO_LONGO_MAX) ?: null,
+        'experiencia' => $experiencia, 'habilidades' => $habilidades,
         'frentes' => implode(',', $frentes), 'dias' => implode(',', $dias), 'periodos' => implode(',', $periodos),
-        'motivacao' => $motivacao, 'como_conheceu' => $comoConheceu !== '' ? $comoConheceu : null,
+        'motivacao' => $motivacao, 'como_conheceu' => $comoConheceu,
         'aceita_contato' => mcp_voluntario_bool($b['aceita_contato'] ?? false) ? 1 : 0,
         'pagina' => $pagina ?: null,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),

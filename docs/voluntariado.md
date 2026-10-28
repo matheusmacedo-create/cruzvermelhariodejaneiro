@@ -22,7 +22,7 @@ Código: `site/voluntariado/cadastro/index.html` e `cadastro.js` (página), `api
    gclid) só vão junto com a permissão de estatística do aviso de cookies, como na matrícula e no chat,
    porque a política diz isso.
 2. **API** `POST /matricula-cursos-presenciais/api/voluntarios.php`: `mcp_voluntario_validar` normaliza
-   e valida (idade mínima 16, CPF opcional mas válido quando vem, telefone, motivação de 20 a 1500
+   e valida (idade mínima 18, ficha completa desde 28/10/2026 — ver "Ficha completa" —, telefone, motivação de 20 a 1500
    caracteres, listas fechadas de escolaridade, frentes, dias, períodos e "como conheceu"), aplica os
    freios (abaixo) e grava com `mcp_voluntario_gravar`. Respostas: 201 `{ok, protocolo, nome, email,
    prazo, menor}`, 422 `{erro, campo}`, 409 e 429 `{erro}`.
@@ -193,6 +193,16 @@ para `/matricula-cursos-presenciais/conferir/` mantendo o `?c=`).
   pela URL, cancelamento, novo código) e `testar_voluntarios_portal_integracao.php` (código no aceite, cartão com QR,
   WhatsApp e cancelamento, gerar de novo, ficha não aceita). O QR baixado do portal foi lido por um leitor independente
   (OpenCV) e abre `/conferir/?c=<código>` com a aprovação válida.
+
+## Ficha completa (28/10/2026)
+
+Pedido do Matheus: na análise das 71 primeiras fichas, faltavam CPF (12), bairro (5), profissão (15), experiência (24),
+habilidades (27), "como conheceu" (3) e selfie (61, de antes de ela virar obrigatória). Desde então nenhuma ficha entra
+incompleta: `mcp_voluntario_validar` (API) e `cadastro.js` (navegador) recusam, campo a campo, sem CPF válido, bairro,
+estado, profissão (estudante, aposentado e desempregado valem), resposta sobre formação na saúde (e "qual", com "sim"),
+experiência e habilidades (3 a 1000 caracteres; "nenhuma" conta como resposta), "como conheceu" e selfie. Sem JavaScript, o
+erro volta em `?erro=<campo>` com a mensagem do campo. A política de privacidade (PT/EN/ES) não chama mais o CPF de opcional
+(revisão 2026-10-28). As fichas antigas continuam como estão: o aceite ainda pede o CPF a quem não tem.
 
 ## Fichas na Redação / Palácio Virtual (27/10/2026)
 
