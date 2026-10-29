@@ -1,0 +1,14 @@
+# Doação mensal no cartão e correção do cartão avulso (29/10/2026). Roteiro em docs/doacao-mensal.md.
+# Ordem: lib/http.php ANTES de pagamentos.php (a validação do cartão muda de arquivo; ao contrário, a matrícula ficaria
+# sem a função por alguns segundos). Depois o backend das doações e, por último, a página (que só oferece "Mensal" quando
+# info.php disser que está ligado, então pode ir antes da configuração).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-doacao-mensal.txt)
+site/matricula-cursos-presenciais/api/lib/http.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/doe/api/lib/doacao.php
+site/doe/api/lib/email_doacao.php
+site/doe/api/doacoes.php
+site/doe/api/webhook.php
+site/doe/static/doe.js
+site/doe/index.html
+site/doe/obrigado/index.html

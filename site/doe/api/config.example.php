@@ -23,9 +23,14 @@ return [
     // Conta da Unicopag dedicada às doações (diferente da conta do checkout de cursos).
     'UNICO_API_KEY_DOACAO' => '',
 
-    // Doação mensal (assinatura recorrente na Unicopag). Só ligue quando a integração
-    // de assinaturas estiver configurada: com 0, a página mostra apenas a doação única.
+    // Doação mensal: assinatura no cartão pela API de assinaturas da Unicopag. Com 1 e o plano abaixo, a
+    // página oferece "Mensal"; com 0 ou sem plano, só a doação única. O token é o UNICO_API_KEY_DOACAO,
+    // salvo outro em UNICO_ASSINATURA_TOKEN. O plano mensal da filial foi criado em 29/10/2026
+    // (produto cvrj-doacao-mensal, variante cvrj-doacao-mensal-v1); o valor de cada doação vai na assinatura.
     'DOACAO_MENSAL' => 0,
+    'DOACAO_MENSAL_PLANO_ID' => '01m62jcwztx693tyx1y0hccgha',
+    'UNICO_ASSINATURA_TOKEN' => '',
+    'UNICO_ASSINATURA_BASE_URL' => 'https://subscription.unicopag.com.br/api/v1',
 
     // Valores sugeridos na página, em centavos, e o valor que já vem marcado.
     'DOACAO_VALORES' => [3000, 6000, 10000, 15000, 25000, 50000],

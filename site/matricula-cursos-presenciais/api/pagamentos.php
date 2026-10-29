@@ -143,37 +143,6 @@ function mcp_validar_aluno(array $b): array
     ];
 }
 
-/** Cartão validado no formato da Unicopag. Devolve também o final para guardar. */
-function mcp_validar_cartao(array $c): array
-{
-    $numero = mcp_digitos(mcp_texto($c['numero'] ?? '', 30));
-    $titular = mcp_texto($c['nome'] ?? '', 80);
-    $validade = mcp_digitos(mcp_texto($c['validade'] ?? '', 10));
-    $cvv = mcp_digitos(mcp_texto($c['cvv'] ?? '', 6));
-    if (strlen($numero) < 13 || strlen($numero) > 19 || !mcp_luhn_valido($numero)) {
-        mcp_falhar(422, 'Número do cartão inválido.', ['campo' => 'cartao_numero']);
-    }
-    if (mb_strlen($titular) < 3) {
-        mcp_falhar(422, 'Informe o nome como está no cartão.', ['campo' => 'cartao_nome']);
-    }
-    if (!in_array(strlen($validade), [4, 6], true)) {
-        mcp_falhar(422, 'Validade inválida. Use MM/AA.', ['campo' => 'cartao_validade']);
-    }
-    $mes = (int) substr($validade, 0, 2);
-    $ano = (int) (strlen($validade) === 4 ? '20' . substr($validade, 2, 2) : substr($validade, 2, 4));
-    $vencido = $ano < (int) gmdate('Y') || ($ano === (int) gmdate('Y') && $mes < (int) gmdate('n'));
-    if ($mes < 1 || $mes > 12 || $vencido) {
-        mcp_falhar(422, 'Validade inválida. Use MM/AA.', ['campo' => 'cartao_validade']);
-    }
-    if (strlen($cvv) < 3 || strlen($cvv) > 4) {
-        mcp_falhar(422, 'Código de segurança inválido.', ['campo' => 'cartao_cvv']);
-    }
-    return [
-        'card' => ['number' => $numero, 'holdername' => $titular, 'exp_month' => sprintf('%02d', $mes), 'exp_year' => (string) $ano, 'cvv' => $cvv],
-        'ultimos4' => substr($numero, -4),
-    ];
-}
-
 function mcp_aplicar_limites(array $aluno): void
 {
     foreach ([['ip', mcp_ip(), MCP_LIMITE_IP], ['cpf', $aluno['cpf'], MCP_LIMITE_CPF], ['email', $aluno['email'], MCP_LIMITE_EMAIL]] as [$coluna, $valor, [$maximo, $janela]]) {

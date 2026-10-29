@@ -85,23 +85,35 @@ function mcp_doacao_api(string $metodo, string $caminho, ?array $corpo = null, ?
     return $resposta;
 }
 
-/** Formas de pagamento oferecidas. A Donaty só documenta PIX; o cartão fica com a Unicopag. */
+/**
+ * Formas de pagamento oferecidas. O PIX vai pelo gateway configurado; o cartão (doação única ou mensal) vai
+ * sempre pela Unicopag, inclusive com DOACAO_GATEWAY = 'donaty' (a Donaty só documenta PIX). Sem chave da
+ * Unicopag, nada de cartão.
+ */
 function mcp_doacao_metodos(): array
 {
-    return mcp_doacao_gateway() === 'donaty' ? ['pix'] : ['pix', 'cartao'];
+    return mcp_doacao_chave('unicopag') !== '' ? ['pix', 'cartao'] : ['pix'];
+}
+
+/** Gateway que cobra cada forma de pagamento: cartão na Unicopag, PIX no configurado. */
+function mcp_doacao_gateway_do_metodo(string $metodo): string
+{
+    return $metodo === 'cartao' ? 'unicopag' : mcp_doacao_gateway();
 }
 
 /**
- * A doação mensal é uma assinatura recorrente na Unicopag (base própria,
- * https://subscription.unicopag.com.br/api/v1, autenticação Bearer). A integração ainda não
- * foi escrita, então esta constante é a trava: enquanto for false, nem a configuração liga a
- * opção e a página nunca oferece o que o servidor não consegue cobrar.
+ * A doação mensal é uma assinatura recorrente na Unicopag, no cartão (API de assinaturas, base própria,
+ * https://subscription.unicopag.com.br/api/v1, autenticação Bearer; código em "doação mensal", no fim deste
+ * arquivo). A constante é a trava do código; a opção só aparece com DOACAO_MENSAL = 1 e o plano mensal
+ * (DOACAO_MENSAL_PLANO_ID, criado em 29/10/2026, docs/doacao-mensal.md) no config.php do servidor.
+ * Vale também com o PIX na Donaty: o cartão é sempre da Unicopag.
  */
-const MCP_DOACAO_MENSAL_IMPLEMENTADA = false;
+const MCP_DOACAO_MENSAL_IMPLEMENTADA = true;
 
 function mcp_doacao_mensal_ativa(): bool
 {
-    return MCP_DOACAO_MENSAL_IMPLEMENTADA && (int) mcp_doacao_cfg('DOACAO_MENSAL', 0) === 1;
+    return MCP_DOACAO_MENSAL_IMPLEMENTADA && (int) mcp_doacao_cfg('DOACAO_MENSAL', 0) === 1
+        && mcp_doacao_plano_mensal() !== '' && in_array('cartao', mcp_doacao_metodos(), true);
 }
 
 function mcp_doacao_teste(): bool
@@ -212,6 +224,15 @@ function mcp_doacao_db(): PDO
     // gateway: com qual provedor a cobrança nasceu. A consulta de status e o postback usam o da própria doação,
     // então uma doação pendente da Unicopag continua confirmando depois da virada para a Donaty (e vice-versa).
     mcp_garantir_colunas($pdo, 'mcp_doacoes', ['anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0', 'gateway' => "VARCHAR(12) NOT NULL DEFAULT 'unicopag'"]);
+    // Cada cobrança paga de uma assinatura vira uma linha de mcp_doacoes (comprovante e aviso por mês). A chave
+    // primária é a trava: postback e consulta simultâneos não registram o mesmo mês duas vezes.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_doacoes_cobrancas (
+        cobranca_id VARCHAR(64) NOT NULL PRIMARY KEY,
+        assinatura_id VARCHAR(64) NOT NULL,
+        doacao_id INT UNSIGNED NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_assinatura (assinatura_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     $pronto = true;
     return $pdo;
 }
@@ -224,10 +245,11 @@ function mcp_doacao_registrar(?int $id, string $tipo, string $detalhe = ''): voi
 
 function mcp_doacao_por(string $coluna, string $valor): ?array
 {
-    if (!in_array($coluna, ['token', 'unicopag_hash', 'id'], true)) {
+    if (!in_array($coluna, ['token', 'unicopag_hash', 'id', 'assinatura_id'], true)) {
         throw new InvalidArgumentException("coluna de busca não permitida: $coluna");
     }
-    $stmt = mcp_doacao_db()->prepare("SELECT * FROM mcp_doacoes WHERE $coluna = ? LIMIT 1");
+    // ORDER BY id: por assinatura_id há uma linha por mês, e a primeira é a que criou a assinatura.
+    $stmt = mcp_doacao_db()->prepare("SELECT * FROM mcp_doacoes WHERE $coluna = ? ORDER BY id LIMIT 1");
     $stmt->execute([$valor]);
     return $stmt->fetch() ?: null;
 }
@@ -267,6 +289,9 @@ function mcp_doacao_protocolo(int $id, ?string $criadoEm = null): string
 /** Reconsulta a transação na conta de doações e aplica o resultado. Postback e polling passam por aqui. */
 function mcp_doacao_sincronizar(array $doacao): array
 {
+    if (!empty($doacao['assinatura_id']) && empty($doacao['unicopag_hash'])) {
+        return mcp_doacao_sincronizar_assinatura($doacao);
+    }
     if (empty($doacao['unicopag_hash'])) {
         return $doacao;
     }
@@ -344,4 +369,157 @@ function mcp_doacao_publico(array $d): array
         'url' => mcp_doacao_url_obrigado((string) $d['token']),
         'teste' => mcp_doacao_teste(),
     ];
+}
+
+// ----------------------------------------------------------------------------- doação mensal (assinaturas)
+/** Id do plano mensal na API de assinaturas (um só; o valor de cada doação vai na própria assinatura). */
+function mcp_doacao_plano_mensal(): string
+{
+    return trim((string) mcp_doacao_cfg('DOACAO_MENSAL_PLANO_ID', ''));
+}
+
+/** Chamada à API de assinaturas. O token é o api_token da mesma conta das doações, salvo outro em UNICO_ASSINATURA_TOKEN. */
+function mcp_doacao_assinatura_api(string $metodo, string $caminho, ?array $corpo = null): array
+{
+    $token = (string) mcp_doacao_cfg('UNICO_ASSINATURA_TOKEN', '') ?: mcp_doacao_chave('unicopag');
+    $resposta = mcp_unicopag($metodo, $caminho, $corpo, $token, null, [
+        'base_url' => (string) mcp_doacao_cfg('UNICO_ASSINATURA_BASE_URL', 'https://subscription.unicopag.com.br/api/v1'),
+        'bearer' => true,
+    ]);
+    if (!isset($resposta['id']) && is_array($resposta['data'] ?? null)) {
+        $resposta = $resposta['data'] + $resposta;
+    }
+    return $resposta;
+}
+
+/** Corpo do POST /subscriptions: cliente, cartão (no formato da API de assinaturas) e o valor mensal em centavos. */
+function mcp_doacao_montar_assinatura(array $doador, int $total, array $card): array
+{
+    return [
+        'planId' => mcp_doacao_plano_mensal(),
+        'paymentMethod' => 'creditCard',
+        'amount' => $total,
+        'amountFirstCharge' => $total,
+        'charge' => true,
+        'customer' => [
+            'name' => $doador['nome'], 'email' => $doador['email'], 'phoneNumber' => $doador['telefone'],
+            'documentNumber' => $doador['cpf'], 'documentType' => 'cpf',
+        ],
+        'card' => [
+            'number' => $card['number'], 'holderName' => $card['holdername'],
+            'expirationMonth' => $card['exp_month'], 'expirationYear' => $card['exp_year'], 'cvv' => $card['cvv'],
+        ],
+    ];
+}
+
+/** Cobranças pagas da assinatura, da mais antiga para a mais nova (lastCharge entra se charges não vier). */
+function mcp_doacao_cobrancas_pagas(array $assinatura): array
+{
+    $todas = is_array($assinatura['charges'] ?? null) ? $assinatura['charges'] : [];
+    if (is_array($assinatura['lastCharge'] ?? null)) {
+        $todas[] = $assinatura['lastCharge'];
+    }
+    $pagas = [];
+    foreach ($todas as $c) {
+        if (is_array($c) && !empty($c['id']) && strtolower((string) ($c['status'] ?? '')) === 'paid') {
+            $pagas[(string) $c['id']] = $c;
+        }
+    }
+    uasort($pagas, static fn(array $a, array $b): int => strcmp((string) ($a['paidAt'] ?? $a['created_at'] ?? ''), (string) ($b['paidAt'] ?? $b['created_at'] ?? '')));
+    return array_values($pagas);
+}
+
+/**
+ * Situação da primeira cobrança: pago só com uma cobrança paga na resposta (status "active" sozinho não basta);
+ * recusado com a assinatura sem pagamento, cancelada ou com a última cobrança recusada; o resto, pendente.
+ */
+function mcp_doacao_status_assinatura(array $assinatura): string
+{
+    if (mcp_doacao_cobrancas_pagas($assinatura)) {
+        return 'pago';
+    }
+    $status = strtolower((string) ($assinatura['status'] ?? ''));
+    $ultima = is_array($assinatura['lastCharge'] ?? null) ? strtolower((string) ($assinatura['lastCharge']['status'] ?? '')) : '';
+    if (in_array($status, ['unpaid', 'canceled', 'cancelled', 'ended'], true) || in_array($ultima, ['failed', 'refused', 'cancelled', 'canceled'], true)) {
+        return 'recusado';
+    }
+    return 'pendente';
+}
+
+/** Reconsulta a assinatura (postback, página de acompanhamento) e aplica o resultado. */
+function mcp_doacao_sincronizar_assinatura(array $doacao): array
+{
+    $id = (int) $doacao['id'];
+    try {
+        $assinatura = mcp_doacao_assinatura_api('GET', '/subscriptions/' . rawurlencode((string) $doacao['assinatura_id']));
+    } catch (McpUnicopagErro $e) {
+        mcp_doacao_registrar($id, 'assinatura_consulta_falhou', $e->status . ' ' . $e->getMessage());
+        mcp_doacao_atualizar($id, ['consultado_em' => mcp_agora()]);
+        return $doacao;
+    }
+    return mcp_doacao_aplicar_assinatura($doacao, $assinatura);
+}
+
+/**
+ * Aplica a resposta da API de assinaturas à doação que criou a assinatura (a linha mais antiga daquele
+ * assinatura_id). A primeira cobrança paga confirma essa linha; cada cobrança paga depois dela é um mês novo:
+ * vira outra linha, com o próprio comprovante e o aviso à equipe.
+ */
+function mcp_doacao_aplicar_assinatura(array $doacao, array $assinatura): array
+{
+    $id = (int) $doacao['id'];
+    $statusOrigem = mb_substr((string) ($assinatura['status'] ?? ''), 0, 40);
+    if ($statusOrigem !== '' && $statusOrigem !== (string) ($doacao['unicopag_status'] ?? '')) {
+        mcp_doacao_registrar($id, 'assinatura_' . $statusOrigem);
+    }
+    mcp_doacao_atualizar($id, ['consultado_em' => mcp_agora(), 'unicopag_status' => $statusOrigem ?: null]);
+    $pagas = mcp_doacao_cobrancas_pagas($assinatura);
+    if ($doacao['status'] !== 'pago') {
+        if ($pagas) {
+            mcp_doacao_reservar_cobranca((string) $pagas[0]['id'], (string) $doacao['assinatura_id'], $id);
+            return mcp_doacao_aplicar_status($id, 'pago');
+        }
+        return mcp_doacao_aplicar_status($id, mcp_doacao_status_assinatura($assinatura));
+    }
+    foreach ($pagas as $cobranca) {
+        mcp_doacao_registrar_mes($doacao, $cobranca);
+    }
+    return mcp_doacao_por('id', (string) $id) ?? $doacao;
+}
+
+/** Marca a cobrança como registrada. true só para quem marcou primeiro (INSERT IGNORE na chave primária). */
+function mcp_doacao_reservar_cobranca(string $cobrancaId, string $assinaturaId, ?int $doacaoId): bool
+{
+    $stmt = mcp_doacao_db()->prepare('INSERT IGNORE INTO mcp_doacoes_cobrancas (cobranca_id, assinatura_id, doacao_id, criado_em) VALUES (?, ?, ?, ?)');
+    $stmt->execute([mb_substr($cobrancaId, 0, 64), mb_substr($assinaturaId, 0, 64), $doacaoId, mcp_agora()]);
+    return $stmt->rowCount() === 1;
+}
+
+/** Um mês pago da doação mensal: linha nova copiada da original, confirmada (comprovante e aviso saem em aplicar_status). */
+function mcp_doacao_registrar_mes(array $original, array $cobranca): void
+{
+    $assinaturaId = (string) $original['assinatura_id'];
+    if (!mcp_doacao_reservar_cobranca((string) $cobranca['id'], $assinaturaId, null)) {
+        return;
+    }
+    $total = is_numeric($cobranca['amount'] ?? null) ? (int) $cobranca['amount'] : (int) $original['total_centavos'];
+    $taxa = min((int) $original['taxa_centavos'], $total);
+    $agora = mcp_agora();
+    $linha = [
+        'token' => mcp_token_novo(), 'frequencia' => 'mensal', 'nome' => $original['nome'], 'cpf' => $original['cpf'],
+        'email' => $original['email'], 'telefone' => $original['telefone'], 'metodo' => 'cartao',
+        'valor_centavos' => $total - $taxa, 'taxa_centavos' => $taxa, 'total_centavos' => $total,
+        'cobre_taxa' => $original['cobre_taxa'], 'anonimo' => $original['anonimo'] ?? 0, 'status' => 'pendente',
+        'assinatura_id' => $assinaturaId, 'unicopag_status' => 'paid',
+        'bandeira' => $original['bandeira'], 'ultimos4' => $original['ultimos4'],
+        'utm_source' => $original['utm_source'], 'utm_medium' => $original['utm_medium'], 'utm_campaign' => $original['utm_campaign'],
+        'gateway' => 'unicopag', 'criado_em' => $agora, 'atualizado_em' => $agora, 'consultado_em' => $agora,
+    ];
+    $pdo = mcp_doacao_db();
+    $pdo->prepare('INSERT INTO mcp_doacoes (' . implode(', ', array_keys($linha)) . ') VALUES (' . implode(', ', array_fill(0, count($linha), '?')) . ')')
+        ->execute(array_values($linha));
+    $novo = (int) $pdo->lastInsertId();
+    $pdo->prepare('UPDATE mcp_doacoes_cobrancas SET doacao_id = ? WHERE cobranca_id = ?')->execute([$novo, mb_substr((string) $cobranca['id'], 0, 64)]);
+    mcp_doacao_registrar($novo, 'mes_pago', 'assinatura de #' . $original['id'] . ' · ' . mcp_brl($total));
+    mcp_doacao_aplicar_status($novo, 'pago');
 }

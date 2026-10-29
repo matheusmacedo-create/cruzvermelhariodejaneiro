@@ -1,0 +1,38 @@
+# Cartão nas doações pela ÚnicoPag (única ou mensal), PIX na Donaty (29/10/2026). Roteiro em docs/doacao-mensal.md.
+# Ordem: backend primeiro (info.php passa a oferecer o cartão), depois políticas e páginas que falam disso.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-doacao-cartao.txt)
+site/doe/api/lib/doacao.php
+site/doe/api/doacoes.php
+site/404.html
+site/campanha-agasalho.html
+site/chat/chat.js
+site/doacao.html
+site/doe/index.html
+site/en/archive/index.html
+site/en/courses/index.html
+site/en/donate/index.html
+site/en/faq/index.html
+site/en/history/index.html
+site/en/index.html
+site/en/our-team/index.html
+site/en/privacy/index.html
+site/en/terms/index.html
+site/equipe.html
+site/es/404.html
+site/es/acervo/index.html
+site/es/cursos/index.html
+site/es/donar/index.html
+site/es/index.html
+site/es/nuestro-equipo/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/terminos/index.html
+site/faq-home.json
+site/faq-idiomas.json
+site/historia/index.html
+site/idiomas.json
+site/index.html
+site/llms.txt
+site/politicas.json
+site/privacidade/index.html
+site/termos/index.html

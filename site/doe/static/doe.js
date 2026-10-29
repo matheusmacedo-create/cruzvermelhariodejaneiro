@@ -331,6 +331,11 @@
       b.addEventListener('click', function () {
         qa('.doe-freq').forEach(function (o) { o.classList.remove('ativo'); });
         b.classList.add('ativo');
+        // A doação mensal é só no cartão: o PIX some enquanto ela estiver marcada (e volta, se o servidor aceitar PIX).
+        var mensal = b.getAttribute('data-freq') === 'mensal';
+        var pix = q('.doe-metodo[data-metodo="pix"]');
+        if (pix) pix.hidden = mensal || !!(info && info.metodos && info.metodos.indexOf('pix') === -1);
+        if (mensal) { var cartao = q('.doe-metodo[data-metodo="cartao"]'); if (cartao) cartao.click(); }
       });
     });
     qa('.doe-valor').forEach(function (b) {

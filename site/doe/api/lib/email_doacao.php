@@ -162,7 +162,7 @@ function mcp_doacao_montar_email_confirmada(array $d): array
         $corpo .= mcp_p('Registramos sua doação como <strong>anônima</strong>: seu nome não entra em agradecimentos públicos, redes sociais nem listas de doadores. Ele fica só com a equipe que cuida das doações.');
     }
     if ($mensal) {
-        $corpo .= mcp_p('Esta é uma <strong>doação mensal</strong>: a cobrança se repete todo mês, e avisamos você antes de cada uma. Para pausar ou cancelar, basta responder este e-mail.');
+        $corpo .= mcp_p('Esta é uma <strong>doação mensal</strong>: a cobrança se repete todo mês, no mesmo cartão, e o comprovante de cada uma chega neste e-mail. Para mudar o valor, pausar ou cancelar, basta responder.');
     }
 
     $corpo .= mcp_subtitulo('Seu comprovante')
