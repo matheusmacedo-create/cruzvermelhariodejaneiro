@@ -1,6 +1,7 @@
 # Doação mensal no cartão (Unicopag, API de assinaturas)
 
-Status em 29/10/2026: **publicado; cartão avulso ligado, mensal desligado até o teste.**
+Status em 29/10/2026: **publicado e ligado** (cartão avulso e mensal). `DOACAO_MENSAL = 1` e o plano estão no `config.php`
+do servidor; nosso webhook está registrado na API de assinaturas e o do absol.lol foi removido. **Falta o teste real com cartão** (passo 5).
 
 **Quem cobra o quê (decisão de 29/10/2026):** o PIX fica na Donaty (`DOACAO_GATEWAY = 'donaty'`); o cartão, único
 ou mensal, vai sempre pela ÚnicoPag (`mcp_doacao_gateway_do_metodo()`), com a chave `UNICO_API_KEY_DOACAO`. Sem
