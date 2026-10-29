@@ -59,6 +59,26 @@ verificar('url com token', mcp_doacao_url('abc'), 'https://exemplo.org/doe/?t=ab
 verificar('mensal desligada sem o plano', mcp_doacao_mensal_ativa(), false);
 verificar('sem plano configurado', mcp_doacao_plano_mensal(), '');
 
+// Doação mensal: o corpo da assinatura e a leitura da resposta da API de assinaturas.
+$doadorMensal = ['nome' => 'Maria da Silva', 'email' => 'maria@exemplo.org', 'telefone' => '21999998888', 'cpf' => '52998224725'];
+$cardMensal = ['number' => '4111111111111111', 'holdername' => 'MARIA SILVA', 'exp_month' => '07', 'exp_year' => '2030', 'cvv' => '123'];
+$corpo = mcp_doacao_montar_assinatura($doadorMensal, 6300, $cardMensal);
+verificar('assinatura no cartão', $corpo['paymentMethod'], 'creditCard');
+verificar('valor mensal em centavos', [$corpo['amount'], $corpo['amountFirstCharge']], [6300, 6300]);
+verificar('primeira cobrança na criação', $corpo['charge'], true);
+verificar('cartão no formato da API de assinaturas', array_keys($corpo['card']), ['number', 'holderName', 'expirationMonth', 'expirationYear', 'cvv']);
+verificar('cliente com CPF', [$corpo['customer']['documentNumber'], $corpo['customer']['documentType']], ['52998224725', 'cpf']);
+verificar('ativa sem cobrança paga continua pendente', mcp_doacao_status_assinatura(['status' => 'active', 'charges' => []]), 'pendente');
+verificar('cobrança paga confirma', mcp_doacao_status_assinatura(['status' => 'pending', 'lastCharge' => ['id' => 'c1', 'status' => 'paid']]), 'pago');
+verificar('sem pagamento é recusada', mcp_doacao_status_assinatura(['status' => 'unpaid']), 'recusado');
+verificar('última cobrança recusada', mcp_doacao_status_assinatura(['status' => 'pending', 'lastCharge' => ['id' => 'c1', 'status' => 'failed']]), 'recusado');
+verificar('status desconhecido fica pendente', mcp_doacao_status_assinatura(['status' => 'algo']), 'pendente');
+$pagas = mcp_doacao_cobrancas_pagas([
+    'charges' => [['id' => 'c2', 'status' => 'paid', 'paidAt' => '2026-12-01'], ['id' => 'c1', 'status' => 'paid', 'paidAt' => '2026-11-01'], ['id' => 'c3', 'status' => 'failed']],
+    'lastCharge' => ['id' => 'c2', 'status' => 'paid', 'paidAt' => '2026-12-01'],
+]);
+verificar('cobranças pagas sem repetir, da mais antiga', array_column($pagas, 'id'), ['c1', 'c2']);
+
 // Valores sugeridos: fora dos limites saem, o resto vem ordenado.
 verificar('valores sugeridos', mcp_doacao_valores(), [3000, 6000, 10000, 15000, 25000, 50000]);
 verificar('valor padrão da configuração', mcp_doacao_valor_padrao(), 10000);

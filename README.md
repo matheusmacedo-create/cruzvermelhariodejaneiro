@@ -2710,14 +2710,11 @@ backend que já cuida das matrículas. A inspiração de fluxo é a página da C
   Financeiro"). Isso é dito **uma vez só**, na pergunta "A doação é segura? Quem processa o
   pagamento?", para o nome no extrato não surpreender quem doou sem roubar o foco da doação. O selo
   de confiança e a transparência falam da filial, não do meio de pagamento.
-- **Doação mensal**: a Unicopag tem API de assinaturas em base própria
-  (`https://subscription.unicopag.com.br/api/v1`, autenticação `Authorization: Bearer`), com webhooks
-  (`subscription.activated`, `subscription.renewed`, `charge.paid`…) e cobrança recorrente por cartão,
-  PIX ou boleto. Os endpoints de **criação** da assinatura não estão na documentação pública, então a
-  integração ainda não foi escrita: a constante `MCP_DOACAO_MENSAL_IMPLEMENTADA` (`lib/doacao.php`)
-  é a trava — enquanto for `false`, nem a configuração `DOACAO_MENSAL` liga a opção e a página nunca
-  oferece o que o servidor não consegue cobrar. Quando os endpoints estiverem em mãos: implementar,
-  virar a constante, ligar `DOACAO_MENSAL` e o seletor "Mensal" aparece sozinho no cartão.
+- **Doação mensal** (29/10/2026, código pronto, desligada): assinatura no cartão pela API de assinaturas da
+  Unicopag (`https://subscription.unicopag.com.br/api/v1`, `Authorization: Bearer`), um plano mensal só e o valor
+  de cada doação na própria assinatura; cada mês pago vira uma linha de `mcp_doacoes` com comprovante. Liga com
+  `DOACAO_MENSAL = 1` e `DOACAO_MENSAL_PLANO_ID` no `config.php` do servidor. Funcionamento, roteiro para ligar,
+  teste e volta atrás em [`docs/doacao-mensal.md`](docs/doacao-mensal.md).
 - **E-mail de agradecimento** (`mcp_doacao_montar_email_confirmada`): personalizado, não genérico.
   O assunto leva o primeiro nome e o valor ("Obrigado, Maria! Sua doação de R$ 105,00 foi
   confirmada"); o corpo abre com o nome no título, mostra um selo com o valor e a data, e um bloco

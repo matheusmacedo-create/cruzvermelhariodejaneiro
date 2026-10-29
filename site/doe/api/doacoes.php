@@ -49,6 +49,9 @@ function mcp_doacao_validar(array $b): array
     if (!in_array($metodo, mcp_doacao_metodos(), true)) {
         mcp_falhar(422, 'Por enquanto as doações são por PIX. Escolha PIX para continuar.', ['campo' => 'metodo']);
     }
+    if ($frequencia === 'mensal' && $metodo !== 'cartao') {
+        mcp_falhar(422, 'A doação mensal é no cartão de crédito. Escolha cartão, ou faça uma doação única por PIX.', ['campo' => 'metodo']);
+    }
     $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
     $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
     return [
@@ -171,6 +174,32 @@ if ($doador['metodo'] === 'pix' && ($aberta = mcp_doacao_pix_aberto($doador, $va
 }
 
 $token = mcp_token_novo();
+
+// Doação mensal: assinatura no cartão (API de assinaturas). A primeira cobrança sai na criação; os meses
+// seguintes chegam pelo postback (webhook.php) e viram linhas próprias, cada uma com seu comprovante.
+if ($doador['frequencia'] === 'mensal') {
+    $payload = mcp_doacao_montar_assinatura($doador, $valor + $taxa, $cartao['card']);
+    try {
+        $assinatura = mcp_doacao_assinatura_api('POST', '/subscriptions', $payload);
+    } catch (McpUnicopagErro $e) {
+        mcp_doacao_registrar(null, 'assinatura_recusou', $e->status . ' ' . $e->getMessage());
+        mcp_falhar(in_array($e->status, [400, 402, 422], true) ? 422 : 502, $e->paraOAluno());
+    } finally {
+        unset($payload, $cartao['card']);
+    }
+    if (empty($assinatura['id'])) {
+        mcp_doacao_registrar(null, 'assinatura_sem_id', mb_substr((string) json_encode(array_keys($assinatura)), 0, 200));
+        mcp_falhar(502, 'Não foi possível concluir a doação mensal. Tente novamente ou faça uma doação única.');
+    }
+    $id = mcp_doacao_gravar($doador, $token, $valor, $taxa, ['payment_status' => (string) ($assinatura['status'] ?? '')], $cartao['ultimos4'] ?? null);
+    mcp_doacao_atualizar($id, ['assinatura_id' => mb_substr((string) $assinatura['id'], 0, 64)]);
+    $doacao = mcp_doacao_aplicar_assinatura(mcp_doacao_por('id', (string) $id) ?? [], $assinatura);
+    if ($doacao['status'] === 'recusado') {
+        mcp_json(mcp_doacao_publico($doacao) + ['ok' => false, 'erro' => 'O cartão foi recusado pelo emissor. Confira os dados, tente outro cartão ou doe com PIX.'], 402);
+    }
+    mcp_json(mcp_doacao_publico($doacao), 201);
+}
+
 $payload = mcp_doacao_montar_cobranca($doador, $token, $valor, $taxa);
 if ($cartao) {
     $payload['card'] = $cartao['card'];
