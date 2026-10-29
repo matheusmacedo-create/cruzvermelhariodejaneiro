@@ -37,7 +37,7 @@ URL_PAGINA = f"{ORIGEM}/doe/"
 
 TITULO = "Doar para a Cruz Vermelha Brasileira Rio de Janeiro"
 H1 = "Doe para a Cruz Vermelha Brasileira Rio de Janeiro"
-DESCRICAO = ("Doe para a Cruz Vermelha Brasileira Rio de Janeiro por PIX, em menos de um minuto. "
+DESCRICAO = ("Doe para a Cruz Vermelha Brasileira Rio de Janeiro por PIX ou cartão, uma vez ou todo mês. "
              "Sua doação mantém a formação de voluntários e as ações no estado.")
 
 # Referências de impacto: valores sugeridos com o que cada um sustenta. Não são pacotes fechados,
@@ -59,7 +59,7 @@ DADOS = [
 PASSOS = [
     ("Escolha quanto doar", "Um dos valores sugeridos ou o que você quiser, a partir de R$ 5."),
     ("Informe seus dados", "Nome, e-mail, CPF e telefone. O CPF é exigido pelo meio de pagamento."),
-    ("Pague por PIX", "A confirmação aparece na tela e o comprovante chega no seu e-mail."),
+    ("Pague por PIX ou cartão", "A confirmação aparece na tela e o comprovante chega no seu e-mail."),
 ]
 
 FAQ = [
@@ -70,15 +70,15 @@ FAQ = [
      "são referências de impacto, não pacotes fechados: a filial aplica os recursos onde a necessidade é maior a cada mês.",
      []),
     ("A doação é segura? Quem processa o pagamento?",
-     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. A doação é feita por PIX e "
-     "processada pela Donaty, plataforma de pagamentos que gera o código PIX e confirma o pagamento para a filial. "
-     "Para emitir a cobrança, a Donaty recebe seu nome, CPF, e-mail e telefone; esses dados também ficam conosco, "
-     "para enviar o comprovante e cumprir obrigações contábeis. Esta página não coleta dados de cartão.",
+     "Sim. A página fica no domínio oficial da filial, com conexão criptografada. O PIX é processado pela Donaty, "
+     "que gera o código e confirma o pagamento para a filial; o cartão, pela ÚnicoPag. Para emitir a cobrança, quem "
+     "processa recebe seu nome, CPF, e-mail e telefone (e, no cartão, os dados do cartão, que não ficam guardados "
+     "conosco). Nome e contato também ficam com a filial, para enviar o comprovante e cumprir obrigações contábeis.",
      []),
     ("Posso doar por PIX? E por cartão?",
-     "Por enquanto, a doação é só por PIX. A página gera o QR code e o código copia e cola na hora, e a confirmação "
-     "aparece sozinha assim que o banco processa, sem você precisar avisar ninguém. Se fechar a página antes de "
-     "pagar, o código também vai para o seu e-mail e vale por 24 horas.",
+     "Pelos dois. No PIX, a página gera o QR code e o código copia e cola na hora, e a confirmação aparece sozinha "
+     "assim que o banco processa; se fechar a página antes de pagar, o código também vai para o seu e-mail e vale "
+     "por 24 horas. No cartão de crédito, a doação é à vista, uma vez ou todo mês.",
      []),
     ("Recebo algum comprovante da doação?",
      "Sim. Assim que o pagamento é confirmado, você recebe um e-mail com o valor, a forma de pagamento, a data, o "
@@ -475,7 +475,7 @@ def main() -> int:
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", header).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
             .replace("@@CHAT@@", chat_widget.tags())
-            .replace("@@H1@@", esc(H1)).replace("@@LEAD@@", "Em menos de um minuto, por PIX. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
+            .replace("@@H1@@", esc(H1)).replace("@@LEAD@@", "Em menos de um minuto, por PIX ou cartão. Sua doação sustenta a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias no estado do Rio.")
             .replace("@@CARTAO@@", CARTAO.replace("@@VALORES@@", valores))
             .replace("@@CONFIANCA@@", confianca).replace("@@IMPACTO@@", impacto)
             .replace("@@DADOS@@", dados).replace("@@PASSOS@@", passos).replace("@@FAQ@@", faq_html))

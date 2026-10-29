@@ -85,25 +85,35 @@ function mcp_doacao_api(string $metodo, string $caminho, ?array $corpo = null, ?
     return $resposta;
 }
 
-/** Formas de pagamento oferecidas. A Donaty só documenta PIX; o cartão fica com a Unicopag. */
+/**
+ * Formas de pagamento oferecidas. O PIX vai pelo gateway configurado; o cartão (doação única ou mensal) vai
+ * sempre pela Unicopag, inclusive com DOACAO_GATEWAY = 'donaty' (a Donaty só documenta PIX). Sem chave da
+ * Unicopag, nada de cartão.
+ */
 function mcp_doacao_metodos(): array
 {
-    return mcp_doacao_gateway() === 'donaty' ? ['pix'] : ['pix', 'cartao'];
+    return mcp_doacao_chave('unicopag') !== '' ? ['pix', 'cartao'] : ['pix'];
+}
+
+/** Gateway que cobra cada forma de pagamento: cartão na Unicopag, PIX no configurado. */
+function mcp_doacao_gateway_do_metodo(string $metodo): string
+{
+    return $metodo === 'cartao' ? 'unicopag' : mcp_doacao_gateway();
 }
 
 /**
  * A doação mensal é uma assinatura recorrente na Unicopag, no cartão (API de assinaturas, base própria,
  * https://subscription.unicopag.com.br/api/v1, autenticação Bearer; código em "doação mensal", no fim deste
  * arquivo). A constante é a trava do código; a opção só aparece com DOACAO_MENSAL = 1 e o plano mensal
- * (DOACAO_MENSAL_PLANO_ID, criado por scripts/criar_plano_doacao_mensal.php) no config.php do servidor.
- * A Donaty não tem cartão, então com ela o mensal some.
+ * (DOACAO_MENSAL_PLANO_ID, criado em 29/10/2026, docs/doacao-mensal.md) no config.php do servidor.
+ * Vale também com o PIX na Donaty: o cartão é sempre da Unicopag.
  */
 const MCP_DOACAO_MENSAL_IMPLEMENTADA = true;
 
 function mcp_doacao_mensal_ativa(): bool
 {
     return MCP_DOACAO_MENSAL_IMPLEMENTADA && (int) mcp_doacao_cfg('DOACAO_MENSAL', 0) === 1
-        && mcp_doacao_plano_mensal() !== '' && mcp_doacao_gateway() === 'unicopag';
+        && mcp_doacao_plano_mensal() !== '' && in_array('cartao', mcp_doacao_metodos(), true);
 }
 
 function mcp_doacao_teste(): bool

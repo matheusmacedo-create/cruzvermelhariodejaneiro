@@ -1,6 +1,11 @@
 # Doação mensal no cartão (Unicopag, API de assinaturas)
 
-Status em 29/10/2026: **código pronto no branch, nada publicado, opção desligada.**
+Status em 29/10/2026: **publicado; cartão avulso ligado, mensal desligado até o teste.**
+
+**Quem cobra o quê (decisão de 29/10/2026):** o PIX fica na Donaty (`DOACAO_GATEWAY = 'donaty'`); o cartão, único
+ou mensal, vai sempre pela ÚnicoPag (`mcp_doacao_gateway_do_metodo()`), com a chave `UNICO_API_KEY_DOACAO`. Sem
+chave da ÚnicoPag, o cartão some. Políticas (PT/EN/ES, revisão 2026-10-29), termos, `/doe/`, páginas em inglês e
+espanhol, FAQ da home, chat e `llms.txt` dizem isso (lista em `scripts/publicacao-doacao-cartao.txt`).
 
 ## Como funciona
 

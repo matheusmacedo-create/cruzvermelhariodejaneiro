@@ -27,6 +27,7 @@ if (($argv[1] ?? '') === '--filho') {
     echo json_encode([
         'gateway' => mcp_doacao_gateway(), 'chave' => mcp_doacao_chave(),
         'opcoes' => mcp_doacao_gateway_opcoes(), 'metodos' => mcp_doacao_metodos(),
+        'gateway_pix' => mcp_doacao_gateway_do_metodo('pix'), 'gateway_cartao' => mcp_doacao_gateway_do_metodo('cartao'),
         // Uma doação antiga usa o gateway em que nasceu, não o atual.
         'chave_unicopag' => mcp_doacao_chave('unicopag'), 'chave_donaty' => mcp_doacao_chave('donaty'),
         'opcoes_unicopag' => mcp_doacao_gateway_opcoes('unicopag'), 'opcoes_donaty' => mcp_doacao_gateway_opcoes('donaty'),
@@ -64,14 +65,17 @@ $unicopag = rodar('unicopag');
 verificar('unicopag explícita', $unicopag['gateway'] ?? null, 'unicopag');
 verificar('unicopag oferece PIX e cartão', $unicopag['metodos'] ?? null, ['pix', 'cartao']);
 
-// Donaty: chave própria, base /api com Bearer, só PIX.
+// Donaty: chave própria, base /api com Bearer, só no PIX. O cartão (único ou mensal) continua na Unicopag.
 $donaty = rodar('donaty');
 verificar('donaty ligada', $donaty['gateway'] ?? null, 'donaty');
 verificar('donaty usa a chave DONATY_API_KEY', $donaty['chave'] ?? null, 'dnt_sk_ficticia');
 verificar('donaty: base, prefixo e Bearer', $donaty['opcoes'] ?? null, [
     'base_url' => 'https://api.donaty.com.br', 'prefixo' => '/api', 'bearer' => true,
 ]);
-verificar('donaty oferece só PIX', $donaty['metodos'] ?? null, ['pix']);
+verificar('donaty no PIX, cartão na Unicopag', $donaty['metodos'] ?? null, ['pix', 'cartao']);
+verificar('PIX vai pela Donaty', $donaty['gateway_pix'] ?? null, 'donaty');
+verificar('cartão vai pela Unicopag', $donaty['gateway_cartao'] ?? null, 'unicopag');
+verificar('sem Donaty, PIX na Unicopag', $unicopag['gateway_pix'] ?? null, 'unicopag');
 
 // Doação criada num gateway continua sendo consultada nele depois da troca (e na volta atrás).
 foreach (['unicopag' => $unicopag, 'donaty' => $donaty] as $atual => $dados) {
