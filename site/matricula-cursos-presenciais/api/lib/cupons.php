@@ -16,8 +16,8 @@
 declare(strict_types=1);
 
 const MCP_CUPONS = [
-    // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos (agenda, 30/10/2026).
-    'AGENDA150' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null],
+    // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos (código NOV15, agenda, 30/10/2026).
+    'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;

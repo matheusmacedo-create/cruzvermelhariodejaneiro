@@ -1,4 +1,4 @@
-# Cupom de desconto no checkout (30/10/2026, AGENDA150). Detalhes no README, "Cupom de desconto no checkout".
+# Cupom de desconto no checkout (30/10/2026, NOV15). Detalhes no README, "Cupom de desconto no checkout".
 # Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria as colunas cupom e cupom_desconto_centavos);
 # depois o módulo novo, antes do lib.php que o carrega; os outros módulos; os endpoints; o CSS e o JS; as páginas por último.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-cupom.txt)

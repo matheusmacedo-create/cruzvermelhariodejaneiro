@@ -1250,7 +1250,7 @@ validado no projeto da Punção Venosa.
 Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à
 vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico`.
 
-- **Código**: `AGENDA150`. Link pronto: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=AGENDA150`
+- **Código**: `NOV15`. Link pronto: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15`
   (o campo já vem aberto e o cupom, aplicado). Sem o parâmetro, a pessoa toca em "Tem um cupom de desconto?" e digita.
   Maiúsculas, minúsculas, espaços e hífens não importam.
 - **Onde mora**: `api/lib/cupons.php` (`MCP_CUPONS`: cursos, total, limite e data final opcional). Cupom novo = uma linha
@@ -1265,12 +1265,12 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
 - **Banco**: colunas `cupom` e `cupom_desconto_centavos` em `mcp_inscricoes` (criadas sozinhas pela migração do `db.php`;
   sem elas, o cupom responde indisponível em vez de cobrar). Cada uso fica em `mcp_eventos` (tipo `cupom`).
 - **Escola e secretaria**: a escola recebe a matrícula de R$ 51 e marca `preco_divergente`; com cupom, esse aviso não vai
-  para "Precisam de atenção" (é o desconto, esperado). O aviso por e-mail diz "matrícula R$ 51,00 (cupom AGENDA150,
-  desconto de R$ 129,00)" e a ficha do painel ganha o selo "Cupom AGENDA150 · desconto de R$ 129,00".
-- **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom AGENDA150)", e a metadata leva `cupom` e
+  para "Precisam de atenção" (é o desconto, esperado). O aviso por e-mail diz "matrícula R$ 51,00 (cupom NOV15,
+  desconto de R$ 129,00)" e a ficha do painel ganha o selo "Cupom NOV15 · desconto de R$ 129,00".
+- **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
   `cupom_desconto_centavos`.
 - **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
-  Para ver quantos já usaram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'AGENDA150' GROUP BY status`.
+  Para ver quantos já usaram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'NOV15' GROUP BY status`.
 - **Testes**: `scripts/testar_meta_integracao.php` (bloco "cupom": 15 verificações com MariaDB e ÚnicoPag falsa, inclusive
   a 31ª recusada, o PIX vencido devolvendo a vaga e a corrida pela última vaga) e `scripts/testar_checkout.php`.
 - **Publicar**: `scripts/publicacao-cupom.txt`.
