@@ -81,7 +81,7 @@ const MCP_RW_TEXTOS = [
     'rec_inscricao_2' => "Olá, {{1}}. Lembrete da Cruz Vermelha RJ: a sua inscrição no curso {{2}} continua em aberto.\n\nSe ficou alguma dúvida sobre o curso ou o pagamento, responda esta mensagem. Para concluir, use o link abaixo.\n[Concluir inscrição]",
     'rec_inscricao_3' => "Olá, {{1}}. Este é o último lembrete sobre a sua inscrição no curso {{2}} da Cruz Vermelha RJ. Se ainda quiser participar, conclua pelo link abaixo.\n\nSe não tiver mais interesse, toque no botão e não enviaremos outras mensagens.\n[Concluir inscrição] [Não tenho interesse]",
     // O rótulo do botão de link não está anotado aqui: a prévia mostra só que ele existe.
-    'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[botão com o link da oferta] [Não tenho interesse]",
+    'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
 const MCP_RW_MINUTO_DA_RODADA = 7;
