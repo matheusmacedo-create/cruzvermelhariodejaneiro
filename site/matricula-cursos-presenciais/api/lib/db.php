@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '57c0e103e1491496';
+const MCP_DB_VERSAO = '4d34d44c8aec1a3e';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -654,7 +654,7 @@ function mcp_migrar_tudo(PDO $pdo): void
         drive_id VARCHAR(80) NOT NULL,
         enviado_em DATETIME NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    // Recuperação do funil (30/10/2026, lib/recuperacao_funil.php e api/recuperacao.php): cada contato da secretaria
+    // Recuperação do funil (30/10/2026, primeira versão, já retirada): cada contato da secretaria
     // com quem deixou dados no checkout e não pagou. pessoa_chave é o HMAC-SHA256 do CPF (nunca o CPF em claro): é
     // por ela que a página sabe quem já foi contatado e quem pagou depois do contato. canal: whatsapp, email ou
     // exportacao (a planilha para o disparo pela Kapso).
@@ -667,6 +667,32 @@ function mcp_migrar_tudo(PDO $pdo): void
         autor VARCHAR(190) NOT NULL,
         criado_em DATETIME NOT NULL,
         KEY ix_pessoa (pessoa_chave, criado_em),
+        KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // A tabela acima ficou SEM USO no mesmo dia: a lista manual (wa.me e planilha) foi trocada pelo disparo automático
+    // abaixo. Não é apagada (nunca se apaga tabela em produção por migração); se um dia sair, sai à mão.
+    // Recuperação por WhatsApp (30/10/2026, lib/recuperacao_whatsapp.php): uma linha por mensagem automática (etapa 1, 2
+    // ou 3) a quem se cadastrou e não pagou. pessoa_chave e telefone_hash são HMAC-SHA256 com a chave
+    // 'recuperacao_whatsapp' de mcp_chaves: nem CPF nem telefone em claro. UNIQUE(pessoa_chave, etapa) é a trava que
+    // impede repetir uma etapa. entrega e resposta vêm do webhook da Kapso (api/kapso-webhook.php).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_whatsapp (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        origem ENUM('site','escola') NOT NULL,
+        etapa TINYINT UNSIGNED NOT NULL,
+        curso_slug VARCHAR(80) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        telefone_hash CHAR(64) NOT NULL,
+        status ENUM('enviado','falhou') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        entrega ENUM('entregue','lida','falhou') NULL,
+        erro VARCHAR(255) NULL,
+        resposta VARCHAR(200) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_pessoa_etapa (pessoa_chave, etapa),
+        KEY ix_provedor (provedor_id),
+        KEY ix_telefone (telefone_hash, criado_em),
         KEY ix_criado (criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
