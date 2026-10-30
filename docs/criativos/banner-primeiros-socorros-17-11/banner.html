@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;600;700&display=block" rel="stylesheet">
+<style>
+:root{--red:#e30613;--ink:#141414}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#111}
+.b{position:relative;overflow:hidden;color:#fff;background:#151515}
+.foto{position:absolute;top:0;bottom:0;right:0;background:url(img/rcp.jpg) center 22%/cover no-repeat}
+.foto::after{content:"";position:absolute;inset:0}
+.txt{position:relative;z-index:2}
+.logo{background:#fff;display:inline-block;border-radius:0 0 22px 0;position:absolute;top:0;left:0;z-index:3}
+.logo img{display:block}
+.tag{display:inline-block;background:var(--red);font:700 1em/1 Inter;letter-spacing:.32em;padding:.55em .8em .55em 1em;border-radius:6px;text-transform:uppercase}
+h1{font-family:"Barlow Condensed";font-weight:800;line-height:.86;text-transform:uppercase;letter-spacing:-.005em}
+h1 span{display:block;color:var(--red)}
+.sub{line-height:1.3;color:#e9e9e9}
+.sub b{color:#fff}
+.det{list-style:none;display:grid}
+.det li{display:flex;align-items:center}
+.ic{background:var(--red);border-radius:10px;display:grid;place-items:center;flex:none}
+.ic svg{fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.det b{display:block;font-family:"Barlow Condensed";font-weight:700;text-transform:uppercase;line-height:1}
+.det small{display:block;letter-spacing:.14em;text-transform:uppercase;color:#cfcfcf;font-weight:600}
+.cta{display:inline-flex;align-items:center;background:#fff;color:var(--ink);font-weight:700;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.cta i{background:var(--red);border-radius:50%;display:grid;place-items:center;font-style:normal;color:#fff}
+.nota{color:#bdbdbd}
+
+/* ---------- desktop 1920x640 ---------- */
+.d{width:1920px;height:640px}
+.d .foto{width:720px;background-position:center 4%}
+.d .foto::after{background:linear-gradient(90deg,#151515 0%,rgba(21,21,21,.6) 18%,rgba(21,21,21,0) 45%)}
+.d .logo{padding:26px 44px 26px 120px}.d .logo img{height:62px}
+.d .txt{padding:150px 0 0 120px;display:grid;grid-template-columns:620px 470px;column-gap:56px}
+.d .tag{font-size:17px}
+.d h1{font-size:128px;margin-top:22px}
+.d .sub{font-size:24px;margin-top:22px;max-width:600px}
+.d .det{gap:22px;align-self:start;margin-top:62px;padding-left:46px;border-left:2px solid rgba(255,255,255,.18)}
+.d .ic{width:64px;height:64px;margin-right:20px}.d .ic svg{width:34px;height:34px}
+.d .det b{font-size:36px}.d .det small{font-size:15px;margin-top:6px}
+.d .cta{font-size:19px;padding:10px 10px 10px 30px;gap:18px;margin-top:34px}
+.d .cta i{width:46px;height:46px;font-size:26px}
+.d .nota{font-size:14px;margin-top:14px}
+.d .barra{position:absolute;left:0;bottom:0;height:10px;width:100%;background:var(--red);z-index:4}
+
+/* ---------- celular 1080x1350 ---------- */
+.m{width:1080px;height:1420px}
+.m .foto{left:0;height:720px;bottom:auto;background-position:center 16%}
+.m .foto::after{background:linear-gradient(180deg,rgba(21,21,21,0) 45%,#151515 100%)}
+.m .logo{padding:30px 48px 30px 64px}.m .logo img{height:76px}
+.m .txt{padding:520px 64px 0;display:flex;flex-direction:column}
+.m .tag{font-size:24px}
+.m h1{font-size:140px;margin-top:24px}
+.m .sub{font-size:31px;margin-top:24px}
+.m .det{gap:20px;margin-top:40px;order:2}
+.m .ic{width:76px;height:76px;margin-right:24px}.m .ic svg{width:40px;height:40px}
+.m .det b{font-size:44px}.m .det small{font-size:19px;margin-top:6px}
+.m .cta{font-size:26px;padding:12px 12px 12px 38px;gap:22px;margin-top:40px}
+.m .cta i{width:60px;height:60px;font-size:34px}
+.m .barra{position:absolute;left:0;bottom:0;height:14px;width:100%;background:var(--red)}
+</style></head><body>
+<template id="t">
+  <div class="foto"></div>
+  <div class="logo"><img src="img/logo.png" alt=""></div>
+  <div class="txt">
+    <div>
+      <span class="tag">Curso presencial</span>
+      <h1>Primeiros<span>Socorros</span></h1>
+      <p class="sub">Aprenda na prática como agir em emergências e esteja preparado para <b>salvar vidas.</b></p>
+      <a class="cta">Ver turma e inscrever-se <i>→</i></a>
+    </div>
+    <ul class="det">
+      <li><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>17 de novembro</b><small>Terça-feira · 9h às 17h</small></span></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span><b>Centro do Rio</b><small>Palácio da Cruz Vermelha</small></span></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M14 3l5 5v3M14 3v5h5M8 9h3M8 13h6"/><circle cx="17" cy="16" r="3"/><path d="m15.5 18.5-1 3.5 2.5-1.2 2.5 1.2-1-3.5"/></svg></span><span><b>Com certificado</b><small>8 horas · aula prática</small></span></li>
+    </ul>
+  </div>
+  <div class="barra"></div>
+</template>
+<div class="b d" id="d"></div>
+<div style="height:40px"></div>
+<div class="b m" id="m"></div>
+<script>for(const id of ['d','m'])document.getElementById(id).append(document.getElementById('t').content.cloneNode(true))</script>
+</body></html>
