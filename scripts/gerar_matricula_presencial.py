@@ -71,6 +71,14 @@ URL_PAGINA = f"{ORIGEM}/matricula-cursos-presenciais/"
 ESCOLA = "https://escola.cursoscruzvermelha.org"
 ESCOLA_LOGIN = f"{ESCOLA}/login"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
+# Banner de campanha no topo do modo geral; None tira o banner. "data" é o dia da turma (AAAA-MM-DD) que a arte anuncia.
+BANNER_TURMA = {
+    "curso": "primeiros-socorros-basico",
+    "data": "2026-11-17",
+    "arquivo": "banner-primeiros-socorros-17-11",
+    "alt": "Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 17 de novembro, terça-feira, "
+           "das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se.",
+}
 STATIC = RAIZ / "site" / "matricula-cursos-presenciais" / "static"
 STATIC_URL = "/matricula-cursos-presenciais/static/"
 
@@ -444,6 +452,11 @@ CSS_PAGINA = """
     .v-menu-endereco { margin-top: 18px; display: flex; gap: 10px; align-items: center; color: var(--v-texto); font-size: 15px; }
     .v-menu-endereco svg { width: 18px; height: 18px; color: var(--v-red); }
     html.v-menu-aberto { overflow: hidden; }
+
+    /* banner de campanha acima do topo (BANNER_TURMA): a arte já traz o texto; o link inteiro leva ao checkout */
+    .v-banner-turma { display: block; background: #151515; }
+    .v-banner-turma img { display: block; width: 100%; max-width: 1920px; height: auto; margin: 0 auto; }
+    .v-banner-turma:focus-visible { outline: 3px solid var(--v-red); outline-offset: -3px; }
 
     /* topo do modo geral */
     .v-hero { position: relative; color: #fff; background: #111; min-height: clamp(560px, calc(100vh - 126px), 760px); min-height: clamp(560px, calc(100svh - 126px), 760px); display: flex; isolation: isolate; }
@@ -2248,6 +2261,19 @@ def main() -> int:
         </div>{hero_cartao}
       </div>
     </section>'''
+    # Banner de campanha (arte em docs/criativos/<pasta>/): só sai enquanto a turma da arte estiver aberta no oferta.json,
+    # e o mesmo data-breve que esconde a turma vencida esconde o banner (a página não precisa ser regerada no dia seguinte).
+    banner = ""
+    b = BANNER_TURMA
+    if b and any(t.inicio.date().isoformat() == b["data"] for t in turmas.get(b["curso"], [])):
+        img = "/matricula-cursos-presenciais/img/" + b["arquivo"]
+        banner = f'''
+    <a class="v-banner-turma v-so-geral v-se-aberta" data-turma-de="{b["curso"]}" href="{checkout(b["curso"], "banner")}" data-local="banner">
+      <picture>
+        <source media="(max-width: 650px)" srcset="{img}-celular-540.webp 540w, {img}-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="{img}-1920.webp" srcset="{img}-960.webp 960w, {img}-1920.webp 1920w" sizes="(min-width: 1920px) 1920px, 100vw" width="1920" height="640" alt="{esc(b["alt"])}" fetchpriority="high" decoding="async">
+      </picture>
+    </a>'''
     destaques = f'''
     <section class="v-destaques v-so-geral" aria-label="Destaques da Escola" data-secao="destaques">
       <div class="v-wrap">
@@ -2935,6 +2961,7 @@ def main() -> int:
 {faixa_topo}
 {cabecalho}
   <main id="conteudo">
+{banner}
 {hero}
 {destaques}
 {secoes_curso}

@@ -172,6 +172,11 @@
     .v-menu-endereco svg { width: 18px; height: 18px; color: var(--v-red); }
     html.v-menu-aberto { overflow: hidden; }
 
+    /* banner de campanha acima do topo (BANNER_TURMA): a arte já traz o texto; o link inteiro leva ao checkout */
+    .v-banner-turma { display: block; background: #151515; }
+    .v-banner-turma img { display: block; width: 100%; max-width: 1920px; height: auto; margin: 0 auto; }
+    .v-banner-turma:focus-visible { outline: 3px solid var(--v-red); outline-offset: -3px; }
+
     /* topo do modo geral */
     .v-hero { position: relative; color: #fff; background: #111; min-height: clamp(560px, calc(100vh - 126px), 760px); min-height: clamp(560px, calc(100svh - 126px), 760px); display: flex; isolation: isolate; }
     /* direção de arte: no celular o retrato da turma com o manequim (aula-turma-vertical); acima de 650 px a mesma aula em
@@ -1511,6 +1516,13 @@
     </div>
   </header>
   <main id="conteudo">
+
+    <a class="v-banner-turma v-so-geral v-se-aberta" data-turma-de="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=banner" data-local="banner">
+      <picture>
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-960.webp 960w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp 1920w" sizes="(min-width: 1920px) 1920px, 100vw" width="1920" height="640" alt="Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 17 de novembro, terça-feira, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." fetchpriority="high" decoding="async">
+      </picture>
+    </a>
 
     <section class="v-hero v-escuro-fundo v-so-geral" aria-labelledby="v-titulo" data-secao="topo">
       <picture><source media="(min-width: 651px)" srcset="/assets/otim/aula-turma-salao-960.webp 960w, /assets/otim/aula-turma-salao-1200.webp 1200w" sizes="100vw" width="1200" height="675"><img class="v-hero-foto" src="/assets/otim/aula-turma-vertical-591.webp" srcset="/assets/otim/aula-turma-vertical-480.webp 480w, /assets/otim/aula-turma-vertical-591.webp 591w" sizes="100vw" width="591" height="1280" alt="Turma em aula na sede da Cruz Vermelha Brasileira no Rio de Janeiro, com o instrutor de primeiros socorros" loading="lazy" decoding="async"></picture>
@@ -3164,6 +3176,6 @@
   <script src="/matricula-cursos-presenciais/static/turmas.js?v=ec161e3177" defer></script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=f27c049d4e">
-  <script src="/chat/chat.js?v=9ed9084114" defer></script>
+  <script src="/chat/chat.js?v=77ad8b13a1" defer></script>
 </body>
 </html>
