@@ -19,6 +19,8 @@ function mcp_publico(array $inscricao, ?array $preferencia = null): array
         'status' => $inscricao['status'],
         'metodo' => $inscricao['metodo'],
         'curso' => ['slug' => $inscricao['curso_slug'], 'nome' => $inscricao['curso_nome']],
+        // O código do cupom (não é dado pessoal): o "Gerar novo PIX" volta ao checkout com ele (lib/cupons.php).
+        'cupom' => $inscricao['cupom'] ?? null,
         'nome' => mcp_primeiro_nome((string) $inscricao['nome']),
         'email' => $inscricao['email'],
         'inscricao_centavos' => (int) $inscricao['inscricao_centavos'],

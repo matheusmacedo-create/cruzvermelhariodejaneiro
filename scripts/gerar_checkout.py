@@ -244,6 +244,14 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                   <label class="ck-plano@@P1_ATIVO@@" id="ck-plano-completo"@@P1_OCULTO@@><input type="radio" name="plano" value="taxa_e_matricula"@@P1_MARCADO@@><span class="ck-plano-rot">Taxa de inscrição + matrícula, à vista<span id="ck-plano-completo-valor"></span></span><small id="ck-plano-completo-legenda">um pagamento só. A entrada na aula é liberada com a matrícula paga.</small></label>
                   <label class="ck-plano@@P2_ATIVO@@" id="ck-plano-taxa"><input type="radio" name="plano" value="so_taxa"@@P2_MARCADO@@><span class="ck-plano-rot">Só a taxa de inscrição — <b id="ck-plano-taxa-valor">@@INSCRICAO@@</b></span><small id="ck-plano-taxa-legenda">Quem pagou apenas a inscrição não tem a entrada liberada.</small></label>
                 </div>
+                <div class="ck-cupom" id="ck-cupom-box">
+                  <button type="button" class="ck-cupom-abrir" id="ck-cupom-abrir" aria-expanded="false" aria-controls="ck-cupom-campo">Tem um cupom de desconto?</button>
+                  <div class="ck-cupom-campo" id="ck-cupom-campo" hidden>
+                    <label class="ck-campo"><span>Cupom de desconto</span><input id="ck-cupom" name="cupom" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30" placeholder="CÓDIGO"></label>
+                    <button type="button" class="btn btn-outline ck-cupom-aplicar" id="ck-cupom-aplicar">Aplicar</button>
+                  </div>
+                  <p class="ck-cupom-msg" id="ck-cupom-msg" role="status" aria-live="polite" hidden></p>
+                </div>
                 <p class="ck-rot-secao" id="ck-metodos-titulo">Forma de pagamento</p>
                 <div class="ck-metodos" role="radiogroup" aria-labelledby="ck-metodos-titulo">
                   <label class="ck-metodo ativo"><input type="radio" name="metodo" value="pix" checked><span class="ck-metodo-ico"><i class="fa-brands fa-pix" aria-hidden="true"></i></span><b>PIX</b></label>
@@ -311,6 +319,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
             <div class="ck-linha" id="ck-r-taxa-linha" hidden><span>Custos de processamento</span><span id="ck-r-taxa">R$ 0,00</span></div>
             <div class="ck-linha" id="ck-r-divulgacao-linha" hidden><span>Divulgação dos cursos</span><span id="ck-r-divulgacao">@@DIVULGACAO@@</span></div>
             <div class="ck-linha" id="ck-r-juros-linha" hidden><span id="ck-r-juros-rotulo">Juros do parcelamento</span><span id="ck-r-juros">R$ 0,00</span></div>
+            <div class="ck-linha ck-linha-desconto" id="ck-r-cupom-linha" hidden><span id="ck-r-cupom-rotulo">Desconto do cupom</span><span id="ck-r-cupom">− R$ 0,00</span></div>
             <div class="ck-linha total"><span id="ck-r-total-rotulo">@@ACAO_ROTULO@@</span><span id="ck-r-total">@@INSCRICAO@@</span></div>
             <div class="ck-r-taxa-so" id="ck-r-so-taxa" hidden>
               <p class="ck-nota">Valor da matrícula, à vista <b id="ck-r-curso-valor">—</b> · Taxa de inscrição <b id="ck-r-inscricao-avista">@@INSCRICAO@@</b> · Total à vista, com a inscrição <b id="ck-r-total-curso">—</b></p>

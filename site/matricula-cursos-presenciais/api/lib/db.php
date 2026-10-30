@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '4e047f387193bda3';
+const MCP_DB_VERSAO = '89b8fe5f3977c2eb';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -197,6 +197,9 @@ function mcp_migrar_tudo(PDO $pdo): void
     // continua o amount sem juros (a soma dos itens); o cobrado com juros fica em total_cobrado_centavos (amount_total
     // da reconsulta). Num ALTER só (mcp_garantir_colunas), com a trava de metadados de 5 s de mcp_migrar.
     mcp_garantir_colunas($pdo, 'mcp_inscricoes', MCP_DB_COLUNAS_PAGAR_TUDO);
+    // Cupom de desconto (30/10/2026, lib/cupons.php): o código usado e quanto saiu da matrícula. As vagas de cada cupom
+    // se contam por esta coluna; sem ela, o cupom responde indisponível em vez de cobrar.
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['cupom' => 'VARCHAR(30) NULL', 'cupom_desconto_centavos' => 'INT UNSIGNED NULL']);
     // Simulação de parcelas da Unicopag: a lista crua por amount (10 min) e o que o servidor mostrou ao navegador
     // (validade de 48 h da oferta a prazo, CDC art. 54-B; faxina em 7 dias pela rotina de 15 minutos).
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_parcelas_cache (
@@ -779,7 +782,7 @@ function mcp_garantir_indices(PDO $pdo): void
 function mcp_eventos_apagar_freios(?int $agora = null): int
 {
     $agora ??= time();
-    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'redacao_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse', 'parcelas_consulta', 'recusa_checkout')
+    $stmt = mcp_db()->prepare("DELETE FROM mcp_eventos WHERE (tipo IN ('ponto_consulta', 'ponto_consulta_falha', 'aviso_pagina', 'conferir', 'painel_link', 'escola_horarios_negado', 'redacao_negado', 'escola_fora', 'ponto_rede_sede', 'ponto_codigo_errado', 'meta_repasse', 'parcelas_consulta', 'recusa_checkout', 'cupom_consulta')
         AND criado_em < ?) OR (tipo = 'armadilha' AND criado_em < ?)");
     $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 2 * 86400), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
     return $stmt->rowCount();

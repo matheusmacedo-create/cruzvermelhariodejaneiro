@@ -776,7 +776,7 @@ if (!function_exists('mcp_montar_cobranca')) {
         $nome = (string) $aluno['curso']['nome'];
         $itens = [['inscricao-' . $slug, $nome . ' — Taxa de inscrição', (int) $compra['inscricao']]];
         if ($compra['plano'] === 'taxa_e_matricula') {
-            $itens[] = ['matricula-' . $slug, $nome . ' — Matrícula', (int) $compra['matricula']];
+            $itens[] = ['matricula-' . $slug, $nome . ' — Matrícula' . (!empty($compra['cupom']) ? ' (cupom ' . $compra['cupom'] . ')' : ''), (int) $compra['matricula']];
         }
         if ((int) $compra['custos'] > 0) {
             $itens[] = ['custos-processamento', 'Custos de processamento (opcional)', (int) $compra['custos']];
@@ -802,6 +802,7 @@ if (!function_exists('mcp_montar_cobranca')) {
                 'plano' => $compra['plano'], 'parcelas' => $pix ? 1 : max(1, (int) $compra['parcelas']),
                 'matricula_centavos' => (int) $compra['matricula'], 'turma_id' => $compra['turma_id'] ?? null,
                 'total_mostrado_centavos' => $compra['total_mostrado'] ?? null, 'order_id' => mcp_meta_id_da_compra($token),
+                'cupom' => $compra['cupom'] ?? null, 'cupom_desconto_centavos' => isset($compra['cupom']) ? (int) $compra['cupom_desconto'] : null,
             ],
         ];
     }

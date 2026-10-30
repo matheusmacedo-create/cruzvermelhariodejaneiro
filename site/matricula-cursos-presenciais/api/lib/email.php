@@ -490,7 +490,8 @@ function mcp_email_decomposicao(array $i): string
 {
     $partes = ['taxa ' . mcp_brl((int) ($i['inscricao_centavos'] ?? 0))];
     if (mcp_email_completo($i)) {
-        $partes[] = 'matrícula ' . mcp_brl(mcp_email_matricula_cobrada($i));
+        $partes[] = 'matrícula ' . mcp_brl(mcp_email_matricula_cobrada($i))
+            . (!empty($i['cupom']) ? ' (cupom ' . $i['cupom'] . ', desconto de ' . mcp_brl((int) ($i['cupom_desconto_centavos'] ?? 0)) . ')' : '');
     }
     if ((int) ($i['taxa_centavos'] ?? 0) > 0) {
         $partes[] = 'custos ' . mcp_brl((int) $i['taxa_centavos']);

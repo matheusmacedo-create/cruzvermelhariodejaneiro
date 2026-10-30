@@ -49,7 +49,7 @@ set_exception_handler(static function (Throwable $e): void {
     exit;
 });
 
-foreach (['config', 'http', 'db', 'unicopag', 'compra', 'escola', 'espera', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas', 'recuperacao', 'voluntarios'] as $modulo) {
+foreach (['config', 'http', 'db', 'unicopag', 'compra', 'cupons', 'escola', 'espera', 'email', 'pdf', 'comprovante', 'publico', 'painel', 'horarios', 'secretaria', 'declaracao', 'ponto', 'presenca', 'avisos', 'comunicacao', 'metricas', 'meta', 'turmas', 'recuperacao', 'voluntarios'] as $modulo) {
     require __DIR__ . '/lib/' . $modulo . '.php';
 }
 // Ligação com o Google Drive (10/2026): fila de trabalhos, exportações e espelho dos assets. Os dois módulos são

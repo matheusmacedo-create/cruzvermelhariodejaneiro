@@ -340,7 +340,11 @@ function mcp_escola_avisos(array $inscricao): array
     if (is_string($acesso['aviso'] ?? null)) {
         $avisos[] = $acesso['aviso']; // inscrições de antes: só o aviso principal
     }
-    return array_values(array_unique(array_filter($avisos, static fn($a): bool => is_string($a) && in_array($a, MCP_ESCOLA_AVISOS, true))));
+    // Compra com cupom (lib/cupons.php): a matrícula foi paga abaixo do preço da escola de propósito; o preco_divergente
+    // da escola é esperado e não pede ação (o desconto aparece no aviso à secretaria, ao lado da matrícula).
+    $comCupom = !empty($inscricao['cupom']);
+    return array_values(array_unique(array_filter($avisos, static fn($a): bool => is_string($a) && in_array($a, MCP_ESCOLA_AVISOS, true)
+        && !($comCupom && $a === 'preco_divergente'))));
 }
 
 /**
