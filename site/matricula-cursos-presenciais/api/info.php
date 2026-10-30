@@ -66,4 +66,5 @@ mcp_json([
     'espera_data_limite' => mcp_espera_data_limite(mcp_espera_prazo(time())),
     'recebedor' => mcp_recebedor(),
     'agente_financiador' => mcp_agente_financiador(),
+    'cupons_vitrine' => mcp_cupons_vitrine(),
 ]);

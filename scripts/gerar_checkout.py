@@ -331,6 +331,15 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
               <li id="ck-depois-turma"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span>Antes da primeira aula, você recebe por e-mail e na sua conta as orientações da turma: data, horário, local e o que vestir. A entrada na aula é liberada com a matrícula paga.</span></li>
               <li id="ck-depois-prazo" hidden><i class="fa-solid fa-circle-check" aria-hidden="true"></i> <span></span></li>
             </ul>
+            <div class="ck-balao" id="ck-balao" role="region" aria-label="Oferta com cupom de desconto" hidden>
+              <p class="ck-balao-selo">Oferta com cupom</p>
+              <p class="ck-balao-titulo" id="ck-balao-titulo"></p>
+              <p class="ck-balao-codigo"><span>Cupom</span> <b id="ck-balao-codigo"></b></p>
+              <p class="ck-balao-vagas" id="ck-balao-vagas"></p>
+              <div class="ck-balao-barra" aria-hidden="true"><span id="ck-balao-barra"></span></div>
+              <button type="button" class="ck-balao-usar" id="ck-balao-usar">Usar o cupom</button>
+              <p class="ck-balao-ok" id="ck-balao-ok" hidden><span>Cupom aplicado no seu total.</span> <button type="button" class="ck-balao-tirar" id="ck-balao-tirar">Remover</button></p>
+            </div>
           </aside>
         </div>
         <script type="application/json" id="ck-cursos">@@CURSOS_JSON@@</script>"""

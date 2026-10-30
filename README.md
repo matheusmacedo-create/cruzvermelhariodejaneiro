@@ -1270,6 +1270,13 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
 - **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
   `cupom_desconto_centavos`.
 - **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
+- **Balão da oferta** (30/10/2026): cupom com `'vitrine' => true` em `MCP_CUPONS` (o `NOV15` é) vai a público no
+  `info.php` (`cupons_vitrine`: código, cursos, valor final, limite e vagas que restam, com a mesma contagem da cobrança).
+  No resumo do checkout aparece um balão com o código, "Restam N cupons de 30" e a barra das vagas; com o curso da oferta
+  escolhido, o cupom **já vem aplicado** (preço cheio riscado no balão, desconto no resumo) e "Remover" tira sem a página
+  insistir. Sem curso escolhido, o botão do balão escolhe o curso e aplica. No celular, o balão fica na faixa do resumo,
+  logo abaixo do Total. Nada se move sozinho e o número é o do servidor: nenhuma contagem regressiva inventada. Esgotado
+  ou com o banco fora, o balão some e o checkout segue. Para tirar o código de público, apague o `'vitrine'`.
   Para ver quantos já usaram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'NOV15' GROUP BY status`.
 - **Testes**: `scripts/testar_meta_integracao.php` (bloco "cupom": 15 verificações com MariaDB e ÚnicoPag falsa, inclusive
   a 31ª recusada, o PIX vencido devolvendo a vaga e a corrida pela última vaga) e `scripts/testar_checkout.php`.
