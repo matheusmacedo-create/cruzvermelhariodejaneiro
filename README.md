@@ -1284,7 +1284,7 @@ Socorros Básico de 17/11**. **Situação: construído e testado só na máquina
 - **Banco**: tabela `mcp_recuperacao_contatos` (criada pela migração do `db.php`, `MCP_DB_VERSAO` nova). `pessoa_chave`
   é o HMAC-SHA256 do CPF com a chave `recuperacao_funil` de `mcp_chaves`: nunca o CPF em claro.
 - **Onde fica**: regra pura em `api/lib/recuperacao_funil.php` (`mcp_rf_*`), página em `api/recuperacao.php`.
-- **Testes**: `scripts/testar_recuperacao_funil_integracao.php` (61 verificações, MariaDB local e servidor PHP local;
+- **Testes**: `scripts/testar_recuperacao_funil_integracao.php` (74 verificações, MariaDB local e servidor PHP local;
   nada externo é chamado, o wa.me só é conferido no `Location`). Também passaram `testar_recuperacao_integracao.php`,
   `testar_avisos_integracao.php` e `testar_checkout.php`.
 - **Publicar** (quando o Matheus pedir): `scripts/publicacao-recuperacao.txt`; conferir com

@@ -9,7 +9,9 @@
  *   - a página: sem sessão, só o link de entrada (GET 200 e POST 403, sem dado nenhum); token do formulário
  *     obrigatório; o WhatsApp registra o contato e responde 303 para o wa.me; "Não quer contato" bloqueia os dois
  *     canais e tira a pessoa da lista; a pessoa que paga depois do contato vira "recuperada"; a planilha (CSV);
- *   - as métricas: recuperadas pelo lembrete do PIX, quebra por curso e os 14 dias.
+ *   - as métricas: recuperadas pelo lembrete do PIX (um pagamento conta uma vez), quebra por curso e os 14 dias;
+ *   - as regras puras de mcp_rf_agrupar: a mesma tentativa paga depois do contato vira "recuperado"; quem foi chamado e
+ *     depois pediu para sair ou passou dos 180 dias continua em "contatadas"; o celular nunca vem de outro CPF do grupo.
  *
  * O teste sobe o site num servidor PHP local (php -S) com um oferta.json próprio (turma de Primeiros Socorros Básico
  * daqui a 18 dias). Nenhum serviço externo é chamado: o wa.me só é conferido no cabeçalho Location, nunca aberto.
@@ -150,8 +152,15 @@ $criar = static function (string $chave, float $dias, array $campos = []) use ($
     $linha['id'] = (int) $db->lastInsertId();
     return $linha;
 };
-/** A pessoa do público que tem esta inscrição, ou null. */
-$pessoaDe = static fn(array $pessoas, array $linha): ?array => mcp_rf_pessoa_por_inscricao($pessoas, (int) $linha['id']);
+/** A pessoa (da lista ou só das métricas) que tem esta inscrição, ou null. */
+$pessoaDe = static function (array $pessoas, array $linha): ?array {
+    foreach ($pessoas as $p) {
+        if ($p['id'] === (int) $linha['id'] || in_array((int) $linha['id'], $p['ids'], true)) {
+            return $p;
+        }
+    }
+    return null;
+};
 
 $servidor = null;
 try {
@@ -296,9 +305,20 @@ try {
     $pessoas = mcp_rf_carregar();
     $pr = $pessoaDe($pessoas, $r1);
     verificar('pagou depois do contato: recuperado', $pr['situacao'] ?? '', 'recuperado');
-    verificar('recuperado sai da lista de trabalho e aparece no filtro', [in_array($pr, mcp_rf_filtrar($pessoas), true), in_array($pr, mcp_rf_filtrar($pessoas, '', 'recuperado'), true)], [false, true]);
+    verificar('recuperado sai da lista de trabalho e não tem filtro nominal', [in_array($pr, mcp_rf_filtrar($pessoas), true), in_array($pr, mcp_rf_filtrar($pessoas, '', 'recuperado'), true)], [false, false]);
     [, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('recuperado não aparece na lista da página', str_contains($html, 'Pessoa Teste recupera'), false);
+    [, , $html] = http($url . '?situacao=recuperado', 'GET', null, [$cookie]);
+    verificar('?situacao=recuperado não lista o recuperado (cai na lista de trabalho)', [str_contains($html, 'Pessoa Teste recupera'), str_contains($html, $r1['email'])], [false, false]);
+
+    // A MESMA tentativa paga depois do contato (PIX ainda válido, ou cobrança aberta reaproveitada): recuperada.
+    $q1 = $criar('mesmalinha', 2);
+    [$st] = http($url, 'POST', ['acao' => 'whatsapp', 'id' => $q1['id'], 't' => $csrf('rf_whatsapp', (int) $q1['id'])], [$cookie]);
+    $db->prepare("UPDATE mcp_inscricoes SET status = 'pago', pago_em = ? WHERE id = ?")->execute([gmdate('Y-m-d H:i:s', time() + 60), $q1['id']]);
+    $hashesCriados[] = ['email', mcp_avisos_hash('email', $q1['email'])];
+    $pessoas = mcp_rf_carregar();
+    $pq = $pessoaDe($pessoas, $q1);
+    verificar('mesma tentativa paga depois do contato: recuperado, fora da lista', [$st, $pq['situacao'] ?? '', $pq['na_lista'] ?? null, $pq['curso_slug'] ?? ''], [303, 'recuperado', false, 'puncao-venosa']);
 
     // Não quer contato.
     [$st] = http($url, 'POST', ['acao' => 'nao_quer', 'id' => $n1['id'], 't' => 'x'], [$cookie]);
@@ -310,11 +330,14 @@ try {
     verificar('não quer contato: bloqueia e-mail e WhatsApp (origem recuperacao)', $bloq->fetchAll(PDO::FETCH_COLUMN), ['email', 'whatsapp']);
     $pessoas = mcp_rf_carregar();
     $pn = $pessoaDe($pessoas, $n1);
-    verificar('não quer contato: situação nao_quer, fora da lista de trabalho', [$pn['situacao'] ?? '', in_array($pn, mcp_rf_filtrar($pessoas), true)], ['nao_quer', false]);
+    verificar('não quer contato: situação nao_quer, fora da lista de trabalho e sem filtro nominal',
+        [$pn['situacao'] ?? '', in_array($pn, mcp_rf_filtrar($pessoas), true), in_array($pn, mcp_rf_filtrar($pessoas, '', 'nao_quer'), true)], ['nao_quer', false, false]);
     [$st, $cab] = http($url, 'POST', ['acao' => 'whatsapp', 'id' => $n1['id'], 't' => $csrf('rf_whatsapp', (int) $n1['id'])], [$cookie]);
     verificar('não quer contato: o WhatsApp não abre mais', [$st, str_contains((string) ($cab['location'] ?? ''), 'erro=saiu')], [303, true]);
     [, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('não quer contato: some da página', str_contains($html, 'Pessoa Teste naoquer'), false);
+    [, , $html] = http($url . '?situacao=nao_quer', 'GET', null, [$cookie]);
+    verificar('?situacao=nao_quer não lista ninguém com nome e e-mail', [str_contains($html, 'Pessoa Teste naoquer'), str_contains($html, $n1['email'])], [false, false]);
 
     // ------------------------------------------------------------------------- métricas
     $m = mcp_rf_metricas($pessoas, mcp_rf_contatos_recentes(), mcp_rf_pix_recuperadas());
@@ -324,13 +347,52 @@ try {
     verificar('métricas: quebra por curso', isset($m['cursos']['puncao-venosa']['pessoas']) && $m['cursos']['puncao-venosa']['pessoas'] >= 3, true);
     verificar('lembrete do PIX: curso diferente não conta', mcp_rf_pix_contar(
         [['inscricao_id' => 1, 'cpf' => '1', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'enviado_em' => '2026-10-01 10:00:00']],
-        [['cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'b', 'pago_em' => '2026-10-02 10:00:00']]), 0);
+        [['id' => 9, 'cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'b', 'pago_em' => '2026-10-02 10:00:00']]), 0);
     verificar('lembrete do PIX: pagamento antes do lembrete não conta, depois conta (pelo e-mail)', [
         mcp_rf_pix_contar([['inscricao_id' => 1, 'cpf' => '', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'enviado_em' => '2026-10-03 10:00:00']],
-            [['cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'a', 'pago_em' => '2026-10-02 10:00:00']]),
+            [['id' => 9, 'cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'a', 'pago_em' => '2026-10-02 10:00:00']]),
         mcp_rf_pix_contar([['inscricao_id' => 1, 'cpf' => '', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'enviado_em' => '2026-10-01 10:00:00']],
-            [['cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'a', 'pago_em' => '2026-10-02 10:00:00']]),
+            [['id' => 9, 'cpf' => '', 'email' => 'A@x.org', 'telefone' => '', 'curso_slug' => 'a', 'pago_em' => '2026-10-02 10:00:00']]),
     ], [0, 1]);
+    verificar('lembrete do PIX: dois lembretes da mesma pessoa e curso, um pagamento → conta 1', mcp_rf_pix_contar([
+        ['inscricao_id' => 1, 'cpf' => '12345678909', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'enviado_em' => '2026-10-01 10:00:00'],
+        ['inscricao_id' => 2, 'cpf' => '12345678909', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'enviado_em' => '2026-10-05 10:00:00'],
+    ], [['id' => 3, 'cpf' => '12345678909', 'email' => 'a@x.org', 'telefone' => '', 'curso_slug' => 'a', 'pago_em' => '2026-10-06 10:00:00']]), 1);
+
+    // ------------------------------------------------------------------------- regras puras de mcp_rf_agrupar
+    $inicioJanela = '2026-05-01 00:00:00';
+    $linhaPura = static fn(int $id, string $cpf, array $c = []): array => $c + ['id' => $id, 'cpf' => $cpf, 'email' => "p$id@x.org", 'telefone' => '21987650' . str_pad((string) $id, 3, '0', STR_PAD_LEFT),
+        'nome' => "Pessoa $id", 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa', 'status' => 'pendente', 'criado_em' => '2026-10-19 10:00:00', 'pago_em' => null, 'atualizado_em' => '2026-10-19 10:00:00'];
+    $chavePura = static fn(string $cpf): string => hash('sha256', $cpf);
+    $semBloqueio = static fn(string $canal, string $destino): ?string => null;
+    $cpfA = '11144477735';
+    $cpfB = '52998224725';
+    $contatoA = [$chavePura($cpfA) => [['canal' => 'whatsapp', 'criado_em' => '2026-10-20 10:00:00']]];
+    $agoraPuro = (int) strtotime('2026-10-30 12:00:00 UTC');
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA, ['status' => 'pago', 'pago_em' => '2026-10-21 10:00:00'])], $contatoA, $chavePura, $semBloqueio, $inicioJanela);
+    $mp = mcp_rf_metricas($p, [], 0, $agoraPuro);
+    verificar('puro: mesma linha pendente → paga depois do contato vira recuperado', [count($p), $p[0]['situacao'] ?? '', $mp['recuperadas'], $mp['contatadas'], $mp['publico']], [1, 'recuperado', 1, 1, 0]);
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA, ['status' => 'pago', 'pago_em' => '2026-10-19 12:00:00'])], $contatoA, $chavePura, $semBloqueio, $inicioJanela);
+    verificar('puro: pagou antes do contato → fora de tudo', $p, []);
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA)], $contatoA, $chavePura, static fn(string $canal, string $destino): ?string => $canal === 'whatsapp' ? 'kapso' : null, $inicioJanela);
+    $mp = mcp_rf_metricas($p, [], 0, $agoraPuro);
+    verificar('puro: chamada e depois SAIR por outra origem → continua em contatadas, fora da lista',
+        [$p[0]['situacao'] ?? '', $mp['contatadas'], $mp['publico'], $mp['bloqueadas'], mcp_rf_filtrar($p)], ['bloqueado', 1, 0, 1, []]);
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA)], [], $chavePura, static fn(string $canal, string $destino): ?string => 'pagina', $inicioJanela);
+    verificar('puro: bloqueada sem nunca ter sido chamada → fora de tudo', $p, []);
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA, ['criado_em' => '2026-03-01 10:00:00'])], $contatoA, $chavePura, $semBloqueio, $inicioJanela);
+    $mp = mcp_rf_metricas($p, [], 0, $agoraPuro);
+    verificar('puro: chamada e passou dos 180 dias → continua em contatadas, fora da lista', [$p[0]['situacao'] ?? '', $p[0]['na_lista'] ?? null, $mp['contatadas'], $mp['publico']], ['contatado', false, 1, 0]);
+    $p = mcp_rf_agrupar([$linhaPura(1, $cpfA, ['criado_em' => '2026-03-01 10:00:00'])], [], $chavePura, $semBloqueio, $inicioJanela);
+    verificar('puro: passou dos 180 dias sem contato → fora de tudo', $p, []);
+    // Maria (CPF A, celular) e João (CPF B, fixo) dividem o e-mail; a tentativa mais recente é a do João.
+    $p = mcp_rf_agrupar([
+        $linhaPura(1, $cpfA, ['email' => 'm@x.org', 'telefone' => '21999990001', 'nome' => 'Maria', 'criado_em' => '2026-10-10 10:00:00']),
+        $linhaPura(2, $cpfB, ['email' => 'm@x.org', 'telefone' => '2122223333', 'nome' => 'João', 'curso_slug' => 'bombeiro-civil', 'curso_nome' => 'Bombeiro Civil']),
+    ], [], $chavePura, $semBloqueio, $inicioJanela);
+    verificar('puro: dois CPFs com o mesmo e-mail → o celular do outro CPF não é usado', [count($p), $p[0]['primeiro_nome'] ?? '', $p[0]['whatsapp'] ?? 'nulo', $p[0]['telefone'] ?? ''],
+        [1, 'João', 'nulo', '2122223333']);
+    verificar('puro: sem celular válido, a pessoa não vai para a planilha', mcp_rf_filtrar($p)[0]['whatsapp'] ?? 'nulo', 'nulo');
 
     // ------------------------------------------------------------------------- planilha
     [$st] = http($url, 'POST', ['acao' => 'exportar', 'id' => 0], [$cookie]);
@@ -350,6 +412,7 @@ try {
     $ev->execute([$quem . ' · %']);
     verificar('exportar: quem exportou fica registrado', (int) $ev->fetchColumn(), 1);
     verificar('exportar: cada pessoa exportada conta como contato (canal exportacao)', array_column($contatosDe($b2), 'canal'), ['exportacao']);
+    verificar('exportar: quem não tem celular fica fora da planilha e não conta como contato', [isset($porEmail[$semCel['email']]), $contatosDe($semCel)], [false, []]);
     verificar('CSV: fórmula neutralizada', str_contains(mcp_rf_csv([['nome' => '=HYPERLINK("x")', 'primeiro_nome' => '=x', 'whatsapp' => null, 'email' => 'a@b.c', 'curso_interesse' => 'C', 'ultima_tentativa' => '2026-10-01 10:00:00']]), "'=HYPERLINK"), true);
 
     $erros = trim((string) file_get_contents($logErros));
