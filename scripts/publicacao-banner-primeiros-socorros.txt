@@ -1,10 +1,12 @@
-# Banner da turma de Primeiros Socorros de 17/11 no topo da matrícula (30/10/2026), com link para o checkout.
-# Arte e fonte em docs/criativos/banner-primeiros-socorros-17-11/; BANNER_TURMA em scripts/gerar_matricula_presencial.py.
+# Banner da turma de Primeiros Socorros de 17/11 (30/10/2026), com link para o checkout.
+# Primeiro foi ao topo da matrícula; no mesmo dia passou para a home, a pedido (BANNER_TURMA = None na matrícula).
+# Arte e fonte em docs/criativos/banner-primeiros-socorros-17-11/. A home tira o banner sozinha no dia da turma.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-banner-primeiros-socorros.txt)
 # 1) as imagens, antes da página que as pede
 site/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp
 site/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-960.webp
 site/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-1080.webp
 site/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-540.webp
-# 2) a página
+# 2) as páginas
+site/index.html
 site/matricula-cursos-presenciais/index.html

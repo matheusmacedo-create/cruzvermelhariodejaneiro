@@ -797,6 +797,12 @@
       main#inicio .hero .eyebrow { margin-bottom: .6rem; }
     }
 
+    /* Banner da turma de Primeiros Socorros de 17/11 (30/10/2026): a arte traz o texto; o link inteiro leva ao checkout.
+       Fonte da arte em docs/criativos/banner-primeiros-socorros-17-11/; o script logo depois do banner o tira no dia da turma. */
+    .hp-banner-turma { display: block; background: #151515; }
+    .hp-banner-turma img { display: block; width: 100%; max-width: 1920px; height: auto; margin: 0 auto; }
+    .hp-banner-turma:focus-visible { outline: 3px solid #e30613; outline-offset: -3px; }
+
     /* Faixa de identidade: números com fonte, cada item é um link. */
     .hp-info a.info-item { color: #fff; display: block; transition: background .15s; border-radius: 4px; }
     .hp-info a.info-item:hover b, .hp-info a.info-item:focus-visible b { text-decoration: underline; text-underline-offset: 3px; }
@@ -1220,6 +1226,13 @@
   </header>
 
   <main id="inicio">
+    <a class="hp-banner-turma" id="hp-banner-turma" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=banner_home">
+      <picture>
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-960.webp 960w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp 1920w" sizes="(min-width: 1920px) 1920px, 100vw" width="1920" height="640" alt="Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 17 de novembro, terça-feira, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." fetchpriority="high" decoding="async">
+      </picture>
+    </a>
+    <script>if (Date.now() >= Date.parse('2026-11-17T09:00:00-03:00')) document.getElementById('hp-banner-turma').remove();</script>
     <!-- data-cvrj-ck-topo: o aviso de cookies (site/consentimento/consentimento.js) fica no alto desta página, abaixo
          do cabeçalho, para não cobrir a missão e os botões da base da primeira tela (achado T01). -->
     <section class="hero" aria-labelledby="hero-title" data-cvrj-ck-topo data-cv-chat-depois-do-hero>

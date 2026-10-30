@@ -72,13 +72,7 @@ ESCOLA = "https://escola.cursoscruzvermelha.org"
 ESCOLA_LOGIN = f"{ESCOLA}/login"
 CHECKOUT_URL = "/matricula-cursos-presenciais/checkout/"
 # Banner de campanha no topo do modo geral; None tira o banner. "data" é o dia da turma (AAAA-MM-DD) que a arte anuncia.
-BANNER_TURMA = {
-    "curso": "primeiros-socorros-basico",
-    "data": "2026-11-17",
-    "arquivo": "banner-primeiros-socorros-17-11",
-    "alt": "Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 17 de novembro, terça-feira, "
-           "das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se.",
-}
+BANNER_TURMA = None
 STATIC = RAIZ / "site" / "matricula-cursos-presenciais" / "static"
 STATIC_URL = "/matricula-cursos-presenciais/static/"
 
