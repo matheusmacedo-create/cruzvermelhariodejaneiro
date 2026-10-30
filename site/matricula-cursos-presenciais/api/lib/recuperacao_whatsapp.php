@@ -42,6 +42,17 @@ const MCP_RW_JANELA_METRICA_DIAS = 40;
 // Segundos depois da âncora em que cada etapa fica devida.
 const MCP_RW_ETAPAS = [1 => 3 * 3600, 2 => 24 * 3600, 3 => 72 * 3600];
 const MCP_RW_MODELOS = [1 => 'rec_inscricao_1', 2 => 'rec_inscricao_2', 3 => 'rec_inscricao_3'];
+/**
+ * O corpo de cada modelo exatamente como foi cadastrado na Meta (30/10/2026), com {nome} e {curso} no lugar de {{1}} e
+ * {{2}}. Só para a prévia do painel: quem manda o texto é a Meta, a partir do nome do modelo. Mudou o modelo lá, mude aqui.
+ */
+const MCP_RW_TEXTOS = [
+    1 => "Olá, {nome}. Sua inscrição no curso {curso} da Cruz Vermelha RJ ainda não foi concluída. Seus dados estão salvos: para garantir a vaga, é só concluir pelo link abaixo.\n[Concluir inscrição]",
+    2 => "Olá, {nome}. Lembrete da Cruz Vermelha RJ: a sua inscrição no curso {curso} continua em aberto.\n\nSe ficou alguma dúvida sobre o curso ou o pagamento, responda esta mensagem. Para concluir, use o link abaixo.\n[Concluir inscrição]",
+    3 => "Olá, {nome}. Este é o último lembrete sobre a sua inscrição no curso {curso} da Cruz Vermelha RJ. Se ainda quiser participar, conclua pelo link abaixo.\n\nSe não tiver mais interesse, toque no botão e não enviaremos outras mensagens.\n[Concluir inscrição] [Não tenho interesse]",
+];
+/** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
+const MCP_RW_MINUTO_DA_RODADA = 7;
 const MCP_RW_POR_RODADA = 40;
 // Teto em 24 h (janela móvel), abaixo dos 250/dia da Meta: sobra folga para outros usos do número. Sem ele, 40 × 12
 // rodadas passariam de 250 no primeiro dia no ar, e a Meta recusaria o resto.
@@ -341,6 +352,28 @@ function mcp_rw_ajustar_horario(int $ts): int
     $dia = intdiv($local, 86400) * 86400;
     $abre = $dia + MCP_RW_HORARIO[0] * 3600;
     return ($local < $abre ? $abre : $abre + 86400) - MCP_RW_FUSO_SEGUNDOS;
+}
+
+/**
+ * A próxima rodada que pode enviar: o próximo minuto MCP_RW_MINUTO_DA_RODADA depois de $agora, dentro das 8h–20h de
+ * Brasília (a das 20h07 já está fora, então a última do dia é a das 19h07 e a seguinte, a das 8h07 do outro dia).
+ */
+function mcp_rw_proxima_rodada(int $agora): int
+{
+    $hora = intdiv($agora, 3600) * 3600 + MCP_RW_MINUTO_DA_RODADA * 60;
+    if ($hora <= $agora) {
+        $hora += 3600;
+    }
+    for ($i = 0; $i < 48 && !mcp_rw_no_horario($hora); $i++) {
+        $hora += 3600;
+    }
+    return $hora;
+}
+
+/** O texto da mensagem como a pessoa vai ler (prévia do painel; o envio usa o modelo da Meta). */
+function mcp_rw_previa(int $etapa, string $primeiroNome, string $curso): string
+{
+    return strtr(MCP_RW_TEXTOS[$etapa] ?? '', ['{nome}' => $primeiroNome, '{curso}' => $curso]);
 }
 
 /**

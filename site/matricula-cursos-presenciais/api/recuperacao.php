@@ -77,6 +77,8 @@ ul.situacao{list-style:none;margin:0;padding:0}ul.situacao li{padding:8px 0;bord
 .nota{color:var(--muted);font-size:.85rem;margin:8px 0 0}
 .paginacao{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:14px;font-size:.9rem}
 .vazio{padding:30px 10px;text-align:center;color:var(--muted)}
+h3{font-size:1rem;margin:18px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.previa{margin:6px 0 10px;padding:12px 14px;border-left:4px solid var(--rule,#ddd);background:#f6f7f8;white-space:normal;font-size:.92rem;line-height:1.45;max-width:640px}
 .entrar{max-width:520px;margin:48px auto 0;text-align:center}
 CSS;
 }
@@ -207,6 +209,59 @@ foreach (array_reverse($m['dias'], true) as $dia => $d) {
 }
 $corpo .= '<section class="cartao"><h2>Últimos ' . MCP_RW_DIAS_METRICA . ' dias</h2><div class="rolar"><table><thead><tr><th scope="col">Dia</th><th scope="col">Mensagens</th><th scope="col">Recuperações</th></tr></thead><tbody>'
     . $linhasDia . '</tbody></table></div></section>';
+
+// Próximo disparo: quem a próxima rodada vai pegar, por modelo, com a prévia do texto. É a mesma conta da rotina
+// (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; a rotina ainda reconfere cada pessoa antes de mandar.
+$rodada = mcp_rw_proxima_rodada($agora);
+$naRodada = array_values(array_filter($m['lista'], static fn(array $p): bool => $p['proxima'] <= $rodada));
+$depois = array_slice($naRodada, MCP_RW_POR_RODADA);
+$naRodada = array_slice($naRodada, 0, MCP_RW_POR_RODADA);
+$travas = [];
+if (!$cfg['ok']) {
+    $travas[] = 'falta ' . implode(' e ', $cfg['falta']) . ' no servidor';
+}
+if ($carga['escola']['estado'] === 'indisponivel') {
+    $travas[] = 'a plataforma da escola não respondeu (sem ela não se sabe quem pagou lá)';
+}
+$corpo .= '<section class="cartao"><h2>Próximo disparo</h2><p class="nota">Próxima rodada: <b>' . rw_e(rw_quando($rodada)) . '</b>. '
+    . 'A rotina roda de hora em hora, no minuto ' . MCP_RW_MINUTO_DA_RODADA . ', das 8h às 20h, e manda no máximo ' . MCP_RW_POR_RODADA . ' mensagens por rodada.</p>';
+if ($travas) {
+    $corpo .= '<div class="aviso erro" role="status">Nada sai na próxima rodada enquanto ' . rw_e(implode('; ', $travas)) . '.</div>';
+}
+if (!$naRodada) {
+    $seguinte = $m['lista'][0] ?? null;
+    $corpo .= '<p class="vazio">Ninguém para a próxima rodada.'
+        . ($seguinte ? ' A seguinte prevista: ' . rw_e(MCP_RW_MODELOS[$seguinte['proxima_etapa']]) . ' para ' . rw_e($seguinte['nome']) . ' em ' . rw_e(rw_quando($seguinte['proxima'])) . '.' : '')
+        . '</p>';
+} else {
+    $porEtapa = [];
+    foreach ($naRodada as $p) {
+        $porEtapa[$p['proxima_etapa']][] = $p;
+    }
+    ksort($porEtapa);
+    foreach ($porEtapa as $etapa => $pessoas) {
+        $nomeModelo = MCP_RW_MODELOS[$etapa];
+        $situacao = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
+        $selo = $situacao === null ? rw_selo('talvez', 'Situação do modelo sem resposta') : ($situacao === 'APPROVED' ? rw_selo('ok', 'Modelo aprovado') : rw_selo('nao', $situacao === 'ausente' ? 'Modelo não existe' : 'Modelo ' . $situacao));
+        $primeiro = $pessoas[0];
+        $linhasModelo = '';
+        foreach ($pessoas as $p) {
+            $linhasModelo .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . rw_e($p['celular']) . '</small></td><td>' . ($p['origem'] === 'escola' ? 'Escola' : 'Site') . '</td>'
+                . '<td>' . rw_e($p['curso']) . '</td><td>' . rw_e(rw_quando($p['proxima'])) . '</td></tr>';
+        }
+        $corpo .= '<h3>' . $selo . $etapa . 'ª mensagem · modelo <code>' . rw_e($nomeModelo) . '</code> · ' . count($pessoas) . ' lead' . (count($pessoas) === 1 ? '' : 's') . '</h3>'
+            . ($situacao !== null && $situacao !== 'APPROVED' ? '<p class="nota">Este modelo ainda não está aprovado na Meta: estes leads esperam a aprovação, sem perder a vez.</p>' : '')
+            . '<p class="nota">Como ' . rw_e(mcp_rw_primeiro_nome($primeiro['nome'])) . ' vai ler:</p>'
+            . '<blockquote class="previa">' . nl2br(rw_e(mcp_rw_previa($etapa, mcp_rw_primeiro_nome($primeiro['nome']), $primeiro['curso']))) . '</blockquote>'
+            . '<div class="rolar"><table><thead><tr><th scope="col">Lead</th><th scope="col">Origem</th><th scope="col">Curso</th><th scope="col">Devida desde</th></tr></thead><tbody>'
+            . $linhasModelo . '</tbody></table></div>';
+    }
+    if ($depois) {
+        $corpo .= '<p class="nota">Mais ' . count($depois) . ' lead' . (count($depois) === 1 ? '' : 's') . ' já devido' . (count($depois) === 1 ? '' : 's')
+            . ' passa' . (count($depois) === 1 ? '' : 'm') . ' do teto desta rodada e fica' . (count($depois) === 1 ? '' : 'm') . ' para a seguinte.</p>';
+    }
+}
+$corpo .= '<p class="nota">Antes de cada envio a rotina confere de novo se a pessoa pagou (no site ou na escola) ou pediu para sair; quem pagou não recebe.</p></section>';
 
 // Pessoas no fluxo.
 $pagina = max(1, (int) ($_GET['p'] ?? 1));

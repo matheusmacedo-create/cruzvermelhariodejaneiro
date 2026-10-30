@@ -621,6 +621,17 @@ try {
         [$st, substr_count($html, '>Aprovado<'), str_contains($html, 'Plataforma da escola'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'No fluxo agora'), str_contains($html, 'Recuperadas')],
         [200, 3, true, true, true, true]);
     verificar('painel: a chave da Kapso nunca aparece', str_contains($html, $chaveKapso), false);
+    verificar('painel: seção "Próximo disparo" com a hora da rodada e a prévia do texto', [str_contains($html, 'Próximo disparo'), str_contains($html, 'Próxima rodada:'),
+        str_contains($html, 'Ninguém para a próxima rodada') || (str_contains($html, 'class="previa"') && str_contains($html, 'rec_inscricao_'))], [true, true, true]);
+    // A hora da próxima rodada: minuto 7, dentro das 8h–20h de Brasília (UTC−3).
+    verificar('próxima rodada: 10h30 → 11h07; 19h30 → 8h07 do dia seguinte; 8h03 → 8h07', [
+        gmdate('Y-m-d H:i', mcp_rw_proxima_rodada(gmmktime(13, 30, 0, 10, 30, 2026))),
+        gmdate('Y-m-d H:i', mcp_rw_proxima_rodada(gmmktime(22, 30, 0, 10, 30, 2026))),
+        gmdate('Y-m-d H:i', mcp_rw_proxima_rodada(gmmktime(11, 3, 0, 10, 30, 2026))),
+    ], ['2026-10-30 14:07', '2026-10-31 11:07', '2026-10-30 11:07']);
+    $previa = mcp_rw_previa(3, 'Ana', 'Bombeiro Civil');
+    verificar('prévia: nome, curso e os botões do modelo 3', [str_starts_with($previa, 'Olá, Ana.'), str_contains($previa, 'curso Bombeiro Civil'),
+        str_contains($previa, '[Não tenho interesse]'), str_contains($previa, '{')], [true, true, true, false]);
     $primeiro = mcp_rw_metricas(mcp_rw_carregar()['pessoas'], mcp_rw_linhas(), time())['lista'][0]['celular'] ?? '?';
     verificar('painel: lista com o celular mascarado, nenhum número inteiro na página', [str_contains($html, $primeiro),
         (bool) array_filter($telefones, static fn(string $t): bool => str_contains($html, substr($t, 2)))], [true, false]);
