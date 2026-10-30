@@ -148,6 +148,14 @@ return [
     // Ou um cenário do Make (POST assinado com X-CVB-Assinatura: sha256=HMAC do corpo; segredo com 24+ caracteres).
     'WHATSAPP_WEBHOOK_URL' => '',
     'WHATSAPP_WEBHOOK_SEGREDO' => '',
+    // Recuperação por WhatsApp (30/10/2026, lib/recuperacao_whatsapp.php): as três mensagens automáticas a quem se
+    // cadastrou e não pagou saem pelo número DEDICADO na Kapso (não é o número dos avisos acima), com os modelos
+    // aprovados rec_inscricao_1, _2 e _3. A chave da API da Kapso (painel da Kapso → API keys) e o Phone number ID
+    // do número dedicado. Também valem em api/config-whatsapp.php. Sem as duas, nada sai e o painel
+    // api/recuperacao.php diz o que falta. Nunca mande a chave por chat nem e-mail.
+    // (Só para o teste local: 'WHATSAPP_KAPSO_BASE' => 'http://127.0.0.1:<porta>', um servidor falso. Nunca no servidor.)
+    'WHATSAPP_KAPSO_CHAVE' => '',
+    'WHATSAPP_KAPSO_NUMERO_ID' => '',
     // Lembrete da aula de amanhã: a função public.aulas_do_dia da escola. Vazio = ESCOLA_API_URL trocando
     // matricula_rapida por aulas_do_dia. Também vale em api/config-escola.php.
     'ESCOLA_API_AULAS_DIA_URL' => '',

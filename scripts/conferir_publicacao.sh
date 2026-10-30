@@ -50,14 +50,17 @@ api/medicao.php|405|
 api/turmas.php|405|
 LISTA
 
-# Recuperação do funil (30/10/2026): sem sessão, só o link de entrada; nenhum número nem pessoa na página.
+# Recuperação por WhatsApp (30/10/2026): sem sessão, só o link de entrada; nenhum número nem pessoa na página.
 codigo=$(pedir "$m/api/recuperacao.php")
-if [ "$codigo" = 200 ] && ! grep -qE 'No público|Contatadas|Chamar no WhatsApp|Exportar planilha' "$tmp" \
+if [ "$codigo" = 200 ] && ! grep -qE 'No fluxo agora|Mensagens enviadas|Recuperadas|Pessoas no fluxo|Ligar o recebimento' "$tmp" \
   && grep -qi '^x-robots-tag:.*noindex' "$tmp.cab"; then ok "api/recuperacao.php sem sessão não mostra dados (noindex)"; else falha "api/recuperacao.php sem sessão → $codigo, mostrou dados ou faltou noindex"; fi
+# O webhook da Kapso sem assinatura: 401 (com 503 seria o banco; com 404, o arquivo não subiu).
+codigo=$(pedir "$m/api/kapso-webhook.php")
+if [ "$codigo" = 401 ]; then ok "api/kapso-webhook.php sem assinatura → 401"; else falha "api/kapso-webhook.php sem assinatura → $codigo (esperado 401)"; fi
 
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
-  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_funil.php api/comparecimentos.php api/lembretes.php; do
+  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done

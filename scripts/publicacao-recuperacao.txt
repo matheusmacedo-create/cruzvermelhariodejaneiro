@@ -1,10 +1,17 @@
-# Recuperação do funil (30/10/2026). Detalhes no README, "Recuperação do funil (30/10/2026)".
-# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria a tabela mcp_recuperacao_contatos); depois o
-# módulo novo, que a página carrega sozinha (o lib.php não muda); a página por último.
+# Recuperação por WhatsApp (30/10/2026). Detalhes no README, "Recuperação por WhatsApp (30/10/2026)".
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria a tabela mcp_recuperacao_whatsapp); depois o
+# módulo novo (que o lib.php não carrega: quem usa faz require_once); depois o webhook, o painel e, por último, a rotina
+# de hora em hora (lembretes.php), que só começa a mandar quando o módulo já está lá.
+# config-whatsapp.php NÃO entra: o código que o lê (lib/config.php) não mudou, e as duas chaves novas
+# (WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID) se escrevem nele à mão, no gerenciador de arquivos da Hostinger.
+# Nunca config.php. O lib/recuperacao_funil.php da primeira versão nunca foi publicado; se estiver no servidor, apague-o.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
-# Depois: abrir api/recuperacao.php logado no Portal e ver os números (o script acima, sem sessão, não lê a tabela nova;
-# se a migração não rodou, a página responde 503 "O banco ainda não está pronto…").
+# Depois: abrir api/recuperacao.php logado no Portal, conferir a "Situação" (chave, número, os 3 modelos aprovados,
+# escola) e tocar em "Ligar o recebimento de respostas". Se a migração não rodou, a página responde 503 "O banco ainda
+# não está pronto…".
 site/matricula-cursos-presenciais/api/lib/db.php
-site/matricula-cursos-presenciais/api/lib/recuperacao_funil.php
+site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
+site/matricula-cursos-presenciais/api/kapso-webhook.php
 site/matricula-cursos-presenciais/api/recuperacao.php
+site/matricula-cursos-presenciais/api/lembretes.php
