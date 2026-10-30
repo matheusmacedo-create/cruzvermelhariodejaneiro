@@ -748,17 +748,17 @@ try {
     verificar('painel sem sessão: POST 403 e nada vai à Kapso', [$st, count(falso('webhooks'))], [403, 0]);
     [$st, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('painel com sessão: situação (4 modelos aprovados, escola ok, webhook desligado) e números',
-        [$st, substr_count($html, '>Aprovado<'), str_contains($html, 'Plataforma da escola'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'No fluxo agora'), str_contains($html, 'Recuperadas')],
+        [$st, substr_count($html, '<td class="n">Aprovado</td>'), str_contains($html, 'Plataforma da escola respondendo'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'esperam a próxima mensagem') || str_contains($html, 'espera a próxima mensagem'), str_contains($html, 'Taxa de recuperação')],
         [200, 4, true, true, true, true]);
     verificar('painel: os 4 modelos usados, o cupom e as métricas novas (por mensagem, tempo até pagar, controle × quem recebeu)', [
-        str_contains($html, 'Modelo rec_inscricao_1_v2'), str_contains($html, 'Modelo rec_inscricao_2'), str_contains($html, 'Modelo rec_inscricao_3'), str_contains($html, 'Modelo ps_cupom_oferta'),
-        str_contains($html, 'Modelo rec_inscricao_1 '), str_contains($html, 'Cupom NOV15'), str_contains($html, 'Recuperação por mensagem'), str_contains($html, 'Pelo link da mensagem'),
-        str_contains($html, 'Tempo até pagar'), str_contains($html, 'Grupo de controle × quem recebeu'), str_contains($html, 'Efeito estimado da mensagem'), str_contains($html, 'dezenas de pessoas'),
+        str_contains($html, 'rec_inscricao_1_v2 (1ª mensagem)'), str_contains($html, 'rec_inscricao_2 (2ª mensagem)'), str_contains($html, 'rec_inscricao_3 (3ª mensagem)'), str_contains($html, 'ps_cupom_oferta (3ª de Primeiros Socorros'),
+        str_contains($html, 'rec_inscricao_1 ('), str_contains($html, 'Cupom NOV15'), str_contains($html, 'Qual mensagem trouxe o pagamento'), str_contains($html, 'Pelo link do botão'),
+        str_contains($html, 'Tempo até pagar'), str_contains($html, 'Efeito da mensagem'), str_contains($html, 'menos o grupo de controle'), str_contains($html, 'dezenas em cada grupo'),
         str_contains($html, '1 h, 24 h e 72 h'),
     ], [true, true, true, true, false, true, true, true, true, true, true, true, true]);
     verificar('painel: a chave da Kapso nunca aparece', str_contains($html, $chaveKapso), false);
-    verificar('painel: seção "Próximo disparo" com a hora da rodada e a prévia do texto', [str_contains($html, 'Próximo disparo'), str_contains($html, 'Próxima rodada:'),
-        str_contains($html, 'Ninguém para a próxima rodada') || (str_contains($html, 'class="previa"') && str_contains($html, 'rec_inscricao_'))], [true, true, true]);
+    verificar('painel: seção "Próximo disparo" com a hora da rodada e a prévia do texto', [str_contains($html, 'Próximo disparo'), str_contains($html, 'class="hora"'),
+        str_contains($html, 'Ninguém para esta rodada') || (str_contains($html, 'class="previa"') && str_contains($html, 'rec_inscricao_'))], [true, true, true]);
     // A hora da próxima rodada: minuto 7, dentro das 8h–20h de Brasília (UTC−3).
     verificar('próxima rodada: 10h30 → 11h07; 19h30 → 8h07 do dia seguinte; 8h03 → 8h07', [
         gmdate('Y-m-d H:i', mcp_rw_proxima_rodada(gmmktime(13, 30, 0, 10, 30, 2026))),
@@ -780,20 +780,20 @@ try {
         in_array('whatsapp.message.received', $wh['corpo']['whatsapp_webhook']['events'] ?? [], true)],
         [303, 'recuperacao.php?webhook=ok', 'POST', $urlWebhook, mcp_segredo('kapso_webhook'), 'kapso', true]);
     [, , $html] = http($url . '?webhook=ok', 'GET', null, [$cookie]);
-    verificar('painel: depois de ligar, "Ligado" e sem o botão', [str_contains($html, '>Ligado<'), str_contains($html, 'Ligar o recebimento de respostas</button>')], [true, false]);
+    verificar('painel: depois de ligar, "Ligado" e sem o botão', [str_contains($html, 'Recebimento de respostas ligado'), str_contains($html, 'Ligar o recebimento de respostas</button>')], [true, false]);
     $webhookCom = static fn(array $mudar): array => ['data' => [$mudar + ['id' => 'wh-9', 'url' => $urlWebhook, 'active' => true, 'events' => MCP_RW_EVENTOS_WEBHOOK]]];
     foreach (['outro segredo' => ['secret_key' => 'segredo-de-outra-base'], 'sem a entrega e a leitura' => ['events' => ['whatsapp.message.received']]] as $caso => $mudar) {
         controle('webhooks', $webhookCom($mudar));
         $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_webhook'");
         [, , $html] = http($url, 'GET', null, [$cookie]);
-        verificar("painel: webhook com $caso aparece desacertado, com o botão, sem mostrar segredo", [str_contains($html, '>Desacertado<'), str_contains($html, 'Ligar o recebimento de respostas</button>'),
+        verificar("painel: webhook com $caso aparece desacertado, com o botão, sem mostrar segredo", [str_contains($html, 'desacertado na Kapso'), str_contains($html, 'Ligar o recebimento de respostas</button>'),
             str_contains($html, 'segredo-de-outra-base'), str_contains($html, mcp_segredo('kapso_webhook'))], [true, true, false, false]);
     }
     http($url, 'POST', ['acao' => 'ligar_webhook', 't' => mcp_painel_csrf($quem, 'rw_webhook', 0)], [$cookie]);
     $wh = array_slice(falso('webhooks'), -1)[0] ?? [];
     [, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('painel: o botão acerta o webhook existente (PATCH com o segredo e os eventos) e volta a "Ligado"', [$wh['metodo'] ?? '', $wh['corpo']['whatsapp_webhook']['secret_key'] ?? '',
-        $wh['corpo']['whatsapp_webhook']['events'] ?? [], str_contains($html, '>Ligado<')], ['PATCH', mcp_segredo('kapso_webhook'), MCP_RW_EVENTOS_WEBHOOK, true]);
+        $wh['corpo']['whatsapp_webhook']['events'] ?? [], str_contains($html, 'Recebimento de respostas ligado')], ['PATCH', mcp_segredo('kapso_webhook'), MCP_RW_EVENTOS_WEBHOOK, true]);
 
     // ------------------------------------------------------------------------- sem configuração
     // Só a configuração SEM a Kapso roda pela linha de comando: com ela, a rodada usaria a hora de agora.

@@ -44,42 +44,83 @@ function rw_pagina(string $corpo, ?string $usuario, int $status = 200): never
 function rw_css(): string
 {
     return <<<'CSS'
-:root{--red:#cc0000;--red-dark:#a30000;--black:#0f1318;--text:#1a202c;--muted:#5f6b7a;--line:#e2e8f0;--soft:#f7f8fa}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--text);background:var(--soft);line-height:1.5}
+:root{--red:#cc0000;--red-dark:#a30000;--black:#0f1318;--text:#1a202c;--muted:#5f6b7a;--line:#e5e9ef;--soft:#f5f6f8;--ok:#0f7b3e;--okbg:#e8f6ee;--warn:#8a5200;--warnbg:#fff4e2;--bad:#8a1c1c;--badbg:#fff0f1;--wa:#dcf8c6}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--text);background:var(--soft);line-height:1.5;font-size:15px}
 a{color:var(--red)}img{display:block}
-.faixa{height:5px;background:var(--red)}
+.faixa{height:4px;background:var(--red)}
 .topo{background:#fff;border-bottom:1px solid var(--line)}
-.topo .linha{display:flex;align-items:center;gap:16px;padding:12px 20px;flex-wrap:wrap}
-.topo img{height:36px;width:auto}.topo b{font-size:1rem;color:var(--black);display:block;line-height:1.2}.topo small{display:block;color:var(--muted);font-size:.8rem}
-.topo .usuario{margin-left:auto;font-size:.85rem;color:var(--muted)}
-.wrap{max-width:1100px;margin:0 auto;padding:0 20px}main.wrap{padding:26px 20px 70px}
-h1{font-size:1.5rem;color:var(--black);margin:0 0 6px;line-height:1.15}h2{font-size:1.02rem;color:var(--black);margin:0 0 12px}
-.cartao{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px}
-.numeros{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:18px 0 0}
-@media(max-width:900px){.numeros{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.numero{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
-.numero b{display:block;font-size:1.8rem;line-height:1.1;color:var(--black)}.numero span{display:block;font-weight:700;color:var(--black);margin-top:4px}
-.numero small{display:block;color:var(--muted);font-size:.82rem}
-.grade{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
-@media(max-width:820px){.grade{grid-template-columns:minmax(0,1fr)}}
+.topo .linha{display:flex;align-items:center;gap:14px;padding:10px 20px;flex-wrap:wrap}
+.topo img{height:34px;width:auto}.topo b{font-size:.95rem;color:var(--black);display:block;line-height:1.2}.topo small{display:block;color:var(--muted);font-size:.78rem}
+.topo .usuario{margin-left:auto;font-size:.82rem;color:var(--muted)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}main.wrap{padding:24px 20px 64px}
+h1{font-size:1.45rem;color:var(--black);margin:0;line-height:1.2}
+h2{font-size:1rem;color:var(--black);margin:0 0 14px;display:flex;align-items:center;gap:8px}h2 small{font-size:.8rem;color:var(--muted);font-weight:600;background:var(--soft);border-radius:999px;padding:1px 9px}
+h3{font-size:.85rem;color:var(--black);margin:16px 0 8px}
+.titulo{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sub{color:var(--muted);margin:4px 0 0;font-size:.9rem}
+.estado{border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.estado::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.estado.ok{background:var(--okbg);color:var(--ok)}.estado.talvez{background:var(--warnbg);color:var(--warn)}.estado.nao{background:var(--badbg);color:var(--bad)}
+.cartao{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
+.destaque{border-color:#d9dee6;box-shadow:0 1px 2px rgba(15,19,24,.05)}
+.destaque .cab{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:6px}
+.rotulo{display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:800}
+.hora{display:block;font-size:1.6rem;color:var(--black);line-height:1.15;margin-top:2px}
+.total{text-align:right}.total b{display:block;font-size:1.6rem;line-height:1.1;color:var(--black)}.total span{font-size:.82rem;color:var(--muted)}
+.grupo{padding:14px 0;border-bottom:1px solid var(--line)}.grupo:last-of-type{border-bottom:0}
+.grupo-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.grupo-cab>div{display:flex;flex-direction:column;line-height:1.25}.grupo-cab small{color:var(--muted);font-size:.78rem;font-family:ui-monospace,Menlo,monospace}
+.grupo-cab .qtd{margin-left:auto;font-weight:700;color:var(--black);font-size:.9rem}
+.etapa{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;background:#4a5568;flex:0 0 auto}
+.etapa.e1{background:#2f6fde}.etapa.e2{background:#7a4fd6}.etapa.e3{background:var(--red)}
+.leads{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.leads li{background:var(--soft);border-radius:10px;padding:8px 12px;line-height:1.3}.leads b{display:block;font-size:.9rem;color:var(--black)}.leads span{font-size:.78rem;color:var(--muted)}
+details.previa{margin-top:10px}
+details>summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--black);padding:6px 0;list-style:none}
+details>summary::-webkit-details-marker{display:none}details>summary::before{content:"▸";display:inline-block;width:16px;color:var(--muted)}details[open]>summary::before{content:"▾"}
+details>summary:focus-visible{outline:3px solid var(--black);outline-offset:2px;border-radius:4px}
+.balao{background:var(--wa);border-radius:4px 14px 14px 14px;padding:12px 14px;max-width:520px;font-size:.9rem;line-height:1.45;margin:6px 0 4px 16px;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.funil{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.funil li{background:var(--soft);border-radius:12px;padding:12px 14px;position:relative;display:flex;flex-direction:column;gap:2px}
+.funil li span{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.funil li b{font-size:1.6rem;color:var(--black);line-height:1.1;font-variant-numeric:tabular-nums}
+.funil li em{font-style:normal;font-weight:800;font-size:.82rem;color:#2f6fde}
+.funil li small{font-size:.76rem;color:var(--muted);line-height:1.3}
+.funil li.fim{background:var(--okbg)}.funil li.fim b,.funil li.fim em{color:var(--ok)}
+@media(max-width:820px){.funil{grid-template-columns:repeat(2,minmax(0,1fr))}.funil li.fim{grid-column:1/-1}}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}@media(max-width:820px){.tres{grid-template-columns:minmax(0,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:14px 16px}.kpi span{display:block;font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kpi b{display:block;font-size:1.7rem;color:var(--black);line-height:1.15;margin:4px 0}.kpi small{display:block;color:var(--muted);font-size:.8rem;line-height:1.35}
 .rolar{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.9rem}
-th{text-align:left;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--soft);white-space:nowrap}
-td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}
-td small{display:block;color:var(--muted);font-size:.82rem}td.n{text-align:right;font-variant-numeric:tabular-nums}
-ul.situacao{list-style:none;margin:0;padding:0}ul.situacao li{padding:8px 0;border-bottom:1px solid var(--line)}ul.situacao li:last-child{border-bottom:0}
-.selo{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.74rem;font-weight:800;white-space:nowrap;margin-right:8px}
-.selo.ok{background:#e9f7ef;color:#0f7b3e}.selo.nao{background:#fff0f2;color:#8a1c1c}.selo.talvez{background:#fff4e5;color:#8a5200}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#4a5568;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--muted);font-size:.78rem}th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+.pessoas td:first-child b{color:var(--black)}
+.pontos{display:inline-flex;gap:4px;padding-top:6px}.pontos i{width:10px;height:10px;border-radius:50%;background:#dfe3e8;display:block}.pontos i.feito{background:var(--ok)}
+q{display:block;font-size:.82rem;color:var(--text);background:var(--wa);border-radius:4px 10px 10px 10px;padding:4px 8px;margin-bottom:4px;quotes:none}
+.mudo{color:#b0b7c2}
+.selo{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.72rem;font-weight:800;white-space:nowrap;margin-right:6px}
+.selo.ok{background:var(--okbg);color:var(--ok)}.selo.nao{background:var(--badbg);color:var(--bad)}.selo.talvez{background:var(--warnbg);color:var(--warn)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;padding:9px 16px;font:inherit;font-weight:800;font-size:.88rem;border:1.5px solid transparent;cursor:pointer;text-decoration:none;min-height:40px}
 .btn:focus-visible{outline:3px solid var(--black);outline-offset:2px}
 .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-dark)}
-.aviso{border-radius:12px;padding:12px 16px;margin:16px 0 0;font-size:.92rem}
-.aviso.ok{background:#e9f7ef;color:#0f5132;border:1px solid #b7e4c7}.aviso.erro{background:#fff0f2;color:#8a1c1c;border:1px solid #f5c2c7}
-.nota{color:var(--muted);font-size:.85rem;margin:8px 0 0}
-.paginacao{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:14px;font-size:.9rem}
-.vazio{padding:30px 10px;text-align:center;color:var(--muted)}
-h3{font-size:1rem;margin:18px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.previa{margin:6px 0 10px;padding:12px 14px;border-left:4px solid var(--rule,#ddd);background:#f6f7f8;white-space:normal;font-size:.92rem;line-height:1.45;max-width:640px}
+.aviso{border-radius:12px;padding:12px 16px;margin:16px 0 0;font-size:.9rem}.aviso ul{margin:0;padding-left:18px}.aviso li+li{margin-top:4px}.aviso form{margin-top:10px}
+.aviso.ok{background:var(--okbg);color:#0f5132;border:1px solid #b7e4c7}.aviso.erro{background:var(--badbg);color:var(--bad);border:1px solid #f5c2c7}
+.aviso.atencao{background:var(--warnbg);color:#5c3a00;border:1px solid #f3d9a8}
+.nota{color:var(--muted);font-size:.84rem;margin:12px 0 0}.nota.forte{color:var(--bad);font-weight:700}
+.paginacao{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:14px;font-size:.88rem}
+.vazio{padding:22px 10px;text-align:center;color:var(--muted)}
+.cartao details{border-top:1px solid var(--line);padding:8px 0}.cartao details:first-of-type{border-top:0}.cartao details[open]{padding-bottom:16px}
+.cartao details p{font-size:.88rem;margin:6px 0 0 16px;max-width:760px}
+.duas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}@media(max-width:820px){.duas{grid-template-columns:minmax(0,1fr)}}
+.checks{list-style:none;margin:6px 0 12px;padding:0}.checks li{padding:6px 0;font-size:.88rem}
+.barras{list-style:none;margin:10px 0 0;padding:0;display:flex;align-items:flex-end;gap:6px;height:130px;border-bottom:1px solid var(--line)}
+.barras li{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;height:100%;position:relative;padding-bottom:18px}
+.barras li small{position:absolute;bottom:0;font-size:.62rem;color:var(--muted);white-space:nowrap}
+.b{display:inline-block;width:8px;min-height:0;border-radius:3px 3px 0 0}.b.m{background:#2f6fde}.b.r{background:var(--ok)}
+.legenda{font-size:.78rem;color:var(--muted);margin:8px 0 0;display:flex;gap:6px;align-items:center}.legenda .b{height:10px;width:10px;border-radius:2px}
+@media(max-width:600px){.barras li:nth-child(odd) small{display:none}.hora,.total b{font-size:1.35rem}}
 .entrar{max-width:520px;margin:48px auto 0;text-align:center}
 CSS;
 }
@@ -131,156 +172,113 @@ try {
 $oferta = mcp_rw_oferta_cupom($agora);
 $m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora, $oferta, $carga['pelo_link']);
 
-$corpo = '<h1>Recuperação por WhatsApp</h1><p class="nota">Três mensagens automáticas a quem se cadastrou no checkout do site ou na plataforma da escola nos últimos '
-    . MCP_RW_JANELA_DIAS . ' dias e não pagou: 1 h, 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), das 8h às 20h, no máximo '
-    . MCP_RW_POR_RODADA . ' por hora e ' . MCP_RW_POR_DIA . ' em 24 h. Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. '
-    . 'Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora. '
-    . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada: é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p>';
+$pct = static fn(?float $t): string => $t === null ? '—' : number_format($t * 100, 1, ',', '.') . '%';
+$plural = static fn(int $n, string $um, string $varios): string => $n . ' ' . ($n === 1 ? $um : $varios);
+$origemNome = static fn(string $o): string => $o === 'escola' ? 'Escola' : 'Site';
+
+// ----------------------------------------------------------------------------- situação (o que impede o envio)
+// Primeiro a pergunta "está rodando?": os problemas aparecem no topo, um por linha; o que está ok fica no detalhe.
+$problemas = [];
+$okItens = [];
+if (!$cfg['ok']) {
+    $problemas[] = 'Falta ' . implode(' e ', $cfg['falta']) . ' no servidor (api/config-whatsapp.php). Nenhuma mensagem sai.';
+} else {
+    $okItens[] = 'Chave da Kapso e número da escola configurados';
+}
+$webhook = 'desconhecido';
+$modelosLinhas = [];
+$naoAprovados = [];
+if ($cfg['ok']) {
+    $modelos = mcp_rw_modelos($cfg, $agora);
+    $usos = ['rec_inscricao_1_v2' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
+        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom'];
+    if (!$modelos['ok']) {
+        $problemas[] = 'A Kapso não respondeu a lista de modelos agora (' . $modelos['erro'] . '). Tente de novo em alguns minutos.';
+    } else {
+        foreach ($modelos['modelos'] as $nome => $sit) {
+            $modelosLinhas[] = [$nome, $usos[$nome] ?? '', $sit];
+            if ($sit !== 'APPROVED') {
+                $naoAprovados[] = ($usos[$nome] ?? $nome) . ($sit === 'ausente' ? ' (modelo não existe)' : '');
+            }
+        }
+    }
+    $webhook = mcp_rw_webhook_situacao($cfg, $agora);
+    if ($webhook === 'ligado') {
+        $okItens[] = 'Recebimento de respostas ligado (entrega, leitura e "Não tenho interesse")';
+    } elseif ($webhook === 'desconhecido') {
+        $okItens[] = 'Recebimento de respostas: a Kapso não respondeu agora';
+    } else {
+        $problemas[] = $webhook === 'diferente'
+            ? 'O recebimento de respostas está desacertado na Kapso: entregas, leituras e "Não tenho interesse" não chegam.'
+            : 'O recebimento de respostas está desligado: o painel não sabe o que foi entregue nem quem respondeu.';
+    }
+}
+if ($carga['escola']['estado'] === 'indisponivel') {
+    $problemas[] = 'A plataforma da escola não respondeu (' . $carga['escola']['erro'] . '). Nada sai até ela voltar, porque não dá para saber quem pagou lá.';
+} elseif ($carga['escola']['estado'] === 'ok') {
+    $okItens[] = 'Plataforma da escola respondendo';
+} else {
+    $okItens[] = 'Plataforma da escola desligada: só os cadastros do checkout do site entram';
+}
+$okItens[] = $oferta !== null
+    ? 'Cupom ' . $oferta['codigo'] . ' valendo na 3ª mensagem de Primeiros Socorros (turma de ' . $oferta['data'] . ')'
+    : 'Cupom ' . MCP_RW_CUPOM . ' fora (encerrado, esgotado ou sem turma): a 3ª de Primeiros Socorros vai sem cupom';
+
+if ($problemas) {
+    $estado = ['nao', 'Parado'];
+} elseif ($naoAprovados && count($naoAprovados) === count($modelosLinhas)) {
+    $estado = ['talvez', 'Esperando a Meta aprovar os modelos'];
+} elseif ($naoAprovados) {
+    $estado = ['talvez', 'Rodando em parte'];
+} else {
+    $estado = ['ok', 'Rodando'];
+}
+
+// ----------------------------------------------------------------------------- cabeçalho
+$corpo = '<div class="titulo"><div><h1>Recuperação por WhatsApp</h1><p class="sub">3 mensagens automáticas para quem se cadastrou e não pagou · '
+    . '1 h, 24 h e 72 h depois · das 8h às 20h</p></div><span class="estado ' . $estado[0] . '">' . rw_e($estado[1]) . '</span></div>';
 $retorno = mcp_texto($_GET['webhook'] ?? '', 10);
 if ($retorno === 'ok') {
     $corpo .= '<div class="aviso ok" role="status">Pronto: a Kapso vai mandar a entrega, a leitura e as respostas para o site.</div>';
 } elseif ($retorno === 'erro') {
-    $corpo .= '<div class="aviso erro" role="status">A Kapso não aceitou ligar o recebimento de respostas agora. Confira a configuração abaixo e tente de novo em alguns minutos.</div>';
+    $corpo .= '<div class="aviso erro" role="status">A Kapso não aceitou ligar o recebimento de respostas agora. Tente de novo em alguns minutos.</div>';
 }
-
-// Situação da configuração.
-$itens = [];
-$itens[] = in_array('WHATSAPP_KAPSO_CHAVE', $cfg['falta'], true) ? rw_selo('nao', 'Falta') . 'Chave da Kapso (WHATSAPP_KAPSO_CHAVE)' : rw_selo('ok', 'Ok') . 'Chave da Kapso';
-$itens[] = in_array('WHATSAPP_KAPSO_NUMERO_ID', $cfg['falta'], true) ? rw_selo('nao', 'Falta') . 'Número (WHATSAPP_KAPSO_NUMERO_ID)' : rw_selo('ok', 'Ok') . 'Número';
-$webhook = 'desconhecido';
-if ($cfg['ok']) {
-    $modelos = mcp_rw_modelos($cfg, $agora);
-    if (!$modelos['ok']) {
-        $itens[] = rw_selo('talvez', 'Sem resposta') . 'Modelos: não deu para ler na Kapso agora (' . rw_e($modelos['erro']) . ')';
-    } else {
-        $usos = ['rec_inscricao_1_v2' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
-            'ps_cupom_oferta' => '3ª de Primeiros Socorros Básico, com o cupom'];
-        foreach ($modelos['modelos'] as $nome => $s) {
-            $itens[] = ($s === 'APPROVED' ? rw_selo('ok', 'Aprovado') : rw_selo('nao', $s === 'ausente' ? 'Não existe' : $s)) . 'Modelo ' . rw_e($nome)
-                . (isset($usos[$nome]) ? ' <small>(' . rw_e($usos[$nome]) . ')</small>' : '');
-        }
+if ($problemas || $naoAprovados) {
+    $corpo .= '<div class="aviso ' . ($problemas ? 'erro' : 'atencao') . '" role="status"><ul>';
+    foreach ($problemas as $x) {
+        $corpo .= '<li>' . rw_e($x) . '</li>';
     }
-    $webhook = mcp_rw_webhook_situacao($cfg, $agora);
-    $itens[] = match ($webhook) {
-        'ligado' => rw_selo('ok', 'Ligado') . 'Recebimento de respostas (entrega, leitura e "Não tenho interesse")',
-        'desligado' => rw_selo('nao', 'Desligado') . 'Recebimento de respostas: sem ele, o painel não sabe o que foi entregue nem quem respondeu',
-        'diferente' => rw_selo('nao', 'Desacertado') . 'Recebimento de respostas: a Kapso tem um webhook para este endereço, mas com outro segredo ou sem todos '
-            . 'os eventos; entregas, leituras e "Não tenho interesse" não chegam. O botão abaixo acerta',
-        default => rw_selo('talvez', 'Sem resposta') . 'Recebimento de respostas: a Kapso não respondeu agora',
-    };
-} else {
-    $itens[] = rw_selo('nao', 'Parado') . 'Nenhuma mensagem sai enquanto faltar ' . rw_e(implode(' e ', $cfg['falta'])) . ' (api/config-whatsapp.php, só no servidor).';
+    if ($naoAprovados) {
+        $corpo .= '<li>Esperando a Meta aprovar: ' . rw_e(implode(', ', $naoAprovados)) . '. Quem deveria receber espera, sem perder a vez.</li>';
+    }
+    $corpo .= '</ul>';
+    if ($cfg['ok'] && $webhook !== 'ligado' && $webhook !== 'desconhecido') {
+        $corpo .= '<form method="post" action="recuperacao.php"><input type="hidden" name="acao" value="ligar_webhook">'
+            . '<input type="hidden" name="t" value="' . rw_e(mcp_painel_csrf($sessao, 'rw_webhook', 0)) . '">'
+            . '<button class="btn btn-red" type="submit">Ligar o recebimento de respostas</button></form>';
+    }
+    $corpo .= '</div>';
 }
-$itens[] = $oferta !== null
-    ? rw_selo('ok', 'Valendo') . 'Cupom ' . rw_e($oferta['codigo']) . ' na 3ª mensagem de Primeiros Socorros Básico (turma de ' . rw_e($oferta['data']) . ')'
-    : rw_selo('talvez', 'Fora') . 'Cupom ' . MCP_RW_CUPOM . ': encerrado, esgotado ou sem turma aberta de Primeiros Socorros Básico; a 3ª vai como rec_inscricao_3';
-$itens[] = match ($carga['escola']['estado']) {
-    'ok' => rw_selo('ok', 'Ok') . 'Plataforma da escola',
-    'desligada' => rw_selo('talvez', 'Desligada') . 'Plataforma da escola: sem ESCOLA_API_URL e ESCOLA_API_TOKEN, só o checkout do site entra',
-    default => rw_selo('nao', 'Indisponível') . 'Escola indisponível: nenhuma mensagem sai até ela responder, porque não dá para saber quem pagou lá (' . rw_e((string) $carga['escola']['erro']) . ')',
-};
-$corpo .= '<section class="cartao"><h2>Situação</h2><ul class="situacao"><li>' . implode('</li><li>', $itens) . '</li></ul>';
-if ($cfg['ok'] && $webhook !== 'ligado') {
-    $corpo .= '<form method="post" action="recuperacao.php" style="margin-top:14px"><input type="hidden" name="acao" value="ligar_webhook">'
-        . '<input type="hidden" name="t" value="' . rw_e(mcp_painel_csrf($sessao, 'rw_webhook', 0)) . '">'
-        . '<button class="btn btn-red" type="submit">Ligar o recebimento de respostas</button></form>';
-}
-$corpo .= '</section>';
 
-// Números.
-$taxa = $m['taxa'] === null ? '—' : number_format($m['taxa'] * 100, 1, ',', '.') . '%';
-$enviadas = array_sum($m['etapas']);
-$corpo .= '<section aria-label="Números" class="numeros">'
-    . '<div class="numero"><b>' . $m['no_fluxo'] . '</b><span>No fluxo agora</span><small>com mensagem ainda por vir'
-    . ($m['no_controle'] > 0 ? ' · mais ' . $m['no_controle'] . ' no grupo de controle' : '') . '</small></div>'
-    . '<div class="numero"><b>' . $enviadas . '</b><span>Mensagens enviadas</span><small>1ª: ' . $m['etapas'][1] . ' · 2ª: ' . $m['etapas'][2] . ' · 3ª: ' . $m['etapas'][3]
-    . ($m['falhas'] > 0 ? ' · ' . $m['falhas'] . ' não saíram' : '') . '</small></div>'
-    . '<div class="numero"><b>' . $m['entregues'] . '</b><span>Entregues</span><small>' . $m['lidas'] . ' lidas</small></div>'
-    . '<div class="numero"><b>' . $m['responderam'] . '</b><span>Responderam</span><small>' . $m['nao_querem'] . ' não querem</small></div>'
-    . '<div class="numero"><b>' . $m['recuperadas'] . '</b><span>Recuperadas</span><small>pagaram depois da 1ª mensagem · ' . rw_e($taxa) . ' de ' . $m['receberam'] . '</small></div>'
-    . '</section>';
-
-// Recuperação por mensagem, tempo até pagar e grupo de controle (só números: nenhum dado pessoal).
-$pct = static fn(?float $t): string => $t === null ? '—' : number_format($t * 100, 1, ',', '.') . '%';
-$linhasMensagem = '';
-foreach ($m['por_mensagem'] as $etapa => $n) {
-    $linhasMensagem .= '<tr><td>' . $etapa . 'ª mensagem</td><td class="n">' . $n . '</td></tr>';
-}
-$linhasModelo = '';
-foreach ($m['por_modelo'] as $nome => $x) {
-    $linhasModelo .= '<tr><td><code>' . rw_e((string) $nome) . '</code></td><td class="n">' . $x['enviadas'] . '</td><td class="n">' . $x['recuperadas'] . '</td></tr>';
-}
-$linhasLink = '';
-foreach ($m['pelo_link'] as $campanha => $n) {
-    $linhasLink .= '<tr><td><code>' . rw_e((string) $campanha) . '</code></td><td class="n">' . $n . '</td></tr>';
-}
-$mediana = $m['mediana_horas'] === null ? '—' : number_format($m['mediana_horas'], 1, ',', '.') . ' h';
-$corpo .= '<div class="grade"><section class="cartao"><h2>Recuperação por mensagem</h2><p class="nota">Das ' . $m['recuperadas']
-    . ' recuperadas, a última mensagem que receberam antes de pagar.</p><div class="rolar"><table><thead><tr><th scope="col">Pagou depois da</th><th scope="col">Pessoas</th></tr></thead><tbody>'
-    . $linhasMensagem . '</tbody></table></div>'
-    . '<div class="rolar"><table><thead><tr><th scope="col">Modelo</th><th scope="col">Enviadas</th><th scope="col">Recuperadas</th></tr></thead><tbody>'
-    . ($linhasModelo ?: '<tr><td colspan="3" class="vazio">Nenhuma mensagem ainda.</td></tr>') . '</tbody></table></div>'
-    . '<h3>Pelo link da mensagem</h3><p class="nota">Pagamentos no checkout do site com a campanha do botão de uma mensagem, nos últimos ' . MCP_RW_JANELA_METRICA_DIAS
-    . ' dias (a plataforma da escola não guarda a campanha).</p><div class="rolar"><table><thead><tr><th scope="col">Campanha</th><th scope="col">Pagamentos</th></tr></thead><tbody>'
-    . $linhasLink . '</tbody></table></div></section>'
-    . '<section class="cartao"><h2>Tempo até pagar</h2><p class="numero" style="margin:0"><b>' . rw_e($mediana) . '</b><span>Mediana entre a 1ª mensagem e o pagamento</span><small>entre as '
-    . $m['recuperadas'] . ' recuperadas</small></p>'
-    . '<h3>Grupo de controle × quem recebeu</h3><div class="rolar"><table><thead><tr><th scope="col">Grupo</th><th scope="col">Pessoas</th><th scope="col">Pagaram</th><th scope="col">Taxa</th></tr></thead><tbody>'
-    . '<tr><td>Receberam a 1ª mensagem<small>pagaram depois dela</small></td><td class="n">' . $m['tratamento']['pessoas'] . '</td><td class="n">' . $m['tratamento']['pagaram'] . '</td><td class="n">' . rw_e($pct($m['tratamento']['taxa'])) . '</td></tr>'
-    . '<tr><td>Grupo de controle<small>não receberam nada; pagaram depois do momento em que a 1ª sairia</small></td><td class="n">' . $m['controle']['pessoas'] . '</td><td class="n">' . $m['controle']['pagaram']
-    . '</td><td class="n">' . rw_e($pct($m['controle']['taxa'])) . '</td></tr></tbody></table></div>'
-    . '<p class="nota"><b>Efeito estimado da mensagem: ' . ($m['efeito_pp'] === null ? '—' : rw_e(($m['efeito_pp'] > 0 ? '+' : '') . number_format($m['efeito_pp'], 1, ',', '.') . ' pontos percentuais')) . '</b> '
-    . '(a taxa de quem recebeu menos a do grupo de controle). Só tem valor estatístico com dezenas de pessoas em cada grupo; com poucas, a diferença pode ser só acaso.</p></section></div>';
-
-$porOrigem = '';
-foreach ($m['origens'] as $origem => $o) {
-    $porOrigem .= '<tr><td>' . ($origem === 'escola' ? 'Plataforma da escola' : 'Checkout do site') . '</td><td class="n">' . $o['mensagens'] . '</td><td class="n">' . $o['pessoas'] . '</td><td class="n">' . $o['recuperadas'] . '</td></tr>';
-}
-$porCurso = '';
-foreach ($m['cursos'] as $nome => $c) {
-    $porCurso .= '<tr><td>' . rw_e((string) $nome) . '</td><td class="n">' . $c['mensagens'] . '</td><td class="n">' . $c['pessoas'] . '</td><td class="n">' . $c['recuperadas'] . '</td></tr>';
-}
-$cabecalho = '<thead><tr><th scope="col">%s</th><th scope="col">Mensagens</th><th scope="col">Pessoas</th><th scope="col">Recuperadas</th></tr></thead>';
-$corpo .= '<div class="grade"><section class="cartao"><h2>Por origem</h2><div class="rolar"><table>' . sprintf($cabecalho, 'Origem') . '<tbody>'
-    . ($porOrigem ?: '<tr><td colspan="4" class="vazio">Nenhuma mensagem ainda.</td></tr>') . '</tbody></table></div></section>'
-    . '<section class="cartao"><h2>Por curso</h2><div class="rolar"><table>' . sprintf($cabecalho, 'Curso') . '<tbody>'
-    . ($porCurso ?: '<tr><td colspan="4" class="vazio">Nenhuma mensagem ainda.</td></tr>') . '</tbody></table></div></section></div>';
-
-$linhasDia = '';
-foreach (array_reverse($m['dias'], true) as $dia => $d) {
-    $linhasDia .= '<tr><td>' . rw_e(MCP_DIAS_SEMANA[(int) date('w', (int) strtotime($dia . ' 12:00 UTC'))] . ', ' . substr($dia, 8, 2) . '/' . substr($dia, 5, 2)) . '</td>'
-        . '<td class="n">' . $d['mensagens'] . '</td><td class="n">' . $d['recuperacoes'] . '</td></tr>';
-}
-$corpo .= '<section class="cartao"><h2>Últimos ' . MCP_RW_DIAS_METRICA . ' dias</h2><div class="rolar"><table><thead><tr><th scope="col">Dia</th><th scope="col">Mensagens</th><th scope="col">Recuperações</th></tr></thead><tbody>'
-    . $linhasDia . '</tbody></table></div></section>';
-
-// Próximo disparo: quem a próxima rodada vai pegar, por modelo, com a prévia do texto. É a mesma conta da rotina
-// (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; a rotina ainda reconfere cada pessoa antes de mandar.
+// ----------------------------------------------------------------------------- próximo disparo
+// A mesma conta da rotina (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; o grupo de controle nunca
+// recebe. A rotina ainda reconfere cada pessoa antes de mandar.
 $rodada = mcp_rw_proxima_rodada($agora);
-// O grupo de controle nunca recebe: fica fora do disparo.
 $aReceber = array_values(array_filter($m['lista'], static fn(array $p): bool => !$p['controle']));
 $naRodada = array_values(array_filter($aReceber, static fn(array $p): bool => $p['proxima'] <= $rodada));
 $depois = array_slice($naRodada, MCP_RW_POR_RODADA);
 $naRodada = array_slice($naRodada, 0, MCP_RW_POR_RODADA);
-$travas = [];
-if (!$cfg['ok']) {
-    $travas[] = 'falta ' . implode(' e ', $cfg['falta']) . ' no servidor';
-}
-if ($carga['escola']['estado'] === 'indisponivel') {
-    $travas[] = 'a plataforma da escola não respondeu (sem ela não se sabe quem pagou lá)';
-}
-$corpo .= '<section class="cartao"><h2>Próximo disparo</h2><p class="nota">Próxima rodada: <b>' . rw_e(rw_quando($rodada)) . '</b>. '
-    . 'A rotina roda de hora em hora, no minuto ' . MCP_RW_MINUTO_DA_RODADA . ', das 8h às 20h, e manda no máximo ' . MCP_RW_POR_RODADA . ' mensagens por rodada.</p>';
-if ($travas) {
-    $corpo .= '<div class="aviso erro" role="status">Nada sai na próxima rodada enquanto ' . rw_e(implode('; ', $travas)) . '.</div>';
+$diaRodada = gmdate('Y-m-d', $rodada - 3 * 3600) === gmdate('Y-m-d', $agora - 3 * 3600) ? 'Hoje' : (gmdate('Y-m-d', $rodada - 3 * 3600) === gmdate('Y-m-d', $agora + 21 * 3600) ? 'Amanhã' : mcp_data_brt(gmdate('Y-m-d H:i:s', $rodada), 'd/m'));
+$corpo .= '<section class="cartao destaque"><div class="cab"><div><span class="rotulo">Próximo disparo</span><b class="hora">' . rw_e($diaRodada . ' às ' . mcp_data_brt(gmdate('Y-m-d H:i:s', $rodada), 'H\hi')) . '</b></div>'
+    . '<div class="total"><b>' . count($naRodada) . '</b><span>' . (count($naRodada) === 1 ? 'mensagem' : 'mensagens') . '</span></div></div>';
+if ($problemas) {
+    $corpo .= '<p class="nota forte">Nada sai enquanto o problema acima não for resolvido.</p>';
 }
 if (!$naRodada) {
     $seguinte = $aReceber[0] ?? null;
-    $corpo .= '<p class="vazio">Ninguém para a próxima rodada.'
-        . ($seguinte ? ' A seguinte prevista: ' . rw_e((string) $seguinte['modelo']) . ' para ' . rw_e($seguinte['nome']) . ' em ' . rw_e(rw_quando($seguinte['proxima'])) . '.' : '')
-        . '</p>';
+    $corpo .= '<p class="vazio">Ninguém para esta rodada.' . ($seguinte ? ' A próxima prevista é a ' . $seguinte['proxima_etapa'] . 'ª mensagem para '
+        . rw_e(mcp_rw_primeiro_nome($seguinte['nome'])) . ', ' . rw_e(mb_strtolower(rw_quando($seguinte['proxima']))) . '.' : '') . '</p>';
 } else {
-    // Um grupo por modelo (a 3ª pode ser o rec_inscricao_3 ou o ps_cupom_oferta), na ordem das etapas.
     $porModelo = [];
     foreach ($naRodada as $p) {
         $porModelo[$p['modelo']][] = $p;
@@ -289,54 +287,157 @@ if (!$naRodada) {
     foreach ($porModelo as $nomeModelo => $pessoas) {
         $nomeModelo = (string) $nomeModelo;
         $etapa = $pessoas[0]['proxima_etapa'];
-        $situacao = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
-        $selo = $situacao === null ? rw_selo('talvez', 'Situação do modelo sem resposta') : ($situacao === 'APPROVED' ? rw_selo('ok', 'Modelo aprovado') : rw_selo('nao', $situacao === 'ausente' ? 'Modelo não existe' : 'Modelo ' . $situacao));
-        $primeiro = $pessoas[0];
-        $linhasModelo = '';
+        $sit = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
+        $selo = $sit === 'APPROVED' ? rw_selo('ok', 'Aprovado') : ($sit === null ? rw_selo('talvez', 'Sem resposta') : rw_selo('talvez', 'Esperando a Meta'));
+        $cupom = $nomeModelo === 'ps_cupom_oferta' ? ' com cupom' : '';
+        $nomes = '';
         foreach ($pessoas as $p) {
-            $linhasModelo .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . rw_e($p['celular']) . '</small></td><td>' . ($p['origem'] === 'escola' ? 'Escola' : 'Site') . '</td>'
-                . '<td>' . rw_e($p['curso']) . '</td><td>' . rw_e(rw_quando($p['proxima'])) . '</td></tr>';
+            $nomes .= '<li><b>' . rw_e($p['nome']) . '</b><span>' . rw_e($p['curso']) . ' · ' . $origemNome($p['origem']) . ' · ' . rw_e($p['celular']) . '</span></li>';
         }
-        $corpo .= '<h3>' . $selo . $etapa . 'ª mensagem · modelo <code>' . rw_e($nomeModelo) . '</code> · ' . count($pessoas) . ' lead' . (count($pessoas) === 1 ? '' : 's') . '</h3>'
-            . ($situacao !== null && $situacao !== 'APPROVED' ? '<p class="nota">Este modelo ainda não está aprovado na Meta: estes leads esperam a aprovação, sem perder a vez.</p>' : '')
-            . '<p class="nota">Como ' . rw_e(mcp_rw_primeiro_nome($primeiro['nome'])) . ' vai ler:</p>'
-            . '<blockquote class="previa">' . nl2br(rw_e((string) $primeiro['previa'])) . '</blockquote>'
-            . '<div class="rolar"><table><thead><tr><th scope="col">Lead</th><th scope="col">Origem</th><th scope="col">Curso</th><th scope="col">Devida desde</th></tr></thead><tbody>'
-            . $linhasModelo . '</tbody></table></div>';
+        $corpo .= '<div class="grupo"><div class="grupo-cab"><span class="etapa e' . $etapa . '">' . $etapa . 'ª</span><div><b>' . $etapa . 'ª mensagem' . $cupom . '</b>'
+            . '<small>' . rw_e($nomeModelo) . '</small></div>' . $selo . '<span class="qtd">' . $plural(count($pessoas), 'lead', 'leads') . '</span></div>'
+            . '<ul class="leads">' . $nomes . '</ul>'
+            . '<details class="previa"><summary>Ver a mensagem como ' . rw_e(mcp_rw_primeiro_nome($pessoas[0]['nome'])) . ' vai receber</summary><div class="balao">'
+            . nl2br(rw_e((string) $pessoas[0]['previa'])) . '</div></details></div>';
     }
     if ($depois) {
-        $corpo .= '<p class="nota">Mais ' . count($depois) . ' lead' . (count($depois) === 1 ? '' : 's') . ' já devido' . (count($depois) === 1 ? '' : 's')
-            . ' passa' . (count($depois) === 1 ? '' : 'm') . ' do teto desta rodada e fica' . (count($depois) === 1 ? '' : 'm') . ' para a seguinte.</p>';
+        $corpo .= '<p class="nota">Mais ' . $plural(count($depois), 'lead', 'leads') . ' fica para a rodada seguinte (o teto é ' . MCP_RW_POR_RODADA . ' por rodada).</p>';
     }
 }
-$corpo .= '<p class="nota">Antes de cada envio a rotina confere de novo se a pessoa pagou (no site ou na escola) ou pediu para sair; quem pagou não recebe.</p></section>';
+$corpo .= '</section>';
 
-// Pessoas no fluxo.
+// ----------------------------------------------------------------------------- funil
+$enviadas = array_sum($m['etapas']);
+// Cada passo com a sua base: entrega e leitura contam MENSAGENS (sobre as enviadas e as entregues); resposta e pagamento
+// contam PESSOAS (sobre quem recebeu ao menos uma). "No fluxo agora" fica fora do funil: é quem ainda tem mensagem por vir.
+$taxaDe = static fn(int $a, int $b): ?string => $b > 0 ? $pct($a / $b) : null;
+$passos = [
+    ['Receberam', $m['receberam'], 'pessoas com ao menos 1 mensagem', null],
+    ['Entregues', $m['entregues'], 'de ' . $plural($enviadas, 'mensagem enviada', 'mensagens enviadas'), $taxaDe($m['entregues'], $enviadas)],
+    ['Lidas', $m['lidas'], 'das entregues', $taxaDe($m['lidas'], $m['entregues'])],
+    ['Responderam', $m['responderam'], $m['nao_querem'] > 0 ? $m['nao_querem'] . ' não querem' : 'pessoas', $taxaDe($m['responderam'], $m['receberam'])],
+    ['Pagaram', $m['recuperadas'], 'pessoas, depois da mensagem', $taxaDe($m['recuperadas'], $m['receberam'])],
+];
+$corpo .= '<section class="cartao"><h2>Funil</h2><ol class="funil">';
+foreach ($passos as $i => [$rotulo, $valor, $nota, $taxaPasso]) {
+    $corpo .= '<li' . ($i === 4 ? ' class="fim"' : '') . '><span>' . rw_e($rotulo) . '</span><b>' . $valor . '</b>'
+        . ($taxaPasso !== null ? '<em>' . rw_e($taxaPasso) . '</em>' : '') . '<small>' . rw_e($nota) . '</small></li>';
+}
+$corpo .= '</ol><p class="nota">Agora: ' . $plural($m['no_fluxo'], 'pessoa espera', 'pessoas esperam') . ' a próxima mensagem'
+    . ($m['no_controle'] > 0 ? ' e ' . $m['no_controle'] . ' ' . ($m['no_controle'] === 1 ? 'está' : 'estão') . ' no grupo de controle (não recebem)' : '')
+    . '. Enviadas: 1ª ' . $m['etapas'][1] . ' · 2ª ' . $m['etapas'][2] . ' · 3ª ' . $m['etapas'][3] . ($m['falhas'] > 0 ? ' · ' . $plural($m['falhas'], 'não saiu', 'não saíram') : '') . '.</p></section>';
+
+// ----------------------------------------------------------------------------- está funcionando?
+$mediana = $m['mediana_horas'] === null ? '—' : number_format($m['mediana_horas'], 1, ',', '.') . ' h';
+$efeito = $m['efeito_pp'] === null ? '—' : ($m['efeito_pp'] > 0 ? '+' : '') . number_format($m['efeito_pp'], 1, ',', '.') . ' p.p.';
+$amostra = min($m['tratamento']['pessoas'], $m['controle']['pessoas']);
+$corpo .= '<section class="cartao"><h2>Está funcionando?</h2><div class="tres">'
+    . '<div class="kpi"><span>Taxa de recuperação</span><b>' . rw_e($pct($m['taxa'])) . '</b><small>' . $m['recuperadas'] . ' de ' . $m['receberam'] . ' pagaram depois da 1ª mensagem</small></div>'
+    . '<div class="kpi"><span>Tempo até pagar</span><b>' . rw_e($mediana) . '</b><small>mediana entre a 1ª mensagem e o pagamento</small></div>'
+    . '<div class="kpi"><span>Efeito da mensagem</span><b>' . rw_e($efeito) . '</b><small>quem recebeu (' . rw_e($pct($m['tratamento']['taxa'])) . ') menos o grupo de controle ('
+    . rw_e($pct($m['controle']['taxa'])) . ')</small></div></div>'
+    . '<p class="nota">' . ($amostra < 30 ? 'Ainda poucas pessoas (' . $m['tratamento']['pessoas'] . ' receberam, ' . $m['controle']['pessoas'] . ' no controle): o efeito só é confiável com dezenas em cada grupo.'
+        : 'Comparação com ' . $m['tratamento']['pessoas'] . ' pessoas que receberam e ' . $m['controle']['pessoas'] . ' no grupo de controle.') . '</p></section>';
+
+// ----------------------------------------------------------------------------- pessoas
 $pagina = max(1, (int) ($_GET['p'] ?? 1));
 $paginas = max(1, (int) ceil(count($m['lista']) / MCP_RW_POR_PAGINA));
 $pagina = min($pagina, $paginas);
 $nessa = array_slice($m['lista'], ($pagina - 1) * MCP_RW_POR_PAGINA, MCP_RW_POR_PAGINA);
-$corpo .= '<section class="cartao"><h2>Pessoas no fluxo</h2>';
+$corpo .= '<section class="cartao"><h2>Pessoas no fluxo <small>' . count($m['lista']) . '</small></h2>';
 if (!$nessa) {
-    rw_pagina($corpo . '<p class="vazio">Ninguém no fluxo agora.</p></section>', $sessao);
-}
-$linhasPessoa = '';
-foreach ($nessa as $p) {
-    $respostas = '';
-    foreach ($p['respostas'] as $r) {
-        $respostas .= '<small>"' . rw_e($r) . '"</small>';
+    $corpo .= '<p class="vazio">Ninguém no fluxo agora.</p></section>';
+} else {
+    $linhasPessoa = '';
+    foreach ($nessa as $p) {
+        $pontos = '';
+        for ($e = 1; $e <= 3; $e++) {
+            $pontos .= '<i class="' . ($p['etapa'] >= $e ? 'feito' : '') . '" title="' . $e . 'ª mensagem"></i>';
+        }
+        $respostas = '';
+        foreach ($p['respostas'] as $r) {
+            $respostas .= '<q>' . rw_e($r) . '</q>';
+        }
+        $proxima = $p['controle'] ? rw_selo('talvez', 'Grupo de controle') . '<small>não recebe</small>'
+            : rw_e($p['proxima_etapa'] . 'ª · ' . rw_quando($p['proxima'])) . ($p['modelo'] === 'ps_cupom_oferta' ? '<small>com cupom</small>' : '');
+        $linhasPessoa .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . rw_e($p['celular']) . ' · ' . $origemNome($p['origem']) . '</small></td>'
+            . '<td>' . rw_e($p['curso']) . '</td><td><span class="pontos" aria-label="' . $p['etapa'] . ' de 3 mensagens enviadas">' . $pontos . '</span></td>'
+            . '<td>' . $proxima . '</td><td>' . ($respostas !== '' ? $respostas : '<span class="mudo">—</span>') . '</td></tr>';
     }
-    $linhasPessoa .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . rw_e($p['celular']) . '</small></td>'
-        . '<td>' . ($p['origem'] === 'escola' ? 'Escola' : 'Site') . '</td><td>' . rw_e($p['curso']) . '</td>'
-        . '<td>' . ($p['etapa'] > 0 ? $p['etapa'] . 'ª enviada' : 'Nenhuma ainda') . '</td>'
-        . '<td>' . ($p['controle'] ? rw_selo('talvez', 'Grupo de controle') . '<small>não recebe mensagem</small>'
-            : $p['proxima_etapa'] . 'ª em ' . rw_e(rw_quando($p['proxima'])) . '<small>' . rw_e((string) $p['modelo']) . '</small>') . '</td>'
-        . '<td>' . ($respostas !== '' ? $respostas : '<small>—</small>') . '</td></tr>';
+    $corpo .= '<div class="rolar"><table class="pessoas"><thead><tr><th scope="col">Pessoa</th><th scope="col">Curso</th><th scope="col">Enviadas</th>'
+        . '<th scope="col">Próxima</th><th scope="col">Respostas</th></tr></thead><tbody>' . $linhasPessoa . '</tbody></table></div>';
+    if ($paginas > 1) {
+        $corpo .= '<nav class="paginacao" aria-label="Páginas"><span>Página ' . $pagina . ' de ' . $paginas . '</span><span>'
+            . ($pagina > 1 ? '<a href="recuperacao.php?p=' . ($pagina - 1) . '">← Anterior</a> ' : '')
+            . ($pagina < $paginas ? '<a href="recuperacao.php?p=' . ($pagina + 1) . '">Próxima →</a>' : '') . '</span></nav>';
+    }
+    $corpo .= '</section>';
 }
-$corpo .= '<div class="rolar"><table><thead><tr><th scope="col">Pessoa</th><th scope="col">Origem</th><th scope="col">Curso</th><th scope="col">Etapa</th>'
-    . '<th scope="col">Próxima mensagem</th><th scope="col">Respostas</th></tr></thead><tbody>' . $linhasPessoa . '</tbody></table></div>';
-$corpo .= '<nav class="paginacao" aria-label="Páginas"><span>' . count($m['lista']) . ' pessoa' . (count($m['lista']) === 1 ? '' : 's') . ' · página ' . $pagina . ' de ' . $paginas . '</span><span>'
-    . ($pagina > 1 ? '<a href="recuperacao.php?p=' . ($pagina - 1) . '">← Anterior</a> ' : '')
-    . ($pagina < $paginas ? '<a href="recuperacao.php?p=' . ($pagina + 1) . '">Próxima →</a>' : '')
-    . '</span></nav><p class="nota">A hora da próxima mensagem é a prevista: antes de mandar, a rotina confere de novo se a pessoa pagou ou pediu para sair.</p></section>';
+
+// ----------------------------------------------------------------------------- detalhes (recolhidos)
+$barras = '';
+$maxDia = max([1, ...array_values(array_map(static fn(array $d): int => max($d['mensagens'], $d['recuperacoes']), $m['dias']))]);
+foreach ($m['dias'] as $dia => $d) {
+    $rot = substr($dia, 8, 2) . '/' . substr($dia, 5, 2);
+    $barras .= '<li title="' . rw_e($rot . ': ' . $d['mensagens'] . ' mensagens, ' . $d['recuperacoes'] . ' recuperações') . '"><span class="b m" style="height:' . (int) round(100 * $d['mensagens'] / $maxDia) . '%"></span>'
+        . '<span class="b r" style="height:' . (int) round(100 * $d['recuperacoes'] / $maxDia) . '%"></span><small>' . rw_e($rot) . '</small></li>';
+}
+$tabela = static function (array $cab, array $linhas): string {
+    $h = '<div class="rolar"><table><thead><tr>';
+    foreach ($cab as $i => $c) {
+        $h .= '<th scope="col"' . ($i > 0 ? ' class="n"' : '') . '>' . rw_e($c) . '</th>';
+    }
+    $h .= '</tr></thead><tbody>';
+    foreach ($linhas as $l) {
+        $h .= '<tr>';
+        foreach ($l as $i => $v) {
+            $h .= '<td' . ($i > 0 ? ' class="n"' : '') . '>' . rw_e((string) $v) . '</td>';
+        }
+        $h .= '</tr>';
+    }
+    return $h . ($linhas ? '' : '<tr><td colspan="' . count($cab) . '" class="vazio">Nada ainda.</td></tr>') . '</tbody></table></div>';
+};
+$porMensagem = [];
+foreach ($m['por_mensagem'] as $etapa => $n) {
+    $porMensagem[] = [$etapa . 'ª mensagem', $n];
+}
+$porModeloT = [];
+foreach ($m['por_modelo'] as $nome => $x) {
+    $porModeloT[] = [(string) $nome, $x['enviadas'], $x['recuperadas']];
+}
+$peloLink = [];
+foreach ($m['pelo_link'] as $campanha => $n) {
+    $peloLink[] = [(string) $campanha, $n];
+}
+$porOrigemT = [];
+foreach ($m['origens'] as $origem => $o) {
+    $porOrigemT[] = [$origem === 'escola' ? 'Plataforma da escola' : 'Checkout do site', $o['pessoas'], $o['mensagens'], $o['recuperadas']];
+}
+$porCursoT = [];
+foreach ($m['cursos'] as $nome => $c) {
+    $porCursoT[] = [(string) $nome, $c['pessoas'], $c['mensagens'], $c['recuperadas']];
+}
+$modelosT = [];
+foreach ($modelosLinhas as [$nome, $uso, $sit]) {
+    $modelosT[] = [$nome . ($uso !== '' ? ' (' . $uso . ')' : ''), $sit === 'APPROVED' ? 'Aprovado' : ($sit === 'ausente' ? 'Não existe' : 'Esperando (' . $sit . ')')];
+}
+$corpo .= '<section class="cartao"><h2>Detalhes</h2>'
+    . '<details><summary>Mensagens e pagamentos por dia (últimos ' . MCP_RW_DIAS_METRICA . ' dias)</summary><ul class="barras">' . $barras . '</ul>'
+    . '<p class="legenda"><span class="b m"></span> mensagens <span class="b r"></span> pagamentos</p></details>'
+    . '<details><summary>Qual mensagem trouxe o pagamento</summary><div class="duas">'
+    . '<div><h3>Última mensagem antes de pagar</h3>' . $tabela(['Mensagem', 'Pessoas'], $porMensagem) . '</div>'
+    . '<div><h3>Pelo link do botão</h3>' . $tabela(['Campanha', 'Pagamentos'], $peloLink) . '<p class="nota">Só o checkout do site guarda a campanha; a escola não.</p></div></div>'
+    . '<h3>Por modelo</h3>' . $tabela(['Modelo', 'Enviadas', 'Recuperadas'], $porModeloT) . '</details>'
+    . '<details><summary>Por origem e por curso</summary><div class="duas"><div>' . $tabela(['Origem', 'Pessoas', 'Mensagens', 'Pagaram'], $porOrigemT) . '</div>'
+    . '<div>' . $tabela(['Curso', 'Pessoas', 'Mensagens', 'Pagaram'], $porCursoT) . '</div></div></details>'
+    . '<details><summary>Configuração e modelos na Meta</summary><ul class="checks">';
+foreach ($okItens as $x) {
+    $corpo .= '<li>' . rw_selo('ok', 'Ok') . rw_e($x) . '</li>';
+}
+$corpo .= '</ul>' . $tabela(['Modelo', 'Situação na Meta'], $modelosT) . '</details>'
+    . '<details><summary>Como funciona</summary><p>Quem se cadastrou no checkout do site ou na plataforma da escola nos últimos ' . MCP_RW_JANELA_DIAS . ' dias e não pagou recebe até 3 mensagens: '
+    . '1 h, 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), só das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por rodada e ' . MCP_RW_POR_DIA . ' em 24 h. '
+    . 'Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora; '
+    . 'antes de cada envio a rotina confere tudo de novo.</p><p>' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada: é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p></details>'
+    . '</section>';
 rw_pagina($corpo, $sessao);
