@@ -1,7 +1,8 @@
 <?php
 /**
  * Recuperação por WhatsApp (30/10/2026): painel avulso da secretaria, fora do painel.php, só para ACOMPANHAR o disparo
- * automático das três mensagens a quem se cadastrou e não pagou. A regra e o envio estão em lib/recuperacao_whatsapp.php;
+ * automático das três mensagens a quem se cadastrou e não pagou, e medir o que elas recuperam (por mensagem, tempo até
+ * pagar e o grupo de controle, que não recebe nada). A regra e o envio estão em lib/recuperacao_whatsapp.php;
  * quem manda é a rotina de hora em hora (api/lembretes.php), nunca esta página.
  *
  *  - Acesso: a sessão do Portal da secretaria (mcp_painel_sessao; o cookie vale para api/). Sem sessão, só o link de
@@ -126,11 +127,15 @@ try {
     rw_pagina('<div class="aviso erro" role="status">O banco ainda não está pronto para esta página (a tabela é criada na primeira visita depois da publicação). '
         . 'Tente de novo em 1 minuto; se continuar assim, avise o responsável pelo site.</div>', $sessao, 503);
 }
-$m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora);
+// O cupom da 3ª (Primeiros Socorros Básico) vale agora? Decide o modelo da próxima mensagem de cada pessoa na lista.
+$oferta = mcp_rw_oferta_cupom($agora);
+$m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora, $oferta, $carga['pelo_link']);
 
 $corpo = '<h1>Recuperação por WhatsApp</h1><p class="nota">Três mensagens automáticas a quem se cadastrou no checkout do site ou na plataforma da escola nos últimos '
-    . MCP_RW_JANELA_DIAS . ' dias e não pagou: 3 h, 24 h e 72 h depois do cadastro, das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por hora e ' . MCP_RW_POR_DIA . ' em 24 h. '
-    . 'Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora.</p>';
+    . MCP_RW_JANELA_DIAS . ' dias e não pagou: 1 h, 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), das 8h às 20h, no máximo '
+    . MCP_RW_POR_RODADA . ' por hora e ' . MCP_RW_POR_DIA . ' em 24 h. Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. '
+    . 'Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora. '
+    . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada: é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p>';
 $retorno = mcp_texto($_GET['webhook'] ?? '', 10);
 if ($retorno === 'ok') {
     $corpo .= '<div class="aviso ok" role="status">Pronto: a Kapso vai mandar a entrega, a leitura e as respostas para o site.</div>';
@@ -148,8 +153,11 @@ if ($cfg['ok']) {
     if (!$modelos['ok']) {
         $itens[] = rw_selo('talvez', 'Sem resposta') . 'Modelos: não deu para ler na Kapso agora (' . rw_e($modelos['erro']) . ')';
     } else {
+        $usos = ['rec_inscricao_1_v2' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
+            'ps_cupom_oferta' => '3ª de Primeiros Socorros Básico, com o cupom'];
         foreach ($modelos['modelos'] as $nome => $s) {
-            $itens[] = ($s === 'APPROVED' ? rw_selo('ok', 'Aprovado') : rw_selo('nao', $s === 'ausente' ? 'Não existe' : $s)) . 'Modelo ' . rw_e($nome);
+            $itens[] = ($s === 'APPROVED' ? rw_selo('ok', 'Aprovado') : rw_selo('nao', $s === 'ausente' ? 'Não existe' : $s)) . 'Modelo ' . rw_e($nome)
+                . (isset($usos[$nome]) ? ' <small>(' . rw_e($usos[$nome]) . ')</small>' : '');
         }
     }
     $webhook = mcp_rw_webhook_situacao($cfg, $agora);
@@ -163,6 +171,9 @@ if ($cfg['ok']) {
 } else {
     $itens[] = rw_selo('nao', 'Parado') . 'Nenhuma mensagem sai enquanto faltar ' . rw_e(implode(' e ', $cfg['falta'])) . ' (api/config-whatsapp.php, só no servidor).';
 }
+$itens[] = $oferta !== null
+    ? rw_selo('ok', 'Valendo') . 'Cupom ' . rw_e($oferta['codigo']) . ' na 3ª mensagem de Primeiros Socorros Básico (turma de ' . rw_e($oferta['data']) . ')'
+    : rw_selo('talvez', 'Fora') . 'Cupom ' . MCP_RW_CUPOM . ': encerrado, esgotado ou sem turma aberta de Primeiros Socorros Básico; a 3ª vai como rec_inscricao_3';
 $itens[] = match ($carga['escola']['estado']) {
     'ok' => rw_selo('ok', 'Ok') . 'Plataforma da escola',
     'desligada' => rw_selo('talvez', 'Desligada') . 'Plataforma da escola: sem ESCOLA_API_URL e ESCOLA_API_TOKEN, só o checkout do site entra',
@@ -180,13 +191,46 @@ $corpo .= '</section>';
 $taxa = $m['taxa'] === null ? '—' : number_format($m['taxa'] * 100, 1, ',', '.') . '%';
 $enviadas = array_sum($m['etapas']);
 $corpo .= '<section aria-label="Números" class="numeros">'
-    . '<div class="numero"><b>' . $m['no_fluxo'] . '</b><span>No fluxo agora</span><small>com mensagem ainda por vir</small></div>'
+    . '<div class="numero"><b>' . $m['no_fluxo'] . '</b><span>No fluxo agora</span><small>com mensagem ainda por vir'
+    . ($m['no_controle'] > 0 ? ' · mais ' . $m['no_controle'] . ' no grupo de controle' : '') . '</small></div>'
     . '<div class="numero"><b>' . $enviadas . '</b><span>Mensagens enviadas</span><small>1ª: ' . $m['etapas'][1] . ' · 2ª: ' . $m['etapas'][2] . ' · 3ª: ' . $m['etapas'][3]
     . ($m['falhas'] > 0 ? ' · ' . $m['falhas'] . ' não saíram' : '') . '</small></div>'
     . '<div class="numero"><b>' . $m['entregues'] . '</b><span>Entregues</span><small>' . $m['lidas'] . ' lidas</small></div>'
     . '<div class="numero"><b>' . $m['responderam'] . '</b><span>Responderam</span><small>' . $m['nao_querem'] . ' não querem</small></div>'
     . '<div class="numero"><b>' . $m['recuperadas'] . '</b><span>Recuperadas</span><small>pagaram depois da 1ª mensagem · ' . rw_e($taxa) . ' de ' . $m['receberam'] . '</small></div>'
     . '</section>';
+
+// Recuperação por mensagem, tempo até pagar e grupo de controle (só números: nenhum dado pessoal).
+$pct = static fn(?float $t): string => $t === null ? '—' : number_format($t * 100, 1, ',', '.') . '%';
+$linhasMensagem = '';
+foreach ($m['por_mensagem'] as $etapa => $n) {
+    $linhasMensagem .= '<tr><td>' . $etapa . 'ª mensagem</td><td class="n">' . $n . '</td></tr>';
+}
+$linhasModelo = '';
+foreach ($m['por_modelo'] as $nome => $x) {
+    $linhasModelo .= '<tr><td><code>' . rw_e((string) $nome) . '</code></td><td class="n">' . $x['enviadas'] . '</td><td class="n">' . $x['recuperadas'] . '</td></tr>';
+}
+$linhasLink = '';
+foreach ($m['pelo_link'] as $campanha => $n) {
+    $linhasLink .= '<tr><td><code>' . rw_e((string) $campanha) . '</code></td><td class="n">' . $n . '</td></tr>';
+}
+$mediana = $m['mediana_horas'] === null ? '—' : number_format($m['mediana_horas'], 1, ',', '.') . ' h';
+$corpo .= '<div class="grade"><section class="cartao"><h2>Recuperação por mensagem</h2><p class="nota">Das ' . $m['recuperadas']
+    . ' recuperadas, a última mensagem que receberam antes de pagar.</p><div class="rolar"><table><thead><tr><th scope="col">Pagou depois da</th><th scope="col">Pessoas</th></tr></thead><tbody>'
+    . $linhasMensagem . '</tbody></table></div>'
+    . '<div class="rolar"><table><thead><tr><th scope="col">Modelo</th><th scope="col">Enviadas</th><th scope="col">Recuperadas</th></tr></thead><tbody>'
+    . ($linhasModelo ?: '<tr><td colspan="3" class="vazio">Nenhuma mensagem ainda.</td></tr>') . '</tbody></table></div>'
+    . '<h3>Pelo link da mensagem</h3><p class="nota">Pagamentos no checkout do site com a campanha do botão de uma mensagem, nos últimos ' . MCP_RW_JANELA_METRICA_DIAS
+    . ' dias (a plataforma da escola não guarda a campanha).</p><div class="rolar"><table><thead><tr><th scope="col">Campanha</th><th scope="col">Pagamentos</th></tr></thead><tbody>'
+    . $linhasLink . '</tbody></table></div></section>'
+    . '<section class="cartao"><h2>Tempo até pagar</h2><p class="numero" style="margin:0"><b>' . rw_e($mediana) . '</b><span>Mediana entre a 1ª mensagem e o pagamento</span><small>entre as '
+    . $m['recuperadas'] . ' recuperadas</small></p>'
+    . '<h3>Grupo de controle × quem recebeu</h3><div class="rolar"><table><thead><tr><th scope="col">Grupo</th><th scope="col">Pessoas</th><th scope="col">Pagaram</th><th scope="col">Taxa</th></tr></thead><tbody>'
+    . '<tr><td>Receberam a 1ª mensagem<small>pagaram depois dela</small></td><td class="n">' . $m['tratamento']['pessoas'] . '</td><td class="n">' . $m['tratamento']['pagaram'] . '</td><td class="n">' . rw_e($pct($m['tratamento']['taxa'])) . '</td></tr>'
+    . '<tr><td>Grupo de controle<small>não receberam nada; pagaram depois do momento em que a 1ª sairia</small></td><td class="n">' . $m['controle']['pessoas'] . '</td><td class="n">' . $m['controle']['pagaram']
+    . '</td><td class="n">' . rw_e($pct($m['controle']['taxa'])) . '</td></tr></tbody></table></div>'
+    . '<p class="nota"><b>Efeito estimado da mensagem: ' . ($m['efeito_pp'] === null ? '—' : rw_e(($m['efeito_pp'] > 0 ? '+' : '') . number_format($m['efeito_pp'], 1, ',', '.') . ' pontos percentuais')) . '</b> '
+    . '(a taxa de quem recebeu menos a do grupo de controle). Só tem valor estatístico com dezenas de pessoas em cada grupo; com poucas, a diferença pode ser só acaso.</p></section></div>';
 
 $porOrigem = '';
 foreach ($m['origens'] as $origem => $o) {
@@ -213,7 +257,9 @@ $corpo .= '<section class="cartao"><h2>Últimos ' . MCP_RW_DIAS_METRICA . ' dias
 // Próximo disparo: quem a próxima rodada vai pegar, por modelo, com a prévia do texto. É a mesma conta da rotina
 // (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; a rotina ainda reconfere cada pessoa antes de mandar.
 $rodada = mcp_rw_proxima_rodada($agora);
-$naRodada = array_values(array_filter($m['lista'], static fn(array $p): bool => $p['proxima'] <= $rodada));
+// O grupo de controle nunca recebe: fica fora do disparo.
+$aReceber = array_values(array_filter($m['lista'], static fn(array $p): bool => !$p['controle']));
+$naRodada = array_values(array_filter($aReceber, static fn(array $p): bool => $p['proxima'] <= $rodada));
 $depois = array_slice($naRodada, MCP_RW_POR_RODADA);
 $naRodada = array_slice($naRodada, 0, MCP_RW_POR_RODADA);
 $travas = [];
@@ -229,18 +275,20 @@ if ($travas) {
     $corpo .= '<div class="aviso erro" role="status">Nada sai na próxima rodada enquanto ' . rw_e(implode('; ', $travas)) . '.</div>';
 }
 if (!$naRodada) {
-    $seguinte = $m['lista'][0] ?? null;
+    $seguinte = $aReceber[0] ?? null;
     $corpo .= '<p class="vazio">Ninguém para a próxima rodada.'
-        . ($seguinte ? ' A seguinte prevista: ' . rw_e(MCP_RW_MODELOS[$seguinte['proxima_etapa']]) . ' para ' . rw_e($seguinte['nome']) . ' em ' . rw_e(rw_quando($seguinte['proxima'])) . '.' : '')
+        . ($seguinte ? ' A seguinte prevista: ' . rw_e((string) $seguinte['modelo']) . ' para ' . rw_e($seguinte['nome']) . ' em ' . rw_e(rw_quando($seguinte['proxima'])) . '.' : '')
         . '</p>';
 } else {
-    $porEtapa = [];
+    // Um grupo por modelo (a 3ª pode ser o rec_inscricao_3 ou o ps_cupom_oferta), na ordem das etapas.
+    $porModelo = [];
     foreach ($naRodada as $p) {
-        $porEtapa[$p['proxima_etapa']][] = $p;
+        $porModelo[$p['modelo']][] = $p;
     }
-    ksort($porEtapa);
-    foreach ($porEtapa as $etapa => $pessoas) {
-        $nomeModelo = MCP_RW_MODELOS[$etapa];
+    uasort($porModelo, static fn(array $a, array $b): int => [$a[0]['proxima_etapa'], $a[0]['modelo']] <=> [$b[0]['proxima_etapa'], $b[0]['modelo']]);
+    foreach ($porModelo as $nomeModelo => $pessoas) {
+        $nomeModelo = (string) $nomeModelo;
+        $etapa = $pessoas[0]['proxima_etapa'];
         $situacao = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
         $selo = $situacao === null ? rw_selo('talvez', 'Situação do modelo sem resposta') : ($situacao === 'APPROVED' ? rw_selo('ok', 'Modelo aprovado') : rw_selo('nao', $situacao === 'ausente' ? 'Modelo não existe' : 'Modelo ' . $situacao));
         $primeiro = $pessoas[0];
@@ -252,7 +300,7 @@ if (!$naRodada) {
         $corpo .= '<h3>' . $selo . $etapa . 'ª mensagem · modelo <code>' . rw_e($nomeModelo) . '</code> · ' . count($pessoas) . ' lead' . (count($pessoas) === 1 ? '' : 's') . '</h3>'
             . ($situacao !== null && $situacao !== 'APPROVED' ? '<p class="nota">Este modelo ainda não está aprovado na Meta: estes leads esperam a aprovação, sem perder a vez.</p>' : '')
             . '<p class="nota">Como ' . rw_e(mcp_rw_primeiro_nome($primeiro['nome'])) . ' vai ler:</p>'
-            . '<blockquote class="previa">' . nl2br(rw_e(mcp_rw_previa($etapa, mcp_rw_primeiro_nome($primeiro['nome']), $primeiro['curso']))) . '</blockquote>'
+            . '<blockquote class="previa">' . nl2br(rw_e((string) $primeiro['previa'])) . '</blockquote>'
             . '<div class="rolar"><table><thead><tr><th scope="col">Lead</th><th scope="col">Origem</th><th scope="col">Curso</th><th scope="col">Devida desde</th></tr></thead><tbody>'
             . $linhasModelo . '</tbody></table></div>';
     }
@@ -281,7 +329,8 @@ foreach ($nessa as $p) {
     $linhasPessoa .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . rw_e($p['celular']) . '</small></td>'
         . '<td>' . ($p['origem'] === 'escola' ? 'Escola' : 'Site') . '</td><td>' . rw_e($p['curso']) . '</td>'
         . '<td>' . ($p['etapa'] > 0 ? $p['etapa'] . 'ª enviada' : 'Nenhuma ainda') . '</td>'
-        . '<td>' . $p['proxima_etapa'] . 'ª em ' . rw_e(rw_quando($p['proxima'])) . '</td>'
+        . '<td>' . ($p['controle'] ? rw_selo('talvez', 'Grupo de controle') . '<small>não recebe mensagem</small>'
+            : $p['proxima_etapa'] . 'ª em ' . rw_e(rw_quando($p['proxima'])) . '<small>' . rw_e((string) $p['modelo']) . '</small>') . '</td>'
         . '<td>' . ($respostas !== '' ? $respostas : '<small>—</small>') . '</td></tr>';
 }
 $corpo .= '<div class="rolar"><table><thead><tr><th scope="col">Pessoa</th><th scope="col">Origem</th><th scope="col">Curso</th><th scope="col">Etapa</th>'

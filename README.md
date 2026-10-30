@@ -1251,10 +1251,20 @@ Pedido do Matheus: não perder os leads que já deixaram o contato. Substitui a 
 manual com wa.me, planilha e convite para outro curso), que saiu inteira. **Situação: construído e testado só na
 máquina; NADA foi publicado.**
 
-- **O que faz**: três mensagens **automáticas** de WhatsApp, pelos modelos aprovados `rec_inscricao_1`, `_2` e `_3`
-  (pt_BR; `{{1}}` = primeiro nome, `{{2}}` = curso; botão de URL com o caminho do checkout do curso, ou da página geral
-  quando não há curso, com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec<etapa>`), enviadas pela Kapso
-  no número dedicado. O painel `api/recuperacao.php` só acompanha.
+- **O que faz**: três mensagens **automáticas** de WhatsApp, enviadas pela Kapso no número dedicado. O modelo é
+  escolhido **por pessoa** (`mcp_rw_modelo`) e gravado na linha (coluna `modelo`):
+  - 1ª: `rec_inscricao_1_v2` (UTILITY; o `rec_inscricao_1` antigo foi reclassificado pela Meta como Marketing e saiu
+    de uso); 2ª: `rec_inscricao_2`; 3ª: `rec_inscricao_3`. Todos pt_BR, `{{1}}` = primeiro nome, `{{2}}` = curso, botão
+    de URL com o caminho do checkout do curso (ou da página geral quando não há curso) e
+    `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec<etapa>`;
+  - **3ª com cupom**: quem quer `primeiros-socorros-basico`, enquanto o cupom `NOV15` vale para ele (`mcp_cupom` sem
+    erro e `mcp_cupom_restantes` > 0) **e** há turma aberta (`mcp_turma_aberta`), recebe o `ps_cupom_oferta`
+    (MARKETING): `{{1}}` = primeiro nome, `{{2}}` = `NOV15`, `{{3}}` = a data da turma ("terça-feira, 17/11"); botão
+    de URL (índice 0) para `checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&…&utm_campaign=rec3cupom`
+    e resposta rápida "Não tenho interesse" (índice 1). Outro curso, cupom esgotado ou encerrado, ou sem turma: a 3ª
+    continua `rec_inscricao_3`. A oferta é decidida uma vez por rodada (`mcp_rw_oferta_cupom`; erro ao ler = sem cupom).
+
+  O painel `api/recuperacao.php` só acompanha.
 - **Quem entra**: no checkout do site, inscrições pendente/expirado/recusado dos últimos **10 dias**; na plataforma da
   escola, `"Usuario"` ALUNO criado nos últimos 10 dias sem matrícula paga (só a conta, ou matrícula sem pagar), lido
   pelo PostgREST com `ESCOLA_API_TOKEN` (paginado, 10 s no máximo). Uma pessoa junta os dois sistemas por CPF, e-mail
@@ -1262,8 +1272,9 @@ máquina; NADA foi publicado.**
   estornado, de qualquer época; escola: taxa confirmada ou PAGO/PARCELADO), quem não tem celular válido, quem está em
   `mcp_avisos_bloqueios` (WhatsApp), CPFs de `TESTE_CPFS` e cursos com "teste"/"dev". Curso e nome: os da tentativa
   mais recente ("nossos cursos" para quem só criou a conta na escola).
-- **Régua**: 1ª com 3 h da âncora (o cadastro ou tentativa mais recente), 2ª com 24 h e 3ª com 72 h, cada uma só se a
-  anterior saiu, e com 21 h / 48 h desde a anterior (sem isso, no primeiro dia no ar, quem se cadastrou há uma semana
+- **Régua** (revista depois de um benchmarking, 30/10/2026): 1ª com **1 h** da âncora (o cadastro ou tentativa mais
+  recente; era 3 h), 2ª com 24 h e 3ª com 72 h, cada uma só se a anterior saiu, e com no mínimo 21 h / 48 h desde a
+  anterior (`MCP_RW_INTERVALOS`, os mesmos de antes; sem isso, no primeiro dia no ar, quem se cadastrou há uma semana
   receberia as três em três horas). Só das **8h às 20h** de Brasília (conferido antes de cada envio, não só no começo
   da rodada); no máximo **40 por rodada** e **200 em 24 h** (o número dedicado tem 250 por dia). Antes de cada envio, a
   pessoa é conferida de novo no banco do site (pagou? bloqueou algum dos celulares dela? respondeu "não quero"?). Nenhuma
@@ -1272,18 +1283,36 @@ máquina; NADA foi publicado.**
   rotina de hora em hora (`api/lembretes.php`). **Escola fora do ar**: nada sai naquela hora (sem ela não se sabe se
   quem veio do site pagou lá). **Só gasta a etapa** o erro que é de quem recebe (número sem WhatsApp, 131026 e
   parecidos); Kapso fora, modelo não aprovado ou pausado, parâmetro recusado e limite da Meta (130429, 131048, 131056)
-  param a rodada e tentam de novo na hora seguinte, e um modelo que a Meta não mostra como aprovado nem é tentado. Um
-  5xx do gateway ou conexão caída no meio contam como enviados (podem ter saído; nunca repete) e param a rodada.
+  param a rodada e tentam de novo na hora seguinte, e um modelo que a Meta não mostra como aprovado nem é tentado (vale
+  o modelo escolhido para cada pessoa: um `ps_cupom_oferta` pendente segura só quem receberia o cupom). Um 5xx do
+  gateway ou conexão caída no meio contam como enviados (podem ter saído; nunca repete) e param a rodada.
+- **Grupo de controle** (`MCP_RW_CONTROLE_PCT = 10`): a pessoa cujo HMAC da chave principal tem o 1º byte múltiplo
+  de 10 (cerca de 10%) **nunca recebe mensagem**. Quando a 1ª dela ficaria devida (mesma reconferência e o modelo da 1ª
+  aprovado, para começar a contar no mesmo ponto de quem recebe), a rodada grava só uma linha etapa 0 com status
+  `controle`, sem chamar a Kapso e sem contar nos tetos. Depois da primeira linha gravada vale o banco (etapa 0 =
+  controle para sempre; quem já recebeu nunca vira controle). É o único jeito de saber quanto a mensagem recupera de
+  verdade: parte de quem recebe pagaria de qualquer jeito.
 - **Respostas**: `api/kapso-webhook.php` (assinatura HMAC-SHA256 do corpo em `X-Webhook-Signature`, segredo
   `kapso_webhook` de `mcp_chaves`; sem ela, 401) grava entregue/lida pelo wamid; "Não tenho interesse" (o botão do
-  `rec_inscricao_3`), SAIR, PARAR ou STOP bloqueiam o WhatsApp (origem `recuperacao`), mesmo que a Kapso reentregue
+  `rec_inscricao_3` e do `ps_cupom_oferta`), SAIR, PARAR ou STOP bloqueiam o WhatsApp (origem `recuperacao`), mesmo que a Kapso reentregue
   dias depois; qualquer outra resposta fica no painel para a secretaria. O painel só diz "Ligado" quando o webhook da
   Kapso tem o segredo do site e os quatro eventos; senão mostra "Desacertado" e o botão, que acerta.
 - **Painel** (`api/recuperacao.php`, sessão do Portal; sem sessão só o link de entrada; noindex, no-store, sem
-  JavaScript): situação (chave, número, os 3 modelos aprovados lidos da Meta com cache de 10 min, webhook, escola),
+  JavaScript): situação (chave, número, os **4 modelos** usados — `rec_inscricao_1_v2`, `rec_inscricao_2`,
+  `rec_inscricao_3`, `ps_cupom_oferta` — lidos da Meta com cache de 10 min, se o cupom está valendo, webhook, escola),
   números (no fluxo, enviadas por etapa, entregues e lidas, responderam, não querem, **recuperadas** = pagaram em
-  qualquer sistema depois da 1ª mensagem, e a taxa), por origem e por curso, últimos 14 dias e a lista das pessoas no
-  fluxo (celular mascarado, etapa, próxima mensagem, respostas), 50 por página. Única ação: "Ligar o recebimento de
+  qualquer sistema depois da 1ª mensagem, e a taxa), e as métricas novas, só com números:
+  - **recuperação por mensagem**: das recuperadas, a última mensagem enviada antes do pagamento (1ª, 2ª ou 3ª, e por
+    modelo), e, no checkout do site, os pagamentos com `utm_campaign` `rec1`/`rec2`/`rec3`/`rec3cupom` ("pelo link
+    da mensagem"; a escola não guarda a campanha);
+  - **tempo até pagar**: mediana de horas entre a 1ª mensagem e o pagamento, nas recuperadas;
+  - **grupo de controle × quem recebeu**: pessoas, quantas pagaram depois da linha etapa 0 / da 1ª mensagem, a taxa de
+    cada grupo e a diferença em pontos percentuais ("efeito estimado da mensagem"), com a nota de que só tem valor
+    estatístico com dezenas de pessoas em cada grupo.
+
+  Depois: por origem e por curso, últimos 14 dias, o **próximo disparo** agrupado por modelo (selo de aprovação e
+  prévia do modelo escolhido para cada pessoa; o grupo de controle não aparece) e a lista das pessoas no fluxo
+  (celular mascarado, etapa, próxima mensagem e modelo, ou "Grupo de controle", respostas), 50 por página. Única ação: "Ligar o recebimento de
   respostas", que cria o webhook na Kapso com o segredo do site.
 - **Configuração**: `WHATSAPP_KAPSO_CHAVE` e `WHATSAPP_KAPSO_NUMERO_ID` em `api/config-whatsapp.php` (só no servidor;
   modelo em `config.example.php`). Sem as duas, nada sai e o painel diz o que falta. A chave nunca vai para log, erro,
@@ -1304,7 +1333,9 @@ máquina; NADA foi publicado.**
   que precisa mostrar "Ok" em Chave e em Número; mande também um aviso de teste pelo Portal para ver que o WhatsApp
   antigo continua saindo.
 - **Banco**: `mcp_recuperacao_whatsapp` (migração do `db.php`, `MCP_DB_VERSAO` nova), só com HMAC (nem CPF nem
-  telefone em claro). A `mcp_recuperacao_contatos` da primeira versão ficou **sem uso** e não é apagada.
+  telefone em claro). Na régua nova, a mesma migração acrescenta a coluna `modelo VARCHAR(40) NULL` (linhas antigas
+  ficam nulas e eram `rec_inscricao_<etapa>`) e o valor `controle` no ENUM de `status`; `UNIQUE(pessoa_chave, etapa)`
+  segue valendo (o controle usa a etapa 0). A `mcp_recuperacao_contatos` da primeira versão ficou **sem uso** e não é apagada.
 - **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_recuperacao_whatsapp_integracao.php` (MariaDB local e um
   servidor falso que faz de Kapso e de PostgREST da escola; nada sai de verdade).
 - **Publicar**: `scripts/publicacao-recuperacao.txt`; conferir com `scripts/conferir_publicacao.sh` e, logado,

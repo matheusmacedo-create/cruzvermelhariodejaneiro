@@ -1,20 +1,21 @@
-# Recuperação por WhatsApp (30/10/2026). Detalhes no README, "Recuperação por WhatsApp (30/10/2026)".
-# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria a tabela mcp_recuperacao_whatsapp); depois o
-# módulo novo (que o lib.php não carrega: quem usa faz require_once); depois o webhook, o painel e, por último, a rotina
-# de hora em hora (lembretes.php), que só começa a mandar quando o módulo já está lá.
-# config-whatsapp.php NÃO entra: o código que o lê (lib/config.php) não mudou, e as duas chaves novas
-# (WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID) se escrevem nele à mão, no gerenciador de arquivos da Hostinger,
-# DENTRO do return [ ... ] que já existe, cada linha terminando em vírgula. Um erro de sintaxe ali desliga o arquivo
-# inteiro, inclusive as chaves Evolution/Cloud dos avisos que já funcionam: confira com php -l (se houver terminal) e
-# vendo "Ok" em Chave e Número no painel. Trecho exato no README.
-# Nunca config.php. O lib/recuperacao_funil.php da primeira versão nunca foi publicado; se estiver no servidor, apague-o.
+# Recuperação por WhatsApp: régua nova (30/10/2026, depois do benchmarking). Detalhes no README, "Recuperação por
+# WhatsApp (30/10/2026)": 1ª com 1 h, modelo rec_inscricao_1_v2, cupom NOV15 na 3ª de Primeiros Socorros
+# (ps_cupom_oferta), grupo de controle de 10% e métricas novas no painel.
+# O que muda: db.php (MCP_DB_VERSAO nova: a primeira requisição acrescenta a coluna modelo e o status 'controle' em
+# mcp_recuperacao_whatsapp), lib/recuperacao_whatsapp.php e recuperacao.php. kapso-webhook.php e lembretes.php NÃO
+# mudaram nesta revisão.
+# Ordem: db.php primeiro; depois o módulo e o painel. Sem a migração, a rodada falha na leitura da tabela (lembretes.php
+# registra e segue, nada sai) e o painel responde 503 "O banco ainda não está pronto…"; um minuto depois, tudo volta.
+# ANTES de publicar: os modelos rec_inscricao_1_v2 e ps_cupom_oferta precisam estar APROVADOS na Meta. Enquanto não
+# estiverem, quem receberia esses modelos espera (sem perder a vez) e o painel mostra o selo; o grupo de controle
+# também espera a aprovação da 1ª, para a comparação começar no mesmo ponto.
+# Se a primeira versão (README, mesma seção) ainda não estiver no servidor, publique também
+# site/matricula-cursos-presenciais/api/kapso-webhook.php e site/matricula-cursos-presenciais/api/lembretes.php, e siga
+# o passo a passo do config-whatsapp.php no README. Nunca config.php.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
-# Depois: abrir api/recuperacao.php logado no Portal, conferir a "Situação" (chave, número, os 3 modelos aprovados,
-# escola) e tocar em "Ligar o recebimento de respostas". Se a migração não rodou, a página responde 503 "O banco ainda
-# não está pronto…".
+# Depois: abrir api/recuperacao.php logado no Portal e conferir a "Situação" (os 4 modelos aprovados, o cupom, a
+# escola) e as seções novas (Recuperação por mensagem, Tempo até pagar, Grupo de controle × quem recebeu).
 site/matricula-cursos-presenciais/api/lib/db.php
 site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
-site/matricula-cursos-presenciais/api/kapso-webhook.php
 site/matricula-cursos-presenciais/api/recuperacao.php
-site/matricula-cursos-presenciais/api/lembretes.php

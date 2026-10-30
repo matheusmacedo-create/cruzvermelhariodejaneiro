@@ -17,39 +17,71 @@
  *    paga), quem não tem celular válido, quem está em mcp_avisos_bloqueios (WhatsApp; inclui quem respondeu "Não tenho
  *    interesse", SAIR, PARAR ou STOP) e os CPFs e cursos de teste (TESTE_CPFS; slug ou nome com "teste" ou "dev").
  *
- * O fluxo, a partir da ÂNCORA (o cadastro ou a tentativa mais recente dentro da janela): mensagem 1 com 3 h, 2 com 24 h
+ * O fluxo, a partir da ÂNCORA (o cadastro ou a tentativa mais recente dentro da janela): mensagem 1 com 1 h, 2 com 24 h
  * (se a 1 saiu) e 3 com 72 h (se a 2 saiu), só das 8h às 20h de Brasília. Entre uma mensagem e a seguinte vale também o
- * intervalo da régua (21 h e 48 h): sem isso, no primeiro dia no ar, quem se cadastrou há 5 dias receberia as três em
- * três horas seguidas. Antes de cada envio a pessoa é conferida de novo no banco do site (pagou? bloqueou?). Nenhuma etapa
- * se repete: UNIQUE(pessoa_chave, etapa) em mcp_recuperacao_whatsapp, e as etapas da pessoa são procuradas por todas as
- * chaves dela e pelo celular. No máximo MCP_RW_POR_RODADA envios por rodada e MCP_RW_POR_DIA em 24 h (o número dedicado
- * tem 250 por dia na Meta). Um erro que não é de quem recebe (modelo não aprovado, parâmetro recusado, limite da Meta)
- * não gasta a etapa: a rodada para e tenta de novo na hora seguinte.
+ * intervalo mínimo (MCP_RW_INTERVALOS: 21 h e 48 h): sem isso, no primeiro dia no ar, quem se cadastrou há 5 dias
+ * receberia as três em três horas seguidas. Antes de cada envio a pessoa é conferida de novo no banco do site (pagou?
+ * bloqueou?). Nenhuma etapa se repete: UNIQUE(pessoa_chave, etapa) em mcp_recuperacao_whatsapp, e as etapas da pessoa
+ * são procuradas por todas as chaves dela e pelo celular. No máximo MCP_RW_POR_RODADA envios por rodada e MCP_RW_POR_DIA
+ * em 24 h (o número dedicado tem 250 por dia na Meta). Um erro que não é de quem recebe (modelo não aprovado, parâmetro
+ * recusado, limite da Meta) não gasta a etapa: a rodada para e tenta de novo na hora seguinte.
+ *
+ * O modelo é escolhido POR PESSOA (mcp_rw_modelo): a 1ª é o rec_inscricao_1_v2 (utilidade), a 2ª o rec_inscricao_2 e a
+ * 3ª o rec_inscricao_3, exceto para quem quer Primeiros Socorros Básico enquanto o cupom NOV15 vale, tem vaga e há turma
+ * aberta: aí a 3ª é o ps_cupom_oferta, com o cupom já aplicado no link. O modelo que saiu fica gravado na linha.
+ *
+ * Grupo de controle (MCP_RW_CONTROLE_PCT): 10% das pessoas, sorteadas pelo HMAC da chave principal, NUNCA recebem nada.
+ * Quando a 1ª delas ficaria devida, a rodada grava só uma linha etapa 0 'controle'. Comparar quanto esse grupo paga
+ * sozinho com quanto paga quem recebeu é o único jeito de saber quanto a mensagem recupera de verdade: sem ele, quem
+ * pagaria de qualquer jeito conta como "recuperado".
  * A rodada é a de hora em hora (api/lembretes.php); falha aqui nunca derruba a rotina.
  *
  * Configuração: WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID (config-whatsapp.php ou config.php). Sem as duas, nada
  * sai e o painel (api/recuperacao.php) diz o que falta. A chave nunca vai para log, erro, painel nem banco.
  *
  * Regras puras (sem banco nem rede, conferidas no teste): mcp_rw_tentativas_site, mcp_rw_tentativas_escola,
- * mcp_rw_agrupar, mcp_rw_proxima, mcp_rw_no_horario, mcp_rw_corpo_envio, mcp_rw_caminho_botao, mcp_rw_ler_webhook,
- * mcp_rw_quer_parar e mcp_rw_metricas.
+ * mcp_rw_agrupar, mcp_rw_proxima, mcp_rw_no_horario, mcp_rw_modelo, mcp_rw_corpo_envio, mcp_rw_caminho_botao,
+ * mcp_rw_ler_webhook, mcp_rw_quer_parar, mcp_rw_pelo_link e mcp_rw_metricas.
  */
 declare(strict_types=1);
 
 const MCP_RW_JANELA_DIAS = 10;
 // As métricas olham mais longe que a janela: quem recebeu a 1ª mensagem e pagou dias depois continua contando.
 const MCP_RW_JANELA_METRICA_DIAS = 40;
-// Segundos depois da âncora em que cada etapa fica devida.
-const MCP_RW_ETAPAS = [1 => 3 * 3600, 2 => 24 * 3600, 3 => 72 * 3600];
-const MCP_RW_MODELOS = [1 => 'rec_inscricao_1', 2 => 'rec_inscricao_2', 3 => 'rec_inscricao_3'];
+// Segundos depois da âncora em que cada etapa fica devida. A 1ª com 1 h (era 3 h; decidido depois de um benchmarking,
+// 30/10/2026): a intenção de pagar esfria rápido, e a 1ª é um aviso de utilidade (inscrição pendente), não oferta.
+const MCP_RW_ETAPAS = [1 => 1 * 3600, 2 => 24 * 3600, 3 => 72 * 3600];
+// Intervalo mínimo desde a mensagem anterior (o mesmo de antes da 1ª com 1 h): 21 h até a 2ª e 48 h até a 3ª.
+const MCP_RW_INTERVALOS = [2 => 21 * 3600, 3 => 48 * 3600];
+// O modelo de cada etapa. O rec_inscricao_1 antigo foi reclassificado pela Meta como Marketing; o _v2 é utilidade.
+const MCP_RW_MODELOS = [1 => 'rec_inscricao_1_v2', 2 => 'rec_inscricao_2', 3 => 'rec_inscricao_3'];
+// A 3ª de quem quer Primeiros Socorros Básico, enquanto o cupom vale, tem vaga e há turma aberta (mcp_rw_oferta_cupom).
+const MCP_RW_MODELO_CUPOM = 'ps_cupom_oferta';
+const MCP_RW_CUPOM = 'NOV15';
+const MCP_RW_CUPOM_CURSO = 'primeiros-socorros-basico';
+const MCP_RW_CUPOM_CAMINHO = 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15'
+    . '&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom';
+// Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel).
+const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta'];
+// As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
+const MCP_RW_CAMPANHAS = ['rec1', 'rec2', 'rec3', 'rec3cupom'];
 /**
- * O corpo de cada modelo exatamente como foi cadastrado na Meta (30/10/2026), com {nome} e {curso} no lugar de {{1}} e
- * {{2}}. Só para a prévia do painel: quem manda o texto é a Meta, a partir do nome do modelo. Mudou o modelo lá, mude aqui.
+ * Grupo de controle: % das pessoas que nunca recebem mensagem (o 1º byte do HMAC da chave principal, módulo 100/%, é
+ * zero). É o único jeito de saber quanto a mensagem recupera de verdade: parte de quem recebe pagaria de qualquer
+ * jeito, e só a taxa de quem NÃO recebeu diz quanto. A divisão é fixa por pessoa (o mesmo HMAC sempre dá o mesmo
+ * grupo) e, depois da primeira linha gravada, vale o que está no banco.
+ */
+const MCP_RW_CONTROLE_PCT = 10;
+/**
+ * O corpo de cada modelo exatamente como foi cadastrado na Meta (30/10/2026), com os botões entre colchetes. Só para a
+ * prévia do painel: quem manda o texto é a Meta, a partir do nome do modelo. Mudou o modelo lá, mude aqui.
  */
 const MCP_RW_TEXTOS = [
-    1 => "Olá, {nome}. Sua inscrição no curso {curso} da Cruz Vermelha RJ ainda não foi concluída. Seus dados estão salvos: para garantir a vaga, é só concluir pelo link abaixo.\n[Concluir inscrição]",
-    2 => "Olá, {nome}. Lembrete da Cruz Vermelha RJ: a sua inscrição no curso {curso} continua em aberto.\n\nSe ficou alguma dúvida sobre o curso ou o pagamento, responda esta mensagem. Para concluir, use o link abaixo.\n[Concluir inscrição]",
-    3 => "Olá, {nome}. Este é o último lembrete sobre a sua inscrição no curso {curso} da Cruz Vermelha RJ. Se ainda quiser participar, conclua pelo link abaixo.\n\nSe não tiver mais interesse, toque no botão e não enviaremos outras mensagens.\n[Concluir inscrição] [Não tenho interesse]",
+    'rec_inscricao_1_v2' => "Olá, {{1}}. A sua inscrição no curso {{2}} da Cruz Vermelha RJ está pendente: ainda não identificamos o pagamento.\n\nPara concluir a inscrição, use o link abaixo. Se já pagou, desconsidere esta mensagem.\n[Concluir inscrição]",
+    'rec_inscricao_2' => "Olá, {{1}}. Lembrete da Cruz Vermelha RJ: a sua inscrição no curso {{2}} continua em aberto.\n\nSe ficou alguma dúvida sobre o curso ou o pagamento, responda esta mensagem. Para concluir, use o link abaixo.\n[Concluir inscrição]",
+    'rec_inscricao_3' => "Olá, {{1}}. Este é o último lembrete sobre a sua inscrição no curso {{2}} da Cruz Vermelha RJ. Se ainda quiser participar, conclua pelo link abaixo.\n\nSe não tiver mais interesse, toque no botão e não enviaremos outras mensagens.\n[Concluir inscrição] [Não tenho interesse]",
+    // O rótulo do botão de link não está anotado aqui: a prévia mostra só que ele existe.
+    'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[botão com o link da oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
 const MCP_RW_MINUTO_DA_RODADA = 7;
@@ -70,7 +102,7 @@ const MCP_RW_PAGOS_ESCOLA = ['PAGO', 'PARCELADO'];
 const MCP_RW_CURSO_GENERICO = 'nossos cursos';
 const MCP_RW_POR_PAGINA = 50;
 const MCP_RW_DIAS_METRICA = 14;
-// Respostas que param tudo, já normalizadas (minúsculas, sem acento, só letras e espaço). O botão do rec_inscricao_3.
+// Respostas que param tudo, já normalizadas (minúsculas, sem acento, só letras e espaço). O botão do rec_inscricao_3 e do ps_cupom_oferta.
 const MCP_RW_PALAVRAS_PARAR = ['nao tenho interesse', 'sair', 'parar', 'stop'];
 // Escola: tempo curto (a rodada e o painel não esperam a escola), páginas de 1000 e no máximo 20 páginas.
 const MCP_RW_ESCOLA_TEMPO_S = 10;
@@ -86,6 +118,31 @@ const MCP_RW_EVENTOS_WEBHOOK = ['whatsapp.message.received', 'whatsapp.message.d
 function mcp_rw_hmac(string $identificador): string
 {
     return hash_hmac('sha256', $identificador, mcp_segredo('recuperacao_whatsapp'));
+}
+
+/**
+ * A chave principal ("c:…", "e:…" ou "t:…") cai no grupo de controle? O 1º byte do HMAC dela, módulo 100 / MCP_RW_CONTROLE_PCT,
+ * é zero (com 10%: múltiplos de 10 entre 0 e 255). Depende só do segredo do banco e da chave, então é sempre o mesmo.
+ */
+function mcp_rw_chave_no_controle(string $principal): bool
+{
+    return hexdec(substr(mcp_rw_hmac($principal), 0, 2)) % intdiv(100, MCP_RW_CONTROLE_PCT) === 0;
+}
+
+/**
+ * A pessoa é do grupo de controle? O que já está gravado manda: uma linha etapa 0 é controle para sempre, e quem já
+ * recebeu alguma mensagem (etapa 1 a 3) nunca vira controle, mesmo que a chave principal mude (um cadastro novo com
+ * outro CPF). Sem nada gravado, vale o sorteio pela chave principal. $minhas: de mcp_rw_da_pessoa.
+ */
+function mcp_rw_controle(array $pessoa, array $minhas): bool
+{
+    if (isset($minhas[0])) {
+        return true;
+    }
+    if (array_filter(array_keys($minhas), static fn(int $e): bool => $e >= 1)) {
+        return false;
+    }
+    return mcp_rw_chave_no_controle((string) $pessoa['principal']);
 }
 
 function mcp_rw_email(?string $email): string
@@ -370,16 +427,21 @@ function mcp_rw_proxima_rodada(int $agora): int
     return $hora;
 }
 
-/** O texto da mensagem como a pessoa vai ler (prévia do painel; o envio usa o modelo da Meta). */
-function mcp_rw_previa(int $etapa, string $primeiroNome, string $curso): string
+/** O texto da mensagem como a pessoa vai ler (prévia do painel; o envio usa o modelo da Meta): {{n}} = parâmetro n. */
+function mcp_rw_previa(string $modelo, array $parametros): string
 {
-    return strtr(MCP_RW_TEXTOS[$etapa] ?? '', ['{nome}' => $primeiroNome, '{curso}' => $curso]);
+    $troca = [];
+    foreach (array_values($parametros) as $i => $p) {
+        $troca['{{' . ($i + 1) . '}}'] = (string) $p;
+    }
+    return strtr(MCP_RW_TEXTOS[$modelo] ?? '', $troca);
 }
 
 /**
  * A próxima etapa de uma pessoa e quando ela fica devida (sem o horário), ou null quando não há mais nada a mandar.
  * $enviadas: etapa => ['status', 'entrega', 'criado_ts'] (as linhas da pessoa em mcp_recuperacao_whatsapp).
- * Etapa 2 e 3 só depois da anterior ENVIADA (e não recusada na entrega), e com o intervalo da régua desde ela.
+ * Etapa 2 e 3 só depois da anterior ENVIADA (e não recusada na entrega), e com o intervalo mínimo desde ela
+ * (MCP_RW_INTERVALOS). A linha etapa 0 (grupo de controle) não entra aqui: quem é do controle nem chega à rodada.
  * @return array{etapa: int, devida_em: int}|null
  */
 function mcp_rw_proxima(int $ancora, array $enviadas): ?array
@@ -395,7 +457,7 @@ function mcp_rw_proxima(int $ancora, array $enviadas): ?array
         if ($anterior === null || $anterior['status'] !== 'enviado' || ($anterior['entrega'] ?? null) === 'falhou') {
             return null;
         }
-        return ['etapa' => $etapa, 'devida_em' => max($ancora + $depois, (int) $anterior['criado_ts'] + $depois - MCP_RW_ETAPAS[$etapa - 1])];
+        return ['etapa' => $etapa, 'devida_em' => max($ancora + $depois, (int) $anterior['criado_ts'] + MCP_RW_INTERVALOS[$etapa])];
     }
     return null;
 }
@@ -417,25 +479,75 @@ function mcp_rw_parametro(string $texto, int $limite = 60): string
 }
 
 /**
- * O corpo do POST /{numero}/messages: modelo rec_inscricao_<etapa> em pt_BR, {{1}} = primeiro nome, {{2}} = curso,
- * botão de URL (índice 0) com o caminho. O "Não tenho interesse" do rec_inscricao_3 é resposta rápida fixa (índice 1):
- * não leva parâmetro, então não entra nos componentes.
+ * O modelo de uma etapa PARA ESTA PESSOA, com os parâmetros do corpo, o caminho do botão de URL e a prévia:
+ * ['nome', 'etapa', 'parametros' (os textos de {{1}}, {{2}}…, já limpos), 'caminho', 'previa'].
+ *  - 1ª: rec_inscricao_1_v2; 2ª: rec_inscricao_2; 3ª: rec_inscricao_3 — {{1}} = primeiro nome, {{2}} = curso, botão
+ *    para o checkout do curso (ou a página geral);
+ *  - 3ª de quem quer MCP_RW_CUPOM_CURSO, com $oferta (mcp_rw_oferta_cupom: cupom valendo, com vaga, e turma aberta):
+ *    ps_cupom_oferta — {{1}} = primeiro nome, {{2}} = o código do cupom, {{3}} = a data da turma ("terça-feira, 17/11"),
+ *    botão para o checkout com o cupom já aplicado.
+ * Sem banco nem rede: quem chama decide a $oferta uma vez por rodada (ou por página do painel).
  */
-function mcp_rw_corpo_envio(string $numero, int $etapa, string $primeiroNome, string $cursoNome, string $caminho): array
+function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null): array
+{
+    $nome = mcp_rw_parametro((string) ($pessoa['primeiro_nome'] ?? '') !== '' ? (string) $pessoa['primeiro_nome'] : 'tudo bem');
+    if ($etapa === 3 && $oferta !== null && ($pessoa['curso_slug'] ?? '') === MCP_RW_CUPOM_CURSO) {
+        $modelo = MCP_RW_MODELO_CUPOM;
+        $parametros = [$nome, mcp_rw_parametro((string) $oferta['codigo']), mcp_rw_parametro((string) $oferta['data'])];
+        $caminho = MCP_RW_CUPOM_CAMINHO;
+    } else {
+        $modelo = MCP_RW_MODELOS[$etapa];
+        $curso = (string) ($pessoa['curso_nome'] ?? '');
+        $parametros = [$nome, mcp_rw_parametro($curso !== '' ? $curso : MCP_RW_CURSO_GENERICO, 160)];
+        $caminho = mcp_rw_caminho_botao((string) ($pessoa['curso_slug'] ?? ''), $etapa);
+    }
+    return ['nome' => $modelo, 'etapa' => $etapa, 'parametros' => $parametros, 'caminho' => $caminho, 'previa' => mcp_rw_previa($modelo, $parametros)];
+}
+
+/**
+ * O corpo do POST /{numero}/messages para o modelo escolhido (mcp_rw_modelo), em pt_BR: os parâmetros do corpo na
+ * ordem e o botão de URL (índice 0) com o caminho. O "Não tenho interesse" do rec_inscricao_3 e do ps_cupom_oferta é
+ * resposta rápida fixa (índice 1): não leva parâmetro, então não entra nos componentes.
+ */
+function mcp_rw_corpo_envio(string $numero, array $modelo): array
 {
     return [
         'messaging_product' => 'whatsapp', 'recipient_type' => 'individual', 'to' => $numero, 'type' => 'template',
         'template' => [
-            'name' => MCP_RW_MODELOS[$etapa], 'language' => ['code' => 'pt_BR'],
+            'name' => $modelo['nome'], 'language' => ['code' => 'pt_BR'],
             'components' => [
-                ['type' => 'body', 'parameters' => [
-                    ['type' => 'text', 'text' => mcp_rw_parametro($primeiroNome !== '' ? $primeiroNome : 'tudo bem')],
-                    ['type' => 'text', 'text' => mcp_rw_parametro($cursoNome !== '' ? $cursoNome : MCP_RW_CURSO_GENERICO, 160)],
-                ]],
-                ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => $caminho]]],
+                ['type' => 'body', 'parameters' => array_map(static fn(string $t): array => ['type' => 'text', 'text' => $t], array_values($modelo['parametros']))],
+                ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => $modelo['caminho']]]],
             ],
         ],
     ];
+}
+
+/**
+ * O cupom da 3ª mensagem pode ser oferecido agora? Só se MCP_RW_CUPOM vale para MCP_RW_CUPOM_CURSO (lib/cupons.php:
+ * existe, é desse curso, não passou do 'ate'), ainda tem vaga e o curso tem turma aberta (lib/compra.php). Devolve
+ * ['codigo', 'data' ("terça-feira, 17/11", o início da turma em Brasília)] ou null. Sem a coluna cupom (logo depois de
+ * uma publicação) ou com qualquer erro, null: a 3ª sai como rec_inscricao_3, que não promete nada.
+ */
+function mcp_rw_oferta_cupom(?int $agora = null): ?array
+{
+    $agora ??= time();
+    try {
+        $cupom = mcp_cupom(MCP_RW_CUPOM, MCP_RW_CUPOM_CURSO, $agora);
+        if (isset($cupom['erro']) || !mcp_cupom_coluna_ok() || mcp_cupom_restantes($cupom, $agora) <= 0) {
+            return null;
+        }
+        $turma = mcp_turma_aberta(MCP_RW_CUPOM_CURSO, $agora);
+        $inicio = $turma !== null ? mcp_iso_ts($turma['inicio']) : null;
+        if ($inicio === null) {
+            return null;
+        }
+        $dia = (new DateTimeImmutable('@' . $inicio))->setTimezone(mcp_fuso_brt());
+        return ['codigo' => (string) $cupom['codigo'], 'data' => MCP_DIAS_SEMANA[(int) $dia->format('w')] . ', ' . $dia->format('d/m')];
+    } catch (Throwable $e) {
+        error_log('[matricula] recuperação por WhatsApp: cupom da 3ª indisponível (' . get_class($e) . '); vai o rec_inscricao_3');
+        return null;
+    }
 }
 
 /** Resposta que pede para parar: "Não tenho interesse" (o botão), SAIR, PARAR ou STOP. */
@@ -571,15 +683,16 @@ function mcp_rw_cache_apagar(string $nome): void
 }
 
 /**
- * A situação dos três modelos na Meta: nome => 'APPROVED', outra situação, ou 'ausente'. O WABA vem do número pela
- * API da plataforma (no número gerenciado pela Kapso, o proxy da Meta não responde o GET do número). Cache de 10 min.
+ * A situação dos modelos que a rodada usa (MCP_RW_MODELOS_TODOS) na Meta: nome => 'APPROVED', outra situação, ou
+ * 'ausente'. O WABA vem do número pela API da plataforma (no número gerenciado pela Kapso, o proxy da Meta não responde
+ * o GET do número). Cache de 10 min (um cache gravado com outra lista de modelos não vale).
  * @return array{ok: bool, modelos: array<string, string>, erro: ?string}
  */
 function mcp_rw_modelos(array $cfg, ?int $agora = null): array
 {
     $cache = mcp_rw_cache('rw_cache_modelos', null, $agora);
-    if ($cache !== null && is_array($cache['m'] ?? null)) {
-        return ['ok' => true, 'modelos' => array_combine(MCP_RW_MODELOS, array_map(static fn($s): string => (string) $s, $cache['m'])), 'erro' => null];
+    if ($cache !== null && is_array($cache['m'] ?? null) && count($cache['m']) === count(MCP_RW_MODELOS_TODOS)) {
+        return ['ok' => true, 'modelos' => array_combine(MCP_RW_MODELOS_TODOS, array_map(static fn($s): string => (string) $s, $cache['m'])), 'erro' => null];
     }
     [$status, $numero, $erro] = mcp_rw_kapso_pedir($cfg, 'GET', $cfg['base'] . '/platform/v1/whatsapp/phone_numbers/' . rawurlencode($cfg['numero_id']), null, 10);
     $d = is_array($numero['data'] ?? null) ? $numero['data'] : [];
@@ -593,7 +706,7 @@ function mcp_rw_modelos(array $cfg, ?int $agora = null): array
     if ($waba === null) {
         return ['ok' => false, 'modelos' => [], 'erro' => $erro ?? 'a Kapso não disse a conta (WABA) do número'];
     }
-    $situacao = array_fill_keys(MCP_RW_MODELOS, 'ausente');
+    $situacao = array_fill_keys(MCP_RW_MODELOS_TODOS, 'ausente');
     $depois = null;
     for ($pagina = 0; $pagina < 5; $pagina++) {
         $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($waba) . '/message_templates?fields=name,status,language&limit=100' . ($depois ? '&after=' . rawurlencode($depois) : '');
@@ -789,8 +902,9 @@ function mcp_rw_escola_ler(int $desde, array $buscar): array
 // ----------------------------------------------------------------------------- banco
 /**
  * O público inteiro, com a situação de cada pessoa: lê o site (as tentativas desde o início das métricas e as pagas de
- * qualquer época), a escola e os bloqueios. A regra está em mcp_rw_agrupar.
- * @return array{pessoas: array, escola: array{estado: string, erro: ?string}}
+ * qualquer época), a escola e os bloqueios. A regra está em mcp_rw_agrupar. pelo_link: os pagamentos do site que
+ * vieram pelo botão de uma mensagem (mcp_rw_pelo_link), para as métricas.
+ * @return array{pessoas: array, escola: array{estado: string, erro: ?string}, pelo_link: array<string, int>}
  */
 function mcp_rw_carregar(?int $agora = null): array
 {
@@ -798,10 +912,11 @@ function mcp_rw_carregar(?int $agora = null): array
     $db = mcp_db();
     $inicio = $agora - MCP_RW_JANELA_DIAS * 86400;
     $inicioMetrica = $agora - MCP_RW_JANELA_METRICA_DIAS * 86400;
-    $stmt = $db->prepare("SELECT id, cpf, email, telefone, nome, curso_slug, curso_nome, status, criado_em, pago_em, atualizado_em
+    $stmt = $db->prepare("SELECT id, cpf, email, telefone, nome, curso_slug, curso_nome, status, criado_em, pago_em, atualizado_em, utm_campaign
         FROM mcp_inscricoes WHERE criado_em >= ? OR status IN ('pago', 'estornado')");
     $stmt->execute([gmdate('Y-m-d H:i:s', $inicioMetrica)]);
-    $site = mcp_rw_tentativas_site($stmt->fetchAll(), $inicio);
+    $linhasSite = $stmt->fetchAll();
+    $site = mcp_rw_tentativas_site($linhasSite, $inicio);
     // A escola é perguntada pelos dados de quem veio do site e não pagou lá (os que pagaram já saem pelo site).
     $buscar = ['cpfs' => [], 'emails' => [], 'numeros' => []];
     foreach ($site as $t) {
@@ -827,7 +942,29 @@ function mcp_rw_carregar(?int $agora = null): array
         $bloqueios[$b['destino_hash']] = true;
     }
     $pessoas = mcp_rw_agrupar($tentativas, static fn(string $numero): bool => isset($bloqueios[mcp_avisos_hash('whatsapp', $numero)]));
-    return ['pessoas' => $pessoas, 'escola' => ['estado' => $escola['estado'], 'erro' => $escola['erro']]];
+    return ['pessoas' => $pessoas, 'escola' => ['estado' => $escola['estado'], 'erro' => $escola['erro']], 'pelo_link' => mcp_rw_pelo_link($linhasSite, $inicioMetrica)];
+}
+
+/**
+ * Pagamentos no checkout do site que vieram pelo botão de uma mensagem: inscrições pagas (ou estornadas depois de
+ * pagas) desde $desde com utm_campaign rec1, rec2, rec3 ou rec3cupom (o link de cada mensagem). Só contagem, sem dado
+ * pessoal. Os da escola não têm como saber: a plataforma não guarda a campanha.
+ * @return array<string, int> campanha => pagamentos
+ */
+function mcp_rw_pelo_link(array $linhas, int $desde): array
+{
+    $saida = array_fill_keys(MCP_RW_CAMPANHAS, 0);
+    foreach ($linhas as $l) {
+        $campanha = (string) ($l['utm_campaign'] ?? '');
+        if (!isset($saida[$campanha]) || !in_array($l['status'] ?? '', MCP_RW_PAGOS_SITE, true)) {
+            continue;
+        }
+        $pago = mcp_rw_ts($l['pago_em'] ?? null) ?? mcp_rw_ts($l['atualizado_em'] ?? null) ?? mcp_rw_ts($l['criado_em'] ?? null);
+        if ($pago !== null && $pago >= $desde) {
+            $saida[$campanha]++;
+        }
+    }
+    return $saida;
 }
 
 /** As chaves (HMAC) de uma pessoa: todas as dela, e a do celular para onde a mensagem vai. */
@@ -843,7 +980,7 @@ function mcp_rw_chaves(array $pessoa): array
 /** Todas as linhas de mcp_recuperacao_whatsapp, por chave e por telefone_hash (para achar as etapas de cada pessoa). */
 function mcp_rw_linhas(): array
 {
-    return mcp_db()->query('SELECT id, pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, chaves, status, provedor_id, entrega, erro, resposta, criado_em, atualizado_em
+    return mcp_db()->query('SELECT id, pessoa_chave, origem, etapa, modelo, curso_slug, curso_nome, telefone_hash, chaves, status, provedor_id, entrega, erro, resposta, criado_em, atualizado_em
         FROM mcp_recuperacao_whatsapp ORDER BY id')->fetchAll();
 }
 
@@ -941,9 +1078,9 @@ function mcp_rw_enviadas_24h(int $agora): int
 
 /**
  * Uma rodada (api/lembretes.php, de hora em hora): manda as etapas devidas, até MCP_RW_POR_RODADA envios e
- * MCP_RW_POR_DIA em 24 h. Nunca lança por causa da Kapso nem da escola; erro de banco sobe para quem chama
- * (lembretes.php registra e segue).
- * @return array{enviados: int, falhas: int, pulados: int, vistos: int, escola: string, motivo: ?string}
+ * MCP_RW_POR_DIA em 24 h, e grava a linha etapa 0 de quem é do grupo de controle (controle: quantas). Nunca lança por
+ * causa da Kapso nem da escola; erro de banco sobe para quem chama (lembretes.php registra e segue).
+ * @return array{enviados: int, falhas: int, pulados: int, vistos: int, controle: int, escola: string, motivo: ?string}
  */
 function mcp_rw_rodar(?int $agora = null): array
 {
@@ -952,7 +1089,7 @@ function mcp_rw_rodar(?int $agora = null): array
     // para o instante de cada envio, não para o início.
     $inicioReal = time();
     $agoraReal = static fn(): int => $agora + max(0, time() - $inicioReal);
-    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'vistos' => 0, 'escola' => '-', 'motivo' => null];
+    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'vistos' => 0, 'controle' => 0, 'escola' => '-', 'motivo' => null];
     $cfg = mcp_rw_kapso_config();
     if (!$cfg['ok']) {
         $r['motivo'] = 'sem configuração (' . implode(', ', $cfg['falta']) . ')';
@@ -970,8 +1107,9 @@ function mcp_rw_rodar(?int $agora = null): array
         return $r;
     }
     $indice = mcp_rw_indice(mcp_rw_linhas());
-    // As devidas, da mais atrasada para a mais nova.
+    // As devidas, da mais atrasada para a mais nova; as do grupo de controle à parte (nunca recebem).
     $fila = [];
+    $controle = [];
     foreach ($carga['pessoas'] as $p) {
         if (!$p['no_fluxo']) {
             continue;
@@ -980,29 +1118,61 @@ function mcp_rw_rodar(?int $agora = null): array
         if (mcp_rw_nao_quer($p, $indice)) {
             continue;
         }
-        $proxima = mcp_rw_proxima((int) $p['ancora'], mcp_rw_da_pessoa($p, $indice));
-        if ($proxima !== null && $proxima['devida_em'] <= $agora) {
-            $fila[] = [$proxima['devida_em'], $proxima['etapa'], $p];
+        $minhas = mcp_rw_da_pessoa($p, $indice);
+        $proxima = mcp_rw_proxima((int) $p['ancora'], $minhas);
+        if ($proxima === null || $proxima['devida_em'] > $agora) {
+            continue;
         }
+        if (mcp_rw_controle($p, $minhas)) {
+            if (!isset($minhas[0])) {
+                $controle[] = $p;
+            }
+            continue;
+        }
+        $fila[] = [$proxima['devida_em'], $proxima['etapa'], $p];
+    }
+    if (!$fila && !$controle) {
+        return $r;
+    }
+    // O cupom da 3ª é decidido uma vez por rodada (lê o banco: vagas do cupom; e o oferta.json: turma aberta).
+    $oferta = array_filter($fila, static fn(array $f): bool => $f[1] === 3 && $f[2]['curso_slug'] === MCP_RW_CUPOM_CURSO) ? mcp_rw_oferta_cupom($agora) : null;
+    $fila = array_map(static fn(array $f): array => [$f[0], $f[1], $f[2], mcp_rw_modelo($f[1], $f[2], $oferta)], $fila);
+    // Modelo não aprovado (ou pausado) não é tentado: a Meta recusaria e a etapa ficaria esperando à toa. Vale o modelo
+    // escolhido para cada pessoa. Se a Kapso não respondeu a lista agora, segue: o erro do envio também para a rodada sem
+    // gastar a etapa.
+    $modelos = mcp_rw_modelos($cfg, $agora);
+    $aprovado = static fn(string $nome): bool => !$modelos['ok'] || ($modelos['modelos'][$nome] ?? '') === 'APPROVED';
+    // O motivo diz só os modelos que seguraram alguém nesta rodada (um modelo que ninguém usaria agora não importa).
+    $faltam = array_values(array_unique(array_map(static fn(array $f): string => $f[3]['nome'], array_filter($fila, static fn(array $f): bool => !$aprovado($f[3]['nome'])))));
+    $fila = array_values(array_filter($fila, static fn(array $f): bool => $aprovado($f[3]['nome'])));
+    if ($faltam) {
+        $r['motivo'] = 'modelo sem aprovação: ' . implode(', ', $faltam);
+    }
+    $db = mcp_db();
+    // Grupo de controle: só a linha etapa 0, sem a Kapso e fora dos tetos. Gravada quando a 1ª mensagem sairia de
+    // verdade (o modelo da 1ª aprovado, depois da mesma reconferência): assim o controle começa a contar no mesmo
+    // ponto em que quem recebe teria recebido, e a comparação das duas taxas é justa.
+    foreach ($controle as $p) {
+        if (!$aprovado(mcp_rw_modelo(1, $p)['nome']) || mcp_rw_reconferir($p) !== null) {
+            continue;
+        }
+        $chave = mcp_rw_hmac($p['principal']);
+        $telefone = mcp_rw_hmac('t:' . $p['numero']);
+        $outras = array_values(array_diff(mcp_rw_chaves($p), [$chave, $telefone]));
+        $quando = gmdate('Y-m-d H:i:s', $agoraReal());
+        $grava = $db->prepare("INSERT IGNORE INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, modelo, curso_slug, curso_nome, telefone_hash, chaves, status, criado_em, atualizado_em)
+            VALUES (?, ?, 0, NULL, ?, ?, ?, ?, 'controle', ?, ?)");
+        $grava->execute([$chave, $p['origem'], $p['curso_slug'] !== '' ? mb_substr($p['curso_slug'], 0, 80) : null, mb_substr($p['curso_nome'], 0, 160), $telefone,
+            $outras ? implode(' ', $outras) : null, $quando, $quando]);
+        $r['controle'] += $grava->rowCount();
     }
     if (!$fila) {
         return $r;
     }
-    // Modelo não aprovado (ou pausado) não é tentado: a Meta recusaria e a etapa ficaria esperando à toa. Se a Kapso não
-    // respondeu a lista agora, segue: o erro do envio também para a rodada sem gastar a etapa.
-    $modelos = mcp_rw_modelos($cfg, $agora);
-    if ($modelos['ok']) {
-        $fila = array_values(array_filter($fila, static fn(array $f): bool => ($modelos['modelos'][MCP_RW_MODELOS[$f[1]]] ?? '') === 'APPROVED'));
-        $faltam = array_keys(array_filter($modelos['modelos'], static fn(string $s): bool => $s !== 'APPROVED'));
-        if ($faltam) {
-            $r['motivo'] = 'modelo sem aprovação: ' . implode(', ', $faltam);
-        }
-    }
     usort($fila, static fn(array $a, array $b): int => [$a[0], $a[2]['principal']] <=> [$b[0], $b[2]['principal']]);
-    $db = mcp_db();
     $noDia = mcp_rw_enviadas_24h($agora);
     $incertosSeguidos = 0;
-    foreach ($fila as [, $etapa, $p]) {
+    foreach ($fila as [, $etapa, $p, $modelo]) {
         if ($r['enviados'] + $r['falhas'] >= MCP_RW_POR_RODADA) {
             break;
         }
@@ -1024,16 +1194,16 @@ function mcp_rw_rodar(?int $agora = null): array
         $outras = array_values(array_diff(mcp_rw_chaves($p), [$chave, $telefone]));
         // A linha é reservada ANTES do envio: a UNIQUE(pessoa_chave, etapa) garante que só um processo manda esta etapa.
         $quando = gmdate('Y-m-d H:i:s', $agoraEnvio);
-        $reserva = $db->prepare("INSERT IGNORE INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, chaves, status, erro, criado_em, atualizado_em)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");
-        $reserva->execute([$chave, $p['origem'], $etapa, $p['curso_slug'] !== '' ? mb_substr($p['curso_slug'], 0, 80) : null, mb_substr($p['curso_nome'], 0, 160), $telefone,
+        $reserva = $db->prepare("INSERT IGNORE INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, modelo, curso_slug, curso_nome, telefone_hash, chaves, status, erro, criado_em, atualizado_em)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");
+        $reserva->execute([$chave, $p['origem'], $etapa, $modelo['nome'], $p['curso_slug'] !== '' ? mb_substr($p['curso_slug'], 0, 80) : null, mb_substr($p['curso_nome'], 0, 160), $telefone,
             $outras ? implode(' ', $outras) : null, $quando, $quando]);
         if ($reserva->rowCount() !== 1) {
             $r['pulados']++;
             continue;
         }
         $id = (int) $db->lastInsertId();
-        $corpo = mcp_rw_corpo_envio((string) $p['numero'], $etapa, $p['primeiro_nome'], $p['curso_nome'], mcp_rw_caminho_botao($p['curso_slug'], $etapa));
+        $corpo = mcp_rw_corpo_envio((string) $p['numero'], $modelo);
         $envio = mcp_rw_kapso_enviar($cfg, $corpo);
         if (!$envio['ok'] && $envio['transitorio']) {
             // A Kapso (ou a Meta) não está aceitando agora: a etapa não foi gasta e o resto espera a próxima rodada.
@@ -1157,7 +1327,8 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             $linha = $stmt->fetch() ?: null;
         }
         if ($linha === null) {
-            $stmt = $db->prepare('SELECT id, resposta FROM mcp_recuperacao_whatsapp WHERE telefone_hash = ? AND criado_em >= ? ORDER BY id DESC LIMIT 1');
+            // A linha do grupo de controle não é mensagem: uma resposta desse celular não é a ela.
+            $stmt = $db->prepare("SELECT id, resposta FROM mcp_recuperacao_whatsapp WHERE telefone_hash = ? AND criado_em >= ? AND status <> 'controle' ORDER BY id DESC LIMIT 1");
             $stmt->execute([mcp_rw_hmac('t:' . $numero), gmdate('Y-m-d H:i:s', $agora - 30 * 86400)]);
             $linha = $stmt->fetch() ?: null;
         }
@@ -1175,22 +1346,48 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
 }
 
 // ----------------------------------------------------------------------------- métricas (puro)
-/**
- * Os números do painel, sem dado pessoal. $linhas: todas de mcp_recuperacao_whatsapp; $pessoas: de mcp_rw_carregar.
- * Recuperada = pessoa que recebeu a 1ª mensagem e pagou (em qualquer sistema) DEPOIS dela; a taxa é sobre quem recebeu
- * a 1ª mensagem nos últimos MCP_RW_JANELA_METRICA_DIAS dias.
- */
-function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
+/** A mediana de uma lista de números, ou null se vazia. */
+function mcp_rw_mediana(array $valores): ?float
 {
-    $m = ['no_fluxo' => 0, 'etapas' => [1 => 0, 2 => 0, 3 => 0], 'falhas' => 0, 'entregues' => 0, 'lidas' => 0, 'responderam' => 0, 'nao_querem' => 0,
-        'receberam' => 0, 'recuperadas' => 0, 'taxa' => null, 'origens' => [], 'cursos' => [], 'dias' => [], 'lista' => []];
+    if (!$valores) {
+        return null;
+    }
+    sort($valores);
+    $n = count($valores);
+    $meio = intdiv($n, 2);
+    return (float) ($n % 2 === 1 ? $valores[$meio] : ($valores[$meio - 1] + $valores[$meio]) / 2);
+}
+
+/**
+ * Os números do painel, sem dado pessoal nos agregados. $linhas: todas de mcp_recuperacao_whatsapp; $pessoas: de
+ * mcp_rw_carregar; $oferta: de mcp_rw_oferta_cupom (o modelo da próxima mensagem de cada pessoa na lista); $peloLink:
+ * o pelo_link de mcp_rw_carregar.
+ *  - recuperada = pessoa que recebeu a 1ª mensagem e pagou (em qualquer sistema) DEPOIS dela; a taxa é sobre quem
+ *    recebeu a 1ª nos últimos MCP_RW_JANELA_METRICA_DIAS dias;
+ *  - por_mensagem / por_modelo: das recuperadas, a última mensagem enviada antes do pagamento;
+ *  - mediana_horas: entre a 1ª mensagem e o pagamento, nas recuperadas;
+ *  - controle × tratamento: quem é do grupo de controle (linha etapa 0) e pagou depois dela, contra quem recebeu a 1ª e
+ *    pagou depois dela, no mesmo período; efeito_pp = diferença das taxas, em pontos percentuais.
+ */
+function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $oferta = null, array $peloLink = []): array
+{
+    $m = ['no_fluxo' => 0, 'no_controle' => 0, 'etapas' => [1 => 0, 2 => 0, 3 => 0], 'falhas' => 0, 'entregues' => 0, 'lidas' => 0, 'responderam' => 0, 'nao_querem' => 0,
+        'receberam' => 0, 'recuperadas' => 0, 'taxa' => null, 'por_mensagem' => [1 => 0, 2 => 0, 3 => 0], 'por_modelo' => [],
+        'pelo_link' => array_replace(array_fill_keys(MCP_RW_CAMPANHAS, 0), array_intersect_key($peloLink, array_flip(MCP_RW_CAMPANHAS))),
+        'mediana_horas' => null, 'controle' => ['pessoas' => 0, 'pagaram' => 0, 'taxa' => null], 'tratamento' => ['pessoas' => 0, 'pagaram' => 0, 'taxa' => null],
+        'efeito_pp' => null, 'origens' => [], 'cursos' => [], 'dias' => [], 'lista' => []];
     $diaDe = static fn(int $ts): string => gmdate('Y-m-d', $ts + MCP_RW_FUSO_SEGUNDOS);
+    // As linhas antigas (antes da coluna modelo) eram todas rec_inscricao_<etapa>.
+    $modeloDe = static fn(array $l): string => (string) ($l['modelo'] ?? '') !== '' ? (string) $l['modelo'] : 'rec_inscricao_' . (int) $l['etapa'];
     for ($i = MCP_RW_DIAS_METRICA - 1; $i >= 0; $i--) {
         $m['dias'][$diaDe($agora - $i * 86400)] = ['mensagens' => 0, 'recuperacoes' => 0];
     }
     $responderam = [];
     $naoQuerem = [];
     foreach ($linhas as $l) {
+        if ($l['status'] === 'controle') {
+            continue; // não é mensagem: só marca quem é do grupo de controle
+        }
         if ($l['status'] === 'enviado') {
             $m['etapas'][(int) $l['etapa']] = ($m['etapas'][(int) $l['etapa']] ?? 0) + 1;
             $m['entregues'] += in_array($l['entrega'], ['entregue', 'lida'], true) ? 1 : 0;
@@ -1205,6 +1402,9 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
             $c = (string) $l['curso_nome'];
             $m['cursos'][$c] ??= ['mensagens' => 0, 'pessoas' => 0, 'recuperadas' => 0];
             $m['cursos'][$c]['mensagens']++;
+            $mo = $modeloDe($l);
+            $m['por_modelo'][$mo] ??= ['enviadas' => 0, 'recuperadas' => 0];
+            $m['por_modelo'][$mo]['enviadas']++;
         } elseif ($l['erro'] !== 'enviando') {
             $m['falhas']++;
         }
@@ -1221,8 +1421,15 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
     $indice = mcp_rw_indice($linhas);
     $inicioMetrica = $agora - MCP_RW_JANELA_METRICA_DIAS * 86400;
     $vistas = [];
+    $horas = [];
     foreach ($pessoas as $p) {
         $minhas = mcp_rw_da_pessoa($p, $indice);
+        $zero = $minhas[0] ?? null;
+        if ($zero !== null && $zero['status'] === 'controle' && $zero['criado_ts'] >= $inicioMetrica && !isset($vistas[$zero['id']])) {
+            $vistas[$zero['id']] = true;
+            $m['controle']['pessoas']++;
+            $m['controle']['pagaram'] += array_filter($p['pagamentos'], static fn(int $ts): bool => $ts > $zero['criado_ts']) ? 1 : 0;
+        }
         $primeira = $minhas[1] ?? null;
         if ($primeira !== null && $primeira['status'] === 'enviado' && $primeira['criado_ts'] >= $inicioMetrica && !isset($vistas[$primeira['id']])) {
             $vistas[$primeira['id']] = true;
@@ -1242,6 +1449,18 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
                 if (isset($m['dias'][$d])) {
                     $m['dias'][$d]['recuperacoes']++;
                 }
+                $horas[] = ($depois[0] - $primeira['criado_ts']) / 3600;
+                // A última mensagem que saiu antes do pagamento é a que leva o crédito.
+                $ultima = $primeira;
+                foreach ($minhas as $etapa => $l) {
+                    if ($etapa >= 1 && $l['status'] === 'enviado' && $l['criado_ts'] < $depois[0] && $l['criado_ts'] >= $ultima['criado_ts']) {
+                        $ultima = $l;
+                    }
+                }
+                $m['por_mensagem'][(int) $ultima['etapa']] = ($m['por_mensagem'][(int) $ultima['etapa']] ?? 0) + 1;
+                $mo = $modeloDe($ultima);
+                $m['por_modelo'][$mo] ??= ['enviadas' => 0, 'recuperadas' => 0];
+                $m['por_modelo'][$mo]['recuperadas']++;
             }
         }
         if (!$p['no_fluxo'] || mcp_rw_nao_quer($p, $indice)) {
@@ -1252,17 +1471,27 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
         if ($proxima === null) {
             continue; // já recebeu as três, ou uma etapa não chegou (número sem WhatsApp): não há mais nada a mandar
         }
-        $m['no_fluxo']++;
+        $controle = mcp_rw_controle($p, $minhas);
+        $controle ? $m['no_controle']++ : $m['no_fluxo']++;
+        $modelo = $controle ? null : mcp_rw_modelo($proxima['etapa'], $p, $oferta);
         $respostas = array_values(array_filter(array_map(static fn(array $l): string => (string) $l['resposta'], $minhas)));
         $m['lista'][] = [
             'nome' => $p['nome'], 'origem' => $p['origem'], 'curso' => $p['curso_nome'], 'celular' => mcp_whatsapp_mascarado($p['numero']),
-            'etapa' => $enviadas ? max($enviadas) : 0, 'proxima' => mcp_rw_ajustar_horario(max($proxima['devida_em'], $agora)),
-            'proxima_etapa' => $proxima['etapa'], 'respostas' => $respostas,
+            'etapa' => $enviadas ? max($enviadas) : 0, 'controle' => $controle,
+            // Quem é do grupo de controle não tem próxima mensagem: nunca recebe.
+            'proxima' => $controle ? null : mcp_rw_ajustar_horario(max($proxima['devida_em'], $agora)),
+            'proxima_etapa' => $proxima['etapa'], 'modelo' => $modelo['nome'] ?? null, 'previa' => $modelo['previa'] ?? null, 'respostas' => $respostas,
         ];
     }
-    $m['taxa'] = $m['receberam'] > 0 ? $m['recuperadas'] / $m['receberam'] : null;
+    $m['taxa'] = $m['receberam'] > 0 ? (float) ($m['recuperadas'] / $m['receberam']) : null;
+    $m['mediana_horas'] = mcp_rw_mediana($horas);
+    $m['tratamento'] = ['pessoas' => $m['receberam'], 'pagaram' => $m['recuperadas'], 'taxa' => $m['taxa']];
+    $m['controle']['taxa'] = $m['controle']['pessoas'] > 0 ? (float) ($m['controle']['pagaram'] / $m['controle']['pessoas']) : null;
+    $m['efeito_pp'] = $m['taxa'] !== null && $m['controle']['taxa'] !== null ? ($m['taxa'] - $m['controle']['taxa']) * 100 : null;
     uasort($m['cursos'], static fn(array $a, array $b): int => [$b['mensagens'], $b['pessoas']] <=> [$a['mensagens'], $a['pessoas']]);
     ksort($m['origens']);
-    usort($m['lista'], static fn(array $a, array $b): int => [$a['proxima'], $a['nome']] <=> [$b['proxima'], $b['nome']]);
+    ksort($m['por_modelo']);
+    // Pela próxima mensagem; o grupo de controle, que não tem próxima, no fim.
+    usort($m['lista'], static fn(array $a, array $b): int => [$a['proxima'] === null, $a['proxima'] ?? 0, $a['nome']] <=> [$b['proxima'] === null, $b['proxima'] ?? 0, $b['nome']]);
     return $m;
 }

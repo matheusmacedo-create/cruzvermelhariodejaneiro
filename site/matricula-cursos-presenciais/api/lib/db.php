@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = 'f106bc8f57cd556a';
+const MCP_DB_VERSAO = '931fae470e1a361a';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -672,9 +672,9 @@ function mcp_migrar_tudo(PDO $pdo): void
     // A tabela acima ficou SEM USO no mesmo dia: a lista manual (wa.me e planilha) foi trocada pelo disparo automático
     // abaixo. Não é apagada (nunca se apaga tabela em produção por migração); se um dia sair, sai à mão.
     // Recuperação por WhatsApp (30/10/2026, lib/recuperacao_whatsapp.php): uma linha por mensagem automática (etapa 1, 2
-    // ou 3) a quem se cadastrou e não pagou. pessoa_chave e telefone_hash são HMAC-SHA256 com a chave
-    // 'recuperacao_whatsapp' de mcp_chaves: nem CPF nem telefone em claro. UNIQUE(pessoa_chave, etapa) é a trava que
-    // impede repetir uma etapa. chaves: os HMAC dos outros dados da pessoa (CPFs, e-mails, celulares do site e da
+    // ou 3; etapa 0 = grupo de controle, que não recebe) a quem se cadastrou e não pagou. pessoa_chave e telefone_hash
+    // são HMAC-SHA256 com a chave 'recuperacao_whatsapp' de mcp_chaves: nem CPF nem telefone em claro.
+    // UNIQUE(pessoa_chave, etapa) é a trava que impede repetir uma etapa. chaves: os HMAC dos outros dados da pessoa (CPFs, e-mails, celulares do site e da
     // escola), para achar as etapas dela mesmo quando a escola está fora do ar e só uma parte dos dados aparece.
     // entrega e resposta vêm do webhook da Kapso (api/kapso-webhook.php).
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_whatsapp (
@@ -682,11 +682,12 @@ function mcp_migrar_tudo(PDO $pdo): void
         pessoa_chave CHAR(64) NOT NULL,
         origem ENUM('site','escola') NOT NULL,
         etapa TINYINT UNSIGNED NOT NULL,
+        modelo VARCHAR(40) NULL,
         curso_slug VARCHAR(80) NULL,
         curso_nome VARCHAR(160) NOT NULL,
         telefone_hash CHAR(64) NOT NULL,
         chaves TEXT NULL,
-        status ENUM('enviado','falhou') NOT NULL,
+        status ENUM('enviado','falhou','controle') NOT NULL,
         provedor_id VARCHAR(128) NULL,
         entrega ENUM('entregue','lida','falhou') NULL,
         erro VARCHAR(255) NULL,
@@ -698,6 +699,12 @@ function mcp_migrar_tudo(PDO $pdo): void
         KEY ix_telefone (telefone_hash, criado_em),
         KEY ix_criado (criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Régua nova da recuperação (30/10/2026, depois do benchmarking): o modelo escolhido para cada pessoa fica gravado
+    // (a 3ª pode ser o rec_inscricao_3 ou o ps_cupom_oferta; linhas de antes ficam nulas e eram rec_inscricao_<etapa>),
+    // e o grupo de controle grava uma linha etapa 0 com status 'controle' (nunca recebe; só marca quem é do grupo).
+    // Acrescentar um valor no fim do ENUM não reescreve a tabela; o MODIFY é idempotente.
+    mcp_garantir_colunas($pdo, 'mcp_recuperacao_whatsapp', ['modelo' => 'VARCHAR(40) NULL']);
+    $pdo->exec("ALTER TABLE mcp_recuperacao_whatsapp MODIFY status ENUM('enviado','falhou','controle') NOT NULL");
 }
 
 /** Colunas dos lembretes em mcp_colaboradores (as mesmas do CREATE TABLE, para bancos antigos). */
