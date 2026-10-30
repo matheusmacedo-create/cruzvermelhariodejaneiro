@@ -34,6 +34,7 @@ while IFS='|' read -r caminho esperado trecho; do
 done <<'LISTA'
 api/ponto.php|200|"pede_codigo"
 api/painel.php|200|
+api/recuperacao.php|200|Entrar pelo Portal da secretaria
 api/avisos.php?u=1.abc|404|Este link não vale mais
 api/whatsapp.php|403|
 api/conferir.php|422|
@@ -49,9 +50,14 @@ api/medicao.php|405|
 api/turmas.php|405|
 LISTA
 
+# Recuperação do funil (30/10/2026): sem sessão, só o link de entrada; nenhum número nem pessoa na página.
+codigo=$(pedir "$m/api/recuperacao.php")
+if [ "$codigo" = 200 ] && ! grep -qE 'No público|Contatadas|Chamar no WhatsApp|Exportar planilha' "$tmp" \
+  && grep -qi '^x-robots-tag:.*noindex' "$tmp.cab"; then ok "api/recuperacao.php sem sessão não mostra dados (noindex)"; else falha "api/recuperacao.php sem sessão → $codigo, mostrou dados ou faltou noindex"; fi
+
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
-  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/comparecimentos.php api/lembretes.php; do
+  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_funil.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done

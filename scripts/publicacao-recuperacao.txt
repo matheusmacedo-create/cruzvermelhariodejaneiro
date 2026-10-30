@@ -1,0 +1,8 @@
+# Recuperação do funil (30/10/2026). Detalhes no README, "Recuperação do funil (30/10/2026)".
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria a tabela mcp_recuperacao_contatos); depois o
+# módulo novo, que a página carrega sozinha (o lib.php não muda); a página por último.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/recuperacao_funil.php
+site/matricula-cursos-presenciais/api/recuperacao.php

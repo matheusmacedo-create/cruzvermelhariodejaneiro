@@ -1245,6 +1245,46 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
+## Recuperação do funil (30/10/2026)
+
+Pedido do Matheus: chamar quem deixou os dados no checkout e não pagou, com o convite para a turma de **Primeiros
+Socorros Básico de 17/11**. **Situação: construído e testado só na máquina; NADA foi publicado** (nem a tabela nova).
+
+- **O que faz**: página avulsa da secretaria, `api/recuperacao.php` (fora do `painel.php`, sem JavaScript, nada se
+  mexe sozinho). Entra com a mesma sessão do Portal (o cookie vale para `api/`); sem sessão, só o link "Entrar pelo
+  Portal da secretaria", nenhum dado. Todo POST leva o token do formulário (`mcp_painel_csrf`); `noindex` e `no-store`.
+- **Quem entra**: inscrições dos últimos **180 dias** que nunca viraram pagamento. Uma **pessoa** junta as tentativas
+  com o mesmo CPF, e-mail (minúsculo) ou telefone (só dígitos, com ou sem 55). Se **qualquer** linha da pessoa, de
+  qualquer curso e época, está `pago` ou `estornado`, ela sai. Saem também: quem pediu para não receber
+  (`mcp_avisos_bloqueios`, e-mail ou WhatsApp, pelo hash de `mcp_avisos_hash`), CPFs de `TESTE_CPFS` e cursos com
+  "teste" ou "dev" no slug ou no nome.
+- **Situação**: `novo`, `contatado` (1 contato ou mais), `recuperado` (pagou qualquer inscrição **depois** do 1º
+  contato registrado; sai da lista e fica só nas métricas) e `nao_quer` (marcado aqui; fora da lista e da planilha).
+- **WhatsApp manual**: "Chamar no WhatsApp" registra o contato e responde 303 para `wa.me/55<celular>?text=…`, numa
+  aba nova; quem envia é a secretaria. A mensagem usa o primeiro nome e o curso de interesse da tentativa mais recente
+  (quem já tentou Primeiros Socorros Básico ouve "Você começou sua inscrição … e ela não foi concluída"), a data da
+  turma aberta no `oferta.json` (`mcp_turma_aberta`) e o link do checkout com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=ps-<aaaammdd>`.
+  Sem turma aberta, o botão fica desligado. Sem preço e sem escassez no texto.
+- **Não quer contato**: grava o bloqueio do e-mail e do WhatsApp da pessoa (origem `recuperacao`). Vale também para os
+  avisos das aulas e comunicados, como o "não quero mais receber" da página.
+- **Planilha para a Kapso**: "Exportar planilha" (POST) baixa o público filtrado em CSV com vírgula:
+  `nome, primeiro_nome, telefone_e164 (55…), email, curso_interesse, ultima_tentativa`. Só novos e contatados. Cada
+  pessoa exportada conta como contatada (canal `exportacao`), e a exportação fica em `mcp_eventos`
+  (`recuperacao_exportacao`, com quem exportou).
+- **Métricas** (só contagens): no público, contatadas, recuperadas e a taxa (recuperadas ÷ contatadas), recuperadas pelo
+  lembrete do PIX que já existia (evento `email_pix_lembrete` seguido de pagamento da mesma pessoa e curso), quebra por
+  curso de interesse e os últimos 14 dias (WhatsApp, exportadas, recuperações). Filtros por curso e situação; 50 por página.
+- **Banco**: tabela `mcp_recuperacao_contatos` (criada pela migração do `db.php`, `MCP_DB_VERSAO` nova). `pessoa_chave`
+  é o HMAC-SHA256 do CPF com a chave `recuperacao_funil` de `mcp_chaves`: nunca o CPF em claro.
+- **Onde fica**: regra pura em `api/lib/recuperacao_funil.php` (`mcp_rf_*`), página em `api/recuperacao.php`.
+- **Testes**: `scripts/testar_recuperacao_funil_integracao.php` (61 verificações, MariaDB local e servidor PHP local;
+  nada externo é chamado, o wa.me só é conferido no `Location`). Também passaram `testar_recuperacao_integracao.php`,
+  `testar_avisos_integracao.php` e `testar_checkout.php`.
+- **Publicar** (quando o Matheus pedir): `scripts/publicacao-recuperacao.txt`; conferir com
+  `scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt` (sem sessão, a página responde 200 só com o link
+  de entrada). **Não publicado, não testado no ar** e sem link no menu do Portal: o endereço é
+  `/matricula-cursos-presenciais/api/recuperacao.php`.
+
 ## Cupom de desconto no checkout (30/10/2026)
 
 Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à
