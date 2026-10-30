@@ -449,7 +449,7 @@ CSS_PAGINA = """
 
     /* banner de campanha acima do topo (BANNER_TURMA): a arte já traz o texto; o link inteiro leva ao checkout */
     .v-banner-turma { display: block; background: #151515; }
-    .v-banner-turma img { display: block; width: 100%; max-width: 1920px; height: auto; margin: 0 auto; }
+    .v-banner-turma img { display: block; width: 100%; height: auto; } /* sem teto de 1920 px: em tela mais larga a foto acabava num corte seco */
     .v-banner-turma:focus-visible { outline: 3px solid var(--v-red); outline-offset: -3px; }
 
     /* topo do modo geral */
@@ -2265,7 +2265,7 @@ def main() -> int:
     <a class="v-banner-turma v-so-geral v-se-aberta" data-turma-de="{b["curso"]}" href="{checkout(b["curso"], "banner")}" data-local="banner">
       <picture>
         <source media="(max-width: 650px)" srcset="{img}-celular-540.webp 540w, {img}-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
-        <img src="{img}-1920.webp" srcset="{img}-960.webp 960w, {img}-1920.webp 1920w" sizes="(min-width: 1920px) 1920px, 100vw" width="1920" height="640" alt="{esc(b["alt"])}" fetchpriority="high" decoding="async">
+        <img src="{img}-1920.webp" srcset="{img}-960.webp 960w, {img}-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="{esc(b["alt"])}" fetchpriority="high" decoding="async">
       </picture>
     </a>'''
     destaques = f'''
