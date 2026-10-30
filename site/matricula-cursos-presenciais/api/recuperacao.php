@@ -8,8 +8,10 @@
  *  - Por pessoa: "Chamar no WhatsApp" registra o contato (mcp_recuperacao_contatos) e redireciona (303) para o wa.me com
  *    a mensagem pronta; nada sai sozinho, quem envia é a secretaria, do WhatsApp dela. "Não quer contato" bloqueia o
  *    e-mail e o WhatsApp da pessoa (mcp_avisos_bloqueios, origem 'recuperacao') e ela sai da lista.
- *  - "Exportar planilha" baixa o público filtrado para o disparo pelos modelos aprovados na Kapso; cada pessoa
- *    exportada conta como contatada (canal 'exportacao'), e a exportação fica em mcp_eventos com quem exportou.
+ *  - "Exportar planilha" baixa o público filtrado para o disparo pelos modelos aprovados na Kapso, só quem tem celular
+ *    válido (sem ele a Kapso não tem para onde mandar); cada pessoa exportada conta como contatada (canal 'exportacao'),
+ *    e a exportação fica em mcp_eventos com quem exportou.
+ *  - Recuperados, "não quer" e quem pediu para sair nunca aparecem com nome e e-mail: são só contagens nas métricas.
  *  - Todo POST leva o token do formulário (mcp_painel_csrf). HTML gerado no servidor, sem JavaScript, e nada se mexe
  *    sozinho na tela: nem atualização automática nem animação.
  */
@@ -109,9 +111,25 @@ function rf_curso_valido(string $curso): string
     return preg_match('/^[a-z0-9-]{1,80}$/', $curso) ? $curso : '';
 }
 
+/** Só as situações da lista de trabalho: recuperados e "não quer" não têm lista nominal (só contagem nas métricas). */
 function rf_situacao_valida(string $situacao): string
 {
-    return isset(MCP_RF_SITUACOES[$situacao]) ? $situacao : '';
+    return in_array($situacao, MCP_RF_SITUACOES_LISTA, true) ? $situacao : '';
+}
+
+/**
+ * O público com a situação de cada um. Logo depois de publicar, a tabela nova pode ainda não existir (a migração do
+ * db.php é adiada por 60 s quando uma transação longa segura o banco): aí a página diz isso, em vez de um erro 500.
+ */
+function rf_carregar(int $agora, string $sessao): array
+{
+    try {
+        return mcp_rf_carregar($agora);
+    } catch (PDOException $e) {
+        error_log('[matricula] recuperação do funil sem banco pronto: ' . $e->getMessage());
+        rf_pagina('<div class="aviso erro" role="status">O banco ainda não está pronto para esta página (a tabela dos contatos é criada '
+            . 'na primeira visita depois da publicação). Tente de novo em 1 minuto; se continuar assim, avise o responsável pelo site.</div>', $sessao, 503);
+    }
 }
 
 // ----------------------------------------------------------------------------- sem sessão: só o caminho de entrada
@@ -135,10 +153,12 @@ if ($metodo === 'POST') {
     if (!in_array($acao, ['whatsapp', 'nao_quer', 'exportar'], true) || $id < 0 || !hash_equals(mcp_painel_csrf($sessao, 'rf_' . $acao, $id), $token)) {
         rf_pagina('<div class="aviso erro">O formulário venceu ou não é desta sessão. <a href="recuperacao.php">Abra a página de novo</a> e tente outra vez.</div>', $sessao, 403);
     }
-    $pessoas = mcp_rf_carregar($agora);
+    $pessoas = rf_carregar($agora, $sessao);
     if ($acao === 'exportar') {
-        // Só quem ainda está no trabalho (novos e contatados): recuperados e "não quer" nunca vão para o disparo.
-        $lista = array_values(array_filter(mcp_rf_filtrar($pessoas, $curso, $situacao), static fn(array $p): bool => in_array($p['situacao'], ['novo', 'contatado'], true)));
+        // Só a lista de trabalho (novos e contatados) e só quem tem celular válido: sem celular a Kapso não tem para onde
+        // mandar, e registrar contato com essa pessoa a faria contar como "contatada" (e talvez "recuperada") sem ter
+        // recebido nada.
+        $lista = array_values(array_filter(mcp_rf_filtrar($pessoas, $curso, $situacao), static fn(array $p): bool => $p['whatsapp'] !== null));
         $turma = mcp_rf_turma($agora);
         mcp_rf_registrar_contatos($lista, 'exportacao', $turma ? mcp_rf_campanha($turma) : 'kapso', $sessao);
         mcp_registrar(null, 'recuperacao_exportacao', $sessao . ' · ' . count($lista) . ' pessoas · curso ' . ($curso ?: 'todos') . ' · situação ' . ($situacao ?: 'novos e contatados'));
@@ -148,7 +168,7 @@ if ($metodo === 'POST') {
         exit;
     }
     $pessoa = $id > 0 ? mcp_rf_pessoa_por_inscricao($pessoas, $id) : null;
-    if ($pessoa === null || !in_array($pessoa['situacao'], ['novo', 'contatado'], true)) {
+    if ($pessoa === null) {
         rf_voltar(rf_query($curso, $situacao, 1, ['erro' => 'saiu']));
     }
     if ($acao === 'nao_quer') {
@@ -165,7 +185,7 @@ if ($metodo === 'POST') {
 }
 
 // ----------------------------------------------------------------------------- tela
-$pessoas = mcp_rf_carregar($agora);
+$pessoas = rf_carregar($agora, $sessao);
 $m = mcp_rf_metricas($pessoas, mcp_rf_contatos_recentes($agora), mcp_rf_pix_recuperadas($agora), $agora);
 $turma = mcp_rf_turma($agora);
 $filtradas = mcp_rf_filtrar($pessoas, $curso, $situacao);
@@ -174,7 +194,8 @@ $pagina = min($pagina, $paginas);
 $nessa = array_slice($filtradas, ($pagina - 1) * MCP_RF_POR_PAGINA, MCP_RF_POR_PAGINA);
 
 $avisos = [
-    'ok' => ['nao_quer' => 'Pronto: essa pessoa não recebe mais mensagens nossas (e-mail e WhatsApp) e saiu da lista.'],
+    'ok' => ['nao_quer' => 'Pronto: essa pessoa saiu da lista e não recebe mais os avisos das aulas nem os comunicados (e-mail e WhatsApp). '
+        . 'O lembrete automático do PIX não consulta esse bloqueio: se ela abrir uma compra nova, o e-mail daquela compra ainda sai.'],
     'erro' => [
         'saiu' => 'Essa pessoa não está mais na lista (pagou, pediu para não receber ou a página estava desatualizada).',
         'sem_turma' => 'Não há turma de Primeiros Socorros Básico aberta para inscrição: a mensagem não foi aberta.',
@@ -200,7 +221,8 @@ $corpo .= '<section aria-label="Números" class="numeros">'
     . '<div class="numero"><b>' . $m['contatadas'] . '</b><span>Contatadas</span><small>com 1 contato ou mais</small></div>'
     . '<div class="numero"><b>' . $m['recuperadas'] . '</b><span>Recuperadas</span><small>pagaram depois do contato · ' . rf_e($taxa) . '</small></div>'
     . '<div class="numero"><b>' . $m['pix'] . '</b><span>Pelo lembrete do PIX</span><small>pagaram o mesmo curso depois do e-mail</small></div>'
-    . '<div class="numero"><b>' . $m['nao_quer'] . '</b><span>Não querem contato</span><small>marcadas nesta página</small></div>'
+    . '<div class="numero"><b>' . $m['nao_quer'] . '</b><span>Não querem contato</span><small>marcadas nesta página'
+    . ($m['bloqueadas'] > 0 ? ' · mais ' . $m['bloqueadas'] . ' pediram para sair depois do contato' : '') . '</small></div>'
     . '</section>';
 
 $linhasCurso = '';
@@ -223,10 +245,11 @@ foreach ($m['cursos'] as $slug => $c) {
     $opcoesCurso .= '<option value="' . rf_e((string) $slug) . '"' . ($curso === (string) $slug ? ' selected' : '') . '>' . rf_e($c['nome']) . '</option>';
 }
 $opcoesSituacao = '<option value="">Novos e contatados</option>';
-foreach (MCP_RF_SITUACOES as $valor => $rotulo) {
-    $opcoesSituacao .= '<option value="' . $valor . '"' . ($situacao === $valor ? ' selected' : '') . '>' . rf_e($rotulo) . '</option>';
+foreach (MCP_RF_SITUACOES_LISTA as $valor) {
+    $opcoesSituacao .= '<option value="' . $valor . '"' . ($situacao === $valor ? ' selected' : '') . '>' . rf_e(MCP_RF_SITUACOES[$valor]) . '</option>';
 }
-$exportaveis = count(array_filter($filtradas, static fn(array $p): bool => in_array($p['situacao'], ['novo', 'contatado'], true)));
+$exportaveis = count(array_filter($filtradas, static fn(array $p): bool => $p['whatsapp'] !== null));
+$semCelular = count($filtradas) - $exportaveis;
 $corpo .= '<section class="cartao"><div class="acoes" style="justify-content:space-between;align-items:flex-end">'
     . '<form class="filtros" method="get" action="recuperacao.php"><div><label for="f-curso">Curso de interesse</label><select id="f-curso" name="curso">' . $opcoesCurso . '</select></div>'
     . '<div><label for="f-situacao">Situação</label><select id="f-situacao" name="situacao">' . $opcoesSituacao . '</select></div>'
@@ -236,7 +259,8 @@ $corpo .= '<section class="cartao"><div class="acoes" style="justify-content:spa
     . '<input type="hidden" name="t" value="' . rf_e(mcp_painel_csrf($sessao, 'rf_exportar', 0)) . '">'
     . '<button class="btn btn-outline" type="submit"' . ($exportaveis ? '' : ' disabled') . '>Exportar planilha (' . $exportaveis . ')</button></form></div>'
     . '<p class="nota">A planilha (nome, primeiro_nome, telefone_e164, email, curso_interesse, ultima_tentativa) é para o disparo com os modelos aprovados na Kapso. '
-    . 'Só leva novos e contatados, e cada pessoa exportada passa a contar como contatada. Quem exportou fica registrado.</p>';
+    . 'Só leva novos e contatados com celular válido, e cada pessoa exportada passa a contar como contatada. Quem exportou fica registrado.'
+    . ($semCelular > 0 ? ' Ficam de fora ' . $semCelular . ' pessoa' . ($semCelular > 1 ? 's' : '') . ' deste filtro sem celular válido.' : '') . '</p>';
 
 // Lista de trabalho.
 if (!$nessa) {

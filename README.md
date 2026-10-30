@@ -1259,20 +1259,27 @@ Socorros Básico de 17/11**. **Situação: construído e testado só na máquina
   (`mcp_avisos_bloqueios`, e-mail ou WhatsApp, pelo hash de `mcp_avisos_hash`), CPFs de `TESTE_CPFS` e cursos com
   "teste" ou "dev" no slug ou no nome.
 - **Situação**: `novo`, `contatado` (1 contato ou mais), `recuperado` (pagou qualquer inscrição **depois** do 1º
-  contato registrado; sai da lista e fica só nas métricas) e `nao_quer` (marcado aqui; fora da lista e da planilha).
+  contato registrado, inclusive a própria tentativa que motivou o contato), `nao_quer` (marcado aqui) e `bloqueado`
+  (pediu para sair por outro caminho depois de ser chamado). A **lista** (com nome e e-mail) é só de novos e
+  contatados; as outras situações são só contagens nas métricas, sem filtro nominal. Quem já foi chamado continua em
+  "contatadas" depois de pagar, de pedir para sair ou de passar dos 180 dias, para a taxa não subir sozinha.
 - **WhatsApp manual**: "Chamar no WhatsApp" registra o contato e responde 303 para `wa.me/55<celular>?text=…`, numa
   aba nova; quem envia é a secretaria. A mensagem usa o primeiro nome e o curso de interesse da tentativa mais recente
   (quem já tentou Primeiros Socorros Básico ouve "Você começou sua inscrição … e ela não foi concluída"), a data da
   turma aberta no `oferta.json` (`mcp_turma_aberta`) e o link do checkout com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=ps-<aaaammdd>`.
   Sem turma aberta, o botão fica desligado. Sem preço e sem escassez no texto.
-- **Não quer contato**: grava o bloqueio do e-mail e do WhatsApp da pessoa (origem `recuperacao`). Vale também para os
-  avisos das aulas e comunicados, como o "não quero mais receber" da página.
+- **Não quer contato**: grava o bloqueio do e-mail e do WhatsApp da pessoa (origem `recuperacao`). Vale para esta lista
+  e para os avisos das aulas e comunicados, como o "não quero mais receber" da página. **Não** segura o lembrete
+  automático do PIX (`lib/recuperacao.php` não consulta os bloqueios): se a pessoa abrir uma compra nova, o e-mail
+  "falta o PIX" daquela compra ainda sai.
 - **Planilha para a Kapso**: "Exportar planilha" (POST) baixa o público filtrado em CSV com vírgula:
-  `nome, primeiro_nome, telefone_e164 (55…), email, curso_interesse, ultima_tentativa`. Só novos e contatados. Cada
+  `nome, primeiro_nome, telefone_e164 (55…), email, curso_interesse, ultima_tentativa`. Só novos e contatados com
+  celular válido (quem não tem fica de fora e não conta como contatado; a tela diz quantos). Cada
   pessoa exportada conta como contatada (canal `exportacao`), e a exportação fica em `mcp_eventos`
   (`recuperacao_exportacao`, com quem exportou).
 - **Métricas** (só contagens): no público, contatadas, recuperadas e a taxa (recuperadas ÷ contatadas), recuperadas pelo
-  lembrete do PIX que já existia (evento `email_pix_lembrete` seguido de pagamento da mesma pessoa e curso), quebra por
+  lembrete do PIX que já existia (pagamentos depois de um `email_pix_lembrete` da mesma pessoa e curso, cada pagamento
+  contado uma vez), quebra por
   curso de interesse e os últimos 14 dias (WhatsApp, exportadas, recuperações). Filtros por curso e situação; 50 por página.
 - **Banco**: tabela `mcp_recuperacao_contatos` (criada pela migração do `db.php`, `MCP_DB_VERSAO` nova). `pessoa_chave`
   é o HMAC-SHA256 do CPF com a chave `recuperacao_funil` de `mcp_chaves`: nunca o CPF em claro.
@@ -1282,7 +1289,9 @@ Socorros Básico de 17/11**. **Situação: construído e testado só na máquina
   `testar_avisos_integracao.php` e `testar_checkout.php`.
 - **Publicar** (quando o Matheus pedir): `scripts/publicacao-recuperacao.txt`; conferir com
   `scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt` (sem sessão, a página responde 200 só com o link
-  de entrada). **Não publicado, não testado no ar** e sem link no menu do Portal: o endereço é
+  de entrada). Esse script não enxerga a tabela nova: depois de publicar, **abra a página logada no Portal** e confira
+  que os números aparecem (se a migração ainda não rodou, a página diz "O banco ainda não está pronto…" com 503, em vez
+  de erro 500). **Não publicado, não testado no ar** e sem link no menu do Portal: o endereço é
   `/matricula-cursos-presenciais/api/recuperacao.php`.
 
 ## Cupom de desconto no checkout (30/10/2026)

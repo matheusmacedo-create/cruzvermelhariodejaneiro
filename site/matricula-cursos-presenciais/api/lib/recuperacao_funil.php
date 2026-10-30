@@ -10,11 +10,15 @@
  *  - uma PESSOA é o grupo de linhas ligadas por CPF, e-mail (minúsculo) ou telefone (só dígitos): quem errou o CPF numa
  *    tentativa e acertou na outra, ou trocou de e-mail, continua sendo uma pessoa só;
  *  - se QUALQUER linha da pessoa, de qualquer curso e de qualquer época, está paga ou estornada, ela sai (quem já é
- *    aluno não recebe "termine sua inscrição"). A exceção é quem pagou DEPOIS do primeiro contato daqui: essa pessoa
- *    é "recuperada" e aparece só nas métricas;
+ *    aluno não recebe "termine sua inscrição"). A exceção é quem pagou DEPOIS do primeiro contato daqui, inclusive a
+ *    própria tentativa que motivou o contato: essa pessoa é "recuperada" e aparece só nas métricas;
  *  - sai quem pediu para não receber (mcp_avisos_bloqueios, por e-mail ou WhatsApp, com o hash de mcp_avisos_hash).
  *    Quem a secretaria marcou "Não quer contato" aqui fica como 'nao_quer' (origem 'recuperacao'), fora da lista;
  *  - saem os CPFs de teste (TESTE_CPFS) e os cursos de teste (slug ou nome com "teste" ou "dev").
+ *
+ * A lista de trabalho ('na_lista') e a base das métricas são coisas diferentes: quem já foi chamado continua contando
+ * em "contatadas" depois de pagar, de pedir para sair ('bloqueado', por outro caminho que não esta página) ou de passar
+ * dos 180 dias. Só sai da lista e da planilha.
  *
  * O registro dos contatos (mcp_recuperacao_contatos) guarda só o HMAC do CPF: dá para saber se a pessoa já foi
  * chamada sem guardar o CPF de novo. A chave do HMAC fica em mcp_chaves (mcp_segredo), como a dos links do painel.
@@ -29,7 +33,9 @@ const MCP_RF_POR_PAGINA = 50;
 const MCP_RF_DIAS_METRICA = 14;
 // A turma que a mensagem oferece. Trocar de curso aqui exige trocar o texto de mcp_rf_mensagem junto.
 const MCP_RF_CURSO_CONVITE = 'primeiros-socorros-basico';
-const MCP_RF_SITUACOES = ['novo' => 'Novo', 'contatado' => 'Contatado', 'recuperado' => 'Recuperado', 'nao_quer' => 'Não quer contato'];
+const MCP_RF_SITUACOES = ['novo' => 'Novo', 'contatado' => 'Contatado', 'recuperado' => 'Recuperado', 'nao_quer' => 'Não quer contato', 'bloqueado' => 'Pediu para sair'];
+// As situações da lista de trabalho: as únicas que a página mostra com nome e e-mail (as outras são só contagens).
+const MCP_RF_SITUACOES_LISTA = ['novo', 'contatado'];
 const MCP_RF_CANAIS = ['whatsapp', 'email', 'exportacao'];
 const MCP_RF_PAGOS = ['pago', 'estornado'];
 
@@ -134,27 +140,28 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
 
     $pessoas = [];
     foreach ($grupos as $grupo) {
-        $pendentes = [];
+        $pendentes = []; // não pagas, dentro da janela: a lista de trabalho
+        $naoPagas = [];  // não pagas de qualquer época carregada (as de fora da janela vêm só se tiveram contato)
+        $pagas = [];
         $pagoTs = null;
         foreach ($grupo as $l) {
             if (in_array($l['status'], MCP_RF_PAGOS, true)) {
-                $ts = mcp_rf_ts($l['pago_em'] ?: ($l['atualizado_em'] ?: $l['criado_em']));
-                $pagoTs = $pagoTs === null ? $ts : min($pagoTs, (int) $ts);
-            } elseif ((string) $l['criado_em'] >= $inicio) {
-                $pendentes[] = $l;
+                $ts = (int) mcp_rf_ts($l['pago_em'] ?: ($l['atualizado_em'] ?: $l['criado_em']));
+                $pagas[] = $l + ['_pago_ts' => $ts];
+                $pagoTs = $pagoTs === null ? $ts : min($pagoTs, $ts);
+            } else {
+                $naoPagas[] = $l;
+                if ((string) $l['criado_em'] >= $inicio) {
+                    $pendentes[] = $l;
+                }
             }
         }
-        if (!$pendentes) {
-            continue; // só linhas pagas, ou tentativas velhas demais
-        }
-        // A mais recente primeiro: é dela o nome, o e-mail e o curso de interesse.
-        usort($pendentes, static fn(array $a, array $b): int => [$b['criado_em'], (int) $b['id']] <=> [$a['criado_em'], (int) $a['id']]);
-        $recente = $pendentes[0];
 
+        // Os contatos vêm de TODAS as linhas do grupo, pagas inclusive: quem conclui a própria tentativa depois da
+        // mensagem (o PIX ainda valia, ou o pagamentos.php reaproveitou a cobrança aberta) tem só a linha paga.
         $chaves = [];
         $emails = [];
         $whatsapps = [];
-        $telefone = '';
         foreach ($grupo as $l) {
             $cpf = mcp_digitos((string) $l['cpf']);
             if (strlen($cpf) === 11) {
@@ -164,21 +171,10 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
             if ($email !== '') {
                 $emails[$email] = true;
             }
-        }
-        foreach ($pendentes as $l) {
-            $tel = mcp_rf_telefone((string) $l['telefone']);
-            $telefone = $telefone !== '' ? $telefone : $tel;
-            $numero = mcp_whatsapp_numero($tel);
-            if ($numero !== null) {
-                $whatsapps[$numero] = true;
-            }
-        }
-        foreach ($grupo as $l) {
             if (($numero = mcp_whatsapp_numero(mcp_rf_telefone((string) $l['telefone']))) !== null) {
-                $whatsapps += [$numero => true]; // os das linhas pagas também contam para o bloqueio
+                $whatsapps[$numero] = true; // os das linhas pagas também contam para o bloqueio
             }
         }
-
         $meus = [];
         foreach (array_keys($chaves) as $k) {
             foreach ($contatos[$k] ?? [] as $c) {
@@ -188,6 +184,10 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
         usort($meus, static fn(array $a, array $b): int => strcmp((string) $a['criado_em'], (string) $b['criado_em']));
         $primeiroContato = $meus ? (string) $meus[0]['criado_em'] : null;
 
+        // A lista de trabalho é só de quem está na janela, sem pagamento e sem bloqueio. As métricas olham mais longe:
+        // quem foi chamado continua em "contatadas" mesmo depois de pagar, de pedir para sair ou de passar dos 180 dias,
+        // senão cada recusa saía do denominador e a taxa subia sozinha.
+        $naLista = false;
         if ($pagoTs !== null) {
             // Pagou alguma coisa: só fica (como recuperada) se pagou depois do primeiro contato daqui.
             if ($primeiroContato === null || $pagoTs <= (int) mcp_rf_ts($primeiroContato)) {
@@ -206,22 +206,45 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
             if (in_array('recuperacao', $origens, true)) {
                 $situacao = 'nao_quer';
             } elseif ($origens) {
-                continue; // pediu para não receber por outro caminho (link do e-mail, PARAR no WhatsApp)
+                $situacao = 'bloqueado'; // pediu para não receber por outro caminho (link do e-mail, SAIR no WhatsApp)
             } else {
                 $situacao = $meus ? 'contatado' : 'novo';
+                $naLista = $pendentes !== [];
+            }
+            if (!$pendentes && !$meus) {
+                continue; // tentativas velhas demais e nunca chamada: não é mais assunto desta página
+            }
+            if ($situacao === 'bloqueado' && !$meus) {
+                continue; // pediu para sair antes de ser chamada: nem lista nem métrica
             }
         }
 
+        // As linhas que descrevem a pessoa: as pendentes da janela; sem elas, as não pagas mais antigas (que vieram por
+        // terem contato); sem essas, as pagas depois do contato (a própria tentativa concluída).
+        $primeiroTs = $primeiroContato !== null ? (int) mcp_rf_ts($primeiroContato) : 0;
+        $base = $pendentes ?: ($naoPagas ?: array_values(array_filter($pagas, static fn(array $l): bool => $l['_pago_ts'] > $primeiroTs)));
+        // A mais recente primeiro: é dela o nome, o e-mail e o curso de interesse.
+        usort($base, static fn(array $a, array $b): int => [$b['criado_em'], (int) $b['id']] <=> [$a['criado_em'], (int) $a['id']]);
+        $recente = $base[0];
+        $cpfRecente = mcp_digitos((string) $recente['cpf']);
+
         $cursos = [];
-        foreach ($pendentes as $l) {
+        foreach ($base as $l) {
             $cursos[(string) $l['curso_slug']] ??= (string) $l['curso_nome'];
         }
-        $cpfRecente = mcp_digitos((string) $recente['cpf']);
+        // Telefone e celular só das tentativas com o CPF da mais recente: o grupo junta CPFs diferentes que dividem um
+        // e-mail ou telefone, e o nome e o curso de uma pessoa não podem ir para o celular de outra. Sem celular válido
+        // nessas tentativas, o WhatsApp fica desligado e a pessoa não vai para a planilha.
+        $telefone = '';
         $whatsappRecente = null;
-        foreach ($pendentes as $l) {
-            if (($whatsappRecente = mcp_whatsapp_numero(mcp_rf_telefone((string) $l['telefone']))) !== null) {
-                break;
+        foreach ($base as $l) {
+            $mesma = strlen($cpfRecente) === 11 ? mcp_digitos((string) $l['cpf']) === $cpfRecente : $l === $recente;
+            if (!$mesma) {
+                continue;
             }
+            $tel = mcp_rf_telefone((string) $l['telefone']);
+            $telefone = $telefone !== '' ? $telefone : $tel;
+            $whatsappRecente ??= mcp_whatsapp_numero($tel);
         }
         $pessoas[] = [
             'id' => (int) $recente['id'],
@@ -239,8 +262,9 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
             'curso_slug' => (string) $recente['curso_slug'],
             'curso_interesse' => (string) $recente['curso_nome'],
             'ultima_tentativa' => (string) $recente['criado_em'],
-            'tentativas' => count($pendentes),
+            'tentativas' => count($base),
             'situacao' => $situacao,
+            'na_lista' => $naLista,
             'contatos' => count($meus),
             'primeiro_contato' => $primeiroContato,
             'ultimo_contato' => $meus ? (string) end($meus)['criado_em'] : null,
@@ -252,22 +276,23 @@ function mcp_rf_agrupar(array $linhas, array $contatos, callable $chave, callabl
 }
 
 /**
- * Filtro da lista: situação '' é a lista de trabalho (novos e contatados); recuperados e "não quer" aparecem só quando
- * pedidos. Curso '' = todos; senão, quem tentou esse curso em alguma das tentativas.
+ * Filtro da lista de trabalho: só quem está nela (novos e contatados, na janela, sem pagamento nem bloqueio).
+ * Recuperados, "não quer" e quem pediu para sair nunca saem daqui com nome e e-mail: ficam só nas métricas.
+ * Situação '' = novos e contatados; curso '' = todos; senão, quem tentou esse curso em alguma das tentativas.
  */
 function mcp_rf_filtrar(array $pessoas, string $curso = '', string $situacao = ''): array
 {
     return array_values(array_filter($pessoas, static function (array $p) use ($curso, $situacao): bool {
-        $ok = $situacao === '' ? in_array($p['situacao'], ['novo', 'contatado'], true) : $p['situacao'] === $situacao;
+        $ok = $p['na_lista'] && in_array($p['situacao'], MCP_RF_SITUACOES_LISTA, true) && ($situacao === '' || $p['situacao'] === $situacao);
         return $ok && ($curso === '' || isset($p['cursos'][$curso]));
     }));
 }
 
-/** A pessoa de uma inscrição (qualquer tentativa dela na janela), ou null se ela não está mais no público. */
+/** A pessoa de uma inscrição (qualquer tentativa dela na janela), ou null se ela não está mais na lista de trabalho. */
 function mcp_rf_pessoa_por_inscricao(array $pessoas, int $id): ?array
 {
     foreach ($pessoas as $p) {
-        if (in_array($id, $p['ids'], true)) {
+        if ($p['na_lista'] && in_array($id, $p['ids'], true)) {
             return $p;
         }
     }
@@ -341,7 +366,7 @@ function mcp_rf_telefone_mascarado(string $digitos): string
 function mcp_rf_metricas(array $pessoas, array $contatosLinhas, int $pixRecuperadas, ?int $agora = null): array
 {
     $agora ??= time();
-    $m = ['publico' => 0, 'novas' => 0, 'contatadas' => 0, 'recuperadas' => 0, 'nao_quer' => 0, 'taxa' => null, 'pix' => $pixRecuperadas, 'cursos' => [], 'dias' => []];
+    $m = ['publico' => 0, 'novas' => 0, 'contatadas' => 0, 'recuperadas' => 0, 'nao_quer' => 0, 'bloqueadas' => 0, 'taxa' => null, 'pix' => $pixRecuperadas, 'cursos' => [], 'dias' => []];
     $fuso = mcp_fuso_brt();
     $hoje = (new DateTimeImmutable('@' . $agora))->setTimezone($fuso)->setTime(0, 0);
     for ($i = MCP_RF_DIAS_METRICA - 1; $i >= 0; $i--) {
@@ -349,14 +374,15 @@ function mcp_rf_metricas(array $pessoas, array $contatosLinhas, int $pixRecupera
     }
     $dia = static fn(string $utc): string => (new DateTimeImmutable($utc, new DateTimeZone('UTC')))->setTimezone($fuso)->format('Y-m-d');
     foreach ($pessoas as $p) {
-        $noPublico = in_array($p['situacao'], ['novo', 'contatado'], true);
+        $noPublico = $p['na_lista'];
         $contatada = $p['contatos'] > 0;
         $recuperada = $p['situacao'] === 'recuperado';
         $m['publico'] += $noPublico ? 1 : 0;
-        $m['novas'] += $p['situacao'] === 'novo' ? 1 : 0;
+        $m['novas'] += $noPublico && $p['situacao'] === 'novo' ? 1 : 0;
         $m['contatadas'] += $contatada ? 1 : 0;
         $m['recuperadas'] += $recuperada ? 1 : 0;
         $m['nao_quer'] += $p['situacao'] === 'nao_quer' ? 1 : 0;
+        $m['bloqueadas'] += $p['situacao'] === 'bloqueado' ? 1 : 0;
         foreach ($p['cursos'] as $slug => $nome) {
             $m['cursos'][$slug] ??= ['nome' => $nome, 'pessoas' => 0, 'contatadas' => 0, 'recuperadas' => 0];
             $m['cursos'][$slug]['pessoas'] += $noPublico ? 1 : 0;
@@ -378,35 +404,38 @@ function mcp_rf_metricas(array $pessoas, array $contatosLinhas, int $pixRecupera
 }
 
 /**
- * Quantas inscrições que receberam o lembrete do PIX (evento email_pix_lembrete) viraram pagamento da mesma pessoa
- * (CPF, e-mail ou telefone) no mesmo curso, depois do lembrete. Puro: recebe as duas listas.
+ * Quantos pagamentos vieram depois do lembrete do PIX (evento email_pix_lembrete) da mesma pessoa (CPF, e-mail ou
+ * telefone) no mesmo curso. Conta cada inscrição PAGA uma vez só: quem abandonou o mesmo curso duas vezes recebe dois
+ * lembretes, mas um pagamento continua sendo um. Puro: recebe as duas listas.
  *
- * @param array $lembretes inscricao_id, cpf, email, telefone, curso_slug, enviado_em
- * @param array $pagos     cpf, email, telefone, curso_slug, pago_em
+ * @param array $lembretes cpf, email, telefone, curso_slug, enviado_em
+ * @param array $pagos     id, cpf, email, telefone, curso_slug, pago_em
  */
 function mcp_rf_pix_contar(array $lembretes, array $pagos): int
 {
-    $indice = [];
-    foreach ($pagos as $p) {
-        $ts = (int) mcp_rf_ts((string) $p['pago_em']);
-        foreach (['c:' . mcp_digitos((string) $p['cpf']), 'e:' . mcp_rf_email((string) $p['email']), 't:' . mcp_rf_telefone((string) $p['telefone'])] as $id) {
-            if (!str_ends_with($id, ':')) {
-                $k = $p['curso_slug'] . '|' . $id;
-                $indice[$k] = max($indice[$k] ?? 0, $ts);
-            }
-        }
-    }
-    $contadas = [];
+    $ids = static fn(array $l): array => array_filter(
+        ['c:' . mcp_digitos((string) $l['cpf']), 'e:' . mcp_rf_email((string) $l['email']), 't:' . mcp_rf_telefone((string) $l['telefone'])],
+        static fn(string $id): bool => !str_ends_with($id, ':'));
+    // O primeiro lembrete de cada pessoa (por chave) e curso.
+    $primeiro = [];
     foreach ($lembretes as $l) {
         $quando = (int) mcp_rf_ts((string) $l['enviado_em']);
-        foreach (['c:' . mcp_digitos((string) $l['cpf']), 'e:' . mcp_rf_email((string) $l['email']), 't:' . mcp_rf_telefone((string) $l['telefone'])] as $id) {
-            if (!str_ends_with($id, ':') && ($indice[$l['curso_slug'] . '|' . $id] ?? 0) > $quando) {
-                $contadas[(int) $l['inscricao_id']] = true;
+        foreach ($ids($l) as $id) {
+            $k = $l['curso_slug'] . '|' . $id;
+            $primeiro[$k] = min($primeiro[$k] ?? PHP_INT_MAX, $quando);
+        }
+    }
+    $contados = [];
+    foreach ($pagos as $p) {
+        $ts = (int) mcp_rf_ts((string) $p['pago_em']);
+        foreach ($ids($p) as $id) {
+            if (($primeiro[$p['curso_slug'] . '|' . $id] ?? PHP_INT_MAX) < $ts) {
+                $contados[(int) $p['id']] = true;
                 break;
             }
         }
     }
-    return count($contadas);
+    return count($contados);
 }
 
 // ----------------------------------------------------------------------------- planilha (pura)
@@ -439,8 +468,11 @@ function mcp_rf_carregar(?int $agora = null): array
 {
     $db = mcp_db();
     $inicio = mcp_rf_inicio($agora);
+    // As da janela, as pagas de qualquer época e as que já receberam contato (mesmo fora da janela: continuam contando
+    // em "contatadas" nas métricas, senão a taxa subia sozinha com o tempo).
     $stmt = $db->prepare("SELECT id, cpf, email, telefone, nome, curso_slug, curso_nome, status, criado_em, pago_em, atualizado_em
-        FROM mcp_inscricoes WHERE criado_em >= ? OR status IN ('pago', 'estornado')");
+        FROM mcp_inscricoes WHERE criado_em >= ? OR status IN ('pago', 'estornado')
+            OR id IN (SELECT inscricao_id FROM mcp_recuperacao_contatos WHERE inscricao_id IS NOT NULL)");
     $stmt->execute([$inicio]);
     $linhas = $stmt->fetchAll();
     $contatos = [];
@@ -475,7 +507,7 @@ function mcp_rf_pix_recuperadas(?int $agora = null): int
     if (!$lembretes) {
         return 0;
     }
-    $stmt = $db->prepare("SELECT cpf, email, telefone, curso_slug, COALESCE(pago_em, atualizado_em) AS pago_em FROM mcp_inscricoes
+    $stmt = $db->prepare("SELECT id, cpf, email, telefone, curso_slug, COALESCE(pago_em, atualizado_em) AS pago_em FROM mcp_inscricoes
         WHERE status IN ('pago', 'estornado') AND COALESCE(pago_em, atualizado_em) >= ?");
     $stmt->execute([$inicio]);
     return mcp_rf_pix_contar($lembretes, $stmt->fetchAll());
@@ -510,7 +542,9 @@ function mcp_rf_registrar_contatos(array $pessoas, string $canal, string $campan
 
 /**
  * "Não quer contato": bloqueia todos os e-mails e celulares da pessoa nos dois canais (mcp_avisos_bloqueios, origem
- * 'recuperacao'). Vale também para os avisos das aulas e comunicados, como o "não quero mais receber" da página.
+ * 'recuperacao'). Vale para esta lista e para os avisos das aulas e comunicados, como o "não quero mais receber" da
+ * página. NÃO segura o lembrete do PIX (lib/recuperacao.php não consulta os bloqueios): se a pessoa abrir um checkout
+ * novo, o e-mail "falta o PIX" daquela compra ainda sai.
  */
 function mcp_rf_nao_quer(array $pessoa, string $autor): void
 {
