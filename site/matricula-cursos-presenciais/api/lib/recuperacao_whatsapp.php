@@ -45,9 +45,12 @@
  */
 declare(strict_types=1);
 
-const MCP_RW_JANELA_DIAS = 10;
+// Quem entra no fluxo: cadastro dos últimos 90 dias (era 10). Com 10 dias só 3 pessoas cabiam; o levantamento de 30/10/2026
+// no espelho da Únicopag achou 21 que nunca pagaram nada desde agosto, e o pedido do responsável foi não perder ninguém.
+// Lead antigo recebe a mesma régua (a 1ª na rodada seguinte, depois 24 h e 72 h), e quem já pagou qualquer coisa sai.
+const MCP_RW_JANELA_DIAS = 90;
 // As métricas olham mais longe que a janela: quem recebeu a 1ª mensagem e pagou dias depois continua contando.
-const MCP_RW_JANELA_METRICA_DIAS = 40;
+const MCP_RW_JANELA_METRICA_DIAS = 120;
 // Segundos depois da âncora em que cada etapa fica devida. A 1ª com 1 h (era 3 h; decidido depois de um benchmarking,
 // 30/10/2026): a intenção de pagar esfria rápido, e a 1ª é um aviso de utilidade (inscrição pendente), não oferta.
 const MCP_RW_ETAPAS = [1 => 1 * 3600, 2 => 24 * 3600, 3 => 72 * 3600];

@@ -1265,8 +1265,8 @@ máquina; NADA foi publicado.**
     continua `rec_inscricao_3`. A oferta é decidida uma vez por rodada (`mcp_rw_oferta_cupom`; erro ao ler = sem cupom).
 
   O painel `api/recuperacao.php` só acompanha.
-- **Quem entra**: no checkout do site, inscrições pendente/expirado/recusado dos últimos **10 dias**; na plataforma da
-  escola, `"Usuario"` ALUNO criado nos últimos 10 dias sem matrícula paga (só a conta, ou matrícula sem pagar), lido
+- **Quem entra**: no checkout do site, inscrições pendente/expirado/recusado dos últimos **90 dias** (eram 10 até 30/10/2026: só 3 pessoas cabiam; o levantamento achou 21 desde agosto); na plataforma da
+  escola, `"Usuario"` ALUNO criado nos últimos 90 dias sem matrícula paga (só a conta, ou matrícula sem pagar), lido
   pelo PostgREST com `ESCOLA_API_TOKEN` (paginado, 10 s no máximo). Uma pessoa junta os dois sistemas por CPF, e-mail
   (minúsculo) ou celular (`mcp_whatsapp_numero`). **Sai** quem pagou qualquer coisa em qualquer sistema (site: pago ou
   estornado, de qualquer época; escola: taxa confirmada ou PAGO/PARCELADO), quem não tem celular válido, quem está em

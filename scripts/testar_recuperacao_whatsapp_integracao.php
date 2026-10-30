@@ -87,8 +87,8 @@ putenv("MCP_CONFIG_ESCOLA_ARQUIVO=$vazio");
 putenv("MCP_CONFIG_WHATSAPP_ARQUIVO=$vazio");
 putenv('MCP_CATALOGO_ARQUIVO=' . $raiz . '/site/matricula-cursos-presenciais/cursos.json');
 // Uma turma de Primeiros Socorros Básico aberta durante todo o teste (as datas ficam 400 dias no futuro): é ela que
-// libera o cupom da 3ª mensagem. O começo é 550 dias à frente; as inscrições fecham na véspera.
-$turmaInicio = (int) strtotime(gmdate('Y-m-d', time() + 550 * 86400) . ' 12:00:00 UTC'); // 9h de Brasília
+// libera o cupom da 3ª mensagem. O começo é 1400 dias à frente (depois da última seção, que fica a 400 + 700 dias); as inscrições fecham na véspera.
+$turmaInicio = (int) strtotime(gmdate('Y-m-d', time() + 1400 * 86400) . ' 12:00:00 UTC'); // 9h de Brasília
 $turmaAte = $turmaInicio - 86400;
 $ofertaTeste = tempnam(sys_get_temp_dir(), 'mcp-rw-oferta-');
 file_put_contents($ofertaTeste, json_encode(['parcelado_no_ar' => false, 'sem_turma' => [], 'turmas' => [[
@@ -393,7 +393,7 @@ try {
     $s10 = $criar('cursoteste', $A - 5 * 3600, ['curso_slug' => 'curso-teste', 'curso_nome' => 'Curso Teste']);
     $s11 = $criar('recente', $A - 1800);                                                     // 30 min: a 1ª ainda não
     $s15 = $criar('controle', $A - 4 * 3600, ['cpf' => cpf_de_teste(true)]);                // grupo de controle
-    $s12 = $criar('velho', $A - 11 * 86400);
+    $s12 = $criar('velho', $A - 91 * 86400);
     $s13 = $criar('semzap', $A - 5 * 3600, ['telefone' => $celular('0000')]);              // a Kapso recusa (131026)
     $e7 = $usuario('sematricula', $A - 4 * 3600);                                            // só criou a conta
     $e8 = $usuario('staff', $A - 4 * 3600, ['papel' => 'SECRETARIA']);
@@ -420,7 +420,7 @@ try {
     verificar('sai quem não tem celular válido', [$fixo['no_fluxo'] ?? null, $fixo['motivo'] ?? null], [false, 'sem_celular']);
     verificar('sai quem bloqueou o WhatsApp', $de($s8['telefone'])['motivo'] ?? null, 'bloqueou');
     verificar('saem CPF de teste e curso de teste', [$de($s9['telefone']), $de($s10['telefone'])], [null, null]);
-    verificar('sai cadastro de mais de 10 dias', $de($s12['telefone'])['motivo'] ?? null, 'fora_da_janela');
+    verificar('sai cadastro de mais de 90 dias', $de($s12['telefone'])['motivo'] ?? null, 'fora_da_janela');
     verificar('conta da escola que não é de aluno não entra', $de($e8['celular']), null);
     verificar('escola: quem só criou a conta entra, com "nossos cursos"', [$de($e7['celular'])['no_fluxo'] ?? null, $de($e7['celular'])['curso_nome'] ?? null, $de($e7['celular'])['curso_slug'] ?? null],
         [true, 'nossos cursos', '']);
@@ -632,7 +632,7 @@ try {
     verificar('métricas: ninguém da lista tem CPF ou celular inteiro', (bool) array_filter($m['lista'], static fn(array $p): bool => preg_match('/\d{8,}/', $p['celular'] . $p['nome']) === 1), false);
 
     // ------------------------------------------------------------------------- teto por rodada
-    $B = $A + 20 * 86400;
+    $B = $A + 100 * 86400;
     $novos = [];
     for ($i = 0; $i < 41; $i++) {
         $novos[] = $criar("lote$i", $B - 4 * 3600);
@@ -642,7 +642,7 @@ try {
     verificar('teto: 40 na rodada, o 41º na seguinte', [$r['enviados'], $r2['enviados']], [40, 1]);
 
     // ------------------------------------------------------------------------- erros que não são de quem recebe
-    $C = $A + 40 * 86400;
+    $C = $A + 200 * 86400;
     $limite = $criar('limite', $C - 5 * 3600, ['telefone' => $celular('1304')]);
     $depoisLimite = $criar('depoislimite', $C - 4 * 3600);
     $r = mcp_rw_rodar($C);
@@ -657,7 +657,7 @@ try {
     mcp_rw_rodar($C + 3600);
     verificar('limite passado: a próxima rodada manda', $etapasPara($depoisLimite['telefone']), ['rec_inscricao_1_v2']);
 
-    $D = $A + 60 * 86400;
+    $D = $A + 300 * 86400;
     controle('modelos', ['pendente' => 'rec_inscricao_1_v2']);
     $pendente = $criar('modelopendente', $D - 4 * 3600);
     $antes = count(falso('kapso'));
@@ -668,7 +668,7 @@ try {
     mcp_rw_rodar($D + 3600);
     verificar('modelo aprovado: sai na rodada seguinte', $etapasPara($pendente['telefone']), ['rec_inscricao_1_v2']);
 
-    $E = $A + 80 * 86400;
+    $E = $A + 400 * 86400;
     $gateway = $criar('gateway', $E - 5 * 3600, ['telefone' => $celular('5020')]);
     $depoisGateway = $criar('depoisgateway', $E - 4 * 3600);
     $r = mcp_rw_rodar($E);
@@ -679,7 +679,7 @@ try {
     verificar('depois do 502: o próximo recebe, e o do 502 não recebe a 1ª de novo', [$etapasPara($depoisGateway['telefone']), count($mensagensPara($gateway['telefone']))],
         [['rec_inscricao_1_v2'], 1]);
 
-    $F = $A + 100 * 86400;
+    $F = $A + 500 * 86400;
     $cheio = $db->prepare("INSERT INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, curso_nome, telefone_hash, status, criado_em, atualizado_em) VALUES (?, 'site', 1, 'x', ?, 'enviado', ?, ?)");
     for ($i = 0; $i < MCP_RW_POR_DIA; $i++) {
         $cheio->execute([hash('sha256', "cheio-$i-$sufixo"), hash('sha256', "tel-$i-$sufixo"), $quando($F - 1800), $quando($F - 1800)]);
@@ -692,7 +692,7 @@ try {
     verificar('teto: libera quando as 200 passam de 24 h', [$r['enviados'], $etapasPara($teto['telefone'])], [0, ['rec_inscricao_1_v2']]);
 
     // ------------------------------------------------------------------------- cupom na 3ª (Primeiros Socorros Básico)
-    $G = $A + 120 * 86400;
+    $G = $A + 600 * 86400;
     $ps = ['curso_slug' => 'primeiros-socorros-basico', 'curso_nome' => 'Primeiros Socorros Básico'];
     $cupomG = mcp_cupom('NOV15', 'primeiros-socorros-basico', $G);
     $vagas = isset($cupomG['erro']) ? 0 : mcp_cupom_restantes($cupomG, $G);
@@ -721,7 +721,7 @@ try {
     };
     verificar('cupom: o modelo que saiu fica gravado em cada linha', $modelosDe($psA['telefone']), ['rec_inscricao_1_v2', 'rec_inscricao_2', 'ps_cupom_oferta']);
 
-    $H = $G + 10 * 86400;
+    $H = $G + 100 * 86400;
     $psB = $criar('psesgotado', $H - 2 * 3600, $ps);
     mcp_rw_rodar($H);
     mcp_rw_rodar($H + 22 * 3600);
