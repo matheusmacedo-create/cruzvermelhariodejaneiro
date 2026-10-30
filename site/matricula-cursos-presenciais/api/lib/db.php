@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '931fae470e1a361a';
+const MCP_DB_VERSAO = 'f8cf16c5d94d05ce';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -705,6 +705,35 @@ function mcp_migrar_tudo(PDO $pdo): void
     // Acrescentar um valor no fim do ENUM não reescreve a tabela; o MODIFY é idempotente.
     mcp_garantir_colunas($pdo, 'mcp_recuperacao_whatsapp', ['modelo' => 'VARCHAR(40) NULL']);
     $pdo->exec("ALTER TABLE mcp_recuperacao_whatsapp MODIFY status ENUM('enviado','falhou','controle') NOT NULL");
+    // Recuperação por e-mail (30/10/2026, lib/recuperacao_email.php): o mesmo público e a mesma régua do WhatsApp, pela
+    // Resend. Uma linha por e-mail (etapa 1, 2 ou 3; etapa 0 = grupo de controle, que não recebe). Nem e-mail nem CPF em
+    // claro: pessoa_chave e chaves são os HMAC de mcp_rw_hmac (os mesmos da tabela do WhatsApp, para achar a pessoa nos
+    // dois canais); email_hash e whatsapp_hash são o mcp_avisos_hash, o mesmo de mcp_avisos_bloqueios, para o descadastro
+    // de um clique bloquear os dois canais só com a linha, sem nunca ter o endereço. 'pulado_pix': a etapa 1 não sai porque
+    // a inscrição já recebeu o lembrete do PIX (lib/recuperacao.php); criado_em é a hora daquele lembrete.
+    // UNIQUE(pessoa_chave, etapa) é a trava que impede repetir uma etapa.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_email (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        origem ENUM('site','escola') NOT NULL,
+        etapa TINYINT UNSIGNED NOT NULL,
+        modelo VARCHAR(20) NULL,
+        assunto VARCHAR(200) NULL,
+        curso_slug VARCHAR(80) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        email_hash CHAR(32) NOT NULL,
+        whatsapp_hash CHAR(32) NULL,
+        chaves TEXT NULL,
+        status ENUM('enviado','falhou','pulado_pix','controle') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        erro VARCHAR(255) NULL,
+        descadastro_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_pessoa_etapa (pessoa_chave, etapa),
+        KEY ix_email (email_hash, criado_em),
+        KEY ix_criado (criado_em, status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 
 /** Colunas dos lembretes em mcp_colaboradores (as mesmas do CREATE TABLE, para bancos antigos). */

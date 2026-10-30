@@ -36,6 +36,7 @@ api/ponto.php|200|"pede_codigo"
 api/painel.php|200|
 api/recuperacao.php|200|Entrar pelo Portal da secretaria
 api/avisos.php?u=1.abc|404|Este link não vale mais
+api/avisos.php?rw=1.abc|404|Este link não vale mais
 api/whatsapp.php|403|
 api/conferir.php|422|
 api/escola-horarios.php|401|
@@ -60,7 +61,7 @@ if [ "$codigo" = 401 ]; then ok "api/kapso-webhook.php sem assinatura → 401"; 
 
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
-  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/comparecimentos.php api/lembretes.php; do
+  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/lib/recuperacao_email.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done

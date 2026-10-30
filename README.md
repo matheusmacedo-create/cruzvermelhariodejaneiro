@@ -1343,10 +1343,65 @@ máquina; NADA foi publicado.**
   401/403, a chave da escola não tem leitura nas tabelas: no Supabase da escola,
   `grant select on "Usuario", "Matricula", "Turma", "Curso" to service_role;`.
 
-### Próximos passos
+### E-mail da mesma recuperação (30/10/2026)
 
-1. **Sincronizar também o e-mail dessas pessoas nessa mesma base** (pedido do Matheus, segundo passo): depois do
-   WhatsApp, que vem primeiro para não perder os leads que já deixaram o contato.
+Pedido do responsável: "sincroniza o e-mail dessas pessoas também". **Situação: construído e testado só na máquina;
+NADA foi publicado.**
+
+- **O que faz**: o **mesmo público** (checkout do site, plataforma da escola e os importados de `config-recuperacao.php`,
+  últimos 90 dias, nunca pagou nada) recebe também **três e-mails** pela Resend, ao lado do WhatsApp e independente
+  dele (`api/lib/recuperacao_email.php`, carregado pelo `recuperacao_whatsapp.php`). Sem celular válido (ex.: telefone
+  incompleto ou fixo) recebe só os e-mails; sem e-mail válido, só o WhatsApp; com os dois, os dois. **Não espera a Meta**:
+  modelo do WhatsApp sem aprovação não segura o e-mail. A pessoa sai de `mcp_rw_agrupar` com as duas situações
+  (`no_fluxo`/`motivo` do WhatsApp e `no_fluxo_email`/`motivo_email`).
+- **Mesma régua e exclusões**: 1º com 1 h da âncora, 2º com 24 h, 3º com 72 h, com os mesmos intervalos mínimos (21 h
+  e 48 h desde o e-mail anterior), só das 8h às 20h de Brasília, reconferência antes de cada envio (pagou em qualquer
+  sistema? bloqueou?) e nunca repete etapa (`UNIQUE(pessoa_chave, etapa)`). O **grupo de controle** é o mesmo e não
+  recebe e-mail (só a linha etapa 0 `controle`, se o WhatsApp ainda não gravou a dele). Quem respondeu **"Não tenho
+  interesse"** (SAIR, PARAR, STOP) no WhatsApp ou se **descadastrou** de um e-mail da recuperação não recebe mais nada
+  nos **dois** canais. Quem bloqueou só os avisos por e-mail (descadastro dos lembretes das aulas) não recebe o e-mail,
+  mas continua no WhatsApp. E-mail recusado pela Resend (endereço inválido) fica `falhou` e a sequência daquela pessoa
+  para, como o número sem WhatsApp.
+- **Lembrete do PIX** (`lib/recuperacao.php`, evento `email_pix_lembrete`): se uma inscrição do site da pessoa já recebeu
+  esse lembrete, o 1º e-mail é dado como cumprido (linha `pulado_pix`, com a hora daquele lembrete, que conta para o
+  intervalo até o 2º). Se o lembrete ainda pode sair (PIX pendente gerado há menos de 20 h, sem lembrete), o 1º e-mail
+  **espera por ele**: sem isso, quem gera o PIX receberia o 1º e-mail com 1 h e o lembrete do PIX com 2 h. Se o lembrete
+  não vier (turma fechou, PIX venceu), o 1º e-mail sai depois das 20 h.
+- **Cota** (a Resend é a conta gratuita, 100 por dia, dividida com recibos, PIX e avisos): no máximo
+  `MCP_RW_EMAIL_POR_RODADA = 10` por rodada e `MCP_RW_EMAIL_POR_DIA = 30` em 24 h corridas; e nada sai se o resto do
+  site já mandou `MCP_RW_EMAIL_RESERVA_SITE = 60` e-mails em 24 h (pelo que fica registrado: eventos `email_*` e avisos
+  por e-mail), para a cota sobrar para os recibos. 429 da Resend, ou duas recusas seguidas (o problema é dela, não dos
+  endereços), não gastam a etapa: a rodada para e tenta na hora seguinte. Resposta sem confirmação no tempo conta como
+  enviada (nunca repete). **Sem `RESEND_API_KEY`, nada sai** (nem pelo `mail()` da hospedagem) e o painel e a rotina dizem.
+- **Conteúdo** (`mcp_rw_email_montar`: HTML na moldura dos e-mails do site, texto puro junto, um botão, sem preço nem
+  escassez): 1º "Sua inscrição em <curso> ainda não foi concluída" (dados registrados, botão "Concluir inscrição");
+  2º "Lembrete: sua inscrição em <curso> continua em aberto" ("ficou alguma dúvida? responda este e-mail", com
+  responder-para o `EMAIL_CONTATO`); 3º "Último aviso sobre sua inscrição em <curso>". Em Primeiros Socorros Básico com o
+  cupom valendo (`mcp_rw_oferta_cupom`), o 3º é "Último aviso: cupom NOV15 em Primeiros Socorros Básico", com o cupom já
+  aplicado no link e a data da turma. Os botões levam os **mesmos caminhos** do WhatsApp com `utm_source=email`
+  (`utm_medium=recuperacao`, `utm_campaign` `rec1`/`rec2`/`rec3`/`rec3cupom`). Sem curso (só a conta na escola): "nossos
+  cursos" e a página de matrícula.
+- **Descadastro**: todo e-mail tem "Não quero mais receber" e o cabeçalho `List-Unsubscribe` de um clique (RFC 8058),
+  para `api/avisos.php?rw=<id>.<assinatura>` (assinado com o segredo dos avisos, como o `?u=`). O GET só mostra a página
+  com o botão (verificadores de e-mail abrem links sozinhos); o POST de um clique grava `mcp_avisos_bloqueios` nos
+  canais `email` **e** `whatsapp` (origem `recuperacao`) pelos hashes da linha, marca `descadastro_em` e tira a pessoa
+  dos dois canais (e, como todo bloqueio de aluno, dos avisos das aulas).
+- **Banco**: `mcp_recuperacao_email` (migração do `db.php`, `MCP_DB_VERSAO` nova): `pessoa_chave` e `chaves` (os HMAC de
+  `mcp_rw_hmac`, os mesmos da tabela do WhatsApp), `origem`, `etapa`, `modelo` (a campanha), `assunto`, `curso_slug`,
+  `curso_nome`, `email_hash` e `whatsapp_hash` (o `mcp_avisos_hash` dos bloqueios), `status` (`enviado`, `falhou`,
+  `pulado_pix` ou `controle`), `provedor_id` (o id da Resend), `erro`, `descadastro_em`, `criado_em`. Nem e-mail nem
+  CPF em claro.
+- **Rotina**: `mcp_rw_email_rodar`, chamada pelo `api/lembretes.php` logo depois da do WhatsApp (aproveita o público que
+  ele leu na mesma hora); escola fora do ar segura os dois canais. Uma falha do e-mail nunca derruba o WhatsApp nem a
+  rotina, e o contrário também.
+- **Painel** (mesmo desenho): o estado junta os dois canais ("Só o e-mail rodando" quando o problema é só do WhatsApp);
+  no **Próximo disparo**, os e-mails da rodada por etapa, com o assunto e a prévia recolhida do texto; no **Funil**,
+  "Por e-mail" (enviados por etapa, pulados pelo PIX, quem recebeu, quem pediu para parar e "Pelo link do e-mail":
+  pagamentos com `utm_source=email`) e a cota da Resend nas últimas 24 h (da recuperação e, estimada, do site inteiro);
+  **recuperadas** passam a contar o pagamento depois da 1ª mensagem de **qualquer** canal; na lista, os dois canais
+  (selos WhatsApp e E-mail com quantas de cada já foram) e o e-mail mascarado (`m***@dominio`).
+- **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_recuperacao_email_integracao.php` (MariaDB local e um servidor
+  falso que faz de Resend, Kapso e escola; nada sai de verdade). O do WhatsApp continua valendo.
 
 ## Cupom de desconto no checkout (30/10/2026)
 

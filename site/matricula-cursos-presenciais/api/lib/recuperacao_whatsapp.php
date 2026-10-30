@@ -39,6 +39,13 @@
  * Configuração: WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID (config-whatsapp.php ou config.php). Sem as duas, nada
  * sai e o painel (api/recuperacao.php) diz o que falta. A chave nunca vai para log, erro, painel nem banco.
  *
+ * E-mail (30/10/2026, "sincroniza o e-mail dessas pessoas também"): o MESMO público recebe a mesma régua por e-mail, ao
+ * lado do WhatsApp e independente dele (lib/recuperacao_email.php, carregado no fim deste arquivo). Por isso cada pessoa
+ * sai de mcp_rw_agrupar com as duas situações: no_fluxo/motivo (WhatsApp) e no_fluxo_email/motivo_email. Quem respondeu
+ * "Não tenho interesse" no WhatsApp ou se descadastrou do e-mail da recuperação sai dos DOIS canais; o grupo de controle
+ * vale para os dois (mcp_rw_controle olha as linhas das duas tabelas); e "recuperada" passa a contar o pagamento depois da
+ * 1ª mensagem de qualquer canal.
+ *
  * Regras puras (sem banco nem rede, conferidas no teste): mcp_rw_tentativas_site, mcp_rw_tentativas_escola,
  * mcp_rw_agrupar, mcp_rw_proxima, mcp_rw_no_horario, mcp_rw_modelo, mcp_rw_corpo_envio, mcp_rw_caminho_botao,
  * mcp_rw_ler_webhook, mcp_rw_quer_parar, mcp_rw_pelo_link e mcp_rw_metricas.
@@ -135,14 +142,17 @@ function mcp_rw_chave_no_controle(string $principal): bool
 /**
  * A pessoa é do grupo de controle? O que já está gravado manda: uma linha etapa 0 é controle para sempre, e quem já
  * recebeu alguma mensagem (etapa 1 a 3) nunca vira controle, mesmo que a chave principal mude (um cadastro novo com
- * outro CPF). Sem nada gravado, vale o sorteio pela chave principal. $minhas: de mcp_rw_da_pessoa.
+ * outro CPF). Sem nada gravado, vale o sorteio pela chave principal. $minhas: de mcp_rw_da_pessoa (WhatsApp);
+ * $minhasEmail: as linhas da pessoa em mcp_recuperacao_email. O grupo é um só para os dois canais: quem é controle não
+ * recebe nem WhatsApp nem e-mail, senão a comparação perde o valor.
  */
-function mcp_rw_controle(array $pessoa, array $minhas): bool
+function mcp_rw_controle(array $pessoa, array $minhas, array $minhasEmail = []): bool
 {
-    if (isset($minhas[0])) {
+    if (isset($minhas[0]) || isset($minhasEmail[0])) {
         return true;
     }
-    if (array_filter(array_keys($minhas), static fn(int $e): bool => $e >= 1)) {
+    $etapas = array_merge(array_keys($minhas), array_keys($minhasEmail));
+    if (array_filter($etapas, static fn(int $e): bool => $e >= 1)) {
         return false;
     }
     return mcp_rw_chave_no_controle((string) $pessoa['principal']);
@@ -316,13 +326,23 @@ function mcp_rw_ids(array $t): array
 
 /**
  * Junta as tentativas em pessoas (union-find pelas chaves) e diz de cada uma: se pagou (e quando, a 1ª vez depois de
- * qualquer instante), se está no fluxo e por quê não, a âncora, o curso e o celular. Sem banco nem rede.
+ * qualquer instante), se está no fluxo de cada canal e por quê não, a âncora, o curso, o celular e o e-mail. Sem banco
+ * nem rede.
+ *  - WhatsApp (no_fluxo, motivo): pagou, fora_da_janela, sem_celular ou bloqueou (WhatsApp bloqueado em qualquer celular
+ *    da pessoa, ou descadastro do e-mail da recuperação em qualquer e-mail dela);
+ *  - e-mail (no_fluxo_email, motivo_email): pagou, fora_da_janela, sem_email ou bloqueou (e-mail bloqueado em qualquer
+ *    e-mail da pessoa, por qualquer motivo, ou "Não tenho interesse"/SAIR no WhatsApp da recuperação em qualquer celular).
  *
  * @param callable $bloqueado fn(string $numero55): bool — mcp_avisos_bloqueios, canal whatsapp
+ * @param ?callable $bloqueadoEmail fn(string $email): bool — mcp_avisos_bloqueios, canal email (qualquer origem)
+ * @param ?callable $parouTudo fn(string $id): bool — "e:<email>" ou "t:<55…>" bloqueado com origem 'recuperacao' (quem
+ *   disse que não quer pela recuperação, num canal, não recebe pelo outro)
  * @return array pessoas, da âncora mais recente para a mais antiga
  */
-function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
+function mcp_rw_agrupar(array $tentativas, callable $bloqueado, ?callable $bloqueadoEmail = null, ?callable $parouTudo = null): array
 {
+    $bloqueadoEmail ??= static fn(string $e): bool => false;
+    $parouTudo ??= static fn(string $id): bool => false;
     $tentativas = array_values(array_filter($tentativas, static fn(array $t): bool => !($t['cpf'] !== '' && mcp_cpf_de_teste($t['cpf']))
         && !mcp_rw_curso_de_teste($t['curso_slug'], $t['curso_nome'] === MCP_RW_CURSO_GENERICO ? '' : $t['curso_nome'])));
     $pai = array_keys($tentativas);
@@ -388,20 +408,46 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
                 }
             }
         }
+        // O e-mail, com a mesma regra do celular: o da tentativa mais recente; sem ele, o de outra com o MESMO CPF ou celular.
+        $email = $recente['email'];
+        if ($email === '') {
+            foreach ($base as $t) {
+                $mesma = ($recente['cpf'] !== '' && $t['cpf'] === $recente['cpf']) || ($recente['numero'] !== null && $t['numero'] === $recente['numero']);
+                if ($mesma && $t['email'] !== '') {
+                    $email = $t['email'];
+                    break;
+                }
+            }
+        }
         $principal = $recente['cpf'] !== '' ? 'c:' . $recente['cpf'] : ($recente['email'] !== '' ? 'e:' . $recente['email'] : ($numero !== null ? 't:' . $numero : ''));
         if ($principal === '') {
             continue; // sem nenhum identificador: não há como saber se é a mesma pessoa de outra tentativa
         }
         $numeros = array_values(array_unique(array_filter(array_map(static fn(array $t): ?string => $t['numero'], $grupo))));
+        $emails = array_values(array_unique(array_filter(array_map(static fn(array $t): string => $t['email'], $grupo))));
+        $todosNumeros = array_values(array_unique(array_filter([$numero, ...$numeros])));
+        // Quem pediu para parar pela recuperação, num canal, não recebe pelo outro.
+        $parou = (bool) array_filter($todosNumeros, static fn(string $n): bool => $parouTudo('t:' . $n))
+            || (bool) array_filter($emails, static fn(string $e): bool => $parouTudo('e:' . $e));
         // Bloqueio em QUALQUER celular da pessoa vale para todos: quem disse "Não tenho interesse" no celular do site não
-        // pode receber a etapa seguinte no celular que deu depois na escola.
+        // pode receber a etapa seguinte no celular que deu depois na escola. O mesmo vale para os e-mails.
         $motivo = match (true) {
             $pagamentos !== [] => 'pagou',
             $abertas === [] => 'fora_da_janela',
             $numero === null => 'sem_celular',
-            (bool) array_filter(array_unique([$numero, ...$numeros]), $bloqueado) => 'bloqueou',
+            $parou || (bool) array_filter($todosNumeros, $bloqueado) => 'bloqueou',
             default => null,
         };
+        $motivoEmail = match (true) {
+            $pagamentos !== [] => 'pagou',
+            $abertas === [] => 'fora_da_janela',
+            $email === '' => 'sem_email',
+            $parou || (bool) array_filter(array_unique([$email, ...$emails]), $bloqueadoEmail) => 'bloqueou',
+            default => null,
+        };
+        // As inscrições do checkout do site (os ids de mcp_inscricoes): é por elas que se sabe se o lembrete do PIX já saiu.
+        $refsSite = array_values(array_unique(array_map(static fn(array $t): int => (int) substr($t['ref'], 1),
+            array_filter($grupo, static fn(array $t): bool => str_starts_with((string) $t['ref'], 's')))));
         $origens = array_values(array_unique(array_map(static fn(array $t): string => $t['origem'], $abertas ?: $grupo)));
         sort($origens);
         $pessoas[] = [
@@ -413,7 +459,8 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
             'primeiro_nome' => mcp_rw_primeiro_nome($recente['nome']),
             'numero' => $numero,
             'cpf' => $recente['cpf'],
-            'emails' => array_values(array_unique(array_filter(array_map(static fn(array $t): string => $t['email'], $grupo)))),
+            'email' => $email,
+            'emails' => $emails,
             'numeros' => $numeros,
             'cpfs' => array_values(array_unique(array_filter(array_map(static fn(array $t): string => $t['cpf'], $grupo)))),
             'curso_slug' => $recente['curso_slug'],
@@ -422,6 +469,9 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
             'pagamentos' => $pagamentos,
             'no_fluxo' => $motivo === null,
             'motivo' => $motivo,
+            'no_fluxo_email' => $motivoEmail === null,
+            'motivo_email' => $motivoEmail,
+            'refs_site' => $refsSite,
         ];
     }
     usort($pessoas, static fn(array $a, array $b): int => [$b['ancora'] ?? 0, $b['principal']] <=> [$a['ancora'] ?? 0, $a['principal']]);
@@ -499,13 +549,22 @@ function mcp_rw_proxima(int $ancora, array $enviadas): ?array
 }
 
 // ----------------------------------------------------------------------------- mensagem (puro)
-/** O parâmetro do botão (caminho sem a barra inicial; a base https://cruzvermelhariodejaneiro.org/ está no modelo). */
-function mcp_rw_caminho_botao(string $slug, int $etapa): string
+/**
+ * O parâmetro do botão (caminho sem a barra inicial; a base https://cruzvermelhariodejaneiro.org/ está no modelo).
+ * $fonte: 'whatsapp' ou 'email' (o botão do e-mail leva os MESMOS caminhos, só com utm_source=email).
+ */
+function mcp_rw_caminho_botao(string $slug, int $etapa, string $fonte = 'whatsapp'): string
 {
-    $utm = 'utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec' . $etapa;
+    $utm = 'utm_source=' . ($fonte === 'email' ? 'email' : 'whatsapp') . '&utm_medium=recuperacao&utm_campaign=rec' . $etapa;
     return $slug !== '' && mcp_curso($slug) !== null
         ? 'matricula-cursos-presenciais/checkout/?curso=' . rawurlencode($slug) . '&' . $utm
         : 'matricula-cursos-presenciais/?' . $utm;
+}
+
+/** O caminho do botão da 3ª com o cupom (o de MCP_RW_CUPOM_CAMINHO), com a fonte pedida. */
+function mcp_rw_caminho_cupom(string $fonte = 'whatsapp'): string
+{
+    return $fonte === 'email' ? str_replace('utm_source=whatsapp', 'utm_source=email', MCP_RW_CUPOM_CAMINHO) : MCP_RW_CUPOM_CAMINHO;
 }
 
 /** Texto de parâmetro: a Meta recusa quebra de linha, tabulação e mais de 4 espaços seguidos. */
@@ -939,8 +998,8 @@ function mcp_rw_escola_ler(int $desde, array $buscar): array
 /**
  * O público inteiro, com a situação de cada pessoa: lê o site (as tentativas desde o início das métricas e as pagas de
  * qualquer época), a escola e os bloqueios. A regra está em mcp_rw_agrupar. pelo_link: os pagamentos do site que
- * vieram pelo botão de uma mensagem (mcp_rw_pelo_link), para as métricas.
- * @return array{pessoas: array, escola: array{estado: string, erro: ?string}, pelo_link: array<string, int>}
+ * vieram pelo botão de uma mensagem de WhatsApp (mcp_rw_pelo_link); pelo_link_email: pelo botão de um e-mail.
+ * @return array{pessoas: array, escola: array{estado: string, erro: ?string}, pelo_link: array<string, int>, pelo_link_email: array<string, int>}
  */
 function mcp_rw_carregar(?int $agora = null): array
 {
@@ -948,7 +1007,7 @@ function mcp_rw_carregar(?int $agora = null): array
     $db = mcp_db();
     $inicio = $agora - MCP_RW_JANELA_DIAS * 86400;
     $inicioMetrica = $agora - MCP_RW_JANELA_METRICA_DIAS * 86400;
-    $stmt = $db->prepare("SELECT id, cpf, email, telefone, nome, curso_slug, curso_nome, status, criado_em, pago_em, atualizado_em, utm_campaign
+    $stmt = $db->prepare("SELECT id, cpf, email, telefone, nome, curso_slug, curso_nome, status, criado_em, pago_em, atualizado_em, utm_source, utm_campaign
         FROM mcp_inscricoes WHERE criado_em >= ? OR status IN ('pago', 'estornado')");
     $stmt->execute([gmdate('Y-m-d H:i:s', $inicioMetrica)]);
     $linhasSite = $stmt->fetchAll();
@@ -975,26 +1034,37 @@ function mcp_rw_carregar(?int $agora = null): array
         error_log('[matricula] recuperação por WhatsApp: escola indisponível (' . $escola['erro'] . '); nada sai até ela responder');
     }
     $tentativas = array_merge($site, mcp_rw_tentativas_escola($escola['usuarios'], $inicio, mcp_rw_slugs_por_uuid()));
-    $bloqueios = [];
-    foreach ($db->query("SELECT destino_hash FROM mcp_avisos_bloqueios WHERE canal = 'whatsapp'") as $b) {
-        $bloqueios[$b['destino_hash']] = true;
+    // Bloqueios: canal => hash => origens. A origem 'recuperacao' (o "Não tenho interesse" do WhatsApp e o descadastro do
+    // e-mail da recuperação) tira a pessoa dos dois canais; as outras valem só para o próprio canal.
+    $bloqueios = ['whatsapp' => [], 'email' => []];
+    foreach ($db->query("SELECT canal, destino_hash, origem FROM mcp_avisos_bloqueios WHERE canal IN ('whatsapp', 'email')") as $b) {
+        $bloqueios[$b['canal']][$b['destino_hash']][$b['origem']] = true;
     }
-    $pessoas = mcp_rw_agrupar($tentativas, static fn(string $numero): bool => isset($bloqueios[mcp_avisos_hash('whatsapp', $numero)]));
-    return ['pessoas' => $pessoas, 'escola' => ['estado' => $escola['estado'], 'erro' => $escola['erro']], 'pelo_link' => mcp_rw_pelo_link($linhasSite, $inicioMetrica)];
+    $pessoas = mcp_rw_agrupar($tentativas,
+        static fn(string $numero): bool => isset($bloqueios['whatsapp'][mcp_avisos_hash('whatsapp', $numero)]),
+        static fn(string $email): bool => isset($bloqueios['email'][mcp_avisos_hash('email', $email)]),
+        static function (string $id) use ($bloqueios): bool {
+            $canal = str_starts_with($id, 'e:') ? 'email' : 'whatsapp';
+            return isset($bloqueios[$canal][mcp_avisos_hash($canal, substr($id, 2))]['recuperacao']);
+        });
+    return ['pessoas' => $pessoas, 'escola' => ['estado' => $escola['estado'], 'erro' => $escola['erro']],
+        'pelo_link' => mcp_rw_pelo_link($linhasSite, $inicioMetrica), 'pelo_link_email' => mcp_rw_pelo_link($linhasSite, $inicioMetrica, 'email')];
 }
 
 /**
  * Pagamentos no checkout do site que vieram pelo botão de uma mensagem: inscrições pagas (ou estornadas depois de
  * pagas) desde $desde com utm_campaign rec1, rec2, rec3 ou rec3cupom (o link de cada mensagem). Só contagem, sem dado
- * pessoal. Os da escola não têm como saber: a plataforma não guarda a campanha.
+ * pessoal. Os da escola não têm como saber: a plataforma não guarda a campanha. $fonte: 'whatsapp' (utm_source
+ * whatsapp, ou vazio nas inscrições de antes do e-mail) ou 'email' (utm_source=email, o botão dos e-mails).
  * @return array<string, int> campanha => pagamentos
  */
-function mcp_rw_pelo_link(array $linhas, int $desde): array
+function mcp_rw_pelo_link(array $linhas, int $desde, string $fonte = 'whatsapp'): array
 {
     $saida = array_fill_keys(MCP_RW_CAMPANHAS, 0);
     foreach ($linhas as $l) {
         $campanha = (string) ($l['utm_campaign'] ?? '');
-        if (!isset($saida[$campanha]) || !in_array($l['status'] ?? '', MCP_RW_PAGOS_SITE, true)) {
+        $doEmail = mb_strtolower((string) ($l['utm_source'] ?? '')) === 'email';
+        if (!isset($saida[$campanha]) || !in_array($l['status'] ?? '', MCP_RW_PAGOS_SITE, true) || $doEmail !== ($fonte === 'email')) {
             continue;
         }
         $pago = mcp_rw_ts($l['pago_em'] ?? null) ?? mcp_rw_ts($l['atualizado_em'] ?? null) ?? mcp_rw_ts($l['criado_em'] ?? null);
@@ -1039,12 +1109,16 @@ function mcp_rw_da_pessoa(array $pessoa, array $indice): array
     return $porEtapa;
 }
 
-/** Índice das linhas por todas as chaves gravadas nelas: pessoa_chave, telefone_hash e as da coluna chaves. */
+/**
+ * Índice das linhas por todas as chaves gravadas nelas: pessoa_chave, telefone_hash e as da coluna chaves. Serve às duas
+ * tabelas (WhatsApp e e-mail).
+ */
 function mcp_rw_indice(array $linhas): array
 {
     $indice = [];
     foreach ($linhas as $l) {
-        $chaves = array_merge([$l['pessoa_chave'], $l['telefone_hash']], preg_split('/\s+/', trim((string) ($l['chaves'] ?? ''))) ?: []);
+        // As linhas do e-mail (mcp_recuperacao_email) não têm telefone_hash: só pessoa_chave e chaves.
+        $chaves = array_merge([$l['pessoa_chave'], $l['telefone_hash'] ?? null], preg_split('/\s+/', trim((string) ($l['chaves'] ?? ''))) ?: []);
         foreach (array_unique(array_filter($chaves)) as $k) {
             $indice[$k][] = $l;
         }
@@ -1067,7 +1141,7 @@ function mcp_rw_nao_quer(array $pessoa, array $indice): bool
 
 /**
  * Confere de novo, no banco, logo antes do envio: pagou no site (pago ou estornado, por CPF, e-mail ou celular) ou
- * bloqueou o WhatsApp? Devolve o motivo para não mandar, ou null.
+ * bloqueou o WhatsApp (ou se descadastrou do e-mail da recuperação)? Devolve o motivo para não mandar, ou null.
  */
 function mcp_rw_reconferir(array $pessoa): ?string
 {
@@ -1079,6 +1153,25 @@ function mcp_rw_reconferir(array $pessoa): ?string
             return 'bloqueou'; // em qualquer celular da pessoa, não só no que vai receber
         }
     }
+    foreach ($pessoa['emails'] as $e) {
+        if (mcp_rw_bloqueado_pela_recuperacao('email', $e)) {
+            return 'bloqueou'; // descadastro do e-mail da recuperação: sai dos dois canais
+        }
+    }
+    return mcp_rw_pagou_no_site($pessoa);
+}
+
+/** O destino está bloqueado com a origem 'recuperacao' (o "Não tenho interesse" ou o descadastro da recuperação)? */
+function mcp_rw_bloqueado_pela_recuperacao(string $canal, string $destino): bool
+{
+    $stmt = mcp_db()->prepare("SELECT 1 FROM mcp_avisos_bloqueios WHERE canal = ? AND destino_hash = ? AND origem = 'recuperacao'");
+    $stmt->execute([$canal, mcp_avisos_hash($canal, $destino)]);
+    return (bool) $stmt->fetchColumn();
+}
+
+/** A pessoa pagou no checkout do site (pago ou estornado, por CPF, e-mail ou celular)? 'pagou' ou null. */
+function mcp_rw_pagou_no_site(array $pessoa): ?string
+{
     $condicoes = [];
     $valores = [];
     if ($pessoa['cpfs']) {
@@ -1117,8 +1210,9 @@ function mcp_rw_enviadas_24h(int $agora): int
 /**
  * Uma rodada (api/lembretes.php, de hora em hora): manda as etapas devidas, até MCP_RW_POR_RODADA envios e
  * MCP_RW_POR_DIA em 24 h, e grava a linha etapa 0 de quem é do grupo de controle (controle: quantas). Nunca lança por
- * causa da Kapso nem da escola; erro de banco sobe para quem chama (lembretes.php registra e segue).
- * @return array{enviados: int, falhas: int, pulados: int, vistos: int, controle: int, escola: string, motivo: ?string}
+ * causa da Kapso nem da escola; erro de banco sobe para quem chama (lembretes.php registra e segue). carga: o público
+ * lido nesta rodada (mcp_rw_carregar), quando foi lido, para a rodada do e-mail logo depois não perguntar à escola de novo.
+ * @return array{enviados: int, falhas: int, pulados: int, vistos: int, controle: int, escola: string, motivo: ?string, carga?: array}
  */
 function mcp_rw_rodar(?int $agora = null): array
 {
@@ -1138,6 +1232,7 @@ function mcp_rw_rodar(?int $agora = null): array
         return $r;
     }
     $carga = mcp_rw_carregar($agora);
+    $r['carga'] = $carga;
     $r['escola'] = $carga['escola']['estado'];
     if ($carga['escola']['estado'] === 'indisponivel') {
         // Sem a escola não se sabe se quem veio do site pagou lá: espera a próxima hora em vez de cobrar quem já pagou.
@@ -1145,6 +1240,9 @@ function mcp_rw_rodar(?int $agora = null): array
         return $r;
     }
     $indice = mcp_rw_indice(mcp_rw_linhas());
+    // As linhas do e-mail: o grupo de controle é um só para os dois canais, e quem se descadastrou do e-mail sai daqui
+    // também. Sem a tabela do e-mail (migração adiada), segue só com o WhatsApp: o e-mail nunca derruba esta rodada.
+    $indiceEmail = mcp_rw_email_indice_seguro();
     // As devidas, da mais atrasada para a mais nova; as do grupo de controle à parte (nunca recebem).
     $fila = [];
     $controle = [];
@@ -1153,7 +1251,7 @@ function mcp_rw_rodar(?int $agora = null): array
             continue;
         }
         $r['vistos']++;
-        if (mcp_rw_nao_quer($p, $indice)) {
+        if (mcp_rw_nao_quer($p, $indice) || mcp_rw_email_descadastrou($p, $indiceEmail)) {
             continue;
         }
         $minhas = mcp_rw_da_pessoa($p, $indice);
@@ -1161,7 +1259,7 @@ function mcp_rw_rodar(?int $agora = null): array
         if ($proxima === null || $proxima['devida_em'] > $agora) {
             continue;
         }
-        if (mcp_rw_controle($p, $minhas)) {
+        if (mcp_rw_controle($p, $minhas, mcp_rw_da_pessoa($p, $indiceEmail))) {
             if (!isset($minhas[0])) {
                 $controle[] = $p;
             }
@@ -1398,28 +1496,52 @@ function mcp_rw_mediana(array $valores): ?float
 
 /**
  * Os números do painel, sem dado pessoal nos agregados. $linhas: todas de mcp_recuperacao_whatsapp; $pessoas: de
- * mcp_rw_carregar; $oferta: de mcp_rw_oferta_cupom (o modelo da próxima mensagem de cada pessoa na lista); $peloLink:
- * o pelo_link de mcp_rw_carregar.
- *  - recuperada = pessoa que recebeu a 1ª mensagem e pagou (em qualquer sistema) DEPOIS dela; a taxa é sobre quem
- *    recebeu a 1ª nos últimos MCP_RW_JANELA_METRICA_DIAS dias;
- *  - por_mensagem / por_modelo: das recuperadas, a última mensagem enviada antes do pagamento;
+ * mcp_rw_carregar; $oferta: de mcp_rw_oferta_cupom (o modelo da próxima mensagem de cada pessoa na lista); $peloLink e
+ * $peloLinkEmail: o pelo_link e o pelo_link_email de mcp_rw_carregar; $linhasEmail: todas de mcp_recuperacao_email.
+ *  - recuperada = pessoa que recebeu a 1ª mensagem de QUALQUER canal (WhatsApp ou e-mail) e pagou (em qualquer sistema)
+ *    DEPOIS dela; a taxa é sobre quem recebeu alguma nos últimos MCP_RW_JANELA_METRICA_DIAS dias;
+ *  - por_mensagem / por_modelo: das recuperadas, a última mensagem enviada antes do pagamento, de qualquer canal (os
+ *    e-mails aparecem em por_modelo como "e-mail rec1"…);
  *  - mediana_horas: entre a 1ª mensagem e o pagamento, nas recuperadas;
- *  - controle × tratamento: quem é do grupo de controle (linha etapa 0) e pagou depois dela, contra quem recebeu a 1ª e
- *    pagou depois dela, no mesmo período; efeito_pp = diferença das taxas, em pontos percentuais.
+ *  - controle × tratamento: quem é do grupo de controle (linha etapa 0, na tabela de qualquer canal) e pagou depois dela,
+ *    contra quem recebeu a 1ª e pagou depois dela, no mesmo período; efeito_pp = diferença das taxas, em pontos percentuais;
+ *  - email: enviados por etapa, etapas dadas como cumpridas pelo lembrete do PIX, falhas, descadastros, quantas pessoas
+ *    receberam ao menos um e-mail e os pagamentos pelo link do e-mail (utm_source=email);
+ *  - lista: quem ainda tem mensagem por vir em algum canal, com os dois canais (whatsapp e canal_email).
  */
-function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $oferta = null, array $peloLink = []): array
+function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $oferta = null, array $peloLink = [], array $linhasEmail = [], array $peloLinkEmail = []): array
 {
     $m = ['no_fluxo' => 0, 'no_controle' => 0, 'etapas' => [1 => 0, 2 => 0, 3 => 0], 'falhas' => 0, 'entregues' => 0, 'lidas' => 0, 'responderam' => 0, 'nao_querem' => 0,
         'receberam' => 0, 'recuperadas' => 0, 'taxa' => null, 'por_mensagem' => [1 => 0, 2 => 0, 3 => 0], 'por_modelo' => [],
         'pelo_link' => array_replace(array_fill_keys(MCP_RW_CAMPANHAS, 0), array_intersect_key($peloLink, array_flip(MCP_RW_CAMPANHAS))),
         'mediana_horas' => null, 'controle' => ['pessoas' => 0, 'pagaram' => 0, 'taxa' => null], 'tratamento' => ['pessoas' => 0, 'pagaram' => 0, 'taxa' => null],
-        'efeito_pp' => null, 'origens' => [], 'cursos' => [], 'dias' => [], 'lista' => []];
+        'efeito_pp' => null, 'origens' => [], 'cursos' => [], 'dias' => [], 'lista' => [],
+        'email' => ['etapas' => [1 => 0, 2 => 0, 3 => 0], 'pulados_pix' => 0, 'falhas' => 0, 'descadastros' => 0, 'receberam' => 0, 'no_fluxo' => 0,
+            'pelo_link' => array_replace(array_fill_keys(MCP_RW_CAMPANHAS, 0), array_intersect_key($peloLinkEmail, array_flip(MCP_RW_CAMPANHAS)))]];
     $diaDe = static fn(int $ts): string => gmdate('Y-m-d', $ts + MCP_RW_FUSO_SEGUNDOS);
-    // As linhas antigas (antes da coluna modelo) eram todas rec_inscricao_<etapa>.
-    $modeloDe = static fn(array $l): string => (string) ($l['modelo'] ?? '') !== '' ? (string) $l['modelo'] : 'rec_inscricao_' . (int) $l['etapa'];
+    // As linhas antigas (antes da coluna modelo) eram todas rec_inscricao_<etapa>; as do e-mail viram "e-mail rec1"….
+    $modeloDe = static fn(array $l): string => ($l['canal'] ?? 'whatsapp') === 'email'
+        ? 'e-mail ' . ((string) ($l['modelo'] ?? '') !== '' ? (string) $l['modelo'] : 'rec' . (int) $l['etapa'])
+        : ((string) ($l['modelo'] ?? '') !== '' ? (string) $l['modelo'] : 'rec_inscricao_' . (int) $l['etapa']);
     for ($i = MCP_RW_DIAS_METRICA - 1; $i >= 0; $i--) {
         $m['dias'][$diaDe($agora - $i * 86400)] = ['mensagens' => 0, 'recuperacoes' => 0];
     }
+    // Uma mensagem enviada (de qualquer canal) entra nos dias, nas origens, nos cursos e no modelo.
+    $contarEnviada = static function (array $l) use (&$m, $diaDe, $modeloDe): void {
+        $d = $diaDe((int) mcp_rw_ts($l['criado_em']));
+        if (isset($m['dias'][$d])) {
+            $m['dias'][$d]['mensagens']++;
+        }
+        $o = $l['origem'];
+        $m['origens'][$o] ??= ['mensagens' => 0, 'pessoas' => 0, 'recuperadas' => 0];
+        $m['origens'][$o]['mensagens']++;
+        $c = (string) $l['curso_nome'];
+        $m['cursos'][$c] ??= ['mensagens' => 0, 'pessoas' => 0, 'recuperadas' => 0];
+        $m['cursos'][$c]['mensagens']++;
+        $mo = $modeloDe($l);
+        $m['por_modelo'][$mo] ??= ['enviadas' => 0, 'recuperadas' => 0];
+        $m['por_modelo'][$mo]['enviadas']++;
+    };
     $responderam = [];
     $naoQuerem = [];
     foreach ($linhas as $l) {
@@ -1430,19 +1552,7 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
             $m['etapas'][(int) $l['etapa']] = ($m['etapas'][(int) $l['etapa']] ?? 0) + 1;
             $m['entregues'] += in_array($l['entrega'], ['entregue', 'lida'], true) ? 1 : 0;
             $m['lidas'] += $l['entrega'] === 'lida' ? 1 : 0;
-            $d = $diaDe((int) mcp_rw_ts($l['criado_em']));
-            if (isset($m['dias'][$d])) {
-                $m['dias'][$d]['mensagens']++;
-            }
-            $o = $l['origem'];
-            $m['origens'][$o] ??= ['mensagens' => 0, 'pessoas' => 0, 'recuperadas' => 0];
-            $m['origens'][$o]['mensagens']++;
-            $c = (string) $l['curso_nome'];
-            $m['cursos'][$c] ??= ['mensagens' => 0, 'pessoas' => 0, 'recuperadas' => 0];
-            $m['cursos'][$c]['mensagens']++;
-            $mo = $modeloDe($l);
-            $m['por_modelo'][$mo] ??= ['enviadas' => 0, 'recuperadas' => 0];
-            $m['por_modelo'][$mo]['enviadas']++;
+            $contarEnviada($l);
         } elseif ($l['erro'] !== 'enviando') {
             $m['falhas']++;
         }
@@ -1453,24 +1563,53 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
             }
         }
     }
+    foreach ($linhasEmail as $l) {
+        $m['email']['descadastros'] += !empty($l['descadastro_em']) ? 1 : 0;
+        if ($l['status'] === 'enviado') {
+            $m['email']['etapas'][(int) $l['etapa']] = ($m['email']['etapas'][(int) $l['etapa']] ?? 0) + 1;
+            $contarEnviada(['canal' => 'email'] + $l);
+        } elseif ($l['status'] === 'pulado_pix') {
+            $m['email']['pulados_pix']++;
+        } elseif ($l['status'] === 'falhou' && $l['erro'] !== 'enviando') {
+            $m['email']['falhas']++;
+        }
+    }
     $m['responderam'] = count($responderam);
     $m['nao_querem'] = count($naoQuerem);
 
     $indice = mcp_rw_indice($linhas);
+    $indiceEmail = mcp_rw_indice($linhasEmail);
     $inicioMetrica = $agora - MCP_RW_JANELA_METRICA_DIAS * 86400;
     $vistas = [];
     $horas = [];
     foreach ($pessoas as $p) {
         $minhas = mcp_rw_da_pessoa($p, $indice);
-        $zero = $minhas[0] ?? null;
-        if ($zero !== null && $zero['status'] === 'controle' && $zero['criado_ts'] >= $inicioMetrica && !isset($vistas[$zero['id']])) {
-            $vistas[$zero['id']] = true;
+        $minhasEmail = mcp_rw_da_pessoa($p, $indiceEmail);
+        // As linhas da pessoa nos dois canais, marcadas com o canal (o id só é único dentro da tabela).
+        $todas = [];
+        foreach ([['whatsapp', $minhas], ['email', $minhasEmail]] as [$canal, $doCanal]) {
+            foreach ($doCanal as $l) {
+                $todas[] = ['canal' => $canal, 'vista' => $canal[0] . $l['id']] + $l;
+            }
+        }
+        // Grupo de controle: a linha etapa 0 mais antiga (o WhatsApp e o e-mail podem ter gravado uma cada).
+        $zeros = array_values(array_filter($todas, static fn(array $l): bool => (int) $l['etapa'] === 0 && $l['status'] === 'controle'));
+        usort($zeros, static fn(array $a, array $b): int => $a['criado_ts'] <=> $b['criado_ts']);
+        $zero = $zeros[0] ?? null;
+        if ($zero !== null && $zero['criado_ts'] >= $inicioMetrica && !array_filter($zeros, static fn(array $l): bool => isset($vistas[$l['vista']]))) {
+            foreach ($zeros as $l) {
+                $vistas[$l['vista']] = true;
+            }
             $m['controle']['pessoas']++;
             $m['controle']['pagaram'] += array_filter($p['pagamentos'], static fn(int $ts): bool => $ts > $zero['criado_ts']) ? 1 : 0;
         }
-        $primeira = $minhas[1] ?? null;
-        if ($primeira !== null && $primeira['status'] === 'enviado' && $primeira['criado_ts'] >= $inicioMetrica && !isset($vistas[$primeira['id']])) {
-            $vistas[$primeira['id']] = true;
+        // A 1ª mensagem de qualquer canal (as enviadas, etapa 1 a 3; o 'pulado_pix' é o lembrete do PIX, que já existia).
+        $enviadasTodas = array_values(array_filter($todas, static fn(array $l): bool => (int) $l['etapa'] >= 1 && $l['status'] === 'enviado'));
+        usort($enviadasTodas, static fn(array $a, array $b): int => [$a['criado_ts'], $a['canal']] <=> [$b['criado_ts'], $b['canal']]);
+        $primeira = $enviadasTodas[0] ?? null;
+        $m['email']['receberam'] += array_filter($enviadasTodas, static fn(array $l): bool => $l['canal'] === 'email' && $l['criado_ts'] >= $inicioMetrica) ? 1 : 0;
+        if ($primeira !== null && $primeira['criado_ts'] >= $inicioMetrica && !isset($vistas[$primeira['vista']])) {
+            $vistas[$primeira['vista']] = true;
             $m['receberam']++;
             $o = $primeira['origem'];
             $c = (string) $primeira['curso_nome'];
@@ -1488,10 +1627,10 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
                     $m['dias'][$d]['recuperacoes']++;
                 }
                 $horas[] = ($depois[0] - $primeira['criado_ts']) / 3600;
-                // A última mensagem que saiu antes do pagamento é a que leva o crédito.
+                // A última mensagem que saiu antes do pagamento, de qualquer canal, é a que leva o crédito.
                 $ultima = $primeira;
-                foreach ($minhas as $etapa => $l) {
-                    if ($etapa >= 1 && $l['status'] === 'enviado' && $l['criado_ts'] < $depois[0] && $l['criado_ts'] >= $ultima['criado_ts']) {
+                foreach ($enviadasTodas as $l) {
+                    if ($l['criado_ts'] < $depois[0] && $l['criado_ts'] >= $ultima['criado_ts']) {
                         $ultima = $l;
                     }
                 }
@@ -1501,24 +1640,36 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
                 $m['por_modelo'][$mo]['recuperadas']++;
             }
         }
-        if (!$p['no_fluxo'] || mcp_rw_nao_quer($p, $indice)) {
+        // Lista: quem ainda tem mensagem por vir em algum canal. "Não tenho interesse" e o descadastro param os dois.
+        if (mcp_rw_nao_quer($p, $indice) || mcp_rw_email_descadastrou($p, $indiceEmail)) {
             continue;
         }
-        $proxima = mcp_rw_proxima((int) $p['ancora'], $minhas);
-        $enviadas = array_keys(array_filter($minhas, static fn(array $l): bool => $l['status'] === 'enviado'));
-        if ($proxima === null) {
-            continue; // já recebeu as três, ou uma etapa não chegou (número sem WhatsApp): não há mais nada a mandar
+        $proxima = $p['no_fluxo'] ? mcp_rw_proxima((int) $p['ancora'], $minhas) : null;
+        $proximaEmail = $p['no_fluxo_email'] ? mcp_rw_email_proxima((int) $p['ancora'], $minhasEmail) : null;
+        if ($proxima === null && $proximaEmail === null) {
+            continue; // já recebeu tudo, ou uma etapa não chegou (número sem WhatsApp, e-mail recusado): não há mais nada a mandar
         }
-        $controle = mcp_rw_controle($p, $minhas);
+        $controle = mcp_rw_controle($p, $minhas, $minhasEmail);
         $controle ? $m['no_controle']++ : $m['no_fluxo']++;
-        $modelo = $controle ? null : mcp_rw_modelo($proxima['etapa'], $p, $oferta);
-        $respostas = array_values(array_filter(array_map(static fn(array $l): string => (string) $l['resposta'], $minhas)));
+        $m['email']['no_fluxo'] += !$controle && $proximaEmail !== null ? 1 : 0;
+        $modelo = $controle || $proxima === null ? null : mcp_rw_modelo($proxima['etapa'], $p, $oferta);
+        // A prévia do e-mail com um link de descadastro de exemplo (o de verdade depende da linha gravada no envio).
+        $email = $controle || $proximaEmail === null ? null : mcp_rw_email_montar($proximaEmail['etapa'], $p, $oferta, mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?rw=…');
+        $respostas = array_values(array_filter(array_map(static fn(array $l): string => (string) ($l['resposta'] ?? ''), $minhas)));
+        $enviadas = array_keys(array_filter($minhas, static fn(array $l): bool => $l['status'] === 'enviado'));
+        $enviadasEmail = array_keys(array_filter($minhasEmail, static fn(array $l, int $e): bool => $e >= 1 && $l['status'] === 'enviado', ARRAY_FILTER_USE_BOTH));
+        // Quem é do grupo de controle não tem próxima mensagem: nunca recebe.
+        $quando = static fn(?array $px): ?int => $controle || $px === null ? null : mcp_rw_ajustar_horario(max($px['devida_em'], $agora));
         $m['lista'][] = [
             'nome' => $p['nome'], 'origem' => $p['origem'], 'curso' => $p['curso_nome'], 'celular' => mcp_whatsapp_mascarado($p['numero']),
+            'email' => $p['email'] !== '' ? mcp_email_mascarado($p['email']) : '',
             'etapa' => $enviadas ? max($enviadas) : 0, 'controle' => $controle,
-            // Quem é do grupo de controle não tem próxima mensagem: nunca recebe.
-            'proxima' => $controle ? null : mcp_rw_ajustar_horario(max($proxima['devida_em'], $agora)),
-            'proxima_etapa' => $proxima['etapa'], 'modelo' => $modelo['nome'] ?? null, 'previa' => $modelo['previa'] ?? null, 'respostas' => $respostas,
+            'proxima' => $quando($proxima), 'proxima_etapa' => $proxima['etapa'] ?? null, 'modelo' => $modelo['nome'] ?? null, 'previa' => $modelo['previa'] ?? null,
+            'respostas' => $respostas,
+            'whatsapp' => ['no_fluxo' => $proxima !== null, 'enviadas' => count(array_filter($enviadas, static fn(int $e): bool => $e >= 1)), 'motivo' => $p['motivo']],
+            'canal_email' => ['no_fluxo' => $proximaEmail !== null, 'enviadas' => count($enviadasEmail), 'pulado_pix' => ($minhasEmail[1]['status'] ?? '') === 'pulado_pix',
+                'proxima' => $quando($proximaEmail), 'proxima_etapa' => $proximaEmail['etapa'] ?? null, 'modelo' => $email['modelo'] ?? null,
+                'assunto' => $email['assunto'] ?? null, 'previa' => $email['texto'] ?? null, 'motivo' => $p['motivo_email']],
         ];
     }
     $m['taxa'] = $m['receberam'] > 0 ? (float) ($m['recuperadas'] / $m['receberam']) : null;
@@ -1529,7 +1680,13 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
     uasort($m['cursos'], static fn(array $a, array $b): int => [$b['mensagens'], $b['pessoas']] <=> [$a['mensagens'], $a['pessoas']]);
     ksort($m['origens']);
     ksort($m['por_modelo']);
-    // Pela próxima mensagem; o grupo de controle, que não tem próxima, no fim.
-    usort($m['lista'], static fn(array $a, array $b): int => [$a['proxima'] === null, $a['proxima'] ?? 0, $a['nome']] <=> [$b['proxima'] === null, $b['proxima'] ?? 0, $b['nome']]);
+    // Pela próxima mensagem de qualquer canal; o grupo de controle, que não tem próxima, no fim.
+    $ordem = static fn(array $x): ?int => ($t = array_filter([$x['proxima'], $x['canal_email']['proxima']], 'is_int')) ? min($t) : null;
+    usort($m['lista'], static fn(array $a, array $b): int => [$ordem($a) === null, $ordem($a) ?? 0, $a['nome']] <=> [$ordem($b) === null, $ordem($b) ?? 0, $b['nome']]);
     return $m;
 }
+
+// ----------------------------------------------------------------------------- e-mail
+// O canal de e-mail da mesma recuperação (o mesmo público, a mesma régua): fica num arquivo à parte, carregado sempre
+// junto com este (a rodada do WhatsApp lê as linhas dele para o grupo de controle e o descadastro).
+require_once __DIR__ . '/recuperacao_email.php';
