@@ -127,7 +127,7 @@ try {
 $m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora);
 
 $corpo = '<h1>Recuperação por WhatsApp</h1><p class="nota">Três mensagens automáticas a quem se cadastrou no checkout do site ou na plataforma da escola nos últimos '
-    . MCP_RW_JANELA_DIAS . ' dias e não pagou: 3 h, 24 h e 72 h depois do cadastro, das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por hora. '
+    . MCP_RW_JANELA_DIAS . ' dias e não pagou: 3 h, 24 h e 72 h depois do cadastro, das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por hora e ' . MCP_RW_POR_DIA . ' em 24 h. '
     . 'Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora.</p>';
 $retorno = mcp_texto($_GET['webhook'] ?? '', 10);
 if ($retorno === 'ok') {
@@ -154,6 +154,8 @@ if ($cfg['ok']) {
     $itens[] = match ($webhook) {
         'ligado' => rw_selo('ok', 'Ligado') . 'Recebimento de respostas (entrega, leitura e "Não tenho interesse")',
         'desligado' => rw_selo('nao', 'Desligado') . 'Recebimento de respostas: sem ele, o painel não sabe o que foi entregue nem quem respondeu',
+        'diferente' => rw_selo('nao', 'Desacertado') . 'Recebimento de respostas: a Kapso tem um webhook para este endereço, mas com outro segredo ou sem todos '
+            . 'os eventos; entregas, leituras e "Não tenho interesse" não chegam. O botão abaixo acerta',
         default => rw_selo('talvez', 'Sem resposta') . 'Recebimento de respostas: a Kapso não respondeu agora',
     };
 } else {
@@ -162,7 +164,7 @@ if ($cfg['ok']) {
 $itens[] = match ($carga['escola']['estado']) {
     'ok' => rw_selo('ok', 'Ok') . 'Plataforma da escola',
     'desligada' => rw_selo('talvez', 'Desligada') . 'Plataforma da escola: sem ESCOLA_API_URL e ESCOLA_API_TOKEN, só o checkout do site entra',
-    default => rw_selo('nao', 'Indisponível') . 'Escola indisponível: o fluxo segue só com o checkout do site (' . rw_e((string) $carga['escola']['erro']) . ')',
+    default => rw_selo('nao', 'Indisponível') . 'Escola indisponível: nenhuma mensagem sai até ela responder, porque não dá para saber quem pagou lá (' . rw_e((string) $carga['escola']['erro']) . ')',
 };
 $corpo .= '<section class="cartao"><h2>Situação</h2><ul class="situacao"><li>' . implode('</li><li>', $itens) . '</li></ul>';
 if ($cfg['ok'] && $webhook !== 'ligado') {

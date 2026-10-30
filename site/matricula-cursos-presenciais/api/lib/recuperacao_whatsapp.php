@@ -9,7 +9,8 @@
  *  - escola: "Usuario" com papel ALUNO criado nos últimos MCP_RW_JANELA_DIAS dias sem nenhuma "Matricula" paga
  *    (taxaConfirmada ou statusPagamento PAGO/PARCELADO): quem só criou a conta e quem se matriculou sem pagar. Lido
  *    pelo PostgREST da escola com a chave secreta (ESCOLA_API_TOKEN), paginado e com tempo curto. Escola fora do ar não
- *    derruba nada: a rodada segue só com o site e o painel diz "escola indisponível";
+ *    derruba nada: o painel diz "escola indisponível" e a rodada termina sem enviar (fica para a hora seguinte), porque
+ *    sem a escola não dá para saber se quem veio do site pagou lá — e cobrar quem já pagou é pior que atrasar uma hora;
  *  - uma PESSOA junta as tentativas dos dois sistemas com o mesmo CPF, e-mail (minúsculo) ou celular (55+DDD+número,
  *    pelo mcp_whatsapp_numero, o mesmo de todo o WhatsApp do site);
  *  - sai quem pagou QUALQUER coisa em QUALQUER sistema (site: pago ou estornado, de qualquer época; escola: matrícula
@@ -21,7 +22,9 @@
  * intervalo da régua (21 h e 48 h): sem isso, no primeiro dia no ar, quem se cadastrou há 5 dias receberia as três em
  * três horas seguidas. Antes de cada envio a pessoa é conferida de novo no banco do site (pagou? bloqueou?). Nenhuma etapa
  * se repete: UNIQUE(pessoa_chave, etapa) em mcp_recuperacao_whatsapp, e as etapas da pessoa são procuradas por todas as
- * chaves dela e pelo celular. No máximo MCP_RW_POR_RODADA envios por rodada (o número dedicado tem 250 por dia na Meta).
+ * chaves dela e pelo celular. No máximo MCP_RW_POR_RODADA envios por rodada e MCP_RW_POR_DIA em 24 h (o número dedicado
+ * tem 250 por dia na Meta). Um erro que não é de quem recebe (modelo não aprovado, parâmetro recusado, limite da Meta)
+ * não gasta a etapa: a rodada para e tenta de novo na hora seguinte.
  * A rodada é a de hora em hora (api/lembretes.php); falha aqui nunca derruba a rotina.
  *
  * Configuração: WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID (config-whatsapp.php ou config.php). Sem as duas, nada
@@ -40,6 +43,13 @@ const MCP_RW_JANELA_METRICA_DIAS = 40;
 const MCP_RW_ETAPAS = [1 => 3 * 3600, 2 => 24 * 3600, 3 => 72 * 3600];
 const MCP_RW_MODELOS = [1 => 'rec_inscricao_1', 2 => 'rec_inscricao_2', 3 => 'rec_inscricao_3'];
 const MCP_RW_POR_RODADA = 40;
+// Teto em 24 h (janela móvel), abaixo dos 250/dia da Meta: sobra folga para outros usos do número. Sem ele, 40 × 12
+// rodadas passariam de 250 no primeiro dia no ar, e a Meta recusaria o resto.
+const MCP_RW_POR_DIA = 200;
+// Erros da Meta que são DE QUEM RECEBE (número sem WhatsApp, o próprio número, fora da lista de teste, a Meta não
+// entrega marketing a essa pessoa, a pessoa parou o marketing): só esses gastam a etapa. Todo o resto (modelo, parâmetro,
+// limite de vazão, spam, conta) depende de nós ou da Meta, e a rodada para sem gastar nada.
+const MCP_RW_ERROS_DO_DESTINO = [131026, 131021, 131030, 131049, 131050];
 // Das 8h às 20h de Brasília (UTC−3, sem horário de verão desde 2019).
 const MCP_RW_HORARIO = [8, 20];
 const MCP_RW_FUSO_SEGUNDOS = -3 * 3600;
@@ -278,11 +288,14 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
         if ($principal === '') {
             continue; // sem nenhum identificador: não há como saber se é a mesma pessoa de outra tentativa
         }
+        $numeros = array_values(array_unique(array_filter(array_map(static fn(array $t): ?string => $t['numero'], $grupo))));
+        // Bloqueio em QUALQUER celular da pessoa vale para todos: quem disse "Não tenho interesse" no celular do site não
+        // pode receber a etapa seguinte no celular que deu depois na escola.
         $motivo = match (true) {
             $pagamentos !== [] => 'pagou',
             $abertas === [] => 'fora_da_janela',
             $numero === null => 'sem_celular',
-            $bloqueado($numero) => 'bloqueou',
+            (bool) array_filter(array_unique([$numero, ...$numeros]), $bloqueado) => 'bloqueou',
             default => null,
         };
         $origens = array_values(array_unique(array_map(static fn(array $t): string => $t['origem'], $abertas ?: $grupo)));
@@ -297,7 +310,7 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado): array
             'numero' => $numero,
             'cpf' => $recente['cpf'],
             'emails' => array_values(array_unique(array_filter(array_map(static fn(array $t): string => $t['email'], $grupo)))),
-            'numeros' => array_values(array_unique(array_filter(array_map(static fn(array $t): ?string => $t['numero'], $grupo)))),
+            'numeros' => $numeros,
             'cpfs' => array_values(array_unique(array_filter(array_map(static fn(array $t): string => $t['cpf'], $grupo)))),
             'curso_slug' => $recente['curso_slug'],
             'curso_nome' => $recente['curso_nome'] !== '' ? $recente['curso_nome'] : MCP_RW_CURSO_GENERICO,
@@ -424,7 +437,7 @@ function mcp_rw_kapso_config(): array
 
 /**
  * Chama a Kapso com o cabeçalho X-API-Key. HTTPS sempre; HTTP só em 127.0.0.1 (teste). Devolve [status, corpo
- * decodificado, erro legível sem a chave, tempo esgotado depois de conectar].
+ * decodificado, erro legível sem a chave, tempo esgotado depois de conectar, conectou (o pedido pode ter chegado)].
  */
 function mcp_rw_kapso_pedir(array $cfg, string $metodo, string $url, ?array $corpo = null, int $tempo = MCP_RW_KAPSO_TEMPO_S): array
 {
@@ -444,7 +457,8 @@ function mcp_rw_kapso_pedir(array $cfg, string $metodo, string $url, ?array $cor
     $resposta = curl_exec($ch);
     $status = $resposta === false ? 0 : (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $erroCurl = curl_error($ch);
-    $esgotado = curl_errno($ch) === CURLE_OPERATION_TIMEDOUT && (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
+    $conectou = (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
+    $esgotado = curl_errno($ch) === CURLE_OPERATION_TIMEDOUT && $conectou;
     curl_close($ch);
     $dados = is_string($resposta) ? json_decode($resposta, true) : null;
     $dados = is_array($dados) ? $dados : [];
@@ -462,30 +476,41 @@ function mcp_rw_kapso_pedir(array $cfg, string $metodo, string $url, ?array $cor
         // A chave nunca sai daqui, nem dentro de uma mensagem de erro.
         $erro = mb_substr(str_replace($cfg['chave'], '[chave]', $erro), 0, 250);
     }
-    return [$status, $dados, $erro, $esgotado];
+    return [$status, $dados, $erro, $esgotado, $conectou];
 }
 
 /**
- * Manda a mensagem de uma etapa. transitorio = a Kapso ou a Meta estão fora ou recusam a configuração (tenta na
- * próxima rodada, sem gastar a etapa); incerto = o tempo acabou depois de o pedido chegar (pode ter saído: não repete).
- * @return array{ok: bool, id: ?string, erro: ?string, transitorio: bool, incerto: bool}
+ * Manda a mensagem de uma etapa.
+ *  - transitorio: com certeza NÃO saiu e a culpa não é de quem recebe (Kapso ou Meta fora, chave ou número recusados,
+ *    modelo não aprovado ou pausado, parâmetro recusado, limite de vazão ou de spam): a etapa não é gasta e a rodada para;
+ *  - incerto: o pedido pode ter chegado (tempo esgotado ou conexão caída depois de conectar, 5xx de gateway, resposta sem
+ *    o id): conta como enviada, para nunca repetir a etapa; parar = a rodada para (a Kapso não está bem);
+ *  - o resto (só os erros de MCP_RW_ERROS_DO_DESTINO): a etapa fica "falhou" para essa pessoa.
+ * @return array{ok: bool, id: ?string, erro: ?string, transitorio: bool, incerto: bool, parar: bool}
  */
 function mcp_rw_kapso_enviar(array $cfg, array $corpo): array
 {
     $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($cfg['numero_id']) . '/messages';
-    [$status, $dados, $erro, $esgotado] = mcp_rw_kapso_pedir($cfg, 'POST', $url, $corpo, 30);
+    [$status, $dados, $erro, $esgotado, $conectou] = mcp_rw_kapso_pedir($cfg, 'POST', $url, $corpo, 30);
+    $incerto = static fn(string $msg, bool $parar): array => ['ok' => true, 'id' => null, 'erro' => $msg . '; a mensagem pode ter saído (não vai de novo)',
+        'transitorio' => false, 'incerto' => true, 'parar' => $parar];
     if ($esgotado) {
-        return ['ok' => true, 'id' => null, 'erro' => 'a Kapso não confirmou a tempo; a mensagem pode ter saído (não vai de novo)', 'transitorio' => false, 'incerto' => true];
+        return $incerto('a Kapso não confirmou a tempo', false);
     }
     $id = $dados['messages'][0]['id'] ?? null;
     if ($erro === null && is_string($id)) {
-        return ['ok' => true, 'id' => mb_substr($id, 0, 128), 'erro' => null, 'transitorio' => false, 'incerto' => false];
+        return ['ok' => true, 'id' => mb_substr($id, 0, 128), 'erro' => null, 'transitorio' => false, 'incerto' => false, 'parar' => false];
     }
-    $codigo = (int) ($dados['error']['code'] ?? 0);
-    // Fora do ar, chave ou número recusados, limite (429), créditos (402) ou o token da Meta caído (190): espera.
-    $transitorio = $status === 0 || $status === 401 || $status === 402 || $status === 403 || $status === 429 || $status >= 500 || $codigo === 190
-        || ($status === 404 && $codigo === 0);
-    return ['ok' => false, 'id' => null, 'erro' => $erro ?? 'resposta sem o id da mensagem', 'transitorio' => $transitorio, 'incerto' => false];
+    $codigo = is_array($dados['error'] ?? null) ? (int) ($dados['error']['code'] ?? 0) : 0;
+    if ($codigo === 0) {
+        // Sem o código da Meta: a conexão caiu depois de conectar, um 5xx de gateway (500, 502, 504…) ou 2xx sem o id
+        // podem ter entregado a mensagem. 503 é "não atendi"; 4xx sem código é recusa da própria Kapso: não saiu.
+        if (($status === 0 && $conectou) || ($status >= 500 && $status !== 503) || ($status >= 200 && $status < 300)) {
+            return $incerto($erro ?? 'resposta sem o id da mensagem', true);
+        }
+    }
+    $falha = ['ok' => false, 'id' => null, 'erro' => $erro ?? 'resposta sem o id da mensagem', 'incerto' => false, 'parar' => false];
+    return $falha + ['transitorio' => !in_array($codigo, MCP_RW_ERROS_DO_DESTINO, true)];
 }
 
 /** Guarda um valor curto em mcp_chaves (o cache do painel: modelos, WABA, webhook). */
@@ -575,28 +600,36 @@ function mcp_rw_webhooks(array $cfg): array
     $lista = [];
     foreach (is_array($dados['data'] ?? null) ? $dados['data'] : [] as $w) {
         if (is_array($w) && isset($w['id']) && (string) ($w['url'] ?? '') === mcp_rw_webhook_url()) {
-            $lista[] = ['id' => (string) $w['id'], 'ativo' => ($w['active'] ?? true) !== false, 'eventos' => array_values(array_filter((array) ($w['events'] ?? []), 'is_string'))];
+            $lista[] = ['id' => (string) $w['id'], 'ativo' => ($w['active'] ?? true) !== false, 'eventos' => array_values(array_filter((array) ($w['events'] ?? []), 'is_string')),
+                'segredo' => is_string($w['secret_key'] ?? null) && $w['secret_key'] !== '' ? $w['secret_key'] : null];
         }
     }
     return [$lista, null];
 }
 
-/** 'ligado', 'desligado' ou 'desconhecido' (Kapso sem resposta). Cache de 10 min, apagado ao ligar. */
+/**
+ * 'ligado', 'diferente' (existe um para o nosso endereço, mas com outro segredo ou sem todos os eventos: as entregas
+ * levariam 401 ou não chegariam), 'desligado' ou 'desconhecido' (Kapso sem resposta). Cache de 10 min, apagado ao ligar.
+ * O segredo é só comparado; nunca sai daqui.
+ */
 function mcp_rw_webhook_situacao(array $cfg, ?int $agora = null): string
 {
     $cache = mcp_rw_cache('rw_cache_webhook', null, $agora);
-    if ($cache !== null && in_array($cache['s'] ?? '', ['ligado', 'desligado'], true)) {
+    if ($cache !== null && in_array($cache['s'] ?? '', ['ligado', 'diferente', 'desligado'], true)) {
         return $cache['s'];
     }
     [$lista] = mcp_rw_webhooks($cfg);
     if ($lista === null) {
         return 'desconhecido';
     }
-    $ligado = false;
+    $s = $lista ? 'diferente' : 'desligado';
     foreach ($lista as $w) {
-        $ligado = $ligado || ($w['ativo'] && in_array('whatsapp.message.received', $w['eventos'], true));
+        // A Kapso pode não devolver o segredo no GET: aí não há o que comparar, e vale o resto.
+        $segredoOk = $w['segredo'] === null || hash_equals(mcp_segredo('kapso_webhook'), $w['segredo']);
+        if ($w['ativo'] && $segredoOk && !array_diff(MCP_RW_EVENTOS_WEBHOOK, $w['eventos'])) {
+            $s = 'ligado';
+        }
     }
-    $s = $ligado ? 'ligado' : 'desligado';
     mcp_rw_cache('rw_cache_webhook', ['s' => $s], $agora);
     return $s;
 }
@@ -612,7 +645,7 @@ function mcp_rw_webhook_ligar(array $cfg): ?string
         return $erro;
     }
     $corpo = ['whatsapp_webhook' => ['kind' => 'kapso', 'url' => mcp_rw_webhook_url(), 'events' => MCP_RW_EVENTOS_WEBHOOK, 'active' => true,
-        'payload_version' => 'v2', 'secret_key' => mcp_segredo('kapso_webhook')]];
+        'secret_key' => mcp_segredo('kapso_webhook')]];
     $base = $cfg['base'] . '/platform/v1/whatsapp/phone_numbers/' . rawurlencode($cfg['numero_id']) . '/webhooks';
     [, , $erro] = $lista
         ? mcp_rw_kapso_pedir($cfg, 'PATCH', $base . '/' . rawurlencode($lista[0]['id']), $corpo, 15)
@@ -753,7 +786,7 @@ function mcp_rw_carregar(?int $agora = null): array
     }
     $escola = mcp_rw_escola_ler($inicioMetrica, $buscar);
     if ($escola['estado'] === 'indisponivel') {
-        error_log('[matricula] recuperação por WhatsApp: escola indisponível (' . $escola['erro'] . '); a rodada segue só com o site');
+        error_log('[matricula] recuperação por WhatsApp: escola indisponível (' . $escola['erro'] . '); nada sai até ela responder');
     }
     $tentativas = array_merge($site, mcp_rw_tentativas_escola($escola['usuarios'], $inicio, mcp_rw_slugs_por_uuid()));
     $bloqueios = [];
@@ -777,7 +810,7 @@ function mcp_rw_chaves(array $pessoa): array
 /** Todas as linhas de mcp_recuperacao_whatsapp, por chave e por telefone_hash (para achar as etapas de cada pessoa). */
 function mcp_rw_linhas(): array
 {
-    return mcp_db()->query('SELECT id, pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, status, provedor_id, entrega, erro, resposta, criado_em, atualizado_em
+    return mcp_db()->query('SELECT id, pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, chaves, status, provedor_id, entrega, erro, resposta, criado_em, atualizado_em
         FROM mcp_recuperacao_whatsapp ORDER BY id')->fetchAll();
 }
 
@@ -798,17 +831,30 @@ function mcp_rw_da_pessoa(array $pessoa, array $indice): array
     return $porEtapa;
 }
 
-/** Índice das linhas por pessoa_chave e por telefone_hash. */
+/** Índice das linhas por todas as chaves gravadas nelas: pessoa_chave, telefone_hash e as da coluna chaves. */
 function mcp_rw_indice(array $linhas): array
 {
     $indice = [];
     foreach ($linhas as $l) {
-        $indice[$l['pessoa_chave']][] = $l;
-        if ($l['telefone_hash'] !== $l['pessoa_chave']) {
-            $indice[$l['telefone_hash']][] = $l;
+        $chaves = array_merge([$l['pessoa_chave'], $l['telefone_hash']], preg_split('/\s+/', trim((string) ($l['chaves'] ?? ''))) ?: []);
+        foreach (array_unique(array_filter($chaves)) as $k) {
+            $indice[$k][] = $l;
         }
     }
     return $indice;
+}
+
+/** Alguma mensagem da pessoa (por qualquer chave dela) teve como resposta "Não tenho interesse", SAIR, PARAR ou STOP? */
+function mcp_rw_nao_quer(array $pessoa, array $indice): bool
+{
+    foreach (mcp_rw_chaves($pessoa) as $k) {
+        foreach ($indice[$k] ?? [] as $l) {
+            if (mcp_rw_quer_parar((string) ($l['resposta'] ?? ''))) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /**
@@ -817,8 +863,13 @@ function mcp_rw_indice(array $linhas): array
  */
 function mcp_rw_reconferir(array $pessoa): ?string
 {
-    if ($pessoa['numero'] === null || mcp_avisos_bloqueado('whatsapp', $pessoa['numero'])) {
+    if ($pessoa['numero'] === null) {
         return 'bloqueou';
+    }
+    foreach (array_unique([$pessoa['numero'], ...$pessoa['numeros']]) as $n) {
+        if (mcp_avisos_bloqueado('whatsapp', $n)) {
+            return 'bloqueou'; // em qualquer celular da pessoa, não só no que vai receber
+        }
     }
     $condicoes = [];
     $valores = [];
@@ -847,14 +898,27 @@ function mcp_rw_reconferir(array $pessoa): ?string
     return $stmt->fetchColumn() ? 'pagou' : null;
 }
 
+/** Quantas mensagens saíram nas 24 h até $agora (o teto diário é uma janela móvel, como o limite da Meta). */
+function mcp_rw_enviadas_24h(int $agora): int
+{
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_recuperacao_whatsapp WHERE status = 'enviado' AND criado_em > ? AND criado_em <= ?");
+    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 86400), gmdate('Y-m-d H:i:s', $agora)]);
+    return (int) $stmt->fetchColumn();
+}
+
 /**
- * Uma rodada (api/lembretes.php, de hora em hora): manda as etapas devidas, até MCP_RW_POR_RODADA envios. Nunca lança
- * por causa da Kapso nem da escola; erro de banco sobe para quem chama (lembretes.php registra e segue).
+ * Uma rodada (api/lembretes.php, de hora em hora): manda as etapas devidas, até MCP_RW_POR_RODADA envios e
+ * MCP_RW_POR_DIA em 24 h. Nunca lança por causa da Kapso nem da escola; erro de banco sobe para quem chama
+ * (lembretes.php registra e segue).
  * @return array{enviados: int, falhas: int, pulados: int, vistos: int, escola: string, motivo: ?string}
  */
 function mcp_rw_rodar(?int $agora = null): array
 {
     $agora ??= time();
+    // A hora "de verdade" ao longo da rodada: a escola e a Kapso podem levar minutos, e o horário e o criado_em valem
+    // para o instante de cada envio, não para o início.
+    $inicioReal = time();
+    $agoraReal = static fn(): int => $agora + max(0, time() - $inicioReal);
     $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'vistos' => 0, 'escola' => '-', 'motivo' => null];
     $cfg = mcp_rw_kapso_config();
     if (!$cfg['ok']) {
@@ -867,6 +931,11 @@ function mcp_rw_rodar(?int $agora = null): array
     }
     $carga = mcp_rw_carregar($agora);
     $r['escola'] = $carga['escola']['estado'];
+    if ($carga['escola']['estado'] === 'indisponivel') {
+        // Sem a escola não se sabe se quem veio do site pagou lá: espera a próxima hora em vez de cobrar quem já pagou.
+        $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); nada sai até ela responder';
+        return $r;
+    }
     $indice = mcp_rw_indice(mcp_rw_linhas());
     // As devidas, da mais atrasada para a mais nova.
     $fila = [];
@@ -875,15 +944,42 @@ function mcp_rw_rodar(?int $agora = null): array
             continue;
         }
         $r['vistos']++;
+        if (mcp_rw_nao_quer($p, $indice)) {
+            continue;
+        }
         $proxima = mcp_rw_proxima((int) $p['ancora'], mcp_rw_da_pessoa($p, $indice));
         if ($proxima !== null && $proxima['devida_em'] <= $agora) {
             $fila[] = [$proxima['devida_em'], $proxima['etapa'], $p];
         }
     }
+    if (!$fila) {
+        return $r;
+    }
+    // Modelo não aprovado (ou pausado) não é tentado: a Meta recusaria e a etapa ficaria esperando à toa. Se a Kapso não
+    // respondeu a lista agora, segue: o erro do envio também para a rodada sem gastar a etapa.
+    $modelos = mcp_rw_modelos($cfg, $agora);
+    if ($modelos['ok']) {
+        $fila = array_values(array_filter($fila, static fn(array $f): bool => ($modelos['modelos'][MCP_RW_MODELOS[$f[1]]] ?? '') === 'APPROVED'));
+        $faltam = array_keys(array_filter($modelos['modelos'], static fn(string $s): bool => $s !== 'APPROVED'));
+        if ($faltam) {
+            $r['motivo'] = 'modelo sem aprovação: ' . implode(', ', $faltam);
+        }
+    }
     usort($fila, static fn(array $a, array $b): int => [$a[0], $a[2]['principal']] <=> [$b[0], $b[2]['principal']]);
     $db = mcp_db();
+    $noDia = mcp_rw_enviadas_24h($agora);
+    $incertosSeguidos = 0;
     foreach ($fila as [, $etapa, $p]) {
         if ($r['enviados'] + $r['falhas'] >= MCP_RW_POR_RODADA) {
+            break;
+        }
+        if ($noDia >= MCP_RW_POR_DIA) {
+            $r['motivo'] = 'teto de ' . MCP_RW_POR_DIA . ' mensagens em 24 h';
+            break;
+        }
+        $agoraEnvio = $agoraReal();
+        if (!mcp_rw_no_horario($agoraEnvio)) {
+            $r['motivo'] = 'fora do horário (8h–20h de Brasília)';
             break;
         }
         if (mcp_rw_reconferir($p) !== null) {
@@ -892,11 +988,13 @@ function mcp_rw_rodar(?int $agora = null): array
         }
         $chave = mcp_rw_hmac($p['principal']);
         $telefone = mcp_rw_hmac('t:' . $p['numero']);
+        $outras = array_values(array_diff(mcp_rw_chaves($p), [$chave, $telefone]));
         // A linha é reservada ANTES do envio: a UNIQUE(pessoa_chave, etapa) garante que só um processo manda esta etapa.
-        $quando = gmdate('Y-m-d H:i:s', $agora);
-        $reserva = $db->prepare("INSERT IGNORE INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, status, erro, criado_em, atualizado_em)
-            VALUES (?, ?, ?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");
-        $reserva->execute([$chave, $p['origem'], $etapa, $p['curso_slug'] !== '' ? mb_substr($p['curso_slug'], 0, 80) : null, mb_substr($p['curso_nome'], 0, 160), $telefone, $quando, $quando]);
+        $quando = gmdate('Y-m-d H:i:s', $agoraEnvio);
+        $reserva = $db->prepare("INSERT IGNORE INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, curso_slug, curso_nome, telefone_hash, chaves, status, erro, criado_em, atualizado_em)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");
+        $reserva->execute([$chave, $p['origem'], $etapa, $p['curso_slug'] !== '' ? mb_substr($p['curso_slug'], 0, 80) : null, mb_substr($p['curso_nome'], 0, 160), $telefone,
+            $outras ? implode(' ', $outras) : null, $quando, $quando]);
         if ($reserva->rowCount() !== 1) {
             $r['pulados']++;
             continue;
@@ -913,11 +1011,19 @@ function mcp_rw_rodar(?int $agora = null): array
             break;
         }
         $db->prepare('UPDATE mcp_recuperacao_whatsapp SET status = ?, provedor_id = ?, erro = ?, atualizado_em = ? WHERE id = ?')
-            ->execute([$envio['ok'] ? 'enviado' : 'falhou', $envio['id'], $envio['erro'] !== null ? mb_substr($envio['erro'], 0, 255) : null, gmdate('Y-m-d H:i:s', $agora), $id]);
+            ->execute([$envio['ok'] ? 'enviado' : 'falhou', $envio['id'], $envio['erro'] !== null ? mb_substr($envio['erro'], 0, 255) : null, gmdate('Y-m-d H:i:s', $agoraReal()), $id]);
         $envio['ok'] ? $r['enviados']++ : $r['falhas']++;
+        $noDia += $envio['ok'] ? 1 : 0;
         // A linha nova entra no índice: se a mesma pessoa aparecesse de novo nesta rodada, não receberia outra etapa.
-        foreach ([$chave, $telefone] as $k) {
-            $indice[$k][] = ['id' => $id, 'etapa' => $etapa, 'status' => $envio['ok'] ? 'enviado' : 'falhou', 'entrega' => null, 'criado_em' => $quando];
+        foreach (array_merge([$chave, $telefone], $outras) as $k) {
+            $indice[$k][] = ['id' => $id, 'etapa' => $etapa, 'status' => $envio['ok'] ? 'enviado' : 'falhou', 'entrega' => null, 'criado_em' => $quando, 'resposta' => null];
+        }
+        // Resposta incerta: uma é acaso; duas seguidas, ou um 5xx/conexão caída, dizem que a Kapso não está bem.
+        $incertosSeguidos = $envio['incerto'] ? $incertosSeguidos + 1 : 0;
+        if ($envio['incerto'] && ($envio['parar'] || $incertosSeguidos >= 2)) {
+            $r['motivo'] = 'Kapso: ' . $envio['erro'];
+            error_log('[matricula] recuperação por WhatsApp parada nesta rodada: ' . $envio['erro']);
+            break;
         }
     }
     return $r;
@@ -999,12 +1105,18 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             $n += $stmt->rowCount();
             continue;
         }
-        // Resposta reenviada de muito tempo atrás (a assinatura não tem data): um "parar" velho não bloqueia de novo.
-        if ($e['ts'] !== null && $e['ts'] < $agora - 86400) {
-            continue;
-        }
         $numero = str_starts_with($e['de'], '55') ? (mcp_whatsapp_numero(substr($e['de'], 2)) ?? $e['de']) : $e['de'];
         $parar = mcp_rw_quer_parar($e['texto']);
+        // Um "parar" bloqueia qualquer que seja a data (a Kapso reentrega o que não chegou, com o horário original, e
+        // bloquear de novo não faz mal: é INSERT IGNORE). A data só limita a gravação do texto: uma resposta comum
+        // reenviada de muito tempo atrás não toma o lugar da mais nova.
+        if ($e['ts'] !== null && $e['ts'] < $agora - 86400) {
+            if ($parar) {
+                mcp_avisos_bloquear_hash('whatsapp', mcp_avisos_hash('whatsapp', $numero), 'recuperacao');
+                $n++;
+            }
+            continue;
+        }
         $linha = null;
         if ($e['citada'] !== null) {
             $stmt = $db->prepare('SELECT id, resposta FROM mcp_recuperacao_whatsapp WHERE provedor_id = ? ORDER BY id DESC LIMIT 1');
@@ -1099,7 +1211,7 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora): array
                 }
             }
         }
-        if (!$p['no_fluxo']) {
+        if (!$p['no_fluxo'] || mcp_rw_nao_quer($p, $indice)) {
             continue;
         }
         $proxima = mcp_rw_proxima((int) $p['ancora'], $minhas);

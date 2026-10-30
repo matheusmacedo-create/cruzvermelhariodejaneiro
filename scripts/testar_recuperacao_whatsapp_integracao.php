@@ -7,14 +7,17 @@
  *   - público: checkout do site e escola juntos por CPF, e-mail (sem diferença de maiúsculas) e celular; quem pagou no
  *     OUTRO sistema sai; sem celular, bloqueado, CPF e curso de teste, cadastro velho e matrícula paga na escola saem;
  *   - fluxo: 3 h / 24 h / 72 h da âncora, intervalo entre as etapas, só das 8h às 20h de Brasília, nunca repete etapa
- *     (e a UNIQUE do banco), quem paga entre as etapas para, teto de 40 por rodada;
+ *     (e a UNIQUE do banco), quem paga entre as etapas para, teto de 40 por rodada e de 200 em 24 h; bloqueio em
+ *     qualquer celular da pessoa vale para todos;
  *   - envio: o corpo exato (modelo, idioma, parâmetros, botão de URL com o caminho do checkout ou da página geral) e o
- *     cabeçalho X-API-Key; Kapso fora do ar não gasta a etapa; número sem WhatsApp fica "falhou" e não segue;
- *   - escola fora do ar não derruba a rodada (segue só com o site); sem a configuração da Kapso nada sai;
- *   - webhook: assinatura válida e inválida, entregue/lida (só avança), "Não tenho interesse" bloqueia, outra resposta
- *     fica guardada;
+ *     cabeçalho X-API-Key; Kapso fora do ar, limite da Meta (130429) e modelo sem aprovação não gastam a etapa; 502 do
+ *     gateway conta como enviada (pode ter saído) e para a rodada; número sem WhatsApp fica "falhou" e não segue;
+ *   - escola fora do ar não derruba a rodada, mas segura os envios até ela voltar; sem a configuração da Kapso nada sai;
+ *   - webhook: assinatura válida e inválida, entregue/lida (só avança), "Não tenho interesse" bloqueia (mesmo reentregue
+ *     dias depois), outra resposta fica guardada;
  *   - painel: sem sessão não mostra dado nenhum; com sessão mostra a situação (modelos, webhook, escola), os números e a
- *     lista; "Ligar o recebimento de respostas" (POST com token) cria o webhook na Kapso com o segredo do site;
+ *     lista; "Ligar o recebimento de respostas" (POST com token) cria o webhook na Kapso com o segredo do site; um
+ *     webhook com outro segredo ou sem todos os eventos aparece como desacertado, com o botão;
  *   - métricas: recuperadas (pagaram depois da 1ª mensagem), por origem e os 14 dias.
  *
  * As datas do teste ficam 400 dias no futuro, às 10h de Brasília: o que outros testes deixaram no banco local fica fora
@@ -142,6 +145,8 @@ if ($caminho === '/meta/whatsapp/v24.0/1112223334/messages' && $metodo === 'POST
     $d = json_decode($corpo, true) ?: [];
     $n = $anotar('kapso.jsonl', ['chave' => $_SERVER['HTTP_X_API_KEY'] ?? '', 'corpo' => $d]);
     if (str_ends_with((string) ($d['to'] ?? ''), '0000')) { http_response_code(400); echo '{"error":{"message":"Message undeliverable","code":131026}}'; return true; }
+    if (str_ends_with((string) ($d['to'] ?? ''), '1304')) { http_response_code(400); echo '{"error":{"message":"(#130429) Rate limit hit","code":130429}}'; return true; }
+    if (str_ends_with((string) ($d['to'] ?? ''), '5020')) { http_response_code(502); echo '{"error":"Bad Gateway"}'; return true; }
     echo json_encode(['messaging_product' => 'whatsapp', 'contacts' => [['wa_id' => $d['to'] ?? '']], 'messages' => [['id' => "wamid.teste-$n"]]]);
     return true;
 }
@@ -151,8 +156,9 @@ if ($caminho === '/platform/v1/whatsapp/phone_numbers/1112223334' && $metodo ===
 }
 if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
     $anotar('modelos.jsonl', ['query' => $_SERVER['QUERY_STRING'] ?? '']);
+    $pendente = (string) ($controle('modelos')['pendente'] ?? '');
     echo json_encode(['data' => [
-        ['name' => 'rec_inscricao_1', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
+        ['name' => 'rec_inscricao_1', 'status' => $pendente === 'rec_inscricao_1' ? 'PENDING' : 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'rec_inscricao_2', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'rec_inscricao_3', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'outro_modelo', 'status' => 'REJECTED', 'language' => 'pt_BR', 'category' => 'UTILITY'],
@@ -306,6 +312,12 @@ try {
         mcp_rw_proxima(0, [1 => ['status' => 'enviado', 'entrega' => 'falhou', 'criado_ts' => 0]]),
         mcp_rw_proxima(0, [1 => ['status' => 'enviado', 'entrega' => null, 'criado_ts' => 0], 2 => ['status' => 'enviado', 'entrega' => null, 'criado_ts' => 0], 3 => ['status' => 'enviado', 'entrega' => null, 'criado_ts' => 0]]),
     ], [null, null, null]);
+    $tent = static fn(string $origem, string $ref, string $cpf, string $numero, int $quando): array => ['origem' => $origem, 'ref' => $ref, 'cpf' => $cpf, 'email' => '',
+        'numero' => $numero, 'nome' => 'Ana Teste', 'curso_slug' => '', 'curso_nome' => 'Punção Venosa', 'quando' => $quando, 'aberta' => true, 'pago' => false, 'pago_ts' => null];
+    $ana = mcp_rw_agrupar([$tent('site', 's1', '52998224725', '5521911112222', $A - 5 * 86400), $tent('escola', 'e1', '52998224725', '5521933334444', $A - 86400)],
+        static fn(string $n): bool => $n === '5521911112222');
+    verificar('bloqueio no celular antigo vale para o novo da mesma pessoa', [count($ana), $ana[0]['numero'] ?? '', $ana[0]['no_fluxo'] ?? null, $ana[0]['motivo'] ?? null],
+        [1, '5521933334444', false, 'bloqueou']);
     verificar('resposta que para: botão, SAIR, Parar., stop; outra não', array_map('mcp_rw_quer_parar', ['Não tenho interesse', 'SAIR', 'Parar.', ' stop ', 'quero saber mais', 'não, obrigado']),
         [true, true, true, true, false, false]);
     verificar('caminho do botão: curso do catálogo vai ao checkout; sem curso, à página geral', [mcp_rw_caminho_botao('bombeiro-civil', 2), mcp_rw_caminho_botao('', 1), mcp_rw_caminho_botao('curso-que-nao-existe', 3)], [
@@ -425,9 +437,14 @@ try {
     // Escola fora do ar; um cadastro novo no site.
     controle('escola', ['fora' => true, 'usuarios' => []]);
     $s14 = $criar('escolafora', $A + 18 * 3600);
+    $antes = count(falso('kapso'));
     $r = mcp_rw_rodar($A + 24 * 3600);
-    verificar('escola fora do ar: a rodada segue só com o site', [$r['escola'], count($mensagensPara($s14['telefone'])), $etapasPara($e1['celular'])], ['indisponivel', 1, ['rec_inscricao_1']]);
+    verificar('escola fora do ar: não derruba, e nada sai até ela voltar (não dá para saber quem pagou lá)',
+        [$r['escola'], str_starts_with((string) $r['motivo'], 'escola indisponível'), count(falso('kapso')) - $antes], ['indisponivel', true, 0]);
     verificar('Maria pagou entre as etapas: não recebe a 2ª', $etapasPara($s1['telefone']), ['rec_inscricao_1']);
+    // Com a escola fora, a pessoa da união aparece só pelo lado do site (outro CPF e outro celular): as etapas dela são
+    // achadas pelo e-mail (coluna chaves), e a 1ª não vai de novo para o celular do site.
+    verificar('escola fora: a pessoa da união não recebe a 1ª de novo pelo celular do site', in_array('rec_inscricao_1', $etapasPara($s3['telefone']), true), false);
     controle('escola', ['fora' => false, 'usuarios' => [$e1, $e3, $e4, $e5, $e6, $e7, $e8]]);
 
     // Kapso fora do ar: a etapa não é gasta.
@@ -441,6 +458,8 @@ try {
     $r = mcp_rw_rodar($A + 26 * 3600);
     verificar('Kapso de volta: a 2ª sai (escola de volta também)', [$r['escola'], $etapasPara($e1['celular']), $etapasPara($e7['celular'])],
         ['ok', ['rec_inscricao_1', 'rec_inscricao_2'], ['rec_inscricao_1', 'rec_inscricao_2']]);
+    verificar('escola de volta: o cadastro feito com ela fora recebe a 1ª', $etapasPara($s14['telefone']), ['rec_inscricao_1']);
+    verificar('Maria continua sem a 2ª', $etapasPara($s1['telefone']), ['rec_inscricao_1']);
     $msg2 = $mensagensPara($e1['celular'])[1]['corpo']['template']['components'][1]['parameters'][0]['text'] ?? '';
     verificar('2ª mensagem: campanha rec2 no botão', str_ends_with($msg2, 'utm_campaign=rec2'), true);
     verificar('número sem WhatsApp não recebe a 2ª', count($mensagensPara($s13['telefone'])), 1);
@@ -485,10 +504,17 @@ try {
     $bloq = $db->prepare("SELECT origem FROM mcp_avisos_bloqueios WHERE canal = 'whatsapp' AND destino_hash = ?");
     $bloq->execute([mcp_avisos_hash('whatsapp', '55' . $e1['celular'])]);
     verificar('"Não tenho interesse": bloqueia (origem recuperacao) e guarda a resposta', [$bloq->fetchColumn(), $respostaDe($e1['celular'])], ['recuperacao', ['Não tenho interesse']]);
+    $tardio = (string) json_encode(['message' => ['id' => 'wamid.in-3', 'from' => '55' . $s12['telefone'], 'type' => 'text', 'text' => ['body' => 'PARAR'], 'timestamp' => (string) (time() - 3 * 86400),
+        'kapso' => ['direction' => 'inbound']], 'phone_number_id' => $numeroId]);
+    http($urlWebhook, 'POST', $tardio, ['X-Webhook-Event: whatsapp.message.received', 'X-Webhook-Signature: ' . $assinar($tardio)]);
+    verificar('"PARAR" reentregue 3 dias depois ainda bloqueia', mcp_avisos_bloqueado('whatsapp', '55' . $s12['telefone']), true);
 
     // ------------------------------------------------------------------------- etapa 3
-    $r = mcp_rw_rodar($A + 68 * 3600);
-    verificar('72 h da âncora, mas só 42 h depois da 2ª: espera', [$etapasPara($e7['celular']), $r['enviados']], [['rec_inscricao_1', 'rec_inscricao_2'], 0]);
+    $r = mcp_rw_rodar($A + 72 * 3600);
+    verificar('76 h da âncora, mas só 46 h depois da 2ª: espera', $etapasPara($e7['celular']), ['rec_inscricao_1', 'rec_inscricao_2']);
+    // Quem se cadastrou 1 h antes da base recebeu a 1ª só às 12h do dia seguinte (a escola e depois a Kapso fora seguraram
+    // as rodadas das 10h e 11h): a 2ª vem 21 h depois dela, e não com 24 h do cadastro.
+    verificar('a 2ª respeita 21 h depois da 1ª (cadastro recente demais na rodada das 10h)', $etapasPara($s11['telefone']), ['rec_inscricao_1', 'rec_inscricao_2']);
     $r = mcp_rw_rodar($A + 74 * 3600);
     verificar('3ª mensagem sai; quem disse "Não tenho interesse" não recebe', [$etapasPara($e7['celular']), $etapasPara($e1['celular'])],
         [['rec_inscricao_1', 'rec_inscricao_2', 'rec_inscricao_3'], ['rec_inscricao_1', 'rec_inscricao_2']]);
@@ -503,7 +529,13 @@ try {
         $k = ($x['corpo']['to'] ?? '') . '|' . ($x['corpo']['template']['name'] ?? '');
         $porEtapa[$k] = ($porEtapa[$k] ?? 0) + 1;
     }
-    verificar('depois da 3ª, nada mais; nenhuma etapa repetiu para ninguém', [count(falso('kapso')) - $antes, max($porEtapa)], [0, 1]);
+    $depois = array_slice(falso('kapso'), $antes);
+    verificar('depois da 3ª, nada mais para quem completou; nenhuma etapa repetiu para ninguém',
+        [count(array_filter($depois, static fn(array $x): bool => ($x['corpo']['to'] ?? '') === '55' . $e7['celular'])), max($porEtapa), $etapasPara($s11['telefone'])],
+        [0, 1, ['rec_inscricao_1', 'rec_inscricao_2', 'rec_inscricao_3']]);
+    $uniao = array_merge($etapasPara($e3['celular']), $etapasPara($s3['telefone']));
+    sort($uniao);
+    verificar('a pessoa da união recebeu cada etapa uma vez só, somando os dois celulares', $uniao, ['rec_inscricao_1', 'rec_inscricao_2', 'rec_inscricao_3']);
 
     // ------------------------------------------------------------------------- métricas
     $agoraM = $A + 74 * 3600;
@@ -525,6 +557,56 @@ try {
     $r2 = mcp_rw_rodar($B + 3600);
     verificar('teto: 40 na rodada, o 41º na seguinte', [$r['enviados'], $r2['enviados']], [40, 1]);
 
+    // ------------------------------------------------------------------------- erros que não são de quem recebe
+    $C = $A + 40 * 86400;
+    $limite = $criar('limite', $C - 5 * 3600, ['telefone' => $celular('1304')]);
+    $depoisLimite = $criar('depoislimite', $C - 4 * 3600);
+    $r = mcp_rw_rodar($C);
+    $linhasDe = static function (string $tel) use ($db): array {
+        $stmt = $db->prepare('SELECT etapa, status, erro FROM mcp_recuperacao_whatsapp WHERE telefone_hash = ? ORDER BY etapa');
+        $stmt->execute([mcp_rw_hmac('t:55' . $tel)]);
+        return $stmt->fetchAll();
+    };
+    verificar('limite da Meta (400/130429): a rodada para e a etapa não é gasta', [$r['enviados'], $r['falhas'], str_contains((string) $r['motivo'], '130429'),
+        $linhasDe($limite['telefone']), count($mensagensPara($depoisLimite['telefone']))], [0, 1, true, [], 0]);
+    $db->prepare("UPDATE mcp_inscricoes SET status = 'pago', pago_em = ? WHERE id = ?")->execute([$quando($C), $limite['id']]);
+    mcp_rw_rodar($C + 3600);
+    verificar('limite passado: a próxima rodada manda', $etapasPara($depoisLimite['telefone']), ['rec_inscricao_1']);
+
+    $D = $A + 60 * 86400;
+    controle('modelos', ['pendente' => 'rec_inscricao_1']);
+    $pendente = $criar('modelopendente', $D - 4 * 3600);
+    $antes = count(falso('kapso'));
+    $r = mcp_rw_rodar($D);
+    verificar('modelo sem aprovação: não tenta, não gasta a etapa e diz qual', [$r['enviados'], count(falso('kapso')) - $antes, str_contains((string) $r['motivo'], 'rec_inscricao_1'),
+        $linhasDe($pendente['telefone'])], [0, 0, true, []]);
+    controle('modelos', []);
+    mcp_rw_rodar($D + 3600);
+    verificar('modelo aprovado: sai na rodada seguinte', $etapasPara($pendente['telefone']), ['rec_inscricao_1']);
+
+    $E = $A + 80 * 86400;
+    $gateway = $criar('gateway', $E - 5 * 3600, ['telefone' => $celular('5020')]);
+    $depoisGateway = $criar('depoisgateway', $E - 4 * 3600);
+    $r = mcp_rw_rodar($E);
+    $lg = $linhasDe($gateway['telefone']);
+    verificar('502 do gateway: conta como enviada (pode ter saído), não repete e a rodada para', [$r['enviados'], $lg[0]['status'] ?? '', str_contains((string) ($lg[0]['erro'] ?? ''), 'pode ter saído'),
+        count($mensagensPara($depoisGateway['telefone']))], [1, 'enviado', true, 0]);
+    mcp_rw_rodar($E + 3600);
+    verificar('depois do 502: o próximo recebe, e o do 502 não recebe a 1ª de novo', [$etapasPara($depoisGateway['telefone']), count($mensagensPara($gateway['telefone']))],
+        [['rec_inscricao_1'], 1]);
+
+    $F = $A + 100 * 86400;
+    $cheio = $db->prepare("INSERT INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, curso_nome, telefone_hash, status, criado_em, atualizado_em) VALUES (?, 'site', 1, 'x', ?, 'enviado', ?, ?)");
+    for ($i = 0; $i < MCP_RW_POR_DIA; $i++) {
+        $cheio->execute([hash('sha256', "cheio-$i-$sufixo"), hash('sha256', "tel-$i-$sufixo"), $quando($F - 1800), $quando($F - 1800)]);
+    }
+    $teto = $criar('tetodiario', $F - 4 * 3600);
+    $r = mcp_rw_rodar($F);
+    verificar('teto de 200 em 24 h: nada sai e diz o motivo', [$r['enviados'], $r['motivo'], count($mensagensPara($teto['telefone']))], [0, 'teto de 200 mensagens em 24 h', 0]);
+    $r = mcp_rw_rodar($F + 23 * 3600); // 9h do dia seguinte: as 200 saíram há 23h30, ainda dentro das 24 h
+    $r2 = mcp_rw_rodar($F + 24 * 3600);
+    verificar('teto: libera quando as 200 passam de 24 h', [$r['enviados'], $etapasPara($teto['telefone'])], [0, ['rec_inscricao_1']]);
+
     // ------------------------------------------------------------------------- painel
     $url = "http://127.0.0.1:$portaSite/matricula-cursos-presenciais/api/recuperacao.php";
     $cookie = 'Cookie: mcp_painel=' . $_COOKIE[MCP_PAINEL_COOKIE];
@@ -539,7 +621,9 @@ try {
         [$st, substr_count($html, '>Aprovado<'), str_contains($html, 'Plataforma da escola'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'No fluxo agora'), str_contains($html, 'Recuperadas')],
         [200, 3, true, true, true, true]);
     verificar('painel: a chave da Kapso nunca aparece', str_contains($html, $chaveKapso), false);
-    verificar('painel: lista com o celular mascarado, sem o número inteiro', [str_contains($html, mcp_whatsapp_mascarado('55' . $novos[0]['telefone'])), str_contains($html, $novos[0]['telefone'])], [true, false]);
+    $primeiro = mcp_rw_metricas(mcp_rw_carregar()['pessoas'], mcp_rw_linhas(), time())['lista'][0]['celular'] ?? '?';
+    verificar('painel: lista com o celular mascarado, nenhum número inteiro na página', [str_contains($html, $primeiro),
+        (bool) array_filter($telefones, static fn(string $t): bool => str_contains($html, substr($t, 2)))], [true, false]);
     [$st] = http($url, 'POST', ['acao' => 'ligar_webhook'], [$cookie]);
     verificar('painel: botão sem o token → 403', [$st, count(falso('webhooks'))], [403, 0]);
     [$st, $cab] = http($url, 'POST', ['acao' => 'ligar_webhook', 't' => mcp_painel_csrf($quem, 'rw_webhook', 0)], [$cookie]);
@@ -550,19 +634,28 @@ try {
         [303, 'recuperacao.php?webhook=ok', 'POST', $urlWebhook, mcp_segredo('kapso_webhook'), 'kapso', true]);
     [, , $html] = http($url . '?webhook=ok', 'GET', null, [$cookie]);
     verificar('painel: depois de ligar, "Ligado" e sem o botão', [str_contains($html, '>Ligado<'), str_contains($html, 'Ligar o recebimento de respostas</button>')], [true, false]);
+    $webhookCom = static fn(array $mudar): array => ['data' => [$mudar + ['id' => 'wh-9', 'url' => $urlWebhook, 'active' => true, 'events' => MCP_RW_EVENTOS_WEBHOOK]]];
+    foreach (['outro segredo' => ['secret_key' => 'segredo-de-outra-base'], 'sem a entrega e a leitura' => ['events' => ['whatsapp.message.received']]] as $caso => $mudar) {
+        controle('webhooks', $webhookCom($mudar));
+        $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_webhook'");
+        [, , $html] = http($url, 'GET', null, [$cookie]);
+        verificar("painel: webhook com $caso aparece desacertado, com o botão, sem mostrar segredo", [str_contains($html, '>Desacertado<'), str_contains($html, 'Ligar o recebimento de respostas</button>'),
+            str_contains($html, 'segredo-de-outra-base'), str_contains($html, mcp_segredo('kapso_webhook'))], [true, true, false, false]);
+    }
+    http($url, 'POST', ['acao' => 'ligar_webhook', 't' => mcp_painel_csrf($quem, 'rw_webhook', 0)], [$cookie]);
+    $wh = array_slice(falso('webhooks'), -1)[0] ?? [];
+    [, , $html] = http($url, 'GET', null, [$cookie]);
+    verificar('painel: o botão acerta o webhook existente (PATCH com o segredo e os eventos) e volta a "Ligado"', [$wh['metodo'] ?? '', $wh['corpo']['whatsapp_webhook']['secret_key'] ?? '',
+        $wh['corpo']['whatsapp_webhook']['events'] ?? [], str_contains($html, '>Ligado<')], ['PATCH', mcp_segredo('kapso_webhook'), MCP_RW_EVENTOS_WEBHOOK, true]);
 
     // ------------------------------------------------------------------------- sem configuração
+    // Só a configuração SEM a Kapso roda pela linha de comando: com ela, a rodada usaria a hora de agora.
     $antes = count(falso('kapso'));
-    $saida = [];
-    exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($raiz . '/site/matricula-cursos-presenciais/api/lembretes.php') . ' 2>/dev/null', $saida);
-    // (com a configuração completa, a rodada da linha de comando usaria a hora de agora: só a sem configuração roda aqui)
-    putenv("MCP_CONFIG_ARQUIVO=$configSem");
     $saida = [];
     exec('MCP_CONFIG_ARQUIVO=' . escapeshellarg($configSem) . ' ' . escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($raiz . '/site/matricula-cursos-presenciais/api/lembretes.php') . ' 2>/dev/null', $saida);
     $linha = array_values(array_filter($saida, static fn(string $l): bool => str_contains($l, 'recuperação por WhatsApp')))[0] ?? '';
     verificar('sem a configuração da Kapso: lembretes.php não manda nada e diz o que falta',
         [str_contains($linha, 'sem configuração (WHATSAPP_KAPSO_CHAVE, WHATSAPP_KAPSO_NUMERO_ID)'), count(falso('kapso')) - $antes], [true, 0]);
-    putenv("MCP_CONFIG_ARQUIVO=$config");
 
     $erros = trim((string) file_get_contents($logErros));
     verificar('servidor sem erro de PHP no log', $erros, '');

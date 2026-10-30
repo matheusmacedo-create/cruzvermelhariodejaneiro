@@ -3,7 +3,10 @@
 # módulo novo (que o lib.php não carrega: quem usa faz require_once); depois o webhook, o painel e, por último, a rotina
 # de hora em hora (lembretes.php), que só começa a mandar quando o módulo já está lá.
 # config-whatsapp.php NÃO entra: o código que o lê (lib/config.php) não mudou, e as duas chaves novas
-# (WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID) se escrevem nele à mão, no gerenciador de arquivos da Hostinger.
+# (WHATSAPP_KAPSO_CHAVE e WHATSAPP_KAPSO_NUMERO_ID) se escrevem nele à mão, no gerenciador de arquivos da Hostinger,
+# DENTRO do return [ ... ] que já existe, cada linha terminando em vírgula. Um erro de sintaxe ali desliga o arquivo
+# inteiro, inclusive as chaves Evolution/Cloud dos avisos que já funcionam: confira com php -l (se houver terminal) e
+# vendo "Ok" em Chave e Número no painel. Trecho exato no README.
 # Nunca config.php. O lib/recuperacao_funil.php da primeira versão nunca foi publicado; se estiver no servidor, apague-o.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt

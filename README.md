@@ -1245,54 +1245,77 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
-## Recuperação do funil (30/10/2026)
+## Recuperação por WhatsApp (30/10/2026)
 
-Pedido do Matheus: chamar quem deixou os dados no checkout e não pagou, com o convite para a turma de **Primeiros
-Socorros Básico de 17/11**. **Situação: construído e testado só na máquina; NADA foi publicado** (nem a tabela nova).
+Pedido do Matheus: não perder os leads que já deixaram o contato. Substitui a primeira versão do mesmo dia (lista
+manual com wa.me, planilha e convite para outro curso), que saiu inteira. **Situação: construído e testado só na
+máquina; NADA foi publicado.**
 
-- **O que faz**: página avulsa da secretaria, `api/recuperacao.php` (fora do `painel.php`, sem JavaScript, nada se
-  mexe sozinho). Entra com a mesma sessão do Portal (o cookie vale para `api/`); sem sessão, só o link "Entrar pelo
-  Portal da secretaria", nenhum dado. Todo POST leva o token do formulário (`mcp_painel_csrf`); `noindex` e `no-store`.
-- **Quem entra**: inscrições dos últimos **180 dias** que nunca viraram pagamento. Uma **pessoa** junta as tentativas
-  com o mesmo CPF, e-mail (minúsculo) ou telefone (só dígitos, com ou sem 55). Se **qualquer** linha da pessoa, de
-  qualquer curso e época, está `pago` ou `estornado`, ela sai. Saem também: quem pediu para não receber
-  (`mcp_avisos_bloqueios`, e-mail ou WhatsApp, pelo hash de `mcp_avisos_hash`), CPFs de `TESTE_CPFS` e cursos com
-  "teste" ou "dev" no slug ou no nome.
-- **Situação**: `novo`, `contatado` (1 contato ou mais), `recuperado` (pagou qualquer inscrição **depois** do 1º
-  contato registrado, inclusive a própria tentativa que motivou o contato), `nao_quer` (marcado aqui) e `bloqueado`
-  (pediu para sair por outro caminho depois de ser chamado). A **lista** (com nome e e-mail) é só de novos e
-  contatados; as outras situações são só contagens nas métricas, sem filtro nominal. Quem já foi chamado continua em
-  "contatadas" depois de pagar, de pedir para sair ou de passar dos 180 dias, para a taxa não subir sozinha.
-- **WhatsApp manual**: "Chamar no WhatsApp" registra o contato e responde 303 para `wa.me/55<celular>?text=…`, numa
-  aba nova; quem envia é a secretaria. A mensagem usa o primeiro nome e o curso de interesse da tentativa mais recente
-  (quem já tentou Primeiros Socorros Básico ouve "Você começou sua inscrição … e ela não foi concluída"), a data da
-  turma aberta no `oferta.json` (`mcp_turma_aberta`) e o link do checkout com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=ps-<aaaammdd>`.
-  Sem turma aberta, o botão fica desligado. Sem preço e sem escassez no texto.
-- **Não quer contato**: grava o bloqueio do e-mail e do WhatsApp da pessoa (origem `recuperacao`). Vale para esta lista
-  e para os avisos das aulas e comunicados, como o "não quero mais receber" da página. **Não** segura o lembrete
-  automático do PIX (`lib/recuperacao.php` não consulta os bloqueios): se a pessoa abrir uma compra nova, o e-mail
-  "falta o PIX" daquela compra ainda sai.
-- **Planilha para a Kapso**: "Exportar planilha" (POST) baixa o público filtrado em CSV com vírgula:
-  `nome, primeiro_nome, telefone_e164 (55…), email, curso_interesse, ultima_tentativa`. Só novos e contatados com
-  celular válido (quem não tem fica de fora e não conta como contatado; a tela diz quantos). Cada
-  pessoa exportada conta como contatada (canal `exportacao`), e a exportação fica em `mcp_eventos`
-  (`recuperacao_exportacao`, com quem exportou).
-- **Métricas** (só contagens): no público, contatadas, recuperadas e a taxa (recuperadas ÷ contatadas), recuperadas pelo
-  lembrete do PIX que já existia (pagamentos depois de um `email_pix_lembrete` da mesma pessoa e curso, cada pagamento
-  contado uma vez), quebra por
-  curso de interesse e os últimos 14 dias (WhatsApp, exportadas, recuperações). Filtros por curso e situação; 50 por página.
-- **Banco**: tabela `mcp_recuperacao_contatos` (criada pela migração do `db.php`, `MCP_DB_VERSAO` nova). `pessoa_chave`
-  é o HMAC-SHA256 do CPF com a chave `recuperacao_funil` de `mcp_chaves`: nunca o CPF em claro.
-- **Onde fica**: regra pura em `api/lib/recuperacao_funil.php` (`mcp_rf_*`), página em `api/recuperacao.php`.
-- **Testes**: `scripts/testar_recuperacao_funil_integracao.php` (74 verificações, MariaDB local e servidor PHP local;
-  nada externo é chamado, o wa.me só é conferido no `Location`). Também passaram `testar_recuperacao_integracao.php`,
-  `testar_avisos_integracao.php` e `testar_checkout.php`.
-- **Publicar** (quando o Matheus pedir): `scripts/publicacao-recuperacao.txt`; conferir com
-  `scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt` (sem sessão, a página responde 200 só com o link
-  de entrada). Esse script não enxerga a tabela nova: depois de publicar, **abra a página logada no Portal** e confira
-  que os números aparecem (se a migração ainda não rodou, a página diz "O banco ainda não está pronto…" com 503, em vez
-  de erro 500). **Não publicado, não testado no ar** e sem link no menu do Portal: o endereço é
-  `/matricula-cursos-presenciais/api/recuperacao.php`.
+- **O que faz**: três mensagens **automáticas** de WhatsApp, pelos modelos aprovados `rec_inscricao_1`, `_2` e `_3`
+  (pt_BR; `{{1}}` = primeiro nome, `{{2}}` = curso; botão de URL com o caminho do checkout do curso, ou da página geral
+  quando não há curso, com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec<etapa>`), enviadas pela Kapso
+  no número dedicado. O painel `api/recuperacao.php` só acompanha.
+- **Quem entra**: no checkout do site, inscrições pendente/expirado/recusado dos últimos **10 dias**; na plataforma da
+  escola, `"Usuario"` ALUNO criado nos últimos 10 dias sem matrícula paga (só a conta, ou matrícula sem pagar), lido
+  pelo PostgREST com `ESCOLA_API_TOKEN` (paginado, 10 s no máximo). Uma pessoa junta os dois sistemas por CPF, e-mail
+  (minúsculo) ou celular (`mcp_whatsapp_numero`). **Sai** quem pagou qualquer coisa em qualquer sistema (site: pago ou
+  estornado, de qualquer época; escola: taxa confirmada ou PAGO/PARCELADO), quem não tem celular válido, quem está em
+  `mcp_avisos_bloqueios` (WhatsApp), CPFs de `TESTE_CPFS` e cursos com "teste"/"dev". Curso e nome: os da tentativa
+  mais recente ("nossos cursos" para quem só criou a conta na escola).
+- **Régua**: 1ª com 3 h da âncora (o cadastro ou tentativa mais recente), 2ª com 24 h e 3ª com 72 h, cada uma só se a
+  anterior saiu, e com 21 h / 48 h desde a anterior (sem isso, no primeiro dia no ar, quem se cadastrou há uma semana
+  receberia as três em três horas). Só das **8h às 20h** de Brasília (conferido antes de cada envio, não só no começo
+  da rodada); no máximo **40 por rodada** e **200 em 24 h** (o número dedicado tem 250 por dia). Antes de cada envio, a
+  pessoa é conferida de novo no banco do site (pagou? bloqueou algum dos celulares dela? respondeu "não quero"?). Nenhuma
+  etapa se repete: `UNIQUE(pessoa_chave, etapa)` em `mcp_recuperacao_whatsapp`, e as etapas da pessoa são procuradas
+  por todas as chaves dela (coluna `chaves`), também quando a escola está fora e só o lado do site aparece. Roda na
+  rotina de hora em hora (`api/lembretes.php`). **Escola fora do ar**: nada sai naquela hora (sem ela não se sabe se
+  quem veio do site pagou lá). **Só gasta a etapa** o erro que é de quem recebe (número sem WhatsApp, 131026 e
+  parecidos); Kapso fora, modelo não aprovado ou pausado, parâmetro recusado e limite da Meta (130429, 131048, 131056)
+  param a rodada e tentam de novo na hora seguinte, e um modelo que a Meta não mostra como aprovado nem é tentado. Um
+  5xx do gateway ou conexão caída no meio contam como enviados (podem ter saído; nunca repete) e param a rodada.
+- **Respostas**: `api/kapso-webhook.php` (assinatura HMAC-SHA256 do corpo em `X-Webhook-Signature`, segredo
+  `kapso_webhook` de `mcp_chaves`; sem ela, 401) grava entregue/lida pelo wamid; "Não tenho interesse" (o botão do
+  `rec_inscricao_3`), SAIR, PARAR ou STOP bloqueiam o WhatsApp (origem `recuperacao`), mesmo que a Kapso reentregue
+  dias depois; qualquer outra resposta fica no painel para a secretaria. O painel só diz "Ligado" quando o webhook da
+  Kapso tem o segredo do site e os quatro eventos; senão mostra "Desacertado" e o botão, que acerta.
+- **Painel** (`api/recuperacao.php`, sessão do Portal; sem sessão só o link de entrada; noindex, no-store, sem
+  JavaScript): situação (chave, número, os 3 modelos aprovados lidos da Meta com cache de 10 min, webhook, escola),
+  números (no fluxo, enviadas por etapa, entregues e lidas, responderam, não querem, **recuperadas** = pagaram em
+  qualquer sistema depois da 1ª mensagem, e a taxa), por origem e por curso, últimos 14 dias e a lista das pessoas no
+  fluxo (celular mascarado, etapa, próxima mensagem, respostas), 50 por página. Única ação: "Ligar o recebimento de
+  respostas", que cria o webhook na Kapso com o segredo do site.
+- **Configuração**: `WHATSAPP_KAPSO_CHAVE` e `WHATSAPP_KAPSO_NUMERO_ID` em `api/config-whatsapp.php` (só no servidor;
+  modelo em `config.example.php`). Sem as duas, nada sai e o painel diz o que falta. A chave nunca vai para log, erro,
+  painel nem banco. **Cuidado ao editar**: esse arquivo já guarda as chaves `WHATSAPP_EVOLUTION_*` e `WHATSAPP_CLOUD_*`
+  dos avisos, e um erro de sintaxe nele (vírgula ou aspa faltando) faz o `lib/config.php` ignorar o arquivo **inteiro**
+  (só registra `config-whatsapp.php ignorado` no `error_log`): os avisos e lembretes por WhatsApp que já estão no ar
+  param em silêncio. Acrescente as duas linhas **dentro** do `return [ ... ];` que já existe, cada uma terminando em
+  vírgula:
+
+  ```php
+      'WHATSAPP_KAPSO_CHAVE' => 'a chave da Kapso',
+      'WHATSAPP_KAPSO_NUMERO_ID' => 'o id do número na Kapso',
+  ];
+  ```
+
+  Se o arquivo ainda não existir, ele é só `<?php return [ ... ];` com essas duas linhas. Logo depois, confira: rode
+  `php -l api/config-whatsapp.php` pelo terminal da Hostinger (se houver acesso) e abra o painel `api/recuperacao.php`,
+  que precisa mostrar "Ok" em Chave e em Número; mande também um aviso de teste pelo Portal para ver que o WhatsApp
+  antigo continua saindo.
+- **Banco**: `mcp_recuperacao_whatsapp` (migração do `db.php`, `MCP_DB_VERSAO` nova), só com HMAC (nem CPF nem
+  telefone em claro). A `mcp_recuperacao_contatos` da primeira versão ficou **sem uso** e não é apagada.
+- **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_recuperacao_whatsapp_integracao.php` (MariaDB local e um
+  servidor falso que faz de Kapso e de PostgREST da escola; nada sai de verdade).
+- **Publicar**: `scripts/publicacao-recuperacao.txt`; conferir com `scripts/conferir_publicacao.sh` e, logado,
+  abrir o painel e tocar em "Ligar o recebimento de respostas". Se o painel disser "escola indisponível" com HTTP
+  401/403, a chave da escola não tem leitura nas tabelas: no Supabase da escola,
+  `grant select on "Usuario", "Matricula", "Turma", "Curso" to service_role;`.
+
+### Próximos passos
+
+1. **Sincronizar também o e-mail dessas pessoas nessa mesma base** (pedido do Matheus, segundo passo): depois do
+   WhatsApp, que vem primeiro para não perder os leads que já deixaram o contato.
 
 ## Cupom de desconto no checkout (30/10/2026)
 
