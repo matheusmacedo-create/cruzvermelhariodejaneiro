@@ -213,3 +213,15 @@ thead .hr-cab { text-align: center; font-size: .92rem; }
 .ck-selo.ok { background: #e9f7ef; color: #0f7b3e; }
 .ck-selo.erro { background: #fff0f2; color: #b91c1c; }
 .ck-codigo + .ck-nota { margin-top: 12px; }
+/* Cupom de desconto (30/10/2026): link discreto que abre o campo; mensagem verde ou vermelha; linha do desconto no resumo. */
+.ck-cupom { margin: 4px 0 16px; }
+.ck-cupom-abrir { background: none; border: 0; padding: 4px 0; color: var(--red); font-weight: 700; font-size: .95rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ck-cupom-campo { display: flex; gap: 10px; align-items: flex-end; }
+.ck-cupom-campo[hidden] { display: none; }
+.ck-cupom-campo .ck-campo { flex: 1; margin: 0; }
+.ck-cupom-campo input { text-transform: uppercase; letter-spacing: .04em; }
+.ck-cupom-aplicar { white-space: nowrap; min-height: 48px; }
+.ck-cupom-msg { margin: 8px 0 0; font-size: .92rem; font-weight: 600; color: #166534; }
+.ck-cupom-msg.ruim { color: var(--red); }
+.ck-cupom-msg[hidden] { display: none; }
+.ck-linha-desconto span:last-child { color: #166534; font-weight: 700; }

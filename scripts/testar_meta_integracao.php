@@ -733,7 +733,9 @@ $situacoesA = ['matrícula paga, nada a fazer' => [], 'estornada e resolvida na 
     'espera: 5 falhas' => ['espera_status' => 'aguardando', 'espera_prazo' => $agoraSql('+60 days'), 'espera_falhas' => 5],
     'espera: recusa da escola' => ['espera_status' => 'aguardando', 'espera_prazo' => $agoraSql('+60 days'), 'espera_erro' => 'curso_inativo'],
     'espera: turma cancelada' => ['espera_status' => 'turma', 'espera_motivo' => 'turma_cancelada', 'espera_prazo' => $agoraSql('+60 days')],
-    'espera com a matrícula a cancelar na escola' => ['espera_status' => 'devolver', 'espera_matricula_escola' => 'm-1', 'espera_prazo' => $agoraSql('+60 days')]];
+    'espera com a matrícula a cancelar na escola' => ['espera_status' => 'devolver', 'espera_matricula_escola' => 'm-1', 'espera_prazo' => $agoraSql('+60 days')],
+    // Cupom (30/10/2026): a matrícula abaixo do preço da escola é o desconto, esperado; sem cupom, o aviso continua pedindo ação.
+    'aviso preco_divergente com cupom' => $comAvisos(['preco_divergente']) + ['cupom' => 'NOV15']];
 foreach (['curso_ja_pago', 'matricula_nao_marcada', 'turma_diferente', 'turma_lotada', 'taxa_em_dobro', 'taxa_paga_antes', 'pendente_antiga', 'preco_divergente',
     'cobranca_escola_aberta', 'matricula_paga_sem_turma'] as $aviso) {
     $situacoesA["aviso $aviso"] = $comAvisos([$aviso]);
@@ -755,9 +757,97 @@ $restaurar->execute(array_map(static fn(string $col) => $baseA[$col], $colunasA)
 verificar('pagar tudo: "Precisam de atenção" em SQL (MariaDB) acha o mesmo que a regra em PHP, situação por situação', $sqlA, $phpA);
 verificar('pagar tudo: "Precisam de atenção" nas situações de referência', array_intersect_key($phpA, array_flip(['matrícula paga, nada a fazer', 'estornada e resolvida na escola',
     'estornada do plano completo', 'escola pendente há 11 min', 'escola pendente há 2 min', 'aviso resolvido na escola', 'espera: data limite em 10 dias',
-    'espera: data limite em 60 dias', 'aviso curso_ja_pago'])), ['matrícula paga, nada a fazer' => false, 'estornada e resolvida na escola' => false,
+    'espera: data limite em 60 dias', 'aviso curso_ja_pago', 'aviso preco_divergente', 'aviso preco_divergente com cupom'])), ['matrícula paga, nada a fazer' => false, 'estornada e resolvida na escola' => false,
     'estornada do plano completo' => true, 'escola pendente há 11 min' => true, 'escola pendente há 2 min' => false, 'aviso resolvido na escola' => false,
-    'espera: data limite em 10 dias' => true, 'espera: data limite em 60 dias' => false, 'aviso curso_ja_pago' => true]);
+    'espera: data limite em 10 dias' => true, 'espera: data limite em 60 dias' => false, 'aviso preco_divergente com cupom' => false,
+    'aviso curso_ja_pago' => true, 'aviso preco_divergente' => true]);
+
+// ----------------------------------------------------------------------------- cupom de desconto (30/10/2026, lib/cupons.php)
+// NOV15: Primeiros Socorros Básico (taxa + matrícula) por R$ 150,00 com tudo incluso, para 30 alunos.
+$ci = pedir('GET', 'info.php?cupom=nov-15&curso=primeiros-socorros-basico');
+verificar('cupom: info.php aceita o código em minúsculas e com hífen, com o total e as 30 vagas', [$ci['http'], $ci['corpo']['cupom']['valido'] ?? null,
+    $ci['corpo']['cupom']['codigo'] ?? null, $ci['corpo']['cupom']['total_centavos'] ?? null, $ci['corpo']['cupom']['restantes'] ?? null], [200, true, 'NOV15', 15000, 30]);
+$ciOutro = pedir('GET', 'info.php?cupom=NOV15&curso=puncao-venosa');
+$ciErrado = pedir('GET', 'info.php?cupom=NAOEXISTE&curso=primeiros-socorros-basico');
+verificar('cupom: outro curso e código que não existe são recusados, com a mensagem', [$ciOutro['corpo']['cupom']['motivo'] ?? null,
+    str_contains((string) ($ciOutro['corpo']['cupom']['mensagem'] ?? ''), 'Primeiros Socorros Básico'), $ciErrado['corpo']['cupom']['motivo'] ?? null], ['curso', true, 'invalido']);
+$mC = 0;
+cobrancas_unicopag($mC);
+$mE = 0;
+emails_resend($mE);
+$alunoCupom = array_merge($alunoPt, ['cpf' => cpf_ficticio('900000201'), 'email' => 'cupom@exemplo.org', 'evento_id' => 'lead.mgb2k1.cupom001',
+    'cupom' => 'NOV15', 'total_mostrado_centavos' => 15000]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['total_mostrado_centavos' => 27900]), $SIM);
+verificar('cupom: total mostrado sem o desconto é recusado (422 total, com 15000), sem cobrar', [$r['http'], $r['corpo']['campo'] ?? null, $r['corpo']['total_centavos'] ?? null,
+    count(cobrancas_unicopag($mC))], [422, 'total', 15000, 0]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['plano' => 'so_taxa', 'total_mostrado_centavos' => 9900]), $SIM);
+verificar('cupom: só a taxa de inscrição com o cupom é recusado (422 cupom, plano)', [$r['http'], $r['corpo']['campo'] ?? null, $r['corpo']['motivo'] ?? null], [422, 'cupom', 'plano']);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['curso' => 'puncao-venosa']), $SIM);
+verificar('cupom: em outro curso, 422 cupom curso', [$r['http'], $r['corpo']['campo'] ?? null, $r['corpo']['motivo'] ?? null], [422, 'cupom', 'curso']);
+// Os custos marcados são ignorados com o cupom: o total é 150 com tudo incluso.
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['cobre_taxa' => true]), $SIM);
+$c = cobrancas_unicopag($mC);
+verificar('cupom, PIX: 201 e uma cobrança de 15000: taxa 9900 e matrícula 5100 (com o cupom no título), sem custos, com o cupom na metadata', [$r['http'], $c[0]['amount'] ?? null,
+    array_map(static fn(array $i): array => [$i['hash'], $i['price']], $c[0]['cart'] ?? []), str_contains((string) ($c[0]['cart'][1]['title'] ?? ''), '(cupom NOV15)'),
+    $c[0]['metadata']['cupom'] ?? null, $c[0]['metadata']['cupom_desconto_centavos'] ?? null, $c[0]['installments'] ?? null],
+    [201, 15000, [['inscricao-primeiros-socorros-basico', 9900], ['matricula-primeiros-socorros-basico', 5100]], true, 'NOV15', 12900, 1]);
+$linhaC = $pdo->query('SELECT * FROM mcp_inscricoes WHERE token = ' . $pdo->quote((string) ($r['corpo']['token'] ?? '')))->fetch() ?: [];
+verificar('cupom: o banco grava o cupom, o desconto, a matrícula com desconto, o total e nenhum custo', [coluna($linhaC, 'cupom'), coluna($linhaC, 'cupom_desconto_centavos'),
+    coluna($linhaC, 'matricula_centavos'), coluna($linhaC, 'total_centavos'), coluna($linhaC, 'taxa_centavos'), coluna($linhaC, 'plano'), $r['corpo']['cupom'] ?? null],
+    ['NOV15', 12900, 5100, 15000, 0, 'taxa_e_matricula', 'NOV15']);
+$r2 = pedir('POST', 'pagamentos.php', $alunoCupom, $SIM);
+verificar('cupom: o mesmo pedido de novo reaproveita o PIX (sem cobrança nova)', [$r2['http'], $r2['corpo']['reaproveitado'] ?? null, $r2['corpo']['token'] ?? null, count(cobrancas_unicopag($mC))],
+    [200, true, $linhaC['token'] ?? 'x', 0]);
+touch("$dir/pago-{$linhaC['unicopag_hash']}");
+pedir('POST', 'webhook.php', ['hash' => $linhaC['unicopag_hash']], [], ['Origin:']);
+$linhaC = $pdo->query('SELECT * FROM mcp_inscricoes WHERE id = ' . (int) $linhaC['id'])->fetch() ?: [];
+$escolaC = array_values(array_filter(array_map(static fn(string $l): array => json_decode($l, true), file("$dir/pedidos.jsonl", FILE_IGNORE_NEW_LINES)),
+    static fn(array $p): bool => $p['caminho'] === '/rest/v1/rpc/matricula_rapida' && str_contains($p['corpo'], (string) $linhaC['unicopag_hash'])));
+$dadosEscola = json_decode((string) ($escolaC[0]['corpo'] ?? '{}'), true)['dados'] ?? [];
+$emailsC = emails_resend($mE);
+$paraSecretaria = implode("\n", array_column(array_filter($emailsC, static fn(array $e): bool => $e[0] === 'secretaria@exemplo.org'), 1));
+verificar('cupom, PIX pago: a escola recebe a taxa 9900 e a matrícula 5100; a secretaria lê o cupom e o desconto', [coluna($linhaC, 'status'), $dadosEscola['valor_centavos'] ?? null,
+    $dadosEscola['matricula_centavos'] ?? null, $dadosEscola['total_centavos'] ?? null, str_contains($paraSecretaria, 'matrícula R$ 51,00 (cupom NOV15, desconto de R$ 129,00)')],
+    ['pago', 9900, 5100, 15000, true]);
+verificar('cupom: a ficha do painel mostra o selo do cupom', in_array('Cupom NOV15 · desconto de R$ 129,00', array_column((array) no_site("mcp_secretaria_selos(mcp_inscricao_por('id', '{$linhaC['id']}'))"), 'rotulo'), true), true);
+// As 30 vagas: 28 inscrições pagas a mais com o cupom (cópias da paga) = 29; a 30ª passa, a 31ª não.
+$modelo = $linhaC;
+unset($modelo['id']);
+for ($k = 0; $k < 28; $k++) {
+    $copia = array_merge($modelo, ['token' => bin2hex(random_bytes(20)), 'unicopag_hash' => 'hcupom' . $k, 'cpf' => cpf_ficticio('8000003' . sprintf('%02d', $k)), 'email' => "cupom$k@exemplo.org", 'ip' => '10.9.0.' . $k]);
+    $pdo->prepare('INSERT INTO mcp_inscricoes (' . implode(', ', array_keys($copia)) . ') VALUES (' . implode(', ', array_fill(0, count($copia), '?')) . ')')->execute(array_values($copia));
+}
+verificar('cupom: com 29 usadas, falta 1 vaga', pedir('GET', 'info.php?cupom=NOV15&curso=primeiros-socorros-basico')['corpo']['cupom']['restantes'] ?? null, 1);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['cpf' => cpf_ficticio('900000202'), 'email' => 'cupom30@exemplo.org']), $SIM);
+$trigesima = (string) ($r['corpo']['token'] ?? '');
+verificar('cupom: a 30ª compra passa (PIX pendente segura a vaga)', [$r['http'], count(cobrancas_unicopag($mC))], [201, 1]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['cpf' => cpf_ficticio('900000203'), 'email' => 'cupom31@exemplo.org']), $SIM);
+$ciFim = pedir('GET', 'info.php?cupom=NOV15&curso=primeiros-socorros-basico');
+verificar('cupom: a 31ª é recusada (422 cupom esgotado), sem cobrar, e o info.php diz que acabou', [$r['http'], $r['corpo']['campo'] ?? null, $r['corpo']['motivo'] ?? null,
+    count(cobrancas_unicopag($mC)), $ciFim['corpo']['cupom']['valido'] ?? null, $ciFim['corpo']['cupom']['motivo'] ?? null], [422, 'cupom', 'esgotado', 0, false, 'esgotado']);
+// O PIX da 30ª venceu (mais de 1 dia pendente): a vaga volta.
+$pdo->prepare('UPDATE mcp_inscricoes SET criado_em = ? WHERE token = ?')->execute([gmdate('Y-m-d H:i:s', time() - 90000), $trigesima]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['cpf' => cpf_ficticio('900000203'), 'email' => 'cupom31@exemplo.org']), $SIM);
+verificar('cupom: PIX pendente há mais de 1 dia libera a vaga', [$r['http'], count(cobrancas_unicopag($mC))], [201, 1]);
+// Duas compras ao mesmo tempo pela última vaga: só uma passa (a trava do cupom). Libera uma vaga e dispara as duas juntas.
+$pdo->prepare("UPDATE mcp_inscricoes SET status = 'estornado' WHERE unicopag_hash = 'hcupom0'")->execute();
+$multi = curl_multi_init();
+$alcas = [];
+foreach (['900000204', '900000205'] as $k => $base) {
+    $corpo = json_encode(array_merge($alunoCupom, ['cpf' => cpf_ficticio($base), 'email' => "corrida$k@exemplo.org"]));
+    $h = curl_init("http://127.0.0.1:$portaSite/matricula-cursos-presenciais/api/pagamentos.php");
+    curl_setopt_array($h, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $corpo, CURLOPT_RETURNTRANSFER => true, CURLOPT_PROXY => '', CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTPHEADER => ['Origin: https://cruzvermelhariodejaneiro.org', 'Content-Type: application/json', 'Accept: application/json', 'User-Agent: Mozilla/5.0 (corrida)']]);
+    curl_multi_add_handle($multi, $h);
+    $alcas[] = $h;
+}
+do {
+    curl_multi_exec($multi, $ativos);
+    curl_multi_select($multi, 0.2);
+} while ($ativos > 0);
+$codigos = array_map(static fn($h): int => (int) curl_getinfo($h, CURLINFO_RESPONSE_CODE), $alcas);
+sort($codigos);
+verificar('cupom: duas compras juntas pela última vaga, só uma passa', [$codigos, count(cobrancas_unicopag($mC)), no_site("mcp_cupom_usados('NOV15')")], [[201, 422], 1, 30]);
 
 $erros = trim((string) @file_get_contents("$dir/site.err"));
 $erros = implode("\n", array_filter(explode("\n", $erros), static fn($l) => !preg_match('/(Development Server|Accepted|Closing|Closed without sending a request|\[200\]|\[201\]|\[204\]|\[404\]|\[402\]|\[422\]|Listening|Press Ctrl|\[matricula\] API de Conversões: PageView · HTTP 400|\[matricula\] API de Conversões: teto de 120 repasses|\[matricula\] escolha de marketing da inscrição não gravada: PDOException: SQLSTATE\[42S22\]|\[matricula\] inscrição gravada sem as colunas (da divulgação|novas): SQLSTATE\[42S22\])/', $l)));

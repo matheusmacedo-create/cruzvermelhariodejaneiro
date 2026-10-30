@@ -1245,6 +1245,36 @@ validado no projeto da Punção Venosa.
   pagamento confirmado de verdade (PIX pago ou cartão aprovado), e-mails e postback real, que só
   acontecem com um pagamento real; primeiro pagamento merece acompanhamento na tabela `mcp_eventos`.
 
+## Cupom de desconto no checkout (30/10/2026)
+
+Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à
+vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico`.
+
+- **Código**: `NOV15`. Link pronto: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15`
+  (o campo já vem aberto e o cupom, aplicado). Sem o parâmetro, a pessoa toca em "Tem um cupom de desconto?" e digita.
+  Maiúsculas, minúsculas, espaços e hífens não importam.
+- **Onde mora**: `api/lib/cupons.php` (`MCP_CUPONS`: cursos, total, limite e data final opcional). Cupom novo = uma linha
+  ali e publicar o arquivo. Para encerrar: `'ate'` no passado ou tirar a linha.
+- **Preço**: o servidor recalcula (`mcp_compra_com_cupom`): a taxa de inscrição fica igual (R$ 99) e a matrícula leva o
+  resto (R$ 51); sem custos de processamento, sem contribuição, à vista (sem parcelado). Só no plano "Taxa de
+  inscrição + matrícula": "Só a taxa" some da tela com o cupom e é recusada no servidor. O CPF de teste usa o cupom
+  sem desconto.
+- **Vagas**: contam as inscrições pagas com o cupom e as pendentes cujo PIX ainda vale (1 dia). Estornada, recusada ou
+  PIX vencido devolvem a vaga. A contagem e a cobrança acontecem com `GET_LOCK`: duas compras juntas pela última vaga,
+  só uma passa. Esgotado, o checkout diz "As vagas com este cupom acabaram" e não cobra nada.
+- **Banco**: colunas `cupom` e `cupom_desconto_centavos` em `mcp_inscricoes` (criadas sozinhas pela migração do `db.php`;
+  sem elas, o cupom responde indisponível em vez de cobrar). Cada uso fica em `mcp_eventos` (tipo `cupom`).
+- **Escola e secretaria**: a escola recebe a matrícula de R$ 51 e marca `preco_divergente`; com cupom, esse aviso não vai
+  para "Precisam de atenção" (é o desconto, esperado). O aviso por e-mail diz "matrícula R$ 51,00 (cupom NOV15,
+  desconto de R$ 129,00)" e a ficha do painel ganha o selo "Cupom NOV15 · desconto de R$ 129,00".
+- **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
+  `cupom_desconto_centavos`.
+- **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
+  Para ver quantos já usaram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'NOV15' GROUP BY status`.
+- **Testes**: `scripts/testar_meta_integracao.php` (bloco "cupom": 15 verificações com MariaDB e ÚnicoPag falsa, inclusive
+  a 31ª recusada, o PIX vencido devolvendo a vaga e a corrida pela última vaga) e `scripts/testar_checkout.php`.
+- **Publicar**: `scripts/publicacao-cupom.txt`.
+
 ## Pagar tudo: taxa de inscrição + matrícula no site (preparado em 08/10/2026, corrigido em 09/10, NÃO publicado)
 
 **Situação:** construído e testado só na máquina; nada foi publicado, cobrado ou aplicado na escola. Todas as chaves novas

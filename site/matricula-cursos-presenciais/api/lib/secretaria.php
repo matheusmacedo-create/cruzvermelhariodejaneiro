@@ -156,6 +156,10 @@ function mcp_secretaria_selos(array $i, array $opcoes = []): array
                 $add($rotulo, $tom);
             }
         }
+        if (!empty($i['cupom'])) {
+            // Compra com cupom (lib/cupons.php): só informa; o preço abaixo do da escola é o desconto.
+            $add('Cupom ' . $i['cupom'] . ' · desconto de ' . mcp_brl((int) ($i['cupom_desconto_centavos'] ?? 0)), 'info');
+        }
         if ($espera === '' && !$acesso && mcp_escola_erro($i) === null && ($i['escola_status'] ?? '') === 'erro'
             && !($completo && (int) ($i['escola_tentativas'] ?? 0) >= MCP_ESCOLA_MAX_TENTATIVAS)) {
             $add('Falha na integração', 'erro');
@@ -356,7 +360,10 @@ function mcp_secretaria_condicao_atencao(): string
         return "i.status = 'pago' AND (i.escola_status = 'erro' OR i.escola_acesso LIKE '%\"resultado\":\"sem_turma\"%' OR i.escola_acesso LIKE '%\"aviso\":\"taxa_ja_confirmada\"%')";
     }
     $like = static fn(string $aviso): string => "i.escola_acesso LIKE '%\"$aviso\"%'";
-    $avisos = implode(' OR ', array_map($like, array_keys(MCP_SECRETARIA_AVISOS)));
+    // Com cupom, o preço diferente da escola é o desconto, esperado (mcp_escola_avisos). Só com a coluna já criada.
+    $cupom = function_exists('mcp_cupom_coluna_ok') && mcp_cupom_coluna_ok();
+    $avisos = implode(' OR ', array_map(static fn(string $aviso): string => $cupom && $aviso === 'preco_divergente'
+        ? '(' . $like($aviso) . ' AND i.cupom IS NULL)' : $like($aviso), array_keys(MCP_SECRETARIA_AVISOS)));
     $escola = "(i.espera_status IS NULL AND (i.escola_status = 'erro' OR i.escola_acesso LIKE '%\"resultado\":\"sem_turma\"%' OR " . $like('matricula_paga_sem_turma')
         . " OR (i.escola_status = 'pendente' AND i.pago_em < UTC_TIMESTAMP() - INTERVAL 10 MINUTE)))"
         . " OR (i.plano <> 'taxa_e_matricula' AND " . $like('taxa_ja_confirmada') . ")"

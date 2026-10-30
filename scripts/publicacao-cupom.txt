@@ -1,0 +1,22 @@
+# Cupom de desconto no checkout (30/10/2026, NOV15). Detalhes no README, "Cupom de desconto no checkout".
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria as colunas cupom e cupom_desconto_centavos);
+# depois o módulo novo, antes do lib.php que o carrega; os outros módulos; os endpoints; o CSS e o JS; as páginas por último.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-cupom.txt)
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/cupons.php
+site/matricula-cursos-presenciais/api/lib.php
+site/matricula-cursos-presenciais/api/lib/compra.php
+site/matricula-cursos-presenciais/api/lib/escola.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/publico.php
+site/matricula-cursos-presenciais/api/lib/secretaria.php
+site/matricula-cursos-presenciais/api/info.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/static/checkout.css
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html

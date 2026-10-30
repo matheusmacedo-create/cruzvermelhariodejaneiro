@@ -9,6 +9,21 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 mcp_exigir_metodo('GET');
 
+// Cupom (lib/cupons.php): ?cupom=CODIGO&curso=slug responde só se vale para o curso e quantas vagas faltam. Com freio
+// por IP, para o código não ser adivinhado na força bruta.
+if (isset($_GET['cupom'])) {
+    [$maximo, $janela] = MCP_CUPOM_LIMITE_CONSULTAS;
+    if (mcp_contar_eventos_recentes('cupom_consulta', mcp_ip_balde(), $janela) >= $maximo) {
+        mcp_falhar(429, 'Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.');
+    }
+    mcp_registrar(null, 'cupom_consulta', mcp_ip_balde());
+    $slugCupom = mcp_texto(is_string($_GET['curso'] ?? null) ? $_GET['curso'] : '', 80);
+    if (!mcp_curso($slugCupom)) {
+        mcp_falhar(422, 'Escolha um curso válido.', ['campo' => 'curso']);
+    }
+    mcp_json(['ok' => true, 'cupom' => mcp_cupom_publico((string) $_GET['cupom'], $slugCupom)]);
+}
+
 $catalogo = mcp_catalogo();
 $inscricao = mcp_inscricao_centavos();
 $completo = mcp_plano_completo_ligado();

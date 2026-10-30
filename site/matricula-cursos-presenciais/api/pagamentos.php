@@ -88,6 +88,19 @@ function mcp_validar_aluno(array $b): array
     $temPlano = array_key_exists('plano', $b);
     $plano = $temPlano ? $b['plano'] : 'so_taxa';
     $info = mcp_planos_info($curso, null, $cpf);
+    // Cupom (30/10/2026, lib/cupons.php), antes do plano: quem usa o cupom no curso errado lê a mensagem do cupom. Só
+    // no plano completo, à vista, sem custos nem contribuição. As vagas se conferem depois, com a trava, antes de cobrar.
+    $cupom = null;
+    $codigoCupom = mcp_cupom_normalizar($b['cupom'] ?? '');
+    if ($codigoCupom !== '') {
+        $cupom = mcp_cupom($codigoCupom, $slug);
+        if (isset($cupom['erro'])) {
+            mcp_recusar(mcp_cupom_mensagem($cupom['erro'], $cupom), ['campo' => 'cupom', 'motivo' => $cupom['erro']]);
+        }
+        if ($plano !== 'taxa_e_matricula') {
+            mcp_recusar(mcp_cupom_mensagem('plano'), ['campo' => 'cupom', 'motivo' => 'plano']);
+        }
+    }
     if (!is_string($plano) || !in_array($plano, MCP_PLANOS, true)) {
         mcp_recusar('Escolha o plano de pagamento.', ['campo' => 'plano', 'planos' => $info['planos'], 'motivo' => $info['motivo']]);
     }
@@ -107,7 +120,7 @@ function mcp_validar_aluno(array $b): array
             }
         }
     }
-    $completoCartao = $plano === 'taxa_e_matricula' && $metodo === 'cartao';
+    $completoCartao = $plano === 'taxa_e_matricula' && $metodo === 'cartao' && $cupom === null;
     $pedidas = $completoCartao ? filter_var($b['parcelas'] ?? 1, FILTER_VALIDATE_INT) : 1;
     $mostrado = filter_var($b['total_mostrado_centavos'] ?? null, FILTER_VALIDATE_INT);
     // Prova do aceite (F12): a versão do texto e o texto exato que a pessoa marcou. Na venda sem turma, obrigatórios; o
@@ -133,8 +146,8 @@ function mcp_validar_aluno(array $b): array
         'aceite_sha256' => $aceiteTexto !== '' ? hash('sha256', $aceiteCanonico) : null,
         'aceite_divergente' => $aceiteDivergente,
         'slug' => $slug, 'curso' => $curso, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email,
-        'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => !empty($b['cobre_taxa']),
-        'divulgacao' => $mostrou && !empty($b['ajuda_divulgacao']) ? $divulgacao : 0, 'divulgacao_oferta' => $mostrou ? $divulgacao : null,
+        'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => $cupom === null && !empty($b['cobre_taxa']), 'cupom' => $cupom,
+        'divulgacao' => $cupom === null && $mostrou && !empty($b['ajuda_divulgacao']) ? $divulgacao : 0, 'divulgacao_oferta' => $mostrou ? $divulgacao : null,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -285,6 +298,9 @@ if (mcp_compra_ja_paga($aluno['slug'], $aluno['cpf']) !== null) {
 
 // Valores, sempre do servidor (com o CPF: o preço de teste vale só para a lista TESTE_CPFS).
 $compra = mcp_compra($aluno['curso'], $aluno['plano'], $aluno['metodo'], $aluno['cobre_taxa'], $aluno['divulgacao'], max(1, $aluno['parcelas_pedidas']), $aluno['cpf']);
+if ($aluno['cupom'] !== null) {
+    $compra = mcp_compra_com_cupom($compra, $aluno['cupom'], $aluno['cpf']);
+}
 $completo = $compra['plano'] === 'taxa_e_matricula';
 $parcelado = $completo && $aluno['metodo'] === 'cartao' && $aluno['parcelas_pedidas'] !== 1;
 
@@ -345,6 +361,19 @@ if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $compra, $tu
     mcp_json(mcp_publico_completo($aberta) + ['reaproveitado' => true]);
 }
 
+// Cupom: uma compra com o mesmo cupom por vez, da contagem das vagas até a inscrição gravada (a trava sai sozinha no fim
+// da requisição). O PIX reaproveitado acima não ocupa vaga nova: a inscrição pendente dele já conta.
+if ($aluno['cupom'] !== null) {
+    $codigoCupom = (string) $aluno['cupom']['codigo'];
+    if (!mcp_cupom_coluna_ok() || !mcp_cupom_travar($codigoCupom)) {
+        mcp_falhar(503, mcp_cupom_mensagem('indisponivel'), ['campo' => 'cupom', 'motivo' => 'indisponivel']);
+    }
+    if (mcp_cupom_restantes($aluno['cupom']) <= 0) {
+        mcp_cupom_soltar($codigoCupom);
+        mcp_recusar(mcp_cupom_mensagem('esgotado'), ['campo' => 'cupom', 'motivo' => 'esgotado']);
+    }
+}
+
 $token = mcp_token_novo();
 $payload = mcp_montar_cobranca($aluno, $token, $compra + ['turma_id' => $turmaId, 'total_mostrado' => $aluno['total_mostrado']]);
 if ($cartao) {
@@ -381,6 +410,10 @@ if ($colunas) {
         'aceite_versao' => $aluno['aceite_versao'], 'aceite_sha256' => $aluno['aceite_sha256'],
         'aceite_em' => $aluno['aceite_versao'] !== null || $aluno['aceite_sha256'] !== null ? mcp_agora() : null,
     ] + $valores;
+    if (isset($compra['cupom'])) {
+        $extras['cupom'] = $compra['cupom'];
+        $extras['cupom_desconto_centavos'] = (int) $compra['cupom_desconto'];
+    }
     if ($aluno['sem_turma']) {
         // Venda sem turma (10.8): a data limite é a que o checkout mostrou (dia da compra + ESPERA_PRAZO_DIAS).
         $extras['espera_prazo'] = mcp_espera_prazo(time());
@@ -388,6 +421,10 @@ if ($colunas) {
 }
 
 $id = mcp_gravar_inscricao($aluno, $token, $compra, $cobranca, $cartao['ultimos4'] ?? null, $extras);
+if (isset($compra['cupom'])) {
+    mcp_cupom_soltar((string) $compra['cupom']);
+    mcp_registrar($id, 'cupom', $compra['cupom'] . ' · desconto ' . mcp_brl((int) $compra['cupom_desconto']));
+}
 if ($aluno['aceite_divergente']) {
     mcp_registrar($id, 'aceite_divergente', (string) $aluno['aceite_versao']);
 }
