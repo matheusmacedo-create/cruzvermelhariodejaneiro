@@ -224,6 +224,39 @@ function mcp_rw_tentativas_site(array $linhas, int $inicio): array
     return $saida;
 }
 
+/**
+ * Leads importados uma vez de fora do site e da escola (30/10/2026: os 7 do funil antigo da Punção Venosa, em
+ * puncaovenosav1, que guardava os cadastros num banco próprio e não recebe mais ninguém desde agosto). Ficam em
+ * api/config-recuperacao.php, SÓ no servidor: o arquivo tem dado pessoal, nunca vai para o Git e o .htaccess o nega
+ * (config-*.php). Formato: ['RECUPERACAO_IMPORTADOS' => [['nome', 'email', 'cpf', 'telefone', 'curso_slug',
+ * 'curso_nome', 'criado_em' (ISO 8601)], ...]]. Entram como tentativas do site (origem 'site'), abertas e não pagas:
+ * se a pessoa pagou depois no site ou na escola, o agrupamento por CPF, e-mail e celular a tira do fluxo. Sem o
+ * arquivo, nada muda.
+ */
+function mcp_rw_tentativas_importadas(int $inicio): array
+{
+    $arquivo = getenv('MCP_CONFIG_RECUPERACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-recuperacao.php';
+    if (!is_file($arquivo)) {
+        return [];
+    }
+    $dados = (static fn(string $a): mixed => require $a)($arquivo);
+    $lista = is_array($dados) && is_array($dados['RECUPERACAO_IMPORTADOS'] ?? null) ? $dados['RECUPERACAO_IMPORTADOS'] : [];
+    $saida = [];
+    foreach ($lista as $i => $l) {
+        if (!is_array($l)) {
+            continue;
+        }
+        $quando = (int) mcp_rw_ts($l['criado_em'] ?? null);
+        $saida[] = [
+            'origem' => 'site', 'ref' => 'i' . (int) $i, 'cpf' => mcp_rw_cpf($l['cpf'] ?? ''), 'email' => mcp_rw_email($l['email'] ?? ''),
+            'numero' => mcp_whatsapp_numero((string) ($l['telefone'] ?? '')), 'nome' => trim((string) ($l['nome'] ?? '')),
+            'curso_slug' => (string) ($l['curso_slug'] ?? ''), 'curso_nome' => (string) ($l['curso_nome'] ?? ''), 'quando' => $quando,
+            'aberta' => $quando > 0 && $quando >= $inicio, 'pago' => false, 'pago_ts' => null,
+        ];
+    }
+    return $saida;
+}
+
 /** A matrícula da escola está paga? (taxa confirmada ou curso pago/parcelado) */
 function mcp_rw_matricula_paga(array $m): bool
 {
@@ -920,6 +953,8 @@ function mcp_rw_carregar(?int $agora = null): array
     $stmt->execute([gmdate('Y-m-d H:i:s', $inicioMetrica)]);
     $linhasSite = $stmt->fetchAll();
     $site = mcp_rw_tentativas_site($linhasSite, $inicio);
+    // Leads importados uma vez de fora (os 7 do funil antigo da Punção Venosa): entram como tentativas do site.
+    $site = array_merge($site, mcp_rw_tentativas_importadas($inicio));
     // A escola é perguntada pelos dados de quem veio do site e não pagou lá (os que pagaram já saem pelo site).
     $buscar = ['cpfs' => [], 'emails' => [], 'numeros' => []];
     foreach ($site as $t) {

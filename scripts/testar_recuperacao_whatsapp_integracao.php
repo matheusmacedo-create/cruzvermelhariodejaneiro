@@ -426,6 +426,30 @@ try {
         [true, 'nossos cursos', '']);
     verificar('escola: quem se matriculou sem pagar entra, com o curso (slug pelo uuid do cursos.json)',
         [$de($e1['celular'])['no_fluxo'] ?? null, $de($e1['celular'])['curso_slug'] ?? null, $de($e1['celular'])['origem'] ?? null], [true, 'bombeiro-civil', 'escola']);
+    // Leads importados uma vez (config-recuperacao.php, só no servidor): entram como tentativas do site; quem pagou sai.
+    $importado = ['nome' => 'Pessoa Importada', 'email' => "rw-importada-$sufixo@exemplo.org", 'cpf' => cpf_de_teste(), 'telefone' => $celular(),
+        'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa', 'criado_em' => gmdate('Y-m-d\\TH:i:s\\Z', $A - 60 * 86400)];
+    $arqImportados = tempnam(sys_get_temp_dir(), 'mcp-rw-imp-');
+    file_put_contents($arqImportados, '<?php return ' . var_export(['RECUPERACAO_IMPORTADOS' => [
+        $importado,
+        ['nome' => 'Importada Que Pagou', 'email' => '', 'cpf' => $s4['cpf'], 'telefone' => $celular(), 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa',
+            'criado_em' => gmdate('Y-m-d\\TH:i:s\\Z', $A - 60 * 86400)],
+    ]], true) . ';');
+    putenv("MCP_CONFIG_RECUPERACAO_ARQUIVO=$arqImportados");
+    $cargaImp = mcp_rw_carregar($A);
+    putenv('MCP_CONFIG_RECUPERACAO_ARQUIVO=' . sys_get_temp_dir() . '/mcp-rw-sem-importados.php');
+    @unlink($arqImportados);
+    $impPor = [];
+    foreach ($cargaImp['pessoas'] as $p) {
+        foreach ($p['numeros'] as $n) {
+            $impPor[$n] = $p;
+        }
+    }
+    $imp = $impPor['55' . $importado['telefone']] ?? [];
+    verificar('importados: lead de fora entra no fluxo como site, com o curso dele (60 dias, dentro da janela)',
+        [$imp['no_fluxo'] ?? null, $imp['origem'] ?? null, $imp['curso_nome'] ?? null, $imp['primeiro_nome'] ?? null], [true, 'site', 'Punção Venosa', 'Pessoa']);
+    $pagouImp = array_values(array_filter($cargaImp['pessoas'], static fn(array $p): bool => in_array(mcp_rw_cpf($s4['cpf']), $p['cpfs'] ?? [], true)))[0] ?? [];
+    verificar('importados: quem pagou na escola (mesmo CPF) continua fora', [$pagouImp['no_fluxo'] ?? null, $pagouImp['motivo'] ?? null], [false, 'pagou']);
     $buscas = array_values(array_filter(falso('escola'), static fn(array $x): bool => isset($x['query']['or'])));
     verificar('escola: busca por CPF, e-mail e celular de quem veio do site, com a chave secreta', [count($buscas) >= 3,
         (bool) array_filter($buscas, static fn(array $x): bool => str_contains((string) $x['query']['or'], $s4['cpf']))], [true, true]);
