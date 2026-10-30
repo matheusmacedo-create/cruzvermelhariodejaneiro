@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '89b8fe5f3977c2eb';
+const MCP_DB_VERSAO = '57c0e103e1491496';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -653,6 +653,21 @@ function mcp_migrar_tudo(PDO $pdo): void
         modificado_em DATETIME NOT NULL,
         drive_id VARCHAR(80) NOT NULL,
         enviado_em DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Recuperação do funil (30/10/2026, lib/recuperacao_funil.php e api/recuperacao.php): cada contato da secretaria
+    // com quem deixou dados no checkout e não pagou. pessoa_chave é o HMAC-SHA256 do CPF (nunca o CPF em claro): é
+    // por ela que a página sabe quem já foi contatado e quem pagou depois do contato. canal: whatsapp, email ou
+    // exportacao (a planilha para o disparo pela Kapso).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_contatos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        inscricao_id INT UNSIGNED NULL,
+        canal VARCHAR(12) NOT NULL,
+        campanha VARCHAR(40) NULL,
+        autor VARCHAR(190) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_pessoa (pessoa_chave, criado_em),
+        KEY ix_criado (criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 
