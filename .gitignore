@@ -36,3 +36,5 @@ site/matricula-cursos-presenciais/api/config-pagar-tudo.php
 *.key
 *.pfx
 *.p12
+# Leads importados uma vez para a recuperação por WhatsApp (dado pessoal): só no servidor.
+site/matricula-cursos-presenciais/api/config-recuperacao.php
