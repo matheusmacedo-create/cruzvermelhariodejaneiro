@@ -190,6 +190,7 @@ if (str_starts_with($caminho, '/platform/v1/whatsapp/phone_numbers/1112223334/we
 if ($caminho === '/rest/v1/Usuario' && $metodo === 'GET') {
     if (($_SERVER['HTTP_APIKEY'] ?? '') !== 'chave-escola-falsa') { http_response_code(401); echo '{}'; return true; }
     $c = $controle('escola');
+    if (!empty($c['fora'])) { http_response_code(403); echo '{}'; return true; }
     $usuarios = $c['usuarios'] ?? [];
     if (isset($_GET['criadoEm'])) {
         $desde = substr((string) $_GET['criadoEm'], 4);
@@ -586,6 +587,16 @@ try {
     controle('resend', []);
     mcp_rw_email_rodar($F + 3600);
     verificar('Resend de volta: os três recebem', array_map(static fn(array $i): int => count($emailsPara($i['email'])), [$f1, $f2, $f3]), [1, 1, 1]);
+
+    // ------------------------------------------------------------------------- escola fora (decisão de 31/10)
+    // Com a escola respondendo erro, seguem o site e os importados: o cadastro do site recebe o 1º e-mail.
+    $Fe = $F + 50 * 86400;
+    controle('escola', ['fora' => true, 'usuarios' => []]);
+    $ef = $criar('escolafora', $Fe - 4 * 3600, ['telefone' => '2122223347']);
+    $r = mcp_rw_email_rodar($Fe);
+    verificar('escola fora: segue só com o site e os importados, e o cadastro do site recebe o 1º e-mail',
+        [$r['escola'], str_contains((string) $r['motivo'], 'seguem só o site e os importados'), count($emailsPara($ef['email']))], ['indisponivel', true, 1]);
+    controle('escola', ['usuarios' => [$eSem]]);
 
     // ------------------------------------------------------------------------- sem RESEND_API_KEY
     $G = $A + 600 * 86400;

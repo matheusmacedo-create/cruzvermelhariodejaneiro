@@ -1280,8 +1280,8 @@ máquina; NADA foi publicado.**
   pessoa é conferida de novo no banco do site (pagou? bloqueou algum dos celulares dela? respondeu "não quero"?). Nenhuma
   etapa se repete: `UNIQUE(pessoa_chave, etapa)` em `mcp_recuperacao_whatsapp`, e as etapas da pessoa são procuradas
   por todas as chaves dela (coluna `chaves`), também quando a escola está fora e só o lado do site aparece. Roda na
-  rotina de hora em hora (`api/lembretes.php`). **Escola fora do ar**: nada sai naquela hora (sem ela não se sabe se
-  quem veio do site pagou lá). **Só gasta a etapa** o erro que é de quem recebe (número sem WhatsApp, 131026 e
+  rotina de hora em hora (`api/lembretes.php`). **Escola fora do ar**: seguem só os cadastros do site e os importados
+  (decisão do responsável em 31/10/2026, com a escola respondendo 403; risco aceito: lembrar quem pagou só na escola). **Só gasta a etapa** o erro que é de quem recebe (número sem WhatsApp, 131026 e
   parecidos); Kapso fora, modelo não aprovado ou pausado, parâmetro recusado e limite da Meta (130429, 131048, 131056)
   param a rodada e tentam de novo na hora seguinte, e um modelo que a Meta não mostra como aprovado nem é tentado (vale
   o modelo escolhido para cada pessoa: um `ps_cupom_oferta` pendente segura só quem receberia o cupom). Um 5xx do
@@ -1345,8 +1345,8 @@ máquina; NADA foi publicado.**
 
 ### E-mail da mesma recuperação (30/10/2026)
 
-Pedido do responsável: "sincroniza o e-mail dessas pessoas também". **Situação: construído e testado só na máquina;
-NADA foi publicado.**
+Pedido do responsável: "sincroniza o e-mail dessas pessoas também". **Situação: publicado em 30/10/2026; em 31/10, com a escola
+respondendo 403, a rodada passou a seguir só com o site e os importados em vez de esperar a escola.**
 
 - **O que faz**: o **mesmo público** (checkout do site, plataforma da escola e os importados de `config-recuperacao.php`,
   últimos 90 dias, nunca pagou nada) recebe também **três e-mails** pela Resend, ao lado do WhatsApp e independente
@@ -1392,7 +1392,7 @@ NADA foi publicado.**
   `pulado_pix` ou `controle`), `provedor_id` (o id da Resend), `erro`, `descadastro_em`, `criado_em`. Nem e-mail nem
   CPF em claro.
 - **Rotina**: `mcp_rw_email_rodar`, chamada pelo `api/lembretes.php` logo depois da do WhatsApp (aproveita o público que
-  ele leu na mesma hora); escola fora do ar segura os dois canais. Uma falha do e-mail nunca derruba o WhatsApp nem a
+  ele leu na mesma hora); escola fora do ar: os dois canais seguem só com o site e os importados. Uma falha do e-mail nunca derruba o WhatsApp nem a
   rotina, e o contrário também.
 - **Painel** (mesmo desenho): o estado junta os dois canais ("Só o e-mail rodando" quando o problema é só do WhatsApp);
   no **Próximo disparo**, os e-mails da rodada por etapa, com o assunto e a prévia recolhida do texto; no **Funil**,

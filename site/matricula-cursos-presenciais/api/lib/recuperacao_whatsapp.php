@@ -9,8 +9,9 @@
  *  - escola: "Usuario" com papel ALUNO criado nos últimos MCP_RW_JANELA_DIAS dias sem nenhuma "Matricula" paga
  *    (taxaConfirmada ou statusPagamento PAGO/PARCELADO): quem só criou a conta e quem se matriculou sem pagar. Lido
  *    pelo PostgREST da escola com a chave secreta (ESCOLA_API_TOKEN), paginado e com tempo curto. Escola fora do ar não
- *    derruba nada: o painel diz "escola indisponível" e a rodada termina sem enviar (fica para a hora seguinte), porque
- *    sem a escola não dá para saber se quem veio do site pagou lá — e cobrar quem já pagou é pior que atrasar uma hora;
+ *    derruba nada: o painel diz "escola indisponível" e a rodada segue só com o site e os importados (decisão do
+ *    responsável em 31/10/2026, com a escola respondendo 403 havia dias: o risco aceito é lembrar quem pagou só na
+ *    escola; antes a rodada inteira esperava a escola voltar);
  *  - uma PESSOA junta as tentativas dos dois sistemas com o mesmo CPF, e-mail (minúsculo) ou celular (55+DDD+número,
  *    pelo mcp_whatsapp_numero, o mesmo de todo o WhatsApp do site);
  *  - sai quem pagou QUALQUER coisa em QUALQUER sistema (site: pago ou estornado, de qualquer época; escola: matrícula
@@ -1031,7 +1032,7 @@ function mcp_rw_carregar(?int $agora = null): array
     }
     $escola = mcp_rw_escola_ler($inicioMetrica, $buscar);
     if ($escola['estado'] === 'indisponivel') {
-        error_log('[matricula] recuperação por WhatsApp: escola indisponível (' . $escola['erro'] . '); nada sai até ela responder');
+        error_log('[matricula] recuperação: escola indisponível (' . $escola['erro'] . '); seguem só o site e os importados');
     }
     $tentativas = array_merge($site, mcp_rw_tentativas_escola($escola['usuarios'], $inicio, mcp_rw_slugs_por_uuid()));
     // Bloqueios: canal => hash => origens. A origem 'recuperacao' (o "Não tenho interesse" do WhatsApp e o descadastro do
@@ -1235,9 +1236,9 @@ function mcp_rw_rodar(?int $agora = null): array
     $r['carga'] = $carga;
     $r['escola'] = $carga['escola']['estado'];
     if ($carga['escola']['estado'] === 'indisponivel') {
-        // Sem a escola não se sabe se quem veio do site pagou lá: espera a próxima hora em vez de cobrar quem já pagou.
-        $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); nada sai até ela responder';
-        return $r;
+        // Decisão do responsável (31/10/2026): com a escola fora, seguem os cadastros do site e os importados (os da escola
+        // nem entram na carga). Risco aceito: quem pagou só na plataforma da escola pode receber um lembrete indevido.
+        $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); seguem só o site e os importados';
     }
     $indice = mcp_rw_indice(mcp_rw_linhas());
     // As linhas do e-mail: o grupo de controle é um só para os dois canais, e quem se descadastrou do e-mail sai daqui

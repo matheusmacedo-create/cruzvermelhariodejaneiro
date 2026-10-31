@@ -226,8 +226,9 @@ if ($cfg['ok']) {
             : 'O recebimento de respostas está desligado: o painel não sabe o que foi entregue nem quem respondeu.';
     }
 }
+$avisosEmail = [];
 if ($carga['escola']['estado'] === 'indisponivel') {
-    $problemas[] = 'A plataforma da escola não respondeu (' . $carga['escola']['erro'] . '). Nada sai até ela voltar, porque não dá para saber quem pagou lá.';
+    $avisosEmail[] = 'A plataforma da escola não respondeu (' . $carga['escola']['erro'] . '): seguem só os cadastros do checkout do site e os importados. Quem pagou só na escola pode receber um lembrete.';
 } elseif ($carga['escola']['estado'] === 'ok') {
     $okItens[] = 'Plataforma da escola respondendo';
 } else {
@@ -235,7 +236,6 @@ if ($carga['escola']['estado'] === 'indisponivel') {
 }
 // E-mail: só a RESEND_API_KEY (a mesma dos outros e-mails do site). Sem ela nenhum e-mail da recuperação sai, mas o
 // WhatsApp segue; por isso é um aviso à parte, e não um "Parado".
-$avisosEmail = [];
 $cotaHoje = $emailsSite + $emailsRecuperacao;
 if (!$emailCfg['ok']) {
     $avisosEmail[] = 'Falta RESEND_API_KEY no servidor: nenhum e-mail da recuperação sai (o WhatsApp segue).';
@@ -253,16 +253,15 @@ $okItens[] = $oferta !== null
     : 'Cupom ' . MCP_RW_CUPOM . ' fora (encerrado, esgotado ou sem turma): a 3ª de Primeiros Socorros vai sem cupom';
 
 // O estado junta os dois canais: o e-mail não depende da Kapso nem da Meta, então um problema só do WhatsApp com o e-mail
-// ligado é "só o e-mail rodando", e não "Parado". A escola fora para os dois (não se sabe quem pagou lá).
-$escolaFora = $carga['escola']['estado'] === 'indisponivel';
+// ligado é "só o e-mail rodando", e não "Parado". A escola fora não para nada: seguem o site e os importados (aviso acima).
 $todosEsperando = $naoAprovados && count($naoAprovados) === count($modelosLinhas);
-if ($escolaFora || ($problemas && !$emailCfg['ok'])) {
+if ($problemas && !$emailCfg['ok']) {
     $estado = ['nao', 'Parado'];
 } elseif ($problemas) {
     $estado = ['talvez', 'Só o e-mail rodando'];
 } elseif ($todosEsperando) {
     $estado = ['talvez', $emailCfg['ok'] ? 'E-mail rodando; WhatsApp esperando a Meta aprovar os modelos' : 'Esperando a Meta aprovar os modelos'];
-} elseif ($naoAprovados || !$emailCfg['ok']) {
+} elseif ($naoAprovados || !$emailCfg['ok'] || $carga['escola']['estado'] === 'indisponivel') {
     $estado = ['talvez', 'Rodando em parte'];
 } else {
     $estado = ['ok', 'Rodando'];

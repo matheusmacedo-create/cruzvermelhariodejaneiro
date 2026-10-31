@@ -526,8 +526,8 @@ try {
     $s14 = $criar('escolafora', $A + 18 * 3600);
     $antes = count(falso('kapso'));
     $r = mcp_rw_rodar($A + 24 * 3600);
-    verificar('escola fora do ar: não derruba, e nada sai até ela voltar (não dá para saber quem pagou lá)',
-        [$r['escola'], str_starts_with((string) $r['motivo'], 'escola indisponível'), count(falso('kapso')) - $antes], ['indisponivel', true, 0]);
+    verificar('escola fora do ar: não derruba, e seguem só o site e os importados (decisão de 31/10)',
+        [$r['escola'], str_contains((string) $r['motivo'], 'seguem só o site e os importados'), in_array('rec_inscricao_1_v2', $etapasPara($s14['telefone']), true)], ['indisponivel', true, true]);
     verificar('Maria pagou entre as etapas: não recebe a 2ª', $etapasPara($s1['telefone']), ['rec_inscricao_1_v2']);
     // Com a escola fora, a pessoa da união aparece só pelo lado do site (outro CPF e outro celular): as etapas dela são
     // achadas pelo e-mail (coluna chaves), e a 1ª não vai de novo para o celular do site.
@@ -596,12 +596,12 @@ try {
     http($urlWebhook, 'POST', $tardio, ['X-Webhook-Event: whatsapp.message.received', 'X-Webhook-Signature: ' . $assinar($tardio)]);
     verificar('"PARAR" reentregue 3 dias depois ainda bloqueia', mcp_avisos_bloqueado('whatsapp', '55' . $s12['telefone']), true);
 
-    // O cadastro feito com a escola fora (18 h depois da base) recebeu a 1ª só 8 h depois do cadastro (a escola e depois a
-    // Kapso fora seguraram as rodadas): a 2ª vem 21 h depois dela, e não com 24 h do cadastro.
-    mcp_rw_rodar($A + 46 * 3600); // 8h de Brasília: 28 h do cadastro, mas só 20 h depois da 1ª
+    // O cadastro feito com a escola fora (18 h depois da base) recebeu a 1ª na rodada de 24 h, mesmo com a escola fora
+    // (seguem o site e os importados): a 2ª vem 21 h depois dela (45 h), antes da rodada de 46 h.
+    mcp_rw_rodar($A + 44 * 3600); // 20 h depois da 1ª: ainda não
     $s14antes = $etapasPara($s14['telefone']);
-    mcp_rw_rodar($A + 47 * 3600);
-    verificar('a 2ª respeita 21 h depois da 1ª (1ª atrasada pela escola e pela Kapso fora)', [$s14antes, $etapasPara($s14['telefone'])],
+    mcp_rw_rodar($A + 46 * 3600);
+    verificar('a 2ª respeita 21 h depois da 1ª (1ª enviada com a escola fora)', [$s14antes, $etapasPara($s14['telefone'])],
         [['rec_inscricao_1_v2'], ['rec_inscricao_1_v2', 'rec_inscricao_2']]);
 
     // ------------------------------------------------------------------------- etapa 3

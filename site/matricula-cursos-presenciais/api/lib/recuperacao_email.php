@@ -368,9 +368,8 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
     $carga ??= mcp_rw_carregar($agora);
     $r['escola'] = $carga['escola']['estado'];
     if ($carga['escola']['estado'] === 'indisponivel') {
-        // A mesma regra do WhatsApp: sem a escola não se sabe se quem veio do site pagou lá.
-        $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); nada sai até ela responder';
-        return $r;
+        // A mesma regra do WhatsApp: com a escola fora, seguem só o site e os importados.
+        $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); seguem só o site e os importados';
     }
     $indiceWhatsapp = mcp_rw_indice(mcp_rw_linhas());
     $indice = mcp_rw_indice(mcp_rw_email_linhas());

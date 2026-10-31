@@ -1,28 +1,9 @@
-# Recuperação por WhatsApp E E-MAIL (30/10/2026). Detalhes no README, "Recuperação por WhatsApp (30/10/2026)" e
-# "E-mail da mesma recuperação (30/10/2026)": o mesmo público recebe também 3 e-mails pela Resend (mesma régua, grupo
-# de controle, descadastro de um clique que tira a pessoa dos dois canais, no máximo 10 por rodada e 30 em 24 h).
-# O que muda nesta revisão: db.php (MCP_DB_VERSAO nova: a primeira requisição cria mcp_recuperacao_email), lib/email.php
-# (só acrescenta mcp_email_ultimo_id, o id da Resend), lib/recuperacao_email.php (novo), lib/recuperacao_whatsapp.php,
-# recuperacao.php (painel), avisos.php (descadastro ?rw=) e lembretes.php (a rodada do e-mail depois da do WhatsApp).
-# kapso-webhook.php NÃO mudou.
-# Ordem (a da lista abaixo): db.php primeiro; email.php e recuperacao_email.php ANTES do recuperacao_whatsapp.php (ele
-# carrega o recuperacao_email.php: publicado antes dele, a rotina e o painel cairiam com "arquivo não encontrado"); depois
-# o painel, o avisos.php e, por último, o lembretes.php. Sem a migração, a rodada do e-mail falha na leitura da tabela
-# (lembretes.php registra e segue; o WhatsApp roda sem ela) e o painel responde 503 "O banco ainda não está pronto…";
-# um minuto depois, tudo volta.
-# ANTES de publicar: RESEND_API_KEY já está no config.php do servidor (é a dos recibos); sem ela nenhum e-mail sai e o
-# painel diz. Nada a configurar a mais. Os modelos do WhatsApp continuam como estavam (o e-mail não depende deles).
-# Se a primeira versão (README, mesma seção) ainda não estiver no servidor, publique também
-# site/matricula-cursos-presenciais/api/kapso-webhook.php e siga o passo a passo do config-whatsapp.php no README.
-# Nunca config.php.
+# Recuperação por WhatsApp e e-mail, 31/10/2026: com a escola respondendo erro (403), a rodada segue só com os cadastros
+# do site e os importados, em vez de não mandar nada (decisão do responsável). Muda só código: sem migração.
+# Ordem: as bibliotecas antes do painel.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
-# Depois: abrir api/recuperacao.php logado no Portal e conferir "Resend configurada" (Detalhes > Configuração), o bloco
-# "E-mail" do Próximo disparo (assunto e prévia) e "Por e-mail" no Funil.
-site/matricula-cursos-presenciais/api/lib/db.php
-site/matricula-cursos-presenciais/api/lib/email.php
+# Depois: a saída da rotina das :07 (cron da Hostinger) deve dizer "seguem só o site e os importados".
 site/matricula-cursos-presenciais/api/lib/recuperacao_email.php
 site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
 site/matricula-cursos-presenciais/api/recuperacao.php
-site/matricula-cursos-presenciais/api/avisos.php
-site/matricula-cursos-presenciais/api/lembretes.php
