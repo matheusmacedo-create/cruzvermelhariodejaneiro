@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '89b8fe5f3977c2eb';
+const MCP_DB_VERSAO = 'f8cf16c5d94d05ce';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -653,6 +653,86 @@ function mcp_migrar_tudo(PDO $pdo): void
         modificado_em DATETIME NOT NULL,
         drive_id VARCHAR(80) NOT NULL,
         enviado_em DATETIME NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Recuperação do funil (30/10/2026, primeira versão, já retirada): cada contato da secretaria
+    // com quem deixou dados no checkout e não pagou. pessoa_chave é o HMAC-SHA256 do CPF (nunca o CPF em claro): é
+    // por ela que a página sabe quem já foi contatado e quem pagou depois do contato. canal: whatsapp, email ou
+    // exportacao (a planilha para o disparo pela Kapso).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_contatos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        inscricao_id INT UNSIGNED NULL,
+        canal VARCHAR(12) NOT NULL,
+        campanha VARCHAR(40) NULL,
+        autor VARCHAR(190) NOT NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_pessoa (pessoa_chave, criado_em),
+        KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // A tabela acima ficou SEM USO no mesmo dia: a lista manual (wa.me e planilha) foi trocada pelo disparo automático
+    // abaixo. Não é apagada (nunca se apaga tabela em produção por migração); se um dia sair, sai à mão.
+    // Recuperação por WhatsApp (30/10/2026, lib/recuperacao_whatsapp.php): uma linha por mensagem automática (etapa 1, 2
+    // ou 3; etapa 0 = grupo de controle, que não recebe) a quem se cadastrou e não pagou. pessoa_chave e telefone_hash
+    // são HMAC-SHA256 com a chave 'recuperacao_whatsapp' de mcp_chaves: nem CPF nem telefone em claro.
+    // UNIQUE(pessoa_chave, etapa) é a trava que impede repetir uma etapa. chaves: os HMAC dos outros dados da pessoa (CPFs, e-mails, celulares do site e da
+    // escola), para achar as etapas dela mesmo quando a escola está fora do ar e só uma parte dos dados aparece.
+    // entrega e resposta vêm do webhook da Kapso (api/kapso-webhook.php).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_whatsapp (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        origem ENUM('site','escola') NOT NULL,
+        etapa TINYINT UNSIGNED NOT NULL,
+        modelo VARCHAR(40) NULL,
+        curso_slug VARCHAR(80) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        telefone_hash CHAR(64) NOT NULL,
+        chaves TEXT NULL,
+        status ENUM('enviado','falhou','controle') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        entrega ENUM('entregue','lida','falhou') NULL,
+        erro VARCHAR(255) NULL,
+        resposta VARCHAR(200) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_pessoa_etapa (pessoa_chave, etapa),
+        KEY ix_provedor (provedor_id),
+        KEY ix_telefone (telefone_hash, criado_em),
+        KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Régua nova da recuperação (30/10/2026, depois do benchmarking): o modelo escolhido para cada pessoa fica gravado
+    // (a 3ª pode ser o rec_inscricao_3 ou o ps_cupom_oferta; linhas de antes ficam nulas e eram rec_inscricao_<etapa>),
+    // e o grupo de controle grava uma linha etapa 0 com status 'controle' (nunca recebe; só marca quem é do grupo).
+    // Acrescentar um valor no fim do ENUM não reescreve a tabela; o MODIFY é idempotente.
+    mcp_garantir_colunas($pdo, 'mcp_recuperacao_whatsapp', ['modelo' => 'VARCHAR(40) NULL']);
+    $pdo->exec("ALTER TABLE mcp_recuperacao_whatsapp MODIFY status ENUM('enviado','falhou','controle') NOT NULL");
+    // Recuperação por e-mail (30/10/2026, lib/recuperacao_email.php): o mesmo público e a mesma régua do WhatsApp, pela
+    // Resend. Uma linha por e-mail (etapa 1, 2 ou 3; etapa 0 = grupo de controle, que não recebe). Nem e-mail nem CPF em
+    // claro: pessoa_chave e chaves são os HMAC de mcp_rw_hmac (os mesmos da tabela do WhatsApp, para achar a pessoa nos
+    // dois canais); email_hash e whatsapp_hash são o mcp_avisos_hash, o mesmo de mcp_avisos_bloqueios, para o descadastro
+    // de um clique bloquear os dois canais só com a linha, sem nunca ter o endereço. 'pulado_pix': a etapa 1 não sai porque
+    // a inscrição já recebeu o lembrete do PIX (lib/recuperacao.php); criado_em é a hora daquele lembrete.
+    // UNIQUE(pessoa_chave, etapa) é a trava que impede repetir uma etapa.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_recuperacao_email (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        pessoa_chave CHAR(64) NOT NULL,
+        origem ENUM('site','escola') NOT NULL,
+        etapa TINYINT UNSIGNED NOT NULL,
+        modelo VARCHAR(20) NULL,
+        assunto VARCHAR(200) NULL,
+        curso_slug VARCHAR(80) NULL,
+        curso_nome VARCHAR(160) NOT NULL,
+        email_hash CHAR(32) NOT NULL,
+        whatsapp_hash CHAR(32) NULL,
+        chaves TEXT NULL,
+        status ENUM('enviado','falhou','pulado_pix','controle') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        erro VARCHAR(255) NULL,
+        descadastro_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_pessoa_etapa (pessoa_chave, etapa),
+        KEY ix_email (email_hash, criado_em),
+        KEY ix_criado (criado_em, status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

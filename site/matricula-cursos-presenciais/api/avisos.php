@@ -4,6 +4,8 @@
  *   GET  ?r=<id>.<destino>.<assinatura>          clique num link de aviso: conta o clique e leva ao destino;
  *   POST ?u=<id>.<assinatura>                     descadastro de um clique (List-Unsubscribe do e-mail); o GET mostra
  *                                                  uma página com o botão (POST confirmar=1), sem link pessoal;
+ *   POST ?rw=<id>.<assinatura>                    o mesmo, para os e-mails da recuperação (lib/recuperacao_email.php):
+ *                                                  para os lembretes da inscrição por e-mail E pelo WhatsApp;
  *   POST {acao: lembretes_ler | lembretes_salvar, t, …}  o que o colaborador quer receber (ponto/lembretes/);
  *   POST {acao: saida_ler | saida_informar, t, hora, dia_seguinte}  saída sem registro do voluntário (ponto/saida/);
  *   POST {acao: opiniao_ler | opiniao_salvar, t, …}      opinião depois de 2 semanas (ponto/opiniao/);
@@ -39,13 +41,48 @@ if (isset($_GET['u'])) {
     exit;
 }
 
-/** Página do descadastro aberta no navegador: pergunta (com o botão), pronto ou link que não vale mais. */
-function av_pagina_descadastro(string $estado): void
+// Descadastro de um clique dos e-mails da recuperação (30/10/2026): as mesmas regras do ?u= acima (o POST sozinho do
+// programa de e-mail descadastra; o GET só mostra a página com o botão). Vale para os dois canais da recuperação.
+if (isset($_GET['rw'])) {
+    header('Cache-Control: no-store');
+    header('Referrer-Policy: no-referrer');
+    header('X-Robots-Tag: noindex, nofollow');
+    $linha = null;
+    if (is_file(__DIR__ . '/lib/recuperacao_whatsapp.php')) {
+        require_once __DIR__ . '/lib/recuperacao_whatsapp.php';
+        $linha = mcp_rw_email_descadastro_linha(mcp_texto($_GET['rw'], 40));
+    }
+    $pelaPagina = $metodo === 'POST' && !empty($_POST['confirmar']);
+    if ($metodo === 'POST' && !$pelaPagina) {
+        $valeu = $linha !== null && mcp_rw_email_descadastrar($linha);
+        http_response_code($valeu ? 200 : 404);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $valeu ? 'Pronto: você não vai mais receber os lembretes da inscrição, nem por e-mail nem pelo WhatsApp.' : 'Link inválido.';
+        exit;
+    }
+    $valeu = $linha !== null && (!$pelaPagina || mcp_rw_email_descadastrar($linha));
+    http_response_code($valeu ? 200 : 404);
+    av_pagina_descadastro($valeu ? ($pelaPagina ? 'pronto' : 'pergunta') : 'invalido', true);
+    exit;
+}
+
+/**
+ * Página do descadastro aberta no navegador: pergunta (com o botão), pronto ou link que não vale mais. $recuperacao: a
+ * dos e-mails da recuperação (lembretes da inscrição, por e-mail e WhatsApp), com o seu próprio texto.
+ */
+function av_pagina_descadastro(string $estado, bool $recuperacao = false): void
 {
     header('Content-Type: text/html; charset=utf-8');
     $contato = mcp_escapar(mcp_email_contato_endereco());
     $css = '/matricula-cursos-presenciais/static/ponto.css?v=' . substr((string) md5_file(__DIR__ . '/../static/ponto.css'), 0, 10);
-    $corpo = match ($estado) {
+    $corpo = $recuperacao ? match ($estado) {
+        'pergunta' => '<h1>Parar os lembretes da inscrição</h1><p>Toque no botão para não receber mais os lembretes sobre a sua inscrição, nem por e-mail nem pelo WhatsApp.</p>'
+            . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber</button></form>',
+        'pronto' => '<h1>Pronto</h1><p>Você não vai mais receber os lembretes sobre a inscrição, nem por e-mail nem pelo WhatsApp.</p>'
+            . '<p class="pt-nota">Mudou de ideia? Escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+        default => '<h1>Este link não vale mais</h1><p>Ele não veio inteiro, ou não é de um lembrete da inscrição.</p>'
+            . '<p class="pt-nota">Para parar os lembretes, escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+    } : match ($estado) {
         'pergunta' => '<h1>Parar os avisos por e-mail</h1><p>Toque no botão para não receber mais estes avisos neste e-mail.</p>'
             . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber</button></form>'
             . '<p class="pt-nota">Prefere mudar os dias ou receber pelo WhatsApp, em vez de parar? Use o link de mudar os lembretes de uma mensagem recente.</p>',

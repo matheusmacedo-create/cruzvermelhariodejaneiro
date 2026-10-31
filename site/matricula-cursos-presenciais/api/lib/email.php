@@ -293,6 +293,8 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
         $esgotado = curl_errno($ch) === CURLE_OPERATION_TIMEDOUT && (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
         curl_close($ch);
         if ($r !== false && $status > 0 && $status < 300) {
+            $id = json_decode((string) $r, true)['id'] ?? null;
+            mcp_email_ultimo_id(is_string($id) ? mb_substr($id, 0, 128) : '');
             return 'resend';
         }
         // No registro, só o erro (sem endereço de e-mail): a resposta da Resend pode citar o destinatário.
@@ -324,6 +326,19 @@ function mcp_enviar_email(string $para, string $assunto, string $html, string $t
     $assuntoCodificado = '=?UTF-8?B?' . base64_encode($assunto) . '?=';
     $ok = @mail($para, $assuntoCodificado, $mensagem, $cabecalhos, '-f' . $enderecoRemetente);
     return $ok ? 'mail' : 'falhou';
+}
+
+/**
+ * O id que a Resend deu ao último e-mail aceito neste processo ('' se ela não disse). Só quem guarda o id lê (a
+ * recuperação por e-mail grava em provedor_id); quem chama mcp_enviar_email continua recebendo só 'resend'.
+ */
+function mcp_email_ultimo_id(?string $novo = null): string
+{
+    static $id = '';
+    if ($novo !== null) {
+        $id = $novo;
+    }
+    return $id;
 }
 
 // ----------------------------------------------------------------------------- pagar tudo: dados comuns

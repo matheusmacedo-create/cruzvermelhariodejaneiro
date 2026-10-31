@@ -3,7 +3,9 @@
  * Lembretes do questionário de dias e horários (lib/horarios.php): manda, a quem pagou e ainda não
  * respondeu, o 1º lembrete 24 h depois do pagamento e o 2º 72 h depois. Para assim que o aluno responde.
  * Na mesma rodada, o lembrete único do PIX em aberto (lib/recuperacao.php): a quem gerou o PIX há 2 a 20 h e
- * não pagou, depois de conferir o pagamento na Unicopag.
+ * não pagou, depois de conferir o pagamento na Unicopag. E a recuperação por WhatsApp (lib/recuperacao_whatsapp.php,
+ * 30/10/2026): as três mensagens automáticas a quem se cadastrou no site ou na escola e não pagou; e, logo depois, os
+ * três e-mails da mesma recuperação a esse mesmo público (lib/recuperacao_email.php).
  *
  * Só pela linha de comando, rodado pelo cron da hospedagem a cada hora:
  *   php /caminho/public_html/matricula-cursos-presenciais/api/lembretes.php
@@ -35,7 +37,34 @@ try {
         error_log('[matricula] lembrete do PIX: ' . get_class($e) . ': ' . $e->getMessage());
         $p = ['falhas' => 1];
     }
-    exit($r['falhas'] + $p['falhas'] > 0 ? 1 : 0);
+    // Recuperação por WhatsApp: módulo opcional (publicado à parte, o resto roda sem ele). Uma falha aqui também não
+    // derruba o que já rodou; sem as chaves da Kapso, não manda nada e só diz o motivo.
+    $w = ['falhas' => 0];
+    if (is_file(__DIR__ . '/lib/recuperacao_whatsapp.php')) {
+        require_once __DIR__ . '/lib/recuperacao_whatsapp.php';
+        try {
+            $w = mcp_rw_rodar();
+            printf("%s recuperação por WhatsApp: %d enviadas, %d falhas, %d puladas, %d pessoas no fluxo, escola %s%s\n",
+                gmdate('Y-m-d H:i:s'), $w['enviados'], $w['falhas'], $w['pulados'], $w['vistos'], $w['escola'], $w['motivo'] !== null ? ' (' . $w['motivo'] . ')' : '');
+        } catch (Throwable $e) {
+            error_log('[matricula] recuperação por WhatsApp: ' . get_class($e) . ': ' . $e->getMessage());
+            $w = ['falhas' => 1];
+        }
+        // Recuperação por e-mail (lib/recuperacao_email.php): o mesmo público, logo depois e independente do WhatsApp
+        // (aproveita o público que ele já leu nesta hora). Uma falha aqui não desfaz nem segura o que já rodou; sem a
+        // RESEND_API_KEY, não manda nada e só diz o motivo.
+        try {
+            $e = mcp_rw_email_rodar(null, $w['carga'] ?? null);
+            printf("%s recuperação por e-mail: %d enviados, %d falhas, %d pulados, %d etapas 1 cumpridas pelo lembrete do PIX, %d esperando o lembrete do PIX, %d pessoas no fluxo, escola %s%s\n",
+                gmdate('Y-m-d H:i:s'), $e['enviados'], $e['falhas'], $e['pulados'], $e['pulados_pix'], $e['esperando_pix'], $e['vistos'], $e['escola'],
+                $e['motivo'] !== null ? ' (' . $e['motivo'] . ')' : '');
+            $w['falhas'] += $e['falhas'];
+        } catch (Throwable $erro) {
+            error_log('[matricula] recuperação por e-mail: ' . get_class($erro) . ': ' . $erro->getMessage());
+            $w['falhas'] += 1;
+        }
+    }
+    exit($r['falhas'] + $p['falhas'] + $w['falhas'] > 0 ? 1 : 0);
 } finally {
     $db->query("SELECT RELEASE_LOCK('mcp_lembretes_horarios')");
 }
