@@ -308,6 +308,8 @@
     var ajusteTotal = null;   // { chave, valor }: total à vista que o servidor mandou num 422 de total
     var atual = {};           // o último cálculo da tela (plano, parcelas, total mostrado, turma)
     var cupom = null;         // cupom conferido pelo info.php: { codigo, curso, total_centavos, restantes } (lib/cupons.php)
+    var cupomDaVitrine = false; // o cupom em uso veio do balão da oferta (aplicado pela página, não digitado)
+    var cupomTirado = {};     // códigos de vitrine que a pessoa removeu nesta visita (a página não os aplica de novo)
     var campos = {
       curso: '#ck-curso', nome: '#ck-nome', cpf: '#ck-cpf', email: '#ck-email', telefone: '#ck-telefone',
       cartao_numero: '#ck-cartao-numero', cartao_nome: '#ck-cartao-nome', cartao_validade: '#ck-cartao-validade', cartao_cvv: '#ck-cartao-cvv'
@@ -499,6 +501,7 @@
       if (!sel.value) { mensagemCupom('Escolha o curso primeiro.', true); atualizar(); return; }
       mensagemCupom('Conferindo o cupom…', false);
       var slug = sel.value;
+      cupomDaVitrine = false;
       api('info.php?cupom=' + encodeURIComponent(codigo) + '&curso=' + encodeURIComponent(slug)).then(function (r) {
         if (sel.value !== slug) return;
         var d = r && r.cupom;
@@ -510,6 +513,67 @@
         }
         atualizar();
       });
+    }
+
+    /* Balão da oferta (30/10/2026): os cupons de vitrine do info.php (cupons_vitrine, com as vagas que restam, contadas
+       no servidor). Com o curso da oferta escolhido, o cupom já entra aplicado; "Remover" tira e a página não insiste. O
+       servidor confere tudo de novo ao cobrar, como no cupom digitado. */
+    function vitrine() { return info && Array.isArray(info.cupons_vitrine) ? info.cupons_vitrine : []; }
+    function ofertaCabe(slug) {
+      var c = cursos[slug] || null;
+      return !!c && planosDe(slug, c, turmaDe(c)).indexOf('taxa_e_matricula') >= 0;
+    }
+    function ofertaPara(slug) {
+      var lista = vitrine();
+      for (var i = 0; i < lista.length; i++) if (lista[i].cursos.indexOf(slug) >= 0 && ofertaCabe(slug)) return lista[i];
+      return null;
+    }
+    function usarOferta(o, slug) {
+      cupom = { valido: true, codigo: o.codigo, curso: slug, total_centavos: o.total_centavos, restantes: o.restantes, limite: o.limite };
+      cupomDaVitrine = true;
+      abrirCupom();
+      var entrada = q('#ck-cupom');
+      if (entrada) entrada.value = o.codigo;
+      mensagemCupom('Cupom ' + o.codigo + ' aplicado: ' + brl(o.total_centavos) + ' com tudo incluso, à vista.', false);
+      atualizar();
+    }
+    function tirarCupom(daPessoa) {
+      if (daPessoa && cupom) cupomTirado[cupom.codigo] = true;
+      cupom = null;
+      cupomDaVitrine = false;
+      var entrada = q('#ck-cupom');
+      if (entrada) entrada.value = '';
+      mensagemCupom('', false);
+      atualizar();
+    }
+    /* Aplica o cupom de vitrine do curso escolhido, se houver e a pessoa não o tiver removido. */
+    function aplicarVitrine() {
+      var o = sel.value ? ofertaPara(sel.value) : null;
+      if (o && !cupomTirado[o.codigo]) { usarOferta(o, sel.value); return true; }
+      return false;
+    }
+    function mostrarBalao(slug, comCupom) {
+      var balao = q('#ck-balao');
+      if (!balao) return;
+      // Sem curso escolhido, o balão apresenta a primeira oferta; com outro curso, some.
+      var o = slug ? ofertaPara(slug) : null;
+      if (!slug) { var lista = vitrine(); for (var i = 0; i < lista.length && !o; i++) if (ofertaCabe(lista[i].cursos[0])) o = lista[i]; }
+      mostrar(balao, !!o);
+      if (!o) return;
+      var alvo = slug || o.cursos[0], c = cursos[alvo] || {};
+      var restantes = comCupom && cupom.codigo === o.codigo && typeof cupom.restantes === 'number' ? cupom.restantes : o.restantes;
+      var cheio = inscricaoAtual() + matriculaDe(c);
+      q('#ck-balao-titulo').innerHTML = esc(c.nome || 'Curso') + ' por <b>' + esc(brl(o.total_centavos)) + '</b>'
+        + (cheio > o.total_centavos ? ' em vez de ' + esc(brl(cheio)) : '') + ', com taxa de inscrição e matrícula inclusas, à vista.';
+      texto('#ck-balao-codigo', o.codigo);
+      q('#ck-balao-vagas').innerHTML = (restantes === 1 ? 'Resta <b>1 cupom</b>' : restantes <= 5 ? 'Últimos <b>' + restantes + ' cupons</b>' : 'Restam <b>' + restantes + ' cupons</b>')
+        + ' de ' + o.limite + '. Quando acabarem, vale o preço cheio.';
+      var barra = q('#ck-balao-barra');
+      if (barra) barra.style.width = Math.max(4, Math.min(100, Math.round(restantes * 100 / (o.limite || 1)))) + '%';
+      var aplicado = !!(comCupom && cupom.codigo === o.codigo);
+      texto('#ck-balao-usar', slug ? 'Usar o cupom ' + o.codigo : 'Quero ' + (c.nome || 'este curso') + ' com o cupom');
+      mostrar('#ck-balao-usar', !aplicado);
+      mostrar('#ck-balao-ok', aplicado);
     }
 
     function atualizar() {
@@ -641,6 +705,7 @@
       var descontoCupom = comCupom && completo ? Math.max(0, inscricao + matricula - cupom.total_centavos) : 0;
       mostrar('#ck-r-cupom-linha', descontoCupom > 0);
       if (descontoCupom > 0) { texto('#ck-r-cupom-rotulo', 'Desconto do cupom ' + cupom.codigo); texto('#ck-r-cupom', '− ' + brl(descontoCupom)); }
+      mostrarBalao(slug, comCupom && completo);
       if (parcelado) { texto('#ck-r-juros-rotulo', 'Juros do parcelamento (' + opcao.acrescimo_rotulo + ')'); texto('#ck-r-juros', brl(opcao.juros_centavos)); }
       texto('#ck-r-total-rotulo', completo ? 'Total' : 'Agora');
       texto('#ck-r-total', brl(total));
@@ -768,7 +833,13 @@
         bloquearOpcao1(slug, r.planos);
       } else if (r.campo === 'cupom') {
         // Cupom recusado na hora de cobrar (vagas acabaram, encerrado, outro curso): sai, e a tela volta ao preço cheio.
+        // O balão da oferta sai junto: as vagas que ele mostrava já não valem.
+        if (cupom && info && Array.isArray(info.cupons_vitrine)) {
+          var recusado = cupom.codigo;
+          info.cupons_vitrine = info.cupons_vitrine.filter(function (o) { return o.codigo !== recusado; });
+        }
         cupom = null;
+        cupomDaVitrine = false;
         mensagemCupom(r.erro || 'Cupom indisponível.', true);
       } else if (r.campo === 'parcelas' && Array.isArray(r.opcoes)) {
         simulacoes[chave] = { estado: r.opcoes.length > 1 ? 'ok' : 'falha', motivo: r.opcoes.length > 1 ? null : 'falha', opcoes: r.opcoes };
@@ -850,8 +921,30 @@
     if (aplicar) aplicar.addEventListener('click', aplicarCupom);
     // Enter no campo do cupom aplica o cupom, em vez de enviar o pagamento.
     if (campoCupom) campoCupom.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); aplicarCupom(); } });
-    // Trocar de curso confere o cupom de novo (ele vale para um curso só).
-    sel.addEventListener('change', function () { if (cupom || (campoCupom && campoCupom.value)) aplicarCupom(); });
+    // Trocar de curso: o cupom de vitrine do curso novo entra sozinho; o da vitrine de outro curso sai sem mensagem de
+    // erro (foi a página que o pôs); o digitado é conferido de novo (ele vale para um curso só).
+    sel.addEventListener('change', function () {
+      if (aplicarVitrine()) return;
+      if (cupomDaVitrine) { tirarCupom(false); return; }
+      if (cupom || (campoCupom && campoCupom.value)) aplicarCupom();
+    });
+    var balaoUsar = q('#ck-balao-usar'), balaoTirar = q('#ck-balao-tirar');
+    if (balaoUsar) balaoUsar.addEventListener('click', function () {
+      var o = sel.value ? ofertaPara(sel.value) : null;
+      if (!o) {
+        // Sem curso escolhido: escolhe o curso da oferta (o change aplica o cupom).
+        var lista = vitrine();
+        for (var i = 0; i < lista.length && !o; i++) if (ofertaCabe(lista[i].cursos[0])) o = lista[i];
+        if (!o) return;
+        delete cupomTirado[o.codigo];
+        sel.value = o.cursos[0];
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        return;
+      }
+      delete cupomTirado[o.codigo];
+      usarOferta(o, sel.value);
+    });
+    if (balaoTirar) balaoTirar.addEventListener('click', function () { tirarCupom(true); if (balaoUsar) balaoUsar.focus(); });
     // focusin pega teclado e toque; change cobre o clique em opção que não recebe foco (Safari).
     form.addEventListener('focusin', marcarEtapa);
     form.addEventListener('change', marcarEtapa);
@@ -870,6 +963,8 @@
       // Link com o cupom (?cupom=CODIGO): o campo já vem aberto e o cupom, aplicado.
       var codigoLink = param('cupom');
       if (codigoLink && campoCupom) { abrirCupom(); campoCupom.value = codigoLink; aplicarCupom(); }
+      // Sem cupom no link, o da vitrine do curso escolhido já vem aplicado (o balão mostra qual e quantos restam).
+      else aplicarVitrine();
     });
   }
 

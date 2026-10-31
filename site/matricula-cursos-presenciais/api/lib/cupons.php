@@ -12,12 +12,14 @@
  * - O CPF de teste (TESTE_CPFS) usa o cupom sem desconto: o preço de teste nunca vira cobrança real.
  * - Para criar outro cupom, acrescente uma linha em MCP_CUPONS e publique este arquivo. Para encerrar um, ponha 'ate'
  *   no passado ou tire a linha (inscrições já feitas não mudam).
+ * - 'vitrine' => true (30/10/2026): o código vai a público no info.php (mcp_cupons_vitrine), e o checkout mostra o
+ *   balão da oferta com as vagas que restam e já aplica o cupom no curso. Sem 'vitrine', o código só vale digitado.
  */
 declare(strict_types=1);
 
 const MCP_CUPONS = [
     // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos (código NOV15, agenda, 30/10/2026).
-    'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null],
+    'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null, 'vitrine' => true],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;
@@ -153,4 +155,32 @@ function mcp_cupom_publico(string $codigo, string $slug): array
     }
     return ['valido' => true, 'codigo' => $cupom['codigo'], 'curso' => $slug, 'total_centavos' => (int) $cupom['total_centavos'],
         'restantes' => $restantes, 'limite' => (int) $cupom['limite']];
+}
+
+/**
+ * Os cupons de vitrine que ainda valem e têm vaga, para o balão da oferta no checkout (info.php): código, cursos, valor
+ * final e vagas. A contagem é a mesma de mcp_cupom_restantes(), então o número do balão é o do servidor, nunca
+ * inventado. Qualquer falha (banco, coluna ainda sem migração) devolve lista vazia: o balão some, o checkout segue.
+ */
+function mcp_cupons_vitrine(?int $agora = null): array
+{
+    $lista = [];
+    try {
+        if (!mcp_cupom_coluna_ok()) {
+            return [];
+        }
+        foreach (MCP_CUPONS as $codigo => $def) {
+            if (empty($def['vitrine']) || ($def['ate'] !== null && (int) mcp_iso_ts($def['ate']) < ($agora ?? time()))) {
+                continue;
+            }
+            $restantes = mcp_cupom_restantes(['codigo' => (string) $codigo] + $def, $agora);
+            if ($restantes > 0) {
+                $lista[] = ['codigo' => (string) $codigo, 'cursos' => array_values($def['cursos']), 'total_centavos' => (int) $def['total_centavos'],
+                    'limite' => (int) $def['limite'], 'restantes' => $restantes];
+            }
+        }
+    } catch (Throwable) {
+        return [];
+    }
+    return $lista;
 }

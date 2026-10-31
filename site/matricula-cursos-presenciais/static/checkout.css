@@ -225,3 +225,26 @@ thead .hr-cab { text-align: center; font-size: .92rem; }
 .ck-cupom-msg.ruim { color: var(--red); }
 .ck-cupom-msg[hidden] { display: none; }
 .ck-linha-desconto span:last-child { color: #166534; font-weight: 700; }
+/* Balão da oferta (30/10/2026): o cupom de vitrine no resumo, com o código à vista e as vagas que restam (contagem do
+   servidor, info.php). Nada se move sozinho: sem pulsar, sem contagem regressiva. No celular aparece na faixa do resumo. */
+.ck-balao { position: relative; margin: 18px 0 0; padding: 16px 16px 14px; border: 2px solid var(--red); border-radius: 16px; background: #fff7f7; }
+.ck-balao[hidden] { display: none; }
+.ck-balao::before { content: ""; position: absolute; top: -10px; left: 28px; width: 16px; height: 16px; background: #fff7f7; border-left: 2px solid var(--red); border-top: 2px solid var(--red); transform: rotate(45deg); }
+.ck-balao p { margin: 0; }
+.ck-balao-selo { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--red); color: #fff; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.ck-balao-titulo { margin: 8px 0 10px !important; color: var(--black); font-size: .98rem; font-weight: 700; line-height: 1.35; }
+.ck-balao-titulo b { color: var(--red); white-space: nowrap; }
+.ck-balao-codigo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 2px dashed var(--red); border-radius: 10px; background: #fff; }
+.ck-balao-codigo span { font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.ck-balao-codigo b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 1.15rem; letter-spacing: .12em; color: var(--black); }
+.ck-balao-vagas { margin: 12px 0 6px !important; font-size: .88rem; color: var(--text); }
+.ck-balao-vagas b { color: var(--red); }
+.ck-balao-barra { height: 8px; border-radius: 999px; background: #ffd9d9; overflow: hidden; }
+.ck-balao-barra span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--red); }
+.ck-balao-usar { display: block; width: 100%; min-height: 46px; margin: 12px 0 0; border: 0; border-radius: 10px; background: var(--red); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.ck-balao-usar[hidden] { display: none; }
+.ck-balao-usar:focus-visible, .ck-balao-tirar:focus-visible { outline: 3px solid var(--black); outline-offset: 2px; }
+.ck-balao-ok { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 0 !important; font-size: .88rem; font-weight: 700; color: #166534; }
+.ck-balao-ok[hidden] { display: none; }
+.ck-balao-tirar { flex: none; background: none; border: 0; padding: 4px 0; color: var(--muted); font: inherit; font-size: .84rem; font-weight: 600; text-decoration: underline; cursor: pointer; }
+@media (max-width: 920px) { .ck-resumo .ck-balao { grid-column: 1 / -1; margin-top: 14px; } }
