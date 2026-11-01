@@ -14,6 +14,18 @@ PAGINA = """<!DOCTYPE html>
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <title>Página não encontrada | Cruz Vermelha Brasileira Rio de Janeiro</title>
   <meta name="robots" content="noindex, follow">
+  <script>
+    // Links da recuperação (WhatsApp e e-mail) com o caminho codificado (01/11/2026): se a Meta ou o aplicativo codificam a
+    // variável do botão, /matricula-cursos-presenciais/checkout/?curso=… chega como …/checkout/%3Fcurso%3D… e cai aqui.
+    // Decodifica e vai ao endereço certo. Só para caminhos da matrícula; nunca para outro site.
+    (function () {
+      var p = location.pathname;
+      if (p.indexOf('/matricula-cursos-presenciais') !== 0 || !/%(3F|26|3D|2F)/i.test(p)) return;
+      var d;
+      try { d = decodeURIComponent(p); } catch (e) { return; }
+      if (d !== p && d.indexOf('/matricula-cursos-presenciais') === 0 && d.indexOf('//') < 0) location.replace(d + location.search + location.hash);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">

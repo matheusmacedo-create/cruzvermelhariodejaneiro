@@ -44,8 +44,11 @@ try {
         require_once __DIR__ . '/lib/recuperacao_whatsapp.php';
         try {
             $w = mcp_rw_rodar();
-            printf("%s recuperação por WhatsApp: %d enviadas, %d falhas, %d puladas, %d pessoas no fluxo, escola %s%s\n",
-                gmdate('Y-m-d H:i:s'), $w['enviados'], $w['falhas'], $w['pulados'], $w['vistos'], $w['escola'], $w['motivo'] !== null ? ' (' . $w['motivo'] . ')' : '');
+            // As devidas que não receberam, por motivo (o mesmo resumo que o painel mostra por pessoa, desde 01/11/2026).
+            $semReceber = mcp_rw_motivos_contagem($w['pessoas'] ?? []);
+            printf("%s recuperação por WhatsApp: %d enviadas, %d falhas, %d puladas, %d pessoas no fluxo, escola %s%s%s\n",
+                gmdate('Y-m-d H:i:s'), $w['enviados'], $w['falhas'], $w['pulados'], $w['vistos'], $w['escola'], $w['motivo'] !== null ? ' (' . $w['motivo'] . ')' : '',
+                $semReceber !== '' ? '; devidas sem receber: ' . $semReceber : '');
         } catch (Throwable $e) {
             error_log('[matricula] recuperação por WhatsApp: ' . get_class($e) . ': ' . $e->getMessage());
             $w = ['falhas' => 1];
@@ -58,6 +61,9 @@ try {
             printf("%s recuperação por e-mail: %d enviados, %d falhas, %d pulados, %d etapas 1 cumpridas pelo lembrete do PIX, %d esperando o lembrete do PIX, %d pessoas no fluxo, escola %s%s\n",
                 gmdate('Y-m-d H:i:s'), $e['enviados'], $e['falhas'], $e['pulados'], $e['pulados_pix'], $e['esperando_pix'], $e['vistos'], $e['escola'],
                 $e['motivo'] !== null ? ' (' . $e['motivo'] . ')' : '');
+            if (($semReceber = mcp_rw_motivos_contagem($e['pessoas'] ?? [])) !== '') {
+                printf("%s recuperação por e-mail: devidos sem receber: %s\n", gmdate('Y-m-d H:i:s'), $semReceber);
+            }
             $w['falhas'] += $e['falhas'];
         } catch (Throwable $erro) {
             error_log('[matricula] recuperação por e-mail: ' . get_class($erro) . ': ' . $erro->getMessage());

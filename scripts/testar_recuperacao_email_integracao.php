@@ -190,6 +190,7 @@ if (str_starts_with($caminho, '/platform/v1/whatsapp/phone_numbers/1112223334/we
 if ($caminho === '/rest/v1/Usuario' && $metodo === 'GET') {
     if (($_SERVER['HTTP_APIKEY'] ?? '') !== 'chave-escola-falsa') { http_response_code(401); echo '{}'; return true; }
     $c = $controle('escola');
+    if (!empty($c['fora'])) { http_response_code(403); echo '{}'; return true; }
     $usuarios = $c['usuarios'] ?? [];
     if (isset($_GET['criadoEm'])) {
         $desde = substr((string) $_GET['criadoEm'], 4);
@@ -228,6 +229,7 @@ $emails = [];
 // A base do teste: daqui a 400 dias, 13h UTC (10h de Brasília).
 $A = (int) strtotime(gmdate('Y-m-d', time() + 400 * 86400) . ' 13:00:00 UTC');
 
+$inicioTeste = gmdate('Y-m-d H:i:s', time() - 5);
 function limpar(PDO $db, string $padraoEmail, array $telefones, array $emails): void
 {
     $stmt = $db->prepare('SELECT id FROM mcp_inscricoes WHERE email REGEXP ?');
@@ -244,6 +246,9 @@ function limpar(PDO $db, string $padraoEmail, array $telefones, array $emails): 
     }
     $db->exec('DELETE FROM mcp_recuperacao_email WHERE criado_em > DATE_ADD(UTC_TIMESTAMP(), INTERVAL 300 DAY)');
     $db->exec('DELETE FROM mcp_recuperacao_whatsapp WHERE criado_em > DATE_ADD(UTC_TIMESTAMP(), INTERVAL 300 DAY)');
+    // Os resumos das rodadas e as aberturas dos links que o teste gerou (gravados com a hora de verdade, sem inscrição).
+    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link') AND inscricao_id IS NULL AND criado_em >= ?")
+        ->execute([$GLOBALS['inicioTeste'] ?? gmdate('Y-m-d H:i:s')]);
     // A pessoa do painel tem o cadastro de agora (horas atrás): as linhas dela são apagadas pelos hashes.
     foreach ($telefones as $numero) {
         $db->prepare("DELETE FROM mcp_avisos_bloqueios WHERE canal = 'whatsapp' AND destino_hash = ?")->execute([mcp_avisos_hash('whatsapp', $numero)]);
@@ -341,21 +346,36 @@ try {
     $e3 = mcp_rw_email_montar(3, $psPessoa, ['codigo' => 'NOV15', 'data' => 'terça-feira, 17/11'], $sair);
     $e3sem = mcp_rw_email_montar(3, $psPessoa, null, $sair);
     $eg = mcp_rw_email_montar(1, ['primeiro_nome' => 'Rui', 'curso_slug' => '', 'curso_nome' => 'nossos cursos'], null, $sair);
+    $tokenE = mcp_rw_token('s77', $A);
+    $e1t = mcp_rw_email_montar(1, ['primeiro_nome' => 'MariaAparecida', 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa'], null, $sair, $tokenE);
+    $e2t = mcp_rw_email_montar(2, ['primeiro_nome' => 'RAQUEL', 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa'], null, $sair, $tokenE);
+    $e3t = mcp_rw_email_montar(3, ['primeiro_nome' => 'Dr.'] + $psPessoa, ['codigo' => 'NOV15', 'data' => 'terça-feira, 17/11'], $sair, $tokenE);
     $site = "http://127.0.0.1:$portaSite/";
     verificar('assuntos: 1º "ainda não foi concluída", 2º lembrete, 3º último aviso, 3º com cupom; sem curso, "nossos cursos"', [$e1['assunto'], $e2['assunto'], $e3sem['assunto'], $e3['assunto'], $eg['assunto']], [
         'Sua inscrição em Punção Venosa ainda não foi concluída', 'Lembrete: sua inscrição em Punção Venosa continua em aberto',
         'Último aviso sobre sua inscrição em Primeiros Socorros Básico', 'Último aviso: cupom NOV15 em Primeiros Socorros Básico', 'Sua inscrição em nossos cursos ainda não foi concluída',
     ]);
-    verificar('botão: os caminhos do WhatsApp com utm_source=email (rec1, rec3cupom com o cupom aplicado, página geral sem curso)', [$e1['link'], $e3['link'], $e3sem['link'], $eg['link']], [
-        $site . 'matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=email&utm_medium=recuperacao&utm_campaign=rec1',
-        $site . 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom',
-        $site . 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3',
-        $site . 'matricula-cursos-presenciais/?utm_source=email&utm_medium=recuperacao&utm_campaign=rec1',
+    verificar('botão: os links curtos do WhatsApp com a fonte "e" (rec1, rec3cupom, rec3, sem curso; com o token no fim)', [$e1['link'], $e3['link'], $e3sem['link'], $eg['link'], $e1t['link']], [
+        $site . 'matricula-cursos-presenciais/api/ir.php/e/puncao-venosa/rec1',
+        $site . 'matricula-cursos-presenciais/api/ir.php/e/primeiros-socorros-basico/rec3cupom',
+        $site . 'matricula-cursos-presenciais/api/ir.php/e/primeiros-socorros-basico/rec3',
+        $site . 'matricula-cursos-presenciais/api/ir.php/e/cursos/rec1',
+        $site . 'matricula-cursos-presenciais/api/ir.php/e/puncao-venosa/rec1/' . $tokenE,
     ]);
+    verificar('link do e-mail: sem "?" nem "&", e o ir.php leva à MESMA query de antes (utm_source=email)', [preg_match('/[?&=%]/', $e1t['link'] . $e3['link']),
+        mcp_rw_link_destino(substr($e3['link'], strlen($site . 'matricula-cursos-presenciais/api/ir.php')))['destino'], mcp_rw_link_destino('/e/puncao-venosa/rec1/' . $tokenE)['destino']], [0,
+        '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom',
+        '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=email&utm_medium=recuperacao&utm_campaign=rec1']);
+    verificar('texto x comportamento: com o token, "já vêm preenchidos" nos 3; sem token, não promete; nunca "ficaram registrados"', [
+        str_contains($e1t['html'], 'já abre com seu nome, e-mail e telefone preenchidos'), str_contains($e2t['html'], 'já vêm preenchidos'), str_contains($e3t['html'], 'seus dados já vêm preenchidos'),
+        str_contains($e1['html'] . $e2['html'] . $e3['html'], 'preenchid'), str_contains($e1['html'] . $e1t['html'], 'ficaram registrados'), str_contains($e1t['texto'], 'preenchidos')],
+        [true, true, true, false, false, true]);
+    verificar('"Oi, X.": o mesmo primeiro nome do WhatsApp (CamelCase, caixa, título)', [str_contains($e1t['html'], 'Oi, Maria.'), str_contains($e1t['html'], 'Falta pouco, Maria.'),
+        str_contains($e2t['html'], 'Oi, Raquel.'), str_contains($e3t['html'], 'Oi. Este é o último lembrete')], [true, true, true, true]);
     verificar('corpo: um botão só, "Concluir inscrição", descadastro no HTML e no texto, moldura do site', [substr_count($e1['html'], 'border-radius:999px;background:#cc0000'),
         str_contains($e1['html'], '>Concluir inscrição</a>'), str_contains($e1['html'], 'Não quero mais receber'), str_contains($e1['html'], mcp_escapar($sair)),
         str_contains($e1['texto'], "Não quero mais receber: $sair"), str_contains($e1['texto'], 'Concluir inscrição: ' . $e1['link']), str_contains($e1['html'], 'CNPJ'),
-        str_contains($e1['html'], 'ainda não identificamos o pagamento'), str_contains($e1['html'], 'Seus dados ficaram registrados')],
+        str_contains($e1['html'], 'ainda não identificamos o pagamento'), str_contains($e1['html'], 'Para concluir, é só seguir pelo botão abaixo.')],
         [1, true, true, true, true, true, true, true, true]);
     verificar('2º: "ficou alguma dúvida? responda este e-mail"', [str_contains($e2['html'], 'Ficou alguma dúvida'), str_contains($e2['html'], 'É só responder este e-mail')], [true, true]);
     verificar('3º com cupom: o código e a data da turma, sem preço nem escassez', [str_contains($e3['html'], '<strong>NOV15</strong>'), str_contains($e3['html'], 'terça-feira, 17/11'),
@@ -393,6 +413,10 @@ try {
     $primeiro = 'Sua inscrição em Punção Venosa ainda não foi concluída';
     verificar('recebem o 1º: com celular, sem celular, quem vai pagar, Primeiros Socorros, quem vai dizer não', array_map(static fn(array $i): array => $assuntosPara($i['email']),
         [$sA, $sCel, $sPaga, $sPS, $sNao]), [[$primeiro], [$primeiro], [$primeiro], ['Sua inscrição em Primeiros Socorros Básico ainda não foi concluída'], [$primeiro]]);
+    $resumoE = mcp_rw_resumo_ultimo('recuperacao_rodada_email');
+    $curta = static fn(array $l): string => substr(mcp_rw_hmac('c:' . $l['cpf']), 0, 16);
+    verificar('resumo da rodada do e-mail: por pessoa, controle, esperando o PIX e a recusa; quem recebeu não aparece', [$resumoE['em'] ?? null, $resumoE['enviados'] ?? null,
+        $resumoE['p'][$curta($sCtl)] ?? null, $resumoE['p'][$curta($sEsp)] ?? null, $resumoE['p'][$curta($sRecusa)] ?? null, isset($resumoE['p'][$curta($sA)])], [$A, 5, 'c', 'P', 'f', false]);
     verificar('não recebem: controle, PIX já lembrado, PIX esperando o lembrete, recente demais, e-mail bloqueado', array_map('count', [
         $emailsPara($sCtl['email']), $emailsPara($sPix['email']), $emailsPara($sEsp['email']), $emailsPara($sRec['email']), $emailsPara($sBlq['email'])]), [0, 0, 0, 0, 0]);
     verificar('linhas: controle etapa 0, pulado_pix na etapa 1, falhou para o recusado', [$linhasDe($sCtl['email']), $linhasDe($sPix['email']), $linhasDe($sRecusa['email'])],
@@ -407,7 +431,7 @@ try {
     $linhaA = $stmt->fetch() ?: [];
     $urlSairA = $site . 'matricula-cursos-presenciais/api/avisos.php?rw=' . ($linhaA['id'] ?? 0) . '.' . mcp_rw_email_assinatura((int) ($linhaA['id'] ?? 0));
     verificar('envio: remetente, responder-para o contato, assunto, List-Unsubscribe da linha, HTML e texto', [
-        $msgA['from'] ?? '', $msgA['reply_to'] ?? '', $msgA['subject'] ?? '', $msgA['headers'] ?? [], str_contains((string) ($msgA['html'] ?? ''), 'utm_source=email&amp;utm_medium=recuperacao&amp;utm_campaign=rec1'),
+        $msgA['from'] ?? '', $msgA['reply_to'] ?? '', $msgA['subject'] ?? '', $msgA['headers'] ?? [], str_contains((string) ($msgA['html'] ?? ''), 'matricula-cursos-presenciais/api/ir.php/e/puncao-venosa/rec1/' . mcp_rw_token('s' . $sA['id'], $A)),
         str_contains((string) ($msgA['text'] ?? ''), 'Não quero mais receber: ' . $urlSairA), str_contains((string) ($msgA['html'] ?? ''), 'Oi, Ana.'),
     ], ['Cruz Vermelha Brasileira Rio de Janeiro <matricula@info.exemplo.org>', 'contato@exemplo.org', 'Sua inscrição em Punção Venosa ainda não foi concluída',
         ['List-Unsubscribe' => '<' . $urlSairA . '>', 'List-Unsubscribe-Post' => 'List-Unsubscribe=One-Click'], true, true, true]);
@@ -491,8 +515,8 @@ try {
     $diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
     $dataTurma = $diasSemana[(int) gmdate('w', $turmaInicio - 3 * 3600)] . ', ' . gmdate('d/m', $turmaInicio - 3 * 3600);
     $htmlPS = (string) ($tresPS[2]['html'] ?? '');
-    verificar('3º com cupom: link com cupom=NOV15 e utm_source=email (rec3cupom), a data da turma, sem preço', [
-        str_contains($htmlPS, 'checkout/?curso=primeiros-socorros-basico&amp;via=agenda&amp;cupom=NOV15&amp;utm_source=email&amp;utm_medium=recuperacao&amp;utm_campaign=rec3cupom'),
+    verificar('3º com cupom: link curto rec3cupom (o ir.php põe cupom=NOV15 e utm_source=email), a data da turma, sem preço', [
+        str_contains($htmlPS, 'api/ir.php/e/primeiros-socorros-basico/rec3cupom/' . mcp_rw_token('s' . $sPS['id'], $A + 72 * 3600)),
         str_contains($htmlPS, $dataTurma), str_contains($htmlPS . ($tresPS[2]['text'] ?? ''), 'R$'), $linhasDe($sPS['email'])], [true, true, false, ['1:enviado:rec1', '2:enviado:rec2', '3:enviado:rec3cupom']]);
     // ------------------------------------------------------------------------- métricas
     $agoraM = $A + 73 * 3600;
@@ -586,6 +610,16 @@ try {
     controle('resend', []);
     mcp_rw_email_rodar($F + 3600);
     verificar('Resend de volta: os três recebem', array_map(static fn(array $i): int => count($emailsPara($i['email'])), [$f1, $f2, $f3]), [1, 1, 1]);
+
+    // ------------------------------------------------------------------------- escola fora (decisão de 31/10)
+    // Com a escola respondendo erro, seguem o site e os importados: o cadastro do site recebe o 1º e-mail.
+    $Fe = $F + 50 * 86400;
+    controle('escola', ['fora' => true, 'usuarios' => []]);
+    $ef = $criar('escolafora', $Fe - 4 * 3600, ['telefone' => '2122223347']);
+    $r = mcp_rw_email_rodar($Fe);
+    verificar('escola fora: segue só com o site e os importados, e o cadastro do site recebe o 1º e-mail',
+        [$r['escola'], str_contains((string) $r['motivo'], 'seguem só o site e os importados'), count($emailsPara($ef['email']))], ['indisponivel', true, 1]);
+    controle('escola', ['usuarios' => [$eSem]]);
 
     // ------------------------------------------------------------------------- sem RESEND_API_KEY
     $G = $A + 600 * 86400;
