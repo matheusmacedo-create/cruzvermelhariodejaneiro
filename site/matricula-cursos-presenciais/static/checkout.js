@@ -315,6 +315,21 @@
       cartao_numero: '#ck-cartao-numero', cartao_nome: '#ck-cartao-nome', cartao_validade: '#ck-cartao-validade', cartao_cvv: '#ck-cartao-cvv'
     };
 
+    /* Recuperação (01/11/2026): quem chega pelo link das mensagens ou dos e-mails da recuperação (utm_medium=recuperacao)
+       encontra nome, e-mail e telefone já preenchidos. O token vai no cookie que o api/ir.php gravou (ou no ?t=), e o
+       servidor nunca manda o CPF. Só preenche campo vazio; token vencido, servidor fora ou resposta vazia deixam a tela
+       como está, sem mensagem nenhuma. */
+    function preencherRecuperacao() {
+      if (param('utm_medium') !== 'recuperacao') return;
+      var t = param('t');
+      api('recuperacao-dados.php' + (t ? '?t=' + encodeURIComponent(t) : '')).then(function (d) {
+        if (!d || d.http !== 200) return;
+        [['#ck-nome', d.nome, null], ['#ck-email', d.email, null], ['#ck-telefone', d.telefone, mascaras.telefone]].forEach(function (c) {
+          var el = q(c[0]);
+          if (el && !el.value && typeof c[1] === 'string' && c[1]) el.value = c[2] ? c[2](c[1]) : c[1];
+        });
+      });
+    }
     function metodo() { return (form.querySelector('input[name=metodo]:checked') || {}).value || 'pix'; }
     function planoMarcado() { var r = form.querySelector('input[name=plano]:checked'); return r ? r.value : 'so_taxa'; }
     function inscricaoAtual() { return info && typeof info.inscricao_centavos === 'number' ? info.inscricao_centavos : inscricaoHtml; }
@@ -951,6 +966,7 @@
     var pedido = param('curso');
     if (pedido && cursos[pedido]) sel.value = pedido;
     atualizar();
+    preencherRecuperacao();
 
     api('info.php').then(function (d) {
       if (!d.ok) { erro('O checkout está indisponível no momento. Tente novamente em instantes.'); btn.disabled = true; return; }

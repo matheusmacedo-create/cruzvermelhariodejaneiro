@@ -1255,13 +1255,16 @@ máquina; NADA foi publicado.**
   escolhido **por pessoa** (`mcp_rw_modelo`) e gravado na linha (coluna `modelo`):
   - 1ª: `rec_inscricao_1_v2` (UTILITY; o `rec_inscricao_1` antigo foi reclassificado pela Meta como Marketing e saiu
     de uso); 2ª: `rec_inscricao_2`; 3ª: `rec_inscricao_3`. Todos pt_BR, `{{1}}` = primeiro nome, `{{2}}` = curso, botão
-    de URL com o caminho do checkout do curso (ou da página geral quando não há curso) e
-    `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec<etapa>`;
+    de URL `https://cruzvermelhariodejaneiro.org/{{1}}` com o **link curto** do checkout do curso (ou da página geral quando
+    não há curso): `matricula-cursos-presenciais/api/ir.php/w/<slug>/rec<etapa>/<token>`, que redireciona para o checkout
+    com `utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec<etapa>` (até 31/10/2026 a variável levava a query
+    direto; veja "Correções de 01/11/2026" abaixo);
   - **3ª com cupom**: quem quer `primeiros-socorros-basico`, enquanto o cupom `NOV15` vale para ele (`mcp_cupom` sem
     erro e `mcp_cupom_restantes` > 0) **e** há turma aberta (`mcp_turma_aberta`), recebe o `ps_cupom_oferta`
     (MARKETING): `{{1}}` = primeiro nome, `{{2}}` = `NOV15`, `{{3}}` = a data da turma ("terça-feira, 17/11"); botão
-    de URL (índice 0) para `checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&…&utm_campaign=rec3cupom`
-    e resposta rápida "Não tenho interesse" (índice 1). Outro curso, cupom esgotado ou encerrado, ou sem turma: a 3ª
+    de URL (índice 0) com o link curto `…/api/ir.php/w/primeiros-socorros-basico/rec3cupom/<token>`, que leva a
+    `checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&…&utm_campaign=rec3cupom`, e resposta rápida "Não
+    tenho interesse" (índice 1). Outro curso, cupom esgotado ou encerrado, ou sem turma: a 3ª
     continua `rec_inscricao_3`. A oferta é decidida uma vez por rodada (`mcp_rw_oferta_cupom`; erro ao ler = sem cupom).
 
   O painel `api/recuperacao.php` só acompanha.
@@ -1282,8 +1285,9 @@ máquina; NADA foi publicado.**
   por todas as chaves dela (coluna `chaves`), também quando a escola está fora e só o lado do site aparece. Roda na
   rotina de hora em hora (`api/lembretes.php`). **Escola fora do ar**: seguem só os cadastros do site e os importados
   (decisão do responsável em 31/10/2026, com a escola respondendo 403; risco aceito: lembrar quem pagou só na escola). **Só gasta a etapa** o erro que é de quem recebe (número sem WhatsApp, 131026 e
-  parecidos); Kapso fora, modelo não aprovado ou pausado, parâmetro recusado e limite da Meta (130429, 131048, 131056)
-  param a rodada e tentam de novo na hora seguinte, e um modelo que a Meta não mostra como aprovado nem é tentado (vale
+  parecidos); Kapso fora, modelo não aprovado ou pausado e limite da Meta (130429, 131048) param a rodada e tentam de novo
+  na hora seguinte (desde 01/11/2026, um erro que pode ser só de uma mensagem — parâmetro recusado, 131056 — deixa só essa
+  pessoa para a rodada seguinte e a fila anda; veja "Correções de 01/11/2026"), e um modelo que a Meta não mostra como aprovado nem é tentado (vale
   o modelo escolhido para cada pessoa: um `ps_cupom_oferta` pendente segura só quem receberia o cupom). Um 5xx do
   gateway ou conexão caída no meio contam como enviados (podem ter saído; nunca repete) e param a rodada.
 - **Grupo de controle** (`MCP_RW_CONTROLE_PCT = 10`): a pessoa cujo HMAC da chave principal tem o 1º byte múltiplo
@@ -1402,6 +1406,68 @@ respondendo 403, a rodada passou a seguir só com o site e os importados em vez 
   (selos WhatsApp e E-mail com quantas de cada já foram) e o e-mail mascarado (`m***@dominio`).
 - **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_recuperacao_email_integracao.php` (MariaDB local e um servidor
   falso que faz de Resend, Kapso e escola; nada sai de verdade). O do WhatsApp continua valendo.
+
+### Correções de 01/11/2026 (depois das primeiras mensagens reais)
+
+Pedido do responsável: "corrija os erros nas mensagens que deram hoje, vi que algumas saiu também sem link, ajeite tudo
+para funcionar perfeitamente amanhã". **Situação: construído e testado só na máquina; NADA foi publicado.**
+
+- **Links curtos** (`api/ir.php`, regra em `mcp_rw_link`/`mcp_rw_link_destino`): o `{{1}}` do botão levava
+  `matricula-cursos-presenciais/checkout/?curso=…&utm_…`. Se a Meta ou o aplicativo codificam a variável (`%3F`, `%26`),
+  o endereço vira `/checkout/%3Fcurso%3D…` e dá 404 (conferido no ar; uma pessoa respondeu "Tentei de todas as formas mas
+  não deu"). Agora o `{{1}}` é `matricula-cursos-presenciais/api/ir.php/<w|e>/<slug ou cursos>/<campanha>/<token>`: só
+  letras, números, `-`, `.` e `/`. O `ir.php` confere a fonte (`w` = whatsapp, `e` = email), o curso (só os do
+  `cursos.json`, nunca curso de teste) e a campanha (`rec1`, `rec2`, `rec3`, `rec3cupom`; esta só em Primeiros Socorros
+  Básico) e responde **302** para o checkout com a **mesma query de antes** (`curso`, `utm_source`, `utm_medium=recuperacao`,
+  `utm_campaign`; na `rec3cupom` também `via=agenda&cupom=NOV15`), ou para a página de matrícula sem curso. Entrada que não
+  confere (ou banco fora) → 302 para `/matricula-cursos-presenciais/`, nunca 500. Os modelos aprovados não mudam (mesmo
+  nome, mesmo prefixo `https://cruzvermelhariodejaneiro.org/{{1}}`): muda só o texto da variável. Os e-mails usam os
+  mesmos links, com a fonte `e`. Cada abertura fica em `mcp_eventos` (`recuperacao_link`, só fonte/curso/campanha).
+- **Links antigos já entregues** (as 4 mensagens com `?` e `&`): o `site/404.html` (e o `scripts/gerar_404.py`) ganhou um
+  script que, num caminho da matrícula com `%3F`, `%26`, `%3D` ou `%2F`, decodifica e vai ao endereço certo (só caminhos da
+  matrícula). Precisa de JavaScript (o navegador do WhatsApp tem). A mesma rede no servidor, sem JavaScript, só por
+  `.htaccess`: a regra está **à parte, não publicada**, em `scripts/htaccess-checkout-codificado.txt` (um `.htaccess` novo só
+  da pasta `checkout/`, com o porquê de cada linha e como conferir).
+- **Pré-preenchimento**: o link leva um token (`mcp_rw_token`: `<ref>.<validade base 36>.<assinatura>`, 30 dias,
+  assinado com o segredo dos links dos avisos; a referência é `s<id>` da inscrição do site, `i<hmac>` do importado — não
+  a posição no arquivo — ou `u<id>` da conta na escola; nenhum dado pessoal). O `ir.php` põe o token num cookie
+  `mcp_rw` HttpOnly, SameSite=Lax, só de `/matricula-cursos-presenciais/api/`, por 6 h — **fora da URL do checkout**, para não
+  ir ao GA4, ao Pixel nem ao Referer. Com `utm_medium=recuperacao` na URL, o `static/checkout.js` faz
+  `GET api/recuperacao-dados.php` (aceita também `?t=`), que devolve só `nome`, `email` e `telefone` (**nunca o CPF**) e
+  preenche só os campos vazios. Token ausente, adulterado ou vencido, cadastro que sumiu ou escola fora do ar: `{}` com 200,
+  sem mensagem na tela. `no-store`, `noindex`. Os e-mails passaram a dizer isso ("o checkout já abre com seu nome, e-mail e
+  telefone preenchidos: é só conferir, informar o CPF e concluir"), no lugar de "seus dados ficaram registrados".
+- **Primeiro nome** (`mcp_rw_primeiro_nome`, o `{{1}}` e o "Oi, X." do e-mail): CamelCase colado vira só o primeiro
+  ("MariaAparecida" → "Maria"), caixa normalizada ("RAQUEL" → "Raquel", "joão" → "João"), títulos e sobras saem (Dr., Sra.,
+  Prof., letra solta, número, e-mail digitado no nome). Sem nome usável, o `{{1}}` é "aluno(a)" (a Meta recusa parâmetro
+  vazio) e o e-mail diz só "Oi.". O campo do nome no checkout recebe "Maria Aparecida" quando o cadastro veio colado.
+- **Uma pessoa não segura mais a fila** (`mcp_rw_erro_escopo`): até aqui, qualquer recusa da Meta que não fosse de quem recebe
+  parava a rodada — inclusive as que podem ser de **uma** mensagem só (parâmetro recusado 132018, par empresa-pessoa no
+  limite 131056, 4xx da Kapso sem código…). Como a fila vai da mais atrasada para a mais nova, essa pessoa ficava sempre na
+  frente e ninguém atrás dela recebia, rodada após rodada. Agora ela fica para a rodada seguinte (sem gastar a etapa) e a
+  fila anda; o **mesmo** erro duas vezes seguidas é tratado como de todos e para a rodada. Os de todos (chave, modelo pausado
+  ou inexistente, 130429, 131048, 132000, 132001, 132015…, 5xx, 401/403/404/429) param na hora, como antes.
+- **Mensagem conferida com o modelo da Meta** (`mcp_rw_estrutura`): a lista de modelos agora pede os `components`; o índice
+  do botão de URL vem de lá (o `rec_inscricao_3` e o `ps_cupom_oferta` têm a resposta rápida junto), e um texto com outro
+  número de `{{n}}` do que a mensagem manda segura aquele modelo (motivo no painel), em vez de a Meta recusar uma por uma.
+  Sem os componentes na resposta, vale o de antes (índice 0).
+- **Reserva presa**: a linha reservada como "enviando" (a rotina caiu entre reservar e gravar a resposta) vale como enviada
+  para a etapa seguinte, como a resposta incerta. Antes a pessoa ficava parada para sempre e sumia da lista do painel.
+- **Por que não recebeu** (diagnóstico dos "5 de 14"): cada rodada (WhatsApp e e-mail) grava em `mcp_eventos`
+  (`recuperacao_rodada`, `recuperacao_rodada_email`) um resumo com os números, o motivo de parada e, por pessoa (os 16
+  primeiros hex do HMAC, sem dado pessoal), por que quem estava devido não recebeu: grupo de controle, modelo sem aprovação ou
+  que não confere, pagou/parou na reconferência, teto da rodada ou de 24 h, fim do horário, rodada parada, recusa só daquela
+  mensagem (com o código), número sem WhatsApp, esperando o lembrete do PIX, cota da Resend. O painel mostra o cartão
+  **Última rodada** e, na lista, "Última rodada (…): <motivo>" por pessoa; o "Agora" do funil separa quantos esperam no
+  WhatsApp e no e-mail (antes era a soma dos dois canais); o selo do canal diz "não chegou" ou "recebeu as 3" em vez de
+  "encerrado"; e "Por que alguém no fluxo ainda não recebeu" lista todos os motivos. A saída da rotina (`lembretes.php`)
+  também conta os motivos ("devidas sem receber: …").
+- **Testar**: os dois testes de integração cobrem os links (forma do parâmetro, destino, inválidos, `ir.php` por HTTP com o
+  cookie), o pré-preenchimento (sem CPF, cookie e `?t=`, adulterado, vencido, escola fora, importado), os nomes, a recusa só
+  de uma mensagem, a estrutura do modelo, a reserva presa e o resumo da rodada.
+- **Publicar**: `scripts/publicacao-recuperacao.txt` (sem migração) e conferir com `scripts/conferir_publicacao.sh`, que agora
+  testa `api/ir.php` (302 certo e inválido) e `api/recuperacao-dados.php` (`{}` sem token). **Antes das 8h07**: se o `ir.php`
+  com caminho depois do `.php` não responder 302 no ar (servidor sem PATH_INFO), os links novos não funcionam.
 
 ## Cupom de desconto no checkout (30/10/2026)
 

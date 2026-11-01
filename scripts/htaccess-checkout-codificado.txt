@@ -1,0 +1,36 @@
+# Regra OPCIONAL (01/11/2026), NÃO publicada: rede de segurança no servidor para os links antigos da recuperação com a
+# query codificada. Só publique se decidir; o site funciona sem ela.
+#
+# O caso: até 31/10/2026 o botão do WhatsApp levava a variável
+#   matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1
+# Se a Meta ou o aplicativo codificam a variável, o endereço chega como
+#   /matricula-cursos-presenciais/checkout/%3Fcurso%3Dpuncao-venosa%26utm_source%3Dwhatsapp…
+# e o servidor procura um ARQUIVO chamado "?curso=puncao-venosa&utm_source=…" dentro de checkout/: 404.
+#
+# Já publicado junto com esta mudança, sem .htaccess: o site/404.html decodifica esse caminho no navegador e vai ao
+# checkout certo (precisa de JavaScript, que o navegador do WhatsApp tem). As mensagens novas usam o link curto
+# (api/ir.php), sem "?" nem "&", e não precisam de nada disto.
+#
+# Esta regra faz o mesmo no servidor, sem depender de JavaScript. Onde: um arquivo NOVO,
+#   site/matricula-cursos-presenciais/checkout/.htaccess
+# só da pasta checkout/ (não mexe no .htaccess da matrícula nem no da raiz). O conteúdo é tudo o que está abaixo da linha
+# "----- recorte -----".
+#
+# Por que cada linha:
+#  - RewriteOptions Inherit: um .htaccess com RewriteEngine On numa subpasta SUBSTITUI as regras de reescrita das pastas
+#    de cima; sem o Inherit, o www → apex da raiz deixaria de valer dentro de checkout/.
+#  - O padrão é comparado com o caminho JÁ DECODIFICADO e relativo à pasta: "?curso=…&utm_source=…". O "?" do destino
+#    separa a query de novo.
+#  - NE (no escape): sem ele o Apache codificaria "&" e "=" de novo no destino.
+#  - 302 (não 301): o navegador não guarda o redirecionamento.
+# Não testado no servidor (não há Apache/LiteSpeed nesta máquina). Depois de publicar, confira:
+#   curl -sI 'https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/%3Fcurso%3Dpuncao-venosa%26utm_campaign%3Drec1'
+# deve dar 302 com Location: /matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_campaign=rec1
+# e https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/checkout/?curso=puncao-venosa deve continuar 200.
+# Para desfazer: apague o arquivo checkout/.htaccess.
+# ----- recorte -----
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteOptions Inherit
+  RewriteRule ^\?(.+)$ /matricula-cursos-presenciais/checkout/?$1 [R=302,L,NE]
+</IfModule>

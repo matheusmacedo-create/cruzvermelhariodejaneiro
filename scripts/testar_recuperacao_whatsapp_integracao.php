@@ -169,6 +169,8 @@ if ($caminho === '/meta/whatsapp/v24.0/1112223334/messages' && $metodo === 'POST
     if (str_ends_with((string) ($d['to'] ?? ''), '0000')) { http_response_code(400); echo '{"error":{"message":"Message undeliverable","code":131026}}'; return true; }
     if (str_ends_with((string) ($d['to'] ?? ''), '1304')) { http_response_code(400); echo '{"error":{"message":"(#130429) Rate limit hit","code":130429}}'; return true; }
     if (str_ends_with((string) ($d['to'] ?? ''), '5020')) { http_response_code(502); echo '{"error":"Bad Gateway"}'; return true; }
+    // Recusa só desta mensagem (parâmetro com problema): 132018.
+    if (preg_match('/132[01]$/', (string) ($d['to'] ?? ''))) { http_response_code(400); echo '{"error":{"message":"(#132018) There was an issue with the parameters in your template.","code":132018}}'; return true; }
     echo json_encode(['messaging_product' => 'whatsapp', 'contacts' => [['wa_id' => $d['to'] ?? '']], 'messages' => [['id' => "wamid.teste-$n"]]]);
     return true;
 }
@@ -180,7 +182,10 @@ if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
     $anotar('modelos.jsonl', ['query' => $_SERVER['QUERY_STRING'] ?? '']);
     $pendente = (string) ($controle('modelos')['pendente'] ?? '');
     $situacao = static fn(string $nome): string => $pendente === $nome ? 'PENDING' : 'APPROVED';
-    echo json_encode(['data' => [
+    // Os componentes (texto e botões) de cada modelo, quando o teste pede: é com eles que a rodada confere a mensagem.
+    $componentes = $controle('modelos')['componentes'] ?? [];
+    $com = static fn(array $m): array => isset($componentes[$m['name']]) ? $m + ['components' => $componentes[$m['name']]] : $m;
+    echo json_encode(['data' => array_map($com, [
         // O rec_inscricao_1 antigo continua na conta (reclassificado como Marketing), mas não é mais usado.
         ['name' => 'rec_inscricao_1', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'rec_inscricao_1_v2', 'status' => $situacao('rec_inscricao_1_v2'), 'language' => 'pt_BR', 'category' => 'UTILITY'],
@@ -188,7 +193,7 @@ if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
         ['name' => 'rec_inscricao_3', 'status' => $situacao('rec_inscricao_3'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'ps_cupom_oferta', 'status' => $situacao('ps_cupom_oferta'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'outro_modelo', 'status' => 'REJECTED', 'language' => 'pt_BR', 'category' => 'UTILITY'],
-    ]]);
+    ])]);
     return true;
 }
 if (preg_match('~^/platform/v1/whatsapp/phone_numbers/1112223334/webhooks(?:/([^/]+))?$~', $caminho, $m)) {
@@ -213,6 +218,11 @@ if ($caminho === '/rest/v1/Usuario' && $metodo === 'GET') {
         $desde = substr((string) $_GET['criadoEm'], 4);
         $usuarios = array_values(array_filter($usuarios, static fn(array $u): bool => ($u['papel'] ?? '') === 'ALUNO' && $u['criadoEm'] >= $desde));
         usort($usuarios, static fn(array $a, array $b): int => [$a['criadoEm'], $a['id']] <=> [$b['criadoEm'], $b['id']]);
+    } elseif (isset($_GET['id'])) {
+        // O pré-preenchimento pede só nome, e-mail e celular de um usuário pelo id.
+        $id = substr((string) $_GET['id'], 3);
+        $usuarios = array_map(static fn(array $u): array => array_intersect_key($u, ['nome' => 1, 'email' => 1, 'celular' => 1]),
+            array_values(array_filter($usuarios, static fn(array $u): bool => $u['id'] === $id)));
     } elseif (isset($_GET['or']) && preg_match('/^\((cpfCnpj|email|celular)\.in\.\((.*)\)\)$/', (string) $_GET['or'], $m)) {
         $valores = str_getcsv($m[2], ',', '"', '\\');
         $usuarios = array_values(array_filter($usuarios, static fn(array $u): bool => in_array((string) ($u[$m[1]] ?? ''), $valores, true)));
@@ -263,7 +273,11 @@ function limpar(PDO $db, string $padraoEmail, string $quem, array $telefones): v
     }
     $db->exec("DELETE FROM mcp_chaves WHERE nome IN ('rw_cache_modelos', 'rw_cache_webhook')");
     $db->prepare("DELETE FROM mcp_eventos WHERE tipo = 'recuperacao_webhook' AND detalhe LIKE ?")->execute([$quem . '%']);
+    // Os resumos das rodadas e as aberturas dos links que o teste gerou (gravados com a hora de verdade, sem inscrição).
+    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link') AND inscricao_id IS NULL AND criado_em >= ?")
+        ->execute([$GLOBALS['inicioTeste'] ?? gmdate('Y-m-d H:i:s')]);
 }
+$inicioTeste = gmdate('Y-m-d H:i:s', time() - 5);
 limpar($db, $padraoEmail, $quem, []);
 
 /** Celular novo (11 dígitos), anotado para a limpeza. $fim: os 4 últimos dígitos (0000 = a Kapso recusa). */
@@ -350,16 +364,54 @@ try {
         [1, '5521933334444', false, 'bloqueou']);
     verificar('resposta que para: botão, SAIR, Parar., stop; outra não', array_map('mcp_rw_quer_parar', ['Não tenho interesse', 'SAIR', 'Parar.', ' stop ', 'quero saber mais', 'não, obrigado']),
         [true, true, true, true, false, false]);
-    verificar('caminho do botão: curso do catálogo vai ao checkout; sem curso, à página geral', [mcp_rw_caminho_botao('bombeiro-civil', 2), mcp_rw_caminho_botao('', 1), mcp_rw_caminho_botao('curso-que-nao-existe', 3)], [
-        'matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec2',
-        'matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1',
-        'matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3',
+    verificar('caminho do botão: link curto do api/ir.php (curso do catálogo; sem curso ou curso desconhecido, "cursos")', [mcp_rw_caminho_botao('bombeiro-civil', 2),
+        mcp_rw_caminho_botao('', 1), mcp_rw_caminho_botao('curso-que-nao-existe', 3), mcp_rw_caminho_botao('puncao-venosa', 1, 'email', 's12.abc.0123456789abcdef'), mcp_rw_caminho_cupom()], [
+        'matricula-cursos-presenciais/api/ir.php/w/bombeiro-civil/rec2',
+        'matricula-cursos-presenciais/api/ir.php/w/cursos/rec1',
+        'matricula-cursos-presenciais/api/ir.php/w/cursos/rec3',
+        'matricula-cursos-presenciais/api/ir.php/e/puncao-venosa/rec1/s12.abc.0123456789abcdef',
+        'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-basico/rec3cupom',
     ]);
+    // A forma do parâmetro do botão (01/11/2026): nada que um cliente possa codificar e quebrar ("?", "&", "=", "%", espaço).
+    $tokenForma = mcp_rw_token('s123', $A);
+    $formas = [mcp_rw_caminho_botao('puncao-venosa', 1, 'whatsapp', $tokenForma), mcp_rw_caminho_cupom('whatsapp', $tokenForma), mcp_rw_caminho_botao('', 2, 'whatsapp', mcp_rw_token('uABC-123-def', $A))];
+    verificar('parâmetro do botão: só letras, números, "-", ".", "/" (sem "?" nem "&"), começando pelo caminho do site', array_map(static fn(string $c): bool => preg_match('~^matricula-cursos-presenciais/api/ir\.php/[A-Za-z0-9./-]+$~', $c) === 1
+        && !preg_match('/[?&=%\s]/', $c), $formas), [true, true, true]);
+    verificar('destino do link curto: a MESMA query de antes (curso, utm whatsapp|email, recuperacao, campanha; cupom na rec3cupom)', [
+        mcp_rw_link_destino('/w/puncao-venosa/rec1/' . $tokenForma), mcp_rw_link_destino('/e/primeiros-socorros-basico/rec3cupom'), mcp_rw_link_destino('/w/cursos/rec2/'),
+    ], [
+        ['destino' => '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1', 'token' => $tokenForma, 'valido' => true],
+        ['destino' => '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom', 'token' => '', 'valido' => true],
+        ['destino' => '/matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec2', 'token' => '', 'valido' => true],
+    ]);
+    verificar('destino do link curto: fonte, curso, campanha ou cupom de outro curso inválidos → página de matrícula', array_map(static fn(string $c): string => mcp_rw_link_destino($c)['destino'],
+        ['/x/puncao-venosa/rec1', '/w/curso-que-nao-existe/rec1', '/w/curso-teste/rec1', '/w/puncao-venosa/rec9', '/w/puncao-venosa/rec3cupom', '', '/w/puncao-venosa', '/w/a/b/c/d/e', '/w/../../rec1']),
+        array_fill(0, 9, '/matricula-cursos-presenciais/'));
+    verificar('token: confere, vence em 30 dias, e adulterado ou malformado não vale', [mcp_rw_token_ref($tokenForma, $A), mcp_rw_token_ref($tokenForma, $A + 29 * 86400),
+        mcp_rw_token_ref($tokenForma, $A + 31 * 86400), mcp_rw_token_ref(str_replace('s123.', 's124.', $tokenForma), $A), mcp_rw_token_ref(substr($tokenForma, 0, -1) . (str_ends_with($tokenForma, 'a') ? 'b' : 'a'), $A),
+        mcp_rw_token_ref('s123', $A), mcp_rw_token('', $A), mcp_rw_token('x9', $A)], ['s123', 's123', null, null, null, null, '', '']);
+    verificar('primeiro nome: CamelCase colado, caixa, títulos e sobras', array_map('mcp_rw_primeiro_nome', ['MariaAparecida', 'MariaAparecida Silva', 'RAQUEL SOUZA', 'joão lima',
+        'Dr. Carlos Mendes', 'Sra. ana', 'M. Aparecida', 'ana-clara', 'ÉRICA', 'AnaPaula', 'maria@gmail.com', '123', '  ', 'Dr.', 'DiCaprio']),
+        ['Maria', 'Maria', 'Raquel', 'João', 'Carlos', 'Ana', 'Aparecida', 'Ana-Clara', 'Érica', 'Ana', '', '', '', '', 'Dicaprio']);
+    verificar('{{1}} nunca vazio: sem nome usável, "aluno(a)"; o curso nunca vazio', [mcp_rw_modelo(1, ['primeiro_nome' => '', 'curso_slug' => '', 'curso_nome' => ''])['parametros'],
+        mcp_rw_modelo(2, ['primeiro_nome' => 'Dr.', 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa'])['parametros'],
+        mcp_rw_modelo(3, ['primeiro_nome' => 'MariaAparecida', 'curso_slug' => 'primeiros-socorros-basico', 'curso_nome' => 'Primeiros Socorros Básico'], ['codigo' => 'NOV15', 'data' => ''])['nome']],
+        [['aluno(a)', 'nossos cursos'], ['aluno(a)', 'Punção Venosa'], 'rec_inscricao_3']);
+    verificar('estrutura do modelo na Meta: índice do botão de URL, parâmetros do texto, e o que segura o envio', [
+        mcp_rw_estrutura([['type' => 'BODY', 'text' => 'Olá, {{1}}. Curso {{2}}.'], ['type' => 'BUTTONS', 'buttons' => [['type' => 'QUICK_REPLY', 'text' => 'Não tenho interesse'], ['type' => 'URL', 'url' => 'https://cruzvermelhariodejaneiro.org/{{1}}']]]]),
+        mcp_rw_estrutura(null), mcp_rw_estrutura([['type' => 'BODY', 'text' => 'Olá'], ['type' => 'BUTTONS', 'buttons' => [['type' => 'URL', 'url' => 'https://cruzvermelhariodejaneiro.org/']]]]),
+        mcp_rw_estrutura_problema(['botao' => 0, 'params' => 3], ['nome' => 'rec_inscricao_2', 'parametros' => ['a', 'b']]),
+        mcp_rw_estrutura_problema(['botao' => 1, 'params' => 2], ['nome' => 'rec_inscricao_3', 'parametros' => ['a', 'b']]),
+        mcp_rw_corpo_envio('5521999990000', ['nome' => 'rec_inscricao_3', 'parametros' => ['a', 'b'], 'caminho' => 'x', 'botao' => 1])['template']['components'][1]['index'],
+    ], [['botao' => 1, 'params' => 2], ['botao' => null, 'params' => null], ['botao' => -1, 'params' => 0], 'rec_inscricao_2 na Meta tem 3 parâmetro(s) no texto, e a mensagem manda 2', null, '1']);
+    verificar('erros da Meta: de quem recebe, de todos, ou só desta mensagem', array_map(static fn(array $x): string => mcp_rw_erro_escopo(...$x),
+        [[400, 131026], [400, 130429], [400, 132001], [400, 131056], [400, 132018], [400, 100], [422, 0], [503, 0], [401, 0], [0, 0]]),
+        ['destino', 'global', 'global', 'pessoa', 'pessoa', 'pessoa', 'pessoa', 'global', 'global', 'global']);
     $psPessoa = ['primeiro_nome' => 'Bia', 'curso_slug' => 'primeiros-socorros-basico', 'curso_nome' => 'Primeiros Socorros Básico'];
     $ofertaPura = ['codigo' => 'NOV15', 'data' => 'terça-feira, 17/11'];
     $cupomPuro = mcp_rw_modelo(3, $psPessoa, $ofertaPura);
     verificar('modelo da 3ª: Primeiros Socorros com o cupom valendo → ps_cupom_oferta, 3 parâmetros e o botão com o cupom', [$cupomPuro['nome'], $cupomPuro['parametros'], $cupomPuro['caminho']],
-        ['ps_cupom_oferta', ['Bia', 'NOV15', 'terça-feira, 17/11'], 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom']);
+        ['ps_cupom_oferta', ['Bia', 'NOV15', 'terça-feira, 17/11'], 'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-basico/rec3cupom']);
     verificar('modelo: outro curso, sem cupom valendo, ou outra etapa → os de sempre', [
         mcp_rw_modelo(3, ['curso_slug' => 'bombeiro-civil', 'curso_nome' => 'Bombeiro Civil'] + $psPessoa, $ofertaPura)['nome'], mcp_rw_modelo(3, $psPessoa, null)['nome'],
         mcp_rw_modelo(1, $psPessoa, $ofertaPura)['nome'], mcp_rw_modelo(2, $psPessoa, $ofertaPura)['nome'],
@@ -477,15 +529,15 @@ try {
         'messaging_product' => 'whatsapp', 'recipient_type' => 'individual', 'to' => '55' . $s1['telefone'], 'type' => 'template',
         'template' => ['name' => 'rec_inscricao_1_v2', 'language' => ['code' => 'pt_BR'], 'components' => [
             ['type' => 'body', 'parameters' => [['type' => 'text', 'text' => 'Maria'], ['type' => 'text', 'text' => 'Punção Venosa']]],
-            ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => 'matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1']]],
+            ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => 'matricula-cursos-presenciais/api/ir.php/w/puncao-venosa/rec1/' . mcp_rw_token('s' . $s1['id'], $A)]]],
         ]],
     ]);
     $msgE1 = $mensagensPara($e1['celular'])[0]['corpo']['template'] ?? [];
     verificar('envio da escola: nome capitalizado, curso da matrícula e checkout do curso', [$msgE1['components'][0]['parameters'][0]['text'] ?? '', $msgE1['components'][0]['parameters'][1]['text'] ?? '',
-        $msgE1['components'][1]['parameters'][0]['text'] ?? ''], ['João', 'Bombeiro Civil', 'matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1']);
+        $msgE1['components'][1]['parameters'][0]['text'] ?? ''], ['João', 'Bombeiro Civil', 'matricula-cursos-presenciais/api/ir.php/w/bombeiro-civil/rec1/' . mcp_rw_token('u' . $e1['id'], $A)]);
     $msgE7 = $mensagensPara($e7['celular'])[0]['corpo']['template'] ?? [];
     verificar('envio sem matrícula: "nossos cursos" e a página geral', [$msgE7['components'][0]['parameters'][1]['text'] ?? '', $msgE7['components'][1]['parameters'][0]['text'] ?? ''],
-        ['nossos cursos', 'matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1']);
+        ['nossos cursos', 'matricula-cursos-presenciais/api/ir.php/w/cursos/rec1/' . mcp_rw_token('u' . $e7['id'], $A)]);
     verificar('a pessoa da união recebe UMA mensagem (no celular da tentativa mais recente)', [count($mensagensPara($e3['celular'])), count($mensagensPara($s3['telefone']))], [1, 0]);
     verificar('não recebem: pagou em outro sistema, sem celular, bloqueado, teste, recente demais, velho', array_map('count', [
         $mensagensPara($s4['telefone']), $mensagensPara($e5['celular']), $mensagensPara($e6['celular']), $mensagensPara($s8['telefone']), $mensagensPara($s9['telefone']),
@@ -548,7 +600,7 @@ try {
     verificar('escola de volta: o cadastro feito com ela fora recebe a 1ª', $etapasPara($s14['telefone']), ['rec_inscricao_1_v2']);
     verificar('Maria continua sem a 2ª', $etapasPara($s1['telefone']), ['rec_inscricao_1_v2']);
     $msg2 = $mensagensPara($e1['celular'])[1]['corpo']['template']['components'][1]['parameters'][0]['text'] ?? '';
-    verificar('2ª mensagem: campanha rec2 no botão', str_ends_with($msg2, 'utm_campaign=rec2'), true);
+    verificar('2ª mensagem: campanha rec2 no botão', str_starts_with($msg2, 'matricula-cursos-presenciais/api/ir.php/w/bombeiro-civil/rec2/'), true);
     verificar('número sem WhatsApp não recebe a 2ª', count($mensagensPara($s13['telefone'])), 1);
 
     // ------------------------------------------------------------------------- webhook
@@ -681,6 +733,32 @@ try {
     mcp_rw_rodar($C + 3600);
     verificar('limite passado: a próxima rodada manda', $etapasPara($depoisLimite['telefone']), ['rec_inscricao_1_v2']);
 
+    // Recusa só desta mensagem (132018, parâmetro): a pessoa fica para a rodada seguinte, sem gastar a etapa, e a fila
+    // ANDA. Até 01/11/2026 a rodada parava nela, e quem vinha atrás (a mais atrasada fica sempre na frente) esperava em
+    // todas as rodadas. O mesmo erro duas vezes seguidas não é da pessoa: aí a rodada para.
+    $chaveCurta = static fn(array $l): string => substr(mcp_rw_hmac('c:' . $l['cpf']), 0, 16);
+    $C2 = $C + 10 * 86400;
+    $ruim = $criar('paramruim', $C2 - 6 * 3600, ['telefone' => $celular('1320')]);
+    $atras = $criar('atrasdoruim', $C2 - 5 * 3600);
+    $r = mcp_rw_rodar($C2);
+    $resumo = mcp_rw_resumo_ultimo('recuperacao_rodada');
+    verificar('erro só desta mensagem (132018): a fila anda, a etapa dela não é gasta e o resumo da rodada diz por quê',
+        [$r['falhas'], $linhasDe($ruim['telefone']), $etapasPara($atras['telefone']), $resumo['p'][$chaveCurta($ruim)] ?? null, $resumo['em'] ?? null, $r['motivo']],
+        [1, [], ['rec_inscricao_1_v2'], 'x:132018', $C2, null]);
+    $ruim2 = $criar('paramruim2', $C2 - 4 * 3600, ['telefone' => $celular('1321')]);
+    $atras2 = $criar('atrasdosdois', $C2 - 3 * 3600);
+    $r = mcp_rw_rodar($C2 + 3600);
+    $resumo = mcp_rw_resumo_ultimo('recuperacao_rodada');
+    verificar('o mesmo erro duas vezes seguidas: a rodada para, ninguém gasta a etapa, e quem ficou atrás aparece como "parou"',
+        [$r['enviados'], $r['falhas'], str_contains((string) $r['motivo'], '132018'), count($mensagensPara($atras2['telefone'])), $linhasDe($ruim2['telefone']),
+            [$resumo['p'][$chaveCurta($ruim)] ?? null, $resumo['p'][$chaveCurta($ruim2)] ?? null, $resumo['p'][$chaveCurta($atras2)] ?? null]],
+        [0, 2, true, 0, [], ['x:132018', 'x:132018', 'p']]);
+    foreach ([$ruim, $ruim2] as $l) {
+        $db->prepare("UPDATE mcp_inscricoes SET status = 'pago', pago_em = ? WHERE id = ?")->execute([$quando($C2 + 3600), $l['id']]);
+    }
+    mcp_rw_rodar($C2 + 2 * 3600);
+    verificar('sem os dois, quem estava atrás recebe na rodada seguinte', $etapasPara($atras2['telefone']), ['rec_inscricao_1_v2']);
+
     $D = $A + 300 * 86400;
     controle('modelos', ['pendente' => 'rec_inscricao_1_v2']);
     $pendente = $criar('modelopendente', $D - 4 * 3600);
@@ -691,6 +769,30 @@ try {
     controle('modelos', []);
     mcp_rw_rodar($D + 3600);
     verificar('modelo aprovado: sai na rodada seguinte', $etapasPara($pendente['telefone']), ['rec_inscricao_1_v2']);
+
+    // A estrutura do modelo na Meta (os componentes da lista de modelos): o índice do botão de URL vem dela, e um texto com
+    // outro número de parâmetros segura o modelo antes de a Meta recusar mensagem por mensagem.
+    $D2 = $D + 10 * 86400;
+    $botaoUrl = ['type' => 'URL', 'text' => 'Concluir inscrição', 'url' => 'https://cruzvermelhariodejaneiro.org/{{1}}'];
+    controle('modelos', ['componentes' => ['rec_inscricao_1_v2' => [['type' => 'BODY', 'text' => 'Olá, {{1}}. A sua inscrição no curso {{2}} está pendente.'],
+        ['type' => 'BUTTONS', 'buttons' => [['type' => 'QUICK_REPLY', 'text' => 'Já paguei'], $botaoUrl]]]]]);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    $indiceBotao = $criar('indicebotao', $D2 - 4 * 3600);
+    mcp_rw_rodar($D2);
+    $tpl = $mensagensPara($indiceBotao['telefone'])[0]['corpo']['template']['components'] ?? [];
+    verificar('estrutura do modelo: o botão de URL no índice que a Meta tem (1, depois de uma resposta rápida)', [$tpl[1]['index'] ?? null, count($tpl[0]['parameters'] ?? [])], ['1', 2]);
+    controle('modelos', ['componentes' => ['rec_inscricao_1_v2' => [['type' => 'BODY', 'text' => 'Olá, {{1}}. Curso {{2}}, turma {{3}}.'], ['type' => 'BUTTONS', 'buttons' => [$botaoUrl]]]]]);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    $tresParam = $criar('tresparametros', $D2 - 2 * 3600);
+    $antes = count(falso('kapso'));
+    $r = mcp_rw_rodar($D2 + 3600);
+    $resumo = mcp_rw_resumo_ultimo('recuperacao_rodada');
+    verificar('estrutura do modelo: 3 parâmetros na Meta e 2 na mensagem → não manda, não gasta, e diz o motivo', [count(falso('kapso')) - $antes, $linhasDe($tresParam['telefone']),
+        str_contains((string) $r['motivo'], 'rec_inscricao_1_v2 na Meta tem 3 parâmetro(s)'), $resumo['p'][$chaveCurta($tresParam)] ?? null], [0, [], true, 'm']);
+    controle('modelos', []);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    mcp_rw_rodar($D2 + 2 * 3600);
+    verificar('modelo acertado na Meta: sai na rodada seguinte', $etapasPara($tresParam['telefone']), ['rec_inscricao_1_v2']);
 
     $E = $A + 400 * 86400;
     $gateway = $criar('gateway', $E - 5 * 3600, ['telefone' => $celular('5020')]);
@@ -715,6 +817,16 @@ try {
     $r2 = mcp_rw_rodar($F + 24 * 3600);
     verificar('teto: libera quando as 200 passam de 24 h', [$r['enviados'], $etapasPara($teto['telefone'])], [0, ['rec_inscricao_1_v2']]);
 
+    // Reserva que ficou "enviando" (a rotina caiu entre reservar a linha e gravar a resposta): vale como enviada (pode ter
+    // saído), e a 2ª segue no tempo dela. Antes a pessoa ficava parada para sempre, fora até da lista do painel.
+    $F2 = $F + 10 * 86400;
+    $presa = $criar('reservapresa', $F2 - 30 * 3600);
+    $db->prepare("INSERT INTO mcp_recuperacao_whatsapp (pessoa_chave, origem, etapa, modelo, curso_nome, telefone_hash, status, erro, criado_em, atualizado_em)
+        VALUES (?, 'site', 1, 'rec_inscricao_1_v2', 'Punção Venosa', ?, 'falhou', 'enviando', ?, ?)")
+        ->execute([mcp_rw_hmac('c:' . $presa['cpf']), mcp_rw_hmac('t:55' . $presa['telefone']), $quando($F2 - 29 * 3600), $quando($F2 - 29 * 3600)]);
+    mcp_rw_rodar($F2);
+    verificar('reserva "enviando" que ficou para trás vale como a 1ª enviada: a 2ª sai', $etapasPara($presa['telefone']), ['rec_inscricao_2']);
+
     // ------------------------------------------------------------------------- cupom na 3ª (Primeiros Socorros Básico)
     $G = $A + 600 * 86400;
     $ps = ['curso_slug' => 'primeiros-socorros-basico', 'curso_nome' => 'Primeiros Socorros Básico'];
@@ -735,7 +847,7 @@ try {
         'name' => 'ps_cupom_oferta', 'language' => ['code' => 'pt_BR'], 'components' => [
             ['type' => 'body', 'parameters' => [['type' => 'text', 'text' => 'Bruno'], ['type' => 'text', 'text' => 'NOV15'], ['type' => 'text', 'text' => $dataTurma]]],
             ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text',
-                'text' => 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom']]],
+                'text' => 'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-basico/rec3cupom/' . mcp_rw_token('s' . $psA['id'], $G + 70 * 3600)]]],
         ],
     ]);
     $modelosDe = static function (string $tel) use ($db): array {
@@ -781,6 +893,10 @@ try {
         str_contains($html, '1 h, 24 h e 72 h'),
     ], [true, true, true, true, false, true, true, true, true, true, true, true, true]);
     verificar('painel: a chave da Kapso nunca aparece', str_contains($html, $chaveKapso), false);
+    verificar('painel: cartão "Última rodada" (o que a rotina fez e por quê) e a explicação de por que alguém não recebeu', [str_contains($html, '<h2>Última rodada</h2>'),
+        (bool) preg_match('~<li><b>WhatsApp, [^<]+:</b> \d+ mensage~u', $html) && str_contains($html, '<b>E-mail:</b> nenhuma rodada registrada ainda'),
+        str_contains($html, 'Por que alguém no fluxo ainda não recebeu'), str_contains($html, 'Links das mensagens abertos nas últimas 24 h')],
+        [true, true, true, true]);
     verificar('painel: seção "Próximo disparo" com a hora da rodada e a prévia do texto', [str_contains($html, 'Próximo disparo'), str_contains($html, 'class="hora"'),
         str_contains($html, 'Ninguém para esta rodada') || (str_contains($html, 'class="previa"') && str_contains($html, 'rec_inscricao_'))], [true, true, true]);
     // A hora da próxima rodada: minuto 7, dentro das 8h–20h de Brasília (UTC−3).
@@ -818,6 +934,63 @@ try {
     [, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('painel: o botão acerta o webhook existente (PATCH com o segredo e os eventos) e volta a "Ligado"', [$wh['metodo'] ?? '', $wh['corpo']['whatsapp_webhook']['secret_key'] ?? '',
         $wh['corpo']['whatsapp_webhook']['events'] ?? [], str_contains($html, 'Recebimento de respostas ligado')], ['PATCH', mcp_segredo('kapso_webhook'), MCP_RW_EVENTOS_WEBHOOK, true]);
+
+    // ------------------------------------------------------------------------- link curto e pré-preenchimento (HTTP)
+    $site = "http://127.0.0.1:$portaSite/matricula-cursos-presenciais/api";
+    $pre = $criar('prefill', time() - 3600, ['nome' => 'Lúcia Prefill Teste']);
+    $tokenPre = mcp_rw_token('s' . $pre['id'], time());
+    [$st, $cab] = http("$site/ir.php/w/puncao-venosa/rec1/$tokenPre");
+    $cookieRw = (string) ($cab['set-cookie'] ?? '');
+    verificar('ir.php: 302 para o checkout com a query de antes, e o token num cookie HttpOnly só da api/ (fora da URL)', [$st, $cab['location'] ?? '',
+        str_starts_with($cookieRw, MCP_RW_COOKIE . '=' . $tokenPre . ';'), stripos($cookieRw, 'HttpOnly') !== false, stripos($cookieRw, 'path=/matricula-cursos-presenciais/api/') !== false,
+        stripos($cookieRw, 'SameSite=Lax') !== false, str_contains($cab['location'] ?? '', $tokenPre), $cab['cache-control'] ?? ''],
+        [302, '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1', true, true, true, true, false, 'no-store']);
+    [$st, $cab] = http("$site/ir.php/e/primeiros-socorros-basico/rec3cupom/" . substr($tokenPre, 0, -2) . 'zz');
+    verificar('ir.php: cupom no link do e-mail; token adulterado redireciona igual, sem cookie', [$st, $cab['location'] ?? '', isset($cab['set-cookie'])],
+        [302, '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom', false]);
+    $invalidos = [];
+    foreach (['/x/puncao-venosa/rec1', '/w/nao-existe/rec1', '/w/puncao-venosa/rec7', '', '/w/cursos/rec3cupom', '/w/%3Fcurso%3Dx/rec1', '/w/puncao-venosa/rec1/a/b'] as $c) {
+        [$st, $cab] = http("$site/ir.php$c");
+        $invalidos[] = $st . ' ' . ($cab['location'] ?? '');
+    }
+    verificar('ir.php: entrada inválida → 302 para a página de matrícula, nunca 500', $invalidos, array_fill(0, 7, '302 /matricula-cursos-presenciais/'));
+    [, $cabC] = http("$site/ir.php/w/cursos/rec2");
+    verificar('ir.php: sem curso, a página de matrícula com as UTMs', $cabC['location'] ?? '', '/matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec2');
+    $aberturas = $db->prepare("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'recuperacao_link' AND detalhe = 'w/puncao-venosa/rec1' AND criado_em >= ?");
+    $aberturas->execute([gmdate('Y-m-d H:i:s', time() - 120)]);
+    verificar('ir.php: a abertura do link fica registrada (só fonte, curso e campanha)', (int) $aberturas->fetchColumn() >= 1, true);
+
+    [$st, $cab, $corpoD] = http("$site/recuperacao-dados.php?t=$tokenPre");
+    verificar('recuperacao-dados.php: nome, e-mail e telefone (sem CPF), no-store', [$st, json_decode($corpoD, true), str_contains($corpoD, $pre['cpf']), $cab['cache-control'] ?? '',
+        stripos($cab['x-robots-tag'] ?? '', 'noindex') !== false], [200, ['nome' => 'Lúcia Prefill Teste', 'email' => $pre['email'], 'telefone' => $pre['telefone']], false, 'no-store, private', true]);
+    [, , $corpoC] = http("$site/recuperacao-dados.php", 'GET', null, ['Cookie: ' . MCP_RW_COOKIE . '=' . $tokenPre]);
+    verificar('recuperacao-dados.php: o token pelo cookie do ir.php vale igual', json_decode($corpoC, true)['email'] ?? null, $pre['email']);
+    $vazios = [];
+    foreach (['?t=' . str_replace('s' . $pre['id'] . '.', 's' . ($pre['id'] + 1) . '.', $tokenPre), '?t=' . mcp_rw_token('s' . $pre['id'], time() - 31 * 86400), '?t=lixo', '', '?t=' . mcp_rw_token('s999999999', time())] as $q) {
+        [$st, , $c] = http("$site/recuperacao-dados.php$q");
+        $vazios[] = "$st $c";
+    }
+    verificar('recuperacao-dados.php: token adulterado, vencido, malformado, ausente ou de cadastro que não existe → {} com 200', $vazios, array_fill(0, 5, '200 {}'));
+    [, , $corpoE] = http("$site/recuperacao-dados.php?t=" . mcp_rw_token('u' . $e7['id'], time()));
+    verificar('recuperacao-dados.php: conta da escola (pelo PostgREST), sem CPF', json_decode($corpoE, true), ['nome' => $e7['nome'], 'email' => $e7['email'], 'telefone' => $e7['celular']]);
+    controle('escola', ['fora' => true, 'usuarios' => []]);
+    [$st, , $corpoE] = http("$site/recuperacao-dados.php?t=" . mcp_rw_token('u' . $e7['id'], time()));
+    verificar('recuperacao-dados.php: escola fora do ar → {} sem erro', "$st $corpoE", '200 {}');
+    controle('escola', ['fora' => false, 'usuarios' => [$e1, $e3, $e4, $e5, $e6, $e7, $e8]]);
+    // Importado (config-recuperacao.php): a referência é o HMAC dos dados, não a posição no arquivo; o nome colado é separado.
+    $impPre = ['nome' => 'MariaAparecida', 'email' => "rw-imppre-$sufixo@exemplo.org", 'cpf' => cpf_de_teste(), 'telefone' => '(21) 98888-7777', 'curso_slug' => 'puncao-venosa',
+        'curso_nome' => 'Punção Venosa', 'criado_em' => gmdate('Y-m-d\\TH:i:s\\Z', time() - 86400)];
+    $arqImp = tempnam(sys_get_temp_dir(), 'mcp-rw-imp-');
+    file_put_contents($arqImp, '<?php return ' . var_export(['RECUPERACAO_IMPORTADOS' => [['nome' => 'Outra', 'email' => 'outra@exemplo.org'], $impPre]], true) . ';');
+    putenv("MCP_CONFIG_RECUPERACAO_ARQUIVO=$arqImp");
+    $refImp = mcp_rw_importado_ref($impPre);
+    $dadosImp = mcp_rw_dados_da_ref($refImp);
+    $pessoaImp = array_values(array_filter(mcp_rw_carregar(time())['pessoas'], static fn(array $p): bool => in_array($impPre['email'], $p['emails'], true)))[0] ?? [];
+    putenv('MCP_CONFIG_RECUPERACAO_ARQUIVO=' . sys_get_temp_dir() . '/mcp-rw-sem-importados.php');
+    @unlink($arqImp);
+    verificar('importado: a referência do token acha a pessoa; "MariaAparecida" vira "Maria" no {{1}} e "Maria Aparecida" no campo do nome',
+        [$pessoaImp['dados_ref'] ?? null, $pessoaImp['primeiro_nome'] ?? null, $dadosImp, preg_match('/^i[0-9a-f]{12}$/', $refImp)],
+        [$refImp, 'Maria', ['nome' => 'Maria Aparecida', 'email' => $impPre['email'], 'telefone' => '21988887777'], 1]);
 
     // ------------------------------------------------------------------------- sem configuração
     // Só a configuração SEM a Kapso roda pela linha de comando: com ela, a rodada usaria a hora de agora.

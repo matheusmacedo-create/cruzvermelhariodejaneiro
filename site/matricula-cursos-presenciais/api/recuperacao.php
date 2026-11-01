@@ -174,6 +174,13 @@ try {
     $linhasEmail = mcp_rw_email_linhas();
     $emailsRecuperacao = mcp_rw_email_enviados_24h($agora);
     $emailsSite = mcp_rw_email_site_24h($agora);
+    // A última rodada de cada canal (o resumo que a rotina grava em mcp_eventos): o que saiu e, por pessoa, por que quem
+    // estava devido não recebeu. E quantas vezes os links curtos foram abertos em 24 h (api/ir.php), por canal.
+    $resumoWa = mcp_rw_resumo_ultimo('recuperacao_rodada');
+    $resumoEm = mcp_rw_resumo_ultimo('recuperacao_rodada_email');
+    $stmtLinks = mcp_db()->prepare("SELECT LEFT(detalhe, 1) AS fonte, COUNT(*) AS n FROM mcp_eventos WHERE tipo = 'recuperacao_link' AND criado_em > ? GROUP BY LEFT(detalhe, 1)");
+    $stmtLinks->execute([gmdate('Y-m-d H:i:s', $agora - 86400)]);
+    $aberturas = array_map('intval', array_column($stmtLinks->fetchAll(), 'n', 'fonte'));
 } catch (PDOException $e) {
     // Logo depois de publicar, a tabela nova pode ainda não existir (a migração do db.php é adiada por 60 s quando uma
     // transação longa segura o banco): a página diz isso, em vez de um erro 500.
@@ -381,6 +388,38 @@ if ($emailsDepois) {
 }
 $corpo .= '</section>';
 
+// ----------------------------------------------------------------------------- última rodada
+// O que a rotina fez na última vez que olhou as pessoas (antes só aparecia na saída do cron, que a secretaria não lê):
+// quantas saíram, por que parou, e quantas pessoas devidas ficaram sem receber, por motivo. Por pessoa, o motivo aparece
+// na lista abaixo ("Última rodada").
+$motivoRodada = static function (string $codigo): string {
+    [$base, $erro] = array_pad(explode(':', $codigo, 2), 2, '');
+    return (MCP_RW_MOTIVOS_RODADA[$base] ?? $base) . ($erro !== '' && $erro !== '0' ? ' (erro #' . $erro . ')' : '');
+};
+$linhaResumo = static function (string $canal, ?array $res, string $um, string $varios) use ($plural): string {
+    if ($res === null) {
+        return '<li><b>' . rw_e($canal) . ':</b> nenhuma rodada registrada ainda (o registro começou em 01/11/2026).</li>';
+    }
+    $contagem = [];
+    foreach ((array) ($res['p'] ?? []) as $codigo) {
+        $base = explode(':', (string) $codigo, 2)[0];
+        $contagem[$base] = ($contagem[$base] ?? 0) + 1;
+    }
+    $partes = [];
+    foreach ($contagem as $base => $n) {
+        $partes[] = $n . ' — ' . (MCP_RW_MOTIVOS_RODADA[$base] ?? $base);
+    }
+    return '<li><b>' . rw_e($canal) . ', ' . rw_e(mb_strtolower(rw_quando((int) $res['em']))) . ':</b> ' . rw_e($plural((int) ($res['enviados'] ?? 0), $um, $varios))
+        . ((int) ($res['falhas'] ?? 0) > 0 ? ', ' . (int) $res['falhas'] . ' sem sair' : '') . ((int) ($res['controle'] ?? 0) > 0 ? ', ' . (int) $res['controle'] . ' no grupo de controle (só registro)' : '')
+        . ((string) ($res['motivo'] ?? '') !== '' ? '. ' . rw_e((string) $res['motivo']) : '')
+        . ($partes ? '<br><small>Devidos que não receberam: ' . rw_e(implode('; ', $partes)) . '.</small>' : '') . '</li>';
+};
+$corpo .= '<section class="cartao"><h2>Última rodada</h2><ul class="checks">'
+    . $linhaResumo('WhatsApp', $resumoWa, 'mensagem enviada', 'mensagens enviadas')
+    . $linhaResumo('E-mail', $resumoEm, 'e-mail enviado', 'e-mails enviados')
+    . '</ul><p class="nota">Links das mensagens abertos nas últimas 24 h: ' . ($aberturas['w'] ?? 0) . ' pelo WhatsApp e ' . ($aberturas['e'] ?? 0)
+    . ' pelo e-mail (programas de e-mail que conferem links sozinhos também contam).</p></section>';
+
 // ----------------------------------------------------------------------------- funil
 $enviadas = array_sum($m['etapas']);
 // Cada passo com a sua base: entrega e leitura contam MENSAGENS (sobre as enviadas e as entregues); resposta e pagamento
@@ -398,7 +437,9 @@ foreach ($passos as $i => [$rotulo, $valor, $nota, $taxaPasso]) {
     $corpo .= '<li' . ($i === 4 ? ' class="fim"' : '') . '><span>' . rw_e($rotulo) . '</span><b>' . $valor . '</b>'
         . ($taxaPasso !== null ? '<em>' . rw_e($taxaPasso) . '</em>' : '') . '<small>' . rw_e($nota) . '</small></li>';
 }
-$corpo .= '</ol><p class="nota">Agora: ' . $plural($m['no_fluxo'], 'pessoa espera', 'pessoas esperam') . ' a próxima mensagem'
+$noFluxoWa = count(array_filter($m['lista'], static fn(array $p): bool => !$p['controle'] && $p['proxima'] !== null));
+$corpo .= '</ol><p class="nota">Agora: ' . $plural($m['no_fluxo'], 'pessoa espera', 'pessoas esperam') . ' a próxima mensagem de algum canal (' . $noFluxoWa . ' no WhatsApp, '
+    . $m['email']['no_fluxo'] . ' no e-mail)'
     . ($m['no_controle'] > 0 ? ' e ' . $m['no_controle'] . ' ' . ($m['no_controle'] === 1 ? 'está' : 'estão') . ' no grupo de controle (não recebem)' : '')
     . '. Enviadas: 1ª ' . $m['etapas'][1] . ' · 2ª ' . $m['etapas'][2] . ' · 3ª ' . $m['etapas'][3] . ($m['falhas'] > 0 ? ' · ' . $plural($m['falhas'], 'não saiu', 'não saíram') : '') . '.</p>';
 // O e-mail, com os mesmos cortes: enviados por etapa, os 1º dados como cumpridos pelo lembrete do PIX e quem pagou pelo
@@ -440,7 +481,12 @@ if (!$nessa) {
     // Os dois canais de cada pessoa, lado a lado: quantas já foram em cada um e a próxima de cada um. Fora do canal (sem
     // celular, sem e-mail, parou, ou a sequência acabou) o selo fica apagado, com o motivo.
     $motivoCanal = static fn(?string $motivo, string $sem): string => match ($motivo) {
-        'sem_celular', 'sem_email' => $sem, 'bloqueou' => 'pediu para parar', default => 'encerrado',
+        'sem_celular', 'sem_email' => $sem, 'bloqueou' => 'pediu para parar', 'falhou' => 'não chegou', 'completo' => 'recebeu as 3', default => 'encerrado',
+    };
+    // O motivo de a pessoa não ter recebido na última rodada de cada canal, se ela estava devida e ficou sem.
+    $naUltima = static function (?array $res, string $chave, string $canal) use ($motivoRodada): string {
+        $codigo = $res['p'][$chave] ?? null;
+        return is_string($codigo) ? '<small>Última rodada (' . rw_e(rw_quando((int) $res['em'])) . '), ' . $canal . ': ' . rw_e($motivoRodada($codigo)) . '</small>' : '';
     };
     $seloCanal = static function (string $classe, string $rotulo, array $c, string $sem, string $extra = '') use ($motivoCanal): string {
         $texto = $c['no_fluxo'] || $c['enviadas'] > 0 ? $c['enviadas'] . ' de 3' . ($c['no_fluxo'] ? '' : ' · ' . $motivoCanal($c['motivo'], $sem)) : $motivoCanal($c['motivo'], $sem);
@@ -454,6 +500,7 @@ if (!$nessa) {
         $em = $p['canal_email'];
         $canais = '<span class="canais" aria-label="' . $p['whatsapp']['enviadas'] . ' de 3 mensagens e ' . $em['enviadas'] . ' de 3 e-mails enviados">'
             . $seloCanal('wa', 'WhatsApp', $p['whatsapp'], 'sem celular') . $seloCanal('em', 'E-mail', $em, 'sem e-mail', $em['pulado_pix'] ? ' · 1º pelo PIX' : '') . '</span>';
+        $ultima = $naUltima($resumoWa, $p['chave'], 'WhatsApp') . $naUltima($resumoEm, $p['chave'], 'e-mail');
         if ($p['controle']) {
             $proxima = rw_selo('talvez', 'Grupo de controle') . '<small>não recebe</small>';
         } else {
@@ -463,7 +510,8 @@ if (!$nessa) {
         $contatos = implode(' · ', array_filter([rw_e($p['celular']), rw_e($p['email']), $origemNome($p['origem'])]));
         $linhasPessoa .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . $contatos . '</small></td>'
             . '<td>' . rw_e($p['curso']) . '</td><td>' . $canais . '</td>'
-            . '<td>' . $proxima . '</td><td>' . ($respostas !== '' ? $respostas : '<span class="mudo">—</span>') . '</td></tr>';
+            . '<td>' . $proxima . ($p['controle'] ? '' : $ultima) . ($p['whatsapp']['erro'] !== null && !$p['whatsapp']['no_fluxo'] ? '<small>WhatsApp: ' . rw_e((string) $p['whatsapp']['erro']) . '</small>' : '')
+            . '</td><td>' . ($respostas !== '' ? $respostas : '<span class="mudo">—</span>') . '</td></tr>';
     }
     $corpo .= '<div class="rolar"><table class="pessoas"><thead><tr><th scope="col">Pessoa</th><th scope="col">Curso</th><th scope="col">Enviadas</th>'
         . '<th scope="col">Próxima</th><th scope="col">Respostas</th></tr></thead><tbody>' . $linhasPessoa . '</tbody></table></div>';
@@ -536,6 +584,18 @@ foreach ($okItens as $x) {
     $corpo .= '<li>' . rw_selo('ok', 'Ok') . rw_e($x) . '</li>';
 }
 $corpo .= '</ul>' . $tabela(['Modelo', 'Situação na Meta'], $modelosT) . '</details>'
+    . '<details><summary>Por que alguém no fluxo ainda não recebeu</summary><ul class="checks">'
+    . '<li>Grupo de controle (' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas): não recebe nada, de propósito.</li>'
+    . '<li>Ainda não deu 1 h do cadastro, ou da tentativa mais recente (quem tenta pagar de novo recomeça a contar). A 2ª e a 3ª esperam 24 h e 72 h do cadastro e pelo menos 21 h e 48 h depois da anterior.</li>'
+    . '<li>Horário: só das 8h às 20h; a última rodada do dia é a das 19h07 e a primeira, a das 8h07.</li>'
+    . '<li>Sem celular válido (fixo, incompleto, sem o 9): recebe só os e-mails. Sem e-mail válido: só o WhatsApp.</li>'
+    . '<li>Modelo da mensagem esperando a Meta aprovar, ou diferente do que a mensagem manda: a pessoa espera, sem perder a vez.</li>'
+    . '<li>Teto: ' . MCP_RW_POR_RODADA . ' mensagens por rodada e ' . MCP_RW_POR_DIA . ' em 24 h (e-mail: ' . MCP_RW_EMAIL_POR_RODADA . ' e ' . MCP_RW_EMAIL_POR_DIA . ').</li>'
+    . '<li>Na conferência logo antes do envio: pagou (em qualquer sistema) ou pediu para parar.</li>'
+    . '<li>A Kapso ou a Meta recusaram: um erro de todos (chave, modelo, limite) para a rodada, e o resto vai na seguinte; um erro só daquela mensagem deixa a pessoa para a rodada seguinte e a fila anda.</li>'
+    . '<li>Número sem WhatsApp: a 1ª fica "não chegou" e a sequência dessa pessoa para (os e-mails continuam).</li>'
+    . '<li>E-mail: quem tem um PIX que ainda vai ganhar o lembrete espera por ele; e nada sai se o site já mandou muitos e-mails em 24 h.</li>'
+    . '</ul><p>Na lista de pessoas, "Última rodada" diz o motivo de cada uma que estava devida e ficou sem receber; o cartão "Última rodada" junta os números.</p></details>'
     . '<details><summary>Como funciona</summary><p>Quem se cadastrou no checkout do site ou na plataforma da escola nos últimos ' . MCP_RW_JANELA_DIAS . ' dias e não pagou recebe até 3 mensagens: '
     . '1 h, 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), só das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por rodada e ' . MCP_RW_POR_DIA . ' em 24 h. '
     . 'Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora; '

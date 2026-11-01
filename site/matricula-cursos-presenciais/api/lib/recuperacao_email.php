@@ -97,7 +97,7 @@ function mcp_rw_email_descadastrou(array $pessoa, array $indice): bool
 /**
  * O próximo e-mail de uma pessoa e quando ele fica devido (sem o horário), ou null. A régua é a do WhatsApp
  * (mcp_rw_proxima): a linha 'pulado_pix' conta como a etapa 1 enviada (na hora do lembrete do PIX), 'falhou' para a
- * sequência, e a etapa 0 (controle) não entra. $minhas: etapa => linha com criado_ts (mcp_rw_da_pessoa).
+ * sequência (menos a reserva que ficou "enviando", que vale como enviada), e a etapa 0 (controle) não entra. $minhas: etapa => linha com criado_ts (mcp_rw_da_pessoa).
  * @return array{etapa: int, devida_em: int}|null
  */
 function mcp_rw_email_proxima(int $ancora, array $minhas): ?array
@@ -108,7 +108,7 @@ function mcp_rw_email_proxima(int $ancora, array $minhas): ?array
             continue;
         }
         $enviadas[(int) $etapa] = ['status' => in_array($l['status'], ['enviado', 'pulado_pix'], true) ? 'enviado' : (string) $l['status'], 'entrega' => null,
-            'criado_ts' => (int) ($l['criado_ts'] ?? 0)];
+            'erro' => $l['erro'] ?? null, 'criado_ts' => (int) ($l['criado_ts'] ?? 0)];
     }
     return mcp_rw_proxima($ancora, $enviadas);
 }
@@ -116,25 +116,31 @@ function mcp_rw_email_proxima(int $ancora, array $minhas): ?array
 /**
  * Um e-mail da recuperação, pronto: ['modelo' (a campanha do botão: rec1, rec2, rec3 ou rec3cupom), 'assunto', 'html',
  * 'texto', 'link', 'preheader']. HTML na moldura dos e-mails do site, texto puro junto, um botão só, e nada de preço
- * nem de escassez: o valor a pessoa vê no checkout. Os botões levam os MESMOS caminhos do WhatsApp (mcp_rw_caminho_botao
- * e o do cupom), com utm_source=email. Sem curso (só a conta na escola), fala de "nossos cursos" e leva à página de
- * matrícula. A 3ª de Primeiros Socorros Básico com $oferta (mcp_rw_oferta_cupom) leva o cupom aplicado e a data da
- * turma. $descadastro: o endereço do "Não quero mais receber" (mcp_rw_email_descadastro_url). Puro.
+ * nem de escassez: o valor a pessoa vê no checkout. Os botões levam os MESMOS links curtos do WhatsApp (api/ir.php,
+ * mcp_rw_caminho_botao e o do cupom), com a fonte "e" (utm_source=email) e o $token do pré-preenchimento (mcp_rw_token):
+ * o checkout abre com nome, e-mail e telefone, e o texto diz isso. Sem curso (só a conta na escola), fala de "nossos
+ * cursos" e leva à página de matrícula. A 3ª de Primeiros Socorros Básico com $oferta (mcp_rw_oferta_cupom) leva o cupom
+ * aplicado e a data da turma. $descadastro: o endereço do "Não quero mais receber" (mcp_rw_email_descadastro_url). Puro.
  */
-function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $descadastro): array
+function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $descadastro, string $token = ''): array
 {
-    $nome = trim((string) ($pessoa['primeiro_nome'] ?? ''));
+    // O mesmo primeiro nome do WhatsApp (CamelCase separado, caixa normalizada, sem título); sem nome usável, "Oi.".
+    $nome = mcp_rw_primeiro_nome((string) ($pessoa['primeiro_nome'] ?? ''));
     $slug = (string) ($pessoa['curso_slug'] ?? '');
     $cursoNome = trim((string) ($pessoa['curso_nome'] ?? ''));
     $generico = $cursoNome === '' || $cursoNome === MCP_RW_CURSO_GENERICO;
     $curso = $generico ? MCP_RW_CURSO_GENERICO : $cursoNome;
-    $cupom = $etapa === 3 && $oferta !== null && $slug === MCP_RW_CUPOM_CURSO;
-    $link = mcp_site_url() . '/' . ($cupom ? mcp_rw_caminho_cupom('email') : mcp_rw_caminho_botao($slug, $etapa, 'email'));
+    $cupom = $etapa === 3 && trim((string) ($oferta['codigo'] ?? '')) !== '' && trim((string) ($oferta['data'] ?? '')) !== '' && $slug === MCP_RW_CUPOM_CURSO;
+    $link = mcp_site_url() . '/' . ($cupom ? mcp_rw_caminho_cupom('email', $token) : mcp_rw_caminho_botao($slug, $etapa, 'email', $token));
     $oi = $nome !== '' ? 'Oi, ' . mcp_escapar($nome) . '.' : 'Oi.';
     $emCurso = $generico ? 'em um dos nossos cursos' : 'em <strong>' . mcp_escapar($curso) . '</strong>';
+    // "Já vêm preenchidos" só quando é verdade: com o token, o checkout pede os dados (api/recuperacao-dados.php) e preenche
+    // nome, e-mail e telefone; o CPF a pessoa digita (ele nunca sai do servidor). Sem curso, o link é a página de matrícula.
+    $preenche = $token !== '' && !$generico;
     $comoConcluir = $generico
         ? 'Pelo botão abaixo você vê os cursos com turma aberta e conclui a inscrição.'
-        : 'Seus dados ficaram registrados conosco. Para concluir, é só seguir pelo botão abaixo.';
+        : ($preenche ? 'Pelo botão abaixo, o checkout já abre com seu nome, e-mail e telefone preenchidos: é só conferir, informar o CPF e concluir.'
+            : 'Para concluir, é só seguir pelo botão abaixo.');
     $botao = 'Concluir inscrição';
     switch ($etapa) {
         case 1:
@@ -150,7 +156,8 @@ function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $
             $preheader = 'Se ficou alguma dúvida sobre o curso ou o pagamento, é só responder este e-mail.';
             $blocos = [mcp_email_b_p("$oi Passando para lembrar: a sua inscrição $emCurso continua em aberto."),
                 mcp_email_b_p('<strong>Ficou alguma dúvida</strong> sobre o curso, a turma ou o pagamento? É só responder este e-mail: a secretaria da Escola de Educação e Saúde lê e responde.'),
-                mcp_email_b_p($generico ? 'Para concluir, escolha o curso pelo botão abaixo.' : 'Para concluir, use o botão abaixo.')];
+                mcp_email_b_p($generico ? 'Para concluir, escolha o curso pelo botão abaixo.'
+                    : ($preenche ? 'Para concluir, use o botão abaixo: seu nome, e-mail e telefone já vêm preenchidos.' : 'Para concluir, use o botão abaixo.'))];
             break;
         default:
             $titulo = 'Último aviso sobre a sua inscrição.';
@@ -162,7 +169,8 @@ function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $
                     . '</strong>. Ele já vem aplicado pelo botão abaixo, e você vê o valor final antes de pagar.');
                 $botao = 'Concluir inscrição com o cupom';
             }
-            $blocos[] = mcp_email_b_p('Se ainda quiser participar, conclua pelo botão abaixo. Depois deste, não mandamos outros lembretes sobre a inscrição.');
+            $blocos[] = mcp_email_b_p('Se ainda quiser participar, conclua pelo botão abaixo' . ($preenche ? ' (seus dados já vêm preenchidos)' : '')
+                . '. Depois deste, não mandamos outros lembretes sobre a inscrição.');
             break;
     }
     $sair = mcp_escapar($descadastro);
@@ -348,16 +356,28 @@ function mcp_rw_email_gravar(array $p, int $etapa, string $status, string $quand
  *  - 'falhou' (a Resend recusou, ex.: endereço inválido): a etapa fica "falhou" e a sequência dessa pessoa para. Duas
  *    recusas seguidas dizem que o problema é da Resend, não de quem recebe: as duas voltam (não gastam a etapa) e a rodada
  *    para até a hora seguinte.
- * @return array{enviados: int, falhas: int, pulados: int, pulados_pix: int, esperando_pix: int, vistos: int, controle: int, escola: string, motivo: ?string}
+ * pessoas: chave curta => motivo (MCP_RW_MOTIVOS_RODADA) de cada pessoa devida que não recebeu; o resumo vai para
+ * mcp_eventos ('recuperacao_rodada_email'), menos fora do horário ou sem configuração.
+ * @return array{enviados: int, falhas: int, pulados: int, pulados_pix: int, esperando_pix: int, vistos: int, controle: int, escola: string, motivo: ?string, pessoas: array}
  */
 function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
 {
     $agora ??= time();
     $inicioReal = time();
     $agoraReal = static fn(): int => $agora + max(0, time() - $inicioReal);
-    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'pulados_pix' => 0, 'esperando_pix' => 0, 'vistos' => 0, 'controle' => 0, 'escola' => '-', 'motivo' => null];
+    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'pulados_pix' => 0, 'esperando_pix' => 0, 'vistos' => 0, 'controle' => 0, 'escola' => '-', 'motivo' => null, 'pessoas' => []];
+    $motivos = [];
+    $marcar = static function (array $p, string $codigo) use (&$motivos): void {
+        $motivos[mcp_rw_chave_curta($p)] = $codigo;
+    };
+    $terminar = static function () use (&$r, &$motivos, $agora): array {
+        $r['pessoas'] = $motivos;
+        mcp_rw_resumo_gravar('recuperacao_rodada_email', $agora, $r, $motivos);
+        return $r;
+    };
     $cfg = mcp_rw_email_config();
     if (!$cfg['ok']) {
+        // Sem a Resend não há rodada (o painel já diz o que falta): nada a resumir.
         $r['motivo'] = 'sem configuração (' . implode(', ', $cfg['falta']) . ')';
         return $r;
     }
@@ -394,6 +414,7 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
             if (!isset($minhas[0]) && !isset($minhasWhatsapp[0])) {
                 $controle[] = $p;
             }
+            $marcar($p, 'c');
             continue;
         }
         $fila[] = [$proxima['devida_em'], $proxima['etapa'], $p];
@@ -414,7 +435,7 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
     }
     if ($refs) {
         $pix = mcp_rw_email_pix($refs, $agora);
-        $fila = array_values(array_filter($fila, static function (array $f) use ($pix, $agora, &$r): bool {
+        $fila = array_values(array_filter($fila, static function (array $f) use ($pix, $agora, &$r, $marcar): bool {
             [, $etapa, $p] = $f;
             if ($etapa !== 1) {
                 return true;
@@ -427,13 +448,14 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
             }
             if (array_intersect_key($pix['esperando'], array_flip($p['refs_site']))) {
                 $r['esperando_pix']++;
+                $marcar($p, 'P');
                 return false;
             }
             return true;
         }));
     }
     if (!$fila) {
-        return $r;
+        return $terminar();
     }
     // O cupom da 3ª é decidido uma vez por rodada, como no WhatsApp.
     $oferta = array_filter($fila, static fn(array $f): bool => $f[1] === 3 && $f[2]['curso_slug'] === MCP_RW_CUPOM_CURSO) ? mcp_rw_oferta_cupom($agora) : null;
@@ -442,26 +464,41 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
     $site = mcp_rw_email_site_24h($agora);
     if ($site >= MCP_RW_EMAIL_RESERVA_SITE) {
         $r['motivo'] = "o site já mandou $site e-mails em 24 h; a cota da Resend fica para os recibos";
-        return $r;
+        foreach ($fila as [, , $p]) {
+            $marcar($p, 'k');
+        }
+        return $terminar();
     }
     $db = mcp_db();
     $recusas = [];
     $incertos = 0;
+    $parou = null; // o código de quem ficou na fila quando a rodada parou: t, T, h ou p
     foreach ($fila as [, $etapa, $p]) {
+        if ($parou !== null) {
+            $marcar($p, $parou);
+            continue;
+        }
         if ($r['enviados'] + $r['falhas'] >= MCP_RW_EMAIL_POR_RODADA) {
-            break;
+            $parou = 't';
+            $marcar($p, $parou);
+            continue;
         }
         if ($noDia >= MCP_RW_EMAIL_POR_DIA) {
             $r['motivo'] = 'teto de ' . MCP_RW_EMAIL_POR_DIA . ' e-mails em 24 h';
-            break;
+            $parou = 'T';
+            $marcar($p, $parou);
+            continue;
         }
         $agoraEnvio = $agoraReal();
         if (!mcp_rw_no_horario($agoraEnvio)) {
             $r['motivo'] = 'fora do horário (8h–20h de Brasília)';
-            break;
+            $parou = 'h';
+            $marcar($p, $parou);
+            continue;
         }
         if (mcp_rw_email_reconferir($p) !== null) {
             $r['pulados']++;
+            $marcar($p, 'r');
             continue;
         }
         // A linha é reservada ANTES do envio (a UNIQUE garante que só um processo manda esta etapa) e dá o id do
@@ -469,9 +506,11 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
         $id = mcp_rw_email_gravar($p, $etapa, 'falhou', gmdate('Y-m-d H:i:s', $agoraEnvio), 'enviando');
         if ($id === 0) {
             $r['pulados']++;
+            $marcar($p, 'd');
             continue;
         }
-        $msg = mcp_rw_email_montar($etapa, $p, $oferta, mcp_rw_email_descadastro_url($id));
+        // O link leva o token do pré-preenchimento: o checkout abre com nome, e-mail e telefone (o texto diz isso).
+        $msg = mcp_rw_email_montar($etapa, $p, $oferta, mcp_rw_email_descadastro_url($id), mcp_rw_token((string) ($p['dados_ref'] ?? ''), $agora));
         mcp_email_ultimo_id('');
         $envio = mcp_enviar_email((string) $p['email'], $msg['assunto'], $msg['html'], $msg['texto'], mcp_email_contato_endereco(), null, [],
             ['sem_reserva' => true, 'tempo' => MCP_RW_EMAIL_TEMPO_S, 'cabecalhos' => mcp_rw_email_cabecalhos($id)]);
@@ -488,7 +527,7 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
             if ($incertos >= 2) {
                 $r['motivo'] = 'Resend: duas respostas sem confirmação seguidas';
                 error_log('[matricula] recuperação por e-mail parada nesta rodada: a Resend não confirmou dois envios seguidos');
-                break;
+                $parou = 'p';
             }
             continue;
         }
@@ -498,17 +537,23 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
             $db->prepare('DELETE FROM mcp_recuperacao_email WHERE id = ?')->execute([$id]);
             $r['motivo'] = $envio === 'limite' ? 'Resend: limite de envio (429); o resto fica para a próxima rodada' : 'sem configuração (RESEND_API_KEY)';
             error_log('[matricula] recuperação por e-mail parada nesta rodada: ' . $r['motivo']);
-            break;
+            $parou = 'p';
+            $marcar($p, 'p');
+            continue;
         }
         $atualizar('falhou', null, 'a Resend recusou o e-mail');
-        $recusas[] = $id;
+        $recusas[] = [$id, $p];
+        $marcar($p, 'f');
         if (count($recusas) >= 2) {
             // Duas recusas seguidas: o problema é da Resend (ou da conta), não dos endereços. Não gasta a etapa de ninguém.
-            $db->prepare('DELETE FROM mcp_recuperacao_email WHERE id IN (' . implode(',', array_map('intval', $recusas)) . ')')->execute();
+            $db->prepare('DELETE FROM mcp_recuperacao_email WHERE id IN (' . implode(',', array_map(static fn(array $x): int => (int) $x[0], $recusas)) . ')')->execute();
+            foreach ($recusas as [, $recusada]) {
+                $marcar($recusada, 'p');
+            }
             $r['motivo'] = 'Resend: duas recusas seguidas; tenta de novo na próxima rodada';
             error_log('[matricula] recuperação por e-mail parada nesta rodada: duas recusas seguidas da Resend');
-            break;
+            $parou = 'p';
         }
     }
-    return $r;
+    return $terminar();
 }

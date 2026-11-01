@@ -59,6 +59,27 @@ if [ "$codigo" = 200 ] && ! grep -qE 'No fluxo agora|Mensagens enviadas|Recupera
 codigo=$(pedir "$m/api/kapso-webhook.php")
 if [ "$codigo" = 401 ]; then ok "api/kapso-webhook.php sem assinatura → 401"; else falha "api/kapso-webhook.php sem assinatura → $codigo (esperado 401)"; fi
 
+# Links curtos da recuperação (01/11/2026): api/ir.php/<w|e>/<curso>/<campanha> → 302 para o checkout com a query de sempre;
+# inválido → 302 para a página de matrícula. Se der 404, o servidor não repassa o caminho depois do .php (PATH_INFO) e os
+# botões novos não funcionam: avise antes da rodada das 8h07.
+redireciona() { # caminho | Location esperado
+  codigo=$(pedir "$m/$1")
+  local destino
+  destino=$(grep -i '^location:' "$tmp.cab" | head -1 | cut -d' ' -f2- | tr -d '\r')
+  if [ "$codigo" = 302 ] && [ "$destino" = "$2" ]; then ok "$1 → 302 $destino"; else falha "$1 → $codigo ${destino:-sem Location} (esperado 302 $2)"; fi
+}
+redireciona 'api/ir.php/w/puncao-venosa/rec1' '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1'
+redireciona 'api/ir.php/e/primeiros-socorros-basico/rec3cupom' '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom'
+redireciona 'api/ir.php/w/cursos/rec2' '/matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec2'
+redireciona 'api/ir.php/w/curso-que-nao-existe/rec1/s1.abc.0123456789abcdef' '/matricula-cursos-presenciais/'
+redireciona 'api/ir.php' '/matricula-cursos-presenciais/'
+# Pré-preenchimento sem token (ou com token que não vale): {} com 200 e sem cache.
+codigo=$(pedir "$m/api/recuperacao-dados.php?t=s1.abc.0123456789abcdef")
+if [ "$codigo" = 200 ] && [ "$(cat "$tmp")" = '{}' ] && grep -qi '^cache-control:.*no-store' "$tmp.cab"; then ok "api/recuperacao-dados.php com token inválido → {} (no-store)"; else falha "api/recuperacao-dados.php → $codigo $(head -c 80 "$tmp")"; fi
+# Link antigo com a query codificada: o 404 da raiz precisa trazer o script que leva ao checkout certo.
+codigo=$(pedir "$m/checkout/%3Fcurso%3Dpuncao-venosa%26utm_campaign%3Drec1")
+if grep -q "decodeURIComponent(p)" "$tmp"; then ok "checkout/%3Fcurso… → $codigo com o 404 que leva ao checkout"; else falha "checkout/%3Fcurso… → $codigo sem o script do 404.html novo"; fi
+
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
   api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/lib/recuperacao_email.php api/comparecimentos.php api/lembretes.php; do

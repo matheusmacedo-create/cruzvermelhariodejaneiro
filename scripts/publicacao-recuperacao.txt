@@ -1,9 +1,25 @@
-# Recuperação por WhatsApp e e-mail, 31/10/2026: com a escola respondendo erro (403), a rodada segue só com os cadastros
-# do site e os importados, em vez de não mandar nada (decisão do responsável). Muda só código: sem migração.
-# Ordem: as bibliotecas antes do painel.
+# Recuperação por WhatsApp e e-mail, 01/11/2026 (depois das primeiras mensagens reais de 31/10): links curtos sem "?" nem
+# "&" (api/ir.php), pré-preenchimento do checkout (api/recuperacao-dados.php), primeiro nome corrigido, a fila não para mais
+# por causa de uma pessoa, a mensagem conferida com o modelo da Meta, e o motivo de cada pessoa não ter recebido no painel.
+# Muda só código: sem migração (os resumos das rodadas vão para mcp_eventos, que já existe).
+# Ordem: as bibliotecas antes de quem as usa; os dois endpoints novos antes do checkout.js que os chama; o checkout.js antes
+# das páginas que apontam para o hash novo dele; o 404.html (rede para os links antigos já entregues) por último.
+# Publicar ANTES da rodada das 8h07: a 2ª mensagem de quem recebeu a 1ª em 31/10 já sai com o link novo.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
-# Depois: a saída da rotina das :07 (cron da Hostinger) deve dizer "seguem só o site e os importados".
+# Depois: abrir o painel (api/recuperacao.php) logado; o cartão "Última rodada" aparece a partir da primeira rodada depois
+# da publicação. A regra opcional de scripts/htaccess-checkout-codificado.txt NÃO está nesta lista (decisão do responsável).
 site/matricula-cursos-presenciais/api/lib/recuperacao_email.php
 site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
+site/matricula-cursos-presenciais/api/ir.php
+site/matricula-cursos-presenciais/api/recuperacao-dados.php
 site/matricula-cursos-presenciais/api/recuperacao.php
+site/matricula-cursos-presenciais/api/lembretes.php
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/404.html

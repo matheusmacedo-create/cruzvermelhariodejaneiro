@@ -47,9 +47,22 @@
  * vale para os dois (mcp_rw_controle olha as linhas das duas tabelas); e "recuperada" passa a contar o pagamento depois da
  * 1ª mensagem de qualquer canal.
  *
+ * Correções de 01/11/2026, depois das primeiras mensagens reais (31/10):
+ *  - links curtos: o {{1}} do botão é api/ir.php/<w|e>/<curso>/<campanha>/<token>, sem "?" nem "&" (mcp_rw_link e
+ *    mcp_rw_link_destino); o api/ir.php responde 302 para o checkout com a mesma query de antes;
+ *  - pré-preenchimento: o token do link (mcp_rw_token: referência curta ao cadastro, validade e assinatura, sem dado
+ *    pessoal) deixa o checkout pedir nome, e-mail e telefone ao api/recuperacao-dados.php (mcp_rw_dados_da_ref; nunca o CPF);
+ *  - primeiro nome: CamelCase colado, caixa, títulos (mcp_rw_primeiro_nome) e "aluno(a)" quando não há nome usável;
+ *  - um erro da Meta que pode ser só de uma mensagem não para mais a rodada inteira (mcp_rw_erro_escopo): a pessoa fica
+ *    para a rodada seguinte e a fila anda;
+ *  - a mensagem é conferida com o modelo que a Meta tem (mcp_rw_estrutura: índice do botão de URL e número de parâmetros);
+ *  - cada rodada grava um resumo (mcp_rw_resumo_gravar) com o motivo de cada pessoa devida que não recebeu, que o painel
+ *    mostra por pessoa.
+ *
  * Regras puras (sem banco nem rede, conferidas no teste): mcp_rw_tentativas_site, mcp_rw_tentativas_escola,
  * mcp_rw_agrupar, mcp_rw_proxima, mcp_rw_no_horario, mcp_rw_modelo, mcp_rw_corpo_envio, mcp_rw_caminho_botao,
- * mcp_rw_ler_webhook, mcp_rw_quer_parar, mcp_rw_pelo_link e mcp_rw_metricas.
+ * mcp_rw_link, mcp_rw_link_destino, mcp_rw_primeiro_nome, mcp_rw_erro_escopo, mcp_rw_estrutura,
+ * mcp_rw_estrutura_problema, mcp_rw_ler_webhook, mcp_rw_quer_parar, mcp_rw_pelo_link e mcp_rw_metricas.
  */
 declare(strict_types=1);
 
@@ -70,8 +83,32 @@ const MCP_RW_MODELOS = [1 => 'rec_inscricao_1_v2', 2 => 'rec_inscricao_2', 3 => 
 const MCP_RW_MODELO_CUPOM = 'ps_cupom_oferta';
 const MCP_RW_CUPOM = 'NOV15';
 const MCP_RW_CUPOM_CURSO = 'primeiros-socorros-basico';
-const MCP_RW_CUPOM_CAMINHO = 'matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15'
-    . '&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom';
+/**
+ * Links curtos dos botões (01/11/2026). O modelo aprovado na Meta tem o botão de URL https://cruzvermelhariodejaneiro.org/{{1}}
+ * e o {{1}} levava o caminho do checkout COM a query (?curso=…&utm_…). Com "?" e "&" dentro da variável o link é frágil:
+ * se a Meta ou o aplicativo codificar a variável (%3F, %26), a URL vira /checkout/%3Fcurso%3D… e dá 404 (conferido no ar
+ * em 31/10/2026, e uma pessoa respondeu "Tentei de todas as formas mas não deu"). Agora o {{1}} é só um caminho, com
+ * letras, números, "-", "." e "/": matricula-cursos-presenciais/api/ir.php/<w|e>/<slug ou cursos>/<campanha>/<token>, e
+ * o api/ir.php responde 302 para o checkout com a mesma query de antes (mcp_rw_link_destino). O e-mail usa os mesmos.
+ */
+const MCP_RW_LINK_BASE = 'matricula-cursos-presenciais/api/ir.php';
+// A fonte no caminho (uma letra, para o link ficar curto) e o utm_source que ela vira.
+const MCP_RW_LINK_FONTES = ['w' => 'whatsapp', 'e' => 'email'];
+// O "slug" do link sem curso (só a conta na escola): leva à página de matrícula, com todos os cursos.
+const MCP_RW_LINK_SEM_CURSO = 'cursos';
+// A página de matrícula: para onde vai o link que não confere (nunca um erro).
+const MCP_RW_LINK_PAGINA = '/matricula-cursos-presenciais/';
+/**
+ * Token do pré-preenchimento (01/11/2026): o e-mail dizia "seus dados ficaram registrados", mas o link abria o checkout
+ * com tudo vazio. O token vai no fim do link curto: uma referência curta ao cadastro (s<id> do checkout do site,
+ * i<hmac> do importado, u<id> da conta na escola; nenhum dado pessoal), a validade e a assinatura (o segredo dos links
+ * dos avisos). O api/ir.php o passa num cookie só da api/ (MCP_RW_COOKIE) e o checkout pede nome, e-mail e telefone ao
+ * api/recuperacao-dados.php, nunca o CPF. O token fica fora da URL do checkout para não ir parar no GA4, no Pixel nem no
+ * Referer.
+ */
+const MCP_RW_TOKEN_DIAS = 30;
+const MCP_RW_COOKIE = 'mcp_rw';
+const MCP_RW_COOKIE_S = 6 * 3600;
 // Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel).
 const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta'];
 // As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
@@ -101,9 +138,18 @@ const MCP_RW_POR_RODADA = 40;
 // rodadas passariam de 250 no primeiro dia no ar, e a Meta recusaria o resto.
 const MCP_RW_POR_DIA = 200;
 // Erros da Meta que são DE QUEM RECEBE (número sem WhatsApp, o próprio número, fora da lista de teste, a Meta não
-// entrega marketing a essa pessoa, a pessoa parou o marketing): só esses gastam a etapa. Todo o resto (modelo, parâmetro,
-// limite de vazão, spam, conta) depende de nós ou da Meta, e a rodada para sem gastar nada.
+// entrega marketing a essa pessoa, a pessoa parou o marketing): só esses gastam a etapa.
 const MCP_RW_ERROS_DO_DESTINO = [131026, 131021, 131030, 131049, 131050];
+/**
+ * Erros que valem para TODAS as mensagens (conta, chave, modelo, vazão, spam, Meta fora): a rodada para na hora, sem
+ * gastar nada, e tenta de novo na hora seguinte. Os demais erros com código (parâmetro recusado, par empresa-pessoa no
+ * limite, 131056, pessoa num experimento da Meta, 130472…) podem ser só daquela pessoa: até 01/11/2026 eles também
+ * paravam a rodada, e uma pessoa com um dado ruim, que fica primeiro na fila por ser a mais atrasada, segurava todo mundo
+ * atrás dela em todas as rodadas. Agora essa pessoa fica para a rodada seguinte (sem gastar a etapa) e a fila anda; dois
+ * erros seguidos com o mesmo código dizem que o problema não é da pessoa, e a rodada para (mcp_rw_rodar).
+ */
+const MCP_RW_ERROS_GLOBAIS = [1, 2, 3, 4, 10, 190, 200, 368, 80007, 130429, 131000, 131005, 131016, 131031, 131042, 131048, 131057,
+    132000, 132001, 132007, 132015, 132016, 132068, 132069, 133010];
 // Das 8h às 20h de Brasília (UTC−3, sem horário de verão desde 2019).
 const MCP_RW_HORARIO = [8, 20];
 const MCP_RW_FUSO_SEGUNDOS = -3 * 3600;
@@ -111,6 +157,12 @@ const MCP_RW_ABERTOS_SITE = ['pendente', 'expirado', 'recusado'];
 const MCP_RW_PAGOS_SITE = ['pago', 'estornado'];
 const MCP_RW_PAGOS_ESCOLA = ['PAGO', 'PARCELADO'];
 const MCP_RW_CURSO_GENERICO = 'nossos cursos';
+// O {{1}} de quem não tem nome usável (vazio, só título, só número): a Meta recusa parâmetro vazio, e "Olá, ." não serve.
+// Lê bem nos quatro modelos: "Olá, aluno(a). A sua inscrição…" e "Olá, aluno(a)! Separamos um cupom…".
+const MCP_RW_NOME_PADRAO = 'aluno(a)';
+// Títulos e tratamentos que aparecem antes do nome (já em minúsculas, sem o ponto): ficam de fora do primeiro nome.
+const MCP_RW_TITULOS = ['dr', 'dra', 'sr', 'sra', 'srta', 'prof', 'profa', 'enf', 'enfa', 'pe', 'me', 'msc', 'phd', 'eng', 'adv', 'exmo', 'exma', 'ilmo', 'ilma',
+    'dom', 'dona', 'seu', 'senhor', 'senhora', 'doutor', 'doutora', 'professor', 'professora', 'enfermeiro', 'enfermeira'];
 const MCP_RW_POR_PAGINA = 50;
 const MCP_RW_DIAS_METRICA = 14;
 // Respostas que param tudo, já normalizadas (minúsculas, sem acento, só letras e espaço). O botão do rec_inscricao_3 e do ps_cupom_oferta.
@@ -171,14 +223,32 @@ function mcp_rw_cpf(?string $cpf): string
     return strlen($d) === 11 ? $d : '';
 }
 
-/** "MARIA" e "maria" viram "Maria"; nome já escrito com maiúsculas e minúsculas fica como está. */
+/**
+ * O primeiro nome para o {{1}} do WhatsApp e o "Oi, X." do e-mail, ou '' quando não há nome usável (quem chama põe o
+ * MCP_RW_NOME_PADRAO no WhatsApp: a Meta recusa parâmetro vazio). Corrigido em 01/11/2026, depois das primeiras
+ * mensagens reais: um lead importado saiu como "Olá, MariaAparecida.".
+ *  - nome colado em CamelCase vira só o primeiro ("MariaAparecida" → "Maria");
+ *  - a caixa é normalizada ("RAQUEL" → "Raquel", "joão" → "João", "ana-clara" → "Ana-Clara");
+ *  - títulos e sobras ficam de fora (Dr., Sra., Prof., uma letra solta, "-", número, e-mail digitado no campo do nome).
+ */
 function mcp_rw_primeiro_nome(string $nome): string
 {
-    $p = mcp_primeiro_nome(trim($nome));
-    if ($p === '') {
-        return '';
+    foreach (preg_split('/[\s,;\/|()]+/u', trim($nome)) ?: [] as $palavra) {
+        // CamelCase colado: corta antes de cada maiúscula que vem depois de minúscula ("MariaAparecida", "AnaPaula").
+        // Pedaço com menos de 3 letras não é nome ("DiCaprio", "McArthur"): aí a palavra fica inteira.
+        $pedaco = (string) (preg_split('/(?<=\p{Ll})(?=\p{Lu})/u', $palavra)[0] ?? '');
+        $palavra = mb_strlen($pedaco) >= 3 ? $pedaco : $palavra;
+        // Só letras, hífen e apóstrofo; ponto, emoji e pontuação saem. Número ou "@" no meio: não é nome.
+        if (preg_match('/[\d@]/u', $palavra)) {
+            continue;
+        }
+        $limpa = trim((string) preg_replace("/[^\\p{L}\\p{M}'’-]+/u", '', $palavra), "-'’");
+        if (mb_strlen($limpa) < 2 || in_array(mb_strtolower($limpa), MCP_RW_TITULOS, true)) {
+            continue;
+        }
+        return mb_substr(mb_convert_case(mb_strtolower($limpa), MB_CASE_TITLE), 0, 30);
     }
-    return ($p === mb_strtoupper($p) || $p === mb_strtolower($p)) ? mb_convert_case(mb_strtolower($p), MB_CASE_TITLE) : $p;
+    return '';
 }
 
 /** Curso de teste: "teste" ou "dev" no slug ou no nome. */
@@ -215,8 +285,9 @@ function mcp_rw_slugs_por_uuid(): array
 
 // ----------------------------------------------------------------------------- tentativas (puro)
 /**
- * Linhas de mcp_inscricoes → tentativas. Cada tentativa: origem, ref, cpf, email, numero (55…, ou null), nome,
- * curso_slug, curso_nome, quando (ts), aberta (conta para o fluxo), pago, pago_ts.
+ * Linhas de mcp_inscricoes → tentativas. Cada tentativa: origem, ref, dados (a referência do token do pré-preenchimento:
+ * s<id>, i<hmac> ou u<id>), cpf, email, numero (55…, ou null), nome, curso_slug, curso_nome, quando (ts), aberta (conta
+ * para o fluxo), pago, pago_ts.
  */
 function mcp_rw_tentativas_site(array $linhas, int $inicio): array
 {
@@ -225,7 +296,7 @@ function mcp_rw_tentativas_site(array $linhas, int $inicio): array
         $quando = (int) mcp_rw_ts($l['criado_em'] ?? null);
         $pago = in_array($l['status'] ?? '', MCP_RW_PAGOS_SITE, true);
         $saida[] = [
-            'origem' => 'site', 'ref' => 's' . (int) ($l['id'] ?? 0), 'cpf' => mcp_rw_cpf($l['cpf'] ?? ''), 'email' => mcp_rw_email($l['email'] ?? ''),
+            'origem' => 'site', 'ref' => 's' . (int) ($l['id'] ?? 0), 'dados' => 's' . (int) ($l['id'] ?? 0), 'cpf' => mcp_rw_cpf($l['cpf'] ?? ''), 'email' => mcp_rw_email($l['email'] ?? ''),
             'numero' => mcp_whatsapp_numero((string) ($l['telefone'] ?? '')), 'nome' => trim((string) ($l['nome'] ?? '')),
             'curso_slug' => (string) ($l['curso_slug'] ?? ''), 'curso_nome' => (string) ($l['curso_nome'] ?? ''), 'quando' => $quando,
             'aberta' => !$pago && in_array($l['status'] ?? '', MCP_RW_ABERTOS_SITE, true) && $quando >= $inicio,
@@ -246,26 +317,38 @@ function mcp_rw_tentativas_site(array $linhas, int $inicio): array
  */
 function mcp_rw_tentativas_importadas(int $inicio): array
 {
-    $arquivo = getenv('MCP_CONFIG_RECUPERACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-recuperacao.php';
-    if (!is_file($arquivo)) {
-        return [];
-    }
-    $dados = (static fn(string $a): mixed => require $a)($arquivo);
-    $lista = is_array($dados) && is_array($dados['RECUPERACAO_IMPORTADOS'] ?? null) ? $dados['RECUPERACAO_IMPORTADOS'] : [];
     $saida = [];
-    foreach ($lista as $i => $l) {
-        if (!is_array($l)) {
-            continue;
-        }
+    foreach (mcp_rw_importados() as $i => $l) {
         $quando = (int) mcp_rw_ts($l['criado_em'] ?? null);
         $saida[] = [
-            'origem' => 'site', 'ref' => 'i' . (int) $i, 'cpf' => mcp_rw_cpf($l['cpf'] ?? ''), 'email' => mcp_rw_email($l['email'] ?? ''),
+            'origem' => 'site', 'ref' => 'i' . (int) $i, 'dados' => mcp_rw_importado_ref($l), 'cpf' => mcp_rw_cpf($l['cpf'] ?? ''), 'email' => mcp_rw_email($l['email'] ?? ''),
             'numero' => mcp_whatsapp_numero((string) ($l['telefone'] ?? '')), 'nome' => trim((string) ($l['nome'] ?? '')),
             'curso_slug' => (string) ($l['curso_slug'] ?? ''), 'curso_nome' => (string) ($l['curso_nome'] ?? ''), 'quando' => $quando,
             'aberta' => $quando > 0 && $quando >= $inicio, 'pago' => false, 'pago_ts' => null,
         ];
     }
     return $saida;
+}
+
+/** A lista de api/config-recuperacao.php (só as entradas que são listas), ou [] sem o arquivo. */
+function mcp_rw_importados(): array
+{
+    $arquivo = getenv('MCP_CONFIG_RECUPERACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-recuperacao.php';
+    if (!is_file($arquivo)) {
+        return [];
+    }
+    $dados = (static fn(string $a): mixed => require $a)($arquivo);
+    $lista = is_array($dados) && is_array($dados['RECUPERACAO_IMPORTADOS'] ?? null) ? $dados['RECUPERACAO_IMPORTADOS'] : [];
+    return array_filter($lista, 'is_array');
+}
+
+/**
+ * A referência de um importado no token: "i" + 12 hex do HMAC do CPF, e-mail e telefone. Não depende da posição no
+ * arquivo (uma linha nova no meio não faz o link de uma pessoa abrir os dados de outra) e não revela nada.
+ */
+function mcp_rw_importado_ref(array $l): string
+{
+    return 'i' . substr(mcp_rw_hmac('i:' . mcp_rw_cpf($l['cpf'] ?? '') . '|' . mcp_rw_email($l['email'] ?? '') . '|' . mcp_digitos((string) ($l['telefone'] ?? ''))), 0, 12);
 }
 
 /** A matrícula da escola está paga? (taxa confirmada ou curso pago/parcelado) */
@@ -297,7 +380,7 @@ function mcp_rw_tentativas_escola(array $usuarios, int $inicio, array $slugsPorU
         $criado = (int) mcp_rw_ts($u['criadoEm'] ?? null);
         $abertaUsuario = !$pago && ($u['papel'] ?? 'ALUNO') === 'ALUNO' && $criado >= $inicio;
         $base = [
-            'origem' => 'escola', 'cpf' => mcp_rw_cpf($u['cpfCnpj'] ?? ''), 'email' => mcp_rw_email($u['email'] ?? ''),
+            'origem' => 'escola', 'dados' => 'u' . $u['id'], 'cpf' => mcp_rw_cpf($u['cpfCnpj'] ?? ''), 'email' => mcp_rw_email($u['email'] ?? ''),
             'numero' => mcp_whatsapp_numero((string) ($u['celular'] ?? '')), 'nome' => trim((string) ($u['nome'] ?? '')),
             'pago' => $pago, 'pago_ts' => $pago ? ($pagoTs ?? $criado) : null,
         ];
@@ -453,6 +536,8 @@ function mcp_rw_agrupar(array $tentativas, callable $bloqueado, ?callable $bloqu
         sort($origens);
         $pessoas[] = [
             'principal' => $principal,
+            // A referência do token do pré-preenchimento: o cadastro de onde saem o nome e o curso da mensagem.
+            'dados_ref' => (string) ($recente['dados'] ?? ''),
             'ids' => array_keys($ids),
             'origem' => $recente['origem'],
             'origens' => $origens,
@@ -541,7 +626,10 @@ function mcp_rw_proxima(int $ancora, array $enviadas): ?array
             return ['etapa' => 1, 'devida_em' => $ancora + $depois];
         }
         $anterior = $enviadas[$etapa - 1] ?? null;
-        if ($anterior === null || $anterior['status'] !== 'enviado' || ($anterior['entrega'] ?? null) === 'falhou') {
+        // Reserva que ficou "enviando" (a rotina caiu entre reservar a linha e gravar a resposta da Kapso): a mensagem pode
+        // ter saído, então vale como enviada, como a resposta incerta. Sem isso a pessoa ficava parada para sempre.
+        $enviada = $anterior !== null && ($anterior['status'] === 'enviado' || ($anterior['status'] === 'falhou' && ($anterior['erro'] ?? null) === 'enviando'));
+        if (!$enviada || ($anterior['entrega'] ?? null) === 'falhou') {
             return null;
         }
         return ['etapa' => $etapa, 'devida_em' => max($ancora + $depois, (int) $anterior['criado_ts'] + MCP_RW_INTERVALOS[$etapa])];
@@ -550,22 +638,89 @@ function mcp_rw_proxima(int $ancora, array $enviadas): ?array
 }
 
 // ----------------------------------------------------------------------------- mensagem (puro)
-/**
- * O parâmetro do botão (caminho sem a barra inicial; a base https://cruzvermelhariodejaneiro.org/ está no modelo).
- * $fonte: 'whatsapp' ou 'email' (o botão do e-mail leva os MESMOS caminhos, só com utm_source=email).
- */
-function mcp_rw_caminho_botao(string $slug, int $etapa, string $fonte = 'whatsapp'): string
+/** O slug vale para um link? Só os cursos do cursos.json (o mesmo catálogo do checkout), e nunca um curso de teste. */
+function mcp_rw_link_slug_ok(string $slug): bool
 {
-    $utm = 'utm_source=' . ($fonte === 'email' ? 'email' : 'whatsapp') . '&utm_medium=recuperacao&utm_campaign=rec' . $etapa;
-    return $slug !== '' && mcp_curso($slug) !== null
-        ? 'matricula-cursos-presenciais/checkout/?curso=' . rawurlencode($slug) . '&' . $utm
-        : 'matricula-cursos-presenciais/?' . $utm;
+    return preg_match('/^[a-z0-9][a-z0-9-]{0,79}$/', $slug) === 1 && mcp_curso($slug) !== null && !mcp_rw_curso_de_teste($slug, '');
 }
 
-/** O caminho do botão da 3ª com o cupom (o de MCP_RW_CUPOM_CAMINHO), com a fonte pedida. */
-function mcp_rw_caminho_cupom(string $fonte = 'whatsapp'): string
+/**
+ * O link curto (sem a barra inicial; a base https://cruzvermelhariodejaneiro.org/ está no modelo): só letras, números,
+ * "-", "." e "/", sem "?" nem "&". $fonte: 'whatsapp' ou 'email'; curso fora do catálogo vai como "cursos" (a página de
+ * matrícula). $token: mcp_rw_token (vazio = sem pré-preenchimento).
+ */
+function mcp_rw_link(string $fonte, string $slug, string $campanha, string $token = ''): string
 {
-    return $fonte === 'email' ? str_replace('utm_source=whatsapp', 'utm_source=email', MCP_RW_CUPOM_CAMINHO) : MCP_RW_CUPOM_CAMINHO;
+    $f = $fonte === 'email' ? 'e' : 'w';
+    $s = mcp_rw_link_slug_ok($slug) ? $slug : MCP_RW_LINK_SEM_CURSO;
+    return MCP_RW_LINK_BASE . "/$f/$s/$campanha" . ($token !== '' ? '/' . $token : '');
+}
+
+/** O parâmetro do botão de uma etapa (rec<etapa>), para o checkout do curso ou, sem curso, a página de matrícula. */
+function mcp_rw_caminho_botao(string $slug, int $etapa, string $fonte = 'whatsapp', string $token = ''): string
+{
+    return mcp_rw_link($fonte, $slug, 'rec' . $etapa, $token);
+}
+
+/** O parâmetro do botão da 3ª com o cupom (campanha rec3cupom: o api/ir.php põe o cupom no link do checkout). */
+function mcp_rw_caminho_cupom(string $fonte = 'whatsapp', string $token = ''): string
+{
+    return mcp_rw_link($fonte, MCP_RW_CUPOM_CURSO, 'rec3cupom', $token);
+}
+
+/**
+ * Para onde vai um link curto: $caminho é o PATH_INFO do api/ir.php ("/w/puncao-venosa/rec1/<token>"). Devolve
+ * ['destino' (caminho absoluto, com a MESMA query que os botões levavam até 31/10/2026), 'token' (o 4º pedaço, ainda não
+ * conferido, ou ''), 'valido' (o caminho conferiu)]. Fonte, slug ou campanha que não conferem → a página de matrícula.
+ * Puro (só lê o catálogo).
+ */
+function mcp_rw_link_destino(string $caminho): array
+{
+    $invalido = ['destino' => MCP_RW_LINK_PAGINA, 'token' => '', 'valido' => false];
+    $partes = explode('/', trim($caminho, '/'));
+    if (count($partes) < 3 || count($partes) > 4) {
+        return $invalido;
+    }
+    [$f, $slug, $campanha] = $partes;
+    $token = (string) ($partes[3] ?? '');
+    $comCurso = $slug !== MCP_RW_LINK_SEM_CURSO;
+    if (!isset(MCP_RW_LINK_FONTES[$f]) || !in_array($campanha, MCP_RW_CAMPANHAS, true) || ($comCurso && !mcp_rw_link_slug_ok($slug))
+        || ($campanha === 'rec3cupom' && $slug !== MCP_RW_CUPOM_CURSO)) {
+        return $invalido;
+    }
+    $utm = 'utm_source=' . MCP_RW_LINK_FONTES[$f] . '&utm_medium=recuperacao&utm_campaign=' . $campanha;
+    $destino = !$comCurso ? MCP_RW_LINK_PAGINA . '?' . $utm
+        : MCP_RW_LINK_PAGINA . 'checkout/?curso=' . rawurlencode($slug) . ($campanha === 'rec3cupom' ? '&via=agenda&cupom=' . rawurlencode(MCP_RW_CUPOM) : '') . '&' . $utm;
+    return ['destino' => $destino, 'token' => preg_match('/^[A-Za-z0-9.-]{1,120}$/', $token) ? $token : '', 'valido' => true];
+}
+
+/** A assinatura de um token (os 16 primeiros hex do HMAC dos links dos avisos, com outro prefixo). */
+function mcp_rw_token_assinatura(string $ref, string $validade): string
+{
+    return substr(mcp_avisos_assinar("rwd|$ref|$validade"), 0, 16);
+}
+
+/**
+ * O token do pré-preenchimento: "<ref>.<validade em base 36>.<assinatura>", URL-safe. $ref: o dados_ref da pessoa
+ * (s<id>, i<hmac> ou u<id>). Sem ref, ''. Vale MCP_RW_TOKEN_DIAS dias a partir de $agora.
+ */
+function mcp_rw_token(string $ref, int $agora): string
+{
+    if (!preg_match('/^[siu][A-Za-z0-9-]{1,64}$/', $ref)) {
+        return '';
+    }
+    $validade = base_convert((string) ($agora + MCP_RW_TOKEN_DIAS * 86400), 10, 36);
+    return "$ref.$validade." . mcp_rw_token_assinatura($ref, $validade);
+}
+
+/** A referência de um token que confere e não venceu, ou null (adulterado, malformado ou vencido). */
+function mcp_rw_token_ref(string $token, int $agora): ?string
+{
+    if (!preg_match('/^([siu][A-Za-z0-9-]{1,64})\.([0-9a-z]{1,8})\.([0-9a-f]{16})$/', $token, $m)
+        || !hash_equals(mcp_rw_token_assinatura($m[1], $m[2]), $m[3]) || (int) base_convert($m[2], 36, 10) < $agora) {
+        return null;
+    }
+    return $m[1];
 }
 
 /** Texto de parâmetro: a Meta recusa quebra de linha, tabulação e mais de 4 espaços seguidos. */
@@ -576,44 +731,53 @@ function mcp_rw_parametro(string $texto, int $limite = 60): string
 
 /**
  * O modelo de uma etapa PARA ESTA PESSOA, com os parâmetros do corpo, o caminho do botão de URL e a prévia:
- * ['nome', 'etapa', 'parametros' (os textos de {{1}}, {{2}}…, já limpos), 'caminho', 'previa'].
+ * ['nome', 'etapa', 'parametros' (os textos de {{1}}, {{2}}…, já limpos e nunca vazios), 'caminho' (o link curto, com o
+ * $token do pré-preenchimento), 'previa'].
  *  - 1ª: rec_inscricao_1_v2; 2ª: rec_inscricao_2; 3ª: rec_inscricao_3 — {{1}} = primeiro nome, {{2}} = curso, botão
- *    para o checkout do curso (ou a página geral);
+ *    com o link curto do checkout do curso (ou da página geral);
  *  - 3ª de quem quer MCP_RW_CUPOM_CURSO, com $oferta (mcp_rw_oferta_cupom: cupom valendo, com vaga, e turma aberta):
  *    ps_cupom_oferta — {{1}} = primeiro nome, {{2}} = o código do cupom, {{3}} = a data da turma ("terça-feira, 17/11"),
  *    botão para o checkout com o cupom já aplicado.
  * Sem banco nem rede: quem chama decide a $oferta uma vez por rodada (ou por página do painel).
  */
-function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null): array
+function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null, string $token = ''): array
 {
-    $nome = mcp_rw_parametro((string) ($pessoa['primeiro_nome'] ?? '') !== '' ? (string) $pessoa['primeiro_nome'] : 'tudo bem');
-    if ($etapa === 3 && $oferta !== null && ($pessoa['curso_slug'] ?? '') === MCP_RW_CUPOM_CURSO) {
+    // Nenhum parâmetro pode ir vazio (a Meta recusa e a rodada pararia): nome sem uso vira MCP_RW_NOME_PADRAO, curso sem
+    // nome vira "nossos cursos"; a oferta só existe com código e data (mcp_rw_oferta_cupom).
+    $nome = mcp_rw_parametro(mcp_rw_primeiro_nome((string) ($pessoa['primeiro_nome'] ?? '')));
+    $nome = $nome !== '' ? $nome : MCP_RW_NOME_PADRAO;
+    $codigo = mcp_rw_parametro((string) ($oferta['codigo'] ?? ''));
+    $data = mcp_rw_parametro((string) ($oferta['data'] ?? ''));
+    if ($etapa === 3 && $codigo !== '' && $data !== '' && ($pessoa['curso_slug'] ?? '') === MCP_RW_CUPOM_CURSO) {
         $modelo = MCP_RW_MODELO_CUPOM;
-        $parametros = [$nome, mcp_rw_parametro((string) $oferta['codigo']), mcp_rw_parametro((string) $oferta['data'])];
-        $caminho = MCP_RW_CUPOM_CAMINHO;
+        $parametros = [$nome, $codigo, $data];
+        $caminho = mcp_rw_caminho_cupom('whatsapp', $token);
     } else {
         $modelo = MCP_RW_MODELOS[$etapa];
-        $curso = (string) ($pessoa['curso_nome'] ?? '');
-        $parametros = [$nome, mcp_rw_parametro($curso !== '' ? $curso : MCP_RW_CURSO_GENERICO, 160)];
-        $caminho = mcp_rw_caminho_botao((string) ($pessoa['curso_slug'] ?? ''), $etapa);
+        $curso = mcp_rw_parametro((string) ($pessoa['curso_nome'] ?? ''), 160);
+        $parametros = [$nome, $curso !== '' ? $curso : MCP_RW_CURSO_GENERICO];
+        $caminho = mcp_rw_caminho_botao((string) ($pessoa['curso_slug'] ?? ''), $etapa, 'whatsapp', $token);
     }
     return ['nome' => $modelo, 'etapa' => $etapa, 'parametros' => $parametros, 'caminho' => $caminho, 'previa' => mcp_rw_previa($modelo, $parametros)];
 }
 
 /**
  * O corpo do POST /{numero}/messages para o modelo escolhido (mcp_rw_modelo), em pt_BR: os parâmetros do corpo na
- * ordem e o botão de URL (índice 0) com o caminho. O "Não tenho interesse" do rec_inscricao_3 e do ps_cupom_oferta é
- * resposta rápida fixa (índice 1): não leva parâmetro, então não entra nos componentes.
+ * ordem e o botão de URL (índice 0, ou o que a Meta tiver no modelo) com o caminho. O "Não tenho interesse" do
+ * rec_inscricao_3 e do ps_cupom_oferta é resposta rápida fixa (índice 1): não leva parâmetro, então não entra nos
+ * componentes.
  */
 function mcp_rw_corpo_envio(string $numero, array $modelo): array
 {
+    // O índice do botão de URL: o que a Meta tem no modelo (mcp_rw_estrutura, posto em 'botao' pela rodada), ou 0.
+    $botao = is_int($modelo['botao'] ?? null) && $modelo['botao'] >= 0 ? $modelo['botao'] : 0;
     return [
         'messaging_product' => 'whatsapp', 'recipient_type' => 'individual', 'to' => $numero, 'type' => 'template',
         'template' => [
             'name' => $modelo['nome'], 'language' => ['code' => 'pt_BR'],
             'components' => [
                 ['type' => 'body', 'parameters' => array_map(static fn(string $t): array => ['type' => 'text', 'text' => $t], array_values($modelo['parametros']))],
-                ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => $modelo['caminho']]]],
+                ['type' => 'button', 'sub_type' => 'url', 'index' => (string) $botao, 'parameters' => [['type' => 'text', 'text' => $modelo['caminho']]]],
             ],
         ],
     ];
@@ -722,25 +886,27 @@ function mcp_rw_kapso_pedir(array $cfg, string $metodo, string $url, ?array $cor
 
 /**
  * Manda a mensagem de uma etapa.
- *  - transitorio: com certeza NÃO saiu e a culpa não é de quem recebe (Kapso ou Meta fora, chave ou número recusados,
- *    modelo não aprovado ou pausado, parâmetro recusado, limite de vazão ou de spam): a etapa não é gasta e a rodada para;
+ *  - transitorio: com certeza NÃO saiu e a culpa não é de quem recebe: a etapa não é gasta. escopo 'global' (Kapso ou
+ *    Meta fora, chave ou número recusados, modelo não aprovado ou pausado, limite de vazão ou de spam,
+ *    MCP_RW_ERROS_GLOBAIS): a rodada para; escopo 'pessoa' (outro erro com código, ou 4xx da Kapso sem código): pode ser
+ *    só desta pessoa, que fica para a rodada seguinte, e a rodada segue com as outras;
  *  - incerto: o pedido pode ter chegado (tempo esgotado ou conexão caída depois de conectar, 5xx de gateway, resposta sem
  *    o id): conta como enviada, para nunca repetir a etapa; parar = a rodada para (a Kapso não está bem);
- *  - o resto (só os erros de MCP_RW_ERROS_DO_DESTINO): a etapa fica "falhou" para essa pessoa.
- * @return array{ok: bool, id: ?string, erro: ?string, transitorio: bool, incerto: bool, parar: bool}
+ *  - o resto (só os erros de MCP_RW_ERROS_DO_DESTINO, escopo 'destino'): a etapa fica "falhou" para essa pessoa.
+ * @return array{ok: bool, id: ?string, erro: ?string, transitorio: bool, incerto: bool, parar: bool, escopo: string, codigo: int}
  */
 function mcp_rw_kapso_enviar(array $cfg, array $corpo): array
 {
     $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($cfg['numero_id']) . '/messages';
     [$status, $dados, $erro, $esgotado, $conectou] = mcp_rw_kapso_pedir($cfg, 'POST', $url, $corpo, 30);
     $incerto = static fn(string $msg, bool $parar): array => ['ok' => true, 'id' => null, 'erro' => $msg . '; a mensagem pode ter saído (não vai de novo)',
-        'transitorio' => false, 'incerto' => true, 'parar' => $parar];
+        'transitorio' => false, 'incerto' => true, 'parar' => $parar, 'escopo' => 'incerto', 'codigo' => 0];
     if ($esgotado) {
         return $incerto('a Kapso não confirmou a tempo', false);
     }
     $id = $dados['messages'][0]['id'] ?? null;
     if ($erro === null && is_string($id)) {
-        return ['ok' => true, 'id' => mb_substr($id, 0, 128), 'erro' => null, 'transitorio' => false, 'incerto' => false, 'parar' => false];
+        return ['ok' => true, 'id' => mb_substr($id, 0, 128), 'erro' => null, 'transitorio' => false, 'incerto' => false, 'parar' => false, 'escopo' => '', 'codigo' => 0];
     }
     $codigo = is_array($dados['error'] ?? null) ? (int) ($dados['error']['code'] ?? 0) : 0;
     if ($codigo === 0) {
@@ -750,8 +916,26 @@ function mcp_rw_kapso_enviar(array $cfg, array $corpo): array
             return $incerto($erro ?? 'resposta sem o id da mensagem', true);
         }
     }
-    $falha = ['ok' => false, 'id' => null, 'erro' => $erro ?? 'resposta sem o id da mensagem', 'incerto' => false, 'parar' => false];
-    return $falha + ['transitorio' => !in_array($codigo, MCP_RW_ERROS_DO_DESTINO, true)];
+    $escopo = mcp_rw_erro_escopo($status, $codigo);
+    return ['ok' => false, 'id' => null, 'erro' => $erro ?? 'resposta sem o id da mensagem', 'incerto' => false, 'parar' => false,
+        'transitorio' => $escopo !== 'destino', 'escopo' => $escopo, 'codigo' => $codigo];
+}
+
+/**
+ * De quem é um erro de envio que com certeza não saiu: 'destino' (de quem recebe: gasta a etapa), 'global' (vale para
+ * todas as mensagens: a rodada para) ou 'pessoa' (pode ser só desta: ela fica para a rodada seguinte e a fila anda). Sem
+ * código da Meta: sem resposta, chave ou número recusados (401/403/404), limite (429) e indisponível (503 e 5xx) são
+ * globais; outro 4xx é recusa da Kapso para esta mensagem. Puro.
+ */
+function mcp_rw_erro_escopo(int $status, int $codigo): string
+{
+    if (in_array($codigo, MCP_RW_ERROS_DO_DESTINO, true)) {
+        return 'destino';
+    }
+    if ($codigo !== 0) {
+        return in_array($codigo, MCP_RW_ERROS_GLOBAIS, true) ? 'global' : 'pessoa';
+    }
+    return $status >= 400 && $status < 500 && !in_array($status, [401, 403, 404, 408, 429], true) ? 'pessoa' : 'global';
 }
 
 /** Guarda um valor curto em mcp_chaves (o cache do painel: modelos, WABA, webhook). */
@@ -779,16 +963,70 @@ function mcp_rw_cache_apagar(string $nome): void
 }
 
 /**
+ * A estrutura de um modelo como está na Meta (os "components" da lista de modelos), para conferir a mensagem antes de
+ * mandar (01/11/2026): ['botao' => o índice do botão de URL com {{1}} (-1 = não tem; null = a Meta não mandou os
+ * componentes), 'params' => quantos {{n}} diferentes o texto tem (null = não se sabe)]. Puro.
+ */
+function mcp_rw_estrutura(mixed $componentes): array
+{
+    if (!is_array($componentes) || $componentes === []) {
+        return ['botao' => null, 'params' => null];
+    }
+    $botao = -1;
+    $params = null;
+    foreach ($componentes as $c) {
+        $tipo = strtoupper((string) ($c['type'] ?? ''));
+        if ($tipo === 'BODY' && is_string($c['text'] ?? null)) {
+            preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $c['text'], $m);
+            $params = count(array_unique($m[1]));
+        }
+        if ($tipo === 'BUTTONS' && is_array($c['buttons'] ?? null)) {
+            foreach (array_values($c['buttons']) as $i => $b) {
+                if ($botao === -1 && strtoupper((string) ($b['type'] ?? '')) === 'URL' && str_contains((string) ($b['url'] ?? ''), '{{1}}')) {
+                    $botao = $i;
+                }
+            }
+        }
+    }
+    return ['botao' => $botao, 'params' => $params];
+}
+
+/**
+ * O que impede mandar $modelo (de mcp_rw_modelo) com a $estrutura que a Meta tem (mcp_rw_estrutura), ou null. Sem os
+ * componentes (null), não há o que conferir. Puro.
+ */
+function mcp_rw_estrutura_problema(array $estrutura, array $modelo): ?string
+{
+    if (($estrutura['botao'] ?? null) === -1) {
+        return $modelo['nome'] . ' na Meta não tem botão de link com {{1}}';
+    }
+    $params = $estrutura['params'] ?? null;
+    if ($params !== null && $params !== count($modelo['parametros'])) {
+        return $modelo['nome'] . " na Meta tem $params parâmetro(s) no texto, e a mensagem manda " . count($modelo['parametros']);
+    }
+    return null;
+}
+
+/**
  * A situação dos modelos que a rodada usa (MCP_RW_MODELOS_TODOS) na Meta: nome => 'APPROVED', outra situação, ou
- * 'ausente'. O WABA vem do número pela API da plataforma (no número gerenciado pela Kapso, o proxy da Meta não responde
- * o GET do número). Cache de 10 min (um cache gravado com outra lista de modelos não vale).
- * @return array{ok: bool, modelos: array<string, string>, erro: ?string}
+ * 'ausente'; e a estrutura de cada um (mcp_rw_estrutura: o índice do botão de URL e quantos parâmetros o texto tem), que
+ * a rodada usa para conferir a mensagem antes de mandar. O WABA vem do número pela API da plataforma (no número
+ * gerenciado pela Kapso, o proxy da Meta não responde o GET do número). Cache de 10 min (um cache gravado com outra
+ * lista de modelos não vale).
+ * @return array{ok: bool, modelos: array<string, string>, estrutura: array<string, array{botao: ?int, params: ?int}>, erro: ?string}
  */
 function mcp_rw_modelos(array $cfg, ?int $agora = null): array
 {
     $cache = mcp_rw_cache('rw_cache_modelos', null, $agora);
     if ($cache !== null && is_array($cache['m'] ?? null) && count($cache['m']) === count(MCP_RW_MODELOS_TODOS)) {
-        return ['ok' => true, 'modelos' => array_combine(MCP_RW_MODELOS_TODOS, array_map(static fn($s): string => (string) $s, $cache['m'])), 'erro' => null];
+        $estrutura = [];
+        foreach (MCP_RW_MODELOS_TODOS as $i => $nome) {
+            $b = $cache['b'][$i] ?? null;
+            $p = $cache['p'][$i] ?? null;
+            $estrutura[$nome] = ['botao' => is_int($b) ? $b : null, 'params' => is_int($p) ? $p : null];
+        }
+        return ['ok' => true, 'modelos' => array_combine(MCP_RW_MODELOS_TODOS, array_map(static fn($s): string => (string) $s, $cache['m'])),
+            'estrutura' => $estrutura, 'erro' => null];
     }
     [$status, $numero, $erro] = mcp_rw_kapso_pedir($cfg, 'GET', $cfg['base'] . '/platform/v1/whatsapp/phone_numbers/' . rawurlencode($cfg['numero_id']), null, 10);
     $d = is_array($numero['data'] ?? null) ? $numero['data'] : [];
@@ -800,20 +1038,22 @@ function mcp_rw_modelos(array $cfg, ?int $agora = null): array
         }
     }
     if ($waba === null) {
-        return ['ok' => false, 'modelos' => [], 'erro' => $erro ?? 'a Kapso não disse a conta (WABA) do número'];
+        return ['ok' => false, 'modelos' => [], 'estrutura' => [], 'erro' => $erro ?? 'a Kapso não disse a conta (WABA) do número'];
     }
     $situacao = array_fill_keys(MCP_RW_MODELOS_TODOS, 'ausente');
+    $estrutura = array_fill_keys(MCP_RW_MODELOS_TODOS, ['botao' => null, 'params' => null]);
     $depois = null;
     for ($pagina = 0; $pagina < 5; $pagina++) {
-        $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($waba) . '/message_templates?fields=name,status,language&limit=100' . ($depois ? '&after=' . rawurlencode($depois) : '');
+        $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($waba) . '/message_templates?fields=name,status,language,components&limit=100' . ($depois ? '&after=' . rawurlencode($depois) : '');
         [$status, $lista, $erro] = mcp_rw_kapso_pedir($cfg, 'GET', $url, null, 10);
         if ($erro !== null) {
-            return ['ok' => false, 'modelos' => [], 'erro' => $erro];
+            return ['ok' => false, 'modelos' => [], 'estrutura' => [], 'erro' => $erro];
         }
         foreach (is_array($lista['data'] ?? null) ? $lista['data'] : [] as $m) {
             $nome = (string) ($m['name'] ?? '');
             if (isset($situacao[$nome]) && ($m['language'] ?? 'pt_BR') === 'pt_BR' && $situacao[$nome] !== 'APPROVED') {
                 $situacao[$nome] = mb_substr(strtoupper((string) ($m['status'] ?? '')), 0, 12) ?: 'ausente';
+                $estrutura[$nome] = mcp_rw_estrutura($m['components'] ?? null);
             }
         }
         $depois = is_string($lista['paging']['cursors']['after'] ?? null) && !empty($lista['paging']['next']) ? $lista['paging']['cursors']['after'] : null;
@@ -821,8 +1061,9 @@ function mcp_rw_modelos(array $cfg, ?int $agora = null): array
             break;
         }
     }
-    mcp_rw_cache('rw_cache_modelos', ['m' => array_values($situacao)], $agora);
-    return ['ok' => true, 'modelos' => $situacao, 'erro' => null];
+    mcp_rw_cache('rw_cache_modelos', ['m' => array_values($situacao), 'b' => array_column(array_values($estrutura), 'botao'),
+        'p' => array_column(array_values($estrutura), 'params')], $agora);
+    return ['ok' => true, 'modelos' => $situacao, 'estrutura' => $estrutura, 'erro' => null];
 }
 
 /** Endereço público do webhook (é para cá que a Kapso manda entrega, leitura e respostas). */
@@ -908,7 +1149,7 @@ function mcp_rw_escola_base(): string
 }
 
 /** GET no PostgREST da escola com a chave secreta. [status (0 = rede), dados ou null]. Nada do corpo vai para log. */
-function mcp_rw_escola_get(string $url): array
+function mcp_rw_escola_get(string $url, int $tempo = MCP_RW_ESCOLA_TEMPO_S): array
 {
     $chave = (string) mcp_cfg('ESCOLA_API_TOKEN', '');
     $ch = curl_init($url);
@@ -916,7 +1157,7 @@ function mcp_rw_escola_get(string $url): array
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HTTPHEADER => ['Accept: application/json', 'apikey: ' . $chave, 'Authorization: Bearer ' . $chave],
         CURLOPT_CONNECTTIMEOUT => 4,
-        CURLOPT_TIMEOUT => MCP_RW_ESCOLA_TEMPO_S,
+        CURLOPT_TIMEOUT => max(1, $tempo),
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (in_array(parse_url($url, PHP_URL_HOST), ['127.0.0.1', 'localhost'], true) ? CURLPROTO_HTTP : 0),
     ]);
     $resposta = curl_exec($ch);
@@ -993,6 +1234,48 @@ function mcp_rw_escola_ler(int $desde, array $buscar): array
         }
     }
     return ['estado' => 'ok', 'erro' => null, 'usuarios' => array_values($porId)];
+}
+
+/**
+ * Nome, e-mail e telefone (DDD + número, só dígitos) do cadastro de uma referência de token, para o checkout
+ * pré-preencher. NUNCA o CPF. s<id>: a inscrição do checkout do site; i<hmac>: o importado de config-recuperacao.php;
+ * u<id>: a conta na plataforma da escola (com 4 s no máximo: a escola fora do ar devolve vazio, e o checkout segue com
+ * os campos vazios). Só as chaves com valor; [] se não achar.
+ */
+function mcp_rw_dados_da_ref(string $ref): array
+{
+    $linha = null;
+    if (preg_match('/^s(\d{1,10})$/', $ref, $m)) {
+        $stmt = mcp_db()->prepare('SELECT nome, email, telefone FROM mcp_inscricoes WHERE id = ?');
+        $stmt->execute([(int) $m[1]]);
+        $linha = $stmt->fetch() ?: null;
+    } elseif (str_starts_with($ref, 'i')) {
+        foreach (mcp_rw_importados() as $l) {
+            if (hash_equals(mcp_rw_importado_ref($l), $ref)) {
+                $linha = $l;
+                break;
+            }
+        }
+    } elseif (preg_match('/^u([A-Za-z0-9-]{1,64})$/', $ref, $m) && ($base = mcp_rw_escola_base()) !== '') {
+        [$status, $dados] = mcp_rw_escola_get($base . '/Usuario?select=nome,email,celular&limit=1&id=eq.' . rawurlencode($m[1]), 4);
+        $u = $status === 200 && is_array($dados[0] ?? null) ? $dados[0] : null;
+        $linha = $u !== null ? ['nome' => $u['nome'] ?? '', 'email' => $u['email'] ?? '', 'telefone' => $u['celular'] ?? ''] : null;
+    }
+    if (!is_array($linha)) {
+        return [];
+    }
+    $telefone = mcp_digitos((string) ($linha['telefone'] ?? ''));
+    $telefone = strlen($telefone) > 11 && str_starts_with($telefone, '55') ? substr($telefone, 2) : $telefone;
+    $nome = mcp_texto($linha['nome'] ?? '', 120);
+    // Nome colado sem espaço nenhum ("MariaAparecida", de um lead importado): separa antes de preencher o campo.
+    if (!str_contains($nome, ' ') && preg_match('/^\p{Lu}\p{Ll}{2,}\p{Lu}\p{Ll}/u', $nome)) {
+        $nome = (string) preg_replace('/(?<=\p{Ll})(?=\p{Lu})/u', ' ', $nome);
+    }
+    return array_filter([
+        'nome' => $nome,
+        'email' => mcp_rw_email(is_string($linha['email'] ?? null) ? $linha['email'] : ''),
+        'telefone' => in_array(strlen($telefone), [10, 11], true) ? $telefone : '',
+    ], static fn(string $v): bool => $v !== '');
 }
 
 // ----------------------------------------------------------------------------- banco
@@ -1209,11 +1492,80 @@ function mcp_rw_enviadas_24h(int $agora): int
 }
 
 /**
+ * Por que alguém que estava devido nesta rodada não recebeu (o código curto gravado no resumo da rodada, por pessoa) e o
+ * texto que o painel mostra. 'x' e 'f' levam o código da Meta depois de ":" ("x:132018").
+ */
+const MCP_RW_MOTIVOS_RODADA = [
+    'c' => 'grupo de controle: não recebe nada, de propósito',
+    'm' => 'o modelo desta mensagem não está aprovado na Meta (ou não confere com a mensagem); espera, sem perder a vez',
+    'r' => 'na conferência antes do envio, pagou ou pediu para parar',
+    'd' => 'esta etapa já estava gravada (outra rodada a mandou)',
+    't' => 'passou do teto por rodada; vai na rodada seguinte',
+    'T' => 'passou do teto em 24 h; vai quando a janela andar',
+    'h' => 'acabou o horário (20h) no meio da rodada; vai às 8h07',
+    'p' => 'a rodada parou antes desta pessoa (a Kapso ou a Meta recusaram tudo); vai na rodada seguinte',
+    'x' => 'a Meta recusou só esta mensagem; a etapa não foi gasta e vai de novo na rodada seguinte',
+    'f' => 'não chegou: o número não recebe WhatsApp; a sequência desta pessoa parou',
+    'P' => 'espera o lembrete do PIX (sai antes, para não chegarem dois e-mails seguidos)',
+    'k' => 'a cota da Resend ficou para os recibos (o site já mandou muitos e-mails em 24 h)',
+];
+// Quantas pessoas, no máximo, o resumo de uma rodada guarda (o detalhe de mcp_eventos tem 4000 caracteres).
+const MCP_RW_RESUMO_PESSOAS = 150;
+
+/**
+ * Grava o resumo de uma rodada em mcp_eventos ('recuperacao_rodada' ou 'recuperacao_rodada_email'): quando, os números, o
+ * motivo e, por pessoa (os 16 primeiros hex da chave HMAC: nenhum dado pessoal), por que quem estava devido não recebeu
+ * (MCP_RW_MOTIVOS_RODADA). É o que o painel mostra por pessoa ("Última rodada") e no cartão da última rodada: antes, o
+ * motivo só aparecia na saída da rotina, que a secretaria não lê. Nunca derruba a rodada.
+ */
+function mcp_rw_resumo_gravar(string $tipo, int $agora, array $r, array $pessoas): void
+{
+    $dados = ['em' => $agora] + array_intersect_key($r, array_flip(['enviados', 'falhas', 'pulados', 'vistos', 'controle', 'pulados_pix', 'esperando_pix', 'escola', 'motivo']));
+    $dados['p'] = array_slice($pessoas, 0, MCP_RW_RESUMO_PESSOAS, true);
+    $json = (string) json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    while (strlen($json) > 3900 && $dados['p']) {
+        $dados['p'] = array_slice($dados['p'], 0, intdiv(count($dados['p']), 2), true);
+        $json = (string) json_encode($dados, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+    mcp_registrar(null, $tipo, $json);
+}
+
+/** Os motivos de uma rodada contados, em poucas palavras, para a saída da rotina: "2 grupo de controle, 1 recusa só desta". */
+function mcp_rw_motivos_contagem(array $pessoas): string
+{
+    $curtos = ['c' => 'grupo de controle', 'm' => 'modelo sem aprovação', 'r' => 'pagou ou parou', 'd' => 'já gravada', 't' => 'teto da rodada', 'T' => 'teto de 24 h',
+        'h' => 'fim do horário', 'p' => 'rodada parada', 'x' => 'recusa só desta', 'f' => 'não chegou', 'P' => 'esperando o PIX', 'k' => 'cota da Resend'];
+    $n = [];
+    foreach ($pessoas as $codigo) {
+        $base = explode(':', (string) $codigo, 2)[0];
+        $n[$base] = ($n[$base] ?? 0) + 1;
+    }
+    return implode(', ', array_map(static fn(string $b, int $q): string => $q . ' ' . ($curtos[$b] ?? $b), array_keys($n), $n));
+}
+
+/** O último resumo de rodada gravado ($tipo: 'recuperacao_rodada' ou 'recuperacao_rodada_email'), ou null. */
+function mcp_rw_resumo_ultimo(string $tipo): ?array
+{
+    $stmt = mcp_db()->prepare('SELECT detalhe FROM mcp_eventos WHERE tipo = ? ORDER BY id DESC LIMIT 1');
+    $stmt->execute([$tipo]);
+    $dados = json_decode((string) $stmt->fetchColumn(), true);
+    return is_array($dados) && isset($dados['em']) ? $dados : null;
+}
+
+/** A chave curta de uma pessoa no resumo da rodada (os 16 primeiros hex do HMAC da chave principal). */
+function mcp_rw_chave_curta(array $pessoa): string
+{
+    return substr(mcp_rw_hmac((string) $pessoa['principal']), 0, 16);
+}
+
+/**
  * Uma rodada (api/lembretes.php, de hora em hora): manda as etapas devidas, até MCP_RW_POR_RODADA envios e
  * MCP_RW_POR_DIA em 24 h, e grava a linha etapa 0 de quem é do grupo de controle (controle: quantas). Nunca lança por
  * causa da Kapso nem da escola; erro de banco sobe para quem chama (lembretes.php registra e segue). carga: o público
  * lido nesta rodada (mcp_rw_carregar), quando foi lido, para a rodada do e-mail logo depois não perguntar à escola de novo.
- * @return array{enviados: int, falhas: int, pulados: int, vistos: int, controle: int, escola: string, motivo: ?string, carga?: array}
+ * pessoas: chave curta => motivo (MCP_RW_MOTIVOS_RODADA) de cada pessoa devida que não recebeu; o resumo vai para
+ * mcp_eventos (mcp_rw_resumo_gravar), menos nas rodadas fora do horário ou sem configuração, que não olham ninguém.
+ * @return array{enviados: int, falhas: int, pulados: int, vistos: int, controle: int, escola: string, motivo: ?string, pessoas: array, carga?: array}
  */
 function mcp_rw_rodar(?int $agora = null): array
 {
@@ -1222,9 +1574,10 @@ function mcp_rw_rodar(?int $agora = null): array
     // para o instante de cada envio, não para o início.
     $inicioReal = time();
     $agoraReal = static fn(): int => $agora + max(0, time() - $inicioReal);
-    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'vistos' => 0, 'controle' => 0, 'escola' => '-', 'motivo' => null];
+    $r = ['enviados' => 0, 'falhas' => 0, 'pulados' => 0, 'vistos' => 0, 'controle' => 0, 'escola' => '-', 'motivo' => null, 'pessoas' => []];
     $cfg = mcp_rw_kapso_config();
     if (!$cfg['ok']) {
+        // Sem a Kapso não há rodada (o painel já diz o que falta): nada a resumir, e nada gravado de hora em hora.
         $r['motivo'] = 'sem configuração (' . implode(', ', $cfg['falta']) . ')';
         return $r;
     }
@@ -1240,6 +1593,15 @@ function mcp_rw_rodar(?int $agora = null): array
         // nem entram na carga). Risco aceito: quem pagou só na plataforma da escola pode receber um lembrete indevido.
         $r['motivo'] = 'escola indisponível (' . $carga['escola']['erro'] . '); seguem só o site e os importados';
     }
+    $motivos = [];
+    $marcar = static function (array $p, string $codigo) use (&$motivos): void {
+        $motivos[mcp_rw_chave_curta($p)] = $codigo;
+    };
+    $terminar = static function () use (&$r, &$motivos, $agora): array {
+        $r['pessoas'] = $motivos;
+        mcp_rw_resumo_gravar('recuperacao_rodada', $agora, $r, $motivos);
+        return $r;
+    };
     $indice = mcp_rw_indice(mcp_rw_linhas());
     // As linhas do e-mail: o grupo de controle é um só para os dois canais, e quem se descadastrou do e-mail sai daqui
     // também. Sem a tabela do e-mail (migração adiada), segue só com o WhatsApp: o e-mail nunca derruba esta rodada.
@@ -1264,26 +1626,43 @@ function mcp_rw_rodar(?int $agora = null): array
             if (!isset($minhas[0])) {
                 $controle[] = $p;
             }
+            $marcar($p, 'c');
             continue;
         }
         $fila[] = [$proxima['devida_em'], $proxima['etapa'], $p];
     }
     if (!$fila && !$controle) {
-        return $r;
+        return $terminar();
     }
     // O cupom da 3ª é decidido uma vez por rodada (lê o banco: vagas do cupom; e o oferta.json: turma aberta).
     $oferta = array_filter($fila, static fn(array $f): bool => $f[1] === 3 && $f[2]['curso_slug'] === MCP_RW_CUPOM_CURSO) ? mcp_rw_oferta_cupom($agora) : null;
-    $fila = array_map(static fn(array $f): array => [$f[0], $f[1], $f[2], mcp_rw_modelo($f[1], $f[2], $oferta)], $fila);
+    // O link de cada pessoa leva o token do pré-preenchimento (o checkout já abre com nome, e-mail e telefone).
+    $fila = array_map(static fn(array $f): array => [$f[0], $f[1], $f[2], mcp_rw_modelo($f[1], $f[2], $oferta, mcp_rw_token((string) ($f[2]['dados_ref'] ?? ''), $agora))], $fila);
     // Modelo não aprovado (ou pausado) não é tentado: a Meta recusaria e a etapa ficaria esperando à toa. Vale o modelo
     // escolhido para cada pessoa. Se a Kapso não respondeu a lista agora, segue: o erro do envio também para a rodada sem
-    // gastar a etapa.
+    // gastar a etapa. Com os componentes do modelo na lista, a mensagem é conferida antes (o índice do botão de URL vem
+    // da Meta; parâmetros a mais ou a menos seguram o modelo, em vez de a Meta recusar uma por uma).
     $modelos = mcp_rw_modelos($cfg, $agora);
     $aprovado = static fn(string $nome): bool => !$modelos['ok'] || ($modelos['modelos'][$nome] ?? '') === 'APPROVED';
+    $problemas = [];
+    foreach ($fila as $i => $f) {
+        $estrutura = $modelos['estrutura'][$f[3]['nome']] ?? ['botao' => null, 'params' => null];
+        $fila[$i][3]['botao'] = $estrutura['botao'];
+        if (($problema = mcp_rw_estrutura_problema($estrutura, $f[3])) !== null) {
+            $problemas[$problema] = true;
+        }
+    }
+    $usavel = static fn(array $f): bool => $aprovado($f[3]['nome']) && mcp_rw_estrutura_problema($modelos['estrutura'][$f[3]['nome']] ?? [], $f[3]) === null;
     // O motivo diz só os modelos que seguraram alguém nesta rodada (um modelo que ninguém usaria agora não importa).
     $faltam = array_values(array_unique(array_map(static fn(array $f): string => $f[3]['nome'], array_filter($fila, static fn(array $f): bool => !$aprovado($f[3]['nome'])))));
-    $fila = array_values(array_filter($fila, static fn(array $f): bool => $aprovado($f[3]['nome'])));
-    if ($faltam) {
-        $r['motivo'] = 'modelo sem aprovação: ' . implode(', ', $faltam);
+    foreach ($fila as $f) {
+        if (!$usavel($f)) {
+            $marcar($f[2], 'm');
+        }
+    }
+    $fila = array_values(array_filter($fila, $usavel));
+    if ($faltam || $problemas) {
+        $r['motivo'] = implode('; ', array_filter([$faltam ? 'modelo sem aprovação: ' . implode(', ', $faltam) : '', implode('; ', array_keys($problemas))]));
     }
     $db = mcp_db();
     // Grupo de controle: só a linha etapa 0, sem a Kapso e fora dos tetos. Gravada quando a 1ª mensagem sairia de
@@ -1304,26 +1683,39 @@ function mcp_rw_rodar(?int $agora = null): array
         $r['controle'] += $grava->rowCount();
     }
     if (!$fila) {
-        return $r;
+        return $terminar();
     }
     usort($fila, static fn(array $a, array $b): int => [$a[0], $a[2]['principal']] <=> [$b[0], $b[2]['principal']]);
     $noDia = mcp_rw_enviadas_24h($agora);
     $incertosSeguidos = 0;
+    $ultimoErroPessoa = null;
+    $parou = null; // o código de quem ficou na fila quando a rodada parou: t, T, h ou p
     foreach ($fila as [, $etapa, $p, $modelo]) {
+        if ($parou !== null) {
+            $marcar($p, $parou);
+            continue;
+        }
         if ($r['enviados'] + $r['falhas'] >= MCP_RW_POR_RODADA) {
-            break;
+            $parou = 't';
+            $marcar($p, $parou);
+            continue;
         }
         if ($noDia >= MCP_RW_POR_DIA) {
             $r['motivo'] = 'teto de ' . MCP_RW_POR_DIA . ' mensagens em 24 h';
-            break;
+            $parou = 'T';
+            $marcar($p, $parou);
+            continue;
         }
         $agoraEnvio = $agoraReal();
         if (!mcp_rw_no_horario($agoraEnvio)) {
             $r['motivo'] = 'fora do horário (8h–20h de Brasília)';
-            break;
+            $parou = 'h';
+            $marcar($p, $parou);
+            continue;
         }
         if (mcp_rw_reconferir($p) !== null) {
             $r['pulados']++;
+            $marcar($p, 'r');
             continue;
         }
         $chave = mcp_rw_hmac($p['principal']);
@@ -1337,22 +1729,39 @@ function mcp_rw_rodar(?int $agora = null): array
             $outras ? implode(' ', $outras) : null, $quando, $quando]);
         if ($reserva->rowCount() !== 1) {
             $r['pulados']++;
+            $marcar($p, 'd');
             continue;
         }
         $id = (int) $db->lastInsertId();
         $corpo = mcp_rw_corpo_envio((string) $p['numero'], $modelo);
         $envio = mcp_rw_kapso_enviar($cfg, $corpo);
         if (!$envio['ok'] && $envio['transitorio']) {
-            // A Kapso (ou a Meta) não está aceitando agora: a etapa não foi gasta e o resto espera a próxima rodada.
+            // Não saiu, e a culpa não é de quem recebe: a etapa não é gasta.
             $db->prepare('DELETE FROM mcp_recuperacao_whatsapp WHERE id = ?')->execute([$id]);
             $r['falhas']++;
+            // Erro que pode ser só desta pessoa: ela fica para a rodada seguinte e a fila anda. O mesmo erro duas vezes
+            // seguidas não é da pessoa (modelo, parâmetro de todos): a rodada para, como um erro global.
+            $repetido = $envio['escopo'] === 'pessoa' && $ultimoErroPessoa === $envio['codigo'];
+            if ($envio['escopo'] === 'pessoa' && !$repetido) {
+                $ultimoErroPessoa = $envio['codigo'];
+                $marcar($p, 'x:' . $envio['codigo']);
+                error_log('[matricula] recuperação por WhatsApp: a Meta recusou uma mensagem (' . $envio['erro'] . '); a pessoa fica para a próxima rodada');
+                continue;
+            }
+            // A Kapso (ou a Meta) não está aceitando agora: o resto espera a próxima rodada.
             $r['motivo'] = 'Kapso: ' . $envio['erro'];
+            $parou = 'p';
+            $marcar($p, $envio['escopo'] === 'pessoa' ? 'x:' . $envio['codigo'] : 'p');
             error_log('[matricula] recuperação por WhatsApp parada nesta rodada: ' . $envio['erro']);
-            break;
+            continue;
         }
+        $ultimoErroPessoa = null;
         $db->prepare('UPDATE mcp_recuperacao_whatsapp SET status = ?, provedor_id = ?, erro = ?, atualizado_em = ? WHERE id = ?')
             ->execute([$envio['ok'] ? 'enviado' : 'falhou', $envio['id'], $envio['erro'] !== null ? mb_substr($envio['erro'], 0, 255) : null, gmdate('Y-m-d H:i:s', $agoraReal()), $id]);
         $envio['ok'] ? $r['enviados']++ : $r['falhas']++;
+        if (!$envio['ok']) {
+            $marcar($p, 'f:' . $envio['codigo']);
+        }
         $noDia += $envio['ok'] ? 1 : 0;
         // A linha nova entra no índice: se a mesma pessoa aparecesse de novo nesta rodada, não receberia outra etapa.
         foreach (array_merge([$chave, $telefone], $outras) as $k) {
@@ -1362,11 +1771,11 @@ function mcp_rw_rodar(?int $agora = null): array
         $incertosSeguidos = $envio['incerto'] ? $incertosSeguidos + 1 : 0;
         if ($envio['incerto'] && ($envio['parar'] || $incertosSeguidos >= 2)) {
             $r['motivo'] = 'Kapso: ' . $envio['erro'];
+            $parou = 'p';
             error_log('[matricula] recuperação por WhatsApp parada nesta rodada: ' . $envio['erro']);
-            break;
         }
     }
-    return $r;
+    return $terminar();
 }
 
 // ----------------------------------------------------------------------------- webhook da Kapso (puro + banco)
@@ -1655,22 +2064,36 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
         $m['email']['no_fluxo'] += !$controle && $proximaEmail !== null ? 1 : 0;
         $modelo = $controle || $proxima === null ? null : mcp_rw_modelo($proxima['etapa'], $p, $oferta);
         // A prévia do e-mail com um link de descadastro de exemplo (o de verdade depende da linha gravada no envio).
-        $email = $controle || $proximaEmail === null ? null : mcp_rw_email_montar($proximaEmail['etapa'], $p, $oferta, mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?rw=…');
+        $email = $controle || $proximaEmail === null ? null : mcp_rw_email_montar($proximaEmail['etapa'], $p, $oferta, mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?rw=…',
+            mcp_rw_token((string) ($p['dados_ref'] ?? ''), $agora));
         $respostas = array_values(array_filter(array_map(static fn(array $l): string => (string) ($l['resposta'] ?? ''), $minhas)));
         $enviadas = array_keys(array_filter($minhas, static fn(array $l): bool => $l['status'] === 'enviado'));
         $enviadasEmail = array_keys(array_filter($minhasEmail, static fn(array $l, int $e): bool => $e >= 1 && $l['status'] === 'enviado', ARRAY_FILTER_USE_BOTH));
         // Quem é do grupo de controle não tem próxima mensagem: nunca recebe.
         $quando = static fn(?array $px): ?int => $controle || $px === null ? null : mcp_rw_ajustar_horario(max($px['devida_em'], $agora));
+        // Por que o canal acabou para quem ainda está no fluxo: uma etapa não chegou (número sem WhatsApp, e-mail recusado)
+        // ou já foram as 3. Sem isso o painel dizia só "encerrado".
+        $fim = static function (bool $noCanal, ?string $motivo, ?array $px, array $doCanal): ?string {
+            if (!$noCanal || $px !== null) {
+                return $motivo;
+            }
+            $falhou = array_filter($doCanal, static fn(array $l, int $e): bool => $e >= 1 && $l['status'] === 'falhou' && ($l['erro'] ?? null) !== 'enviando', ARRAY_FILTER_USE_BOTH);
+            return $falhou ? 'falhou' : 'completo';
+        };
+        $falhaWhatsapp = array_values(array_filter($minhas, static fn(array $l): bool => (int) $l['etapa'] >= 1 && $l['status'] === 'falhou' && ($l['erro'] ?? null) !== 'enviando'));
         $m['lista'][] = [
+            // A chave curta (sem dado pessoal): é por ela que o painel acha a pessoa no resumo da última rodada.
+            'chave' => mcp_rw_chave_curta($p),
             'nome' => $p['nome'], 'origem' => $p['origem'], 'curso' => $p['curso_nome'], 'celular' => mcp_whatsapp_mascarado($p['numero']),
             'email' => $p['email'] !== '' ? mcp_email_mascarado($p['email']) : '',
             'etapa' => $enviadas ? max($enviadas) : 0, 'controle' => $controle,
             'proxima' => $quando($proxima), 'proxima_etapa' => $proxima['etapa'] ?? null, 'modelo' => $modelo['nome'] ?? null, 'previa' => $modelo['previa'] ?? null,
             'respostas' => $respostas,
-            'whatsapp' => ['no_fluxo' => $proxima !== null, 'enviadas' => count(array_filter($enviadas, static fn(int $e): bool => $e >= 1)), 'motivo' => $p['motivo']],
+            'whatsapp' => ['no_fluxo' => $proxima !== null, 'enviadas' => count(array_filter($enviadas, static fn(int $e): bool => $e >= 1)),
+                'motivo' => $fim($p['no_fluxo'], $p['motivo'], $proxima, $minhas), 'erro' => isset($falhaWhatsapp[0]) ? (string) $falhaWhatsapp[0]['erro'] : null],
             'canal_email' => ['no_fluxo' => $proximaEmail !== null, 'enviadas' => count($enviadasEmail), 'pulado_pix' => ($minhasEmail[1]['status'] ?? '') === 'pulado_pix',
                 'proxima' => $quando($proximaEmail), 'proxima_etapa' => $proximaEmail['etapa'] ?? null, 'modelo' => $email['modelo'] ?? null,
-                'assunto' => $email['assunto'] ?? null, 'previa' => $email['texto'] ?? null, 'motivo' => $p['motivo_email']],
+                'assunto' => $email['assunto'] ?? null, 'previa' => $email['texto'] ?? null, 'motivo' => $fim($p['no_fluxo_email'], $p['motivo_email'], $proximaEmail, $minhasEmail)],
         ];
     }
     $m['taxa'] = $m['receberam'] > 0 ? (float) ($m['recuperadas'] / $m['receberam']) : null;
