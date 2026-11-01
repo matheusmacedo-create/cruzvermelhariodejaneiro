@@ -154,7 +154,18 @@ if ($sessao === null) {
 $cfg = mcp_rw_kapso_config();
 $emailCfg = mcp_rw_email_config();
 
-// ----------------------------------------------------------------------------- a única ação: ligar o webhook
+// ----------------------------------------------------------------------------- as ações: ligar o webhook e "já pagou na escola"
+if ($metodo === 'POST' && ($_POST['acao'] ?? '') === 'mp_pagou_escola') {
+    // Matrícula pendente: a secretaria marca que a pessoa pagou a matrícula na escola (com a plataforma da escola fora do
+    // ar, o site não tem como saber). A inscrição sai da régua e conta como paga. Token do formulário por inscrição.
+    $id = (int) ($_POST['id'] ?? 0);
+    if ($id <= 0 || !hash_equals(mcp_painel_csrf($sessao, 'mp_pagou', $id), mcp_texto($_POST['t'] ?? '', 40))) {
+        rw_pagina('<div class="aviso erro">O formulário venceu ou não é desta sessão. <a href="recuperacao.php">Abra a página de novo</a> e tente outra vez.</div>', $sessao, 403);
+    }
+    mcp_mp_marcar_pago_escola($id, $sessao);
+    header('Location: recuperacao.php?mp=ok#matricula', true, 303);
+    exit;
+}
 if ($metodo === 'POST') {
     $token = mcp_texto($_POST['t'] ?? '', 40);
     if (($_POST['acao'] ?? '') !== 'ligar_webhook' || !hash_equals(mcp_painel_csrf($sessao, 'rw_webhook', 0), $token)) {
@@ -181,6 +192,13 @@ try {
     $stmtLinks = mcp_db()->prepare("SELECT LEFT(detalhe, 1) AS fonte, COUNT(*) AS n FROM mcp_eventos WHERE tipo = 'recuperacao_link' AND criado_em > ? GROUP BY LEFT(detalhe, 1)");
     $stmtLinks->execute([gmdate('Y-m-d H:i:s', $agora - 86400)]);
     $aberturas = array_map('intval', array_column($stmtLinks->fetchAll(), 'n', 'fonte'));
+    // Matrícula pendente (lib/matricula_pendente.php): o público, os números e a última rodada.
+    $cargaMp = mcp_mp_carregar($agora);
+    $mp = mcp_mp_metricas($cargaMp, $agora, mcp_mp_pelo_link($agora - MCP_MP_JANELA_DIAS * 86400));
+    $stmtMp = mcp_db()->prepare("SELECT detalhe FROM mcp_eventos WHERE tipo = 'matricula_rodada' ORDER BY id DESC LIMIT 1");
+    $stmtMp->execute();
+    $resumoMp = json_decode((string) $stmtMp->fetchColumn(), true);
+    $resumoMp = is_array($resumoMp) && isset($resumoMp['em']) ? $resumoMp : null;
 } catch (PDOException $e) {
     // Logo depois de publicar, a tabela nova pode ainda não existir (a migração do db.php é adiada por 60 s quando uma
     // transação longa segura o banco): a página diz isso, em vez de um erro 500.
@@ -190,7 +208,9 @@ try {
 }
 // O cupom da 3ª (Primeiros Socorros Básico) vale agora? Decide o modelo da próxima mensagem de cada pessoa na lista.
 $oferta = mcp_rw_oferta_cupom($agora);
-$m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora, $oferta, $carga['pelo_link'], $linhasEmail, $carga['pelo_link_email']);
+// A lista de modelos da Meta (cache de 10 min): com ela, a lista de pessoas mostra o modelo da família que vai sair.
+$modelos = $cfg['ok'] ? mcp_rw_modelos($cfg, $agora) : null;
+$m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora, $oferta, $carga['pelo_link'], $linhasEmail, $carga['pelo_link_email'], $modelos);
 
 $pct = static fn(?float $t): string => $t === null ? '—' : number_format($t * 100, 1, ',', '.') . '%';
 $plural = static fn(int $n, string $um, string $varios): string => $n . ' ' . ($n === 1 ? $um : $varios);
@@ -208,17 +228,24 @@ if (!$cfg['ok']) {
 $webhook = 'desconhecido';
 $modelosLinhas = [];
 $naoAprovados = [];
-if ($cfg['ok']) {
-    $modelos = mcp_rw_modelos($cfg, $agora);
-    $usos = ['rec_inscricao_1_v2' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
-        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom'];
+$naoAprovadosMp = [];
+if ($cfg['ok'] && $modelos !== null) {
+    $usos = ['rec_inscricao_1' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
+        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom', 'mat_pendente_1' => 'matrícula pendente, 1ª', 'mat_pendente_2' => 'matrícula pendente, 2ª'];
     if (!$modelos['ok']) {
         $problemas[] = 'A Kapso não respondeu a lista de modelos agora (' . $modelos['erro'] . '). Tente de novo em alguns minutos.';
     } else {
-        foreach ($modelos['modelos'] as $nome => $sit) {
-            $modelosLinhas[] = [$nome, $usos[$nome] ?? '', $sit];
+        // Por família (01/11/2026): a versão que vai sair (a de maior versão aprovada como utilidade; senão a aprovada de
+        // qualquer categoria) e as outras que a Meta tem. Uma família sem nenhuma aprovada segura só as suas mensagens.
+        foreach (MCP_RW_FAMILIAS as $familia => $padrao) {
+            $escolhido = mcp_rw_escolher_modelo(['nome' => $padrao, 'parametros' => []], ['estrutura' => []] + $modelos)['nome'];
+            $sit = $modelos['modelos'][$escolhido] ?? 'ausente';
+            $outros = array_values(array_filter(array_keys($modelos['modelos']), static fn(string $n): bool => mcp_rw_familia($n) === $familia && $n !== $escolhido));
+            $modelosLinhas[] = [$escolhido, $usos[$familia] ?? '', $sit, $modelos['categorias'][$escolhido] ?? '',
+                implode(', ', array_map(static fn(string $n): string => $n . ' (' . strtolower($modelos['modelos'][$n]) . ($modelos['categorias'][$n] ?? '' ? ', ' . strtolower($modelos['categorias'][$n]) : '') . ')', $outros))];
             if ($sit !== 'APPROVED') {
-                $naoAprovados[] = ($usos[$nome] ?? $nome) . ($sit === 'ausente' ? ' (modelo não existe)' : '');
+                $texto = ($usos[$familia] ?? $padrao) . ($sit === 'ausente' ? ' (modelo não existe)' : '');
+                str_starts_with($familia, 'mat_') ? $naoAprovadosMp[] = $texto : $naoAprovados[] = $texto;
             }
         }
     }
@@ -261,7 +288,7 @@ $okItens[] = $oferta !== null
 
 // O estado junta os dois canais: o e-mail não depende da Kapso nem da Meta, então um problema só do WhatsApp com o e-mail
 // ligado é "só o e-mail rodando", e não "Parado". A escola fora não para nada: seguem o site e os importados (aviso acima).
-$todosEsperando = $naoAprovados && count($naoAprovados) === count($modelosLinhas);
+$todosEsperando = $naoAprovados && count($naoAprovados) === count($modelosLinhas) - 2;
 if ($problemas && !$emailCfg['ok']) {
     $estado = ['nao', 'Parado'];
 } elseif ($problemas) {
@@ -276,7 +303,7 @@ if ($problemas && !$emailCfg['ok']) {
 
 // ----------------------------------------------------------------------------- cabeçalho
 $corpo = '<div class="titulo"><div><h1>Recuperação por WhatsApp e e-mail</h1><p class="sub">3 mensagens e 3 e-mails automáticos para quem se cadastrou e não pagou · '
-    . '1 h, 24 h e 72 h depois · das 8h às 20h</p></div><span class="estado ' . $estado[0] . '">' . rw_e($estado[1]) . '</span></div>';
+    . '1 h (30 min no WhatsApp de quem gerou PIX), 24 h e 72 h depois · das 8h às 20h · e a matrícula pendente de quem pagou só a taxa</p></div><span class="estado ' . $estado[0] . '">' . rw_e($estado[1]) . '</span></div>';
 $retorno = mcp_texto($_GET['webhook'] ?? '', 10);
 if ($retorno === 'ok') {
     $corpo .= '<div class="aviso ok" role="status">Pronto: a Kapso vai mandar a entrega, a leitura e as respostas para o site.</div>';
@@ -299,6 +326,101 @@ if ($problemas || $naoAprovados || $avisosEmail) {
     }
     $corpo .= '</div>';
 }
+
+// ----------------------------------------------------------------------------- matrícula pendente
+// Quem pagou só a taxa e ainda não pagou a matrícula (lib/matricula_pendente.php): 2 mensagens e 2 e-mails, sem grupo de
+// controle. Primeiro na página: é o fluxo mais importante agora, e tem data de aula.
+$wa = $mp['enviadas']['whatsapp'];
+$ema = $mp['enviadas']['email'];
+$corpo .= '<section class="cartao destaque" id="matricula"><div class="cab"><div><span class="rotulo">Pagou a inscrição, falta a matrícula</span>'
+    . '<b class="hora">Matrícula pendente</b></div><div class="total"><b>' . $mp['pendentes'] . '</b><span>' . ($mp['pendentes'] === 1 ? 'aluno com a matrícula em aberto' : 'alunos com a matrícula em aberto')
+    . '</span></div></div>';
+if (mcp_texto($_GET['mp'] ?? '', 4) === 'ok') {
+    $corpo .= '<div class="aviso ok" role="status">Pronto: marcado como pago na escola. Essa pessoa não recebe mais os lembretes da matrícula.</div>';
+}
+$avisosMp = [];
+if ($cargaMp['escola']['estado'] === 'indisponivel') {
+    $avisosMp[] = 'A plataforma da escola não respondeu (' . $cargaMp['escola']['erro'] . '): o site não sabe quem pagou a matrícula na escola. Quem pagou lá pode receber um lembrete; use "Já pagou na escola" na lista para parar.';
+} elseif ($cargaMp['escola']['estado'] === 'desligada') {
+    $avisosMp[] = 'Plataforma da escola desligada: o site só sabe das matrículas pagas pelo site. Quem pagou na escola: use "Já pagou na escola" na lista.';
+}
+if ($naoAprovadosMp) {
+    $avisosMp[] = 'Esperando a Meta aprovar: ' . implode(', ', $naoAprovadosMp) . '. Os e-mails seguem; o WhatsApp espera, sem perder a vez.';
+}
+if (!$cfg['ok']) {
+    $avisosMp[] = 'Sem a Kapso configurada: só os e-mails saem.';
+}
+if (!$emailCfg['ok']) {
+    $avisosMp[] = 'Sem a RESEND_API_KEY: os e-mails da matrícula não saem.';
+}
+if ($avisosMp) {
+    $corpo .= '<div class="aviso atencao" role="status"><ul>' . implode('', array_map(static fn(string $x): string => '<li>' . rw_e($x) . '</li>', $avisosMp)) . '</ul></div>';
+}
+$corpo .= '<ol class="funil" style="margin-top:14px">'
+    . '<li><span>Em aberto agora</span><b>' . $mp['pendentes'] . '</b><small>taxa paga, matrícula não, turma marcada' . ($mp['sem_turma'] > 0 ? ' · ' . $mp['sem_turma'] . ' sem data de turma' : '') . '</small></li>'
+    . '<li><span>1ª mensagem</span><b>' . ($wa[1] + $ema[1]) . '</b><small>' . $wa[1] . ' WhatsApp · ' . $ema[1] . ' e-mail</small></li>'
+    . '<li><span>2ª mensagem</span><b>' . ($wa[2] + $ema[2]) . '</b><small>' . $wa[2] . ' WhatsApp · ' . $ema[2] . ' e-mail (véspera ou 48 h antes)</small></li>'
+    . '<li><span>Receberam</span><b>' . $mp['receberam'] . '</b><small>alunos com ao menos 1 mensagem</small></li>'
+    . '<li class="fim"><span>Pagaram depois</span><b>' . $mp['pagaram_depois'] . '</b>' . ($mp['receberam'] > 0 ? '<em>' . rw_e($pct($mp['pagaram_depois'] / $mp['receberam'])) . '</em>' : '')
+    . '<small>a matrícula, depois da 1ª mensagem</small></li></ol>';
+$peloLinkMp = array_sum($mp['pelo_link']['whatsapp']) + array_sum($mp['pelo_link']['email']);
+$corpo .= '<p class="nota">Pagaram depois da mensagem: ' . $mp['depois_como']['site'] . ' pelo site (' . $peloLinkMp . ' pelo botão de uma mensagem: '
+    . ($mp['pelo_link']['whatsapp']['mat1'] + $mp['pelo_link']['whatsapp']['mat2']) . ' WhatsApp, ' . ($mp['pelo_link']['email']['mat1'] + $mp['pelo_link']['email']['mat2']) . ' e-mail), '
+    . $mp['depois_como']['escola'] . ' na escola (pela plataforma), ' . $mp['depois_como']['painel'] . ' marcados aqui como "já pagou na escola"'
+    . ($mp['depois_como']['completa'] > 0 ? ', ' . $mp['depois_como']['completa'] . ' comprando de novo com a matrícula' : '')
+    . ($mp['mediana_horas'] !== null ? '. Mediana: ' . number_format($mp['mediana_horas'], 1, ',', '.') . ' h entre a 1ª mensagem e o pagamento' : '')
+    . '. Sem grupo de controle: a pessoa já é aluna e precisa pagar para entrar na aula.'
+    . ($mp['turma_passou'] > 0 ? ' ' . $plural($mp['turma_passou'], 'turma já começou', 'turmas já começaram') . ' sem a matrícula paga (não recebem mais).' : '') . '</p>';
+if ($resumoMp !== null) {
+    $contagem = [];
+    foreach ((array) ($resumoMp['p'] ?? []) as $codigo) {
+        $base = explode(':', (string) $codigo, 2)[0];
+        $contagem[$base] = ($contagem[$base] ?? 0) + 1;
+    }
+    $partes = [];
+    foreach ($contagem as $base => $n) {
+        $partes[] = $n . ' — ' . (MCP_MP_MOTIVOS_RODADA[$base] ?? $base);
+    }
+    $corpo .= '<p class="nota">Última rodada (' . rw_e(mb_strtolower(rw_quando((int) $resumoMp['em']))) . '): ' . (int) ($resumoMp['w']['enviados'] ?? 0) . ' WhatsApp e '
+        . (int) ($resumoMp['e']['enviados'] ?? 0) . ' e-mail' . ((string) ($resumoMp['motivo'] ?? '') !== '' ? '. ' . rw_e((string) $resumoMp['motivo']) : '')
+        . ($partes ? '. Devidos que não receberam: ' . rw_e(implode('; ', $partes)) : '') . '.</p>';
+}
+if (!$mp['lista']) {
+    $corpo .= '<p class="vazio">Ninguém com a matrícula em aberto agora.</p>';
+} else {
+    $motivoMp = static fn(?string $x, string $sem): string => match ($x) {
+        'sem_celular', 'sem_email' => $sem, 'bloqueou' => 'bloqueado', 'descadastrou' => 'pediu para parar', default => 'encerrado',
+    };
+    $selo = static function (string $classe, string $rotulo, array $c, string $sem) use ($motivoMp): string {
+        $fora = $c['motivo'] !== null || ($c['proxima'] === null && $c['enviadas'] < 2);
+        $texto = $c['motivo'] !== null ? ($c['enviadas'] > 0 ? $c['enviadas'] . ' de 2 · ' : '') . $motivoMp($c['motivo'], $sem) : $c['enviadas'] . ' de 2';
+        return '<span class="canal ' . $classe . ($fora ? ' fora' : '') . '"><i>' . $rotulo . '</i>' . rw_e($texto) . '</span>';
+    };
+    $linhasMp = '';
+    foreach (array_slice($mp['lista'], 0, MCP_RW_POR_PAGINA) as $p) {
+        $proximaMp = '';
+        foreach (['whatsapp' => 'WhatsApp', 'canal_email' => 'E-mail'] as $k => $rotulo) {
+            $px = $p[$k]['proxima'];
+            $proximaMp .= $px !== null ? '<div>' . $rotulo . ': ' . rw_e($px['etapa'] . 'ª · ' . rw_quando($px['quando'])) . '</div>' : '';
+        }
+        $respostasMp = implode('', array_map(static fn(string $r): string => '<q>' . rw_e($r) . '</q>', $p['respostas']));
+        $linhasMp .= '<tr><td><b>' . rw_e($p['nome']) . '</b><small>' . implode(' · ', array_filter([rw_e($p['celular']), rw_e($p['email'])])) . '</small>' . $respostasMp . '</td>'
+            . '<td>' . rw_e($p['curso']) . '<small>turma de ' . rw_e($p['turma']) . '</small></td>'
+            . '<td><span class="canais">' . $selo('wa', 'WhatsApp', $p['whatsapp'], 'sem celular') . $selo('em', 'E-mail', $p['canal_email'], 'sem e-mail') . '</span></td>'
+            . '<td>' . ($proximaMp !== '' ? $proximaMp : '<span class="mudo">—</span>') . '</td>'
+            . '<td><form method="post" action="recuperacao.php"><input type="hidden" name="acao" value="mp_pagou_escola"><input type="hidden" name="id" value="' . (int) $p['inscricao_id'] . '">'
+            . '<input type="hidden" name="t" value="' . rw_e(mcp_painel_csrf($sessao, 'mp_pagou', (int) $p['inscricao_id'])) . '"><button class="btn" type="submit" style="border-color:var(--line)">Já pagou na escola</button></form></td></tr>';
+    }
+    $corpo .= '<div class="rolar"><table class="pessoas"><thead><tr><th scope="col">Aluno</th><th scope="col">Curso</th><th scope="col">Enviadas</th><th scope="col">Próxima</th><th scope="col">Na escola</th></tr></thead><tbody>'
+        . $linhasMp . '</tbody></table></div>'
+        . (count($mp['lista']) > MCP_RW_POR_PAGINA ? '<p class="nota">Mostrando as ' . MCP_RW_POR_PAGINA . ' turmas mais próximas de ' . count($mp['lista']) . '.</p>' : '');
+}
+$corpo .= '<details><summary>Como funciona</summary><p>Quem pagou só a taxa de inscrição (o plano padrão do checkout) tem a vaga, mas a entrada na aula depende da matrícula. '
+    . 'A 1ª mensagem (WhatsApp mat_pendente_1 e um e-mail) sai 1 h depois da confirmação da taxa; a 2ª (mat_pendente_2 e outro e-mail), na véspera da turma, às 10h, ou 48 h antes, se a turma está a mais de '
+    . MCP_MP_LONGE_DIAS . ' dias da taxa. Se a 2ª já chegou, vai só ela; nada sai a menos de 1 h do início, nem depois. Só das 8h às 20h.</p>'
+    . '<p>O botão leva à página de pagar a matrícula, que cobra só a matrícula da inscrição (PIX ou cartão à vista) com os dados que a pessoa já deu. '
+    . 'Paga, o aluno recebe o comprovante e a secretaria recebe um aviso para marcar a matrícula como paga na plataforma da escola. Quem já pagou (no site, na escola pela plataforma ou marcado aqui), bloqueou o canal ou pediu para parar não recebe. '
+    . 'As mensagens contam no mesmo teto diário da recuperação (WhatsApp ' . MCP_RW_POR_DIA . ' e e-mail ' . MCP_RW_EMAIL_POR_DIA . ' em 24 h) e saem antes dela.</p></details></section>';
 
 // ----------------------------------------------------------------------------- próximo disparo
 // A mesma conta da rotina (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; o grupo de controle nunca
@@ -338,7 +460,7 @@ if (!$naRodada) {
         $etapa = $pessoas[0]['proxima_etapa'];
         $sit = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
         $selo = $sit === 'APPROVED' ? rw_selo('ok', 'Aprovado') : ($sit === null ? rw_selo('talvez', 'Sem resposta') : rw_selo('talvez', 'Esperando a Meta'));
-        $cupom = $nomeModelo === 'ps_cupom_oferta' ? ' com cupom' : '';
+        $cupom = mcp_rw_familia($nomeModelo) === 'ps_cupom_oferta' ? ' com cupom' : '';
         $nomes = '';
         foreach ($pessoas as $p) {
             $nomes .= '<li><b>' . rw_e($p['nome']) . '</b><span>' . rw_e($p['curso']) . ' · ' . $origemNome($p['origem']) . ' · ' . rw_e($p['celular']) . '</span></li>';
@@ -504,7 +626,7 @@ if (!$nessa) {
         if ($p['controle']) {
             $proxima = rw_selo('talvez', 'Grupo de controle') . '<small>não recebe</small>';
         } else {
-            $proxima = ($p['proxima'] !== null ? '<div>WhatsApp: ' . rw_e($p['proxima_etapa'] . 'ª · ' . rw_quando($p['proxima'])) . ($p['modelo'] === 'ps_cupom_oferta' ? ' <small>com cupom</small>' : '') . '</div>' : '')
+            $proxima = ($p['proxima'] !== null ? '<div>WhatsApp: ' . rw_e($p['proxima_etapa'] . 'ª · ' . rw_quando($p['proxima'])) . (mcp_rw_familia((string) $p['modelo']) === 'ps_cupom_oferta' ? ' <small>com cupom</small>' : '') . '</div>' : '')
                 . ($em['proxima'] !== null ? '<div>E-mail: ' . rw_e($em['proxima_etapa'] . 'º · ' . rw_quando($em['proxima'])) . ($em['modelo'] === 'rec3cupom' ? ' <small>com cupom</small>' : '') . '</div>' : '');
         }
         $contatos = implode(' · ', array_filter([rw_e($p['celular']), rw_e($p['email']), $origemNome($p['origem'])]));
@@ -567,8 +689,9 @@ foreach ($m['cursos'] as $nome => $c) {
     $porCursoT[] = [(string) $nome, $c['pessoas'], $c['mensagens'], $c['recuperadas']];
 }
 $modelosT = [];
-foreach ($modelosLinhas as [$nome, $uso, $sit]) {
-    $modelosT[] = [$nome . ($uso !== '' ? ' (' . $uso . ')' : ''), $sit === 'APPROVED' ? 'Aprovado' : ($sit === 'ausente' ? 'Não existe' : 'Esperando (' . $sit . ')')];
+foreach ($modelosLinhas as [$nome, $uso, $sit, $categoria, $outros]) {
+    $modelosT[] = [$nome . ($uso !== '' ? ' (' . $uso . ')' : ''), ($sit === 'APPROVED' ? 'Aprovado' : ($sit === 'ausente' ? 'Não existe' : 'Esperando (' . $sit . ')'))
+        . ($categoria !== '' ? ' · ' . mb_strtolower($categoria) : ''), $outros !== '' ? $outros : '—'];
 }
 $corpo .= '<section class="cartao"><h2>Detalhes</h2>'
     . '<details><summary>Mensagens e pagamentos por dia (últimos ' . MCP_RW_DIAS_METRICA . ' dias)</summary><ul class="barras">' . $barras . '</ul>'
@@ -583,10 +706,12 @@ $corpo .= '<section class="cartao"><h2>Detalhes</h2>'
 foreach ($okItens as $x) {
     $corpo .= '<li>' . rw_selo('ok', 'Ok') . rw_e($x) . '</li>';
 }
-$corpo .= '</ul>' . $tabela(['Modelo', 'Situação na Meta'], $modelosT) . '</details>'
+$corpo .= '</ul>' . $tabela(['Modelo que sai (por família)', 'Situação na Meta', 'Outras versões na Meta'], $modelosT)
+    . '<p class="nota">Cada mensagem usa a versão da família de maior número aprovada como utilidade (UTILITY); sem nenhuma, a aprovada de qualquer categoria. Uma versão nova aprovada (ex.: rec_inscricao_2_v2) entra sozinha na rodada seguinte.</p></details>'
     . '<details><summary>Por que alguém no fluxo ainda não recebeu</summary><ul class="checks">'
     . '<li>Grupo de controle (' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas): não recebe nada, de propósito.</li>'
-    . '<li>Ainda não deu 1 h do cadastro, ou da tentativa mais recente (quem tenta pagar de novo recomeça a contar). A 2ª e a 3ª esperam 24 h e 72 h do cadastro e pelo menos 21 h e 48 h depois da anterior.</li>'
+    . '<li>Ainda não deu 1 h do cadastro, ou da tentativa mais recente (quem tenta pagar de novo recomeça a contar); no WhatsApp de quem gerou PIX, 30 min.'
+    . ' Antes da 1ª de quem tem PIX pendente, a Unicopag é consultada (quem já pagou não recebe). A 2ª e a 3ª esperam 24 h e 72 h do cadastro e pelo menos 21 h e 48 h depois da anterior.</li>'
     . '<li>Horário: só das 8h às 20h; a última rodada do dia é a das 19h07 e a primeira, a das 8h07.</li>'
     . '<li>Sem celular válido (fixo, incompleto, sem o 9): recebe só os e-mails. Sem e-mail válido: só o WhatsApp.</li>'
     . '<li>Modelo da mensagem esperando a Meta aprovar, ou diferente do que a mensagem manda: a pessoa espera, sem perder a vez.</li>'
@@ -597,9 +722,9 @@ $corpo .= '</ul>' . $tabela(['Modelo', 'Situação na Meta'], $modelosT) . '</de
     . '<li>E-mail: quem tem um PIX que ainda vai ganhar o lembrete espera por ele; e nada sai se o site já mandou muitos e-mails em 24 h.</li>'
     . '</ul><p>Na lista de pessoas, "Última rodada" diz o motivo de cada uma que estava devida e ficou sem receber; o cartão "Última rodada" junta os números.</p></details>'
     . '<details><summary>Como funciona</summary><p>Quem se cadastrou no checkout do site ou na plataforma da escola nos últimos ' . MCP_RW_JANELA_DIAS . ' dias e não pagou recebe até 3 mensagens: '
-    . '1 h, 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), só das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por rodada e ' . MCP_RW_POR_DIA . ' em 24 h. '
+    . '1 h (30 min no WhatsApp de quem gerou um PIX), 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), só das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por rodada e ' . MCP_RW_POR_DIA . ' em 24 h. '
     . 'Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora; '
-    . 'antes de cada envio a rotina confere tudo de novo.</p><p>' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada (nem WhatsApp nem e-mail): é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p>'
+    . 'antes de cada envio a rotina confere tudo de novo. O botão leva direto ao pagamento: com o PIX ainda aberto, à tela desse PIX (o QR); sem ele, ao checkout do curso já preenchido.</p><p>' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada (nem WhatsApp nem e-mail): é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p>'
     . '<p>O mesmo público recebe também 3 e-mails, na mesma régua e no mesmo horário, independentes do WhatsApp: quem não tem celular válido recebe só os e-mails, quem não tem e-mail só o WhatsApp. '
     . 'Quem já recebeu o lembrete do PIX não recebe o 1º e-mail (e quem ainda vai receber esse lembrete espera por ele). No máximo ' . MCP_RW_EMAIL_POR_RODADA . ' e-mails por rodada e '
     . MCP_RW_EMAIL_POR_DIA . ' em 24 h, porque a conta da Resend (' . MCP_RW_RESEND_COTA_DIA . ' por dia) é a mesma dos recibos, do PIX e dos avisos; e nada sai se o resto do site já mandou '

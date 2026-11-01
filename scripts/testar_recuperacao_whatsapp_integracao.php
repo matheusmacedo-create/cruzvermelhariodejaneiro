@@ -180,19 +180,24 @@ if ($caminho === '/platform/v1/whatsapp/phone_numbers/1112223334' && $metodo ===
 }
 if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
     $anotar('modelos.jsonl', ['query' => $_SERVER['QUERY_STRING'] ?? '']);
-    $pendente = (string) ($controle('modelos')['pendente'] ?? '');
-    $situacao = static fn(string $nome): string => $pendente === $nome ? 'PENDING' : 'APPROVED';
+    // 'pendente': um nome ou uma lista de nomes que a Meta ainda não aprovou; 'extras': modelos a mais na conta (as versões
+    // novas de cada família, _v2, _v3, com a categoria).
+    $pendentes = (array) ($controle('modelos')['pendente'] ?? []);
+    $situacao = static fn(string $nome): string => in_array($nome, $pendentes, true) ? 'PENDING' : 'APPROVED';
     // Os componentes (texto e botões) de cada modelo, quando o teste pede: é com eles que a rodada confere a mensagem.
     $componentes = $controle('modelos')['componentes'] ?? [];
     $com = static fn(array $m): array => isset($componentes[$m['name']]) ? $m + ['components' => $componentes[$m['name']]] : $m;
     echo json_encode(['data' => array_map($com, [
         // O rec_inscricao_1 antigo continua na conta (reclassificado como Marketing), mas não é mais usado.
-        ['name' => 'rec_inscricao_1', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
+        ['name' => 'rec_inscricao_1', 'status' => $situacao('rec_inscricao_1'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'rec_inscricao_1_v2', 'status' => $situacao('rec_inscricao_1_v2'), 'language' => 'pt_BR', 'category' => 'UTILITY'],
         ['name' => 'rec_inscricao_2', 'status' => $situacao('rec_inscricao_2'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'rec_inscricao_3', 'status' => $situacao('rec_inscricao_3'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'ps_cupom_oferta', 'status' => $situacao('ps_cupom_oferta'), 'language' => 'pt_BR', 'category' => 'MARKETING'],
+        ['name' => 'mat_pendente_1', 'status' => $situacao('mat_pendente_1'), 'language' => 'pt_BR', 'category' => 'UTILITY'],
+        ['name' => 'mat_pendente_2', 'status' => $situacao('mat_pendente_2'), 'language' => 'pt_BR', 'category' => 'UTILITY'],
         ['name' => 'outro_modelo', 'status' => 'REJECTED', 'language' => 'pt_BR', 'category' => 'UTILITY'],
+        ...array_values((array) ($controle('modelos')['extras'] ?? [])),
     ])]);
     return true;
 }
@@ -274,7 +279,7 @@ function limpar(PDO $db, string $padraoEmail, string $quem, array $telefones): v
     $db->exec("DELETE FROM mcp_chaves WHERE nome IN ('rw_cache_modelos', 'rw_cache_webhook')");
     $db->prepare("DELETE FROM mcp_eventos WHERE tipo = 'recuperacao_webhook' AND detalhe LIKE ?")->execute([$quem . '%']);
     // Os resumos das rodadas e as aberturas dos links que o teste gerou (gravados com a hora de verdade, sem inscrição).
-    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link') AND inscricao_id IS NULL AND criado_em >= ?")
+    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link', 'matricula_rodada', 'rw_cache_modelos') AND inscricao_id IS NULL AND criado_em >= ?")
         ->execute([$GLOBALS['inicioTeste'] ?? gmdate('Y-m-d H:i:s')]);
 }
 $inicioTeste = gmdate('Y-m-d H:i:s', time() - 5);
@@ -397,6 +402,22 @@ try {
         mcp_rw_modelo(2, ['primeiro_nome' => 'Dr.', 'curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa'])['parametros'],
         mcp_rw_modelo(3, ['primeiro_nome' => 'MariaAparecida', 'curso_slug' => 'primeiros-socorros-basico', 'curso_nome' => 'Primeiros Socorros Básico'], ['codigo' => 'NOV15', 'data' => ''])['nome']],
         [['aluno(a)', 'nossos cursos'], ['aluno(a)', 'Punção Venosa'], 'rec_inscricao_3']);
+    // Família de modelos (01/11/2026): entre os aprovados da família, utilidade primeiro e a maior versão; só um que confere.
+    $listaFam = ['ok' => true, 'modelos' => ['rec_inscricao_2' => 'APPROVED', 'rec_inscricao_2_v2' => 'APPROVED', 'rec_inscricao_2_v3' => 'PENDING', 'rec_inscricao_1' => 'APPROVED',
+        'rec_inscricao_1_v2' => 'APPROVED', 'rec_inscricao_1_v3' => 'APPROVED', 'rec_inscricao_3' => 'APPROVED', 'rec_inscricao_3_v2' => 'APPROVED'],
+        'categorias' => ['rec_inscricao_2' => 'MARKETING', 'rec_inscricao_2_v2' => 'UTILITY', 'rec_inscricao_1' => 'MARKETING', 'rec_inscricao_1_v2' => 'UTILITY',
+            'rec_inscricao_1_v3' => 'MARKETING', 'rec_inscricao_3' => 'MARKETING', 'rec_inscricao_3_v2' => 'MARKETING'],
+        'estrutura' => ['rec_inscricao_1_v2' => ['botao' => 0, 'params' => 3]]];
+    $doisParam = static fn(string $nome): array => ['nome' => $nome, 'parametros' => ['Ana', 'Punção Venosa'], 'caminho' => 'x'];
+    verificar('família: utilidade de maior versão; sem utilidade aprovada, a maior versão aprovada; versão que não confere fica de fora; sem a lista, o nome de hoje', [
+        mcp_rw_escolher_modelo($doisParam('rec_inscricao_2'), $listaFam)['nome'],
+        mcp_rw_escolher_modelo($doisParam('rec_inscricao_3'), $listaFam)['nome'],
+        mcp_rw_escolher_modelo($doisParam('rec_inscricao_1_v2'), $listaFam)['nome'],
+        mcp_rw_escolher_modelo($doisParam('rec_inscricao_2'), ['ok' => false])['nome'],
+        mcp_rw_escolher_modelo($doisParam('rec_inscricao_2'), ['ok' => true, 'modelos' => ['rec_inscricao_2' => 'PENDING'], 'categorias' => [], 'estrutura' => []])['nome'],
+        [mcp_rw_familia('rec_inscricao_3_v12'), mcp_rw_familia('outro_modelo_v2'), mcp_rw_versao('rec_inscricao_2'), mcp_rw_versao('rec_inscricao_2_v3')],
+        str_starts_with(mcp_rw_escolher_modelo($doisParam('rec_inscricao_2'), $listaFam)['previa'] ?? '', 'Olá, Ana. Lembrete'),
+    ], ['rec_inscricao_2_v2', 'rec_inscricao_3_v2', 'rec_inscricao_1_v3', 'rec_inscricao_2', 'rec_inscricao_2', ['rec_inscricao_3', null, 1, 3], true]);
     verificar('estrutura do modelo na Meta: índice do botão de URL, parâmetros do texto, e o que segura o envio', [
         mcp_rw_estrutura([['type' => 'BODY', 'text' => 'Olá, {{1}}. Curso {{2}}.'], ['type' => 'BUTTONS', 'buttons' => [['type' => 'QUICK_REPLY', 'text' => 'Não tenho interesse'], ['type' => 'URL', 'url' => 'https://cruzvermelhariodejaneiro.org/{{1}}']]]]),
         mcp_rw_estrutura(null), mcp_rw_estrutura([['type' => 'BODY', 'text' => 'Olá'], ['type' => 'BUTTONS', 'buttons' => [['type' => 'URL', 'url' => 'https://cruzvermelhariodejaneiro.org/']]]]),
@@ -760,15 +781,25 @@ try {
     verificar('sem os dois, quem estava atrás recebe na rodada seguinte', $etapasPara($atras2['telefone']), ['rec_inscricao_1_v2']);
 
     $D = $A + 300 * 86400;
-    controle('modelos', ['pendente' => 'rec_inscricao_1_v2']);
+    // Nenhuma versão da família rec_inscricao_1 aprovada (nem a _v2 nem a antiga): a mensagem espera.
+    controle('modelos', ['pendente' => ['rec_inscricao_1_v2', 'rec_inscricao_1']]);
     $pendente = $criar('modelopendente', $D - 4 * 3600);
     $antes = count(falso('kapso'));
     $r = mcp_rw_rodar($D);
-    verificar('modelo sem aprovação: não tenta, não gasta a etapa e diz qual', [$r['enviados'], count(falso('kapso')) - $antes, str_contains((string) $r['motivo'], 'rec_inscricao_1_v2'),
+    verificar('modelo sem aprovação (nenhuma versão da família): não tenta, não gasta a etapa e diz qual', [$r['enviados'], count(falso('kapso')) - $antes, str_contains((string) $r['motivo'], 'rec_inscricao_1_v2'),
         $linhasDe($pendente['telefone'])], [0, 0, true, []]);
     controle('modelos', []);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
     mcp_rw_rodar($D + 3600);
     verificar('modelo aprovado: sai na rodada seguinte', $etapasPara($pendente['telefone']), ['rec_inscricao_1_v2']);
+    // Família (01/11/2026): só a _v2 sem aprovação, e a antiga (Marketing) aprovada → sai a aprovada de qualquer categoria.
+    controle('modelos', ['pendente' => ['rec_inscricao_1_v2']]);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    $familiaAntiga = $criar('familiaantiga', $D + 3 * 3600);
+    mcp_rw_rodar($D + 5 * 3600);
+    verificar('família: sem a _v2 (utilidade) aprovada, vai a versão aprovada de outra categoria (rec_inscricao_1, marketing)', $etapasPara($familiaAntiga['telefone']), ['rec_inscricao_1']);
+    controle('modelos', []);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
 
     // A estrutura do modelo na Meta (os componentes da lista de modelos): o índice do botão de URL vem dela, e um texto com
     // outro número de parâmetros segura o modelo antes de a Meta recusar mensagem por mensagem.
@@ -781,7 +812,8 @@ try {
     mcp_rw_rodar($D2);
     $tpl = $mensagensPara($indiceBotao['telefone'])[0]['corpo']['template']['components'] ?? [];
     verificar('estrutura do modelo: o botão de URL no índice que a Meta tem (1, depois de uma resposta rápida)', [$tpl[1]['index'] ?? null, count($tpl[0]['parameters'] ?? [])], ['1', 2]);
-    controle('modelos', ['componentes' => ['rec_inscricao_1_v2' => [['type' => 'BODY', 'text' => 'Olá, {{1}}. Curso {{2}}, turma {{3}}.'], ['type' => 'BUTTONS', 'buttons' => [$botaoUrl]]]]]);
+    // A versão antiga da família também fora (sem aprovação): sem nenhuma que confira, a mensagem espera.
+    controle('modelos', ['pendente' => ['rec_inscricao_1'], 'componentes' => ['rec_inscricao_1_v2' => [['type' => 'BODY', 'text' => 'Olá, {{1}}. Curso {{2}}, turma {{3}}.'], ['type' => 'BUTTONS', 'buttons' => [$botaoUrl]]]]]);
     $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
     $tresParam = $criar('tresparametros', $D2 - 2 * 3600);
     $antes = count(falso('kapso'));
@@ -840,14 +872,16 @@ try {
     $outroG = $criar('outrocurso', $G - 2 * 3600);
     mcp_rw_rodar($G);
     mcp_rw_rodar($G + 22 * 3600); // 2ª: 24 h do cadastro
-    mcp_rw_rodar($G + 70 * 3600); // 3ª: 72 h do cadastro e 48 h depois da 2ª
+    // 3ª: 72 h do cadastro e 48 h depois da 2ª. Dois minutos a mais: a 2ª é gravada com a hora de verdade da rodada (os
+    // segundos que a rodada levou contam), e a 3ª ficaria devida alguns segundos DEPOIS das 70 h exatas (teste instável).
+    mcp_rw_rodar($G + 70 * 3600 + 120);
     verificar('cupom: a 3ª de Primeiros Socorros é o ps_cupom_oferta; outro curso continua no rec_inscricao_3', [$etapasPara($psA['telefone']), $etapasPara($outroG['telefone'])],
         [['rec_inscricao_1_v2', 'rec_inscricao_2', 'ps_cupom_oferta'], ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3']]);
     verificar('cupom: corpo exato do ps_cupom_oferta (nome, cupom, data da turma e o botão de URL com o cupom)', $mensagensPara($psA['telefone'])[2]['corpo']['template'] ?? [], [
         'name' => 'ps_cupom_oferta', 'language' => ['code' => 'pt_BR'], 'components' => [
             ['type' => 'body', 'parameters' => [['type' => 'text', 'text' => 'Bruno'], ['type' => 'text', 'text' => 'NOV15'], ['type' => 'text', 'text' => $dataTurma]]],
             ['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text',
-                'text' => 'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-basico/rec3cupom/' . mcp_rw_token('s' . $psA['id'], $G + 70 * 3600)]]],
+                'text' => 'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-basico/rec3cupom/' . mcp_rw_token('s' . $psA['id'], $G + 70 * 3600 + 120)]]],
         ],
     ]);
     $modelosDe = static function (string $tel) use ($db): array {
@@ -867,11 +901,45 @@ try {
         $criar("cupompago$i", $A - 300 * 86400, $ps + ['status' => 'pago', 'pago_em' => $quando($A - 300 * 86400), 'cupom' => 'NOV15']);
     }
     verificar('cupom esgotado: a oferta sai do ar', [mcp_cupom_restantes(mcp_cupom('NOV15', 'primeiros-socorros-basico', $H), $H), mcp_rw_oferta_cupom($H + 70 * 3600)], [0, null]);
-    mcp_rw_rodar($H + 70 * 3600);
+    mcp_rw_rodar($H + 70 * 3600 + 120);
     verificar('cupom esgotado: a 3ª de Primeiros Socorros volta a ser o rec_inscricao_3', [$etapasPara($psB['telefone']), $modelosDe($psB['telefone'])],
         [['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3'], ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3']]);
     $mH = mcp_rw_metricas(mcp_rw_carregar($H + 70 * 3600)['pessoas'], mcp_rw_linhas(), $H + 70 * 3600);
     verificar('métricas por modelo: o ps_cupom_oferta aparece com as suas enviadas', $mH['por_modelo']['ps_cupom_oferta']['enviadas'] ?? null, 1);
+
+    // ------------------------------------------------------------------------- família de modelos e PIX em 30 min (01/11/2026)
+    // A Meta aprovou o rec_inscricao_2_v2 como utilidade; o rec_inscricao_3_v2 ainda está em análise.
+    $K = $A + 760 * 86400;
+    controle('modelos', ['pendente' => ['rec_inscricao_3_v2'], 'extras' => [
+        ['name' => 'rec_inscricao_2_v2', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'UTILITY'],
+        ['name' => 'rec_inscricao_3_v2', 'status' => 'PENDING', 'language' => 'pt_BR', 'category' => 'UTILITY'],
+        ['name' => 'rec_inscricao_2_v3', 'status' => 'APPROVED', 'language' => 'en_US', 'category' => 'UTILITY'],
+    ]]);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    $fam = $criar('familia', $K - 2 * 3600);
+    mcp_rw_rodar($K);
+    mcp_rw_rodar($K + 22 * 3600);
+    mcp_rw_rodar($K + 70 * 3600 + 120);
+    verificar('família: a 2ª sai pelo rec_inscricao_2_v2 (aprovado como utilidade); a 3ª fica no rec_inscricao_3 (a _v2 em análise; a _v3 de outro idioma não conta)',
+        [$etapasPara($fam['telefone']), $modelosDe($fam['telefone'])],
+        [['rec_inscricao_1_v2', 'rec_inscricao_2_v2', 'rec_inscricao_3'], ['rec_inscricao_1_v2', 'rec_inscricao_2_v2', 'rec_inscricao_3']]);
+    $mK = mcp_rw_metricas(mcp_rw_carregar($K + 71 * 3600)['pessoas'], mcp_rw_linhas(), $K + 71 * 3600);
+    verificar('família: as métricas por modelo mostram a versão que saiu', $mK['por_modelo']['rec_inscricao_2_v2']['enviadas'] ?? null, 1);
+    controle('modelos', []);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    // Quem gerou um PIX recebe a 1ª com 30 min; o cartão recusado na mesma hora, só com 1 h.
+    $K2 = $K + 10 * 86400;
+    $comPix = $criar('compix', $K2 - 40 * 60, ['pix_copia_cola' => '00020126pixdeteste', 'unicopag_hash' => 'h-rw-pix-' . $sufixo]);
+    $semPix = $criar('cartaorecusado', $K2 - 40 * 60, ['metodo' => 'cartao', 'status' => 'recusado']);
+    $r = mcp_rw_rodar($K2);
+    verificar('PIX gerado: a 1ª do WhatsApp com 30 min; cartão recusado espera dar 1 h', [$etapasPara($comPix['telefone']), $etapasPara($semPix['telefone'])],
+        [['rec_inscricao_1_v2'], []]);
+    $pPix = array_values(array_filter(mcp_rw_carregar($K2)['pessoas'], static fn(array $p): bool => in_array($comPix['email'], $p['emails'], true)))[0] ?? [];
+    verificar('PIX gerado: a pessoa leva a marca do PIX, e a régua da 1ª é de 30 min (a do e-mail continua 1 h)',
+        [$pPix['pix'] ?? null, mcp_rw_proxima(1000, [], mcp_rw_primeira(['pix' => true])), mcp_rw_email_proxima(1000, [])],
+        [true, ['etapa' => 1, 'devida_em' => 2800], ['etapa' => 1, 'devida_em' => 4600]]);
+    mcp_rw_rodar($K2 + 3600);
+    verificar('cartão recusado: a 1ª com 1 h, na rodada seguinte', $etapasPara($semPix['telefone']), ['rec_inscricao_1_v2']);
 
     // ------------------------------------------------------------------------- painel
     $url = "http://127.0.0.1:$portaSite/matricula-cursos-presenciais/api/recuperacao.php";
@@ -884,14 +952,14 @@ try {
     verificar('painel sem sessão: POST 403 e nada vai à Kapso', [$st, count(falso('webhooks'))], [403, 0]);
     [$st, , $html] = http($url, 'GET', null, [$cookie]);
     verificar('painel com sessão: situação (4 modelos aprovados, escola ok, webhook desligado) e números',
-        [$st, substr_count($html, '<td class="n">Aprovado</td>'), str_contains($html, 'Plataforma da escola respondendo'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'esperam a próxima mensagem') || str_contains($html, 'espera a próxima mensagem'), str_contains($html, 'Taxa de recuperação')],
-        [200, 4, true, true, true, true]);
-    verificar('painel: os 4 modelos usados, o cupom e as métricas novas (por mensagem, tempo até pagar, controle × quem recebeu)', [
+        [$st, substr_count($html, '<td class="n">Aprovado'), str_contains($html, 'Plataforma da escola respondendo'), str_contains($html, 'Ligar o recebimento de respostas'), str_contains($html, 'esperam a próxima mensagem') || str_contains($html, 'espera a próxima mensagem'), str_contains($html, 'Taxa de recuperação')],
+        [200, 6, true, true, true, true]);
+    verificar('painel: os modelos por família (o que sai e as outras versões), o cupom e as métricas novas (por mensagem, tempo até pagar, controle × quem recebeu)', [
         str_contains($html, 'rec_inscricao_1_v2 (1ª mensagem)'), str_contains($html, 'rec_inscricao_2 (2ª mensagem)'), str_contains($html, 'rec_inscricao_3 (3ª mensagem)'), str_contains($html, 'ps_cupom_oferta (3ª de Primeiros Socorros'),
-        str_contains($html, 'rec_inscricao_1 ('), str_contains($html, 'Cupom NOV15'), str_contains($html, 'Qual mensagem trouxe o pagamento'), str_contains($html, 'Pelo link do botão'),
+        str_contains($html, '<td class="n">rec_inscricao_1 (approved, marketing)</td>'), str_contains($html, 'Cupom NOV15'), str_contains($html, 'Qual mensagem trouxe o pagamento'), str_contains($html, 'Pelo link do botão'),
         str_contains($html, 'Tempo até pagar'), str_contains($html, 'Efeito da mensagem'), str_contains($html, 'menos o grupo de controle'), str_contains($html, 'dezenas em cada grupo'),
-        str_contains($html, '1 h, 24 h e 72 h'),
-    ], [true, true, true, true, false, true, true, true, true, true, true, true, true]);
+        str_contains($html, '24 h e 72 h'), str_contains($html, 'mat_pendente_1 (matrícula pendente, 1ª)'), str_contains($html, 'Matrícula pendente'),
+    ], [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true]);
     verificar('painel: a chave da Kapso nunca aparece', str_contains($html, $chaveKapso), false);
     verificar('painel: cartão "Última rodada" (o que a rotina fez e por quê) e a explicação de por que alguém não recebeu', [str_contains($html, '<h2>Última rodada</h2>'),
         (bool) preg_match('~<li><b>WhatsApp, [^<]+:</b> \d+ mensage~u', $html) && str_contains($html, '<b>E-mail:</b> nenhuma rodada registrada ainda'),
@@ -945,6 +1013,24 @@ try {
         str_starts_with($cookieRw, MCP_RW_COOKIE . '=' . $tokenPre . ';'), stripos($cookieRw, 'HttpOnly') !== false, stripos($cookieRw, 'path=/matricula-cursos-presenciais/api/') !== false,
         stripos($cookieRw, 'SameSite=Lax') !== false, str_contains($cab['location'] ?? '', $tokenPre), $cab['cache-control'] ?? ''],
         [302, '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1', true, true, true, true, false, 'no-store']);
+    // Direto ao pagamento (01/11/2026): com o PIX ainda aberto, o link abre a tela desse PIX (pendente/?t=…); vencido (mais de
+    // 23 h), o checkout de sempre; o link do cupom continua no checkout (o cupom muda o valor).
+    $pixAberto = $criar('pixaberto', time() - 3600, ['pix_copia_cola' => '00020126pixaberto', 'unicopag_hash' => 'h-rw-aberto-' . $sufixo]);
+    $pixVelho = $criar('pixvelho', time() - 30 * 3600, ['pix_copia_cola' => '00020126pixvelho', 'unicopag_hash' => 'h-rw-velho-' . $sufixo]);
+    $destinos = [];
+    foreach (["w/puncao-venosa/rec1/" . mcp_rw_token('s' . $pixAberto['id'], time()), "e/puncao-venosa/rec2/" . mcp_rw_token('s' . $pixAberto['id'], time()),
+        "w/puncao-venosa/rec1/" . mcp_rw_token('s' . $pixVelho['id'], time()), "w/primeiros-socorros-basico/rec3cupom/" . mcp_rw_token('s' . $pixAberto['id'], time())] as $c) {
+        $destinos[] = http("$site/ir.php/$c")[1]['location'] ?? '';
+    }
+    verificar('ir.php: PIX aberto → a tela do PIX com as UTMs; PIX vencido e cupom → o checkout', $destinos, [
+        '/matricula-cursos-presenciais/pendente/?t=' . $pixAberto['token'] . '&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1',
+        '/matricula-cursos-presenciais/pendente/?t=' . $pixAberto['token'] . '&utm_source=email&utm_medium=recuperacao&utm_campaign=rec2',
+        '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1',
+        '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom',
+    ]);
+    $db->prepare("UPDATE mcp_inscricoes SET status = 'pago', pago_em = ? WHERE id = ?")->execute([$quando(time()), $pixAberto['id']]);
+    verificar('ir.php: PIX já pago → o checkout de sempre (nunca a tela de um PIX pago)', http("$site/ir.php/w/puncao-venosa/rec1/" . mcp_rw_token('s' . $pixAberto['id'], time()))[1]['location'] ?? '',
+        '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec1');
     [$st, $cab] = http("$site/ir.php/e/primeiros-socorros-basico/rec3cupom/" . substr($tokenPre, 0, -2) . 'zz');
     verificar('ir.php: cupom no link do e-mail; token adulterado redireciona igual, sem cookie', [$st, $cab['location'] ?? '', isset($cab['set-cookie'])],
         [302, '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom', false]);

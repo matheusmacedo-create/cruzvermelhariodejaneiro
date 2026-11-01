@@ -239,12 +239,26 @@ function mcp_rw_email_descadastrar(array $linha): bool
 }
 
 // ----------------------------------------------------------------------------- banco: cota, PIX e reconferência
-/** Quantos e-mails da recuperação saíram nas 24 h até $agora (janela móvel, como o teto). */
+/**
+ * Quantos e-mails da recuperação saíram nas 24 h até $agora (janela móvel, como o teto). Conta também os da matrícula
+ * pendente (mcp_matricula_pendente, canal email): a cota da Resend e o teto MCP_RW_EMAIL_POR_DIA são um só para os dois
+ * fluxos (a rodada da matrícula vem antes, porque tem data de aula). Sem aquela tabela, só a recuperação.
+ */
 function mcp_rw_email_enviados_24h(int $agora): int
 {
+    $de = gmdate('Y-m-d H:i:s', $agora - 86400);
+    $ate = gmdate('Y-m-d H:i:s', $agora);
     $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_recuperacao_email WHERE status = 'enviado' AND criado_em > ? AND criado_em <= ?");
-    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 86400), gmdate('Y-m-d H:i:s', $agora)]);
-    return (int) $stmt->fetchColumn();
+    $stmt->execute([$de, $ate]);
+    $n = (int) $stmt->fetchColumn();
+    try {
+        $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_matricula_pendente WHERE canal = 'email' AND status = 'enviado' AND criado_em > ? AND criado_em <= ?");
+        $stmt->execute([$de, $ate]);
+        $n += (int) $stmt->fetchColumn();
+    } catch (PDOException) {
+        // Sem a tabela da matrícula pendente: só a recuperação.
+    }
+    return $n;
 }
 
 /**

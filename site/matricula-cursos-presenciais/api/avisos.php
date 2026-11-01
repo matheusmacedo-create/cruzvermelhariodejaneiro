@@ -6,6 +6,8 @@
  *                                                  uma página com o botão (POST confirmar=1), sem link pessoal;
  *   POST ?rw=<id>.<assinatura>                    o mesmo, para os e-mails da recuperação (lib/recuperacao_email.php):
  *                                                  para os lembretes da inscrição por e-mail E pelo WhatsApp;
+ *   POST ?mp=<id>.<assinatura>                    o mesmo, para os e-mails da matrícula pendente
+ *                                                  (lib/matricula_pendente.php): só os lembretes da matrícula;
  *   POST {acao: lembretes_ler | lembretes_salvar, t, …}  o que o colaborador quer receber (ponto/lembretes/);
  *   POST {acao: saida_ler | saida_informar, t, hora, dia_seguinte}  saída sem registro do voluntário (ponto/saida/);
  *   POST {acao: opiniao_ler | opiniao_salvar, t, …}      opinião depois de 2 semanas (ponto/opiniao/);
@@ -66,16 +68,51 @@ if (isset($_GET['rw'])) {
     exit;
 }
 
+// Descadastro de um clique dos e-mails da matrícula pendente (01/11/2026, lib/matricula_pendente.php): as mesmas regras
+// do ?rw= (o POST sozinho do programa de e-mail descadastra; o GET só mostra a página com o botão). Para só os lembretes
+// da matrícula daquela inscrição, nos dois canais; os avisos das aulas continuam (a pessoa é aluna).
+if (isset($_GET['mp'])) {
+    header('Cache-Control: no-store');
+    header('Referrer-Policy: no-referrer');
+    header('X-Robots-Tag: noindex, nofollow');
+    $linha = null;
+    if (is_file(__DIR__ . '/lib/recuperacao_whatsapp.php')) {
+        require_once __DIR__ . '/lib/recuperacao_whatsapp.php';
+        $linha = mcp_mp_descadastro_linha(mcp_texto($_GET['mp'], 40));
+    }
+    $pelaPagina = $metodo === 'POST' && !empty($_POST['confirmar']);
+    if ($metodo === 'POST' && !$pelaPagina) {
+        $valeu = $linha !== null && mcp_mp_descadastrar($linha);
+        http_response_code($valeu ? 200 : 404);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $valeu ? 'Pronto: você não vai mais receber os lembretes da matrícula, nem por e-mail nem pelo WhatsApp.' : 'Link inválido.';
+        exit;
+    }
+    $valeu = $linha !== null && (!$pelaPagina || mcp_mp_descadastrar($linha));
+    http_response_code($valeu ? 200 : 404);
+    av_pagina_descadastro($valeu ? ($pelaPagina ? 'pronto' : 'pergunta') : 'invalido', 'matricula');
+    exit;
+}
+
 /**
- * Página do descadastro aberta no navegador: pergunta (com o botão), pronto ou link que não vale mais. $recuperacao: a
- * dos e-mails da recuperação (lembretes da inscrição, por e-mail e WhatsApp), com o seu próprio texto.
+ * Página do descadastro aberta no navegador: pergunta (com o botão), pronto ou link que não vale mais. $tipo: 'avisos'
+ * (os avisos do ponto e das aulas), true ou 'recuperacao' (os lembretes da inscrição, por e-mail e WhatsApp) ou
+ * 'matricula' (os lembretes da matrícula pendente), cada um com o seu texto.
  */
-function av_pagina_descadastro(string $estado, bool $recuperacao = false): void
+function av_pagina_descadastro(string $estado, bool|string $tipo = 'avisos'): void
 {
     header('Content-Type: text/html; charset=utf-8');
     $contato = mcp_escapar(mcp_email_contato_endereco());
     $css = '/matricula-cursos-presenciais/static/ponto.css?v=' . substr((string) md5_file(__DIR__ . '/../static/ponto.css'), 0, 10);
-    $corpo = $recuperacao ? match ($estado) {
+    $recuperacao = $tipo === true || $tipo === 'recuperacao';
+    $corpo = $tipo === 'matricula' ? match ($estado) {
+        'pergunta' => '<h1>Parar os lembretes da matrícula</h1><p>Toque no botão para não receber mais os lembretes de pagar a matrícula, nem por e-mail nem pelo WhatsApp. Os avisos das aulas continuam.</p>'
+            . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber</button></form>',
+        'pronto' => '<h1>Pronto</h1><p>Você não vai mais receber os lembretes da matrícula. Lembre-se: a entrada na aula é liberada com a matrícula paga, na secretaria da Escola ou pelo site.</p>'
+            . '<p class="pt-nota">Dúvidas? Escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+        default => '<h1>Este link não vale mais</h1><p>Ele não veio inteiro, ou não é de um lembrete da matrícula.</p>'
+            . '<p class="pt-nota">Para parar os lembretes, escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
+    } : ($recuperacao ? match ($estado) {
         'pergunta' => '<h1>Parar os lembretes da inscrição</h1><p>Toque no botão para não receber mais os lembretes sobre a sua inscrição, nem por e-mail nem pelo WhatsApp.</p>'
             . '<form method="post"><input type="hidden" name="confirmar" value="1"><button class="pt-btn" type="submit">Não quero mais receber</button></form>',
         'pronto' => '<h1>Pronto</h1><p>Você não vai mais receber os lembretes sobre a inscrição, nem por e-mail nem pelo WhatsApp.</p>'
@@ -90,7 +127,7 @@ function av_pagina_descadastro(string $estado, bool $recuperacao = false): void
             . '<p class="pt-nota">Mudou de ideia? Escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
         default => '<h1>Este link não vale mais</h1><p>Ele foi trocado, ou o e-mail do cadastro mudou.</p>'
             . '<p class="pt-nota">Para parar os avisos, use o link da mensagem mais recente ou escreva para a secretaria: <a href="mailto:' . $contato . '">' . $contato . '</a>.</p>',
-    };
+    });
     echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">'
         . '<meta name="robots" content="noindex, nofollow"><meta name="referrer" content="no-referrer"><meta name="theme-color" content="#cc0000">'
         . '<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><title>Avisos por e-mail | ' . mcp_escapar(MCP_NOME_FILIAL) . '</title>'
