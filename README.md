@@ -1469,6 +1469,100 @@ para funcionar perfeitamente amanhã". **Situação: construído e testado só n
   testa `api/ir.php` (302 certo e inválido) e `api/recuperacao-dados.php` (`{}` sem token). **Antes das 8h07**: se o `ir.php`
   com caminho depois do `.php` não responder 302 no ar (servidor sem PATH_INFO), os links novos não funcionam.
 
+### Matrícula pendente e reforço da recuperação (01/11/2026, tarde)
+
+Pedido do responsável: dois fluxos de "recuperação de carrinho", o mais importante sendo **"pagou a inscrição, falta a
+matrícula"**. **Situação: construído e testado só na máquina; NADA foi publicado.**
+
+**Como a matrícula era paga até aqui.** O plano padrão do checkout é "Só a taxa de inscrição" (o "taxa + matrícula" depende
+da escola, que responde 403 desde 31/10, e fica fora). Quem paga só a taxa tem a vaga, mas a entrada na aula depende da
+matrícula, "paga antes da aula, com a secretaria da Escola": o e-mail da taxa dizia "a secretaria escreve com o jeito de
+pagar", e o checkout recusa uma segunda compra do mesmo curso pelo mesmo CPF ("para pagar só a matrícula, fale com a
+secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois.**
+
+**A matrícula pendente** (`api/lib/matricula_pendente.php`, prefixo `mcp_mp_`, carregado pelo `recuperacao_whatsapp.php`):
+- **Público**: inscrições do checkout pagas **só com a taxa** nos últimos 60 dias, com turma marcada no futuro (resposta da
+  escola, turma vendida do `oferta.json` ou a coluna `turma_inicio`; sem turma, nada a cobrar antes) e matrícula com preço
+  (`valor_curso_centavos`). Uma "pessoa" aqui é uma inscrição. Saem CPF e curso de teste.
+- **Já pagou?** No site: um pagamento pago em `mcp_matricula_pagamentos` ou uma compra "taxa + matrícula" paga depois, do
+  mesmo CPF e curso. Na escola: uma `Matricula` do mesmo CPF e curso com `statusPagamento` PAGO ou PARCELADO (PostgREST, como
+  a recuperação). E o botão **"Já pagou na escola"** do painel. **Escola fora** (o caso de hoje): segue com o que o site sabe —
+  quem pagou só na escola pode receber um lembrete; o painel avisa e o botão para tudo daquela inscrição.
+- **Régua** (cada canal anda sozinho, só das 8h às 20h): **1ª** 1 h depois da confirmação da taxa; **2ª** na **véspera**
+  da turma às 10h, ou **48 h antes** do início se a turma está a mais de 7 dias da taxa (interpretação de "ou 48 h antes, se a
+  turma estiver longe": dá tempo de pagar num dia útil). Pelo menos 6 h entre as duas; se a 2ª já chegou quando a 1ª ficaria
+  devida (taxa paga na véspera), vai **só a 2ª**. Nada sai a menos de 1 h do início nem depois (**turma passada: não manda**).
+  Pagou entre as mensagens: a 2ª não sai (reconferido no banco antes de cada envio).
+- **WhatsApp**: modelos `mat_pendente_1` e `mat_pendente_2` (já submetidos), `{{1}}` primeiro nome, `{{2}}` curso, `{{3}}`
+  data ("terça-feira, 17/11" na 1ª; "amanhã, terça-feira, 17/11, às 9h" na 2ª, com "hoje"/"amanhã" quando é o caso e a hora
+  quando é conhecida), botão `https://cruzvermelhariodejaneiro.org/{{1}}` com o link curto
+  `matricula-cursos-presenciais/api/ir.php/<w|e>/<curso>/<mat1|mat2>/<token>`. Mesma Kapso, mesmo tratamento de erros da
+  recuperação; entrega e respostas pelo mesmo webhook. A prévia do painel é **aproximada** (o texto exato é o da Meta).
+- **E-mail**: dois e-mails equivalentes, na moldura dos e-mails do site, com o valor da matrícula, o botão "Pagar a
+  matrícula" e a alternativa de pagar na secretaria. "Não quero mais receber" e o List-Unsubscribe de um clique levam a
+  `api/avisos.php?mp=<id>.<assinatura>`, que para **só os lembretes da matrícula** daquela inscrição (os dois canais) — de
+  propósito **não** grava `mcp_avisos_bloqueios`: a pessoa é aluna e os avisos das aulas continuam.
+- **Bloqueios**: WhatsApp bloqueado (qualquer origem, inclusive o "Não tenho interesse" da recuperação) não recebe WhatsApp;
+  e-mail bloqueado não recebe e-mail; "SAIR/PARAR" no WhatsApp bloqueia o número.
+- **Sem grupo de controle** (a pessoa já é aluna e precisa pagar para entrar), mas tudo fica registrado para medir: uma linha
+  por mensagem em `mcp_matricula_pendente` e o resumo de cada rodada em `mcp_eventos` (`matricula_rodada`).
+- **Cota**: o WhatsApp conta no mesmo teto de 200 em 24 h do número (`mcp_rw_enviadas_24h` soma as duas tabelas); o e-mail no
+  mesmo teto de 30 em 24 h e na mesma reserva dos recibos (`mcp_rw_email_enviados_24h` soma as duas). A rodada da matrícula
+  roda **antes** da do carrinho no `api/lembretes.php` (tem data de aula).
+- **Por que tabelas novas** (e não `mcp_recuperacao_whatsapp/email` com outra etapa): as contas e a régua do carrinho leem
+  **todas** as linhas daquelas tabelas (etapas 1–3, grupo de controle, "recuperadas", última mensagem antes de pagar); misturar
+  a matrícula ali exigiria filtrar em cada uma e qualquer esquecimento estragaria as métricas. `mcp_matricula_pendente`
+  (`UNIQUE(inscricao_id, canal, etapa)`; `canal` whatsapp/email/painel) aponta a inscrição pelo id (o dado pessoal fica só
+  em `mcp_inscricoes`) e guarda o `mcp_avisos_hash` do destino.
+
+**Pagar a matrícula pelo site** (`api/matricula.php`, página `pagar-matricula/` com `static/matricula.js`):
+- O link curto `mat1`/`mat2` responde 302 para `/matricula-cursos-presenciais/pagar-matricula/?curso=…&utm_…` e põe o token
+  (`mcp_rw_token` com a referência **`m<id da inscrição>`**: assinado, 30 dias, sem dado pessoal) no cookie `mcp_rw` só da
+  `api/`, **fora da URL** (nem GA4, nem Pixel, nem Referer).
+- A tela mostra o primeiro nome, o curso, a turma e o valor (nunca CPF, telefone ou e-mail inteiro) e cobra **só a matrícula**
+  da inscrição já paga, por **PIX ou cartão à vista**, na mesma Unicopag (`POST /public/v1/payments`, um item "Curso —
+  Matrícula", `metadata.tipo = matricula`), com os dados do pagador **da própria inscrição** (nada vem do navegador além da
+  forma de pagamento e do cartão, que vai direto à Unicopag e não é gravado). O PIX pendente da mesma matrícula é
+  reaproveitado (20 h); a tela acompanha (`GET ?c=<token>`, reconsulta a cada 6 s, vence com 25 h). Freio de 10 pedidos por IP
+  em 10 min, campo armadilha e a exigência de origem do site.
+- `mcp_matricula_pagamentos` guarda a cobrança (tabela à parte de `mcp_inscricoes` de propósito: lá uma linha é uma inscrição,
+  que vai à escola, manda o recibo da taxa e conta como compra no painel e na Meta). O postback é o mesmo `api/webhook.php`:
+  hash que não é de inscrição é procurado ali, e vale a reconsulta. Mesmas transições (pago definitivo; recusado/expirado só
+  sobre pendente).
+- **Paga**: o aluno recebe o comprovante, e a secretaria (`EMAIL_SECRETARIA`) recebe "Matrícula paga pelo site" com a
+  instrução de **marcar a matrícula como paga na plataforma da escola (À vista, PAGO, Pagamento CURSO, gateway unicopag-2)** —
+  o mesmo procedimento da "matrícula não marcada" do plano completo. Nada chama a escola (403, e ela não tem função para
+  marcar como paga uma matrícula existente) nem a Meta (a compra já contou na taxa). Estorno: aviso à secretaria.
+- Recusas: já paga, compra que já incluía a matrícula, turma que começou há mais de 1 dia, link adulterado/vencido/de outro
+  tipo (404).
+
+**Reforço do carrinho abandonado** (recuperação de sempre, sem mudar os nomes dos modelos):
+- **1ª mensagem com 30 min para quem gerou PIX** (`MCP_RW_PRIMEIRA_PIX`), só no WhatsApp; o e-mail dessa pessoa continua
+  sendo o lembrete do PIX (2 a 20 h), e o 1º e-mail continua esperando por ele (sem dois e-mails). Antes dessa 1ª, a Unicopag é
+  consultada (`mcp_rw_pix_conferir`): um PIX pago cujo aviso ainda não chegou não recebe "ainda não identificamos o pagamento".
+- **Direto ao pagamento**: com o PIX da inscrição ainda aberto (menos de 23 h, pendente, turma à venda, sem outra compra
+  paga), o link `rec1/rec2/rec3` abre a tela desse PIX (`pendente/?t=…`, com o QR, como o lembrete do PIX por e-mail); sem
+  ele, o checkout já preenchido de sempre. O link do cupom continua no checkout.
+- **Modelos por família** (`MCP_RW_FAMILIAS`, `mcp_rw_escolher_modelo`): `rec_inscricao_2`, `rec_inscricao_2_v2`, `_v3`… são a
+  mesma mensagem. Entre os aprovados da família (pt_BR), vale a **maior versão aprovada como UTILITY**; sem nenhuma, a aprovada
+  de maior versão de **qualquer categoria**; e só uma cujos parâmetros e botão conferem com a mensagem. Sem a lista da Meta,
+  os nomes de hoje. Consequência: se a `_v2` de utilidade for pausada, sai a versão antiga aprovada (ex.: `rec_inscricao_1`,
+  marketing) em vez de segurar a mensagem. O cache da lista passou a morar num evento `rw_cache_modelos` (passou dos 128
+  caracteres de `mcp_chaves`, que guarda só a hora e o id). O painel mostra, por família, a versão que sai e as outras.
+- O cliente da Unicopag aceita HTTP **só em 127.0.0.1** (o servidor falso dos testes), como já faziam a Kapso e a escola.
+
+- **Painel** (`api/recuperacao.php`): seção **Matrícula pendente** no topo — em aberto agora, 1ª e 2ª enviadas por canal,
+  quantos receberam, **pagaram depois** da 1ª (pelo site, pelo botão de uma mensagem, na escola, marcados), mediana, última
+  rodada, a lista (turma, selos por canal, próxima de cada canal, respostas) e o botão "Já pagou na escola" (POST com token).
+- **Banco**: `mcp_matricula_pendente` e `mcp_matricula_pagamentos` (migração do `db.php`, `MCP_DB_VERSAO` nova).
+- **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_matricula_pendente_integracao.php` (MariaDB local e um servidor falso
+  que faz de Kapso, escola, Resend **e Unicopag**): régua, véspera, turma passada, pagou entre as mensagens, bloqueio,
+  descadastro, escola fora, teto somado, família `mat_pendente_1_v2`, pagamento de ponta a ponta (PIX + postback + e-mails,
+  cartão aprovado e recusado), painel e o PIX conferido antes da 1ª. O do WhatsApp ganhou a escolha de família, os 30 min do
+  PIX e o link direto ao PIX.
+- **Publicar**: `scripts/publicacao-recuperacao.txt` (com migração; a página nova e o `matricula.js` antes da biblioteca) e
+  conferir com `scripts/conferir_publicacao.sh`.
+
 ## Cupom de desconto no checkout (30/10/2026)
 
 Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à

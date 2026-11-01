@@ -15,7 +15,7 @@ trap 'rm -f "$tmp"' EXIT
 falhas=0
 ok() { printf 'ok     %s\n' "$*"; }
 falha() { printf 'FALHA  %s\n' "$*"; falhas=$((falhas + 1)); }
-pedir() { curl -sS -o "$tmp" -D "$tmp.cab" -w '%{http_code}' --max-time 30 "$1" 2>/dev/null || echo 000; }
+pedir() { curl -sS -o "$tmp" -D "$tmp.cab" -w '%{http_code}' --max-time 30 "$@" 2>/dev/null || echo 000; }
 
 echo "== Estáticos iguais ao repositório"
 marca="conferencia=$(date +%s)"
@@ -37,6 +37,9 @@ api/painel.php|200|
 api/recuperacao.php|200|Entrar pelo Portal da secretaria
 api/avisos.php?u=1.abc|404|Este link não vale mais
 api/avisos.php?rw=1.abc|404|Este link não vale mais
+api/avisos.php?mp=1.abc|404|Este link não vale mais
+api/matricula.php|404|"motivo":"link"
+api/matricula.php?c=0000000000000000000000000000000000000000|404|
 api/whatsapp.php|403|
 api/conferir.php|422|
 api/escola-horarios.php|401|
@@ -73,6 +76,13 @@ redireciona 'api/ir.php/e/primeiros-socorros-basico/rec3cupom' '/matricula-curso
 redireciona 'api/ir.php/w/cursos/rec2' '/matricula-cursos-presenciais/?utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec2'
 redireciona 'api/ir.php/w/curso-que-nao-existe/rec1/s1.abc.0123456789abcdef' '/matricula-cursos-presenciais/'
 redireciona 'api/ir.php' '/matricula-cursos-presenciais/'
+# Matrícula pendente (01/11/2026): mat1/mat2 levam à tela de pagar a matrícula; sem curso, à página de matrícula.
+redireciona 'api/ir.php/w/puncao-venosa/mat1' '/matricula-cursos-presenciais/pagar-matricula/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=mat1'
+redireciona 'api/ir.php/e/puncao-venosa/mat2' '/matricula-cursos-presenciais/pagar-matricula/?curso=puncao-venosa&utm_source=email&utm_medium=recuperacao&utm_campaign=mat2'
+redireciona 'api/ir.php/w/cursos/mat1' '/matricula-cursos-presenciais/'
+# O postback com um hash desconhecido (nem inscrição nem matrícula): 200 "ignorado" (com 500, a tabela nova não foi criada).
+codigo=$(pedir "$m/api/webhook.php" -X POST -H 'Content-Type: application/json' --data '{"hash":"conferencia-inexistente"}')
+if [ "$codigo" = 200 ] && grep -q 'ignorado' "$tmp"; then ok "api/webhook.php com hash desconhecido → 200 ignorado"; else falha "api/webhook.php com hash desconhecido → $codigo $(head -c 80 "$tmp")"; fi
 # Pré-preenchimento sem token (ou com token que não vale): {} com 200 e sem cache.
 codigo=$(pedir "$m/api/recuperacao-dados.php?t=s1.abc.0123456789abcdef")
 if [ "$codigo" = 200 ] && [ "$(cat "$tmp")" = '{}' ] && grep -qi '^cache-control:.*no-store' "$tmp.cab"; then ok "api/recuperacao-dados.php com token inválido → {} (no-store)"; else falha "api/recuperacao-dados.php → $codigo $(head -c 80 "$tmp")"; fi
@@ -82,7 +92,7 @@ if grep -q "decodeURIComponent(p)" "$tmp"; then ok "checkout/%3Fcurso… → $co
 
 echo "== Bloqueados"
 for caminho in api/config.php api/config-escola.php api/config.example.php api/lib.php \
-  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/lib/recuperacao_email.php api/comparecimentos.php api/lembretes.php; do
+  api/lib/avisos.php api/lib/db.php api/lib/config.php api/lib/turmas.php api/lib/recuperacao_whatsapp.php api/lib/recuperacao_email.php api/lib/matricula_pendente.php api/comparecimentos.php api/lembretes.php; do
   codigo=$(pedir "$m/$caminho")
   if [ "$codigo" = 403 ]; then ok "$caminho → 403"; else falha "$caminho → $codigo (esperado 403)"; fi
 done

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gera as páginas do checkout da matrícula: checkout/, pendente/, parabens/ e horarios/, e as do
+"""Gera as páginas do checkout da matrícula: checkout/, pendente/, parabens/, horarios/ e pagar-matricula/, e as do
 ponto da sede: ponto/ (com o cartaz do QR code), comparecimento/ e conferir/.
 
 Todas usam o cabeçalho, o rodapé, o CSS, o GA4 e o Meta Pixel da home (via
@@ -349,6 +349,10 @@ CORPO_PARABENS = """        <div class="ck-card" id="pb-card" aria-live="polite"
 CORPO_HORARIOS = """        <div class="ck-card" id="hr-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_COMPARECIMENTO = """        <div class="ck-card" id="cp-card" aria-live="polite"><p>Carregando…</p></div>"""
 CORPO_CONFERIR = """        <div class="ck-card" id="cf-card" aria-live="polite"><p>Carregando…</p></div>"""
+# Pagar a matrícula (01/11/2026, api/matricula.php e static/matricula.js): a tela aberta pelo botão das mensagens da
+# matrícula pendente, para quem pagou só a taxa. O JS próprio (e não o checkout.js) de propósito: o checkout, por onde
+# entra toda inscrição, não muda. Os estilos são os do checkout (ck-card, ck-metodo, ck-cartao-box, ck-pix, ck-etapas).
+CORPO_MATRICULA = """        <div class="ck-card" id="mt-card" aria-live="polite"><p>Carregando…</p></div>"""
 
 # Ponto da sede (29/09/2026): página própria, sem o cabeçalho do site, sem medição e sem chat. Fica
 # aberta no aparelho da recepção e também no celular de quem lê o QR code do cartaz.
@@ -643,19 +647,20 @@ NOSCRIPT = {
     "horarios": "Esta página precisa de JavaScript para mostrar o questionário de dias e horários.",
     "comparecimento": "Esta página precisa de JavaScript para mostrar o comprovante.",
     "conferir": "Esta página precisa de JavaScript para conferir o código.",
+    "matricula": "Esta página precisa de JavaScript para gerar o pagamento da matrícula.",
 }
 # Telas do pagar tudo: levam o CSS dos planos, das parcelas, do PIX e da Parabéns.
-TELAS_PAGAR_TUDO = {"checkout", "pendente", "parabens"}
+TELAS_PAGAR_TUDO = {"checkout", "pendente", "parabens", "matricula"}
 
 
 def montar(partes: dict, titulo: str, id_: str, h1: str, lead: str, corpo: str, qrcode: bool, wrap_extra: str = "", passo: int = 2,
-           eyebrow: str = "Curso presencial", etapas: list[str] | None = None) -> str:
+           eyebrow: str = "Curso presencial", etapas: list[str] | None = None, js: str = "checkout.js") -> str:
     return (PAGINA
             .replace("@@EYEBROW@@", esc(eyebrow))
             .replace("@@NOSCRIPT@@", NOSCRIPT[id_])
             .replace("@@TITULO@@", esc(titulo)).replace("@@QRCODE@@", QRCODE if qrcode else "")
             .replace("@@ESTILO@@", partes["estilo"])
-            .replace("@@CSS_URL@@", url_estatico("checkout.css")).replace("@@JS_URL@@", url_estatico("checkout.js"))
+            .replace("@@CSS_URL@@", url_estatico("checkout.css")).replace("@@JS_URL@@", url_estatico(js))
             .replace("@@CSS_PAGAR_TUDO@@", CSS_PAGAR_TUDO if id_ in TELAS_PAGAR_TUDO else "  <style>.ck-card .btn { text-align: center; }</style>")
             .replace("@@GA4@@", partes["ga4"]).replace("@@PIXEL@@", partes["pixel"])
             .replace("@@HEADER@@", partes["header"]).replace("@@FOOTER@@", partes["footer"]).replace("@@MENU_JS@@", partes["menu_js"])
@@ -797,6 +802,12 @@ def main() -> int:
                                  "Comprovante de comparecimento",
                                  "O comprovante da sua aula presencial. Ele fica disponível quando a aula termina e também chega no seu e-mail.",
                                  CORPO_COMPARECIMENTO, qrcode=False, wrap_extra=' style="max-width:820px"', passo=0, eyebrow="Escola de Educação e Saúde"),
+        # Pagar a matrícula (01/11/2026): só pelo link das mensagens da matrícula pendente (o token fica num cookie da api/).
+        "pagar-matricula": montar(partes, "Pagar a matrícula | Cruz Vermelha Brasileira Rio de Janeiro", "matricula",
+                                  "Pagar a matrícula",
+                                  "A taxa de inscrição já está paga. Falta a matrícula para a entrada na aula ser liberada.",
+                                  CORPO_MATRICULA, qrcode=True, wrap_extra=' style="max-width:720px"', passo=2,
+                                  etapas=["Taxa de inscrição", "Matrícula", "Entrada liberada"], js="matricula.js"),
         "conferir": montar(partes, "Conferir documento | Cruz Vermelha Brasileira Rio de Janeiro", "conferir",
                            "Conferir um documento ou aprovação",
                            "Digite o código de verificação do documento ou da aprovação no voluntariado para confirmar que ele foi emitido pela Cruz Vermelha Brasileira Rio de Janeiro.",

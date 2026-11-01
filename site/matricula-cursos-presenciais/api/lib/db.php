@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = 'f8cf16c5d94d05ce';
+const MCP_DB_VERSAO = '5d2e122f26f61625';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -733,6 +733,69 @@ function mcp_migrar_tudo(PDO $pdo): void
         UNIQUE KEY ux_pessoa_etapa (pessoa_chave, etapa),
         KEY ix_email (email_hash, criado_em),
         KEY ix_criado (criado_em, status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Matrícula pendente (01/11/2026, lib/matricula_pendente.php): quem pagou só a taxa de inscrição tem a vaga, mas a
+    // entrada na aula depende da matrícula. Uma linha por mensagem (canal whatsapp ou email; etapa 1 logo depois da taxa,
+    // etapa 2 na véspera ou 48 h antes da turma) e a marcação do painel "já pagou na escola" (canal painel, etapa 0,
+    // status pago_escola). Tabela própria, e não as da recuperação do carrinho, de propósito: aqui a pessoa já é aluna,
+    // não há grupo de controle, e as contas e a régua do carrinho (que leem todas as linhas daquelas tabelas) não podem
+    // misturar as duas coisas. inscricao_id aponta a inscrição paga (o dado pessoal fica só em mcp_inscricoes);
+    // destino_hash é o mcp_avisos_hash do celular ou do e-mail (o mesmo de mcp_avisos_bloqueios). UNIQUE(inscricao_id,
+    // canal, etapa) é a trava que impede repetir uma etapa.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_matricula_pendente (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        inscricao_id INT UNSIGNED NOT NULL,
+        canal ENUM('whatsapp','email','painel') NOT NULL,
+        etapa TINYINT UNSIGNED NOT NULL,
+        modelo VARCHAR(40) NULL,
+        assunto VARCHAR(200) NULL,
+        curso_slug VARCHAR(80) NULL,
+        turma_inicio DATETIME NULL,
+        destino_hash CHAR(32) NULL,
+        status ENUM('enviado','falhou','pago_escola') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        entrega ENUM('entregue','lida','falhou') NULL,
+        erro VARCHAR(255) NULL,
+        resposta VARCHAR(200) NULL,
+        autor VARCHAR(190) NULL,
+        descadastro_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_inscricao_canal_etapa (inscricao_id, canal, etapa),
+        KEY ix_provedor (provedor_id),
+        KEY ix_criado (criado_em, canal, status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Pagamento da matrícula pelo site (01/11/2026, api/matricula.php): a cobrança da matrícula de uma inscrição que já
+    // pagou só a taxa, aberta pelo link assinado da mensagem. Tabela à parte de mcp_inscricoes de propósito: uma linha
+    // lá é uma inscrição (vai à escola, manda o recibo da taxa, conta como compra no painel e na Meta); a matrícula paga
+    // depois não é nada disso. Mesmo ciclo de status, mesma Unicopag, mesmo postback (webhook.php procura aqui quando o
+    // hash não é de uma inscrição). O cartão nunca é gravado: só a bandeira e os 4 últimos dígitos.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_matricula_pagamentos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        inscricao_id INT UNSIGNED NOT NULL,
+        token CHAR(40) NOT NULL,
+        metodo ENUM('pix','cartao') NOT NULL,
+        valor_centavos INT UNSIGNED NOT NULL,
+        status ENUM('pendente','pago','recusado','expirado','estornado') NOT NULL DEFAULT 'pendente',
+        unicopag_hash VARCHAR(64) NULL,
+        unicopag_status VARCHAR(40) NULL,
+        pix_copia_cola TEXT NULL,
+        pix_url VARCHAR(255) NULL,
+        pix_imagem VARCHAR(255) NULL,
+        bandeira VARCHAR(30) NULL,
+        ultimos4 CHAR(4) NULL,
+        utm_source VARCHAR(120) NULL,
+        utm_campaign VARCHAR(160) NULL,
+        ip VARCHAR(45) NULL,
+        email_aluno VARCHAR(20) NULL,
+        email_secretaria VARCHAR(20) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        pago_em DATETIME NULL,
+        consultado_em DATETIME NULL,
+        UNIQUE KEY uq_token (token),
+        KEY ix_hash (unicopag_hash),
+        KEY ix_inscricao (inscricao_id, status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

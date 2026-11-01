@@ -5,7 +5,8 @@
  * Na mesma rodada, o lembrete único do PIX em aberto (lib/recuperacao.php): a quem gerou o PIX há 2 a 20 h e
  * não pagou, depois de conferir o pagamento na Unicopag. E a recuperação por WhatsApp (lib/recuperacao_whatsapp.php,
  * 30/10/2026): as três mensagens automáticas a quem se cadastrou no site ou na escola e não pagou; e, logo depois, os
- * três e-mails da mesma recuperação a esse mesmo público (lib/recuperacao_email.php).
+ * três e-mails da mesma recuperação a esse mesmo público (lib/recuperacao_email.php). Antes delas, a matrícula pendente
+ * (lib/matricula_pendente.php, 01/11/2026): 2 mensagens e 2 e-mails a quem pagou só a taxa, para pagar a matrícula.
  *
  * Só pela linha de comando, rodado pelo cron da hospedagem a cada hora:
  *   php /caminho/public_html/matricula-cursos-presenciais/api/lembretes.php
@@ -40,8 +41,23 @@ try {
     // Recuperação por WhatsApp: módulo opcional (publicado à parte, o resto roda sem ele). Uma falha aqui também não
     // derruba o que já rodou; sem as chaves da Kapso, não manda nada e só diz o motivo.
     $w = ['falhas' => 0];
+    $falhasMp = 0;
     if (is_file(__DIR__ . '/lib/recuperacao_whatsapp.php')) {
         require_once __DIR__ . '/lib/recuperacao_whatsapp.php';
+        // Matrícula pendente (lib/matricula_pendente.php, 01/11/2026): quem pagou só a taxa e precisa pagar a matrícula antes
+        // da aula. Vem ANTES da recuperação do carrinho: tem data de aula, e o teto em 24 h (WhatsApp e e-mail) é o mesmo.
+        // Uma falha aqui não segura a recuperação.
+        try {
+            $mp = mcp_mp_rodar();
+            printf("%s matrícula pendente: WhatsApp %d enviadas, %d falhas, %d puladas%s; e-mail %d enviados, %d falhas, %d pulados%s; %d inscrições pendentes, escola %s%s\n",
+                gmdate('Y-m-d H:i:s'), $mp['whatsapp']['enviados'], $mp['whatsapp']['falhas'], $mp['whatsapp']['pulados'],
+                $mp['whatsapp']['motivo'] !== null ? ' (' . $mp['whatsapp']['motivo'] . ')' : '', $mp['email']['enviados'], $mp['email']['falhas'], $mp['email']['pulados'],
+                $mp['email']['motivo'] !== null ? ' (' . $mp['email']['motivo'] . ')' : '', $mp['vistos'], $mp['escola'], $mp['motivo'] !== null ? ' (' . $mp['motivo'] . ')' : '');
+            $falhasMp = $mp['whatsapp']['falhas'] + $mp['email']['falhas'];
+        } catch (Throwable $erro) {
+            error_log('[matricula] matrícula pendente: ' . get_class($erro) . ': ' . $erro->getMessage());
+            $falhasMp = 1;
+        }
         try {
             $w = mcp_rw_rodar();
             // As devidas que não receberam, por motivo (o mesmo resumo que o painel mostra por pessoa, desde 01/11/2026).
@@ -53,6 +69,7 @@ try {
             error_log('[matricula] recuperação por WhatsApp: ' . get_class($e) . ': ' . $e->getMessage());
             $w = ['falhas' => 1];
         }
+        $w['falhas'] += $falhasMp;
         // Recuperação por e-mail (lib/recuperacao_email.php): o mesmo público, logo depois e independente do WhatsApp
         // (aproveita o público que ele já leu nesta hora). Uma falha aqui não desfaz nem segura o que já rodou; sem a
         // RESEND_API_KEY, não manda nada e só diz o motivo.

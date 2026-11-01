@@ -1,25 +1,26 @@
-# Recuperação por WhatsApp e e-mail, 01/11/2026 (depois das primeiras mensagens reais de 31/10): links curtos sem "?" nem
-# "&" (api/ir.php), pré-preenchimento do checkout (api/recuperacao-dados.php), primeiro nome corrigido, a fila não para mais
-# por causa de uma pessoa, a mensagem conferida com o modelo da Meta, e o motivo de cada pessoa não ter recebido no painel.
-# Muda só código: sem migração (os resumos das rodadas vão para mcp_eventos, que já existe).
-# Ordem: as bibliotecas antes de quem as usa; os dois endpoints novos antes do checkout.js que os chama; o checkout.js antes
-# das páginas que apontam para o hash novo dele; o 404.html (rede para os links antigos já entregues) por último.
-# Publicar ANTES da rodada das 8h07: a 2ª mensagem de quem recebeu a 1ª em 31/10 já sai com o link novo.
+# Matrícula pendente e reforço da recuperação, 01/11/2026 (tarde): 2 mensagens e 2 e-mails a quem pagou só a taxa, a tela de
+# pagar a matrícula pelo site (api/matricula.php + pagar-matricula/), e na recuperação do carrinho a 1ª em 30 min para quem
+# gerou PIX (com a Unicopag conferida antes), o link direto à tela do PIX aberto e a escolha do modelo por família (_v2/_v3).
+# COM MIGRAÇÃO: duas tabelas novas (mcp_matricula_pendente, mcp_matricula_pagamentos), criadas pelo db.php na primeira
+# requisição depois da publicação (MCP_DB_VERSAO nova). O código aguenta o esquema antigo por alguns segundos.
+# Ordem: o db.php e as bibliotecas antes de quem as usa; o matricula_pendente.php ANTES do recuperacao_whatsapp.php (que o
+# carrega: na ordem contrária, a rotina e o painel cairiam até o arquivo chegar); a página e o JS antes do ir.php, que manda
+# para lá; o lembretes.php por último (é ele que começa a mandar).
+# Publicar FORA do minuto 7 (a rodada roda às hh:07).
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-recuperacao.txt)
 # Conferir: scripts/conferir_publicacao.sh scripts/publicacao-recuperacao.txt
-# Depois: abrir o painel (api/recuperacao.php) logado; o cartão "Última rodada" aparece a partir da primeira rodada depois
-# da publicação. A regra opcional de scripts/htaccess-checkout-codificado.txt NÃO está nesta lista (decisão do responsável).
+# Depois: abrir o painel (api/recuperacao.php) logado: a seção "Matrícula pendente" aparece no topo (se der "banco ainda não
+# está pronto", espere 1 minuto). Conferir em "Configuração, modelos na Meta" se mat_pendente_1 e _2 estão aprovados.
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/unicopag.php
+site/matricula-cursos-presenciais/api/lib/matricula_pendente.php
 site/matricula-cursos-presenciais/api/lib/recuperacao_email.php
 site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
+site/matricula-cursos-presenciais/api/webhook.php
+site/matricula-cursos-presenciais/api/avisos.php
+site/matricula-cursos-presenciais/api/matricula.php
+site/matricula-cursos-presenciais/static/matricula.js
+site/matricula-cursos-presenciais/pagar-matricula/index.html
 site/matricula-cursos-presenciais/api/ir.php
-site/matricula-cursos-presenciais/api/recuperacao-dados.php
 site/matricula-cursos-presenciais/api/recuperacao.php
 site/matricula-cursos-presenciais/api/lembretes.php
-site/matricula-cursos-presenciais/static/checkout.js
-site/matricula-cursos-presenciais/checkout/index.html
-site/matricula-cursos-presenciais/pendente/index.html
-site/matricula-cursos-presenciais/parabens/index.html
-site/matricula-cursos-presenciais/horarios/index.html
-site/matricula-cursos-presenciais/comparecimento/index.html
-site/matricula-cursos-presenciais/conferir/index.html
-site/404.html

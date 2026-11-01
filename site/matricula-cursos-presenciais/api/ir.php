@@ -15,6 +15,9 @@
  *    checkout, para não ir parar no GA4, no Pixel nem no Referer. Token inválido: redireciona igual, sem cookie.
  *  - Cada abertura fica em mcp_eventos ('recuperacao_link', só fonte/curso/campanha; nenhum dado pessoal): o painel
  *    mostra quantas vezes os links foram abertos. Leitores de e-mail que abrem links sozinhos também contam.
+ *  - Direto ao pagamento (01/11/2026): com o PIX da inscrição ainda aberto, o link do carrinho abre a tela desse PIX
+ *    (pendente/?t=…), como o lembrete do PIX por e-mail; as campanhas mat1 e mat2 (matrícula pendente) levam à tela de
+ *    pagar a matrícula (pagar-matricula/), com o token no mesmo cookie.
  */
 declare(strict_types=1);
 
@@ -33,7 +36,14 @@ try {
         $partes = explode('/', trim($caminho, '/'));
         mcp_registrar(null, 'recuperacao_link', implode('/', array_slice($partes, 0, 3)));
     }
-    if ($link['token'] !== '' && mcp_rw_token_ref($link['token'], time()) !== null) {
+    $ref = $link['token'] !== '' ? mcp_rw_token_ref($link['token'], time()) : null;
+    // Com o PIX ainda aberto, direto à tela dele (o QR), em vez do checkout (01/11/2026, mcp_rw_link_pix_direto).
+    if ($ref !== null && $link['valido']) {
+        [$fonte, , $campanha] = explode('/', trim($caminho, '/'));
+        $utm = 'utm_source=' . MCP_RW_LINK_FONTES[$fonte] . '&utm_medium=recuperacao&utm_campaign=' . $campanha;
+        $destino = mcp_rw_link_pix_direto($ref, $campanha, $utm, time()) ?? $destino;
+    }
+    if ($ref !== null) {
         setcookie(MCP_RW_COOKIE, $link['token'], [
             'expires' => time() + MCP_RW_COOKIE_S, 'path' => '/matricula-cursos-presenciais/api/',
             'secure' => str_starts_with(mcp_site_url(), 'https://'), 'httponly' => true, 'samesite' => 'Lax',

@@ -247,7 +247,7 @@ function limpar(PDO $db, string $padraoEmail, array $telefones, array $emails): 
     $db->exec('DELETE FROM mcp_recuperacao_email WHERE criado_em > DATE_ADD(UTC_TIMESTAMP(), INTERVAL 300 DAY)');
     $db->exec('DELETE FROM mcp_recuperacao_whatsapp WHERE criado_em > DATE_ADD(UTC_TIMESTAMP(), INTERVAL 300 DAY)');
     // Os resumos das rodadas e as aberturas dos links que o teste gerou (gravados com a hora de verdade, sem inscrição).
-    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link') AND inscricao_id IS NULL AND criado_em >= ?")
+    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link', 'matricula_rodada', 'rw_cache_modelos') AND inscricao_id IS NULL AND criado_em >= ?")
         ->execute([$GLOBALS['inicioTeste'] ?? gmdate('Y-m-d H:i:s')]);
     // A pessoa do painel tem o cadastro de agora (horas atrás): as linhas dela são apagadas pelos hashes.
     foreach ($telefones as $numero) {

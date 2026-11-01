@@ -57,7 +57,8 @@ function mcp_unicopag(string $metodo, string $caminho, ?array $corpo = null, ?st
         CURLOPT_HTTPHEADER => $cabecalhos,
         CURLOPT_CONNECTTIMEOUT => min(10, $tempo ?? 10),
         CURLOPT_TIMEOUT => $tempo ?? 55,
-        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
+        // HTTPS sempre; HTTP só em 127.0.0.1 (o servidor falso dos testes de integração, como o da Kapso e o da escola).
+        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS | (in_array(parse_url($url, PHP_URL_HOST), ['127.0.0.1', 'localhost'], true) ? CURLPROTO_HTTP : 0),
     ]);
     if ($corpo !== null) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($corpo, JSON_UNESCAPED_UNICODE));
