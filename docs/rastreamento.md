@@ -236,6 +236,27 @@ espera). Duas mudanças pequenas que já valem:
 A página `/matricula-cursos-presenciais/` não mudou. Próximos: função da escola (v2), teste real de R$ 2 e a página
 nova com a venda de tudo à vista (passos 1, 4 e 5 de `scripts/publicacao-pagar-tudo-passo*.txt`).
 
+## Modo de consentimento avançado do Google (02/11/2026)
+
+Decisão do responsável. O gtag.js passa a ser baixado em toda visita (bloco de medição da home, copiado para
+todas as páginas), com o Consent Mode em `denied` até a pessoa escolher. Sem "sim" para estatística (sem escolha
+ou com "Rejeitar"), ele não grava `_ga` nem guarda identificador e manda só sinais da visita e dos eventos
+(`page_view`, `generate_lead`, `checkout_etapa` etc.), que o GA4 e o Google Ads usam para estimar os totais. Com
+"sim", mede com cookies, como antes. O Pixel da Meta e o repasse à API de Conversões não mudaram: só com "sim"
+para marketing.
+
+- A escolha já gravada entra no `<head>`, antes do `gtag('config')`; o `url_passthrough` leva o `gclid` pelo
+  endereço quando não há cookie de anúncio. A chave `ga-disable-G-HDYZZ5JZHF` saiu (cortaria os sinais sem cookie).
+- O gtag.js é baixado só pelo bloco, uma vez por página; o `consentimento.js` não baixa nada.
+- **Continua só com consentimento:** o `purchase` do curso (Parabéns) e o da doação (`/doe/obrigado/`), porque
+  dependem da marca `mcp_purchase_…`/`doe_purchase_…` no `localStorage` (categoria "Estatística e marketing" na
+  Política de Cookies); e a origem da visita (`utm_*`, `gclid`) gravada com a inscrição. Quem rejeitou entra no
+  `generate_lead` sem cookie, mas não no `purchase`. Mudar isso é outra decisão (a marca no navegador sem
+  permissão precisaria de base própria).
+- Conferido no Chromium em 02/11/2026 (home e checkout, Google e Meta interceptados): sem escolha e com
+  "Rejeitar", gtag.js uma vez, nenhum `_ga`, nenhum fbevents.js; com "Aceitar todos", gtag.js uma vez, `_ga`
+  gravado e fbevents.js baixado.
+
 ## Carregamento adiado (19/09, à noite)
 
 Os scripts `gtag.js` e `fbevents.js` passaram a carregar depois do `load` da página, em momento

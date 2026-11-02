@@ -104,7 +104,7 @@
   },
   "paginas": {
     "privacidade": {
-      "revisao": "2026-10-29",
+      "revisao": "2026-11-02",
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.",
@@ -164,10 +164,16 @@
                     "base": "Consentimento (art. 7º, I), que você pode retirar a qualquer momento."
                   },
                   {
-                    "titulo": "Estatística de visitas (Google Analytics), só com a sua permissão",
+                    "titulo": "Estatística de visitas com cookies (Google Analytics), só com a sua permissão",
                     "dados": "Páginas vistas, origem da visita, dados técnicos do navegador e do aparelho, cidade aproximada e o identificador do cookie.",
                     "finalidade": "Contar as visitas e entender quais páginas são lidas, para melhorar o site.",
                     "base": "Consentimento (art. 7º, I), dado no aviso de cookies."
+                  },
+                  {
+                    "titulo": "Estatística de visitas sem cookies (Google Analytics), em toda visita",
+                    "dados": "Sem a permissão de estatística (antes de responder ao aviso de cookies ou depois de recusar), o site carrega o Google Analytics no modo de consentimento avançado do Google: ele não grava cookies nem guarda identificador seu, e envia ao Google só sinais de cada página vista e de ações na página (como cliques e etapas da inscrição ou da ficha de voluntário). Como em qualquer acesso a um servidor, a requisição leva o endereço IP e dados técnicos do navegador e do aparelho; por isso não dizemos que esses sinais são anônimos. Se você chegou por um anúncio do Google, o identificador do clique (gclid) pode seguir no endereço das páginas seguintes, em vez de ficar num cookie.",
+                    "finalidade": "Estimar o total de visitas e de resultados das campanhas, inclusive de quem não permitiu os cookies de estatística, sem reconhecer a mesma pessoa de uma visita para outra. O Google usa esses sinais para calcular estimativas no Google Analytics e no Google Ads.",
+                    "base": "Legítimo interesse (art. 7º, IX, e art. 10), com o mínimo necessário: sem cookie, sem identificador e sem ligação com o seu nome. Se não quiser enviar nem esses sinais, você pode bloquear o Google Analytics no navegador (por exemplo, com o complemento de desativação do Google Analytics, do próprio Google) ou se opor pelo e-mail do fim desta página."
                   },
                   {
                     "titulo": "Marketing (Pixel e API de Conversões da Meta), só com a sua permissão",
@@ -263,7 +269,7 @@
                   "**Resend**, que envia os e-mails (comprovantes, protocolos do chat, a confirmação da ficha de voluntário, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula, do chat e do voluntariado saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.",
                   "**Meta, pelo WhatsApp**, só para quem autorizou receber mensagens por ali: o número e o texto de cada lembrete ou comunicado. Se a instituição usar um intermediário para mandar o WhatsApp (o Make ou o servidor do WhatsApp do Palácio Virtual, mantido pela filial), ele recebe o mesmo, só para o envio. Alunos só recebem WhatsApp com a autorização registrada na plataforma da escola.",
                   "**Vercel e Supabase**, que hospedam o sistema interno da filial (o Palácio Virtual), que publica as notícias, guarda a lista da newsletter e recebe as fichas do cadastro de voluntários.",
-                  "**Google e Meta**, pelas ferramentas de estatística e de marketing, só com a sua permissão. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
+                  "**Google e Meta**, pelas ferramentas de estatística e de marketing: os cookies delas e o Pixel da Meta, só com a sua permissão; o Google Analytics sem cookies, em toda visita, como descrito acima. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.",
                   "**Google**, pelo Google Workspace da filial, como operador: o Drive e as Planilhas guardam a cópia em PDF das fichas de voluntário, as exportações diárias da secretaria (sem CPF) e as cópias de segurança do banco de dados; o e-mail da filial recebe as mensagens que você nos envia e os avisos internos dos formulários.",
                   "**Autoridades públicas**, quando a lei ou uma ordem judicial exigir."
                 ]
@@ -287,7 +293,7 @@
             "titulo": "Cookies",
             "blocos": [
               {
-                "p": "Usamos cookies necessários para o site funcionar e, só com a sua permissão, cookies de estatística e de marketing. A lista completa, com a validade de cada um, está na [Política de Cookies]({cookies}). Você pode mudar a sua escolha quando quiser:"
+                "p": "Usamos cookies necessários para o site funcionar e, só com a sua permissão, cookies de estatística e de marketing. Sem essa permissão, o Google Analytics funciona sem cookies, como descrito acima. A lista completa, com a validade de cada um, está na [Política de Cookies]({cookies}). Você pode mudar a sua escolha quando quiser:"
               },
               {
                 "botao_cookies": "Preferências de cookies"
@@ -428,10 +434,16 @@
                     "base": "Consent (Art. 7, I), which you can withdraw at any time."
                   },
                   {
-                    "titulo": "Visit statistics (Google Analytics), only with your permission",
+                    "titulo": "Visit statistics with cookies (Google Analytics), only with your permission",
                     "dados": "Pages viewed, where the visit came from, technical data about the browser and device, approximate city and the cookie identifier.",
                     "finalidade": "To count visits and understand which pages are read, so we can improve the site.",
                     "base": "Consent (Art. 7, I), given in the cookie notice."
+                  },
+                  {
+                    "titulo": "Visit statistics without cookies (Google Analytics), on every visit",
+                    "dados": "Without statistics permission (before you answer the cookie notice, or after you refuse), the site loads Google Analytics in Google's advanced consent mode: it stores no cookies and keeps no identifier of yours, and only sends Google signals about each page viewed and about actions on the page (such as clicks and steps of an enrolment or the volunteer form). As with any request to a server, it carries your IP address and technical data about the browser and device; that is why we do not call these signals anonymous. If you arrived through a Google ad, the click identifier (gclid) may be carried in the address of the following pages instead of being kept in a cookie.",
+                    "finalidade": "To estimate the total number of visits and campaign results, including from people who did not allow statistics cookies, without recognising the same person from one visit to the next. Google uses these signals to calculate estimates in Google Analytics and Google Ads.",
+                    "base": "Legitimate interest (Art. 7, IX, and Art. 10), with the minimum necessary: no cookie, no identifier and no link to your name. If you do not want even these signals to be sent, you can block Google Analytics in your browser (for example, with Google's own Google Analytics opt-out add-on) or object at the e-mail at the end of this page."
                   },
                   {
                     "titulo": "Marketing (Meta Pixel and Conversions API), only with your permission",
@@ -527,7 +539,7 @@
                   "**Resend**, which sends the e-mails (receipts, chat reference numbers, the volunteer form confirmation, the newsletter and the time clock reminders and announcements). If it is unavailable, enrolment, chat and volunteering e-mails go out through the hosting server; the time clock reminders and announcements wait for Resend to come back.",
                   "**Meta, through WhatsApp**, only for people who agreed to receive messages there: the number and the text of each reminder or announcement. If the institution uses an intermediary to send WhatsApp messages (Make, or the server of the Palácio Virtual WhatsApp, run by the branch), it receives the same, only for sending. Students only receive WhatsApp messages if their authorisation is recorded on the school platform.",
                   "**Vercel and Supabase**, which host the branch's internal system (Palácio Virtual), which publishes the news, keeps the newsletter list and receives the volunteer registration forms.",
-                  "**Google and Meta**, through the statistics and marketing tools, only with your permission. Meta also receives from our server a copy of the marketing events, with the data described above (Conversions API). Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
+                  "**Google and Meta**, through the statistics and marketing tools: their cookies and the Meta Pixel only with your permission; Google Analytics without cookies, on every visit, as described above. Meta also receives from our server a copy of the marketing events, with the data described above (Conversions API). Google also serves the site's fonts (Google Fonts) and, for that, receives the IP address of whoever opens the page, without cookies.",
                   "**Google**, through the branch's Google Workspace, as a processor: Drive and Sheets hold the PDF copies of the volunteer forms, the office's daily exports (without CPF) and the database backups; the branch's e-mail receives the messages you send us and the internal notices from the forms.",
                   "**Public authorities**, when the law or a court order requires it."
                 ]
@@ -551,7 +563,7 @@
             "titulo": "Cookies",
             "blocos": [
               {
-                "p": "We use cookies the site needs in order to work and, only with your permission, statistics and marketing cookies. The full list, with how long each one lasts, is in the [Cookie Policy]({cookies}). You can change your choice at any time:"
+                "p": "We use cookies the site needs in order to work and, only with your permission, statistics and marketing cookies. Without that permission, Google Analytics works without cookies, as described above. The full list, with how long each one lasts, is in the [Cookie Policy]({cookies}). You can change your choice at any time:"
               },
               {
                 "botao_cookies": "Cookie preferences"
@@ -692,10 +704,16 @@
                     "base": "Consentimiento (art. 7, I), que puede retirar en cualquier momento."
                   },
                   {
-                    "titulo": "Estadística de visitas (Google Analytics), solo con su permiso",
+                    "titulo": "Estadística de visitas con cookies (Google Analytics), solo con su permiso",
                     "dados": "Páginas vistas, origen de la visita, datos técnicos del navegador y del dispositivo, ciudad aproximada y el identificador de la cookie.",
                     "finalidade": "Contar las visitas y entender qué páginas se leen, para mejorar el sitio.",
                     "base": "Consentimiento (art. 7, I), dado en el aviso de cookies."
+                  },
+                  {
+                    "titulo": "Estadística de visitas sin cookies (Google Analytics), en cada visita",
+                    "dados": "Sin el permiso de estadística (antes de responder al aviso de cookies o después de rechazarlo), el sitio carga Google Analytics en el modo de consentimiento avanzado de Google: no guarda cookies ni ningún identificador suyo, y solo envía a Google señales de cada página vista y de acciones en la página (como clics y pasos de la inscripción o de la ficha de voluntario). Como en cualquier acceso a un servidor, la solicitud lleva la dirección IP y datos técnicos del navegador y del dispositivo; por eso no decimos que estas señales sean anónimas. Si llegó por un anuncio de Google, el identificador del clic (gclid) puede seguir en la dirección de las páginas siguientes, en lugar de quedar en una cookie.",
+                    "finalidade": "Estimar el total de visitas y de resultados de las campañas, también de quien no permitió las cookies de estadística, sin reconocer a la misma persona de una visita a otra. Google usa estas señales para calcular estimaciones en Google Analytics y Google Ads.",
+                    "base": "Interés legítimo (art. 7, IX, y art. 10), con lo mínimo necesario: sin cookie, sin identificador y sin relación con su nombre. Si no quiere enviar ni siquiera estas señales, puede bloquear Google Analytics en su navegador (por ejemplo, con el complemento de inhabilitación de Google Analytics, del propio Google) o oponerse por el correo del final de esta página."
                   },
                   {
                     "titulo": "Marketing (Píxel y API de Conversiones de Meta), solo con su permiso",
@@ -791,7 +809,7 @@
                   "**Resend**, que envía los correos (comprobantes, protocolos del chat, la confirmación de la ficha de voluntario, el boletín y los recordatorios y comunicados del control de asistencia). Si no está disponible, los correos de la matrícula, del chat y del voluntariado salen por el servidor del alojamiento; los recordatorios y comunicados del control de asistencia esperan a que Resend vuelva.",
                   "**Meta, por WhatsApp**, solo para quien autorizó recibir mensajes por ahí: el número y el texto de cada recordatorio o comunicado. Si la institución usa un intermediario para enviar el WhatsApp (Make o el servidor del WhatsApp del Palácio Virtual, mantenido por la filial), este recibe lo mismo, solo para el envío. Los alumnos solo reciben WhatsApp si su autorización está registrada en la plataforma de la escuela.",
                   "**Vercel y Supabase**, que alojan el sistema interno de la filial (el Palácio Virtual), que publica las noticias, guarda la lista del boletín y recibe las fichas del registro de voluntarios.",
-                  "**Google y Meta**, por las herramientas de estadística y de marketing, solo con su permiso. Meta también recibe de nuestro servidor una copia de los eventos de marketing, con los datos descritos arriba (API de Conversiones). Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
+                  "**Google y Meta**, por las herramientas de estadística y de marketing: sus cookies y el Píxel de Meta, solo con su permiso; Google Analytics sin cookies, en cada visita, como se describe arriba. Meta también recibe de nuestro servidor una copia de los eventos de marketing, con los datos descritos arriba (API de Conversiones). Google también entrega las fuentes del sitio (Google Fonts) y, para ello, recibe la dirección IP de quien abre la página, sin cookies.",
                   "**Google**, por el Google Workspace de la filial, como encargado: Drive y Hojas de cálculo guardan la copia en PDF de las fichas de voluntarios, las exportaciones diarias de la secretaría (sin CPF) y las copias de seguridad de la base de datos; el correo de la filial recibe los mensajes que usted nos envía y los avisos internos de los formularios.",
                   "**Autoridades públicas**, cuando la ley o una orden judicial lo exija."
                 ]
@@ -815,7 +833,7 @@
             "titulo": "Cookies",
             "blocos": [
               {
-                "p": "Usamos cookies necesarias para que el sitio funcione y, solo con su permiso, cookies de estadística y de marketing. La lista completa, con la duración de cada una, está en la [Política de Cookies]({cookies}). Puede cambiar su elección cuando quiera:"
+                "p": "Usamos cookies necesarias para que el sitio funcione y, solo con su permiso, cookies de estadística y de marketing. Sin ese permiso, Google Analytics funciona sin cookies, como se describe arriba. La lista completa, con la duración de cada una, está en la [Política de Cookies]({cookies}). Puede cambiar su elección cuando quiera:"
               },
               {
                 "botao_cookies": "Preferencias de cookies"
@@ -899,7 +917,7 @@
       }
     },
     "cookies": {
-      "revisao": "2026-10-02",
+      "revisao": "2026-11-02",
       "pt": {
         "titulo_aba": "Cookies | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "Quais cookies o site da Cruz Vermelha Brasileira Rio de Janeiro usa, para quê e por quanto tempo, e como aceitar, recusar ou mudar a sua escolha.",
@@ -914,7 +932,7 @@
             "titulo": "Sua escolha",
             "blocos": [
               {
-                "p": "Na primeira visita, um aviso pergunta se você aceita os cookies de estatística e de marketing. Os botões Rejeitar, Personalizar e Aceitar todos têm o mesmo destaque, e nenhum cookie além dos necessários é gravado antes da sua resposta."
+                "p": "Na primeira visita, um aviso pergunta se você aceita os cookies de estatística e de marketing. Os botões Rejeitar, Personalizar e Aceitar todos têm o mesmo destaque, e nenhum cookie além dos necessários é gravado antes da sua resposta. Antes dela, e também se você recusar, o Google Analytics funciona sem cookies (veja Estatística, abaixo)."
               },
               {
                 "p": "A escolha fica guardada por 12 meses e vale para cruzvermelhariodejaneiro.org e seus subdomínios. Depois desse prazo, perguntamos de novo. Você pode mudar de ideia a qualquer momento, aqui ou em “Preferências de cookies”, no rodapé de todas as páginas."
@@ -926,7 +944,7 @@
                 "botao_cookies": "Abrir preferências de cookies"
               },
               {
-                "p": "Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar, e a ferramenta deixa de ser carregada. No marketing, o nosso servidor também deixa de enviar à Meta a cópia dos eventos. Numa inscrição já feita, a retirada passa a valer quando você abre de novo a página da inscrição (pagamento ou confirmação) no mesmo navegador; se não for voltar a ela, ou se inscreveu em outro aparelho, peça pelo e-mail do fim desta página. A retirada não desfaz o que foi feito enquanto a permissão valia (art. 8º, § 5º, da LGPD)."
+                "p": "Ao retirar uma permissão, apagamos do navegador os cookies daquela categoria que o próprio site consegue apagar. O Pixel da Meta deixa de ser carregado, e o Google Analytics volta a funcionar sem cookies. No marketing, o nosso servidor também deixa de enviar à Meta a cópia dos eventos. Numa inscrição já feita, a retirada passa a valer quando você abre de novo a página da inscrição (pagamento ou confirmação) no mesmo navegador; se não for voltar a ela, ou se inscreveu em outro aparelho, peça pelo e-mail do fim desta página. A retirada não desfaz o que foi feito enquanto a permissão valia (art. 8º, § 5º, da LGPD)."
               }
             ]
           },
@@ -937,7 +955,7 @@
               {
                 "lista": [
                   "**Necessários (sempre ligados):** fazem o site funcionar. Guardam a sua escolha sobre cookies, o andamento da conversa no chat, o aparelho da recepção liberado para o ponto da sede, quem pediu para ser lembrado no ponto pelo celular e, para a equipe, a sessão dos painéis internos. Não dependem de permissão, porque sem eles o site não faz o que você pediu.",
-                  "**Estatística (desligados até você ligar):** o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.",
+                  "**Estatística (desligados até você ligar):** o Google Analytics conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome. Os cookies dele só são gravados com a sua permissão. Sem ela (antes de responder ou depois de recusar), o site carrega o Google Analytics mesmo assim, no modo de consentimento avançado do Google: sem cookies e sem identificador, ele envia ao Google só sinais da visita e das ações na página, que o Google usa para estimar os totais de visitas e de resultados dos anúncios. Esses sinais levam o endereço IP e dados técnicos do navegador, como qualquer acesso, e por isso não os chamamos de anônimos. Se você chegou por um anúncio do Google, o identificador do clique (gclid) pode seguir no endereço das páginas seguintes, em vez de ficar num cookie. Detalhes e base legal na [Política de Privacidade]({privacidade}).",
                   "**Marketing (desligados até você ligar):** o Pixel da Meta mede o alcance e o resultado das nossas campanhas no Facebook e no Instagram. Com ele ligado, o nosso servidor também envia à Meta uma cópia dos eventos (API de Conversões), com os dados descritos na [Política de Privacidade]({privacidade})."
                 ]
               }
@@ -1093,7 +1111,7 @@
             "titulo": "Your choice",
             "blocos": [
               {
-                "p": "On your first visit, a notice asks whether you accept statistics and marketing cookies. The Reject, Customize and Accept all buttons are equally prominent, and no cookie other than the necessary ones is stored before you answer."
+                "p": "On your first visit, a notice asks whether you accept statistics and marketing cookies. The Reject, Customize and Accept all buttons are equally prominent, and no cookie other than the necessary ones is stored before you answer. Before that, and also if you refuse, Google Analytics works without cookies (see Statistics, below)."
               },
               {
                 "p": "Your choice is kept for 12 months and applies to cruzvermelhariodejaneiro.org and its subdomains. After that, we ask again. You can change your mind at any time, here or under “Cookie preferences” in the footer of every page."
@@ -1105,7 +1123,7 @@
                 "botao_cookies": "Open cookie preferences"
               },
               {
-                "p": "When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5)."
+                "p": "When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete. The Meta Pixel stops loading, and Google Analytics goes back to working without cookies. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5)."
               }
             ]
           },
@@ -1116,7 +1134,7 @@
               {
                 "lista": [
                   "**Necessary (always on):** keep the site working. They store your cookie choice, the progress of the chat conversation, the reception device authorised for the headquarters time clock, who asked to be remembered on the time clock on their phone and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.",
-                  "**Statistics (off until you turn them on):** Google Analytics counts visits and shows which pages are read, without identifying you by name.",
+                  "**Statistics (off until you turn them on):** Google Analytics counts visits and shows which pages are read, without identifying you by name. Its cookies are only stored with your permission. Without it (before you answer, or after you refuse), the site still loads Google Analytics, in Google's advanced consent mode: with no cookies and no identifier, it only sends Google signals about the visit and actions on the page, which Google uses to estimate total visits and ad results. These signals carry your IP address and technical data about the browser, like any request, which is why we do not call them anonymous. If you arrived through a Google ad, the click identifier (gclid) may be carried in the address of the following pages instead of being kept in a cookie. Details and legal basis in the [Privacy Policy]({privacidade}).",
                   "**Marketing (off until you turn them on):** the Meta Pixel measures the reach and results of our campaigns on Facebook and Instagram. With it on, our server also sends Meta a copy of the events (Conversions API), with the data described in the [Privacy Policy]({privacidade})."
                 ]
               }
@@ -1272,7 +1290,7 @@
             "titulo": "Su elección",
             "blocos": [
               {
-                "p": "En la primera visita, un aviso le pregunta si acepta las cookies de estadística y de marketing. Los botones Rechazar, Personalizar y Aceptar todas tienen el mismo destaque, y no se guarda ninguna cookie además de las necesarias antes de su respuesta."
+                "p": "En la primera visita, un aviso le pregunta si acepta las cookies de estadística y de marketing. Los botones Rechazar, Personalizar y Aceptar todas tienen el mismo destaque, y no se guarda ninguna cookie además de las necesarias antes de su respuesta. Antes de ella, y también si rechaza, Google Analytics funciona sin cookies (vea Estadística, abajo)."
               },
               {
                 "p": "Su elección se guarda por 12 meses y vale para cruzvermelhariodejaneiro.org y sus subdominios. Después de ese plazo, volvemos a preguntar. Puede cambiar de opinión en cualquier momento, aquí o en “Preferencias de cookies”, en el pie de todas las páginas."
@@ -1284,7 +1302,7 @@
                 "botao_cookies": "Abrir preferencias de cookies"
               },
               {
-                "p": "Al retirar un permiso, borramos de su navegador las cookies de esa categoría que el propio sitio puede borrar, y la herramienta deja de cargarse. En el marketing, nuestro servidor también deja de enviar a Meta la copia de los eventos. En una inscripción ya hecha, la retirada vale cuando usted vuelve a abrir la página de la inscripción (pago o confirmación) en el mismo navegador; si no va a volver a ella, o se inscribió en otro dispositivo, pídalo por el correo del final de esta página. La retirada no deshace lo realizado mientras el permiso estaba vigente (art. 8, § 5, de la LGPD)."
+                "p": "Al retirar un permiso, borramos de su navegador las cookies de esa categoría que el propio sitio puede borrar. El Píxel de Meta deja de cargarse, y Google Analytics vuelve a funcionar sin cookies. En el marketing, nuestro servidor también deja de enviar a Meta la copia de los eventos. En una inscripción ya hecha, la retirada vale cuando usted vuelve a abrir la página de la inscripción (pago o confirmación) en el mismo navegador; si no va a volver a ella, o se inscribió en otro dispositivo, pídalo por el correo del final de esta página. La retirada no deshace lo realizado mientras el permiso estaba vigente (art. 8, § 5, de la LGPD)."
               }
             ]
           },
@@ -1295,7 +1313,7 @@
               {
                 "lista": [
                   "**Necesarias (siempre activas):** hacen que el sitio funcione. Guardan su elección sobre cookies, el progreso de la conversación del chat, el aparato de la recepción autorizado para el control de asistencia de la sede, quién pidió ser recordado en el control de asistencia por el celular y, para el equipo, la sesión de los paneles internos. No dependen de permiso, porque sin ellas el sitio no puede hacer lo que usted pidió.",
-                  "**Estadística (desactivadas hasta que las active):** Google Analytics cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.",
+                  "**Estadística (desactivadas hasta que las active):** Google Analytics cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre. Sus cookies solo se guardan con su permiso. Sin él (antes de responder o después de rechazar), el sitio carga Google Analytics de todos modos, en el modo de consentimiento avanzado de Google: sin cookies y sin identificador, solo envía a Google señales de la visita y de las acciones en la página, que Google usa para estimar el total de visitas y de resultados de los anuncios. Estas señales llevan la dirección IP y datos técnicos del navegador, como cualquier acceso, y por eso no las llamamos anónimas. Si llegó por un anuncio de Google, el identificador del clic (gclid) puede seguir en la dirección de las páginas siguientes, en lugar de quedar en una cookie. Detalles y base legal en la [Política de Privacidad]({privacidade}).",
                   "**Marketing (desactivadas hasta que las active):** el Píxel de Meta mide el alcance y el resultado de nuestras campañas en Facebook e Instagram. Con él activado, nuestro servidor también envía a Meta una copia de los eventos (API de Conversiones), con los datos descritos en la [Política de Privacidad]({privacidade})."
                 ]
               }

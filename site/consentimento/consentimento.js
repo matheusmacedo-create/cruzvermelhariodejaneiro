@@ -11,8 +11,12 @@
  * por 12 meses: quem escolheu no site principal não é perguntado de novo nos subdomínios.
  *
  * Quem baixa o Google Analytics e o Pixel da Meta é o bloco de medição do <head>
- * (window.cvrjMedicao, copiado da home para todas as páginas): sem escolha, ou com "não", nada é
- * baixado. Este arquivo só pergunta, grava e avisa o bloco.
+ * (window.cvrjMedicao, copiado da home para todas as páginas). O Pixel só com "sim" para marketing.
+ * O Google Analytics entra em toda visita, no modo de consentimento avançado do Google (02/11/2026):
+ * sem "sim" para estatística (sem escolha, ou com "não"), ele não grava cookie nem guarda
+ * identificador, e manda só sinais da visita e dos eventos, que o Google usa para estimar os totais.
+ * Por isso o primeiro nível diz, numa frase, que essa medição sem cookies acontece. Este arquivo só
+ * pergunta, grava e avisa o bloco (window.cvrjMedicao.aplicar); não baixa nada.
  *
  * "Preferências de cookies" (rodapé e Política de Cookies): qualquer elemento com data-cvrj-cookies
  * reabre as categorias. Textos em português, inglês e espanhol, pela língua da página (<html lang>).
@@ -29,6 +33,8 @@
   // Punção ou num consentimento.js antigo guardado no cache) é perguntado de novo, e até lá o servidor não
   // manda nada à Meta (MCP_META_REVISAO, em api/lib/meta.php, é o mesmo número). A VERSAO do cookie não muda,
   // porque os outros sites (Punção, Redação, Escola) leem v=1 e ignoram o r.
+  // O modo avançado do Google (02/11/2026) não subiu a revisão: ela trata do que vai à Meta, que não mudou,
+  // e perguntar de novo não mudaria nada na medição sem cookies, que não depende da resposta.
   var REVISAO = 2;
   var VALIDADE_S = 365 * 24 * 60 * 60;
   var DOMINIO = /(^|\.)cruzvermelhariodejaneiro\.org$/i.test(location.hostname) ? '.cruzvermelhariodejaneiro.org' : '';
@@ -38,14 +44,14 @@
   var TEXTOS = {
     pt: {
       titulo: 'Sua privacidade',
-      texto: 'Usamos cookies necessários e, com a sua permissão, de estatística (Google Analytics) e de marketing (Meta). Detalhes em “Personalizar” e na',
+      texto: 'Usamos cookies necessários e, com a sua permissão, de estatística (Google Analytics) e de marketing (Meta). Sem ela, o Google Analytics conta visitas sem cookies. Detalhes em “Personalizar” e na',
       politica: 'Política de Cookies', url: '/cookies/',
       rejeitar: 'Rejeitar', personalizar: 'Personalizar', aceitar: 'Aceitar todos',
       painel: 'Preferências de cookies',
       intro: 'Escolha quais cookies podemos usar. Os necessários ficam sempre ligados, porque sem eles o site não funciona. Você pode mudar a escolha quando quiser em “Preferências de cookies”, no rodapé.',
       categorias: {
         necessarios: ['Necessários', 'Fazem o site funcionar: guardam a sua escolha sobre cookies e a conversa do chat enquanto você navega.'],
-        estatistica: ['Estatística', 'Google Analytics: conta as visitas e mostra quais páginas são lidas, sem identificar você pelo nome.'],
+        estatistica: ['Estatística', 'Google Analytics: ligado, conta as visitas com cookies e mostra quais páginas são lidas, sem identificar você pelo nome. Desligado, o Google Analytics carrega mesmo assim, mas sem cookies e sem identificador: recebe só sinais da visita e das ações na página (com o endereço IP e dados do navegador, como em qualquer acesso), que o Google usa para estimar os totais de visitas e de resultados dos anúncios.'],
         marketing: ['Marketing', 'Pixel da Meta (Facebook e Instagram): mede o alcance e o resultado das nossas campanhas. O nosso servidor também envia esses eventos à Meta e, no chat e na inscrição, nome, e-mail e telefone em código (hash).']
       },
       sempre: 'Sempre ligados',
@@ -53,14 +59,14 @@
     },
     en: {
       titulo: 'Your privacy',
-      texto: 'We use necessary cookies and, with your permission, statistics (Google Analytics) and marketing (Meta) cookies. Details under “Customize” and in our',
+      texto: 'We use necessary cookies and, with your permission, statistics (Google Analytics) and marketing (Meta) cookies. Without it, Google Analytics counts visits without cookies. Details under “Customize” and in our',
       politica: 'Cookie Policy', url: '/en/cookies/',
       rejeitar: 'Reject', personalizar: 'Customize', aceitar: 'Accept all',
       painel: 'Cookie preferences',
       intro: 'Choose which cookies we may use. Necessary cookies are always on, because the site does not work without them. You can change your choice at any time under “Cookie preferences” in the footer.',
       categorias: {
         necessarios: ['Necessary', 'Keep the site working: they store your cookie choice and the chat conversation while you browse.'],
-        estatistica: ['Statistics', 'Google Analytics: counts visits and shows which pages are read, without identifying you by name.'],
+        estatistica: ['Statistics', 'Google Analytics: when on, counts visits with cookies and shows which pages are read, without identifying you by name. When off, Google Analytics still loads, but with no cookies and no identifier: it only receives signals about the visit and actions on the page (with your IP address and browser details, as with any request), which Google uses to estimate total visits and ad results.'],
         marketing: ['Marketing', 'Meta Pixel (Facebook and Instagram): measures the reach and results of our campaigns. Our server also sends these events to Meta and, in the chat and enrolment, your name, e-mail and phone number in coded form (hash).']
       },
       sempre: 'Always on',
@@ -68,14 +74,14 @@
     },
     es: {
       titulo: 'Su privacidad',
-      texto: 'Usamos cookies necesarias y, con su permiso, de estadística (Google Analytics) y de marketing (Meta). Detalles en “Personalizar” y en la',
+      texto: 'Usamos cookies necesarias y, con su permiso, de estadística (Google Analytics) y de marketing (Meta). Sin él, Google Analytics cuenta visitas sin cookies. Detalles en “Personalizar” y en la',
       politica: 'Política de Cookies', url: '/es/cookies/',
       rejeitar: 'Rechazar', personalizar: 'Personalizar', aceitar: 'Aceptar todas',
       painel: 'Preferencias de cookies',
       intro: 'Elija qué cookies podemos usar. Las necesarias siempre están activas, porque sin ellas el sitio no funciona. Puede cambiar su elección cuando quiera en “Preferencias de cookies”, en el pie de página.',
       categorias: {
         necessarios: ['Necesarias', 'Hacen que el sitio funcione: guardan su elección sobre cookies y la conversación del chat mientras navega.'],
-        estatistica: ['Estadística', 'Google Analytics: cuenta las visitas y muestra qué páginas se leen, sin identificarle por su nombre.'],
+        estatistica: ['Estadística', 'Google Analytics: activada, cuenta las visitas con cookies y muestra qué páginas se leen, sin identificarle por su nombre. Desactivada, Google Analytics se carga igual, pero sin cookies y sin identificador: solo recibe señales de la visita y de las acciones en la página (con la dirección IP y datos del navegador, como en cualquier acceso), que Google usa para estimar el total de visitas y de resultados de los anuncios.'],
         marketing: ['Marketing', 'Píxel de Meta (Facebook e Instagram): mide el alcance y el resultado de nuestras campañas. Nuestro servidor también envía estos eventos a Meta y, en el chat y la inscripción, nombre, correo y teléfono en código (hash).']
       },
       sempre: 'Siempre activas',
@@ -165,7 +171,8 @@
     '.cvrj-ck-cat input:disabled+span.cvrj-ck-chave{opacity:.55}' +
     '.cvrj-ck-sempre{font-size:.78rem;font-weight:700;color:#555;margin-left:auto;margin-right:8px}' +
     // Celular: a frase em cima e os três botões embaixo, ainda lado a lado e do mesmo tamanho (em 360x740, cerca
-    // de 18% da tela). Só o painel do segundo nível empilha os botões, que lá têm rótulos longos.
+    // de 23% da tela, com a frase da medição sem cookies). Só o painel do segundo nível empilha os botões, que lá
+    // têm rótulos longos.
     '@media (max-width:760px){.cvrj-ck{flex-direction:column;align-items:stretch;padding:10px 12px calc(10px + env(safe-area-inset-bottom, 0px))}.cvrj-ck p{max-width:none}.cvrj-ck .cvrj-ck-botoes{grid-template-columns:repeat(3,1fr);gap:6px}.cvrj-ck .cvrj-ck-botoes button{min-height:44px;padding:6px 4px;font-size:.84rem}}' +
     '@media (max-width:560px){.cvrj-ck-painel .cvrj-ck-botoes{grid-template-columns:1fr}.cvrj-ck-painel{padding:20px 16px}}' +
     '@media print{.cvrj-ck,.cvrj-ck-fundo{display:none!important}}';

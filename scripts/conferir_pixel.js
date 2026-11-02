@@ -82,7 +82,9 @@ async function cenario(nome, url, passos, esperado) {
   let fase = 'chegada';
   await ctx.route(/\/matricula-cursos-presenciais\/api\//, (r) => (r.request().method() === 'GET' && /\/api\/info\.php$/.test(new URL(r.request().url()).pathname) ? r.continue() : r.abort()));
   await ctx.route(/\/api\/medicao\.php/, (r) => { try { repasses.push(Object.assign(JSON.parse(r.request().postData() || '{}'), { fase })); } catch (e) { /* corpo inválido */ } return r.fulfill({ status: 204, body: '' }); });
-  await ctx.route(/facebook\.com\/tr|google-analytics\.com\/g\/collect/, (r) => r.abort());
+  // Desde o modo avançado do Google (02/11/2026), o gtag.js manda sinais sem cookie também sem escolha e com
+  // "Rejeitar": os envios ao GA4 (três endereços) e os do Google Ads (/ccm/collect) também ficam aqui.
+  await ctx.route(/facebook\.com\/tr|(google-analytics\.com|analytics\.google\.com|doubleclick\.net)\/g\/collect|\/ccm\/collect/, (r) => r.abort());
   const p = await ctx.newPage();
   const vistos = [];
   const erros = [];

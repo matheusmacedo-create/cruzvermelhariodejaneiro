@@ -1,0 +1,96 @@
+# Modo de consentimento avançado do Google (02/11/2026): o gtag.js em toda visita, sem cookies até a permissão de
+# estatística; o Pixel da Meta continua só com permissão de marketing. Ordem: o aviso (consentimento.js) primeiro,
+# porque as páginas o pedem pelo hash novo (v=e48ee91603); depois a home e as páginas que copiam o bloco de medição
+# (inclui as 6 políticas com o texto novo e o Impacto das Cores, que pede o aviso pelo endereço completo).
+# Fora da lista: site/politicas.json (fonte de scripts/gerar_politicas.py, não é servida). site/doacao.html está na
+# lista por ter o bloco (consentimento.py o mantém), mas o .htaccess da raiz a redireciona para /doe/ (301).
+# Antes de publicar, guarde o que está no ar e compare: estas páginas são as do repositório, e as do ar podem ter
+# mudado por outro caminho (scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' ...)).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-consentimento-avancado.txt)
+# Depois: limpar o cache do site. Conferir: scripts/conferir_publicacao.sh scripts/publicacao-consentimento-avancado.txt
+# e NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js (o Pixel continua só com "sim" para marketing).
+# Fora deste repositório: copiar o bloco de medição novo para lib/site/analytics.ts da Redação.
+# 1) o aviso de cookies
+site/consentimento/consentimento.js
+# 2) a home e as páginas (bloco de medição e tag do aviso)
+site/index.html
+site/404.html
+site/base-legal/index.html
+site/bio/index.html
+site/campanha-agasalho.html
+site/cbfi/index.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/cursos-gratuitos/index.html
+site/dia-das-criancas/index.html
+site/direito-internacional-humanitario/index.html
+site/doacao-indisponivel.html
+site/doacao.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/en/404.html
+site/en/archive/index.html
+site/en/cookies/index.html
+site/en/courses/index.html
+site/en/donate/index.html
+site/en/faq/index.html
+site/en/history/index.html
+site/en/how-we-produce-our-content/index.html
+site/en/index.html
+site/en/news/7-september-parade-registration-of-branch-volunteers/index.html
+site/en/news/alcoholics-anonymous-sign-language-meeting-in-leblon-marks-79-years/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/index.html
+site/en/news/caps-and-capsi-public-mental-health-services-in-mare-alemao-and-penha/index.html
+site/en/news/carer-for-older-people-course-what-carers-do-and-how-to-train/index.html
+site/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/index.html
+site/en/news/civil-firefighter-course-what-the-job-involves-and-how-to-qualify-in-rio/index.html
+site/en/news/deam-digital-rj-how-to-report-domestic-violence-online/index.html
+site/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/index.html
+site/en/news/health-in-schools-quiz-on-vaping-hpv-and-condoms-in-rio/index.html
+site/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/index.html
+site/en/news/index.html
+site/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/index.html
+site/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/index.html
+site/en/news/peripheral-iv-cannulation-course-who-it-is-for-and-what-you-learn/index.html
+site/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/index.html
+site/en/news/yellow-september-and-suicide-prevention/index.html
+site/en/our-team/index.html
+site/en/privacy/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/en/winter-clothing-drive/index.html
+site/equipe.html
+site/es/404.html
+site/es/acervo/index.html
+site/es/como-producimos-nuestro-contenido/index.html
+site/es/cookies/index.html
+site/es/cursos/index.html
+site/es/donar/index.html
+site/es/index.html
+site/es/nuestro-equipo/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/gestao/index.html
+site/historia/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/pagar-matricula/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/movimento-internacional/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/projetocores/index.html
+site/quem-somos/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/voluntariado/cadastro/index.html
+site/voluntariado/index.html
