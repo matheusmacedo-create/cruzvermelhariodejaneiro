@@ -124,14 +124,28 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
 </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/cookies/","name":"Cookie Policy","description":"Which cookies the Brazilian Red Cross Rio de Janeiro website uses, what for and for how long, and how to accept, refuse or change your choice.","inLanguage":"en","dateModified":"2026-10-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cookie Policy","item":"https://cruzvermelhariodejaneiro.org/en/cookies/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/cookies/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/cookies/","name":"Cookie Policy","description":"Which cookies the Brazilian Red Cross Rio de Janeiro website uses, what for and for how long, and how to accept, refuse or change your choice.","inLanguage":"en","dateModified":"2026-11-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cookie Policy","item":"https://cruzvermelhariodejaneiro.org/en/cookies/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
-    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    // pessoa escolher no aviso de cookies. Modo de consentimento avançado do Google (02/11/2026): o gtag.js
+    // é baixado em toda visita (pelo carregador do fim deste bloco) e, com "denied", não grava cookie nem
+    // guarda identificador; manda só sinais da visita e dos eventos, sem cookie, que o Google usa para
+    // estimar os totais. Com "sim" para estatística, mede com cookies, como antes.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    // Quem já escolheu: a escolha entra aqui, antes do config, para o page_view já sair com ela (e não com
+    // "denied" seguido de uma atualização). O carregador do fim do bloco aplica de novo, sem efeito.
+    (function () {
+      var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/), v;
+      try { v = m ? '&' + decodeURIComponent(m[1]) + '&' : ''; } catch (e) { return; }
+      if (v.indexOf('&v=1&') < 0) return;
+      var e = v.indexOf('&e=1&') >= 0 ? 'granted' : 'denied', k = v.indexOf('&m=1&') >= 0 ? 'granted' : 'denied';
+      gtag('consent', 'update', { analytics_storage: e, ad_storage: k, ad_user_data: k, ad_personalization: k });
+    })();
+    // Sem cookie de anúncio, o gclid passa de uma página à outra pelo endereço, em vez de ficar num cookie.
+    gtag('set', 'url_passthrough', true);
     gtag('js', new Date());
 
     gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
@@ -152,10 +166,12 @@
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
-    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
-    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
-    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
-    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    // Carregador da medição. A escolha fica no cookie cvrj_consentimento (todo *.cruzvermelhariodejaneiro.org,
+    // 12 meses), gravado pelo aviso de cookies (/consentimento/). Depois de a página carregar (load + ocioso):
+    // - o gtag.js entra sempre (modo avançado, 02/11/2026); sem "sim" para estatística, mede sem cookie;
+    // - o fbevents.js (Pixel da Meta) e o repasse ao servidor, só com "sim" para marketing. Sem escolha, os
+    //   eventos do Pixel esperam na fila; com "não", nada vai à Meta.
+    // Este bloco é o único que baixa o gtag.js (consentimento.js só pergunta e chama aplicar): uma vez por página.
     (function () {
       var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
       var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
@@ -197,16 +213,19 @@
       }
       function aplicar(c) {
         c = c || ler();
+        // Até 02/11/2026 o gtag.js só entrava com "sim", e o "não" ligava a chave ga-disable, que corta todo
+        // envio. No modo avançado a chave fica desligada: a falta de cookie vem do consentimento "denied".
+        if (c) {
+          gtag('consent', 'update', {
+            analytics_storage: c.estatistica ? 'granted' : 'denied',
+            ad_storage: c.marketing ? 'granted' : 'denied',
+            ad_user_data: c.marketing ? 'granted' : 'denied',
+            ad_personalization: c.marketing ? 'granted' : 'denied'
+          });
+          fbq('consent', c.marketing ? 'grant' : 'revoke');
+        }
+        baixar(GTAG);
         if (!c) return;
-        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
-        gtag('consent', 'update', {
-          analytics_storage: c.estatistica ? 'granted' : 'denied',
-          ad_storage: c.marketing ? 'granted' : 'denied',
-          ad_user_data: c.marketing ? 'granted' : 'denied',
-          ad_personalization: c.marketing ? 'granted' : 'denied'
-        });
-        fbq('consent', c.marketing ? 'grant' : 'revoke');
-        if (c.estatistica) baixar(GTAG);
         var esperando = pendentes;
         pendentes = [];
         if (c.marketing) {
@@ -217,14 +236,13 @@
       }
       window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
-        if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
         else setTimeout(function () { aplicar(); }, 800);
       }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=5ad82fa582" defer></script>
+  <script src="/consentimento/consentimento.js?v=e48ee91603" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -275,7 +293,7 @@
       <div class="wrap">
         <p class="eyebrow">Data protection</p>
         <h1>Cookie Policy</h1>
-        <p class="pol-data">Last updated <time datetime="2026-10-02">2 October 2026</time>.</p>
+        <p class="pol-data">Last updated <time datetime="2026-11-02">2 November 2026</time>.</p>
         <p class="pol-traducao">This translation is provided for convenience. The official version is the Portuguese one.</p>
       </div>
     </section>
@@ -295,18 +313,18 @@
         </nav>
       <section id="preferencias" aria-labelledby="t-preferencias">
         <h2 id="t-preferencias">Your choice</h2>
-        <p>On your first visit, a notice asks whether you accept statistics and marketing cookies. The Reject, Customize and Accept all buttons are equally prominent, and no cookie other than the necessary ones is stored before you answer.</p>
+        <p>On your first visit, a notice asks whether you accept statistics and marketing cookies. The Reject, Customize and Accept all buttons are equally prominent, and no cookie other than the necessary ones is stored before you answer. Before that, and also if you refuse, Google Analytics works without cookies (see Statistics, below).</p>
         <p>Your choice is kept for 12 months and applies to cruzvermelhariodejaneiro.org and its subdomains. After that, we ask again. You can change your mind at any time, here or under “Cookie preferences” in the footer of every page.</p>
         <p class="pol-estado" id="pol-estado" aria-live="polite" data-textos="{&quot;rotulo&quot;: &quot;Your current choice:&quot;, &quot;nenhuma&quot;: &quot;you have not chosen yet. Until you do, only necessary cookies are used.&quot;, &quot;estatistica&quot;: &quot;statistics&quot;, &quot;marketing&quot;: &quot;marketing&quot;, &quot;sim&quot;: &quot;yes&quot;, &quot;nao&quot;: &quot;no&quot;, &quot;em&quot;: &quot;recorded on&quot;}"></p>
         <p class="pol-acoes"><a class="btn btn-red" href="#preferencias" data-cvrj-cookies>Open cookie preferences</a></p>
         <noscript><p>Without JavaScript, the site uses no statistics or marketing cookies, so there is no choice to make.</p></noscript>
-        <p>When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete, and the tool stops loading. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5).</p>
+        <p>When you withdraw a permission, we delete from your browser the cookies of that category that the site itself can delete. The Meta Pixel stops loading, and Google Analytics goes back to working without cookies. For marketing, our server also stops sending Meta the copy of the events. For an enrolment already made, the withdrawal takes effect when you open the enrolment page (payment or confirmation) again in the same browser; if you will not go back to it, or enrolled on another device, ask us at the e-mail at the end of this page. Withdrawal does not undo what was done while the permission was in force (LGPD, Art. 8, § 5).</p>
       </section>
       <section id="categories" aria-labelledby="t-categories">
         <h2 id="t-categories">Categories</h2>
         <ul>
           <li><strong>Necessary (always on):</strong> keep the site working. They store your cookie choice, the progress of the chat conversation, the reception device authorised for the headquarters time clock, who asked to be remembered on the time clock on their phone and, for staff, the session of the internal panels. They do not depend on permission, because without them the site cannot do what you asked.</li>
-          <li><strong>Statistics (off until you turn them on):</strong> Google Analytics counts visits and shows which pages are read, without identifying you by name.</li>
+          <li><strong>Statistics (off until you turn them on):</strong> Google Analytics counts visits and shows which pages are read, without identifying you by name. Its cookies are only stored with your permission. Without it (before you answer, or after you refuse), the site still loads Google Analytics, in Google&#x27;s advanced consent mode: with no cookies and no identifier, it only sends Google signals about the visit and actions on the page, which Google uses to estimate total visits and ad results. These signals carry your IP address and technical data about the browser, like any request, which is why we do not call them anonymous. If you arrived through a Google ad, the click identifier (gclid) may be carried in the address of the following pages instead of being kept in a cookie. Details and legal basis in the <a href="/en/privacy/">Privacy Policy</a>.</li>
           <li><strong>Marketing (off until you turn them on):</strong> the Meta Pixel measures the reach and results of our campaigns on Facebook and Instagram. With it on, our server also sends Meta a copy of the events (Conversions API), with the data described in the <a href="/en/privacy/">Privacy Policy</a>.</li>
         </ul>
       </section>

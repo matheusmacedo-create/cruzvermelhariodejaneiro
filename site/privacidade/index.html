@@ -87,14 +87,28 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
   </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/privacidade/#pagina","url":"https://cruzvermelhariodejaneiro.org/privacidade/","name":"Política de Privacidade","description":"O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.","inLanguage":"pt-BR","dateModified":"2026-10-29","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://cruzvermelhariodejaneiro.org/"},{"@type":"ListItem","position":2,"name":"Política de Privacidade","item":"https://cruzvermelhariodejaneiro.org/privacidade/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/privacidade/#pagina","url":"https://cruzvermelhariodejaneiro.org/privacidade/","name":"Política de Privacidade","description":"O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.","inLanguage":"pt-BR","dateModified":"2026-11-02","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://cruzvermelhariodejaneiro.org/"},{"@type":"ListItem","position":2,"name":"Política de Privacidade","item":"https://cruzvermelhariodejaneiro.org/privacidade/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
-    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    // pessoa escolher no aviso de cookies. Modo de consentimento avançado do Google (02/11/2026): o gtag.js
+    // é baixado em toda visita (pelo carregador do fim deste bloco) e, com "denied", não grava cookie nem
+    // guarda identificador; manda só sinais da visita e dos eventos, sem cookie, que o Google usa para
+    // estimar os totais. Com "sim" para estatística, mede com cookies, como antes.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    // Quem já escolheu: a escolha entra aqui, antes do config, para o page_view já sair com ela (e não com
+    // "denied" seguido de uma atualização). O carregador do fim do bloco aplica de novo, sem efeito.
+    (function () {
+      var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/), v;
+      try { v = m ? '&' + decodeURIComponent(m[1]) + '&' : ''; } catch (e) { return; }
+      if (v.indexOf('&v=1&') < 0) return;
+      var e = v.indexOf('&e=1&') >= 0 ? 'granted' : 'denied', k = v.indexOf('&m=1&') >= 0 ? 'granted' : 'denied';
+      gtag('consent', 'update', { analytics_storage: e, ad_storage: k, ad_user_data: k, ad_personalization: k });
+    })();
+    // Sem cookie de anúncio, o gclid passa de uma página à outra pelo endereço, em vez de ficar num cookie.
+    gtag('set', 'url_passthrough', true);
     gtag('js', new Date());
 
     gtag('config', 'G-HDYZZ5JZHF', { linker: { domains: ['escola.cursoscruzvermelha.org'] } });
@@ -115,10 +129,12 @@
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
-    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
-    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
-    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
-    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    // Carregador da medição. A escolha fica no cookie cvrj_consentimento (todo *.cruzvermelhariodejaneiro.org,
+    // 12 meses), gravado pelo aviso de cookies (/consentimento/). Depois de a página carregar (load + ocioso):
+    // - o gtag.js entra sempre (modo avançado, 02/11/2026); sem "sim" para estatística, mede sem cookie;
+    // - o fbevents.js (Pixel da Meta) e o repasse ao servidor, só com "sim" para marketing. Sem escolha, os
+    //   eventos do Pixel esperam na fila; com "não", nada vai à Meta.
+    // Este bloco é o único que baixa o gtag.js (consentimento.js só pergunta e chama aplicar): uma vez por página.
     (function () {
       var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
       var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
@@ -160,16 +176,19 @@
       }
       function aplicar(c) {
         c = c || ler();
+        // Até 02/11/2026 o gtag.js só entrava com "sim", e o "não" ligava a chave ga-disable, que corta todo
+        // envio. No modo avançado a chave fica desligada: a falta de cookie vem do consentimento "denied".
+        if (c) {
+          gtag('consent', 'update', {
+            analytics_storage: c.estatistica ? 'granted' : 'denied',
+            ad_storage: c.marketing ? 'granted' : 'denied',
+            ad_user_data: c.marketing ? 'granted' : 'denied',
+            ad_personalization: c.marketing ? 'granted' : 'denied'
+          });
+          fbq('consent', c.marketing ? 'grant' : 'revoke');
+        }
+        baixar(GTAG);
         if (!c) return;
-        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
-        gtag('consent', 'update', {
-          analytics_storage: c.estatistica ? 'granted' : 'denied',
-          ad_storage: c.marketing ? 'granted' : 'denied',
-          ad_user_data: c.marketing ? 'granted' : 'denied',
-          ad_personalization: c.marketing ? 'granted' : 'denied'
-        });
-        fbq('consent', c.marketing ? 'grant' : 'revoke');
-        if (c.estatistica) baixar(GTAG);
         var esperando = pendentes;
         pendentes = [];
         if (c.marketing) {
@@ -180,14 +199,13 @@
       }
       window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
-        if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
         else setTimeout(function () { aplicar(); }, 800);
       }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=5ad82fa582" defer></script>
+  <script src="/consentimento/consentimento.js?v=e48ee91603" defer></script>
   <!-- End Meta Pixel Code -->
 </head>
 <body>
@@ -247,7 +265,7 @@
       <div class="wrap">
         <p class="eyebrow">Proteção de dados</p>
         <h1>Política de Privacidade</h1>
-        <p class="pol-data">Atualizada em <time datetime="2026-10-29">29 de outubro de 2026</time>.</p>
+        <p class="pol-data">Atualizada em <time datetime="2026-11-02">2 de novembro de 2026</time>.</p>
       </div>
     </section>
     <div class="wrap pol-corpo">
@@ -318,11 +336,19 @@
             </dl>
           </article>
           <article class="pol-atividade">
-            <h3>Estatística de visitas (Google Analytics), só com a sua permissão</h3>
+            <h3>Estatística de visitas com cookies (Google Analytics), só com a sua permissão</h3>
             <dl>
               <dt>Dados</dt><dd>Páginas vistas, origem da visita, dados técnicos do navegador e do aparelho, cidade aproximada e o identificador do cookie.</dd>
               <dt>Para quê</dt><dd>Contar as visitas e entender quais páginas são lidas, para melhorar o site.</dd>
               <dt>Base legal</dt><dd>Consentimento (art. 7º, I), dado no aviso de cookies.</dd>
+            </dl>
+          </article>
+          <article class="pol-atividade">
+            <h3>Estatística de visitas sem cookies (Google Analytics), em toda visita</h3>
+            <dl>
+              <dt>Dados</dt><dd>Sem a permissão de estatística (antes de responder ao aviso de cookies ou depois de recusar), o site carrega o Google Analytics no modo de consentimento avançado do Google: ele não grava cookies nem guarda identificador seu, e envia ao Google só sinais de cada página vista e de ações na página (como cliques e etapas da inscrição ou da ficha de voluntário). Como em qualquer acesso a um servidor, a requisição leva o endereço IP e dados técnicos do navegador e do aparelho; por isso não dizemos que esses sinais são anônimos. Se você chegou por um anúncio do Google, o identificador do clique (gclid) pode seguir no endereço das páginas seguintes, em vez de ficar num cookie.</dd>
+              <dt>Para quê</dt><dd>Estimar o total de visitas e de resultados das campanhas, inclusive de quem não permitiu os cookies de estatística, sem reconhecer a mesma pessoa de uma visita para outra. O Google usa esses sinais para calcular estimativas no Google Analytics e no Google Ads.</dd>
+              <dt>Base legal</dt><dd>Legítimo interesse (art. 7º, IX, e art. 10), com o mínimo necessário: sem cookie, sem identificador e sem ligação com o seu nome. Se não quiser enviar nem esses sinais, você pode bloquear o Google Analytics no navegador (por exemplo, com o complemento de desativação do Google Analytics, do próprio Google) ou se opor pelo e-mail do fim desta página.</dd>
             </dl>
           </article>
           <article class="pol-atividade">
@@ -417,7 +443,7 @@
           <li><strong>Resend</strong>, que envia os e-mails (comprovantes, protocolos do chat, a confirmação da ficha de voluntário, newsletter e os lembretes e comunicados do ponto). Na falta dele, os e-mails da matrícula, do chat e do voluntariado saem pelo servidor da hospedagem; os lembretes e comunicados do ponto esperam o Resend voltar.</li>
           <li><strong>Meta, pelo WhatsApp</strong>, só para quem autorizou receber mensagens por ali: o número e o texto de cada lembrete ou comunicado. Se a instituição usar um intermediário para mandar o WhatsApp (o Make ou o servidor do WhatsApp do Palácio Virtual, mantido pela filial), ele recebe o mesmo, só para o envio. Alunos só recebem WhatsApp com a autorização registrada na plataforma da escola.</li>
           <li><strong>Vercel e Supabase</strong>, que hospedam o sistema interno da filial (o Palácio Virtual), que publica as notícias, guarda a lista da newsletter e recebe as fichas do cadastro de voluntários.</li>
-          <li><strong>Google e Meta</strong>, pelas ferramentas de estatística e de marketing, só com a sua permissão. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.</li>
+          <li><strong>Google e Meta</strong>, pelas ferramentas de estatística e de marketing: os cookies delas e o Pixel da Meta, só com a sua permissão; o Google Analytics sem cookies, em toda visita, como descrito acima. A Meta recebe também, do nosso servidor, uma cópia dos eventos de marketing, com os dados descritos acima (API de Conversões). O Google também entrega as fontes do site (Google Fonts) e, para isso, recebe o endereço IP de quem abre a página, sem cookies.</li>
           <li><strong>Google</strong>, pelo Google Workspace da filial, como operador: o Drive e as Planilhas guardam a cópia em PDF das fichas de voluntário, as exportações diárias da secretaria (sem CPF) e as cópias de segurança do banco de dados; o e-mail da filial recebe as mensagens que você nos envia e os avisos internos dos formulários.</li>
           <li><strong>Autoridades públicas</strong>, quando a lei ou uma ordem judicial exigir.</li>
         </ul>
@@ -429,7 +455,7 @@
       </section>
       <section id="cookies" aria-labelledby="t-cookies">
         <h2 id="t-cookies">Cookies</h2>
-        <p>Usamos cookies necessários para o site funcionar e, só com a sua permissão, cookies de estatística e de marketing. A lista completa, com a validade de cada um, está na <a href="/cookies/">Política de Cookies</a>. Você pode mudar a sua escolha quando quiser:</p>
+        <p>Usamos cookies necessários para o site funcionar e, só com a sua permissão, cookies de estatística e de marketing. Sem essa permissão, o Google Analytics funciona sem cookies, como descrito acima. A lista completa, com a validade de cada um, está na <a href="/cookies/">Política de Cookies</a>. Você pode mudar a sua escolha quando quiser:</p>
         <p class="pol-acoes"><a class="btn btn-red" href="/cookies/#preferencias" data-cvrj-cookies>Preferências de cookies</a></p>
         <noscript><p>Sem JavaScript, o site não usa cookies de estatística nem de marketing, e não há escolha a fazer.</p></noscript>
       </section>

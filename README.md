@@ -3408,10 +3408,21 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
   `Domain=.cruzvermelhariodejaneiro.org`): quem escolheu no site principal não é perguntado de novo
   nos subdomínios (Impacto das Cores, Punção Venosa, Redação).
 - O bloco de medição da home (entre `<!-- Google tag (gtag.js) -->` e `<!-- End Meta Pixel Code -->`)
-  começa com o Consent Mode v2 negado e **só baixa o gtag.js e o fbevents.js com permissão**
-  (`window.cvrjMedicao.aplicar`, que também chama `fbq('consent', 'grant')`). Revogar liga
-  `ga-disable-G-HDYZZ5JZHF`, chama `fbq('consent', 'revoke')` e apaga `_ga*`, `_gid`, `_fbp` e
-  `_fbc`. O pixel em `<noscript>` saiu (sem JavaScript não há escolha). **Não há
+  começa com o Consent Mode v2 negado. **Modo de consentimento avançado do Google (02/11/2026, decisão
+  do responsável):** o gtag.js é baixado em **toda** visita, depois do `load` (na bio, na hora), com ou
+  sem escolha; sem "sim" para estatística ele não grava `_ga` nem guarda identificador, e manda só
+  sinais da visita e dos eventos, que o Google usa para estimar os totais (GA4 e Google Ads). Quem já
+  escolheu tem a escolha aplicada no próprio `<head>`, antes do `gtag('config')`, para o `page_view`
+  já sair com ela; `url_passthrough` leva o `gclid` pelo endereço quando não há cookie de anúncio. O
+  bloco é o único que baixa o gtag.js (uma vez por página); o `consentimento.js` não baixa nada. O
+  **fbevents.js continua só com permissão de marketing** (`window.cvrjMedicao.aplicar`, que também
+  chama `fbq('consent', 'grant')`). Revogar manda o consentimento `denied` ao gtag (que volta a medir
+  sem cookie), chama `fbq('consent', 'revoke')` e apaga `_ga*`, `_gid`, `_fbp` e `_fbc`. A chave
+  `ga-disable-G-HDYZZ5JZHF`, que o "não" ligava até 02/11/2026, saiu: ela cortaria também os sinais
+  sem cookie. O aviso diz no primeiro nível, numa frase, que a medição sem cookies acontece; a
+  Política de Cookies e a de Privacidade (tratamento próprio, por legítimo interesse) explicam o
+  resto. A `REVISAO` do aviso (2) não mudou: ela trata do que vai à Meta, e isso não mudou. Lista de
+  publicação: `scripts/publicacao-consentimento-avancado.txt`. O pixel em `<noscript>` saiu (sem JavaScript não há escolha). **Não há
   `fbq('consent', 'revoke')` antes do `init`:** de 27/09 a 02/10 essa linha travou o Pixel, que
   baixava e não enviava nada, nem para quem aceitou (detalhes em `docs/rastreamento.md`).
 - `scripts/consentimento.py` carimba o hash do aviso na home e copia o bloco para as páginas
@@ -3419,7 +3430,8 @@ CD/ANPD nº 2/2022, agente de pequeno porte).
   completo do aviso). Rode **antes** dos geradores, que copiam o bloco da home.
 - A origem da visita (utm, fbclid, gclid) só vai com a inscrição, com a mensagem do chat ou para a
   escola (bio) se a pessoa permitiu estatística.
-- Conferido no Chromium, página por página (33 páginas): nenhum pedido ao Google ou à Meta antes da
+- Conferido no Chromium, página por página (33 páginas, antes do modo avançado de 02/11/2026; desde
+  então o gtag.js é baixado antes da escolha, sem cookies): nenhum pedido ao Google ou à Meta antes da
   escolha; "Aceitar todos" baixa os dois scripts; revogar apaga os cookies; a Política de Cookies
   mostra a escolha atual.
 - Baixar o script não basta: `scripts/conferir_pixel.js` exige que os eventos cheguem à Meta
@@ -3501,8 +3513,11 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 
 `consentimento.py` → `gerar_noticias_home.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
 `gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
-`gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `chat_widget.py`, e
-`gerar_ingles.py` depois de `gerar_idiomas.py` (notícias e 404 em inglês).
+`gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `gerar_institucional.py` → `gerar_gestao.py` →
+`gerar_voluntariado_cadastro.py` → `gerar_pedido_documentos.py` → `chat_widget.py`, e `gerar_ingles.py` depois de
+`gerar_idiomas.py` (notícias e 404 em inglês). Os quatro antes do último `chat_widget.py` também copiam o bloco de
+medição da home (as páginas institucionais, `/gestao/` e o cadastro de voluntários; o pedido de documentos não tem o
+bloco): sem eles, essas páginas ficam com o aviso de cookies antigo (anotado em 02/11/2026).
 Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
 
 ### Pendências para a filial

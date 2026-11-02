@@ -120,10 +120,24 @@
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
-    // pessoa escolher no aviso de cookies. As chamadas abaixo só ficam na fila; o gtag.js nem é baixado.
+    // pessoa escolher no aviso de cookies. Modo de consentimento avançado do Google (02/11/2026): o gtag.js
+    // é baixado em toda visita (pelo carregador do fim deste bloco) e, com "denied", não grava cookie nem
+    // guarda identificador; manda só sinais da visita e dos eventos, sem cookie, que o Google usa para
+    // estimar os totais. Com "sim" para estatística, mede com cookies, como antes.
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    // Quem já escolheu: a escolha entra aqui, antes do config, para o page_view já sair com ela (e não com
+    // "denied" seguido de uma atualização). O carregador do fim do bloco aplica de novo, sem efeito.
+    (function () {
+      var m = document.cookie.match(/(?:^|;\s*)cvrj_consentimento=([^;]+)/), v;
+      try { v = m ? '&' + decodeURIComponent(m[1]) + '&' : ''; } catch (e) { return; }
+      if (v.indexOf('&v=1&') < 0) return;
+      var e = v.indexOf('&e=1&') >= 0 ? 'granted' : 'denied', k = v.indexOf('&m=1&') >= 0 ? 'granted' : 'denied';
+      gtag('consent', 'update', { analytics_storage: e, ad_storage: k, ad_user_data: k, ad_personalization: k });
+    })();
+    // Sem cookie de anúncio, o gclid passa de uma página à outra pelo endereço, em vez de ficar num cookie.
+    gtag('set', 'url_passthrough', true);
     gtag('js', new Date());
 
     gtag('set', { content_group: 'institucional' });
@@ -145,10 +159,12 @@
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
   </script>
   <script>
-    // Medição só com consentimento. A escolha fica no cookie cvrj_consentimento (todo
-    // *.cruzvermelhariodejaneiro.org, 12 meses), gravado pelo aviso de cookies (/consentimento/).
-    // Sem escolha, ou com "não", nem o gtag.js nem o fbevents.js são baixados. Com "sim", eles entram
-    // depois de a página carregar (load + ocioso), e as chamadas da fila saem nessa hora.
+    // Carregador da medição. A escolha fica no cookie cvrj_consentimento (todo *.cruzvermelhariodejaneiro.org,
+    // 12 meses), gravado pelo aviso de cookies (/consentimento/). Depois de a página carregar (load + ocioso):
+    // - o gtag.js entra sempre (modo avançado, 02/11/2026); sem "sim" para estatística, mede sem cookie;
+    // - o fbevents.js (Pixel da Meta) e o repasse ao servidor, só com "sim" para marketing. Sem escolha, os
+    //   eventos do Pixel esperam na fila; com "não", nada vai à Meta.
+    // Este bloco é o único que baixa o gtag.js (consentimento.js só pergunta e chama aplicar): uma vez por página.
     (function () {
       var GTAG = 'https://www.googletagmanager.com/gtag/js?id=G-HDYZZ5JZHF';
       var PIXEL = 'https://connect.facebook.net/en_US/fbevents.js';
@@ -190,16 +206,19 @@
       }
       function aplicar(c) {
         c = c || ler();
+        // Até 02/11/2026 o gtag.js só entrava com "sim", e o "não" ligava a chave ga-disable, que corta todo
+        // envio. No modo avançado a chave fica desligada: a falta de cookie vem do consentimento "denied".
+        if (c) {
+          gtag('consent', 'update', {
+            analytics_storage: c.estatistica ? 'granted' : 'denied',
+            ad_storage: c.marketing ? 'granted' : 'denied',
+            ad_user_data: c.marketing ? 'granted' : 'denied',
+            ad_personalization: c.marketing ? 'granted' : 'denied'
+          });
+          fbq('consent', c.marketing ? 'grant' : 'revoke');
+        }
+        baixar(GTAG);
         if (!c) return;
-        window['ga-disable-G-HDYZZ5JZHF'] = !c.estatistica;
-        gtag('consent', 'update', {
-          analytics_storage: c.estatistica ? 'granted' : 'denied',
-          ad_storage: c.marketing ? 'granted' : 'denied',
-          ad_user_data: c.marketing ? 'granted' : 'denied',
-          ad_personalization: c.marketing ? 'granted' : 'denied'
-        });
-        fbq('consent', c.marketing ? 'grant' : 'revoke');
-        if (c.estatistica) baixar(GTAG);
         var esperando = pendentes;
         pendentes = [];
         if (c.marketing) {
@@ -210,14 +229,13 @@
       }
       window.cvrjMedicao = { ler: ler, aplicar: aplicar, novoId: novoId, servidor: servidor };
       function agendar() {
-        if (!ler()) return;
         if ('requestIdleCallback' in window) requestIdleCallback(function () { aplicar(); }, { timeout: 2500 });
         else setTimeout(function () { aplicar(); }, 800);
       }
       if (document.readyState === 'complete') agendar(); else window.addEventListener('load', agendar);
     })();
   </script>
-  <script src="/consentimento/consentimento.js?v=5ad82fa582" defer></script>
+  <script src="/consentimento/consentimento.js?v=e48ee91603" defer></script>
   <!-- End Meta Pixel Code -->
   <script type="application/ld+json">
 {

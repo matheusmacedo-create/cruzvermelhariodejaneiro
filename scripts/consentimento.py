@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Aviso de cookies (site/consentimento/consentimento.js) e o bloco de medição que depende dele.
 
-O bloco de medição da home (entre <!-- Google tag (gtag.js) --> e <!-- End Meta Pixel Code -->) só
-baixa o Google Analytics e o Pixel da Meta com consentimento, e termina com a tag do aviso:
+O bloco de medição da home (entre <!-- Google tag (gtag.js) --> e <!-- End Meta Pixel Code -->) baixa o
+Google Analytics em toda visita, sem cookies até a permissão de estatística (modo de consentimento
+avançado do Google, 02/11/2026), e o Pixel da Meta só com consentimento; termina com a tag do aviso:
 <script src="/consentimento/consentimento.js?v=HASH" defer></script>. O hash é do conteúdo do
 arquivo: mudou o aviso, muda a URL, e o cache de um ano (site/consentimento/.htaccess) nunca serve
 a versão velha.
