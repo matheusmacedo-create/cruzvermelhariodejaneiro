@@ -206,8 +206,9 @@ try {
     rw_pagina('<div class="aviso erro" role="status">O banco ainda não está pronto para esta página (a tabela é criada na primeira visita depois da publicação). '
         . 'Tente de novo em 1 minuto; se continuar assim, avise o responsável pelo site.</div>', $sessao, 503);
 }
-// O cupom da 3ª (Primeiros Socorros Básico) vale agora? Decide o modelo da próxima mensagem de cada pessoa na lista.
-$oferta = mcp_rw_oferta_cupom($agora);
+// Os cupons da 3ª (MCP_RW_OFERTAS: Primeiros Socorros Básico, Lei Lucas) valem agora? Decidem o modelo da próxima
+// mensagem de cada pessoa na lista.
+$oferta = mcp_rw_ofertas_cupom(array_keys(MCP_RW_OFERTAS), $agora);
 // A lista de modelos da Meta (cache de 10 min): com ela, a lista de pessoas mostra o modelo da família que vai sair.
 $modelos = $cfg['ok'] ? mcp_rw_modelos($cfg, $agora) : null;
 $m = mcp_rw_metricas($carga['pessoas'], $linhas, $agora, $oferta, $carga['pelo_link'], $linhasEmail, $carga['pelo_link_email'], $modelos);
@@ -231,7 +232,7 @@ $naoAprovados = [];
 $naoAprovadosMp = [];
 if ($cfg['ok'] && $modelos !== null) {
     $usos = ['rec_inscricao_1' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
-        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom', 'mat_pendente_1' => 'matrícula pendente, 1ª', 'mat_pendente_2' => 'matrícula pendente, 2ª'];
+        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom', 'll_cupom_oferta' => '3ª da Lei Lucas, com cupom', 'mat_pendente_1' => 'matrícula pendente, 1ª', 'mat_pendente_2' => 'matrícula pendente, 2ª'];
     if (!$modelos['ok']) {
         $problemas[] = 'A Kapso não respondeu a lista de modelos agora (' . $modelos['erro'] . '). Tente de novo em alguns minutos.';
     } else {
@@ -243,7 +244,8 @@ if ($cfg['ok'] && $modelos !== null) {
             $outros = array_values(array_filter(array_keys($modelos['modelos']), static fn(string $n): bool => mcp_rw_familia($n) === $familia && $n !== $escolhido));
             $modelosLinhas[] = [$escolhido, $usos[$familia] ?? '', $sit, $modelos['categorias'][$escolhido] ?? '',
                 implode(', ', array_map(static fn(string $n): string => $n . ' (' . strtolower($modelos['modelos'][$n]) . ($modelos['categorias'][$n] ?? '' ? ', ' . strtolower($modelos['categorias'][$n]) : '') . ')', $outros))];
-            if ($sit !== 'APPROVED') {
+            // Um modelo de cupom sem aprovação não segura ninguém (a 3ª vai sem cupom): o aviso é a linha do cupom, acima.
+            if ($sit !== 'APPROVED' && !in_array($familia, array_column(MCP_RW_OFERTAS, 'modelo'), true)) {
                 $texto = ($usos[$familia] ?? $padrao) . ($sit === 'ausente' ? ' (modelo não existe)' : '');
                 str_starts_with($familia, 'mat_') ? $naoAprovadosMp[] = $texto : $naoAprovados[] = $texto;
             }
@@ -282,13 +284,18 @@ if (!$emailCfg['ok']) {
         $avisosEmail[] = "O site já mandou $emailsSite e-mails nas últimas 24 h: a recuperação por e-mail espera, para a cota da Resend sobrar para os recibos.";
     }
 }
-$okItens[] = $oferta !== null
-    ? 'Cupom ' . $oferta['codigo'] . ' valendo na 3ª mensagem de Primeiros Socorros (turma de ' . $oferta['data'] . ')'
-    : 'Cupom ' . MCP_RW_CUPOM . ' fora (encerrado, esgotado ou sem turma): a 3ª de Primeiros Socorros vai sem cupom';
+foreach (MCP_RW_OFERTAS as $slugOferta => $defOferta) {
+    $cursoOferta = (string) (mcp_curso($slugOferta)['nome'] ?? $slugOferta);
+    $okItens[] = isset($oferta[$slugOferta])
+        ? 'Cupom ' . $oferta[$slugOferta]['codigo'] . ' valendo na 3ª mensagem de ' . $cursoOferta . ' (turma de ' . $oferta[$slugOferta]['data'] . ')'
+            . ($modelos !== null && $modelos['ok'] && ($modelos['modelos'][$defOferta['modelo']] ?? '') !== 'APPROVED'
+                ? '; no WhatsApp, o ' . $defOferta['modelo'] . ' espera a Meta e a 3ª vai sem cupom (o e-mail já leva)' : '')
+        : 'Cupom ' . $defOferta['cupom'] . ' fora (encerrado, esgotado ou sem turma): a 3ª de ' . $cursoOferta . ' vai sem cupom';
+}
 
 // O estado junta os dois canais: o e-mail não depende da Kapso nem da Meta, então um problema só do WhatsApp com o e-mail
 // ligado é "só o e-mail rodando", e não "Parado". A escola fora não para nada: seguem o site e os importados (aviso acima).
-$todosEsperando = $naoAprovados && count($naoAprovados) === count($modelosLinhas) - 2;
+$todosEsperando = $naoAprovados && count($naoAprovados) === count($modelosLinhas) - 2 - count(MCP_RW_OFERTAS);
 if ($problemas && !$emailCfg['ok']) {
     $estado = ['nao', 'Parado'];
 } elseif ($problemas) {
@@ -460,7 +467,7 @@ if (!$naRodada) {
         $etapa = $pessoas[0]['proxima_etapa'];
         $sit = isset($modelos) && $modelos['ok'] ? ($modelos['modelos'][$nomeModelo] ?? 'ausente') : null;
         $selo = $sit === 'APPROVED' ? rw_selo('ok', 'Aprovado') : ($sit === null ? rw_selo('talvez', 'Sem resposta') : rw_selo('talvez', 'Esperando a Meta'));
-        $cupom = mcp_rw_familia($nomeModelo) === 'ps_cupom_oferta' ? ' com cupom' : '';
+        $cupom = in_array(mcp_rw_familia($nomeModelo), array_column(MCP_RW_OFERTAS, 'modelo'), true) ? ' com cupom' : '';
         $nomes = '';
         foreach ($pessoas as $p) {
             $nomes .= '<li><b>' . rw_e($p['nome']) . '</b><span>' . rw_e($p['curso']) . ' · ' . $origemNome($p['origem']) . ' · ' . rw_e($p['celular']) . '</span></li>';
@@ -626,7 +633,7 @@ if (!$nessa) {
         if ($p['controle']) {
             $proxima = rw_selo('talvez', 'Grupo de controle') . '<small>não recebe</small>';
         } else {
-            $proxima = ($p['proxima'] !== null ? '<div>WhatsApp: ' . rw_e($p['proxima_etapa'] . 'ª · ' . rw_quando($p['proxima'])) . (mcp_rw_familia((string) $p['modelo']) === 'ps_cupom_oferta' ? ' <small>com cupom</small>' : '') . '</div>' : '')
+            $proxima = ($p['proxima'] !== null ? '<div>WhatsApp: ' . rw_e($p['proxima_etapa'] . 'ª · ' . rw_quando($p['proxima'])) . (in_array(mcp_rw_familia((string) $p['modelo']), array_column(MCP_RW_OFERTAS, 'modelo'), true) ? ' <small>com cupom</small>' : '') . '</div>' : '')
                 . ($em['proxima'] !== null ? '<div>E-mail: ' . rw_e($em['proxima_etapa'] . 'º · ' . rw_quando($em['proxima'])) . ($em['modelo'] === 'rec3cupom' ? ' <small>com cupom</small>' : '') . '</div>' : '');
         }
         $contatos = implode(' · ', array_filter([rw_e($p['celular']), rw_e($p['email']), $origemNome($p['origem'])]));
@@ -723,7 +730,7 @@ $corpo .= '</ul>' . $tabela(['Modelo que sai (por família)', 'Situação na Met
     . '</ul><p>Na lista de pessoas, "Última rodada" diz o motivo de cada uma que estava devida e ficou sem receber; o cartão "Última rodada" junta os números.</p></details>'
     . '<details><summary>Como funciona</summary><p>Quem se cadastrou no checkout do site ou na plataforma da escola nos últimos ' . MCP_RW_JANELA_DIAS . ' dias e não pagou recebe até 3 mensagens: '
     . '1 h (30 min no WhatsApp de quem gerou um PIX), 24 h e 72 h depois do cadastro (com pelo menos 21 h e 48 h entre uma e a seguinte), só das 8h às 20h, no máximo ' . MCP_RW_POR_RODADA . ' por rodada e ' . MCP_RW_POR_DIA . ' em 24 h. '
-    . 'Em Primeiros Socorros Básico, enquanto o cupom ' . MCP_RW_CUPOM . ' vale e há turma aberta, a 3ª leva o cupom. Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora; '
+    . 'Nos cursos com cupom (' . implode(', ', array_map(static fn(string $s, array $d): string => rw_e((string) (mcp_curso($s)['nome'] ?? $s)) . ' com o ' . $d['cupom'], array_keys(MCP_RW_OFERTAS), MCP_RW_OFERTAS)) . '), enquanto o cupom vale, tem vaga e há turma aberta, a 3ª leva o cupom (no WhatsApp, só com o modelo do curso aprovado na Meta). Quem paga em qualquer um dos dois sistemas, responde "Não tenho interesse" ou não tem celular válido sai na hora; '
     . 'antes de cada envio a rotina confere tudo de novo. O botão leva direto ao pagamento: com o PIX ainda aberto, à tela desse PIX (o QR); sem ele, ao checkout do curso já preenchido.</p><p>' . MCP_RW_CONTROLE_PCT . '% das pessoas, sorteadas, ficam no grupo de controle e não recebem nada (nem WhatsApp nem e-mail): é a comparação com elas que mostra quanto as mensagens recuperam de verdade.</p>'
     . '<p>O mesmo público recebe também 3 e-mails, na mesma régua e no mesmo horário, independentes do WhatsApp: quem não tem celular válido recebe só os e-mails, quem não tem e-mail só o WhatsApp. '
     . 'Quem já recebeu o lembrete do PIX não recebe o 1º e-mail (e quem ainda vai receber esse lembrete espera por ele). No máximo ' . MCP_RW_EMAIL_POR_RODADA . ' e-mails por rodada e '
