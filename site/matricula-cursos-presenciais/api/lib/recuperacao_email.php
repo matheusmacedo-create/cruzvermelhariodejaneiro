@@ -119,8 +119,8 @@ function mcp_rw_email_proxima(int $ancora, array $minhas): ?array
  * nem de escassez: o valor a pessoa vê no checkout. Os botões levam os MESMOS links curtos do WhatsApp (api/ir.php,
  * mcp_rw_caminho_botao e o do cupom), com a fonte "e" (utm_source=email) e o $token do pré-preenchimento (mcp_rw_token):
  * o checkout abre com nome, e-mail e telefone, e o texto diz isso. Sem curso (só a conta na escola), fala de "nossos
- * cursos" e leva à página de matrícula. A 3ª de Primeiros Socorros Básico com $oferta (mcp_rw_oferta_cupom) leva o cupom
- * aplicado e a data da turma. $descadastro: o endereço do "Não quero mais receber" (mcp_rw_email_descadastro_url). Puro.
+ * cursos" e leva à página de matrícula. A 3ª de um curso com cupom (MCP_RW_OFERTAS), com a oferta dele em $oferta
+ * (mcp_rw_oferta_cupom ou mcp_rw_ofertas_cupom; mcp_rw_oferta_para), leva o cupom aplicado e a data da turma. $descadastro: o endereço do "Não quero mais receber" (mcp_rw_email_descadastro_url). Puro.
  */
 function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $descadastro, string $token = ''): array
 {
@@ -130,8 +130,9 @@ function mcp_rw_email_montar(int $etapa, array $pessoa, ?array $oferta, string $
     $cursoNome = trim((string) ($pessoa['curso_nome'] ?? ''));
     $generico = $cursoNome === '' || $cursoNome === MCP_RW_CURSO_GENERICO;
     $curso = $generico ? MCP_RW_CURSO_GENERICO : $cursoNome;
-    $cupom = $etapa === 3 && trim((string) ($oferta['codigo'] ?? '')) !== '' && trim((string) ($oferta['data'] ?? '')) !== '' && $slug === MCP_RW_CUPOM_CURSO;
-    $link = mcp_site_url() . '/' . ($cupom ? mcp_rw_caminho_cupom('email', $token) : mcp_rw_caminho_botao($slug, $etapa, 'email', $token));
+    $oferta = mcp_rw_oferta_para($oferta, $slug);
+    $cupom = $etapa === 3 && trim((string) ($oferta['codigo'] ?? '')) !== '' && trim((string) ($oferta['data'] ?? '')) !== '';
+    $link = mcp_site_url() . '/' . ($cupom ? mcp_rw_caminho_cupom('email', $token, $slug) : mcp_rw_caminho_botao($slug, $etapa, 'email', $token));
     $oi = $nome !== '' ? 'Oi, ' . mcp_escapar($nome) . '.' : 'Oi.';
     $emCurso = $generico ? 'em um dos nossos cursos' : 'em <strong>' . mcp_escapar($curso) . '</strong>';
     // "Já vêm preenchidos" só quando é verdade: com o token, o checkout pede os dados (api/recuperacao-dados.php) e preenche
@@ -471,8 +472,8 @@ function mcp_rw_email_rodar(?int $agora = null, ?array $carga = null): array
     if (!$fila) {
         return $terminar();
     }
-    // O cupom da 3ª é decidido uma vez por rodada, como no WhatsApp.
-    $oferta = array_filter($fila, static fn(array $f): bool => $f[1] === 3 && $f[2]['curso_slug'] === MCP_RW_CUPOM_CURSO) ? mcp_rw_oferta_cupom($agora) : null;
+    // O cupom da 3ª é decidido uma vez por rodada, por curso, como no WhatsApp.
+    $oferta = mcp_rw_ofertas_cupom(array_map(static fn(array $f): string => (string) $f[2]['curso_slug'], array_filter($fila, static fn(array $f): bool => $f[1] === 3)), $agora);
     usort($fila, static fn(array $a, array $b): int => [$a[0], $a[2]['principal']] <=> [$b[0], $b[2]['principal']]);
     $noDia = mcp_rw_email_enviados_24h($agora);
     $site = mcp_rw_email_site_24h($agora);

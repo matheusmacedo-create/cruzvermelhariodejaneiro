@@ -2,7 +2,7 @@
 /**
  * Link curto dos botões da recuperação (WhatsApp e e-mail), 01/11/2026: /matricula-cursos-presenciais/api/ir.php/<w|e>/
  * <slug ou cursos>/<campanha>[/<token>] responde 302 para o checkout do curso com a query de sempre (curso, utm_source
- * whatsapp|email, utm_medium=recuperacao, utm_campaign; na rec3cupom também via=agenda&cupom=NOV15), ou para a página de
+ * whatsapp|email, utm_medium=recuperacao, utm_campaign; na rec3cupom também via=agenda&cupom=<o cupom do curso em MCP_RW_OFERTAS>), ou para a página de
  * matrícula sem curso. A regra está em mcp_rw_link_destino (lib/recuperacao_whatsapp.php).
  *
  * Por quê: o modelo aprovado na Meta tem o botão https://cruzvermelhariodejaneiro.org/{{1}}, e o {{1}} levava o caminho do

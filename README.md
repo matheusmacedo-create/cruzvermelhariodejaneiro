@@ -1563,6 +1563,34 @@ secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois
 - **Publicar**: `scripts/publicacao-recuperacao.txt` (com migração; a página nova e o `matricula.js` antes da biblioteca) e
   conferir com `scripts/conferir_publicacao.sh`.
 
+### Cupom PRO12 na recuperação da Lei Lucas (03/11/2026)
+
+Pedido do responsável: "coloca o PRO12 na recuperação da Lei Lucas também".
+
+- **Por curso** (`MCP_RW_OFERTAS` em `lib/recuperacao_whatsapp.php`): curso => cupom e modelo da Meta. Primeiros Socorros
+  Básico com `NOV15` e `ps_cupom_oferta` (como antes); Primeiros Socorros Lei Lucas com `PRO12` e **`ll_cupom_oferta`**.
+  A regra de cada um é a mesma do NOV15: a 3ª (WhatsApp e e-mail) leva o cupom enquanto ele vale para o curso
+  (`lib/cupons.php`), tem vaga e há turma aberta (`mcp_rw_oferta_cupom`, agora por curso; a rodada decide uma vez por
+  curso com `mcp_rw_ofertas_cupom`). O link é o mesmo `…/api/ir.php/<w|e>/<curso>/rec3cupom/<token>`, e o `ir.php` põe o
+  cupom **do curso** (`&cupom=PRO12` na Lei Lucas). Curso sem cupom na lista: `rec3cupom` não confere e vai à página de
+  matrícula, como antes.
+- **E-mail**: sai com o PRO12 já, sem depender da Meta (assunto "Último aviso: cupom PRO12 em …", botão com o cupom).
+- **WhatsApp**: o texto do `ps_cupom_oferta` cita "Primeiros Socorros Básico" e "30 alunos", então a Lei Lucas precisa do
+  **modelo novo `ll_cupom_oferta`**, a cadastrar na Kapso/Meta (categoria Marketing, pt_BR), com os mesmos parâmetros
+  e botões do `ps_cupom_oferta`: corpo
+  "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças
+  da Cruz Vermelha RJ: \*{{2}}\*. … o cupom vale só para os primeiros 10 alunos da turma de {{3}}. …" (texto inteiro em
+  `MCP_RW_TEXTOS`), botão de URL "Ver minha oferta" `https://cruzvermelhariodejaneiro.org/{{1}}` (o 1º botão) e resposta
+  rápida "Não tenho interesse" (o 2º).
+- **Sem aprovação, não segura** (`mcp_rw_cupom_sem_aprovacao`): um modelo de cupom que a lista da Meta não mostra como
+  aprovado (em análise, recusado ou ainda não cadastrado) faz a 3ª daquele curso sair como `rec_inscricao_3`, sem cupom.
+  Antes, um `ps_cupom_oferta` pendente segurava a 3ª de quem receberia o cupom; com turma marcada para daqui a dias, esperar
+  a Meta deixaria a pessoa sem mensagem nenhuma. Sem a lista (Kapso fora), vale o de antes para qualquer modelo. O painel
+  mostra, por curso, se o cupom vale e se o modelo dele espera a Meta, e o modelo de cupom sem aprovação não entra mais
+  no "Esperando a Meta aprovar" (não segura ninguém).
+- **Testar**: os testes de integração do WhatsApp (156) e do e-mail (63) cobrem o modelo e o link da Lei Lucas, o mapa de
+  ofertas por curso e a 3ª que não espera um modelo de cupom em análise.
+
 ## Cupom de desconto no checkout (30/10/2026)
 
 Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à

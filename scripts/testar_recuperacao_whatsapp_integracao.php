@@ -439,6 +439,28 @@ try {
     ], ['rec_inscricao_3', 'rec_inscricao_3', 'rec_inscricao_1_v2', 'rec_inscricao_2']);
     verificar('prévia do ps_cupom_oferta: nome, cupom em negrito e a data da turma, sem {{n}} sobrando', [str_starts_with($cupomPuro['previa'], 'Olá, Bia! Separamos'),
         str_contains($cupomPuro['previa'], '*NOV15*'), str_contains($cupomPuro['previa'], 'turma de terça-feira, 17/11.'), str_contains($cupomPuro['previa'], '{{')], [true, true, true, false]);
+    // Lei Lucas com o PRO12 (03/11/2026): cada curso de MCP_RW_OFERTAS tem o seu cupom e o seu modelo.
+    $llPessoa = ['primeiro_nome' => 'Caio', 'curso_slug' => 'primeiros-socorros-lei-lucas', 'curso_nome' => 'Primeiros Socorros Lei Lucas - Ambientes com Crianças'];
+    $ofertasMapa = ['primeiros-socorros-lei-lucas' => ['codigo' => 'PRO12', 'data' => 'quinta-feira, 12/11'], 'primeiros-socorros-basico' => $ofertaPura];
+    $llPuro = mcp_rw_modelo(3, $llPessoa, $ofertasMapa);
+    verificar('modelo da 3ª: Lei Lucas com o PRO12 → ll_cupom_oferta, 3 parâmetros e o botão do cupom da Lei Lucas', [$llPuro['nome'], $llPuro['parametros'], $llPuro['caminho'],
+        str_contains($llPuro['previa'], '*PRO12*'), str_contains($llPuro['previa'], 'primeiros 10 alunos da turma de quinta-feira, 12/11.')],
+        ['ll_cupom_oferta', ['Caio', 'PRO12', 'quinta-feira, 12/11'], 'matricula-cursos-presenciais/api/ir.php/w/primeiros-socorros-lei-lucas/rec3cupom', true, true]);
+    verificar('ofertas por curso: o mapa serve cada curso com o seu cupom; a oferta solta é só de Primeiros Socorros Básico', [
+        mcp_rw_modelo(3, $psPessoa, $ofertasMapa)['parametros'][1], mcp_rw_modelo(3, $llPessoa, $ofertaPura)['nome'],
+        mcp_rw_modelo(3, $llPessoa, ['primeiros-socorros-basico' => $ofertaPura])['nome'], mcp_rw_modelo(3, ['curso_slug' => 'puncao-venosa', 'curso_nome' => 'Punção Venosa'] + $llPessoa, $ofertasMapa)['nome'],
+    ], ['NOV15', 'rec_inscricao_3', 'rec_inscricao_3', 'rec_inscricao_3']);
+    verificar('link do cupom: cada curso leva o seu cupom; rec3cupom de curso sem cupom não confere', [
+        mcp_rw_link_destino('/w/primeiros-socorros-lei-lucas/rec3cupom/x')['destino'], mcp_rw_link_destino('/e/primeiros-socorros-basico/rec3cupom')['destino'],
+        mcp_rw_link_destino('/w/puncao-venosa/rec3cupom')['valido'],
+    ], ['/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&via=agenda&cupom=PRO12&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom',
+        '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom', false]);
+    $listaLl = static fn(string $sit): array => ['ok' => true, 'modelos' => ['ll_cupom_oferta' => $sit, 'rec_inscricao_3' => 'APPROVED'], 'categorias' => [], 'estrutura' => []];
+    verificar('modelo de cupom sem aprovação na Meta (em análise ou ausente) não segura: vai o rec_inscricao_3; sem a lista, como antes', [
+        mcp_rw_cupom_sem_aprovacao($llPuro, $listaLl('PENDING')), mcp_rw_cupom_sem_aprovacao($llPuro, ['ok' => true, 'modelos' => [], 'categorias' => [], 'estrutura' => []]),
+        mcp_rw_cupom_sem_aprovacao($llPuro, $listaLl('APPROVED')), mcp_rw_cupom_sem_aprovacao($llPuro, ['ok' => false]),
+        mcp_rw_cupom_sem_aprovacao(mcp_rw_modelo(3, $llPessoa, null), $listaLl('PENDING')),
+    ], [true, true, false, false, false]);
     verificar('grupo de controle: o sorteio pela chave é fixo, e o que está gravado manda', [
         mcp_rw_chave_no_controle('c:' . cpf_de_teste(true)), mcp_rw_chave_no_controle('c:' . cpf_de_teste()),
         mcp_rw_controle(['principal' => 'c:' . cpf_de_teste()], [0 => ['status' => 'controle']]), mcp_rw_controle(['principal' => 'c:' . cpf_de_teste(true)], [1 => ['status' => 'enviado']]),
@@ -890,6 +912,22 @@ try {
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     };
     verificar('cupom: o modelo que saiu fica gravado em cada linha', $modelosDe($psA['telefone']), ['rec_inscricao_1_v2', 'rec_inscricao_2', 'ps_cupom_oferta']);
+
+    // Modelo de cupom em análise na Meta (03/11/2026, o ll_cupom_oferta da Lei Lucas): a 3ª não espera a aprovação, vai como
+    // rec_inscricao_3 (a turma tem data). Aqui com o ps_cupom_oferta pendente, que tem turma no oferta.json de teste; antes do
+    // bloco do cupom esgotado, que acaba com as vagas do NOV15 para sempre neste banco.
+    $J = $G + 10 * 86400;
+    $psC = $criar('pscupomemanalise', $J - 2 * 3600, $ps);
+    mcp_rw_rodar($J);
+    mcp_rw_rodar($J + 22 * 3600);
+    $tinhaOferta = mcp_rw_oferta_cupom($J + 70 * 3600) !== null;
+    controle('modelos', ['pendente' => ['ps_cupom_oferta']]);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    mcp_rw_rodar($J + 70 * 3600 + 120);
+    controle('modelos', []);
+    $db->exec("DELETE FROM mcp_chaves WHERE nome = 'rw_cache_modelos'");
+    verificar('modelo de cupom em análise: a 3ª sai como rec_inscricao_3, sem esperar a Meta', [$tinhaOferta, $modelosDe($psC['telefone'])],
+        [true, ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3']]);
 
     $H = $G + 100 * 86400;
     $psB = $criar('psesgotado', $H - 2 * 3600, $ps);

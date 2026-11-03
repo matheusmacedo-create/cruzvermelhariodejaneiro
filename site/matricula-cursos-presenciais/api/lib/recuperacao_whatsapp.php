@@ -28,8 +28,9 @@
  * recusado, limite da Meta) não gasta a etapa: a rodada para e tenta de novo na hora seguinte.
  *
  * O modelo é escolhido POR PESSOA (mcp_rw_modelo): a 1ª é o rec_inscricao_1_v2 (utilidade), a 2ª o rec_inscricao_2 e a
- * 3ª o rec_inscricao_3, exceto para quem quer Primeiros Socorros Básico enquanto o cupom NOV15 vale, tem vaga e há turma
- * aberta: aí a 3ª é o ps_cupom_oferta, com o cupom já aplicado no link. O modelo que saiu fica gravado na linha.
+ * 3ª o rec_inscricao_3, exceto para quem quer um curso com cupom na recuperação (MCP_RW_OFERTAS: Primeiros Socorros
+ * Básico com o NOV15, Lei Lucas com o PRO12) enquanto o cupom vale, tem vaga e há turma aberta: aí a 3ª é o modelo de
+ * cupom do curso, com o cupom já aplicado no link. O modelo que saiu fica gravado na linha.
  *
  * Grupo de controle (MCP_RW_CONTROLE_PCT): 10% das pessoas, sorteadas pelo HMAC da chave principal, NUNCA recebem nada.
  * Quando a 1ª delas ficaria devida, a rodada grava só uma linha etapa 0 'controle'. Comparar quanto esse grupo paga
@@ -107,6 +108,17 @@ const MCP_RW_MODELO_CUPOM = 'ps_cupom_oferta';
 const MCP_RW_CUPOM = 'NOV15';
 const MCP_RW_CUPOM_CURSO = 'primeiros-socorros-basico';
 /**
+ * Os cursos com cupom na 3ª mensagem (03/11/2026: a Lei Lucas com o PRO12): curso => o cupom (lib/cupons.php) e o modelo
+ * da Meta. Cada curso tem o seu modelo, porque o texto aprovado cita o curso e quantos alunos o cupom atende. Um modelo
+ * de cupom só sai com a aprovação confirmada na lista da Meta; enquanto ele está em análise (ou foi recusado), a 3ª
+ * desse curso vai como rec_inscricao_3, sem segurar ninguém (mcp_rw_cupom_sem_aprovacao). O e-mail não depende da Meta:
+ * a 3ª do e-mail leva o cupom assim que ele vale.
+ */
+const MCP_RW_OFERTAS = [
+    MCP_RW_CUPOM_CURSO => ['cupom' => MCP_RW_CUPOM, 'modelo' => MCP_RW_MODELO_CUPOM],
+    'primeiros-socorros-lei-lucas' => ['cupom' => 'PRO12', 'modelo' => 'll_cupom_oferta'],
+];
+/**
  * Links curtos dos botões (01/11/2026). O modelo aprovado na Meta tem o botão de URL https://cruzvermelhariodejaneiro.org/{{1}}
  * e o {{1}} levava o caminho do checkout COM a query (?curso=…&utm_…). Com "?" e "&" dentro da variável o link é frágil:
  * se a Meta ou o aplicativo codificar a variável (%3F, %26), a URL vira /checkout/%3Fcurso%3D… e dá 404 (conferido no ar
@@ -134,7 +146,7 @@ const MCP_RW_COOKIE = 'mcp_rw';
 const MCP_RW_COOKIE_S = 6 * 3600;
 // Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel): os nomes de hoje, que valem quando
 // a Meta não responde a lista. As versões novas de cada um (_v2, _v3…) entram sozinhas pela família (MCP_RW_FAMILIAS).
-const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'mat_pendente_1', 'mat_pendente_2'];
+const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'mat_pendente_1', 'mat_pendente_2'];
 /**
  * Famílias de modelos (01/11/2026): família => o nome usado hoje (o padrão). rec_inscricao_2, rec_inscricao_2_v2 e
  * rec_inscricao_2_v3 são a mesma mensagem, submetida de novo à Meta (a Meta reclassifica como Marketing o que considera
@@ -143,7 +155,7 @@ const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_insc
  */
 const MCP_RW_FAMILIAS = [
     'rec_inscricao_1' => 'rec_inscricao_1_v2', 'rec_inscricao_2' => 'rec_inscricao_2', 'rec_inscricao_3' => 'rec_inscricao_3',
-    'ps_cupom_oferta' => 'ps_cupom_oferta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
+    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
 ];
 // As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
 const MCP_RW_CAMPANHAS = ['rec1', 'rec2', 'rec3', 'rec3cupom'];
@@ -164,6 +176,8 @@ const MCP_RW_TEXTOS = [
     'rec_inscricao_3' => "Olá, {{1}}. Este é o último lembrete sobre a sua inscrição no curso {{2}} da Cruz Vermelha RJ. Se ainda quiser participar, conclua pelo link abaixo.\n\nSe não tiver mais interesse, toque no botão e não enviaremos outras mensagens.\n[Concluir inscrição] [Não tenho interesse]",
     // O rótulo do botão de link não está anotado aqui: a prévia mostra só que ele existe.
     'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
+    // Submetido em 03/11/2026 (o mesmo formato do ps_cupom_oferta: {{1}} nome, {{2}} cupom, {{3}} data da turma).
+    'll_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 10 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
 const MCP_RW_MINUTO_DA_RODADA = 7;
@@ -709,10 +723,10 @@ function mcp_rw_caminho_botao(string $slug, int $etapa, string $fonte = 'whatsap
     return mcp_rw_link($fonte, $slug, 'rec' . $etapa, $token);
 }
 
-/** O parâmetro do botão da 3ª com o cupom (campanha rec3cupom: o api/ir.php põe o cupom no link do checkout). */
-function mcp_rw_caminho_cupom(string $fonte = 'whatsapp', string $token = ''): string
+/** O parâmetro do botão da 3ª com o cupom (campanha rec3cupom: o api/ir.php põe o cupom do curso no link do checkout). */
+function mcp_rw_caminho_cupom(string $fonte = 'whatsapp', string $token = '', string $slug = MCP_RW_CUPOM_CURSO): string
 {
-    return mcp_rw_link($fonte, MCP_RW_CUPOM_CURSO, 'rec3cupom', $token);
+    return mcp_rw_link($fonte, $slug, 'rec3cupom', $token);
 }
 
 /**
@@ -734,7 +748,7 @@ function mcp_rw_link_destino(string $caminho): array
     // As campanhas da matrícula pendente (mat1, mat2) levam à tela de pagar a matrícula, sempre de um curso.
     $matricula = in_array($campanha, MCP_MP_CAMPANHAS, true);
     if (!isset(MCP_RW_LINK_FONTES[$f]) || (!in_array($campanha, MCP_RW_CAMPANHAS, true) && !$matricula) || ($comCurso && !mcp_rw_link_slug_ok($slug))
-        || ($campanha === 'rec3cupom' && $slug !== MCP_RW_CUPOM_CURSO) || ($matricula && !$comCurso)) {
+        || ($campanha === 'rec3cupom' && !isset(MCP_RW_OFERTAS[$slug])) || ($matricula && !$comCurso)) {
         return $invalido;
     }
     $utm = 'utm_source=' . MCP_RW_LINK_FONTES[$f] . '&utm_medium=recuperacao&utm_campaign=' . $campanha;
@@ -742,7 +756,7 @@ function mcp_rw_link_destino(string $caminho): array
         return ['destino' => MCP_MP_PAGINA . '?curso=' . rawurlencode($slug) . '&' . $utm, 'token' => preg_match('/^[A-Za-z0-9.-]{1,120}$/', $token) ? $token : '', 'valido' => true];
     }
     $destino = !$comCurso ? MCP_RW_LINK_PAGINA . '?' . $utm
-        : MCP_RW_LINK_PAGINA . 'checkout/?curso=' . rawurlencode($slug) . ($campanha === 'rec3cupom' ? '&via=agenda&cupom=' . rawurlencode(MCP_RW_CUPOM) : '') . '&' . $utm;
+        : MCP_RW_LINK_PAGINA . 'checkout/?curso=' . rawurlencode($slug) . ($campanha === 'rec3cupom' ? '&via=agenda&cupom=' . rawurlencode(MCP_RW_OFERTAS[$slug]['cupom']) : '') . '&' . $utm;
     return ['destino' => $destino, 'token' => preg_match('/^[A-Za-z0-9.-]{1,120}$/', $token) ? $token : '', 'valido' => true];
 }
 
@@ -808,9 +822,10 @@ function mcp_rw_parametro(string $texto, int $limite = 60): string
  * $token do pré-preenchimento), 'previa'].
  *  - 1ª: rec_inscricao_1_v2; 2ª: rec_inscricao_2; 3ª: rec_inscricao_3 — {{1}} = primeiro nome, {{2}} = curso, botão
  *    com o link curto do checkout do curso (ou da página geral);
- *  - 3ª de quem quer MCP_RW_CUPOM_CURSO, com $oferta (mcp_rw_oferta_cupom: cupom valendo, com vaga, e turma aberta):
- *    ps_cupom_oferta — {{1}} = primeiro nome, {{2}} = o código do cupom, {{3}} = a data da turma ("terça-feira, 17/11"),
- *    botão para o checkout com o cupom já aplicado.
+ *  - 3ª de quem quer um curso de MCP_RW_OFERTAS, com a oferta dele em $oferta (mcp_rw_oferta_cupom: cupom valendo, com
+ *    vaga, e turma aberta; uma oferta só, que vale para MCP_RW_CUPOM_CURSO, ou curso => oferta, de mcp_rw_ofertas_cupom):
+ *    o modelo de cupom do curso (ps_cupom_oferta, ll_cupom_oferta) — {{1}} = primeiro nome, {{2}} = o código do cupom,
+ *    {{3}} = a data da turma ("terça-feira, 17/11"), botão para o checkout com o cupom já aplicado.
  * Sem banco nem rede: quem chama decide a $oferta uma vez por rodada (ou por página do painel).
  */
 function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null, string $token = ''): array
@@ -819,12 +834,14 @@ function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null, string 
     // nome vira "nossos cursos"; a oferta só existe com código e data (mcp_rw_oferta_cupom).
     $nome = mcp_rw_parametro(mcp_rw_primeiro_nome((string) ($pessoa['primeiro_nome'] ?? '')));
     $nome = $nome !== '' ? $nome : MCP_RW_NOME_PADRAO;
+    $slug = (string) ($pessoa['curso_slug'] ?? '');
+    $oferta = mcp_rw_oferta_para($oferta, $slug);
     $codigo = mcp_rw_parametro((string) ($oferta['codigo'] ?? ''));
     $data = mcp_rw_parametro((string) ($oferta['data'] ?? ''));
-    if ($etapa === 3 && $codigo !== '' && $data !== '' && ($pessoa['curso_slug'] ?? '') === MCP_RW_CUPOM_CURSO) {
-        $modelo = MCP_RW_MODELO_CUPOM;
+    if ($etapa === 3 && $codigo !== '' && $data !== '') {
+        $modelo = MCP_RW_OFERTAS[$slug]['modelo'];
         $parametros = [$nome, $codigo, $data];
-        $caminho = mcp_rw_caminho_cupom('whatsapp', $token);
+        $caminho = mcp_rw_caminho_cupom('whatsapp', $token, $slug);
     } else {
         $modelo = MCP_RW_MODELOS[$etapa];
         $curso = mcp_rw_parametro((string) ($pessoa['curso_nome'] ?? ''), 160);
@@ -857,20 +874,67 @@ function mcp_rw_corpo_envio(string $numero, array $modelo): array
 }
 
 /**
- * O cupom da 3ª mensagem pode ser oferecido agora? Só se MCP_RW_CUPOM vale para MCP_RW_CUPOM_CURSO (lib/cupons.php:
- * existe, é desse curso, não passou do 'ate'), ainda tem vaga e o curso tem turma aberta (lib/compra.php). Devolve
- * ['codigo', 'data' ("terça-feira, 17/11", o início da turma em Brasília)] ou null. Sem a coluna cupom (logo depois de
- * uma publicação) ou com qualquer erro, null: a 3ª sai como rec_inscricao_3, que não promete nada.
+ * A oferta da 3ª para o curso $slug, de $ofertas: uma oferta só (['codigo', 'data'], de mcp_rw_oferta_cupom sem curso),
+ * que vale para MCP_RW_CUPOM_CURSO, ou curso => oferta (mcp_rw_ofertas_cupom). Curso sem oferta (ou fora de
+ * MCP_RW_OFERTAS): null. Puro.
  */
-function mcp_rw_oferta_cupom(?int $agora = null): ?array
+function mcp_rw_oferta_para(?array $ofertas, string $slug): ?array
+{
+    if ($ofertas === null || !isset(MCP_RW_OFERTAS[$slug])) {
+        return null;
+    }
+    if (array_key_exists('codigo', $ofertas)) {
+        return $slug === MCP_RW_CUPOM_CURSO ? $ofertas : null;
+    }
+    return is_array($ofertas[$slug] ?? null) ? $ofertas[$slug] : null;
+}
+
+/**
+ * As ofertas que valem agora para os cursos $slugs (só os de MCP_RW_OFERTAS): curso => ['codigo', 'data']. Curso sem
+ * cupom valendo, sem vaga ou sem turma fica de fora. A rodada pede só os cursos de quem está na vez da 3ª.
+ */
+function mcp_rw_ofertas_cupom(array $slugs, ?int $agora = null): array
+{
+    $ofertas = [];
+    foreach (array_unique($slugs) as $slug) {
+        if (isset(MCP_RW_OFERTAS[$slug]) && ($oferta = mcp_rw_oferta_cupom($agora, (string) $slug)) !== null) {
+            $ofertas[$slug] = $oferta;
+        }
+    }
+    return $ofertas;
+}
+
+/**
+ * Um modelo de cupom (de MCP_RW_OFERTAS) que a lista da Meta ($lista, de mcp_rw_modelos) não mostra como aprovado? Aí a
+ * 3ª vai como rec_inscricao_3: o modelo novo de um curso, ainda em análise, não segura ninguém (a turma tem data). Sem a
+ * lista (Kapso fora), false: vale o que a rodada já faz com qualquer modelo. Puro.
+ */
+function mcp_rw_cupom_sem_aprovacao(array $modelo, array $lista): bool
+{
+    $familia = mcp_rw_familia((string) ($modelo['nome'] ?? ''));
+    return ($lista['ok'] ?? false) && $familia !== null && in_array($familia, array_column(MCP_RW_OFERTAS, 'modelo'), true)
+        && (($lista['modelos'][(string) $modelo['nome']] ?? '') !== 'APPROVED');
+}
+
+/**
+ * O cupom da 3ª mensagem pode ser oferecido agora no curso $slug (de MCP_RW_OFERTAS)? Só se o cupom dele vale para o
+ * curso (lib/cupons.php: existe, é desse curso, não passou do 'ate'), ainda tem vaga e o curso tem turma aberta
+ * (lib/compra.php). Devolve ['codigo', 'data' ("terça-feira, 17/11", o início da turma em Brasília)] ou null. Sem a
+ * coluna cupom (logo depois de uma publicação) ou com qualquer erro, null: a 3ª sai como rec_inscricao_3, que não promete
+ * nada.
+ */
+function mcp_rw_oferta_cupom(?int $agora = null, string $slug = MCP_RW_CUPOM_CURSO): ?array
 {
     $agora ??= time();
+    if (!isset(MCP_RW_OFERTAS[$slug])) {
+        return null;
+    }
     try {
-        $cupom = mcp_cupom(MCP_RW_CUPOM, MCP_RW_CUPOM_CURSO, $agora);
+        $cupom = mcp_cupom(MCP_RW_OFERTAS[$slug]['cupom'], $slug, $agora);
         if (isset($cupom['erro']) || !mcp_cupom_coluna_ok() || mcp_cupom_restantes($cupom, $agora) <= 0) {
             return null;
         }
-        $turma = mcp_turma_aberta(MCP_RW_CUPOM_CURSO, $agora);
+        $turma = mcp_turma_aberta($slug, $agora);
         $inicio = $turma !== null ? mcp_iso_ts($turma['inicio']) : null;
         if ($inicio === null) {
             return null;
@@ -1824,8 +1888,8 @@ function mcp_rw_rodar(?int $agora = null): array
     if (!$fila && !$controle) {
         return $terminar();
     }
-    // O cupom da 3ª é decidido uma vez por rodada (lê o banco: vagas do cupom; e o oferta.json: turma aberta).
-    $oferta = array_filter($fila, static fn(array $f): bool => $f[1] === 3 && $f[2]['curso_slug'] === MCP_RW_CUPOM_CURSO) ? mcp_rw_oferta_cupom($agora) : null;
+    // O cupom da 3ª é decidido uma vez por rodada, por curso (lê o banco: vagas do cupom; e o oferta.json: turma aberta).
+    $oferta = mcp_rw_ofertas_cupom(array_map(static fn(array $f): string => (string) $f[2]['curso_slug'], array_filter($fila, static fn(array $f): bool => $f[1] === 3)), $agora);
     // O link de cada pessoa leva o token do pré-preenchimento (o checkout já abre com nome, e-mail e telefone).
     $fila = array_map(static fn(array $f): array => [$f[0], $f[1], $f[2], mcp_rw_modelo($f[1], $f[2], $oferta, mcp_rw_token((string) ($f[2]['dados_ref'] ?? ''), $agora))], $fila);
     // Modelo não aprovado (ou pausado) não é tentado: a Meta recusaria e a etapa ficaria esperando à toa. Vale o modelo
@@ -1834,8 +1898,15 @@ function mcp_rw_rodar(?int $agora = null): array
     // da Meta; parâmetros a mais ou a menos seguram o modelo, em vez de a Meta recusar uma por uma).
     $modelos = mcp_rw_modelos($cfg, $agora);
     $aprovado = static fn(string $nome): bool => !$modelos['ok'] || ($modelos['modelos'][$nome] ?? '') === 'APPROVED';
-    // A família (01/11/2026): a versão nova aprovada (rec_inscricao_2_v2…) entra no lugar da de hoje, sozinha.
-    $fila = array_map(static fn(array $f): array => [$f[0], $f[1], $f[2], mcp_rw_escolher_modelo($f[3], $modelos)], $fila);
+    // A família (01/11/2026): a versão nova aprovada (rec_inscricao_2_v2…) entra no lugar da de hoje, sozinha. Um modelo de
+    // cupom sem aprovação vira o rec_inscricao_3 (mcp_rw_cupom_sem_aprovacao).
+    $fila = array_map(static function (array $f) use ($modelos, $agora): array {
+        $modelo = mcp_rw_escolher_modelo($f[3], $modelos);
+        if (mcp_rw_cupom_sem_aprovacao($modelo, $modelos)) {
+            $modelo = mcp_rw_escolher_modelo(mcp_rw_modelo($f[1], $f[2], null, mcp_rw_token((string) ($f[2]['dados_ref'] ?? ''), $agora)), $modelos);
+        }
+        return [$f[0], $f[1], $f[2], $modelo];
+    }, $fila);
     $problemas = [];
     foreach ($fila as $i => $f) {
         $estrutura = $modelos['estrutura'][$f[3]['nome']] ?? ['botao' => null, 'params' => null];
@@ -2280,8 +2351,12 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
         $controle ? $m['no_controle']++ : $m['no_fluxo']++;
         $m['email']['no_fluxo'] += !$controle && $proximaEmail !== null ? 1 : 0;
         $modelo = $controle || $proxima === null ? null : mcp_rw_modelo($proxima['etapa'], $p, $oferta);
-        // Com a lista da Meta ($modelosMeta, de mcp_rw_modelos), o nome que vai sair de verdade (a versão da família).
+        // Com a lista da Meta ($modelosMeta, de mcp_rw_modelos), o nome que vai sair de verdade (a versão da família; o
+        // modelo de cupom ainda sem aprovação vira o rec_inscricao_3, como na rodada).
         $modelo = $modelo !== null && $modelosMeta !== null ? mcp_rw_escolher_modelo($modelo, $modelosMeta) : $modelo;
+        if ($modelo !== null && $modelosMeta !== null && mcp_rw_cupom_sem_aprovacao($modelo, $modelosMeta)) {
+            $modelo = mcp_rw_escolher_modelo(mcp_rw_modelo($proxima['etapa'], $p), $modelosMeta);
+        }
         // A prévia do e-mail com um link de descadastro de exemplo (o de verdade depende da linha gravada no envio).
         $email = $controle || $proximaEmail === null ? null : mcp_rw_email_montar($proximaEmail['etapa'], $p, $oferta, mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?rw=…',
             mcp_rw_token((string) ($p['dados_ref'] ?? ''), $agora));
