@@ -1588,6 +1588,10 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
 - **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
   `cupom_desconto_centavos`.
 - **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
+- **`PRO12`** (03/11/2026): Primeiros Socorros Lei Lucas por **R$ 120,00 com tudo incluso** (taxa R$ 99 + matrícula
+  R$ 21, desconto de R$ 129), **10 vagas**, até 11/11/2026 às 23h59 (fim das inscrições da turma de 12/11), com balão
+  (`vitrine`). Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&cupom=PRO12` (sem o
+  parâmetro, o balão já aplica). A recuperação por WhatsApp/e-mail continua oferecendo só o `NOV15` (`MCP_RW_CUPOM`).
 - **Balão da oferta** (30/10/2026): cupom com `'vitrine' => true` em `MCP_CUPONS` (o `NOV15` é) vai a público no
   `info.php` (`cupons_vitrine`: código, cursos, valor final, limite e vagas que restam, com a mesma contagem da cobrança).
   No resumo do checkout aparece um balão com o código, "Restam N cupons de 30" e a barra das vagas; com o curso da oferta

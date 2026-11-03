@@ -20,6 +20,9 @@ declare(strict_types=1);
 const MCP_CUPONS = [
     // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos (código NOV15, agenda, 30/10/2026).
     'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null, 'vitrine' => true],
+    // Primeiros Socorros Lei Lucas por R$ 120,00 com tudo incluso, para 10 alunos (código PRO12, 03/11/2026). Vale até o
+    // fim das inscrições da turma de 12/11 (oferta.json: inscricoes_ate).
+    'PRO12' => ['cursos' => ['primeiros-socorros-lei-lucas'], 'total_centavos' => 12000, 'limite' => 10, 'ate' => '2026-11-11T23:59:59-03:00', 'vitrine' => true],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;
