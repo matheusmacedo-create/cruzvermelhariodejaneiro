@@ -75,7 +75,7 @@ FAQ = [
 FAQ_CBFI = {
     "Como ser voluntário da Cruz Vermelha no Rio de Janeiro?":
         "Preencha o cadastro no formulário oficial do voluntariado, no botão acima. A próxima turma do CBFI, o curso de "
-        f"formação inicial dos voluntários, é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, e está aberta a quem se cadastra agora: "
+        "formação inicial dos voluntários, está aberta a quem se cadastra agora: "
         "a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados antes dela, para a ficha de entrevista. "
         "Dúvidas antes de se cadastrar podem ser tiradas no WhatsApp do voluntariado ou no chat deste site.",
 }
@@ -91,7 +91,7 @@ BLOCOS = [
      "titulo": "Quero ser voluntário da Cruz Vermelha Brasileira Rio de Janeiro", "descricao": "Cadastro rápido no formulário do voluntariado.",
      "link": "/voluntariado/cadastro/", "id": "voluntario"},
     # Só até a turma do CBFI de 28/11/2026 (scripts/cbfi.py): some sozinho no navegador no dia seguinte.
-    *([{"tipo": "botao", "icone": "fa-solid fa-calendar-days", "titulo": f"CBFI: próxima turma de voluntários em {cbfi.DATA_CURTA}",
+    *([{"tipo": "botao", "icone": "fa-solid fa-calendar-days", "titulo": "CBFI: próxima turma de voluntários",
         "link": cbfi.URL, "id": "cbfi", "cbfi": True}] if cbfi.aberto() else []),
     {"tipo": "botao", "icone": "fa-solid fa-hand-holding-heart", "titulo": "Doar para a Cruz Vermelha Brasileira Rio de Janeiro",
      "link": "/doe/?utm_source=ig&utm_medium=social&utm_content=link_in_bio", "id": "doe"},

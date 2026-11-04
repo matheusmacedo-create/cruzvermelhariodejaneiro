@@ -88,10 +88,10 @@ CBFI_LINK = f'<a href="{cbfi.URL}">Saiba mais sobre o CBFI</a>'
 ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
     ("Ficha de entrevista", cbfi.alternar(
-        f"A equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, antes do CBFI de {cbfi.DATA_CURTA}.",
+        "A equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, antes da próxima turma do CBFI.",
         f"A equipe do voluntariado entra em contato pelo WhatsApp em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas.")),
     ("CBFI", cbfi.alternar(
-        f"Curso Básico de Formação Institucional: próxima turma no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_CURTA}, na sede. Gratuito e só para quem entra no voluntariado.",
+        "Curso Básico de Formação Institucional: a próxima turma está aberta a quem se cadastrar agora, na sede. Gratuito e só para quem entra no voluntariado.",
         "Curso Básico de Formação Institucional: quatro vezes por ano, na sede, gratuito e só para quem entra no voluntariado.")),
     ("Termo de adesão", "Formaliza o vínculo e você começa a atuar."),
 ]
@@ -403,11 +403,11 @@ def sucesso() -> str:
           <h3>Próximos passos</h3>
           <ol class="vc-passos">
             <li><b>Contato da coordenação.</b> """ + cbfi.alternar(
-                f"Antes do CBFI de {cbfi.DATA_CURTA}, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.",
+                "Antes da próxima turma do CBFI, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.",
                 f"Em {PROXIMAS_ENTRADAS}, quando abrem as novas entradas, a coordenadora do voluntariado chama você pelo WhatsApp para explicar como será a entrevista.") + """</li>
             <li><b>Entrevista e aprovação.</b> Na entrevista, a coordenação conhece você, a sua disponibilidade e as frentes de interesse. Se você for aprovado(a), recebe o código de aprovação.</li>
             <li><b>CBFI, o Curso Básico de Formação Institucional.</b> Só para quem foi aprovado(a). """ + cbfi.alternar(
-                f"A próxima turma é no {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. {CBFI_LINK}.",
+                f"A próxima turma está aberta a quem se cadastra agora, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado. {CBFI_LINK}.",
                 "Acontece quatro vezes por ano, na sede, no Centro do Rio. É gratuito e só para quem entra no voluntariado.") + """</li>
             <li><b>Termo de adesão.</b> Depois da formação, você assina o termo que formaliza o vínculo e começa a atuar na sua frente.</li>
           </ol>
@@ -477,7 +477,7 @@ def main() -> int:
         <h1 id="vc-titulo">{esc(H1)}</h1>
         <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 18 anos.</p>
         <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>{cbfi.alternar(
-            f"<b>Próxima turma do CBFI: {cbfi.DIA_DA_SEMANA}, {cbfi.DATA_TEXTO}.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
+            f"<b>Próxima turma do CBFI.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
             f"<b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.")}</span></p>
         <ol class="vc-etapas" aria-label="As quatro etapas para ser voluntário">
           {etapas}

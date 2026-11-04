@@ -253,11 +253,12 @@ verificar('e-mail à equipe: menor de 18 leva o aviso', str_contains($equipeMeno
 
 // Turma do CBFI de 28/11/2026: até o dia dela os textos falam da turma; no dia seguinte voltam para janeiro.
 mcp_vol_hoje('2026-11-28');
-verificar('CBFI: no dia 28/11 a turma ainda vale', [mcp_vol_cbfi_aberto(), mcp_vol_prazo()], [true, 'antes do CBFI de 28 de novembro de 2026']);
+verificar('CBFI: no dia 28/11 a turma ainda vale', [mcp_vol_cbfi_aberto(), mcp_vol_prazo()], [true, 'antes da próxima turma do CBFI']);
 $cbfiConfirmacao = mcp_montar_email_voluntario_confirmacao($ficha);
 $cbfiTudo = $cbfiConfirmacao['assunto'] . $cbfiConfirmacao['html'] . $cbfiConfirmacao['texto'];
 $cbfiEquipe = mcp_montar_email_voluntario_equipe($ficha);
-verificar('CBFI: confirmação, aviso à equipe e frase da API falam da turma, não de janeiro', [str_contains($cbfiTudo, '28 de novembro de 2026'), str_contains($cbfiTudo, 'janeiro de 2027'), str_contains($cbfiConfirmacao['html'], 'A próxima turma do CBFI é no dia 28 de novembro de 2026'), str_contains($cbfiEquipe['html'], 'turma do CBFI de 28 de novembro de 2026'), str_contains(mcp_vol_aviso_prazo(), '28 de novembro de 2026')], [true, false, true, true, true]);
+// Desde 04/11/2026 o que o voluntário lê não traz a data da turma; o aviso à equipe continua com ela.
+verificar('CBFI: confirmação, aviso à equipe e frase da API falam da turma, não de janeiro', [str_contains($cbfiTudo, '28 de novembro de 2026'), str_contains($cbfiTudo, 'janeiro de 2027'), str_contains($cbfiConfirmacao['html'], 'A próxima turma do CBFI está aberta a quem se cadastra agora'), str_contains($cbfiEquipe['html'], 'turma do CBFI de 28 de novembro de 2026'), str_contains(mcp_vol_aviso_prazo(), 'A próxima turma do CBFI está aberta'), str_contains(mcp_vol_aviso_prazo(), '28 de novembro')], [false, false, true, true, true, false]);
 // O contato da equipe é pelo WhatsApp (27/10/2026): a confirmação diz isso e mostra o telefone da ficha.
 verificar('confirmação: contato pelo WhatsApp, no telefone da ficha, não por e-mail', [str_contains($cbfiTudo, 'O contato vem pelo WhatsApp'), str_contains($cbfiTudo, mcp_telefone_bonito((string) $ficha['telefone'])), str_contains($cbfiTudo, 'O contato vem por e-mail')], [true, true, false]);
 verificar('CBFI: texto puro continua com os passos numerados', (bool) preg_match('/^1\) .+\n2\) .+\n3\) .+\n4\) .+$/m', $cbfiConfirmacao['texto']), true);
