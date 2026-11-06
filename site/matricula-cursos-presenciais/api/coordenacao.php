@@ -26,6 +26,8 @@
  * Tutorial (?ajuda=1): "Como usar esta página", em passos, com "Ouvir este passo" (o áudio pronto em
  * /assets/coordenacao/passo-N.mp3, gravado uma vez com a voz da ElevenLabs; sem o arquivo, a voz do próprio aparelho lê
  * o texto). O botão "Como usar" fica no topo de todas as telas.
+ * Assistente de voz (06/11/2026): no tutorial, e só nele (a página não mostra dado de ninguém), o widget da ElevenLabs
+ * (agente CO_ASSISTENTE, voz Sarah, instruções com o tutorial; só responde sobre o uso da página e não vê as fichas).
  * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
  * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
@@ -39,6 +41,9 @@ const CO_LIMITE_LISTA = 500;
 const CO_PARA_DECIDIR = ['nova', 'em_analise', 'entrevista'];
 const CO_RECUSADOS = ['recusada', 'arquivada'];
 const CO_EMAIL_LIMITE = [40, 3600];
+/** Agente de conversa da ElevenLabs que tira dúvidas por voz (conta da filial; só aceita o domínio do site). */
+const CO_ASSISTENTE = 'agent_7801m6qjd5j4ervve1ypbw9zvdfb';
+const CO_ASSISTENTE_JS = 'https://unpkg.com/@elevenlabs/convai-widget-embed@0.21.3';
 const CO_EMAIL_MIN = 10;
 const CO_EMAIL_MAX = 5000;
 /** Motivos da recusa: rótulo do botão e explicação curta. A mensagem de cada um está em co_recusa_mensagem(). */
@@ -143,6 +148,8 @@ a{color:var(--vermelho-escuro)}
 .passo{background:#fff;border:2px solid var(--linha);border-radius:18px;padding:18px 20px;margin:0 0 16px;display:grid;grid-template-columns:56px 1fr;gap:4px 16px}
 .passo .n{grid-row:span 3;width:56px;height:56px;border-radius:50%;background:var(--vermelho);color:#fff;font-weight:900;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
 .passo h2{margin:6px 0 4px}.passo p{margin:0 0 8px}.passo ul{margin:0 0 8px;padding-left:22px}
+.falar{background:#fff;border:3px solid var(--vermelho);border-radius:18px;padding:18px 20px;margin:0 0 22px}
+.falar h2{margin:0 0 6px}.falar p{margin:0}
 .ouvir{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:8px 18px;border-radius:12px;border:2px solid var(--linha);background:#fff;font:inherit;font-weight:800;cursor:pointer}
 .ouvir[aria-pressed="true"]{border-color:var(--vermelho);background:#fff5f6}
 @media (max-width:560px){.passo{grid-template-columns:1fr}.passo .n{grid-row:auto}}
@@ -411,7 +418,13 @@ function co_tutorial(): never
     co_pagina('Como usar a página do voluntariado',
         '<a class="voltar" href="' . co_e(co_url()) . '">← Voltar para as fichas</a>'
         . '<h1>Como usar esta página</h1><p class="dica">Leia ou toque em <b>Ouvir este passo</b> para escutar. São ' . count(co_passos()) . ' passos.</p>'
-        . $html . '<a class="btn grande cheio" href="' . co_e(co_url()) . '">Entendi, ver as fichas</a>' . $js);
+        . '<section class="falar" aria-labelledby="falar-titulo"><h2 id="falar-titulo">Tirar dúvida falando</h2>'
+        . '<p>No canto de baixo da tela aparece <b>Precisa de ajuda?</b>. Toque no botão preto <b>Iniciar uma chamada</b> e pergunte em voz alta. '
+        . 'Por exemplo: "como eu recuso uma pessoa?". A assistente responde falando. Na primeira vez, o aparelho pede para usar o microfone: toque em <b>Permitir</b>. '
+        . 'Para terminar, toque no botão vermelho de desligar.</p></section>'
+        . $html
+        . '<elevenlabs-convai agent-id="' . co_e(CO_ASSISTENTE) . '"></elevenlabs-convai>'
+        . '<script src="' . co_e(CO_ASSISTENTE_JS) . '" async type="text/javascript"></script>' . '<a class="btn grande cheio" href="' . co_e(co_url()) . '">Entendi, ver as fichas</a>' . $js);
 }
 
 function co_lista(string $ver, string $aviso = ''): never
