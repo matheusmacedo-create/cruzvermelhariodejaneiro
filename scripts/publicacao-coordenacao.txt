@@ -3,6 +3,7 @@
 # quiser, COORDENACAO_NOME. Sem ele a página responde 404.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-coordenacao.txt)
 site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/.htaccess
 site/matricula-cursos-presenciais/api/coordenacao.php
 site/matricula-cursos-presenciais/api/lib/voluntario_foto.php
 site/matricula-cursos-presenciais/api/voluntario-foto.php
@@ -15,3 +16,4 @@ site/assets/coordenacao/passo-5.mp3
 site/assets/coordenacao/passo-6.mp3
 site/assets/coordenacao/passo-7.mp3
 site/assets/coordenacao/passo-8.mp3
+site/assets/coordenacao/chamada.mp3

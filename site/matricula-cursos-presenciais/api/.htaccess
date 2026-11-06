@@ -20,3 +20,11 @@ Options -Indexes
   Header always set X-Content-Type-Options "nosniff"
   Header always set Cache-Control "no-store"
 </IfModule>
+# A página da coordenação (coordenacao.php) tem a assistente de voz da ElevenLabs, que precisa do microfone. O
+# .htaccess da pasta de cima proíbe o microfone em tudo (microphone=()); aqui só esta página volta a poder usá-lo, e só
+# o próprio site (self). As outras páginas seguem com o microfone proibido.
+<Files "coordenacao.php">
+  <IfModule mod_headers.c>
+    Header always set Permissions-Policy "camera=(), microphone=(self), geolocation=(), payment=()"
+  </IfModule>
+</Files>

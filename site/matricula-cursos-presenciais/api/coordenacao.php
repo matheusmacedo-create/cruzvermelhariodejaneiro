@@ -28,6 +28,14 @@
  * o texto). O botão "Como usar" fica no topo de todas as telas.
  * Assistente de voz (06/11/2026): no tutorial, e só nele (a página não mostra dado de ninguém), o widget da ElevenLabs
  * (agente CO_ASSISTENTE, voz Sarah, instruções com o tutorial; só responde sobre o uso da página e não vê as fichas).
+ * Modelos de mensagem (06/11/2026): "Conversar no WhatsApp" abre ?id=N&passo=whatsapp, com modelos prontos (combinar uma
+ * conversa, marcar a entrevista na sede, pedir uma informação, pessoa não respondeu, ficha em análise e, conforme a ficha,
+ * pedir a foto ou mandar o código); ela escolhe, muda o texto e o formulário abre o wa.me com ele. "Mandar e-mail" abre
+ * ?id=N&passo=email, com os mesmos modelos (co_modelos()). As anotações continuam gravadas, mas não aparecem nesta página
+ * (pedido do Matheus: confundiam); a equipe as vê no portal.
+ * Fotos da lista (06/11/2026): a hospedagem atende ~20 pedidos ao PHP ao mesmo tempo e responde 503 ao resto, e a lista
+ * pedia dezenas de fotos de uma vez (algumas apareciam quebradas). Agora a página busca as fotos 4 por vez, na ordem em
+ * que aparecem na tela, e tenta de novo a que falhar (até 5 vezes, esperando mais a cada vez). Sem JavaScript, <noscript>.
  * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
  * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
@@ -149,7 +157,12 @@ a{color:var(--vermelho-escuro)}
 .passo .n{grid-row:span 3;width:56px;height:56px;border-radius:50%;background:var(--vermelho);color:#fff;font-weight:900;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
 .passo h2{margin:6px 0 4px}.passo p{margin:0 0 8px}.passo ul{margin:0 0 8px;padding-left:22px}
 .falar{background:#fff;border:3px solid var(--vermelho);border-radius:18px;padding:18px 20px;margin:0 0 22px}
-.falar h2{margin:0 0 6px}.falar p{margin:0}
+.falar h2{margin:0 0 8px;font-size:1.35rem}.falar p{margin:0 0 10px}
+.falar ol{margin:0 0 12px;padding-left:0;list-style:none;counter-reset:ch}
+.falar ol li{counter-increment:ch;position:relative;padding:8px 0 8px 52px;min-height:44px}
+.falar ol li::before{content:counter(ch);position:absolute;left:0;top:4px;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
+.falar ul{margin:0 0 12px;padding-left:22px}.falar ul li{margin:4px 0;font-style:italic}
+.falar .animo{background:#fff5f6;border-radius:12px;padding:12px 16px;margin:0 0 12px;font-weight:600}
 .ouvir{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:8px 18px;border-radius:12px;border:2px solid var(--linha);background:#fff;font:inherit;font-weight:800;cursor:pointer}
 .ouvir[aria-pressed="true"]{border-color:var(--vermelho);background:#fff5f6}
 @media (max-width:560px){.passo{grid-template-columns:1fr}.passo .n{grid-row:auto}}
@@ -335,20 +348,112 @@ function co_email_montar(array $f, string $mensagem): array
     ];
 }
 
-/** O bloco "Mandar e-mail" da ficha: o texto pronto numa caixa grande e o botão de enviar. */
-function co_bloco_email(array $f, string $mensagem = ''): string
+/**
+ * Modelos de mensagem para a pessoa da ficha, os mesmos no WhatsApp e no e-mail: [chave => [rótulo, explicação, texto]].
+ * Os que dependem da ficha (pedir a foto, código de aprovação) só entram quando fazem sentido.
+ */
+function co_modelos(array $f): array
 {
+    $ola = 'Olá, ' . mcp_primeiro_nome((string) $f['nome']) . "! Aqui é a coordenação do voluntariado da Cruz Vermelha Brasileira Rio de Janeiro.\n\n";
+    $m = [];
+    if ((string) $f['status'] === 'aceita') {
+        $a = mcp_voluntario_aprovacao((int) $f['id']);
+        if ($a && empty($a['cancelada_em'])) {
+            $m['codigo'] = ['Mandar o código de aprovação', 'A pessoa foi aprovada: mande o código.', mcp_voluntario_aprovacao_mensagem($f, (string) $a['codigo'])];
+        }
+    }
+    $m['conversar'] = ['Combinar uma conversa', 'Primeiro contato depois do cadastro.',
+        $ola . 'Recebemos a sua ficha de voluntário e gostaríamos de conversar com você. Qual é o melhor dia e horário para falarmos?'];
+    $m['entrevista'] = ['Marcar a entrevista na sede', 'Convida a pessoa para vir à sede. Complete o dia e a hora.',
+        $ola . "Gostaríamos de conhecer você pessoalmente. Você pode vir à sede da Cruz Vermelha, na Praça da Cruz Vermelha, 10, no Centro do Rio, no dia ___, às ___?\n\nSe não puder, diga qual dia fica melhor para você."];
+    $m['informacao'] = ['Pedir uma informação', 'Falta algum dado na ficha. Complete o que precisa.',
+        $ola . 'Para completar a sua ficha de voluntário, precisamos de uma informação: ___. Pode responder esta mensagem?'];
+    if (mcp_voluntario_selfie((int) $f['id']) === null) {
+        $m['foto'] = ['Pedir a foto', 'A ficha está sem foto. Vai com o link para mandar a selfie.', mcp_vf_mensagem($f)];
+    }
+    $m['sem_resposta'] = ['A pessoa não respondeu', 'Para quem não deu retorno.',
+        $ola . 'Tentamos falar com você sobre a sua ficha de voluntário, mas ainda não tivemos resposta. Você ainda tem interesse? Responda esta mensagem, por favor.'];
+    $m['analise'] = ['Avisar que a ficha está em análise', 'Para tranquilizar quem está esperando.',
+        $ola . 'Recebemos a sua ficha de voluntário. Estamos olhando todas as fichas com cuidado e, em breve, entramos em contato. Obrigado pela paciência!'];
+    $m['livre'] = ['Escrever do meu jeito', 'Só a saudação. Você escreve o resto.', $ola];
+    return $m;
+}
+
+/**
+ * Escolha do modelo em botões grandes e a caixa com o texto, que troca com o modelo (a não ser que já tenha sido mudado à
+ * mão). Os botões ficam fora do <form> de envio (vão com form="" vazio), para não irem junto no pedido.
+ */
+function co_seletor(array $modelos, string $idTexto, string $nomeTexto, string $escolhido, string $mensagem, string $rotulo, string $formId): string
+{
+    if (!isset($modelos[$escolhido])) {
+        $escolhido = (string) array_key_first($modelos);
+    }
+    $opcoes = '';
+    $textos = [];
+    foreach ($modelos as $chaveModelo => [$titulo, $explica, $texto]) {
+        $textos[$chaveModelo] = $texto;
+        $opcoes .= '<label class="motivo"><input type="radio" name="modelo-' . co_e($idTexto) . '" form="" value="' . co_e((string) $chaveModelo) . '"' . ($chaveModelo === $escolhido ? ' checked' : '') . '>'
+            . '<span><b>' . co_e($titulo) . '</b><small>' . co_e($explica) . '</small></span></label>';
+    }
+    $dados = json_encode($textos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return '<fieldset class="motivos"><legend>Escolha um modelo de mensagem</legend>' . $opcoes . '</fieldset>'
+        . '<label class="campo"><span>' . co_e($rotulo) . '</span><textarea name="' . co_e($nomeTexto) . '" id="' . co_e($idTexto) . '" form="' . co_e($formId) . '" maxlength="' . CO_EMAIL_MAX . '" required>'
+        . co_e($mensagem !== '' ? $mensagem : $textos[$escolhido]) . '</textarea></label>'
+        . '<script>(function(){var m=' . $dados . ',t=document.getElementById(' . json_encode($idTexto) . '),r=document.querySelectorAll(' . json_encode('input[name="modelo-' . $idTexto . '"]') . ');'
+        . 'for(var i=0;i<r.length;i++)r[i].addEventListener("change",function(e){var limpo=t.value.trim()==="";for(var k in m)if(t.value.trim()===m[k].trim())limpo=true;'
+        . 'if(limpo){t.value=m[e.target.value];}else if(confirm("Trocar o texto que você escreveu pelo modelo?")){t.value=m[e.target.value];}});})();</script>';
+}
+
+/** Tela do WhatsApp: os modelos, o texto e "Abrir no WhatsApp" (formulário GET para o wa.me, sem JavaScript obrigatório). */
+function co_tela_whatsapp(int $id): never
+{
+    $f = mcp_voluntario_por_id($id);
+    if (!$f) {
+        co_lista('decidir', co_aviso('Essa ficha não foi encontrada.', 'erro'));
+    }
+    $digitos = mcp_digitos((string) $f['telefone']);
+    if ($digitos === '') {
+        co_ficha($id, co_aviso('Esta ficha não tem telefone.', 'info'));
+    }
+    $modelos = co_modelos($f);
+    $escolhido = isset($modelos['codigo']) ? 'codigo' : 'conversar';
+    co_pagina('Mensagem pelo WhatsApp',
+        '<a class="voltar" href="' . co_e(co_url(['id' => $id])) . '">← Voltar para a ficha</a>'
+        . '<div class="confirmar" style="max-width:720px;text-align:left">'
+        . '<h1>Mensagem pelo WhatsApp para ' . co_e((string) $f['nome']) . '</h1>'
+        . '<p>Escolha um modelo. Se quiser, mude o texto. Depois toque em <b>Abrir no WhatsApp</b>: a mensagem aparece pronta lá, e você só toca em enviar.</p>'
+        . co_seletor($modelos, 'co-whats', 'text', $escolhido, '', 'Mensagem (pode mudar o texto)', 'co-form-whats')
+        . '<form id="co-form-whats" method="get" action="https://wa.me/55' . co_e($digitos) . '" target="_blank" rel="noopener">'
+        . '<div class="botoes"><button class="btn grande whats" type="submit">Abrir no WhatsApp</button>'
+        . '<a class="btn grande claro" href="' . co_e(co_url(['id' => $id])) . '">Voltar para a ficha</a></div></form>'
+        . '<p class="dica" style="margin-top:12px">Para: ' . co_e(mcp_telefone_bonito((string) $f['telefone'])) . '</p></div>');
+}
+
+/** Tela "Mandar e-mail": os modelos, o texto e o botão de enviar (como a do WhatsApp). $erro e $mensagem voltam do envio. */
+function co_tela_email(int $id, string $erro = '', string $mensagem = ''): never
+{
+    $f = mcp_voluntario_por_id($id);
+    if (!$f) {
+        co_lista('decidir', co_aviso('Essa ficha não foi encontrada.', 'erro'));
+    }
     $email = (string) $f['email'];
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return '';
+        co_ficha($id, co_aviso('Esta ficha não tem um e-mail válido.', 'info'));
     }
-    $mensagem = $mensagem !== '' ? $mensagem : co_email_modelo($f);
-    return '<div class="bloco" id="email"><h2>Mandar e-mail</h2>'
-        . '<p style="margin:0">Para <b>' . co_e($email) . '</b>. A mensagem já está escrita: se quiser, mude o texto. Depois toque em "Enviar e-mail". A resposta da pessoa chega na caixa do voluntariado.</p>'
-        . '<form method="post" action="coordenacao.php"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
-        . '<input type="hidden" name="acao" value="email"><input type="hidden" name="id" value="' . (int) $f['id'] . '">'
-        . '<label class="campo"><span>Mensagem</span><textarea name="mensagem" maxlength="' . CO_EMAIL_MAX . '" required>' . co_e($mensagem) . '</textarea></label>'
-        . '<div class="botoes"><button class="btn grande azul" type="submit">Enviar e-mail</button></div></form></div>';
+    $modelos = co_modelos($f);
+    if (isset($modelos['codigo'])) {
+        $modelos['codigo'][2] = co_email_modelo($f); // no e-mail, o código vai com o texto próprio (link de conferência por extenso)
+    }
+    co_pagina('Mensagem por e-mail',
+        '<a class="voltar" href="' . co_e(co_url(['id' => $id])) . '">← Voltar para a ficha</a>'
+        . '<div class="confirmar" style="max-width:720px;text-align:left">' . ($erro !== '' ? co_aviso(co_e($erro), 'erro') : '')
+        . '<h1>Mensagem por e-mail para ' . co_e((string) $f['nome']) . '</h1>'
+        . '<p>Para <b>' . co_e($email) . '</b>. Escolha um modelo. Se quiser, mude o texto. Depois toque em <b>Enviar e-mail</b>. A resposta da pessoa chega na caixa do voluntariado.</p>'
+        . co_seletor($modelos, 'co-email', 'mensagem', isset($modelos['codigo']) ? 'codigo' : 'conversar', $mensagem, 'Mensagem (pode mudar o texto)', 'co-form-email')
+        . '<form id="co-form-email" method="post" action="coordenacao.php"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
+        . '<input type="hidden" name="acao" value="email"><input type="hidden" name="id" value="' . $id . '">'
+        . '<div class="botoes"><button class="btn grande azul" type="submit">Enviar e-mail</button>'
+        . '<a class="btn grande claro" href="' . co_e(co_url(['id' => $id])) . '">Voltar para a ficha</a></div></form></div>');
 }
 
 /** Envia o e-mail e anota na ficha. Devolve null (enviado) ou a mensagem de erro para a tela. */
@@ -386,16 +491,43 @@ function co_passos(): array
             'A página abre na lista de fichas. Em cima há três abas. Para decidir: as fichas que esperam a sua decisão. As que chegaram primeiro aparecem primeiro. Aprovados: quem você já aprovou. Recusados: quem foi recusado. Cada ficha aparece num cartão, com a foto, o nome, a idade e o bairro.'],
         ['Abrir uma ficha', '<p>Toque na foto ou em <b>Ver a ficha completa</b>. Aparece tudo o que a pessoa preencheu: quem é, contato, como quer ajudar e, em <b>Nas palavras da pessoa</b>, por que quer ser voluntária.</p><p>Para voltar, toque em <b>Voltar para a lista</b>, no alto.</p>',
             'Para abrir uma ficha, toque na foto, ou em Ver a ficha completa. Aparece tudo o que a pessoa preencheu: quem é, contato, como quer ajudar, e por que quer ser voluntária. Para voltar, toque em Voltar para a lista, no alto da página.'],
-        ['Falar com a pessoa', '<p>Logo abaixo do nome há três botões:</p><ul><li><b>Conversar no WhatsApp</b>: abre o WhatsApp já com uma saudação escrita.</li><li><b>Ligar</b>: liga para o telefone da ficha.</li><li><b>Mandar e-mail</b>: leva até uma mensagem pronta. Mude o texto se quiser e toque em <b>Enviar e-mail</b>. A resposta chega na caixa do voluntariado.</li></ul>',
-            'Para falar com a pessoa, use os botões logo abaixo do nome. Conversar no WhatsApp abre o WhatsApp já com uma saudação escrita. Ligar liga para o telefone da ficha. Mandar e-mail leva até uma mensagem pronta. Mude o texto se quiser, e toque em Enviar e-mail. A resposta chega na caixa do voluntariado.'],
+        ['Falar com a pessoa', '<p>Logo abaixo do nome há três botões:</p><ul><li><b>Conversar no WhatsApp</b>: mostra modelos de mensagem prontos. Escolha um, mude o texto se quiser e toque em <b>Abrir no WhatsApp</b>.</li><li><b>Ligar</b>: liga para o telefone da ficha.</li><li><b>Mandar e-mail</b>: mostra os mesmos modelos. Escolha um, mude o texto se quiser e toque em <b>Enviar e-mail</b>. A resposta chega na caixa do voluntariado.</li></ul>',
+            'Para falar com a pessoa, use os botões logo abaixo do nome. Conversar no WhatsApp mostra modelos de mensagem prontos. Escolha um, mude o texto se quiser, e toque em Abrir no WhatsApp. Ligar liga para o telefone da ficha. Mandar e-mail mostra os mesmos modelos. Escolha um, mude o texto se quiser, e toque em Enviar e-mail. A resposta chega na caixa do voluntariado.'],
         ['Ficha sem foto', '<p>As fichas mais antigas vieram sem foto. Se achar necessário, toque em <b>Pedir a foto pelo WhatsApp</b> ou <b>Pedir a foto por e-mail</b>.</p><p>A pessoa recebe um link só dela para mandar a selfie. Quando ela mandar, a foto aparece na ficha sozinha.</p>',
             'As fichas mais antigas vieram sem foto. Se achar necessário, toque em Pedir a foto pelo WhatsApp, ou Pedir a foto por e-mail. A pessoa recebe um link só dela para mandar a selfie. Quando ela mandar, a foto aparece na ficha sozinha.'],
         ['Aprovar', '<p>Depois de conversar com a pessoa, toque no botão verde <b>Aprovar</b>. A página pergunta se você tem certeza: toque em <b>Sim, aprovar</b>.</p><p>Se a ficha veio sem CPF, a página pede o CPF. Pergunte à pessoa e digite.</p><p>Aparece o <b>código de aprovação</b>. Mande para a pessoa: toque em <b>Mandar pelo WhatsApp</b> ou <b>Mandar por e-mail</b>. A mensagem já vai pronta.</p>',
             'Para aprovar, depois de conversar com a pessoa, toque no botão verde Aprovar. A página pergunta se você tem certeza. Toque em Sim, aprovar. Se a ficha veio sem CPF, a página pede o CPF. Pergunte à pessoa e digite. Depois aparece o código de aprovação. Mande para a pessoa: toque em Mandar pelo WhatsApp, ou Mandar por e-mail. A mensagem já vai pronta.'],
         ['Recusar', '<p>Toque em <b>Recusar</b>. Escolha o motivo: <b>Lotação máxima</b>, <b>Sem vaga na área escolhida</b>, <b>Não conseguimos falar com a pessoa</b> ou <b>Outro motivo</b>.</p><p>A mensagem para a pessoa já vem escrita para o motivo, e você pode mudar o texto. Com <b>Avisar a pessoa por e-mail</b> marcado, ela recebe a mensagem. Depois, se quiser, mande a mesma mensagem pelo WhatsApp.</p>',
             'Para recusar, toque em Recusar, e escolha o motivo: Lotação máxima, Sem vaga na área escolhida, Não conseguimos falar com a pessoa, ou Outro motivo. A mensagem para a pessoa já vem escrita para o motivo, e você pode mudar o texto. Com Avisar a pessoa por e-mail marcado, ela recebe a mensagem. Depois, se quiser, mande a mesma mensagem pelo WhatsApp.'],
-        ['Se errar', '<p>Recusou por engano? Abra a aba <b>Recusados</b>, abra a ficha e toque em <b>Desfazer a recusa</b>. Ela volta para <b>Para decidir</b>.</p><p>Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus.</p><p>Tudo o que você faz fica anotado na ficha, no fim da página.</p>',
-            'Se errar: recusou por engano? Abra a aba Recusados, abra a ficha, e toque em Desfazer a recusa. Ela volta para Para decidir. Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus. Tudo o que você faz fica anotado na ficha, no fim da página.'],
+        ['Se errar', '<p>Recusou por engano? Abra a aba <b>Recusados</b>, abra a ficha e toque em <b>Desfazer a recusa</b>. Ela volta para <b>Para decidir</b>.</p><p>Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus.</p><p>Tudo o que você faz fica registrado para a equipe.</p>',
+            'Se errar: recusou por engano? Abra a aba Recusados, abra a ficha, e toque em Desfazer a recusa. Ela volta para Para decidir. Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus. Tudo o que você faz fica registrado para a equipe.'],
+    ];
+}
+
+/** O quadro "Tire suas dúvidas conversando com a assistente": [HTML, texto que a voz lê]. */
+function co_chamada(): array
+{
+    return [
+        '<h2 id="falar-titulo">Tire suas dúvidas conversando com a assistente</h2>'
+        . '<p>Ficou com alguma dúvida? Converse com a <b>assistente do voluntariado</b>. É como uma ligação: você pergunta falando, e ela responde com voz. '
+        . 'Ela conhece esta página de ponta a ponta e tem toda a paciência do mundo.</p>'
+        . '<p><b>Como fazer a chamada:</b></p><ol>'
+        . '<li>No canto de baixo da tela, toque no botão preto <b>Iniciar uma chamada</b>.</li>'
+        . '<li>Na primeira vez, o aparelho pergunta se pode usar o microfone. Toque em <b>Permitir</b>.</li>'
+        . '<li>Espere a assistente dizer "Olá". Depois, faça a sua pergunta em voz alta, do seu jeito, como se falasse com uma pessoa.</li>'
+        . '<li>Ela responde falando. Quando ela terminar, pergunte de novo, peça para repetir ou para explicar mais devagar.</li>'
+        . '<li>Para terminar, toque no botão vermelho de desligar.</li></ol>'
+        . '<p><b>Você pode perguntar, por exemplo:</b></p><ul>'
+        . '<li>"Como eu aprovo uma pessoa?"</li><li>"Como mando o código pelo WhatsApp?"</li>'
+        . '<li>"Recusei uma pessoa por engano. E agora?"</li><li>"A ficha está sem foto. O que eu faço?"</li></ul>'
+        . '<p class="animo">Pode usar sem medo e quantas vezes quiser. Perguntar não muda nada nas fichas, e não existe pergunta boba. '
+        . 'A assistente só explica: quem decide é sempre você. Se ela não souber responder, vai dizer para você falar com o Matheus.</p>',
+        'Ficou com alguma dúvida? Converse com a assistente do voluntariado. É como uma ligação: você pergunta falando, e ela responde com voz. '
+        . 'Ela conhece esta página de ponta a ponta, e tem toda a paciência do mundo. Para fazer a chamada: no canto de baixo da tela, toque no botão preto Iniciar uma chamada. '
+        . 'Na primeira vez, o aparelho pergunta se pode usar o microfone. Toque em Permitir. Espere a assistente dizer olá. Depois, faça a sua pergunta em voz alta, do seu jeito, como se falasse com uma pessoa. '
+        . 'Ela responde falando. Quando ela terminar, pergunte de novo, peça para repetir, ou para explicar mais devagar. Para terminar, toque no botão vermelho de desligar. '
+        . 'Você pode perguntar, por exemplo: como eu aprovo uma pessoa? Ou: recusei uma pessoa por engano, e agora? '
+        . 'Pode usar sem medo, e quantas vezes quiser. Perguntar não muda nada nas fichas, e não existe pergunta boba. A assistente só explica: quem decide é sempre você.',
     ];
 }
 
@@ -406,22 +538,20 @@ function co_tutorial(): never
         $n = $i + 1;
         $html .= '<section class="passo" aria-labelledby="passo-' . $n . '"><span class="n" aria-hidden="true">' . $n . '</span>'
             . '<h2 id="passo-' . $n . '">' . co_e($titulo) . '</h2><div>' . $texto . '</div>'
-            . '<button class="ouvir" type="button" data-n="' . $n . '" data-fala="' . co_e($fala) . '" aria-pressed="false">🔊 Ouvir este passo</button></section>';
+            . '<button class="ouvir" type="button" data-n="' . $n . '" data-audio="passo-' . $n . '" data-fala="' . co_e($fala) . '" aria-pressed="false">🔊 Ouvir este passo</button></section>';
     }
     // Toca o áudio gravado (/assets/coordenacao/passo-N.mp3); sem ele, a voz do aparelho lê o texto. Um passo por vez.
     $js = '<script>(function(){var tocando=null,botao=null;function parar(){if(tocando){tocando.pause();tocando=null;}if(window.speechSynthesis)speechSynthesis.cancel();'
-        . 'if(botao){botao.setAttribute("aria-pressed","false");botao.textContent="🔊 Ouvir este passo";botao=null;}}'
+        . 'if(botao){botao.setAttribute("aria-pressed","false");botao.textContent=botao.getAttribute("data-rotulo")||"🔊 Ouvir este passo";botao=null;}}'
         . 'function falar(b){if(!window.speechSynthesis){return;}var u=new SpeechSynthesisUtterance(b.getAttribute("data-fala"));u.lang="pt-BR";u.rate=.9;u.onend=parar;speechSynthesis.speak(u);}'
         . 'document.querySelectorAll(".ouvir").forEach(function(b){b.addEventListener("click",function(){var era=botao===b;parar();if(era)return;botao=b;b.setAttribute("aria-pressed","true");b.textContent="⏹ Parar";'
-        . 'var a=new Audio("/assets/coordenacao/passo-"+b.getAttribute("data-n")+".mp3");tocando=a;a.onended=parar;a.onerror=function(){if(tocando===a){tocando=null;falar(b);}};'
+        . 'var a=new Audio("/assets/coordenacao/"+b.getAttribute("data-audio")+".mp3");tocando=a;a.onended=parar;a.onerror=function(){if(tocando===a){tocando=null;falar(b);}};'
         . 'a.play().catch(function(){if(tocando===a){tocando=null;falar(b);}});});});})();</script>';
     co_pagina('Como usar a página do voluntariado',
         '<a class="voltar" href="' . co_e(co_url()) . '">← Voltar para as fichas</a>'
         . '<h1>Como usar esta página</h1><p class="dica">Leia ou toque em <b>Ouvir este passo</b> para escutar. São ' . count(co_passos()) . ' passos.</p>'
-        . '<section class="falar" aria-labelledby="falar-titulo"><h2 id="falar-titulo">Tirar dúvida falando</h2>'
-        . '<p>No canto de baixo da tela aparece <b>Precisa de ajuda?</b>. Toque no botão preto <b>Iniciar uma chamada</b> e pergunte em voz alta. '
-        . 'Por exemplo: "como eu recuso uma pessoa?". A assistente responde falando. Na primeira vez, o aparelho pede para usar o microfone: toque em <b>Permitir</b>. '
-        . 'Para terminar, toque no botão vermelho de desligar.</p></section>'
+        . '<section class="falar" aria-labelledby="falar-titulo">' . co_chamada()[0]
+        . '<button class="ouvir" type="button" data-audio="chamada" data-rotulo="🔊 Ouvir como funciona a chamada" data-fala="' . co_e(co_chamada()[1]) . '" aria-pressed="false">🔊 Ouvir como funciona a chamada</button></section>'
         . $html
         . '<elevenlabs-convai agent-id="' . co_e(CO_ASSISTENTE) . '"></elevenlabs-convai>'
         . '<script src="' . co_e(CO_ASSISTENTE_JS) . '" async type="text/javascript"></script>' . '<a class="btn grande cheio" href="' . co_e(co_url()) . '">Entendi, ver as fichas</a>' . $js);
@@ -451,7 +581,8 @@ function co_lista(string $ver, string $aviso = ''): never
         $id = (int) $f['id'];
         $idade = mcp_voluntario_idade_texto($f);
         $foto = isset($fotos[$id])
-            ? '<img src="' . co_e(co_url(['foto' => $id])) . '" alt="Foto de ' . co_e((string) $f['nome']) . '" loading="lazy" decoding="async">'
+            ? '<img data-foto="' . co_e(co_url(['foto' => $id])) . '" alt="Foto de ' . co_e((string) $f['nome']) . '" decoding="async">'
+                . '<noscript><img src="' . co_e(co_url(['foto' => $id])) . '" alt="Foto de ' . co_e((string) $f['nome']) . '" loading="lazy"></noscript>'
             : '<span>Sem foto</span>';
         $cartoes .= '<a class="cartao" href="' . co_e(co_url(['id' => $id])) . '">'
             . '<div class="foto">' . $foto . '</div><div class="dados">'
@@ -474,7 +605,31 @@ function co_lista(string $ver, string $aviso = ''): never
     co_pagina('Fichas de voluntários · ' . $titulo,
         $aviso . '<h1>Fichas de quem quer ser voluntário</h1><p class="dica">' . co_e($dica) . '</p>'
         . '<nav class="abas" aria-label="Grupos de fichas">' . $menu . '</nav>'
-        . ($cartoes !== '' ? '<div class="grade">' . $cartoes . '</div>' : '<div class="vazio">' . co_e($vazio) . '</div>'));
+        . ($cartoes !== '' ? '<div class="grade">' . $cartoes . '</div>' . co_js_fotos() : '<div class="vazio">' . co_e($vazio) . '</div>'));
+}
+
+/**
+ * Carrega as fotos da lista em fila: só as que estão (ou vão estar) na tela, no máximo 4 ao mesmo tempo, e tenta de novo a
+ * que falhar (503 da hospedagem cheia), esperando 1, 2, 4, 8 e 16 segundos. Depois da 5ª falha, mostra "Toque para
+ * carregar a foto" (tocar recomeça).
+ */
+function co_js_fotos(): string
+{
+    return '<script>(function(){var MAX=4,ativas=0,fila=[];'
+        . 'function proxima(){while(ativas<MAX&&fila.length){carregar(fila.shift());}}'
+        . 'function carregar(img){ativas++;var url=img.getAttribute("data-foto"),n=+(img.getAttribute("data-tentativa")||0);'
+        . 'var t=new Image();t.onload=function(){img.src=t.src;img.removeAttribute("data-foto");ativas--;proxima();};'
+        . 't.onerror=function(){ativas--;n++;img.setAttribute("data-tentativa",n);'
+        . 'if(n>=5){img.alt="Toque para carregar a foto";img.parentNode.setAttribute("data-falhou","1");proxima();return;}'
+        . 'setTimeout(function(){fila.unshift(img);proxima();},1000*Math.pow(2,n-1));proxima();};'
+        . 't.src=url+(n?"&t="+n:"");}'
+        . 'var imgs=[].slice.call(document.querySelectorAll("img[data-foto]"));'
+        . 'function pedir(img){if(img.getAttribute("data-na-fila"))return;img.setAttribute("data-na-fila","1");fila.push(img);proxima();}'
+        . 'if("IntersectionObserver" in window){var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){o.unobserve(e.target);pedir(e.target);}});},{rootMargin:"600px 0px"});'
+        . 'imgs.forEach(function(i){o.observe(i);});}else{imgs.forEach(pedir);}'
+        . 'document.addEventListener("click",function(e){var c=e.target.closest&&e.target.closest("[data-falhou]");if(!c)return;var i=c.querySelector("img[data-foto]");if(!i)return;'
+        . 'e.preventDefault();c.removeAttribute("data-falhou");i.setAttribute("data-tentativa","0");i.alt="Carregando a foto";fila.unshift(i);proxima();},true);'
+        . '})();</script>';
 }
 
 function co_dl(array $linhas): string
@@ -538,10 +693,10 @@ function co_bloco_aprovacao(array $f): string
         . '<p style="margin:0">Código de aprovação:</p><p class="codigo">' . co_e(mcp_codigo_formatado($codigo)) . '</p>'
         . '<p style="margin:0 0 4px">Mande o código para a pessoa pelo WhatsApp. A mensagem já vai pronta: é só tocar em enviar.</p>'
         . '<div class="botoes">' . ($whats !== '' ? '<a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar o código pelo WhatsApp</a>' : '<p>Esta ficha não tem telefone.</p>')
-        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn grande azul" href="#email">Mandar o código por e-mail</a>' : '') . '</div></div>';
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn grande azul" href="' . co_e(co_url(['id' => (int) $f['id'], 'passo' => 'email'])) . '">Mandar o código por e-mail</a>' : '') . '</div></div>';
 }
 
-function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): never
+function co_ficha(int $id, string $aviso = ''): never
 {
     $f = mcp_voluntario_por_id($id);
     if (!$f) {
@@ -554,9 +709,9 @@ function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): neve
     $idade = mcp_voluntario_idade((string) $f['data_nascimento']);
     $saudacao = 'Olá, ' . mcp_primeiro_nome($nome) . '! Aqui é a coordenação do voluntariado da Cruz Vermelha Brasileira Rio de Janeiro. Recebemos a sua ficha de voluntário.';
     $whats = co_whatsapp($telefone, $saudacao);
-    $contatoBotoes = ($whats !== '' ? '<a class="btn whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Conversar no WhatsApp</a>' : '')
+    $contatoBotoes = ($whats !== '' ? '<a class="btn whats" href="' . co_e(co_url(['id' => $id, 'passo' => 'whatsapp'])) . '">Conversar no WhatsApp</a>' : '')
         . ($telefone !== '' ? '<a class="btn claro" href="tel:+55' . co_e(mcp_digitos($telefone)) . '">Ligar</a>' : '')
-        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn claro" href="#email">Mandar e-mail</a>' : '');
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn claro" href="' . co_e(co_url(['id' => $id, 'passo' => 'email'])) . '">Mandar e-mail</a>' : '');
 
     $saude = (int) ($f['saude'] ?? 0) === 1 ? 'Sim' . (!empty($f['saude_qual']) ? ': ' . (string) $f['saude_qual'] : '') : 'Não';
     $quem = co_dl([
@@ -583,11 +738,6 @@ function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): neve
     $palavras = '<p class="rotulo">Por que quer ser voluntário</p><p class="texto">' . co_e((string) $f['motivacao']) . '</p>'
         . (!empty($f['experiencia']) ? '<p class="rotulo">Experiência com voluntariado</p><p class="texto">' . co_e((string) $f['experiencia']) . '</p>' : '')
         . (!empty($f['habilidades']) ? '<p class="rotulo">Habilidades e formação</p><p class="texto">' . co_e((string) $f['habilidades']) . '</p>' : '');
-    $notas = '';
-    foreach (mcp_voluntario_notas($id) as $n) {
-        $notas .= '<p class="rotulo">' . co_e(co_data((string) $n['criado_em'], 'd/m/Y')) . ' · ' . co_e((string) $n['quem']) . '</p><p class="texto">' . co_e((string) $n['texto']) . '</p>';
-    }
-
     if (in_array($status, CO_PARA_DECIDIR, true)) {
         $decisao = '<div class="bloco decidir"><h2>Sua decisão</h2>'
             . '<p style="margin:0">Depois de conversar com a pessoa, escolha uma opção. Antes de valer, a página pergunta se você tem certeza.</p>'
@@ -618,8 +768,6 @@ function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): neve
         . '<div class="bloco"><h2>Contato</h2>' . $contato . '</div>'
         . '<div class="bloco"><h2>Como quer ajudar</h2>' . $ajudar . '</div>'
         . '<div class="bloco"><h2>Nas palavras da pessoa</h2>' . $palavras . '</div>'
-        . co_bloco_email($f, $mensagemEmail)
-        . ($notas !== '' ? '<div class="bloco"><h2>Anotações da equipe</h2>' . $notas . '</div>' : '')
         . '</div></div>');
 }
 
@@ -809,9 +957,10 @@ if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
         case 'email':
             $mensagem = mcp_texto_longo($_POST['mensagem'] ?? '', CO_EMAIL_MAX);
             $erro = co_email_enviar($f, $mensagem);
-            co_ficha($id, $erro === null
-                ? co_aviso('E-mail enviado para ' . co_e((string) $f['email']) . '. Ele ficou anotado no fim da ficha.', 'ok')
-                : co_aviso(co_e($erro), 'erro'), $erro === null ? '' : $mensagem);
+            if ($erro !== null) {
+                co_tela_email($id, $erro, $mensagem);
+            }
+            co_ficha($id, co_aviso('E-mail enviado para ' . co_e((string) $f['email']) . '.', 'ok'));
         case 'desfazer':
             if (!in_array((string) $f['status'], CO_RECUSADOS, true)) {
                 co_ficha($id);
@@ -827,6 +976,12 @@ if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
 $id = (int) ($_GET['id'] ?? 0);
 if ($id > 0) {
     $passo = (string) ($_GET['passo'] ?? '');
+    if ($passo === 'whatsapp') {
+        co_tela_whatsapp($id);
+    }
+    if ($passo === 'email') {
+        co_tela_email($id);
+    }
     if ($passo === 'aprovar' || $passo === 'recusar') {
         co_confirmar($id, $passo);
     }

@@ -175,8 +175,8 @@ try {
     verificar('lista: foto de quem tem, "Sem foto" de quem não tem', [str_contains($lista['corpo'], 'foto=' . $a), str_contains($lista['corpo'], 'foto=' . $b)], [true, false]);
     verificar('lista: os links levam a chave', str_contains($lista['corpo'], 'coordenacao.php?k=' . $chave . '&amp;id=' . $a), true);
     $tutorial = http("$base$k&ajuda=1");
-    verificar('tutorial: 8 passos com "Ouvir", e o botão "Como usar" no topo da lista', [$tutorial['status'], substr_count($tutorial['corpo'], 'class="passo"'), substr_count($tutorial['corpo'], 'data-fala='),
-        str_contains($lista['corpo'], 'ajuda=1')], [200, 8, 8, true]);
+    verificar('tutorial: 8 passos e o quadro da chamada, cada um com "Ouvir", e o botão "Como usar" no topo da lista', [$tutorial['status'], substr_count($tutorial['corpo'], 'class="passo"'), substr_count($tutorial['corpo'], 'data-fala='),
+        str_contains($tutorial['corpo'], 'data-audio="chamada"'), str_contains($tutorial['corpo'], 'Como fazer a chamada'), str_contains($lista['corpo'], 'ajuda=1')], [200, 8, 9, true, true, true]);
     verificar('tutorial: sem a chave, 404', http("$base?ajuda=1")['status'], 404);
     verificar('assistente de voz: só no tutorial, não na lista nem na ficha', [str_contains($tutorial['corpo'], '<elevenlabs-convai agent-id='), str_contains($lista['corpo'], 'elevenlabs'), str_contains(http("$base$k&id=$a")['corpo'], 'elevenlabs')], [true, false, false]);
     $aprovados = http("$base$k&ver=aprovados");
@@ -189,9 +189,14 @@ try {
     $ver = http("$base$k&id=$a");
     verificar('ficha: tudo o que a pessoa escreveu', [str_contains($ver['corpo'], 'Quero ajudar as pessoas do meu bairro'), str_contains($ver['corpo'], 'paróquia'),
         str_contains($ver['corpo'], 'Costura'), str_contains($ver['corpo'], 'Enfermagem'), str_contains($ver['corpo'], 'Tijuca')], [true, true, true, true, true]);
-    verificar('ficha: WhatsApp e botões Aprovar e Recusar', [str_contains($ver['corpo'], 'https://wa.me/5521987654321'), str_contains($ver['corpo'], 'passo=aprovar'), str_contains($ver['corpo'], 'passo=recusar')], [true, true, true]);
+    verificar('ficha: WhatsApp e botões Aprovar e Recusar', [str_contains($ver['corpo'], 'passo=whatsapp'), str_contains($ver['corpo'], 'passo=aprovar'), str_contains($ver['corpo'], 'passo=recusar')], [true, true, true]);
     verificar('ficha: CPF só parcial', str_contains($ver['corpo'], (string) mcp_voluntario_por_id($a)['cpf']), false);
 
+    $wz = http("$base$k&id=$a&passo=whatsapp");
+    verificar('WhatsApp: tela de modelos que abre o wa.me com o texto escolhido', [$wz['status'], str_contains($wz['corpo'], 'action="https://wa.me/5521987654321"'), str_contains($wz['corpo'], 'name="text"'),
+        str_contains($wz['corpo'], 'Marcar a entrevista na sede'), str_contains($wz['corpo'], 'A pessoa não respondeu'), str_contains($wz['corpo'], 'Combinar uma conversa'), str_contains($wz['corpo'], 'Pedir a foto')], [200, true, true, true, true, true, false]);
+    verificar('WhatsApp: os botões de modelo não vão junto para o wa.me', (bool) preg_match('/name="modelo-co-whats" form=""/', $wz['corpo']), true);
+    verificar('WhatsApp da ficha sem foto: oferece o modelo "Pedir a foto"', str_contains(http("$base$k&id=$b&passo=whatsapp")['corpo'], 'Pedir a foto'), true);
     $conf = http("$base$k&id=$a&passo=aprovar");
     verificar('confirmação de aprovar: pergunta e não decide sozinha', [str_contains($conf['corpo'], 'Sim, aprovar'), (string) mcp_voluntario_por_id($a)['status']], [true, 'nova']);
 
@@ -270,7 +275,9 @@ try {
     // E-mail à pessoa.
     $email = (string) mcp_voluntario_por_id($d)['email'];
     $ver = http("$base$k&id=$d");
-    verificar('ficha: bloco "Mandar e-mail" com o texto pronto', [str_contains($ver['corpo'], 'name="mensagem"'), str_contains($ver['corpo'], 'Olá, Duda!'), str_contains($ver['corpo'], 'href="#email"')], [true, true, true]);
+    $telaEmail = http("$base$k&id=$d&passo=email");
+    verificar('e-mail: botão na ficha leva à tela com os modelos e o texto pronto', [str_contains($ver['corpo'], 'passo=email'), str_contains($ver['corpo'], 'name="mensagem"'),
+        str_contains($telaEmail['corpo'], 'name="mensagem"'), str_contains($telaEmail['corpo'], 'Olá, Duda!'), str_contains($telaEmail['corpo'], 'Marcar a entrevista na sede')], [true, false, true, true, true]);
     $notasAntes = count(mcp_voluntario_notas($d));
     @unlink("$pastaResend/ultimo.json");
     $env = http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => "Olá, Duda!\n\nPodemos conversar no sábado às 10h?"]);
@@ -279,6 +286,7 @@ try {
     verificar('e-mail: o texto da coordenadora, com o protocolo no assunto', [str_contains((string) ($saiu['text'] ?? ''), 'sábado às 10h'), str_contains((string) ($saiu['subject'] ?? ''), (string) mcp_voluntario_por_id($d)['protocolo']),
         str_contains((string) ($saiu['html'] ?? ''), 'Podemos conversar no sábado')], [true, true, true]);
     verificar('e-mail: aviso na tela e anotação na ficha', [str_contains($env['corpo'], 'E-mail enviado para'), count(mcp_voluntario_notas($d)) - $notasAntes], [true, 1]);
+    verificar('anotações: gravadas, mas não aparecem na página dela', [str_contains($env['corpo'], 'Anotações da equipe'), str_contains($env['corpo'], 'E-mail enviado à pessoa')], [false, false]);
     @unlink("$pastaResend/ultimo.json");
     $curto = http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => 'oi']);
     verificar('e-mail curto demais: não envia e avisa', [is_file("$pastaResend/ultimo.json"), str_contains($curto['corpo'], 'curta demais')], [false, true]);
@@ -287,6 +295,8 @@ try {
     preg_match('/name="mensagem" value="([^"]*)"/', $aprovadoEmail['corpo'], $mm);
     http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => html_entity_decode($mm[1] ?? '', ENT_QUOTES)]);
     $saiu = json_decode((string) @file_get_contents("$pastaResend/ultimo.json"), true) ?: [];
+    $wzAprov = http("$base$k&id=$d&passo=whatsapp");
+    verificar('WhatsApp da ficha aprovada: começa no modelo do código', [(bool) preg_match('/value="codigo" checked/', $wzAprov['corpo']), str_contains($wzAprov['corpo'], mcp_codigo_formatado((string) mcp_voluntario_aprovacao($d)['codigo']))], [true, true]);
     verificar('código por e-mail: sai com o código e o link de conferência', [str_contains((string) ($saiu['text'] ?? ''), mcp_codigo_formatado((string) mcp_voluntario_aprovacao($d)['codigo'])), str_contains((string) ($saiu['text'] ?? ''), '/conferir/?c=')], [true, true]);
 
     $erros = array_values(array_filter(explode("\n", (string) file_get_contents($log)), static fn(string $l): bool => (bool) preg_match('/PHP (Warning|Notice|Fatal|Deprecated|Parse)/', $l)));
