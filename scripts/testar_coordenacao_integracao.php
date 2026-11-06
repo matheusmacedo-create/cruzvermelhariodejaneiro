@@ -11,6 +11,8 @@
  *   - recusar e desfazer a recusa; quem decidiu fica como "<COORDENACAO_NOME> · link da coordenação";
  *   - mandar e-mail (a uma Resend falsa em 127.0.0.1): texto pronto, para a pessoa, responder-para o voluntariado, anotado na
  *     ficha; mensagem curta recusada; o código por e-mail depois de aprovar;
+ *   - recusar com motivo: a confirmação traz os motivos e a mensagem pronta; com "avisar", o e-mail sai e a anotação leva
+ *     o motivo; avisar sem mensagem não recusa; a tela final oferece o WhatsApp com a mesma mensagem;
  *   - pedir a foto (ficha sem selfie): botões só nela, o link da ficha (api/voluntario-foto.php) abre o formulário, link
  *     errado dá 404, a foto enviada entra na ficha (JPEG regravado) e o link passa a dizer "já recebemos".
  * Mesmo modelo de testar_voluntarios_integracao.php (servidor embutido do PHP, CPFs sintéticos, tudo apagado no fim).
@@ -172,6 +174,10 @@ try {
     verificar('lista: a mais antiga primeiro', strpos($lista['corpo'], "Ana Teste") < strpos($lista['corpo'], "Duda Teste"), true);
     verificar('lista: foto de quem tem, "Sem foto" de quem não tem', [str_contains($lista['corpo'], 'foto=' . $a), str_contains($lista['corpo'], 'foto=' . $b)], [true, false]);
     verificar('lista: os links levam a chave', str_contains($lista['corpo'], 'coordenacao.php?k=' . $chave . '&amp;id=' . $a), true);
+    $tutorial = http("$base$k&ajuda=1");
+    verificar('tutorial: 8 passos com "Ouvir", e o botão "Como usar" no topo da lista', [$tutorial['status'], substr_count($tutorial['corpo'], 'class="passo"'), substr_count($tutorial['corpo'], 'data-fala='),
+        str_contains($lista['corpo'], 'ajuda=1')], [200, 8, 8, true]);
+    verificar('tutorial: sem a chave, 404', http("$base?ajuda=1")['status'], 404);
     $aprovados = http("$base$k&ver=aprovados");
     verificar('aba Aprovados mostra o Caio', str_contains($aprovados['corpo'], "Caio Teste Coordenação $sufixo"), true);
 
@@ -213,6 +219,22 @@ try {
     http($base, 'POST', ['k' => $chave, 'acao' => 'desfazer', 'id' => $d]);
     verificar('desfazer a recusa: volta para em análise', (string) mcp_voluntario_por_id($d)['status'], 'em_analise');
     verificar('POST sem a chave: 404 e nada muda', [http($base, 'POST', ['acao' => 'recusar', 'id' => $d])['status'], (string) mcp_voluntario_por_id($d)['status']], [404, 'em_analise']);
+
+    // Recusar com motivo e mensagem (Eva).
+    $e = ficha("Eva Teste Coordenação $sufixo", cpf_de_teste());
+    $confR = http("$base$k&id=$e&passo=recusar");
+    verificar('confirmação da recusa: motivos, lotação marcada, mensagem pronta e "avisar" marcado', [str_contains($confR['corpo'], 'Lotação máxima'), (bool) preg_match('/value="lotacao" checked/', $confR['corpo']),
+        str_contains($confR['corpo'], 'lotação máxima, e não conseguimos'), (bool) preg_match('/name="avisar" value="1" checked/', $confR['corpo']), str_contains($confR['corpo'], 'Não conseguimos falar com a pessoa')], [true, true, true, true, true]);
+    $vazia = http($base, 'POST', ['k' => $chave, 'acao' => 'recusar', 'id' => $e, 'motivo' => 'lotacao', 'avisar' => '1', 'mensagem' => '']);
+    verificar('avisar sem mensagem: não recusa e pede a mensagem', [(string) mcp_voluntario_por_id($e)['status'], str_contains($vazia['corpo'], 'Escreva a mensagem')], ['nova', true]);
+    @unlink("$pastaResend/ultimo.json");
+    $notasE = count(mcp_voluntario_notas($e));
+    $recE = http($base, 'POST', ['k' => $chave, 'acao' => 'recusar', 'id' => $e, 'motivo' => 'lotacao', 'avisar' => '1', 'mensagem' => "Olá, Eva!\n\nAs vagas chegaram à lotação máxima."]);
+    $saiu = json_decode((string) @file_get_contents("$pastaResend/ultimo.json"), true) ?: [];
+    $notasTexto = implode(' | ', array_column(mcp_voluntario_notas($e), 'texto'));
+    verificar('recusar com aviso: recusada, e-mail enviado, motivo e mensagem anotados', [(string) mcp_voluntario_por_id($e)['status'], str_contains((string) ($saiu['text'] ?? ''), 'lotação máxima'),
+        str_contains($notasTexto, 'Motivo: Lotação máxima'), count(mcp_voluntario_notas($e)) - $notasE], ['recusada', true, true, 2]);
+    verificar('tela final: e-mail enviado e WhatsApp com a mesma mensagem', [str_contains($recE['corpo'], 'foi enviada por e-mail'), str_contains($recE['corpo'], 'wa.me/5521987654321?text=' . rawurlencode("Olá, Eva!"))], [true, true]);
 
     // Pedir a foto (a Bia não tem selfie; a Ana tem).
     $verB = http("$base$k&id=$b");
