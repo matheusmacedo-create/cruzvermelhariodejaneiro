@@ -18,7 +18,8 @@
  *   ?id=N&passo=aprovar|recusar   a confirmação (com o CPF, se a ficha veio sem);
  *   ?foto=N           a selfie (JPEG, sem cache).
  * Ações (POST com a chave): aprovar (aceita a ficha, cria o colaborador do ponto e o código de aprovação, como na Redação),
- * recusar e desfazer a recusa (volta para "em análise"). Quem decidiu fica em status_por como "<nome> · link da coordenação".
+ * recusar, desfazer a recusa (volta para "em análise") e mandar e-mail à pessoa (pela Resend, com responder-para a caixa
+ * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora). Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
@@ -28,6 +29,9 @@ const CO_CHAVE_MIN = 32;
 const CO_LIMITE_LISTA = 500;
 const CO_PARA_DECIDIR = ['nova', 'em_analise', 'entrevista'];
 const CO_RECUSADOS = ['recusada', 'arquivada'];
+const CO_EMAIL_LIMITE = [40, 3600];
+const CO_EMAIL_MIN = 10;
+const CO_EMAIL_MAX = 5000;
 
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -183,6 +187,9 @@ a.cartao:hover,a.cartao:focus-visible{border-color:var(--vermelho);outline:none;
 .campo span{display:block;font-weight:700;margin-bottom:6px}
 .campo input{width:100%;min-height:64px;font:inherit;font-size:1.3rem;padding:10px 16px;border:3px solid var(--linha);border-radius:12px;letter-spacing:.04em}
 .campo input:focus{border-color:#1a5fb4;outline:none}
+.campo textarea{width:100%;min-height:220px;font:inherit;font-size:1.05rem;line-height:1.5;padding:12px 16px;border:3px solid var(--linha);border-radius:12px;resize:vertical}
+.campo textarea:focus{border-color:#1a5fb4;outline:none}
+.btn.azul{background:#1a5fb4;color:#fff}.btn.azul:hover{background:#144a8c}
 .codigo{font-size:2.2rem;font-weight:900;letter-spacing:.08em;margin:6px 0}
 .rodape{max-width:1180px;margin:0 auto;padding:0 16px 30px;color:var(--suave);font-size:.85rem}
 CSS;
@@ -251,6 +258,82 @@ function co_whatsapp(string $telefone, string $mensagem): string
 function co_aviso(string $texto, string $classe = 'ok'): string
 {
     return $texto === '' ? '' : '<div class="aviso ' . co_e($classe) . '" role="status">' . $texto . '</div>';
+}
+
+// ----------------------------------------------------------------------------- e-mail à pessoa
+/** O texto pronto do e-mail, conforme a situação da ficha (a coordenadora pode mudar antes de enviar). */
+function co_email_modelo(array $f): string
+{
+    $ola = 'Olá, ' . mcp_primeiro_nome((string) $f['nome']) . "!\n\n";
+    if ((string) $f['status'] === 'aceita') {
+        $a = mcp_voluntario_aprovacao((int) $f['id']);
+        if ($a && empty($a['cancelada_em'])) {
+            return $ola . 'Sua ficha de voluntário foi aprovada. Seu código de aprovação é ' . mcp_codigo_formatado((string) $a['codigo']) . ".\n\n"
+                . 'Qualquer pessoa pode conferir o código em ' . mcp_conferir_url((string) $a['codigo']) . ". Guarde este código: ele mostra que você foi aprovado(a) para seguir para o CBFI e o termo de adesão.\n\n"
+                . 'Em breve entramos em contato com as próximas orientações.';
+        }
+    }
+    return $ola . "Recebemos a sua ficha de voluntário na Cruz Vermelha Brasileira Rio de Janeiro e gostaríamos de conversar com você.\n\n"
+        . 'Pode responder este e-mail dizendo o melhor dia e horário para falarmos? Se preferir, mande uma mensagem pelo WhatsApp.';
+}
+
+/** Monta o e-mail da coordenação para a pessoa da ficha. */
+function co_email_montar(array $f, string $mensagem): array
+{
+    $protocolo = (string) ($f['protocolo'] ?? '');
+    $assinatura = 'Coordenação do voluntariado · Cruz Vermelha Brasileira Rio de Janeiro';
+    $corpo = '<div style="font-size:16px;line-height:1.6;color:#1a202c">' . nl2br(mcp_escapar($mensagem), false) . '</div>'
+        . '<p style="margin:22px 0 0;font-size:15px;line-height:1.5;color:#1a202c"><strong>' . mcp_escapar($assinatura) . '</strong></p>'
+        . mcp_nota('Para falar com a coordenação, é só responder este e-mail' . ($protocolo !== '' ? ' (protocolo da sua ficha: <strong>' . mcp_escapar($protocolo) . '</strong>)' : '') . '.');
+    return [
+        'assunto' => 'Voluntariado da Cruz Vermelha Brasileira Rio de Janeiro' . ($protocolo !== '' ? " · $protocolo" : ''),
+        'html' => mcp_moldura('Mensagem da coordenação do voluntariado', $corpo, [
+            'eyebrow' => 'Voluntariado',
+            'preheader' => mb_substr(preg_replace('/\s+/u', ' ', $mensagem) ?? '', 0, 140),
+            'motivo' => 'Você recebeu este e-mail porque preencheu a ficha de voluntariado em cruzvermelhariodejaneiro.org' . ($protocolo !== '' ? " (protocolo $protocolo)" : '') . '.',
+        ]),
+        'texto' => "$mensagem\n\n$assinatura\n\nPara falar com a coordenação, é só responder este e-mail" . ($protocolo !== '' ? " (protocolo $protocolo)" : '') . ".\n",
+    ];
+}
+
+/** O bloco "Mandar e-mail" da ficha: o texto pronto numa caixa grande e o botão de enviar. */
+function co_bloco_email(array $f, string $mensagem = ''): string
+{
+    $email = (string) $f['email'];
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return '';
+    }
+    $mensagem = $mensagem !== '' ? $mensagem : co_email_modelo($f);
+    return '<div class="bloco" id="email"><h2>Mandar e-mail</h2>'
+        . '<p style="margin:0">Para <b>' . co_e($email) . '</b>. A mensagem já está escrita: se quiser, mude o texto. Depois toque em "Enviar e-mail". A resposta da pessoa chega na caixa do voluntariado.</p>'
+        . '<form method="post" action="coordenacao.php"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
+        . '<input type="hidden" name="acao" value="email"><input type="hidden" name="id" value="' . (int) $f['id'] . '">'
+        . '<label class="campo"><span>Mensagem</span><textarea name="mensagem" maxlength="' . CO_EMAIL_MAX . '" required>' . co_e($mensagem) . '</textarea></label>'
+        . '<div class="botoes"><button class="btn grande azul" type="submit">Enviar e-mail</button></div></form></div>';
+}
+
+/** Envia o e-mail e anota na ficha. Devolve null (enviado) ou a mensagem de erro para a tela. */
+function co_email_enviar(array $f, string $mensagem): ?string
+{
+    if (!filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL)) {
+        return 'Esta ficha não tem um e-mail válido.';
+    }
+    if (mb_strlen($mensagem) < CO_EMAIL_MIN) {
+        return 'A mensagem está vazia ou curta demais. Escreva um pouco mais e envie de novo.';
+    }
+    [$maximo, $janela] = CO_EMAIL_LIMITE;
+    if (mcp_contar_eventos_recentes('coordenacao_email', 'enviado', $janela) >= $maximo) {
+        return 'Muitos e-mails enviados na última hora. Espere um pouco e tente de novo.';
+    }
+    $m = co_email_montar($f, $mensagem);
+    $envio = mcp_enviar_email((string) $f['email'], $m['assunto'], $m['html'], $m['texto'], mcp_voluntarios_email_destino());
+    if ($envio === 'falhou') {
+        mcp_registrar(null, 'coordenacao_email', 'falhou');
+        return 'O e-mail não pôde ser enviado agora. Tente de novo daqui a pouco.';
+    }
+    mcp_registrar(null, 'coordenacao_email', 'enviado');
+    mcp_voluntario_nota_registrar((int) $f['id'], co_quem(), "E-mail enviado à pessoa:\n\n$mensagem");
+    return null;
 }
 
 // ----------------------------------------------------------------------------- telas
@@ -348,10 +431,11 @@ function co_bloco_aprovacao(array $f): string
     return '<div class="bloco"><h2>Aprovada</h2>'
         . '<p style="margin:0">Código de aprovação:</p><p class="codigo">' . co_e(mcp_codigo_formatado($codigo)) . '</p>'
         . '<p style="margin:0 0 4px">Mande o código para a pessoa pelo WhatsApp. A mensagem já vai pronta: é só tocar em enviar.</p>'
-        . '<div class="botoes">' . ($whats !== '' ? '<a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar o código pelo WhatsApp</a>' : '<p>Esta ficha não tem telefone.</p>') . '</div></div>';
+        . '<div class="botoes">' . ($whats !== '' ? '<a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar o código pelo WhatsApp</a>' : '<p>Esta ficha não tem telefone.</p>')
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn grande azul" href="#email">Mandar o código por e-mail</a>' : '') . '</div></div>';
 }
 
-function co_ficha(int $id, string $aviso = ''): never
+function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): never
 {
     $f = mcp_voluntario_por_id($id);
     if (!$f) {
@@ -365,7 +449,8 @@ function co_ficha(int $id, string $aviso = ''): never
     $saudacao = 'Olá, ' . mcp_primeiro_nome($nome) . '! Aqui é a coordenação do voluntariado da Cruz Vermelha Brasileira Rio de Janeiro. Recebemos a sua ficha de voluntário.';
     $whats = co_whatsapp($telefone, $saudacao);
     $contatoBotoes = ($whats !== '' ? '<a class="btn whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Conversar no WhatsApp</a>' : '')
-        . ($telefone !== '' ? '<a class="btn claro" href="tel:+55' . co_e(mcp_digitos($telefone)) . '">Ligar</a>' : '');
+        . ($telefone !== '' ? '<a class="btn claro" href="tel:+55' . co_e(mcp_digitos($telefone)) . '">Ligar</a>' : '')
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) ? '<a class="btn claro" href="#email">Mandar e-mail</a>' : '');
 
     $saude = (int) ($f['saude'] ?? 0) === 1 ? 'Sim' . (!empty($f['saude_qual']) ? ': ' . (string) $f['saude_qual'] : '') : 'Não';
     $quem = co_dl([
@@ -427,6 +512,7 @@ function co_ficha(int $id, string $aviso = ''): never
         . '<div class="bloco"><h2>Contato</h2>' . $contato . '</div>'
         . '<div class="bloco"><h2>Como quer ajudar</h2>' . $ajudar . '</div>'
         . '<div class="bloco"><h2>Nas palavras da pessoa</h2>' . $palavras . '</div>'
+        . co_bloco_email($f, $mensagemEmail)
         . ($notas !== '' ? '<div class="bloco"><h2>Anotações da equipe</h2>' . $notas . '</div>' : '')
         . '</div></div>');
 }
@@ -476,6 +562,12 @@ function co_aprovada(array $f, string $codigo): never
         . '<p>Agora mande o código para a pessoa. Toque no botão verde: o WhatsApp abre com a mensagem pronta, é só enviar.</p>'
         . '<div class="botoes" style="justify-content:center">'
         . ($whats !== '' ? '<a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar pelo WhatsApp</a>' : '<p>Esta ficha não tem telefone: entregue o código pessoalmente.</p>')
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL)
+            ? '<form method="post" action="coordenacao.php" style="display:contents"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
+                . '<input type="hidden" name="acao" value="email"><input type="hidden" name="id" value="' . $id . '">'
+                . '<input type="hidden" name="mensagem" value="' . co_e(co_email_modelo($f)) . '">'
+                . '<button class="btn grande azul" type="submit">Mandar por e-mail</button></form>'
+            : '')
         . '</div><div class="botoes" style="justify-content:center">'
         . ($proxima !== null ? '<a class="btn grande cheio" href="' . co_e(co_url(['id' => $proxima])) . '">Ver a próxima ficha</a>' : '')
         . '<a class="btn grande claro" href="' . co_e(co_url()) . '">Voltar para a lista</a></div></div>');
@@ -538,6 +630,12 @@ if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
                 co_ficha($proxima, co_aviso('A ficha de ' . co_e((string) $f['nome']) . ' foi recusada. Esta é a próxima ficha para decidir.', 'ok'));
             }
             co_lista('decidir', co_aviso('A ficha de ' . co_e((string) $f['nome']) . ' foi recusada.', 'ok'));
+        case 'email':
+            $mensagem = mcp_texto_longo($_POST['mensagem'] ?? '', CO_EMAIL_MAX);
+            $erro = co_email_enviar($f, $mensagem);
+            co_ficha($id, $erro === null
+                ? co_aviso('E-mail enviado para ' . co_e((string) $f['email']) . '. Ele ficou anotado no fim da ficha.', 'ok')
+                : co_aviso(co_e($erro), 'erro'), $erro === null ? '' : $mensagem);
         case 'desfazer':
             if (!in_array((string) $f['status'], CO_RECUSADOS, true)) {
                 co_ficha($id);

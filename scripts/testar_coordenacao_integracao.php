@@ -8,7 +8,9 @@
  *   - a ficha inteira (motivação, experiência, habilidades, WhatsApp) e a confirmação antes de decidir;
  *   - aprovar: cria o colaborador do ponto, a ficha fica aceita, sai o código de aprovação e o WhatsApp com a mensagem;
  *     repetir não troca o código; ficha sem CPF pede o CPF e recusa CPF errado;
- *   - recusar e desfazer a recusa; quem decidiu fica como "<COORDENACAO_NOME> · link da coordenação".
+ *   - recusar e desfazer a recusa; quem decidiu fica como "<COORDENACAO_NOME> · link da coordenação";
+ *   - mandar e-mail (a uma Resend falsa em 127.0.0.1): texto pronto, para a pessoa, responder-para o voluntariado, anotado na
+ *     ficha; mensagem curta recusada; o código por e-mail depois de aprovar.
  * Mesmo modelo de testar_voluntarios_integracao.php (servidor embutido do PHP, CPFs sintéticos, tudo apagado no fim).
  *
  * Uso: MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_coordenacao_integracao.php
@@ -22,9 +24,14 @@ if ($configOriginal === '' || !is_file($configOriginal)) {
     exit(2);
 }
 $porta = 19500 + random_int(0, 400);
+$portaResend = $porta + 1000;
+$pastaResend = sys_get_temp_dir() . '/mcp-coord-resend-' . bin2hex(random_bytes(3));
+mkdir($pastaResend);
+file_put_contents("$pastaResend/index.php", '<?php file_put_contents(__DIR__ . "/ultimo.json", file_get_contents("php://input")); header("Content-Type: application/json"); echo json_encode(["id" => "teste"]);');
 $chave = bin2hex(random_bytes(20));
 $config = tempnam(sys_get_temp_dir(), 'mcp-coord-');
-file_put_contents($config, '<?php return [\'SITE_URL\' => \'http://127.0.0.1:' . $porta . '\', \'ESCOLA_API_URL\' => \'\'] + (require ' . var_export($configOriginal, true) . ');');
+file_put_contents($config, '<?php return [\'SITE_URL\' => \'http://127.0.0.1:' . $porta . '\', \'ESCOLA_API_URL\' => \'\', \'RESEND_API_KEY\' => \'re_teste\', '
+    . '\'RESEND_API_URL\' => \'http://127.0.0.1:' . $portaResend . '/emails\', \'EMAIL_VOLUNTARIADO\' => \'voluntariado@exemplo.org\'] + (require ' . var_export($configOriginal, true) . ');');
 $coord = tempnam(sys_get_temp_dir(), 'mcp-coord-chave-');
 $semChave = tempnam(sys_get_temp_dir(), 'mcp-coord-sem-');
 file_put_contents($semChave, '<?php return [];');
@@ -128,8 +135,9 @@ $servidor = proc_open([PHP_BINARY, '-S', "127.0.0.1:$porta", '-t', $raiz . '/sit
     ['MCP_CONFIG_ARQUIVO' => $config, 'MCP_CONFIG_COORDENACAO_ARQUIVO' => $coord, 'MCP_CONFIG_ESCOLA_ARQUIVO' => $semExtra, 'MCP_CONFIG_WHATSAPP_ARQUIVO' => $semExtra,
      'MCP_CONFIG_META_ARQUIVO' => $semExtra, 'MCP_CONFIG_PAGAR_TUDO_ARQUIVO' => $semExtra, 'MCP_CONFIG_REDACAO_ARQUIVO' => $semExtra, 'MCP_CONFIG_GOOGLE_ARQUIVO' => $semExtra,
      'MCP_CATALOGO_ARQUIVO' => $raiz . '/site/matricula-cursos-presenciais/cursos.json', 'PATH' => (string) getenv('PATH')]);
+$resend = proc_open([PHP_BINARY, '-S', "127.0.0.1:$portaResend", "$pastaResend/index.php"], $nulo, $tubosResend);
 $base = "http://127.0.0.1:$porta/matricula-cursos-presenciais/api/coordenacao.php";
-for ($i = 0; $i < 50 && @fsockopen('127.0.0.1', $porta) === false; $i++) {
+for ($i = 0; $i < 50 && (@fsockopen('127.0.0.1', $porta) === false || @fsockopen('127.0.0.1', $portaResend) === false); $i++) {
     usleep(100000);
 }
 
@@ -203,11 +211,38 @@ try {
     verificar('desfazer a recusa: volta para em análise', (string) mcp_voluntario_por_id($d)['status'], 'em_analise');
     verificar('POST sem a chave: 404 e nada muda', [http($base, 'POST', ['acao' => 'recusar', 'id' => $d])['status'], (string) mcp_voluntario_por_id($d)['status']], [404, 'em_analise']);
 
+    // E-mail à pessoa.
+    $email = (string) mcp_voluntario_por_id($d)['email'];
+    $ver = http("$base$k&id=$d");
+    verificar('ficha: bloco "Mandar e-mail" com o texto pronto', [str_contains($ver['corpo'], 'name="mensagem"'), str_contains($ver['corpo'], 'Olá, Duda!'), str_contains($ver['corpo'], 'href="#email"')], [true, true, true]);
+    $notasAntes = count(mcp_voluntario_notas($d));
+    @unlink("$pastaResend/ultimo.json");
+    $env = http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => "Olá, Duda!\n\nPodemos conversar no sábado às 10h?"]);
+    $saiu = json_decode((string) @file_get_contents("$pastaResend/ultimo.json"), true) ?: [];
+    verificar('e-mail: enviado para a pessoa, responder-para o voluntariado', [$env['status'], $saiu['to'] ?? null, $saiu['reply_to'] ?? null], [200, [$email], 'voluntariado@exemplo.org']);
+    verificar('e-mail: o texto da coordenadora, com o protocolo no assunto', [str_contains((string) ($saiu['text'] ?? ''), 'sábado às 10h'), str_contains((string) ($saiu['subject'] ?? ''), (string) mcp_voluntario_por_id($d)['protocolo']),
+        str_contains((string) ($saiu['html'] ?? ''), 'Podemos conversar no sábado')], [true, true, true]);
+    verificar('e-mail: aviso na tela e anotação na ficha', [str_contains($env['corpo'], 'E-mail enviado para'), count(mcp_voluntario_notas($d)) - $notasAntes], [true, 1]);
+    @unlink("$pastaResend/ultimo.json");
+    $curto = http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => 'oi']);
+    verificar('e-mail curto demais: não envia e avisa', [is_file("$pastaResend/ultimo.json"), str_contains($curto['corpo'], 'curta demais')], [false, true]);
+    $aprovadoEmail = http($base, 'POST', ['k' => $chave, 'acao' => 'aprovar', 'id' => $d]);
+    verificar('depois de aprovar: botão "Mandar por e-mail" com o código', [str_contains($aprovadoEmail['corpo'], 'Mandar por e-mail'), str_contains($aprovadoEmail['corpo'], mcp_codigo_formatado((string) mcp_voluntario_aprovacao($d)['codigo']))], [true, true]);
+    preg_match('/name="mensagem" value="([^"]*)"/', $aprovadoEmail['corpo'], $mm);
+    http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $d, 'mensagem' => html_entity_decode($mm[1] ?? '', ENT_QUOTES)]);
+    $saiu = json_decode((string) @file_get_contents("$pastaResend/ultimo.json"), true) ?: [];
+    verificar('código por e-mail: sai com o código e o link de conferência', [str_contains((string) ($saiu['text'] ?? ''), mcp_codigo_formatado((string) mcp_voluntario_aprovacao($d)['codigo'])), str_contains((string) ($saiu['text'] ?? ''), '/conferir/?c=')], [true, true]);
+
     $erros = array_values(array_filter(explode("\n", (string) file_get_contents($log)), static fn(string $l): bool => (bool) preg_match('/PHP (Warning|Notice|Fatal|Deprecated|Parse)/', $l)));
     verificar('sem aviso nem erro do PHP no servidor', $erros, []);
 } finally {
     proc_terminate($servidor);
     proc_close($servidor);
+    proc_terminate($resend);
+    proc_close($resend);
+    @unlink("$pastaResend/index.php");
+    @unlink("$pastaResend/ultimo.json");
+    @rmdir($pastaResend);
     limpar($db);
     @unlink($config);
     @unlink($coord);

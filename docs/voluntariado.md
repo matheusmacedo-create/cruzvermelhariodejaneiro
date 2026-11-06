@@ -249,6 +249,10 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   pronta. Ficha sem CPF pede o CPF na confirmação. Recarregar não troca o código.
 - **Recusar**: `recusada`, com a nota "Recusada pelo link da coordenação."; a pessoa não é avisada sozinha. "Desfazer a
   recusa" volta a ficha para `em_analise`. Ficha aceita não se desfaz por aqui (só pelo portal).
+- **Mandar e-mail**: na ficha, o bloco "Mandar e-mail" traz o texto pronto (convite para conversar; na ficha aprovada, o
+  código com o link de conferência), que a coordenadora pode mudar. Sai pela Resend, do remetente geral, com
+  responder-para a caixa do voluntariado (`EMAIL_VOLUNTARIADO`); cada envio fica nas anotações da ficha; até 40 por hora.
+  Depois de aprovar, "Mandar por e-mail" envia o código com um toque.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
