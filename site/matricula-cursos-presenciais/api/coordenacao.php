@@ -36,6 +36,9 @@
  * Fotos da lista (06/11/2026): a hospedagem atende ~20 pedidos ao PHP ao mesmo tempo e responde 503 ao resto, e a lista
  * pedia dezenas de fotos de uma vez (algumas apareciam quebradas). Agora a página busca as fotos 4 por vez, na ordem em
  * que aparecem na tela, e tenta de novo a que falhar (até 5 vezes, esperando mais a cada vez). Sem JavaScript, <noscript>.
+ * Logo (06/11/2026): no topo, o logo horizontal do site (/assets/otim/logo-cvb-rj-480.png) em faixa branca; o logo quadrado
+ * (/assets/coordenacao/logo-quadrado-N.png, a partir do arquivo oficial enviado pelo Matheus) é o ícone do atalho no
+ * celular e da assistente; /assets/coordenacao/previa.jpg é a imagem da prévia do link no WhatsApp.
  * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
  * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
@@ -130,15 +133,30 @@ function co_pagina(string $titulo, string $corpo): never
     echo '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">'
         . '<meta name="viewport" content="width=device-width,initial-scale=1">'
         . '<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">'
-        . '<meta name="theme-color" content="#c8102e">'
+        . '<meta name="theme-color" content="#c8102e">' . co_cabecalho_marca()
         . '<title>' . co_e($titulo) . '</title><style>' . co_css() . '</style></head><body>'
-        . '<header class="topo"><div class="faixa"><span class="cruz" aria-hidden="true"></span>'
-        . '<span><b>Voluntariado</b><br><small>Cruz Vermelha Brasileira · Rio de Janeiro</small></span>'
+        . '<header class="topo"><div class="faixa">'
+        . '<img class="logo" src="/assets/otim/logo-cvb-rj-480.png" width="480" height="144" alt="Cruz Vermelha Brasileira · Rio de Janeiro">'
+        . '<span class="secao">Voluntariado</span>'
         . '<a class="ajuda" href="' . co_e(co_url(['ajuda' => 1])) . '">Como usar</a></div></header>'
         . '<main class="conteudo">' . $corpo . '</main>'
         . '<footer class="rodape">As fotos e os dados são só para escolher os voluntários. Não mande para outras pessoas.</footer>'
         . '</body></html>';
     exit;
+}
+
+/** Ícones (atalho na tela inicial do celular, aba do navegador) e a prévia do link no WhatsApp, com o logo da filial. */
+function co_cabecalho_marca(): string
+{
+    $site = mcp_site_url();
+    return '<link rel="icon" href="/favicon.ico" sizes="any">'
+        . '<link rel="icon" type="image/png" sizes="192x192" href="/assets/coordenacao/logo-quadrado-192.png">'
+        . '<link rel="apple-touch-icon" href="/assets/coordenacao/logo-quadrado-180.png">'
+        . '<meta name="apple-mobile-web-app-title" content="Voluntariado"><meta name="application-name" content="Voluntariado">'
+        . '<meta property="og:type" content="website"><meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">'
+        . '<meta property="og:title" content="Voluntariado · fichas de voluntários">'
+        . '<meta property="og:description" content="Página da coordenação do voluntariado da Cruz Vermelha Brasileira Rio de Janeiro.">'
+        . '<meta property="og:image" content="' . co_e($site) . '/assets/coordenacao/previa.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">';
 }
 
 function co_css(): string
@@ -149,10 +167,12 @@ function co_css(): string
 html{font-size:20px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--fundo);color:var(--texto);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
 a{color:var(--vermelho-escuro)}
-.topo{background:var(--vermelho);color:#fff}
-.faixa{max-width:1180px;margin:0 auto;padding:14px 16px;display:flex;gap:14px;align-items:center;font-size:1.1rem}
-.faixa small{font-size:.8rem;opacity:.95;line-height:1.3;display:inline-block}
-.ajuda{margin-left:auto;flex:none;background:#fff;color:var(--vermelho-escuro);font-weight:800;text-decoration:none;border-radius:12px;padding:10px 16px;font-size:1rem}
+.topo{background:#fff;border-bottom:6px solid var(--vermelho)}
+.faixa{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;gap:16px;align-items:center}
+.logo{height:56px;width:auto;display:block;flex:none}
+.secao{font-weight:800;font-size:1.1rem;color:var(--vermelho-escuro);padding-left:16px;border-left:2px solid var(--linha)}
+.ajuda{margin-left:auto;flex:none;background:var(--vermelho);color:#fff;font-weight:800;text-decoration:none;border-radius:12px;padding:10px 16px;font-size:1rem}
+@media (max-width:560px){.logo{height:42px}.secao{display:none}}
 .passo{background:#fff;border:2px solid var(--linha);border-radius:18px;padding:18px 20px;margin:0 0 16px;display:grid;grid-template-columns:56px 1fr;gap:4px 16px}
 .passo .n{grid-row:span 3;width:56px;height:56px;border-radius:50%;background:var(--vermelho);color:#fff;font-weight:900;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
 .passo h2{margin:6px 0 4px}.passo p{margin:0 0 8px}.passo ul{margin:0 0 8px;padding-left:22px}
@@ -166,10 +186,6 @@ a{color:var(--vermelho-escuro)}
 .ouvir{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:8px 18px;border-radius:12px;border:2px solid var(--linha);background:#fff;font:inherit;font-weight:800;cursor:pointer}
 .ouvir[aria-pressed="true"]{border-color:var(--vermelho);background:#fff5f6}
 @media (max-width:560px){.passo{grid-template-columns:1fr}.passo .n{grid-row:auto}}
-.cruz{width:40px;height:40px;background:#fff;border-radius:8px;position:relative;flex:none}
-.cruz::before,.cruz::after{content:"";position:absolute;background:var(--vermelho)}
-.cruz::before{left:15px;top:6px;width:10px;height:28px}
-.cruz::after{left:6px;top:15px;width:28px;height:10px}
 .conteudo{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
 h1{font-size:1.6rem;line-height:1.25;margin:6px 0 6px}
 h2{font-size:1.25rem;margin:0 0 12px}

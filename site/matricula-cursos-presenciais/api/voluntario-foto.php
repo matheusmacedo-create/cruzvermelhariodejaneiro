@@ -27,7 +27,7 @@ function vf_pagina(string $titulo, string $corpo, int $status = 200): never
         . '<title>' . mcp_escapar($titulo) . '</title><style>'
         . ':root{--vermelho:#c8102e;--texto:#111;--suave:#444;--linha:#cfcfcf}*{box-sizing:border-box}html{font-size:19px}'
         . 'body{margin:0;background:#f4f4f2;color:var(--texto);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}'
-        . '.topo{background:var(--vermelho);color:#fff;padding:14px 16px;font-weight:700}.topo small{display:block;font-weight:400;font-size:.8rem}'
+        . '.topo{background:#fff;border-bottom:6px solid var(--vermelho);padding:12px 16px}.topo img{height:48px;width:auto;display:block}'
         . 'main{max-width:560px;margin:0 auto;padding:22px 16px 40px}h1{font-size:1.5rem;line-height:1.25;margin:0 0 10px}'
         . '.caixa{background:#fff;border:2px solid var(--linha);border-radius:18px;padding:20px;margin:16px 0}'
         . 'label.foto{display:block;border:3px dashed var(--linha);border-radius:16px;padding:22px;text-align:center;font-weight:700;cursor:pointer}'
@@ -35,7 +35,8 @@ function vf_pagina(string $titulo, string $corpo, int $status = 200): never
         . 'button{width:100%;min-height:68px;margin-top:18px;border:0;border-radius:14px;background:var(--vermelho);color:#fff;font:inherit;font-size:1.2rem;font-weight:800;cursor:pointer}'
         . '.aviso{border-radius:14px;padding:14px 18px;font-weight:600}.ok{background:#dff3e5;border:2px solid #9fd3ae;color:#0f4a22}.erro{background:#ffe1e5;border:2px solid #f2a5b1;color:#7a0a1c}'
         . 'ul{padding-left:20px;margin:8px 0 0}.nota{color:var(--suave);font-size:.85rem}'
-        . '</style></head><body><div class="topo">Cruz Vermelha Brasileira<small>Rio de Janeiro · Voluntariado</small></div><main>' . $corpo . '</main></body></html>';
+        . '</style><link rel="icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/assets/coordenacao/logo-quadrado-180.png"></head><body>'
+        . '<div class="topo"><img src="/assets/otim/logo-cvb-rj-480.png" width="480" height="144" alt="Cruz Vermelha Brasileira · Rio de Janeiro"></div><main>' . $corpo . '</main></body></html>';
     exit;
 }
 
