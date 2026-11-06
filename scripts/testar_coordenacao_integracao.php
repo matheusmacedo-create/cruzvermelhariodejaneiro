@@ -174,6 +174,10 @@ try {
     verificar('lista: a mais antiga primeiro', strpos($lista['corpo'], "Ana Teste") < strpos($lista['corpo'], "Duda Teste"), true);
     verificar('lista: foto de quem tem, "Sem foto" de quem não tem', [str_contains($lista['corpo'], 'foto=' . $a), str_contains($lista['corpo'], 'foto=' . $b)], [true, false]);
     verificar('lista: os links levam a chave', str_contains($lista['corpo'], 'coordenacao.php?k=' . $chave . '&amp;id=' . $a), true);
+    $tutorial = http("$base$k&ajuda=1");
+    verificar('tutorial: 8 passos com "Ouvir", e o botão "Como usar" no topo da lista', [$tutorial['status'], substr_count($tutorial['corpo'], 'class="passo"'), substr_count($tutorial['corpo'], 'data-fala='),
+        str_contains($lista['corpo'], 'ajuda=1')], [200, 8, 8, true]);
+    verificar('tutorial: sem a chave, 404', http("$base?ajuda=1")['status'], 404);
     $aprovados = http("$base$k&ver=aprovados");
     verificar('aba Aprovados mostra o Caio', str_contains($aprovados['corpo'], "Caio Teste Coordenação $sufixo"), true);
 

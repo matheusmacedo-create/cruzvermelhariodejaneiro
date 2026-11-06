@@ -23,6 +23,9 @@
  * Recusar (06/11/2026): a coordenadora escolhe o motivo (lotação máxima, sem vaga na área, sem contato, outro), que vai
  * para a anotação da ficha; cada motivo traz uma mensagem pronta e editável, mandada por e-mail se "Avisar a pessoa" estiver
  * marcado (vem marcado), e depois da recusa há o botão para mandar a mesma mensagem pelo WhatsApp.
+ * Tutorial (?ajuda=1): "Como usar esta página", em passos, com "Ouvir este passo" (o áudio pronto em
+ * /assets/coordenacao/passo-N.mp3, gravado uma vez com a voz da ElevenLabs; sem o arquivo, a voz do próprio aparelho lê
+ * o texto). O botão "Como usar" fica no topo de todas as telas.
  * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
  * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
@@ -117,7 +120,8 @@ function co_pagina(string $titulo, string $corpo): never
         . '<meta name="theme-color" content="#c8102e">'
         . '<title>' . co_e($titulo) . '</title><style>' . co_css() . '</style></head><body>'
         . '<header class="topo"><div class="faixa"><span class="cruz" aria-hidden="true"></span>'
-        . '<span><b>Voluntariado</b><br><small>Cruz Vermelha Brasileira · Rio de Janeiro</small></span></div></header>'
+        . '<span><b>Voluntariado</b><br><small>Cruz Vermelha Brasileira · Rio de Janeiro</small></span>'
+        . '<a class="ajuda" href="' . co_e(co_url(['ajuda' => 1])) . '">Como usar</a></div></header>'
         . '<main class="conteudo">' . $corpo . '</main>'
         . '<footer class="rodape">As fotos e os dados são só para escolher os voluntários. Não mande para outras pessoas.</footer>'
         . '</body></html>';
@@ -135,6 +139,13 @@ a{color:var(--vermelho-escuro)}
 .topo{background:var(--vermelho);color:#fff}
 .faixa{max-width:1180px;margin:0 auto;padding:14px 16px;display:flex;gap:14px;align-items:center;font-size:1.1rem}
 .faixa small{font-size:.8rem;opacity:.95;line-height:1.3;display:inline-block}
+.ajuda{margin-left:auto;flex:none;background:#fff;color:var(--vermelho-escuro);font-weight:800;text-decoration:none;border-radius:12px;padding:10px 16px;font-size:1rem}
+.passo{background:#fff;border:2px solid var(--linha);border-radius:18px;padding:18px 20px;margin:0 0 16px;display:grid;grid-template-columns:56px 1fr;gap:4px 16px}
+.passo .n{grid-row:span 3;width:56px;height:56px;border-radius:50%;background:var(--vermelho);color:#fff;font-weight:900;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
+.passo h2{margin:6px 0 4px}.passo p{margin:0 0 8px}.passo ul{margin:0 0 8px;padding-left:22px}
+.ouvir{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:8px 18px;border-radius:12px;border:2px solid var(--linha);background:#fff;font:inherit;font-weight:800;cursor:pointer}
+.ouvir[aria-pressed="true"]{border-color:var(--vermelho);background:#fff5f6}
+@media (max-width:560px){.passo{grid-template-columns:1fr}.passo .n{grid-row:auto}}
 .cruz{width:40px;height:40px;background:#fff;border-radius:8px;position:relative;flex:none}
 .cruz::before,.cruz::after{content:"";position:absolute;background:var(--vermelho)}
 .cruz::before{left:15px;top:6px;width:10px;height:28px}
@@ -358,6 +369,51 @@ function co_email_enviar(array $f, string $mensagem): ?string
 }
 
 // ----------------------------------------------------------------------------- telas
+/** Os passos do tutorial: título, texto (HTML simples) e o texto que a voz lê. */
+function co_passos(): array
+{
+    return [
+        ['Abrir a página', '<p>Use sempre o mesmo link. Salve nos favoritos do computador ou na tela inicial do celular, para abrir com um toque.</p><p>Não precisa de senha. Por isso, <b>não passe o link para outras pessoas</b>.</p>',
+            'Para abrir a página, use sempre o mesmo link. Salve nos favoritos do computador, ou na tela inicial do celular, para abrir com um toque. Não precisa de senha. Por isso, não passe o link para outras pessoas.'],
+        ['Ver as fichas', '<p>A página abre na lista de fichas. Em cima há três abas:</p><ul><li><b>Para decidir</b>: as fichas que esperam a sua decisão. As que chegaram primeiro aparecem primeiro.</li><li><b>Aprovados</b>: quem você já aprovou.</li><li><b>Recusados</b>: quem foi recusado.</li></ul><p>Cada ficha aparece num cartão, com a foto, o nome, a idade e o bairro.</p>',
+            'A página abre na lista de fichas. Em cima há três abas. Para decidir: as fichas que esperam a sua decisão. As que chegaram primeiro aparecem primeiro. Aprovados: quem você já aprovou. Recusados: quem foi recusado. Cada ficha aparece num cartão, com a foto, o nome, a idade e o bairro.'],
+        ['Abrir uma ficha', '<p>Toque na foto ou em <b>Ver a ficha completa</b>. Aparece tudo o que a pessoa preencheu: quem é, contato, como quer ajudar e, em <b>Nas palavras da pessoa</b>, por que quer ser voluntária.</p><p>Para voltar, toque em <b>Voltar para a lista</b>, no alto.</p>',
+            'Para abrir uma ficha, toque na foto, ou em Ver a ficha completa. Aparece tudo o que a pessoa preencheu: quem é, contato, como quer ajudar, e por que quer ser voluntária. Para voltar, toque em Voltar para a lista, no alto da página.'],
+        ['Falar com a pessoa', '<p>Logo abaixo do nome há três botões:</p><ul><li><b>Conversar no WhatsApp</b>: abre o WhatsApp já com uma saudação escrita.</li><li><b>Ligar</b>: liga para o telefone da ficha.</li><li><b>Mandar e-mail</b>: leva até uma mensagem pronta. Mude o texto se quiser e toque em <b>Enviar e-mail</b>. A resposta chega na caixa do voluntariado.</li></ul>',
+            'Para falar com a pessoa, use os botões logo abaixo do nome. Conversar no WhatsApp abre o WhatsApp já com uma saudação escrita. Ligar liga para o telefone da ficha. Mandar e-mail leva até uma mensagem pronta. Mude o texto se quiser, e toque em Enviar e-mail. A resposta chega na caixa do voluntariado.'],
+        ['Ficha sem foto', '<p>As fichas mais antigas vieram sem foto. Se achar necessário, toque em <b>Pedir a foto pelo WhatsApp</b> ou <b>Pedir a foto por e-mail</b>.</p><p>A pessoa recebe um link só dela para mandar a selfie. Quando ela mandar, a foto aparece na ficha sozinha.</p>',
+            'As fichas mais antigas vieram sem foto. Se achar necessário, toque em Pedir a foto pelo WhatsApp, ou Pedir a foto por e-mail. A pessoa recebe um link só dela para mandar a selfie. Quando ela mandar, a foto aparece na ficha sozinha.'],
+        ['Aprovar', '<p>Depois de conversar com a pessoa, toque no botão verde <b>Aprovar</b>. A página pergunta se você tem certeza: toque em <b>Sim, aprovar</b>.</p><p>Se a ficha veio sem CPF, a página pede o CPF. Pergunte à pessoa e digite.</p><p>Aparece o <b>código de aprovação</b>. Mande para a pessoa: toque em <b>Mandar pelo WhatsApp</b> ou <b>Mandar por e-mail</b>. A mensagem já vai pronta.</p>',
+            'Para aprovar, depois de conversar com a pessoa, toque no botão verde Aprovar. A página pergunta se você tem certeza. Toque em Sim, aprovar. Se a ficha veio sem CPF, a página pede o CPF. Pergunte à pessoa e digite. Depois aparece o código de aprovação. Mande para a pessoa: toque em Mandar pelo WhatsApp, ou Mandar por e-mail. A mensagem já vai pronta.'],
+        ['Recusar', '<p>Toque em <b>Recusar</b>. Escolha o motivo: <b>Lotação máxima</b>, <b>Sem vaga na área escolhida</b>, <b>Não conseguimos falar com a pessoa</b> ou <b>Outro motivo</b>.</p><p>A mensagem para a pessoa já vem escrita para o motivo, e você pode mudar o texto. Com <b>Avisar a pessoa por e-mail</b> marcado, ela recebe a mensagem. Depois, se quiser, mande a mesma mensagem pelo WhatsApp.</p>',
+            'Para recusar, toque em Recusar, e escolha o motivo: Lotação máxima, Sem vaga na área escolhida, Não conseguimos falar com a pessoa, ou Outro motivo. A mensagem para a pessoa já vem escrita para o motivo, e você pode mudar o texto. Com Avisar a pessoa por e-mail marcado, ela recebe a mensagem. Depois, se quiser, mande a mesma mensagem pelo WhatsApp.'],
+        ['Se errar', '<p>Recusou por engano? Abra a aba <b>Recusados</b>, abra a ficha e toque em <b>Desfazer a recusa</b>. Ela volta para <b>Para decidir</b>.</p><p>Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus.</p><p>Tudo o que você faz fica anotado na ficha, no fim da página.</p>',
+            'Se errar: recusou por engano? Abra a aba Recusados, abra a ficha, e toque em Desfazer a recusa. Ela volta para Para decidir. Aprovou por engano? Não dá para desfazer por aqui. Avise o Matheus. Tudo o que você faz fica anotado na ficha, no fim da página.'],
+    ];
+}
+
+function co_tutorial(): never
+{
+    $html = '';
+    foreach (co_passos() as $i => [$titulo, $texto, $fala]) {
+        $n = $i + 1;
+        $html .= '<section class="passo" aria-labelledby="passo-' . $n . '"><span class="n" aria-hidden="true">' . $n . '</span>'
+            . '<h2 id="passo-' . $n . '">' . co_e($titulo) . '</h2><div>' . $texto . '</div>'
+            . '<button class="ouvir" type="button" data-n="' . $n . '" data-fala="' . co_e($fala) . '" aria-pressed="false">🔊 Ouvir este passo</button></section>';
+    }
+    // Toca o áudio gravado (/assets/coordenacao/passo-N.mp3); sem ele, a voz do aparelho lê o texto. Um passo por vez.
+    $js = '<script>(function(){var tocando=null,botao=null;function parar(){if(tocando){tocando.pause();tocando=null;}if(window.speechSynthesis)speechSynthesis.cancel();'
+        . 'if(botao){botao.setAttribute("aria-pressed","false");botao.textContent="🔊 Ouvir este passo";botao=null;}}'
+        . 'function falar(b){if(!window.speechSynthesis){return;}var u=new SpeechSynthesisUtterance(b.getAttribute("data-fala"));u.lang="pt-BR";u.rate=.9;u.onend=parar;speechSynthesis.speak(u);}'
+        . 'document.querySelectorAll(".ouvir").forEach(function(b){b.addEventListener("click",function(){var era=botao===b;parar();if(era)return;botao=b;b.setAttribute("aria-pressed","true");b.textContent="⏹ Parar";'
+        . 'var a=new Audio("/assets/coordenacao/passo-"+b.getAttribute("data-n")+".mp3");tocando=a;a.onended=parar;a.onerror=function(){if(tocando===a){tocando=null;falar(b);}};'
+        . 'a.play().catch(function(){if(tocando===a){tocando=null;falar(b);}});});});})();</script>';
+    co_pagina('Como usar a página do voluntariado',
+        '<a class="voltar" href="' . co_e(co_url()) . '">← Voltar para as fichas</a>'
+        . '<h1>Como usar esta página</h1><p class="dica">Leia ou toque em <b>Ouvir este passo</b> para escutar. São ' . count(co_passos()) . ' passos.</p>'
+        . $html . '<a class="btn grande cheio" href="' . co_e(co_url()) . '">Entendi, ver as fichas</a>' . $js);
+}
+
 function co_lista(string $ver, string $aviso = ''): never
 {
     $abas = [
@@ -762,5 +818,8 @@ if ($id > 0) {
         co_confirmar($id, $passo);
     }
     co_ficha($id);
+}
+if (isset($_GET['ajuda'])) {
+    co_tutorial();
 }
 co_lista((string) ($_GET['ver'] ?? 'decidir'));

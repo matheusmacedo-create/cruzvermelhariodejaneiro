@@ -257,6 +257,10 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   código com o link de conferência), que a coordenadora pode mudar. Sai pela Resend, do remetente geral, com
   responder-para a caixa do voluntariado (`EMAIL_VOLUNTARIADO`); cada envio fica nas anotações da ficha; até 40 por hora.
   Depois de aprovar, "Mandar por e-mail" envia o código com um toque.
+- **Tutorial** (`?ajuda=1`, botão "Como usar" no topo de todas as telas): 8 passos (abrir, ver as fichas, abrir uma ficha,
+  falar com a pessoa, ficha sem foto, aprovar, recusar, se errar), cada um com "Ouvir este passo". O áudio é o arquivo
+  `/assets/coordenacao/passo-N.mp3` (gravado uma vez com a voz da ElevenLabs configurada na Redação); sem o arquivo, a
+  voz do próprio aparelho (`speechSynthesis`, pt-BR) lê o texto de `co_passos()`.
 - **Pedir a foto** (06/11/2026): as 61 fichas de antes da noite de 27/10/2026 vieram sem foto, porque o formulário ainda
   não pedia (as "Fotos do crachá" da Redação são as selfies do site, já ligadas às fichas). Na ficha sem foto, "Pedir a
   foto pelo WhatsApp" e "Pedir a foto por e-mail" mandam, **só quando a coordenadora toca**, um link daquela ficha
