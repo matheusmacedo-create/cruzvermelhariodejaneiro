@@ -4,3 +4,5 @@
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-coordenacao.txt)
 site/matricula-cursos-presenciais/api/lib/config.php
 site/matricula-cursos-presenciais/api/coordenacao.php
+site/matricula-cursos-presenciais/api/lib/voluntario_foto.php
+site/matricula-cursos-presenciais/api/voluntario-foto.php

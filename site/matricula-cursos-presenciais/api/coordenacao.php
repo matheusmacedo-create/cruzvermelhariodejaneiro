@@ -19,10 +19,13 @@
  *   ?foto=N           a selfie (JPEG, sem cache).
  * Ações (POST com a chave): aprovar (aceita a ficha, cria o colaborador do ponto e o código de aprovação, como na Redação),
  * recusar, desfazer a recusa (volta para "em análise") e mandar e-mail à pessoa (pela Resend, com responder-para a caixa
- * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora). Quem decidiu fica em status_por como "<nome> · link da coordenação".
+ * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora).
+ * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
+ * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
+require_once __DIR__ . '/lib/voluntario_foto.php';
 
 const CO_FALHAS = [20, 3600];
 const CO_CHAVE_MIN = 32;
@@ -417,7 +420,23 @@ function co_retrato(array $f, bool $temFoto): string
     return $temFoto
         ? '<img src="' . co_e(co_url(['foto' => $id])) . '" alt="Foto de ' . co_e((string) $f['nome']) . '">'
             . '<a class="ampliar" href="' . co_e(co_url(['foto' => $id])) . '" target="_blank" rel="noopener">Abrir a foto em tamanho grande</a>'
-        : '<div class="semfoto">Esta ficha não tem foto. As fichas de antes de 27/10/2026 não pediam foto.</div>';
+        : '<div class="semfoto">Esta ficha não tem foto. As fichas de antes de 27/10/2026 não pediam foto.</div>' . co_pedir_foto($f);
+}
+
+/** Botões para pedir a foto (só nas fichas sem foto): WhatsApp com a mensagem pronta e e-mail com um toque. */
+function co_pedir_foto(array $f): string
+{
+    $mensagem = mcp_vf_mensagem($f);
+    $whats = co_whatsapp((string) $f['telefone'], $mensagem);
+    $botoes = ($whats !== '' ? '<a class="btn whats" style="width:100%" href="' . co_e($whats) . '" target="_blank" rel="noopener">Pedir a foto pelo WhatsApp</a>' : '')
+        . (filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL)
+            ? '<form method="post" action="coordenacao.php" style="width:100%"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
+                . '<input type="hidden" name="acao" value="email"><input type="hidden" name="id" value="' . (int) $f['id'] . '">'
+                . '<input type="hidden" name="mensagem" value="' . co_e($mensagem) . '">'
+                . '<button class="btn azul" style="width:100%" type="submit">Pedir a foto por e-mail</button></form>'
+            : '');
+    return $botoes === '' ? '' : '<p style="margin:12px 0 0;font-size:.95rem">Se achar necessário, peça a foto. A pessoa recebe um link só dela para mandar a selfie, e a foto aparece aqui sozinha.</p>'
+        . '<div class="botoes" style="flex-direction:column">' . $botoes . '</div>';
 }
 
 function co_bloco_aprovacao(array $f): string

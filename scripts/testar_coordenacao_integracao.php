@@ -10,7 +10,9 @@
  *     repetir não troca o código; ficha sem CPF pede o CPF e recusa CPF errado;
  *   - recusar e desfazer a recusa; quem decidiu fica como "<COORDENACAO_NOME> · link da coordenação";
  *   - mandar e-mail (a uma Resend falsa em 127.0.0.1): texto pronto, para a pessoa, responder-para o voluntariado, anotado na
- *     ficha; mensagem curta recusada; o código por e-mail depois de aprovar.
+ *     ficha; mensagem curta recusada; o código por e-mail depois de aprovar;
+ *   - pedir a foto (ficha sem selfie): botões só nela, o link da ficha (api/voluntario-foto.php) abre o formulário, link
+ *     errado dá 404, a foto enviada entra na ficha (JPEG regravado) e o link passa a dizer "já recebemos".
  * Mesmo modelo de testar_voluntarios_integracao.php (servidor embutido do PHP, CPFs sintéticos, tudo apagado no fim).
  *
  * Uso: MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_coordenacao_integracao.php
@@ -86,10 +88,11 @@ function limpar(PDO $db): void
         $db->prepare('DELETE FROM mcp_voluntarios_selfies WHERE ficha_id = ?')->execute([$id]);
         $db->prepare('DELETE FROM mcp_voluntarios_aprovacoes WHERE ficha_id = ?')->execute([$id]);
         $db->prepare('DELETE FROM mcp_voluntarios_notas WHERE ficha_id = ?')->execute([$id]);
+        $db->prepare("DELETE FROM mcp_eventos WHERE tipo = 'voluntario_foto_recebida' AND detalhe = ?")->execute(["#$id"]);
         $db->prepare('DELETE FROM mcp_voluntarios WHERE id = ?')->execute([$id]);
     }
     $db->exec("DELETE FROM mcp_colaboradores WHERE nome LIKE '%Teste Coordenação %'");
-    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('coordenacao_negado') AND detalhe IN ('127.0.0.1', '::1')");
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('coordenacao_negado', 'voluntario_foto_envio') AND detalhe IN ('127.0.0.1', '::1')");
 }
 limpar($db);
 
@@ -210,6 +213,36 @@ try {
     http($base, 'POST', ['k' => $chave, 'acao' => 'desfazer', 'id' => $d]);
     verificar('desfazer a recusa: volta para em análise', (string) mcp_voluntario_por_id($d)['status'], 'em_analise');
     verificar('POST sem a chave: 404 e nada muda', [http($base, 'POST', ['acao' => 'recusar', 'id' => $d])['status'], (string) mcp_voluntario_por_id($d)['status']], [404, 'em_analise']);
+
+    // Pedir a foto (a Bia não tem selfie; a Ana tem).
+    $verB = http("$base$k&id=$b");
+    $verA = http("$base$k&id=$a");
+    verificar('sem foto: botões de pedir a foto; com foto: não', [str_contains($verB['corpo'], 'Pedir a foto pelo WhatsApp'), str_contains($verB['corpo'], 'Pedir a foto por e-mail'), str_contains($verA['corpo'], 'Pedir a foto')], [true, true, false]);
+    require_once $raiz . '/site/matricula-cursos-presenciais/api/lib/voluntario_foto.php';
+    $linkFoto = mcp_vf_link($b);
+    verificar('pedido de foto: o WhatsApp leva o link da ficha', str_contains($verB['corpo'], rawurlencode($linkFoto)), true);
+    @unlink("$pastaResend/ultimo.json");
+    preg_match('/name="mensagem" value="([^"]*)"><button class="btn azul" style="width:100%" type="submit">Pedir a foto por e-mail/', $verB['corpo'], $mf);
+    http($base, 'POST', ['k' => $chave, 'acao' => 'email', 'id' => $b, 'mensagem' => html_entity_decode($mf[1] ?? '', ENT_QUOTES)]);
+    $saiu = json_decode((string) @file_get_contents("$pastaResend/ultimo.json"), true) ?: [];
+    verificar('pedido de foto por e-mail: sai com o link', str_contains((string) ($saiu['text'] ?? ''), $linkFoto), true);
+    $form = http($linkFoto);
+    verificar('link da foto: abre o formulário com o primeiro nome', [$form['status'], str_contains($form['corpo'], 'Olá, Bia!'), str_contains($form['corpo'], 'name="selfie"')], [200, true, true]);
+    verificar('link da foto errado: 404', [http(preg_replace('/k=\w+/', 'k=errado', $linkFoto))['status'], http(str_replace('f=' . $b, 'f=' . $a, $linkFoto))['status']], [404, 404]);
+    $img = imagecreatetruecolor(1200, 900);
+    imagefill($img, 0, 0, imagecolorallocate($img, 30, 120, 200));
+    ob_start();
+    imagejpeg($img);
+    $jpg = (string) ob_get_clean();
+    $fronteira = 'teste' . bin2hex(random_bytes(6));
+    preg_match('/[?&]k=(\w+)/', $linkFoto, $mk);
+    $corpo = "--$fronteira\r\nContent-Disposition: form-data; name=\"f\"\r\n\r\n$b\r\n--$fronteira\r\nContent-Disposition: form-data; name=\"k\"\r\n\r\n{$mk[1]}\r\n"
+        . "--$fronteira\r\nContent-Disposition: form-data; name=\"selfie\"; filename=\"eu.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n$jpg\r\n--$fronteira--\r\n";
+    $ctx = stream_context_create(['http' => ['method' => 'POST', 'ignore_errors' => true, 'header' => "Content-Type: multipart/form-data; boundary=$fronteira\r\n", 'content' => $corpo]]);
+    $resp = (string) @file_get_contents("http://127.0.0.1:$porta/matricula-cursos-presenciais/api/voluntario-foto.php", false, $ctx);
+    $sf = mcp_voluntario_selfie($b);
+    verificar('foto enviada: entra na ficha, reduzida a 800 px', [str_contains($resp, 'Foto recebida'), $sf !== null, $sf['largura'] ?? null], [true, true, 800]);
+    verificar('depois de enviar: o link diz "já recebemos" e a coordenadora vê a foto', [str_contains(http($linkFoto)['corpo'], 'Já recebemos'), str_contains(http("$base$k&id=$b")['corpo'], 'foto=' . $b)], [true, true]);
 
     // E-mail à pessoa.
     $email = (string) mcp_voluntario_por_id($d)['email'];

@@ -253,6 +253,12 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   código com o link de conferência), que a coordenadora pode mudar. Sai pela Resend, do remetente geral, com
   responder-para a caixa do voluntariado (`EMAIL_VOLUNTARIADO`); cada envio fica nas anotações da ficha; até 40 por hora.
   Depois de aprovar, "Mandar por e-mail" envia o código com um toque.
+- **Pedir a foto** (06/11/2026): as 61 fichas de antes da noite de 27/10/2026 vieram sem foto, porque o formulário ainda
+  não pedia (as "Fotos do crachá" da Redação são as selfies do site, já ligadas às fichas). Na ficha sem foto, "Pedir a
+  foto pelo WhatsApp" e "Pedir a foto por e-mail" mandam, **só quando a coordenadora toca**, um link daquela ficha
+  (`api/voluntario-foto.php?f=<id>&k=<HMAC do id com o segredo voluntario_foto>`, em `lib/voluntario_foto.php`). A pessoa
+  tira a selfie ou escolhe uma foto; ela passa pelo mesmo tratamento do cadastro (gira, reduz a 800 px, regrava sem EXIF)
+  e entra na ficha. O link vale enquanto a ficha não tem foto; depois diz "já recebemos". Até 10 envios por hora por IP.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
