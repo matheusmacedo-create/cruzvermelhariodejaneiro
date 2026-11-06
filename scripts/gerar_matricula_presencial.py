@@ -120,7 +120,7 @@ GARANTIA_7_DIAS = ("Você pode desistir em até 7 dias corridos, contados do pag
 
 # Ordem dos cards depois dos cursos com turma aberta (3.0). Curso novo fora da lista entra no fim, com aviso.
 ORDEM_EXIBICAO = ["primeiros-socorros-basico", "suporte-basico-de-vida", "primeiros-socorros-lei-lucas",
-                  "puncao-venosa", "bombeiro-civil", "cuidador-de-idosos"]
+                  "puncao-venosa", "curativos-e-tratamento-de-feridas", "bombeiro-civil", "cuidador-de-idosos"]
 NOME_CURTO = {"primeiros-socorros-lei-lucas": "Primeiros Socorros Lei Lucas", "cuidador-de-idosos": "Cuidador de Idosos"}
 # Descrição curta de cada curso, literal da escola (spec 1.5): linha sob o título do card e linha de apoio da ficha.
 BENEFICIO = {
@@ -128,6 +128,8 @@ BENEFICIO = {
     "suporte-basico-de-vida": "Atendimento inicial de emergências com diretrizes oficiais.",
     "primeiros-socorros-lei-lucas": "Capacitação essencial.",
     "puncao-venosa": "Técnica de acesso venoso periférico com segurança.",
+    # Sem o "(MATRÍCULA GRÁTIS EM NOVEMBRO)" da escola: aqui a promoção é o cupom CURATIVOS (api/lib/cupons.php).
+    "curativos-e-tratamento-de-feridas": "Capacitação teórico-prática em avaliação, limpeza e curativos para o cuidado seguro de feridas.",
     "bombeiro-civil": "Formação para atuação em prevenção e combate a incêndios. (VALOR DE HOMOLOGAÇÃO A PARTE)",
     "cuidador-de-idosos": "Cuidados, segurança e bem-estar no atendimento ao idoso.",
 }
@@ -192,6 +194,17 @@ COPY_CURSO = {
                     "no Centro do Rio. Além da técnica de punção venosa, o curso aborda biossegurança, prevenção de complicações, escolha "
                     "de dispositivos e boas práticas assistenciais."),
     },
+    # 06/11/2026: frases tiradas da página do curso na escola (Sobre o curso e Dúvidas frequentes).
+    "curativos-e-tratamento-de-feridas": {
+        "titulo": "Curativos e Tratamento de Feridas na Cruz Vermelha: 8 horas com prática",
+        "promessa": ("Em 8 horas, com teoria e prática simulada, você aprende a avaliar, limpar e tratar feridas com segurança, "
+                     "seguindo as normas técnicas e os protocolos de biossegurança."),
+        "objecao": ("O curso habilita para realizar curativos profissionalmente?",
+                    "O curso oferece aperfeiçoamento, mas não substitui a formação profissional nem amplia as atribuições legais de "
+                    "cada categoria. É indicado para profissionais e estudantes da área da saúde, com idade mínima de 18 anos e "
+                    "conhecimentos básicos na área. As aulas são presenciais, na Praça da Cruz Vermelha, 10, no Centro do Rio, com "
+                    "demonstrações de técnicas, aplicação de coberturas e simulações."),
+    },
     "bombeiro-civil": {
         "titulo": "Curso de Bombeiro Civil na Cruz Vermelha: 80 horas no Centro do Rio",
         "promessa": "Em 80 horas, aprenda a combater princípios de incêndio, prestar primeiros socorros e evacuar ambientes, com aulas práticas que simulam emergências reais.",
@@ -226,7 +239,8 @@ PALAVRAS_PROIBIDAS = [
     r"Agora você paga só a taxa", r"WhatsApp", r"wa\.me", r"cruzvermelharj\.org\.br", r"seja voluntári", r"voluntariado",
 ]
 # Frases do catálogo da escola que prometem emprego, renda ou mercado ficam fora da página e do chat.
-EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno financeiro|\brenda\b|iniciar seus atendimentos", re.I)
+# O contato do catálogo da escola ("Entre em contato com a Secretaria pelo WhatsApp") também fica fora: aqui é o chat.
+EXCLUIR_CATALOGO = re.compile(r"emprego|oportunidade|mercado de trabalho|retorno financeiro|\brenda\b|iniciar seus atendimentos|whatsapp", re.I)
 
 # --- o certificado (modelo da filial, 04/10/2026; imagens de amostra de scripts/gerar_certificado_modelo.py) ------
 # Desde 19/10/2026 (achados C9/M09, na linha da decisão de 13/10): o texto atribui o certificado à escola, a Ltda, e não à
@@ -1585,11 +1599,12 @@ JS_PAGINA = """
         var cupons = d && Array.isArray(d.cupons_vitrine) ? d.cupons_vitrine : [];
         todos('[data-cupom-de]').forEach(function (el) {
           var s = el.getAttribute('data-cupom-de'), c = porCurso[s], o = null;
-          cupons.forEach(function (x) { if (!o && x && Array.isArray(x.cursos) && x.cursos.indexOf(s) >= 0 && +x.restantes > 0) o = x; });
+          // Sem limite de vagas (limite null): vale até a data; com limite, só enquanto restar cupom.
+          cupons.forEach(function (x) { if (!o && x && Array.isArray(x.cursos) && x.cursos.indexOf(s) >= 0 && (x.limite === null || +x.restantes > 0)) o = x; });
           if (!o || !c || !Array.isArray(c.planos) || c.planos.indexOf('taxa_e_matricula') < 0) { el.hidden = true; return; }
           var valor = (+o.total_centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
           el.textContent = 'Com o cupom ' + o.codigo + ': R$\u00a0' + valor + ' com tudo incluso · '
-            + (+o.restantes === 1 ? 'resta 1 cupom' : 'restam ' + o.restantes + ' cupons');
+            + (o.limite === null ? (o.ate ? 'até ' + o.ate : 'por tempo limitado') : +o.restantes === 1 ? 'resta 1 cupom' : 'restam ' + o.restantes + ' cupons');
           el.hidden = false;
         });
 __INFO_PRAZO__

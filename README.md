@@ -1618,6 +1618,15 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
 - **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
   `cupom_desconto_centavos`.
 - **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
+- **`CURATIVOS`** (06/11/2026): Curativos e Tratamento de Feridas por **R$ 150,00 com tudo incluso** até 30/11/2026, sem
+  limite de vagas (`'limite' => null`: a página e o checkout mostram "até 30/11" em vez das vagas, e o balão do checkout
+  esconde a barra). É o preço da escola, que vende o curso sem taxa de inscrição em novembro; aqui o curso entra com o preço
+  padrão (R$ 150 + R$ 99, decisão do Matheus) e a promoção é o cupom. O curso veio pela sincronização do catálogo, que passou
+  a aceitar curso com taxa diferente na escola (entra com a taxa do site, com aviso), com a turma de 28/11 (`oferta.json`), a
+  foto (`gerar_imagens_matricula.py`) e os textos do `gerar_matricula_presencial.py` (ordem, resumo, título, promessa e a
+  pergunta "O curso habilita…?", tirados da página da escola). Dúvida do catálogo que manda ao WhatsApp fica fora da página e
+  do chat (`EXCLUIR_CATALOGO`). Atenção: `gerar_imagens_matricula.py` apaga de `img/` o que não é foto de curso (modelos de
+  certificado, banner): depois de rodá-lo, restaure esses arquivos com `git checkout`.
 - **Selo na página de matrícula** (06/11/2026): nos cartões, na agenda "Próximas turmas" e na ficha do curso, o JS da
   página preenche um selo com os `cupons_vitrine` do `info.php` ("Com o cupom NOV15: R$ 150,00 com tudo incluso · restam
   16 cupons"), só no curso que vende "taxa + matrícula". O HTML leva o selo vazio e escondido (`data-cupom-de`): sem

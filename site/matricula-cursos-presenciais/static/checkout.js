@@ -581,10 +581,17 @@
       q('#ck-balao-titulo').innerHTML = esc(c.nome || 'Curso') + ' por <b>' + esc(brl(o.total_centavos)) + '</b>'
         + (cheio > o.total_centavos ? ' em vez de ' + esc(brl(cheio)) : '') + ', com taxa de inscrição e matrícula inclusas, à vista.';
       texto('#ck-balao-codigo', o.codigo);
-      q('#ck-balao-vagas').innerHTML = (restantes === 1 ? 'Resta <b>1 cupom</b>' : restantes <= 5 ? 'Últimos <b>' + restantes + ' cupons</b>' : 'Restam <b>' + restantes + ' cupons</b>')
-        + ' de ' + o.limite + '. Quando acabarem, vale o preço cheio.';
+      // Cupom sem limite de vagas (limite null, 06/11/2026): só o prazo, sem barra.
+      var semLimite = o.limite === null || o.limite === undefined;
+      q('#ck-balao-vagas').innerHTML = semLimite
+        ? 'Promoção válida' + (o.ate ? ' até <b>' + esc(o.ate) + '</b>' : ' por tempo limitado') + '. Depois, vale o preço cheio.'
+        : (restantes === 1 ? 'Resta <b>1 cupom</b>' : restantes <= 5 ? 'Últimos <b>' + restantes + ' cupons</b>' : 'Restam <b>' + restantes + ' cupons</b>')
+          + ' de ' + o.limite + '. Quando acabarem, vale o preço cheio.';
       var barra = q('#ck-balao-barra');
-      if (barra) barra.style.width = Math.max(4, Math.min(100, Math.round(restantes * 100 / (o.limite || 1)))) + '%';
+      if (barra) {
+        barra.parentNode.hidden = semLimite;
+        if (!semLimite) barra.style.width = Math.max(4, Math.min(100, Math.round(restantes * 100 / (o.limite || 1)))) + '%';
+      }
       var aplicado = !!(comCupom && cupom.codigo === o.codigo);
       texto('#ck-balao-usar', slug ? 'Usar o cupom ' + o.codigo : 'Quero ' + (c.nome || 'este curso') + ' com o cupom');
       mostrar('#ck-balao-usar', !aplicado);

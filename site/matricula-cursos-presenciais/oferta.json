@@ -32,11 +32,20 @@
       "fim": "2026-11-17T17:00:00-03:00",
       "inscricoes_ate": "2026-11-16T23:59:59-03:00",
       "lotada": false
+    },
+    {
+      "curso": "curativos-e-tratamento-de-feridas",
+      "id_escola": "fd3ccdf4-07d2-4211-9f1d-9c7572be9571",
+      "inicio": "2026-11-28T09:00:00-03:00",
+      "fim": "2026-11-28T17:00:00-03:00",
+      "inscricoes_ate": "2026-11-27T23:59:59-03:00",
+      "lotada": false
     }
   ],
   "sem_turma": {
     "bombeiro-civil": {"max_fila": 30},
     "cuidador-de-idosos": {"max_fila": 30},
+    "curativos-e-tratamento-de-feridas": {"max_fila": 30},
     "primeiros-socorros-basico": {"max_fila": 30},
     "primeiros-socorros-lei-lucas": {"max_fila": 30},
     "puncao-venosa": {"max_fila": 30},

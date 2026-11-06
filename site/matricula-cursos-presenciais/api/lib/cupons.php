@@ -12,6 +12,8 @@
  * - O CPF de teste (TESTE_CPFS) usa o cupom sem desconto: o preço de teste nunca vira cobrança real.
  * - Para criar outro cupom, acrescente uma linha em MCP_CUPONS e publique este arquivo. Para encerrar um, ponha 'ate'
  *   no passado ou tire a linha (inscrições já feitas não mudam).
+ * - 'limite' => null (06/11/2026): cupom sem limite de vagas, só com o prazo ('ate'); a página e o checkout mostram "até
+ *   DD/MM" no lugar das vagas que restam (a promoção da escola no Curativos vale o mês todo, sem número de vagas).
  * - 'vitrine' => true (30/10/2026): o código vai a público no info.php (mcp_cupons_vitrine), e o checkout mostra o
  *   balão da oferta com as vagas que restam e já aplica o cupom no curso. Sem 'vitrine', o código só vale digitado.
  */
@@ -23,6 +25,9 @@ const MCP_CUPONS = [
     // Primeiros Socorros Lei Lucas por R$ 120,00 com tudo incluso, para 10 alunos (código PRO12, 03/11/2026). Vale até o
     // fim das inscrições da turma de 12/11 (oferta.json: inscricoes_ate).
     'PRO12' => ['cursos' => ['primeiros-socorros-lei-lucas'], 'total_centavos' => 12000, 'limite' => 10, 'ate' => '2026-11-11T23:59:59-03:00', 'vitrine' => true],
+    // Curativos e Tratamento de Feridas por R$ 150,00 com tudo incluso em novembro (06/11/2026): o preço da escola, que
+    // vende o curso sem taxa de inscrição neste mês; aqui o curso tem o preço padrão (R$ 150 + R$ 99) e a promoção é o cupom.
+    'CURATIVOS' => ['cursos' => ['curativos-e-tratamento-de-feridas'], 'total_centavos' => 15000, 'limite' => null, 'ate' => '2026-11-30T23:59:59-03:00', 'vitrine' => true],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;
@@ -99,6 +104,9 @@ function mcp_cupom_usados(string $codigo, ?int $agora = null): int
 
 function mcp_cupom_restantes(array $cupom, ?int $agora = null): int
 {
+    if (($cupom['limite'] ?? null) === null) {
+        return PHP_INT_MAX; // sem limite de vagas: vale até o 'ate'
+    }
     return max(0, (int) $cupom['limite'] - mcp_cupom_usados((string) $cupom['codigo'], $agora));
 }
 
@@ -142,6 +150,13 @@ function mcp_compra_com_cupom(array $compra, array $cupom, ?string $cpf = null):
     ]);
 }
 
+/** O fim da validade de um cupom em Brasília, "30/11", ou null (sem 'ate'). */
+function mcp_cupom_ate_texto(array $cupom): ?string
+{
+    $ts = ($cupom['ate'] ?? null) !== null ? mcp_iso_ts($cupom['ate']) : null;
+    return $ts !== null ? (new DateTimeImmutable('@' . $ts))->setTimezone(mcp_fuso_brt())->format('d/m') : null;
+}
+
 /** O que a página pode saber de um cupom (info.php?cupom=): nada de quem usou, só o que falta. */
 function mcp_cupom_publico(string $codigo, string $slug): array
 {
@@ -156,8 +171,9 @@ function mcp_cupom_publico(string $codigo, string $slug): array
     if ($restantes <= 0) {
         return ['valido' => false, 'motivo' => 'esgotado', 'mensagem' => mcp_cupom_mensagem('esgotado')];
     }
+    $semLimite = ($cupom['limite'] ?? null) === null;
     return ['valido' => true, 'codigo' => $cupom['codigo'], 'curso' => $slug, 'total_centavos' => (int) $cupom['total_centavos'],
-        'restantes' => $restantes, 'limite' => (int) $cupom['limite']];
+        'restantes' => $semLimite ? null : $restantes, 'limite' => $semLimite ? null : (int) $cupom['limite'], 'ate' => mcp_cupom_ate_texto($cupom)];
 }
 
 /**
@@ -178,8 +194,9 @@ function mcp_cupons_vitrine(?int $agora = null): array
             }
             $restantes = mcp_cupom_restantes(['codigo' => (string) $codigo] + $def, $agora);
             if ($restantes > 0) {
+                $semLimite = ($def['limite'] ?? null) === null;
                 $lista[] = ['codigo' => (string) $codigo, 'cursos' => array_values($def['cursos']), 'total_centavos' => (int) $def['total_centavos'],
-                    'limite' => (int) $def['limite'], 'restantes' => $restantes];
+                    'limite' => $semLimite ? null : (int) $def['limite'], 'restantes' => $semLimite ? null : $restantes, 'ate' => mcp_cupom_ate_texto($def)];
             }
         }
     } catch (Throwable) {
