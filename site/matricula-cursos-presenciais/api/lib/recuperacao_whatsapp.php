@@ -117,6 +117,8 @@ const MCP_RW_CUPOM_CURSO = 'primeiros-socorros-basico';
 const MCP_RW_OFERTAS = [
     MCP_RW_CUPOM_CURSO => ['cupom' => MCP_RW_CUPOM, 'modelo' => MCP_RW_MODELO_CUPOM],
     'primeiros-socorros-lei-lucas' => ['cupom' => 'PRO12', 'modelo' => 'll_cupom_oferta'],
+    // 06/11/2026: o CURATIVOS (R$ 150,00 com tudo incluso até 30/11, sem limite de vagas).
+    'curativos-e-tratamento-de-feridas' => ['cupom' => 'CURATIVOS', 'modelo' => 'cur_cupom_oferta'],
 ];
 /**
  * Links curtos dos botões (01/11/2026). O modelo aprovado na Meta tem o botão de URL https://cruzvermelhariodejaneiro.org/{{1}}
@@ -146,7 +148,7 @@ const MCP_RW_COOKIE = 'mcp_rw';
 const MCP_RW_COOKIE_S = 6 * 3600;
 // Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel): os nomes de hoje, que valem quando
 // a Meta não responde a lista. As versões novas de cada um (_v2, _v3…) entram sozinhas pela família (MCP_RW_FAMILIAS).
-const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'mat_pendente_1', 'mat_pendente_2'];
+const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'cur_cupom_oferta', 'mat_pendente_1', 'mat_pendente_2'];
 /**
  * Famílias de modelos (01/11/2026): família => o nome usado hoje (o padrão). rec_inscricao_2, rec_inscricao_2_v2 e
  * rec_inscricao_2_v3 são a mesma mensagem, submetida de novo à Meta (a Meta reclassifica como Marketing o que considera
@@ -155,7 +157,7 @@ const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_insc
  */
 const MCP_RW_FAMILIAS = [
     'rec_inscricao_1' => 'rec_inscricao_1_v2', 'rec_inscricao_2' => 'rec_inscricao_2', 'rec_inscricao_3' => 'rec_inscricao_3',
-    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
+    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'cur_cupom_oferta' => 'cur_cupom_oferta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
 ];
 // As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
 const MCP_RW_CAMPANHAS = ['rec1', 'rec2', 'rec3', 'rec3cupom'];
@@ -178,6 +180,8 @@ const MCP_RW_TEXTOS = [
     'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
     // Submetido em 03/11/2026 (o mesmo formato do ps_cupom_oferta: {{1}} nome, {{2}} cupom, {{3}} data da turma).
     'll_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 10 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
+    // Submetido em 06/11/2026: o CURATIVOS não tem limite de vagas, então o texto fala da turma, não de "primeiros N alunos".
+    'cur_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
 const MCP_RW_MINUTO_DA_RODADA = 7;
