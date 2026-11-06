@@ -110,6 +110,7 @@ PAGINAS = [
     ("/en/news/", "en/news/index.html", "weekly", "0.6", "Notícias em inglês"),
     ("/en/winter-clothing-drive/", "en/winter-clothing-drive/index.html", "monthly", "0.5", "Campanha do Agasalho em inglês"),
     ("/en/history/", "en/history/index.html", "monthly", "0.6", "História em inglês"),
+    ("/en/who-founded-the-red-cross/", "en/who-founded-the-red-cross/index.html", "yearly", "0.6", "Quem fundou a Cruz Vermelha (só em inglês)"),
 ]
 
 # Notícias traduzidas: original da Redação → versão em inglês (gravado por gerar_ingles.py).

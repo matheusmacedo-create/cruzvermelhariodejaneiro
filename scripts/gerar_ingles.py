@@ -4,6 +4,7 @@
   site/en/news/                   índice das notícias traduzidas
   site/en/news/<slug>/            uma página por matéria (traducoes/en/noticias/<slug>.md)
   site/en/winter-clothing-drive/  Campanha do Agasalho
+  site/en/who-founded-the-red-cross/  quem fundou a Cruz Vermelha (traducoes/en/fundador.md; só em inglês)
   site/en/404.html                servido pelo site/en/.htaccess para tudo que estiver sob /en/
 
 Privacidade, Cookies, Termos e Reembolso em inglês são gerados por gerar_politicas.py, não por
@@ -264,8 +265,16 @@ SO_PT_EN: set[str] = set()
 _alternativas_originais = gi.alternativas
 
 
+SO_EN: set[str] = set()
+
+
 def alternativas(pagina: str, atual: str) -> str:
-    """Nas páginas sem espanhol, o cluster é pt-BR + en, com x-default no português."""
+    """Nas páginas sem espanhol, o cluster é pt-BR + en, com x-default no português. Página só em
+    inglês (sem par em outra língua) declara só a si mesma, com x-default nela."""
+    if pagina in SO_EN:
+        en = gi.PAGINAS[pagina]["en"]
+        return "\n".join([f'  <link rel="alternate" hreflang="en" href="{ORIGEM}{en}">',
+                          f'  <link rel="alternate" hreflang="x-default" href="{ORIGEM}{en}">'])
     if pagina not in SO_PT_EN:
         return _alternativas_originais(pagina, atual)
     pt, en = gi.PAGINAS[pagina]["pt"], gi.PAGINAS[pagina]["en"]
@@ -553,6 +562,62 @@ def pagina_campanha(idioma: dict, partes: dict, P: dict) -> str:
     return moldura(idioma, "campanha", c["titulo"], c["descricao"], corpo, ld, partes, og_imagem=og)
 
 
+FUNDADOR = "/en/who-founded-the-red-cross/"
+
+
+def pagina_fundador(idioma: dict, partes: dict) -> str:
+    """Quem fundou a Cruz Vermelha: página só em inglês, feita para quem busca a origem do Movimento
+    (Henry Dunant, Solferino, Genebra) e chega à filial do Rio. Não é tradução: não tem par em português."""
+    arquivo = FONTE / "fundador.md"
+    f, corpo_md = ler_cabecalho(arquivo.read_text(encoding="utf-8"), arquivo)
+    if "⟦" in corpo_md or "⟧" in corpo_md:
+        raise SystemExit(f"{arquivo.name}: marcador ⟦ ⟧ esquecido no texto")
+    url = f"{ORIGEM}{FUNDADOR}"
+    trilha, ld_trilha = migalhas(idioma, [(f["titulo"], FUNDADOR)])
+    palavras = len(re.sub(r"[#*\[\]()!>-]", " ", corpo_md).split())
+    minutos = max(1, math.ceil(palavras / 200))
+    # Perguntas frequentes: cada "### pergunta" da última seção e o parágrafo logo abaixo.
+    faq_md = corpo_md.split("## Frequently asked questions", 1)[1]
+    perguntas = re.findall(r"^### (.+?)\n\n(.+?)(?:\n\n|\Z)", faq_md.strip() + "\n", re.M | re.S)
+    if len(perguntas) < 3:
+        raise SystemExit(f"{arquivo.name}: perguntas frequentes não encontradas")
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap materia-estreita">
+        {trilha}
+        <p class="eyebrow">History of the Movement</p>
+        <h1>{esc(f['titulo'])}</h1>
+        <p class="materia-linhafina">{esc(f['linha_fina'])}</p>
+        <p class="materia-meta"><b>By Brazilian Red Cross — Rio de Janeiro Branch</b> · <time datetime="{f['modificado']}">{data_extenso(f['modificado'])}</time> · {minutos} min read</p>
+      </div>
+    </section>
+    <article class="materia">
+      <div class="wrap materia-estreita">
+        <div class="i18n-prosa">
+{markdown(corpo_md, "/assets/otim/")}
+        </div>
+      </div>
+    </article>"""
+    ld = [{"@context": "https://schema.org", "@type": "Article", "@id": f"{url}#artigo",
+           "headline": f["titulo"], "description": f["linha_fina"], "inLanguage": "en",
+           "datePublished": f["publicado"], "dateModified": f["modificado"],
+           "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+           "author": organizacao(idioma), "publisher": organizacao(idioma),
+           "about": [{"@type": "Person", "name": "Henry Dunant", "birthDate": "1828-05-08", "deathDate": "1910-10-30"},
+                     {"@type": "Organization", "name": "International Committee of the Red Cross", "foundingDate": "1863-02-17"}],
+           "image": [f"{ORIGEM}/assets/otim/historia-obras-1923-960.webp"],
+           "isPartOf": {"@type": "WebSite", "@id": f"{ORIGEM}/#site", "url": f"{ORIGEM}/"}, "wordCount": palavras},
+          {"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{url}#perguntas", "inLanguage": "en",
+           "mainEntity": [{"@type": "Question", "name": q.strip(),
+                           "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"\s+", " ", a).strip()}}
+                          for q, a in perguntas]},
+          ld_trilha]
+    gi.PAGINAS["fundador"] = {"pt": None, "en": FUNDADOR, "es": None}
+    SO_EN.add("fundador")
+    og = (f"{ORIGEM}/assets/otim/og-acervo.jpg", 1200, 630)  # a mesma da história em inglês
+    return moldura(idioma, "fundador", f["titulo_seo"], f["linha_fina"], corpo, ld, partes,
+                   og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
+
+
 def pagina_erro(idioma: dict, partes: dict, P: dict) -> str:
     e = P["erro"]
     links = "".join(f'<a class="btn {"btn-red" if i == 0 else "btn-outline"}" href="{u}"'
@@ -604,6 +669,7 @@ def main() -> int:
         paginas[SITE / "en" / "news" / n["slug"] / "index.html"] = pagina_noticia(idioma, partes, P, n, noticias)
     paginas[SITE / "en" / "news" / "index.html"] = pagina_indice(idioma, partes, P, noticias)
     paginas[SITE / "en" / "winter-clothing-drive" / "index.html"] = pagina_campanha(idioma, partes, P)
+    paginas[SITE / "en" / "who-founded-the-red-cross" / "index.html"] = pagina_fundador(idioma, partes)
     paginas[SITE / "en" / "404.html"] = pagina_erro(idioma, partes, P)
     conferir_links(paginas)
     for destino, html_ in paginas.items():
