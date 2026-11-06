@@ -455,6 +455,16 @@ try {
         mcp_rw_link_destino('/w/puncao-venosa/rec3cupom')['valido'],
     ], ['/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&via=agenda&cupom=PRO12&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom',
         '/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&via=agenda&cupom=NOV15&utm_source=email&utm_medium=recuperacao&utm_campaign=rec3cupom', false]);
+    // Curativos com o CURATIVOS (06/11/2026): cupom sem limite de vagas, modelo próprio.
+    $curPessoa = ['primeiro_nome' => 'Duda', 'curso_slug' => 'curativos-e-tratamento-de-feridas', 'curso_nome' => 'Curativos e Tratamento de Feridas'];
+    $curPuro = mcp_rw_modelo(3, $curPessoa, ['curativos-e-tratamento-de-feridas' => ['codigo' => 'CURATIVOS', 'data' => 'sábado, 28/11']]);
+    verificar('modelo da 3ª: Curativos com o CURATIVOS → cur_cupom_oferta, o link do cupom e a prévia sem "primeiros N alunos"', [$curPuro['nome'], $curPuro['parametros'],
+        $curPuro['caminho'], mcp_rw_link_destino('/w/curativos-e-tratamento-de-feridas/rec3cupom/x')['destino'], str_contains($curPuro['previa'], 'primeiros'),
+        str_contains($curPuro['previa'], 'turma de sábado, 28/11.')],
+        ['cur_cupom_oferta', ['Duda', 'CURATIVOS', 'sábado, 28/11'], 'matricula-cursos-presenciais/api/ir.php/w/curativos-e-tratamento-de-feridas/rec3cupom',
+            '/matricula-cursos-presenciais/checkout/?curso=curativos-e-tratamento-de-feridas&via=agenda&cupom=CURATIVOS&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=rec3cupom',
+            false, true]);
+    verificar('cupom sem limite de vagas (CURATIVOS): restantes nunca acabam', mcp_cupom_restantes(['codigo' => 'CURATIVOS', 'limite' => null]) > 1000000, true);
     $listaLl = static fn(string $sit): array => ['ok' => true, 'modelos' => ['ll_cupom_oferta' => $sit, 'rec_inscricao_3' => 'APPROVED'], 'categorias' => [], 'estrutura' => []];
     verificar('modelo de cupom sem aprovação na Meta (em análise ou ausente) não segura: vai o rec_inscricao_3; sem a lista, como antes', [
         mcp_rw_cupom_sem_aprovacao($llPuro, $listaLl('PENDING')), mcp_rw_cupom_sem_aprovacao($llPuro, ['ok' => true, 'modelos' => [], 'categorias' => [], 'estrutura' => []]),

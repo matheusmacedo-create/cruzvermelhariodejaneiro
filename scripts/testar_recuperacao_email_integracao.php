@@ -348,6 +348,10 @@ try {
     // Lei Lucas com o PRO12 (03/11/2026): a 3ª do e-mail leva o cupom do curso, sem esperar a Meta.
     $llPessoaE = ['primeiro_nome' => 'Caio', 'curso_slug' => 'primeiros-socorros-lei-lucas', 'curso_nome' => 'Primeiros Socorros Lei Lucas - Ambientes com Crianças'];
     $e3ll = mcp_rw_email_montar(3, $llPessoaE, ['primeiros-socorros-lei-lucas' => ['codigo' => 'PRO12', 'data' => 'quinta-feira, 12/11']], $sair);
+    $e3cur = mcp_rw_email_montar(3, ['primeiro_nome' => 'Duda', 'curso_slug' => 'curativos-e-tratamento-de-feridas', 'curso_nome' => 'Curativos e Tratamento de Feridas'],
+        ['curativos-e-tratamento-de-feridas' => ['codigo' => 'CURATIVOS', 'data' => 'sábado, 28/11']], $sair);
+    verificar('3º e-mail do Curativos com o CURATIVOS: campanha rec3cupom, assunto e link do cupom do curso', [$e3cur['modelo'], str_contains($e3cur['assunto'], 'CURATIVOS'),
+        str_contains($e3cur['link'], '/api/ir.php/e/curativos-e-tratamento-de-feridas/rec3cupom')], ['rec3cupom', true, true]);
     verificar('3º e-mail da Lei Lucas com o PRO12: campanha rec3cupom, assunto com o cupom e o link do cupom da Lei Lucas', [$e3ll['modelo'],
         str_contains($e3ll['assunto'], 'PRO12'), str_contains($e3ll['link'], '/api/ir.php/e/primeiros-socorros-lei-lucas/rec3cupom'),
         mcp_rw_email_montar(3, $llPessoaE, ['codigo' => 'NOV15', 'data' => 'terça-feira, 17/11'], $sair)['modelo']], ['rec3cupom', true, true, 'rec3']);

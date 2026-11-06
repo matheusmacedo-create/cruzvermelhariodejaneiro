@@ -232,7 +232,7 @@ $naoAprovados = [];
 $naoAprovadosMp = [];
 if ($cfg['ok'] && $modelos !== null) {
     $usos = ['rec_inscricao_1' => '1ª mensagem', 'rec_inscricao_2' => '2ª mensagem', 'rec_inscricao_3' => '3ª mensagem',
-        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom', 'll_cupom_oferta' => '3ª da Lei Lucas, com cupom', 'mat_pendente_1' => 'matrícula pendente, 1ª', 'mat_pendente_2' => 'matrícula pendente, 2ª'];
+        'ps_cupom_oferta' => '3ª de Primeiros Socorros, com cupom', 'll_cupom_oferta' => '3ª da Lei Lucas, com cupom', 'cur_cupom_oferta' => '3ª do Curativos, com cupom', 'mat_pendente_1' => 'matrícula pendente, 1ª', 'mat_pendente_2' => 'matrícula pendente, 2ª'];
     if (!$modelos['ok']) {
         $problemas[] = 'A Kapso não respondeu a lista de modelos agora (' . $modelos['erro'] . '). Tente de novo em alguns minutos.';
     } else {

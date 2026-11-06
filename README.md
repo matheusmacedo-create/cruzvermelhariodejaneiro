@@ -1565,6 +1565,14 @@ secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois
 - **Publicar**: `scripts/publicacao-recuperacao.txt` (com migração; a página nova e o `matricula.js` antes da biblioteca) e
   conferir com `scripts/conferir_publicacao.sh`.
 
+### Cupom CURATIVOS na recuperação (06/11/2026)
+
+O Curativos e Tratamento de Feridas entrou em `MCP_RW_OFERTAS` com o cupom `CURATIVOS` e o modelo **`cur_cupom_oferta`**
+(a cadastrar na Kapso/Meta, Marketing, pt_BR, com os mesmos parâmetros e botões do `ps_cupom_oferta`). O cupom não tem
+limite de vagas, então o texto fala da turma ("A promoção vale para a turma de {{3}}."), não de "primeiros N alunos"; o
+texto inteiro está em `MCP_RW_TEXTOS`. Como no PRO12: o e-mail leva o cupom já; o WhatsApp só com o modelo aprovado, e até
+lá a 3ª sai como `rec_inscricao_3`.
+
 ### Cupom PRO12 na recuperação da Lei Lucas (03/11/2026)
 
 Pedido do responsável: "coloca o PRO12 na recuperação da Lei Lucas também".
