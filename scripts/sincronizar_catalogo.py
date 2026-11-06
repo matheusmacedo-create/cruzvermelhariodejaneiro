@@ -7,6 +7,15 @@ observações, dúvidas frequentes e a URL da foto do curso (imagem_url), exatam
 publica. As fotos em WebP são geradas por scripts/gerar_imagens_matricula.py e a página
 site/matricula-cursos-presenciais/index.html por scripts/gerar_matricula_presencial.py.
 
+Formato da escola desde 11/2026: a página do curso é /cursos/<nome-do-curso> (o endereço antigo, /cursos/<id>, redireciona
+para ele), a carga horária e a escolaridade vêm nos "chips" do topo (sem rótulo), e o id do curso (o "uuid", que a
+matrícula manda à escola depois do pagamento) só aparece na imagem de compartilhamento (og:image .../compartilhar/curso/
+<id>.jpg). Sem esse id, ou com um id diferente do já gravado para o mesmo curso, nada é gravado.
+
+Curso cuja taxa de inscrição na escola é diferente da do checkout (inscricao_centavos) fica de fora e a sincronização avisa:
+o checkout cobra a mesma taxa em todos os cursos e venderia o curso por outro preço (11/2026: Curativos e Tratamento de
+Feridas, com taxa de R$ 0,00 na escola).
+
 Regra do projeto: só existem aqui os cursos que a escola publica. Curso que sair do catálogo
 da escola sai daqui na próxima sincronização. E nem todo curso da escola entra: os de FORA_DO_DOMINIO
 ficam só na plataforma da escola, e a sincronização não os traz de volta.
@@ -94,15 +103,37 @@ def bloco_entre(linhas: list[str], inicio: str, fins: list[str]) -> list[str]:
     return saida
 
 
-def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
-    url = f"{ORIGEM}/cursos/{uuid}"
+UUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+
+
+def chips(pagina: str) -> list[str]:
+    """Os "chips" do topo da página do curso (formato de 11/2026): carga horária, escolaridade, presencial, certificado."""
+    bloco = re.search(r'<div class="v-curso-chips">(.*?)</div>', pagina, re.S)
+    if not bloco:
+        return []
+    itens = re.findall(r"<span[^>]*>(.*?)</span>", bloco.group(1), re.S)
+    return [re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", i))).strip() for i in itens]
+
+
+def extrair_curso(caminho: str, nome_catalogo: str) -> dict:
+    url = f"{ORIGEM}/cursos/{caminho}"
     pagina = baixar(url)
     linhas = texto_em_linhas(pagina)
     h1 = re.search(r"<h1[^>]*>(.*?)</h1>", pagina, re.S)
     nome = html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() if h1 else nome_catalogo
     meta = re.search(r'<meta name="description" content="([^"]*)"', pagina)
-    # Foto do curso: a mesma que a escola mostra no topo da página do curso.
-    foto = re.search(r'<img class="cx-hero-img" src="([^"]+)"', pagina)
+    # Foto do curso: a mesma que a escola mostra no topo da página do curso (classe antiga e a de 11/2026).
+    foto = re.search(r'<img class="(?:cx-hero-img|v-curso-foto)" src="([^"]+)"', pagina)
+    # O id do curso na escola: o próprio caminho (formato antigo) ou o da imagem de compartilhamento (11/2026).
+    uuid = caminho if UUID.fullmatch(caminho) else None
+    if uuid is None:
+        m_id = re.search(r'/compartilhar/curso/(' + UUID.pattern + r')\.', pagina)
+        uuid = m_id.group(1) if m_id else None
+    if uuid is None:
+        raise ValueError(f"sem o id do curso na página {url}")
+    canonica = re.search(r'<link rel="canonical" href="([^"]+)"', pagina)
+    url = canonica.group(1) if canonica and canonica.group(1).startswith(ORIGEM + "/cursos/") else url
+    topo = chips(pagina)
 
     # Descrição curta: a linha logo depois do h1.
     try:
@@ -130,6 +161,8 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
         descricao = ""
 
     sobre = bloco_entre(linhas, "Sobre o curso", ["Turmas abertas", "Dúvidas frequentes", "Investimento"])
+    # Subtítulo da seção (11/2026) e a condição promocional da escola não são texto do curso.
+    sobre = [l for l in sobre if l != "O que você vai aprender" and not l.lower().startswith("condição promocional")]
     observacoes = [l for l in sobre if re.search(r"homologa|alimento|documento|a cargo do aluno", l, re.I)]
     sobre = [l for l in sobre if l not in observacoes]
     observacoes = inclui + observacoes
@@ -141,13 +174,19 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
     if not descricao and sobre:
         descricao = re.split(r"(?<=[.!?])\s", sobre[0])[0]
 
-    faq_linhas = bloco_entre(linhas, "Dúvidas frequentes", ["Investimento"])
+    # Dúvidas: pergunta (termina em "?") seguida da resposta. Desde 11/2026 o bloco vem depois do Investimento e acaba
+    # em "Veja também" (os outros cursos).
+    faq_linhas = bloco_entre(linhas, "Dúvidas frequentes", ["Investimento", "Veja também", "Outros cursos da Escola"])
     faq = []
-    for k in range(0, len(faq_linhas) - 1, 2):
-        if faq_linhas[k].endswith("?"):
+    k = 0
+    while k < len(faq_linhas) - 1:
+        if faq_linhas[k].endswith("?") and not faq_linhas[k + 1].endswith("?"):
             faq.append({"pergunta": faq_linhas[k], "resposta": faq_linhas[k + 1]})
+            k += 2
+        else:
+            k += 1
 
-    investimento = bloco_entre(linhas, "Investimento", ["Inscrever-se", "©"])
+    investimento = bloco_entre(linhas, "Investimento", ["Inscrever-se", "Valores para pagamento", "©"])
     def valor(rotulo: str) -> int | None:
         for i, l in enumerate(investimento):
             if l.lower().startswith(rotulo.lower()):
@@ -163,10 +202,11 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
         "descricao": descricao,
         "sobre": sobre,
         "observacoes": observacoes,
-        "carga_horaria": depois_de(linhas, "Carga horária"),
-        "escolaridade": depois_de(linhas, "Escolaridade mínima"),
-        "valor_curso_centavos": valor("Valor do curso"),
-        "valor_matricula_escola_centavos": valor("Valor da matrícula"),
+        "carga_horaria": depois_de(linhas, "Carga horária") or next((c for c in topo if re.fullmatch(r"\d+ horas?", c)), ""),
+        "escolaridade": depois_de(linhas, "Escolaridade mínima") or next((c for c in topo if re.match(r"(?i)ensino ", c)), ""),
+        # Desde 11/2026 a escola chama de "matrícula" o valor do curso, e de "taxa de inscrição" a taxa.
+        "valor_curso_centavos": valor("Valor do curso") if valor("Valor do curso") is not None else valor("Valor da matrícula"),
+        "valor_matricula_escola_centavos": valor("Taxa de inscrição") if valor("Taxa de inscrição") is not None else valor("Valor da matrícula"),
         "total_escola_centavos": valor("Total à vista"),
         "faq": faq,
         "imagem": slug,  # base dos arquivos em img/ (<slug>-480.webp e <slug>-960.webp)
@@ -177,14 +217,33 @@ def extrair_curso(uuid: str, nome_catalogo: str) -> dict:
 def main() -> int:
     catalogo = baixar(f"{ORIGEM}/cursos")
     vistos: dict[str, str] = {}
-    for uuid, rotulo in re.findall(r'href="/cursos/([0-9a-f-]{36})"(?:[^>]*aria-label="Ver ([^"]+)")?', catalogo):
-        if uuid not in vistos or (rotulo and not vistos[uuid]):
-            vistos[uuid] = html.unescape(rotulo or "")
+    # Link de cada curso: /cursos/<id> (até 10/2026, aria-label "Ver X") ou /cursos/<nome-do-curso> (11/2026, aria-label
+    # "X: ver turmas e valores").
+    for caminho, rotulo in re.findall(r'href="/cursos/([a-z0-9][a-z0-9-]*)"(?:[^>]*aria-label="(?:Ver )?([^"]+?)(?:: ver turmas e valores)?")?', catalogo):
+        if caminho not in vistos or (rotulo and not vistos[caminho]):
+            vistos[caminho] = html.unescape(rotulo or "")
     if not vistos:
         print("nenhum curso no catálogo; nada gravado", file=sys.stderr)
         return 1
 
-    cursos = [extrair_curso(uuid, nome) for uuid, nome in vistos.items()]
+    anterior = json.loads(SAIDA.read_text(encoding="utf-8")) if SAIDA.exists() else {}
+    inscricao = int(anterior.get("inscricao_centavos") or 9900)
+    try:
+        cursos = [extrair_curso(caminho, nome) for caminho, nome in vistos.items()]
+    except (ValueError, OSError) as erro:
+        print(f"ERRO: {erro}. Nada foi gravado.", file=sys.stderr)
+        return 1
+    # O id de um curso que já existe aqui não muda: é o que a matrícula manda à escola. Mudou, alguém precisa olhar.
+    ids = {c["slug"]: c.get("uuid") for c in anterior.get("cursos", [])}
+    trocados = [c["slug"] for c in cursos if ids.get(c["slug"]) and ids[c["slug"]] != c["uuid"]]
+    if trocados:
+        print(f"ERRO: o id na escola mudou para {', '.join(trocados)}. Nada foi gravado.", file=sys.stderr)
+        return 1
+    fora_taxa = [c for c in cursos if c["valor_matricula_escola_centavos"] is not None and c["valor_matricula_escola_centavos"] != inscricao]
+    for c in fora_taxa:
+        print(f"  fora (taxa de inscrição da escola R$ {c['valor_matricula_escola_centavos'] / 100:.2f}, o checkout cobra R$ {inscricao / 100:.2f}): "
+              f"{c['nome']} [{c['slug']}]")
+    cursos = [c for c in cursos if c not in fora_taxa]
     for c in cursos:
         if c["slug"] in FORA_DO_DOMINIO:
             print(f"  fora do domínio da filial: {c['nome']} [{c['slug']}] ({FORA_DO_DOMINIO[c['slug']]})")
@@ -200,10 +259,9 @@ def main() -> int:
             grupos.append({"id": gid, "titulo": titulo, "cursos": membros})
 
     # Contribuição opcional para a divulgação (07/10/2026): o valor em teste não vem da escola; fica o do arquivo.
-    anterior = json.loads(SAIDA.read_text(encoding="utf-8")) if SAIDA.exists() else {}
     dados = {
         "fonte": f"{ORIGEM}/cursos",
-        "inscricao_centavos": 9900,
+        "inscricao_centavos": inscricao,
         "divulgacao_centavos": 0,
         "grupos": grupos,
         "cursos": cursos,

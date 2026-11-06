@@ -27,7 +27,7 @@
       "slug": "bombeiro-civil",
       "uuid": "5bd737ee-00a6-48dc-b5ab-08cde9b12897",
       "nome": "Bombeiro Civil",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/5bd737ee-00a6-48dc-b5ab-08cde9b12897",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/bombeiro-civil",
       "descricao": "Formação para atuação em prevenção e combate a incêndios.",
       "sobre": [
         "O Curso de Bombeiro Civil da Cruz Vermelha forma profissionais capacitados para prevenir acidentes, combater princípios de incêndio, prestar primeiros socorros e atuar na proteção de pessoas e do patrimônio em situações de emergência.",
@@ -40,8 +40,8 @@
       "carga_horaria": "80 horas",
       "escolaridade": "Ensino Médio",
       "valor_curso_centavos": 95000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 105000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 104900,
       "faq": [
         {
           "pergunta": "Quem pode fazer o curso de Bombeiro Civil?",
@@ -71,7 +71,7 @@
       "slug": "cuidador-de-idosos",
       "uuid": "2bf8d91d-ad41-4232-903f-ca4895b611f3",
       "nome": "Cuidador de Idosos (Curso Livre)",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/2bf8d91d-ad41-4232-903f-ca4895b611f3",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/cuidador-de-idosos-curso-livre",
       "descricao": "Cuidados, segurança e bem-estar no atendimento ao idoso.",
       "sobre": [
         "O Curso de Cuidador de Idosos da Cruz Vermelha forma profissionais capacitados para prestar assistência à pessoa idosa com segurança, responsabilidade, empatia e respeito, promovendo qualidade de vida e bem-estar em diferentes contextos de cuidado.",
@@ -82,8 +82,8 @@
       "carga_horaria": "160 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 95000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 105000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 104900,
       "faq": [
         {
           "pergunta": "Quem pode fazer esse curso?",
@@ -113,7 +113,7 @@
       "slug": "primeiros-socorros-basico",
       "uuid": "05f2c1fa-3aef-40c6-a5df-66ea30c32a4b",
       "nome": "Primeiros Socorros Básico",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/05f2c1fa-3aef-40c6-a5df-66ea30c32a4b",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/primeiros-socorros-basico",
       "descricao": "O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
       "sobre": [
         "O Curso de Primeiros Socorros Básico da Cruz Vermelha - Rio de Janeiro forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
@@ -126,8 +126,8 @@
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 18000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 28000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 27900,
       "faq": [
         {
           "pergunta": "Preciso ser da área da saúde?",
@@ -157,7 +157,7 @@
       "slug": "primeiros-socorros-lei-lucas",
       "uuid": "f8373fef-2523-42e4-ab3f-cc1059b10379",
       "nome": "Primeiros Socorros Lei Lucas - Ambientes com Crianças",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/f8373fef-2523-42e4-ab3f-cc1059b10379",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/primeiros-socorros-lei-lucas-ambientes-com-criancas",
       "descricao": "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
       "sobre": [
         "O Curso de Primeiros Socorros em Crianças da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência envolvendo o público infantil e prestar o atendimento inicial com rapidez, segurança e responsabilidade até a chegada do serviço especializado.",
@@ -168,8 +168,8 @@
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 15000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 25000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 24900,
       "faq": [],
       "imagem": "primeiros-socorros-lei-lucas",
       "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787244064-e1a66aa9dff5.webp"
@@ -178,7 +178,7 @@
       "slug": "puncao-venosa",
       "uuid": "ab2035b1-2c11-476f-a275-d29a4111ecf0",
       "nome": "Punção Venosa",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/ab2035b1-2c11-476f-a275-d29a4111ecf0",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/puncao-venosa",
       "descricao": "Técnica de acesso venoso periférico com segurança.",
       "sobre": [
         "O Curso de Punção Venosa da Cruz Vermelha forma profissionais capacitados para realizar procedimentos de acesso venoso com segurança, precisão e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.",
@@ -189,8 +189,8 @@
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Médio",
       "valor_curso_centavos": 15000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 25000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 24900,
       "faq": [
         {
           "pergunta": "Quem pode fazer esse curso?",
@@ -220,7 +220,7 @@
       "slug": "suporte-basico-de-vida",
       "uuid": "4f84e97b-1908-4e1e-8ea7-97d4124caff4",
       "nome": "Suporte Básico de Vida",
-      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/4f84e97b-1908-4e1e-8ea7-97d4124caff4",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/suporte-basico-de-vida",
       "descricao": "Atendimento inicial de emergências com diretrizes oficiais.",
       "sobre": [
         "O Curso de Suporte Básico de Vida da Cruz Vermelha forma pessoas capacitadas para reconhecer situações de emergência, prestar o atendimento inicial de forma segura e agir com rapidez até a chegada do serviço especializado.",
@@ -231,8 +231,8 @@
       "carga_horaria": "4 horas",
       "escolaridade": "Ensino Fundamental",
       "valor_curso_centavos": 15000,
-      "valor_matricula_escola_centavos": 10000,
-      "total_escola_centavos": 25000,
+      "valor_matricula_escola_centavos": 9900,
+      "total_escola_centavos": 24900,
       "faq": [
         {
           "pergunta": "Para quem é indicado este curso?",

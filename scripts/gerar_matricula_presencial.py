@@ -721,6 +721,9 @@ CSS_PAGINA = """
     .v-agenda-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--v-texto); }
     .v-agenda-preco { margin-top: 6px; font-size: 14px; color: var(--v-ink); }
     .v-agenda-preco b { font-weight: 800; }
+    /* Selo do cupom (06/11/2026): preenchido pelo JS com o info.php; nada se move sozinho. */
+    .v-cupom { display: inline-block; margin-top: 8px; padding: 4px 10px; border: 1.5px dashed #c8102e; border-radius: 999px; background: #fff4f5; color: #a00d25; font-size: 13px; font-weight: 700; line-height: 1.35; }
+    .v-cupom[hidden] { display: none; }
     .v-devolucao { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; min-height: 24px; font-size: 13px; font-weight: 600; color: var(--v-green-ink); text-decoration: none; line-height: 1.35; }
     .v-devolucao:hover { text-decoration: underline; }
     .v-devolucao svg { width: 16px; height: 16px; }
@@ -1577,6 +1580,18 @@ JS_PAGINA = """
           if (vendeSemTurma) vendaGeral = true;
         });
         raiz.setAttribute('data-venda-geral', vendaGeral ? '1' : '0');
+        // Selo do cupom (06/11/2026): os cupons_vitrine do info.php (código, valor final com tudo incluso e vagas que
+        // restam, contadas no servidor). Só no curso que vende "taxa + matrícula" (o cupom vale só nesse plano).
+        var cupons = d && Array.isArray(d.cupons_vitrine) ? d.cupons_vitrine : [];
+        todos('[data-cupom-de]').forEach(function (el) {
+          var s = el.getAttribute('data-cupom-de'), c = porCurso[s], o = null;
+          cupons.forEach(function (x) { if (!o && x && Array.isArray(x.cursos) && x.cursos.indexOf(s) >= 0 && +x.restantes > 0) o = x; });
+          if (!o || !c || !Array.isArray(c.planos) || c.planos.indexOf('taxa_e_matricula') < 0) { el.hidden = true; return; }
+          var valor = (+o.total_centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          el.textContent = 'Com o cupom ' + o.codigo + ': R$\u00a0' + valor + ' com tudo incluso · '
+            + (+o.restantes === 1 ? 'resta 1 cupom' : 'restam ' + o.restantes + ' cupons');
+          el.hidden = false;
+        });
 __INFO_PRAZO__
         var dias = d && +d.espera_prazo_dias > 0 ? +d.espera_prazo_dias : 0;
         var limite = d && /^\d{2}\/\d{2}\/\d{4}$/.test(d.espera_data_limite || '') ? d.espera_data_limite : (dias ? dataLimite(dias) : '');
@@ -2021,11 +2036,17 @@ def main() -> int:
                 f'fornecido pela filial para ilustração, com o nome do aluno, o curso e a carga horária" loading="lazy" decoding="async" '
                 f'width="640" height="452" data-cert-curso="{s}">')
 
+    def cupom(s: str) -> str:
+        """Selo do cupom do curso (06/11/2026): vazio e escondido no HTML; o JS preenche com os cupons_vitrine do info.php
+        (código, valor final e vagas que restam) e o mostra só enquanto o cupom vale e o curso vende "taxa + matrícula".
+        Sem JavaScript ou sem resposta da API, não aparece: a página nunca anuncia um cupom que já acabou."""
+        return f'<p class="v-cupom" data-cupom-de="{s}" hidden></p>'
+
     def preco(s: str) -> str:
         """Bloco de preço da escola (1.5): "Matrícula à vista" / "R$ 180" / "+ R$ 99 de taxa de inscrição". O total fica no
         Investimento e na barra."""
         return (f'<div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p>'
-                f'<p class="v-preco-valor">{brl_curto(mat(s))}</p><p class="v-preco-taxa">+ {taxa} de taxa de inscrição</p></div>')
+                f'<p class="v-preco-valor">{brl_curto(mat(s))}</p><p class="v-preco-taxa">+ {taxa} de taxa de inscrição</p>{cupom(s)}</div>')
 
     def chat_link(texto: str, s: str, local: str, assunto: str = "matricula") -> str:
         return (f'<a class="v-chat-link" href="#chat" data-abrir-chat data-assunto="{assunto}" data-curso="{s}" data-local="{local}">'
@@ -2547,7 +2568,7 @@ def main() -> int:
               <p class="v-chips"><span class="v-chip">{esc(c["carga_horaria"])}</span><span class="v-chip">{esc(escolaridade(s))}</span><span class="v-chip">Presencial</span>{chip_turma}</p>
               <div class="v-card-rodape">
                 {preco(s)}
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>{brl_curto(mat(s))}</b></p><p class="v-pc-taxa">+ {taxa} de taxa de inscrição</p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>{brl_curto(mat(s))}</b></p><p class="v-pc-taxa">+ {taxa} de taxa de inscrição</p>{cupom(s)}</div>
                 <span class="v-card-seta" aria-hidden="true">{SVG["seta"]}</span>
               </div>
             </div>
@@ -2564,6 +2585,7 @@ def main() -> int:
               <p class="v-cartao-dia">{esc(cursos[s]["nome"])}</p>
               <p class="v-agenda-meta"><span class="v-dias" data-turma-de="{s}"></span><span>{esc(t.horario)}</span><span>{esc(cursos[s]["carga_horaria"])}</span><span>Centro do Rio</span></p>
               <p class="v-agenda-preco">Matrícula à vista <b>{brl_curto(mat(s))}</b> + {taxa} de taxa de inscrição</p>
+              {cupom(s)}
             </div>
             {inscrever(s, "agenda", "v-btn v-btn-vermelho")}
           </div></div>''')

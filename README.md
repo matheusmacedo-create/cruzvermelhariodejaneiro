@@ -963,7 +963,9 @@ regra pública da escola ("a entrada na aula é liberada com a matrícula paga")
 pergunta "Preciso criar conta?"; FAQ da turma não formada sem prometer além dos 7 dias; frases do catálogo que prometem
 emprego ou renda ficam fora da página e do chat (`EXCLUIR_CATALOGO`); legendas das fotos com o que elas mostram
 (formação de voluntários, equipe), não "turma" nem "instrutor". **Achados fora desta página, para tratar à parte:**
-`scripts/sincronizar_catalogo.py` não lê mais a escola (zera preço, carga e escolaridade se rodado); `faq-home.json`
+`scripts/sincronizar_catalogo.py` não lê mais a escola (zera preço, carga e escolaridade se rodado; **corrigido em
+06/11/2026** para o formato novo da escola: página por nome do curso, carga e escolaridade nos "chips", id do curso na
+imagem de compartilhamento, e curso com taxa de inscrição diferente da do checkout fica de fora com aviso); `faq-home.json`
 descreve o fluxo antigo (secretaria confirma em 3 dias úteis) e cita R$ 100 de matrícula da escola (a escola cobra R$ 99
 nos cartões e diz R$ 100 no passo 02); o aviso de cookies cobre 58% da primeira tela em 375×667; o cinza `--muted` do
 cabeçalho e rodapé da home tem contraste abaixo de 4,5:1 em 12–13 px.
@@ -1616,6 +1618,10 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
 - **ÚnicoPag**: o item da matrícula vai como "… — Matrícula (cupom NOV15)", e a metadata leva `cupom` e
   `cupom_desconto_centavos`.
 - **Consulta**: `info.php?cupom=CODIGO&curso=slug` diz se vale e quantas vagas faltam (30 consultas por IP a cada 10 min).
+- **Selo na página de matrícula** (06/11/2026): nos cartões, na agenda "Próximas turmas" e na ficha do curso, o JS da
+  página preenche um selo com os `cupons_vitrine` do `info.php` ("Com o cupom NOV15: R$ 150,00 com tudo incluso · restam
+  16 cupons"), só no curso que vende "taxa + matrícula". O HTML leva o selo vazio e escondido (`data-cupom-de`): sem
+  JavaScript ou com a API fora, nada aparece, e cupom esgotado ou vencido some sozinho, sem publicar de novo.
 - **`PRO12`** (03/11/2026): Primeiros Socorros Lei Lucas por **R$ 120,00 com tudo incluso** (taxa R$ 99 + matrícula
   R$ 21, desconto de R$ 129), **10 vagas**, até 11/11/2026 às 23h59 (fim das inscrições da turma de 12/11), com balão
   (`vitrine`). Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&cupom=PRO12` (sem o

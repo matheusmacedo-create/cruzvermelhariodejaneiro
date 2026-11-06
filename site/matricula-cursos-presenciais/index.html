@@ -446,6 +446,9 @@
     .v-agenda-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--v-texto); }
     .v-agenda-preco { margin-top: 6px; font-size: 14px; color: var(--v-ink); }
     .v-agenda-preco b { font-weight: 800; }
+    /* Selo do cupom (06/11/2026): preenchido pelo JS com o info.php; nada se move sozinho. */
+    .v-cupom { display: inline-block; margin-top: 8px; padding: 4px 10px; border: 1.5px dashed #c8102e; border-radius: 999px; background: #fff4f5; color: #a00d25; font-size: 13px; font-weight: 700; line-height: 1.35; }
+    .v-cupom[hidden] { display: none; }
     .v-devolucao { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; min-height: 24px; font-size: 13px; font-weight: 600; color: var(--v-green-ink); text-decoration: none; line-height: 1.35; }
     .v-devolucao:hover { text-decoration: underline; }
     .v-devolucao svg { width: 16px; height: 16px; }
@@ -1560,7 +1563,7 @@
               <h2 class="v-destaque-titulo">Punção Venosa</h2>
               <p class="v-destaque-meta">8 horas · Ensino Médio · Presencial no Centro do Rio</p>
               <hr class="v-destaque-linha">
-              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div><div class="v-data-caixa"><span class="v-sr">sábado, 7 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>7</b><span>novembro</span></div></div></div>
+              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div><div class="v-data-caixa"><span class="v-sr">sábado, 7 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>7</b><span>novembro</span></div></div></div>
               <span class="v-destaque-ver">Ver turma e inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </a>
           </div>
@@ -1570,7 +1573,7 @@
               <h2 class="v-destaque-titulo">Primeiros Socorros Lei Lucas - Ambientes com Crianças</h2>
               <p class="v-destaque-meta">8 horas · Ensino Fundamental · Presencial no Centro do Rio</p>
               <hr class="v-destaque-linha">
-              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div><div class="v-data-caixa"><span class="v-sr">quinta-feira, 12 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>12</b><span>novembro</span></div></div></div>
+              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div><div class="v-data-caixa"><span class="v-sr">quinta-feira, 12 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>12</b><span>novembro</span></div></div></div>
               <span class="v-destaque-ver">Ver turma e inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </a>
           </div>
@@ -1580,7 +1583,7 @@
               <h2 class="v-destaque-titulo">Primeiros Socorros Básico</h2>
               <p class="v-destaque-meta">8 horas · Ensino Fundamental · Presencial no Centro do Rio</p>
               <hr class="v-destaque-linha">
-              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div><div class="v-data-caixa"><span class="v-sr">terça-feira, 17 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>17</b><span>novembro</span></div></div></div>
+              <div class="v-destaque-preco"><div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div><div class="v-data-caixa"><span class="v-sr">terça-feira, 17 de novembro de 2026</span><div class="v-data" aria-hidden="true"><b>17</b><span>novembro</span></div></div></div>
               <span class="v-destaque-ver">Ver turma e inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </a>
           </div>
@@ -1635,7 +1638,7 @@
               </div>
             </div>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div><div class="v-se-breve" data-turma-de="primeiros-socorros-basico"><div class="v-se-venda" data-curso-de="primeiros-socorros-basico">
@@ -1643,7 +1646,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -1652,7 +1655,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-basico" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div></div>
@@ -1755,7 +1758,7 @@
               </div>
             </div>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div><div class="v-se-breve" data-turma-de="primeiros-socorros-lei-lucas"><div class="v-se-venda" data-curso-de="primeiros-socorros-lei-lucas">
@@ -1763,7 +1766,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -1772,7 +1775,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="primeiros-socorros-lei-lucas" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div></div>
@@ -1864,7 +1867,7 @@
               </div>
             </div>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div><div class="v-se-breve" data-turma-de="puncao-venosa"><div class="v-se-venda" data-curso-de="puncao-venosa">
@@ -1872,7 +1875,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -1881,7 +1884,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="puncao-venosa" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div></div>
@@ -1979,7 +1982,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="suporte-basico-de-vida" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -1988,7 +1991,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="suporte-basico-de-vida" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="suporte-basico-de-vida" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="suporte-basico-de-vida" href="/matricula-cursos-presenciais/checkout/?curso=suporte-basico-de-vida&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div>
@@ -2075,7 +2078,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="bombeiro-civil" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="bombeiro-civil" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -2084,7 +2087,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="bombeiro-civil" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="bombeiro-civil" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="bombeiro-civil" href="/matricula-cursos-presenciais/checkout/?curso=bombeiro-civil&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div>
@@ -2171,7 +2174,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria ainda não publicou a data da próxima turma. Você pode se inscrever agora, já com tudo pago: quando a Escola marcar uma turma deste curso, você entra na primeira que tiver vaga, por ordem de pagamento, e recebe a data e o horário por e-mail.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="cuidador-de-idosos" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande mr-cta" data-local="detalhes" data-curso="cuidador-de-idosos" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos&amp;via=detalhes">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <p class="v-micro">PIX ou cartão, à vista.</p>
             <p class="v-promessa">Se a data ou o horário não servirem, avise em até 7 dias depois do e-mail com a data e devolvemos tudo o que você pagou. Também devolvemos tudo se você desistir antes de a turma ser confirmada, ou se não houver turma marcada para começar <span data-espera-limite>em até 90 dias da inscrição</span>, sem você precisar pedir.</p>
@@ -2180,7 +2183,7 @@
             <h2 class="v-cartao-breve-titulo">Ainda não há turma aberta</h2>
             <p class="v-cartao-breve-texto">A secretaria publica as datas aqui assim que abre as inscrições. Fale com a gente para saber a próxima turma.</p>
             <hr class="v-destaque-linha">
-            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
+            <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="cuidador-de-idosos" hidden></p></div>
             <a class="v-btn v-btn-vermelho v-btn-grande" href="#chat" data-abrir-chat data-assunto="matricula" data-curso="cuidador-de-idosos" data-local="sem_turma">Saber a próxima turma</a>
             <a class="v-btn v-btn-contorno mr-cta" data-local="detalhes" data-curso="cuidador-de-idosos" href="/matricula-cursos-presenciais/checkout/?curso=cuidador-de-idosos&amp;via=detalhes">Entrar na lista da próxima turma</a>
             <p class="v-aviso"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg><span>A participação nas aulas é liberada só com a <b>matrícula paga</b>, além da taxa de inscrição. Quem pagou apenas a inscrição não tem a entrada liberada.</span></p></div>
@@ -2287,6 +2290,7 @@
               <p class="v-cartao-dia">Punção Venosa</p>
               <p class="v-agenda-meta"><span class="v-dias" data-turma-de="puncao-venosa"></span><span>09:00 - 17:00</span><span>8 horas</span><span>Centro do Rio</span></p>
               <p class="v-agenda-preco">Matrícula à vista <b>R$ 150</b> + R$ 99 de taxa de inscrição</p>
+              <p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p>
             </div>
             <a class="v-btn v-btn-vermelho mr-cta" data-local="agenda" data-curso="puncao-venosa" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=agenda">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div></div>
@@ -2296,6 +2300,7 @@
               <p class="v-cartao-dia">Primeiros Socorros Lei Lucas - Ambientes com Crianças</p>
               <p class="v-agenda-meta"><span class="v-dias" data-turma-de="primeiros-socorros-lei-lucas"></span><span>09:00 - 17:00</span><span>8 horas</span><span>Centro do Rio</span></p>
               <p class="v-agenda-preco">Matrícula à vista <b>R$ 150</b> + R$ 99 de taxa de inscrição</p>
+              <p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p>
             </div>
             <a class="v-btn v-btn-vermelho mr-cta" data-local="agenda" data-curso="primeiros-socorros-lei-lucas" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=agenda">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div></div>
@@ -2305,6 +2310,7 @@
               <p class="v-cartao-dia">Primeiros Socorros Básico</p>
               <p class="v-agenda-meta"><span class="v-dias" data-turma-de="primeiros-socorros-basico"></span><span>09:00 - 17:00</span><span>8 horas</span><span>Centro do Rio</span></p>
               <p class="v-agenda-preco">Matrícula à vista <b>R$ 180</b> + R$ 99 de taxa de inscrição</p>
+              <p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p>
             </div>
             <a class="v-btn v-btn-vermelho mr-cta" data-local="agenda" data-curso="primeiros-socorros-basico" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=agenda">Inscrever-se <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div></div>
@@ -2319,8 +2325,8 @@
               <p class="v-card-desc">(+Lei Lucas)</p>
               <p class="v-chips"><span class="v-chip">8 horas</span><span class="v-chip">Ensino Fundamental</span><span class="v-chip">Presencial</span><span class="v-se-aberta" data-turma-de="primeiros-socorros-basico"><span class="v-chip">Início 17/11</span></span><span class="v-se-breve" data-turma-de="primeiros-socorros-basico"></span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 180</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 180</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 180</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-basico" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -2333,8 +2339,8 @@
               <p class="v-card-desc">Capacitação essencial.</p>
               <p class="v-chips"><span class="v-chip">8 horas</span><span class="v-chip">Ensino Fundamental</span><span class="v-chip">Presencial</span><span class="v-se-aberta" data-turma-de="primeiros-socorros-lei-lucas"><span class="v-chip">Início 12/11</span></span><span class="v-se-breve" data-turma-de="primeiros-socorros-lei-lucas"></span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="primeiros-socorros-lei-lucas" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -2347,8 +2353,8 @@
               <p class="v-card-desc">Técnica de acesso venoso periférico com segurança.</p>
               <p class="v-chips"><span class="v-chip">8 horas</span><span class="v-chip">Ensino Médio</span><span class="v-chip">Presencial</span><span class="v-se-aberta" data-turma-de="puncao-venosa"><span class="v-chip">Início 07/11</span></span><span class="v-se-breve" data-turma-de="puncao-venosa"></span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="puncao-venosa" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -2361,8 +2367,8 @@
               <p class="v-card-desc">Atendimento inicial de emergências com diretrizes oficiais.</p>
               <p class="v-chips"><span class="v-chip">4 horas</span><span class="v-chip">Ensino Fundamental</span><span class="v-chip">Presencial</span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 150</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="suporte-basico-de-vida" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 150</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="suporte-basico-de-vida" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -2375,8 +2381,8 @@
               <p class="v-card-desc v-card-desc-fixa">Formação para atuação em prevenção e combate a incêndios. (VALOR DE HOMOLOGAÇÃO A PARTE)</p>
               <p class="v-chips"><span class="v-chip">80 horas</span><span class="v-chip">Ensino Médio</span><span class="v-chip">Presencial</span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 950</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="bombeiro-civil" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 950</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="bombeiro-civil" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -2389,8 +2395,8 @@
               <p class="v-card-desc">Cuidados, segurança e bem-estar no atendimento ao idoso.</p>
               <p class="v-chips"><span class="v-chip">160 horas</span><span class="v-chip">Ensino Fundamental</span><span class="v-chip">Presencial</span></p>
               <div class="v-card-rodape">
-                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p></div>
-                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 950</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p></div>
+                <div class="v-preco"><p class="v-preco-rotulo">Matrícula à vista</p><p class="v-preco-valor">R$ 950</p><p class="v-preco-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="cuidador-de-idosos" hidden></p></div>
+                <div class="v-preco-compacto"><p class="v-pc-mat">Matrícula à vista <b>R$ 950</b></p><p class="v-pc-taxa">+ R$ 99 de taxa de inscrição</p><p class="v-cupom" data-cupom-de="cuidador-de-idosos" hidden></p></div>
                 <span class="v-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </div>
             </div>
@@ -3155,6 +3161,18 @@
           if (vendeSemTurma) vendaGeral = true;
         });
         raiz.setAttribute('data-venda-geral', vendaGeral ? '1' : '0');
+        // Selo do cupom (06/11/2026): os cupons_vitrine do info.php (código, valor final com tudo incluso e vagas que
+        // restam, contadas no servidor). Só no curso que vende "taxa + matrícula" (o cupom vale só nesse plano).
+        var cupons = d && Array.isArray(d.cupons_vitrine) ? d.cupons_vitrine : [];
+        todos('[data-cupom-de]').forEach(function (el) {
+          var s = el.getAttribute('data-cupom-de'), c = porCurso[s], o = null;
+          cupons.forEach(function (x) { if (!o && x && Array.isArray(x.cursos) && x.cursos.indexOf(s) >= 0 && +x.restantes > 0) o = x; });
+          if (!o || !c || !Array.isArray(c.planos) || c.planos.indexOf('taxa_e_matricula') < 0) { el.hidden = true; return; }
+          var valor = (+o.total_centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          el.textContent = 'Com o cupom ' + o.codigo + ': R$ ' + valor + ' com tudo incluso · '
+            + (+o.restantes === 1 ? 'resta 1 cupom' : 'restam ' + o.restantes + ' cupons');
+          el.hidden = false;
+        });
 
         var dias = d && +d.espera_prazo_dias > 0 ? +d.espera_prazo_dias : 0;
         var limite = d && /^\d{2}\/\d{2}\/\d{4}$/.test(d.espera_data_limite || '') ? d.espera_data_limite : (dias ? dataLimite(dias) : '');
