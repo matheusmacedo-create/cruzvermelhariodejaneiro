@@ -34,6 +34,8 @@ function mcp_config(): array
             [getenv('MCP_CONFIG_PAGAR_TUDO_ARQUIVO') ?: dirname(__DIR__) . '/config-pagar-tudo.php', static fn(string $c): bool => in_array($c, MCP_CHAVES_PAGAR_TUDO, true)],
             [getenv('MCP_CONFIG_GOOGLE_ARQUIVO') ?: dirname(__DIR__) . '/config-google.php', static fn(string $c): bool => str_starts_with($c, 'GOOGLE_')],
             [getenv('MCP_CONFIG_REDACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-redacao.php', static fn(string $c): bool => str_starts_with($c, 'REDACAO_')],
+            // Link da coordenação do voluntariado (06/11/2026, api/coordenacao.php): só as COORDENACAO_*.
+            [getenv('MCP_CONFIG_COORDENACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-coordenacao.php', static fn(string $c): bool => str_starts_with($c, 'COORDENACAO_')],
         ];
         foreach ($extras as [$arquivoExtra, $vale]) {
             if (is_file($arquivoExtra)) {

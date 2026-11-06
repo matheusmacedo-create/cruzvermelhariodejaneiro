@@ -230,6 +230,32 @@ O portal continua para consulta e para cancelar um código. Lado da Redação: `
 - **Testes**: `testar_voluntarios_integracao.php` (401, lista com a selfie, paginação, aprovar sem e com CPF,
   idempotência, recusar, protocolo desconhecido e o aviso chegando a um receptor local com a chave).
 
+## Link da coordenação (06/11/2026)
+
+Pedido do Matheus: a coordenadora do voluntariado não usava nem o portal nem a Redação. Ela ganhou uma página só dela,
+**sem senha e sem login**, feita para quem tem pouca familiaridade com computador e celular: letra grande, botões grandes,
+uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. Código: `api/coordenacao.php`.
+
+- **Link**: `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/coordenacao.php?k=<COORDENACAO_CHAVE>`.
+  A chave (32+ caracteres) fica em `api/config-coordenacao.php`, fora do Git, com o nome opcional `COORDENACAO_NOME`
+  (fica registrado em quem decidiu, como "<nome> · link da coordenação"). Sem a chave, 404; chave errada, 404 e o freio
+  `coordenacao_negado` (20 por hora por IP). **Quem tem o link entra**: se ele vazar, troque a chave no arquivo e mande o
+  link novo; o antigo para na hora.
+- **Telas**: "Para decidir" (fichas `nova`, `em_analise` e `entrevista`, da mais antiga para a mais nova), "Aprovados" e
+  "Recusados", em cartões com a foto; a ficha inteira (foto grande, quem é, contato, como quer ajudar, motivação,
+  experiência, habilidades, anotações da equipe), com "Conversar no WhatsApp" e "Ligar".
+- **Aprovar**: o mesmo que a aprovação da Redação (`mcp_voluntario_aceitar` + `mcp_voluntario_aprovacao_emitir`): cria o
+  colaborador do ponto, a ficha fica `aceita` e sai o código de aprovação, com o botão "Mandar pelo WhatsApp" e a mensagem
+  pronta. Ficha sem CPF pede o CPF na confirmação. Recarregar não troca o código.
+- **Recusar**: `recusada`, com a nota "Recusada pelo link da coordenação."; a pessoa não é avisada sozinha. "Desfazer a
+  recusa" volta a ficha para `em_analise`. Ficha aceita não se desfaz por aqui (só pelo portal).
+- **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
+  pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
+- **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
+  `no-referrer` e `X-Frame-Options: DENY`.
+- **Testes**: `scripts/testar_coordenacao_integracao.php` (mesmo modelo do teste de integração do cadastro).
+- **Publicação**: `scripts/publicacao-coordenacao.txt`.
+
 ## Configuração (nomes, só no servidor)
 
 - `EMAIL_VOLUNTARIADO` (opcional, em `config.php`): destino do aviso de ficha nova e das mensagens do chat com o

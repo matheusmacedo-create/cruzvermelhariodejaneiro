@@ -1,0 +1,6 @@
+# Link da coordenação do voluntariado (06/11/2026, docs/voluntariado.md). A configuração primeiro, depois a página.
+# Antes, criar no servidor (fora do Git) api/config-coordenacao.php com COORDENACAO_CHAVE (32+ caracteres) e, se
+# quiser, COORDENACAO_NOME. Sem ele a página responde 404.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-coordenacao.txt)
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/coordenacao.php
