@@ -77,6 +77,30 @@ Today the Rio de Janeiro Branch works from that building in emergencies, communi
 
 [Read the history of the Red Cross in Brazil](/en/history/) · [Meet our team](/en/our-team/)
 
+## Timeline
+
+- **1828:** Henry Dunant is born in Geneva on 8 May.
+- **1859:** Battle of Solferino, 24 June. Dunant organises care for the wounded of both sides.
+- **1862:** *A Memory of Solferino* is published.
+- **1863:** The Committee of Five is formed in Geneva on 17 February; the international conference meets in October.
+- **1864:** Twelve states sign the first Geneva Convention on 22 August, adopting the red cross emblem.
+- **1876:** The committee takes the name International Committee of the Red Cross.
+- **1901:** Dunant receives the first Nobel Peace Prize, shared with Frédéric Passy.
+- **1907:** A provisional board of the Brazilian Red Cross is acclaimed in Rio de Janeiro on 31 December, with Oswaldo Cruz as president.
+- **1908:** The statutes of the Brazilian Red Cross are approved on 5 December, its official founding date.
+- **1910:** Dunant dies in Heiden, Switzerland, on 30 October. In Brazil, Decree No. 2,380 protects the name and the emblem.
+- **1919:** The League of Red Cross Societies, today the IFRC, is founded. Construction of the Red Cross Palace begins in Rio de Janeiro.
+- **1929:** The red crescent is recognised in the Geneva Convention.
+- **1965:** The seven Fundamental Principles are proclaimed.
+- **2005:** The red crystal is adopted as a third emblem.
+
+## Sources
+
+- International Committee of the Red Cross, [The history of the emblems](https://www.icrc.org/en/article/history-emblems).
+- International Committee of the Red Cross, [Red cross, red crescent and red crystal: what do they mean?](https://www.icrc.org/en/document/red-cross-red-crescent-and-red-crystal-what-do-they-mean-one-word-protection)
+- The Nobel Prize, [Henry Dunant: facts](https://www.nobelprize.org/prizes/peace/1901/dunant/facts/) and [The Nobel Peace Prize 1901](https://www.nobelprize.org/prizes/peace/1901/summary/).
+- Brazilian Red Cross — Rio de Janeiro Branch, [History of the Red Cross in Brazil](/en/history/), with its own references for the Brazilian dates.
+
 ## Frequently asked questions
 
 ### Who founded the Red Cross?
