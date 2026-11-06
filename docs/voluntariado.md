@@ -262,6 +262,11 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   `/assets/coordenacao/passo-N.mp3` (gravado uma vez com a voz da ElevenLabs configurada na Redação); sem o arquivo, a
   voz do próprio aparelho (`speechSynthesis`, pt-BR) lê o texto de `co_passos()`. Os áudios ficam só no servidor (como o resto de
   `site/assets/`); para regravar depois de mudar um texto: `scripts/gerar_audios_coordenacao.sh` e publicar os `.mp3`.
+- **Assistente de voz** (06/11/2026): na página "Como usar", e só nela (não mostra dado de ninguém), o widget da ElevenLabs
+  (`@elevenlabs/convai-widget-embed@0.21.3`) com o agente `agent_7801m6qjd5j4ervve1ypbw9zvdfb` ("Assistente do voluntariado
+  (coordenação)", na conta da ElevenLabs da Redação): voz Sarah (`eleven_flash_v2_5`), Claude Haiku 5.5, português, até
+  10 min por conversa, só aceita o domínio do site. As instruções têm o tutorial; ela só explica o uso da página, não vê
+  as fichas e não opina sobre aprovar. Mudou o tutorial? Atualize também as instruções do agente no painel da ElevenLabs.
 - **Pedir a foto** (06/11/2026): as 61 fichas de antes da noite de 27/10/2026 vieram sem foto, porque o formulário ainda
   não pedia (as "Fotos do crachá" da Redação são as selfies do site, já ligadas às fichas). Na ficha sem foto, "Pedir a
   foto pelo WhatsApp" e "Pedir a foto por e-mail" mandam, **só quando a coordenadora toca**, um link daquela ficha
