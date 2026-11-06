@@ -6,3 +6,12 @@ site/matricula-cursos-presenciais/api/lib/config.php
 site/matricula-cursos-presenciais/api/coordenacao.php
 site/matricula-cursos-presenciais/api/lib/voluntario_foto.php
 site/matricula-cursos-presenciais/api/voluntario-foto.php
+# Áudios do tutorial (fora do Git; gerados por scripts/gerar_audios_coordenacao.sh)
+site/assets/coordenacao/passo-1.mp3
+site/assets/coordenacao/passo-2.mp3
+site/assets/coordenacao/passo-3.mp3
+site/assets/coordenacao/passo-4.mp3
+site/assets/coordenacao/passo-5.mp3
+site/assets/coordenacao/passo-6.mp3
+site/assets/coordenacao/passo-7.mp3
+site/assets/coordenacao/passo-8.mp3
