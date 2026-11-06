@@ -267,6 +267,15 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   (coordenação)", na conta da ElevenLabs da Redação): voz Sarah (`eleven_flash_v2_5`), Claude Haiku 5.5, português, até
   10 min por conversa, só aceita o domínio do site. As instruções têm o tutorial; ela só explica o uso da página, não vê
   as fichas e não opina sobre aprovar. Mudou o tutorial? Atualize também as instruções do agente no painel da ElevenLabs.
+- **Modelos de mensagem, e-mail em tela própria e anotações** (06/11/2026): "Conversar no WhatsApp" e "Mandar e-mail" abrem
+  telas (`?passo=whatsapp`, `?passo=email`) com os mesmos modelos (`co_modelos()`: combinar uma conversa, marcar a entrevista
+  na sede, pedir uma informação, pedir a foto, a pessoa não respondeu, ficha em análise, código de aprovação, escrever do
+  meu jeito). O WhatsApp abre pelo `wa.me` com o texto escolhido. As anotações continuam gravadas, mas saíram da página
+  dela (confundiam); a equipe as vê no portal.
+- **Microfone da assistente**: o `.htaccess` de `matricula-cursos-presenciais/` proíbe o microfone (`microphone=()`), e a
+  chamada dava "Permission denied". O `api/.htaccess` libera `microphone=(self)` só para `coordenacao.php`.
+- **Fotos da lista**: a hospedagem atende ~20 pedidos ao PHP ao mesmo tempo e responde 503 ao resto (40 fotos de uma vez =
+  20 erros). A lista agora busca as fotos 4 por vez, perto da tela, e tenta de novo a que falhar (até 5 vezes).
 - **Pedir a foto** (06/11/2026): as 61 fichas de antes da noite de 27/10/2026 vieram sem foto, porque o formulário ainda
   não pedia (as "Fotos do crachá" da Redação são as selfies do site, já ligadas às fichas). Na ficha sem foto, "Pedir a
   foto pelo WhatsApp" e "Pedir a foto por e-mail" mandam, **só quando a coordenadora toca**, um link daquela ficha
