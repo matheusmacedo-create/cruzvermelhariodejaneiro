@@ -56,6 +56,17 @@
         { p: "O cuidador de idosos pode trabalhar no exterior?", r: "O curso oferece excelente formação, porém a possibilidade de atuação em outro país depende da legislação e das exigências específicas de cada local, podendo ser necessária complementação ou validação da formação." },
         { p: "Onde posso trabalhar?", r: "O cuidador pode atuar em residências, instituições de longa permanência, clínicas, centros de convivência e serviços de assistência ao idoso." },
         { p: "O curso ensina cuidados práticos?", r: "Sim. O aluno aprende técnicas de cuidados diários, mobilização, higiene, alimentação, prevenção de acidentes, primeiros socorros, ética e humanização no atendimento." }
+      ] },
+    { slug: "curativos-e-tratamento-de-feridas", nome: "Curativos e Tratamento de Feridas", carga: "8 horas", escolaridade: "Ensino Médio", valor: "R$ 150,00", descricao: "Capacitação teórico-prática em avaliação, limpeza e curativos para o cuidado seguro de feridas.", faq: [
+        { p: "Para quem é indicado o curso?", r: "Para profissionais e estudantes da área da saúde interessados em aprimorar suas habilidades no cuidado com feridas." },
+        { p: "O curso possui aulas práticas?", r: "Sim. O curso prioriza a prática, com demonstrações de técnicas, aplicação de coberturas e simulações." },
+        { p: "Quais são os pré-requisitos?", r: "Ter idade mínima de 18 anos e conhecimentos básicos na área da saúde." },
+        { p: "Vou aprender a escolher a cobertura adequada para cada ferida?", r: "Sim. Serão apresentadas as principais coberturas, suas indicações e critérios básicos de escolha." },
+        { p: "O curso aborda lesões por pressão?", r: "Sim. Serão abordadas a identificação, classificação, prevenção e os cuidados básicos com essas lesões." },
+        { p: "O curso oferece certificado?", r: "Sim. O certificado de conclusão será emitido pela escola, a O-CVB Filial Rio de Janeiro Ensino Ltda, com carga horária de 8 horas, mediante cumprimento dos critérios do curso." },
+        { p: "O certificado é válido em todo o Brasil?", r: "O certificado pode ser apresentado em todo o território nacional como comprovação de capacitação, observadas as exigências de cada instituição." },
+        { p: "Preciso levar materiais para a aula prática?", r: "As orientações sobre materiais necessários serão informadas pela organização do curso." },
+        { p: "O curso habilita para realizar curativos profissionalmente?", r: "O curso oferece aperfeiçoamento, mas não substitui a formação profissional nem amplia as atribuições legais de cada categoria." }
       ] }
   ];
   /* /chat:cursos */

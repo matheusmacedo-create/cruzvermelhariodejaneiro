@@ -240,6 +240,7 @@ thead .hr-cab { text-align: center; font-size: .92rem; }
 .ck-balao-vagas { margin: 12px 0 6px !important; font-size: .88rem; color: var(--text); }
 .ck-balao-vagas b { color: var(--red); }
 .ck-balao-barra { height: 8px; border-radius: 999px; background: #ffd9d9; overflow: hidden; }
+.ck-balao-barra[hidden] { display: none; }
 .ck-balao-barra span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--red); }
 .ck-balao-usar { display: block; width: 100%; min-height: 46px; margin: 12px 0 0; border: 0; border-radius: 10px; background: var(--red); color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 .ck-balao-usar[hidden] { display: none; }

@@ -20,6 +20,13 @@
         "bombeiro-civil",
         "cuidador-de-idosos"
       ]
+    },
+    {
+      "id": "outros",
+      "titulo": "Outros cursos",
+      "cursos": [
+        "curativos-e-tratamento-de-feridas"
+      ]
     }
   ],
   "cursos": [
@@ -108,6 +115,68 @@
       ],
       "imagem": "cuidador-de-idosos",
       "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1784787106167-5e8e5cf0d864.webp"
+    },
+    {
+      "slug": "curativos-e-tratamento-de-feridas",
+      "uuid": "1fca11c1-4dd1-495c-a73f-c51b5b21c231",
+      "nome": "Curativos e Tratamento de Feridas",
+      "url_escola": "https://escola.cursoscruzvermelha.org/cursos/curativos-e-tratamento-de-feridas",
+      "descricao": "Capacitação teórico-prática em avaliação, limpeza e curativos para o cuidado seguro de feridas.",
+      "sobre": [
+        "O Curso de Curativos e Tratamento de Feridas da Cruz Vermelha forma profissionais capacitados para avaliar, limpar e tratar feridas com segurança, eficácia e responsabilidade, seguindo as normas técnicas e os protocolos de biossegurança.",
+        "Durante a formação, o aluno desenvolve conhecimentos teóricos e práticos sobre tipos de feridas e processo de cicatrização, avaliação e classificação das lesões, limpeza e antissepsia, biossegurança, tipos de coberturas e suas indicações, além de técnicas de curativos simples e especiais aplicadas em práticas simuladas.",
+        "Após a conclusão, o profissional estará preparado para atuar em hospitais, clínicas, unidades básicas de saúde, atendimento domiciliar (home care), instituições de longa permanência para idosos e demais serviços da área da saúde, realizando curativos com competência, segurança e qualidade."
+      ],
+      "observacoes": [],
+      "carga_horaria": "8 horas",
+      "escolaridade": "Ensino Médio",
+      "valor_curso_centavos": 15000,
+      "valor_matricula_escola_centavos": 0,
+      "total_escola_centavos": 15000,
+      "faq": [
+        {
+          "pergunta": "Para quem é indicado o curso?",
+          "resposta": "Para profissionais e estudantes da área da saúde interessados em aprimorar suas habilidades no cuidado com feridas."
+        },
+        {
+          "pergunta": "O curso possui aulas práticas?",
+          "resposta": "Sim. O curso prioriza a prática, com demonstrações de técnicas, aplicação de coberturas e simulações."
+        },
+        {
+          "pergunta": "Quais são os pré-requisitos?",
+          "resposta": "Ter idade mínima de 18 anos e conhecimentos básicos na área da saúde."
+        },
+        {
+          "pergunta": "Vou aprender a escolher a cobertura adequada para cada ferida?",
+          "resposta": "Sim. Serão apresentadas as principais coberturas, suas indicações e critérios básicos de escolha."
+        },
+        {
+          "pergunta": "O curso aborda lesões por pressão?",
+          "resposta": "Sim. Serão abordadas a identificação, classificação, prevenção e os cuidados básicos com essas lesões."
+        },
+        {
+          "pergunta": "O curso oferece certificado?",
+          "resposta": "Sim. O certificado de conclusão será emitido pela Cruz Vermelha Brasileira – Filial Rio de Janeiro, com carga horária de 8 horas, mediante cumprimento dos critérios do curso."
+        },
+        {
+          "pergunta": "O certificado é válido em todo o Brasil?",
+          "resposta": "O certificado pode ser apresentado em todo o território nacional como comprovação de capacitação, observadas as exigências de cada instituição."
+        },
+        {
+          "pergunta": "Preciso levar materiais para a aula prática?",
+          "resposta": "As orientações sobre materiais necessários serão informadas pela organização do curso."
+        },
+        {
+          "pergunta": "O curso habilita para realizar curativos profissionalmente?",
+          "resposta": "O curso oferece aperfeiçoamento, mas não substitui a formação profissional nem amplia as atribuições legais de cada categoria."
+        },
+        {
+          "pergunta": "Como posso esclarecer outras dúvidas?",
+          "resposta": "Entre em contato com a Secretaria pelo WhatsApp: (21) 99992-2864."
+        }
+      ],
+      "imagem": "curativos-e-tratamento-de-feridas",
+      "imagem_url": "https://wrckokgdtiwvxapqzkki.supabase.co/storage/v1/object/public/cursos/curso-1793930882182-8f9fc8f4e5f0.webp"
     },
     {
       "slug": "primeiros-socorros-basico",

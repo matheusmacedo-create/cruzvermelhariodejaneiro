@@ -12,9 +12,10 @@ para ele), a carga horária e a escolaridade vêm nos "chips" do topo (sem rótu
 matrícula manda à escola depois do pagamento) só aparece na imagem de compartilhamento (og:image .../compartilhar/curso/
 <id>.jpg). Sem esse id, ou com um id diferente do já gravado para o mesmo curso, nada é gravado.
 
-Curso cuja taxa de inscrição na escola é diferente da do checkout (inscricao_centavos) fica de fora e a sincronização avisa:
-o checkout cobra a mesma taxa em todos os cursos e venderia o curso por outro preço (11/2026: Curativos e Tratamento de
-Feridas, com taxa de R$ 0,00 na escola).
+Curso cuja taxa de inscrição na escola é diferente da do checkout (inscricao_centavos) entra com o preço padrão do site
+(a matrícula da escola + a taxa do checkout, a mesma de todos os cursos), e a sincronização avisa: o valor da escola, se
+for menor, vira um cupom de vitrine em api/lib/cupons.php (decisão do Matheus de 06/11/2026, no Curativos e Tratamento de
+Feridas, que a escola vende sem taxa em novembro).
 
 Regra do projeto: só existem aqui os cursos que a escola publica. Curso que sair do catálogo
 da escola sai daqui na próxima sincronização. E nem todo curso da escola entra: os de FORA_DO_DOMINIO
@@ -149,6 +150,8 @@ def extrair_curso(caminho: str, nome_catalogo: str) -> dict:
     if re.fullmatch(r"\(.*\)", descricao):
         complementos.append(descricao.strip("()").strip())
         descricao = ""
+    # Aviso de promoção da escola no fim da descrição ("(MATRÍCULA GRÁTIS EM NOVEMBRO)"): aqui a promoção é um cupom.
+    descricao = re.sub(r"\s*\([^)]*GR[ÁA]TIS[^)]*\)\s*$", "", descricao, flags=re.I)
     m_hom = re.search(r"\s*\((?:VALOR DE )?HOMOLOGA[^)]*\)\s*$", descricao, re.I)
     if m_hom:
         descricao = descricao[: m_hom.start()].strip()
@@ -239,11 +242,10 @@ def main() -> int:
     if trocados:
         print(f"ERRO: o id na escola mudou para {', '.join(trocados)}. Nada foi gravado.", file=sys.stderr)
         return 1
-    fora_taxa = [c for c in cursos if c["valor_matricula_escola_centavos"] is not None and c["valor_matricula_escola_centavos"] != inscricao]
-    for c in fora_taxa:
-        print(f"  fora (taxa de inscrição da escola R$ {c['valor_matricula_escola_centavos'] / 100:.2f}, o checkout cobra R$ {inscricao / 100:.2f}): "
-              f"{c['nome']} [{c['slug']}]")
-    cursos = [c for c in cursos if c not in fora_taxa]
+    for c in cursos:
+        if c["valor_matricula_escola_centavos"] is not None and c["valor_matricula_escola_centavos"] != inscricao:
+            print(f"  AVISO: taxa de inscrição da escola R$ {c['valor_matricula_escola_centavos'] / 100:.2f} em {c['nome']} [{c['slug']}]; "
+                  f"o site cobra a padrão, R$ {inscricao / 100:.2f}. O preço da escola, se for promoção, vai num cupom (api/lib/cupons.php).")
     for c in cursos:
         if c["slug"] in FORA_DO_DOMINIO:
             print(f"  fora do domínio da filial: {c['nome']} [{c['slug']}] ({FORA_DO_DOMINIO[c['slug']]})")
