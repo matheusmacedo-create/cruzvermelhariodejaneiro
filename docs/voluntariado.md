@@ -276,6 +276,10 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   chamada dava "Permission denied". O `api/.htaccess` libera `microphone=(self)` só para `coordenacao.php`.
 - **Fotos da lista**: a hospedagem atende ~20 pedidos ao PHP ao mesmo tempo e responde 503 ao resto (40 fotos de uma vez =
   20 erros). A lista agora busca as fotos 4 por vez, perto da tela, e tenta de novo a que falhar (até 5 vezes).
+- **Logo** (06/11/2026): topo branco com o logo horizontal do site (`/assets/otim/logo-cvb-rj-480.png`) e faixa vermelha, na
+  página da coordenação e na de envio de foto. O logo quadrado oficial vira `site/assets/coordenacao/logo-quadrado-{180,192,512}.png`
+  (atalho na tela inicial do celular, ícone da aba e da assistente) e `previa.jpg` (1200×630, prévia do link no WhatsApp,
+  pelas tags `og:`). As imagens ficam só no servidor, como o resto de `site/assets/`.
 - **Pedir a foto** (06/11/2026): as 61 fichas de antes da noite de 27/10/2026 vieram sem foto, porque o formulário ainda
   não pedia (as "Fotos do crachá" da Redação são as selfies do site, já ligadas às fichas). Na ficha sem foto, "Pedir a
   foto pelo WhatsApp" e "Pedir a foto por e-mail" mandam, **só quando a coordenadora toca**, um link daquela ficha

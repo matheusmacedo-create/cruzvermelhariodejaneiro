@@ -17,3 +17,8 @@ site/assets/coordenacao/passo-6.mp3
 site/assets/coordenacao/passo-7.mp3
 site/assets/coordenacao/passo-8.mp3
 site/assets/coordenacao/chamada.mp3
+# Logo (06/11/2026)
+site/assets/coordenacao/logo-quadrado-180.png
+site/assets/coordenacao/logo-quadrado-192.png
+site/assets/coordenacao/logo-quadrado-512.png
+site/assets/coordenacao/previa.jpg
