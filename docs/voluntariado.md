@@ -247,7 +247,11 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
 - **Aprovar**: o mesmo que a aprovação da Redação (`mcp_voluntario_aceitar` + `mcp_voluntario_aprovacao_emitir`): cria o
   colaborador do ponto, a ficha fica `aceita` e sai o código de aprovação, com o botão "Mandar pelo WhatsApp" e a mensagem
   pronta. Ficha sem CPF pede o CPF na confirmação. Recarregar não troca o código.
-- **Recusar**: `recusada`, com a nota "Recusada pelo link da coordenação."; a pessoa não é avisada sozinha. "Desfazer a
+- **Recusar**: `recusada`. A confirmação pede o motivo (Lotação máxima, Sem vaga na área escolhida, Não conseguimos
+  falar com a pessoa, Outro motivo), que vai para a nota ("Recusada pelo link da coordenação. Motivo: …"). Cada motivo traz
+  uma mensagem pronta e editável (trocar o motivo troca o texto, se ele não foi mudado à mão); "Avisar a pessoa por e-mail"
+  vem marcado e manda a mensagem (anotada na ficha); a tela final oferece a mesma mensagem pelo WhatsApp. Desmarcado, a
+  pessoa não é avisada. "Desfazer a
   recusa" volta a ficha para `em_analise`. Ficha aceita não se desfaz por aqui (só pelo portal).
 - **Mandar e-mail**: na ficha, o bloco "Mandar e-mail" traz o texto pronto (convite para conversar; na ficha aprovada, o
   código com o link de conferência), que a coordenadora pode mudar. Sai pela Resend, do remetente geral, com

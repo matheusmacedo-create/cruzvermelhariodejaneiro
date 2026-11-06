@@ -20,6 +20,9 @@
  * Ações (POST com a chave): aprovar (aceita a ficha, cria o colaborador do ponto e o código de aprovação, como na Redação),
  * recusar, desfazer a recusa (volta para "em análise") e mandar e-mail à pessoa (pela Resend, com responder-para a caixa
  * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora).
+ * Recusar (06/11/2026): a coordenadora escolhe o motivo (lotação máxima, sem vaga na área, sem contato, outro), que vai
+ * para a anotação da ficha; cada motivo traz uma mensagem pronta e editável, mandada por e-mail se "Avisar a pessoa" estiver
+ * marcado (vem marcado), e depois da recusa há o botão para mandar a mesma mensagem pelo WhatsApp.
  * Ficha sem foto: botões "Pedir a foto pelo WhatsApp" e "Pedir a foto por e-mail", com o link só daquela ficha para a
  * pessoa mandar a selfie (api/voluntario-foto.php, lib/voluntario_foto.php). Nada é enviado sem a coordenadora tocar. Quem decidiu fica em status_por como "<nome> · link da coordenação".
  */
@@ -35,6 +38,13 @@ const CO_RECUSADOS = ['recusada', 'arquivada'];
 const CO_EMAIL_LIMITE = [40, 3600];
 const CO_EMAIL_MIN = 10;
 const CO_EMAIL_MAX = 5000;
+/** Motivos da recusa: rótulo do botão e explicação curta. A mensagem de cada um está em co_recusa_mensagem(). */
+const CO_MOTIVOS = [
+    'lotacao' => ['Lotação máxima', 'As vagas de voluntário estão todas preenchidas agora.'],
+    'area' => ['Sem vaga na área escolhida', 'Não há lugar nas frentes que a pessoa quer.'],
+    'sem_contato' => ['Não conseguimos falar com a pessoa', 'Tentamos contato e ninguém respondeu.'],
+    'outro' => ['Outro motivo', 'Escreva a mensagem do seu jeito.'],
+];
 
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store, private');
@@ -193,6 +203,14 @@ a.cartao:hover,a.cartao:focus-visible{border-color:var(--vermelho);outline:none;
 .campo textarea{width:100%;min-height:220px;font:inherit;font-size:1.05rem;line-height:1.5;padding:12px 16px;border:3px solid var(--linha);border-radius:12px;resize:vertical}
 .campo textarea:focus{border-color:#1a5fb4;outline:none}
 .btn.azul{background:#1a5fb4;color:#fff}.btn.azul:hover{background:#144a8c}
+.motivos{display:grid;gap:10px;margin:18px 0 0;text-align:left;border:0;padding:0}
+.motivos legend{font-weight:800;font-size:1.1rem;margin-bottom:8px;padding:0}
+.motivo{display:flex;gap:14px;align-items:flex-start;background:#fff;border:3px solid var(--linha);border-radius:14px;padding:14px 16px;cursor:pointer}
+.motivo input{width:28px;height:28px;margin:2px 0 0;flex:none;accent-color:var(--vermelho)}
+.motivo b{display:block;font-size:1.1rem}.motivo small{display:block;color:var(--suave);font-size:.9rem}
+.motivo:has(input:checked){border-color:var(--vermelho);background:#fff5f6}
+.marcar{display:flex;gap:12px;align-items:center;text-align:left;margin:16px 0 0;font-weight:700;font-size:1.05rem}
+.marcar input{width:28px;height:28px;flex:none;accent-color:var(--vermelho)}
 .codigo{font-size:2.2rem;font-weight:900;letter-spacing:.08em;margin:6px 0}
 .rodape{max-width:1180px;margin:0 auto;padding:0 16px 30px;color:var(--suave);font-size:.85rem}
 CSS;
@@ -536,7 +554,49 @@ function co_ficha(int $id, string $aviso = '', string $mensagemEmail = ''): neve
         . '</div></div>');
 }
 
-function co_confirmar(int $id, string $passo, string $erro = '', string $cpfDigitado = ''): never
+/** A mensagem pronta da recusa para cada motivo (a coordenadora pode mudar antes de mandar). */
+function co_recusa_mensagem(array $f, string $motivo): string
+{
+    $ola = 'Olá, ' . mcp_primeiro_nome((string) $f['nome']) . "!\n\n"
+        . "Agradecemos muito o seu interesse em ser voluntário(a) da Cruz Vermelha Brasileira Rio de Janeiro.\n\n";
+    $fim = "\n\nObrigado pela vontade de ajudar!";
+    return $ola . match ($motivo) {
+        'lotacao' => 'Neste momento, as vagas de voluntário chegaram à lotação máxima, e não conseguimos incluir novas pessoas. '
+            . 'Quando abrirmos novas vagas, você pode fazer um novo cadastro pelo nosso site.',
+        'area' => 'Neste momento, não temos vagas nas áreas que você escolheu na ficha. '
+            . 'Quando abrirmos novas vagas, você pode fazer um novo cadastro pelo nosso site, escolhendo as áreas que quiser.',
+        'sem_contato' => 'Tentamos falar com você pelo telefone informado na ficha, mas não conseguimos. Por isso, encerramos a sua ficha por enquanto. '
+            . 'Se ainda tiver interesse, faça um novo cadastro pelo nosso site.',
+        default => 'Neste momento, não vamos conseguir seguir com a sua ficha de voluntário.',
+    } . $fim;
+}
+
+/** O formulário da recusa: motivo em botões grandes, a mensagem pronta (troca com o motivo) e "Avisar a pessoa por e-mail". */
+function co_recusa_campos(array $f, string $motivo = 'lotacao', string $mensagem = '', bool $avisar = true): string
+{
+    $motivo = isset(CO_MOTIVOS[$motivo]) ? $motivo : 'lotacao';
+    $modelos = [];
+    $opcoes = '';
+    foreach (CO_MOTIVOS as $chaveMotivo => [$rotulo, $explica]) {
+        $modelos[$chaveMotivo] = co_recusa_mensagem($f, $chaveMotivo);
+        $opcoes .= '<label class="motivo"><input type="radio" name="motivo" value="' . co_e($chaveMotivo) . '"' . ($chaveMotivo === $motivo ? ' checked' : '') . ' required>'
+            . '<span><b>' . co_e($rotulo) . '</b><small>' . co_e($explica) . '</small></span></label>';
+    }
+    $temEmail = filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL) !== false;
+    $dados = json_encode($modelos, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return '<fieldset class="motivos"><legend>Por que recusar?</legend>' . $opcoes . '</fieldset>'
+        . '<label class="campo"><span>Mensagem para a pessoa (pode mudar o texto)</span>'
+        . '<textarea name="mensagem" id="co-mensagem" maxlength="' . CO_EMAIL_MAX . '">' . co_e($mensagem !== '' ? $mensagem : $modelos[$motivo]) . '</textarea></label>'
+        . ($temEmail
+            ? '<label class="marcar"><input type="checkbox" name="avisar" value="1"' . ($avisar ? ' checked' : '') . '>Avisar a pessoa por e-mail (' . co_e((string) $f['email']) . ')</label>'
+            : '<p class="dica" style="text-align:left">Esta ficha não tem e-mail. Depois de recusar, você pode mandar a mensagem pelo WhatsApp.</p>')
+        // Trocar o motivo troca a mensagem, a não ser que ela já tenha sido mudada à mão.
+        . '<script>(function(){var m=' . $dados . ',t=document.getElementById("co-mensagem"),r=document.querySelectorAll("input[name=motivo]");'
+        . 'for(var i=0;i<r.length;i++)r[i].addEventListener("change",function(e){var limpo=false;for(var k in m)if(t.value.trim()===m[k].trim())limpo=true;'
+        . 'if(limpo||t.value.trim()==="")t.value=m[e.target.value];});})();</script>';
+}
+
+function co_confirmar(int $id, string $passo, string $erro = '', string $cpfDigitado = '', array $recusa = []): never
 {
     $f = mcp_voluntario_por_id($id);
     if (!$f) {
@@ -557,16 +617,37 @@ function co_confirmar(int $id, string $passo, string $erro = '', string $cpfDigi
     $pergunta = $aprovar ? 'Aprovar ' . $nome . '?' : 'Recusar ' . $nome . '?';
     $explica = $aprovar
         ? 'Ao aprovar, a pessoa ganha um código de aprovação, e você poderá mandar esse código pelo WhatsApp.'
-        : 'A pessoa não recebe nenhum aviso automático. Se precisar, você pode desfazer depois.';
+        : 'Escolha o motivo. A mensagem abaixo já vem escrita para ele. Se precisar, você pode desfazer a recusa depois.';
+    $camposRecusa = $aprovar ? '' : co_recusa_campos($f, (string) ($recusa['motivo'] ?? 'lotacao'), (string) ($recusa['mensagem'] ?? ''), (bool) ($recusa['avisar'] ?? true));
     co_pagina($pergunta,
         '<div class="confirmar">' . ($erro !== '' ? co_aviso(co_e($erro), 'erro') : '') . $foto
         . '<h1 style="margin-top:14px">' . co_e($pergunta) . '</h1><p>' . co_e($explica) . '</p>'
         . '<form method="post" action="coordenacao.php"><input type="hidden" name="k" value="' . co_e($GLOBALS['chave']) . '">'
         . '<input type="hidden" name="acao" value="' . ($aprovar ? 'aprovar' : 'recusar') . '"><input type="hidden" name="id" value="' . $id . '">'
-        . $campoCpf
+        . $campoCpf . $camposRecusa
         . '<div class="botoes" style="justify-content:center;margin-top:22px">'
         . '<button class="btn grande ' . ($aprovar ? 'verde' : 'cheio') . '" type="submit">' . ($aprovar ? 'Sim, aprovar' : 'Sim, recusar') . '</button>'
         . '<a class="btn grande claro" href="' . co_e(co_url(['id' => $id])) . '">Não, voltar</a></div></form></div>');
+}
+
+/** Depois de recusar: o resultado do e-mail, o WhatsApp com a mesma mensagem e a próxima ficha. */
+function co_recusada(array $f, string $mensagem, ?string $email): never
+{
+    $id = (int) $f['id'];
+    $whats = $mensagem !== '' ? co_whatsapp((string) $f['telefone'], $mensagem) : '';
+    $proxima = co_proxima($id);
+    $avisoEmail = match (true) {
+        $email === null => '',
+        $email === 'enviado' => co_aviso('A mensagem foi enviada por e-mail para ' . co_e((string) $f['email']) . '.', 'ok'),
+        default => co_aviso(co_e($email) . ' A ficha foi recusada mesmo assim; se quiser, mande pelo WhatsApp.', 'erro'),
+    };
+    co_pagina('Ficha recusada',
+        '<div class="confirmar">' . co_aviso('A ficha de ' . co_e((string) $f['nome']) . ' foi recusada.', 'ok') . $avisoEmail
+        . ($whats !== '' ? '<p>Se quiser, mande a mesma mensagem também pelo WhatsApp. O WhatsApp abre com o texto pronto, é só enviar.</p>'
+            . '<div class="botoes" style="justify-content:center"><a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar pelo WhatsApp</a></div>' : '')
+        . '<div class="botoes" style="justify-content:center">'
+        . ($proxima !== null ? '<a class="btn grande cheio" href="' . co_e(co_url(['id' => $proxima])) . '">Ver a próxima ficha</a>' : '')
+        . '<a class="btn grande claro" href="' . co_e(co_url()) . '">Voltar para a lista</a></div></div>');
 }
 
 /** Depois de aprovar: o código grande, o WhatsApp com a mensagem pronta e a próxima ficha. */
@@ -639,16 +720,23 @@ if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
             if (!in_array((string) $f['status'], CO_PARA_DECIDIR, true)) {
                 co_ficha($id, co_aviso('Essa ficha já foi decidida.', 'info'));
             }
-            $erro = mcp_voluntario_mudar_status($id, 'recusada', $quem, 'Recusada pelo link da coordenação.');
-            mcp_registrar(null, 'coordenacao_voluntario', "recusar · #$id · " . ($erro === null ? 'ok' : 'erro'));
+            $motivo = (string) ($_POST['motivo'] ?? '');
+            $motivo = isset(CO_MOTIVOS[$motivo]) ? $motivo : 'outro';
+            $mensagem = mcp_texto_longo($_POST['mensagem'] ?? '', CO_EMAIL_MAX);
+            $avisar = !empty($_POST['avisar']) && filter_var((string) $f['email'], FILTER_VALIDATE_EMAIL);
+            if ($avisar && mb_strlen($mensagem) < CO_EMAIL_MIN) {
+                co_confirmar($id, 'recusar', 'Escreva a mensagem para a pessoa, ou desmarque "Avisar a pessoa por e-mail".', '', ['motivo' => $motivo, 'mensagem' => $mensagem, 'avisar' => true]);
+            }
+            $erro = mcp_voluntario_mudar_status($id, 'recusada', $quem, 'Recusada pelo link da coordenação. Motivo: ' . CO_MOTIVOS[$motivo][0] . '.');
+            mcp_registrar(null, 'coordenacao_voluntario', "recusar · #$id · $motivo · " . ($erro === null ? 'ok' : 'erro'));
             if ($erro !== null) {
                 co_ficha($id, co_aviso(co_e($erro), 'erro'));
             }
-            $proxima = co_proxima($id);
-            if ($proxima !== null) {
-                co_ficha($proxima, co_aviso('A ficha de ' . co_e((string) $f['nome']) . ' foi recusada. Esta é a próxima ficha para decidir.', 'ok'));
+            $email = null;
+            if ($avisar) {
+                $email = co_email_enviar($f, $mensagem) ?? 'enviado';
             }
-            co_lista('decidir', co_aviso('A ficha de ' . co_e((string) $f['nome']) . ' foi recusada.', 'ok'));
+            co_recusada(mcp_voluntario_por_id($id) ?? $f, $mensagem, $email);
         case 'email':
             $mensagem = mcp_texto_longo($_POST['mensagem'] ?? '', CO_EMAIL_MAX);
             $erro = co_email_enviar($f, $mensagem);
