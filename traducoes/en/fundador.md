@@ -15,11 +15,17 @@ The Red Cross was founded by **Henry Dunant** (1828–1910), a Swiss businessman
 - **First Geneva Convention:** 22 August 1864
 - **Today:** 191 National Red Cross and Red Crescent Societies, one of them the Brazilian Red Cross
 
+![Black-and-white portrait photograph of Henry Dunant, with dark hair, full side whiskers and a moustache, wearing a dark jacket and a large bow tie](fundador-henry-dunant-960.webp "960x1212")
+*Henry Dunant as a young man. — Photo: public domain, via Wikimedia Commons*
+
 ## Solferino, 1859
 
 On 24 June 1859 the armies of France and Sardinia fought the Austrian army near the village of Solferino, in northern Italy. In a single day, tens of thousands of soldiers were killed or wounded, far more than the army medical services could treat.
 
 Dunant was travelling in the region on business and arrived the evening after the battle. In the nearby town of Castiglione delle Stiviere, he organised local people, many of them women, to bring water, food and care to the wounded, whichever army they had fought for. The volunteers' words *tutti fratelli*, "all are brothers", became a lasting image of that impartiality.
+
+![Painting of the Battle of Solferino: troops storming a hillside among ruined walls, a church and a tower, under smoke and a stormy sky](fundador-batalha-de-solferino-960.webp "960x620")
+*The Battle of Solferino, 24 June 1859, painted by Carlo Bossoli. — Public domain, via Wikimedia Commons*
 
 ## A Memory of Solferino, 1862
 
@@ -42,6 +48,9 @@ On 22 August 1864, twelve states signed the first Geneva Convention, "for the Am
 
 The same treaty adopted the emblem that would protect them: a red cross on a white background.
 
+![The original Geneva Convention open, with the red wax seals of the signatures](/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/original-da-convencao-de-genebra-aberto-com-os-selos-de-cera.jpg "1600x1306")
+*An original Geneva Convention on display, with the wax seals of the signatories. — Photo: Kevin Quinn / Wikimedia Commons (CC BY 2.0)*
+
 ## Why a red cross?
 
 The emblem reverses the colours of the Swiss flag, in tribute to Switzerland, Dunant's country. It is a sign of protection, not a religious symbol. The red crescent, first used in the 1870s, was recognised alongside it in the Geneva Convention of 1929, and the red crystal was added in 2005.
@@ -63,6 +72,11 @@ Dunant's idea grew into the **International Red Cross and Red Crescent Movement*
 - **191 National Societies**, each working in its own country with its own volunteers.
 
 All of them follow the same seven Fundamental Principles, proclaimed in 1965: humanity, impartiality, neutrality, independence, voluntary service, unity and universality.
+
+![Façade of the headquarters of the International Committee of the Red Cross in Geneva, Switzerland](/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg "1600x1060")
+*ICRC headquarters in Geneva today. — Photo: Gfuerst / Wikimedia Commons (CC BY-SA 3.0)*
+
+To go deeper, read [what the Geneva Conventions are](/en/news/geneva-conventions-what-they-are-and-what-they-protect/) and [what the ICRC does](/en/news/icrc-what-is-the-international-committee-of-the-red-cross/).
 
 ## How the Red Cross came to Brazil
 

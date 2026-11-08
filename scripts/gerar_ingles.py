@@ -209,7 +209,9 @@ def figura(alt: str, src: str, dim: str, legenda: str, credito: str, pasta: str,
         legenda_html = f"<figcaption>{em_linha(legenda)}"
         legenda_html += f'<span class="credito">{em_linha(credito)}</span>' if credito else ""
         legenda_html += "</figcaption>"
-    return (f'<figure{classe}><img src="{esc(pasta + src)}" alt="{esc(alt)}" width="{largura}" '
+    # Caminho absoluto ("/noticias/…/foto.jpg") usa a imagem que já está no servidor, sem a pasta da página.
+    caminho = src if src.startswith(("/", "https://")) else pasta + src
+    return (f'<figure{classe}><img src="{esc(caminho)}" alt="{esc(alt)}" width="{largura}" '
             f'height="{altura}" {carga}>{legenda_html}</figure>')
 
 
