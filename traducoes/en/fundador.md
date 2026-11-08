@@ -15,8 +15,8 @@ The Red Cross was founded by **Henry Dunant** (1828–1910), a Swiss businessman
 - **First Geneva Convention:** 22 August 1864
 - **Today:** 191 National Red Cross and Red Crescent Societies, one of them the Brazilian Red Cross
 
-![Portrait photograph of a young Henry Dunant, with dark hair and side whiskers, in a dark jacket and bow tie](fundador-henry-dunant-960.webp "DIMDUNANT")
-*Henry Dunant as a young man, in the years before Solferino. — Photo: public domain, via Wikimedia Commons*
+![Black-and-white portrait photograph of Henry Dunant, with dark hair, full side whiskers and a moustache, wearing a dark jacket and a large bow tie](fundador-henry-dunant-960.webp "960x1212")
+*Henry Dunant as a young man. — Photo: public domain, via Wikimedia Commons*
 
 ## Solferino, 1859
 
@@ -24,7 +24,7 @@ On 24 June 1859 the armies of France and Sardinia fought the Austrian army near 
 
 Dunant was travelling in the region on business and arrived the evening after the battle. In the nearby town of Castiglione delle Stiviere, he organised local people, many of them women, to bring water, food and care to the wounded, whichever army they had fought for. The volunteers' words *tutti fratelli*, "all are brothers", became a lasting image of that impartiality.
 
-![Panoramic painting of the Battle of Solferino, with troops and smoke across a wide plain under a cloudy sky](fundador-batalha-de-solferino-960.webp "DIMSOLF")
+![Painting of the Battle of Solferino: troops storming a hillside among ruined walls, a church and a tower, under smoke and a stormy sky](fundador-batalha-de-solferino-960.webp "960x620")
 *The Battle of Solferino, 24 June 1859, painted by Carlo Bossoli. — Public domain, via Wikimedia Commons*
 
 ## A Memory of Solferino, 1862
