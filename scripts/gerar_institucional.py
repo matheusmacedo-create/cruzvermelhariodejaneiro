@@ -2,7 +2,8 @@
 """Gera as páginas institucionais da filial a partir de site/institucional.json (11/10/2026).
 
 Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /movimento-internacional/,
-/direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/ e /cbfi/ (o link do CBFI, 27/10/2026). O conteúdo (textos, fontes oficiais,
+/direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/, /cbfi/ (o link do CBFI, 27/10/2026) e
+/kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026). O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -48,7 +49,7 @@ CONTEUDO = RAIZ / "site" / "institucional.json"
 ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema",
-         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi"]
+         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página) e
 # de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "direito-internacional-humanitario", "base-legal"}
@@ -56,7 +57,8 @@ VOLUNTARIADO = {"cbfi"}
 NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princípios Fundamentais",
                 "movimento-internacional": "Movimento Internacional", "emblema": "O emblema",
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
-                "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI"}
+                "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
+                "kit-de-emergencia": "Kit de emergência"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
