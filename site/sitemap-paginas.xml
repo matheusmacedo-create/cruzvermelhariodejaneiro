@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-06T17:59:43+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-08T20:17:01+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -1182,6 +1182,25 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/kit-de-emergencia/</loc>
+    <lastmod>2026-11-08T20:11:56+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Fotografia em preto e branco do acervo: mulheres de uniforme branco atendem uma pessoa deitada no chão, ao lado de um veículo, enquanto uma mulher de uniforme escuro observa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/gestao/</loc>
     <lastmod>2026-11-02T20:18:56+00:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -1270,7 +1289,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/</loc>
-    <lastmod>2026-11-06T13:25:59+00:00</lastmod>
+    <lastmod>2026-11-08T13:20:54+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -1774,12 +1793,20 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/"/>
-    <lastmod>2026-11-02T19:13:54+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:27+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
     <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/original-da-convencao-de-genebra-aberto-com-os-selos-de-cera.jpg</image:loc>
+      <image:title>Geneva Conventions: what they are and what they protect</image:title>
+    </image:image>
+    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha-1.jpg</image:loc>
       <image:title>Henry Dunant: who was the founder of the Red Cross</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg</image:loc>
+      <image:title>ICRC: what is the International Committee of the Red Cross</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/cruz-vermelha-brasileira-rio-de-janeiro.jpg</image:loc>
@@ -2345,9 +2372,25 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/en/who-founded-the-red-cross/</loc>
-    <lastmod>2026-11-06T17:58:41+00:00</lastmod>
+    <lastmod>2026-11-08T20:11:54+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/fundador-henry-dunant-960.webp</image:loc>
+      <image:title>Black-and-white portrait photograph of Henry Dunant, with dark hair, full side whiskers and a moustache, wearing a dark jacket and a large bow tie</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/fundador-batalha-de-solferino-960.webp</image:loc>
+      <image:title>Painting of the Battle of Solferino: troops storming a hillside among ruined walls, a church and a tower, under smoke and a stormy sky</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/original-da-convencao-de-genebra-aberto-com-os-selos-de-cera.jpg</image:loc>
+      <image:title>The original Geneva Convention open, with the red wax seals of the signatures</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg</image:loc>
+      <image:title>Façade of the headquarters of the International Committee of the Red Cross in Geneva, Switzerland</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-obras-1923-960.webp</image:loc>
       <image:title>The Red Cross Palace in Rio de Janeiro in 1923, with scaffolding still on the façade and the upper floors and dome structure in place</image:title>
@@ -2363,11 +2406,34 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/news/geneva-conventions-what-they-are-and-what-they-protect/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/geneva-conventions-what-they-are-and-what-they-protect/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/"/>
+    <lastmod>2026-11-07T01:36:22+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/original-da-convencao-de-genebra-aberto-com-os-selos-de-cera.jpg</image:loc>
+      <image:title>The original Geneva Convention open, with the red wax seals of the signatures</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/convencoes-de-genebra-o-que-sao-e-o-que-protegem/pacote-de-ajuda-humanitaria-da-cruz-vermelha-destinado-a-pri.jpg</image:loc>
+      <image:title>A Red Cross relief parcel addressed to prisoners of war</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/</loc>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/"/>
-    <lastmod>2026-11-02T19:13:52+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:24+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2382,11 +2448,34 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/news/icrc-what-is-the-international-committee-of-the-red-cross/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/icrc-what-is-the-international-committee-of-the-red-cross/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/"/>
+    <lastmod>2026-11-07T01:36:26+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg</image:loc>
+      <image:title>Façade of the headquarters of the International Committee of the Red Cross in Geneva, Switzerland</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/noticias/cicv-o-que-e-o-comite-internacional-da-cruz-vermelha/placa-emoldurada-do-seculo-xix-com-os-nomes-dos-membros-do-c.jpg</image:loc>
+      <image:title>A framed 19th-century plaque with the names of the members of the International Committee of the Red Cross, in the reading room of the ICRC archives</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/</loc>
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva/"/>
-    <lastmod>2026-11-02T19:13:55+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:28+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2527,7 +2616,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/alcoolicos-anonimos-reuniao-com-traducao-em-libras-no-leblon-completa-79-anos/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/alcoholics-anonymous-sign-language-meeting-in-leblon-marks-79-years/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/alcoolicos-anonimos-reuniao-com-traducao-em-libras-no-leblon-completa-79-anos/"/>
-    <lastmod>2026-11-02T19:13:37+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:14+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2546,7 +2635,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/caps-and-capsi-public-mental-health-services-in-mare-alemao-and-penha/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/caps-e-capsi-atendem-mare-alemao-e-penha-mostra-reportagem/"/>
-    <lastmod>2026-11-02T19:13:43+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:17+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2569,7 +2658,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/health-in-schools-quiz-on-vaping-hpv-and-condoms-in-rio/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/saude-nas-escolas-quiz-sobre-vape-hpv-e-preservativo-no-rio/"/>
-    <lastmod>2026-11-02T19:13:51+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:23+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2592,7 +2681,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/deam-digital-rj-how-to-report-domestic-violence-online/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/deam-digital-rj-como-denunciar-violencia-domestica-online/"/>
-    <lastmod>2026-11-02T19:13:48+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:19+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2615,7 +2704,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/choco-apelo-de-emergencia-da-ifrc-apoia-cruz-roja-colombiana/"/>
-    <lastmod>2026-11-02T19:13:46+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2638,7 +2727,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/helicoptero-dos-bombeiros-na-praia-o-que-fazer-e-o-que-evitar/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/helicoptero-dos-bombeiros-na-praia-o-que-fazer-e-o-que-evitar/"/>
-    <lastmod>2026-11-02T19:13:50+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:21+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2657,7 +2746,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/ciclovia-tim-maia-interdicao-nesta-quarta-feira-2-9-em-funcao-da-ressaca-no-mar/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/ciclovia-tim-maia-interdicao-nesta-quarta-feira-2-9-em-funcao-da-ressaca-no-mar/"/>
-    <lastmod>2026-11-02T19:13:59+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:29+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2676,7 +2765,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/yellow-september-and-suicide-prevention/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/setembro-amarelo-cruz-vermelha-rj-e-a-valorizacao-da-vida/"/>
-    <lastmod>2026-11-02T19:14:01+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:32+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2695,7 +2784,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/recebemos-na-sede-da-cruz-vermelha-do-rio-de-janeiro-os-representantes-da/"/>
-    <lastmod>2026-11-02T19:13:41+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:15+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -2714,7 +2803,7 @@
     <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://cruzvermelhariodejaneiro.org/en/news/7-september-parade-registration-of-branch-volunteers/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cruzvermelhariodejaneiro.org/noticias/7-de-setembro/"/>
-    <lastmod>2026-11-02T19:13:36+00:00</lastmod>
+    <lastmod>2026-11-07T01:36:13+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
