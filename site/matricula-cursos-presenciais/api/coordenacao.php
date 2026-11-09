@@ -13,6 +13,9 @@
  *
  * Telas (todas com ?k=):
  *   (nada)            lista "Para decidir" (fichas nova, em análise e entrevista), da mais antiga para a mais nova;
+ *   ?ver=fora         as que esperam decisão e são de quem mora fora da cidade do Rio (10/11/2026, pedido do Matheus:
+ *                     separadas para a coordenadora recusar com um toque; saem de "Para decidir"; a recusa delas já
+ *                     vem no motivo "Mora fora da cidade do Rio", com a mensagem pronta);
  *   ?ver=aprovados    as aceitas; ?ver=recusados as recusadas e arquivadas (mais novas primeiro);
  *   ?id=N             a ficha inteira, com a foto, o WhatsApp da pessoa e os botões Aprovar e Recusar;
  *   ?id=N&passo=aprovar|recusar   a confirmação (com o CPF, se a ficha veio sem);
@@ -59,6 +62,7 @@ const CO_EMAIL_MIN = 10;
 const CO_EMAIL_MAX = 5000;
 /** Motivos da recusa: rótulo do botão e explicação curta. A mensagem de cada um está em co_recusa_mensagem(). */
 const CO_MOTIVOS = [
+    'fora' => ['Mora fora da cidade do Rio', 'O voluntariado é presencial, na sede, e só para quem mora na capital.'],
     'lotacao' => ['Lotação máxima', 'As vagas de voluntário estão todas preenchidas agora.'],
     'area' => ['Sem vaga na área escolhida', 'Não há lugar nas frentes que a pessoa quer.'],
     'sem_contato' => ['Não conseguimos falar com a pessoa', 'Tentamos contato e ninguém respondeu.'],
@@ -281,6 +285,12 @@ function co_selo(string $status): string
         default => $status,
     };
     return '<span class="selo ' . $classe . '">' . co_e($texto) . '</span>';
+}
+
+/** Selo das fichas de quem mora fora da cidade do Rio (mcp_voluntario_fora_da_capital). */
+function co_selo_fora(): string
+{
+    return '<span class="selo andamento">Mora fora do Rio</span>';
 }
 
 /** Ids das fichas que têm selfie (uma consulta para a lista inteira). */
@@ -577,6 +587,7 @@ function co_lista(string $ver, string $aviso = ''): never
 {
     $abas = [
         'decidir' => ['Para decidir', CO_PARA_DECIDIR, true],
+        'fora' => ['De fora do Rio', CO_PARA_DECIDIR, true],
         'aprovados' => ['Aprovados', ['aceita'], false],
         'recusados' => ['Recusados', CO_RECUSADOS, false],
     ];
@@ -584,13 +595,26 @@ function co_lista(string $ver, string $aviso = ''): never
         $ver = 'decidir';
     }
     [$titulo, $status, $antigas] = $abas[$ver];
+    // As fichas que esperam decisão se dividem em duas abas: quem mora na cidade do Rio e quem mora fora.
+    $esperando = co_fichas(CO_PARA_DECIDIR, true);
+    $deFora = array_values(array_filter($esperando, 'mcp_voluntario_fora_da_capital'));
+    $doRio = array_values(array_filter($esperando, static fn(array $f): bool => !mcp_voluntario_fora_da_capital($f)));
     $menu = '';
     foreach ($abas as $chaveAba => [$rotulo, $sts]) {
         $atual = $chaveAba === $ver ? ' aria-current="page"' : '';
+        $quantas = match ($chaveAba) {
+            'decidir' => count($doRio),
+            'fora' => count($deFora),
+            default => co_contar($sts),
+        };
         $menu .= '<a class="aba" href="' . co_e(co_url($chaveAba === 'decidir' ? [] : ['ver' => $chaveAba])) . '"' . $atual . '>'
-            . co_e($rotulo) . ' <span class="num">' . co_contar($sts) . '</span></a>';
+            . co_e($rotulo) . ' <span class="num">' . $quantas . '</span></a>';
     }
-    $fichas = co_fichas($status, $antigas);
+    $fichas = match ($ver) {
+        'decidir' => $doRio,
+        'fora' => $deFora,
+        default => co_fichas($status, $antigas),
+    };
     $fotos = co_com_foto(array_column($fichas, 'id'));
     $cartoes = '';
     foreach ($fichas as $f) {
@@ -602,7 +626,7 @@ function co_lista(string $ver, string $aviso = ''): never
             : '<span>Sem foto</span>';
         $cartoes .= '<a class="cartao" href="' . co_e(co_url(['id' => $id])) . '">'
             . '<div class="foto">' . $foto . '</div><div class="dados">'
-            . '<div>' . co_selo((string) $f['status']) . '</div>'
+            . '<div>' . co_selo((string) $f['status']) . (mcp_voluntario_fora_da_capital($f) ? ' ' . co_selo_fora() : '') . '</div>'
             . '<div class="nome">' . co_e((string) $f['nome']) . '</div>'
             . '<div class="linha">' . co_e(trim($idade . ($idade !== '' ? ' · ' : '') . mcp_voluntario_local_texto($f))) . '</div>'
             . '<div class="linha">Chegou em ' . co_e(co_data((string) $f['criado_em'])) . '</div>'
@@ -610,11 +634,13 @@ function co_lista(string $ver, string $aviso = ''): never
     }
     $dica = match ($ver) {
         'decidir' => 'Toque numa foto para ver a ficha completa e decidir. As que chegaram primeiro aparecem primeiro.',
+        'fora' => 'Fichas de quem mora fora da cidade do Rio de Janeiro. O voluntariado é só para quem mora na capital: abra a ficha e toque em "Recusar". A mensagem para a pessoa já vem pronta.',
         'aprovados' => 'Pessoas que você já aprovou. Toque para ver a ficha e mandar o código de aprovação pelo WhatsApp.',
         default => 'Fichas recusadas ou arquivadas. Se recusou por engano, abra a ficha e toque em "Desfazer a recusa".',
     };
     $vazio = match ($ver) {
         'decidir' => 'Nenhuma ficha esperando decisão. Tudo em dia!',
+        'fora' => 'Nenhuma ficha de fora do Rio esperando decisão.',
         'aprovados' => 'Ainda não há ninguém aprovado.',
         default => 'Nenhuma ficha recusada.',
     };
@@ -658,18 +684,20 @@ function co_dl(array $linhas): string
 }
 
 /** Próxima ficha "para decidir" depois desta (na ordem da lista), ou null. */
-function co_proxima(int $depoisDe): ?int
+function co_proxima(int $depoisDe, bool $fora = false): ?int
 {
-    $marcas = implode(',', array_fill(0, count(CO_PARA_DECIDIR), '?'));
-    $stmt = mcp_db()->prepare("SELECT id FROM mcp_voluntarios WHERE status IN ($marcas) AND id > ? ORDER BY id ASC LIMIT 1");
-    $stmt->execute([...CO_PARA_DECIDIR, $depoisDe]);
-    $id = $stmt->fetchColumn();
-    if ($id === false) {
-        $stmt = mcp_db()->prepare("SELECT id FROM mcp_voluntarios WHERE status IN ($marcas) AND id <> ? ORDER BY id ASC LIMIT 1");
-        $stmt->execute([...CO_PARA_DECIDIR, $depoisDe]);
-        $id = $stmt->fetchColumn();
+    $primeira = null;
+    foreach (co_fichas(CO_PARA_DECIDIR, true) as $f) {
+        $id = (int) $f['id'];
+        if ($id === $depoisDe || mcp_voluntario_fora_da_capital($f) !== $fora) {
+            continue;
+        }
+        if ($id > $depoisDe) {
+            return $id;
+        }
+        $primeira ??= $id;
     }
-    return $id === false ? null : (int) $id;
+    return $primeira;
 }
 
 function co_retrato(array $f, bool $temFoto): string
@@ -734,7 +762,7 @@ function co_ficha(int $id, string $aviso = ''): never
         'Nome' => co_e($nome),
         'Idade' => co_e(($idade !== null ? $idade . ' anos' : '') . ' (nasceu em ' . mcp_voluntario_nascimento_texto($f) . ')')
             . (mcp_voluntario_menor($f) ? ' <span class="selo andamento">menor de 18</span>' : ''),
-        'Onde mora' => co_e(mcp_voluntario_local_texto($f)),
+        'Onde mora' => co_e(mcp_voluntario_local_texto($f)) . (mcp_voluntario_fora_da_capital($f) ? ' ' . co_selo_fora() : ''),
         'Profissão' => co_e((string) ($f['profissao'] ?: 'não informada')),
         'Escolaridade' => co_e(MCP_VOL_ESCOLARIDADES[$f['escolaridade']] ?? (string) $f['escolaridade']),
         'Formação na saúde' => co_e($saude),
@@ -771,6 +799,7 @@ function co_ficha(int $id, string $aviso = ''): never
     $voltar = match (true) {
         $status === 'aceita' => co_url(['ver' => 'aprovados']),
         in_array($status, CO_RECUSADOS, true) => co_url(['ver' => 'recusados']),
+        mcp_voluntario_fora_da_capital($f) => co_url(['ver' => 'fora']),
         default => co_url(),
     };
     co_pagina($nome . ' · ficha de voluntário',
@@ -794,6 +823,9 @@ function co_recusa_mensagem(array $f, string $motivo): string
         . "Agradecemos muito o seu interesse em ser voluntário(a) da Cruz Vermelha Brasileira Rio de Janeiro.\n\n";
     $fim = "\n\nObrigado pela vontade de ajudar!";
     return $ola . match ($motivo) {
+        'fora' => 'O voluntariado desta filial é presencial: é preciso ir 24 vezes à sede, no Centro do Rio de Janeiro, em 6 meses. '
+            . 'Por isso, ele é só para quem mora na cidade do Rio de Janeiro, e não vamos conseguir seguir com a sua ficha. '
+            . 'Sugerimos procurar a Cruz Vermelha da sua cidade ou da sua região.',
         'lotacao' => 'Neste momento, as vagas de voluntário chegaram à lotação máxima, e não conseguimos incluir novas pessoas. '
             . 'Quando abrirmos novas vagas, você pode fazer um novo cadastro pelo nosso site.',
         'area' => 'Neste momento, não temos vagas nas áreas que você escolheu na ficha. '
@@ -851,7 +883,7 @@ function co_confirmar(int $id, string $passo, string $erro = '', string $cpfDigi
     $explica = $aprovar
         ? 'Ao aprovar, a pessoa ganha um código de aprovação, e você poderá mandar esse código pelo WhatsApp.'
         : 'Escolha o motivo. A mensagem abaixo já vem escrita para ele. Se precisar, você pode desfazer a recusa depois.';
-    $camposRecusa = $aprovar ? '' : co_recusa_campos($f, (string) ($recusa['motivo'] ?? 'lotacao'), (string) ($recusa['mensagem'] ?? ''), (bool) ($recusa['avisar'] ?? true));
+    $camposRecusa = $aprovar ? '' : co_recusa_campos($f, (string) ($recusa['motivo'] ?? (mcp_voluntario_fora_da_capital($f) ? 'fora' : 'lotacao')), (string) ($recusa['mensagem'] ?? ''), (bool) ($recusa['avisar'] ?? true));
     co_pagina($pergunta,
         '<div class="confirmar">' . ($erro !== '' ? co_aviso(co_e($erro), 'erro') : '') . $foto
         . '<h1 style="margin-top:14px">' . co_e($pergunta) . '</h1><p>' . co_e($explica) . '</p>'
@@ -868,7 +900,7 @@ function co_recusada(array $f, string $mensagem, ?string $email): never
 {
     $id = (int) $f['id'];
     $whats = $mensagem !== '' ? co_whatsapp((string) $f['telefone'], $mensagem) : '';
-    $proxima = co_proxima($id);
+    $proxima = co_proxima($id, mcp_voluntario_fora_da_capital($f));
     $avisoEmail = match (true) {
         $email === null => '',
         $email === 'enviado' => co_aviso('A mensagem foi enviada por e-mail para ' . co_e((string) $f['email']) . '.', 'ok'),
@@ -880,7 +912,7 @@ function co_recusada(array $f, string $mensagem, ?string $email): never
             . '<div class="botoes" style="justify-content:center"><a class="btn grande whats" href="' . co_e($whats) . '" target="_blank" rel="noopener">Mandar pelo WhatsApp</a></div>' : '')
         . '<div class="botoes" style="justify-content:center">'
         . ($proxima !== null ? '<a class="btn grande cheio" href="' . co_e(co_url(['id' => $proxima])) . '">Ver a próxima ficha</a>' : '')
-        . '<a class="btn grande claro" href="' . co_e(co_url()) . '">Voltar para a lista</a></div></div>');
+        . '<a class="btn grande claro" href="' . co_e(co_url(mcp_voluntario_fora_da_capital($f) ? ['ver' => 'fora'] : [])) . '">Voltar para a lista</a></div></div>');
 }
 
 /** Depois de aprovar: o código grande, o WhatsApp com a mensagem pronta e a próxima ficha. */
@@ -888,7 +920,7 @@ function co_aprovada(array $f, string $codigo): never
 {
     $id = (int) $f['id'];
     $whats = co_whatsapp((string) $f['telefone'], mcp_voluntario_aprovacao_mensagem($f, $codigo));
-    $proxima = co_proxima($id);
+    $proxima = co_proxima($id, mcp_voluntario_fora_da_capital($f));
     co_pagina('Ficha aprovada',
         '<div class="confirmar">' . co_aviso('Pronto! A ficha de ' . co_e((string) $f['nome']) . ' foi aprovada.', 'ok')
         . '<p style="margin:0">Código de aprovação:</p><p class="codigo">' . co_e(mcp_codigo_formatado($codigo)) . '</p>'
@@ -903,7 +935,7 @@ function co_aprovada(array $f, string $codigo): never
             : '')
         . '</div><div class="botoes" style="justify-content:center">'
         . ($proxima !== null ? '<a class="btn grande cheio" href="' . co_e(co_url(['id' => $proxima])) . '">Ver a próxima ficha</a>' : '')
-        . '<a class="btn grande claro" href="' . co_e(co_url()) . '">Voltar para a lista</a></div></div>');
+        . '<a class="btn grande claro" href="' . co_e(co_url(mcp_voluntario_fora_da_capital($f) ? ['ver' => 'fora'] : [])) . '">Voltar para a lista</a></div></div>');
 }
 
 // ----------------------------------------------------------------------------- rotas

@@ -174,6 +174,22 @@ try {
     verificar('lista: a mais antiga primeiro', strpos($lista['corpo'], "Ana Teste") < strpos($lista['corpo'], "Duda Teste"), true);
     verificar('lista: foto de quem tem, "Sem foto" de quem não tem', [str_contains($lista['corpo'], 'foto=' . $a), str_contains($lista['corpo'], 'foto=' . $b)], [true, false]);
     verificar('lista: os links levam a chave', str_contains($lista['corpo'], 'coordenacao.php?k=' . $chave . '&amp;id=' . $a), true);
+    // De fora do Rio (10/11/2026): a ficha de quem mora fora da capital sai de "Para decidir" e vai para a aba própria,
+    // com o selo, e a recusa dela já vem no motivo "Mora fora da cidade do Rio", com a mensagem pronta.
+    $fora = ficha("Flora Teste Coordenação $sufixo", cpf_de_teste());
+    $db->prepare("UPDATE mcp_voluntarios SET cidade = 'Cachoeiras de Macacu', bairro = 'Ribeira' WHERE id = ?")->execute([$fora]);
+    $listaRio = http("$base$k");
+    $listaFora = http("$base$k&ver=fora");
+    verificar('de fora: sai de "Para decidir" e aparece só na aba "De fora do Rio", com o selo', [str_contains($listaRio['corpo'], "Flora Teste Coordenação $sufixo"), str_contains($listaRio['corpo'], 'De fora do Rio'),
+        $listaFora['status'], str_contains($listaFora['corpo'], "Flora Teste Coordenação $sufixo"), str_contains($listaFora['corpo'], "Ana Teste Coordenação $sufixo"), str_contains($listaFora['corpo'], 'Mora fora do Rio')], [false, true, 200, true, false, true]);
+    $verFora = http("$base$k&id=$fora");
+    verificar('de fora: a ficha leva o selo e volta para a aba dela', [str_contains($verFora['corpo'], 'Mora fora do Rio'), str_contains($verFora['corpo'], 'ver=fora'), str_contains(http("$base$k&id=$a")['corpo'], 'Mora fora do Rio')], [true, true, false]);
+    $confFora = http("$base$k&id=$fora&passo=recusar");
+    verificar('de fora: a recusa já vem no motivo certo, com a mensagem pronta', [(bool) preg_match('/name="motivo" value="fora" checked/', $confFora['corpo']), (bool) preg_match('/<textarea[^>]*>[^<]*24 vezes[^<]*Cruz Vermelha da sua cidade/s', $confFora['corpo']),
+        (bool) preg_match('/name="motivo" value="lotacao" checked/', http("$base$k&id=$a&passo=recusar")['corpo'])], [true, true, true]);
+    $recFora = http($base, 'POST', ['k' => $chave, 'acao' => 'recusar', 'id' => $fora, 'motivo' => 'fora']);
+    verificar('de fora: recusada, com o motivo na anotação, e a próxima não é uma ficha do Rio', [(string) mcp_voluntario_por_id($fora)['status'], str_contains((string) (mcp_voluntario_notas($fora)[0]['texto'] ?? ''), 'Mora fora da cidade do Rio'),
+        str_contains($recFora['corpo'], '&amp;id=' . $a)], ['recusada', true, false]);
     $tutorial = http("$base$k&ajuda=1");
     verificar('tutorial: 8 passos e o quadro da chamada, cada um com "Ouvir", e o botão "Como usar" no topo da lista', [$tutorial['status'], substr_count($tutorial['corpo'], 'class="passo"'), substr_count($tutorial['corpo'], 'data-fala='),
         str_contains($tutorial['corpo'], 'data-audio="chamada"'), str_contains($tutorial['corpo'], 'Como fazer a chamada'), str_contains($lista['corpo'], 'ajuda=1')], [200, 8, 9, true, true, true]);

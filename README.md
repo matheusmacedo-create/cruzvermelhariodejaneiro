@@ -170,6 +170,21 @@ Pedido do Matheus: tirar o domingo dos dias em que a pessoa pode atuar. A opçã
 (portal, PDF, CSV, Redação); ficha nova que chegue com domingo (página em cache) entra sem ele. Publicação:
 `site/matricula-cursos-presenciais/api/lib/voluntarios.php` e `site/voluntariado/cadastro/index.html`.
 
+## Coordenação: fichas de fora do Rio numa aba própria (10/11/2026)
+
+Pedido do Matheus, para a coordenadora desqualificar mais fácil quem mora fora da capital. No link dela
+(`api/coordenacao.php`):
+
+- **Aba "De fora do Rio"** (`?ver=fora`): as fichas que esperam decisão e são de fora da cidade do Rio
+  (`mcp_voluntario_fora_da_capital`, a mesma regra do cadastro e do e-mail à equipe). Elas saem de "Para decidir".
+- **Selo "Mora fora do Rio"** no cartão e em "Onde mora", na ficha.
+- **Recusar**: motivo novo "Mora fora da cidade do Rio", que já vem marcado nessas fichas, com a mensagem pronta
+  (presencial, 24 idas à sede em 6 meses, procurar a Cruz Vermelha da sua cidade). Depois de decidir, a "próxima ficha"
+  fica no mesmo grupo.
+- O tutorial ("Como usar") e os áudios gravados ainda falam em três abas e quatro motivos: falta regravar
+  (`scripts/gerar_audios_coordenacao.sh`).
+- Teste: `scripts/testar_coordenacao_integracao.php` (MariaDB local). Publicação: só `api/coordenacao.php`.
+
 ## Voluntariado: só para quem mora na cidade do Rio (09/11/2026)
 
 Pedido da coordenação do voluntariado, depois de uma ficha de Cachoeiras de Macacu: o voluntariado é presencial, na sede,
