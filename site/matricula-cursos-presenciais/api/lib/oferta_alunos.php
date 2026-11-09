@@ -74,10 +74,12 @@ function mcp_oa_config(): array
 function mcp_oa_modelo(array $pessoa, array $oferta): array
 {
     $nome = mcp_rw_parametro(mcp_rw_primeiro_nome((string) ($pessoa['nome'] ?? '')));
-    $modelo = MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'];
+    $modelo = (string) (MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'] ?? MCP_RW_MODELO_CUPOM_GERAL);
     $parametros = [$nome !== '' ? $nome : MCP_RW_NOME_PADRAO, mcp_rw_parametro((string) $oferta['codigo']), mcp_rw_parametro((string) $oferta['data'])];
-    return ['nome' => $modelo, 'etapa' => 0, 'parametros' => $parametros, 'caminho' => mcp_rw_link('whatsapp', MCP_OA_CURSO, MCP_OA_LINK),
+    $m = ['nome' => $modelo, 'etapa' => 0, 'parametros' => $parametros, 'caminho' => mcp_rw_link('whatsapp', MCP_OA_CURSO, MCP_OA_LINK),
         'previa' => mcp_rw_previa($modelo, $parametros)];
+    // Curso sem modelo próprio: o modelo de cupom geral, com o curso em parâmetro.
+    return $modelo === MCP_RW_MODELO_CUPOM_GERAL ? mcp_rw_cupom_geral($m, '', MCP_OA_CURSO) : $m;
 }
 
 /** O celular já tem uma compra paga do curso da oferta no checkout do site? */
@@ -147,12 +149,15 @@ function mcp_oa_rodar(?int $agora = null): array
         $r['motivo'] = 'Kapso: ' . ($modelos['erro'] ?? 'sem a lista de modelos');
         return $fim($r);
     }
-    $base = mcp_rw_escolher_modelo(mcp_oa_modelo($fila[0], $oferta), $modelos);
-    $estrutura = $modelos['estrutura'][$base['nome']] ?? ['botao' => null, 'params' => null];
-    if (($modelos['modelos'][$base['nome']] ?? '') !== 'APPROVED') {
-        $r['motivo'] = 'modelo sem aprovação: ' . $base['nome'];
+    // O modelo do curso, se aprovado; senão o geral (curso em parâmetro), se aprovado; sem os dois, espera.
+    $proprio = mcp_oa_modelo($fila[0], $oferta);
+    $base = mcp_rw_cupom_resolver($proprio, $modelos, '', MCP_OA_CURSO);
+    if ($base === null || ($modelos['modelos'][$base['nome']] ?? '') !== 'APPROVED') {
+        $r['motivo'] = 'modelo sem aprovação: ' . $proprio['nome'] . ($proprio['nome'] !== MCP_RW_MODELO_CUPOM_GERAL ? ' (nem o geral, ' . MCP_RW_MODELO_CUPOM_GERAL . ')' : '');
         return $fim($r);
     }
+    $geral = mcp_rw_familia($base['nome']) === MCP_RW_MODELO_CUPOM_GERAL && mcp_rw_familia($proprio['nome']) !== MCP_RW_MODELO_CUPOM_GERAL;
+    $estrutura = $modelos['estrutura'][$base['nome']] ?? ['botao' => null, 'params' => null];
     if (($problema = mcp_rw_estrutura_problema($estrutura, $base)) !== null) {
         $r['motivo'] = $problema;
         return $fim($r);
@@ -178,7 +183,8 @@ function mcp_oa_rodar(?int $agora = null): array
             $r['pulados']++;
             continue;
         }
-        $m = array_replace(mcp_oa_modelo($p, $oferta), ['nome' => $base['nome'], 'botao' => $estrutura['botao'] ?? null]);
+        $m = mcp_oa_modelo($p, $oferta);
+        $m = array_replace($geral ? mcp_rw_cupom_geral($m, '', MCP_OA_CURSO) : $m, ['nome' => $base['nome'], 'botao' => $estrutura['botao'] ?? null]);
         $quando = gmdate('Y-m-d H:i:s', $agoraEnvio);
         $stmt = $db->prepare("INSERT IGNORE INTO mcp_oferta_alunos (campanha, destino_hash, modelo, curso_slug, status, erro, criado_em, atualizado_em)
             VALUES (?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");

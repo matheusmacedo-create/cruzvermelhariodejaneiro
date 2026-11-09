@@ -114,6 +114,16 @@ const MCP_RW_CUPOM_CURSO = 'primeiros-socorros-basico';
  * desse curso vai como rec_inscricao_3, sem segurar ninguém (mcp_rw_cupom_sem_aprovacao). O e-mail não depende da Meta:
  * a 3ª do e-mail leva o cupom assim que ele vale.
  */
+/**
+ * O modelo de cupom GERAL (09/11/2026, "um modelo que sirva para várias entradas no ano"): o mesmo texto dos modelos de
+ * cupom por curso, com o curso também em parâmetro — {{1}} primeiro nome, {{2}} o curso, {{3}} o cupom, {{4}} a data da
+ * turma. Serve para qualquer curso e qualquer cupom, sem submeter um modelo novo à Meta a cada promoção:
+ *  - curso de MCP_RW_OFERTAS SEM 'modelo' usa o geral direto (cupom novo = uma linha aqui e outra em lib/cupons.php);
+ *  - curso com modelo próprio que a Meta ainda não aprovou cai no geral, se ele estiver aprovado (mcp_rw_cupom_resolver),
+ *    e só sem os dois a 3ª vai sem cupom.
+ * O texto não fala em "primeiros N alunos": quem quiser dizer o limite de vagas usa o modelo próprio do curso.
+ */
+const MCP_RW_MODELO_CUPOM_GERAL = 'curso_cupom_oferta';
 const MCP_RW_OFERTAS = [
     MCP_RW_CUPOM_CURSO => ['cupom' => MCP_RW_CUPOM, 'modelo' => MCP_RW_MODELO_CUPOM],
     'primeiros-socorros-lei-lucas' => ['cupom' => 'PRO12', 'modelo' => 'll_cupom_oferta'],
@@ -148,7 +158,7 @@ const MCP_RW_COOKIE = 'mcp_rw';
 const MCP_RW_COOKIE_S = 6 * 3600;
 // Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel): os nomes de hoje, que valem quando
 // a Meta não responde a lista. As versões novas de cada um (_v2, _v3…) entram sozinhas pela família (MCP_RW_FAMILIAS).
-const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'cur_cupom_oferta', 'mat_pendente_1', 'mat_pendente_2'];
+const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL, 'mat_pendente_1', 'mat_pendente_2'];
 /**
  * Famílias de modelos (01/11/2026): família => o nome usado hoje (o padrão). rec_inscricao_2, rec_inscricao_2_v2 e
  * rec_inscricao_2_v3 são a mesma mensagem, submetida de novo à Meta (a Meta reclassifica como Marketing o que considera
@@ -157,7 +167,7 @@ const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_insc
  */
 const MCP_RW_FAMILIAS = [
     'rec_inscricao_1' => 'rec_inscricao_1_v2', 'rec_inscricao_2' => 'rec_inscricao_2', 'rec_inscricao_3' => 'rec_inscricao_3',
-    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'cur_cupom_oferta' => 'cur_cupom_oferta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
+    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'cur_cupom_oferta' => 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL => MCP_RW_MODELO_CUPOM_GERAL, 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
 ];
 // As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
 const MCP_RW_CAMPANHAS = ['rec1', 'rec2', 'rec3', 'rec3cupom'];
@@ -182,6 +192,8 @@ const MCP_RW_TEXTOS = [
     'll_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 10 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
     // Submetido à Meta em 09/11/2026 (em 06/11 ficou só o texto aqui: o modelo não existia na conta): o CURATIVOS não tem limite de vagas, então o texto fala da turma, não de "primeiros N alunos".
     'cur_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
+    // O geral (submetido à Meta em 09/11/2026): o texto do CURATIVOS com o curso em parâmetro.
+    MCP_RW_MODELO_CUPOM_GERAL => "Olá, {{1}}! Separamos um cupom especial para você no curso de {{2}} da Cruz Vermelha RJ: *{{3}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{4}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
 const MCP_RW_MINUTO_DA_RODADA = 7;
@@ -846,8 +858,11 @@ function mcp_rw_modelo(int $etapa, array $pessoa, ?array $oferta = null, string 
     $codigo = mcp_rw_parametro((string) ($oferta['codigo'] ?? ''));
     $data = mcp_rw_parametro((string) ($oferta['data'] ?? ''));
     if ($etapa === 3 && $codigo !== '' && $data !== '') {
-        $modelo = MCP_RW_OFERTAS[$slug]['modelo'];
+        $modelo = (string) (MCP_RW_OFERTAS[$slug]['modelo'] ?? MCP_RW_MODELO_CUPOM_GERAL);
         $parametros = [$nome, $codigo, $data];
+        if ($modelo === MCP_RW_MODELO_CUPOM_GERAL) {
+            $parametros = mcp_rw_cupom_geral(['parametros' => $parametros], (string) ($pessoa['curso_nome'] ?? ''), $slug)['parametros'];
+        }
         $caminho = mcp_rw_caminho_cupom('whatsapp', $token, $slug);
     } else {
         $modelo = MCP_RW_MODELOS[$etapa];
@@ -912,6 +927,39 @@ function mcp_rw_ofertas_cupom(array $slugs, ?int $agora = null): array
 }
 
 /**
+ * A versão GERAL (MCP_RW_MODELO_CUPOM_GERAL) de uma mensagem de cupom de curso ($modelo com os parâmetros [nome, cupom,
+ * data]): o mesmo botão, e o curso entra como {{2}} — [nome, curso, cupom, data]. O nome do curso vem de quem chama ou,
+ * sem ele, do catálogo. Puro (só lê o catálogo).
+ */
+function mcp_rw_cupom_geral(array $modelo, string $cursoNome, string $slug = ''): array
+{
+    [$nome, $codigo, $data] = array_values((array) $modelo['parametros']);
+    $curso = mcp_rw_parametro($cursoNome !== '' ? $cursoNome : (string) (mcp_curso($slug)['nome'] ?? ''), 160);
+    $parametros = [$nome, $curso !== '' ? $curso : MCP_RW_CURSO_GENERICO, $codigo, $data];
+    return array_replace($modelo, ['nome' => MCP_RW_MODELO_CUPOM_GERAL, 'parametros' => $parametros, 'previa' => mcp_rw_previa(MCP_RW_MODELO_CUPOM_GERAL, $parametros)]);
+}
+
+/**
+ * O modelo de cupom que sai de verdade, com a lista da Meta ($lista, de mcp_rw_modelos): o do curso (a melhor versão da
+ * família), se aprovado; senão o GERAL, se aprovado e com a estrutura conferida; senão null (quem chama manda sem cupom
+ * ou espera). Sem a lista (Kapso fora), o do curso, como sempre. $modelo: uma mensagem de cupom (mcp_rw_modelo na 3ª com
+ * oferta, ou mcp_oa_modelo).
+ */
+function mcp_rw_cupom_resolver(array $modelo, array $lista, string $cursoNome, string $slug = ''): ?array
+{
+    $modelo = mcp_rw_escolher_modelo($modelo, $lista);
+    if (!mcp_rw_cupom_sem_aprovacao($modelo, $lista)) {
+        return $modelo;
+    }
+    if (mcp_rw_familia((string) $modelo['nome']) === MCP_RW_MODELO_CUPOM_GERAL) {
+        return null;
+    }
+    $geral = mcp_rw_escolher_modelo(mcp_rw_cupom_geral($modelo, $cursoNome, $slug), $lista);
+    return (($lista['modelos'][$geral['nome']] ?? '') === 'APPROVED'
+        && mcp_rw_estrutura_problema($lista['estrutura'][$geral['nome']] ?? ['botao' => null, 'params' => null], $geral) === null) ? $geral : null;
+}
+
+/**
  * Um modelo de cupom (de MCP_RW_OFERTAS) que a lista da Meta ($lista, de mcp_rw_modelos) não mostra como aprovado? Aí a
  * 3ª vai como rec_inscricao_3: o modelo novo de um curso, ainda em análise, não segura ninguém (a turma tem data). Sem a
  * lista (Kapso fora), false: vale o que a rodada já faz com qualquer modelo. Puro.
@@ -919,7 +967,7 @@ function mcp_rw_ofertas_cupom(array $slugs, ?int $agora = null): array
 function mcp_rw_cupom_sem_aprovacao(array $modelo, array $lista): bool
 {
     $familia = mcp_rw_familia((string) ($modelo['nome'] ?? ''));
-    return ($lista['ok'] ?? false) && $familia !== null && in_array($familia, array_column(MCP_RW_OFERTAS, 'modelo'), true)
+    return ($lista['ok'] ?? false) && $familia !== null && in_array($familia, [MCP_RW_MODELO_CUPOM_GERAL, ...array_column(MCP_RW_OFERTAS, 'modelo')], true)
         && (($lista['modelos'][(string) $modelo['nome']] ?? '') !== 'APPROVED');
 }
 
@@ -1918,7 +1966,9 @@ function mcp_rw_rodar(?int $agora = null): array
     $fila = array_map(static function (array $f) use ($modelos, $agora): array {
         $modelo = mcp_rw_escolher_modelo($f[3], $modelos);
         if (mcp_rw_cupom_sem_aprovacao($modelo, $modelos)) {
-            $modelo = mcp_rw_escolher_modelo(mcp_rw_modelo($f[1], $f[2], null, mcp_rw_token((string) ($f[2]['dados_ref'] ?? ''), $agora)), $modelos);
+            // O modelo do curso não está aprovado: vai o geral, se estiver; sem os dois, a 3ª sai sem cupom.
+            $modelo = mcp_rw_cupom_resolver($f[3], $modelos, (string) ($f[2]['curso_nome'] ?? ''), (string) ($f[2]['curso_slug'] ?? ''))
+                ?? mcp_rw_escolher_modelo(mcp_rw_modelo($f[1], $f[2], null, mcp_rw_token((string) ($f[2]['dados_ref'] ?? ''), $agora)), $modelos);
         }
         return [$f[0], $f[1], $f[2], $modelo];
     }, $fila);
@@ -2370,7 +2420,8 @@ function mcp_rw_metricas(array $pessoas, array $linhas, int $agora, ?array $ofer
         // modelo de cupom ainda sem aprovação vira o rec_inscricao_3, como na rodada).
         $modelo = $modelo !== null && $modelosMeta !== null ? mcp_rw_escolher_modelo($modelo, $modelosMeta) : $modelo;
         if ($modelo !== null && $modelosMeta !== null && mcp_rw_cupom_sem_aprovacao($modelo, $modelosMeta)) {
-            $modelo = mcp_rw_escolher_modelo(mcp_rw_modelo($proxima['etapa'], $p), $modelosMeta);
+            $modelo = mcp_rw_cupom_resolver(mcp_rw_modelo($proxima['etapa'], $p, $oferta), $modelosMeta, (string) ($p['curso_nome'] ?? ''), (string) ($p['curso_slug'] ?? ''))
+                ?? mcp_rw_escolher_modelo(mcp_rw_modelo($proxima['etapa'], $p), $modelosMeta);
         }
         // A prévia do e-mail com um link de descadastro de exemplo (o de verdade depende da linha gravada no envio).
         $email = $controle || $proximaEmail === null ? null : mcp_rw_email_montar($proximaEmail['etapa'], $p, $oferta, mcp_site_url() . '/matricula-cursos-presenciais/api/avisos.php?rw=…',

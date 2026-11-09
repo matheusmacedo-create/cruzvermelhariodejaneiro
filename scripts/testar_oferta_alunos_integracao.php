@@ -105,6 +105,8 @@ if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
         ['name' => 'ps_cupom_oferta', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'cur_cupom_oferta', 'status' => $controle['situacao'] ?? 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING', 'components' => [
             ['type' => 'BODY', 'text' => 'Olá, {{1}}! Cupom *{{2}}* para a turma de {{3}}.'], ['type' => 'BUTTONS', 'buttons' => $botoes]]],
+        ['name' => 'curso_cupom_oferta', 'status' => $controle['geral'] ?? 'PENDING', 'language' => 'pt_BR', 'category' => 'MARKETING', 'components' => [
+            ['type' => 'BODY', 'text' => 'Olá, {{1}}! Curso {{2}}, cupom *{{3}}*, turma de {{4}}.'], ['type' => 'BUTTONS', 'buttons' => $botoes]]],
     ]]);
     return true;
 }
@@ -198,7 +200,7 @@ try {
     $semCache();
     $r = mcp_oa_rodar($A);
     verificar('rodada: modelo em análise na Meta → nada sai e ninguém perde a vez', [$r['enviados'], $r['motivo'], count($enviadas()), count($linhas())],
-        [0, 'modelo sem aprovação: cur_cupom_oferta', 0, 0]);
+        [0, 'modelo sem aprovação: cur_cupom_oferta (nem o geral, curso_cupom_oferta)', 0, 0]);
     $controle(['sem_modelos' => true]);
     $semCache();
     $r = mcp_oa_rodar($A);
@@ -275,6 +277,33 @@ try {
     verificar('ir.php: o botão responde 302 para o checkout com o cupom', [$st, (bool) preg_match("~\\nLocation: /matricula-cursos-presenciais/checkout/\\?curso=$curso&via=agenda&cupom=CURATIVOS&utm_source=whatsapp&utm_medium=oferta&utm_campaign=alunos\\r~", $resp)],
         [302, true]);
     proc_terminate($site);
+
+    // ------------------------------------------------------------------------- modelo geral (curso em parâmetro)
+    $limpar();
+    @unlink("$falso/kapso.jsonl");
+    $lista([['nome' => 'Carla Souza', 'telefone' => $celular(7)]]);
+    $controle(['situacao' => 'PENDING', 'geral' => 'APPROVED']);
+    $r = mcp_oa_rodar($A);
+    $e = $enviadas();
+    verificar('modelo geral: com o do curso em análise e o geral aprovado, sai pelo geral, com o curso em {{2}}',
+        [$r['enviados'], $e[0]['template']['name'] ?? '', array_column($e[0]['template']['components'][0]['parameters'] ?? [], 'text'), $e[0]['template']['components'][1]['parameters'][0]['text'] ?? '', $linhas()[0]['modelo'] ?? ''],
+        [1, 'curso_cupom_oferta', ['Carla', 'Curativos e Tratamento de Feridas', 'CURATIVOS', 'sábado, 28/11'], "matricula-cursos-presenciais/api/ir.php/w/$curso/alunos", 'curso_cupom_oferta']);
+    $modelosAgora = mcp_rw_modelos(mcp_rw_kapso_config(), $A);
+    $pessoa3 = ['primeiro_nome' => 'Rita', 'curso_slug' => $curso, 'curso_nome' => 'Curativos e Tratamento de Feridas'];
+    $terceira = mcp_rw_modelo(3, $pessoa3, [$curso => ['codigo' => 'CURATIVOS', 'data' => 'sábado, 28/11']]);
+    $resolvido = mcp_rw_cupom_resolver($terceira, $modelosAgora, 'Curativos e Tratamento de Feridas', $curso);
+    verificar('modelo geral: a 3ª da recuperação com cupom também cai no geral (o link continua o rec3cupom)',
+        [$terceira['nome'], $resolvido['nome'] ?? null, $resolvido['parametros'] ?? null, $resolvido['caminho'] ?? null],
+        ['cur_cupom_oferta', 'curso_cupom_oferta', ['Rita', 'Curativos e Tratamento de Feridas', 'CURATIVOS', 'sábado, 28/11'], "matricula-cursos-presenciais/api/ir.php/w/$curso/rec3cupom"]);
+    $controle([]);
+    $semCache();
+    $modelosAgora = mcp_rw_modelos(mcp_rw_kapso_config(), $A);
+    verificar('modelo geral: com o do curso aprovado, vale o do curso; sem nenhum dos dois, null',
+        [mcp_rw_cupom_resolver($terceira, $modelosAgora, '', $curso)['nome'] ?? null,
+            mcp_rw_cupom_resolver($terceira, ['ok' => true, 'modelos' => ['cur_cupom_oferta' => 'PENDING', 'curso_cupom_oferta' => 'PENDING'], 'categorias' => [], 'estrutura' => []], '', $curso)],
+        ['cur_cupom_oferta', null]);
+    verificar('modelo geral: a prévia traz o curso, o cupom e a data',
+        str_contains(mcp_rw_cupom_geral($terceira, '', $curso)['previa'], 'no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *CURATIVOS*') , true);
 
     // ------------------------------------------------------------------------- erros da Kapso e teto por rodada
     $limpar();

@@ -1585,8 +1585,9 @@ secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois
 ### Oferta a ex-alunos por WhatsApp (09/11/2026)
 
 Pedido do responsável: mandar a oferta de Curativos (cupom `CURATIVOS`, R$ 150,00 com tudo incluso, turma de 28/11) por
-WhatsApp a quem já pagou um curso da escola. **Situação: construído e testado só na máquina; NADA foi publicado e nenhuma
-mensagem saiu.**
+WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2026 às 19h35 (código conferido com
+`conferir_publicacao.sh`) e a lista de 75 celulares no servidor, ligada. Nenhuma mensagem saiu ainda: o modelo
+`cur_cupom_oferta` estava em análise na Meta; o disparo começa sozinho na primeira rodada (8h–20h) depois da aprovação.**
 
 - **O que faz** (`api/lib/oferta_alunos.php`, prefixo `mcp_oa_`, carregado pelo `recuperacao_whatsapp.php`): um disparo
   **único**. Cada celular da lista recebe **uma** mensagem do modelo de cupom do curso (`cur_cupom_oferta`, de
@@ -1619,6 +1620,25 @@ mensagem saiu.**
 - **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_oferta_alunos_integracao.php` (MariaDB local e uma Kapso falsa; 30
   verificações). Os testes da recuperação por WhatsApp (158) e da matrícula pendente (53) seguem passando.
 - **Publicar**: `scripts/publicacao-oferta-alunos.txt` (com migração), depois subir a lista ao servidor.
+
+### Modelo de cupom geral, para qualquer curso (09/11/2026)
+
+Pedido do responsável: "um modelo que a gente possa usar com várias entradas no ano". **Situação: modelo submetido à Meta em
+09/11/2026 (em análise); código publicado em 09/11/2026 às 20h12 e conferido com `conferir_publicacao.sh`.**
+
+- **O modelo**: `curso_cupom_oferta` (Marketing, pt_BR, na conta do número do site). O texto é o do CURATIVOS com o curso em
+  parâmetro: `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` o cupom, `{{4}}` a data da turma; botão "Ver minha oferta"
+  (`https://cruzvermelhariodejaneiro.org/{{1}}`) e resposta rápida "Não tenho interesse". Não fala em "primeiros N alunos":
+  quem quiser dizer o limite de vagas continua com um modelo próprio do curso.
+- **Cupom novo sem modelo novo**: uma linha em `MCP_CUPONS` (`lib/cupons.php`) e outra em `MCP_RW_OFERTAS`
+  (`lib/recuperacao_whatsapp.php`) **sem** `'modelo'` — `'slug-do-curso' => ['cupom' => 'CODIGO']`. A 3ª mensagem da
+  recuperação desse curso e a oferta a ex-alunos saem pelo geral.
+- **Reserva dos modelos por curso** (`mcp_rw_cupom_resolver`): curso com modelo próprio que a Meta ainda não aprovou
+  (`cur_cupom_oferta`, `ll_cupom_oferta`) sai pelo geral, se ele estiver aprovado; aprovado o do curso, volta a valer o do
+  curso; sem nenhum dos dois, a 3ª da recuperação sai sem cupom (`rec_inscricao_3`) e a oferta a ex-alunos espera.
+- **Família**: `curso_cupom_oferta_v2`… entram sozinhas, como nas outras (`MCP_RW_FAMILIAS`).
+- **Testar**: `scripts/testar_oferta_alunos_integracao.php` (34 verificações, com o bloco "modelo geral").
+- **Publicar**: `scripts/publicacao-oferta-alunos.txt` (os mesmos arquivos; desta vez sem migração: o `db.php` não mudou).
 
 ### Cupom CURATIVOS na recuperação (06/11/2026)
 
