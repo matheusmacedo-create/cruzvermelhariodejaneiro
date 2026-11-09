@@ -180,7 +180,7 @@ const MCP_RW_TEXTOS = [
     'ps_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Básico da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 30 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
     // Submetido em 03/11/2026 (o mesmo formato do ps_cupom_oferta: {{1}} nome, {{2}} cupom, {{3}} data da turma).
     'll_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 10 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
-    // Submetido em 06/11/2026: o CURATIVOS não tem limite de vagas, então o texto fala da turma, não de "primeiros N alunos".
+    // Submetido à Meta em 09/11/2026 (em 06/11 ficou só o texto aqui: o modelo não existia na conta): o CURATIVOS não tem limite de vagas, então o texto fala da turma, não de "primeiros N alunos".
     'cur_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];
 /** O minuto em que o cron da hospedagem roda o api/lembretes.php ("7 * * * *" no hPanel). */
@@ -751,16 +751,19 @@ function mcp_rw_link_destino(string $caminho): array
     $comCurso = $slug !== MCP_RW_LINK_SEM_CURSO;
     // As campanhas da matrícula pendente (mat1, mat2) levam à tela de pagar a matrícula, sempre de um curso.
     $matricula = in_array($campanha, MCP_MP_CAMPANHAS, true);
-    if (!isset(MCP_RW_LINK_FONTES[$f]) || (!in_array($campanha, MCP_RW_CAMPANHAS, true) && !$matricula) || ($comCurso && !mcp_rw_link_slug_ok($slug))
-        || ($campanha === 'rec3cupom' && !isset(MCP_RW_OFERTAS[$slug])) || ($matricula && !$comCurso)) {
+    // A oferta a ex-alunos (lib/oferta_alunos.php, campanha "alunos"): o checkout do curso com o cupom dele, como a
+    // rec3cupom, mas com utm_medium=oferta (não é recuperação de carrinho e não entra nas contas dela).
+    $alunos = $campanha === MCP_OA_LINK;
+    if (!isset(MCP_RW_LINK_FONTES[$f]) || (!in_array($campanha, MCP_RW_CAMPANHAS, true) && !$matricula && !$alunos) || ($comCurso && !mcp_rw_link_slug_ok($slug))
+        || (($campanha === 'rec3cupom' || $alunos) && !isset(MCP_RW_OFERTAS[$slug])) || ($matricula && !$comCurso)) {
         return $invalido;
     }
-    $utm = 'utm_source=' . MCP_RW_LINK_FONTES[$f] . '&utm_medium=recuperacao&utm_campaign=' . $campanha;
+    $utm = 'utm_source=' . MCP_RW_LINK_FONTES[$f] . '&utm_medium=' . ($alunos ? 'oferta' : 'recuperacao') . '&utm_campaign=' . $campanha;
     if ($matricula) {
         return ['destino' => MCP_MP_PAGINA . '?curso=' . rawurlencode($slug) . '&' . $utm, 'token' => preg_match('/^[A-Za-z0-9.-]{1,120}$/', $token) ? $token : '', 'valido' => true];
     }
     $destino = !$comCurso ? MCP_RW_LINK_PAGINA . '?' . $utm
-        : MCP_RW_LINK_PAGINA . 'checkout/?curso=' . rawurlencode($slug) . ($campanha === 'rec3cupom' ? '&via=agenda&cupom=' . rawurlencode(MCP_RW_OFERTAS[$slug]['cupom']) : '') . '&' . $utm;
+        : MCP_RW_LINK_PAGINA . 'checkout/?curso=' . rawurlencode($slug) . ($campanha === 'rec3cupom' || $alunos ? '&via=agenda&cupom=' . rawurlencode(MCP_RW_OFERTAS[$slug]['cupom']) : '') . '&' . $utm;
     return ['destino' => $destino, 'token' => preg_match('/^[A-Za-z0-9.-]{1,120}$/', $token) ? $token : '', 'valido' => true];
 }
 
@@ -1722,6 +1725,14 @@ function mcp_rw_enviadas_24h(int $agora): int
     } catch (PDOException) {
         // Sem a tabela da matrícula pendente: só a recuperação.
     }
+    try {
+        // A oferta a ex-alunos (lib/oferta_alunos.php) sai pelo mesmo número.
+        $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_oferta_alunos WHERE status = 'enviado' AND criado_em > ? AND criado_em <= ?");
+        $stmt->execute([$de, $ate]);
+        $n += (int) $stmt->fetchColumn();
+    } catch (PDOException) {
+        // Sem a tabela da oferta: nada a somar.
+    }
     return $n;
 }
 
@@ -2121,7 +2132,7 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             $ordem = "FIELD(entrega, 'entregue', 'lida')";
             // As mensagens da matrícula pendente (mcp_matricula_pendente) saem pelo mesmo número: a entrega vale para as duas
             // tabelas (o wamid só existe numa delas). Sem a tabela nova, só a da recuperação.
-            foreach (['mcp_recuperacao_whatsapp', 'mcp_matricula_pendente'] as $tabela) {
+            foreach (['mcp_recuperacao_whatsapp', 'mcp_matricula_pendente', 'mcp_oferta_alunos'] as $tabela) {
                 try {
                     $stmt = $db->prepare("UPDATE $tabela SET entrega = ?, erro = COALESCE(?, erro), atualizado_em = ?
                         WHERE provedor_id = ? AND (entrega IS NULL OR ? = 'falhou' OR (entrega <> 'falhou' AND $ordem < FIELD(?, 'entregue', 'lida')))");
@@ -2153,7 +2164,7 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             $stmt->execute([$e['citada']]);
             $linha = $stmt->fetch() ?: null;
             // Resposta a uma mensagem da matrícula pendente: guardada na linha dela (o painel mostra), e só ali.
-            if ($linha === null && mcp_mp_guardar_resposta($e['citada'], $e['texto'], $quando)) {
+            if ($linha === null && (mcp_mp_guardar_resposta($e['citada'], $e['texto'], $quando) || mcp_oa_guardar_resposta($e['citada'], $e['texto'], $quando))) {
                 $n++;
                 if ($parar) {
                     mcp_avisos_bloquear_hash('whatsapp', mcp_avisos_hash('whatsapp', $numero), 'recuperacao');
@@ -2415,3 +2426,6 @@ require_once __DIR__ . '/recuperacao_email.php';
 // A matrícula pendente (01/11/2026): quem pagou só a taxa e precisa pagar a matrícula antes da aula. Usa a Kapso, os
 // modelos, os links curtos e a Resend daqui; fluxo, tabelas e painel à parte.
 require_once __DIR__ . '/matricula_pendente.php';
+// A oferta a ex-alunos (09/11/2026): disparo único do cupom de um curso a quem já estudou na escola. Usa a Kapso, os
+// modelos e os links curtos daqui; lista só no servidor, tabela e seção do painel à parte.
+require_once __DIR__ . '/oferta_alunos.php';

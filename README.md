@@ -1565,6 +1565,44 @@ secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois
 - **Publicar**: `scripts/publicacao-recuperacao.txt` (com migração; a página nova e o `matricula.js` antes da biblioteca) e
   conferir com `scripts/conferir_publicacao.sh`.
 
+### Oferta a ex-alunos por WhatsApp (09/11/2026)
+
+Pedido do responsável: mandar a oferta de Curativos (cupom `CURATIVOS`, R$ 150,00 com tudo incluso, turma de 28/11) por
+WhatsApp a quem já pagou um curso da escola. **Situação: construído e testado só na máquina; NADA foi publicado e nenhuma
+mensagem saiu.**
+
+- **O que faz** (`api/lib/oferta_alunos.php`, prefixo `mcp_oa_`, carregado pelo `recuperacao_whatsapp.php`): um disparo
+  **único**. Cada celular da lista recebe **uma** mensagem do modelo de cupom do curso (`cur_cupom_oferta`, de
+  `MCP_RW_OFERTAS`): `{{1}}` primeiro nome, `{{2}}` o cupom, `{{3}}` a data da turma, botão com o link curto
+  `…/api/ir.php/w/curativos-e-tratamento-de-feridas/alunos`, que leva ao checkout com o cupom aplicado e
+  `utm_source=whatsapp&utm_medium=oferta&utm_campaign=alunos` (fora das contas da recuperação, que usam `utm_medium=recuperacao`).
+- **A lista** fica em `api/config-oferta-alunos.php`, **só no servidor** (dado pessoal: nunca no Git; o `.htaccess` nega
+  `config-*.php`): `['OFERTA_ALUNOS_LIGADA' => true, 'OFERTA_ALUNOS' => [['nome' => '…', 'telefone' => '…'], …]]`. Sem o
+  arquivo, com `false` ou com a lista vazia, nada sai. **Para parar**: ponha `false` ou apague o arquivo.
+- **Quem não recebe**: telefone que não é celular, repetido, celular em `mcp_avisos_bloqueios` (qualquer origem: "Não tenho
+  interesse", SAIR, PARAR), quem já tem compra paga do curso no site e quem já recebeu (`UNIQUE(campanha, destino_hash)`).
+- **Quando sai**: na rotina de hora em hora (`api/lembretes.php`), **depois** da matrícula pendente e da recuperação, das 8h
+  às 20h, no máximo 40 por rodada, dentro do mesmo teto de 200 mensagens em 24 h do número (`mcp_rw_enviadas_24h` soma as
+  três tabelas). Só com o modelo **aprovado** na Meta e a estrutura conferida; modelo em análise ou Kapso sem a lista de
+  modelos: espera, sem gastar a vez de ninguém. Para sozinho quando a oferta deixa de valer (`mcp_rw_oferta_cupom`: cupom
+  vencido em 30/11, ou turma fechada).
+- **Erros da Kapso**: como na recuperação (o que é de quem recebe gasta a vez; erro de todos para a rodada; resposta incerta
+  conta como enviada, para nunca repetir).
+- **Banco**: `mcp_oferta_alunos` (migração do `db.php`, `MCP_DB_VERSAO` nova), só com o hash do celular. Entrega, leitura e
+  resposta chegam pelo webhook da recuperação; "Não tenho interesse" bloqueia o celular. A rodada com movimento fica em
+  `mcp_eventos` (`oferta_alunos_rodada`, só números).
+- **Painel** (`api/recuperacao.php`): a seção "Oferta a quem já foi aluno" aparece com a lista no servidor: na lista,
+  enviadas, entregues e lidas, responderam, compraram pelo link, e o que está segurando (desligada, modelo em análise, oferta
+  vencida). Nenhum nome nem número.
+- **Modelo na Meta**: o `cur_cupom_oferta` foi **submetido em 09/11/2026** pela API da Kapso (conta do número do site) e
+  estava em análise. Em 06/11 só o texto tinha ficado no código: por isso a 3ª da recuperação do Curativos vinha saindo como
+  `rec_inscricao_3`, sem cupom. O `ll_cupom_oferta` (PRO12, Lei Lucas) **continua sem existir na Meta**.
+- **Outro curso ou outra lista**: trocar `MCP_OA_CAMPANHA` e `MCP_OA_CURSO` (o curso precisa estar em `MCP_RW_OFERTAS`) e a
+  lista do servidor. Campanha com outro nome começa do zero (quem recebeu a anterior pode receber a nova).
+- **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_oferta_alunos_integracao.php` (MariaDB local e uma Kapso falsa; 30
+  verificações). Os testes da recuperação por WhatsApp (158) e da matrícula pendente (53) seguem passando.
+- **Publicar**: `scripts/publicacao-oferta-alunos.txt` (com migração), depois subir a lista ao servidor.
+
 ### Cupom CURATIVOS na recuperação (06/11/2026)
 
 O Curativos e Tratamento de Feridas entrou em `MCP_RW_OFERTAS` com o cupom `CURATIVOS` e o modelo **`cur_cupom_oferta`**

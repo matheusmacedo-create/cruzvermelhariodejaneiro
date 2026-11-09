@@ -80,6 +80,9 @@ redireciona 'api/ir.php' '/matricula-cursos-presenciais/'
 redireciona 'api/ir.php/w/puncao-venosa/mat1' '/matricula-cursos-presenciais/pagar-matricula/?curso=puncao-venosa&utm_source=whatsapp&utm_medium=recuperacao&utm_campaign=mat1'
 redireciona 'api/ir.php/e/puncao-venosa/mat2' '/matricula-cursos-presenciais/pagar-matricula/?curso=puncao-venosa&utm_source=email&utm_medium=recuperacao&utm_campaign=mat2'
 redireciona 'api/ir.php/w/cursos/mat1' '/matricula-cursos-presenciais/'
+# Oferta a ex-alunos (09/11/2026): a campanha "alunos" leva ao checkout do curso com o cupom dele e utm_medium=oferta.
+redireciona 'api/ir.php/w/curativos-e-tratamento-de-feridas/alunos' '/matricula-cursos-presenciais/checkout/?curso=curativos-e-tratamento-de-feridas&via=agenda&cupom=CURATIVOS&utm_source=whatsapp&utm_medium=oferta&utm_campaign=alunos'
+redireciona 'api/ir.php/w/puncao-venosa/alunos' '/matricula-cursos-presenciais/'
 # O postback com um hash desconhecido (nem inscrição nem matrícula): 200 "ignorado" (com 500, a tabela nova não foi criada).
 codigo=$(pedir "$m/api/webhook.php" -X POST -H 'Content-Type: application/json' --data '{"hash":"conferencia-inexistente"}')
 if [ "$codigo" = 200 ] && grep -q 'ignorado' "$tmp"; then ok "api/webhook.php com hash desconhecido → 200 ignorado"; else falha "api/webhook.php com hash desconhecido → $codigo $(head -c 80 "$tmp")"; fi

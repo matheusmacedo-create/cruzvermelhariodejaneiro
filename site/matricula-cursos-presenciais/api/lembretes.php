@@ -70,6 +70,20 @@ try {
             $w = ['falhas' => 1];
         }
         $w['falhas'] += $falhasMp;
+        // Oferta a ex-alunos (lib/oferta_alunos.php, 09/11/2026): disparo único, DEPOIS da matrícula pendente e da
+        // recuperação (o teto em 24 h do número é o mesmo, e lembrete tem a vez antes de oferta). Sem a lista no servidor,
+        // não faz nada. Uma falha aqui não segura o e-mail da recuperação.
+        try {
+            $oa = mcp_oa_rodar();
+            if ($oa['enviados'] + $oa['falhas'] + $oa['pulados'] > 0 || ($oa['faltam'] > 0 && $oa['motivo'] !== null)) {
+                printf("%s oferta a ex-alunos: %d enviadas, %d falhas, %d puladas, %d ainda na fila%s\n",
+                    gmdate('Y-m-d H:i:s'), $oa['enviados'], $oa['falhas'], $oa['pulados'], $oa['faltam'], $oa['motivo'] !== null ? ' (' . $oa['motivo'] . ')' : '');
+            }
+            $w['falhas'] += $oa['falhas'];
+        } catch (Throwable $erro) {
+            error_log('[matricula] oferta a ex-alunos: ' . get_class($erro) . ': ' . $erro->getMessage());
+            $w['falhas'] += 1;
+        }
         // Recuperação por e-mail (lib/recuperacao_email.php): o mesmo público, logo depois e independente do WhatsApp
         // (aproveita o público que ele já leu nesta hora). Uma falha aqui não desfaz nem segura o que já rodou; sem a
         // RESEND_API_KEY, não manda nada e só diz o motivo.

@@ -1,0 +1,16 @@
+# Oferta a ex-alunos por WhatsApp (09/11/2026): disparo único do cupom CURATIVOS a quem já estudou na escola.
+# Detalhes no README, "Oferta a ex-alunos por WhatsApp".
+# COM MIGRAÇÃO: tabela nova mcp_oferta_alunos, criada pelo db.php na primeira requisição depois da publicação
+# (MCP_DB_VERSAO nova). Sem a tabela por alguns segundos, o teto em 24 h e o webhook seguem como antes.
+# Ordem: o db.php; o oferta_alunos.php ANTES do recuperacao_whatsapp.php (que o carrega: na ordem contrária, a rotina, o
+# painel, o ir.php e o webhook cairiam até o arquivo chegar); o painel; o lembretes.php por último (é ele que manda).
+# Publicar FORA do minuto 7 (a rodada roda às hh:07).
+# Nada sai só com o código: o disparo começa quando api/config-oferta-alunos.php (a lista, só no servidor, fora do Git)
+# estiver lá com 'OFERTA_ALUNOS_LIGADA' => true E o modelo cur_cupom_oferta estiver aprovado na Meta.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-oferta-alunos.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-oferta-alunos.txt
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/oferta_alunos.php
+site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
+site/matricula-cursos-presenciais/api/recuperacao.php
+site/matricula-cursos-presenciais/api/lembretes.php
