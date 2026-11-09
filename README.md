@@ -1624,7 +1624,7 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
 ### Modelo de cupom geral, para qualquer curso (09/11/2026)
 
 Pedido do responsável: "um modelo que a gente possa usar com várias entradas no ano". **Situação: modelo submetido à Meta em
-09/11/2026 (em análise); código testado só na máquina, NÃO publicado.**
+09/11/2026 (em análise); código publicado em 09/11/2026 às 20h12 e conferido com `conferir_publicacao.sh`.**
 
 - **O modelo**: `curso_cupom_oferta` (Marketing, pt_BR, na conta do número do site). O texto é o do CURATIVOS com o curso em
   parâmetro: `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` o cupom, `{{4}}` a data da turma; botão "Ver minha oferta"
