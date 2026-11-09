@@ -84,6 +84,12 @@ ORIGEM_CHAVES = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm
 PROXIMAS_ENTRADAS = cbfi.PROXIMAS_ENTRADAS
 CBFI_LINK = f'<a href="{cbfi.URL}">Saiba mais sobre o CBFI</a>'
 
+# Só para quem mora na capital (coordenação do voluntariado, 09/11/2026): as atividades são presenciais, na sede, no Centro
+# do Rio. O aviso vai no topo e no campo da cidade; o cadastro.js repete o aviso quando a cidade digitada é outra, e o
+# e-mail à equipe destaca a ficha (mcp_voluntario_fora_da_capital). A ficha de fora não é barrada.
+SO_CAPITAL = ("<b>Só para quem mora na cidade do Rio de Janeiro.</b> O voluntariado desta filial é presencial, na sede, na Praça da "
+              "Cruz Vermelha, 10, no Centro do Rio. Mora em outro município? Procure a Cruz Vermelha da sua cidade ou da sua região.")
+
 # (título, HTML do detalhe)
 ETAPAS = [
     ("Cadastro", "Este formulário. Leva uns dez minutos."),
@@ -213,6 +219,7 @@ CSS = """
     .vc-topo .lead { max-width: 66ch; margin-bottom: 0; }
     .vc-entradas { display: flex; gap: 12px; align-items: flex-start; max-width: 66ch; margin: 18px 0 0; background: #fff7f7; border: 1px solid #f5c2c7; border-left: 4px solid var(--red); border-radius: 12px; padding: 14px 16px; color: var(--text); line-height: 1.55; }
     .vc-entradas i { color: var(--red); font-size: 1.25rem; margin-top: 2px; flex-shrink: 0; }
+    .vc-fora { margin: 0; background: #fff7e6; border: 1px solid #f0c36d; border-left: 4px solid #b26a00; border-radius: 10px; padding: 12px 14px; font-size: 1rem; line-height: 1.5; color: var(--text); }
     .vc-etapas { list-style: none; counter-reset: etapa; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 26px 0 0; padding: 0; }
     .vc-etapas li { counter-increment: etapa; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 14px 14px 54px; position: relative; font-size: .92rem; line-height: 1.4; color: var(--text); }
     .vc-etapas li::before { content: counter(etapa); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
@@ -328,7 +335,10 @@ def formulario() -> str:
     contato = cartao("vc-contato", "Contato", "A confirmação chega por e-mail; a equipe do voluntariado chama pelo WhatsApp.", '<div class="vc-grade">' + "".join([
         entrada("email", "E-mail", tipo="email", obrigatorio=True, atributos='autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"'),
         entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, dica="De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.", atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
-        entrada("cidade", "Cidade", obrigatorio=True, atributos='autocomplete="address-level2" maxlength="120"'),
+        entrada("cidade", "Cidade", obrigatorio=True, dica="O voluntariado é presencial, no Centro do Rio, e só para quem mora na cidade do Rio de Janeiro.",
+                atributos='autocomplete="address-level2" maxlength="120"'),
+        # Logo abaixo da cidade (no celular é uma coluna só): aparece (cadastro.js) quando a cidade ou o estado digitados não são o Rio de Janeiro, capital.
+        '<p class="vc-fora vc-campo-largo" id="vc-fora" role="status" hidden></p>',
         entrada("bairro", "Bairro", obrigatorio=True, atributos='autocomplete="address-level3" minlength="2" maxlength="120"'),
         selecao("estado", "Estado", [(uf, uf) for uf in UFS], obrigatorio=True, selecionado="RJ", atributos='autocomplete="address-level1"'),
     ]) + "</div>")
@@ -476,6 +486,7 @@ def main() -> int:
         <p class="eyebrow">Voluntariado</p>
         <h1 id="vc-titulo">{esc(H1)}</h1>
         <p class="lead">Preencha o cadastro abaixo. Depois dele vêm a ficha de entrevista, o CBFI (Curso Básico de Formação Institucional, oferecido quatro vezes por ano) e o termo de adesão. A formação é gratuita e só para quem entra no voluntariado. A idade mínima é 18 anos.</p>
+        <p class="vc-entradas" role="note"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>{SO_CAPITAL}</span></p>
         <p class="vc-entradas" role="note"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>{cbfi.alternar(
             f"<b>Próxima turma do CBFI.</b> Ela está aberta a quem se cadastrar agora: a equipe do voluntariado entra em contato pelo WhatsApp com os cadastrados, para a ficha de entrevista e as orientações da turma. {CBFI_LINK}.",
             f"<b>Novas entradas em {esc(PROXIMAS_ENTRADAS)}.</b> Você já pode se cadastrar: a ficha fica guardada, e a equipe do voluntariado entra em contato com todos os cadastrados nessa época. Até lá, não é preciso esperar resposta nem enviar a ficha de novo.")}</span></p>

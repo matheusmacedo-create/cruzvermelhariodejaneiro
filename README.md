@@ -163,6 +163,23 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
 - Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
+## Voluntariado: só para quem mora na cidade do Rio (09/11/2026)
+
+Pedido da coordenação do voluntariado, depois de uma ficha de Cachoeiras de Macacu: o voluntariado é presencial, na sede,
+no Centro do Rio, e só para quem mora na capital; quem mora em outro município procura a Cruz Vermelha de lá. E a data
+de 28/11 não é para aparecer em lugar nenhum.
+
+- **Aviso**: no topo de `/voluntariado/cadastro/` (`SO_CAPITAL` em `gerar_voluntariado_cadastro.py`) e na dica do campo
+  Cidade; no início de `/voluntariado/` e numa pergunta nova da FAQ dela; em "Para quem" e na FAQ de `/cbfi/`
+  (`site/institucional.json`).
+- **Cidade de fora**: o `cadastro.js` mostra um aviso logo abaixo do campo quando a cidade não é "Rio de Janeiro" ou o
+  estado não é RJ (`foraDaCapital`). **A ficha não é barrada**; o e-mail à equipe destaca "Mora fora da cidade do Rio de
+  Janeiro" (`mcp_voluntario_fora_da_capital`, a mesma regra). Para barrar de vez, basta devolver erro no campo `cidade`
+  em `mcp_voluntario_validar` e em `validar()` do `cadastro.js`.
+- **Data de 28/11**: saiu do e-mail à equipe e do painel de fichas, os dois lugares onde ainda aparecia (as páginas e o
+  e-mail ao voluntário já não a traziam desde 04/11). `MCP_VOL_CBFI_DATA` continua só para decidir a volta a janeiro.
+- Home, `/bio/` e chat não mudaram. Publicação: `scripts/publicacao-voluntariado-capital.txt`.
+
 ## Voluntariado: selfie obrigatória no cadastro (27/10/2026)
 
 Pedido do Matheus: pedir ao voluntário uma selfie, só para a equipe reconhecê-lo na entrevista e no CBFI (nasceu

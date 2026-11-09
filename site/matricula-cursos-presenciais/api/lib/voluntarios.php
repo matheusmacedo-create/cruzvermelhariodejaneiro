@@ -29,9 +29,9 @@ const MCP_VOL_MOTIVACAO_MIN = 20;
 const MCP_VOL_PROXIMAS_ENTRADAS = 'janeiro de 2027';
 // Turma do CBFI de 28/11/2026, aberta a quem se cadastra agora (pedido do Matheus, 27/10/2026). Até essa data, em Brasília,
 // os textos falam da turma; a partir do dia seguinte voltam sozinhos para as novas entradas em janeiro. A mesma data de
-// scripts/cbfi.py, que faz a troca nas páginas: mudou aqui, mudar lá.
+// scripts/cbfi.py, que faz a troca nas páginas: mudou aqui, mudar lá. A data só decide a troca: nenhum texto a mostra,
+// nem os da equipe (pedido da coordenação do voluntariado, 09/11/2026).
 const MCP_VOL_CBFI_DATA = '2026-11-28';
-const MCP_VOL_CBFI_DATA_TEXTO = '28 de novembro de 2026';
 const MCP_VOL_MOTIVACAO_MAX = 1500;
 // Selfie obrigatória (27/10/2026; nasceu opcional no mesmo dia): o arquivo pode chegar com até 10 MB (sem JavaScript, direto da câmera); fica guardada
 // com no máximo 800 px no lado maior, em JPG. A ficha em JSON com a selfie já reduzida pelo navegador cabe em 768 KB.
@@ -1171,6 +1171,21 @@ function mcp_voluntario_local_texto(array $f): string
     return $local . (!empty($f['estado']) ? ' · ' . $f['estado'] : '');
 }
 
+/**
+ * A pessoa mora fora da cidade do Rio de Janeiro (capital)? O voluntariado da filial é presencial, na sede, no Centro,
+ * e só para quem mora na capital (coordenação do voluntariado, 09/11/2026). A ficha não é barrada: a página avisa e a
+ * equipe vê o aviso no e-mail. A mesma regra de foraDaCapital() em site/voluntariado/cadastro/cadastro.js.
+ */
+function mcp_voluntario_fora_da_capital(array $f): bool
+{
+    $estado = mb_strtoupper(trim((string) ($f['estado'] ?? '')));
+    if ($estado !== '' && $estado !== 'RJ') {
+        return true;
+    }
+    $cidade = mb_strtolower(trim((string) preg_replace('/[\s.,;\/()\-–]+/u', ' ', (string) ($f['cidade'] ?? ''))));
+    return $cidade !== '' && !preg_match('/^(rio( de janeiro)?|rj)( (rj|capital))*$/u', $cidade);
+}
+
 /** Nascimento DD/MM/AAAA. */
 function mcp_voluntario_nascimento_texto(array $f): string
 {
@@ -1457,13 +1472,14 @@ function mcp_montar_email_voluntario_equipe(array $f): array
     $frentes = mcp_voluntario_rotulos((string) $f['frentes'], MCP_VOL_FRENTES);
     $portal = mcp_voluntario_link_portal((int) ($f['id'] ?? 0));
     $mailto = 'mailto:' . $email . '?subject=' . rawurlencode("Re: Voluntariado · $protocolo");
+    $fora = mcp_voluntario_fora_da_capital($f);
 
     $linhas = [
         'Nome' => $nome,
         'Idade' => $idade !== '' ? $idade . ' (' . mcp_voluntario_nascimento_texto($f) . ')' : mcp_voluntario_nascimento_texto($f),
         'E-mail' => ['html' => '<a href="mailto:' . mcp_escapar($email) . '" style="color:#cc0000;text-decoration:none">' . mcp_escapar($email) . '</a>'],
         'Telefone' => ['html' => '<a href="tel:+55' . mcp_escapar(mcp_digitos($telefone)) . '" style="color:#1a202c;text-decoration:none">' . mcp_escapar(mcp_telefone_bonito($telefone)) . '</a>'],
-        'Onde mora' => mcp_voluntario_local_texto($f),
+        'Onde mora' => mcp_voluntario_local_texto($f) . ($fora ? ' (fora da cidade do Rio de Janeiro)' : ''),
         'Escolaridade' => MCP_VOL_ESCOLARIDADES[$f['escolaridade']] ?? (string) $f['escolaridade'],
         'Profissão' => (string) ($f['profissao'] ?: 'não informada'),
         'Formação na área da saúde' => (int) ($f['saude'] ?? 0) === 1 ? 'Sim' . (!empty($f['saude_qual']) ? ': ' . $f['saude_qual'] : '') : 'Não',
@@ -1488,8 +1504,9 @@ function mcp_montar_email_voluntario_equipe(array $f): array
 
     $corpo = mcp_p('<strong>' . mcp_escapar($nome) . '</strong>' . ($idade !== '' ? ', ' . mcp_escapar($idade) . ',' : '') . ' de ' . mcp_escapar(mcp_voluntario_local_texto($f))
             . ', quer ser voluntário(a) em <strong>' . mcp_escapar($frentes) . '</strong>. ' . (mcp_vol_cbfi_aberto()
-                ? 'A pessoa foi avisada da turma do CBFI de ' . MCP_VOL_CBFI_DATA_TEXTO . ' e de que a equipe entra em contato pelo WhatsApp antes dela, para a ficha de entrevista.'
+                ? 'A pessoa foi avisada de que a equipe entra em contato pelo WhatsApp antes da próxima turma do CBFI, para a ficha de entrevista.'
                 : 'A pessoa foi avisada de que as novas entradas abrem em ' . MCP_VOL_PROXIMAS_ENTRADAS . ' e de que o contato da equipe vem nessa época, pelo WhatsApp.'))
+        . ($fora ? mcp_nota('<strong>Mora fora da cidade do Rio de Janeiro.</strong> O cadastro avisa que o voluntariado é presencial, na sede, no Centro do Rio, e que quem mora em outro município deve procurar a Cruz Vermelha de lá.') : '')
         . ($menor ? mcp_nota('<strong>Menor de 18 anos:</strong> o termo de adesão é assinado também pelo responsável legal.') : '')
         . mcp_subtitulo('Motivação') . mcp_citacao((string) $f['motivacao'])
         . (!empty($f['experiencia']) ? mcp_subtitulo('Experiência com voluntariado') . mcp_citacao((string) $f['experiencia']) : '')
@@ -1504,6 +1521,7 @@ function mcp_montar_email_voluntario_equipe(array $f): array
 
     $texto = "$nome" . ($idade !== '' ? ", $idade," : '') . ' de ' . mcp_voluntario_local_texto($f) . ", quer ser voluntário(a) em $frentes.\n"
         . ($menor ? "Menor de 18 anos: o termo de adesão é assinado também pelo responsável legal.\n" : '')
+        . ($fora ? "Mora fora da cidade do Rio de Janeiro: o cadastro avisa que o voluntariado é presencial, na sede, no Centro do Rio.\n" : '')
         . "\nMotivação:\n{$f['motivacao']}\n"
         . (!empty($f['experiencia']) ? "\nExperiência com voluntariado:\n{$f['experiencia']}\n" : '')
         . (!empty($f['habilidades']) ? "\nHabilidades e formação:\n{$f['habilidades']}\n" : '')

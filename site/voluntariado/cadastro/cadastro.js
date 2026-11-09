@@ -381,6 +381,24 @@
   mascara(form.elements.telefone, telefoneBonito);
   mascara(form.elements.cpf, cpfBonito);
 
+  // Só para quem mora na capital (09/11/2026): o voluntariado é presencial, na sede, no Centro do Rio. Quando a cidade ou
+  // o estado são outros, um aviso aparece embaixo dos campos. Não barra o envio. A mesma regra de
+  // mcp_voluntario_fora_da_capital() em api/lib/voluntarios.php.
+  var foraAviso = document.getElementById('vc-fora');
+  function foraDaCapital(cidade, estado) {
+    if (estado && estado.toUpperCase() !== 'RJ') return true;
+    var c = String(cidade || '').toLowerCase().replace(/[\s.,;\/()\-–]+/g, ' ').trim();
+    return c !== '' && !/^(rio( de janeiro)?|rj)( (rj|capital))*$/.test(c);
+  }
+  function avisarFora() {
+    if (!foraAviso) return;
+    var fora = valor('cidade').length >= 2 && foraDaCapital(valor('cidade'), valor('estado'));
+    foraAviso.textContent = fora ? 'Atenção: o voluntariado desta filial é só para quem mora na cidade do Rio de Janeiro. As atividades são presenciais, na sede, no Centro do Rio. Se você mora em outro município, procure a Cruz Vermelha da sua cidade ou da sua região.' : '';
+    foraAviso.hidden = !fora;
+  }
+  ['cidade', 'estado'].forEach(function (n) { if (form.elements[n]) form.elements[n].addEventListener('change', avisarFora); });
+  avisarFora();
+
   // Contador da motivação: o número visível muda a cada tecla; o leitor de tela ouve só quando a pessoa para de digitar.
   var motivacao = form.elements.motivacao, contador = document.getElementById('vc-motivacao-contador');
   var contadorSr = document.getElementById('vc-motivacao-contador-sr'), contadorTimer = null;

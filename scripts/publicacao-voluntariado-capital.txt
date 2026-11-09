@@ -1,0 +1,11 @@
+# Voluntariado só para quem mora na cidade do Rio (09/11/2026, pedido da coordenação do voluntariado): aviso no cadastro,
+# em /voluntariado/ e em /cbfi/, aviso no campo da cidade quando ela é outra, destaque no e-mail à equipe; e sai a data
+# de 28/11 do e-mail à equipe e do painel (ver README, "Voluntariado: só para quem mora na cidade do Rio").
+# Bibliotecas antes das páginas; cadastro.js antes da página que o cita pelo hash. Depois: limpar o cache.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-voluntariado-capital.txt)
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/lib/painel_voluntarios.php
+site/voluntariado/cadastro/cadastro.js
+site/voluntariado/cadastro/index.html
+site/voluntariado/index.html
+site/cbfi/index.html
