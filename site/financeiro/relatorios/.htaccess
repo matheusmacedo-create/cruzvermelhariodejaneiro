@@ -1,0 +1,2 @@
+# Os relatórios só saem pelo ../index.php, com a chave do link. Direto pelo endereço, nunca.
+Require all denied
