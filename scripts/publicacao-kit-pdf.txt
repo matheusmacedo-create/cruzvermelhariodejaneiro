@@ -11,5 +11,9 @@
 # python3 scripts/gerar_sitemaps.py e publicar os sitemaps (o lastmod da página muda). No GA4 (tempo real), o toque
 # no botão aparece como kit_baixar e o toque num vídeo como video_start (docs/rastreamento.md).
 # Só depois de o PDF responder 200 no ar a edição da newsletter pode sair: o botão dela leva a /kit-de-emergencia/#baixar.
+# O mesmo vale para a caixa "Receba a lista do kit de emergência no seu e-mail" das matérias (Palácio Virtual,
+# lib/site/caixa-de-material.ts): o botão do e-mail dela termina neste PDF. Ordem: publicar aqui, mesclar o PR da
+# Redação e só então "Regerar as páginas das matérias" (Configurações › Site). O endereço do PDF não muda sem mudar
+# lib/newsletter/materiais.ts, na Redação.
 site/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf
 site/kit-de-emergencia/index.html
