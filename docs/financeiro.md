@@ -2,7 +2,9 @@
 
 Pedido do Matheus (09/11/2026): o relatório mensal das contas da CVB-RJ na Unicopag (até então um PDF) virou uma página
 para o financeiro abrir no celular ou no computador, com botões de ajuda (**?**) ao lado de cada número e palavra, o
-botão "Como ler este relatório", menu por conta e glossário. Mesmo modelo do link da coordenação do voluntariado
+botão "Como ler este relatório", menu por conta e glossário. Fundo **sempre branco** (sem modo escuro, mesmo com o
+celular no escuro) e **letra grande** (texto a 20px, botões de ajuda de 36px), pedido do Matheus para quem lê com
+dificuldade; mantenha assim nos meses seguintes. Mesmo modelo do link da coordenação do voluntariado
 (`docs/voluntariado.md`): **sem senha e sem login**, a chave vai no próprio link.
 
 ## Link
