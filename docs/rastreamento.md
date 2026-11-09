@@ -212,6 +212,22 @@ origem da visita (utm, fbclid, gclid) só com a permissão de estatística, como
 no GA4, marcar `generate_lead` como evento principal ("key event"); no Gerenciador de Eventos, o Contact com
 categoria `brinquedos` pode virar uma conversão personalizada.
 
+## Guia do kit de emergência (`/kit-de-emergencia/`, 09/11/2026)
+
+GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `institucional`, como as outras páginas de
+`scripts/gerar_institucional.py`. Dois eventos próprios, só no GA4:
+
+| Momento | GA4 |
+| --- | --- |
+| Toque num dos links da lista em PDF | `kit_baixar` (origem = `botao`, o botão vermelho, ou `lista`, o link abaixo da tabela) |
+| Toque na capa de um vídeo (o player do YouTube só carrega aí) | `video_start` (video_provider = `youtube`, video_title) |
+
+`origem` já é dimensão registrada. O `kit_baixar` conta o toque no link, não o arquivo aberto, e não depende da
+medição otimizada de downloads da propriedade (se ela estiver ligada, o mesmo toque também gera um `file_download`).
+A edição da newsletter foi redigida para levar ao guia com
+`utm_source=newsletter&utm_medium=email&utm_campaign=kit-de-emergencia`: os downloads vindos do e-mail aparecem
+cruzando o `kit_baixar` com a origem da sessão. Não publicado ainda (ver `scripts/publicacao-kit-pdf.txt`).
+
 ## Pagar tudo, passo 5: venda de tudo à vista ligada (10/10/2026)
 
 A função da escola v2 foi aplicada pelo dono no SQL Editor (responde `matricula_rapida_versao() = 3`). Publicados: o

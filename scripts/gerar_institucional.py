@@ -31,7 +31,11 @@ computador, 42%; vira bloco no celular). Toda <img> ganha loading="lazy". A pág
 Vídeos (09/11/2026, guia do kit): <div class="inst-video" data-yt="ID" data-titulo="…" data-canal="…"></div> vira uma
 capa (miniatura do YouTube + botão de tocar) que é um link comum para o vídeo. Com JavaScript, o toque troca a capa
 pelo player em youtube-nocookie.com, dentro da página; antes do toque nada do YouTube carrega além da miniatura
-(sem cookie). Só entram vídeos de canais oficiais, conferidos pelo oEmbed do YouTube (autor e título).
+(sem cookie). Só entram vídeos de canais conferidos pelo oEmbed do YouTube (autor e título). O toque manda ao GA4 o
+evento video_start (video_title, video_provider).
+
+Cliques medidos (09/11/2026): um <a data-evento="nome" data-origem="…"> manda ao GA4 o evento "nome" com o
+parâmetro origem (dimensão já registrada). Usado no botão do PDF do kit: kit_baixar (docs/rastreamento.md).
 
 Uso:  python3 scripts/gerar_institucional.py [slug ...]
 Depois: publicar as pastas geradas (lista em scripts/publicacao-institucional.txt) e o sitemap.
@@ -197,6 +201,15 @@ def video(m: re.Match) -> str:
             '<span class="inst-video-tocar" aria-hidden="true"></span></a>'
             f'<figcaption><b>{nome}</b>Vídeo do canal {canal}, no YouTube. Toque para assistir.</figcaption></figure>')
 
+
+EVENTO_JS = """<script>
+  /* Cliques medidos: <a data-evento="nome" data-origem="…"> manda o evento ao GA4 (docs/rastreamento.md). */
+  document.querySelectorAll('a[data-evento]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      if (typeof gtag === 'function') gtag('event', a.getAttribute('data-evento'), { origem: a.getAttribute('data-origem') || '' });
+    });
+  });
+</script>"""
 
 # Só entra nas páginas que têm vídeo, para as outras não mudarem de tamanho.
 VIDEO_CSS = """  <style>
@@ -399,6 +412,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"])
     tem_video = any('class="inst-video"' in s["html"] for s in p["secoes"])
     video_css, video_js = ("\n" + VIDEO_CSS, "\n" + VIDEO_JS) if tem_video else ("", "")
+    evento_js = "\n" + EVENTO_JS if any("data-evento=" in s["html"] for s in p["secoes"]) else ""
     perguntas = ""
     if p.get("perguntas"):
         itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{resposta_html(q)}</p></details>" for q in p["perguntas"])
@@ -483,7 +497,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
 {partes["footer"]}
 
 {partes["menu_js"]}
-{chat_widget.tags()}{video_js}
+{chat_widget.tags()}{video_js}{evento_js}
 </body>
 </html>
 """

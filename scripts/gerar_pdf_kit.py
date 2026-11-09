@@ -13,6 +13,10 @@ e publique o PDF junto. O texto fixo das duas folhas (título, telefones, rodap�
 Pensado para quem tem mais de 50 anos e vai imprimir em casa ou na lan house: letra de 11 pt para cima, alto
 contraste, pouco vermelho (gasta menos tinta) e nada que dependa de cor para ser entendido.
 
+Fonte: Arial (ou a Liberation Sans, de mesmas medidas, que é a do ambiente de geração), e não a Inter do site. A Inter
+instalada é OpenType/CFF, e o Chromium a grava no PDF como fonte Type 3, que alguns leitores e impressoras antigas
+tratam mal; a Liberation Sans entra como TrueType. Confira com `pdffonts` depois de gerar.
+
 Uso: python3 scripts/gerar_pdf_kit.py   (precisa do Playwright/Chromium do ambiente; o logotipo vem do site no ar).
 """
 from __future__ import annotations
@@ -89,7 +93,7 @@ def pagina_html(kit: list[tuple[str, str, str]], socorros: list[str], atualizado
   @page {{ size: A4; margin: 13mm 14mm 12mm; }}
   * {{ box-sizing: border-box; }}
   html {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
-  body {{ margin: 0; font: 11pt/1.35 Inter, Arial, "Liberation Sans", sans-serif; color: #111; }}
+  body {{ margin: 0; font: 11pt/1.35 Arial, "Liberation Sans", Arimo, sans-serif; color: #111; }}
   .folha + .folha {{ break-before: page; }}
   header {{ display: flex; align-items: center; justify-content: space-between; padding-bottom: 3mm; border-bottom: 1.2mm solid #cc0000; }}
   header img {{ height: 13mm; width: auto; }}
@@ -164,7 +168,7 @@ def pagina_html(kit: list[tuple[str, str, str]], socorros: list[str], atualizado
         <li><b>193</b> Corpo de Bombeiros</li>
         <li><b>199</b> Defesa Civil</li>
       </ul>
-      <p class="dica" style="margin:2mm 0 0"><b>Alertas no celular:</b> envie um SMS com o seu CEP para <b>40199</b>. É gratuito.</p>
+      <p class="dica" style="margin:2mm 0 0"><b>Alertas no celular:</b> envie um SMS com o seu CEP para <b>40199</b>.</p>
     </div>
   </div>
 
@@ -191,7 +195,11 @@ def main() -> int:
         if "NODE_PATH" not in ambiente:
             ambiente["NODE_PATH"] = subprocess.run(["npm", "root", "-g"], capture_output=True, text=True).stdout.strip()
         subprocess.run(["node", str(runner), str(entrada), str(SAIDA)], check=True, env=ambiente)
+    folhas = len(re.findall(rb"/Type\s*/Page\b", SAIDA.read_bytes()))
     print(f"gravado {SAIDA.relative_to(RAIZ)} ({SAIDA.stat().st_size} bytes; {len(kit)} itens no kit, {len(socorros)} nos primeiros socorros)")
+    if folhas != 2:
+        print(f"ATENÇÃO: o PDF saiu com {folhas or '?'} folhas, e são 2. A lista cresceu? Ajuste o texto ou os espaços antes de publicar.")
+        return 1
     return 0
 
 
