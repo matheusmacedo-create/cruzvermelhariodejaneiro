@@ -135,6 +135,10 @@ verificar('frentes repetidas contam uma vez', $com(['frentes' => ['outra', 'outr
 verificar('todas as 9 frentes cabem na coluna', strlen($com(['frentes' => array_keys(mcp_voluntarios_frentes())])['dados']['frentes']) <= 255, true);
 verificar('dias vazios', campo_erro($com(['dias' => []])), 'dias');
 verificar('dia desconhecido', campo_erro($com(['dias' => ['segunda']])), 'dias');
+// O domingo saiu do cadastro (10/11/2026): ficha de página em cache entra sem ele; só domingo é como nenhum dia.
+verificar('domingo: sai da ficha nova', $com(['dias' => ['dom', 'sab', 'seg']])['dados']['dias'] ?? null, 'seg,sab');
+verificar('domingo: sozinho não vale como dia', campo_erro($com(['dias' => ['dom']])), 'dias');
+verificar('domingo: ficha antiga continua legível', mcp_voluntario_rotulos('sab,dom', MCP_VOL_DIAS), mcp_voluntario_rotulos('sab', MCP_VOL_DIAS) . ', Domingo');
 verificar('períodos vazios', campo_erro($com(['periodos' => []])), 'periodos');
 verificar('período desconhecido', campo_erro($com(['periodos' => ['madrugada']])), 'periodos');
 verificar('motivação curta (19)', campo_erro($com(['motivacao' => str_repeat('a', 19)])), 'motivacao');

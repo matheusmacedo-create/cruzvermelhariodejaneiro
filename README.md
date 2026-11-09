@@ -163,6 +163,13 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
 - Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
+## Voluntariado: cadastro sem domingo (10/11/2026)
+
+Pedido do Matheus: tirar o domingo dos dias em que a pessoa pode atuar. A opção saiu de `/voluntariado/cadastro/`
+(`DIAS` em `gerar_voluntariado_cadastro.py`). A API guarda `dom` em `MCP_VOL_DIAS` só para mostrar as fichas antigas
+(portal, PDF, CSV, Redação); ficha nova que chegue com domingo (página em cache) entra sem ele. Publicação:
+`site/matricula-cursos-presenciais/api/lib/voluntarios.php` e `site/voluntariado/cadastro/index.html`.
+
 ## Voluntariado: só para quem mora na cidade do Rio (09/11/2026)
 
 Pedido da coordenação do voluntariado, depois de uma ficha de Cachoeiras de Macacu: o voluntariado é presencial, na sede,
