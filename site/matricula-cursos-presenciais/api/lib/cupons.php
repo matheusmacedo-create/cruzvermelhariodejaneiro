@@ -28,6 +28,11 @@ const MCP_CUPONS = [
     // Curativos e Tratamento de Feridas por R$ 150,00 com tudo incluso em novembro (06/11/2026): o preço da escola, que
     // vende o curso sem taxa de inscrição neste mês; aqui o curso tem o preço padrão (R$ 150 + R$ 99) e a promoção é o cupom.
     'CURATIVOS' => ['cursos' => ['curativos-e-tratamento-de-feridas'], 'total_centavos' => 15000, 'limite' => null, 'ate' => '2026-11-30T23:59:59-03:00', 'vitrine' => true],
+    // Grupo de 5 cuidadoras na turma de 17/11 de Primeiros Socorros Básico, por R$ 150,00 cada com tudo incluso (09/11/2026,
+    // pedido do Matheus; substitui o link avulso feito na ÚnicoPag). Sem vitrine: vale só pelo link ou digitado. Uma pessoa
+    // paga as 5, uma inscrição por cuidadora (a matrícula na escola é pelo CPF de cada uma). Vale até o fim das inscrições
+    // da turma de 17/11 (oferta.json: inscricoes_ate).
+    'CUIDADORAS17' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 5, 'ate' => '2026-11-16T23:59:59-03:00'],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;

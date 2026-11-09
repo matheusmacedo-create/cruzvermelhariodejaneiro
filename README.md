@@ -1643,6 +1643,13 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
   R$ 21, desconto de R$ 129), **10 vagas**, até 11/11/2026 às 23h59 (fim das inscrições da turma de 12/11), com balão
   (`vitrine`). Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&cupom=PRO12` (sem o
   parâmetro, o balão já aplica). A recuperação por WhatsApp/e-mail continua oferecendo só o `NOV15` (`MCP_RW_CUPOM`).
+- **`CUIDADORAS17`** (09/11/2026): grupo de **5 cuidadoras** na turma de **17/11/2026** de Primeiros Socorros Básico, por
+  **R$ 150,00 cada com tudo incluso** (taxa R$ 99 + matrícula R$ 51), até 16/11/2026 às 23h59 (fim das inscrições da turma).
+  Sem `vitrine`: não aparece no balão nem na página, vale só pelo link ou digitado. Substitui o link avulso que tinha sido
+  criado direto na ÚnicoPag, que não entrava na escola sozinho. Uma pessoa paga as 5: usa o link uma vez por cuidadora, com
+  o nome, o CPF, o e-mail e o celular de cada uma (a matrícula na escola é pelo CPF), e paga com o próprio PIX ou cartão.
+  Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&cupom=CUIDADORAS17&utm_source=direto&utm_medium=grupo&utm_campaign=cuidadoras-17-11`.
+  Para ver quantas já entraram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'CUIDADORAS17' GROUP BY status`.
 - **Balão da oferta** (30/10/2026): cupom com `'vitrine' => true` em `MCP_CUPONS` (o `NOV15` é) vai a público no
   `info.php` (`cupons_vitrine`: código, cursos, valor final, limite e vagas que restam, com a mesma contagem da cobrança).
   No resumo do checkout aparece um balão com o código, "Restam N cupons de 30" e a barra das vagas; com o curso da oferta
