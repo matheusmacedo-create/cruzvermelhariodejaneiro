@@ -435,8 +435,12 @@ $corpo .= '<details><summary>Como funciona</summary><p>Quem pagou só a taxa de 
 $oa = mcp_oa_metricas($agora);
 if ($oa !== null && ($oa['na_lista'] > 0 || $oa['enviadas'] + $oa['falharam'] > 0)) {
     $cursoOa = (string) (mcp_curso(MCP_OA_CURSO)['nome'] ?? MCP_OA_CURSO);
-    $modeloOa = MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'];
+    $modeloOa = (string) (MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'] ?? MCP_RW_MODELO_CUPOM_GERAL);
     $situacaoOa = $modelos !== null && ($modelos['ok'] ?? false) ? (string) ($modelos['modelos'][$modeloOa] ?? 'ausente') : null;
+    // Com o modelo geral aprovado, a oferta sai por ele enquanto o do curso espera: não há o que avisar.
+    if ($situacaoOa !== null && $situacaoOa !== 'APPROVED' && ($modelos['modelos'][MCP_RW_MODELO_CUPOM_GERAL] ?? '') === 'APPROVED') {
+        $situacaoOa = 'APPROVED';
+    }
     $avisosOa = [];
     if (!$oa['ligada']) {
         $avisosOa[] = 'Desligada: a lista está no servidor, mas OFERTA_ALUNOS_LIGADA não é true. Nada sai.';
@@ -445,7 +449,7 @@ if ($oa !== null && ($oa['na_lista'] > 0 || $oa['enviadas'] + $oa['falharam'] > 
         $avisosOa[] = 'A oferta não vale agora (cupom encerrado ou sem vaga, ou o curso sem turma aberta). Nada sai.';
     }
     if ($situacaoOa !== null && $situacaoOa !== 'APPROVED') {
-        $avisosOa[] = 'Esperando a Meta aprovar o modelo ' . $modeloOa . ' (situação: ' . mb_strtolower($situacaoOa) . '). Ninguém perde a vez: sai na primeira rodada depois da aprovação.';
+        $avisosOa[] = 'Esperando a Meta aprovar o modelo ' . $modeloOa . ' ou o geral, ' . MCP_RW_MODELO_CUPOM_GERAL . ' (situação: ' . mb_strtolower($situacaoOa) . '). Ninguém perde a vez: sai na primeira rodada depois da aprovação.';
     }
     if (!$cfg['ok']) {
         $avisosOa[] = 'Sem a Kapso configurada: nada sai.';

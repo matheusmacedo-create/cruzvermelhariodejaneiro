@@ -1621,6 +1621,25 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
   verificações). Os testes da recuperação por WhatsApp (158) e da matrícula pendente (53) seguem passando.
 - **Publicar**: `scripts/publicacao-oferta-alunos.txt` (com migração), depois subir a lista ao servidor.
 
+### Modelo de cupom geral, para qualquer curso (09/11/2026)
+
+Pedido do responsável: "um modelo que a gente possa usar com várias entradas no ano". **Situação: modelo submetido à Meta em
+09/11/2026 (em análise); código testado só na máquina, NÃO publicado.**
+
+- **O modelo**: `curso_cupom_oferta` (Marketing, pt_BR, na conta do número do site). O texto é o do CURATIVOS com o curso em
+  parâmetro: `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` o cupom, `{{4}}` a data da turma; botão "Ver minha oferta"
+  (`https://cruzvermelhariodejaneiro.org/{{1}}`) e resposta rápida "Não tenho interesse". Não fala em "primeiros N alunos":
+  quem quiser dizer o limite de vagas continua com um modelo próprio do curso.
+- **Cupom novo sem modelo novo**: uma linha em `MCP_CUPONS` (`lib/cupons.php`) e outra em `MCP_RW_OFERTAS`
+  (`lib/recuperacao_whatsapp.php`) **sem** `'modelo'` — `'slug-do-curso' => ['cupom' => 'CODIGO']`. A 3ª mensagem da
+  recuperação desse curso e a oferta a ex-alunos saem pelo geral.
+- **Reserva dos modelos por curso** (`mcp_rw_cupom_resolver`): curso com modelo próprio que a Meta ainda não aprovou
+  (`cur_cupom_oferta`, `ll_cupom_oferta`) sai pelo geral, se ele estiver aprovado; aprovado o do curso, volta a valer o do
+  curso; sem nenhum dos dois, a 3ª da recuperação sai sem cupom (`rec_inscricao_3`) e a oferta a ex-alunos espera.
+- **Família**: `curso_cupom_oferta_v2`… entram sozinhas, como nas outras (`MCP_RW_FAMILIAS`).
+- **Testar**: `scripts/testar_oferta_alunos_integracao.php` (34 verificações, com o bloco "modelo geral").
+- **Publicar**: `scripts/publicacao-oferta-alunos.txt` (os mesmos arquivos; desta vez sem migração: o `db.php` não mudou).
+
 ### Cupom CURATIVOS na recuperação (06/11/2026)
 
 O Curativos e Tratamento de Feridas entrou em `MCP_RW_OFERTAS` com o cupom `CURATIVOS` e o modelo **`cur_cupom_oferta`**
