@@ -34,7 +34,7 @@ autorizacao=(-H "X-Auth: $HOSTINGER_TUS_AUTH" -H "X-Auth-Rest: $HOSTINGER_TUS_AU
 for arquivo in "$@"; do
   destino="${arquivo#"$RAIZ"/}"
   [ "$destino" != "$arquivo" ] || { echo "fora de $RAIZ/: $arquivo"; exit 2; }
-  if [[ "$destino" =~ (^|/)api/config(-[a-z]+)?\.php$ ]]; then
+  if [[ "$destino" =~ (^|/)api/config(-[a-z]+)?\.php$ || "$destino" =~ ^financeiro/config\.php$ ]]; then
     echo "recusado: $destino guarda as senhas do servidor e nunca sai daqui"; exit 2
   fi
   case "$modo" in

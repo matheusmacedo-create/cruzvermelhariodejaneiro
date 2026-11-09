@@ -1,0 +1,10 @@
+# Relatório das contas do financeiro (09/11/2026, docs/financeiro.md). Primeiro a proteção, depois a página.
+# Antes, criar no servidor (fora do Git) financeiro/config.php com FINANCEIRO_CHAVE (32+ caracteres), no modelo de
+# financeiro/config.example.php. Sem ele a página responde 404.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-financeiro.txt)
+site/financeiro/.htaccess
+site/financeiro/relatorios/.htaccess
+site/financeiro/config.example.php
+site/financeiro/index.php
+# Relatório de cada mês (fora do Git; ver docs/financeiro.md)
+site/financeiro/relatorios/2026-11.html

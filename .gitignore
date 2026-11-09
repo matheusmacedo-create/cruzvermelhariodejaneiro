@@ -38,3 +38,8 @@ site/matricula-cursos-presenciais/api/config-pagar-tudo.php
 *.p12
 # Leads importados uma vez para a recuperação por WhatsApp (dado pessoal): só no servidor.
 site/matricula-cursos-presenciais/api/config-recuperacao.php
+
+# Relatório das contas do financeiro (/financeiro/, docs/financeiro.md): a chave do link e os relatórios de cada mês
+# (valores das contas) ficam só no servidor.
+site/financeiro/config.php
+site/financeiro/relatorios/*.html

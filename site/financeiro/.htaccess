@@ -1,0 +1,19 @@
+# Relatório das contas para o financeiro (09/11/2026, docs/financeiro.md). Só o index.php responde; ele confere a
+# chave do link (?k=) e lê o relatório do mês em relatorios/. A chave e os relatórios ficam só no servidor.
+Options -Indexes
+DirectoryIndex index.php
+<FilesMatch "^(config(-[a-z-]+)?\.php|config\.example\.php)$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+<FilesMatch "(~|\.(bak|old|orig|save|swp|swo|tmp|dist|sql|log))$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Cache-Control "no-store, private"
+  Header always set Referrer-Policy "no-referrer"
+</IfModule>
