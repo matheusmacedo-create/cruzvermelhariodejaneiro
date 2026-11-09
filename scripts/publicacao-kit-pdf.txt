@@ -13,7 +13,8 @@
 # Só depois de o PDF responder 200 no ar a edição da newsletter pode sair: o botão dela leva a /kit-de-emergencia/#baixar.
 # O mesmo vale para a caixa "Receba a lista do kit de emergência no seu e-mail" das matérias (Palácio Virtual,
 # lib/site/caixa-de-material.ts): o botão do e-mail dela termina neste PDF. Ordem: publicar aqui, mesclar o PR da
-# Redação e só então "Regerar as páginas das matérias" (Configurações › Site). O endereço do PDF não muda sem mudar
-# lib/newsletter/materiais.ts, na Redação.
+# Redação e só então "Regerar as páginas das matérias" (Configurações › Site). A Redação confere sozinha: enquanto
+# este PDF não responder 200, as matérias saem sem a caixa (e o aviso da regeração diz por quê). O endereço do PDF
+# não muda sem mudar lib/newsletter/materiais.ts, na Redação.
 site/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf
 site/kit-de-emergencia/index.html

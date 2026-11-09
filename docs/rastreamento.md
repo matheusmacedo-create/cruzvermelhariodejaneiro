@@ -231,8 +231,9 @@ matérias e o envio são do Palácio Virtual (`lib/site/caixa-de-material.ts` e 
 repositório da Redação): a pessoa deixa o e-mail, recebe a mensagem com o botão “Baixar a lista em PDF” e o toque nele
 confirma a inscrição na newsletter e abre o PDF deste repositório. O `kit_pedir` sai da página da matéria (a matéria é
 a página do evento) e usa `origem` e `tipo`, que já são dimensões registradas. Quem confirmou aparece na lista da
-Newsletter com a origem “Materia”. **O PDF precisa estar no ar antes de a caixa entrar**: o botão do e-mail termina em
-`/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf`, e o endereço não pode mudar sem mudar lá.
+Newsletter com a origem “Materia”. **A caixa só entra com o PDF no ar**: o botão do e-mail termina em
+`/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf`, e o Palácio confere esse endereço ao gerar cada página
+(sem ele, a matéria sai sem a caixa). O endereço não pode mudar sem mudar lá.
 
 A edição da newsletter foi redigida para levar ao guia com
 `utm_source=newsletter&utm_medium=email&utm_campaign=kit-de-emergencia`: os downloads vindos do e-mail aparecem
