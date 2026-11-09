@@ -172,10 +172,10 @@ de 28/11 não é para aparecer em lugar nenhum.
 - **Aviso**: no topo de `/voluntariado/cadastro/` (`SO_CAPITAL` em `gerar_voluntariado_cadastro.py`) e na dica do campo
   Cidade; no início de `/voluntariado/` e numa pergunta nova da FAQ dela; em "Para quem" e na FAQ de `/cbfi/`
   (`site/institucional.json`).
+- **Presença** (Matheus, no mesmo dia): os avisos dizem que é preciso ir 24 vezes à sede em 6 meses. Não barrar: só avisar.
 - **Cidade de fora**: o `cadastro.js` mostra um aviso logo abaixo do campo quando a cidade não é "Rio de Janeiro" ou o
   estado não é RJ (`foraDaCapital`). **A ficha não é barrada**; o e-mail à equipe destaca "Mora fora da cidade do Rio de
-  Janeiro" (`mcp_voluntario_fora_da_capital`, a mesma regra). Para barrar de vez, basta devolver erro no campo `cidade`
-  em `mcp_voluntario_validar` e em `validar()` do `cadastro.js`.
+  Janeiro" (`mcp_voluntario_fora_da_capital`, a mesma regra).
 - **Data de 28/11**: saiu do e-mail à equipe e do painel de fichas, os dois lugares onde ainda aparecia (as páginas e o
   e-mail ao voluntário já não a traziam desde 04/11). `MCP_VOL_CBFI_DATA` continua só para decidir a volta a janeiro.
 - Home, `/bio/` e chat não mudaram. Publicação: `scripts/publicacao-voluntariado-capital.txt`.

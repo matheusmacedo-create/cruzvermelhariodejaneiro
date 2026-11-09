@@ -85,10 +85,10 @@ PROXIMAS_ENTRADAS = cbfi.PROXIMAS_ENTRADAS
 CBFI_LINK = f'<a href="{cbfi.URL}">Saiba mais sobre o CBFI</a>'
 
 # Só para quem mora na capital (coordenação do voluntariado, 09/11/2026): as atividades são presenciais, na sede, no Centro
-# do Rio. O aviso vai no topo e no campo da cidade; o cadastro.js repete o aviso quando a cidade digitada é outra, e o
+# do Rio, com 24 idas à sede em 6 meses (Matheus, 09/11/2026). O aviso vai no topo e no campo da cidade; o cadastro.js repete o aviso quando a cidade digitada é outra, e o
 # e-mail à equipe destaca a ficha (mcp_voluntario_fora_da_capital). A ficha de fora não é barrada.
-SO_CAPITAL = ("<b>Só para quem mora na cidade do Rio de Janeiro.</b> O voluntariado desta filial é presencial, na sede, na Praça da "
-              "Cruz Vermelha, 10, no Centro do Rio. Mora em outro município? Procure a Cruz Vermelha da sua cidade ou da sua região.")
+SO_CAPITAL = ("<b>Só para quem mora na cidade do Rio de Janeiro.</b> O voluntariado desta filial é presencial: é preciso ir 24 vezes "
+              "à sede, na Praça da Cruz Vermelha, 10, no Centro do Rio, em 6 meses. Mora em outro município? Procure a Cruz Vermelha da sua cidade ou da sua região.")
 
 # (título, HTML do detalhe)
 ETAPAS = [
@@ -335,7 +335,7 @@ def formulario() -> str:
     contato = cartao("vc-contato", "Contato", "A confirmação chega por e-mail; a equipe do voluntariado chama pelo WhatsApp.", '<div class="vc-grade">' + "".join([
         entrada("email", "E-mail", tipo="email", obrigatorio=True, atributos='autocomplete="email" maxlength="190" inputmode="email" spellcheck="false"'),
         entrada("telefone", "Telefone com DDD", tipo="tel", obrigatorio=True, dica="De preferência um celular com WhatsApp: é por ele que a equipe do voluntariado entra em contato.", atributos='autocomplete="tel" inputmode="tel" maxlength="16" placeholder="(21) 99999-9999"'),
-        entrada("cidade", "Cidade", obrigatorio=True, dica="O voluntariado é presencial, no Centro do Rio, e só para quem mora na cidade do Rio de Janeiro.",
+        entrada("cidade", "Cidade", obrigatorio=True, dica="Só para quem mora na cidade do Rio de Janeiro: são 24 idas à sede, no Centro do Rio, em 6 meses.",
                 atributos='autocomplete="address-level2" maxlength="120"'),
         # Logo abaixo da cidade (no celular é uma coluna só): aparece (cadastro.js) quando a cidade ou o estado digitados não são o Rio de Janeiro, capital.
         '<p class="vc-fora vc-campo-largo" id="vc-fora" role="status" hidden></p>',
