@@ -22,7 +22,7 @@ Regras:
   - página com noindex ou com canonical apontando para outro endereço fica de fora (avisa);
   - lastmod só quando há fonte confiável (Last-Modified do servidor ou article:modified_time);
     sem fonte, o campo é omitido, nunca inventado;
-  - logotipos, logos de parceiros e pixels de rastreio não entram como imagem.
+  - logotipos, logos de parceiros, pixels de rastreio e capas de vídeo do YouTube não entram como imagem.
 
 Uso:  python3 scripts/gerar_sitemaps.py
 Sem dependências além da biblioteca padrão. Precisa de rede (confere tudo ao vivo).
@@ -171,7 +171,9 @@ NS_SITEMAP = "http://www.sitemaps.org/schemas/sitemap/0.9"
 NS_IMAGEM = "http://www.google.com/schemas/sitemap-image/1.1"
 NS_XHTML = "http://www.w3.org/1999/xhtml"
 EXTENSOES_IMAGEM = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif")
-IGNORAR_IMAGEM = re.compile(r"logo|/parceiros/|facebook\.com/tr|^data:", re.I)
+# ytimg.com e img.youtube.com são as capas dos vídeos do YouTube que as páginas mostram (o bloco inst-video de
+# gerar_institucional.py, 09/11/2026): imagem de outro canal, hospedada no YouTube, não é imagem da página.
+IGNORAR_IMAGEM = re.compile(r"logo|/parceiros/|facebook\.com/tr|^data:|ytimg\.com/|img\.youtube\.com/", re.I)
 
 
 # ----------------------------------------------------------------------------- rede

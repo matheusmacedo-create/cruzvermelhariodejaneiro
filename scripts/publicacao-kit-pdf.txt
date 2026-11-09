@@ -2,8 +2,18 @@
 # 07/11/2026, Defesa Civil do Paraná, Ministério da Saúde, Cruz Vermelha Canadense, Comissão Europeia), seção da
 # água, o que acrescentar para crianças, idosos e animais, três vídeos de canais de terceiros (Einstein, Drauzio
 # Varella e MIDR) e a lista em PDF para imprimir, citada na newsletter.
-# ESTADO: NÃO publicado. Antes de publicar, o Matheus assiste aos três vídeos (o conteúdo não foi assistido na
-# sessão que os escolheu; só canal e título foram conferidos).
+# ESTADO: PUBLICADO em 09/11/2026, às 18h28 (horário de Brasília), com o ok do Matheus, a partir da main em 7ea65c7
+# (o guia e o PDF entraram pelo PR #148), com o cache limpo. O conteúdo dos três vídeos não foi assistido pela sessão
+# que os escolheu e publicou: só o canal e o título foram conferidos (oEmbed do YouTube).
+# O ar antes da publicação = o Git em 1e002c3 (a página conferida byte a byte com a cópia tirada do ar; o PDF não
+# existia). Desfazer: scripts/desfazer_publicacao.sh 1e002c3 scripts/publicacao-kit-pdf.txt (a página volta e o PDF
+# é apagado). ATENÇÃO: sem o PDF no ar, as matérias do Palácio regeradas depois saem sem a caixa da lista do kit, e
+# o botão das mensagens já enviadas dá em página não encontrada.
+# Conferido no ar: conferir_publicacao.sh (os dois arquivos iguais ao repositório; uma falha passageira num item
+# da API da matrícula na primeira rodada, que não se repetiu em duas seguidas); navegador em 390 px e 1280 px
+# (título novo, 3 vídeos com capa, botão abrindo o PDF com 195045 bytes, player ao tocar, sem erro de JS nem
+# rolagem lateral). Sitemaps regerados e publicados em seguida; as capas dos vídeos do YouTube ficam fora do
+# sitemap de imagens (regra nova em gerar_sitemaps.py).
 # Gerar antes: python3 scripts/gerar_institucional.py kit-de-emergencia && python3 scripts/gerar_pdf_kit.py
 # Ordem: o PDF primeiro (a página aponta para ele), depois a página.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-kit-pdf.txt)
@@ -11,5 +21,10 @@
 # python3 scripts/gerar_sitemaps.py e publicar os sitemaps (o lastmod da página muda). No GA4 (tempo real), o toque
 # no botão aparece como kit_baixar e o toque num vídeo como video_start (docs/rastreamento.md).
 # Só depois de o PDF responder 200 no ar a edição da newsletter pode sair: o botão dela leva a /kit-de-emergencia/#baixar.
+# O mesmo vale para a caixa "Receba a lista do kit de emergência no seu e-mail" das matérias (Palácio Virtual,
+# lib/site/caixa-de-material.ts): o botão do e-mail dela termina neste PDF. Ordem: publicar aqui, mesclar o PR da
+# Redação e só então "Regerar as páginas das matérias" (Configurações › Site). A Redação confere sozinha: enquanto
+# este PDF não responder 200, as matérias saem sem a caixa (e o aviso da regeração diz por quê). O endereço do PDF
+# não muda sem mudar lib/newsletter/materiais.ts, na Redação.
 site/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf
 site/kit-de-emergencia/index.html
