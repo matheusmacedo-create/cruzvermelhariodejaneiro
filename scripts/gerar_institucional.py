@@ -28,6 +28,11 @@ para emblemas centralizados, inst-figura-media (600 px centralizada) e inst-figu
 computador, 42%; vira bloco no celular). Toda <img> ganha loading="lazy". A página pode ter imagem_og (1200x630) e atualizado
 (AAAA-MM-DD) próprios; as figuras entram no JSON-LD (WebPage.image).
 
+Vídeos (09/11/2026, guia do kit): <div class="inst-video" data-yt="ID" data-titulo="…" data-canal="…"></div> vira uma
+capa (miniatura do YouTube + botão de tocar) que é um link comum para o vídeo. Com JavaScript, o toque troca a capa
+pelo player em youtube-nocookie.com, dentro da página; antes do toque nada do YouTube carrega além da miniatura
+(sem cookie). Só entram vídeos de canais oficiais, conferidos pelo oEmbed do YouTube (autor e título).
+
 Uso:  python3 scripts/gerar_institucional.py [slug ...]
 Depois: publicar as pastas geradas (lista em scripts/publicacao-institucional.txt) e o sitemap.
 """
@@ -180,6 +185,55 @@ def carregar() -> dict:
     return paginas
 
 
+def video(m: re.Match) -> str:
+    """Capa de um vídeo do YouTube: link comum, que o VIDEO_JS troca pelo player no toque."""
+    dados = dict(re.findall(r'data-([a-z]+)="([^"]*)"', m.group(1)))
+    yt, nome, canal = dados["yt"], dados["titulo"], dados["canal"]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{11}", yt):
+        raise SystemExit(f"inst-video com identificador inválido: {yt}")
+    return (f'<figure class="inst-figura inst-video"><a class="inst-video-capa" href="https://www.youtube.com/watch?v={yt}" '
+            f'data-yt="{yt}" data-titulo="{nome}" target="_blank" rel="noopener" aria-label="Assistir ao vídeo: {nome}">'
+            f'<img src="https://i.ytimg.com/vi/{yt}/hqdefault.jpg" width="480" height="360" alt="">'
+            '<span class="inst-video-tocar" aria-hidden="true"></span></a>'
+            f'<figcaption><b>{nome}</b>Vídeo do canal {canal}, no YouTube. Toque para assistir.</figcaption></figure>')
+
+
+# Só entra nas páginas que têm vídeo, para as outras não mudarem de tamanho.
+VIDEO_CSS = """  <style>
+    /* Vídeos do YouTube (09/11/2026): capa clicável; o player só carrega depois do toque. */
+    .inst-video { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .inst-video-capa { position: relative; display: block; aspect-ratio: 16 / 9; background: #000; }
+    .inst-video-capa img, .inst-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
+    .inst-video-quadro { position: relative; aspect-ratio: 16 / 9; background: #000; }
+    .inst-video-tocar { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--red); box-shadow: 0 6px 22px rgba(0, 0, 0, .45); }
+    .inst-video-tocar::after { content: ""; position: absolute; left: 30px; top: 22px; border-style: solid; border-width: 16px 0 16px 26px; border-color: transparent transparent transparent #fff; }
+    .inst-video-capa:hover .inst-video-tocar, .inst-video-capa:focus-visible .inst-video-tocar { background: var(--red-dark); }
+    .inst-video-capa:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+    .inst-video figcaption b { display: block; color: var(--black); font-size: .98rem; margin: 0 0 2px; }
+  </style>"""
+
+VIDEO_JS = """<script>
+  /* Vídeos: troca a capa pelo player do YouTube (sem cookie até tocar). Sem JavaScript, a capa abre o YouTube. */
+  document.querySelectorAll('.inst-video-capa').forEach(function (capa) {
+    capa.addEventListener('click', function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+      e.preventDefault();
+      var quadro = document.createElement('div');
+      quadro.className = 'inst-video-quadro';
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + capa.getAttribute('data-yt') + '?autoplay=1&rel=0';
+      f.title = capa.getAttribute('data-titulo');
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      f.allowFullscreen = true;
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      quadro.appendChild(f);
+      capa.parentNode.replaceChild(quadro, capa);
+      if (typeof gtag === 'function') gtag('event', 'video_start', { video_provider: 'youtube', video_title: f.title });
+    });
+  });
+</script>"""
+
+
 def tratar_html(html: str, titulo: str = "") -> str:
     """Links externos abrem em outra aba; tabelas ganham rolagem horizontal no celular."""
     def link(m: re.Match) -> str:
@@ -188,6 +242,7 @@ def tratar_html(html: str, titulo: str = "") -> str:
         if href and href.group(1).startswith("http") and not href.group(1).startswith(ORIGEM) and "target=" not in attrs:
             attrs += ' target="_blank" rel="noopener"'
         return f"<a{attrs}>"
+    html = re.sub(r'<div class="inst-video"([^>]*)></div>', video, html)
     html = re.sub(r"<a(\s[^>]*)>", link, html)
     # Figuras ficam abaixo da primeira dobra: carregam quando se aproximam da tela.
     html = re.sub(r"<img(?![^>]*\bloading=)", '<img loading="lazy" decoding="async"', html)
@@ -342,6 +397,8 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         f'      <section class="inst-secao" id="{esc(s["id"])}" aria-labelledby="{esc(s["id"])}-titulo">\n'
         f'        <h2 id="{esc(s["id"])}-titulo">{esc(s["h2"])}</h2>\n'
         f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"])
+    tem_video = any('class="inst-video"' in s["html"] for s in p["secoes"])
+    video_css, video_js = ("\n" + VIDEO_CSS, "\n" + VIDEO_JS) if tem_video else ("", "")
     perguntas = ""
     if p.get("perguntas"):
         itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{resposta_html(q)}</p></details>" for q in p["perguntas"])
@@ -382,7 +439,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 {partes["estilo"]}
-{CSS}
+{CSS}{video_css}
 {ga4}
 {partes["pixel"]}
 {json_ld(p, paginas)}
@@ -426,7 +483,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
 {partes["footer"]}
 
 {partes["menu_js"]}
-{chat_widget.tags()}
+{chat_widget.tags()}{video_js}
 </body>
 </html>
 """

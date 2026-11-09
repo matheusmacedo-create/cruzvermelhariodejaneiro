@@ -1,0 +1,14 @@
+# Guia do kit de emergência, revisão de 09/11/2026 (pedido do Matheus): mais fontes oficiais (nota do MIDR de
+# 07/11/2026, Defesa Civil do Paraná, Ministério da Saúde, Cruz Vermelha Canadense, Comissão Europeia), seção da
+# água, o que acrescentar para crianças, idosos e animais, três vídeos de canais de terceiros (Einstein, Drauzio
+# Varella e MIDR) e a lista em PDF para imprimir, citada na newsletter.
+# ESTADO: NÃO publicado. Antes de publicar, o Matheus assiste aos três vídeos (o conteúdo não foi assistido na
+# sessão que os escolheu; só canal e título foram conferidos).
+# Gerar antes: python3 scripts/gerar_institucional.py kit-de-emergencia && python3 scripts/gerar_pdf_kit.py
+# Ordem: o PDF primeiro (a página aponta para ele), depois a página.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-kit-pdf.txt)
+# Depois: limpar o cache, conferir no celular o botão "Baixar a lista em PDF" e o toque nos vídeos, rodar
+# python3 scripts/gerar_sitemaps.py e publicar os sitemaps (o lastmod da página muda).
+# Só depois de o PDF responder 200 no ar a edição da newsletter pode sair: o botão dela leva a /kit-de-emergencia/#baixar.
+site/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf
+site/kit-de-emergencia/index.html
