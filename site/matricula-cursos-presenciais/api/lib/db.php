@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '3ab5e477f8fe15d5';
+const MCP_DB_VERSAO = '20bac97a31776460';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -768,6 +768,26 @@ function mcp_migrar_tudo(PDO $pdo): void
         UNIQUE KEY ux_inscricao_canal_etapa (inscricao_id, canal, etapa),
         KEY ix_provedor (provedor_id),
         KEY ix_criado (criado_em, canal, status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Oferta a ex-alunos por WhatsApp (09/11/2026, lib/oferta_alunos.php): disparo único de um cupom a quem já estudou
+    // na escola. Uma linha por celular e campanha (UNIQUE: ninguém recebe duas vezes), só com o mcp_avisos_hash do
+    // celular (o mesmo de mcp_avisos_bloqueios); o nome e o número ficam na lista, que mora só no servidor.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_oferta_alunos (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        campanha VARCHAR(40) NOT NULL,
+        destino_hash CHAR(32) NOT NULL,
+        modelo VARCHAR(40) NULL,
+        curso_slug VARCHAR(80) NULL,
+        status ENUM('enviado','falhou') NOT NULL,
+        provedor_id VARCHAR(128) NULL,
+        entrega ENUM('entregue','lida','falhou') NULL,
+        erro VARCHAR(255) NULL,
+        resposta VARCHAR(200) NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        UNIQUE KEY ux_campanha_destino (campanha, destino_hash),
+        KEY ix_provedor (provedor_id),
+        KEY ix_criado (criado_em, status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Pagamento da matrícula pelo site (01/11/2026, api/matricula.php): a cobrança da matrícula de uma inscrição que já
     // pagou só a taxa, aberta pelo link assinado da mensagem. Tabela à parte de mcp_inscricoes de propósito: uma linha

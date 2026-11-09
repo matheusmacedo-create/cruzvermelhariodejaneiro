@@ -429,6 +429,49 @@ $corpo .= '<details><summary>Como funciona</summary><p>Quem pagou só a taxa de 
     . 'Paga, o aluno recebe o comprovante e a secretaria recebe um aviso para marcar a matrícula como paga na plataforma da escola. Quem já pagou (no site, na escola pela plataforma ou marcado aqui), bloqueou o canal ou pediu para parar não recebe. '
     . 'As mensagens contam no mesmo teto diário da recuperação (WhatsApp ' . MCP_RW_POR_DIA . ' e e-mail ' . MCP_RW_EMAIL_POR_DIA . ' em 24 h) e saem antes dela.</p></details></section>';
 
+// ----------------------------------------------------------------------------- oferta a ex-alunos
+// Disparo único do cupom de um curso a quem já estudou na escola (lib/oferta_alunos.php). Só aparece com a lista no
+// servidor ou com alguma mensagem já enviada; nenhum nome nem número, só contagens.
+$oa = mcp_oa_metricas($agora);
+if ($oa !== null && ($oa['na_lista'] > 0 || $oa['enviadas'] + $oa['falharam'] > 0)) {
+    $cursoOa = (string) (mcp_curso(MCP_OA_CURSO)['nome'] ?? MCP_OA_CURSO);
+    $modeloOa = MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'];
+    $situacaoOa = $modelos !== null && ($modelos['ok'] ?? false) ? (string) ($modelos['modelos'][$modeloOa] ?? 'ausente') : null;
+    $avisosOa = [];
+    if (!$oa['ligada']) {
+        $avisosOa[] = 'Desligada: a lista está no servidor, mas OFERTA_ALUNOS_LIGADA não é true. Nada sai.';
+    }
+    if ($oa['oferta'] === null) {
+        $avisosOa[] = 'A oferta não vale agora (cupom encerrado ou sem vaga, ou o curso sem turma aberta). Nada sai.';
+    }
+    if ($situacaoOa !== null && $situacaoOa !== 'APPROVED') {
+        $avisosOa[] = 'Esperando a Meta aprovar o modelo ' . $modeloOa . ' (situação: ' . mb_strtolower($situacaoOa) . '). Ninguém perde a vez: sai na primeira rodada depois da aprovação.';
+    }
+    if (!$cfg['ok']) {
+        $avisosOa[] = 'Sem a Kapso configurada: nada sai.';
+    }
+    $corpo .= '<section class="cartao" id="oferta-alunos"><div class="cab"><div><span class="rotulo">Oferta a quem já foi aluno · uma mensagem só</span>'
+        . '<b class="hora">' . rw_e($cursoOa) . ($oa['oferta'] !== null ? ' com o cupom ' . rw_e($oa['oferta']['codigo']) : '') . '</b></div><div class="total"><b>' . $oa['faltam'] . '</b><span>'
+        . ($oa['faltam'] === 1 ? 'ainda vai receber' : 'ainda vão receber') . '</span></div></div>';
+    if ($avisosOa) {
+        $corpo .= '<div class="aviso atencao" role="status"><ul>' . implode('', array_map(static fn(string $x): string => '<li>' . rw_e($x) . '</li>', $avisosOa)) . '</ul></div>';
+    }
+    $corpo .= '<ol class="funil" style="margin-top:14px">'
+        . '<li><span>Na lista</span><b>' . $oa['na_lista'] . '</b><small>celulares válidos' . ($oa['invalidos'] > 0 ? ' · ' . $oa['invalidos'] . ' com telefone inválido' : '') . ($oa['bloqueados'] > 0 ? ' · ' . $oa['bloqueados'] . ' pediram para não receber' : '') . '</small></li>'
+        . '<li><span>Enviadas</span><b>' . $oa['enviadas'] . '</b><small>' . ($oa['falharam'] > 0 ? $oa['falharam'] . ' não saíram (número sem WhatsApp ou recusa da Meta)' : 'nenhuma falha') . '</small></li>'
+        . '<li><span>Entregues</span><b>' . $oa['entregues'] . '</b><small>' . $oa['lidas'] . ' lidas</small></li>'
+        . '<li><span>Responderam</span><b>' . $oa['responderam'] . '</b><small>' . $oa['nao_querem'] . ' "Não tenho interesse"</small></li>'
+        . '<li class="fim"><span>Compraram pelo link</span><b>' . $oa['compras'] . '</b>' . ($oa['enviadas'] > 0 ? '<em>' . rw_e($pct($oa['compras'] / $oa['enviadas'])) . '</em>' : '')
+        . '<small>compras pagas do curso vindas do botão</small></li></ol>';
+    $rodadaOa = $oa['rodada'];
+    $corpo .= '<p class="nota">' . ($rodadaOa !== null && isset($rodadaOa['em'])
+        ? 'Última rodada com movimento, ' . rw_e(rw_quando((int) $rodadaOa['em'])) . ': ' . (int) ($rodadaOa['enviados'] ?? 0) . ' enviadas, ' . (int) ($rodadaOa['falhas'] ?? 0) . ' falhas, '
+            . (int) ($rodadaOa['pulados'] ?? 0) . ' puladas' . (!empty($rodadaOa['motivo']) ? ' (' . rw_e((string) $rodadaOa['motivo']) . ')' : '') . '. '
+        : 'Ainda não rodou. ')
+        . 'Sai de hora em hora, das 8h às 20h, depois dos lembretes da matrícula e da recuperação, no máximo ' . MCP_OA_POR_RODADA . ' por rodada e dentro do mesmo teto de '
+        . MCP_RW_POR_DIA . ' mensagens em 24 h. Quem pediu para não receber e quem já comprou o curso ficam de fora.</p></section>';
+}
+
 // ----------------------------------------------------------------------------- próximo disparo
 // A mesma conta da rotina (mcp_rw_proxima com o ajuste de horário) e o mesmo teto por rodada; o grupo de controle nunca
 // recebe. A rotina ainda reconfere cada pessoa antes de mandar. Os e-mails vêm à parte, com o teto deles (por rodada e o
