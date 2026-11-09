@@ -393,7 +393,7 @@
   function avisarFora() {
     if (!foraAviso) return;
     var fora = valor('cidade').length >= 2 && foraDaCapital(valor('cidade'), valor('estado'));
-    foraAviso.textContent = fora ? 'Atenção: o voluntariado desta filial é só para quem mora na cidade do Rio de Janeiro. As atividades são presenciais, na sede, no Centro do Rio. Se você mora em outro município, procure a Cruz Vermelha da sua cidade ou da sua região.' : '';
+    foraAviso.textContent = fora ? 'Atenção: o voluntariado desta filial é só para quem mora na cidade do Rio de Janeiro. É presencial: é preciso ir 24 vezes à sede, no Centro do Rio, em 6 meses. Se você mora em outro município, procure a Cruz Vermelha da sua cidade ou da sua região.' : '';
     foraAviso.hidden = !fora;
   }
   ['cidade', 'estado'].forEach(function (n) { if (form.elements[n]) form.elements[n].addEventListener('change', avisarFora); });
