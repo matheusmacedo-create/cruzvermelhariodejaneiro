@@ -1585,8 +1585,9 @@ secretaria"). **Não havia nenhum caminho no site para pagar a matrícula depois
 ### Oferta a ex-alunos por WhatsApp (09/11/2026)
 
 Pedido do responsável: mandar a oferta de Curativos (cupom `CURATIVOS`, R$ 150,00 com tudo incluso, turma de 28/11) por
-WhatsApp a quem já pagou um curso da escola. **Situação: construído e testado só na máquina; NADA foi publicado e nenhuma
-mensagem saiu.**
+WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2026 às 19h35 (código conferido com
+`conferir_publicacao.sh`) e a lista de 75 celulares no servidor, ligada. Nenhuma mensagem saiu ainda: o modelo
+`cur_cupom_oferta` estava em análise na Meta; o disparo começa sozinho na primeira rodada (8h–20h) depois da aprovação.**
 
 - **O que faz** (`api/lib/oferta_alunos.php`, prefixo `mcp_oa_`, carregado pelo `recuperacao_whatsapp.php`): um disparo
   **único**. Cada celular da lista recebe **uma** mensagem do modelo de cupom do curso (`cur_cupom_oferta`, de
