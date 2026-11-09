@@ -86,6 +86,8 @@ const MCP_VOL_STATUS = [
     'recusada' => 'Recusada',
     'arquivada' => 'Arquivada',
 ];
+// O domingo saiu do cadastro em 10/11/2026 (pedido do Matheus): a tabela o mantém só para mostrar as fichas antigas;
+// uma ficha nova que chegue com ele (página em cache) é aceita sem o domingo (mcp_voluntario_validar).
 const MCP_VOL_DIAS = ['seg' => 'Segunda', 'ter' => 'Terça', 'qua' => 'Quarta', 'qui' => 'Quinta', 'sex' => 'Sexta', 'sab' => 'Sábado', 'dom' => 'Domingo'];
 const MCP_VOL_PERIODOS = ['manha' => 'Manhã', 'tarde' => 'Tarde', 'noite' => 'Noite'];
 const MCP_VOL_UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
@@ -362,6 +364,9 @@ function mcp_voluntario_validar(array $b, ?string $hoje = null): array
         return $falha('frentes', 'Marque pelo menos uma frente em que você gostaria de atuar.');
     }
     $dias = mcp_voluntario_lista($b['dias'] ?? [], MCP_VOL_DIAS);
+    if ($dias !== null) {
+        $dias = array_values(array_diff($dias, ['dom']));
+    }
     if ($dias === null) {
         return $falha('dias', 'Um dos dias marcados não existe. Recarregue a página e marque de novo.');
     }

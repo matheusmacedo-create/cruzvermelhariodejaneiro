@@ -64,7 +64,8 @@ FRENTES = [
     ("administrativo", "Administrativo", "Secretaria, organização e apoio à gestão."),
     ("outra", "Outra área", "Conte nas habilidades o que você gostaria de fazer."),
 ]
-DIAS = [("seg", "Segunda"), ("ter", "Terça"), ("qua", "Quarta"), ("qui", "Quinta"), ("sex", "Sexta"), ("sab", "Sábado"), ("dom", "Domingo")]
+# Sem domingo desde 10/11/2026 (pedido do Matheus). A API ainda conhece "dom" para mostrar as fichas antigas.
+DIAS = [("seg", "Segunda"), ("ter", "Terça"), ("qua", "Quarta"), ("qui", "Quinta"), ("sex", "Sexta"), ("sab", "Sábado")]
 PERIODOS = [("manha", "Manhã"), ("tarde", "Tarde"), ("noite", "Noite")]
 COMO_CONHECEU = [
     ("instagram", "Instagram"),
