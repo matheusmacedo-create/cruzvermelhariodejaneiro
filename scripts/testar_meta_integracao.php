@@ -849,6 +849,98 @@ $codigos = array_map(static fn($h): int => (int) curl_getinfo($h, CURLINFO_RESPO
 sort($codigos);
 verificar('cupom: duas compras juntas pela última vaga, só uma passa', [$codigos, count(cobrancas_unicopag($mC)), no_site("mcp_cupom_usados('NOV15')")], [[201, 422], 1, 30]);
 
+// ----------------------------------------------------------------------------- cupom de grupo (09/11/2026, 'grupo' => 5)
+// CUIDADORAS17: 5 pessoas em Primeiros Socorros Básico por R$ 150,00 cada, num pagamento só de R$ 750,00.
+// O bloco começa com os freios zerados (os blocos de cima já fizeram muitas compras deste IP).
+$pdo->exec("UPDATE mcp_inscricoes SET ip = '10.250.0.1'");
+$pdo->exec("DELETE FROM mcp_eventos WHERE tipo IN ('recusa_checkout', 'limite')");
+$gi = pedir('GET', 'info.php?cupom=CUIDADORAS17&curso=primeiros-socorros-basico');
+verificar('grupo: info.php diz o grupo de 5, o valor por pessoa e as 5 vagas', [$gi['corpo']['cupom']['valido'] ?? null, $gi['corpo']['cupom']['grupo'] ?? null,
+    $gi['corpo']['cupom']['total_centavos'] ?? null, $gi['corpo']['cupom']['restantes'] ?? null], [true, 5, 15000, 5]);
+$pessoasG = [];
+foreach ([2, 3, 4, 5] as $k) {
+    $pessoasG[] = ['nome' => "Cuidadora Numero $k", 'cpf' => cpf_ficticio('7000005' . sprintf('%02d', $k)), 'email' => "cuidadora$k@exemplo.org", 'telefone' => "(21) 97777-000$k"];
+}
+$alunoG = array_merge($alunoPt, ['nome' => 'Cuidadora Numero Um', 'cpf' => cpf_ficticio('700000501'), 'email' => 'cuidadora1@exemplo.org', 'evento_id' => 'lead.mgb2k1.grupo001',
+    'cupom' => 'CUIDADORAS17', 'total_mostrado_centavos' => 75000, 'grupo' => $pessoasG]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoG, ['grupo' => array_slice($pessoasG, 0, 3)]), $SIM);
+verificar('grupo: sem as 4 outras pessoas, 422 grupo, sem cobrar', [$r['http'], $r['corpo']['campo'] ?? null, count(cobrancas_unicopag($mC))], [422, 'grupo', 0]);
+$repetido = $pessoasG;
+$repetido[1]['cpf'] = $pessoasG[0]['cpf'];
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoG, ['grupo' => $repetido]), $SIM);
+verificar('grupo: CPF repetido no grupo é recusado no campo da pessoa 3', [$r['http'], $r['corpo']['campo'] ?? null, count(cobrancas_unicopag($mC))], [422, 'grupo.3.cpf', 0]);
+$r = pedir('POST', 'pagamentos.php', array_merge($alunoG, ['total_mostrado_centavos' => 15000]), $SIM);
+verificar('grupo: total mostrado de uma pessoa só é recusado (422 total, com 75000)', [$r['http'], $r['corpo']['campo'] ?? null, $r['corpo']['total_centavos'] ?? null, count(cobrancas_unicopag($mC))],
+    [422, 'total', 75000, 0]);
+$mE = 0;
+emails_resend($mE);
+$r = pedir('POST', 'pagamentos.php', $alunoG, $SIM);
+$c = cobrancas_unicopag($mC);
+verificar('grupo, PIX: 201 e UMA cobrança de 75000 (taxa 49500 + matrícula 25500), em nome da pessoa 1, com o grupo na metadata', [$r['http'], count($c), $c[0]['amount'] ?? null,
+    array_column($c[0]['cart'] ?? [], 'price'), $c[0]['customer']['document'] ?? null, $c[0]['metadata']['grupo'] ?? null, $c[0]['installments'] ?? null],
+    [201, 1, 75000, [49500, 25500], $alunoG['cpf'], 5, 1]);
+verificar('grupo: a tela de quem paga mostra 750 e as 5 pessoas', [$r['corpo']['total_centavos'] ?? null, $r['corpo']['total_cobrado_centavos'] ?? null, $r['corpo']['grupo']['qtd'] ?? null,
+    $r['corpo']['grupo']['nomes'] ?? null], [75000, 75000, 5, ['Cuidadora', 'Cuidadora', 'Cuidadora', 'Cuidadora', 'Cuidadora']]);
+$principalG = $pdo->query('SELECT * FROM mcp_inscricoes WHERE token = ' . $pdo->quote((string) ($r['corpo']['token'] ?? '')))->fetch() ?: [];
+$linhasG = $pdo->query('SELECT id, cpf, email, grupo_id, grupo_ordem, grupo_qtd, unicopag_hash, pix_copia_cola, total_centavos, matricula_centavos, cupom, status, turma_id FROM mcp_inscricoes WHERE grupo_id = '
+    . (int) ($principalG['id'] ?? 0) . ' ORDER BY grupo_ordem')->fetchAll();
+verificar('grupo: 5 inscrições, uma por pessoa, de R$ 150 cada; só a principal tem o hash e o PIX', [count($linhasG), array_column($linhasG, 'grupo_ordem'), array_column($linhasG, 'email'),
+    array_map('intval', array_column($linhasG, 'total_centavos')), array_map('intval', array_column($linhasG, 'matricula_centavos')),
+    count(array_filter(array_column($linhasG, 'unicopag_hash'))), count(array_filter(array_column($linhasG, 'pix_copia_cola'))), array_unique(array_column($linhasG, 'status')),
+    array_unique(array_column($linhasG, 'turma_id'))],
+    [5, [1, 2, 3, 4, 5], ['cuidadora1@exemplo.org', 'cuidadora2@exemplo.org', 'cuidadora3@exemplo.org', 'cuidadora4@exemplo.org', 'cuidadora5@exemplo.org'],
+    [15000, 15000, 15000, 15000, 15000], [5100, 5100, 5100, 5100, 5100], 1, 1, ['pendente'], ['turma-meta-1']]);
+$emailsG = emails_resend($mE);
+verificar('grupo: o e-mail do PIX vai só para a pessoa 1, com o total de R$ 750,00 e as 5 pessoas', [array_column($emailsG, 0),
+    str_contains((string) ($emailsG[0][1] ?? ''), 'R$ 750,00'), str_contains((string) ($emailsG[0][1] ?? ''), 'Pessoas no grupo')], [['cuidadora1@exemplo.org'], true, true]);
+$gi = pedir('GET', 'info.php?cupom=CUIDADORAS17&curso=primeiros-socorros-basico');
+$r2 = pedir('POST', 'pagamentos.php', array_merge($alunoG, ['email' => 'outro-grupo@exemplo.org']), $SIM);
+verificar('grupo: as 5 vagas ficam presas pelo PIX; outro grupo é recusado (esgotado), sem cobrar', [$gi['corpo']['cupom']['valido'] ?? null, $gi['corpo']['cupom']['motivo'] ?? null,
+    $r2['http'], $r2['corpo']['motivo'] ?? null, count(cobrancas_unicopag($mC))], [false, 'esgotado', 422, 'esgotado', 0]);
+// Uma compra de uma pessoa só, com os mesmos dados da pessoa 1 e o mesmo valor por pessoa (cupom NOV15), nunca reaproveita o PIX do grupo.
+$pdo->prepare("UPDATE mcp_inscricoes SET status = 'estornado' WHERE unicopag_hash = 'hcupom1'")->execute();
+$r3 = pedir('POST', 'pagamentos.php', array_merge($alunoCupom, ['nome' => $alunoG['nome'], 'cpf' => $alunoG['cpf'], 'email' => $alunoG['email'], 'telefone' => $alunoG['telefone']]), $SIM);
+verificar('grupo: o PIX do grupo não serve a uma compra de uma pessoa só (cobrança nova de 15000)', [$r3['http'], $r3['corpo']['reaproveitado'] ?? null,
+    ($r3['corpo']['token'] ?? '') !== ($principalG['token'] ?? ''), $r3['corpo']['total_centavos'] ?? null], [201, null, true, 15000]);
+cobrancas_unicopag($mC);
+// A reconsulta de uma pessoa do grupo (status.php com o token dela) olha a cobrança da principal.
+touch("$dir/pago-{$principalG['unicopag_hash']}");
+$filhaToken = (string) $pdo->query('SELECT token FROM mcp_inscricoes WHERE grupo_id = ' . (int) $principalG['id'] . ' AND grupo_ordem = 3')->fetchColumn();
+// (a tela só reconsulta depois de 6 s da última consulta)
+$pdo->exec("UPDATE mcp_inscricoes SET consultado_em = '2026-01-01 00:00:00' WHERE token = " . $pdo->quote($filhaToken));
+$st = pedir('GET', 'status.php?t=' . $filhaToken);
+$linhasG = $pdo->query('SELECT * FROM mcp_inscricoes WHERE grupo_id = ' . (int) $principalG['id'] . ' ORDER BY grupo_ordem')->fetchAll();
+$escolaG = array_values(array_filter(array_map(static fn(string $l): array => json_decode($l, true), file("$dir/pedidos.jsonl", FILE_IGNORE_NEW_LINES)),
+    static fn(array $p): bool => $p['caminho'] === '/rest/v1/rpc/matricula_rapida' && str_contains($p['corpo'], (string) $principalG['unicopag_hash'])));
+$dadosG = array_map(static fn(array $p): array => json_decode((string) $p['corpo'], true)['dados'] ?? [], $escolaG);
+$transacoes = array_column($dadosG, 'transacao');
+sort($transacoes);
+$h = (string) $principalG['unicopag_hash'];
+verificar('grupo pago: as 5 inscrições pagas; a escola recebe 5 matrículas, cada uma com o CPF e uma transação própria', [array_unique(array_column($linhasG, 'status')),
+    count(array_filter(array_column($linhasG, 'pago_em'))), $st['corpo']['status'] ?? null, count($dadosG), $transacoes,
+    array_unique(array_map('intval', array_column($dadosG, 'matricula_centavos'))), array_unique(array_map('intval', array_column($dadosG, 'total_centavos'))),
+    count(array_unique(array_column($dadosG, 'cpf'))), array_unique(array_column($dadosG, 'turma_id'))],
+    [['pago'], 5, 'pago', 5, [$h, "$h-g2", "$h-g3", "$h-g4", "$h-g5"], [5100], [15000], 5, ['turma-meta-1']]);
+$emailsG = emails_resend($mE);
+$alunosG = array_values(array_unique(array_filter(array_column($emailsG, 0), static fn(string $e): bool => str_starts_with($e, 'cuidadora'))));
+sort($alunosG);
+$secretariaG = array_values(array_filter($emailsG, static fn(array $e): bool => $e[0] === 'secretaria@exemplo.org'));
+verificar('grupo pago: cada pessoa recebe o próprio e-mail; a secretaria recebe 5 avisos, com a linha do grupo e a transação', [$alunosG,
+    count($secretariaG), str_contains((string) ($secretariaG[1][1] ?? ''), 'pagamento único de R$ 750,00'), str_contains((string) ($secretariaG[1][1] ?? ''), $h)],
+    [['cuidadora1@exemplo.org', 'cuidadora2@exemplo.org', 'cuidadora3@exemplo.org', 'cuidadora4@exemplo.org', 'cuidadora5@exemplo.org'], 5, true, true]);
+verificar('grupo pago: nenhum valor divergente registrado e o cobrado por pessoa', [(int) $pdo->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'valor_divergente' AND inscricao_id IN ("
+    . implode(',', array_map('intval', array_column($linhasG, 'id'))) . ')')->fetchColumn(), no_site('mcp_cupom_usados("CUIDADORAS17")')], [0, 5]);
+// Repetir o postback não paga de novo nem chama a escola de novo.
+$antes = count(file("$dir/pedidos.jsonl"));
+pedir('POST', 'webhook.php', ['hash' => $h], [], ['Origin:']);
+$novos = array_filter(array_map(static fn(string $l): array => json_decode($l, true), array_slice(file("$dir/pedidos.jsonl", FILE_IGNORE_NEW_LINES), $antes)),
+    static fn(array $p): bool => $p['caminho'] === '/rest/v1/rpc/matricula_rapida');
+verificar('grupo: o postback repetido não chama a escola de novo', count($novos), 0);
+// Estorno da cobrança: as 5 inscrições ficam estornadas (e as 5 vagas voltam).
+no_site('mcp_aplicar_status(' . (int) $principalG['id'] . ', "estornado")');
+verificar('grupo: o estorno da cobrança estorna as 5 e devolve as vagas', [$pdo->query('SELECT GROUP_CONCAT(DISTINCT status) FROM mcp_inscricoes WHERE grupo_id = ' . (int) $principalG['id'])->fetchColumn(),
+    no_site('mcp_cupom_usados("CUIDADORAS17")')], ['estornado', 0]);
+
 $erros = trim((string) @file_get_contents("$dir/site.err"));
 $erros = implode("\n", array_filter(explode("\n", $erros), static fn($l) => !preg_match('/(Development Server|Accepted|Closing|Closed without sending a request|\[200\]|\[201\]|\[204\]|\[404\]|\[402\]|\[422\]|Listening|Press Ctrl|\[matricula\] API de Conversões: PageView · HTTP 400|\[matricula\] API de Conversões: teto de 120 repasses|\[matricula\] escolha de marketing da inscrição não gravada: PDOException: SQLSTATE\[42S22\]|\[matricula\] inscrição gravada sem as colunas (da divulgação|novas): SQLSTATE\[42S22\])/', $l)));
 verificar('nenhum erro do PHP no servidor local', $erros, '');

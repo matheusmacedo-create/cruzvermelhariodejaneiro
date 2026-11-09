@@ -79,7 +79,7 @@ function mcp_montar_email_pix_lembrete(array $inscricao): array
 {
     $nome = mcp_primeiro_nome((string) $inscricao['nome']);
     $curso = (string) $inscricao['curso_nome'];
-    $total = mcp_brl((int) $inscricao['total_centavos']);
+    $total = mcp_brl(function_exists('mcp_grupo_valor_cobranca') ? mcp_grupo_valor_cobranca($inscricao) : (int) $inscricao['total_centavos']);
     $completo = mcp_email_completo($inscricao);
     $semTurma = $completo && empty($inscricao['turma_id']);
     $codigo = (string) ($inscricao['pix_copia_cola'] ?? '');

@@ -1016,5 +1016,15 @@ function mcp_pix_ja_pago(array $inscricao): bool
 /** mcp_publico() com os campos do pagar tudo (status.php e pagamentos.php). */
 function mcp_publico_completo(array $inscricao, ?array $preferencia = null): array
 {
-    return array_replace_recursive(mcp_publico($inscricao, $preferencia), mcp_publico_compra($inscricao));
+    $publico = array_replace_recursive(mcp_publico($inscricao, $preferencia), mcp_publico_compra($inscricao));
+    // Cupom de grupo: a tela de quem paga (a principal) mostra o valor da cobrança inteira e quem está no grupo.
+    $qtd = function_exists('mcp_grupo_qtd') ? mcp_grupo_qtd($inscricao) : 1;
+    if ($qtd > 1) {
+        $publico['total_centavos'] *= $qtd;
+        $publico['total_cobrado_centavos'] *= $qtd;
+        $publico['parcela_centavos'] *= $qtd;
+        $publico['primeira_parcela_centavos'] *= $qtd;
+        $publico['grupo'] = ['qtd' => $qtd, 'nomes' => mcp_grupo_nomes((int) $inscricao['id']), 'por_pessoa_centavos' => (int) $inscricao['total_centavos']];
+    }
+    return $publico;
 }

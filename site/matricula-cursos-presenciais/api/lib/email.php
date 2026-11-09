@@ -1007,7 +1007,9 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
 {
     $nome = mcp_primeiro_nome((string) $inscricao['nome']);
     $curso = (string) $inscricao['curso_nome'];
-    $total = mcp_brl((int) $inscricao['total_centavos']);
+    // Cupom de grupo: o PIX é o das N pessoas.
+    $qtdGrupo = function_exists('mcp_grupo_qtd') ? mcp_grupo_qtd($inscricao) : 1;
+    $total = mcp_brl((int) $inscricao['total_centavos'] * $qtdGrupo);
     $completo = mcp_email_completo($inscricao);
     $semTurma = $completo && empty($inscricao['turma_id']);
     $codigo = (string) ($inscricao['pix_copia_cola'] ?? '');
@@ -1023,7 +1025,7 @@ function mcp_montar_email_pix_aberto(array $inscricao): array
     };
     $c = mcp_email_juntar([
         mcp_email_b_p($abertura),
-        mcp_email_b_caixa(mcp_email_linhas_pix($inscricao), ['Total do PIX' => $total]),
+        mcp_email_b_caixa(mcp_email_linhas_pix($inscricao) + ($qtdGrupo > 1 ? ['Pessoas no grupo' => $qtdGrupo . ' (' . implode(', ', mcp_grupo_nomes((int) $inscricao['id'])) . '), ' . mcp_brl((int) $inscricao['total_centavos']) . ' cada'] : []), ['Total do PIX' => $total]),
         mcp_email_b_botao($link, 'Concluir pagamento'),
         mcp_email_b_nota('Pelo botão você vê o QR code e acompanha a confirmação em tempo real. Ou pague agora com o código:'),
         mcp_email_b_html(mcp_bloco_pix($codigo), "PIX copia e cola:\n$codigo"),
@@ -1566,12 +1568,13 @@ function mcp_montar_email_secretaria_linhas(array $i): array
     if ($completo && !empty($i['espera_status']) && mcp_email_data_limite($i) !== '') {
         $linhas['Data limite'] = mcp_email_data_limite($i);
     }
-    return $linhas + [
+    // Cupom de grupo: a linha "Grupo" e, nas outras pessoas, a transação da cobrança única (lib/cupons.php).
+    return array_replace($linhas + [
         'Método' => ($i['metodo'] ?? '') === 'pix' ? 'PIX' : trim('Cartão ' . ($i['bandeira'] ?? '') . ' final ' . ($i['ultimos4'] ?? '')),
         'Transação Unicopag' => (string) ($i['unicopag_hash'] ?? ''),
         'Origem' => trim(($i['utm_source'] ?? '') . ' ' . ($i['utm_campaign'] ?? '')) ?: 'direto',
         'Escola' => mcp_escola_resumo($i),
-    ];
+    ], function_exists('mcp_grupo_linhas') ? mcp_grupo_linhas($i) : []);
 }
 
 /**

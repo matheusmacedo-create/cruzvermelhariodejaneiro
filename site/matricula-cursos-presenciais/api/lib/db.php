@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '5d2e122f26f61625';
+const MCP_DB_VERSAO = '3ab5e477f8fe15d5';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -200,6 +200,10 @@ function mcp_migrar_tudo(PDO $pdo): void
     // Cupom de desconto (30/10/2026, lib/cupons.php): o código usado e quanto saiu da matrícula. As vagas de cada cupom
     // se contam por esta coluna; sem ela, o cupom responde indisponível em vez de cobrar.
     mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['cupom' => 'VARCHAR(30) NULL', 'cupom_desconto_centavos' => 'INT UNSIGNED NULL']);
+    // Cupom de grupo (09/11/2026, lib/cupons.php): um pagamento só para várias pessoas. Cada pessoa tem a sua inscrição;
+    // grupo_id é o id da inscrição que guarda a cobrança (a principal, ordem 1, com grupo_qtd), e as outras seguem o
+    // status dela. Sem estas colunas, o cupom de grupo responde indisponível em vez de cobrar.
+    mcp_garantir_colunas($pdo, 'mcp_inscricoes', ['grupo_id' => 'INT UNSIGNED NULL', 'grupo_ordem' => 'TINYINT UNSIGNED NULL', 'grupo_qtd' => 'TINYINT UNSIGNED NULL']);
     // Simulação de parcelas da Unicopag: a lista crua por amount (10 min) e o que o servidor mostrou ao navegador
     // (validade de 48 h da oferta a prazo, CDC art. 54-B; faxina em 7 dias pela rotina de 15 minutos).
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_parcelas_cache (

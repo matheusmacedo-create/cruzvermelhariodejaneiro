@@ -16,6 +16,12 @@
  *   DD/MM" no lugar das vagas que restam (a promoção da escola no Curativos vale o mês todo, sem número de vagas).
  * - 'vitrine' => true (30/10/2026): o código vai a público no info.php (mcp_cupons_vitrine), e o checkout mostra o
  *   balão da oferta com as vagas que restam e já aplica o cupom no curso. Sem 'vitrine', o código só vale digitado.
+ * - 'grupo' => N (09/11/2026): um pagamento só para N pessoas (N × total_centavos), numa cobrança da Unicopag. O checkout
+ *   pede os dados das N; cada uma vira uma inscrição com os valores de uma pessoa (a escola e a secretaria veem cada
+ *   aluno como sempre). A primeira (a principal, grupo_ordem 1) guarda a cobrança, o PIX e o grupo_qtd; as outras têm
+ *   grupo_id = id da principal, sem hash, e seguem o status dela (mcp_aplicar_status). As N vagas são conferidas de uma
+ *   vez. Na escola, cada uma vai com uma transação própria (o hash da principal + "-g<ordem>"), porque a
+ *   matricula_rapida reconhece a repetição pelo hash. Só à vista (PIX ou cartão 1×), como todo cupom.
  */
 declare(strict_types=1);
 
@@ -29,10 +35,10 @@ const MCP_CUPONS = [
     // vende o curso sem taxa de inscrição neste mês; aqui o curso tem o preço padrão (R$ 150 + R$ 99) e a promoção é o cupom.
     'CURATIVOS' => ['cursos' => ['curativos-e-tratamento-de-feridas'], 'total_centavos' => 15000, 'limite' => null, 'ate' => '2026-11-30T23:59:59-03:00', 'vitrine' => true],
     // Grupo de 5 cuidadoras na turma de 17/11 de Primeiros Socorros Básico, por R$ 150,00 cada com tudo incluso (09/11/2026,
-    // pedido do Matheus; substitui o link avulso feito na ÚnicoPag). Sem vitrine: vale só pelo link ou digitado. Uma pessoa
-    // paga as 5, uma inscrição por cuidadora (a matrícula na escola é pelo CPF de cada uma). Vale até o fim das inscrições
-    // da turma de 17/11 (oferta.json: inscricoes_ate).
-    'CUIDADORAS17' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 5, 'ate' => '2026-11-16T23:59:59-03:00'],
+    // pedido do Matheus; substitui o link avulso feito na ÚnicoPag). Sem vitrine: vale só pelo link ou digitado. Com
+    // 'grupo' => 5, um pagamento só de R$ 750,00 pelas 5, com os dados de cada uma (a matrícula na escola é pelo CPF).
+    // Vale até o fim das inscrições da turma de 17/11 (oferta.json: inscricoes_ate).
+    'CUIDADORAS17' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 5, 'ate' => '2026-11-16T23:59:59-03:00', 'grupo' => 5],
 ];
 /** Quanto tempo uma inscrição pendente com cupom segura a vaga: o PIX vale 1 dia. */
 const MCP_CUPOM_RESERVA_SEGUNDOS = 86400;
@@ -177,8 +183,209 @@ function mcp_cupom_publico(string $codigo, string $slug): array
         return ['valido' => false, 'motivo' => 'esgotado', 'mensagem' => mcp_cupom_mensagem('esgotado')];
     }
     $semLimite = ($cupom['limite'] ?? null) === null;
+    $grupo = mcp_cupom_grupo($cupom);
+    if ($grupo > 1 && (!mcp_grupo_colunas_ok() || $restantes < $grupo)) {
+        return ['valido' => false, 'motivo' => mcp_grupo_colunas_ok() ? 'esgotado' : 'indisponivel',
+            'mensagem' => mcp_cupom_mensagem(mcp_grupo_colunas_ok() ? 'esgotado' : 'indisponivel')];
+    }
     return ['valido' => true, 'codigo' => $cupom['codigo'], 'curso' => $slug, 'total_centavos' => (int) $cupom['total_centavos'],
-        'restantes' => $semLimite ? null : $restantes, 'limite' => $semLimite ? null : (int) $cupom['limite'], 'ate' => mcp_cupom_ate_texto($cupom)];
+        'restantes' => $semLimite ? null : $restantes, 'limite' => $semLimite ? null : (int) $cupom['limite'], 'ate' => mcp_cupom_ate_texto($cupom)]
+        + ($grupo > 1 ? ['grupo' => $grupo] : []);
+}
+
+// ----------------------------------------------------------------------------- cupom de grupo (09/11/2026)
+/** Quantas pessoas o cupom paga de uma vez (1 = o cupom de sempre). */
+function mcp_cupom_grupo(?array $cupom): int
+{
+    return max(1, min(20, (int) ($cupom['grupo'] ?? 1)));
+}
+
+/** As colunas grupo_id, grupo_ordem e grupo_qtd existem? Sem elas, o cupom de grupo fica indisponível. */
+function mcp_grupo_colunas_ok(): bool
+{
+    static $ok = null;
+    if ($ok === true) {
+        return true;
+    }
+    try {
+        $existentes = array_column(mcp_db()->query('SHOW COLUMNS FROM mcp_inscricoes')->fetchAll(), 'Field');
+    } catch (Throwable) {
+        return false;
+    }
+    return $ok = !array_diff(['grupo_id', 'grupo_ordem', 'grupo_qtd'], $existentes);
+}
+
+/** Quantas pessoas a cobrança desta inscrição paga: N na principal de um grupo, 1 em qualquer outra. */
+function mcp_grupo_qtd(array $i): int
+{
+    return !empty($i['grupo_id']) && (int) $i['grupo_id'] === (int) ($i['id'] ?? 0) ? max(1, (int) ($i['grupo_qtd'] ?? 1)) : 1;
+}
+
+/** É uma inscrição do grupo que não guarda a cobrança (segue a principal)? */
+function mcp_grupo_e_filha(array $i): bool
+{
+    return !empty($i['grupo_id']) && (int) $i['grupo_id'] !== (int) ($i['id'] ?? 0);
+}
+
+/** O valor da cobrança desta inscrição (o PIX que a pessoa paga): total × N na principal de um grupo. */
+function mcp_grupo_valor_cobranca(array $i): int
+{
+    return (int) $i['total_centavos'] * mcp_grupo_qtd($i);
+}
+
+/** O cobrado e os juros da cobrança do grupo, divididos por pessoa (cada inscrição guarda o de uma pessoa). */
+function mcp_grupo_valores_por_pessoa(array $valores, int $qtd): array
+{
+    foreach (['total_cobrado_centavos', 'juros_centavos'] as $campo) {
+        if (isset($valores[$campo])) {
+            $valores[$campo] = intdiv((int) $valores[$campo], max(1, $qtd));
+        }
+    }
+    return $valores;
+}
+
+/**
+ * As linhas dos avisos à secretaria de uma inscrição de grupo: "Grupo" (pessoa n de N, o pagamento único) e, nas
+ * outras pessoas, a "Transação Unicopag" da cobrança única. Fora de grupo, nada.
+ */
+function mcp_grupo_linhas(array $i): array
+{
+    if (empty($i['grupo_id'])) {
+        return [];
+    }
+    $qtd = max(1, (int) ($i['grupo_qtd'] ?? 1));
+    $linhas = ['Grupo' => 'pessoa ' . (int) ($i['grupo_ordem'] ?? 1) . " de $qtd · pagamento único de " . mcp_brl((int) $i['total_centavos'] * $qtd)
+        . (!empty($i['cupom']) ? ' (cupom ' . $i['cupom'] . ')' : '') . ' · inscrição principal ' . (int) $i['grupo_id']];
+    if (mcp_grupo_e_filha($i)) {
+        $linhas['Transação Unicopag'] = (string) preg_replace('/-g\d+$/', '', mcp_grupo_transacao($i)) ?: '—';
+    }
+    return $linhas;
+}
+
+/** Os ids das outras inscrições do grupo desta principal, na ordem. */
+function mcp_grupo_filhas(int $principalId): array
+{
+    if (!mcp_grupo_colunas_ok()) {
+        return [];
+    }
+    $stmt = mcp_db()->prepare('SELECT id FROM mcp_inscricoes WHERE grupo_id = ? AND id <> ? ORDER BY grupo_ordem, id');
+    $stmt->execute([$principalId, $principalId]);
+    return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+}
+
+/** Os primeiros nomes do grupo, na ordem (para a tela e o e-mail de quem paga). */
+function mcp_grupo_nomes(int $principalId): array
+{
+    $stmt = mcp_db()->prepare('SELECT nome FROM mcp_inscricoes WHERE grupo_id = ? ORDER BY grupo_ordem, id');
+    $stmt->execute([$principalId]);
+    return array_map(static fn($n): string => mcp_primeiro_nome((string) $n), $stmt->fetchAll(PDO::FETCH_COLUMN));
+}
+
+/**
+ * A transação que vai à escola: a principal (e qualquer inscrição fora de grupo) manda o hash da Unicopag; as outras do
+ * grupo mandam o hash da principal + "-g<ordem>" (a matricula_rapida trata o mesmo hash como a mesma compra).
+ */
+function mcp_grupo_transacao(array $i): string
+{
+    $hash = (string) ($i['unicopag_hash'] ?? '');
+    if (!mcp_grupo_e_filha($i)) {
+        return $hash;
+    }
+    $stmt = mcp_db()->prepare('SELECT unicopag_hash FROM mcp_inscricoes WHERE id = ?');
+    $stmt->execute([(int) $i['grupo_id']]);
+    $principal = (string) ($stmt->fetchColumn() ?: '');
+    return $principal === '' ? '' : mb_substr($principal, 0, 58) . '-g' . max(2, (int) ($i['grupo_ordem'] ?? 2));
+}
+
+/**
+ * As outras pessoas do grupo, validadas como a primeira (nome, CPF, e-mail e telefone). Cada falha responde 422 com o
+ * campo "grupo.<n>.<campo>" (n = 2..N), para a página marcar. CPFs repetidos no grupo também falham.
+ */
+function mcp_grupo_validar(mixed $lista, array $primeira, int $qtd): array
+{
+    $lista = is_array($lista) ? array_values($lista) : [];
+    if (count($lista) !== $qtd - 1) {
+        mcp_falhar(422, 'Preencha os dados das ' . $qtd . ' pessoas do grupo.', ['campo' => 'grupo']);
+    }
+    $cpfs = [$primeira['cpf']];
+    $pessoas = [];
+    foreach ($lista as $k => $p) {
+        $n = $k + 2;
+        $p = is_array($p) ? $p : [];
+        $nome = mcp_texto($p['nome'] ?? '', 160);
+        if (mb_strlen($nome) < 5 || !str_contains($nome, ' ')) {
+            mcp_falhar(422, "Informe o nome completo da pessoa $n.", ['campo' => "grupo.$n.nome"]);
+        }
+        $cpf = mcp_digitos(mcp_texto($p['cpf'] ?? '', 20));
+        if (!mcp_cpf_valido($cpf)) {
+            mcp_falhar(422, "CPF da pessoa $n inválido. Confira os 11 números.", ['campo' => "grupo.$n.cpf"]);
+        }
+        if (in_array($cpf, $cpfs, true)) {
+            mcp_falhar(422, "O CPF da pessoa $n já está em outra pessoa do grupo. Cada pessoa tem o seu.", ['campo' => "grupo.$n.cpf"]);
+        }
+        $cpfs[] = $cpf;
+        $email = mb_strtolower(mcp_texto($p['email'] ?? '', 190));
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            mcp_falhar(422, "E-mail da pessoa $n inválido.", ['campo' => "grupo.$n.email"]);
+        }
+        $telefone = mcp_telefone(mcp_texto($p['telefone'] ?? '', 30));
+        if ($telefone === '') {
+            mcp_falhar(422, "Informe o telefone da pessoa $n, com DDD.", ['campo' => "grupo.$n.telefone"]);
+        }
+        $pessoas[] = ['ordem' => $n, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email, 'telefone' => $telefone];
+    }
+    return $pessoas;
+}
+
+/**
+ * Grava as outras inscrições do grupo, copiando a principal (curso, valores, plano, turma, cupom, origem) com os dados
+ * de cada pessoa. Ficam sem a cobrança (hash, PIX e cartão só na principal) e com o status dela.
+ */
+function mcp_grupo_gravar(int $principalId, array $pessoas): void
+{
+    $pdo = mcp_db();
+    $qtd = count($pessoas) + 1;
+    $pdo->prepare('UPDATE mcp_inscricoes SET grupo_id = ?, grupo_ordem = 1, grupo_qtd = ? WHERE id = ?')->execute([$principalId, $qtd, $principalId]);
+    $stmt = $pdo->prepare('SELECT * FROM mcp_inscricoes WHERE id = ?');
+    $stmt->execute([$principalId]);
+    $base = $stmt->fetch();
+    if (!$base) {
+        return;
+    }
+    // Só o que é da compra passa para as outras: nada da cobrança, dos e-mails, da escola, da Meta nem dos avisos. O IP
+    // fica só na principal: o freio por IP (pagamentos.php) conta uma compra de grupo como uma compra, não como N.
+    $copiar = ['curso_slug', 'curso_nome', 'metodo', 'inscricao_centavos', 'taxa_centavos', 'divulgacao_centavos', 'total_centavos',
+        'cobre_taxa', 'divulgacao_oferta_centavos', 'status', 'unicopag_status', 'utm_source', 'utm_medium', 'utm_campaign',
+        'utm_content', 'utm_term', 'escola_status', 'criado_em', 'atualizado_em', 'consultado_em',
+        'plano', 'plano_oferta', 'matricula_centavos', 'matricula_preco_centavos', 'parcelas', 'total_mostrado_centavos',
+        'turma_id', 'turma_inicio', 'aceite_versao', 'aceite_sha256', 'aceite_em', 'cupom', 'cupom_desconto_centavos'];
+    foreach ($pessoas as $p) {
+        $linha = [];
+        foreach ($copiar as $coluna) {
+            if (array_key_exists($coluna, $base)) {
+                $linha[$coluna] = $base[$coluna];
+            }
+        }
+        $linha = array_replace($linha, [
+            'token' => mcp_token_novo(), 'nome' => $p['nome'], 'cpf' => $p['cpf'], 'email' => $p['email'], 'telefone' => $p['telefone'],
+            'grupo_id' => $principalId, 'grupo_ordem' => $p['ordem'], 'grupo_qtd' => $qtd,
+            // Pendente sempre: se a principal já virou paga (postback antes deste INSERT), o acerto abaixo aplica o
+            // pagamento pela porta única, com o pós-pagamento de cada pessoa.
+            'status' => in_array($base['status'], ['recusado', 'expirado'], true) ? $base['status'] : 'pendente',
+        ]);
+        $colunas = implode(', ', array_keys($linha));
+        $marcadores = implode(', ', array_fill(0, count($linha), '?'));
+        $pdo->prepare("INSERT INTO mcp_inscricoes ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
+        mcp_registrar((int) $pdo->lastInsertId(), 'grupo', "pessoa {$p['ordem']} de $qtd · cobrança na inscrição $principalId");
+    }
+    mcp_registrar($principalId, 'grupo', "pessoa 1 de $qtd · " . mcp_brl((int) $base['total_centavos'] * $qtd) . ' numa cobrança só');
+    $stmt->execute([$principalId]);
+    $agora = (string) (($stmt->fetch() ?: [])['status'] ?? '');
+    if (in_array($agora, ['pago', 'estornado'], true)) {
+        foreach (mcp_grupo_filhas($principalId) as $filha) {
+            mcp_aplicar_status($filha, $agora);
+        }
+    }
 }
 
 /**
