@@ -183,6 +183,10 @@ function mcp_pix_aberto(array $aluno, array $compra, ?string $turmaId, bool $col
         $sql .= ' AND plano = ? AND matricula_centavos = ? AND turma_id <=> ?';
         array_push($params, $compra['plano'], $compra['matricula'], $turmaId);
     }
+    // O PIX de um grupo (cupom de grupo) é de N pessoas: nunca serve a uma compra de uma pessoa só.
+    if (mcp_grupo_colunas_ok()) {
+        $sql .= ' AND grupo_id IS NULL';
+    }
     $stmt = mcp_db()->prepare($sql . ' ORDER BY id DESC LIMIT 1');
     $stmt->execute($params);
     $aberta = $stmt->fetch();
@@ -286,6 +290,9 @@ if (mcp_texto($b['site'] ?? '', 10) !== '') {
 
 mcp_freio_recusas();
 $aluno = mcp_validar_aluno($b);
+// Cupom de grupo (09/11/2026, lib/cupons.php): um pagamento só para N pessoas, com os dados de cada uma.
+$qtdGrupo = mcp_cupom_grupo($aluno['cupom']);
+$grupo = $qtdGrupo > 1 ? mcp_grupo_validar($b['grupo'] ?? null, $aluno, $qtdGrupo) : [];
 $cartao = $aluno['metodo'] === 'cartao' ? mcp_validar_cartao(is_array($b['cartao'] ?? null) ? $b['cartao'] : []) : null;
 unset($b);
 
@@ -294,6 +301,12 @@ unset($b);
 if (mcp_compra_ja_paga($aluno['slug'], $aluno['cpf']) !== null) {
     mcp_recusar('Este CPF já tem uma compra paga deste curso. Não pague de novo: para pagar só a matrícula ou tirar dúvidas, fale com a secretaria pelo chat.',
         ['campo' => 'ja_pago']);
+}
+foreach ($grupo as $p) {
+    if (mcp_compra_ja_paga($aluno['slug'], $p['cpf']) !== null) {
+        mcp_recusar("O CPF da pessoa {$p['ordem']} já tem uma compra paga deste curso. Tire essa pessoa do grupo ou fale com a secretaria pelo chat.",
+            ['campo' => "grupo.{$p['ordem']}.cpf"]);
+    }
 }
 
 // Valores, sempre do servidor (com o CPF: o preço de teste vale só para a lista TESTE_CPFS).
@@ -306,9 +319,11 @@ $parcelado = $completo && $aluno['metodo'] === 'cartao' && $aluno['parcelas_pedi
 
 // À vista (PIX, cartão 1x, só a taxa): o total mostrado tem de ser o de agora. Obrigatório na opção 1 (T15); na
 // página antiga, sem o campo, só a taxa segue sem conferir.
-if (!$parcelado && ($completo || $aluno['total_mostrado'] !== null) && $aluno['total_mostrado'] !== $compra['amount']) {
-    mcp_recusar('O valor mudou para ' . mcp_brl($compra['amount']) . '. Confira o novo total e pague de novo.',
-        ['campo' => 'total', 'total_centavos' => $compra['amount'], 'opcoes' => [mcp_parcela_opcao($compra['amount'], 1, $compra['amount'])]]);
+// No grupo, a página mostra o total das N pessoas (o valor da cobrança).
+$cobrar = $compra['amount'] * $qtdGrupo;
+if (!$parcelado && ($completo || $aluno['total_mostrado'] !== null) && $aluno['total_mostrado'] !== $cobrar) {
+    mcp_recusar('O valor mudou para ' . mcp_brl($cobrar) . '. Confira o novo total e pague de novo.',
+        ['campo' => 'total', 'total_centavos' => $cobrar, 'opcoes' => [mcp_parcela_opcao($cobrar, 1, $cobrar)]]);
 }
 
 mcp_aplicar_limites($aluno);
@@ -355,7 +370,11 @@ if ($completo && !$colunas) {
 }
 
 $turmaId = $aluno['turma']['id_escola'] ?? null;
-if ($aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $compra, $turmaId, $colunas))) {
+if ($qtdGrupo > 1 && !mcp_grupo_colunas_ok()) {
+    mcp_falhar(503, mcp_cupom_mensagem('indisponivel'), ['campo' => 'cupom', 'motivo' => 'indisponivel']);
+}
+// O grupo sempre gera uma cobrança nova (o PIX aberto de uma pessoa nunca serve para N).
+if ($qtdGrupo === 1 && $aluno['metodo'] === 'pix' && ($aberta = mcp_pix_aberto($aluno, $compra, $turmaId, $colunas))) {
     mcp_registrar((int) $aberta['id'], 'pix_reaproveitado');
     mcp_meta_cobranca_criada($aberta, $aluno, $aluno['meta_lead'], false);
     mcp_json(mcp_publico_completo($aberta) + ['reaproveitado' => true]);
@@ -368,7 +387,7 @@ if ($aluno['cupom'] !== null) {
     if (!mcp_cupom_coluna_ok() || !mcp_cupom_travar($codigoCupom)) {
         mcp_falhar(503, mcp_cupom_mensagem('indisponivel'), ['campo' => 'cupom', 'motivo' => 'indisponivel']);
     }
-    if (mcp_cupom_restantes($aluno['cupom']) <= 0) {
+    if (mcp_cupom_restantes($aluno['cupom']) < $qtdGrupo) {
         mcp_cupom_soltar($codigoCupom);
         mcp_recusar(mcp_cupom_mensagem('esgotado'), ['campo' => 'cupom', 'motivo' => 'esgotado']);
     }
@@ -376,6 +395,17 @@ if ($aluno['cupom'] !== null) {
 
 $token = mcp_token_novo();
 $payload = mcp_montar_cobranca($aluno, $token, $compra + ['turma_id' => $turmaId, 'total_mostrado' => $aluno['total_mostrado']]);
+if ($qtdGrupo > 1) {
+    // Uma cobrança só: cada item vale N vezes o de uma pessoa (amount = a soma), e a metadata leva o grupo.
+    foreach ($payload['cart'] as &$item) {
+        $item['price'] = (int) $item['price'] * $qtdGrupo;
+        $item['title'] .= " ($qtdGrupo pessoas)";
+    }
+    unset($item);
+    $payload['amount'] = array_sum(array_column($payload['cart'], 'price'));
+    $payload['metadata']['grupo'] = $qtdGrupo;
+    $payload['metadata']['grupo_pessoas'] = implode(', ', array_merge([mcp_primeiro_nome($aluno['nome'])], array_map(static fn(array $p): string => mcp_primeiro_nome($p['nome']), $grupo)));
+}
 if ($cartao) {
     $payload['card'] = $cartao['card'];
 }
@@ -393,6 +423,9 @@ try {
 $extras = [];
 if ($colunas) {
     $valores = mcp_valores_da_transacao($cobranca);
+    if ($qtdGrupo > 1) {
+        $valores = mcp_grupo_valores_por_pessoa($valores, $qtdGrupo);
+    }
     $cobrado = $valores['total_cobrado_centavos'] ?? null;
     // Sem o cobrado na resposta, a diferença fica para a reconsulta (mcp_conferir_juros), que usa o valor de verdade.
     $diferenca = $via48h && $cobrado !== null ? max(0, $cobrado - (int) $aluno['total_mostrado']) : 0;
@@ -402,7 +435,7 @@ if ($colunas) {
         'matricula_centavos' => (int) $compra['matricula'],
         'matricula_preco_centavos' => (int) ($aluno['curso']['valor_curso_centavos'] ?? 0) ?: null,
         'parcelas' => $aluno['metodo'] === 'pix' ? 1 : (int) $compra['parcelas'],
-        'total_mostrado_centavos' => $aluno['total_mostrado'],
+        'total_mostrado_centavos' => $aluno['total_mostrado'] !== null && $qtdGrupo > 1 ? intdiv($aluno['total_mostrado'], $qtdGrupo) : $aluno['total_mostrado'],
         'turma_id' => $turmaId, 'turma_inicio' => $turmaInicio !== null ? gmdate('Y-m-d H:i:s', $turmaInicio) : null,
         'taxa_mes_pct' => $opcao !== null && $opcao['n'] > 1 ? $opcao['taxa_mes_pct'] : null,
         'cet_ano_pct' => $opcao !== null && $opcao['n'] > 1 ? $opcao['cet_ano_pct'] : null,
@@ -421,6 +454,9 @@ if ($colunas) {
 }
 
 $id = mcp_gravar_inscricao($aluno, $token, $compra, $cobranca, $cartao['ultimos4'] ?? null, $extras);
+if ($grupo) {
+    mcp_grupo_gravar($id, $grupo);
+}
 if (isset($compra['cupom'])) {
     mcp_cupom_soltar((string) $compra['cupom']);
     mcp_registrar($id, 'cupom', $compra['cupom'] . ' · desconto ' . mcp_brl((int) $compra['cupom_desconto']));

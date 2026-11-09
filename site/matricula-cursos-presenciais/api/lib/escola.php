@@ -67,7 +67,8 @@ function mcp_escola_payload(array $inscricao, string $token): array
         'email' => $inscricao['email'],
         'celular' => $inscricao['telefone'],
         'curso_id' => (string) ($curso['uuid'] ?? ''),
-        'transacao' => $inscricao['unicopag_hash'],
+        // Cupom de grupo: cada pessoa com uma transação própria (lib/cupons.php, mcp_grupo_transacao).
+        'transacao' => function_exists('mcp_grupo_transacao') ? mcp_grupo_transacao($inscricao) : $inscricao['unicopag_hash'],
         'metodo' => $inscricao['metodo'],
         'valor_centavos' => (int) $inscricao['inscricao_centavos'],
         'total_centavos' => (int) $inscricao['total_centavos'],

@@ -1644,12 +1644,30 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
   (`vitrine`). Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&cupom=PRO12` (sem o
   parâmetro, o balão já aplica). A recuperação por WhatsApp/e-mail continua oferecendo só o `NOV15` (`MCP_RW_CUPOM`).
 - **`CUIDADORAS17`** (09/11/2026): grupo de **5 cuidadoras** na turma de **17/11/2026** de Primeiros Socorros Básico, por
-  **R$ 150,00 cada com tudo incluso** (taxa R$ 99 + matrícula R$ 51), até 16/11/2026 às 23h59 (fim das inscrições da turma).
-  Sem `vitrine`: não aparece no balão nem na página, vale só pelo link ou digitado. Substitui o link avulso que tinha sido
-  criado direto na ÚnicoPag, que não entrava na escola sozinho. Uma pessoa paga as 5: usa o link uma vez por cuidadora, com
-  o nome, o CPF, o e-mail e o celular de cada uma (a matrícula na escola é pelo CPF), e paga com o próprio PIX ou cartão.
+  **R$ 150,00 cada com tudo incluso** (taxa R$ 99 + matrícula R$ 51), **num pagamento só de R$ 750,00**, até 16/11/2026 às
+  23h59 (fim das inscrições da turma). Sem `vitrine`: não aparece no balão nem na página, vale só pelo link ou digitado.
+  Substitui o link avulso que tinha sido criado direto na ÚnicoPag, que não entrava na escola sozinho.
   Link: `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&cupom=CUIDADORAS17&utm_source=direto&utm_medium=grupo&utm_campaign=cuidadoras-17-11`.
   Para ver quantas já entraram: `SELECT status, COUNT(*) FROM mcp_inscricoes WHERE cupom = 'CUIDADORAS17' GROUP BY status`.
+- **Cupom de grupo** (`'grupo' => N` em `MCP_CUPONS`, 09/11/2026): um pagamento só para N pessoas.
+  - **Tela**: com o cupom aplicado, o checkout monta o bloco "As outras N−1 pessoas do grupo" (nome, CPF, celular e e-mail
+    de cada uma; o HTML não muda, o bloco nasce no `checkout.js`) e mostra N × o valor do cupom no plano, no resumo e no
+    botão. O PIX e o comprovante do pagamento vão para o e-mail da pessoa 1; cada pessoa recebe o próprio e-mail de
+    confirmação e o acesso à área do aluno.
+  - **Cobrança**: uma só na ÚnicoPag, em nome da pessoa 1, com cada item N vezes (`amount` = N × valor) e `grupo` na metadata.
+    Só à vista (PIX ou cartão 1×). O PIX aberto nunca é reaproveitado por um grupo, nem o de um grupo por uma compra de uma pessoa.
+  - **Banco**: uma inscrição por pessoa, com os valores de uma pessoa (a escola, o painel e as somas leem como sempre).
+    `grupo_id` (o id da principal), `grupo_ordem` (1 a N) e `grupo_qtd` (N), criadas pela migração do `db.php`. Só a
+    principal tem o hash, o PIX e o IP; as outras seguem o status dela (`mcp_aplicar_status`: pago, vencido, recusado e
+    estornado valem para todas, cada uma com o próprio pós-pagamento). Reconsultar uma delas reconsulta a principal.
+    `total_cobrado_centavos` e `juros_centavos` guardam o de uma pessoa (a cobrança dividida por N).
+  - **Vagas**: as N são conferidas de uma vez, com a trava do cupom; o PIX vencido devolve as N.
+  - **Escola**: cada pessoa vai à `matricula_rapida` com o próprio CPF e uma transação própria: o hash da principal e,
+    nas outras, o hash + `-g<ordem>` (a função reconhece a repetição pelo hash; com o mesmo hash, só a pessoa 1 seria
+    matriculada).
+  - **Secretaria**: um aviso por pessoa, com a linha "Grupo: pessoa n de N · pagamento único de R$ … · inscrição
+    principal …" e a transação da cobrança única. O estorno é da cobrança inteira (pela principal).
+  - **Testes**: bloco "grupo" de `scripts/testar_meta_integracao.php` (15 verificações com MariaDB e ÚnicoPag falsa).
 - **Balão da oferta** (30/10/2026): cupom com `'vitrine' => true` em `MCP_CUPONS` (o `NOV15` é) vai a público no
   `info.php` (`cupons_vitrine`: código, cursos, valor final, limite e vagas que restam, com a mesma contagem da cobrança).
   No resumo do checkout aparece um balão com o código, "Restam N cupons de 30" e a barra das vagas; com o curso da oferta

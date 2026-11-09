@@ -1,0 +1,19 @@
+# Cupom de grupo (09/11/2026, CUIDADORAS17: 5 pessoas num pagamento só). Detalhes no README, "Cupom de grupo".
+# Ordem: db.php primeiro (MCP_DB_VERSAO nova: a primeira requisição cria grupo_id, grupo_ordem e grupo_qtd); depois o
+# cupons.php (as funções do grupo), os módulos que as usam (com function_exists), o pagamentos.php, o JS e as páginas.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-grupo.txt)
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/cupons.php
+site/matricula-cursos-presenciais/api/lib/unicopag.php
+site/matricula-cursos-presenciais/api/lib/escola.php
+site/matricula-cursos-presenciais/api/lib/compra.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/recuperacao.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html

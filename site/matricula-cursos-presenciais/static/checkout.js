@@ -494,6 +494,61 @@
     /* Cupom de desconto (30/10/2026): fixa o total da taxa + matrícula, à vista, com tudo incluso, num curso. O servidor
        confere o código, o curso e as vagas de novo ao cobrar; aqui só se mostra o que o info.php respondeu. */
     function cupomVale(slug) { return !!(cupom && cupom.curso === slug); }
+    /* Cupom de grupo (09/11/2026, lib/cupons.php 'grupo'): um pagamento só para N pessoas, com os dados de cada uma. A
+       pessoa 1 é o bloco "Seus dados"; as outras ganham um bloco montado aqui (o HTML do checkout não muda). */
+    function grupoDoCupom() { return cupom && cupom.grupo > 1 ? cupom.grupo : 1; }
+    var grupoMontado = 0;
+    function montarGrupo(n) {
+      var bloco = q('#ck-grupo');
+      if (n <= 1) {
+        if (bloco) { bloco.hidden = true; bloco.querySelectorAll('input').forEach(function (i) { i.disabled = true; }); }
+        texto('#ck-t2 small', 'para a inscrição e a área do aluno');
+        return;
+      }
+      texto('#ck-t2 small', 'da pessoa 1 do grupo: o PIX e o comprovante do pagamento chegam neste e-mail');
+      if (!bloco || grupoMontado !== n) {
+        if (bloco) bloco.parentNode.removeChild(bloco);
+        var dois = q('#ck-t2') && q('#ck-t2').closest('section');
+        if (!dois) return;
+        var h = '<h2 class="ck-bloco-titulo" id="ck-tg"><span class="ck-num">+</span> As outras ' + (n - 1) + ' pessoas do grupo <small>cada uma com o nome, o CPF, o celular e o e-mail dela</small></h2>'
+          + '<p class="ck-nota" style="margin:0 0 14px">Cada pessoa recebe no próprio e-mail a confirmação e o acesso à área do aluno, e entra na turma pelo CPF dela. O pagamento é um só, para as ' + n + '.</p>';
+        for (var k = 2; k <= n; k++) {
+          var id = 'ck-g' + k + '-';
+          h += '<fieldset class="ck-grupo-pessoa" style="border:1px solid #e3e7ee;border-radius:14px;padding:14px 14px 4px;margin:0 0 14px">'
+            + '<legend style="font-weight:700;padding:0 6px">Pessoa ' + k + '</legend>'
+            + '<label class="ck-campo"><span>Nome completo</span><input id="' + id + 'nome" autocomplete="off" placeholder="Como está no documento dela" required></label>'
+            + '<div class="ck-2col"><label class="ck-campo"><span>CPF</span><input id="' + id + 'cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>'
+            + '<label class="ck-campo"><span>Telefone (celular)</span><input id="' + id + 'telefone" inputmode="tel" autocomplete="off" placeholder="(21) 99999-9999" required></label></div>'
+            + '<label class="ck-campo"><span>E-mail</span><input id="' + id + 'email" type="email" autocomplete="off" placeholder="pessoa@exemplo.com" required></label>'
+            + '</fieldset>';
+          campos['grupo.' + k + '.nome'] = '#' + id + 'nome';
+          campos['grupo.' + k + '.cpf'] = '#' + id + 'cpf';
+          campos['grupo.' + k + '.telefone'] = '#' + id + 'telefone';
+          campos['grupo.' + k + '.email'] = '#' + id + 'email';
+        }
+        bloco = document.createElement('section');
+        bloco.className = 'ck-bloco-form';
+        bloco.id = 'ck-grupo';
+        bloco.setAttribute('aria-labelledby', 'ck-tg');
+        bloco.innerHTML = h;
+        dois.parentNode.insertBefore(bloco, dois.nextSibling);
+        for (var j = 2; j <= n; j++) {
+          aplicarMascara(q('#ck-g' + j + '-cpf'), mascaras.cpf);
+          aplicarMascara(q('#ck-g' + j + '-telefone'), mascaras.telefone);
+        }
+        grupoMontado = n;
+      }
+      bloco.hidden = false;
+      bloco.querySelectorAll('input').forEach(function (i) { i.disabled = false; });
+    }
+    function lerGrupo(n) {
+      var lista = [];
+      for (var k = 2; k <= n; k++) {
+        var v = function (c) { var el = q('#ck-g' + k + '-' + c); return el ? el.value.trim() : ''; };
+        lista.push({ nome: v('nome'), cpf: digitos(v('cpf')), email: v('email'), telefone: digitos(v('telefone')) });
+      }
+      return lista;
+    }
     function mensagemCupom(t, ruim) {
       var el = q('#ck-cupom-msg');
       if (!el) return;
@@ -522,7 +577,9 @@
         var d = r && r.cupom;
         if (r && r.ok && d && d.valido) {
           cupom = d;
-          mensagemCupom('Cupom ' + d.codigo + ' aplicado: ' + brl(d.total_centavos) + ' com tudo incluso, à vista.', false);
+          mensagemCupom(d.grupo > 1
+            ? 'Cupom ' + d.codigo + ' aplicado: ' + d.grupo + ' pessoas por ' + brl(d.total_centavos * d.grupo) + ' (' + brl(d.total_centavos) + ' cada), com tudo incluso, à vista, num pagamento só.'
+            : 'Cupom ' + d.codigo + ' aplicado: ' + brl(d.total_centavos) + ' com tudo incluso, à vista.', false);
         } else {
           mensagemCupom((d && d.mensagem) || r.erro || 'Não foi possível conferir o cupom.', true);
         }
@@ -570,6 +627,8 @@
     function mostrarBalao(slug, comCupom) {
       var balao = q('#ck-balao');
       if (!balao) return;
+      // Com um cupom do link ou digitado aplicado (não o da vitrine), o balão some: ninguém troca o cupom sem querer.
+      if (comCupom && !cupomDaVitrine) { mostrar(balao, false); return; }
       // Sem curso escolhido, o balão apresenta a primeira oferta; com outro curso, some.
       var o = slug ? ofertaPara(slug) : null;
       if (!slug) { var lista = vitrine(); for (var i = 0; i < lista.length && !o; i++) if (ofertaCabe(lista[i].cursos[0])) o = lista[i]; }
@@ -630,7 +689,9 @@
       if (divulgacao <= 0) q('#ck-divulgacao').checked = false;
       var ajuda = q('#ck-divulgacao').checked;
       var amount = inscricao + (completo ? matricula : 0) + (cobre ? taxa : 0) + (ajuda ? divulgacao : 0);
-      if (comCupom && completo) amount = cupom.total_centavos;
+      var grupo = comCupom && completo ? grupoDoCupom() : 1;
+      if (comCupom && completo) amount = cupom.total_centavos * grupo;
+      montarGrupo(grupo);
 
       // Parcelas: só a opção 1, no Crédito, com o teto do servidor acima de 1 (E3, 2.4).
       var maxParcelas = info && info.parcelas_max ? info.parcelas_max : 1;
@@ -650,7 +711,7 @@
       var parcelado = !!(opcao && n > 1);
       var chaveTotal = [slug, plano, met, cobre ? 1 : 0, ajuda ? 1 : 0, n, comCupom ? cupom.codigo : ''].join('|');
       var total = parcelado ? opcao.total_centavos : (ajusteTotal && ajusteTotal.chave === chaveTotal ? ajusteTotal.valor : amount);
-      atual = { slug: slug, plano: plano, completo: completo, n: n, total: total, turma: turma, semTurma: semTurma, cupom: comCupom && completo ? cupom.codigo : '' };
+      atual = { slug: slug, plano: plano, completo: completo, n: n, total: total, turma: turma, semTurma: semTurma, cupom: comCupom && completo ? cupom.codigo : '', grupo: grupo };
 
       fichaDoCurso(c, turma);
       // Topo (1.12): o nome do curso e a turma, ou "Ainda não há turma aberta."
@@ -658,10 +719,10 @@
       rotularPassos(completo ? (semTurma ? 'semTurma' : 'completo') : 'taxa');
 
       // Planos: valores e legendas (1.12 e 10.4).
-      texto('#ck-plano-completo-valor', c && matricula > 0 ? ' — ' + brl(comCupom ? cupom.total_centavos : inscricao + matricula) : '');
+      texto('#ck-plano-completo-valor', c && matricula > 0 ? ' — ' + brl(comCupom ? cupom.total_centavos * grupoDoCupom() : inscricao + matricula) : '');
       texto('#ck-plano-taxa-valor', brl(inscricao));
       var depoisCompleto = semTurma ? 'Você entra na primeira turma deste curso que tiver vaga, por ordem de pagamento, e recebe a data por e-mail.' : 'A entrada na aula é liberada com a matrícula paga.';
-      texto('#ck-plano-completo-legenda', (comCupom ? 'Com o cupom ' + cupom.codigo + ': tudo incluso, um pagamento só. ' : parcelado ? n + ' parcelas mensais no cartão, total ' + brl(total) + ' com juros. ' : 'um pagamento só. ') + depoisCompleto);
+      texto('#ck-plano-completo-legenda', (comCupom ? 'Com o cupom ' + cupom.codigo + ': ' + (grupoDoCupom() > 1 ? grupoDoCupom() + ' pessoas × ' + brl(cupom.total_centavos) + ', ' : '') + 'tudo incluso, um pagamento só. ' : parcelado ? n + ' parcelas mensais no cartão, total ' + brl(total) + ' com juros. ' : 'um pagamento só. ') + depoisCompleto);
       texto('#ck-plano-taxa-legenda', !c ? 'Quem pagou apenas a inscrição não tem a entrada liberada.'
         : turma ? 'Quem pagou apenas a inscrição não tem a entrada liberada. A matrícula (' + brl(matricula) + ' à vista) é paga antes da aula, com a secretaria da Escola, que escreve para você por e-mail.'
         : listaInteresse ? 'Você entra na lista de interesse da próxima turma. Quando a turma for marcada, a secretaria avisa por e-mail, e o lugar fica com quem pagar a matrícula enquanto houver vaga. Quem já pagou tudo entra primeiro.'
@@ -716,15 +777,19 @@
 
       // Resumo lateral (1.12).
       mostrar('#ck-r-matricula-linha', completo);
-      texto('#ck-r-matricula', brl(matricula));
-      texto('#ck-r-inscricao-rotulo', completo ? 'Taxa de inscrição' : 'Taxa de inscrição (agora)');
-      texto('#ck-r-inscricao', brl(inscricao));
+      var vezes = grupo > 1 ? ' (' + grupo + ' × ' : '';
+      texto('#ck-r-matricula', brl(matricula * grupo));
+      var rotMat = q('#ck-r-matricula-linha span');
+      if (rotMat && !rotMat.getAttribute('data-original')) rotMat.setAttribute('data-original', rotMat.textContent);
+      if (rotMat) rotMat.textContent = rotMat.getAttribute('data-original') + (grupo > 1 ? vezes + brl(matricula) + ')' : '');
+      texto('#ck-r-inscricao-rotulo', (completo ? 'Taxa de inscrição' : 'Taxa de inscrição (agora)') + (grupo > 1 ? vezes + brl(inscricao) + ')' : ''));
+      texto('#ck-r-inscricao', brl(inscricao * grupo));
       mostrar('#ck-r-taxa-linha', cobre);
       texto('#ck-r-taxa', brl(taxa));
       mostrar('#ck-r-divulgacao-linha', ajuda);
       texto('#ck-r-divulgacao', brl(divulgacao));
       mostrar('#ck-r-juros-linha', parcelado);
-      var descontoCupom = comCupom && completo ? Math.max(0, inscricao + matricula - cupom.total_centavos) : 0;
+      var descontoCupom = comCupom && completo ? Math.max(0, inscricao + matricula - cupom.total_centavos) * grupo : 0;
       mostrar('#ck-r-cupom-linha', descontoCupom > 0);
       if (descontoCupom > 0) { texto('#ck-r-cupom-rotulo', 'Desconto do cupom ' + cupom.codigo); texto('#ck-r-cupom', '− ' + brl(descontoCupom)); }
       mostrarBalao(slug, comCupom && completo);
@@ -796,6 +861,18 @@
       if (!cpfValido(dados.cpf)) return falhou('CPF inválido. Confira os 11 números.', 'cpf');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return falhou('E-mail inválido.', 'email');
       if (dados.telefone.length < 10 || dados.telefone.length > 11) return falhou('Informe o telefone com DDD.', 'telefone');
+      if (dados.grupo) {
+        var cpfs = [dados.cpf];
+        for (var g = 0; g < dados.grupo.length; g++) {
+          var p = dados.grupo[g], k = g + 2;
+          if (p.nome.length < 5 || p.nome.indexOf(' ') < 0) return falhou('Informe o nome completo da pessoa ' + k + '.', 'grupo.' + k + '.nome');
+          if (!cpfValido(p.cpf)) return falhou('CPF da pessoa ' + k + ' inválido. Confira os 11 números.', 'grupo.' + k + '.cpf');
+          if (cpfs.indexOf(p.cpf) >= 0) return falhou('O CPF da pessoa ' + k + ' já está em outra pessoa do grupo. Cada pessoa tem o seu.', 'grupo.' + k + '.cpf');
+          cpfs.push(p.cpf);
+          if (p.telefone.length < 10 || p.telefone.length > 11) return falhou('Informe o telefone da pessoa ' + k + ', com DDD.', 'grupo.' + k + '.telefone');
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) return falhou('E-mail da pessoa ' + k + ' inválido.', 'grupo.' + k + '.email');
+        }
+      }
       if (dados.cartao) {
         if (dados.cartao.numero.length < 13 || !luhnValido(dados.cartao.numero)) return falhou('Número do cartão inválido.', 'cartao_numero');
         if (dados.cartao.nome.length < 3) return falhou('Informe o nome como está no cartão.', 'cartao_nome');
@@ -822,6 +899,7 @@
         if (dados.metodo === 'cartao' && marcado.value === 'taxa_e_matricula') dados.parcelas = atual.n || 1;
         dados.total_mostrado_centavos = atual.total;
         if (atual.cupom && marcado.value === 'taxa_e_matricula') { dados.cupom = atual.cupom; dados.cobre_taxa = false; }
+        if (atual.cupom && atual.grupo > 1 && marcado.value === 'taxa_e_matricula') dados.grupo = lerGrupo(atual.grupo);
         // A turma que a página mostrou, sempre na opção 1 (vazia = curso sem turma): se mudou, o servidor pede para conferir.
         if (marcado.value === 'taxa_e_matricula') dados.turma_id = atual.turma && atual.turma.id_escola ? atual.turma.id_escola : '';
       }

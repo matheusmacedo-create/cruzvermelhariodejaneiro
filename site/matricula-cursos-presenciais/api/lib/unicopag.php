@@ -100,6 +100,15 @@ function mcp_traduzir_status(?string $origem): string
  */
 function mcp_sincronizar(array $inscricao): array
 {
+    // Cupom de grupo: as outras pessoas não têm cobrança própria; reconsultar uma delas é reconsultar a principal, que
+    // aplica o status a todas (mcp_aplicar_status).
+    if (function_exists('mcp_grupo_e_filha') && mcp_grupo_e_filha($inscricao)) {
+        $principal = mcp_inscricao_por('id', (string) $inscricao['grupo_id']);
+        if ($principal) {
+            mcp_sincronizar($principal);
+        }
+        return mcp_inscricao_por('id', (string) $inscricao['id']) ?? $inscricao;
+    }
     if (empty($inscricao['unicopag_hash'])) {
         return $inscricao;
     }
@@ -117,7 +126,9 @@ function mcp_sincronizar(array $inscricao): array
     // segundos; a reconsulta do status.php e do webhook não pode quebrar nessa janela (T10).
     $colunas = function_exists('mcp_colunas_plano_ok') && mcp_colunas_plano_ok();
     if ($colunas) {
-        $campos += mcp_valores_da_transacao($transacao, $inscricao);
+        $valores = mcp_valores_da_transacao($transacao, $inscricao);
+        // Cupom de grupo: a cobrança é de N pessoas; a principal guarda o de uma.
+        $campos += function_exists('mcp_grupo_qtd') && mcp_grupo_qtd($inscricao) > 1 ? mcp_grupo_valores_por_pessoa($valores, mcp_grupo_qtd($inscricao)) : $valores;
     }
     mcp_atualizar($id, $campos);
     if ($colunas && isset($campos['total_cobrado_centavos'])) {
@@ -143,7 +154,8 @@ function mcp_valores_da_transacao(array $transacao, ?array $inscricao = null): a
     }
     $amount = $numero($transacao['amount'] ?? null);
     $juros = $numero($transacao['amount_interest'] ?? null) ?? ($amount !== null ? $total - $amount : 0);
-    if ($inscricao !== null && ($inscricao['total_cobrado_centavos'] ?? null) === null && $amount !== null && $amount !== (int) $inscricao['total_centavos']) {
+    $esperado = $inscricao !== null ? (function_exists('mcp_grupo_valor_cobranca') ? mcp_grupo_valor_cobranca($inscricao) : (int) $inscricao['total_centavos']) : 0;
+    if ($inscricao !== null && ($inscricao['total_cobrado_centavos'] ?? null) === null && $amount !== null && $amount !== $esperado) {
         mcp_registrar((int) $inscricao['id'], 'valor_divergente', "amount $amount · total_centavos {$inscricao['total_centavos']}");
     }
     return ['total_cobrado_centavos' => $total, 'juros_centavos' => max(0, $juros)];
@@ -251,6 +263,16 @@ function mcp_aplicar_status(int $id, string $novo): array
                 mcp_pos_pagamento($id);
             } elseif ($novo === 'estornado') {
                 mcp_pos_estorno($id);
+            }
+        }
+        // Cupom de grupo: o status da cobrança vale para todas as pessoas do grupo (cada uma com o próprio pós-pagamento:
+        // escola, e-mail e aviso). Repetir é seguro: cada transição só vale uma vez por inscrição.
+        if (function_exists('mcp_grupo_colunas_ok') && mcp_grupo_colunas_ok()) {
+            $i = mcp_inscricao_por('id', (string) $id);
+            if ($i && mcp_grupo_qtd($i) > 1 && ($i['status'] ?? '') === $novo) {
+                foreach (mcp_grupo_filhas($id) as $filha) {
+                    mcp_aplicar_status($filha, $novo);
+                }
             }
         }
     }
@@ -389,6 +411,10 @@ function mcp_aviso_linhas(array $i): array
         'Método' => $i['metodo'] === 'pix' ? 'PIX' : 'Cartão ' . ($i['bandeira'] ?? '') . ' final ' . ($i['ultimos4'] ?? ''),
         'Transação Unicopag' => $i['unicopag_hash'],
     ];
+    // Cupom de grupo: em qual cobrança está esta pessoa (as outras não têm hash próprio).
+    if (function_exists('mcp_grupo_linhas')) {
+        $linhas = array_replace($linhas, mcp_grupo_linhas($i));
+    }
     if (!empty($i['espera_prazo'])) {
         $linhas['Data limite'] = mcp_espera_data_limite((string) $i['espera_prazo']);
     }
