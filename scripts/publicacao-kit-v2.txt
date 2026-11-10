@@ -1,0 +1,59 @@
+# Guia do kit de emergência, revisão de 10/11/2026 (pedido do Matheus: trecho de 72 horas, mais fotos, vídeos e
+# matérias complementares, para subir o CTR da campanha do Ad Grants), e duas páginas novas que o complementam:
+# /mochila-de-emergencia/ (mochila de sair de casa, buscada como kit de sobrevivência e kit 72 horas) e
+# /kit-de-primeiros-socorros/ (o kit de casa, mais carro, trabalho, viagem e escola). Trilha das duas:
+# Início › Kit de emergência › Página. Fontes lidas em 10/11/2026, com revisão de fatos e revisão editorial.
+# ESTADO: PUBLICADO em 10/11/2026, às 14h11 (horário de Brasília; as imagens às 14h10), a pedido do Matheus, a partir
+# do branch claude/eager-planck-xabt07, com o cache limpo. O ar antes da publicação = o Git em 981d255 (a página do
+# kit conferida byte a byte com a cópia tirada do ar; as páginas novas, as fotos e as imagens og não existiam).
+# Conferido no ar: conferir_publicacao.sh (29 dos 31 arquivos iguais ao repositório; as 2 imagens og .jpg chegam
+# diferentes porque o CDN da Hostinger recomprime todo JPEG, como já faz com og-home.jpg e og-emblema.jpg; a cópia
+# no servidor, lida pela API de arquivos, é igual byte a byte); navegador em 390 px e 1280 px nas três páginas
+# (todas as fotos carregam, sem erro de JS nem rolagem lateral, o player abre ao tocar na capa);
+# conferir_links.py (572 endereços internos em 95 páginas; os 2 problemas apontados já existiam, em gestao/ e nas
+# páginas de privacidade). Sitemaps regerados e publicados às 14h25, com as duas páginas novas.
+# Desfazer: scripts/desfazer_publicacao.sh 981d255 scripts/publicacao-kit-v2.txt (a página do kit volta, as páginas
+# novas, as fotos e as imagens og são apagadas). As fotos ficam fora do Git (site/assets): para publicar de novo
+# depois de desfeito, gere-as de novo a partir das páginas de origem no Wikimedia Commons (lista em
+# docs/institucional/kit-imagens-inventario-2026-11-10.json).
+# O PDF NÃO muda: a tabela de lista-emergencia e o <ul> de lista-primeiros-socorros ficaram iguais, byte a byte.
+# site/institucional.json NUNCA entra nesta lista: as notas internas iriam para o ar.
+# Os vídeos (8 no total, 5 novos) foram conferidos pelo oEmbed do YouTube (canal e título) e pela capa; o conteúdo
+# deles não foi assistido pela sessão que os escolheu.
+# Gerar antes: python3 scripts/gerar_institucional.py kit-de-emergencia mochila-de-emergencia kit-de-primeiros-socorros
+# Ordem: as imagens primeiro (as páginas apontam para elas), depois as páginas novas, por fim a do kit (que aponta
+# para as novas).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-kit-v2.txt)
+# Depois: limpar o cache, conferir no ar, rodar python3 scripts/gerar_sitemaps.py e publicar os sitemaps (as duas
+# páginas novas entram em sitemap-paginas.xml só quando respondem 200).
+site/assets/institucional/fotos/kit-agua-garrafas-480.webp
+site/assets/institucional/fotos/kit-agua-garrafas-960.webp
+site/assets/institucional/fotos/kit-alagamento-catete-480.webp
+site/assets/institucional/fotos/kit-alagamento-catete-960.webp
+site/assets/institucional/fotos/kit-enchente-rio-acari-480.webp
+site/assets/institucional/fotos/kit-enchente-rio-acari-960.webp
+site/assets/institucional/fotos/kit-enlatados-prateleira-480.webp
+site/assets/institucional/fotos/kit-enlatados-prateleira-960.webp
+site/assets/institucional/fotos/kit-mochila-guardada-480.webp
+site/assets/institucional/fotos/kit-mochila-guardada-960.webp
+site/assets/institucional/fotos/kit-mochila-itens-480.webp
+site/assets/institucional/fotos/kit-mochila-itens-960.webp
+site/assets/institucional/fotos/kit-montado-japao-480.webp
+site/assets/institucional/fotos/kit-montado-japao-960.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-aberto-480.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-aberto-960.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-bolsa-480.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-bolsa-960.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-itens-480.webp
+site/assets/institucional/fotos/kit-primeiros-socorros-itens-960.webp
+site/assets/institucional/fotos/kit-radio-manivela-480.webp
+site/assets/institucional/fotos/kit-radio-manivela-960.webp
+site/assets/institucional/fotos/kit-termometro-digital-480.webp
+site/assets/institucional/fotos/kit-termometro-digital-960.webp
+site/assets/institucional/fotos/kit-treino-bandagem-480.webp
+site/assets/institucional/fotos/kit-treino-bandagem-960.webp
+site/assets/institucional/og/og-kit-de-emergencia.jpg
+site/assets/institucional/og/og-kit-de-primeiros-socorros.jpg
+site/mochila-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/kit-de-emergencia/index.html

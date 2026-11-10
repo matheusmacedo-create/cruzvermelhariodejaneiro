@@ -215,11 +215,12 @@ categoria `brinquedos` pode virar uma conversão personalizada.
 ## Guia do kit de emergência (`/kit-de-emergencia/`, 09/11/2026)
 
 GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `institucional`, como as outras páginas de
-`scripts/gerar_institucional.py`. Dois eventos próprios, só no GA4:
+`scripts/gerar_institucional.py`. As duas páginas que complementam o guia, `/mochila-de-emergencia/` e
+`/kit-de-primeiros-socorros/` (10/11/2026), seguem o mesmo padrão, com os mesmos eventos. Dois eventos próprios, só no GA4:
 
 | Momento | GA4 |
 | --- | --- |
-| Toque num dos links da lista em PDF | `kit_baixar` (origem = `botao`, o botão vermelho, ou `lista`, o link abaixo da tabela) |
+| Toque num dos links da lista em PDF | `kit_baixar` (origem = `botao`, o botão vermelho, ou `lista`, o link abaixo da tabela; `mochila` ou `primeiros-socorros`, o link do PDF nas duas páginas complementares) |
 | Toque na capa de um vídeo (o player do YouTube só carrega aí) | `video_start` (video_provider = `youtube`, video_title) |
 | Pedido da lista por e-mail aceito, na caixa das matérias (ver abaixo) | `kit_pedir` (origem = `materia`; tipo = `emergencia` ou `primeiros-socorros`, a variante da caixa) |
 

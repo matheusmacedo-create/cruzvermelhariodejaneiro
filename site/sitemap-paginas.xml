@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-09T21:38:57+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-10T17:25:17+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -1149,7 +1149,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/voluntariado/cadastro/</loc>
-    <lastmod>2026-11-09T21:16:40+00:00</lastmod>
+    <lastmod>2026-11-09T23:22:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1183,9 +1183,37 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/kit-de-emergencia/</loc>
-    <lastmod>2026-11-09T21:28:06+00:00</lastmod>
+    <lastmod>2026-11-10T17:11:16+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-alagamento-catete-960.webp</image:loc>
+      <image:title>Rua alagada vista de baixo de um toldo, com vasos de plantas e um hidrante dentro da água e duas pessoas de guarda-chuva atravessando ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enlatados-prateleira-960.webp</image:loc>
+      <image:title>Prateleiras de metal cheias de latas e embalagens de alimentos enfileiradas, num depósito iluminado</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-radio-manivela-960.webp</image:loc>
+      <image:title>Rádio portátil preto e prateado, visto de lado, com a manivela aberta, a antena recolhida e uma lanterna de LED na ponta</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-montado-japao-960.webp</image:loc>
+      <image:title>Sobre uma mesa de madeira, dois capacetes brancos, uma bolsa prateada com letras japonesas em vermelho, uma garrafa de água, uma lata de comida, pilhas, uma pequena lanterna, luvas, máscara embalada e uma manta térmica</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enchente-rio-acari-960.webp</image:loc>
+      <image:title>Rio de água barrenta passando sob uma ponte de concreto, com restos de móveis e lixo nas margens</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-primeiros-socorros-aberto-960.webp</image:loc>
+      <image:title>Estojo de primeiros socorros aberto, com ataduras e uma manta térmica embaladas e um manual ilustrado de primeiros socorros</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-agua-garrafas-960.webp</image:loc>
+      <image:title>Fardos de garrafas de água de 1,5 litro embrulhados em plástico e empilhados num depósito, com uma etiqueta branca que traz a data de validade</image:title>
+    </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
       <image:title>Fotografia em preto e branco do acervo: mulheres de uniforme branco atendem uma pessoa deitada no chão, ao lado de um veículo, enquanto uma mulher de uniforme escuro observa</image:title>
@@ -1197,7 +1225,73 @@
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
     </image:image>
     <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/og/og-kit-de-emergencia.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/</loc>
+    <lastmod>2026-11-10T17:11:13+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-itens-960.webp</image:loc>
+      <image:title>Sobre uma mesa, uma manta verde com uma corda vermelha, uma toalha cinza, duas lanternas prateadas, uma lanterna de cabeça, pilhas, sacos plásticos pretos, uma faca e uma tesoura</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enchente-rio-acari-960.webp</image:loc>
+      <image:title>Rio de água barrenta passando sob uma ponte de concreto, com restos de móveis e lixo nas margens</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-guardada-960.webp</image:loc>
+      <image:title>Bolsa prateada de cordão, com letras japonesas em vermelho, apoiada no chão num canto, ao lado de cabos de rede azuis e amarelos</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-alagamento-catete-960.webp</image:loc>
+      <image:title>Rua alagada vista de baixo de um toldo, com vasos de plantas e um hidrante dentro da água e duas pessoas de guarda-chuva atravessando ao fundo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/historia-ac-atividades-6-th.webp</image:loc>
+      <image:title>Em preto e branco, mulheres de uniforme branco atendem uma pessoa deitada no chão, ao lado de um veículo, enquanto uma mulher de uniforme escuro observa</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/kit-de-primeiros-socorros/</loc>
+    <lastmod>2026-11-10T17:11:14+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-primeiros-socorros-itens-960.webp</image:loc>
+      <image:title>Itens de um kit de primeiros socorros arrumados sobre uma mesa branca: esparadrapo, luvas descartáveis, manual, ataduras, curativos adesivos, uma compressa grande e manta térmica, todos embalados, e uma tesoura de cortar atadura</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-termometro-digital-960.webp</image:loc>
+      <image:title>Termômetro digital branco com tampa azul e ponta metálica sobre azulejos claros, com o visor marcando 98,6 °F</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-primeiros-socorros-bolsa-960.webp</image:loc>
+      <image:title>Bolsa vermelha de primeiros socorros com faixas refletivas, aberta sobre um pano azul, com uma caixa de luvas descartáveis, ataduras e gaze à mostra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-treino-bandagem-960.webp</image:loc>
+      <image:title>Diante de marinheiros sentados, um instrutor de uniforme azul-marinho aplica uma bandagem no antebraço de um colega</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/og/og-kit-de-primeiros-socorros.jpg</image:loc>
     </image:image>
   </url>
   <url>
@@ -1289,7 +1383,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/</loc>
-    <lastmod>2026-11-09T13:26:12+00:00</lastmod>
+    <lastmod>2026-11-10T15:54:34+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
