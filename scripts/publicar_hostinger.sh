@@ -20,6 +20,8 @@
 # A mesma credencial abre a API de arquivos: .../api/raw/<caminho> lê um arquivo publicado (inclusive
 # PHP) e DELETE em .../api/resources/<caminho> apaga (204 = apagado).
 # Os config.php do servidor (senhas, fora do Git) nunca são enviados nem apagados por aqui.
+# site/institucional.json (conteúdo das páginas institucionais, com as notas internas) é pulado ao publicar:
+# esteve no ar de 21/10 a 10/11/2026 porque duas listas antigas o traziam, e foi apagado do servidor.
 set -euo pipefail
 : "${HOSTINGER_TUS_URL:?defina HOSTINGER_TUS_URL}" "${HOSTINGER_TUS_AUTH:?defina HOSTINGER_TUS_AUTH}" "${HOSTINGER_TUS_AUTH_REST:?defina HOSTINGER_TUS_AUTH_REST}"
 RAIZ="${RAIZ:-site}"
@@ -59,6 +61,9 @@ for arquivo in "$@"; do
       esac
       ;;
     publicar)
+      if [ "$destino" = institucional.json ]; then
+        echo "pulado: institucional.json traz as notas internas das páginas e não vai para o ar"; continue
+      fi
       [ -f "$arquivo" ] || { echo "arquivo não encontrado: $arquivo"; exit 2; }
       tamanho=$(stat -c%s "$arquivo")
       codigo=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$HOSTINGER_TUS_URL/$destino?override=true" \
