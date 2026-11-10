@@ -1,0 +1,773 @@
+{
+ "_sobre": "Imagens e vídeos do guia do kit de emergência e das páginas /mochila-de-emergencia/ e /kit-de-primeiros-socorros/, publicados em 10/11/2026 (scripts/publicacao-kit-v2.txt). As fotos ficam só no servidor (site/assets está fora do Git): para refazer uma, baixe o original da página de origem e gere as versões de 480 e 960 px em webp. O crédito e a licença de cada foto estão na legenda dela na página. Critérios: só domínio público, CC0, CC BY ou CC BY-SA; nenhum kit com o emblema da cruz vermelha; nenhuma criança em destaque; marcas comerciais fora de destaque. Vídeos só de canais oficiais de terceiros (nada da TV Cruz Vermelha nem de gestões anteriores da filial).",
+ "fotos": [
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-montado-japao-480.webp",
+    "/assets/institucional/fotos/kit-montado-japao-960.webp"
+   ],
+   "tamanho_grande": "960x960",
+   "usada_em": [
+    "/kit-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Earthquake_Kit_in_Japan_2008.jpg",
+   "autor": "Toby Oxborrow",
+   "licenca": "CC BY-SA 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "descricao_original": "Each room had two eathquake kit backpacks. Nirayama City, Shizuoka Prefecture, Japan (data: 2008-05-10)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-agua-garrafas-480.webp",
+    "/assets/institucional/fotos/kit-agua-garrafas-960.webp"
+   ],
+   "tamanho_grande": "960x698",
+   "usada_em": [
+    "/kit-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:FEMA_-_35596_-_Bottled_water_prepared_for_Iowa_flood_relief.jpg",
+   "autor": "Patsy Lynch/FEMA",
+   "licenca": "Domínio público (PD-USGov-FEMA)",
+   "licenca_url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-FEMA",
+   "descricao_original": "Mason City, IA, June 11, 2008 -- Pallets of bottled water have been provided to the residents of Mason City, IA after their water supply was contaminated by flood waters.. Storms have inconvenienced many people throughout Iowa. Photo by Patsy Lynch/FEMA"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-enlatados-prateleira-480.webp",
+    "/assets/institucional/fotos/kit-enlatados-prateleira-960.webp"
+   ],
+   "tamanho_grande": "960x640",
+   "usada_em": [
+    "/kit-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:The_Emergency_Food_Assistance_Program_(TEFAP)_(20250110-USDA-FNS-UNK-080).jpg",
+   "autor": "Departamento de Agricultura dos EUA (USDA)",
+   "licenca": "Domínio público (PD-USGov-USDA)",
+   "licenca_url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-USDA",
+   "descricao_original": "Food pantry shelves filled with USDA Foods canned and pouched products in Fairfax, VA. (Fairfax, VA. January 2025) (USDA photo)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-radio-manivela-480.webp",
+    "/assets/institucional/fotos/kit-radio-manivela-960.webp"
+   ],
+   "tamanho_grande": "960x720",
+   "usada_em": [
+    "/kit-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Kaito_KA-350_(9480937625).jpg",
+   "autor": "James Case",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "descricao_original": "Hand crank ready for action! (data: 2013-07-14)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-alagamento-catete-480.webp",
+    "/assets/institucional/fotos/kit-alagamento-catete-960.webp"
+   ],
+   "tamanho_grande": "960x1280",
+   "usada_em": [
+    "/kit-de-emergencia/",
+    "/mochila-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Enchente_no_bairro_do_Catete.jpg",
+   "autor": "Alberto Lemos",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "descricao_original": "Duas pessoas se protegem com guarda-chuva e enfrentam grave alagamento no cruzamento das ruas do Catete e Silveira Martins, no bairro do Catete, zona sul do Rio e Janeiro, em uma tarde de novembro de 2019, após grandes chuvas."
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-enchente-rio-acari-480.webp",
+    "/assets/institucional/fotos/kit-enchente-rio-acari-960.webp"
+   ],
+   "tamanho_grande": "960x638",
+   "usada_em": [
+    "/kit-de-emergencia/",
+    "/mochila-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Rioacari.jpg",
+   "autor": "Tânia Rêgo/Agência Brasil",
+   "licenca": "CC BY 3.0 BR",
+   "licenca_url": "https://creativecommons.org/licenses/by/3.0/br",
+   "descricao_original": "Rio Acari, na zona norte do Rio de Janeiro, após as enchentes de dezembro de 2013. Tânia Rêgo / Agência Brasil, 20/12/2013"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-mochila-itens-480.webp",
+    "/assets/institucional/fotos/kit-mochila-itens-960.webp"
+   ],
+   "tamanho_grande": "960x820",
+   "usada_em": [
+    "/mochila-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:1._Art%C3%ADculos_de_ayuda.jpg",
+   "autor": "Isabel Calderon 98",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "descricao_original": "Mini survival kit / (es) Los artículos que se puede llevar en la mochila para emergencias y que nos ayudarán en algún problema de emergencia son las siguientes: papel higiénico, una manta, una toalla pequeña, una soga, cinta aislante, bolsas de plástico, una o más linternas, alcohol en gel, toallitas húmedas, un cuchillo o navaja multiusos, unas tijeras, un metro, una radio y pilas de repuesto, dinero en efectivo, encendedor o fósforos, una libreta con números de teléfonos de emergencia así como números de familiares cercanos, lapiceros, lápiz y plumones. (data: 2023-10-13)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-mochila-guardada-480.webp",
+    "/assets/institucional/fotos/kit-mochila-guardada-960.webp"
+   ],
+   "tamanho_grande": "960x720",
+   "usada_em": [
+    "/mochila-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Earthquake_Survival_Kit_(2851285960).jpg",
+   "autor": "David Pursehouse",
+   "licenca": "CC BY 2.0",
+   "licenca_url": "https://creativecommons.org/licenses/by/2.0",
+   "descricao_original": "Earthquake survival kit, stored under my desk. Photographs of an earthquake survival kit belonging to a British worker in Japan. I don't know if this is based on any specific guidelines. Contents: - 1.5 liter bottle of water - Canned bread - Rice - Pack of disposable toilet bags - Foil sheet (to keep body dry/warm) - Checklist (data: 2008-09-12)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-primeiros-socorros-aberto-480.webp",
+    "/assets/institucional/fotos/kit-primeiros-socorros-aberto-960.webp"
+   ],
+   "tamanho_grande": "960x680",
+   "usada_em": [
+    "/kit-de-emergencia/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Kit_pronto_soccorso_moto_(aperto).JPG",
+   "autor": "Umberto NURS",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "descricao_original": "{{it}} una sacca aperta contenente un kit di pronto soccorso per cicli e motocicli, conforme alla normativa DIN 13167. {{en}} an open bag containing a first-aid kit for cycles and motorcycles, conforming to DIN standard 13167. (2013-07-29)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-primeiros-socorros-itens-480.webp",
+    "/assets/institucional/fotos/kit-primeiros-socorros-itens-960.webp"
+   ],
+   "tamanho_grande": "960x720",
+   "usada_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Contenuto_kit_pronto_soccorso_moto.JPG",
+   "autor": "Umberto NURS",
+   "licenca": "CC BY-SA 4.0",
+   "licenca_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "descricao_original": "{{it}} Contenuto di un kit di pronto soccorso per cicli e motocicli, conforme alla normativa DIN 13167; sono presenti: 1 rocchetto cerotto 5mm x 2,5 cm; 8 fasciature adesive 10 cm x 6 cm; 2 bende - tampone sterili, mis media; 1 telo sterile TNT 60 cm x 80 cm; 1 copertura isotermica oro/argento; 1 paio di forbici taglia bendaggi; 4 guanti in vinile; 1 manuale per il primo soccorso. (2013-07-29)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-primeiros-socorros-bolsa-480.webp",
+    "/assets/institucional/fotos/kit-primeiros-socorros-bolsa-960.webp"
+   ],
+   "tamanho_grande": "960x720",
+   "usada_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:First_Aid_Kit_for_Immediate_Emergency_Response_01.jpg",
+   "autor": "ABORISADEADETONA",
+   "licenca": "CC0 1.0",
+   "licenca_url": "https://creativecommons.org/publicdomain/zero/1.0",
+   "descricao_original": "{{en}} Essential First Aid Supplies for Home, Workplace, and Travel. {{en}} Contents of a Standard Emergency First Aid Kit. (2025-12-12; Wiki Science Competition 2025, Nigéria)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-treino-bandagem-480.webp",
+    "/assets/institucional/fotos/kit-treino-bandagem-960.webp"
+   ],
+   "tamanho_grande": "960x639",
+   "usada_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:160502-N-TC720-086_(26761363266).jpg",
+   "autor": "Mat Murch, Marinha dos EUA (publicada por Commander, U.S. Naval Forces Europe-Africa/U.S. 6th Fleet)",
+   "licenca": "Domínio público (PD-USGov-Military-Navy, obra da Marinha dos EUA)",
+   "licenca_url": "https://commons.wikimedia.org/wiki/Template:PD-USGov-Military-Navy",
+   "descricao_original": "160502-N-TC720-086 ROTA, Spain (May 2, 2016) - Chief Hospital Corpsman Justin Engle, from Afloat Training Group Norfolk, demonstrates how to apply a bandage to a fractured arm on Gunner's Mate 2nd Class JD Rodewald, from Warner Robin, Georgia, aboard USS Donald Cook (DDG 75) during medical training May 2, 2016. Donald Cook, an Arleigh Burke-class guided-missile destroyer, forward deployed to Rota, Spain is conducting a routine patrol in the U.S. 6th Fleet area of operations in support of U.S. national security interests in Europe. (U.S. Navy photo by Mass Communication Specialist 2nd Class Mat Murch/Released)"
+  },
+  {
+   "arquivos": [
+    "/assets/institucional/fotos/kit-termometro-digital-480.webp",
+    "/assets/institucional/fotos/kit-termometro-digital-960.webp"
+   ],
+   "tamanho_grande": "960x586",
+   "usada_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "origem": "https://commons.wikimedia.org/wiki/File:Thermometer_(Normal_Temperature)_on_Counter_(50837548688).jpg",
+   "autor": "Margaret Barse, Alabama Extension (Alabama Cooperative Extension System)",
+   "licenca": "CC0 1.0",
+   "licenca_url": "https://creativecommons.org/publicdomain/zero/1.0",
+   "descricao_original": "Título: Thermometer (Normal Temperature) on Counter. Descrição: ACES | Margaret Barse. Autor: Alabama Extension (Flickr, 2020-12-11; CC0 conferida pelo FlickreviewR)."
+  }
+ ],
+ "imagens_og": [
+  {
+   "arquivo": "/assets/institucional/og/og-kit-de-emergencia.jpg",
+   "pagina": "/kit-de-emergencia/",
+   "origem": "https://commons.wikimedia.org/wiki/File:The_Emergency_Food_Assistance_Program_(TEFAP)_(20250110-USDA-FNS-UNK-080).jpg",
+   "licenca": "Domínio público (PD-USGov-USDA). 1200x630, JPEG q82, recorte centralizado da miniatura de 1920x1280 (faixa y 136-1144), sem texto acrescentado. Na prévia de 1200 px, rótulos pequenos (Furman's, Collard Greens) ficam legíveis no canto inferior esquerdo, sem destaque."
+  },
+  {
+   "arquivo": "",
+   "pagina": "/mochila-de-emergencia/",
+   "origem": "NÃO GERADA: nenhuma foto em domínio público ou CC0 de mochila de emergência passou na conferência. As de domínio público achadas tinham cruz vermelha (FEMA 37173/37174, Cruz Vermelha Americana), criança em destaque (FEMA 40042), rostos de adultos em primeiro plano (FEMA 41881, Guarda Nacional de NY) ou vítimas em sofrimento com crianças (FEMA 14535). As boas fotos de mochila são CC BY/CC BY-SA, que pedem crédito.",
+   "licenca": "—"
+  },
+  {
+   "arquivo": "/assets/institucional/og/og-kit-de-primeiros-socorros.jpg",
+   "pagina": "/kit-de-primeiros-socorros/",
+   "origem": "https://commons.wikimedia.org/wiki/File:First_Aid_Kit_for_Immediate_Emergency_Response_01.jpg (original 3718x2789; recorte centralizado de 1280x672 na miniatura de 1280x960 do Commons, reduzido a 1200x630, JPG q82 progressivo, sem texto; 144.640 bytes; arquivo em /home/user/cruzvermelhariodejaneiro/site/assets/institucional/og/og-kit-de-primeiros-socorros.jpg)",
+   "licenca": "CC0 1.0 (ABORISADEADETONA): domínio público, sem exigência de crédito"
+  }
+ ],
+ "videos": [
+  {
+   "youtube": "UQSB3TlOVWs",
+   "titulo": "Saiba como montar um kit de emergência",
+   "canal": "Ministério da Integração Desenvolvimento Regional",
+   "canal_url": "https://www.youtube.com/@midregional",
+   "usado_em": [
+    "/kit-de-emergencia/"
+   ],
+   "conferido": "canal e título pelo oEmbed do YouTube; capa vista. Conteúdo não assistido."
+  },
+  {
+   "youtube": "QaZR8ZqesTA",
+   "titulo": "[DICAS DA DEFESA CIVIL PR] ALAGAMENTO E INUNDAÇÃO",
+   "canal": "Defesa Civil do Paraná",
+   "canal_url": "https://www.youtube.com/@DefesaCivil-Pr",
+   "usado_em": [
+    "/mochila-de-emergencia/"
+   ],
+   "conferido": "canal e título pelo oEmbed do YouTube; capa vista. Conteúdo não assistido."
+  },
+  {
+   "youtube": "UBqHL7V3ZlE",
+   "titulo": "Saiba Como Agir - Chuvas Intensas",
+   "canal": "Ministério da Integração Desenvolvimento Regional",
+   "canal_url": "https://www.youtube.com/@midregional",
+   "usado_em": [
+    "/mochila-de-emergencia/"
+   ],
+   "conferido": "canal e título pelo oEmbed do YouTube; capa vista. Conteúdo não assistido. Entrou na revisão final no lugar de dD4f9HTZaJk (vertical)."
+  },
+  {
+   "youtube": "e-7MIWyNOqQ",
+   "titulo": "SAMU 192: O que fazer em caso de sangramento?",
+   "canal": "Ministério da Saúde",
+   "canal_url": "https://www.youtube.com/@MinSaudeBR",
+   "usado_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "conferido": "canal e título pelo oEmbed do YouTube; capa vista. Conteúdo não assistido."
+  },
+  {
+   "youtube": "LquiiQVKqKE",
+   "titulo": "Como fazer massagem cardíaca em crianças e adultos | Primeiros Socorros",
+   "canal": "Einstein Hospital Israelita",
+   "canal_url": "https://www.youtube.com/@einstein",
+   "usado_em": [
+    "/kit-de-primeiros-socorros/"
+   ],
+   "conferido": "canal e título pelo oEmbed do YouTube; capa vista. Conteúdo não assistido."
+  },
+  {
+   "youtube": "C2c0BIJygYI",
+   "titulo": "Como salvar uma pessoa engasgada | Primeiros Socorros",
+   "canal": "Einstein Hospital Israelita",
+   "usado_em": [
+    "/kit-de-emergencia/"
+   ],
+   "conferido": "desde 09/11/2026 (canal e título pelo oEmbed); conteúdo não assistido."
+  },
+  {
+   "youtube": "fsnv8b1vNUY",
+   "titulo": "Primeiros socorros | Coluna #16",
+   "canal": "Drauzio Varella",
+   "usado_em": [
+    "/kit-de-emergencia/"
+   ],
+   "conferido": "desde 09/11/2026 (canal e título pelo oEmbed); conteúdo não assistido."
+  },
+  {
+   "youtube": "5WmVSWZvOT8",
+   "titulo": "Como o Defesa Civil Alerta Funciona?",
+   "canal": "Ministério da Integração Desenvolvimento Regional",
+   "usado_em": [
+    "/kit-de-emergencia/"
+   ],
+   "conferido": "desde 09/11/2026 (canal e título pelo oEmbed); conteúdo não assistido."
+  }
+ ],
+ "videos_avaliados_e_nao_usados": [
+  "C6UUmo_xfyM",
+  "dD4f9HTZaJk"
+ ],
+ "fotos_descartadas": [
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_37174_-_Emergency_Preparedness_%22ready_to_go%22_kit..jpg",
+   "motivo": "Domínio público, mas é o kit da Cruz Vermelha Americana com o emblema (cruz vermelha sobre branco) na bolsa."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_37173_-_Red_Cross_%22ready_to_go%22_preparedness_kit.jpg",
+   "motivo": "Mesmo motivo: emblema da cruz vermelha no kit e no estojo de primeiros socorros."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Eton_FR300_emergency_crank_radio.jpg",
+   "motivo": "Rádio de manivela 'American Red Cross edition', com o emblema."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Be_Prepared,_All_Year_Long_160928-F-DD155-0015.jpg",
+   "motivo": "Domínio público e com galões de água, mas o kit tem estojo de primeiros socorros com cruz vermelha sobre branco (Johnson & Johnson) e marcas em destaque (Lysol, Quaker)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Offutt_Air_Force_Base_emergency_safety_kit_in_back_of_Honda_Element.jpg",
+   "motivo": "Kit de carro com caixa 'First Aid' com cruz vermelha e marcas em destaque (Prestone, StarKist, Planters)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Display_of_items_listed_in_Om_krisen_kommer.jpg",
+   "motivo": "CC0, mas é expositor de supermercado: marcas em destaque (Barilla, Uncle Ben's, Lipton, Gevalia) e cartazes de texto."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Non_Perishable_Food_in_cabinet.JPG",
+   "motivo": "Despensa de casa (CC BY-SA 4.0), mas com muitas marcas legíveis em primeiro plano (Shurfine, Amy's, Nestlé, Geisha)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:The_Emergency_Food_Assistance_Program_(TEFAP)_(20250110-USDA-FNS-UNK-076).jpg",
+   "motivo": "Latas de uma marca (Margaret Holmes) em close."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:The_Emergency_Food_Assistance_Program_(TEFAP)_(20250110-USDA-FNS-UNK-081).jpg",
+   "motivo": "Latas de uma marca (Lakeside) em close."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Chuva_Rio.jpg",
+   "motivo": "Agência Brasil, Botafogo, 06/04/2010, CC BY 3.0 BR: boa candidata, mas o original tem só 800 px e o upload.wikimedia.org devolveu 429 (Retry-After 600); a versão de 960 px do servidor de miniaturas é ampliada. Pode substituir a do Catete se o original for baixado depois."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Natural_disasters_in_Rio_de_Janeiro.jpg",
+   "motivo": "Agência Brasil (CC BY 3.0 BR), mas 800 px e descrição vaga ('Natural disasters in Rio de Janeiro in April 2010'), sem rua para a legenda."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Temporal_causa_preju%C3%ADzos_no_Rio_(40238462202).jpg",
+   "motivo": "Agência Brasil (CC BY 2.0), árvore sobre táxi no Centro em 15/02/2018: é foto de vendaval, não de chuva/alagamento; serve à matéria de vendaval."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Superakvego_en_Rio_de_Janeiro_en_2010_placo_Afonso_Pena_je_la_4-a_de_mateno.jpg",
+   "motivo": "CC BY 2.0, Tijuca 2010, mas foto noturna de celular, escura."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Largo_do_Bode%C3%A7%C3%A3o_Alagado_-_panoramio.jpg",
+   "motivo": "Foto de celular de 2010, baixa qualidade."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:%E5%82%99%E8%93%84%E6%B0%B4(%E5%8C%97%E7%94%9F%E6%B6%AF%E5%AD%A6%E7%BF%92%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%E3%81%AB%E3%81%A6)_01.jpg",
+   "motivo": "Água estocada em Nagoya (CC BY-SA 4.0), mas o assunto é o rótulo do produto, com a marca (KUROBE) e texto em japonês."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_35593_-_Bottled_water_in_Iowa.jpg",
+   "motivo": "Mesma pauta da escolhida (35596), em plano aberto escuro e menos útil."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:6._Mochila_de_emergencias.jpg",
+   "motivo": "Mochila arrumada, mas lata de atum com marca (Real) e brasão de colégio em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Mochila_preparada.jpg",
+   "motivo": "Logotipo de marca de roupa (Stüssy) em destaque na mochila."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Mochila_de_emergencia_organizada.jpg",
+   "motivo": "Mochila da Prefeitura de Lima; a foto já vem com pixelização na parede e tem logotipo institucional estrangeiro em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Los_elementos_de_la_mochila_de_emergencia.jpg",
+   "motivo": "CC BY-SA 4.0, aceitável, mas foto de celular sem cuidado e menos completa que a escolhida."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:%E9%81%BF%E9%9B%A3%E7%94%A8%E5%93%81%E3%82%BB%E3%83%83%E3%83%88_(8439158672).jpg",
+   "motivo": "Caixas de CalorieMate (marca) em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Earthquake_Survival_Kit_-_Checklist_(2851285426).jpg",
+   "motivo": "É foto de uma lista impressa (texto)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:What_to_carry_in_your_evacuation_luggage_by_Ministry_of_the_Interior_of_the_Czech_Republic_2024.jpg",
+   "motivo": "Infográfico (arte com texto), não foto."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Create_Your_Own_Bug_Out_Bag_Infographic.jpg",
+   "motivo": "Infográfico (arte com texto), não foto."
+  },
+  {
+   "url": "https://www.flickr.com/photos/77174816@N04/11327361743",
+   "motivo": "PreparedBC (CC BY 2.0): série natalina com texto sobre a imagem (montagem), 500 px."
+  },
+  {
+   "url": "https://www.flickr.com/photos/75714412@N00/36875770896",
+   "motivo": "'Basic Emergency Kit (01)', Public Domain Mark no Flickr: é foto de um checklist impresso da FEMA (texto)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Radio_Shack_20-238_Emergency_Crank_Radio.jpg",
+   "motivo": "Marca (RadioShack) em destaque; o mesmo vale para as vistas frontais de Kaito, C. Crane, HQ, Philips e Sony."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_40042_-_Student_smiles_with_her_student_%22starter%22_emergency_kit.jpg",
+   "motivo": "Domínio público, mas rosto de criança em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_14535_-_Photograph_by_Win_Henderson_taken_on_08-31-2005_in_Louisiana.jpg",
+   "motivo": "Evacuação com bolsas (domínio público), mas mostra crianças e vítimas em sofrimento (Katrina); não usei por dignidade e pela regra das crianças."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_41881_-_Ready.gov_preparedness_event_at_a_school_in_Colorado.jpg",
+   "motivo": "Mochilas de emergência (domínio público), mas rostos de adultos em primeiro plano e crianças ao fundo."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:IBPA_134452_-_Abrigo_de_acolhimento_das_fam%C3%ADlias_da_enchente_do_Gua%C3%ADba_no_Centro_-_2024-05-09_-_Cesar_Lopes-PMPA.JPG",
+   "motivo": "Abrigo em Porto Alegre (2024), mas a licença é a predefinição genérica 'Attribution' da Prefeitura, fora da lista aceita (CC BY/CC BY-SA/domínio público)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Whats_in_my_go-bag.jpg",
+   "motivo": "Bolsa de fotógrafo do dia a dia, com marcas registradas (iPod, Oakley, Victorinox), não é mochila de emergência."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Botiquín_de_primeros_auxilios,_Madrid,_España,_2015.JPG",
+   "motivo": "Traz seringa, agulhas e lâmina (não são itens de kit doméstico) e a marca Omniplast em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Botiquín_de_primeros_auxilios_en_una_bolsa_hermética,_Madrid,_España,_2015.JPG",
+   "motivo": "Mesmo kit da foto anterior (que traz seringa e agulhas), embolado num saco plástico; itens pouco legíveis."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:2._Botiquín_de_primeros_auxilios.jpg",
+   "motivo": "Remédios à vista (cartelas de comprimidos, água oxigenada, álcool em gel) e oxímetro; o site não indica remédio."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:A_first_aid_box.jpg",
+   "motivo": "Caixa branca com cruz vermelha na tampa."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Homemade_First-aid_box.jpg",
+   "motivo": "Cruz vermelha pintada sobre fundo branco (CC0, mas recusada pela regra do emblema)."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Plastic_First-aid_box.jpg",
+   "motivo": "Cruz vermelha desenhada na caixa."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_Aid_clinic_box.jpg",
+   "motivo": "Armário com cruz vermelha."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:A-first-aid-kit.jpg",
+   "motivo": "Domínio público (CDC), mas só 938 px de largura; bolsa vermelha com 'FIRSTAID' bordado; preferidas fotos maiores e sem texto em inglês."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_aid_bag.jpg",
+   "motivo": "CC0, porém bolsa fechada (não mostra os itens) com 'First Aid Kit' escrito em inglês; para a og foi preferida a bolsa aberta."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Standard_First_Aid_Kit_and_Essential_Emergency_Medical_Supplies_01.jpg",
+   "motivo": "Emblema da Cruz Vermelha da Nigéria (cruz vermelha sobre branco) no veículo ao fundo."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Standard_First_Aid_Kit_and_Essential_Emergency_Medical_Supplies_20.jpg",
+   "motivo": "Caixa de paracetamol de marca (Emzor) à vista: remédio com marca."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Standard_First_Aid_Kit_and_Essential_Emergency_Medical_Supplies_15.jpg",
+   "motivo": "Série com filtro forte e rótulos de marca; ataduras pouco legíveis."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Standard_First_Aid_Kit_and_Essential_Emergency_Medical_Supplies_04.jpg",
+   "motivo": "Tesoura sobre pano azul (CC0), mas com filtro forte; a tesoura já aparece na foto dos itens."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First-aid_travel_kit_1.jpg",
+   "motivo": "Marca Care Plus em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:HEKA_ERT_training_kit_1.jpg",
+   "motivo": "Marca HEKA em todas as embalagens."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Apteczkapp.jpg",
+   "motivo": "Bolsa com as marcas Honda e Suwary em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Autoverbandskasten_mit_Inhalt.jpg",
+   "motivo": "Folheto com um símbolo vermelho sobre branco (aparentemente uma cruz) e a marca KALFF visíveis."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Offener_Autoverbandskasten.jpg",
+   "motivo": "Marca KALFF visível; caixa preta sobre fundo escuro, itens pouco legíveis."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_Aid_Basic_Kit.jpg",
+   "motivo": "Frasco de álcool com símbolo vermelho no rótulo e produtos de farmácia com marca."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_aid_kit.jpg",
+   "motivo": "Bolsa fechada com 'SOS' e texto em finlandês e sueco; não mostra os itens."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Small_first_aid_kit_at_office.jpg",
+   "motivo": "Cena poluída (teclado, papéis de escritório) e só 1280 px."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:FirstAidItems.jpg",
+   "motivo": "800 px e etiquetas de preço em japonês sobre os itens."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_aid_2.jpg",
+   "motivo": "Série '~riley' (First aid 1 a 23): bolsas de atendimento pré-hospitalar profissional, não kit de casa; algumas com a marca FERNO."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Kit_pronto_soccorso_moto.JPG",
+   "motivo": "Mesma bolsa, fechada; usada a versão aberta."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Mullkompresse_Vlieskompresse.jpg",
+   "motivo": "Gazes ótimas, mas com a marca Draco em destaque nas embalagens."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Adhesive_dressing-20100202.jpg",
+   "motivo": "Marca PremierPore em destaque e montagem de duas fotos lado a lado."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Roll_dressing_01.jpg",
+   "motivo": "Marca Young Chemical impressa em todo o rolo."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Bandaging_an_injured_arm_as_part_of_a_course_in_first_aid_8d21269v.jpg",
+   "motivo": "Domínio público (1942, curso civil), mas a cena é distante e a bandagem quase não aparece; tem a borda do negativo."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:American_Red_Cross_-_Classes_in_Red_Cross_Work_(workrooms_and_classes)_-_American_Red_Cross_course_at_Teacher's_College._Bandaging_a_broken_arm_-_NARA_-_20802208.jpg",
+   "motivo": "Digitalização de ficha de arquivo com texto; a foto ocupa um canto pequeno."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:15th_BSB_medics_provide_first_aid_training_to_AAFES_employees_DVIDS58219.jpg",
+   "motivo": "Marca Pepsi em destaque ao fundo; cena militar com pessoa deitada no chão."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:First_Aid_(3).jpg",
+   "motivo": "Série do Egito (2011): feridos com sangue em protesto, pessoas identificáveis; contexto de violência."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Pressure_immobilisation_technique_on_arm.jpg",
+   "motivo": "Técnica de imobilização para picada de cobra usada na Austrália; no Brasil não é a orientação, e a foto confundiria."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Bandage3.JPG",
+   "motivo": "CC0, mas é curativo real num pé, com algodão sujo numa lixeira: cena hospitalar desagradável, não é treino."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Healthcare_professional_prepares_to_apply_a_bandage_to_a_patient's_arm_in_a_clinical_setting_undefined.jpg",
+   "motivo": "Não aberta: série do usuário Shixart1985 com descrições de aparência gerada automaticamente, sem como garantir que é foto real (regra: nada de IA); ambiente clínico, não treino."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:2025-07-06_UEFA_Women_EM_BS_026.jpg",
+   "motivo": "Só manequins de reanimação (marca Laerdal), sem bandagem; aviso de direitos de personalidade."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:160504-Z-MW427-507_(26824613765).jpg",
+   "motivo": "Pela descrição (não aberta), treino militar de vítimas em massa: contexto inadequado para kit de casa."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Sensor_Novo_e_Antigo_Termometro_DSCN4766.jpg",
+   "motivo": "Boa comparação digital x mercúrio (autor brasileiro), mas a marca techline aparece em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:2023_Elektroniczny_termometr_lekarski.jpg",
+   "motivo": "Marca bms visível no aparelho."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Электронный_термометр.jpg",
+   "motivo": "Marca B.Well em destaque."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:2015_Elektroniczny_termometr_lekarski.jpg",
+   "motivo": "Marcado como marca registrada (Beurer) na própria página."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:RescueFoil.jpg",
+   "motivo": "Autoria só 'presumida' ({{own assumed}}), moeda de euro na foto ({{NoCoins}}), 1024 px e baixa qualidade."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Emergency_blanket_20110709.jpg",
+   "motivo": "800 px e só a embalagem fechada."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:USMC-02101.jpg",
+   "motivo": "Domínio público, mas a manta é de edição especial camuflada (pouco representativa) e o contexto é chegada de maratona."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Copertina_termica_è_in_3_strati.jpg",
+   "motivo": "É diagrama, não foto."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Alerta_falso_da_Defesa_Civil_em_2026.png",
+   "motivo": "Mapa (não é foto) sobre o alerta falso de junho de 2026; não serve para ilustrar o alerta oficial."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Alerta_de_“misantropi4”.jpg",
+   "motivo": "Não aberta: pelo título e pela busca, imagem do alerta FALSO de 2026; seria enganoso e não é foto."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Cell_Broadcast_T-Alert_National_Test_Alert_2026-01-20.png",
+   "motivo": "Captura de tela de um alerta de teste (T-Alert) de outro país; não é foto nem é do Brasil."
+  },
+  {
+   "url": "https://commons.wikimedia.org/wiki/File:Simulado_de_enchente_com_a_Defesa_Civil._(31860688887).jpg",
+   "motivo": "Não aberta: série do Governo de SP (São Luiz do Paraitinga, 2019, CC BY 2.0); não é Rio e a descrição não fala de sirene nem de alerta no celular. Item (e) não encontrado: nenhuma foto de sirene da Defesa Civil numa comunidade do Rio nem do alerta no celular no Commons (buscas por texto, intitle, insource com 'Agência Brasil' e 'Rio de Janeiro', categorias Cell Broadcast e de defesa civil: zero resultados úteis)."
+  }
+ ],
+ "videos_descartados": [
+  {
+   "yt": "sJd1rLreWaY",
+   "motivo": "Conteúdo duvidoso para esta página. Ministério da Saúde, \"Limpeza após enchente: cuidados a serem tomados com alimentos e embalagens\" (42 s, vertical, há 2 anos). O canal é oficial, mas o vídeo trata de limpar embalagens. Um letreiro traz a diluição de limpeza (\"1 litro de hipoclorito a 2,5% ou água sanitária para cada 4 litros de água\"), que o leitor pode confundir com as 2 gotas por litro da água de beber. A descrição, cortada, passa a falar de alimentos que estavam dentro de embalagens, e os letreiros falam de vidros e embalagens plásticas a limpar. Já a página diz, citando o Ministério da Saúde, que nem alimento embalado ou enlatado que teve contato com a enchente deve ser consumido: a divergência precisa ser conferida antes de qualquer uso. Não achamos vídeo oficial e curto sobre tratar a água para beber (hipoclorito ou fervura); esse assunto fica só no texto."
+  },
+  {
+   "yt": "GxfWHNxOzWs",
+   "motivo": "Longo demais. É uma transmissão de 1h01 feita para agentes de saúde (\"ACE e ACS: orientações para o tratamento intradomiciliar de água para consumo humano\"), num canal com o nome da SVSA/MS; não conferimos se esse canal é o oficial."
+  },
+  {
+   "yt": "kWYAGhQIAdI",
+   "motivo": "Canal não oficial: \"Uso do hipoclorito de sódio\", corte de programa do canal particular Dr. BACTÉRIA."
+  },
+  {
+   "yt": "EpF-pbVruK0",
+   "motivo": "Canal não oficial: \"Água contaminada: o que fazer antes de beber?\", do canal particular DOUTOR AJUDA."
+  },
+  {
+   "yt": "qRsk4oDMc6U",
+   "motivo": "Canal não oficial (sobrevivencialismo) e longo demais: \"Purificar água com água sanitária funciona?\", do canal Sobrevivente, com 16:57."
+  },
+  {
+   "yt": "vv1BXeCKJvE",
+   "motivo": "Fora do tema e desatualizado. TV Brasil, \"Cartilha mostra forma correta de usar água sanitária pra limpar casa\", de 6 anos atrás: trata de limpar a casa, não de água para beber."
+  },
+  {
+   "yt": "0Gif7uuorQ0",
+   "motivo": "Desatualizado e com remédios. Einstein, \"Aprenda a montar um kit completo de primeiros socorros em casa\" (3:48), de 15 anos atrás. Os quadros mostram frascos de remédio, conta-gotas e pomadas dentro do kit, ou seja, indicação de remédios, que o site não faz."
+  },
+  {
+   "yt": "9VRcB00d99U",
+   "motivo": "Conteúdo duvidoso e repetido. Einstein, \"Sangramento: como estancar em emergências\" (1:32, incorporável). A capa mostra um garrote improvisado no braço, orientação que pode divergir da do SAMU, e ninguém assistiu ao vídeo. O SAMU 192 do Ministério da Saúde (e-7MIWyNOqQ) cobre o mesmo assunto com a fonte oficial."
+  },
+  {
+   "yt": "y7NNuF9YszQ",
+   "motivo": "Comercial e desatualizado: \"Como fazer kit primeiros socorros\", do site comercial Tua Saúde, de 9 anos atrás. Corre o risco de indicar remédios."
+  },
+  {
+   "yt": "Uewxpbt06FE",
+   "motivo": "Comercial e longo: \"Itens de SBV do kit de primeiros socorros\" (10:11), do IBRAPH, empresa que vende cursos de atendimento pré-hospitalar."
+  },
+  {
+   "yt": "1iEZjneX1Ts",
+   "motivo": "Comercial: \"O que ter no kit de primeiros socorros em casa?\", da Farmácia do Zezinho. Provavelmente indica remédios."
+  },
+  {
+   "yt": "TQGGZg0gSmY",
+   "motivo": "Desatualizado e confuso para o leitor brasileiro. O INEM é oficial, mas é de Portugal: o vídeo \"Kit de primeiros socorros\" é de 13 anos atrás, em português de Portugal, e cita o número de emergência 112."
+  },
+  {
+   "yt": "WL4sgr8H9cw",
+   "motivo": "Longo demais: \"Famílias em Pauta – Primeiros socorros na escola\", da Sociedade Brasileira de Pediatria, com 25:24."
+  },
+  {
+   "yt": "DAQmLNRyTtY",
+   "motivo": "Imprensa comercial: CNN Brasil, \"Não há motivo para alarme, diz Defesa Civil sobre kit de emergência de 72h\". Noticia a polêmica, não ensina a montar o kit."
+  },
+  {
+   "yt": "cbcQ1JTn1ss",
+   "motivo": "Imprensa comercial: Band Jornalismo noticiando a polêmica do kit."
+  },
+  {
+   "yt": "UojHc_amxVs",
+   "motivo": "Imprensa comercial: Metrópoles noticiando a polêmica do kit."
+  },
+  {
+   "yt": "K-zC7l09qfM",
+   "motivo": "Imprensa comercial e longo: UOL, 7:33, sobre a polêmica do kit."
+  },
+  {
+   "yt": "ZtBL_LE4ZyQ",
+   "motivo": "Comercial: anúncio do kit de sobrevivência EvakPak, da MIRA Safety."
+  },
+  {
+   "yt": "a5dsKVpfWs4",
+   "motivo": "Canal particular e longo: Mayco Costa, kit de 72 horas, 10:06."
+  },
+  {
+   "yt": "L1fnx7yaVYE",
+   "motivo": "Canal particular e longo: Leo Farah, mochila de 72 horas, 19:17."
+  },
+  {
+   "yt": "8WyMknMaaPk",
+   "motivo": "Canal particular de sobrevivencialismo e longo demais: Guia do Sobrevivente, 40:27, com título alarmista."
+  },
+  {
+   "yt": "0bz2rC64VGI",
+   "motivo": "Desatualizado. MPRJ, \"Morte Zero: se houver sirene na sua comunidade...\" (1:10), de 8 anos atrás. O canal é oficial, mas o vídeo da Prefeitura e da Defesa Civil do Rio (C6UUmo_xfyM) cobre o mesmo assunto, e é a Defesa Civil que opera as sirenes."
+  },
+  {
+   "yt": "e1L4PZdr8PQ",
+   "motivo": "Desatualizado. Prefeitura do Rio, \"#ComoFaz para receber alertas da Defesa Civil?\" (0:55), de 2019: é anterior ao Defesa Civil Alerta no celular, que a página já explica."
+  },
+  {
+   "yt": "BXzrmjq-qIc",
+   "motivo": "Reserva. Prefeitura do Rio, \"#ComoFaz caso eu esteja no carro ou a pé durante um alagamento?\" (1:22, 2019). É oficial e curto, mas é de 2019. Serve melhor à matéria de alagamento."
+  },
+  {
+   "yt": "QaFCVM97N0w",
+   "motivo": "Desatualizado. MIDR, \"Prevenção em Ação: Enchentes\" (2:26), de 8 anos atrás. O próprio MIDR tem vídeos mais novos."
+  },
+  {
+   "yt": "UBqHL7V3ZlE",
+   "motivo": "Reserva. MIDR, \"Saiba Como Agir – Chuvas Intensas\" (79 s, há 2 anos, horizontal, com Libras, incorporável: embed OK). É bom e ficou de fora só para não repetir assunto. É a troca natural do dD4f9HTZaJk se o formato vertical incomodar."
+  },
+  {
+   "yt": "vCWvVhhfBwU",
+   "motivo": "Reserva. MIDR, \"Saiba como agir em casos de chuvas intensas!\" (89 s, há 1 ano, com Zé Gotinha e Libras, incorporável). Serve à seção de crianças (cada-casa) e ficou de fora para não repetir assunto. Ninguém assistiu ao vídeo."
+  },
+  {
+   "yt": "9o6mpIAMobw",
+   "motivo": "Reserva. Ministério da Saúde, \"Chuvas fortes e inundações: você sabe como agir?\" (2:24, há 2 meses, incorporável). É vertical, foca no El Niño no Sul e no Sudeste, e ninguém assistiu ao vídeo."
+  },
+  {
+   "yt": "smxp0yy8g-k",
+   "motivo": "Reserva para a matéria de leptospirose. Ministério da Saúde, \"Alerta para doenças relacionadas a enchentes\" (68 s, incorporável). É vertical e ninguém assistiu ao vídeo."
+  },
+  {
+   "yt": "hXbym34zFbU",
+   "motivo": "Reserva para o kit-de-primeiros-socorros. Secretaria de Estado de Saúde RJ, \"SAMU 192: Aprenda a agir em queimaduras, choque elétrico e engasgo agora!\" (3:47, há 2 meses, incorporável), sobre acidentes domésticos com crianças. Ninguém assistiu ao vídeo, e ele ficou de fora para a lista não passar de 6."
+  },
+  {
+   "yt": "25urPz2sU6E",
+   "motivo": "Amplo demais. Ministério da Saúde, \"El Niño: como se proteger?\" (5:00), sobre calor, dengue, enchente e seca. Ninguém assistiu ao vídeo."
+  },
+  {
+   "yt": "si03j34Dcqk",
+   "motivo": "Short vertical do MIDR com o título \"6 de novembro de 2026\", que não diz o assunto. O conteúdo não foi conferido."
+  },
+  {
+   "yt": "LHRvkkBYfRI",
+   "motivo": "Reserva. Defesa Civil do Paraná, compilação de dicas (5:09). Junta as quatro dicas da série; o vídeo de alagamento (1:22) é mais direto."
+  },
+  {
+   "yt": "cnp8yhhviao",
+   "motivo": "Desatualizado: TV Brasil, \"Simulação das sirenes contra chuva\", reportagem de 15 anos atrás."
+  },
+  {
+   "yt": "9O09n7ilg_4",
+   "motivo": "Longo demais: CEPED Defesa Civil Rio, \"Workshop Sirenes Cariocas\", com 3h04."
+  },
+  {
+   "yt": "3sdVWT88MQ4",
+   "motivo": "Institucional: Secretaria de Estado de Saúde RJ, \"Ondas de calor, chuvas intensas e alagamentos exigem preparo\". Mostra como o estado se prepara, não ensina o morador."
+  }
+ ]
+}

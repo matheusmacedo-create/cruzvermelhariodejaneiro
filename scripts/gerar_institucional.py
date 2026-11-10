@@ -60,7 +60,8 @@ CONTEUDO = RAIZ / "site" / "institucional.json"
 ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema",
-         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia"]
+         "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
+         "mochila-de-emergencia", "kit-de-primeiros-socorros"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "direito-internacional-humanitario", "base-legal"}
