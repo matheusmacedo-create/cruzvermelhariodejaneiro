@@ -70,6 +70,8 @@ PAGINAS = [
     ("/voluntariado/cadastro/", "voluntariado/cadastro/index.html", "monthly", "0.6", "Cadastro de voluntário"),
     ("/cbfi/", "cbfi/index.html", "monthly", "0.6", "CBFI, formação inicial dos voluntários"),
     ("/kit-de-emergencia/", "kit-de-emergencia/index.html", "monthly", "0.7", "Guia: kit de emergência e de primeiros socorros"),
+    ("/mochila-de-emergencia/", "mochila-de-emergencia/index.html", "monthly", "0.6", "Guia: mochila de emergência (kit de sobrevivência)"),
+    ("/kit-de-primeiros-socorros/", "kit-de-primeiros-socorros/index.html", "monthly", "0.6", "Guia: kit de primeiros socorros de casa"),
     ("/gestao/", "gestao/index.html", "monthly", "0.6", "Como funciona a nossa gestão"),
     ("/pedido-de-documentos/", "pedido-de-documentos/index.html", "yearly", "0.4", "Pedido de documentos"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),

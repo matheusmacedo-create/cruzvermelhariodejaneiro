@@ -3,7 +3,9 @@
 
 Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /movimento-internacional/,
 /direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/, /cbfi/ (o link do CBFI, 27/10/2026) e
-/kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026). O conteúdo (textos, fontes oficiais,
+/kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026), com as duas páginas que o
+complementam desde 10/11/2026: /mochila-de-emergencia/ (a mochila para sair de casa, o "kit de sobrevivência") e
+/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página. O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -59,15 +61,17 @@ ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia"]
-# Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página) e
-# de "Atuação" (Início › Página).
+# Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
+# complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "direito-internacional-humanitario", "base-legal"}
 VOLUNTARIADO = {"cbfi"}
+KIT = {"mochila-de-emergencia", "kit-de-primeiros-socorros"}
 NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princípios Fundamentais",
                 "movimento-internacional": "Movimento Internacional", "emblema": "O emblema",
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
                 "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
-                "kit-de-emergencia": "Kit de emergência"}
+                "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
+                "kit-de-primeiros-socorros": "Kit de primeiros socorros"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
@@ -285,6 +289,8 @@ def trilha(p: dict) -> list[tuple[str, str]]:
         itens.append(("Quem somos", url_de("quem-somos")))
     elif p["slug"] in VOLUNTARIADO:
         itens.append(("Voluntariado", url_de("voluntariado")))
+    elif p["slug"] in KIT:
+        itens.append(("Kit de emergência", url_de("kit-de-emergencia")))
     itens.append((NOMES_CURTOS[p["slug"]], url_de(p["slug"])))
     return itens
 
