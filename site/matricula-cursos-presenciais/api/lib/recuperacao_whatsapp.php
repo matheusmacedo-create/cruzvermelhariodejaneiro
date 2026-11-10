@@ -158,7 +158,7 @@ const MCP_RW_COOKIE = 'mcp_rw';
 const MCP_RW_COOKIE_S = 6 * 3600;
 // Todos os modelos que a rodada pode usar (a situação de cada um aparece no painel): os nomes de hoje, que valem quando
 // a Meta não responde a lista. As versões novas de cada um (_v2, _v3…) entram sozinhas pela família (MCP_RW_FAMILIAS).
-const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL, 'mat_pendente_1', 'mat_pendente_2'];
+const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_inscricao_3', 'ps_cupom_oferta', 'll_cupom_oferta', 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL, 'curso_nova_turma_aberta', 'mat_pendente_1', 'mat_pendente_2'];
 /**
  * Famílias de modelos (01/11/2026): família => o nome usado hoje (o padrão). rec_inscricao_2, rec_inscricao_2_v2 e
  * rec_inscricao_2_v3 são a mesma mensagem, submetida de novo à Meta (a Meta reclassifica como Marketing o que considera
@@ -167,7 +167,7 @@ const MCP_RW_MODELOS_TODOS = ['rec_inscricao_1_v2', 'rec_inscricao_2', 'rec_insc
  */
 const MCP_RW_FAMILIAS = [
     'rec_inscricao_1' => 'rec_inscricao_1_v2', 'rec_inscricao_2' => 'rec_inscricao_2', 'rec_inscricao_3' => 'rec_inscricao_3',
-    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'cur_cupom_oferta' => 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL => MCP_RW_MODELO_CUPOM_GERAL, 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
+    'ps_cupom_oferta' => 'ps_cupom_oferta', 'll_cupom_oferta' => 'll_cupom_oferta', 'cur_cupom_oferta' => 'cur_cupom_oferta', MCP_RW_MODELO_CUPOM_GERAL => MCP_RW_MODELO_CUPOM_GERAL, 'curso_nova_turma_aberta' => 'curso_nova_turma_aberta', 'mat_pendente_1' => 'mat_pendente_1', 'mat_pendente_2' => 'mat_pendente_2',
 ];
 // As campanhas dos botões: um pagamento no site com uma delas veio "pelo link da mensagem".
 const MCP_RW_CAMPANHAS = ['rec1', 'rec2', 'rec3', 'rec3cupom'];
@@ -192,6 +192,9 @@ const MCP_RW_TEXTOS = [
     'll_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Primeiros Socorros Lei Lucas - Ambientes com Crianças da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. Mas atenção: o cupom vale só para os primeiros 10 alunos da turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
     // Submetido à Meta em 09/11/2026 (em 06/11 ficou só o texto aqui: o modelo não existia na conta): o CURATIVOS não tem limite de vagas, então o texto fala da turma, não de "primeiros N alunos".
     'cur_cupom_oferta' => "Olá, {{1}}! Separamos um cupom especial para você no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *{{2}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{3}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
+    // Aviso de turma nova (já aprovado na conta, Marketing): o modelo da oferta a ex-alunos (lib/oferta_alunos.php). Não cita o
+    // cupom; o botão leva ao checkout com ele aplicado.
+    'curso_nova_turma_aberta' => "Olá, {{1}}! A Cruz Vermelha RJ abriu uma nova turma do curso {{2}}: {{3}}, na Praça da Cruz Vermelha, no Centro.\n\nAs vagas são limitadas à capacidade da sala. Veja os detalhes e faça a sua inscrição pelo botão abaixo.\n[Ver a turma] [Não tenho interesse]",
     // O geral (submetido à Meta em 09/11/2026): o texto do CURATIVOS com o curso em parâmetro.
     MCP_RW_MODELO_CUPOM_GERAL => "Olá, {{1}}! Separamos um cupom especial para você no curso de {{2}} da Cruz Vermelha RJ: *{{3}}*.\n\nCom ele, a sua inscrição fica bem mais em conta, e você vê o valor final assim que abrir o link. A promoção vale para a turma de {{4}}.\n\nToque no botão abaixo para ver a sua oferta. O cupom já vem aplicado.\n[Ver minha oferta] [Não tenho interesse]",
 ];

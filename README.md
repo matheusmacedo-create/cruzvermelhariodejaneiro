@@ -1622,7 +1622,7 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
 - **Quem não recebe**: telefone que não é celular, repetido, celular em `mcp_avisos_bloqueios` (qualquer origem: "Não tenho
   interesse", SAIR, PARAR), quem já tem compra paga do curso no site e quem já recebeu (`UNIQUE(campanha, destino_hash)`).
 - **Quando sai**: na rotina de hora em hora (`api/lembretes.php`), **depois** da matrícula pendente e da recuperação, das 8h
-  às 20h, no máximo 40 por rodada, dentro do mesmo teto de 200 mensagens em 24 h do número (`mcp_rw_enviadas_24h` soma as
+  às 20h, no máximo 100 por rodada (eram 40 até 10/11), dentro do mesmo teto de 200 mensagens em 24 h do número (`mcp_rw_enviadas_24h` soma as
   três tabelas). Só com o modelo **aprovado** na Meta e a estrutura conferida; modelo em análise ou Kapso sem a lista de
   modelos: espera, sem gastar a vez de ninguém. Para sozinho quando a oferta deixa de valer (`mcp_rw_oferta_cupom`: cupom
   vencido em 30/11, ou turma fechada).
@@ -1642,6 +1642,17 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
 - **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_oferta_alunos_integracao.php` (MariaDB local e uma Kapso falsa; 30
   verificações). Os testes da recuperação por WhatsApp (158) e da matrícula pendente (53) seguem passando.
 - **Publicar**: `scripts/publicacao-oferta-alunos.txt` (com migração), depois subir a lista ao servidor.
+
+### Oferta a ex-alunos pelo aviso de turma nova (10/11/2026)
+
+Os modelos de cupom (`cur_cupom_oferta`, `curso_cupom_oferta` e as versões `_v2` a `_v4`, submetidas em 10/11) passaram de um
+dia em análise na Meta. Decisão do responsável: mandar a oferta a ex-alunos pelo **`curso_nova_turma_aberta`**, que já estava
+aprovado na conta (Marketing): `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` a turma ("sábado, 28/11, das 9h às 17h",
+`mcp_oa_turma_texto`). O texto não cita o cupom; o botão é o mesmo link curto `…/ir.php/w/<curso>/alunos`, que abre o
+checkout com o cupom aplicado. É o modelo **preferido** do disparo (`MCP_OA_MODELO_TURMA`); sem ele aprovado (pausado,
+por exemplo), valem o modelo de cupom do curso e o geral, como antes. A 3ª mensagem da recuperação não mudou.
+Teste: `scripts/testar_oferta_alunos_integracao.php` (37 verificações). **Publicado em 10/11/2026 às 16h11** e conferido com
+`conferir_publicacao.sh`; a primeira rodada com o modelo é a das 17h07.
 
 ### Modelo de cupom geral, para qualquer curso (09/11/2026)
 

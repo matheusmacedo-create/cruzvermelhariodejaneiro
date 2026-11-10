@@ -101,7 +101,10 @@ if ($caminho === '/platform/v1/whatsapp/phone_numbers/1112223334') {
 }
 if ($caminho === '/meta/whatsapp/v24.0/998877665544/message_templates') {
     $botoes = [['type' => 'URL', 'text' => 'Ver minha oferta', 'url' => 'https://cruzvermelhariodejaneiro.org/{{1}}'], ['type' => 'QUICK_REPLY', 'text' => 'Não tenho interesse']];
-    echo json_encode(['data' => [
+    $turma = isset($controle['turma']) ? [['name' => 'curso_nova_turma_aberta', 'status' => $controle['turma'], 'language' => 'pt_BR', 'category' => 'MARKETING', 'components' => [
+        ['type' => 'BODY', 'text' => 'Olá, {{1}}! Nova turma do curso {{2}}: {{3}}.'], ['type' => 'BUTTONS', 'buttons' => [
+            ['type' => 'URL', 'text' => 'Ver a turma', 'url' => 'https://cruzvermelhariodejaneiro.org/{{1}}'], ['type' => 'QUICK_REPLY', 'text' => 'Não tenho interesse']]]]]] : [];
+    echo json_encode(['data' => [...$turma,
         ['name' => 'ps_cupom_oferta', 'status' => 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING'],
         ['name' => 'cur_cupom_oferta', 'status' => $controle['situacao'] ?? 'APPROVED', 'language' => 'pt_BR', 'category' => 'MARKETING', 'components' => [
             ['type' => 'BODY', 'text' => 'Olá, {{1}}! Cupom *{{2}}* para a turma de {{3}}.'], ['type' => 'BUTTONS', 'buttons' => $botoes]]],
@@ -131,7 +134,7 @@ $lista = static function (array $pessoas, bool $ligada = true) use ($listaArq): 
 $db = mcp_db();
 $celular = static fn(int $n): string => '219' . str_pad((string) (71230000 + $n), 8, '0', STR_PAD_LEFT);
 $numeros = [];
-for ($i = 1; $i <= 60; $i++) {
+for ($i = 1; $i <= MCP_OA_POR_RODADA + 20; $i++) {
     $numeros[$i] = '55' . $celular($i);
 }
 $sufixo = bin2hex(random_bytes(3));
@@ -304,6 +307,26 @@ try {
         ['cur_cupom_oferta', null]);
     verificar('modelo geral: a prévia traz o curso, o cupom e a data',
         str_contains(mcp_rw_cupom_geral($terceira, '', $curso)['previa'], 'no curso de Curativos e Tratamento de Feridas da Cruz Vermelha RJ: *CURATIVOS*') , true);
+
+    // ------------------------------------------------------------------------- aviso de turma nova (o modelo preferido)
+    $limpar();
+    @unlink("$falso/kapso.jsonl");
+    $lista([['nome' => 'Paula Lima', 'telefone' => $celular(8)]]);
+    verificar('aviso de turma: o {{3}} é o dia e o horário da turma aberta', mcp_oa_turma_texto($A), 'sábado, 28/11, das 9h às 17h');
+    $controle(['turma' => 'APPROVED']);
+    $semCache();
+    $r = mcp_oa_rodar($A);
+    $e = $enviadas();
+    verificar('aviso de turma: aprovado, é ele que sai (mesmo com o de cupom aprovado), com nome, curso e turma, e o botão da campanha alunos',
+        [$r['enviados'], $e[0]['template']['name'] ?? '', array_column($e[0]['template']['components'][0]['parameters'] ?? [], 'text'), $e[0]['template']['components'][1]['parameters'][0]['text'] ?? '', $linhas()[0]['modelo'] ?? ''],
+        [1, 'curso_nova_turma_aberta', ['Paula', 'Curativos e Tratamento de Feridas', 'sábado, 28/11, das 9h às 17h'], "matricula-cursos-presenciais/api/ir.php/w/$curso/alunos", 'curso_nova_turma_aberta']);
+    $limpar();
+    @unlink("$falso/kapso.jsonl");
+    $controle(['turma' => 'PAUSED']);
+    $r = mcp_oa_rodar($A);
+    verificar('aviso de turma: pausado na Meta, vale o modelo de cupom do curso', [$r['enviados'], $enviadas()[0]['template']['name'] ?? ''], [1, 'cur_cupom_oferta']);
+    $controle([]);
+    $semCache();
 
     // ------------------------------------------------------------------------- erros da Kapso e teto por rodada
     $limpar();
