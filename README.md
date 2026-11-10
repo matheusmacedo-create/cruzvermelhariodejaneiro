@@ -1651,7 +1651,8 @@ aprovado na conta (Marketing): `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` a
 `mcp_oa_turma_texto`). O texto não cita o cupom; o botão é o mesmo link curto `…/ir.php/w/<curso>/alunos`, que abre o
 checkout com o cupom aplicado. É o modelo **preferido** do disparo (`MCP_OA_MODELO_TURMA`); sem ele aprovado (pausado,
 por exemplo), valem o modelo de cupom do curso e o geral, como antes. A 3ª mensagem da recuperação não mudou.
-Teste: `scripts/testar_oferta_alunos_integracao.php` (37 verificações).
+Teste: `scripts/testar_oferta_alunos_integracao.php` (37 verificações). **Publicado em 10/11/2026 às 16h11** e conferido com
+`conferir_publicacao.sh`; a primeira rodada com o modelo é a das 17h07.
 
 ### Modelo de cupom geral, para qualquer curso (09/11/2026)
 
