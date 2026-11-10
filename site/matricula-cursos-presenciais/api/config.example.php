@@ -186,7 +186,7 @@ return [
     //   <?php return [
     //       'IA_ANTHROPIC_CHAVE' => 'cole aqui a chave',  // console.anthropic.com > API keys (uma chave só para o site)
     //       // Opcionais:
-    //       // 'IA_MODELO' => 'claude-opus-5-5',  // o padrão; 'claude-sonnet-5-5' ou 'claude-haiku-5-5' custam menos
+    //       // 'IA_MODELO' => 'claude-haiku-5-5', // o padrão (barato); 'claude-sonnet-5-5' ou 'claude-opus-5-5' custam mais
     //       // 'IA_ESFORCO' => 'low',             // low (padrão), medium ou high: mais esforço, mais custo e mais demora
     //       // 'IA_POR_DIA' => 2000,              // teto de perguntas respondidas pela IA em 24 h; acima disso, busca por palavras
     //       // 'IA_CACHE_1H' => true,             // cache de 1 hora da base (só compensa com perguntas quase toda hora)

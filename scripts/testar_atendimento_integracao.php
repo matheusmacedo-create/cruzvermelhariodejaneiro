@@ -71,7 +71,7 @@ $sessao = static fn(int $n): string => '7e57' . str_pad(dechex($n), 28, '0', STR
 $pastaIa = sys_get_temp_dir() . '/mcp-ia-falsa-' . $sufixo;
 mkdir($pastaIa . '/v1', 0700, true);
 file_put_contents($pastaIa . '/v1/messages', '<?php
-file_put_contents(__DIR__ . "/../pedido.json", json_encode(["corpo" => json_decode(file_get_contents("php://input"), true), "chave" => $_SERVER["HTTP_X_API_KEY"] ?? "", "versao" => $_SERVER["HTTP_ANTHROPIC_VERSION"] ?? ""]));
+file_put_contents(__DIR__ . "/../pedido.json", json_encode(["corpo" => json_decode(file_get_contents("php://input"), true), "chave" => $_SERVER["HTTP_X_API_KEY"] ?? "", "versao" => $_SERVER["HTTP_ANTHROPIC_VERSION"] ?? "", "beta" => $_SERVER["HTTP_ANTHROPIC_BETA"] ?? ""]));
 $r = json_decode((string) @file_get_contents(__DIR__ . "/../resposta.json"), true);
 http_response_code($r["http"] ?? 200);
 header("Content-Type: application/json");
@@ -184,7 +184,8 @@ try {
     verificar('ia: pedido no formato da API (chave no cabeçalho, versão, modelo, esforço, saída estruturada)', [$pedido['chave'] ?? null, $pedido['versao'] ?? null, $c['model'] ?? null,
         $c['output_config']['effort'] ?? null, $c['output_config']['format']['type'] ?? null, $c['output_config']['format']['schema']['additionalProperties'] ?? null,
         isset($c['temperature']), isset($c['thinking'])],
-        ['chave-de-teste', '2026-10-21', 'claude-opus-5-5', 'low', 'json_schema', false, false, false]);
+        ['chave-de-teste', '2026-10-21', 'claude-haiku-5-5', 'low', 'json_schema', false, false, false]);
+    verificar('ia: o modelo padrão não leva o parâmetro de troca de modelo', [isset($c['fallbacks']), $pedido['beta'] ?? ''], [false, '']);
     verificar('ia: base no prefixo em cache, pergunta fora dele', [$c['system'][0]['cache_control']['type'] ?? null, str_contains((string) ($c['system'][0]['text'] ?? ''), '<base_de_respostas>'),
         str_contains((string) ($c['system'][0]['text'] ?? ''), 'quanto tempo dura o curso de cuidador?'), end($c['messages'])['content'] ?? null],
         ['ephemeral', true, false, 'quanto tempo dura o curso de cuidador?']);

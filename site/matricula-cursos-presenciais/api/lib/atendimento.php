@@ -429,10 +429,14 @@ function mcp_at_ia_configurada(): bool
     return is_string(mcp_cfg('IA_ANTHROPIC_CHAVE')) && function_exists('curl_init') && mcp_cfg('IA_DESLIGADA', false) !== true;
 }
 
-/** Modelo trocável em api/config-ia.php (IA_MODELO), sem mexer no código. */
+/**
+ * Modelo trocável em api/config-ia.php (IA_MODELO), sem mexer no código. O padrão é o Claude Haiku 5.5 (decisão do
+ * responsável, 10/11/2026: simples, barato e que resolva): a tarefa é responder a partir de uma base curta e
+ * classificar, e ele custa umas 40 vezes menos que o Opus 5.5.
+ */
 function mcp_at_ia_modelo(): string
 {
-    return (string) mcp_cfg('IA_MODELO', 'claude-opus-5-5');
+    return (string) mcp_cfg('IA_MODELO', 'claude-haiku-5-5');
 }
 
 /**

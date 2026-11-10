@@ -163,14 +163,15 @@ A primeira pergunta de uma conversa grava a base no cache; as seguintes, em até
 
 | Modelo (`IA_MODELO`) | Primeira pergunta | Perguntas seguintes | 500 conversas de 2 perguntas por mês |
 | --- | --- | --- | --- |
-| `claude-opus-5-5` (padrão) | cerca de US$ 0,08 | cerca de US$ 0,01 | cerca de US$ 45 |
+| `claude-haiku-5-5` (padrão) | cerca de US$ 0,002 | menos de US$ 0,001 | cerca de US$ 1 |
 | `claude-sonnet-5-5` | cerca de US$ 0,04 | cerca de US$ 0,005 | cerca de US$ 23 |
-| `claude-haiku-5-5` | cerca de US$ 0,002 | menos de US$ 0,001 | cerca de US$ 1 |
+| `claude-opus-5-5` | cerca de US$ 0,08 | cerca de US$ 0,01 | cerca de US$ 45 |
 
-O padrão é o modelo mais capaz porque um erro aqui é uma informação errada ao público. O Haiku 5.5 custa umas
-40 vezes menos; trocar é uma linha no `config-ia.php`, e a decisão é da instituição. Recomendo começar no
-padrão, olhar um mês de respostas no painel e então testar o mais barato com as mesmas perguntas. Teto de
-segurança: 2.000 perguntas pela IA a cada 24 h (`IA_POR_DIA`); acima disso, busca por palavras.
+O padrão é o Haiku 5.5, por decisão do responsável (10/11/2026): um modelo simples, barato e que resolva. A tarefa
+cabe nele: responder a partir de uma base curta e classificar o assunto. Se o painel mostrar respostas ruins
+(muitas "não bastou" ou casos de gente que não foram reconhecidos), subir para o Sonnet 5.5 é uma linha no
+`config-ia.php`. Teto de segurança: 2.000 perguntas pela IA a cada 24 h (`IA_POR_DIA`); acima disso, busca por
+palavras.
 
 ## Privacidade (pendência antes de publicar)
 
@@ -197,7 +198,7 @@ MCP_CONFIG_ARQUIVO=/caminho/config-teste.php php scripts/testar_atendimento_inte
 ```
 
 Contra um MariaDB local: API, IA por um servidor falso (formato do pedido, cache, saída estruturada, quedas),
-chamado com a conversa, portal e freio (46 verificações).
+chamado com a conversa, portal e freio (47 verificações).
 
 Conferido também no navegador, em 390 px: pergunta, resposta, "resolveu", caso que precisa da equipe, coleta,
 revisão, envio, conversa nova, roteiro de botões e queda do servidor de atendimento.
