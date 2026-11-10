@@ -1643,6 +1643,16 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
   verificações). Os testes da recuperação por WhatsApp (158) e da matrícula pendente (53) seguem passando.
 - **Publicar**: `scripts/publicacao-oferta-alunos.txt` (com migração), depois subir a lista ao servidor.
 
+### Oferta a ex-alunos pelo aviso de turma nova (10/11/2026)
+
+Os modelos de cupom (`cur_cupom_oferta`, `curso_cupom_oferta` e as versões `_v2` a `_v4`, submetidas em 10/11) passaram de um
+dia em análise na Meta. Decisão do responsável: mandar a oferta a ex-alunos pelo **`curso_nova_turma_aberta`**, que já estava
+aprovado na conta (Marketing): `{{1}}` primeiro nome, `{{2}}` o curso, `{{3}}` a turma ("sábado, 28/11, das 9h às 17h",
+`mcp_oa_turma_texto`). O texto não cita o cupom; o botão é o mesmo link curto `…/ir.php/w/<curso>/alunos`, que abre o
+checkout com o cupom aplicado. É o modelo **preferido** do disparo (`MCP_OA_MODELO_TURMA`); sem ele aprovado (pausado,
+por exemplo), valem o modelo de cupom do curso e o geral, como antes. A 3ª mensagem da recuperação não mudou.
+Teste: `scripts/testar_oferta_alunos_integracao.php` (37 verificações).
+
 ### Modelo de cupom geral, para qualquer curso (09/11/2026)
 
 Pedido do responsável: "um modelo que a gente possa usar com várias entradas no ano". **Situação: modelo submetido à Meta em

@@ -35,6 +35,13 @@ const MCP_OA_CURSO = 'curativos-e-tratamento-de-feridas';
 /** A campanha do link curto (o 3º pedaço do api/ir.php) e o utm_campaign do checkout. */
 const MCP_OA_LINK = 'alunos';
 const MCP_OA_POR_RODADA = 40;
+/**
+ * O modelo preferido do disparo (10/11/2026, decisão do responsável: os modelos de cupom passaram de um dia em análise na
+ * Meta e este já estava aprovado): o aviso de turma nova — {{1}} primeiro nome, {{2}} o curso, {{3}} a turma ("sábado,
+ * 28/11, das 9h às 17h"). O texto não cita o cupom; o botão leva ao checkout com ele aplicado, e a página mostra o
+ * desconto. Sem ele aprovado, vale o modelo de cupom do curso ou o geral (mcp_rw_cupom_resolver).
+ */
+const MCP_OA_MODELO_TURMA = 'curso_nova_turma_aberta';
 
 /**
  * A lista de api/config-oferta-alunos.php: ['ligada', 'lista' => [['nome', 'numero' (55…)], …] sem repetidos,
@@ -80,6 +87,33 @@ function mcp_oa_modelo(array $pessoa, array $oferta): array
         'previa' => mcp_rw_previa($modelo, $parametros)];
     // Curso sem modelo próprio: o modelo de cupom geral, com o curso em parâmetro.
     return $modelo === MCP_RW_MODELO_CUPOM_GERAL ? mcp_rw_cupom_geral($m, '', MCP_OA_CURSO) : $m;
+}
+
+/** A turma aberta do curso como o {{3}} do aviso de turma: "sábado, 28/11, das 9h às 17h". Sem turma aberta, null. */
+function mcp_oa_turma_texto(int $agora): ?string
+{
+    $turma = mcp_turma_aberta(MCP_OA_CURSO, $agora);
+    $inicio = $turma !== null ? mcp_iso_ts($turma['inicio']) : null;
+    $fim = $turma !== null ? mcp_iso_ts($turma['fim'] ?? null) : null;
+    if ($inicio === null) {
+        return null;
+    }
+    $hora = static function (int $ts): string {
+        $d = (new DateTimeImmutable('@' . $ts))->setTimezone(mcp_fuso_brt());
+        return $d->format('G') . 'h' . ($d->format('i') !== '00' ? $d->format('i') : '');
+    };
+    $dia = (new DateTimeImmutable('@' . $inicio))->setTimezone(mcp_fuso_brt());
+    return MCP_DIAS_SEMANA[(int) $dia->format('w')] . ', ' . $dia->format('d/m') . ($fim !== null && $fim > $inicio ? ', das ' . $hora($inicio) . ' às ' . $hora($fim) : ', às ' . $hora($inicio));
+}
+
+/** A mensagem do aviso de turma nova (MCP_OA_MODELO_TURMA) para uma pessoa da lista: [nome, curso, turma]. */
+function mcp_oa_modelo_turma(array $pessoa, string $turma): array
+{
+    $nome = mcp_rw_parametro(mcp_rw_primeiro_nome((string) ($pessoa['nome'] ?? '')));
+    $curso = mcp_rw_parametro((string) (mcp_curso(MCP_OA_CURSO)['nome'] ?? ''), 160);
+    $parametros = [$nome !== '' ? $nome : MCP_RW_NOME_PADRAO, $curso !== '' ? $curso : MCP_RW_CURSO_GENERICO, mcp_rw_parametro($turma, 120)];
+    return ['nome' => MCP_OA_MODELO_TURMA, 'etapa' => 0, 'parametros' => $parametros, 'caminho' => mcp_rw_link('whatsapp', MCP_OA_CURSO, MCP_OA_LINK),
+        'previa' => mcp_rw_previa(MCP_OA_MODELO_TURMA, $parametros)];
 }
 
 /** O celular já tem uma compra paga do curso da oferta no checkout do site? */
@@ -149,9 +183,16 @@ function mcp_oa_rodar(?int $agora = null): array
         $r['motivo'] = 'Kapso: ' . ($modelos['erro'] ?? 'sem a lista de modelos');
         return $fim($r);
     }
-    // O modelo do curso, se aprovado; senão o geral (curso em parâmetro), se aprovado; sem os dois, espera.
+    // Primeiro o aviso de turma nova (MCP_OA_MODELO_TURMA), se aprovado e com a estrutura conferida; senão o modelo de cupom
+    // do curso; senão o de cupom geral (curso em parâmetro); sem nenhum, espera.
+    $turmaTexto = mcp_oa_turma_texto($agora);
+    $deTurma = $turmaTexto !== null ? mcp_rw_escolher_modelo(mcp_oa_modelo_turma($fila[0], $turmaTexto), $modelos) : null;
+    if ($deTurma !== null && (($modelos['modelos'][$deTurma['nome']] ?? '') !== 'APPROVED'
+        || mcp_rw_estrutura_problema($modelos['estrutura'][$deTurma['nome']] ?? ['botao' => null, 'params' => null], $deTurma) !== null)) {
+        $deTurma = null;
+    }
     $proprio = mcp_oa_modelo($fila[0], $oferta);
-    $base = mcp_rw_cupom_resolver($proprio, $modelos, '', MCP_OA_CURSO);
+    $base = $deTurma ?? mcp_rw_cupom_resolver($proprio, $modelos, '', MCP_OA_CURSO);
     if ($base === null || ($modelos['modelos'][$base['nome']] ?? '') !== 'APPROVED') {
         $r['motivo'] = 'modelo sem aprovação: ' . $proprio['nome'] . ($proprio['nome'] !== MCP_RW_MODELO_CUPOM_GERAL ? ' (nem o geral, ' . MCP_RW_MODELO_CUPOM_GERAL . ')' : '');
         return $fim($r);
@@ -183,8 +224,8 @@ function mcp_oa_rodar(?int $agora = null): array
             $r['pulados']++;
             continue;
         }
-        $m = mcp_oa_modelo($p, $oferta);
-        $m = array_replace($geral ? mcp_rw_cupom_geral($m, '', MCP_OA_CURSO) : $m, ['nome' => $base['nome'], 'botao' => $estrutura['botao'] ?? null]);
+        $m = $deTurma !== null ? mcp_oa_modelo_turma($p, (string) $turmaTexto) : mcp_oa_modelo($p, $oferta);
+        $m = array_replace($deTurma === null && $geral ? mcp_rw_cupom_geral($m, '', MCP_OA_CURSO) : $m, ['nome' => $base['nome'], 'botao' => $estrutura['botao'] ?? null]);
         $quando = gmdate('Y-m-d H:i:s', $agoraEnvio);
         $stmt = $db->prepare("INSERT IGNORE INTO mcp_oferta_alunos (campanha, destino_hash, modelo, curso_slug, status, erro, criado_em, atualizado_em)
             VALUES (?, ?, ?, ?, 'falhou', 'enviando', ?, ?)");

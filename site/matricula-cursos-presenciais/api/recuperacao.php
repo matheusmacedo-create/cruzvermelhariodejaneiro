@@ -438,7 +438,8 @@ if ($oa !== null && ($oa['na_lista'] > 0 || $oa['enviadas'] + $oa['falharam'] > 
     $modeloOa = (string) (MCP_RW_OFERTAS[MCP_OA_CURSO]['modelo'] ?? MCP_RW_MODELO_CUPOM_GERAL);
     $situacaoOa = $modelos !== null && ($modelos['ok'] ?? false) ? (string) ($modelos['modelos'][$modeloOa] ?? 'ausente') : null;
     // Com o modelo geral aprovado, a oferta sai por ele enquanto o do curso espera: não há o que avisar.
-    if ($situacaoOa !== null && $situacaoOa !== 'APPROVED' && ($modelos['modelos'][MCP_RW_MODELO_CUPOM_GERAL] ?? '') === 'APPROVED') {
+    if ($situacaoOa !== null && $situacaoOa !== 'APPROVED' && (($modelos['modelos'][MCP_RW_MODELO_CUPOM_GERAL] ?? '') === 'APPROVED'
+        || ($modelos['modelos'][MCP_OA_MODELO_TURMA] ?? '') === 'APPROVED')) {
         $situacaoOa = 'APPROVED';
     }
     $avisosOa = [];
