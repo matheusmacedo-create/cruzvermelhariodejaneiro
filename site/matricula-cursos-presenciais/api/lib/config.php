@@ -36,6 +36,8 @@ function mcp_config(): array
             [getenv('MCP_CONFIG_REDACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-redacao.php', static fn(string $c): bool => str_starts_with($c, 'REDACAO_')],
             // Link da coordenação do voluntariado (06/11/2026, api/coordenacao.php): só as COORDENACAO_*.
             [getenv('MCP_CONFIG_COORDENACAO_ARQUIVO') ?: dirname(__DIR__) . '/config-coordenacao.php', static fn(string $c): bool => str_starts_with($c, 'COORDENACAO_')],
+            // Atendimento inteligente do chat (10/11/2026, lib/atendimento.php): a chave da Anthropic e o modelo. Só as IA_*.
+            [getenv('MCP_CONFIG_IA_ARQUIVO') ?: dirname(__DIR__) . '/config-ia.php', static fn(string $c): bool => str_starts_with($c, 'IA_')],
         ];
         foreach ($extras as [$arquivoExtra, $vale]) {
             if (is_file($arquivoExtra)) {

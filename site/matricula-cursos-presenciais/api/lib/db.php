@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = '20bac97a31776460';
+const MCP_DB_VERSAO = 'aae4f3dca95a9199';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -258,6 +258,39 @@ function mcp_migrar_tudo(PDO $pdo): void
         'respondido_por' => 'VARCHAR(120) NULL',
         'email_resposta' => 'VARCHAR(20) NULL',
     ]);
+    // Atendimento inteligente (10/11/2026, lib/atendimento.php): o chamado guarda a categoria, os dados coletados antes
+    // de escrever (JSON [rótulo => valor]) e a conversa com o assistente (JSON), para a equipe não pedir de novo.
+    mcp_garantir_colunas($pdo, 'mcp_contatos', [
+        'categoria' => 'VARCHAR(30) NULL',
+        'detalhes' => 'TEXT NULL',
+        'conversa' => 'MEDIUMTEXT NULL',
+    ]);
+    // O que as pessoas procuram: cada pergunta feita ao chat, o que foi respondido e o desfecho. Sem nome nem e-mail:
+    // quem pergunta só se identifica se abrir chamado (contato_id).
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_buscas (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        sessao CHAR(32) NOT NULL,
+        pergunta VARCHAR(500) NOT NULL,
+        canal ENUM('texto','voz','botao') NOT NULL DEFAULT 'texto',
+        modo ENUM('ia','local') NOT NULL,
+        categoria VARCHAR(30) NOT NULL,
+        sabe TINYINT(1) NOT NULL,
+        precisa_equipe TINYINT(1) NOT NULL DEFAULT 0,
+        resposta TEXT NULL,
+        fonte VARCHAR(255) NULL,
+        nota DECIMAL(4,3) NULL,
+        tokens INT UNSIGNED NULL,
+        desfecho ENUM('resolveu','nao_resolveu','chamado') NULL,
+        contato_id INT UNSIGNED NULL,
+        pagina VARCHAR(255) NULL,
+        idioma VARCHAR(8) NULL,
+        ip VARCHAR(45) NULL,
+        criado_em DATETIME NOT NULL,
+        KEY ix_sessao (sessao, id),
+        KEY ix_criado (criado_em),
+        KEY ix_ip (ip, criado_em),
+        KEY ix_contato (contato_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Chaves geradas no servidor (segredo dos links do painel): não exigem editar config.php.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_chaves (
         nome VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -1080,10 +1113,26 @@ function mcp_contato_gravar(array $c): int
         'utm_content' => $c['utm_content'], 'utm_term' => $c['utm_term'], 'fbclid' => $c['fbclid'], 'gclid' => $c['gclid'],
         'ip' => mcp_ip(), 'criado_em' => $agora,
     ];
-    $colunas = implode(', ', array_keys($linha));
-    $marcadores = implode(', ', array_fill(0, count($linha), '?'));
+    // Atendimento inteligente: só quando o chamado veio de uma conversa com o assistente (as colunas são de 10/11/2026).
+    $extras = [];
+    foreach (['categoria', 'detalhes', 'conversa'] as $coluna) {
+        if (isset($c[$coluna]) && $c[$coluna] !== '') {
+            $extras[$coluna] = $c[$coluna];
+        }
+    }
     $pdo = mcp_db();
-    $pdo->prepare("INSERT INTO mcp_contatos ($colunas) VALUES ($marcadores)")->execute(array_values($linha));
+    $inserir = static function (array $l) use ($pdo): void {
+        $pdo->prepare('INSERT INTO mcp_contatos (' . implode(', ', array_keys($l)) . ') VALUES (' . implode(', ', array_fill(0, count($l), '?')) . ')')->execute(array_values($l));
+    };
+    try {
+        $inserir($linha + $extras);
+    } catch (PDOException $e) {
+        // 42S22: coluna que ainda não existe (migração adiada). A mensagem não se perde por causa dos dados a mais.
+        if (!$extras || $e->getCode() !== '42S22') {
+            throw $e;
+        }
+        $inserir($linha);
+    }
     return (int) $pdo->lastInsertId();
 }
 

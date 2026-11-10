@@ -163,6 +163,24 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
 - Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
+## Atendimento inteligente do chat (10/11/2026, NÃO publicado)
+
+O chat "Fale com a gente" passa a responder primeiro: a pessoa escreve ou dita o que procura, o site responde na hora
+com o que já está publicado (FAQ da home e catálogo de cursos), registra a pergunta e só abre chamado por e-mail quando
+a resposta não resolve ou o caso precisa de gente. O chamado chega com a categoria, os dados próprios daquele tipo de
+pedido (empresa e quantas pessoas, situação do pagamento, curso feito...) e a conversa. Tudo em
+[docs/atendimento.md](docs/atendimento.md): a pesquisa de mercado, a decisão, o custo, a pendência de privacidade e a
+publicação.
+
+- **Responde** por IA (Claude, pela API da Anthropic, só com a base publicada) quando há chave em `api/config-ia.php`;
+  sem chave, com erro ou demora, por busca por palavras. Se o `api/atendimento.php` cair, o chat volta ao roteiro de botões.
+- **Registra** cada pergunta em `mcp_buscas`, sem identificar quem perguntou, com o desfecho (resolveu, não resolveu,
+  virou chamado). O portal da secretaria ganhou "O que procuram" (`painel.php?v=procuras`): perguntas sem resposta,
+  respostas mais usadas, assuntos e planilha. É a pauta da FAQ: resposta escrita na `site/faq-home.json` passa a valer no chat.
+- **Voz** como opção: microfone para ditar e "Ouvir" em cada resposta, com o que o aparelho já tem.
+- Testes: `php scripts/testar_atendimento.php` e `scripts/testar_atendimento_integracao.php` (banco local).
+- Publicar: `scripts/publicacao-atendimento.txt`.
+
 ## Voluntariado: cadastro sem domingo (10/11/2026)
 
 Pedido do Matheus: tirar o domingo dos dias em que a pessoa pode atuar. A opção saiu de `/voluntariado/cadastro/`
