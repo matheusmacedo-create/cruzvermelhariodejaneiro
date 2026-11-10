@@ -6,7 +6,10 @@ pergunta e só leva o caso à equipe, por e-mail, quando a resposta não resolve
 Nesse caso o chamado chega com mais dados do que antes: a categoria, os dados próprios daquele tipo de pedido
 e a conversa inteira.
 
-Estado: **código pronto e testado, não publicado.** A publicação está descrita no fim.
+Estado: **publicado em 10/11/2026**, com autorização do responsável. Os 49 arquivos foram conferidos no servidor
+contra o Git, o cache foi limpo e o chat respondeu ao vivo (busca por palavras). A IA está **desligada** até existir
+o `api/config-ia.php` no servidor (veja "Ligar a IA"). As duas primeiras linhas de `mcp_buscas` ("onde fica a sede e
+qual o horário?" e "tem curso gratuito?") são da conferência da publicação. A pendência de privacidade continua aberta.
 
 ## O problema
 
@@ -173,7 +176,7 @@ cabe nele: responder a partir de uma base curta e classificar o assunto. Se o pa
 `config-ia.php`. Teto de segurança: 2.000 perguntas pela IA a cada 24 h (`IA_POR_DIA`); acima disso, busca por
 palavras.
 
-## Privacidade (pendência antes de publicar)
+## Privacidade (pendência em aberto)
 
 - As perguntas são gravadas sem identificação, e o rodapé do chat passou a dizer isso.
 - **Com a IA ligada, o texto da pergunta vai à Anthropic** para gerar a resposta. Nome, e-mail e telefone não
@@ -208,7 +211,7 @@ segue o formato documentado e foi conferido contra um servidor falso); o ditado 
 verdade (o teste automático confere que o botão aparece e que o texto ditado seria enviado como "voz", mas não
 fala nem ouve). Os dois pedem um teste manual depois de publicar.
 
-## Publicar
+## Publicar (feito em 10/11/2026; fica como roteiro)
 
 A lista de arquivos e a ordem estão em `scripts/publicacao-atendimento.txt`. Resumo:
 

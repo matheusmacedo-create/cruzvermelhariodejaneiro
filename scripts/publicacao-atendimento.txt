@@ -1,7 +1,7 @@
 # Atendimento inteligente do chat (10/11/2026, docs/atendimento.md): o chat responde na hora com o que está publicado,
 # registra o que as pessoas procuram (portal > O que procuram) e só abre chamado, com os dados e a conversa, quando precisa.
-# NÃO publicado. Antes: resolver a pendência de privacidade de docs/atendimento.md (a política precisa citar o registro
-# das perguntas e, com a IA, a Anthropic).
+# PUBLICADO em 10/11/2026 (o ar antes = o Git em 5dc0ea2, conferido arquivo a arquivo). Em aberto: a pendência de
+# privacidade de docs/atendimento.md (a política precisa citar o registro das perguntas e, com a IA, a Anthropic).
 # Ordem: bibliotecas, depois os endpoints, depois o chat, depois as páginas (que só trocam o endereço versionado do chat).
 # O chat.js antigo, em cache no navegador de quem já visitou, continua funcionando com o contato.php novo.
 # Antes, a cópia do ar:

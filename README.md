@@ -163,7 +163,7 @@ cadastrar agora e, depois dela, as comunicações de volta para "novas entradas 
 - Home: idade mínima corrigida para 18 anos e fim da frase sobre menores no card do termo de adesão.
 - Publicação: `scripts/publicacao-cbfi.txt`.
 
-## Atendimento inteligente do chat (10/11/2026, NÃO publicado)
+## Atendimento inteligente do chat (publicado em 10/11/2026)
 
 O chat "Fale com a gente" passa a responder primeiro: a pessoa escreve ou dita o que procura, o site responde na hora
 com o que já está publicado (FAQ da home e catálogo de cursos), registra a pergunta e só abre chamado por e-mail quando
