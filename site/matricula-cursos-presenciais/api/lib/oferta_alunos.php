@@ -34,7 +34,7 @@ const MCP_OA_CAMPANHA = 'curativos-alunos';
 const MCP_OA_CURSO = 'curativos-e-tratamento-de-feridas';
 /** A campanha do link curto (o 3º pedaço do api/ir.php) e o utm_campaign do checkout. */
 const MCP_OA_LINK = 'alunos';
-const MCP_OA_POR_RODADA = 40;
+const MCP_OA_POR_RODADA = 100; // 10/11/2026: a lista inteira (75) numa rodada só; o teto de 24 h do número continua valendo
 /**
  * O modelo preferido do disparo (10/11/2026, decisão do responsável: os modelos de cupom passaram de um dia em análise na
  * Meta e este já estava aprovado): o aviso de turma nova — {{1}} primeiro nome, {{2}} o curso, {{3}} a turma ("sábado,

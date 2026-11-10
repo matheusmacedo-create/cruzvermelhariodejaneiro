@@ -1622,7 +1622,7 @@ WhatsApp a quem já pagou um curso da escola. **Situação: publicado em 09/11/2
 - **Quem não recebe**: telefone que não é celular, repetido, celular em `mcp_avisos_bloqueios` (qualquer origem: "Não tenho
   interesse", SAIR, PARAR), quem já tem compra paga do curso no site e quem já recebeu (`UNIQUE(campanha, destino_hash)`).
 - **Quando sai**: na rotina de hora em hora (`api/lembretes.php`), **depois** da matrícula pendente e da recuperação, das 8h
-  às 20h, no máximo 40 por rodada, dentro do mesmo teto de 200 mensagens em 24 h do número (`mcp_rw_enviadas_24h` soma as
+  às 20h, no máximo 100 por rodada (eram 40 até 10/11), dentro do mesmo teto de 200 mensagens em 24 h do número (`mcp_rw_enviadas_24h` soma as
   três tabelas). Só com o modelo **aprovado** na Meta e a estrutura conferida; modelo em análise ou Kapso sem a lista de
   modelos: espera, sem gastar a vez de ninguém. Para sozinho quando a oferta deixa de valer (`mcp_rw_oferta_cupom`: cupom
   vencido em 30/11, ou turma fechada).
