@@ -134,7 +134,7 @@ $lista = static function (array $pessoas, bool $ligada = true) use ($listaArq): 
 $db = mcp_db();
 $celular = static fn(int $n): string => '219' . str_pad((string) (71230000 + $n), 8, '0', STR_PAD_LEFT);
 $numeros = [];
-for ($i = 1; $i <= 60; $i++) {
+for ($i = 1; $i <= MCP_OA_POR_RODADA + 20; $i++) {
     $numeros[$i] = '55' . $celular($i);
 }
 $sufixo = bin2hex(random_bytes(3));
