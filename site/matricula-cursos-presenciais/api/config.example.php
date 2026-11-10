@@ -178,6 +178,22 @@ return [
     'RECEBEDOR_NOME'   => '',
     'RECEBEDOR_CNPJ'   => '',
 
+    // Atendimento inteligente do chat (10/11/2026, docs/atendimento.md): o chat responde na hora com o que está publicado
+    // no site e registra o que as pessoas procuram (portal > O que procuram). Sem nada aqui, ele já funciona pela busca
+    // por palavras. Com a chave da Anthropic, o Claude redige a resposta a partir da mesma base e reconhece quando o caso
+    // precisa da equipe. Estas chaves NÃO ficam neste arquivo: moram em api/config-ia.php (só no servidor, fora do Git;
+    // de lá só valem as IA_*), escrito pelo gerenciador de arquivos da Hostinger. Nunca mande a chave por chat nem e-mail.
+    //   <?php return [
+    //       'IA_ANTHROPIC_CHAVE' => 'cole aqui a chave',  // console.anthropic.com > API keys (uma chave só para o site)
+    //       // Opcionais:
+    //       // 'IA_MODELO' => 'claude-haiku-5-5', // o padrão (barato); 'claude-sonnet-5-5' ou 'claude-opus-5-5' custam mais
+    //       // 'IA_ESFORCO' => 'low',             // low (padrão), medium ou high: mais esforço, mais custo e mais demora
+    //       // 'IA_POR_DIA' => 2000,              // teto de perguntas respondidas pela IA em 24 h; acima disso, busca por palavras
+    //       // 'IA_CACHE_1H' => true,             // cache de 1 hora da base (só compensa com perguntas quase toda hora)
+    //       // 'IA_DESLIGADA' => true,            // desliga a IA sem apagar a chave (booleano, sem aspas)
+    //   ];
+    // (Só para o teste local: 'IA_ANTHROPIC_URL' => 'http://127.0.0.1:<porta>', um servidor falso. Nunca no servidor.)
+
     // Google Drive da filial (10/2026, docs/google-drive.md): fichas de voluntários em PDF e na planilha, exportações
     // diárias em CSV, cópia do banco e espelho de public_html/assets, pela rotina api/drive.php (cron a cada 15 min).
     // Estas chaves NÃO ficam aqui: moram em api/config-google.php (só no servidor, fora do Git; de lá só valem as

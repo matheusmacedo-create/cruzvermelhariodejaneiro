@@ -1,0 +1,65 @@
+# Atendimento inteligente do chat (10/11/2026, docs/atendimento.md): o chat responde na hora com o que está publicado,
+# registra o que as pessoas procuram (portal > O que procuram) e só abre chamado, com os dados e a conversa, quando precisa.
+# NÃO publicado. Antes: resolver a pendência de privacidade de docs/atendimento.md (a política precisa citar o registro
+# das perguntas e, com a IA, a Anthropic).
+# Ordem: bibliotecas, depois os endpoints, depois o chat, depois as páginas (que só trocam o endereço versionado do chat).
+# O chat.js antigo, em cache no navegador de quem já visitou, continua funcionando com o contato.php novo.
+# Antes, a cópia do ar:
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-atendimento $(grep -vE '^(#|$)' scripts/publicacao-atendimento.txt)
+# Publicar:
+#   scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-atendimento.txt)
+# Depois: limpar o cache (hosting_cache_clear-website); abrir o chat no celular, perguntar "onde fica a sede?", marcar
+# "Resolveu" e conferir a pergunta em painel.php?v=procuras. A tabela mcp_buscas e as colunas novas de mcp_contatos
+# nascem na primeira requisição (lib/db.php). Para ligar a IA: api/config-ia.php no servidor (config.example.php).
+# Na Redação: regerar as páginas das notícias, para pegarem o endereço novo do chat.
+# Desfazer: republicar a cópia do ar (a tabela e as colunas novas podem ficar; o código anterior as ignora):
+#   C=/tmp/no-ar-atendimento; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-atendimento.txt | grep -vxFf $C/novos.txt | tac | sed "s|^site/|$C/|")
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/lib/atendimento.php
+site/matricula-cursos-presenciais/api/lib/painel_atendimento.php
+site/matricula-cursos-presenciais/api/lib.php
+site/matricula-cursos-presenciais/api/atendimento.php
+site/matricula-cursos-presenciais/api/contato.php
+site/matricula-cursos-presenciais/api/painel.php
+site/chat/chat.css
+site/chat/chat.min.css
+site/chat/chat.js
+site/404.html
+site/base-legal/index.html
+site/bio/index.html
+site/campanha-agasalho.html
+site/cbfi/index.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/cursos-gratuitos/index.html
+site/dia-das-criancas/index.html
+site/direito-internacional-humanitario/index.html
+site/doacao.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/equipe.html
+site/gestao/index.html
+site/historia/index.html
+site/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/pagar-matricula/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/mochila-de-emergencia/index.html
+site/movimento-internacional/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/quem-somos/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/voluntariado/cadastro/index.html
+site/voluntariado/index.html

@@ -18,6 +18,7 @@
  *     nas aulas; aparelhos da recepção e o cartaz do QR code (lib/ponto.php e lib/presenca.php);
  *   - Comunicação (?v=comunicacao): lembretes, comunicados das três fases da implantação, fila do
  *     WhatsApp, envios e resultados (lib/painel_comunicacao.php, lib/avisos.php, lib/comunicacao.php);
+ *   - O que procuram: as perguntas feitas ao chat do site, o que foi respondido e o desfecho (lib/painel_atendimento.php);
  *   - Escola (plataforma da escola): link externo.
  *
  * Acesso (lib/painel.php): pelo link assinado que vai no aviso à equipe (abre só aquele contato) ou por
@@ -29,6 +30,7 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 require __DIR__ . '/lib/painel_comunicacao.php';
 require __DIR__ . '/lib/painel_voluntarios.php';
+require __DIR__ . '/lib/painel_atendimento.php';
 
 const MCP_PAINEL_LIMITE_LINKS = [5, 3600];
 const MCP_PAINEL_RESPOSTA_MIN = 5;
@@ -41,6 +43,7 @@ const PN_ICONES = [
     'inscricoes' => '<path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
     'horarios' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
     'mensagens' => '<path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/>',
+    'procuras' => '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
     'voluntarios' => '<path d="M12 20.5s-7.5-4.6-7.5-10.2A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.5 2.3c0 5.6-7.5 10.2-7.5 10.2z"/><path d="M9 3.5h6M12 2v3"/>',
     'turmas' => '<circle cx="9" cy="8" r="3"/><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14h1a4 4 0 0 1 4 4v1"/>',
     'ponto' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
@@ -91,6 +94,7 @@ function pn_menu(string $aba): string
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
         'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
+        'procuras' => ['painel.php?v=procuras', 'O que procuram', function_exists('mcp_buscas_sem_resposta_contar') ? mcp_buscas_sem_resposta_contar() : 0, 'perguntas que o site não soube responder nos últimos 7 dias'],
         'voluntarios' => ['painel.php?v=voluntarios', 'Voluntários', mcp_voluntarios_novas_contar(), 'fichas novas'],
         'turmas' => ['painel.php?v=turmas', 'Turmas sob demanda', mcp_turma_contar()['acao'], 'pedidos de turma fechada sem resposta ou listas que chegaram a ' . MCP_TURMA_MINIMO],
         'ponto' => ['painel.php?v=ponto', 'Ponto da sede', mcp_ponto_esquecidas_contar() + mcp_ponto_termos_pendentes_contar() + mcp_ponto_saidas_informadas_contar(),
@@ -100,7 +104,7 @@ function pn_menu(string $aba): string
     $html = '';
     foreach ($itens as $chave => [$href, $rotulo, $n, $explica]) {
         $html .= '<a href="' . pn_e($href) . '"' . ($aba === $chave ? ' aria-current="page"' : '') . '>' . pn_icone($chave) . '<span>' . pn_e($rotulo) . '</span>'
-            . ($n > 0 ? '<span class="badge' . ($chave === 'horarios' ? ' suave' : '') . '" title="' . $n . ' ' . pn_e($explica) . '">' . $n . '<span class="sr"> ' . pn_e($explica) . '</span></span>' : '') . '</a>';
+            . ($n > 0 ? '<span class="badge' . (in_array($chave, ['horarios', 'procuras'], true) ? ' suave' : '') . '" title="' . $n . ' ' . pn_e($explica) . '">' . $n . '<span class="sr"> ' . pn_e($explica) . '</span></span>' : '') . '</a>';
     }
     $escola = rtrim((string) mcp_cfg('ESCOLA_URL', 'https://escola.cursoscruzvermelha.org'), '/') . '/login';
     $html .= '<a class="externo" title="Plataforma da escola (abre em outra aba)" href="' . pn_e($escola) . '" target="_blank" rel="noopener">' . pn_icone('escola')
@@ -1541,6 +1545,8 @@ function pn_detalhe(array $c, string $quem, string $baseQuery, bool $comLista, ?
     if ($c['pagina']) {
         $dados['Página'] = '<a href="' . pn_e(mcp_site_url() . (string) $c['pagina']) . '" target="_blank" rel="noopener">' . pn_e((string) $c['pagina']) . '</a>';
     }
+    // Atendimento inteligente: o que a pessoa procurava e os dados que o chat coletou antes do chamado.
+    $dados += pa_contato_dados($c);
     $dados['Origem'] = pn_e(trim(($c['utm_source'] ?? '') . ' ' . ($c['utm_campaign'] ?? '')) ?: 'direto');
     $dados['Recebido em'] = pn_e(pn_data((string) $c['criado_em'])) . ' (Brasília)';
     if ($c['respondido_em']) {
@@ -1560,6 +1566,7 @@ function pn_detalhe(array $c, string $quem, string $baseQuery, bool $comLista, ?
         . '<div class="cartao"><h2>Mensagem</h2><p class="mensagem">' . pn_e((string) $c['mensagem']) . '</p>'
         . ($c['resposta'] ? '<h2 style="margin-top:18px">Resposta enviada' . ($c['respondido_em'] ? ' em ' . pn_e(pn_data((string) $c['respondido_em'])) : '') . '</h2><p class="resposta-anterior">' . pn_e((string) $c['resposta']) . '</p>' : '')
         . '</div></div>'
+        . pa_contato_extras($c)
         . '<div class="cartao" style="margin-top:18px"><h2>' . ($c['resposta'] ? 'Enviar outra resposta por e-mail' : 'Responder por e-mail') . '</h2>'
         . '<p class="nota" style="margin:0 0 6px">A pessoa recebe a resposta no padrão visual do site, com o protocolo no assunto, vinda de ' . pn_e(mcp_email_endereco(mcp_email_remetente_contato())) . '. Se ela responder, cai em ' . pn_e(mcp_email_contato_endereco()) . '.</p>'
         . '<form method="post" action="painel.php">' . $ocultos . '<input type="hidden" name="acao" value="responder"><input type="hidden" name="t" value="' . pn_e(mcp_painel_csrf($quem, 'responder', $id)) . '">'
@@ -1935,6 +1942,9 @@ if ($secao === 'comunicado') {
 }
 if ($secao === 'voluntarios') {
     pv_lista($sessao, $aviso, $classe);
+}
+if ($secao === 'procuras') {
+    pa_procuras($sessao);
 }
 if ($secao === 'voluntario') {
     pv_ficha($sessao, (int) ($_GET['id'] ?? 0), $aviso, $classe);

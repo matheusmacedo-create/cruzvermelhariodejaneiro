@@ -1,8 +1,12 @@
-/* Chat de contato por e-mail da Cruz Vermelha Brasileira Rio de Janeiro (site inteiro, sem dependências).
-   Cria o botão flutuante e um painel em estilo de conversa que pergunta assunto, curso, nome, e-mail,
-   telefone (opcional) e mensagem, e envia tudo para /matricula-cursos-presenciais/api/contato.php, que
-   grava, manda por e-mail à equipe e devolve um protocolo. Entrou em 19/09/2026 no lugar do botão do
-   WhatsApp da secretaria: o contato passa a chegar por e-mail, com cópia para quem escreveu.
+/* Chat de atendimento da Cruz Vermelha Brasileira Rio de Janeiro (site inteiro, sem dependências).
+   Cria o botão flutuante e um painel em estilo de conversa. Desde 10/11/2026 (docs/atendimento.md) a conversa
+   começa pela pergunta: a pessoa escreve (ou dita) o que procura, /matricula-cursos-presenciais/api/atendimento.php
+   responde na hora com o que está publicado no site e registra a pergunta. Só quando a resposta não resolve, ou o
+   caso precisa de gente, o chat coleta os dados (os de sempre e os que aquele tipo de pedido exige) e envia tudo
+   para /matricula-cursos-presenciais/api/contato.php, que grava, manda por e-mail à equipe (com a conversa) e
+   devolve um protocolo. Se o atendimento.php não responder, o chat cai no roteiro de botões de antes (assunto,
+   curso, dúvidas da FAQ, nome, e-mail, telefone, mensagem). Entrou em 19/09/2026 no lugar do botão do WhatsApp
+   da secretaria.
    Fonte: site/chat/chat.js; as páginas referenciam /chat/chat.js?v=<hash> (scripts/chat_widget.py).
    Abrir de fora: qualquer elemento com data-abrir-chat (e opcionalmente data-assunto / data-curso),
    o endereço com #chat, ou window.cvChat.abrir(). */
@@ -11,6 +15,8 @@
   if (window.cvChat) return;
 
   var API = '/matricula-cursos-presenciais/api/contato.php';
+  var API_ATENDIMENTO = '/matricula-cursos-presenciais/api/atendimento.php';
+  var PERGUNTA_MAX = 500;
   var URL_MATRICULA = '/matricula-cursos-presenciais/';
   var URL_CHECKOUT = URL_MATRICULA + 'checkout/';
   var URL_PRIVACIDADE = '/privacidade/';
@@ -109,12 +115,13 @@
     doacoes: { href: '/doe/?utm_source=site&utm_medium=chat', rotulo: 'Doar pelo site' }
   };
   var COM_CURSO = ['matricula', 'curso', 'pagamento'];
-  var ORDEM = ['assunto', 'curso', 'nome', 'email', 'telefone', 'mensagem'];
   var ROTULOS = { assunto: 'Assunto', curso: 'Curso', nome: 'Nome', email: 'E-mail', telefone: 'Telefone', mensagem: 'Mensagem' };
   var ICONES = {
     balao: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.1 1 4 2.7 5.4L4 21l4.6-1.9c1.1.3 2.2.4 3.4.4 5.5 0 10-3.6 10-8S17.5 3 12 3zm-4 9.3a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm4 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z"/></svg>',
     cruz: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z"/></svg>',
     x: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 1 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4z"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15zm6.5-3.5a1 1 0 1 0-2 0 4.5 4.5 0 0 1-9 0 1 1 0 1 0-2 0 6.5 6.5 0 0 0 5.5 6.4V20H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1a6.5 6.5 0 0 0 5.5-6.4z"/></svg>',
+    som: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5v5a1 1 0 0 0 1 1h2.6l4.7 3.8a.7.7 0 0 0 1.2-.6V5.3a.7.7 0 0 0-1.2-.6L7.6 8.5H5a1 1 0 0 0-1 1zm12.6-1.2a1 1 0 0 0-1.4 1.4 3.3 3.3 0 0 1 0 4.6 1 1 0 0 0 1.4 1.4 5.3 5.3 0 0 0 0-7.4z"/></svg>',
     enviar: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.4 20.4l17.5-7.5c.8-.4.8-1.5 0-1.8L3.4 3.6c-.7-.3-1.4.3-1.4.9v5.2c0 .5.4.9.9 1L15 12 2.9 13.3c-.5.1-.9.5-.9 1v5.2c0 .7.7 1.2 1.4.9z"/></svg>'
   };
 
@@ -139,6 +146,8 @@
     return '(' + d.slice(0, 2) + ') ' + d.slice(2, corte) + '-' + d.slice(corte);
   }
   function rotuloAssunto(chave) {
+    // Assunto que só o atendimento inteligente usa (empresas, imprensa): o rótulo veio do servidor com a resposta.
+    if (estado && estado.assuntoRotulo && estado.categoria && chave === estado.respostas.assunto) return estado.assuntoRotulo;
     for (var i = 0; i < ASSUNTOS.length; i++) if (ASSUNTOS[i][0] === chave) return ASSUNTOS[i][1];
     return chave;
   }
@@ -178,12 +187,31 @@
   }
 
   // ------------------------------------------------------------------ estado (sobrevive à navegação entre páginas)
-  function novoEstado() { return { aberto: false, passo: 'assunto', respostas: {}, editando: false, erro: '',
-    protocolo: '', aberturaRastreada: false, duvidasVistas: false, duvidasLidas: [] }; }
+  /* Identificador da conversa (32 hexadecimais, sorteado aqui): junta as perguntas de uma visita no registro do
+     servidor e liga a conversa ao chamado. Não identifica a pessoa nem sobrevive ao fechar a aba. */
+  function novaSessao() {
+    var bytes = new Uint8Array(16), i, h = '';
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes);
+    else for (i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+    for (i = 0; i < 16; i++) h += (bytes[i] < 16 ? '0' : '') + bytes[i].toString(16);
+    return h;
+  }
+  /* passo 'busca' = a pessoa pergunta e o site responde; os demais são os do chamado (ordem()).
+     conversa: [{ id, p, r, links, sugestoes, sabe, precisa, assunto, categoria, coletar }], uma entrada por pergunta.
+     categoria/coletar/detalhes: o que a última resposta disse que o chamado precisa e o que a pessoa já informou. */
+  function novoEstado() { return { aberto: false, passo: 'busca', respostas: {}, editando: false, erro: '',
+    protocolo: '', aberturaRastreada: false, duvidasVistas: false, duvidasLidas: [],
+    sessao: novaSessao(), conversa: [], avaliado: '', categoria: '', assuntoRotulo: '', coletar: [], detalhes: {} }; }
   function carregar() {
     try {
       var s = JSON.parse(sessionStorage.getItem(CHAVE) || 'null');
-      if (s && s.respostas && typeof s.passo === 'string') { s.enviando = false; return s; }
+      if (s && s.respostas && typeof s.passo === 'string') {
+        // Conversa guardada por uma versão anterior do chat (sem a busca): completa o que falta.
+        var novo = novoEstado();
+        Object.keys(novo).forEach(function (k) { if (!Object.prototype.hasOwnProperty.call(s, k)) s[k] = novo[k]; });
+        s.enviando = false; s.perguntando = false; s.pendente = '';
+        return s;
+      }
     } catch (e) { /* sem sessão guardada */ }
     return novoEstado();
   }
@@ -191,8 +219,21 @@
   var estado = carregar();
 
   function precisaCurso() { return COM_CURSO.indexOf(estado.respostas.assunto) >= 0; }
+  /* Os passos do chamado. Os "x:chave" são os dados que o servidor pediu para este tipo de pedido (empresa,
+     quantas pessoas, situação do pagamento...): entram antes do nome, enquanto o assunto está fresco. */
+  function ordem() {
+    return ['assunto', 'curso'].concat(estado.coletar.map(function (c) { return 'x:' + c.chave; }), ['nome', 'email', 'telefone', 'mensagem']);
+  }
+  function extra(passo) {
+    if (passo.indexOf('x:') !== 0) return null;
+    for (var i = 0; i < estado.coletar.length; i++) if (estado.coletar[i].chave === passo.slice(2)) return estado.coletar[i];
+    return null;
+  }
+  function rotuloPasso(passo) { var x = extra(passo); return x ? x.rotulo : ROTULOS[passo]; }
+  function ultima() { return estado.conversa.length ? estado.conversa[estado.conversa.length - 1] : null; }
   function respondido(passo) {
     var r = estado.respostas;
+    if (extra(passo)) return Object.prototype.hasOwnProperty.call(estado.detalhes, passo.slice(2));
     if (passo === 'curso') return !precisaCurso() || Object.prototype.hasOwnProperty.call(r, 'curso');
     if (passo === 'telefone') return Object.prototype.hasOwnProperty.call(r, 'telefone');
     return typeof r[passo] === 'string' && r[passo] !== '';
@@ -221,7 +262,8 @@
     // Antes de pedir nome e e-mail: o que a escola já respondeu sobre este curso. Muita gente
     // para por aqui, e quem para não precisou abrir chamado nem esperar três dias úteis.
     if (!estado.duvidasVistas && respondido('assunto') && respondido('curso') && temOQueResponder()) return 'duvidas';
-    for (var i = 0; i < ORDEM.length; i++) if (!respondido(ORDEM[i])) return ORDEM[i];
+    var passos = ordem();
+    for (var i = 0; i < passos.length; i++) if (!respondido(passos[i])) return passos[i];
     return 'revisar';
   }
 
@@ -256,9 +298,35 @@
   }
 
   // ------------------------------------------------------------------ perguntas do robô e respostas da pessoa
+  function saudacao() {
+    return 'Oi! Aqui é o atendimento da <b>' + NOME + '</b>.\n<b>Escreva o que você procura</b>' + (ditado.disponivel() ? ', ou toque no microfone e fale,' : '')
+      + ' e eu respondo na hora com o que está publicado no site.';
+  }
+  /* Depois de cada resposta: resolveu? Se a resposta não existe, ou o caso é de gente, o caminho é a equipe,
+     que já recebe a conversa. A caixa de texto continua aberta: perguntar de novo é sempre possível. */
+  function telaBusca() {
+    var u = ultima(), entrada = { tipo: 'text', autocomplete: 'off', placeholder: u ? 'Escreva outra pergunta…' : 'Ex.: quanto custa o curso de cuidador?' };
+    if (!u) return { html: saudacao(), entrada: entrada, chips: [{ valor: 'assuntos', rotulo: 'Prefiro escolher um assunto', classe: 'neutro' }] };
+    if (estado.avaliado === 'resolveu') return { html: 'Que bom! Se precisar de mais alguma coisa, é só escrever.', entrada: entrada, chips: [{ valor: 'fechar', rotulo: 'Fechar', classe: 'neutro' }] };
+    if (u.precisa) return { html: 'Para isso a equipe precisa ver o seu caso. Posso passar agora: são só alguns dados, e a resposta chega <b>por e-mail em até ' + PRAZO + '</b>.', entrada: entrada,
+      chips: [{ valor: 'equipe', rotulo: 'Passar para a equipe', classe: 'cheio' }, { valor: 'resolveu', rotulo: 'Não precisa, obrigado', classe: 'neutro' }] };
+    if (u.sabe) return { html: 'Isso resolveu?', entrada: entrada,
+      chips: [{ valor: 'resolveu', rotulo: 'Resolveu, obrigado' }, { valor: 'equipe', rotulo: 'Não resolveu: falar com a equipe', classe: 'neutro' }] };
+    var chips = (u.sugestoes || []).map(function (t) { return { valor: 's' + t, rotulo: t }; });
+    chips.push({ valor: 'equipe', rotulo: 'Falar com a equipe', classe: chips.length ? 'neutro' : 'cheio' });
+    return { html: chips.length > 1 ? 'Não achei uma resposta exata. Seria uma destas?' : (u.r ? 'Quer que eu passe a sua pergunta para a equipe? A resposta chega por e-mail em até ' + PRAZO + '.'
+      : 'Não encontrei isso nas respostas do site. Você pode perguntar com outras palavras ou passar para a equipe, que responde por e-mail em até ' + PRAZO + '.'), entrada: entrada, chips: chips };
+  }
   function pergunta(passo) {
-    var r = estado.respostas, daPagina, chips;
+    var r = estado.respostas, daPagina, chips, x = extra(passo);
+    if (x) {
+      chips = (x.opcoes || []).map(function (o) { return { valor: o, rotulo: o }; });
+      if (x.opcional) chips.push({ valor: '', rotulo: 'Pular', classe: 'neutro' });
+      return { html: escapar(x.pergunta), chips: chips.length ? chips : null, entrada: x.opcoes ? null : { tipo: 'text', autocomplete: 'off', placeholder: 'Escreva aqui…' } };
+    }
     switch (passo) {
+      case 'busca':
+        return telaBusca();
       case 'assunto':
         return { html: 'Oi! Aqui é o atendimento da <b>' + NOME + '</b>, associação sem fins lucrativos que forma voluntários, faz campanhas humanitárias e leva educação preventiva às comunidades do Rio. Deixe sua mensagem e a nossa equipe responde <b>por e-mail em até ' + PRAZO + '</b>.\nSobre o que você quer falar?',
           chips: ASSUNTOS.map(function (a) { return { valor: a[0], rotulo: a[1] }; }) };
@@ -278,13 +346,16 @@
         return { html: 'Se quiser um retorno também por telefone, informe com DDD. É opcional.', entrada: { tipo: 'tel', autocomplete: 'tel', placeholder: '(21) 99999-9999' },
           chips: [{ valor: '', rotulo: 'Prefiro só por e-mail', classe: 'neutro' }] };
       case 'mensagem':
+        // Quem veio de uma conversa já escreveu o que procura: as perguntas vão junto, e a mensagem é só o que faltar.
+        if (estado.conversa.length && !estado.editando) return { html: 'Quer acrescentar algum detalhe? O que você perguntou aqui já vai junto para a equipe.',
+          entrada: { tipo: 'textarea', autocomplete: 'off', placeholder: 'Escreva aqui, se quiser…' }, chips: [{ valor: '@conversa', rotulo: 'Não, pode enviar assim', classe: 'cheio' }] };
         return { html: 'Pode escrever sua mensagem. Quanto mais detalhes, melhor a resposta.', entrada: { tipo: 'textarea', autocomplete: 'off', placeholder: 'Escreva aqui…' } };
       case 'revisar':
         return { html: 'Tudo certo? Confira antes de enviar.', resumo: true,
           chips: [{ valor: 'enviar', rotulo: 'Enviar mensagem', classe: 'cheio' }, { valor: 'corrigir', rotulo: 'Corrigir algo', classe: 'neutro' }] };
       case 'corrigir':
-        return { html: 'O que você quer corrigir?', chips: ORDEM.filter(function (p) { return p !== 'curso' || precisaCurso(); })
-          .map(function (p) { return { valor: p, rotulo: ROTULOS[p] }; }).concat([{ valor: 'voltar', rotulo: 'Voltar', classe: 'neutro' }]) };
+        return { html: 'O que você quer corrigir?', chips: ordem().filter(function (p) { return p !== 'curso' || precisaCurso(); })
+          .map(function (p) { return { valor: p, rotulo: rotuloPasso(p) }; }).concat([{ valor: 'voltar', rotulo: 'Voltar', classe: 'neutro' }]) };
       case 'enviado':
         chips = [];
         if (precisaCurso() && r.curso) chips.push({ href: URL_CHECKOUT + '?curso=' + encodeURIComponent(r.curso), rotulo: 'Fazer matrícula em ' + nomeCurso(r.curso) });
@@ -300,6 +371,7 @@
   }
   function resposta(passo) {
     var r = estado.respostas;
+    if (extra(passo)) return estado.detalhes[passo.slice(2)] || 'Não informado';
     if (passo === 'assunto') return rotuloAssunto(r.assunto);
     if (passo === 'curso') return r.curso ? nomeCurso(r.curso) : 'Ainda não sei';
     if (passo === 'telefone') return r.telefone ? r.telefone : 'Prefiro só por e-mail';
@@ -320,6 +392,10 @@
     return 'mailto:' + EMAIL_CONTATO + '?subject=' + encodeURIComponent('Contato pelo site: ' + rotuloAssunto(r.assunto || 'outro')) + '&body=' + encodeURIComponent(corpo);
   }
   function validar(passo, valor) {
+    if (passo === 'busca' && valor.length < 3) return 'Escreva em poucas palavras o que você procura.';
+    if (passo === 'busca' && valor.length > PERGUNTA_MAX) return 'A pergunta pode ter até ' + PERGUNTA_MAX + ' caracteres. Resuma em uma ou duas frases.';
+    if (extra(passo) && valor.length < 2 && !extra(passo).opcional) return 'Preciso dessa informação para a equipe conseguir responder.';
+    if (extra(passo) && valor.length > 200) return 'Resuma em até 200 caracteres.';
     if (passo === 'nome' && valor.length < 2) return 'Digite seu nome para a gente saber com quem fala.';
     if (passo === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor)) return 'Esse e-mail não parece válido. Confira e envie de novo.';
     if (passo === 'telefone' && valor !== '' && (digitos(valor).length < 10 || digitos(valor).length > 11)) return 'Telefone incompleto. Use DDD + número, ou toque em "Prefiro só por e-mail".';
@@ -329,7 +405,73 @@
   }
 
   // ------------------------------------------------------------------ interface
-  var raiz, botao, painel, mensagens, leitor, form, campo, enviarBtn, contagem = 0;
+  var raiz, botao, painel, mensagens, leitor, form, campo, enviarBtn, micBtn, contagem = 0;
+
+  /* Voz, como opção e nunca como único caminho (docs/atendimento.md): ditar a pergunta e ouvir a resposta, com o que
+     o próprio aparelho oferece (Web Speech API). Sem custo e sem serviço a mais; onde o navegador não tem, o
+     microfone simplesmente não aparece. O texto ditado cai na caixa para a pessoa conferir antes de enviar. */
+  var ditado = (function () {
+    var Classe = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null, ativo = false, usado = false;
+    function permitido() {
+      // Página que proíbe o microfone por Permissions-Policy (o checkout da matrícula): sem botão.
+      try { var pol = document.permissionsPolicy || document.featurePolicy; return !pol || pol.allowsFeature('microphone'); } catch (e) { return true; }
+    }
+    function idioma() { var l = (document.documentElement.lang || 'pt-BR').toLowerCase(); return l.indexOf('en') === 0 ? 'en-US' : l.indexOf('es') === 0 ? 'es-ES' : 'pt-BR'; }
+    function parar() { if (rec && ativo) { try { rec.stop(); } catch (e) { /* já parou */ } } }
+    function alternar() {
+      if (ativo) { parar(); return; }
+      var base = campo.value ? campo.value.replace(/\s+$/, '') + ' ' : '';
+      rec = new Classe();
+      rec.lang = idioma(); rec.interimResults = true; rec.continuous = false;
+      rec.onstart = function () { ativo = true; atualizar(); leitor.textContent = 'Ouvindo. Pode falar.'; };
+      rec.onresult = function (e) {
+        var texto = '';
+        for (var i = 0; i < e.results.length; i++) texto += e.results[i][0].transcript;
+        campo.value = (base + texto).slice(0, 3000);
+        usado = true;
+        ajustarAltura();
+      };
+      rec.onerror = function (e) {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') estado.erro = 'Não consegui usar o microfone. Confira a permissão do navegador ou escreva a pergunta.';
+        else if (e.error === 'no-speech') estado.erro = 'Não ouvi nada. Toque no microfone e fale de novo, ou escreva.';
+        else if (e.error !== 'aborted') estado.erro = 'O ditado não funcionou agora. Escreva a pergunta, por favor.';
+      };
+      rec.onend = function () {
+        ativo = false; atualizar();
+        if (estado.erro) { render(); }
+        else if (campo.value.trim()) { leitor.textContent = 'Entendi: ' + campo.value.trim() + '. Confira e toque em enviar.'; enviarBtn.focus({ preventScroll: true }); }
+      };
+      try { estado.erro = ''; rec.start(); } catch (e) { ativo = false; atualizar(); }
+    }
+    function atualizar() {
+      if (!micBtn) return;
+      micBtn.classList.toggle('ouvindo', ativo);
+      micBtn.setAttribute('aria-pressed', String(ativo));
+      micBtn.setAttribute('aria-label', ativo ? 'Parar de ouvir' : 'Falar em vez de escrever');
+      if (ativo) campo.placeholder = 'Ouvindo… pode falar';
+    }
+    return { disponivel: function () { return !!Classe && permitido(); }, alternar: alternar, parar: parar,
+      /* A última mensagem enviada veio do microfone? (lido uma vez: vira o canal "voz" no registro) */
+      consumir: function () { var u = usado; usado = false; return u; } };
+  })();
+  /* Ouvir a resposta com a voz do próprio aparelho. Um botão por resposta; tocar de novo para. */
+  var leitura = (function () {
+    var falando = null;
+    function parar() { try { window.speechSynthesis.cancel(); } catch (e) { /* sem voz */ } if (falando) { falando.classList.remove('falando'); falando.lastChild.textContent = 'Ouvir'; falando = null; } }
+    return { disponivel: function () { return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window; }, parar: parar,
+      alternar: function (botao, texto) {
+        var era = falando === botao;
+        parar();
+        if (era) return;
+        var fala = new SpeechSynthesisUtterance(texto);
+        fala.lang = (document.documentElement.lang || 'pt-BR').toLowerCase().indexOf('pt') === 0 ? 'pt-BR' : document.documentElement.lang;
+        fala.rate = 0.95;
+        fala.onend = fala.onerror = function () { if (falando === botao) parar(); };
+        falando = botao; botao.classList.add('falando'); botao.lastChild.textContent = 'Parar';
+        window.speechSynthesis.speak(fala);
+        rastrear('chat_ouvir_resposta', {});
+      } };
+  })();
 
   function balao(classe, conteudo, texto) {
     var b = el('div', { class: 'cv-chat-msg ' + classe });
@@ -344,11 +486,23 @@
       return el('button', { class: classe, type: 'button', text: c.rotulo, onclick: function () { escolher(passo, c.valor); } });
     }));
   }
+  /* Abaixo de cada resposta do site: as páginas que resolvem (matrícula, cadastro, doação) e o botão de ouvir. */
+  function apoioDaResposta(turno) {
+    var itens = (turno.links || []).map(function (l) { return el('a', { class: 'cv-chat-chip' + (l.destaque ? ' cheio' : ''), href: l.href, text: l.rotulo }); });
+    if (leitura.disponivel() && turno.r) {
+      itens.push(el('button', { class: 'cv-chat-chip neutro cv-chat-ouvir', type: 'button', html: ICONES.som + '<span>Ouvir</span>',
+        onclick: function () { leitura.alternar(this, turno.r); } }));
+    }
+    return itens.length ? el('div', { class: 'cv-chat-chips' }, itens) : null;
+  }
+  function resumoDaConversa() {
+    return 'Perguntei no chat do site: ' + estado.conversa.map(function (t) { return '"' + t.p + '"'; }).join('; ') + '.';
+  }
   function resumo() {
     var dl = el('dl');
-    ORDEM.forEach(function (p) {
+    ordem().forEach(function (p) {
       if (p === 'curso' && !precisaCurso()) return;
-      dl.appendChild(el('dt', { text: ROTULOS[p] }));
+      dl.appendChild(el('dt', { text: rotuloPasso(p) }));
       dl.appendChild(el('dd', { text: resposta(p) }));
     });
     return el('div', { class: 'cv-chat-resumo' }, [dl]);
@@ -363,9 +517,21 @@
     if (!estado.aberto) return;
 
     var itens = [];
-    ORDEM.forEach(function (p) {
+    // A conversa com o site vem primeiro e fica na tela: quem segue para a equipe continua vendo o que já foi dito.
+    if (estado.conversa.length || estado.perguntando) itens.push(balao('robo', saudacao()));
+    estado.conversa.forEach(function (t) {
+      itens.push(balao('pessoa', t.p, true));
+      if (t.r) itens.push(balao('robo', t.r, true));
+      var apoio = apoioDaResposta(t);
+      if (apoio) itens.push(apoio);
+    });
+    if (estado.perguntando) { itens.push(balao('pessoa', estado.pendente || '', true)); itens.push(digitando()); }
+    var deConversa = estado.conversa.length > 0 && estado.passo !== 'busca';
+    if (deConversa) itens.push(balao('robo', 'Certo, vou passar para a equipe. Preciso de alguns dados, um de cada vez.'));
+    (estado.passo === 'busca' ? [] : ordem()).forEach(function (p) {
       if (p === 'curso' && !precisaCurso()) return;
       if (!respondido(p) || p === estado.passo) return;
+      if (p === 'assunto' && deConversa) return; // o assunto veio da conversa: não repete a saudação nem a escolha
       itens.push(balao('robo', pergunta(p).html));
       itens.push(balao('pessoa', resposta(p), true));
       // A ficha do curso e as dúvidas já respondidas ficam na conversa, logo depois do curso:
@@ -378,8 +544,9 @@
         });
       }
     });
-    var q = pergunta(estado.passo);
+    var q = estado.perguntando ? null : pergunta(estado.passo);
     if (q) {
+      // Na primeira tela da busca a saudação é a própria pergunta; depois dela, a conversa já a mostrou acima.
       itens.push(balao('robo', q.html));
       if (estado.erro && estado.passo !== 'falhou') itens.push(balao('robo erro', estado.erro, true));
       if (q.resumo) itens.push(resumo());
@@ -389,13 +556,16 @@
     var entrada = q && q.entrada && !estado.enviando ? q.entrada : null;
     campo.disabled = !entrada;
     enviarBtn.disabled = !entrada;
+    // Ditar só onde se escreve texto livre (pergunta, mensagem e os dados em texto): nome, e-mail e telefone saem errados.
+    micBtn.hidden = !(entrada && ditado.disponivel() && (estado.passo === 'busca' || estado.passo === 'mensagem' || extra(estado.passo)));
+    if (micBtn.hidden) ditado.parar();
     if (entrada) {
       campo.placeholder = entrada.placeholder;
       campo.setAttribute('inputmode', entrada.tipo === 'email' ? 'email' : entrada.tipo === 'tel' ? 'tel' : 'text');
       campo.setAttribute('autocomplete', entrada.autocomplete);
       campo.setAttribute('enterkeyhint', 'send');
     } else {
-      campo.placeholder = estado.passo === 'enviado' ? 'Mensagem enviada' : estado.enviando ? 'Enviando…' : 'Escolha uma opção acima';
+      campo.placeholder = estado.passo === 'enviado' ? 'Mensagem enviada' : estado.enviando ? 'Enviando…' : estado.perguntando ? 'Procurando a resposta…' : 'Escolha uma opção acima';
       campo.value = '';
       ajustarAltura();
     }
@@ -403,6 +573,11 @@
     itens.forEach(function (n, i) { if (i >= contagem) n.classList.add('nova'); mensagens.appendChild(n); });
     contagem = itens.length;
     mensagens.scrollTop = mensagens.scrollHeight;
+    // O normal é caber tudo (resposta, páginas e "resolveu?"). Resposta longa: a leitura começa no início dela, e não no fim.
+    if (estado.passo === 'busca' && estado.conversa.length && !estado.perguntando) {
+      var feitas = mensagens.querySelectorAll('.cv-chat-msg.pessoa'), resp = feitas.length ? feitas[feitas.length - 1].nextElementSibling : null;
+      if (resp) mensagens.scrollTop = Math.min(mensagens.scrollTop, Math.max(0, resp.offsetTop - mensagens.offsetTop - 12));
+    }
     // Leitor de tela: só a fala nova do robô (a conversa inteira é redesenhada a cada passo).
     var falas = mensagens.querySelectorAll('.cv-chat-msg.robo');
     var ultima = falas.length ? falas[falas.length - 1].textContent : '';
@@ -410,7 +585,11 @@
   }
   function focar() {
     if (!estado.aberto) return;
-    if (!campo.disabled) { campo.focus({ preventScroll: true }); return; }
+    // Depois de uma resposta, no celular, o foco não vai para a caixa de texto: o teclado subiria por cima do que
+    // a pessoa acabou de receber. Ela lê primeiro; para perguntar de novo, é só tocar na caixa.
+    var lendo = estado.passo === 'busca' && estado.conversa.length > 0 && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if (!campo.disabled && !lendo) { campo.focus({ preventScroll: true }); return; }
+    if (lendo) return;
     var chip = mensagens.querySelector('.cv-chat-chip');
     if (chip) chip.focus({ preventScroll: true });
   }
@@ -420,9 +599,59 @@
   }
 
   // ------------------------------------------------------------------ fluxo
+  /* A pessoa perguntou: o servidor responde com o que está publicado e registra. Falhou na primeira pergunta
+     (sem rede, servidor fora): o chat volta ao roteiro de botões, que não depende do atendimento.php. */
+  function perguntar(texto, canal) {
+    if (estado.perguntando) return;
+    leitura.parar();
+    estado.erro = ''; estado.avaliado = ''; estado.perguntando = true; estado.pendente = texto;
+    render();
+    fetch(API_ATENDIMENTO, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ acao: 'perguntar', sessao: estado.sessao, pergunta: texto, canal: canal, pagina: location.pathname + location.search,
+        idioma: document.documentElement.lang || '', site: '' }) })
+      .then(function (resp) { return resp.json().catch(function () { return null; }).then(function (d) { return { http: resp.status, d: d }; }); })
+      .catch(function () { return { http: 0, d: null }; })
+      .then(function (x) {
+        var d = x.d && typeof x.d === 'object' ? x.d : null;
+        estado.perguntando = false; estado.pendente = '';
+        if (d && d.ok) {
+          estado.conversa.push({ id: d.id, p: texto, r: d.resposta || '', links: d.links || [], sugestoes: d.sugestoes || [], sabe: !!d.sabe, precisa: !!d.precisa_equipe,
+            assunto: d.assunto || 'outro', assuntoRotulo: d.assunto_rotulo || '', categoria: d.categoria || 'outro', coletar: d.coletar || [] });
+          rastrear('chat_pergunta', { categoria: d.categoria, respondida: d.sabe ? 'sim' : 'nao', canal: canal, pagina: location.pathname });
+        } else if (d && x.http === 422) {
+          estado.erro = d.erro || 'Não entendi a pergunta. Tente escrever de outro jeito.';
+        } else {
+          // Limite de perguntas, servidor fora ou sem rede: o caminho da equipe continua aberto.
+          estado.erro = (d && d.erro) || (x.http === 0 ? 'Sem conexão. Verifique a internet e tente de novo.' : 'Não consegui consultar as respostas agora.');
+          if (!estado.conversa.length) { estado.passo = 'assunto'; estado.respostas.mensagem = texto.length >= 10 ? texto : ''; }
+        }
+        guardar(); render(); focar();
+      });
+  }
+  function avaliar(resolveu) {
+    var u = ultima();
+    if (!u || !u.id) return;
+    rastrear(resolveu ? 'chat_resolveu' : 'chat_para_equipe', { categoria: u.categoria });
+    try {
+      fetch(API_ATENDIMENTO, { method: 'POST', credentials: 'same-origin', keepalive: true, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ acao: 'avaliar', sessao: estado.sessao, id: u.id, resolveu: resolveu }) }).catch(function () { /* o registro é de melhor esforço */ });
+    } catch (e) { /* idem */ }
+  }
+  /* Da conversa para o chamado: o assunto e os dados a coletar vêm da última resposta do servidor. */
+  function abrirChamado() {
+    var u = ultima();
+    avaliar(false);
+    if (u) {
+      estado.respostas.assunto = u.assunto; estado.assuntoRotulo = u.assuntoRotulo || '';
+      estado.categoria = u.categoria; estado.coletar = u.coletar || []; estado.detalhes = {};
+      estado.duvidasVistas = true; // as dúvidas em botões são para quem não perguntou; aqui a pessoa já perguntou
+    }
+    estado.passo = estado.respostas.assunto ? proximoPasso() : 'assunto';
+    guardar(); render(); focar();
+  }
   function responder(passo, valor) {
     estado.erro = '';
-    estado.respostas[passo] = valor;
+    if (extra(passo)) estado.detalhes[passo.slice(2)] = valor; else estado.respostas[passo] = valor;
     if (estado.editando) {
       estado.editando = false;
       estado.passo = (precisaCurso() && !respondido('curso')) ? 'curso' : 'revisar';
@@ -434,6 +663,15 @@
   }
   function escolher(passo, valor) {
     estado.erro = '';
+    if (passo === 'busca') {
+      if (valor === 'assuntos') { rastrear('chat_escolheu_assunto', {}); estado.passo = 'assunto'; guardar(); render(); focar(); return; }
+      if (valor === 'fechar') { fechar(); return; }
+      if (valor === 'equipe') { abrirChamado(); return; }
+      if (valor === 'resolveu') { avaliar(true); estado.avaliado = 'resolveu'; guardar(); render(); focar(); return; }
+      if (String(valor).charAt(0) === 's') { perguntar(String(valor).slice(1), 'botao'); }
+      return;
+    }
+    if (passo === 'mensagem' && valor === '@conversa') { responder('mensagem', resumoDaConversa()); return; }
     if (passo === 'revisar') {
       if (valor === 'enviar') { enviar(); return; }
       estado.passo = 'corrigir'; guardar(); render(); focar(); return;
@@ -445,6 +683,7 @@
     if (passo === 'enviado') {
       if (valor === 'fechar') { fechar(); return; }
       var r = estado.respostas;
+      leitura.parar();
       estado = novoEstado();
       estado.aberto = true; estado.aberturaRastreada = true;
       estado.respostas = { nome: r.nome, email: r.email, telefone: r.telefone || '' };
@@ -474,10 +713,15 @@
   function aoEnviarTexto(e) {
     if (e) e.preventDefault();
     var q = pergunta(estado.passo);
-    if (!q || !q.entrada || estado.enviando) return;
+    if (!q || !q.entrada || estado.enviando || estado.perguntando) return;
+    ditado.parar();
     var valor = campo.value.trim();
+    // Detalhe a mais de quem veio de uma conversa: as perguntas feitas seguem na mensagem, antes do que a pessoa acrescentou.
+    if (estado.passo === 'mensagem' && estado.conversa.length && !estado.editando && valor) valor = (resumoDaConversa() + '\n\n' + valor).slice(0, 3000);
     var erro = validar(estado.passo, valor);
     if (erro) { estado.erro = erro; render(); campo.focus(); return; }
+    if (estado.passo === 'busca') { campo.value = ''; ajustarAltura(); perguntar(valor, ditado.consumir() ? 'voz' : 'texto'); return; }
+    ditado.consumir();
     if (estado.passo === 'telefone') valor = telefoneBonito(valor);
     if (estado.passo === 'email') valor = valor.toLowerCase();
     campo.value = '';
@@ -497,6 +741,9 @@
       ja_respondido: estado.duvidasLidas.map(function (d) { return d.p; }),
       pagina: location.pathname + location.search, origem: origem(), site: ''
     };
+    // Chamado que nasceu de uma conversa: o servidor anexa a conversa (lida do banco pelo identificador) e confere a
+    // categoria e os dados coletados contra a lista dele.
+    if (estado.conversa.length) { corpo.sessao = estado.sessao; corpo.categoria = estado.categoria || 'outro'; corpo.detalhes = estado.detalhes; }
     // O id do Contact do Pixel vai junto: o servidor manda o mesmo Contact à API de Conversões (só com "sim" para marketing).
     try { if (window.cvrjMedicao && window.cvrjMedicao.novoId) corpo.evento_id = window.cvrjMedicao.novoId('ct'); } catch (e) { /* sem bloco de medição */ }
     fetch(API, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(corpo) })
@@ -510,7 +757,7 @@
           estado.passo = 'enviado';
           rastrear('contato_enviado', { assunto: r.assunto, curso: corpo.curso, pagina: location.pathname },
             'Contact', { content_category: r.assunto, content_name: nomeCurso(corpo.curso) || rotuloAssunto(r.assunto) }, corpo.evento_id);
-        } else if (d.campo && ORDEM.indexOf(d.campo) >= 0) {
+        } else if (d.campo && ordem().indexOf(d.campo) >= 0) {
           estado.passo = d.campo; estado.editando = true; estado.erro = d.erro || '';
         } else {
           estado.passo = 'falhou'; estado.erro = d.erro || 'Não consegui enviar agora.';
@@ -519,7 +766,7 @@
       });
   }
   function abrir(inicial) {
-    if (inicial && estado.passo === 'assunto' && !estado.respostas.assunto) {
+    if (inicial && (estado.passo === 'assunto' || estado.passo === 'busca') && !estado.respostas.assunto && !estado.conversa.length) {
       if (inicial.assunto && rotuloAssunto(inicial.assunto) !== inicial.assunto) estado.respostas.assunto = inicial.assunto;
       if (inicial.curso && curso(inicial.curso) && precisaCurso()) estado.respostas.curso = inicial.curso;
       if (estado.respostas.assunto) estado.passo = proximoPasso();
@@ -531,7 +778,7 @@
       rastrear('contato_aberto', { pagina: location.pathname });
     }
   }
-  function fechar() { estado.aberto = false; guardar(); render(); botao.focus(); }
+  function fechar() { ditado.parar(); leitura.parar(); estado.aberto = false; guardar(); render(); botao.focus(); }
 
   // ------------------------------------------------------------------ montagem
   function montar() {
@@ -539,7 +786,7 @@
     botao = el('button', { class: 'cv-chat-abrir', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'cv-chat-painel',
       html: '<span class="cv-chat-abrir-ico">' + ICONES.balao + '</span><span class="cv-chat-abrir-rotulo">Fale com a gente</span><span class="cv-chat-abrir-x">' + ICONES.x + '</span>',
       onclick: function () { if (estado.aberto) fechar(); else abrir(); } });
-    var topo = el('header', { class: 'cv-chat-topo', html: '<span class="cv-chat-avatar"><img src="' + LOGO + '" width="44" height="44" alt=""></span><div><b id="cv-chat-titulo">' + NOME + '</b><small><span class="cv-chat-status">Atendimento por e-mail</span> · resposta em até ' + PRAZO + '</small></div>' });
+    var topo = el('header', { class: 'cv-chat-topo', html: '<span class="cv-chat-avatar"><img src="' + LOGO + '" width="44" height="44" alt=""></span><div><b id="cv-chat-titulo">' + NOME + '</b><small><span class="cv-chat-status">Respostas na hora</span> · equipe por e-mail</small></div>' });
     topo.appendChild(el('button', { class: 'cv-chat-fechar', type: 'button', 'aria-label': 'Fechar o chat', html: ICONES.x, onclick: fechar }));
     mensagens = el('div', { class: 'cv-chat-mensagens', role: 'log' });
     leitor = el('div', { class: 'cv-chat-sr', 'aria-live': 'polite', 'aria-atomic': 'true' });
@@ -547,8 +794,9 @@
     campo.addEventListener('input', ajustarAltura);
     campo.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); aoEnviarTexto(); } });
     enviarBtn = el('button', { class: 'cv-chat-enviar', type: 'submit', 'aria-label': 'Enviar', html: ICONES.enviar });
-    form = el('form', { class: 'cv-chat-compor', novalidate: true, onsubmit: aoEnviarTexto }, [campo, enviarBtn]);
-    var rodape = el('p', { class: 'cv-chat-rodape', html: 'Seus dados são usados só para responder ao contato. <a href="' + URL_PRIVACIDADE + '">Política de privacidade</a>' });
+    micBtn = el('button', { class: 'cv-chat-mic', type: 'button', 'aria-label': 'Falar em vez de escrever', 'aria-pressed': 'false', hidden: true, html: ICONES.mic, onclick: function () { ditado.alternar(); } });
+    form = el('form', { class: 'cv-chat-compor', novalidate: true, onsubmit: aoEnviarTexto }, [micBtn, campo, enviarBtn]);
+    var rodape = el('p', { class: 'cv-chat-rodape', html: 'As perguntas ficam registradas, sem o seu nome, para melhorar as respostas. Nome e e-mail são usados só para responder ao contato. <a href="' + URL_PRIVACIDADE + '">Política de privacidade</a>' });
     painel = el('div', { class: 'cv-chat-painel', id: 'cv-chat-painel', role: 'dialog', 'aria-labelledby': 'cv-chat-titulo', hidden: true }, [topo, mensagens, form, rodape, leitor]);
     raiz.appendChild(painel);
     raiz.appendChild(botao);

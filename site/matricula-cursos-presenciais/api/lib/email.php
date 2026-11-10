@@ -2055,6 +2055,9 @@ function mcp_contato_assuntos(): array
         'brinquedos' => 'Doação de brinquedos (Dia das Crianças)',
         // Só da página /pedido-de-documentos/ (api/documentos.php); os comprovantes vão só por e-mail.
         'documentos' => 'Pedido de documento',
+        // Só do atendimento inteligente (lib/atendimento.php): a categoria da conversa vira o assunto do chamado.
+        'empresas' => 'Treinamento para empresa, escola ou grupo',
+        'imprensa' => 'Imprensa',
     ];
 }
 
@@ -2082,6 +2085,32 @@ function mcp_contato_assunto_rotulo(string $chave): string
 function mcp_contato_com_curso(string $assunto): bool
 {
     return in_array($assunto, ['matricula', 'curso', 'pagamento'], true);
+}
+
+/** Dados coletados pelo chat antes do chamado (coluna detalhes, JSON [rótulo => valor]). Lista vazia se não houver. */
+function mcp_contato_detalhes(array $c): array
+{
+    $d = is_string($c['detalhes'] ?? null) ? json_decode($c['detalhes'], true) : null;
+    $limpo = [];
+    foreach (is_array($d) ? $d : [] as $rotulo => $valor) {
+        if (is_string($rotulo) && is_string($valor) && $valor !== '') {
+            $limpo[mb_substr($rotulo, 0, 60)] = mb_substr($valor, 0, 200);
+        }
+    }
+    return $limpo;
+}
+
+/** A conversa com o assistente antes do chamado (coluna conversa, JSON): [['p', 'r', 'sabe', 'voz'], ...]. */
+function mcp_contato_conversa(array $c): array
+{
+    $d = is_string($c['conversa'] ?? null) ? json_decode($c['conversa'], true) : null;
+    $turnos = [];
+    foreach (is_array($d) ? $d : [] as $t) {
+        if (is_array($t) && is_string($t['p'] ?? null) && $t['p'] !== '') {
+            $turnos[] = ['p' => $t['p'], 'r' => is_string($t['r'] ?? null) ? $t['r'] : '', 'sabe' => !empty($t['sabe']), 'voz' => !empty($t['voz'])];
+        }
+    }
+    return $turnos;
 }
 
 /**
@@ -2114,12 +2143,36 @@ function mcp_montar_email_contato_equipe(array $c): array
     if ($curso !== '') {
         $linhas['Curso'] = $curso;
     }
+    // O que o chat perguntou a mais para este tipo de pedido (empresa, quantas pessoas, situação do pagamento...).
+    foreach (mcp_contato_detalhes($c) as $rotulo => $valor) {
+        if (!isset($linhas[$rotulo])) {
+            $linhas[$rotulo] = $valor;
+        }
+    }
     $linhas['Página'] = $c['pagina'] ?: 'não informada';
     $linhas['Origem'] = trim(($c['utm_source'] ?? '') . ' ' . ($c['utm_campaign'] ?? '')) ?: 'direto';
     if ($quando !== '') {
         $linhas['Recebido em'] = $quando . ' (Brasília)';
     }
     $linhas['Protocolo'] = $protocolo;
+
+    // A conversa com o assistente antes do chamado: o que a pessoa procurou, com as palavras dela, e o que o site
+    // respondeu. Quem responde não repete o que já foi dito e vê onde a resposta do site não bastou.
+    $conversa = mcp_contato_conversa($c);
+    $conversaHtml = '';
+    $conversaTexto = '';
+    if ($conversa) {
+        $itens = [];
+        foreach ($conversa as $t) {
+            $resposta = $t['r'] !== '' ? mb_substr($t['r'], 0, 400) . (mb_strlen($t['r']) > 400 ? '…' : '') : 'O site não tinha esta resposta.';
+            $itens[] = '<strong>' . mcp_escapar($t['p']) . '</strong>' . ($t['voz'] ? ' <span style="color:#718096">(por voz)</span>' : '')
+                . '<br><span style="color:#4a5568">' . ($t['sabe'] ? '' : '<em>Sem resposta no site.</em> ') . mcp_escapar($resposta) . '</span>';
+            $conversaTexto .= '- ' . $t['p'] . "\n  " . ($t['sabe'] ? '' : '[sem resposta no site] ') . $resposta . "\n";
+        }
+        $conversaHtml = mcp_subtitulo('O que a pessoa perguntou ao assistente do site')
+            . mcp_lista($itens)
+            . mcp_nota('O assistente respondeu com o que está publicado no site. A pessoa leu e, ainda assim, pediu para falar com a equipe.');
+    }
 
     // O que o chat já respondeu antes do chamado: a equipe não precisa repetir, e saber o que a
     // pessoa leu e mesmo assim não resolveu costuma ser a parte mais útil da mensagem.
@@ -2134,6 +2187,7 @@ function mcp_montar_email_contato_equipe(array $c): array
             . ($curso !== '' ? ' (' . mcp_escapar($curso) . ')' : '') . '. A pessoa já foi avisada de que a resposta chega por e-mail em até ' . MCP_EMAIL_PRAZO . '.')
         . mcp_citacao((string) $c['mensagem'])
         . $jaLido
+        . $conversaHtml
         . ($linkPainel !== ''
             ? mcp_botao($linkPainel, 'Responder no painel')
                 . mcp_nota('Pelo painel a resposta sai no padrão visual do site, com o protocolo no assunto, e fica registrada com data e quem respondeu.')
@@ -2145,7 +2199,8 @@ function mcp_montar_email_contato_equipe(array $c): array
 
     $texto = "$nome escreveu pelo {$canal['nome']} sobre " . mb_strtolower($assunto) . ($curso !== '' ? " ($curso)" : '') . ".\n\nMensagem:\n{$c['mensagem']}\n\n"
         . ($linkPainel !== '' ? "Responder no painel: $linkPainel\n" : '')
-        . "Responder por e-mail: $email (ou responda este e-mail).\n\n";
+        . "Responder por e-mail: $email (ou responda este e-mail).\n\n"
+        . ($conversaTexto !== '' ? "O que a pessoa perguntou ao assistente do site:\n$conversaTexto\n" : '');
     foreach ($linhas as $rotulo => $valor) {
         $texto .= "$rotulo: " . (is_array($valor) ? ($rotulo === 'E-mail' ? $email : mcp_telefone_bonito($telefone)) : $valor) . "\n";
     }

@@ -62,6 +62,16 @@ function mcp_validar_contato(array $b): array
             break;
         }
     }
+    // Atendimento inteligente (10/11/2026): quando o chamado nasce de uma conversa com o assistente, a categoria e os
+    // dados coletados passam pela lista de lib/atendimento.php, e a conversa é lida do banco pelo identificador
+    // (o navegador não manda o texto das respostas: manda só de qual conversa veio).
+    $sessao = function_exists('mcp_at_sessao_valida') ? mcp_at_sessao_valida($b['sessao'] ?? null) : '';
+    $categoria = $sessao !== '' && isset($b['categoria']) ? mcp_at_categoria_valida($b['categoria']) : '';
+    $detalhes = $categoria !== '' ? mcp_at_detalhes($categoria, $b['detalhes'] ?? null) : [];
+    $conversa = [];
+    foreach ($sessao !== '' ? mcp_busca_conversa($sessao) : [] as $turno) {
+        $conversa[] = ['p' => (string) $turno['pergunta'], 'r' => (string) ($turno['resposta'] ?? ''), 'sabe' => (bool) $turno['sabe'], 'voz' => $turno['canal'] === 'voz'];
+    }
     $origem = is_array($b['origem'] ?? null) ? $b['origem'] : [];
     $utm = static fn(string $k, int $limite = 160): ?string => mcp_texto($origem[$k] ?? '', $limite) ?: null;
     return [
@@ -71,6 +81,9 @@ function mcp_validar_contato(array $b): array
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
+        'sessao' => $sessao, 'categoria' => $categoria, 'detalhes_lista' => $detalhes, 'conversa_lista' => $conversa,
+        'detalhes' => $detalhes ? json_encode($detalhes, JSON_UNESCAPED_UNICODE) : '',
+        'conversa' => $conversa ? json_encode($conversa, JSON_UNESCAPED_UNICODE) : '',
     ];
 }
 
@@ -101,6 +114,13 @@ $registro = mcp_contato_por_id($id) ?? ($contato + ['id' => $id, 'protocolo' => 
 // O que o chat já respondeu não vai para a tabela (é do atendimento, não do contato): reanexa
 // aqui, depois da releitura, para entrar nos dois e-mails.
 $registro['ja_respondido'] = $contato['ja_respondido'];
+if ($contato['sessao'] !== '') {
+    try {
+        mcp_busca_ligar_contato($contato['sessao'], $id); // as perguntas desta conversa passam a apontar para o chamado
+    } catch (Throwable $e) {
+        error_log('[atendimento] ligação com o chamado falhou: ' . get_class($e));
+    }
+}
 try {
     $registro['link_painel'] = mcp_painel_link_contato($id); // botão "Responder no painel" do aviso à equipe
 } catch (Throwable $e) {

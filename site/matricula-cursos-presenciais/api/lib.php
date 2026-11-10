@@ -3,7 +3,7 @@
  * Bootstrap do backend do checkout da matrícula em cursos presenciais (PHP 8.3, Hostinger).
  *
  * Endpoints públicos: info.php, pagamentos.php, parcelas.php (simulação de parcelas do pagar tudo), status.php,
- * webhook.php, contato.php (chat do site),
+ * webhook.php, contato.php (chat do site), atendimento.php (o chat responde na hora e registra o que se procura),
  * turmas.php (pedidos de turma fechada e listas de interesse),
  * medicao.php (repasse de eventos de página à API de Conversões da Meta) e painel.php (portal da
  * secretaria: inscrições, horários dos alunos e mensagens do chat).
@@ -55,6 +55,11 @@ foreach (['config', 'http', 'db', 'unicopag', 'compra', 'cupons', 'escola', 'esp
 // Ligação com o Google Drive (10/2026): fila de trabalhos, exportações e espelho dos assets. Os dois módulos são
 // opcionais: publicados à parte, o site continua funcionando sem eles (lib/voluntarios.php só enfileira a ficha se
 // mcp_drive_enfileirar existir).
+// Atendimento inteligente do chat (10/11/2026). Opcional como os do Drive: sem o arquivo, o chat segue no roteiro de
+// botões e o contato.php funciona como antes (ele confere function_exists antes de usar).
+if (is_file(__DIR__ . '/lib/atendimento.php')) {
+    require_once __DIR__ . '/lib/atendimento.php';
+}
 if (is_file(__DIR__ . '/lib/google_drive.php')) {
     require_once __DIR__ . '/lib/google_drive.php';
 }
