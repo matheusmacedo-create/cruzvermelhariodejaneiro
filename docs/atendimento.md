@@ -7,8 +7,8 @@ Nesse caso o chamado chega com mais dados do que antes: a categoria, os dados pr
 e a conversa inteira.
 
 Estado: **publicado em 10/11/2026**, com autorização do responsável. Os 49 arquivos foram conferidos no servidor
-contra o Git, o cache foi limpo e o chat respondeu ao vivo (busca por palavras). A IA está **desligada** até existir
-o `api/config-ia.php` no servidor (veja "Ligar a IA"). As duas primeiras linhas de `mcp_buscas` ("onde fica a sede e
+contra o Git, o cache foi limpo e o chat respondeu ao vivo (busca por palavras). A IA foi **ligada no mesmo dia** (`api/config-ia.php`
+no servidor, modelo padrão) e respondeu ao vivo em cerca de 2 a 5 segundos. As duas primeiras linhas de `mcp_buscas` ("onde fica a sede e
 qual o horário?" e "tem curso gratuito?") são da conferência da publicação. A pendência de privacidade continua aberta.
 
 ## O problema
@@ -193,7 +193,7 @@ palavras.
 php scripts/testar_atendimento.php
 ```
 
-Sem banco nem rede: base, busca, categorias, conferência dos dados, e-mail da equipe (87 verificações).
+Sem banco nem rede: base, busca, categorias, conferência dos dados, e-mail da equipe (88 verificações).
 Com uma pergunta entre aspas, mostra o que a busca por palavras responderia.
 
 ```bash

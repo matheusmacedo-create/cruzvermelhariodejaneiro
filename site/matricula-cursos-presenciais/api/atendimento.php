@@ -68,7 +68,12 @@ $categoria = $r['categoria'];
 // No celular, mais de dois botões de página empurram o "Isso resolveu?" para fora da tela: a ação pronta primeiro.
 $links = $r['links'];
 usort($links, static fn(array $x, array $y): int => (int) !empty($y['destaque']) <=> (int) !empty($x['destaque']));
-$links = array_slice($links, 0, 2);
+// Dois botões para a mesma página (o link da FAQ e a ação da categoria) viram um só: fica o de destaque, que vem primeiro.
+$unicos = [];
+foreach ($links as $l) {
+    $unicos[strtok((string) $l['href'], '?')] ??= $l;
+}
+$links = array_slice(array_values($unicos), 0, 2);
 $dados = mcp_at_categorias()[$categoria];
 mcp_json([
     'ok' => true,
