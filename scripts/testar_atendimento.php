@@ -72,6 +72,7 @@ foreach ($base as $item) {
     }
 }
 verificar('base: só links do site ou https', $linkRuim, 0);
+verificar('base: nenhum botão leva ao próprio chat', count(array_filter($base, static fn(array $i): bool => (bool) array_intersect(array_column($i['links'], 1), ['/#chat', '/#contato']))), 0);
 verificar('link: javascript não passa', mcp_at_link_seguro('javascript:alert(1)'), false);
 verificar('link: outro site sem https não passa', mcp_at_link_seguro('//exemplo.org/x'), false);
 verificar('base: certificado dos cursos é da escola, não da filial',
