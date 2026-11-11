@@ -774,6 +774,83 @@
    "atualizado": "2026-10-15"
   },
   {
+   "slug": "manual-de-identidade",
+   "titulo_seo": "Manual de Identidade da Cruz Vermelha Brasileira – PDF",
+   "descricao_seo": "Baixe o Manual de Identidade Institucional da Cruz Vermelha Brasileira: emblema, logotipo, cor, tipografia e aplicações. Veja também quem pode usar a marca.",
+   "eyebrow": "Institucional",
+   "h1": "Manual de Identidade Institucional da Cruz Vermelha Brasileira",
+   "lead": "O manual reúne as regras visuais da Cruz Vermelha Brasileira: como desenhar o emblema, compor o logotipo, usar a cor e aplicar a marca em papelaria, uniformes e veículos. Deixe o seu e-mail para baixar o PDF.",
+   "atualizado": "2026-11-11",
+   "relacionadas": [
+    "emblema",
+    "base-legal",
+    "movimento-internacional",
+    "quem-somos"
+   ],
+   "secoes": [
+    {
+     "id": "baixar",
+     "h2": "Baixe o manual em PDF",
+     "html": "<p>O manual foi elaborado pelo Departamento Nacional de Comunicação Social da Cruz Vermelha Brasileira e vale para todas as filiais do país, inclusive a do Rio de Janeiro. A filial publica aqui uma cópia para consulta de voluntários, fornecedores, parceiros, imprensa e estudantes.</p><p>Informe o seu e-mail e marque a autorização: o botão de baixar aparece aqui na hora, e uma cópia do link vai para a sua caixa de entrada.</p><div class=\"inst-material\" data-material=\"manual-de-identidade\" data-evento=\"manual_pedir\" data-chave=\"manual-de-identidade-liberado\"><figure class=\"inst-material-capa\"><img src=\"/manual-de-identidade/capa-manual-de-identidade.webp\" width=\"480\" height=\"670\" alt=\"Capa do Manual de Identidade Institucional da Cruz Vermelha Brasileira: o logotipo com a cruz vermelha e desenhos de certificado, crachá, colete, mochila, caixa e caminhão com a marca\"></figure><div class=\"inst-material-miolo\"><p class=\"inst-material-ficha\">PDF · 52 páginas · 14 MB</p><form class=\"inst-material-form\" action=\"https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever\" method=\"post\"><input type=\"hidden\" name=\"material\" value=\"manual-de-identidade\"><label class=\"inst-material-armadilha\" aria-hidden=\"true\">Não preencha este campo <input type=\"text\" name=\"site\" tabindex=\"-1\" autocomplete=\"off\"></label><label class=\"inst-material-rotulo\" for=\"inst-material-email\">Seu e-mail</label><input id=\"inst-material-email\" type=\"email\" name=\"email\" autocomplete=\"email\" inputmode=\"email\" placeholder=\"nome@exemplo.com\" required><label class=\"inst-material-aceite\"><input type=\"checkbox\" name=\"consentimento\" value=\"1\" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail o Manual de Identidade Institucional e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type=\"submit\" class=\"btn btn-red\">Liberar o download</button></form><p class=\"inst-material-recado\" role=\"status\" aria-live=\"polite\"></p><p class=\"inst-material-baixar\" hidden><a class=\"btn btn-red\" href=\"/manual-de-identidade/manual-de-identidade-institucional-cruz-vermelha-brasileira.pdf\" download data-evento=\"manual_baixar\" data-origem=\"pagina\">Baixar o manual em PDF</a></p></div></div>"
+    },
+    {
+     "id": "o-que-tem",
+     "h2": "O que o manual traz",
+     "html": "<p>São 52 páginas, divididas em uma introdução, duas partes e os anexos:</p><ul><li><strong>Introdução:</strong> o Movimento Internacional da Cruz Vermelha e do Crescente Vermelho, os emblemas humanitários, o cristal vermelho e a diferença entre uso protetor e uso indicativo.</li><li><strong>Primeira parte, elementos básicos:</strong> o emblema, o logotipo, a composição horizontal, a cor, as famílias tipográficas, as formas corretas e incorretas de aplicação, o nome das filiais e a convivência com outras marcas do Movimento.</li><li><strong>Segunda parte, peças de comunicação:</strong> papelaria, crachá, diploma e certificado, bandeiras e banner, slides de apresentação, uniformes, objetos promocionais e veículos.</li><li><strong>Anexos:</strong> a Lei nº 3.960/1961, o Decreto nº 966/1962, o Decreto nº 2.380/1910, o Decreto-Lei nº 7.928/1945 e o regulamento de mídias sociais.</li></ul>"
+    },
+    {
+     "id": "resumo",
+     "h2": "A marca em resumo",
+     "html": "<p>Para consultas rápidas, estes são os pontos do manual que mais aparecem nos pedidos que chegam à filial:</p><ul><li><strong>Emblema:</strong> a cruz vermelha é formada por cinco quadrados iguais, sobre fundo branco. Veja a origem e as regras de desenho na página <a href=\"/emblema/\">Os emblemas da Cruz Vermelha</a>.</li><li><strong>Logotipo:</strong> o emblema ao lado das palavras “Cruz Vermelha Brasileira”, compostas em Franklin Gothic Demi Cond. O nome da filial entra em Franklin Gothic Book, em maiúsculas, e só na papelaria; nas outras peças vale o logotipo da Cruz Vermelha Brasileira.</li><li><strong>Tamanho mínimo:</strong> 7 mm de uma ponta à outra do emblema.</li><li><strong>O que não fazer:</strong> mudar as cores, alterar a composição ou as proporções, deixar outros elementos invadirem o espaço do logotipo ou aplicá-lo sobre foto sem uma caixa branca de fundo.</li></ul><table class=\"inst-tabela\"><thead><tr><th>Sistema de cor</th><th>Valor no manual</th><th>Onde usar</th></tr></thead><tbody><tr><td>CMYK</td><td>C 0, M 100, Y 100, K 0</td><td>Impressos em mais de uma tinta</td></tr><tr><td>RGB</td><td>R 227, G 34, B 25</td><td>Telas e monitores</td></tr><tr><td>Pantone</td><td>485</td><td>Impressos em tinta plana</td></tr><tr><td>HTML</td><td>#FF0000</td><td>Páginas da internet</td></tr></tbody></table><p>O código HTML do manual (#FF0000) não é o mesmo tom do RGB que ele indica para telas: R 227, G 34, B 25 corresponde a #E32219. Na dúvida, confirme com a comunicação da filial antes de produzir a peça.</p>"
+    },
+    {
+     "id": "quem-pode",
+     "h2": "Quem pode usar a marca",
+     "html": "<p>Ter o manual não autoriza ninguém a usar a marca. O nome e o emblema da Cruz Vermelha são protegidos por lei no Brasil: o <a href=\"https://www.planalto.gov.br/ccivil_03/decreto/historicos/dpl/dpl2380-1910.htm\">Decreto nº 2.380/1910</a>, reproduzido nos anexos do manual, reserva o nome e o sinal às sociedades da Cruz Vermelha e proíbe o uso do emblema como marca de fábrica ou de comércio.</p><p>O manual serve a quem já produz peças para a Cruz Vermelha Brasileira, como voluntários, filiais e fornecedores contratados. Para usar o logotipo da filial do Rio de Janeiro em evento, parceria, material impresso ou reportagem, escreva antes para a filial pelo <a href=\"/#contato\">contato do site</a>.</p><p>O próprio manual lembra que as marcas do Comitê Internacional da Cruz Vermelha, da Federação Internacional e de outras Sociedades Nacionais só podem ser usadas com autorização expressa de cada uma. Viu a cruz vermelha usada sem autorização? Veja <a href=\"/emblema/#avise\">como avisar a filial</a>.</p>"
+    }
+   ],
+   "perguntas": [
+    {
+     "pergunta": "Por que o site pede o meu e-mail para baixar o manual?",
+     "resposta": "Para enviar uma cópia do link para a sua caixa de entrada e, depois, as notícias, campanhas e informações sobre cursos da Cruz Vermelha do Rio de Janeiro, se você confirmar. Dá para sair da lista a qualquer momento pelo link que vem em todas as mensagens."
+    },
+    {
+     "pergunta": "O e-mail não chegou. E agora?",
+     "resposta": "Confira a caixa de spam e a aba de promoções. Se você já deixou o e-mail nesta página, o botão de baixar continua aparecendo neste aparelho."
+    },
+    {
+     "pergunta": "Posso usar o logotipo da Cruz Vermelha no meu material?",
+     "resposta": "Só com autorização. O nome e o emblema da Cruz Vermelha são protegidos por lei e não podem ser usados como marca comercial. Para eventos, parcerias ou reportagens com a filial do Rio de Janeiro, peça a autorização pelo contato do site."
+    },
+    {
+     "pergunta": "Este manual vale para a filial do Rio de Janeiro?",
+     "resposta": "Vale. É o manual nacional da Cruz Vermelha Brasileira, e as filiais seguem as mesmas regras de emblema, logotipo e cor; o nome da filial entra no logotipo só na papelaria."
+    }
+   ],
+   "fontes": [
+    {
+     "rotulo": "Cruz Vermelha Brasileira – Manual de Identidade Institucional (Departamento Nacional de Comunicação Social, 2016)",
+     "url": "https://cruzvermelhariodejaneiro.org/manual-de-identidade/manual-de-identidade-institucional-cruz-vermelha-brasileira.pdf"
+    },
+    {
+     "rotulo": "Decreto nº 2.380/1910 (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/decreto/historicos/dpl/dpl2380-1910.htm"
+    },
+    {
+     "rotulo": "Lei nº 3.960/1961 (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/leis/1950-1969/l3960.htm"
+    },
+    {
+     "rotulo": "Decreto nº 8.885/2016 – Estatuto da Cruz Vermelha Brasileira (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm"
+    },
+    {
+     "rotulo": "CICV – Uso de emblemas",
+     "url": "https://www.icrc.org/pt/direito-e-politicas/uso-de-emblemas"
+    }
+   ]
+  },
+  {
    "slug": "direito-internacional-humanitario",
    "titulo_seo": "Direito Internacional Humanitário (DIH) – Cruz Vermelha RJ",
    "descricao_seo": "O que é o Direito Internacional Humanitário, as Convenções de Genebra e seus Protocolos, os decretos que os promulgaram no Brasil e o papel da filial.",

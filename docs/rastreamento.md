@@ -224,6 +224,14 @@ GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `institucional`
 | Toque na capa de um vídeo (o player do YouTube só carrega aí) | `video_start` (video_provider = `youtube`, video_title) |
 | Pedido da lista por e-mail aceito, na caixa das matérias (ver abaixo) | `kit_pedir` (origem = `materia`; tipo = `emergencia` ou `primeiros-socorros`, a variante da caixa) |
 
+**Manual de Identidade (11/11/2026).** A página `/manual-de-identidade/` pede o e-mail antes de mostrar o botão do PDF
+(o pedido vai para a Redação, material `manual-de-identidade`):
+
+| Momento | GA4 |
+| --- | --- |
+| Pedido do manual aceito (o botão de baixar aparece) | `manual_pedir` (origem = `pagina`) |
+| Toque em “Baixar o manual em PDF” | `manual_baixar` (origem = `pagina`) |
+
 `origem` já é dimensão registrada. O `kit_baixar` conta o toque no link, não o arquivo aberto, e não depende da
 medição otimizada de downloads da propriedade (se ela estiver ligada, o mesmo toque também gera um `file_download`).
 **A caixa das matérias (09/11/2026).** Dezoito matérias de `/noticias/` (emergências, Defesa Civil e primeiros socorros

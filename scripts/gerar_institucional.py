@@ -39,6 +39,15 @@ evento video_start (video_title, video_provider).
 Cliques medidos (09/11/2026): um <a data-evento="nome" data-origem="…"> manda ao GA4 o evento "nome" com o
 parâmetro origem (dimensão já registrada). Usado no botão do PDF do kit: kit_baixar (docs/rastreamento.md).
 
+Material com e-mail (11/11/2026, /manual-de-identidade/): <div class="inst-material"> com um <form> que manda para a
+rota de inscrição da Redação (api/newsletter/inscrever, com o campo material) e um botão de baixar escondido. O botão
+só aparece depois de o pedido ser aceito; a Redação grava o e-mail com o aceite e manda uma cópia do link. O PDF
+continua público (a porta é um convite, não uma cerca: decisão 3 de lib/newsletter/materiais.ts, na Redação). O aceite
+da página tem de ser, letra por letra, o `consentimento` do material lá: é o que fica gravado como o que a pessoa leu.
+Sem JavaScript, o formulário navega para a página de resposta da Redação e o link chega por e-mail. Com o pedido
+aceito, o aparelho guarda que já pediu (localStorage) e, na volta, mostra o botão direto. Medição: manual_pedir (pedido
+aceito) e manual_baixar (toque no botão).
+
 Uso:  python3 scripts/gerar_institucional.py [slug ...]
 Depois: publicar as pastas geradas (lista em scripts/publicacao-institucional.txt) e o sitemap.
 """
@@ -59,16 +68,18 @@ ORIGEM = "https://cruzvermelhariodejaneiro.org"
 CONTEUDO = RAIZ / "site" / "institucional.json"
 ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
-ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema",
+ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
          "mochila-de-emergencia", "kit-de-primeiros-socorros"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
-QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "direito-internacional-humanitario", "base-legal"}
+QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
+              "direito-internacional-humanitario", "base-legal"}
 VOLUNTARIADO = {"cbfi"}
 KIT = {"mochila-de-emergencia", "kit-de-primeiros-socorros"}
 NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princípios Fundamentais",
                 "movimento-internacional": "Movimento Internacional", "emblema": "O emblema",
+                "manual-de-identidade": "Manual de identidade",
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
                 "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
                 "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
@@ -252,6 +263,66 @@ VIDEO_JS = """<script>
 </script>"""
 
 
+# Só entra nas páginas que têm o material com e-mail (o manual de identidade).
+MATERIAL_CSS = """  <style>
+    /* Material com e-mail (11/11/2026): capa ao lado do formulário no computador; um sob o outro no celular. */
+    .inst-material { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; align-items: start; margin: 22px 0 8px; padding: 24px; border: 1px solid var(--line); border-top: 4px solid var(--red); border-radius: 14px; background: var(--soft); }
+    .inst-material [hidden] { display: none !important; }
+    .inst-material-capa { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
+    .inst-material-capa img { display: block; width: 100%; height: auto; }
+    .inst-secao .inst-material-ficha { margin: 0 0 14px; font-size: .9rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .inst-material-form { display: grid; gap: 12px; }
+    .inst-material-rotulo { margin-bottom: -6px; font-size: 1rem; font-weight: 700; color: var(--black); }
+    .inst-material input[type=email] { width: 100%; min-height: 52px; padding: 12px 14px; border: 1.5px solid #6b7480; border-radius: 8px; background: #fff; color: var(--black); font: inherit; font-size: 17px; box-sizing: border-box; }
+    .inst-material input[type=email]:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+    .inst-material-aceite { display: flex; gap: 12px; align-items: flex-start; font-size: .95rem; line-height: 1.55; color: var(--text); cursor: pointer; }
+    .inst-material-aceite input { flex: 0 0 auto; width: 24px; height: 24px; margin: 1px 0 0; accent-color: var(--red); }
+    .inst-material button.btn, .inst-material-baixar .btn { min-height: 52px; width: 100%; justify-content: center; font-size: 1.05rem; border: 0; cursor: pointer; }
+    .inst-material button[disabled] { opacity: .7; cursor: progress; }
+    .inst-material-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .inst-secao .inst-material-recado { margin: 14px 0 0; font-size: 1.05rem; line-height: 1.5; font-weight: 600; color: #14532d; }
+    .inst-secao .inst-material-recado:empty { display: none; }
+    .inst-secao .inst-material-recado[data-erro] { color: #991b1b; }
+    .inst-secao .inst-material-baixar { margin: 14px 0 0; }
+    @media (max-width: 620px) {
+      .inst-material { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
+      .inst-material-capa { max-width: 150px; }
+    }
+  </style>"""
+
+MATERIAL_JS = """<script>
+  /* Material com e-mail: manda o pedido para a Redação e, aceito, mostra o botão de baixar (gerar_institucional.py). */
+  (function () {
+    var caixa = document.querySelector('.inst-material'); if (!caixa) return;
+    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
+    var chave = caixa.getAttribute('data-chave');
+    function liberar(recado) { f.hidden = true; baixar.hidden = false; r.removeAttribute('data-erro'); r.textContent = recado; }
+    try { if (window.localStorage && localStorage.getItem(chave)) liberar('Você já deixou o seu e-mail neste aparelho. Toque no botão para baixar.'); } catch (e) {}
+    if (!window.fetch) return;
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var b = f.querySelector('button[type=submit]'), rotulo = b.textContent, d = new FormData(f);
+      b.disabled = true; b.textContent = 'Enviando…'; r.removeAttribute('data-erro'); r.textContent = '';
+      fetch(f.action, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: d.get('email'), site: d.get('site'), consentimento: d.get('consentimento') === '1', material: d.get('material'), origem: 'materia' }) })
+        .then(function (x) { return x.json().catch(function () { return {}; }); })
+        .then(function (resp) {
+          if (resp && resp.ok) {
+            liberar('Pronto! Toque no botão abaixo para baixar. Também enviamos o link para o seu e-mail (confira a caixa de spam).');
+            try { localStorage.setItem(chave, '1'); } catch (e) {}
+            try { if (typeof gtag === 'function') gtag('event', caixa.getAttribute('data-evento'), { origem: 'pagina' }); } catch (e) {}
+            var a = baixar.querySelector('a'); if (a) a.focus();
+          } else {
+            r.setAttribute('data-erro', '1'); r.textContent = (resp && resp.erro) || 'Não foi possível concluir agora. Tente de novo.';
+          }
+        })
+        .catch(function () { r.setAttribute('data-erro', '1'); r.textContent = 'Não foi possível concluir agora. Confira a sua conexão e tente de novo.'; })
+        .then(function () { b.disabled = false; b.textContent = rotulo; });
+    });
+  })();
+</script>"""
+
+
 def tratar_html(html: str, titulo: str = "") -> str:
     """Links externos abrem em outra aba; tabelas ganham rolagem horizontal no celular."""
     def link(m: re.Match) -> str:
@@ -420,6 +491,8 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
     tem_video = any('class="inst-video"' in s["html"] for s in p["secoes"])
     video_css, video_js = ("\n" + VIDEO_CSS, "\n" + VIDEO_JS) if tem_video else ("", "")
     evento_js = "\n" + EVENTO_JS if any("data-evento=" in s["html"] for s in p["secoes"]) else ""
+    tem_material = any('class="inst-material"' in s["html"] for s in p["secoes"])
+    material_css, material_js = ("\n" + MATERIAL_CSS, "\n" + MATERIAL_JS) if tem_material else ("", "")
     perguntas = ""
     if p.get("perguntas"):
         itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{resposta_html(q)}</p></details>" for q in p["perguntas"])
@@ -460,7 +533,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 {partes["estilo"]}
-{CSS}{video_css}
+{CSS}{video_css}{material_css}
 {ga4}
 {partes["pixel"]}
 {json_ld(p, paginas)}
@@ -504,7 +577,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
 {partes["footer"]}
 
 {partes["menu_js"]}
-{chat_widget.tags()}{video_js}{evento_js}
+{chat_widget.tags()}{video_js}{evento_js}{material_js}
 </body>
 </html>
 """
