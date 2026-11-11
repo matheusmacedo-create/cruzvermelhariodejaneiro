@@ -1,0 +1,67 @@
+{
+  "slug": "mochila-de-emergencia",
+  "arquivo": "mochila-de-emergencia-cruz-vermelha-rj.pdf",
+  "titulo": "Mochila de emergência: lista para conferir",
+  "sub": "Marque com um X o que já está na mochila. Deixe-a perto da porta principal, num lugar seco que a família inteira conheça. É o que você leva se precisar sair de casa às pressas, para os 3 primeiros dias (72 horas).",
+  "credito": "Listas adaptadas das Cruzes Vermelhas Americana e Canadense, da Federação Internacional (FICV) e da Defesa Civil",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": { "secao": "lista", "formato": "tabela" },
+          "no_papel": {
+            "Veja abaixo quanto levar.": "Leve o que conseguir carregar a pé, em garrafas pequenas.",
+            " Veja o que pôr no kit de primeiros socorros.": "",
+            "Veja quais documentos levar.": "A lista está na folha 2.",
+            " Veja o que fazer na falta de luz.": ""
+          }
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "Documentos, num saco plástico bem fechado",
+          "itens": [
+            "Cópias da identidade, do CPF e da carteira de motorista de cada pessoa",
+            "Cópias das certidões e do cartão do SUS ou do plano de saúde",
+            "Comprovante de endereço e escritura ou contrato de aluguel",
+            "Lista dos remédios de cada um, com doenças e alergias, e cópias das receitas"
+          ]
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Acrescente o que a sua casa precisa",
+          "itens": [
+            "Bebês: fraldas, mamadeira, fórmula e comida de bebê",
+            "Crianças: um brinquedo, um jogo ou um livro",
+            "Idosos: remédios de uso contínuo, receitas e óculos reserva",
+            "Pessoas com deficiência: aparelhos do dia a dia e cartão com dados de saúde",
+            "Animais: ração, água, guia ou caixa de transporte e carteira de vacinação"
+          ]
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Na hora de sair",
+          "itens": [
+            "Se as autoridades mandarem sair, saia na hora e leve a mochila.",
+            "Se for seguro, desligue a energia e feche os registros de água e de gás.",
+            "Ajude crianças, idosos e quem tem dificuldade para andar.",
+            "Não pegue atalhos e nunca atravesse ruas inundadas, nem de carro.",
+            "Vá para a casa de parentes ou amigos ou para o abrigo indicado pela Prefeitura.",
+            "Só volte quando a Defesa Civil liberar."
+          ]
+        },
+        { "tipo": "familia_e_emergencia" },
+        {
+          "tipo": "datas",
+          "titulo": "Conferimos a mochila em",
+          "texto": "Confira a cada 6 meses: troque o que venceu e recarregue as baterias."
+        },
+        { "tipo": "curso" }
+      ]
+    }
+  ]
+}

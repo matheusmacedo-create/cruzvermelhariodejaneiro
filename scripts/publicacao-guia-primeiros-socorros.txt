@@ -1,0 +1,27 @@
+# Guia do kit de primeiros socorros em PDF (11/11/2026, pedido do Matheus): o primeiro guia completo no padrão dos
+# guias gratuitos (docs/padrao-guias-gratuitos.md). Duas folhas para imprimir e marcar e uma com as 23 fontes da página.
+# A página /kit-de-primeiros-socorros/ ganha a seção #baixar: o botão do PDF só aparece depois de a pessoa deixar o
+# e-mail e marcar o aceite; o pedido vai para a Redação (material kit-de-primeiros-socorros, lib/newsletter/materiais.ts),
+# que grava o e-mail e manda uma cópia do link. Eventos primeiros_socorros_pedir e primeiros_socorros_baixar
+# (docs/rastreamento.md). A página também troca o endereço do Manual de Primeiros Socorros do Ministério da Saúde e da
+# Fiocruz, que saiu do ar em fiocruz.br (404), pela cópia da Biblioteca Virtual em Saúde.
+# ESTADO: NÃO PUBLICADO.
+# Antes de publicar: abrir no navegador https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf e
+# confirmar que é o manual de 2003 (o servidor recusa leitura automática, e a sessão não conseguiu abrir).
+# Gerar antes: python3 scripts/gerar_institucional.py kit-de-primeiros-socorros && python3 scripts/gerar_guia_pdf.py kit-de-primeiros-socorros
+# ORDEM, e ela importa:
+#   1. A Redação primeiro: mesclar o PR que cadastra o material kit-de-primeiros-socorros. Sem ele, a rota responde
+#      "Este formulário está desatualizado" e ninguém consegue liberar o botão.
+#   2. Publicar aqui, o PDF e a capa antes da página:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-guia-primeiros-socorros.txt)
+#   3. Limpar o cache e conferir no celular: deixar um e-mail de teste, ver o botão aparecer e o PDF abrir, e ver a
+#      mensagem chegar com "Baixar a lista em PDF".
+#   4. Na Redação, "Regerar as páginas das matérias" (Configurações › Site): as 6 matérias de primeiros socorros
+#      trocam a caixa da lista do kit de emergência pela do kit de primeiros socorros. Enquanto este PDF não responder
+#      200, elas saem sem a caixa.
+#   5. python3 scripts/gerar_sitemaps.py e publicar os sitemaps (o lastmod da página muda).
+# Desfazer: scripts/desfazer_publicacao.sh 553cc89 scripts/publicacao-guia-primeiros-socorros.txt (a página volta, o
+# PDF e a capa são apagados). Desfeito, regerar as matérias de novo: elas ficam sem a caixa até o PDF voltar.
+site/kit-de-primeiros-socorros/kit-de-primeiros-socorros-cruz-vermelha-rj.pdf
+site/kit-de-primeiros-socorros/capa-kit-de-primeiros-socorros.webp
+site/kit-de-primeiros-socorros/index.html

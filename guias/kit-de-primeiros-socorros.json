@@ -1,0 +1,78 @@
+{
+  "slug": "kit-de-primeiros-socorros",
+  "arquivo": "kit-de-primeiros-socorros-cruz-vermelha-rj.pdf",
+  "titulo": "Kit de primeiros socorros: lista para conferir",
+  "sub": "Marque com um X o que já está na caixa. As quantidades são para uma família de 4 pessoas. Guarde o kit num lugar seco, fácil de alcançar para os adultos e que todos da casa conheçam.",
+  "credito": "Lista da Cruz Vermelha Americana, adaptada pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          },
+          "no_papel": {
+            "Não use no olho, no ouvido ou no nariz, nem em ferrão de abelha, que se tira raspando a pele com uma lâmina limpa (Fiocruz).": "Não use no olho, no ouvido ou no nariz, nem em ferrão de abelha (Fiocruz)."
+          }
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "Vale acrescentar",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "lista"
+          },
+          "sem_fonte": true
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "O que vai junto na caixa",
+          "itens": [
+            "Uma lista do que tem dentro, colada na tampa",
+            "Os telefones do seu médico e de quem pode ajudar",
+            "Os remédios de uso contínuo da família, com as receitas e a lista do que cada um toma"
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Gaze, não algodão.",
+          "texto": "O algodão se desmancha na ferida e prejudica a cicatrização. Remédio, só os de uso contínuo da família. Na tampa, use a cruz branca sobre fundo verde ou escreva “Primeiros socorros”: a cruz vermelha é um emblema protegido."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Num corte que sangra",
+          "itens": [
+            "Lave as mãos e ponha as luvas.",
+            "Corte pequeno: aperte com gaze até parar de sangrar. Depois, enxágue com água, seque e cubra com um curativo.",
+            "Sangramento forte: faça pressão firme com gaze, atadura ou pano limpo dobrado e ligue 192 na hora.",
+            "Se o sangue atravessar, ponha outro pano por cima, sem tirar o primeiro.",
+            "Algo preso no corte: não tire nem aperte em cima. Pressione com firmeza dos dois lados e ligue 192."
+          ]
+        },
+        {
+          "tipo": "familia_e_emergencia",
+          "titulo": "Telefones do médico e da família",
+          "ponto_de_encontro": false,
+          "dica": {
+            "rotulo": "O SAMU",
+            "texto": "atende 24 horas, e a ligação é grátis."
+          }
+        },
+        {
+          "tipo": "datas",
+          "titulo": "Conferimos o kit em",
+          "texto": "Reponha logo o que for usado. A cada 6 meses, confira a validade, os lacres e a cola dos curativos."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
