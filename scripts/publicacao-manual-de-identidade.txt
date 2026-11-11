@@ -5,7 +5,8 @@
 # de baixar só aparece depois de a pessoa deixar o e-mail e marcar o aceite; o pedido vai para a Redação (material
 # manual-de-identidade, lib/newsletter/materiais.ts), que grava o e-mail e manda uma cópia do link. O .htaccess tira o
 # PDF da busca do Google (X-Robots-Tag), para quem procura chegar à página e não ao arquivo solto.
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 11/11/2026, às 19h15 (horário de Brasília), a pedido do Matheus, a partir da main em 39a9414;
+# cache limpo, arquivos conferidos no ar byte a byte e sitemaps regerados e publicados. Falta o e-mail de teste no formulário.
 # Gerar antes: python3 scripts/gerar_institucional.py manual-de-identidade
 # ORDEM, e ela importa:
 #   1. A Redação primeiro: mesclar o PR que cadastra o material manual-de-identidade. Sem ele, a rota responde
