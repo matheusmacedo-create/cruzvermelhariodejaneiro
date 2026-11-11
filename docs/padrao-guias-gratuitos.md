@@ -47,7 +47,9 @@ Regras fixas:
 - **Sem texto de tela no papel** ("veja abaixo", "clique"). O gerador acusa; a troca vai em `no_papel`, na ficha.
 - **Identidade, do Manual de Identidade Institucional, edição de 2022** (págs. 17 a 22): Montserrat nos títulos e
   Open Sans no texto; vermelho RGB 227/34/25 só em filete e detalhe, cinza-escuro `#1f2324` no texto, cinza
-  `#a7afb2` nos fios e azul-marinho `#011e41` nos subtítulos; o emblema só dentro do logotipo, nunca solto. Caixa de
+  `#a7afb2` nos fios e azul-marinho `#011e41` nos subtítulos; o emblema só dentro do logotipo, nunca solto.
+  **O logotipo é sempre o da filial, com “Rio de Janeiro”** (decisão do Matheus, 11/11/2026), mesmo onde o manual
+  pede o logotipo nacional sem o nome da filial. Caixa de
   primeiros socorros se marca com cruz branca em fundo verde.
 - **Nome do arquivo:** `<slug>-cruz-vermelha-rj.pdf`, na pasta da página. Depois de publicado, o endereço não muda.
 - **Rodapé:** de quem são as listas, onde estão as fontes, a data e "Pode copiar e distribuir, sem alterar".
