@@ -884,8 +884,37 @@
     .hp-escola-cartao p:not(.eyebrow) { color: var(--muted); margin: 0 0 20px; }
     @media (max-width: 620px) { .hp-escola-cartao { padding: 22px 20px; } .hp-escola-cartao .btn { width: 100%; } }
 
-    /* Últimas notícias (19/10/2026): cartões das campanhas, sem imagem, com a data visível. */
+    /* Últimas notícias (11/11/2026): seis matérias com foto. No computador, a principal ocupa duas colunas e duas linhas;
+       até 920 px, a principal fica inteira e as outras viram linhas com miniatura à esquerda (lista curta no celular). */
     .hp-noticias .campaign-card-body time { color: var(--red); font-weight: 800; }
+    .hp-noticias .campaign-card-body p.eyebrow { font-size: .75rem; letter-spacing: .06em; color: var(--muted); }
+    .hp-noticias-grade .campaign-card-body { padding: 18px 20px 20px; }
+    .hp-noticias-grade .campaign-card-body h3 { font-size: 18px; line-height: 1.3; margin: 8px 0 0; }
+    .hp-noticias-grade .campaign-card-body p:not(.eyebrow) { font-size: 16px; margin: 10px 0 18px; }
+    .hp-noticias-grade .campaign-card-body .btn { align-self: flex-start; min-height: 48px; }
+    .hp-noticias-grade .hp-noticia-semfoto {
+      background: var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23ed1b2e' d='M16 0h16v16h16v16H32v16H16V32H0V16h16z'/%3E%3C/svg%3E") center / 44px no-repeat;
+    }
+    @media (min-width: 921px) {
+      .hp-noticias-grade .hp-noticia-principal { grid-column: span 2; grid-row: span 2; }
+      .hp-noticias-grade .hp-noticia-principal .campaign-card-thumb { aspect-ratio: auto; flex: 1; min-height: 300px; }
+      .hp-noticias-grade .hp-noticia-principal .campaign-card-body { flex: 0 0 auto; padding: 24px 28px 28px; }
+      .hp-noticias-grade .hp-noticia-principal h3 { font-size: clamp(22px, 2vw, 28px); }
+    }
+    @media (max-width: 920px) {
+      .hp-noticias-grade { gap: 14px; margin-top: 28px; }
+      .hp-noticias-grade .campaign-card:not(.hp-noticia-principal) { flex-direction: row; align-items: stretch; }
+      .hp-noticias-grade .campaign-card:not(.hp-noticia-principal) .campaign-card-thumb { flex: 0 0 120px; aspect-ratio: auto; min-height: 104px; }
+      .hp-noticias-grade .campaign-card:not(.hp-noticia-principal) .campaign-card-body { padding: 14px 16px; justify-content: center; }
+      .hp-noticias-grade .campaign-card:not(.hp-noticia-principal) .hp-noticia-semfoto { background-size: 30px; }
+      .hp-noticias-grade .hp-noticia-principal h3 { font-size: 21px; }
+      .hp-noticias-grade .hp-noticia-principal .btn { align-self: stretch; }
+    }
+    .hp-noticias-todas { margin: 28px 0 0; }
+    @media (max-width: 620px) { .hp-noticias-todas .btn { width: 100%; } }
+    @media (max-width: 380px) {
+      .hp-noticias-grade .campaign-card:not(.hp-noticia-principal) .campaign-card-thumb { flex-basis: 92px; }
+    }
 
     /* Fundo do hero (16/10/2026): turma do CBFI de 10/10 no salão nobre. Sobrescreve a regra do primeiro <style>,
        que os geradores copiam para as outras páginas. */
@@ -1462,7 +1491,7 @@
       </div>
     </section>
 
-    <!-- Últimas notícias (19/10/2026): a lista entre os marcadores é escrita por scripts/gerar_noticias_home.py, a partir
+    <!-- Últimas notícias (19/10/2026; seis com foto desde 11/11/2026): a lista entre os marcadores é escrita por scripts/gerar_noticias_home.py, a partir
          do índice /noticias/ da Redação, e o script no fim da página a atualiza no navegador com o mesmo índice. -->
     <section class="campaigns-section hp-noticias" id="noticias" aria-labelledby="noticias-titulo" style="background:#fff">
       <div class="wrap">
@@ -1470,34 +1499,54 @@
         <h2 id="noticias-titulo">Últimas notícias</h2>
         <p class="lead">O que a filial publica sobre prevenção, voluntariado e o Movimento Internacional da Cruz Vermelha.</p>
         <!-- noticias:inicio -->
-        <div class="campaigns-grid" data-noticias-home data-quantas="3" data-fora="conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva curso-de-bombeiro-civil-o-que-faz-e-como-se-formar curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa curso-de-primeiros-socorros-domine-com-poucas-aulas curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer homologacao-de-bombeiro-civil-no-cbmerj-como-funciona">
-          <a class="campaign-card" href="/noticias/termo-de-adesao-de-voluntario-o-que-e-e-o-que-deve-ter/">
+        <div class="campaigns-grid hp-noticias-grade" data-noticias-home data-quantas="6" data-fora="conhecimento-tambem-salva-vidas-cruz-vermelha-brasileira-rio-de-janeiro-leva curso-de-bombeiro-civil-o-que-faz-e-como-se-formar curso-de-cuidador-de-idosos-o-que-faz-e-como-se-capacitar curso-de-micropigmentacao-labial-o-que-e-e-como-se-especializar curso-de-primeiros-socorros-basico-para-o-dia-a-dia-em-casa curso-de-primeiros-socorros-domine-com-poucas-aulas curso-de-primeiros-socorros-lei-lucas-o-que-a-lei-exige-das-escolas curso-de-puncao-venosa-para-quem-e-e-o-que-aprofunda curso-de-socorrista-o-que-e-e-o-que-um-curso-livre-ensina curso-de-suporte-basico-de-vida-o-que-e-e-quem-deveria-fazer homologacao-de-bombeiro-civil-no-cbmerj-como-funciona" data-caderno-fora="cursos" data-assunto-fora="Cursos e formação">
+          <a class="campaign-card hp-noticia-principal" href="/noticias/como-cuidar-de-idoso-com-alzheimer-no-dia-a-dia/">
+            <div class="campaign-card-thumb"><img alt="" src="https://cruzvermelhariodejaneiro.org/noticias/como-cuidar-de-idoso-com-alzheimer-no-dia-a-dia/maos-de-uma-senhora-idosa-fazendo-croche-com-linha-branca-em-480.webp" srcset="https://cruzvermelhariodejaneiro.org/noticias/como-cuidar-de-idoso-com-alzheimer-no-dia-a-dia/maos-de-uma-senhora-idosa-fazendo-croche-com-linha-branca-em-480.webp 480w, https://cruzvermelhariodejaneiro.org/noticias/como-cuidar-de-idoso-com-alzheimer-no-dia-a-dia/maos-de-uma-senhora-idosa-fazendo-croche-com-linha-branca-em-960.webp 960w" sizes="(max-width: 920px) 100vw, 740px" width="1600" height="1067" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem"><time datetime="2026-10-17T18:02:04.109000Z">17 de outubro de 2026</time></p>
-              <h3>Termo de adesão voluntário: o que é e o que deve ter</h3>
-              <p>Termo de adesão voluntário: o que é, por que a Lei 9.608/1998 o exige, o que deve constar nele e o que conferir antes de assinar.</p>
+              <p class="eyebrow">Cuidado com idosos · <time datetime="2026-11-10T13:20:04.688000Z">10 de novembro de 2026</time></p>
+              <h3>Cuidar de idoso com Alzheimer: guia para o dia a dia</h3>
+              <p>Como cuidar de idoso com Alzheimer no dia a dia: rotina, conversa, segurança da casa e quando procurar a equipe de saúde, segundo o Ministério da Saúde.</p>
               <span class="btn btn-outline">Ler a notícia</span>
             </div>
           </a>
-          <a class="campaign-card" href="/noticias/henry-dunant-quem-foi-o-fundador-da-cruz-vermelha/">
+          <a class="campaign-card" href="/noticias/banho-no-leito-do-idoso/">
+            <div class="campaign-card-thumb"><img alt="" src="https://cruzvermelhariodejaneiro.org/noticias/banho-no-leito-do-idoso/jarra-e-bacia-esmaltadas-decoradas-com-flores-sobre-um-barri-480.webp" srcset="https://cruzvermelhariodejaneiro.org/noticias/banho-no-leito-do-idoso/jarra-e-bacia-esmaltadas-decoradas-com-flores-sobre-um-barri-480.webp 480w, https://cruzvermelhariodejaneiro.org/noticias/banho-no-leito-do-idoso/jarra-e-bacia-esmaltadas-decoradas-com-flores-sobre-um-barri-960.webp 960w" sizes="(max-width: 920px) 120px, 360px" width="1600" height="900" loading="lazy" decoding="async"></div>
             <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem"><time datetime="2026-10-17T17:59:47.914000Z">17 de outubro de 2026</time></p>
-              <h3>Henry Dunant: quem foi o fundador da Cruz Vermelha</h3>
-              <p>Saiba quem foi Henry Dunant, o empresário suíço que propôs a ajuda humanitária organizada, ajudou a fundar o CICV e recebeu o primeiro Nobel da Paz.</p>
-              <span class="btn btn-outline">Ler a notícia</span>
+              <p class="eyebrow">Cuidado com idosos · <time datetime="2026-11-09T13:20:01.752000Z">9 de novembro de 2026</time></p>
+              <h3>Banho no leito do idoso: cuidados de quem cuida</h3>
             </div>
           </a>
-          <a class="campaign-card" href="/noticias/sms-40199-como-receber-alertas-da-defesa-civil-no-rio/">
+          <a class="campaign-card" href="/noticias/caderneta-da-pessoa-idosa-para-que-serve/">
+            <div class="campaign-card-thumb hp-noticia-semfoto" aria-hidden="true"></div>
             <div class="campaign-card-body">
-              <p class="eyebrow" style="font-size:.7rem"><time datetime="2026-10-17T17:57:06.135000Z">17 de outubro de 2026</time></p>
-              <h3>SMS 40199: como receber alertas da Defesa Civil no Rio</h3>
-              <p>Veja como se cadastrar no SMS 40199 com o CEP, como consultar e cancelar o cadastro, o que chega no celular e como receber alertas pelo WhatsApp.</p>
-              <span class="btn btn-outline">Ler a notícia</span>
+              <p class="eyebrow">Cuidado com idosos · <time datetime="2026-11-09T13:15:02.015000Z">9 de novembro de 2026</time></p>
+              <h3>Caderneta da pessoa idosa: para que serve e como usar</h3>
+            </div>
+          </a>
+          <a class="campaign-card" href="/noticias/restabelecimento-de-lacos-familiares/">
+            <div class="campaign-card-thumb"><img alt="" src="https://cruzvermelhariodejaneiro.org/noticias/restabelecimento-de-lacos-familiares/dois-telefones-publicos-em-forma-de-concha-um-azul-e-um-verd-480.webp" srcset="https://cruzvermelhariodejaneiro.org/noticias/restabelecimento-de-lacos-familiares/dois-telefones-publicos-em-forma-de-concha-um-azul-e-um-verd-480.webp 480w, https://cruzvermelhariodejaneiro.org/noticias/restabelecimento-de-lacos-familiares/dois-telefones-publicos-em-forma-de-concha-um-azul-e-um-verd-960.webp 960w" sizes="(max-width: 920px) 120px, 360px" width="1600" height="900" loading="lazy" decoding="async"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow">História e Movimento · <time datetime="2026-11-09T13:10:02.311000Z">9 de novembro de 2026</time></p>
+              <h3>Restabelecimento de laços familiares: como funciona</h3>
+            </div>
+          </a>
+          <a class="campaign-card" href="/noticias/crianca-bateu-a-cabeca-o-que-fazer/">
+            <div class="campaign-card-thumb hp-noticia-semfoto" aria-hidden="true"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow">Primeiros socorros · <time datetime="2026-11-09T13:05:02.747000Z">9 de novembro de 2026</time></p>
+              <h3>Criança bateu a cabeça: o que fazer e quando ligar 192</h3>
+            </div>
+          </a>
+          <a class="campaign-card" href="/noticias/voluntariado-conta-como-horas-complementares/">
+            <div class="campaign-card-thumb hp-noticia-semfoto" aria-hidden="true"></div>
+            <div class="campaign-card-body">
+              <p class="eyebrow">Voluntariado · <time datetime="2026-11-09T13:00:04.974000Z">9 de novembro de 2026</time></p>
+              <h3>Voluntariado horas complementares: conta ou não?</h3>
             </div>
           </a>
         </div>
         <!-- noticias:fim -->
-        <p class="hp-links-linha"><a href="/noticias/">Todas as notícias</a></p>
+        <p class="hp-noticias-todas"><a class="btn btn-red" href="/noticias/">Ver todas as notícias</a></p>
       </div>
     </section>
 
@@ -1884,32 +1933,62 @@
   </script>
   <script>
     // Últimas notícias: depois de a página carregar, refaz a lista com o índice /noticias/ da Redação (o mesmo que
-    // scripts/gerar_noticias_home.py lê), para a home acompanhar cada publicação. Sem índice legível, fica a lista gravada.
+    // scripts/gerar_noticias_home.py lê, com as mesmas regras), para a home acompanhar cada publicação. Sem índice
+    // legível, fica a lista gravada.
     (function () {
       var grade = document.querySelector('[data-noticias-home]');
       if (!grade || !window.fetch || !window.DOMParser) return;
-      var fora = (grade.getAttribute('data-fora') || '').split(' '), quantas = parseInt(grade.getAttribute('data-quantas'), 10) || 3;
+      var fora = (grade.getAttribute('data-fora') || '').split(' '), quantas = parseInt(grade.getAttribute('data-quantas'), 10) || 6;
+      var cadernoFora = grade.getAttribute('data-caderno-fora') || '', assuntoFora = grade.getAttribute('data-assunto-fora') || '';
       var origem = 'https://cruzvermelhariodejaneiro.org';
       function elemento(tag, classe, texto) { var e = document.createElement(tag); if (classe) e.className = classe; if (texto) e.textContent = texto; return e; }
+      function slugDe(url) { return url.replace(/\/+$/, '').split('/').pop(); }
+      function foto(n, sizes) {
+        var caixa = elemento('div', 'campaign-card-thumb');
+        if (!n.img) { caixa.className += ' hp-noticia-semfoto'; caixa.setAttribute('aria-hidden', 'true'); return caixa; }
+        var img = elemento('img'), srcset = n.srcset.split(',').map(function (x) { return x.trim(); })
+          .filter(function (x) { return x && !/ 1600w$/.test(x); }).join(', ');
+        img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.width = n.largura; img.height = n.altura;
+        if (srcset) { img.srcset = srcset; img.sizes = sizes; img.src = srcset.split(' ')[0]; } else img.src = n.img;
+        caixa.appendChild(img);
+        return caixa;
+      }
       function atualizar() {
         fetch('/noticias/', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
           if (!t) return;
-          var doc = new DOMParser().parseFromString(t, 'text/html'), itens = [];
-          Array.prototype.forEach.call(doc.querySelectorAll('a.manchete, ul.grade > li > a'), function (a) {
-            var url = a.getAttribute('href') || '', h = a.querySelector('h2, h3'), tempo = a.querySelector('time'), p = a.querySelector('p');
-            var slug = url.replace(/\/+$/, '').split('/').pop();
-            if (!h || !tempo || url.indexOf(origem + '/noticias/') !== 0 || fora.indexOf(slug) >= 0) return;
-            itens.push({ url: url.slice(origem.length), titulo: h.textContent.trim(), descricao: p ? p.textContent.trim() : '',
-                         quando: tempo.getAttribute('datetime') || '', data: tempo.textContent.trim(), ms: Date.parse(tempo.getAttribute('datetime')) || 0 });
+          var doc = new DOMParser().parseFromString(t, 'text/html'), porUrl = {}, lista = [];
+          if (cadernoFora) Array.prototype.forEach.call(doc.querySelectorAll('section.caderno#' + cadernoFora + ' a[href]'), function (a) {
+            fora.push(slugDe(a.getAttribute('href')));
           });
+          Array.prototype.forEach.call(doc.querySelectorAll('main a[href]'), function (a) {
+            var url = a.getAttribute('href') || '', h = a.querySelector('h2, h3'), tempo = a.querySelector('time');
+            if (!h || !tempo || url.indexOf(origem + '/noticias/') !== 0) return;
+            var n = porUrl[url];
+            if (!n) {
+              n = porUrl[url] = { url: url.slice(origem.length), slug: slugDe(url), titulo: h.textContent.trim(), assunto: '', descricao: '',
+                                  quando: tempo.getAttribute('datetime') || '', data: tempo.textContent.trim(), img: '', srcset: '',
+                                  ms: Date.parse(tempo.getAttribute('datetime')) || 0 };
+              lista.push(n);
+            }
+            var k = a.querySelector('.kicker'), p = a.querySelector('p'), img = a.querySelector('img'), webp = a.querySelector('source[type="image/webp"]');
+            if (!n.assunto && k) n.assunto = k.textContent.trim();
+            if (!n.descricao && p) n.descricao = p.textContent.trim();
+            if (!n.img && img) { n.img = img.getAttribute('src') || ''; n.largura = img.getAttribute('width'); n.altura = img.getAttribute('height');
+                                 n.srcset = webp ? webp.getAttribute('srcset') || '' : ''; }
+          });
+          var itens = lista.filter(function (n) { return fora.indexOf(n.slug) < 0 && n.assunto !== assuntoFora; });
           if (!itens.length) return;
           itens.sort(function (x, y) { return y.ms - x.ms; });
-          var cartoes = itens.slice(0, quantas).map(function (n) {
-            var a = elemento('a', 'campaign-card'), corpo = elemento('div', 'campaign-card-body'), linha = elemento('p', 'eyebrow'), quando = elemento('time', '', n.data);
-            a.href = n.url; linha.style.fontSize = '.7rem'; quando.setAttribute('datetime', n.quando);
+          var cartoes = itens.slice(0, quantas).map(function (n, i) {
+            var principal = i === 0, a = elemento('a', 'campaign-card' + (principal ? ' hp-noticia-principal' : '')),
+                corpo = elemento('div', 'campaign-card-body'), linha = elemento('p', 'eyebrow'), quando = elemento('time', '', n.data);
+            a.href = n.url; quando.setAttribute('datetime', n.quando);
+            if (n.assunto) linha.appendChild(document.createTextNode(n.assunto + ' · '));
             linha.appendChild(quando); corpo.appendChild(linha); corpo.appendChild(elemento('h3', '', n.titulo));
-            if (n.descricao) corpo.appendChild(elemento('p', '', n.descricao));
-            corpo.appendChild(elemento('span', 'btn btn-outline', 'Ler a notícia')); a.appendChild(corpo);
+            if (principal && n.descricao) corpo.appendChild(elemento('p', '', n.descricao));
+            if (principal) corpo.appendChild(elemento('span', 'btn btn-outline', 'Ler a notícia'));
+            a.appendChild(foto(n, principal ? '(max-width: 920px) 100vw, 740px' : '(max-width: 920px) 120px, 360px'));
+            a.appendChild(corpo);
             return a;
           });
           while (grade.firstChild) grade.removeChild(grade.firstChild);

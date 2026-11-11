@@ -638,10 +638,16 @@ de 4) mexeu só nas fontes; nada foi publicado e a regeração completa fica par
   cartões de curso e o bloco "No trauma, ajudar é fazer a coisa certa" (que terminava em venda); newsletter e
   contato com a missão antes dos cursos (o texto do aceite da newsletter não mudou: é o mesmo gravado pela Redação
   em `lib/newsletter/inscricao.ts`).
-- **Últimas notícias:** `scripts/gerar_noticias_home.py` lê o índice `/noticias/` da Redação e escreve as 3 mais
+- **Últimas notícias:** `scripts/gerar_noticias_home.py` lê o índice `/noticias/` da Redação e escreve as 6 mais
   recentes entre `<!-- noticias:inicio -->` e `<!-- noticias:fim -->`; as matérias de venda de curso (11 slugs,
   achado C7) ficam fora. Um script no fim da home refaz a lista no navegador com o mesmo índice, depois do
   `load`, para a home acompanhar cada publicação da Redação sem republicar `index.html`.
+  **11/11/2026:** a Redação passou o índice para o layout "jornal" (manchete, `ul.secundarias`, cadernos) e o
+  script do navegador, que procurava `ul.grade`, só achava a manchete: a home mostrava uma notícia. Os dois leitores
+  agora pegam todo link de matéria do `<main>` (somando foto, assunto e linha fina das várias aparições) e a home
+  mostra **6**: a principal com foto grande (duas colunas no computador) e mais cinco; até 920 px as cinco viram
+  linhas com miniatura à esquerda. Matéria sem foto ganha um quadro com a cruz. Além dos 11 slugs, ficam fora o
+  caderno `#cursos` e o assunto "Cursos e formação" (mesmo motivo do C7). O link virou o botão "Ver todas as notícias".
 - **FAQ da home:** 9 perguntas (instituição, como ajudar, voluntariado e uma da escola, "tem cursos gratuitos?"),
   nenhuma com preço; a resposta da doação diz que ela é feita em `/doe/`, por PIX ou cartão; a de emergências não
   apresenta mais curso como o que a filial oferece. As outras perguntas de curso seguem no JSON (`"home": false`)
