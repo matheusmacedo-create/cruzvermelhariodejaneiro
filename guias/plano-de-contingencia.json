@@ -1,0 +1,109 @@
+{
+  "slug": "plano-de-contingencia",
+  "arquivo": "plano-de-contingencia-cruz-vermelha-rj.pdf",
+  "capa": "capa-plano-de-contingencia.webp",
+  "titulo": "Roteiro do plano de contingência",
+  "sub": "Responda em reunião, com quem decide e com quem vai executar. As respostas são o esqueleto do plano do seu município, escola, empresa, condomínio ou comunidade.",
+  "credito": "Roteiro de apoio da filial, que não substitui o modelo oficial do seu município nem a orientação da Defesa Civil local",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "perguntas",
+          "linhas": 2,
+          "itens": [
+            [
+              "Qual é o risco?",
+              "Enchente, deslizamento, vendaval, calor extremo, incêndio. Onde acontece e em que época do ano."
+            ],
+            [
+              "Quem está exposto?",
+              "Quantas pessoas moram, estudam ou trabalham na área. Quem precisa de ajuda para sair: crianças, idosos, pessoas com deficiência, acamados."
+            ],
+            [
+              "O que dispara o alerta, e quem decide?",
+              "Chuva acumulada, nível do rio, aviso da Defesa Civil. Nome de quem decide e de um substituto."
+            ],
+            [
+              "Como avisamos todo mundo?",
+              "Sirene, SMS 40199, grupo de mensagens, carro de som, porta a porta. Deixe a mensagem já escrita."
+            ],
+            [
+              "Por onde saímos, e para onde vamos?",
+              "A rota mais segura, sinalizada, e o ponto de encontro: alto, firme e conhecido de todos."
+            ],
+            [
+              "Onde as pessoas ficam, se não puderem voltar?",
+              "Abrigo, casa de parentes, escola, igreja. Quem cuida da água, da comida e da higiene."
+            ],
+            [
+              "Que recursos temos?",
+              "Veículos, lanternas, rádio, kit de primeiros socorros, kit de emergência, contatos de quem pode ajudar."
+            ],
+            [
+              "Quando treinamos?",
+              "Um simulado por ano, pelo menos. Data do próximo:"
+            ],
+            [
+              "Quando revisamos o plano?",
+              "Depois de cada simulado e de cada emergência real. Próxima revisão:"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "ficha",
+          "titulo": "Quem faz o quê",
+          "colunas": [
+            "Tarefa",
+            "Responsável",
+            "Substituto",
+            "Telefone"
+          ],
+          "rotulos": [
+            "Coordenação geral",
+            "Acompanhar os alertas",
+            "Avisar as pessoas",
+            "Conduzir a saída pela rota",
+            "Contar quem chegou ao ponto de encontro",
+            "Ajudar quem tem dificuldade de sair",
+            "Primeiros socorros",
+            "Falar com a Defesa Civil e a imprensa"
+          ]
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Níveis de alerta: o que fazemos em cada um",
+          "colunas": [
+            "Nível",
+            "O que dispara",
+            "O que fazemos"
+          ],
+          "rotulos": [
+            "Observação",
+            "Alerta",
+            "Alarme (sair agora)"
+          ],
+          "altura_mm": 11
+        },
+        {
+          "tipo": "campos",
+          "titulo": "Ponto de encontro e abrigo",
+          "itens": [
+            "Ponto de encontro:",
+            "Abrigo:",
+            "Defesa Civil do município (telefone):"
+          ]
+        },
+        {
+          "tipo": "familia_e_emergencia",
+          "titulo": "Telefones de quem pode ajudar",
+          "ponto_de_encontro": false
+        }
+      ]
+    }
+  ]
+}

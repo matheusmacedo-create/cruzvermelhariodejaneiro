@@ -1,0 +1,7 @@
+# Materiais para instituições (11/11/2026): o PDF fica fora da busca do Google, para quem procura chegar à página (que
+# pede o e-mail antes de mostrar o botão de baixar) e não ao arquivo solto. A página continua indexada.
+<IfModule mod_headers.c>
+  <FilesMatch "\.pdf$">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+</IfModule>

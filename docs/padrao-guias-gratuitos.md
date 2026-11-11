@@ -37,6 +37,13 @@ A ficha `guias/<slug>.json` diz o que vai em cada folha; o desenho fica só no g
 | `familia_e_emergencia` | Telefones da família para preencher e os telefones de emergência. Aceita `titulo`, `ponto_de_encontro` e `dica`. |
 | `datas` | As datas em que a família conferiu. |
 | `curso` | O convite do curso, igual em todos. |
+| `checklist` | O que fazer, com quadradinho: título e uma linha de detalhe, sem a coluna "quanto" (11/11/2026, Lei Lucas). |
+| `ficha` | Tabela para preencher: `colunas` e `linhas` em branco, ou `rotulos` na 1ª coluna; `altura_mm` opcional. |
+| `campos` | Rótulos com uma linha ao lado para escrever ("Escola:", "Ponto de encontro:"). |
+| `perguntas` | Perguntas numeradas, com uma linha de explicação e `linhas` para a resposta (plano de contingência). |
+| `emergencia` | O cartaz: `passos` à esquerda, `telefones` e um `campo` para preencher à direita, num quadro vermelho. |
+
+Com `"capa"` na ficha, o gerador grava também a folha 1 em WebP de 480 × 679, que a página mostra ao lado do formulário.
 
 Regras fixas:
 
@@ -72,4 +79,5 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Kit de emergência | no ar | PDF próprio, de antes do padrão (`gerar_pdf_kit.py`) | sim |
 | Mochila de emergência | no ar | modelo do padrão, gerado e não publicado | não |
 | Kit de primeiros socorros | no ar | **primeiro guia completo no padrão, gerado e não publicado** | sim: formulário na página e caixa nas matérias de primeiros socorros (não publicado) |
-| Lei Lucas | só matéria em notícias | falta | não |
+| Lei Lucas para escolas | `/lei-lucas-para-escolas/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: checklist, ficha dos capacitados e cartaz de emergência | sim (não publicado) |
+| Plano de contingência | `/plano-de-contingencia/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: perguntas com linhas, ficha de quem faz o quê e níveis de alerta | sim (não publicado) |

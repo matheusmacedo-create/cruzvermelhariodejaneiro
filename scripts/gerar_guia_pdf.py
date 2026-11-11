@@ -131,6 +131,42 @@ def bloco(b: dict, pagina: dict) -> str:
     <p class="dica">{dica}</p>
   </div>
 </div>"""
+    if tipo == "checklist":  # o que fazer, com quadradinho para marcar: título e uma linha de detalhe (sem a coluna "quanto")
+        itens = "\n".join(q(f'<b>{e(t)}</b><p>{e(d)}</p>' if d else f'<b>{e(t)}</b>') for t, d in b["itens"])
+        return f'{titulo}<ul class="marcar det">\n{itens}\n</ul>'
+    if tipo == "campos":  # rótulos com uma linha para escrever ao lado: "Escola", "Ponto de encontro"
+        itens = "\n".join(f'<p class="campo"><b>{e(r)}</b><span></span></p>' for r in b["itens"])
+        return f'{titulo}<div class="campos">\n{itens}\n</div>'
+    if tipo == "ficha":  # tabela para preencher: colunas e linhas em branco, ou a 1ª coluna já escrita (rotulos)
+        colunas = b["colunas"]
+        rotulos = b.get("rotulos") or [""] * b.get("linhas", 6)
+        altura = f' style="height:{b["altura_mm"]}mm"' if b.get("altura_mm") else ""
+        cab = "".join(f"<th>{e(c)}</th>" for c in colunas)
+        linhas = "\n".join(f'<tr{altura}><td class="rot">{e(r)}</td>' + "<td></td>" * (len(colunas) - 1) + "</tr>" for r in rotulos)
+        return f'{titulo}<table class="ficha"><thead><tr>{cab}</tr></thead><tbody>\n{linhas}\n</tbody></table>'
+    if tipo == "perguntas":  # perguntas numeradas, com uma linha de explicação e linhas para a resposta
+        vazias = '<span class="linha"></span>' * b.get("linhas", 2)
+        itens = "\n".join(f'<li><b>{e(t)}</b><p>{e(d)}</p>{vazias}</li>' for t, d in b["itens"])
+        return f'{titulo}<ol class="perguntas">\n{itens}\n</ol>'
+    if tipo == "emergencia":  # o cartaz: passos à esquerda, telefones (e um campo para preencher) à direita
+        passos = "\n".join(f"<li>{e(i)}</li>" for i in b["passos"])
+        tels = "".join(f"<li><b>{e(n)}</b> {e(o)}</li>" for n, o in b["telefones"])
+        campo = (f'<p class="dica"><b>{e(b["campo"])}</b></p><div class="linhas"><span></span></div><div class="linhas"><span></span></div>'
+                 if b.get("campo") else "")
+        dica = f'<p class="dica"><b>{e(b["dica"]["rotulo"])}</b> {e(b["dica"]["texto"])}</p>' if b.get("dica") else ""
+        return f"""<div class="cartaz">
+  <h2>{e(b["titulo"])}</h2>
+  <div class="duas">
+    <ol class="passos">
+{passos}
+    </ol>
+    <div>
+      <ul class="tel">{tels}</ul>
+      {dica}
+      {campo}
+    </div>
+  </div>
+</div>"""
     if tipo == "curso":  # o convite, igual em todos: diz que o curso é pago e quem vende (regra do Ad Grants)
         return (f'<p class="curso"><b>A lista ajuda, mas é a pessoa que socorre.</b> Aprenda primeiros socorros na prática, no Palácio da '
                 f'Cruz Vermelha, no Centro do Rio. Cursos presenciais pagos, vendidos pela escola (O-CVB Filial Rio de Janeiro Ensino Ltda): '
@@ -228,6 +264,21 @@ def documento(ficha: dict, pagina: dict, logo_b64: str) -> str:
   .fontes li {{ padding: .7mm 0; break-inside: avoid; }}
   .fontes li b {{ font-weight: 600; }}
   .fontes li span {{ display: block; font-size: 7.4pt; overflow-wrap: anywhere; }}
+  .campos {{ display: flex; flex-wrap: wrap; gap: 1mm 6mm; margin: 1mm 0 2mm; }}
+  .campo {{ flex: 1 1 60mm; display: flex; align-items: flex-end; gap: 2mm; margin: 0; font-size: 10.4pt; }}
+  .campo span {{ flex: 1; border-bottom: .3mm solid {ESCURO}; height: 6.6mm; }}
+  table.ficha th {{ border-bottom: .4mm solid {ESCURO}; padding-right: 2mm; }}
+  table.ficha td + td, table.ficha th + th {{ width: auto; padding-left: 2mm; }}
+  table.ficha td.rot {{ font-weight: 600; font-size: 9.8pt; vertical-align: bottom; padding-bottom: .8mm; width: 34%; }}
+  .perguntas {{ list-style: none; margin: 0; padding: 0; counter-reset: pergunta; }}
+  .perguntas li {{ counter-increment: pergunta; padding: .9mm 0 0; break-inside: avoid; }}
+  .perguntas li > b {{ font-size: 10.8pt; }}
+  .perguntas li > b::before {{ content: counter(pergunta) ". "; color: {VERMELHO}; font-family: "Montserrat", Arial, sans-serif; font-weight: 800; }}
+  .perguntas p {{ margin: .2mm 0 0; font-size: 9.2pt; line-height: 1.3; }}
+  .perguntas .linha {{ display: block; height: 5.4mm; border-bottom: .3mm solid {ESCURO}; }}
+  .cartaz {{ margin-top: 4mm; padding: 3mm 4.5mm; border: .8mm solid {VERMELHO}; border-radius: 3mm; }}
+  .cartaz h2 {{ border: 0; padding: 0; margin: 0 0 1.5mm; font-size: 15pt; }}
+  .cartaz .duas {{ margin-top: 0; }}
   .pe {{ margin: 2.5mm 0 0; padding-top: 1.5mm; border-top: .3mm solid {CINZA}; font-size: 7.8pt; line-height: 1.3; }}
 </style></head>
 <body>
@@ -253,6 +304,14 @@ def gerar(slug: str, paginas: dict, logo_b64: str) -> bool:
         subprocess.run(["node", str(runner), str(entrada), str(saida)], check=True, env=ambiente)
     folhas = len(re.findall(rb"/Type\s*/Page\b", saida.read_bytes()))
     print(f"gravado {saida.relative_to(RAIZ)} ({saida.stat().st_size} bytes, {folhas} folhas)")
+    if ficha.get("capa"):  # a folha 1 em 480 x 679 (a proporção do A4), que a página mostra ao lado do formulário
+        from io import BytesIO
+        from PIL import Image
+        png = subprocess.run(["pdftoppm", "-f", "1", "-l", "1", "-png", "-scale-to-x", "480", "-scale-to-y", "-1", str(saida)],
+                             capture_output=True, check=True).stdout
+        capa = RAIZ / "site" / slug / ficha["capa"]
+        Image.open(BytesIO(png)).convert("RGB").resize((480, 679)).save(capa, "WEBP", quality=80, method=6)
+        print(f"gravado {capa.relative_to(RAIZ)} (capa)")
     certo = True
     esperadas = len(ficha["folhas"]) + 1
     if folhas != esperadas:
