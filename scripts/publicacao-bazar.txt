@@ -1,8 +1,9 @@
 # Bazar solidário (11/11/2026, pedido do Matheus): página nova /bazar/, para arrecadar roupas e itens domésticos em
-# bom estado. Conteúdo em site/institucional.json (slug bazar), gerada por scripts/gerar_institucional.py bazar.
+# bom estado, e um card para ela em "Campanhas ativas", na home (a página vai antes da home, que aponta para ela). Conteúdo em site/institucional.json (slug bazar), gerada por scripts/gerar_institucional.py bazar.
 # ANTES de publicar: confirmar com a coordenação os pontos listados em notas_internas da página (horário e local de
 # entrega, o que se recebe, destino dos itens, datas do bazar aberto ao público).
 # Depois: limpar o cache e rodar python3 scripts/gerar_sitemaps.py (a /bazar/ só entra no mapa depois de no ar)
 # e publicar os três sitemaps.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-bazar.txt)
 site/bazar/index.html
+site/index.html

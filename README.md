@@ -143,7 +143,9 @@ Pedido do Matheus: uma página para arrecadar roupas e itens domésticos em bom 
   Entrou na lista do `gerar_sitemaps.py` e a Campanha do Agasalho passou a poder aparecer em "Veja também".
 - **Não publicada.** Local e horário de entrega são os da sede já publicados para donativos (segunda a sexta, 10h às
   17h); a lista de itens, o destino (venda a preços acessíveis, renda para a filial) e a falta de datas do bazar estão
-  em `notas_internas` da página, para a coordenação confirmar antes. Nenhuma outra página aponta para ela ainda.
+  em `notas_internas` da página, para a coordenação confirmar antes.
+- **Home**: terceiro card em "Campanhas ativas" (`site/index.html`), com o ícone `hand-holding-heart` no lugar da foto
+  (o sprite da home ganhou o símbolo, por `scripts/icones.py`). Trocar por foto quando houver uma do bazar.
 - Conferida em 390 px (sem rolagem lateral, botão de 59 px de altura). Publicação: `scripts/publicacao-bazar.txt`.
 
 ## CBFI de 28/11/2026 e volta automática para janeiro (27/10/2026)
