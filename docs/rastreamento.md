@@ -233,6 +233,23 @@ GA4 e Pixel da home (com o aviso de cookies), grupo de conteúdo `institucional`
 | Pedido do manual aceito (o botão de baixar aparece) | `manual_pedir` (origem = `pagina`) |
 | Toque em “Baixar o manual em PDF” | `manual_baixar` (origem = `pagina`) |
 
+**Páginas para instituições (11/11/2026).** `/lei-lucas-para-escolas/` e `/plano-de-contingencia/` seguem o modelo do
+manual (materiais `lei-lucas-escolas` e `plano-de-contingencia` na Redação); `/empresas-e-orgaos-publicos/` não tem
+material. Os botões que levam a escola, a empresa ou o órgão para a turma fechada ou para o chat também contam:
+
+| Momento | GA4 |
+| --- | --- |
+| Pedido do kit Lei Lucas aceito | `leilucas_pedir` (origem = `pagina`) |
+| Toque em “Baixar o kit em PDF” | `leilucas_baixar` (origem = `pagina`) |
+| Pedido do roteiro do plano de contingência aceito | `contingencia_pedir` (origem = `pagina`) |
+| Toque em “Baixar o roteiro em PDF” | `contingencia_baixar` (origem = `pagina`) |
+| Toque em “Pedir uma turma…” (vai para o formulário de turma fechada) | `b2b_turma` (origem = `lei-lucas` ou `empresas`) |
+| Toque em “Propor uma parceria” (abre o chat no assunto de parcerias) | `b2b_contato` (origem = `plano-de-contingencia` ou `empresas`) |
+
+O pedido de turma em si continua sendo o `turma_pedido` da página de matrícula, e a mensagem do chat, o `contato_enviado`.
+Para o Google Ads, as conversões que importam são `leilucas_pedir` e `contingencia_pedir` (lead de instituição) e o
+`turma_pedido`: marcar como evento-chave no GA4 e importar só depois de ver os primeiros chegarem.
+
 `origem` já é dimensão registrada. O `kit_baixar` conta o toque no link, não o arquivo aberto, e não depende da
 medição otimizada de downloads da propriedade (se ela estiver ligada, o mesmo toque também gera um `file_download`).
 **A caixa das matérias (09/11/2026).** Dezoito matérias de `/noticias/` (emergências, Defesa Civil e primeiros socorros

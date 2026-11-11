@@ -1,0 +1,116 @@
+{
+  "slug": "lei-lucas-para-escolas",
+  "arquivo": "lei-lucas-para-escolas-cruz-vermelha-rj.pdf",
+  "capa": "capa-lei-lucas-para-escolas.webp",
+  "titulo": "Lei Lucas na escola: checklist de adequação",
+  "sub": "A Lei 13.722/2018 obriga escolas de educação básica, públicas e privadas, e espaços de recreação infantil a capacitar professores e funcionários em noções básicas de primeiros socorros. Marque com um X o que a sua escola já fez.",
+  "credito": "Material de orientação da filial, que não substitui a lei nem as regras do seu município",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "checklist",
+          "itens": [
+            [
+              "Listamos todos que lidam com as crianças",
+              "Professores, auxiliares, monitores, portaria, cozinha, limpeza e transporte."
+            ],
+            [
+              "Escolhemos quem será capacitado",
+              "Com gente treinada em todos os turnos, no recreio, no transporte e nos passeios."
+            ],
+            [
+              "Conferimos a regra do nosso município",
+              "Com a secretaria de educação ou o órgão que autoriza o funcionamento da escola."
+            ],
+            [
+              "Agendamos a capacitação presencial",
+              "Com prática em manequim de criança e de bebê: engasgo e RCP não se aprendem só com vídeo."
+            ],
+            [
+              "Montamos os kits de primeiros socorros",
+              "Um na secretaria e um portátil para os passeios. Conferimos a validade de tudo."
+            ],
+            [
+              "Afixamos a ficha dos capacitados",
+              "Com o certificado, num lugar que pais e fiscalização vejam (folha 2)."
+            ],
+            [
+              "Combinamos quem faz o quê numa emergência",
+              "Quem atende, quem liga para o 192, quem avisa a família, quem acompanha a criança."
+            ],
+            [
+              "Deixamos a ficha de saúde de cada criança à mão",
+              "Alergias, remédios de uso contínuo e telefone dos responsáveis."
+            ],
+            [
+              "Avisamos as famílias",
+              "Que a equipe foi capacitada e como a escola age numa emergência."
+            ],
+            [
+              "Marcamos a reciclagem para daqui a um ano",
+              "A lei prevê o curso todo ano. Data marcada: ____/____/________"
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que a lei pede, em resumo:",
+          "texto": "capacitação todo ano (curso e reciclagem); gente capacitada na proporção da equipe; kits de primeiros socorros; e a comprovação, com o nome dos capacitados, afixada em lugar visível. Quem não cumpre está sujeito a notificação, multa e, na reincidência, à cassação do alvará (escolas particulares) ou à responsabilização do agente público (escolas públicas)."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "ficha",
+          "titulo": "Profissionais capacitados em primeiros socorros (Lei 13.722/2018)",
+          "colunas": [
+            "Nome",
+            "Função",
+            "Data da capacitação"
+          ],
+          "linhas": 7
+        },
+        {
+          "tipo": "campos",
+          "itens": [
+            "Escola:",
+            "Ano:"
+          ]
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Emergência com uma criança",
+          "passos": [
+            "Mantenha a calma e afaste a criança do perigo, se for seguro.",
+            "Chame quem foi capacitado (os nomes estão nesta folha).",
+            "Ligue 192 e responda com calma o que perguntarem.",
+            "Não dê comida, água nem remédio sem orientação.",
+            "Avise a família e mande alguém acompanhar a criança."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "190",
+              "Polícia"
+            ]
+          ],
+          "campo": "Endereço da escola (para dizer ao 192):"
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Capacitação da equipe:",
+          "texto": "curso presencial Primeiros Socorros Lei Lucas – Ambientes com Crianças (8 horas), também em turma fechada para a escola, no Palácio da Cruz Vermelha, Centro do Rio. Curso pago, vendido pela escola ligada à filial (O-CVB Filial Rio de Janeiro Ensino Ltda): cruzvermelhariodejaneiro.org/lei-lucas-para-escolas"
+        }
+      ]
+    }
+  ]
+}

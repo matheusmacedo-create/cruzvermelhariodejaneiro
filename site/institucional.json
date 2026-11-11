@@ -1900,6 +1900,233 @@
    ],
    "notas_internas": "Criada em 11/11/2026, a pedido do Matheus, para arrecadar roupas e itens domésticos em bom estado para o bazar. A CONFIRMAR com a coordenação antes de publicar: (1) local e horário de entrega (usados os da sede já publicados para donativos: segunda a sexta, 10h às 17h, sem agendamento, pela portaria); (2) lista do que se recebe e do que não se recebe, em especial pequenos aparelhos, móveis e itens grandes; (3) que os itens são vendidos a preços acessíveis e a renda fica na filial; (4) datas, horário e local do bazar aberto ao público (a página não diz nenhum: acrescentar quando houver); (5) se a filial busca doações em casa e se dá recibo (a página não promete nenhum dos dois). FORMULÁRIO (11/11/2026): a seção \"Avise o que você vai doar\" grava o registro (api/bazar.php, tabela mcp_bazar_doacoes), manda e-mail à equipe e avisa a responsável do bazar pelo WhatsApp, com o modelo bazar_doacao_nova, só depois de a Meta aprovar o modelo (docs/bazar.md). Sem foto: a pasta assets/ fica só na Hostinger.",
    "atualizado": "2026-11-11"
+  },
+  {
+   "slug": "lei-lucas-para-escolas",
+   "titulo_seo": "Lei Lucas para escolas: o que exige e kit grátis – Cruz Vermelha RJ",
+   "descricao_seo": "O que a Lei Lucas (Lei 13.722/2018) pede de escolas e creches, passo a passo para se adequar e kit gratuito em PDF com checklist, ficha dos capacitados e cartaz.",
+   "eyebrow": "Escolas e creches",
+   "h1": "Lei Lucas na escola: o que a lei pede e como se adequar",
+   "lead": "A Lei Lucas obriga escolas e espaços de recreação infantil a capacitar professores e funcionários em primeiros socorros. Veja o que ela exige, um passo a passo para a sua escola e baixe de graça o kit com checklist, ficha dos capacitados e cartaz para a sala dos professores.",
+   "atualizado": "2026-11-11",
+   "relacionadas": [
+    "kit-de-primeiros-socorros",
+    "empresas-e-orgaos-publicos",
+    "plano-de-contingencia",
+    "kit-de-emergencia"
+   ],
+   "secoes": [
+    {
+     "id": "o-que-e",
+     "h2": "O que é a Lei Lucas",
+     "html": "<p>A Lei nº 13.722, de 4 de outubro de 2018, ficou conhecida como <strong>Lei Lucas</strong> por causa de Lucas Begalli Zamora, um menino de 10 anos que morreu engasgado durante um passeio escolar em 2017, em Campinas (SP). A família transformou a perda em campanha, e a campanha virou lei federal.</p><p>A lei vale para <strong>escolas de educação básica, públicas e privadas</strong> (da creche ao ensino médio) e para <strong>estabelecimentos de recreação infantil</strong>, como brinquedotecas e espaços de festa. Ela pede que professores e funcionários aprendam noções básicas de primeiros socorros, para agir nos primeiros minutos de um engasgo, uma queda, uma convulsão ou um sangramento, até o socorro chegar.</p><blockquote class=\"inst-oficial\"><p>“Fica obrigatória a capacitação em noções básicas de primeiros socorros de professores e funcionários de estabelecimentos de ensino públicos e privados de educação básica e de estabelecimentos de recreação infantil.”</p><cite>Lei nº 13.722/2018, art. 1º. Texto completo no <a href=\"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13722.htm\">Planalto</a>.</cite></blockquote>"
+    },
+    {
+     "id": "o-que-pede",
+     "h2": "O que a lei pede da escola",
+     "html": "<p>Em palavras simples, a lei pede quatro coisas:</p><ol><li><strong>Capacitar a equipe todo ano.</strong> O curso é oferecido anualmente, tanto para quem nunca fez quanto para a reciclagem de quem já fez.</li><li><strong>Ter gente capacitada na proporção certa.</strong> O número de pessoas treinadas acompanha o número de professores e funcionários (ou, na recreação, o movimento de crianças), conforme a regulamentação.</li><li><strong>Ter kits de primeiros socorros</strong>, de acordo com a orientação das entidades especializadas.</li><li><strong>Deixar à vista a comprovação.</strong> A escola afixa, em lugar visível, o certificado da capacitação e o nome dos profissionais capacitados.</li></ol><p>Quem não cumpre está sujeito a notificação, multa (em dobro na reincidência) e, em nova reincidência, à cassação do alvará ou da autorização de funcionamento, no caso das escolas e espaços particulares. Nas escolas públicas, a lei prevê a responsabilização do agente público.</p><p>A lei deixa detalhes para regulamentação, e estados e municípios podem ter regras próprias. Antes de fechar o plano da sua escola, confirme com a secretaria de educação ou o órgão que autoriza o funcionamento o que é exigido no seu município.</p>"
+    },
+    {
+     "id": "passo-a-passo",
+     "h2": "Passo a passo para a sua escola se adequar",
+     "html": "<ol><li><strong>Faça a conta da equipe.</strong> Liste professores, auxiliares, monitores, porteiros, merendeiras e motoristas: todos lidam com as crianças em algum momento do dia.</li><li><strong>Escolha quem vai ser capacitado primeiro</strong>, de modo que haja gente treinada em todos os turnos, no recreio, no transporte e nos passeios.</li><li><strong>Agende a capacitação</strong>, com prática em manequim de criança e de bebê. Engasgo e RCP não se aprendem só com vídeo.</li><li><strong>Monte e confira os kits de primeiros socorros</strong>: um na secretaria e outro portátil para passeios. Veja a lista no nosso <a href=\"/kit-de-primeiros-socorros/\">guia do kit de primeiros socorros</a>.</li><li><strong>Afixe a comprovação</strong>, com o certificado e o nome de quem foi capacitado, num lugar que pais e fiscalização vejam.</li><li><strong>Combine o que fazer numa emergência</strong>: quem atende, quem liga para o 192, quem avisa a família e quem acompanha a criança.</li><li><strong>Marque a reciclagem</strong> para daqui a um ano e repita o processo.</li></ol><p>Quer um roteiro mais detalhado, item por item? A Redação da filial preparou o <a href=\"/noticias/lei-lucas-na-pratica-checklist-para-escolas-e-creches/\">checklist da Lei Lucas para escolas e creches</a>.</p>"
+    },
+    {
+     "id": "baixar",
+     "h2": "Baixe grátis o kit Lei Lucas para escolas",
+     "html": "<p>São duas folhas em PDF para imprimir, mais uma com as fontes: o <strong>checklist de adequação</strong>, a <strong>ficha dos profissionais capacitados</strong> para afixar na escola e um <strong>cartaz de emergência</strong> para a sala dos professores, com os telefones e os primeiros passos.</p><p>Informe o seu e-mail e marque a autorização: o botão de baixar aparece aqui na hora, e uma cópia do link vai para a sua caixa de entrada.</p><div class=\"inst-material\" data-material=\"lei-lucas-escolas\" data-evento=\"leilucas_pedir\" data-chave=\"lei-lucas-escolas-liberado\"><figure class=\"inst-material-capa\"><img src=\"/lei-lucas-para-escolas/capa-lei-lucas-para-escolas.webp\" width=\"480\" height=\"679\" alt=\"Primeira folha do kit Lei Lucas para escolas: o checklist de adequação, com quadradinhos para marcar, e o logotipo da Cruz Vermelha Brasileira Rio de Janeiro no topo\"></figure><div class=\"inst-material-miolo\"><p class=\"inst-material-ficha\">PDF · 3 folhas · para imprimir</p><form class=\"inst-material-form\" action=\"https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever\" method=\"post\"><input type=\"hidden\" name=\"material\" value=\"lei-lucas-escolas\"><label class=\"inst-material-armadilha\" aria-hidden=\"true\">Não preencha este campo <input type=\"text\" name=\"site\" tabindex=\"-1\" autocomplete=\"off\"></label><label class=\"inst-material-rotulo\" for=\"inst-material-email\">Seu e-mail</label><input id=\"inst-material-email\" type=\"email\" name=\"email\" autocomplete=\"email\" inputmode=\"email\" placeholder=\"nome@exemplo.com\" required><label class=\"inst-material-aceite\"><input type=\"checkbox\" name=\"consentimento\" value=\"1\" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail o kit Lei Lucas para escolas e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type=\"submit\" class=\"btn btn-red\">Liberar o download</button></form><p class=\"inst-material-recado\" role=\"status\" aria-live=\"polite\"></p><p class=\"inst-material-baixar\" hidden><a class=\"btn btn-red\" href=\"/lei-lucas-para-escolas/lei-lucas-para-escolas-cruz-vermelha-rj.pdf\" download data-evento=\"leilucas_baixar\" data-origem=\"pagina\">Baixar o kit em PDF</a></p></div></div>"
+    },
+    {
+     "id": "capacitacao",
+     "h2": "Capacitação da equipe com a Cruz Vermelha",
+     "html": "<p>A Escola de Educação e Saúde, ligada à filial, tem o curso <strong>Primeiros Socorros Lei Lucas – Ambientes com Crianças</strong>: 8 horas presenciais sobre avaliação da criança, RCP, engasgo, quedas, traumas, convulsões, queimaduras e hemorragias, com prática em manequim e certificado.</p><ul><li><strong>Para uma ou duas pessoas:</strong> matrícula individual numa turma aberta, na sede, no Centro do Rio.</li><li><strong>Para a equipe inteira (15 a 30 pessoas):</strong> uma turma fechada só da sua escola, com datas combinadas, no mesmo valor por pessoa. As aulas são na sede; em outro local, só com aprovação da escola.</li></ul><p>A capacitação é contratada com a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à filial; o resultado dos cursos ajuda a manter o Palácio da Cruz Vermelha e as atividades da filial.</p><p class=\"cta-row\"><a class=\"btn btn-red\" href=\"/matricula-cursos-presenciais/?turma=1&amp;turma_curso=primeiros-socorros-lei-lucas&amp;alunos=15#turmas-sob-demanda\" data-evento=\"b2b_turma\" data-origem=\"lei-lucas\">Pedir uma turma para a minha escola</a> <a class=\"btn btn-outline\" href=\"/matricula-cursos-presenciais/?curso=primeiros-socorros-lei-lucas\">Ver o curso e as turmas abertas</a></p><p>O pedido de turma não cobra nada: a secretaria responde por e-mail em até 3 dias úteis com as datas possíveis.</p>"
+    }
+   ],
+   "perguntas": [
+    {
+     "pergunta": "A Lei Lucas vale para escola particular e para creche?",
+     "resposta": "Vale. A lei alcança escolas de educação básica públicas e privadas, o que inclui creches e pré-escolas, e também os estabelecimentos de recreação infantil."
+    },
+    {
+     "pergunta": "Com que frequência a equipe precisa ser capacitada?",
+     "resposta": "A lei prevê o curso todo ano, tanto para a capacitação de quem ainda não fez quanto para a reciclagem de quem já fez."
+    },
+    {
+     "pergunta": "Quantas pessoas da escola precisam fazer o curso?",
+     "resposta": "A lei manda guardar proporção com o número de professores e funcionários e deixa o número para regulamentação. Na prática, o ideal é ter gente capacitada em todos os turnos, no recreio, no transporte e nos passeios. Confirme a regra do seu município com a secretaria de educação."
+    },
+    {
+     "pergunta": "Curso online vale para a Lei Lucas?",
+     "resposta": "A lei fala em capacitação, sem detalhar o formato, mas RCP e desengasgo pedem prática com manequim e instrutor ao lado. Por isso o curso Lei Lucas da escola ligada à Cruz Vermelha do Rio é presencial."
+    },
+    {
+     "pergunta": "Quanto custa capacitar a equipe?",
+     "resposta": "O curso Lei Lucas custa R$ 150 por pessoa, além da inscrição de R$ 99, também numa turma fechada para a escola (15 a 30 pessoas). Os valores atualizados ficam na página de matrícula; o pedido de turma fechada não cobra nada."
+    },
+    {
+     "pergunta": "O kit em PDF é gratuito?",
+     "resposta": "É. Você deixa o e-mail, o botão de baixar aparece na hora, e uma cópia do link vai para a sua caixa de entrada. Dá para sair da lista a qualquer momento."
+    }
+   ],
+   "fontes": [
+    {
+     "rotulo": "Lei nº 13.722/2018 – Lei Lucas (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13722.htm"
+    },
+    {
+     "rotulo": "Lei nº 9.394/1996 – Lei de Diretrizes e Bases da Educação, que define a educação básica (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/leis/l9394.htm"
+    }
+   ],
+   "notas_internas": "CRIADA 11/11/2026 (Claude, pedido do Matheus: alcançar escolas, empresas e governo; item 1 do plano B2B). Destino da campanha do Ad Grants 'Lei Lucas para escolas' (busca 'lei lucas', ~18 mil/mês no Brasil, concorrência baixa). Material lei-lucas-escolas (lib/newsletter/materiais.ts, na Redação); PDF no padrão dos guias (guias/<slug>.json e scripts/gerar_guia_pdf.py). A página não diz que o curso 'atende' ou 'cumpre' a lei: a lei deixa detalhes para regulamentação (docs/redesenho-matricula-2026-10.md). Venda só no bloco final, dizendo quem vende (regra do Ad Grants e de cursos-gratuitos). Fatos da lei a reconferir no Planalto antes de publicar: o proxy do ambiente não abriu planalto.gov.br em 11/11; a fonte da Agência Senado também não foi aberta."
+  },
+  {
+   "slug": "plano-de-contingencia",
+   "titulo_seo": "Plano de contingência: roteiro em PDF – Cruz Vermelha RJ",
+   "descricao_seo": "O que é um plano de contingência de proteção e defesa civil, o que ele precisa ter e um roteiro gratuito em PDF para municípios, escolas, empresas e comunidades.",
+   "eyebrow": "Gestão de riscos e desastres",
+   "h1": "Plano de contingência: o que é, o que precisa ter e um roteiro para começar",
+   "lead": "O plano de contingência diz quem faz o quê quando a chuva forte, a enchente ou o deslizamento chegam. Veja o que ele precisa ter e baixe de graça o roteiro da Cruz Vermelha para montar ou revisar o plano do seu município, escola, empresa ou comunidade.",
+   "atualizado": "2026-11-11",
+   "relacionadas": [
+    "kit-de-emergencia",
+    "mochila-de-emergencia",
+    "empresas-e-orgaos-publicos",
+    "voluntariado"
+   ],
+   "secoes": [
+    {
+     "id": "o-que-e",
+     "h2": "O que é um plano de contingência",
+     "html": "<p>Plano de contingência é o documento que organiza, <strong>antes do desastre</strong>, a resposta a um cenário de risco conhecido: uma encosta que pode deslizar, um rio que costuma transbordar, uma onda de calor. Ele responde a perguntas simples, que no meio da emergência não dá tempo de discutir: quem dá o alerta, quem sai de casa, por qual caminho, para onde vai, quem cuida de quem e como a população fica sabendo.</p><p>No Brasil, a <a href=\"https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12608.htm\">Lei nº 12.608/2012</a>, que criou a Política Nacional de Proteção e Defesa Civil, dá aos municípios a tarefa de mapear as áreas de risco, manter a população informada e fazer exercícios simulados conforme o plano de contingência. Os municípios com áreas suscetíveis a desastres têm, além disso, a obrigação de elaborar o plano, prevista na <a href=\"https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/lei/l12340.htm\">Lei nº 12.340/2010</a>, com a redação dada pela Lei nº 12.983/2014.</p><p>Mas o plano não é só da prefeitura. Escolas, condomínios, empresas, hospitais e associações de moradores também precisam saber o que fazer, e o plano de cada um funciona melhor quando conversa com o da Defesa Civil do município.</p>"
+    },
+    {
+     "id": "o-que-tem",
+     "h2": "O que um bom plano precisa ter",
+     "html": "<ol><li><strong>O cenário de risco:</strong> o que pode acontecer, onde, em que época do ano e quantas pessoas moram, estudam ou trabalham na área.</li><li><strong>Os gatilhos do alerta:</strong> o que muda de um nível para outro (observação, alerta, alarme), como chuva acumulada em milímetros ou o nível do rio, e quem decide.</li><li><strong>Quem faz o quê:</strong> cada órgão, setor ou pessoa com a sua tarefa, o nome de um responsável e de um substituto, e os telefones de todos.</li><li><strong>Rotas de fuga e pontos de encontro:</strong> o caminho mais seguro, sinalizado, e os lugares altos e firmes onde as pessoas se reúnem.</li><li><strong>Abrigos e acolhimento:</strong> para onde vão as famílias que perderam a casa, quem cuida da água, da comida, da higiene e de quem tem mais dificuldade de se mover.</li><li><strong>Comunicação com a população:</strong> sirene, SMS e alerta no celular, carro de som, rádio, redes sociais e líderes comunitários, com a mensagem já escrita.</li><li><strong>Recursos:</strong> veículos, equipamentos, estoques e contatos de quem pode ajudar, inclusive voluntários e organizações da sociedade civil.</li><li><strong>Simulados e revisão:</strong> o plano só funciona se for treinado. Marque um simulado por ano e revise o plano depois de cada simulado ou de cada emergência real.</li></ol><p>Moradores podem receber os alertas da Defesa Civil no celular: basta mandar o CEP por SMS para o número <strong>40199</strong>. Veja também como montar o <a href=\"/kit-de-emergencia/\">kit de emergência da família</a> e a <a href=\"/mochila-de-emergencia/\">mochila para sair de casa</a>.</p>"
+    },
+    {
+     "id": "baixar",
+     "h2": "Baixe grátis o roteiro do plano de contingência",
+     "html": "<p>São duas folhas em PDF para imprimir e preencher em reunião, mais uma com as fontes: as <strong>perguntas que o plano precisa responder</strong>, com espaço para as respostas, e a <strong>ficha de quem faz o quê</strong>, com responsáveis, substitutos, níveis de alerta e telefones. Serve para começar o plano de uma escola, empresa ou comunidade, ou para revisar o de um município.</p><p>Informe o seu e-mail e marque a autorização: o botão de baixar aparece aqui na hora, e uma cópia do link vai para a sua caixa de entrada.</p><div class=\"inst-material\" data-material=\"plano-de-contingencia\" data-evento=\"contingencia_pedir\" data-chave=\"plano-de-contingencia-liberado\"><figure class=\"inst-material-capa\"><img src=\"/plano-de-contingencia/capa-plano-de-contingencia.webp\" width=\"480\" height=\"679\" alt=\"Primeira folha do roteiro do plano de contingência: perguntas numeradas com linhas para preencher e o logotipo da Cruz Vermelha Brasileira Rio de Janeiro no topo\"></figure><div class=\"inst-material-miolo\"><p class=\"inst-material-ficha\">PDF · 3 folhas · para imprimir e preencher</p><form class=\"inst-material-form\" action=\"https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever\" method=\"post\"><input type=\"hidden\" name=\"material\" value=\"plano-de-contingencia\"><label class=\"inst-material-armadilha\" aria-hidden=\"true\">Não preencha este campo <input type=\"text\" name=\"site\" tabindex=\"-1\" autocomplete=\"off\"></label><label class=\"inst-material-rotulo\" for=\"inst-material-email\">Seu e-mail</label><input id=\"inst-material-email\" type=\"email\" name=\"email\" autocomplete=\"email\" inputmode=\"email\" placeholder=\"nome@exemplo.com\" required><label class=\"inst-material-aceite\"><input type=\"checkbox\" name=\"consentimento\" value=\"1\" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail o roteiro do plano de contingência e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type=\"submit\" class=\"btn btn-red\">Liberar o download</button></form><p class=\"inst-material-recado\" role=\"status\" aria-live=\"polite\"></p><p class=\"inst-material-baixar\" hidden><a class=\"btn btn-red\" href=\"/plano-de-contingencia/plano-de-contingencia-cruz-vermelha-rj.pdf\" download data-evento=\"contingencia_baixar\" data-origem=\"pagina\">Baixar o roteiro em PDF</a></p></div></div><p>O roteiro não substitui o modelo oficial do seu município nem a orientação da Defesa Civil local: ele ajuda a reunir as respostas antes de escrever o plano.</p>"
+    },
+    {
+     "id": "cruz-vermelha",
+     "h2": "Como a Cruz Vermelha pode somar",
+     "html": "<p>Pelo Estatuto, a Cruz Vermelha Brasileira é uma sociedade de socorro voluntário <strong>auxiliar dos poderes públicos</strong> no campo humanitário, com autonomia (veja a <a href=\"/base-legal/\">base legal</a>). Em emergências e na prevenção, a filial do Rio de Janeiro trabalha com educação preventiva, campanhas de apoio comunitário e a formação dos próprios voluntários, que incluem a frente de gestão de riscos e desastres.</p><p>Se você trabalha na Defesa Civil, numa secretaria municipal ou estadual, numa escola ou numa associação de moradores e quer somar esforços em prevenção, campanhas ou preparação da comunidade, escreva para a filial pelo chat do site, com o assunto <em>Doações, Campanha do Agasalho e parcerias</em>. A equipe avalia cada proposta e responde por e-mail em até 3 dias úteis.</p><p class=\"cta-row\"><a class=\"btn btn-red\" href=\"#chat\" data-abrir-chat data-assunto=\"doacoes\" data-evento=\"b2b_contato\" data-origem=\"plano-de-contingencia\">Propor uma parceria</a> <a class=\"btn btn-outline\" href=\"/empresas-e-orgaos-publicos/\">Para órgãos públicos e empresas</a></p>"
+    }
+   ],
+   "perguntas": [
+    {
+     "pergunta": "Qual a diferença entre plano de contingência e plano de emergência?",
+     "resposta": "Os nomes variam, mas em geral o plano de contingência trata de um cenário de risco específico (a enchente de um rio, o deslizamento de uma encosta) e diz quem faz o quê quando ele acontece. O plano de emergência de uma escola ou empresa costuma cobrir todas as situações do prédio, como incêndio e evacuação. Os dois devem conversar com a Defesa Civil do município."
+    },
+    {
+     "pergunta": "O município é obrigado a ter plano de contingência?",
+     "resposta": "Os municípios com áreas suscetíveis a desastres têm de elaborar o plano de contingência de proteção e defesa civil, conforme a Lei 12.340/2010, com a redação da Lei 12.983/2014. E a Lei 12.608/2012 dá ao município a tarefa de fazer simulados conforme o plano."
+    },
+    {
+     "pergunta": "Uma escola ou um condomínio pode ter o próprio plano?",
+     "resposta": "Pode, e deve. O roteiro desta página serve justamente para isso: reunir quem decide, definir rotas e pontos de encontro e combinar como avisar todo mundo. Depois, apresente o plano à Defesa Civil do seu município."
+    },
+    {
+     "pergunta": "Como recebo os alertas da Defesa Civil no celular?",
+     "resposta": "Mande o CEP da sua casa por SMS para o número 40199. Você passa a receber os alertas da Defesa Civil para aquela área, sem custo."
+    },
+    {
+     "pergunta": "O roteiro em PDF é gratuito?",
+     "resposta": "É. Você deixa o e-mail, o botão de baixar aparece na hora, e uma cópia do link vai para a sua caixa de entrada. Dá para sair da lista a qualquer momento."
+    }
+   ],
+   "fontes": [
+    {
+     "rotulo": "Lei nº 12.608/2012 – Política Nacional de Proteção e Defesa Civil (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2012/lei/l12608.htm"
+    },
+    {
+     "rotulo": "Lei nº 12.340/2010 – transferências para prevenção e resposta a desastres (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2010/lei/l12340.htm"
+    },
+    {
+     "rotulo": "Lei nº 12.983/2014 (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2014/lei/l12983.htm"
+    },
+    {
+     "rotulo": "Decreto nº 8.885/2016 – Estatuto da Cruz Vermelha Brasileira (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm"
+    }
+   ],
+   "notas_internas": "CRIADA 11/11/2026 (Claude, pedido do Matheus; item 2 do plano B2B). Destino da campanha do Ad Grants 'Plano de contingência' (busca 'plano de contingência defesa civil', ~260/mês, quem busca costuma ser servidor de Defesa Civil). Material plano-de-contingencia (lib/newsletter/materiais.ts, na Redação); PDF no padrão dos guias (guias/<slug>.json e scripts/gerar_guia_pdf.py). A filial não promete serviço a órgão público: o bloco final convida a propor parceria, e a equipe avalia. Antes de publicar, reconferir no Planalto a obrigação do plano (Lei 12.340/2010, art. 3º-A, redação da Lei 12.983/2014), as tarefas do município na Lei 12.608/2012 (art. 8º) e o SMS 40199: o proxy do ambiente não abriu planalto.gov.br em 11/11."
+  },
+  {
+   "slug": "empresas-e-orgaos-publicos",
+   "titulo_seo": "Para empresas, escolas e órgãos públicos – Cruz Vermelha RJ",
+   "descricao_seo": "Turmas fechadas de primeiros socorros, Lei Lucas e Suporte Básico de Vida para equipes, e parcerias com a Cruz Vermelha do Rio em prevenção, campanhas e voluntariado.",
+   "eyebrow": "Instituições",
+   "h1": "Para empresas, escolas e órgãos públicos",
+   "lead": "Sua equipe pode aprender a agir numa emergência, e sua instituição pode somar esforços com a Cruz Vermelha do Rio de Janeiro. Veja os caminhos e peça uma proposta.",
+   "atualizado": "2026-11-11",
+   "relacionadas": [
+    "lei-lucas-para-escolas",
+    "plano-de-contingencia",
+    "voluntariado",
+    "quem-somos"
+   ],
+   "secoes": [
+    {
+     "id": "caminhos",
+     "h2": "Três caminhos para a sua instituição",
+     "html": "<ol><li><strong><a href=\"#treinamento\">Treinar a equipe</a></strong> em primeiros socorros, Lei Lucas ou Suporte Básico de Vida, numa turma fechada só para vocês.</li><li><strong><a href=\"#parcerias\">Ser parceira da filial</a></strong> em campanhas, prevenção e preparação da comunidade para desastres.</li><li><strong><a href=\"#materiais\">Usar os materiais gratuitos</a></strong> da filial com os seus alunos, funcionários ou moradores.</li></ol>"
+    },
+    {
+     "id": "treinamento",
+     "h2": "Treinamento da equipe: turmas fechadas",
+     "html": "<p>Uma turma fechada reúne de <strong>15 a 30 pessoas</strong> da mesma empresa, escola, condomínio ou órgão, com datas combinadas e o <strong>mesmo valor por pessoa</strong> dos cursos abertos. As aulas são presenciais, na sede, no Centro do Rio; em outro local, só com aprovação. Mais de 30 pessoas? A secretaria divide em mais de uma turma.</p><ul><li><strong>Suporte Básico de Vida</strong> (4 horas): para qualquer equipe. Parada cardíaca, RCP e desfibrilador.</li><li><strong>Primeiros Socorros Básico</strong> (8 horas): para empresas, condomínios, igrejas e academias.</li><li><strong>Primeiros Socorros Lei Lucas – Ambientes com Crianças</strong> (8 horas): para escolas, creches e espaços de recreação infantil. Veja <a href=\"/lei-lucas-para-escolas/\">o que a Lei Lucas pede</a>.</li><li><strong>Bombeiro Civil</strong> (80 horas): para quem vai atuar como bombeiro civil.</li></ul><p>A capacitação é contratada com a Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à filial; o resultado dos cursos ajuda a manter o Palácio da Cruz Vermelha e as atividades da filial. Os valores atualizados de cada curso estão na <a href=\"/matricula-cursos-presenciais/\">página de matrícula</a>.</p><p class=\"cta-row\"><a class=\"btn btn-red\" href=\"/matricula-cursos-presenciais/?turma=1&amp;alunos=15#turmas-sob-demanda\" data-evento=\"b2b_turma\" data-origem=\"empresas\">Pedir uma turma fechada</a></p><p>O pedido não cobra nada. A secretaria responde por e-mail em até 3 dias úteis, com as datas possíveis.</p>"
+    },
+    {
+     "id": "parcerias",
+     "h2": "Parcerias com a filial",
+     "html": "<p>A Cruz Vermelha Brasileira Rio de Janeiro é uma associação privada sem fins lucrativos, <strong>auxiliar dos poderes públicos</strong> no campo humanitário, com autonomia, e reconhecida como de utilidade pública municipal (Lei 5.153/2010) e estadual (Lei 9.984/2023). Veja a <a href=\"/base-legal/\">base legal</a> e o <a href=\"/transparencia/\">portal da transparência</a>.</p><h3>Órgãos públicos</h3><p>Defesa Civil, secretarias de educação, saúde e assistência social podem propor à filial ações de <strong>educação preventiva</strong>, <strong>campanhas de apoio comunitário</strong> e <strong>preparação da comunidade</strong> para desastres. Um bom ponto de partida é o <a href=\"/plano-de-contingencia/\">roteiro do plano de contingência</a>.</p><h3>Empresas</h3><p>Empresas podem apoiar campanhas como a <a href=\"/campanha-agasalho.html\">Campanha do Agasalho</a>, organizar coletas entre os funcionários, apoiar as ações da filial com uma <a href=\"/doe/\">doação</a> ou incentivar os funcionários a se tornarem <a href=\"/voluntariado/\">voluntários</a>.</p><p>Cada proposta é avaliada pela filial, de acordo com os Princípios Fundamentais da Cruz Vermelha: o nome e o emblema não podem ser usados como marca comercial, nem em ação de empresa, sem autorização (veja <a href=\"/emblema/\">o emblema</a>).</p><p class=\"cta-row\"><a class=\"btn btn-red\" href=\"#chat\" data-abrir-chat data-assunto=\"doacoes\" data-evento=\"b2b_contato\" data-origem=\"empresas\">Propor uma parceria</a></p><p>O chat do site responde por e-mail em até 3 dias úteis, com o número de protocolo no assunto.</p>"
+    },
+    {
+     "id": "materiais",
+     "h2": "Materiais gratuitos para usar com a sua equipe",
+     "html": "<ul><li><a href=\"/lei-lucas-para-escolas/#baixar\"><strong>Kit Lei Lucas para escolas</strong></a>: checklist de adequação, ficha dos capacitados e cartaz para a sala dos professores.</li><li><a href=\"/plano-de-contingencia/#baixar\"><strong>Roteiro do plano de contingência</strong></a>: as perguntas que o plano precisa responder e a ficha de quem faz o quê.</li><li><a href=\"/kit-de-emergencia/#baixar\"><strong>Lista do kit de emergência</strong></a>: para distribuir a funcionários, alunos e moradores.</li><li><a href=\"/kit-de-primeiros-socorros/\"><strong>Guia do kit de primeiros socorros</strong></a>: o que ter em casa, no carro, no trabalho e na escola.</li></ul>"
+    }
+   ],
+   "perguntas": [
+    {
+     "pergunta": "A Cruz Vermelha dá treinamento na minha empresa?",
+     "resposta": "As turmas fechadas são presenciais, na sede, no Centro do Rio, para 15 a 30 pessoas. Aula em outro local só acontece com aprovação. Peça a turma pelo formulário da página de matrícula e informe o local preferido."
+    },
+    {
+     "pergunta": "Quem emite o certificado e a nota fiscal do treinamento?",
+     "resposta": "A Escola de Educação e Saúde, a O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à Cruz Vermelha Brasileira Rio de Janeiro."
+    },
+    {
+     "pergunta": "Empresas de fora da cidade do Rio podem pedir turma?",
+     "resposta": "Podem. Empresas e escolas de qualquer município podem pedir uma turma fechada; as aulas são na sede, no Centro do Rio."
+    },
+    {
+     "pergunta": "Minha empresa pode usar a marca da Cruz Vermelha numa campanha?",
+     "resposta": "Só com autorização. O nome e o emblema da Cruz Vermelha são protegidos por lei e não podem ser usados como marca comercial. Proponha a parceria pelo chat do site, e a filial avalia."
+    }
+   ],
+   "fontes": [
+    {
+     "rotulo": "Decreto nº 8.885/2016 – Estatuto da Cruz Vermelha Brasileira (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/decreto/d8885.htm"
+    },
+    {
+     "rotulo": "Lei nº 13.722/2018 – Lei Lucas (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13722.htm"
+    },
+    {
+     "rotulo": "Decreto nº 2.380/1910 – proteção do nome e do emblema (Planalto)",
+     "url": "https://www.planalto.gov.br/ccivil_03/decreto/historicos/dpl/dpl2380-1910.htm"
+    }
+   ],
+   "notas_internas": "CRIADA 11/11/2026 (Claude, pedido do Matheus; item 3 do plano B2B). Porta de entrada de empresas, escolas e órgãos públicos. Nada de serviço novo: as turmas fechadas são as 'Turmas sob demanda' da página de matrícula (regras de 04/10/2026: 15 a 30, mesmo valor por pessoa, na sede) e as parcerias vão pelo chat (assunto doacoes, o rótulo já fala em parcerias). Missão antes da venda (Ad Grants): treinamento diz quem vende. Curativos, Punção Venosa e Cuidador de Idosos ficaram fora da tabela de propósito (público profissional da saúde, não equipe de empresa). Reconfirmar com a filial antes de publicar: utilidade pública (Leis 5.153/2010 e 9.984/2023, como no chat) e a situação do CNPJ, que constava INAPTO na revisão de 19/10/2026."
   }
  ]
 }
