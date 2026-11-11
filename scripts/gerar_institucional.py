@@ -5,7 +5,9 @@ Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /mov
 /direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/, /cbfi/ (o link do CBFI, 27/10/2026) e
 /kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026), com as duas páginas que o
 complementam desde 10/11/2026: /mochila-de-emergencia/ (a mochila para sair de casa, o "kit de sobrevivência") e
-/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página. O conteúdo (textos, fontes oficiais,
+/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página; e /bazar/
+(11/11/2026: arrecadação de roupas e itens domésticos para o bazar solidário; sem fontes oficiais, a caixa de fontes
+não aparece). O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -70,7 +72,7 @@ ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
-         "mochila-de-emergencia", "kit-de-primeiros-socorros"]
+         "mochila-de-emergencia", "kit-de-primeiros-socorros", "bazar"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
@@ -83,9 +85,10 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
                 "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
                 "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
-                "kit-de-primeiros-socorros": "Kit de primeiros socorros"}
+                "kit-de-primeiros-socorros": "Kit de primeiros socorros", "bazar": "Bazar solidário"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
+              "campanha-agasalho": ("/campanha-agasalho.html", "Campanha do Agasalho", "Roupas de frio, cobertores e calçados entregues a famílias em situação de vulnerabilidade."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
               "transparencia": ("/transparencia/", "Transparência", "Os documentos publicados pela filial, cada um com código de verificação.")}
 FORCA_LEGAL = {"vigente": "https://schema.org/InForce", "revogado": "https://schema.org/NotInForce",
@@ -502,6 +505,14 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         {itens}
       </section>"""
     fontes = "\n          ".join(f'<li><a href="{esc(f["url"])}" target="_blank" rel="noopener">{esc(f["rotulo"])}</a></li>' for f in p["fontes"])
+    # Página sem fontes oficiais (o bazar) não leva a caixa vazia.
+    caixa_fontes = f"""
+      <aside class="inst-fontes" aria-labelledby="inst-fontes-titulo">
+        <h2 id="inst-fontes-titulo">Fontes oficiais</h2>
+        <ul>
+          {fontes}
+        </ul>
+      </aside>""" if p["fontes"] else ""
     titulo = p["titulo_seo"]
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -558,13 +569,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
       <div class="wrap">
 {secoes}
 {perguntas}
-
-      <aside class="inst-fontes" aria-labelledby="inst-fontes-titulo">
-        <h2 id="inst-fontes-titulo">Fontes oficiais</h2>
-        <ul>
-          {fontes}
-        </ul>
-      </aside>
+{caixa_fontes}
       <p class="inst-atualizado">Atualizado em {atualizado_em(p):%d/%m/%Y}.</p>
       </div>
     </div>
