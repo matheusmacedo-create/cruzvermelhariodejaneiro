@@ -10,11 +10,13 @@ avisa e sai com erro (encurte o texto, não a letra).
 A lista principal NÃO se copia para a ficha: o bloco com "da_pagina" lê a tabela ou o <ul> da seção da página, em
 site/institucional.json. Mudou a lista na página, rode este script de novo e publique o PDF junto.
 
-Identidade, do Manual de Identidade Institucional da Cruz Vermelha Brasileira (site/manual-de-identidade/):
-  - vermelho corporativo RGB 227/34/25 (Pantone 485), só em filete e detalhe: gasta pouca tinta e nada depende de cor;
-  - títulos em Libre Franklin, a versão livre (licença OFL) da Franklin Gothic do logotipo, em guias/fontes/;
-  - o emblema só aparece dentro do logotipo da filial, nunca solto como enfeite nem para marcar primeiros socorros.
-Texto corrido em Arial/Liberation Sans, de 10,5 pt para cima: o público tem mais de 50 anos e imprime em casa.
+Identidade, do Manual de Identidade Institucional da Cruz Vermelha Brasileira, edição de 2022 (págs. 17 a 22):
+  - cores primárias: vermelho RGB 227/34/25, cinza-escuro #1f2324 no texto e cinza #a7afb2 nos fios; da paleta
+    secundária, o azul-marinho #011e41 nos subtítulos. O vermelho só em filete e detalhe: gasta pouca tinta e nada
+    depende de cor;
+  - Montserrat nos títulos e Open Sans no corpo do texto, as duas com licença OFL, em guias/fontes/;
+  - o emblema só aparece dentro do logotipo, nunca solto como enfeite nem para marcar primeiros socorros.
+Texto de 10 pt para cima (o detalhe de cada item da lista, 9,2 pt): o público tem mais de 50 anos e imprime em casa.
 
 Uso: python3 scripts/gerar_guia_pdf.py <slug> [<slug>...]   (sem slug: todas as fichas de guias/)
      Precisa do Playwright/Chromium do ambiente; o logotipo vem do site no ar. Confira as fontes com `pdffonts`.
@@ -39,7 +41,7 @@ FICHAS = RAIZ / "guias"
 FONTES = FICHAS / "fontes"
 LOGO = "https://cruzvermelhariodejaneiro.org/assets/logo-cvb-rj.png"
 SITE = "cruzvermelhariodejaneiro.org"
-VERMELHO = "#e32219"
+VERMELHO, ESCURO, MARINHO, CINZA = "#e32219", "#1f2324", "#011e41", "#a7afb2"
 
 # O que não faz sentido no papel: a folha não tem link nem "mais abaixo". Achou, a ficha precisa de um "no_papel".
 SO_NA_TELA = re.compile(r"\b(veja|clique|toque|abaixo|acima|nesta página|no link)\b", re.I)
@@ -132,9 +134,10 @@ def bloco(b: dict, pagina: dict) -> str:
 
 def fontes_css() -> str:
     regras = []
-    for peso in (400, 600, 700, 800):
-        dados = base64.b64encode((FONTES / f"libre-franklin-latin-{peso}-normal.woff2").read_bytes()).decode()
-        regras.append(f'@font-face {{ font-family: "Libre Franklin"; font-weight: {peso}; src: url(data:font/woff2;base64,{dados}) format("woff2"); }}')
+    for familia, arquivo, pesos in (("Montserrat", "montserrat", (700, 800)), ("Open Sans", "open-sans", (400, 600, 700))):
+        for peso in pesos:
+            dados = base64.b64encode((FONTES / f"{arquivo}-latin-{peso}-normal.woff2").read_bytes()).decode()
+            regras.append(f'@font-face {{ font-family: "{familia}"; font-weight: {peso}; src: url(data:font/woff2;base64,{dados}) format("woff2"); }}')
     return "\n".join(regras)
 
 
@@ -162,50 +165,50 @@ def documento(ficha: dict, pagina: dict, logo_b64: str) -> str:
   @page {{ size: A4; margin: 13mm 14mm 12mm; }}
   * {{ box-sizing: border-box; }}
   html {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
-  body {{ margin: 0; font: 11pt/1.35 Arial, "Liberation Sans", Arimo, sans-serif; color: #111; }}
-  h1, h2, header span, .tel b, .passos li::before {{ font-family: "Libre Franklin", Arial, "Liberation Sans", sans-serif; }}
+  body {{ margin: 0; font: 10.4pt/1.35 "Open Sans", Arial, "Liberation Sans", sans-serif; color: {ESCURO}; }}
+  h1, h2, header span, .tel b, .passos li::before {{ font-family: "Montserrat", Arial, "Liberation Sans", sans-serif; }}
   .folha + .folha {{ break-before: page; }}
   header {{ display: flex; align-items: center; justify-content: space-between; padding-bottom: 3mm; border-bottom: 1.2mm solid {VERMELHO}; }}
   header img {{ height: 13mm; width: auto; }}
-  header span {{ font-size: 9.5pt; font-weight: 600; text-align: right; }}
+  header span {{ font-size: 8.8pt; font-weight: 700; text-align: right; }}
   header i {{ display: block; font-style: normal; font-weight: 800; font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; color: {VERMELHO}; }}
-  h1 {{ font-size: 22pt; font-weight: 800; line-height: 1.12; margin: 5mm 0 1.5mm; letter-spacing: -.01em; }}
-  .sub {{ font-size: 11.5pt; margin: 0 0 3mm; color: #333; }}
-  h2 {{ font-size: 13.5pt; font-weight: 700; margin: 3.4mm 0 1.5mm; padding-bottom: 1mm; border-bottom: .3mm solid #999; }}
+  h1 {{ font-size: 20pt; font-weight: 800; line-height: 1.12; margin: 5mm 0 1.5mm; letter-spacing: -.01em; }}
+  .sub {{ font-size: 10.8pt; margin: 0 0 3mm; }}
+  h2 {{ font-size: 12.5pt; font-weight: 700; color: {MARINHO}; margin: 3.4mm 0 1.5mm; padding-bottom: 1mm; border-bottom: .3mm solid {CINZA}; }}
   .folha > h2:first-of-type {{ margin-top: 4.5mm; }}
   ul.marcar {{ list-style: none; margin: 0; padding: 0; }}
   ul.marcar li {{ display: flex; gap: 3mm; align-items: flex-start; break-inside: avoid; }}
-  .q {{ flex: 0 0 5.2mm; height: 5.2mm; border: .5mm solid #111; border-radius: .8mm; margin-top: .6mm; }}
-  .det li {{ padding: 1.3mm 0; border-bottom: .2mm solid #ccc; }}
+  .q {{ flex: 0 0 5.2mm; height: 5.2mm; border: .5mm solid {ESCURO}; border-radius: .8mm; margin-top: .6mm; }}
+  .det li {{ padding: 1.3mm 0; border-bottom: .2mm solid {CINZA}; }}
   .det li:last-child {{ border-bottom: 0; }}
-  .det b {{ font-size: 11.5pt; }}
-  .quanto {{ font-size: 10.5pt; color: #333; }}
+  .det b {{ font-size: 10.8pt; }}
+  .quanto {{ font-size: 10pt; }}
   .quanto::before {{ content: "· "; }}
-  .det p {{ margin: .3mm 0 0; font-size: 9.6pt; line-height: 1.3; color: #333; }}
+  .det p {{ margin: .2mm 0 0; font-size: 9.2pt; line-height: 1.3; }}
   .curta {{ columns: 2; column-gap: 8mm; }}
-  .curta li {{ padding: .6mm 0; font-size: 10.6pt; }}
+  .curta li {{ padding: .6mm 0; font-size: 10.2pt; }}
   .passos {{ list-style: none; margin: 0; padding: 0; counter-reset: passo; }}
-  .passos li {{ counter-increment: passo; display: flex; gap: 3mm; align-items: baseline; padding: .5mm 0; font-size: 10.8pt; break-inside: avoid; }}
+  .passos li {{ counter-increment: passo; display: flex; gap: 3mm; align-items: baseline; padding: .5mm 0; font-size: 10.4pt; break-inside: avoid; }}
   .passos li::before {{ content: counter(passo); flex: 0 0 5.2mm; font-weight: 800; font-size: 12pt; color: {VERMELHO}; text-align: center; }}
-  .aviso {{ margin: 3mm 0 0; padding: 2.5mm 3.5mm; border-left: 1.2mm solid {VERMELHO}; background: #f4f4f4; font-size: 10.8pt; }}
-  .caixa {{ border: .4mm solid #111; border-radius: 2mm; padding: 3mm 4mm; }}
+  .aviso {{ margin: 3mm 0 0; padding: 2.5mm 3.5mm; border-left: 1.2mm solid {VERMELHO}; background: #f4f4f4; font-size: 10.4pt; }}
+  .caixa {{ border: .4mm solid {ESCURO}; border-radius: 2mm; padding: 3mm 4mm; }}
   .caixa h2 {{ border: 0; padding: 0; }}
   .duas {{ display: grid; grid-template-columns: 1.15fr 1fr; gap: 6mm; margin-top: 3.5mm; }}
   .duas h2 {{ margin-top: 0; }}
   table {{ width: 100%; border-collapse: collapse; }}
-  th {{ text-align: left; font-size: 9.5pt; font-weight: 600; color: #333; padding: 0 0 1mm; }}
-  td {{ height: 6.6mm; border-bottom: .3mm solid #555; }}
+  th {{ text-align: left; font-size: 9.2pt; font-weight: 600; padding: 0 0 1mm; }}
+  td {{ height: 6.6mm; border-bottom: .3mm solid {ESCURO}; }}
   td + td, th + th {{ width: 42%; padding-left: 4mm; }}
   .tel {{ margin: 0; padding: 0; list-style: none; }}
-  .tel li {{ display: flex; align-items: baseline; gap: 3mm; padding: .5mm 0; font-size: 11pt; }}
+  .tel li {{ display: flex; align-items: baseline; gap: 3mm; padding: .5mm 0; font-size: 10.4pt; }}
   .tel b {{ font-size: 16pt; font-weight: 800; min-width: 16mm; }}
   .linhas {{ display: flex; gap: 5mm; margin-top: 1mm; }}
-  .linhas span {{ flex: 1; border-bottom: .3mm solid #555; height: 7mm; font-size: 9.5pt; color: #555; }}
+  .linhas span {{ flex: 1; border-bottom: .3mm solid {ESCURO}; height: 7mm; font-size: 9pt; }}
   p {{ margin: 0 0 2mm; }}
-  .dica {{ font-size: 10.5pt; }}
+  .dica {{ font-size: 10pt; }}
   .caixa .dica {{ margin: 2mm 0 0; }}
-  .curso {{ margin-top: 3mm; font-size: 10.5pt; }}
-  .pe {{ margin: 2.5mm 0 0; padding-top: 1.5mm; border-top: .3mm solid #999; font-size: 8.2pt; line-height: 1.3; color: #333; }}
+  .curso {{ margin-top: 3mm; font-size: 10pt; }}
+  .pe {{ margin: 2.5mm 0 0; padding-top: 1.5mm; border-top: .3mm solid {CINZA}; font-size: 7.8pt; line-height: 1.3; }}
 </style></head>
 <body>
 {chr(10).join(folhas)}

@@ -41,12 +41,14 @@ A ficha `guias/<slug>.json` diz o que vai em cada folha; o desenho fica só no g
 Regras fixas:
 
 - **Duas folhas.** Não coube, encurta-se o texto, não a letra. O gerador sai com erro se passar.
-- **Letra de 10,5 pt para cima**, alto contraste, nada que dependa de cor: o público tem mais de 50 anos.
+- **Letra de 10 pt para cima** (o detalhe de cada item, 9,2 pt), alto contraste, nada que dependa de cor: o público
+  tem mais de 50 anos.
 - **A lista vem da página** (`da_pagina`), para o papel e a tela nunca dizerem coisas diferentes.
 - **Sem texto de tela no papel** ("veja abaixo", "clique"). O gerador acusa; a troca vai em `no_papel`, na ficha.
-- **Identidade, do Manual de Identidade Institucional:** vermelho corporativo RGB 227/34/25 (Pantone 485), só em
-  filete e detalhe; títulos em Libre Franklin, a versão livre da Franklin Gothic do logotipo; o emblema só dentro
-  do logotipo da filial, nunca solto. Caixa de primeiros socorros se marca com cruz branca em fundo verde.
+- **Identidade, do Manual de Identidade Institucional, edição de 2022** (págs. 17 a 22): Montserrat nos títulos e
+  Open Sans no texto; vermelho RGB 227/34/25 só em filete e detalhe, cinza-escuro `#1f2324` no texto, cinza
+  `#a7afb2` nos fios e azul-marinho `#011e41` nos subtítulos; o emblema só dentro do logotipo, nunca solto. Caixa de
+  primeiros socorros se marca com cruz branca em fundo verde.
 - **Nome do arquivo:** `<slug>-cruz-vermelha-rj.pdf`, na pasta da página. Depois de publicado, o endereço não muda.
 - **Rodapé:** de quem são as listas, onde estão as fontes, a data e "Pode copiar e distribuir, sem alterar".
 
