@@ -60,6 +60,11 @@ foreach (['config', 'http', 'db', 'unicopag', 'compra', 'cupons', 'escola', 'esp
 if (is_file(__DIR__ . '/lib/atendimento.php')) {
     require_once __DIR__ . '/lib/atendimento.php';
 }
+// Bazar solidário (11/11/2026): o registro do que a pessoa quer doar e o aviso à responsável. Opcional como os outros:
+// precisa da recuperação por WhatsApp (o cliente da Kapso mora lá).
+if (is_file(__DIR__ . '/lib/bazar.php') && is_file(__DIR__ . '/lib/recuperacao_whatsapp.php')) {
+    require_once __DIR__ . '/lib/bazar.php';
+}
 if (is_file(__DIR__ . '/lib/google_drive.php')) {
     require_once __DIR__ . '/lib/google_drive.php';
 }

@@ -5,7 +5,9 @@ Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /mov
 /direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/, /cbfi/ (o link do CBFI, 27/10/2026) e
 /kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026), com as duas páginas que o
 complementam desde 10/11/2026: /mochila-de-emergencia/ (a mochila para sair de casa, o "kit de sobrevivência") e
-/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página. O conteúdo (textos, fontes oficiais,
+/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página; e /bazar/
+(11/11/2026: arrecadação de roupas e itens domésticos para o bazar solidário; sem fontes oficiais, a caixa de fontes
+não aparece). O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -70,7 +72,7 @@ ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
-         "mochila-de-emergencia", "kit-de-primeiros-socorros"]
+         "mochila-de-emergencia", "kit-de-primeiros-socorros", "bazar"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
@@ -83,9 +85,10 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
                 "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
                 "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
-                "kit-de-primeiros-socorros": "Kit de primeiros socorros"}
+                "kit-de-primeiros-socorros": "Kit de primeiros socorros", "bazar": "Bazar solidário"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
+              "campanha-agasalho": ("/campanha-agasalho.html", "Campanha do Agasalho", "Roupas de frio, cobertores e calçados entregues a famílias em situação de vulnerabilidade."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
               "transparencia": ("/transparencia/", "Transparência", "Os documentos publicados pela filial, cada um com código de verificação.")}
 FORCA_LEGAL = {"vigente": "https://schema.org/InForce", "revogado": "https://schema.org/NotInForce",
@@ -323,6 +326,125 @@ MATERIAL_JS = """<script>
 </script>"""
 
 
+# Só entra na página do bazar. O formulário manda para api/bazar.php, que grava o registro e avisa a responsável do
+# bazar (docs/bazar.md). As chaves dos itens e das entregas são as de MCP_BAZAR_ITENS e MCP_BAZAR_ENTREGAS, em
+# api/lib/bazar.php: scripts/testar_bazar_integracao.php confere que as duas listas são iguais.
+BAZAR_ITENS = [("roupas", "Roupas"), ("calcados", "Calçados"), ("acessorios", "Bolsas e acessórios"),
+               ("cama-mesa-banho", "Cama, mesa e banho"), ("cozinha", "Utensílios de cozinha"), ("casa", "Objetos de casa"),
+               ("aparelhos", "Pequenos aparelhos"), ("outros", "Outros itens")]
+BAZAR_ENTREGAS = [("esta-semana", "Esta semana"), ("proxima-semana", "Na próxima semana"), ("este-mes", "Ainda neste mês"),
+                  ("nao-sei", "Ainda não sei")]
+BAZAR_API = "/matricula-cursos-presenciais/api/bazar.php"
+
+
+def bazar_form() -> str:
+    itens = "".join(f'<label class="bz-opcao"><input type="checkbox" name="itens" value="{c}"><span>{esc(r)}</span></label>' for c, r in BAZAR_ITENS)
+    entregas = "".join(f'<label class="bz-opcao"><input type="radio" name="entrega" value="{c}"{" checked" if c == "nao-sei" else ""}><span>{esc(r)}</span></label>'
+                       for c, r in BAZAR_ENTREGAS)
+    return f"""<div class="inst-bazar">
+<form class="bz-form" action="{BAZAR_API}" method="post" novalidate>
+<div class="bz-campo"><label for="bz-nome">Seu nome</label><input id="bz-nome" name="nome" type="text" autocomplete="name" maxlength="120" required></div>
+<div class="bz-campo"><label for="bz-telefone">Seu WhatsApp, com DDD</label><input id="bz-telefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="(21) 91234-5678" required><p class="bz-dica">É por ele que a equipe do bazar fala com você.</p></div>
+<fieldset class="bz-campo" id="bz-itens"><legend>O que você quer doar? Marque tudo o que tiver.</legend>{itens}</fieldset>
+<div class="bz-campo"><label for="bz-descricao">Quer contar mais? (não é obrigatório)</label><textarea id="bz-descricao" name="descricao" rows="3" maxlength="600" placeholder="Por exemplo: três sacos de roupa de criança e um jogo de panelas."></textarea></div>
+<fieldset class="bz-campo"><legend>Quando você pretende trazer?</legend>{entregas}</fieldset>
+<div class="bz-armadilha" aria-hidden="true"><label for="bz-site">Não preencha este campo</label><input id="bz-site" name="site" type="text" tabindex="-1" autocomplete="off"></div>
+<label class="bz-opcao bz-aceite" id="bz-aceite"><input type="checkbox" name="aceite" value="1" required><span>Concordo que a Cruz Vermelha Brasileira Rio de Janeiro use o meu nome e o meu WhatsApp para combinar a entrega desta doação, como diz a <a href="/privacidade/">Política de Privacidade</a>.</span></label>
+<p class="bz-recado" role="alert" aria-live="assertive"></p>
+<button class="btn btn-red bz-enviar" type="submit">Avisar a equipe do bazar</button>
+</form>
+<div class="bz-pronto" hidden tabindex="-1">
+<h3>Recebemos o seu aviso<span class="bz-pronto-nome"></span>!</h3>
+<p>O seu protocolo é <strong class="bz-pronto-protocolo"></strong>. Anote ou tire uma foto desta tela.</p>
+<p>Agora é só trazer a doação à sede, na Praça da Cruz Vermelha, 10, Centro, de segunda a sexta, das 10h às 17h. Se for preciso combinar algum detalhe, a equipe do bazar chama você pelo WhatsApp.</p>
+</div>
+<noscript><p>Este formulário precisa do JavaScript ligado no navegador. Sem ele, não tem problema: é só trazer a doação à sede no horário de atendimento.</p></noscript>
+</div>"""
+
+
+BAZAR_CSS = """  <style>
+    /* Formulário do bazar (11/11/2026): pensado para o celular e para quem tem mais de 50 anos: letra grande, um campo
+       por linha, opções que ocupam a largura toda e alvos de toque de 52 px. */
+    .inst-bazar { margin: 18px 0 8px; padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+    .bz-campo { margin: 0 0 22px; padding: 0; border: 0; min-width: 0; }
+    .bz-campo > label:not(.bz-opcao), .bz-campo > legend { display: block; font-size: 1.08rem; font-weight: 700; color: var(--black); margin: 0 0 8px; padding: 0; line-height: 1.35; }
+    .bz-campo input[type=text], .bz-campo input[type=tel], .bz-campo textarea { display: block; width: 100%; box-sizing: border-box; min-height: 52px; padding: 12px 14px; font: inherit; font-size: 1.1rem; line-height: 1.4; color: var(--black); background: var(--paper); border: 2px solid #8a94a3; border-radius: 10px; }
+    .bz-campo input:focus, .bz-campo textarea:focus { outline: 3px solid var(--red); outline-offset: 1px; border-color: var(--red); }
+    .bz-dica { font-size: .95rem !important; color: var(--muted) !important; margin: 6px 0 0 !important; }
+    .bz-opcao { display: flex; align-items: center; gap: 12px; min-height: 52px; box-sizing: border-box; padding: 10px 14px; margin: 0 0 8px; background: var(--paper); border: 2px solid var(--line); border-radius: 10px; font-size: 1.06rem; line-height: 1.35; color: var(--text); cursor: pointer; }
+    .bz-opcao input { flex: 0 0 auto; width: 24px; height: 24px; margin: 0; accent-color: var(--red); }
+    .bz-opcao:has(input:checked) { border-color: var(--red); background: #fff5f5; }
+    .bz-opcao:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 1px; }
+    .bz-aceite { align-items: flex-start; font-size: .98rem; margin: 0 0 18px; }
+    .bz-aceite input { margin-top: 2px; }
+    .bz-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .bz-erro > label:not(.bz-opcao), .bz-erro > legend { color: var(--red); }
+    .bz-erro input[type=text], .bz-erro input[type=tel], .bz-erro textarea, .bz-opcao.bz-erro { border-color: var(--red); }
+    .bz-recado { margin: 0 0 14px !important; font-size: 1.05rem !important; font-weight: 700; color: var(--red) !important; }
+    .bz-recado:empty { display: none; }
+    .inst-bazar .bz-enviar { display: block; width: 100%; min-height: 56px; font-size: 1.1rem; cursor: pointer; }
+    .inst-bazar .bz-enviar[disabled] { opacity: .65; cursor: default; }
+    .bz-pronto { padding: 4px 0; }
+    .bz-pronto:focus { outline: none; }
+    .bz-pronto h3 { margin: 0 0 10px; font-size: 1.3rem; color: var(--black); }
+    .bz-pronto-protocolo { font-size: 1.2rem; white-space: nowrap; }
+    @media (max-width: 620px) { .inst-bazar { padding: 16px 14px; } }
+  </style>"""
+
+BAZAR_JS = """<script>
+  /* Formulário do bazar: manda o aviso para api/bazar.php e mostra o protocolo (gerar_institucional.py). */
+  (function () {
+    var caixa = document.querySelector('.inst-bazar'); if (!caixa || !window.fetch) return;
+    var f = caixa.querySelector('form'), recado = f.querySelector('.bz-recado'), botao = f.querySelector('.bz-enviar'), pronto = caixa.querySelector('.bz-pronto');
+    var alvos = { nome: '#bz-nome', telefone: '#bz-telefone', itens: '#bz-itens', descricao: '#bz-descricao', aceite: '#bz-aceite' };
+    function limpar() {
+      recado.textContent = '';
+      Array.prototype.forEach.call(f.querySelectorAll('.bz-erro'), function (e) { e.classList.remove('bz-erro'); });
+    }
+    function erro(campo, texto) {
+      recado.textContent = texto;
+      var alvo = campo && alvos[campo] ? f.querySelector(alvos[campo]) : null;
+      if (alvo) {
+        var bloco = alvo.classList.contains('bz-campo') || alvo.classList.contains('bz-opcao') ? alvo : alvo.parentNode;
+        bloco.classList.add('bz-erro');
+        var foco = alvo.matches('input, textarea') ? alvo : alvo.querySelector('input');
+        if (foco) foco.focus();
+        bloco.scrollIntoView({ block: 'center' });
+      }
+    }
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      limpar();
+      var d = new FormData(f), itens = d.getAll('itens');
+      var nome = String(d.get('nome') || '').trim(), telefone = String(d.get('telefone') || '').replace(/\D/g, ''), descricao = String(d.get('descricao') || '').trim();
+      if (nome.length < 2) return erro('nome', 'Digite o seu nome.');
+      if (telefone.length < 10 || telefone.length > 13) return erro('telefone', 'Digite o seu celular com DDD, por exemplo (21) 91234-5678.');
+      if (!itens.length) return erro('itens', 'Marque pelo menos um tipo de item que você quer doar.');
+      if (itens.indexOf('outros') !== -1 && descricao.length < 3) return erro('descricao', 'Você marcou “Outros itens”: escreva quais são.');
+      if (!d.get('aceite')) return erro('aceite', 'Marque que você concorda com o uso dos seus dados para combinarmos a entrega.');
+      var rotulo = botao.textContent;
+      botao.disabled = true; botao.textContent = 'Enviando…';
+      fetch(f.action, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: nome, telefone: String(d.get('telefone') || ''), itens: itens, descricao: descricao, entrega: d.get('entrega') || 'nao-sei', aceite: true, site: d.get('site') || '' }) })
+        .then(function (x) { return x.json().catch(function () { return {}; }); })
+        .then(function (r) {
+          if (r && r.ok) {
+            caixa.querySelector('.bz-pronto-nome').textContent = r.nome ? ', ' + r.nome : '';
+            caixa.querySelector('.bz-pronto-protocolo').textContent = r.protocolo || '';
+            f.hidden = true; pronto.hidden = false; pronto.focus();
+            pronto.scrollIntoView({ block: 'center' });
+            try { if (typeof gtag === 'function') gtag('event', 'bazar_registrar', { origem: 'pagina' }); } catch (e) {}
+          } else {
+            erro(r && r.campo, (r && r.erro) || 'Não foi possível enviar agora. Tente de novo em instantes.');
+          }
+        })
+        .catch(function () { erro(null, 'Não foi possível enviar agora. Confira a sua internet e tente de novo.'); })
+        .then(function () { botao.disabled = false; botao.textContent = rotulo; });
+    });
+  })();
+</script>"""
+
+
 def tratar_html(html: str, titulo: str = "") -> str:
     """Links externos abrem em outra aba; tabelas ganham rolagem horizontal no celular."""
     def link(m: re.Match) -> str:
@@ -332,6 +454,7 @@ def tratar_html(html: str, titulo: str = "") -> str:
             attrs += ' target="_blank" rel="noopener"'
         return f"<a{attrs}>"
     html = re.sub(r'<div class="inst-video"([^>]*)></div>', video, html)
+    html = html.replace('<div class="inst-bazar"></div>', bazar_form())
     html = re.sub(r"<a(\s[^>]*)>", link, html)
     # Figuras ficam abaixo da primeira dobra: carregam quando se aproximam da tela.
     html = re.sub(r"<img(?![^>]*\bloading=)", '<img loading="lazy" decoding="async"', html)
@@ -493,6 +616,8 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
     evento_js = "\n" + EVENTO_JS if any("data-evento=" in s["html"] for s in p["secoes"]) else ""
     tem_material = any('class="inst-material"' in s["html"] for s in p["secoes"])
     material_css, material_js = ("\n" + MATERIAL_CSS, "\n" + MATERIAL_JS) if tem_material else ("", "")
+    if any('class="inst-bazar"' in s["html"] for s in p["secoes"]):
+        material_css, material_js = material_css + "\n" + BAZAR_CSS, material_js + "\n" + BAZAR_JS
     perguntas = ""
     if p.get("perguntas"):
         itens = "\n        ".join(f"<details><summary>{esc(q['pergunta'])}</summary><p>{resposta_html(q)}</p></details>" for q in p["perguntas"])
@@ -502,6 +627,14 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         {itens}
       </section>"""
     fontes = "\n          ".join(f'<li><a href="{esc(f["url"])}" target="_blank" rel="noopener">{esc(f["rotulo"])}</a></li>' for f in p["fontes"])
+    # Página sem fontes oficiais (o bazar) não leva a caixa vazia.
+    caixa_fontes = f"""
+      <aside class="inst-fontes" aria-labelledby="inst-fontes-titulo">
+        <h2 id="inst-fontes-titulo">Fontes oficiais</h2>
+        <ul>
+          {fontes}
+        </ul>
+      </aside>""" if p["fontes"] else ""
     titulo = p["titulo_seo"]
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -558,13 +691,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
       <div class="wrap">
 {secoes}
 {perguntas}
-
-      <aside class="inst-fontes" aria-labelledby="inst-fontes-titulo">
-        <h2 id="inst-fontes-titulo">Fontes oficiais</h2>
-        <ul>
-          {fontes}
-        </ul>
-      </aside>
+{caixa_fontes}
       <p class="inst-atualizado">Atualizado em {atualizado_em(p):%d/%m/%Y}.</p>
       </div>
     </div>

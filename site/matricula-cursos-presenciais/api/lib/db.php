@@ -35,7 +35,7 @@ function mcp_db(): PDO
  * novo quando o arquivo muda). Vem do código que está rodando, e não do arquivo em disco: logo depois de um
  * deploy, uma requisição servida com o db.php antigo (opcache) não grava a versão nova sem criar o que é novo.
  */
-const MCP_DB_VERSAO = 'aae4f3dca95a9199';
+const MCP_DB_VERSAO = '228f6c4b71f3e75a';
 
 /**
  * Cria e atualiza as tabelas (CREATE IF NOT EXISTS evita passo manual no deploy). Roda inteira só quando
@@ -821,6 +821,31 @@ function mcp_migrar_tudo(PDO $pdo): void
         UNIQUE KEY ux_campanha_destino (campanha, destino_hash),
         KEY ix_provedor (provedor_id),
         KEY ix_criado (criado_em, status)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    // Bazar solidário (11/11/2026, lib/bazar.php e api/bazar.php): o que cada pessoa avisou que vai doar, pelo formulário
+    // da página /bazar/. O aviso à responsável do bazar sai por WhatsApp (modelo aprovado na Meta, pela Kapso): fica
+    // 'pendente' enquanto o modelo não está aprovado ou a Kapso não respondeu, e a rodada de hora em hora tenta de novo.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_bazar_doacoes (
+        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        protocolo VARCHAR(20) NULL,
+        nome VARCHAR(120) NOT NULL,
+        telefone VARCHAR(20) NOT NULL,
+        itens VARCHAR(255) NOT NULL,
+        descricao TEXT NULL,
+        entrega VARCHAR(20) NOT NULL,
+        ip VARCHAR(45) NULL,
+        email_equipe VARCHAR(10) NULL,
+        aviso_status ENUM('pendente','enviado','falhou','vencido') NOT NULL DEFAULT 'pendente',
+        aviso_modelo VARCHAR(40) NULL,
+        aviso_provedor_id VARCHAR(128) NULL,
+        aviso_erro VARCHAR(255) NULL,
+        aviso_tentativas TINYINT UNSIGNED NOT NULL DEFAULT 0,
+        aviso_em DATETIME NULL,
+        criado_em DATETIME NOT NULL,
+        atualizado_em DATETIME NOT NULL,
+        KEY ix_aviso (aviso_status, criado_em),
+        KEY ix_ip (ip, criado_em),
+        KEY ix_telefone (telefone, criado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // Pagamento da matrícula pelo site (01/11/2026, api/matricula.php): a cobrança da matrícula de uma inscrição que já
     // pagou só a taxa, aberta pelo link assinado da mensagem. Tabela à parte de mcp_inscricoes de propósito: uma linha
