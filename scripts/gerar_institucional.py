@@ -75,7 +75,7 @@ IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
          "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia", "quando-ligar-192",
-         "bazar", "lei-lucas-para-escolas", "plano-de-contingencia", "empresas-e-orgaos-publicos"]
+         "verao-seguro", "bazar", "lei-lucas-para-escolas", "plano-de-contingencia", "empresas-e-orgaos-publicos"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",

@@ -1,0 +1,99 @@
+{
+  "slug": "verao-seguro",
+  "arquivo": "verao-seguro-cruz-vermelha-rj.pdf",
+  "capa": "capa-verao-seguro.webp",
+  "titulo": "Verão seguro no Rio: o dia de calor",
+  "sub": "Marque com um X os cuidados de hoje. Valem para toda a família, e mais ainda para idosos, bebês e quem trabalha ao sol.",
+  "credito": "Orientações do Ministério da Saúde, da OPAS/OMS, do Centro de Operações Rio, da Sobrasa e do Corpo de Bombeiros, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Mais atenção com:",
+          "texto": "idosos, bebês e crianças, gestantes, quem trabalha ao sol e quem tem doença do coração, dos rins ou do pulmão, ou diabetes. Remédio de uso contínuo só muda com orientação médica."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Ventilador tem limite:",
+          "texto": "com mais de 40 °C, ele passa a esquentar o corpo. Nesses dias, prefira banho frio, pano molhado na pele e um lugar com ar-condicionado."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "Alguém passou mal no calor",
+          "itens": [
+            "Leve a pessoa para a sombra ou um lugar fresco e afrouxe a roupa.",
+            "Refresque o corpo com pano molhado, borrifo de água, abano ou banho fresco.",
+            "Se estiver acordada e sem enjoo, dê água devagar, em pequenos goles.",
+            "Vomitou, piorou, ficou confusa ou não melhorou em 1 hora? Procure atendimento de saúde na hora."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Sinais de exaustão pelo calor:",
+          "texto": "suor intenso, pele fria e pálida, tontura ou desmaio, dor de cabeça, respiração acelerada, pulso rápido e fraco. Sede forte, saliva grossa e urina escura indicam falta de água."
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Insolação é emergência: ligue 192",
+          "passos": [
+            "Ligue 192 na hora, ou peça para alguém ligar.",
+            "Leve a pessoa para um lugar fresco.",
+            "Resfrie a cabeça e o corpo com água e abane.",
+            "Não dê nada para beber."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "199",
+              "Defesa Civil"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Sinais de insolação:",
+            "texto": "pele quente, vermelha e seca, temperatura de mais de 40 °C, confusão, convulsão ou desmaio."
+          }
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Na praia",
+          "da_pagina": {
+            "secao": "praia",
+            "formato": "lista"
+          },
+          "sem_fonte": true
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Alguém se afogando",
+          "itens": [
+            "Não entre na água. Avise o guarda-vidas e ligue 193.",
+            "Jogue para a pessoa uma boia ou outro objeto que flutue.",
+            "Espere o socorro profissional e não perca a pessoa de vista."
+          ]
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
