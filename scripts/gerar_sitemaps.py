@@ -77,6 +77,7 @@ PAGINAS = [
     ("/empresas-e-orgaos-publicos/", "empresas-e-orgaos-publicos/index.html", "monthly", "0.6", "Para empresas, escolas e órgãos públicos"),
     ("/gestao/", "gestao/index.html", "monthly", "0.6", "Como funciona a nossa gestão"),
     ("/pedido-de-documentos/", "pedido-de-documentos/index.html", "yearly", "0.4", "Pedido de documentos"),
+    ("/bazar/", "bazar/index.html", "monthly", "0.6", "Bazar solidário: doação de roupas e itens domésticos"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),

@@ -155,6 +155,27 @@ ficar esperando resposta antes. O texto é um só, em `MCP_VOL_PROXIMAS_ENTRADAS
   está fora do ar de propósito.
 - **Em janeiro**: trocar o texto nas duas constantes (ou tirar o aviso) e republicar as mesmas páginas.
 
+## Bazar solidário: página `/bazar/` (11/11/2026)
+
+Pedido do Matheus: uma página para arrecadar roupas e itens domésticos em bom estado para o bazar.
+
+- **Página nova `/bazar/`** (`site/institucional.json`, slug `bazar`, gerada por `gerar_institucional.py bazar`; trilha
+  Início › Bazar solidário): onde e quando entregar, o que recebemos, o que não recebemos, como preparar a doação, para
+  onde vai e perguntas. Sem fontes oficiais: o gerador deixa de fora a caixa "Fontes oficiais" quando a lista está vazia.
+  Entrou na lista do `gerar_sitemaps.py` e a Campanha do Agasalho passou a poder aparecer em "Veja também".
+- **Não publicada.** Local e horário de entrega são os da sede já publicados para donativos (segunda a sexta, 10h às
+  17h); a lista de itens, o destino (venda a preços acessíveis, renda para a filial) e a falta de datas do bazar estão
+  em `notas_internas` da página, para a coordenação confirmar antes.
+- **Home**: terceiro card em "Campanhas ativas" (`site/index.html`), com o ícone `hand-holding-heart` no lugar da foto
+  (o sprite da home ganhou o símbolo, por `scripts/icones.py`). Trocar por foto quando houver uma do bazar.
+- **Registro de doações e aviso por WhatsApp** ([docs/bazar.md](docs/bazar.md)): a seção "Avise o que você vai doar" manda
+  para `api/bazar.php`, que grava em `mcp_bazar_doacoes`, manda e-mail à equipe e avisa a responsável do bazar pelo
+  WhatsApp (Kapso, modelo `bazar_doacao_nova`). O aviso **só sai com o modelo aprovado na Meta** e conferido; até lá
+  fica pendente (48 h) e a rodada do `lembretes.php` tenta de novo. O modelo foi enviado à Meta em 11/11/2026 e estava
+  em análise. O celular de destino fica só no servidor (`WHATSAPP_BAZAR_AVISO`). Teste:
+  `scripts/testar_bazar_integracao.php` (64 verificações).
+- Conferida em 390 px (sem rolagem lateral, botão de 59 px de altura). Publicação: `scripts/publicacao-bazar.txt`.
+
 ## CBFI de 28/11/2026 e volta automática para janeiro (27/10/2026)
 
 Pedido do Matheus: uma página para ser "o link do CBFI" na divulgação, a turma de **28/11/2026** aberta a quem se

@@ -156,6 +156,11 @@ return [
     // (Só para o teste local: 'WHATSAPP_KAPSO_BASE' => 'http://127.0.0.1:<porta>', um servidor falso. Nunca no servidor.)
     'WHATSAPP_KAPSO_CHAVE' => '',
     'WHATSAPP_KAPSO_NUMERO_ID' => '',
+    // Bazar solidário (11/11/2026, lib/bazar.php): o celular (DDD + número) de quem recebe, pelo WhatsApp, o aviso de
+    // cada doação registrada na página /bazar/. Sai pelo número da Kapso acima, com o modelo bazar_doacao_nova, e só
+    // depois de a Meta aprovar o modelo. Vazio = nenhum aviso sai (o registro e o e-mail à equipe continuam). O número
+    // é de uma pessoa: fica só no servidor (também vale em api/config-whatsapp.php).
+    'WHATSAPP_BAZAR_AVISO' => '',
     // Lembrete da aula de amanhã: a função public.aulas_do_dia da escola. Vazio = ESCOLA_API_URL trocando
     // matricula_rapida por aulas_do_dia. Também vale em api/config-escola.php.
     'ESCOLA_API_AULAS_DIA_URL' => '',

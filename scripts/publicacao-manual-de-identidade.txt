@@ -1,5 +1,7 @@
 # Manual de Identidade Institucional da Cruz Vermelha Brasileira (11/11/2026, pedido do Matheus): página
-# /manual-de-identidade/ com o PDF do manual nacional (52 páginas, 14 MB, o arquivo original, sem recompressão). O botão
+# /manual-de-identidade/ com o PDF do manual nacional. Desde 11/11/2026, à noite, é a EDIÇÃO DE 2022 (85 páginas, 4 MB,
+# o arquivo que o Matheus enviou, sem recompressão), no lugar da anterior (52 páginas, 14 MB); a capa e os textos da
+# página (o que o manual traz, cores, tipografia) acompanham. O endereço do PDF é o mesmo. O botão
 # de baixar só aparece depois de a pessoa deixar o e-mail e marcar o aceite; o pedido vai para a Redação (material
 # manual-de-identidade, lib/newsletter/materiais.ts), que grava o e-mail e manda uma cópia do link. O .htaccess tira o
 # PDF da busca do Google (X-Robots-Tag), para quem procura chegar à página e não ao arquivo solto.
