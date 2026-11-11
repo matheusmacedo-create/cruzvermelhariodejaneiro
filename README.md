@@ -1678,6 +1678,16 @@ por exemplo), valem o modelo de cupom do curso e o geral, como antes. A 3ª mens
 Teste: `scripts/testar_oferta_alunos_integracao.php` (37 verificações). **Publicado em 10/11/2026 às 16h11** e conferido com
 `conferir_publicacao.sh`; a primeira rodada com o modelo é a das 17h07.
 
+### Oferta a ex-alunos, 2ª leva com o cupom (11/11/2026)
+
+A 1ª leva saiu em 10/11 às 17h07 pelo aviso de turma nova: 74 mensagens, 73 entregues (44 lidas até a manhã seguinte), 1
+barrada pela Meta, 11 "Não tenho interesse" (bloqueados sozinhos). Em 11/11 a Meta aprovou `cur_cupom_oferta`,
+`ll_cupom_oferta` e `curso_cupom_oferta`. Decisão do responsável: mandar de novo a oferta de Curativos aos mesmos contatos,
+agora com o cupom no texto. Para isso a campanha mudou de nome (`MCP_OA_CAMPANHA = 'curativos-alunos-cupom'`: campanha nova
+começa do zero) e passou a preferir o modelo de cupom (`MCP_OA_PREFERE = 'cupom'`; o aviso de turma só entra sem nenhum
+modelo de cupom aprovado). Quem pediu para não receber na 1ª leva e quem já comprou o curso continuam de fora. O painel
+passa a mostrar os números da campanha nova (os da 1ª ficam em `mcp_oferta_alunos`, campanha `curativos-alunos`).
+
 ### Modelo de cupom geral, para qualquer curso (09/11/2026)
 
 Pedido do responsável: "um modelo que a gente possa usar com várias entradas no ano". **Situação: modelo submetido à Meta em
