@@ -6,7 +6,7 @@ repete as quatro, sem inventar formato.
 | Peça | O que é | Onde mora |
 | --- | --- | --- |
 | 1. Página | O guia completo, com fontes, fotos, perguntas e respostas. É o que o Google e os anúncios do Ad Grants encontram. | `site/institucional.json` → `scripts/gerar_institucional.py` |
-| 2. PDF | Duas folhas A4 para imprimir e marcar. É o resumo da página, não outra versão dela. | `guias/<slug>.json` → `scripts/gerar_guia_pdf.py` |
+| 2. PDF | Duas folhas A4 para imprimir e marcar e uma terceira com todas as fontes. É o resumo da página, não outra versão dela. | `guias/<slug>.json` → `scripts/gerar_guia_pdf.py` |
 | 3. Entrega | A caixa que pede o e-mail, o aceite e a mensagem com o botão de baixar. | Redação, `lib/newsletter/materiais.ts` |
 | 4. Medida | Dois eventos no GA4: `<id>_pedir` (deixou o e-mail) e `<id>_baixar` (tocou no botão). | `docs/rastreamento.md` |
 
@@ -31,16 +31,19 @@ A ficha `guias/<slug>.json` diz o que vai em cada folha; o desenho fica só no g
 | Bloco | Para quê |
 | --- | --- |
 | `lista_detalhada` | A lista principal, com quadradinho, quantidade e motivo. Com `da_pagina`, lê a tabela da página. |
-| `lista_curta` | Itens de uma linha, em duas colunas. |
+| `lista_curta` | Itens de uma linha, em duas colunas. Com `sem_fonte`, tira o “(St John)” do fim de cada item. |
 | `passos` | O que fazer, em ordem numerada. |
 | `aviso` | Um recado em destaque. |
-| `familia_e_emergencia` | Telefones da família para preencher e os telefones de emergência. |
+| `familia_e_emergencia` | Telefones da família para preencher e os telefones de emergência. Aceita `titulo`, `ponto_de_encontro` e `dica`. |
 | `datas` | As datas em que a família conferiu. |
 | `curso` | O convite do curso, igual em todos. |
 
 Regras fixas:
 
-- **Duas folhas.** Não coube, encurta-se o texto, não a letra. O gerador sai com erro se passar.
+- **Duas folhas de conteúdo e uma de fontes.** Não coube, encurta-se o texto, não a letra. O gerador sai com erro
+  se passar.
+- **Todas as fontes, no papel.** A última folha é montada sozinha com as fontes da página, nome e endereço por
+  extenso. Antes de gerar, confira se cada endereço ainda responde; fonte que saiu do ar se troca na página.
 - **Letra de 10 pt para cima** (o detalhe de cada item, 9,2 pt), alto contraste, nada que dependa de cor: o público
   tem mais de 50 anos.
 - **A lista vem da página** (`da_pagina`), para o papel e a tela nunca dizerem coisas diferentes.
@@ -67,6 +70,6 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Guia | Página | PDF no padrão | Entrega por e-mail |
 | --- | --- | --- | --- |
 | Kit de emergência | no ar | PDF próprio, de antes do padrão (`gerar_pdf_kit.py`) | sim |
-| Mochila de emergência | no ar | **modelo do padrão, gerado e não publicado** | não |
-| Kit de primeiros socorros | no ar | falta | não |
+| Mochila de emergência | no ar | modelo do padrão, gerado e não publicado | não |
+| Kit de primeiros socorros | no ar | **primeiro guia completo no padrão, gerado e não publicado**; a página já aponta para ele | não |
 | Lei Lucas | só matéria em notícias | falta | não |

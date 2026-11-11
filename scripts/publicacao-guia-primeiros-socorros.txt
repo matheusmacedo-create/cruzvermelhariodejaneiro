@@ -1,0 +1,17 @@
+# Guia do kit de primeiros socorros em PDF (11/11/2026, pedido do Matheus): o primeiro guia completo no padrão dos
+# guias gratuitos (docs/padrao-guias-gratuitos.md). Duas folhas para imprimir e marcar e uma com as 23 fontes da página.
+# A página /kit-de-primeiros-socorros/ troca o link "Prefere no papel?", que levava ao PDF do kit de emergência, pelo
+# PDF novo (evento primeiros_socorros_baixar, docs/rastreamento.md), e troca o endereço do Manual de Primeiros Socorros
+# do Ministério da Saúde e da Fiocruz, que saiu do ar em fiocruz.br (404), pela cópia da Biblioteca Virtual em Saúde.
+# ESTADO: NÃO PUBLICADO.
+# Antes de publicar: abrir no navegador https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf e
+# confirmar que é o manual de 2003 (o servidor recusa leitura automática, e a sessão não conseguiu abrir).
+# Gerar antes: python3 scripts/gerar_institucional.py kit-de-primeiros-socorros && python3 scripts/gerar_guia_pdf.py kit-de-primeiros-socorros
+# Ordem: o PDF primeiro (a página aponta para ele), depois a página.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-guia-primeiros-socorros.txt)
+# Depois: limpar o cache, conferir no celular o link "Baixe o guia do kit de primeiros socorros em PDF", rodar
+# python3 scripts/gerar_sitemaps.py e publicar os sitemaps (o lastmod da página muda).
+# Desfazer: scripts/desfazer_publicacao.sh 553cc89 scripts/publicacao-guia-primeiros-socorros.txt (a página volta e o
+# PDF é apagado).
+site/kit-de-primeiros-socorros/kit-de-primeiros-socorros-cruz-vermelha-rj.pdf
+site/kit-de-primeiros-socorros/index.html

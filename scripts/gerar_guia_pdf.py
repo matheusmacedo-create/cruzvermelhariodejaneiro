@@ -4,8 +4,9 @@
 Cada guia tem uma ficha em guias/<slug>.json, que diz o que vai em cada folha. O desenho (cabeçalho, letra, cor,
 quadradinhos, telefones, convite do curso, rodapé) fica só aqui: guia novo é ficha nova, sem mexer no desenho.
 
-Saída: site/<slug>/<arquivo da ficha>.pdf, em A4. O número de folhas é o da ficha; se o texto não couber, o script
-avisa e sai com erro (encurte o texto, não a letra).
+Saída: site/<slug>/<arquivo da ficha>.pdf, em A4: as folhas da ficha e, no fim, a folha das fontes, que o script monta
+sozinho com TODAS as fontes da página (nome e endereço por extenso). Se o texto não couber, o script avisa e sai com
+erro (encurte o texto, não a letra).
 
 A lista principal NÃO se copia para a ficha: o bloco com "da_pagina" lê a tabela ou o <ul> da seção da página, em
 site/institucional.json. Mudou a lista na página, rode este script de novo e publique o PDF junto.
@@ -100,6 +101,8 @@ def bloco(b: dict, pagina: dict) -> str:
         return f'{titulo}<ul class="marcar det">\n{itens}\n</ul>'
     if tipo == "lista_curta":  # só o item, em duas colunas
         linhas = [l[0] for l in da_pagina(pagina, b["da_pagina"], b.get("no_papel", {}))] if "da_pagina" in b else b["itens"]
+        if b.get("sem_fonte"):  # tira o "(St John)" do fim de cada item: a fonte está na folha das fontes
+            linhas = [re.sub(r"\s*\([^()]*\)$", "", i) for i in linhas]
         itens = "\n".join(q(e(i[0].upper() + i[1:])) for i in linhas)
         return f'{titulo}<ul class="marcar curta">\n{itens}\n</ul>'
     if tipo == "passos":  # o que fazer, em ordem
@@ -108,21 +111,24 @@ def bloco(b: dict, pagina: dict) -> str:
         return f'<p class="aviso"><b>{e(b["rotulo"])}</b> {e(b["texto"])}</p>'
     if tipo == "datas":
         return f'{titulo}<p class="dica">{e(b["texto"])}</p><div class="linhas"><span>data</span><span>data</span><span>data</span><span>data</span></div>'
-    if tipo == "familia_e_emergencia":  # fixo em todo guia de emergência: a família preenche, os telefones já vêm
-        vazias = "\n".join("<tr><td></td><td></td></tr>" for _ in range(4))
+    if tipo == "familia_e_emergencia":  # a família preenche, os telefones já vêm. A ficha pode trocar o título e a dica
+        encontro = ('<p class="dica" style="margin-top:3mm"><b>Nosso ponto de encontro:</b></p>\n    <div class="linhas"><span></span></div>'
+                    if b.get("ponto_de_encontro", True) else "")
+        dica = (f'<b>{e(b["dica"]["rotulo"])}</b> {e(b["dica"]["texto"])}' if "dica" in b
+                else "<b>Alertas no celular:</b> envie um SMS com o seu CEP para <b>40199</b>.")
+        vazias = "\n".join("<tr><td></td><td></td></tr>" for _ in range(4 if b.get("ponto_de_encontro", True) else 3))
         return f"""<div class="duas">
   <div>
-    <h2>Telefones da família</h2>
+    <h2>{e(b.get("titulo", "Telefones da família"))}</h2>
     <table><thead><tr><th>Nome</th><th>Telefone</th></tr></thead><tbody>
 {vazias}
     </tbody></table>
-    <p class="dica" style="margin-top:3mm"><b>Nosso ponto de encontro:</b></p>
-    <div class="linhas"><span></span></div>
+    {encontro}
   </div>
   <div class="caixa">
     <h2>Em caso de emergência</h2>
     <ul class="tel"><li><b>192</b> SAMU</li><li><b>193</b> Corpo de Bombeiros</li><li><b>199</b> Defesa Civil</li></ul>
-    <p class="dica"><b>Alertas no celular:</b> envie um SMS com o seu CEP para <b>40199</b>.</p>
+    <p class="dica">{dica}</p>
   </div>
 </div>"""
     if tipo == "curso":  # o convite, igual em todos: diz que o curso é pago e quem vende (regra do Ad Grants)
@@ -142,20 +148,30 @@ def fontes_css() -> str:
 
 
 def documento(ficha: dict, pagina: dict, logo_b64: str) -> str:
-    total = len(ficha["folhas"])
+    total = len(ficha["folhas"]) + 1  # a última é sempre a das fontes
     endereco = f'{SITE}/{ficha["slug"]}'
     atualizado = date.fromisoformat(pagina["atualizado"])
     folhas = []
     for n, folha in enumerate(ficha["folhas"], 1):
         abre = f'<h1>{e(ficha["titulo"])}</h1>\n<p class="sub">{e(ficha["sub"])}</p>' if n == 1 else ""
-        pe = (f'<p class="pe">Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro · {e(ficha["credito"])}; fontes em {endereco} · '
-              f'Atualizado em {atualizado:%d/%m/%Y} · Pode copiar e distribuir, sem alterar.</p>') if n == total else ""
+        pe = (f'<p class="pe">Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro · {e(ficha["credito"])}; fontes '
+              f'na folha {total} e em {endereco} · Atualizado em {atualizado:%d/%m/%Y} · Pode copiar e distribuir, sem alterar.</p>') if n == total - 1 else ""
         corpo = "\n".join(bloco(b, pagina) for b in folha["blocos"])
         folhas.append(f"""<section class="folha">
 <header><img src="data:image/png;base64,{logo_b64}" alt="Cruz Vermelha Brasileira – Rio de Janeiro"><span><i>Guia gratuito</i>{endereco} · folha {n} de {total}</span></header>
 {abre}
 {corpo}
 {pe}
+</section>""")
+    # A folha das fontes: todas as da página, com o endereço por extenso (no papel não há link para tocar).
+    lista = "\n".join(f'<li><b>{e(f["rotulo"])}</b><span>{e(f["url"])}</span></li>' for f in pagina["fontes"])
+    folhas.append(f"""<section class="folha fontes">
+<header><img src="data:image/png;base64,{logo_b64}" alt="Cruz Vermelha Brasileira – Rio de Janeiro"><span><i>Guia gratuito</i>{endereco} · folha {total} de {total}</span></header>
+<h2>Fontes deste guia</h2>
+<p class="dica">Tudo o que está nas folhas anteriores vem destas {len(pagina["fontes"])} fontes públicas. O guia completo, atualizado em {atualizado:%d/%m/%Y}, mostra o que veio de cada uma: {endereco}.</p>
+<ol>
+{lista}
+</ol>
 </section>""")
     return f"""<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
@@ -190,8 +206,8 @@ def documento(ficha: dict, pagina: dict, logo_b64: str) -> str:
   .passos {{ list-style: none; margin: 0; padding: 0; counter-reset: passo; }}
   .passos li {{ counter-increment: passo; display: flex; gap: 3mm; align-items: baseline; padding: .5mm 0; font-size: 10.4pt; break-inside: avoid; }}
   .passos li::before {{ content: counter(passo); flex: 0 0 5.2mm; font-weight: 800; font-size: 12pt; color: {VERMELHO}; text-align: center; }}
-  .aviso {{ margin: 3mm 0 0; padding: 2.5mm 3.5mm; border-left: 1.2mm solid {VERMELHO}; background: #f4f4f4; font-size: 10.4pt; }}
-  .caixa {{ border: .4mm solid {ESCURO}; border-radius: 2mm; padding: 3mm 4mm; }}
+  .aviso {{ margin: 2.5mm 0 0; padding: 2mm 3.5mm; border-left: 1.2mm solid {VERMELHO}; background: #f4f4f4; font-size: 10.4pt; }}
+  .caixa {{ border: .4mm solid {ESCURO}; border-radius: 2mm; padding: 2.5mm 4mm; align-self: start; }}
   .caixa h2 {{ border: 0; padding: 0; }}
   .duas {{ display: grid; grid-template-columns: 1.15fr 1fr; gap: 6mm; margin-top: 3.5mm; }}
   .duas h2 {{ margin-top: 0; }}
@@ -201,13 +217,17 @@ def documento(ficha: dict, pagina: dict, logo_b64: str) -> str:
   td + td, th + th {{ width: 42%; padding-left: 4mm; }}
   .tel {{ margin: 0; padding: 0; list-style: none; }}
   .tel li {{ display: flex; align-items: baseline; gap: 3mm; padding: .5mm 0; font-size: 10.4pt; }}
-  .tel b {{ font-size: 16pt; font-weight: 800; min-width: 16mm; }}
+  .tel b {{ font-size: 14pt; font-weight: 800; min-width: 15mm; }}
   .linhas {{ display: flex; gap: 5mm; margin-top: 1mm; }}
   .linhas span {{ flex: 1; border-bottom: .3mm solid {ESCURO}; height: 7mm; font-size: 9pt; }}
   p {{ margin: 0 0 2mm; }}
   .dica {{ font-size: 10pt; }}
   .caixa .dica {{ margin: 2mm 0 0; }}
   .curso {{ margin-top: 3mm; font-size: 10pt; }}
+  .fontes ol {{ margin: 2mm 0 0; padding-left: 6mm; font-size: 8.6pt; line-height: 1.3; }}
+  .fontes li {{ padding: .7mm 0; break-inside: avoid; }}
+  .fontes li b {{ font-weight: 600; }}
+  .fontes li span {{ display: block; font-size: 7.4pt; overflow-wrap: anywhere; }}
   .pe {{ margin: 2.5mm 0 0; padding-top: 1.5mm; border-top: .3mm solid {CINZA}; font-size: 7.8pt; line-height: 1.3; }}
 </style></head>
 <body>
@@ -220,7 +240,7 @@ def gerar(slug: str, paginas: dict, logo_b64: str) -> bool:
     if ficha["slug"] != slug or slug not in paginas:
         raise SystemExit(f"{slug}: a ficha não bate com o nome do arquivo, ou a página não existe em site/institucional.json")
     html = documento(ficha, paginas[slug], logo_b64)
-    corpo = texto(re.sub(r"<(style|title|header)\b.*?</\1>", "", html, flags=re.S))
+    corpo = texto(re.sub(r'<(style|title|header)\b.*?</\1>|<section class="folha fontes">.*?</section>', "", html, flags=re.S))
     sobras = sorted({m.group(0).lower() for m in SO_NA_TELA.finditer(corpo)})
     saida = RAIZ / "site" / slug / ficha["arquivo"]
     with tempfile.TemporaryDirectory() as tmp:
@@ -234,8 +254,9 @@ def gerar(slug: str, paginas: dict, logo_b64: str) -> bool:
     folhas = len(re.findall(rb"/Type\s*/Page\b", saida.read_bytes()))
     print(f"gravado {saida.relative_to(RAIZ)} ({saida.stat().st_size} bytes, {folhas} folhas)")
     certo = True
-    if folhas != len(ficha["folhas"]):
-        print(f'  ATENÇÃO: saíram {folhas or "?"} folhas, e a ficha tem {len(ficha["folhas"])}. Encurte o texto antes de publicar.')
+    esperadas = len(ficha["folhas"]) + 1
+    if folhas != esperadas:
+        print(f'  ATENÇÃO: saíram {folhas or "?"} folhas, e são {esperadas} (as da ficha e a das fontes). Encurte o texto antes de publicar.')
         certo = False
     if sobras:
         print(f'  ATENÇÃO: texto de tela no papel ({", ".join(sobras)}). Acerte com "no_papel", na ficha.')
