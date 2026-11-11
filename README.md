@@ -146,6 +146,12 @@ Pedido do Matheus: uma página para arrecadar roupas e itens domésticos em bom 
   em `notas_internas` da página, para a coordenação confirmar antes.
 - **Home**: terceiro card em "Campanhas ativas" (`site/index.html`), com o ícone `hand-holding-heart` no lugar da foto
   (o sprite da home ganhou o símbolo, por `scripts/icones.py`). Trocar por foto quando houver uma do bazar.
+- **Registro de doações e aviso por WhatsApp** ([docs/bazar.md](docs/bazar.md)): a seção "Avise o que você vai doar" manda
+  para `api/bazar.php`, que grava em `mcp_bazar_doacoes`, manda e-mail à equipe e avisa a responsável do bazar pelo
+  WhatsApp (Kapso, modelo `bazar_doacao_nova`). O aviso **só sai com o modelo aprovado na Meta** e conferido; até lá
+  fica pendente (48 h) e a rodada do `lembretes.php` tenta de novo. O modelo foi enviado à Meta em 11/11/2026 e estava
+  em análise. O celular de destino fica só no servidor (`WHATSAPP_BAZAR_AVISO`). Teste:
+  `scripts/testar_bazar_integracao.php` (64 verificações).
 - Conferida em 390 px (sem rolagem lateral, botão de 59 px de altura). Publicação: `scripts/publicacao-bazar.txt`.
 
 ## CBFI de 28/11/2026 e volta automática para janeiro (27/10/2026)

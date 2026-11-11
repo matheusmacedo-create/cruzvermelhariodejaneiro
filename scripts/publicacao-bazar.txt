@@ -1,9 +1,22 @@
 # Bazar solidário (11/11/2026, pedido do Matheus): página nova /bazar/, para arrecadar roupas e itens domésticos em
-# bom estado, e um card para ela em "Campanhas ativas", na home (a página vai antes da home, que aponta para ela). Conteúdo em site/institucional.json (slug bazar), gerada por scripts/gerar_institucional.py bazar.
-# ANTES de publicar: confirmar com a coordenação os pontos listados em notas_internas da página (horário e local de
-# entrega, o que se recebe, destino dos itens, datas do bazar aberto ao público).
+# bom estado, com o formulário "Avise o que você vai doar" (registro + e-mail à equipe + aviso por WhatsApp à
+# responsável do bazar), e um card para ela em "Campanhas ativas", na home. Conteúdo em site/institucional.json (slug
+# bazar), gerada por scripts/gerar_institucional.py bazar. Como funciona o registro e o aviso: docs/bazar.md.
+# ANTES de publicar:
+#  - confirmar com a coordenação os pontos de notas_internas da página (horário e local de entrega, o que se recebe,
+#    destino dos itens, datas do bazar aberto ao público);
+#  - no servidor, em api/config-whatsapp.php: 'WHATSAPP_BAZAR_AVISO' => 'DDD + número' de quem recebe os avisos.
+#    Sem a linha, ou com o modelo bazar_doacao_nova ainda em análise na Meta, nenhum WhatsApp sai (o registro e o
+#    e-mail à equipe funcionam).
+# Ordem: banco e biblioteca antes do endpoint, o endpoint antes da página que o chama, a página antes da home.
+# O db.php novo cria a tabela mcp_bazar_doacoes na primeira requisição (MCP_DB_VERSAO mudou).
 # Depois: limpar o cache e rodar python3 scripts/gerar_sitemaps.py (a /bazar/ só entra no mapa depois de no ar)
 # e publicar os três sitemaps.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-bazar.txt)
+site/matricula-cursos-presenciais/api/lib/db.php
+site/matricula-cursos-presenciais/api/lib/bazar.php
+site/matricula-cursos-presenciais/api/lib.php
+site/matricula-cursos-presenciais/api/lembretes.php
+site/matricula-cursos-presenciais/api/bazar.php
 site/bazar/index.html
 site/index.html

@@ -1828,7 +1828,12 @@
     {
      "id": "como-doar",
      "h2": "Onde e quando entregar",
-     "html": "<div class=\"inst-oficial\" role=\"note\"><p style=\"font-style:normal\"><strong>Entregue na sede, no Centro do Rio.</strong> Não é preciso marcar hora: basta levar a doação no horário abaixo.</p></div><ul><li><strong>Onde:</strong> no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro.</li><li><strong>Quando:</strong> de segunda a sexta, das 10h às 17h.</li><li><strong>Como:</strong> na portaria, diga que a doação é para o bazar.</li></ul><p><a class=\"btn btn-red\" href=\"https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130\">Ver como chegar</a></p><p>Tem muitas caixas ou um item grande? Avise antes pelo <a href=\"/#chat\">chat do site</a>, para a equipe se preparar para receber.</p>"
+     "html": "<div class=\"inst-oficial\" role=\"note\"><p style=\"font-style:normal\"><strong>Entregue na sede, no Centro do Rio.</strong> Não é preciso marcar hora: basta levar a doação no horário abaixo.</p></div><ul><li><strong>Onde:</strong> no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro.</li><li><strong>Quando:</strong> de segunda a sexta, das 10h às 17h.</li><li><strong>Como:</strong> na portaria, diga que a doação é para o bazar.</li></ul><p><a class=\"btn btn-red\" href=\"https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130\">Ver como chegar</a></p><p>Se puder, <a href=\"#avisar\">avise antes o que você vai trazer</a>: leva um minuto e ajuda a equipe a se preparar, principalmente quando são muitas caixas ou um item grande.</p>"
+    },
+    {
+     "id": "avisar",
+     "h2": "Avise o que você vai doar",
+     "html": "<p>Não é obrigatório, mas ajuda muito. Preencha abaixo e a responsável pelo bazar fica sabendo o que vai chegar. Se for preciso combinar algum detalhe, ela chama você pelo WhatsApp.</p><div class=\"inst-bazar\"></div>"
     },
     {
      "id": "o-que-recebemos",
@@ -1865,7 +1870,11 @@
     },
     {
      "pergunta": "Preciso marcar hora para entregar?",
-     "resposta": "Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se forem muitas caixas ou um item grande, avise antes pelo chat do site, para a equipe se preparar para receber."
+     "resposta": "Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se puder, avise antes o que vai trazer, pelo formulário desta página: ajuda a equipe a se preparar, principalmente quando são muitas caixas ou um item grande."
+    },
+    {
+     "pergunta": "Preciso avisar antes o que vou doar?",
+     "resposta": "Não é obrigatório. O aviso, pelo formulário desta página, leva um minuto: você diz o seu nome, o seu WhatsApp e o que quer doar, e recebe um protocolo. A responsável pelo bazar fica sabendo e, se for preciso combinar algum detalhe, chama você pelo WhatsApp."
     },
     {
      "pergunta": "Posso doar uma roupa com um defeito pequeno?",
@@ -1880,7 +1889,7 @@
      "resposta": "Pode. A doação em dinheiro é feita pela página Doe agora, no site, e vai para o caixa da filial, que mantém a formação de voluntários e as ações humanitárias."
     }
    ],
-   "notas_internas": "Criada em 11/11/2026, a pedido do Matheus, para arrecadar roupas e itens domésticos em bom estado para o bazar. A CONFIRMAR com a coordenação antes de publicar: (1) local e horário de entrega (usados os da sede já publicados para donativos: segunda a sexta, 10h às 17h, sem agendamento, pela portaria); (2) lista do que se recebe e do que não se recebe, em especial pequenos aparelhos, móveis e itens grandes; (3) que os itens são vendidos a preços acessíveis e a renda fica na filial; (4) datas, horário e local do bazar aberto ao público (a página não diz nenhum: acrescentar quando houver); (5) se a filial busca doações em casa e se dá recibo (a página não promete nenhum dos dois). Sem foto: a pasta assets/ fica só na Hostinger.",
+   "notas_internas": "Criada em 11/11/2026, a pedido do Matheus, para arrecadar roupas e itens domésticos em bom estado para o bazar. A CONFIRMAR com a coordenação antes de publicar: (1) local e horário de entrega (usados os da sede já publicados para donativos: segunda a sexta, 10h às 17h, sem agendamento, pela portaria); (2) lista do que se recebe e do que não se recebe, em especial pequenos aparelhos, móveis e itens grandes; (3) que os itens são vendidos a preços acessíveis e a renda fica na filial; (4) datas, horário e local do bazar aberto ao público (a página não diz nenhum: acrescentar quando houver); (5) se a filial busca doações em casa e se dá recibo (a página não promete nenhum dos dois). FORMULÁRIO (11/11/2026): a seção \"Avise o que você vai doar\" grava o registro (api/bazar.php, tabela mcp_bazar_doacoes), manda e-mail à equipe e avisa a responsável do bazar pelo WhatsApp, com o modelo bazar_doacao_nova, só depois de a Meta aprovar o modelo (docs/bazar.md). Sem foto: a pasta assets/ fica só na Hostinger.",
    "atualizado": "2026-11-11"
   }
  ]

@@ -84,6 +84,21 @@ try {
             error_log('[matricula] oferta a ex-alunos: ' . get_class($erro) . ': ' . $erro->getMessage());
             $w['falhas'] += 1;
         }
+        // Bazar solidário (lib/bazar.php, 11/11/2026): os avisos de doação que ficaram pendentes (modelo ainda não
+        // aprovado na Meta, Kapso fora, fora do horário). Poucos por dia; uma falha aqui não segura o resto.
+        if (function_exists('mcp_bazar_rodar')) {
+            try {
+                $bz = mcp_bazar_rodar();
+                if ($bz['enviados'] + $bz['falhas'] + $bz['pendentes'] + $bz['vencidos'] > 0) {
+                    printf("%s bazar: %d avisos enviados, %d falhas, %d pendentes, %d vencidos%s\n",
+                        gmdate('Y-m-d H:i:s'), $bz['enviados'], $bz['falhas'], $bz['pendentes'], $bz['vencidos'], $bz['motivo'] !== null ? ' (' . $bz['motivo'] . ')' : '');
+                }
+                $w['falhas'] += $bz['falhas'];
+            } catch (Throwable $erro) {
+                error_log('[matricula] bazar: ' . get_class($erro) . ': ' . $erro->getMessage());
+                $w['falhas'] += 1;
+            }
+        }
         // Recuperação por e-mail (lib/recuperacao_email.php): o mesmo público, logo depois e independente do WhatsApp
         // (aproveita o público que ele já leu nesta hora). Uma falha aqui não desfaz nem segura o que já rodou; sem a
         // RESEND_API_KEY, não manda nada e só diz o motivo.

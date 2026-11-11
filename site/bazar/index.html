@@ -118,6 +118,34 @@
       .inst-oficial { padding: 14px 16px; }
     }
   </style>
+  <style>
+    /* Formulário do bazar (11/11/2026): pensado para o celular e para quem tem mais de 50 anos: letra grande, um campo
+       por linha, opções que ocupam a largura toda e alvos de toque de 52 px. */
+    .inst-bazar { margin: 18px 0 8px; padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+    .bz-campo { margin: 0 0 22px; padding: 0; border: 0; min-width: 0; }
+    .bz-campo > label:not(.bz-opcao), .bz-campo > legend { display: block; font-size: 1.08rem; font-weight: 700; color: var(--black); margin: 0 0 8px; padding: 0; line-height: 1.35; }
+    .bz-campo input[type=text], .bz-campo input[type=tel], .bz-campo textarea { display: block; width: 100%; box-sizing: border-box; min-height: 52px; padding: 12px 14px; font: inherit; font-size: 1.1rem; line-height: 1.4; color: var(--black); background: var(--paper); border: 2px solid #8a94a3; border-radius: 10px; }
+    .bz-campo input:focus, .bz-campo textarea:focus { outline: 3px solid var(--red); outline-offset: 1px; border-color: var(--red); }
+    .bz-dica { font-size: .95rem !important; color: var(--muted) !important; margin: 6px 0 0 !important; }
+    .bz-opcao { display: flex; align-items: center; gap: 12px; min-height: 52px; box-sizing: border-box; padding: 10px 14px; margin: 0 0 8px; background: var(--paper); border: 2px solid var(--line); border-radius: 10px; font-size: 1.06rem; line-height: 1.35; color: var(--text); cursor: pointer; }
+    .bz-opcao input { flex: 0 0 auto; width: 24px; height: 24px; margin: 0; accent-color: var(--red); }
+    .bz-opcao:has(input:checked) { border-color: var(--red); background: #fff5f5; }
+    .bz-opcao:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 1px; }
+    .bz-aceite { align-items: flex-start; font-size: .98rem; margin: 0 0 18px; }
+    .bz-aceite input { margin-top: 2px; }
+    .bz-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .bz-erro > label:not(.bz-opcao), .bz-erro > legend { color: var(--red); }
+    .bz-erro input[type=text], .bz-erro input[type=tel], .bz-erro textarea, .bz-opcao.bz-erro { border-color: var(--red); }
+    .bz-recado { margin: 0 0 14px !important; font-size: 1.05rem !important; font-weight: 700; color: var(--red) !important; }
+    .bz-recado:empty { display: none; }
+    .inst-bazar .bz-enviar { display: block; width: 100%; min-height: 56px; font-size: 1.1rem; cursor: pointer; }
+    .inst-bazar .bz-enviar[disabled] { opacity: .65; cursor: default; }
+    .bz-pronto { padding: 4px 0; }
+    .bz-pronto:focus { outline: none; }
+    .bz-pronto h3 { margin: 0 0 10px; font-size: 1.3rem; color: var(--black); }
+    .bz-pronto-protocolo { font-size: 1.2rem; white-space: nowrap; }
+    @media (max-width: 620px) { .inst-bazar { padding: 16px 14px; } }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -299,7 +327,15 @@
      "name": "Preciso marcar hora para entregar?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se forem muitas caixas ou um item grande, avise antes pelo chat do site, para a equipe se preparar para receber."
+      "text": "Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se puder, avise antes o que vai trazer, pelo formulário desta página: ajuda a equipe a se preparar, principalmente quando são muitas caixas ou um item grande."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Preciso avisar antes o que vou doar?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Não é obrigatório. O aviso, pelo formulário desta página, leva um minuto: você diz o seu nome, o seu WhatsApp e o que quer doar, e recebe um protocolo. A responsável pelo bazar fica sabendo e, se for preciso combinar algum detalhe, chama você pelo WhatsApp."
      }
     },
     {
@@ -398,6 +434,7 @@
         <p class="lead">A Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro está arrecadando roupas e itens domésticos em bom estado para o bazar solidário. O que está parado no seu armário pode ajudar a manter as ações da filial.</p>
         <ul class="inst-indice" aria-label="Nesta página">
           <li><a href="#como-doar">Onde e quando entregar</a></li>
+          <li><a href="#avisar">Avise o que você vai doar</a></li>
           <li><a href="#o-que-recebemos">O que recebemos</a></li>
           <li><a href="#o-que-nao-recebemos">O que não recebemos</a></li>
           <li><a href="#como-preparar">Como preparar a doação</a></li>
@@ -410,7 +447,30 @@
       <div class="wrap">
       <section class="inst-secao" id="como-doar" aria-labelledby="como-doar-titulo">
         <h2 id="como-doar-titulo">Onde e quando entregar</h2>
-        <div class="inst-oficial" role="note"><p style="font-style:normal"><strong>Entregue na sede, no Centro do Rio.</strong> Não é preciso marcar hora: basta levar a doação no horário abaixo.</p></div><ul><li><strong>Onde:</strong> no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro.</li><li><strong>Quando:</strong> de segunda a sexta, das 10h às 17h.</li><li><strong>Como:</strong> na portaria, diga que a doação é para o bazar.</li></ul><p><a class="btn btn-red" href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130" target="_blank" rel="noopener">Ver como chegar</a></p><p>Tem muitas caixas ou um item grande? Avise antes pelo <a href="/#chat">chat do site</a>, para a equipe se preparar para receber.</p>
+        <div class="inst-oficial" role="note"><p style="font-style:normal"><strong>Entregue na sede, no Centro do Rio.</strong> Não é preciso marcar hora: basta levar a doação no horário abaixo.</p></div><ul><li><strong>Onde:</strong> no Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, Rio de Janeiro.</li><li><strong>Quando:</strong> de segunda a sexta, das 10h às 17h.</li><li><strong>Como:</strong> na portaria, diga que a doação é para o bazar.</li></ul><p><a class="btn btn-red" href="https://www.google.com/maps/search/?api=1&amp;query=Pra%C3%A7a%20da%20Cruz%20Vermelha%2C%2010%2C%20Centro%2C%20Rio%20de%20Janeiro%2C%2020230-130" target="_blank" rel="noopener">Ver como chegar</a></p><p>Se puder, <a href="#avisar">avise antes o que você vai trazer</a>: leva um minuto e ajuda a equipe a se preparar, principalmente quando são muitas caixas ou um item grande.</p>
+      </section>
+
+      <section class="inst-secao" id="avisar" aria-labelledby="avisar-titulo">
+        <h2 id="avisar-titulo">Avise o que você vai doar</h2>
+        <p>Não é obrigatório, mas ajuda muito. Preencha abaixo e a responsável pelo bazar fica sabendo o que vai chegar. Se for preciso combinar algum detalhe, ela chama você pelo WhatsApp.</p><div class="inst-bazar">
+<form class="bz-form" action="/matricula-cursos-presenciais/api/bazar.php" method="post" novalidate>
+<div class="bz-campo"><label for="bz-nome">Seu nome</label><input id="bz-nome" name="nome" type="text" autocomplete="name" maxlength="120" required></div>
+<div class="bz-campo"><label for="bz-telefone">Seu WhatsApp, com DDD</label><input id="bz-telefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="(21) 91234-5678" required><p class="bz-dica">É por ele que a equipe do bazar fala com você.</p></div>
+<fieldset class="bz-campo" id="bz-itens"><legend>O que você quer doar? Marque tudo o que tiver.</legend><label class="bz-opcao"><input type="checkbox" name="itens" value="roupas"><span>Roupas</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="calcados"><span>Calçados</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="acessorios"><span>Bolsas e acessórios</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="cama-mesa-banho"><span>Cama, mesa e banho</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="cozinha"><span>Utensílios de cozinha</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="casa"><span>Objetos de casa</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="aparelhos"><span>Pequenos aparelhos</span></label><label class="bz-opcao"><input type="checkbox" name="itens" value="outros"><span>Outros itens</span></label></fieldset>
+<div class="bz-campo"><label for="bz-descricao">Quer contar mais? (não é obrigatório)</label><textarea id="bz-descricao" name="descricao" rows="3" maxlength="600" placeholder="Por exemplo: três sacos de roupa de criança e um jogo de panelas."></textarea></div>
+<fieldset class="bz-campo"><legend>Quando você pretende trazer?</legend><label class="bz-opcao"><input type="radio" name="entrega" value="esta-semana"><span>Esta semana</span></label><label class="bz-opcao"><input type="radio" name="entrega" value="proxima-semana"><span>Na próxima semana</span></label><label class="bz-opcao"><input type="radio" name="entrega" value="este-mes"><span>Ainda neste mês</span></label><label class="bz-opcao"><input type="radio" name="entrega" value="nao-sei" checked><span>Ainda não sei</span></label></fieldset>
+<div class="bz-armadilha" aria-hidden="true"><label for="bz-site">Não preencha este campo</label><input id="bz-site" name="site" type="text" tabindex="-1" autocomplete="off"></div>
+<label class="bz-opcao bz-aceite" id="bz-aceite"><input type="checkbox" name="aceite" value="1" required><span>Concordo que a Cruz Vermelha Brasileira Rio de Janeiro use o meu nome e o meu WhatsApp para combinar a entrega desta doação, como diz a <a href="/privacidade/">Política de Privacidade</a>.</span></label>
+<p class="bz-recado" role="alert" aria-live="assertive"></p>
+<button class="btn btn-red bz-enviar" type="submit">Avisar a equipe do bazar</button>
+</form>
+<div class="bz-pronto" hidden tabindex="-1">
+<h3>Recebemos o seu aviso<span class="bz-pronto-nome"></span>!</h3>
+<p>O seu protocolo é <strong class="bz-pronto-protocolo"></strong>. Anote ou tire uma foto desta tela.</p>
+<p>Agora é só trazer a doação à sede, na Praça da Cruz Vermelha, 10, Centro, de segunda a sexta, das 10h às 17h. Se for preciso combinar algum detalhe, a equipe do bazar chama você pelo WhatsApp.</p>
+</div>
+<noscript><p>Este formulário precisa do JavaScript ligado no navegador. Sem ele, não tem problema: é só trazer a doação à sede no horário de atendimento.</p></noscript>
+</div>
       </section>
 
       <section class="inst-secao" id="o-que-recebemos" aria-labelledby="o-que-recebemos-titulo">
@@ -436,7 +496,8 @@
       <section class="inst-secao inst-perguntas" id="perguntas" aria-labelledby="perguntas-titulo">
         <h2 id="perguntas-titulo">Perguntas frequentes</h2>
         <details><summary>Onde entrego a doação para o bazar?</summary><p>Na sede da Cruz Vermelha Brasileira Rio de Janeiro, o Palácio da Cruz Vermelha, na Praça da Cruz Vermelha, 10, Centro, de segunda a sexta, das 10h às 17h. Na portaria, diga que a doação é para o bazar.</p></details>
-        <details><summary>Preciso marcar hora para entregar?</summary><p>Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se forem muitas caixas ou um item grande, avise antes pelo chat do site, para a equipe se preparar para receber.</p></details>
+        <details><summary>Preciso marcar hora para entregar?</summary><p>Não. Basta levar a doação de segunda a sexta, das 10h às 17h. Se puder, avise antes o que vai trazer, pelo formulário desta página: ajuda a equipe a se preparar, principalmente quando são muitas caixas ou um item grande.</p></details>
+        <details><summary>Preciso avisar antes o que vou doar?</summary><p>Não é obrigatório. O aviso, pelo formulário desta página, leva um minuto: você diz o seu nome, o seu WhatsApp e o que quer doar, e recebe um protocolo. A responsável pelo bazar fica sabendo e, se for preciso combinar algum detalhe, chama você pelo WhatsApp.</p></details>
         <details><summary>Posso doar uma roupa com um defeito pequeno?</summary><p>Só se ela estiver pronta para uso. Peças rasgadas, manchadas ou com zíper quebrado não podem ir para o bazar. Uma boa regra é doar o que você daria de presente a alguém da sua família.</p></details>
         <details><summary>Qual é a diferença entre o bazar e a Campanha do Agasalho?</summary><p>Na Campanha do Agasalho, roupas de frio, cobertores e calçados são entregues diretamente a famílias em situação de vulnerabilidade. No bazar, roupas e itens de casa são oferecidos a preços acessíveis, e a renda ajuda a manter as ações da filial.</p></details>
         <details><summary>Posso ajudar com dinheiro em vez de itens?</summary><p>Pode. A doação em dinheiro é feita pela página Doe agora, no site, e vai para o caixa da filial, que mantém a formação de voluntários e as ações humanitárias.</p></details>
@@ -593,5 +654,57 @@
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=c358e9afca">
   <script src="/chat/chat.js?v=ea411964f1" defer></script>
+<script>
+  /* Formulário do bazar: manda o aviso para api/bazar.php e mostra o protocolo (gerar_institucional.py). */
+  (function () {
+    var caixa = document.querySelector('.inst-bazar'); if (!caixa || !window.fetch) return;
+    var f = caixa.querySelector('form'), recado = f.querySelector('.bz-recado'), botao = f.querySelector('.bz-enviar'), pronto = caixa.querySelector('.bz-pronto');
+    var alvos = { nome: '#bz-nome', telefone: '#bz-telefone', itens: '#bz-itens', descricao: '#bz-descricao', aceite: '#bz-aceite' };
+    function limpar() {
+      recado.textContent = '';
+      Array.prototype.forEach.call(f.querySelectorAll('.bz-erro'), function (e) { e.classList.remove('bz-erro'); });
+    }
+    function erro(campo, texto) {
+      recado.textContent = texto;
+      var alvo = campo && alvos[campo] ? f.querySelector(alvos[campo]) : null;
+      if (alvo) {
+        var bloco = alvo.classList.contains('bz-campo') || alvo.classList.contains('bz-opcao') ? alvo : alvo.parentNode;
+        bloco.classList.add('bz-erro');
+        var foco = alvo.matches('input, textarea') ? alvo : alvo.querySelector('input');
+        if (foco) foco.focus();
+        bloco.scrollIntoView({ block: 'center' });
+      }
+    }
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      limpar();
+      var d = new FormData(f), itens = d.getAll('itens');
+      var nome = String(d.get('nome') || '').trim(), telefone = String(d.get('telefone') || '').replace(/\D/g, ''), descricao = String(d.get('descricao') || '').trim();
+      if (nome.length < 2) return erro('nome', 'Digite o seu nome.');
+      if (telefone.length < 10 || telefone.length > 13) return erro('telefone', 'Digite o seu celular com DDD, por exemplo (21) 91234-5678.');
+      if (!itens.length) return erro('itens', 'Marque pelo menos um tipo de item que você quer doar.');
+      if (itens.indexOf('outros') !== -1 && descricao.length < 3) return erro('descricao', 'Você marcou “Outros itens”: escreva quais são.');
+      if (!d.get('aceite')) return erro('aceite', 'Marque que você concorda com o uso dos seus dados para combinarmos a entrega.');
+      var rotulo = botao.textContent;
+      botao.disabled = true; botao.textContent = 'Enviando…';
+      fetch(f.action, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: nome, telefone: String(d.get('telefone') || ''), itens: itens, descricao: descricao, entrega: d.get('entrega') || 'nao-sei', aceite: true, site: d.get('site') || '' }) })
+        .then(function (x) { return x.json().catch(function () { return {}; }); })
+        .then(function (r) {
+          if (r && r.ok) {
+            caixa.querySelector('.bz-pronto-nome').textContent = r.nome ? ', ' + r.nome : '';
+            caixa.querySelector('.bz-pronto-protocolo').textContent = r.protocolo || '';
+            f.hidden = true; pronto.hidden = false; pronto.focus();
+            pronto.scrollIntoView({ block: 'center' });
+            try { if (typeof gtag === 'function') gtag('event', 'bazar_registrar', { origem: 'pagina' }); } catch (e) {}
+          } else {
+            erro(r && r.campo, (r && r.erro) || 'Não foi possível enviar agora. Tente de novo em instantes.');
+          }
+        })
+        .catch(function () { erro(null, 'Não foi possível enviar agora. Confira a sua internet e tente de novo.'); })
+        .then(function () { botao.disabled = false; botao.textContent = rotulo; });
+    });
+  })();
+</script>
 </body>
 </html>
