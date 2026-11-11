@@ -1,0 +1,28 @@
+# Páginas para instituições (11/11/2026, pedido do Matheus): /lei-lucas-para-escolas/ (kit Lei Lucas em PDF),
+# /plano-de-contingencia/ (roteiro em PDF) e /empresas-e-orgaos-publicos/ (turmas fechadas e parcerias). Os dois PDFs só
+# aparecem depois do e-mail; o pedido vai para a Redação (materiais lei-lucas-escolas e plano-de-contingencia,
+# lib/newsletter/materiais.ts), que grava o e-mail e manda uma cópia do link.
+# ESTADO: NÃO PUBLICADO.
+# Gerar antes: python3 scripts/gerar_pdf_materiais.py && python3 scripts/gerar_institucional.py lei-lucas-para-escolas plano-de-contingencia empresas-e-orgaos-publicos
+# ORDEM, e ela importa:
+#   0. Reconferir no Planalto os fatos marcados nas notas internas das três páginas (o proxy deste ambiente não abriu
+#      planalto.gov.br) e, com a filial, a situação do CNPJ e as leis de utilidade pública citadas.
+#   1. A Redação primeiro: mesclar o PR que cadastra os dois materiais. Sem ele, a rota responde "Este formulário está
+#      desatualizado" e ninguém consegue liberar o botão.
+#   2. Publicar aqui, os PDFs e as capas antes das páginas:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-instituicoes.txt)
+#   3. Limpar o cache e conferir no celular: deixar um e-mail de teste em cada página, ver o botão aparecer e o PDF
+#      abrir, e a mensagem chegar. Tocar em "Pedir uma turma" (abre o formulário com o curso) e em "Propor uma
+#      parceria" (abre o chat). `curl -sI` nos PDFs: 200 e X-Robots-Tag.
+#   4. python3 scripts/gerar_sitemaps.py e publicar os sitemaps (páginas novas).
+#   5. Só então criar (pausadas) as campanhas do Ad Grants que apontam para elas.
+# Desfazer: scripts/publicar_hostinger.sh --apagar com os arquivos abaixo (são todos novos; .htaccess nunca é apagado).
+site/lei-lucas-para-escolas/kit-lei-lucas-escolas-cruz-vermelha-rj.pdf
+site/lei-lucas-para-escolas/capa-kit-lei-lucas.webp
+site/lei-lucas-para-escolas/.htaccess
+site/lei-lucas-para-escolas/index.html
+site/plano-de-contingencia/roteiro-plano-de-contingencia-cruz-vermelha-rj.pdf
+site/plano-de-contingencia/capa-roteiro-plano-de-contingencia.webp
+site/plano-de-contingencia/.htaccess
+site/plano-de-contingencia/index.html
+site/empresas-e-orgaos-publicos/index.html

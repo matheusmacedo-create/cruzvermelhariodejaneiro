@@ -5,7 +5,9 @@ Páginas: /quem-somos/, /principios-fundamentais/, /base-legal/, /emblema/, /mov
 /direito-internacional-humanitario/, /cursos-gratuitos/, /voluntariado/, /cbfi/ (o link do CBFI, 27/10/2026) e
 /kit-de-emergencia/ (guia do kit de emergência e de primeiros socorros, 08/11/2026), com as duas páginas que o
 complementam desde 10/11/2026: /mochila-de-emergencia/ (a mochila para sair de casa, o "kit de sobrevivência") e
-/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página. O conteúdo (textos, fontes oficiais,
+/kit-de-primeiros-socorros/ (o kit de casa, item por item), na trilha Início › Kit de emergência › Página. Desde
+11/11/2026, as três para instituições (trilha Início › Página): /lei-lucas-para-escolas/ e /plano-de-contingencia/, cada
+uma com um material em PDF liberado pelo e-mail, e /empresas-e-orgaos-publicos/, a porta de turmas fechadas e parcerias. O conteúdo (textos, fontes oficiais,
 perguntas, termos e normas) fica no JSON; aqui só a moldura: cabeçalho, rodapé, CSS, GA4, Pixel (com o aviso de
 cookies) e o script do menu vêm de site/index.html (partes_da_home), como nos outros geradores, e o chat de
 contato entra no fim.
@@ -70,7 +72,8 @@ ATUALIZADO = date(2026, 10, 11)
 IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
-         "mochila-de-emergencia", "kit-de-primeiros-socorros"]
+         "mochila-de-emergencia", "kit-de-primeiros-socorros", "lei-lucas-para-escolas", "plano-de-contingencia",
+         "empresas-e-orgaos-publicos"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
 QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
@@ -83,7 +86,9 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "direito-internacional-humanitario": "Direito Internacional Humanitário", "base-legal": "Base legal",
                 "cursos-gratuitos": "Formação de voluntários", "voluntariado": "Voluntariado", "cbfi": "CBFI",
                 "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
-                "kit-de-primeiros-socorros": "Kit de primeiros socorros"}
+                "kit-de-primeiros-socorros": "Kit de primeiros socorros",
+                "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
+                "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "equipe": ("/equipe.html", "Equipe", "Quem dirige a filial e coordena cada frente de trabalho."),
@@ -120,6 +125,8 @@ CSS = """  <style>
     .inst-secao li { margin: 0 0 6px; }
     .inst-secao a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
     .inst-secao a.btn { color: #fff; text-decoration: none; }
+    .inst-secao a.btn-outline { color: var(--black); }
+    .inst-secao a.btn-outline:hover { color: var(--red); }
     .inst-oficial { margin: 18px 0 18px; padding: 18px 22px; border-left: 4px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; }
     .inst-oficial p { font-size: 1rem; font-style: italic; margin: 0 0 8px; }
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }

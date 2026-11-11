@@ -115,6 +115,28 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
+
+Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por
+`scripts/gerar_institucional.py` a partir de `site/institucional.json` (trilha Início › Página):
+
+| Página | Para quem | O que oferece | Busca que mira |
+| --- | --- | --- | --- |
+| `/lei-lucas-para-escolas/` | diretores e coordenadores de escolas e creches | o que a Lei 13.722/2018 pede, passo a passo, **kit em PDF** (checklist, ficha dos capacitados, cartaz) e o pedido de turma fechada do curso Lei Lucas | "lei lucas" (~18 mil/mês no Brasil) |
+| `/plano-de-contingencia/` | Defesa Civil municipal, secretarias, escolas e comunidades | o que o plano precisa ter, **roteiro em PDF** (perguntas e ficha de quem faz o quê) e o convite para propor parceria | "plano de contingência defesa civil" (~260/mês) |
+| `/empresas-e-orgaos-publicos/` | RH, segurança do trabalho, gestores públicos | turmas fechadas (as Turmas sob demanda de 04/10), parcerias pelo chat e os materiais gratuitos | porta de entrada dos dois materiais |
+
+- **Os PDFs só aparecem depois do e-mail**, como o Manual de Identidade: materiais `lei-lucas-escolas` e
+  `plano-de-contingencia` em `lib/newsletter/materiais.ts`, na Redação (PR do mesmo branch). Gerados por
+  `scripts/gerar_pdf_materiais.py`, que também grava a capa de cada um.
+- **Nada de serviço novo.** As turmas fechadas são as de sempre (15 a 30, mesmo valor por pessoa, na sede) e as parcerias
+  vão pelo chat, assunto "Doações, Campanha do Agasalho e parcerias". A venda aparece só no fim, dizendo quem vende
+  (a escola, O-CVB Filial Rio de Janeiro Ensino Ltda), como pede o Ad Grants.
+- **Medição** em `docs/rastreamento.md`: `leilucas_pedir`, `contingencia_pedir`, os `_baixar`, `b2b_turma` e `b2b_contato`.
+- **Antes de publicar**, reconferir no Planalto os fatos das leis (o proxy deste ambiente não abriu planalto.gov.br) e,
+  com a filial, a situação do CNPJ (constava INAPTO na revisão de 19/10/2026), que pesa em qualquer parceria com órgão
+  público. Ordem e lista em `scripts/publicacao-instituicoes.txt`.
+
 ## Voluntariado: novas entradas em janeiro de 2027 (18/10/2026)
 
 Pedido do Matheus: avisar que só haverá novas entradas em janeiro e que o contato é só nessa época, para ninguém
