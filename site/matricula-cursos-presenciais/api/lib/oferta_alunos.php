@@ -29,7 +29,10 @@
 declare(strict_types=1);
 
 /** O nome do disparo no banco (cada celular recebe uma vez por campanha). */
-const MCP_OA_CAMPANHA = 'curativos-alunos';
+// 11/11/2026: 'curativos-alunos-cupom' é a 2ª leva (decisão do responsável), aos mesmos contatos da 1ª ('curativos-alunos',
+// de 10/11, pelo aviso de turma nova), agora com o cupom no texto. Campanha com outro nome começa do zero; quem pediu para
+// não receber na 1ª continua de fora (mcp_avisos_bloqueios).
+const MCP_OA_CAMPANHA = 'curativos-alunos-cupom';
 /** O curso oferecido: tem de estar em MCP_RW_OFERTAS (o cupom e o modelo vêm de lá). */
 const MCP_OA_CURSO = 'curativos-e-tratamento-de-feridas';
 /** A campanha do link curto (o 3º pedaço do api/ir.php) e o utm_campaign do checkout. */
@@ -42,6 +45,11 @@ const MCP_OA_POR_RODADA = 100; // 10/11/2026: a lista inteira (75) numa rodada s
  * desconto. Sem ele aprovado, vale o modelo de cupom do curso ou o geral (mcp_rw_cupom_resolver).
  */
 const MCP_OA_MODELO_TURMA = 'curso_nova_turma_aberta';
+/**
+ * Qual modelo a campanha prefere: 'cupom' (o modelo de cupom do curso, ou o geral; o aviso de turma só se nenhum dos dois
+ * estiver aprovado) ou 'turma' (o aviso de turma primeiro, como na 1ª leva de 10/11).
+ */
+const MCP_OA_PREFERE = 'cupom';
 
 /**
  * A lista de api/config-oferta-alunos.php: ['ligada', 'lista' => [['nome', 'numero' (55…)], …] sem repetidos,
@@ -192,7 +200,13 @@ function mcp_oa_rodar(?int $agora = null): array
         $deTurma = null;
     }
     $proprio = mcp_oa_modelo($fila[0], $oferta);
-    $base = $deTurma ?? mcp_rw_cupom_resolver($proprio, $modelos, '', MCP_OA_CURSO);
+    $deCupom = mcp_rw_cupom_resolver($proprio, $modelos, '', MCP_OA_CURSO);
+    $deCupom = $deCupom !== null && ($modelos['modelos'][$deCupom['nome']] ?? '') === 'APPROVED' ? $deCupom : null;
+    // A ordem da campanha (MCP_OA_PREFERE): com 'cupom', o aviso de turma só entra se nenhum modelo de cupom estiver aprovado.
+    if (MCP_OA_PREFERE === 'cupom' && $deCupom !== null) {
+        $deTurma = null;
+    }
+    $base = $deTurma ?? $deCupom;
     if ($base === null || ($modelos['modelos'][$base['nome']] ?? '') !== 'APPROVED') {
         $r['motivo'] = 'modelo sem aprovação: ' . $proprio['nome'] . ($proprio['nome'] !== MCP_RW_MODELO_CUPOM_GERAL ? ' (nem o geral, ' . MCP_RW_MODELO_CUPOM_GERAL . ')' : '');
         return $fim($r);

@@ -313,18 +313,19 @@ try {
     @unlink("$falso/kapso.jsonl");
     $lista([['nome' => 'Paula Lima', 'telefone' => $celular(8)]]);
     verificar('aviso de turma: o {{3}} é o dia e o horário da turma aberta', mcp_oa_turma_texto($A), 'sábado, 28/11, das 9h às 17h');
-    $controle(['turma' => 'APPROVED']);
+    $controle(['turma' => 'APPROVED', 'situacao' => 'PENDING']);
     $semCache();
     $r = mcp_oa_rodar($A);
     $e = $enviadas();
-    verificar('aviso de turma: aprovado, é ele que sai (mesmo com o de cupom aprovado), com nome, curso e turma, e o botão da campanha alunos',
+    verificar('aviso de turma: sem nenhum modelo de cupom aprovado, é ele que sai, com nome, curso e turma, e o botão da campanha alunos',
         [$r['enviados'], $e[0]['template']['name'] ?? '', array_column($e[0]['template']['components'][0]['parameters'] ?? [], 'text'), $e[0]['template']['components'][1]['parameters'][0]['text'] ?? '', $linhas()[0]['modelo'] ?? ''],
         [1, 'curso_nova_turma_aberta', ['Paula', 'Curativos e Tratamento de Feridas', 'sábado, 28/11, das 9h às 17h'], "matricula-cursos-presenciais/api/ir.php/w/$curso/alunos", 'curso_nova_turma_aberta']);
     $limpar();
     @unlink("$falso/kapso.jsonl");
-    $controle(['turma' => 'PAUSED']);
+    $controle(['turma' => 'APPROVED']);
+    $semCache();
     $r = mcp_oa_rodar($A);
-    verificar('aviso de turma: pausado na Meta, vale o modelo de cupom do curso', [$r['enviados'], $enviadas()[0]['template']['name'] ?? ''], [1, 'cur_cupom_oferta']);
+    verificar('campanha que prefere o cupom: com o de cupom e o aviso de turma aprovados, sai o de cupom', [MCP_OA_PREFERE, $r['enviados'], $enviadas()[0]['template']['name'] ?? ''], ['cupom', 1, 'cur_cupom_oferta']);
     $controle([]);
     $semCache();
 
