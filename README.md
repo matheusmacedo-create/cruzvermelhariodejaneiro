@@ -128,7 +128,7 @@ Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três p
 
 - **Os PDFs só aparecem depois do e-mail**, como o Manual de Identidade: materiais `lei-lucas-escolas` e
   `plano-de-contingencia` em `lib/newsletter/materiais.ts`, na Redação (PR do mesmo branch). Gerados por
-  `scripts/gerar_pdf_materiais.py`, que também grava a capa de cada um.
+  `scripts/gerar_guia_pdf.py`, no padrão dos guias (`guias/<slug>.json`), que também grava a capa de cada um.
 - **Nada de serviço novo.** As turmas fechadas são as de sempre (15 a 30, mesmo valor por pessoa, na sede) e as parcerias
   vão pelo chat, assunto "Doações, Campanha do Agasalho e parcerias". A venda aparece só no fim, dizendo quem vende
   (a escola, O-CVB Filial Rio de Janeiro Ensino Ltda), como pede o Ad Grants.
