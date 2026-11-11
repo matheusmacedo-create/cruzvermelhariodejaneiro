@@ -115,7 +115,7 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
-## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
+## Páginas para instituições: escolas, órgãos públicos e empresas (publicadas em 11/11/2026)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por
 `scripts/gerar_institucional.py` a partir de `site/institucional.json` (trilha Início › Página):
