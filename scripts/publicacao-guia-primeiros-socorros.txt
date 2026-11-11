@@ -5,7 +5,10 @@
 # que grava o e-mail e manda uma cópia do link. Eventos primeiros_socorros_pedir e primeiros_socorros_baixar
 # (docs/rastreamento.md). A página também troca o endereço do Manual de Primeiros Socorros do Ministério da Saúde e da
 # Fiocruz, que saiu do ar em fiocruz.br (404), pela cópia da Biblioteca Virtual em Saúde.
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 11/11/2026, às 19h15 (horário de Brasília), a pedido do Matheus, a partir da main em 39a9414;
+# cache limpo, arquivos conferidos no ar byte a byte e sitemaps regerados e publicados. Faltam: o e-mail de teste no
+# formulário, regerar as matérias na Redação (passo 4) e abrir no navegador o endereço do manual do Ministério da Saúde
+# (não foi confirmado antes de publicar).
 # Antes de publicar: abrir no navegador https://bvsms.saude.gov.br/bvs/publicacoes/manual_primeiros_socorros.pdf e
 # confirmar que é o manual de 2003 (o servidor recusa leitura automática, e a sessão não conseguiu abrir).
 # Gerar antes: python3 scripts/gerar_institucional.py kit-de-primeiros-socorros && python3 scripts/gerar_guia_pdf.py kit-de-primeiros-socorros

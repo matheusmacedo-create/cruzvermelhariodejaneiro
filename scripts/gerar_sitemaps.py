@@ -78,6 +78,7 @@ PAGINAS = [
     ("/gestao/", "gestao/index.html", "monthly", "0.6", "Como funciona a nossa gestão"),
     ("/pedido-de-documentos/", "pedido-de-documentos/index.html", "yearly", "0.4", "Pedido de documentos"),
     ("/bazar/", "bazar/index.html", "monthly", "0.6", "Bazar solidário: doação de roupas e itens domésticos"),
+    ("/manual-de-identidade/", "manual-de-identidade/index.html", "yearly", "0.5", "Manual de Identidade Institucional da Cruz Vermelha Brasileira (PDF)"),
     ("/campanha-agasalho.html", "campanha-agasalho.html", "monthly", "0.6", "Campanha do Agasalho"),
     ("/equipe.html", "equipe.html", "monthly", "0.5", "Equipe"),
     ("/noticias/", None, "daily", "0.8", "Notícias (Redação)"),
