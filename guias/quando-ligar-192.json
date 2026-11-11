@@ -1,0 +1,145 @@
+{
+  "slug": "quando-ligar-192",
+  "arquivo": "quando-ligar-192-cruz-vermelha-rj.pdf",
+  "capa": "capa-quando-ligar-192.webp",
+  "titulo": "Quando ligar 192",
+  "sub": "Cole na geladeira. O SAMU atende 24 horas, e a ligação é grátis. Na dúvida, ligue.",
+  "credito": "Resumo da filial, que não substitui o atendimento do SAMU nem um curso de primeiros socorros",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Ligue 192 e diga",
+          "passos": [
+            "O endereço: rua, número e bairro.",
+            "Um ponto de referência.",
+            "O que aconteceu.",
+            "A idade da pessoa.",
+            "Se ela está acordada e se respira."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "199",
+              "Defesa Civil"
+            ]
+          ],
+          "campo": "Nosso endereço e ponto de referência:"
+        },
+        {
+          "tipo": "perguntas",
+          "titulo": "AVC (derrame): faça o teste SAMU",
+          "linhas": 0,
+          "itens": [
+            [
+              "Sorriso",
+              "Peça para a pessoa sorrir. A boca fica torta ou cai para um lado?"
+            ],
+            [
+              "Abraço",
+              "Peça para levantar os dois braços. Um deles perde a força e cai?"
+            ],
+            [
+              "Música",
+              "Peça para repetir uma frase ou cantar. A fala sai enrolada ou sem sentido?"
+            ],
+            [
+              "Urgência",
+              "Notou qualquer uma dessas mudanças? Ligue 192 e anote a hora em que começou."
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Também são sinais de AVC, quando aparecem de repente:",
+          "texto": "confusão, perda da visão, dor de cabeça muito forte, tontura e fraqueza ou formigamento em um lado do corpo. Se os sinais sumirem, ligue do mesmo jeito. O lugar é o hospital, não o posto de saúde nem a UPA."
+        },
+        {
+          "tipo": "perguntas",
+          "titulo": "Infarto: os sinais",
+          "linhas": 0,
+          "itens": [
+            [
+              "Dor ou aperto no peito",
+              "Forte e demorada. Pode ir para as costas, o rosto e o braço."
+            ],
+            [
+              "Suor frio, palidez, falta de ar, sensação de desmaio",
+              "Podem vir junto com a dor."
+            ],
+            [
+              "Mulheres, idosos e pessoas com diabetes",
+              "Pode não haver dor forte: falta de ar, enjoo, cansaço fora do comum, dor nas costas, no queixo ou na parte alta da barriga. Mal-estar súbito conta."
+            ]
+          ]
+        },
+        {
+          "tipo": "passos",
+          "titulo": "AVC ou infarto: até o socorro chegar",
+          "itens": [
+            "Ligue 192. Não espere para ver se passa.",
+            "Sente a pessoa numa posição confortável. Ela não deve fazer esforço.",
+            "Afrouxe a roupa apertada e fique junto.",
+            "Não dê remédio por conta própria. Siga o que o atendente orientar."
+          ]
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "aviso",
+          "rotulo": "Engasgo: a pessoa tosse e fala?",
+          "texto": "Incentive a tossir e fique ao lado, sem interferir. Os passos desta folha são para quem não consegue tossir, falar nem respirar."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Engasgo grave: adulto ou criança com mais de 1 ano",
+          "itens": [
+            "Peça para alguém ligar 192. Sozinho, ligue no viva-voz.",
+            "Incline a pessoa para a frente e dê até 5 tapas firmes nas costas, entre os ombros, com a base da mão.",
+            "Não saiu? Por trás dela, feche uma mão entre o umbigo e as costelas, cubra com a outra e puxe com força para dentro e para cima, até 5 vezes.",
+            "Alterne 5 tapas e 5 compressões até o objeto sair ou o socorro chegar."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Gestante no fim da gravidez ou pessoa obesa:",
+          "texto": "as compressões são no meio do peito, e não na barriga. Com criança pequena, ajoelhe-se atrás dela."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Engasgo grave: bebê com menos de 1 ano",
+          "itens": [
+            "Peça para alguém ligar 192. Sozinho, ligue no viva-voz.",
+            "Sente-se. Deite o bebê de bruços no seu antebraço, apoiado na coxa, com a cabeça mais baixa que o corpo. Segure o queixo dele.",
+            "Dê até 5 tapas firmes nas costas, entre os ombros. A força é menor que num adulto.",
+            "Não saiu? Vire o bebê de barriga para cima, com a cabeça mais baixa, e faça até 5 compressões no meio do peito.",
+            "Alterne até o objeto sair, o bebê chorar ou o socorro chegar."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que não fazer:",
+          "texto": "não enfie o dedo na boca sem ver o objeto; não deixe a pessoa sozinha; não passe trote. Depois de um engasgo grave, procure um serviço de saúde, mesmo que o objeto tenha saído. Se a pessoa desmaiar, avise o 192 e siga as instruções."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "192 ou 193?",
+          "texto": "192, SAMU: problema de saúde que ameaça a vida, como AVC, infarto, dor forte no peito, falta de ar, engasgo, convulsão, intoxicação e queimadura grave. 193, Bombeiros: incêndio, afogamento, acidente de trânsito, queda grave e desabamento. Se um número não atender, ligue para o outro."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

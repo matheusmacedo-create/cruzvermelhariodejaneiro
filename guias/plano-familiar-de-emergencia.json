@@ -1,0 +1,128 @@
+{
+  "slug": "plano-familiar-de-emergencia",
+  "arquivo": "plano-familiar-de-emergencia-cruz-vermelha-rj.pdf",
+  "capa": "capa-plano-familiar-de-emergencia.webp",
+  "titulo": "Plano familiar de emergência: ficha da família",
+  "sub": "Preencham juntos, a lápis: telefone, escola e remédio mudam. Guardem uma cópia na mochila de emergência e deixem outra num lugar que todos da casa conheçam.",
+  "credito": "Ficha da filial, com orientações da Defesa Civil e da Cruz Vermelha",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "ficha",
+          "titulo": "Quem mora na casa",
+          "colunas": [
+            "Nome",
+            "Telefone",
+            "Onde passa o dia (escola, trabalho)"
+          ],
+          "linhas": 6,
+          "altura_mm": 8
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Onde nos encontramos e por onde saímos",
+          "colunas": [
+            "Combinado",
+            "Endereço ou caminho"
+          ],
+          "rotulos": [
+            "Ponto de encontro perto de casa",
+            "Ponto de encontro fora do bairro",
+            "Se não der para voltar, vamos para",
+            "Rota de saída",
+            "Segunda rota"
+          ],
+          "altura_mm": 9
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Contato de fora da cidade",
+          "colunas": [
+            "Contato",
+            "Nome",
+            "Telefone",
+            "Cidade"
+          ],
+          "rotulos": [
+            "Principal",
+            "Reserva"
+          ],
+          "altura_mm": 8
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Quem faz o quê",
+          "colunas": [
+            "Tarefa",
+            "Quem faz",
+            "Se não puder, quem faz"
+          ],
+          "rotulos": [
+            "Buscar as crianças",
+            "Ajudar quem precisa de apoio",
+            "Levar os animais",
+            "Pegar a mochila e os documentos",
+            "Desligar a luz, a água e o gás",
+            "Avisar o contato de fora"
+          ],
+          "altura_mm": 8
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "ficha",
+          "titulo": "Saúde e remédios de cada um",
+          "colunas": [
+            "Nome",
+            "Doenças e alergias",
+            "Remédios de uso contínuo",
+            "Médico ou posto (telefone)"
+          ],
+          "linhas": 6,
+          "altura_mm": 7.5
+        },
+        {
+          "tipo": "campos",
+          "titulo": "Onde fica em casa",
+          "itens": [
+            "Quadro de luz:",
+            "Registro de água:",
+            "Registro de gás:",
+            "Documentos:",
+            "Mochila de emergência:",
+            "Kit de primeiros socorros:"
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Na hora de sair.",
+          "texto": "Só desligue a luz e feche os registros se for seguro. Com água no chão, não encoste no quadro de luz. Só volte para casa quando a Defesa Civil liberar."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Treinem o plano",
+          "itens": [
+            "Façam a pé o caminho até os dois pontos de encontro, com a mochila de emergência.",
+            "Cada um diz qual é a sua tarefa. As crianças dizem para quem ligar."
+          ]
+        },
+        {
+          "tipo": "familia_e_emergencia",
+          "titulo": "Vizinho, escola, médico",
+          "ponto_de_encontro": false
+        },
+        {
+          "tipo": "datas",
+          "titulo": "Revimos o plano em",
+          "texto": "A cada 6 meses, e quando mudar a casa, o telefone, a escola ou o remédio de alguém. Confiram a ficha e anotem a data."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
