@@ -71,5 +71,5 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | --- | --- | --- | --- |
 | Kit de emergência | no ar | PDF próprio, de antes do padrão (`gerar_pdf_kit.py`) | sim |
 | Mochila de emergência | no ar | modelo do padrão, gerado e não publicado | não |
-| Kit de primeiros socorros | no ar | **primeiro guia completo no padrão, gerado e não publicado**; a página já aponta para ele | não |
+| Kit de primeiros socorros | no ar | **primeiro guia completo no padrão, gerado e não publicado** | sim: formulário na página e caixa nas matérias de primeiros socorros (não publicado) |
 | Lei Lucas | só matéria em notícias | falta | não |
