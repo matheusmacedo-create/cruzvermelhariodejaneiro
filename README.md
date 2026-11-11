@@ -115,6 +115,21 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Quatro guias gratuitos com pedido de e-mail (11/11/2026, NÃO publicado)
+
+Pedido do Matheus: mais materiais em PDF para as matérias capturarem e-mail. No padrão de
+`docs/padrao-guias-gratuitos.md` (página, PDF de 2 folhas + fontes, entrega pela Redação, dois eventos no GA4):
+
+| Página | PDF | Caixa nas matérias de |
+| --- | --- | --- |
+| `/mochila-de-emergencia/` (já no ar; ganha a seção `#baixar`) | lista para marcar | sirene da Defesa Civil e sinais de deslizamento |
+| `/quando-ligar-192/` | cartaz: o que dizer ao 192, teste SAMU, sinais de infarto, engasgo | AVC, infarto, engasgo (adulto e bebê) e desmaio |
+| `/verao-seguro/` | calor forte, sinais de alerta no corpo e praia | onda de calor, insolação, afogamento e helicóptero na praia |
+| `/plano-familiar-de-emergencia/` | ficha para a família preencher | plano familiar, alertas da Defesa Civil e estágios da cidade |
+
+Materiais e caixas em `lib/newsletter/materiais.ts` e `lib/site/caixa-de-material.ts`, na Redação (PR do mesmo branch):
+de 18 para 27 matérias com caixa. Ordem de publicação e pendências de revisão em `scripts/publicacao-guias-novembro.txt`.
+
 ## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por

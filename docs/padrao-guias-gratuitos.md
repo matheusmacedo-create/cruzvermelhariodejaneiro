@@ -77,7 +77,15 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Guia | Página | PDF no padrão | Entrega por e-mail |
 | --- | --- | --- | --- |
 | Kit de emergência | no ar | PDF próprio, de antes do padrão (`gerar_pdf_kit.py`) | sim |
-| Mochila de emergência | no ar | modelo do padrão, gerado e não publicado | não |
+| Mochila de emergência | no ar; seção `#baixar` com o formulário gerada e não publicada (11/11/2026) | no padrão, com capa, gerado e não publicado | sim: formulário na página e caixa nas matérias da sirene e de deslizamento (não publicado) |
 | Kit de primeiros socorros | no ar | **primeiro guia completo no padrão, gerado e não publicado** | sim: formulário na página e caixa nas matérias de primeiros socorros (não publicado) |
 | Lei Lucas para escolas | `/lei-lucas-para-escolas/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: checklist, ficha dos capacitados e cartaz de emergência | sim (não publicado) |
 | Plano de contingência | `/plano-de-contingencia/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: perguntas com linhas, ficha de quem faz o quê e níveis de alerta | sim (não publicado) |
+| Quando ligar 192 | `/quando-ligar-192/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: cartaz com o que dizer ao 192, teste SAMU, sinais de infarto e engasgo | sim: formulário na página e caixa nas matérias de AVC, infarto, engasgo e desmaio (não publicado) |
+| Verão seguro no Rio | `/verao-seguro/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa nas matérias de calor, insolação, afogamento e praia (não publicado) |
+| Plano familiar de emergência | `/plano-familiar-de-emergencia/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: ficha para a família preencher | sim: formulário na página e caixa nas matérias do plano, dos alertas e dos estágios (não publicado) |
+
+Os quatro últimos e a entrega da mochila saíram juntos em 11/11/2026 (pedido do Matheus: mais guias, mais matérias com
+caixa de e-mail). A lista de publicação é `scripts/publicacao-guias-novembro.txt`. O conteúdo de saúde do cartaz
+"Quando ligar 192" (as manobras de engasgo, sobretudo) e do guia do verão precisa do visto de um instrutor da escola
+antes de ir ao ar: as pendências de cada um estão em `notas_internas`, em `site/institucional.json`.

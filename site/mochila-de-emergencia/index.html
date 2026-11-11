@@ -62,6 +62,8 @@
     .inst-secao li { margin: 0 0 6px; }
     .inst-secao a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
     .inst-secao a.btn { color: #fff; text-decoration: none; }
+    .inst-secao a.btn-outline { color: var(--black); }
+    .inst-secao a.btn-outline:hover { color: var(--red); }
     .inst-oficial { margin: 18px 0 18px; padding: 18px 22px; border-left: 4px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; }
     .inst-oficial p { font-size: 1rem; font-style: italic; margin: 0 0 8px; }
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }
@@ -129,6 +131,31 @@
     .inst-video-capa:hover .inst-video-tocar, .inst-video-capa:focus-visible .inst-video-tocar { background: var(--red-dark); }
     .inst-video-capa:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
     .inst-video figcaption b { display: block; color: var(--black); font-size: .98rem; margin: 0 0 2px; }
+  </style>
+  <style>
+    /* Material com e-mail (11/11/2026): capa ao lado do formulário no computador; um sob o outro no celular. */
+    .inst-material { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; align-items: start; margin: 22px 0 8px; padding: 24px; border: 1px solid var(--line); border-top: 4px solid var(--red); border-radius: 14px; background: var(--soft); }
+    .inst-material [hidden] { display: none !important; }
+    .inst-material-capa { margin: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); }
+    .inst-material-capa img { display: block; width: 100%; height: auto; }
+    .inst-secao .inst-material-ficha { margin: 0 0 14px; font-size: .9rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .inst-material-form { display: grid; gap: 12px; }
+    .inst-material-rotulo { margin-bottom: -6px; font-size: 1rem; font-weight: 700; color: var(--black); }
+    .inst-material input[type=email] { width: 100%; min-height: 52px; padding: 12px 14px; border: 1.5px solid #6b7480; border-radius: 8px; background: #fff; color: var(--black); font: inherit; font-size: 17px; box-sizing: border-box; }
+    .inst-material input[type=email]:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+    .inst-material-aceite { display: flex; gap: 12px; align-items: flex-start; font-size: .95rem; line-height: 1.55; color: var(--text); cursor: pointer; }
+    .inst-material-aceite input { flex: 0 0 auto; width: 24px; height: 24px; margin: 1px 0 0; accent-color: var(--red); }
+    .inst-material button.btn, .inst-material-baixar .btn { min-height: 52px; width: 100%; justify-content: center; font-size: 1.05rem; border: 0; cursor: pointer; }
+    .inst-material button[disabled] { opacity: .7; cursor: progress; }
+    .inst-material-armadilha { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .inst-secao .inst-material-recado { margin: 14px 0 0; font-size: 1.05rem; line-height: 1.5; font-weight: 600; color: #14532d; }
+    .inst-secao .inst-material-recado:empty { display: none; }
+    .inst-secao .inst-material-recado[data-erro] { color: #991b1b; }
+    .inst-secao .inst-material-baixar { margin: 14px 0 0; }
+    @media (max-width: 620px) {
+      .inst-material { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
+      .inst-material-capa { max-width: 150px; }
+    }
   </style>
   <!-- Google tag (gtag.js) -->
   <script>
@@ -270,7 +297,7 @@
    "breadcrumb": {
     "@id": "https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/#trilha"
    },
-   "dateModified": "2026-11-10",
+   "dateModified": "2026-11-11",
    "citation": [
     "https://x.com/defesacivilbr/status/2118761311018291534",
     "https://www.bombeiros.ce.gov.br/2026/11/07/defesa-civil-do-ceara-esclarece/",
@@ -296,6 +323,7 @@
    ],
    "image": [
     "https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-itens-960.webp",
+    "https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/capa-mochila-de-emergencia.webp",
     "https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enchente-rio-acari-960.webp",
     "https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-guardada-960.webp",
     "https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-alagamento-catete-960.webp",
@@ -404,6 +432,14 @@
       "@type": "Answer",
       "text": "A cada 6 meses, o prazo que a Defesa Civil Nacional dá para conferir as validades do kit de emergência. Troque o que venceu, recarregue as baterias e reveja a mochila sempre que as necessidades da família mudarem."
      }
+    },
+    {
+     "@type": "Question",
+     "name": "A lista da mochila em PDF é gratuita?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "É. Você deixa o e-mail, o botão de baixar aparece na hora, e uma cópia do link vai para a sua caixa de entrada. Dá para sair da lista a qualquer momento."
+     }
     }
    ]
   }
@@ -478,6 +514,7 @@
         <ul class="inst-indice" aria-label="Nesta página">
           <li><a href="#o-que-e">O que é a mochila de emergência</a></li>
           <li><a href="#lista">O que levar na mochila</a></li>
+          <li><a href="#baixar">Baixe a lista em PDF</a></li>
           <li><a href="#kit-72-horas">Kit 72 horas e a mochila</a></li>
           <li><a href="#documentos">Documentos e contatos</a></li>
           <li><a href="#cada-pessoa">Bebês, idosos, pessoas com deficiência e animais</a></li>
@@ -497,7 +534,12 @@
 
       <section class="inst-secao" id="lista" aria-labelledby="lista-titulo">
         <h2 id="lista-titulo">O que levar na mochila</h2>
-        <p>A tabela junta as listas da Cruz Vermelha Americana (<a href="https://www.redcross.org/get-help/how-to-prepare-for-emergencies/survival-kit-supplies.html" target="_blank" rel="noopener">kit de sobrevivência</a> e <a href="https://www.redcross.org/about-us/news-and-events/news/2025/do-you-know-how-to-get-ready-in-case-you-have-to-evacuate.html" target="_blank" rel="noopener">saída de casa</a>), da <a href="https://cdn.redcross.ca/prodmedia/crc/documents/1-3-PocketGuide.pdf" target="_blank" rel="noopener">Cruz Vermelha Canadense</a> e da <a href="https://www.ifrc.org/sites/default/files/2021-06/Messages-06-PART-B1-HR.pdf" target="_blank" rel="noopener">Federação Internacional das Sociedades da Cruz Vermelha e do Crescente Vermelho (FICV)</a> com o <a href="https://www.defesacivil.pr.gov.br/Pagina/Kit-de-Emergencia-pessoal" target="_blank" rel="noopener">kit pessoal da Defesa Civil do Paraná</a>, adaptadas por nós. Quantidades por pessoa, salvo indicação.</p><div class="inst-tabela-rolagem" tabindex="0" role="region" aria-label="Tabela: O que levar na mochila, role para o lado para ver todas as colunas"><table class="inst-tabela"><thead><tr><th>Item</th><th>Quanto</th><th>Detalhes</th></tr></thead><tbody><tr><td>Água potável</td><td>O que der para carregar (referência: 2 litros por dia)</td><td>Medida da Defesa Civil do Paraná. Veja abaixo quanto levar.</td></tr><tr><td>Comida que não estraga</td><td>Para 3 dias</td><td>Pronta para comer: barras de cereais, biscoitos, frutas secas.</td></tr><tr><td>Remédios de uso contínuo</td><td>Pelo menos 7 dias, se possível</td><td>A Cruz Vermelha Americana pede 7 dias; a Canadense, no mínimo 3. Com cópia das receitas, sobretudo as de remédios controlados.</td></tr><tr><td>Kit de primeiros socorros</td><td>1 por família</td><td>Um básico, sugere a <a href="https://www.redcross.ca/crc/documents/How-We-Help/72-Hour-EM-Backpack_English.pdf" target="_blank" rel="noopener">Cruz Vermelha Canadense</a>. Veja o que pôr no <a href="/kit-de-primeiros-socorros/">kit de primeiros socorros</a>. Para marcar a caixa, o sinal certo é a <a href="/kit-de-emergencia/#cruz-verde">cruz branca sobre fundo verde</a>, e não a cruz vermelha.</td></tr><tr><td>Cópias de documentos</td><td>De cada pessoa</td><td>Num saco plástico bem fechado. Veja <a href="#documentos">quais documentos levar</a>.</td></tr><tr><td>Contatos e plano da família, no papel</td><td>1 cópia por pessoa</td><td>Também salvos no celular, com alguém de fora da cidade e os telefones de emergência.</td></tr><tr><td>Celular, carregador e bateria portátil</td><td>Carregados</td><td>E o carregador de aparelhos de saúde, como CPAP ou cadeira de rodas motorizada.</td></tr><tr><td>Lanterna e pilhas de reserva</td><td>1 lanterna</td><td>Vela, não: a <a href="https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil/ComoagirInundaesMDR.pdf" target="_blank" rel="noopener">Defesa Civil Nacional</a> aponta o risco de incêndio. Pilhas fora do aparelho. Veja o que fazer na <a href="/noticias/falta-de-luz-o-que-fazer/">falta de luz</a>.</td></tr><tr><td>Rádio a pilha ou a manivela</td><td>1 por família</td><td>Para ouvir as autoridades sem energia ou internet.</td></tr><tr><td>Dinheiro em espécie</td><td>Em notas pequenas</td><td>Sem energia ou internet, cartão, Pix e caixa eletrônico podem não funcionar.</td></tr><tr><td>Roupa, calçado firme, capa de chuva e luvas de trabalho</td><td>1 troca, com roupa de baixo</td><td>Para sair na chuva e ter roupa seca depois.</td></tr><tr><td>Manta térmica e apito</td><td>1 de cada</td><td>Para se aquecer e para sinalizar que precisa de ajuda.</td></tr><tr><td>Higiene</td><td>Para 3 dias</td><td>Escova e pasta de dentes, absorventes, álcool em gel e máscara.</td></tr><tr><td>Óculos reserva</td><td>Para quem usa</td><td>E o líquido das lentes de contato.</td></tr><tr><td>Chaves reserva</td><td>De casa e do carro</td><td>Uma cópia de cada, guardada na mochila.</td></tr><tr><td>Mapa do bairro, impresso</td><td>1 por família</td><td>O GPS pode falhar, e o caminho de sempre pode estar fechado.</td></tr></tbody></table></div><h3>Quanta água levar</h3><p>Leve o que conseguir carregar a pé, em garrafas pequenas, e deixe o resto no kit de casa. É a nossa sugestão: as fontes não dão o mesmo número.</p><p>Para comparar: a Defesa Civil do Paraná indica <strong>2 litros por pessoa, por dia</strong>, a mesma medida dos cartões da Defesa Civil Nacional para o kit de casa, repetida pela <a href="https://maceio.al.gov.br/noticias/defesa-civil/defesa-civil-de-maceio-reforca-que-orientacao-sobre-kit-de-emergencia-nao-indica-previsao-de-desastre-e-enfatiza-carater-preventivo" target="_blank" rel="noopener">Defesa Civil de Maceió</a>: 6 litros por pessoa para 3 dias. A Cruz Vermelha Americana fala em 1 galão, cerca de 3,8 litros, por pessoa, por dia. A Cruz Vermelha Canadense, no guia de bolso, põe na mochila de saída só uma garrafa e deixa os litros no kit de casa: 2 litros por pessoa, por dia, por 3 dias. Já no <a href="https://cdn.redcross.ca/prodmedia/crc/documents/How-We-Help/Emergencies-and-Disasters-in-Canada/BeReady/Build-or-Buy-a-Kit-Portuguese_Final_Digital.pdf" target="_blank" rel="noopener">guia dela em português</a>, o kit, guardado numa mochila para poder ser levado, tem pelo menos 1 litro por pessoa, por dia, durante pelo menos 3 dias.</p><p>Para guardar e tratar a água, veja o <a href="/kit-de-emergencia/#agua">guia do kit de emergência</a>.</p><p>Prefere o papel? <a href="/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf" data-evento="kit_baixar" data-origem="mochila">Baixe a lista do kit em PDF</a>: é a lista do kit de casa. Marque o que vai para a mochila e guarde uma cópia nela.</p>
+        <p>A tabela junta as listas da Cruz Vermelha Americana (<a href="https://www.redcross.org/get-help/how-to-prepare-for-emergencies/survival-kit-supplies.html" target="_blank" rel="noopener">kit de sobrevivência</a> e <a href="https://www.redcross.org/about-us/news-and-events/news/2025/do-you-know-how-to-get-ready-in-case-you-have-to-evacuate.html" target="_blank" rel="noopener">saída de casa</a>), da <a href="https://cdn.redcross.ca/prodmedia/crc/documents/1-3-PocketGuide.pdf" target="_blank" rel="noopener">Cruz Vermelha Canadense</a> e da <a href="https://www.ifrc.org/sites/default/files/2021-06/Messages-06-PART-B1-HR.pdf" target="_blank" rel="noopener">Federação Internacional das Sociedades da Cruz Vermelha e do Crescente Vermelho (FICV)</a> com o <a href="https://www.defesacivil.pr.gov.br/Pagina/Kit-de-Emergencia-pessoal" target="_blank" rel="noopener">kit pessoal da Defesa Civil do Paraná</a>, adaptadas por nós. Quantidades por pessoa, salvo indicação.</p><div class="inst-tabela-rolagem" tabindex="0" role="region" aria-label="Tabela: O que levar na mochila, role para o lado para ver todas as colunas"><table class="inst-tabela"><thead><tr><th>Item</th><th>Quanto</th><th>Detalhes</th></tr></thead><tbody><tr><td>Água potável</td><td>O que der para carregar (referência: 2 litros por dia)</td><td>Medida da Defesa Civil do Paraná. Veja abaixo quanto levar.</td></tr><tr><td>Comida que não estraga</td><td>Para 3 dias</td><td>Pronta para comer: barras de cereais, biscoitos, frutas secas.</td></tr><tr><td>Remédios de uso contínuo</td><td>Pelo menos 7 dias, se possível</td><td>A Cruz Vermelha Americana pede 7 dias; a Canadense, no mínimo 3. Com cópia das receitas, sobretudo as de remédios controlados.</td></tr><tr><td>Kit de primeiros socorros</td><td>1 por família</td><td>Um básico, sugere a <a href="https://www.redcross.ca/crc/documents/How-We-Help/72-Hour-EM-Backpack_English.pdf" target="_blank" rel="noopener">Cruz Vermelha Canadense</a>. Veja o que pôr no <a href="/kit-de-primeiros-socorros/">kit de primeiros socorros</a>. Para marcar a caixa, o sinal certo é a <a href="/kit-de-emergencia/#cruz-verde">cruz branca sobre fundo verde</a>, e não a cruz vermelha.</td></tr><tr><td>Cópias de documentos</td><td>De cada pessoa</td><td>Num saco plástico bem fechado. Veja <a href="#documentos">quais documentos levar</a>.</td></tr><tr><td>Contatos e plano da família, no papel</td><td>1 cópia por pessoa</td><td>Também salvos no celular, com alguém de fora da cidade e os telefones de emergência.</td></tr><tr><td>Celular, carregador e bateria portátil</td><td>Carregados</td><td>E o carregador de aparelhos de saúde, como CPAP ou cadeira de rodas motorizada.</td></tr><tr><td>Lanterna e pilhas de reserva</td><td>1 lanterna</td><td>Vela, não: a <a href="https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil/ComoagirInundaesMDR.pdf" target="_blank" rel="noopener">Defesa Civil Nacional</a> aponta o risco de incêndio. Pilhas fora do aparelho. Veja o que fazer na <a href="/noticias/falta-de-luz-o-que-fazer/">falta de luz</a>.</td></tr><tr><td>Rádio a pilha ou a manivela</td><td>1 por família</td><td>Para ouvir as autoridades sem energia ou internet.</td></tr><tr><td>Dinheiro em espécie</td><td>Em notas pequenas</td><td>Sem energia ou internet, cartão, Pix e caixa eletrônico podem não funcionar.</td></tr><tr><td>Roupa, calçado firme, capa de chuva e luvas de trabalho</td><td>1 troca, com roupa de baixo</td><td>Para sair na chuva e ter roupa seca depois.</td></tr><tr><td>Manta térmica e apito</td><td>1 de cada</td><td>Para se aquecer e para sinalizar que precisa de ajuda.</td></tr><tr><td>Higiene</td><td>Para 3 dias</td><td>Escova e pasta de dentes, absorventes, álcool em gel e máscara.</td></tr><tr><td>Óculos reserva</td><td>Para quem usa</td><td>E o líquido das lentes de contato.</td></tr><tr><td>Chaves reserva</td><td>De casa e do carro</td><td>Uma cópia de cada, guardada na mochila.</td></tr><tr><td>Mapa do bairro, impresso</td><td>1 por família</td><td>O GPS pode falhar, e o caminho de sempre pode estar fechado.</td></tr></tbody></table></div><h3>Quanta água levar</h3><p>Leve o que conseguir carregar a pé, em garrafas pequenas, e deixe o resto no kit de casa. É a nossa sugestão: as fontes não dão o mesmo número.</p><p>Para comparar: a Defesa Civil do Paraná indica <strong>2 litros por pessoa, por dia</strong>, a mesma medida dos cartões da Defesa Civil Nacional para o kit de casa, repetida pela <a href="https://maceio.al.gov.br/noticias/defesa-civil/defesa-civil-de-maceio-reforca-que-orientacao-sobre-kit-de-emergencia-nao-indica-previsao-de-desastre-e-enfatiza-carater-preventivo" target="_blank" rel="noopener">Defesa Civil de Maceió</a>: 6 litros por pessoa para 3 dias. A Cruz Vermelha Americana fala em 1 galão, cerca de 3,8 litros, por pessoa, por dia. A Cruz Vermelha Canadense, no guia de bolso, põe na mochila de saída só uma garrafa e deixa os litros no kit de casa: 2 litros por pessoa, por dia, por 3 dias. Já no <a href="https://cdn.redcross.ca/prodmedia/crc/documents/How-We-Help/Emergencies-and-Disasters-in-Canada/BeReady/Build-or-Buy-a-Kit-Portuguese_Final_Digital.pdf" target="_blank" rel="noopener">guia dela em português</a>, o kit, guardado numa mochila para poder ser levado, tem pelo menos 1 litro por pessoa, por dia, durante pelo menos 3 dias.</p><p>Para guardar e tratar a água, veja o <a href="/kit-de-emergencia/#agua">guia do kit de emergência</a>.</p><p>Prefere o papel? <a href="#baixar">Baixe a lista da mochila em PDF</a>, marque o que já tem e guarde uma cópia nela.</p>
+      </section>
+
+      <section class="inst-secao" id="baixar" aria-labelledby="baixar-titulo">
+        <h2 id="baixar-titulo">Baixe a lista em PDF</h2>
+        <p>A lista desta página em três folhas: duas para imprimir e marcar o que já está na mochila, com os documentos, o que fazer na hora de sair e os telefones da família, e uma com todas as fontes. É gratuita.</p><p>Informe o seu e-mail e marque a autorização: o botão de baixar aparece aqui na hora, e uma cópia do link vai para a sua caixa de entrada.</p><div class="inst-material" data-material="mochila-de-emergencia" data-evento="mochila_pedir" data-chave="mochila-de-emergencia-liberado"><figure class="inst-material-capa"><img loading="lazy" decoding="async" src="/mochila-de-emergencia/capa-mochila-de-emergencia.webp" width="480" height="679" alt="Primeira folha da lista da mochila de emergência: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e os itens da mochila, cada um com um quadradinho para marcar"></figure><div class="inst-material-miolo"><p class="inst-material-ficha">PDF · 3 folhas · para imprimir</p><form class="inst-material-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post"><input type="hidden" name="material" value="mochila-de-emergencia"><label class="inst-material-armadilha" aria-hidden="true">Não preencha este campo <input type="text" name="site" tabindex="-1" autocomplete="off"></label><label class="inst-material-rotulo" for="inst-material-email">Seu e-mail</label><input id="inst-material-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="nome@exemplo.com" required><label class="inst-material-aceite"><input type="checkbox" name="consentimento" value="1" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail a lista da mochila de emergência e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type="submit" class="btn btn-red">Liberar o download</button></form><p class="inst-material-recado" role="status" aria-live="polite"></p><p class="inst-material-baixar" hidden><a class="btn btn-red" href="/mochila-de-emergencia/mochila-de-emergencia-cruz-vermelha-rj.pdf" download data-evento="mochila_baixar" data-origem="pagina">Baixar a lista em PDF</a></p></div></div>
       </section>
 
       <section class="inst-secao" id="kit-72-horas" aria-labelledby="kit-72-horas-titulo">
@@ -541,6 +583,7 @@
         <details><summary>Onde deixar a mochila de emergência?</summary><p>Num lugar limpo, seco e fácil de pegar, perto da porta principal. Todos da casa precisam saber onde ela fica.</p></details>
         <details><summary>Quando devo sair de casa com a mochila?</summary><p>Quando a Defesa Civil mandar sair, seja pelo alerta no celular, pelo toque de desocupação da sirene ou por um agente, e logo que notar sinais de deslizamento. Não espere a água subir: saia antes que as rotas de fuga fiquem interditadas.</p></details>
         <details><summary>De quanto em quanto tempo devo conferir a mochila?</summary><p>A cada 6 meses, o prazo que a Defesa Civil Nacional dá para conferir as validades do kit de emergência. Troque o que venceu, recarregue as baterias e reveja a mochila sempre que as necessidades da família mudarem.</p></details>
+        <details><summary>A lista da mochila em PDF é gratuita?</summary><p>É. Você deixa o e-mail, o botão de baixar aparece na hora, e uma cópia do link vai para a sua caixa de entrada. Dá para sair da lista a qualquer momento.</p></details>
       </section>
 
       <aside class="inst-fontes" aria-labelledby="inst-fontes-titulo">
@@ -569,7 +612,7 @@
           <li><a href="https://www2.cruzroja.es/preparacionantedesastres" target="_blank" rel="noopener">Cruz Roja Española – Preparación ante desastres (em espanhol)</a></li>
         </ul>
       </aside>
-      <p class="inst-atualizado">Atualizado em 10/11/2026.</p>
+      <p class="inst-atualizado">Atualizado em 11/11/2026.</p>
       </div>
     </div>
 
@@ -747,6 +790,37 @@
       if (typeof gtag === 'function') gtag('event', a.getAttribute('data-evento'), { origem: a.getAttribute('data-origem') || '' });
     });
   });
+</script>
+<script>
+  /* Material com e-mail: manda o pedido para a Redação e, aceito, mostra o botão de baixar (gerar_institucional.py). */
+  (function () {
+    var caixa = document.querySelector('.inst-material'); if (!caixa) return;
+    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
+    var chave = caixa.getAttribute('data-chave');
+    function liberar(recado) { f.hidden = true; baixar.hidden = false; r.removeAttribute('data-erro'); r.textContent = recado; }
+    try { if (window.localStorage && localStorage.getItem(chave)) liberar('Você já deixou o seu e-mail neste aparelho. Toque no botão para baixar.'); } catch (e) {}
+    if (!window.fetch) return;
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var b = f.querySelector('button[type=submit]'), rotulo = b.textContent, d = new FormData(f);
+      b.disabled = true; b.textContent = 'Enviando…'; r.removeAttribute('data-erro'); r.textContent = '';
+      fetch(f.action, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: d.get('email'), site: d.get('site'), consentimento: d.get('consentimento') === '1', material: d.get('material'), origem: 'materia' }) })
+        .then(function (x) { return x.json().catch(function () { return {}; }); })
+        .then(function (resp) {
+          if (resp && resp.ok) {
+            liberar('Pronto! Toque no botão abaixo para baixar. Também enviamos o link para o seu e-mail (confira a caixa de spam).');
+            try { localStorage.setItem(chave, '1'); } catch (e) {}
+            try { if (typeof gtag === 'function') gtag('event', caixa.getAttribute('data-evento'), { origem: 'pagina' }); } catch (e) {}
+            var a = baixar.querySelector('a'); if (a) a.focus();
+          } else {
+            r.setAttribute('data-erro', '1'); r.textContent = (resp && resp.erro) || 'Não foi possível concluir agora. Tente de novo.';
+          }
+        })
+        .catch(function () { r.setAttribute('data-erro', '1'); r.textContent = 'Não foi possível concluir agora. Confira a sua conexão e tente de novo.'; })
+        .then(function () { b.disabled = false; b.textContent = rotulo; });
+    });
+  })();
 </script>
 </body>
 </html>

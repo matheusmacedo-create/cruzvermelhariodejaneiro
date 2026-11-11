@@ -1,0 +1,38 @@
+# Quatro guias gratuitos com pedido de e-mail (11/11/2026, pedido do Matheus): a mochila de emergência ganha a seção
+# #baixar e a capa; páginas novas /quando-ligar-192/ (cartaz), /verao-seguro/ (guia) e /plano-familiar-de-emergencia/
+# (ficha), cada uma com o PDF no padrão dos guias (docs/padrao-guias-gratuitos.md). O botão de baixar só aparece depois
+# do e-mail e do aceite; o pedido vai para a Redação (materiais mochila-de-emergencia, quando-ligar-192, verao-seguro e
+# plano-familiar-de-emergencia, lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha quatro variantes:
+# de 18 para 27 matérias (lib/site/caixa-de-material.ts).
+# ESTADO: NÃO PUBLICADO.
+# Gerar antes: python3 scripts/gerar_guia_pdf.py mochila-de-emergencia quando-ligar-192 verao-seguro plano-familiar-de-emergencia
+#              python3 scripts/gerar_institucional.py mochila-de-emergencia quando-ligar-192 verao-seguro plano-familiar-de-emergencia
+# ORDEM, e ela importa:
+#   0. Revisão de fatos, antes de tudo (o padrão pede): as pendências de cada página estão em notas_internas, em
+#      site/institucional.json. As que pesam: no cartaz Quando ligar 192, as manobras de engasgo descritas passo a passo
+#      (as fontes divergem para maiores de 1 ano; o texto segue a FICV e a Cruz Vermelha Americana) precisam do visto
+#      de um instrutor da escola; no plano familiar, o número de sirenes do Rio e o telefone 1746.
+#   1. A Redação primeiro: mesclar o PR que cadastra os quatro materiais. Sem ele, a rota responde "Este formulário
+#      está desatualizado" e ninguém consegue liberar o botão.
+#   2. Publicar aqui, os PDFs e as capas antes das páginas:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-guias-novembro.txt)
+#   3. Limpar o cache e conferir no celular: deixar um e-mail de teste em cada página (um endereço diferente por
+#      página, ou 30 minutos entre os pedidos: a Redação não repete convite ao mesmo endereço antes disso), ver o
+#      botão aparecer, o PDF abrir e a mensagem chegar.
+#   4. Na Redação, "Regerar as páginas das matérias" (Configurações › Site): as 9 matérias novas ganham a caixa e as 6
+#      que mudaram de variante trocam de material. Enquanto um PDF não responder 200, a matéria dele sai sem a caixa.
+#   5. python3 scripts/gerar_sitemaps.py e publicar os sitemaps (três páginas novas; o lastmod da mochila muda).
+# Desfazer: scripts/desfazer_publicacao.sh <commit anterior> scripts/publicacao-guias-novembro.txt (a página da
+# mochila e o PDF dela voltam; os outros arquivos são novos e são apagados). Desfeito, regerar as matérias de novo.
+site/mochila-de-emergencia/mochila-de-emergencia-cruz-vermelha-rj.pdf
+site/mochila-de-emergencia/capa-mochila-de-emergencia.webp
+site/mochila-de-emergencia/index.html
+site/quando-ligar-192/quando-ligar-192-cruz-vermelha-rj.pdf
+site/quando-ligar-192/capa-quando-ligar-192.webp
+site/quando-ligar-192/index.html
+site/verao-seguro/verao-seguro-cruz-vermelha-rj.pdf
+site/verao-seguro/capa-verao-seguro.webp
+site/verao-seguro/index.html
+site/plano-familiar-de-emergencia/plano-familiar-de-emergencia-cruz-vermelha-rj.pdf
+site/plano-familiar-de-emergencia/capa-plano-familiar-de-emergencia.webp
+site/plano-familiar-de-emergencia/index.html
