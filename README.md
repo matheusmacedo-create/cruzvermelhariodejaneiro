@@ -130,7 +130,7 @@ Pedido do Matheus: mais materiais em PDF para as matérias capturarem e-mail. No
 Materiais e caixas em `lib/newsletter/materiais.ts` e `lib/site/caixa-de-material.ts`, na Redação (PR do mesmo branch):
 de 18 para 27 matérias com caixa. Ordem de publicação e pendências de revisão em `scripts/publicacao-guias-novembro.txt`.
 
-## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
+## Páginas para instituições: escolas, órgãos públicos e empresas (publicadas em 11/11/2026)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por
 `scripts/gerar_institucional.py` a partir de `site/institucional.json` (trilha Início › Página):
