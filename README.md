@@ -144,7 +144,7 @@ Mesmo pedido e mesmo padrão da leva de 11/11:
 Na Redação, o kit Lei Lucas para escolas ganha caixa em três matérias de Lei Lucas: 58 matérias com caixa de material.
 Ordem de publicação e pendências em `scripts/publicacao-guias-novembro-2.txt`.
 
-## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
+## Páginas para instituições: escolas, órgãos públicos e empresas (publicadas em 11/11/2026)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por
 `scripts/gerar_institucional.py` a partir de `site/institucional.json` (trilha Início › Página):
