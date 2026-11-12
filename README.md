@@ -130,6 +130,20 @@ Pedido do Matheus: mais materiais em PDF para as matérias capturarem e-mail. No
 Materiais e caixas em `lib/newsletter/materiais.ts` e `lib/site/caixa-de-material.ts`, na Redação (PR do mesmo branch):
 de 18 para 27 matérias com caixa. Ordem de publicação e pendências de revisão em `scripts/publicacao-guias-novembro.txt`.
 
+## Segunda leva de guias gratuitos (12/11/2026, NÃO publicado)
+
+Mesmo pedido e mesmo padrão da leva de 11/11:
+
+| Página | PDF | Caixa nas matérias de |
+| --- | --- | --- |
+| `/cuidador-de-idosos/` | rotina do dia, ficha dos remédios e sinais de alerta | banho no leito, Alzheimer, lesão por pressão, caderneta da pessoa idosa e sobrecarga do cuidador |
+| `/acidentes-em-casa/` | cartaz: picada de cobra, de escorpião e choque elétrico | as três matérias desses assuntos |
+| `/cartaz-da-cruz-vermelha/` | os 7 princípios, os emblemas, o Movimento e a linha do tempo | 19 matérias de história, Movimento, direito humanitário e emblemas |
+| `/checklist-dengue/` | a vistoria semanal da casa, sintomas e sinais de alarme | prevenção da dengue |
+
+Na Redação, o kit Lei Lucas para escolas ganha caixa em três matérias de Lei Lucas: 58 matérias com caixa de material.
+Ordem de publicação e pendências em `scripts/publicacao-guias-novembro-2.txt`.
+
 ## Páginas para instituições: escolas, órgãos públicos e empresas (11/11/2026, NÃO publicado)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por
