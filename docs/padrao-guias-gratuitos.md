@@ -84,8 +84,16 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Quando ligar 192 | `/quando-ligar-192/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: cartaz com o que dizer ao 192, teste SAMU, sinais de infarto e engasgo | sim: formulário na página e caixa nas matérias de AVC, infarto, engasgo e desmaio (não publicado) |
 | Verão seguro no Rio | `/verao-seguro/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa nas matérias de calor, insolação, afogamento e praia (não publicado) |
 | Plano familiar de emergência | `/plano-familiar-de-emergencia/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: ficha para a família preencher | sim: formulário na página e caixa nas matérias do plano, dos alertas e dos estágios (não publicado) |
+| Guia do cuidador de idosos | `/cuidador-de-idosos/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa em 5 matérias de cuidado com idosos (não publicado) |
+| Acidentes em casa | `/acidentes-em-casa/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz das picadas e do choque elétrico | sim: formulário na página e caixa nas matérias de cobra, escorpião e choque (não publicado) |
+| A Cruz Vermelha em uma página | `/cartaz-da-cruz-vermelha/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: princípios, emblemas, Movimento e linha do tempo, tirados das páginas institucionais | sim: formulário na página e caixa em 19 matérias de história, Movimento e direito humanitário (não publicado) |
+| Checklist contra a dengue | `/checklist-dengue/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa na matéria da dengue (não publicado) |
 
 Os quatro últimos e a entrega da mochila saíram juntos em 11/11/2026 (pedido do Matheus: mais guias, mais matérias com
 caixa de e-mail). A lista de publicação é `scripts/publicacao-guias-novembro.txt`. O conteúdo de saúde do cartaz
 "Quando ligar 192" (as manobras de engasgo, sobretudo) e do guia do verão precisa do visto de um instrutor da escola
 antes de ir ao ar: as pendências de cada um estão em `notas_internas`, em `site/institucional.json`.
+
+A segunda leva (12/11/2026: cuidador de idosos, acidentes em casa, a Cruz Vermelha em uma página e a dengue) tem a
+lista em `scripts/publicacao-guias-novembro-2.txt`. Com ela e com a caixa do kit Lei Lucas em três matérias, a Redação
+passa a ter caixa de material em 58 matérias.
