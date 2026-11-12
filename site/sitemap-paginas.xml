@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-12T00:37:59+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-12T03:50:35+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -1445,6 +1445,158 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/guia-do-bombeiro-civil/</loc>
+    <lastmod>2026-11-12T03:43:28+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/guia-do-bombeiro-civil/capa-guia-do-bombeiro-civil.webp</image:loc>
+      <image:title>Primeira folha do guia do bombeiro civil: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o checklist do caminho até a homologação no CBMERJ, com um quadradinho para marcar cada passo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/guia-dos-cursos/</loc>
+    <lastmod>2026-11-12T03:43:30+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/guia-dos-cursos/capa-guia-dos-cursos.webp</image:loc>
+      <image:title>Primeira folha do guia dos cursos: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o quadro com os sete cursos presenciais, cada um com a carga horária, o pré-requisito e para quem é, com um quadradinho para marcar</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/onde-buscar-ajuda/</loc>
+    <lastmod>2026-11-12T03:43:31+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/onde-buscar-ajuda/capa-onde-buscar-ajuda.webp</image:loc>
+      <image:title>Primeira folha do cartaz Onde buscar ajuda no Rio de Janeiro: o logotipo da Cruz Vermelha Brasileira Rio de Janeiro, os telefones 188, 180, 100, 190, 192, 193, 199 e 136 e o que cada serviço faz</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/rcp-e-manobra-de-heimlich/</loc>
+    <lastmod>2026-11-12T03:43:32+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/rcp-e-manobra-de-heimlich/capa-rcp-e-manobra-de-heimlich.webp</image:loc>
+      <image:title>Primeira folha do cartaz RCP e manobra de Heimlich: o logotipo da Cruz Vermelha Brasileira Rio de Janeiro, como reconhecer a parada cardíaca, o passo a passo das compressões no peito e o uso do desfibrilador</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/intoxicacao-alimentar/</loc>
+    <lastmod>2026-11-12T03:43:34+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/intoxicacao-alimentar/capa-intoxicacao-alimentar.webp</image:loc>
+      <image:title>Primeira folha do guia da intoxicação alimentar: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o checklist da cozinha segura, cada cuidado com um quadradinho para marcar</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/febre-em-crianca/</loc>
+    <lastmod>2026-11-12T03:43:35+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/febre-em-crianca/capa-febre-em-crianca.webp</image:loc>
+      <image:title>Primeira folha do guia da febre em criança: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro, a lista do que fazer em casa, o que não fazer e o quadro dos sinais de alerta, com os telefones 192 e 193</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/pressao-alta-e-pressao-baixa/</loc>
+    <lastmod>2026-11-12T03:43:36+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/pressao-alta-e-pressao-baixa/capa-pressao-alta-e-pressao-baixa.webp</image:loc>
+      <image:title>Primeira folha do guia da pressão alta e da pressão baixa: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro, a lista de como medir a pressão em casa, o diário da pressão em branco, com data, hora, máxima e mínima, e a ficha dos remédios e horários</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/queimaduras/</loc>
+    <lastmod>2026-11-12T03:43:38+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/queimaduras/capa-queimaduras.webp</image:loc>
+      <image:title>Primeira folha do cartaz Queimaduras: o logotipo da Cruz Vermelha Brasileira Rio de Janeiro, os telefones 192 e 193, os primeiros passos e a lista do que não usar na queimadura</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/lei-lucas-para-escolas/</loc>
     <lastmod>2026-11-11T22:09:29+00:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -2734,6 +2886,53 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/international-humanitarian-law/</loc>
+    <lastmod>2026-11-12T03:45:47+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/haia-1899-conferencia-da-paz-960.webp</image:loc>
+      <image:title>Delegates in dark suits seated at tables arranged in a U shape, in a hall with large wall paintings, at the First International Peace Conference in The Hague, 1899</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-960.webp</image:loc>
+      <image:title>Wooden gate with barbed wire at the Stalag X B prisoner-of-war camp in Sandbostel, with prisoners in uniform talking by the fence and huts in the background</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp</image:loc>
+      <image:title>Delegates seated side by side at a long table, signing and leafing through documents, with advisers standing behind them, at the signing of the 1949 Geneva Conventions</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp</image:loc>
+      <image:title>Red Cross cardboard parcel for prisoners of war from the Canadian Red Cross, with the red cross, the words Prisoners' Parcels and the list of contents in English and German</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/convencao-genebra-1864-documento-960.webp</image:loc>
+      <image:title>Facsimile of the 1864 Geneva Convention, open, with handwritten text, signatures and red wax seals</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/protecao-civil-sinal-veiculo-960.webp</image:loc>
+      <image:title>A blue triangle on an orange background, the international sign of civil defence, on a round sticker on the white door of a German civil protection vehicle</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp</image:loc>
+      <image:title>Façade of the Itamaraty Palace in Brasília, with concrete arches over glass, a reflecting pool with a white sculpture and an honour guard in dress uniform on a red carpet</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-960.webp</image:loc>
+      <image:title>A Brazilian Red Cross Rio de Janeiro volunteer in a red vest speaks into a microphone during a training session at the headquarters, with participants seen from behind in the foreground</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
     </image:image>
   </url>
   <url>

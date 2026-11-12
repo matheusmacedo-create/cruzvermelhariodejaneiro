@@ -5,7 +5,10 @@
 # /queimaduras/). O botão de baixar só aparece depois do e-mail e do aceite; o pedido vai para a Redação (um material
 # por guia, com o mesmo id da pasta, lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha três grupos:
 # de 58 para 76 matérias na lista (lib/site/caixa-de-material.ts).
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 12/11/2026, às 00h51 (horário de Brasília), a pedido do Matheus, a partir da main em 8aaf681, SEM a revisão
+# de fatos do passo 0 (decisão dele; as pendências seguem em notas_internas). O guia do bombeiro civil saiu sem o convite
+# para o curso da escola. Cache limpo, os 24 arquivos conferidos no ar byte a byte, sitemaps regerados e publicados.
+# Faltam: o e-mail de teste em cada página e regerar as matérias (passo 4).
 # Gerar antes: python3 scripts/gerar_guia_pdf.py guia-do-bombeiro-civil guia-dos-cursos onde-buscar-ajuda rcp-e-manobra-de-heimlich intoxicacao-alimentar febre-em-crianca pressao-alta-e-pressao-baixa queimaduras
 #              python3 scripts/gerar_institucional.py guia-do-bombeiro-civil guia-dos-cursos onde-buscar-ajuda rcp-e-manobra-de-heimlich intoxicacao-alimentar febre-em-crianca pressao-alta-e-pressao-baixa queimaduras
 # ORDEM, e ela importa:
