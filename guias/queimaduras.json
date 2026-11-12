@@ -1,0 +1,140 @@
+{
+  "slug": "queimaduras",
+  "arquivo": "queimaduras-cruz-vermelha-rj.pdf",
+  "capa": "capa-queimaduras.webp",
+  "titulo": "Queimaduras: o que fazer na hora",
+  "sub": "Deixe na cozinha. Água corrente fria, pano limpo e nada de receita caseira.",
+  "credito": "Resumo da filial, que não substitui o atendimento de saúde nem um curso de primeiros socorros",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Queimou? Os primeiros passos",
+          "passos": [
+            "Afaste a pessoa do que queimou. Choque: desligue a energia antes.",
+            "Água corrente fria, nunca gelada, com jato suave.",
+            "Tire anel, relógio e roupa que não estejam grudados.",
+            "Cubra com pano limpo e úmido, sem apertar.",
+            "Queimadura grande ou funda: ligue 192 ou 193."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Produto químico, no RJ:",
+            "texto": "0800 722 6001, centro de intoxicações."
+          },
+          "campo": "Pronto-socorro ou UPA mais perto de casa:"
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Quanto tempo na água?",
+          "texto": "Ministério da Saúde: cerca de 10 minutos. Sociedade Brasileira de Dermatologia: cerca de 20. Federação Internacional da Cruz Vermelha: no mínimo 10, de preferência 20."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Sem torneira por perto:",
+          "texto": "compressas limpas, úmidas e frias também servem."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Na queimadura, não use nem faça",
+          "da_pagina": {
+            "secao": "nao-fazer",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Os graus:",
+          "texto": "1º grau: pele vermelha, que dói, sem bolha. 2º grau: bolhas e dor forte. 3º grau: pele branca, amarelada ou escura, seca e dura; pode não doer."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Ligue 192 ou 193:",
+          "texto": "queimadura em grande parte do corpo ou funda; por eletricidade, por produto químico ou em incêndio; no rosto, na boca ou no pescoço; pessoa que respirou fumaça."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Pronto-socorro ou UPA, sem esperar:",
+          "texto": "queimadura nas mãos, nos pés, nas partes íntimas ou numa junta; bolhas em área maior que o braço; bebê, criança pequena, pessoa idosa ou com diabetes."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Roupa em chamas:",
+          "texto": "a pessoa deve parar, deitar e rolar no chão. Roupa grudada na pele não se puxa: corte o tecido em volta."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "Queimadura de sol",
+          "itens": [
+            "Saia do sol, fique num lugar fresco e beba bastante líquido.",
+            "Banho frio ou compressas frias e limpas.",
+            "Bolhas, área grande, bebê ou pessoa idosa: procure atendimento. Não fure as bolhas."
+          ]
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Água-viva e caravela",
+          "itens": [
+            "Saia do mar. Ponha compressas geladas com água do mar, ou bolsa fria.",
+            "Tire os tentáculos com pinça ou com a mão protegida por luva.",
+            "Lave com bastante vinagre, sem esfregar.",
+            "Procure um serviço de saúde. Passou mal? Ligue 192 ou 193."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Na água-viva:",
+          "texto": "não use água doce, não esfregue o local e não encoste no animal, mesmo que pareça morto na areia."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Produto químico",
+          "itens": [
+            "Não encoste no produto.",
+            "Lave com muita água corrente, até a dor diminuir.",
+            "Tire a roupa atingida, se não estiver grudada.",
+            "Ligue 192 ou 193. No olho: lave na hora, com água limpa."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Engoliu produto químico?",
+          "texto": "Não dê água nem leite. Ligue 192 ou 0800 722 6001."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Para evitar, na cozinha e com crianças",
+          "da_pagina": {
+            "secao": "prevenir-cozinha",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Álcool e fogo",
+          "da_pagina": {
+            "secao": "prevenir-alcool",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

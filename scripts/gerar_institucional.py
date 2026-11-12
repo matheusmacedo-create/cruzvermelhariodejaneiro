@@ -75,7 +75,9 @@ IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
          "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia", "quando-ligar-192",
-         "verao-seguro", "acidentes-em-casa", "checklist-dengue", "cuidador-de-idosos", "bazar", "lei-lucas-para-escolas",
+         "verao-seguro", "acidentes-em-casa", "checklist-dengue", "cuidador-de-idosos", "rcp-e-manobra-de-heimlich",
+         "febre-em-crianca", "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "queimaduras",
+         "guia-do-bombeiro-civil", "guia-dos-cursos", "onde-buscar-ajuda", "bazar", "lei-lucas-para-escolas",
          "plano-de-contingencia", "empresas-e-orgaos-publicos", "cartaz-da-cruz-vermelha"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
@@ -92,7 +94,11 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "kit-de-primeiros-socorros": "Kit de primeiros socorros",
                 "plano-familiar-de-emergencia": "Plano familiar de emergência", "quando-ligar-192": "Quando ligar 192",
                 "verao-seguro": "Verão seguro no Rio", "acidentes-em-casa": "Acidentes em casa",
-                "checklist-dengue": "Checklist contra a dengue", "cuidador-de-idosos": "Guia do cuidador de idosos", "cartaz-da-cruz-vermelha": "A Cruz Vermelha em uma página",
+                "checklist-dengue": "Checklist contra a dengue", "cuidador-de-idosos": "Guia do cuidador de idosos",
+                "rcp-e-manobra-de-heimlich": "RCP e manobra de Heimlich", "febre-em-crianca": "Febre em criança",
+                "guia-do-bombeiro-civil": "Guia do bombeiro civil", "guia-dos-cursos": "Guia dos cursos",
+                "pressao-alta-e-pressao-baixa": "Pressão alta e pressão baixa", "intoxicacao-alimentar": "Intoxicação alimentar",
+                "queimaduras": "Queimaduras", "onde-buscar-ajuda": "Onde buscar ajuda", "cartaz-da-cruz-vermelha": "A Cruz Vermelha em uma página",
                 "bazar": "Bazar solidário",
                 "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
                 "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
