@@ -2,7 +2,7 @@
 # /plano-de-contingencia/ (roteiro em PDF) e /empresas-e-orgaos-publicos/ (turmas fechadas e parcerias). Os dois PDFs só
 # aparecem depois do e-mail; o pedido vai para a Redação (materiais lei-lucas-escolas e plano-de-contingencia,
 # lib/newsletter/materiais.ts), que grava o e-mail e manda uma cópia do link.
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 11/11/2026 (9 arquivos, todos novos; sitemaps regenerados e publicados). Conferido: as 3 páginas e os 2 PDFs dão 200, PDFs com X-Robots-Tag.
 # Gerar antes: python3 scripts/gerar_guia_pdf.py lei-lucas-para-escolas plano-de-contingencia && python3 scripts/gerar_institucional.py lei-lucas-para-escolas plano-de-contingencia empresas-e-orgaos-publicos
 # ORDEM, e ela importa:
 #   0. Reconferir no Planalto os fatos marcados nas notas internas das três páginas (o proxy deste ambiente não abriu
