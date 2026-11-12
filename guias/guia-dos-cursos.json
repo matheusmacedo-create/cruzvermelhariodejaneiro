@@ -1,0 +1,146 @@
+{
+  "slug": "guia-dos-cursos",
+  "arquivo": "guia-dos-cursos-cruz-vermelha-rj.pdf",
+  "capa": "capa-guia-dos-cursos.webp",
+  "titulo": "Guia dos cursos: qual é para você",
+  "sub": "Para quem está escolhendo um curso presencial de saúde ou de primeiros socorros no Rio. Marque com um X os cursos que servem para você. Em cada um: a carga horária e a escolaridade pedida.",
+  "credito": "Dados do catálogo da Escola de Educação e Saúde e das matérias da filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "titulo": "Os sete cursos, lado a lado",
+          "itens": [
+            [
+              "Primeiros Socorros Básico",
+              "8 horas · Ensino Fundamental",
+              "Para qualquer pessoa. RCP, desfibrilador (DEA), hemorragias, traumas, engasgos e desmaios. Inclui a Lei Lucas."
+            ],
+            [
+              "Primeiros Socorros Lei Lucas (crianças)",
+              "8 horas · Ensino Fundamental",
+              "Para quem cuida de crianças ou trabalha com elas. RCP, engasgo, quedas, convulsões, queimaduras e prevenção."
+            ],
+            [
+              "Suporte Básico de Vida",
+              "4 horas · Ensino Fundamental",
+              "Para equipes de trabalho e para quem tem pouco tempo. Os mesmos temas do Básico, em formato compacto."
+            ],
+            [
+              "Punção Venosa",
+              "8 horas · Ensino Médio",
+              "Para estudantes e profissionais da saúde. Anatomia das veias, técnica, materiais e biossegurança. Atuar segue as normas do conselho."
+            ],
+            [
+              "Curativos e Tratamento de Feridas",
+              "8 horas · Ensino Médio",
+              "Para estudantes e profissionais da saúde, com 18 anos ou mais. Avaliação, limpeza e coberturas. Não amplia o que a profissão permite."
+            ],
+            [
+              "Cuidador de Idosos (curso livre)",
+              "160 horas · Ensino Fundamental",
+              "Para quem quer trabalhar como cuidador ou cuida de um familiar. Higiene, alimentação, mobilização e prevenção. Não é técnico de enfermagem."
+            ],
+            [
+              "Bombeiro Civil",
+              "80 horas · Ensino Médio",
+              "Para quem quer a profissão. Incêndio, evacuação e primeiro atendimento. No Rio, pede homologação no CBMERJ, à parte, depois do curso."
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Curso livre não é curso técnico:",
+          "texto": "capacita e aperfeiçoa, com certificado de conclusão. Não dá registro em conselho profissional, não forma socorrista profissional e não muda o que cada profissão pode fazer. Vai usar no trabalho? Pergunte antes ao conselho da profissão ou ao empregador."
+        },
+        {
+          "tipo": "checklist",
+          "titulo": "Qual curso é para mim",
+          "itens": [
+            [
+              "Cuido de crianças, em casa ou na escola",
+              "Primeiros Socorros Lei Lucas. Para um conteúdo geral, Primeiros Socorros Básico."
+            ],
+            [
+              "Cuido de um idoso",
+              "Cuidador de Idosos. Só para agir numa emergência, Primeiros Socorros Básico."
+            ],
+            [
+              "Sou profissional ou estudante da saúde",
+              "Punção Venosa, Curativos e Tratamento de Feridas ou Suporte Básico de Vida."
+            ],
+            [
+              "Quero trabalhar na área",
+              "Cuidador de Idosos ou Bombeiro Civil. Nenhum deles é curso técnico de enfermagem."
+            ],
+            [
+              "Quero saber agir numa emergência",
+              "Primeiros Socorros Básico. Com pouco tempo, Suporte Básico de Vida."
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "perguntas",
+          "titulo": "Perguntas para fazer antes de se matricular em qualquer curso",
+          "linhas": 1,
+          "itens": [
+            [
+              "O que eu quero fazer com este curso?",
+              "Cuidar da família, cumprir uma exigência do trabalho ou trabalhar na área: cada objetivo pede um curso."
+            ],
+            [
+              "É curso livre, curso técnico ou formação de uma profissão?",
+              "Curso livre capacita e aperfeiçoa. Não dá registro em conselho profissional."
+            ],
+            [
+              "Para o trabalho que eu quero, o que mais é exigido?",
+              "Pergunte ao conselho da profissão ou ao empregador: registro, homologação, treinamento no serviço."
+            ],
+            [
+              "Quem emite o certificado? Ele é aceito onde vou apresentar?",
+              "Confirme antes de pagar, se o certificado é para trabalho, estágio ou exigência da escola."
+            ],
+            [
+              "Quantas horas são de prática, com instrutor?",
+              "Reanimação, desengasgo e punção se aprendem treinando, com alguém corrigindo."
+            ],
+            [
+              "Qual é a carga horária? O que o curso pede de mim?",
+              "Escolaridade, idade mínima e conhecimento anterior, quando houver."
+            ],
+            [
+              "Quanto custa no total?",
+              "Some a taxa de inscrição, o valor do curso e o que for cobrado à parte, como a homologação."
+            ],
+            [
+              "E se eu desistir, ou se a turma não for formada?",
+              "Peça a regra de cancelamento e de devolução por escrito."
+            ]
+          ]
+        },
+        {
+          "tipo": "campos",
+          "titulo": "O curso que escolhi",
+          "itens": [
+            "Curso:",
+            "Data da turma:",
+            "Horário:",
+            "Local:",
+            "O que levar:",
+            "Falei com:"
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Valores e turmas mudam:",
+          "texto": "consulte em cruzvermelhariodejaneiro.org/matricula-cursos-presenciais. Os cursos são presenciais, no Centro do Rio, pagos e vendidos pela escola (O-CVB Filial Rio de Janeiro Ensino Ltda), empresa ligada à filial."
+        }
+      ]
+    }
+  ]
+}

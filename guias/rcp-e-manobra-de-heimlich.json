@@ -1,0 +1,129 @@
+{
+  "slug": "rcp-e-manobra-de-heimlich",
+  "arquivo": "rcp-e-manobra-de-heimlich-cruz-vermelha-rj.pdf",
+  "capa": "capa-rcp-e-manobra-de-heimlich.webp",
+  "titulo": "RCP e manobra de Heimlich",
+  "sub": "Deixe à vista. Serve para lembrar os passos: não substitui um curso prático, com manequim.",
+  "credito": "Resumo da filial, que não substitui o atendimento do SAMU nem um curso de primeiros socorros",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Parada cardíaca: como reconhecer",
+          "passos": [
+            "Chame em voz alta e encoste nos ombros. A pessoa não responde.",
+            "Olhe o peito por até 10 segundos. Ela não respira, ou só dá suspiros espaçados.",
+            "Ligue 192 no viva-voz e peça para alguém buscar um DEA (desfibrilador).",
+            "Comece as compressões no peito. Não procure o pulso."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "199",
+              "Defesa Civil"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Na dúvida se ela respira:",
+            "texto": "ligue 192 e siga o atendente."
+          }
+        },
+        {
+          "tipo": "passos",
+          "titulo": "RCP só com as mãos: adulto",
+          "itens": [
+            "Deite a pessoa de costas num lugar firme e plano. Ajoelhe-se ao lado.",
+            "Ponha a base de uma mão no meio do peito, sobre o osso. A outra mão vai por cima, com os dedos entrelaçados.",
+            "Estique os braços, com os ombros bem em cima das mãos.",
+            "Aperte forte e rápido: o peito afunda cerca de 5 cm, de 100 a 120 vezes por minuto, quase 2 por segundo.",
+            "Deixe o peito voltar todo depois de cada aperto, sem se apoiar nele.",
+            "Não pare. Havendo outra pessoa, troquem a cada 2 minutos."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Só pare se:",
+          "texto": "o DEA mandar, o socorro assumir ou a pessoa tossir, abrir os olhos, falar ou se mexer e voltar a respirar normalmente. Quem não foi treinado faz só as compressões, sem respiração boca a boca."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "DEA (desfibrilador): como usar",
+          "itens": [
+            "Ligue o aparelho e faça o que a voz mandar. Qualquer pessoa pode usar.",
+            "Tire a roupa do peito. Se estiver molhado, enxugue.",
+            "Cole as duas pás como mostra o desenho: uma no alto do peito, do lado direito, e a outra na lateral esquerda, mais para baixo que a axila.",
+            "Afaste todos. Ninguém encosta na pessoa enquanto o aparelho analisa o coração.",
+            "Se o aparelho indicar o choque, confira que ninguém encosta e aperte o botão.",
+            "Volte às compressões na hora e continue seguindo a voz."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Criança e bebê:",
+          "texto": "o ritmo é o mesmo. Na criança, uma mão ou as duas, afundando cerca de 5 cm. No bebê, dois dedos ou os dois polegares no meio do peito, afundando cerca de 4 cm. No DEA, pás infantis para menores de 8 anos, se houver; se não, as de adulto, sem encostar uma na outra: uma no peito e a outra nas costas."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "aviso",
+          "rotulo": "Engasgo: a pessoa tosse e fala?",
+          "texto": "Incentive a tossir e fique ao lado, sem interferir. Os passos desta folha são para quem não consegue tossir, falar nem respirar."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Engasgo grave: adulto ou criança com mais de 1 ano",
+          "itens": [
+            "Peça para alguém ligar 192. Sozinho, ligue no viva-voz.",
+            "Incline a pessoa para a frente e dê até 5 tapas firmes nas costas, entre os ombros, com a base da mão.",
+            "Não saiu? Por trás dela, feche uma mão entre o umbigo e as costelas, cubra com a outra e puxe com força para dentro e para cima, até 5 vezes. É a manobra de Heimlich.",
+            "Alterne 5 tapas e 5 compressões até o objeto sair ou o socorro chegar."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Gestante no fim da gravidez ou pessoa obesa:",
+          "texto": "as compressões são no meio do peito, e não na barriga. Com criança pequena, ajoelhe-se atrás dela."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Engasgo grave: bebê com menos de 1 ano",
+          "itens": [
+            "Peça para alguém ligar 192. Sozinho, ligue no viva-voz.",
+            "Sente-se. Deite o bebê de bruços no seu antebraço, apoiado na coxa, com a cabeça mais baixa que o corpo. Segure o queixo dele.",
+            "Dê até 5 tapas firmes nas costas, entre os ombros. A força é menor que num adulto.",
+            "Não saiu? Vire o bebê de barriga para cima, com a cabeça mais baixa, e faça até 5 compressões no meio do peito.",
+            "Alterne até o objeto sair, o bebê chorar ou o socorro chegar."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Se a pessoa desmaiar:",
+          "texto": "deite-a no chão, avise o 192 e comece as compressões no peito, como na RCP. Só tire da boca o que você estiver vendo."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que não fazer:",
+          "texto": "não enfie o dedo na boca sem ver o objeto; não faça compressão na barriga de bebê; não deixe a pessoa sozinha; não treine as manobras em outra pessoa. Depois de um engasgo grave, procure um serviço de saúde, mesmo que o objeto tenha saído."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "192 ou 193?",
+          "texto": "192, SAMU: parada cardíaca, engasgo e outros problemas de saúde que ameaçam a vida. 193, Bombeiros: afogamento, incêndio e acidente. Se um número não atender, ligue para o outro."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
