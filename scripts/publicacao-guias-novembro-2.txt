@@ -5,7 +5,9 @@
 # Redação (materiais cuidador-de-idosos, acidentes-em-casa, cartaz-da-cruz-vermelha e checklist-dengue,
 # lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha cinco grupos (os quatro guias e o kit Lei Lucas
 # em três matérias): de 27 para 58 matérias (lib/site/caixa-de-material.ts).
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 11/11/2026, às 21h38 (horário de Brasília), a pedido do Matheus, a partir da main em 45615bb, SEM a revisão
+# de fatos do passo 0 (decisão dele; as pendências seguem em notas_internas). Cache limpo, os 12 arquivos conferidos no ar
+# byte a byte, sitemaps regerados e publicados. Faltam: o e-mail de teste em cada página e regerar as matérias (passo 4).
 # Gerar antes: python3 scripts/gerar_guia_pdf.py cuidador-de-idosos acidentes-em-casa cartaz-da-cruz-vermelha checklist-dengue
 #              python3 scripts/gerar_institucional.py cuidador-de-idosos acidentes-em-casa cartaz-da-cruz-vermelha checklist-dengue
 # ORDEM, e ela importa:
