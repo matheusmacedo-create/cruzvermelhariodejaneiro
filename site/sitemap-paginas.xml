@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-12T00:01:17+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-12T00:56:58+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -2658,6 +2658,53 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-acervo.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/en/international-humanitarian-law/</loc>
+    <lastmod>2026-11-12T00:46:54+00:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/haia-1899-conferencia-da-paz-960.webp</image:loc>
+      <image:title>Delegates in dark suits seated at tables arranged in a U shape, in a hall with large wall paintings, at the First International Peace Conference in The Hague, 1899</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/campo-prisioneiros-stalag-xb-1940-960.webp</image:loc>
+      <image:title>Wooden gate with barbed wire at the Stalag X B prisoner-of-war camp in Sandbostel, with prisoners in uniform talking by the fence and huts in the background</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp</image:loc>
+      <image:title>Delegates seated side by side at a long table, signing and leafing through documents, with advisers standing behind them, at the signing of the 1949 Geneva Conventions</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp</image:loc>
+      <image:title>Red Cross cardboard parcel for prisoners of war from the Canadian Red Cross, with the red cross, the words Prisoners' Parcels and the list of contents in English and German</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/emblema/fotos/convencao-genebra-1864-documento-960.webp</image:loc>
+      <image:title>Facsimile of the 1864 Geneva Convention, open, with handwritten text, signatures and red wax seals</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/protecao-civil-sinal-veiculo-960.webp</image:loc>
+      <image:title>A blue triangle on an orange background, the international sign of civil defence, on a round sticker on the white door of a German civil protection vehicle</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp</image:loc>
+      <image:title>Façade of the Itamaraty Palace in Brasília, with concrete arches over glass, a reflecting pool with a white sculpture and an honour guard in dress uniform on a red carpet</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/voluntario-microfone-960.webp</image:loc>
+      <image:title>A Brazilian Red Cross Rio de Janeiro volunteer in a red vest speaks into a microphone during a training session at the headquarters, with participants seen from behind in the foreground</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
     </image:image>
   </url>
   <url>
