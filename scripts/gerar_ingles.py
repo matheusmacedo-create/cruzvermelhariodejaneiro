@@ -6,6 +6,7 @@
   site/en/winter-clothing-drive/  Campanha do Agasalho
   site/en/who-founded-the-red-cross/  quem fundou a Cruz Vermelha (traducoes/en/fundador.md; só em inglês)
   site/en/international-humanitarian-law/  Direito Internacional Humanitário (traducoes/en/dih.md; par da página em português)
+  site/es/derecho-internacional-humanitario/  o mesmo em espanhol (traducoes/es/dih.md, 12/11/2026)
   site/en/404.html                servido pelo site/en/.htaccess para tudo que estiver sob /en/
 
 Privacidade, Cookies, Termos e Reembolso em inglês são gerados por gerar_politicas.py, não por
@@ -40,6 +41,8 @@ ORIGEM = gi.ORIGEM
 FONTE = RAIZ / "traducoes" / "en"
 MESES = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
          "October", "November", "December"]
+MESES_ES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre",
+            "noviembre", "diciembre"]
 BRASILIA = timezone(timedelta(hours=-3))
 LIMITES = {"titulo": 120, "linha_fina": 200, "slug": 80, "corpo": 20000}
 esc = gi.esc
@@ -161,9 +164,11 @@ def ler_noticias() -> list[dict]:
     return noticias
 
 
-def data_extenso(iso: str) -> str:
-    """'2026-09-03T04:14:21.408Z' → '3 September 2026', no horário de Brasília."""
+def data_extenso(iso: str, codigo: str = "en") -> str:
+    """'2026-09-03T04:14:21.408Z' → '3 September 2026' (ou '3 de septiembre de 2026'), no horário de Brasília."""
     quando = datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(BRASILIA)
+    if codigo == "es":
+        return f"{quando.day} de {MESES_ES[quando.month - 1]} de {quando.year}"
     return f"{quando.day} {MESES[quando.month - 1]} {quando.year}"
 
 
@@ -178,7 +183,7 @@ def atributos_link(url: str) -> str:
     """Link para página só em português avisa a troca de língua; externo abre em outra aba."""
     if url.startswith(("http://", "https://")):
         return ' target="_blank" rel="noopener"'
-    if url.startswith(("/en/", "mailto:", "#")):
+    if url.startswith(("/en/", "/es/", "mailto:", "#")):
         return ""
     return ' hreflang="pt-BR" lang="pt-BR"'
 
@@ -312,7 +317,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
 
 def migalhas(idioma: dict, itens: list[tuple[str, str]]) -> tuple[str, dict]:
     """Trilha visível e o BreadcrumbList correspondente."""
-    trilha = [(idioma["instituicao_curta"], "/en/")] + itens
+    trilha = [(idioma["instituicao_curta"], f"/{idioma['pasta']}/")] + itens
     visivel = " &rsaquo; ".join(f'<a href="{u}">{esc(n)}</a>' for n, u in trilha[:-1])
     ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i, "name": n, "item": f"{ORIGEM}{u}"} for i, (n, u) in enumerate(trilha, 1)]}
@@ -609,7 +614,7 @@ def pagina_fundador(idioma: dict, partes: dict) -> str:
                      {"@type": "Organization", "name": "International Committee of the Red Cross", "foundingDate": "1863-02-17"}],
            "image": [f"{ORIGEM}/assets/otim/historia-obras-1923-960.webp"],
            "isPartOf": {"@type": "WebSite", "@id": f"{ORIGEM}/#site", "url": f"{ORIGEM}/"}, "wordCount": palavras},
-          {"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{url}#perguntas", "inLanguage": "en",
+          {"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{url}#perguntas", "inLanguage": idioma["codigo"],
            "mainEntity": [{"@type": "Question", "name": q.strip(),
                            "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"\s+", " ", a).strip()}}
                           for q, a in perguntas]},
@@ -622,6 +627,16 @@ def pagina_fundador(idioma: dict, partes: dict) -> str:
 
 
 DIH = "/en/international-humanitarian-law/"
+DIH_ES = "/es/derecho-internacional-humanitario/"
+# Rótulos da página de DIH em cada língua (12/11/2026: a versão em espanhol, para a campanha do Ad Grants na América Latina e na Espanha).
+DIH_TEXTOS = {
+    "en": {"arquivo": "dih.md", "caminho": DIH, "sobrancelha": "International humanitarian law",
+           "por": "By Brazilian Red Cross — Rio de Janeiro Branch", "leitura": "min read",
+           "perguntas": "## Frequently asked questions", "assunto": "International humanitarian law"},
+    "es": {"arquivo": "dih.md", "caminho": DIH_ES, "sobrancelha": "Derecho internacional humanitario",
+           "por": "Por Cruz Roja Brasileña — Filial de Río de Janeiro", "leitura": "min de lectura",
+           "perguntas": "## Preguntas frecuentes", "assunto": "Derecho internacional humanitario"},
+}
 
 
 def pagina_dih(idioma: dict, partes: dict) -> str:
@@ -630,25 +645,26 @@ def pagina_dih(idioma: dict, partes: dict) -> str:
     para "international humanitarian law" (~27 mil buscas por mês nos países de língua inglesa). Não é tradução
     literal: o trecho do Brasil fica curto e entram as seções que quem busca em inglês procura (princípios, DIH e
     direitos humanos). As citações dos tratados em inglês foram conferidas no Avalon Project (Yale), em 12/11/2026."""
-    arquivo = FONTE / "dih.md"
+    T = DIH_TEXTOS[idioma["codigo"]]
+    arquivo = RAIZ / "traducoes" / idioma["codigo"] / T["arquivo"]
     f, corpo_md = ler_cabecalho(arquivo.read_text(encoding="utf-8"), arquivo)
     if "⟦" in corpo_md or "⟧" in corpo_md:
         raise SystemExit(f"{arquivo.name}: marcador ⟦ ⟧ esquecido no texto")
-    url = f"{ORIGEM}{DIH}"
-    trilha, ld_trilha = migalhas(idioma, [(f["titulo"], DIH)])
+    url = f"{ORIGEM}{T['caminho']}"
+    trilha, ld_trilha = migalhas(idioma, [(f["titulo"], T["caminho"])])
     palavras = len(re.sub(r"[#*\[\]()!>-]", " ", corpo_md).split())
     minutos = max(1, math.ceil(palavras / 200))
-    faq_md = corpo_md.split("## Frequently asked questions", 1)[1]
+    faq_md = corpo_md.split(T["perguntas"], 1)[1]
     perguntas = re.findall(r"^### (.+?)\n\n(.+?)(?:\n\n|\Z)", faq_md.strip() + "\n", re.M | re.S)
     if len(perguntas) < 3:
         raise SystemExit(f"{arquivo.name}: perguntas frequentes não encontradas")
     corpo = f"""    <section class="i18n-hero">
       <div class="wrap materia-estreita">
         {trilha}
-        <p class="eyebrow">International humanitarian law</p>
+        <p class="eyebrow">{esc(T['sobrancelha'])}</p>
         <h1>{esc(f['titulo'])}</h1>
         <p class="materia-linhafina">{esc(f['linha_fina'])}</p>
-        <p class="materia-meta"><b>By Brazilian Red Cross — Rio de Janeiro Branch</b> · <time datetime="{f['modificado']}">{data_extenso(f['modificado'])}</time> · {minutos} min read</p>
+        <p class="materia-meta"><b>{esc(T['por'])}</b> · <time datetime="{f['modificado']}">{data_extenso(f['modificado'], idioma['codigo'])}</time> · {minutos} {esc(T['leitura'])}</p>
       </div>
     </section>
     <article class="materia">
@@ -659,11 +675,11 @@ def pagina_dih(idioma: dict, partes: dict) -> str:
       </div>
     </article>"""
     ld = [{"@context": "https://schema.org", "@type": "Article", "@id": f"{url}#artigo",
-           "headline": f["titulo"], "description": f["linha_fina"], "inLanguage": "en",
+           "headline": f["titulo"], "description": f["linha_fina"], "inLanguage": idioma["codigo"],
            "datePublished": f["publicado"], "dateModified": f["modificado"],
            "mainEntityOfPage": {"@type": "WebPage", "@id": url},
            "author": organizacao(idioma), "publisher": organizacao(idioma),
-           "about": [{"@type": "Thing", "name": "International humanitarian law",
+           "about": [{"@type": "Thing", "name": T["assunto"],
                       "sameAs": "https://en.wikipedia.org/wiki/International_humanitarian_law"},
                      {"@type": "Legislation", "name": "Geneva Conventions of 12 August 1949", "legislationDate": "1949-08-12"}],
            "image": [f"{ORIGEM}/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp"],
@@ -673,7 +689,7 @@ def pagina_dih(idioma: dict, partes: dict) -> str:
                            "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"\s+", " ", a).strip()}}
                           for q, a in perguntas]},
           ld_trilha]
-    registrar("dih", "/direito-internacional-humanitario/", DIH)
+    gi.PAGINAS["dih"] = {"pt": "/direito-internacional-humanitario/", "en": DIH, "es": DIH_ES}
     og = (f"{ORIGEM}/assets/otim/og-home.jpg", 1200, 630)
     return moldura(idioma, "dih", f["titulo_seo"], f["linha_fina"], corpo, ld, partes,
                    og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
@@ -702,14 +718,15 @@ def pagina_erro(idioma: dict, partes: dict, P: dict) -> str:
 # ----------------------------------------------------------------------------- conferência
 
 def conferir_links(paginas: dict[Path, str]) -> None:
-    """Todo link interno para /en/ precisa apontar para uma página que existe."""
+    """Todo link interno para /en/ ou /es/ precisa apontar para uma página que existe."""
     def endereco(p: Path) -> str:
         url = "/" + p.relative_to(SITE).as_posix()
         return url[:-len("index.html")] if url.endswith("/index.html") else url
-    existentes = {endereco(p) for p in (SITE / "en").rglob("*.html")} | {endereco(p) for p in paginas}
+    existentes = ({endereco(p) for p in (SITE / "en").rglob("*.html")} | {endereco(p) for p in (SITE / "es").rglob("*.html")}
+                  | {endereco(p) for p in paginas})
     problemas = []
     for arquivo, html_ in paginas.items():
-        for alvo in re.findall(r'href="(/en/[^"#?]*)', html_):
+        for alvo in re.findall(r'href="(/(?:en|es)/[^"#?]*)', html_):
             if alvo not in existentes:
                 problemas.append(f"{arquivo.relative_to(SITE)} → {alvo}")
     if problemas:
@@ -732,6 +749,7 @@ def main() -> int:
     paginas[SITE / "en" / "winter-clothing-drive" / "index.html"] = pagina_campanha(idioma, partes, P)
     paginas[SITE / "en" / "who-founded-the-red-cross" / "index.html"] = pagina_fundador(idioma, partes)
     paginas[SITE / "en" / "international-humanitarian-law" / "index.html"] = pagina_dih(idioma, partes)
+    paginas[SITE / "es" / "derecho-internacional-humanitario" / "index.html"] = pagina_dih(dados["idiomas"]["es"], partes)
     paginas[SITE / "en" / "404.html"] = pagina_erro(idioma, partes, P)
     conferir_links(paginas)
     for destino, html_ in paginas.items():
