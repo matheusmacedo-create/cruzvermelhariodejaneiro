@@ -5,6 +5,7 @@
   site/en/news/<slug>/            uma página por matéria (traducoes/en/noticias/<slug>.md)
   site/en/winter-clothing-drive/  Campanha do Agasalho
   site/en/who-founded-the-red-cross/  quem fundou a Cruz Vermelha (traducoes/en/fundador.md; só em inglês)
+  site/en/international-humanitarian-law/  Direito Internacional Humanitário (traducoes/en/dih.md; par da página em português)
   site/en/404.html                servido pelo site/en/.htaccess para tudo que estiver sob /en/
 
 Privacidade, Cookies, Termos e Reembolso em inglês são gerados por gerar_politicas.py, não por
@@ -620,6 +621,64 @@ def pagina_fundador(idioma: dict, partes: dict) -> str:
                    og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
 
 
+DIH = "/en/international-humanitarian-law/"
+
+
+def pagina_dih(idioma: dict, partes: dict) -> str:
+    """Direito Internacional Humanitário em inglês (12/11/2026): versão para o público de fora do Brasil da página
+    /direito-internacional-humanitario/, com as mesmas figuras e créditos, destino da campanha do Ad Grants em inglês
+    para "international humanitarian law" (~27 mil buscas por mês nos países de língua inglesa). Não é tradução
+    literal: o trecho do Brasil fica curto e entram as seções que quem busca em inglês procura (princípios, DIH e
+    direitos humanos). As citações dos tratados em inglês foram conferidas no Avalon Project (Yale), em 12/11/2026."""
+    arquivo = FONTE / "dih.md"
+    f, corpo_md = ler_cabecalho(arquivo.read_text(encoding="utf-8"), arquivo)
+    if "⟦" in corpo_md or "⟧" in corpo_md:
+        raise SystemExit(f"{arquivo.name}: marcador ⟦ ⟧ esquecido no texto")
+    url = f"{ORIGEM}{DIH}"
+    trilha, ld_trilha = migalhas(idioma, [(f["titulo"], DIH)])
+    palavras = len(re.sub(r"[#*\[\]()!>-]", " ", corpo_md).split())
+    minutos = max(1, math.ceil(palavras / 200))
+    faq_md = corpo_md.split("## Frequently asked questions", 1)[1]
+    perguntas = re.findall(r"^### (.+?)\n\n(.+?)(?:\n\n|\Z)", faq_md.strip() + "\n", re.M | re.S)
+    if len(perguntas) < 3:
+        raise SystemExit(f"{arquivo.name}: perguntas frequentes não encontradas")
+    corpo = f"""    <section class="i18n-hero">
+      <div class="wrap materia-estreita">
+        {trilha}
+        <p class="eyebrow">International humanitarian law</p>
+        <h1>{esc(f['titulo'])}</h1>
+        <p class="materia-linhafina">{esc(f['linha_fina'])}</p>
+        <p class="materia-meta"><b>By Brazilian Red Cross — Rio de Janeiro Branch</b> · <time datetime="{f['modificado']}">{data_extenso(f['modificado'])}</time> · {minutos} min read</p>
+      </div>
+    </section>
+    <article class="materia">
+      <div class="wrap materia-estreita">
+        <div class="i18n-prosa">
+{markdown(corpo_md, "/assets/otim/")}
+        </div>
+      </div>
+    </article>"""
+    ld = [{"@context": "https://schema.org", "@type": "Article", "@id": f"{url}#artigo",
+           "headline": f["titulo"], "description": f["linha_fina"], "inLanguage": "en",
+           "datePublished": f["publicado"], "dateModified": f["modificado"],
+           "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+           "author": organizacao(idioma), "publisher": organizacao(idioma),
+           "about": [{"@type": "Thing", "name": "International humanitarian law",
+                      "sameAs": "https://en.wikipedia.org/wiki/International_humanitarian_law"},
+                     {"@type": "Legislation", "name": "Geneva Conventions of 12 August 1949", "legislationDate": "1949-08-12"}],
+           "image": [f"{ORIGEM}/assets/institucional/fotos/genebra-1949-assinatura-convencoes-960.webp"],
+           "isPartOf": {"@type": "WebSite", "@id": f"{ORIGEM}/#site", "url": f"{ORIGEM}/"}, "wordCount": palavras},
+          {"@context": "https://schema.org", "@type": "FAQPage", "@id": f"{url}#perguntas", "inLanguage": "en",
+           "mainEntity": [{"@type": "Question", "name": q.strip(),
+                           "acceptedAnswer": {"@type": "Answer", "text": re.sub(r"\s+", " ", a).strip()}}
+                          for q, a in perguntas]},
+          ld_trilha]
+    registrar("dih", "/direito-internacional-humanitario/", DIH)
+    og = (f"{ORIGEM}/assets/otim/og-home.jpg", 1200, 630)
+    return moldura(idioma, "dih", f["titulo_seo"], f["linha_fina"], corpo, ld, partes,
+                   og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
+
+
 def pagina_erro(idioma: dict, partes: dict, P: dict) -> str:
     e = P["erro"]
     links = "".join(f'<a class="btn {"btn-red" if i == 0 else "btn-outline"}" href="{u}"'
@@ -672,6 +731,7 @@ def main() -> int:
     paginas[SITE / "en" / "news" / "index.html"] = pagina_indice(idioma, partes, P, noticias)
     paginas[SITE / "en" / "winter-clothing-drive" / "index.html"] = pagina_campanha(idioma, partes, P)
     paginas[SITE / "en" / "who-founded-the-red-cross" / "index.html"] = pagina_fundador(idioma, partes)
+    paginas[SITE / "en" / "international-humanitarian-law" / "index.html"] = pagina_dih(idioma, partes)
     paginas[SITE / "en" / "404.html"] = pagina_erro(idioma, partes, P)
     conferir_links(paginas)
     for destino, html_ in paginas.items():
