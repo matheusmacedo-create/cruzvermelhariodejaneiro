@@ -1,0 +1,136 @@
+{
+ "slug": "guia-do-bombeiro-civil",
+ "arquivo": "guia-do-bombeiro-civil-cruz-vermelha-rj.pdf",
+ "capa": "capa-guia-do-bombeiro-civil.webp",
+ "titulo": "Guia do bombeiro civil no Rio de Janeiro: do curso à homologação",
+ "sub": "Para quem quer entrar na profissão ou já trabalha nela. Marque com um X cada passo cumprido e anote as datas a lápis.",
+ "credito": "Resumo da filial, com base na Lei 11.901/2009 e nas Notas Técnicas 2-11 e 1-01 do CBMERJ. Não substitui a norma nem a orientação do CBMERJ",
+ "folhas": [
+  {
+   "blocos": [
+    {
+     "tipo": "checklist",
+     "titulo": "O caminho até a homologação",
+     "itens": [
+      [
+       "Conferi os requisitos",
+       "18 anos ou mais, 5º ano do ensino fundamental e CPF. O curso pode pedir escolaridade maior."
+      ],
+      [
+       "Achei a empresa formadora na lista do CBMERJ",
+       "Na relação de cadastrados da DGST, no grupo das empresas formadoras de bombeiro civil. Registro válido até: ____/____/______"
+      ],
+      [
+       "Fiz as perguntas antes de pagar",
+       "Quem pede a homologação da turma, quando e quanto custa. A lista está na folha 2."
+      ],
+      [
+       "Fiz o curso de formação",
+       "No mínimo 80 horas-aula, em até 4 meses. Assinei a lista de presença em todas as aulas."
+      ],
+      [
+       "Passei nas quatro provas",
+       "Teórica e prática de combate a incêndio, teórica e prática de primeiros socorros. Média 6,00 e nenhuma nota menor que 5,00."
+      ],
+      [
+       "Recebi e conferi o certificado",
+       "Nome, endereço, CNPJ e número do credenciamento da empresa, meu nome e CPF, data do curso e assinatura do responsável técnico."
+      ],
+      [
+       "A empresa pediu a homologação da turma ao CBMERJ",
+       "Quem pede é a empresa formadora. Data do pedido: ____/____/______"
+      ],
+      [
+       "Conferi a turma homologada",
+       "As turmas homologadas ficam em consulta pública na página da DGST, com o nome dos concludentes."
+      ],
+      [
+       "Entreguei o atestado médico ao empregador",
+       "Em papel timbrado, com carimbo, CRM e assinatura, dizendo que estou apto aos esforços físicos da profissão."
+      ],
+      [
+       "Marquei a atualização",
+       "No mínimo 24 horas-aula, em até 2 anos. Data limite: ____/____/______"
+      ]
+     ]
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "O CBMERJ não emite carteira de bombeiro civil.",
+     "texto": "O que vale é a turma homologada. No ato da homologação, o bombeiro civil já é considerado habilitado para trabalhar nos 2 primeiros anos."
+    }
+   ]
+  },
+  {
+   "blocos": [
+    {
+     "tipo": "lista_curta",
+     "titulo": "Documentos para separar",
+     "da_pagina": {
+      "secao": "documentos",
+      "formato": "lista"
+     }
+    },
+    {
+     "tipo": "ficha",
+     "titulo": "Prazos da atualização (reciclagem) para anotar",
+     "colunas": [
+      "O quê",
+      "Data",
+      "Empresa formadora"
+     ],
+     "rotulos": [
+      "Conclusão do curso de formação",
+      "Homologação da turma",
+      "1ª atualização (até 2 anos depois)",
+      "2ª atualização (até 2 anos depois)",
+      "3ª atualização (até 2 anos depois)"
+     ],
+     "altura_mm": 7.5
+    },
+    {
+     "tipo": "campos",
+     "itens": [
+      "Número da ata do curso de formação:"
+     ]
+    },
+    {
+     "tipo": "perguntas",
+     "titulo": "Perguntas para fazer antes de se matricular",
+     "linhas": 1,
+     "itens": [
+      [
+       "Qual é o registro da empresa formadora no CBMERJ?",
+       "Peça o número e a validade. O credenciamento dura 12 meses."
+      ],
+      [
+       "Quem pede a homologação da turma, e quando?",
+       "Pela norma do CBMERJ, é a empresa formadora, ao concluir o curso."
+      ],
+      [
+       "A homologação tem custo para o aluno?",
+       "As normas não dizem o valor. Peça por escrito."
+      ],
+      [
+       "Onde são as aulas práticas?",
+       "A norma exige campo de treinamento com hidrantes, extintores e casa de fumaça."
+      ],
+      [
+       "Como são as provas e o reforço?",
+       "São quatro provas. Quem não atinge a nota tem reforço e nova prova."
+      ],
+      [
+       "A escola oferece a atualização?",
+       "Ela é feita em até 2 anos e pede o número da ata do curso de formação."
+      ]
+     ]
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "Em emergência: 193, Corpo de Bombeiros. 192, SAMU.",
+     "texto": "As leis e as normas deste guia, com os endereços, estão na folha 3 e em cruzvermelhariodejaneiro.org/guia-do-bombeiro-civil"
+    }
+   ]
+  }
+ ]
+}

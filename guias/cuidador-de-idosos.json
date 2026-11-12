@@ -1,0 +1,135 @@
+{
+  "slug": "cuidador-de-idosos",
+  "arquivo": "cuidador-de-idosos-cruz-vermelha-rj.pdf",
+  "capa": "capa-cuidador-de-idosos.webp",
+  "titulo": "Guia do cuidador de idosos: a rotina do dia",
+  "sub": "Para quem cuida de um familiar idoso em casa. Marque com um X cada cuidado feito no dia e preencha a ficha dos remédios a lápis: a receita muda.",
+  "credito": "Orientações do Ministério da Saúde, da SBGG, da ABRAz e da OMS, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "ficha",
+          "titulo": "Rotina da semana",
+          "colunas": [
+            "Cuidado",
+            "Seg",
+            "Ter",
+            "Qua",
+            "Qui",
+            "Sex",
+            "Sáb",
+            "Dom"
+          ],
+          "rotulos": [
+            "Banho ou higiene do corpo",
+            "Dentes ou dentadura limpos",
+            "Pele seca, hidratada e olhada",
+            "Água oferecida várias vezes",
+            "Refeições feitas sem pressa",
+            "Remédios da manhã",
+            "Remédios da tarde",
+            "Remédios da noite",
+            "Posição mudada de 2 em 2 horas",
+            "Fralda trocada quando molhou",
+            "Caminhada, sol ou conversa"
+          ],
+          "altura_mm": 7
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Pessoa acamada:",
+          "texto": "mude a posição de 2 em 2 horas, sem arrastar. Apoie o corpo com travesseiros e deixe o lençol esticado. Apareceu ferida na pele? Avise a equipe de saúde."
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Remédios e horários (copie da receita)",
+          "colunas": [
+            "Remédio e dose",
+            "Para que serve",
+            "Horários",
+            "Como tomar"
+          ],
+          "linhas": 7,
+          "altura_mm": 7.6
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Remédio é com o médico:",
+          "texto": "não mude a dose, não troque e não pare por conta própria. Conte ao médico todos os remédios, chás e vitaminas. Sintoma novo pode ser efeito de remédio: avise a equipe de saúde."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Pessoa com demência:",
+          "texto": "rotina fixa, casa calma, fala devagar, um assunto por vez. Em vez de discutir, mude de assunto. Remédios, facas e produtos de limpeza ficam em armário fechado."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "Casa segura contra quedas",
+          "da_pagina": {
+            "secao": "quedas",
+            "formato": "lista"
+          },
+          "sem_fonte": true
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Procure o posto de saúde, a UPA ou o médico:",
+          "texto": "confusão que começa de repente, mudança rápida de comportamento, dor que começa de repente, febre que não passa, vômito e diarreia, queda, ferida na pele, engasgos nas refeições ou perda de peso."
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Emergência: ligue 192",
+          "passos": [
+            "Ligue 192 ou peça para alguém ligar. A ligação é gratuita.",
+            "Fale com calma: diga o que aconteceu e o endereço.",
+            "Fique com a pessoa até o socorro chegar.",
+            "No desmaio, deixe a pessoa deitada. Não dê nada para beber, comer ou cheirar.",
+            "Caiu e não responde? É caso de 192. Caiu e se levantou? Leve a um serviço de urgência."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "100",
+              "Violência contra idoso (opção 2)"
+            ]
+          ],
+          "dica": {
+            "rotulo": "É caso de 192:",
+            "texto": "desmaio; pessoa que não responde ou não respira; engasgo sem falar, tossir nem respirar; boca torta, fala alterada ou fraqueza de um lado do corpo; dor no peito que aparece de repente; convulsão."
+          },
+          "campo": "Médico ou posto de saúde (nome e telefone):"
+        },
+        {
+          "tipo": "campos",
+          "titulo": "Quem pode ajudar",
+          "itens": [
+            "Familiar que reveza:",
+            "Vizinho:",
+            "Farmácia:",
+            "Cartão do SUS (número):"
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Quem cuida também precisa de cuidado:",
+          "texto": "divida as tarefas, peça ajuda dizendo do que precisa e faça pausas. Sempre exausto, irritado, sem dormir ou sem esperança? Procure o posto de saúde."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

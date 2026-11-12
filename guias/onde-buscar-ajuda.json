@@ -1,0 +1,167 @@
+{
+  "slug": "onde-buscar-ajuda",
+  "arquivo": "onde-buscar-ajuda-cruz-vermelha-rj.pdf",
+  "capa": "capa-onde-buscar-ajuda.webp",
+  "titulo": "Onde buscar ajuda no Rio de Janeiro",
+  "sub": "Afixe onde todos possam ler. Pedir ajuda é um direito, e conversar ajuda.",
+  "credito": "Resumo da filial, que não substitui o atendimento dos serviços de saúde, de segurança e de proteção",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Os telefones",
+          "passos": [
+            "Perigo agora: ligue 190.",
+            "Risco de vida: ligue 192.",
+            "Precisa conversar: ligue 188, a qualquer hora.",
+            "Diga onde você está e o que está acontecendo.",
+            "Não fique só: chame alguém de confiança."
+          ],
+          "telefones": [
+            [
+              "188",
+              "CVV, apoio emocional"
+            ],
+            [
+              "180",
+              "Atendimento à Mulher"
+            ],
+            [
+              "100",
+              "Direitos Humanos"
+            ],
+            [
+              "190",
+              "Polícia Militar"
+            ],
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ],
+            [
+              "199",
+              "Defesa Civil"
+            ],
+            [
+              "136",
+              "Disque Saúde, do SUS"
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "188, CVV (Centro de Valorização da Vida):",
+          "texto": "para quem quer e precisa conversar. Atende 24 horas, de graça, sob sigilo e sem julgamentos. Também por chat e e-mail: cvv.org.br."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "CAPS e CAPSi:",
+          "texto": "serviços públicos de saúde mental, gratuitos pelo SUS, para quem está em sofrimento intenso. Não é preciso marcar consulta para o primeiro acolhimento. O CAPSi atende crianças e adolescentes."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Risco imediato à vida:",
+          "texto": "ligue 192 ou vá à UPA 24h ou ao pronto-socorro. Não deixe a pessoa sozinha."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "180, Central de Atendimento à Mulher:",
+          "texto": "informa direitos e serviços e registra denúncias de violência contra a mulher. Atende 24 horas, e a ligação é gratuita. Qualquer pessoa pode ligar."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Delegacia, DEAM e Deam Digital:",
+          "texto": "o registro se faz na delegacia mais perto, na DEAM (delegacia da mulher) ou pela internet, na Deam Digital: delegaciaonline.pcivil.rj.gov.br. A medida protetiva de urgência pode ser pedida no registro."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "100, Disque Direitos Humanos:",
+          "texto": "violência contra criança, adolescente, pessoa idosa e pessoa com deficiência. Atende 24 horas, e a ligação é gratuita. A denúncia pode ser anônima."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Conselho Tutelar:",
+          "texto": "recebe os casos de suspeita de maus-tratos contra criança ou adolescente."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Álcool e outras drogas:",
+          "texto": "o CAPS AD atende pelo SUS, de graça. Alcoólicos Anônimos é um grupo de apoio mútuo, sem pagamento. Na cidade do Rio, o plantão atende 24 horas: (21) 2253-3377."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "136, Disque Saúde:",
+          "texto": "a Ouvidoria-Geral do SUS, para informações, reclamações e denúncias. De segunda a sexta, das 8h às 20h, e aos sábados, das 8h às 18h. Não é número de emergência."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "Como ajudar alguém",
+          "itens": [
+            "Encontre um momento e um lugar calmo. Diga que você está ali para ouvir.",
+            "Ouça sem julgar e sem pressa. Não ofereça soluções prontas nem faça comparações.",
+            "Leve a sério o que a pessoa diz. Não trate como exagero nem como chantagem.",
+            "Incentive a procurar um serviço de saúde. Ofereça-se para ir junto.",
+            "Em perigo imediato, não deixe a pessoa sozinha. Ligue 192 e chame alguém de confiança dela.",
+            "Continue em contato nos dias seguintes. O cuidado continua depois da primeira conversa."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que evitar:",
+          "texto": "julgar, dar bronca, comparar com a dor de outras pessoas, dizer que é exagero ou que vai passar sozinho. Procure um serviço de saúde junto com a pessoa."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Violência contra a mulher:",
+          "texto": "a culpa não é de quem sofre a violência. Qualquer pessoa pode ligar para o 180 e pedir orientação ou denunciar. Em perigo imediato, ligue 190."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Criança, adolescente, pessoa idosa ou pessoa com deficiência:",
+          "texto": "qualquer pessoa pode ligar para o 100, sobre uma violência que sofre ou de que tem conhecimento. A denúncia pode ser anônima. Em perigo imediato, ligue 190."
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Os serviços perto de nós",
+          "colunas": [
+            "Serviço",
+            "Endereço",
+            "Telefone"
+          ],
+          "rotulos": [
+            "CAPS",
+            "CAPSi (crianças e adolescentes)",
+            "CAPS AD (álcool e outras drogas)",
+            "Posto de saúde",
+            "UPA 24h ou hospital",
+            "Delegacia",
+            "DEAM (delegacia da mulher)",
+            "Conselho Tutelar"
+          ],
+          "altura_mm": 9
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Como achar cada serviço:",
+          "texto": "pergunte no posto de saúde onde fica o CAPS da sua região. O 180 informa os serviços para mulheres mais perto. A Polícia Civil lista as delegacias em policiacivil.rj.gov.br."
+        },
+        {
+          "tipo": "campos",
+          "itens": [
+            "Pessoa de confiança:",
+            "Telefone:"
+          ]
+        }
+      ]
+    }
+  ]
+}

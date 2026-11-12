@@ -1,0 +1,98 @@
+{
+  "slug": "intoxicacao-alimentar",
+  "arquivo": "intoxicacao-alimentar-cruz-vermelha-rj.pdf",
+  "capa": "capa-intoxicacao-alimentar.webp",
+  "titulo": "Intoxicação alimentar: a cozinha segura",
+  "sub": "Prenda esta folha na geladeira e marque com um X os cuidados da sua cozinha. A folha 2 diz o que fazer se alguém passar mal.",
+  "credito": "Orientações do Ministério da Saúde, da Anvisa, da OMS e da Fiocruz, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Zona de perigo:",
+          "texto": "entre 5 °C e 60 °C, os micróbios se multiplicam depressa. Comida quente fica bem quente até servir. Comida fria fica na geladeira."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Comida estragada nem sempre avisa:",
+          "texto": "há micróbios que não mudam o cheiro, o gosto nem a aparência do alimento. Na dúvida, não coma."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "Diarreia ou vômito: o que fazer em casa",
+          "itens": [
+            "Beba mais líquido que de costume: água, chá, suco, água de coco, sopa ou soro de reidratação oral.",
+            "Beba aos poucos e muitas vezes, depois de cada evacuação e de cada vômito.",
+            "Continue comendo a comida de sempre. O bebê que mama no peito continua mamando.",
+            "Lave as mãos depois de ir ao banheiro e antes de mexer em comida.",
+            "Não melhorou em 2 dias? Procure a unidade de saúde."
+          ]
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Sinais de alerta: procure a unidade de saúde",
+          "da_pagina": {
+            "secao": "sinais-de-alerta",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Pessoa desacordada ou que não consegue beber: ligue 192",
+          "passos": [
+            "Ligue 192, ou peça para alguém ligar.",
+            "Diga o endereço e conte o que a pessoa comeu e há quanto tempo passa mal.",
+            "Fique com a pessoa até o socorro chegar.",
+            "Não dê remédio por conta própria."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU, 24 horas, ligação gratuita"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Sinais de desidratação:",
+            "texto": "muita sede, boca seca, olhos fundos, choro sem lágrimas, irritação."
+          },
+          "campo": "Unidade de saúde perto de casa:"
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que não fazer:",
+          "texto": "não tome remédio para prender o intestino. Antibiótico e remédio para vômito, só com indicação de profissional de saúde. Refrigerante não serve para repor líquido."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Mais atenção com:",
+          "texto": "bebês e crianças, idosos, gestantes e pessoas com a imunidade baixa. Com diarreia ou vômito, procurem a unidade de saúde sem esperar."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Na festa, na marmita e na praia",
+          "itens": [
+            "Prato da véspera: geladeira, e esquentar bem",
+            "Nada de ovo cru nem de massa crua",
+            "Marmita e lanche na bolsa térmica",
+            "Gelo só de água tratada"
+          ]
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

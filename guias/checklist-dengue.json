@@ -1,0 +1,112 @@
+{
+  "slug": "checklist-dengue",
+  "arquivo": "checklist-dengue-cruz-vermelha-rj.pdf",
+  "capa": "capa-checklist-dengue.webp",
+  "titulo": "Checklist contra a dengue: 10 minutos por semana",
+  "sub": "Uma vez por semana, dê a volta pela casa e pelo quintal e marque com um X o que já conferiu. Sem água parada, o mosquito não nasce.",
+  "credito": "Orientações do Ministério da Saúde, da Fiocruz, da OPAS/OMS, da Anvisa e da Secretaria de Estado de Saúde do Rio de Janeiro, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Vistoria feita em (anote o dia)",
+          "colunas": [
+            "Mês",
+            "1ª semana",
+            "2ª semana",
+            "3ª semana",
+            "4ª semana",
+            "5ª semana"
+          ],
+          "linhas": 4
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Por que toda semana:",
+          "texto": "com calor e água, o ovo leva de 7 a 10 dias para virar mosquito. Os ovos ficam na parede do recipiente: lave as bordas com bucha e sabão."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "Sintomas mais comuns da dengue",
+          "da_pagina": {
+            "secao": "sintomas",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Com esses sintomas:",
+          "texto": "procure uma unidade de saúde. Repouse e beba bastante líquido, como o médico orientar."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Sinais de alarme",
+          "da_pagina": {
+            "secao": "sinais-de-alarme",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Sinal de alarme ou sangramento: atendimento urgente",
+          "passos": [
+            "Vá na hora ao serviço de urgência mais próximo.",
+            "Se a pessoa estiver muito mal, ligue 192.",
+            "A febre baixou? O cuidado continua: é quando os sinais de alarme aparecem.",
+            "Não dê remédio por conta própria."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "1746",
+              "Foco do mosquito, na cidade do Rio"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Quando aparecem:",
+            "texto": "em geral entre o 3º e o 7º dia da doença."
+          },
+          "campo": "Unidade de saúde perto de casa:"
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que não fazer:",
+          "texto": "não tome remédio por conta própria. Não use aspirina (AAS), que pode causar sangramento, nem antibiótico. Não relaxe quando a febre baixar."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Mais atenção com:",
+          "texto": "pessoas mais velhas, quem tem diabetes, pressão alta ou outra doença crônica, grávidas e crianças de até 2 anos."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Para evitar as picadas",
+          "itens": [
+            "Calça e camisa de manga comprida",
+            "Tela em portas e janelas",
+            "Mosquiteiro sobre a cama",
+            "Repelente com registro na Anvisa, usado como manda o rótulo"
+          ]
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "slug": "febre-em-crianca",
+  "arquivo": "febre-em-crianca-cruz-vermelha-rj.pdf",
+  "capa": "capa-febre-em-crianca.webp",
+  "titulo": "Febre em criança: o que fazer",
+  "sub": "Para pais, avós e cuidadores. Febre é temperatura de 37,5 °C ou mais, medida na axila com termômetro digital (SBP, 2025). Mais que o número, vale o jeito da criança.",
+  "credito": "Orientações da Sociedade Brasileira de Pediatria e do Ministério da Saúde, com apoio do NHS e da Academia Americana de Pediatria, reunidas pela filial; não substitui a consulta",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "O que fazer em casa",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "lista"
+          },
+          "sem_fonte": true
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Remédio para febre:",
+          "texto": "só o que o pediatra indicou, na dose que ele indicou. Não alterne nem misture remédios. Não dê AAS (ácido acetilsalicílico) a criança."
+        },
+        {
+          "tipo": "perguntas",
+          "titulo": "O que não fazer",
+          "linhas": 0,
+          "itens": [
+            [
+              "Banho gelado, compressa fria ou gelo",
+              "O efeito dura pouco, e a criança fica com calafrios e mais desconforto."
+            ],
+            [
+              "Álcool na pele",
+              "Banho ou fricção com álcool pode fazer mal à criança."
+            ],
+            [
+              "Agasalhar demais",
+              "Muita roupa e muita coberta dificultam a perda de calor."
+            ],
+            [
+              "Antibiótico ou remédio de adulto por conta própria",
+              "Antibiótico não baixa febre. Remédio para febre não previne convulsão."
+            ]
+          ]
+        },
+        {
+          "tipo": "emergencia",
+          "titulo": "Sinais de alerta: atendimento na hora",
+          "passos": [
+            "Bebê com menos de 3 meses com febre.",
+            "Convulsão ou desmaio.",
+            "Dificuldade para respirar ou respiração rápida.",
+            "Não mama nem bebe líquidos, ou vomita tudo.",
+            "Muito sonolenta, difícil de acordar, ou mole e sem reação.",
+            "Choro que não para, irritação extrema ou confusão.",
+            "Pescoço duro, dor de cabeça forte ou moleira estufada.",
+            "Manchas vermelhas ou arroxeadas na pele.",
+            "Lábios ou pele azulados, acinzentados ou muito pálidos."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Leve a criança à emergência ou à UPA.",
+            "texto": "Ligue 192 na convulsão, se ela não respira direito, se não acorda ou se você não tem como levar."
+          },
+          "campo": "Pediatra ou posto de saúde (nome e telefone):"
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "campos",
+          "titulo": "Anotações da febre: leve ao médico",
+          "itens": [
+            "Nome da criança:",
+            "Idade e peso:",
+            "A febre começou (dia e hora):",
+            "Alergias e remédios de uso diário:"
+          ]
+        },
+        {
+          "tipo": "ficha",
+          "colunas": [
+            "Dia e hora",
+            "Temperatura",
+            "Remédio e dose dados",
+            "Como a criança estava"
+          ],
+          "linhas": 12,
+          "altura_mm": 7.4
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Como medir:",
+          "texto": "termômetro digital, no fundo da axila, com o braço fechado junto ao corpo, pelo tempo do manual. Depois do banho ou do cobertor, espere alguns minutos."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Convulsão febril: o que fazer",
+          "itens": [
+            "Mantenha a calma e olhe a hora em que a crise começou.",
+            "Afaste móveis e objetos em que a criança possa se machucar.",
+            "Proteja a cabeça, com as mãos ou com algo macio, e mantenha-a virada de lado.",
+            "Passou? Deixe a criança deitada de lado e leve-a para ser avaliada por um médico."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Na convulsão, não:",
+          "texto": "segure o corpo à força; ponha o dedo ou qualquer coisa na boca; dê líquido ou remédio pela boca; tire a roupa ou passe água fria para baixar a temperatura."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Ligue 192 na convulsão se:",
+          "texto": "é a primeira crise; dura 5 minutos ou mais; a respiração não volta ao normal; a criança se machucou; vem uma crise atrás da outra."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

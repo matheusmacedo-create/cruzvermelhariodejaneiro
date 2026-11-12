@@ -84,8 +84,29 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Quando ligar 192 | `/quando-ligar-192/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: cartaz com o que dizer ao 192, teste SAMU, sinais de infarto e engasgo | sim: formulário na página e caixa nas matérias de AVC, infarto, engasgo e desmaio (não publicado) |
 | Verão seguro no Rio | `/verao-seguro/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa nas matérias de calor, insolação, afogamento e praia (não publicado) |
 | Plano familiar de emergência | `/plano-familiar-de-emergencia/`, gerada e não publicada (11/11/2026) | no padrão, gerado e não publicado: ficha para a família preencher | sim: formulário na página e caixa nas matérias do plano, dos alertas e dos estágios (não publicado) |
+| Guia do cuidador de idosos | `/cuidador-de-idosos/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa em 5 matérias de cuidado com idosos (não publicado) |
+| Acidentes em casa | `/acidentes-em-casa/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz das picadas e do choque elétrico | sim: formulário na página e caixa nas matérias de cobra, escorpião e choque (não publicado) |
+| A Cruz Vermelha em uma página | `/cartaz-da-cruz-vermelha/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: princípios, emblemas, Movimento e linha do tempo, tirados das páginas institucionais | sim: formulário na página e caixa em 19 matérias de história, Movimento e direito humanitário (não publicado) |
+| Checklist contra a dengue | `/checklist-dengue/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado | sim: formulário na página e caixa na matéria da dengue (não publicado) |
+| Guia do bombeiro civil | `/guia-do-bombeiro-civil/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: guia do bombeiro civil no Rio de Janeiro | sim: formulário na página; caixa nas matérias: as 6 matérias de bombeiro civil, brigada e Lei Kiss (não publicado) |
+| Guia dos cursos | `/guia-dos-cursos/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: quadro dos cursos presenciais e para quem é cada um | sim: formulário na página; caixa nas matérias: as 8 matérias de curso (nas que são advertorial a caixa não aparece) (não publicado) |
+| Onde buscar ajuda | `/onde-buscar-ajuda/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz de telefones e serviços gratuitos no Rio | sim: formulário na página; caixa nas matérias: Setembro Amarelo, CAPS, DEAM Digital e Alcoólicos Anônimos (não publicado) |
+| RCP e manobra de Heimlich | `/rcp-e-manobra-de-heimlich/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz da massagem cardíaca e do desengasgo | sim: formulário na página; caixa nas matérias: nenhuma (pedido só na página; buscas "manobra de heimlich", 33 mil/mês, e "rcp", 27 mil) (não publicado) |
+| Intoxicação alimentar | `/intoxicacao-alimentar/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cozinha segura, o que fazer e sinais de alerta | sim: formulário na página; caixa nas matérias: nenhuma (busca "intoxicação alimentar", 60 mil/mês, 165 mil em dezembro) (não publicado) |
+| Febre em criança | `/febre-em-crianca/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: o que fazer, sinais de alerta e ficha da febre | sim: formulário na página; caixa nas matérias: nenhuma (busca "febre em criança", 22 mil/mês) (não publicado) |
+| Pressão alta e pressão baixa | `/pressao-alta-e-pressao-baixa/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: como medir, o que fazer e diário da pressão | sim: formulário na página; caixa nas matérias: nenhuma (buscas "pressão baixa o que fazer", 18 mil/mês, e "pressão alta o que fazer", 10 mil) (não publicado) |
+| Queimaduras | `/queimaduras/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz do que fazer e do que não fazer | sim: formulário na página; caixa nas matérias: nenhuma (buscas "queimadura de segundo grau", 4 mil/mês, e "queimadura de sol", 27 mil em dezembro) (não publicado) |
 
 Os quatro últimos e a entrega da mochila saíram juntos em 11/11/2026 (pedido do Matheus: mais guias, mais matérias com
 caixa de e-mail). A lista de publicação é `scripts/publicacao-guias-novembro.txt`. O conteúdo de saúde do cartaz
 "Quando ligar 192" (as manobras de engasgo, sobretudo) e do guia do verão precisa do visto de um instrutor da escola
 antes de ir ao ar: as pendências de cada um estão em `notas_internas`, em `site/institucional.json`.
+
+A segunda leva (12/11/2026: cuidador de idosos, acidentes em casa, a Cruz Vermelha em uma página e a dengue) tem a
+lista em `scripts/publicacao-guias-novembro-2.txt`. Com ela e com a caixa do kit Lei Lucas em três matérias, a Redação
+passa a ter caixa de material em 58 matérias.
+
+A terceira leva (12/11/2026) tem a lista em `scripts/publicacao-guias-novembro-3.txt`. Cinco dos oito guias dela
+nasceram das buscas mais fortes do Google no Brasil (Planejador de palavras-chave do Google Ads, média de 12 meses até
+10/2026) e não têm matéria correspondente: são pedidos só na página. Com os outros três, a Redação passa a ter 76
+matérias na lista de caixas de material.

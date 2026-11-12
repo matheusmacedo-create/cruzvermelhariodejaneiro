@@ -130,6 +130,39 @@ Pedido do Matheus: mais materiais em PDF para as matérias capturarem e-mail. No
 Materiais e caixas em `lib/newsletter/materiais.ts` e `lib/site/caixa-de-material.ts`, na Redação (PR do mesmo branch):
 de 18 para 27 matérias com caixa. Ordem de publicação e pendências de revisão em `scripts/publicacao-guias-novembro.txt`.
 
+## Terceira leva de guias gratuitos (12/11/2026, NÃO publicado)
+
+Três guias para as matérias que ainda não tinham caixa e cinco tirados das buscas mais fortes do Google no Brasil
+(Planejador de palavras-chave, média de 12 meses):
+
+| Página | PDF | Caixa nas matérias |
+| --- | --- | --- |
+| `/guia-do-bombeiro-civil/` | guia do bombeiro civil no Rio de Janeiro | as 6 matérias de bombeiro civil, brigada e Lei Kiss |
+| `/guia-dos-cursos/` | quadro dos cursos presenciais e para quem é cada um | as 8 matérias de curso (nas que são advertorial a caixa não aparece) |
+| `/onde-buscar-ajuda/` | cartaz de telefones e serviços gratuitos no Rio | Setembro Amarelo, CAPS, DEAM Digital e Alcoólicos Anônimos |
+| `/rcp-e-manobra-de-heimlich/` | cartaz da massagem cardíaca e do desengasgo | nenhuma (pedido só na página; buscas "manobra de heimlich", 33 mil/mês, e "rcp", 27 mil) |
+| `/intoxicacao-alimentar/` | cozinha segura, o que fazer e sinais de alerta | nenhuma (busca "intoxicação alimentar", 60 mil/mês, 165 mil em dezembro) |
+| `/febre-em-crianca/` | o que fazer, sinais de alerta e ficha da febre | nenhuma (busca "febre em criança", 22 mil/mês) |
+| `/pressao-alta-e-pressao-baixa/` | como medir, o que fazer e diário da pressão | nenhuma (buscas "pressão baixa o que fazer", 18 mil/mês, e "pressão alta o que fazer", 10 mil) |
+| `/queimaduras/` | cartaz do que fazer e do que não fazer | nenhuma (buscas "queimadura de segundo grau", 4 mil/mês, e "queimadura de sol", 27 mil em dezembro) |
+
+Na Redação: 76 matérias na lista de caixas de material. Ordem de publicação e pendências em
+`scripts/publicacao-guias-novembro-3.txt`.
+
+## Segunda leva de guias gratuitos (12/11/2026, NÃO publicado)
+
+Mesmo pedido e mesmo padrão da leva de 11/11:
+
+| Página | PDF | Caixa nas matérias de |
+| --- | --- | --- |
+| `/cuidador-de-idosos/` | rotina do dia, ficha dos remédios e sinais de alerta | banho no leito, Alzheimer, lesão por pressão, caderneta da pessoa idosa e sobrecarga do cuidador |
+| `/acidentes-em-casa/` | cartaz: picada de cobra, de escorpião e choque elétrico | as três matérias desses assuntos |
+| `/cartaz-da-cruz-vermelha/` | os 7 princípios, os emblemas, o Movimento e a linha do tempo | 19 matérias de história, Movimento, direito humanitário e emblemas |
+| `/checklist-dengue/` | a vistoria semanal da casa, sintomas e sinais de alarme | prevenção da dengue |
+
+Na Redação, o kit Lei Lucas para escolas ganha caixa em três matérias de Lei Lucas: 58 matérias com caixa de material.
+Ordem de publicação e pendências em `scripts/publicacao-guias-novembro-2.txt`.
+
 ## Páginas para instituições: escolas, órgãos públicos e empresas (publicadas em 11/11/2026)
 
 Pedido do Matheus: alcançar escolas, empresas e governo pelo Ad Grants. Três páginas novas, geradas por

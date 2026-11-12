@@ -1,0 +1,144 @@
+{
+  "slug": "acidentes-em-casa",
+  "arquivo": "acidentes-em-casa-cruz-vermelha-rj.pdf",
+  "capa": "capa-acidentes-em-casa.webp",
+  "titulo": "Acidentes em casa: picadas e choque elétrico",
+  "sub": "Deixe à vista. Em picada de cobra, de escorpião ou de aranha e em choque elétrico, peça ajuda cedo.",
+  "credito": "Resumo da filial, que não substitui o atendimento de saúde nem um curso de primeiros socorros",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Picada ou choque: os primeiros passos",
+          "passos": [
+            "Picada: afaste a pessoa do animal.",
+            "Choque: desligue a energia antes de encostar na pessoa.",
+            "Ligue 192 ou 193 e diga o endereço.",
+            "Deixe a pessoa calma e parada.",
+            "Não dê remédio nem receita caseira."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ]
+          ],
+          "dica": {
+            "rotulo": "Dúvida sobre veneno, no RJ:",
+            "texto": "0800 722 6001, centro de intoxicações."
+          },
+          "campo": "Hospital com soro mais perto de casa:"
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Picada de cobra",
+          "itens": [
+            "Afaste a pessoa da cobra. Ligue 192 ou 193.",
+            "Deite a pessoa. Ela deve se mexer o mínimo possível e não andar.",
+            "Tire anel, relógio, pulseira, sapato e roupa apertada.",
+            "Se puder, lave o local com água e sabão.",
+            "Leve logo ao hospital com soro. Se for seguro, fotografe a cobra de longe."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Na picada de cobra, não faça:",
+          "texto": "torniquete nem amarração; corte, furo ou sucção; compressa fria; esfregar o local; ervas, borra de café, querosene ou outra receita caseira. Não tente pegar a cobra."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Picada de escorpião",
+          "itens": [
+            "Afaste a pessoa do escorpião e acalme-a.",
+            "Lave o local com água e sabão.",
+            "Leve sem demora ao hospital com soro. Em emergência, ligue 192 ou 193."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Criança picada por escorpião:",
+          "texto": "hospital na hora, mesmo que pareça leve. Sinais graves, em qualquer idade: muito suor, vômito, agitação, tremores e muita saliva."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Picada de aranha",
+          "itens": [
+            "Lave o local. Compressa morna ajuda a aliviar a dor.",
+            "Procure o serviço de saúde mais próximo. Leve uma foto nítida da aranha, se não houver risco."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Para onde levar:",
+          "texto": "nem todo hospital tem soro. O tratamento é gratuito, pelo SUS. Na cidade do Rio (lista do Ministério da Saúde, julho de 2026): Hospital Lourenço Jorge, na Barra da Tijuca, e Hospital Pedro II, em Santa Cruz. A lista muda: confira e anote o mais perto de casa."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "Choque elétrico: o que fazer",
+          "itens": [
+            "Não encoste na pessoa enquanto a energia estiver ligada.",
+            "Desligue o disjuntor ou a chave geral.",
+            "Não deu para desligar? Não se aproxime. Afaste as outras pessoas e ligue 193.",
+            "Com a energia desligada, ligue 192 ou 193.",
+            "Fale com a pessoa. Observe se ela responde e respira. Não a mova sem necessidade.",
+            "Não responde e não respira? Avise o atendente e siga as instruções."
+          ]
+        },
+        {
+          "tipo": "campos",
+          "itens": [
+            "Onde fica a chave geral da nossa casa:"
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Perto da eletricidade, nunca use:",
+          "texto": "objeto de metal, molhado ou úmido, nem as mãos. Água, metal, pele úmida e chão molhado conduzem a corrente. Na dúvida, não se aproxime."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "A pessoa parece bem?",
+          "texto": "Ligue 192 e conte o que houve. Queimadura de eletricidade é sempre emergência."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Fio caído na rua:",
+          "texto": "fique longe, afaste as pessoas, ligue 193 e avise a companhia de energia."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Para evitar picadas, em casa e no quintal",
+          "da_pagina": {
+            "secao": "prevenir-picadas",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Para evitar choque em casa",
+          "da_pagina": {
+            "secao": "prevenir-choque",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "192 ou 193?",
+          "texto": "Em picada, 192 (SAMU) ou 193 (Bombeiros): o que atender primeiro. Em choque, ligue depois de desligar a energia. Fio caído, pessoa presa à corrente ou cobra dentro de casa: 193."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}

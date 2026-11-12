@@ -1,0 +1,37 @@
+# Segunda leva de guias gratuitos com pedido de e-mail (12/11/2026, pedido do Matheus): páginas novas
+# /cuidador-de-idosos/ (guia), /acidentes-em-casa/ (cartaz das picadas e do choque elétrico), /cartaz-da-cruz-vermelha/
+# (A Cruz Vermelha em uma página) e /checklist-dengue/, cada uma com o PDF no padrão dos guias
+# (docs/padrao-guias-gratuitos.md). O botão de baixar só aparece depois do e-mail e do aceite; o pedido vai para a
+# Redação (materiais cuidador-de-idosos, acidentes-em-casa, cartaz-da-cruz-vermelha e checklist-dengue,
+# lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha cinco grupos (os quatro guias e o kit Lei Lucas
+# em três matérias): de 27 para 58 matérias (lib/site/caixa-de-material.ts).
+# ESTADO: PUBLICADO em 11/11/2026, às 21h38 (horário de Brasília), a pedido do Matheus, a partir da main em 45615bb, SEM a revisão
+# de fatos do passo 0 (decisão dele; as pendências seguem em notas_internas). Cache limpo, os 12 arquivos conferidos no ar
+# byte a byte, sitemaps regerados e publicados. Faltam: o e-mail de teste em cada página e regerar as matérias (passo 4).
+# Gerar antes: python3 scripts/gerar_guia_pdf.py cuidador-de-idosos acidentes-em-casa cartaz-da-cruz-vermelha checklist-dengue
+#              python3 scripts/gerar_institucional.py cuidador-de-idosos acidentes-em-casa cartaz-da-cruz-vermelha checklist-dengue
+# ORDEM, e ela importa:
+#   0. Revisão de fatos, antes de tudo (o padrão pede): as pendências de cada página estão em notas_internas, em
+#      site/institucional.json. O conteúdo de saúde (cuidador, picadas, choque e dengue) pede o visto de um profissional.
+#   1. A Redação primeiro: mesclar o PR que cadastra os quatro materiais. Sem ele, a rota responde "Este formulário
+#      está desatualizado" e ninguém consegue liberar o botão.
+#   2. Publicar aqui, os PDFs e as capas antes das páginas:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-guias-novembro-2.txt)
+#   3. Limpar o cache e conferir no celular: deixar um e-mail de teste em cada página (um endereço diferente por
+#      página, ou 30 minutos entre os pedidos), ver o botão aparecer, o PDF abrir e a mensagem chegar.
+#   4. Na Redação, "Regerar as páginas das matérias" (Configurações › Site): as 31 matérias novas ganham a caixa.
+#      Enquanto um PDF não responder 200, a matéria dele sai sem a caixa.
+#   5. python3 scripts/gerar_sitemaps.py e publicar os sitemaps (quatro páginas novas).
+# Desfazer: scripts/publicar_hostinger.sh --apagar com os arquivos abaixo (são todos novos). Desfeito, regerar as matérias.
+site/cuidador-de-idosos/cuidador-de-idosos-cruz-vermelha-rj.pdf
+site/cuidador-de-idosos/capa-cuidador-de-idosos.webp
+site/cuidador-de-idosos/index.html
+site/acidentes-em-casa/acidentes-em-casa-cruz-vermelha-rj.pdf
+site/acidentes-em-casa/capa-acidentes-em-casa.webp
+site/acidentes-em-casa/index.html
+site/cartaz-da-cruz-vermelha/cartaz-da-cruz-vermelha-cruz-vermelha-rj.pdf
+site/cartaz-da-cruz-vermelha/capa-cartaz-da-cruz-vermelha.webp
+site/cartaz-da-cruz-vermelha/index.html
+site/checklist-dengue/checklist-dengue-cruz-vermelha-rj.pdf
+site/checklist-dengue/capa-checklist-dengue.webp
+site/checklist-dengue/index.html
