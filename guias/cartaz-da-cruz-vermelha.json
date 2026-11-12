@@ -1,0 +1,151 @@
+{
+  "slug": "cartaz-da-cruz-vermelha",
+  "arquivo": "cartaz-da-cruz-vermelha-cruz-vermelha-rj.pdf",
+  "capa": "capa-cartaz-da-cruz-vermelha.webp",
+  "titulo": "A Cruz Vermelha em uma página",
+  "sub": "Para afixar na sala de aula ou na sede: os princípios, os emblemas, quem é quem no Movimento e as datas principais.",
+  "credito": "Resumo da filial; o texto oficial dos princípios está no art. 8º do Estatuto da Cruz Vermelha Brasileira",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "perguntas",
+          "titulo": "Os 7 Princípios Fundamentais",
+          "linhas": 0,
+          "itens": [
+            [
+              "Humanidade",
+              "Evitar e aliviar o sofrimento, proteger a vida e a saúde e tratar cada pessoa com respeito."
+            ],
+            [
+              "Imparcialidade",
+              "Ajudar sem discriminar. A necessidade de cada pessoa define a ordem, e os casos mais urgentes vêm primeiro."
+            ],
+            [
+              "Neutralidade",
+              "Não tomar partido em guerras nem em disputas políticas, raciais, religiosas ou ideológicas, para manter a confiança de todos."
+            ],
+            [
+              "Independência",
+              "Ajudar o poder público e cumprir as leis, com autonomia para seguir sempre os princípios."
+            ],
+            [
+              "Voluntariado",
+              "Ajudar por vontade de ajudar, sem buscar lucro nem vantagem."
+            ],
+            [
+              "Unidade",
+              "Uma só Cruz Vermelha ou Crescente Vermelho em cada país, aberta a todos e presente em todo o território."
+            ],
+            [
+              "Universalidade",
+              "Uma só rede no mundo. Todas as Sociedades Nacionais têm os mesmos direitos e o dever de ajudar umas às outras."
+            ]
+          ]
+        },
+        {
+          "tipo": "perguntas",
+          "titulo": "Os três emblemas, com o mesmo valor",
+          "linhas": 0,
+          "itens": [
+            [
+              "Cruz vermelha",
+              "Uma cruz vermelha sobre fundo branco: as cores da bandeira da Suíça, invertidas. Adotada em 1863. É o emblema que a Cruz Vermelha Brasileira usa."
+            ],
+            [
+              "Crescente vermelho",
+              "Um crescente vermelho sobre fundo branco. Reconhecido em 1929. É usado nos países que o adotaram, como a Turquia."
+            ],
+            [
+              "Cristal vermelho",
+              "Um quadrado vermelho apoiado sobre a ponta, em fundo branco. Criado em 2005. Não tem conotação nacional, política nem religiosa."
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Nenhum é símbolo religioso, político ou étnico.",
+          "texto": "Os três são sinais de proteção."
+        },
+        {
+          "tipo": "perguntas",
+          "titulo": "Para que servem os emblemas",
+          "linhas": 0,
+          "itens": [
+            [
+              "Proteção",
+              "Em conflitos armados, o emblema marca pessoas, veículos e prédios protegidos, como os serviços de saúde das forças armadas. Aparece grande, vermelho sobre branco, sem acréscimos."
+            ],
+            [
+              "Indicação",
+              "No dia a dia, sobretudo em tempo de paz, mostra o vínculo com a Sociedade Nacional. Vem com o nome: no Brasil, “Cruz Vermelha Brasileira” ou “CVB”."
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Uso indevido:",
+          "texto": "é usar o emblema, o nome ou uma imitação sem ter esse direito. A lei brasileira proíbe o emblema como marca de fábrica ou de comércio. Farmácia, hospital e caixa de primeiros socorros têm outros sinais. Viu uso indevido? Avise a filial: contato@cruzvermelhariodejaneiro.org"
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "O Movimento Internacional: três componentes, sete datas",
+          "passos": [
+            "Comitê Internacional da Cruz Vermelha (CICV). Deu origem ao Movimento, em 1863. Protege e ajuda pessoas afetadas por conflitos armados e trabalha pelo respeito ao Direito Internacional Humanitário.",
+            "Federação Internacional (FICV). Reúne as 191 Sociedades Nacionais. Funciona por meio delas e cuida da integridade e dos interesses delas.",
+            "Sociedades Nacionais. No máximo uma por país. Auxiliam as autoridades na área humanitária, respondem a emergências e apoiam pessoas vulneráveis no próprio país."
+          ],
+          "telefones": [
+            [
+              "1859",
+              "Batalha de Solferino, na Itália. O suíço Henri Dunant vê os feridos abandonados no campo."
+            ],
+            [
+              "1863",
+              "Reúne-se em Genebra o comitê que daria origem ao CICV. Delegados de 14 governos adotam a cruz vermelha."
+            ],
+            [
+              "1864",
+              "A Primeira Convenção de Genebra faz da cruz vermelha o emblema único."
+            ],
+            [
+              "1908",
+              "A Cruz Vermelha Brasileira é fundada no Rio de Janeiro, em 5 de dezembro."
+            ],
+            [
+              "1949",
+              "São assinadas as quatro Convenções de Genebra, em 12 de agosto."
+            ],
+            [
+              "1977",
+              "Dois Protocolos Adicionais reforçam a proteção das vítimas dos conflitos armados."
+            ],
+            [
+              "2005",
+              "O Protocolo III cria o cristal vermelho, o terceiro emblema."
+            ]
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "No Brasil:",
+          "texto": "a Sociedade Nacional é a Cruz Vermelha Brasileira. A filial do Rio de Janeiro faz parte dela. Não é um escritório do CICV nem da Federação."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Direito Internacional Humanitário:",
+          "texto": "é o conjunto de regras que limita os efeitos dos conflitos armados. As quatro Convenções de Genebra de 1949 são o seu núcleo."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Quer fazer parte?",
+          "texto": "O voluntariado é um dos sete princípios. A filial forma os próprios voluntários, e não é preciso ser da área da saúde. O voluntariado desta filial é presencial, para quem mora na cidade do Rio de Janeiro: cruzvermelhariodejaneiro.org/voluntariado"
+        }
+      ]
+    }
+  ]
+}

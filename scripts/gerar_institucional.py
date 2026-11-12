@@ -75,10 +75,11 @@ IMAGEM_OG = f"{ORIGEM}/assets/otim/og-home.jpg"
 ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
          "direito-internacional-humanitario", "base-legal", "cursos-gratuitos", "voluntariado", "cbfi", "kit-de-emergencia",
          "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia", "quando-ligar-192",
-         "verao-seguro", "bazar", "lei-lucas-para-escolas", "plano-de-contingencia", "empresas-e-orgaos-publicos"]
+         "verao-seguro", "acidentes-em-casa", "checklist-dengue", "bazar", "lei-lucas-para-escolas",
+         "plano-de-contingencia", "empresas-e-orgaos-publicos", "cartaz-da-cruz-vermelha"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
-QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade",
+QUEM_SOMOS = {"principios-fundamentais", "movimento-internacional", "emblema", "manual-de-identidade", "cartaz-da-cruz-vermelha",
               "direito-internacional-humanitario", "base-legal"}
 VOLUNTARIADO = {"cbfi"}
 KIT = {"mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia"}
@@ -90,7 +91,9 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "kit-de-emergencia": "Kit de emergência", "mochila-de-emergencia": "Mochila de emergência",
                 "kit-de-primeiros-socorros": "Kit de primeiros socorros",
                 "plano-familiar-de-emergencia": "Plano familiar de emergência", "quando-ligar-192": "Quando ligar 192",
-                "verao-seguro": "Verão seguro no Rio", "bazar": "Bazar solidário",
+                "verao-seguro": "Verão seguro no Rio", "acidentes-em-casa": "Acidentes em casa",
+                "checklist-dengue": "Checklist contra a dengue", "cartaz-da-cruz-vermelha": "A Cruz Vermelha em uma página",
+                "bazar": "Bazar solidário",
                 "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
                 "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
