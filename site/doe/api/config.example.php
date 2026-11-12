@@ -32,6 +32,11 @@ return [
     'UNICO_ASSINATURA_TOKEN' => '',
     'UNICO_ASSINATURA_BASE_URL' => 'https://subscription.unicopag.com.br/api/v1',
 
+    // Doação internacional (/en/donate/): formulário em inglês, só cartão de crédito, doação única, sem CPF
+    // (documento numérico do país de quem doa). Com 0, a página em inglês mostra "escreva para nós". Ligar só
+    // depois do teste real com cartão emitido fora do Brasil: docs/doacao-internacional.md.
+    'DOACAO_INTERNACIONAL' => 0,
+
     // Valores sugeridos na página, em centavos, e o valor que já vem marcado.
     'DOACAO_VALORES' => [3000, 6000, 10000, 15000, 25000, 50000],
     'DOACAO_VALOR_PADRAO' => 6000,

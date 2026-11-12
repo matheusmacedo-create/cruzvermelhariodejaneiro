@@ -34,13 +34,39 @@ function mcp_doacao_validar(array $b): array
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         mcp_falhar(422, 'E-mail inválido.', ['campo' => 'email']);
     }
-    $cpf = mcp_digitos(mcp_texto($b['cpf'] ?? '', 20));
-    if (!mcp_cpf_valido($cpf)) {
-        mcp_falhar(422, 'CPF inválido. Confira os 11 números.', ['campo' => 'cpf']);
-    }
-    $telefone = mcp_telefone(mcp_texto($b['telefone'] ?? '', 30));
-    if ($telefone === '') {
-        mcp_falhar(422, 'Informe o telefone com DDD.', ['campo' => 'telefone']);
+    // Doação internacional (página em inglês): sem CPF. Entram o país, um documento só com números e o telefone
+    // com código do país; só cartão de crédito, uma vez. As mensagens daqui são traduzidas pela página, pelo `campo`.
+    $internacional = !empty($b['internacional']);
+    $documento = $pais = null;
+    if ($internacional) {
+        if (!mcp_doacao_internacional_ativa()) {
+            mcp_falhar(422, 'A doação internacional ainda não está disponível. Escreva para nós.', ['campo' => 'internacional']);
+        }
+        if ($frequencia !== 'unica') {
+            mcp_falhar(422, 'A doação internacional é única. Para doar todo mês, escreva para nós.', ['campo' => 'frequencia']);
+        }
+        $cpf = '';
+        $pais = mcp_doacao_pais(mcp_texto($b['pais'] ?? '', 4));
+        if ($pais === '') {
+            mcp_falhar(422, 'Informe o país.', ['campo' => 'pais']);
+        }
+        $documento = mcp_doacao_documento_internacional(mcp_texto($b['documento'] ?? '', 40));
+        if ($documento === '') {
+            mcp_falhar(422, 'Informe um documento de identificação só com números (de 5 a 20).', ['campo' => 'documento']);
+        }
+        $telefone = mcp_doacao_telefone_internacional(mcp_texto($b['telefone'] ?? '', 30));
+        if ($telefone === '') {
+            mcp_falhar(422, 'Informe o telefone com o código do país.', ['campo' => 'telefone']);
+        }
+    } else {
+        $cpf = mcp_digitos(mcp_texto($b['cpf'] ?? '', 20));
+        if (!mcp_cpf_valido($cpf)) {
+            mcp_falhar(422, 'CPF inválido. Confira os 11 números.', ['campo' => 'cpf']);
+        }
+        $telefone = mcp_telefone(mcp_texto($b['telefone'] ?? '', 30));
+        if ($telefone === '') {
+            mcp_falhar(422, 'Informe o telefone com DDD.', ['campo' => 'telefone']);
+        }
     }
     if (empty($b['aceite'])) {
         mcp_falhar(422, 'Confirme que leu o aviso de privacidade para concluir.', ['campo' => 'aceite']);
@@ -48,6 +74,9 @@ function mcp_doacao_validar(array $b): array
     $metodo = ($b['metodo'] ?? 'pix') === 'cartao' ? 'cartao' : 'pix';
     if (!in_array($metodo, mcp_doacao_metodos(), true)) {
         mcp_falhar(422, 'Por enquanto as doações são por PIX. Escolha PIX para continuar.', ['campo' => 'metodo']);
+    }
+    if ($internacional && $metodo !== 'cartao') {
+        mcp_falhar(422, 'De fora do Brasil a doação é no cartão de crédito.', ['campo' => 'metodo']);
     }
     if ($frequencia === 'mensal' && $metodo !== 'cartao') {
         mcp_falhar(422, 'A doação mensal é no cartão de crédito. Escolha cartão, ou faça uma doação única por PIX.', ['campo' => 'metodo']);
@@ -58,6 +87,7 @@ function mcp_doacao_validar(array $b): array
         'frequencia' => $frequencia, 'valor' => $valor, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email,
         'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => !empty($b['cobre_taxa']),
         'anonimo' => !empty($b['anonimo']),
+        'documento' => $documento, 'pais' => $pais, 'idioma' => ($b['idioma'] ?? '') === 'en' || $internacional ? 'en' : null,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -66,7 +96,7 @@ function mcp_doacao_validar(array $b): array
 
 function mcp_doacao_aplicar_limites(array $doador): void
 {
-    foreach ([['ip', mcp_ip(), MCP_DOACAO_LIMITE_IP], ['cpf', $doador['cpf'], MCP_DOACAO_LIMITE_CPF], ['email', $doador['email'], MCP_DOACAO_LIMITE_EMAIL]] as [$coluna, $valor, [$maximo, $janela]]) {
+    foreach ([['ip', mcp_ip(), MCP_DOACAO_LIMITE_IP], ['cpf', $doador['cpf'], MCP_DOACAO_LIMITE_CPF], ['documento', (string) $doador['documento'], MCP_DOACAO_LIMITE_CPF], ['email', $doador['email'], MCP_DOACAO_LIMITE_EMAIL]] as [$coluna, $valor, [$maximo, $janela]]) {
         if ($valor !== '' && mcp_doacao_contar_recentes($coluna, $valor, $janela) >= $maximo) {
             mcp_doacao_registrar(null, 'limite', "$coluna · $maximo em {$janela}s");
             mcp_falhar(429, 'Muitas tentativas seguidas. Aguarde alguns minutos e tente de novo.');
@@ -102,7 +132,7 @@ function mcp_doacao_montar_cobranca(array $doador, string $token, int $valor, in
         'amount' => $valor + $taxa,
         'payment_method' => $doador['metodo'] === 'pix' ? 'pix' : 'credit_card',
         'installments' => 1,
-        'customer' => ['name' => $doador['nome'], 'email' => $doador['email'], 'phone_number' => $doador['telefone'], 'document' => $doador['cpf']],
+        'customer' => ['name' => $doador['nome'], 'email' => $doador['email'], 'phone_number' => $doador['telefone'], 'document' => mcp_doacao_documento($doador)],
         'cart' => $cart,
         'postback_url' => mcp_site_url() . '/doe/api/webhook.php',
         'expire_in_days' => 1,
@@ -111,7 +141,7 @@ function mcp_doacao_montar_cobranca(array $doador, string $token, int $valor, in
             'token' => $token, 'tipo' => 'doacao', 'frequencia' => $doador['frequencia'], 'doador' => $doador['nome'],
             'cobre_taxa' => $doador['cobre_taxa'], 'anonima' => $doador['anonimo'],
             'utm_source' => $doador['utm_source'], 'utm_campaign' => $doador['utm_campaign'],
-        ],
+        ] + ($doador['pais'] !== null ? ['pais' => $doador['pais'], 'internacional' => true] : []),
     ];
 }
 
@@ -128,6 +158,7 @@ function mcp_doacao_gravar(array $doador, string $token, int $valor, int $taxa, 
         'email' => $doador['email'], 'telefone' => $doador['telefone'], 'metodo' => $doador['metodo'],
         'valor_centavos' => $valor, 'taxa_centavos' => $taxa, 'total_centavos' => $valor + $taxa,
         'cobre_taxa' => $doador['cobre_taxa'] ? 1 : 0, 'anonimo' => $doador['anonimo'] ? 1 : 0,
+        'documento' => $doador['documento'], 'pais' => $doador['pais'], 'idioma' => $doador['idioma'],
         'status' => $status === 'pago' ? 'pendente' : $status,
         'unicopag_hash' => $limitar($cobranca['hash'] ?? null, 64), 'unicopag_status' => $statusOrigem ?: null,
         'pix_copia_cola' => $pix ? ($pix['pix_qr_code'] ?? null) : null,
@@ -195,7 +226,8 @@ if ($doador['frequencia'] === 'mensal') {
     mcp_doacao_atualizar($id, ['assinatura_id' => mb_substr((string) $assinatura['id'], 0, 64)]);
     $doacao = mcp_doacao_aplicar_assinatura(mcp_doacao_por('id', (string) $id) ?? [], $assinatura);
     if ($doacao['status'] === 'recusado') {
-        mcp_json(mcp_doacao_publico($doacao) + ['ok' => false, 'erro' => 'O cartão foi recusado pelo emissor. Confira os dados, tente outro cartão ou doe com PIX.'], 402);
+        // O 'ok' => false vem primeiro: na união de arrays vale a chave da esquerda, e com a ordem trocada a recusa saía como ok.
+        mcp_json(['ok' => false, 'erro' => 'O cartão foi recusado pelo emissor. Confira os dados, tente outro cartão ou doe com PIX.'] + mcp_doacao_publico($doacao), 402);
     }
     mcp_json(mcp_doacao_publico($doacao), 201);
 }
@@ -225,7 +257,8 @@ if ($status === 'pago') {
     mcp_json(mcp_doacao_publico(mcp_doacao_aplicar_status($id, 'pago')), 201);
 }
 if ($status === 'recusado') {
-    mcp_json(mcp_doacao_publico($doacao) + ['ok' => false, 'erro' => 'O cartão foi recusado pelo emissor. Confira os dados, tente outro cartão ou doe com PIX.'], 402);
+    // O 'ok' => false vem primeiro: na união de arrays vale a chave da esquerda, e com a ordem trocada a recusa saía como ok.
+    mcp_json(['ok' => false, 'erro' => 'O cartão foi recusado pelo emissor. Confira os dados, tente outro cartão ou doe com PIX.'] + mcp_doacao_publico($doacao), 402);
 }
 // Cartão em análise: a página acompanha pelo status.
 mcp_json(mcp_doacao_publico($doacao), 201);

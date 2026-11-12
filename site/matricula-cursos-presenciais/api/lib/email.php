@@ -108,10 +108,17 @@ function mcp_moldura(string $titulo, string $corpo, array $opcoes = []): string
     $siteVisivel = mcp_escapar((string) preg_replace('#^https?://#', '', mcp_site_url()));
     $logo = mcp_escapar(mcp_email_logo());
     $f = MCP_EMAIL_FONTE;
+    // 'idioma' => 'en': rodapé e marcação em inglês (comprovante da doação feita em /en/donate/). Sem chat: ele é em português.
+    $ingles = ($opcoes['idioma'] ?? '') === 'en';
+    $lang = $ingles ? 'en' : 'pt-BR';
+    $duvidas = $ingles
+        ? "<strong>Questions?</strong> Reply to this e-mail or write to <a href=\"mailto:$contato\" style=\"color:#cc0000;font-weight:700;text-decoration:none\">$contato</a>. We answer in English."
+        : "<strong>Dúvidas?</strong> Responda este e-mail ou escreva para <a href=\"mailto:$contato\" style=\"color:#cc0000;font-weight:700;text-decoration:none\">$contato</a>. Se preferir, use o chat em <a href=\"$site/#chat\" style=\"color:#cc0000;text-decoration:none\">$siteVisivel</a>.";
+    $filial = $ingles ? 'Brazilian Red Cross · Rio de Janeiro State Branch (Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro)' : 'Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro';
     $pre = $preheader !== ''
         ? '<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#f7f8fa">' . mcp_escapar($preheader) . str_repeat('&nbsp;&zwnj;', 40) . '</div>'
         : '';
-    return "<!doctype html><html lang=\"pt-BR\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+    return "<!doctype html><html lang=\"$lang\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
         . "<meta name=\"color-scheme\" content=\"light\"><meta name=\"supported-color-schemes\" content=\"light\"><title>$t</title>"
         . "<link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap\" rel=\"stylesheet\">"
         . "<style>body{margin:0;padding:0}a{color:#cc0000}@media (max-width:620px){.mcp-wrap{padding:12px 6px!important}.mcp-pad{padding-left:20px!important;padding-right:20px!important}.mcp-h1{font-size:24px!important}}</style></head>"
@@ -124,11 +131,11 @@ function mcp_moldura(string $titulo, string $corpo, array $opcoes = []): string
         . "<h1 class=\"mcp-h1\" style=\"margin:0;font-size:27px;line-height:1.15;letter-spacing:-.02em;color:#0f1318;font-weight:800\">$t</h1></td></tr>"
         . "<tr><td class=\"mcp-pad\" style=\"padding:10px 32px 30px;font-size:16px;line-height:1.55;color:#1a202c\">$corpo</td></tr>"
         . "<tr><td class=\"mcp-pad\" bgcolor=\"#f7f8fa\" style=\"padding:20px 32px;background:#f7f8fa;border-top:1px solid #e2e8f0;font-size:13px;line-height:1.55;color:#718096\">"
-        . "<p style=\"margin:0 0 8px;color:#1a202c\"><strong>Dúvidas?</strong> Responda este e-mail ou escreva para <a href=\"mailto:$contato\" style=\"color:#cc0000;font-weight:700;text-decoration:none\">$contato</a>. Se preferir, use o chat em <a href=\"$site/#chat\" style=\"color:#cc0000;text-decoration:none\">$siteVisivel</a>.</p>"
+        . "<p style=\"margin:0 0 8px;color:#1a202c\">$duvidas</p>"
         . ($fornecedor !== ''
             ? "<p style=\"margin:0 0 4px\">Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro</p><p style=\"margin:0\">$fornecedor</p></td></tr>"
-            : "<p style=\"margin:0 0 4px\">Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro · CNPJ " . MCP_EMAIL_CNPJ . "</p>"
-              . "<p style=\"margin:0\">Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · CEP 20230-130</p></td></tr>")
+            : "<p style=\"margin:0 0 4px\">$filial · CNPJ " . MCP_EMAIL_CNPJ . "</p>"
+              . "<p style=\"margin:0\">Praça da Cruz Vermelha, 10 · Centro · Rio de Janeiro · RJ · " . ($ingles ? '20230-130 · Brazil' : 'CEP 20230-130') . "</p></td></tr>")
         . "</table>"
         . ($motivo !== '' ? "<p style=\"margin:14px auto 0;max-width:600px;font-family:$f;font-size:12px;line-height:1.5;color:#a0aec0;text-align:center\">" . mcp_escapar($motivo) . "</p>" : '')
         . "</td></tr></table></body></html>";

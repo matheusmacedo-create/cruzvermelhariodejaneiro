@@ -116,6 +116,111 @@ function mcp_doacao_mensal_ativa(): bool
         && mcp_doacao_plano_mensal() !== '' && in_array('cartao', mcp_doacao_metodos(), true);
 }
 
+/**
+ * Doação internacional (página em inglês, /en/donate/): cartão de crédito, uma vez, para quem não tem CPF.
+ * No lugar do CPF vai um documento de identificação só com números (passaporte ou identidade), que é o que a
+ * Unicopag exige em customer.document (sondado em 21/09/2026: numérico e nada além disso; README). Fica desligada
+ * até DOACAO_INTERNACIONAL = 1 em /doe/api/config.php, depois do teste real com cartão de fora (docs/doacao-internacional.md).
+ */
+function mcp_doacao_internacional_ativa(): bool
+{
+    return (int) mcp_doacao_cfg('DOACAO_INTERNACIONAL', 0) === 1 && in_array('cartao', mcp_doacao_metodos(), true);
+}
+
+/**
+ * Documento de quem doa de fora: só números, de 5 a 20. Espaço, ponto e hífen saem; letra não é cortada
+ * (cortar a letra do documento de alguém é inventar outro documento): devolve '' e a página pede outro.
+ */
+function mcp_doacao_documento_internacional(string $bruto): string
+{
+    $limpo = (string) preg_replace('/[\s.\-\/]+/', '', $bruto);
+    return ctype_digit($limpo) && strlen($limpo) >= 5 && strlen($limpo) <= 20 ? $limpo : '';
+}
+
+/** Telefone com código do país, só dígitos (E.164: até 15; aqui, de 8 a 15, sem zero na frente). '' se inválido. */
+function mcp_doacao_telefone_internacional(string $bruto): string
+{
+    $digitos = ltrim(mcp_digitos($bruto), '0');
+    return strlen($digitos) >= 8 && strlen($digitos) <= 15 ? $digitos : '';
+}
+
+/** País em ISO 3166-1 alfa-2 (duas letras maiúsculas). '' se não for. */
+function mcp_doacao_pais(string $bruto): string
+{
+    $pais = strtoupper(trim($bruto));
+    return preg_match('/^[A-Z]{2}$/', $pais) ? $pais : '';
+}
+
+/** Idioma da doação: 'en' (página em inglês) ou 'pt'. Decide a língua do comprovante e o endereço de acompanhamento. */
+function mcp_doacao_idioma(array $d): string
+{
+    return ($d['idioma'] ?? '') === 'en' ? 'en' : 'pt';
+}
+
+/** Documento enviado ao meio de pagamento: o CPF, ou o documento estrangeiro de quem doa de fora. */
+function mcp_doacao_documento(array $d): string
+{
+    return (string) ($d['cpf'] ?? '') !== '' ? (string) $d['cpf'] : (string) ($d['documento'] ?? '');
+}
+
+/**
+ * Câmbio de referência (reais por 1 dólar, euro e libra), para a página em inglês mostrar o valor aproximado na
+ * moeda de quem doa. Fonte: PTAX de venda do Banco Central (dados abertos, sem chave). Guardado em arquivo por 12 h;
+ * se o Banco Central não responder, vale o último guardado (até 7 dias) e, sem ele, a página fica sem a
+ * aproximação. A cobrança é sempre em reais; quem converte é o emissor do cartão.
+ */
+function mcp_doacao_cambio(): ?array
+{
+    $arquivo = (string) (getenv('DOE_CAMBIO_ARQUIVO') ?: sys_get_temp_dir() . '/cvrj-doe-cambio.json');
+    $guardado = is_file($arquivo) ? json_decode((string) @file_get_contents($arquivo), true) : null;
+    $guardado = is_array($guardado) ? $guardado : [];
+    $agora = time();
+    $valido = static fn(array $c): bool => (float) ($c['usd'] ?? 0) > 0 && (float) ($c['eur'] ?? 0) > 0;
+    if ($valido($guardado) && $agora - (int) ($guardado['lido_em'] ?? 0) < 12 * 3600) {
+        return mcp_doacao_cambio_publico($guardado);
+    }
+    // Falhou há pouco: não tenta de novo a cada visita (o info.php é a primeira chamada da página).
+    if ($agora - (int) ($guardado['tentado_em'] ?? 0) >= 1800) {
+        $novo = mcp_doacao_cambio_buscar();
+        $guardado = $novo ? $novo + ['lido_em' => $agora, 'tentado_em' => $agora] : ['tentado_em' => $agora] + $guardado;
+        @file_put_contents($arquivo, json_encode($guardado), LOCK_EX);
+    }
+    return $valido($guardado) && $agora - (int) ($guardado['lido_em'] ?? 0) < 7 * 86400 ? mcp_doacao_cambio_publico($guardado) : null;
+}
+
+function mcp_doacao_cambio_publico(array $c): array
+{
+    return array_filter(['usd' => (float) $c['usd'], 'eur' => (float) $c['eur'], 'gbp' => (float) ($c['gbp'] ?? 0)]) + ['data' => (string) ($c['data'] ?? '')];
+}
+
+/** Última PTAX de venda dos últimos 10 dias (fim de semana e feriado não têm cotação). null se faltar dólar ou euro. */
+function mcp_doacao_cambio_buscar(): ?array
+{
+    $base = 'https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/';
+    $periodo = "@dataInicial='" . gmdate('m-d-Y', time() - 10 * 86400) . "'&@dataFinalCotacao='" . gmdate('m-d-Y') . "'";
+    $fim = '&$top=1&$orderby=dataHoraCotacao%20desc&$format=json&$select=cotacaoVenda,dataHoraCotacao';
+    $urls = [
+        'usd' => $base . 'CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?' . $periodo . $fim,
+        'eur' => $base . "CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@moeda='EUR'&" . $periodo . $fim,
+        'gbp' => $base . "CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@moeda='GBP'&" . $periodo . $fim,
+    ];
+    $cambio = [];
+    foreach ($urls as $moeda => $url) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 2, CURLOPT_TIMEOUT => 3, CURLOPT_PROTOCOLS => CURLPROTO_HTTPS]);
+        $resposta = curl_exec($ch);
+        curl_close($ch);
+        $linha = is_string($resposta) ? (json_decode($resposta, true)['value'][0] ?? null) : null;
+        $valor = is_array($linha) ? (float) ($linha['cotacaoVenda'] ?? 0) : 0.0;
+        // Faixa de sanidade: um número absurdo (erro de formato) não vai para a página.
+        if ($valor > 1 && $valor < 50) {
+            $cambio[$moeda] = round($valor, 4);
+            $cambio['data'] = substr((string) ($linha['dataHoraCotacao'] ?? ''), 0, 10);
+        }
+    }
+    return isset($cambio['usd'], $cambio['eur']) ? $cambio : null;
+}
+
 function mcp_doacao_teste(): bool
 {
     return (int) mcp_doacao_cfg('DOACAO_TESTE_CENTAVOS', 0) > 0;
@@ -162,9 +267,10 @@ function mcp_doacao_url(string $token = ''): string
 }
 
 /** Tela de acompanhamento e agradecimento, com endereço próprio: é para onde os e-mails levam. */
-function mcp_doacao_url_obrigado(string $token): string
+function mcp_doacao_url_obrigado(string $token, string $idioma = 'pt'): string
 {
-    return mcp_site_url() . '/doe/obrigado/?t=' . rawurlencode($token);
+    // A doação feita na página em inglês é acompanhada lá mesmo (/en/donate/?t=<token>), em inglês.
+    return mcp_site_url() . ($idioma === 'en' ? '/en/donate/' : '/doe/obrigado/') . '?t=' . rawurlencode($token);
 }
 
 // ----------------------------------------------------------------------------- banco
@@ -223,7 +329,12 @@ function mcp_doacao_db(): PDO
     // Colunas acrescentadas depois da primeira versão da tabela.
     // gateway: com qual provedor a cobrança nasceu. A consulta de status e o postback usam o da própria doação,
     // então uma doação pendente da Unicopag continua confirmando depois da virada para a Donaty (e vice-versa).
-    mcp_garantir_colunas($pdo, 'mcp_doacoes', ['anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0', 'gateway' => "VARCHAR(12) NOT NULL DEFAULT 'unicopag'"]);
+    // documento, pais, idioma (doação internacional, 12/11/2026): quem doa de fora não tem CPF (a coluna cpf fica ''),
+    // informa um documento numérico do país dele, o país e recebe o comprovante em inglês.
+    mcp_garantir_colunas($pdo, 'mcp_doacoes', [
+        'anonimo' => 'TINYINT(1) NOT NULL DEFAULT 0', 'gateway' => "VARCHAR(12) NOT NULL DEFAULT 'unicopag'",
+        'documento' => 'VARCHAR(20) NULL', 'pais' => 'CHAR(2) NULL', 'idioma' => 'VARCHAR(5) NULL',
+    ]);
     // Cada cobrança paga de uma assinatura vira uma linha de mcp_doacoes (comprovante e aviso por mês). A chave
     // primária é a trava: postback e consulta simultâneos não registram o mesmo mês duas vezes.
     $pdo->exec("CREATE TABLE IF NOT EXISTS mcp_doacoes_cobrancas (
@@ -270,7 +381,7 @@ function mcp_doacao_atualizar(int $id, array $campos): void
 /** Quantas doações uma chave (ip, cpf ou email) abriu nos últimos N segundos. Base dos freios. */
 function mcp_doacao_contar_recentes(string $coluna, string $valor, int $segundos): int
 {
-    if (!in_array($coluna, ['ip', 'cpf', 'email'], true)) {
+    if (!in_array($coluna, ['ip', 'cpf', 'email', 'documento'], true)) {
         throw new InvalidArgumentException("coluna não permitida: $coluna");
     }
     $stmt = mcp_doacao_db()->prepare("SELECT COUNT(*) FROM mcp_doacoes WHERE $coluna = ? AND criado_em > ?");
@@ -342,7 +453,7 @@ function mcp_doacao_aplicar_status(int $id, string $novo): array
 }
 
 // ----------------------------------------------------------------------------- visão pública
-/** O que a página pode receber: nunca CPF, hash da transação, IP ou número de cartão. */
+/** O que a página pode receber: nunca CPF, documento, hash da transação, IP ou número de cartão. */
 function mcp_doacao_publico(array $d): array
 {
     return [
@@ -366,7 +477,8 @@ function mcp_doacao_publico(array $d): array
         'cartao' => $d['metodo'] === 'cartao' ? ['bandeira' => $d['bandeira'], 'ultimos4' => $d['ultimos4']] : null,
         'criado_em' => $d['criado_em'],
         'pago_em' => $d['pago_em'],
-        'url' => mcp_doacao_url_obrigado((string) $d['token']),
+        'url' => mcp_doacao_url_obrigado((string) $d['token'], mcp_doacao_idioma($d)),
+        'idioma' => mcp_doacao_idioma($d),
         'teste' => mcp_doacao_teste(),
     ];
 }

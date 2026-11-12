@@ -10,7 +10,12 @@
 
 /* ---------- topo: texto à esquerda, cartão à direita */
 .doe-hero { padding: 44px 0 64px; background: linear-gradient(180deg, var(--d-soft) 0%, #fff 62%); }
-.doe-grid { display: grid; grid-template-columns: 1fr 460px; gap: 48px; align-items: start; }
+/* Três blocos: apresentação, cartão e lista de confiança. No computador o cartão ocupa a coluna da direita; no
+   celular ele sobe para logo depois do título, antes da lista (quem abre a página no celular vê onde doar sem rolar tanto). */
+.doe-grid { display: grid; grid-template-columns: 1fr 460px; grid-template-areas: "intro card" "conf card"; grid-template-rows: auto 1fr; gap: 26px 48px; align-items: start; }
+.doe-intro { grid-area: intro; }
+.doe-grid > .doe-card { grid-area: card; }
+.doe-grid > .doe-confianca { grid-area: conf; margin-top: 0; }
 /* O h1 da home é branco e gigante (hero escuro); aqui o fundo é claro e o título divide espaço com o cartão. */
 .doe-hero h1 { margin: 0 0 14px; color: var(--d-black); font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1.04; letter-spacing: -.035em; }
 .doe-hero .lead { max-width: 30em; }
@@ -49,6 +54,10 @@
 .doe-campo { display: block; margin-bottom: 12px; }
 .doe-campo span { display: block; margin-bottom: 6px; font-size: .84rem; font-weight: 700; color: var(--d-black); }
 .doe-campo input { width: 100%; min-height: 48px; border: 1.5px solid var(--d-line); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 1rem; color: var(--d-black); background: #fff; transition: border-color .15s, box-shadow .15s; }
+.doe-campo select { width: 100%; min-height: 48px; border: 1.5px solid var(--d-line); border-radius: 12px; padding: 0 14px; font: inherit; font-size: 1rem; color: var(--d-black); background: #fff; transition: border-color .15s, box-shadow .15s; }
+.doe-campo select:focus { outline: 0; border-color: var(--d-red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .1); }
+.doe-campo.erro select { border-color: var(--d-red); background: #fff5f5; }
+.doe-campo .doe-dica { display: block; margin-top: 6px; font-size: .8rem; line-height: 1.45; font-weight: 400; color: var(--d-muted); }
 .doe-campo input:focus { outline: 0; border-color: var(--d-red); box-shadow: 0 0 0 4px rgba(204, 0, 0, .1); }
 .doe-campo.erro input { border-color: var(--d-red); background: #fff5f5; }
 .doe-dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -60,6 +69,7 @@
 .doe-caixa.marcado { border-color: var(--d-red); background: #fff5f5; }
 .doe-caixa input { margin: 2px 0 0; width: 18px; height: 18px; accent-color: var(--d-red); flex-shrink: 0; }
 .doe-caixa b { font-weight: 800; }
+.doe-caixa a { color: var(--d-red); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
 
 .doe-resumo { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 18px 0 12px; padding-top: 14px; border-top: 2px solid var(--d-black); font-weight: 800; }
 .doe-resumo span { font-size: .92rem; }
@@ -105,8 +115,30 @@
 .doe-dado b { font-size: 1rem; color: var(--d-black); font-weight: 800; }
 .doe-dado p { margin: 4px 0 0; font-size: .88rem; line-height: 1.5; color: var(--d-muted); }
 
+/* ---------- doação internacional (/en/donate/) e o atalho para ela em /doe/ */
+.doa-valores { grid-template-columns: repeat(2, 1fr); }
+.doa-valores .doe-op { padding: 14px 10px; font-size: 1.08rem; }
+.doa-valores .doe-op small:empty { display: none; }
+.doa-aprox { margin: 10px 0 0; min-height: 1.3em; font-size: .88rem; font-weight: 700; color: var(--d-muted); text-align: center; }
+.doa-aprox-total { margin: -4px 0 14px; text-align: right; font-weight: 600; font-size: .82rem; }
+.doe-aviso svg, .doe-aviso .ico { width: 12px; height: 12px; fill: var(--d-muted); vertical-align: -1px; margin-right: 3px; }
+.doa-fora { text-align: center; }
+.doa-fora h2 { margin: 0 0 8px; font-size: 1.28rem; letter-spacing: -.01em; }
+.doa-fora p { margin: 0 0 16px; font-size: .96rem; line-height: 1.55; color: var(--d-muted); }
+.doa-fora:not([hidden]) ~ .doa-cpf { display: none; }
+.doa-cpf, .doe-fora-do-brasil { padding-top: 14px; border-top: 1px solid var(--d-line); font-size: .86rem; }
+.doa-cpf a, .doe-fora-do-brasil a, .doa-fora .doe-aviso a { color: var(--d-red); font-weight: 700; }
+.doa-quem { display: grid; grid-template-columns: 1fr 520px; gap: 44px; align-items: center; }
+.doa-quem img { width: 100%; height: auto; border-radius: 18px; display: block; }
+.doa-links { margin: 16px 0 0; font-size: .95rem; line-height: 1.9; }
+.doa-links a { color: var(--d-red); font-weight: 700; }
+.doa-fim { text-align: center; }
+.doa-fim .lead { margin-left: auto; margin-right: auto; }
+.doa-fim .cta-row { justify-content: center; margin-top: 24px; }
+
 @media (max-width: 1040px) {
-  .doe-grid { grid-template-columns: 1fr; gap: 34px; }
+  .doe-grid { grid-template-columns: 1fr; grid-template-areas: "intro" "card" "conf"; grid-template-rows: auto; gap: 24px; }
+  .doa-quem { grid-template-columns: 1fr; gap: 26px; }
   .doe-card { position: static; }
 }
 @media (max-width: 620px) {

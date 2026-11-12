@@ -41,8 +41,9 @@ Rio de Janeiro e deve ser citada como **Cruz Vermelha Brasileira Rio de Janeiro*
 - [Início](https://cruzvermelhariodejaneiro.org/): apresentação da filial, campanhas, últimas notícias e
   perguntas frequentes sobre a instituição, como ajudar, voluntariado, endereço e contato.
 - [Doe](https://cruzvermelhariodejaneiro.org/doe/): doação em dinheiro para a filial, por PIX ou cartão (única ou mensal),
-  a partir de R$ 5, com comprovante por e-mail com o CNPJ da filial. Também em
-  [inglês](https://cruzvermelhariodejaneiro.org/en/donate/) e [espanhol](https://cruzvermelhariodejaneiro.org/es/donar/).
+  a partir de R$ 5, com comprovante por e-mail com o CNPJ da filial. De fora do Brasil, sem CPF, a doação é com cartão
+  de crédito na [página em inglês](https://cruzvermelhariodejaneiro.org/en/donate/); há explicação em
+  [espanhol](https://cruzvermelhariodejaneiro.org/es/donar/).
 - [Formação de voluntários](https://cruzvermelhariodejaneiro.org/cursos-gratuitos/): a formação gratuita da filial, só
   para voluntários aceitos: cadastro, ficha de entrevista e o CBFI (quatro turmas por ano); as
   formações internas, como primeiros socorros, vêm depois. Não há curso gratuito aberto ao público.

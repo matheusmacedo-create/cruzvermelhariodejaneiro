@@ -23,4 +23,8 @@ mcp_json([
         'cartao' => ['pct' => (float) mcp_doacao_cfg('TAXA_CARTAO_PCT', 0), 'fixa' => (int) mcp_doacao_cfg('TAXA_CARTAO_FIXA', 0)],
     ],
     'teste' => mcp_doacao_teste(),
+    // Doação internacional (/en/donate/): se o formulário em inglês pode cobrar e o câmbio de referência.
+    // ?cambio=1 só a página em inglês manda: a página em português não precisa esperar o Banco Central.
+    'internacional' => mcp_doacao_internacional_ativa(),
+    'cambio' => isset($_GET['cambio']) && mcp_doacao_internacional_ativa() ? mcp_doacao_cambio() : null,
 ]);

@@ -102,7 +102,7 @@
           ],
           [
             "Donate",
-            "PIX or card, once or monthly, with a Brazilian CPF. From outside Brazil, write to us — the donation page explains how.",
+            "By credit card from any country, in English, without a Brazilian tax number. In Brazil, by PIX or card, once or monthly.",
             "Go to the donation page",
             "doar"
           ],
@@ -309,39 +309,186 @@
         "cta_voluntario": "Register as a volunteer"
       },
       "doar": {
-        "titulo": "Donate to the Brazilian Red Cross — Rio de Janeiro",
-        "descricao": "Donate to the Brazilian Red Cross Rio de Janeiro branch by PIX. Your donation funds volunteer training and community action across the state.",
-        "sobrancelha": "Support our work",
-        "h1": "Donate to the Brazilian Red Cross — Rio de Janeiro",
-        "linha": "Your donation stays with the Rio de Janeiro branch and funds volunteer training, first-aid training, preventive education and community action across the state.",
-        "como_titulo": "How it works",
-        "como": [
+        "formulario": true,
+        "titulo": "Donate to the Brazilian Red Cross in Rio de Janeiro by credit card",
+        "descricao": "Donate to the Brazilian Red Cross in Rio de Janeiro from any country, by credit card, in English. No Brazilian tax number needed. Receipt by e-mail.",
+        "sobrancelha": "Donate from anywhere in the world",
+        "h1": "Donate to the Brazilian Red Cross in Rio de Janeiro",
+        "linha": "Give by credit card, in English, from any country. Your gift funds volunteer training, first-aid training and community action across the state of Rio de Janeiro.",
+        "confianca": [
           [
-            "Who can donate online",
-            "The form asks for a CPF, the Brazilian individual taxpayer number, and a phone number with a Brazilian area code. If you live in Brazil you almost certainly have a CPF. If you are outside Brazil, read “Donating from outside Brazil” below."
+            "credit-card",
+            "<b>International credit cards accepted.</b> No Brazilian tax number (CPF) needed."
           ],
           [
-            "Choose an amount and pay by PIX",
-            "Any amount helps. You can also cover the payment processing cost so the full amount reaches the branch, and you may donate anonymously."
+            "certificate",
+            "<b>Registered non-profit</b>, Brazilian registration (CNPJ) 08.560.973/0001-97, recognised as a public-interest organisation by municipal and state law."
+          ],
+          [
+            "lock",
+            "<b>Secure payment</b> on the branch's official website. Your card details are not stored by us."
+          ],
+          [
+            "envelope",
+            "<b>Receipt by e-mail</b>, in English, as soon as the payment is confirmed."
+          ]
+        ],
+        "valores": [
+          10000,
+          25000,
+          50000,
+          100000
+        ],
+        "valor_padrao": 25000,
+        "impacto_sobrancelha": "Where your donation goes",
+        "impacto_titulo": "Every gift becomes training, presence and response.",
+        "impacto_linha": "The amounts below are reference points, not fixed packages: the branch puts the money where the need is greatest each month.",
+        "impacto": [
+          [
+            "R$ 30",
+            "First-aid supplies",
+            "Materials for hands-on classes: bandages, gloves and training equipment used by every group."
+          ],
+          [
+            "R$ 60",
+            "Preventive education",
+            "Guidance for the public at community events: what to do before help arrives."
+          ],
+          [
+            "R$ 100",
+            "Trained volunteers",
+            "Initial and continuing training for the volunteers who wear the vest in the streets."
+          ],
+          [
+            "R$ 250",
+            "Community action",
+            "Campaigns such as the Winter Clothing Drive and Impacto das Cores, which reach the people who need them most."
+          ]
+        ],
+        "quem_sobrancelha": "Transparency",
+        "quem_titulo": "You know exactly who you are supporting.",
+        "quem_linha": "The Brazilian Red Cross — Rio de Janeiro Branch is the Rio de Janeiro State branch of the Brazilian Red Cross, the National Society of the International Red Cross and Red Crescent Movement in Brazil. Its work is carried out largely by volunteers trained by the branch itself, from its own headquarters in the centre of Rio de Janeiro.",
+        "foto_alt": "Volunteers of the Rio de Janeiro branch, in white T-shirts and red vests with the red cross, gathered in the auditorium of the Red Cross Palace",
+        "dados": [
+          [
+            "Legal name",
+            "Cruz Vermelha Brasileira<br>Filial do Estado do Rio de Janeiro",
+            ""
+          ],
+          [
+            "Brazilian registration (CNPJ)",
+            "08.560.973/0001-97",
+            "The number shown on the receipt we send by e-mail."
+          ],
+          [
+            "Public-interest status",
+            "Municipal and state",
+            "Municipal Law 5,153/2010 and State Law 9,984/2023."
+          ],
+          [
+            "Headquarters",
+            "Praça da Cruz Vermelha, 10",
+            "Red Cross Palace, Centro, Rio de Janeiro, Brazil."
+          ]
+        ],
+        "quem_links": [
+          [
+            "About the branch",
+            "/en/#sobre"
+          ],
+          [
+            "Our team",
+            "/en/our-team/"
+          ],
+          [
+            "Published documents (in Portuguese)",
+            "/transparencia/"
+          ]
+        ],
+        "como_sobrancelha": "How it works",
+        "como_titulo": "Three steps, about two minutes.",
+        "como": [
+          [
+            "Choose an amount",
+            "Amounts are in Brazilian reais (R$), with the approximate value in US dollars, euros and pounds beside them."
+          ],
+          [
+            "Enter your details and card",
+            "Name, e-mail, country, phone and an ID number, then your credit card. No Brazilian tax number needed."
           ],
           [
             "Get your receipt",
-            "A receipt with a protocol number is sent to your e-mail as soon as the payment clears."
+            "The confirmation appears on screen and the receipt, with a reference number, arrives by e-mail."
           ]
         ],
-        "idioma_titulo": "A note on language",
-        "idioma_texto": "The payment screen itself is in Portuguese. It is short — amount, name, e-mail, CPF, phone number, then PIX or card — and the buttons are: <b>Doar</b> (donate), <b>PIX</b>, <b>Cartão</b> (card), <b>Mensal</b> (monthly), <b>Doar anonimamente</b> (donate anonymously) and <b>Copiar código PIX</b> (copy PIX code). If anything is unclear, write to us and we will help in English.",
-        "transparencia_titulo": "Where the money goes",
-        "transparencia": "The Brazilian Red Cross — Rio de Janeiro Branch is a non-profit organisation, CNPJ 08.560.973/0001-97, officially recognised as a public-interest organisation by municipal and state law. Donations fund volunteer training, first-aid training, preventive education, community campaigns and the running costs of the branch. Donations are made by PIX and processed by Donaty.",
-        "botao": "Go to the donation page",
-        "botao_nota": "The donation page is in Portuguese.",
-        "exterior_titulo": "Donating from outside Brazil",
-        "exterior_paragrafos": [
-          "From outside Brazil, PIX is not an option, and the reason is structural rather than a rule of ours. PIX is Brazil’s instant payment system, operated by the country’s Central Bank, and every PIX payment moves money between accounts held at Brazilian banks — there is no way to send one from a bank abroad. Our online form also takes credit cards, once or every month, but it is in Portuguese and asks for a CPF (the Brazilian taxpayer number) to issue each charge.",
-          "The form also asks for a CPF to issue each charge. Foreign residents in Brazil who already have one can use the form in full, by PIX or card. If you have no CPF or are outside Brazil, write to us with the amount you would like to give and we will arrange the payment with you directly."
+        "como_botao": "Choose your donation amount",
+        "faq_sobrancelha": "Questions and answers",
+        "faq_titulo": "Before you donate",
+        "faq": [
+          [
+            "Can I donate from outside Brazil?",
+            "Yes. This page takes credit card donations from any country, in English, without a Brazilian tax number (CPF). You choose an amount, enter your details and your card, and the receipt arrives by e-mail. PIX, Brazil's instant payment system, only works between accounts at Brazilian banks, so from abroad the card is the way to give.",
+            []
+          ],
+          [
+            "Which currency will I be charged in?",
+            "In Brazilian reais (R$). Your card issuer converts the amount to your own currency, at its own exchange rate, and may add a foreign transaction fee. The amounts in US dollars, euros and pounds shown on this page are approximations based on the Central Bank of Brazil's reference rate, so the figure on your statement may differ slightly.",
+            []
+          ],
+          [
+            "Why do you ask for an ID number?",
+            "The payment company in Brazil requires an identification number for every charge. Brazilians use their CPF; from abroad you can use your passport number or national ID number, as long as it has digits only. If your passport number has letters, use another government-issued ID that is all digits (a national ID, tax number or driving licence number), or write to us and we will help. The number is used to issue the charge and for the branch's accounting records, and is never made public.",
+            []
+          ],
+          [
+            "Is it safe? Who processes the payment?",
+            "The page is on the branch's official domain, over an encrypted connection. Card donations are processed by ÚnicoPag, a Brazilian payment company. Your card details pass through our server only on their way to ÚnicoPag, at the moment of payment, and are not stored by us. How we handle your data is set out in the Privacy Policy.",
+            [
+              [
+                "Privacy Policy",
+                "/en/privacy/"
+              ]
+            ]
+          ],
+          [
+            "My card was declined. What can I do?",
+            "Some banks block a first charge from another country as a precaution. Approve the charge in your banking app or call your bank, then try again, or use another credit card. If it still does not go through, write to contato@cruzvermelhariodejaneiro.org and we will help in English.",
+            []
+          ],
+          [
+            "Will I get a receipt? Is my donation tax-deductible?",
+            "You receive a receipt by e-mail as soon as the payment is confirmed, with the amount, the date, a reference number and the branch's Brazilian registration number (CNPJ). The receipt is issued in Brazil. Whether a donation to a Brazilian non-profit can be deducted in your country depends on your local tax rules, and we cannot confirm that for you.",
+            []
+          ],
+          [
+            "Can I give every month?",
+            "From this page, donations are one-off for now. Monthly giving is available on the Portuguese donation page for donors with a Brazilian tax number (CPF). If you would like to give regularly from abroad, write to us and we will arrange it with you.",
+            [
+              [
+                "Portuguese donation page",
+                "/doe/"
+              ]
+            ]
+          ],
+          [
+            "I live in Brazil or have a CPF. Which page should I use?",
+            "Use the Portuguese donation page: with a CPF you can give by PIX or credit card, once or every month. The form is short, and you can write to us in English if anything is unclear.",
+            [
+              [
+                "Portuguese donation page",
+                "/doe/"
+              ]
+            ]
+          ],
+          [
+            "Can my company or National Society support the branch?",
+            "Yes. Sister National Societies, institutions and companies wishing to partner, donate institutionally or sponsor a campaign can write to contato@cruzvermelhariodejaneiro.org. We answer in English.",
+            []
+          ]
         ],
-        "outra_forma_titulo": "Other ways to help",
-        "outra_forma": "Sister National Societies, institutions and companies wishing to partner, donate institutionally or sponsor a campaign can write to us directly. For clothing, blankets and shoes, the Winter Clothing Drive receives donations at our headquarters, Monday to Friday, 10am to 5pm."
+        "fim_titulo": "Ready to help?",
+        "fim_linha": "It takes about two minutes, and every amount counts.",
+        "fim_botao": "Donate now"
       },
       "rodape": {
         "sobre": "About",
@@ -510,7 +657,7 @@
           ],
           [
             "Donar",
-            "PIX o tarjeta, una vez o cada mes, con CPF brasileño. Desde fuera de Brasil, escríbanos — la página de donación explica cómo.",
+            "PIX o tarjeta, una vez o cada mes, con CPF brasileño. Desde fuera de Brasil, con tarjeta de crédito en el formulario en inglés.",
             "Ir a la página de donación",
             "doar"
           ],
@@ -726,7 +873,7 @@
         "como": [
           [
             "Quién puede donar en línea",
-            "El formulario pide el CPF, el número de contribuyente individual brasileño, y un teléfono con código de área de Brasil. Si vive en Brasil, es casi seguro que tiene CPF. Si está fuera de Brasil, lea “Donar desde fuera de Brasil” más abajo."
+            "El formulario en portugués pide el CPF, el número de contribuyente individual brasileño, y un teléfono con código de área de Brasil. Si vive en Brasil, es casi seguro que tiene CPF. Si está fuera de Brasil, lea “Donar desde fuera de Brasil” más abajo: hay un formulario en inglés para tarjeta de crédito, sin CPF."
           ],
           [
             "Elija el importe y pague por PIX",
@@ -745,11 +892,12 @@
         "botao_nota": "La página de donación está en portugués.",
         "exterior_titulo": "Donar desde fuera de Brasil",
         "exterior_paragrafos": [
-          "Desde fuera de Brasil el PIX no es una opción, y el motivo es estructural, no una regla nuestra. El PIX es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y cada pago por PIX mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. Nuestro formulario en línea también acepta tarjeta de crédito, una vez o todos los meses, pero está en portugués y pide un CPF (el número de contribuyente brasileño) para emitir cada cobro.",
-          "El formulario también pide el CPF para emitir cada cobro. Quien vive en Brasil como extranjero y ya lo tiene puede usar el formulario completo, por PIX o tarjeta. Si no tiene CPF o está fuera de Brasil, escríbanos con el importe que desea donar y organizamos el pago directamente con usted."
+          "Desde fuera de Brasil el PIX no es una opción, y el motivo es estructural, no una regla nuestra. El PIX es el sistema de pagos instantáneos de Brasil, operado por el Banco Central del país, y cada pago por PIX mueve dinero entre cuentas de bancos brasileños — no hay manera de enviarlo desde un banco del exterior. El formulario en portugués también acepta tarjeta de crédito, una vez o todos los meses, pero pide un CPF (el número de contribuyente brasileño) para emitir cada cobro.",
+          "Si no tiene CPF o está fuera de Brasil, use el formulario en inglés: recibe donaciones con tarjeta de crédito de cualquier país, sin CPF, y el comprobante llega por correo. Quien vive en Brasil como extranjero y ya tiene CPF puede usar el formulario en portugués completo, por PIX o tarjeta. Si lo prefiere, escríbanos y le ayudamos en español."
         ],
         "outra_forma_titulo": "Otras formas de ayudar",
-        "outra_forma": "Las Sociedades Nacionales hermanas, instituciones y empresas que deseen establecer alianzas, donar institucionalmente o patrocinar una campaña pueden escribirnos directamente. Para ropa, mantas y calzado, la Campaña de Ropa de Abrigo recibe donaciones en nuestra sede, de lunes a viernes, de 10 a 17 horas."
+        "outra_forma": "Las Sociedades Nacionales hermanas, instituciones y empresas que deseen establecer alianzas, donar institucionalmente o patrocinar una campaña pueden escribirnos directamente. Para ropa, mantas y calzado, la Campaña de Ropa de Abrigo recibe donaciones en nuestra sede, de lunes a viernes, de 10 a 17 horas.",
+        "exterior_boton": "Donar con tarjeta desde fuera de Brasil (formulario en inglés)"
       },
       "rodape": {
         "sobre": "Acerca de",

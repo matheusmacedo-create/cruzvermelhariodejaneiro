@@ -161,6 +161,58 @@ contem('comprovante mensal fala do cancelamento', 'pausar ou cancelar', mcp_doac
 verificar('doação única não fala em mensal', str_contains(mcp_doacao_montar_email_confirmada($doacao)['html'], 'Doação mensal'), false);
 verificar('linhas do comprovante', array_keys(mcp_doacao_linhas($doacao)), ['Protocolo', 'Forma de pagamento', 'Valor da doação', 'Custos de processamento', 'Data']);
 
+// ----------------------------------------------------------------- doação internacional (/en/donate/)
+verificar('internacional desligada por padrão', mcp_doacao_internacional_ativa(), false);
+verificar('documento: passaporte numérico passa', mcp_doacao_documento_internacional('123456789'), '123456789');
+verificar('documento: espaço, ponto e hífen saem', mcp_doacao_documento_internacional('12.345 678-9'), '123456789');
+verificar('documento: letra não é cortada, é recusado', mcp_doacao_documento_internacional('C01X00T47'), '');
+verificar('documento: curto demais', mcp_doacao_documento_internacional('1234'), '');
+verificar('documento: longo demais', mcp_doacao_documento_internacional(str_repeat('1', 21)), '');
+verificar('telefone internacional com +', mcp_doacao_telefone_internacional('+1 (415) 555-2671'), '14155552671');
+verificar('telefone internacional: zeros da frente saem', mcp_doacao_telefone_internacional('0044 20 7946 0958'), '442079460958');
+verificar('telefone internacional curto', mcp_doacao_telefone_internacional('+1 555'), '');
+verificar('telefone internacional longo', mcp_doacao_telefone_internacional('+1234567890123456'), '');
+verificar('país em duas letras', mcp_doacao_pais(' us '), 'US');
+verificar('país inválido', mcp_doacao_pais('USA'), '');
+verificar('documento enviado: CPF quando há', mcp_doacao_documento(['cpf' => '52998224725', 'documento' => null]), '52998224725');
+verificar('documento enviado: o estrangeiro sem CPF', mcp_doacao_documento(['cpf' => '', 'documento' => '123456789']), '123456789');
+verificar('idioma padrão', mcp_doacao_idioma($doacao), 'pt');
+
+$fora = ['id' => 43, 'metodo' => 'cartao', 'cpf' => '', 'documento' => '987654321', 'pais' => 'US', 'idioma' => 'en',
+    'nome' => 'Jane Miller Doe', 'email' => 'jane@example.org', 'telefone' => '14155552671', 'bandeira' => 'visa', 'ultimos4' => '4242',
+    'pix_copia_cola' => null, 'pix_url' => null] + $doacao;
+$publicoFora = mcp_doacao_publico($fora);
+$jsonFora = json_encode($publicoFora);
+verificar('internacional: acompanha na página em inglês', $publicoFora['url'], 'https://exemplo.org/en/donate/?t=' . str_repeat('a', 40));
+verificar('internacional: idioma na visão pública', $publicoFora['idioma'], 'en');
+verificar('internacional: público sem documento', str_contains($jsonFora, '987654321'), false);
+verificar('internacional: público sem telefone', str_contains($jsonFora, '14155552671'), false);
+$en = mcp_doacao_montar_email_confirmada_en($fora);
+verificar('comprovante em inglês: assunto', $en['assunto'], 'Thank you, Jane! Your donation of R$ 105,00 is confirmed');
+contem('comprovante em inglês: referência', 'CVD-260920-0043', $en['html']);
+contem('comprovante em inglês: cartão', 'Credit card Visa ···· 4242', $en['html']);
+contem('comprovante em inglês: CNPJ', '08.560.973/0001-97', $en['html']);
+contem('comprovante em inglês: moldura em inglês', '<html lang="en">', $en['html']);
+contem('comprovante em inglês: rodapé em inglês', 'Questions?', $en['html']);
+verificar('comprovante em inglês: sem rodapé em português', str_contains($en['html'], 'Dúvidas?'), false);
+verificar('comprovante em inglês: sem o selo em português', str_contains($en['html'], 'Doação confirmada'), false);
+verificar('comprovante em inglês: sem documento', str_contains($en['html'] . $en['texto'], '987654321'), false);
+verificar('comprovante em português continua em português', str_contains(mcp_doacao_montar_email_confirmada($doacao)['html'], '<html lang="pt-BR">'), true);
+$equipeFora = mcp_doacao_montar_email_equipe($fora);
+contem('aviso interno: país da doação internacional', 'país US', $equipeFora['html']);
+contem('aviso interno: telefone com código do país', '+14155552671', $equipeFora['html']);
+verificar('aviso interno: sem documento', str_contains($equipeFora['html'], '987654321'), false);
+
+// Câmbio de referência: lido do arquivo guardado (sem rede) enquanto estiver fresco.
+$cambioArquivo = tempnam(sys_get_temp_dir(), 'doe-cambio-');
+file_put_contents($cambioArquivo, json_encode(['usd' => 5.5606, 'eur' => 6.1706, 'gbp' => 7.3861, 'data' => '2026-11-11', 'lido_em' => time(), 'tentado_em' => time()]));
+putenv("DOE_CAMBIO_ARQUIVO=$cambioArquivo");
+verificar('câmbio guardado', mcp_doacao_cambio(), ['usd' => 5.5606, 'eur' => 6.1706, 'gbp' => 7.3861, 'data' => '2026-11-11']);
+// Velho demais (8 dias) e com tentativa recente: nada de número vencido na página, e nada de rede.
+file_put_contents($cambioArquivo, json_encode(['usd' => 5.5, 'eur' => 6.1, 'lido_em' => time() - 8 * 86400, 'tentado_em' => time()]));
+verificar('câmbio vencido não aparece', mcp_doacao_cambio(), null);
+@unlink($cambioArquivo);
+
 @unlink($configGeral);
 @unlink($configDoe);
 printf("%d testes, %d falhas\n", $total, $falhas);

@@ -1,0 +1,32 @@
+# Doação internacional no cartão, em inglês, sem CPF (12/11/2026). Roteiro em docs/doacao-internacional.md.
+# Três blocos, nesta ordem. O formulário só cobra com DOACAO_INTERNACIONAL = 1 no config.php do servidor.
+# Publicar um bloco: scripts/publicar_hostinger.sh <arquivos do bloco>
+
+# --- backend (não muda nada para quem doa hoje; lib antes dos endpoints)
+site/matricula-cursos-presenciais/api/lib/email.php
+site/doe/api/lib/doacao.php
+site/doe/api/lib/email_doacao.php
+site/doe/api/info.php
+site/doe/api/doacoes.php
+
+# --- formulário (depois de DOACAO_INTERNACIONAL = 1; o teste real vem logo em seguida)
+site/doe/static/doe.css
+site/doe/static/doe.min.css
+site/doe/static/donate.js
+site/privacidade/index.html
+site/en/privacy/index.html
+site/es/privacidad/index.html
+site/politicas.json
+site/en/donate/index.html
+
+# --- textos (depois do teste real aprovado)
+site/doe/index.html
+site/doe/obrigado/index.html
+site/en/index.html
+site/en/faq/index.html
+site/es/index.html
+site/es/donar/index.html
+site/es/preguntas-frecuentes/index.html
+site/idiomas.json
+site/faq-idiomas.json
+site/llms.txt

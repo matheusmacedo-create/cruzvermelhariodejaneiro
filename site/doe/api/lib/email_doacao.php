@@ -200,9 +200,81 @@ function mcp_doacao_montar_email_confirmada(array $d): array
     ];
 }
 
+/**
+ * Comprovante em inglês, para quem doou pela página /en/donate/. Mesmos dados do comprovante em português;
+ * os valores continuam em reais (R$), que é a moeda da cobrança, e a data, no horário de Brasília.
+ */
+function mcp_doacao_montar_email_confirmada_en(array $d): array
+{
+    $nome = mcp_escapar(mcp_primeiro_nome((string) $d['nome']));
+    $valor = (int) $d['valor_centavos'];
+    $taxa = (int) $d['taxa_centavos'];
+    $total = mcp_brl((int) $d['total_centavos']);
+    $protocolo = mcp_doacao_protocolo((int) $d['id'], (string) $d['criado_em']);
+    $quando = mcp_data_brt((string) ($d['pago_em'] ?: $d['criado_em']), 'd/m/Y H:i');
+    $quando = $quando !== '' ? "$quando (Brasília time)" : '';
+    $site = mcp_site_url();
+    $anonima = (int) ($d['anonimo'] ?? 0) === 1;
+    $final = (string) ($d['ultimos4'] ?? '');
+    $bandeira = trim((string) ($d['bandeira'] ?? ''));
+    $forma = 'Credit card' . ($bandeira !== '' ? ' ' . ucfirst($bandeira) : '') . ($final !== '' ? " ···· $final" : '');
+
+    $linhas = ['Reference' => $protocolo, 'Payment method' => $forma];
+    if ($taxa > 0) {
+        $linhas['Donation'] = mcp_brl($valor);
+        $linhas['Processing costs'] = mcp_brl($taxa);
+    }
+    if ($quando !== '') {
+        $linhas['Date'] = $quando;
+    }
+    if ($anonima) {
+        $linhas['Recognition'] = 'Anonymous donation';
+    }
+
+    $selo = str_replace('Doação confirmada', 'Donation confirmed', mcp_doacao_selo($total, $quando));
+    $corpo = mcp_p('Your donation has just reached the Brazilian Red Cross in Rio de Janeiro. It funds volunteer training, first-aid training, preventive education and community action across the state of Rio de Janeiro.')
+        . $selo
+        . mcp_p('The amount is in Brazilian reais (R$), the currency of the charge. Your card statement will show it converted by your card issuer, at the issuer\'s exchange rate.');
+    if ($taxa > 0) {
+        $corpo .= mcp_p('You also chose to cover the processing costs, so <strong>' . mcp_escapar(mcp_brl($valor)) . '</strong> reaches the branch in full.');
+    }
+    if ($anonima) {
+        $corpo .= mcp_p('We recorded your donation as <strong>anonymous</strong>: your name will not appear in public acknowledgements, on social media or in donor lists. Only the team that handles donations sees it.');
+    }
+    $corpo .= mcp_subtitulo('Your receipt')
+        . mcp_caixa($linhas, ['Total' => $total])
+        . mcp_nota('Keep this e-mail: it is the receipt for your donation, with the reference <strong>' . mcp_escapar($protocolo)
+            . '</strong> and the Brazilian registration number (CNPJ) ' . MCP_EMAIL_CNPJ . ' of Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro. It is issued in Brazil; whether it can be used for tax purposes in your country depends on your local rules.')
+        . mcp_subtitulo('Stay close')
+        . mcp_p('News from the branch, in English, is on our website.')
+        . mcp_botao($site . '/en/news/', 'Read our news')
+        . '<p style="margin:26px 0 0;font-size:15px;line-height:1.5;color:#1a202c">With gratitude,<br><strong>The team at the Brazilian Red Cross — Rio de Janeiro</strong></p>';
+
+    $texto = "Thank you, $nome.\n\nYour donation has just reached the Brazilian Red Cross in Rio de Janeiro.\n\n"
+        . "Donation confirmed: $total" . ($quando !== '' ? " on $quando" : '') . "\n"
+        . "Reference: $protocolo\nPayment method: $forma\n"
+        . ($taxa > 0 ? 'You covered the processing costs, so ' . mcp_brl($valor) . " reaches the branch in full.\n" : '')
+        . ($anonima ? "Your donation was recorded as anonymous.\n" : '')
+        . "The amount is in Brazilian reais (R$); your card issuer converts it to your currency.\n"
+        . "\nNews from the branch: $site/en/news/\n\n"
+        . "With gratitude,\nThe team at the Brazilian Red Cross - Rio de Janeiro\nCNPJ " . MCP_EMAIL_CNPJ . "\n";
+
+    return [
+        'para' => (string) $d['email'],
+        'assunto' => "Thank you, $nome! Your donation of $total is confirmed",
+        'html' => mcp_moldura('Thank you, ' . $nome . '.', $corpo, [
+            'idioma' => 'en',
+            'eyebrow' => 'Donation · Brazilian Red Cross Rio de Janeiro',
+            'preheader' => "We received your donation of $total. Here is your receipt.",
+            'motivo' => 'You received this e-mail because you donated at cruzvermelhariodejaneiro.org/en/donate.',
+        ]),
+        'texto' => $texto,
+    ];
+}
+
 function mcp_doacao_email_confirmada(array $d): void
 {
-    $m = mcp_doacao_montar_email_confirmada($d);
+    $m = mcp_doacao_idioma($d) === 'en' ? mcp_doacao_montar_email_confirmada_en($d) : mcp_doacao_montar_email_confirmada($d);
     $envio = mcp_enviar_email($m['para'], $m['assunto'], $m['html'], $m['texto'], null, mcp_doacao_remetente());
     mcp_doacao_atualizar((int) $d['id'], ['email_doador' => $envio]);
     mcp_doacao_registrar((int) $d['id'], 'email_confirmada', $envio);
@@ -213,8 +285,10 @@ function mcp_doacao_montar_email_equipe(array $d): array
 {
     $total = mcp_brl((int) $d['total_centavos']);
     $email = mcp_escapar((string) $d['email']);
-    $telefone = mcp_telefone_bonito((string) $d['telefone']);
-    $linhas = mcp_doacao_linhas($d) + [
+    $pais = (string) ($d['pais'] ?? '');
+    // Doação internacional: telefone com código do país (com o + na frente) e o país informado.
+    $telefone = $pais !== '' ? '+' . (string) $d['telefone'] : mcp_telefone_bonito((string) $d['telefone']);
+    $linhas = mcp_doacao_linhas($d) + ($pais !== '' ? ['Origem da doação' => "Internacional (página em inglês) · país $pais"] : []) + [
         'Nome' => (string) $d['nome'],
         'E-mail' => ['html' => '<a href="mailto:' . $email . '" style="color:#cc0000;text-decoration:none">' . $email . '</a>'],
         'Telefone' => $telefone,

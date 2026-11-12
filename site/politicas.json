@@ -104,7 +104,7 @@
   },
   "paginas": {
     "privacidade": {
-      "revisao": "2026-11-02",
+      "revisao": "2026-11-12",
       "pt": {
         "titulo_aba": "Privacidade | Cruz Vermelha Brasileira Rio de Janeiro",
         "descricao": "O que o site da Cruz Vermelha Brasileira Rio de Janeiro coleta na matrícula, no chat, na newsletter e no cadastro de voluntários, e seus direitos pela LGPD.",
@@ -195,7 +195,7 @@
                   },
                   {
                     "titulo": "Doações",
-                    "dados": "Nome, CPF, e-mail, telefone, valor, forma de pagamento (PIX ou cartão), se a doação é única ou mensal, se é anônima, se o doador cobriu os custos de processamento, a origem da visita (parâmetros de campanha da URL) e o endereço IP. No cartão, guardamos só a bandeira e os quatro últimos dígitos.",
+                    "dados": "Nome, CPF (ou, na doação feita de fora do Brasil pela página em inglês, o país e o número de um documento de identificação, no lugar do CPF), e-mail, telefone, valor, forma de pagamento (PIX ou cartão), se a doação é única ou mensal, se é anônima, se o doador cobriu os custos de processamento, a origem da visita (parâmetros de campanha da URL) e o endereço IP. No cartão, guardamos só a bandeira e os quatro últimos dígitos.",
                     "finalidade": "Emitir a cobrança da doação (e, na doação mensal, as cobranças de cada mês), enviar o código PIX e o comprovante por e-mail, avisar a equipe da filial, reenviar comprovantes e cumprir obrigações legais e contábeis.",
                     "base": "Execução de contrato, a doação (art. 7º, V), cumprimento de obrigação legal (art. 7º, II) e exercício regular de direitos (art. 7º, VI)."
                   },
@@ -262,7 +262,7 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, que processa os pagamentos das inscrições e as doações por cartão (inclusive a mensal): nome, CPF, e-mail e telefone e, no cartão, os dados do cartão.",
+                  "**ÚnicoPag**, que processa os pagamentos das inscrições e as doações por cartão (inclusive a mensal): nome, CPF (ou o número do documento de identificação de quem doa de fora do Brasil), e-mail e telefone e, no cartão, os dados do cartão.",
                   "**Donaty**, que processa as doações por PIX: nome, CPF, e-mail e telefone, o valor, se a doação é anônima, se o doador cobriu os custos de processamento e a origem da visita (campanha). Não enviamos a ela o endereço IP nem dados de cartão.",
                   "**Plataforma da escola** ([escola.cursoscruzvermelha.org]({escola})), na matrícula paga: nome, CPF, e-mail e telefone, para criar a matrícula e o acesso ao curso; no ponto da sede, o CPF e a data, para saber as aulas do aluno naquele dia.",
                   "**Hostinger**, que hospeda o site, os formulários e o banco de dados deles.",
@@ -465,7 +465,7 @@
                   },
                   {
                     "titulo": "Donations",
-                    "dados": "Name, CPF, e-mail, phone number, amount, payment method (PIX or card), whether the donation is one-off or monthly, whether it is anonymous, whether the donor covered the processing costs, where the visit came from (campaign parameters in the URL) and the IP address. For cards, we keep only the card brand and the last four digits.",
+                    "dados": "Name, CPF (or, for donations made from outside Brazil on the English page, the country and an identification document number instead of the CPF), e-mail, phone number, amount, payment method (PIX or card), whether the donation is one-off or monthly, whether it is anonymous, whether the donor covered the processing costs, where the visit came from (campaign parameters in the URL) and the IP address. For cards, we keep only the card brand and the last four digits.",
                     "finalidade": "To issue the donation charge (and, for monthly donations, each month's charge), send the PIX code and the receipt by e-mail, notify the branch team, resend receipts and meet legal and accounting obligations.",
                     "base": "Performance of a contract, the donation (Art. 7, V), compliance with a legal obligation (Art. 7, II) and the regular exercise of rights (Art. 7, VI)."
                   },
@@ -532,7 +532,7 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, which processes enrolment payments and card donations (including monthly ones): name, CPF, e-mail and phone number and, for cards, the card details.",
+                  "**ÚnicoPag**, which processes enrolment payments and card donations (including monthly ones): name, CPF (or the identification document number of donors outside Brazil), e-mail and phone number and, for cards, the card details.",
                   "**Donaty**, which processes PIX donations: name, CPF, e-mail and phone number, the amount, whether the donation is anonymous, whether the donor covered the processing costs and the origin of the visit (campaign). We do not send it the IP address or card details.",
                   "**The school platform** ([escola.cursoscruzvermelha.org]({escola})), for paid enrolments: name, CPF, e-mail and phone number, to create the enrolment and the course access; at the headquarters time clock, the CPF and the date, to find the student's classes that day.",
                   "**Hostinger**, which hosts the site, the forms and their database.",
@@ -735,7 +735,7 @@
                   },
                   {
                     "titulo": "Donaciones",
-                    "dados": "Nombre, CPF, correo, teléfono, importe, forma de pago (PIX o tarjeta), si la donación es única o mensual, si es anónima, si el donante cubrió los costos de procesamiento, el origen de la visita (parámetros de campaña de la URL) y la dirección IP. Con tarjeta, guardamos solo la marca y los cuatro últimos dígitos.",
+                    "dados": "Nombre, CPF (o, en la donación hecha desde fuera de Brasil en la página en inglés, el país y el número de un documento de identificación, en lugar del CPF), correo, teléfono, importe, forma de pago (PIX o tarjeta), si la donación es única o mensual, si es anónima, si el donante cubrió los costos de procesamiento, el origen de la visita (parámetros de campaña de la URL) y la dirección IP. Con tarjeta, guardamos solo la marca y los cuatro últimos dígitos.",
                     "finalidade": "Emitir el cobro de la donación (y, en la donación mensual, el cobro de cada mes), enviar el código PIX y el comprobante por correo, avisar al equipo de la filial, reenviar comprobantes y cumplir obligaciones legales y contables.",
                     "base": "Ejecución de un contrato, la donación (art. 7, V), cumplimiento de una obligación legal (art. 7, II) y ejercicio regular de derechos (art. 7, VI)."
                   },
@@ -802,7 +802,7 @@
               },
               {
                 "lista": [
-                  "**ÚnicoPag**, que procesa los pagos de las inscripciones y las donaciones con tarjeta (incluida la mensual): nombre, CPF, correo y teléfono y, con tarjeta, los datos de la tarjeta.",
+                  "**ÚnicoPag**, que procesa los pagos de las inscripciones y las donaciones con tarjeta (incluida la mensual): nombre, CPF (o el número del documento de identificación de quien dona desde fuera de Brasil), correo y teléfono y, con tarjeta, los datos de la tarjeta.",
                   "**Donaty**, que procesa las donaciones por PIX: nombre, CPF, correo y teléfono, el monto, si la donación es anónima, si el donante cubrió los costos de procesamiento y el origen de la visita (campaña). No le enviamos la dirección IP ni datos de tarjeta.",
                   "**La plataforma de la escuela** ([escola.cursoscruzvermelha.org]({escola})), en la matrícula pagada: nombre, CPF, correo y teléfono, para crear la matrícula y el acceso al curso; en el control de asistencia de la sede, el CPF y la fecha, para saber las clases del alumno ese día.",
                   "**Hostinger**, que aloja el sitio, los formularios y su base de datos.",

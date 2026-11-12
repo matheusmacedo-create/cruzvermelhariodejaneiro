@@ -2,6 +2,8 @@
 
 Revisão para Ad Grants de 19/10/2026: [correções, testes e roteiro de publicação](docs/revisao-ad-grants-2026-10-19.md). Novas inscrições sem contribuição de divulgação, identificação da escola no checkout, doação sem promessa futura e imagem móvel versionada. A documentação abaixo preserva o histórico anterior; consulte a revisão para o estado desta entrega.
 
+Doação internacional (12/11/2026): `/en/donate/` passou a ter o formulário de cartão de crédito em inglês, sem CPF, para quem doa de fora do Brasil, e `/doe/` ficou com o cartão de doação no topo no celular. Pronto no branch, **não publicado**, com `DOACAO_INTERNACIONAL` desligada até o teste real: [roteiro](docs/doacao-internacional.md).
+
 Este repositório guarda a parte **institucional (social)** da presença digital da
 CVB-RJ: as páginas estáticas do site principal `cruzvermelhariodejaneiro.org`, o kit de
 SEO da escola e os scripts para publicar. A Redação, a intranet e os demais sistemas são

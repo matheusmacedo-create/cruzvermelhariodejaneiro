@@ -310,7 +310,8 @@ def rodape(idioma: dict) -> str:
 
 
 def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, ld: list, partes: dict,
-            imagem: str = "og-home.jpg", css: str = "") -> str:
+            imagem: str = "og-home.jpg", css: str = "", cabeca: str = "", classe: str = "",
+            icones_extras: set | None = None) -> str:
     caminho = PAGINAS[pagina][idioma["codigo"]]
     ld_json = json.dumps(ld, ensure_ascii=False, separators=(",", ":"))
     assert "</" not in ld_json, "JSON-LD não pode conter </ (fecharia o <script>)"
@@ -339,11 +340,11 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <style>{partes['estilo_sem_tag']}{ESTILO_EXTRA}{css}</style>
-  <script type="application/ld+json">{ld_json}</script>
+  <script type="application/ld+json">{ld_json}</script>{cabeca}
 {partes['ga4']}
 {partes['pixel']}
 </head>
-<body>
+<body{f' class="{classe}"' if classe else ''}>
 {cabecalho(idioma, pagina)}
   <main>
 {corpo}
@@ -353,7 +354,7 @@ def moldura(idioma: dict, pagina: str, titulo: str, descricao: str, corpo: str, 
 </body>
 </html>
 """
-    return icones.converter(html_)  # troca as tags do Font Awesome, injeta o sprite e o CSS
+    return icones.converter(html_, extras=icones_extras)  # troca as tags do Font Awesome, injeta o sprite e o CSS
 
 
 def pagina_home(idioma: dict, partes: dict) -> str:
@@ -471,8 +472,223 @@ def pagina_home(idioma: dict, partes: dict) -> str:
     return moldura(idioma, "home", h["titulo"], h["descricao"], corpo, ld, partes)
 
 
+def pagina_doar_formulario(idioma: dict, partes: dict) -> str:
+    """Página de doação com o formulário na própria página (inglês, 12/11/2026): doação internacional.
+
+    Cartão de crédito, uma vez, sem CPF, para quem doa de fora do Brasil; o backend é o mesmo de /doe/
+    (site/doe/api/, com internacional: true) e o script é site/doe/static/donate.js. O visual reaproveita o
+    doe.css da página em português. Se o servidor estiver com DOACAO_INTERNACIONAL desligado, o script troca o
+    formulário pelo bloco "write to us" (#doa-fora), que também é o que aparece sem JavaScript.
+    Roteiro para ligar: docs/doacao-internacional.md.
+    """
+    import gerar_doe  # só aqui: gerar_doe carrega o gerador da matrícula, que as outras páginas não usam
+
+    d = idioma["doar"]
+    caminho = PAGINAS["doar"][idioma["codigo"]]
+    confianca = "\n".join(
+        f'          <li><i class="fa-solid fa-{icone}" aria-hidden="true"></i><span>{texto}</span></li>'
+        for icone, texto in d["confianca"])
+    valores = "\n".join(
+        f'                  <button class="doe-op doe-valor" type="button" data-valor="{c}">R$ {c // 100:,}<small></small></button>'
+        for c in d["valores"])
+    impacto = "\n".join(
+        f'          <article class="doe-item"><b>{esc(v)}</b><h3>{esc(t)}</h3><p>{esc(x)}</p></article>'
+        for v, t, x in d["impacto"])
+    dados = "\n".join(
+        f'          <div class="doe-dado"><span>{esc(r)}</span><b>{v}</b>' + (f"<p>{esc(n)}</p>" if n else "") + "</div>"
+        for r, v, n in d["dados"])
+    quem_links = " · ".join(link(url, texto) for texto, url in d["quem_links"])
+    passos = "\n".join(
+        f'          <article class="doe-item"><b>{i}</b><h3>{esc(t)}</h3><p>{esc(x)}</p></article>'
+        for i, (t, x) in enumerate(d["como"], 1))
+    faq_itens, faq_ld = [], []
+    for i, (pergunta, resposta, links) in enumerate(d["faq"]):
+        texto = com_email(esc(resposta))
+        for rotulo, url in links:
+            alvo = esc(rotulo)
+            if alvo not in texto:
+                raise SystemExit(f"trecho do link não está na resposta: {rotulo!r}")
+            texto = texto.replace(alvo, link(url, rotulo), 1)
+        faq_itens.append(f'          <details class="faq-item"{" open" if i == 0 else ""}>\n            <summary>{esc(pergunta)}</summary>\n'
+                         f'            <div class="faq-answer">{texto}</div>\n          </details>')
+        faq_ld.append({"@type": "Question", "name": pergunta, "acceptedAnswer": {"@type": "Answer", "text": resposta}})
+    faq = "\n".join(faq_itens)
+    privacidade = PAGINAS["privacidade"][idioma["codigo"]]
+    corpo = f"""    <section class="doe-hero" id="doe">
+      <div class="wrap doe-grid">
+        <div class="doe-intro">
+          <p class="eyebrow">{esc(d['sobrancelha'])}</p>
+          <h1>{esc(d['h1'])}</h1>
+          <p class="lead">{esc(d['linha'])}</p>
+        </div>
+        <aside class="doe-card" id="doe-card">
+          <p class="doe-teste" id="doa-teste" hidden>Test mode: the amount charged is not the amount chosen.</p>
+          <div class="doe-passos" aria-hidden="true">
+            <span class="doe-passo ativo"><i>1</i> Amount</span>
+            <span class="doe-traco"></span>
+            <span class="doe-passo"><i>2</i> Details</span>
+            <span class="doe-traco"></span>
+            <span class="doe-passo"><i>3</i> Done</span>
+          </div>
+          <form id="doa-form" novalidate data-valor-padrao="{d['valor_padrao']}">
+            <div id="doa-valor">
+              <div class="doe-bloco">
+                <span class="doe-rotulo">Choose an amount · Brazilian reais (R$)</span>
+                <div class="doe-valores doa-valores">
+{valores}
+                </div>
+                <label class="doe-outro">
+                  <span>R$</span>
+                  <input id="doa-outro" type="text" inputmode="numeric" autocomplete="off" placeholder="Other amount" aria-label="Other amount in Brazilian reais">
+                </label>
+                <p class="doa-aprox" id="doa-aprox" aria-live="polite"></p>
+              </div>
+              <button class="btn btn-red doe-acao" type="button" id="doa-continuar" style="margin-top:16px">Continue</button>
+              <p class="doe-erro" id="doa-erro-valor" role="alert"></p>
+              <p class="doe-aviso"><i class="fa-solid fa-lock" aria-hidden="true"></i> Secure payment by credit card. You are charged in Brazilian reais and your card issuer converts the amount.</p>
+            </div>
+
+            <div id="doa-dados" hidden>
+              <div class="doe-bloco">
+                <span class="doe-rotulo">Your details</span>
+                <label class="doe-campo"><span>Full name</span><input id="doa-nome" type="text" autocomplete="name" enterkeyhint="next"></label>
+                <label class="doe-campo"><span>E-mail</span><input id="doa-email" type="email" autocomplete="email" inputmode="email" enterkeyhint="next"></label>
+                <label class="doe-campo"><span>Country</span><select id="doa-pais" autocomplete="country"><option value="">Select your country</option></select></label>
+                <label class="doe-campo"><span>Phone, with country code</span><input id="doa-telefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+1 415 555 2671"></label>
+                <label class="doe-campo"><span>Passport or national ID number</span><input id="doa-documento" type="text" inputmode="numeric" autocomplete="off" aria-describedby="doa-documento-dica"><small class="doe-dica" id="doa-documento-dica">Digits only. The payment company in Brazil requires an ID number for every charge. It is never made public.</small></label>
+              </div>
+              <div class="doe-bloco">
+                <span class="doe-rotulo">Credit card</span>
+                <div class="doe-cartao-grid">
+                  <label class="doe-campo largo"><span>Card number</span><input id="doa-cartao_numero" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></label>
+                  <label class="doe-campo largo"><span>Name on card</span><input id="doa-cartao_nome" type="text" autocomplete="cc-name"></label>
+                  <label class="doe-campo"><span>Expiry date</span><input id="doa-cartao_validade" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></label>
+                  <label class="doe-campo"><span>Security code</span><input id="doa-cartao_cvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="000"></label>
+                </div>
+                <label class="doe-caixa" id="doa-cobre-caixa">
+                  <input type="checkbox" id="doa-cobre">
+                  <span>I want to cover the <b>processing costs</b> (<span id="doa-taxa-valor">R$ 0.00</span>) so the branch receives my full donation.</span>
+                </label>
+                <label class="doe-caixa" id="doa-anonimo-caixa">
+                  <input type="checkbox" id="doa-anonimo">
+                  <span>I want to <b>donate anonymously</b>: my name will not appear in public acknowledgements or donor lists.</span>
+                </label>
+                <label class="doe-caixa" id="doa-aceite-caixa">
+                  <input type="checkbox" id="doa-aceite">
+                  <span>I have read the <a href="{privacidade}" target="_blank" rel="noopener">Privacy Policy</a> and agree to the use of my data to process this donation.</span>
+                </label>
+              </div>
+              <div class="doe-resumo"><span>Your donation</span><b class="doe-total">R$ 0.00</b></div>
+              <p class="doa-aprox doa-aprox-total" id="doa-aprox-total"></p>
+              <div class="doe-armadilha" aria-hidden="true"><label>Leave this empty<input id="doa-site" type="text" tabindex="-1" autocomplete="off"></label></div>
+              <button class="btn btn-red doe-acao" type="submit" id="doa-enviar">Donate</button>
+              <button class="doe-voltar" type="button">Back to change the amount</button>
+              <p class="doe-erro" id="doa-erro" role="alert"></p>
+            </div>
+          </form>
+          <div id="doa-andamento" hidden></div>
+          <div id="doa-obrigado" hidden></div>
+          <div id="doa-fora" class="doa-fora" hidden>
+            <h2>Write to us to donate from abroad</h2>
+            <p>Card donations from outside Brazil are not available on this page right now. Write to us with the amount you would like to give and we will arrange the payment with you, in English.</p>
+            <a class="btn btn-red doe-acao" href="mailto:{EMAIL}?subject=Donation%20from%20abroad">{EMAIL}</a>
+            <p class="doe-aviso">Have a Brazilian tax number (CPF)? <a href="/doe/" hreflang="pt-BR" lang="pt-BR">Use the Portuguese donation page</a>, by PIX or card.</p>
+          </div>
+          <noscript><p class="doe-aviso">This form needs JavaScript to take your donation. Turn JavaScript on, or write to {EMAIL} and we will arrange the payment with you.</p></noscript>
+          <p class="doe-aviso doa-cpf">Have a Brazilian tax number (CPF)? <a href="/doe/" hreflang="pt-BR" lang="pt-BR">Donate in Portuguese</a>, by PIX or card, once or monthly.</p>
+        </aside>
+        <ul class="doe-confianca">
+{confianca}
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <p class="eyebrow">{esc(d['impacto_sobrancelha'])}</p>
+        <h2>{esc(d['impacto_titulo'])}</h2>
+        <p class="lead">{esc(d['impacto_linha'])}</p>
+        <div class="doe-impacto">
+{impacto}
+        </div>
+      </div>
+    </section>
+
+    <section style="background:var(--soft)">
+      <div class="wrap">
+        <div class="doa-quem">
+          <div>
+            <p class="eyebrow">{esc(d['quem_sobrancelha'])}</p>
+            <h2>{esc(d['quem_titulo'])}</h2>
+            <p class="lead">{esc(d['quem_linha'])}</p>
+            <p class="doa-links">{quem_links}</p>
+          </div>
+          <img loading="lazy" decoding="async" src="/assets/otim/hero-equipe-grupo-960.webp" srcset="/assets/otim/hero-equipe-grupo-960.webp 960w, /assets/otim/hero-equipe-grupo-1440.webp 1440w" sizes="(max-width: 920px) calc(100vw - 40px), 520px" width="960" height="723" alt="{esc(d['foto_alt'])}">
+        </div>
+        <div class="doe-dados">
+{dados}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <p class="eyebrow">{esc(d['como_sobrancelha'])}</p>
+        <h2>{esc(d['como_titulo'])}</h2>
+        <div class="doe-impacto">
+{passos}
+        </div>
+        <div class="cta-row" style="margin-top:30px">
+          <a class="btn btn-red" href="#doe-card">{esc(d['como_botao'])}</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq" style="background:var(--soft)">
+      <div class="wrap">
+        <p class="eyebrow">{esc(d['faq_sobrancelha'])}</p>
+        <h2>{esc(d['faq_titulo'])}</h2>
+        <div class="faq-list">
+{faq}
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap doa-fim">
+        <h2>{esc(d['fim_titulo'])}</h2>
+        <p class="lead">{esc(d['fim_linha'])}</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="#doe-card">{esc(d['fim_botao'])}</a>
+          <a class="btn btn-outline" href="mailto:{EMAIL}">{EMAIL}</a>
+        </div>
+      </div>
+    </section>"""
+    url = f"{ORIGEM}{caminho}"
+    ld = [{"@context": "https://schema.org", "@type": "WebPage", "url": url,
+           "name": d["titulo"], "description": d["descricao"], "inLanguage": idioma["codigo"],
+           "isPartOf": {"@id": f"{ORIGEM}/#site"}, "about": {"@id": f"{ORIGEM}/#organizacao"}},
+          {"@context": "https://schema.org", "@type": "DonateAction", "name": d["titulo"], "description": d["descricao"],
+           "recipient": {"@id": f"{ORIGEM}/#organizacao"},
+           "target": {"@type": "EntryPoint", "urlTemplate": url,
+                      "actionPlatform": ["https://schema.org/DesktopWebPlatform", "https://schema.org/MobileWebPlatform"]}},
+          {"@context": "https://schema.org", "@type": "FAQPage", "url": f"{url}#faq", "inLanguage": idioma["codigo"],
+           "isPartOf": {"@id": f"{ORIGEM}/#site"}, "mainEntity": faq_ld}]
+    cabeca = (f'\n  <link rel="stylesheet" href="{gerar_doe.url_estatico("doe.css")}">'
+              f'\n  <script src="{gerar_doe.url_estatico("donate.js")}" defer></script>')
+    # circle-check é desenhado pelo donate.js (tela de agradecimento): entra no sprite mesmo sem estar no HTML.
+    return moldura(idioma, "doar", d["titulo"], d["descricao"], corpo, ld, partes, cabeca=cabeca, classe="doe",
+                   icones_extras={"circle-check"})
+
+
 def pagina_doar(idioma: dict, partes: dict) -> str:
     d = idioma["doar"]
+    if d.get("formulario"):
+        return pagina_doar_formulario(idioma, partes)
+    exterior_botao = (f"""
+        <div class="cta-row" style="margin-top:20px">
+          <a class="btn btn-red" href="{PAGINAS['doar']['en']}" hreflang="en" lang="{idioma['codigo']}">{esc(d['exterior_boton'])}</a>
+        </div>""" if d.get("exterior_boton") else "")
     passos = "\n          ".join(
         f"<li><strong>{esc(a)}</strong><span>{esc(b)}</span></li>" for a, b in d["como"])
     exterior = "\n          ".join(f"<p>{esc(x)}</p>" for x in d["exterior_paragrafos"])
@@ -500,7 +716,7 @@ def pagina_doar(idioma: dict, partes: dict) -> str:
         <h2>{esc(d['exterior_titulo'])}</h2>
         <div class="i18n-caixa">
           {exterior}
-        </div>
+        </div>{exterior_botao}
       </div>
     </section>
     <section class="i18n-bloco">

@@ -101,6 +101,12 @@ FAQ = [
      "porque o meio de pagamento exige esses dados para emitir a cobrança e para enviar o seu comprovante, mas eles "
      "ficam restritos à equipe que cuida das doações.",
      []),
+    ("Moro fora do Brasil ou não tenho CPF. Posso doar?",
+     "Pode. A página de doação em inglês recebe cartão de crédito de qualquer país, sem CPF: no lugar dele, você "
+     "informa o país e o número de um documento de identificação (passaporte ou identidade, só com números). A "
+     "cobrança é feita em reais e o emissor do cartão converte para a sua moeda. O comprovante chega por e-mail, em "
+     "inglês. Por PIX só é possível doar a partir de uma conta em banco brasileiro.",
+     [("página de doação em inglês", "/en/donate/")]),
     ("Minha empresa quer apoiar a Cruz Vermelha Brasileira Rio de Janeiro.",
      "Empresas apoiam a filial com doações institucionais, patrocínio de campanhas e treinamentos corporativos de NR "
      "e de primeiros socorros pela Lei Lucas. Fale com a gente pelo chat do site ou pelo e-mail "
@@ -156,15 +162,15 @@ PAGINA = """<!DOCTYPE html>
   <main id="doe">
     <section class="doe-hero">
       <div class="wrap doe-grid">
-        <div>
+        <div class="doe-intro">
           <p class="eyebrow">Doação</p>
           <h1>@@H1@@</h1>
           <p class="lead">@@LEAD@@</p>
-          <ul class="doe-confianca">
-@@CONFIANCA@@
-          </ul>
         </div>
 @@CARTAO@@
+        <ul class="doe-confianca">
+@@CONFIANCA@@
+        </ul>
       </div>
     </section>
 
@@ -300,6 +306,7 @@ CARTAO = """        <aside class="doe-card" id="doe-card">
           <div id="doe-pix" hidden></div>
           <div id="doe-obrigado" hidden></div>
           <noscript><p class="doe-aviso">Esta página precisa de JavaScript para gerar o pagamento. Ative o JavaScript ou escreva para contato@cruzvermelhariodejaneiro.org.</p></noscript>
+          <p class="doe-aviso doe-fora-do-brasil">Está fora do Brasil ou não tem CPF? <a href="/en/donate/" hreflang="en" lang="en">Donate in English</a>, com cartão de crédito internacional.</p>
         </aside>"""
 
 CONFIANCA = [
