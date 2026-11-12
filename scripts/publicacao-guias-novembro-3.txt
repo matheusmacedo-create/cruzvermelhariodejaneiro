@@ -1,0 +1,49 @@
+# Terceira leva de guias gratuitos com pedido de e-mail (12/11/2026, pedido do Matheus): oito páginas novas, cada uma
+# com o PDF no padrão dos guias (docs/padrao-guias-gratuitos.md). Três cobrem matérias que não tinham caixa
+# (/guia-do-bombeiro-civil/, /guia-dos-cursos/, /onde-buscar-ajuda/) e cinco nasceram das buscas mais fortes do Google
+# (/rcp-e-manobra-de-heimlich/, /intoxicacao-alimentar/, /febre-em-crianca/, /pressao-alta-e-pressao-baixa/,
+# /queimaduras/). O botão de baixar só aparece depois do e-mail e do aceite; o pedido vai para a Redação (um material
+# por guia, com o mesmo id da pasta, lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha três grupos:
+# de 58 para 76 matérias na lista (lib/site/caixa-de-material.ts).
+# ESTADO: NÃO PUBLICADO.
+# Gerar antes: python3 scripts/gerar_guia_pdf.py guia-do-bombeiro-civil guia-dos-cursos onde-buscar-ajuda rcp-e-manobra-de-heimlich intoxicacao-alimentar febre-em-crianca pressao-alta-e-pressao-baixa queimaduras
+#              python3 scripts/gerar_institucional.py guia-do-bombeiro-civil guia-dos-cursos onde-buscar-ajuda rcp-e-manobra-de-heimlich intoxicacao-alimentar febre-em-crianca pressao-alta-e-pressao-baixa queimaduras
+# ORDEM, e ela importa:
+#   0. Revisão de fatos, antes de tudo (o padrão pede): as pendências de cada página estão em notas_internas, em
+#      site/institucional.json. Seis dos oito guias são de saúde e pedem o visto de um profissional: RCP e desengasgo
+#      (instrutor da escola), febre em criança (pediatra), pressão, intoxicação alimentar, queimaduras e o cartaz Onde
+#      buscar ajuda (profissional de saúde mental).
+#   1. A Redação primeiro: mesclar o PR que cadastra os oito materiais. Sem ele, a rota responde "Este formulário
+#      está desatualizado" e ninguém consegue liberar o botão.
+#   2. Publicar aqui, os PDFs e as capas antes das páginas:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-guias-novembro-3.txt)
+#   3. Limpar o cache e conferir no celular: deixar um e-mail de teste em cada página (um endereço diferente por
+#      página, ou 30 minutos entre os pedidos), ver o botão aparecer, o PDF abrir e a mensagem chegar.
+#   4. Na Redação, "Regerar as páginas das matérias" (Configurações › Site): as 18 matérias novas ganham a caixa.
+#      Enquanto um PDF não responder 200, a matéria dele sai sem a caixa.
+#   5. python3 scripts/gerar_sitemaps.py e publicar os sitemaps (oito páginas novas).
+# Desfazer: scripts/publicar_hostinger.sh --apagar com os arquivos abaixo (são todos novos). Desfeito, regerar as matérias.
+site/guia-do-bombeiro-civil/guia-do-bombeiro-civil-cruz-vermelha-rj.pdf
+site/guia-do-bombeiro-civil/capa-guia-do-bombeiro-civil.webp
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/guia-dos-cursos-cruz-vermelha-rj.pdf
+site/guia-dos-cursos/capa-guia-dos-cursos.webp
+site/guia-dos-cursos/index.html
+site/onde-buscar-ajuda/onde-buscar-ajuda-cruz-vermelha-rj.pdf
+site/onde-buscar-ajuda/capa-onde-buscar-ajuda.webp
+site/onde-buscar-ajuda/index.html
+site/rcp-e-manobra-de-heimlich/rcp-e-manobra-de-heimlich-cruz-vermelha-rj.pdf
+site/rcp-e-manobra-de-heimlich/capa-rcp-e-manobra-de-heimlich.webp
+site/rcp-e-manobra-de-heimlich/index.html
+site/intoxicacao-alimentar/intoxicacao-alimentar-cruz-vermelha-rj.pdf
+site/intoxicacao-alimentar/capa-intoxicacao-alimentar.webp
+site/intoxicacao-alimentar/index.html
+site/febre-em-crianca/febre-em-crianca-cruz-vermelha-rj.pdf
+site/febre-em-crianca/capa-febre-em-crianca.webp
+site/febre-em-crianca/index.html
+site/pressao-alta-e-pressao-baixa/pressao-alta-e-pressao-baixa-cruz-vermelha-rj.pdf
+site/pressao-alta-e-pressao-baixa/capa-pressao-alta-e-pressao-baixa.webp
+site/pressao-alta-e-pressao-baixa/index.html
+site/queimaduras/queimaduras-cruz-vermelha-rj.pdf
+site/queimaduras/capa-queimaduras.webp
+site/queimaduras/index.html
