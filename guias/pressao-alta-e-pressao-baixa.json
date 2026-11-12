@@ -1,0 +1,123 @@
+{
+  "slug": "pressao-alta-e-pressao-baixa",
+  "arquivo": "pressao-alta-e-pressao-baixa-cruz-vermelha-rj.pdf",
+  "capa": "capa-pressao-alta-e-pressao-baixa.webp",
+  "titulo": "Pressão alta e pressão baixa: o que fazer",
+  "sub": "Meça do jeito certo, anote no diário e leve esta folha à consulta.",
+  "credito": "Orientações do Ministério da Saúde e da Diretriz Brasileira de Hipertensão de 2025, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_curta",
+          "titulo": "Como medir a pressão em casa",
+          "da_pagina": {
+            "secao": "medir",
+            "formato": "lista"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O que os números dizem:",
+          "texto": "normal, menos de 120/80 (12 por 8). Alerta, de 120/80 a 139/89: cuide dos hábitos. Alta, 140/90 (14 por 9) ou mais: procure o médico."
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Diário da pressão",
+          "colunas": [
+            "Data",
+            "Hora",
+            "Máxima",
+            "Mínima",
+            "Como me senti"
+          ],
+          "linhas": 10,
+          "altura_mm": 6.6
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Remédios e horários (copie da receita)",
+          "colunas": [
+            "Remédio e dose",
+            "Horários",
+            "Como tomar"
+          ],
+          "linhas": 4,
+          "altura_mm": 6.6
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Remédio é com o médico:",
+          "texto": "tome todos os dias, no horário da receita. Não mude a dose, não pare e não tome remédio de outra pessoa. Preencha a lápis: a receita muda."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "emergencia",
+          "titulo": "Emergência: ligue 192",
+          "passos": [
+            "Ligue 192. Não espere para ver se passa.",
+            "Diga o endereço e o que a pessoa está sentindo.",
+            "Sente a pessoa numa posição confortável. Ela não deve fazer esforço.",
+            "Boca torta ou fala enrolada? Anote a hora em que começou.",
+            "Não dê remédio por conta própria. Siga o que o atendente orientar."
+          ],
+          "telefones": [
+            [
+              "192",
+              "SAMU"
+            ],
+            [
+              "193",
+              "Bombeiros"
+            ]
+          ],
+          "dica": {
+            "rotulo": "É caso de 192:",
+            "texto": "dor forte no peito; falta de ar; boca torta, fala enrolada ou fraqueza de um lado do corpo; confusão; dor de cabeça súbita e muito forte; desmaio em que a pessoa não volta a responder logo."
+          },
+          "campo": "Médico ou posto de saúde (nome e telefone):"
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Pressão alta, sem sintomas: o que fazer na hora",
+          "itens": [
+            "Sente-se ou deite-se num lugar confortável, descanse de 5 a 10 minutos e meça de novo.",
+            "Continuou alta, ou ficou em dúvida? Procure o posto de saúde ou a UPA nas horas seguintes.",
+            "Não tome remédio de outra pessoa nem dose a mais. Passando mal, não dirija."
+          ]
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Pressão baixa, com tontura, fraqueza ou vista escura: o que fazer na hora",
+          "itens": [
+            "Sente-se ou deite-se num lugar seguro, onde não possa cair.",
+            "Deitado, levante as pernas, ou peça para alguém levantar.",
+            "Beba água em goles, se estiver bem acordado e engolindo sem dificuldade.",
+            "Melhorou? Levante-se devagar: primeiro sente, depois fique em pé."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Não faça:",
+          "texto": "sal embaixo da língua; dar água ou comida a quem desmaiou; levantar-se de repente."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Procure o posto de saúde ou o médico:",
+          "texto": "tontura ou desmaios que se repetem; sintomas depois de remédio novo ou de mudança de dose; pressão de 14 por 9 ou mais em dias diferentes."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Todo dia:",
+          "texto": "menos sal (o rosa e o marinho também contam); frutas e verduras; 150 minutos de atividade física por semana; não fumar. Remédio da pressão alta é gratuito no posto e no Farmácia Popular: leve documento com foto, CPF e receita."
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
