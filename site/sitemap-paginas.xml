@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-11T22:42:39+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-12T00:01:17+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -1239,12 +1239,16 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/</loc>
-    <lastmod>2026-11-10T20:45:38+00:00</lastmod>
+    <lastmod>2026-11-11T23:55:17+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-itens-960.webp</image:loc>
       <image:title>Sobre uma mesa, uma manta verde com uma corda vermelha, uma toalha cinza, duas lanternas prateadas, uma lanterna de cabeça, pilhas, sacos plásticos pretos, uma faca e uma tesoura</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/capa-mochila-de-emergencia.webp</image:loc>
+      <image:title>Primeira folha da lista da mochila de emergência: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e os itens da mochila, cada um com um quadradinho para marcar</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enchente-rio-acari-960.webp</image:loc>
@@ -1305,6 +1309,63 @@
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/og/og-kit-de-primeiros-socorros.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/quando-ligar-192/</loc>
+    <lastmod>2026-11-11T23:55:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/quando-ligar-192/capa-quando-ligar-192.webp</image:loc>
+      <image:title>Primeira folha do cartaz Quando ligar 192: o logotipo da Cruz Vermelha Brasileira Rio de Janeiro, o que dizer ao atendente do 192, o teste do AVC e os sinais de infarto</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/verao-seguro/</loc>
+    <lastmod>2026-11-11T23:55:25+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/verao-seguro/capa-verao-seguro.webp</image:loc>
+      <image:title>Primeira folha do guia Verão seguro no Rio: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o checklist do dia de calor, cada cuidado com um quadradinho para marcar</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/plano-familiar-de-emergencia/</loc>
+    <lastmod>2026-11-11T23:55:28+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/plano-familiar-de-emergencia/capa-plano-familiar-de-emergencia.webp</image:loc>
+      <image:title>Primeira folha da ficha do plano familiar de emergência: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e as tabelas em branco para preencher com os nomes, os telefones e os pontos de encontro da família</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
     </image:image>
   </url>
   <url>

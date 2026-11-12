@@ -4,7 +4,9 @@
 # do e-mail e do aceite; o pedido vai para a Redação (materiais mochila-de-emergencia, quando-ligar-192, verao-seguro e
 # plano-familiar-de-emergencia, lib/newsletter/materiais.ts). Na Redação, a caixa das matérias ganha quatro variantes:
 # de 18 para 27 matérias (lib/site/caixa-de-material.ts).
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 11/11/2026, às 21h01 (horário de Brasília), a pedido do Matheus, a partir da main em d14ee48, SEM a revisão
+# de fatos do passo 0 (decisão dele; as pendências seguem em notas_internas). Cache limpo, os 12 arquivos conferidos no ar
+# byte a byte, sitemaps regerados e publicados. Faltam: o e-mail de teste em cada página e regerar as matérias (passo 4).
 # Gerar antes: python3 scripts/gerar_guia_pdf.py mochila-de-emergencia quando-ligar-192 verao-seguro plano-familiar-de-emergencia
 #              python3 scripts/gerar_institucional.py mochila-de-emergencia quando-ligar-192 verao-seguro plano-familiar-de-emergencia
 # ORDEM, e ela importa:
