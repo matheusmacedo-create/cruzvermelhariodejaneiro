@@ -2,7 +2,8 @@
 """Sincroniza as turmas do oferta.json com as turmas abertas que a escola publica.
 
 Lê a página pública de cada curso (url_escola, no cursos.json) em escola.cursoscruzvermelha.org: a lista "Escolha sua
-turma" traz, de cada turma, a data ("Início em 12 de novembro de 2026"), o horário ("09:00 - 17:00") e o id da turma
+turma" traz, de cada turma, a data (o dia e o mês no quadro da data; até 11/2026 também "Início em 12 de novembro de
+2026", com o ano), o horário ("09:00 - 17:00") e o id da turma
 na escola (o link /inscrever/<id>), que é o turma_id que a matrícula manda à escola depois do pagamento.
 
 Regras:
@@ -48,9 +49,20 @@ def baixar(url: str) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
-def ler_turmas(pagina: str) -> list[dict]:
+def ano_da_turma(dia: int, mes: int, pagina: str, hoje: datetime) -> int:
+    """O ano de uma turma que a escola mostra só com dia e mês (formato de 11/2026). Vale o do data-inicio da página
+    (a contagem regressiva da próxima turma) quando é o mesmo dia; senão, a próxima vez que esse dia acontece: a escola
+    só lista turma aberta, que é de hoje em diante."""
+    for a, m, d in re.findall(r'data-inicio="(\d{4})-(\d{2})-(\d{2})T', pagina):
+        if (int(m), int(d)) == (mes, dia):
+            return int(a)
+    return hoje.year if (mes, dia) >= (hoje.month, hoje.day) else hoje.year + 1
+
+
+def ler_turmas(pagina: str, hoje: datetime | None = None) -> list[dict]:
     """As turmas da seção "Escolha sua turma". Sem a seção (curso sem turma aberta), lista vazia; com a seção e sem
     conseguir ler uma turma, erro (a página mudou: melhor parar que fechar turmas)."""
+    hoje = hoje or datetime.now(BRT)
     if "Sem turma aberta no momento" in pagina and "Escolha sua turma" not in pagina:
         return []
     inicio = pagina.find("Escolha sua turma")
@@ -67,9 +79,16 @@ def ler_turmas(pagina: str) -> list[dict]:
         data = re.search(r"Início em (\d{1,2}) de ([a-zç]+) de (\d{4})", texto)
         hora = re.search(r"(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})", texto)
         ident = re.search(r'/inscrever/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"', bloco)
-        if not (data and hora and ident) or data.group(2) not in MESES:
+        if data:
+            d, mes, ano = int(data.group(1)), data.group(2), int(data.group(3))
+        else:  # formato de 11/2026: só o quadro da data, <b>28</b><span>novembro</span>, sem o ano
+            quadro = re.search(r'class="v-data">\s*<b>(\d{1,2})</b>\s*<span>([a-zç]+)</span>', bloco)
+            d, mes, ano = (int(quadro.group(1)), quadro.group(2), None) if quadro else (0, "", None)
+        if not (d and hora and ident) or mes not in MESES:
             raise ValueError(f"turma ilegível: {texto[:120]!r}")
-        dia = datetime(int(data.group(3)), MESES.index(data.group(2)) + 1, int(data.group(1)), tzinfo=BRT)
+        if ano is None:
+            ano = ano_da_turma(d, MESES.index(mes) + 1, pagina, hoje)
+        dia = datetime(ano, MESES.index(mes) + 1, d, tzinfo=BRT)
         comeca = dia.replace(hour=int(hora.group(1)), minute=int(hora.group(2)))
         termina = dia.replace(hour=int(hora.group(3)), minute=int(hora.group(4)))
         prazo = (dia - timedelta(days=1)).replace(hour=23, minute=59, second=59)
@@ -144,6 +163,13 @@ def teste() -> int:
     ver("lê a turma do exemplo", lidas, [{"id_escola": "bd0e9f3c-5268-4572-bc9f-04237aa9de38",
                                          "inicio": "2026-11-12T09:00:00-03:00", "fim": "2026-11-12T17:00:00-03:00",
                                          "inscricoes_ate": "2026-11-11T23:59:59-03:00"}])
+    sem_ano = EXEMPLO.replace("Início em 12 de novembro de 2026", "Quinta-feira · 1 encontro")
+    ver("formato sem o ano: a próxima vez que o dia acontece", ler_turmas(sem_ano, datetime(2026, 11, 3, tzinfo=BRT)), lidas)
+    ver("formato sem o ano: dia que já passou neste ano é do ano que vem",
+        ler_turmas(sem_ano, datetime(2026, 12, 20, tzinfo=BRT))[0]["inicio"], "2027-11-12T09:00:00-03:00")
+    ver("formato sem o ano: vale o ano do data-inicio da página",
+        ler_turmas(sem_ano + '<b data-inicio="2027-11-12T12:00:00.000Z">', datetime(2026, 11, 3, tzinfo=BRT))[0]["inicio"],
+        "2027-11-12T09:00:00-03:00")
     ver("curso sem turma: lista vazia", ler_turmas("<p>Sem turma aberta no momento</p>"), [])
     try:
         ler_turmas("<html>outra coisa</html>")
