@@ -31,7 +31,7 @@
       "inicio": "2026-11-17T09:00:00-03:00",
       "fim": "2026-11-17T17:00:00-03:00",
       "inscricoes_ate": "2026-11-16T23:59:59-03:00",
-      "lotada": false
+      "lotada": true
     },
     {
       "curso": "curativos-e-tratamento-de-feridas",
@@ -39,6 +39,22 @@
       "inicio": "2026-11-28T09:00:00-03:00",
       "fim": "2026-11-28T17:00:00-03:00",
       "inscricoes_ate": "2026-11-27T23:59:59-03:00",
+      "lotada": false
+    },
+    {
+      "curso": "puncao-venosa",
+      "id_escola": "dc257a6e-56f7-4950-84ae-9460081888c2",
+      "inicio": "2026-12-05T09:00:00-03:00",
+      "fim": "2026-12-05T17:00:00-03:00",
+      "inscricoes_ate": "2026-12-04T23:59:59-03:00",
+      "lotada": false
+    },
+    {
+      "curso": "primeiros-socorros-lei-lucas",
+      "id_escola": "ef4c176c-3e2a-490e-abee-c362ca5f531f",
+      "inicio": "2026-12-09T09:00:00-03:00",
+      "fim": "2026-12-09T17:00:00-03:00",
+      "inscricoes_ate": "2026-12-08T23:59:59-03:00",
       "lotada": false
     }
   ],

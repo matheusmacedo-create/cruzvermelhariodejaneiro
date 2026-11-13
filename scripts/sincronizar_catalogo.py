@@ -242,6 +242,13 @@ def main() -> int:
     if trocados:
         print(f"ERRO: o id na escola mudou para {', '.join(trocados)}. Nada foi gravado.", file=sys.stderr)
         return 1
+    # Escolaridade que a escola deixou de mostrar na página do curso: fica a que já estava aqui (o checkout pede o
+    # aceite da escolaridade mínima e a página a mostra no cartão), com aviso.
+    antes = {c["slug"]: c for c in anterior.get("cursos", [])}
+    for c in cursos:
+        if not c["escolaridade"] and (antes.get(c["slug"]) or {}).get("escolaridade"):
+            c["escolaridade"] = antes[c["slug"]]["escolaridade"]
+            print(f"  AVISO: a escola não informa a escolaridade de {c['nome']} [{c['slug']}]; mantida a do arquivo, {c['escolaridade']}.")
     for c in cursos:
         if c["valor_matricula_escola_centavos"] is not None and c["valor_matricula_escola_centavos"] != inscricao:
             print(f"  AVISO: taxa de inscrição da escola R$ {c['valor_matricula_escola_centavos'] / 100:.2f} em {c['nome']} [{c['slug']}]; "
