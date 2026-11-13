@@ -194,9 +194,9 @@
       ],
       "carga_horaria": "8 horas",
       "escolaridade": "Ensino Fundamental",
-      "valor_curso_centavos": 18000,
-      "valor_matricula_escola_centavos": 9900,
-      "total_escola_centavos": 27900,
+      "valor_curso_centavos": 15000,
+      "valor_matricula_escola_centavos": 0,
+      "total_escola_centavos": 15000,
       "faq": [
         {
           "pergunta": "Preciso ser da área da saúde?",

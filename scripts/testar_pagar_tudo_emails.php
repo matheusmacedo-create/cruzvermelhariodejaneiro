@@ -88,7 +88,7 @@ confere('acréscimo 27%', mcp_email_acrescimo($cartao10) === '27%', mcp_email_ac
 confere('linha do crédito', mcp_email_linha_credito($cartao10) === 'Parcelamento: 10 parcelas mensais (1ª de R$ 35,46 e 9 de R$ 35,43) · juros de 4,60% ao mês · CET de 71,55% ao ano · preço à vista R$ 279,00 · total R$ 354,33 · concedido por O-CVB Filial Rio de Janeiro Ensino Ltda', mcp_email_linha_credito($cartao10));
 confere('linha do crédito some à vista', mcp_email_linha_credito($paga) === '');
 confere('total pago = cobrado', mcp_email_total_pago_centavos($cartao10) === 35433 && mcp_email_total_pago_centavos($paga) === 27900);
-confere('matrícula: preço gravado > catálogo', mcp_email_matricula(['matricula_preco_centavos' => 17000] + $paga) === 'R$ 170,00' && mcp_email_matricula(['matricula_preco_centavos' => null] + $paga) === 'R$ 180,00');
+confere('matrícula: preço gravado > catálogo', mcp_email_matricula(['matricula_preco_centavos' => 17000] + $paga) === 'R$ 170,00' && mcp_email_matricula(['matricula_preco_centavos' => null] + $paga) === 'R$ 150,00');
 confere('taxa em dobro com juros (12x do exemplo)', mcp_email_taxa_em_dobro_centavos(['total_centavos' => 27900, 'total_cobrado_centavos' => 37107, 'inscricao_centavos' => 9900, 'parcelas' => 12, 'metodo' => 'cartao']) === 13167);
 confere('janela: envio + 7 ou véspera', mcp_email_janela_ate(gmdate('Y-m-d', time() + 30 * 86400), time()) === (new DateTimeImmutable('@' . time()))->setTimezone(new DateTimeZone('America/Sao_Paulo'))->modify('+7 days')->setTime(23, 59, 59)->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'));
 $vesp = mcp_email_janela_ate(gmdate('Y-m-d', time() + 3 * 86400), time());

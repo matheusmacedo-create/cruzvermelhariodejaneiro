@@ -87,7 +87,7 @@ Ensino Ltda, empresa ligada à filial. Cada curso tem a taxa de inscrição de R
 valores abaixo, à vista); a plataforma da escola também parcela, com juros. Datas e horários variam
 por turma.
 
-- Primeiros Socorros Básico: 8 horas, Ensino Fundamental, R$ 180. Inclui a Lei Lucas.
+- Primeiros Socorros Básico: 8 horas, Ensino Fundamental, R$ 150. Inclui a Lei Lucas.
 - Primeiros Socorros Lei Lucas (ambientes com crianças): 8 horas, Ensino Fundamental, R$ 150.
 - Suporte Básico de Vida (BLS): 4 horas, Ensino Fundamental, R$ 150.
 - Punção Venosa: 8 horas, Ensino Médio, R$ 150. Para estudantes e profissionais da saúde.

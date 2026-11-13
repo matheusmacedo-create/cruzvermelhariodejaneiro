@@ -67,7 +67,8 @@ function recarregar_config(): void
     // mcp_config() guarda num static; o jeito limpo é rodar cada cenário de chave num processo próprio (abaixo).
 }
 
-$psb = mcp_curso('primeiros-socorros-basico');
+// As contas abaixo são as do exemplo da spec (matrícula de R$ 180,00); o preço do catálogo passou a R$ 150,00 em 13/11/2026.
+$psb = ['valor_curso_centavos' => 18000] + mcp_curso('primeiros-socorros-basico');
 $bombeiro = mcp_curso('bombeiro-civil');
 $cuidador = mcp_curso('cuidador-de-idosos');
 
@@ -296,8 +297,8 @@ $cenarios = [
     'sem turma ligado, fora da lista' => [['PLANO_COMPLETO' => true, 'PLANO_COMPLETO_SEM_TURMA' => true], 'bombeiro-civil', null, 3, 'sem_turma_fora_da_lista'],
     'sem turma string true' => [['PLANO_COMPLETO' => true, 'PLANO_COMPLETO_SEM_TURMA' => 'true'], 'cuidador-de-idosos', null, 3, 'sem_turma_desligado'],
     'teste: CPF da lista paga 100 de taxa' => [['PLANO_COMPLETO' => true, 'PRECO_TESTE_CENTAVOS' => 100, 'PRECO_TESTE_MATRICULA_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', CPF_TESTE, 3, '#compra:200'],
-    'teste: outro CPF paga o preço real' => [['PLANO_COMPLETO' => true, 'PRECO_TESTE_CENTAVOS' => 100, 'PRECO_TESTE_MATRICULA_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', CPF_OUTRO, 3, '#compra:27900'],
-    'teste: info.php sem CPF mostra o real' => [['PLANO_COMPLETO' => true, 'PRECO_TESTE_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', null, 3, '#compra:27900'],
+    'teste: outro CPF paga o preço real' => [['PLANO_COMPLETO' => true, 'PRECO_TESTE_CENTAVOS' => 100, 'PRECO_TESTE_MATRICULA_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', CPF_OUTRO, 3, '#compra:24900'],
+    'teste: info.php sem CPF mostra o real' => [['PLANO_COMPLETO' => true, 'PRECO_TESTE_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', null, 3, '#compra:24900'],
     // Revisão de regressões (09/10): nos testes reais, PLANO_COMPLETO_SO_TESTE deixa a opção 1 só para os CPFs da lista.
     'só teste: outro CPF não paga a opção 1' => [['PLANO_COMPLETO' => true, 'PLANO_COMPLETO_SO_TESTE' => true, 'PRECO_TESTE_MATRICULA_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', CPF_OUTRO, 3, 'desligado'],
     'só teste: CPF da lista paga' => [['PLANO_COMPLETO' => true, 'PLANO_COMPLETO_SO_TESTE' => true, 'PRECO_TESTE_MATRICULA_CENTAVOS' => 100, 'TESTE_CPFS' => [CPF_TESTE]], 'primeiros-socorros-basico', CPF_TESTE, 3, null],
