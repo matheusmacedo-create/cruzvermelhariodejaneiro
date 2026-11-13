@@ -26,8 +26,11 @@
 declare(strict_types=1);
 
 const MCP_CUPONS = [
-    // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos (código NOV15, agenda, 30/10/2026).
-    'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 30, 'ate' => null, 'vitrine' => true],
+    // Primeiros Socorros Básico por R$ 150,00 com tudo incluso, para 30 alunos por turma (código NOV15, agenda, 30/10/2026).
+    // 13/11/2026: a turma de 17/11 lotou com 28 das 30 vagas do cupom usadas, e a venda passou à turma de 02/12. O limite
+    // conta todas as inscrições com o código, de qualquer turma, então vai a 58: as 28 já usadas + 30 da turma de dezembro.
+    // É o preço da escola, que vende o curso por R$ 150,00 sem taxa de inscrição; aqui a tabela é R$ 150 + R$ 99.
+    'NOV15' => ['cursos' => ['primeiros-socorros-basico'], 'total_centavos' => 15000, 'limite' => 58, 'ate' => null, 'vitrine' => true],
     // Primeiros Socorros Lei Lucas por R$ 120,00 com tudo incluso, para 10 alunos (código PRO12, 03/11/2026). Vale até o
     // fim das inscrições da turma de 12/11 (oferta.json: inscricoes_ate).
     'PRO12' => ['cursos' => ['primeiros-socorros-lei-lucas'], 'total_centavos' => 12000, 'limite' => 10, 'ate' => '2026-11-11T23:59:59-03:00', 'vitrine' => true],
