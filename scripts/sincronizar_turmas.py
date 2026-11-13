@@ -59,6 +59,22 @@ def ano_da_turma(dia: int, mes: int, pagina: str, hoje: datetime) -> int:
     return hoje.year if (mes, dia) >= (hoje.month, hoje.day) else hoje.year + 1
 
 
+def ler_horario(bloco: str) -> tuple[int, int, int, int] | None:
+    """O horário da turma: (hora, minuto) do começo e do fim. A secretaria escreve o campo à mão: "09:00 - 17:00",
+    "09-18h", "9h às 18h", "08h30 às 12h". É lido na linha do horário (o <span> do texto da turma), nunca na da data.
+    Sem horário legível, ou com o fim antes do começo, None (e a sincronização para sem gravar)."""
+    linha = re.search(r'class="v-turma-txt">.*?<span>(.*?)</span>', bloco, re.S)
+    texto = html.unescape(re.sub(r"<[^>]+>", " ", linha.group(1))) if linha else ""
+    m = re.search(r"(?<!\d)(\d{1,2})(?:\s*[:h]\s*(\d{2}))?\s*h?\s*(?:-|–|—|às|as|a|até)\s*(\d{1,2})(?:\s*[:h]\s*(\d{2}))?\s*h?(?!\d)",
+                  texto, re.I)
+    if not m:
+        return None
+    h1, m1, h2, m2 = (int(g or 0) for g in m.groups())
+    if h1 > 23 or h2 > 23 or m1 > 59 or m2 > 59 or (h2, m2) <= (h1, m1):
+        return None
+    return h1, m1, h2, m2
+
+
 def ler_turmas(pagina: str, hoje: datetime | None = None) -> list[dict]:
     """As turmas da seção "Escolha sua turma". Sem a seção (curso sem turma aberta), lista vazia; com a seção e sem
     conseguir ler uma turma, erro (a página mudou: melhor parar que fechar turmas)."""
@@ -77,7 +93,7 @@ def ler_turmas(pagina: str, hoje: datetime | None = None) -> list[dict]:
     for bloco in blocos:
         texto = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", bloco)))
         data = re.search(r"Início em (\d{1,2}) de ([a-zç]+) de (\d{4})", texto)
-        hora = re.search(r"(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})", texto)
+        hora = ler_horario(bloco)
         ident = re.search(r'/inscrever/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"', bloco)
         if data:
             d, mes, ano = int(data.group(1)), data.group(2), int(data.group(3))
@@ -89,8 +105,8 @@ def ler_turmas(pagina: str, hoje: datetime | None = None) -> list[dict]:
         if ano is None:
             ano = ano_da_turma(d, MESES.index(mes) + 1, pagina, hoje)
         dia = datetime(ano, MESES.index(mes) + 1, d, tzinfo=BRT)
-        comeca = dia.replace(hour=int(hora.group(1)), minute=int(hora.group(2)))
-        termina = dia.replace(hour=int(hora.group(3)), minute=int(hora.group(4)))
+        comeca = dia.replace(hour=hora[0], minute=hora[1])
+        termina = dia.replace(hour=hora[2], minute=hora[3])
         prazo = (dia - timedelta(days=1)).replace(hour=23, minute=59, second=59)
         turmas.append({"id_escola": ident.group(1), "inicio": comeca.isoformat(), "fim": termina.isoformat(),
                        "inscricoes_ate": prazo.isoformat()})
@@ -170,6 +186,11 @@ def teste() -> int:
     ver("formato sem o ano: vale o ano do data-inicio da página",
         ler_turmas(sem_ano + '<b data-inicio="2027-11-12T12:00:00.000Z">', datetime(2026, 11, 3, tzinfo=BRT))[0]["inicio"],
         "2027-11-12T09:00:00-03:00")
+    for escrito, lido in (("09:00 - 17:00", (9, 0, 17, 0)), ("09-18h", (9, 0, 18, 0)), ("9h às 18h", (9, 0, 18, 0)),
+                          ("08h30 às 12h", (8, 30, 12, 0)), ("18:30–22:00", (18, 30, 22, 0)), ("a combinar", None),
+                          ("18h às 9h", None)):
+        ver(f"horário escrito {escrito!r}",
+            ler_horario(f'<div class="v-turma-txt"><strong>Sábado · 1 encontro</strong> <span>{escrito} · Praça da Cruz Vermelha, 10 · Centro</span></div>'), lido)
     ver("curso sem turma: lista vazia", ler_turmas("<p>Sem turma aberta no momento</p>"), [])
     try:
         ler_turmas("<html>outra coisa</html>")
