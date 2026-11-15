@@ -1,6 +1,8 @@
 # Banners das turmas abertas na home (15/11/2026): Curativos 28/11, Primeiros Socorros 02/12, Punção Venosa 05/12 e
 # Lei Lucas 09/12, no lugar do banner da turma de 17/11 (fechada). Um por vez, o da turma mais próxima.
 # Artes e fonte em docs/criativos/banners-turmas-nov-dez-2026/.
+# Publicado em 15/11/2026, com o cache limpo e os 18 arquivos conferidos no ar (idênticos ao Git). O sitemap enviado é o do
+# ar (mais novo que o do Git) com a troca da imagem da home.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-banners-turmas.txt)
 # 1) as imagens, antes da página que as pede
 site/matricula-cursos-presenciais/img/banner-curativos-28-11-1920.webp
