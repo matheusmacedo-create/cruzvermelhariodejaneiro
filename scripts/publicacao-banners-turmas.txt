@@ -1,0 +1,24 @@
+# Banners das turmas abertas na home (15/11/2026): Curativos 28/11, Primeiros Socorros 02/12, Punção Venosa 05/12 e
+# Lei Lucas 09/12, no lugar do banner da turma de 17/11 (fechada). Um por vez, o da turma mais próxima.
+# Artes e fonte em docs/criativos/banners-turmas-nov-dez-2026/.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-banners-turmas.txt)
+# 1) as imagens, antes da página que as pede
+site/matricula-cursos-presenciais/img/banner-curativos-28-11-1920.webp
+site/matricula-cursos-presenciais/img/banner-curativos-28-11-960.webp
+site/matricula-cursos-presenciais/img/banner-curativos-28-11-celular-1080.webp
+site/matricula-cursos-presenciais/img/banner-curativos-28-11-celular-540.webp
+site/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-1920.webp
+site/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-960.webp
+site/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-celular-1080.webp
+site/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-celular-540.webp
+site/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-1920.webp
+site/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-960.webp
+site/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-celular-1080.webp
+site/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-celular-540.webp
+site/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-1920.webp
+site/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-960.webp
+site/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-celular-1080.webp
+site/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-celular-540.webp
+# 2) as páginas
+site/index.html
+site/sitemap-paginas.xml

@@ -797,10 +797,12 @@
       main#inicio .hero .eyebrow { margin-bottom: .6rem; }
     }
 
-    /* Banner da turma de Primeiros Socorros de 17/11 (30/10/2026): a arte traz o texto; o link inteiro leva ao checkout.
-       Fonte da arte em docs/criativos/banner-primeiros-socorros-17-11/; o script logo depois do banner o tira no dia da turma. */
+    /* Banners das turmas abertas (15/11/2026), um por turma, na ordem das datas: a arte traz o texto e o link inteiro leva ao
+       checkout. Só o primeiro aparece; o script logo depois deles tira cada um quando as inscrições da turma fecham
+       (meia-noite do dia da aula), e o seguinte assume. Fonte das artes em docs/criativos/banners-turmas-nov-dez-2026/. */
     .hp-banner-turma { display: block; background: #151515; }
     .hp-banner-turma img { display: block; width: 100%; height: auto; } /* sem teto de 1920 px: em tela mais larga a foto acabava num corte seco */
+    .hp-banner-turma ~ .hp-banner-turma { display: none; }
     .hp-banner-turma:focus-visible { outline: 3px solid #e30613; outline-offset: -3px; }
 
     /* Faixa de identidade: números com fonte, cada item é um link. */
@@ -1273,13 +1275,31 @@
   </header>
 
   <main id="inicio">
-    <a class="hp-banner-turma" id="hp-banner-turma" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=banner_home">
+    <a class="hp-banner-turma" data-ate="2026-11-28T00:00:00-03:00" href="/matricula-cursos-presenciais/checkout/?curso=curativos-e-tratamento-de-feridas&amp;via=banner_home">
       <picture>
-        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
-        <img src="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-960.webp 960w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-17-11-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 17 de novembro, terça-feira, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." fetchpriority="high" decoding="async">
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-curativos-28-11-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-curativos-28-11-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-curativos-28-11-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-curativos-28-11-960.webp 960w, /matricula-cursos-presenciais/img/banner-curativos-28-11-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="Curso presencial de Curativos e Tratamento de Feridas: avaliação, limpeza e curativos para o cuidado seguro de feridas. 28 de novembro, sábado, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." fetchpriority="high" decoding="async">
       </picture>
     </a>
-    <script>if (Date.now() >= Date.parse('2026-11-17T09:00:00-03:00')) document.getElementById('hp-banner-turma').remove();</script>
+    <a class="hp-banner-turma" data-ate="2026-12-02T00:00:00-03:00" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-basico&amp;via=banner_home">
+      <picture>
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-960.webp 960w, /matricula-cursos-presenciais/img/banner-primeiros-socorros-02-12-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="Curso presencial de Primeiros Socorros: aprenda na prática como agir em emergências. 2 de dezembro, quarta-feira, das 9h às 18h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." loading="lazy" decoding="async">
+      </picture>
+    </a>
+    <a class="hp-banner-turma" data-ate="2026-12-05T00:00:00-03:00" href="/matricula-cursos-presenciais/checkout/?curso=puncao-venosa&amp;via=banner_home">
+      <picture>
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-960.webp 960w, /matricula-cursos-presenciais/img/banner-puncao-venosa-05-12-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="Curso presencial de Punção Venosa, para estudantes e profissionais da saúde: acesso venoso periférico com segurança. 5 de dezembro, sábado, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." loading="lazy" decoding="async">
+      </picture>
+    </a>
+    <a class="hp-banner-turma" data-ate="2026-12-09T00:00:00-03:00" href="/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&amp;via=banner_home">
+      <picture>
+        <source media="(max-width: 650px)" srcset="/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-celular-540.webp 540w, /matricula-cursos-presenciais/img/banner-lei-lucas-09-12-celular-1080.webp 1080w" sizes="100vw" width="1080" height="1420">
+        <img src="/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-1920.webp" srcset="/matricula-cursos-presenciais/img/banner-lei-lucas-09-12-960.webp 960w, /matricula-cursos-presenciais/img/banner-lei-lucas-09-12-1920.webp 1920w" sizes="100vw" width="1920" height="640" alt="Curso presencial de Primeiros Socorros Lei Lucas, para ambientes com crianças: saiba agir em engasgos, quedas e outras emergências. 9 de dezembro, quarta-feira, das 9h às 17h, no Palácio da Cruz Vermelha, Centro do Rio. Com certificado, 8 horas de aula prática. Inscreva-se." loading="lazy" decoding="async">
+      </picture>
+    </a>
+    <script>document.querySelectorAll('.hp-banner-turma').forEach(function (b) { if (Date.now() >= Date.parse(b.getAttribute('data-ate'))) b.remove(); });</script>
     <!-- data-cvrj-ck-topo: o aviso de cookies (site/consentimento/consentimento.js) fica no alto desta página, abaixo
          do cabeçalho, para não cobrir a missão e os botões da base da primeira tela (achado T01). -->
     <section class="hero" aria-labelledby="hero-title" data-cvrj-ck-topo data-cv-chat-depois-do-hero>
