@@ -3,6 +3,7 @@
 # Artes e fonte em docs/criativos/banners-turmas-nov-dez-2026/.
 # Publicado em 15/11/2026, com o cache limpo e os 18 arquivos conferidos no ar (idênticos ao Git). O sitemap enviado é o do
 # ar (mais novo que o do Git) com a troca da imagem da home.
+# Carrossel (os quatro banners girando a cada 6 s) publicado no mesmo dia: só site/index.html, conferido no ar.
 # Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-banners-turmas.txt)
 # 1) as imagens, antes da página que as pede
 site/matricula-cursos-presenciais/img/banner-curativos-28-11-1920.webp
