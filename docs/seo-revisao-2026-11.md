@@ -5,8 +5,9 @@ tudo e corrigir o que estiver errado. Método: `scripts/auditar_seo.py` nas 189 
 rastreamento próprio (cada link, imagem e recurso das 189 páginas: 1.480 endereços conferidos), o Search
 Console (28 dias, 17/10 a 13/11) e o PageSpeed.
 
-**Estado: corrigido no Git, ainda não publicado.** Ordem de publicação em
-`scripts/publicacao-seo-novembro.txt`. Na Redação, as correções estão no PR do mesmo branch.
+**Estado: publicado em 15/11/2026, às 21h40** (49 páginas, conferidas no ar byte a byte; detalhes e pendências
+em `scripts/publicacao-seo-novembro.txt`). Na Redação, as correções estão no PR #410 e só valem no site depois
+do merge e de "Regerar as páginas das notícias".
 
 ## 1. Como o site está
 

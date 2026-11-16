@@ -2,7 +2,14 @@
 # guias gratuitos (dez não recebiam link de nenhuma página), hreflang do Direito Internacional Humanitário nas três
 # línguas, links quebrados, data das notícias em inglês, tags de compartilhamento em /verificar/ e dados estruturados
 # em /pedido-de-documentos/. O que foi achado e o que ficou para decidir: docs/seo-revisao-2026-11.md.
-# ESTADO: NÃO publicado. Nenhum arquivo novo: todos já existem no ar e são sobrescritos.
+# ESTADO: PUBLICADO em 15/11/2026, às 21h40 (horário de Brasília), a pedido do Matheus, a partir do branch
+# claude/ecstatic-faraday-inucnj em c7c5cdd (PR #183). Cache limpo, os 49 arquivos conferidos no ar byte a byte,
+# consulta de um código em /verificar/ testada. Nenhum arquivo novo: todos já existiam no ar.
+# ATENÇÃO: /en/international-humanitarian-law/ foi ao ar com duas linhas a mais que a deste commit (o hreflang "es"
+# e o link ES do seletor de idioma), que já estavam no ar pelo PR #174 e este branch não tem. Depois de mesclar os
+# dois PRs, rodar python3 scripts/gerar_ingles.py e conferir que a página gerada bate com a do ar.
+# Sitemaps NÃO republicados: o sitemap-paginas.xml no ar tem a página em espanhol do DIH (PR #174) e o gerado daqui
+# não teria. Regerar e publicar depois do merge do #174.
 # Gerar antes (já feito neste commit): python3 scripts/gerar_institucional.py; python3 scripts/gerar_ingles.py;
 #   python3 scripts/gerar_politicas.py; python3 scripts/gerar_verificar.py; python3 scripts/gerar_pedido_documentos.py
 # ORDEM:
