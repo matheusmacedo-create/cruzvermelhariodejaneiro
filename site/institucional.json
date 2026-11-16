@@ -983,7 +983,7 @@
     {
      "id": "como-nos-financiamos",
      "h2": "Como a filial se financia",
-     "html": "<p>A filial não tem fins lucrativos: o que entra é aplicado nas atividades e na manutenção da sede. O Estatuto diz que o patrimônio da Cruz Vermelha Brasileira, incluído o das filiais, é “totalmente destinado às ações humanitárias, filantrópicas e para sua subsistência” (art. 75).</p><p>As fontes são estas:</p><ul><li><strong>O resultado da escola.</strong> A O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à filial, vende os cursos pagos e os treinamentos para empresas. O resultado da escola é destinado à manutenção do Palácio da Cruz Vermelha e às atividades da filial.</li><li><strong>Doações em dinheiro</strong>, por PIX, na <a href=\"/doe/\">página de doação</a>. O comprovante chega por e-mail, com o CNPJ da filial.</li><li><strong>Doações de bens nas campanhas.</strong> Agasalhos, cobertores, calçados e brinquedos, entregues na sede, vão direto para as pessoas atendidas.</li><li><strong>Parcerias com empresas</strong>, em programas de responsabilidade social, e com o poder público, quando houver. A Lei 13.019/2014 manda divulgar toda parceria com o poder público na internet, e o lugar disso no site é o portal da transparência.</li><li><strong>Repasse do órgão central</strong>, previsto no art. 74 do Estatuto (parte das receitas de leis que beneficiam a Cruz Vermelha), quando houver. A filial, por sua vez, contribui mensalmente com o órgão central (art. 73).</li></ul><figure class=\"inst-figura inst-figura-media\"><img src=\"/assets/otim/agasalho-hero-rua-640.webp\" srcset=\"/assets/otim/agasalho-hero-rua-640.webp 640w, /assets/otim/agasalho-hero-rua-1264.webp 1264w\" sizes=\"(max-width: 920px) calc(100vw - 40px), 600px\" width=\"640\" height=\"429\" alt=\"Voluntário da Cruz Vermelha, agachado e de colete vermelho, entrega um cobertor a um homem idoso sentado numa cadeira na calçada, ao lado de um ponto de ônibus\"><figcaption>Campanha do Agasalho: um voluntário da filial entrega um cobertor na rua. As doações de bens recebidas na sede vão direto para as pessoas atendidas.</figcaption></figure><p>Os documentos da filial ficam no <a href=\"/transparencia/\">portal da transparência</a>, cada um com código de registro e impressão digital verificáveis. Lá estão o Estatuto e a escritura pública de ata notarial de 02/02/2026.</p>"
+     "html": "<p>A filial não tem fins lucrativos: o que entra é aplicado nas atividades e na manutenção da sede. O Estatuto diz que o patrimônio da Cruz Vermelha Brasileira, incluído o das filiais, é “totalmente destinado às ações humanitárias, filantrópicas e para sua subsistência” (art. 75).</p><p>As fontes são estas:</p><ul><li><strong>O resultado da escola.</strong> A O-CVB Filial Rio de Janeiro Ensino Ltda (CNPJ 67.733.551/0001-35), empresa ligada à filial, vende os cursos pagos e os treinamentos para empresas. O resultado da escola é destinado à manutenção do Palácio da Cruz Vermelha e às atividades da filial.</li><li><strong>Doações em dinheiro</strong>, por PIX ou cartão, na <a href=\"/doe/\">página de doação</a>. O comprovante chega por e-mail, com o CNPJ da filial.</li><li><strong>Doações de bens nas campanhas.</strong> Agasalhos, cobertores, calçados e brinquedos, entregues na sede, vão direto para as pessoas atendidas.</li><li><strong>Parcerias com empresas</strong>, em programas de responsabilidade social, e com o poder público, quando houver. A Lei 13.019/2014 manda divulgar toda parceria com o poder público na internet, e o lugar disso no site é o portal da transparência.</li><li><strong>Repasse do órgão central</strong>, previsto no art. 74 do Estatuto (parte das receitas de leis que beneficiam a Cruz Vermelha), quando houver. A filial, por sua vez, contribui mensalmente com o órgão central (art. 73).</li></ul><figure class=\"inst-figura inst-figura-media\"><img src=\"/assets/otim/agasalho-hero-rua-640.webp\" srcset=\"/assets/otim/agasalho-hero-rua-640.webp 640w, /assets/otim/agasalho-hero-rua-1264.webp 1264w\" sizes=\"(max-width: 920px) calc(100vw - 40px), 600px\" width=\"640\" height=\"429\" alt=\"Voluntário da Cruz Vermelha, agachado e de colete vermelho, entrega um cobertor a um homem idoso sentado numa cadeira na calçada, ao lado de um ponto de ônibus\"><figcaption>Campanha do Agasalho: um voluntário da filial entrega um cobertor na rua. As doações de bens recebidas na sede vão direto para as pessoas atendidas.</figcaption></figure><p>Os documentos da filial ficam no <a href=\"/transparencia/\">portal da transparência</a>, cada um com código de registro e impressão digital verificáveis. Lá estão o Estatuto e a escritura pública de ata notarial de 02/02/2026.</p>"
     },
     {
      "id": "conheca-mais",
@@ -1208,7 +1208,7 @@
   {
    "slug": "cbfi",
    "titulo_seo": "CBFI: formação inicial de voluntários – Cruz Vermelha RJ",
-   "descricao_seo": "O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma, como participar e o que se aprende.",
+   "descricao_seo": "O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma e como participar.",
    "eyebrow": "Voluntariado",
    "h1": "CBFI: o curso de formação inicial dos voluntários",
    "lead": "O CBFI, Curso Básico de Formação Institucional, é a porta de entrada de todo voluntário da Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro. É gratuito, acontece na sede, no Centro do Rio, e é só para quem entra no voluntariado.",
@@ -1273,7 +1273,7 @@
   },
   {
    "slug": "kit-de-emergencia",
-   "titulo_seo": "Kit de emergência para 72 horas: lista em PDF – Cruz Vermelha RJ",
+   "titulo_seo": "Kit de emergência 72 horas: lista em PDF – Cruz Vermelha RJ",
    "descricao_seo": "Kit de emergência para 72 horas: lista em PDF para imprimir, quanta água guardar, kit de primeiros socorros e quando usar a mochila de emergência.",
    "eyebrow": "Prepare-se",
    "h1": "Kit de emergência para 72 horas: o que ter em casa",
@@ -1451,7 +1451,7 @@
   },
   {
    "slug": "mochila-de-emergencia",
-   "titulo_seo": "Mochila de emergência: lista do kit 72 horas – Cruz Vermelha RJ",
+   "titulo_seo": "Mochila de emergência: lista do kit 72h – Cruz Vermelha RJ",
    "descricao_seo": "Mochila de emergência (kit de sobrevivência ou kit 72 horas): o que levar, quanta água, documentos, onde deixar e quando sair de casa. Lista item por item.",
    "eyebrow": "Prepare-se",
    "h1": "Mochila de emergência: o que levar se precisar sair de casa",
@@ -1642,7 +1642,7 @@
   },
   {
    "slug": "kit-de-primeiros-socorros",
-   "titulo_seo": "Kit de primeiros socorros: lista e como montar – Cruz Vermelha RJ",
+   "titulo_seo": "Kit de primeiros socorros: lista completa – Cruz Vermelha RJ",
    "descricao_seo": "O que deve ter no kit de primeiros socorros, para que serve cada item, como montar e guardar a caixa, quando conferir e a lista em PDF para imprimir.",
    "eyebrow": "Prepare-se",
    "h1": "Kit de primeiros socorros: o que deve ter e como montar o seu",
@@ -1837,7 +1837,7 @@
   },
   {
    "slug": "bazar",
-   "titulo_seo": "Bazar solidário: doe roupas e itens de casa – Cruz Vermelha RJ",
+   "titulo_seo": "Bazar solidário: doe roupas e utensílios – Cruz Vermelha RJ",
    "descricao_seo": "Doe roupas, calçados e itens domésticos em bom estado para o bazar solidário da Cruz Vermelha no Rio: o que recebemos, como preparar e onde entregar, no Centro.",
    "eyebrow": "Bazar solidário",
    "h1": "Doe roupas e itens de casa para o nosso bazar",
@@ -1912,8 +1912,8 @@
   },
   {
    "slug": "lei-lucas-para-escolas",
-   "titulo_seo": "Lei Lucas para escolas: o que exige e kit grátis – Cruz Vermelha RJ",
-   "descricao_seo": "O que a Lei Lucas (Lei 13.722/2018) pede de escolas e creches, passo a passo para se adequar e kit gratuito em PDF com checklist, ficha dos capacitados e cartaz.",
+   "titulo_seo": "Lei Lucas para escolas: guia e kit grátis – Cruz Vermelha RJ",
+   "descricao_seo": "O que a Lei Lucas (Lei 13.722/2018) pede de escolas e creches, o passo a passo para se adequar e kit gratuito em PDF com checklist, ficha e cartaz.",
    "eyebrow": "Escolas e creches",
    "h1": "Lei Lucas na escola: o que a lei pede e como se adequar",
    "lead": "A Lei Lucas obriga escolas e espaços de recreação infantil a capacitar professores e funcionários em primeiros socorros. Veja o que ela exige, um passo a passo para a sua escola e baixe de graça o kit com checklist, ficha dos capacitados e cartaz para a sala dos professores.",
@@ -1992,7 +1992,7 @@
   {
    "slug": "plano-de-contingencia",
    "titulo_seo": "Plano de contingência: roteiro em PDF – Cruz Vermelha RJ",
-   "descricao_seo": "O que é um plano de contingência de proteção e defesa civil, o que ele precisa ter e um roteiro gratuito em PDF para municípios, escolas, empresas e comunidades.",
+   "descricao_seo": "O que é um plano de contingência de proteção e defesa civil, o que precisa ter e um roteiro gratuito em PDF para municípios, escolas, empresas e comunidades.",
    "eyebrow": "Gestão de riscos e desastres",
    "h1": "Plano de contingência: o que é, o que precisa ter e um roteiro para começar",
    "lead": "O plano de contingência diz quem faz o quê quando a chuva forte, a enchente ou o deslizamento chegam. Veja o que ele precisa ter e baixe de graça o roteiro da Cruz Vermelha para montar ou revisar o plano do seu município, escola, empresa ou comunidade.",
@@ -2070,7 +2070,7 @@
   {
    "slug": "empresas-e-orgaos-publicos",
    "titulo_seo": "Para empresas, escolas e órgãos públicos – Cruz Vermelha RJ",
-   "descricao_seo": "Turmas fechadas de primeiros socorros, Lei Lucas e Suporte Básico de Vida para equipes, e parcerias com a Cruz Vermelha do Rio em prevenção, campanhas e voluntariado.",
+   "descricao_seo": "Turmas fechadas de primeiros socorros, Lei Lucas e Suporte Básico de Vida para equipes, e parcerias com a Cruz Vermelha do Rio em prevenção e voluntariado.",
    "eyebrow": "Instituições",
    "h1": "Para empresas, escolas e órgãos públicos",
    "lead": "Sua equipe pode aprender a agir numa emergência, e sua instituição pode somar esforços com a Cruz Vermelha do Rio de Janeiro. Veja os caminhos e peça uma proposta.",
@@ -2140,7 +2140,7 @@
   {
    "slug": "quando-ligar-192",
    "titulo_seo": "Quando ligar 192: AVC, infarto e engasgo – Cruz Vermelha RJ",
-   "descricao_seo": "Como reconhecer AVC, infarto e engasgo, o que fazer até o socorro chegar, o que dizer ao atendente do SAMU 192 e quando ligar 193. Com cartaz em PDF para a geladeira.",
+   "descricao_seo": "Como reconhecer AVC, infarto e engasgo, o que fazer até o socorro chegar, o que dizer ao atendente do SAMU 192 e quando ligar 193. Com cartaz em PDF.",
    "eyebrow": "Prepare-se",
    "h1": "Quando ligar 192: como reconhecer AVC, infarto e engasgo",
    "lead": "No AVC, no infarto e no engasgo, os primeiros minutos decidem muito. Veja como reconhecer cada um, o que fazer até o socorro chegar, o que não fazer e o que dizer a quem atende o 192. No fim, um cartaz para colar na geladeira.",
@@ -2295,7 +2295,7 @@
   },
   {
    "slug": "plano-familiar-de-emergencia",
-   "titulo_seo": "Plano familiar de emergência: ficha em PDF – Cruz Vermelha RJ",
+   "titulo_seo": "Plano familiar de emergência: ficha PDF – Cruz Vermelha RJ",
    "descricao_seo": "Plano familiar de emergência: o que combinar em família, pontos de encontro, contato de fora da cidade, alertas da Defesa Civil e a ficha em PDF para preencher.",
    "eyebrow": "Prepare-se",
    "h1": "Plano familiar de emergência: o que combinar antes da chuva forte",
@@ -2648,8 +2648,8 @@
   },
   {
    "slug": "acidentes-em-casa",
-   "titulo_seo": "Picada de cobra, escorpião e choque: o que fazer – Cruz Vermelha RJ",
-   "descricao_seo": "O que fazer e o que não fazer em picada de cobra, de escorpião e de aranha e em choque elétrico, os hospitais com soro no Rio, quando ligar 192 ou 193 e o cartaz em PDF.",
+   "titulo_seo": "Picada de cobra ou escorpião: o que fazer – Cruz Vermelha RJ",
+   "descricao_seo": "O que fazer e o que não fazer em picada de cobra, de escorpião e de aranha e em choque elétrico, os hospitais com soro no Rio e quando ligar 192 ou 193.",
    "eyebrow": "Prepare-se",
    "h1": "Acidentes em casa: picadas e choque elétrico",
    "lead": "Picada de cobra, de escorpião ou de aranha e choque elétrico acontecem dentro de casa e no quintal. Veja o que fazer nos primeiros minutos, o que não fazer, para onde levar a pessoa no Rio e como evitar. No fim, um cartaz para deixar à vista.",
@@ -2851,7 +2851,7 @@
   },
   {
    "slug": "cartaz-da-cruz-vermelha",
-   "titulo_seo": "A Cruz Vermelha em uma página: cartaz em PDF – Cruz Vermelha RJ",
+   "titulo_seo": "A Cruz Vermelha em uma página: cartaz PDF – Cruz Vermelha RJ",
    "descricao_seo": "Cartaz gratuito em PDF para a sala de aula ou a sede: os 7 Princípios Fundamentais, os três emblemas, os componentes do Movimento e a linha do tempo.",
    "eyebrow": "Institucional",
    "h1": "A Cruz Vermelha em uma página: cartaz para imprimir",
@@ -3174,7 +3174,7 @@
   },
   {
    "slug": "cuidador-de-idosos",
-   "titulo_seo": "Guia do cuidador de idosos: rotina, quedas e sinais – Cruz Vermelha RJ",
+   "titulo_seo": "Guia do cuidador de idosos: rotina diária – Cruz Vermelha RJ",
    "descricao_seo": "Para quem cuida de um idoso em casa: banho, comida, mudança de posição, remédios nos horários, como evitar quedas, quando ligar 192, Alzheimer e o guia em PDF.",
    "eyebrow": "Cuidar em casa",
    "h1": "Guia do cuidador de idosos: a rotina, os riscos e os sinais de alerta",
@@ -3322,7 +3322,7 @@
   },
   {
    "slug": "guia-do-bombeiro-civil",
-   "titulo_seo": "Guia do bombeiro civil no RJ: curso e homologação – Cruz Vermelha RJ",
+   "titulo_seo": "Bombeiro civil no RJ: curso e homologação – Cruz Vermelha RJ",
    "descricao_seo": "O que faz o bombeiro civil, a diferença para o brigadista, o curso de 80 horas-aula, a homologação no CBMERJ, a reciclagem a cada 2 anos e o guia grátis em PDF.",
    "eyebrow": "Profissão e formação",
    "h1": "Guia do bombeiro civil no Rio de Janeiro",
@@ -3475,8 +3475,8 @@
   },
   {
    "slug": "guia-dos-cursos",
-   "titulo_seo": "Guia dos cursos de saúde e primeiros socorros no Rio – Cruz Vermelha RJ",
-   "descricao_seo": "Qual curso presencial é para você: para quem é, o que ensina, carga horária e pré-requisito de cada curso da escola, o que um curso livre não habilita e o guia em PDF.",
+   "titulo_seo": "Guia dos cursos de primeiros socorros – Cruz Vermelha RJ",
+   "descricao_seo": "Qual curso presencial é para você: para quem é, o que ensina, carga horária e pré-requisito de cada curso da escola e o que um curso livre não habilita.",
    "eyebrow": "Cursos presenciais",
    "h1": "Guia dos cursos de saúde e primeiros socorros: qual é para você",
    "lead": "Para quem está escolhendo um curso presencial no Rio de Janeiro. Veja, para cada curso da Escola de Educação e Saúde, para quem é, o que ensina, a carga horária e o pré-requisito. Depois, ache o seu perfil, entenda o que um curso livre não habilita e saiba como funciona a inscrição.",
@@ -3646,7 +3646,7 @@
   {
    "slug": "rcp-e-manobra-de-heimlich",
    "titulo_seo": "RCP e manobra de Heimlich: passo a passo – Cruz Vermelha RJ",
-   "descricao_seo": "Como reconhecer a parada cardíaca, fazer a massagem cardíaca (RCP) só com as mãos, usar o DEA e desengasgar adulto, criança e bebê. Com cartaz em PDF para imprimir.",
+   "descricao_seo": "Como reconhecer a parada cardíaca, fazer a massagem cardíaca (RCP) só com as mãos, usar o DEA e desengasgar adulto, criança e bebê. Com cartaz em PDF.",
    "eyebrow": "Prepare-se",
    "h1": "RCP e manobra de Heimlich: passo a passo",
    "lead": "Quando o coração para ou alguém engasga de verdade, quem está por perto tem poucos minutos. Aqui estão os passos da massagem cardíaca (RCP) só com as mãos, do uso do desfibrilador (DEA) e do desengasgo em adulto, criança e bebê. No fim, um cartaz para imprimir.",
@@ -3806,8 +3806,8 @@
   },
   {
    "slug": "febre-em-crianca",
-   "titulo_seo": "Febre em criança: o que fazer e quando ir ao médico – Cruz Vermelha RJ",
-   "descricao_seo": "Febre em criança: a partir de que temperatura, como medir, o que fazer em casa, o que não fazer, sinais de alerta, convulsão febril e quando ligar 192. Com guia em PDF.",
+   "titulo_seo": "Febre em criança: o que fazer em casa – Cruz Vermelha RJ",
+   "descricao_seo": "Febre em criança: a partir de que temperatura, como medir, o que fazer em casa, o que não fazer, sinais de alerta, convulsão febril e quando ligar 192.",
    "eyebrow": "Cuidar em casa",
    "h1": "Febre em criança: o que fazer e quando procurar o médico",
    "lead": "Para pais, avós e cuidadores. Veja a partir de que temperatura é febre, como medir, o que fazer em casa, o que não fazer, quais sinais pedem atendimento na hora e como agir numa convulsão febril. No fim, um guia em PDF com a ficha para anotar a temperatura e levar ao médico.",
@@ -4330,7 +4330,7 @@
   {
    "slug": "queimaduras",
    "titulo_seo": "Queimadura: o que fazer na hora – Cruz Vermelha RJ",
-   "descricao_seo": "O que fazer e o que não fazer em queimadura de primeiro e de segundo grau, de sol, de água-viva e de produto químico, quando ligar 192 ou 193 e o cartaz em PDF para a cozinha.",
+   "descricao_seo": "O que fazer e o que não fazer em queimadura de primeiro e de segundo grau, de sol, de água-viva e de produto químico, quando ligar 192 ou 193 e o cartaz em PDF.",
    "eyebrow": "Prepare-se",
    "h1": "Queimaduras: o que fazer na hora",
    "lead": "Água corrente fria, nada de gelo, de pasta de dente nem de manteiga, e bolha não se fura. Veja o que fazer em queimadura de fogo, de líquido quente, de sol, de água-viva e de produto químico, quando ir ao hospital e como evitar. No fim, um cartaz para deixar na cozinha.",

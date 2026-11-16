@@ -6,21 +6,21 @@
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <title>CBFI: formação inicial de voluntários – Cruz Vermelha RJ</title>
-  <meta name="description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma, como participar e o que se aprende.">
+  <meta name="description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma e como participar.">
   <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/cbfi/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">
   <meta property="og:title" content="CBFI: formação inicial de voluntários – Cruz Vermelha RJ">
-  <meta property="og:description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma, como participar e o que se aprende.">
+  <meta property="og:description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma e como participar.">
   <meta property="og:url" content="https://cruzvermelhariodejaneiro.org/cbfi/">
   <meta property="og:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CBFI: formação inicial de voluntários – Cruz Vermelha RJ">
-  <meta name="twitter:description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma, como participar e o que se aprende.">
+  <meta name="twitter:description" content="O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma e como participar.">
   <meta name="twitter:image" content="https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,6 +62,8 @@
     .inst-secao li { margin: 0 0 6px; }
     .inst-secao a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
     .inst-secao a.btn { color: #fff; text-decoration: none; }
+    .inst-secao a.btn-outline { color: var(--black); }
+    .inst-secao a.btn-outline:hover { color: var(--red); }
     .inst-oficial { margin: 18px 0 18px; padding: 18px 22px; border-left: 4px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; }
     .inst-oficial p { font-size: 1rem; font-style: italic; margin: 0 0 8px; }
     .inst-oficial cite { display: block; font-size: .84rem; font-style: normal; color: var(--muted); }
@@ -89,6 +91,11 @@
     .inst-cartao:hover { border-color: var(--red); transform: translateY(-2px); }
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    .inst-guias { margin: 34px 0 0; }
+    .inst-guias h2 { font-size: 1.15rem; margin: 0 0 12px; }
+    .inst-guias ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .inst-guias a { display: flex; align-items: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--black); font-size: .95rem; font-weight: 600; }
+    .inst-guias a:hover { border-color: var(--red); color: var(--red); }
     /* Figuras (15/10/2026, página do emblema): figura isolada, galeria de emblemas (ícones) e galeria de fotos. */
     .inst-figura { margin: 18px 0 22px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
     .inst-figura img { display: block; width: 100%; height: auto; }
@@ -247,7 +254,7 @@
    "@id": "https://cruzvermelhariodejaneiro.org/cbfi/#pagina",
    "url": "https://cruzvermelhariodejaneiro.org/cbfi/",
    "name": "CBFI: o curso de formação inicial dos voluntários",
-   "description": "O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma, como participar e o que se aprende.",
+   "description": "O CBFI, Curso Básico de Formação Institucional, é a formação inicial gratuita dos voluntários da Cruz Vermelha no Rio: próxima turma e como participar.",
    "inLanguage": "pt-BR",
    "isPartOf": {
     "@id": "https://cruzvermelhariodejaneiro.org/#site"
@@ -592,7 +599,7 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=c358e9afca">
-  <script src="/chat/chat.js?v=ea411964f1" defer></script>
+  <script src="/chat/chat.js?v=bbff830f7f" defer></script>
   <script>/* CBFI de 28/11 (scripts/cbfi.py): a partir do dia seguinte, o texto de janeiro */(function(){var h=new Date(Date.now()-108e5).toISOString().slice(0,10);if(h<="2026-11-28")return;var l=document.querySelectorAll("[data-cbfi]");for(var i=0;i<l.length;i++){var a=l[i].getAttribute("data-cbfi")==="ate";l[i].hidden=a;if(a)l[i].style.display="none";}})();</script>
 </body>
 </html>

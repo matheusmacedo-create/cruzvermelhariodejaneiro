@@ -102,6 +102,18 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "bazar": "Bazar solidário",
                 "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
                 "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
+# Os guias gratuitos. Cada guia lista os outros no fim da página ("Mais guias gratuitos"): na revisão de SEO de
+# 16/11/2026, dez deles não recebiam nenhum link de outra página do site (só o sitemap os citava), e página sem
+# link interno o Google rastreia pouco e classifica mal. Guia novo = uma linha aqui.
+GUIAS = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia",
+         "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
+         "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "verao-seguro", "checklist-dengue",
+         "cuidador-de-idosos", "onde-buscar-ajuda", "guia-dos-cursos", "guia-do-bombeiro-civil",
+         "lei-lucas-para-escolas", "plano-de-contingencia", "cartaz-da-cruz-vermelha", "manual-de-identidade"]
+# A mesma página em outra língua (scripts/gerar_ingles.py e gerar_idiomas.py declaram o par do lado de lá).
+# hreflang só de um lado o Google ignora: a página em português precisa citar as traduções de volta.
+TRADUCOES = {"direito-internacional-humanitario": {"en": "/en/international-humanitarian-law/",
+                                                   "es": "/es/derecho-internacional-humanitario/"}}
 # Páginas que já existem no site e podem aparecer em "relacionadas".
 EXISTENTES = {"historia": ("/historia/", "Nossa história", "Da fundação da Cruz Vermelha Brasileira, em 1908, ao Palácio da Cruz Vermelha."),
               "campanha-agasalho": ("/campanha-agasalho.html", "Campanha do Agasalho", "Roupas de frio, cobertores e calçados entregues a famílias em situação de vulnerabilidade."),
@@ -168,6 +180,11 @@ CSS = """  <style>
     .inst-cartao:hover { border-color: var(--red); transform: translateY(-2px); }
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    .inst-guias { margin: 34px 0 0; }
+    .inst-guias h2 { font-size: 1.15rem; margin: 0 0 12px; }
+    .inst-guias ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .inst-guias a { display: flex; align-items: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--black); font-size: .95rem; font-weight: 600; }
+    .inst-guias a:hover { border-color: var(--red); color: var(--red); }
     /* Figuras (15/10/2026, página do emblema): figura isolada, galeria de emblemas (ícones) e galeria de fotos. */
     .inst-figura { margin: 18px 0 22px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
     .inst-figura img { display: block; width: 100%; height: auto; }
@@ -595,17 +612,48 @@ def relacionadas(p: dict, paginas: dict) -> str:
             cartoes.append((f"/{slug}/", NOMES_CURTOS.get(slug, q["h1"]), q["lead"]))
         elif slug in EXISTENTES:
             cartoes.append(EXISTENTES[slug])
-    if not cartoes:
+    guias = mais_guias(p, paginas)
+    if not cartoes and not guias:
         return ""
     itens = "\n          ".join(f'<a class="inst-cartao" href="{esc(u)}"><b>{esc(t)}</b><span>{esc(d)}</span></a>' for u, t, d in cartoes[:4])
-    return f"""    <section class="inst-relacionadas" aria-labelledby="inst-relacionadas-titulo">
-      <div class="wrap">
-        <h2 id="inst-relacionadas-titulo">Veja também</h2>
+    bloco = f"""        <h2 id="inst-relacionadas-titulo">Veja também</h2>
         <div class="inst-cartoes">
           {itens}
-        </div>
+        </div>""" if cartoes else ""
+    rotulo = "inst-relacionadas-titulo" if cartoes else "inst-guias-titulo"
+    return f"""    <section class="inst-relacionadas" aria-labelledby="{rotulo}">
+      <div class="wrap">
+{bloco}{guias}
       </div>
     </section>"""
+
+
+def mais_guias(p: dict, paginas: dict) -> str:
+    """Nos guias gratuitos, a lista dos outros guias (ver GUIAS). É <div role="navigation">, não <nav>: o CSS da
+    home esconde <nav> solto em tela estreita (o menu do cabeçalho), e a lista sumia no celular."""
+    if p["slug"] not in GUIAS:
+        return ""
+    itens = "\n            ".join(f'<li><a href="/{g}/">{esc(NOMES_CURTOS.get(g, paginas[g]["h1"]))}</a></li>'
+                                  for g in GUIAS if g != p["slug"] and g in paginas)
+    return f"""
+        <div class="inst-guias" role="navigation" aria-labelledby="inst-guias-titulo">
+          <h2 id="inst-guias-titulo">Mais guias gratuitos</h2>
+          <ul>
+            {itens}
+          </ul>
+        </div>"""
+
+
+def hreflang(p: dict) -> str:
+    """As tags de idioma da página que tem tradução (TRADUCOES), com x-default no português."""
+    outras = TRADUCOES.get(p["slug"])
+    if not outras:
+        return ""
+    url = url_de(p["slug"])
+    linhas = [f'  <link rel="alternate" hreflang="pt-BR" href="{url}">']
+    linhas += [f'  <link rel="alternate" hreflang="{lingua}" href="{ORIGEM}{caminho}">' for lingua, caminho in outras.items()]
+    linhas.append(f'  <link rel="alternate" hreflang="x-default" href="{url}">')
+    return "\n" + "\n".join(linhas)
 
 
 def imagem_og(p: dict) -> str:
@@ -663,7 +711,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
   <link rel="icon" type="image/png" href="/assets/favicon.png">
   <title>{esc(titulo)}</title>
   <meta name="description" content="{esc(p['descricao_seo'])}">
-  <link rel="canonical" href="{url}">
+  <link rel="canonical" href="{url}">{hreflang(p)}
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">

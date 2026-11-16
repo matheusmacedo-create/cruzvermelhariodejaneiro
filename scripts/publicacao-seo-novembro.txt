@@ -1,0 +1,59 @@
+# Revisão de SEO de 16/11/2026 (pedido do Matheus): títulos e descrições dentro do limite da busca, ligação entre os
+# guias gratuitos (dez não recebiam link de nenhuma página), hreflang do Direito Internacional Humanitário nas três
+# línguas, links quebrados, data das notícias em inglês, tags de compartilhamento em /verificar/ e dados estruturados
+# em /pedido-de-documentos/. O que foi achado e o que ficou para decidir: docs/seo-revisao-2026-11.md.
+# ESTADO: PUBLICADO em 15/11/2026, às 21h40 (horário de Brasília), a pedido do Matheus, a partir do branch
+# claude/ecstatic-faraday-inucnj em c7c5cdd (PR #183). Cache limpo, os 49 arquivos conferidos no ar byte a byte,
+# consulta de um código em /verificar/ testada. Nenhum arquivo novo: todos já existiam no ar.
+# 15/11/2026, 22h: este branch recebeu o do PR #174 (página em espanhol do DIH). A página em inglês gerada daqui
+# passou a ser idêntica à que está no ar. A versão em espanhol ganhou as mesmas três correções (título, descrição
+# de busca e o link do Commons com parêntese) e foi publicada, com os sitemaps regerados.
+site/acidentes-em-casa/index.html
+site/base-legal/index.html
+site/bazar/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/cbfi/index.html
+site/checklist-dengue/index.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/cuidador-de-idosos/index.html
+site/cursos-gratuitos/index.html
+site/direito-internacional-humanitario/index.html
+site/emblema/index.html
+site/empresas-e-orgaos-publicos/index.html
+site/en/history/index.html
+site/en/how-we-produce-our-content/index.html
+site/en/international-humanitarian-law/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/geneva-conventions-what-they-are-and-what-they-protect/index.html
+site/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/index.html
+site/en/news/icrc-what-is-the-international-committee-of-the-red-cross/index.html
+site/en/who-founded-the-red-cross/index.html
+site/es/como-producimos-nuestro-contenido/index.html
+site/febre-em-crianca/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/mochila-de-emergencia/index.html
+site/movimento-internacional/index.html
+site/onde-buscar-ajuda/index.html
+site/pedido-de-documentos/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/quem-somos/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/verao-seguro/index.html
+site/verificar/index.html
+site/voluntariado/index.html
