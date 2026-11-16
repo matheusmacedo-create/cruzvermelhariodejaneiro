@@ -135,6 +135,7 @@ PAGINAS = [
     ("/en/history/", "en/history/index.html", "monthly", "0.6", "História em inglês"),
     ("/en/who-founded-the-red-cross/", "en/who-founded-the-red-cross/index.html", "yearly", "0.6", "Quem fundou a Cruz Vermelha (só em inglês)"),
     ("/en/international-humanitarian-law/", "en/international-humanitarian-law/index.html", "yearly", "0.6", "Direito Internacional Humanitário em inglês"),
+    ("/es/derecho-internacional-humanitario/", "es/derecho-internacional-humanitario/index.html", "yearly", "0.6", "Direito Internacional Humanitário em espanhol"),
 ]
 
 # Notícias traduzidas: original da Redação → versão em inglês (gravado por gerar_ingles.py).

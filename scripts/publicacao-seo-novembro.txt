@@ -5,21 +5,9 @@
 # ESTADO: PUBLICADO em 15/11/2026, às 21h40 (horário de Brasília), a pedido do Matheus, a partir do branch
 # claude/ecstatic-faraday-inucnj em c7c5cdd (PR #183). Cache limpo, os 49 arquivos conferidos no ar byte a byte,
 # consulta de um código em /verificar/ testada. Nenhum arquivo novo: todos já existiam no ar.
-# ATENÇÃO: /en/international-humanitarian-law/ foi ao ar com duas linhas a mais que a deste commit (o hreflang "es"
-# e o link ES do seletor de idioma), que já estavam no ar pelo PR #174 e este branch não tem. Depois de mesclar os
-# dois PRs, rodar python3 scripts/gerar_ingles.py e conferir que a página gerada bate com a do ar.
-# Sitemaps NÃO republicados: o sitemap-paginas.xml no ar tem a página em espanhol do DIH (PR #174) e o gerado daqui
-# não teria. Regerar e publicar depois do merge do #174.
-# Gerar antes (já feito neste commit): python3 scripts/gerar_institucional.py; python3 scripts/gerar_ingles.py;
-#   python3 scripts/gerar_politicas.py; python3 scripts/gerar_verificar.py; python3 scripts/gerar_pedido_documentos.py
-# ORDEM:
-#   1. Guardar o que está no ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-seo-novembro.txt)
-#   2. Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-seo-novembro.txt)
-#   3. Limpar o cache e conferir no celular um guia (o bloco "Mais guias gratuitos" no fim) e /verificar/ (a consulta
-#      de um código continua funcionando: a página tem CSP e só ganhou <meta>).
-#   4. python3 scripts/auditar_seo.py nas páginas publicadas e python3 scripts/gerar_sitemaps.py; publicar os sitemaps.
-#   5. Na Redação, depois de mesclar o PR do mesmo branch: "Regerar as páginas das notícias" (Configurações › Site).
-# Desfazer: scripts/desfazer_publicacao.sh (versão anterior tirada do Git) ou republicar a cópia do passo 1.
+# 15/11/2026, 22h: este branch recebeu o do PR #174 (página em espanhol do DIH). A página em inglês gerada daqui
+# passou a ser idêntica à que está no ar. A versão em espanhol ganhou as mesmas três correções (título, descrição
+# de busca e o link do Commons com parêntese) e foi publicada, com os sitemaps regerados.
 site/acidentes-em-casa/index.html
 site/base-legal/index.html
 site/bazar/index.html
