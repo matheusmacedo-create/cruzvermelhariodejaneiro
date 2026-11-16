@@ -1039,7 +1039,21 @@ def conferir(html: str, nome: str) -> None:
 def montar(modelo: str, partes: dict, header: str, js: str | None, titulo: str, descricao: str, nome: str) -> str:
     # O endereço oficial só na página: sem ele, o Search Console marcava "sem canonical declarado" (25/10/2026).
     # A 404 é noindex e não declara endereço.
-    canonical = ('  <link rel="canonical" href="https://cruzvermelhariodejaneiro.org/verificar/">\n'
+    # Junto vão as tags de compartilhamento (16/11/2026): sem elas o link da verificação, que anda por WhatsApp,
+    # aparecia sem título nem imagem. São só <meta>: nada de terceiros é carregado e a CSP não muda.
+    endereco = "https://cruzvermelhariodejaneiro.org/verificar/"
+    imagem = "https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg"
+    canonical = (f'  <link rel="canonical" href="{endereco}">\n'
+                 '  <meta property="og:type" content="website">\n'
+                 '  <meta property="og:locale" content="pt_BR">\n'
+                 '  <meta property="og:site_name" content="Cruz Vermelha Brasileira Rio de Janeiro">\n'
+                 f'  <meta property="og:title" content="{esc(titulo)}">\n'
+                 f'  <meta property="og:description" content="{esc(descricao)}">\n'
+                 f'  <meta property="og:url" content="{endereco}">\n'
+                 f'  <meta property="og:image" content="{imagem}">\n'
+                 '  <meta property="og:image:width" content="1200">\n'
+                 '  <meta property="og:image:height" content="630">\n'
+                 '  <meta name="twitter:card" content="summary_large_image">\n'
                  if nome == "index.html" else "")
     html = (modelo.replace("@@CANONICAL@@", canonical)
             .replace("@@TITULO@@", esc(titulo)).replace("@@DESCRICAO@@", esc(descricao))

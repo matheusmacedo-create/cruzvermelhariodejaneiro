@@ -1,0 +1,64 @@
+# Revisão de SEO de 16/11/2026 (pedido do Matheus): títulos e descrições dentro do limite da busca, ligação entre os
+# guias gratuitos (dez não recebiam link de nenhuma página), hreflang do Direito Internacional Humanitário nas três
+# línguas, links quebrados, data das notícias em inglês, tags de compartilhamento em /verificar/ e dados estruturados
+# em /pedido-de-documentos/. O que foi achado e o que ficou para decidir: docs/seo-revisao-2026-11.md.
+# ESTADO: NÃO publicado. Nenhum arquivo novo: todos já existem no ar e são sobrescritos.
+# Gerar antes (já feito neste commit): python3 scripts/gerar_institucional.py; python3 scripts/gerar_ingles.py;
+#   python3 scripts/gerar_politicas.py; python3 scripts/gerar_verificar.py; python3 scripts/gerar_pedido_documentos.py
+# ORDEM:
+#   1. Guardar o que está no ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-seo-novembro.txt)
+#   2. Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-seo-novembro.txt)
+#   3. Limpar o cache e conferir no celular um guia (o bloco "Mais guias gratuitos" no fim) e /verificar/ (a consulta
+#      de um código continua funcionando: a página tem CSP e só ganhou <meta>).
+#   4. python3 scripts/auditar_seo.py nas páginas publicadas e python3 scripts/gerar_sitemaps.py; publicar os sitemaps.
+#   5. Na Redação, depois de mesclar o PR do mesmo branch: "Regerar as páginas das notícias" (Configurações › Site).
+# Desfazer: scripts/desfazer_publicacao.sh (versão anterior tirada do Git) ou republicar a cópia do passo 1.
+site/acidentes-em-casa/index.html
+site/base-legal/index.html
+site/bazar/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/cbfi/index.html
+site/checklist-dengue/index.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/cuidador-de-idosos/index.html
+site/cursos-gratuitos/index.html
+site/direito-internacional-humanitario/index.html
+site/emblema/index.html
+site/empresas-e-orgaos-publicos/index.html
+site/en/history/index.html
+site/en/how-we-produce-our-content/index.html
+site/en/international-humanitarian-law/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/geneva-conventions-what-they-are-and-what-they-protect/index.html
+site/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/index.html
+site/en/news/icrc-what-is-the-international-committee-of-the-red-cross/index.html
+site/en/who-founded-the-red-cross/index.html
+site/es/como-producimos-nuestro-contenido/index.html
+site/febre-em-crianca/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/mochila-de-emergencia/index.html
+site/movimento-internacional/index.html
+site/onde-buscar-ajuda/index.html
+site/pedido-de-documentos/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/quem-somos/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/verao-seguro/index.html
+site/verificar/index.html
+site/voluntariado/index.html

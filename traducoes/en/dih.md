@@ -1,7 +1,8 @@
 ---
 titulo: What Is International Humanitarian Law? The Rules of War, Explained
-titulo_seo: What Is International Humanitarian Law (IHL)? A Plain-English Guide
+titulo_seo: What Is International Humanitarian Law (IHL)? Plain Guide
 linha_fina: International humanitarian law is the set of rules that limits the effects of war. Here is what it protects, how the Geneva Conventions and their Protocols work, the three principles behind every attack, and why the Red Cross helps spread it.
+descricao_seo: International humanitarian law is the set of rules that limits the effects of war: what it protects, the Geneva Conventions and the three core principles.
 publicado: 2026-11-12T12:00:00-03:00
 modificado: 2026-11-12T12:00:00-03:00
 ---
@@ -49,7 +50,7 @@ All four share one identical article, **Common Article 3**, which sets minimum r
 > "Persons taking no active part in the hostilities, including members of armed forces who have laid down their arms and those placed hors de combat by sickness, wounds, detention, or any other cause, shall in all circumstances be treated humanely (…)."
 
 ![Red Cross cardboard parcel for prisoners of war from the Canadian Red Cross, with the red cross, the words Prisoners' Parcels and the list of contents in English and German](/assets/institucional/fotos/encomenda-prisioneiros-cruz-vermelha-canadense-960.webp "960x720")
-*A Canadian Red Cross parcel for prisoners of war in the Second World War, routed through the International Committee of the Red Cross in Geneva. The Third Convention protects prisoners of war. — Photo: Auckland War Memorial Museum Tāmaki Paenga Hira, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Parcel,_prisoner%27s_(AM_2008.22.1-1).jpg), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) (resized by the branch)*
+*A Canadian Red Cross parcel for prisoners of war in the Second World War, routed through the International Committee of the Red Cross in Geneva. The Third Convention protects prisoners of war. — Photo: Auckland War Memorial Museum Tāmaki Paenga Hira, via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Parcel,_prisoner%27s_%28AM_2008.22.1-1%29.jpg), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) (resized by the branch)*
 
 The link between the Red Cross and these treaties goes back to the beginning. The first Geneva Convention was signed in 1864, a year after the Red Cross was founded, and it was the first treaty to protect the wounded and the people who care for them. Read the story in [Who founded the Red Cross?](/en/who-founded-the-red-cross/)
 
@@ -111,7 +112,7 @@ The Red Cross and Red Crescent help with that task in every country. This page i
 Brazil ratified the four Geneva Conventions in 1957, acceded to Protocols I and II in 1992 and ratified Protocol III in 2009. In 2023 the federal government created a National Commission for the Dissemination and Implementation of IHL (Decree No. 11,752), chaired by the Ministry of Foreign Affairs. The ICRC is invited to its meetings, without a vote.
 
 ![Façade of the Itamaraty Palace in Brasília, with concrete arches over glass, a reflecting pool with a white sculpture and an honour guard in dress uniform on a red carpet](/assets/institucional/fotos/palacio-itamaraty-brasilia-960.webp "960x528")
-*The Itamaraty Palace in Brasília, home of Brazil's Ministry of Foreign Affairs, which chairs the National IHL Commission. — Photo: Luis Tajes/SETUR (Agência Brasília), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Pal%C3%A1cio_do_Itamaraty_(48206263506).jpg), [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) (resized by the branch)*
+*The Itamaraty Palace in Brasília, home of Brazil's Ministry of Foreign Affairs, which chairs the National IHL Commission. — Photo: Luis Tajes/SETUR (Agência Brasília), via [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Pal%C3%A1cio_do_Itamaraty_%2848206263506%29.jpg), [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) (resized by the branch)*
 
 The Statute of the Brazilian Red Cross gives its state branches, like ours in Rio de Janeiro, the task of promoting training and spreading international humanitarian law and the Geneva Conventions.
 

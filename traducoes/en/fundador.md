@@ -2,6 +2,7 @@
 titulo: Who Founded the Red Cross? Henry Dunant, Solferino and Geneva
 titulo_seo: Who Founded the Red Cross? Henry Dunant and the 1863 Origins
 linha_fina: The Red Cross was founded by Henry Dunant and four other citizens of Geneva in 1863, four years after he saw the wounded left to die at Solferino. Here is the story, in plain words, and how it reached Brazil.
+descricao_seo: Henry Dunant and four other citizens of Geneva founded the Red Cross in 1863, after he saw the wounded left to die at Solferino. The story, in plain words.
 publicado: 2026-11-06T12:00:00-03:00
 modificado: 2026-11-06T12:00:00-03:00
 ---

@@ -2,7 +2,7 @@
 slug_pt: cicv-o-que-e-o-comite-internacional-da-cruz-vermelha
 grupo: noticia
 titulo: ICRC: what is the International Committee of the Red Cross
-titulo_seo: What is the ICRC? The International Committee of the Red Cross
+titulo_seo: What is the ICRC? International Committee of the Red Cross
 linha_fina: Understand what the ICRC is, what it does and how it relates to the International Federation and to National Societies such as the Brazilian Red Cross.
 publicado: 2026-10-16T15:15:50.878Z
 capa: fachada-da-sede-do-comite-internacional-da-cruz-vermelha-em.jpg

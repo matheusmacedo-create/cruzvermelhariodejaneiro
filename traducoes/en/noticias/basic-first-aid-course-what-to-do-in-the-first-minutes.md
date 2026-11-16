@@ -110,6 +110,6 @@ Bear in mind that the certificate attests to training in first response to every
 
 ## Sources and references
 
-- [SAMU 192 — Brazilian Ministry of Health](https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/s/samu-192) — how the service works and when to call it, in Portuguese.
+- [SAMU 192 — Brazilian Ministry of Health](https://www.gov.br/saude/pt-br/composicao/saes/samu-192) — how the service works and when to call it, in Portuguese.
 - [Burns — Health Tips — Ministry of Health Virtual Health Library](https://bvsms.saude.gov.br/bvs/dicas/54queimaduras.html) — what to do and what not to do with a burn, in Portuguese.
 - [Penal Code — Decree-Law 2,848/1940 (consolidated text) — Planalto](https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm) — art. 135, failure to assist, in Portuguese.

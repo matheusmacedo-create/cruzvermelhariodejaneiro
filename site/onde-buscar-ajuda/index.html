@@ -91,6 +91,11 @@
     .inst-cartao:hover { border-color: var(--red); transform: translateY(-2px); }
     .inst-cartao b { display: block; font-size: 1rem; margin: 0 0 6px; color: var(--black); }
     .inst-cartao span { font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    .inst-guias { margin: 34px 0 0; }
+    .inst-guias h2 { font-size: 1.15rem; margin: 0 0 12px; }
+    .inst-guias ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .inst-guias a { display: flex; align-items: center; min-height: 44px; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--black); font-size: .95rem; font-weight: 600; }
+    .inst-guias a:hover { border-color: var(--red); color: var(--red); }
     /* Figuras (15/10/2026, página do emblema): figura isolada, galeria de emblemas (ícones) e galeria de fotos. */
     .inst-figura { margin: 18px 0 22px; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); overflow: hidden; }
     .inst-figura img { display: block; width: 100%; height: auto; }
@@ -605,6 +610,31 @@
           <a class="inst-cartao" href="/cuidador-de-idosos/"><b>Guia do cuidador de idosos</b><span>Para quem cuida de um familiar idoso em casa. Veja como organizar a rotina do dia, com banho, comida, mudança de posição e remédios nos horários, como evitar quedas, quais sinais pedem médico ou uma ligação para o 192, como lidar com a demência e como cuidar de você também.</span></a>
           <a class="inst-cartao" href="/voluntariado/"><b>Voluntariado</b><span>Para ser voluntário da Cruz Vermelha Brasileira – Filial do Estado do Rio de Janeiro, não é preciso ser da área da saúde: a filial forma os próprios voluntários. Veja o que faz um voluntário, como entrar e o que a lei diz sobre o serviço voluntário.</span></a>
         </div>
+        <div class="inst-guias" role="navigation" aria-labelledby="inst-guias-titulo">
+          <h2 id="inst-guias-titulo">Mais guias gratuitos</h2>
+          <ul>
+            <li><a href="/kit-de-emergencia/">Kit de emergência</a></li>
+            <li><a href="/mochila-de-emergencia/">Mochila de emergência</a></li>
+            <li><a href="/kit-de-primeiros-socorros/">Kit de primeiros socorros</a></li>
+            <li><a href="/plano-familiar-de-emergencia/">Plano familiar de emergência</a></li>
+            <li><a href="/quando-ligar-192/">Quando ligar 192</a></li>
+            <li><a href="/rcp-e-manobra-de-heimlich/">RCP e manobra de Heimlich</a></li>
+            <li><a href="/acidentes-em-casa/">Acidentes em casa</a></li>
+            <li><a href="/queimaduras/">Queimaduras</a></li>
+            <li><a href="/febre-em-crianca/">Febre em criança</a></li>
+            <li><a href="/pressao-alta-e-pressao-baixa/">Pressão alta e pressão baixa</a></li>
+            <li><a href="/intoxicacao-alimentar/">Intoxicação alimentar</a></li>
+            <li><a href="/verao-seguro/">Verão seguro no Rio</a></li>
+            <li><a href="/checklist-dengue/">Checklist contra a dengue</a></li>
+            <li><a href="/cuidador-de-idosos/">Guia do cuidador de idosos</a></li>
+            <li><a href="/guia-dos-cursos/">Guia dos cursos</a></li>
+            <li><a href="/guia-do-bombeiro-civil/">Guia do bombeiro civil</a></li>
+            <li><a href="/lei-lucas-para-escolas/">Lei Lucas para escolas</a></li>
+            <li><a href="/plano-de-contingencia/">Plano de contingência</a></li>
+            <li><a href="/cartaz-da-cruz-vermelha/">A Cruz Vermelha em uma página</a></li>
+            <li><a href="/manual-de-identidade/">Manual de identidade</a></li>
+          </ul>
+        </div>
       </div>
     </section>
   </main>
@@ -728,7 +758,7 @@
   </script>
   <!-- Chat de contato por e-mail (site/chat/, scripts/chat_widget.py) -->
   <link rel="stylesheet" href="/chat/chat.min.css?v=c358e9afca">
-  <script src="/chat/chat.js?v=ea411964f1" defer></script>
+  <script src="/chat/chat.js?v=bbff830f7f" defer></script>
 <script>
   /* Cliques medidos: <a data-evento="nome" data-origem="…"> manda o evento ao GA4 (docs/rastreamento.md). */
   document.querySelectorAll('a[data-evento]').forEach(function (a) {

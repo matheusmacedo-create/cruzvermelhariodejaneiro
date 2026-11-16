@@ -88,5 +88,5 @@ The branch's Escola de Educação e Saúde CVB-RJ (School of Education and Healt
 
 - [Highlights of the 2025 AHA Guidelines for CPR and ECC — American Heart Association](https://cpr.heart.org/-/media/CPR-Files/2025-documents-for-cpr-heart-edits-posting/Resuscitation-Science/JN1580_PTBR_Hghlghts_2025ECCGuidelines_Final_251021.pdf?sc_lang=en) — chain of survival and resuscitation guidelines (Portuguese edition).
 - [Part 1: Executive Summary — 2025 American Heart Association Guidelines for Cardiopulmonary Resuscitation and Emergency Cardiovascular Care (PubMed)](https://pubmed.ncbi.nlm.nih.gov/41122893/) — original text of the guidelines.
-- [SAMU 192 — Brazilian Ministry of Health](https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/s/samu-192) — how to call the emergency ambulance service, in Portuguese.
+- [SAMU 192 — Brazilian Ministry of Health](https://www.gov.br/saude/pt-br/composicao/saes/samu-192) — how to call the emergency ambulance service, in Portuguese.
 - [SAMU 192: the types of service provided by mobile emergency care — Brazilian Ministry of Health](https://www.gov.br/saude/pt-br/assuntos/noticias/2024/agosto/samu-192-conheca-os-tipos-de-servicos-prestados-pelo-atendimento-movel-de-urgencia) — basic and advanced support ambulances, in Portuguese.

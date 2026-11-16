@@ -255,6 +255,17 @@ def main() -> int:
     js = (JS.replace("__API__", API).replace("__MAX__", str(ARQUIVOS_MAX)).replace("__MB__", str(ARQUIVO_MB))
           .replace("__TOTAL__", str(TOTAL_MB)).replace("__COMPROVAR__", comprovar))
 
+    # Dados estruturados (16/11/2026): a página e a trilha, como nas demais páginas institucionais.
+    dados_estruturados = json.dumps([
+        {"@context": "https://schema.org", "@type": "WebPage", "@id": f"{URL_PAGINA}#pagina", "url": URL_PAGINA,
+         "name": "Pedido de documentos", "description": DESCRICAO, "inLanguage": "pt-BR",
+         "isPartOf": {"@type": "WebSite", "@id": f"{ORIGEM}/#site", "url": f"{ORIGEM}/"},
+         "publisher": {"@type": "NGO", "@id": f"{ORIGEM}/#organizacao"}},
+        {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Início", "item": f"{ORIGEM}/"},
+            {"@type": "ListItem", "position": 2, "name": "Pedido de documentos", "item": URL_PAGINA}]},
+    ], ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+
     pagina = f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -274,6 +285,10 @@ def main() -> int:
   <meta property="og:description" content="{esc(DESCRICAO)}">
   <meta property="og:url" content="{URL_PAGINA}">
   <meta property="og:image" content="{ORIGEM}/assets/otim/og-home.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{dados_estruturados}</script>
   <!-- Estilos copiados da home (site/index.html), com a "Inter Reserva": sem Google Fonts nesta página. -->
 {partes["estilo"]}
 {CSS}

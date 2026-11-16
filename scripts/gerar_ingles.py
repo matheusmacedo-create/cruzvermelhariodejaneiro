@@ -617,7 +617,7 @@ def pagina_fundador(idioma: dict, partes: dict) -> str:
     gi.PAGINAS["fundador"] = {"pt": None, "en": FUNDADOR, "es": None}
     SO_EN.add("fundador")
     og = (f"{ORIGEM}/assets/otim/og-acervo.jpg", 1200, 630)  # a mesma da história em inglês
-    return moldura(idioma, "fundador", f["titulo_seo"], f["linha_fina"], corpo, ld, partes,
+    return moldura(idioma, "fundador", f["titulo_seo"], f.get("descricao_seo", f["linha_fina"]), corpo, ld, partes,
                    og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
 
 
@@ -675,7 +675,7 @@ def pagina_dih(idioma: dict, partes: dict) -> str:
           ld_trilha]
     registrar("dih", "/direito-internacional-humanitario/", DIH)
     og = (f"{ORIGEM}/assets/otim/og-home.jpg", 1200, 630)
-    return moldura(idioma, "dih", f["titulo_seo"], f["linha_fina"], corpo, ld, partes,
+    return moldura(idioma, "dih", f["titulo_seo"], f.get("descricao_seo", f["linha_fina"]), corpo, ld, partes,
                    og_imagem=og, artigo={"publicado": f["publicado"], "modificado": f["modificado"]})
 
 
@@ -724,7 +724,9 @@ def main() -> int:
     partes["estilo_sem_tag"] = re.sub(r"^\s*<style>|</style>\s*$", "", partes["estilo"])
     noticias = ler_noticias()
     for n in noticias:
-        n["modificado"] = P["traduzido_em"]
+        # A data de modificação é a da tradução, mas nunca antes da publicação: matéria publicada depois de
+        # traduzido_em saía com dateModified anterior a datePublished, que o Google lê como dado inválido.
+        n["modificado"] = max(P["traduzido_em"], n["publicado"], key=datetime.fromisoformat)
     paginas: dict[Path, str] = {}
     for n in noticias:
         paginas[SITE / "en" / "news" / n["slug"] / "index.html"] = pagina_noticia(idioma, partes, P, n, noticias)
