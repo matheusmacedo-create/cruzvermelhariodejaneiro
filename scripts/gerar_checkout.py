@@ -282,7 +282,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                   </div>
                 </div>
                 <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">@@COBRE_LEGENDA@@</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
-                <div id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" data-centavos="0" disabled hidden><span id="ck-divulgacao-valor" hidden></span></div>
+                <label class="ck-check" id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao"><span class="ck-check-texto">Quero ajudar na divulgação dos cursos<small id="ck-divulgacao-legenda">Opcional. Usado nos anúncios que levam os cursos a mais gente.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ R$ 0,00</span></label>
                 <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="@@ACEITE_VERSAO@@"><span class="ck-check-texto" id="ck-requisitos-texto">@@ACEITE@@</span></label>
                 <span id="ck-escolaridade" hidden></span>
                 <div class="ck-condicoes" id="ck-condicoes"@@P1_OCULTO@@><h3>Resumo das condições</h3><p id="ck-condicoes-texto"></p></div>
@@ -714,7 +714,7 @@ def main() -> int:
     partes = medicao_com_plano(vocabulario_checkout(partes_da_home(home)))
     inscricao_c = int(dados["inscricao_centavos"])
     inscricao = brl(inscricao_c)
-    # Compatibilidade com os resumos de inscrições antigas; novas inscrições não oferecem divulgação.
+    # A divulgação (17/11/2026) é em % do valor do curso e aparece pelo checkout.js; aqui fica só o resumo zerado.
     divulgacao = 0
     # Opção 1 visível e marcada no HTML só na geração do passo 5 (T24). Sem isso, o checkout.js a mostra quando o
     # info.php a trouxer em "planos".
@@ -760,8 +760,7 @@ def main() -> int:
                       .replace("@@P2_ATIVO@@", "" if completo_html else " ativo").replace("@@P2_MARCADO@@", "" if completo_html else " checked")
                       .replace("@@ACAO_ROTULO@@", "Total" if completo_html else "Agora")
                       .replace("@@INSCRICAO_ROTULO@@", "Taxa de inscrição" if completo_html else "Taxa de inscrição (agora)")
-                      .replace("@@COBRE_LEGENDA@@", "Opcional. Cobre os custos de processamento da taxa de inscrição." if completo_html
-                               else "Opcional. Cobre os custos de processamento da taxa de inscrição da escola.")
+                      .replace("@@COBRE_LEGENDA@@", "Opcional. Para cobrir os custos do pagamento (PIX ou cartão).")
                       .replace("@@ACEITE_VERSAO@@", aceite_versao).replace("@@ACEITE@@", aceite)
                       .replace("@@RECEBEDOR_NOME@@", esc(RECEBEDOR_NOME)).replace("@@RECEBEDOR_CNPJ@@", RECEBEDOR_CNPJ)
                       .replace("@@SUSTENTA_TITULO@@", esc(SUSTENTA_TITULO)).replace("@@SUSTENTA_CURTO@@", esc(SUSTENTA_CURTO))

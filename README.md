@@ -2,6 +2,8 @@
 
 Revisão para Ad Grants de 19/10/2026: [correções, testes e roteiro de publicação](docs/revisao-ad-grants-2026-10-19.md). Novas inscrições sem contribuição de divulgação, identificação da escola no checkout, doação sem promessa futura e imagem móvel versionada. A documentação abaixo preserva o histórico anterior; consulte a revisão para o estado desta entrega.
 
+Opcionais do checkout em 17/11/2026: [custos de processamento de 5% e divulgação de 10% do valor do curso, também com cupom](docs/checkout-opcionais-2026-11-17.md). A contribuição para divulgação removida na revisão para Ad Grants voltou, agora em percentual.
+
 Este repositório guarda a parte **institucional (social)** da presença digital da
 CVB-RJ: as páginas estáticas do site principal `cruzvermelhariodejaneiro.org`, o kit de
 SEO da escola e os scripts para publicar. A Redação, a intranet e os demais sistemas são

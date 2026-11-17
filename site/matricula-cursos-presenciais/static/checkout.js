@@ -333,11 +333,17 @@
     function metodo() { return (form.querySelector('input[name=metodo]:checked') || {}).value || 'pix'; }
     function planoMarcado() { var r = form.querySelector('input[name=plano]:checked'); return r ? r.value : 'so_taxa'; }
     function inscricaoAtual() { return info && typeof info.inscricao_centavos === 'number' ? info.inscricao_centavos : inscricaoHtml; }
-    function taxaAtual() { return info ? (metodo() === 'pix' ? info.taxa.pix : info.taxa.cartao) : 0; }
-    /* Novas inscrições não cobram divulgação, mesmo com resposta antiga da API em cache. */
-    function divulgacaoAtual() {
-      return 0;
+    /* Opcionais (17/11/2026): os dois em % do valor do curso na compra (inscrição + matrícula, ou o valor do cupom), por
+       pessoa, com a mesma conta do servidor (api/lib/compra.php). Custos de processamento: TAXA_*_PCT + parcela fixa. */
+    function taxaRegra() { return info && info.taxa_regra ? (metodo() === 'pix' ? info.taxa_regra.pix : info.taxa_regra.cartao) : null; }
+    function taxaDe(base) {
+      var r = taxaRegra();
+      if (!r) return info && info.taxa ? (metodo() === 'pix' ? info.taxa.pix : info.taxa.cartao) : 0;
+      return Math.max(0, Math.round(base * (Number(r.pct) || 0) / 100) + (parseInt(r.fixa, 10) || 0));
     }
+    function divulgacaoPct() { return info && typeof info.divulgacao_pct === 'number' ? info.divulgacao_pct : 0; }
+    function divulgacaoDe(base) { return Math.max(0, Math.round(base * divulgacaoPct() / 100)); }
+    function pctRotulo(v) { return String(Math.round(v * 100) / 100).replace('.', ',') + '%'; }
     function matriculaDe(c) {
       if (!c) return 0;
       if (typeof c.matricula_centavos === 'number') return c.matricula_centavos;
@@ -682,15 +688,16 @@
       var completo = plano === 'taxa_e_matricula';
       var inscricao = inscricaoAtual(), matricula = matriculaDe(c);
       var met = metodo(), cartao = met === 'cartao';
-      var taxa = taxaAtual();
-      if (comCupom) q('#ck-cobre').checked = false;
+      // A base dos opcionais, por pessoa: o valor do curso na compra (com cupom, o valor do cupom).
+      var base = comCupom && completo ? cupom.total_centavos : inscricao + (completo ? matricula : 0);
+      var taxa = taxaDe(base);
+      var oferecerDivulgacao = divulgacaoPct() > 0;
+      var divulgacao = oferecerDivulgacao ? divulgacaoDe(base) : 0;
+      if (!oferecerDivulgacao) q('#ck-divulgacao').checked = false;
       var cobre = q('#ck-cobre').checked;
-      var divulgacao = divulgacaoAtual();
-      if (divulgacao <= 0) q('#ck-divulgacao').checked = false;
       var ajuda = q('#ck-divulgacao').checked;
-      var amount = inscricao + (completo ? matricula : 0) + (cobre ? taxa : 0) + (ajuda ? divulgacao : 0);
       var grupo = comCupom && completo ? grupoDoCupom() : 1;
-      if (comCupom && completo) amount = cupom.total_centavos * grupo;
+      var amount = (base + (cobre ? taxa : 0) + (ajuda ? divulgacao : 0)) * grupo;
       montarGrupo(grupo);
 
       // Parcelas: só a opção 1, no Crédito, com o teto do servidor acima de 1 (E3, 2.4).
@@ -711,7 +718,7 @@
       var parcelado = !!(opcao && n > 1);
       var chaveTotal = [slug, plano, met, cobre ? 1 : 0, ajuda ? 1 : 0, n, comCupom ? cupom.codigo : ''].join('|');
       var total = parcelado ? opcao.total_centavos : (ajusteTotal && ajusteTotal.chave === chaveTotal ? ajusteTotal.valor : amount);
-      atual = { slug: slug, plano: plano, completo: completo, n: n, total: total, turma: turma, semTurma: semTurma, cupom: comCupom && completo ? cupom.codigo : '', grupo: grupo };
+      atual = { slug: slug, plano: plano, completo: completo, n: n, total: total, turma: turma, semTurma: semTurma, cupom: comCupom && completo ? cupom.codigo : '', grupo: grupo, divulgacao: divulgacao };
 
       fichaDoCurso(c, turma);
       // Topo (1.12): o nome do curso e a turma, ou "Ainda não há turma aberta."
@@ -752,14 +759,15 @@
         texto('#ck-vocepaga-valor', parcelasTexto(n, opcao.parcela_centavos, opcao.primeira_centavos));
       }
 
-      // Opcionais (E4: os custos são 5% só da taxa, nos dois planos).
+      // Opcionais (17/11/2026): em % do valor do curso, também com cupom; no grupo, o valor das N pessoas.
+      var regra = taxaRegra();
       q('#ck-cobre-opcao').classList.toggle('marcado', cobre);
-      mostrar('#ck-cobre-opcao', !comCupom);
-      texto('#ck-cobre-legenda', 'Opcional. Cobre os custos de processamento da taxa de inscrição da escola.');
-      q('#ck-divulgacao-opcao').hidden = divulgacao <= 0;
+      texto('#ck-cobre-legenda', 'Opcional. ' + (regra && Number(regra.pct) > 0 ? pctRotulo(Number(regra.pct)) + ' do valor do curso, para' : 'Para') + ' cobrir os custos do pagamento (PIX ou cartão).');
+      texto('#ck-taxa-valor', '+ ' + brl(taxa * grupo));
+      mostrar('#ck-divulgacao-opcao', oferecerDivulgacao);
       q('#ck-divulgacao-opcao').classList.toggle('marcado', ajuda);
-      texto('#ck-divulgacao-valor', '+ ' + brl(divulgacao));
-      texto('#ck-taxa-valor', '+ ' + brl(taxa));
+      texto('#ck-divulgacao-legenda', 'Opcional. ' + pctRotulo(divulgacaoPct()) + ' do valor do curso, usados nos anúncios que levam os cursos a mais gente.');
+      texto('#ck-divulgacao-valor', '+ ' + brl(divulgacao * grupo));
 
       // Aceite (1.12 e 10.4). No HTML antigo, a escolaridade entra no texto antigo, como antes.
       if (!texto('#ck-requisitos-texto', aceiteTexto(c, completo, semTurma))) texto('#ck-escolaridade', c && c.escolaridade ? 'escolaridade mínima: ' + c.escolaridade : 'escolaridade mínima');
@@ -785,9 +793,9 @@
       texto('#ck-r-inscricao-rotulo', (completo ? 'Taxa de inscrição' : 'Taxa de inscrição (agora)') + (grupo > 1 ? vezes + brl(inscricao) + ')' : ''));
       texto('#ck-r-inscricao', brl(inscricao * grupo));
       mostrar('#ck-r-taxa-linha', cobre);
-      texto('#ck-r-taxa', brl(taxa));
+      texto('#ck-r-taxa', brl(taxa * grupo));
       mostrar('#ck-r-divulgacao-linha', ajuda);
-      texto('#ck-r-divulgacao', brl(divulgacao));
+      texto('#ck-r-divulgacao', brl(divulgacao * grupo));
       mostrar('#ck-r-juros-linha', parcelado);
       var descontoCupom = comCupom && completo ? Math.max(0, inscricao + matricula - cupom.total_centavos) * grupo : 0;
       mostrar('#ck-r-cupom-linha', descontoCupom > 0);
@@ -888,7 +896,7 @@
         curso: sel.value, nome: q('#ck-nome').value.trim(), cpf: digitos(q('#ck-cpf').value), email: q('#ck-email').value.trim(),
         telefone: digitos(q('#ck-telefone').value), metodo: metodo(), cobre_taxa: q('#ck-cobre').checked,
         // O valor mostrado vai junto: o servidor só cobra a contribuição se for o valor de agora.
-        ajuda_divulgacao: q('#ck-divulgacao').checked, divulgacao_centavos: divulgacaoAtual(),
+        ajuda_divulgacao: q('#ck-divulgacao').checked, divulgacao_centavos: atual.divulgacao || 0,
         requisitos: q('#ck-requisitos').checked, site: q('#ck-site').value, origem: origemAtual
       };
       // Pagar tudo: o plano sai só do input marcado. Sem ele (HTML antigo em cache), nada disso vai e o servidor cobra só
@@ -898,7 +906,7 @@
         dados.plano = marcado.value;
         if (dados.metodo === 'cartao' && marcado.value === 'taxa_e_matricula') dados.parcelas = atual.n || 1;
         dados.total_mostrado_centavos = atual.total;
-        if (atual.cupom && marcado.value === 'taxa_e_matricula') { dados.cupom = atual.cupom; dados.cobre_taxa = false; }
+        if (atual.cupom && marcado.value === 'taxa_e_matricula') dados.cupom = atual.cupom;
         if (atual.cupom && atual.grupo > 1 && marcado.value === 'taxa_e_matricula') dados.grupo = lerGrupo(atual.grupo);
         // A turma que a página mostrou, sempre na opção 1 (vazia = curso sem turma): se mudou, o servidor pede para conferir.
         if (marcado.value === 'taxa_e_matricula') dados.turma_id = atual.turma && atual.turma.id_escola ? atual.turma.id_escola : '';
@@ -915,10 +923,9 @@
     /* Os 422 do pagar tudo (spec 1.12): nada foi cobrado; a tela se ajusta ao que o servidor disse e mostra a mensagem. */
     function tratarRecusa(r, dados) {
       var slug = dados.curso, chave = chaveSimulacao(slug, dados.cobre_taxa, dados.ajuda_divulgacao);
-      if (r.campo === 'divulgacao' && typeof r.divulgacao_centavos === 'number') {
-        // A contribuição mudou de valor (ou saiu) depois que a página abriu: mostra o valor novo antes da mensagem.
-        if (info) info.divulgacao_centavos = r.divulgacao_centavos;
-        else q('#ck-divulgacao').setAttribute('data-centavos', String(r.divulgacao_centavos));
+      if (r.campo === 'divulgacao') {
+        // O percentual da contribuição mudou (ou ela saiu) depois que a página abriu: mostra o valor novo antes da mensagem.
+        if (info && typeof r.divulgacao_pct === 'number') info.divulgacao_pct = r.divulgacao_pct;
       } else if (r.campo === 'plano' && (r.motivo === 'prazo_fila' || r.motivo === 'condicoes')) {
         // A turma fechou num curso que ainda vende tudo sem turma, ou a turma mudou: a opção 1 continua, com as condições
         // novas (sem turma: fila, data limite, aceite e Resumo da 10.4). Recarrega os planos e pede o aceite de novo.
