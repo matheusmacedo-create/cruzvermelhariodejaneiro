@@ -26,8 +26,7 @@ if (mcp_contar_eventos_recentes('parcelas_consulta', $balde, $janela) >= $maximo
 }
 mcp_registrar(null, 'parcelas_consulta', $balde);
 
-$divulgacao = ($_GET['divulgacao'] ?? '0') === '1' ? mcp_divulgacao_centavos() : 0;
-$compra = mcp_compra($curso, 'taxa_e_matricula', 'cartao', ($_GET['cobre'] ?? '0') === '1', $divulgacao, 1);
+$compra = mcp_compra($curso, 'taxa_e_matricula', 'cartao', ($_GET['cobre'] ?? '0') === '1', ($_GET['divulgacao'] ?? '0') === '1', 1);
 $opcoes = mcp_parcelas_opcoes($compra['amount']);
 mcp_parcelas_registrar_exibidas($compra['amount'], $opcoes);
 mcp_json([

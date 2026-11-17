@@ -1,5 +1,7 @@
 # Versão revisada para Ad Grants — 19/10/2026
 
+> **17/11/2026:** a contribuição opcional para a divulgação voltou ao checkout, agora em percentual e também com cupom, por decisão do Matheus. Veja [`checkout-opcionais-2026-11-17.md`](checkout-opcionais-2026-11-17.md).
+
 Esta entrega corrige o código do site institucional e o gerador do portal no Palácio Virtual. Não foi publicada e não altera dados ou pagamentos existentes.
 
 ## O que muda

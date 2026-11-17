@@ -25,7 +25,9 @@ def main() -> int:
 
     checkout = (RAIZ / 'site/matricula-cursos-presenciais/checkout/index.html').read_text()
     doacao = (RAIZ / 'site/doe/index.html').read_text()
-    conferir('Quero ajudar a divulgar os cursos' not in checkout, 'Checkout ainda oferece contribuição para divulgação.')
+    # 17/11/2026: a contribuição opcional para a divulgação voltou ao checkout (decisão do Matheus: os anúncios da escola
+    # são pagos direto à Meta, e o Ad Grants não financia a escola). Ela é em % do valor do curso (divulgacao_pct no
+    # info.php); o campo antigo de valor fixo (divulgacao_centavos) continua em zero no catálogo e na API.
     conferir('Venda e recebimento: O-CVB Filial Rio de Janeiro Ensino Ltda' in checkout,
              'Checkout não identifica a empresa responsável pela venda.')
     conferir('Acesso futuro a cursos gravados' not in doacao, 'Doação ainda promete benefício futuro.')
@@ -49,15 +51,13 @@ def main() -> int:
                     conferir(r.status == 200 and bool(corpo), f'{caminho}: resposta vazia ou HTTP diferente de 200.')
                     if caminho == '/doe/':
                         conferir(b'Acesso futuro a cursos gravados' not in corpo, 'Doação publicada ainda contém a promessa antiga.')
-                    if caminho.endswith('/checkout/'):
-                        conferir(b'Quero ajudar a divulgar os cursos' not in corpo, 'Checkout publicado ainda contém a oferta antiga.')
             except Exception as e:
                 erros.append(f'{caminho}: {type(e).__name__}: {e}')
         try:
             with urlopen(base + '/matricula-cursos-presenciais/api/info.php', timeout=20) as r:
                 info = json.load(r)
             conferir(info.get('ok') is True and info.get('divulgacao_centavos') == 0,
-                     'API publicada não confirmou a contribuição desativada.')
+                     'API publicada ainda manda o valor fixo antigo da contribuição.')
         except Exception as e:
             erros.append(f'API info.php: {type(e).__name__}: {e}')
     for erro in erros:

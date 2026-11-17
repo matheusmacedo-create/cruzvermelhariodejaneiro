@@ -52,7 +52,11 @@ mcp_json([
     'versao' => MCP_VERSAO,
     'inscricao_centavos' => $inscricao,
     'taxa' => ['pix' => mcp_taxa('pix', $inscricao), 'cartao' => mcp_taxa('cartao', $inscricao)],
-    'divulgacao_centavos' => mcp_divulgacao_centavos(),
+    // Opcionais em % do valor do curso na compra (17/11/2026): a página faz a mesma conta do servidor (lib/compra.php).
+    'taxa_regra' => ['pix' => mcp_taxa_regra('pix'), 'cartao' => mcp_taxa_regra('cartao')],
+    'divulgacao_pct' => mcp_divulgacao_pct(),
+    // Valor fixo antigo: as páginas de antes de 17/11 o liam; fica em zero para elas não mostrarem um valor errado.
+    'divulgacao_centavos' => 0,
     'teste' => mcp_modo_teste(),
     'grupos' => $catalogo['grupos'] ?? [],
     'cursos' => $cursos,

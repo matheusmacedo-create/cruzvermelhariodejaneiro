@@ -226,19 +226,36 @@ function mcp_agente_financiador(): array
 /** Custos de processamento que o aluno pode escolher cobrir: percentual + parcela fixa, por método. */
 function mcp_taxa(string $metodo, int $base): int
 {
-    $pct = (float) mcp_cfg($metodo === 'pix' ? 'TAXA_PIX_PCT' : 'TAXA_CARTAO_PCT', 0);
-    $fixa = (int) mcp_cfg($metodo === 'pix' ? 'TAXA_PIX_FIXA' : 'TAXA_CARTAO_FIXA', 0);
-    return max(0, (int) round($base * $pct / 100) + $fixa);
+    $regra = mcp_taxa_regra($metodo);
+    return max(0, (int) round($base * $regra['pct'] / 100) + $regra['fixa']);
+}
+
+/** A regra dos custos de processamento de um método ({pct, fixa}), para a página fazer a mesma conta do servidor. */
+function mcp_taxa_regra(string $metodo): array
+{
+    return [
+        'pct' => (float) mcp_cfg($metodo === 'pix' ? 'TAXA_PIX_PCT' : 'TAXA_CARTAO_PCT', 0),
+        'fixa' => (int) mcp_cfg($metodo === 'pix' ? 'TAXA_PIX_FIXA' : 'TAXA_CARTAO_FIXA', 0),
+    ];
 }
 
 /**
- * Não há contribuição para divulgar cursos nas novas inscrições.
- * Ignora configurações e catálogos antigos, inclusive em páginas que ficaram em cache.
- * Os valores de inscrições anteriores continuam nos comprovantes e nos estornos.
+ * Contribuição opcional para a divulgação dos cursos (de volta em 17/11/2026, pedido do Matheus): um percentual do
+ * valor do curso na compra (taxa de inscrição + matrícula, ou o valor do cupom), 10% por padrão. A filial paga os
+ * anúncios da escola direto à Meta; o Google Ad Grants não financia a escola. DIVULGACAO_PCT no config.php sobrepõe
+ * (0 desliga a oferta). A chave antiga de valor fixo (DIVULGACAO_CENTAVOS) continua ignorada.
  */
-function mcp_divulgacao_centavos(): int
+const MCP_DIVULGACAO_PCT_PADRAO = 10;
+
+function mcp_divulgacao_pct(): float
 {
-    return 0;
+    return max(0.0, (float) mcp_cfg('DIVULGACAO_PCT', MCP_DIVULGACAO_PCT_PADRAO));
+}
+
+/** A contribuição para a divulgação sobre um valor de curso, em centavos (0 com a oferta desligada). */
+function mcp_divulgacao_centavos(int $base): int
+{
+    return max(0, (int) round(max(0, $base) * mcp_divulgacao_pct() / 100));
 }
 
 function mcp_escola_configurada(): bool

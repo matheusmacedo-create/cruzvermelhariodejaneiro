@@ -244,22 +244,38 @@ function mcp_matricula_centavos(array $curso, ?string $cpf = null): int
 }
 
 /**
- * A compra, em centavos: taxa de inscrição, matrícula (só na opção 1), custos de processamento (5% só sobre a taxa,
- * E4), divulgação e o amount (a soma, sem juros). Parcelas: só na opção 1 no cartão; no PIX ou na opção 2, 1.
+ * A compra, em centavos: taxa de inscrição, matrícula (só na opção 1) e os dois opcionais, ambos em percentual do valor
+ * do curso na compra (a base: inscrição + matrícula): custos de processamento (TAXA_*_PCT, 5%) e contribuição para a
+ * divulgação (DIVULGACAO_PCT, 10%) — 17/11/2026, antes os custos eram 5% só da taxa (E4). amount é a soma, sem juros.
+ * Parcelas: só na opção 1 no cartão; no PIX ou na opção 2, 1. Com cupom, mcp_compra_com_cupom() refaz a conta.
  */
-function mcp_compra(array $curso, string $plano, string $metodo, bool $cobre, int $divulgacao, int $parcelas, ?string $cpf = null): array
+function mcp_compra(array $curso, string $plano, string $metodo, bool $cobre, bool $ajuda, int $parcelas, ?string $cpf = null): array
 {
     $plano = $plano === 'taxa_e_matricula' ? 'taxa_e_matricula' : 'so_taxa';
     $metodo = $metodo === 'cartao' ? 'cartao' : 'pix';
     $inscricao = mcp_inscricao_centavos($cpf);
     $matricula = $plano === 'taxa_e_matricula' ? mcp_matricula_centavos($curso, $cpf) : 0;
-    $custos = $cobre ? mcp_taxa($metodo, $inscricao) : 0;
-    $divulgacao = max(0, $divulgacao);
-    return [
-        'inscricao' => $inscricao, 'matricula' => $matricula, 'custos' => $custos, 'divulgacao' => $divulgacao,
-        'amount' => $inscricao + $matricula + $custos + $divulgacao, 'plano' => $plano,
+    return mcp_compra_opcionais([
+        'inscricao' => $inscricao, 'matricula' => $matricula, 'plano' => $plano, 'metodo' => $metodo,
+        'cobre' => $cobre, 'ajuda' => $ajuda,
         'parcelas' => $plano === 'taxa_e_matricula' && $metodo === 'cartao' ? max(1, min(12, $parcelas)) : 1,
-    ];
+    ]);
+}
+
+/**
+ * Os opcionais e o amount de uma compra, sobre a base de agora (inscrição + matrícula). 'divulgacao_oferta' é o valor
+ * que a opção mostra, marcada ou não (para a adesão contar quem viu a opção).
+ */
+function mcp_compra_opcionais(array $compra): array
+{
+    $base = (int) $compra['inscricao'] + (int) $compra['matricula'];
+    $custos = !empty($compra['cobre']) ? mcp_taxa((string) $compra['metodo'], $base) : 0;
+    $oferta = mcp_divulgacao_centavos($base);
+    $divulgacao = !empty($compra['ajuda']) ? $oferta : 0;
+    return array_replace($compra, [
+        'base' => $base, 'custos' => $custos, 'divulgacao' => $divulgacao, 'divulgacao_oferta' => $oferta,
+        'amount' => $base + $custos + $divulgacao,
+    ]);
 }
 
 // ----------------------------------------------------------------------------- escola: versão da função (E12, T7)

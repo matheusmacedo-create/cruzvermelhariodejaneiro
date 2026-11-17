@@ -146,24 +146,23 @@ function mcp_cupom_soltar(string $codigo): void
 }
 
 /**
- * A compra de mcp_compra() com o cupom: total = valor do cupom, sem custos, sem contribuição e à vista. A taxa de
- * inscrição fica igual (ou o total inteiro, se o cupom valer menos que ela) e a matrícula leva o resto. Com o CPF de
- * teste, a compra de teste fica como está (o cupom é registrado, sem desconto).
+ * A compra de mcp_compra() com o cupom: valor do curso = valor do cupom, à vista. A taxa de inscrição fica igual (ou o
+ * total inteiro, se o cupom valer menos que ela) e a matrícula leva o resto. Os opcionais (custos de processamento e
+ * divulgação, 17/11/2026) valem também com cupom, em percentual do valor do cupom. Com o CPF de teste, a compra de
+ * teste fica como está (o cupom é registrado, sem desconto).
  */
 function mcp_compra_com_cupom(array $compra, array $cupom, ?string $cpf = null): array
 {
     $cheio = (int) $compra['inscricao'] + (int) $compra['matricula'];
     if (mcp_cpf_de_teste($cpf)) {
-        $total = (int) $compra['inscricao'] + (int) $compra['matricula'];
-        return array_replace($compra, ['custos' => 0, 'divulgacao' => 0, 'amount' => $total, 'parcelas' => 1,
-            'cupom' => $cupom['codigo'], 'cupom_desconto' => 0]);
+        return mcp_compra_opcionais(array_replace($compra, ['parcelas' => 1, 'cupom' => $cupom['codigo'], 'cupom_desconto' => 0]));
     }
     $total = (int) $cupom['total_centavos'];
     $inscricao = min((int) $compra['inscricao'], $total);
-    return array_replace($compra, [
-        'inscricao' => $inscricao, 'matricula' => $total - $inscricao, 'custos' => 0, 'divulgacao' => 0,
-        'amount' => $total, 'parcelas' => 1, 'cupom' => $cupom['codigo'], 'cupom_desconto' => max(0, $cheio - $total),
-    ]);
+    return mcp_compra_opcionais(array_replace($compra, [
+        'inscricao' => $inscricao, 'matricula' => $total - $inscricao, 'parcelas' => 1,
+        'cupom' => $cupom['codigo'], 'cupom_desconto' => max(0, $cheio - $total),
+    ]));
 }
 
 /** O fim da validade de um cupom em Brasília, "30/11", ou null (sem 'ate'). */

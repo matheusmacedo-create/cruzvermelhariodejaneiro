@@ -72,24 +72,16 @@ function mcp_validar_aluno(array $b): array
         mcp_falhar(422, 'Confirme que leu os requisitos do curso.', ['campo' => 'requisitos']);
     }
     $metodo = ($b['metodo'] ?? 'pix') === 'cartao' ? 'cartao' : 'pix';
-    // Contribuição opcional para a divulgação (07/10/2026). A página manda o valor que mostrou; só se cobra se for o
-    // valor de agora (nunca um total diferente do que a pessoa viu). Oferta: o valor mostrado, nulo se a opção não
-    // apareceu (página antiga em cache), para a adesão do teste contar só quem viu a opção.
-    $divulgacao = mcp_divulgacao_centavos();
+    // Contribuição opcional para a divulgação (07/10/2026; de volta em 17/11/2026, em % do valor do curso). A página manda
+    // o valor que mostrou; a conferência com o valor de agora fica para depois da compra montada (a base depende do
+    // plano e do cupom). Sem o campo (página antiga em cache), a opção não apareceu: a oferta fica nula.
     $vista = filter_var($b['divulgacao_centavos'] ?? null, FILTER_VALIDATE_INT);
-    $mostrou = $divulgacao > 0 && $vista === $divulgacao;
-    if (!empty($b['ajuda_divulgacao']) && !$mostrou) {
-        mcp_falhar(422, $divulgacao > 0
-            ? 'O valor da contribuição para a divulgação mudou para ' . mcp_brl($divulgacao) . '. Confira o novo total e pague de novo.'
-            : 'A contribuição para a divulgação não está mais disponível. Confira o total e pague de novo.',
-            ['campo' => 'divulgacao', 'divulgacao_centavos' => $divulgacao]);
-    }
     // Pagar tudo: o plano sai só do input marcado; sem o campo (HTML antigo em cache), só a taxa, como antes (T9).
     $temPlano = array_key_exists('plano', $b);
     $plano = $temPlano ? $b['plano'] : 'so_taxa';
     $info = mcp_planos_info($curso, null, $cpf);
     // Cupom (30/10/2026, lib/cupons.php), antes do plano: quem usa o cupom no curso errado lê a mensagem do cupom. Só
-    // no plano completo, à vista, sem custos nem contribuição. As vagas se conferem depois, com a trava, antes de cobrar.
+    // no plano completo e à vista; os opcionais valem também com cupom (17/11/2026). As vagas se conferem depois, com a trava, antes de cobrar.
     $cupom = null;
     $codigoCupom = mcp_cupom_normalizar($b['cupom'] ?? '');
     if ($codigoCupom !== '') {
@@ -146,8 +138,9 @@ function mcp_validar_aluno(array $b): array
         'aceite_sha256' => $aceiteTexto !== '' ? hash('sha256', $aceiteCanonico) : null,
         'aceite_divergente' => $aceiteDivergente,
         'slug' => $slug, 'curso' => $curso, 'nome' => $nome, 'cpf' => $cpf, 'email' => $email,
-        'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => $cupom === null && !empty($b['cobre_taxa']), 'cupom' => $cupom,
-        'divulgacao' => $cupom === null && $mostrou && !empty($b['ajuda_divulgacao']) ? $divulgacao : 0, 'divulgacao_oferta' => $mostrou ? $divulgacao : null,
+        'telefone' => $telefone, 'metodo' => $metodo, 'cobre_taxa' => !empty($b['cobre_taxa']), 'cupom' => $cupom,
+        'ajuda_divulgacao' => !empty($b['ajuda_divulgacao']), 'divulgacao_vista' => is_int($vista) && $vista > 0 ? $vista : null,
+        'divulgacao_oferta' => null,
         'utm_source' => $utm('utm_source', 120), 'utm_medium' => $utm('utm_medium', 120),
         'utm_campaign' => $utm('utm_campaign'), 'utm_content' => $utm('utm_content'), 'utm_term' => $utm('utm_term'),
         'fbclid' => $utm('fbclid', 255), 'gclid' => $utm('gclid', 255),
@@ -310,10 +303,19 @@ foreach ($grupo as $p) {
 }
 
 // Valores, sempre do servidor (com o CPF: o preço de teste vale só para a lista TESTE_CPFS).
-$compra = mcp_compra($aluno['curso'], $aluno['plano'], $aluno['metodo'], $aluno['cobre_taxa'], $aluno['divulgacao'], max(1, $aluno['parcelas_pedidas']), $aluno['cpf']);
+$compra = mcp_compra($aluno['curso'], $aluno['plano'], $aluno['metodo'], $aluno['cobre_taxa'], $aluno['ajuda_divulgacao'], max(1, $aluno['parcelas_pedidas']), $aluno['cpf']);
 if ($aluno['cupom'] !== null) {
     $compra = mcp_compra_com_cupom($compra, $aluno['cupom'], $aluno['cpf']);
 }
+// Divulgação: só se cobra o valor que a pessoa viu (por pessoa, o mesmo da compra); nunca um total diferente do que ela
+// viu. A oferta registrada é o valor mostrado, nula se a opção não apareceu.
+if ($aluno['ajuda_divulgacao'] && $aluno['divulgacao_vista'] !== (int) $compra['divulgacao']) {
+    mcp_falhar(422, (int) $compra['divulgacao_oferta'] > 0
+        ? 'O valor da contribuição para a divulgação mudou para ' . mcp_brl((int) $compra['divulgacao_oferta']) . '. Confira o novo total e pague de novo.'
+        : 'A contribuição para a divulgação não está mais disponível. Confira o total e pague de novo.',
+        ['campo' => 'divulgacao', 'divulgacao_centavos' => (int) $compra['divulgacao_oferta'], 'divulgacao_pct' => mcp_divulgacao_pct()]);
+}
+$aluno['divulgacao_oferta'] = $aluno['divulgacao_vista'] !== null && (int) $compra['divulgacao_oferta'] > 0 ? (int) $compra['divulgacao_oferta'] : null;
 $completo = $compra['plano'] === 'taxa_e_matricula';
 $parcelado = $completo && $aluno['metodo'] === 'cartao' && $aluno['parcelas_pedidas'] !== 1;
 

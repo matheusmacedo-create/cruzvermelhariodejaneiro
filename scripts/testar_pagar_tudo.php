@@ -73,22 +73,31 @@ $bombeiro = mcp_curso('bombeiro-civil');
 $cuidador = mcp_curso('cuidador-de-idosos');
 
 // --- mcp_compra (2.2) e D11
-$c = static fn(string $plano, string $metodo, bool $cobre, bool $div, int $n = 1, ?string $cpf = CPF_OUTRO): array => mcp_compra($psb, $plano, $metodo, $cobre, $div ? 1490 : 0, $n, $cpf);
+$c = static fn(string $plano, string $metodo, bool $cobre, bool $div, int $n = 1, ?string $cpf = CPF_OUTRO): array => mcp_compra($psb, $plano, $metodo, $cobre, $div, $n, $cpf);
 v('compra 279', $c('taxa_e_matricula', 'pix', false, false)['amount'], 27900);
-v('compra 283,95', $c('taxa_e_matricula', 'pix', true, false)['amount'], 28395);
-v('compra 293,90', $c('taxa_e_matricula', 'cartao', false, true)['amount'], 29390);
-v('compra 298,85', $c('taxa_e_matricula', 'cartao', true, true)['amount'], 29885);
+// Opcionais em % do valor do curso na compra (17/11/2026): custos 5%, divulgação 10% (DIVULGACAO_PCT padrão).
+v('compra 292,95 (custos 5% de 279)', $c('taxa_e_matricula', 'pix', true, false)['amount'], 29295);
+v('compra 306,90 (divulgação 10% de 279)', $c('taxa_e_matricula', 'cartao', false, true)['amount'], 30690);
+v('compra 320,85 (os dois)', $c('taxa_e_matricula', 'cartao', true, true)['amount'], 32085);
 v('compra 99', $c('so_taxa', 'pix', false, false)['amount'], 9900);
-v('compra 118,85', $c('so_taxa', 'cartao', true, true)['amount'], 11885);
-v('D11 custos 495 na opção 1', $c('taxa_e_matricula', 'cartao', true, false)['custos'], 495);
-v('D11 custos 495 na opção 2', $c('so_taxa', 'pix', true, false)['custos'], 495);
+v('compra 113,85 (só a taxa, os dois)', $c('so_taxa', 'cartao', true, true)['amount'], 11385);
+v('custos 5% do valor do curso na opção 1', $c('taxa_e_matricula', 'cartao', true, false)['custos'], 1395);
+v('custos 5% da taxa na opção 2', $c('so_taxa', 'pix', true, false)['custos'], 495);
+v('divulgação: oferta mostrada mesmo sem marcar', [$c('taxa_e_matricula', 'pix', false, false)['divulgacao'], $c('taxa_e_matricula', 'pix', false, false)['divulgacao_oferta']], [0, 2790]);
+// Com cupom: a base é o valor do cupom (R$ 150), e os dois opcionais continuam valendo.
+$cupomTeste = ['codigo' => 'TESTE', 'total_centavos' => 15000];
+$cc = mcp_compra_com_cupom($c('taxa_e_matricula', 'pix', true, true), $cupomTeste, CPF_OUTRO);
+v('cupom: custos e divulgação sobre o valor do cupom', [$cc['inscricao'], $cc['matricula'], $cc['custos'], $cc['divulgacao'], $cc['amount'], $cc['cupom_desconto']],
+    [9900, 5100, 750, 1500, 17250, 12900]);
+$cs = mcp_compra_com_cupom($c('taxa_e_matricula', 'cartao', false, false), $cupomTeste, CPF_OUTRO);
+v('cupom: sem opcionais, o valor do cupom', [$cs['custos'], $cs['divulgacao'], $cs['amount'], $cs['parcelas'], $cs['divulgacao_oferta']], [0, 0, 15000, 1, 1500]);
 v('parcelas só no cartão da opção 1', $c('taxa_e_matricula', 'pix', false, false, 10)['parcelas'], 1);
 v('parcelas na opção 2 viram 1', $c('so_taxa', 'cartao', false, false, 10)['parcelas'], 1);
 v('parcelas 10 no cartão', $c('taxa_e_matricula', 'cartao', false, false, 10)['parcelas'], 10);
 foreach (mcp_catalogo()['cursos'] as $curso) {
     foreach (['taxa_e_matricula', 'so_taxa'] as $plano) {
         foreach (['pix', 'cartao'] as $metodo) {
-            foreach ([[false, 0], [true, 0], [false, 1490], [true, 1490]] as [$cobre, $div]) {
+            foreach ([[false, false], [true, false], [false, true], [true, true]] as [$cobre, $div]) {
                 $x = mcp_compra($curso, $plano, $metodo, $cobre, $div, 1, CPF_OUTRO);
                 v("soma {$curso['slug']} $plano $metodo", $x['amount'], $x['inscricao'] + $x['matricula'] + $x['custos'] + $x['divulgacao']);
             }
@@ -183,16 +192,16 @@ v('validade 48 h', mcp_parcela_opcao(1000, 1, 1000, 1_000_000)['valido_ate'], gm
 // --- cobrança (3.2)
 $aluno = ['slug' => 'primeiros-socorros-basico', 'curso' => $psb, 'nome' => 'Fulana de Teste', 'email' => 'fulana@exemplo.org', 'telefone' => '21999990000',
     'cpf' => CPF_OUTRO, 'metodo' => 'cartao', 'cobre_taxa' => true, 'utm_source' => null, 'utm_campaign' => null];
-$compra = mcp_compra($psb, 'taxa_e_matricula', 'cartao', true, 1490, 10, CPF_OUTRO);
+$compra = mcp_compra($psb, 'taxa_e_matricula', 'cartao', true, true, 10, CPF_OUTRO);
 $pay = mcp_montar_cobranca($aluno, str_repeat('a', 40), $compra + ['turma_id' => 'turma-teste-1', 'total_mostrado' => 39000]);
 v('cobrança: soma dos price = amount', array_sum(array_column($pay['cart'], 'price')), $pay['amount']);
-v('cobrança: amount = compra', $pay['amount'], 29885);
+v('cobrança: amount = compra', $pay['amount'], 32085);
 v('cobrança: itens', array_column($pay['cart'], 'hash'), ['inscricao-primeiros-socorros-basico', 'matricula-primeiros-socorros-basico', 'custos-processamento', 'divulgacao']);
 v('cobrança: títulos', array_column($pay['cart'], 'title')[0] . ' / ' . array_column($pay['cart'], 'title')[1], 'Primeiros Socorros Básico — Taxa de inscrição / Primeiros Socorros Básico — Matrícula');
 v('cobrança: operation_type 1', array_unique(array_column($pay['cart'], 'operation_type')), [1]);
 v('cobrança: installments 10', $pay['installments'], 10);
 v('cobrança: metadata', [$pay['metadata']['plano'], $pay['metadata']['parcelas'], $pay['metadata']['matricula_centavos'], $pay['metadata']['turma_id']], ['taxa_e_matricula', 10, 18000, 'turma-teste-1']);
-$pix = mcp_montar_cobranca(['metodo' => 'pix'] + $aluno, str_repeat('a', 40), mcp_compra($psb, 'so_taxa', 'pix', false, 0, 1, CPF_OUTRO));
+$pix = mcp_montar_cobranca(['metodo' => 'pix'] + $aluno, str_repeat('a', 40), mcp_compra($psb, 'so_taxa', 'pix', false, false, 1, CPF_OUTRO));
 v('cobrança opção 2: um item', array_column($pix['cart'], 'hash'), ['inscricao-primeiros-socorros-basico']);
 v('cobrança PIX: installments 1', [$pix['installments'], $pix['payment_method']], [1, 'pix']);
 
@@ -313,7 +322,7 @@ require $raiz . '/site/matricula-cursos-presenciais/api/lib.php';
 restore_exception_handler();
 $curso = mcp_curso($slug);
 $info = mcp_planos_info($curso, null, $cpf);
-$compra = mcp_compra($curso, 'taxa_e_matricula', 'pix', false, 0, 1, $cpf);
+$compra = mcp_compra($curso, 'taxa_e_matricula', 'pix', false, false, 1, $cpf);
 file_put_contents($saida, json_encode(['motivo' => $info['motivo'], 'planos' => $info['planos'], 'amount' => $compra['amount']]));
 PHP;
 file_put_contents("$tmp/filho.php", $filho);

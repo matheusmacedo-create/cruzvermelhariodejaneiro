@@ -1,0 +1,15 @@
+# Opcionais do checkout (17/11/2026): docs/checkout-opcionais-2026-11-17.md. Backend antes da página.
+site/matricula-cursos-presenciais/api/lib/config.php
+site/matricula-cursos-presenciais/api/lib/compra.php
+site/matricula-cursos-presenciais/api/lib/cupons.php
+site/matricula-cursos-presenciais/api/lib/email.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/api/parcelas.php
+site/matricula-cursos-presenciais/api/info.php
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
