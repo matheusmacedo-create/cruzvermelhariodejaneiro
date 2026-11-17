@@ -49,3 +49,11 @@ um opcional recebe "o valor mudou" e a página corrige o total. Nada é cobrado 
 2. `static/checkout.js` e as páginas que o referenciam com a versão nova: `checkout/`, `pendente/`,
    `parabens/`, `horarios/`, `conferir/` e `comparecimento/` (`index.html` de cada uma)
 3. Limpar o cache da Hostinger e conferir `api/info.php`: ele deve trazer `divulgacao_pct: 10` e `taxa_regra`.
+
+**Publicado em 17/11/2026, por volta de 17h52 UTC**, na ordem de `scripts/publicacao-opcionais.txt`. Antes, foi
+feita uma cópia do que estava no ar, e os 14 arquivos eram idênticos aos da `main` em `1e558b1`. Depois de publicar,
+o cache foi limpo. `scripts/conferir_publicacao.sh scripts/publicacao-opcionais.txt` deu "Tudo certo." e
+`conferir_ad_grants.py --url` deu 0 falhas. O `info.php` no ar traz `divulgacao_pct: 10`; o `parcelas.php` calcula
+R$ 286,35 para R$ 249 com os dois opcionais; no checkout real em 390 px, o cupom CURATIVOS com os dois opcionais
+dá R$ 172,50, sem erro de JS. Nenhum pagamento foi feito.
+Para desfazer: `scripts/desfazer_publicacao.sh 1e558b1 scripts/publicacao-opcionais.txt`.
