@@ -1149,9 +1149,11 @@
       if (!(ac && ac.link)) return '';
       return '<a class="btn btn-red" href="' + esc(ac.link) + '">Criar minha senha</a>' + (ac.url ? '<a class="btn btn-outline" href="' + esc(ac.url) + '">Já criei: entrar</a>' : '');
     }
+    /* A data e o horário da turma são fixos (18/11/2026): o questionário de horários, desligado, fazia o aluno achar que podia escolher. */
+    var TURMA_FIXA = '<p><b>A data e o horário da turma são estes.</b> Não é preciso escolher dia nem horário.</p>';
     function linhaTurma(t) {
       if (!t || !t.data_longa) return '';
-      return '<p class="ck-turma-linha">Início em ' + esc(t.data_longa) + (t.horario ? ' · ' + esc(t.horario) : '') + ' · Praça da Cruz Vermelha, 10 · Centro</p>';
+      return '<p class="ck-turma-linha">Início em ' + esc(t.data_longa) + (t.horario ? ' · ' + esc(t.horario) : '') + ' · Praça da Cruz Vermelha, 10 · Centro</p>' + TURMA_FIXA;
     }
     function matriculaAVista(d) { return d.matricula_preco_centavos ? brl(d.matricula_preco_centavos) + ' à vista' : 'à vista'; }
     /* Quanto da taxa paga em dobro volta, com os juros proporcionais: taxa × total cobrado ÷ amount (spec 2.6). */
@@ -1257,7 +1259,7 @@
         + '<div class="ck-falta"><b>Falta pagar a matrícula.</b>A taxa de inscrição reserva a sua vaga, mas sem o pagamento da matrícula a entrada na aula não é liberada.</div>'
         + '<p>' + (data ? 'Sua vaga na turma de ' + esc(data) + ' está reservada. ' : 'Sua vaga está reservada. ')
         + 'A matrícula, de ' + esc(matriculaAVista(d)) + ', é paga antes da aula: a secretaria da Escola escreve para você com o jeito de pagar.</p>'
-        + ac.html + botoes(ac, d) + '<p class="ck-nota" style="margin-top:12px">' + NOTA_ESTORNO + '</p></div>' };
+        + (data ? TURMA_FIXA : '') + ac.html + botoes(ac, d) + '<p class="ck-nota" style="margin-top:12px">' + NOTA_ESTORNO + '</p></div>' };
     }
     /* Só a taxa sem turma: com a venda sem turma no ar para o curso, a lista é de interesse (quem pagou tudo entra
        primeiro; 10.4, F5). O info.php diz; sem resposta, fica o texto de sempre. */

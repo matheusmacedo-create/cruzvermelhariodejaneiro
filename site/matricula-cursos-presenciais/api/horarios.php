@@ -16,7 +16,7 @@ if (!$post) {
     mcp_exigir_metodo('GET');
 }
 if (!mcp_horarios_ativo()) {
-    mcp_falhar(410, 'Não é preciso responder mais nada aqui. A secretaria da Escola fala com você por e-mail sobre turma, data e horário.');
+    mcp_falhar(410, 'Não é preciso escolher dia nem horário: cada turma tem data e horário fixos. Veja os da sua turma na página da sua inscrição.');
 }
 $token = mcp_texto($post ? ($corpo['t'] ?? '') : ($_GET['t'] ?? ''), MCP_TOKEN_TAMANHO);
 $inscricao = mcp_token_valido($token) ? mcp_inscricao_por('token', $token) : null;
