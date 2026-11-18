@@ -634,6 +634,9 @@ function mcp_secretaria_evento(string $tipo, ?string $detalhe): ?string
 function mcp_secretaria_lembrete(array $i, string $quem, ?int $agora = null): string
 {
     $agora ??= time();
+    if (!mcp_horarios_ativo()) {
+        return 'desligado';
+    }
     if (($i['status'] ?? '') !== 'pago') {
         return 'nao_pago';
     }

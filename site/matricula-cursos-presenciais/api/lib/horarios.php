@@ -14,8 +14,20 @@
  *
  * Fase 2: a mesma pergunta dentro da área do aluno da escola, quando houver acesso ao código da
  * plataforma (contrato dos dados em docs/escola/README.md).
+ *
+ * DESLIGADO (18/11/2026): o questionário confundia os alunos e gerava pedidos de suporte. Com
+ * mcp_horarios_ativo() falso, a tela Parabéns não mostra o alerta nem o resumo, os e-mails de pagamento
+ * saem sem o convite, os lembretes (automáticos e os da ficha) não saem e o link horarios/?t= responde 410
+ * com um recado. As respostas antigas continuam no painel. Para religar sem deploy: 'HORARIOS_ATIVO' => true
+ * no api/config.php do servidor.
  */
 declare(strict_types=1);
+
+/** O questionário está ligado? Desligado por padrão desde 18/11/2026 (ver acima). */
+function mcp_horarios_ativo(): bool
+{
+    return mcp_cfg_ligada('HORARIOS_ATIVO');
+}
 
 const MCP_HORARIOS_DIAS = ['seg' => 'Segunda', 'ter' => 'Terça', 'qua' => 'Quarta', 'qui' => 'Quinta', 'sex' => 'Sexta', 'sab' => 'Sábado'];
 const MCP_HORARIOS_DIAS_CURTOS = ['seg' => 'Seg', 'ter' => 'Ter', 'qua' => 'Qua', 'qui' => 'Qui', 'sex' => 'Sex', 'sab' => 'Sáb'];
@@ -185,7 +197,7 @@ function mcp_horarios_resumo(array $p): string
 /** O que a tela Parabéns precisa saber: onde responder e se já respondeu. Só com a inscrição paga. */
 function mcp_horarios_publico(array $inscricao, ?array $preferencia): ?array
 {
-    if (($inscricao['status'] ?? '') !== 'pago') {
+    if (!mcp_horarios_ativo() || ($inscricao['status'] ?? '') !== 'pago') {
         return null;
     }
     return [
@@ -420,6 +432,9 @@ function mcp_montar_email_lembrete_horarios(array $inscricao, int $numero): arra
  */
 function mcp_horarios_enviar_lembretes(int $limite = 50, ?int $agora = null): array
 {
+    if (!mcp_horarios_ativo()) {
+        return ['enviados' => 0, 'falhas' => 0, 'vistos' => 0];
+    }
     $agora ??= time();
     $db = mcp_db();
     $desde = max((string) mcp_cfg('HORARIOS_LEMBRETES_DESDE', MCP_HORARIOS_DESDE_PADRAO),

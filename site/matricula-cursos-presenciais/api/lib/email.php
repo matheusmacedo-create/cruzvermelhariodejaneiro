@@ -1068,6 +1068,9 @@ function mcp_email_pix_aberto(array $inscricao): void
  */
 function mcp_email_bloco_horarios(array $inscricao, bool $comTurma, bool $principal = false): array
 {
+    if (!mcp_horarios_ativo()) {
+        return ['html' => '', 'texto' => ''];
+    }
     $url = mcp_url_pagina('horarios', (string) $inscricao['token']);
     // Quem pagou tudo sem turma entra pela ordem de pagamento: os horários ajudam a Escola a marcar turmas, não a escolher a de cada um.
     $espera = mcp_email_completo($inscricao) && empty($inscricao['turma_id']);

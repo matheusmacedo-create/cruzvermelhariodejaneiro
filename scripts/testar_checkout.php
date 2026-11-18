@@ -14,6 +14,8 @@ $configTeste = tempnam(sys_get_temp_dir(), 'mcp-config-');
 file_put_contents($configTeste, "<?php return [
     'SITE_URL' => 'https://exemplo.org', 'INSCRICAO_CENTAVOS' => '', 'PRECO_TESTE_CENTAVOS' => '',
     'DIVULGACAO_CENTAVOS' => 1490,
+    // O questionário de horários está desligado em produção (18/11/2026); aqui fica ligado para conferir o código.
+    'HORARIOS_ATIVO' => true,
     'TAXA_PIX_PCT' => 5.0, 'TAXA_PIX_FIXA' => 0, 'TAXA_CARTAO_PCT' => 5.0, 'TAXA_CARTAO_FIXA' => 0,
     'ESCOLA_API_URL' => '', 'ESCOLA_URL' => 'https://escola.exemplo.org', 'EMAIL_CONTATO' => 'contato@exemplo.org',
 ];");

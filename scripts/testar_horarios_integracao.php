@@ -28,7 +28,7 @@ if ($configOriginal === '' || !is_file($configOriginal)) {
 // Mesma configuração, com a secretaria ligada (para conferir o aviso) e sem integração com a escola.
 $config = tempnam(sys_get_temp_dir(), 'mcp-horarios-');
 // Lembretes: só pagamentos dos últimos 4 dias entram (as inscrições do teste e nada antigo do banco local).
-file_put_contents($config, '<?php return [\'EMAIL_SECRETARIA\' => \'secretaria@exemplo.org\', \'ESCOLA_API_URL\' => \'\', \'ESCOLA_API_TOKEN\' => \'\', '
+file_put_contents($config, '<?php return [\'EMAIL_SECRETARIA\' => \'secretaria@exemplo.org\', \'ESCOLA_API_URL\' => \'\', \'ESCOLA_API_TOKEN\' => \'\', \'HORARIOS_ATIVO\' => true, '
     . '\'HORARIOS_LEMBRETES_DESDE\' => ' . var_export(gmdate('Y-m-d H:i:s', time() - 4 * 86400), true) . '] + (require '
     . var_export($configOriginal, true) . ');');
 $semEscola = tempnam(sys_get_temp_dir(), 'mcp-horarios-escola-');

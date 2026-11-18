@@ -102,6 +102,9 @@ return [
     // Pagar tudo: true só depois da matricula_rapida v2 aplicada na escola (docs/escola/matricula_rapida_v2.sql).
     // Também vai no api/config-escola.php. Desligada, a escola nunca recebe a matrícula paga junto.
     'ESCOLA_MATRICULA_PAGA' => false,
+    // Questionário de dias e horários (lib/horarios.php): desligado desde 18/11/2026, porque confundia os
+    // alunos. true religa a tela Parabéns, o convite nos e-mails e os lembretes.
+    'HORARIOS_ATIVO' => false,
     // Aba "Horários" do painel da secretaria da escola: ela lê as respostas do questionário de dias e
     // horários em api/escola-horarios.php com esta chave (32 caracteres ou mais; gere com
     // `openssl rand -hex 24`). Também vai no api/config-escola.php, e a mesma chave vai na variável
