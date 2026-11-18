@@ -1489,6 +1489,10 @@
 
     api('horarios.php?t=' + encodeURIComponent(token)).then(function (d) {
       if (!d.ok) {
+        if (d.http === 410) {
+          card.innerHTML = '<p>' + esc(d.erro) + '</p><div class="cta-row"><a class="btn btn-red" href="../parabens/?t=' + encodeURIComponent(token) + '">Ver minha inscrição</a></div>';
+          return;
+        }
         card.innerHTML = d.http === 403 ? '<p>' + esc(d.erro) + '</p><p class="ck-nota">Assim que o pagamento for aprovado, este link abre o questionário.</p>' : voltarCursos(d.erro || 'Inscrição não encontrada.');
         return;
       }

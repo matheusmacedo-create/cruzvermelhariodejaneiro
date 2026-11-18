@@ -92,7 +92,7 @@ function pn_menu(string $aba): string
     $itens = [
         'inicio' => ['painel.php', 'Início', 0, ''],
         'inscricoes' => ['painel.php?v=inscricoes', 'Inscrições', $contas['atencao'], 'precisam de atenção'],
-        'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', $contas['sem_horarios'], 'ainda sem horários'],
+        'horarios' => ['painel.php?v=horarios', 'Horários dos alunos', mcp_horarios_ativo() ? $contas['sem_horarios'] : 0, 'ainda sem horários'],
         'mensagens' => ['painel.php?v=mensagens', 'Mensagens do chat', mcp_contatos_contar()['novo'], 'sem resposta'],
         'procuras' => ['painel.php?v=procuras', 'O que procuram', function_exists('mcp_buscas_sem_resposta_contar') ? mcp_buscas_sem_resposta_contar() : 0, 'perguntas que o site não soube responder nos últimos 7 dias'],
         'voluntarios' => ['painel.php?v=voluntarios', 'Voluntários', mcp_voluntarios_novas_contar(), 'fichas novas'],
@@ -570,7 +570,7 @@ function pn_horarios(string $usuario): never
 
     $titulo = $curso !== '' ? $contagem[$curso]['nome'] : 'Todos os cursos';
     // Quem pagou e ainda não disse os horários: a lista (com o lembrete à mão) fica em Inscrições.
-    $faltam = mcp_secretaria_contar($curso !== '' ? $curso : null)['sem_horarios'];
+    $faltam = mcp_horarios_ativo() ? mcp_secretaria_contar($curso !== '' ? $curso : null)['sem_horarios'] : 0;
     $avisoFaltam = $faltam > 0 ? '<p class="faltam"><b>' . $faltam . ' aluno' . ($faltam > 1 ? 's pagaram e ainda não disseram os horários.' : ' pagou e ainda não disse os horários.')
         . '</b> <a href="' . pn_e('painel.php?v=inscricoes&f=sem_horarios' . ($curso !== '' ? '&curso=' . rawurlencode($curso) : '')) . '">Ver quem falta e mandar lembrete →</a></p>' : '';
     $corpo = '<div class="cabeca"><div><p class="eyebrow">Questionário do site</p><h1>Dias e horários preferidos</h1>'
@@ -679,7 +679,7 @@ function pn_inicio(string $usuario, string $aviso = '', string $classe = 'ok'): 
     $numeros = '<div class="numeros">'
         . $numero('painel.php?v=inscricoes&f=pagas', $contas['pagas'], 'Inscrições pagas', mcp_secretaria_pagas_recentes(7) . ' nos últimos 7 dias')
         . $numero('painel.php?v=inscricoes&f=atencao', $contas['atencao'], 'Precisam de atenção', 'matrícula na escola, devolução ou fila com pendência', true)
-        . $numero('painel.php?v=inscricoes&f=sem_horarios', $contas['sem_horarios'], 'Sem horários', 'pagaram e ainda não disseram os horários')
+        . (mcp_horarios_ativo() ? $numero('painel.php?v=inscricoes&f=sem_horarios', $contas['sem_horarios'], 'Sem horários', 'pagaram e ainda não disseram os horários') : '')
         . $numero('painel.php?v=mensagens&f=novo', $novas, 'Mensagens novas', 'do chat do site, sem resposta', true)
         . '</div>';
 
@@ -999,6 +999,8 @@ function pn_inscricao(string $usuario, int $id, string $aviso = '', string $clas
 
     if (!$pago) {
         $horarios = '<p class="nota" style="margin:0">O questionário abre para o aluno depois que o pagamento é confirmado.</p>';
+    } elseif (!$pref && !mcp_horarios_ativo()) {
+        $horarios = '<p class="nota" style="margin:0">O questionário de horários está desligado: o aluno não é mais convidado a responder.</p>';
     } elseif ($pref) {
         $horarios = $dl(array_filter([
             'Pode vir' => pn_e(mcp_horarios_texto($pref['horarios'])),
@@ -1590,6 +1592,7 @@ $avisos = [
     'lb_recente' => ['Já saiu um lembrete nas últimas 24 horas. Espere um pouco antes de mandar outro.', 'erro'],
     'lb_resp' => ['O aluno já respondeu os horários; nenhum lembrete foi enviado.', 'ok'],
     'lb_falhou' => ['O e-mail não pôde ser enviado agora. Tente de novo em instantes.', 'erro'],
+    'lb_desligado' => ['O questionário de horários está desligado; nenhum lembrete foi enviado.', 'erro'],
     'lb_naopago' => ['Esta inscrição não está paga; o questionário ainda não abriu para o aluno.', 'erro'],
     'col_ok' => ['Colaborador salvo.', 'ok'],
     'pt_corr' => ['Registro corrigido.', 'ok'],
@@ -1670,7 +1673,7 @@ if ($metodo === 'POST') {
         }
         $resultado = mcp_secretaria_lembrete($inscricao, $sessao);
         mcp_registrar(null, 'painel_lembrete', "#$id · $sessao · $resultado");
-        pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago'][$resultado]);
+        pn_redirecionar('v=inscricao&id=' . $id . '&ok=' . ['enviado' => 'lb_ok', 'recente' => 'lb_recente', 'respondido' => 'lb_resp', 'falhou' => 'lb_falhou', 'nao_pago' => 'lb_naopago', 'desligado' => 'lb_desligado'][$resultado]);
     }
 
     // Pagar tudo (lib/espera.php): "Já resolvi na escola", "Devolver", "Continua esperando" e "Já cancelei na escola",
