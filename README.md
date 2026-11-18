@@ -1882,6 +1882,8 @@ vista), para **30 alunos**, no checkout `/matricula-cursos-presenciais/checkout/
   R$ 109), a pedido do Matheus. Mudou só o `total_centavos` em `lib/cupons.php`: a página de matrícula, a agenda, a ficha
   e o checkout leem o valor do `info.php`, e os modelos de WhatsApp e os e-mails não citam valor. Quem já pagou R$ 120,00
   não muda; o código, o limite (14) e o prazo (08/12) ficam como estavam.
+  **Publicado em 18/11/2026** (só o `lib/cupons.php`; o do ar era igual ao do Git antes): `info.php` devolve 14000, e a
+  página de matrícula e o checkout em 390 px mostram R$ 140,00, sem nenhum R$ 120,00 e sem erro de JS.
 - **`CUIDADORAS17`** (09/11/2026): grupo de **5 cuidadoras** na turma de **17/11/2026** de Primeiros Socorros Básico, por
   **R$ 150,00 cada com tudo incluso** (taxa R$ 99 + matrícula R$ 51), **num pagamento só de R$ 750,00**, até 16/11/2026 às
   23h59 (fim das inscrições da turma). Sem `vitrine`: não aparece no balão nem na página, vale só pelo link ou digitado.
