@@ -9,7 +9,11 @@
  *    ao chegar e a saída ao sair";
  *  - saída não registrada: às 9h, ao voluntário que registrou a entrada ontem e não a saída, com o link
  *    para informar a que horas saiu (a secretaria confere no portal);
- *  - aula de amanhã: às 18h, a cada aluno com aula no dia seguinte, pela função aulas_do_dia da escola.
+ *  - aula de amanhã: às 18h, a cada aluno com aula no dia seguinte, pela função aulas_do_dia da escola;
+ *  - aula daqui a 2 dias (18/11/2026): às 18h, dois dias antes, a cada aluno com aula, pela mesma função.
+ *    Padrão da escola: LIGADO, sem ninguém precisar marcar (MCP_AJUSTES_LIGADOS_POR_PADRAO); dá para
+ *    desligar no portal. Pela API oficial do WhatsApp (cloud) vai só por e-mail: ainda não há modelo
+ *    aprovado na Meta para ele.
  * Os comunicados das três fases (antes, durante e depois de 2 semanas) são agendados no portal.
  *
  * Canais: e-mail (Resend, como os outros e-mails do site) e WhatsApp, de três jeitos:
@@ -77,17 +81,22 @@ const MCP_AVISOS_DIAS_UTEIS = ['seg', 'ter', 'qua', 'qui', 'sex'];
 /** Dias em que a equipe contratada pode pedir o lembrete: dia útil com a véspera também útil (segunda não: sairia no domingo). */
 const MCP_AVISOS_DIAS_EQUIPE = ['ter', 'qua', 'qui', 'sex'];
 /** Avisos por e-mail que levam o descadastro de um clique (List-Unsubscribe): os que a pessoa não pediu naquela hora. */
-const MCP_AVISOS_COM_DESCADASTRO = ['vespera', 'saida', 'aula', 'campanha'];
+const MCP_AVISOS_COM_DESCADASTRO = ['vespera', 'saida', 'aula', 'aula_2dias', 'campanha'];
 /** O ajuste do portal que liga cada lembrete: desligado, o que estava na fila também não sai. */
-const MCP_AVISOS_AJUSTES = ['vespera' => 'lembrete_vespera', 'saida' => 'lembrete_saida', 'aula' => 'lembrete_aula'];
+const MCP_AVISOS_AJUSTES = ['vespera' => 'lembrete_vespera', 'saida' => 'lembrete_saida', 'aula' => 'lembrete_aula', 'aula_2dias' => 'lembrete_aula_2dias'];
+/** Ajustes que valem como ligados enquanto ninguém mexeu neles no portal (padrão da escola). */
+const MCP_AJUSTES_LIGADOS_POR_PADRAO = ['lembrete_aula_2dias'];
+/** Lembretes de aula: o tipo e quantos dias antes da aula ele sai. */
+const MCP_AVISOS_AULAS = ['aula' => 1, 'aula_2dias' => 2];
 /** Ordem de saída: o que tem hora certa (teste, link, saída, véspera, aula) antes dos comunicados. */
-const MCP_AVISOS_PRIORIDADE = "FIELD(tipo, 'teste', 'link', 'saida', 'vespera', 'aula', 'campanha')";
+const MCP_AVISOS_PRIORIDADE = "FIELD(tipo, 'teste', 'link', 'saida', 'vespera', 'aula', 'aula_2dias', 'campanha')";
 /** Tempo máximo de uma rodada mandando (a rotina roda a cada 15 minutos); num clique do portal, bem menos. */
 const MCP_AVISOS_RODADA_S = ['cli' => 600, 'web' => 20];
 const MCP_AVISOS_TIPOS = [
     'vespera' => 'Lembrete da véspera',
     'saida' => 'Saída não registrada',
     'aula' => 'Aula de amanhã',
+    'aula_2dias' => 'Aula daqui a 2 dias',
     'campanha' => 'Comunicado',
     'teste' => 'Teste',
     'link' => 'Link das preferências',
@@ -132,7 +141,7 @@ function mcp_ajuste_gravar(string $nome, string $valor, string $quem): void
 
 function mcp_ajuste_ligado(string $nome): bool
 {
-    return mcp_ajuste($nome, '0') === '1';
+    return mcp_ajuste($nome, in_array($nome, MCP_AJUSTES_LIGADOS_POR_PADRAO, true) ? '1' : '0') === '1';
 }
 
 // ----------------------------------------------------------------------------- horário de Brasília
@@ -631,13 +640,14 @@ function mcp_aviso_por_chave(string $chave): ?array
 
 /**
  * Até quando um aviso pode sair. Véspera e aula: até as 20h da véspera (depois disso, "amanhã" viraria
- * "hoje" e a mensagem estaria errada); comunicado: o prazo da fase (lib/comunicacao.php); saída não
+ * "hoje" e a mensagem estaria errada); aula daqui a 2 dias: até as 20h de dois dias antes; comunicado: o prazo da fase (lib/comunicacao.php); saída não
  * registrada: 3 dias; o resto, 1 dia.
  */
 function mcp_aviso_validade(array $aviso, int $agora): string
 {
-    if (in_array($aviso['tipo'], ['vespera', 'aula'], true) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $aviso['referencia'])) {
-        return mcp_ponto_local_para_utc(mcp_avisos_dia_mais((string) $aviso['referencia'], -1) . ' ' . MCP_AVISOS_JANELA[1] . ':00');
+    if (in_array($aviso['tipo'], ['vespera', 'aula', 'aula_2dias'], true) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $aviso['referencia'])) {
+        $antes = MCP_AVISOS_AULAS[$aviso['tipo']] ?? 1;
+        return mcp_ponto_local_para_utc(mcp_avisos_dia_mais((string) $aviso['referencia'], -$antes) . ' ' . MCP_AVISOS_JANELA[1] . ':00');
     }
     if ($aviso['tipo'] === 'campanha' && !empty($aviso['campanha_id']) && ($campanha = mcp_campanha((int) $aviso['campanha_id']))) {
         return mcp_campanha_validade($campanha, $agora);
@@ -683,14 +693,15 @@ function mcp_aviso_destinatario(array $aviso): array
     if ($ajuste !== null && !mcp_ajuste_ligado($ajuste)) {
         return ['ok' => false, 'motivo' => 'lembrete desligado no portal'];
     }
-    if ($aviso['tipo'] === 'aula' && $aviso['canal'] === 'whatsapp' && !mcp_ajuste_ligado('aula_whatsapp')) {
+    $ehAula = isset(MCP_AVISOS_AULAS[$aviso['tipo']]);
+    if ($ehAula && $aviso['canal'] === 'whatsapp' && !mcp_ajuste_ligado('aula_whatsapp')) {
         return ['ok' => false, 'motivo' => 'WhatsApp da aula desligado no portal'];
     }
     // Recesso marcado depois do preparo (às 8h) também barra o lembrete da aula.
-    if ($aviso['tipo'] === 'aula' && mcp_avisos_dia_fechado((string) $aviso['referencia']) !== null) {
+    if ($ehAula && mcp_avisos_dia_fechado((string) $aviso['referencia']) !== null) {
         return ['ok' => false, 'motivo' => 'sede fechada nesse dia'];
     }
-    if ($aviso['tipo'] === 'aula' && $aviso['canal'] === 'whatsapp' && mcp_avisos_aluno_saiu(json_decode((string) ($aviso['dados'] ?? ''), true) ?: [])) {
+    if ($ehAula && $aviso['canal'] === 'whatsapp' && mcp_avisos_aluno_saiu(json_decode((string) ($aviso['dados'] ?? ''), true) ?: [])) {
         return ['ok' => false, 'motivo' => 'pediu para não receber'];
     }
     if ($aviso['tipo'] === 'campanha') {
@@ -1139,7 +1150,7 @@ function mcp_avisos_trocar_para_email(int $agora): int
         return 0;
     }
     $fim = mcp_ponto_local_para_utc(mcp_ponto_hoje($agora) . ' ' . MCP_AVISOS_JANELA[1] . ':00');
-    $stmt = mcp_db()->prepare("SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = 'whatsapp' AND tipo IN ('vespera', 'saida', 'aula')
+    $stmt = mcp_db()->prepare("SELECT * FROM mcp_avisos WHERE status = 'pendente' AND canal = 'whatsapp' AND tipo IN ('vespera', 'saida', 'aula', 'aula_2dias')
         AND expira_em IS NOT NULL AND expira_em <= ? AND expira_em > ? ORDER BY id");
     $stmt->execute([$fim, gmdate('Y-m-d H:i:s', $agora)]);
     $n = 0;
@@ -1516,19 +1527,21 @@ function mcp_avisos_preparar_saida(?int $agora = null): int
 }
 
 /**
- * Aula de amanhã: a partir das 8h, pergunta à escola (aulas_do_dia) quem tem aula amanhã e prepara um
- * lembrete por aluno (e-mail; WhatsApp também, se ligado e o aluno tiver celular). Pergunta uma vez por
- * dia; se a escola não responder, tenta na próxima rodada.
+ * Aula de amanhã ($tipo 'aula') ou daqui a 2 dias ('aula_2dias'): a partir das 8h, pergunta à escola
+ * (aulas_do_dia) quem tem aula nesse dia e prepara um lembrete por aluno (e-mail; WhatsApp também, se ligado
+ * e o aluno tiver celular). Pergunta uma vez por dia; se a escola não responder, tenta na próxima rodada.
  */
-function mcp_avisos_preparar_aulas(?int $agora = null): int
+function mcp_avisos_preparar_aulas(?int $agora = null, string $tipo = 'aula'): int
 {
     $agora ??= time();
     if (mcp_avisos_hora_local($agora) < MCP_AVISOS_JANELA[0] || mcp_avisos_hora_local($agora) >= MCP_AVISOS_JANELA[1]) {
         return 0;
     }
+    $antes = MCP_AVISOS_AULAS[$tipo];
+    $marca = $tipo === 'aula' ? 'aula_preparada' : $tipo . '_preparada';
     $hoje = mcp_ponto_hoje($agora);
-    $amanha = mcp_avisos_dia_mais($hoje, 1);
-    if (mcp_ajuste('aula_preparada') === $amanha || mcp_avisos_dia_fechado($amanha) !== null) {
+    $amanha = mcp_avisos_dia_mais($hoje, $antes); // o dia da aula
+    if (mcp_ajuste($marca) === $amanha || mcp_avisos_dia_fechado($amanha) !== null) {
         return 0;
     }
     $escola = mcp_escola_aulas_do_dia($amanha);
@@ -1554,20 +1567,21 @@ function mcp_avisos_preparar_aulas(?int $agora = null): int
         }
         // WhatsApp só para quem autorizou na escola (a função aulas_do_dia devolve whatsapp_autorizado) e não
         // disse "não quero mais receber" na página.
+        // O de 2 dias não tem modelo aprovado na Meta: pela API oficial, vai só por e-mail.
         if ($numero !== null && $aluno['whatsapp_autorizado'] && mcp_whatsapp_ativo() && mcp_ajuste_ligado('aula_whatsapp') && !mcp_avisos_bloqueado('whatsapp', $numero)
-            && !mcp_avisos_aluno_saiu($dados)) {
+            && !mcp_avisos_aluno_saiu($dados) && ($tipo === 'aula' || mcp_whatsapp_modo() !== 'cloud')) {
             $canais['whatsapp'] = $numero;
         }
         foreach ($canais as $canal => $destino) {
             $n += mcp_aviso_criar([
-                'chave' => 'aula|' . mb_substr($aluno['id'], 0, 64) . "|$amanha|$canal", 'tipo' => 'aula', 'canal' => $canal, 'pessoa' => $pessoa,
+                'chave' => $tipo . '|' . mb_substr($aluno['id'], 0, 64) . "|$amanha|$canal", 'tipo' => $tipo, 'canal' => $canal, 'pessoa' => $pessoa,
                 'nome' => $aluno['nome'], 'destino' => $destino, 'referencia' => $amanha, 'dados' => $dados,
                 'agendado_para' => mcp_ponto_local_para_utc("$hoje " . MCP_AVISOS_HORA_VESPERA . ':00'),
                 'expira_em' => mcp_ponto_local_para_utc("$hoje " . MCP_AVISOS_JANELA[1] . ':00'),
             ], $agora) !== null ? 1 : 0;
         }
     }
-    mcp_ajuste_gravar('aula_preparada', $amanha, 'rotina');
+    mcp_ajuste_gravar($marca, $amanha, 'rotina');
     return $n;
 }
 
@@ -1722,6 +1736,9 @@ function mcp_avisos_rodar(?int $agora = null): array
     }
     if (mcp_ajuste_ligado('lembrete_aula')) {
         $r['preparados'] += mcp_avisos_preparar_aulas($agora);
+    }
+    if (mcp_ajuste_ligado('lembrete_aula_2dias')) {
+        $r['preparados'] += mcp_avisos_preparar_aulas($agora, 'aula_2dias');
     }
     $r['preparados'] += mcp_campanhas_disparar($agora);
     [$r['enviados'], $r['falhas']] = mcp_avisos_enviar_pendentes($agora);

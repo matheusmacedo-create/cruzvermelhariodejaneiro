@@ -17,6 +17,7 @@ Código: `site/matricula-cursos-presenciais/api/lib/avisos.php` (fila, envio, ca
 | Lembrete da véspera | 18h do dia anterior (preparado a partir das 8h) | voluntário e diretoria, nos dias que escolheram; equipe contratada, de terça a sexta com a véspera também em dia útil (a mensagem nunca sai em fim de semana nem em feriado) e só se a própria pessoa escolheu os dias pelo link | WhatsApp automático, se autorizou; senão e-mail. No modo manual, os dois |
 | Saída não registrada | a partir das 9h | voluntário ou diretoria com entrada de até 3 dias atrás, sem saída há mais de 16 horas | igual ao da véspera |
 | Aula de amanhã | 18h do dia anterior | aluno com aula no dia seguinte (função `aulas_do_dia` da escola) | e-mail; WhatsApp só com o ajuste próprio ligado **e** a autorização registrada na escola |
+| Aula daqui a 2 dias | 18h de dois dias antes | aluno com aula dali a 2 dias (a mesma função). **Padrão da escola: ligado sem ninguém marcar** (18/11/2026); dá para desligar na Visão geral | igual ao da aula de amanhã, mas pela API oficial vai só por e-mail (ainda sem modelo aprovado na Meta) |
 | Comunicado | na data agendada | o público escolhido (todos, voluntários, os outros vínculos, alunos que confirmaram presença pelo ponto) | e-mail e WhatsApp (alunos: só e-mail) e aviso na tela do ponto |
 | Link das preferências | quando a secretaria manda | colaborador | e-mail |
 
@@ -302,7 +303,7 @@ sair.
    planilha**: colar do Excel ou do Google Planilhas; conferir; importar), conferir quem está sem
    contato, preparar os comunicados, revisar os textos e mandar um teste para si.
 2. **Ligar os lembretes** na Visão geral: véspera e saída (e o da aula, depois da função `aulas_do_dia`
-   aplicada na escola). Marcar ali os dias sem expediente (recessos) além dos feriados. Desligar um
+   aplicada na escola). O da aula daqui a 2 dias já vem ligado. Marcar ali os dias sem expediente (recessos) além dos feriados. Desligar um
    lembrete tira da fila o que era dele; religado no mesmo dia, o que ainda está no prazo volta.
 3. **No modo manual**, abrir a Fila do WhatsApp de manhã e no fim da tarde.
 4. **Todo dia:** conferir as saídas informadas (o número aparece no menu, em Ponto da sede).

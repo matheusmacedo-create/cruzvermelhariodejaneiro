@@ -775,6 +775,28 @@ try {
         linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|whatsapp")['status'] ?? null, linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|whatsapp"),
         linha_aviso($db, "aula|al3-$sufixo|$depoisDeAmanha|email")['status'] ?? null], [3, 'manual', null, 'pendente']);
     mcp_ajuste_gravar('aula_whatsapp', '0', $quem);
+    // Aula daqui a 2 dias (18/11/2026): padrão da escola, ligado sem ninguém marcar; sai às 18h de dois dias antes.
+    verificar('aula 2 dias: ligado por padrão (sem ajuste gravado); a véspera depende do portal', [mcp_ajuste('lembrete_aula_2dias', 'nada'), mcp_ajuste_ligado('lembrete_aula_2dias')], ['nada', true]);
+    file_put_contents("$falso/escola.json", json_encode(['falha' => false, 'alunos' => [
+        ['aluno_id' => "al4-$sufixo", 'nome' => "Lúcia Aluna $marca", 'email' => "lucia-$sufixo@avisos-teste.example", 'celular' => '21998766666', 'aulas' => $aulaNoite],
+    ]]));
+    $chamadas = count(falso('escola'));
+    $av2 = static fn(): ?array => linha_aviso($db, "aula_2dias|al4-$sufixo|$depoisDeAmanha|email");
+    verificar('aula 2 dias: pergunta à escola pelas aulas de depois de amanhã e prepara o e-mail, válido até as 20h de hoje', [mcp_avisos_preparar_aulas(em($hoje, '08:20'), 'aula_2dias'),
+        falso('escola')[$chamadas]['dados']['data'] ?? null, mcp_ajuste('aula_2dias_preparada'), $av2()['tipo'] ?? null, $av2()['expira_em'] ?? null],
+        [1, $depoisDeAmanha, $depoisDeAmanha, 'aula_2dias', mcp_ponto_local_para_utc("$hoje 20:00:00")]);
+    verificar('aula 2 dias: uma vez por dia', mcp_avisos_preparar_aulas(em($hoje, '09:20'), 'aula_2dias'), 0);
+    $antesEmails = count(falso('emails'));
+    mcp_avisos_enviar_pendentes(em($hoje, '18:00'));
+    $paraLucia = array_values(array_filter(array_slice(falso('emails'), $antesEmails), static fn(array $e): bool => ($e['to'][0] ?? $e['to'] ?? '') === "lucia-$sufixo@avisos-teste.example"))[0] ?? [];
+    $diaAula = mcp_avisos_dia_texto($depoisDeAmanha);
+    verificar('e-mail da aula 2 dias: assunto com a data, "daqui a 2 dias", sem "amanhã", com o horário', [$paraLucia['subject'] ?? null,
+        str_contains($paraLucia['html'] ?? '', 'daqui a 2 dias'), mb_stripos($paraLucia['html'] ?? '', 'amanhã'), str_contains($paraLucia['html'] ?? '', 'das 18:00 às 22:00'), $av2()['status'] ?? null],
+        ["Lembrete: aula de Bombeiro Civil, $diaAula", true, false, true, 'enviado']);
+    mcp_ajuste_gravar('lembrete_aula_2dias', '0', $quem);
+    verificar('aula 2 dias: dá para desligar no portal', mcp_ajuste_ligado('lembrete_aula_2dias'), false);
+    $db->exec("DELETE FROM mcp_ajustes WHERE nome IN ('lembrete_aula_2dias', 'aula_2dias_preparada')");
+    mcp_ajustes_todos(true);
     // Descadastro de um clique: o POST do programa de e-mail descadastra; abrir o link mostra uma página com o
     // botão, sem link pessoal (quem tem o cabeçalho não ganha acesso às escolhas da pessoa).
     $avSara = linha_aviso($db, "aula|al2-$sufixo|$depoisDeAmanha|email");

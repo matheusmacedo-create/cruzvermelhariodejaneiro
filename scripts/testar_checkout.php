@@ -811,6 +811,10 @@ verificar('prazo do aviso: véspera e aula até as 20h da véspera; saída 3 dia
     mcp_aviso_validade(['tipo' => 'vespera', 'referencia' => '2026-10-01'], $agoraAviso), mcp_aviso_validade(['tipo' => 'aula', 'referencia' => '2026-10-02'], $agoraAviso),
     mcp_aviso_validade(['tipo' => 'saida', 'referencia' => '12'], $agoraAviso), mcp_aviso_validade(['tipo' => 'link', 'referencia' => null], $agoraAviso),
 ], ['2026-09-30 23:00:00', '2026-10-01 23:00:00', '2026-10-03 12:00:00', '2026-10-01 12:00:00']);
+verificar('prazo do aviso: aula daqui a 2 dias até as 20h de dois dias antes', mcp_aviso_validade(['tipo' => 'aula_2dias', 'referencia' => '2026-10-02'], $agoraAviso), '2026-09-30 23:00:00');
+// mcp_ajuste_ligado() lê o banco: aqui, só a lista dos que valem ligados por padrão.
+verificar('aula daqui a 2 dias: ligado por padrão, a véspera não', [in_array('lembrete_aula_2dias', MCP_AJUSTES_LIGADOS_POR_PADRAO, true), in_array('lembrete_aula', MCP_AJUSTES_LIGADOS_POR_PADRAO, true), MCP_AVISOS_AJUSTES['aula_2dias']],
+    [true, false, 'lembrete_aula_2dias']);
 verificar('data no modelo do WhatsApp', [mcp_avisos_data_modelo('2026-10-01'), mcp_avisos_data_modelo('2026-10-03')], ['1º/10 (quinta)', '03/10 (sábado)']);
 verificar('planilha: dias por extenso, abreviados, ordinais, intervalos e expressões', array_map('mcp_importar_dias', [
     'segunda e quarta', 'seg, qua, sex', '2ª a 6ª', '2 a 6', '2a e 4a feira', 'segunda a sexta', 'segunda até quarta', 'sex a seg', 'segunda e a quarta', 'terça-feira, quinta-feira e sábado',

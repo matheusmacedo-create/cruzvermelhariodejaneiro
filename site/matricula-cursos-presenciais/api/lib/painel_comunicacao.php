@@ -217,7 +217,7 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
     $evolucaoPendente = (string) mcp_cfg('WHATSAPP_EVOLUTION_URL', '') !== '' && !mcp_ajuste_ligado('evolution_riscos') && mcp_whatsapp_modo() !== 'cloud';
     $rotinaEm = mcp_ajuste('rotina_em');
     // Parada há 45 minutos, ou nunca rodou com algo esperando por ela (lembrete ligado ou comunicado marcado).
-    $precisaRotina = mcp_ajuste_ligado('lembrete_vespera') || mcp_ajuste_ligado('lembrete_saida') || mcp_ajuste_ligado('lembrete_aula')
+    $precisaRotina = mcp_ajuste_ligado('lembrete_vespera') || mcp_ajuste_ligado('lembrete_saida') || mcp_ajuste_ligado('lembrete_aula') || mcp_ajuste_ligado('lembrete_aula_2dias')
         || (bool) mcp_db()->query("SELECT 1 FROM mcp_campanhas WHERE status IN ('agendada', 'enviando') LIMIT 1")->fetchColumn();
     $rotinaParada = $rotinaEm !== '' ? (int) strtotime($rotinaEm . ' UTC') < $agora - 45 * 60 : $precisaRotina;
     $canais = '<div class="cartao"><h2>Canais</h2><ul class="contas">'
@@ -252,6 +252,9 @@ function pc_geral(string $usuario, string $aviso, string $classe): never
             . $check('lembrete_saida', 'Saída não registrada, às 9h', 'Para o voluntário que entrou ontem e não registrou a saída, com o link para informar o horário. Hoje: <b>' . $saidas . '</b>.')
             . $check('lembrete_aula', 'Aula de amanhã, às 18h (alunos)', 'Usa a lista de aulas da plataforma da escola. '
                 . ($aulaPreparada !== '' ? 'Última lista preparada: aulas de ' . pn_e(mcp_escola_data($aulaPreparada)) . '.' : 'Se depois das 8h continuar sem lista preparada, avise o suporte técnico.'))
+            . $check('lembrete_aula_2dias', 'Aula daqui a 2 dias, às 18h (alunos)', 'Padrão da escola: vem ligado. Sai dois dias antes de cada aula, com a mesma lista da plataforma da escola. '
+                . (($aula2 = mcp_ajuste('aula_2dias_preparada')) !== '' ? 'Última lista preparada: aulas de ' . pn_e(mcp_escola_data($aula2)) . '.' : 'Se depois das 8h continuar sem lista preparada, avise o suporte técnico.')
+                . (mcp_whatsapp_modo() === 'cloud' ? ' Pela API oficial do WhatsApp, vai só por e-mail (falta o modelo aprovado na Meta).' : ''))
             . $check('aula_whatsapp', 'Lembrete da aula também pelo WhatsApp', 'Vale só para os alunos que autorizaram o WhatsApp na escola (a escola informa quem). Os outros recebem só por e-mail.')
             . $check('whatsapp_ativo', 'Usar o WhatsApp', 'Se desmarcar, nada vai pelo WhatsApp (nem para a fila) e tudo segue por e-mail. O que estava esperando volta a sair se religar dentro do prazo.')
             . '<label style="margin-top:12px">Dias sem expediente na sede (além dos feriados)<input name="dias_fechados" placeholder="24/12, 31/12" value="'
@@ -652,12 +655,12 @@ function pc_resultados(string $usuario, string $aviso, string $classe): never
 
     // Lembretes: saíram, clicaram, deram certo.
     $lembretes = '';
-    foreach (['vespera', 'saida', 'aula', 'campanha', 'link'] as $tipo) {
+    foreach (['vespera', 'saida', 'aula', 'aula_2dias', 'campanha', 'link'] as $tipo) {
         $t = $m['avisos'][$tipo];
         if ($t['preparados'] === 0) {
             continue;
         }
-        $certo = in_array($tipo, ['vespera', 'saida', 'aula'], true) ? pc_pct(mcp_metricas_pct($t['convertidos'], $t['avaliados'])) . '<small>' . $t['convertidos'] . ' de ' . $t['avaliados'] . '</small>' : '—';
+        $certo = in_array($tipo, ['vespera', 'saida', 'aula', 'aula_2dias'], true) ? pc_pct(mcp_metricas_pct($t['convertidos'], $t['avaliados'])) . '<small>' . $t['convertidos'] . ' de ' . $t['avaliados'] . '</small>' : '—';
         $lembretes .= '<tr><td class="aluno"><b>' . pn_e(MCP_AVISOS_TIPOS[$tipo]) . '</b><small>' . $t['email'] . ' por e-mail · ' . $t['whatsapp'] . ' por WhatsApp</small></td>'
             . '<td data-rotulo="Enviados">' . $t['enviados'] . '<small>de ' . $t['preparados'] . ' preparados</small></td>'
             . '<td data-rotulo="Falhas">' . $t['falhas'] . ($t['fila'] ? '<small>' . $t['fila'] . ' na fila</small>' : '') . '</td>'
@@ -849,10 +852,11 @@ function pc_post(string $sessao, string $acao, int $id): never
     switch ($acao) {
         case 'ajustes_salvar':
             // A decisão sobre o WhatsApp do Palácio vem num formulário à parte (não mexe nos outros ajustes).
-            $nomes = !empty($_POST['so_evolucao']) ? ['evolution_riscos'] : ['lembrete_vespera', 'lembrete_saida', 'lembrete_aula', 'aula_whatsapp', 'whatsapp_ativo'];
+            $nomes = !empty($_POST['so_evolucao']) ? ['evolution_riscos'] : ['lembrete_vespera', 'lembrete_saida', 'lembrete_aula', 'lembrete_aula_2dias', 'aula_whatsapp', 'whatsapp_ativo'];
             foreach ($nomes as $nome) {
                 $novo = !empty($_POST[$nome]) ? '1' : '0';
-                if (mcp_ajuste($nome, '0') !== $novo) {
+                // Compara com o valor que vale hoje: um ajuste ligado por padrão também precisa poder ser desligado.
+                if ((mcp_ajuste_ligado($nome) ? '1' : '0') !== $novo) {
                     mcp_ajuste_gravar($nome, $novo, $sessao);
                     mcp_registrar(null, 'painel_ajuste', "$sessao · $nome = $novo");
                     // Lembrete desligado: o que estava na fila daquele tipo também não sai. Religado, o que saiu da

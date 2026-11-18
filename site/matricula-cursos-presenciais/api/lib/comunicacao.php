@@ -396,7 +396,8 @@ function mcp_montar_aviso_saida(array $colaborador, array $registro, int $avisoI
     ];
 }
 
-function mcp_montar_aviso_aula(string $nome, string $dataIso, array $aulas, int $avisoId): array
+/** Lembrete da aula: $antes = 1 (amanhã, às 18h da véspera) ou 2 (daqui a 2 dias; 18/11/2026, padrão da escola). */
+function mcp_montar_aviso_aula(string $nome, string $dataIso, array $aulas, int $avisoId, int $antes = 1): array
 {
     $primeiro = mcp_primeiro_nome(mcp_nome_proprio($nome));
     $dia = mcp_avisos_dia_texto($dataIso);
@@ -422,26 +423,32 @@ function mcp_montar_aviso_aula(string $nome, string $dataIso, array $aulas, int 
         }
         $caixa[$rotulo] = $h;
     }
-    $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. Lembrete: amanhã, <strong>' . mcp_escapar($dia) . '</strong>, você tem aula na sede da ' . MCP_NOME_FILIAL . ':')
+    $quando = $antes === 1 ? 'amanhã' : 'daqui a 2 dias';
+    $corpo = mcp_p('Oi, ' . mcp_escapar($primeiro) . '. Lembrete: ' . $quando . ', <strong>' . mcp_escapar($dia) . '</strong>, você tem aula na sede da ' . MCP_NOME_FILIAL . ':')
         . mcp_caixa($caixa)
         . mcp_p('Ao chegar, confirme a presença no <strong>ponto da recepção</strong> com o seu CPF. No fim da aula, o comprovante de comparecimento chega neste e-mail.')
         . mcp_botao($mapa, 'Como chegar', true)
         . mcp_nota(mcp_escapar(MCP_PRESENCA_LOCAL) . '. <a href="' . mcp_escapar($sair) . '">Não quero receber estes lembretes</a>.');
     $lista = implode("\n", array_map(static fn(array $l): string => "- {$l[0]}, {$l[1]}", $linhas));
     $resumoAulas = count($linhas) === 1 ? "*$cursos*, $horarios" : implode('; ', array_map(static fn(array $l): string => "*{$l[0]}*, {$l[1]}", $linhas));
+    $Quando = mb_strtoupper(mb_substr($quando, 0, 1)) . mb_substr($quando, 1);
+    $titulo = $antes === 1 ? "Até amanhã, $primeiro!" : "Sua aula está chegando, $primeiro!";
     return [
-        'assunto' => count($nomesCursos) === 1 ? "Amanhã tem aula: $cursos" : 'Amanhã tem aula na sede',
-        'titulo' => "Até amanhã, $primeiro!",
-        'html' => mcp_moldura("Até amanhã, $primeiro!", $corpo, [
+        'assunto' => $antes === 1
+            ? (count($nomesCursos) === 1 ? "Amanhã tem aula: $cursos" : 'Amanhã tem aula na sede')
+            : (count($nomesCursos) === 1 ? "Lembrete: aula de $cursos, $dia" : "Lembrete: aula na sede, $dia"),
+        'titulo' => $titulo,
+        'html' => mcp_moldura($titulo, $corpo, [
             'eyebrow' => 'Escola de Educação e Saúde',
-            'preheader' => "Amanhã, $dia: $cursos, $horarios. Confirme a presença no ponto da recepção.",
-            'motivo' => 'Você recebeu este lembrete porque tem aula presencial amanhã na Escola de Educação e Saúde da ' . MCP_NOME_FILIAL . '.',
+            'preheader' => "$Quando, $dia: $cursos, $horarios. Confirme a presença no ponto da recepção.",
+            'motivo' => 'Você recebeu este lembrete porque tem aula presencial ' . $quando . ' na Escola de Educação e Saúde da ' . MCP_NOME_FILIAL . '.',
         ]),
-        'texto' => "Oi, $primeiro. Lembrete: amanhã, $dia, você tem aula na sede:\n$lista\n\nAo chegar, confirme a presença no ponto da recepção com o seu CPF. No fim da aula, o comprovante de comparecimento chega neste e-mail.\n\n"
+        'texto' => "Oi, $primeiro. Lembrete: $quando, $dia, você tem aula na sede:\n$lista\n\nAo chegar, confirme a presença no ponto da recepção com o seu CPF. No fim da aula, o comprovante de comparecimento chega neste e-mail.\n\n"
             . MCP_PRESENCA_LOCAL . "\nComo chegar: $mapa\nNão quero receber estes lembretes: $sair",
-        'whatsapp' => "Olá, $primeiro! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: amanhã, $dia, tem aula de $resumoAulas, na Praça da Cruz Vermelha, 10 (Centro). "
+        'whatsapp' => "Olá, $primeiro! Lembrete da Escola de Educação e Saúde da Cruz Vermelha Brasileira RJ: $quando, $dia, tem aula de $resumoAulas, na Praça da Cruz Vermelha, 10 (Centro). "
             . "Ao chegar, confirme a presença no ponto da recepção com o seu CPF.\n\nNão quero receber estes lembretes: $sair",
-        'modelo' => ['nome' => 'cvb_aula_amanha', 'parametros' => [$primeiro, $dia, $cursos, $horarios], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'sair')],
+        // O de 2 dias ainda não tem modelo aprovado na Meta (e por isso não é preparado para a API oficial).
+        'modelo' => $antes === 1 ? ['nome' => 'cvb_aula_amanha', 'parametros' => [$primeiro, $dia, $cursos, $horarios], 'botao' => mcp_avisos_sufixo_clique($avisoId, 'sair')] : null,
     ];
 }
 
@@ -501,7 +508,8 @@ function mcp_aviso_mensagem(array $aviso, array $dest, int $agora): ?array
             }
             return mcp_montar_aviso_saida($c, $registro, $id, $agora);
         case 'aula':
-            return mcp_montar_aviso_aula((string) $dest['nome'], (string) $aviso['referencia'], (array) ($dados['aulas'] ?? []), $id);
+        case 'aula_2dias':
+            return mcp_montar_aviso_aula((string) $dest['nome'], (string) $aviso['referencia'], (array) ($dados['aulas'] ?? []), $id, MCP_AVISOS_AULAS[$aviso['tipo']]);
         case 'link':
             return $c ? mcp_montar_aviso_link($c, $id) : null;
         case 'campanha':

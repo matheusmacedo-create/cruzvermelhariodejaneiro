@@ -127,7 +127,7 @@ function mcp_metricas_avisos(string $deIso, string $ateIso, ?int $agora = null):
     $datas = [];
     $pontos = [];
     foreach ($avisos as $a) {
-        if (in_array($a['tipo'], ['vespera', 'aula'], true) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $a['referencia'])) {
+        if (in_array($a['tipo'], ['vespera', 'aula', 'aula_2dias'], true) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $a['referencia'])) {
             $datas[] = (string) $a['referencia'];
         } elseif ($a['tipo'] === 'saida') {
             $pontos[] = (int) ((json_decode((string) $a['dados'], true) ?: [])['ponto'] ?? 0);
@@ -176,7 +176,7 @@ function mcp_metricas_avisos(string $deIso, string $ateIso, ?int $agora = null):
         }
         // Conversão: uma vez por pessoa e referência (quem recebeu por e-mail e WhatsApp conta uma vez).
         $chave = $a['tipo'] . '|' . ($a['pessoa'] ?? $a['destino']) . '|' . $a['referencia'];
-        if ($a['status'] !== 'enviado' || isset($vistos[$chave]) || !in_array($a['tipo'], ['vespera', 'saida', 'aula'], true)) {
+        if ($a['status'] !== 'enviado' || isset($vistos[$chave]) || !in_array($a['tipo'], ['vespera', 'saida', 'aula', 'aula_2dias'], true)) {
             unset($t);
             continue;
         }
@@ -188,7 +188,7 @@ function mcp_metricas_avisos(string $deIso, string $ateIso, ?int $agora = null):
             $feito = $saidas[(int) ($dados['ponto'] ?? 0)] ?? false;
             $prazo = (int) strtotime((string) $a['enviado_em'] . ' UTC') + MCP_AVISOS_LINK_DIAS['saida'] * 86400 < $agora;
             $ok = $feito ? true : ($prazo ? false : null);
-        } elseif ($a['tipo'] === 'aula' && !empty($dados['email']) && (string) $a['referencia'] < $hoje) {
+        } elseif (in_array($a['tipo'], ['aula', 'aula_2dias'], true) && !empty($dados['email']) && (string) $a['referencia'] < $hoje) {
             $ok = isset($presente[mb_strtolower((string) $dados['email']) . '|' . $a['referencia']]);
         }
         if ($ok !== null) {
