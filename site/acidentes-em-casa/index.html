@@ -150,6 +150,19 @@
       .inst-material-capa { max-width: 150px; }
     }
   </style>
+  <style>
+    /* Convite para apoiar nos guias (19/11/2026): uma linha leve no topo e um bloco curto depois do PDF. */
+    .inst-apoio-linha { margin: 18px 0 0; max-width: 66ch; font-size: 1rem; line-height: 1.6; color: var(--text); }
+    .inst-apoio-linha a { padding: 12px 0; color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+    .inst-apoio { margin: 0 0 38px; padding: 22px 24px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .inst-apoio h2 { font-size: 1.25rem; line-height: 1.3; letter-spacing: -.01em; margin: 0 0 8px; }
+    .inst-apoio p { font-size: 1.04rem; line-height: 1.6; color: var(--text); margin: 0 0 16px; max-width: 64ch; }
+    .inst-apoio .inst-apoio-nota { font-size: 1rem; color: var(--muted); margin: 14px 0 0; }
+    .inst-apoio a.btn { text-decoration: none; }
+    /* O botão do guia (PDF/material) continua sendo o maior e o único com sombra: o convite não compete com ele. */
+    .inst-apoio .btn-red { box-shadow: none; }
+    @media (max-width: 620px) { .inst-apoio { padding: 20px 18px; } .inst-apoio .cta-row { align-items: flex-start; } }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -492,6 +505,7 @@
           <li><a href="#192-ou-193">Quando ligar 192 ou 193</a></li>
           <li><a href="#aprenda">Aprenda a socorrer</a></li>
         </ul>
+        <p class="inst-apoio-linha">Guia gratuito da Cruz Vermelha Brasileira Rio de Janeiro. Quer apoiar este trabalho? <a href="/doe/?de=acidentes-em-casa" data-evento="apoio_doar" data-origem="acidentes-em-casa-topo">Doe a partir de R$ 5</a>.</p>
       </div>
     </section>
 
@@ -511,6 +525,16 @@
         <h2 id="baixar-titulo">Baixe o cartaz para deixar à vista</h2>
         <p>O resumo desta página em três folhas: duas para imprimir e deixar à vista, com o que fazer e o que não fazer na picada de cobra, de escorpião e de aranha e no choque elétrico, e um espaço para anotar o hospital com soro mais perto de casa, e uma com todas as fontes. É gratuito.</p><p>Informe o seu e-mail e marque a autorização: o botão de baixar aparece aqui na hora, e uma cópia do link vai para a sua caixa de entrada.</p><div class="inst-material" data-material="acidentes-em-casa" data-evento="acidentes_pedir" data-chave="acidentes-em-casa-liberado"><figure class="inst-material-capa"><img loading="lazy" decoding="async" src="/acidentes-em-casa/capa-acidentes-em-casa.webp" width="480" height="679" alt="Primeira folha do cartaz Acidentes em casa: o logotipo da Cruz Vermelha Brasileira Rio de Janeiro, os telefones 192 e 193 e o que fazer na picada de cobra, de escorpião e de aranha"></figure><div class="inst-material-miolo"><p class="inst-material-ficha">PDF · 3 folhas · para imprimir</p><form class="inst-material-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post"><input type="hidden" name="material" value="acidentes-em-casa"><label class="inst-material-armadilha" aria-hidden="true">Não preencha este campo <input type="text" name="site" tabindex="-1" autocomplete="off"></label><label class="inst-material-rotulo" for="inst-material-email">Seu e-mail</label><input id="inst-material-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="nome@exemplo.com" required><label class="inst-material-aceite"><input type="checkbox" name="consentimento" value="1" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail o cartaz Acidentes em casa e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type="submit" class="btn btn-red">Liberar o download</button></form><p class="inst-material-recado" role="status" aria-live="polite"></p><p class="inst-material-baixar" hidden><a class="btn btn-red" href="/acidentes-em-casa/acidentes-em-casa-cruz-vermelha-rj.pdf" download data-evento="acidentes_baixar" data-origem="pagina">Baixar o cartaz em PDF</a></p></div></div>
       </section>
+
+      <aside class="inst-apoio" aria-labelledby="inst-apoio-titulo">
+        <h2 id="inst-apoio-titulo">Este guia é gratuito</h2>
+        <p>Sua doação, a partir de R$ 5, ajuda a manter a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias da filial. Leva menos de um minuto, por PIX ou cartão.</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="/doe/?de=acidentes-em-casa" data-evento="apoio_doar" data-origem="acidentes-em-casa-meio">Doe agora</a>
+          <a class="btn btn-outline" href="/voluntariado/cadastro/" data-evento="apoio_voluntario" data-origem="acidentes-em-casa-meio">Seja voluntário no Rio</a>
+        </div>
+        <p class="inst-apoio-nota">O voluntariado é presencial, para quem mora na cidade do Rio de Janeiro e tem 18 anos ou mais.</p>
+      </aside>
 
       <section class="inst-secao" id="cobra" aria-labelledby="cobra-titulo">
         <h2 id="cobra-titulo">Picada de cobra</h2>
@@ -813,6 +837,27 @@
         .catch(function () { r.setAttribute('data-erro', '1'); r.textContent = 'Não foi possível concluir agora. Confira a sua conexão e tente de novo.'; })
         .then(function () { b.disabled = false; b.textContent = rotulo; });
     });
+  })();
+</script>
+<script>
+  /* Convite para apoiar: quem chegou ao guia por anúncio (utm_*, gclid, fbclid no endereço) leva esses parâmetros para
+     /doe/ e para o cadastro no clique, e a origem fica gravada lá. Só reescreve o link: não guarda nada. */
+  (function () {
+    try {
+      var aqui = new URLSearchParams(location.search), levar = [];
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach(function (k) {
+        var v = aqui.get(k); if (v) levar.push([k, v]);
+      });
+      if (!levar.length) return;
+      document.querySelectorAll('a[data-evento^="apoio_"]').forEach(function (a) {
+        function acrescentar() {
+          var u = new URL(a.getAttribute('href'), location.href);
+          levar.forEach(function (par) { if (!u.searchParams.has(par[0])) u.searchParams.set(par[0], par[1]); });
+          a.setAttribute('href', u.pathname + u.search + u.hash);
+        }
+        ['click', 'auxclick', 'contextmenu'].forEach(function (ev) { a.addEventListener(ev, acrescentar); });
+      });
+    } catch (e) { /* navegador antigo: o link segue sem os parâmetros */ }
   })();
 </script>
 </body>

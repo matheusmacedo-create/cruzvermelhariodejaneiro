@@ -1,0 +1,41 @@
+# Convite para apoiar no alto dos guias (19/11/2026, aprovado pelo responsável junto com a volta dos anúncios dos
+# guias): nos 16 guias de saúde e emergência (CONVITE_APOIO em scripts/gerar_institucional.py), uma linha "Doe a partir
+# de R$ 5" logo depois do índice e o bloco "Este guia é gratuito" depois da seção do PDF (#baixar), com "Doe agora" e
+# "Seja voluntário no Rio". O bloco "Ajude a Cruz Vermelha" do fim não muda. Medição: apoio_doar e apoio_voluntario
+# (docs/rastreamento.md). Fora: /onde-buscar-ajuda/, os guias da escola e as páginas institucionais.
+# ESTADO: NÃO publicado. Sai do commit que trouxer esta lista (o que estiver na main depois do merge do PR do convite).
+# Estilo e script: não há arquivo separado para publicar antes. O CSS (APOIO_CSS) e o script do clique (APOIO_JS) vão
+# dentro de cada página, só nas 16; nenhum .css, .js nem .min.css muda. Por isso a lista tem só as páginas.
+# O ar antes da publicação: as 16 páginas no ar eram iguais, byte a byte, ao Git em 2b4f74a (conferido em 19/11/2026
+# por HTTP). Publicar só leva o convite, nada mais.
+# Gerar antes (só confirma; os arquivos já vêm gerados no commit): python3 scripts/gerar_institucional.py
+#   e git status deve continuar limpo. "Atualizado em" das páginas não muda.
+# ORDEM: as páginas dos anúncios ligados primeiro (kit de emergência, mochila, kit de primeiros socorros, queimaduras,
+# RCP e Lei Lucas), depois os outros dez guias. A ordem entre elas não quebra nada: cada página é independente.
+# Antes, a cópia do ar (volta atrás):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-convite-apoio $(grep -vE '^(#|$)' scripts/publicacao-convite-apoio.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-convite-apoio.txt)
+# Depois: limpar o cache do site e conferir com scripts/conferir_publicacao.sh scripts/publicacao-convite-apoio.txt
+#   ("== Estáticos iguais ao repositório" tem de dar ok nas 16; a parte da API é da matrícula e não muda aqui).
+#   No celular: abrir /queimaduras/?utm_source=teste&utm_medium=teste, tocar em "Doe agora" e ver o endereço da página
+#   de doar chegar com os utm (sem pagar). Sitemaps: não precisam (nenhuma página nova nem endereço novo).
+# Desfazer (a versão anterior vem do Git; nenhuma página é nova):
+#   scripts/desfazer_publicacao.sh 2b4f74a scripts/publicacao-convite-apoio.txt
+# ou, com a cópia: C=/tmp/no-ar-convite-apoio; RAIZ=$C scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-convite-apoio.txt | tac | sed "s|^site/|$C/|")
+# Depois de desfazer, limpar o cache. E pausar os anúncios dos guias, se o motivo de religá-los era o convite.
+site/kit-de-emergencia/index.html
+site/mochila-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/queimaduras/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/lei-lucas-para-escolas/index.html
+site/plano-familiar-de-emergencia/index.html
+site/quando-ligar-192/index.html
+site/acidentes-em-casa/index.html
+site/febre-em-crianca/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/intoxicacao-alimentar/index.html
+site/verao-seguro/index.html
+site/checklist-dengue/index.html
+site/cuidador-de-idosos/index.html
+site/plano-de-contingencia/index.html
