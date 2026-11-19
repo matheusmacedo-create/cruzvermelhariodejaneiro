@@ -3,7 +3,12 @@
 # de R$ 5" logo depois do índice e o bloco "Este guia é gratuito" depois da seção do PDF (#baixar), com "Doe agora" e
 # "Seja voluntário no Rio". O bloco "Ajude a Cruz Vermelha" do fim não muda. Medição: apoio_doar e apoio_voluntario
 # (docs/rastreamento.md). Fora: /onde-buscar-ajuda/, os guias da escola e as páginas institucionais.
-# ESTADO: NÃO publicado. Sai do commit que trouxer esta lista (o que estiver na main depois do merge do PR do convite).
+# ESTADO: PUBLICADO em 19/11/2026, às 14h57 (horário de Brasília), a partir de 3ef19af (branch
+# claude/affectionate-mendel-vxtxq5, antes do merge), por pedido do responsável. Cópia do ar tirada antes (16 arquivos,
+# iguais ao Git em 2b4f74a; nenhum novo). Cache limpo pela API da hospedagem. Conferido no ar: as 16 páginas iguais ao
+# repositório, byte a byte; /onde-buscar-ajuda/, /quem-somos/ e /voluntariado/ sem o convite; em celular simulado, o
+# toque em "Doe agora" numa visita com utm_* abriu /doe/ com "de" e os utm_*. A parte "== API" de
+# conferir_publicacao.sh (matrícula) não foi rodada: esta publicação não toca na matrícula.
 # Estilo e script: não há arquivo separado para publicar antes. O CSS (APOIO_CSS) e o script do clique (APOIO_JS) vão
 # dentro de cada página, só nas 16; nenhum .css, .js nem .min.css muda. Por isso a lista tem só as páginas.
 # O ar antes da publicação: as 16 páginas no ar eram iguais, byte a byte, ao Git em 2b4f74a (conferido em 19/11/2026
