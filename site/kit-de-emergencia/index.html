@@ -137,6 +137,19 @@
     .inst-video-capa:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
     .inst-video figcaption b { display: block; color: var(--black); font-size: .98rem; margin: 0 0 2px; }
   </style>
+  <style>
+    /* Convite para apoiar nos guias (19/11/2026): uma linha leve no topo e um bloco curto depois do PDF. */
+    .inst-apoio-linha { margin: 18px 0 0; max-width: 66ch; font-size: 1rem; line-height: 1.6; color: var(--text); }
+    .inst-apoio-linha a { padding: 12px 0; color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+    .inst-apoio { margin: 0 0 38px; padding: 22px 24px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .inst-apoio h2 { font-size: 1.25rem; line-height: 1.3; letter-spacing: -.01em; margin: 0 0 8px; }
+    .inst-apoio p { font-size: 1.04rem; line-height: 1.6; color: var(--text); margin: 0 0 16px; max-width: 64ch; }
+    .inst-apoio .inst-apoio-nota { font-size: 1rem; color: var(--muted); margin: 14px 0 0; }
+    .inst-apoio a.btn { text-decoration: none; }
+    /* O botão do guia (PDF/material) continua sendo o maior e o único com sombra: o convite não compete com ele. */
+    .inst-apoio .btn-red { box-shadow: none; }
+    @media (max-width: 620px) { .inst-apoio { padding: 20px 18px; } .inst-apoio .cta-row { align-items: flex-start; } }
+  </style>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -494,6 +507,7 @@
           <li><a href="#alerta">Quando o alerta da Defesa Civil chegar</a></li>
           <li><a href="#aprenda">Aprenda a usar o kit</a></li>
         </ul>
+        <p class="inst-apoio-linha">Guia gratuito da Cruz Vermelha Brasileira Rio de Janeiro. Quer apoiar este trabalho? <a href="/doe/?de=kit-de-emergencia" data-evento="apoio_doar" data-origem="kit-de-emergencia-topo">Doe a partir de R$ 5</a>.</p>
       </div>
     </section>
 
@@ -508,6 +522,16 @@
         <h2 id="baixar-titulo">Baixe a lista para imprimir</h2>
         <p>A lista inteira cabe em duas folhas. Baixe o PDF, imprima e marque com um X o que já tem em casa. Na segunda folha há espaço para anotar os telefones da família e a data da última conferência.</p><p><a class="btn btn-red" href="/kit-de-emergencia/kit-de-emergencia-cruz-vermelha-rj.pdf" data-evento="kit_baixar" data-origem="botao">Baixar a lista em PDF</a></p><p>É gratuito e não pede cadastro. Guarde uma cópia dentro do kit e mande o arquivo para a família pelo WhatsApp.</p>
       </section>
+
+      <aside class="inst-apoio" aria-labelledby="inst-apoio-titulo">
+        <h2 id="inst-apoio-titulo">Este guia é gratuito</h2>
+        <p>Sua doação, a partir de R$ 5, ajuda a manter a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias da filial. Leva menos de um minuto, por PIX ou cartão.</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="/doe/?de=kit-de-emergencia" data-evento="apoio_doar" data-origem="kit-de-emergencia-meio">Doe agora</a>
+          <a class="btn btn-outline" href="/voluntariado/cadastro/" data-evento="apoio_voluntario" data-origem="kit-de-emergencia-meio">Seja voluntário no Rio</a>
+        </div>
+        <p class="inst-apoio-nota">O voluntariado é presencial, para quem mora na cidade do Rio de Janeiro e tem 18 anos ou mais.</p>
+      </aside>
 
       <section class="inst-secao" id="lista-emergencia" aria-labelledby="lista-emergencia-titulo">
         <h2 id="lista-emergencia-titulo">Kit de emergência: a lista</h2>
@@ -791,6 +815,27 @@
       if (typeof gtag === 'function') gtag('event', a.getAttribute('data-evento'), { origem: a.getAttribute('data-origem') || '' });
     });
   });
+</script>
+<script>
+  /* Convite para apoiar: quem chegou ao guia por anúncio (utm_*, gclid, fbclid no endereço) leva esses parâmetros para
+     /doe/ e para o cadastro no clique, e a origem fica gravada lá. Só reescreve o link: não guarda nada. */
+  (function () {
+    try {
+      var aqui = new URLSearchParams(location.search), levar = [];
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach(function (k) {
+        var v = aqui.get(k); if (v) levar.push([k, v]);
+      });
+      if (!levar.length) return;
+      document.querySelectorAll('a[data-evento^="apoio_"]').forEach(function (a) {
+        function acrescentar() {
+          var u = new URL(a.getAttribute('href'), location.href);
+          levar.forEach(function (par) { if (!u.searchParams.has(par[0])) u.searchParams.set(par[0], par[1]); });
+          a.setAttribute('href', u.pathname + u.search + u.hash);
+        }
+        ['click', 'auxclick', 'contextmenu'].forEach(function (ev) { a.addEventListener(ev, acrescentar); });
+      });
+    } catch (e) { /* navegador antigo: o link segue sem os parâmetros */ }
+  })();
 </script>
 </body>
 </html>

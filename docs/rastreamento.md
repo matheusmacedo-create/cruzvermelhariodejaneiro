@@ -269,6 +269,30 @@ A edição da newsletter foi redigida para levar ao guia com
 `utm_source=newsletter&utm_medium=email&utm_campaign=kit-de-emergencia`: os downloads vindos do e-mail aparecem
 cruzando o `kit_baixar` com a origem da sessão. Não publicado ainda (ver `scripts/publicacao-kit-pdf.txt`).
 
+## Convite para apoiar nos guias (19/11/2026, NÃO publicado)
+
+Os 16 guias de saúde e emergência (lista `CONVITE_APOIO` em `scripts/gerar_institucional.py`; fora dela, de propósito,
+`/onde-buscar-ajuda/`, os guias da escola e as páginas institucionais) ganham o convite em dois lugares: uma linha no
+topo, logo depois do índice ("Doe a partir de R$ 5"), e o bloco "Este guia é gratuito" depois da seção do PDF
+(`#baixar`), com "Doe agora" e "Seja voluntário no Rio". O bloco "Ajude a Cruz Vermelha" do fim não mudou e continua
+sem medição. Só GA4, pelo `data-evento` que o gerador já tinha:
+
+| Momento | GA4 |
+| --- | --- |
+| Toque em "Doe a partir de R$ 5" (linha do topo) ou em "Doe agora" (bloco do meio) | `apoio_doar` (origem = `<slug>-topo` ou `<slug>-meio`, por exemplo `queimaduras-meio`) |
+| Toque em "Seja voluntário no Rio" (bloco do meio) | `apoio_voluntario` (origem = `<slug>-meio`) |
+
+Os links levam a `/doe/?de=<slug>` (a doação grava `site · <slug> · doacao` como origem, `doe.js`) e a
+`/voluntariado/cadastro/`. Se a visita chegou ao guia com `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`,
+`utm_term`, `gclid` ou `fbclid` no endereço (anúncio), um script pequeno acrescenta esses parâmetros ao link no
+clique, sem cookie e sem guardar nada: a página de doação grava a origem do anúncio (o `utm_source` vale mais que o
+`de`), e o cadastro grava a origem quando a pessoa aceitou a estatística no aviso de cookies (`cadastro.js`). Sem
+JavaScript, o link funciona igual, só sem os parâmetros. Exceção à regra do `doe.js` (link de dentro do site não leva
+`utm_source`): aqui o link só repete os utm/gclid com que a visita chegou ao guia, sem criar origem nova. Conferido no
+navegador em 19/11/2026 (servidor local).
+`origem` já é dimensão registrada. Os dois eventos são novos: não marcar como evento principal (são cliques, não
+doação nem ficha).
+
 ## Pagar tudo, passo 5: venda de tudo à vista ligada (10/10/2026)
 
 A função da escola v2 foi aplicada pelo dono no SQL Editor (responde `matricula_rapida_versao() = 3`). Publicados: o

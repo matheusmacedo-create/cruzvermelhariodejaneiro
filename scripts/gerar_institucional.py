@@ -52,6 +52,12 @@ Sem JavaScript, o formulário navega para a página de resposta da Redação e o
 aceito, o aparelho guarda que já pediu (localStorage) e, na volta, mostra o botão direto. Medição: manual_pedir (pedido
 aceito) e manual_baixar (toque no botão).
 
+Convite para apoiar (19/11/2026): nos guias de saúde e emergência (lista CONVITE_APOIO), uma linha discreta logo
+depois do índice ("Doe a partir de R$ 5") e um bloco curto depois da seção "baixar" (a do PDF), com "Doe agora" e
+"Seja voluntário no Rio". O bloco "Ajude a Cruz Vermelha" do fim continua igual. Os botões contam o clique pelo
+data-evento (apoio_doar e apoio_voluntario, origem = <slug>-topo ou <slug>-meio) e, se a visita chegou com utm_* ou
+gclid no endereço (anúncio), o clique leva esses parâmetros para /doe/ e para o cadastro (APOIO_JS, sem guardar nada).
+
 Uso:  python3 scripts/gerar_institucional.py [slug ...]
 Depois: publicar as pastas geradas (lista em scripts/publicacao-institucional.txt) e o sitemap.
 """
@@ -110,6 +116,15 @@ GUIAS = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorro
          "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "verao-seguro", "checklist-dengue",
          "cuidador-de-idosos", "onde-buscar-ajuda", "guia-dos-cursos", "guia-do-bombeiro-civil",
          "lei-lucas-para-escolas", "plano-de-contingencia", "cartaz-da-cruz-vermelha", "manual-de-identidade"]
+# Os guias que levam o convite para apoiar (19/11/2026): os de saúde e de emergência. Ficam de fora, de propósito:
+# onde-buscar-ajuda (trata de suicídio e violência: não é lugar para pedir doação), os guias da escola
+# (guia-dos-cursos, guia-do-bombeiro-civil) e os institucionais (cartaz-da-cruz-vermelha, manual-de-identidade).
+# As páginas fora de GUIAS (quem somos, voluntariado, formação, base legal, empresas...) nunca entram.
+CONVITE_APOIO = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia",
+                 "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
+                 "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "verao-seguro", "checklist-dengue",
+                 "cuidador-de-idosos", "lei-lucas-para-escolas", "plano-de-contingencia"]
+assert set(CONVITE_APOIO) <= set(GUIAS) and "onde-buscar-ajuda" not in CONVITE_APOIO
 # A mesma página em outra língua (scripts/gerar_ingles.py e gerar_idiomas.py declaram o par do lado de lá).
 # hreflang só de um lado o Google ignora: a página em português precisa citar as traduções de volta.
 TRADUCOES = {"direito-internacional-humanitario": {"en": "/en/international-humanitarian-law/",
@@ -604,6 +619,65 @@ ACAO = """    <section class="inst-acao" aria-labelledby="inst-acao-titulo">
     </section>"""
 
 
+# O convite para apoiar nos guias (CONVITE_APOIO). Só o que a página de doação diz: PIX ou cartão, a partir de R$ 5,
+# em menos de um minuto, e para onde vai a doação. O voluntariado é presencial, só para quem mora na cidade do Rio e
+# tem 18 anos ou mais: o botão diz "no Rio" porque os guias são lidos no Brasil inteiro.
+APOIO_CSS = """  <style>
+    /* Convite para apoiar nos guias (19/11/2026): uma linha leve no topo e um bloco curto depois do PDF. */
+    .inst-apoio-linha { margin: 18px 0 0; max-width: 66ch; font-size: 1rem; line-height: 1.6; color: var(--text); }
+    .inst-apoio-linha a { padding: 12px 0; color: var(--red); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; }
+    .inst-apoio { margin: 0 0 38px; padding: 22px 24px; border: 1px solid var(--line); border-left: 5px solid var(--red); border-radius: 14px; background: var(--paper); }
+    .inst-apoio h2 { font-size: 1.25rem; line-height: 1.3; letter-spacing: -.01em; margin: 0 0 8px; }
+    .inst-apoio p { font-size: 1.04rem; line-height: 1.6; color: var(--text); margin: 0 0 16px; max-width: 64ch; }
+    .inst-apoio .inst-apoio-nota { font-size: 1rem; color: var(--muted); margin: 14px 0 0; }
+    .inst-apoio a.btn { text-decoration: none; }
+    /* O botão do guia (PDF/material) continua sendo o maior e o único com sombra: o convite não compete com ele. */
+    .inst-apoio .btn-red { box-shadow: none; }
+    @media (max-width: 620px) { .inst-apoio { padding: 20px 18px; } .inst-apoio .cta-row { align-items: flex-start; } }
+  </style>"""
+
+APOIO_JS = """<script>
+  /* Convite para apoiar: quem chegou ao guia por anúncio (utm_*, gclid, fbclid no endereço) leva esses parâmetros para
+     /doe/ e para o cadastro no clique, e a origem fica gravada lá. Só reescreve o link: não guarda nada. */
+  (function () {
+    try {
+      var aqui = new URLSearchParams(location.search), levar = [];
+      ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid'].forEach(function (k) {
+        var v = aqui.get(k); if (v) levar.push([k, v]);
+      });
+      if (!levar.length) return;
+      document.querySelectorAll('a[data-evento^="apoio_"]').forEach(function (a) {
+        function acrescentar() {
+          var u = new URL(a.getAttribute('href'), location.href);
+          levar.forEach(function (par) { if (!u.searchParams.has(par[0])) u.searchParams.set(par[0], par[1]); });
+          a.setAttribute('href', u.pathname + u.search + u.hash);
+        }
+        ['click', 'auxclick', 'contextmenu'].forEach(function (ev) { a.addEventListener(ev, acrescentar); });
+      });
+    } catch (e) { /* navegador antigo: o link segue sem os parâmetros */ }
+  })();
+</script>"""
+
+
+def apoio_linha(slug: str) -> str:
+    """A linha do topo, logo depois do índice "Nesta página"."""
+    return ('\n        <p class="inst-apoio-linha">Guia gratuito da Cruz Vermelha Brasileira Rio de Janeiro. Quer apoiar este '
+            f'trabalho? <a href="/doe/?de={slug}" data-evento="apoio_doar" data-origem="{slug}-topo">Doe a partir de R$ 5</a>.</p>')
+
+
+def apoio_bloco(slug: str) -> str:
+    """O bloco do meio, depois da seção do PDF (ou da primeira seção)."""
+    return f"""      <aside class="inst-apoio" aria-labelledby="inst-apoio-titulo">
+        <h2 id="inst-apoio-titulo">Este guia é gratuito</h2>
+        <p>Sua doação, a partir de R$ 5, ajuda a manter a formação de voluntários, a capacitação em primeiros socorros e as ações humanitárias da filial. Leva menos de um minuto, por PIX ou cartão.</p>
+        <div class="cta-row">
+          <a class="btn btn-red" href="/doe/?de={slug}" data-evento="apoio_doar" data-origem="{slug}-meio">Doe agora</a>
+          <a class="btn btn-outline" href="/voluntariado/cadastro/" data-evento="apoio_voluntario" data-origem="{slug}-meio">Seja voluntário no Rio</a>
+        </div>
+        <p class="inst-apoio-nota">O voluntariado é presencial, para quem mora na cidade do Rio de Janeiro e tem 18 anos ou mais.</p>
+      </aside>"""
+
+
 def relacionadas(p: dict, paginas: dict) -> str:
     cartoes = []
     for slug in p.get("relacionadas", []):
@@ -673,13 +747,21 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         f'<li><a href="{esc(u.replace(ORIGEM, "") or "/")}">{esc(n)}</a></li>' if i < len(trilha(p)) - 1
         else f'<li aria-current="page">{esc(n)}</li>' for i, (n, u) in enumerate(trilha(p)))
     indice = "\n          ".join(f'<li><a href="#{esc(s["id"])}">{esc(s["h2"])}</a></li>' for s in p["secoes"])
-    secoes = "\n\n".join(
+    blocos = [
         f'      <section class="inst-secao" id="{esc(s["id"])}" aria-labelledby="{esc(s["id"])}-titulo">\n'
         f'        <h2 id="{esc(s["id"])}-titulo">{esc(s["h2"])}</h2>\n'
-        f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"])
+        f'        {tratar_html(s["html"], s["h2"])}\n      </section>' for s in p["secoes"]]
+    # Convite para apoiar (CONVITE_APOIO): o bloco entra depois da seção "baixar" (a do PDF) ou, sem ela, da primeira.
+    convite = slug in CONVITE_APOIO
+    if convite:
+        ids = [s["id"] for s in p["secoes"]]
+        blocos.insert((ids.index("baixar") if "baixar" in ids else 0) + 1, apoio_bloco(slug))
+    secoes = "\n\n".join(blocos)
+    linha_apoio = apoio_linha(slug) if convite else ""
+    apoio_css, apoio_js = ("\n" + APOIO_CSS, "\n" + APOIO_JS) if convite else ("", "")
     tem_video = any('class="inst-video"' in s["html"] for s in p["secoes"])
     video_css, video_js = ("\n" + VIDEO_CSS, "\n" + VIDEO_JS) if tem_video else ("", "")
-    evento_js = "\n" + EVENTO_JS if any("data-evento=" in s["html"] for s in p["secoes"]) else ""
+    evento_js = "\n" + EVENTO_JS if convite or any("data-evento=" in s["html"] for s in p["secoes"]) else ""
     tem_material = any('class="inst-material"' in s["html"] for s in p["secoes"])
     material_css, material_js = ("\n" + MATERIAL_CSS, "\n" + MATERIAL_JS) if tem_material else ("", "")
     if any('class="inst-bazar"' in s["html"] for s in p["secoes"]):
@@ -732,7 +814,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
   <!-- Estilos copiados da home (site/index.html): mesmo padrão visual da filial. -->
 {partes["estilo"]}
-{CSS}{video_css}{material_css}
+{CSS}{video_css}{material_css}{apoio_css}
 {ga4}
 {partes["pixel"]}
 {json_ld(p, paginas)}
@@ -749,7 +831,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         <p class="lead">{esc(p['lead'])}</p>
         <ul class="inst-indice" aria-label="Nesta página">
           {indice}
-        </ul>
+        </ul>{linha_apoio}
       </div>
     </section>
 
@@ -770,7 +852,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
 {partes["footer"]}
 
 {partes["menu_js"]}
-{chat_widget.tags()}{video_js}{evento_js}{material_js}
+{chat_widget.tags()}{video_js}{evento_js}{material_js}{apoio_js}
 </body>
 </html>
 """

@@ -22,6 +22,10 @@ Endereço curto, com o termo que as pessoas buscam (`/mochila-de-emergencia/`). 
 6. **Aprenda**, com o convite do curso e a frase de que o curso é pago e vendido pela escola.
 7. Perguntas e respostas, fontes e páginas relacionadas.
 
+Guia de saúde ou de emergência entra também em `CONVITE_APOIO`, no gerador (19/11/2026): ganha a linha "Doe a partir
+de R$ 5" depois do índice e o bloco "Este guia é gratuito" depois da seção `#baixar`. Guia de assunto sensível (como
+`/onde-buscar-ajuda/`) e guia da escola ficam de fora.
+
 Toda afirmação de saúde ou de segurança tem fonte oficial com link, e passa por revisão de fatos antes de publicar.
 
 ## 2. O PDF

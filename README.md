@@ -117,6 +117,33 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Convite para apoiar no alto dos guias (publicado em 19/11/2026)
+
+Aprovado pelo responsável em 19/11/2026, junto com a volta dos anúncios dos guias: em 30 dias, das 595 visitas que entraram por guia ou
+notícia (439 de anúncio), só 2 abriram a página de doar e 1 o cadastro de voluntário, porque o único convite ficava no
+fim, de 8 a 27 telas abaixo no celular. Nos 16 guias de saúde e emergência (lista `CONVITE_APOIO` em
+`scripts/gerar_institucional.py`), o convite agora aparece também:
+
+- numa linha leve logo depois do índice: "Guia gratuito da Cruz Vermelha Brasileira Rio de Janeiro. Quer apoiar este
+  trabalho? Doe a partir de R$ 5.";
+- num bloco curto depois da seção do PDF (`#baixar`), "Este guia é gratuito", com "Doe agora" e "Seja voluntário no
+  Rio" (o voluntariado é presencial, só para quem mora na cidade do Rio e tem 18 anos ou mais: a nota diz isso).
+
+O bloco "Ajude a Cruz Vermelha" do fim continua igual. Ficam de fora `/onde-buscar-ajuda/` (suicídio e violência), os
+guias da escola (cursos e bombeiro civil) e as páginas institucionais. Medição (`apoio_doar`, `apoio_voluntario`) e
+repasse da origem do anúncio para `/doe/` e para o cadastro em `docs/rastreamento.md`. Estilo e script vão dentro de
+cada página (só nas 16). Lista de publicação: `scripts/publicacao-convite-apoio.txt`.
+
+Publicado em 19/11/2026, às 14h57 (horário de Brasília), a partir de `3ef19af`, pela lista acima, por pedido do
+responsável ("sim, pode religar os guias e publicar no site"). Antes do envio, a cópia do ar das 16 páginas era igual,
+byte a byte, ao Git em `2b4f74a`. Depois: cache limpo pela API da hospedagem e as 16 páginas conferidas por HTTP, iguais
+ao repositório; `/onde-buscar-ajuda/`, `/quem-somos/` e `/voluntariado/` sem o convite. Num celular simulado (390 px), no
+ar: a linha fica a 1,3 tela e o bloco a 4,6 telas no guia do kit de emergência (o convite antigo ficava a 27), sem
+rolagem horizontal nem erro de página, e o toque em "Doe agora" numa visita com `utm_*` abriu `/doe/` com `de` e os
+`utm_*`. Não testado: doação de verdade, chegada dos eventos ao Analytics, iPhone real. Junto, na conta de anúncios:
+grupos "Kit de emergência" e "Mochila de emergência" religados e orçamento da campanha de US$ 10 para US$ 150 por dia.
+Desfazer: `scripts/desfazer_publicacao.sh 2b4f74a scripts/publicacao-convite-apoio.txt` e limpar o cache.
+
 ## Quatro guias gratuitos com pedido de e-mail (11/11/2026, NÃO publicado)
 
 Pedido do Matheus: mais materiais em PDF para as matérias capturarem e-mail. No padrão de
