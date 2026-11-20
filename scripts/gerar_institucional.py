@@ -50,7 +50,9 @@ continua público (a porta é um convite, não uma cerca: decisão 3 de lib/news
 da página tem de ser, letra por letra, o `consentimento` do material lá: é o que fica gravado como o que a pessoa leu.
 Sem JavaScript, o formulário navega para a página de resposta da Redação e o link chega por e-mail. Com o pedido
 aceito, o aparelho guarda que já pediu (localStorage) e, na volta, mostra o botão direto. Medição: manual_pedir (pedido
-aceito) e manual_baixar (toque no botão).
+aceito) e manual_baixar (toque no botão). Desde 20/11/2026, junto com o evento próprio de cada material ("…_pedir"), o
+pedido aceito manda também material_pedido (origem = pagina, tipo = o campo material): um nome só para todos os
+materiais, que é o que o Google Ads importa como conversão (docs/rastreamento.md).
 
 Convite para apoiar (19/11/2026): nos guias de saúde e emergência (lista CONVITE_APOIO), uma linha discreta logo
 depois do índice ("Doe a partir de R$ 5") e um bloco curto depois da seção "baixar" (a do PDF), com "Doe agora" e
@@ -364,6 +366,8 @@ MATERIAL_JS = """<script>
             liberar('Pronto! Toque no botão abaixo para baixar. Também enviamos o link para o seu e-mail (confira a caixa de spam).');
             try { localStorage.setItem(chave, '1'); } catch (e) {}
             try { if (typeof gtag === 'function') gtag('event', caixa.getAttribute('data-evento'), { origem: 'pagina' }); } catch (e) {}
+            // Um evento só para todos os materiais (20/11/2026): é o que o Google Ads importa, em vez de um por guia.
+            try { if (typeof gtag === 'function') gtag('event', 'material_pedido', { origem: 'pagina', tipo: String(d.get('material') || '') }); } catch (e) {}
             var a = baixar.querySelector('a'); if (a) a.focus();
           } else {
             r.setAttribute('data-erro', '1'); r.textContent = (resp && resp.erro) || 'Não foi possível concluir agora. Tente de novo.';
