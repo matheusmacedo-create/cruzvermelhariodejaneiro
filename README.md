@@ -134,6 +134,16 @@ guias da escola (cursos e bombeiro civil) e as páginas institucionais. Mediçã
 repasse da origem do anúncio para `/doe/` e para o cadastro em `docs/rastreamento.md`. Estilo e script vão dentro de
 cada página (só nas 16). Lista de publicação: `scripts/publicacao-convite-apoio.txt`.
 
+## Um evento só para os pedidos de material (20/11/2026, NÃO publicado)
+
+Para o Google Ads contar como resultado quem pede um guia, cada evento do GA4 tem de ser importado, um a um, na tela
+do Google Ads, e o GA4 aceita 30 eventos principais. Em vez de um por guia, as 20 páginas com a caixa de material por
+e-mail (`inst-material`, em `scripts/gerar_institucional.py`) passam a mandar, junto com o evento próprio
+(`mochila_pedir`, `quandoligar_pedir`…), o evento comum `material_pedido` (origem = `pagina`, tipo = o material). Nada
+muda na tela nem no pedido à Redação: é uma linha no script da caixa. No Google Ads importam-se só `material_pedido` e
+`kit_baixar`. As páginas já estão geradas; a publicação espera o sim do responsável. Detalhes em
+`docs/rastreamento.md`. Lista de publicação: `scripts/publicacao-material-pedido.txt`.
+
 Publicado em 19/11/2026, às 14h57 (horário de Brasília), a partir de `3ef19af`, pela lista acima, por pedido do
 responsável ("sim, pode religar os guias e publicar no site"). Antes do envio, a cópia do ar das 16 páginas era igual,
 byte a byte, ao Git em `2b4f74a`. Depois: cache limpo pela API da hospedagem e as 16 páginas conferidas por HTTP, iguais
