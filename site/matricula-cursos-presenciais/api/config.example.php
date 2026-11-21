@@ -220,4 +220,16 @@ return [
     //   ];
     // Só para testes locais com um servidor falso do Google (scripts/testar_drive.php); nunca no servidor de verdade:
     //   'GOOGLE_API_URL' => 'https://www.googleapis.com', 'GOOGLE_TOKEN_URL' => 'https://oauth2.googleapis.com/token'.
+
+    // Matrículas pagas para o Google Ads pelo servidor (21/11/2026, lib/google_ads.php, docs/rastreamento.md): o
+    // Google Ads busca api/google-ads-conversoes.php uma vez por dia, com usuário e senha. Estas chaves também moram
+    // em api/config-google.php (só no servidor). Sem a senha, o endereço responde 404 e nada sai.
+    //       // Senha que a programação de envios do Google Ads usa (24 caracteres ou mais; gere com
+    //       // `openssl rand -hex 24`). É digitada em dois lugares: aqui e na tela do Google Ads.
+    //       'GOOGLE_ADS_IMPORT_SENHA' => '',
+    //       // Opcionais: o usuário (padrão 'google-ads'), o nome exato da ação de conversão criada no Google Ads
+    //       // (padrão 'Matricula paga (servidor)') e quantos dias de pagamentos cada busca devolve (padrão 4).
+    //       // 'GOOGLE_ADS_IMPORT_USUARIO' => 'google-ads',
+    //       // 'GOOGLE_ADS_IMPORT_CONVERSAO' => 'Matricula paga (servidor)',
+    //       // 'GOOGLE_ADS_IMPORT_DIAS' => 4,
 ];

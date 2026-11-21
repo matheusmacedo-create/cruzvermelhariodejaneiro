@@ -1,0 +1,11 @@
+# Matrículas pagas para o Google Ads pelo servidor (21/11/2026, pedido do responsável): o CSV que a programação de
+# envios do Google Ads busca uma vez por dia (docs/rastreamento.md, "Matrículas pagas para o Google Ads pelo servidor").
+# Dois arquivos novos; nenhum arquivo que já está no ar muda. O módulo antes do endereço que o carrega.
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-google-ads-importacao.txt)
+# Desfazer: scripts/publicar_hostinger.sh --apagar $(grep -vE '^(#|$)' scripts/publicacao-google-ads-importacao.txt)
+# Conferir no ar, sem credencial: api/google-ads-conversoes.php responde 404 enquanto GOOGLE_ADS_IMPORT_SENHA não
+# estiver em api/config-google.php, e 401 depois. api/lib/google_ads.php responde 403 (pasta lib/ negada).
+# Teste local: php scripts/testar_google_ads.php (28 de 28).
+# ESTADO: NÃO PUBLICADO.
+site/matricula-cursos-presenciais/api/lib/google_ads.php
+site/matricula-cursos-presenciais/api/google-ads-conversoes.php

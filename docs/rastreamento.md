@@ -86,6 +86,47 @@ O que a conferência também mostrou:
 - As telas com `?t=<token>` (Parabéns, pendente, horários, obrigado da doação) mandam o endereço inteiro no
   `page_view` do GA4 e no `PageView` da Meta. Ver Pendências.
 
+## Matrículas pagas para o Google Ads pelo servidor (21/11/2026, NÃO publicado)
+
+Pedido do responsável depois da leitura de 22/10 a 21/11/2026: o GA4 registrou 26 pagamentos (R$ 3.649,50) e
+nenhum atribuído aos anúncios. Parte disso é onde o orçamento foi gasto (guias, no Brasil inteiro), e parte é o
+que o navegador não vê: o `purchase` só sai na tela Parabéns, então quem paga o PIX no aplicativo do banco e não
+volta ao site não vira conversão, mesmo tendo aceitado os cookies.
+
+`api/google-ads-conversoes.php` (com `api/lib/google_ads.php`) entrega ao Google Ads um CSV no modelo "Conversões
+de cliques", com os pagamentos dos últimos dias. O Google Ads busca o arquivo sozinho, uma vez por dia, e casa
+cada linha com o clique pelo `gclid` da inscrição.
+
+- **Quem entra:** inscrição `pago`, com `gclid` e com "sim" para marketing guardado (`meta_marketing = 1`); o
+  pagamento da matrícula feito depois (`mcp_matricula_pagamentos`), pela escolha e pelo `gclid` da inscrição; no
+  cupom de grupo, só a inscrição que guarda a cobrança, com o valor de todos. **Quem recusou o marketing não
+  entra**, como no navegador: isto não mede quem disse "não", mede quem disse "sim" e não voltou à tela Parabéns.
+- **O que vai:** `gclid`, nome da conversão, hora do pagamento (UTC), valor em BRL e um id que é hash do token (na
+  inscrição, o mesmo `transaction_id` do `purchase` do GA4). Nenhum nome, CPF, e-mail ou telefone.
+- **Fora, por enquanto:** a doação (`mcp_doacoes` guarda o `gclid`, mas não a escolha de marketing: precisa de
+  uma coluna antes); o clique de iPhone sem `gclid` (o banco não guarda `gbraid`/`wbraid`); o estorno depois do
+  envio (a conversão já contada continua contada).
+- **Proteção:** usuário e senha (`GOOGLE_ADS_IMPORT_SENHA` em `api/config-google.php`, 24 caracteres ou mais).
+  Sem a senha, o endereço responde 404; com senha errada, 401, e cada IP tem 20 erros por hora. Cada busca fica
+  em `mcp_eventos` (`gads_exportado`, com o número de linhas).
+- **Sem estado:** cada busca devolve os últimos 4 dias (`GOOGLE_ADS_IMPORT_DIAS`). O Google Ads recusa a linha
+  que já recebeu com o aviso de conversão duplicada: é o esperado, e não um erro a corrigir.
+- **Teste:** `php scripts/testar_google_ads.php` (28 de 28, sem banco). A consulta ao banco não foi rodada contra
+  um MariaDB: confira a primeira busca no ar.
+
+Para ligar, nesta ordem:
+
+1. Publicar os dois arquivos (`scripts/publicacao-google-ads-importacao.txt`). Sem a senha, nada muda no ar.
+2. No Google Ads: Metas → Resumo → Criar ação de conversão → Conversões off-line → importar de cliques. Nome
+   **`Matricula paga (servidor)`** (igual, letra por letra), categoria Compra, valor "usar valores diferentes",
+   contagem "todas". Esperar de 4 a 6 horas antes do primeiro envio.
+3. No servidor, pelo gerenciador de arquivos da Hostinger: `GOOGLE_ADS_IMPORT_SENHA` em `api/config-google.php`.
+4. No Google Ads: Metas → Conversões → Envios → Programações → "+" → origem HTTPS, endereço
+   `https://cruzvermelhariodejaneiro.org/matricula-cursos-presenciais/api/google-ads-conversoes.php`, usuário
+   `google-ads` e a mesma senha; frequência diária.
+5. Com esta ação como principal, o `purchase` importado do GA4 passa a secundária: as duas contam a mesma venda
+   de quem aceitou os cookies e voltou à tela Parabéns.
+
 ## Etapa e erro no checkout e no cadastro de voluntário (24/10/2026)
 
 Para saber onde as pessoas param entre o `begin_checkout` e o `add_payment_info` (de 19 a 23/10, 9 `generate_lead` e
