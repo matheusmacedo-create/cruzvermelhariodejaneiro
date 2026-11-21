@@ -6,6 +6,11 @@
 # Conferir no ar, sem credencial: api/google-ads-conversoes.php responde 404 enquanto GOOGLE_ADS_IMPORT_SENHA não
 # estiver em api/config-google.php, e 401 depois. api/lib/google_ads.php responde 403 (pasta lib/ negada).
 # Teste local: php scripts/testar_google_ads.php (28 de 28).
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 21/11/2026, às 18h42 (horário de Brasília), a partir de fc9146b (branch
+# claude/hopeful-rubin-rsypow, antes do merge), por pedido do responsável. Os dois arquivos não existiam no ar (nada
+# a copiar antes). Conferido no ar: os dois iguais ao repositório, byte a byte; api/google-ads-conversoes.php responde
+# 404 "Não encontrado." (a senha ainda não está no servidor); api/lib/google_ads.php responde 403; api/info.php 200 e
+# api/escola-horarios.php 401, como antes. Cache não foi limpo: são endereços novos, em PHP.
+# FALTA para ligar: a senha em api/config-google.php, a ação de conversão e a programação no Google Ads.
 site/matricula-cursos-presenciais/api/lib/google_ads.php
 site/matricula-cursos-presenciais/api/google-ads-conversoes.php

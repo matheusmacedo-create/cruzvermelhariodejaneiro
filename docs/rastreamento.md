@@ -86,7 +86,7 @@ O que a conferência também mostrou:
 - As telas com `?t=<token>` (Parabéns, pendente, horários, obrigado da doação) mandam o endereço inteiro no
   `page_view` do GA4 e no `PageView` da Meta. Ver Pendências.
 
-## Matrículas pagas para o Google Ads pelo servidor (21/11/2026, NÃO publicado)
+## Matrículas pagas para o Google Ads pelo servidor (21/11/2026, publicado e ainda desligado)
 
 Pedido do responsável depois da leitura de 22/10 a 21/11/2026: o GA4 registrou 26 pagamentos (R$ 3.649,50) e
 nenhum atribuído aos anúncios. Parte disso é onde o orçamento foi gasto (guias, no Brasil inteiro), e parte é o
@@ -116,7 +116,8 @@ cada linha com o clique pelo `gclid` da inscrição.
 
 Para ligar, nesta ordem:
 
-1. Publicar os dois arquivos (`scripts/publicacao-google-ads-importacao.txt`). Sem a senha, nada muda no ar.
+1. Publicar os dois arquivos (`scripts/publicacao-google-ads-importacao.txt`). **Feito em 21/11/2026, às 18h42**:
+   sem a senha, o endereço responde 404 e nada sai.
 2. No Google Ads: Metas → Resumo → Criar ação de conversão → Conversões off-line → importar de cliques. Nome
    **`Matricula paga (servidor)`** (igual, letra por letra), categoria Compra, valor "usar valores diferentes",
    contagem "todas". Esperar de 4 a 6 horas antes do primeiro envio.
