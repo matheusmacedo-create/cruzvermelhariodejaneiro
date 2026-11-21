@@ -293,13 +293,13 @@ navegador em 19/11/2026 (servidor local).
 `origem` já é dimensão registrada. Os dois eventos são novos: não marcar como evento principal (são cliques, não
 doação nem ficha).
 
-## Um evento só para os pedidos de material: `material_pedido` (20/11/2026, NÃO publicado)
+## Um evento só para os pedidos de material: `material_pedido` (publicado em 21/11/2026)
 
 As 20 páginas que entregam um material depois do e-mail (a caixa `inst-material` de `scripts/gerar_institucional.py`:
 os guias de saúde e emergência com PDF, o kit Lei Lucas, o roteiro do plano de contingência, o guia do bombeiro civil,
-o guia dos cursos, o cartaz da Cruz Vermelha e o manual de identidade) passam a mandar, quando o pedido é aceito,
-**dois** eventos ao GA4: o próprio de cada material, como antes, e um comum a todos. As páginas já estão geradas no
-repositório; no ar, só depois de o responsável autorizar a publicação (`scripts/publicacao-material-pedido.txt`).
+o guia dos cursos, o cartaz da Cruz Vermelha e o manual de identidade) mandam, quando o pedido é aceito, **dois**
+eventos ao GA4: o próprio de cada material, como antes, e um comum a todos. Publicado em 21/11/2026, com a
+autorização do responsável (`scripts/publicacao-material-pedido.txt`).
 
 | Momento | GA4 |
 | --- | --- |
@@ -310,8 +310,8 @@ ação de conversão), e a propriedade do GA4 aceita 30 eventos principais (já 
 uma única importação cobre todos os materiais, os de hoje e os que vierem. O evento próprio continua para ver cada
 material em separado no GA4; `origem` e `tipo` já são dimensões registradas.
 
-- **GA4:** depois de publicar, marcar `material_pedido` como evento principal (propriedade 544248603). Ele só
-  aparece na lista de importação do Google Ads depois de o GA4 receber o primeiro.
+- **GA4:** `material_pedido` marcado como evento principal em 21/11/2026 (propriedade 544248603). Na lista de
+  importação do Google Ads ele só aparece depois de o Google propagar a marcação (a ajuda fala em 24 a 48 horas).
 - **Google Ads:** importar `material_pedido` e `kit_baixar` (a página do kit de emergência entrega o PDF sem pedir
   e-mail, por isso tem evento à parte). **Não** importar junto os `…_pedir` de cada material (`mochila_pedir`,
   `leilucas_pedir`, `contingencia_pedir`): contaria o mesmo pedido duas vezes. O `kit_pedir` é só da caixa das
@@ -320,8 +320,9 @@ material em separado no GA4; `origem` e `tipo` já são dimensões registradas.
   evento próprio.
 - Sem JavaScript o pedido funciona igual, pela página de resposta da Redação, e nenhum dos dois eventos sai.
 
-Conferido em 20/11/2026 num Chromium com tela de celular (servidor local), com o pedido à Redação simulado (nada
-gravado): a fila da página recebe o evento próprio e o `material_pedido`, com `tipo` certo. Falta conferir no ar.
+Conferido num Chromium com tela de celular, em 20/11/2026 no servidor local e em 21/11/2026 no ar, com o pedido à
+Redação simulado (nada gravado) e os envios de medição barrados: a fila da página recebe o evento próprio e o
+`material_pedido`, com `tipo` certo. As 20 páginas no ar ficaram iguais ao repositório, byte a byte.
 
 ## Pagar tudo, passo 5: venda de tudo à vista ligada (10/10/2026)
 
