@@ -20,6 +20,9 @@
  *   - escola fora do ar não derruba a rodada, mas segura os envios até ela voltar; sem a configuração da Kapso nada sai;
  *   - webhook: assinatura válida e inválida, entregue/lida (só avança), "Não tenho interesse" bloqueia (mesmo reentregue
  *     dias depois), outra resposta fica guardada;
+ *   - resposta automática (23/11/2026): quem escreve (texto, áudio) recebe na hora o aviso de que o número é só de
+ *     divulgação, com o WhatsApp da secretaria; uma por celular em 24 h (também num lote), nunca a quem pediu para parar,
+ *     a uma reação ou a mensagem antiga reentregue; a recusa da Kapso não gasta a vez;
  *   - painel: sem sessão não mostra dado nenhum; com sessão mostra a situação (modelos, webhook, escola), os números e a
  *     lista; "Ligar o recebimento de respostas" (POST com token) cria o webhook na Kapso com o segredo do site; um
  *     webhook com outro segredo ou sem todos os eventos aparece como desacertado, com o botão;
@@ -279,7 +282,7 @@ function limpar(PDO $db, string $padraoEmail, string $quem, array $telefones): v
     $db->exec("DELETE FROM mcp_chaves WHERE nome IN ('rw_cache_modelos', 'rw_cache_webhook')");
     $db->prepare("DELETE FROM mcp_eventos WHERE tipo = 'recuperacao_webhook' AND detalhe LIKE ?")->execute([$quem . '%']);
     // Os resumos das rodadas e as aberturas dos links que o teste gerou (gravados com a hora de verdade, sem inscrição).
-    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link', 'matricula_rodada', 'rw_cache_modelos') AND inscricao_id IS NULL AND criado_em >= ?")
+    $db->prepare("DELETE FROM mcp_eventos WHERE tipo IN ('recuperacao_rodada', 'recuperacao_rodada_email', 'recuperacao_link', 'matricula_rodada', 'rw_cache_modelos', 'rw_auto_resposta', 'rw_auto_resposta_falhou') AND inscricao_id IS NULL AND criado_em >= ?")
         ->execute([$GLOBALS['inicioTeste'] ?? gmdate('Y-m-d H:i:s')]);
 }
 $inicioTeste = gmdate('Y-m-d H:i:s', time() - 5);
@@ -320,8 +323,12 @@ $matricula = static function (string $id, int $criadoTs, string $cursoUuid, stri
         'statusPagamento' => 'PENDENTE', 'turma' => ['cursoId' => $cursoUuid, 'curso' => ['id' => $cursoUuid, 'nome' => $cursoNome]]];
 };
 /** Mensagens que o servidor falso recebeu para um celular (11 dígitos), na ordem. */
+// Só os modelos (as etapas); a resposta automática (texto livre, 23/11/2026) fica em $automaticasPara.
 $mensagensPara = static function (string $tel): array {
-    return array_values(array_filter(falso('kapso'), static fn(array $x): bool => ($x['corpo']['to'] ?? '') === '55' . $tel));
+    return array_values(array_filter(falso('kapso'), static fn(array $x): bool => ($x['corpo']['to'] ?? '') === '55' . $tel && ($x['corpo']['type'] ?? '') !== 'text'));
+};
+$automaticasPara = static function (string $tel): array {
+    return array_values(array_filter(falso('kapso'), static fn(array $x): bool => ($x['corpo']['to'] ?? '') === '55' . $tel && ($x['corpo']['type'] ?? '') === 'text'));
 };
 $etapasPara = static fn(string $tel): array => array_map(static fn(array $x): string => (string) ($x['corpo']['template']['name'] ?? ''), $mensagensPara($tel));
 $uuidBombeiro = (string) mcp_curso('bombeiro-civil')['uuid'];
@@ -701,6 +708,66 @@ try {
     http($urlWebhook, 'POST', $tardio, ['X-Webhook-Event: whatsapp.message.received', 'X-Webhook-Signature: ' . $assinar($tardio)]);
     verificar('"PARAR" reentregue 3 dias depois ainda bloqueia', mcp_avisos_bloqueado('whatsapp', '55' . $s12['telefone']), true);
 
+    // ------------------------------------------------------------------------- resposta automática (23/11/2026)
+    $entrada = static function (array $mensagens) use ($urlWebhook, $assinar, $numeroId): array {
+        $itens = array_map(static fn(array $m): array => ['message' => $m + ['kapso' => ['direction' => 'inbound']], 'phone_number_id' => $numeroId], $mensagens);
+        $corpo = (string) json_encode(count($itens) === 1 ? $itens[0] : ['batch' => true, 'data' => $itens]);
+        [$st, , $resp] = http($urlWebhook, 'POST', $corpo, ['X-Webhook-Event: whatsapp.message.received', 'X-Webhook-Signature: ' . $assinar($corpo)]);
+        return [$st, json_decode($resp, true)['tratados'] ?? null];
+    };
+    $autoEventos = static function (string $tel, string $tipo = 'rw_auto_resposta') use ($db): int {
+        $stmt = $db->prepare('SELECT COUNT(*) FROM mcp_eventos WHERE tipo = ? AND detalhe LIKE ?');
+        $stmt->execute([$tipo, mcp_rw_hmac('t:55' . $tel) . '%']);
+        return (int) $stmt->fetchColumn();
+    };
+    $auto = $automaticasPara($e7['celular']);
+    $textoAuto = (string) ($auto[0]['corpo']['text']['body'] ?? '');
+    verificar('resposta automática: a pergunta recebeu um texto só, do número dedicado, com a chave da Kapso',
+        [count($auto), $auto[0]['corpo']['type'] ?? '', $auto[0]['corpo']['messaging_product'] ?? '', $auto[0]['chave'] ?? '', $autoEventos($e7['celular'])], [1, 'text', 'whatsapp', $chaveKapso, 1]);
+    verificar('resposta automática: diz que o número é só de divulgação e dá o WhatsApp da secretaria, com o link',
+        [str_contains($textoAuto, 'mensagem automática'), str_contains($textoAuto, 'só para divulgar os nossos cursos'), str_contains($textoAuto, '(21) 99992-2864'),
+            str_contains($textoAuto, 'https://wa.me/5521999922864'), str_contains($textoAuto, 'responda SAIR'), $textoAuto === mcp_rw_auto_resposta_texto('21999922864')],
+        [true, true, true, true, true, true]);
+    verificar('resposta automática: o registro guarda só o HMAC do celular, nunca o número',
+        (int) $db->query("SELECT COUNT(*) FROM mcp_eventos WHERE tipo LIKE 'rw_auto_resposta%' AND detalhe LIKE '%" . $e7['celular'] . "%'")->fetchColumn(), 0);
+    $entrada([['id' => 'wamid.in-4', 'from' => '55' . $e7['celular'], 'type' => 'text', 'text' => ['body' => 'E o valor?'], 'timestamp' => (string) time()]]);
+    verificar('resposta automática: a segunda mensagem da mesma pessoa no mesmo dia não recebe outra (e a resposta nova fica guardada)',
+        [count($automaticasPara($e7['celular'])), $respostaDe($e7['celular'])], [1, ['E o valor?']]);
+    verificar('resposta automática: quem disse "Não tenho interesse" ou "PARAR" não recebe', [count($automaticasPara($e1['celular'])), count($automaticasPara($s12['telefone']))], [0, 0]);
+    // Quem nunca recebeu mensagem nossa e manda um áudio: não há linha onde guardar, mas a resposta sai.
+    $desconhecido = $celular();
+    [$st, $tratados] = $entrada([['id' => 'wamid.in-5', 'from' => '55' . $desconhecido, 'type' => 'audio', 'audio' => ['id' => 'midia-1'], 'timestamp' => (string) time()]]);
+    verificar('resposta automática: áudio de um celular desconhecido também recebe', [$st, $tratados, count($automaticasPara($desconhecido)), $autoEventos($desconhecido)], [200, 1, 1, 1]);
+    $reagiu = $celular();
+    $entrada([['id' => 'wamid.in-6', 'from' => '55' . $reagiu, 'type' => 'reaction', 'reaction' => ['message_id' => $idE1, 'emoji' => '👍']]]);
+    $antigo = $celular();
+    $entrada([['id' => 'wamid.in-7', 'from' => '55' . $antigo, 'type' => 'text', 'text' => ['body' => 'Oi, tudo bem?'], 'timestamp' => (string) (time() - 13 * 3600)]]);
+    verificar('resposta automática: reação e mensagem reentregue 13 h depois não recebem', [count($automaticasPara($reagiu)), count($automaticasPara($antigo))], [0, 0]);
+    $lote = $celular();
+    $arrependido = $celular();
+    [, $tratados] = $entrada([
+        ['id' => 'wamid.in-8', 'from' => '55' . $lote, 'type' => 'text', 'text' => ['body' => 'Boa tarde'], 'timestamp' => (string) time()],
+        ['id' => 'wamid.in-9', 'from' => '55' . $lote, 'type' => 'image', 'image' => ['id' => 'midia-2'], 'timestamp' => (string) time()],
+        ['id' => 'wamid.in-10', 'from' => '55' . $arrependido, 'type' => 'text', 'text' => ['body' => 'Como faço para pagar?'], 'timestamp' => (string) time()],
+        ['id' => 'wamid.in-11', 'from' => '55' . $arrependido, 'type' => 'text', 'text' => ['body' => 'Sair'], 'timestamp' => (string) time()],
+    ]);
+    verificar('resposta automática: lote com duas mensagens da pessoa → uma resposta; quem pergunta e logo pede para sair → nenhuma, e fica bloqueado',
+        [$tratados, count($automaticasPara($lote)), count($automaticasPara($arrependido)), mcp_avisos_bloqueado('whatsapp', '55' . $arrependido)], [2, 1, 0, true]);
+    // A Kapso recusa (final 0000 = 131026): não gasta a vez, a próxima mensagem tenta de novo.
+    $recusado = $celular('0000');
+    $entrada([['id' => 'wamid.in-12', 'from' => '55' . $recusado, 'type' => 'text', 'text' => ['body' => 'Olá'], 'timestamp' => (string) time()]]);
+    $entrada([['id' => 'wamid.in-13', 'from' => '55' . $recusado, 'type' => 'text', 'text' => ['body' => 'Alguém?'], 'timestamp' => (string) time()]]);
+    verificar('resposta automática: recusa da Kapso fica registrada como falha e não gasta a vez',
+        [count($automaticasPara($recusado)), $autoEventos($recusado), $autoEventos($recusado, 'rw_auto_resposta_falhou')], [2, 0, 2]);
+    // 25 h depois, a mesma pessoa escreve de novo: outra resposta (direto na função, com o relógio adiantado).
+    $depois = time() + 25 * 3600;
+    $n23 = mcp_rw_webhook_tratar([['tipo' => 'midia', 'de' => '55' . $desconhecido, 'ts' => $depois - 60]], $depois - 60 - 2 * 3600);
+    $n25 = mcp_rw_webhook_tratar([['tipo' => 'midia', 'de' => '55' . $desconhecido, 'ts' => $depois]], $depois);
+    verificar('resposta automática: 23 h depois ainda não; 25 h depois, de novo', [$n23, $n25, count($automaticasPara($desconhecido))], [0, 1, 2]);
+    verificar('resposta automática: número da secretaria da configuração (com 55 ou máscara) e o que não serve',
+        [mcp_rw_secretaria_whatsapp(), mcp_rw_auto_resposta_texto('2133334444') === str_replace(['(21) 99992-2864', '5521999922864'], ['(21) 3333-4444', '552133334444'], $textoAuto)],
+        ['21999922864', true]);
+
     // O cadastro feito com a escola fora (18 h depois da base) recebeu a 1ª na rodada de 24 h, mesmo com a escola fora
     // (seguem o site e os importados): a 2ª vem 21 h depois dela (45 h), antes da rodada de 46 h.
     mcp_rw_rodar($A + 44 * 3600); // 20 h depois da 1ª: ainda não
@@ -723,6 +790,9 @@ try {
     mcp_rw_rodar($A + 120 * 3600);
     $porEtapa = [];
     foreach (falso('kapso') as $x) {
+        if (($x['corpo']['type'] ?? '') === 'text') {
+            continue; // a resposta automática não é etapa (a recusada pela Kapso foi tentada duas vezes, de propósito)
+        }
         $k = ($x['corpo']['to'] ?? '') . '|' . ($x['corpo']['template']['name'] ?? '');
         $porEtapa[$k] = ($porEtapa[$k] ?? 0) + 1;
     }
@@ -1027,6 +1097,8 @@ try {
     $primeiro = mcp_rw_metricas(mcp_rw_carregar()['pessoas'], mcp_rw_linhas(), time())['lista'][0]['celular'] ?? '?';
     verificar('painel: lista com o celular mascarado, nenhum número inteiro na página', [str_contains($html, $primeiro),
         (bool) array_filter($telefones, static fn(string $t): bool => str_contains($html, substr($t, 2)))], [true, false]);
+    verificar('painel: com o recebimento de respostas desligado, avisa que a resposta automática também não sai',
+        [str_contains($html, 'também fica sem a resposta automática'), str_contains($html, 'Resposta automática ligada')], [true, false]);
     [$st] = http($url, 'POST', ['acao' => 'ligar_webhook'], [$cookie]);
     verificar('painel: botão sem o token → 403', [$st, count(falso('webhooks'))], [403, 0]);
     [$st, $cab] = http($url, 'POST', ['acao' => 'ligar_webhook', 't' => mcp_painel_csrf($quem, 'rw_webhook', 0)], [$cookie]);
@@ -1037,6 +1109,8 @@ try {
         [303, 'recuperacao.php?webhook=ok', 'POST', $urlWebhook, mcp_segredo('kapso_webhook'), 'kapso', true]);
     [, , $html] = http($url . '?webhook=ok', 'GET', null, [$cookie]);
     verificar('painel: depois de ligar, "Ligado" e sem o botão', [str_contains($html, 'Recebimento de respostas ligado'), str_contains($html, 'Ligar o recebimento de respostas</button>')], [true, false]);
+    verificar('painel: com o recebimento ligado, mostra a resposta automática ligada e o WhatsApp da secretaria',
+        [str_contains($html, 'Resposta automática ligada'), str_contains($html, '(21) 99992-2864'), str_contains($html, 'também fica sem a resposta automática')], [true, true, false]);
     $webhookCom = static fn(array $mudar): array => ['data' => [$mudar + ['id' => 'wh-9', 'url' => $urlWebhook, 'active' => true, 'events' => MCP_RW_EVENTOS_WEBHOOK]]];
     foreach (['outro segredo' => ['secret_key' => 'segredo-de-outra-base'], 'sem a entrega e a leitura' => ['events' => ['whatsapp.message.received']]] as $caso => $mudar) {
         controle('webhooks', $webhookCom($mudar));

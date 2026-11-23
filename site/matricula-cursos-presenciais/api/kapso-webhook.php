@@ -9,6 +9,9 @@
  *  - Entregue/lida/falhou: atualiza a linha pelo wamid. Resposta "Não tenho interesse" (o botão do rec_inscricao_3),
  *    SAIR, PARAR ou STOP: bloqueia o WhatsApp do número (mcp_avisos_bloqueios, origem 'recuperacao'). Qualquer outra
  *    resposta fica guardada para a secretaria ver no painel (api/recuperacao.php).
+ *  - Resposta automática (23/11/2026): quem escreve para o número (texto, áudio, foto…) e não pediu para parar recebe
+ *    na hora um texto dizendo que ele é só de divulgação dos cursos e que o atendimento é no WhatsApp da secretaria.
+ *    Uma por celular a cada 24 h (mcp_rw_auto_responder).
  *  - Responde 200 sempre que entendeu o pedido, para a Kapso não reenviar.
  */
 declare(strict_types=1);

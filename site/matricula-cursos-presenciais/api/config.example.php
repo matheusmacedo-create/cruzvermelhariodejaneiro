@@ -159,6 +159,12 @@ return [
     // (Só para o teste local: 'WHATSAPP_KAPSO_BASE' => 'http://127.0.0.1:<porta>', um servidor falso. Nunca no servidor.)
     'WHATSAPP_KAPSO_CHAVE' => '',
     'WHATSAPP_KAPSO_NUMERO_ID' => '',
+    // Resposta automática do número dedicado (23/11/2026): quem escreve para ele recebe na hora o aviso de que o número
+    // é só de divulgação dos cursos e que o atendimento é no WhatsApp da secretaria. WHATSAPP_SECRETARIA: DDD + número
+    // (vazio = (21) 99992-2864, o do código). WHATSAPP_AUTO_RESPOSTA => false desliga. Também valem em
+    // api/config-whatsapp.php. Só funciona com o "recebimento de respostas" ligado no painel api/recuperacao.php.
+    'WHATSAPP_SECRETARIA' => '',
+    'WHATSAPP_AUTO_RESPOSTA' => true,
     // Bazar solidário (11/11/2026, lib/bazar.php): o celular (DDD + número) de quem recebe, pelo WhatsApp, o aviso de
     // cada doação registrada na página /bazar/. Sai pelo número da Kapso acima, com o modelo bazar_doacao_nova, e só
     // depois de a Meta aprovar o modelo. Vazio = nenhum aviso sai (o registro e o e-mail à equipe continuam). O número

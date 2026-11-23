@@ -242,6 +242,16 @@ const MCP_RW_ESCOLA_LOTE = 60;
 const MCP_RW_KAPSO_TEMPO_S = 20;
 const MCP_RW_CACHE_S = 600;
 const MCP_RW_EVENTOS_WEBHOOK = ['whatsapp.message.received', 'whatsapp.message.delivered', 'whatsapp.message.read', 'whatsapp.message.failed'];
+// Resposta automática (23/11/2026): o número dedicado só divulga os cursos e não presta atendimento. Quem escreve
+// para ele recebe, na hora, um texto dizendo isso e o WhatsApp da secretaria (DDD + número; WHATSAPP_SECRETARIA na
+// configuração troca). Uma por celular a cada 24 h, e só a uma mensagem recente: a Kapso reentrega o que não chegou com
+// o horário original, e texto livre só sai dentro das 24 h da conversa aberta por quem escreveu.
+const MCP_RW_SECRETARIA_WHATSAPP = '21999922864';
+const MCP_RW_AUTO_RESPOSTA_INTERVALO_S = 24 * 3600;
+const MCP_RW_AUTO_RESPOSTA_VALIDADE_S = 12 * 3600;
+const MCP_RW_AUTO_RESPOSTA_TEMPO_S = 10;
+// O que a pessoa manda sem texto e também merece a resposta automática (reação e aviso do sistema não).
+const MCP_RW_AUTO_RESPOSTA_MIDIAS = ['audio', 'voice', 'image', 'video', 'document', 'sticker', 'location', 'contacts', 'interactive', 'button', 'order'];
 
 // ----------------------------------------------------------------------------- identidade
 /** HMAC-SHA256 (64 hex) de um identificador ("c:<cpf>", "e:<email>", "t:<55…>"). Sem o segredo do banco, não se volta. */
@@ -1090,10 +1100,10 @@ function mcp_rw_kapso_pedir(array $cfg, string $metodo, string $url, ?array $cor
  *  - o resto (só os erros de MCP_RW_ERROS_DO_DESTINO, escopo 'destino'): a etapa fica "falhou" para essa pessoa.
  * @return array{ok: bool, id: ?string, erro: ?string, transitorio: bool, incerto: bool, parar: bool, escopo: string, codigo: int}
  */
-function mcp_rw_kapso_enviar(array $cfg, array $corpo): array
+function mcp_rw_kapso_enviar(array $cfg, array $corpo, int $tempo = 30): array
 {
     $url = $cfg['base'] . '/meta/whatsapp/v24.0/' . rawurlencode($cfg['numero_id']) . '/messages';
-    [$status, $dados, $erro, $esgotado, $conectou] = mcp_rw_kapso_pedir($cfg, 'POST', $url, $corpo, 30);
+    [$status, $dados, $erro, $esgotado, $conectou] = mcp_rw_kapso_pedir($cfg, 'POST', $url, $corpo, $tempo);
     $incerto = static fn(string $msg, bool $parar): array => ['ok' => true, 'id' => null, 'erro' => $msg . '; a mensagem pode ter saído (não vai de novo)',
         'transitorio' => false, 'incerto' => true, 'parar' => $parar, 'escopo' => 'incerto', 'codigo' => 0];
     if ($esgotado) {
@@ -2126,6 +2136,7 @@ function mcp_rw_assinatura_ok(string $corpo, string $cabecalho): bool
  * Lê o payload v2 da Kapso (avulso ou em lote: {"batch": true, "data": [...]}) em eventos simples, sem tocar no banco:
  *  - ['tipo' => 'entrega', 'id' => wamid, 'entrega' => entregue|lida|falhou, 'erro' => ?string]
  *  - ['tipo' => 'resposta', 'de' => '55…', 'texto' => …, 'citada' => ?wamid, 'ts' => ?int]
+ *  - ['tipo' => 'midia', 'de' => '55…', 'ts' => ?int]: áudio, foto, documento… sem texto; só pede a resposta automática
  * O evento vem do cabeçalho X-Webhook-Event (ou do corpo). Mensagens de outro número do projeto ficam de fora.
  */
 function mcp_rw_ler_webhook(array $corpo, string $eventoCabecalho, string $numeroId): array
@@ -2158,10 +2169,15 @@ function mcp_rw_ler_webhook(array $corpo, string $eventoCabecalho, string $numer
         }
         $de = mcp_digitos((string) ($m['from'] ?? $item['conversation']['phone_number'] ?? ''));
         $texto = $m['text']['body'] ?? $m['button']['text'] ?? $m['button']['payload'] ?? $m['interactive']['button_reply']['title'] ?? null;
+        $ts = $m['timestamp'] ?? null;
         if ($de === '' || !is_string($texto) || trim($texto) === '') {
+            // Sem texto (áudio, foto, documento…): nada a guardar para a secretaria, mas a pessoa escreveu para um número
+            // que não atende e precisa saber disso (mcp_rw_auto_responder).
+            if ($de !== '' && in_array(strtolower((string) ($m['type'] ?? '')), MCP_RW_AUTO_RESPOSTA_MIDIAS, true)) {
+                $saida[] = ['tipo' => 'midia', 'de' => $de, 'ts' => is_numeric($ts) ? (int) $ts : null];
+            }
             continue;
         }
-        $ts = $m['timestamp'] ?? null;
         $saida[] = ['tipo' => 'resposta', 'de' => $de, 'texto' => mcp_texto($texto, 200), 'citada' => is_string($m['context']['id'] ?? null) ? $m['context']['id'] : null,
             'ts' => is_numeric($ts) ? (int) $ts : null];
     }
@@ -2172,6 +2188,8 @@ function mcp_rw_ler_webhook(array $corpo, string $eventoCabecalho, string $numer
  * Aplica os eventos: entrega/leitura pelo wamid (a situação só avança; "falhou" vale sempre), e respostas — guardadas
  * na linha da mensagem respondida (ou na mais recente para aquele celular). "Não tenho interesse", SAIR, PARAR ou STOP
  * gravam o bloqueio do WhatsApp (mcp_avisos_bloqueios, origem 'recuperacao'): a pessoa sai do fluxo e dos avisos.
+ * Quem escreveu outra coisa (ou mandou áudio, foto…) recebe no fim a resposta automática (mcp_rw_auto_responder): o
+ * número é só de divulgação e o atendimento é no WhatsApp da secretaria. Quem pediu para parar não recebe.
  * Devolve quantos eventos mudaram alguma coisa.
  */
 function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
@@ -2180,6 +2198,9 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
     $db = mcp_db();
     $quando = gmdate('Y-m-d H:i:s', $agora);
     $n = 0;
+    // Quem recebe a resposta automática neste pedido: celular => para onde responder (o número como a Meta mandou). Fica
+    // para o fim: primeiro o que a pessoa disse é guardado, e um lote com três mensagens dela pede uma resposta só.
+    $responder = [];
     foreach ($eventos as $e) {
         if ($e['tipo'] === 'entrega') {
             $ordem = "FIELD(entrega, 'entregue', 'lida')";
@@ -2200,7 +2221,15 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             continue;
         }
         $numero = str_starts_with($e['de'], '55') ? (mcp_whatsapp_numero(substr($e['de'], 2)) ?? $e['de']) : $e['de'];
-        $parar = mcp_rw_quer_parar($e['texto']);
+        $parar = $e['tipo'] === 'resposta' && mcp_rw_quer_parar($e['texto']);
+        if ($parar) {
+            unset($responder[$numero]);
+        } elseif ($e['ts'] === null || $e['ts'] >= $agora - MCP_RW_AUTO_RESPOSTA_VALIDADE_S) {
+            $responder[$numero] = $e['de'];
+        }
+        if ($e['tipo'] !== 'resposta') {
+            continue; // áudio, foto…: não há texto a guardar
+        }
         // Um "parar" bloqueia qualquer que seja a data (a Kapso reentrega o que não chegou, com o horário original, e
         // bloquear de novo não faz mal: é INSERT IGNORE). A data só limita a gravação do texto: uma resposta comum
         // reenviada de muito tempo atrás não toma o lugar da mais nova.
@@ -2242,7 +2271,89 @@ function mcp_rw_webhook_tratar(array $eventos, ?int $agora = null): int
             $n++;
         }
     }
+    foreach ($responder as $numero => $para) {
+        $n += mcp_rw_auto_responder((string) $numero, (string) $para, $agora) ? 1 : 0;
+    }
     return $n;
+}
+
+// ----------------------------------------------------------------------------- resposta automática (23/11/2026)
+/** O WhatsApp da secretaria (DDD + número, só dígitos) que a resposta automática indica, ou '' se a configuração está errada. */
+function mcp_rw_secretaria_whatsapp(): string
+{
+    $d = mcp_digitos((string) mcp_cfg('WHATSAPP_SECRETARIA', MCP_RW_SECRETARIA_WHATSAPP));
+    $d = strlen($d) > 11 && str_starts_with($d, '55') ? substr($d, 2) : $d;
+    return in_array(strlen($d), [10, 11], true) ? $d : '';
+}
+
+/**
+ * A resposta automática para o painel: está ligada (configuração e número da secretaria em ordem)? O WhatsApp da
+ * secretaria e quantas saíram nas últimas 24 h. Só sai de verdade com o recebimento de respostas ligado na Kapso.
+ * @return array{ligada: bool, secretaria: string, enviadas_24h: int}
+ */
+function mcp_rw_auto_resposta_situacao(?int $agora = null): array
+{
+    $agora ??= time();
+    $secretaria = mcp_rw_secretaria_whatsapp();
+    $stmt = mcp_db()->prepare("SELECT COUNT(*) FROM mcp_eventos WHERE tipo = 'rw_auto_resposta' AND criado_em >= ?");
+    $stmt->execute([gmdate('Y-m-d H:i:s', $agora - 86400)]);
+    return ['ligada' => mcp_cfg('WHATSAPP_AUTO_RESPOSTA', true) !== false && $secretaria !== '', 'secretaria' => $secretaria, 'enviadas_24h' => (int) $stmt->fetchColumn()];
+}
+
+/** O texto da resposta automática. Puro. $secretaria: DDD + número, só dígitos. */
+function mcp_rw_auto_resposta_texto(string $secretaria): string
+{
+    return "Olá! Esta é uma mensagem automática da Cruz Vermelha Brasileira Rio de Janeiro.\n\n"
+        . "Este número serve só para divulgar os nossos cursos. Por aqui não conseguimos atender, tirar dúvidas nem ajudar.\n\n"
+        . 'Tem interesse ou precisa de ajuda? Fale com a secretaria pelo WhatsApp ' . mcp_telefone_bonito($secretaria) . ":\n"
+        . 'https://wa.me/55' . $secretaria . "\n\n"
+        . 'Para não receber mais mensagens deste número, responda SAIR.';
+}
+
+/**
+ * Manda a resposta automática a quem escreveu para o número dedicado: uma por celular a cada 24 h. $numero é o celular
+ * normalizado (a chave do limite, guardada só como HMAC); $para é o número como a Meta mandou (é a ele que a conversa de
+ * 24 h está aberta). O registro fica em mcp_eventos ('rw_auto_resposta', o HMAC e o id da mensagem; a falha em
+ * 'rw_auto_resposta_falhou', que não gasta a vez: a próxima mensagem da pessoa tenta de novo). Resposta incerta da Kapso
+ * conta como enviada. Uma trava por celular impede duas respostas quando a Kapso manda dois pedidos juntos. Desliga com
+ * WHATSAPP_AUTO_RESPOSTA => false. Nunca lança: o webhook responde 200 de qualquer jeito.
+ */
+function mcp_rw_auto_responder(string $numero, string $para, ?int $agora = null): bool
+{
+    $agora ??= time();
+    try {
+        $cfg = mcp_rw_kapso_config();
+        $secretaria = mcp_rw_secretaria_whatsapp();
+        $para = mcp_digitos($para);
+        if (mcp_cfg('WHATSAPP_AUTO_RESPOSTA', true) === false || !$cfg['ok'] || $secretaria === '' || $para === '') {
+            return false;
+        }
+        $hmac = mcp_rw_hmac('t:' . $numero);
+        $db = mcp_db();
+        $trava = 'mcp_rw_auto_' . substr($hmac, 0, 40);
+        $pegou = $db->prepare('SELECT GET_LOCK(?, 0)');
+        $pegou->execute([$trava]);
+        if ((int) $pegou->fetchColumn() !== 1) {
+            return false; // outro pedido já está respondendo a este celular
+        }
+        try {
+            $ja = $db->prepare("SELECT 1 FROM mcp_eventos WHERE tipo = 'rw_auto_resposta' AND criado_em >= ? AND detalhe LIKE ? LIMIT 1");
+            $ja->execute([gmdate('Y-m-d H:i:s', $agora - MCP_RW_AUTO_RESPOSTA_INTERVALO_S), $hmac . '%']);
+            if ($ja->fetchColumn()) {
+                return false;
+            }
+            $envio = mcp_rw_kapso_enviar($cfg, ['messaging_product' => 'whatsapp', 'recipient_type' => 'individual', 'to' => $para, 'type' => 'text',
+                'text' => ['preview_url' => false, 'body' => mcp_rw_auto_resposta_texto($secretaria)]], MCP_RW_AUTO_RESPOSTA_TEMPO_S);
+            $db->prepare('INSERT INTO mcp_eventos (inscricao_id, tipo, detalhe, criado_em) VALUES (NULL, ?, ?, ?)')
+                ->execute([$envio['ok'] ? 'rw_auto_resposta' : 'rw_auto_resposta_falhou', mb_substr($hmac . ' ' . ($envio['id'] ?? $envio['erro'] ?? ''), 0, 400), gmdate('Y-m-d H:i:s', $agora)]);
+            return $envio['ok'];
+        } finally {
+            $db->prepare('SELECT RELEASE_LOCK(?)')->execute([$trava]);
+        }
+    } catch (Throwable $e) {
+        error_log('[matricula] resposta automática do WhatsApp: ' . get_class($e) . ': ' . $e->getMessage());
+        return false;
+    }
 }
 
 // ----------------------------------------------------------------------------- métricas (puro)

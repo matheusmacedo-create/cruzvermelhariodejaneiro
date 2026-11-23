@@ -252,14 +252,24 @@ if ($cfg['ok'] && $modelos !== null) {
         }
     }
     $webhook = mcp_rw_webhook_situacao($cfg, $agora);
+    // Resposta automática (23/11/2026): quem escreve para o número recebe o aviso de que ele é só de divulgação, com o
+    // WhatsApp da secretaria. Depende do recebimento de respostas: sem ele, o site nem fica sabendo que alguém escreveu.
+    $auto = mcp_rw_auto_resposta_situacao($agora);
+    $semAuto = $auto['ligada'] ? ' Quem escreve para o número também fica sem a resposta automática com o WhatsApp da secretaria.' : '';
     if ($webhook === 'ligado') {
         $okItens[] = 'Recebimento de respostas ligado (entrega, leitura e "Não tenho interesse")';
     } elseif ($webhook === 'desconhecido') {
         $okItens[] = 'Recebimento de respostas: a Kapso não respondeu agora';
     } else {
-        $problemas[] = $webhook === 'diferente'
+        $problemas[] = ($webhook === 'diferente'
             ? 'O recebimento de respostas está desacertado na Kapso: entregas, leituras e "Não tenho interesse" não chegam.'
-            : 'O recebimento de respostas está desligado: o painel não sabe o que foi entregue nem quem respondeu.';
+            : 'O recebimento de respostas está desligado: o painel não sabe o que foi entregue nem quem respondeu.') . $semAuto;
+    }
+    if (!$auto['ligada']) {
+        $problemas[] = 'A resposta automática a quem escreve para este número está desligada (WHATSAPP_AUTO_RESPOSTA ou WHATSAPP_SECRETARIA na configuração).';
+    } elseif ($webhook === 'ligado' || $webhook === 'desconhecido') {
+        $okItens[] = 'Resposta automática ligada: quem escreve para este número recebe o aviso de que ele é só de divulgação, com o WhatsApp da secretaria '
+            . mcp_telefone_bonito($auto['secretaria']) . ' (' . $auto['enviadas_24h'] . ' nas últimas 24 h)';
     }
 }
 $avisosEmail = [];

@@ -1863,6 +1863,50 @@ Pedido do responsável: "coloca o PRO12 na recuperação da Lei Lucas também".
 - **Testar**: os testes de integração do WhatsApp (156) e do e-mail (63) cobrem o modelo e o link da Lei Lucas, o mapa de
   ofertas por curso e a 3ª que não espera um modelo de cupom em análise.
 
+### Resposta automática do número de divulgação (23/11/2026)
+
+Pedido do responsável: "adicionar mensagem automática nesses números avisando que eles são apenas para divulgação dos
+cursos e não são capazes de prestar atendimento; é necessário entrar em contato com o número da secretaria".
+**Situação: construído e testado só na máquina; NADA foi publicado.**
+
+- **Por quê**: de 02/11 a 22/11/2026, 50 pessoas escreveram para o número dedicado (86 mensagens; 18 com dúvida de
+  pagamento, data ou valor) e nenhuma teve resposta: o número só manda modelos, ninguém atende por ele.
+- **O que faz** (`mcp_rw_auto_responder`, chamado pelo `mcp_rw_webhook_tratar` do `api/kapso-webhook.php`): quem escreve
+  para o número (texto, botão, áudio, foto, documento…) recebe **na hora** um texto livre, pelo mesmo número:
+
+  > Olá! Esta é uma mensagem automática da Cruz Vermelha Brasileira Rio de Janeiro.
+  >
+  > Este número serve só para divulgar os nossos cursos. Por aqui não conseguimos atender, tirar dúvidas nem ajudar.
+  >
+  > Tem interesse ou precisa de ajuda? Fale com a secretaria pelo WhatsApp (21) 99992-2864:
+  > https://wa.me/5521999922864
+  >
+  > Para não receber mais mensagens deste número, responda SAIR.
+
+  O texto está em `mcp_rw_auto_resposta_texto`; o número da secretaria é `MCP_RW_SECRETARIA_WHATSAPP` (ou
+  `WHATSAPP_SECRETARIA` na configuração do servidor).
+- **Regras**: **uma por celular a cada 24 h** (o registro `rw_auto_resposta` em `mcp_eventos` guarda só o HMAC do celular
+  e o id da mensagem; uma trava por celular segura dois pedidos juntos da Kapso; um lote com várias mensagens da pessoa
+  pede uma resposta só). **Não recebe**: quem pediu para parar ("Não tenho interesse", SAIR, PARAR, STOP — continua só
+  bloqueado, como antes), reação a uma mensagem e mensagem reentregue pela Kapso com mais de 12 h (o texto livre só sai
+  dentro das 24 h da conversa aberta por quem escreveu). **Recusa da Kapso ou da Meta** fica em
+  `rw_auto_resposta_falhou` e não gasta a vez: a próxima mensagem da pessoa tenta de novo; resposta incerta conta como
+  enviada. O envio espera a Kapso no máximo 10 s e nunca derruba o webhook (200 de qualquer jeito). A resposta que a
+  pessoa mandou continua guardada para o painel, como antes; áudio e foto não têm texto a guardar.
+- **Depende do recebimento de respostas**: sem o webhook da Kapso ligado **no número que envia**, o site nem fica sabendo
+  que alguém escreveu. Em 23/11/2026 o webhook estava só no número antigo (+1 711, que parou de enviar em 31/10); o
+  número em uso (+55 21) não tinha nenhum. Depois de publicar: abrir `api/recuperacao.php` logado e tocar em **"Ligar o
+  recebimento de respostas"**. O painel passa a dizer "Resposta automática ligada… (N nas últimas 24 h)"; com o
+  recebimento desligado ou desacertado, o aviso do problema diz que a resposta automática também não sai.
+- **Desligar**: `'WHATSAPP_AUTO_RESPOSTA' => false` em `api/config-whatsapp.php` (o painel mostra como problema).
+- **Sem migração** (usa `mcp_eventos`). O `mcp_rw_kapso_enviar` ganhou o tempo de espera como terceiro parâmetro (30 s
+  por padrão, como era).
+- **Testar**: `MCP_CONFIG_ARQUIVO=… php scripts/testar_recuperacao_whatsapp_integracao.php` (171 verificações; 13 novas:
+  o texto e o número da secretaria, uma por dia, lote, áudio de desconhecido, reação, mensagem antiga, quem pede para
+  parar, recusa da Kapso, 23 h × 25 h e o painel). Os outros testes que usam o mesmo webhook seguem passando
+  (e-mail 64, matrícula pendente 53, oferta a ex-alunos 37, bazar 64, avisos 185).
+- **Publicar**: `scripts/publicacao-resposta-automatica.txt` e conferir com `scripts/conferir_publicacao.sh`.
+
 ## Cupom de desconto no checkout (30/10/2026)
 
 Pedido do Matheus: Primeiros Socorros Básico por **R$ 150,00 com tudo incluso** (taxa de inscrição + matrícula, à
