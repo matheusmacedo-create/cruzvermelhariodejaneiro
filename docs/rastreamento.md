@@ -269,7 +269,7 @@ A edição da newsletter foi redigida para levar ao guia com
 `utm_source=newsletter&utm_medium=email&utm_campaign=kit-de-emergencia`: os downloads vindos do e-mail aparecem
 cruzando o `kit_baixar` com a origem da sessão. Não publicado ainda (ver `scripts/publicacao-kit-pdf.txt`).
 
-## Convite para apoiar nos guias (19/11/2026, NÃO publicado)
+## Convite para apoiar nos guias (publicado em 19/11/2026)
 
 Os 16 guias de saúde e emergência (lista `CONVITE_APOIO` em `scripts/gerar_institucional.py`; fora dela, de propósito,
 `/onde-buscar-ajuda/`, os guias da escola e as páginas institucionais) ganham o convite em dois lugares: uma linha no
@@ -292,6 +292,37 @@ JavaScript, o link funciona igual, só sem os parâmetros. Exceção à regra do
 navegador em 19/11/2026 (servidor local).
 `origem` já é dimensão registrada. Os dois eventos são novos: não marcar como evento principal (são cliques, não
 doação nem ficha).
+
+## Um evento só para os pedidos de material: `material_pedido` (publicado em 21/11/2026)
+
+As 20 páginas que entregam um material depois do e-mail (a caixa `inst-material` de `scripts/gerar_institucional.py`:
+os guias de saúde e emergência com PDF, o kit Lei Lucas, o roteiro do plano de contingência, o guia do bombeiro civil,
+o guia dos cursos, o cartaz da Cruz Vermelha e o manual de identidade) mandam, quando o pedido é aceito, **dois**
+eventos ao GA4: o próprio de cada material, como antes, e um comum a todos. Publicado em 21/11/2026, com a
+autorização do responsável (`scripts/publicacao-material-pedido.txt`).
+
+| Momento | GA4 |
+| --- | --- |
+| Pedido do material aceito, na página do material | o evento próprio (`mochila_pedir`, `quandoligar_pedir`, `leilucas_pedir`…, origem = `pagina`) **e** `material_pedido` (origem = `pagina`, tipo = o campo `material` do formulário, por exemplo `quando-ligar-192`) |
+
+Por quê: o Google Ads só conta como conversão o que é importado, um a um, na tela dele (o evento principal do GA4 vira
+ação de conversão), e a propriedade do GA4 aceita 30 eventos principais (já eram 23 em 20/11/2026). Com um nome só,
+uma única importação cobre todos os materiais, os de hoje e os que vierem. O evento próprio continua para ver cada
+material em separado no GA4; `origem` e `tipo` já são dimensões registradas.
+
+- **GA4:** `material_pedido` marcado como evento principal em 21/11/2026 (propriedade 544248603). Na lista de
+  importação do Google Ads ele só aparece depois de o Google propagar a marcação (a ajuda fala em 24 a 48 horas).
+- **Google Ads:** importar `material_pedido` e `kit_baixar` (a página do kit de emergência entrega o PDF sem pedir
+  e-mail, por isso tem evento à parte). **Não** importar junto os `…_pedir` de cada material (`mochila_pedir`,
+  `leilucas_pedir`, `contingencia_pedir`): contaria o mesmo pedido duas vezes. O `kit_pedir` é só da caixa das
+  matérias e não vem de anúncio.
+- A caixa das matérias (gerada pelo Palácio Virtual, `origem = materia`) **não** manda `material_pedido`: lá segue só o
+  evento próprio.
+- Sem JavaScript o pedido funciona igual, pela página de resposta da Redação, e nenhum dos dois eventos sai.
+
+Conferido num Chromium com tela de celular, em 20/11/2026 no servidor local e em 21/11/2026 no ar, com o pedido à
+Redação simulado (nada gravado) e os envios de medição barrados: a fila da página recebe o evento próprio e o
+`material_pedido`, com `tipo` certo. As 20 páginas no ar ficaram iguais ao repositório, byte a byte.
 
 ## Pagar tudo, passo 5: venda de tudo à vista ligada (10/10/2026)
 

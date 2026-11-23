@@ -1,0 +1,47 @@
+# Um evento só para os pedidos de material (20/11/2026): nas 20 páginas com a caixa de material por e-mail
+# (inst-material, em scripts/gerar_institucional.py), o pedido aceito passa a mandar ao GA4, junto com o evento próprio
+# (mochila_pedir, quandoligar_pedir…), o evento comum material_pedido (origem = pagina, tipo = o material). É uma linha
+# no script da caixa (MATERIAL_JS), que vai dentro de cada página: nenhum .css, .js nem imagem muda, e nada muda na
+# tela nem no pedido à Redação. Motivo e uso no Google Ads: docs/rastreamento.md.
+# ESTADO: PUBLICADO em 21/11/2026, às 17h32 (horário de Brasília), a partir de 4db269a (branch
+# claude/affectionate-mendel-vxtxq5), com a autorização do responsável. Cópia do ar tirada antes (20 arquivos, iguais
+# ao Git em cb045bd; nenhum novo). Cache limpo pela API da hospedagem. Conferido no ar: as 20 páginas iguais ao
+# repositório, byte a byte; /kit-de-emergencia/ e /quem-somos/ sem o evento; em celular simulado, com o pedido à
+# Redação simulado e os envios de medição barrados, saem o evento próprio e o material_pedido (origem = pagina, tipo
+# certo). No GA4, material_pedido foi marcado como evento principal em 21/11/2026. A parte "== API" de
+# conferir_publicacao.sh (matrícula) não foi rodada: esta publicação não toca na matrícula.
+# O ar antes da publicação: as 20 páginas no ar eram iguais, byte a byte, ao Git em cb045bd (conferido em 20/11/2026
+# por HTTP). Publicar só leva a linha nova.
+# Gerar antes (só confirma; os arquivos já vêm gerados no commit): python3 scripts/gerar_institucional.py
+#   e git status deve continuar limpo. "Atualizado em" das páginas não muda.
+# ORDEM: as páginas com anúncio ligado primeiro, depois as dos quatro guias que ganham anúncio, depois as demais. A
+# ordem entre elas não quebra nada: cada página é independente.
+# Antes, a cópia do ar (volta atrás):
+#   scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar-material-pedido $(grep -vE '^(#|$)' scripts/publicacao-material-pedido.txt)
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-material-pedido.txt)
+# Depois: limpar o cache do site e conferir com scripts/conferir_publicacao.sh scripts/publicacao-material-pedido.txt
+#   ("== Estáticos iguais ao repositório" tem de dar ok nas 20; a parte da API é da matrícula e não muda aqui).
+#   Sitemaps: não precisam (nenhuma página nova nem endereço novo).
+# Desfazer (a versão anterior vem do Git; nenhuma página é nova):
+#   scripts/desfazer_publicacao.sh cb045bd scripts/publicacao-material-pedido.txt
+# Depois de desfazer, limpar o cache. No Google Ads, a ação de conversão material_pedido para de receber pedidos.
+site/mochila-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/queimaduras/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/lei-lucas-para-escolas/index.html
+site/plano-familiar-de-emergencia/index.html
+site/quando-ligar-192/index.html
+site/verao-seguro/index.html
+site/acidentes-em-casa/index.html
+site/febre-em-crianca/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/intoxicacao-alimentar/index.html
+site/checklist-dengue/index.html
+site/cuidador-de-idosos/index.html
+site/onde-buscar-ajuda/index.html
+site/plano-de-contingencia/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/manual-de-identidade/index.html

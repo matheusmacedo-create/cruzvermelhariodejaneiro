@@ -780,6 +780,8 @@
             liberar('Pronto! Toque no botão abaixo para baixar. Também enviamos o link para o seu e-mail (confira a caixa de spam).');
             try { localStorage.setItem(chave, '1'); } catch (e) {}
             try { if (typeof gtag === 'function') gtag('event', caixa.getAttribute('data-evento'), { origem: 'pagina' }); } catch (e) {}
+            // Um evento só para todos os materiais (20/11/2026): é o que o Google Ads importa, em vez de um por guia.
+            try { if (typeof gtag === 'function') gtag('event', 'material_pedido', { origem: 'pagina', tipo: String(d.get('material') || '') }); } catch (e) {}
             var a = baixar.querySelector('a'); if (a) a.focus();
           } else {
             r.setAttribute('data-erro', '1'); r.textContent = (resp && resp.erro) || 'Não foi possível concluir agora. Tente de novo.';
