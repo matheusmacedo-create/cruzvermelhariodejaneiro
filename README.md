@@ -1867,7 +1867,9 @@ Pedido do responsável: "coloca o PRO12 na recuperação da Lei Lucas também".
 
 Pedido do responsável: "adicionar mensagem automática nesses números avisando que eles são apenas para divulgação dos
 cursos e não são capazes de prestar atendimento; é necessário entrar em contato com o número da secretaria".
-**Situação: construído e testado só na máquina; NADA foi publicado.**
+**Situação: publicado em 23/11/2026 às 9h56, com autorização do responsável (os três arquivos no ar conferidos byte a
+byte com o repositório, e `conferir_publicacao.sh` com "Tudo certo"). Ainda NÃO responde ninguém: falta ligar o
+recebimento de respostas no número em uso, pelo painel (abaixo). Nenhuma mensagem real foi testada.**
 
 - **Por quê**: de 02/11 a 22/11/2026, 50 pessoas escreveram para o número dedicado (86 mensagens; 18 com dúvida de
   pagamento, data ou valor) e nenhuma teve resposta: o número só manda modelos, ninguém atende por ele.
@@ -1905,7 +1907,10 @@ cursos e não são capazes de prestar atendimento; é necessário entrar em cont
   o texto e o número da secretaria, uma por dia, lote, áudio de desconhecido, reação, mensagem antiga, quem pede para
   parar, recusa da Kapso, 23 h × 25 h e o painel). Os outros testes que usam o mesmo webhook seguem passando
   (e-mail 64, matrícula pendente 53, oferta a ex-alunos 37, bazar 64, avisos 185).
-- **Publicar**: `scripts/publicacao-resposta-automatica.txt` e conferir com `scripts/conferir_publicacao.sh`.
+- **Publicar**: `scripts/publicacao-resposta-automatica.txt` e conferir com `scripts/conferir_publicacao.sh`. O
+  `api/config.example.php` ficou de fora: o do servidor é uma versão antiga, diferente de todas as do Git (sem nenhuma
+  chave preenchida), e é só documentação. Para desfazer: `scripts/desfazer_publicacao.sh d15bdc0
+  scripts/publicacao-resposta-automatica.txt`.
 
 ## Cupom de desconto no checkout (30/10/2026)
 

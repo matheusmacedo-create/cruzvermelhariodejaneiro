@@ -1,8 +1,9 @@
 # Resposta automática do número de divulgação (23/11/2026): quem escreve para o número dedicado da Kapso recebe na hora
 # o aviso de que ele é só de divulgação dos cursos, com o WhatsApp da secretaria, (21) 99992-2864. Uma por celular a
 # cada 24 h; quem pediu para parar não recebe. Detalhes no README, "Resposta automática do número de divulgação".
-# SEM MIGRAÇÃO. Ordem: a biblioteca antes do painel (que chama uma função nova dela); o webhook e o exemplo de
-# configuração só mudaram o comentário.
+# SEM MIGRAÇÃO. Ordem: a biblioteca antes do painel (que chama uma função nova dela); o webhook só mudou o comentário.
+# O api/config.example.php fica de fora: é só documentação, e o do servidor é uma versão antiga, diferente de todas as
+# do Git (conferido em 23/11/2026: sem nenhuma chave preenchida).
 # Publicar FORA do minuto 7 (a rodada roda às hh:07).
 # DEPOIS de publicar: abrir api/recuperacao.php logado e tocar em "Ligar o recebimento de respostas". Em 23/11/2026 o
 # webhook da Kapso estava só no número antigo; sem ele no número em uso, a resposta automática não sai. O painel tem de
@@ -13,4 +14,3 @@
 site/matricula-cursos-presenciais/api/lib/recuperacao_whatsapp.php
 site/matricula-cursos-presenciais/api/recuperacao.php
 site/matricula-cursos-presenciais/api/kapso-webhook.php
-site/matricula-cursos-presenciais/api/config.example.php
