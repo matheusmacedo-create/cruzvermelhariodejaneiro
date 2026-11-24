@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=block" rel="stylesheet">
+<style>
+:root{--red:#e30613;--ink:#141414}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#111}
+.b{position:relative;overflow:hidden;color:#fff;background:#151515;width:1080px;height:1350px}
+.foto{position:absolute;top:0;left:0;right:0;height:450px;background:url(../banners-turmas-nov-dez-2026/img/lei-lucas.jpg) center 38%/cover no-repeat}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,21,.05) 30%,#151515 100%)}
+.logo{background:#fff;display:inline-block;border-radius:0 0 22px 0;position:absolute;top:0;left:0;z-index:3;padding:28px 44px 28px 60px}
+.logo img{display:block;height:72px}
+.txt{position:relative;z-index:2;padding:316px 60px 0}
+.tag{display:inline-block;background:var(--red);font:700 25px/1 Inter;letter-spacing:.26em;padding:.6em .8em .6em 1em;border-radius:6px;text-transform:uppercase}
+.antes{font:600 38px/1.2 Inter;margin-top:26px;color:#f1f1f1}
+h1{font-family:"Barlow Condensed";font-weight:800;font-size:124px;line-height:.88;text-transform:uppercase;margin-top:10px}
+h1 span{display:block;color:var(--red)}
+.preco{display:flex;align-items:flex-end;gap:34px;margin-top:34px}
+.de{font:600 34px/1.15 Inter;color:#bdbdbd;padding-bottom:22px}
+.de s{display:block;font:700 62px/1 "Barlow Condensed";color:#d6d6d6;text-decoration-thickness:5px;text-decoration-color:var(--red)}
+.por{font:700 40px/1 Inter;padding-bottom:30px}
+.valor{font-family:"Barlow Condensed";font-weight:800;font-size:216px;line-height:.8;letter-spacing:-.01em;display:flex;align-items:flex-start;gap:14px}
+.valor small{font-size:84px;line-height:1;margin-top:10px}
+.incluso{font:600 30px/1.3 Inter;margin-top:26px;color:#f1f1f1}
+.incluso b{background:#fff;color:var(--ink);border-radius:8px;padding:2px 14px;font-weight:800;letter-spacing:.04em}
+.aviso{margin-top:26px;border-left:8px solid var(--red);padding:6px 0 6px 24px;font:500 31px/1.32 Inter;color:#e9e9e9}
+.aviso b{color:#fff;font-weight:700}
+.pe{position:absolute;left:60px;right:60px;bottom:52px;display:flex;align-items:center;justify-content:space-between;gap:24px;z-index:2}
+.det{font:600 23px/1.4 Inter;letter-spacing:.1em;text-transform:uppercase;color:#cfcfcf}
+.cta{display:inline-flex;align-items:center;background:#fff;color:var(--ink);font:700 27px/1 Inter;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;padding:11px 11px 11px 34px;gap:20px;white-space:nowrap}
+.cta i{background:var(--red);border-radius:50%;display:grid;place-items:center;font-style:normal;color:#fff;width:58px;height:58px;font-size:32px}
+.barra{position:absolute;left:0;bottom:0;height:14px;width:100%;background:var(--red)}
+</style></head><body>
+<div class="b" id="cartao">
+  <div class="foto"></div>
+  <div class="logo"><img src="../banners-turmas-nov-dez-2026/img/logo.png" alt=""></div>
+  <div class="txt">
+    <span class="tag">Curso presencial</span>
+    <p class="antes">Inscreva-se na próxima turma de</p>
+    <h1>Primeiros Socorros <span>Lei Lucas</span></h1>
+    <div class="preco">
+      <div class="de">de <s>R$ 249</s></div>
+      <div class="por">por</div>
+      <div class="valor"><small>R$</small>140</div>
+    </div>
+    <p class="incluso">Com tudo incluso, usando o cupom <b>PRO12</b></p>
+    <p class="aviso"><b>Preço promocional.</b><br>Não sabemos até quando o desconto vai ficar.</p>
+  </div>
+  <div class="pe">
+    <p class="det">8 horas · presencial<br>Centro do Rio · com certificado</p>
+    <span class="cta">Saiba mais <i>→</i></span>
+  </div>
+  <div class="barra"></div>
+</div>
+</body></html>
