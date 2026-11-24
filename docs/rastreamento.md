@@ -158,8 +158,9 @@ escolha, rejeitar, aceitar e quem já tinha aceitado):
 - **Faltava o segundo conjunto de dados da Meta** (`1580762603752102`, o que a conta de anúncios enxerga): a página foi
   gerada da `main`, antes de o branch do segundo conjunto ser juntado, e foi ao ar só com o primeiro. Corrigido no
   repositório (o branch do segundo conjunto foi juntado a este e a página regerada: os dois `fbq('init')`), com quatro
-  cenários da página em `scripts/conferir_pixel.js` (19 de 19 com `--repositorio`). **A página corrigida ainda não foi
-  publicada**: até lá, os anúncios da Meta que apontarem para ela não veem `PageView` nem `ViewContent` nesse conjunto.
+  cenários da página em `scripts/conferir_pixel.js` (19 de 19 com `--repositorio`). **Republicada no mesmo dia** e
+  conferida no ar: 19 de 19, `PageView` e `ViewContent` da página nos dois conjuntos. Entre a primeira publicação e a
+  correção (cerca de duas horas), a página só mandou eventos ao primeiro conjunto.
 - Visto e não mexido: no checkout, `InitiateCheckout` e `begin_checkout` saem com value 249 mesmo com o cupom que leva a
   140 (o valor é o do carregamento, antes de o cupom ser aplicado); o `Purchase` leva o valor pago.
 - Quatro visitas de teste chegaram ao GA4 de verdade (endereço com `conferir=1` ou `utm_source=teste-medicao`), com

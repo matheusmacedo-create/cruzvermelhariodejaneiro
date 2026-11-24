@@ -166,9 +166,11 @@ num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas,
   links e imagens respondem 200; JSON-LD válido (`validar_jsonld.py`); o link do botão abre o checkout real com
   "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". **Não testado:** as três regras novas do `.htaccess` (não há
   Apache/LiteSpeed aqui) e um pagamento de verdade vindo da página.
-- **Pendente (24/11/2026, fim do dia): republicar o `index.html`.** A página no ar inicia só o primeiro conjunto de dados
-  da Meta; o segundo (`1580762603752102`, o da conta de anúncios) entrou no repositório depois e a página regerada já o
-  tem. Conferência completa da medição em `docs/rastreamento.md`.
+- **Republicado em 24/11/2026 com os dois conjuntos de dados da Meta** ("sim, pode republicar com os dois pixels"): a
+  primeira publicação tinha ido só com o primeiro; o segundo (`1580762603752102`, o da conta de anúncios) entrou no
+  repositório depois. Só o `index.html` da página, cache limpo, página no ar idêntica ao Git em `d129786`, e
+  `scripts/conferir_pixel.js` no ar: 19 de 19, com cada evento nos dois conjuntos. Conferência completa da medição em
+  `docs/rastreamento.md`.
 - **Publicado em 24/11/2026**, com a autorização do Matheus ("publique a página, você tem autorização"), na ordem de
   `scripts/publicacao-escola-presencial.txt`: imagem, página e, por último, o `.htaccess` da raiz. Antes, cópia do que
   estava no ar: os dois arquivos da página eram novos e o `.htaccess` do servidor era igual ao do Git em `ebf1995`, só
