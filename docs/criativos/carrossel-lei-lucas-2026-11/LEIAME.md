@@ -44,8 +44,11 @@ Reserva: reserva_L_batalhao_DF (PMs salvam bebê no batalhão, DF, 22 s).
 
 ## Narração e legenda
 
-- Voz: ElevenLabs, voz "Sarah" (a da filial, a mesma das matérias) e o modelo de narração do projeto
-  (`eleven_v4`), pedida com o tempo de cada letra: a legenda sai desse tempo, no ponto da fala.
+- Voz: ElevenLabs, voz brasileira nativa "Ana Dias" (biblioteca de vozes; `VOZ_ID` troca) e o modelo de
+  narração do projeto (`eleven_v4`), pedida com o tempo de cada letra: a legenda sai desse tempo, no ponto da
+  fala. A primeira versão usou a "Sarah" da filial, que é americana e lê português com sotaque: não ficou
+  natural (retorno do Matheus, 24/11/2026). Para anúncio, só voz nativa.
+- O cartão final com voz sai de `cartao_voz.py`, com a mesma voz.
 - O texto de cada fala está em `montar.py` (`NARRADOS`). A barra `|` marca onde a legenda troca de bloco e
   não vai para a voz. O número antes da fala é o segundo em que ela entra, para casar com a cena.
 - Depoimentos: a fala é a original, cortada para começar na aluna, com redução de ruído e volume nivelado; a

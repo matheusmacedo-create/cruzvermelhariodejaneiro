@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Fala um texto pela ElevenLabs (voz "Sarah", a da filial; modelo de narração do projeto) e guarda MP3 + tempos.
+"""Fala um texto pela ElevenLabs (voz brasileira nativa; modelo de narração do projeto) e guarda MP3 + tempos.
 A chave não passa por aqui: o proxy do ambiente põe o cabeçalho."""
 import base64, hashlib, json, os, sys, urllib.request
 API = 'https://api.elevenlabs.io'
-VOZ = os.environ.get('VOZ_ID', 'EXAVITQu4vr4xnSDxMaL')
+# Voz brasileira nativa da biblioteca da ElevenLabs ("Ana Dias"). A "Sarah" da filial (EXAVITQu4vr4xnSDxMaL) é
+# americana e lê português com sotaque: serviu para testar, não para anúncio. VOZ_ID troca.
+VOZ = os.environ.get('VOZ_ID', 'MZxV5lN3cv7hi1376O0m')
 MODELO = os.environ.get('MODELO', 'eleven_v4')
 def falar(texto, pasta, anterior='', seguinte=''):
     chave = hashlib.sha256('\0'.join([VOZ, MODELO, texto, anterior, seguinte]).encode()).hexdigest()[:20]
