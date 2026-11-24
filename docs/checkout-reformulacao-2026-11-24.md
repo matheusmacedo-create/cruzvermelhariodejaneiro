@@ -133,6 +133,20 @@ do que estava no ar: os três arquivos do servidor eram iguais aos do Git. Cache
 (`amount_centavos: 14000`) e `motivo: desligado`; as 29 verificações do checkout sem falha; matrícula, página do curso e
 as três páginas de reembolso abrem sem erro, e nenhuma mostra parcelas ao comprador enquanto a chave está desligada.
 
-**Estado em 24/11/2026, fim do dia: a chave do servidor continua em 1** (`info.php`: `parcelas_max: 1`,
-`parcelado_no_ar: false`). O parcelamento passa a valer quando o responsável puser `'PARCELAS_MAX' => 12` em
-`api/config-pagar-tudo.php`.
+**Chave ligada em 24/11/2026**, a pedido do Matheus ("pode ler e regravar o api/config-pagar-tudo.php no servidor").
+O arquivo foi copiado do ar, só a linha `'PARCELAS_MAX'` mudou (1 → 12; as outras sete chaves ficaram iguais, conferido
+chave a chave) e voltou por TUS direto, porque o `publicar_hostinger.sh` recusa `api/config*.php` de propósito. No
+servidor ficou byte a byte o arquivo novo; pela web ele segue respondendo 403. Volta rápida: `'PARCELAS_MAX' => 1`.
+
+Conferido no ar com a chave ligada (`parc-ar.js`, 11 verificações, envio do pagamento interceptado, nada cobrado):
+`info.php` responde `parcelas_max: 12`, `parcelado_no_ar: true`; o checkout no Crédito mostra 12 opções com e sem cupom;
+o envio sai com `parcelas: 12`, `cupom: PRO12` e o total mostrado; a página do curso mostra "ou em até 12x no cartão,
+com juros"; nenhuma tela com erro de JavaScript nem rolagem lateral em 390 px.
+
+**A taxa da Unicopag não é 2,99% ao mês: é 2,99% sobre o total, igual de 2x a 12x.** A simulação do ar devolve, para
+R$ 140,00, total de R$ 144,19 em qualquer número de parcelas (12 × R$ 12,01; 0,46% ao mês; CET 5,62% ao ano) e, para
+R$ 249,00, total de R$ 256,45. A conta feita antes de ligar (12 × R$ 14,06, total R$ 168,72) supunha 2,99% ao mês e não
+vale. A tela mostra o que a Unicopag simula, então o aluno vê o valor certo; o que muda é quanto de juros entra. Se a
+intenção era 2,99% ao mês, o ajuste é na conta da Unicopag (o site acompanha sozinho). Avisado ao Matheus.
+
+Continua sem teste: nenhuma cobrança parcelada real foi feita.
