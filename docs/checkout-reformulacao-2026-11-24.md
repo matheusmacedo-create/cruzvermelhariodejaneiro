@@ -4,7 +4,12 @@ Pedido do Matheus: "faça uma refatoração no checkout da página e entenda com
 Mudou só a tela (`scripts/gerar_checkout.py`, `static/checkout.js`, `static/checkout.css`). Nada mudou no servidor, no
 pagamento, nos valores nem nos textos legais.
 
-**ESTADO: no branch, NÃO publicado.** É o fluxo de pagamento: vai ao ar com o OK do responsável.
+**ESTADO: PUBLICADO em 24/11/2026**, com o OK do Matheus ("sim, pode publicar o checkout reformulado"), na ordem de
+`scripts/publicacao-checkout-reformulado.txt` (os dois estáticos antes das sete telas). Antes, cópia do que estava no ar:
+as telas eram as do repositório, só com o `checkout.js` de 17/11. Cache limpo. No ar: `scripts/conferir_publicacao.sh`
+"Tudo certo" (os 9 arquivos idênticos ao Git em `7395e10`, API respondendo, configurações bloqueadas); as 29
+verificações de tela, com o pagamento respondido no teste; `conferir_ga4_conversoes.js` 3 de 3 e `conferir_pixel.js`
+19 de 19. Nenhum pagamento de verdade foi feito no teste.
 
 ## O que os números mostraram (GA4, 27/10 a 24/11/2026)
 

@@ -117,7 +117,7 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
-## Checkout reformulado para converter mais (24/11/2026, NÃO publicado)
+## Checkout reformulado para converter mais (publicado em 24/11/2026)
 
 De cerca de 290 pessoas que chegaram ao checkout em 27/10 a 24/11/2026, 50 começaram a preencher, 33 enviaram e 24
 pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o aceite obrigatório era o erro mais comum. A
