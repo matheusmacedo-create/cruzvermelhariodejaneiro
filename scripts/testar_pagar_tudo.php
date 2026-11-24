@@ -299,7 +299,8 @@ v('oferta.json do repositório vale', (static function () use ($raiz): bool {
     sort($slugs);
     $fila = array_keys($o['sem_turma']);
     sort($fila);
-    return $o['parcelado_no_ar'] === false && $fila === $slugs;
+    // 24/11/2026: "parcelado_no_ar" passou a true (passo 6 publicado); quem liga de fato é PARCELAS_MAX no servidor.
+    return $o['parcelado_no_ar'] === true && $fila === $slugs;
 })(), true);
 
 // --- cenários de chave em processo próprio (mcp_config guarda num static)

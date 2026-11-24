@@ -150,3 +150,15 @@ vale. A tela mostra o que a Unicopag simula, então o aluno vê o valor certo; o
 intenção era 2,99% ao mês, o ajuste é na conta da Unicopag (o site acompanha sozinho). Avisado ao Matheus.
 
 Continua sem teste: nenhuma cobrança parcelada real foi feita.
+
+**Desligado de novo em 24/11/2026, cerca de uma hora depois.** O Matheus respondeu que a taxa está errada ("coloque
+2,99 ao mês, se não irá gerar suporte"). O site não escolhe a taxa: manda à Unicopag o valor sem juros e o número de
+parcelas (`mcp_montar_cobranca`), e a conta da Unicopag soma os juros; não há documentação pública da API com um campo
+de taxa por cobrança. Por isso `'PARCELAS_MAX'` voltou para 1 no servidor (o arquivo ficou igual, chave a chave, ao de
+antes de ligar) e `info.php` voltou a responder `parcelas_max: 1`, `parcelado_no_ar: false`: cartão só à vista, nenhuma
+página fala em parcelas. O código e as páginas do parcelado continuam publicados.
+
+**Para religar:** acertar o parcelamento na conta da Unicopag para 2,99% ao mês, pôr `'PARCELAS_MAX' => 12` e conferir
+`api/parcelas.php?curso=primeiros-socorros-lei-lucas&cupom=PRO12`: com 2,99% ao mês pela tabela Price, R$ 140,00 em 12x
+dá 12 × R$ 14,06, total R$ 168,72. Se a simulação não mostrar isso, voltar para 1. Não deu para saber daqui se alguém
+comprou parcelado na hora em que ficou ligado: conferir no painel da Unicopag (compras de 24/11 no cartão, 2x ou mais).

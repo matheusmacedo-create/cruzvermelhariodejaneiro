@@ -40,7 +40,9 @@ const MCP_CUPONS = [
     // turma: 4 foram usadas na de 12/11, então vai a 14, para a de dezembro ter as 10.
     // 18/11/2026: o valor passa de R$ 120,00 para R$ 140,00 com tudo incluso (pedido do Matheus): taxa R$ 99 + matrícula
     // R$ 41, desconto de R$ 109 sobre os R$ 249 da tabela. Quem já pagou R$ 120,00 não muda. O código continua PRO12.
-    'PRO12' => ['cursos' => ['primeiros-socorros-lei-lucas'], 'total_centavos' => 14000, 'limite' => 14, 'ate' => '2026-12-08T23:59:59-03:00', 'vitrine' => true],
+    // 24/11/2026: o limite vai de 14 para 24 (pedido do Matheus, para anunciar a página /escola-presencial/lei-lucas/):
+    // restava 1 dos 14, ficam 11. O prazo não muda.
+    'PRO12' => ['cursos' => ['primeiros-socorros-lei-lucas'], 'total_centavos' => 14000, 'limite' => 24, 'ate' => '2026-12-08T23:59:59-03:00', 'vitrine' => true],
     // Curativos e Tratamento de Feridas por R$ 150,00 com tudo incluso em novembro (06/11/2026): o preço da escola, que
     // vende o curso sem taxa de inscrição neste mês; aqui o curso tem o preço padrão (R$ 150 + R$ 99) e a promoção é o cupom.
     'CURATIVOS' => ['cursos' => ['curativos-e-tratamento-de-feridas'], 'total_centavos' => 15000, 'limite' => null, 'ate' => '2026-11-30T23:59:59-03:00', 'vitrine' => true],

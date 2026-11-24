@@ -124,7 +124,8 @@ pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o acei
 tela foi reorganizada (curso do link numa linha, topo mais baixo, erro junto do campo, aceite colado ao botão, cupom e
 opcionais mais enxutos), sem mexer no servidor nem no pagamento: o primeiro campo foi de 1.013 px para 495 px e o botão
 de 3.252 px para 2.507 px. No mesmo dia, o parcelamento no cartão em até 12x passou a valer também com cupom (código e
-páginas publicados e a chave `PARCELAS_MAX = 12` ligada no servidor; a Unicopag cobra 2,99% sobre o total, não ao mês). Diagnóstico, mudanças,
+páginas publicados; a chave `PARCELAS_MAX` foi a 12 e voltou a 1 no mesmo dia, porque a conta da Unicopag cobra 2,99%
+sobre o total, não ao mês: religar só depois de acertar a taxa lá). Diagnóstico, mudanças,
 testes e listas de publicação: [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
 
 ## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
@@ -147,9 +148,9 @@ num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas,
   botão de compra, com "Ver as próximas turmas"). O relógio do navegador decide antes da primeira pintura e o
   `info.php` corrige; "restam N cupons" é o número do servidor e não aparece sem resposta. Se o valor do cupom mudar no
   `cupons.php` sem a página ser regerada, os preços da tela seguem o `info.php`.
-- **Atenção, cupons**: em 24/11/2026 o `info.php` dizia **restam 2 de 14** cupons `PRO12`. Com o cupom esgotado a página
-  passa sozinha ao preço de tabela. Para vender mais vagas a R$ 140,00, aumentar o `'limite'` do `PRO12` e publicar o
-  `cupons.php` antes da página (decisão do responsável; não foi mexido).
+- **Atenção, cupons**: em 24/11/2026 restava 1 dos 14 cupons `PRO12`, e o limite subiu para **24** no mesmo dia (pedido
+  do Matheus; `cupons.php` publicado, `info.php` conferido: restam 11). Com o cupom esgotado a página passa sozinha ao
+  preço de tabela. Para vender mais vagas a R$ 140,00, aumentar de novo o `'limite'` do `PRO12` e publicar o `cupons.php`.
 - **Depoimentos** (24/11/2026, pedido do Matheus): a seção "O que dizem os alunos" traz quatro comentários que a Escola
   já publica em `escola.cursoscruzvermelha.org/#depoimentos` (pesquisa de satisfação ao fim de cada turma), copiados
   palavra por palavra, com o nome abreviado, o curso e a nota: um de quem fez a Lei Lucas, em destaque, e três de
