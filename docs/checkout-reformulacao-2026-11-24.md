@@ -167,5 +167,5 @@ comprou parcelado na hora em que ficou ligado: conferir no painel da Unicopag (c
 para religar. Com a chave em 12, a simulação continuou devolvendo 2,99% sobre o total (R$ 140,00 → R$ 144,19 em
 qualquer número de parcelas), inclusive para valores nunca consultados (R$ 147,00 → R$ 151,40), o que descarta o cache
 de 10 minutos do site. A chave voltou para 1 em menos de um minuto. Estado: cartão só à vista. Para a Unicopag: em
-2,99% ao mês (tabela Price) o acréscimo sobre o total é 4,51% em 2x, 9,23% em 5x, 10,82% em 6x, 15,75% em 9x e 20,51%
-em 12x.
+2,99% ao mês (tabela Price) o acréscimo sobre o total é 4,51% em 2x, 6,04% em 3x, 7,59% em 4x, 9,15% em 5x, 10,72% em
+6x, 12,31% em 7x, 13,92% em 8x, 15,54% em 9x, 17,17% em 10x, 18,82% em 11x e 20,48% em 12x.
