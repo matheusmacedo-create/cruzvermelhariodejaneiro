@@ -93,6 +93,31 @@ LEI_PEDE = [
     "A comprovação, com o nome dos capacitados, afixada em lugar visível.",
 ]
 
+# Depoimentos: os que a Escola publica em https://escola.cursoscruzvermelha.org/#depoimentos ("Comentários de quem fez
+# os cursos, enviados na pesquisa de satisfação ao fim de cada turma"), copiados em 24/11/2026 palavra por palavra, com
+# o nome abreviado, o curso e a nota que a Escola mostra. Só foi acrescentado o espaço que faltava depois de uma vírgula
+# no primeiro. Nunca inventar, resumir, juntar nem trocar o curso de um depoimento: o da Lei Lucas vem primeiro e os de
+# Primeiros Socorros Básico aparecem com o nome do curso que a pessoa fez.
+# "autorizacao" segue a regra D8 da matrícula (gerar_matricula_presencial.py, PROVA): antes de publicar, a Escola
+# confirma que a autorização dada na pesquisa cobre este site. Sem isso, esvazie a lista: a seção some sozinha.
+DEPOIMENTOS_FONTE = "https://escola.cursoscruzvermelha.org/#depoimentos"
+DEPOIMENTOS = [
+    {"nome": "Keila E.", "curso": "Primeiros Socorros Lei Lucas - Ambientes com Crianças", "nota": 5,
+     "texto": "Foi uma experiência maravilhosa de muito conhecimento e aprendizado com uma equipe incrível, valeu a pena cada minuto.",
+     "autorizacao": "publicado pela Escola no site dela (pesquisa de satisfação); confirmar o uso neste site antes de publicar"},
+    {"nome": "Lilian R.", "curso": "Primeiros Socorros Básico", "nota": 5,
+     "texto": ("O curso de primeiros socorros foi fundamental, pois nos preparou para agir com rapidez e segurança em situações de "
+               "emergência. Saber como ajudar alguém pode fazer a diferença entre a vida e a morte. Parabéns ao professor pela "
+               "excelente didática!"),
+     "autorizacao": "publicado pela Escola no site dela (pesquisa de satisfação); confirmar o uso neste site antes de publicar"},
+    {"nome": "Mandy Y.", "curso": "Primeiros Socorros Básico", "nota": 5,
+     "texto": "O curso é extremamente prático e interativo. Me senti acolhido e menos ansioso pra enfrentar alguma ocorrência no dia a dia.",
+     "autorizacao": "publicado pela Escola no site dela (pesquisa de satisfação); confirmar o uso neste site antes de publicar"},
+    {"nome": "Michelle D.", "curso": "Primeiros Socorros Básico", "nota": 5,
+     "texto": "Maravilhoso, atividades práticas e muito conhecimento.",
+     "autorizacao": "publicado pela Escola no site dela (pesquisa de satisfação); confirmar o uso neste site antes de publicar"},
+]
+
 
 def ler_cupom() -> dict:
     """A linha do cupom em MCP_CUPONS (cupons.php é a fonte: o servidor cobra por ela)."""
@@ -223,7 +248,7 @@ def main() -> int:
             <div>
               <p class="ll-turma-dia"><span class="ll-sr">{esc(dia)}. </span><span aria-hidden="true">{esc(dia_curto.capitalize())}</span></p>
               <p class="ll-turma-hora">{esc(horario)} · Centro do Rio</p>
-              <p class="ll-dias ll-se-aberta" data-ll-dias hidden></p>
+              <p class="ll-dias ll-se-aberta"></p>
             </div>
           </div>{preco_topo}
           {selo_cupom}
@@ -303,6 +328,32 @@ def main() -> int:
           <li><b>02</b><h3>Receba as orientações.</h3><p>Antes da aula, você recebe por e-mail e na sua conta as orientações da turma: data, horário, local e o que vestir.</p></li>
           <li><b>03</b><h3>Venha para a aula.</h3><p>{esc(dia.capitalize())}, {esc(horario)}, na Praça da Cruz Vermelha, 10, no Centro do Rio.</p></li>
         </ol>
+      </div>
+    </section>'''
+
+    # --- depoimentos (só com 2 ou mais, todos com nome, curso, texto e autorização: regra D8 da matrícula) ---------------
+    depoimentos = ""
+    if len(DEPOIMENTOS) >= 2:
+        for d in DEPOIMENTOS:
+            if not all(d.get(k) for k in ("nome", "curso", "texto", "autorizacao")):
+                print("recusado: depoimento sem nome, curso, texto ou autorização registrada (D8)")
+                return 1
+        if DEPOIMENTOS[0]["curso"] != curso["nome"]:
+            print("recusado: o primeiro depoimento tem de ser de quem fez este curso")
+            return 1
+
+        def depoimento(d: dict, destaque: bool) -> str:
+            nota = int(d.get("nota") or 0)
+            estrelas = (f'<div class="ll-depo-nota" role="img" aria-label="Nota {nota} de 5">{ESTRELA * nota}</div>' if 1 <= nota <= 5 else "")
+            return (f'<li><figure class="ll-depo{" ll-depo-destaque" if destaque else ""}">{estrelas}<blockquote>“{esc(d["texto"])}”</blockquote>'
+                    f'<figcaption><b>{esc(d["nome"])}</b><span>{esc(d["curso"])}</span></figcaption></figure></li>')
+        depoimentos = f'''
+    <section class="ll-secao ll-depo-secao" id="depoimentos" aria-labelledby="depo-titulo" data-secao="depoimentos">
+      <div class="ll-wrap">
+        <p class="ll-kicker">Depoimentos</p>
+        <h2 id="depo-titulo">O que dizem os alunos.</h2>
+        <p class="ll-sub">Comentários de quem fez os cursos de primeiros socorros da Escola, enviados na pesquisa de satisfação ao fim de cada turma.</p>
+        <ul class="ll-depos">{"".join(depoimento(d, i == 0) for i, d in enumerate(DEPOIMENTOS))}</ul>
       </div>
     </section>'''
 
@@ -491,12 +542,19 @@ def main() -> int:
     # --- estado antes da primeira pintura --------------------------------------------------------------------------
     estado_js = ("(function(){var d=document.documentElement;d.className+=(d.className?' ':'')+'js';try{"
                  f"var a=Date.now(),T={int(turma.inscricoes_ate.timestamp() * 1000)},C={int(cupom_ate.timestamp() * 1000)};"
-                 "d.setAttribute('data-oferta',a>T?'encerrada':a>C?'tabela':'cupom');}catch(e){}})();")
+                 "d.setAttribute('data-oferta',a>T?'encerrada':a>C?'tabela':'cupom');"
+                 # "Começa em N dias" pela data de Brasília, numa variável de CSS: o cartão já nasce com a linha (sem salto).
+                 "var hj;try{hj=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(a));}"
+                 "catch(e){hj=new Date(a-108e5).toISOString().slice(0,10);}"
+                 f"var h=hj.split('-'),i={json.dumps(turma.inicio.date().isoformat())}.split('-'),"
+                 "n=Math.round((Date.UTC(+i[0],i[1]-1,+i[2])-Date.UTC(+h[0],h[1]-1,+h[2]))/864e5);"
+                 "if(n>=0){d.style.setProperty('--ll-dias','\"'+(n===0?'Começa hoje':n===1?'Começa em 1 dia':'Começa em '+n+' dias')+'\"');d.setAttribute('data-ll-dias','1');}"
+                 "}catch(e){}})();")
     ga4 = partes["ga4"].replace("gtag('config', 'G-", "gtag('set', { content_group: 'escola' });\n    gtag('config', 'G-", 1)
     assert "content_group: 'escola'" in ga4, "não achei o gtag('config') da home para inserir o content_group"
     js = (JS.replace("__SLUG__", json.dumps(SLUG)).replace("__CUPOM__", json.dumps(CUPOM)).replace("__NOME__", json.dumps(curso["nome"], ensure_ascii=False))
           .replace("__API_INFO__", json.dumps(API_INFO)).replace("__LISTA__", json.dumps(LISTA_GA4, ensure_ascii=False))
-          .replace("__INICIO__", json.dumps(turma.inicio.isoformat())).replace("__DIA__", json.dumps(turma.inicio.date().isoformat()))
+          .replace("__INICIO__", json.dumps(turma.inicio.isoformat()))
           .replace("__TABELA__", str(tabela)).replace("__TOTAL_CUPOM__", str(cupom["total"])).replace("__MATRICULA__", str(matricula)))
     css = CSS.replace("@@FONTES@@", fontes_da_home(home))
     robots = "" if INDEXAR else '\n  <meta name="robots" content="noindex, follow">'
@@ -542,6 +600,7 @@ def main() -> int:
 {conteudo}
 {lei}
 {como}
+{depoimentos}
 {investimento}
 {certificado}
 {chegar}
@@ -587,6 +646,8 @@ def main() -> int:
     return 0
 
 
+ESTRELA = ('<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 '
+           '1.2-6.5L2.5 9.5l6.6-.9z"/></svg>')
 TAG_SVG = '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>'
 
 # --- CSS: o mesmo desenho da página de matrícula (vermelho, preto, Inter), com o prefixo ll- ------------------------
@@ -662,6 +723,9 @@ CSS = """
     .ll-hero::after{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(17,17,17,.42) 0, rgba(17,17,17,.74) 190px, #111 460px); }
     .ll-hero-grade{ display:grid; gap:24px; padding:28px 0 32px; }
     .ll-olho{ font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.86); display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; }
+    /* No celular a etiqueta e o complemento ficam sempre em duas linhas: numa só, a troca de fonte fazia o título pular. */
+    @media (max-width:650px){ .ll-olho{ display:grid; justify-items:start; gap:8px; } }
+    @media (min-width:651px){ .ll-olho{ flex-wrap:nowrap; white-space:nowrap; } }
     .ll-olho span{ background:var(--red); color:#fff; padding:5px 10px; border-radius:6px; letter-spacing:.14em; }
     .ll-hero h1{ font-size:clamp(30px, 8.4vw, 54px); line-height:1.06; letter-spacing:-.035em; font-weight:800; margin-top:14px; text-wrap:balance; }
     .ll-hero-lead{ margin-top:14px; font-size:17px; line-height:1.55; color:rgba(255,255,255,.9); max-width:56ch; }
@@ -675,7 +739,9 @@ CSS = """
     .ll-data span{ font-size:10.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
     .ll-turma-dia{ font-size:19px; font-weight:800; letter-spacing:-.02em; line-height:1.2; color:var(--titulo); }
     .ll-turma-hora{ font-size:15px; color:var(--texto); margin-top:3px; }
-    .ll-dias{ display:inline-flex; margin-top:6px; background:var(--green-bg); color:var(--green-ink); font-size:13px; font-weight:800; padding:4px 10px; border-radius:999px; }
+    .ll-dias{ display:none; margin-top:6px; background:var(--green-bg); color:var(--green-ink); font-size:13px; font-weight:800; padding:4px 10px; border-radius:999px; }
+    html[data-ll-dias] .ll-dias{ display:inline-flex; }
+    .ll-dias::before{ content:var(--ll-dias); }
     .ll-preco{ border-top:1px solid var(--line); padding-top:14px; }
     .ll-preco-de{ font-size:15px; font-weight:700; color:var(--muted); }
     .ll-preco-de s{ color:var(--texto); text-decoration-thickness:2px; text-decoration-color:var(--red); }
@@ -686,6 +752,7 @@ CSS = """
     .ll-preco-nota{ font-size:14.5px; color:var(--texto); margin-top:6px; }
     .ll-selo{ display:flex; gap:10px; align-items:flex-start; border:1.5px dashed var(--red); background:var(--aviso-bg); color:var(--aviso-ink); border-radius:16px; padding:11px 14px; font-size:14.5px; line-height:1.45; font-weight:600; }
     .ll-selo svg{ color:var(--red); margin-top:1px; }
+    @media (max-width:650px){ .ll-selo{ min-height:calc(3 * 1.45em + 25px); } }
     .ll-selo b{ font-weight:900; letter-spacing:.02em; }
     .ll-micro{ font-size:14px; color:var(--muted); text-align:center; }
     .ll-micro > .ll-link:only-child{ display:inline-flex; align-items:center; min-height:44px; font-size:16px; }
@@ -734,6 +801,21 @@ CSS = """
     .ll-passos b{ font-size:13px; font-weight:900; letter-spacing:.1em; color:var(--red); }
     .ll-passos h3{ font-size:19px; font-weight:800; letter-spacing:-.02em; margin-top:4px; color:var(--titulo); }
     .ll-passos p{ margin-top:6px; color:var(--texto); font-size:16px; }
+    .ll-depo-secao{ background:var(--escuro); color:#fff; }
+    .ll-depo-secao h2{ color:#fff; }
+    .ll-depo-secao .ll-kicker{ color:#ff5a6b; }
+    .ll-depo-secao .ll-sub{ color:rgba(255,255,255,.82); }
+    .ll-depos{ display:grid; gap:12px; margin-top:24px; }
+    .ll-depo{ height:100%; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); border-radius:20px; padding:20px; display:flex; flex-direction:column; gap:12px; }
+    .ll-depo-nota{ display:flex; gap:2px; color:#f5b301; }
+    .ll-depo-nota svg{ width:18px; height:18px; }
+    .ll-depo blockquote{ margin:0; font-size:17px; line-height:1.5; color:rgba(255,255,255,.94); }
+    .ll-depo figcaption{ margin-top:auto; display:grid; gap:2px; font-size:14.5px; color:rgba(255,255,255,.74); }
+    .ll-depo figcaption b{ font-size:16px; font-weight:800; color:#fff; }
+    .ll-depo-destaque{ background:#fff; border-color:#fff; }
+    .ll-depo-destaque blockquote{ color:var(--titulo); font-size:20px; font-weight:700; letter-spacing:-.015em; line-height:1.4; }
+    .ll-depo-destaque figcaption{ color:var(--texto); }
+    .ll-depo-destaque figcaption b{ color:var(--titulo); }
     .ll-sustenta{ margin-top:18px; font-size:14.5px; color:var(--muted); max-width:62ch; }
     .ll-inv{ background:#fff; border:1px solid var(--line); border-radius:24px; padding:22px 20px; box-shadow:0 16px 50px rgba(0,0,0,.05); display:grid; gap:14px; align-self:start; }
     .ll-inv dl{ display:grid; }
@@ -789,6 +871,10 @@ CSS = """
       .ll-publico{ grid-template-columns:repeat(2, 1fr); gap:16px; }
       .ll-aprender{ grid-template-columns:repeat(2, 1fr); }
       .ll-passos{ grid-template-columns:repeat(3, 1fr); gap:16px; }
+      .ll-depos{ grid-template-columns:repeat(3, 1fr); gap:16px; }
+      .ll-depos li:first-child{ grid-column:1 / -1; }
+      .ll-depo-destaque{ padding:28px; }
+      .ll-depo-destaque blockquote{ font-size:24px; max-width:44ch; }
       .ll-fotos li{ flex-basis:36%; }
       .ll-cartao,.ll-inv{ padding:28px 26px; }
     }
@@ -816,7 +902,7 @@ JS = """
   <script>
     (function () {
       var SLUG = __SLUG__, CUPOM = __CUPOM__, NOME = __NOME__, API_INFO = __API_INFO__, LISTA = __LISTA__;
-      var INICIO = __INICIO__, DIA = __DIA__, TABELA = __TABELA__, TOTAL_CUPOM = __TOTAL_CUPOM__, MATRICULA = __MATRICULA__;
+      var INICIO = __INICIO__, TABELA = __TABELA__, TOTAL_CUPOM = __TOTAL_CUPOM__, MATRICULA = __MATRICULA__;
       var raiz = document.documentElement;
       function todos(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
       function ga(evento, dados) { try { if (window.gtag) window.gtag('event', evento, dados || {}); } catch (e) {} }
@@ -831,16 +917,6 @@ JS = """
         if (estado() === 'cupom') i.coupon = CUPOM;
         return i;
       }
-
-      // "Começa em N dias", pela data de Brasília (como na página de matrícula).
-      try {
-        var hoje;
-        try { hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }
-        catch (e) { hoje = new Date(Date.now() - 108e5).toISOString().slice(0, 10); }
-        var h = hoje.split('-'), i = DIA.split('-');
-        var n = Math.round((Date.UTC(+i[0], i[1] - 1, +i[2]) - Date.UTC(+h[0], h[1] - 1, +h[2])) / 864e5);
-        if (n >= 0) todos('[data-ll-dias]').forEach(function (el) { el.textContent = n === 0 ? 'Começa hoje' : n === 1 ? 'Começa em 1 dia' : 'Começa em ' + n + ' dias'; el.hidden = false; });
-      } catch (e) {}
 
       // UTMs, fbclid, gclid, gbraid e wbraid com que a pessoa chegou seguem para o checkout (os links já funcionam sem JS).
       var extras = new URLSearchParams();
@@ -892,18 +968,24 @@ JS = """
           .then(function (d) { try { if (d && d.ok && Array.isArray(d.cursos)) aplicarInfo(d); } catch (e) {} arrumarLinks(); infoFim(); avaliarBarra(); });
       } catch (e) { infoFim(); }
 
-      // Barra fixa do celular: aparece depois do cartão do topo e some no convite final e no rodapé.
-      var barra = document.getElementById('ll-barra'), cartao = document.getElementById('inscricao'), fim = document.getElementById('final');
+      // Barra fixa do celular: aparece sempre que o botão do cartão do topo não está na tela (ele fica abaixo da primeira
+      // tela), menos com o aviso de cookies aberto, no convite final e no rodapé.
+      var barra = document.getElementById('ll-barra'), cartao = document.querySelector('#inscricao a.ll-cta'), fim = document.getElementById('final');
       var passou = false, noFim = false;
+      function avisoAberto() { return parseFloat(raiz.style.getPropertyValue('--cvrj-ck-altura')) > 0; }
       function avaliarBarra() {
         if (!barra) return;
-        var mostrar = passou && !noFim && estado() !== 'encerrada';
-        barra.hidden = !mostrar;
+        var mostrar = passou && !noFim && !avisoAberto() && estado() !== 'encerrada';
+        if (barra.hidden === mostrar) barra.hidden = !mostrar;
         // O botão do chat sobe para não ficar em cima da barra (variável do /chat/chat.css).
-        raiz.style.setProperty('--cv-chat-acima', mostrar && barra.offsetHeight ? barra.offsetHeight + 'px' : '0px');
+        // Só grava quando muda: o observador do style do <html>, logo abaixo, chamaria esta função sem parar.
+        var acima = mostrar && barra.offsetHeight ? barra.offsetHeight + 'px' : '0px';
+        if (raiz.style.getPropertyValue('--cv-chat-acima') !== acima) raiz.style.setProperty('--cv-chat-acima', acima);
       }
       if (barra && cartao && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (es) { es.forEach(function (e) { passou = !e.isIntersecting && e.boundingClientRect.top < 0; }); avaliarBarra(); }, { threshold: 0 }).observe(cartao);
+        new IntersectionObserver(function (es) { es.forEach(function (e) { passou = !e.isIntersecting; }); avaliarBarra(); }, { threshold: 0 }).observe(cartao);
+        // O aviso de cookies guarda a altura dele no style do <html>: quando fecha, a barra pode aparecer.
+        if ('MutationObserver' in window) new MutationObserver(avaliarBarra).observe(raiz, { attributes: true, attributeFilter: ['style'] });
         if (fim) new IntersectionObserver(function (es) { es.forEach(function (e) { noFim = e.isIntersecting || e.boundingClientRect.top < 0; }); avaliarBarra(); }, { threshold: 0 }).observe(fim);
       }
 

@@ -140,6 +140,19 @@ num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas,
 - **Atenção, cupons**: em 24/11/2026 o `info.php` dizia **restam 2 de 14** cupons `PRO12`. Com o cupom esgotado a página
   passa sozinha ao preço de tabela. Para vender mais vagas a R$ 140,00, aumentar o `'limite'` do `PRO12` e publicar o
   `cupons.php` antes da página (decisão do responsável; não foi mexido).
+- **Depoimentos** (24/11/2026, pedido do Matheus): a seção "O que dizem os alunos" traz quatro comentários que a Escola
+  já publica em `escola.cursoscruzvermelha.org/#depoimentos` (pesquisa de satisfação ao fim de cada turma), copiados
+  palavra por palavra, com o nome abreviado, o curso e a nota: um de quem fez a Lei Lucas, em destaque, e três de
+  Primeiros Socorros Básico, cada um com o nome do curso que a pessoa fez. Nada foi inventado, resumido nem trocado de
+  curso (lista `DEPOIMENTOS` no gerador; com menos de 2, a seção some). **Antes de publicar**, confirmar com a Escola que
+  a autorização dada na pesquisa cobre este site (regra D8 da matrícula: depoimento só com autorização registrada).
+- **Avaliação de 24/11/2026** (Lighthouse 12, celular, página servida daqui com o resto vindo do ar, 5 rodadas):
+  desempenho 84 a 92 (LCP 1,4 a 1,9 s; o que pesa é o gtag, de terceiros, como no resto do site), acessibilidade 100,
+  boas práticas 100, SEO 69 só pelo `noindex`, que é de propósito. O salto de layout caiu de 0,06 para 0,004: a etiqueta
+  do topo passou a ter duas linhas fixas no celular, "Começa em N dias" nasce antes da primeira pintura e o selo do cupom
+  reserva a altura. A barra fixa do celular passou a aparecer sempre que o botão do cartão está fora da tela (ele fica
+  abaixo da primeira tela), menos com o aviso de cookies aberto. O que falta é dado, não código: mais depoimentos de quem
+  fez a Lei Lucas, quem dá a aula, o que levar e como é o almoço num dia de 8 horas.
 - **Fora da busca**: `noindex, follow` e fora dos sitemaps, como a `/bio/` (é página de campanha; a vitrine que o Google
   conhece continua sendo a matrícula). Para indexar: `INDEXAR = True` no gerador e incluir no sitemap.
 - **Medição** (GA4 e Pixel, com o aviso de cookies da home): `view_item`/`ViewContent` ao abrir (com o repasse à API de

@@ -7,6 +7,8 @@
 #   1. Conferir quantos cupons PRO12 restam (info.php, cupons_vitrine). Em 24/11/2026 restavam 2 de 14: com o cupom
 #      esgotado a página mostra sozinha o preço de tabela (R$ 249,00). Para vender mais vagas a R$ 140,00, aumentar o
 #      'limite' do PRO12 em api/lib/cupons.php e publicar esse arquivo ANTES da página.
+#   1b. Depoimentos: confirmar com a Escola que a autorização da pesquisa de satisfação cobre este site (são os que ela
+#      publica em escola.cursoscruzvermelha.org/#depoimentos). Sem a confirmação, esvaziar DEPOIMENTOS no gerador e gerar de novo.
 #   2. Guardar o .htaccess que está no ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar site/.htaccess
 #   3. Publicar, a imagem antes da página e o .htaccess por último:
 #      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-escola-presencial.txt)
