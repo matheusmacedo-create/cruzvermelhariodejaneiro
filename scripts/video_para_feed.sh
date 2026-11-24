@@ -9,9 +9,12 @@
 #   scripts/video_para_feed.sh entrada.mp4 saida.mp4            # quadro inteiro, com fundo desfocado
 #   scripts/video_para_feed.sh entrada.mp4 saida.mp4 cortar     # preenche a tela, cortando as bordas
 #   INICIO=3 DURACAO=25 scripts/video_para_feed.sh entrada.mp4 saida.mp4   # começa no segundo 3, dura 25 s
+#   ALINHAR=topo scripts/video_para_feed.sh entrada.mp4 saida.mp4 cortar   # no corte, fica com o alto do quadro
 #
 # "fundo" (padrão) mantém a cena toda visível, o que importa em imagem de câmera de segurança; "cortar"
-# dá mais impacto quando a ação está no centro. Vídeo sem som ganha uma faixa de silêncio.
+# dá mais impacto quando a ação está no centro. No corte de um vídeo em pé, ALINHAR escolhe a parte que
+# fica: topo, centro (padrão) ou base, útil quando há uma faixa de legenda a tirar. Vídeo sem som ganha uma
+# faixa de silêncio.
 # Precisa de ffmpeg e ffprobe. Não envia nada a lugar nenhum.
 set -euo pipefail
 
@@ -20,15 +23,22 @@ saida="${2:?informe o arquivo de saída (.mp4)}"
 modo="${3:-fundo}"
 inicio="${INICIO:-0}"
 duracao="${DURACAO:-60}"
+alinhar="${ALINHAR:-centro}"
 L=1080
 A=1350
 
 [ -f "$entrada" ] || { echo "arquivo não encontrado: $entrada" >&2; exit 2; }
 case "$modo" in fundo | cortar) ;; *) echo "modo desconhecido: $modo (use fundo ou cortar)" >&2; exit 2 ;; esac
+case "$alinhar" in
+  topo) y=0 ;;
+  centro) y="(ih-${A})/2" ;;
+  base) y="ih-${A}" ;;
+  *) echo "ALINHAR desconhecido: $alinhar (use topo, centro ou base)" >&2; exit 2 ;;
+esac
 awk -v d="$duracao" 'BEGIN { exit !(d > 0 && d <= 60) }' || { echo "DURACAO precisa ficar entre 1 e 60 segundos" >&2; exit 2; }
 
 if [ "$modo" = cortar ]; then
-  filtro="[0:v]scale=${L}:${A}:force_original_aspect_ratio=increase,crop=${L}:${A},setsar=1,fps=30,format=yuv420p[v]"
+  filtro="[0:v]scale=${L}:${A}:force_original_aspect_ratio=increase,crop=${L}:${A}:(iw-${L})/2:${y},setsar=1,fps=30,format=yuv420p[v]"
 else
   filtro="[0:v]split=2[f][q];[f]scale=${L}:${A}:force_original_aspect_ratio=increase,crop=${L}:${A},boxblur=24:2,eq=brightness=-0.08[fundo];[q]scale=${L}:${A}:force_original_aspect_ratio=decrease[frente];[fundo][frente]overlay=(W-w)/2:(H-h)/2,setsar=1,fps=30,format=yuv420p[v]"
 fi
