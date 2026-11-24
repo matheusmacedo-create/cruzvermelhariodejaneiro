@@ -162,3 +162,10 @@ página fala em parcelas. O código e as páginas do parcelado continuam publica
 `api/parcelas.php?curso=primeiros-socorros-lei-lucas&cupom=PRO12`: com 2,99% ao mês pela tabela Price, R$ 140,00 em 12x
 dá 12 × R$ 14,06, total R$ 168,72. Se a simulação não mostrar isso, voltar para 1. Não deu para saber daqui se alguém
 comprou parcelado na hora em que ficou ligado: conferir no painel da Unicopag (compras de 24/11 no cartão, 2x ou mais).
+
+**Segunda tentativa, 24/11/2026 (19h10 de Brasília).** O Matheus avisou que tinha ajustado a taxa na Unicopag e pediu
+para religar. Com a chave em 12, a simulação continuou devolvendo 2,99% sobre o total (R$ 140,00 → R$ 144,19 em
+qualquer número de parcelas), inclusive para valores nunca consultados (R$ 147,00 → R$ 151,40), o que descarta o cache
+de 10 minutos do site. A chave voltou para 1 em menos de um minuto. Estado: cartão só à vista. Para a Unicopag: em
+2,99% ao mês (tabela Price) o acréscimo sobre o total é 4,51% em 2x, 9,23% em 5x, 10,82% em 6x, 15,75% em 9x e 20,51%
+em 12x.
