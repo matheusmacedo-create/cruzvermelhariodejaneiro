@@ -21,5 +21,17 @@
 # Desfazer: scripts/publicar_hostinger.sh --apagar site/escola-presencial/lei-lucas/index.html site/escola-presencial/lei-lucas/og-lei-lucas.jpg
 #   e republicar o .htaccess guardado no passo 2 (.htaccess nunca é apagado).
 site/escola-presencial/lei-lucas/og-lei-lucas.jpg
+# Depoimentos em vídeo (24/11/2026, PUBLICADOS): os vídeos, as capas e as legendas antes da página; o .htaccess da pasta
+# manda o .vtt como text/vtt. Autorização de imagem das três alunas: com a filial (docs/criativos/pagina-lei-lucas/LEIAME.md).
+site/escola-presencial/lei-lucas/.htaccess
+site/escola-presencial/lei-lucas/depoimento-luciana.mp4
+site/escola-presencial/lei-lucas/depoimento-luciana.webp
+site/escola-presencial/lei-lucas/depoimento-luciana.vtt
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.mp4
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.webp
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.vtt
+site/escola-presencial/lei-lucas/depoimento-luciene.mp4
+site/escola-presencial/lei-lucas/depoimento-luciene.webp
+site/escola-presencial/lei-lucas/depoimento-luciene.vtt
 site/escola-presencial/lei-lucas/index.html
 site/.htaccess

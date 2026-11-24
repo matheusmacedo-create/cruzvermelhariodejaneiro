@@ -139,6 +139,7 @@ O que a separa da matrícula nos relatórios é o `item_list_name` ("Página Lei
 | Toca em "Pedir uma turma para a escola" | | `contact_company_training` (`local` = turma_fechada ou duvida_turma) |
 | Toca em "Abrir no Google Maps" | | `como_chegar` |
 | Cada seção aparece na tela (uma vez) | | `secao_vista` (`secao`, `pagina=lei_lucas`) |
+| Começa ou termina um depoimento em vídeo (uma vez cada) | | `depoimento_video` (`video` = luciana, ana-claudia ou luciene; `acao` = inicio ou fim) |
 
 **Conferência de 24/11/2026, com a página no ar.** Pela rede, sem nada chegar à Meta nem ao GA4 (cenários sem
 escolha, rejeitar, aceitar e quem já tinha aceitado):

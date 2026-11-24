@@ -146,6 +146,17 @@ num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas,
   Primeiros Socorros Básico, cada um com o nome do curso que a pessoa fez. Nada foi inventado, resumido nem trocado de
   curso (lista `DEPOIMENTOS` no gerador; com menos de 2, a seção some). **Antes de publicar**, confirmar com a Escola que
   a autorização dada na pesquisa cobre este site (regra D8 da matrícula: depoimento só com autorização registrada).
+- **Depoimentos em vídeo** (24/11/2026, pedido do Matheus: "acrescente um vídeo de depoimento... busque e coloque"):
+  no alto da seção de depoimentos, "Alunas contam como foi", com três vídeos curtos (Luciana, Ana Cláudia e Luciene,
+  19 a 23 s, 4:5), gravados pela filial na sede e já legendados para o carrossel do Instagram. Vieram da conta de
+  anúncios da Meta e foram recodificados sem as faixas laterais (cerca de 1,5 MB cada; origem e comando em
+  `docs/criativos/pagina-lei-lucas/LEIAME.md`). O vídeo só é baixado quando a pessoa toca (`preload="none"`, só a capa
+  antes), um toca por vez e cada um tem a legenda em texto (`.vtt`) para leitor de tela. Medição: `depoimento_video`
+  (`video`, `acao` = inicio ou fim). Lista `VIDEOS` no gerador; vazia, o bloco some. A autorização de imagem das três
+  alunas fica com a filial. **Publicado em 24/11/2026**: vídeos, capas, legendas, o `.htaccess` da pasta (`.vtt` como
+  `text/vtt`) e a página; cache limpo. No ar: página idêntica ao Git em `d4bb1ba`, os três `.mp4` idênticos, servidos
+  como `video/mp4` com pedido parcial (206); num Chromium em 390 px os três tocam (576 x 720), um por vez, sem erro.
+  Lighthouse com os vídeos: acessibilidade 100, boas práticas 100, desempenho 84, salto de layout 0,004.
 - **Avaliação de 24/11/2026** (Lighthouse 12, celular, página servida daqui com o resto vindo do ar, 5 rodadas):
   desempenho 84 a 92 (LCP 1,4 a 1,9 s; o que pesa é o gtag, de terceiros, como no resto do site), acessibilidade 100,
   boas práticas 100, SEO 69 só pelo `noindex`, que é de propósito. O salto de layout caiu de 0,06 para 0,004: a etiqueta
