@@ -44,16 +44,24 @@ Reserva: reserva_L_batalhao_DF (PMs salvam bebê no batalhão, DF, 22 s).
 
 ## Narração e legenda
 
-- Voz: ElevenLabs, voz brasileira nativa "Ana Dias" (biblioteca de vozes; `VOZ_ID` troca) e o modelo de
+- Voz: ElevenLabs, voz brasileira nativa "Marcelo Costa" (biblioteca de vozes; `VOZ_ID` troca) e o modelo de
   narração do projeto (`eleven_v4`), pedida com o tempo de cada letra: a legenda sai desse tempo, no ponto da
-  fala. A primeira versão usou a "Sarah" da filial, que é americana e lê português com sotaque: não ficou
-  natural (retorno do Matheus, 24/11/2026). Para anúncio, só voz nativa.
+  fala. O Matheus escolheu essa voz entre seis nativas, de ouvido, em 24/11/2026. A primeira versão usou a
+  "Sarah" da filial, que é americana e lê português com sotaque: não ficou natural. Para anúncio, só voz nativa.
 - O cartão final com voz sai de `cartao_voz.py`, com a mesma voz.
+- Música de fundo: duas trilhas instrumentais originais, geradas na ElevenLabs Music (sem direito autoral de
+  terceiros): uma tensa, que toca até o instante em que a criança volta a respirar, e uma de alívio, dali em
+  diante. A frase que marca a virada é o `alivio` de cada vídeo. Depoimentos e cartão usam só a de alívio, mais
+  baixa. A música abaixa sozinha enquanto há voz. Os arquivos (`tensa_-23.wav`, `esperanca_-23.wav`, nivelados
+  em -23 LUFS) ficam em PASTA/musica, fora do repositório.
 - O texto de cada fala está em `montar.py` (`NARRADOS`). A barra `|` marca onde a legenda troca de bloco e
   não vai para a voz. O número antes da fala é o segundo em que ela entra, para casar com a cena.
 - Depoimentos: a fala é a original, cortada para começar na aluna, com redução de ruído e volume nivelado; a
   legenda veio da transcrição da ElevenLabs e foi conferida bloco a bloco (`DEPOIMENTOS`).
 - Volume: todos em torno de -16 LUFS. O som original só ficou, baixo, no vídeo da mãe (09_A).
+- Armadilha paga: o nivelador de volume (loudnorm) atrasa o som em 3 s; sem completar a faixa até o fim
+  (`apad=whole_dur`) antes de misturar, o áudio dos depoimentos acabava 3 s antes do vídeo. Confira sempre a
+  duração do som contra a do vídeo.
 - Conferência feita: cada vídeo narrado foi transcrito de volta e bateu com o roteiro palavra por palavra.
 
 ## Como montar de novo

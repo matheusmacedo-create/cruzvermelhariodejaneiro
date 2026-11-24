@@ -8,11 +8,12 @@ import os, re, subprocess, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from falar import falar
 
-# PASTA: onde estão videos/prontos (os vídeos já em 1080 x 1350) e onde saem carrossel/ e voz/cache/.
+# PASTA: onde estão videos/prontos (os vídeos já em 1080 x 1350) e musica/, e onde saem carrossel/ e voz/cache/.
 S = os.environ.get('PASTA') or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PRONTOS = f'{S}/videos/prontos'
 SAIDA = f'{S}/carrossel'
 CACHE = f'{S}/voz/cache'
+MUSICA = f'{S}/musica'
 os.makedirs(SAIDA, exist_ok=True)
 
 BAIXO = (1090, 260)   # y, altura da faixa
@@ -22,14 +23,14 @@ MAX_BLOCO = 46        # letras por bloco (duas linhas)
 
 NARRADOS = {
     'D': dict(arquivo='D_pms_salvam_bebe_viatura_DF', inicio=0, teto=50, faixa=BAIXO, original=0,
-              credito='Imagens: PMDF, via Metrópoles', nome='01_D_viatura_DF', falas=[
+              credito='Imagens: PMDF, via Metrópoles', nome='01_D_viatura_DF', alivio='E o bebê volta', falas=[
         (0.4, 'Águas Claras, Distrito Federal. |Um carro cruza com uma viatura |da Polícia Militar e para.'),
         (None, 'Uma mulher desce desesperada, |com um bebê de um ano no colo. |Ele estava inconsciente e arroxeado.'),
         (None, 'Os policiais começam na hora |a manobra de desengasgo. |E o bebê volta a chorar.'),
         (None, 'Depois, ele foi levado para avaliação médica.'),
         (None, 'E se não tivesse uma viatura passando?')]),
     'K': dict(arquivo='K_pm_salva_bebe_quartel_MG_g1', inicio=10, teto=49.9, faixa=BAIXO, original=0,
-              credito='Imagens: Polícia Militar, via g1 Sul de Minas', nome='03_K_quartel_MG', falas=[
+              credito='Imagens: Polícia Militar, via g1 Sul de Minas', nome='03_K_quartel_MG', alivio='No terceiro ciclo', falas=[
         (0.4, 'Sapucaí-Mirim, Sul de Minas. |Uma bebê de apenas um mês |chega engasgada ao quartel da Polícia Militar.'),
         (None, 'O cabo Victor Aquino estava sozinho no posto. |A bebê estava arroxeada, com o corpo rígido.'),
         (None, 'Ele fez a manobra: |cinco batidas nas costas, |cinco compressões no peito.'),
@@ -37,14 +38,14 @@ NARRADOS = {
         (None, 'No terceiro ciclo, a mãozinha dela abriu.'),
         (38.3, 'A bebê foi levada ao hospital |e passou por avaliação médica. |Ele sabia o que fazer.')]),
     'F': dict(arquivo='F_pms_salvam_bebe_camera_2022', inicio=14, teto=46, faixa=BAIXO, original=0,
-              credito='Imagens: câmera de segurança, 2022', nome='04_F_policial_rua', falas=[
+              credito='Imagens: câmera de segurança, 2022', nome='04_F_policial_rua', alivio='Até que o bebê', falas=[
         (0.4, 'Uma família chega correndo |com um bebê engasgado |e encontra um policial militar.'),
         (8.0, 'O policial pega a criança, |vira de bruços |e começa as batidas nas costas.'),
         (20.0, 'São segundos que parecem horas.'),
         (35.5, 'Até que o bebê volta a respirar. |Ele foi levado ao hospital e passa bem.'),
         (None, 'Você saberia fazer o mesmo?')]),
     'J': dict(arquivo='J_bombeiro_salva_menina_quartel_SC_jornal', inicio=0, teto=50, faixa=(212, 296), original=0,
-              credito='Imagens: Corpo de Bombeiros de SC, via Jornal Razão', nome='06_J_bombeiros_SC', falas=[
+              credito='Imagens: Corpo de Bombeiros de SC, via Jornal Razão', nome='06_J_bombeiros_SC', alivio='Deu certo', falas=[
         (0.4, 'Braço do Norte, Santa Catarina. |Uma mãe entra de carro |no quartel dos bombeiros, |buzinando, com o pisca-alerta ligado.'),
         (None, 'A filha, de sete anos, |estava engasgada e inconsciente.'),
         (None, 'O cabo Michel corre até o carro |e começa a manobra ali mesmo, no pátio.'),
@@ -52,7 +53,7 @@ NARRADOS = {
         (None, 'Depois, ela foi levada de ambulância |ao hospital, para avaliação.'),
         (None, 'E se o quartel estivesse longe?')]),
     'E': dict(arquivo='E_pm_salva_bebe_chapeco_jornal', inicio=0, teto=39, faixa=(528, 226), original=0,
-              credito='Imagens: câmera do batalhão, via Jornal Razão', nome='07_E_batalhao_Chapeco', falas=[
+              credito='Imagens: câmera do batalhão, via Jornal Razão', nome='07_E_batalhao_Chapeco', alivio='A respiração voltou', falas=[
         (0.4, 'Chapecó, Santa Catarina. |Um policial militar encerrava |um plantão de dezoito horas |quando um casal chegou pedindo socorro.'),
         (None, 'Nos braços, a filha, |que não conseguia respirar direito.'),
         (None, 'Ele vira a bebê de bruços |e faz a manobra de desengasgo.'),
@@ -60,14 +61,14 @@ NARRADOS = {
         (27.0, 'O SAMU chegou logo depois |e levou a bebê ao hospital, para avaliação.'),
         (None, 'Em casa, quem faz isso é você.')]),
     'A': dict(arquivo='A_mae_salva_bebe_camera', inicio=8, teto=46, faixa=BAIXO, original=0.16,
-              credito='Imagens: arquivo da família (@juliannarvalentim)', nome='09_A_mae_em_casa', falas=[
+              credito='Imagens: arquivo da família (@juliannarvalentim)', nome='09_A_mae_em_casa', alivio='E ele desengasgou', falas=[
         (0.4, 'Em casa, na sala. |O bebê teve um engasgo silencioso.'),
         (None, 'Quando a mãe percebeu, ele já não reagia.'),
         (9.5, 'Ela fez a manobra que treinava |desde que ele era recém-nascido.'),
         (17.0, 'E ele desengasgou.'),
         (20.0, 'Ali não tinha viatura nem quartel. |Tinha a mãe. |E ela sabia o que fazer.')]),
     'L': dict(arquivo='L_pms_salvam_bebe_batalhao_DF_correio', inicio=0, teto=26, faixa=(975, 270), original=0,
-              credito='Imagens: PMDF, via Correio Braziliense', nome='reserva_L_batalhao_DF', falas=[
+              credito='Imagens: PMDF, via Correio Braziliense', nome='reserva_L_batalhao_DF', alivio='Ele voltou a respirar', falas=[
         (0.4, 'Estrutural, Distrito Federal. |Os pais chegam ao batalhão da Polícia Militar |com o bebê engasgado, já sem respirar.'),
         (None, 'Dois policiais fazem a manobra de desengasgo, |adaptada para bebês.'),
         (None, 'Ele voltou a respirar ali mesmo. |Os bombeiros avaliaram: a criança passa bem.')]),
@@ -206,6 +207,28 @@ def acertar_exibicao(blocos, total):
     return blocos
 
 
+def trilha(f, entradas, indice, total, alivio=None, ganho_tensa=-2, ganho_alivio=0, desloc=0.0):
+    """Põe a música de fundo sob a faixa [fala] e devolve tudo em [a]. Até o instante do alívio toca a trilha
+    tensa; dali em diante, a de alívio (sem alívio, só ela). A música abaixa sozinha enquanto há voz.
+    As duas trilhas são originais (ElevenLabs Music), niveladas em -23 LUFS, em PASTA/musica."""
+    partes = []
+    if alivio is not None:
+        entradas += ['-i', f'{MUSICA}/tensa_-23.wav']
+        f.append(f'[{indice}:a]atrim=0:{alivio + 1.0:.2f},afade=t=in:d=0.8,afade=t=out:st={alivio - 0.6:.2f}:d=1.6,volume={ganho_tensa}dB[mt]')
+        partes.append('[mt]')
+        indice += 1
+    comeco = max(0.0, alivio - 0.6) if alivio is not None else 0.0
+    dur = total - comeco
+    ms = int(comeco * 1000)
+    entradas += ['-i', f'{MUSICA}/esperanca_-23.wav']
+    f.append(f'[{indice}:a]atrim={desloc:.2f}:{desloc + dur:.2f},asetpts=PTS-STARTPTS,afade=t=in:d={1.6 if alivio is not None else 0.8},'
+             f'afade=t=out:st={dur - 1.5:.2f}:d=1.5,adelay={ms}|{ms},volume={ganho_alivio}dB[mh]')
+    partes.append('[mh]')
+    f.append('[mt][mh]amix=inputs=2:normalize=0:duration=longest[mus]' if len(partes) == 2 else '[mh]anull[mus]')
+    f.append(f'[fala]asplit[fa][fb];[mus][fb]sidechaincompress=threshold=0.05:ratio=3:attack=40:release=600[md];'
+             f'[fa][md]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84:level=false,atrim=0:{total:.2f}[a]')
+
+
 def codificar(entradas, filtro, saida):
     subprocess.check_call(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', *entradas, '-filter_complex', filtro,
                            '-map', '[v]', '-map', '[a]', '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'medium', '-crf', '19',
@@ -243,12 +266,15 @@ def montar_narrado(letra, c):
     f.append(f"{''.join(nomes)}amix=inputs={len(nomes)}:normalize=0:duration=longest,highpass=f=70,"
              f"acompressor=threshold=-20dB:ratio=2.5:attack=8:release=160:makeup=2,loudnorm=I=-16:TP=-1.5:LRA=9,apad=whole_dur={total:.2f}[voz]")
     if c['original'] > 0:
-        f.append(f"[0:a]volume={c['original']}[orig];[voz][orig]amix=inputs=2:normalize=0:duration=first,atrim=0:{total:.2f}[a]")
+        f.append(f"[0:a]volume={c['original']}[orig];[voz][orig]amix=inputs=2:normalize=0:duration=first,atrim=0:{total:.2f}[fala]")
     else:
-        f.append(f'[voz]atrim=0:{total:.2f}[a]')
+        f.append(f'[voz]atrim=0:{total:.2f}[fala]')
+    alivio = next((b[0] for b in blocos if b[2].startswith(c['alivio'])), None)
+    assert alivio is not None, f'{letra}: não achei a frase do alívio'
+    trilha(f, entradas, len(audios) + 1, total, alivio)
     saida = f'{SAIDA}/{c["nome"]}_1080x1350.mp4'
     codificar(entradas, ';'.join(f), saida)
-    print(f'{letra}: {saida} ({total:.1f} s; narração até {cursor:.1f} s; {sum(len(t) for t in textos)} letras)')
+    print(f'{letra}: {saida} ({total:.1f} s; narração até {cursor:.1f} s; alívio em {alivio:.1f} s)')
 
 
 def montar_depoimento(letra, c):
@@ -259,9 +285,12 @@ def montar_depoimento(letra, c):
     origem = f'{PRONTOS}/{c["arquivo"]}_1080x1350.mp4'
     f = (f"[0:v]{filtro_da_faixa(BAIXO)},ass='{ass}',fps=30,format=yuv420p[v];"
          f"[0:a]highpass=f=90,afftdn=nr=10:nf=-32,acompressor=threshold=-22dB:ratio=3:attack=6:release=140:makeup=3,"
-         f"loudnorm=I=-16:TP=-1.5:LRA=9,afade=t=in:d=0.08,afade=t=out:st={total - 0.15:.2f}:d=0.15[a]")
+         f"loudnorm=I=-16:TP=-1.5:LRA=9,apad=whole_dur={total:.2f},atrim=0:{total:.2f},"
+         f"afade=t=in:d=0.08,afade=t=out:st={total - 0.15:.2f}:d=0.15[fala]")
     saida = f'{SAIDA}/{c["nome"]}_1080x1350.mp4'
-    codificar(['-ss', str(c['inicio']), '-t', f'{total:.2f}', '-i', origem], f, saida)
+    entradas, filtros = ['-ss', str(c['inicio']), '-t', f'{total:.2f}', '-i', origem], [f]
+    trilha(filtros, entradas, 1, total, None, ganho_alivio=-7, desloc=c.get('musica_em', 8.0))
+    codificar(entradas, ';'.join(filtros), saida)
     print(f'{letra}: {saida} ({total:.1f} s)')
 
 

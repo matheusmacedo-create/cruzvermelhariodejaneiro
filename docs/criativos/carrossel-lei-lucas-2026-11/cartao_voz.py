@@ -3,6 +3,7 @@
 import os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from falar import falar
+from montar import trilha
 S = os.environ.get('PASTA') or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 falas = ['Inscreva-se na próxima turma de Primeiros Socorros Lei Lucas, na Cruz Vermelha do Rio de Janeiro.',
          'De duzentos e quarenta e nove, por cento e quarenta reais, com tudo incluso.',
@@ -20,7 +21,8 @@ for i, t in enumerate(falas):
 total = cursor + 1.4
 f.append(f"{''.join(nomes)}amix=inputs={len(nomes)}:normalize=0:duration=longest,highpass=f=70,"
          f"acompressor=threshold=-20dB:ratio=2.5:attack=8:release=160:makeup=2,loudnorm=I=-16:TP=-1.5:LRA=9,"
-         f"apad=whole_dur={total:.2f},atrim=0:{total:.2f}[a]")
+         f"apad=whole_dur={total:.2f},atrim=0:{total:.2f}[fala]")
+trilha(f, entradas, len(falas) + 1, total, None, ganho_alivio=0, desloc=20.0)
 f.append('[0:v]fps=30,format=yuv420p[v]')
 subprocess.check_call(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', *entradas, '-filter_complex', ';'.join(f), '-map', '[v]', '-map', '[a]',
                        '-t', f'{total:.2f}', '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'medium', '-crf', '17', '-tune', 'stillimage', '-r', '30',

@@ -3,9 +3,9 @@
 A chave não passa por aqui: o proxy do ambiente põe o cabeçalho."""
 import base64, hashlib, json, os, sys, urllib.request
 API = 'https://api.elevenlabs.io'
-# Voz brasileira nativa da biblioteca da ElevenLabs ("Ana Dias"). A "Sarah" da filial (EXAVITQu4vr4xnSDxMaL) é
+# Voz brasileira nativa da biblioteca da ElevenLabs ("Marcelo Costa", a escolhida pelo Matheus entre seis, em 24/11/2026). A "Sarah" da filial (EXAVITQu4vr4xnSDxMaL) é
 # americana e lê português com sotaque: serviu para testar, não para anúncio. VOZ_ID troca.
-VOZ = os.environ.get('VOZ_ID', 'MZxV5lN3cv7hi1376O0m')
+VOZ = os.environ.get('VOZ_ID', 'bJrNspxJVFovUxNBQ0wh')
 MODELO = os.environ.get('MODELO', 'eleven_v4')
 def falar(texto, pasta, anterior='', seguinte=''):
     chave = hashlib.sha256('\0'.join([VOZ, MODELO, texto, anterior, seguinte]).encode()).hexdigest()[:20]
