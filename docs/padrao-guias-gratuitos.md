@@ -100,6 +100,7 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Febre em criança | `/febre-em-crianca/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: o que fazer, sinais de alerta e ficha da febre | sim: formulário na página; caixa nas matérias: nenhuma (busca "febre em criança", 22 mil/mês) (não publicado) |
 | Pressão alta e pressão baixa | `/pressao-alta-e-pressao-baixa/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: como medir, o que fazer e diário da pressão | sim: formulário na página; caixa nas matérias: nenhuma (buscas "pressão baixa o que fazer", 18 mil/mês, e "pressão alta o que fazer", 10 mil) (não publicado) |
 | Queimaduras | `/queimaduras/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz do que fazer e do que não fazer | sim: formulário na página; caixa nas matérias: nenhuma (buscas "queimadura de segundo grau", 4 mil/mês, e "queimadura de sol", 27 mil em dezembro) (não publicado) |
+| El Niño: como se preparar | `/el-nino/`, gerada e não publicada (24/11/2026) | no padrão, gerado e não publicado: checklist da casa pronta, o que fazer no calor forte, na chuva forte e na fumaça | sim: formulário na página; caixa nas matérias: nenhuma ainda (buscas "el nino", 165 mil em outubro de 2026, e "el nino 2026", 74 mil) (não publicado) |
 
 Os quatro últimos e a entrega da mochila saíram juntos em 11/11/2026 (pedido do Matheus: mais guias, mais matérias com
 caixa de e-mail). A lista de publicação é `scripts/publicacao-guias-novembro.txt`. O conteúdo de saúde do cartaz
@@ -114,3 +115,7 @@ A terceira leva (12/11/2026) tem a lista em `scripts/publicacao-guias-novembro-3
 nasceram das buscas mais fortes do Google no Brasil (Planejador de palavras-chave do Google Ads, média de 12 meses até
 10/2026) e não têm matéria correspondente: são pedidos só na página. Com os outros três, a Redação passa a ter 76
 matérias na lista de caixas de material.
+
+O guia do El Niño (24/11/2026, pedido do Matheus) tem a lista em `scripts/publicacao-el-nino.txt`. É o primeiro guia com
+texto que envelhece: a seção "Como está o El Niño agora" cita os boletins de novembro de 2026 e precisa ser revista a
+cada boletim da NOAA (o próximo é de 10/12/2026). O que conferir está em `notas_internas`.
