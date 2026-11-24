@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;600;700&display=block" rel="stylesheet">
+<style>
+/* Imagem de compartilhamento (1200x630) da página /escola-presencial/lei-lucas/, no desenho dos banners das turmas.
+   Sem data e sem preço: o WhatsApp e a Meta guardam a imagem por semanas. */
+:root{--red:#e30613;--ink:#141414}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#111}
+#og{position:relative;overflow:hidden;width:1200px;height:630px;color:#fff;background:#151515}
+.foto{position:absolute;top:0;bottom:0;right:0;width:620px;background:url(../banners-turmas-nov-dez-2026/img/lei-lucas.jpg) center 40%/cover no-repeat}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#151515 0%,rgba(21,21,21,.62) 20%,rgba(21,21,21,0) 50%)}
+.logo{background:#fff;display:inline-block;border-radius:0 0 20px 0;position:absolute;top:0;left:0;z-index:3;padding:22px 36px 22px 64px}
+.logo img{display:block;height:54px}
+.txt{position:relative;z-index:2;padding:122px 0 0 64px;width:700px}
+.tag{display:inline-block;background:var(--red);font:700 17px/1 Inter;letter-spacing:.32em;padding:.55em .8em .55em 1em;border-radius:6px;text-transform:uppercase}
+h1{font-family:"Barlow Condensed";font-weight:800;font-size:98px;line-height:.86;text-transform:uppercase;margin-top:18px}
+h1 span{display:block;color:var(--red)}
+.sub{font-size:23px;line-height:1.3;color:#e9e9e9;margin-top:18px;max-width:520px}
+.sub b{color:#fff}
+.det{position:absolute;left:64px;bottom:44px;z-index:2;display:flex;gap:28px;font:700 17px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:#e2e2e2}
+.det span + span{padding-left:28px;border-left:2px solid rgba(255,255,255,.28)}
+.barra{position:absolute;left:0;bottom:0;height:10px;width:100%;background:var(--red);z-index:4}
+</style></head>
+<body>
+<div id="og">
+  <div class="foto"></div>
+  <div class="logo"><img src="../banners-turmas-nov-dez-2026/img/logo.png" alt=""></div>
+  <div class="txt">
+    <span class="tag">Curso presencial</span>
+    <h1>Primeiros socorros <span>Lei Lucas</span></h1>
+    <p class="sub">Para ambientes com crianças: saiba agir em engasgos, quedas e <b>outras emergências.</b></p>
+  </div>
+  <div class="det"><span>Centro do Rio</span><span>8 horas</span><span>Com certificado</span></div>
+  <div class="barra"></div>
+</div>
+</body></html>

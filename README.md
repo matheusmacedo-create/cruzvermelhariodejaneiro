@@ -117,6 +117,46 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (24/11/2026, NÃO publicada)
+
+Pedido do Matheus: uma página única vendendo o curso Primeiros Socorros Lei Lucas pelo preço promocional de R$ 140,00,
+num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas, algo assim"). Ficou em
+`/escola-presencial/lei-lucas/`, com hífen como o resto do site; `/escolapresencial/leilucas` responde 301 para lá
+(`site/.htaccess`), e `/escola-presencial/` sozinha leva à vitrine dos cursos.
+
+- **Gerador**: `scripts/gerar_escola_presencial.py`. Nenhum dado novo: curso e preço de tabela vêm do `cursos.json`, a
+  turma do `oferta.json` (09/12/2026, 9h às 17h), o preço e o prazo da promoção da linha do `PRO12` em
+  `api/lib/cupons.php`, e título, promessa, resposta sobre a lei, fotos das aulas, modelo do certificado e "como a
+  escola sustenta a filial" do `gerar_matricula_presencial.py`. A trava de vocabulário da matrícula
+  (`PALAVRAS_PROIBIDAS`) vale aqui também, mais "vagas limitadas", "últimas vagas" e "certificado internacional".
+- **O botão** leva ao checkout de sempre, com o cupom já aplicado:
+  `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&via=lp-lei-lucas-<local>&cupom=PRO12`
+  (as `utm_*`, `fbclid`, `gclid`, `gbraid` e `wbraid` da chegada seguem junto). Nada muda no checkout nem no banco.
+- **Três estados**, em `<html data-oferta>`: `cupom` (preço da promoção), `tabela` (cupom esgotado ou vencido: R$ 249,00,
+  botão sem cupom) e `encerrada` (inscrições da turma fechadas, ou a turma do `info.php` não é mais a da página: sem
+  botão de compra, com "Ver as próximas turmas"). O relógio do navegador decide antes da primeira pintura e o
+  `info.php` corrige; "restam N cupons" é o número do servidor e não aparece sem resposta. Se o valor do cupom mudar no
+  `cupons.php` sem a página ser regerada, os preços da tela seguem o `info.php`.
+- **Atenção, cupons**: em 24/11/2026 o `info.php` dizia **restam 2 de 14** cupons `PRO12`. Com o cupom esgotado a página
+  passa sozinha ao preço de tabela. Para vender mais vagas a R$ 140,00, aumentar o `'limite'` do `PRO12` e publicar o
+  `cupons.php` antes da página (decisão do responsável; não foi mexido).
+- **Fora da busca**: `noindex, follow` e fora dos sitemaps, como a `/bio/` (é página de campanha; a vitrine que o Google
+  conhece continua sendo a matrícula). Para indexar: `INDEXAR = True` no gerador e incluir no sitemap.
+- **Medição** (GA4 e Pixel, com o aviso de cookies da home): `view_item`/`ViewContent` ao abrir (com o repasse à API de
+  Conversões), `select_item` e `click_enroll` nos botões, com `item_list_name` "Página Lei Lucas", `oferta` (o estado) e
+  `coupon` no item; detalhes em `docs/rastreamento.md`. Grupo de conteúdo do GA4: `escola`.
+- **Imagem de compartilhamento**: `og-lei-lucas.jpg` (1200x630, sem data e sem preço), fonte em
+  `docs/criativos/pagina-lei-lucas/`.
+- **Conferido em 24/11/2026**, num Chromium com a página servida daqui e o resto vindo do ar: 390, 768 e 1280 px sem
+  rolagem lateral e sem erro de JavaScript; os três estados com o `info.php` simulado (cupom valendo, esgotado e turma
+  fechada); barra fixa do celular, chat e eventos; sem JavaScript a página mostra a promoção sem o número de cupons; todos os
+  links e imagens respondem 200; JSON-LD válido (`validar_jsonld.py`); o link do botão abre o checkout real com
+  "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". **Não testado:** as três regras novas do `.htaccess` (não há
+  Apache/LiteSpeed aqui) e um pagamento de verdade vindo da página.
+- **Publicar**: `scripts/publicacao-escola-presencial.txt` (imagem, página e, por último, o `.htaccess` da raiz).
+- **Quando a turma ou o cupom mudarem** (`oferta.json`, `cupons.php`): rodar o gerador e publicar o `index.html`. Sem
+  turma aberta ou com o cupom vencido, o gerador se recusa a gravar.
+
 ## Convite para apoiar no alto dos guias (publicado em 19/11/2026)
 
 Aprovado pelo responsável em 19/11/2026, junto com a volta dos anúncios dos guias: em 30 dias, das 595 visitas que entraram por guia ou
@@ -3870,12 +3910,14 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 ### Ordem de geração
 
 `consentimento.py` → `gerar_noticias_home.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
-`gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
+`gerar_checkout.py` → `gerar_escola_presencial.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
 `gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `gerar_institucional.py` → `gerar_gestao.py` →
 `gerar_voluntariado_cadastro.py` → `gerar_pedido_documentos.py` → `chat_widget.py`, e `gerar_ingles.py` depois de
 `gerar_idiomas.py` (notícias e 404 em inglês). Os quatro antes do último `chat_widget.py` também copiam o bloco de
 medição da home (as páginas institucionais, `/gestao/` e o cadastro de voluntários; o pedido de documentos não tem o
 bloco): sem eles, essas páginas ficam com o aviso de cookies antigo (anotado em 02/11/2026).
+`gerar_escola_presencial.py` (24/11/2026, página de venda do curso Lei Lucas) copia o bloco de medição da home e as tags do
+chat, e lê `cursos.json`, `oferta.json` e `cupons.php`: entra depois do `gerar_matricula_presencial.py`.
 Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
 
 ### Pendências para a filial

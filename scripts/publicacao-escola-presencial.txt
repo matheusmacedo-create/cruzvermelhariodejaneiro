@@ -1,0 +1,22 @@
+# Página de venda do curso Primeiros Socorros Lei Lucas (24/11/2026, pedido do Matheus): /escola-presencial/lei-lucas/,
+# com o preço do cupom PRO12 (R$ 140,00 com tudo incluso) e a turma de 09/12/2026.
+# ESTADO: NÃO PUBLICADO.
+# Gerar antes: python3 scripts/gerar_escola_presencial.py (lê cursos.json, oferta.json e api/lib/cupons.php)
+#   Imagem de compartilhamento: node docs/criativos/pagina-lei-lucas/render.js (só se o og.html mudar).
+# ORDEM:
+#   1. Conferir quantos cupons PRO12 restam (info.php, cupons_vitrine). Em 24/11/2026 restavam 2 de 14: com o cupom
+#      esgotado a página mostra sozinha o preço de tabela (R$ 249,00). Para vender mais vagas a R$ 140,00, aumentar o
+#      'limite' do PRO12 em api/lib/cupons.php e publicar esse arquivo ANTES da página.
+#   2. Guardar o .htaccess que está no ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar site/.htaccess
+#   3. Publicar, a imagem antes da página e o .htaccess por último:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-escola-presencial.txt)
+#   4. Limpar o cache e conferir no celular (390 px): a página abre, mostra "restam N cupons", o botão leva ao checkout
+#      com "Cupom PRO12 aplicado: R$ 140,00"; /escolapresencial/leilucas responde 301 para /escola-presencial/lei-lucas/
+#      e a home continua abrindo (o .htaccess é o da raiz do site).
+# A página é noindex e fica fora dos sitemaps (INDEXAR em scripts/gerar_escola_presencial.py).
+# Quando a turma ou o cupom mudarem (oferta.json, cupons.php): gerar de novo e publicar só o index.html.
+# Desfazer: scripts/publicar_hostinger.sh --apagar site/escola-presencial/lei-lucas/index.html site/escola-presencial/lei-lucas/og-lei-lucas.jpg
+#   e republicar o .htaccess guardado no passo 2 (.htaccess nunca é apagado).
+site/escola-presencial/lei-lucas/og-lei-lucas.jpg
+site/escola-presencial/lei-lucas/index.html
+site/.htaccess

@@ -86,6 +86,26 @@ O que a conferência também mostrou:
 - As telas com `?t=<token>` (Parabéns, pendente, horários, obrigado da doação) mandam o endereço inteiro no
   `page_view` do GA4 e no `PageView` da Meta. Ver Pendências.
 
+## Página de venda do curso Lei Lucas (`/escola-presencial/lei-lucas/`, 24/11/2026)
+
+A página entra no mesmo funil da matrícula: os eventos têm os mesmos nomes e o mesmo `item_id`
+(`primeiros-socorros-lei-lucas`), e o botão leva ao checkout, onde o `begin_checkout` e o resto continuam como estão.
+O que a separa da matrícula nos relatórios é o `item_list_name` ("Página Lei Lucas") e o `via` do checkout
+(`lp-lei-lucas-<local>`). Grupo de conteúdo: `escola`.
+
+| Momento | Meta | GA4 |
+| --- | --- | --- |
+| Abre a página (depois do `info.php`, no máximo 2,5 s) | `ViewContent` (value = preço do estado; `eventID` repassado à API de Conversões) | `view_item` (value, `oferta`, `origem=pagina_lei_lucas`, items com `coupon=PRO12` no estado cupom) e `view_course_details` |
+| Toca num botão de inscrição | (nada: o `InitiateCheckout` vem no checkout) | `select_item` e `click_enroll` (`local` = cabecalho, topo, conteudo, investimento, final ou barra; `oferta`) |
+| Toca em "Dúvidas?" ou num atalho do chat | (o chat manda os dele) | `chat_atalho` (`local`) |
+| Toca em "Pedir uma turma para a escola" | | `contact_company_training` (`local` = turma_fechada ou duvida_turma) |
+| Toca em "Abrir no Google Maps" | | `como_chegar` |
+| Cada seção aparece na tela (uma vez) | | `secao_vista` (`secao`, `pagina=lei_lucas`) |
+
+`oferta` é o estado da página: `cupom`, `tabela` ou `encerrada`. O value do `view_item` e do `select_item` é 140 com o
+cupom valendo e 249 sem ele. Para ver `oferta` e `secao` nos relatórios, registre as duas como dimensões de evento no
+GA4 (o registro não vale para trás).
+
 ## Etapa e erro no checkout e no cadastro de voluntário (24/10/2026)
 
 Para saber onde as pessoas param entre o `begin_checkout` e o `add_payment_info` (de 19 a 23/10, 9 `generate_lead` e
