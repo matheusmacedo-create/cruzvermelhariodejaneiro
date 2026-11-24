@@ -21,7 +21,10 @@
  *   aluno como sempre). A primeira (a principal, grupo_ordem 1) guarda a cobrança, o PIX e o grupo_qtd; as outras têm
  *   grupo_id = id da principal, sem hash, e seguem o status dela (mcp_aplicar_status). As N vagas são conferidas de uma
  *   vez. Na escola, cada uma vai com uma transação própria (o hash da principal + "-g<ordem>"), porque a
- *   matricula_rapida reconhece a repetição pelo hash. Só à vista (PIX ou cartão 1×), como todo cupom.
+ *   matricula_rapida reconhece a repetição pelo hash. Só à vista (PIX ou cartão 1×).
+ * - Parcelas no cartão (24/11/2026, pedido do Matheus): o cupom de uma pessoa pode ser parcelado como a compra sem cupom
+ *   (até PARCELAS_MAX, com os juros da simulação da Unicopag por conta do aluno). O valor do cupom é o valor à vista; os
+ *   juros entram por cima. O cupom de grupo e a compra do CPF de teste continuam só à vista.
  */
 declare(strict_types=1);
 
@@ -91,7 +94,7 @@ function mcp_cupom_mensagem(string $motivo, ?array $cupom = null): string
         'curso' => 'Este cupom vale só para ' . ($nomes ? implode(', ', $nomes) : 'outro curso') . '.',
         'encerrado' => 'Este cupom não está mais valendo.',
         'esgotado' => 'As vagas com este cupom acabaram.',
-        'plano' => 'O cupom vale para a taxa de inscrição + matrícula, à vista.',
+        'plano' => 'O cupom vale para a taxa de inscrição + matrícula.',
         'indisponivel' => 'O cupom está indisponível agora. Tente de novo em alguns minutos.',
         default => 'Cupom inválido. Confira o código.',
     };
@@ -148,7 +151,8 @@ function mcp_cupom_soltar(string $codigo): void
 }
 
 /**
- * A compra de mcp_compra() com o cupom: valor do curso = valor do cupom, à vista. A taxa de inscrição fica igual (ou o
+ * A compra de mcp_compra() com o cupom: valor do curso = valor do cupom (o valor à vista; no cartão, as parcelas que a
+ * compra já trazia continuam, menos no cupom de grupo, que é só à vista). A taxa de inscrição fica igual (ou o
  * total inteiro, se o cupom valer menos que ela) e a matrícula leva o resto. Os opcionais (custos de processamento e
  * divulgação, 17/11/2026) valem também com cupom, em percentual do valor do cupom. Com o CPF de teste, a compra de
  * teste fica como está (o cupom é registrado, sem desconto).
@@ -161,8 +165,9 @@ function mcp_compra_com_cupom(array $compra, array $cupom, ?string $cpf = null):
     }
     $total = (int) $cupom['total_centavos'];
     $inscricao = min((int) $compra['inscricao'], $total);
+    $parcelas = mcp_cupom_grupo($cupom) > 1 ? 1 : max(1, (int) ($compra['parcelas'] ?? 1));
     return mcp_compra_opcionais(array_replace($compra, [
-        'inscricao' => $inscricao, 'matricula' => $total - $inscricao, 'parcelas' => 1,
+        'inscricao' => $inscricao, 'matricula' => $total - $inscricao, 'parcelas' => $parcelas,
         'cupom' => $cupom['codigo'], 'cupom_desconto' => max(0, $cheio - $total),
     ]));
 }

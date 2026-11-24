@@ -217,6 +217,11 @@ def main() -> int:
     marca = (f'<img src="{LOGO["src"]}" width="{LOGO["largura"]}" height="{LOGO["altura"]}" alt="{esc(LOGO["alt"])}">'
              f'<span class="ll-marca-escola"><b>Escola de Educação</b><span>e Saúde CVB-RJ</span></span>')
 
+    # Parcelas no cartão (24/11/2026): a linha nasce escondida e só aparece quando o info.php diz que o parcelado está
+    # valendo no servidor (parcelado_no_ar e parcelas_max > 1); o número de vezes é o do servidor. Os juros e a taxa ao
+    # mês aparecem no checkout, na hora de escolher as parcelas.
+    parcelas = ('<p class="ll-parcelas" data-ll-parcelas hidden>ou em até <b data-ll-parcelas-n>12</b>x no cartão, com juros</p>')
+
     # --- preço (o mesmo bloco no topo e no Investimento) ---------------------------------------------------------
     selo_cupom = (f'<p class="ll-selo ll-se-cupom">{_svg(TAG_SVG)}<span>Cupom <b>{CUPOM}</b> já aplicado no botão'
                   f'<span data-ll-restam hidden></span> · vale até {prazo_cupom}, enquanto houver cupons</span></p>')
@@ -225,11 +230,13 @@ def main() -> int:
             <p class="ll-preco-de">De <s data-ll-tabela>{v_tabela}</s> por</p>
             <p class="ll-preco-por"><b data-ll-cupom>{v_cupom}</b><span>com tudo incluso</span></p>
             <p class="ll-preco-nota">Taxa de inscrição + matrícula, à vista. PIX ou cartão.</p>
+            {parcelas}
           </div>
           <div class="ll-preco ll-se-tabela">
             <p class="ll-preco-de">Total à vista</p>
             <p class="ll-preco-por"><b data-ll-tabela>{v_tabela}</b></p>
             <p class="ll-preco-nota">Matrícula de {brl_curto(matricula)} + taxa de inscrição de {brl_curto(inscricao)}. PIX ou cartão.</p>
+            {parcelas}
           </div>
           <div class="ll-preco ll-se-encerrada">
             <p class="ll-preco-de">Turma de {turma.ddmm}</p>
@@ -427,7 +434,7 @@ def main() -> int:
           {selo_cupom}
           {cta("investimento", "ll-btn ll-btn-vermelho ll-btn-grande ll-btn-largo")}
           {proximas("ll-btn ll-btn-vermelho ll-btn-grande ll-btn-largo")}
-          <p class="ll-micro ll-se-aberta">PIX ou cartão, à vista.</p>
+          <p class="ll-micro ll-se-aberta">PIX ou cartão, à vista.<span data-ll-parcelas hidden> No cartão, também em até <span data-ll-parcelas-n>12</span>x, com juros.</span></p>
           {aviso_entrada}
           <p class="ll-micro">{chat("Dúvidas? Fale com a secretaria", "investimento")}</p>
         </aside>
@@ -478,6 +485,7 @@ def main() -> int:
         ("ll-se-cupom", f"O que está incluso nos {preco_vivo}?",
          f"<p>A taxa de inscrição e a matrícula, que é o valor do curso, à vista, por PIX ou cartão. Na tabela, as duas somam {v_tabela} "
          f"(matrícula de {brl_curto(matricula)} + taxa de inscrição de {brl_curto(inscricao)}). O cupom {CUPOM} já vem aplicado no botão desta página.</p>"
+         "<p data-ll-parcelas hidden>No cartão, o valor também pode ser dividido em até <span data-ll-parcelas-n>12</span> vezes, com juros: o checkout mostra o valor de cada parcela, o total e a taxa antes de você pagar.</p>"
          "<p>No pagamento aparecem dois opcionais, para cobrir os custos de processamento e para ajudar na divulgação dos cursos. Só paga quem marcar.</p>"),
         ("ll-se-cupom", f"Até quando vale o preço de {preco_vivo}?",
          f"<p>Até {prazo_cupom}, às 23h59, ou até os cupons acabarem, o que vier primeiro. O número de cupons que restam é contado pelo sistema de "
@@ -791,6 +799,7 @@ CSS = """
     .ll-preco-por span{ font-size:16px; font-weight:800; color:var(--green-ink); }
     .ll-preco-fim{ font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1.15; color:var(--titulo); margin-top:2px; }
     .ll-preco-nota{ font-size:14.5px; color:var(--texto); margin-top:6px; }
+    .ll-parcelas{ font-size:15.5px; font-weight:700; color:var(--titulo); margin-top:4px; }
     .ll-selo{ display:flex; gap:10px; align-items:flex-start; border:1.5px dashed var(--red); background:var(--aviso-bg); color:var(--aviso-ink); border-radius:16px; padding:11px 14px; font-size:14.5px; line-height:1.45; font-weight:600; }
     .ll-selo svg{ color:var(--red); margin-top:1px; }
     @media (max-width:650px){ .ll-selo{ min-height:calc(3 * 1.45em + 25px); } }
@@ -998,6 +1007,10 @@ JS = """
         var turmaOk = !!c.turma && c.turma.inicio === INICIO && c.turma.lotada !== true && planos.indexOf('taxa_e_matricula') >= 0;
         if (!turmaOk) { raiz.setAttribute('data-oferta', 'encerrada'); return; }
         if (+c.total_centavos > 0) TABELA = +c.total_centavos;
+        // Parcelas no cartão: só com o parcelado valendo no servidor; o número de vezes é o dele.
+        var vezes = d.parcelado_no_ar === true && +d.parcelas_max > 1 ? +d.parcelas_max : 0;
+        todos('[data-ll-parcelas-n]').forEach(function (el) { if (vezes) el.textContent = String(vezes); });
+        todos('[data-ll-parcelas]').forEach(function (el) { el.hidden = !vezes; });
         (Array.isArray(d.cupons_vitrine) ? d.cupons_vitrine : []).forEach(function (x) {
           if (!o && x && x.codigo === CUPOM && Array.isArray(x.cursos) && x.cursos.indexOf(SLUG) >= 0 && (x.limite === null || +x.restantes > 0) && +x.total_centavos > 0 && +x.total_centavos < TABELA) o = x;
         });

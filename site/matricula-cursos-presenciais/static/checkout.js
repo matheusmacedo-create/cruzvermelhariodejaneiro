@@ -397,14 +397,15 @@
     }
 
     // ---------------------------------------------------------------- parcelas (spec 2.4; api/parcelas.php)
-    function chaveSimulacao(slug, cobre, ajuda) { return slug + '|' + (cobre ? 1 : 0) + '|' + (ajuda ? 1 : 0); }
+    // Com cupom (24/11/2026), a simulação é a do valor do cupom: o código entra na chave e no pedido.
+    function chaveSimulacao(slug, cobre, ajuda, codigo) { return slug + '|' + (cobre ? 1 : 0) + '|' + (ajuda ? 1 : 0) + (codigo ? '|' + codigo : ''); }
     /* Pede as parcelas 300 ms depois da última mudança de curso ou opcionais. A pedida que ficou para trás é esquecida. */
-    function pedirParcelas(chave, slug, cobre, ajuda) {
+    function pedirParcelas(chave, slug, cobre, ajuda, codigo) {
       if (agendada && agendada.chave !== chave) { clearTimeout(agendada.timer); delete simulacoes[agendada.chave]; }
       simulacoes[chave] = { estado: 'carregando' };
       agendada = { chave: chave, timer: setTimeout(function () {
         agendada = null;
-        api('parcelas.php?curso=' + encodeURIComponent(slug) + '&cobre=' + (cobre ? 1 : 0) + '&divulgacao=' + (ajuda ? 1 : 0)).then(function (r) {
+        api('parcelas.php?curso=' + encodeURIComponent(slug) + '&cobre=' + (cobre ? 1 : 0) + '&divulgacao=' + (ajuda ? 1 : 0) + (codigo ? '&cupom=' + encodeURIComponent(codigo) : '')).then(function (r) {
           if (r.ok && Array.isArray(r.opcoes) && r.opcoes.length) {
             simulacoes[chave] = { estado: r.parcelado ? 'ok' : 'falha', motivo: r.motivo || null, opcoes: r.opcoes };
           } else if (r.http === 422 && r.campo === 'plano') {
@@ -568,6 +569,12 @@
       }
       return lista;
     }
+    /* Como o valor do cupom pode ser pago (24/11/2026): à vista ou, com o parcelado ligado no servidor, em até N vezes no
+       cartão, com os juros por conta do aluno. O cupom de grupo é só à vista. */
+    function cupomComoPaga() {
+      var m = info && info.parcelado_no_ar && +info.parcelas_max > 1 ? +info.parcelas_max : 1;
+      return m > 1 ? 'à vista ou em até ' + m + 'x no cartão, com juros' : 'à vista';
+    }
     function mensagemCupom(t, ruim) {
       var el = q('#ck-cupom-msg');
       if (!el) return;
@@ -598,7 +605,7 @@
           cupom = d;
           mensagemCupom(d.grupo > 1
             ? 'Cupom ' + d.codigo + ' aplicado: ' + d.grupo + ' pessoas por ' + brl(d.total_centavos * d.grupo) + ' (' + brl(d.total_centavos) + ' cada), com tudo incluso, à vista, num pagamento só.'
-            : 'Cupom ' + d.codigo + ' aplicado: ' + brl(d.total_centavos) + ' com tudo incluso, à vista.', false);
+            : 'Cupom ' + d.codigo + ' aplicado: ' + brl(d.total_centavos) + ' com tudo incluso, ' + cupomComoPaga() + '.', false);
         } else {
           mensagemCupom((d && d.mensagem) || r.erro || 'Não foi possível conferir o cupom.', true);
         }
@@ -625,7 +632,7 @@
       abrirCupom();
       var entrada = q('#ck-cupom');
       if (entrada) entrada.value = o.codigo;
-      mensagemCupom('Cupom ' + o.codigo + ' aplicado: ' + brl(o.total_centavos) + ' com tudo incluso, à vista.', false);
+      mensagemCupom('Cupom ' + o.codigo + ' aplicado: ' + brl(o.total_centavos) + ' com tudo incluso, ' + cupomComoPaga() + '.', false);
       atualizar();
     }
     function tirarCupom(daPessoa) {
@@ -657,7 +664,7 @@
       var restantes = comCupom && cupom.codigo === o.codigo && typeof cupom.restantes === 'number' ? cupom.restantes : o.restantes;
       var cheio = inscricaoAtual() + matriculaDe(c);
       q('#ck-balao-titulo').innerHTML = esc(c.nome || 'Curso') + ' por <b>' + esc(brl(o.total_centavos)) + '</b>'
-        + (cheio > o.total_centavos ? ' em vez de ' + esc(brl(cheio)) : '') + ', com taxa de inscrição e matrícula inclusas, à vista.';
+        + (cheio > o.total_centavos ? ' em vez de ' + esc(brl(cheio)) : '') + ', com taxa de inscrição e matrícula inclusas, ' + cupomComoPaga() + '.';
       texto('#ck-balao-codigo', o.codigo);
       // Cupom sem limite de vagas (limite null, 06/11/2026): só o prazo, sem barra.
       var semLimite = o.limite === null || o.limite === undefined;
@@ -713,13 +720,15 @@
       var amount = (base + (cobre ? taxa : 0) + (ajuda ? divulgacao : 0)) * grupo;
       montarGrupo(grupo);
 
-      // Parcelas: só a opção 1, no Crédito, com o teto do servidor acima de 1 (E3, 2.4).
+      // Parcelas: só a opção 1, no Crédito, com o teto do servidor acima de 1 (E3, 2.4). Com cupom de uma pessoa também
+      // (24/11/2026); o cupom de grupo continua só à vista.
       var maxParcelas = info && info.parcelas_max ? info.parcelas_max : 1;
-      var querParcelas = temPlanos && !!c && completo && cartao && maxParcelas > 1 && !comCupom;
+      var codigoParcelas = comCupom && completo ? cupom.codigo : '';
+      var querParcelas = temPlanos && !!c && completo && cartao && maxParcelas > 1 && grupo <= 1;
       var sim = null, opcao = null, n = 1;
       if (querParcelas) {
-        var chave = chaveSimulacao(slug, cobre, ajuda);
-        if (!simulacoes[chave]) pedirParcelas(chave, slug, cobre, ajuda);
+        var chave = chaveSimulacao(slug, cobre, ajuda, codigoParcelas);
+        if (!simulacoes[chave]) pedirParcelas(chave, slug, cobre, ajuda, codigoParcelas);
         sim = simulacoes[chave];
         if (sim.estado === 'ok') {
           preencherParcelas(sim.opcoes);
@@ -750,7 +759,7 @@
       texto('#ck-plano-completo-valor', c && matricula > 0 ? ' — ' + brl(comCupom ? cupom.total_centavos * grupoDoCupom() : inscricao + matricula) : '');
       texto('#ck-plano-taxa-valor', brl(inscricao));
       var depoisCompleto = semTurma ? 'Você entra na primeira turma deste curso que tiver vaga, por ordem de pagamento, e recebe a data por e-mail.' : 'A entrada na aula é liberada com a matrícula paga.';
-      texto('#ck-plano-completo-legenda', (comCupom ? 'Com o cupom ' + cupom.codigo + ': ' + (grupoDoCupom() > 1 ? grupoDoCupom() + ' pessoas × ' + brl(cupom.total_centavos) + ', ' : '') + 'tudo incluso, um pagamento só. ' : parcelado ? n + ' parcelas mensais no cartão, total ' + brl(total) + ' com juros. ' : 'um pagamento só. ') + depoisCompleto);
+      texto('#ck-plano-completo-legenda', (comCupom ? 'Com o cupom ' + cupom.codigo + ': ' + (grupoDoCupom() > 1 ? grupoDoCupom() + ' pessoas × ' + brl(cupom.total_centavos) + ', ' : '') + (parcelado ? n + ' parcelas mensais no cartão, total ' + brl(total) + ' com juros. ' : 'tudo incluso, um pagamento só. ') : parcelado ? n + ' parcelas mensais no cartão, total ' + brl(total) + ' com juros. ' : 'um pagamento só. ') + depoisCompleto);
       texto('#ck-plano-taxa-legenda', !c ? 'Quem pagou apenas a inscrição não tem a entrada liberada.'
         : turma ? 'Quem pagou apenas a inscrição não tem a entrada liberada. A matrícula (' + brl(matricula) + ' à vista) é paga antes da aula, com a secretaria da Escola, que escreve para você por e-mail.'
         : listaInteresse ? 'Você entra na lista de interesse da próxima turma. Quando a turma for marcada, a secretaria avisa por e-mail, e o lugar fica com quem pagar a matrícula enquanto houver vaga. Quem já pagou tudo entra primeiro.'
@@ -967,7 +976,7 @@
 
     /* Os 422 do pagar tudo (spec 1.12): nada foi cobrado; a tela se ajusta ao que o servidor disse e mostra a mensagem. */
     function tratarRecusa(r, dados) {
-      var slug = dados.curso, chave = chaveSimulacao(slug, dados.cobre_taxa, dados.ajuda_divulgacao);
+      var slug = dados.curso, chave = chaveSimulacao(slug, dados.cobre_taxa, dados.ajuda_divulgacao, dados.cupom && !dados.grupo ? dados.cupom : '');
       if (r.campo === 'divulgacao') {
         // O percentual da contribuição mudou (ou ela saiu) depois que a página abriu: mostra o valor novo antes da mensagem.
         if (info && typeof r.divulgacao_pct === 'number') info.divulgacao_pct = r.divulgacao_pct;

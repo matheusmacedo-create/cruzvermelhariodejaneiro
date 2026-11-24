@@ -1,0 +1,24 @@
+# Parcelamento no cartão em até 12x, também com cupom (24/11/2026, pedido do Matheus: "pode ligar o parcelamento";
+# juros de 2,99% ao mês, da tabela da ÚnicoPag, por conta do aluno). Registro: docs/checkout-reformulacao-2026-11-24.md.
+# O que liga de verdade é a chave do servidor: PARCELAS_MAX = 12 em api/config-pagar-tudo.php (fora do Git; este script
+# nunca envia arquivos de configuração). Com ela em 1, tudo abaixo fica no ar sem efeito: o cartão continua à vista.
+# Volta rápida: PARCELAS_MAX = 1.
+# Antes: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-parcelado-cupom.txt)
+# ORDEM: o servidor antes das telas (o servidor novo aceita a tela antiga; a tela nova pede a simulação com o cupom).
+site/matricula-cursos-presenciais/api/lib/cupons.php
+site/matricula-cursos-presenciais/api/parcelas.php
+site/matricula-cursos-presenciais/api/pagamentos.php
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/pagar-matricula/index.html
+site/matricula-cursos-presenciais/checkout/index.html
+site/matricula-cursos-presenciais/oferta.json
+site/matricula-cursos-presenciais/index.html
+site/escola-presencial/lei-lucas/index.html
+site/reembolso/index.html
+site/en/refunds/index.html
+site/es/reembolsos/index.html

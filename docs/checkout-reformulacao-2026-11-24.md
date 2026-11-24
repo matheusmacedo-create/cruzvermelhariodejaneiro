@@ -79,16 +79,50 @@ republicar a cópia do ar feita antes.
 Medida de sucesso: a parcela de quem chega e começa a preencher (`checkout_etapa` = dados sobre `begin_checkout`),
 hoje perto de 17%, e os `checkout_erro` de `requisitos`. Evento novo: `checkout_trocar_curso`.
 
-## Parcelamento no cartão (pedido de 24/11/2026: até 12x, juros de 2,99% ao mês pagos pelo aluno) — NÃO feito
+## Parcelamento no cartão em até 12x, também com cupom (24/11/2026)
 
-O checkout já tem o parcelamento pronto e desligado (passo 6 do "pagar tudo"): o servidor pede a simulação à ÚnicoPag,
-mostra juros, taxa ao mês e CET, e confere o cobrado contra o mostrado. O que falta não é tela:
+Pedido do Matheus: "no cartão de crédito precisa dar opção de parcelamento em até 12x pelo aluno", "taxa de 2,99 ao
+mês"; depois, "a ÚnicoPag já está com 2,99, pode ligar o parcelamento".
 
-- **A taxa vem da ÚnicoPag**, não do site: é a tabela de parcelamento da conta que define os 2,99% ao mês. O site só
-  mostra a taxa que a simulação devolve.
-- **A chave fica no servidor** (`PARCELAS_MAX = 12` em `api/config-pagar-tudo.php`, fora do Git) e no `oferta.json`
-  (`"parcelado_no_ar": true`), mais as páginas e políticas geradas com `PARCELADO_HTML=1`
-  (`scripts/publicacao-pagar-tudo-passo6.txt`).
-- **Com cupom, hoje é só à vista** (regra de 30/10/2026, no servidor e na tela). O Lei Lucas a R$ 140 é cupom: para
-  parcelar, a regra muda em `api/lib/cupons.php`, `api/pagamentos.php`, `api/parcelas.php` e `checkout.js`.
-- As travas que o próprio roteiro pede antes de ligar: compra de teste em 2x e o OK do jurídico.
+**Como funciona (já existia, desligado: passo 6 do "pagar tudo").** O servidor pede a simulação à ÚnicoPag
+(`/installments`), mostra cada opção com o valor da parcela, o total, os juros, a taxa ao mês e o CET, e na cobrança
+confere o total mostrado contra o cobrado. **A taxa é a da tabela da conta na ÚnicoPag**: o site não a define, só mostra.
+
+**O que mudou no código.**
+
+- **Cupom parcelado**: até 24/11 o cupom era só à vista (regra de 30/10). Agora o cupom de uma pessoa pode ser pago em
+  até `PARCELAS_MAX` vezes no cartão, com os juros por cima do valor do cupom. `api/lib/cupons.php`
+  (`mcp_compra_com_cupom` mantém as parcelas da compra), `api/pagamentos.php` (lê as parcelas pedidas também com cupom)
+  e `api/parcelas.php` (aceita `&cupom=`: a simulação é a do valor do cupom). O **cupom de grupo** e a compra do CPF
+  de teste continuam só à vista.
+- **Tela** (`checkout.js`): pede a simulação com o cupom; a linha verde do cupom e o balão dizem "à vista ou em até 12x
+  no cartão, com juros" quando o servidor oferece parcelas.
+- **Páginas**: `oferta.json` com `"parcelado_no_ar": true`; a matrícula regerada (os textos do parcelado que já
+  estavam prontos); a página do curso Lei Lucas ganha "ou em até 12x no cartão, com juros", que só aparece quando o
+  `info.php` diz que o parcelado vale; `/reembolso/` em PT, EN e ES com os trechos do parcelado que o roteiro já trazia
+  (estorno do valor total com os juros; quitação antecipada, art. 52, § 2º, do CDC), revisão de 24/11/2026.
+- Ficou para depois: a resposta "Quanto custa…" da FAQ da home e do chat ainda diz "à vista" (mudar o `chat.js` mexe
+  na referência dele em todas as páginas do site).
+
+**A chave que liga fica no servidor**: `PARCELAS_MAX = 12` em `api/config-pagar-tudo.php` (fora do Git; o
+`publicar_hostinger.sh` nunca envia arquivo de configuração). Com ela em 1, tudo isto fica no ar sem efeito: o
+`info.php` responde `parcelado_no_ar: false` e o cartão continua à vista. Volta rápida: `PARCELAS_MAX = 1`.
+
+**Conferido (sem publicar).**
+
+- Unitários: `testar_pagar_tudo.php` 308 (4 novos: cupom em 6x e 12x mantém as parcelas e o valor do cupom; PIX e
+  grupo ficam em 1), `testar_checkout.php` 895, `testar_pagar_tudo_emails.php` 186, sem falha.
+- Tela, com o servidor simulado a 2,99% ao mês (opções geradas pelas funções do próprio servidor): R$ 140,00 com cupom
+  = 12 × R$ 14,06, total R$ 168,72, "Juros de 2,99% ao mês", CET 42,48% ao ano; o envio leva `parcelas: 12`,
+  `cupom: PRO12` e `total_mostrado_centavos: 16872`; marcar os custos pede outra simulação; sem cupom, 12 opções; com a
+  chave desligada (como o servidor está hoje), nada de parcelas. 17 verificações, mais as 29 do checkout.
+- `conferir_ga4_conversoes.js` e `conferir_pixel.js` com `--repositorio`, `conferir_ad_grants.py`: sem falha.
+- **Não testado**: a cobrança parcelada de verdade na ÚnicoPag. O teste de integração com banco
+  (`testar_meta_integracao.php`) não serve hoje: falha igual com e sem esta mudança (20 de 60), porque espera os preços
+  antigos do catálogo (R$ 279). **A primeira compra parcelada precisa ser acompanhada**: o roteiro do projeto pedia uma
+  compra de teste em 2x antes de abrir, e o OK do jurídico para os textos.
+
+**Depois de ligar a chave**: abrir `api/parcelas.php?curso=primeiros-socorros-lei-lucas&cupom=PRO12` e conferir a
+`taxa_mes_rotulo` (tem de dar 2,99%, ou perto disso pelo arredondamento dos centavos).
+
+Lista de publicação: `scripts/publicacao-parcelado-cupom.txt`.

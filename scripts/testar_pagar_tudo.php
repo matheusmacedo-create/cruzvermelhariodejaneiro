@@ -91,6 +91,16 @@ v('cupom: custos e divulgação sobre o valor do cupom', [$cc['inscricao'], $cc[
     [9900, 5100, 750, 1500, 17250, 12900]);
 $cs = mcp_compra_com_cupom($c('taxa_e_matricula', 'cartao', false, false), $cupomTeste, CPF_OUTRO);
 v('cupom: sem opcionais, o valor do cupom', [$cs['custos'], $cs['divulgacao'], $cs['amount'], $cs['parcelas'], $cs['divulgacao_oferta']], [0, 0, 15000, 1, 1500]);
+// Parcelas com cupom (24/11/2026): o cupom de uma pessoa mantém as parcelas da compra no cartão; o valor do cupom é o
+// valor à vista (os juros entram por cima, na simulação). PIX e cupom de grupo continuam em 1.
+$c6 = mcp_compra_com_cupom($c('taxa_e_matricula', 'cartao', false, false, 6), $cupomTeste, CPF_OUTRO);
+v('cupom no cartão em 6x: mantém as parcelas e o amount do cupom', [$c6['parcelas'], $c6['amount'], $c6['cupom'], $c6['cupom_desconto'] > 0], [6, 15000, 'TESTE', true]);
+$c12 = mcp_compra_com_cupom($c('taxa_e_matricula', 'cartao', true, false, 12), $cupomTeste, CPF_OUTRO);
+v('cupom no cartão em 12x com custos: parcelas 12, custos sobre o valor do cupom', [$c12['parcelas'], $c12['custos'], $c12['amount']], [12, 750, 15750]);
+$cp = mcp_compra_com_cupom($c('taxa_e_matricula', 'pix', false, false, 6), $cupomTeste, CPF_OUTRO);
+v('cupom no PIX: sempre 1 parcela', [$cp['parcelas'], $cp['amount']], [1, 15000]);
+$cg = mcp_compra_com_cupom($c('taxa_e_matricula', 'cartao', false, false, 6), $cupomTeste + ['grupo' => 5], CPF_OUTRO);
+v('cupom de grupo no cartão: só à vista', [$cg['parcelas'], $cg['amount']], [1, 15000]);
 v('parcelas só no cartão da opção 1', $c('taxa_e_matricula', 'pix', false, false, 10)['parcelas'], 1);
 v('parcelas na opção 2 viram 1', $c('so_taxa', 'cartao', false, false, 10)['parcelas'], 1);
 v('parcelas 10 no cartão', $c('taxa_e_matricula', 'cartao', false, false, 10)['parcelas'], 10);
