@@ -167,6 +167,11 @@ const retirar = { nome: 'retirar', espera: 1500, fazer: async (p) => {
   await cenario('matrícula, quem já tinha aceitado', '/matricula-cursos-presenciais/', [], { jaAceitou: true, espera: 9000, eventos: ['PageView'] });
   // Modo curso (?curso=<slug>, link de anúncio): o ViewContent sai ao carregar, uma vez, com o mesmo id no repasse.
   await cenario('matrícula ?curso=, quem já tinha aceitado', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [], { jaAceitou: true, espera: 9000, eventos: ['PageView', 'ViewContent'] });
+  // Página de venda do curso Lei Lucas (24/11/2026): o ViewContent sai ao carregar, depois do info.php, com o repasse.
+  await cenario('página Lei Lucas, aceitar', '/escola-presencial/lei-lucas/', [aceitar], { eventos: ['PageView', 'ViewContent'] });
+  await cenario('página Lei Lucas, quem já tinha aceitado', '/escola-presencial/lei-lucas/', [], { jaAceitou: true, espera: 9000, eventos: ['PageView', 'ViewContent'] });
+  await cenario('página Lei Lucas, sem escolher', '/escola-presencial/lei-lucas/', [], { nadaDaMeta: true });
+  await cenario('página Lei Lucas, rejeitar', '/escola-presencial/lei-lucas/', [rejeitar], { nadaDaMeta: true });
   await cenario('matrícula ?curso=, sem escolher', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [], { nadaDaMeta: true });
   await cenario('matrícula ?curso=, rejeitar', '/matricula-cursos-presenciais/?curso=bombeiro-civil', [rejeitar], { nadaDaMeta: true });
   await cenario('checkout com curso, aceitar', '/matricula-cursos-presenciais/checkout/?curso=puncao-venosa', [aceitar], { eventos: ['PageView', 'InitiateCheckout'] });

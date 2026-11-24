@@ -140,6 +140,31 @@ O que a separa da matrícula nos relatórios é o `item_list_name` ("Página Lei
 | Toca em "Abrir no Google Maps" | | `como_chegar` |
 | Cada seção aparece na tela (uma vez) | | `secao_vista` (`secao`, `pagina=lei_lucas`) |
 
+**Conferência de 24/11/2026, com a página no ar.** Pela rede, sem nada chegar à Meta nem ao GA4 (cenários sem
+escolha, rejeitar, aceitar e quem já tinha aceitado):
+
+- Meta: nada sai sem consentimento nem com "Rejeitar". Com "Aceitar todos", `PageView` e `ViewContent` (value 140, BRL,
+  `content_ids` com o slug), cada um com o `eventID` que o repasse à API de Conversões leva igual; o `fbclid` da chegada
+  vira `fbc`. No checkout seguem `PageView` e `InitiateCheckout`.
+- GA4: `page_view`, `view_item` (value 140, BRL, `coupon=PRO12`, lista "Página Lei Lucas"), `view_course_details` e
+  `secao_vista` nas duas propriedades (G-HDYZZ5JZHF e G-Z5NWV4RBTT); as `utm_*` e o `gclid` chegam no endereço e seguem
+  para o checkout, que manda `begin_checkout`. No tempo real da propriedade apareceram a página (pelo título),
+  `view_item` e `begin_checkout`.
+- Toque no botão: `select_item` (value 140, `local`) e `click_enroll` saem quando a página está sendo trocada pelo
+  checkout. Nem a rota do Playwright nem o `Network.requestWillBeSent` enxergam esse envio, e com rota ativa ele se
+  perde: parecia que os dois eventos não existiam, também na página de matrícula. Só apareceram com um proxy em cadeia
+  que desvia os endereços de coleta do GA4 para um receptor local. Quem conferir cliques que levam a outra página deve
+  usar esse caminho, ou olhar o relatório do GA4 no dia seguinte.
+- **Faltava o segundo conjunto de dados da Meta** (`1580762603752102`, o que a conta de anúncios enxerga): a página foi
+  gerada da `main`, antes de o branch do segundo conjunto ser juntado, e foi ao ar só com o primeiro. Corrigido no
+  repositório (o branch do segundo conjunto foi juntado a este e a página regerada: os dois `fbq('init')`), com quatro
+  cenários da página em `scripts/conferir_pixel.js` (19 de 19 com `--repositorio`). **A página corrigida ainda não foi
+  publicada**: até lá, os anúncios da Meta que apontarem para ela não veem `PageView` nem `ViewContent` nesse conjunto.
+- Visto e não mexido: no checkout, `InitiateCheckout` e `begin_checkout` saem com value 249 mesmo com o cupom que leva a
+  140 (o valor é o do carregamento, antes de o cupom ser aplicado); o `Purchase` leva o valor pago.
+- Quatro visitas de teste chegaram ao GA4 de verdade (endereço com `conferir=1` ou `utm_source=teste-medicao`), com
+  consentimento só de estatística: nada delas foi à Meta.
+
 `oferta` é o estado da página: `cupom`, `tabela` ou `encerrada`. O value do `view_item` e do `select_item` é 140 com o
 cupom valendo e 249 sem ele. Para ver `oferta` e `secao` nos relatórios, registre as duas como dimensões de evento no
 GA4 (o registro não vale para trás).
