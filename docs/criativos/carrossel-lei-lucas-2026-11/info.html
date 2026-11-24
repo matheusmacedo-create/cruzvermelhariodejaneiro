@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=block" rel="stylesheet">
+<style>
+:root{--red:#e30613;--ink:#141414}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#111}
+.b{position:relative;overflow:hidden;color:#fff;background:#151515;width:1080px;height:1350px;margin-bottom:40px}
+.foto{position:absolute;top:0;left:0;right:0;height:400px;background:url(../banners-turmas-nov-dez-2026/img/lei-lucas.jpg) center 38%/cover no-repeat}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,21,.1) 20%,#151515 100%)}
+.logo{background:#fff;display:inline-block;border-radius:0 0 22px 0;position:absolute;top:0;left:0;z-index:3;padding:28px 44px 28px 60px}
+.logo img{display:block;height:72px}
+.txt{position:relative;z-index:2;padding:0 60px}
+.tag{display:inline-block;background:var(--red);font:700 25px/1 Inter;letter-spacing:.26em;padding:.6em .8em .6em 1em;border-radius:6px;text-transform:uppercase}
+h1{font-family:"Barlow Condensed";font-weight:800;line-height:.9;text-transform:uppercase;margin-top:22px}
+h1 span{color:var(--red)}
+.lista{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:28px 26px;margin-top:46px}
+.lista li{display:flex;align-items:center;gap:22px;background:#1f1f1f;border-radius:16px;padding:36px 24px}
+.ic{background:var(--red);border-radius:12px;display:grid;place-items:center;flex:none;width:88px;height:88px}
+.ic svg{width:48px;height:48px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lista b{display:block;font:800 52px/1 "Barlow Condensed";text-transform:uppercase}
+.lista small{display:block;font:500 26px/1.25 Inter;color:#cfcfcf;margin-top:6px}
+.p{font:500 43px/1.34 Inter;color:#ededed;margin-top:36px}
+.p b{color:#fff;font-weight:700}
+.quem{margin-top:52px;border-left:8px solid var(--red);padding:4px 0 4px 26px}
+.quem h2{font:700 25px/1 Inter;letter-spacing:.22em;text-transform:uppercase;color:#cfcfcf}
+.quem p{font:700 42px/1.34 Inter;margin-top:16px}
+.pe{position:absolute;left:60px;right:60px;bottom:54px;z-index:2;font:600 25px/1.4 Inter;letter-spacing:.1em;text-transform:uppercase;color:#cfcfcf}
+.barra{position:absolute;left:0;bottom:0;height:14px;width:100%;background:var(--red)}
+</style></head><body>
+
+<div class="b" id="aprende">
+  <div class="foto"></div>
+  <div class="logo"><img src="../banners-turmas-nov-dez-2026/img/logo.png" alt=""></div>
+  <div class="txt" style="padding-top:290px">
+    <span class="tag">O que você aprende</span>
+    <h1 style="font-size:118px">Em um dia, você aprende <span>a agir em</span></h1>
+    <ul class="lista">
+      <li><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/><path d="M12 13v4"/></svg></span><div><b>Engasgo</b><small>em bebês e crianças</small></div></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/><path d="M4 12h4l2-3 3 6 2-3h5"/></svg></span><div><b>Parada</b><small>reanimação (RCP)</small></div></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7 16l4-8 3 5 3-3"/><circle cx="17" cy="6" r="2"/></svg></span><div><b>Quedas</b><small>e traumas</small></div></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><div><b>Convulsões</b><small>o que fazer na hora</small></div></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-4-3-6-4-9-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 7a7 7 0 0 0 7 7z"/></svg></span><div><b>Queimaduras</b><small>primeiros cuidados</small></div></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2s7 7.5 7 12.5A7 7 0 0 1 5 14.5C5 9.500 12 2 12 2z"/></svg></span><div><b>Hemorragias</b><small>como controlar</small></div></li>
+    </ul>
+  </div>
+  <p class="pe">Teoria e prática · 8 horas · com certificado</p>
+  <div class="barra"></div>
+</div>
+
+<div class="b" id="lei">
+  <div class="logo"><img src="../banners-turmas-nov-dez-2026/img/logo.png" alt=""></div>
+  <div class="txt" style="padding-top:216px">
+    <span class="tag">Por que Lei Lucas</span>
+    <h1 style="font-size:134px">A lei que nasceu <span>de uma perda</span></h1>
+    <p class="p">Em 2017, <b>Lucas, de 10 anos, morreu engasgado</b> em um passeio da escola.</p>
+    <p class="p">Desde 2018, a Lei Lucas manda que <b>escolas e espaços de recreação infantil</b> tenham professores e funcionários capacitados em primeiros socorros.</p>
+    <div class="quem">
+      <h2>Para quem é o curso</h2>
+      <p>Pais e avós · Professores e creches<br>Babás e cuidadores · Projetos com crianças</p>
+    </div>
+  </div>
+  <p class="pe">Lei nº 13.722, de 4 de outubro de 2018</p>
+  <div class="barra"></div>
+</div>
+</body></html>

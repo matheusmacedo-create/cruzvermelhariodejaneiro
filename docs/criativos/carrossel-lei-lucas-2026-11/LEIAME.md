@@ -7,20 +7,26 @@ imagem e as ferramentas que montam tudo de novo.
 
 ## Ordem dos cartões
 
+Versão de 24/11/2026 (tarde): o Matheus sentiu falta de cartões com informação do curso, então entraram dois
+e saíram dois resgates (ficam de reserva). O anúncio em carrossel aceita no máximo 10 cartões.
+
 | Nº | Arquivo | O que é | Duração |
 | --- | --- | --- | --- |
-| 1 | 01_D_viatura_DF | PMs salvam bebê de 1 ano ao lado da viatura (DF) | 29 s |
-| 2 | 02_G_depoimento_Luciana | Depoimento de aluna | 23 s |
-| 3 | 03_K_quartel_MG | PM salva bebê de 1 mês no quartel (MG) | 46 s |
-| 4 | 04_F_policial_rua | PM salva bebê na rua (câmera de 2022) | 45 s |
-| 5 | 05_H_depoimento_Ana_Claudia | Depoimento de aluna, odontopediatra | 20 s |
-| 6 | 06_J_bombeiros_SC | Bombeiro salva menina de 7 anos no quartel (SC) | 33 s |
-| 7 | 07_E_batalhao_Chapeco | PM salva bebê no batalhão (Chapecó, SC) | 38 s |
-| 8 | 08_I_depoimento_Luciene | Depoimento de aluna | 19 s |
-| 9 | 09_A_mae_em_casa | Mãe desengasga o filho em casa | 28 s |
-| 10 | 10_cartao_final (PNG, ou MP4 com voz) | Preço e chamada para a inscrição | 19 s com voz |
+| 1 | 01_resgate_viatura_DF | PMs salvam bebê de 1 ano ao lado da viatura (DF) | 28 s |
+| 2 | 02_depoimento_Luciana | Depoimento de aluna | 23 s |
+| 3 | 03_resgate_quartel_MG | PM salva bebê de 1 mês no quartel (MG) | 46 s |
+| 4 | 04_cartao_o_que_voce_aprende | Cartão: o que se aprende em um dia de curso | 18 s |
+| 5 | 05_resgate_bombeiros_SC | Bombeiro salva menina de 7 anos no quartel (SC) | 32 s |
+| 6 | 06_depoimento_Ana_Claudia | Depoimento de aluna, odontopediatra | 20 s |
+| 7 | 07_cartao_lei_lucas | Cartão: por que Lei Lucas e para quem é o curso | 26 s |
+| 8 | 08_resgate_mae_em_casa | Mãe desengasga o filho em casa | 27 s |
+| 9 | 09_depoimento_Luciene | Depoimento de aluna | 19 s |
+| 10 | 10_cartao_preco | Cartão: preço e chamada para a inscrição | 18 s |
 
-Reserva: reserva_L_batalhao_DF (PMs salvam bebê no batalhão, DF, 22 s).
+Reservas: policial na rua (câmera de 2022), batalhão de Chapecó e batalhão do DF.
+Os três cartões saem de `cartao.html` (preço) e `info.html` (os dois de informação); a voz e a música deles, de
+`cartao_voz.py`. O que os cartões de informação dizem vem da ficha do curso (`cursos.json`) e da página da Lei
+Lucas no site.
 
 ## Regras que valeram aqui
 
@@ -71,8 +77,10 @@ Reserva: reserva_L_batalhao_DF (PMs salvam bebê no batalhão, DF, 22 s).
 scripts/video_para_feed.sh entrada.mp4 PASTA/videos/prontos/NOME_1080x1350.mp4
 # 2. montar (sem letras, monta todos); a chave da ElevenLabs vem do ambiente, nunca do código
 PASTA=/caminho/da/pasta python3 docs/criativos/carrossel-lei-lucas-2026-11/montar.py D K F
-# 3. cartão final
+# 3. cartões (imagem e, depois, vídeo com voz e música)
 node docs/criativos/carrossel-lei-lucas-2026-11/render.js
+node docs/criativos/carrossel-lei-lucas-2026-11/render_info.js
+PASTA=/caminho/da/pasta python3 docs/criativos/carrossel-lei-lucas-2026-11/cartao_voz.py
 ```
 
 Precisa de ffmpeg com libass, da fonte Inter instalada e, para o cartão, do Playwright.
@@ -88,7 +96,7 @@ No curso de Primeiros Socorros Lei Lucas da Cruz Vermelha do Rio você aprende, 
 
 Inscreva-se na próxima turma: de R$ 249 por R$ 140 com tudo incluso, usando o cupom PRO12. É preço promocional e não sabemos até quando o desconto vai ficar.
 
-Toque em Saiba mais.
+Link na bio.
 
 Imagens: PMDF, Polícia Militar de MG e Corpo de Bombeiros de SC, via Metrópoles, g1 Sul de Minas e Jornal Razão; arquivo de família.
 ```
