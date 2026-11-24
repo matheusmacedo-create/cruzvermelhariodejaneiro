@@ -123,8 +123,9 @@ De cerca de 290 pessoas que chegaram ao checkout em 27/10 a 24/11/2026, 50 come�
 pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o aceite obrigatório era o erro mais comum. A
 tela foi reorganizada (curso do link numa linha, topo mais baixo, erro junto do campo, aceite colado ao botão, cupom e
 opcionais mais enxutos), sem mexer no servidor nem no pagamento: o primeiro campo foi de 1.013 px para 495 px e o botão
-de 3.252 px para 2.507 px. Diagnóstico, mudanças, testes, lista de publicação e a situação do parcelamento em 12x
-(pedido no mesmo dia, não feito): [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
+de 3.252 px para 2.507 px. No mesmo dia, o parcelamento no cartão em até 12x passou a valer também com cupom (código e
+páginas publicados; **falta a chave `PARCELAS_MAX = 12` no servidor**, que é do responsável). Diagnóstico, mudanças,
+testes e listas de publicação: [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
 
 ## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
 

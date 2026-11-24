@@ -126,3 +126,13 @@ confere o total mostrado contra o cobrado. **A taxa é a da tabela da conta na �
 `taxa_mes_rotulo` (tem de dar 2,99%, ou perto disso pelo arredondamento dos centavos).
 
 Lista de publicação: `scripts/publicacao-parcelado-cupom.txt`.
+
+**Publicado em 24/11/2026**, com o OK do Matheus ("pode ligar o parcelamento"), o servidor antes das telas. Antes, cópia
+do que estava no ar: os três arquivos do servidor eram iguais aos do Git. Cache limpo. No ar:
+`scripts/conferir_publicacao.sh` "Tudo certo"; `parcelas.php?…&cupom=PRO12` responde com o valor do cupom
+(`amount_centavos: 14000`) e `motivo: desligado`; as 29 verificações do checkout sem falha; matrícula, página do curso e
+as três páginas de reembolso abrem sem erro, e nenhuma mostra parcelas ao comprador enquanto a chave está desligada.
+
+**Estado em 24/11/2026, fim do dia: a chave do servidor continua em 1** (`info.php`: `parcelas_max: 1`,
+`parcelado_no_ar: false`). O parcelamento passa a valer quando o responsável puser `'PARCELAS_MAX' => 12` em
+`api/config-pagar-tudo.php`.
