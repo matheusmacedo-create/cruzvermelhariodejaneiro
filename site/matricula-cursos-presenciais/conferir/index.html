@@ -53,6 +53,10 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
+  // Segundo conjunto de dados (24/11/2026): o do portfólio NND Negocios Locais, o único que a conta de anúncios
+  // das campanhas enxerga. O primeiro é de outro portfólio, que a Meta ainda não deixa compartilhar. Todo
+  // fbq('track') vai aos dois; a API de Conversões (servidor) segue só para o primeiro.
+  fbq('init', '1580762603752102');
   // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
   window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });

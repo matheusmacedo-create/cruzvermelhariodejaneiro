@@ -15,6 +15,9 @@
 // Por que existe: de 27/09 a 02/10/2026 o "Aceitar todos" baixava o fbevents.js, mas nenhum evento
 // saía (um fbq('consent', 'revoke') na fila travava o Pixel). A conferência da época só olhava o
 // download do script; esta exige o PageView, o ViewContent e o InitiateCheckout na Meta.
+//
+// Desde 24/11/2026 as páginas iniciam dois conjuntos de dados (PIXELS, abaixo): cada evento precisa sair para
+// os dois, com o mesmo id. O repasse à API de Conversões continua um só (o servidor fala só com o primeiro).
 const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
@@ -22,6 +25,9 @@ const { chromium } = require('playwright');
 const RAIZ = path.resolve(__dirname, '..', 'site');
 const BASE = 'https://cruzvermelhariodejaneiro.org';
 const DO_REPOSITORIO = process.argv.includes('--repositorio');
+// O conjunto de dados de sempre e o do portfólio da conta de anúncios das campanhas (docs/rastreamento.md).
+const PIXELS = ['2224500131617302', '1580762603752102'];
+const AUTOMATICOS = ['SubscribedButtonClick', 'Microdata'];
 
 function arquivoLocal(u) {
   const x = new URL(u);
@@ -51,6 +57,12 @@ function tipo(u, corpo) {
   if (/connect\.facebook\.net\/signals\/config/.test(u)) return 'meta:config';
   if (/connect\.facebook\.net\/.*fbevents\.js/.test(u)) return 'meta:fbevents.js';
   return null;
+}
+
+// Para qual conjunto de dados o envio vai (campo id, na URL ou no corpo); null se não for um envio de evento.
+function pixelDoEnvio(u, corpo) {
+  if (!/facebook\.com\/tr/.test(u)) return null;
+  return new URL(u).searchParams.get('id') || campoDoCorpo(corpo, 'id');
 }
 
 let falhas = 0;
@@ -88,7 +100,7 @@ async function cenario(nome, url, passos, esperado) {
   const p = await ctx.newPage();
   const vistos = [];
   const erros = [];
-  p.on('request', (r) => { const t = tipo(r.url(), r.postData()); if (t) vistos.push({ fase, t }); });
+  p.on('request', (r) => { const t = tipo(r.url(), r.postData()); if (t) vistos.push({ fase, t, pixel: pixelDoEnvio(r.url(), r.postData()) }); });
   p.on('pageerror', (e) => erros.push(e.message.slice(0, 160)));
   await p.goto(BASE + url + (url.includes('?') ? '&' : '?') + 'conferir_pixel=1', { waitUntil: 'load' });
   await p.waitForTimeout(esperado.espera || 6000);
@@ -103,6 +115,20 @@ async function cenario(nome, url, passos, esperado) {
   // API de Conversões: os eventos de página que saíram no Pixel também vão ao repasse, com o mesmo id.
   for (const [ev, eid] of comId) {
     if (['PageView', 'ViewContent', 'InitiateCheckout'].includes(ev) && !repasses.some((x) => x.evento === ev && x.id === eid)) problemas.push(`${ev} sem repasse com o mesmo id`);
+  }
+  // Dois conjuntos de dados: o mesmo evento, com o mesmo id, sai para cada um. Os eventos que o próprio Pixel
+  // cria (AUTOMATICOS: clique em botão, dados da página) saem com um id por conjunto; neles vale só o nome.
+  const destinos = {};
+  for (const v of vistos) {
+    if (!/^meta:[A-Z]/.test(v.t)) continue;
+    const ev = v.t.slice(5).split('#')[0];
+    const chave = AUTOMATICOS.includes(ev) ? ev : v.t.slice(5);
+    (destinos[chave] = destinos[chave] || new Set()).add(v.pixel);
+  }
+  for (const [chave, ids] of Object.entries(destinos)) {
+    const ev = chave.split('#')[0];
+    for (const id of PIXELS) if (!ids.has(id)) problemas.push(`${ev} não saiu para o conjunto ${id}`);
+    for (const id of ids) if (!PIXELS.includes(id)) problemas.push(`${ev} saiu para um conjunto desconhecido (${id})`);
   }
   if (esperado.nadaDaMeta && repasses.length) problemas.push('repasse sem consentimento');
   if (esperado.simAntigo && repasses.some((x) => x.fase === 'chegada')) problemas.push('repasse antes de a pessoa responder ao aviso de novo');

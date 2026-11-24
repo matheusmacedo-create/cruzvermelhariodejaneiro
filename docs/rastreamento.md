@@ -1,9 +1,41 @@
 # Rastreamento (GA4 e Meta Pixel), revisado em 19/09/2026
 
 IDs em uso: GA4 `G-HDYZZ5JZHF` e Meta Pixel `2224500131617302`, os mesmos em todas as páginas
-deste repositório. A verificação foi feita ao vivo, no navegador, capturando o que cada página envia
+deste repositório (desde 24/11/2026, também o conjunto `1580762603752102`: seção abaixo). A verificação foi feita ao vivo, no navegador, capturando o que cada página envia
 e interceptando as chamadas `gtag()` e `fbq()`; o fluxo do checkout foi testado com a resposta da
 API simulada, sem criar transação.
+
+## Dois conjuntos de dados da Meta (24/11/2026, NÃO publicado)
+
+As campanhas de novembro rodam na conta de anúncios "3" (`2438819769904784`), do portfólio **NND Negocios Locais**.
+O Pixel do site, `2224500131617302`, é do portfólio **Sophya.ia** e só está ligado à conta "CruzVermelha", que a Meta
+marca como `UNSETTLED` e não deixa consultar. A conta "3" não enxerga nenhum evento do site: as campanhas otimizam por clique e não mostram
+inscrição nem compra. A Meta não deixa o Sophya.ia compartilhar o Pixel com um parceiro (portfólio novo, "após várias
+semanas").
+
+Saída: as páginas passam a iniciar também o conjunto **`1580762603752102`** ("Cruz Vermelha Rio de Janeiro", do NND, já
+ligado à conta "3"), com um segundo `fbq('init')` no bloco de medição da home, logo depois do primeiro. Todo
+`fbq('track')` e `fbq('trackCustom')` sai para os dois, com o mesmo `eventID`. Nada muda no consentimento: o
+`fbevents.js` continua só com "sim" para marketing.
+
+- **O que o conjunto novo recebe:** só os eventos do navegador (PageView, ViewContent, InitiateCheckout, Lead,
+  AddPaymentInfo, Purchase, Contact, CompleteRegistration, SubmitApplication). A API de Conversões continua indo só
+  para o primeiro (`MCP_META_PIXEL` e o token são dele): compra confirmada sem navegador (postback, outro aparelho) e
+  visita com bloqueador não chegam ao novo. Para chegarem, falta um token do conjunto novo e o envio em dobro em
+  `api/lib/meta.php`.
+- **O histórico não se transfere:** a Meta não importa eventos de um conjunto para outro. O primeiro segue recebendo
+  tudo, como antes. As contagens por hora de 27/10 a 24/11/2026 (Contact, Lead, AddPaymentInfo, Purchase e
+  CompleteRegistration, navegador e servidor, sem deduplicar), exportadas do Gerenciador de Eventos, estão em
+  `docs/dados/pixel-2224500131617302-eventos-por-hora-2026-10-27-a-2026-11-24.csv` (horário como veio na exportação).
+- **Fora desta mudança:** as páginas geradas pela Redação (`lib/site/analytics.ts`: notícias, acervo, transparência),
+  a escola e os apps da Vercel continuam só com o primeiro conjunto.
+- **Conferência:** `scripts/conferir_pixel.js` passou a exigir cada evento nos dois conjuntos, com o mesmo id (os
+  eventos que o próprio Pixel cria, como `SubscribedButtonClick`, saem com um id por conjunto). Com `--repositorio`,
+  15 de 15 cenários em 24/11/2026.
+- **Publicação:** `scripts/publicacao-segundo-pixel.txt` (101 páginas iguais às do ar). A home e as seis telas do
+  checkout estão mais novas no ar que na `main`: nelas a linha entra sobre a cópia do ar, não sobre o repositório.
+- **Quando o Sophya.ia puder compartilhar o Pixel:** ligar o `2224500131617302` à conta "3" e decidir se o segundo
+  `init` sai.
 
 ## Cobertura por página
 
