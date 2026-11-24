@@ -1,6 +1,7 @@
 # Página de venda do curso Primeiros Socorros Lei Lucas (24/11/2026, pedido do Matheus): /escola-presencial/lei-lucas/,
 # com o preço do cupom PRO12 (R$ 140,00 com tudo incluso) e a turma de 09/12/2026.
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 24/11/2026 (página e imagem novas; .htaccess da raiz com as três regras). Cache limpo; conferido no ar
+#   (página idêntica ao Git, redirecionamentos, home e matrícula em 200, checkout com o cupom aplicado).
 # Gerar antes: python3 scripts/gerar_escola_presencial.py (lê cursos.json, oferta.json e api/lib/cupons.php)
 #   Imagem de compartilhamento: node docs/criativos/pagina-lei-lucas/render.js (só se o og.html mudar).
 # ORDEM:

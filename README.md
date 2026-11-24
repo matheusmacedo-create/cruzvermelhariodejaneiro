@@ -117,7 +117,7 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
-## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (24/11/2026, NÃO publicada)
+## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
 
 Pedido do Matheus: uma página única vendendo o curso Primeiros Socorros Lei Lucas pelo preço promocional de R$ 140,00,
 num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas, algo assim"). Ficou em
@@ -166,7 +166,18 @@ num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas,
   links e imagens respondem 200; JSON-LD válido (`validar_jsonld.py`); o link do botão abre o checkout real com
   "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". **Não testado:** as três regras novas do `.htaccess` (não há
   Apache/LiteSpeed aqui) e um pagamento de verdade vindo da página.
-- **Publicar**: `scripts/publicacao-escola-presencial.txt` (imagem, página e, por último, o `.htaccess` da raiz).
+- **Publicado em 24/11/2026**, com a autorização do Matheus ("publique a página, você tem autorização"), na ordem de
+  `scripts/publicacao-escola-presencial.txt`: imagem, página e, por último, o `.htaccess` da raiz. Antes, cópia do que
+  estava no ar: os dois arquivos da página eram novos e o `.htaccess` do servidor era igual ao do Git em `ebf1995`, só
+  com fim de linha CRLF (o publicado agora vai com LF). Cache limpo pela API da hospedagem. Conferido no ar: `index.html`
+  idêntico ao do Git em `a7c644d`; a imagem responde 200 em 1200x630 (a hospedagem a recomprime: 84 KB no ar, 86 KB
+  aqui); home, matrícula, `/doe/`, `/noticias/` e `info.php` continuam em 200 e o 404 próprio continua;
+  `/escolapresencial/leilucas` (com ou sem barra, com ou sem hífen em cada parte) responde 301 para o endereço oficial
+  levando a query junto, e `/escola-presencial/` responde 302 para a matrícula. Num Chromium em 390 px, pelo endereço
+  sem hífen: estado `cupom`, "restam 2 cupons", 4 depoimentos, sem erro de JavaScript, sem imagem quebrada e sem rolagem
+  lateral; o botão abriu o checkout com "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". Nenhum pagamento foi feito.
+  Os depoimentos foram ao ar por decisão do responsável; a confirmação com a Escola (regra D8) continua valendo.
+  Desfazer: apagar os dois arquivos da página e republicar o `.htaccess` de `ebf1995` (passos na lista de publicação).
 - **Quando a turma ou o cupom mudarem** (`oferta.json`, `cupons.php`): rodar o gerador e publicar o `index.html`. Sem
   turma aberta ou com o cupom vencido, o gerador se recusa a gravar.
 
