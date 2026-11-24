@@ -117,6 +117,15 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Checkout reformulado para converter mais (24/11/2026, NÃO publicado)
+
+De cerca de 290 pessoas que chegaram ao checkout em 27/10 a 24/11/2026, 50 começaram a preencher, 33 enviaram e 24
+pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o aceite obrigatório era o erro mais comum. A
+tela foi reorganizada (curso do link numa linha, topo mais baixo, erro junto do campo, aceite colado ao botão, cupom e
+opcionais mais enxutos), sem mexer no servidor nem no pagamento: o primeiro campo foi de 1.013 px para 495 px e o botão
+de 3.252 px para 2.507 px. Diagnóstico, mudanças, testes, lista de publicação e a situação do parcelamento em 12x
+(pedido no mesmo dia, não feito): [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
+
 ## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
 
 Pedido do Matheus: uma página única vendendo o curso Primeiros Socorros Lei Lucas pelo preço promocional de R$ 140,00,

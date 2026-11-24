@@ -249,3 +249,71 @@ thead .hr-cab { text-align: center; font-size: .92rem; }
 .ck-balao-ok[hidden] { display: none; }
 .ck-balao-tirar { flex: none; background: none; border: 0; padding: 4px 0; color: var(--muted); font: inherit; font-size: .84rem; font-weight: 600; text-decoration: underline; cursor: pointer; }
 @media (max-width: 920px) { .ck-resumo .ck-balao { grid-column: 1 / -1; margin-top: 14px; } }
+
+/* ---------- Reformulação do checkout para o celular (11/2026). De 27/10 a 24/11/2026, de cerca de 290 pessoas que
+   chegaram ao checkout, só umas 50 começaram a preencher: o primeiro campo ficava a mais de uma tela do topo (1.013 px
+   em 390 px) e o botão de pagar, a quase quatro. Aqui o topo encolhe, o curso que veio no link vira uma linha, a
+   mensagem de erro aparece junto do campo e o aceite obrigatório fica colado ao botão. Nada muda no pagamento. */
+.ck-campo-msg { display: block; margin-top: 6px; color: #b3121d; font-size: .9rem; font-weight: 700; }
+.ck-num-ok { background: #0f7b3e; font-size: .8rem; }
+.ck-curso-fixo { display: flex; align-items: center; gap: 12px; }
+.ck-curso-fixo[hidden] { display: none; }
+.ck-curso-fixo-texto { flex: 1; min-width: 0; margin: 0; display: grid; gap: 1px; }
+.ck-curso-fixo-texto small { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #0f7b3e; }
+.ck-curso-fixo-texto b { color: var(--black); font-size: 1rem; line-height: 1.25; }
+.ck-curso-fixo-texto span { color: var(--muted); font-size: .86rem; line-height: 1.35; }
+.ck-curso-trocar { flex: none; min-height: 44px; padding: 8px 14px; border: 1.5px solid #cbd5e1; border-radius: 999px; background: #fff; color: var(--black); font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; }
+.ck-curso-trocar:hover { border-color: var(--red); color: var(--red); }
+.ck-curso-recolhido > .ck-bloco-titulo, .ck-curso-recolhido > #ck-curso-escolha { display: none; }
+/* opcionais num grupo só, com linhas mais baixas; o aceite obrigatório não se confunde com eles */
+.ck-opcionais { margin: 0 0 14px; }
+.ck-opcionais:not(:has(.ck-check:not([hidden]))) { display: none; }
+.ck-opcionais .ck-check { padding: 12px 14px; margin-bottom: 8px; }
+.ck-opcionais .ck-check small { font-size: .82rem; line-height: 1.4; }
+.ck-rot-aceite { margin-top: 4px; }
+.ck-check-aceite { border: 1.5px solid #94a3b8; background: #fff; font-weight: 600; color: var(--black); margin-bottom: 8px; }
+.ck-check-aceite input { width: 22px; height: 22px; margin-top: 1px; }
+.ck-check-aceite.erro { border-color: var(--red); background: #fff3f3; box-shadow: 0 0 0 4px rgba(204, 0, 0, .12); }
+.ck-aceite-msg { margin: 0 0 10px; color: #b3121d; font-size: .92rem; font-weight: 700; }
+.ck-aceite-msg[hidden] { display: none; }
+/* cupom valendo: só a linha verde e o atalho para trocar */
+.ck-cupom-aplicado .ck-cupom-campo { display: none; }
+.ck-cupom-aplicado .ck-cupom-msg { margin-top: 0; }
+.ck-cupom-trocar { background: none; border: 0; padding: 6px 0; min-height: 32px; color: var(--muted); font: inherit; font-size: .86rem; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ck-cupom-trocar[hidden] { display: none; }
+/* opcionais: caixa, título e valor numa linha; a explicação ocupa a largura toda embaixo */
+.ck-opcionais .ck-check { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 12px; row-gap: 2px; align-items: start; }
+.ck-opcionais .ck-check-texto { display: contents; }
+.ck-opcionais .ck-check small { grid-column: 2 / -1; grid-row: 2; margin-top: 0; }
+.ck-opcionais .ck-check .ck-check-valor { grid-column: 3; grid-row: 1; margin-left: 0; }
+/* um plano só (com cupom, ou curso sem a opção da taxa): vira uma linha de informação, sem a bolinha de escolha */
+.ck-planos:has(> .ck-plano[hidden]) .ck-plano:not([hidden]) { padding-left: 16px; cursor: default; }
+.ck-planos:has(> .ck-plano[hidden]) .ck-plano:not([hidden]) input { position: absolute; opacity: 0; pointer-events: none; }
+@media (max-width: 920px) {
+  /* PIX e Crédito lado a lado */
+  .ck-metodos { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ck-metodo { padding: 14px 10px 14px 44px; }
+  .ck-metodo input { left: 14px; }
+  /* com o curso escolhido, o resumo do alto fica só com o total: o topo da página já diz o curso e a turma */
+  .ck-com-curso .ck-resumo { display: block; padding: 12px 16px; }
+  .ck-com-curso .ck-resumo-foto, .ck-com-curso .ck-resumo-rotulo, .ck-com-curso .ck-resumo-curso, .ck-com-curso .ck-resumo-meta { display: none; }
+  .ck-com-curso .ck-resumo .ck-linha.total { margin: 0; padding: 0; border-top: 0; }
+  .ck-com-curso .ck-resumo .ck-balao { margin-top: 12px; }
+}
+@media (max-width: 620px) {
+  body[data-tela="checkout"] .ck-hero { padding: 16px 0 14px; }
+  body[data-tela="checkout"] .ck-hero .eyebrow { margin-bottom: 2px; }
+  body[data-tela="checkout"] .ck-hero h1 { font-size: 1.34rem; line-height: 1.16; margin: 2px 0 4px; }
+  body[data-tela="checkout"] .ck-hero .lead { font-size: .96rem; }
+  body[data-tela="checkout"] .ck-passos { display: none; }
+  body[data-tela="checkout"] .ck-secao { padding-top: 14px; }
+  body[data-tela="checkout"] .ck-grid { gap: 12px; }
+  body[data-tela="checkout"] .ck-card { padding: 16px; }
+  body[data-tela="checkout"] .ck-bloco-form + .ck-bloco-form { margin-top: 16px; padding-top: 16px; }
+  body[data-tela="checkout"] .ck-bloco-titulo { margin-bottom: 14px; }
+  body[data-tela="checkout"] .ck-bloco-titulo small { display: none; }
+  body[data-tela="checkout"] .ck-campo { margin-bottom: 14px; }
+  body[data-tela="checkout"] .ck-condicoes p { font-size: .84rem; line-height: 1.5; }
+  /* curso recolhido: o nome já está no topo da página; aqui ficam a confirmação, os dados do curso e o "Trocar" */
+  body[data-tela="checkout"] .ck-curso-fixo-texto b { display: none; }
+}

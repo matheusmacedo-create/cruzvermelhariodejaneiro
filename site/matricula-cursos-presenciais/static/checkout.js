@@ -310,6 +310,9 @@
     var cupom = null;         // cupom conferido pelo info.php: { codigo, curso, total_centavos, restantes } (lib/cupons.php)
     var cupomDaVitrine = false; // o cupom em uso veio do balão da oferta (aplicado pela página, não digitado)
     var cupomTirado = {};     // códigos de vitrine que a pessoa removeu nesta visita (a página não os aplica de novo)
+    var cursoDoLink = '';     // o curso que veio escolhido pelo link (?curso=): o bloco 1 fica recolhido numa linha
+    var trocouCurso = false;  // a pessoa tocou em "Trocar": o seletor de curso fica à vista até o fim da visita
+    var trocandoCupom = false; // a pessoa tocou em "Usar outro cupom": o campo do cupom volta a aparecer
     var campos = {
       curso: '#ck-curso', nome: '#ck-nome', cpf: '#ck-cpf', email: '#ck-email', telefone: '#ck-telefone',
       cartao_numero: '#ck-cartao-numero', cartao_nome: '#ck-cartao-nome', cartao_validade: '#ck-cartao-validade', cartao_cvv: '#ck-cartao-cvv'
@@ -451,6 +454,16 @@
       if (meta && c) { texto('#ck-m-carga', c.carga_horaria || ''); texto('#ck-m-escolaridade', c.escolaridade ? 'Escolaridade mínima: ' + c.escolaridade.replace(/^Ensino /, '') : ''); }
       var foto = q('#ck-r-foto');
       if (foto && c && c.imagem && foto.getAttribute('src') !== c.imagem) { foto.src = c.imagem; foto.alt = c.nome; }
+      /* Reformulação de 11/2026: com o curso escolhido, o resumo do celular vira só a linha do total (o topo já diz o
+         curso e a turma); e quem chegou com o curso no link vê o bloco 1 recolhido numa linha, com "Trocar". */
+      document.body.classList.toggle('ck-com-curso', !!c);
+      var fixo = q('#ck-curso-fixo');
+      if (fixo) {
+        var recolher = !!c && cursoDoLink === sel.value && !trocouCurso;
+        fixo.hidden = !recolher;
+        fixo.parentNode.classList.toggle('ck-curso-recolhido', recolher);
+        if (c) { texto('#ck-cf-nome', c.nome); texto('#ck-cf-meta', [c.carga_horaria, c.escolaridade, 'Praça da Cruz Vermelha, 10 · Centro'].filter(Boolean).join(' · ')); }
+      }
     }
 
     /* O Resumo das condições (spec 1.12; sem turma, 10.4): o mesmo texto do e-mail e do comprovante. */
@@ -721,6 +734,14 @@
       atual = { slug: slug, plano: plano, completo: completo, n: n, total: total, turma: turma, semTurma: semTurma, cupom: comCupom && completo ? cupom.codigo : '', grupo: grupo, divulgacao: divulgacao };
 
       fichaDoCurso(c, turma);
+      /* Cupom valendo no total: o campo e o "Aplicar" saem da frente e fica só a linha verde, com "Usar outro cupom"
+         (reformulação de 11/2026). Cupom recusado, de outro curso ou em conferência: o campo continua à vista. */
+      var caixaCupom = q('#ck-cupom-box');
+      if (caixaCupom) {
+        var cupomNoTotal = !!(comCupom && completo) && !trocandoCupom;
+        caixaCupom.classList.toggle('ck-cupom-aplicado', cupomNoTotal);
+        mostrar('#ck-cupom-trocar', cupomNoTotal);
+      }
       // Topo (1.12): o nome do curso e a turma, ou "Ainda não há turma aberta."
       topo(c ? c.nome : 'Inscrição', c ? (turma ? turma.lead : 'Ainda não há turma aberta.') : 'Escolha o curso e veja as turmas abertas, os horários e os valores.');
       rotularPassos(completo ? (semTurma ? 'semTurma' : 'completo') : 'taxa');
@@ -850,13 +871,37 @@
       ajustarResumo();
     });
 
+    /* Reformulação de 11/2026: a mensagem aparece também junto do campo recusado (a caixa de erro fica lá embaixo, perto
+       do botão, e a pessoa não a via); e o aceite que faltou marcar ganha destaque e vem para o meio da tela. De 27/10 a
+       24/11/2026, o aceite foi o erro mais comum do checkout: 43 tentativas recusadas de 10 pessoas. */
+    function limparAceite() {
+      var caixa = q('#ck-aceite-caixa'), msg = q('#ck-aceite-msg');
+      if (caixa) caixa.classList.remove('erro');
+      if (msg) msg.hidden = true;
+    }
     function erro(mensagem, campo, extraHtml) {
       form.querySelectorAll('.ck-campo.erro').forEach(function (c) { c.classList.remove('erro'); });
+      form.querySelectorAll('.ck-campo-msg').forEach(function (m) { if (m.parentNode) m.parentNode.removeChild(m); });
+      limparAceite();
       erroEl.textContent = mensagem || '';
       if (!mensagem) return;
       if (extraHtml) erroEl.insertAdjacentHTML('beforeend', extraHtml);
       var el = campos[campo] && q(campos[campo]);
-      if (el) { el.closest('.ck-campo').classList.add('erro'); el.focus(); }
+      var caixa = campo === 'requisitos' ? q('#ck-aceite-caixa') : null;
+      if (el) {
+        var cx = el.closest('.ck-campo');
+        cx.classList.add('erro');
+        var m = document.createElement('small');
+        m.className = 'ck-campo-msg';
+        m.textContent = mensagem;
+        cx.appendChild(m);
+        el.focus();
+      } else if (caixa) {
+        caixa.classList.add('erro');
+        mostrar('#ck-aceite-msg', true);
+        caixa.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try { q('#ck-requisitos').focus({ preventScroll: true }); } catch (e) { /* sem foco */ }
+      }
       else erroEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
@@ -887,7 +932,7 @@
         if (digitos(dados.cartao.validade).length !== 4) return falhou('Validade inválida. Use MM/AA.', 'cartao_validade');
         if (digitos(dados.cartao.cvv).length < 3) return falhou('Código de segurança inválido.', 'cartao_cvv');
       }
-      if (!dados.requisitos) return falhou('Confirme que leu os requisitos do curso.');
+      if (!dados.requisitos) return falhou('Falta marcar a caixa de confirmação, logo acima do botão.', 'requisitos');
       return true;
     }
 
@@ -1020,6 +1065,8 @@
       if (alvo.name === 'plano') escolhaManual = alvo.value;
       if (alvo.id === 'ck-parcelas') nEscolhido = parseInt(alvo.value, 10) || 1;
       if (alvo.id !== 'ck-requisitos') erro('');
+      // Marcou o aceite: o destaque de "faltou marcar" sai (as outras mensagens ficam, como antes).
+      else if (alvo.checked && q('#ck-aceite-caixa') && q('#ck-aceite-caixa').classList.contains('erro')) erro('');
       atualizar();
     });
     form.addEventListener('submit', enviar);
@@ -1056,7 +1103,21 @@
     form.addEventListener('focusin', marcarEtapa);
     form.addEventListener('change', marcarEtapa);
     var pedido = param('curso');
-    if (pedido && cursos[pedido]) sel.value = pedido;
+    if (pedido && cursos[pedido]) { sel.value = pedido; cursoDoLink = pedido; }
+    var outroCupom = q('#ck-cupom-trocar');
+    if (outroCupom) outroCupom.addEventListener('click', function () {
+      trocandoCupom = true;
+      atualizar();
+      var entrada = q('#ck-cupom');
+      if (entrada) { try { entrada.focus(); entrada.select(); } catch (e) { /* sem foco */ } }
+    });
+    var trocar = q('#ck-curso-trocar');
+    if (trocar) trocar.addEventListener('click', function () {
+      trocouCurso = true;
+      atualizar();
+      rastrear(null, null, 'checkout_trocar_curso', { curso: sel.value });
+      try { sel.focus(); } catch (e) { /* sem foco */ }
+    });
     atualizar();
     preencherRecuperacao();
 
@@ -1066,7 +1127,7 @@
       d.cursos.forEach(function (c) { cursos[c.slug] = Object.assign(cursos[c.slug] || {}, c); });
       mostrarAvisoTeste(d);
       var pedido = param('curso');
-      if (pedido && cursos[pedido] && !sel.value) sel.value = pedido;
+      if (pedido && cursos[pedido] && !sel.value) { sel.value = pedido; cursoDoLink = pedido; }
       atualizar();
       // Link com o cupom (?cupom=CODIGO): o campo já vem aberto e o cupom, aplicado.
       var codigoLink = param('cupom');
