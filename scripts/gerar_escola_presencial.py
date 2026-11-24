@@ -118,6 +118,23 @@ DEPOIMENTOS = [
      "autorizacao": "publicado pela Escola no site dela (pesquisa de satisfação); confirmar o uso neste site antes de publicar"},
 ]
 
+# Depoimentos em vídeo (24/11/2026, pedido do Matheus): as três alunas que a filial gravou na sede, nos cortes que já
+# estavam prontos para o carrossel do Instagram (docs/criativos/carrossel-lei-lucas-2026-11/ no branch do carrossel),
+# com a legenda e o nome embutidos na imagem. Os arquivos vieram da conta de anúncios da Meta (vídeos 02, 06 e 09 do
+# carrossel, 720 x 720), sem as faixas laterais: 576 x 720. Como recodificar: docs/criativos/pagina-lei-lucas/LEIAME.md.
+# O crédito é o que está escrito no vídeo: as alunas dizem "curso de primeiros socorros", sem dizer qual deles.
+# A legenda em texto (.vtt) repete a fala, para quem usa leitor de tela; a transcrição é a do carrossel, conferida lá.
+# "autorizacao": a autorização de imagem das entrevistadas fica com a filial (pendência anotada no leia-me do
+# carrossel). Sem ela, esvazie a lista: o bloco some sozinho.
+VIDEOS = [
+    {"arquivo": "depoimento-luciana", "nome": "Luciana", "credito": "aluna do curso de Primeiros Socorros", "segundos": 23,
+     "autorizacao": "vídeo gravado e enviado pela filial; autorização de imagem a confirmar com a filial"},
+    {"arquivo": "depoimento-ana-claudia", "nome": "Ana Cláudia", "credito": "odontopediatra e aluna do curso", "segundos": 20,
+     "autorizacao": "vídeo gravado e enviado pela filial; autorização de imagem a confirmar com a filial"},
+    {"arquivo": "depoimento-luciene", "nome": "Luciene", "credito": "aluna do curso de Primeiros Socorros", "segundos": 19,
+     "autorizacao": "vídeo gravado e enviado pela filial; autorização de imagem a confirmar com a filial"},
+]
+
 
 def ler_cupom() -> dict:
     """A linha do cupom em MCP_CUPONS (cupons.php é a fonte: o servidor cobra por ela)."""
@@ -332,6 +349,29 @@ def main() -> int:
     </section>'''
 
     # --- depoimentos (só com 2 ou mais, todos com nome, curso, texto e autorização: regra D8 da matrícula) ---------------
+    videos = ""
+    for v in VIDEOS:
+        if not all(v.get(k) for k in ("arquivo", "nome", "credito", "autorizacao")):
+            print("recusado: vídeo de depoimento sem arquivo, nome, crédito ou autorização registrada (D8)")
+            return 1
+        faltam = [e for e in (".mp4", ".webp", ".vtt") if not (PASTA / (v["arquivo"] + e)).exists()]
+        if faltam:
+            print(f"recusado: faltam arquivos de {v['arquivo']} em {PASTA.relative_to(RAIZ)}: {', '.join(faltam)}")
+            return 1
+    if VIDEOS:
+        # preload="none": o vídeo só é baixado quando a pessoa toca; antes disso, só a capa. A legenda já está na imagem;
+        # a faixa de texto (.vtt) fica desligada e serve a quem usa leitor de tela.
+        itens = "".join(
+            f'<li><figure class="ll-video"><video controls playsinline preload="none" width="576" height="720" poster="{v["arquivo"]}.webp" '
+            f'data-ll-video="{v["arquivo"].removeprefix("depoimento-")}" aria-label="Depoimento em vídeo de {esc(v["nome"])}, {esc(v["credito"])}">'
+            f'<source src="{v["arquivo"]}.mp4" type="video/mp4"><track kind="captions" srclang="pt-BR" label="Português" src="{v["arquivo"]}.vtt">'
+            f'</video><figcaption><b>{esc(v["nome"])}</b><span>{esc(v["credito"])} · {v["segundos"]} s</span></figcaption></figure></li>'
+            for v in VIDEOS)
+        videos = f'''
+        <h3 class="ll-h3 ll-depo-h3">Alunas contam como foi.</h3>
+        <p class="ll-sub">Gravados na sede, no Centro do Rio. Toque para assistir: os vídeos têm legenda.</p>
+        <ul class="ll-videos" aria-label="Depoimentos em vídeo">{itens}</ul>'''
+
     depoimentos = ""
     if len(DEPOIMENTOS) >= 2:
         for d in DEPOIMENTOS:
@@ -352,7 +392,9 @@ def main() -> int:
       <div class="ll-wrap">
         <p class="ll-kicker">Depoimentos</p>
         <h2 id="depo-titulo">O que dizem os alunos.</h2>
-        <p class="ll-sub">Comentários de quem fez os cursos de primeiros socorros da Escola, enviados na pesquisa de satisfação ao fim de cada turma.</p>
+{videos}
+        <h3 class="ll-h3 ll-depo-h3">Na pesquisa de satisfação.</h3>
+        <p class="ll-sub">Comentários de quem fez os cursos de primeiros socorros da Escola, enviados ao fim de cada turma.</p>
         <ul class="ll-depos">{"".join(depoimento(d, i == 0) for i, d in enumerate(DEPOIMENTOS))}</ul>
       </div>
     </section>'''
@@ -805,7 +847,16 @@ CSS = """
     .ll-depo-secao h2{ color:#fff; }
     .ll-depo-secao .ll-kicker{ color:#ff5a6b; }
     .ll-depo-secao .ll-sub{ color:rgba(255,255,255,.82); }
-    .ll-depos{ display:grid; gap:12px; margin-top:24px; }
+    .ll-depo-secao .ll-depo-h3{ color:#fff; margin-top:28px; }
+    .ll-depo-secao h2 + .ll-depo-h3{ margin-top:20px; }
+    .ll-depo-secao .ll-depo-h3 + .ll-sub{ margin-top:6px; }
+    .ll-videos{ display:flex; gap:12px; margin:18px calc(var(--gut) * -1) 0; padding:0 var(--gut) 6px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .ll-videos::-webkit-scrollbar{ display:none; }
+    .ll-videos li{ flex:0 0 78%; max-width:340px; scroll-snap-align:center; }
+    .ll-video video{ display:block; width:100%; height:auto; aspect-ratio:4 / 5; border-radius:20px; background:#0c0f14; object-fit:cover; }
+    .ll-video figcaption{ margin-top:10px; display:grid; gap:2px; font-size:14.5px; color:rgba(255,255,255,.74); }
+    .ll-video figcaption b{ font-size:17px; font-weight:800; color:#fff; }
+    .ll-depos{ display:grid; gap:12px; margin-top:18px; }
     .ll-depo{ height:100%; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); border-radius:20px; padding:20px; display:flex; flex-direction:column; gap:12px; }
     .ll-depo-nota{ display:flex; gap:2px; color:#f5b301; }
     .ll-depo-nota svg{ width:18px; height:18px; }
@@ -876,6 +927,7 @@ CSS = """
       .ll-depo-destaque{ padding:28px; }
       .ll-depo-destaque blockquote{ font-size:24px; max-width:44ch; }
       .ll-fotos li{ flex-basis:36%; }
+      .ll-videos li{ flex-basis:40%; }
       .ll-cartao,.ll-inv{ padding:28px 26px; }
     }
     @media (min-width:980px){
@@ -893,6 +945,8 @@ CSS = """
       .ll-ico{ grid-row:auto; }
       .ll-aprender{ grid-template-columns:repeat(4, 1fr); }
       .ll-fotos{ margin:20px 0 0; padding:0; overflow:visible; display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; }
+      .ll-videos{ margin:20px 0 0; padding:0; overflow:visible; display:grid; grid-template-columns:repeat(3, minmax(0, 340px)); gap:24px; }
+      .ll-videos li{ max-width:none; }
       .ll-fotos li{ max-width:none; }
     }
   </style>"""
@@ -1015,6 +1069,18 @@ JS = """
         if (turma) ga('contact_company_training', { local: turma.getAttribute('data-local') || '', curso: SLUG });
         var mapa = alvo.closest('[data-ll-mapa]');
         if (mapa) ga('como_chegar', { local: 'pagina_lei_lucas', curso: SLUG });
+      });
+      // Depoimentos em vídeo: um toca por vez; mede quem começou e quem viu até o fim (uma vez cada).
+      var videos = todos('video[data-ll-video]'), medidos = {};
+      videos.forEach(function (v) {
+        var nome = v.getAttribute('data-ll-video');
+        v.addEventListener('play', function () {
+          videos.forEach(function (o) { if (o !== v && !o.paused) o.pause(); });
+          if (!medidos[nome + ':inicio']) { medidos[nome + ':inicio'] = 1; ga('depoimento_video', { video: nome, acao: 'inicio', pagina: 'lei_lucas' }); }
+        });
+        v.addEventListener('ended', function () {
+          if (!medidos[nome + ':fim']) { medidos[nome + ':fim'] = 1; ga('depoimento_video', { video: nome, acao: 'fim', pagina: 'lei_lucas' }); }
+        });
       });
       // Seções vistas (uma vez cada), para saber até onde as pessoas leem.
       if ('IntersectionObserver' in window) {

@@ -183,7 +183,16 @@
     .ll-depo-secao h2{ color:#fff; }
     .ll-depo-secao .ll-kicker{ color:#ff5a6b; }
     .ll-depo-secao .ll-sub{ color:rgba(255,255,255,.82); }
-    .ll-depos{ display:grid; gap:12px; margin-top:24px; }
+    .ll-depo-secao .ll-depo-h3{ color:#fff; margin-top:28px; }
+    .ll-depo-secao h2 + .ll-depo-h3{ margin-top:20px; }
+    .ll-depo-secao .ll-depo-h3 + .ll-sub{ margin-top:6px; }
+    .ll-videos{ display:flex; gap:12px; margin:18px calc(var(--gut) * -1) 0; padding:0 var(--gut) 6px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .ll-videos::-webkit-scrollbar{ display:none; }
+    .ll-videos li{ flex:0 0 78%; max-width:340px; scroll-snap-align:center; }
+    .ll-video video{ display:block; width:100%; height:auto; aspect-ratio:4 / 5; border-radius:20px; background:#0c0f14; object-fit:cover; }
+    .ll-video figcaption{ margin-top:10px; display:grid; gap:2px; font-size:14.5px; color:rgba(255,255,255,.74); }
+    .ll-video figcaption b{ font-size:17px; font-weight:800; color:#fff; }
+    .ll-depos{ display:grid; gap:12px; margin-top:18px; }
     .ll-depo{ height:100%; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); border-radius:20px; padding:20px; display:flex; flex-direction:column; gap:12px; }
     .ll-depo-nota{ display:flex; gap:2px; color:#f5b301; }
     .ll-depo-nota svg{ width:18px; height:18px; }
@@ -254,6 +263,7 @@
       .ll-depo-destaque{ padding:28px; }
       .ll-depo-destaque blockquote{ font-size:24px; max-width:44ch; }
       .ll-fotos li{ flex-basis:36%; }
+      .ll-videos li{ flex-basis:40%; }
       .ll-cartao,.ll-inv{ padding:28px 26px; }
     }
     @media (min-width:980px){
@@ -271,6 +281,8 @@
       .ll-ico{ grid-row:auto; }
       .ll-aprender{ grid-template-columns:repeat(4, 1fr); }
       .ll-fotos{ margin:20px 0 0; padding:0; overflow:visible; display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; }
+      .ll-videos{ margin:20px 0 0; padding:0; overflow:visible; display:grid; grid-template-columns:repeat(3, minmax(0, 340px)); gap:24px; }
+      .ll-videos li{ max-width:none; }
       .ll-fotos li{ max-width:none; }
     }
   </style>
@@ -611,7 +623,12 @@
       <div class="ll-wrap">
         <p class="ll-kicker">Depoimentos</p>
         <h2 id="depo-titulo">O que dizem os alunos.</h2>
-        <p class="ll-sub">Comentários de quem fez os cursos de primeiros socorros da Escola, enviados na pesquisa de satisfação ao fim de cada turma.</p>
+
+        <h3 class="ll-h3 ll-depo-h3">Alunas contam como foi.</h3>
+        <p class="ll-sub">Gravados na sede, no Centro do Rio. Toque para assistir: os vídeos têm legenda.</p>
+        <ul class="ll-videos" aria-label="Depoimentos em vídeo"><li><figure class="ll-video"><video controls playsinline preload="none" width="576" height="720" poster="depoimento-luciana.webp" data-ll-video="luciana" aria-label="Depoimento em vídeo de Luciana, aluna do curso de Primeiros Socorros"><source src="depoimento-luciana.mp4" type="video/mp4"><track kind="captions" srclang="pt-BR" label="Português" src="depoimento-luciana.vtt"></video><figcaption><b>Luciana</b><span>aluna do curso de Primeiros Socorros · 23 s</span></figcaption></figure></li><li><figure class="ll-video"><video controls playsinline preload="none" width="576" height="720" poster="depoimento-ana-claudia.webp" data-ll-video="ana-claudia" aria-label="Depoimento em vídeo de Ana Cláudia, odontopediatra e aluna do curso"><source src="depoimento-ana-claudia.mp4" type="video/mp4"><track kind="captions" srclang="pt-BR" label="Português" src="depoimento-ana-claudia.vtt"></video><figcaption><b>Ana Cláudia</b><span>odontopediatra e aluna do curso · 20 s</span></figcaption></figure></li><li><figure class="ll-video"><video controls playsinline preload="none" width="576" height="720" poster="depoimento-luciene.webp" data-ll-video="luciene" aria-label="Depoimento em vídeo de Luciene, aluna do curso de Primeiros Socorros"><source src="depoimento-luciene.mp4" type="video/mp4"><track kind="captions" srclang="pt-BR" label="Português" src="depoimento-luciene.vtt"></video><figcaption><b>Luciene</b><span>aluna do curso de Primeiros Socorros · 19 s</span></figcaption></figure></li></ul>
+        <h3 class="ll-h3 ll-depo-h3">Na pesquisa de satisfação.</h3>
+        <p class="ll-sub">Comentários de quem fez os cursos de primeiros socorros da Escola, enviados ao fim de cada turma.</p>
         <ul class="ll-depos"><li><figure class="ll-depo ll-depo-destaque"><div class="ll-depo-nota" role="img" aria-label="Nota 5 de 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg></div><blockquote>“Foi uma experiência maravilhosa de muito conhecimento e aprendizado com uma equipe incrível, valeu a pena cada minuto.”</blockquote><figcaption><b>Keila E.</b><span>Primeiros Socorros Lei Lucas - Ambientes com Crianças</span></figcaption></figure></li><li><figure class="ll-depo"><div class="ll-depo-nota" role="img" aria-label="Nota 5 de 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg></div><blockquote>“O curso de primeiros socorros foi fundamental, pois nos preparou para agir com rapidez e segurança em situações de emergência. Saber como ajudar alguém pode fazer a diferença entre a vida e a morte. Parabéns ao professor pela excelente didática!”</blockquote><figcaption><b>Lilian R.</b><span>Primeiros Socorros Básico</span></figcaption></figure></li><li><figure class="ll-depo"><div class="ll-depo-nota" role="img" aria-label="Nota 5 de 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg></div><blockquote>“O curso é extremamente prático e interativo. Me senti acolhido e menos ansioso pra enfrentar alguma ocorrência no dia a dia.”</blockquote><figcaption><b>Mandy Y.</b><span>Primeiros Socorros Básico</span></figcaption></figure></li><li><figure class="ll-depo"><div class="ll-depo-nota" role="img" aria-label="Nota 5 de 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="m12 2.6 2.9 6 6.6.9-4.8 4.6 1.2 6.5-5.9-3.2-5.9 3.2 1.2-6.5L2.5 9.5l6.6-.9z"/></svg></div><blockquote>“Maravilhoso, atividades práticas e muito conhecimento.”</blockquote><figcaption><b>Michelle D.</b><span>Primeiros Socorros Básico</span></figcaption></figure></li></ul>
       </div>
     </section>
@@ -845,6 +862,18 @@
         if (turma) ga('contact_company_training', { local: turma.getAttribute('data-local') || '', curso: SLUG });
         var mapa = alvo.closest('[data-ll-mapa]');
         if (mapa) ga('como_chegar', { local: 'pagina_lei_lucas', curso: SLUG });
+      });
+      // Depoimentos em vídeo: um toca por vez; mede quem começou e quem viu até o fim (uma vez cada).
+      var videos = todos('video[data-ll-video]'), medidos = {};
+      videos.forEach(function (v) {
+        var nome = v.getAttribute('data-ll-video');
+        v.addEventListener('play', function () {
+          videos.forEach(function (o) { if (o !== v && !o.paused) o.pause(); });
+          if (!medidos[nome + ':inicio']) { medidos[nome + ':inicio'] = 1; ga('depoimento_video', { video: nome, acao: 'inicio', pagina: 'lei_lucas' }); }
+        });
+        v.addEventListener('ended', function () {
+          if (!medidos[nome + ':fim']) { medidos[nome + ':fim'] = 1; ga('depoimento_video', { video: nome, acao: 'fim', pagina: 'lei_lucas' }); }
+        });
       });
       // Seções vistas (uma vez cada), para saber até onde as pessoas leem.
       if ('IntersectionObserver' in window) {
