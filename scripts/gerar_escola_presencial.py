@@ -48,7 +48,8 @@ URL_PAGINA = f"{ORIGEM}/escola-presencial/lei-lucas/"
 URL_MATRICULA = "/matricula-cursos-presenciais/"
 URL_CURSO_MATRICULA = f"{URL_MATRICULA}?curso={SLUG}"
 URL_TURMA_FECHADA = f"{URL_MATRICULA}?turma=1&amp;turma_curso={SLUG}&amp;alunos=15#turmas-sob-demanda"
-URL_KIT_ESCOLAS = "/lei-lucas-para-escolas/"
+# Sem link para o kit gratuito /lei-lucas-para-escolas/ (pedido do Matheus, 24/11/2026: "isso vai gerar confusão").
+# Esta página vende o curso; o kit em PDF é outra coisa e tirava a pessoa do caminho da inscrição.
 CUPONS_PHP = RAIZ / "site" / "matricula-cursos-presenciais" / "api" / "lib" / "cupons.php"
 IMG_MATRICULA = "/matricula-cursos-presenciais/img/"
 # "via" do checkout: lp-lei-lucas-<local do botão>, para separar esta página da matrícula nos relatórios.
@@ -328,7 +329,6 @@ def main() -> int:
           <p>Para uma ou duas pessoas, a inscrição é nesta turma. Para a equipe inteira, de 15 a 30 pessoas, a Escola abre uma turma só de vocês, com data combinada e o mesmo valor por pessoa dos cursos.</p>
           <p class="ll-caixa-acoes">
             <a class="ll-btn ll-btn-preto" href="{URL_TURMA_FECHADA}" data-local="turma_fechada" data-ll-turma>Pedir uma turma para a escola {SVG["seta"]}</a>
-            <a class="ll-link" href="{URL_KIT_ESCOLAS}" data-local="kit_escolas">Baixar o kit gratuito da Lei Lucas para escolas</a>
           </p>
         </aside>
       </div>
@@ -531,7 +531,6 @@ def main() -> int:
       <a class="ll-marca" href="{URL_MATRICULA}" data-saida-ll="rodape">{marca}</a>
       <ul class="ll-rodape-links">
         <li><a href="{URL_MATRICULA}">Todos os cursos da Escola</a></li>
-        <li><a href="{URL_KIT_ESCOLAS}">Lei Lucas para escolas</a></li>
         <li><a href="{SUSTENTA_URL}">Como a escola sustenta a filial</a></li>
         <li><a href="/">Site da Cruz Vermelha RJ</a></li>
         <li><a href="mailto:{EMAIL_CONTATO}">{EMAIL_CONTATO}</a></li>
