@@ -1,4 +1,5 @@
 # Segundo conjunto de dados da Meta (24/11/2026): fbq('init', '1580762603752102') depois do init de sempre.
+# PUBLICADO em 24/11/2026 (as 101 daqui e, sobre a cópia do ar, a home e as seis telas do checkout).
 # Em 24/11/2026 estas 101 páginas estavam no ar iguais à main, byte a byte (conferido com curl): podem sair daqui.
 # FORA da lista, de propósito:
 #   - site/index.html e as seis telas do checkout (checkout, comparecimento, conferir, horarios, parabens,

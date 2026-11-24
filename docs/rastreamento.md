@@ -5,7 +5,7 @@ deste repositório (desde 24/11/2026, também o conjunto `1580762603752102`: se�
 e interceptando as chamadas `gtag()` e `fbq()`; o fluxo do checkout foi testado com a resposta da
 API simulada, sem criar transação.
 
-## Dois conjuntos de dados da Meta (24/11/2026, NÃO publicado)
+## Dois conjuntos de dados da Meta (publicado em 24/11/2026)
 
 As campanhas de novembro rodam na conta de anúncios "3" (`2438819769904784`), do portfólio **NND Negocios Locais**.
 O Pixel do site, `2224500131617302`, é do portfólio **Sophya.ia** e só está ligado à conta "CruzVermelha", que a Meta
@@ -32,8 +32,14 @@ ligado à conta "3"), com um segundo `fbq('init')` no bloco de medição da home
 - **Conferência:** `scripts/conferir_pixel.js` passou a exigir cada evento nos dois conjuntos, com o mesmo id (os
   eventos que o próprio Pixel cria, como `SubscribedButtonClick`, saem com um id por conjunto). Com `--repositorio`,
   15 de 15 cenários em 24/11/2026.
-- **Publicação:** `scripts/publicacao-segundo-pixel.txt` (101 páginas iguais às do ar). A home e as seis telas do
-  checkout estão mais novas no ar que na `main`: nelas a linha entra sobre a cópia do ar, não sobre o repositório.
+- **Publicado em 24/11/2026**, com a autorização do responsável: as 101 páginas de
+  `scripts/publicacao-segundo-pixel.txt`, depois de copiar as do servidor (iguais à `main`, byte a byte), e a home e
+  as seis telas do checkout, que estão mais novas no ar que na `main`: nelas a linha entrou sobre a cópia do ar (só
+  as quatro linhas a mais), não sobre o repositório. Cache limpo em seguida. Conferido no ar: as 108 páginas iguais
+  ao que foi enviado e `conferir_pixel.js` com 15 de 15. **A home e as telas do checkout deste repositório continuam
+  diferentes das do ar** (já eram antes desta mudança): quem for publicá-las de novo precisa partir da cópia do ar ou
+  trazer para a `main` o que falta.
+- **Para desfazer:** tirar as quatro linhas (o comentário e o segundo `init`) das 108 páginas e publicar de novo.
 - **Quando o Sophya.ia puder compartilhar o Pixel:** ligar o `2224500131617302` à conta "3" e decidir se o segundo
   `init` sai.
 
