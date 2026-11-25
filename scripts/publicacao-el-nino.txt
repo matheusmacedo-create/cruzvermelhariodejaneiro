@@ -1,0 +1,48 @@
+# Guia gratuito do El Niño (24/11/2026, pedido do Matheus): página nova /el-nino/, com o PDF no padrão dos guias
+# (docs/padrao-guias-gratuitos.md) e o pedido de e-mail (material el-nino, lib/newsletter/materiais.ts, na Redação).
+# Os outros 21 guias ganham uma linha em "Mais guias gratuitos", com o link para a página nova.
+# ESTADO: PUBLICADO EM PARTE em 24/11/2026, às 19h08 (horário de Brasília), a pedido do Matheus ("sim, pode abrir os PRs e
+# publicar"), a partir da main em 94e1e26. Foram ao ar os três arquivos de /el-nino/ (PDF, capa e página), conferidos no
+# servidor byte a byte, com o cache limpo; a Redação já aceita o material el-nino (PR 417). Os sitemaps foram regerados
+# e publicados em 25/11/2026.
+# NÃO PUBLICADAS: as 21 páginas dos outros guias (a linha nova em "Mais guias gratuitos"). No ar, todas elas têm quatro
+# linhas a mais que a main: o segundo pixel da Meta (1580762603752102), publicado em 24/11/2026 por outra conversa a
+# partir do branch claude/relaxed-maxwell-aaxn97, ainda sem PR. Publicar a versão da main apagaria esse pixel. Depois
+# que aquele branch entrar na main: regerar (python3 scripts/gerar_institucional.py) e publicar as 21 páginas e a
+# /el-nino/, que hoje está no ar só com o primeiro pixel.
+# Falta também: pedir o guia com um e-mail de teste (o envio de verdade não foi testado).
+# Gerar antes: python3 scripts/gerar_guia_pdf.py el-nino
+#              python3 scripts/gerar_institucional.py
+# ORDEM, e ela importa:
+#   0. Revisão de fatos: as fontes e os cuidados estão em notas_internas, em site/institucional.json. A seção
+#      "Como está o El Niño agora" cita os boletins de novembro de 2026: se a publicação for depois de 10/12/2026,
+#      conferir o boletim novo da NOAA antes.
+#   1. A Redação primeiro: mesclar o PR que cadastra o material el-nino. Sem ele, a rota responde "Este formulário
+#      está desatualizado" e ninguém consegue liberar o botão.
+#   2. O PDF e a capa, depois a página nova, depois as páginas dos outros guias.
+#   3. Limpar o cache e conferir os arquivos no ar; pedir o guia com um e-mail de teste.
+#   4. Regerar e publicar os sitemaps (python3 scripts/gerar_sitemaps.py) e pedir a indexação de /el-nino/.
+site/el-nino/el-nino-cruz-vermelha-rj.pdf
+site/el-nino/capa-el-nino.webp
+site/el-nino/index.html
+site/acidentes-em-casa/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/checklist-dengue/index.html
+site/cuidador-de-idosos/index.html
+site/febre-em-crianca/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/mochila-de-emergencia/index.html
+site/onde-buscar-ajuda/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/verao-seguro/index.html

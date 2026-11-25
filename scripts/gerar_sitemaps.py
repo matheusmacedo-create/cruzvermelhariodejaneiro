@@ -74,6 +74,7 @@ PAGINAS = [
     ("/kit-de-primeiros-socorros/", "kit-de-primeiros-socorros/index.html", "monthly", "0.6", "Guia: kit de primeiros socorros de casa"),
     ("/quando-ligar-192/", "quando-ligar-192/index.html", "monthly", "0.6", "Guia: quando ligar 192 (cartaz em PDF)"),
     ("/verao-seguro/", "verao-seguro/index.html", "monthly", "0.6", "Guia: verão seguro no Rio"),
+    ("/el-nino/", "el-nino/index.html", "weekly", "0.7", "Guia: El Niño, como se preparar"),
     ("/plano-familiar-de-emergencia/", "plano-familiar-de-emergencia/index.html", "monthly", "0.6", "Guia: plano familiar de emergência (ficha em PDF)"),
     ("/cuidador-de-idosos/", "cuidador-de-idosos/index.html", "monthly", "0.6", "Guia do cuidador de idosos"),
     ("/acidentes-em-casa/", "acidentes-em-casa/index.html", "monthly", "0.6", "Guia: acidentes em casa, picadas e choque elétrico (cartaz em PDF)"),
