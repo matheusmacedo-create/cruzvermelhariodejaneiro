@@ -1,7 +1,16 @@
 # Guia gratuito do El Niño (24/11/2026, pedido do Matheus): página nova /el-nino/, com o PDF no padrão dos guias
 # (docs/padrao-guias-gratuitos.md) e o pedido de e-mail (material el-nino, lib/newsletter/materiais.ts, na Redação).
 # Os outros 21 guias ganham uma linha em "Mais guias gratuitos", com o link para a página nova.
-# ESTADO: NÃO PUBLICADO. Gerado em 24/11/2026.
+# ESTADO: PUBLICADO EM PARTE em 24/11/2026, às 19h08 (horário de Brasília), a pedido do Matheus ("sim, pode abrir os PRs e
+# publicar"), a partir da main em 94e1e26. Foram ao ar os três arquivos de /el-nino/ (PDF, capa e página), conferidos no
+# servidor byte a byte, com o cache limpo; a Redação já aceita o material el-nino (PR 417). Os sitemaps foram regerados
+# e publicados em 25/11/2026.
+# NÃO PUBLICADAS: as 21 páginas dos outros guias (a linha nova em "Mais guias gratuitos"). No ar, todas elas têm quatro
+# linhas a mais que a main: o segundo pixel da Meta (1580762603752102), publicado em 24/11/2026 por outra conversa a
+# partir do branch claude/relaxed-maxwell-aaxn97, ainda sem PR. Publicar a versão da main apagaria esse pixel. Depois
+# que aquele branch entrar na main: regerar (python3 scripts/gerar_institucional.py) e publicar as 21 páginas e a
+# /el-nino/, que hoje está no ar só com o primeiro pixel.
+# Falta também: pedir o guia com um e-mail de teste (o envio de verdade não foi testado).
 # Gerar antes: python3 scripts/gerar_guia_pdf.py el-nino
 #              python3 scripts/gerar_institucional.py
 # ORDEM, e ela importa:
