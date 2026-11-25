@@ -1,0 +1,76 @@
+{
+  "slug": "el-nino",
+  "arquivo": "el-nino-cruz-vermelha-rj.pdf",
+  "capa": "capa-el-nino.webp",
+  "titulo": "El Niño: a casa pronta para o calor e a chuva",
+  "sub": "Marque com um X o que já está pronto. O El Niño aumenta a chance de calor forte, de chuva forte e de seca: vale preparar a casa antes.",
+  "credito": "Orientações do Ministério da Saúde e da Defesa Civil Nacional, reunidas pela filial",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Sem pânico:",
+          "texto": "o El Niño não marca data nem lugar para um desastre. Ele aumenta a probabilidade de calor, chuva forte ou seca, conforme a região. A previsão do tempo de cada dia e os avisos da Defesa Civil são o que vale na hora."
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "passos",
+          "titulo": "No dia de calor forte",
+          "itens": [
+            "Beba água com frequência, mesmo sem sede. Evite bebida alcoólica ou com cafeína.",
+            "Use roupas leves e de cores claras.",
+            "Deixe as atividades ao ar livre para os horários mais frescos do dia.",
+            "Trabalha ao ar livre? Faça pausas frequentes em lugar fresco ou com sombra."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Sinais de alerta no calor:",
+          "texto": "suor em excesso, fraqueza, tontura, enjoo, dor de cabeça, cãibras e diarreia. Com esses sinais, procure a unidade de saúde mais próxima."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Na chuva forte",
+          "itens": [
+            "Nunca atravesse ruas alagadas, nem de carro, moto ou bicicleta: a força da água pode arrastar você.",
+            "Evite contato com a água de alagamento, que pode estar contaminada.",
+            "Com risco de inundação, desligue os aparelhos elétricos e o quadro geral de energia e feche o registro de entrada de água.",
+            "Depois, volte para casa durante a luz do dia. Não use água de fontes naturais e de poços depois do alagamento."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Sinais de deslizamento:",
+          "texto": "rachaduras no chão, árvores, postes ou cercas inclinados e barulhos vindos do chão. Saia de casa imediatamente e avise a Defesa Civil e o Corpo de Bombeiros."
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Com fumaça de queimada ou ar muito seco",
+          "itens": [
+            "Fique em ambientes fechados, com portas e janelas fechadas nas horas de mais fumaça.",
+            "Evite atividades físicas ao ar livre.",
+            "No ar seco, beba bastante água e umedeça o ambiente com bacias de água ou panos úmidos."
+          ]
+        },
+        {
+          "tipo": "familia_e_emergencia",
+          "ponto_de_encontro": false
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
