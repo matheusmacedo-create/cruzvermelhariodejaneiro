@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+/* Carrossel do feed do Instagram (7 slides, 4:5, 1080x1350): Curativos e Tratamento de Feridas, turma de 28/11/2026.
+   Margem de 72 px: aguenta o corte 3:4 da grade do perfil. Texto corrido nunca abaixo de 30 px (público 50+, celular). */
+:root{--red:#e30613;--red2:#b0000d;--ink:#151515;--cinza:#cfcfcf}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#333}
+.s{position:relative;overflow:hidden;width:1080px;height:1350px;color:#fff;background:var(--ink);margin-bottom:40px}
+.s.claro{background:#f6f4f2;color:var(--ink)}
+.s.vermelho{background:radial-gradient(120% 90% at 0% 0%,#ff2a35 0%,var(--red) 38%,var(--red2) 100%)}
+.s.escuro{background:radial-gradient(110% 80% at 100% 0%,#5a0509 0%,#2a0606 34%,var(--ink) 72%)}
+
+/* marca, numeração e seta */
+.logo{position:absolute;top:0;left:0;z-index:5;background:#fff;border-radius:0 0 26px 0;padding:30px 44px 30px 72px}
+.logo img{display:block;height:74px}
+.logo.p{padding:24px 34px 24px 72px}.logo.p img{height:54px}
+.num{position:absolute;top:44px;right:72px;z-index:5;font:700 22px/1 Inter;letter-spacing:.3em;text-transform:uppercase;text-align:right}
+.num b{display:block;font:800 40px/1 "Barlow Condensed";letter-spacing:.06em;margin-top:10px}
+.s:not(.claro) .num{text-shadow:0 2px 10px rgba(0,0,0,.75),0 0 2px rgba(0,0,0,.6)}
+.claro .num{color:#555}.claro .num b{color:var(--ink)}
+.seta{position:absolute;right:72px;bottom:64px;z-index:5;width:84px;height:84px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+.vermelho .seta{background:#fff}
+.seta svg{width:40px;height:40px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.arraste{position:absolute;right:72px;bottom:64px;z-index:5;display:flex;align-items:center;gap:20px;border:2px solid rgba(255,255,255,.75);border-radius:999px;
+  padding:10px 10px 10px 34px;font:700 24px/1 Inter;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.35)}
+.arraste i{width:64px;height:64px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+.arraste svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* foto de fundo */
+.foto{position:absolute;left:0;top:0;width:100%;background-repeat:no-repeat;background-size:cover}
+.foto::after{content:"";position:absolute;inset:0}
+.cred{position:absolute;z-index:4;font:600 20px/1.2 Inter;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);padding:10px 16px;border-radius:8px}
+
+/* texto */
+.c{position:absolute;left:72px;right:72px;z-index:3}
+.tag{display:inline-block;background:var(--red);color:#fff;font:700 24px/1 Inter;letter-spacing:.26em;padding:.6em .8em .6em 1em;border-radius:6px;text-transform:uppercase}
+.vermelho .tag{background:#fff;color:var(--red)}
+h1,h2{font-family:"Barlow Condensed";font-weight:800;text-transform:uppercase;line-height:.97;letter-spacing:-.005em}
+h1{font-size:132px}h2{font-size:112px}
+h1 span,h2 span{display:block;color:var(--red)}
+.vermelho h2 span{color:#fff}.vermelho h2{color:#1a0002}
+p.t{font-size:36px;line-height:1.3;color:#ececec}
+.claro p.t{color:#333}
+p.t b{color:#fff;font-weight:700}.claro p.t b{color:var(--ink)}
+.fio{width:120px;height:8px;background:var(--red);border-radius:4px}
+</style></head><body>
+
+<!-- 1. CAPA -->
+<section class="s" id="s1">
+  <div class="foto" style="height:1010px;background-image:url(img/capa.jpg);background-size:1180px auto;background-position:0% 58%"></div>
+  <style>#s1 .foto::after{background:linear-gradient(180deg,rgba(21,21,21,.25) 0%,rgba(21,21,21,0) 22%,rgba(21,21,21,0) 48%,rgba(21,21,21,.88) 76%,#151515 96%)}</style>
+  <div class="logo"><img src="img/logo.png" alt=""></div>
+  <div class="cred" style="right:72px;top:44px;background:rgba(0,0,0,.5)">Foto: turma de 17/11, na nossa sede</div>
+  <div class="c" style="top:760px">
+    <span class="tag" style="letter-spacing:.16em">Neste sábado, 28/11 · inscrições até sexta</span>
+    <h1 style="margin-top:22px;font-size:104px;white-space:nowrap">Qual cobertura usar<span>em cada ferida?</span></h1>
+    <p class="t" style="margin-top:26px;max-width:880px"><b>Curativos e Tratamento de Feridas:</b> curso presencial de 8 horas para quem é da saúde, no Centro do Rio.</p>
+  </div>
+  <div class="arraste">Arraste para o lado <i><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></div>
+</section>
+
+<!-- 2. A DÚVIDA -->
+<section class="s escuro" id="s2">
+  <style>
+    #s2 .fala{background:#fff;color:var(--ink);border-radius:28px 28px 28px 6px;padding:34px 42px;font:700 56px/1.1 Inter;letter-spacing:-.01em;width:max-content;max-width:900px}
+    #s2 .fala+.fala{margin-top:34px}
+    #s2 .fala.d{margin-left:auto;border-radius:28px 28px 6px 28px;background:#ffe9ea}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>2 / 7</b></div>
+  <div class="c" style="top:200px">
+    <span class="tag">No plantão, no home care, no estágio</span>
+    <h2 style="margin-top:24px">A dúvida<span>sempre aparece</span></h2>
+  </div>
+  <div class="c" style="top:570px">
+    <div class="fala">“Limpo essa ferida com quê?”</div>
+    <div class="fala d">“Qual cobertura eu uso aqui?”</div>
+    <div class="fala">“É lesão por pressão?<br>Como eu classifico?”</div>
+  </div>
+  <div class="c" style="bottom:72px;right:190px">
+    <div class="fio"></div>
+    <p class="t" style="margin-top:22px">No curso, você treina <b>cada resposta,</b> com teoria e prática simulada.</p>
+  </div>
+  <div class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+</section>
+
+<!-- 3. O QUE VOCÊ APRENDE -->
+<section class="s claro" id="s3">
+  <style>
+    #s3 ol{list-style:none;display:grid;gap:16px;counter-reset:n}
+    #s3 li{counter-increment:n;display:flex;align-items:center;gap:26px;font:600 39px/1.15 Inter;letter-spacing:-.01em;background:#fff;border-radius:18px;padding:14px 26px 14px 14px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+    #s3 li::before{content:counter(n);flex:none;width:70px;height:70px;border-radius:14px;background:var(--red);color:#fff;display:grid;place-items:center;font:800 48px/1 "Barlow Condensed"}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>3 / 7</b></div>
+  <div class="c" style="top:190px">
+    <span class="tag">O que você aprende</span>
+    <h2 style="margin-top:22px;font-size:104px">Da avaliação<span>ao curativo</span></h2>
+  </div>
+  <div class="c" style="top:505px">
+    <ol>
+      <li>Tipos de feridas e cicatrização</li>
+      <li>Avaliação e classificação das lesões</li>
+      <li>Limpeza, antissepsia e biossegurança</li>
+      <li>Coberturas: qual usar e quando</li>
+      <li>Curativos simples e especiais</li>
+      <li>Lesão por pressão: prevenção e cuidados</li>
+    </ol>
+  </div>
+  <div class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+</section>
+
+<!-- 4. COMO É A AULA -->
+<section class="s" id="s4">
+  <div class="foto" style="height:800px;background-image:url(img/pratica.jpg);background-size:1370px auto;background-position:0% 57%"></div>
+  <style>
+    #s4 .foto::after{background:linear-gradient(180deg,rgba(21,21,21,.78) 0%,rgba(21,21,21,0) 24%,rgba(21,21,21,0) 60%,#151515 100%)}
+    #s4 ul{list-style:none;display:grid;gap:14px}
+    #s4 li{display:flex;align-items:center;gap:20px;font:600 38px/1.15 Inter}
+    #s4 li::before{content:"";flex:none;width:44px;height:44px;border-radius:50%;background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/26px no-repeat}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>4 / 7</b></div>
+  <div class="cred" style="left:72px;top:640px">Foto de outra turma: Primeiros Socorros, 17/11, na nossa sede</div>
+  <div class="c" style="top:730px">
+    <span class="tag">Como é a aula</span>
+    <h2 style="margin-top:20px">Aqui se aprende<span>fazendo</span></h2>
+  </div>
+  <div class="c" style="top:1060px;right:190px">
+    <ul>
+      <li>Demonstração das técnicas</li>
+      <li>Aplicação de coberturas</li>
+      <li>Práticas simuladas</li>
+    </ul>
+  </div>
+  <div class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+</section>
+
+<!-- 5. PARA QUEM É + CERTIFICADO -->
+<section class="s escuro" id="s5">
+  <style>
+    #s5 ul{list-style:none;display:grid;gap:16px}
+    #s5 li{display:flex;align-items:center;gap:20px;font:600 38px/1.15 Inter}
+    #s5 li::before{content:"";flex:none;width:44px;height:44px;border-radius:50%;background:var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/26px no-repeat}
+    #s5 .cert{background:#fff;color:var(--ink);border-radius:24px;padding:30px 34px;display:flex;gap:28px;align-items:center}
+    #s5 .cert .ic{flex:none;width:104px;height:104px;border-radius:20px;background:var(--red);display:grid;place-items:center}
+    #s5 .cert svg{width:60px;height:60px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    #s5 .cert b{display:block;font:800 52px/.95 "Barlow Condensed";text-transform:uppercase}
+    #s5 .cert span{display:block;font:500 30px/1.25 Inter;color:#333;margin-top:10px}
+    #s5 .nota{font:500 28px/1.35 Inter;color:#ededed}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>5 / 7</b></div>
+  <div class="c" style="top:200px">
+    <span class="tag">Público e certificado</span>
+    <h2 style="margin-top:24px">Feito para quem<span>é da saúde</span></h2>
+    <p class="t" style="margin-top:28px">Profissionais e estudantes da área da saúde que querem cuidar de feridas <b>com mais segurança.</b></p>
+    <ul style="margin-top:34px">
+      <li>18 anos ou mais</li>
+      <li>Ensino médio</li>
+      <li>Conhecimentos básicos na área da saúde</li>
+    </ul>
+  </div>
+  <div class="c" style="top:900px">
+    <div class="cert">
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M14 3l5 5v3M14 3v5h5M8 9h3M8 13h6"/><circle cx="17" cy="16" r="3"/><path d="m15.500 18.500-1 3.500 2.500-1.200 2.500 1.200-1-3.500"/></svg></span>
+      <div><b>Certificado da Cruz Vermelha</b><span>Emitido pela Cruz Vermelha Brasileira – Filial Rio de Janeiro. Carga horária: 8 horas.</span></div>
+    </div>
+    <p class="nota" style="margin-top:26px;margin-right:120px">Curso de aperfeiçoamento: não substitui a formação profissional nem amplia as atribuições legais de cada categoria.</p>
+  </div>
+  <div class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+</section>
+
+<!-- 6. QUANDO, ONDE, QUANTO -->
+<section class="s" id="s6">
+  <div class="foto" style="height:600px;background-image:url(img/palacio.jpg);background-position:50% 47%;filter:brightness(1.12) contrast(1.05)"></div>
+  <style>
+    #s6 .foto::after{background:linear-gradient(180deg,rgba(21,21,21,.7) 0%,rgba(21,21,21,0) 30%,rgba(21,21,21,0) 62%,#151515 100%)}
+    #s6 ul{list-style:none;display:grid;gap:22px}
+    #s6 li{display:flex;align-items:center;gap:26px}
+    #s6 .ic{flex:none;width:88px;height:88px;border-radius:14px;background:var(--red);display:grid;place-items:center}
+    #s6 .ic svg{width:46px;height:46px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    #s6 li b{display:block;font:700 54px/1 "Barlow Condensed";text-transform:uppercase}
+    #s6 li small{display:block;font:600 26px/1.2 Inter;letter-spacing:.06em;color:var(--cinza);margin-top:8px}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>6 / 7</b></div>
+  <div class="c" style="top:540px">
+    <span class="tag">Anote aí</span>
+    <h2 style="margin-top:20px">Sábado,<span>28 de novembro</span></h2>
+  </div>
+  <div class="c" style="top:880px;right:180px">
+    <ul>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.500 2"/></svg></span><span><b>Das 9h às 17h</b><small>8 horas de curso, num dia só</small></span></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.200-7-11.500a7 7 0 0 1 14 0C19 14.800 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/></svg></span><span><b>Palácio da Cruz Vermelha</b><small>Praça da Cruz Vermelha, 10 · Centro do Rio</small></span></li>
+      <li><span class="ic"><svg viewBox="0 0 24 24"><rect x="2.500" y="5" width="19" height="14" rx="2"/><path d="M2.500 10h19M6.500 15h4"/></svg></span><span><b>R$ 249 à vista</b><small>ou em até 12x no cartão (com juros)</small></span></li>
+    </ul>
+  </div>
+  <div class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+</section>
+
+<!-- 7. CHAMADA -->
+<section class="s vermelho" id="s7">
+  <div class="foto" style="height:680px;background-image:url(img/equipe.jpg);background-position:50% 66%"></div>
+  <style>
+    #s7 .foto::after{background:linear-gradient(180deg,rgba(30,0,2,.8) 0%,rgba(227,6,19,0) 26%,rgba(227,6,19,0) 58%,#d40511 100%)}
+    #s7{background:linear-gradient(180deg,#d40511 0%,#d40511 45%,#a8000c 100%)}
+    #s7 .bio{display:inline-flex;align-items:center;gap:22px;background:#fff;color:var(--ink);border-radius:999px;padding:14px 14px 14px 44px;font:700 40px/1 Inter;letter-spacing:.04em;text-transform:uppercase}
+    #s7 .bio i{width:76px;height:76px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+    #s7 .bio svg{width:38px;height:38px;fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+    #s7 p.t{color:#fff}
+  </style>
+  <div class="logo p"><img src="img/logo.png" alt=""></div>
+  <div class="num">Curativos e feridas<b>7 / 7</b></div>
+  <div class="c" style="top:640px">
+    <span class="tag">A gente espera você no Palácio</span>
+    <h2 style="margin-top:22px;font-size:124px">Inscrições até<span>sexta, 27/11</span></h2>
+    <div class="bio" style="margin-top:34px">Link na bio <i><svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></i></div>
+    <p class="t" style="margin-top:36px">Dúvidas? WhatsApp da Secretaria: <b>(21) 99992-2864</b></p>
+    <p class="t" style="margin-top:14px;font-size:32px;opacity:.92">Envie este post para quem divide o plantão com você.</p>
+  </div>
+</section>
+
+</body></html>
