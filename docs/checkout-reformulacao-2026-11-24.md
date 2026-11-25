@@ -169,3 +169,14 @@ qualquer número de parcelas), inclusive para valores nunca consultados (R$ 147,
 de 10 minutos do site. A chave voltou para 1 em menos de um minuto. Estado: cartão só à vista. Para a Unicopag: em
 2,99% ao mês (tabela Price) o acréscimo sobre o total é 4,51% em 2x, 6,04% em 3x, 7,59% em 4x, 9,15% em 5x, 10,72% em
 6x, 12,31% em 7x, 13,92% em 8x, 15,54% em 9x, 17,17% em 10x, 18,82% em 11x e 20,48% em 12x.
+
+**Ligado em 25/11/2026 (9h10 de Brasília), a 1,89% ao mês.** O Matheus decidiu por 1,89% ao mês, ajustou a Unicopag e
+pediu para religar. `'PARCELAS_MAX'` foi a 12 (só essa linha mudou) e a simulação do ar foi comparada, opção a opção,
+com a tabela Price de 1,89% ao mês: R$ 140,00 e R$ 249,00, de 2x a 12x, diferença de no máximo 1 centavo; a tela
+calcula "Juros de 1,89% ao mês" e CET de 25,2% ao ano. Em 12x: R$ 140,00 → total R$ 157,79 (1ª de R$ 13,25 e 11 de
+R$ 13,14); R$ 249,00 → total R$ 280,65. No ar, as 11 verificações do `parc-ar.js` passaram (checkout no Crédito com 12
+opções, envio interceptado com `parcelas: 12`, `cupom: PRO12` e total mostrado 15779, página do curso com "ou em até
+12x no cartão, com juros", sem erro de JavaScript nem rolagem lateral em 390 px). Volta rápida: `'PARCELAS_MAX' => 1`.
+
+Continua sem teste: nenhuma cobrança parcelada real foi feita; a primeira venda parcelada precisa ser acompanhada (o
+servidor avisa a secretaria se o cartão cobrar mais que o total mostrado).

@@ -124,8 +124,8 @@ pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o acei
 tela foi reorganizada (curso do link numa linha, topo mais baixo, erro junto do campo, aceite colado ao botão, cupom e
 opcionais mais enxutos), sem mexer no servidor nem no pagamento: o primeiro campo foi de 1.013 px para 495 px e o botão
 de 3.252 px para 2.507 px. No mesmo dia, o parcelamento no cartão em até 12x passou a valer também com cupom (código e
-páginas publicados; a chave `PARCELAS_MAX` foi a 12 e voltou a 1 no mesmo dia, porque a conta da Unicopag cobra 2,99%
-sobre o total, não ao mês: religar só depois de acertar a taxa lá). Diagnóstico, mudanças,
+páginas publicados; **ligado em 25/11/2026 com `PARCELAS_MAX = 12` no servidor e a Unicopag em 1,89% ao mês**, depois de
+duas tentativas em 24/11 desfeitas porque a conta cobrava 2,99% sobre o total). Diagnóstico, mudanças,
 testes e listas de publicação: [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
 
 ## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
