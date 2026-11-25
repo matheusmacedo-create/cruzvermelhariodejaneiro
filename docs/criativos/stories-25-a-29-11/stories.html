@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=block" rel="stylesheet">
+<style>
+/* Stories de 25 a 29/11/2026, no mesmo desenho dos banners das turmas (Barlow Condensed + Inter, #e30613 sobre #141414).
+   1080x1920. Zonas da interface do Instagram: 250 px no topo e 340 px no rodapé ficam sem texto.
+   Onde entra adesivo (enquete, caixinha, quiz, contagem, link) a arte só deixa o espaço vazio: classe .vao. */
+:root{--red:#e30613;--ink:#141414}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#000;display:flex;flex-wrap:wrap;gap:40px;padding:40px}
+.s{position:relative;overflow:hidden;width:1080px;height:1920px;color:#fff;background:var(--ink);flex:none}
+.s::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 0% 30%,#242424 0%,rgba(20,20,20,0) 70%)}
+.foto{position:absolute;top:0;left:0;right:0;height:1000px;background-size:cover;background-repeat:no-repeat}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,20,20,.55) 0%,rgba(20,20,20,0) 22%,rgba(20,20,20,0) 52%,var(--ink) 100%)}
+.logo{position:absolute;top:236px;left:0;z-index:3;background:#fff;padding:22px 40px 22px 72px;border-radius:0 22px 22px 0}
+.logo img{display:block;height:66px}
+.txt{position:absolute;left:72px;right:72px;top:420px;bottom:340px;z-index:2;display:flex;flex-direction:column;align-items:flex-start}
+.s.f .txt{top:760px}
+.tag{display:inline-block;background:var(--red);font:700 26px/1 Inter;letter-spacing:.26em;padding:.6em .7em .6em .95em;border-radius:6px;text-transform:uppercase;margin-bottom:30px}
+h1{font-family:"Barlow Condensed";font-weight:800;font-size:150px;line-height:.97;text-transform:uppercase;letter-spacing:-.005em}
+h1 span{color:var(--red);display:block}
+h1 span.in{display:inline}
+h1.m{font-size:124px;line-height:.98}
+h1.p{font-size:104px;line-height:1}
+.sub{font-size:44px;line-height:1.3;color:#ededed;margin-top:36px}
+.sub b{color:#fff;font-weight:700}
+.nota{font-size:40px;line-height:1.3;color:#bdbdbd;margin-top:28px}
+.vao{flex:none;width:100%}
+ul.li{list-style:none;margin-top:52px;display:grid;gap:34px;width:100%}
+ul.li li{font:600 54px/1.15 Inter;padding-left:50px;position:relative}
+ul.li li::before{content:"";position:absolute;left:0;top:.5em;width:24px;height:6px;background:var(--red);border-radius:3px}
+ol.pa{list-style:none;margin-top:60px;display:grid;gap:52px;width:100%;counter-reset:n}
+ol.pa li{counter-increment:n;display:grid;grid-template-columns:130px 1fr;align-items:center}
+ol.pa li::before{content:counter(n);font:800 160px/.8 "Barlow Condensed";color:var(--red)}
+ol.pa b{display:block;font:700 76px/1 "Barlow Condensed";text-transform:uppercase}
+ol.pa small{display:block;font:500 42px/1.25 Inter;color:#cfcfcf;margin-top:8px}
+.qa{margin-top:56px;display:grid;gap:56px;width:100%}
+.qa b{display:block;font:700 78px/1 "Barlow Condensed";text-transform:uppercase;color:var(--red)}
+.qa p{font:500 46px/1.3 Inter;color:#ededed;margin-top:10px}
+.det{list-style:none;display:grid;gap:26px;margin-top:44px;width:100%}
+.det li{display:flex;align-items:center}
+.ic{background:var(--red);border-radius:12px;display:grid;place-items:center;flex:none;width:92px;height:92px;margin-right:28px}
+.ic svg{width:50px;height:50px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.det b{display:block;font:700 64px/1 "Barlow Condensed";text-transform:uppercase}
+.det small{display:block;font:600 28px/1.2 Inter;letter-spacing:.12em;text-transform:uppercase;color:#cfcfcf;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
+.chips span{border:3px solid var(--red);border-radius:999px;font:600 34px/1 Inter;padding:.5em .8em}
+.preco{margin-top:44px;display:flex;align-items:flex-end;gap:28px;width:100%;border-top:2px solid rgba(255,255,255,.18);padding-top:36px}
+.preco .de{font:500 40px/1.2 Inter;color:#bdbdbd}
+.preco .de s{color:#bdbdbd}
+.preco .por{font:800 190px/.8 "Barlow Condensed";color:#fff}
+.preco .por i{font-style:normal;font-size:.45em;vertical-align:top;margin-right:.1em;color:var(--red)}
+.preco .cup{font:500 36px/1.45 Inter;color:#ededed}
+.preco .cup b{background:#fff;color:var(--ink);padding:.05em .35em;border-radius:6px;font-weight:700;letter-spacing:.04em}
+.cta{margin-top:auto;display:inline-flex;align-items:center;gap:22px;background:#fff;color:var(--ink);font:700 36px/1 Inter;border-radius:999px;padding:14px 14px 14px 40px;text-transform:uppercase;letter-spacing:.03em}
+.cta i{background:var(--red);border-radius:50%;display:grid;place-items:center;font-style:normal;color:#fff;width:68px;height:68px;font-size:40px}
+.cols{columns:2;column-gap:40px}
+.cols ul.li{margin-top:0}
+.cols li{break-inside:avoid}
+.barra{position:absolute;left:0;bottom:0;height:14px;width:100%;background:var(--red);z-index:4}
+</style></head><body>
+<script>
+const IC={
+ dia:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ pin:'<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+ cert:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5M14 3l5 5v3M14 3v5h5M8 9h3M8 13h6"/><circle cx="17" cy="16" r="3"/><path d="m15.5 18.5-1 3.5 2.5-1.2 2.5 1.2-1-3.5"/></svg>'};
+const det=l=>'<ul class="det">'+l.map(([i,b,s])=>`<li><span class="ic">${IC[i]}</span><span><b>${b}</b><small>${s}</small></span></li>`).join('')+'</ul>';
+const li=l=>'<ul class="li">'+l.map(x=>`<li>${x}</li>`).join('')+'</ul>';
+const pa=l=>'<ol class="pa">'+l.map(([b,s])=>`<li><span><b>${b}</b><small>${s}</small></span></li>`).join('')+'</ol>';
+const qa=l=>'<div class="qa">'+l.map(([b,s])=>`<div><b>${b}</b><p>${s}</p></div>`).join('')+'</div>';
+const chips=l=>'<div class="chips">'+l.map(x=>`<span>${x}</span>`).join('')+'</div>';
+const vao=h=>`<div class="vao" style="height:${h}px"></div>`;
+const cta=t=>`<span class="cta">${t} <i>↓</i></span>`;
+const PRECO='<div class="preco"><div class="por"><i>R$</i>150</div><div><p class="de">de <s>R$ 249</s> por</p><p class="cup">com o cupom <b>CURATIVOS</b><br>já aplicado no link</p></div></div>';
+const FOTO={cur:['img/curativos.jpg','30% 30%'],cur2:['img/curativos.jpg','88% 30%'],bas:['img/basico.jpg','60% 60%'],aud:['img/auditorio-voluntarios-960.webp','40% 40%'],sal:['img/turma-cbfi-salao-960.webp','center 40%']};
+
+// id = dia-ordem-assunto. foto: chave de FOTO. h: classe do título (m = médio, p = pequeno). c: o resto do cartão.
+const S=[
+ // QUARTA, 25/11 — Curativos
+ {id:'1-qua-1-gancho',foto:'cur',tag:'Para quem é da saúde',h:'m',h1:'Antes do curativo, <span>vem a avaliação.</span>',
+  c:'<p class="sub">É ela que diz como limpar, o que usar e quando trocar.</p><p class="nota">Curso presencial neste sábado, no Centro do Rio.</p>'},
+ {id:'1-qua-2-enquete',tag:'Enquete',h:'m',h1:'Na hora de escolher a cobertura, <span class="in">você...</span>',
+  c:vao(520)+'<p class="nota">Responda na enquete.</p>'},
+ {id:'1-qua-3-o-que-treina',tag:'8 horas de aula',h:'m',h1:'Um sábado inteiro <span>de prática</span>',
+  c:li(['Avaliar e classificar a ferida','Limpeza, antissepsia e biossegurança','Escolher a cobertura certa','Curativos simples e especiais','Lesão por pressão: prevenir e cuidar'])+'<p class="nota">Com demonstração, aplicação de coberturas e prática simulada.</p>'},
+ {id:'1-qua-4-servico',tag:'Curso presencial',h:'p',h1:'Curativos <span>e Tratamento de Feridas</span>',
+  c:det([['dia','Sábado, 28/11','9h às 17h'],['pin','Centro do Rio','Palácio da Cruz Vermelha'],['cert','Certificado de 8 horas','Para profissionais e estudantes da saúde']])+PRECO+cta('Inscrições até sexta')},
+
+ // QUINTA, 26/11 — Voluntariado e CBFI
+ {id:'2-qui-1-gancho',foto:'aud',tag:'Voluntariado',h:'m',h1:'Todo voluntário começa <span>pelo mesmo lugar.</span>',
+  c:'<p class="sub">Um curso chamado CBFI.</p>'},
+ {id:'2-qui-2-cbfi',foto:'sal',tag:'CBFI',h:'p',h1:'Curso Básico de <span>Formação Institucional</span>',
+  c:'<p class="sub">É onde você conhece o Movimento Internacional, os Princípios Fundamentais e como a filial funciona.</p>'+chips(['Gratuito','Na sede, no Centro do Rio','Quatro turmas por ano'])},
+ {id:'2-qui-3-passos',tag:'Como entrar',h:'m',h1:'O caminho, <span>em 4 passos</span>',
+  c:pa([['Cadastro no site','Leva uns dez minutos.'],['Ficha de entrevista','A equipe chama pelo WhatsApp.'],['CBFI','Na sede, no dia marcado.'],['Termo de adesão','É ele que formaliza o voluntariado.']])},
+ {id:'2-qui-4-requisitos',tag:'Antes de se cadastrar',h:'m',h1:'O voluntariado <span>é presencial.</span>',
+  c:li(['Morar na cidade do Rio','Ter 18 anos ou mais','Ir 24 vezes à sede em 6 meses'])+'<p class="nota">Mora em outra cidade? Procure a Cruz Vermelha da sua região.</p>'+cta('Cadastro pelo link')},
+ {id:'2-qui-5-caixinha',tag:'Pergunte',h1:'Ficou com <span>dúvida?</span>',
+  c:'<p class="sub">Escreva aqui. A equipe do voluntariado responde nos stories.</p>'},
+ {id:'2-qui-6-lembrete-curativos',foto:'cur2',tag:'Curso presencial',h:'p',h1:'Curativos: <span>inscrições até amanhã</span>',
+  c:'<p class="sub">Sábado, 28/11, 9h às 17h, no Palácio da Cruz Vermelha.</p>'+PRECO+cta('Inscreva-se pelo link')},
+
+ // SEXTA, 27/11 — último dia de Curativos
+ {id:'3-sex-1-ultimo-dia',foto:'cur',tag:'Último dia',h:'p',h1:'Amanhã tem aula. <span>Hoje ainda dá tempo.</span>',
+  c:'<p class="sub">Curativos e Tratamento de Feridas. Sábado, 9h às 17h, no Palácio da Cruz Vermelha.</p>'+cta('Inscrição até 23h59')},
+ {id:'3-sex-2-perguntas',tag:'Dúvidas',h:'m',h1:'Três perguntas <span>que sempre chegam</span>',
+  c:qa([['Tem prática?','Tem. Demonstração, aplicação de coberturas e prática simulada.'],['Para quem é?','Profissionais e estudantes da saúde, com 18 anos ou mais.'],['Tem certificado?','Tem. De 8 horas, da Cruz Vermelha Brasileira – Filial Rio de Janeiro.']])},
+ {id:'3-sex-3-termometro',tag:'Seja sincero',h:'p',h1:'Lesão por pressão: <span>você se sente seguro para classificar?</span>',
+  c:vao(360)+'<p class="nota">Arraste para responder. É um dos temas da aula de amanhã.</p>'},
+ {id:'3-sex-4-fecha-hoje',tag:'Últimas horas',h1:'Fecha hoje, <span>às 23h59.</span>',
+  c:PRECO+'<p class="nota">A próxima turma de Curativos ainda não tem data.</p>'+cta('Inscreva-se pelo link')},
+
+ // SÁBADO, 28/11 — cobertura (o resto do dia é foto e vídeo, com texto do próprio Instagram)
+ {id:'4-sab-1-abertura',tag:'Sábado na sede',h1:'Bom dia, <span>Palácio.</span>',
+  c:'<p class="sub">Hoje a casa recebe duas turmas: os novos voluntários, no CBFI, e o curso de Curativos e Tratamento de Feridas.</p><p class="nota">Acompanhe por aqui ao longo do dia.</p>'},
+ {id:'4-sab-2-quiz',tag:'Quiz',h:'m',h1:'Quantos são os <span>Princípios Fundamentais</span> da Cruz Vermelha?',
+  c:''},
+ {id:'4-sab-3-resposta',tag:'Resposta',h1:'São <span>sete.</span>',
+  c:'<div class="cols" style="width:100%;margin-top:52px">'+li(['Humanidade','Imparcialidade','Neutralidade','Independência','Voluntariado','Unidade','Universalidade'])+'</div><p class="nota">É o que a turma do CBFI estuda hoje, na sede.</p>'},
+ {id:'4-sab-4-fechamento',foto:'sal',tag:'Voluntariado',h:'m',h1:'Quer estar <span>na próxima turma?</span>',
+  c:'<p class="sub">As novas entradas abrem em janeiro de 2027. Cadastre-se agora: a ficha fica guardada e a equipe chama pelo WhatsApp.</p>'+cta('Cadastro pelo link')},
+
+ // DOMINGO, 29/11 — utilidade e próximo curso
+ {id:'5-dom-1-kit',tag:'Para a sua casa',h:'m',h1:'Tem kit de primeiros socorros <span>em casa?</span>',
+  c:vao(330)+'<p class="nota">A lista completa, item por item, está no nosso site. É gratuita.</p>'+cta('Veja a lista pelo link')},
+ {id:'5-dom-2-engasgo',foto:'bas',tag:'Enquete',h:'p',h1:'Se alguém engasgar na sua frente, <span>você sabe o que fazer?</span>',
+  c:''},
+ {id:'5-dom-3-servico',tag:'Para qualquer pessoa',h:'p',h1:'Primeiros Socorros <span>Básico</span>',
+  c:'<p class="sub">Não precisa ser da saúde. Você treina reanimação, desfibrilador, engasgo, hemorragia e desmaio.</p>'+det([['dia','Quarta, 2/12','9h às 18h'],['pin','Centro do Rio','Palácio da Cruz Vermelha'],['cert','Certificado de 8 horas','Inclui Lei Lucas']])+cta('Inscreva-se pelo link')},
+
+ // CORINGA — fundo para responder pergunta da caixinha
+ {id:'0-coringa-voce-perguntou',tag:'Você perguntou',h1:'',
+  c:vao(900)+'<p class="nota">Tem outra dúvida? Mande na caixinha.</p>'},
+];
+for(const s of S){
+  const el=document.createElement('div');el.className='s'+(s.foto?' f':'');el.id=s.id;
+  let h='';
+  if(s.foto){const[u,p]=FOTO[s.foto];h+=`<div class="foto" style="background-image:url(${u});background-position:${p}"></div>`}
+  h+='<div class="logo"><img src="img/logo.png" alt=""></div><div class="txt">';
+  h+=`<span class="tag">${s.tag}</span>`+(s.h1?`<h1 class="${s.h||''}">${s.h1}</h1>`:'')+s.c+'</div><div class="barra"></div>';
+  el.innerHTML=h;document.body.append(el);
+}
+</script>
+</body></html>
