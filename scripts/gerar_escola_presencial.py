@@ -56,12 +56,16 @@ IMG_MATRICULA = "/matricula-cursos-presenciais/img/"
 VIA = "lp-lei-lucas"
 LISTA_GA4 = "Página Lei Lucas"
 
-# Página de campanha (anúncio, WhatsApp, Instagram): fora da busca, como a /bio/. A vitrine que o Google conhece
-# continua sendo /matricula-cursos-presenciais/. Para indexar, troque para True e inclua a página no sitemap.
-INDEXAR = False
+# Até 25/11/2026 era página só de campanha (anúncio, WhatsApp, Instagram), fora da busca, como a /bio/. Nesse dia o
+# Matheus pediu para o Google indexar ("faça o google indexar sim"): a página entrou em scripts/gerar_sitemaps.py.
+# Para tirar da busca de novo, troque para False e retire a linha do sitemap.
+INDEXAR = True
 
 TITULO = "Primeiros Socorros Lei Lucas no Rio: curso presencial | Cruz Vermelha Brasileira Rio de Janeiro"
 OG_TITULO = "Primeiros Socorros Lei Lucas: curso presencial no Centro do Rio"
+# O título principal é o da matrícula (COPY_CURSO), com "Curso de" na frente: é a palavra que as pessoas buscam
+# ("curso lei lucas", "curso de primeiros socorros infantil") e que o título não trazia (25/11/2026).
+TITULO_H1 = "Curso de {titulo}"
 IMAGEM_OG = f"{URL_PAGINA}og-lei-lucas.jpg"
 # Foto que a escola publica no curso (a mesma do banner de 09/12), já no Git.
 FOTO_TOPO = {"src": f"{IMG_MATRICULA}{SLUG}-960.webp", "srcset": f"{IMG_MATRICULA}{SLUG}-480.webp 480w, {IMG_MATRICULA}{SLUG}-960.webp 960w",
@@ -79,11 +83,14 @@ APRENDER = [
     "Medidas preventivas",
 ]
 # Para quem é: os lugares que o catálogo cita (famílias, escolas, creches, projetos sociais, esporte) e as funções que
-# o kit /lei-lucas-para-escolas/ lista.
+# o kit /lei-lucas-para-escolas/ lista. Em 25/11/2026 entraram, por nome, as funções que as pessoas buscam no Google
+# (auxiliar de creche, berçarista, mediador, inspetor, babá, gestante): são funcionários de escola e cuidadores, que o
+# curso já atendia. Nenhuma promessa nova: ver as duas perguntas "serve para mim" e "vale como formação" nas dúvidas.
 PUBLICO = [
-    ("predio", "Escolas e creches", "Professores, auxiliares, monitores e as equipes de portaria, cozinha, limpeza e transporte."),
+    ("predio", "Escolas e creches", "Professores, auxiliares de creche, berçaristas, mediadores, inspetores, monitores e as equipes de portaria, "
+     "cozinha, limpeza e transporte."),
     ("capelo", "Recreação infantil", "Monitores e recreadores de espaços de recreação infantil, que a Lei Lucas também alcança."),
-    ("cruz", "Famílias e cuidadores", "Pais, avós, babás e quem cuida de crianças em casa. O curso é aberto a qualquer pessoa."),
+    ("cruz", "Famílias e cuidadores", "Pais, mães, gestantes, avós, babás e quem cuida de crianças em casa. O curso é aberto a qualquer pessoa."),
     ("medalha", "Projetos sociais e esporte", "Educadores de projetos sociais e de atividades esportivas com crianças."),
 ]
 # Resumo do que a lei pede: o mesmo do kit para escolas (guias/lei-lucas-para-escolas.json, bloco "aviso").
@@ -262,7 +269,7 @@ def main() -> int:
       <div class="ll-wrap ll-hero-grade">
         <div class="ll-hero-texto">
           <p class="ll-olho"><span>Curso presencial</span> Ambientes com crianças</p>
-          <h1 id="ll-titulo">{esc(copy["titulo"])}</h1>
+          <h1 id="ll-titulo">{esc(TITULO_H1.format(titulo=copy["titulo"]))}</h1>
           <p class="ll-hero-lead">{esc(copy["promessa"])}</p>
           <ul class="ll-chips" aria-label="Resumo do curso">{chips}</ul>
         </div>
@@ -493,6 +500,16 @@ def main() -> int:
         ("ll-se-tabela", "Quanto custa o curso?",
          f"<p>A matrícula, que é o valor do curso, custa {brl_curto(matricula)}, e a taxa de inscrição, {brl_curto(inscricao)}: {v_tabela} à vista, por PIX "
          "ou cartão. A entrada na aula é liberada com a matrícula paga.</p>"),
+        ("", "Sou babá, cuidadora, mãe ou pai. O curso serve para mim?",
+         "<p>Sim. O curso é aberto a qualquer pessoa que tenha crianças por perto: pais, mães, gestantes, avós, babás e quem cuida de crianças em "
+         f"casa. Não é preciso ser da área da saúde, e a escolaridade mínima é o {esc(curso['escolaridade'])}.</p>"),
+        ("", "O curso vale como formação de babá, berçarista ou auxiliar de creche?",
+         f"<p>Não. Este é um curso livre de primeiros socorros, de {esc(carga)}, sobre emergências com crianças. Ele não substitui a formação "
+         "profissional dessas funções: complementa. Para quem trabalha em escola, creche ou espaço de recreação infantil, é a capacitação em "
+         "noções básicas de primeiros socorros que a Lei Lucas pede.</p>"),
+        ("", "Trabalho em escola como auxiliar, mediador ou inspetor. Preciso fazer?",
+         "<p>A Lei Lucas fala em professores e funcionários, sem listar funções, e pede gente capacitada na proporção da equipe. Quem define quem "
+         "faz o curso a cada ano é a escola. Você também pode se inscrever por conta própria, nesta turma.</p>"),
         ("", "Recebo certificado?",
          f"<p>Sim. O curso oferece certificado aos alunos que concluírem os requisitos previstos. {esc(CERT_PESO)}</p>"),
         ("", "Posso desistir depois de pagar?",
