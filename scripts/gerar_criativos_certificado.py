@@ -42,16 +42,21 @@ def b64(caminho: Path, tipo: str) -> str:
     return f"data:{tipo};base64,{base64.b64encode(caminho.read_bytes()).decode()}"
 
 
-def pagina(curso: dict, insc: str, formato: str) -> str:
+def pagina(curso: dict, insc_centavos: int, formato: str) -> str:
     largura, altura = FORMATOS[formato]
     stories = formato == "stories"
     s = curso["slug"]
     nome = NOME_CURTO.get(s, curso["nome"])
     promessa = COPY_CURSO[s]["promessa"]
     meta = f'{curso["carga_horaria"]} presenciais · Centro do Rio'
-    # O preço inteiro, como na página: a inscrição agora e o curso depois (nunca só os R$ 99).
+    # O preço inteiro, como na página (nunca só os R$ 99): o total em destaque, a conta embaixo e o parcelamento
+    # no cartão. O parcelamento tem juros (FAQ da página): nunca "sem juros" nem número de parcelas aqui.
     v = curso.get("valor_curso_centavos")
-    valor_curso = f"+ curso R$ {int(v) // 100}, pago depois" if v else "+ valor do curso, pago depois"
+    if v:
+        rotulo, total = "Valor total", f"R$ {(insc_centavos + int(v)) // 100}"
+        conta = f"inscrição R$ {insc_centavos // 100} + curso R$ {int(v) // 100}"
+    else:
+        rotulo, total, conta = "Inscrição", f"R$ {insc_centavos // 100}", "+ valor do curso"
     return f"""<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=block" rel="stylesheet">
 <style>
@@ -74,6 +79,7 @@ def pagina(curso: dict, insc: str, formato: str) -> str:
   .cta {{ background: #cc0000; color: #fff; font-weight: 800; font-size: {'40px' if stories else '28px'}; padding: {'30px 48px' if stories else '20px 34px'}; border-radius: 999px; white-space: nowrap; }}
   .preco {{ font-size: {'28px' if stories else '19px'}; color: #4a5568; line-height: 1.3; margin: 0; }}
   .preco b {{ display: block; color: #0f1318; font-size: {'46px' if stories else '32px'}; }}
+  .preco strong {{ color: #0f1318; font-weight: 700; }}
 </style></head><body><div class="c">
   <img class="logo" src="{b64(LOGO, 'image/png')}" alt="">
   <h1>Coloque o <em>seu nome</em> neste certificado.</h1>
@@ -84,7 +90,7 @@ def pagina(curso: dict, insc: str, formato: str) -> str:
   <p class="promessa">{html.escape(promessa)}</p>
   <p class="peso">{html.escape(PESO)}</p>
   <div class="rodape">
-    <p class="preco">Inscrição<b>{html.escape(insc)}</b>garante sua vaga<br>{html.escape(valor_curso)}</p>
+    <p class="preco">{rotulo}<b>{html.escape(total)}</b>{html.escape(conta)}<br><strong>Dá para parcelar no cartão</strong></p>
     <span class="cta">Fazer matrícula</span>
   </div>
 </div></body></html>"""
@@ -110,7 +116,7 @@ const [,, lista] = process.argv;
 def main() -> int:
     dados = json.loads(DADOS.read_text(encoding="utf-8"))
     cursos = {c["slug"]: c for c in dados["cursos"]}
-    insc = f'R$ {dados["inscricao_centavos"] // 100}'
+    insc = int(dados["inscricao_centavos"])
     SAIDA.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)

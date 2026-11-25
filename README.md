@@ -1205,7 +1205,9 @@ Cruz Vermelha. **O PDF não entra no repositório nem no site.**
 - **Tela do PIX** (checkout e pendente, `static/checkout.js`): o certificado do curso abaixo do código.
 - **Criativos de remarketing** (`scripts/gerar_criativos_certificado.py` → `docs/criativos/`): feed 1080×1080 e
   stories 1080×1920 de Punção Venosa e Primeiros Socorros Básico, "Coloque o seu nome neste certificado.", com
-  "Imagem de modelo" e o preço inteiro (inscrição agora + curso depois, nunca só os R$ 99). Público sugerido: quem viu a página de matrícula ou iniciou o checkout nos últimos 14 dias e
+  "Imagem de modelo" e o preço inteiro (o total em destaque, a conta "inscrição R$ 99 + curso R$ 150" e "Dá para
+  parcelar no cartão"; nunca só os R$ 99, nunca "sem juros"). O anúncio só roda com o parcelamento ligado no checkout
+  (`parcelas_max` > 1 no `api/info.php`). Público sugerido: quem viu a página de matrícula ou iniciou o checkout nos últimos 14 dias e
   não comprou.
 
 **Revisão adversarial (três revisores, cada achado conferido):** além do que está acima, entraram "Inclui Lei Lucas."
