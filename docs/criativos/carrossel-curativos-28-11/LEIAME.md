@@ -3,8 +3,7 @@
 - `slide-1.png` a `slide-7.png`: as artes prontas (4:5, 1080x1350), na ordem de publicação.
 - `carrossel.html` é a fonte; `node render.js` (Playwright) regenera os PNG.
 - Fotos reais, sem banco de imagem: a turma de Primeiros Socorros de 17/11/2026 na sede (enviadas pelo Matheus; slides
-  1 e 4), a equipe no saguão do Palácio (post do Instagram de 28/05/2026; slide 6) e a equipe em frente ao Palácio
-  (post do Instagram de 25/09/2026; slide 7). Não há foto de aula de curativos: o slide 4 diz de que turma é a foto, e a legenda também.
+  1, 4 e 6) e a equipe em frente ao Palácio (post do Instagram de 25/09/2026; slide 7). Não há foto de aula de curativos: o slide 4 diz de que turma é a foto, e a legenda também.
 - Passou por uma segunda avaliação, independente, antes de fechar (nota 7 na primeira versão); as correções dela
   estão aplicadas: prazo e público na capa, requisito de ensino médio, recortes das fotos e crédito das fotos.
 - Estrutura: 1 pergunta-gancho · 2 a dúvida de quem cuida de feridas · 3 o que se aprende · 4 como é a aula ·
@@ -54,5 +53,5 @@ O curso é de aperfeiçoamento: não substitui a formação profissional nem amp
 3. Texto: O que você aprende, da avaliação ao curativo. Tipos de feridas e cicatrização; avaliação e classificação das lesões; limpeza, antissepsia e biossegurança; coberturas: qual usar e quando; curativos simples e especiais; lesão por pressão: prevenção e cuidados.
 4. Duas alunas praticam uma técnica em dupla, observadas pela turma (foto de outra turma: Primeiros Socorros de 17/11, na sede). Texto: Como é a aula: aqui se aprende fazendo. Demonstração das técnicas, aplicação de coberturas, práticas simuladas.
 5. Texto: Público e certificado: feito para quem é da saúde. Profissionais e estudantes da área da saúde, com 18 anos ou mais, ensino médio e conhecimentos básicos na área. Certificado da Cruz Vermelha Brasileira – Filial Rio de Janeiro, 8 horas. Curso de aperfeiçoamento: não substitui a formação profissional nem amplia as atribuições legais de cada categoria.
-6. Equipe da Cruz Vermelha, de colete branco, no saguão do Palácio, sob um arco dourado. Texto: Anote aí, é aqui, no Palácio. Sábado, 28/11, das 9h às 17h. Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10, Centro do Rio. R$ 150 com o cupom CURATIVOS (de R$ 249), à vista ou em até 12x no cartão, com juros.
+6. Instrutor da Cruz Vermelha, de uniforme vermelho, demonstra uma manobra enquanto as alunas praticam em volta (foto de outra turma: Primeiros Socorros de 17/11, na sede). Texto: Anote aí. Sábado, 28/11, das 9h às 17h. Palácio da Cruz Vermelha, Praça da Cruz Vermelha, 10, Centro do Rio. R$ 150 com o cupom CURATIVOS (de R$ 249), à vista ou em até 12x no cartão, com juros.
 7. Equipe da Cruz Vermelha, de colete branco e uniforme vermelho, em frente ao Palácio. Texto: A gente espera você no Palácio. Inscrições até sexta, 27/11. Link na bio. Cupom CURATIVOS já aplicado no site: R$ 150. Dúvidas? WhatsApp da Secretaria: (21) 99992-2864.
