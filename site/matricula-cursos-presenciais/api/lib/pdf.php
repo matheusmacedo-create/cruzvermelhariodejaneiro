@@ -336,6 +336,11 @@ final class McpPdf
     private static function cp1252(string $texto): string
     {
         $texto = preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $texto) ?? '';
+        // Acento digitado como letra + sinal solto (o "ã" de alguns teclados de celular) vira a letra acentuada; sem isso
+        // "Não" saía "N?o".
+        if (class_exists('Normalizer')) {
+            $texto = Normalizer::normalize($texto, Normalizer::FORM_C) ?: $texto;
+        }
         return mb_convert_encoding($texto, 'Windows-1252', 'UTF-8');
     }
 

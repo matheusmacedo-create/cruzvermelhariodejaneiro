@@ -271,7 +271,7 @@ verificar('fichas em pdf: duas fotos embutidas como JPEG, com as medidas certas,
 verificar('fichas em pdf: nome, contato, frentes, aprovação e protocolo', [str_contains($conteudoFichas, 'Bruno Reis'), str_contains($conteudoFichas, '20/05/1990 \\(36 anos\\)'),
     str_contains($conteudoFichas, 'Juventude'), str_contains($conteudoFichas, '20/11/2026'), str_contains($conteudoFichas, 'VOL-261101-01')], [true, true, true, true, true]);
 verificar('fichas em pdf: sem CPF (dígitos, formatado ou parcial) e sem saúde', [str_contains($conteudoFichas, $cpf), str_contains($conteudoFichas, substr($cpf, 0, 3) . '.'), str_contains($conteudoFichas, 'CPF'),
-    str_contains($conteudoFichas, 'sa\\372de')], [false, false, false, false]);
+    str_contains($conteudoFichas, mb_convert_encoding('saúde', 'Windows-1252', 'UTF-8'))], [false, false, false, false]);
 $pdfVazio = mcp_voluntarios_fichas_pdf([], []);
 verificar('fichas em pdf: sem ninguém, uma página dizendo isso', [substr_count($pdfVazio, '/Type /Page /Parent'), str_contains(pdf_texto($pdfVazio), 'Nenhuma ficha')], [1, true]);
 // As fichas completas: a ficha inteira de cada pessoa, cada uma em página nova, com a foto de quem tem.
@@ -303,6 +303,20 @@ verificar('registro: já foi voluntário pelo texto da experiência (sim, não, 
     mcp_voluntario_registro_dados(['experiencia' => ''] + $aprovada)['voluntario'], mcp_voluntario_registro_dados(['experiencia' => 'Nunca'] + $aprovada)['entidades']], ['sim', 'Defesa Civil, 3 anos', 'nao', '', '']);
 verificar('registro: escolaridade de cada opção do site', array_map(static fn(string $e): ?array => mcp_voluntario_registro_dados(['escolaridade' => $e] + $aprovada)['escolaridade'], array_keys(MCP_VOL_ESCOLARIDADES)),
     [['fundamental', 'completo'], ['medio', 'completo'], ['medio', 'completo'], ['superior', 'incompleto'], ['superior', 'completo'], ['pos', 'completo']]);
+verificar('registro: experiência em texto livre vira sim, não ou sem resposta', array_map(static fn(string $t): array => mcp_voluntario_registro_experiencia($t),
+    ['', '....................', 'dddddddddddddddd', 'Não', "Na\u{0303}o", 'Nunca fui', 'Nem um', 'No momento, nenhuma.', 'Essa seria a primeira', 'Sim', 'Sim.', 'Sim já', 'Sim, na pandemia.', 'Trabalho social', 'Nos hospitais']),
+    [['', ''], ['', ''], ['', ''], ['nao', ''], ['nao', ''], ['nao', ''], ['nao', ''], ['nao', ''], ['nao', ''], ['sim', ''], ['sim', ''], ['sim', ''], ['sim', 'Sim, na pandemia.'], ['sim', 'Trabalho social'], ['sim', 'Nos hospitais']]);
+verificar('registro: cidade com a grafia certa, sem o estado, e número no lugar da cidade fica em branco', array_map('mcp_voluntario_registro_cidade',
+    ['rj', 'RIO DE JANEIRO', 'Rio de Janeiro - RJ', 'rio de janeiro-rj', 'Río de Janeiro', 'sao joao de meriti', 'Nova Iguaçu RJ', 'belfort roxo', 'duque de caxias - rj', '21965725477', 'ilha do governador', 'Juiz de Fora']),
+    ['Rio de Janeiro', 'Rio de Janeiro', 'Rio de Janeiro', 'Rio de Janeiro', 'Rio de Janeiro', 'São João de Meriti', 'Nova Iguaçu', 'Belford Roxo', 'Duque de Caxias', '', 'Ilha do Governador', 'Juiz de Fora']);
+verificar('registro: nome e bairro com as iniciais maiúsculas', [mcp_voluntario_registro_dados(['nome' => 'ADRIANO PERASSOLI DIAS', 'bairro' => 'santa cruz'] + $aprovada)['nome'],
+    mcp_voluntario_registro_dados(['nome' => 'bianca pinto da silva'] + $aprovada)['nome'], mcp_voluntario_registro_dados(['bairro' => 'santa cruz'] + $aprovada)['bairro']], ['Adriano Perassoli Dias', 'Bianca Pinto da Silva', 'Santa Cruz']);
+$textoLongo = trim(str_repeat('Curso de primeiros socorros e atendimento ao público. ', 40));
+[$duas] = mcp_voluntario_registro_ajustar('Primeiros socorros e informática.', 500, 9.0, 2);
+[$quatro, $tamQuatro] = mcp_voluntario_registro_ajustar($textoLongo, 500, 7.5, 4);
+verificar('registro: texto curto fica como está; o comprido diminui a letra, ocupa 4 linhas e é cortado na palavra, com reticências', [$duas, count($quatro), $tamQuatro, str_ends_with($quatro[3], ' …'),
+    (bool) preg_match('/(socorros|atendimento|público|Curso|primeiros|de|ao|e) …$/u', $quatro[3]), McpPdf::larguraTexto($quatro[3], 'normal', $tamQuatro) <= 500], [['Primeiros socorros e informática.'], 4, 6.0, true, true, true]);
+verificar('pdf: acento digitado como letra + sinal solto sai certo, e não "?"', str_contains(pdf_texto(mcp_voluntarios_fichas_registro_pdf([['nome' => "Joa\u{0303}o Conceic\u{0327}a\u{0303}o"] + $aprovada], [])), mb_convert_encoding('João Conceição', 'Windows-1252', 'UTF-8')), true);
 $pdfRegistro = mcp_voluntarios_fichas_registro_pdf([['id' => 301] + $aprovada, ['id' => 302, 'nome' => 'Bia Registro'] + $cheia], [301 => $miniatura]);
 $conteudoRegistro = pdf_texto($pdfRegistro);
 verificar('registro em pdf: uma folha por pessoa, com o formulário e os dados; a foto de quem tem e o quadro "FOTO" de quem não tem', [substr_count($pdfRegistro, '/Type /Page /Parent'),

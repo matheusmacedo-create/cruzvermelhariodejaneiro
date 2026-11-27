@@ -315,6 +315,13 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   marca o médio completo. "Já atuou como voluntário" vem do texto livre da experiência (vazio = sem marca; começa com
   "não"/"nunca" = não). A folha 2 do formulário ainda não foi feita. Código: `mcp_voluntario_registro_dados()` e
   `mcp_voluntarios_fichas_registro_pdf()`. No ar desde 27/11/2026 (232 folhas, 5,7 MB, em 7 segundos).
+  Conferência das 232 fichas no mesmo dia e o que mudou: nome e bairro com as iniciais maiúsculas (49 nomes vinham todos
+  em maiúsculas, em minúsculas ou misturados); cidade com a grafia certa e sem o "- RJ" (`mcp_voluntario_registro_cidade`:
+  "rj", "Río de Janeiro", "sao joao de meriti", telefone no lugar da cidade); a experiência lida melhor
+  (`mcp_voluntario_registro_experiencia`: "Nem um", "No momento, nenhuma", "Essa seria a primeira" = não; "....",
+  "dddd" = sem resposta; só "Sim" = sim, sem entidade); texto comprido em letra menor e até 4 linhas (cursos) ou 3
+  (entidades), cortado na palavra (56 fichas tinham texto cortado em 2 linhas); e acento digitado como letra + sinal
+  solto deixou de sair "?" em todos os PDFs (`McpPdf`, normalização NFC quando o servidor tem a extensão intl).
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,

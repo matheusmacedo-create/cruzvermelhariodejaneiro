@@ -1481,14 +1481,21 @@ function mcp_voluntarios_fichas_fotos(array $ids, int $lado = MCP_VOL_FICHAS_FOT
     return $fotos;
 }
 
+/** Minúsculas e sem acento, para comparar textos digitados de qualquer jeito ("São João" = "sao joao"). */
+function mcp_voluntario_sem_acento(string $texto): string
+{
+    $texto = trim($texto);
+    if (class_exists('Normalizer')) {
+        $texto = Normalizer::normalize($texto, Normalizer::FORM_C) ?: $texto;
+    }
+    return strtr(mb_strtolower($texto), ['á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'í' => 'i', 'ì' => 'i',
+        'î' => 'i', 'ï' => 'i', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c', 'ñ' => 'n']);
+}
+
 /** As fichas em ordem alfabética do nome, sem diferenciar maiúscula nem acento ("Érica" entre "Elisa" e "Fábio"). */
 function mcp_voluntarios_fichas_ordenar(array $fichas): array
 {
-    $chave = static function (array $f): string {
-        $nome = mb_strtolower(trim((string) ($f['nome'] ?? '')));
-        return strtr($nome, ['á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'í' => 'i', 'ì' => 'i',
-            'î' => 'i', 'ï' => 'i', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c', 'ñ' => 'n']);
-    };
+    $chave = static fn(array $f): string => mcp_voluntario_sem_acento((string) ($f['nome'] ?? ''));
     usort($fichas, static fn(array $a, array $b): int => [$chave($a), (int) ($a['id'] ?? 0)] <=> [$chave($b), (int) ($b['id'] ?? 0)]);
     return $fichas;
 }
@@ -1562,7 +1569,7 @@ function mcp_voluntario_registro_dados(array $f): array
         default => null,
     };
     $experiencia = trim((string) preg_replace('/\s+/u', ' ', (string) ($f['experiencia'] ?? '')));
-    $voluntario = $experiencia === '' ? '' : (preg_match('/^(n[ãa]o|nunca|nenhum|sem experi|ainda n[ãa]o|n\/a|-+$)/iu', $experiencia) ? 'nao' : 'sim');
+    [$voluntario, $entidades] = mcp_voluntario_registro_experiencia($experiencia);
     $cursos = [];
     if ((string) ($f['escolaridade'] ?? '') === 'tecnico') {
         $cursos[] = 'Ensino técnico';
@@ -1577,21 +1584,68 @@ function mcp_voluntario_registro_dados(array $f): array
     $nascimento = mcp_voluntario_data((string) ($f['data_nascimento'] ?? ''));
     return [
         'numero' => (string) ($f['protocolo'] ?? ''),
-        'nome' => trim((string) ($f['nome'] ?? '')),
+        'nome' => mcp_nome_proprio((string) ($f['nome'] ?? '')),
         'nascimento' => $nascimento === null ? '' : implode('/', array_reverse(explode('-', $nascimento))),
         'cpf' => mcp_voluntario_cpf_parcial($f['cpf'] ?? null) ?: '',
-        'bairro' => trim((string) ($f['bairro'] ?? '')),
-        'cidade' => trim((string) ($f['cidade'] ?? '')),
-        'estado' => trim((string) ($f['estado'] ?? '')),
+        'bairro' => mcp_nome_proprio((string) ($f['bairro'] ?? '')),
+        'cidade' => mcp_voluntario_registro_cidade((string) ($f['cidade'] ?? '')),
+        'estado' => mb_strtoupper(trim((string) ($f['estado'] ?? ''))),
         'email' => trim((string) ($f['email'] ?? '')),
         'celular' => mcp_telefone_bonito((string) ($f['telefone'] ?? '')),
         'formacao' => (int) ($f['saude'] ?? 0) === 1 ? trim((string) ($f['saude_qual'] ?? '')) : '',
         'escolaridade' => $escolaridade,
         'cursos' => implode(' · ', $cursos),
         'voluntario' => $voluntario,
-        'entidades' => $voluntario === 'sim' ? $experiencia : '',
+        'entidades' => $entidades,
         'enviada' => mcp_data_brt((string) ($f['criado_em'] ?? ''), 'd/m/Y'),
     ];
+}
+
+/**
+ * "Já atuou como voluntário antes?" a partir do texto livre da experiência: ['sim'|'nao'|'', texto das entidades].
+ * Vazio ou rabisco ("....", "ddddd") = sem resposta. Começa negando ("não", "nunca", "nenhuma", "seria a primeira") =
+ * não. Só "sim" = sim, sem entidade. O resto = sim, com o texto da pessoa. É uma leitura de texto livre: quem respondeu
+ * outra coisa ("sou técnica de enfermagem") sai como sim; a conferência é de quem lê a ficha.
+ */
+function mcp_voluntario_registro_experiencia(string $texto): array
+{
+    $texto = trim($texto);
+    $chave = trim((string) preg_replace('/[^a-z0-9\/ ]+/', ' ', mcp_voluntario_sem_acento($texto)));
+    $chave = (string) preg_replace('/\s+/', ' ', $chave);
+    if ($chave === '' || preg_match('/^(.)\1*$/', str_replace(' ', '', $chave)) && strlen($chave) > 1 || in_array($chave, ['x', 'ok'], true)) {
+        return ['', ''];
+    }
+    if (preg_match('/^(nao|n|nunca|nenhum|nenhuma|nem um|nem uma|sem experiencia|ainda nao|n\/a|no momento nenhuma?|(essa |esta )?seria a (minha )?primeira|(e |sera )?(a )?(minha )?primeira vez)\b/', $chave)) {
+        return ['nao', ''];
+    }
+    if (preg_match('/^(sim|s|ja|sim ja|ja sim|sim sim)$/', $chave)) {
+        return ['sim', ''];
+    }
+    return ['sim', $texto];
+}
+
+/** Municípios do Grande Rio como se escrevem, pela forma sem acento (o que as pessoas digitam no site). */
+const MCP_VOL_CIDADES = ['rio de janeiro' => 'Rio de Janeiro', 'rio' => 'Rio de Janeiro', 'rj' => 'Rio de Janeiro', 'rio de janeiro capital' => 'Rio de Janeiro',
+    'sao joao de meriti' => 'São João de Meriti', 'sao goncalo' => 'São Gonçalo', 'niteroi' => 'Niterói', 'nilopolis' => 'Nilópolis', 'marica' => 'Maricá', 'mage' => 'Magé',
+    'nova iguacu' => 'Nova Iguaçu', 'belford roxo' => 'Belford Roxo', 'belfort roxo' => 'Belford Roxo', 'duque de caxias' => 'Duque de Caxias', 'itaguai' => 'Itaguaí',
+    'itaborai' => 'Itaboraí', 'seropedica' => 'Seropédica', 'petropolis' => 'Petrópolis', 'teresopolis' => 'Teresópolis', 'tangua' => 'Tanguá'];
+
+/**
+ * A cidade como vai na ficha de registro: sem o "- RJ" do fim (o estado tem campo próprio), com a grafia certa dos
+ * municípios do Grande Rio ("sao joao de meriti", "RJ", "Río de Janeiro") e, nas outras, só as iniciais maiúsculas.
+ * Telefone ou número digitado no campo da cidade fica em branco.
+ */
+function mcp_voluntario_registro_cidade(string $cidade): string
+{
+    $cidade = trim((string) preg_replace('/\s+/u', ' ', $cidade));
+    if ($cidade === '' || !preg_match('/\pL/u', $cidade)) {
+        return '';
+    }
+    $semEstado = trim((string) preg_replace('/[\s,\/(–-]+rj\)?\.?$/iu', '', $cidade));
+    if ($semEstado !== '') {
+        $cidade = $semEstado;
+    }
+    return MCP_VOL_CIDADES[mcp_voluntario_sem_acento($cidade)] ?? mcp_nome_proprio($cidade);
 }
 
 /**
@@ -1614,6 +1668,35 @@ function mcp_voluntarios_fichas_registro_pdf(array $fichas, array $fotos, string
         $pdf->texto(MCP_CP_MARGEM, 80, 'Nenhuma ficha neste grupo.', 'normal', 12, MCP_CP_TEXTO);
     }
     return $pdf->gerar();
+}
+
+/**
+ * O texto em linhas que cabem na largura: tenta a letra $tam e vai diminuindo (até 6) enquanto passar de $maximo
+ * linhas. Se cabe em $maximo, devolve essas linhas; se nem na menor letra cabe, corta na última palavra inteira, com
+ * reticências. Com $maximo 2 e texto que não cabe, devolve as linhas todas (quem chama tenta de novo com mais linhas).
+ *
+ * @return array{0: list<string>, 1: float} as linhas e o tamanho da letra
+ */
+function mcp_voluntario_registro_ajustar(string $texto, float $largura, float $tam, int $maximo): array
+{
+    $texto = trim($texto);
+    if ($texto === '') {
+        return [[], $tam];
+    }
+    $linhas = McpPdf::quebrar($texto, 'normal', $tam, $largura);
+    while (count($linhas) > $maximo && $tam > 6.0) {
+        $tam -= 0.5;
+        $linhas = McpPdf::quebrar($texto, 'normal', $tam, $largura);
+    }
+    if (count($linhas) > $maximo && $maximo > 2) {
+        $linhas = array_slice($linhas, 0, $maximo);
+        $ultima = $linhas[$maximo - 1];
+        while ($ultima !== '' && McpPdf::larguraTexto($ultima . ' …', 'normal', $tam) > $largura) {
+            $ultima = (string) preg_replace('/\s*\S+$/u', '', $ultima);
+        }
+        $linhas[$maximo - 1] = rtrim($ultima, ' ,;:') . ' …';
+    }
+    return [$linhas, $tam];
 }
 
 /** Uma folha do formulário, com os dados de mcp_voluntario_registro_dados(). */
@@ -1757,20 +1840,19 @@ function mcp_voluntario_registro_desenhar(McpPdf $pdf, array $d, ?string $foto, 
     $y += 76;
     $pdf->linha($esq, $y, $dir, $y, $preto, $fino);
     $pdf->texto($esq + 4, $y + 10, 'ESPECIALIZAÇÕES E OUTROS CURSOS', 'normal', 7.5, $preto);
-    // Duas linhas para escrever: o texto do site entra nelas, na letra que couber.
+    // Duas linhas para escrever. O texto do site entra nelas; se for comprido, a letra diminui e ele ocupa até quatro
+    // linhas, sem as pautas (que são para a caneta). Só o que nem assim cabe é cortado, na palavra, com reticências.
     $cursos = (string) $d['cursos'];
-    $tamCursos = 9.0;
-    $linhasCursos = McpPdf::quebrar($cursos, 'normal', $tamCursos, $larg - 14);
-    while (count($linhasCursos) > 2 && $tamCursos > 6.5) {
-        $tamCursos -= 0.5;
-        $linhasCursos = McpPdf::quebrar($cursos, 'normal', $tamCursos, $larg - 14);
+    [$linhasCursos, $tamCursos] = mcp_voluntario_registro_ajustar($cursos, $larg - 14, 9.0, 2);
+    $pautado = count($linhasCursos) <= 2;
+    if (!$pautado) {
+        [$linhasCursos, $tamCursos] = mcp_voluntario_registro_ajustar($cursos, $larg - 14, 7.5, 4);
     }
-    foreach ([0, 1] as $i) {
-        $base = $y + 28 + $i * 17;
-        $pdf->linha($esq + 5, $base, $dir - 5, $base, $preto, 0.4);
-        if ($cursos !== '' && isset($linhasCursos[$i])) {
-            $pdf->texto($esq + 7, $base - 3, $linhasCursos[$i] . ($i === 1 && count($linhasCursos) > 2 ? '…' : ''), 'normal', $tamCursos, $tinta);
-        }
+    foreach ($pautado ? [0, 1] : [] as $i) {
+        $pdf->linha($esq + 5, $y + 28 + $i * 17, $dir - 5, $y + 28 + $i * 17, $preto, 0.4);
+    }
+    foreach ($linhasCursos as $i => $linhaCursos) {
+        $pdf->texto($esq + 7, $pautado ? $y + 25 + $i * 17 : $y + 20 + $i * 9.2, $linhaCursos, 'normal', $tamCursos, $tinta);
     }
     $y += 54;
     $pdf->linha($esq, $y, $dir, $y, $preto, $fino);
@@ -1797,17 +1879,12 @@ function mcp_voluntario_registro_desenhar(McpPdf $pdf, array $d, ?string $foto, 
     $marca($esq + 56, $y + 19, 'NÃO', $d['voluntario'] === 'nao');
     $pdf->contorno($esq + 185, $y, $larg - 185, 36, $preto, $fino);
     $pdf->texto($esq + 189, $y + 10, 'SE SIM, EM QUAL(IS) ENTIDADE(S)?', 'normal', 7.2, $preto);
-    $entidades = (string) $d['entidades'];
-    if ($entidades !== '') {
-        $tamEnt = 8.5;
-        $linhasEnt = McpPdf::quebrar($entidades, 'normal', $tamEnt, $larg - 185 - 12);
-        while (count($linhasEnt) > 2 && $tamEnt > 6.0) {
-            $tamEnt -= 0.5;
-            $linhasEnt = McpPdf::quebrar($entidades, 'normal', $tamEnt, $larg - 185 - 12);
-        }
-        foreach (array_slice($linhasEnt, 0, 2) as $i => $linhaEnt) {
-            $pdf->texto($esq + 191, $y + 21 + $i * 10, $linhaEnt . ($i === 1 && count($linhasEnt) > 2 ? '…' : ''), 'normal', $tamEnt, $tinta);
-        }
+    [$linhasEnt, $tamEnt] = mcp_voluntario_registro_ajustar((string) $d['entidades'], $larg - 185 - 12, 8.5, 2);
+    if (count($linhasEnt) > 2) {
+        [$linhasEnt, $tamEnt] = mcp_voluntario_registro_ajustar((string) $d['entidades'], $larg - 185 - 12, 7.0, 3);
+    }
+    foreach ($linhasEnt as $i => $linhaEnt) {
+        $pdf->texto($esq + 191, $y + (count($linhasEnt) > 2 ? 18.5 : 21) + $i * (count($linhasEnt) > 2 ? 7.6 : 10), $linhaEnt, 'normal', $tamEnt, $tinta);
     }
     $pdf->contorno($esq, $y, $larg, 36, $preto, $grosso);
 
