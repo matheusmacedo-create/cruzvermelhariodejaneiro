@@ -340,6 +340,14 @@ final class McpPdf
         // "Não" saía "N?o".
         if (class_exists('Normalizer')) {
             $texto = Normalizer::normalize($texto, Normalizer::FORM_C) ?: $texto;
+            // Letra com um acento que o cp1252 não tem ("ā" no lugar de "ã") perde o acento em vez de virar "?".
+            $texto = preg_replace_callback('/[^\x{00}-\x{FF}]/u', static function (array $m): string {
+                if (mb_convert_encoding($m[0], 'Windows-1252', 'UTF-8') !== '?') {
+                    return $m[0];
+                }
+                $base = preg_replace('/\p{Mn}+/u', '', Normalizer::normalize($m[0], Normalizer::FORM_D) ?: $m[0]) ?? $m[0];
+                return $base !== '' ? $base : $m[0];
+            }, $texto) ?? $texto;
         }
         return mb_convert_encoding($texto, 'Windows-1252', 'UTF-8');
     }

@@ -316,6 +316,7 @@ $textoLongo = trim(str_repeat('Curso de primeiros socorros e atendimento ao púb
 [$quatro, $tamQuatro] = mcp_voluntario_registro_ajustar($textoLongo, 500, 7.5, 4);
 verificar('registro: texto curto fica como está; o comprido diminui a letra, ocupa 4 linhas e é cortado na palavra, com reticências', [$duas, count($quatro), $tamQuatro, str_ends_with($quatro[3], ' …'),
     (bool) preg_match('/(socorros|atendimento|público|Curso|primeiros|de|ao|e) …$/u', $quatro[3]), McpPdf::larguraTexto($quatro[3], 'normal', $tamQuatro) <= 500], [['Primeiros socorros e informática.'], 4, 6.0, true, true, true]);
+verificar('pdf: letra com acento que o cp1252 não tem perde o acento, não vira "?"; travessão e aspas curvas continuam', [str_contains(pdf_texto(mcp_voluntarios_fichas_registro_pdf([['nome' => "Gest\u{0101}o \u{2013} \u{201C}Ok\u{201D}"] + $aprovada], [])), mb_convert_encoding("Gestao \u{2013} \u{201C}Ok\u{201D}", 'Windows-1252', 'UTF-8'))], [true]);
 verificar('pdf: acento digitado como letra + sinal solto sai certo, e não "?"', str_contains(pdf_texto(mcp_voluntarios_fichas_registro_pdf([['nome' => "Joa\u{0303}o Conceic\u{0327}a\u{0303}o"] + $aprovada], [])), mb_convert_encoding('João Conceição', 'Windows-1252', 'UTF-8')), true);
 $pdfRegistro = mcp_voluntarios_fichas_registro_pdf([['id' => 301] + $aprovada, ['id' => 302, 'nome' => 'Bia Registro'] + $cheia], [301 => $miniatura]);
 $conteudoRegistro = pdf_texto($pdfRegistro);
