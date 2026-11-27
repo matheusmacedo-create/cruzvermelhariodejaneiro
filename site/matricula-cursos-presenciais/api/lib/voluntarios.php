@@ -1266,7 +1266,7 @@ function mcp_voluntario_pdf(array $f): string
  *
  * @return array{0: McpPdf, 1: int} o PDF e o número de páginas da ficha ($total 0 = ainda não se sabe)
  */
-function mcp_voluntario_pdf_desenhar(array $f, int $total, ?McpPdf $emPdf = null, ?string $foto = null): array
+function mcp_voluntario_pdf_desenhar(array $f, int $total, ?McpPdf $emPdf = null, ?string $foto = null, float $fator = 0.0): array
 {
     $pdf = $emPdf ?? new McpPdf();
     $protocolo = (string) ($f['protocolo'] ?? '');
@@ -1281,8 +1281,12 @@ function mcp_voluntario_pdf_desenhar(array $f, int $total, ?McpPdf $emPdf = null
     $dir = McpPdf::LARGURA - MCP_CP_MARGEM;
     $largura = $dir - $esq;
     $limite = McpPdf::ALTURA - 60;
-    $passo = 13.2;
-    $tam = 10.0;
+    // $fator > 0: o desenho de uma folha só (logo pequeno, cabeçalho curto e tudo na escala $fator).
+    $umaFolha = $fator > 0;
+    $k = $umaFolha ? $fator : 1.0;
+    $passo = 13.2 * $k;
+    $tam = 10.0 * $k;
+    $rot = 8.6 * max($k, 0.8);
     $colunaValor = $esq + 150;
     $pagina = 1;
     $gerado = mcp_data_brt(mcp_agora(), 'd/m/Y \à\s H\hi');
@@ -1315,58 +1319,71 @@ function mcp_voluntario_pdf_desenhar(array $f, int $total, ?McpPdf $emPdf = null
             $y += $avanco;
         }
     };
-    $secao = static function (string $texto) use ($pdf, $esq, $dir, $avancar, &$y): void {
-        $avancar(20);
-        $pdf->texto($esq, $y, mb_strtoupper($texto), 'negrito', 8.8, MCP_CP_VERMELHO, 0.9);
+    $secao = static function (string $texto) use ($pdf, $esq, $dir, $avancar, $k, &$y): void {
+        $avancar(20 * $k);
+        $pdf->texto($esq, $y, mb_strtoupper($texto), 'negrito', 8.8 * max($k, 0.8), MCP_CP_VERMELHO, 0.9);
         $pdf->linha($esq, $y + 4, $dir, $y + 4, MCP_CP_FIO, 0.8);
         $y += 4;
     };
     // Linha rótulo/valor: o valor quebra na coluna da direita; o rótulo fica na primeira linha.
-    $campo = static function (string $rotulo, string $valor) use ($pdf, $esq, $dir, $colunaValor, $passo, $tam, $avancar, &$y): void {
+    $campo = static function (string $rotulo, string $valor) use ($pdf, $esq, $dir, $colunaValor, $passo, $tam, $rot, $umaFolha, $avancar, &$y): void {
         $linhas = McpPdf::quebrar($valor !== '' ? $valor : '—', 'normal', $tam, $dir - $colunaValor);
         foreach ($linhas as $i => $l) {
             $avancar($i === 0 ? $passo + 2 : $passo);
             if ($i === 0) {
-                foreach (McpPdf::quebrar($rotulo, 'negrito', 8.6, $colunaValor - $esq - 10) as $j => $r) {
-                    $pdf->texto($esq, $y + $j * 10.5, $r, 'negrito', 8.6, MCP_CP_CINZA, 0.4);
+                $rotulos = McpPdf::quebrar($rotulo, 'negrito', $rot, $colunaValor - $esq - 10);
+                foreach ($rotulos as $j => $r) {
+                    $pdf->texto($esq, $y + $j * ($rot + 1.9), $r, 'negrito', $rot, MCP_CP_CINZA, 0.4);
                 }
             }
             $pdf->texto($colunaValor, $y, $l, 'normal', $tam, MCP_CP_TEXTO);
         }
+        // Na folha única, o rótulo de duas linhas ("Aceita contato por e-mail e telefone") não encosta no que vem depois.
+        if ($umaFolha && count($rotulos) > count($linhas)) {
+            $y += (count($rotulos) - count($linhas)) * ($rot + 1.9);
+        }
     };
     // Texto corrido (motivação, experiência, habilidades), com os parágrafos da pessoa.
-    $paragrafos = static function (string $texto) use ($pdf, $esq, $largura, $passo, $tam, $avancar, &$y): void {
+    $paragrafos = static function (string $texto) use ($pdf, $esq, $largura, $passo, $tam, $k, $avancar, &$y): void {
         $primeiro = true;
         foreach (preg_split('/\n+/', trim($texto)) ?: [] as $paragrafo) {
             if (trim($paragrafo) === '') {
                 continue;
             }
             foreach (McpPdf::quebrar($paragrafo, 'normal', $tam, $largura) as $i => $l) {
-                $avancar($i === 0 ? ($primeiro ? $passo + 3 : $passo + 5) : $passo);
+                $avancar($i === 0 ? ($primeiro ? $passo + 3 : $passo + 5 * $k) : $passo);
                 $pdf->texto($esq, $y, $l, 'normal', $tam, MCP_CP_TEXTO);
             }
             $primeiro = false;
         }
     };
 
-    // Cabeçalho da primeira página, igual ao das declarações: faixa, logo e fio.
+    // Cabeçalho da primeira página, igual ao das declarações: faixa, logo e fio. Na folha única, o logo fica pequeno, o
+    // título vai ao lado da foto e a caixa começa mais em cima.
     $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
-    $logoL = 345.0;
+    $logoL = $umaFolha ? 150.0 : 345.0;
     $logoA = $logoL * 398 / 1325;
-    $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, 44 - 0.0427 * $logoA, $logoL, $logoA);
+    $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, ($umaFolha ? 24 : 44) - 0.0427 * $logoA, $logoL, $logoA);
+    $ladoFoto = $umaFolha ? 92.0 : 106.0;
     if ($foto !== null && $foto !== '') {
         try {
-            $pdf->imagemJpeg($foto, $dir - 106, 42, 106, 106);
+            $pdf->imagemJpeg($foto, $dir - $ladoFoto, $umaFolha ? 22 : 42, $ladoFoto, $ladoFoto);
         } catch (Throwable) {
             // foto que não abre: a ficha sai sem ela
         }
     }
-    $pdf->linha($esq, 158, $dir, 158, MCP_CP_FIO, 0.8);
-    $pdf->texto($esq, 186, $titulo, 'negrito', 17, MCP_CP_TEXTO, 0.4);
-    $pdf->texto($esq, 204, 'Programa de voluntariado · Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro', 'normal', 11, MCP_CP_CINZA);
+    if ($umaFolha) {
+        $pdf->texto($esq, 92, $titulo, 'negrito', 13, MCP_CP_TEXTO, 0.4);
+        $pdf->texto($esq, 106, 'Programa de voluntariado · Filial do Estado do Rio de Janeiro', 'normal', 9, MCP_CP_CINZA);
+        $pdf->linha($esq, 122, $dir, 122, MCP_CP_FIO, 0.8);
+    } else {
+        $pdf->linha($esq, 158, $dir, 158, MCP_CP_FIO, 0.8);
+        $pdf->texto($esq, 186, $titulo, 'negrito', 17, MCP_CP_TEXTO, 0.4);
+        $pdf->texto($esq, 204, 'Programa de voluntariado · Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro', 'normal', 11, MCP_CP_CINZA);
+    }
 
     // Caixa com a faixa vermelha: nome, protocolo, situação e quando chegou.
-    $topo = 220.0;
+    $topo = $umaFolha ? 132.0 : 220.0;
     $recebida = mcp_data_brt((string) ($f['criado_em'] ?? ''), 'd/m/Y \à\s H\hi');
     $situacao = mcp_voluntario_status_rotulo((string) ($f['status'] ?? 'nova'))
         . (!empty($f['status_em']) ? ' desde ' . mcp_data_brt((string) $f['status_em'], 'd/m/Y') : '');
@@ -1490,10 +1507,15 @@ function mcp_voluntarios_fichas_aprovadas_completas(): array
     return mcp_voluntarios_fichas_ordenar($stmt->fetchAll());
 }
 
+/** As escalas tentadas, da maior para a menor, até a ficha completa caber numa folha A4. */
+const MCP_VOL_FICHA_FATORES = [1.0, 0.97, 0.94, 0.91, 0.88, 0.85, 0.82, 0.79, 0.76, 0.73, 0.7, 0.67, 0.64, 0.61, 0.58, 0.55, 0.52, 0.49, 0.46];
+
 /**
- * Bytes do PDF com a ficha COMPLETA de cada pessoa, uma depois da outra, cada uma começando em página nova e com a foto
- * no alto: o mesmo desenho e os mesmos dados da ficha individual (mcp_voluntario_pdf: CPF só com os 3 primeiros
- * dígitos, motivação, experiência, habilidades, consentimentos). Função pura: recebe as fichas e as fotos [id => JPEG].
+ * Bytes do PDF com a ficha COMPLETA de cada pessoa, UMA PESSOA POR FOLHA A4, com a foto no alto: os mesmos dados da
+ * ficha individual (mcp_voluntario_pdf: CPF só com os 3 primeiros dígitos, motivação, experiência, habilidades,
+ * consentimentos), com o logo pequeno e o cabeçalho curto. Quem escreveu muito sai com a letra um pouco menor: a ficha
+ * é desenhada na maior escala de MCP_VOL_FICHA_FATORES em que cabe numa folha. Função pura: recebe as fichas e as
+ * fotos [id => JPEG].
  */
 function mcp_voluntarios_fichas_completas_pdf(array $fichas, array $fotos, string $titulo = 'Voluntários aprovados'): string
 {
@@ -1501,10 +1523,18 @@ function mcp_voluntarios_fichas_completas_pdf(array $fichas, array $fotos, strin
     $quantas = count($fichas);
     $pdf->metadados("Fichas completas dos voluntários — $titulo", MCP_NOME_FILIAL, 'Fichas de cadastro de voluntário(a) (' . ($quantas === 1 ? '1 ficha' : "$quantas fichas") . ')');
     foreach ($fichas as $f) {
-        // A primeira passada, num documento à parte, só conta as páginas desta ficha.
-        [, $total] = mcp_voluntario_pdf_desenhar($f, 0);
         $foto = $fotos[(int) ($f['id'] ?? 0)] ?? null;
-        mcp_voluntario_pdf_desenhar($f, $total, $pdf, is_string($foto) ? $foto : null);
+        $foto = is_string($foto) ? $foto : null;
+        // Ensaia num documento à parte (sem a foto, que não muda a altura) até achar a escala que cabe numa folha.
+        $fator = 0.0;
+        $total = 1;
+        foreach (MCP_VOL_FICHA_FATORES as $fator) {
+            [, $total] = mcp_voluntario_pdf_desenhar($f, 0, null, null, $fator);
+            if ($total === 1) {
+                break;
+            }
+        }
+        mcp_voluntario_pdf_desenhar($f, $total, $pdf, $foto, $fator);
     }
     if (!$fichas) {
         $pdf->texto(MCP_CP_MARGEM, 80, 'Nenhuma ficha neste grupo.', 'normal', 12, MCP_CP_TEXTO);

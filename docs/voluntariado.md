@@ -297,11 +297,12 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   deste botão. Publicação: `scripts/publicacao-fichas-pdf.txt` (no ar desde 27/11/2026: os 3 arquivos conferidos iguais
   ao repositório, e o PDF saiu com as 232 fichas aprovadas em 39 páginas, 3,6 MB, em 5 segundos).
 - **Fichas completas dos aprovados em PDF** (27/11/2026): o segundo botão da aba, "Baixar as fichas completas em PDF"
-  (`?pdf=aprovados-completas`), junta num arquivo a ficha inteira de cada aprovado, uma pessoa por folha, em ordem
-  alfabética: o mesmo desenho e os mesmos dados da ficha individual do portal (`mcp_voluntario_pdf`: CPF só com os 3
-  primeiros dígitos, formação em saúde, motivação, experiência, habilidades, consentimentos), com a foto no alto, à
-  direita do logo. Código: `mcp_voluntarios_fichas_completas_pdf()`. No ar desde 27/11/2026 (232 fichas, 411 páginas,
-  6,2 MB, em 12 segundos).
+  (`?pdf=aprovados-completas`), junta num arquivo a ficha inteira de cada aprovado, **uma pessoa por folha A4**, em ordem
+  alfabética: os mesmos dados da ficha individual do portal (`mcp_voluntario_pdf`: CPF só com os 3 primeiros dígitos,
+  formação em saúde, motivação, experiência, habilidades, consentimentos), com o logo pequeno, o cabeçalho curto e a foto
+  no alto, à direita. Quem escreveu muito sai com a letra menor: cada ficha é desenhada na maior escala de
+  `MCP_VOL_FICHA_FATORES` em que cabe numa folha (a mais cheia possível, com tudo marcado e os três textos no limite,
+  cabe). A ficha individual do portal e do Drive não mudou. Código: `mcp_voluntarios_fichas_completas_pdf()`.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,

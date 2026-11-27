@@ -279,8 +279,19 @@ $completas = [['id' => 201, 'nome' => 'Ana Completa', 'protocolo' => 'VOL-261101
     ['id' => 203, 'nome' => 'Caio Completo', 'protocolo' => 'VOL-261101-0203'] + $aprovada];
 $pdfCompletas = mcp_voluntarios_fichas_completas_pdf($completas, [201 => $miniatura, 203 => "\xFF\xD8 estragada"]);
 $conteudoCompletas = pdf_texto($pdfCompletas);
-verificar('fichas completas: cada pessoa começa em página nova (2 + 2 + 2), com a numeração da própria ficha', [substr_count($pdfCompletas, '/Type /Page /Parent'),
-    substr_count($conteudoCompletas, 'gina 1 de 1'), substr_count($conteudoCompletas, 'gina 1 de 2'), substr_count($conteudoCompletas, 'gina 2 de 2')], [6, 0, 3, 3]);
+verificar('fichas completas: uma pessoa por folha, mesmo a que escreveu o máximo nos três textos', [substr_count($pdfCompletas, '/Type /Page /Parent'),
+    substr_count($conteudoCompletas, 'gina 1 de 1'), str_contains($conteudoCompletas, 'gina 1 de 2')], [3, 3, false]);
+$cheia = $longa;
+foreach (['motivacao', 'experiencia', 'habilidades'] as $campoCheio) {
+    $cheia[$campoCheio] = mb_substr(str_repeat('Texto no limite do campo, com palavras de tamanho comum. ', 30), 0, MCP_VOL_TEXTO_LONGO_MAX);
+}
+$cheia['nome'] = 'Maria Aparecida da Conceição dos Santos Albuquerque de Mendonça Figueiredo Cavalcanti';
+$cheia['frentes'] = implode(',', array_keys(MCP_VOL_FRENTES));
+$cheia['dias'] = implode(',', array_keys(MCP_VOL_DIAS));
+$cheia['periodos'] = implode(',', array_keys(MCP_VOL_PERIODOS));
+$pdfCheia = mcp_voluntarios_fichas_completas_pdf([$cheia], []);
+verificar('fichas completas: a ficha mais cheia possível (tudo marcado, textos no limite) cabe numa folha', [substr_count($pdfCheia, '/Type /Page /Parent'), str_contains(pdf_texto($pdfCheia), 'respons')], [1, true]);
+verificar('fichas completas: a ficha individual do portal não mudou de tamanho', substr_count(mcp_voluntario_pdf($longa), '/Type /Page /Parent'), 2);
 verificar('fichas completas: os dados inteiros (motivação, consentimentos, CPF só parcial) e a foto de quem tem', [str_contains($conteudoCompletas, 'Ana Completa'), str_contains($conteudoCompletas, 'Caio Completo'),
     substr_count($conteudoCompletas, 'CONSENTIMENTOS \\(LGPD\\)'), str_contains($conteudoCompletas, $cpf), substr_count($pdfCompletas, '/Filter /DCTDecode'), substr_count($conteudoCompletas, '/J1 Do')], [true, true, 3, false, 1, 1]);
 verificar('fichas completas: sem ninguém, uma página dizendo isso', str_contains(pdf_texto(mcp_voluntarios_fichas_completas_pdf([], [])), 'Nenhuma ficha'), true);
