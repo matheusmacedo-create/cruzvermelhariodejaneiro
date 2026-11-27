@@ -1,0 +1,115 @@
+{
+ "slug": "curso-de-cuidador-de-idosos",
+ "arquivo": "curso-de-cuidador-de-idosos-cruz-vermelha-rj.pdf",
+ "capa": "capa-curso-de-cuidador-de-idosos.webp",
+ "titulo": "Curso de cuidador de idosos: como escolher",
+ "sub": "Para quem está escolhendo um curso, em qualquer cidade do Brasil. Marque com um X o que já conferiu e anote a lápis as respostas de cada escola.",
+ "credito": "Resumo da filial, com base na CBO, na LDB, no Guia Pronatec de Cursos FIC e em documentos do Ministério da Saúde. Não substitui o texto oficial",
+ "folhas": [
+  {
+   "blocos": [
+    {
+     "tipo": "lista_detalhada",
+     "titulo": "Gratuito, pago, presencial ou online: o que conferir",
+     "da_pagina": {
+      "secao": "lista",
+      "formato": "tabela"
+     }
+    },
+    {
+     "tipo": "lista_curta",
+     "titulo": "O que um bom curso ensina",
+     "da_pagina": {
+      "secao": "conteudo",
+      "formato": "lista"
+     }
+    },
+    {
+     "tipo": "ficha",
+     "titulo": "Os cursos que estou comparando",
+     "colunas": [
+      "",
+      "Curso 1",
+      "Curso 2",
+      "Curso 3"
+     ],
+     "rotulos": [
+      "Escola",
+      "Gratuito ou pago",
+      "Presencial ou online",
+      "Carga horária total",
+      "Horas de prática",
+      "Custo total"
+     ],
+     "altura_mm": 7.5
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "Curso livre não é curso técnico:",
+     "texto": "dá certificado, não diploma de técnico. Não habilita para a enfermagem: injeção, curativo complexo e sonda são trabalho de profissional de enfermagem."
+    }
+   ]
+  },
+  {
+   "blocos": [
+    {
+     "tipo": "perguntas",
+     "titulo": "10 perguntas para fazer antes de se matricular",
+     "linhas": 1,
+     "itens": [
+      [
+       "É curso livre ou curso técnico?",
+       "Curso de cuidador de idosos é curso livre: dá certificado, não diploma de técnico."
+      ],
+      [
+       "Qual é a carga horária total?",
+       "Nos programas públicos, a referência é de 160 horas."
+      ],
+      [
+       "Quantas horas são de prática, com instrutor?",
+       "Banho na cama e mudança de posição se aprendem treinando."
+      ],
+      [
+       "O que o curso ensina?",
+       "Compare o programa com a lista da folha 1."
+      ],
+      [
+       "Quem dá as aulas?",
+       "Pergunte a formação e a experiência de quem ensina a parte de saúde."
+      ],
+      [
+       "O curso deixa claro o que o cuidador não faz?",
+       "Injeção, curativo complexo e sonda são trabalho da enfermagem."
+      ],
+      [
+       "Quem emite o certificado, e quem vai me contratar aceita?",
+       "Confira nome e CNPJ da escola, carga horária e conteúdo."
+      ],
+      [
+       "Quanto custa no total?",
+       "Some matrícula, mensalidades, material, uniforme e taxa de certificado."
+      ],
+      [
+       "Se é gratuito: qual é o programa, e há alguma taxa?",
+       "Curso de programa público tem edital e regras de inscrição."
+      ],
+      [
+       "E se eu desistir, ou se a turma não for formada?",
+       "Peça a regra de cancelamento e de devolução por escrito."
+      ]
+     ]
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "Não achamos lei federal que exija o curso:",
+     "texto": "a profissão não foi regulamentada (situação em 27/11/2026). Quem pede o certificado é quem contrata: pergunte antes onde você quer trabalhar."
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "No Rio de Janeiro:",
+     "texto": "a escola ligada à Cruz Vermelha tem o curso Cuidador de Idosos (curso livre), de 160 horas. É presencial, no Centro do Rio, pago e vendido pela escola (O-CVB Filial Rio de Janeiro Ensino Ltda): cruzvermelhariodejaneiro.org/matricula-cursos-presenciais"
+    }
+   ]
+  }
+ ]
+}

@@ -101,6 +101,13 @@ a página que aponta para ele, depois o PR da Redação, por fim os sitemaps.
 | Pressão alta e pressão baixa | `/pressao-alta-e-pressao-baixa/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: como medir, o que fazer e diário da pressão | sim: formulário na página; caixa nas matérias: nenhuma (buscas "pressão baixa o que fazer", 18 mil/mês, e "pressão alta o que fazer", 10 mil) (não publicado) |
 | Queimaduras | `/queimaduras/`, gerada e não publicada (12/11/2026) | no padrão, gerado e não publicado: cartaz do que fazer e do que não fazer | sim: formulário na página; caixa nas matérias: nenhuma (buscas "queimadura de segundo grau", 4 mil/mês, e "queimadura de sol", 27 mil em dezembro) (não publicado) |
 | El Niño: como se preparar | `/el-nino/`, no ar desde 24/11/2026 | no padrão, no ar: checklist da casa pronta, o que fazer no calor forte, na chuva forte e na fumaça | sim: formulário na página; caixa nas matérias: nenhuma ainda (buscas "el nino", 165 mil em outubro de 2026, e "el nino 2026", 74 mil). Os outros guias ainda não mostram o link para ele: ver `scripts/publicacao-el-nino.txt` |
+| Curso de primeiros socorros: como escolher | `/curso-de-primeiros-socorros/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: o que o curso deve ensinar, o quadro gratuito, pago, online e presencial e as perguntas antes da matrícula | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de primeiros socorros", 6,6 mil/mês) (não publicado) |
+| Curso de cuidador de idosos: como escolher | `/curso-de-cuidador-de-idosos/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: o quadro para comparar, o que um bom curso ensina e as 10 perguntas antes da matrícula | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de cuidador de idosos", 12 mil/mês) (não publicado) |
+| Cuidador de idosos: a profissão | `/profissao-cuidador-de-idosos/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: os direitos da Lei Complementar 150 e a ficha de combinados entre a família e o cuidador | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "quanto ganha um cuidador de idosos", 3,6 mil/mês) (não publicado) |
+| Bombeiro civil: profissão e curso | `/curso-de-bombeiro-civil/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: o caminho em sete passos, os direitos da Lei 11.901 e as perguntas antes de pagar a matrícula | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de bombeiro civil", 12 mil/mês, e "quanto ganha um bombeiro civil", 8 mil) (não publicado) |
+| Brigada de incêndio | `/brigada-de-incendio/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: o checklist de quem precisa montar a brigada e a ficha dos brigadistas | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de brigadista", 3,6 mil/mês) (não publicado) |
+| Como ser socorrista | `/como-ser-socorrista/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: o quadro dos quatro caminhos e as perguntas antes de pagar um curso de APH | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de aph", 3,6 mil/mês, e "curso de socorrista", 2,9 mil) (não publicado) |
+| Babá e cuidador infantil | `/curso-de-baba/`, gerada e não publicada (27/11/2026) | no padrão, gerado e não publicado: a ficha da criança, a casa segura por idade e o que o curso deve ensinar | sim: formulário na página; caixa nas matérias: nenhuma (busca no Brasil: "curso de babá", 1,6 mil/mês, e "curso de cuidador infantil", mil) (não publicado) |
 
 Os quatro últimos e a entrega da mochila saíram juntos em 11/11/2026 (pedido do Matheus: mais guias, mais matérias com
 caixa de e-mail). A lista de publicação é `scripts/publicacao-guias-novembro.txt`. O conteúdo de saúde do cartaz
@@ -119,3 +126,11 @@ matérias na lista de caixas de material.
 O guia do El Niño (24/11/2026, pedido do Matheus) tem a lista em `scripts/publicacao-el-nino.txt`. É o primeiro guia com
 texto que envelhece: a seção "Como está o El Niño agora" cita os boletins de novembro de 2026 e precisa ser revista a
 cada boletim da NOAA (o próximo é de 10/12/2026). O que conferir está em `notas_internas`.
+
+Os sete guias de profissão e curso (27/11/2026, pedido do Matheus: matérias para receber o tráfego do Ad Grants no Brasil
+inteiro e captar contato) têm a lista em `scripts/publicacao-guias-profissao-e-curso.txt`. Nasceram das buscas por
+curso no Planejador de palavras-chave (Brasil, média de 12 meses até 10/2026) e são pedidos só na página. Três regras
+que valem para eles: a escola só é convidada para o curso que de fato vende (não vende APH, socorrista, brigadista,
+babá nem curso online); o curso de Bombeiro Civil da escola não é convidado em nenhum deles, pelo motivo registrado
+em `guia-do-bombeiro-civil` em 12/11/2026 (a escola não foi achada na relação de formadoras do CBMERJ); e valor de
+salário só entra com lei ou decreto e a data. Não entram em `CONVITE_APOIO`.
