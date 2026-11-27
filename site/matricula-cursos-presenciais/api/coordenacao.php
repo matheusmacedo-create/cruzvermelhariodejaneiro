@@ -26,6 +26,8 @@
  *                     mcp_eventos como coordenacao_fichas_pdf.
  *   ?pdf=aprovados-completas   a ficha inteira de cada aprovado (a mesma do portal, com a foto no alto e o CPF só com
  *                     os 3 primeiros dígitos), uma pessoa por folha (mcp_voluntarios_fichas_completas_pdf).
+ *   ?pdf=aprovados-registro    a "Ficha de Registro de Voluntário" da CVB (CVB-CADVOL-FORM01, folha 1) redesenhada e
+ *                     preenchida com o que o site sabe, uma folha por aprovado (mcp_voluntarios_fichas_registro_pdf).
  * Ações (POST com a chave): aprovar (aceita a ficha, cria o colaborador do ponto e o código de aprovação, como na Redação),
  * recusar, desfazer a recusa (volta para "em análise") e mandar e-mail à pessoa (pela Resend, com responder-para a caixa
  * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora).
@@ -654,8 +656,9 @@ function co_lista(string $ver, string $aviso = ''): never
         $aviso . '<h1>Fichas de quem quer ser voluntário</h1><p class="dica">' . co_e($dica) . '</p>'
         . '<nav class="abas" aria-label="Grupos de fichas">' . $menu . '</nav>'
         . ($ver === 'aprovados' && $cartoes !== '' ? '<div class="botoes" style="margin:0 0 18px"><a class="btn grande azul" href="' . co_e(co_url(['pdf' => 'aprovados'])) . '">Baixar as fichas em PDF (com foto)</a>'
-            . '<a class="btn grande claro" href="' . co_e(co_url(['pdf' => 'aprovados-completas'])) . '">Baixar as fichas completas em PDF</a></div>'
-            . '<p class="dica">O primeiro PDF traz todos os aprovados, em ordem alfabética, com a foto, o telefone e o e-mail, várias pessoas por página. O segundo traz a ficha inteira de cada um, uma pessoa por folha. Pode demorar alguns segundos para abrir.</p>' : '')
+            . '<a class="btn grande claro" href="' . co_e(co_url(['pdf' => 'aprovados-completas'])) . '">Baixar as fichas completas em PDF</a>'
+            . '<a class="btn grande claro" href="' . co_e(co_url(['pdf' => 'aprovados-registro'])) . '">Baixar as fichas de registro da Cruz Vermelha</a></div>'
+            . '<p class="dica">O primeiro PDF traz todos os aprovados, em ordem alfabética, com a foto, o telefone e o e-mail, várias pessoas por página. O segundo traz a ficha inteira de cada um, uma pessoa por folha. O terceiro é a Ficha de Registro de Voluntário da Cruz Vermelha, já preenchida com o que a pessoa informou no site: o resto ela completa à mão. Pode demorar alguns segundos para abrir.</p>' : '')
         . ($cartoes !== '' ? '<div class="grade">' . $cartoes . '</div>' . co_js_fotos() : '<div class="vazio">' . co_e($vazio) . '</div>'));
 }
 
@@ -964,26 +967,29 @@ if (isset($_GET['foto'])) {
 // As fichas dos aprovados num PDF só, com a foto de cada um (27/11/2026). "aprovados": a ficha resumida, várias por
 // página, sem CPF e sem saúde. "aprovados-completas": a ficha inteira de cada um (a mesma do portal, CPF só com os 3
 // primeiros dígitos), cada uma em página nova.
+// "aprovados-registro": a Ficha de Registro de Voluntário da CVB (CVB-CADVOL-FORM01, folha 1) preenchida com o que o
+// site sabe, uma folha por pessoa.
 $pdfPedido = (string) ($_GET['pdf'] ?? '');
-if ($pdfPedido === 'aprovados' || $pdfPedido === 'aprovados-completas') {
+if (in_array($pdfPedido, ['aprovados', 'aprovados-completas', 'aprovados-registro'], true)) {
     @set_time_limit(180);
-    $completas = $pdfPedido === 'aprovados-completas';
     try {
-        if ($completas) {
-            $fichas = mcp_voluntarios_fichas_aprovadas_completas();
-            $pdf = mcp_voluntarios_fichas_completas_pdf($fichas, mcp_voluntarios_fichas_fotos(array_column($fichas, 'id'), 360));
-        } else {
+        if ($pdfPedido === 'aprovados') {
             $fichas = mcp_voluntarios_fichas_aprovadas();
             $pdf = mcp_voluntarios_fichas_pdf($fichas, mcp_voluntarios_fichas_fotos(array_column($fichas, 'id')));
+        } else {
+            $fichas = mcp_voluntarios_fichas_aprovadas_completas();
+            $fotosDasFichas = mcp_voluntarios_fichas_fotos(array_column($fichas, 'id'), 360);
+            $pdf = $pdfPedido === 'aprovados-registro' ? mcp_voluntarios_fichas_registro_pdf($fichas, $fotosDasFichas) : mcp_voluntarios_fichas_completas_pdf($fichas, $fotosDasFichas);
         }
     } catch (Throwable $e) {
         error_log('[coordenacao] PDF das fichas: ' . $e->getMessage());
         co_lista('aprovados', co_aviso('Não foi possível montar o PDF agora. Tente de novo daqui a pouco.', 'erro'));
     }
-    mcp_registrar(null, 'coordenacao_fichas_pdf', count($fichas) . ' fichas' . ($completas ? ' completas' : '') . ' · ' . co_quem());
+    $tipoPdf = ['aprovados' => '', 'aprovados-completas' => ' completas', 'aprovados-registro' => ' de registro'][$pdfPedido];
+    mcp_registrar(null, 'coordenacao_fichas_pdf', count($fichas) . ' fichas' . $tipoPdf . ' · ' . co_quem());
     header('Content-Type: application/pdf');
     header('Content-Length: ' . strlen($pdf));
-    header('Content-Disposition: attachment; filename="voluntarios-aprovados-' . ($completas ? 'fichas-completas-' : '') . mcp_data_brt(mcp_agora(), 'Y-m-d') . '.pdf"');
+    header('Content-Disposition: attachment; filename="voluntarios-aprovados-' . ltrim(str_replace(' ', '-', $tipoPdf) . '-', '-') . mcp_data_brt(mcp_agora(), 'Y-m-d') . '.pdf"');
     echo $pdf;
     exit;
 }

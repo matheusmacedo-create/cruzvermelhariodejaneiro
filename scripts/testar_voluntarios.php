@@ -295,6 +295,20 @@ verificar('fichas completas: a ficha individual do portal não mudou de tamanho'
 verificar('fichas completas: os dados inteiros (motivação, consentimentos, CPF só parcial) e a foto de quem tem', [str_contains($conteudoCompletas, 'Ana Completa'), str_contains($conteudoCompletas, 'Caio Completo'),
     substr_count($conteudoCompletas, 'CONSENTIMENTOS \\(LGPD\\)'), str_contains($conteudoCompletas, $cpf), substr_count($pdfCompletas, '/Filter /DCTDecode'), substr_count($conteudoCompletas, '/J1 Do')], [true, true, 3, false, 1, 1]);
 verificar('fichas completas: sem ninguém, uma página dizendo isso', str_contains(pdf_texto(mcp_voluntarios_fichas_completas_pdf([], [])), 'Nenhuma ficha'), true);
+// A Ficha de Registro de Voluntário da CVB (CVB-CADVOL-FORM01, folha 1), preenchida com o que o site sabe.
+$reg = mcp_voluntario_registro_dados(['escolaridade' => 'tecnico', 'profissao' => 'Enfermeira', 'habilidades' => "Libras\ne inglês", 'experiencia' => 'Defesa Civil, 3 anos', 'saude' => 1, 'saude_qual' => 'Técnica de enfermagem'] + $aprovada);
+verificar('registro: número, nascimento, CPF só parcial, celular', [$reg['numero'], $reg['nascimento'], $reg['cpf'] === mcp_voluntario_cpf_parcial($cpf), str_contains($reg['cpf'], substr($cpf, 3, 3)), $reg['celular'] !== ''], ['VOL-261016-0042', '20/05/1990', true, false, true]);
+verificar('registro: técnico marca o médio completo e vai nos cursos, com a profissão e as habilidades', [$reg['escolaridade'], $reg['cursos'], $reg['formacao']], [['medio', 'completo'], 'Ensino técnico · Profissão: Enfermeira · Libras e inglês', 'Técnica de enfermagem']);
+verificar('registro: já foi voluntário pelo texto da experiência (sim, não, sem resposta)', [$reg['voluntario'], $reg['entidades'], mcp_voluntario_registro_dados(['experiencia' => 'Não, nunca fui'] + $aprovada)['voluntario'],
+    mcp_voluntario_registro_dados(['experiencia' => ''] + $aprovada)['voluntario'], mcp_voluntario_registro_dados(['experiencia' => 'Nunca'] + $aprovada)['entidades']], ['sim', 'Defesa Civil, 3 anos', 'nao', '', '']);
+verificar('registro: escolaridade de cada opção do site', array_map(static fn(string $e): ?array => mcp_voluntario_registro_dados(['escolaridade' => $e] + $aprovada)['escolaridade'], array_keys(MCP_VOL_ESCOLARIDADES)),
+    [['fundamental', 'completo'], ['medio', 'completo'], ['medio', 'completo'], ['superior', 'incompleto'], ['superior', 'completo'], ['pos', 'completo']]);
+$pdfRegistro = mcp_voluntarios_fichas_registro_pdf([['id' => 301] + $aprovada, ['id' => 302, 'nome' => 'Bia Registro'] + $cheia], [301 => $miniatura]);
+$conteudoRegistro = pdf_texto($pdfRegistro);
+verificar('registro em pdf: uma folha por pessoa, com o formulário e os dados; a foto de quem tem e o quadro "FOTO" de quem não tem', [substr_count($pdfRegistro, '/Type /Page /Parent'),
+    substr_count($conteudoRegistro, 'FICHA DE REGISTRO DE VOLUNT'), substr_count($conteudoRegistro, 'CVB-CADVOL-FORM01'), str_contains($conteudoRegistro, 'Bia Registro'), str_contains($conteudoRegistro, '20/05/1990'),
+    substr_count($pdfRegistro, '/Filter /DCTDecode'), substr_count($conteudoRegistro, '(FOTO)'), str_contains($conteudoRegistro, $cpf)], [2, 2, 2, true, true, 1, 1, false]);
+verificar('registro em pdf: sem ninguém, uma página dizendo isso', str_contains(pdf_texto(mcp_voluntarios_fichas_registro_pdf([], [])), 'Nenhuma ficha'), true);
 // O comprovante e as declarações (uma imagem PNG, nenhuma foto) continuam saindo como antes.
 verificar('pdf da ficha individual: continua sem foto JPEG e com o logo no objeto 7', [substr_count($pdf, '/DCTDecode'), str_contains($pdf, '/XObject << /Im1 7 0 R >>')], [0, true]);
 

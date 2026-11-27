@@ -205,6 +205,9 @@ try {
     $pdfCompletas = http("$base$k&pdf=aprovados-completas");
     verificar('PDF das fichas completas dos aprovados: botão na aba e sai um PDF', [str_contains($aprovados['corpo'], 'pdf=aprovados-completas'), $pdfCompletas['status'], $pdfCompletas['tipo'],
         str_starts_with($pdfCompletas['corpo'], '%PDF-1.4')], [true, 200, 'application/pdf', true]);
+    $pdfRegistro = http("$base$k&pdf=aprovados-registro");
+    verificar('PDF das fichas de registro dos aprovados: botão na aba e sai um PDF', [str_contains($aprovados['corpo'], 'pdf=aprovados-registro'), $pdfRegistro['status'], $pdfRegistro['tipo'],
+        str_starts_with($pdfRegistro['corpo'], '%PDF-1.4')], [true, 200, 'application/pdf', true]);
     verificar('PDF dos aprovados: sem a chave, 404; a aba "Para decidir" não tem o botão', [http("$base?pdf=aprovados")['status'], str_contains($lista['corpo'], 'pdf=aprovados')], [404, false]);
 
     $foto = http("$base$k&foto=$a");

@@ -1542,6 +1542,298 @@ function mcp_voluntarios_fichas_completas_pdf(array $fichas, array $fotos, strin
     return $pdf->gerar();
 }
 
+// ----------------------------------------------------------------------------- ficha de registro (modelo da CVB)
+/**
+ * O que a ficha do site sabe para a "Ficha de Registro de Voluntário" da CVB (CVB-CADVOL-FORM01, folha 1). Função pura.
+ * O site não pergunta RG, sexo, naturalidade, nacionalidade, tipo sanguíneo, habilitação, filiação, estado civil, rua,
+ * CEP, idiomas nem contatos de emergência: esses campos ficam em branco, para completar à mão.
+ *  - 'escolaridade': [coluna do formulário, linha] a marcar. O site guarda o nível, não se concluiu: fundamental e médio
+ *    saem como "completo"; o técnico marca o médio completo e vai escrito nos cursos.
+ *  - 'voluntario': 'sim', 'nao' ou '' (não respondeu), a partir do texto livre de "experiência com voluntariado".
+ */
+function mcp_voluntario_registro_dados(array $f): array
+{
+    $escolaridade = match ((string) ($f['escolaridade'] ?? '')) {
+        'fundamental' => ['fundamental', 'completo'],
+        'medio', 'tecnico' => ['medio', 'completo'],
+        'superior_incompleto' => ['superior', 'incompleto'],
+        'superior' => ['superior', 'completo'],
+        'pos' => ['pos', 'completo'],
+        default => null,
+    };
+    $experiencia = trim((string) preg_replace('/\s+/u', ' ', (string) ($f['experiencia'] ?? '')));
+    $voluntario = $experiencia === '' ? '' : (preg_match('/^(n[ãa]o|nunca|nenhum|sem experi|ainda n[ãa]o|n\/a|-+$)/iu', $experiencia) ? 'nao' : 'sim');
+    $cursos = [];
+    if ((string) ($f['escolaridade'] ?? '') === 'tecnico') {
+        $cursos[] = 'Ensino técnico';
+    }
+    if (trim((string) ($f['profissao'] ?? '')) !== '') {
+        $cursos[] = 'Profissão: ' . trim((string) $f['profissao']);
+    }
+    $habilidades = trim((string) preg_replace('/\s+/u', ' ', (string) ($f['habilidades'] ?? '')));
+    if ($habilidades !== '') {
+        $cursos[] = $habilidades;
+    }
+    $nascimento = mcp_voluntario_data((string) ($f['data_nascimento'] ?? ''));
+    return [
+        'numero' => (string) ($f['protocolo'] ?? ''),
+        'nome' => trim((string) ($f['nome'] ?? '')),
+        'nascimento' => $nascimento === null ? '' : implode('/', array_reverse(explode('-', $nascimento))),
+        'cpf' => mcp_voluntario_cpf_parcial($f['cpf'] ?? null) ?: '',
+        'bairro' => trim((string) ($f['bairro'] ?? '')),
+        'cidade' => trim((string) ($f['cidade'] ?? '')),
+        'estado' => trim((string) ($f['estado'] ?? '')),
+        'email' => trim((string) ($f['email'] ?? '')),
+        'celular' => mcp_telefone_bonito((string) ($f['telefone'] ?? '')),
+        'formacao' => (int) ($f['saude'] ?? 0) === 1 ? trim((string) ($f['saude_qual'] ?? '')) : '',
+        'escolaridade' => $escolaridade,
+        'cursos' => implode(' · ', $cursos),
+        'voluntario' => $voluntario,
+        'entidades' => $voluntario === 'sim' ? $experiencia : '',
+        'enviada' => mcp_data_brt((string) ($f['criado_em'] ?? ''), 'd/m/Y'),
+    ];
+}
+
+/**
+ * Bytes do PDF com a "Ficha de Registro de Voluntário" da CVB (folha 1 do CVB-CADVOL-FORM01) redesenhada e preenchida,
+ * UMA FOLHA POR PESSOA, com a selfie no quadro da foto 3x4. Função pura: recebe as fichas e as fotos [id => JPEG].
+ */
+function mcp_voluntarios_fichas_registro_pdf(array $fichas, array $fotos, string $filial = 'Rio de Janeiro'): string
+{
+    $pdf = new McpPdf();
+    $quantas = count($fichas);
+    $pdf->metadados('Ficha de Registro de Voluntário', MCP_NOME_FILIAL, 'Ficha de Registro de Voluntário (' . ($quantas === 1 ? '1 ficha' : "$quantas fichas") . ')');
+    foreach ($fichas as $f) {
+        if ($pdf->temConteudo()) {
+            $pdf->novaPagina();
+        }
+        $foto = $fotos[(int) ($f['id'] ?? 0)] ?? null;
+        mcp_voluntario_registro_desenhar($pdf, mcp_voluntario_registro_dados($f), is_string($foto) ? $foto : null, $filial);
+    }
+    if (!$fichas) {
+        $pdf->texto(MCP_CP_MARGEM, 80, 'Nenhuma ficha neste grupo.', 'normal', 12, MCP_CP_TEXTO);
+    }
+    return $pdf->gerar();
+}
+
+/** Uma folha do formulário, com os dados de mcp_voluntario_registro_dados(). */
+function mcp_voluntario_registro_desenhar(McpPdf $pdf, array $d, ?string $foto, string $filial): void
+{
+    $preto = '#111111';
+    $tinta = '#12306b';   // o que foi preenchido, em azul de caneta, para separar do impresso
+    $esq = 40.0;
+    $dir = McpPdf::LARGURA - 40.0;
+    $larg = $dir - $esq;
+    $fino = 0.6;
+    $grosso = 1.5;
+    // O texto preenchido encolhe até caber; se nem assim, é cortado com reticências.
+    $escrever = static function (float $x, float $yBase, string $texto, float $largura, float $tam = 10.0) use ($pdf, $tinta): void {
+        $texto = trim($texto);
+        if ($texto === '') {
+            return;
+        }
+        while ($tam > 6.5 && McpPdf::larguraTexto($texto, 'normal', $tam) > $largura) {
+            $tam -= 0.5;
+        }
+        if (McpPdf::larguraTexto($texto, 'normal', $tam) > $largura) {
+            $texto = McpPdf::quebrar($texto, 'normal', $tam, $largura - McpPdf::larguraTexto('…', 'normal', $tam))[0] . '…';
+        }
+        $pdf->texto($x, $yBase, $texto, 'normal', $tam, $tinta);
+    };
+    $celula = static function (float $x, float $y, float $l, float $a, string $rotulo, string $valor = '') use ($pdf, $preto, $fino, $escrever): void {
+        $pdf->contorno($x, $y, $l, $a, $preto, $fino);
+        $pdf->texto($x + 4, $y + 9, $rotulo, 'normal', 6.6, $preto);
+        $escrever($x + 6, $y + $a - 5.5, $valor, $l - 12);
+    };
+    $marca = static function (float $x, float $y, string $rotulo, bool $marcado = false, float $tam = 7.0) use ($pdf, $preto, $tinta): void {
+        $pdf->contorno($x, $y, 9, 9, $preto, 0.7);
+        if ($marcado) {
+            $pdf->linha($x + 1.5, $y + 1.5, $x + 7.5, $y + 7.5, $tinta, 1.4);
+            $pdf->linha($x + 7.5, $y + 1.5, $x + 1.5, $y + 7.5, $tinta, 1.4);
+        }
+        $pdf->texto($x + 13, $y + 7.5, $rotulo, 'normal', $tam, $preto);
+    };
+
+    // Cabeçalho: logo, título, número da ficha e filial.
+    $logoL = 128.0;
+    $logoA = $logoL * 398 / 1325;
+    $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, 30 - 0.0427 * $logoA, $logoL, $logoA);
+    $titulo = 'FICHA DE REGISTRO DE VOLUNTÁRIO';
+    $pdf->texto($dir - McpPdf::larguraTexto($titulo, 'negrito', 13.5), 50, $titulo, 'negrito', 13.5, $preto);
+    $pdf->texto(318, 94, 'FICHA DE CADASTRO Nº', 'negrito', 9.5, $preto);
+    $pdf->linha(432, 96, $dir, 96, $preto, $fino);
+    $escrever(436, 93, (string) $d['numero'], $dir - 440);
+    $pdf->texto($esq, 110, 'FILIAL', 'negrito', 9, $preto);
+    $pdf->linha($esq + 34, 112, 300, 112, $preto, $fino);
+    $escrever($esq + 38, 109, $filial, 220);
+
+    // Bloco 1: identificação, com o quadro da foto 3x4.
+    $y = 124.0;
+    $h = 25.0;
+    $fotoL = 84.0;
+    $fotoA = 112.0;
+    $l1 = $larg - $fotoL;
+    $c1 = 150.0;
+    $c2 = 140.0;
+    $celula($esq, $y, $l1, $h, 'NOME COMPLETO', (string) $d['nome']);
+    $celula($esq, $y + $h, $c1, $h, 'DATA DE NASCIMENTO', (string) $d['nascimento']);
+    $celula($esq + $c1, $y + $h, $c2, $h, 'NATURALIDADE');
+    $celula($esq + $c1 + $c2, $y + $h, $l1 - $c1 - $c2, $h, 'NACIONALIDADE');
+    $celula($esq, $y + 2 * $h, $c1, $h, 'RG');
+    $celula($esq + $c1, $y + 2 * $h, $c2, $h, 'CPF', (string) $d['cpf']);
+    $celula($esq + $c1 + $c2, $y + 2 * $h, $l1 - $c1 - $c2, $h, 'TIPO SANGUÍNEO FATOR RH');
+    $y4 = $y + 3 * $h;
+    $h4 = $fotoA - 3 * $h;
+    $celula($esq, $y4, $c1, $h4, 'SEXO');
+    $marca($esq + 8, $y4 + 19, 'F');
+    $marca($esq + 52, $y4 + 19, 'M');
+    $celula($esq + $c1, $y4, $l1 - $c1, $h4, 'HABILITAÇÃO');
+    $marca($esq + $c1 + 14, $y4 + 19, 'SIM');
+    $marca($esq + $c1 + 60, $y4 + 19, 'NÃO');
+    $pdf->texto($esq + $c1 + 118, $y4 + 13, 'TIPO:', 'normal', 7, $preto);
+    foreach ([['A', 150, 5], ['B', 150, 21], ['C', 190, 5], ['D', 190, 21], ['E', 230, 12]] as [$letra, $dx, $dy]) {
+        $marca($esq + $c1 + $dx, $y4 + $dy, $letra);
+    }
+    $fotoX = $dir - $fotoL;
+    if ($foto !== null && $foto !== '') {
+        try {
+            $pdf->imagemJpeg($foto, $fotoX, $y, $fotoL, $fotoA);
+        } catch (Throwable) {
+            $foto = null;
+        }
+    }
+    if ($foto === null || $foto === '') {
+        $pdf->texto($fotoX + ($fotoL - McpPdf::larguraTexto('FOTO', 'normal', 10)) / 2, $y + 52, 'FOTO', 'normal', 10, $preto);
+        $pdf->texto($fotoX + ($fotoL - McpPdf::larguraTexto('(3X4)', 'normal', 7.5)) / 2, $y + 64, '(3X4)', 'normal', 7.5, $preto);
+    }
+    $pdf->contorno($fotoX, $y, $fotoL, $fotoA, $preto, $grosso);
+    $y5 = $y + $fotoA;
+    $filiacaoL = 335.0;
+    $celula($esq, $y5, $filiacaoL, $h, 'FILIAÇÃO:  (NOME DA MÃE)');
+    $celula($esq, $y5 + $h, $filiacaoL, $h, '(NOME DO PAI)');
+    $pdf->contorno($esq + $filiacaoL, $y5, $larg - $filiacaoL, 2 * $h, $preto, $fino);
+    $pdf->texto($esq + $filiacaoL + 6, $y5 + 28, 'ESTADO CIVIL', 'normal', 7.5, $preto);
+    foreach (['SOLTEIRO (A)', 'CASADO (A)', 'VIÚVO (A)', 'OUTROS'] as $i => $estadoCivil) {
+        $marca($esq + $filiacaoL + 84, $y5 + 3 + $i * 11.5, $estadoCivil);
+    }
+    $pdf->contorno($esq, $y, $larg, $fotoA + 2 * $h, $preto, $grosso);
+
+    // Bloco 2: endereço e contatos.
+    $y = $y5 + 2 * $h + 7;
+    $celula($esq, $y, $larg, $h, 'ENDEREÇO RESIDENCIAL');
+    $celula($esq, $y + $h, 150, $h, 'BAIRRO', (string) $d['bairro']);
+    $celula($esq + 150, $y + $h, 170, $h, 'CIDADE', (string) $d['cidade']);
+    $celula($esq + 320, $y + $h, 70, $h, 'ESTADO', (string) $d['estado']);
+    $celula($esq + 390, $y + $h, $larg - 390, $h, 'CEP');
+    $celula($esq, $y + 2 * $h, $larg, $h, 'E-MAIL', (string) $d['email']);
+    $celula($esq, $y + 3 * $h, 150, $h, 'TELEFONE');
+    $celula($esq + 150, $y + 3 * $h, 170, $h, 'CELULAR', (string) $d['celular']);
+    $celula($esq + 320, $y + 3 * $h, $larg - 320, $h, 'OUTROS');
+    $pdf->contorno($esq, $y, $larg, 4 * $h, $preto, $grosso);
+
+    // Bloco 3: formação, cursos e línguas.
+    $y += 4 * $h + 7;
+    $topo3 = $y;
+    $pdf->texto($esq + 4, $y + 12, 'FORMAÇÃO EM', 'normal', 7.5, $preto);
+    $pdf->linha($esq + 62, $y + 14, $esq + 330, $y + 14, $preto, $fino);
+    $escrever($esq + 66, $y + 11.5, (string) $d['formacao'], 260, 9.5);
+    $niveis = [
+        'fundamental' => ['E. FUNDAMENTAL', ['completo', 'incompleto', 'cursando']],
+        'medio' => ['E. MÉDIO', ['completo', 'incompleto', 'cursando']],
+        'superior' => ['E. SUPERIOR', ['completo', 'incompleto', 'cursando']],
+        'pos' => ['PÓS-GRADUAÇÃO', ['completo', 'cursando']],
+        'mestrado' => ['MESTRADO', ['completo', 'cursando']],
+        'doutorado' => ['DOUTORADO', ['completo', 'cursando']],
+    ];
+    $coluna = 0;
+    foreach ($niveis as $nivel => [$rotuloNivel, $linhas]) {
+        $x = $esq + 4 + $coluna * ($larg - 8) / 6;
+        $pdf->texto($x, $y + 28, $rotuloNivel, 'negrito', 7.2, $preto);
+        foreach ($linhas as $i => $linhaNivel) {
+            $marca($x, $y + 33 + $i * 13, mb_strtoupper($linhaNivel), $d['escolaridade'] === [$nivel, $linhaNivel], 6.6);
+        }
+        $coluna++;
+    }
+    $y += 76;
+    $pdf->linha($esq, $y, $dir, $y, $preto, $fino);
+    $pdf->texto($esq + 4, $y + 10, 'ESPECIALIZAÇÕES E OUTROS CURSOS', 'normal', 7.5, $preto);
+    // Duas linhas para escrever: o texto do site entra nelas, na letra que couber.
+    $cursos = (string) $d['cursos'];
+    $tamCursos = 9.0;
+    $linhasCursos = McpPdf::quebrar($cursos, 'normal', $tamCursos, $larg - 14);
+    while (count($linhasCursos) > 2 && $tamCursos > 6.5) {
+        $tamCursos -= 0.5;
+        $linhasCursos = McpPdf::quebrar($cursos, 'normal', $tamCursos, $larg - 14);
+    }
+    foreach ([0, 1] as $i) {
+        $base = $y + 28 + $i * 17;
+        $pdf->linha($esq + 5, $base, $dir - 5, $base, $preto, 0.4);
+        if ($cursos !== '' && isset($linhasCursos[$i])) {
+            $pdf->texto($esq + 7, $base - 3, $linhasCursos[$i] . ($i === 1 && count($linhasCursos) > 2 ? '…' : ''), 'normal', $tamCursos, $tinta);
+        }
+    }
+    $y += 54;
+    $pdf->linha($esq, $y, $dir, $y, $preto, $fino);
+    $pdf->texto($esq + 4, $y + 11, 'CONHECIMENTO DE LÍNGUAS ESTRANGEIRAS', 'normal', 7.5, $preto);
+    foreach (['INGLÊS', 'ESPANHOL', 'FRANCÊS'] as $i => $lingua) {
+        $x = $esq + 4 + $i * 118;
+        $pdf->texto($x, $y + 24, $lingua, 'negrito', 7.2, $preto);
+        foreach (['LÊ', 'FALA', 'ESCREVE'] as $j => $saber) {
+            $marca($x, $y + 29 + $j * 13, $saber, false, 6.6);
+        }
+    }
+    $pdf->texto($esq + 362, $y + 24, 'OUTROS', 'negrito', 7.2, $preto);
+    foreach ([0, 1, 2] as $j) {
+        $pdf->linha($esq + 362, $y + 38 + $j * 13, $dir - 6, $y + 38 + $j * 13, $preto, 0.4);
+    }
+    $y += 74;
+    $pdf->contorno($esq, $topo3, $larg, $y - $topo3, $preto, $grosso);
+
+    // Bloco 4: já foi voluntário.
+    $y += 7;
+    $pdf->contorno($esq, $y, 185, 36, $preto, $fino);
+    $pdf->texto($esq + 4, $y + 10, 'JÁ ATUOU COMO VOLUNTÁRIO ANTES?', 'normal', 7.2, $preto);
+    $marca($esq + 8, $y + 19, 'SIM', $d['voluntario'] === 'sim');
+    $marca($esq + 56, $y + 19, 'NÃO', $d['voluntario'] === 'nao');
+    $pdf->contorno($esq + 185, $y, $larg - 185, 36, $preto, $fino);
+    $pdf->texto($esq + 189, $y + 10, 'SE SIM, EM QUAL(IS) ENTIDADE(S)?', 'normal', 7.2, $preto);
+    $entidades = (string) $d['entidades'];
+    if ($entidades !== '') {
+        $tamEnt = 8.5;
+        $linhasEnt = McpPdf::quebrar($entidades, 'normal', $tamEnt, $larg - 185 - 12);
+        while (count($linhasEnt) > 2 && $tamEnt > 6.0) {
+            $tamEnt -= 0.5;
+            $linhasEnt = McpPdf::quebrar($entidades, 'normal', $tamEnt, $larg - 185 - 12);
+        }
+        foreach (array_slice($linhasEnt, 0, 2) as $i => $linhaEnt) {
+            $pdf->texto($esq + 191, $y + 21 + $i * 10, $linhaEnt . ($i === 1 && count($linhasEnt) > 2 ? '…' : ''), 'normal', $tamEnt, $tinta);
+        }
+    }
+    $pdf->contorno($esq, $y, $larg, 36, $preto, $grosso);
+
+    // Bloco 5: contatos de emergência (o site não pergunta).
+    $y += 43;
+    $pdf->texto($esq + 4, $y + 11, 'CONTATOS DE EMERGÊNCIA', 'normal', 7.5, $preto);
+    $marca($dir - 172, $y + 4, 'NÃO QUERO FORNECER ESTA INFORMAÇÃO', false, 6.6);
+    foreach ([0, 1] as $i) {
+        $base = $y + 30 + $i * 19;
+        $pdf->texto($esq + 4, $base, 'NOME', 'normal', 7, $preto);
+        $pdf->texto($dir - 172, $base, 'TELEFONE', 'normal', 7, $preto);
+        $pdf->linha($esq, $base + 4, $dir, $base + 4, $preto, $i === 0 ? $fino : 0);
+    }
+    $pdf->contorno($esq, $y, $larg, 54, $preto, $grosso);
+
+    // Rodapé do formulário e, embaixo, de onde vieram os dados.
+    $base = McpPdf::ALTURA - 44;
+    $pdf->texto($esq, $base, 'DOCUMENTO RESTRITO', 'normal', 7, MCP_CP_CINZA);
+    $pdf->texto(($esq + $dir - McpPdf::larguraTexto('REF 1/2', 'normal', 7)) / 2, $base, 'REF 1/2', 'normal', 7, MCP_CP_CINZA);
+    $codigo = 'CVB-CADVOL-FORM01-REV.L/0';
+    $pdf->texto($dir - McpPdf::larguraTexto($codigo, 'normal', 7), $base, $codigo, 'normal', 7, MCP_CP_CINZA);
+    $origem = 'Preenchida com os dados que a pessoa enviou pelo site' . ($d['enviada'] !== '' ? ' em ' . $d['enviada'] : '')
+        . ($d['numero'] !== '' ? ' (ficha ' . $d['numero'] . ')' : '') . '. Os campos em branco não são perguntados no site.';
+    $pdf->texto($esq, $base + 13, $origem, 'normal', 6.4, MCP_CP_CINZA);
+}
+
 /** As linhas rótulo/valor da ficha resumida (a do PDF com foto). Sem CPF, sem saúde e sem os textos longos. */
 function mcp_voluntario_ficha_resumo(array $f): array
 {

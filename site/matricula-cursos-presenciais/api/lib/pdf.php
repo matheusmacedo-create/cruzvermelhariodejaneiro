@@ -107,6 +107,13 @@ final class McpPdf
             . self::n($l) . ' ' . self::n($a) . " re f\n";
     }
 
+    /** Só o contorno do retângulo (as caixas de um formulário). */
+    public function contorno(float $x, float $y, float $l, float $a, string $cor, float $espessura = 1.0): void
+    {
+        $this->conteudo .= self::rgb($cor) . ' RG ' . self::n($espessura) . ' w ' . self::n($x) . ' ' . self::n(self::ALTURA - $y - $a) . ' '
+            . self::n($l) . ' ' . self::n($a) . " re S\n";
+    }
+
     /**
      * Retângulo com raio por canto: [superior esquerdo, superior direito, inferior direito, inferior
      * esquerdo]. Raio 0 dá canto vivo — é assim que a caixa do participante tem a faixa vermelha

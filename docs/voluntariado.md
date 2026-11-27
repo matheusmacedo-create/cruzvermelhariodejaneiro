@@ -304,6 +304,17 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   `MCP_VOL_FICHA_FATORES` em que cabe numa folha (a mais cheia possível, com tudo marcado e os três textos no limite,
   cabe). A ficha individual do portal e do Drive não mudou. Código: `mcp_voluntarios_fichas_completas_pdf()`. No ar desde
   27/11/2026: 232 fichas em 232 páginas, 5,6 MB, em 10 segundos.
+- **Ficha de Registro de Voluntário da CVB, preenchida** (27/11/2026, pedido do Matheus): o terceiro botão da aba,
+  "Baixar as fichas de registro da Cruz Vermelha" (`?pdf=aprovados-registro`), redesenha a folha 1 do formulário de papel
+  `CVB-CADVOL-FORM01` (a partir de uma foto dele) e preenche uma folha por aprovado com o que o site sabe: número da
+  ficha (o protocolo), filial, nome, nascimento, CPF (só os 3 primeiros dígitos), bairro, cidade, estado, e-mail,
+  celular, formação em saúde, escolaridade, cursos (profissão e habilidades), se já foi voluntário e a selfie no quadro
+  da foto 3x4. O que foi preenchido sai em azul. **Ficam em branco**, porque o site não pergunta: RG, sexo, naturalidade,
+  nacionalidade, tipo sanguíneo, habilitação, filiação, estado civil, rua, CEP, telefone fixo, idiomas e contatos de
+  emergência. Escolaridade: o site guarda o nível, não se concluiu; fundamental e médio saem como "completo" e o técnico
+  marca o médio completo. "Já atuou como voluntário" vem do texto livre da experiência (vazio = sem marca; começa com
+  "não"/"nunca" = não). A folha 2 do formulário ainda não foi feita. Código: `mcp_voluntario_registro_dados()` e
+  `mcp_voluntarios_fichas_registro_pdf()`.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
