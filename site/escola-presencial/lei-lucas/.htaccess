@@ -1,0 +1,5 @@
+# Página de venda do curso Lei Lucas: a legenda em texto dos depoimentos em vídeo (.vtt) precisa sair como text/vtt
+# para o navegador aceitar a faixa <track>.
+<IfModule mod_mime.c>
+  AddType text/vtt .vtt
+</IfModule>

@@ -1,0 +1,84 @@
+{
+ "slug": "brigada-de-incendio",
+ "arquivo": "brigada-de-incendio-cruz-vermelha-rj.pdf",
+ "capa": "capa-brigada-de-incendio.webp",
+ "titulo": "Brigada de incêndio: checklist de quem precisa montar",
+ "sub": "Para síndicos, escolas e empresas. Marque com um X cada passo cumprido. Os números com “No RJ” são da norma do Corpo de Bombeiros do Rio de Janeiro: em outro estado, confira a norma de lá.",
+ "credito": "Resumo da filial, com base na NR 23, na Lei 13.425/2017 e na Nota Técnica 2-11 do CBMERJ. Não substitui a norma nem a orientação do Corpo de Bombeiros do seu estado",
+ "folhas": [
+  {
+   "blocos": [
+    {
+     "tipo": "lista_detalhada",
+     "titulo": "Os passos para montar a brigada",
+     "da_pagina": {
+      "secao": "lista",
+      "formato": "tabela"
+     }
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "A brigada age no princípio do incêndio.",
+     "texto": "Mesmo com brigada no local, ligue sempre 193, Corpo de Bombeiros."
+    }
+   ]
+  },
+  {
+   "blocos": [
+    {
+     "tipo": "campos",
+     "itens": [
+      "Local:",
+      "Norma do estado:",
+      "Brigadistas por turno (mínimo):",
+      "Último simulado:"
+     ]
+    },
+    {
+     "tipo": "ficha",
+     "titulo": "Ficha dos brigadistas",
+     "colunas": [
+      "Nome",
+      "Setor e turno",
+      "Data do curso",
+      "Validade"
+     ],
+     "linhas": 8,
+     "altura_mm": 7.5
+    },
+    {
+     "tipo": "perguntas",
+     "titulo": "Perguntas para fazer antes de contratar o curso",
+     "linhas": 1,
+     "itens": [
+      [
+       "Qual é o registro da empresa no Corpo de Bombeiros do estado?",
+       "Peça o número e a data até quando o registro vale."
+      ],
+      [
+       "O curso segue a norma de qual estado? Quantas horas tem?",
+       "No RJ, o curso de brigadista tem no mínimo 16 horas-aula."
+      ],
+      [
+       "Onde é a aula prática, e com que equipamentos?",
+       "No RJ, a norma exige campo de treinamento com hidrantes, extintores e casa de fumaça."
+      ],
+      [
+       "Quem ensina os primeiros socorros?",
+       "No RJ: médico, enfermeiro, técnico de enfermagem ou bombeiro militar inativo."
+      ],
+      [
+       "A empresa oferece a atualização no ano que vem?",
+       "No RJ, ela tem no mínimo 8 horas-aula e é feita em até 1 ano."
+      ]
+     ]
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "Em emergência: 193, Corpo de Bombeiros. 192, SAMU.",
+     "texto": "As leis e as normas deste guia, com os endereços, estão na folha 3 e em cruzvermelhariodejaneiro.org/brigada-de-incendio"
+    }
+   ]
+  }
+ ]
+}

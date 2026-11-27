@@ -1781,14 +1781,14 @@
       }
     },
     "reembolso": {
-      "revisao": "2026-10-13",
+      "revisao": "2026-11-24",
       "pt": {
         "titulo_aba": "Cancelamento e reembolso | Cruz Vermelha Brasileira RJ",
         "descricao": "Como desistir da inscrição em curso da Cruz Vermelha Brasileira Rio de Janeiro: direito de arrependimento de 7 dias, quando o valor volta e como pedir.",
         "sobrancelha": "Matrícula em cursos",
         "h1": "Cancelamento e reembolso",
         "intro": [
-          "Estas regras valem para o que você paga na [página de cursos presenciais]({matricula}): a taxa de inscrição de {inscricao} e, se você escolher pagar junto, a matrícula (o valor do curso), à vista. Elas seguem o Código de Defesa do Consumidor (Lei nº 8.078/1990) e o Decreto nº 7.962/2013, que trata das compras pela internet."
+          "Estas regras valem para o que você paga na [página de cursos presenciais]({matricula}): a taxa de inscrição de {inscricao} e, se você escolher pagar junto, a matrícula (o valor do curso), à vista ou parcelada no cartão. Elas seguem o Código de Defesa do Consumidor (Lei nº 8.078/1990) e o Decreto nº 7.962/2013, que trata das compras pela internet."
         ],
         "secoes": [
           {
@@ -1857,7 +1857,13 @@
                 ]
               },
               {
+                "p": "No cartão parcelado, o estorno é do valor total da compra, com os juros; como ele aparece na fatura (crédito de uma vez ou fim das parcelas que faltam) depende do banco emissor."
+              },
+              {
                 "p": "Quando só uma parte do valor volta (por exemplo, só a matrícula), a devolução é feita por PIX, para uma conta no seu nome, com os juros do parcelamento que correspondem a essa parte, porque o processador de pagamento só estorna a compra inteira."
+              },
+              {
+                "p": "Quem quiser quitar antes as parcelas que faltam pede pelo chat e recebe de volta os juros das parcelas antecipadas (art. 52, § 2º, do CDC)."
               },
               {
                 "p": "Avisamos por e-mail quando o estorno for feito."
@@ -1893,7 +1899,7 @@
         "sobrancelha": "Course enrolment",
         "h1": "Cancellation and refunds",
         "intro": [
-          "These rules apply to what you pay on the [in-person courses page]({matricula}): the {inscricao} enrolment fee and, if you choose to pay it at the same time, the course fee, in a single payment. They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases."
+          "These rules apply to what you pay on the [in-person courses page]({matricula}): the {inscricao} enrolment fee and, if you choose to pay it at the same time, the course fee, in a single payment or in card instalments. They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases."
         ],
         "secoes": [
           {
@@ -1962,7 +1968,13 @@
                 ]
               },
               {
+                "p": "For card instalments, the refund is for the full amount of the purchase, including interest; how it shows on your statement (a single credit or the end of the remaining instalments) depends on the card issuer."
+              },
+              {
                 "p": "When only part of the amount is refunded (for example, only the course fee), the refund is made by PIX, to an account in your name, with the instalment interest that corresponds to that part, because the payment processor only refunds whole purchases."
+              },
+              {
+                "p": "If you want to pay off the remaining instalments early, ask through the chat and you will get back the interest on the instalments paid in advance (Art. 52, § 2, of the Consumer Protection Code)."
               },
               {
                 "p": "We let you know by e-mail when the refund has been made."
@@ -1998,7 +2010,7 @@
         "sobrancelha": "Matrícula en cursos",
         "h1": "Cancelación y reembolso",
         "intro": [
-          "Estas reglas se aplican a lo que usted paga en la [página de cursos presenciales]({matricula}): la tasa de inscripción de {inscricao} y, si elige pagarla junto, la matrícula (el valor del curso), al contado. Siguen el Código de Defensa del Consumidor de Brasil (Ley n.º 8.078/1990) y el Decreto n.º 7.962/2013, sobre las compras por internet."
+          "Estas reglas se aplican a lo que usted paga en la [página de cursos presenciales]({matricula}): la tasa de inscripción de {inscricao} y, si elige pagarla junto, la matrícula (el valor del curso), al contado o en cuotas con tarjeta. Siguen el Código de Defensa del Consumidor de Brasil (Ley n.º 8.078/1990) y el Decreto n.º 7.962/2013, sobre las compras por internet."
         ],
         "secoes": [
           {
@@ -2067,7 +2079,13 @@
                 ]
               },
               {
+                "p": "Con tarjeta en cuotas, el reembolso es del valor total de la compra, con los intereses; cómo aparece en el resumen (un crédito de una vez o el fin de las cuotas que faltan) depende del banco emisor."
+              },
+              {
                 "p": "Cuando solo se devuelve una parte del importe (por ejemplo, solo la matrícula), la devolución se hace por PIX, a una cuenta a su nombre, con los intereses de las cuotas que corresponden a esa parte, porque el procesador de pagos solo reembolsa la compra entera."
+              },
+              {
+                "p": "Quien quiera cancelar antes las cuotas que faltan lo pide por el chat y recibe de vuelta los intereses de las cuotas adelantadas (art. 52, § 2.º, del Código de Defensa del Consumidor)."
               },
               {
                 "p": "Le avisamos por correo cuando se haga el reembolso."

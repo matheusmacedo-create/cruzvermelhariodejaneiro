@@ -5,6 +5,9 @@
 # publicar"), a partir da main em 94e1e26. Foram ao ar os três arquivos de /el-nino/ (PDF, capa e página), conferidos no
 # servidor byte a byte, com o cache limpo; a Redação já aceita o material el-nino (PR 417). Os sitemaps foram regerados
 # e publicados em 25/11/2026.
+# ATUALIZAÇÃO DE 27/11/2026: as páginas dos outros guias foram publicadas com a linha do El Niño, junto com a caixa do
+# alto (scripts/publicacao-caixa-do-alto.txt), e a /el-nino/ ganhou o segundo conjunto de dados da Meta. O trecho
+# abaixo fica como registro do que estava pendente até então.
 # NÃO PUBLICADAS: as 21 páginas dos outros guias (a linha nova em "Mais guias gratuitos"). No ar, todas elas têm quatro
 # linhas a mais que a main: o segundo pixel da Meta (1580762603752102), publicado em 24/11/2026 por outra conversa a
 # partir do branch claude/relaxed-maxwell-aaxn97, ainda sem PR. Publicar a versão da main apagaria esse pixel. Depois

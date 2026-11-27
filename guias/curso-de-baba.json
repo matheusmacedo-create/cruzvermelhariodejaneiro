@@ -1,0 +1,123 @@
+{
+ "slug": "curso-de-baba",
+ "arquivo": "curso-de-baba-cruz-vermelha-rj.pdf",
+ "capa": "capa-curso-de-baba.webp",
+ "titulo": "Ficha da criança para a babá",
+ "sub": "Para pais, avós, babás e cuidadores. Preencha a lápis, deixe na geladeira e atualize quando algo mudar. Na folha 2: a casa segura por idade e o que um curso de babá deve ensinar.",
+ "credito": "Resumo da filial, com base na CBO e em orientações do Ministério da Saúde, da Anvisa e da Sociedade Brasileira de Pediatria. Não substitui o pediatra",
+ "folhas": [
+  {
+   "blocos": [
+    {
+     "tipo": "campos",
+     "titulo": "A criança",
+     "itens": [
+      "Nome:",
+      "Nascimento:",
+      "Endereço da casa, para dizer ao 192:",
+      "Ponto de referência:",
+      "Alergias (alimento, remédio, inseto):",
+      "Problemas de saúde:",
+      "Não pode comer:",
+      "Quem pode buscar a criança:"
+     ]
+    },
+    {
+     "tipo": "ficha",
+     "titulo": "Remédios de uso",
+     "colunas": [
+      "Remédio",
+      "Dose",
+      "Horário",
+      "Quem autorizou"
+     ],
+     "linhas": 4,
+     "altura_mm": 7.5
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "Remédio só com receita.",
+     "texto": "Nunca dê remédio que não tenha sido receitado por profissional de saúde, e confira a validade (Ministério da Saúde)."
+    },
+    {
+     "tipo": "ficha",
+     "titulo": "Telefones",
+     "colunas": [
+      "Quem",
+      "Nome",
+      "Telefone"
+     ],
+     "rotulos": [
+      "Mãe ou responsável",
+      "Pai ou responsável",
+      "Outro adulto de confiança",
+      "Pediatra",
+      "Posto, UPA ou hospital mais perto"
+     ],
+     "altura_mm": 7
+    },
+    {
+     "tipo": "emergencia",
+     "titulo": "Numa emergência",
+     "passos": [
+      "Fique com a criança. Não a deixe sozinha.",
+      "Ligue 192. Diga o endereço e o que aconteceu, e siga a orientação de quem atende.",
+      "Engoliu remédio ou produto de limpeza? Ligue 0800 722 6001.",
+      "Avise os pais."
+     ],
+     "telefones": [
+      [
+       "192",
+       "SAMU"
+      ],
+      [
+       "193",
+       "Bombeiros"
+      ]
+     ],
+     "dica": {
+      "rotulo": "0800 722 6001:",
+      "texto": "Disque-Intoxicação, da Anvisa. Gratuito, 24 horas."
+     }
+    }
+   ]
+  },
+  {
+   "blocos": [
+    {
+     "tipo": "checklist",
+     "titulo": "Casa segura, por idade",
+     "itens": [
+      [
+       "Até 6 meses",
+       "Lençol ajustado, nada cobrindo o rosto, sem cordão no pescoço. Nunca sozinho na banheira, no trocador ou na cama. Testar a água do banho e a comida."
+      ],
+      [
+       "De 6 meses a 1 ano",
+       "Portão na escada e rede nas janelas. Peças pequenas, sacos plásticos e fios fora do alcance. Protetor nas tomadas. Baldes e bacias vazios. Sem andador."
+      ],
+      [
+       "De 1 a 4 anos",
+       "Criança longe do fogão, cabo das panelas para dentro. Remédios e produtos de limpeza no alto e fechados. Piscina cercada. Na rua, pela mão."
+      ],
+      [
+       "De 5 a 11 anos",
+       "Capacete na bicicleta e no skate. Na água, sempre com um adulto olhando. No carro, banco de trás e cinto."
+      ]
+     ]
+    },
+    {
+     "tipo": "lista_detalhada",
+     "titulo": "O que um curso de babá deve ensinar",
+     "da_pagina": {
+      "secao": "lista",
+      "formato": "tabela"
+     }
+    },
+    {
+     "tipo": "curso"
+    }
+   ]
+  }
+ ]
+}

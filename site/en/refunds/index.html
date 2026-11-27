@@ -124,7 +124,7 @@
       .pol-tabela td::before { content:attr(data-rotulo) ": "; font-weight:700; color:var(--muted) }
     }
 </style>
-  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/refunds/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/refunds/","name":"Cancellation and refunds","description":"How to withdraw from a course enrolment with the Brazilian Red Cross Rio de Janeiro: the 7-day right of withdrawal, when the money is returned and how to ask.","inLanguage":"en","dateModified":"2026-10-13","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cancellation and refunds","item":"https://cruzvermelhariodejaneiro.org/en/refunds/"}]}]</script>
+  <script type="application/ld+json">[{"@context":"https://schema.org","@type":"WebPage","@id":"https://cruzvermelhariodejaneiro.org/en/refunds/#pagina","url":"https://cruzvermelhariodejaneiro.org/en/refunds/","name":"Cancellation and refunds","description":"How to withdraw from a course enrolment with the Brazilian Red Cross Rio de Janeiro: the 7-day right of withdrawal, when the money is returned and how to ask.","inLanguage":"en","dateModified":"2026-11-24","isPartOf":{"@id":"https://cruzvermelhariodejaneiro.org/#site"},"about":{"@id":"https://cruzvermelhariodejaneiro.org/#organizacao"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://cruzvermelhariodejaneiro.org/en/"},{"@type":"ListItem","position":2,"name":"Cancellation and refunds","item":"https://cruzvermelhariodejaneiro.org/en/refunds/"}]}]</script>
   <!-- Google tag (gtag.js) -->
   <script>
     // Consentimento antes de tudo (LGPD; Guia de Cookies da ANPD): estatística e marketing negados até a
@@ -161,6 +161,10 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
+  // Segundo conjunto de dados (24/11/2026): o do portfólio NND Negocios Locais, o único que a conta de anúncios
+  // das campanhas enxerga. O primeiro é de outro portfólio, que a Meta ainda não deixa compartilhar. Todo
+  // fbq('track') vai aos dois; a API de Conversões (servidor) segue só para o primeiro.
+  fbq('init', '1580762603752102');
   // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
   window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
@@ -293,13 +297,13 @@
       <div class="wrap">
         <p class="eyebrow">Course enrolment</p>
         <h1>Cancellation and refunds</h1>
-        <p class="pol-data">Last updated <time datetime="2026-10-13">13 October 2026</time>.</p>
+        <p class="pol-data">Last updated <time datetime="2026-11-24">24 November 2026</time>.</p>
         <p class="pol-traducao">This translation is provided for convenience. The official version is the Portuguese one.</p>
       </div>
     </section>
     <div class="wrap pol-corpo">
       <div class="pol-intro">
-        <p>These rules apply to what you pay on the <a href="/matricula-cursos-presenciais/" hreflang="pt-BR" lang="pt-BR">in-person courses page</a>: the R$ 99 enrolment fee and, if you choose to pay it at the same time, the course fee, in a single payment. They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases.</p>
+        <p>These rules apply to what you pay on the <a href="/matricula-cursos-presenciais/" hreflang="pt-BR" lang="pt-BR">in-person courses page</a>: the R$ 99 enrolment fee and, if you choose to pay it at the same time, the course fee, in a single payment or in card instalments. They follow the Brazilian Consumer Protection Code (Law No. 8,078/1990) and Decree No. 7,962/2013, on online purchases.</p>
       </div>
         <nav class="pol-indice" aria-label="On this page">
           <p>On this page</p>
@@ -344,7 +348,9 @@
           <li><strong>PIX:</strong> the amount goes back to the account the payment came from.</li>
           <li><strong>Credit card:</strong> the charge is cancelled or, if it is already on your statement, the refund appears on one of the following statements, according to the issuing bank&#x27;s schedule.</li>
         </ul>
+        <p>For card instalments, the refund is for the full amount of the purchase, including interest; how it shows on your statement (a single credit or the end of the remaining instalments) depends on the card issuer.</p>
         <p>When only part of the amount is refunded (for example, only the course fee), the refund is made by PIX, to an account in your name, with the instalment interest that corresponds to that part, because the payment processor only refunds whole purchases.</p>
+        <p>If you want to pay off the remaining instalments early, ask through the chat and you will get back the interest on the instalments paid in advance (Art. 52, § 2, of the Consumer Protection Code).</p>
         <p>We let you know by e-mail when the refund has been made.</p>
       </section>
       <section id="course-fee" aria-labelledby="t-course-fee">

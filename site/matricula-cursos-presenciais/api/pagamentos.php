@@ -81,7 +81,8 @@ function mcp_validar_aluno(array $b): array
     $plano = $temPlano ? $b['plano'] : 'so_taxa';
     $info = mcp_planos_info($curso, null, $cpf);
     // Cupom (30/10/2026, lib/cupons.php), antes do plano: quem usa o cupom no curso errado lê a mensagem do cupom. Só
-    // no plano completo e à vista; os opcionais valem também com cupom (17/11/2026). As vagas se conferem depois, com a trava, antes de cobrar.
+    // no plano completo; os opcionais valem também com cupom (17/11/2026) e, desde 24/11/2026, as parcelas no cartão
+    // também (menos no cupom de grupo). As vagas se conferem depois, com a trava, antes de cobrar.
     $cupom = null;
     $codigoCupom = mcp_cupom_normalizar($b['cupom'] ?? '');
     if ($codigoCupom !== '') {
@@ -112,7 +113,7 @@ function mcp_validar_aluno(array $b): array
             }
         }
     }
-    $completoCartao = $plano === 'taxa_e_matricula' && $metodo === 'cartao' && $cupom === null;
+    $completoCartao = $plano === 'taxa_e_matricula' && $metodo === 'cartao' && ($cupom === null || mcp_cupom_grupo($cupom) <= 1);
     $pedidas = $completoCartao ? filter_var($b['parcelas'] ?? 1, FILTER_VALIDATE_INT) : 1;
     $mostrado = filter_var($b['total_mostrado_centavos'] ?? null, FILTER_VALIDATE_INT);
     // Prova do aceite (F12): a versão do texto e o texto exato que a pessoa marcou. Na venda sem turma, obrigatórios; o

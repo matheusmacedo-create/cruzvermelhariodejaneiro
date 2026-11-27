@@ -117,6 +117,97 @@ as três telas do checkout (`noindex`) e a API; e `/verificar/`, escondida de pr
    o sitemap da escola.
 3. Publicar no Instagram/Facebook e na bio o atalho `cruzvermelhariodejaneiro.org/escola`.
 
+## Checkout reformulado para converter mais (publicado em 24/11/2026)
+
+De cerca de 290 pessoas que chegaram ao checkout em 27/10 a 24/11/2026, 50 começaram a preencher, 33 enviaram e 24
+pagaram; no celular, o primeiro campo ficava a mais de uma tela do topo e o aceite obrigatório era o erro mais comum. A
+tela foi reorganizada (curso do link numa linha, topo mais baixo, erro junto do campo, aceite colado ao botão, cupom e
+opcionais mais enxutos), sem mexer no servidor nem no pagamento: o primeiro campo foi de 1.013 px para 495 px e o botão
+de 3.252 px para 2.507 px. No mesmo dia, o parcelamento no cartão em até 12x passou a valer também com cupom (código e
+páginas publicados; **ligado em 25/11/2026 com `PARCELAS_MAX = 12` no servidor e a Unicopag em 1,89% ao mês**, depois de
+duas tentativas em 24/11 desfeitas porque a conta cobrava 2,99% sobre o total). Diagnóstico, mudanças,
+testes e listas de publicação: [docs/checkout-reformulacao-2026-11-24.md](docs/checkout-reformulacao-2026-11-24.md).
+
+## Página de venda do curso Lei Lucas: `/escola-presencial/lei-lucas/` (publicada em 24/11/2026)
+
+Pedido do Matheus: uma página única vendendo o curso Primeiros Socorros Lei Lucas pelo preço promocional de R$ 140,00,
+num endereço próprio ("cruzvermelhariodejaneiro.org/escolapresencial/leilucas, algo assim"). Ficou em
+`/escola-presencial/lei-lucas/`, com hífen como o resto do site; `/escolapresencial/leilucas` responde 301 para lá
+(`site/.htaccess`), e `/escola-presencial/` sozinha leva à vitrine dos cursos.
+
+- **Gerador**: `scripts/gerar_escola_presencial.py`. Nenhum dado novo: curso e preço de tabela vêm do `cursos.json`, a
+  turma do `oferta.json` (09/12/2026, 9h às 17h), o preço e o prazo da promoção da linha do `PRO12` em
+  `api/lib/cupons.php`, e título, promessa, resposta sobre a lei, fotos das aulas, modelo do certificado e "como a
+  escola sustenta a filial" do `gerar_matricula_presencial.py`. A trava de vocabulário da matrícula
+  (`PALAVRAS_PROIBIDAS`) vale aqui também, mais "vagas limitadas", "últimas vagas" e "certificado internacional".
+- **O botão** leva ao checkout de sempre, com o cupom já aplicado:
+  `/matricula-cursos-presenciais/checkout/?curso=primeiros-socorros-lei-lucas&via=lp-lei-lucas-<local>&cupom=PRO12`
+  (as `utm_*`, `fbclid`, `gclid`, `gbraid` e `wbraid` da chegada seguem junto). Nada muda no checkout nem no banco.
+- **Três estados**, em `<html data-oferta>`: `cupom` (preço da promoção), `tabela` (cupom esgotado ou vencido: R$ 249,00,
+  botão sem cupom) e `encerrada` (inscrições da turma fechadas, ou a turma do `info.php` não é mais a da página: sem
+  botão de compra, com "Ver as próximas turmas"). O relógio do navegador decide antes da primeira pintura e o
+  `info.php` corrige; "restam N cupons" é o número do servidor e não aparece sem resposta. Se o valor do cupom mudar no
+  `cupons.php` sem a página ser regerada, os preços da tela seguem o `info.php`.
+- **Atenção, cupons**: em 24/11/2026 restava 1 dos 14 cupons `PRO12`, e o limite subiu para **24** no mesmo dia (pedido
+  do Matheus; `cupons.php` publicado, `info.php` conferido: restam 11). Com o cupom esgotado a página passa sozinha ao
+  preço de tabela. Para vender mais vagas a R$ 140,00, aumentar de novo o `'limite'` do `PRO12` e publicar o `cupons.php`.
+- **Depoimentos** (24/11/2026, pedido do Matheus): a seção "O que dizem os alunos" traz quatro comentários que a Escola
+  já publica em `escola.cursoscruzvermelha.org/#depoimentos` (pesquisa de satisfação ao fim de cada turma), copiados
+  palavra por palavra, com o nome abreviado, o curso e a nota: um de quem fez a Lei Lucas, em destaque, e três de
+  Primeiros Socorros Básico, cada um com o nome do curso que a pessoa fez. Nada foi inventado, resumido nem trocado de
+  curso (lista `DEPOIMENTOS` no gerador; com menos de 2, a seção some). **Antes de publicar**, confirmar com a Escola que
+  a autorização dada na pesquisa cobre este site (regra D8 da matrícula: depoimento só com autorização registrada).
+- **Depoimentos em vídeo** (24/11/2026, pedido do Matheus: "acrescente um vídeo de depoimento... busque e coloque"):
+  no alto da seção de depoimentos, "Alunas contam como foi", com três vídeos curtos (Luciana, Ana Cláudia e Luciene,
+  19 a 23 s, 4:5), gravados pela filial na sede e já legendados para o carrossel do Instagram. Vieram da conta de
+  anúncios da Meta e foram recodificados sem as faixas laterais (cerca de 1,5 MB cada; origem e comando em
+  `docs/criativos/pagina-lei-lucas/LEIAME.md`). O vídeo só é baixado quando a pessoa toca (`preload="none"`, só a capa
+  antes), um toca por vez e cada um tem a legenda em texto (`.vtt`) para leitor de tela. Medição: `depoimento_video`
+  (`video`, `acao` = inicio ou fim). Lista `VIDEOS` no gerador; vazia, o bloco some. A autorização de imagem das três
+  alunas fica com a filial. **Publicado em 24/11/2026**: vídeos, capas, legendas, o `.htaccess` da pasta (`.vtt` como
+  `text/vtt`) e a página; cache limpo. No ar: página idêntica ao Git em `d4bb1ba`, os três `.mp4` idênticos, servidos
+  como `video/mp4` com pedido parcial (206); num Chromium em 390 px os três tocam (576 x 720), um por vez, sem erro.
+  Lighthouse com os vídeos: acessibilidade 100, boas práticas 100, desempenho 84, salto de layout 0,004.
+- **Avaliação de 24/11/2026** (Lighthouse 12, celular, página servida daqui com o resto vindo do ar, 5 rodadas):
+  desempenho 84 a 92 (LCP 1,4 a 1,9 s; o que pesa é o gtag, de terceiros, como no resto do site), acessibilidade 100,
+  boas práticas 100, SEO 69 só pelo `noindex`, que é de propósito. O salto de layout caiu de 0,06 para 0,004: a etiqueta
+  do topo passou a ter duas linhas fixas no celular, "Começa em N dias" nasce antes da primeira pintura e o selo do cupom
+  reserva a altura. A barra fixa do celular passou a aparecer sempre que o botão do cartão está fora da tela (ele fica
+  abaixo da primeira tela), menos com o aviso de cookies aberto. O que falta é dado, não código: mais depoimentos de quem
+  fez a Lei Lucas, quem dá a aula, o que levar e como é o almoço num dia de 8 horas.
+- **Fora da busca**: `noindex, follow` e fora dos sitemaps, como a `/bio/` (é página de campanha; a vitrine que o Google
+  conhece continua sendo a matrícula). Para indexar: `INDEXAR = True` no gerador e incluir no sitemap.
+- **Medição** (GA4 e Pixel, com o aviso de cookies da home): `view_item`/`ViewContent` ao abrir (com o repasse à API de
+  Conversões), `select_item` e `click_enroll` nos botões, com `item_list_name` "Página Lei Lucas", `oferta` (o estado) e
+  `coupon` no item; detalhes em `docs/rastreamento.md`. Grupo de conteúdo do GA4: `escola`.
+- **Imagem de compartilhamento**: `og-lei-lucas.jpg` (1200x630, sem data e sem preço), fonte em
+  `docs/criativos/pagina-lei-lucas/`.
+- **Conferido em 24/11/2026**, num Chromium com a página servida daqui e o resto vindo do ar: 390, 768 e 1280 px sem
+  rolagem lateral e sem erro de JavaScript; os três estados com o `info.php` simulado (cupom valendo, esgotado e turma
+  fechada); barra fixa do celular, chat e eventos; sem JavaScript a página mostra a promoção sem o número de cupons; todos os
+  links e imagens respondem 200; JSON-LD válido (`validar_jsonld.py`); o link do botão abre o checkout real com
+  "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". **Não testado:** as três regras novas do `.htaccess` (não há
+  Apache/LiteSpeed aqui) e um pagamento de verdade vindo da página.
+- **Republicado em 24/11/2026 com os dois conjuntos de dados da Meta** ("sim, pode republicar com os dois pixels"): a
+  primeira publicação tinha ido só com o primeiro; o segundo (`1580762603752102`, o da conta de anúncios) entrou no
+  repositório depois. Só o `index.html` da página, cache limpo, página no ar idêntica ao Git em `d129786`, e
+  `scripts/conferir_pixel.js` no ar: 19 de 19, com cada evento nos dois conjuntos. Conferência completa da medição em
+  `docs/rastreamento.md`.
+- **Publicado em 24/11/2026**, com a autorização do Matheus ("publique a página, você tem autorização"), na ordem de
+  `scripts/publicacao-escola-presencial.txt`: imagem, página e, por último, o `.htaccess` da raiz. Antes, cópia do que
+  estava no ar: os dois arquivos da página eram novos e o `.htaccess` do servidor era igual ao do Git em `ebf1995`, só
+  com fim de linha CRLF (o publicado agora vai com LF). Cache limpo pela API da hospedagem. Conferido no ar: `index.html`
+  idêntico ao do Git em `a7c644d`; a imagem responde 200 em 1200x630 (a hospedagem a recomprime: 84 KB no ar, 86 KB
+  aqui); home, matrícula, `/doe/`, `/noticias/` e `info.php` continuam em 200 e o 404 próprio continua;
+  `/escolapresencial/leilucas` (com ou sem barra, com ou sem hífen em cada parte) responde 301 para o endereço oficial
+  levando a query junto, e `/escola-presencial/` responde 302 para a matrícula. Num Chromium em 390 px, pelo endereço
+  sem hífen: estado `cupom`, "restam 2 cupons", 4 depoimentos, sem erro de JavaScript, sem imagem quebrada e sem rolagem
+  lateral; o botão abriu o checkout com "Cupom PRO12 aplicado: R$ 140,00 com tudo incluso". Nenhum pagamento foi feito.
+  Os depoimentos foram ao ar por decisão do responsável; a confirmação com a Escola (regra D8) continua valendo.
+  Desfazer: apagar os dois arquivos da página e republicar o `.htaccess` de `ebf1995` (passos na lista de publicação).
+- **Quando a turma ou o cupom mudarem** (`oferta.json`, `cupons.php`): rodar o gerador e publicar o `index.html`. Sem
+  turma aberta ou com o cupom vencido, o gerador se recusa a gravar.
+
 ## Convite para apoiar no alto dos guias (publicado em 19/11/2026)
 
 Aprovado pelo responsável em 19/11/2026, junto com a volta dos anúncios dos guias: em 30 dias, das 595 visitas que entraram por guia ou
@@ -3870,12 +3961,14 @@ fontes no código anotadas); o português usa o cabeçalho e o rodapé da home, 
 ### Ordem de geração
 
 `consentimento.py` → `gerar_noticias_home.py` → `gerar_faq_home.py` → `chat_widget.py` → `gerar_matricula_presencial.py` →
-`gerar_checkout.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
+`gerar_checkout.py` → `gerar_escola_presencial.py` → `gerar_bio.py` → `gerar_dia_das_criancas.py` → `gerar_404.py` → `gerar_idiomas.py` → `gerar_verificar.py` →
 `gerar_doacao_indisponivel.py` → `gerar_doe.py` → `gerar_politicas.py` → `gerar_institucional.py` → `gerar_gestao.py` →
 `gerar_voluntariado_cadastro.py` → `gerar_pedido_documentos.py` → `chat_widget.py`, e `gerar_ingles.py` depois de
 `gerar_idiomas.py` (notícias e 404 em inglês). Os quatro antes do último `chat_widget.py` também copiam o bloco de
 medição da home (as páginas institucionais, `/gestao/` e o cadastro de voluntários; o pedido de documentos não tem o
 bloco): sem eles, essas páginas ficam com o aviso de cookies antigo (anotado em 02/11/2026).
+`gerar_escola_presencial.py` (24/11/2026, página de venda do curso Lei Lucas) copia o bloco de medição da home e as tags do
+chat, e lê `cursos.json`, `oferta.json` e `cupons.php`: entra depois do `gerar_matricula_presencial.py`.
 Depois de publicar, `gerar_sitemaps.py` (confere tudo ao vivo).
 
 ### Pendências para a filial

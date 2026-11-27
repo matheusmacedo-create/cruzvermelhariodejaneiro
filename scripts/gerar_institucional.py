@@ -85,7 +85,9 @@ ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "em
          "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia", "quando-ligar-192",
          "verao-seguro", "el-nino", "acidentes-em-casa", "checklist-dengue", "cuidador-de-idosos",
          "rcp-e-manobra-de-heimlich", "febre-em-crianca", "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "queimaduras",
-         "guia-do-bombeiro-civil", "guia-dos-cursos", "onde-buscar-ajuda", "bazar", "lei-lucas-para-escolas",
+         "guia-do-bombeiro-civil", "guia-dos-cursos", "curso-de-primeiros-socorros", "curso-de-cuidador-de-idosos",
+         "profissao-cuidador-de-idosos", "curso-de-bombeiro-civil", "brigada-de-incendio", "como-ser-socorrista",
+         "curso-de-baba", "onde-buscar-ajuda", "bazar", "lei-lucas-para-escolas",
          "plano-de-contingencia", "empresas-e-orgaos-publicos", "cartaz-da-cruz-vermelha"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
@@ -110,7 +112,13 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "queimaduras": "Queimaduras", "onde-buscar-ajuda": "Onde buscar ajuda", "cartaz-da-cruz-vermelha": "A Cruz Vermelha em uma página",
                 "bazar": "Bazar solidário",
                 "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
-                "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
+                "empresas-e-orgaos-publicos": "Empresas e órgãos públicos",
+                "curso-de-primeiros-socorros": "Curso de primeiros socorros",
+                "curso-de-cuidador-de-idosos": "Curso de cuidador de idosos",
+                "profissao-cuidador-de-idosos": "Cuidador de idosos: a profissão",
+                "curso-de-bombeiro-civil": "Bombeiro civil: profissão e curso",
+                "brigada-de-incendio": "Brigada de incêndio", "como-ser-socorrista": "Como ser socorrista",
+                "curso-de-baba": "Babá e cuidador infantil"}
 # Os guias gratuitos. Cada guia lista os outros no fim da página ("Mais guias gratuitos"): na revisão de SEO de
 # 16/11/2026, dez deles não recebiam nenhum link de outra página do site (só o sitemap os citava), e página sem
 # link interno o Google rastreia pouco e classifica mal. Guia novo = uma linha aqui.
@@ -118,10 +126,12 @@ GUIAS = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorro
          "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
          "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "verao-seguro", "el-nino", "checklist-dengue",
          "cuidador-de-idosos", "onde-buscar-ajuda", "guia-dos-cursos", "guia-do-bombeiro-civil",
+         "curso-de-primeiros-socorros", "curso-de-cuidador-de-idosos", "profissao-cuidador-de-idosos",
+         "curso-de-bombeiro-civil", "brigada-de-incendio", "como-ser-socorrista", "curso-de-baba",
          "lei-lucas-para-escolas", "plano-de-contingencia", "cartaz-da-cruz-vermelha", "manual-de-identidade"]
 # Os guias que levam o convite para apoiar (19/11/2026): os de saúde e de emergência. Ficam de fora, de propósito:
 # onde-buscar-ajuda (trata de suicídio e violência: não é lugar para pedir doação), os guias da escola
-# (guia-dos-cursos, guia-do-bombeiro-civil) e os institucionais (cartaz-da-cruz-vermelha, manual-de-identidade).
+# (guia-dos-cursos, guia-do-bombeiro-civil e os sete de profissão e curso de 27/11/2026) e os institucionais (cartaz-da-cruz-vermelha, manual-de-identidade).
 # As páginas fora de GUIAS (quem somos, voluntariado, formação, base legal, empresas...) nunca entram.
 CONVITE_APOIO = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia",
                  "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
@@ -340,6 +350,17 @@ MATERIAL_CSS = """  <style>
     .inst-secao .inst-material-recado:empty { display: none; }
     .inst-secao .inst-material-recado[data-erro] { color: #991b1b; }
     .inst-secao .inst-material-baixar { margin: 14px 0 0; }
+    /* A caixa do alto (27/11/2026): o mesmo pedido da seção do PDF, logo abaixo do título, para caber na primeira tela. */
+    .inst-material-topo { grid-template-columns: 1fr; gap: 14px; max-width: 620px; margin: 22px 0 6px; padding: 20px; background: #fff; box-shadow: 0 10px 28px rgba(0, 0, 0, .08); }
+    .inst-material-topo .inst-material-cab { display: flex; gap: 14px; align-items: center; }
+    .inst-material-topo .inst-material-capa { flex: 0 0 76px; max-width: 76px; box-shadow: 0 3px 10px rgba(0, 0, 0, .12); }
+    .inst-material-topo .inst-material-titulo { margin: 0 0 4px; font-size: 1.3rem; line-height: 1.25; font-weight: 800; color: var(--black); }
+    .inst-material-topo .inst-material-ficha { margin: 0; font-size: .88rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .inst-material-topo .inst-material-como { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--text); }
+    .inst-material-topo .inst-material-recado { margin: 4px 0 0; font-size: 1.05rem; line-height: 1.5; font-weight: 600; color: #14532d; }
+    .inst-material-topo .inst-material-recado:empty { display: none; }
+    .inst-material-topo .inst-material-recado[data-erro] { color: #991b1b; }
+    .inst-material-topo .inst-material-baixar { margin: 4px 0 0; }
     @media (max-width: 620px) {
       .inst-material { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
       .inst-material-capa { max-width: 150px; }
@@ -349,12 +370,19 @@ MATERIAL_CSS = """  <style>
 MATERIAL_JS = """<script>
   /* Material com e-mail: manda o pedido para a Redação e, aceito, mostra o botão de baixar (gerar_institucional.py). */
   (function () {
-    var caixa = document.querySelector('.inst-material'); if (!caixa) return;
-    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
-    var chave = caixa.getAttribute('data-chave');
-    function liberar(recado) { f.hidden = true; baixar.hidden = false; r.removeAttribute('data-erro'); r.textContent = recado; }
+    var caixas = [].slice.call(document.querySelectorAll('.inst-material')); if (!caixas.length) return;
+    // A página pode ter duas caixas do mesmo material: a do alto e a da seção do PDF. O pedido aceito numa libera as duas.
+    function liberar(recado) {
+      caixas.forEach(function (c) {
+        var cf = c.querySelector('form'), cr = c.querySelector('.inst-material-recado'), cb = c.querySelector('.inst-material-baixar');
+        cf.hidden = true; cb.hidden = false; cr.removeAttribute('data-erro'); cr.textContent = recado;
+      });
+    }
+    var chave = caixas[0].getAttribute('data-chave');
     try { if (window.localStorage && localStorage.getItem(chave)) liberar('Você já deixou o seu e-mail neste aparelho. Toque no botão para baixar.'); } catch (e) {}
     if (!window.fetch) return;
+    caixas.forEach(function (caixa) {
+    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
     f.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var b = f.querySelector('button[type=submit]'), rotulo = b.textContent, d = new FormData(f);
@@ -376,6 +404,7 @@ MATERIAL_JS = """<script>
         })
         .catch(function () { r.setAttribute('data-erro', '1'); r.textContent = 'Não foi possível concluir agora. Confira a sua conexão e tente de novo.'; })
         .then(function () { b.disabled = false; b.textContent = rotulo; });
+    });
     });
   })();
 </script>"""
@@ -723,6 +752,41 @@ def mais_guias(p: dict, paginas: dict) -> str:
         </div>"""
 
 
+def material_do_alto(p: dict) -> str:
+    """A caixa de pedido do PDF repetida logo abaixo do título (27/11/2026). No celular, a caixa da seção ficava de
+    4 a 7 telas abaixo do topo; quem chega pelo anúncio decide na primeira. É a mesma caixa (mesmo material, mesmo
+    aceite, letra por letra), com outro id no campo e um título curto. Só nos guias (GUIAS)."""
+    if p["slug"] not in GUIAS:
+        return ""
+    for s in p["secoes"]:
+        i = s["html"].find('<div class="inst-material"')
+        if i < 0:
+            continue
+        # O bloco vai da abertura ao </div> que a fecha (as <div> de dentro contam).
+        nivel, j = 0, i
+        for m in re.finditer(r"<div\b|</div>", s["html"][i:]):
+            nivel += 1 if m.group(0) != "</div>" else -1
+            if nivel == 0:
+                j = i + m.end()
+                break
+        bloco = s["html"][i:j]
+        capa = re.search(r'<figure class="inst-material-capa">.*?</figure>', bloco, re.S)
+        ficha = re.search(r'<p class="inst-material-ficha">.*?</p>', bloco, re.S)
+        assert capa and ficha and 'id="inst-material-email"' in bloco, f"{p['slug']}: a caixa do material mudou de formato"
+        # O título fala do que a pessoa recebe ("o guia", "o cartaz", "a lista"), não do formato do arquivo: o nome
+        # sai do botão de baixar da própria caixa ("Baixar o guia em PDF").
+        nome = re.search(r">Baixar (.+?) em PDF<", bloco)
+        objeto = nome.group(1) if nome else "o material"
+        cab = (f'<div class="inst-material-cab">{capa.group(0)}<div><h2 class="inst-material-titulo" id="receber">Receba {esc(objeto)} no seu e-mail, grátis</h2>'
+               f'{ficha.group(0)}</div></div><p class="inst-material-como">O botão de baixar aparece aqui na hora. Serve para ler no celular ou imprimir.</p>')
+        bloco = bloco.replace(capa.group(0), "", 1).replace(ficha.group(0), "", 1)
+        bloco = bloco.replace('<div class="inst-material-miolo">', '<div class="inst-material-miolo">' + cab, 1)
+        bloco = bloco.replace('class="inst-material"', 'class="inst-material inst-material-topo"', 1)
+        bloco = bloco.replace("inst-material-email", "inst-material-email-topo")
+        return "\n        " + bloco
+    return ""
+
+
 def hreflang(p: dict) -> str:
     """As tags de idioma da página que tem tradução (TRADUCOES), com x-default no português."""
     outras = TRADUCOES.get(p["slug"])
@@ -833,7 +897,7 @@ def gerar(p: dict, paginas: dict, partes: dict) -> str:
         <nav class="inst-trilha" aria-label="Você está em"><ol>{trilha_html}</ol></nav>
         <p class="eyebrow">{esc(p['eyebrow'])}</p>
         <h1 id="inst-titulo">{esc(p['h1'])}</h1>
-        <p class="lead">{esc(p['lead'])}</p>
+        <p class="lead">{esc(p['lead'])}</p>{material_do_alto(p)}
         <ul class="inst-indice" aria-label="Nesta página">
           {indice}
         </ul>{linha_apoio}

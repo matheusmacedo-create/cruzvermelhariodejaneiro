@@ -1,0 +1,65 @@
+# Sete guias de profissão e curso (27/11/2026, pedido do Matheus): páginas novas no padrão dos guias
+# (docs/padrao-guias-gratuitos.md), com PDF, capa e pedido de e-mail. São as páginas de destino dos anúncios do
+# Ad Grants para as buscas por curso no Brasil. Os outros 22 guias ganham sete linhas em "Mais guias gratuitos".
+# ESTADO: NÃO PUBLICADO.
+# Gerar antes: python3 scripts/gerar_institucional.py
+#              python3 scripts/gerar_guia_pdf.py curso-de-primeiros-socorros curso-de-cuidador-de-idosos profissao-cuidador-de-idosos curso-de-bombeiro-civil brigada-de-incendio como-ser-socorrista curso-de-baba
+# ORDEM, e ela importa:
+#   0. Revisão de fatos: as fontes e o que não foi confirmado estão em notas_internas, em site/institucional.json.
+#      Pedem o visto de um instrutor da escola antes de ir ao ar: curso-de-primeiros-socorros (coluna "Como é a aula"),
+#      curso-de-baba (casa segura por idade), brigada-de-incendio (tabela de passos e seção "quantos") e
+#      como-ser-socorrista (seções "samu" e "condutor").
+#   1. A Redação primeiro: mesclar o PR que cadastra os sete materiais (lib/newsletter/materiais.ts). Sem ele, a rota
+#      responde "Este formulário está desatualizado" e ninguém consegue liberar o botão.
+#   2. BASE: este branch foi montado sobre claude/peaceful-hypatia-o0vp3y, que em 27/11/2026 não estava na main e era
+#      igual ao que está no ar (caixa do alto dos guias, segundo pixel da Meta, página do Lei Lucas). Por isso as sete
+#      páginas novas já saem com a caixa do alto e os dois pixels, e as 22 antigas só ganham as sete linhas de
+#      "Mais guias gratuitos". Antes de publicar, conferir de novo que o ar é igual a essa base
+#      (scripts/publicar_hostinger.sh --copiar-do-ar); se alguém publicou por fora, parar e avisar.
+#   3. Os PDFs e as capas, depois as sete páginas novas, depois as páginas dos outros guias.
+#   4. Limpar o cache e conferir os arquivos no ar; pedir um guia com um e-mail de teste.
+#   5. Regerar e publicar os sitemaps (python3 scripts/gerar_sitemaps.py) e pedir a indexação das sete páginas.
+#   6. Só então criar os anúncios: destino fora do ar é anúncio reprovado.
+site/curso-de-primeiros-socorros/curso-de-primeiros-socorros-cruz-vermelha-rj.pdf
+site/curso-de-primeiros-socorros/capa-curso-de-primeiros-socorros.webp
+site/curso-de-cuidador-de-idosos/curso-de-cuidador-de-idosos-cruz-vermelha-rj.pdf
+site/curso-de-cuidador-de-idosos/capa-curso-de-cuidador-de-idosos.webp
+site/profissao-cuidador-de-idosos/profissao-cuidador-de-idosos-cruz-vermelha-rj.pdf
+site/profissao-cuidador-de-idosos/capa-profissao-cuidador-de-idosos.webp
+site/curso-de-bombeiro-civil/curso-de-bombeiro-civil-cruz-vermelha-rj.pdf
+site/curso-de-bombeiro-civil/capa-curso-de-bombeiro-civil.webp
+site/brigada-de-incendio/brigada-de-incendio-cruz-vermelha-rj.pdf
+site/brigada-de-incendio/capa-brigada-de-incendio.webp
+site/como-ser-socorrista/como-ser-socorrista-cruz-vermelha-rj.pdf
+site/como-ser-socorrista/capa-como-ser-socorrista.webp
+site/curso-de-baba/curso-de-baba-cruz-vermelha-rj.pdf
+site/curso-de-baba/capa-curso-de-baba.webp
+site/curso-de-primeiros-socorros/index.html
+site/curso-de-cuidador-de-idosos/index.html
+site/profissao-cuidador-de-idosos/index.html
+site/curso-de-bombeiro-civil/index.html
+site/brigada-de-incendio/index.html
+site/como-ser-socorrista/index.html
+site/curso-de-baba/index.html
+site/acidentes-em-casa/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/checklist-dengue/index.html
+site/cuidador-de-idosos/index.html
+site/el-nino/index.html
+site/febre-em-crianca/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/mochila-de-emergencia/index.html
+site/onde-buscar-ajuda/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/verao-seguro/index.html

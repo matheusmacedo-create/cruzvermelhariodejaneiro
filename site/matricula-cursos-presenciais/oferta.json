@@ -1,5 +1,5 @@
 {
-  "parcelado_no_ar": false,
+  "parcelado_no_ar": true,
   "turmas": [
     {
       "curso": "primeiros-socorros-basico",
