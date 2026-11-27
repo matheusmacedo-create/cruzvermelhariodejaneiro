@@ -314,7 +314,7 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   emergência. Escolaridade: o site guarda o nível, não se concluiu; fundamental e médio saem como "completo" e o técnico
   marca o médio completo. "Já atuou como voluntário" vem do texto livre da experiência (vazio = sem marca; começa com
   "não"/"nunca" = não). A folha 2 do formulário ainda não foi feita. Código: `mcp_voluntario_registro_dados()` e
-  `mcp_voluntarios_fichas_registro_pdf()`.
+  `mcp_voluntarios_fichas_registro_pdf()`. No ar desde 27/11/2026 (232 folhas, 5,7 MB, em 7 segundos).
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
