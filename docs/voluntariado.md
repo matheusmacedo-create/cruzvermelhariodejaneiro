@@ -294,7 +294,8 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   por arquivo (`MCP_VOL_FICHAS_LIMITE`). Código: `mcp_voluntarios_fichas_pdf()` e vizinhas em `lib/voluntarios.php`, e
   `McpPdf::imagemJpeg()` (o gerador de PDF passou a desenhar fotos JPEG, quantas forem). Cada geração fica em
   `mcp_eventos` como `coordenacao_fichas_pdf` (quantas fichas e quem). O tutorial e a assistente de voz ainda não falam
-  deste botão. Publicação: `scripts/publicacao-fichas-pdf.txt`.
+  deste botão. Publicação: `scripts/publicacao-fichas-pdf.txt` (no ar desde 27/11/2026: os 3 arquivos conferidos iguais
+  ao repositório, e o PDF saiu com as 232 fichas aprovadas em 39 páginas, 3,6 MB, em 5 segundos).
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
