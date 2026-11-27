@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Páginas fixas do site institucional da Cruz Vermelha Brasileira, filial Rio de Janeiro.
-     Gerado por scripts/gerar_sitemaps.py em 2026-11-25T22:05:36+00:00. Não editar à mão. -->
+     Gerado por scripts/gerar_sitemaps.py em 2026-11-27T18:48:39+00:00. Não editar à mão. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/</loc>
@@ -1204,7 +1204,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/kit-de-emergencia/</loc>
-    <lastmod>2026-11-24T13:13:07+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:41+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1251,16 +1251,16 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/</loc>
-    <lastmod>2026-11-24T13:13:15+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:47+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-itens-960.webp</image:loc>
-      <image:title>Sobre uma mesa, uma manta verde com uma corda vermelha, uma toalha cinza, duas lanternas prateadas, uma lanterna de cabeça, pilhas, sacos plásticos pretos, uma faca e uma tesoura</image:title>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/mochila-de-emergencia/capa-mochila-de-emergencia.webp</image:loc>
       <image:title>Primeira folha da lista da mochila de emergência: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e os itens da mochila, cada um com um quadradinho para marcar</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-mochila-itens-960.webp</image:loc>
+      <image:title>Sobre uma mesa, uma manta verde com uma corda vermelha, uma toalha cinza, duas lanternas prateadas, uma lanterna de cabeça, pilhas, sacos plásticos pretos, uma faca e uma tesoura</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-enchente-rio-acari-960.webp</image:loc>
@@ -1290,16 +1290,16 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/kit-de-primeiros-socorros/</loc>
-    <lastmod>2026-11-24T13:13:08+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:43+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
-      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-primeiros-socorros-itens-960.webp</image:loc>
-      <image:title>Itens de um kit de primeiros socorros arrumados sobre uma mesa branca: esparadrapo, luvas descartáveis, manual, ataduras, curativos adesivos, uma compressa grande e manta térmica, todos embalados, e uma tesoura de cortar atadura</image:title>
-    </image:image>
-    <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/kit-de-primeiros-socorros/capa-kit-de-primeiros-socorros.webp</image:loc>
       <image:title>Primeira folha da lista do kit de primeiros socorros: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e os itens do kit, cada um com um quadradinho para marcar</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-primeiros-socorros-itens-960.webp</image:loc>
+      <image:title>Itens de um kit de primeiros socorros arrumados sobre uma mesa branca: esparadrapo, luvas descartáveis, manual, ataduras, curativos adesivos, uma compressa grande e manta térmica, todos embalados, e uma tesoura de cortar atadura</image:title>
     </image:image>
     <image:image>
       <image:loc>https://cruzvermelhariodejaneiro.org/assets/institucional/fotos/kit-termometro-digital-960.webp</image:loc>
@@ -1325,7 +1325,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/quando-ligar-192/</loc>
-    <lastmod>2026-11-24T13:13:27+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:54+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1344,7 +1344,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/verao-seguro/</loc>
-    <lastmod>2026-11-24T13:13:35+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:58+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1363,7 +1363,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/el-nino/</loc>
-    <lastmod>2026-11-24T22:05:27+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:35+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1419,7 +1419,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/plano-familiar-de-emergencia/</loc>
-    <lastmod>2026-11-24T13:13:21+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:51+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1438,7 +1438,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/cuidador-de-idosos/</loc>
-    <lastmod>2026-11-24T13:11:37+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:33+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1457,7 +1457,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/acidentes-em-casa/</loc>
-    <lastmod>2026-11-24T13:11:24+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:29+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1476,7 +1476,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/checklist-dengue/</loc>
-    <lastmod>2026-11-24T13:11:33+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:32+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1495,7 +1495,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/cartaz-da-cruz-vermelha/</loc>
-    <lastmod>2026-11-24T13:11:31+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:31+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -1514,7 +1514,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/guia-do-bombeiro-civil/</loc>
-    <lastmod>2026-11-24T13:13:00+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:37+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1533,7 +1533,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/guia-dos-cursos/</loc>
-    <lastmod>2026-11-24T13:13:02+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:39+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -1551,8 +1551,141 @@
     </image:image>
   </url>
   <url>
+    <loc>https://cruzvermelhariodejaneiro.org/curso-de-primeiros-socorros/</loc>
+    <lastmod>2026-11-27T18:42:20+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/curso-de-primeiros-socorros/capa-curso-de-primeiros-socorros.webp</image:loc>
+      <image:title>Primeira folha do guia para escolher um curso de primeiros socorros: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o checklist do que o curso deve ensinar, com um quadradinho para marcar cada tema</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/curso-de-cuidador-de-idosos/</loc>
+    <lastmod>2026-11-27T18:42:21+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/curso-de-cuidador-de-idosos/capa-curso-de-cuidador-de-idosos.webp</image:loc>
+      <image:title>Primeira folha do guia do curso de cuidador de idosos: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro, o quadro para comparar curso gratuito, pago, presencial e online, a lista do que um bom curso ensina e a ficha para anotar os cursos comparados</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/profissao-cuidador-de-idosos/</loc>
+    <lastmod>2026-11-27T18:42:22+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/profissao-cuidador-de-idosos/capa-profissao-cuidador-de-idosos.webp</image:loc>
+      <image:title>Primeira folha do guia da profissão de cuidador de idosos: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e a lista dos direitos do empregado doméstico, com um quadradinho para marcar cada um</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/curso-de-bombeiro-civil/</loc>
+    <lastmod>2026-11-27T18:42:24+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/curso-de-bombeiro-civil/capa-curso-de-bombeiro-civil.webp</image:loc>
+      <image:title>Primeira folha do guia do curso de bombeiro civil: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro, o caminho em sete passos, com um quadradinho para marcar cada um, e os direitos da Lei 11.901/2009</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/brigada-de-incendio/</loc>
+    <lastmod>2026-11-27T18:42:25+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/brigada-de-incendio/capa-brigada-de-incendio.webp</image:loc>
+      <image:title>Primeira folha do checklist da brigada de incêndio: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e os onze passos para montar a brigada, com um quadradinho para marcar cada um</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/como-ser-socorrista/</loc>
+    <lastmod>2026-11-27T18:42:27+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/como-ser-socorrista/capa-como-ser-socorrista.webp</image:loc>
+      <image:title>Primeira folha do guia Quero ser socorrista: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e o quadro dos quatro caminhos, SAMU pela área da saúde, condutor socorrista, bombeiro militar e bombeiro civil, com o que cada um pede</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://cruzvermelhariodejaneiro.org/curso-de-baba/</loc>
+    <lastmod>2026-11-27T18:42:28+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/curso-de-baba/capa-curso-de-baba.webp</image:loc>
+      <image:title>Primeira folha do guia da babá e do cuidador infantil: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e a ficha da criança para preencher, com alergias, remédios, telefones dos pais e do pediatra e um quadro com o que fazer numa emergência</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-1440.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/hero-equipe-grupo-960.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://cruzvermelhariodejaneiro.org/assets/otim/og-home.jpg</image:loc>
+    </image:image>
+  </url>
+  <url>
     <loc>https://cruzvermelhariodejaneiro.org/onde-buscar-ajuda/</loc>
-    <lastmod>2026-11-24T13:13:18+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:48+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1571,7 +1704,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/rcp-e-manobra-de-heimlich/</loc>
-    <lastmod>2026-11-24T13:13:31+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:56+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1590,7 +1723,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/intoxicacao-alimentar/</loc>
-    <lastmod>2026-11-24T13:13:05+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:40+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1609,7 +1742,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/febre-em-crianca/</loc>
-    <lastmod>2026-11-24T13:12:58+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:36+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1628,7 +1761,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/pressao-alta-e-pressao-baixa/</loc>
-    <lastmod>2026-11-24T13:13:22+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:52+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1647,7 +1780,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/queimaduras/</loc>
-    <lastmod>2026-11-24T13:13:28+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:55+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1666,7 +1799,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/lei-lucas-para-escolas/</loc>
-    <lastmod>2026-11-24T13:13:09+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:44+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <image:image>
@@ -1685,7 +1818,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/plano-de-contingencia/</loc>
-    <lastmod>2026-11-24T13:13:19+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:49+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
     <image:image>
@@ -1768,7 +1901,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/manual-de-identidade/</loc>
-    <lastmod>2026-11-24T13:13:11+00:00</lastmod>
+    <lastmod>2026-11-27T18:42:45+00:00</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
     <image:image>
@@ -1840,7 +1973,7 @@
   </url>
   <url>
     <loc>https://cruzvermelhariodejaneiro.org/noticias/</loc>
-    <lastmod>2026-11-25T13:01:13+00:00</lastmod>
+    <lastmod>2026-11-26T13:06:12+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

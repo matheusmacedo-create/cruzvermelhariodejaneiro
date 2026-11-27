@@ -1,7 +1,15 @@
 # Sete guias de profissão e curso (27/11/2026, pedido do Matheus): páginas novas no padrão dos guias
 # (docs/padrao-guias-gratuitos.md), com PDF, capa e pedido de e-mail. São as páginas de destino dos anúncios do
 # Ad Grants para as buscas por curso no Brasil. Os outros 22 guias ganham sete linhas em "Mais guias gratuitos".
-# ESTADO: NÃO PUBLICADO.
+# ESTADO: PUBLICADO em 27/11/2026, por volta das 15h45 (horário de Brasília), a pedido do Matheus ("pode mesclar os PRs
+# e publicar"), a partir da main em 9a1486d (PR 194). A Redação entrou antes (PR 419) e já aceitava os sete materiais.
+# Foram ao ar os 43 arquivos desta lista, conferidos no servidor byte a byte com o cache limpo; conferir_ad_grants.py
+# --url deu 0 falha. Antes de publicar, o ar era igual à base, menos uma linha na página do kit de emergência (faltava
+# o link do El Niño em "Mais guias gratuitos", que agora está lá). Os sitemaps foram regerados e publicados em seguida:
+# só entraram os sete endereços novos.
+# NÃO FEITO: o visto de um instrutor nos trechos do passo 0; o pedido de um guia com e-mail de teste (o envio de
+# verdade não foi testado: a rota foi testada só até a validação do e-mail, sem inscrever ninguém); o pedido de
+# indexação no Search Console; os anúncios.
 # Gerar antes: python3 scripts/gerar_institucional.py
 #              python3 scripts/gerar_guia_pdf.py curso-de-primeiros-socorros curso-de-cuidador-de-idosos profissao-cuidador-de-idosos curso-de-bombeiro-civil brigada-de-incendio como-ser-socorrista curso-de-baba
 # ORDEM, e ela importa:
