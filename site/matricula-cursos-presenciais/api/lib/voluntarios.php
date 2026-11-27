@@ -1259,14 +1259,24 @@ function mcp_voluntario_pdf(array $f): string
     return $pdf->gerar();
 }
 
-/** @return array{0: McpPdf, 1: int} o PDF e o número de páginas ($total 0 = ainda não se sabe) */
-function mcp_voluntario_pdf_desenhar(array $f, int $total): array
+/**
+ * Com $emPdf, a ficha é desenhada dentro daquele documento, começando em página nova (as fichas completas de vários
+ * voluntários num arquivo só); a numeração continua sendo a da ficha ("Página 1 de 2"). $foto: o JPEG da selfie, que
+ * vai no alto, à direita do logo.
+ *
+ * @return array{0: McpPdf, 1: int} o PDF e o número de páginas da ficha ($total 0 = ainda não se sabe)
+ */
+function mcp_voluntario_pdf_desenhar(array $f, int $total, ?McpPdf $emPdf = null, ?string $foto = null): array
 {
-    $pdf = new McpPdf();
+    $pdf = $emPdf ?? new McpPdf();
     $protocolo = (string) ($f['protocolo'] ?? '');
     $nome = (string) $f['nome'];
     $titulo = 'FICHA DE CADASTRO DE VOLUNTÁRIO(A)';
-    $pdf->metadados("Ficha de cadastro de voluntário(a) — $nome", MCP_NOME_FILIAL, "Ficha de cadastro de voluntário(a) $protocolo");
+    if ($emPdf === null) {
+        $pdf->metadados("Ficha de cadastro de voluntário(a) — $nome", MCP_NOME_FILIAL, "Ficha de cadastro de voluntário(a) $protocolo");
+    } elseif ($pdf->temConteudo()) {
+        $pdf->novaPagina();
+    }
     $esq = MCP_CP_MARGEM;
     $dir = McpPdf::LARGURA - MCP_CP_MARGEM;
     $largura = $dir - $esq;
@@ -1344,6 +1354,13 @@ function mcp_voluntario_pdf_desenhar(array $f, int $total): array
     $logoL = 345.0;
     $logoA = $logoL * 398 / 1325;
     $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, 44 - 0.0427 * $logoA, $logoL, $logoA);
+    if ($foto !== null && $foto !== '') {
+        try {
+            $pdf->imagemJpeg($foto, $dir - 106, 42, 106, 106);
+        } catch (Throwable) {
+            // foto que não abre: a ficha sai sem ela
+        }
+    }
     $pdf->linha($esq, 158, $dir, 158, MCP_CP_FIO, 0.8);
     $pdf->texto($esq, 186, $titulo, 'negrito', 17, MCP_CP_TEXTO, 0.4);
     $pdf->texto($esq, 204, 'Programa de voluntariado · Cruz Vermelha Brasileira · Filial do Estado do Rio de Janeiro', 'normal', 11, MCP_CP_CINZA);
@@ -1435,13 +1452,13 @@ function mcp_voluntario_selfie_miniatura(string $jpeg, int $lado = MCP_VOL_FICHA
 }
 
 /** As fotos (já reduzidas) das fichas dadas: [id da ficha => bytes do JPEG]. Quem não tem selfie fica de fora. */
-function mcp_voluntarios_fichas_fotos(array $ids): array
+function mcp_voluntarios_fichas_fotos(array $ids, int $lado = MCP_VOL_FICHAS_FOTO_LADO): array
 {
     $fotos = [];
     foreach (array_map('intval', $ids) as $id) {
         $selfie = $id > 0 ? mcp_voluntario_selfie($id) : null;
         if ($selfie !== null && $selfie['jpeg'] !== '') {
-            $fotos[$id] = mcp_voluntario_selfie_miniatura($selfie['jpeg']);
+            $fotos[$id] = mcp_voluntario_selfie_miniatura($selfie['jpeg'], $lado);
         }
     }
     return $fotos;
@@ -1463,6 +1480,36 @@ function mcp_voluntarios_fichas_ordenar(array $fichas): array
 function mcp_voluntarios_fichas_aprovadas(): array
 {
     return mcp_voluntarios_fichas_ordenar(mcp_voluntarios_listar(['status' => 'aceita'], 1, MCP_VOL_FICHAS_LIMITE)['linhas']);
+}
+
+/** Fichas aceitas com todas as colunas (a ficha completa mostra o CPF parcial), em ordem alfabética. */
+function mcp_voluntarios_fichas_aprovadas_completas(): array
+{
+    $stmt = mcp_db()->prepare("SELECT * FROM mcp_voluntarios WHERE status = 'aceita' ORDER BY id LIMIT " . MCP_VOL_FICHAS_LIMITE);
+    $stmt->execute();
+    return mcp_voluntarios_fichas_ordenar($stmt->fetchAll());
+}
+
+/**
+ * Bytes do PDF com a ficha COMPLETA de cada pessoa, uma depois da outra, cada uma começando em página nova e com a foto
+ * no alto: o mesmo desenho e os mesmos dados da ficha individual (mcp_voluntario_pdf: CPF só com os 3 primeiros
+ * dígitos, motivação, experiência, habilidades, consentimentos). Função pura: recebe as fichas e as fotos [id => JPEG].
+ */
+function mcp_voluntarios_fichas_completas_pdf(array $fichas, array $fotos, string $titulo = 'Voluntários aprovados'): string
+{
+    $pdf = new McpPdf();
+    $quantas = count($fichas);
+    $pdf->metadados("Fichas completas dos voluntários — $titulo", MCP_NOME_FILIAL, 'Fichas de cadastro de voluntário(a) (' . ($quantas === 1 ? '1 ficha' : "$quantas fichas") . ')');
+    foreach ($fichas as $f) {
+        // A primeira passada, num documento à parte, só conta as páginas desta ficha.
+        [, $total] = mcp_voluntario_pdf_desenhar($f, 0);
+        $foto = $fotos[(int) ($f['id'] ?? 0)] ?? null;
+        mcp_voluntario_pdf_desenhar($f, $total, $pdf, is_string($foto) ? $foto : null);
+    }
+    if (!$fichas) {
+        $pdf->texto(MCP_CP_MARGEM, 80, 'Nenhuma ficha neste grupo.', 'normal', 12, MCP_CP_TEXTO);
+    }
+    return $pdf->gerar();
 }
 
 /** As linhas rótulo/valor da ficha resumida (a do PDF com foto). Sem CPF, sem saúde e sem os textos longos. */

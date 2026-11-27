@@ -84,6 +84,12 @@ final class McpPdf
         $this->conteudo = '';
     }
 
+    /** Já há algo desenhado? (Quem junta vários documentos num só abre página nova a partir do segundo.) */
+    public function temConteudo(): bool
+    {
+        return $this->conteudo !== '' || $this->paginas !== [];
+    }
+
     public function totalPaginas(): int
     {
         return count($this->paginas) + 1;

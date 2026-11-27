@@ -202,6 +202,9 @@ try {
     $pdfAprovados = http("$base$k&pdf=aprovados");
     verificar('PDF dos aprovados: botão na aba, sai um PDF e fica o registro', [str_contains($aprovados['corpo'], 'pdf=aprovados'), $pdfAprovados['status'], $pdfAprovados['tipo'],
         str_starts_with($pdfAprovados['corpo'], '%PDF-1.4'), mcp_contar_eventos_do_tipo('coordenacao_fichas_pdf', 3600) >= 1], [true, 200, 'application/pdf', true, true]);
+    $pdfCompletas = http("$base$k&pdf=aprovados-completas");
+    verificar('PDF das fichas completas dos aprovados: botão na aba e sai um PDF', [str_contains($aprovados['corpo'], 'pdf=aprovados-completas'), $pdfCompletas['status'], $pdfCompletas['tipo'],
+        str_starts_with($pdfCompletas['corpo'], '%PDF-1.4')], [true, 200, 'application/pdf', true]);
     verificar('PDF dos aprovados: sem a chave, 404; a aba "Para decidir" não tem o botão', [http("$base?pdf=aprovados")['status'], str_contains($lista['corpo'], 'pdf=aprovados')], [404, false]);
 
     $foto = http("$base$k&foto=$a");
