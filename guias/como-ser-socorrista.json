@@ -30,6 +30,22 @@
             "Na central: médico regulador, telefonista e rádio-operador",
             "Entrada: concurso ou seleção de quem mantém o SAMU na região"
           ]
+        },
+        {
+          "tipo": "passos",
+          "titulo": "Por onde começar",
+          "itens": [
+            "Escolha o cargo: técnico de enfermagem, enfermeiro, médico, condutor, bombeiro militar ou bombeiro civil.",
+            "Faça a formação que o cargo pede. Na saúde, tire o registro no conselho.",
+            "Acompanhe os editais da secretaria de saúde do município e do estado, e os concursos do Corpo de Bombeiros.",
+            "Leia no edital quais cursos e documentos são exigidos, antes de pagar qualquer curso.",
+            "Enquanto isso, aprenda primeiros socorros na prática, para saber se o socorro é para você."
+          ]
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Condutor de ambulância:",
+          "texto": "o Código de Trânsito pede 21 anos, curso especializado e, para ambulância, reciclagem a cada 5 anos (arts. 145 e 145-A). Confirme no Detran do seu estado a regra que vale hoje e a categoria de CNH que o edital pede."
         }
       ]
     },

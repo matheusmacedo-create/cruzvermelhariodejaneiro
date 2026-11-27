@@ -4,7 +4,7 @@
  "capa": "capa-curso-de-baba.webp",
  "titulo": "Ficha da criança para a babá",
  "sub": "Para pais, avós, babás e cuidadores. Preencha a lápis, deixe na geladeira e atualize quando algo mudar. Na folha 2: a casa segura por idade e o que um curso de babá deve ensinar.",
- "credito": "Resumo da filial, com base na CBO, do Ministério do Trabalho, e em orientações do Ministério da Saúde, da Anvisa e da Sociedade Brasileira de Pediatria. Não substitui o pediatra",
+ "credito": "Resumo da filial, com base na CBO e em orientações do Ministério da Saúde, da Anvisa e da Sociedade Brasileira de Pediatria. Não substitui o pediatra",
  "folhas": [
   {
    "blocos": [
@@ -31,8 +31,8 @@
       "Horário",
       "Quem autorizou"
      ],
-     "linhas": 3,
-     "altura_mm": 7
+     "linhas": 4,
+     "altura_mm": 7.5
     },
     {
      "tipo": "aviso",
@@ -102,7 +102,7 @@
       ],
       [
        "De 5 a 11 anos",
-       "Capacete na bicicleta, no patinete e no skate. Na água, sempre com um adulto olhando. No carro, banco de trás e cinto."
+       "Capacete na bicicleta e no skate. Na água, sempre com um adulto olhando. No carro, banco de trás e cinto."
       ]
      ]
     },
