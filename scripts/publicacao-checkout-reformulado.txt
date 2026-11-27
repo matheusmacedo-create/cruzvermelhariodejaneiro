@@ -1,0 +1,15 @@
+# Checkout reformulado para o celular (24/11/2026, pedido do Matheus): campos na primeira tela, erro junto do campo,
+# aceite colado ao botão. Só a tela: nada de servidor. Registro: docs/checkout-reformulacao-2026-11-24.md.
+# Antes: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar $(grep -vE '^(#|$)' scripts/publicacao-checkout-reformulado.txt)
+# Publicar (os dois estáticos antes das telas): scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-checkout-reformulado.txt)
+# Depois: limpar o cache e scripts/conferir_publicacao.sh scripts/publicacao-checkout-reformulado.txt
+# Desfazer: republicar a cópia do ar (RAIZ=/tmp/no-ar scripts/publicar_hostinger.sh /tmp/no-ar/...) e limpar o cache.
+site/matricula-cursos-presenciais/static/checkout.css
+site/matricula-cursos-presenciais/static/checkout.js
+site/matricula-cursos-presenciais/pendente/index.html
+site/matricula-cursos-presenciais/parabens/index.html
+site/matricula-cursos-presenciais/horarios/index.html
+site/matricula-cursos-presenciais/comparecimento/index.html
+site/matricula-cursos-presenciais/conferir/index.html
+site/matricula-cursos-presenciais/pagar-matricula/index.html
+site/matricula-cursos-presenciais/checkout/index.html

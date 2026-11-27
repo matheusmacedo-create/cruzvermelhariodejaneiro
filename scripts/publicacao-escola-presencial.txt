@@ -1,0 +1,43 @@
+# Página de venda do curso Primeiros Socorros Lei Lucas (24/11/2026, pedido do Matheus): /escola-presencial/lei-lucas/,
+# com o preço do cupom PRO12 (R$ 140,00 com tudo incluso) e a turma de 09/12/2026.
+# ESTADO: PUBLICADO em 24/11/2026 (página e imagem novas; .htaccess da raiz com as três regras). Cache limpo; conferido no ar
+#   (página idêntica ao Git, redirecionamentos, home e matrícula em 200, checkout com o cupom aplicado).
+# Gerar antes: python3 scripts/gerar_escola_presencial.py (lê cursos.json, oferta.json e api/lib/cupons.php)
+#   Imagem de compartilhamento: node docs/criativos/pagina-lei-lucas/render.js (só se o og.html mudar).
+# ORDEM:
+#   1. Conferir quantos cupons PRO12 restam (info.php, cupons_vitrine). Em 24/11/2026 restavam 2 de 14: com o cupom
+#      esgotado a página mostra sozinha o preço de tabela (R$ 249,00). Para vender mais vagas a R$ 140,00, aumentar o
+#      'limite' do PRO12 em api/lib/cupons.php e publicar esse arquivo ANTES da página.
+#   1b. Depoimentos: confirmar com a Escola que a autorização da pesquisa de satisfação cobre este site (são os que ela
+#      publica em escola.cursoscruzvermelha.org/#depoimentos). Sem a confirmação, esvaziar DEPOIMENTOS no gerador e gerar de novo.
+#   2. Guardar o .htaccess que está no ar: scripts/publicar_hostinger.sh --copiar-do-ar /tmp/no-ar site/.htaccess
+#   3. Publicar, a imagem antes da página e o .htaccess por último:
+#      scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-escola-presencial.txt)
+#   4. Limpar o cache e conferir no celular (390 px): a página abre, mostra "restam N cupons", o botão leva ao checkout
+#      com "Cupom PRO12 aplicado: R$ 140,00"; /escolapresencial/leilucas responde 301 para /escola-presencial/lei-lucas/
+#      e a home continua abrindo (o .htaccess é o da raiz do site).
+# A página era noindex e ficava fora dos sitemaps até 25/11/2026. Nesse dia, a pedido do Matheus ("faça o google
+# indexar sim"), INDEXAR passou a True em scripts/gerar_escola_presencial.py e a página entrou em scripts/gerar_sitemaps.py.
+# No mesmo dia (25/11/2026, por volta das 19h de Brasília) foi republicado o index.html com: "Curso de" no título
+# principal; auxiliares de creche, berçaristas, mediadores, inspetores, mães e gestantes em "Para quem é"; e três
+# perguntas novas (babá/mãe/pai, formação de babá ou auxiliar de creche, funcionário de escola). Motivo: os anúncios de
+# curso do Google passaram a apontar para esta página, com palavras novas para esse público (campanha Turmas abertas).
+# Conferido no servidor byte a byte e no celular (390 px); cache limpo; sitemaps regerados e publicados.
+# Quando a turma ou o cupom mudarem (oferta.json, cupons.php): gerar de novo e publicar só o index.html.
+# Desfazer: scripts/publicar_hostinger.sh --apagar site/escola-presencial/lei-lucas/index.html site/escola-presencial/lei-lucas/og-lei-lucas.jpg
+#   e republicar o .htaccess guardado no passo 2 (.htaccess nunca é apagado).
+site/escola-presencial/lei-lucas/og-lei-lucas.jpg
+# Depoimentos em vídeo (24/11/2026, PUBLICADOS): os vídeos, as capas e as legendas antes da página; o .htaccess da pasta
+# manda o .vtt como text/vtt. Autorização de imagem das três alunas: com a filial (docs/criativos/pagina-lei-lucas/LEIAME.md).
+site/escola-presencial/lei-lucas/.htaccess
+site/escola-presencial/lei-lucas/depoimento-luciana.mp4
+site/escola-presencial/lei-lucas/depoimento-luciana.webp
+site/escola-presencial/lei-lucas/depoimento-luciana.vtt
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.mp4
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.webp
+site/escola-presencial/lei-lucas/depoimento-ana-claudia.vtt
+site/escola-presencial/lei-lucas/depoimento-luciene.mp4
+site/escola-presencial/lei-lucas/depoimento-luciene.webp
+site/escola-presencial/lei-lucas/depoimento-luciene.vtt
+site/escola-presencial/lei-lucas/index.html
+site/.htaccess

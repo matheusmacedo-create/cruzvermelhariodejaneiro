@@ -215,22 +215,29 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
           <div class="ck-card">
             <form id="ck-form" novalidate autocomplete="on" data-inscricao-centavos="@@INSCRICAO_CENTAVOS@@">
               <div class="ck-armadilha" aria-hidden="true"><label>Não preencha este campo<input id="ck-site" name="site" tabindex="-1" autocomplete="off"></label></div>
-              <section class="ck-bloco-form" aria-labelledby="ck-t1">
+              <section class="ck-bloco-form ck-bloco-curso" aria-labelledby="ck-t1">
                 <h2 class="ck-bloco-titulo" id="ck-t1"><span class="ck-num">1</span> Curso</h2>
-                <label class="ck-campo"><span>Curso presencial</span>
-                  <select id="ck-curso" name="curso" required>
-                    <option value="" disabled selected>Escolha o curso</option>@@OPCOES@@
-                  </select>
-                </label>
-                <ul class="ck-curso-meta" id="ck-curso-meta" hidden>
-                  <li><i class="fa-regular fa-clock" aria-hidden="true"></i> <span id="ck-m-carga"></span></li>
-                  <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> <span id="ck-m-escolaridade"></span></li>
-                  <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Praça da Cruz Vermelha, 10 · Centro</li>
-                </ul>
+                <div class="ck-curso-fixo" id="ck-curso-fixo" hidden>
+                  <span class="ck-num ck-num-ok" aria-hidden="true"><i class="fa-solid fa-check"></i></span>
+                  <p class="ck-curso-fixo-texto"><small>Curso escolhido</small><b id="ck-cf-nome"></b><span id="ck-cf-meta"></span></p>
+                  <button type="button" class="ck-curso-trocar" id="ck-curso-trocar" aria-controls="ck-curso-escolha">Trocar</button>
+                </div>
+                <div id="ck-curso-escolha">
+                  <label class="ck-campo"><span>Curso presencial</span>
+                    <select id="ck-curso" name="curso" required>
+                      <option value="" disabled selected>Escolha o curso</option>@@OPCOES@@
+                    </select>
+                  </label>
+                  <ul class="ck-curso-meta" id="ck-curso-meta" hidden>
+                    <li><i class="fa-regular fa-clock" aria-hidden="true"></i> <span id="ck-m-carga"></span></li>
+                    <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> <span id="ck-m-escolaridade"></span></li>
+                    <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Praça da Cruz Vermelha, 10 · Centro</li>
+                  </ul>
+                </div>
               </section>
               <section class="ck-bloco-form" aria-labelledby="ck-t2">
                 <h2 class="ck-bloco-titulo" id="ck-t2"><span class="ck-num">2</span> Seus dados <small>para a inscrição e a área do aluno</small></h2>
-                <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" placeholder="Como está no seu documento" required></label>
+                <label class="ck-campo"><span>Nome completo</span><input id="ck-nome" name="nome" autocomplete="name" autocapitalize="words" placeholder="Como está no seu documento" required></label>
                 <div class="ck-2col">
                   <label class="ck-campo"><span>CPF</span><input id="ck-cpf" name="cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" required></label>
                   <label class="ck-campo"><span>Telefone (celular)</span><input id="ck-telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" required></label>
@@ -251,6 +258,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                     <button type="button" class="btn btn-outline ck-cupom-aplicar" id="ck-cupom-aplicar">Aplicar</button>
                   </div>
                   <p class="ck-cupom-msg" id="ck-cupom-msg" role="status" aria-live="polite" hidden></p>
+                  <button type="button" class="ck-cupom-trocar" id="ck-cupom-trocar" aria-controls="ck-cupom-campo" hidden>Usar outro cupom</button>
                 </div>
                 <p class="ck-rot-secao" id="ck-metodos-titulo">Forma de pagamento</p>
                 <div class="ck-metodos" role="radiogroup" aria-labelledby="ck-metodos-titulo">
@@ -281,11 +289,16 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                     <div class="ck-vocepaga"><span>Você paga</span><strong id="ck-vocepaga-valor"></strong><small>no cartão de crédito</small></div>
                   </div>
                 </div>
-                <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">@@COBRE_LEGENDA@@</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
-                <label class="ck-check" id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao"><span class="ck-check-texto">Quero ajudar na divulgação dos cursos<small id="ck-divulgacao-legenda">Opcional. Usado nos anúncios que levam os cursos a mais gente.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ R$ 0,00</span></label>
-                <label class="ck-check"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="@@ACEITE_VERSAO@@"><span class="ck-check-texto" id="ck-requisitos-texto">@@ACEITE@@</span></label>
-                <span id="ck-escolaridade" hidden></span>
+                <div class="ck-opcionais" id="ck-opcionais">
+                  <p class="ck-rot-secao">Se quiser ajudar (opcional)</p>
+                  <label class="ck-check" id="ck-cobre-opcao"><input type="checkbox" id="ck-cobre" name="cobre_taxa"><span class="ck-check-texto">Quero cobrir os custos de processamento<small id="ck-cobre-legenda">@@COBRE_LEGENDA@@</small></span><span class="ck-check-valor" id="ck-taxa-valor">+ R$ 0,00</span></label>
+                  <label class="ck-check" id="ck-divulgacao-opcao" hidden><input type="checkbox" id="ck-divulgacao" name="ajuda_divulgacao"><span class="ck-check-texto">Quero ajudar na divulgação dos cursos<small id="ck-divulgacao-legenda">Opcional. Usado nos anúncios que levam os cursos a mais gente.</small></span><span class="ck-check-valor" id="ck-divulgacao-valor">+ R$ 0,00</span></label>
+                </div>
                 <div class="ck-condicoes" id="ck-condicoes"@@P1_OCULTO@@><h3>Resumo das condições</h3><p id="ck-condicoes-texto"></p></div>
+                <p class="ck-rot-secao ck-rot-aceite">Para concluir</p>
+                <label class="ck-check ck-check-aceite" id="ck-aceite-caixa"><input type="checkbox" id="ck-requisitos" name="requisitos" required data-aceite-versao="@@ACEITE_VERSAO@@"><span class="ck-check-texto" id="ck-requisitos-texto">@@ACEITE@@</span></label>
+                <p class="ck-aceite-msg" id="ck-aceite-msg" hidden><i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Marque a caixa acima para continuar.</p>
+                <span id="ck-escolaridade" hidden></span>
                 <p class="ck-nota ck-sustenta" id="ck-sustenta"><b>@@SUSTENTA_TITULO@@.</b> @@SUSTENTA_CURTO@@ <a href="@@SUSTENTA_URL@@">Veja como a filial se financia</a>.</p>
                 <div class="ck-erro" id="ck-erro" role="alert" aria-live="assertive"></div>
                 <div class="ck-acao">
@@ -296,6 +309,7 @@ CORPO_CHECKOUT = """        <div class="ck-grid">
                   <li><i class="fa-solid fa-certificate" aria-hidden="true"></i> Certificado da Escola de Educação e Saúde</li>
                   <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Aulas presenciais no Centro do Rio</li>
                   <li><i class="fa-solid fa-lock" aria-hidden="true"></i> <span id="ck-selo-pagamento">PIX ou cartão, à vista</span></li>
+                  <li><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Desistência em até 7 dias, com o valor de volta</li>
                 </ul>
                 <div id="ck-legal-hoje"@@LEGAL_HOJE_OCULTO@@>
                   <p class="ck-nota ck-legal" style="margin:14px 0 0">Ao pagar, você concorda com os <a href="/termos/">Termos de Uso</a> e com as regras de <a href="/reembolso/">cancelamento e reembolso</a>: dá para desistir em até 7 dias depois do pagamento e receber o valor de volta (art. 49 do Código de Defesa do Consumidor). Seus dados são usados para a matrícula, a cobrança e os avisos sobre as suas aulas, como explica a <a href="/privacidade/">Política de Privacidade</a>.</p>

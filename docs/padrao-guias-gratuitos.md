@@ -22,6 +22,10 @@ Endereço curto, com o termo que as pessoas buscam (`/mochila-de-emergencia/`). 
 6. **Aprenda**, com o convite do curso e a frase de que o curso é pago e vendido pela escola.
 7. Perguntas e respostas, fontes e páginas relacionadas.
 
+A caixa de pedido do PDF aparece duas vezes (27/11/2026): logo abaixo do título, posta pelo gerador
+(`material_do_alto`), e na seção `#baixar`. No celular, a da seção ficava de 4 a 7 telas abaixo do topo. É a mesma
+caixa, com o mesmo aceite; o gerador sai com erro se o formato dela mudar.
+
 Guia de saúde ou de emergência entra também em `CONVITE_APOIO`, no gerador (19/11/2026): ganha a linha "Doe a partir
 de R$ 5" depois do índice e o bloco "Este guia é gratuito" depois da seção `#baixar`. Guia de assunto sensível (como
 `/onde-buscar-ajuda/`) e guia da escola ficam de fora.

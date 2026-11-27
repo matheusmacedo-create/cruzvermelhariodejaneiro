@@ -1,0 +1,113 @@
+# Segundo conjunto de dados da Meta (24/11/2026): fbq('init', '1580762603752102') depois do init de sempre.
+# PUBLICADO em 24/11/2026 (as 101 daqui e, sobre a cópia do ar, a home e as seis telas do checkout).
+# Em 24/11/2026 estas 101 páginas estavam no ar iguais à main, byte a byte (conferido com curl): podem sair daqui.
+# FORA da lista, de propósito:
+#   - site/index.html e as seis telas do checkout (checkout, comparecimento, conferir, horarios, parabens,
+#     pendente): no ar estão mais novas que a main (carrossel de banners da home; outro checkout.js). Publicar
+#     as do repositório desfaria isso. Nelas, copie a do ar (--copiar-do-ar), acrescente a mesma linha depois do
+#     fbq('init', '2224500131617302') e publique a cópia. São as telas que mandam InitiateCheckout, Lead e Purchase.
+#   - site/doacao.html (301, fora do ar).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-segundo-pixel.txt)
+# Conferir: scripts/conferir_publicacao.sh scripts/publicacao-segundo-pixel.txt
+#           NODE_PATH=$(npm root -g) node scripts/conferir_pixel.js
+site/404.html
+site/acidentes-em-casa/index.html
+site/base-legal/index.html
+site/bazar/index.html
+site/bio/index.html
+site/campanha-agasalho.html
+site/cartaz-da-cruz-vermelha/index.html
+site/cbfi/index.html
+site/checklist-dengue/index.html
+site/como-produzimos-nosso-conteudo/index.html
+site/cookies/index.html
+site/cuidador-de-idosos/index.html
+site/cursos-gratuitos/index.html
+site/dia-das-criancas/index.html
+site/direito-internacional-humanitario/index.html
+site/doacao-indisponivel.html
+site/doe/index.html
+site/doe/obrigado/index.html
+site/emblema/index.html
+site/empresas-e-orgaos-publicos/index.html
+site/en/404.html
+site/en/archive/index.html
+site/en/cookies/index.html
+site/en/courses/index.html
+site/en/donate/index.html
+site/en/faq/index.html
+site/en/history/index.html
+site/en/how-we-produce-our-content/index.html
+site/en/index.html
+site/en/international-humanitarian-law/index.html
+site/en/news/7-september-parade-registration-of-branch-volunteers/index.html
+site/en/news/alcoholics-anonymous-sign-language-meeting-in-leblon-marks-79-years/index.html
+site/en/news/basic-first-aid-course-what-to-do-in-the-first-minutes/index.html
+site/en/news/basic-life-support-bls-course-what-it-is-and-who-it-is-for/index.html
+site/en/news/branch-welcomes-the-rio-de-janeiro-state-civil-firefighters-association/index.html
+site/en/news/caps-and-capsi-public-mental-health-services-in-mare-alemao-and-penha/index.html
+site/en/news/carer-for-older-people-course-what-carers-do-and-how-to-train/index.html
+site/en/news/choco-ifrc-emergency-appeal-supports-the-colombian-red-cross/index.html
+site/en/news/civil-firefighter-course-what-the-job-involves-and-how-to-qualify-in-rio/index.html
+site/en/news/deam-digital-rj-how-to-report-domestic-violence-online/index.html
+site/en/news/fire-brigade-helicopter-on-the-beach-what-to-do-and-what-to-avoid/index.html
+site/en/news/geneva-conventions-what-they-are-and-what-they-protect/index.html
+site/en/news/health-in-schools-quiz-on-vaping-hpv-and-condoms-in-rio/index.html
+site/en/news/henry-dunant-who-was-the-founder-of-the-red-cross/index.html
+site/en/news/icrc-what-is-the-international-committee-of-the-red-cross/index.html
+site/en/news/index.html
+site/en/news/knowledge-saves-lives-too-the-branch-takes-its-courses-to-the-public/index.html
+site/en/news/lucas-law-what-it-requires-of-brazilian-schools-and-how-to-train-staff/index.html
+site/en/news/peripheral-iv-cannulation-course-who-it-is-for-and-what-you-learn/index.html
+site/en/news/tim-maia-cycle-path-closed-on-2-september-due-to-heavy-surf/index.html
+site/en/news/yellow-september-and-suicide-prevention/index.html
+site/en/our-team/index.html
+site/en/privacy/index.html
+site/en/refunds/index.html
+site/en/terms/index.html
+site/en/who-founded-the-red-cross/index.html
+site/en/winter-clothing-drive/index.html
+site/equipe.html
+site/es/404.html
+site/es/acervo/index.html
+site/es/como-producimos-nuestro-contenido/index.html
+site/es/cookies/index.html
+site/es/cursos/index.html
+site/es/derecho-internacional-humanitario/index.html
+site/es/donar/index.html
+site/es/index.html
+site/es/nuestro-equipo/index.html
+site/es/preguntas-frecuentes/index.html
+site/es/privacidad/index.html
+site/es/reembolsos/index.html
+site/es/terminos/index.html
+site/febre-em-crianca/index.html
+site/gestao/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/historia/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-emergencia/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/matricula-cursos-presenciais/index.html
+site/matricula-cursos-presenciais/pagar-matricula/index.html
+site/mochila-de-emergencia/index.html
+site/movimento-internacional/index.html
+site/onde-buscar-ajuda/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/principios-fundamentais/index.html
+site/privacidade/index.html
+site/projetocores/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/quem-somos/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/reembolso/index.html
+site/termos/index.html
+site/verao-seguro/index.html
+site/voluntariado/cadastro/index.html
+site/voluntariado/index.html

@@ -1,0 +1,36 @@
+# Caixa de pedido do PDF no alto dos guias (27/11/2026, pedido do Matheus: "fazer essas páginas grandes captadoras de
+# leads"; publicação autorizada com "sim, pode publicar as duas").
+# O que mudou: nas 21 páginas de guia com pedido por e-mail, a mesma caixa da seção do PDF aparece também logo abaixo
+# do título ("Receba o guia no seu e-mail, grátis"), com o mesmo material e o mesmo aceite. O pedido aceito numa caixa
+# libera as duas. Em 390 px, o campo de e-mail passou de 3.800 a 5.600 px do topo para 660 a 780 px.
+# ESTADO: PUBLICADO em 27/11/2026, a partir do branch claude/peaceful-hypatia-o0vp3y (que já traz o segundo conjunto
+# de dados da Meta, 1580762603752102). Antes de enviar: cópia das 21 páginas do servidor, iguais à cópia pública; a
+# diferença para o que estava no ar era só a caixa nova, o script das duas caixas e, em 20 páginas, a linha do
+# El Niño em "Mais guias gratuitos" (pendente desde 24/11, ver publicacao-el-nino.txt). A /el-nino/ ganhou também o
+# segundo conjunto de dados da Meta, que as outras 20 já tinham. Cache limpo. Conferido: as 21 páginas no servidor
+# iguais ao Git, byte a byte; num Chromium em 390 px, as 21 com duas caixas, sem rolagem lateral, sem id repetido,
+# sem erro de JavaScript e com o envio respondido no teste liberando as duas caixas (nada foi gravado).
+# NÃO TESTADO: um pedido de verdade, com e-mail real, pela caixa do alto.
+# Para desfazer: scripts/desfazer_publicacao.sh <commit anterior> scripts/publicacao-caixa-do-alto.txt e limpar o cache.
+# A página do kit de emergência não entrou: ela entrega o PDF sem pedir e-mail (decisão pendente do responsável).
+site/acidentes-em-casa/index.html
+site/cartaz-da-cruz-vermelha/index.html
+site/checklist-dengue/index.html
+site/cuidador-de-idosos/index.html
+site/el-nino/index.html
+site/febre-em-crianca/index.html
+site/guia-do-bombeiro-civil/index.html
+site/guia-dos-cursos/index.html
+site/intoxicacao-alimentar/index.html
+site/kit-de-primeiros-socorros/index.html
+site/lei-lucas-para-escolas/index.html
+site/manual-de-identidade/index.html
+site/mochila-de-emergencia/index.html
+site/onde-buscar-ajuda/index.html
+site/plano-de-contingencia/index.html
+site/plano-familiar-de-emergencia/index.html
+site/pressao-alta-e-pressao-baixa/index.html
+site/quando-ligar-192/index.html
+site/queimaduras/index.html
+site/rcp-e-manobra-de-heimlich/index.html
+site/verao-seguro/index.html

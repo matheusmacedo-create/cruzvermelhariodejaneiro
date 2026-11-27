@@ -1,9 +1,11 @@
 <?php
 /**
- * GET ?curso={slug}&cobre=0|1&divulgacao=0|1: as parcelas no cartão da opção "Taxa de inscrição + matrícula" (pagar
+ * GET ?curso={slug}&cobre=0|1&divulgacao=0|1[&cupom=CODIGO]: as parcelas no cartão da opção "Taxa de inscrição + matrícula" (pagar
  * tudo, spec 2.4). O amount sai do servidor (mcp_compra, preço real, cartão); as opções, da simulação da Unicopag
  * (cache de 10 min, filtros a cada leitura). Cada opção devolvida fica registrada como mostrada: é o que vale para a
  * validade de 48 h na hora de cobrar. Freio: 40 consultas por IP a cada 10 minutos. Contrato: contrato-api.md, seção 2.
+ * Com cupom (24/11/2026): o amount é o da compra com o cupom (lib/cupons.php), como o pagamentos.php vai cobrar. Cupom
+ * que não vale para o curso, vencido ou de grupo: a simulação sai sem ele (o de grupo é só à vista; a tela não pede).
  */
 declare(strict_types=1);
 require __DIR__ . '/lib.php';
@@ -27,6 +29,13 @@ if (mcp_contar_eventos_recentes('parcelas_consulta', $balde, $janela) >= $maximo
 mcp_registrar(null, 'parcelas_consulta', $balde);
 
 $compra = mcp_compra($curso, 'taxa_e_matricula', 'cartao', ($_GET['cobre'] ?? '0') === '1', ($_GET['divulgacao'] ?? '0') === '1', 1);
+$codigoCupom = mcp_cupom_normalizar($_GET['cupom'] ?? '');
+if ($codigoCupom !== '') {
+    $cupom = mcp_cupom($codigoCupom, (string) $curso['slug']);
+    if (!isset($cupom['erro']) && mcp_cupom_grupo($cupom) <= 1) {
+        $compra = mcp_compra_com_cupom($compra, $cupom);
+    }
+}
 $opcoes = mcp_parcelas_opcoes($compra['amount']);
 mcp_parcelas_registrar_exibidas($compra['amount'], $opcoes);
 mcp_json([

@@ -34,6 +34,13 @@
   RewriteRule ^(voluntario|seja-voluntario)/?$ /voluntariado/ [R=301,L]
   RewriteRule ^contato/?$ /#contato [R=301,L]
 
+  # Página de venda do curso Lei Lucas (24/11/2026): /escola-presencial/lei-lucas/. As grafias sem hífen levam ao
+  # endereço oficial (a origem do anúncio na query segue junto), e a pasta /escola-presencial/, que não tem página
+  # própria, leva à vitrine dos cursos (302: pode ganhar uma página depois).
+  RewriteRule ^escolapresencial/lei-?lucas/?$ /escola-presencial/lei-lucas/ [R=301,L]
+  RewriteRule ^escola-presencial/leilucas/?$ /escola-presencial/lei-lucas/ [R=301,L]
+  RewriteRule ^escola-?presencial/?$ /matricula-cursos-presenciais/ [R=302,L]
+
   # Ponto da sede: o QR code do cartaz da recepção aponta para /ponto/. /conferir/ é o endereço
   # impresso nos comprovantes de comparecimento e nas declarações de horas (a query ?c= segue junto).
   # 302 e não 301: o endereço de destino pode mudar sem o navegador guardar o antigo.

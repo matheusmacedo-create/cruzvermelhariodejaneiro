@@ -1,9 +1,47 @@
 # Rastreamento (GA4 e Meta Pixel), revisado em 19/09/2026
 
 IDs em uso: GA4 `G-HDYZZ5JZHF` e Meta Pixel `2224500131617302`, os mesmos em todas as páginas
-deste repositório. A verificação foi feita ao vivo, no navegador, capturando o que cada página envia
+deste repositório (desde 24/11/2026, também o conjunto `1580762603752102`: seção abaixo). A verificação foi feita ao vivo, no navegador, capturando o que cada página envia
 e interceptando as chamadas `gtag()` e `fbq()`; o fluxo do checkout foi testado com a resposta da
 API simulada, sem criar transação.
+
+## Dois conjuntos de dados da Meta (publicado em 24/11/2026)
+
+As campanhas de novembro rodam na conta de anúncios "3" (`2438819769904784`), do portfólio **NND Negocios Locais**.
+O Pixel do site, `2224500131617302`, é do portfólio **Sophya.ia** e só está ligado à conta "CruzVermelha", que a Meta
+marca como `UNSETTLED` e não deixa consultar. A conta "3" não enxerga nenhum evento do site: as campanhas otimizam por clique e não mostram
+inscrição nem compra. A Meta não deixa o Sophya.ia compartilhar o Pixel com um parceiro (portfólio novo, "após várias
+semanas").
+
+Saída: as páginas passam a iniciar também o conjunto **`1580762603752102`** ("Cruz Vermelha Rio de Janeiro", do NND, já
+ligado à conta "3"), com um segundo `fbq('init')` no bloco de medição da home, logo depois do primeiro. Todo
+`fbq('track')` e `fbq('trackCustom')` sai para os dois, com o mesmo `eventID`. Nada muda no consentimento: o
+`fbevents.js` continua só com "sim" para marketing.
+
+- **O que o conjunto novo recebe:** só os eventos do navegador (PageView, ViewContent, InitiateCheckout, Lead,
+  AddPaymentInfo, Purchase, Contact, CompleteRegistration, SubmitApplication). A API de Conversões continua indo só
+  para o primeiro (`MCP_META_PIXEL` e o token são dele): compra confirmada sem navegador (postback, outro aparelho) e
+  visita com bloqueador não chegam ao novo. Para chegarem, falta um token do conjunto novo e o envio em dobro em
+  `api/lib/meta.php`.
+- **O histórico não se transfere:** a Meta não importa eventos de um conjunto para outro. O primeiro segue recebendo
+  tudo, como antes. As contagens por hora de 27/10 a 24/11/2026 (Contact, Lead, AddPaymentInfo, Purchase e
+  CompleteRegistration, navegador e servidor, sem deduplicar), exportadas do Gerenciador de Eventos, estão em
+  `docs/dados/pixel-2224500131617302-eventos-por-hora-2026-10-27-a-2026-11-24.csv` (horário como veio na exportação).
+- **Fora desta mudança:** as páginas geradas pela Redação (`lib/site/analytics.ts`: notícias, acervo, transparência),
+  a escola e os apps da Vercel continuam só com o primeiro conjunto.
+- **Conferência:** `scripts/conferir_pixel.js` passou a exigir cada evento nos dois conjuntos, com o mesmo id (os
+  eventos que o próprio Pixel cria, como `SubscribedButtonClick`, saem com um id por conjunto). Com `--repositorio`,
+  15 de 15 cenários em 24/11/2026.
+- **Publicado em 24/11/2026**, com a autorização do responsável: as 101 páginas de
+  `scripts/publicacao-segundo-pixel.txt`, depois de copiar as do servidor (iguais à `main`, byte a byte), e a home e
+  as seis telas do checkout, que estão mais novas no ar que na `main`: nelas a linha entrou sobre a cópia do ar (só
+  as quatro linhas a mais), não sobre o repositório. Cache limpo em seguida. Conferido no ar: as 108 páginas iguais
+  ao que foi enviado e `conferir_pixel.js` com 15 de 15. **A home e as telas do checkout deste repositório continuam
+  diferentes das do ar** (já eram antes desta mudança): quem for publicá-las de novo precisa partir da cópia do ar ou
+  trazer para a `main` o que falta.
+- **Para desfazer:** tirar as quatro linhas (o comentário e o segundo `init`) das 108 páginas e publicar de novo.
+- **Quando o Sophya.ia puder compartilhar o Pixel:** ligar o `2224500131617302` à conta "3" e decidir se o segundo
+  `init` sai.
 
 ## Cobertura por página
 
@@ -85,6 +123,53 @@ O que a conferência também mostrou:
   é problema"). Na importação para o Google Ads, escolha a propriedade `G-HDYZZ5JZHF`.
 - As telas com `?t=<token>` (Parabéns, pendente, horários, obrigado da doação) mandam o endereço inteiro no
   `page_view` do GA4 e no `PageView` da Meta. Ver Pendências.
+
+## Página de venda do curso Lei Lucas (`/escola-presencial/lei-lucas/`, 24/11/2026)
+
+A página entra no mesmo funil da matrícula: os eventos têm os mesmos nomes e o mesmo `item_id`
+(`primeiros-socorros-lei-lucas`), e o botão leva ao checkout, onde o `begin_checkout` e o resto continuam como estão.
+O que a separa da matrícula nos relatórios é o `item_list_name` ("Página Lei Lucas") e o `via` do checkout
+(`lp-lei-lucas-<local>`). Grupo de conteúdo: `escola`.
+
+| Momento | Meta | GA4 |
+| --- | --- | --- |
+| Abre a página (depois do `info.php`, no máximo 2,5 s) | `ViewContent` (value = preço do estado; `eventID` repassado à API de Conversões) | `view_item` (value, `oferta`, `origem=pagina_lei_lucas`, items com `coupon=PRO12` no estado cupom) e `view_course_details` |
+| Toca num botão de inscrição | (nada: o `InitiateCheckout` vem no checkout) | `select_item` e `click_enroll` (`local` = cabecalho, topo, conteudo, investimento, final ou barra; `oferta`) |
+| Toca em "Dúvidas?" ou num atalho do chat | (o chat manda os dele) | `chat_atalho` (`local`) |
+| Toca em "Pedir uma turma para a escola" | | `contact_company_training` (`local` = turma_fechada ou duvida_turma) |
+| Toca em "Abrir no Google Maps" | | `como_chegar` |
+| Cada seção aparece na tela (uma vez) | | `secao_vista` (`secao`, `pagina=lei_lucas`) |
+| Começa ou termina um depoimento em vídeo (uma vez cada) | | `depoimento_video` (`video` = luciana, ana-claudia ou luciene; `acao` = inicio ou fim) |
+
+**Conferência de 24/11/2026, com a página no ar.** Pela rede, sem nada chegar à Meta nem ao GA4 (cenários sem
+escolha, rejeitar, aceitar e quem já tinha aceitado):
+
+- Meta: nada sai sem consentimento nem com "Rejeitar". Com "Aceitar todos", `PageView` e `ViewContent` (value 140, BRL,
+  `content_ids` com o slug), cada um com o `eventID` que o repasse à API de Conversões leva igual; o `fbclid` da chegada
+  vira `fbc`. No checkout seguem `PageView` e `InitiateCheckout`.
+- GA4: `page_view`, `view_item` (value 140, BRL, `coupon=PRO12`, lista "Página Lei Lucas"), `view_course_details` e
+  `secao_vista` nas duas propriedades (G-HDYZZ5JZHF e G-Z5NWV4RBTT); as `utm_*` e o `gclid` chegam no endereço e seguem
+  para o checkout, que manda `begin_checkout`. No tempo real da propriedade apareceram a página (pelo título),
+  `view_item` e `begin_checkout`.
+- Toque no botão: `select_item` (value 140, `local`) e `click_enroll` saem quando a página está sendo trocada pelo
+  checkout. Nem a rota do Playwright nem o `Network.requestWillBeSent` enxergam esse envio, e com rota ativa ele se
+  perde: parecia que os dois eventos não existiam, também na página de matrícula. Só apareceram com um proxy em cadeia
+  que desvia os endereços de coleta do GA4 para um receptor local. Quem conferir cliques que levam a outra página deve
+  usar esse caminho, ou olhar o relatório do GA4 no dia seguinte.
+- **Faltava o segundo conjunto de dados da Meta** (`1580762603752102`, o que a conta de anúncios enxerga): a página foi
+  gerada da `main`, antes de o branch do segundo conjunto ser juntado, e foi ao ar só com o primeiro. Corrigido no
+  repositório (o branch do segundo conjunto foi juntado a este e a página regerada: os dois `fbq('init')`), com quatro
+  cenários da página em `scripts/conferir_pixel.js` (19 de 19 com `--repositorio`). **Republicada no mesmo dia** e
+  conferida no ar: 19 de 19, `PageView` e `ViewContent` da página nos dois conjuntos. Entre a primeira publicação e a
+  correção (cerca de duas horas), a página só mandou eventos ao primeiro conjunto.
+- Visto e não mexido: no checkout, `InitiateCheckout` e `begin_checkout` saem com value 249 mesmo com o cupom que leva a
+  140 (o valor é o do carregamento, antes de o cupom ser aplicado); o `Purchase` leva o valor pago.
+- Quatro visitas de teste chegaram ao GA4 de verdade (endereço com `conferir=1` ou `utm_source=teste-medicao`), com
+  consentimento só de estatística: nada delas foi à Meta.
+
+`oferta` é o estado da página: `cupom`, `tabela` ou `encerrada`. O value do `view_item` e do `select_item` é 140 com o
+cupom valendo e 249 sem ele. Para ver `oferta` e `secao` nos relatórios, registre as duas como dimensões de evento no
+GA4 (o registro não vale para trás).
 
 ## Etapa e erro no checkout e no cadastro de voluntário (24/10/2026)
 
