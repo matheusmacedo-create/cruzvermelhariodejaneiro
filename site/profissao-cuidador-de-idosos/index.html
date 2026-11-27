@@ -145,6 +145,17 @@
     .inst-secao .inst-material-recado:empty { display: none; }
     .inst-secao .inst-material-recado[data-erro] { color: #991b1b; }
     .inst-secao .inst-material-baixar { margin: 14px 0 0; }
+    /* A caixa do alto (27/11/2026): o mesmo pedido da seção do PDF, logo abaixo do título, para caber na primeira tela. */
+    .inst-material-topo { grid-template-columns: 1fr; gap: 14px; max-width: 620px; margin: 22px 0 6px; padding: 20px; background: #fff; box-shadow: 0 10px 28px rgba(0, 0, 0, .08); }
+    .inst-material-topo .inst-material-cab { display: flex; gap: 14px; align-items: center; }
+    .inst-material-topo .inst-material-capa { flex: 0 0 76px; max-width: 76px; box-shadow: 0 3px 10px rgba(0, 0, 0, .12); }
+    .inst-material-topo .inst-material-titulo { margin: 0 0 4px; font-size: 1.3rem; line-height: 1.25; font-weight: 800; color: var(--black); }
+    .inst-material-topo .inst-material-ficha { margin: 0; font-size: .88rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .inst-material-topo .inst-material-como { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--text); }
+    .inst-material-topo .inst-material-recado { margin: 4px 0 0; font-size: 1.05rem; line-height: 1.5; font-weight: 600; color: #14532d; }
+    .inst-material-topo .inst-material-recado:empty { display: none; }
+    .inst-material-topo .inst-material-recado[data-erro] { color: #991b1b; }
+    .inst-material-topo .inst-material-baixar { margin: 4px 0 0; }
     @media (max-width: 620px) {
       .inst-material { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
       .inst-material-capa { max-width: 150px; }
@@ -187,6 +198,10 @@
   // Sem fbq('consent', 'revoke') antes do init: o fbevents.js só é baixado com consentimento, e um revoke
   // na fila travava o Pixel (o grant ficava atrás do PageView e nada era enviado, nem com "Aceitar todos").
   fbq('init', '2224500131617302');
+  // Segundo conjunto de dados (24/11/2026): o do portfólio NND Negocios Locais, o único que a conta de anúncios
+  // das campanhas enxerga. O primeiro é de outro portfólio, que a Meta ainda não deixa compartilhar. Todo
+  // fbq('track') vai aos dois; a API de Conversões (servidor) segue só para o primeiro.
+  fbq('init', '1580762603752102');
   // O mesmo id vai no PageView que o servidor do site repassa à Meta (API de Conversões): ela junta os dois.
   window.cvrjIdPageView = 'pv.' + Date.now().toString(36) + '.' + Math.random().toString(36).slice(2, 10);
   fbq('track', 'PageView', {}, { eventID: window.cvrjIdPageView });
@@ -484,6 +499,7 @@
         <p class="eyebrow">Profissão e formação</p>
         <h1 id="inst-titulo">Cuidador de idosos: o que faz, quanto ganha e quais são os direitos</h1>
         <p class="lead">Para quem pensa em trabalhar como cuidador e para a família que vai contratar um. O que a função faz e o que não faz, de que depende o salário, os direitos de quem trabalha em residência, a diferença entre diarista e empregado, a situação da regulamentação da profissão e uma ficha de combinados para imprimir.</p>
+        <div class="inst-material inst-material-topo" data-material="profissao-cuidador-de-idosos" data-evento="profcuidador_pedir" data-chave="profissao-cuidador-de-idosos-liberado"><div class="inst-material-miolo"><div class="inst-material-cab"><figure class="inst-material-capa"><img src="/profissao-cuidador-de-idosos/capa-profissao-cuidador-de-idosos.webp" width="480" height="679" alt="Primeira folha do guia da profissão de cuidador de idosos: o logotipo da Cruz Vermelha Brasileira no Rio de Janeiro e a lista dos direitos do empregado doméstico, com um quadradinho para marcar cada um"></figure><div><h2 class="inst-material-titulo" id="receber">Receba o guia no seu e-mail, grátis</h2><p class="inst-material-ficha">PDF · 3 folhas · para imprimir</p></div></div><p class="inst-material-como">O botão de baixar aparece aqui na hora. Serve para ler no celular ou imprimir.</p><form class="inst-material-form" action="https://redacao.cruzvermelhariodejaneiro.org/api/newsletter/inscrever" method="post"><input type="hidden" name="material" value="profissao-cuidador-de-idosos"><label class="inst-material-armadilha" aria-hidden="true">Não preencha este campo <input type="text" name="site" tabindex="-1" autocomplete="off"></label><label class="inst-material-rotulo" for="inst-material-email-topo">Seu e-mail</label><input id="inst-material-email-topo" type="email" name="email" autocomplete="email" inputmode="email" placeholder="nome@exemplo.com" required><label class="inst-material-aceite"><input type="checkbox" name="consentimento" value="1" required><span>Autorizo a Cruz Vermelha Brasileira — Filial Rio de Janeiro a enviar para o meu e-mail o guia da profissão de cuidador de idosos e, depois, notícias, campanhas e informações sobre cursos. Sei que posso sair da lista a qualquer momento pelo link presente em todas as mensagens.</span></label><button type="submit" class="btn btn-red">Liberar o download</button></form><p class="inst-material-recado" role="status" aria-live="polite"></p><p class="inst-material-baixar" hidden><a class="btn btn-red" href="/profissao-cuidador-de-idosos/profissao-cuidador-de-idosos-cruz-vermelha-rj.pdf" download data-evento="profcuidador_baixar" data-origem="pagina">Baixar o guia em PDF</a></p></div></div>
         <ul class="inst-indice" aria-label="Nesta página">
           <li><a href="#o-que-e">O que faz e quanto ganha um cuidador de idosos</a></li>
           <li><a href="#lista">Os direitos de quem trabalha em residência</a></li>
@@ -784,12 +800,19 @@
 <script>
   /* Material com e-mail: manda o pedido para a Redação e, aceito, mostra o botão de baixar (gerar_institucional.py). */
   (function () {
-    var caixa = document.querySelector('.inst-material'); if (!caixa) return;
-    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
-    var chave = caixa.getAttribute('data-chave');
-    function liberar(recado) { f.hidden = true; baixar.hidden = false; r.removeAttribute('data-erro'); r.textContent = recado; }
+    var caixas = [].slice.call(document.querySelectorAll('.inst-material')); if (!caixas.length) return;
+    // A página pode ter duas caixas do mesmo material: a do alto e a da seção do PDF. O pedido aceito numa libera as duas.
+    function liberar(recado) {
+      caixas.forEach(function (c) {
+        var cf = c.querySelector('form'), cr = c.querySelector('.inst-material-recado'), cb = c.querySelector('.inst-material-baixar');
+        cf.hidden = true; cb.hidden = false; cr.removeAttribute('data-erro'); cr.textContent = recado;
+      });
+    }
+    var chave = caixas[0].getAttribute('data-chave');
     try { if (window.localStorage && localStorage.getItem(chave)) liberar('Você já deixou o seu e-mail neste aparelho. Toque no botão para baixar.'); } catch (e) {}
     if (!window.fetch) return;
+    caixas.forEach(function (caixa) {
+    var f = caixa.querySelector('form'), r = caixa.querySelector('.inst-material-recado'), baixar = caixa.querySelector('.inst-material-baixar');
     f.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var b = f.querySelector('button[type=submit]'), rotulo = b.textContent, d = new FormData(f);
@@ -811,6 +834,7 @@
         })
         .catch(function () { r.setAttribute('data-erro', '1'); r.textContent = 'Não foi possível concluir agora. Confira a sua conexão e tente de novo.'; })
         .then(function () { b.disabled = false; b.textContent = rotulo; });
+    });
     });
   })();
 </script>

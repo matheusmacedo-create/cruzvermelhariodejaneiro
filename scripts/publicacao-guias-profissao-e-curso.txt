@@ -11,9 +11,11 @@
 #      como-ser-socorrista (seções "samu" e "condutor").
 #   1. A Redação primeiro: mesclar o PR que cadastra os sete materiais (lib/newsletter/materiais.ts). Sem ele, a rota
 #      responde "Este formulário está desatualizado" e ninguém consegue liberar o botão.
-#   2. Conferir que o que está no ar é igual à main (scripts/publicar_hostinger.sh --copiar-do-ar). Em 24/11/2026 as
-#      páginas dos guias no ar tinham um segundo pixel da Meta que não estava na main: ver scripts/publicacao-el-nino.txt.
-#      Se ainda for assim, publicar só as sete pastas novas e deixar as 22 páginas antigas para depois.
+#   2. BASE: este branch foi montado sobre claude/peaceful-hypatia-o0vp3y, que em 27/11/2026 não estava na main e era
+#      igual ao que está no ar (caixa do alto dos guias, segundo pixel da Meta, página do Lei Lucas). Por isso as sete
+#      páginas novas já saem com a caixa do alto e os dois pixels, e as 22 antigas só ganham as sete linhas de
+#      "Mais guias gratuitos". Antes de publicar, conferir de novo que o ar é igual a essa base
+#      (scripts/publicar_hostinger.sh --copiar-do-ar); se alguém publicou por fora, parar e avisar.
 #   3. Os PDFs e as capas, depois as sete páginas novas, depois as páginas dos outros guias.
 #   4. Limpar o cache e conferir os arquivos no ar; pedir um guia com um e-mail de teste.
 #   5. Regerar e publicar os sitemaps (python3 scripts/gerar_sitemaps.py) e pedir a indexação das sete páginas.
