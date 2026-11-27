@@ -2,7 +2,7 @@
  "slug": "profissao-cuidador-de-idosos",
  "arquivo": "profissao-cuidador-de-idosos-cruz-vermelha-rj.pdf",
  "capa": "capa-profissao-cuidador-de-idosos.webp",
- "titulo": "Cuidador de idosos: direitos e ficha de combinados",
+ "titulo": "Cuidador de idosos: direitos e combinados",
  "sub": "Para o cuidador e para a família que contrata. Marque com um X cada direito conferido e preencha a ficha juntos, antes do primeiro dia.",
  "credito": "Resumo da filial, com base na Lei Complementar 150/2015, na CBO e na Nota Técnica 40/2025 do Ministério da Saúde. Não substitui a lei nem a orientação de um contador ou do sindicato",
  "folhas": [
@@ -80,6 +80,9 @@
       "Assinatura da família:",
       "Assinatura do cuidador:"
      ]
+    },
+    {
+     "tipo": "curso"
     }
    ]
   }
