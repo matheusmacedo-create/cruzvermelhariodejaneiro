@@ -85,7 +85,9 @@ ORDEM = ["quem-somos", "principios-fundamentais", "movimento-internacional", "em
          "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia", "quando-ligar-192",
          "verao-seguro", "el-nino", "acidentes-em-casa", "checklist-dengue", "cuidador-de-idosos",
          "rcp-e-manobra-de-heimlich", "febre-em-crianca", "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "queimaduras",
-         "guia-do-bombeiro-civil", "guia-dos-cursos", "onde-buscar-ajuda", "bazar", "lei-lucas-para-escolas",
+         "guia-do-bombeiro-civil", "guia-dos-cursos", "curso-de-primeiros-socorros", "curso-de-cuidador-de-idosos",
+         "profissao-cuidador-de-idosos", "curso-de-bombeiro-civil", "brigada-de-incendio", "como-ser-socorrista",
+         "curso-de-baba", "onde-buscar-ajuda", "bazar", "lei-lucas-para-escolas",
          "plano-de-contingencia", "empresas-e-orgaos-publicos", "cartaz-da-cruz-vermelha"]
 # Páginas de "Quem somos" (trilha Início › Quem somos › Página), do voluntariado (Início › Voluntariado › Página), as que
 # complementam o guia do kit (Início › Kit de emergência › Página) e as de "Atuação" (Início › Página).
@@ -110,7 +112,13 @@ NOMES_CURTOS = {"quem-somos": "Quem somos", "principios-fundamentais": "Princíp
                 "queimaduras": "Queimaduras", "onde-buscar-ajuda": "Onde buscar ajuda", "cartaz-da-cruz-vermelha": "A Cruz Vermelha em uma página",
                 "bazar": "Bazar solidário",
                 "lei-lucas-para-escolas": "Lei Lucas para escolas", "plano-de-contingencia": "Plano de contingência",
-                "empresas-e-orgaos-publicos": "Empresas e órgãos públicos"}
+                "empresas-e-orgaos-publicos": "Empresas e órgãos públicos",
+                "curso-de-primeiros-socorros": "Curso de primeiros socorros",
+                "curso-de-cuidador-de-idosos": "Curso de cuidador de idosos",
+                "profissao-cuidador-de-idosos": "Cuidador de idosos: a profissão",
+                "curso-de-bombeiro-civil": "Bombeiro civil: profissão e curso",
+                "brigada-de-incendio": "Brigada de incêndio", "como-ser-socorrista": "Como ser socorrista",
+                "curso-de-baba": "Babá e cuidador infantil"}
 # Os guias gratuitos. Cada guia lista os outros no fim da página ("Mais guias gratuitos"): na revisão de SEO de
 # 16/11/2026, dez deles não recebiam nenhum link de outra página do site (só o sitemap os citava), e página sem
 # link interno o Google rastreia pouco e classifica mal. Guia novo = uma linha aqui.
@@ -118,10 +126,12 @@ GUIAS = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorro
          "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
          "pressao-alta-e-pressao-baixa", "intoxicacao-alimentar", "verao-seguro", "el-nino", "checklist-dengue",
          "cuidador-de-idosos", "onde-buscar-ajuda", "guia-dos-cursos", "guia-do-bombeiro-civil",
+         "curso-de-primeiros-socorros", "curso-de-cuidador-de-idosos", "profissao-cuidador-de-idosos",
+         "curso-de-bombeiro-civil", "brigada-de-incendio", "como-ser-socorrista", "curso-de-baba",
          "lei-lucas-para-escolas", "plano-de-contingencia", "cartaz-da-cruz-vermelha", "manual-de-identidade"]
 # Os guias que levam o convite para apoiar (19/11/2026): os de saúde e de emergência. Ficam de fora, de propósito:
 # onde-buscar-ajuda (trata de suicídio e violência: não é lugar para pedir doação), os guias da escola
-# (guia-dos-cursos, guia-do-bombeiro-civil) e os institucionais (cartaz-da-cruz-vermelha, manual-de-identidade).
+# (guia-dos-cursos, guia-do-bombeiro-civil e os sete de profissão e curso de 27/11/2026) e os institucionais (cartaz-da-cruz-vermelha, manual-de-identidade).
 # As páginas fora de GUIAS (quem somos, voluntariado, formação, base legal, empresas...) nunca entram.
 CONVITE_APOIO = ["kit-de-emergencia", "mochila-de-emergencia", "kit-de-primeiros-socorros", "plano-familiar-de-emergencia",
                  "quando-ligar-192", "rcp-e-manobra-de-heimlich", "acidentes-em-casa", "queimaduras", "febre-em-crianca",
