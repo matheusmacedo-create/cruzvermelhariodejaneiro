@@ -302,7 +302,8 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   formação em saúde, motivação, experiência, habilidades, consentimentos), com o logo pequeno, o cabeçalho curto e a foto
   no alto, à direita. Quem escreveu muito sai com a letra menor: cada ficha é desenhada na maior escala de
   `MCP_VOL_FICHA_FATORES` em que cabe numa folha (a mais cheia possível, com tudo marcado e os três textos no limite,
-  cabe). A ficha individual do portal e do Drive não mudou. Código: `mcp_voluntarios_fichas_completas_pdf()`.
+  cabe). A ficha individual do portal e do Drive não mudou. Código: `mcp_voluntarios_fichas_completas_pdf()`. No ar desde
+  27/11/2026: 232 fichas em 232 páginas, 5,6 MB, em 10 segundos.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,
