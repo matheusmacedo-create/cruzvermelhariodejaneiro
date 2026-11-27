@@ -763,8 +763,12 @@ def material_do_alto(p: dict) -> str:
         capa = re.search(r'<figure class="inst-material-capa">.*?</figure>', bloco, re.S)
         ficha = re.search(r'<p class="inst-material-ficha">.*?</p>', bloco, re.S)
         assert capa and ficha and 'id="inst-material-email"' in bloco, f"{p['slug']}: a caixa do material mudou de formato"
-        cab = (f'<div class="inst-material-cab">{capa.group(0)}<div><h2 class="inst-material-titulo" id="receber">Baixe o PDF, é grátis</h2>'
-               f'{ficha.group(0)}</div></div><p class="inst-material-como">Informe o seu e-mail: o botão de baixar aparece na hora.</p>')
+        # O título fala do que a pessoa recebe ("o guia", "o cartaz", "a lista"), não do formato do arquivo: o nome
+        # sai do botão de baixar da própria caixa ("Baixar o guia em PDF").
+        nome = re.search(r">Baixar (.+?) em PDF<", bloco)
+        objeto = nome.group(1) if nome else "o material"
+        cab = (f'<div class="inst-material-cab">{capa.group(0)}<div><h2 class="inst-material-titulo" id="receber">Receba {esc(objeto)} no seu e-mail, grátis</h2>'
+               f'{ficha.group(0)}</div></div><p class="inst-material-como">O botão de baixar aparece aqui na hora. Serve para ler no celular ou imprimir.</p>')
         bloco = bloco.replace(capa.group(0), "", 1).replace(ficha.group(0), "", 1)
         bloco = bloco.replace('<div class="inst-material-miolo">', '<div class="inst-material-miolo">' + cab, 1)
         bloco = bloco.replace('class="inst-material"', 'class="inst-material inst-material-topo"', 1)
