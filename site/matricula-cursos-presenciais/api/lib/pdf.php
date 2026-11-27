@@ -1,7 +1,7 @@
 <?php
 /**
  * Gerador de PDF mínimo, sem biblioteca: páginas A4 com retângulos, cantos arredondados, fios,
- * texto em Helvetica e uma imagem PNG. O comprovante e as declarações cabem numa página; o termo de
+ * texto em Helvetica, uma imagem PNG e fotos JPEG. O comprovante e as declarações cabem numa página; o termo de
  * adesão do voluntário usa novaPagina().
  *
  * Por que à mão: a Hostinger não tem Composer neste projeto, e o FPDF não é baixável daqui (o proxy
@@ -14,6 +14,7 @@
  *   é o que permite quebrar linha de nome de curso comprido sem estourar a margem.
  * - Imagem: PNG sem entrelaçamento e sem alfa, lido direto dos blocos IDAT, que já são zlib com os
  *   filtros PNG — o PDF desenha isso com /Predictor 15, sem decodificar nada aqui e sem GD.
+ * - Fotos: JPEG entra como está (/DCTDecode), quantas forem; só as medidas são lidas do arquivo (imagemJpeg()).
  * - Coordenadas: a API recebe y a partir do TOPO da página (como se lê o layout); a conversão para a
  *   origem do PDF (canto inferior) fica aqui dentro.
  *
@@ -71,6 +72,8 @@ final class McpPdf
     private array $paginas = [];
     /** @var array{largura:int, altura:int, espaco:string, cores:int, bits:int, dados:string}|null */
     private ?array $imagem = null;
+    /** @var list<array{largura:int, altura:int, espaco:string, decode:string, dados:string}> fotos JPEG, na ordem em que entraram */
+    private array $jpegs = [];
     /** @var array<string, string> */
     private array $info = [];
 
@@ -202,19 +205,44 @@ final class McpPdf
             . self::n(self::ALTURA - $y - $a) . " cm /Im1 Do\nQ\n";
     }
 
+    /**
+     * Desenha um JPEG (os bytes, não o caminho) cobrindo o retângulo: a foto é centrada e o que sobra fica de fora,
+     * como o object-fit: cover da tela. Quantas fotos quiser por documento (as fichas dos voluntários, uma por pessoa).
+     * O JPEG entra no PDF como está (/DCTDecode), sem decodificar nada aqui e sem GD.
+     */
+    public function imagemJpeg(string $jpeg, float $x, float $y, float $l, float $a): void
+    {
+        $im = self::lerJpeg($jpeg);
+        $this->jpegs[] = $im;
+        $escala = max($l / $im['largura'], $a / $im['altura']);
+        $il = $im['largura'] * $escala;
+        $ia = $im['altura'] * $escala;
+        $base = self::ALTURA - $y - $a;
+        $this->conteudo .= "q\n" . self::n($x) . ' ' . self::n($base) . ' ' . self::n($l) . ' ' . self::n($a) . " re W n\n"
+            . self::n($il) . ' 0 0 ' . self::n($ia) . ' ' . self::n($x + ($l - $il) / 2) . ' ' . self::n($base + ($a - $ia) / 2)
+            . ' cm /J' . count($this->jpegs) . " Do\nQ\n";
+    }
+
     /** O arquivo PDF inteiro. */
     public function gerar(): string
     {
         $comprimir = function_exists('gzcompress');
         $filtro = $comprimir ? ' /Filter /FlateDecode' : '';
-        $recursos = '/Font << /F1 4 0 R /F2 5 0 R >>' . ($this->imagem ? ' /XObject << /Im1 7 0 R >>' : '')
-            . ' /ProcSet [/PDF /Text' . ($this->imagem ? ' /ImageB /ImageC /ImageI' : '') . ']';
         // Página 1 nos objetos 3 (página) e 6 (conteúdo), como sempre; as seguintes, do 9 em diante, aos pares.
         $conteudos = [...$this->paginas, $this->conteudo];
         $numeros = [[3, 6]];
         for ($i = 1, $n = count($conteudos); $i < $n; $i++) {
             $numeros[] = [7 + 2 * $i, 8 + 2 * $i];
         }
+        // As fotos JPEG vêm depois da última página.
+        $primeiroJpeg = 7 + 2 * count($conteudos);
+        $xobjetos = $this->imagem ? ' /Im1 7 0 R' : '';
+        foreach ($this->jpegs as $i => $_) {
+            $xobjetos .= ' /J' . ($i + 1) . ' ' . ($primeiroJpeg + $i) . ' 0 R';
+        }
+        $temImagem = $xobjetos !== '';
+        $recursos = '/Font << /F1 4 0 R /F2 5 0 R >>' . ($temImagem ? ' /XObject <<' . $xobjetos . ' >>' : '')
+            . ' /ProcSet [/PDF /Text' . ($temImagem ? ' /ImageB /ImageC /ImageI' : '') . ']';
         $objetos = [
             1 => '<< /Type /Catalog /Pages 2 0 R >>',
             2 => '<< /Type /Pages /Kids [' . implode(' ', array_map(static fn(array $p): string => $p[0] . ' 0 R', $numeros)) . '] /Count ' . count($numeros) . ' >>',
@@ -235,6 +263,11 @@ final class McpPdf
                 . ' /Filter /FlateDecode /DecodeParms << /Predictor 15 /Colors ' . $im['cores'] . ' /BitsPerComponent '
                 . $im['bits'] . ' /Columns ' . $im['largura'] . ' >> /Length ' . strlen($im['dados']) . " >>\nstream\n"
                 . $im['dados'] . "\nendstream";
+        }
+        foreach ($this->jpegs as $i => $im) {
+            $objetos[$primeiroJpeg + $i] = '<< /Type /XObject /Subtype /Image /Width ' . $im['largura'] . ' /Height ' . $im['altura']
+                . ' /ColorSpace ' . $im['espaco'] . ' /BitsPerComponent 8' . $im['decode'] . ' /Filter /DCTDecode /Length '
+                . strlen($im['dados']) . " >>\nstream\n" . $im['dados'] . "\nendstream";
         }
         $info = [];
         foreach ($this->info as $chave => $valor) {
@@ -302,6 +335,51 @@ final class McpPdf
     private static function stringUnicode(string $texto): string
     {
         return '<FEFF' . strtoupper(bin2hex(mb_convert_encoding($texto, 'UTF-16BE', 'UTF-8'))) . '>';
+    }
+
+    /**
+     * Medidas e cores de um JPEG, lidas do marcador SOF (o quadro). Só 8 bits por cor, que é o que câmera e GD gravam.
+     *
+     * @return array{largura:int, altura:int, espaco:string, decode:string, dados:string}
+     */
+    private static function lerJpeg(string $bin): array
+    {
+        $n = strlen($bin);
+        if ($n < 4 || !str_starts_with($bin, "\xFF\xD8")) {
+            throw new RuntimeException('a foto não é JPEG');
+        }
+        $pos = 2;
+        while ($pos + 9 < $n) {
+            if ($bin[$pos] !== "\xFF") {
+                break;
+            }
+            $marcador = ord($bin[$pos + 1]);
+            if ($marcador === 0xFF) {  // preenchimento entre marcadores
+                $pos++;
+                continue;
+            }
+            if ($marcador === 0xDA) {  // começo dos dados sem ter achado o quadro
+                break;
+            }
+            $tamanho = unpack('n', substr($bin, $pos + 2, 2))[1];
+            // SOF0 a SOF15, menos DHT (C4), JPG (C8) e DAC (CC).
+            if ($marcador >= 0xC0 && $marcador <= 0xCF && !in_array($marcador, [0xC4, 0xC8, 0xCC], true)) {
+                $q = unpack('Cbits/naltura/nlargura/Ccores', substr($bin, $pos + 4, 6));
+                if ($q['bits'] !== 8 || $q['largura'] < 1 || $q['altura'] < 1) {
+                    break;
+                }
+                // CMYK de JPEG (Adobe) vem invertido: o /Decode desinverte.
+                [$espaco, $decode] = match ($q['cores']) {
+                    1 => ['/DeviceGray', ''],
+                    3 => ['/DeviceRGB', ''],
+                    4 => ['/DeviceCMYK', ' /Decode [1 0 1 0 1 0 1 0]'],
+                    default => throw new RuntimeException('JPEG com número de cores não suportado'),
+                };
+                return ['largura' => $q['largura'], 'altura' => $q['altura'], 'espaco' => $espaco, 'decode' => $decode, 'dados' => $bin];
+            }
+            $pos += 2 + $tamanho;
+        }
+        throw new RuntimeException('JPEG não suportado (sem o quadro de 8 bits)');
     }
 
     /** @return array{largura:int, altura:int, espaco:string, cores:int, bits:int, dados:string} */

@@ -20,6 +20,10 @@
  *   ?id=N             a ficha inteira, com a foto, o WhatsApp da pessoa e os botões Aprovar e Recusar;
  *   ?id=N&passo=aprovar|recusar   a confirmação (com o CPF, se a ficha veio sem);
  *   ?foto=N           a selfie (JPEG, sem cache).
+ *   ?pdf=aprovados    as fichas de todos os aprovados num PDF só, com a foto de cada um (27/11/2026, pedido do Matheus:
+ *                     para conferência). Ficha resumida, em ordem alfabética, sem CPF e sem saúde
+ *                     (mcp_voluntarios_fichas_pdf, lib/voluntarios.php). Botão na aba "Aprovados"; cada geração fica em
+ *                     mcp_eventos como coordenacao_fichas_pdf.
  * Ações (POST com a chave): aprovar (aceita a ficha, cria o colaborador do ponto e o código de aprovação, como na Redação),
  * recusar, desfazer a recusa (volta para "em análise") e mandar e-mail à pessoa (pela Resend, com responder-para a caixa
  * do voluntariado; o texto vem pronto e pode ser mudado; cada envio fica nas anotações da ficha; até 40 por hora).
@@ -647,6 +651,8 @@ function co_lista(string $ver, string $aviso = ''): never
     co_pagina('Fichas de voluntários · ' . $titulo,
         $aviso . '<h1>Fichas de quem quer ser voluntário</h1><p class="dica">' . co_e($dica) . '</p>'
         . '<nav class="abas" aria-label="Grupos de fichas">' . $menu . '</nav>'
+        . ($ver === 'aprovados' && $cartoes !== '' ? '<div class="botoes" style="margin:0 0 18px"><a class="btn grande azul" href="' . co_e(co_url(['pdf' => 'aprovados'])) . '">Baixar as fichas em PDF (com foto)</a></div>'
+            . '<p class="dica">O PDF traz todos os aprovados, em ordem alfabética, com a foto, o telefone e o e-mail. Serve para imprimir ou conferir. Pode demorar alguns segundos para abrir.</p>' : '')
         . ($cartoes !== '' ? '<div class="grade">' . $cartoes . '</div>' . co_js_fotos() : '<div class="vazio">' . co_e($vazio) . '</div>'));
 }
 
@@ -949,6 +955,24 @@ if (isset($_GET['foto'])) {
     header('Content-Length: ' . strlen($selfie['jpeg']));
     header('Content-Disposition: inline; filename="foto.jpg"');
     echo $selfie['jpeg'];
+    exit;
+}
+
+// As fichas dos aprovados num PDF só, com a foto de cada um (27/11/2026). Ficha resumida, sem CPF e sem saúde.
+if ((string) ($_GET['pdf'] ?? '') === 'aprovados') {
+    @set_time_limit(120);
+    try {
+        $fichas = mcp_voluntarios_fichas_aprovadas();
+        $pdf = mcp_voluntarios_fichas_pdf($fichas, mcp_voluntarios_fichas_fotos(array_column($fichas, 'id')));
+    } catch (Throwable $e) {
+        error_log('[coordenacao] PDF das fichas: ' . $e->getMessage());
+        co_lista('aprovados', co_aviso('Não foi possível montar o PDF agora. Tente de novo daqui a pouco.', 'erro'));
+    }
+    mcp_registrar(null, 'coordenacao_fichas_pdf', count($fichas) . ' fichas · ' . co_quem());
+    header('Content-Type: application/pdf');
+    header('Content-Length: ' . strlen($pdf));
+    header('Content-Disposition: attachment; filename="voluntarios-aprovados-' . mcp_data_brt(mcp_agora(), 'Y-m-d') . '.pdf"');
+    echo $pdf;
     exit;
 }
 

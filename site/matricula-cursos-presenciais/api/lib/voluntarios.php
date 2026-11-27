@@ -1400,6 +1400,182 @@ function mcp_voluntario_pdf_desenhar(array $f, int $total): array
     return [$pdf, $pagina];
 }
 
+// ----------------------------------------------------------------------------- fichas com foto num PDF só
+/** Lado, em pixels, da foto dentro do PDF das fichas: ela aparece com 3 cm, e 300 px imprimem nítido. */
+const MCP_VOL_FICHAS_FOTO_LADO = 300;
+/** Quantas fichas cabem num arquivo (500 aprovados com foto dão uns 10 MB). */
+const MCP_VOL_FICHAS_LIMITE = 1000;
+
+/**
+ * A selfie reduzida a um quadrado (o centro da foto) de MCP_VOL_FICHAS_FOTO_LADO: a guardada tem até 800 px e ~100 KB,
+ * e cem delas inteiras fariam um PDF pesado demais para baixar no celular. Sem GD, ou se a foto não abrir, devolve a
+ * original (o PDF a recorta ao desenhar).
+ */
+function mcp_voluntario_selfie_miniatura(string $jpeg, int $lado = MCP_VOL_FICHAS_FOTO_LADO): string
+{
+    if (!function_exists('imagecreatefromstring') || !function_exists('imagejpeg')) {
+        return $jpeg;
+    }
+    $img = @imagecreatefromstring($jpeg);
+    if ($img === false) {
+        return $jpeg;
+    }
+    $largura = imagesx($img);
+    $altura = imagesy($img);
+    $corte = min($largura, $altura);
+    $final = min($lado, $corte);
+    $tela = imagecreatetruecolor($final, $final);
+    imagecopyresampled($tela, $img, 0, 0, intdiv($largura - $corte, 2), intdiv($altura - $corte, 2), $final, $final, $corte, $corte);
+    imagedestroy($img);
+    ob_start();
+    imagejpeg($tela, null, 80);
+    $saida = (string) ob_get_clean();
+    imagedestroy($tela);
+    return $saida !== '' ? $saida : $jpeg;
+}
+
+/** As fotos (já reduzidas) das fichas dadas: [id da ficha => bytes do JPEG]. Quem não tem selfie fica de fora. */
+function mcp_voluntarios_fichas_fotos(array $ids): array
+{
+    $fotos = [];
+    foreach (array_map('intval', $ids) as $id) {
+        $selfie = $id > 0 ? mcp_voluntario_selfie($id) : null;
+        if ($selfie !== null && $selfie['jpeg'] !== '') {
+            $fotos[$id] = mcp_voluntario_selfie_miniatura($selfie['jpeg']);
+        }
+    }
+    return $fotos;
+}
+
+/** As fichas em ordem alfabética do nome, sem diferenciar maiúscula nem acento ("Érica" entre "Elisa" e "Fábio"). */
+function mcp_voluntarios_fichas_ordenar(array $fichas): array
+{
+    $chave = static function (array $f): string {
+        $nome = mb_strtolower(trim((string) ($f['nome'] ?? '')));
+        return strtr($nome, ['á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'í' => 'i', 'ì' => 'i',
+            'î' => 'i', 'ï' => 'i', 'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ç' => 'c', 'ñ' => 'n']);
+    };
+    usort($fichas, static fn(array $a, array $b): int => [$chave($a), (int) ($a['id'] ?? 0)] <=> [$chave($b), (int) ($b['id'] ?? 0)]);
+    return $fichas;
+}
+
+/** Fichas aceitas (as aprovadas), com as colunas da lista do portal (sem CPF), em ordem alfabética. */
+function mcp_voluntarios_fichas_aprovadas(): array
+{
+    return mcp_voluntarios_fichas_ordenar(mcp_voluntarios_listar(['status' => 'aceita'], 1, MCP_VOL_FICHAS_LIMITE)['linhas']);
+}
+
+/** As linhas rótulo/valor da ficha resumida (a do PDF com foto). Sem CPF, sem saúde e sem os textos longos. */
+function mcp_voluntario_ficha_resumo(array $f): array
+{
+    $idade = mcp_voluntario_idade_texto($f);
+    $linhas = [
+        ['Nascimento', trim(mcp_voluntario_nascimento_texto($f) . ($idade !== '' ? " ($idade)" : ''))],
+        ['Telefone', mcp_telefone_bonito((string) ($f['telefone'] ?? '')) ?: 'não informado'],
+        ['E-mail', (string) ($f['email'] ?? '') ?: 'não informado'],
+        ['Onde mora', mcp_voluntario_local_texto($f) ?: 'não informado'],
+        ['Frentes', mcp_voluntario_rotulos((string) ($f['frentes'] ?? ''), MCP_VOL_FRENTES) ?: 'não informadas'],
+    ];
+    $situacao = (string) ($f['status'] ?? '');
+    $quando = mcp_data_brt((string) ($f['status_em'] ?? ''), 'd/m/Y');
+    $linhas[] = $situacao === 'aceita'
+        ? ['Aprovação', ($quando !== '' ? $quando : 'data não registrada') . (!empty($f['protocolo']) ? ' · ' . $f['protocolo'] : '')]
+        : ['Situação', mcp_voluntario_status_rotulo($situacao) . (!empty($f['protocolo']) ? ' · ' . $f['protocolo'] : '')];
+    return $linhas;
+}
+
+/**
+ * Bytes do PDF com as fichas resumidas, uma embaixo da outra (5 na primeira página, 6 nas seguintes), cada uma com a
+ * foto: para a coordenação conferir quem foi aprovado, no papel ou na tela. Função pura: recebe as fichas (na ordem em
+ * que devem sair) e as fotos [id => JPEG]; ficha sem foto sai com o quadro "Sem foto". Sem CPF e sem saúde.
+ */
+function mcp_voluntarios_fichas_pdf(array $fichas, array $fotos, string $titulo = 'Voluntários aprovados'): string
+{
+    [, $total] = mcp_voluntarios_fichas_pdf_desenhar($fichas, $fotos, $titulo, 0);
+    [$pdf] = mcp_voluntarios_fichas_pdf_desenhar($fichas, $fotos, $titulo, $total);
+    return $pdf->gerar();
+}
+
+/** @return array{0: McpPdf, 1: int} o PDF e o número de páginas ($total 0 = ainda não se sabe) */
+function mcp_voluntarios_fichas_pdf_desenhar(array $fichas, array $fotos, string $titulo, int $total): array
+{
+    $pdf = new McpPdf();
+    $quantas = count($fichas);
+    $contagem = $quantas === 1 ? '1 ficha' : "$quantas fichas";
+    $pdf->metadados("Fichas dos voluntários — $titulo", MCP_NOME_FILIAL, "Fichas dos voluntários ($contagem)");
+    $esq = MCP_CP_MARGEM;
+    $dir = McpPdf::LARGURA - MCP_CP_MARGEM;
+    $limite = McpPdf::ALTURA - 60;
+    $lado = 86.0;      // a foto, ~3 cm
+    $bloco = 116.0;    // a altura de uma ficha, com o respiro
+    $xTexto = $esq + $lado + 16;
+    $xValor = $xTexto + 62;
+    $pagina = 1;
+    $gerado = mcp_data_brt(mcp_agora(), 'd/m/Y \à\s H\hi');
+    $cabecalho = mb_strtoupper("Fichas dos voluntários · $titulo");
+    $rodape = static function () use ($pdf, $esq, $dir, $total, &$pagina, $gerado, $contagem): void {
+        $base = McpPdf::ALTURA - 34;
+        $pdf->linha($esq, $base - 14, $dir, $base - 14, MCP_CP_FIO, 0.8);
+        $numero = $total > 0 ? "Página $pagina de $total" : "Página $pagina";
+        $pdf->texto($esq, $base, "Uso interno da coordenação: contém dados pessoais · $contagem · gerado em $gerado", 'normal', 8.4, MCP_CP_CINZA);
+        $pdf->texto($dir - McpPdf::larguraTexto($numero, 'normal', 8.4), $base, $numero, 'normal', 8.4, MCP_CP_CINZA);
+    };
+
+    // Primeira página: faixa, logo, título e a contagem.
+    $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
+    $logoL = 230.0;
+    $logoA = $logoL * 398 / 1325;
+    $pdf->imagemPng(MCP_COMPROVANTE_LOGO, $esq - 0.0257 * $logoL, 34 - 0.0427 * $logoA, $logoL, $logoA);
+    $pdf->linha($esq, 112, $dir, 112, MCP_CP_FIO, 0.8);
+    $pdf->texto($esq, 138, mb_strtoupper("Fichas dos voluntários"), 'negrito', 16, MCP_CP_TEXTO, 0.4);
+    $pdf->texto($esq, 155, "$titulo · $contagem, em ordem alfabética · gerado em $gerado (Brasília)", 'normal', 10, MCP_CP_CINZA);
+    $y = 174.0;
+
+    if (!$fichas) {
+        $pdf->texto($esq, $y + 20, 'Nenhuma ficha neste grupo.', 'normal', 12, MCP_CP_TEXTO);
+    }
+    foreach ($fichas as $f) {
+        if ($y + $bloco > $limite) {
+            $rodape();
+            $pdf->novaPagina();
+            $pagina++;
+            $pdf->retangulo(0, 0, McpPdf::LARGURA, 8, MCP_CP_VERMELHO);
+            $pdf->texto($esq, 38, $cabecalho, 'negrito', 8.6, MCP_CP_CINZA, 0.9);
+            $pdf->linha($esq, 50, $dir, 50, MCP_CP_FIO, 0.8);
+            $y = 64.0;
+        }
+        // A foto; se o arquivo não servir, o quadro "Sem foto" (uma foto ruim não derruba o documento inteiro).
+        $desenhada = false;
+        $jpeg = $fotos[(int) ($f['id'] ?? 0)] ?? null;
+        if (is_string($jpeg) && $jpeg !== '') {
+            try {
+                $pdf->imagemJpeg($jpeg, $esq, $y, $lado, $lado);
+                $desenhada = true;
+            } catch (Throwable) {
+                $desenhada = false;
+            }
+        }
+        if (!$desenhada) {
+            $pdf->retangulo($esq, $y, $lado, $lado, MCP_CP_CAIXA);
+            $aviso = 'Sem foto';
+            $pdf->texto($esq + ($lado - McpPdf::larguraTexto($aviso, 'normal', 9)) / 2, $y + $lado / 2 + 3, $aviso, 'normal', 9, MCP_CP_CINZA);
+        }
+        $nome = McpPdf::quebrar((string) ($f['nome'] ?? ''), 'negrito', 13, $dir - $xTexto);
+        $pdf->texto($xTexto, $y + 13, $nome[0] . (count($nome) > 1 ? '…' : ''), 'negrito', 13, MCP_CP_TEXTO);
+        $yy = $y + 17;
+        foreach (mcp_voluntario_ficha_resumo($f) as [$rotulo, $valor]) {
+            $yy += 12.6;
+            $pdf->texto($xTexto, $yy, $rotulo, 'negrito', 8.2, MCP_CP_CINZA, 0.3);
+            $linhas = McpPdf::quebrar($valor !== '' ? $valor : '—', 'normal', 9.6, $dir - $xValor);
+            $pdf->texto($xValor, $yy, $linhas[0] . (count($linhas) > 1 ? '…' : ''), 'normal', 9.6, MCP_CP_TEXTO);
+        }
+        $pdf->linha($esq, $y + $bloco - 14, $dir, $y + $bloco - 14, MCP_CP_FIO, 0.8);
+        $y += $bloco;
+    }
+    $rodape();
+    return [$pdf, $pagina];
+}
+
 // ----------------------------------------------------------------------------- planilha (CSV, sem CPF)
 /** Planilha das fichas que passam pelos filtros (até 5000 linhas), sem CPF e sem IP. */
 function mcp_voluntarios_csv(array $filtros): string

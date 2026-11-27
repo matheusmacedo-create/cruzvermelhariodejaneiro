@@ -286,6 +286,15 @@ uma decisão por tela e sempre uma confirmação antes de aprovar ou recusar. C�
   (`api/voluntario-foto.php?f=<id>&k=<HMAC do id com o segredo voluntario_foto>`, em `lib/voluntario_foto.php`). A pessoa
   tira a selfie ou escolhe uma foto; ela passa pelo mesmo tratamento do cadastro (gira, reduz a 800 px, regrava sem EXIF)
   e entra na ficha. O link vale enquanto a ficha não tem foto; depois diz "já recebemos". Até 10 envios por hora por IP.
+- **Fichas dos aprovados em PDF** (27/11/2026, pedido do Matheus, para conferência): na aba "Aprovados", o botão
+  "Baixar as fichas em PDF (com foto)" (`?pdf=aprovados`) baixa um arquivo só com todas as fichas aceitas, em ordem
+  alfabética, 5 na primeira página e 6 nas seguintes. Cada ficha traz a foto, o nome, nascimento e idade, telefone,
+  e-mail, onde mora, frentes, a data da aprovação e o protocolo. **Sem CPF e sem saúde.** Ficha sem selfie sai com o quadro
+  "Sem foto". A selfie é reduzida a um quadrado de 300 px antes de entrar (500 aprovados dão uns 10 MB); até 1000 fichas
+  por arquivo (`MCP_VOL_FICHAS_LIMITE`). Código: `mcp_voluntarios_fichas_pdf()` e vizinhas em `lib/voluntarios.php`, e
+  `McpPdf::imagemJpeg()` (o gerador de PDF passou a desenhar fotos JPEG, quantas forem). Cada geração fica em
+  `mcp_eventos` como `coordenacao_fichas_pdf` (quantas fichas e quem). O tutorial e a assistente de voz ainda não falam
+  deste botão. Publicação: `scripts/publicacao-fichas-pdf.txt`.
 - **Com a Redação**: a Redação importa as fichas pelo id e não relê a situação. Uma ficha decidida aqui pode continuar
   pendente lá; aprovar lá depois devolve o mesmo código, e recusar lá uma ficha aceita aqui dá erro.
 - **Privacidade**: CPF só com os 3 primeiros dígitos, como no portal; a foto só com a chave e sem cache; `noindex`,

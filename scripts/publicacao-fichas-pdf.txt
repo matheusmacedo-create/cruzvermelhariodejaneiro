@@ -1,0 +1,6 @@
+# Fichas dos voluntários aprovados em PDF, com foto, no link da coordenação (27/11/2026, docs/voluntariado.md).
+# Sem migração e sem configuração nova. As bibliotecas primeiro, a página por último (ela chama as funções novas).
+# Publicar: scripts/publicar_hostinger.sh $(grep -vE '^(#|$)' scripts/publicacao-fichas-pdf.txt)
+site/matricula-cursos-presenciais/api/lib/pdf.php
+site/matricula-cursos-presenciais/api/lib/voluntarios.php
+site/matricula-cursos-presenciais/api/coordenacao.php

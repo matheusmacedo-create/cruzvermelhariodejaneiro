@@ -244,6 +244,39 @@ verificar('pdf: ficha com os textos no máximo cabe em 2 páginas', substr_count
 verificar('pdf: menor de 18 avisa do responsável; numeração das páginas', [str_contains($conteudoLongo, 'respons'), str_contains($conteudoLongo, 'gina 2 de 2')], [true, true]);
 verificar('nome do arquivo do PDF', mcp_voluntario_pdf_arquivo(['protocolo' => 'VOL-261016-0042', 'nome' => 'MARIA DA SILVA']), 'VOL-261016-0042_Maria_da_Silva.pdf');
 
+// ----------------------------------------------------------------------------- fichas com foto num PDF só (página da coordenação)
+$aprovada = ['status' => 'aceita', 'status_em' => '2026-11-20 15:00:00'] + $ficha;
+$grupo = [];
+foreach (['Zélia Duarte', 'Érica Souza', 'ana lima', 'Fábio Nunes', 'Elisa Prado', 'Bruno Reis', 'Caio Sá'] as $i => $nomeDoGrupo) {
+    $grupo[] = ['id' => 100 + $i, 'nome' => $nomeDoGrupo, 'protocolo' => 'VOL-261101-01' . sprintf('%02d', $i)] + $aprovada;
+}
+$grupo = mcp_voluntarios_fichas_ordenar($grupo);
+verificar('fichas em pdf: ordem alfabética sem diferenciar acento nem maiúscula', array_column($grupo, 'nome'), ['ana lima', 'Bruno Reis', 'Caio Sá', 'Elisa Prado', 'Érica Souza', 'Fábio Nunes', 'Zélia Duarte']);
+$retrato = imagecreatetruecolor(600, 800);
+imagefill($retrato, 0, 0, (int) imagecolorallocate($retrato, 40, 90, 160));
+ob_start();
+imagejpeg($retrato, null, 82);
+$retratoJpeg = (string) ob_get_clean();
+$miniatura = mcp_voluntario_selfie_miniatura($retratoJpeg);
+verificar('fichas em pdf: a foto vira um quadrado de 300 px, menor que a original', [getimagesizefromstring($miniatura)[0], getimagesizefromstring($miniatura)[1], strlen($miniatura) < strlen($retratoJpeg)], [300, 300, true]);
+verificar('fichas em pdf: o que não abre como foto volta como veio', mcp_voluntario_selfie_miniatura('não é foto'), 'não é foto');
+// Duas com foto, uma com a foto estragada (sai "Sem foto", sem derrubar o documento) e o resto sem foto.
+$fotosDoGrupo = [(int) $grupo[0]['id'] => $miniatura, (int) $grupo[1]['id'] => $retratoJpeg, (int) $grupo[2]['id'] => "\xFF\xD8 estragada"];
+$pdfFichas = mcp_voluntarios_fichas_pdf($grupo, $fotosDoGrupo);
+$conteudoFichas = pdf_texto($pdfFichas);
+verificar('fichas em pdf: 7 fichas em 2 páginas (5 na primeira, 6 nas seguintes), numeradas', [str_starts_with($pdfFichas, '%PDF-1.4'), str_ends_with($pdfFichas, "%%EOF\n"),
+    substr_count($pdfFichas, '/Type /Page /Parent'), str_contains($conteudoFichas, 'gina 2 de 2'), str_contains($conteudoFichas, '7 fichas')], [true, true, 2, true, true]);
+verificar('fichas em pdf: duas fotos embutidas como JPEG, com as medidas certas, e cinco quadros "Sem foto"', [substr_count($pdfFichas, '/Filter /DCTDecode'),
+    str_contains($pdfFichas, '/Width 300 /Height 300'), str_contains($pdfFichas, '/Width 600 /Height 800'), substr_count($conteudoFichas, '(Sem foto)')], [2, true, true, 5]);
+verificar('fichas em pdf: nome, contato, frentes, aprovação e protocolo', [str_contains($conteudoFichas, 'Bruno Reis'), str_contains($conteudoFichas, '20/05/1990 \\(36 anos\\)'),
+    str_contains($conteudoFichas, 'Juventude'), str_contains($conteudoFichas, '20/11/2026'), str_contains($conteudoFichas, 'VOL-261101-01')], [true, true, true, true, true]);
+verificar('fichas em pdf: sem CPF (dígitos, formatado ou parcial) e sem saúde', [str_contains($conteudoFichas, $cpf), str_contains($conteudoFichas, substr($cpf, 0, 3) . '.'), str_contains($conteudoFichas, 'CPF'),
+    str_contains($conteudoFichas, 'sa\\372de')], [false, false, false, false]);
+$pdfVazio = mcp_voluntarios_fichas_pdf([], []);
+verificar('fichas em pdf: sem ninguém, uma página dizendo isso', [substr_count($pdfVazio, '/Type /Page /Parent'), str_contains(pdf_texto($pdfVazio), 'Nenhuma ficha')], [1, true]);
+// O comprovante e as declarações (uma imagem PNG, nenhuma foto) continuam saindo como antes.
+verificar('pdf da ficha individual: continua sem foto JPEG e com o logo no objeto 7', [substr_count($pdf, '/DCTDecode'), str_contains($pdf, '/XObject << /Im1 7 0 R >>')], [0, true]);
+
 // ----------------------------------------------------------------------------- e-mails (montagem)
 $equipe = mcp_montar_email_voluntario_equipe($ficha);
 $tudoEquipe = $equipe['assunto'] . $equipe['html'] . $equipe['texto'];

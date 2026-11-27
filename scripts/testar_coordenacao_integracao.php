@@ -95,6 +95,7 @@ function limpar(PDO $db): void
     }
     $db->exec("DELETE FROM mcp_colaboradores WHERE nome LIKE '%Teste Coordenação %'");
     $db->exec("DELETE FROM mcp_eventos WHERE tipo IN ('coordenacao_negado', 'voluntario_foto_envio') AND detalhe IN ('127.0.0.1', '::1')");
+    $db->exec("DELETE FROM mcp_eventos WHERE tipo = 'coordenacao_fichas_pdf' AND detalhe LIKE '%Dona Teste%'");
 }
 limpar($db);
 
@@ -197,6 +198,11 @@ try {
     verificar('assistente de voz: só no tutorial, não na lista nem na ficha', [str_contains($tutorial['corpo'], '<elevenlabs-convai agent-id='), str_contains($lista['corpo'], 'elevenlabs'), str_contains(http("$base$k&id=$a")['corpo'], 'elevenlabs')], [true, false, false]);
     $aprovados = http("$base$k&ver=aprovados");
     verificar('aba Aprovados mostra o Caio', str_contains($aprovados['corpo'], "Caio Teste Coordenação $sufixo"), true);
+    // As fichas dos aprovados num PDF só (27/11/2026): botão na aba, só com a chave, e a geração fica registrada.
+    $pdfAprovados = http("$base$k&pdf=aprovados");
+    verificar('PDF dos aprovados: botão na aba, sai um PDF e fica o registro', [str_contains($aprovados['corpo'], 'pdf=aprovados'), $pdfAprovados['status'], $pdfAprovados['tipo'],
+        str_starts_with($pdfAprovados['corpo'], '%PDF-1.4'), mcp_contar_eventos_do_tipo('coordenacao_fichas_pdf', 3600) >= 1], [true, 200, 'application/pdf', true, true]);
+    verificar('PDF dos aprovados: sem a chave, 404; a aba "Para decidir" não tem o botão', [http("$base?pdf=aprovados")['status'], str_contains($lista['corpo'], 'pdf=aprovados')], [404, false]);
 
     $foto = http("$base$k&foto=$a");
     verificar('foto: JPEG com a chave', [$foto['status'], $foto['tipo'], str_starts_with($foto['corpo'], "\xFF\xD8")], [200, 'image/jpeg', true]);
