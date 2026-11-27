@@ -1,0 +1,101 @@
+{
+  "slug": "como-ser-socorrista",
+  "arquivo": "como-ser-socorrista-cruz-vermelha-rj.pdf",
+  "capa": "capa-como-ser-socorrista.webp",
+  "titulo": "Quero ser socorrista: os 4 caminhos",
+  "sub": "Para quem quer trabalhar no socorro e está escolhendo por onde começar. Marque com um X o caminho que combina com você e leve as perguntas da folha 2 antes de pagar qualquer curso.",
+  "credito": "Resumo da filial, com base nas Portarias 2.048/2002 e 1.010/2012 do Ministério da Saúde, no Código de Trânsito Brasileiro e nas Leis 7.498/1986, 11.901/2009 e 14.751/2023. Não substitui a norma nem o edital de cada serviço",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "titulo": "Os 4 caminhos, lado a lado",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Socorrista não é profissão regulamentada com esse nome.",
+          "texto": "Existe a ocupação 5151-35 na Classificação Brasileira de Ocupações, mas não há carteira nem conselho de socorristas. Em editais e anúncios, olhe a formação que o cargo pede, e não o nome do cargo."
+        },
+        {
+          "tipo": "lista_curta",
+          "titulo": "Quem vai na ambulância do SAMU 192",
+          "itens": [
+            "Suporte básico: condutor e técnico ou auxiliar de enfermagem",
+            "Suporte avançado: condutor, enfermeiro e médico",
+            "Na central: médico regulador, telefonista e rádio-operador",
+            "Entrada: concurso ou seleção de quem mantém o SAMU na região"
+          ]
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "perguntas",
+          "titulo": "Perguntas para fazer antes de pagar um curso de APH ou de socorrista",
+          "linhas": 1,
+          "itens": [
+            [
+              "Qual é o meu objetivo?",
+              "SAMU, bombeiros, brigada de empresa ou saber agir em casa. Cada um pede uma formação."
+            ],
+            [
+              "O edital ou o empregador pede este curso?",
+              "Anote a carga horária exigida. Curso que ninguém pede não abre porta."
+            ],
+            [
+              "O curso exige formação anterior?",
+              "Procedimento de enfermagem só com formação e inscrição no Coren."
+            ],
+            [
+              "Quantas horas são de prática presencial?",
+              "Com manequim e equipamento. Socorro se aprende treinando."
+            ],
+            [
+              "Quem são os instrutores?",
+              "Peça a formação de cada um, por escrito."
+            ],
+            [
+              "O que vem escrito no certificado?",
+              "Nome do curso, carga horária, conteúdo e CNPJ de quem emite."
+            ],
+            [
+              "O que o curso promete?",
+              "Registro, carteira de socorrista ou emprego garantido é sinal de alerta."
+            ],
+            [
+              "Qual é o valor total?",
+              "Com material, taxa e certificado. Pergunte como funciona a desistência."
+            ]
+          ]
+        },
+        {
+          "tipo": "ficha",
+          "titulo": "Cursos que pesquisei",
+          "colunas": [
+            "Curso e escola",
+            "Horas (prática)",
+            "Valor total"
+          ],
+          "linhas": 3,
+          "altura_mm": 7.5
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Primeiro passo no Rio de Janeiro:",
+          "texto": "Primeiros Socorros Básico (8 horas) e Suporte Básico de Vida (4 horas), presenciais, no Palácio da Cruz Vermelha, no Centro. São cursos livres e pagos, vendidos pela escola (O-CVB Filial Rio de Janeiro Ensino Ltda). Não formam socorrista profissional nem habilitam a trabalhar no SAMU. cruzvermelhariodejaneiro.org/matricula-cursos-presenciais"
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Em emergência: 192, SAMU. 193, Corpo de Bombeiros.",
+          "texto": "As leis e as normas deste guia, com os endereços, estão na folha 3 e em cruzvermelhariodejaneiro.org/como-ser-socorrista"
+        }
+      ]
+    }
+  ]
+}

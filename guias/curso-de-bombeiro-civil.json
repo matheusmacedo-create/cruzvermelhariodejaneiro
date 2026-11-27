@@ -1,0 +1,93 @@
+{
+ "slug": "curso-de-bombeiro-civil",
+ "arquivo": "curso-de-bombeiro-civil-cruz-vermelha-rj.pdf",
+ "capa": "capa-curso-de-bombeiro-civil.webp",
+ "titulo": "Bombeiro civil: 8 perguntas antes de pagar a matrícula",
+ "sub": "Para quem vai escolher um curso de bombeiro civil, em qualquer estado. Marque com um X cada passo cumprido e anote, a lápis, o que a escola responder.",
+ "credito": "Resumo da filial, com base na Lei 11.901/2009 e em normas dos Corpos de Bombeiros do RJ e de MG. Não substitui a norma do Corpo de Bombeiros do seu estado",
+ "folhas": [
+  {
+   "blocos": [
+    {
+     "tipo": "lista_detalhada",
+     "titulo": "O caminho em 7 passos, em qualquer estado",
+     "da_pagina": {
+      "secao": "lista",
+      "formato": "tabela"
+     }
+    },
+    {
+     "tipo": "lista_curta",
+     "titulo": "O que a Lei 11.901/2009 garante ao bombeiro civil",
+     "da_pagina": {
+      "secao": "direitos",
+      "formato": "lista"
+     }
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "O salário não está em lei federal.",
+     "texto": "Depende do piso da convenção coletiva do seu estado, do nível (básico, líder ou mestre) e do adicional de 30%. Pergunte o piso de hoje ao sindicato da categoria."
+    }
+   ]
+  },
+  {
+   "blocos": [
+    {
+     "tipo": "perguntas",
+     "titulo": "8 perguntas para fazer à escola antes de pagar a matrícula",
+     "linhas": 1,
+     "itens": [
+      [
+       "A escola é credenciada no Corpo de Bombeiros do estado?",
+       "Peça o número do registro e a validade. Procure o nome na lista oficial."
+      ],
+      [
+       "O curso é de bombeiro civil ou de brigadista?",
+       "São cursos diferentes. O de brigadista é mais curto e não forma bombeiro civil."
+      ],
+      [
+       "Quantas horas tem o curso?",
+       "Compare com a carga que a norma do Corpo de Bombeiros do seu estado pede."
+      ],
+      [
+       "Onde são as aulas práticas, e com que equipamentos?",
+       "Combate a incêndio e primeiros socorros se aprendem treinando, com instrutor."
+      ],
+      [
+       "O que vem escrito no certificado?",
+       "Nome e registro da escola, seu nome e CPF, data e carga horária. Peça um modelo."
+      ],
+      [
+       "Há registro ou homologação no Corpo de Bombeiros depois do curso?",
+       "Quem pede, quando e quanto custa. Peça o valor por escrito."
+      ],
+      [
+       "De quanto em quanto tempo é a reciclagem?",
+       "O prazo vem da norma do estado. Pergunte se a escola oferece."
+      ],
+      [
+       "Quanto custa no total? E se eu desistir?",
+       "Some matrícula, curso, material e taxas. Peça a regra de devolução por escrito."
+      ]
+     ]
+    },
+    {
+     "tipo": "campos",
+     "titulo": "O curso que escolhi",
+     "itens": [
+      "Escola e registro:",
+      "Norma do meu estado:",
+      "Data da turma:",
+      "Reciclagem até:"
+     ]
+    },
+    {
+     "tipo": "aviso",
+     "rotulo": "No Rio de Janeiro:",
+     "texto": "a Escola de Educação e Saúde tem o curso de Bombeiro Civil, de 80 horas, presencial, no Centro do Rio. É pago e vendido pela escola (O-CVB Filial Rio de Janeiro Ensino Ltda), empresa ligada à filial. Turmas e valores: cruzvermelhariodejaneiro.org/matricula-cursos-presenciais"
+    }
+   ]
+  }
+ ]
+}

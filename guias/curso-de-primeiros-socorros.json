@@ -1,0 +1,98 @@
+{
+  "slug": "curso-de-primeiros-socorros",
+  "arquivo": "curso-de-primeiros-socorros-cruz-vermelha-rj.pdf",
+  "capa": "capa-curso-de-primeiros-socorros.webp",
+  "titulo": "Como escolher um curso de primeiros socorros",
+  "sub": "Para quem vai se matricular ou contratar o treinamento de uma equipe, em qualquer cidade do Brasil. Marque com um X cada tema que está no programa do curso.",
+  "credito": "Orientação da filial, com base na diretriz de 2019 da Sociedade Brasileira de Cardiologia e nas diretrizes de 2020 da Federação Internacional da Cruz Vermelha",
+  "folhas": [
+    {
+      "blocos": [
+        {
+          "tipo": "lista_detalhada",
+          "titulo": "O que o curso deve ensinar",
+          "da_pagina": {
+            "secao": "lista",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "Habilidade se aprende praticando:",
+          "texto": "o estudo on-line melhora o conhecimento, mas pode não melhorar a habilidade. Para saber fazer compressões e desengasgo, procure aula prática em manequim, com instrutor."
+        },
+        {
+          "tipo": "aviso",
+          "rotulo": "O certificado de curso livre",
+          "texto": "comprova a capacitação. Não é diploma técnico, não dá registro em conselho e não forma socorrista profissional."
+        },
+        {
+          "tipo": "campos",
+          "titulo": "O curso que estou avaliando",
+          "itens": [
+            "Curso:",
+            "Quem oferece:",
+            "Carga horária:",
+            "Horas de prática:",
+            "Valor total:",
+            "Falei com:"
+          ]
+        }
+      ]
+    },
+    {
+      "blocos": [
+        {
+          "tipo": "perguntas",
+          "titulo": "8 perguntas para fazer antes de se matricular",
+          "linhas": 1,
+          "itens": [
+            [
+              "Para que eu quero o curso?",
+              "Família, exigência da escola ou da empresa, ou primeiro passo na área."
+            ],
+            [
+              "O programa cobre o que eu preciso?",
+              "Compare com a folha 1. Cuida de crianças? Peça criança e bebê."
+            ],
+            [
+              "Quantas horas são de prática, e em quê?",
+              "Manequim de adulto, de criança e de bebê, e desfibrilador de treino."
+            ],
+            [
+              "Quantos alunos por turma e por manequim?",
+              "Menos gente por manequim, mais treino para cada um."
+            ],
+            [
+              "Quem dá a aula?",
+              "Peça o nome e a formação do instrutor."
+            ],
+            [
+              "Quem assina o certificado, e o que vem nele?",
+              "Carga horária, conteúdo, data e instrutor. Confirme se é aceito onde você vai entregar."
+            ],
+            [
+              "Quanto custa no total, e se eu desistir?",
+              "Inscrição, curso, material e certificado. Peça a regra de cancelamento por escrito."
+            ],
+            [
+              "De quanto em quanto tempo devo refazer?",
+              "Sem treino, a habilidade se perde em meses. A Lei Lucas pede curso anual nas escolas."
+            ]
+          ]
+        },
+        {
+          "tipo": "lista_detalhada",
+          "titulo": "Gratuito ou pago, on-line ou presencial",
+          "da_pagina": {
+            "secao": "gratuito-ou-pago",
+            "formato": "tabela"
+          }
+        },
+        {
+          "tipo": "curso"
+        }
+      ]
+    }
+  ]
+}
